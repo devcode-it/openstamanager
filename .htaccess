@@ -45,7 +45,8 @@ php_value post_max_size 20M
     RewriteRule ^logs/?$ - [F,L]
     RewriteRule ^update/?$ - [F,L]
 
-	# Deny access to svn, node_modules and vendor folders
+	# Deny access to svn, git, node_modules and vendor folders
+    RewriteRule ^.git/?$ - [F,L]
     RewriteRule ^.svn/?$ - [F,L]
     RewriteRule ^node_modules/?$ - [F,L]
     RewriteRule ^vendor/?$ - [F,L]

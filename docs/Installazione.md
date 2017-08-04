@@ -9,21 +9,21 @@ currentMenu: installazione
 - [Tabella dei contenuti](#tabella-dei-contenuti)
 - [Requisiti](#requisiti)
 - [Installazione](#installazione)
-    - [Versioni](#versioni)
-    - [SourceForge](#sourceforge)
+  - [Versioni](#versioni)
+  - [Github](#github)
 - [Strumenti utili](#strumenti-utili)
-    - [Windows](#windows)
-    - [Linux](#linux)
-    - [MAC](#mac)
+  - [Windows](#windows)
+  - [Linux](#linux)
+  - [MAC](#mac)
 - [Problemi comuni](#problemi-comuni)
-    - [Schermata bianca iniziale](#schermata-bianca-iniziale)
-    - [Blocco dell'installazione allo 0%](#blocco-dellinstallazione-allo-0%25)
+  - [Schermata bianca iniziale](#schermata-bianca-iniziale)
+  - [Blocco dell'installazione allo 0%](#blocco-dellinstallazione-allo-0%25)
 
 <!-- /TOC -->
 
 ## Requisiti
 
-Prima di iniziare l'installazione, è necessario procedere al download di una versione del progetto da [SourceForge](https://sourceforge.net/p/openstamanager/). Si consiglia inoltre di controllare che i prerequisiti del software, elencati di seguito, siano soddisfatti.
+Prima di iniziare l'installazione, è necessario procedere al download di una versione del progetto da [Github](https://github.com/devcode-it/openstamanager). Si consiglia inoltre di controllare che i prerequisiti del software, elencati di seguito, siano soddisfatti.
 
 L'installazione del gestionale richiede la presenza di un server web con abilitato il [DBMS (Database Management System)](https://it.wikipedia.org/wiki/Database_management_system) MySQL e il linguaggio di programmazione [PHP](http://php.net/).
 
@@ -36,10 +36,10 @@ Per procedere all'installazione è necessario seguire i seguenti punti:
 
 1. Creare una cartella (ad esempio `openstamanager`) nella root del sever web installato ed estrarvi il contenuto della release scaricata. Il percorso della cartella root del server varia in base al software in utilizzo:
 
-    - LAMP (`/var/www/html`);
-    - XAMPP (`C:/xampp/htdocs` per Windows, `/opt/lampp/htdocs/` per Linux, `/Applications/XAMPP/htdocs/` per MAC);
-    - WAMP (`C:\wamp\www`);
-    - MAMP (`C:\MAMP\htdocs` per Windows, `/Applications/MAMP/htdocs` per MAC).
+   - LAMP (`/var/www/html`);
+   - XAMPP (`C:/xampp/htdocs` per Windows, `/opt/lampp/htdocs/` per Linux, `/Applications/XAMPP/htdocs/` per MAC);
+   - WAMP (`C:\wamp\www`);
+   - MAMP (`C:\MAMP\htdocs` per Windows, `/Applications/MAMP/htdocs` per MAC).
 
 2. Creare un database vuoto (tramite [PHPMyAdmin](http://localhost/phpmyadmin/) o riga di comando).
 3. Accedere a <http://localhost/openstamanager> dal vostro browser.
@@ -49,11 +49,11 @@ Per procedere all'installazione è necessario seguire i seguenti punti:
 
 ### Versioni
 
-Per mantenere un elevato grado di trasparenza riguardo al ciclo delle release, seguiamo le linee guida [Semantic Versioning (SemVer)](http://semver.org/) per definire le versioni del progetto. Per vedere tutte le versioni disponibili al download, visitare la [pagina relativa](https://sourceforge.net/projects/openstamanager/files/) su SourceForge.
+Per mantenere un elevato grado di trasparenza riguardo al ciclo delle release, seguiamo le linee guida [Semantic Versioning (SemVer)](http://semver.org/) per definire le versioni del progetto. Per vedere tutte le versioni disponibili al download, visitare la [pagina relativa](https://github.com/devcode-it/openstamanager/releases) su Github (per versioni precedenti alla 2.3, visitare [SourceForge](https://sourceforge.net/projects/openstamanager/files/)).
 
-### SourceForge
+### Github
 
-Nel caso si stia utilizzando la versione direttamente ottenuta dalla repository di SourceForge, è necessario eseguire i seguenti comandi da linea di comando per completare le dipendenze PHP (tramite [Composer](https://getcomposer.org/)) e gli asssets (tramite [Yarn](https://yarnpkg.com/)) del progetto.
+Nel caso si stia utilizzando la versione direttamente ottenuta dalla repository di Github, è necessario eseguire i seguenti comandi da linea di comando per completare le dipendenze PHP (tramite [Composer](https://getcomposer.org/)) e gli asssets (tramite [Yarn](https://yarnpkg.com/)) del progetto.
 
 ```bash
 php composer.phar install
@@ -69,7 +69,7 @@ In alternativa alla sequenza di comandi precedente, è possibile utilizzare il s
 yarn run develop-OSM
 ```
 
-Per ulteriori informazioni, visitare le sezioni [Assets](https://sourceforge.net/p/openstamanager/wiki/Assets/) e [Framework](https://sourceforge.net/p/openstamanager/wiki/Framework/) della documentazione.
+Per ulteriori informazioni, visitare le sezioni [Assets](https://devcode-it.github.io/openstamanager/assets.html) e [Framework](https://devcode-it.github.io/openstamanager/framework.html) della documentazione.
 
 ## Strumenti utili
 
@@ -88,7 +88,7 @@ sudo apt-get install apache2 php5 mysql-server
 
 Una volta completata l’installazione è necessario creare una cartella per il gestionale, copiandobi al suo interno il contenuto della release scaricata, nel web server di Apache2:
 
-- nella versione <= 2.3, la cartella si trova in `/var/www/`;
+- nella versione &lt;= 2.3, la cartella si trova in `/var/www/`;
 - nella versione >= 2.4, la cartella si trova in `/var/www/html/`;
 
 E' inoltre necessario assicurarsi di concedere i permessi di scrittura sulla cartella creata:

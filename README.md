@@ -1,15 +1,17 @@
 # OpenSTAManager
 
-OpenSTAManager ("Gestore Aperto del Servizio Tecnico di Assistenza") è un software open source, web based, modulare e semplice da usare, ideato e sviluppato da Fabio Lovato per gestire ed archiviare il servizio di assistenza tecnica e la fatturazione.
+Il gestionale OpenSTAManager è un software open-source e web based, sviluppato dall'azienda informatica DevCode di Este per gestire ed archiviare il servizio di assistenza tecnica e la relativa fatturazione.
+Il nome del progetto deriva dalla parziale traduzione in inglese degli elementi principali che lo compongono: la natura open source e il suo obiettivo quale Gestore del Servizio Tecnico di Assistenza.
 
-Funzioni principali:
+Un software gestionale, identificato nell'insieme degli applicativi che automatizzano i processi di gestione all'interno delle aziende, appartiene solitamente a una specifica categoria del settore, specializzata negli ambiti di:
 
-- dashboard con Interventi e Appuntamenti;
-- gestione Anagrafiche;
-- gestione Contabilità;
-- gestione Contratti;
-- gestione Magazzino;
-- gestione Impianti.
+- Gestione della contabilità;
+- Gestione del magazzino;
+- Gestione e ausilio della produzione;
+- Gestione e previsione dei budget aziendali;
+- Gestione ed analisi finanziaria.
+
+Secondo questa definizione, OpenSTAManager riesce a generalizzare al proprio interno le funzionalità caratteristiche della contabilità e della gestione del magazzino, presentando inoltre moduli piuttosto avanzati e destinati a complementare l'attività aziendale in relazione agli interventi di assistenza della realtà lavorativa in oggetto.
 
 ## Tabella dei contenuti
 
@@ -19,7 +21,7 @@ Funzioni principali:
 - [Requisiti](#requisiti)
 - [Installazione](#installazione)
     - [Versioni](#versioni)
-    - [SourceForge](#sourceforge)
+    - [Github](#github)
 - [Perché software open source](#perché-software-open-source)
 - [Componenti esterni](#componenti-esterni)
 - [Community](#community)
@@ -31,14 +33,14 @@ Funzioni principali:
 
 ## Requisiti
 
-Prima di iniziare l'installazione, è necessario procedere al download di una versione del progetto da [SourceForge](https://sourceforge.net/p/openstamanager/). Si consiglia inoltre di controllare che i prerequisiti del software, elencati di seguito, siano soddisfatti.
+Prima di iniziare l'installazione, è necessario procedere al download di una versione del progetto da [Github](https://github.com/devcode-it/openstamanager). Si consiglia inoltre di controllare che i prerequisiti del software, elencati di seguito, siano soddisfatti.
 
 L'installazione del gestionale richiede la presenza di un server web con abilitato il [DBMS (Database Management System)](https://it.wikipedia.org/wiki/Database_management_system) MySQL e il linguaggio di programmazione [PHP](http://php.net/).
 
 - PHP >= 5.4 (si consiglia come minimo la versione 5.6 per poter usufruire di tutte le funzionalità del progetto)
 - MySQL >= 5.0
 
-Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Informazioni](https://sourceforge.net/p/openstamanager/wiki/Installazione/) della documentazione.
+Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Informazioni](https://devcode-it.github.io/openstamanager/installazione.html) della documentazione.
 
 ## Installazione
 
@@ -59,11 +61,11 @@ Per procedere all'installazione è necessario seguire i seguenti punti:
 
 ### Versioni
 
-Per mantenere un elevato grado di trasparenza riguardo al ciclo delle release, seguiamo le linee guida [Semantic Versioning (SemVer)](http://semver.org/) per definire le versioni del progetto. Per vedere tutte le versioni disponibili al download, visitare la [pagina relativa](https://sourceforge.net/projects/openstamanager/files/) su SourceForge.
+Per mantenere un elevato grado di trasparenza riguardo al ciclo delle release, seguiamo le linee guida [Semantic Versioning (SemVer)](http://semver.org/) per definire le versioni del progetto. Per vedere tutte le versioni disponibili al download, visitare la [pagina relativa](https://github.com/devcode-it/openstamanager/releases) su Github (per versioni precedenti alla 2.3, visitare [SourceForge](https://sourceforge.net/projects/openstamanager/files/)).
 
-### SourceForge
+### Github
 
-Nel caso si stia utilizzando la versione direttamente ottenuta dalla repository di SourceForge, è necessario eseguire i seguenti comandi da linea di comando per completare le dipendenze PHP (tramite [Composer](https://getcomposer.org/)) e gli asssets (tramite [Yarn](https://yarnpkg.com/)) del progetto.
+Nel caso si stia utilizzando la versione direttamente ottenuta dalla repository di Github, è necessario eseguire i seguenti comandi da linea di comando per completare le dipendenze PHP (tramite [Composer](https://getcomposer.org/)) e gli asssets (tramite [Yarn](https://yarnpkg.com/)) del progetto.
 
 ```bash
 php composer.phar install
@@ -79,7 +81,7 @@ In alternativa alla sequenza di comandi precedente, è possibile utilizzare il s
 yarn run develop-OSM
 ```
 
-Per ulteriori informazioni, visitare le sezioni [Assets](https://sourceforge.net/p/openstamanager/wiki/Assets/) e [Framework](https://sourceforge.net/p/openstamanager/wiki/Framework/) della documentazione.
+Per ulteriori informazioni, visitare le sezioni [Assets](https://devcode-it.github.io/openstamanager/assets.html) e [Framework](https://devcode-it.github.io/openstamanager/framework.html) della documentazione.
 
 ## Perché software open source
 
@@ -87,7 +89,7 @@ Il progetto è un software open source perché permette agli utilizzatori di stu
 
 In questo modo è possibile ottenere un'ulteriore garanzia sul funzionamento del software, poiché chiunque ne abbia le capacità può verificarlo, escludendo mancanze in relazione alla sicurezza e alla privacy dei dati (caratteristica che il software proprietario non può offrire).
 
-Nel caso utilizziate il programma per uso commerciale, si consiglia di non utilizzare le versioni ottenibili direttamente dalla repository su SourceForge (SVN) ma di scaricare le release ufficiali disponibili nel nostro sito ufficiale <http://www.openstamanager.com>; se siete inoltre interessati a supporto e assistenza professionali, li potete richiedere nella [sezione dedicata](http://www.openstamanager.com/per-le-aziende/).
+Nel caso utilizziate il programma per uso commerciale, si consiglia di non utilizzare le versioni ottenibili direttamente dalla repository su Github ma di scaricare le release ufficiali disponibili nel nostro sito ufficiale <http://www.openstamanager.com>; se siete inoltre interessati a supporto e assistenza professionali, li potete richiedere nella [sezione dedicata](http://www.openstamanager.com/per-le-aziende/).
 
 ## Componenti esterni
 
@@ -104,7 +106,7 @@ OpenSTAManager è stato progettato utilizzando altro software open source, tra c
 
 La community è una componente importante in un progetto open source, perché mette in contatto utenti e programmatori tra di loro e permette pertanto l'individuazione di soluzioni innovative e migliori.
 
-Il forum ufficiale è disponibile all'indirizzo <http://www.openstamanager.com/forum/>, e potete segnalare i vostri problemi e soddisfare le vostre curiosità nelle sezioni più adeguate:
+Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), e il nostro forum ufficiale è disponibile all'indirizzo <http://www.openstamanager.com/forum/>, dove potete segnalare i vostri problemi e soddisfare le vostre curiosità nelle sezioni più adeguate:
 
 - [Idee, suggerimenti e consigli](http://www.openstamanager.com/forum/viewforum.php?f=1)
 - [Problemi con la prima installazione](http://www.openstamanager.com/forum/viewforum.php?f=2)
@@ -114,20 +116,20 @@ Il forum ufficiale è disponibile all'indirizzo <http://www.openstamanager.com/f
 
 **Attenzione**: vi ricordiamo che non vi è nessuna garanzia che qualcuno risponda in tempo alle vostre richieste o problemi.
 
-Siamo inoltre presenti su [Facebook](https://www.facebook.com/openstamanager) e su SourceForge con una [mailing-list](https://sourceforge.net/p/openstamanager/mailman/).
-
 ## Contribuire
 
-Per poter contribuire, si consiglia di seguire le indicazioni descritte all'interno della [documentazione ufficiale](https://sourceforge.net/p/openstamanager/wiki/Contribuire/); in particolare, prestare attenzione al codice di condotta e allo stile del codice.
+Per poter contribuire, si consiglia di seguire le indicazioni descritte all'interno della [documentazione ufficiale](https://devcode-it.github.io/openstamanager/contribuire.html); in particolare, prestare attenzione al codice di condotta e allo stile del codice.
 
 ## Sviluppatori
 
-- **Fabio Lovato**, fondatore e sviluppatore ([loviuz](https://sourceforge.net/u/loviuz/profile/))
-- **Fabio Piovan**, sviluppatore ([magreba](https://sourceforge.net/u/magreba/profile/))
-- **Luca Salvà**, sviluppatore ([lucasalva](https://sourceforge.net/u/lucasalva/profile/))
+- **Fabio Lovato**, il fondatore ([loviuz](https://github.com/loviuz))
+- **Fabio Piovan** ([magreba](https://sourceforge.net/u/magreba/profile/))
+- **Luca Salvà** ([lucasalva87](https://github.com/lucasalva87))
+- **Matteo Baccarin**
+- **Thomas Zilio** ([Dasc3er](https://github.com/Dasc3er))
 
-Per la lista completa delle persone che hanno partecipato al progetto, consultare la [pagina principale della documentazione](https://sourceforge.net/p/openstamanager/wiki/Home/) su SourceForge.
+Per la lista completa delle persone che hanno partecipato al progetto, consultare la [pagina principale della documentazione](https://devcode-it.github.io/openstamanager/index.html) su Github.
 
 ## Licenza
 
-Questo progetto è tutelato dalla licenza **GPL 3** (vedere [LICENSE](https://sourceforge.net/p/openstamanager/code/HEAD/tree/trunk/openstamanager/LICENSE) per ulteriori dettagli).
+Questo progetto è tutelato dalla licenza **GPL 3** (si veda [LICENSE](https://github.com/devcode-it/openstamanager/blob/master/LICENSE) per ulteriori dettagli).

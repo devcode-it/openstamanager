@@ -25,8 +25,8 @@
         }
     ],
     "repository": {
-        "type": "svn",
-        "url": "svn://svn.code.sf.net/p/openstamanager/code/trunk"
+        "type": "git",
+        "url": "https://github.com/devcode-it/openstamanager.git"
     },
     "main": "gulpfile.js",
     "dependencies": {

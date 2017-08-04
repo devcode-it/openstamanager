@@ -71,6 +71,7 @@ vendor/
 ######################
 *.new
 *.old
+*.mo
 .couscous/
 assets/dist
 backup/*

@@ -76,7 +76,7 @@ else{
 										<a href="http://www.openstamanager.com/forum/" target="_blank"><i class="fa fa-2x fa-edit"></i><br><?php echo _("Forum") ?></b></a>
 									</div>
 									<div class="col-md-4 text-center">
-										<a href="http://sourceforge.net/p/openstamanager/mailman/" target="_blank"><i class="fa fa-2x fa-envelope"></i><br><?php echo _("Mailing list") ?></a>
+										<a href="http://eepurl.com/8MFgH" target="_blank"><i class="fa fa-2x fa-envelope"></i><br><?php echo _("Mailing list") ?></a>
 									</div>
 									<div class="col-md-4 text-center">
 										<a href="https://www.facebook.com/openstamanager" target="_blank"><i class="fa fa-2x fa-facebook-square"></i><br><?php echo _("Pagina Facebook") ?></a>
@@ -114,10 +114,7 @@ else{
 							<p><?php echo _("Offriamo supporto a pagamento professionale a chi fosse interessato, ma a chi non interessa il supporto a pagamento e sta comunque utilizzando il software chiediamo una donazione per il lavoro svolto finora e per la possibilità di continuare questo progetto con lo stesso spirito con cui è nato. Con le donazioni non diventiamo ricchi, ma è un <b>grande
 							simbolo di apprezzamento</b>") ?>.</p>
 
-							<p>
-								<a href="http://sourceforge.net/donate/index.php?group_id=236538" class="btn btn-lg btn-success" target="_blank"><i class="fa fa-usd"></i> <?php echo _("Supporta questo progetto") ?></a>
-								<img src="http://images.sourceforge.net/images/project-support.jpg" border="0" alt="<?php echo _("Supporta questo progetto") ?>" class="pull-right"/>
-							</p>
+							<a href="http://sourceforge.net/donate/index.php?group_id=236538" class="btn btn-lg btn-success" target="_blank"><i class="fa fa-usd"></i> <?php echo _("Supporta questo progetto") ?></a>
 						</div>
 					</div>
 				</div>

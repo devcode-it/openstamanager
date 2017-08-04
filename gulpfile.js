@@ -231,7 +231,7 @@ gulp.task('release', function () {
     var archiver = require('archiver');
     var fs = require('fs');
 
-    shell.exec('svn info --show-item=revision . > REVISION');
+    // shell.exec('svn info --show-item=revision . > REVISION');
 
     del([
         './vendor/tecnickcom/tcpdf/fonts/*',
@@ -254,7 +254,7 @@ gulp.task('release', function () {
     archive.glob('**/*', {
         dot: true,
         ignore: [
-            '.svn/**',
+            '.git/**',
             'node_modules/**',
             'backup/**',
             'files/**',

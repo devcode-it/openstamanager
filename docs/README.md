@@ -16,7 +16,7 @@ Si avverte pertanto che questa documentazione non è utilizzabile con efficacia 
 
 - [Presentazione](#presentazione)
 - [Storia](#storia)
-- [Membri](#membri)
+- [Sviluppatori](#sviluppatori)
 
 <!-- /TOC -->
 
@@ -35,8 +35,6 @@ Un software gestionale, identificato nell'insieme degli applicativi che automati
 
 Secondo questa definizione, OpenSTAManager riesce a generalizzare al proprio interno le funzionalità caratteristiche della contabilità e della gestione del magazzino, presentando inoltre moduli piuttosto avanzati e destinati a complementare l'attività aziendale in relazione agli interventi di assistenza della realtà lavorativa in oggetto.
 
-Proprio grazie alla vasta gamma di funzionalità che lo caratterizzano, questo gestionale riesce a mantenere una posizione rilevante all'interno del mercato, garantita dalla natura open source del progetto e amplificata dall'ampio grado di personalizzazione che contraddistingue questo particolare software.
-
 ## Storia
 
 OpenSTAManager viene inizialmente ideato da Nicoletta Marampon e sviluppato da **Fabio Lovato** al fine di gestire esclusivamente le anagrafiche e gli interventi aziendali per piccole realtà lavorative.
@@ -46,6 +44,10 @@ Fondamentale in questo senso risulta essere la collaborazione dei nuovi colleghi
 
 L'insieme di cambiamenti introdotti nel periodo compreso tra giugno 2016 e giugno 2017 hanno infine portato alla generazione di un ramo di sviluppo parallelo (_branch_) per la versione 2.3, destinata a cambiare e migliorare in modo fondamentale numerose sezioni _front-end_ e _back-end_ del progetto.
 
-## Membri
+## Sviluppatori
 
-[[members]]
+- **Fabio Lovato**, il fondatore ([loviuz](https://github.com/loviuz))
+- **Fabio Piovan** ([magreba](https://sourceforge.net/u/magreba/profile/))
+- **Luca Salvà** ([lucasalva87](https://github.com/lucasalva87))
+- **Matteo Baccarin**
+- **Thomas Zilio** ([Dasc3er](https://github.com/Dasc3er))

@@ -253,7 +253,7 @@ function do_backup()
         $dump .= backup_tables();
         file_put_contents($backup_dir.$tmp_backup_dir.$database_file, $dump);
         // Copia file di OSM (escludendo la cartella di backup)
-        copyr(DOCROOT, $backup_dir.$tmp_backup_dir, [slashes($backup_dir), '.svn', 'config.inc.php', 'node_modules']);
+        copyr(DOCROOT, $backup_dir.$tmp_backup_dir, [slashes($backup_dir), '.svn', '.git', 'config.inc.php', 'node_modules']);
         // Creazione zip
         if (extension_loaded('zip')) {
             if (create_zip($backup_dir.$tmp_backup_dir, $backup_dir.$backup_file)) {

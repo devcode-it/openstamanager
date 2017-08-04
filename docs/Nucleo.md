@@ -49,7 +49,7 @@ currentMenu: nucleo
 
 <!-- /TOC -->
 
-Scaricando la versione SVN del progetto dovreste trovare una struttura di base molto simile a quella seguente.
+Scaricando la versione GIT del progetto dovreste trovare una struttura di base molto simile a quella seguente.
 
     .
     ├── api

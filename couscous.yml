@@ -6,6 +6,8 @@ include:
 
 branch: gh-pages
 
+baseUrl: /openstamanager
+
 github:
     user: devcode-it
     repo: openstamanager

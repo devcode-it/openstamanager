@@ -30,7 +30,7 @@ if (empty($idriga)) {
     $q = 'SELECT * FROM co_righe_preventivi WHERE idpreventivo='.prepare($id_record).' AND id='.prepare($idriga);
     $rsr = $dbo->fetchArray($q);
 
-    $idarticolo = $rsr[0]['idarticolo'];
+    $idarticolo = !empty($rsr[0]['idarticolo']) ? $rsr[0]['idarticolo'] : '';
     $descrizione = $rsr[0]['descrizione'];
     $qta = $rsr[0]['qta'];
     $um = $rsr[0]['um'];

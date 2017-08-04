@@ -90,7 +90,7 @@
         "assets-OSM": "yarn upgrade && yarn run build-OSM",
         "build-OSM": "gulp",
         "dump-OSM": "php composer.phar dump-autoload",
-        "doc-OSM": "php couscous.phar generate --target website && php phpDocumentor.phar -d . --ignore=\"vendor/*\" -t website/docs",
+        "doc-OSM": "php couscous.phar deploy",
         "windows-fix": "yarn global add windows-build-tools"
     },
     "overrides": {

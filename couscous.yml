@@ -4,8 +4,11 @@ template:
 include:
     - docs
 
-# Base URL of the published website (no "/" at the end!)
-baseUrl: /osm/website
+branch: gh-pages
+
+github:
+    user: devcode-it
+    repo: openstamanager
 
 title: OpenSTAManager
 subTitle: Il gestionale open source per l'assistenza tecnica e la fatturazione
@@ -38,10 +41,9 @@ menu:
                 api:
                     text: API
                     relativeUrl: api.html
-                docs:
-                    text: Documentazione completa
-                    relativeUrl: docs/
+                #docs:
+                #    text: Documentazione completa
+                #    relativeUrl: docs/
                 osm:
                     text: Sito ufficiale
                     absoluteUrl: http://www.openstamanager.com/
-

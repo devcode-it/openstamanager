@@ -1,0 +1,47 @@
+template:
+    url: https://github.com/pnowy/CouscousNativeTemplate
+
+include:
+    - docs
+
+# Base URL of the published website (no "/" at the end!)
+baseUrl: /osm/website
+
+title: OpenSTAManager
+subTitle: Il gestionale open source per l'assistenza tecnica e la fatturazione
+fontAwesomeIcon: fa fa-cog
+
+# The left menu bar
+menu:
+    sections:
+        main:
+            name: Documentazione di base
+            items:
+                home:
+                    text: Home page
+                    relativeUrl: index.html
+                installazione:
+                    text: Installazione
+                    relativeUrl: installazione.html
+                framework:
+                    text: Framework
+                    relativeUrl: framework.html
+                assets:
+                    text: Assets
+                    relativeUrl: assets.html
+                moduli:
+                    text: Moduli
+                    relativeUrl: moduli.html
+        other:
+            name: Approfondimenti
+            items:
+                api:
+                    text: API
+                    relativeUrl: api.html
+                docs:
+                    text: Documentazione completa
+                    relativeUrl: docs/
+                osm:
+                    text: Sito ufficiale
+                    absoluteUrl: http://www.openstamanager.com/
+

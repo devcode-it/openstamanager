@@ -1,0 +1,57 @@
+{
+    "name": "openstamanager/openstamanager",
+    "description": "Gestionale open source per assistenza tecnica e fatturazione",
+    "version": "2.3.0",
+    "license": "GPL-3.0",
+    "keywords": [
+        "open source",
+        "gestionale",
+        "assistenza tecnica",
+        "fatturazione"
+    ],
+    "homepage": "http://openstamanager.com/",
+    "authors": [{
+        "name": "Fabio Lovato",
+        "email": "info@openstamanager.com"
+    }, {
+        "name": "Fabio Piovan",
+        "email": "info@openstamanager.com"
+    }, {
+        "name": "Luca Salvà",
+        "email": "info@openstamanager.com"
+    }],
+    "type": "project",
+    "require": {
+        "php": ">=5.4",
+        "ezyang/htmlpurifier": "^4.8",
+        "filp/whoops": "^2.1",
+        "intervention/image": "^2.3",
+        "ircmaxell/password-compat": "^1.0",
+        "maximebf/debugbar": "^1.13",
+        "monolog/monolog": "^1.22",
+        "paragonie/random_compat": "^2.0",
+        "phpmailer/phpmailer": "^5.2",
+        "spipu/html2pdf": "^4.6",
+        "symfony/translation": "^3.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "": "lib/classes/",
+            "Module\\": "modules/"
+        },
+        "files": [
+            "lib/functions.php",
+            "lib/util.php",
+            "lib/deprecated.php"
+        ]
+    },
+    "scripts": {
+        "post-create-project-cmd": "yarn run release-OSM"
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true,
+        "apcu-autoloader": true,
+        "prefer-stable": true
+    }
+}

@@ -1,0 +1,214 @@
+.skin-default .wrapper,
+.skin-default .main-sidebar,
+.skin-default .left-side {
+    background: #333;
+}
+
+.skin-default.login-page .wrapper {
+    background: #d2d6de;
+}
+
+.skin-default .content-wrapper,
+.skin-default .content {
+    background: #f6f6f6;
+}
+
+.skin-default #supersearch {
+    color: #eee;
+}
+
+.skin-default #supersearch:focus {
+    color: #222;
+}
+
+.skin-default .inner {
+    color: #eee;
+}
+
+.skin-default .nav-tabs-custom .nav-tabs li a {
+    color: #3c8dbc;
+}
+
+.skin-default .nav-tabs-custom .nav-tabs li.active a {
+    color: inherit;
+}
+
+.skin-default .nav-tabs-custom .nav-tabs.pull-right li a.back-btn {
+    color: #3C8DBC;
+}
+
+.skin-default .nav-tabs-custom .nav-tabs.pull-right li a.back-btn:hover {
+    color: #72AFD2;
+}
+
+.skin-default .main-header .navbar {
+    color: #eee;
+    background: #222;
+    border: none;
+}
+
+.skin-default .main-header .navbar .nav li a
+.skin-default .main-header .navbar .nav li a:hover,
+.skin-default .main-header .navbar .nav li a:active,
+.skin-default .main-header .navbar .nav li a:focus,
+.skin-default .main-header .navbar .nav .open a,
+.skin-default .main-header .navbar .nav .open a:hover,
+.skin-default .main-header .navbar .nav .open a:focus,
+.skin-default .main-header .navbar .nav .active a,
+.skin-default .main-header .navbar .nav .actual a {
+    background: rgba(0, 0, 0, 0.2);
+    color: #f6f6f6;
+}
+
+.skin-default .main-header .navbar .sidebar-toggle,
+.skin-default .main-header .navbar .sidebar-toggle .icon-bar {
+    color: #f6f6f6;
+}
+
+.skin-default .main-header .navbar .sidebar-toggle:hover {
+    color: #f6f6f6;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.skin-default .main-header .navbar .sidebar-toggle {
+    color: #f6f6f6;
+}
+
+.skin-default .main-header .navbar .sidebar-toggle:hover {
+    background: #222;
+}
+
+@media (max-width: 767px) {
+    .skin-default .main-header .navbar .dropdown-menu li.divider {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    .skin-default .main-header .navbar .dropdown-menu li a {
+        color: #f6f6f6;
+    }
+    .skin-default .main-header .navbar .dropdown-menu li a:hover {
+        background: #222;
+    }
+}
+
+.skin-default .main-header .navbar .sidebar-toggle .icon-bar {
+    background: #f6f6f6;
+}
+
+.skin-default .main-header .logo {
+    background: #222;
+    color: #f6f6f6;
+    border-bottom: 0 solid transparent;
+}
+
+.skin-default .main-header .logo:hover {
+    background: #222;
+}
+
+.skin-default .main-header li.user-header {
+    background: #222;
+}
+
+.skin-default .main-header a {
+    text-decoration: none;
+}
+
+.skin-default .content-header {
+    background: transparent;
+}
+
+.skin-default .user-panel .info,
+.skin-default .user-panel .info a {
+    color: #f6f6f6;
+}
+
+.skin-default .sidebar-menu li.header {
+    color: #4b646f;
+    background: #222;
+}
+
+.skin-default .sidebar-menu li a {
+    border-left: 3px solid transparent;
+}
+
+.skin-default .sidebar-menu li:hover a,
+.skin-default .sidebar-menu li.active a,
+.skin-default .sidebar-menu li.actual a {
+    background: #222;
+    border-left-color: #222;
+}
+
+.skin-default .sidebar-menu li:hover>a,
+.skin-default .sidebar-menu li.actual>a {
+    color: #f6f6f6;
+}
+
+.skin-default .sidebar-menu li .treeview-menu {
+    margin: 0 1px;
+    background: #222;
+}
+
+.skin-default .sidebar a {
+    color: #f6f6f6;
+}
+
+.skin-default .sidebar a:hover {
+    text-decoration: none;
+}
+
+.skin-default .treeview-menu li a {
+    color: #f6f6f6;
+}
+
+.skin-default .sidebar-form {
+    border-color: #222;
+}
+
+.skin-default .sidebar-form input[type="text"],
+.skin-default .sidebar-form .btn {
+    box-shadow: none;
+    background: #222;
+    border-color: transparent;
+}
+
+.skin-default .sidebar-form input[type="text"] {
+    color: #666;
+}
+
+.skin-default .sidebar-form input[type="text"]:focus,
+.skin-default .sidebar-form input[type="text"]:focus+.input-group-btn .btn {
+    background: #f6f6f6;
+    color: #666;
+}
+
+.skin-default .sidebar-form input[type="text"]:focus+.input-group-btn .btn {
+    border-left-color: #f6f6f6;
+}
+
+.skin-default .sidebar-form .btn {
+    color: #999;
+}
+
+.skin-default .main-sidebar li,
+.skin-default .main-sidebar li a {
+    color: #ccc;
+}
+
+.skin-default .panel-primary .panel-heading {
+    border-bottom: 2px solid #57a;
+}
+
+.skin-default .ui-autocomplete {
+    background: #f6f6f6;
+    border-color: #ccc;
+    border-color: rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+}
+
+.skin-default .parsley-errors-list{
+    color: red;
+}

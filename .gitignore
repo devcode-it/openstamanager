@@ -1,0 +1,87 @@
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.pyo
+*.pyc
+
+# Packages #
+############
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
+
+# OS generated files #
+######################
+*~
+._*
+.cache
+.DS_Store
+.DS_Store?
+.idea
+.project
+.settings
+.tmproj
+*.esproj
+*.sublime-project
+*.sublime-workspace
+nbproject
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+$RECYCLE.BIN
+desktop.ini
+Desktop.ini
+.Spotlight-V100
+.Trashes
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+# Visual Studio Code #
+######################
+.vscode/*
+
+# Npm and Yarn, Bower, Composer #
+######################
+bower_components/
+node_modules/
+vendor/
+
+# Project #
+######################
+*.phar
+*.lock
+*.new
+*.old
+assets/dist
+backup/*
+!backup/.htaccess
+files/*
+!files/.htaccess
+!files/my_impianti/
+files/my_impianti/*
+!files/my_impianti/componente.ini
+config.inc.php
+REVISION

@@ -1,0 +1,199 @@
+{
+    "name": "openstamanager",
+    "description": "Gestionale open source per assistenza tecnica e fatturazione",
+    "version": "2.3.0",
+    "license": "GPL-3.0",
+    "keywords": [
+        "open source",
+        "gestionale",
+        "assistenza tecnica",
+        "fatturazione"
+    ],
+    "homepage": "http://openstamanager.com/",
+    "author": {
+        "name": "Fabio Lovato",
+        "email": "info@openstamanager.com"
+    },
+    "contributors": [
+        {
+            "name": "Fabio Piovan",
+            "email": "info@openstamanager.com"
+        },
+        {
+            "name": "Luca Salvà",
+            "email": "info@openstamanager.com"
+        }
+    ],
+    "repository": {
+        "type": "svn",
+        "url": "svn://svn.code.sf.net/p/openstamanager/code/trunk"
+    },
+    "main": "gulpfile.js",
+    "dependencies": {
+        "admin-lte": "^2.3.11",
+        "autosize": "^3.0.21",
+        "bootstrap": "^3.3.7",
+        "bootstrap-colorpicker": "^2.5.1",
+        "bootstrap-daterangepicker": "^2.1.25",
+        "bootstrap-switch": "^3.3.4",
+        "ckeditor": "^4.6.2",
+        "components-jqueryui": "^1.12.1",
+        "datatables.net-bs": "^1.10.15",
+        "datatables.net-buttons-bs": "^1.3.1",
+        "datatables.net-scroller-bs": "^1.4.2",
+        "datatables.net-select-bs": "^1.2.2",
+        "eonasdan-bootstrap-datetimepicker": "^4.17.47",
+        "font-awesome": "^4.7.0",
+        "fullcalendar": "^3.4.0",
+        "html5shiv": "^3.7.3",
+        "inputmask": "^3.3.6",
+        "jquery": "^3.2.1",
+        "jquery-form": "^4.2.1",
+        "jquery-slimscroll": "^1.3.8",
+        "jquery-ui-touch-punch": "^0.2.3",
+        "moment": "^2.18.1",
+        "parsleyjs": "^2.7.2",
+        "respond.js": "^1.4.2",
+        "select2": "^4.0.3",
+        "select2-bootstrap-theme": "^0.1.0-beta.10",
+        "signature_pad": "^2.1.1",
+        "smartwizard": "^4.2.2",
+        "sweetalert2": "^6.6.5",
+        "tooltipster": "^4.2.5"
+    },
+    "devDependencies": {
+        "archiver": "^2.0.0",
+        "cwd": "^0.10.0",
+        "del": "^2.2.0",
+        "gulp": "^3.9.1",
+        "gulp-autoprefixer": "^3.1.1",
+        "gulp-clean-css": "^2.3.2",
+        "gulp-concat": "^2.6.0",
+        "gulp-debug": "^3.1.0",
+        "gulp-flatten": "^0.2.0",
+        "gulp-if": "^2.0.2",
+        "gulp-json-minify": "^1.0.5",
+        "gulp-less": "^3.3.0",
+        "gulp-rename": "^1.2.2",
+        "gulp-sass": "^3.1.0",
+        "gulp-stylus": "^2.6.0",
+        "gulp-uglify": "^1.5.3",
+        "gulp-util": "^3.0.8",
+        "main-bower-files": "^2.13.1",
+        "shelljs": "^0.7.7"
+    },
+    "scripts": {
+        "gulp": "gulp",
+        "release-OSM": "yarn run develop-OSM && gulp release",
+        "develop-OSM": "yarn install && yarn run install-OSM && yarn run assets-OSM",
+        "install-OSM": "php composer.phar install",
+        "assets-OSM": "yarn upgrade && yarn run build-OSM",
+        "build-OSM": "gulp",
+        "dump-OSM": "php composer.phar dump-autoload",
+        "doc-OSM": "php couscous.phar generate --target website && php phpDocumentor.phar -d . --ignore=\"vendor/*\" -t website/docs",
+        "windows-fix": "yarn global add windows-build-tools"
+    },
+    "overrides": {
+        "almond": {
+            "ignore": true
+        },
+        "ckeditor": {
+            "ignore": true
+        },
+        "admin-lte": {
+            "main": [
+                "dist/css/AdminLTE.css",
+                "dist/js/app.js"
+            ],
+            "dependencies": {
+                "jquery": ">=1.9.1"
+            }
+        },
+        "bootstrap": {
+            "main": [
+                "dist/js/bootstrap.min.js",
+                "dist/css/bootstrap.min.css",
+                "dist/fonts/*"
+            ],
+            "dependencies": {
+                "jquery": ">=1.9.1",
+                "admin-lte": "*"
+            }
+        },
+        "datatables.net-bs": {
+            "main": [
+                "js/dataTables.bootstrap.js",
+                "css/dataTables.bootstrap.css"
+            ]
+        },
+        "datatables.net-buttons": {
+            "main": [
+                "js/dataTables.buttons.js",
+                "js/buttons.colVis.js",
+                "js/buttons.flash.js",
+                "js/buttons.html5.js",
+                "js/buttons.print.js"
+            ]
+        },
+        "datatables.net-buttons-bs": {
+            "main": [
+                "js/buttons.bootstrap.js",
+                "css/buttons.bootstrap.css"
+            ]
+        },
+        "datatables.net-scroller-bs": {
+            "main": "css/scroller.bootstrap.css"
+        },
+        "datatables.net-select-bs": {
+            "main": "css/select.bootstrap.css"
+        },
+        "font-awesome": {
+            "main": [
+                "css/font-awesome.min.css",
+                "fonts/*"
+            ]
+        },
+        "fullcalendar": {
+            "main": [
+                "dist/fullcalendar.js",
+                "dist/fullcalendar.css"
+            ]
+        },
+        "inputmask": {
+            "main": "dist/min/jquery.inputmask.bundle.min.js"
+        },
+        "jquery-slimscroll": {
+            "main": "jquery.slimscroll.js"
+        },
+        "parsleyjs": {
+            "main": [
+                "dist/parsley.js",
+                "src/parsley.css"
+            ]
+        },
+        "select2": {
+            "main": [
+                "dist/js/select2.min.js",
+                "dist/css/select2.min.css"
+            ]
+        },
+        "select2-bootstrap-theme": {
+            "main": "dist/select2-bootstrap.css"
+        },
+        "smartwizard": {
+            "main": [
+                "dist/css/smart_wizard.min.css",
+                "dist/css/smart_wizard_theme_arrows.min.css",
+                "dist/css/smart_wizard_theme_circles.min.css",
+                "dist/css/smart_wizard_theme_dots.min.css",
+                "dist/js/jquery.smartWizard.min.js"
+            ]
+        },
+        "sweetalert2": {
+            "main": [
+                "dist/sweetalert2.js",
+                "dist/sweetalert2.css"
+            ]
+        }
+    }
+}

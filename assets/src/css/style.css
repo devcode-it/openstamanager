@@ -1,0 +1,561 @@
+*:focus {
+    outline: none;
+}
+
+@font-face {
+    font-family: 'OpenSansRegular';
+    src: url('../fonts/opensans-regular-webfont.eot');
+    src: url('../fonts/opensans-regular-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/opensans-regular-webfont.woff') format('woff'), url('../fonts/opensans-regular-webfont.ttf') format('truetype'), url('../fonts/opensans-regular-webfont.svg#OpenSansRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+html,
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
+html {
+    height: 100%;
+}
+
+textarea {
+    resize: vertical;
+}
+
+a.disabled {
+    pointer-events: none;
+    cursor: default;
+    opacity: 0.6;
+}
+
+.btn-calendar>.btn {
+    color: inherit !important;
+    background: transparent;
+    font-size: 20px;
+    margin-top: 2px;
+}
+
+#progress {
+    width: 400px;
+    margin: auto;
+    position: relative;
+    display: none;
+}
+
+#progress .progress-bar {
+    background-image: url(../img/progress.gif);
+}
+
+#progress .progress-bar span {
+    position: absolute;
+    top: 2px;
+    left: 47%;
+    color: #a20;
+    font-weight: bold;
+}
+
+#datetime {
+    font-size: 11px;
+    font-weight: normal;
+    color: #aaa;
+    margin: 8px 0 0 0;
+}
+
+#right-menu {
+    padding: 10px;
+}
+
+#right-menu .fa-info {
+    padding: 0px 5px
+}
+
+.ui-menu {
+    position: fixed !important;
+}
+
+.ui-autocomplete {
+    min-width: 160px;
+    padding: 10px;
+    margin: 2px;
+    list-style: none;
+    border-style: solid;
+    border-width: 1px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.ui-autocomplete-category {
+    font-size: 150%;
+}
+
+.ui-autocomplete-scrollable {
+    max-height: 80vh;
+    width: 600px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.ui-autocomplete a {
+    color: inherit;
+}
+
+.square {
+    width: 24px;
+    height: 24px;
+    margin: auto;
+}
+
+.content {
+    padding: 20px 15px;
+}
+
+.navbar a:hover,
+.logo:hover {
+    text-decoration: none
+}
+
+.no-padding {
+    padding: 0 0px;
+}
+
+.box-center {
+    width: 600px;
+    margin: 7% auto
+}
+
+.box-center-large {
+    width: 850px;
+    margin: 7% auto
+}
+
+.box-center .box-body,
+.box-center-large .box-body {
+    padding: 20px;
+    border-top: 0
+}
+
+@media ( max-width:768px) {
+    .box-center,
+    .box-center-large {
+        width: 90%;
+        margin-top: 20px
+    }
+}
+
+.li-widget a:hover {
+    text-decoration: none;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+#main_loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #555;
+    z-index: 9999;
+    text-align: center;
+    opacity: 0.9;
+    -moz-opacity: 0.9;
+    filter: alpha(opacity=90);
+}
+
+#main_loading>div {
+    position: relative;
+    top: 50%;
+    color: #333;
+}
+
+#main_loading>div>i {
+    font-size: 300px;
+    margin-top: -150px;
+    color: #e24e1e;
+}
+
+#mini-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9000;
+    width: 100%;
+    height: 100%;
+    background: rgba( 0, 0, 0, 0.15);
+}
+
+#mini-loader>div {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    margin-top: -50px;
+    margin-left: -50px;
+    background: transparent url(../img/ajax-loader.gif) top left no-repeat;
+}
+
+body .header .logo {
+    font-family: inherit;
+}
+
+.btn-github {
+    color: #ffffff;
+    background-color: #444444;
+    border-color: rgba(0, 0, 0, 0.2);
+}
+
+.btn-github:hover,
+.btn-github:focus,
+.btn-github:active,
+.btn-github.active,
+.open .dropdown-toggle.btn-github {
+    color: #ffffff;
+    background-color: #303030;
+    border-color: rgba(0, 0, 0, 0.2);
+}
+
+.btn-github:active,
+.btn-github.active,
+.open .dropdown-toggle.btn-github {
+    background-image: none;
+}
+
+.btn-github.disabled,
+.btn-github[disabled],
+fieldset[disabled] .btn-github,
+.btn-github.disabled:hover,
+.btn-github[disabled]:hover,
+fieldset[disabled] .btn-github:hover,
+.btn-github.disabled:focus,
+.btn-github[disabled]:focus,
+fieldset[disabled] .btn-github:focus,
+.btn-github.disabled:active,
+.btn-github[disabled]:active,
+fieldset[disabled] .btn-github:active,
+.btn-github.disabled.active,
+.btn-github[disabled].active,
+fieldset[disabled] .btn-github.active {
+    background-color: #444444;
+    border-color: rgba(0, 0, 0, 0.2);
+}
+
+.btn-github .badge {
+    color: #444444;
+    background-color: #ffffff;
+}
+
+span.form-control {
+    background: transparent;
+    border: none;
+}
+
+.panel-heading.mini {
+    padding: 5px 8px;
+}
+
+.dropdown.col-md-3>.dropdown-menu {
+    width: 91.5%;
+    left: 15px;
+    padding: 5px;
+}
+
+.input-group-addon {
+    padding: 0px 12px;
+}
+
+.colorpicker {
+    margin-top: 0px !important;
+}
+
+@media ( max-width: 992px) {
+    .table-bordered>thead>tr>th,
+    .table-bordered>tbody>tr>th,
+    .table-bordered>tfoot>tr>th,
+    .table-bordered>thead>tr>td,
+    .table-bordered>tbody>tr>td,
+    .table-bordered>tfoot>tr>td {
+        word-break: break-all;
+    }
+}
+
+
+/* Aggiustamenti per i widget */
+
+.widget li {
+    margin-left: 0 !important;
+    list-style-type: none;
+}
+
+.widget {
+    padding: 0;
+    margin-bottom: 0;
+}
+
+.widget.bordered {
+    border: 6px dashed #aaa;
+    margin: 10px;
+    min-height: 200px;
+    padding: 4px;
+}
+
+.close {
+    padding-right: 5px;
+    position: relative;
+    z-index: 1;
+    opacity: 0.1;
+}
+
+
+/* Tooltip dark */
+
+.ui-tooltip {
+    background: #222 !important;
+    color: white !important;
+    border: 0px;
+    font-size: 11px !important;
+}
+
+.nav-tabs-custom>.nav-tabs.pull-right>li>a.back-btn {
+    font-size: 12px;
+    color: #3C8DBC;
+}
+
+.nav-tabs-custom>.nav-tabs.pull-right>li>a.back-btn:hover {
+    cursor: pointer;
+    color: #72AFD2;
+}
+
+@media ( max-width: 480px) {
+    #main_loading>div>i {
+        font-size: 160px;
+        margin-top: -80px;
+    }
+}
+
+#back-to-top {
+    display: inline-block;
+    height: 60px;
+    width: 60px;
+    position: fixed;
+    bottom: 60px;
+    right: 10px;
+    z-index: 10;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    /* image replacement properties */
+    color: #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    background: rgba(255, 78, 0, 0.8);
+    visibility: hidden;
+    opacity: 0;
+    -webkit-transition: opacity .3s 0s, visibility 0s .3s;
+    -moz-transition: opacity .3s 0s, visibility 0s .3s;
+    transition: opacity .3s 0s, visibility 0s .3s;
+}
+
+#back-to-top>span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    margin-left: -15px;
+    margin-top: -15px;
+}
+
+#back-to-top.cd-is-visible {
+    visibility: visible;
+    opacity: 0.8;
+    z-index: 900;
+}
+
+#back-to-top.cd-is-visible:hover {
+    visibility: visible;
+    opacity: 1;
+    z-index: 900;
+}
+
+#back-to-top.cd-fade-out {
+    opacity: 0.5;
+}
+
+.input-searching {
+    background: #FFBF91;
+}
+
+.deleteicon:hover {
+    color: black;
+}
+
+.deleteicon {
+    color: gray;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    margin-left: -30px;
+    bottom: 7px;
+    right: 17px;
+    float: right;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.input-group-addon {
+    min-width: 40px;
+}
+
+.info-box-icon i {
+    color: #fff;
+}
+
+.progress-description,
+.info-box-text {
+    white-space: normal;
+    overflow: auto;
+}
+
+.colorpicker,
+.colorpicker * {
+    z-index: 9999
+}
+
+.signature-pad {
+    width: 100%;
+    height: 100%;
+    font-size: 10px;
+    border: 1px solid #e8e8e8;
+    background-color: #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.27), 0 0 40px rgba(0, 0, 0, 0.08) inset;
+    border-radius: 4px;
+}
+
+.signature-pad:before,
+.signature-pad:after {
+    content: "";
+    width: 40%;
+    height: 10px;
+    left: 20px;
+    bottom: 10px;
+    background: transparent;
+    -webkit-transform: skew(-3deg) rotate(-3deg);
+    -moz-transform: skew(-3deg) rotate(-3deg);
+    -ms-transform: skew(-3deg) rotate(-3deg);
+    -o-transform: skew(-3deg) rotate(-3deg);
+    transform: skew(-3deg) rotate(-3deg);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.4);
+}
+
+.signature-pad:after {
+    left: auto;
+    right: 20px;
+    -webkit-transform: skew(3deg) rotate(3deg);
+    -moz-transform: skew(3deg) rotate(3deg);
+    -ms-transform: skew(3deg) rotate(3deg);
+    -o-transform: skew(3deg) rotate(3deg);
+    transform: skew(3deg) rotate(3deg);
+}
+
+@media screen and (max-width: 1024px) {
+    .signature-pad {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: auto;
+        height: auto;
+        min-width: 250px;
+        min-height: 140px;
+        margin: 5%;
+    }
+}
+
+@media screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+    .signature-pad {
+        margin: 10%;
+    }
+}
+
+#canvas {
+    width: 100%;
+    height: 100%;
+    min-height: 202px;
+    border-radius: 4px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.02) inset;
+}
+
+.sidebar-menu li>a>.pull-right-container {
+    position: absolute;
+    padding: 12px;
+    right: 10px;
+    top: 50%;
+    margin-top: -19px;
+}
+
+.sidebar-form {
+    border-radius: 3px;
+    border-color: 1px;
+    margin: 10px 10px;
+}
+
+.sidebar-form input[type="text"],
+.sidebar-form .btn {
+    border: 1px;
+    height: 35px;
+    -webkit-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+
+.sidebar-form input[type="text"] {
+    border-top-left-radius: 2px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 2px;
+}
+
+.sidebar-form .btn {
+    border-top-left-radius: 0;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 0;
+}
+
+.swal2-buttonswrapper .btn {
+    margin: 5px;
+}
+
+
+/* Personalizzazione del plugin Select2 */
+
+.select2-search,
+.select2-search__field {
+    width: 100%!important
+}
+
+.select2-results__option[aria-selected=true] {
+    display: none
+}
+
+.select2-container--bootstrap .select2-selection--multiple .select2-selection__choice {
+    margin: 2px 0 0 2px;
+}
+
+.select2-container--bootstrap .select2-selection--single .select2-selection__rendered {
+    padding: 4px;
+}
+
+.input-group-addon.no-padding {
+    border: 0px;
+}
+
+.input-group-addon.no-padding>* {
+    border-radius: 0px;
+}

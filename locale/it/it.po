@@ -1,0 +1,5462 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenSTAManager\n"
+"POT-Creation-Date: 2017-08-04 15:49+0200\n"
+"PO-Revision-Date: 2017-08-04 15:50+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: it_IT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.3\n"
+"X-Poedit-Basepath: ../..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: tr\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: .svn\n"
+"X-Poedit-SearchPathExcluded-1: assets\n"
+"X-Poedit-SearchPathExcluded-2: backup\n"
+"X-Poedit-SearchPathExcluded-3: vendor\n"
+"X-Poedit-SearchPathExcluded-4: assets\n"
+"X-Poedit-SearchPathExcluded-5: bower_components\n"
+"X-Poedit-SearchPathExcluded-6: node_modules\n"
+"X-Poedit-SearchPathExcluded-7: logs\n"
+"X-Poedit-SearchPathExcluded-8: files\n"
+"X-Poedit-SearchPathExcluded-9: docs\n"
+"X-Poedit-SearchPathExcluded-10: .*\n"
+"X-Poedit-SearchPathExcluded-11: *.log\n"
+"X-Poedit-SearchPathExcluded-12: *.md\n"
+"X-Poedit-SearchPathExcluded-13: *.json\n"
+"X-Poedit-SearchPathExcluded-14: *.lock\n"
+"X-Poedit-SearchPathExcluded-15: *.phar\n"
+"X-Poedit-SearchPathExcluded-16: *.css\n"
+"X-Poedit-SearchPathExcluded-17: *.js\n"
+
+#: actions.php:26
+msgid "Non hai permessi di scrittura per il modulo _MODULE_"
+msgstr "Non hai permessi di scrittura per il modulo _MODULE_"
+
+#: actions.php:31
+msgid "Non hai i permessi di scrittura nella cartella _DIR_!"
+msgstr "Non hai i permessi di scrittura nella cartella _DIR_!"
+
+#: actions.php:168
+msgid "File caricato correttamente!"
+msgstr "File caricato correttamente!"
+
+#: actions.php:170
+msgid "Errore durante il caricamento del file!"
+msgstr "Errore durante il caricamento del file!"
+
+#: actions.php:188
+msgid "File _FILE_ eliminato!"
+msgstr "File _FILE_ eliminato!"
+
+#: actions.php:191
+msgid "Errore durante l'eliminazione del file _FILE_ in _DIR_!"
+msgstr "Errore durante l'eliminazione del file _FILE_ in _DIR_!"
+
+#: add.php:82 lib/functions.php:211 modules/utenti/edit.php:147
+msgid "Errore"
+msgstr "Errore"
+
+#: ajax_autocomplete.php:357
+msgid "Nessuna vendita di questo articolo al cliente selezionato"
+msgstr "Nessuna vendita di questo articolo al cliente selezionato"
+
+#: ajax_autocomplete.php:388
+#| msgid "Questo articolo non &eacute; mai stato venduto"
+msgid "Questo articolo non è mai stato venduto"
+msgstr "Questo articolo non è mai stato venduto"
+
+#: ajax_autocomplete.php:419
+#| msgid "Questo articolo non &eacute; mai stato acquistato"
+msgid "Questo articolo non è mai stato acquistato"
+msgstr "Questo articolo non è mai stato acquistato"
+
+#: ajax_autocomplete.php:488
+msgid "Nessuna fattura trovata"
+msgstr "Nessuna fattura trovata"
+
+#: ajax_autocomplete.php:524
+msgid "Nessun ddt trovato"
+msgstr "Nessun ddt trovato"
+
+#: bug.php:70 bug.php:195 include/bottom.php:14 info.php:34
+msgid "In sviluppo"
+msgstr "In sviluppo"
+
+#: bug.php:71
+msgid "Questa email arriva dal modulo bug di segnalazione bug di OSM"
+msgstr "Questa email arriva dal modulo bug di segnalazione bug di OSM"
+
+#: bug.php:72
+msgid "IP"
+msgstr "IP"
+
+#: bug.php:89
+msgid "Backup del database eseguito ed allegato correttamente!"
+msgstr "Backup del database eseguito ed allegato correttamente!"
+
+#: bug.php:91
+msgid "Errore durante la creazione del file di backup!"
+msgstr "Errore durante la creazione del file di backup!"
+
+#: bug.php:104
+msgid "Errore durante l'invio della segnalazione"
+msgstr "Errore durante l'invio della segnalazione"
+
+#: bug.php:106
+msgid "Email inviata correttamente!"
+msgstr "Email inviata correttamente!"
+
+#: bug.php:144 editor.php:37 index.php:88 modules/pagamenti/edit.php:109
+msgid "Attenzione!"
+msgstr "Attenzione!"
+
+#: bug.php:144
+msgid ""
+"Per utilizzare correttamente il modulo di segnalazione bug devi configurare "
+"alcuni parametri email nella scheda impostazioni"
+msgstr ""
+"Per utilizzare correttamente il modulo di segnalazione bug devi configurare "
+"alcuni parametri email nella scheda impostazioni"
+
+#: bug.php:145
+msgid "Correggi"
+msgstr "Correggi"
+
+#: bug.php:153 include/top.php:170
+msgid "Segnalazione bug"
+msgstr "Segnalazione bug"
+
+#: bug.php:160 include/top.php:64
+msgid "Da"
+msgstr "Da"
+
+#: bug.php:162
+msgid "Mittente"
+msgstr "Mittente"
+
+#: bug.php:168 include/top.php:65
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:189
+msgid "A"
+msgstr "A"
+
+#: bug.php:170
+msgid "Destinatario"
+msgstr "Destinatario"
+
+#: bug.php:176
+msgid "Cc"
+msgstr "Cc"
+
+#: bug.php:178
+msgid "Copia a"
+msgstr "Copia a"
+
+#: bug.php:184
+msgid "Bcc"
+msgstr "Bcc"
+
+#: bug.php:186
+msgid "Copia nascosta a"
+msgstr "Copia nascosta a"
+
+#: bug.php:192 bug.php:195
+msgid "Versione OSM"
+msgstr "Versione OSM"
+
+#: bug.php:202
+msgid "Allega file di log"
+msgstr "Allega file di log"
+
+#: bug.php:206
+msgid "Allega copia del database"
+msgstr "Allega copia del database"
+
+#: bug.php:210
+msgid "Allega informazioni sul PC"
+msgstr "Allega informazioni sul PC"
+
+#: bug.php:217
+msgid "Descrizione del bug"
+msgstr "Descrizione del bug"
+
+#: bug.php:222
+msgid "Invia segnalazione"
+msgstr "Invia segnalazione"
+
+#: bug.php:231
+msgid "Se hai riscontrato un bug ricordati di specificare"
+msgstr "Se hai riscontrato un bug ricordati di specificare"
+
+#: bug.php:233
+msgid "Modulo esatto (o pagina relativa) in cui questi si è verificato"
+msgstr "Modulo esatto (o pagina relativa) in cui questi si è verificato"
+
+#: bug.php:234
+msgid "Dopo quali specifiche operazioni hai notato il malfunzionameto"
+msgstr "Dopo quali specifiche operazioni hai notato il malfunzionameto"
+
+#: bug.php:236
+msgid ""
+"Assicurati inoltre di controllare che il checkbox relativo ai file di log "
+"sia contrassegnato, oppure riporta qui l'errore visualizzato"
+msgstr ""
+"Assicurati inoltre di controllare che il checkbox relativo ai file di log "
+"sia contrassegnato, oppure riporta qui l'errore visualizzato"
+
+#: bug.php:237
+msgid "Ti ringraziamo per il tuo contributo"
+msgstr "Ti ringraziamo per il tuo contributo"
+
+#: bug.php:238
+msgid "Lo staff di OSM"
+msgstr "Lo staff di OSM"
+
+#: controller.php:15 editor.php:21 plugin_editor.php:9
+#: templates/pdfgen_variables.php:50
+msgid "Accesso negato"
+msgstr "Accesso negato"
+
+#: controller.php:42 include/manager.php:26
+#: lib/classes/HTMLBuilder/Wrapper/HTMLWrapper.php:110
+#: modules/anagrafiche/add.php:30 modules/anagrafiche/plugins/referenti.php:78
+#: modules/anagrafiche/plugins/sedi.php:145 modules/articoli/add.php:34
+#: modules/automezzi/add.php:22 modules/automezzi/add_articolo.php:32
+#: modules/automezzi/add_tecnico.php:40 modules/beni/add.php:18
+#: modules/categorie/add.php:76 modules/causali/add.php:17
+#: modules/contratti/add.php:22 modules/contratti/add_riga.php:16
+#: modules/contratti/plugins/addfattura.php:48
+#: modules/contratti/plugins/contratti.ordiniservizio.php:317
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:147
+#: modules/ddt/add.php:45 modules/ddt/add_articolo.php:138
+#: modules/ddt/add_riga.php:33 modules/fatture/add.php:38
+#: modules/fatture/add_articolo.php:159 modules/fatture/add_contratto.php:82
+#: modules/fatture/add_ddt_righe.php:149 modules/fatture/add_intervento.php:83
+#: modules/fatture/add_preventivo.php:86 modules/fatture/add_riga.php:118
+#: modules/fatture/edit_riga.php:114 modules/gestione_componenti/add.php:24
+#: modules/interventi/add.php:222 modules/interventi/add_articolo.php:18
+#: modules/interventi/add_articolo.php:180 modules/interventi/add_righe.php:14
+#: modules/iva/add.php:28 modules/listini/add.php:23 modules/misure/add.php:18
+#: modules/my_impianti/add.php:30
+#: modules/my_impianti/plugins/my_impianti.componenti.php:119
+#: modules/ordini/add.php:37 modules/ordini/add_articolo.php:147
+#: modules/ordini/add_riga.php:23 modules/pagamenti/add.php:18
+#: modules/pagamenti/edit.php:99 modules/partitario/add_conto.php:26
+#: modules/porti/add.php:18 modules/preventivi/add.php:29
+#: modules/preventivi/edit_riga.php:15
+#: modules/preventivi/plugins/preventivi.consuntivo.php:326
+#: modules/primanota/add.php:214 modules/ritenute/add.php:28
+#: modules/stati_intervento/add.php:26 modules/tipi_anagrafiche/add.php:20
+#: modules/tipi_intervento/add.php:22 modules/utenti/add.php:18
+#: modules/utenti/user.php:19 modules/viste/edit.php:229
+#: modules/viste/edit.php:412 modules/voci_servizio/add.php:22
+#: modules/zone/add.php:22 plugins/sedi/add.php:65
+msgid "Aggiungi"
+msgstr "Aggiungi"
+
+#: core.php:50 include/bottom.php:16 include/configuration.php:169
+#: include/top.php:16 include/top.php:150 include/top.php:197 index.php:107
+#: info.php:15
+msgid "OpenSTAManager"
+msgstr "OpenSTAManager"
+
+#: editor.php:40
+msgid "I seguenti utenti stanno visualizzando questa pagina"
+msgstr "I seguenti utenti stanno visualizzando questa pagina"
+
+#: editor.php:43
+msgid ""
+"Prestare attenzione prima di effettuare modifiche, poichè queste potrebbero "
+"essere perse a causa di multipli salvataggi contemporanei"
+msgstr ""
+"Prestare attenzione prima di effettuare modifiche, poichè queste potrebbero "
+"essere perse a causa di multipli salvataggi contemporanei"
+
+#: editor.php:50 plugin_editor.php:45
+msgid "Record non trovato"
+msgstr "Record non trovato"
+
+#: editor.php:65
+msgid "Torna all'elenco"
+msgstr "Torna all'elenco"
+
+#: editor.php:128
+msgid "Indietro"
+msgstr "Indietro"
+
+#: include/bottom.php:13 info.php:34 modules/aggiornamenti/edit.php:96
+msgid "Versione"
+msgstr "Versione"
+
+#: include/configuration.php:12 include/configuration.php:186
+msgid "Configurazione"
+msgstr "Configurazione"
+
+#: include/configuration.php:63
+msgid "Permessi di scrittura mancanti"
+msgstr "Permessi di scrittura mancanti"
+
+#: include/configuration.php:66
+msgid "Sembra che non ci siano i permessi di scrittura sul file _FILE_"
+msgstr "Sembra che non ci siano i permessi di scrittura sul file _FILE_"
+
+#: include/configuration.php:74
+msgid "Torna indietro"
+msgstr "Torna indietro"
+
+#: include/configuration.php:75 include/configuration.php:111
+#: include/configuration.php:128 include/update.php:128
+msgid "Riprova"
+msgstr "Riprova"
+
+#: include/configuration.php:80
+msgid "Creazione manuale"
+msgstr "Creazione manuale"
+
+#: include/configuration.php:86
+msgid "Inserire il seguente testo nel file _FILE_"
+msgstr "Inserire il seguente testo nel file _FILE_"
+
+#: include/configuration.php:106
+msgid "Impossibile connettersi al database"
+msgstr "Impossibile connettersi al database"
+
+#: include/configuration.php:109
+msgid "Si è verificato un'errore durante la connessione al database"
+msgstr "Si è verificato un'errore durante la connessione al database"
+
+#: include/configuration.php:110
+msgid ""
+"Controllare di aver inserito correttamente i dati di accesso, e che il "
+"database atto ad ospitare i dati del gestionale sia esistente"
+msgstr ""
+"Controllare di aver inserito correttamente i dati di accesso, e che il "
+"database atto ad ospitare i dati del gestionale sia esistente"
+
+#: include/configuration.php:122
+msgid "Parametri non sufficienti!"
+msgstr "Parametri non sufficienti!"
+
+#: include/configuration.php:125
+msgid ""
+"L'avvio del software è fallito a causa dell'assenza di alcuni paramentri "
+"nella configurazione di base"
+msgstr ""
+"L'avvio del software è fallito a causa dell'assenza di alcuni paramentri "
+"nella configurazione di base"
+
+#: include/configuration.php:126
+msgid ""
+"Si prega di controllare che il file _CONFIG_ contenga tutti i dati inseriti "
+"durante la configurazione iniziale (con l'eccezione di password e indirizzo "
+"email amministrativi)"
+msgstr ""
+"Si prega di controllare che il file _CONFIG_ contenga tutti i dati inseriti "
+"durante la configurazione iniziale (con l'eccezione di password e indirizzo "
+"email amministrativi)"
+
+#: include/configuration.php:127
+msgid "Nel caso il problema persista, rivolgersi all'assistenza ufficiale"
+msgstr "Nel caso il problema persista, rivolgersi all'assistenza ufficiale"
+
+#: include/configuration.php:143
+msgid "Successivo"
+msgstr "Successivo"
+
+#: include/configuration.php:144
+msgid "Precedente"
+msgstr "Precedente"
+
+#: include/configuration.php:155 include/top.php:77
+msgid "Impossibile procedere"
+msgstr "Impossibile procedere"
+
+#: include/configuration.php:155
+msgid "Prima di proseguire devi completare i campi obbligatori!"
+msgstr "Prima di proseguire devi completare i campi obbligatori!"
+
+#: include/configuration.php:168 index.php:106 info.php:14
+msgid "OSM Logo"
+msgstr "OSM Logo"
+
+#: include/configuration.php:178
+msgid "Requisiti"
+msgstr "Requisiti"
+
+#: include/configuration.php:182 info.php:35
+msgid "Licenza"
+msgstr "Licenza"
+
+#: include/configuration.php:193
+msgid "Un benvenuto da OpenSTAManager!"
+msgstr "Un benvenuto da OpenSTAManager!"
+
+#: include/configuration.php:194
+msgid ""
+"Prima di procedere alla configurazione e all'installazione del software, "
+"sono necessari alcuni accorgimenti per garantire il corretto funzionamento "
+"del gestionale"
+msgstr ""
+"Prima di procedere alla configurazione e all'installazione del software, "
+"sono necessari alcuni accorgimenti per garantire il corretto funzionamento "
+"del gestionale"
+
+#: include/configuration.php:202
+msgid ""
+"Le seguenti estensioni PHP devono essere abilitate dal file di "
+"configurazione _FILE_"
+msgstr ""
+"Le seguenti estensioni PHP devono essere abilitate dal file di "
+"configurazione _FILE_"
+
+#: include/configuration.php:205
+msgid ""
+"Necessario per l'utilizzo delle funzioni di aggiornamento automatico e "
+"backup, oltre che per eventuali moduli aggiuntivi"
+msgstr ""
+"Necessario per l'utilizzo delle funzioni di aggiornamento automatico e "
+"backup, oltre che per eventuali moduli aggiuntivi"
+
+#: include/configuration.php:206
+msgid "Necessario per la connessione al database"
+msgstr "Necessario per la connessione al database"
+
+#: include/configuration.php:207
+msgid "Utile per la generazione di chiavi complesse (non obbligatorio)"
+msgstr "Utile per la generazione di chiavi complesse (non obbligatorio)"
+
+#: include/configuration.php:241
+msgid ""
+"Le seguenti impostazioni PHP devono essere modificate nel file di "
+"configurazione _FILE_"
+msgstr ""
+"Le seguenti impostazioni PHP devono essere modificate nel file di "
+"configurazione _FILE_"
+
+#: include/configuration.php:283
+msgid "Valore consigliato"
+msgstr "Valore consigliato"
+
+#: include/configuration.php:298
+msgid ""
+"Le seguenti cartelle devono risultare scrivibili da parte del gestionale"
+msgstr ""
+"Le seguenti cartelle devono risultare scrivibili da parte del gestionale"
+
+#: include/configuration.php:301
+msgid "Necessario per il salvataggio dei backup"
+msgstr "Necessario per il salvataggio dei backup"
+
+#: include/configuration.php:302
+msgid "Necessario per il salvataggio di file inseriti dagli utenti"
+msgstr "Necessario per il salvataggio di file inseriti dagli utenti"
+
+#: include/configuration.php:303
+msgid "Necessario per la gestione dei file di log"
+msgstr "Necessario per la gestione dei file di log"
+
+#: include/configuration.php:338
+msgid "OpenSTAManager è tutelato dalla licenza _LICENSE_!"
+msgstr "OpenSTAManager è tutelato dalla licenza _LICENSE_!"
+
+#: include/configuration.php:342
+msgid "Visiona e accetta la licenza per proseguire"
+msgstr "Visiona e accetta la licenza per proseguire"
+
+#: include/configuration.php:342
+msgid "Accetti la licenza GPLv3 di OpenSTAManager?"
+msgstr "Accetti la licenza GPLv3 di OpenSTAManager?"
+
+#: include/configuration.php:347
+msgid "Ho visionato e accetto"
+msgstr "Ho visionato e accetto"
+
+#: include/configuration.php:353
+msgid "Versioni tradotte"
+msgstr "Versioni tradotte"
+
+#: include/configuration.php:366
+msgid "Aiuto"
+msgstr "Aiuto"
+
+#: include/configuration.php:366
+msgid "Contatta il nostro help-desk"
+msgstr "Contatta il nostro help-desk"
+
+#: include/configuration.php:368
+msgid "Non hai ancora configurato OpenSTAManager"
+msgstr "Non hai ancora configurato OpenSTAManager"
+
+#: include/configuration.php:369
+msgid ""
+"Configura correttamente il software con i seguenti parametri (modificabili "
+"successivamente dal file _CONFIG_)"
+msgstr ""
+"Configura correttamente il software con i seguenti parametri (modificabili "
+"successivamente dal file _CONFIG_)"
+
+#: include/configuration.php:379
+msgid "Host del database"
+msgstr "Host del database"
+
+#: include/configuration.php:379
+msgid "Indirizzo dell'host del database"
+msgstr "Indirizzo dell'host del database"
+
+#: include/configuration.php:379 include/configuration.php:388
+#: include/configuration.php:394 include/configuration.php:400
+msgid "Esempio"
+msgstr "Esempio"
+
+#: include/configuration.php:388
+msgid "Username dell'utente MySQL"
+msgstr "Username dell'utente MySQL"
+
+#: include/configuration.php:394
+msgid "Password dell'utente MySQL"
+msgstr "Password dell'utente MySQL"
+
+#: include/configuration.php:400
+msgid "Nome del database"
+msgstr "Nome del database"
+
+#: include/configuration.php:409
+msgid "Password dell'amministratore"
+msgstr "Password dell'amministratore"
+
+#: include/configuration.php:409
+msgid "Scegli la password di amministratore"
+msgstr "Scegli la password di amministratore"
+
+#: include/configuration.php:409
+msgid "Valore di default"
+msgstr "Valore di default"
+
+#: include/configuration.php:415
+msgid "Email dell'amministratore"
+msgstr "Email dell'amministratore"
+
+#: include/configuration.php:415
+msgid "Digita l'indirizzo email dell'amministratore"
+msgstr "Digita l'indirizzo email dell'amministratore"
+
+#: include/configuration.php:426
+msgid "Campi obbligatori"
+msgstr "Campi obbligatori"
+
+#: include/configuration.php:430
+msgid "Prosegui"
+msgstr "Prosegui"
+
+#: include/manager.php:128
+msgid "Elimina selezione"
+msgstr "Elimina selezione"
+
+#: include/manager.php:135
+msgid "Seleziona tutto"
+msgstr "Seleziona tutto"
+
+#: include/manager.php:136
+msgid "Deseleziona tutto"
+msgstr "Deseleziona tutto"
+
+#: include/manager.php:144
+msgid "Azioni di gruppo"
+msgstr "Azioni di gruppo"
+
+#: include/manager.php:161 include/top.php:74
+msgid "Esporta"
+msgstr "Esporta"
+
+#: include/manager.php:162 include/top.php:76
+msgid "Copia"
+msgstr "Copia"
+
+#: include/manager.php:163 include/top.php:75 include/top.php:167
+msgid "Stampa"
+msgstr "Stampa"
+
+#: include/top.php:51 modules/pagamenti/edit.php:77
+#: modules/pagamenti/edit.php:141
+msgid "Giorno"
+msgstr "Giorno"
+
+#: include/top.php:52
+msgid "Settimana"
+msgstr "Settimana"
+
+#: include/top.php:53
+msgid "Mese"
+msgstr "Mese"
+
+#: include/top.php:54
+msgid "Oggi"
+msgstr "Oggi"
+
+#: include/top.php:55
+msgid "Ieri"
+msgstr "Ieri"
+
+#: include/top.php:56
+msgid "Ultimi 7 giorni"
+msgstr "Ultimi 7 giorni"
+
+#: include/top.php:57
+msgid "Ultimi 30 giorni"
+msgstr "Ultimi 30 giorni"
+
+#: include/top.php:58
+msgid "Questo mese"
+msgstr "Questo mese"
+
+#: include/top.php:59
+msgid "Mese scorso"
+msgstr "Mese scorso"
+
+#: include/top.php:60
+msgid "Quest'anno"
+msgstr "Quest'anno"
+
+#: include/top.php:61
+msgid "Anno scorso"
+msgstr "Anno scorso"
+
+#: include/top.php:62
+msgid "Applica"
+msgstr "Applica"
+
+#: include/top.php:63 include/top.php:114
+msgid "Annulla"
+msgstr "Annulla"
+
+#: include/top.php:66
+msgid "Personalizzato"
+msgstr "Personalizzato"
+
+#: include/top.php:67 lib/classes/HTMLBuilder/Handler/MediaHandler.php:36
+#: lib/deprecated.php:726 modules/anagrafiche/edit.php:337
+#: modules/anagrafiche/plugins/referenti.php:134
+#: modules/anagrafiche/plugins/sedi.php:253 modules/articoli/edit.php:268
+#: modules/automezzi/edit.php:94 modules/beni/edit.php:32
+#: modules/categorie/edit.php:81 modules/causali/edit.php:31
+#: modules/contratti/edit.php:332 modules/ddt/edit.php:195
+#: modules/fatture/edit.php:386 modules/gestione_componenti/edit.php:63
+#: modules/interventi/edit.php:290 modules/iva/edit.php:48
+#: modules/listini/edit.php:43 modules/misure/edit.php:32
+#: modules/my_impianti/edit.php:108
+#: modules/my_impianti/plugins/my_impianti.componenti.php:253
+#: modules/ordini/edit.php:122 modules/pagamenti/edit.php:49
+#: modules/pagamenti/edit.php:117 modules/partitario/edit.php:72
+#: modules/porti/edit.php:43 modules/preventivi/edit.php:162
+#: modules/primanota/edit.php:242 modules/ritenute/edit.php:42
+#: modules/stati_intervento/edit.php:46 modules/tipi_anagrafiche/edit.php:49
+#: modules/tipi_intervento/edit.php:73 modules/utenti/edit.php:132
+#: modules/viste/edit.php:123 modules/viste/edit.php:367
+#: modules/voci_servizio/edit.php:27 modules/zone/edit.php:29
+#: plugins/sedi/edit.php:89
+msgid "Elimina"
+msgstr "Elimina"
+
+#: include/top.php:68 include/update.php:172
+msgid "Sei sicuro?"
+msgstr "Sei sicuro?"
+
+#: include/top.php:69 modules/pagamenti/edit.php:48
+msgid "Eliminare questo elemento?"
+msgstr "Eliminare questo elemento?"
+
+#: include/top.php:70 lib/classes/Widgets.php:100
+msgid "Chiudi"
+msgstr "Chiudi"
+
+#: include/top.php:71
+msgid "Filtra"
+msgstr "Filtra"
+
+#: include/top.php:72
+msgid "La ricerca potrebbe richiedere del tempo"
+msgstr "La ricerca potrebbe richiedere del tempo"
+
+#: include/top.php:73
+#: modules/my_impianti/plugins/my_impianti.componenti.php:213
+msgid "Dettagli"
+msgstr "Dettagli"
+
+#: include/top.php:78
+msgid "Prima di proseguire devi selezionare alcuni elementi!"
+msgstr "Prima di proseguire devi selezionare alcuni elementi!"
+
+#: include/top.php:148
+msgid "OSM"
+msgstr "OSM"
+
+#: include/top.php:156
+msgid "Mostra/nascondi menu"
+msgstr "Mostra/nascondi menu"
+
+#: include/top.php:173
+msgid "Log accessi"
+msgstr "Log accessi"
+
+#: include/top.php:176 include/top.php:241 info.php:17
+msgid "Informazioni"
+msgstr "Informazioni"
+
+#: include/top.php:179
+msgid "Esci"
+msgstr "Esci"
+
+#: include/top.php:204
+msgid "Cerca"
+msgstr "Cerca"
+
+#: include/update.php:30
+msgid "Aggiornamento del database (_FILENAME_)"
+msgstr "Aggiornamento del database (_FILENAME_)"
+
+#: include/update.php:39
+msgid "Esecuzione dello script di aggiornamento (_FILENAME_)"
+msgstr "Esecuzione dello script di aggiornamento (_FILENAME_)"
+
+#: include/update.php:61
+msgid "Errore durante l'esecuzione dell'aggiornamento alla versione _VERSION_"
+msgstr "Errore durante l'esecuzione dell'aggiornamento alla versione _VERSION_"
+
+#: include/update.php:70
+msgid "Aggiornamento completato!!!"
+msgstr "Aggiornamento completato!!!"
+
+#: include/update.php:87
+msgid "Puoi procedere al login con i seguenti dati"
+msgstr "Puoi procedere al login con i seguenti dati"
+
+#: include/update.php:88 log.php:24 modules/utenti/user.php:36
+msgid "Username"
+msgstr "Username"
+
+#: include/update.php:89 index.php:121 modules/utenti/user.php:42
+msgid "Password"
+msgstr "Password"
+
+#: include/update.php:90
+msgid ""
+"E' fortemente consigliato rimuovere i permessi di scrittura dal file _FILE_"
+msgstr ""
+"E' fortemente consigliato rimuovere i permessi di scrittura dal file _FILE_"
+
+#: include/update.php:112 include/update.php:123
+msgid "Aggiornamento in corso!"
+msgstr "Aggiornamento in corso!"
+
+#: include/update.php:126
+msgid ""
+"E' attualmente in corso la procedura di aggiornamento del software, e "
+"pertanto siete pregati di attendere fino alla sua conclusione"
+msgstr ""
+"E' attualmente in corso la procedura di aggiornamento del software, e "
+"pertanto siete pregati di attendere fino alla sua conclusione"
+
+#: include/update.php:127
+msgid ""
+"Nel caso il problema persista, rivolgersi all'amministratore o "
+"all'assistenza ufficiale"
+msgstr ""
+"Nel caso il problema persista, rivolgersi all'amministratore o "
+"all'assistenza ufficiale"
+
+#: include/update.php:143
+msgid "Installa!"
+msgstr "Installa!"
+
+#: include/update.php:143
+msgid "Aggiorna!"
+msgstr "Aggiorna!"
+
+#: include/update.php:144 include/update.php:155
+msgid "Installazione"
+msgstr "Installazione"
+
+#: include/update.php:144 include/update.php:155
+msgid "Aggiornamento"
+msgstr "Aggiornamento"
+
+#: include/update.php:160
+msgid ""
+"E' la prima volta che avvii OpenSTAManager e non hai ancora installato il "
+"database"
+msgstr ""
+"E' la prima volta che avvii OpenSTAManager e non hai ancora installato il "
+"database"
+
+#: include/update.php:163
+msgid "E' necessario aggiornare il database a una nuova versione"
+msgstr "E' necessario aggiornare il database a una nuova versione"
+
+#: include/update.php:166
+msgid "Premi il tasto _BUTTON_ per procedere con l'aggiornamento!"
+msgstr "Premi il tasto _BUTTON_ per procedere con l'aggiornamento!"
+
+#: include/update.php:173
+msgid "Continuare con l'aggiornamento?"
+msgstr "Continuare con l'aggiornamento?"
+
+#: include/update.php:177
+msgid "Procedi"
+msgstr "Procedi"
+
+#: include/update.php:196
+msgid "Log"
+msgstr "Log"
+
+#: include/update.php:250
+msgid "Aggiornamento _DONE_ di _TODO_ (_VERSION_)"
+msgstr "Aggiornamento _DONE_ di _TODO_ (_VERSION_)"
+
+#: index.php:32
+msgid "Backup saltato perché già esistente!"
+msgstr "Backup saltato perché già esistente!"
+
+#: index.php:34 index.php:41
+msgid "Backup automatico eseguito correttamente!"
+msgstr "Backup automatico eseguito correttamente!"
+
+#: index.php:36
+msgid ""
+"Non è possibile eseguire i backup poichè la cartella di backup non esiste!!!"
+msgstr ""
+"Non è possibile eseguire i backup poichè la cartella di backup non esiste!!!"
+
+#: index.php:39
+msgid "La cartella di backup è stata creata correttamente."
+msgstr "La cartella di backup è stata creata correttamente."
+
+#: index.php:44
+msgid "Non è stato possibile creare la cartella di backup!"
+msgstr "Non è stato possibile creare la cartella di backup!"
+
+#: index.php:76
+msgid "Login"
+msgstr "Login"
+
+#: index.php:88
+msgid "Stai utilizzando una versione <b>non stabile</b> di OSM."
+msgstr "Stai utilizzando una versione <b>non stabile</b> di OSM."
+
+#: index.php:113 modules/utenti/edit.php:22
+msgid "Nome utente"
+msgstr "Nome utente"
+
+#: index.php:128
+msgid "Mantieni attiva la sessione"
+msgstr "Mantieni attiva la sessione"
+
+#: index.php:133
+msgid "Accedi"
+msgstr "Accedi"
+
+#: index.php:144
+msgid "Backup automatico in corso"
+msgstr "Backup automatico in corso"
+
+#: index.php:146
+msgid "Autenticazione"
+msgstr "Autenticazione"
+
+#: info.php:28
+msgid ""
+"<b>OpenSTAManager</b> è un <b>software libero</b> ideato e sviluppato da <a "
+"href=\"mailto:info@openstamanager.com\">Fabio Lovato</a>"
+msgstr ""
+"<b>OpenSTAManager</b> è un <b>software libero</b> ideato e sviluppato da <a "
+"href=\"mailto:info@openstamanager.com\">Fabio Lovato</a>"
+
+#: info.php:29
+msgid ""
+"Il nome significa \"Gestore di STA (<b>Servizio Tecnico Assistenza</b>) "
+"aperto\" ed è stato creato per gestire e archiviare l'assistenza tecnica "
+"fornita ai propri clienti"
+msgstr ""
+"Il nome significa \"Gestore di STA (<b>Servizio Tecnico Assistenza</b>) "
+"aperto\" ed è stato creato per gestire e archiviare l'assistenza tecnica "
+"fornita ai propri clienti"
+
+#: info.php:33 modules/anagrafiche/edit.php:128
+msgid "Sito web"
+msgstr "Sito web"
+
+#: info.php:35
+msgid "Vai al sito per leggere la licenza"
+msgstr "Vai al sito per leggere la licenza"
+
+#: info.php:45
+msgid "Perchè software libero"
+msgstr "Perchè software libero"
+
+#: info.php:49
+msgid ""
+"Il progetto è software libero perchè permette a tutti di conoscere come "
+"funziona avendo il codice sorgente del programma e fornisce così la "
+"possibilità di studiare come funziona, modificarlo, adattarlo alle proprie "
+"esigenze e, in ambito commerciale, non obbliga l'utilizzatore ad essere "
+"legato allo stesso fornitore di assistenza"
+msgstr ""
+"Il progetto è software libero perchè permette a tutti di conoscere come "
+"funziona avendo il codice sorgente del programma e fornisce così la "
+"possibilità di studiare come funziona, modificarlo, adattarlo alle proprie "
+"esigenze e, in ambito commerciale, non obbliga l'utilizzatore ad essere "
+"legato allo stesso fornitore di assistenza"
+
+#: info.php:50
+msgid ""
+"E' altrettanto importante sapere come funziona per conoscere come vengono "
+"trattati i VOSTRI dati, proteggendo così la vostra <b>privacy</b>"
+msgstr ""
+"E' altrettanto importante sapere come funziona per conoscere come vengono "
+"trattati i VOSTRI dati, proteggendo così la vostra <b>privacy</b>"
+
+#: info.php:52
+msgid ""
+"OpenSTAManager è inoltre stato progettato utilizzando altro software libero, "
+"tra cui principalmente"
+msgstr ""
+"OpenSTAManager è inoltre stato progettato utilizzando altro software libero, "
+"tra cui principalmente"
+
+#: info.php:66
+msgid "Community"
+msgstr "Community"
+
+#: info.php:70
+msgid ""
+"La community è un componente importante in un progetto open source perchè "
+"mette in contatto le persone tra di loro, utenti e programmatori"
+msgstr ""
+"La community è un componente importante in un progetto open source perchè "
+"mette in contatto le persone tra di loro, utenti e programmatori"
+
+#: info.php:72
+msgid "Con OpenSTAManager siamo presenti su"
+msgstr "Con OpenSTAManager siamo presenti su"
+
+#: info.php:76
+msgid "Forum"
+msgstr "Forum"
+
+#: info.php:79
+msgid "Mailing list"
+msgstr "Mailing list"
+
+#: info.php:82
+msgid "Pagina Facebook"
+msgstr "Pagina Facebook"
+
+#: info.php:92
+msgid "Aggiornamenti e nuove versioni"
+msgstr "Aggiornamenti e nuove versioni"
+
+#: info.php:96
+msgid ""
+"Tutti gli aggiornamenti e le nuove versioni sono disponibili all'indirizzo"
+msgstr ""
+"Tutti gli aggiornamenti e le nuove versioni sono disponibili all'indirizzo"
+
+#: info.php:107
+msgid "Supporta il progetto"
+msgstr "Supporta il progetto"
+
+#: info.php:111
+msgid ""
+"OpenSTAManager è software libero ed è nato e cresciuto con il lavoro "
+"volontario di alcuni programmatori"
+msgstr ""
+"OpenSTAManager è software libero ed è nato e cresciuto con il lavoro "
+"volontario di alcuni programmatori"
+
+#: info.php:113
+msgid ""
+"La filosofia del software libero fa sì che il progetto sia <b>accessibile a "
+"tutti</b> e nel nostro caso specifico lo è, anche dal punto di vista della "
+"gratuità"
+msgstr ""
+"La filosofia del software libero fa sì che il progetto sia <b>accessibile a "
+"tutti</b> e nel nostro caso specifico lo è, anche dal punto di vista della "
+"gratuità"
+
+#: info.php:114
+msgid ""
+"Offriamo supporto a pagamento professionale a chi fosse interessato, ma a "
+"chi non interessa il supporto a pagamento e sta comunque utilizzando il "
+"software chiediamo una donazione per il lavoro svolto finora e per la "
+"possibilità di continuare questo progetto con lo stesso spirito con cui è "
+"nato. Con le donazioni non diventiamo ricchi, ma è un <b>grande\n"
+"\t\t\t\t\t\t\tsimbolo di apprezzamento</b>"
+msgstr ""
+"Offriamo supporto a pagamento professionale a chi fosse interessato, ma a "
+"chi non interessa il supporto a pagamento e sta comunque utilizzando il "
+"software chiediamo una donazione per il lavoro svolto finora e per la "
+"possibilità di continuare questo progetto con lo stesso spirito con cui è "
+"nato. Con le donazioni non diventiamo ricchi, ma è un <b>grande\n"
+"\t\t\t\t\t\t\tsimbolo di apprezzamento</b>"
+
+#: info.php:118 info.php:119
+msgid "Supporta questo progetto"
+msgstr "Supporta questo progetto"
+
+#: info.php:129
+msgid "Servizi a pagamento"
+msgstr "Servizi a pagamento"
+
+#: info.php:133
+#| msgid ""
+#| "Per le aziende che hanno necessit&agrave; di essere seguite da "
+#| "<b>supporto professionale</b> è disponibile un servizio di assistenza e "
+#| "supporto a pagamento"
+msgid ""
+"Per le aziende che hanno necessità di essere seguite da <b>supporto "
+"professionale</b> è disponibile un servizio di assistenza e supporto a "
+"pagamento"
+msgstr ""
+"Per le aziende che hanno necessità di essere seguite da <b>supporto "
+"professionale</b> è disponibile un servizio di assistenza e supporto a "
+"pagamento"
+
+#: info.php:134
+#| msgid ""
+#| "&Egrave; disponibile anche un <b>servizio cloud</b> su cui poter "
+#| "installare OpenSTAManager, in modo da non doverti pi&ugrave; preoccupare "
+#| "di backup e gestione dei dati"
+msgid ""
+"E' disponibile anche un <b>servizio cloud</b> su cui poter installare "
+"OpenSTAManager, in modo da non doverti più preoccupare di backup e gestione "
+"dei dati"
+msgstr ""
+"E' disponibile anche un <b>servizio cloud</b> su cui poter installare "
+"OpenSTAManager, in modo da non doverti più preoccupare di backup e gestione "
+"dei dati"
+
+#: info.php:136
+msgid "Tutte le informazioni su servizi e prezzi le potete trovare qui"
+msgstr "Tutte le informazioni su servizi e prezzi le potete trovare qui"
+
+#: info.php:137
+msgid "Ottieni supporto professionale"
+msgstr "Ottieni supporto professionale"
+
+#: lib/classes/Auth.php:62 log.php:62
+msgid "Autenticazione fallita!"
+msgstr "Autenticazione fallita!"
+
+#: lib/classes/Auth.php:63 log.php:56
+msgid "Utente non abilitato!"
+msgstr "Utente non abilitato!"
+
+#: lib/classes/Auth.php:64 log.php:59
+msgid "L'utente non ha nessun permesso impostato!"
+msgstr "L'utente non ha nessun permesso impostato!"
+
+#: lib/classes/Database.php:76
+msgid "Database non esistente!"
+msgstr "Database non esistente!"
+
+#: lib/classes/Database.php:76
+msgid "Credenziali di accesso invalide!"
+msgstr "Credenziali di accesso invalide!"
+
+#: lib/classes/Database.php:79
+msgid "Errore durante la connessione al database"
+msgstr "Errore durante la connessione al database"
+
+#: lib/classes/Database.php:308
+msgid "Impossibile ottenere l'ultimo identificativo creato"
+msgstr "Impossibile ottenere l'ultimo identificativo creato"
+
+#: lib/classes/Database.php:568 lib/classes/Update.php:222
+msgid "Aggiornamento fallito"
+msgstr "Aggiornamento fallito"
+
+#: lib/classes/Database.php:596
+msgid "Si è verificato un'errore"
+msgstr "Si è verificato un'errore"
+
+#: lib/classes/Database.php:599
+msgid ""
+"Se il problema persiste siete pregati di chiedere assistenza tramite la "
+"sezione Bug"
+msgstr ""
+"Se il problema persiste siete pregati di chiedere assistenza tramite la "
+"sezione Bug"
+
+#: lib/classes/HTMLBuilder/Handler/SelectHandler.php:63
+msgid "Seleziona un'opzione"
+msgstr "Seleziona un'opzione"
+
+#: lib/classes/HTMLBuilder/Manager/FileManager.php:24 lib/deprecated.php:921
+msgid "Allegati"
+msgstr "Allegati"
+
+#: lib/classes/HTMLBuilder/Manager/FileManager.php:36
+#: lib/classes/HTMLBuilder/Manager/FileManager.php:69 lib/deprecated.php:969
+#: lib/deprecated.php:973 modules/aggiornamenti/edit.php:95
+#: modules/aggiornamenti/edit.php:228 modules/automezzi/add.php:10
+#: modules/automezzi/edit.php:24 modules/categorie/add.php:25
+#: modules/categorie/add.php:37 modules/categorie/edit.php:23
+#: modules/categorie/edit.php:57 modules/contratti/add.php:11
+#: modules/contratti/edit.php:57 modules/listini/add.php:11
+#: modules/listini/edit.php:23 modules/my_impianti/add.php:15
+#: modules/my_impianti/edit.php:37
+#: modules/my_impianti/plugins/my_impianti.anagrafiche.php:49
+#: modules/my_impianti/plugins/my_impianti.componenti.php:182
+#: modules/my_impianti/plugins/my_impianti.interventi.php:84
+#: modules/preventivi/edit.php:46 modules/utenti/add.php:11
+#: modules/viste/edit.php:133 modules/viste/edit.php:277
+#: modules/zone/add.php:11
+msgid "Nome"
+msgstr "Nome"
+
+#: lib/classes/HTMLBuilder/Manager/FileManager.php:37 lib/deprecated.php:935
+#: log.php:25 modules/articoli/plugins/articoli.movimenti.php:43
+#: modules/contratti/plugins/addfattura.php:23 modules/ddt/add.php:30
+#: modules/ddt/edit.php:46 modules/ddt/plugins/ddt.anagrafiche.php:15
+#: modules/ddt/plugins/ddt.anagrafiche.php:25 modules/fatture/add.php:23
+#: modules/my_impianti/plugins/my_impianti.anagrafiche.php:56
+#: modules/my_impianti/plugins/my_impianti.componenti.php:188
+#: modules/my_impianti/plugins/my_impianti.interventi.php:93
+#: modules/ordini/add.php:26 modules/ordini/edit.php:34
+#: modules/scadenzario/edit.php:59 modules/scadenzario/edit.php:72
+#: templates/interventi/actions.php:307
+msgid "Data"
+msgstr "Data"
+
+#: lib/classes/HTMLBuilder/Manager/FileManager.php:51 lib/deprecated.php:948
+msgid "Vuoi eliminare questo file?"
+msgstr "Vuoi eliminare questo file?"
+
+#: lib/classes/HTMLBuilder/Manager/FileManager.php:73 lib/deprecated.php:934
+msgid "File"
+msgstr "File"
+
+#: lib/classes/HTMLBuilder/Manager/FileManager.php:78 lib/deprecated.php:978
+#: modules/aggiornamenti/edit.php:57 modules/aggiornamenti/edit.php:78
+msgid "Carica"
+msgstr "Carica"
+
+#: lib/classes/HTMLBuilder/Wrapper/HTMLWrapper.php:125
+msgid "&euro;"
+msgstr "&euro;"
+
+#: lib/classes/Modules.php:453
+msgid "Visualizza scheda"
+msgstr "Visualizza scheda"
+
+#: lib/classes/Permissions.php:82 modules/aggiornamenti/upload_modules.php:6
+msgid "Accesso negato!"
+msgstr "Accesso negato!"
+
+#: lib/classes/Util/Ini.php:131
+msgid "Attributi per _NAME_"
+msgstr "Attributi per _NAME_"
+
+#: lib/deprecated.php:16 lib/deprecated.php:34 lib/deprecated.php:52
+#: lib/deprecated.php:73 lib/deprecated.php:103 lib/deprecated.php:133
+#: lib/deprecated.php:165 lib/deprecated.php:193 lib/deprecated.php:213
+#: lib/deprecated.php:232 lib/deprecated.php:251 lib/deprecated.php:268
+#: lib/deprecated.php:284 lib/deprecated.php:303 lib/deprecated.php:325
+#: lib/deprecated.php:355 lib/deprecated.php:809 lib/deprecated.php:845
+msgid "Funzione deprecata!"
+msgstr "Funzione deprecata!"
+
+#: lib/deprecated.php:862
+msgid "Classe deprecata!"
+msgstr "Classe deprecata!"
+
+#: lib/deprecated.php:907 lib/permissions_check.php:3 lib/user_check.php:3
+msgid "Procedura deprecata!"
+msgstr "Procedura deprecata!"
+
+#: lib/deprecated.php:933 modules/articoli/edit.php:44
+#: modules/automezzi/edit.php:33 modules/beni/add.php:11
+#: modules/beni/edit.php:23 modules/causali/add.php:10
+#: modules/causali/edit.php:22 modules/contratti/add_riga.php:51
+#: modules/contratti/edit.php:114 modules/contratti/edit.php:300
+#: modules/contratti/plugins/addfattura.php:39
+#: modules/contratti/plugins/contratti.consuntivo.php:226
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:56
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:124
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:137
+#: modules/contratti/row-list.php:22
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:51
+#: modules/dashboard/ajaxreq.php:126 modules/ddt/add_articolo.php:44
+#: modules/ddt/add_riga.php:60 modules/ddt/creafattura.php:62
+#: modules/ddt/row-list.php:8 modules/fatture/add_articolo.php:52
+#: modules/fatture/add_contratto.php:43 modules/fatture/add_ddt_righe.php:44
+#: modules/fatture/add_intervento.php:44 modules/fatture/add_preventivo.php:47
+#: modules/fatture/add_riga.php:37 modules/fatture/edit_riga.php:42
+#: modules/fatture/row-list.php:14 modules/interventi/add_articolo.php:86
+#: modules/interventi/add_righe.php:52 modules/interventi/ajax_righe.php:12
+#: modules/interventi/edit.php:150
+#: modules/interventi/plugins/my_impianti.interventi.php:20
+#: modules/iva/add.php:11 modules/iva/edit.php:23
+#: modules/my_impianti/edit.php:64
+#: modules/my_impianti/plugins/my_impianti.anagrafiche.php:63
+#: modules/my_impianti/plugins/my_impianti.interventi.php:100
+#: modules/ordini/add_articolo.php:45 modules/ordini/add_riga.php:75
+#: modules/ordini/row-list.php:9 modules/pagamenti/add.php:11
+#: modules/pagamenti/edit.php:18 modules/partitario/add_conto.php:20
+#: modules/partitario/edit_conto.php:25 modules/porti/add.php:11
+#: modules/porti/edit.php:22 modules/preventivi/edit.php:112
+#: modules/preventivi/edit_riga.php:70 modules/preventivi/row-list.php:14
+#: modules/ritenute/add.php:11 modules/ritenute/edit.php:23
+#: modules/stati_intervento/add.php:15 modules/stati_intervento/edit.php:32
+#: modules/tipi_anagrafiche/add.php:12 modules/tipi_anagrafiche/edit.php:38
+#: modules/tipi_intervento/add.php:15 modules/tipi_intervento/edit.php:22
+#: modules/voci_servizio/add.php:15 modules/voci_servizio/edit.php:21
+#: modules/zone/add.php:15 modules/zone/edit.php:23
+#: templates/interventi/actions.php:46 templates/interventi/actions.php:78
+#: templates/interventi/actions.php:195 templates/interventi/actions.php:398
+msgid "Descrizione"
+msgstr "Descrizione"
+
+#: lib/functions.php:133 modules/backup/edit.php:122
+msgid "Estensione zip non supportata!"
+msgstr "Estensione zip non supportata!"
+
+#: lib/functions.php:164
+msgid "Errore durante la creazione dell'archivio!"
+msgstr "Errore durante la creazione dell'archivio!"
+
+#: lib/functions.php:185
+msgid "archivi multi-disco non supportati"
+msgstr "archivi multi-disco non supportati"
+
+#: lib/functions.php:186
+msgid "ridenominazione del file temporaneo fallita"
+msgstr "ridenominazione del file temporaneo fallita"
+
+#: lib/functions.php:187
+msgid "impossibile chiudere il file zip"
+msgstr "impossibile chiudere il file zip"
+
+#: lib/functions.php:188
+msgid "errore durante la ricerca dei file"
+msgstr "errore durante la ricerca dei file"
+
+#: lib/functions.php:189
+msgid "errore di lettura"
+msgstr "errore di lettura"
+
+#: lib/functions.php:190
+msgid "errore di scrittura"
+msgstr "errore di scrittura"
+
+#: lib/functions.php:191
+msgid "errore CRC"
+msgstr "errore CRC"
+
+#: lib/functions.php:192
+msgid "l'archivio zip è stato chiuso"
+msgstr "l'archivio zip è stato chiuso"
+
+#: lib/functions.php:193
+msgid "file non trovato"
+msgstr "file non trovato"
+
+#: lib/functions.php:194
+msgid "il file esiste già"
+msgstr "il file esiste già"
+
+#: lib/functions.php:195
+msgid "impossibile aprire il file"
+msgstr "impossibile aprire il file"
+
+#: lib/functions.php:196
+msgid "impossibile creare il file temporaneo"
+msgstr "impossibile creare il file temporaneo"
+
+#: lib/functions.php:197
+msgid "errore nella libreria Zlib"
+msgstr "errore nella libreria Zlib"
+
+#: lib/functions.php:198
+msgid "fallimento nell'allocare memoria"
+msgstr "fallimento nell'allocare memoria"
+
+#: lib/functions.php:199
+msgid "voce modificata"
+msgstr "voce modificata"
+
+#: lib/functions.php:200
+msgid "metodo di compressione non supportato"
+msgstr "metodo di compressione non supportato"
+
+#: lib/functions.php:201
+msgid "fine del file non prevista"
+msgstr "fine del file non prevista"
+
+#: lib/functions.php:202
+msgid "argomento non valido"
+msgstr "argomento non valido"
+
+#: lib/functions.php:203
+msgid "file zip non valido"
+msgstr "file zip non valido"
+
+#: lib/functions.php:204
+msgid "errore interno"
+msgstr "errore interno"
+
+#: lib/functions.php:205
+msgid "archivio zip inconsistente"
+msgstr "archivio zip inconsistente"
+
+#: lib/functions.php:206
+msgid "impossibile rimuovere la voce"
+msgstr "impossibile rimuovere la voce"
+
+#: lib/functions.php:207
+msgid "voce eliminata"
+msgstr "voce eliminata"
+
+#: lib/functions.php:260 lib/functions.php:265
+msgid "Nuovo backup creato!"
+msgstr "Nuovo backup creato!"
+
+#: lib/functions.php:262 modules/backup/actions.php:26
+msgid "Errore durante la creazione del backup!"
+msgstr "Errore durante la creazione del backup!"
+
+#: lib/functions.php:493
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:95
+#: modules/preventivi/plugins/preventivi.consuntivo.php:150
+msgid "Altro"
+msgstr "Altro"
+
+#: log.php:16
+msgid "Ultimi 100 accessi"
+msgstr "Ultimi 100 accessi"
+
+#: log.php:26 modules/aggiornamenti/edit.php:97
+#: modules/aggiornamenti/edit.php:230 modules/contratti/edit.php:97
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:167
+#: modules/contratti/plugins/contratti.ordiniservizio.php:102
+#: modules/ddt/edit.php:50 modules/fatture/edit.php:52
+#: modules/interventi/edit.php:134
+#: modules/my_impianti/plugins/my_impianti.componenti.php:211
+#: modules/ordini/edit.php:38 modules/preventivi/edit.php:83
+msgid "Stato"
+msgstr "Stato"
+
+#: log.php:27
+msgid "Indirizzo IP"
+msgstr "Indirizzo IP"
+
+#: log.php:53
+msgid "Login riuscito!"
+msgstr "Login riuscito!"
+
+#: modules/aggiornamenti/actions.php:31
+msgid "Modulo _MODULE_ disinstallato!"
+msgstr "Modulo _MODULE_ disinstallato!"
+
+#: modules/aggiornamenti/actions.php:41
+msgid "Modulo _MODULE_ disabilitato!"
+msgstr "Modulo _MODULE_ disabilitato!"
+
+#: modules/aggiornamenti/actions.php:49
+msgid "Modulo _MODULE_ abilitato!"
+msgstr "Modulo _MODULE_ abilitato!"
+
+#: modules/aggiornamenti/actions.php:58
+msgid "Widget _WIDGET_ disabilitato!"
+msgstr "Widget _WIDGET_ disabilitato!"
+
+#: modules/aggiornamenti/actions.php:68
+msgid "Widget _WIDGET_ abilitato!"
+msgstr "Widget _WIDGET_ abilitato!"
+
+#: modules/aggiornamenti/actions.php:78 modules/aggiornamenti/actions.php:88
+msgid "Posizione del widget _WIDGET_ aggiornata!"
+msgstr "Posizione del widget _WIDGET_ aggiornata!"
+
+#: modules/aggiornamenti/edit.php:10
+msgid "Estensione ZIP"
+msgstr "Estensione ZIP"
+
+#: modules/aggiornamenti/edit.php:10
+msgid "da abilitare"
+msgstr "da abilitare"
+
+#: modules/aggiornamenti/edit.php:30
+msgid ""
+"Devi modificare il seguenti parametri del file di configurazione PHP "
+"(_CONFIG_) per poter caricare gli aggiornamenti"
+msgstr ""
+"Devi modificare il seguenti parametri del file di configurazione PHP "
+"(_CONFIG_) per poter caricare gli aggiornamenti"
+
+#: modules/aggiornamenti/edit.php:47
+msgid "Carica un aggiornamento"
+msgstr "Carica un aggiornamento"
+
+#: modules/aggiornamenti/edit.php:56 modules/aggiornamenti/edit.php:77
+msgid "Avviare la procedura?"
+msgstr "Avviare la procedura?"
+
+#: modules/aggiornamenti/edit.php:69
+msgid "Carica un nuovo modulo"
+msgstr "Carica un nuovo modulo"
+
+#: modules/aggiornamenti/edit.php:92
+msgid "Moduli installati"
+msgstr "Moduli installati"
+
+#: modules/aggiornamenti/edit.php:98
+msgid "Compatibilità"
+msgstr "Compatibilità"
+
+#: modules/aggiornamenti/edit.php:109 modules/aggiornamenti/edit.php:165
+#: modules/aggiornamenti/edit.php:249
+msgid "Abilitato"
+msgstr "Abilitato"
+
+#: modules/aggiornamenti/edit.php:110 modules/aggiornamenti/edit.php:166
+#: modules/aggiornamenti/edit.php:249
+msgid "Clicca per disabilitarlo"
+msgstr "Clicca per disabilitarlo"
+
+#: modules/aggiornamenti/edit.php:113 modules/aggiornamenti/edit.php:169
+#: modules/aggiornamenti/edit.php:252
+msgid "Non abilitato"
+msgstr "Non abilitato"
+
+#: modules/aggiornamenti/edit.php:120 modules/aggiornamenti/edit.php:176
+msgid "Disabilitare questo modulo?"
+msgstr "Disabilitare questo modulo?"
+
+#: modules/aggiornamenti/edit.php:122 modules/aggiornamenti/edit.php:178
+msgid "Abilitare questo modulo?"
+msgstr "Abilitare questo modulo?"
+
+#: modules/aggiornamenti/edit.php:135 modules/aggiornamenti/edit.php:191
+msgid "Compatibile"
+msgstr "Compatibile"
+
+#: modules/aggiornamenti/edit.php:138 modules/aggiornamenti/edit.php:194
+msgid "Non compabitile!"
+msgstr "Non compabitile!"
+
+#: modules/aggiornamenti/edit.php:138 modules/aggiornamenti/edit.php:194
+msgid "Questo modulo è compatibile solo con le versioni"
+msgstr "Questo modulo è compatibile solo con le versioni"
+
+#: modules/aggiornamenti/edit.php:154 modules/aggiornamenti/edit.php:210
+msgid "Disinstalla"
+msgstr "Disinstalla"
+
+#: modules/aggiornamenti/edit.php:154 modules/aggiornamenti/edit.php:210
+msgid "Vuoi disinstallare questo modulo?"
+msgstr "Vuoi disinstallare questo modulo?"
+
+#: modules/aggiornamenti/edit.php:154 modules/aggiornamenti/edit.php:210
+msgid "Tutti i dati salvati andranno persi!"
+msgstr "Tutti i dati salvati andranno persi!"
+
+#: modules/aggiornamenti/edit.php:154 modules/aggiornamenti/edit.php:210
+msgid "Sei veramente sicuro?"
+msgstr "Sei veramente sicuro?"
+
+#: modules/aggiornamenti/edit.php:225
+msgid "Widgets"
+msgstr "Widgets"
+
+#: modules/aggiornamenti/edit.php:229 modules/aggiornamenti/edit.php:231
+#: modules/viste/edit.php:397 modules/viste/edit.php:440
+msgid "Posizione"
+msgstr "Posizione"
+
+#: modules/aggiornamenti/edit.php:258
+msgid "Disabilitare questo widget?"
+msgstr "Disabilitare questo widget?"
+
+#: modules/aggiornamenti/edit.php:260
+msgid "Abilitare questo widget?"
+msgstr "Abilitare questo widget?"
+
+#: modules/aggiornamenti/edit.php:265
+msgid "Schermata modulo in alto"
+msgstr "Schermata modulo in alto"
+
+#: modules/aggiornamenti/edit.php:267
+msgid "Schermata modulo a destra"
+msgstr "Schermata modulo a destra"
+
+#: modules/aggiornamenti/edit.php:271 modules/aggiornamenti/edit.php:274
+msgid "Clicca per cambiare la posizione..."
+msgstr "Clicca per cambiare la posizione..."
+
+#: modules/aggiornamenti/edit.php:272 modules/aggiornamenti/edit.php:275
+msgid "Cambiare la posizione di questo widget?"
+msgstr "Cambiare la posizione di questo widget?"
+
+#: modules/aggiornamenti/upload_modules.php:16
+msgid "Estensione php_zip non caricata!"
+msgstr "Estensione php_zip non caricata!"
+
+#: modules/aggiornamenti/upload_modules.php:16
+msgid "Verifica e attivala sul tuo php.ini"
+msgstr "Verifica e attivala sul tuo php.ini"
+
+#: modules/aggiornamenti/upload_modules.php:18
+msgid "Il file non è un archivio zip!"
+msgstr "Il file non è un archivio zip!"
+
+#: modules/aggiornamenti/upload_modules.php:64
+msgid "File di aggiornamento non riconosciuto!"
+msgstr "File di aggiornamento non riconosciuto!"
+
+#: modules/aggiornamenti/upload_modules.php:126
+msgid "File di installazione non valido!"
+msgstr "File di installazione non valido!"
+
+#: modules/anagrafiche/actions.php:66
+msgid "Il codice anagrafica inserito esiste già! Inserirne un'altro..."
+msgstr "Il codice anagrafica inserito esiste già! Inserirne un'altro..."
+
+#: modules/anagrafiche/actions.php:190
+msgid ""
+"Anagrafica Azienda impostata come predefinita. Per ulteriori "
+"informazionioni, visitare \"Strumenti -> Impostazioni -> Generali\"."
+msgstr ""
+"Anagrafica Azienda impostata come predefinita. Per ulteriori "
+"informazionioni, visitare \"Strumenti -> Impostazioni -> Generali\"."
+
+#: modules/anagrafiche/actions.php:226
+msgid "Aggiunta nuova anagrafica di tipo _TYPE_"
+msgstr "Aggiunta nuova anagrafica di tipo _TYPE_"
+
+#: modules/anagrafiche/actions.php:235 modules/anagrafiche/bulk.php:16
+msgid "Anagrafica eliminata!"
+msgstr "Anagrafica eliminata!"
+
+#: modules/anagrafiche/add.php:19 modules/anagrafiche/edit.php:24
+#: modules/contratti/widgets/contratti.pianificazionedashboard.php:50
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:72
+#: modules/dashboard/ajaxreq.php:97 modules/utenti/edit.php:23
+msgid "Ragione sociale"
+msgstr "Ragione sociale"
+
+#: modules/anagrafiche/add.php:23 modules/anagrafiche/edit.php:290
+#: modules/utenti/edit.php:24
+msgid "Tipo di anagrafica"
+msgstr "Tipo di anagrafica"
+
+#: modules/anagrafiche/edit.php:13
+msgid "Dati anagrafici"
+msgstr "Dati anagrafici"
+
+#: modules/anagrafiche/edit.php:18 modules/anagrafiche/edit.php:104
+#: modules/anagrafiche/edit.php:210
+#: modules/anagrafiche/plugins/referenti.php:144
+#: modules/anagrafiche/plugins/sedi.php:255 modules/articoli/edit.php:20
+#: modules/articoli/edit.php:128
+#: modules/articoli/plugins/articoli.lotti.php:114
+#: modules/automezzi/edit.php:18 modules/beni/edit.php:10
+#: modules/categorie/edit.php:10 modules/causali/edit.php:9
+#: modules/contratti/edit.php:32
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:236
+#: modules/ddt/edit.php:27 modules/ddt/edit.php:123 modules/fatture/edit.php:30
+#: modules/fatture/edit.php:213 modules/gestione_componenti/edit.php:41
+#: modules/impostazioni/edit.php:18 modules/impostazioni/edit.php:69
+#: modules/interventi/edit.php:34 modules/interventi/edit.php:110
+#: modules/interventi/edit.php:170 modules/interventi/edit.php:232
+#: modules/iva/edit.php:10 modules/listini/edit.php:16
+#: modules/misure/edit.php:10 modules/my_impianti/edit.php:18
+#: modules/my_impianti/plugins/my_impianti.componenti.php:250
+#: modules/ordini/edit.php:78 modules/porti/edit.php:9
+#: modules/preventivi/edit.php:21 modules/preventivi/edit.php:117
+#: modules/primanota/edit.php:26 modules/ritenute/edit.php:10
+#: modules/scadenzario/edit.php:133 modules/stati_intervento/edit.php:22
+#: modules/tecnici_tariffe/edit.php:11 modules/tecnici_tariffe/edit.php:83
+#: modules/tipi_anagrafiche/edit.php:27 modules/tipi_intervento/edit.php:12
+#: modules/viste/edit.php:14 modules/voci_servizio/edit.php:11
+#: modules/zone/edit.php:13
+msgid "Salva modifiche"
+msgstr "Salva modifiche"
+
+#: modules/anagrafiche/edit.php:28
+msgid "Tipologia"
+msgstr "Tipologia"
+
+#: modules/anagrafiche/edit.php:28
+msgid "Non specificato"
+msgstr "Non specificato"
+
+#: modules/anagrafiche/edit.php:28
+msgid "Azienda"
+msgstr "Azienda"
+
+#: modules/anagrafiche/edit.php:28
+msgid "Privato"
+msgstr "Privato"
+
+#: modules/anagrafiche/edit.php:28
+msgid "Ente pubblico"
+msgstr "Ente pubblico"
+
+#: modules/anagrafiche/edit.php:34
+msgid "Partita IVA"
+msgstr "Partita IVA"
+
+#: modules/anagrafiche/edit.php:38
+msgid "Codice fiscale"
+msgstr "Codice fiscale"
+
+#: modules/anagrafiche/edit.php:42
+msgid "Codice anagrafica"
+msgstr "Codice anagrafica"
+
+#: modules/anagrafiche/edit.php:48
+msgid "Luogo di nascita"
+msgstr "Luogo di nascita"
+
+#: modules/anagrafiche/edit.php:52
+msgid "Data di nascita"
+msgstr "Data di nascita"
+
+#: modules/anagrafiche/edit.php:56
+msgid "Sesso"
+msgstr "Sesso"
+
+#: modules/anagrafiche/edit.php:56
+msgid "Uomo"
+msgstr "Uomo"
+
+#: modules/anagrafiche/edit.php:56
+msgid "Donna"
+msgstr "Donna"
+
+#: modules/anagrafiche/edit.php:62 modules/anagrafiche/plugins/sedi.php:76
+#: modules/anagrafiche/plugins/sedi.php:185 modules/dashboard/ajaxreq.php:108
+#: plugins/sedi/add.php:16 plugins/sedi/edit.php:19
+#: templates/interventi/actions.php:17
+msgid "Indirizzo"
+msgstr "Indirizzo"
+
+#: modules/anagrafiche/edit.php:66
+msgid "Indirizzo2"
+msgstr "Indirizzo2"
+
+#: modules/anagrafiche/edit.php:72 modules/anagrafiche/plugins/sedi.php:114
+#: modules/anagrafiche/plugins/sedi.php:223 plugins/sedi/edit.php:57
+msgid "Nazione"
+msgstr "Nazione"
+
+#: modules/anagrafiche/edit.php:76 modules/anagrafiche/plugins/sedi.php:100
+#: modules/anagrafiche/plugins/sedi.php:209 plugins/sedi/add.php:30
+#: plugins/sedi/edit.php:43
+msgid "C.A.P."
+msgstr "C.A.P."
+
+#: modules/anagrafiche/edit.php:80 modules/anagrafiche/plugins/sedi.php:96
+#: modules/anagrafiche/plugins/sedi.php:205 plugins/sedi/add.php:26
+#: plugins/sedi/edit.php:39
+msgid "Città"
+msgstr "Città"
+
+#: modules/anagrafiche/edit.php:84 modules/anagrafiche/plugins/sedi.php:104
+#: modules/anagrafiche/plugins/sedi.php:213 plugins/sedi/add.php:34
+#: plugins/sedi/edit.php:47
+msgid "Provincia"
+msgstr "Provincia"
+
+#: modules/anagrafiche/edit.php:88 modules/anagrafiche/plugins/sedi.php:108
+#: modules/anagrafiche/plugins/sedi.php:217
+#: modules/interventi/ajax_tecnici.php:59
+#: modules/preventivi/plugins/preventivi.consuntivo.php:35
+#: modules/preventivi/plugins/preventivi.consuntivo.php:90
+#: plugins/sedi/add.php:38 plugins/sedi/edit.php:51
+msgid "Km"
+msgstr "Km"
+
+#: modules/anagrafiche/edit.php:99
+msgid "Contatti"
+msgstr "Contatti"
+
+#: modules/anagrafiche/edit.php:110
+#: modules/anagrafiche/plugins/referenti.php:61
+#: modules/anagrafiche/plugins/referenti.php:106
+#: modules/anagrafiche/plugins/referenti.php:124
+#: modules/anagrafiche/plugins/sedi.php:118
+#: modules/anagrafiche/plugins/sedi.php:227 modules/dashboard/ajaxreq.php:100
+#: plugins/sedi/add.php:48 plugins/sedi/edit.php:61
+msgid "Telefono"
+msgstr "Telefono"
+
+#: modules/anagrafiche/edit.php:114 modules/anagrafiche/plugins/sedi.php:124
+#: modules/anagrafiche/plugins/sedi.php:233 plugins/sedi/edit.php:67
+msgid "Fax"
+msgstr "Fax"
+
+#: modules/anagrafiche/edit.php:118 modules/anagrafiche/plugins/sedi.php:128
+#: modules/anagrafiche/plugins/sedi.php:237 modules/dashboard/ajaxreq.php:104
+#: plugins/sedi/add.php:44 plugins/sedi/edit.php:71
+msgid "Cellulare"
+msgstr "Cellulare"
+
+#: modules/anagrafiche/edit.php:124 templates/interventi/actions.php:27
+msgid "Email"
+msgstr "Email"
+
+#: modules/anagrafiche/edit.php:132 modules/anagrafiche/plugins/sedi.php:138
+#: modules/anagrafiche/plugins/sedi.php:247
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:164
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:73
+#: modules/interventi/add.php:172 plugins/sedi/add.php:58
+#: plugins/sedi/edit.php:81
+msgid "Zona"
+msgstr "Zona"
+
+#: modules/anagrafiche/edit.php:146
+msgid "Informazioni predefinite"
+msgstr "Informazioni predefinite"
+
+#: modules/anagrafiche/edit.php:156
+msgid "Pagamento predefinito per acquisti"
+msgstr "Pagamento predefinito per acquisti"
+
+#: modules/anagrafiche/edit.php:165
+msgid "Pagamento predefinito per vendite"
+msgstr "Pagamento predefinito per vendite"
+
+#: modules/anagrafiche/edit.php:171
+msgid "Iva predefinita"
+msgstr "Iva predefinita"
+
+#: modules/anagrafiche/edit.php:178
+msgid "Listino articoli"
+msgstr "Listino articoli"
+
+#: modules/anagrafiche/edit.php:182
+msgid "Indirizzo di fatturazione"
+msgstr "Indirizzo di fatturazione"
+
+#: modules/anagrafiche/edit.php:186 modules/contratti/edit.php:140
+#: modules/contratti/edit.php:198 modules/interventi/edit.php:130
+#: modules/preventivi/plugins/preventivi.consuntivo.php:88
+msgid "Tipo attività"
+msgstr "Tipo attività"
+
+#: modules/anagrafiche/edit.php:190
+msgid "Agente principale"
+msgstr "Agente principale"
+
+#: modules/anagrafiche/edit.php:205 modules/dashboard/ajaxreq.php:130
+msgid "Informazioni aggiuntive"
+msgstr "Informazioni aggiuntive"
+
+#: modules/anagrafiche/edit.php:217
+msgid "Codice registro imprese"
+msgstr "Codice registro imprese"
+
+#: modules/anagrafiche/edit.php:221
+msgid "Codice R.E.A."
+msgstr "Codice R.E.A."
+
+#: modules/anagrafiche/edit.php:221
+msgid "provincia/C.C.I.A.A."
+msgstr "provincia/C.C.I.A.A."
+
+#: modules/anagrafiche/edit.php:225
+msgid "N<sup>o</sup> iscr. C.C.I.A.A."
+msgstr "N<sup>o</sup> iscr. C.C.I.A.A."
+
+#: modules/anagrafiche/edit.php:229
+msgid "Città iscr. C.C.I.A.A."
+msgstr "Città iscr. C.C.I.A.A."
+
+#: modules/anagrafiche/edit.php:235
+msgid "Appoggio bancario"
+msgstr "Appoggio bancario"
+
+#: modules/anagrafiche/edit.php:239
+msgid "Filiale banca"
+msgstr "Filiale banca"
+
+#: modules/anagrafiche/edit.php:243
+msgid "Codice IBAN"
+msgstr "Codice IBAN"
+
+#: modules/anagrafiche/edit.php:247
+msgid "Codice BIC"
+msgstr "Codice BIC"
+
+#: modules/anagrafiche/edit.php:251
+msgid "Dicitura fissa fattura"
+msgstr "Dicitura fissa fattura"
+
+#: modules/anagrafiche/edit.php:257
+msgid "Foro di competenza"
+msgstr "Foro di competenza"
+
+#: modules/anagrafiche/edit.php:261
+msgid "Settore merceologico"
+msgstr "Settore merceologico"
+
+#: modules/anagrafiche/edit.php:265
+msgid "Marche trattate"
+msgstr "Marche trattate"
+
+#: modules/anagrafiche/edit.php:271
+msgid "N<sup>o</sup> dipendenti"
+msgstr "N<sup>o</sup> dipendenti"
+
+#: modules/anagrafiche/edit.php:275
+msgid "N<sup>o</sup> macchine"
+msgstr "N<sup>o</sup> macchine"
+
+#: modules/anagrafiche/edit.php:279
+msgid "N<sup>o</sup> iscr. tribunale"
+msgstr "N<sup>o</sup> iscr. tribunale"
+
+#: modules/anagrafiche/edit.php:283
+msgid "N<sup>o</sup> iscr. albo artigiani"
+msgstr "N<sup>o</sup> iscr. albo artigiani"
+
+#: modules/anagrafiche/edit.php:298 modules/categorie/add.php:41
+#: modules/categorie/edit.php:27 modules/categorie/edit.php:58
+#: modules/stati_intervento/add.php:19 modules/stati_intervento/edit.php:36
+msgid "Colore"
+msgstr "Colore"
+
+#: modules/anagrafiche/edit.php:311
+msgid "Relazione con il cliente"
+msgstr "Relazione con il cliente"
+
+#: modules/anagrafiche/edit.php:318
+msgid "Capitale sociale"
+msgstr "Capitale sociale"
+
+#: modules/anagrafiche/edit.php:327 modules/articoli/edit.php:115
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:63
+#: modules/dashboard/ajaxreq.php:112 modules/ddt/edit.php:118
+#: modules/fatture/edit.php:201 modules/listini/edit.php:32
+#: modules/ordini/edit.php:73
+msgid "Note"
+msgstr "Note"
+
+#: modules/anagrafiche/plugins/referenti.php:20
+msgid "Aggiunto nuovo referente!"
+msgstr "Aggiunto nuovo referente!"
+
+#: modules/anagrafiche/plugins/referenti.php:31
+#: modules/anagrafiche/plugins/sedi.php:50 modules/beni/actions.php:11
+#: modules/categorie/actions.php:13 modules/categorie/actions.php:75
+#: modules/causali/actions.php:12 modules/iva/actions.php:15
+#: modules/misure/actions.php:12 modules/pagamenti/actions.php:42
+#: modules/porti/actions.php:12 modules/ritenute/actions.php:14
+#: modules/viste/actions.php:30 modules/viste/actions.php:81
+#: modules/viste/actions.php:117 modules/viste/actions.php:133
+#: plugins/sedi/actions.php:50
+msgid "Salvataggio completato!"
+msgstr "Salvataggio completato!"
+
+#: modules/anagrafiche/plugins/referenti.php:38
+msgid "Referente eliminato!"
+msgstr "Referente eliminato!"
+
+#: modules/anagrafiche/plugins/referenti.php:51
+#: modules/anagrafiche/plugins/referenti.php:104
+#: modules/anagrafiche/plugins/referenti.php:118
+msgid "Nominativo"
+msgstr "Nominativo"
+
+#: modules/anagrafiche/plugins/referenti.php:55
+#: modules/anagrafiche/plugins/referenti.php:105
+#: modules/anagrafiche/plugins/referenti.php:121
+msgid "Mansione"
+msgstr "Mansione"
+
+#: modules/anagrafiche/plugins/referenti.php:65
+#: modules/anagrafiche/plugins/referenti.php:107
+#: modules/anagrafiche/plugins/referenti.php:127
+#: modules/anagrafiche/plugins/sedi.php:134
+#: modules/anagrafiche/plugins/sedi.php:243 plugins/sedi/add.php:52
+#: plugins/sedi/edit.php:77
+msgid "Indirizzo email"
+msgstr "Indirizzo email"
+
+#: modules/anagrafiche/plugins/referenti.php:71
+#: modules/anagrafiche/plugins/referenti.php:108
+#: modules/anagrafiche/plugins/referenti.php:130
+#: modules/contratti/plugins/contratti.ordiniservizio.php:99
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:58
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:125
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:140
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:53
+#: modules/contratti/widgets/contratti.pianificazionedashboard.php:51
+#: modules/interventi/add.php:119 modules/interventi/edit.php:49
+#: modules/my_impianti/edit.php:58
+msgid "Sede"
+msgstr "Sede"
+
+#: modules/anagrafiche/plugins/referenti.php:88
+msgid "Referenti"
+msgstr "Referenti"
+
+#: modules/anagrafiche/plugins/referenti.php:89
+#: modules/anagrafiche/plugins/sedi.php:156
+msgid "Nuovo referente"
+msgstr "Nuovo referente"
+
+#: modules/anagrafiche/plugins/referenti.php:92
+msgid "Qui hai la possibilità di gestire i referenti di questa anagrafica"
+msgstr "Qui hai la possibilità di gestire i referenti di questa anagrafica"
+
+#: modules/anagrafiche/plugins/referenti.php:109 modules/categorie/edit.php:60
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:59
+#: modules/utenti/edit.php:25
+msgid "Opzioni"
+msgstr "Opzioni"
+
+#: modules/anagrafiche/plugins/sedi.php:32 plugins/sedi/actions.php:25
+msgid "Aggiunta una nuova sede!"
+msgstr "Aggiunta una nuova sede!"
+
+#: modules/anagrafiche/plugins/sedi.php:57 plugins/sedi/actions.php:58
+msgid "Sede eliminata!"
+msgstr "Sede eliminata!"
+
+#: modules/anagrafiche/plugins/sedi.php:70
+#: modules/anagrafiche/plugins/sedi.php:179 plugins/sedi/add.php:12
+#: plugins/sedi/edit.php:13
+msgid "Nome sede"
+msgstr "Nome sede"
+
+#: modules/anagrafiche/plugins/sedi.php:80
+#: modules/anagrafiche/plugins/sedi.php:189 plugins/sedi/add.php:20
+#: plugins/sedi/edit.php:23
+msgid "Secondo indirizzo"
+msgstr "Secondo indirizzo"
+
+#: modules/anagrafiche/plugins/sedi.php:86
+#: modules/anagrafiche/plugins/sedi.php:195 plugins/sedi/edit.php:29
+msgid "P.Iva"
+msgstr "P.Iva"
+
+#: modules/anagrafiche/plugins/sedi.php:90
+#: modules/anagrafiche/plugins/sedi.php:199 plugins/sedi/edit.php:33
+msgid "Codice Fiscale"
+msgstr "Codice Fiscale"
+
+#: modules/anagrafiche/plugins/sedi.php:155
+msgid "Sedi"
+msgstr "Sedi"
+
+#: modules/anagrafiche/plugins/sedi.php:156
+msgid "Nuova sede"
+msgstr "Nuova sede"
+
+#: modules/anagrafiche/plugins/sedi.php:159
+msgid "Qui hai la possibilità di gestire le sedi di questa anagrafica"
+msgstr "Qui hai la possibilità di gestire le sedi di questa anagrafica"
+
+#: modules/anagrafiche/plugins/statistiche.php:24
+#: modules/contratti/plugins/contratti.consuntivo.php:99
+msgid "Interventi"
+msgstr "Interventi"
+
+#: modules/anagrafiche/plugins/statistiche.php:29
+msgid ""
+"Sono stati svolti <strong>_NUMBER_ interventi</strong> per un totale di "
+"_EUR_ &euro;"
+msgstr ""
+"Sono stati svolti <strong>_NUMBER_ interventi</strong> per un totale di "
+"_EUR_ &euro;"
+
+#: modules/anagrafiche/plugins/statistiche.php:30
+#: modules/anagrafiche/plugins/statistiche.php:65
+#: modules/anagrafiche/plugins/statistiche.php:102
+#: modules/anagrafiche/plugins/statistiche.php:137
+#: modules/anagrafiche/plugins/statistiche.php:163
+#: modules/contratti/plugins/contratti.ordiniservizio.php:144
+msgid "Visualizza"
+msgstr "Visualizza"
+
+#: modules/anagrafiche/plugins/statistiche.php:33
+msgid "Nessun intervento"
+msgstr "Nessun intervento"
+
+#: modules/anagrafiche/plugins/statistiche.php:59
+msgid "Preventivi"
+msgstr "Preventivi"
+
+#: modules/anagrafiche/plugins/statistiche.php:64
+msgid ""
+"Si è lavorato per <strong>_NUMBER_ preventivi</strong> per un totale di "
+"_EUR_ &euro;"
+msgstr ""
+"Si è lavorato per <strong>_NUMBER_ preventivi</strong> per un totale di "
+"_EUR_ &euro;"
+
+#: modules/anagrafiche/plugins/statistiche.php:68
+msgid "Nessun preventivo"
+msgstr "Nessun preventivo"
+
+#: modules/anagrafiche/plugins/statistiche.php:96
+msgid "Contratti"
+msgstr "Contratti"
+
+#: modules/anagrafiche/plugins/statistiche.php:101
+msgid ""
+"Si è lavorato per <strong>_NUMBER_ contratti</strong> per un totale di _EUR_ "
+"&euro;"
+msgstr ""
+"Si è lavorato per <strong>_NUMBER_ contratti</strong> per un totale di _EUR_ "
+"&euro;"
+
+#: modules/anagrafiche/plugins/statistiche.php:105
+msgid "Nessun contratto"
+msgstr "Nessun contratto"
+
+#: modules/anagrafiche/plugins/statistiche.php:117
+msgid "Fatture"
+msgstr "Fatture"
+
+#: modules/anagrafiche/plugins/statistiche.php:136
+msgid ""
+"Sono state emesse <strong>_NUMBER_ fatture di vendita</strong> per un totale "
+"di _EUR_ &euro;"
+msgstr ""
+"Sono state emesse <strong>_NUMBER_ fatture di vendita</strong> per un totale "
+"di _EUR_ &euro;"
+
+#: modules/anagrafiche/plugins/statistiche.php:140
+msgid "Nessuna fattura di vendita"
+msgstr "Nessuna fattura di vendita"
+
+#: modules/anagrafiche/plugins/statistiche.php:162
+msgid ""
+"Sono state registrate <strong>_NUMBER_ fatture di acquisto</strong> per un "
+"totale di _EUR_ &euro;"
+msgstr ""
+"Sono state registrate <strong>_NUMBER_ fatture di acquisto</strong> per un "
+"totale di _EUR_ &euro;"
+
+#: modules/anagrafiche/plugins/statistiche.php:166
+msgid "Nessuna fattura di acquisto"
+msgstr "Nessuna fattura di acquisto"
+
+#: modules/articoli/actions.php:77 modules/my_impianti/actions.php:60
+msgid "Errore durante il caricamento del file in _DIR_!"
+msgstr "Errore durante il caricamento del file in _DIR_!"
+
+#: modules/articoli/actions.php:93 modules/automezzi/actions.php:17
+#: modules/automezzi/actions.php:89 modules/gestione_componenti/actions.php:15
+#: modules/interventi/actions.php:180 modules/listini/actions.php:14
+#: modules/my_impianti/actions.php:48 modules/stati_intervento/actions.php:17
+#: modules/tecnici_tariffe/actions.php:48
+#: modules/tecnici_tariffe/actions.php:69
+#: modules/tecnici_tariffe/actions.php:78
+#: modules/tipi_anagrafiche/actions.php:15 modules/voci_servizio/actions.php:12
+#: modules/zone/actions.php:21
+msgid "Informazioni salvate correttamente!"
+msgstr "Informazioni salvate correttamente!"
+
+#: modules/articoli/actions.php:107
+msgid "Aggiunto un nuovo articolo!"
+msgstr "Aggiunto un nuovo articolo!"
+
+#: modules/articoli/actions.php:113
+msgid "Esiste già un articolo con questo codice!"
+msgstr "Esiste già un articolo con questo codice!"
+
+#: modules/articoli/actions.php:198
+msgid "Carico magazzino con serial da _SERIAL_INIZIO_ a _SERIAL_FINE_"
+msgstr "Carico magazzino con serial da _SERIAL_INIZIO_ a _SERIAL_FINE_"
+
+#: modules/articoli/actions.php:201
+msgid "Aggiunti _NUM_ prodotti!"
+msgstr "Aggiunti _NUM_ prodotti!"
+
+#: modules/articoli/actions.php:203
+msgid "Errore durante l'inserimento!"
+msgstr "Errore durante l'inserimento!"
+
+#: modules/articoli/actions.php:218
+msgid "Eliminazione dal magazzino del prodotto con serial _SERIAL_"
+msgstr "Eliminazione dal magazzino del prodotto con serial _SERIAL_"
+
+#: modules/articoli/actions.php:221
+msgid "Prodotto rimosso!"
+msgstr "Prodotto rimosso!"
+
+#: modules/articoli/actions.php:231
+msgid "Articolo eliminato!"
+msgstr "Articolo eliminato!"
+
+#: modules/articoli/add.php:14
+msgid "Inserisci il codice:"
+msgstr "Inserisci il codice:"
+
+#: modules/articoli/add.php:18
+msgid "Inserisci la descrizione:"
+msgstr "Inserisci la descrizione:"
+
+#: modules/articoli/add.php:22
+msgid "Inserisci la categoria:"
+msgstr "Inserisci la categoria:"
+
+#: modules/articoli/add.php:26
+msgid "Inserisci la subcategoria:"
+msgstr "Inserisci la subcategoria:"
+
+#: modules/articoli/edit.php:15
+#: modules/articoli/widgets/articoli.dashboard.php:11
+#: modules/automezzi/add_articolo.php:19
+#: modules/automezzi/row-list-articoli.php:13
+#: modules/contratti/plugins/contratti.consuntivo.php:156
+#: modules/ddt/add_articolo.php:36 modules/ddt/add_serial.php:20
+#: modules/ddt/edit.php:143 modules/ddt/plugins/ddt.anagrafiche.php:16
+#: modules/ddt/plugins/ddt.anagrafiche.php:26
+#: modules/fatture/add_articolo.php:44 modules/fatture/add_serial.php:20
+#: modules/interventi/add_articolo.php:78 modules/interventi/add_serial.php:12
+#: modules/interventi/ajax_articoli.php:14 modules/ordini/add_articolo.php:37
+#: modules/ordini/add_serial.php:20 modules/preventivi/edit_riga.php:62
+msgid "Articolo"
+msgstr "Articolo"
+
+#: modules/articoli/edit.php:29 modules/my_impianti/edit.php:27
+msgid "Immagine"
+msgstr "Immagine"
+
+#: modules/articoli/edit.php:33 modules/interventi/edit.php:118
+#: modules/my_impianti/plugins/my_impianti.componenti.php:209
+#: modules/stati_intervento/add.php:11 modules/stati_intervento/edit.php:28
+#: modules/tipi_intervento/add.php:11 modules/tipi_intervento/edit.php:18
+#: modules/zone/edit.php:19 templates/interventi/actions.php:74
+msgid "Codice"
+msgstr "Codice"
+
+#: modules/articoli/edit.php:37 modules/voci_servizio/add.php:11
+#: modules/voci_servizio/edit.php:17
+msgid "Categoria"
+msgstr "Categoria"
+
+#: modules/articoli/edit.php:39
+msgid "Subcategoria"
+msgstr "Subcategoria"
+
+#: modules/articoli/edit.php:50
+msgid "Quantità"
+msgstr "Quantità"
+
+#: modules/articoli/edit.php:53
+msgid "Modifica manualmente quantità"
+msgstr "Modifica manualmente quantità"
+
+#: modules/articoli/edit.php:53
+msgid "Seleziona per modificare manualmente la quantità"
+msgstr "Seleziona per modificare manualmente la quantità"
+
+#: modules/articoli/edit.php:53
+msgid "Quantità manuale"
+msgstr "Quantità manuale"
+
+#: modules/articoli/edit.php:66 modules/contratti/add_riga.php:70
+#: modules/ddt/add_riga.php:74 modules/fatture/add_articolo.php:88
+#: modules/fatture/add_riga.php:97 modules/fatture/edit_riga.php:93
+#: modules/interventi/add_articolo.php:101 modules/interventi/add_righe.php:67
+#: modules/ordini/add_articolo.php:74 modules/ordini/add_riga.php:95
+#: modules/preventivi/edit_riga.php:84
+msgid "Unità di misura"
+msgstr "Unità di misura"
+
+#: modules/articoli/edit.php:72
+msgid "Prezzo di vendita base"
+msgstr "Prezzo di vendita base"
+
+#: modules/articoli/edit.php:76
+msgid "Iva di vendita"
+msgstr "Iva di vendita"
+
+#: modules/articoli/edit.php:80
+msgid "Seleziona per rendere visibile l'articolo"
+msgstr "Seleziona per rendere visibile l'articolo"
+
+#: modules/articoli/edit.php:80
+msgid "ATTIVO"
+msgstr "ATTIVO"
+
+#: modules/articoli/edit.php:84
+msgid "Abilita serial number"
+msgstr "Abilita serial number"
+
+#: modules/articoli/edit.php:84
+msgid "Abilita serial number in fase di aggiunta articolo in fattura o ddt"
+msgstr "Abilita serial number in fase di aggiunta articolo in fattura o ddt"
+
+#: modules/articoli/edit.php:100 modules/interventi/ajax_articoli.php:19
+#: modules/interventi/ajax_righe.php:14
+#: modules/preventivi/plugins/preventivi.consuntivo.php:133
+#: modules/preventivi/plugins/preventivi.consuntivo.php:178
+msgid "Prezzo di acquisto"
+msgstr "Prezzo di acquisto"
+
+#: modules/articoli/edit.php:104
+msgid "Soglia minima quantità"
+msgstr "Soglia minima quantità"
+
+#: modules/articoli/edit.php:108
+msgid "Giorni di garanzia"
+msgstr "Giorni di garanzia"
+
+#: modules/articoli/edit.php:123
+msgid "Aggiungi informazioni componente personalizzato"
+msgstr "Aggiungi informazioni componente personalizzato"
+
+#: modules/articoli/edit.php:141
+msgid "Seleziona un componente"
+msgstr "Seleziona un componente"
+
+#: modules/articoli/edit.php:177
+msgid "Prezzo articolo per listino"
+msgstr "Prezzo articolo per listino"
+
+#: modules/articoli/edit.php:192 modules/listini/edit.php:11
+msgid "Listino"
+msgstr "Listino"
+
+#: modules/articoli/edit.php:193
+msgid "Prezzo di vendita finale"
+msgstr "Prezzo di vendita finale"
+
+#: modules/articoli/edit.php:199
+msgid "Base"
+msgstr "Base"
+
+#: modules/articoli/edit.php:223
+msgid "Questo articolo è presente nei seguenti automezzi"
+msgstr "Questo articolo è presente nei seguenti automezzi"
+
+#: modules/articoli/edit.php:236
+msgid "Nome automezzo"
+msgstr "Nome automezzo"
+
+#: modules/articoli/edit.php:237 modules/automezzi/add.php:14
+#: modules/automezzi/edit.php:27
+msgid "Targa"
+msgstr "Targa"
+
+#: modules/articoli/edit.php:238
+#: modules/articoli/plugins/articoli.movimenti.php:41
+#: modules/articoli/widgets/articoli.dashboard.php:12
+#: modules/automezzi/row-list-articoli.php:14 modules/contratti/add_riga.php:64
+#: modules/contratti/plugins/contratti.consuntivo.php:157
+#: modules/contratti/plugins/contratti.consuntivo.php:227
+#: modules/contratti/row-list.php:23 modules/ddt/add_articolo.php:67
+#: modules/ddt/add_riga.php:68 modules/ddt/creafattura.php:63
+#: modules/ddt/row-list.php:9 modules/fatture/add_articolo.php:82
+#: modules/fatture/add_ddt_righe.php:45 modules/fatture/add_riga.php:91
+#: modules/fatture/edit_riga.php:87 modules/fatture/row-list.php:15
+#: modules/interventi/add_articolo.php:95 modules/interventi/add_righe.php:61
+#: modules/interventi/ajax_articoli.php:15 modules/interventi/ajax_righe.php:13
+#: modules/ordini/add_articolo.php:68 modules/ordini/add_riga.php:89
+#: modules/ordini/row-list.php:10 modules/preventivi/edit_riga.php:78
+#: modules/preventivi/plugins/preventivi.consuntivo.php:132
+#: modules/preventivi/plugins/preventivi.consuntivo.php:177
+#: modules/preventivi/row-list.php:15 templates/interventi/actions.php:82
+#: templates/interventi/actions.php:199 templates/interventi/actions.php:402
+msgid "Q.tà"
+msgstr "Q.tà"
+
+#: modules/articoli/modutil.php:36
+msgid "Carico dal magazzino sull'automezzo _NAME_"
+msgstr "Carico dal magazzino sull'automezzo _NAME_"
+
+#: modules/articoli/modutil.php:36
+msgid "Scarico nel magazzino dall'automezzo _NAME_"
+msgstr "Scarico nel magazzino dall'automezzo _NAME_"
+
+#: modules/articoli/modutil.php:40
+msgid "Carico sull'automezzo _NAME_"
+msgstr "Carico sull'automezzo _NAME_"
+
+#: modules/articoli/modutil.php:40
+msgid "Scarico dall'automezzo _NAME_"
+msgstr "Scarico dall'automezzo _NAME_"
+
+#: modules/articoli/modutil.php:52
+msgid "Ripristino articolo da intervento _NUM_"
+msgstr "Ripristino articolo da intervento _NUM_"
+
+#: modules/articoli/modutil.php:52
+msgid "Scarico magazzino per intervento _NUM_"
+msgstr "Scarico magazzino per intervento _NUM_"
+
+#: modules/articoli/modutil.php:62
+msgid "Carico magazzino"
+msgstr "Carico magazzino"
+
+#: modules/articoli/modutil.php:62
+msgid "Scarico magazzino"
+msgstr "Scarico magazzino"
+
+#: modules/articoli/modutil.php:68
+msgid "Ripristino articolo da _TYPE_ _NUM_"
+msgstr "Ripristino articolo da _TYPE_ _NUM_"
+
+#: modules/articoli/modutil.php:68
+msgid "Carico magazzino da _TYPE_ numero _NUM_"
+msgstr "Carico magazzino da _TYPE_ numero _NUM_"
+
+#: modules/articoli/modutil.php:69
+msgid "Rimozione articolo da _TYPE_ _NUM_"
+msgstr "Rimozione articolo da _TYPE_ _NUM_"
+
+#: modules/articoli/modutil.php:69
+msgid "Scarico magazzino per _TYPE_ numero _NUM_"
+msgstr "Scarico magazzino per _TYPE_ numero _NUM_"
+
+#: modules/articoli/plugins/articoli.lotti.php:10
+msgid "Produzione"
+msgstr "Produzione"
+
+#: modules/articoli/plugins/articoli.lotti.php:38
+msgid "Inserimento nuovi prodotti"
+msgstr "Inserimento nuovi prodotti"
+
+#: modules/articoli/plugins/articoli.lotti.php:67
+msgid "Serial number da"
+msgstr "Serial number da"
+
+#: modules/articoli/plugins/articoli.lotti.php:80
+msgid "Ultimo serial number inserito"
+msgstr "Ultimo serial number inserito"
+
+#: modules/articoli/plugins/articoli.lotti.php:113
+msgid "Totale prodotti da inserire"
+msgstr "Totale prodotti da inserire"
+
+#: modules/articoli/plugins/articoli.lotti.php:119
+msgid "L'inserimento incrementerà la quantità dell'articolo!"
+msgstr "L'inserimento incrementerà la quantità dell'articolo!"
+
+#: modules/articoli/plugins/articoli.lotti.php:122
+msgid "L'inserimento non movimenterà la quantità dell'articolo!"
+msgstr "L'inserimento non movimenterà la quantità dell'articolo!"
+
+#: modules/articoli/plugins/articoli.lotti.php:136
+msgid "Ricerca prodotti"
+msgstr "Ricerca prodotti"
+
+#: modules/articoli/plugins/articoli.lotti.php:143
+msgid "La cancellazione decrementerà la quantità dell'articolo!"
+msgstr "La cancellazione decrementerà la quantità dell'articolo!"
+
+#: modules/articoli/plugins/articoli.lotti.php:145
+msgid "L'inserimento decrementerà la quantità dell'articolo!"
+msgstr "L'inserimento decrementerà la quantità dell'articolo!"
+
+#: modules/articoli/plugins/articoli.lotti.php:167
+#: modules/ddt/add_serial.php:40 modules/fatture/add_serial.php:40
+#: modules/interventi/add_serial.php:32 modules/ordini/add_serial.php:40
+#: modules/preventivi/plugins/preventivi.consuntivo.php:147
+msgid "Serial"
+msgstr "Serial"
+
+#: modules/articoli/plugins/articoli.lotti.php:168
+msgid "Data di creazione"
+msgstr "Data di creazione"
+
+#: modules/articoli/plugins/articoli.lotti.php:169
+msgid "Documento di vendita"
+msgstr "Documento di vendita"
+
+#: modules/articoli/plugins/articoli.lotti.php:170
+#: modules/contratti/edit.php:301
+#: modules/contratti/plugins/contratti.consuntivo.php:272
+#: modules/contratti/row-list.php:178 modules/ddt/row-list.php:293
+#: modules/fatture/row-list.php:315 modules/interventi/ajax_costi.php:83
+#: modules/ordini/row-list.php:273
+#: modules/preventivi/plugins/preventivi.consuntivo.php:216
+#: modules/preventivi/row-list.php:189 modules/primanota/add.php:185
+#: modules/scadenzario/edit.php:114
+msgid "Totale"
+msgstr "Totale"
+
+#: modules/articoli/plugins/articoli.lotti.php:243
+#: modules/fatture/add_intervento.php:36
+#: modules/interventi/plugins/my_impianti.interventi.php:19
+msgid "Intervento"
+msgstr "Intervento"
+
+#: modules/articoli/plugins/articoli.lotti.php:245
+msgid "(q.tà _QTA_)"
+msgstr "(q.tà _QTA_)"
+
+#: modules/articoli/plugins/articoli.lotti.php:254
+msgid "_DOC_ n<sup>o</sup> _NUM_ del _DATE_"
+msgstr "_DOC_ n<sup>o</sup> _NUM_ del _DATE_"
+
+#: modules/articoli/plugins/articoli.movimenti.php:10
+msgid "Movimenti"
+msgstr "Movimenti"
+
+#: modules/articoli/plugins/articoli.movimenti.php:19
+msgid "Quantità calcolata dai movimenti"
+msgstr "Quantità calcolata dai movimenti"
+
+#: modules/articoli/plugins/articoli.movimenti.php:32
+msgid "Mostra tutti i movimenti"
+msgstr "Mostra tutti i movimenti"
+
+#: modules/articoli/plugins/articoli.movimenti.php:35
+msgid "Mostra solo gli ultimi 20 movimenti"
+msgstr "Mostra solo gli ultimi 20 movimenti"
+
+#: modules/articoli/plugins/articoli.movimenti.php:42
+#: modules/primanota/add.php:109 modules/primanota/edit.php:38
+msgid "Causale"
+msgstr "Causale"
+
+#: modules/articoli/plugins/articoli.movimenti.php:64
+msgid "Nessun movimento disponibile"
+msgstr "Nessun movimento disponibile"
+
+#: modules/articoli/widgets/articoli.dashboard.php:30
+msgid "Non ci sono articoli in esaurimento"
+msgstr "Non ci sono articoli in esaurimento"
+
+#: modules/automezzi/actions.php:20 modules/automezzi/actions.php:39
+msgid "Esiste già un automezzo con questa targa!"
+msgstr "Esiste già un automezzo con questa targa!"
+
+#: modules/automezzi/actions.php:37
+msgid "Aggiunto un nuovo automezzo!"
+msgstr "Aggiunto un nuovo automezzo!"
+
+#: modules/automezzi/actions.php:61
+msgid "Collegato un nuovo tecnico!"
+msgstr "Collegato un nuovo tecnico!"
+
+#: modules/automezzi/actions.php:91
+msgid "Errore durante il salvataggio del tecnico!"
+msgstr "Errore durante il salvataggio del tecnico!"
+
+#: modules/automezzi/actions.php:102
+msgid "Tecnico rimosso!"
+msgstr "Tecnico rimosso!"
+
+#: modules/automezzi/actions.php:124
+msgid "Caricato il magazzino dell'automezzo!"
+msgstr "Caricato il magazzino dell'automezzo!"
+
+#: modules/automezzi/actions.php:141
+msgid "Articoli riportati nel magazzino centrale!"
+msgstr "Articoli riportati nel magazzino centrale!"
+
+#: modules/automezzi/actions.php:159
+msgid "Automezzo eliminato e articoli riportati in magazzino!"
+msgstr "Automezzo eliminato e articoli riportati in magazzino!"
+
+#: modules/automezzi/add_articolo.php:25
+msgid "Q.tà su questo automezzo"
+msgstr "Q.tà su questo automezzo"
+
+#: modules/automezzi/add_tecnico.php:19
+#: modules/automezzi/row-list-tecnici.php:15 modules/my_impianti/add.php:23
+#: modules/preventivi/plugins/preventivi.consuntivo.php:87
+#: templates/interventi/actions.php:303
+msgid "Tecnico"
+msgstr "Tecnico"
+
+#: modules/automezzi/add_tecnico.php:25
+msgid "Data dal"
+msgstr "Data dal"
+
+#: modules/automezzi/add_tecnico.php:31
+msgid "Data al"
+msgstr "Data al"
+
+#: modules/automezzi/edit.php:13 modules/interventi/edit.php:138
+msgid "Automezzo"
+msgstr "Automezzo"
+
+#: modules/automezzi/edit.php:46
+msgid "Tecnici responsabili automezzo"
+msgstr "Tecnici responsabili automezzo"
+
+#: modules/automezzi/edit.php:49
+msgid "Magazzino automezzo"
+msgstr "Magazzino automezzo"
+
+#: modules/automezzi/edit.php:68
+msgid "Salva date"
+msgstr "Salva date"
+
+#: modules/automezzi/edit.php:71 modules/interventi/ajax_tecnici.php:262
+#: modules/interventi/ajax_tecnici.php:268
+msgid "Aggiungi tecnico"
+msgstr "Aggiungi tecnico"
+
+#: modules/automezzi/edit.php:83
+msgid "Articolo magazzino"
+msgstr "Articolo magazzino"
+
+#: modules/automezzi/row-list-articoli.php:15
+#: modules/interventi/ajax_articoli.php:24 modules/interventi/ajax_righe.php:18
+#: modules/preventivi/plugins/preventivi.consuntivo.php:134
+#: modules/preventivi/plugins/preventivi.consuntivo.php:179
+msgid "Prezzo di vendita"
+msgstr "Prezzo di vendita"
+
+#: modules/automezzi/row-list-articoli.php:32
+msgid "Q.tà magazzino"
+msgstr "Q.tà magazzino"
+
+#: modules/automezzi/row-list-articoli.php:48
+msgid "Rimuovere articolo dell'automezzo?"
+msgstr "Rimuovere articolo dell'automezzo?"
+
+#: modules/automezzi/row-list-articoli.php:61
+msgid "Nessun articolo presente"
+msgstr "Nessun articolo presente"
+
+#: modules/automezzi/row-list-tecnici.php:16
+msgid "dal"
+msgstr "dal"
+
+#: modules/automezzi/row-list-tecnici.php:17
+msgid "al"
+msgstr "al"
+
+#: modules/automezzi/row-list-tecnici.php:45
+msgid "Rimuovere il tecnico responsabile dell'automezzo?"
+msgstr "Rimuovere il tecnico responsabile dell'automezzo?"
+
+#: modules/automezzi/row-list-tecnici.php:65
+msgid "Nessun tecnico inserito"
+msgstr "Nessun tecnico inserito"
+
+#: modules/backup/actions.php:17
+msgid "Backup _FILE_ eliminato!"
+msgstr "Backup _FILE_ eliminato!"
+
+#: modules/backup/actions.php:19
+msgid "Errore durante l'eliminazione del backup _FILE_!"
+msgstr "Errore durante l'eliminazione del backup _FILE_!"
+
+#: modules/backup/actions.php:26
+msgid "Verifica che la cartella _DIR_ abbia i permessi di scrittura!"
+msgstr "Verifica che la cartella _DIR_ abbia i permessi di scrittura!"
+
+#: modules/backup/edit.php:5
+msgid ""
+"Il backup è molto importante perchè permette di creare una copia della "
+"propria installazione con relativi dati per poterla ripristinare in seguito "
+"a errori, cancellazione di dati accidentale o guasti hardware"
+msgstr ""
+"Il backup è molto importante perchè permette di creare una copia della "
+"propria installazione con relativi dati per poterla ripristinare in seguito "
+"a errori, cancellazione di dati accidentale o guasti hardware"
+
+#: modules/backup/edit.php:12
+msgid "Il percorso di backup è attualmente in"
+msgstr "Il percorso di backup è attualmente in"
+
+#: modules/backup/edit.php:14
+msgid "Sembra che tu non abbia ancora specificato un percorso per il backup"
+msgstr "Sembra che tu non abbia ancora specificato un percorso per il backup"
+
+#: modules/backup/edit.php:18
+msgid "Puoi modificare il percorso di backup dal tuo file _CONFIG_"
+msgstr "Puoi modificare il percorso di backup dal tuo file _CONFIG_"
+
+#: modules/backup/edit.php:22
+msgid ""
+"Per motivi di sicurezza si consiglia di modificare il percorso della "
+"cartella di backup al di fuori delle cartelle di OSM, possibilmente in una "
+"unità esterna"
+msgstr ""
+"Per motivi di sicurezza si consiglia di modificare il percorso della "
+"cartella di backup al di fuori delle cartelle di OSM, possibilmente in una "
+"unità esterna"
+
+#: modules/backup/edit.php:28
+msgid ""
+"La cartella di backup presente nella configurazione non è utilizzabile dal "
+"gestionale!"
+msgstr ""
+"La cartella di backup presente nella configurazione non è utilizzabile dal "
+"gestionale!"
+
+#: modules/backup/edit.php:28
+msgid "Verificare che la cartella abbia i permessi di scrittura abilitati"
+msgstr "Verificare che la cartella abbia i permessi di scrittura abilitati"
+
+#: modules/backup/edit.php:62
+msgid "Non è ancora stato trovato alcun backup!"
+msgstr "Non è ancora stato trovato alcun backup!"
+
+#: modules/backup/edit.php:62
+msgid "Se hai già inserito dei dati su OSM crealo il prima possibile..."
+msgstr "Se hai già inserito dei dati su OSM crealo il prima possibile..."
+
+#: modules/backup/edit.php:74 modules/backup/edit.php:98
+msgid "Backup del _DATE_ alle _TIME_"
+msgstr "Backup del _DATE_ alle _TIME_"
+
+#: modules/backup/edit.php:76 modules/backup/edit.php:100
+#: modules/gestione_componenti/edit.php:11
+msgid "Nome del file"
+msgstr "Nome del file"
+
+#: modules/backup/edit.php:77 modules/backup/edit.php:101
+msgid "Dimensione"
+msgstr "Dimensione"
+
+#: modules/backup/edit.php:80
+msgid "Scarica"
+msgstr "Scarica"
+
+#: modules/backup/edit.php:82 modules/backup/edit.php:106
+msgid "Elimina backup"
+msgstr "Elimina backup"
+
+#: modules/backup/edit.php:91
+msgid "Backup non compressi"
+msgstr "Backup non compressi"
+
+#: modules/backup/edit.php:104
+msgid "Non scaricabile"
+msgstr "Non scaricabile"
+
+#: modules/backup/edit.php:115
+msgid "La cartella di backup non esiste!"
+msgstr "La cartella di backup non esiste!"
+
+#: modules/backup/edit.php:115
+msgid "Non è possibile eseguire i backup!"
+msgstr "Non è possibile eseguire i backup!"
+
+#: modules/backup/edit.php:122
+msgid ""
+"Il backup verrà eseguito ma non in formato zip e quindi scaricabile solo "
+"tramite ftp o con copia-incolla"
+msgstr ""
+"Il backup verrà eseguito ma non in formato zip e quindi scaricabile solo "
+"tramite ftp o con copia-incolla"
+
+#: modules/backup/edit.php:127
+msgid "Crea backup"
+msgstr "Crea backup"
+
+#: modules/backup/edit.php:132
+msgid "Nuovo backup"
+msgstr "Nuovo backup"
+
+#: modules/backup/edit.php:133
+msgid "Sei sicuro di voler creare un nuovo backup?"
+msgstr "Sei sicuro di voler creare un nuovo backup?"
+
+#: modules/backup/edit.php:137
+msgid "Crea"
+msgstr "Crea"
+
+#: modules/beni/actions.php:13 modules/beni/actions.php:28
+#: modules/causali/actions.php:14 modules/causali/actions.php:33
+#: modules/iva/actions.php:17 modules/iva/actions.php:37
+#: modules/porti/actions.php:14 modules/porti/actions.php:32
+#: modules/ritenute/actions.php:16 modules/ritenute/actions.php:36
+msgid "E' già presente una tipologia di _TYPE_ con la stessa descrizione!"
+msgstr "E' già presente una tipologia di _TYPE_ con la stessa descrizione!"
+
+#: modules/beni/actions.php:26 modules/categorie/actions.php:32
+#: modules/causali/actions.php:31 modules/iva/actions.php:35
+#: modules/misure/actions.php:35 modules/pagamenti/actions.php:56
+#: modules/porti/actions.php:30 modules/ritenute/actions.php:34
+msgid "Aggiunta nuova tipologia di _TYPE_"
+msgstr "Aggiunta nuova tipologia di _TYPE_"
+
+#: modules/beni/actions.php:36 modules/categorie/actions.php:49
+#: modules/causali/actions.php:44 modules/iva/actions.php:49
+#: modules/misure/actions.php:48 modules/pagamenti/actions.php:66
+#: modules/porti/actions.php:47 modules/ritenute/actions.php:47
+msgid "Tipologia di _TYPE_ eliminata con successo!"
+msgstr "Tipologia di _TYPE_ eliminata con successo!"
+
+#: modules/beni/edit.php:17 modules/categorie/edit.php:17
+#: modules/causali/edit.php:16 modules/iva/edit.php:17
+#: modules/misure/edit.php:17 modules/pagamenti/edit.php:12
+#: modules/porti/edit.php:16 modules/ritenute/edit.php:17
+msgid "Dati"
+msgstr "Dati"
+
+#: modules/categorie/actions.php:15 modules/categorie/actions.php:34
+#: modules/categorie/actions.php:78 modules/causali/actions.php:17
+#: modules/causali/actions.php:36 modules/iva/actions.php:20
+#: modules/iva/actions.php:40 modules/misure/actions.php:17
+#: modules/misure/actions.php:40 modules/pagamenti/actions.php:44
+#: modules/pagamenti/actions.php:58 modules/porti/actions.php:17
+#: modules/porti/actions.php:35 modules/ritenute/actions.php:19
+#: modules/ritenute/actions.php:39 modules/viste/actions.php:32
+#: modules/viste/actions.php:83 modules/viste/actions.php:119
+msgid "Ci sono stati alcuni errori durante il salvataggio!"
+msgstr "Ci sono stati alcuni errori durante il salvataggio!"
+
+#: modules/categorie/actions.php:52
+msgid "Esistono ancora alcuni articoli sotto questa categoria!"
+msgstr "Esistono ancora alcuni articoli sotto questa categoria!"
+
+#: modules/categorie/add.php:47 modules/categorie/edit.php:33
+#: modules/categorie/edit.php:59
+msgid "Nota"
+msgstr "Nota"
+
+#: modules/categorie/add.php:71 modules/pagamenti/edit.php:100
+#: modules/viste/edit.php:96 modules/viste/edit.php:230
+#: modules/viste/edit.php:340 modules/viste/edit.php:413
+msgid "Salva"
+msgstr "Salva"
+
+#: modules/categorie/edit.php:43
+msgid "Sottocategorie"
+msgstr "Sottocategorie"
+
+#: modules/categorie/edit.php:48
+msgid "Aggiungi riga"
+msgstr "Aggiungi riga"
+
+#: modules/categorie/edit.php:48
+msgid "Sottocategoria"
+msgstr "Sottocategoria"
+
+#: modules/categorie/row-list.php:14
+msgid "Modifica sottocategoria"
+msgstr "Modifica sottocategoria"
+
+#: modules/contratti/actions.php:35
+msgid "Aggiunto contratto numero _NUM_!"
+msgstr "Aggiunto contratto numero _NUM_!"
+
+#: modules/contratti/actions.php:114
+msgid "Contratto modificato correttamente!"
+msgstr "Contratto modificato correttamente!"
+
+#: modules/contratti/actions.php:141 modules/ddt/actions.php:166
+#: modules/fatture/actions.php:596 modules/ordini/actions.php:157
+#: modules/preventivi/actions.php:231
+msgid "Articolo aggiunto!"
+msgstr "Articolo aggiunto!"
+
+#: modules/contratti/actions.php:169 modules/ddt/actions.php:431
+#: modules/fatture/actions.php:741 modules/ordini/actions.php:308
+msgid "Riga modificata!"
+msgstr "Riga modificata!"
+
+#: modules/contratti/actions.php:182
+msgid "Riga eliminata!"
+msgstr "Riga eliminata!"
+
+#: modules/contratti/actions.php:200 modules/fatture/actions.php:1046
+#: modules/preventivi/actions.php:190
+msgid "Intervento _NUM_ rimosso!"
+msgstr "Intervento _NUM_ rimosso!"
+
+#: modules/contratti/actions.php:210
+msgid "Contratto eliminato!"
+msgstr "Contratto eliminato!"
+
+#: modules/contratti/actions.php:244
+msgid "Contratto rinnovato!"
+msgstr "Contratto rinnovato!"
+
+#: modules/contratti/actions.php:248
+msgid "Errore durante il rinnovo del contratto!"
+msgstr "Errore durante il rinnovo del contratto!"
+
+#: modules/contratti/add.php:15 modules/contratti/edit.php:43
+#: modules/ddt/add.php:13 modules/ddt/edit.php:59 modules/fatture/add.php:9
+#: modules/fatture/edit.php:62 modules/interventi/add.php:115
+#: modules/interventi/edit.php:45 modules/my_impianti/add.php:19
+#: modules/my_impianti/edit.php:42 modules/ordini/add.php:10
+#: modules/ordini/edit.php:48 modules/preventivi/add.php:14
+#: modules/preventivi/edit.php:32 modules/scadenzario/edit.php:32
+#: templates/interventi/actions.php:16
+msgid "Cliente"
+msgstr "Cliente"
+
+#: modules/contratti/add_riga.php:30 modules/ddt/add_riga.php:19
+#: modules/interventi/add_articolo.php:33 modules/interventi/add_righe.php:24
+#: modules/ordini/add_riga.php:42 modules/preventivi/edit_riga.php:27
+#: modules/utenti/user.php:15 plugins/sedi/edit.php:92
+msgid "Modifica"
+msgstr "Modifica"
+
+#: modules/contratti/add_riga.php:58 modules/contratti/row-list.php:26
+#: modules/contratti/row-list.php:166 modules/ddt/add_articolo.php:61
+#: modules/ddt/add_riga.php:82 modules/ddt/row-list.php:12
+#: modules/fatture/add_articolo.php:69 modules/fatture/add_contratto.php:54
+#: modules/fatture/add_intervento.php:55 modules/fatture/add_preventivo.php:58
+#: modules/fatture/add_riga.php:78 modules/fatture/edit_riga.php:74
+#: modules/fatture/row-list.php:18 modules/fatture/row-list.php:302
+#: modules/ordini/add_articolo.php:62 modules/ordini/add_riga.php:83
+#: modules/ordini/row-list.php:13 modules/ordini/row-list.php:260
+#: modules/preventivi/edit.php:90 modules/preventivi/edit_riga.php:125
+#: modules/preventivi/row-list.php:18 templates/interventi/actions.php:562
+msgid "Iva"
+msgstr "Iva"
+
+#: modules/contratti/add_riga.php:116 modules/contratti/row-list.php:25
+#: modules/ddt/add_articolo.php:73 modules/ddt/add_riga.php:88
+#: modules/ddt/row-list.php:11 modules/fatture/add_articolo.php:94
+#: modules/fatture/add_contratto.php:67 modules/fatture/add_intervento.php:68
+#: modules/fatture/add_preventivo.php:71 modules/fatture/add_riga.php:103
+#: modules/fatture/edit_riga.php:99 modules/fatture/row-list.php:17
+#: modules/interventi/add_articolo.php:115 modules/ordini/add_articolo.php:82
+#: modules/ordini/add_riga.php:103 modules/ordini/row-list.php:12
+#: modules/preventivi/edit_riga.php:131 modules/preventivi/row-list.php:17
+msgid "Costo unitario"
+msgstr "Costo unitario"
+
+#: modules/contratti/add_riga.php:122 modules/ddt/add_articolo.php:79
+#: modules/ddt/add_riga.php:94 modules/fatture/add_articolo.php:100
+#: modules/fatture/add_contratto.php:73 modules/fatture/add_intervento.php:74
+#: modules/fatture/add_preventivo.php:77 modules/fatture/add_riga.php:109
+#: modules/fatture/edit_riga.php:105 modules/interventi/add_articolo.php:121
+#: modules/interventi/add_righe.php:87 modules/ordini/add_articolo.php:88
+#: modules/ordini/add_riga.php:109 modules/preventivi/edit_riga.php:137
+msgid "Sconto unitario"
+msgstr "Sconto unitario"
+
+#: modules/contratti/edit.php:18 modules/ddt/edit.php:22
+#: modules/fatture/edit.php:23
+msgid "Intestazione"
+msgstr "Intestazione"
+
+#: modules/contratti/edit.php:27
+msgid "Rinnova"
+msgstr "Rinnova"
+
+#: modules/contratti/edit.php:31
+msgid "Stampa contratto"
+msgstr "Stampa contratto"
+
+#: modules/contratti/edit.php:39 modules/ddt/plugins/ddt.anagrafiche.php:14
+#: modules/ddt/plugins/ddt.anagrafiche.php:24
+#: modules/gestione_componenti/edit.php:10 modules/partitario/add_conto.php:16
+#: modules/partitario/edit_conto.php:21 modules/preventivi/edit.php:28
+#: modules/scadenzario/edit.php:54
+msgid "Numero"
+msgstr "Numero"
+
+#: modules/contratti/edit.php:47 modules/preventivi/edit.php:36
+msgid "Agente"
+msgstr "Agente"
+
+#: modules/contratti/edit.php:51 modules/interventi/edit.php:57
+#: modules/preventivi/edit.php:40 templates/interventi/actions.php:20
+msgid "Referente"
+msgstr "Referente"
+
+#: modules/contratti/edit.php:61 modules/preventivi/edit.php:54
+msgid "Validità"
+msgstr "Validità"
+
+#: modules/contratti/edit.php:65
+msgid "Rinnovabile"
+msgstr "Rinnovabile"
+
+#: modules/contratti/edit.php:69
+msgid "Preavviso per rinnovo"
+msgstr "Preavviso per rinnovo"
+
+#: modules/contratti/edit.php:75 modules/preventivi/edit.php:65
+msgid "Data bozza"
+msgstr "Data bozza"
+
+#: modules/contratti/edit.php:79 modules/preventivi/edit.php:69
+msgid "Data accettazione"
+msgstr "Data accettazione"
+
+#: modules/contratti/edit.php:83 modules/contratti/edit.php:303
+#: modules/contratti/widgets/contratti_scadenza.dashboard.php:13
+#: modules/preventivi/edit.php:73
+msgid "Data conclusione"
+msgstr "Data conclusione"
+
+#: modules/contratti/edit.php:87 modules/preventivi/edit.php:77
+msgid "Data rifiuto"
+msgstr "Data rifiuto"
+
+#: modules/contratti/edit.php:93 modules/preventivi/edit.php:61
+msgid "Metodo di pagamento"
+msgstr "Metodo di pagamento"
+
+#: modules/contratti/edit.php:101
+msgid "Impianti"
+msgstr "Impianti"
+
+#: modules/contratti/edit.php:108 modules/preventivi/edit.php:106
+msgid "Esclusioni"
+msgstr "Esclusioni"
+
+#: modules/contratti/edit.php:123 modules/tipi_intervento/edit.php:28
+msgid "Costi unitari"
+msgstr "Costi unitari"
+
+#: modules/contratti/edit.php:142 modules/contratti/edit.php:200
+#: modules/preventivi/plugins/preventivi.consuntivo.php:91
+#: modules/tecnici_tariffe/edit.php:30 modules/tipi_intervento/edit.php:34
+#: modules/tipi_intervento/edit.php:57
+msgid "Costo orario"
+msgstr "Costo orario"
+
+#: modules/contratti/edit.php:143 modules/contratti/edit.php:201
+msgid "Costo al km"
+msgstr "Costo al km"
+
+#: modules/contratti/edit.php:144 modules/contratti/edit.php:202
+msgid "Diritto di chiamata"
+msgstr "Diritto di chiamata"
+
+#: modules/contratti/edit.php:146 modules/contratti/edit.php:204
+msgid "Costo orario (tecnico)"
+msgstr "Costo orario (tecnico)"
+
+#: modules/contratti/edit.php:147 modules/contratti/edit.php:205
+msgid "Costo al km (tecnico)"
+msgstr "Costo al km (tecnico)"
+
+#: modules/contratti/edit.php:148 modules/contratti/edit.php:206
+msgid "Diritto di chiamata (tecnico)"
+msgstr "Diritto di chiamata (tecnico)"
+
+#: modules/contratti/edit.php:188
+msgid "Mostra tipi di attività non utilizzate"
+msgstr "Mostra tipi di attività non utilizzate"
+
+#: modules/contratti/edit.php:254 modules/ddt/edit.php:133
+msgid "Righe"
+msgstr "Righe"
+
+#: modules/contratti/edit.php:261
+msgid "Riga"
+msgstr "Riga"
+
+#: modules/contratti/edit.php:288
+msgid "Rinnovi precedenti"
+msgstr "Rinnovi precedenti"
+
+#: modules/contratti/edit.php:302
+#: modules/contratti/widgets/contratti_scadenza.dashboard.php:12
+msgid "Data inizio"
+msgstr "Data inizio"
+
+#: modules/contratti/edit.php:312
+msgid "Contratto n<sup>o</sup> _NUM_"
+msgstr "Contratto n<sup>o</sup> _NUM_"
+
+#: modules/contratti/plugins/addfattura.php:30
+msgid "Tipo di fattura"
+msgstr "Tipo di fattura"
+
+#: modules/contratti/plugins/contratti.consuntivo.php:78
+msgid "Intervento <b>_NUM_</b> del <b>_DATE_</b>"
+msgstr "Intervento <b>_NUM_</b> del <b>_DATE_</b>"
+
+#: modules/contratti/plugins/contratti.consuntivo.php:100
+#: modules/dashboard/ajaxreq.php:33 modules/dashboard/ajaxreq.php:119
+#: modules/dashboard/edit.php:218 modules/interventi/add.php:198
+msgid "Tecnici"
+msgstr "Tecnici"
+
+#: modules/contratti/plugins/contratti.consuntivo.php:101
+msgid "Subtotale contratto"
+msgstr "Subtotale contratto"
+
+#: modules/contratti/plugins/contratti.consuntivo.php:151
+msgid "Articoli utilizzati"
+msgstr "Articoli utilizzati"
+
+#: modules/contratti/plugins/contratti.consuntivo.php:158
+#: modules/contratti/plugins/contratti.consuntivo.php:228
+msgid "Prezzo unitario"
+msgstr "Prezzo unitario"
+
+#: modules/contratti/plugins/contratti.consuntivo.php:159
+#: modules/contratti/plugins/contratti.consuntivo.php:229
+msgid "Subtot"
+msgstr "Subtot"
+
+#: modules/contratti/plugins/contratti.consuntivo.php:173
+#: modules/ddt/creafattura.php:83 modules/fatture/row-list.php:107
+#: modules/interventi/ajax_articoli.php:76
+#: modules/preventivi/plugins/preventivi.consuntivo.php:144
+msgid "Lotto"
+msgstr "Lotto"
+
+#: modules/contratti/plugins/contratti.consuntivo.php:176
+#: modules/ddt/creafattura.php:86 modules/ddt/row-list.php:65
+#: modules/fatture/row-list.php:102 modules/fatture/row-list.php:111
+#: modules/interventi/ajax_articoli.php:71
+#: modules/interventi/ajax_articoli.php:80 modules/ordini/row-list.php:65
+msgid "SN"
+msgstr "SN"
+
+#: modules/contratti/plugins/contratti.consuntivo.php:221
+#: templates/interventi/actions.php:185
+msgid "Spese aggiuntive"
+msgstr "Spese aggiuntive"
+
+#: modules/contratti/plugins/contratti.consuntivo.php:281
+#: modules/preventivi/plugins/preventivi.consuntivo.php:249
+msgid "Totale interventi per stato"
+msgstr "Totale interventi per stato"
+
+#: modules/contratti/plugins/contratti.consuntivo.php:341
+msgid "Stampa consuntivo"
+msgstr "Stampa consuntivo"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:9
+#: modules/contratti/plugins/contratti.ordiniservizio.php:9
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:6
+#: modules/contratti/widgets/contratti.pianificazionedashboard.php:6
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:6
+msgid "Gennaio"
+msgstr "Gennaio"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:10
+#: modules/contratti/plugins/contratti.ordiniservizio.php:10
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:7
+#: modules/contratti/widgets/contratti.pianificazionedashboard.php:7
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:7
+msgid "Febbraio"
+msgstr "Febbraio"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:11
+#: modules/contratti/plugins/contratti.ordiniservizio.php:11
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:8
+#: modules/contratti/widgets/contratti.pianificazionedashboard.php:8
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:8
+msgid "Marzo"
+msgstr "Marzo"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:12
+#: modules/contratti/plugins/contratti.ordiniservizio.php:12
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:9
+#: modules/contratti/widgets/contratti.pianificazionedashboard.php:9
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:9
+msgid "Aprile"
+msgstr "Aprile"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:13
+#: modules/contratti/plugins/contratti.ordiniservizio.php:13
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:10
+#: modules/contratti/widgets/contratti.pianificazionedashboard.php:10
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:10
+msgid "Maggio"
+msgstr "Maggio"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:14
+#: modules/contratti/plugins/contratti.ordiniservizio.php:14
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:11
+#: modules/contratti/widgets/contratti.pianificazionedashboard.php:11
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:11
+msgid "Giugno"
+msgstr "Giugno"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:15
+#: modules/contratti/plugins/contratti.ordiniservizio.php:15
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:12
+#: modules/contratti/widgets/contratti.pianificazionedashboard.php:12
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:12
+msgid "Luglio"
+msgstr "Luglio"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:16
+#: modules/contratti/plugins/contratti.ordiniservizio.php:16
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:13
+#: modules/contratti/widgets/contratti.pianificazionedashboard.php:13
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:13
+msgid "Agosto"
+msgstr "Agosto"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:17
+#: modules/contratti/plugins/contratti.ordiniservizio.php:17
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:14
+#: modules/contratti/widgets/contratti.pianificazionedashboard.php:14
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:14
+msgid "Settembre"
+msgstr "Settembre"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:18
+#: modules/contratti/plugins/contratti.ordiniservizio.php:18
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:15
+#: modules/contratti/widgets/contratti.pianificazionedashboard.php:15
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:15
+msgid "Ottobre"
+msgstr "Ottobre"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:19
+#: modules/contratti/plugins/contratti.ordiniservizio.php:19
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:16
+#: modules/contratti/widgets/contratti.pianificazionedashboard.php:16
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:16
+msgid "Novembre"
+msgstr "Novembre"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:20
+#: modules/contratti/plugins/contratti.ordiniservizio.php:20
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:17
+#: modules/contratti/widgets/contratti.pianificazionedashboard.php:17
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:17
+msgid "Dicembre"
+msgstr "Dicembre"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:49
+msgid "Pianificazione generata correttamente!"
+msgstr "Pianificazione generata correttamente!"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:61
+msgid "Pianificazione eliminata correttamente!"
+msgstr "Pianificazione eliminata correttamente!"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:133
+msgid "Pianificazione fatturazione"
+msgstr "Pianificazione fatturazione"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:138
+msgid "Qui puoi programmare la fatturazione del contratto"
+msgstr "Qui puoi programmare la fatturazione del contratto"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:147
+msgid "Non sono ancora state pianificate fatture"
+msgstr "Non sono ancora state pianificate fatture"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:163
+#: modules/pagamenti/edit.php:60 modules/pagamenti/edit.php:135
+msgid "Scadenza"
+msgstr "Scadenza"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:165
+#: modules/scadenzario/edit.php:73
+msgid "Importo"
+msgstr "Importo"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:166
+#: modules/scadenzario/edit.php:49
+msgid "Documento"
+msgstr "Documento"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:208
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:101
+msgid "1 sede"
+msgstr "1 sede"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:210
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:103
+msgid "_NUM_ sedi"
+msgstr "_NUM_ sedi"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:244
+msgid "Fattura n<sup>o</sup> _NUM_ del _DATE_"
+msgstr "Fattura n<sup>o</sup> _NUM_ del _DATE_"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:249
+msgid "Non ancora fatturato"
+msgstr "Non ancora fatturato"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:267
+msgid "Crea fattura"
+msgstr "Crea fattura"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:272
+#: modules/contratti/plugins/contratti.ordiniservizio.php:227
+msgid "Vuoi eliminare questa pianificazione?"
+msgstr "Vuoi eliminare questa pianificazione?"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:296
+#: modules/contratti/plugins/contratti.ordiniservizio.php:93
+msgid "Non sono ancora stati pianificati ordini di servizio"
+msgstr "Non sono ancora stati pianificati ordini di servizio"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:308
+msgid "Pianifica la fatturazione"
+msgstr "Pianifica la fatturazione"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:320
+msgid "Zone di cui pianificare la fatturazione"
+msgstr "Zone di cui pianificare la fatturazione"
+
+#: modules/contratti/plugins/contratti.fatturaordiniservizio.php:354
+msgid "Pianifica ora"
+msgstr "Pianifica ora"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:24
+msgid "Voci di servizio salvate correttamente!"
+msgstr "Voci di servizio salvate correttamente!"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:26
+msgid "Errore durante il salvataggio delle voci di servizio!"
+msgstr "Errore durante il salvataggio delle voci di servizio!"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:45
+msgid "Nessun collegamento a ordini di servizio"
+msgstr "Nessun collegamento a ordini di servizio"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:48
+msgid "Ordine di servizio numero _NUM_ (termine massimo _DATE_)"
+msgstr "Ordine di servizio numero _NUM_ (termine massimo _DATE_)"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:58
+msgid "Voce di servizio"
+msgstr "Voce di servizio"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:59
+msgid "Presenza"
+msgstr "Presenza"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:60
+#: modules/contratti/plugins/contratti.ordiniservizio.php:160
+msgid "Eseguito"
+msgstr "Eseguito"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:61
+msgid "Esito"
+msgstr "Esito"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:62
+msgid "Priorità"
+msgstr "Priorità"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:101
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:127
+msgid "Sì"
+msgstr "Sì"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:102
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:128
+msgid "No"
+msgstr "No"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:153
+msgid "Pos."
+msgstr "Pos."
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:154
+msgid "Neg."
+msgstr "Neg."
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:190
+msgid "M"
+msgstr "M"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:191
+msgid "B"
+msgstr "B"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:213
+msgid "Consegnata copia in centrale"
+msgstr "Consegnata copia in centrale"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:216
+msgid "Consegnata copia al cliente"
+msgstr "Consegnata copia al cliente"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:219
+msgid "Consegnata copia all'amministratore"
+msgstr "Consegnata copia all'amministratore"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:227
+msgid "L'impianto può funzionare in sicurezza"
+msgstr "L'impianto può funzionare in sicurezza"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.interventi.php:247
+msgid "Stampa ordine di servizio"
+msgstr "Stampa ordine di servizio"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:48
+msgid "Ordini di servizio generati correttamente!"
+msgstr "Ordini di servizio generati correttamente!"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:63
+msgid "Ordine di servizio eliminato correttamente!"
+msgstr "Ordine di servizio eliminato correttamente!"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:69
+msgid "Ordine di servizio già chiuso, impossibile eliminarlo!"
+msgstr "Ordine di servizio già chiuso, impossibile eliminarlo!"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:76
+msgid "Pianificazione ordini di servizio"
+msgstr "Pianificazione ordini di servizio"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:81
+msgid "Qui puoi programmare gli ordini di servizio del contratto"
+msgstr "Qui puoi programmare gli ordini di servizio del contratto"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:98
+msgid "Entro"
+msgstr "Entro"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:100
+#: modules/contratti/plugins/contratti.ordiniservizio.php:279
+#: modules/contratti/widgets/contratti.pianificazionedashboard.php:52
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:74
+#: modules/interventi/add.php:138
+msgid "Impianto"
+msgstr "Impianto"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:101
+#: modules/contratti/plugins/contratti.ordiniservizio.php:159
+msgid "Voci di servizio"
+msgstr "Voci di servizio"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:154
+msgid "Non sono state pianificate voci di servizio"
+msgstr "Non sono state pianificate voci di servizio"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:183
+msgid "non ancora eseguito"
+msgstr "non ancora eseguito"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:191
+msgid "Intervento n<sup>o</sup> _NUM_ del _DATE_"
+msgstr "Intervento n<sup>o</sup> _NUM_ del _DATE_"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:214
+msgid "aperto"
+msgstr "aperto"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:217
+msgid "chiuso"
+msgstr "chiuso"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:253
+msgid "Non sono ancora state inserite voci di servizio"
+msgstr "Non sono ancora state inserite voci di servizio"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:254
+msgid "Inizia ora"
+msgstr "Inizia ora"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:269
+msgid "Pianifica nuovi ordini di servizio"
+msgstr "Pianifica nuovi ordini di servizio"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:285
+msgid "Voci di servizio da pianificare"
+msgstr "Voci di servizio da pianificare"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:334
+msgid "Copiare la pianificazione da un altro impianto"
+msgstr "Copiare la pianificazione da un altro impianto"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:343
+msgid "Carica questa pianificazione"
+msgstr "Carica questa pianificazione"
+
+#: modules/contratti/plugins/contratti.ordiniservizio.php:352
+msgid ""
+"Le date di accettazione e conclusione del contratto non sono ancora state "
+"impostate"
+msgstr ""
+"Le date di accettazione e conclusione del contratto non sono ancora state "
+"impostate"
+
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:17
+msgid "Intervento pianificato!"
+msgstr "Intervento pianificato!"
+
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:19
+msgid "Errore durante l'aggiunta dell'intervento!"
+msgstr "Errore durante l'aggiunta dell'intervento!"
+
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:29
+msgid "Pianificazione eliminata!"
+msgstr "Pianificazione eliminata!"
+
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:43
+msgid "Pianificazione interventi"
+msgstr "Pianificazione interventi"
+
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:46
+msgid ""
+"Puoi <b>pianificare dei \"promemoria\"</b> degli interventi da effettuare "
+"entro determinate scadenze"
+msgstr ""
+"Puoi <b>pianificare dei \"promemoria\"</b> degli interventi da effettuare "
+"entro determinate scadenze"
+
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:47
+msgid ""
+"Questi promemoria serviranno per semplificare la pianificazione del giorno "
+"esatto di intervento nel caso, ad esempio, di interventi mensili e verranno "
+"visualizzati nella dashboard"
+msgstr ""
+"Questi promemoria serviranno per semplificare la pianificazione del giorno "
+"esatto di intervento nel caso, ad esempio, di interventi mensili e verranno "
+"visualizzati nella dashboard"
+
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:54
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:122
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:131
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:49
+#: modules/contratti/widgets/contratti.pianificazionedashboard.php:49
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:71
+msgid "Entro il"
+msgstr "Entro il"
+
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:55
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:123
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:134
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:50
+#: modules/dashboard/ajaxreq.php:117 modules/interventi/add.php:179
+msgid "Tipo intervento"
+msgstr "Tipo intervento"
+
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:57
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:52
+msgid "Intervento collegato"
+msgstr "Intervento collegato"
+
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:70
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:84
+#: modules/contratti/widgets/contratti.pianificazionedashboard.php:73
+msgid "Sede legale"
+msgstr "Sede legale"
+
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:81
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:72
+#: modules/interventi/plugins/my_impianti.interventi.php:27
+msgid "Intervento _NUM_ del _DATE_"
+msgstr "Intervento _NUM_ del _DATE_"
+
+#: modules/contratti/plugins/contratti.pianificazioneinterventi.php:114
+msgid "Pianifica promemoria per un nuovo intervento"
+msgstr "Pianifica promemoria per un nuovo intervento"
+
+#: modules/contratti/row-list.php:24 modules/ddt/row-list.php:10
+#: modules/fatture/row-list.php:16 modules/ordini/row-list.php:11
+#: modules/preventivi/row-list.php:16
+msgid "U.m."
+msgstr "U.m."
+
+#: modules/contratti/row-list.php:27 modules/contratti/row-list.php:118
+#: modules/contratti/row-list.php:153 modules/ddt/row-list.php:13
+#: modules/ddt/row-list.php:218 modules/fatture/row-list.php:19
+#: modules/fatture/row-list.php:249 modules/ordini/row-list.php:14
+#: modules/ordini/row-list.php:205 modules/preventivi/row-list.php:19
+#: modules/preventivi/row-list.php:129 modules/preventivi/row-list.php:164
+#: templates/interventi/actions.php:509
+msgid "Imponibile"
+msgstr "Imponibile"
+
+#: modules/contratti/row-list.php:129 modules/ddt/row-list.php:233
+#: modules/fatture/row-list.php:262 modules/ordini/row-list.php:218
+#: modules/preventivi/row-list.php:140 templates/interventi/actions.php:90
+#: templates/interventi/actions.php:207 templates/interventi/actions.php:319
+msgid "Sconto"
+msgstr "Sconto"
+
+#: modules/contratti/row-list.php:141 modules/ddt/row-list.php:247
+#: modules/fatture/row-list.php:274 modules/ordini/row-list.php:230
+#: modules/preventivi/row-list.php:152 templates/interventi/actions.php:541
+msgid "Imponibile scontato"
+msgstr "Imponibile scontato"
+
+#: modules/contratti/widgets/contratti.pianificazionedashboard.interventi.php:115
+msgid "Non ci sono interventi da pianificare"
+msgstr "Non ci sono interventi da pianificare"
+
+#: modules/contratti/widgets/contratti.pianificazionedashboard.php:109
+msgid "Non ci sono ordini di servizio da pianificare"
+msgstr "Non ci sono ordini di servizio da pianificare"
+
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:21
+msgid "Fatture da emettere"
+msgstr "Fatture da emettere"
+
+#: modules/contratti/widgets/contratti.ratecontrattuali.php:143
+msgid "Non ci sono fatture da emettere"
+msgstr "Non ci sono fatture da emettere"
+
+#: modules/contratti/widgets/contratti_scadenza.dashboard.php:11
+#: modules/fatture/add_contratto.php:35 modules/interventi/add.php:134
+#: modules/interventi/edit.php:93
+msgid "Contratto"
+msgstr "Contratto"
+
+#: modules/contratti/widgets/contratti_scadenza.dashboard.php:14
+msgid "Rinnovo"
+msgstr "Rinnovo"
+
+#: modules/contratti/widgets/contratti_scadenza.dashboard.php:25
+msgid "scade fra _DAYS_ giorni"
+msgstr "scade fra _DAYS_ giorni"
+
+#: modules/contratti/widgets/contratti_scadenza.dashboard.php:25
+msgid "scaduto da _DAYS_ giorni"
+msgstr "scaduto da _DAYS_ giorni"
+
+#: modules/contratti/widgets/contratti_scadenza.dashboard.php:43
+msgid "Non ci sono contratti in scadenza"
+msgstr "Non ci sono contratti in scadenza"
+
+#: modules/dashboard/ajaxreq.php:71
+msgid "Attività completata, non è possibile modificarla!"
+msgstr "Attività completata, non è possibile modificarla!"
+
+#: modules/dashboard/ajaxreq.php:96
+msgid "Numero intervento"
+msgstr "Numero intervento"
+
+#: modules/dashboard/ajaxreq.php:115 modules/interventi/add.php:164
+#: modules/interventi/edit.php:122
+#: modules/my_impianti/plugins/my_impianti.componenti.php:212
+msgid "Data richiesta"
+msgstr "Data richiesta"
+
+#: modules/dashboard/ajaxreq.php:122 modules/interventi/add.php:202
+#: modules/interventi/edit.php:146 templates/interventi/actions.php:36
+msgid "Richiesta"
+msgstr "Richiesta"
+
+#: modules/dashboard/edit.php:87
+msgid "Stati intervento"
+msgstr "Stati intervento"
+
+#: modules/dashboard/edit.php:92 modules/dashboard/edit.php:143
+#: modules/dashboard/edit.php:223 modules/dashboard/edit.php:273
+msgid "Tutti"
+msgstr "Tutti"
+
+#: modules/dashboard/edit.php:138
+msgid "Tipi intervento"
+msgstr "Tipi intervento"
+
+#: modules/dashboard/edit.php:268
+msgid "Zone"
+msgstr "Zone"
+
+#: modules/dashboard/edit.php:299
+msgid "Interventi da pianificare"
+msgstr "Interventi da pianificare"
+
+#: modules/dashboard/edit.php:464
+msgid "Pianifica intervento"
+msgstr "Pianifica intervento"
+
+#: modules/dashboard/edit.php:480
+msgid "Aggiungi intervento"
+msgstr "Aggiungi intervento"
+
+#: modules/dashboard/edit.php:492
+msgid "Errore durante la creazione degli eventi"
+msgstr "Errore durante la creazione degli eventi"
+
+#: modules/ddt/actions.php:44
+msgid "Aggiunto DDT in _TYPE_ numero _NUM_!"
+msgstr "Aggiunto DDT in _TYPE_ numero _NUM_!"
+
+#: modules/ddt/actions.php:135
+msgid "Ddt modificato correttamente!"
+msgstr "Ddt modificato correttamente!"
+
+#: modules/ddt/actions.php:205 modules/fatture/actions.php:643
+#: modules/ordini/actions.php:187
+msgid "Riga aggiunta!"
+msgstr "Riga aggiunta!"
+
+#: modules/ddt/actions.php:285
+msgid "Creato un nuovo ddt!"
+msgstr "Creato un nuovo ddt!"
+
+#: modules/ddt/actions.php:297 modules/ddt/actions.php:397
+#: modules/ddt/actions.php:448 modules/fatture/actions.php:169
+#: modules/fatture/actions.php:719 modules/fatture/actions.php:1059
+#: modules/ordini/actions.php:291 modules/ordini/actions.php:325
+msgid "Alcuni serial number sono già stati utilizzati!"
+msgstr "Alcuni serial number sono già stati utilizzati!"
+
+#: modules/ddt/actions.php:309 modules/fatture/actions.php:1072
+#: modules/ordini/actions.php:215
+msgid "Articolo rimosso!"
+msgstr "Articolo rimosso!"
+
+#: modules/ddt/actions.php:336 modules/fatture/actions.php:1207
+#: modules/ordini/actions.php:236 modules/preventivi/actions.php:178
+msgid "Riga rimossa!"
+msgstr "Riga rimossa!"
+
+#: modules/ddt/actions.php:475
+msgid "Ddt eliminato!"
+msgstr "Ddt eliminato!"
+
+#: modules/ddt/add.php:20 modules/ddt/edit.php:64 modules/fatture/add.php:12
+#: modules/fatture/edit.php:67 modules/ordini/add.php:15
+#: modules/ordini/edit.php:54 modules/scadenzario/edit.php:42
+msgid "Fornitore"
+msgstr "Fornitore"
+
+#: modules/ddt/add.php:38
+msgid "Tipo ddt"
+msgstr "Tipo ddt"
+
+#: modules/ddt/add_articolo.php:25 modules/ddt/add_riga.php:44
+#: modules/ddt/creafattura.php:28
+msgid "Ddt numero _NUM_"
+msgstr "Ddt numero _NUM_"
+
+#: modules/ddt/add_articolo.php:88 modules/fatture/add_articolo.php:109
+#: modules/interventi/add_articolo.php:130 modules/ordini/add_articolo.php:97
+msgid "Visualizza ultimi prezzi (cliente)"
+msgstr "Visualizza ultimi prezzi (cliente)"
+
+#: modules/ddt/add_articolo.php:95 modules/fatture/add_articolo.php:116
+#: modules/interventi/add_articolo.php:137 modules/ordini/add_articolo.php:104
+msgid "Visualizza ultimi prezzi (acquisto)"
+msgstr "Visualizza ultimi prezzi (acquisto)"
+
+#: modules/ddt/add_articolo.php:102 modules/fatture/add_articolo.php:123
+#: modules/interventi/add_articolo.php:144 modules/ordini/add_articolo.php:111
+msgid "Visualizza ultimi prezzi (vendita)"
+msgstr "Visualizza ultimi prezzi (vendita)"
+
+#: modules/ddt/add_serial.php:45 modules/fatture/add_serial.php:45
+#: modules/ordini/add_serial.php:45
+msgid "Inserisci i numeri seriali degli articoli aggiunti:"
+msgstr "Inserisci i numeri seriali degli articoli aggiunti:"
+
+#: modules/ddt/add_serial.php:80 modules/fatture/add_serial.php:80
+#: modules/ordini/add_serial.php:80
+msgid "Visualizza vendita"
+msgstr "Visualizza vendita"
+
+#: modules/ddt/add_serial.php:102 modules/fatture/add_serial.php:102
+#: modules/interventi/add_serial.php:41 modules/ordini/add_serial.php:102
+msgid "Aggiorna"
+msgstr "Aggiorna"
+
+#: modules/ddt/creafattura.php:36
+msgid ""
+"Seleziona le righe che vuoi inserire nella fattura e la relativa quantità"
+msgstr ""
+"Seleziona le righe che vuoi inserire nella fattura e la relativa quantità"
+
+#: modules/ddt/creafattura.php:52
+msgid "Data fattura"
+msgstr "Data fattura"
+
+#: modules/ddt/creafattura.php:64 modules/fatture/add_ddt_righe.php:46
+msgid "Q.tà da evadere"
+msgstr "Q.tà da evadere"
+
+#: modules/ddt/creafattura.php:65 modules/fatture/add_ddt_righe.php:47
+msgid "Subtot."
+msgstr "Subtot."
+
+#: modules/ddt/creafattura.php:66 modules/fatture/add_ddt_righe.php:48
+msgid "Da evadere"
+msgstr "Da evadere"
+
+#: modules/ddt/creafattura.php:153
+msgid "Crea fattura di vendita"
+msgstr "Crea fattura di vendita"
+
+#: modules/ddt/creafattura.php:153
+msgid "Crea fattura di acquisto"
+msgstr "Crea fattura di acquisto"
+
+#: modules/ddt/creafattura.php:162 modules/fatture/add_ddt_righe.php:141
+msgid "Non ci sono articoli da evadere in questo ddt"
+msgstr "Non ci sono articoli da evadere in questo ddt"
+
+#: modules/ddt/edit.php:36
+msgid "Numero ddt"
+msgstr "Numero ddt"
+
+#: modules/ddt/edit.php:42 modules/fatture/edit.php:44
+#: modules/ordini/edit.php:30
+msgid "Numero secondario"
+msgstr "Numero secondario"
+
+#: modules/ddt/edit.php:72
+msgid "Destinazione merce"
+msgstr "Destinazione merce"
+
+#: modules/ddt/edit.php:80 modules/fatture/edit.php:133
+msgid "Aspetto beni"
+msgstr "Aspetto beni"
+
+#: modules/ddt/edit.php:84 modules/fatture/edit.php:137
+msgid "Causale trasporto"
+msgstr "Causale trasporto"
+
+#: modules/ddt/edit.php:88 modules/fatture/edit.php:141
+msgid "Porto"
+msgstr "Porto"
+
+#: modules/ddt/edit.php:92 modules/fatture/edit.php:145
+msgid "N<sup>o</sup> colli"
+msgstr "N<sup>o</sup> colli"
+
+#: modules/ddt/edit.php:98 modules/fatture/edit.php:122
+#: modules/ordini/edit.php:61
+msgid "Pagamento"
+msgstr "Pagamento"
+
+#: modules/ddt/edit.php:102
+msgid "Tipo di spedizione"
+msgstr "Tipo di spedizione"
+
+#: modules/ddt/edit.php:106
+msgid "Vettore"
+msgstr "Vettore"
+
+#: modules/ddt/edit.php:112 modules/fatture/edit.php:195
+#: modules/interventi/ajax_costi.php:76 modules/ordini/edit.php:67
+#: modules/preventivi/edit.php:100
+msgid "Sconto totale"
+msgstr "Sconto totale"
+
+#: modules/ddt/edit.php:146
+msgid "Riga generica"
+msgstr "Riga generica"
+
+#: modules/ddt/edit.php:161
+msgid "Crea fattura da ddt"
+msgstr "Crea fattura da ddt"
+
+#: modules/ddt/edit.php:168
+msgid "Stampa ddt"
+msgstr "Stampa ddt"
+
+#: modules/ddt/plugins/ddt.anagrafiche.php:17
+#: modules/ddt/plugins/ddt.anagrafiche.php:27
+msgid "Qtà"
+msgstr "Qtà"
+
+#: modules/ddt/plugins/ddt.anagrafiche.php:97
+msgid "Nessun ddt di vendita per questa anagrafica"
+msgstr "Nessun ddt di vendita per questa anagrafica"
+
+#: modules/ddt/row-list.php:61 modules/fatture/row-list.php:98
+#: modules/interventi/ajax_articoli.php:67 modules/ordini/row-list.php:61
+msgid "_NUM_ serial mancanti"
+msgstr "_NUM_ serial mancanti"
+
+#: modules/ddt/row-list.php:96 modules/ordini/row-list.php:90
+msgid "Q.tà iniziale"
+msgstr "Q.tà iniziale"
+
+#: modules/ddt/row-list.php:263 modules/fatture/add_riga.php:49
+#: modules/fatture/edit_riga.php:54 modules/fatture/row-list.php:288
+#: modules/ordini/row-list.php:246
+msgid "Rivalsa INPS"
+msgstr "Rivalsa INPS"
+
+#: modules/ddt/row-list.php:278 modules/preventivi/row-list.php:177
+msgid "IVA"
+msgstr "IVA"
+
+#: modules/ddt/row-list.php:308 modules/fatture/edit.php:156
+#: modules/fatture/row-list.php:328 modules/ordini/row-list.php:286
+msgid "Marca da bollo"
+msgstr "Marca da bollo"
+
+#: modules/ddt/row-list.php:324 modules/fatture/add_riga.php:57
+#: modules/fatture/edit_riga.php:62 modules/fatture/row-list.php:342
+#: modules/ordini/row-list.php:300
+msgid "Ritenuta d'acconto"
+msgstr "Ritenuta d'acconto"
+
+#: modules/ddt/row-list.php:340 modules/fatture/row-list.php:358
+#: modules/ordini/row-list.php:314
+msgid "Netto a pagare"
+msgstr "Netto a pagare"
+
+#: modules/fatture/actions.php:49
+msgid "Aggiunta fattura numero _NUM_!"
+msgstr "Aggiunta fattura numero _NUM_!"
+
+#: modules/fatture/actions.php:159
+msgid "Fattura modificata correttamente!"
+msgstr "Fattura modificata correttamente!"
+
+#: modules/fatture/actions.php:210
+msgid "Fattura eliminata!"
+msgstr "Fattura eliminata!"
+
+#: modules/fatture/actions.php:252
+msgid "Fattura duplicata correttamente!"
+msgstr "Fattura duplicata correttamente!"
+
+#: modules/fatture/actions.php:265
+msgid "Fattura riaperta!"
+msgstr "Fattura riaperta!"
+
+#: modules/fatture/actions.php:398 modules/preventivi/actions.php:159
+msgid "Intervento _NUM_ aggiunto!"
+msgstr "Intervento _NUM_ aggiunto!"
+
+#: modules/fatture/actions.php:400
+msgid "Errore durante l'inserimento dell'intervento _NUM_ in fattura!"
+msgstr "Errore durante l'inserimento dell'intervento _NUM_ in fattura!"
+
+#: modules/fatture/actions.php:491
+msgid "Preventivo _NUM_ aggiunto!"
+msgstr "Preventivo _NUM_ aggiunto!"
+
+#: modules/fatture/actions.php:553
+msgid "Contratto _NUM_ aggiunto!"
+msgstr "Contratto _NUM_ aggiunto!"
+
+#: modules/fatture/actions.php:844 modules/fatture/actions.php:935
+msgid "Creata una nuova fattura!"
+msgstr "Creata una nuova fattura!"
+
+#: modules/fatture/actions.php:1004
+msgid "Aggiunti nuovi articoli in fattura!"
+msgstr "Aggiunti nuovi articoli in fattura!"
+
+#: modules/fatture/actions.php:1123
+msgid "Preventivo rimosso!"
+msgstr "Preventivo rimosso!"
+
+#: modules/fatture/actions.php:1173
+msgid "Contratto rimosso!"
+msgstr "Contratto rimosso!"
+
+#: modules/fatture/add.php:31 modules/fatture/edit.php:107
+msgid "Tipo fattura"
+msgstr "Tipo fattura"
+
+#: modules/fatture/add_articolo.php:33 modules/fatture/add_contratto.php:24
+#: modules/fatture/add_intervento.php:25 modules/fatture/add_preventivo.php:24
+#: modules/fatture/add_riga.php:26 modules/fatture/edit_riga.php:30
+msgid "Documento numero _NUM_"
+msgstr "Documento numero _NUM_"
+
+#: modules/fatture/add_articolo.php:74 modules/fatture/add_contratto.php:59
+#: modules/fatture/add_intervento.php:60 modules/fatture/add_preventivo.php:63
+#: modules/fatture/add_riga.php:83 modules/fatture/edit.php:118
+#: modules/fatture/edit_riga.php:79 modules/primanota/add.php:127
+#: modules/primanota/edit.php:74
+msgid "Conto"
+msgstr "Conto"
+
+#: modules/fatture/add_ddt.php:22
+msgid "DDT"
+msgstr "DDT"
+
+#: modules/fatture/add_ddt_righe.php:40
+msgid "Seleziona le righe che vuoi inserire nella fattura e la quantità"
+msgstr "Seleziona le righe che vuoi inserire nella fattura e la quantità"
+
+#: modules/fatture/add_preventivo.php:35 modules/interventi/add.php:130
+#: modules/interventi/edit.php:73
+msgid "Preventivo"
+msgstr "Preventivo"
+
+#: modules/fatture/add_preventivo.php:39
+msgid "Importa righe"
+msgstr "Importa righe"
+
+#: modules/fatture/add_preventivo.php:39
+msgid "Importa tutte le righe del preventivo"
+msgstr "Importa tutte le righe del preventivo"
+
+#: modules/fatture/edit.php:28
+msgid "Duplica fattura"
+msgstr "Duplica fattura"
+
+#: modules/fatture/edit.php:39
+msgid "Numero fattura"
+msgstr "Numero fattura"
+
+#: modules/fatture/edit.php:48
+msgid "Data emissione"
+msgstr "Data emissione"
+
+#: modules/fatture/edit.php:75
+msgid "Riferimento sede cliente"
+msgstr "Riferimento sede cliente"
+
+#: modules/fatture/edit.php:81
+msgid "Agente di riferimento"
+msgstr "Agente di riferimento"
+
+#: modules/fatture/edit.php:92
+msgid "Scadenze"
+msgstr "Scadenze"
+
+#: modules/fatture/edit.php:207
+msgid "Note aggiuntive"
+msgstr "Note aggiuntive"
+
+#: modules/fatture/edit.php:268
+msgid "Nessun Intervento"
+msgstr "Nessun Intervento"
+
+#: modules/fatture/edit.php:280
+msgid "Nessun Preventivo"
+msgstr "Nessun Preventivo"
+
+#: modules/fatture/edit.php:292
+msgid "Nessun Contratto"
+msgstr "Nessun Contratto"
+
+#: modules/fatture/edit.php:342
+msgid "Vai alla scheda anagrafica <i class=\"fa fa-chevron-right\"></i>"
+msgstr "Vai alla scheda anagrafica <i class=\"fa fa-chevron-right\"></i>"
+
+#: modules/fatture/row-list.php:124
+msgid "Rif. ordine _NUM_ del _DATE_"
+msgstr "Rif. ordine _NUM_ del _DATE_"
+
+#: modules/fatture/row-list.php:129
+msgid "Rif. ddt _NUM_ del _DATE_"
+msgstr "Rif. ddt _NUM_ del _DATE_"
+
+#: modules/fatture/row-list.php:133
+msgid "Rif. preventivo _NUM_ del _DATE_"
+msgstr "Rif. preventivo _NUM_ del _DATE_"
+
+#: modules/gestione_componenti/actions.php:13
+msgid "Impossibile modificare il file!"
+msgstr "Impossibile modificare il file!"
+
+#: modules/gestione_componenti/actions.php:34
+msgid ""
+"Il file componente _FILE_ esiste già, nessun nuovo componente è stato creato!"
+msgstr ""
+"Il file componente _FILE_ esiste già, nessun nuovo componente è stato creato!"
+
+#: modules/gestione_componenti/actions.php:36
+#: modules/interventi/actions.php:545
+msgid "Impossibile creare il file!"
+msgstr "Impossibile creare il file!"
+
+#: modules/gestione_componenti/actions.php:38
+msgid "Componente _FILE_ aggiunto correttamente!"
+msgstr "Componente _FILE_ aggiunto correttamente!"
+
+#: modules/gestione_componenti/actions.php:48
+msgid "File _FILE_ rimosso correttamente!"
+msgstr "File _FILE_ rimosso correttamente!"
+
+#: modules/gestione_componenti/add.php:11
+#: modules/gestione_componenti/edit.php:47
+msgid "Nome file"
+msgstr "Nome file"
+
+#: modules/gestione_componenti/add.php:17
+#: modules/gestione_componenti/edit.php:54
+msgid "Contenuto"
+msgstr "Contenuto"
+
+#: modules/gestione_componenti/edit.php:35
+msgid "Componente"
+msgstr "Componente"
+
+#: modules/impostazioni/actions.php:14
+msgid "Il valore inserito del parametro _NAME_ deve essere un numero intero!"
+msgstr "Il valore inserito del parametro _NAME_ deve essere un numero intero!"
+
+#: modules/impostazioni/actions.php:30
+msgid ""
+"Il valore inserito del parametro _NAME_ deve essere un compreso tra i valori "
+"previsti!"
+msgstr ""
+"Il valore inserito del parametro _NAME_ deve essere un compreso tra i valori "
+"previsti!"
+
+#: modules/impostazioni/actions.php:45
+msgid "Impostazioni aggiornate correttamente!"
+msgstr "Impostazioni aggiornate correttamente!"
+
+#: modules/impostazioni/edit.php:13
+msgid "Valori della sezione"
+msgstr "Valori della sezione"
+
+#: modules/impostazioni/edit.php:48
+msgid "Attivo"
+msgstr "Attivo"
+
+#: modules/interventi/actions.php:196
+msgid "Numero intervento _NUM_ saltato perchè già esistente!"
+msgstr "Numero intervento _NUM_ saltato perchè già esistente!"
+
+#: modules/interventi/actions.php:197
+msgid "Nuovo numero intervento calcolato _NUM_"
+msgstr "Nuovo numero intervento calcolato _NUM_"
+
+#: modules/interventi/actions.php:228
+msgid "Aggiunto nuovo intervento!"
+msgstr "Aggiunto nuovo intervento!"
+
+#: modules/interventi/actions.php:361
+msgid "Intervento _NUM_ eliminato!"
+msgstr "Intervento _NUM_ eliminato!"
+
+#: modules/interventi/actions.php:547
+msgid "Firma salvata correttamente!"
+msgstr "Firma salvata correttamente!"
+
+#: modules/interventi/actions.php:548
+msgid "Attività completata!"
+msgstr "Attività completata!"
+
+#: modules/interventi/actions.php:550
+msgid "Errore durante il salvataggio della firma nel database!"
+msgstr "Errore durante il salvataggio della firma nel database!"
+
+#: modules/interventi/actions.php:553
+msgid "Errore durante il salvataggio della firma!"
+msgstr "Errore durante il salvataggio della firma!"
+
+#: modules/interventi/actions.php:553
+msgid "La firma risulta vuota"
+msgstr "La firma risulta vuota"
+
+#: modules/interventi/actions.php:556
+msgid ""
+"Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine "
+"della firma!"
+msgstr ""
+"Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine "
+"della firma!"
+
+#: modules/interventi/actions.php:615
+msgid "Errore durante l'invio dell'email"
+msgstr "Errore durante l'invio dell'email"
+
+#: modules/interventi/actions.php:618
+msgid "Email inviata!"
+msgstr "Email inviata!"
+
+#: modules/interventi/add.php:107 modules/interventi/edit.php:24
+msgid "Dati cliente"
+msgstr "Dati cliente"
+
+#: modules/interventi/add.php:119 modules/interventi/add.php:130
+#: modules/interventi/add.php:134 modules/interventi/add.php:138
+msgid "Seleziona prima un cliente"
+msgstr "Seleziona prima un cliente"
+
+#: modules/interventi/add.php:123 modules/interventi/edit.php:53
+msgid "Per conto di"
+msgstr "Per conto di"
+
+#: modules/interventi/add.php:144
+msgid "Componenti"
+msgstr "Componenti"
+
+#: modules/interventi/add.php:144
+msgid "Seleziona prima un impianto"
+msgstr "Seleziona prima un impianto"
+
+#: modules/interventi/add.php:153 modules/interventi/edit.php:105
+msgid "Dati intervento"
+msgstr "Dati intervento"
+
+#: modules/interventi/add.php:160
+msgid "Codice intervento"
+msgstr "Codice intervento"
+
+#: modules/interventi/add.php:168
+msgid "Data intervento"
+msgstr "Data intervento"
+
+#: modules/interventi/add.php:183
+msgid "Stato intervento"
+msgstr "Stato intervento"
+
+#: modules/interventi/add.php:187
+msgid "Orario inizio"
+msgstr "Orario inizio"
+
+#: modules/interventi/add.php:191
+msgid "Orario fine"
+msgstr "Orario fine"
+
+#: modules/interventi/add_articolo.php:107
+msgid "Impianto su cui installare"
+msgstr "Impianto su cui installare"
+
+#: modules/interventi/add_firma.php:12
+msgid "Intervento inesistente!"
+msgstr "Intervento inesistente!"
+
+#: modules/interventi/add_firma.php:33
+msgid "Firma"
+msgstr "Firma"
+
+#: modules/interventi/add_firma.php:40
+msgid "Plugin PDF mancante"
+msgstr "Plugin PDF mancante"
+
+#: modules/interventi/add_firma.php:52
+msgid "Nome e cognome"
+msgstr "Nome e cognome"
+
+#: modules/interventi/add_firma.php:64
+msgid "Cancella firma"
+msgstr "Cancella firma"
+
+#: modules/interventi/add_firma.php:67
+msgid "Salva firma"
+msgstr "Salva firma"
+
+#: modules/interventi/add_righe.php:75
+msgid "Prezzo di acquisto (un.)"
+msgstr "Prezzo di acquisto (un.)"
+
+#: modules/interventi/add_righe.php:81
+msgid "Prezzo di vendita (un.)"
+msgstr "Prezzo di vendita (un.)"
+
+#: modules/interventi/ajax_articoli.php:25 modules/interventi/ajax_righe.php:19
+msgid "Subtotale"
+msgstr "Subtotale"
+
+#: modules/interventi/ajax_articoli.php:135
+#: modules/interventi/ajax_articoli.php:140
+msgid "Modifica articoli"
+msgstr "Modifica articoli"
+
+#: modules/interventi/ajax_articoli.php:142
+msgid "Riportare questo articolo in magazzino?"
+msgstr "Riportare questo articolo in magazzino?"
+
+#: modules/interventi/ajax_costi.php:42 modules/interventi/ajax_tecnici.php:165
+#: modules/interventi/ajax_tecnici.php:180
+#: modules/preventivi/plugins/preventivi.consuntivo.php:36
+msgid "Costo"
+msgstr "Costo"
+
+#: modules/interventi/ajax_costi.php:43 modules/interventi/ajax_tecnici.php:166
+#: modules/interventi/ajax_tecnici.php:189
+#: modules/preventivi/plugins/preventivi.consuntivo.php:37
+msgid "Addebito"
+msgstr "Addebito"
+
+#: modules/interventi/ajax_costi.php:44
+msgid "Tot. Scontato"
+msgstr "Tot. Scontato"
+
+#: modules/interventi/ajax_costi.php:48
+msgid "Totale manodopera"
+msgstr "Totale manodopera"
+
+#: modules/interventi/ajax_costi.php:55
+msgid "Totale viaggio"
+msgstr "Totale viaggio"
+
+#: modules/interventi/ajax_costi.php:62
+msgid "Totale articoli"
+msgstr "Totale articoli"
+
+#: modules/interventi/ajax_costi.php:69
+msgid "Totale altre spese"
+msgstr "Totale altre spese"
+
+#: modules/interventi/ajax_costi.php:96
+msgid "Sconto globale"
+msgstr "Sconto globale"
+
+#: modules/interventi/ajax_righe.php:79
+msgid "Modifica spesa"
+msgstr "Modifica spesa"
+
+#: modules/interventi/ajax_righe.php:80
+msgid "Eliminare questa spesa?"
+msgstr "Eliminare questa spesa?"
+
+#: modules/interventi/ajax_tecnici.php:57
+msgid "Orario"
+msgstr "Orario"
+
+#: modules/interventi/ajax_tecnici.php:58
+#: modules/preventivi/plugins/preventivi.consuntivo.php:34
+#: modules/preventivi/plugins/preventivi.consuntivo.php:89
+msgid "Ore"
+msgstr "Ore"
+
+#: modules/interventi/ajax_tecnici.php:60
+msgid "Sconto ore"
+msgstr "Sconto ore"
+
+#: modules/interventi/ajax_tecnici.php:61
+msgid "Sconto km"
+msgstr "Sconto km"
+
+#: modules/interventi/ajax_tecnici.php:167
+#: modules/interventi/ajax_tecnici.php:198
+msgid "Scontato"
+msgstr "Scontato"
+
+#: modules/interventi/ajax_tecnici.php:255
+msgid "Nessun tecnico presente"
+msgstr "Nessun tecnico presente"
+
+#: modules/interventi/edit.php:9 modules/interventi/edit.php:31
+msgid "Anteprima e firma"
+msgstr "Anteprima e firma"
+
+#: modules/interventi/edit.php:12
+msgid "Nuova anteprima e firma"
+msgstr "Nuova anteprima e firma"
+
+#: modules/interventi/edit.php:13 modules/interventi/edit.php:257
+msgid "Firmato il _TIMESTAMP_ da _PERSON_"
+msgstr "Firmato il _TIMESTAMP_ da _PERSON_"
+
+#: modules/interventi/edit.php:33
+msgid "Stampa intervento"
+msgstr "Stampa intervento"
+
+#: modules/interventi/edit.php:154
+msgid "Note interne"
+msgstr "Note interne"
+
+#: modules/interventi/edit.php:163
+msgid "Ore di lavoro"
+msgstr "Ore di lavoro"
+
+#: modules/interventi/edit.php:168 modules/interventi/edit.php:169
+msgid "Mostra dettagli costi"
+msgstr "Mostra dettagli costi"
+
+#: modules/interventi/edit.php:187 templates/interventi/actions.php:68
+msgid "Materiale utilizzato"
+msgstr "Materiale utilizzato"
+
+#: modules/interventi/edit.php:197
+msgid "Aggiungi articolo"
+msgstr "Aggiungi articolo"
+
+#: modules/interventi/edit.php:207
+#: modules/preventivi/plugins/preventivi.consuntivo.php:176
+msgid "Altre spese"
+msgstr "Altre spese"
+
+#: modules/interventi/edit.php:217
+msgid "Aggiungi altre spese"
+msgstr "Aggiungi altre spese"
+
+#: modules/interventi/edit.php:227
+msgid "Costi totali"
+msgstr "Costi totali"
+
+#: modules/interventi/edit.php:253
+msgid "Questo intervento non è ancora stato firmato dal cliente"
+msgstr "Questo intervento non è ancora stato firmato dal cliente"
+
+#: modules/interventi/plugins/my_impianti.interventi.php:9
+msgid "Interventi eseguiti su questo impianto"
+msgstr "Interventi eseguiti su questo impianto"
+
+#: modules/interventi/plugins/my_impianti.interventi.php:37
+msgid "Nessun intervento su questo impianto"
+msgstr "Nessun intervento su questo impianto"
+
+#: modules/iva/add.php:17 modules/iva/edit.php:29 modules/pagamenti/edit.php:56
+#: modules/pagamenti/edit.php:131 modules/ritenute/add.php:17
+#: modules/ritenute/edit.php:29
+msgid "Percentuale"
+msgstr "Percentuale"
+
+#: modules/iva/add.php:21 modules/iva/edit.php:33 modules/ritenute/add.php:21
+#: modules/ritenute/edit.php:33
+msgid "Indetraibile"
+msgstr "Indetraibile"
+
+#: modules/iva/edit.php:39
+msgid "Dicitura fissa in fattura"
+msgstr "Dicitura fissa in fattura"
+
+#: modules/listini/actions.php:25
+msgid "Nuovo listino aggiunto!"
+msgstr "Nuovo listino aggiunto!"
+
+#: modules/listini/actions.php:31
+msgid "Listino eliminato!"
+msgstr "Listino eliminato!"
+
+#: modules/listini/add.php:15 modules/listini/edit.php:26
+msgid "Guadagno/sconto"
+msgstr "Guadagno/sconto"
+
+#: modules/misure/actions.php:14 modules/misure/actions.php:37
+msgid "E' già presente una tipologia di _TYPE_ con lo stesso valore!"
+msgstr "E' già presente una tipologia di _TYPE_ con lo stesso valore!"
+
+#: modules/misure/add.php:11 modules/misure/edit.php:23
+msgid "Valore"
+msgstr "Valore"
+
+#: modules/my_impianti/actions.php:86
+msgid "Aggiunto nuovo impianto!"
+msgstr "Aggiunto nuovo impianto!"
+
+#: modules/my_impianti/actions.php:119
+msgid "Impianto e relativi componenti eliminati!"
+msgstr "Impianto e relativi componenti eliminati!"
+
+#: modules/my_impianti/add.php:11 modules/my_impianti/edit.php:33
+#: modules/my_impianti/plugins/my_impianti.anagrafiche.php:36
+#: modules/my_impianti/plugins/my_impianti.interventi.php:77
+msgid "Matricola"
+msgstr "Matricola"
+
+#: modules/my_impianti/edit.php:13
+msgid "Dati impianto"
+msgstr "Dati impianto"
+
+#: modules/my_impianti/edit.php:50
+msgid "Tecnico assegnato"
+msgstr "Tecnico assegnato"
+
+#: modules/my_impianti/edit.php:54
+msgid "Data installazione"
+msgstr "Data installazione"
+
+#: modules/my_impianti/edit.php:70
+msgid "Proprietario"
+msgstr "Proprietario"
+
+#: modules/my_impianti/edit.php:77
+msgid "Ubicazione"
+msgstr "Ubicazione"
+
+#: modules/my_impianti/edit.php:81
+msgid "Palazzo"
+msgstr "Palazzo"
+
+#: modules/my_impianti/edit.php:85
+msgid "Scala"
+msgstr "Scala"
+
+#: modules/my_impianti/edit.php:91
+msgid "Piano"
+msgstr "Piano"
+
+#: modules/my_impianti/edit.php:95
+msgid "Interno"
+msgstr "Interno"
+
+#: modules/my_impianti/edit.php:99
+msgid "Occupante"
+msgstr "Occupante"
+
+#: modules/my_impianti/plugins/my_impianti.anagrafiche.php:10
+msgid "Impianto rimosso!"
+msgstr "Impianto rimosso!"
+
+#: modules/my_impianti/plugins/my_impianti.anagrafiche.php:17
+msgid "Impianti del cliente"
+msgstr "Impianti del cliente"
+
+#: modules/my_impianti/plugins/my_impianti.anagrafiche.php:71
+msgid "Questa anagrafica non ha impianti"
+msgstr "Questa anagrafica non ha impianti"
+
+#: modules/my_impianti/plugins/my_impianti.anagrafiche.php:75
+msgid "L'anagrafica corrente non è di tipo 'Cliente'"
+msgstr "L'anagrafica corrente non è di tipo 'Cliente'"
+
+#: modules/my_impianti/plugins/my_impianti.componenti.php:20
+msgid "Informazioni componente aggiornate correttamente!"
+msgstr "Informazioni componente aggiornate correttamente!"
+
+#: modules/my_impianti/plugins/my_impianti.componenti.php:38
+msgid "Aggiunto un nuovo componente all'impianto!"
+msgstr "Aggiunto un nuovo componente all'impianto!"
+
+#: modules/my_impianti/plugins/my_impianti.componenti.php:65
+msgid "Aggiunto un nuovo componente in sostituzione al precedente!"
+msgstr "Aggiunto un nuovo componente in sostituzione al precedente!"
+
+#: modules/my_impianti/plugins/my_impianti.componenti.php:67
+msgid "Questo componente è già stato sostituito!"
+msgstr "Questo componente è già stato sostituito!"
+
+#: modules/my_impianti/plugins/my_impianti.componenti.php:77
+msgid "Rimosso componente dall'impianto!"
+msgstr "Rimosso componente dall'impianto!"
+
+#: modules/my_impianti/plugins/my_impianti.componenti.php:89
+msgid "Componenti installati"
+msgstr "Componenti installati"
+
+#: modules/my_impianti/plugins/my_impianti.componenti.php:103
+msgid "Aggiungi un componente"
+msgstr "Aggiungi un componente"
+
+#: modules/my_impianti/plugins/my_impianti.componenti.php:110
+msgid "Hai già aggiunto tutti i componenti"
+msgstr "Hai già aggiunto tutti i componenti"
+
+#: modules/my_impianti/plugins/my_impianti.componenti.php:119
+msgid "Seleziona prima un componente"
+msgstr "Seleziona prima un componente"
+
+#: modules/my_impianti/plugins/my_impianti.componenti.php:146
+msgid "INSTALLATO in data _DATE_"
+msgstr "INSTALLATO in data _DATE_"
+
+#: modules/my_impianti/plugins/my_impianti.componenti.php:148
+msgid "SOSTITUITO in data _DATE_"
+msgstr "SOSTITUITO in data _DATE_"
+
+#: modules/my_impianti/plugins/my_impianti.componenti.php:206
+msgid "Interventi collegati"
+msgstr "Interventi collegati"
+
+#: modules/my_impianti/plugins/my_impianti.componenti.php:210
+msgid "Tipo"
+msgstr "Tipo"
+
+#: modules/my_impianti/plugins/my_impianti.componenti.php:234
+msgid "Nessun intervento collegato a questo componente!"
+msgstr "Nessun intervento collegato a questo componente!"
+
+#: modules/my_impianti/plugins/my_impianti.componenti.php:262
+msgid "Vuoi sostituire questo componente con un altro dello stesso tipo?"
+msgstr "Vuoi sostituire questo componente con un altro dello stesso tipo?"
+
+#: modules/my_impianti/plugins/my_impianti.componenti.php:262
+msgid "Sostituisci questo componente"
+msgstr "Sostituisci questo componente"
+
+#: modules/my_impianti/plugins/my_impianti.componenti.php:265
+msgid "Componente già sostituito"
+msgstr "Componente già sostituito"
+
+#: modules/my_impianti/plugins/my_impianti.componenti.php:281
+msgid "Nessun componente inserito"
+msgstr "Nessun componente inserito"
+
+#: modules/my_impianti/plugins/my_impianti.interventi.php:32
+msgid "Informazioni impianti salvate!"
+msgstr "Informazioni impianti salvate!"
+
+#: modules/my_impianti/plugins/my_impianti.interventi.php:49
+msgid "Informazioni componenti salvate!"
+msgstr "Informazioni componenti salvate!"
+
+#: modules/my_impianti/plugins/my_impianti.interventi.php:56
+msgid "Impianti dell'intervento"
+msgstr "Impianti dell'intervento"
+
+#: modules/my_impianti/plugins/my_impianti.interventi.php:59
+msgid "Impianti su cui è stato effettuato l'intervento"
+msgstr "Impianti su cui è stato effettuato l'intervento"
+
+#: modules/my_impianti/plugins/my_impianti.interventi.php:106
+msgid "Componenti soggetti all'intervento"
+msgstr "Componenti soggetti all'intervento"
+
+#: modules/my_impianti/plugins/my_impianti.interventi.php:142
+msgid "Salva componenti"
+msgstr "Salva componenti"
+
+#: modules/my_impianti/plugins/my_impianti.interventi.php:164
+msgid "Impianti disponibili"
+msgstr "Impianti disponibili"
+
+#: modules/my_impianti/plugins/my_impianti.interventi.php:174
+msgid "Salva impianti"
+msgstr "Salva impianti"
+
+#: modules/ordini/actions.php:50
+msgid "Aggiunto ordine numero _NUM_!"
+msgstr "Aggiunto ordine numero _NUM_!"
+
+#: modules/ordini/actions.php:132
+msgid "Ordine modificato correttamente!"
+msgstr "Ordine modificato correttamente!"
+
+#: modules/ordini/actions.php:333
+msgid "Ordine eliminato!"
+msgstr "Ordine eliminato!"
+
+#: modules/ordini/add_articolo.php:26 modules/ordini/add_riga.php:59
+msgid "Ordine numero _NUM_"
+msgstr "Ordine numero _NUM_"
+
+#: modules/ordini/creaddt.php:137 modules/ordini/creafattura.php:138
+msgid "Non ci sono articoli da evadere in questo ordine"
+msgstr "Non ci sono articoli da evadere in questo ordine"
+
+#: modules/ordini/creaddt.php:150
+msgid "Crea ddt di vendita"
+msgstr "Crea ddt di vendita"
+
+#: modules/ordini/creaddt.php:153
+msgid "Crea ddt di acquisto"
+msgstr "Crea ddt di acquisto"
+
+#: modules/ordini/edit.php:26
+msgid "Numero ordine"
+msgstr "Numero ordine"
+
+#: modules/pagamenti/actions.php:75
+msgid "Elemento eliminato con successo!"
+msgstr "Elemento eliminato con successo!"
+
+#: modules/pagamenti/edit.php:26
+msgid "Rate"
+msgstr "Rate"
+
+#: modules/pagamenti/edit.php:46
+msgid "Rata _NUMBER_"
+msgstr "Rata _NUMBER_"
+
+#: modules/pagamenti/edit.php:60 modules/pagamenti/edit.php:135
+msgid "Data fatturazione"
+msgstr "Data fatturazione"
+
+#: modules/pagamenti/edit.php:60 modules/pagamenti/edit.php:135
+msgid "Data fatturazione fine mese"
+msgstr "Data fatturazione fine mese"
+
+#: modules/pagamenti/edit.php:60 modules/pagamenti/edit.php:135
+msgid "Data fatturazione giorno fisso"
+msgstr "Data fatturazione giorno fisso"
+
+#: modules/pagamenti/edit.php:60 modules/pagamenti/edit.php:135
+msgid "Data fatturazione fine mese (giorno fisso)"
+msgstr "Data fatturazione fine mese (giorno fisso)"
+
+#: modules/pagamenti/edit.php:89 modules/pagamenti/edit.php:145
+msgid "Distanza in giorni"
+msgstr "Distanza in giorni"
+
+#: modules/pagamenti/edit.php:112
+msgid ""
+"Prima di poter continuare con il salvataggio è necessario che i valori "
+"percentuali raggiungano in totale il 100%"
+msgstr ""
+"Prima di poter continuare con il salvataggio è necessario che i valori "
+"percentuali raggiungano in totale il 100%"
+
+#: modules/pagamenti/edit.php:124
+msgid "Nuova rata"
+msgstr "Nuova rata"
+
+#: modules/partitario/actions.php:21
+msgid "Nuovo conto aggiunto!"
+msgstr "Nuovo conto aggiunto!"
+
+#: modules/partitario/actions.php:24 modules/partitario/actions.php:47
+msgid "Il numero scelto è già esistente!"
+msgstr "Il numero scelto è già esistente!"
+
+#: modules/partitario/actions.php:44
+msgid "Descrizione conto modificata!"
+msgstr "Descrizione conto modificata!"
+
+#: modules/partitario/actions.php:61
+msgid "Conto eliminato!"
+msgstr "Conto eliminato!"
+
+#: modules/porti/actions.php:49
+msgid "Sono presenti dei documenti collegati a questo porto!"
+msgstr "Sono presenti dei documenti collegati a questo porto!"
+
+#: modules/porti/edit.php:37
+msgid "Ci sono _NUM_ documenti collegati"
+msgstr "Ci sono _NUM_ documenti collegati"
+
+#: modules/preventivi/actions.php:65
+msgid "Aggiunto preventivo numero _NUM_!"
+msgstr "Aggiunto preventivo numero _NUM_!"
+
+#: modules/preventivi/actions.php:139
+msgid "Preventivo modificato correttamente!"
+msgstr "Preventivo modificato correttamente!"
+
+#: modules/preventivi/actions.php:199
+msgid "Preventivo eliminato!"
+msgstr "Preventivo eliminato!"
+
+#: modules/preventivi/add.php:11
+msgid "Nome preventivo"
+msgstr "Nome preventivo"
+
+#: modules/preventivi/add.php:21
+msgid "Tipo di Attività"
+msgstr "Tipo di Attività"
+
+#: modules/preventivi/edit.php:50
+msgid "Tempi di consegna"
+msgstr "Tempi di consegna"
+
+#: modules/preventivi/edit.php:87
+msgid "Tipo di attività"
+msgstr "Tipo di attività"
+
+#: modules/preventivi/edit.php:94
+msgid "Resa materiale"
+msgstr "Resa materiale"
+
+#: modules/preventivi/edit_riga.php:52
+msgid "Preventivo numero _NUM_"
+msgstr "Preventivo numero _NUM_"
+
+#: modules/preventivi/edit_riga.php:90
+msgid "Sconto/rincaro articoli per questo cliente"
+msgstr "Sconto/rincaro articoli per questo cliente"
+
+#: modules/preventivi/plugins/preventivi.consuntivo.php:33
+#: modules/tecnici_tariffe/edit.php:25
+msgid "Attività"
+msgstr "Attività"
+
+#: modules/preventivi/plugins/preventivi.consuntivo.php:38
+msgid "Tot. scontato"
+msgstr "Tot. scontato"
+
+#: modules/preventivi/plugins/preventivi.consuntivo.php:92
+#: modules/tecnici_tariffe/edit.php:31 modules/tipi_intervento/edit.php:38
+#: modules/tipi_intervento/edit.php:61
+msgid "Costo km"
+msgstr "Costo km"
+
+#: modules/preventivi/plugins/preventivi.consuntivo.php:93
+#: modules/preventivi/plugins/preventivi.consuntivo.php:96
+msgid "Diritto ch."
+msgstr "Diritto ch."
+
+#: modules/preventivi/plugins/preventivi.consuntivo.php:94
+msgid "Prezzo orario"
+msgstr "Prezzo orario"
+
+#: modules/preventivi/plugins/preventivi.consuntivo.php:95
+msgid "Prezzo km"
+msgstr "Prezzo km"
+
+#: modules/preventivi/plugins/preventivi.consuntivo.php:131
+msgid "Materiale"
+msgstr "Materiale"
+
+#: modules/preventivi/plugins/preventivi.consuntivo.php:280
+msgid "Rapporto budget/spesa"
+msgstr "Rapporto budget/spesa"
+
+#: modules/preventivi/plugins/preventivi.consuntivo.php:318
+msgid "Aggiungi un altro intervento a questo preventivo"
+msgstr "Aggiungi un altro intervento a questo preventivo"
+
+#: modules/primanota/actions.php:57 modules/primanota/actions.php:189
+msgid "Errore durante l'aggiunta del movimento!"
+msgstr "Errore durante l'aggiunta del movimento!"
+
+#: modules/primanota/actions.php:60
+msgid "Movimento aggiunto in prima nota!"
+msgstr "Movimento aggiunto in prima nota!"
+
+#: modules/primanota/actions.php:192
+msgid "Movimento modificato in prima nota!"
+msgstr "Movimento modificato in prima nota!"
+
+#: modules/primanota/actions.php:298
+msgid "Movimento eliminato!"
+msgstr "Movimento eliminato!"
+
+#: modules/primanota/add.php:105 modules/primanota/edit.php:34
+msgid "Data movimento"
+msgstr "Data movimento"
+
+#: modules/primanota/add.php:128 modules/primanota/edit.php:75
+msgid "Dare"
+msgstr "Dare"
+
+#: modules/primanota/add.php:129 modules/primanota/edit.php:76
+msgid "Avere"
+msgstr "Avere"
+
+#: modules/primanota/edit.php:18
+msgid "Torna alla fattura"
+msgstr "Torna alla fattura"
+
+#: modules/scadenzario/actions.php:23
+msgid "Scadenze aggiornate!"
+msgstr "Scadenze aggiornate!"
+
+#: modules/scadenzario/actions.php:25
+msgid "Il totale degli importi inseriti non corrisponde al totale da pagare!"
+msgstr "Il totale degli importi inseriti non corrisponde al totale da pagare!"
+
+#: modules/scadenzario/controller_after.php:19
+msgid "Stampa scadenzario"
+msgstr "Stampa scadenzario"
+
+#: modules/scadenzario/controller_after.php:28
+msgid "Scadenzario clienti"
+msgstr "Scadenzario clienti"
+
+#: modules/scadenzario/controller_after.php:32
+msgid "Scadenzario fornitori"
+msgstr "Scadenzario fornitori"
+
+#: modules/scadenzario/edit.php:13
+msgid "Dettagli scadenza"
+msgstr "Dettagli scadenza"
+
+#: modules/scadenzario/edit.php:65
+msgid "Apri documento"
+msgstr "Apri documento"
+
+#: modules/scadenzario/edit.php:74
+msgid "Pagato"
+msgstr "Pagato"
+
+#: modules/scadenzario/edit.php:123
+msgid "Aggiungi prima nota..."
+msgstr "Aggiungi prima nota..."
+
+#: modules/scadenzario/edit.php:125
+msgid "Il totale da pagare deve essere pari a _NUM_"
+msgstr "Il totale da pagare deve essere pari a _NUM_"
+
+#: modules/scadenzario/edit.php:125
+msgid "Differenza di"
+msgstr "Differenza di"
+
+#: modules/stati_intervento/actions.php:30
+msgid "Nuovo stato di intervento aggiunto!"
+msgstr "Nuovo stato di intervento aggiunto!"
+
+#: modules/stati_intervento/actions.php:38
+msgid "Stato di intervento eliminato!"
+msgstr "Stato di intervento eliminato!"
+
+#: modules/stati_intervento/edit.php:7
+msgid "Puoi modificare solo il colore di questo intervento!"
+msgstr "Puoi modificare solo il colore di questo intervento!"
+
+#: modules/tecnici_tariffe/actions.php:50
+msgid "Errore durante il salvataggio delle tariffe!"
+msgstr "Errore durante il salvataggio delle tariffe!"
+
+#: modules/tecnici_tariffe/actions.php:71
+#: modules/tecnici_tariffe/actions.php:80
+msgid "Errore durante l'importazione tariffe!"
+msgstr "Errore durante l'importazione tariffe!"
+
+#: modules/tecnici_tariffe/edit.php:26
+msgid "Addebito orario"
+msgstr "Addebito orario"
+
+#: modules/tecnici_tariffe/edit.php:27
+msgid "Addebito km"
+msgstr "Addebito km"
+
+#: modules/tecnici_tariffe/edit.php:28
+msgid "Addebito diritto ch."
+msgstr "Addebito diritto ch."
+
+#: modules/tecnici_tariffe/edit.php:32
+msgid "Costo diritto ch."
+msgstr "Costo diritto ch."
+
+#: modules/tipi_anagrafiche/actions.php:18
+msgid "Nome non consentito!"
+msgstr "Nome non consentito!"
+
+#: modules/tipi_anagrafiche/actions.php:31 modules/zone/actions.php:34
+msgid "Nome già esistente!"
+msgstr "Nome già esistente!"
+
+#: modules/tipi_anagrafiche/actions.php:37
+msgid "Nuovo tipo di anagrafica aggiunto!"
+msgstr "Nuovo tipo di anagrafica aggiunto!"
+
+#: modules/tipi_anagrafiche/actions.php:46
+msgid "Tipo di anagrafica eliminato!"
+msgstr "Tipo di anagrafica eliminato!"
+
+#: modules/tipi_anagrafiche/edit.php:8
+msgid "Non puoi modificare questo tipo di anagrafica!"
+msgstr "Non puoi modificare questo tipo di anagrafica!"
+
+#: modules/tipi_intervento/actions.php:27
+msgid "Informazioni tipo intervento salvate correttamente!"
+msgstr "Informazioni tipo intervento salvate correttamente!"
+
+#: modules/tipi_intervento/actions.php:40
+msgid "Nuovo tipo di intervento aggiunto!"
+msgstr "Nuovo tipo di intervento aggiunto!"
+
+#: modules/tipi_intervento/actions.php:52
+msgid "Tipo di intervento eliminato!"
+msgstr "Tipo di intervento eliminato!"
+
+#: modules/tipi_intervento/edit.php:42 modules/tipi_intervento/edit.php:65
+msgid "Diritto chiamata"
+msgstr "Diritto chiamata"
+
+#: modules/tipi_intervento/edit.php:51
+msgid "Costi unitari riconosciuti al tecnico"
+msgstr "Costi unitari riconosciuti al tecnico"
+
+#: modules/tipi_intervento/edit.php:84
+msgid "Ci sono _NUM_ interventi collegati"
+msgstr "Ci sono _NUM_ interventi collegati"
+
+#: modules/tipi_intervento/edit.php:85
+msgid ""
+"Eliminando questo tipo di attività, vengono rimossi anche gli interventi "
+"collegati!"
+msgstr ""
+"Eliminando questo tipo di attività, vengono rimossi anche gli interventi "
+"collegati!"
+
+#: modules/utenti/actions.php:11
+msgid "Utente abilitato!"
+msgstr "Utente abilitato!"
+
+#: modules/utenti/actions.php:18
+msgid "Utente disabilitato!"
+msgstr "Utente disabilitato!"
+
+#: modules/utenti/actions.php:33 modules/utenti/actions.php:85
+msgid "La password deve essere lunga almeno _MIN_ caratteri!"
+msgstr "La password deve essere lunga almeno _MIN_ caratteri!"
+
+#: modules/utenti/actions.php:36 modules/utenti/actions.php:88
+#: modules/utenti/user.php:73
+msgid "Le password non coincidono"
+msgstr "Le password non coincidono"
+
+#: modules/utenti/actions.php:41
+msgid "Password aggiornata!"
+msgstr "Password aggiornata!"
+
+#: modules/utenti/actions.php:55
+msgid "Username aggiornato!"
+msgstr "Username aggiornato!"
+
+#: modules/utenti/actions.php:57 modules/utenti/actions.php:98
+msgid "Utente già esistente!"
+msgstr "Utente già esistente!"
+
+#: modules/utenti/actions.php:94
+msgid "Utente aggiunto!"
+msgstr "Utente aggiunto!"
+
+#: modules/utenti/actions.php:109
+msgid "Gruppo aggiunto!"
+msgstr "Gruppo aggiunto!"
+
+#: modules/utenti/actions.php:112
+msgid "Gruppo già esistente!"
+msgstr "Gruppo già esistente!"
+
+#: modules/utenti/actions.php:119
+msgid "Utente eliminato!"
+msgstr "Utente eliminato!"
+
+#: modules/utenti/actions.php:133
+msgid "Gruppo eliminato!"
+msgstr "Gruppo eliminato!"
+
+#: modules/utenti/actions.php:136
+msgid "Questo gruppo non si può eliminare!"
+msgstr "Questo gruppo non si può eliminare!"
+
+#: modules/utenti/edit.php:14
+msgid "Utenti _GROUP_"
+msgstr "Utenti _GROUP_"
+
+#: modules/utenti/edit.php:54
+msgid "Disabilitare questo utente?"
+msgstr "Disabilitare questo utente?"
+
+#: modules/utenti/edit.php:61
+msgid "Non è possibile disabilitare l'utente admin"
+msgstr "Non è possibile disabilitare l'utente admin"
+
+#: modules/utenti/edit.php:74
+msgid "Non è possibile eliminare l'utente admin"
+msgstr "Non è possibile eliminare l'utente admin"
+
+#: modules/utenti/edit.php:86
+msgid "Non ci sono utenti in questo gruppo"
+msgstr "Non ci sono utenti in questo gruppo"
+
+#: modules/utenti/edit.php:89
+msgid "Aggiungi utente"
+msgstr "Aggiungi utente"
+
+#: modules/utenti/edit.php:100 modules/utenti/edit.php:109
+msgid "Permessi"
+msgstr "Permessi"
+
+#: modules/utenti/edit.php:108
+msgid "Modulo"
+msgstr "Modulo"
+
+#: modules/utenti/edit.php:113
+msgid "Nessun permesso"
+msgstr "Nessun permesso"
+
+#: modules/utenti/edit.php:113
+msgid "Sola lettura"
+msgstr "Sola lettura"
+
+#: modules/utenti/edit.php:113
+msgid "Lettura e scrittura"
+msgstr "Lettura e scrittura"
+
+#: modules/utenti/edit.php:121
+msgid "Gli amministratori hanno accesso a qualsiasi modulo"
+msgstr "Gli amministratori hanno accesso a qualsiasi modulo"
+
+#: modules/utenti/edit.php:131
+msgid ""
+"Eliminando questo gruppo verranno eliminati anche i permessi e gli utenti "
+"collegati"
+msgstr ""
+"Eliminando questo gruppo verranno eliminati anche i permessi e gli utenti "
+"collegati"
+
+#: modules/utenti/edit.php:144
+msgid "Salvataggio completato"
+msgstr "Salvataggio completato"
+
+#: modules/utenti/edit.php:144
+msgid "Permessi aggiornati!"
+msgstr "Permessi aggiornati!"
+
+#: modules/utenti/edit.php:147
+msgid "Errore durante l'aggiornamento dei permessi!"
+msgstr "Errore durante l'aggiornamento dei permessi!"
+
+#: modules/utenti/user.php:48
+msgid "Ripeti la password"
+msgstr "Ripeti la password"
+
+#: modules/utenti/user.php:57
+msgid "Collega ad una anagrafica"
+msgstr "Collega ad una anagrafica"
+
+#: modules/utenti/user.php:71
+msgid "Inserire una password valida"
+msgstr "Inserire una password valida"
+
+#: modules/utenti/user.php:75
+msgid "La password deve essere lunga minimo _MIN_ caratteri!"
+msgstr "La password deve essere lunga minimo _MIN_ caratteri!"
+
+#: modules/utenti/user.php:77
+msgid "L'username deve essere lungo minimo _MIN_ caratteri!"
+msgstr "L'username deve essere lungo minimo _MIN_ caratteri!"
+
+#: modules/viste/actions.php:143 modules/viste/actions.php:152
+msgid "Eliminazione completata!"
+msgstr "Eliminazione completata!"
+
+#: modules/viste/edit.php:21
+msgid "Opzioni di visualizzazione"
+msgstr "Opzioni di visualizzazione"
+
+#: modules/viste/edit.php:28
+msgid "Il modulo che stai analizzando è un semplice menu"
+msgstr "Il modulo che stai analizzando è un semplice menu"
+
+#: modules/viste/edit.php:31
+msgid ""
+"Il modulo che stai analizzando possiede una struttura complessa, che prevede "
+"l'utilizzo di file personalizzati per la gestione delle viste"
+msgstr ""
+"Il modulo che stai analizzando possiede una struttura complessa, che prevede "
+"l'utilizzo di file personalizzati per la gestione delle viste"
+
+#: modules/viste/edit.php:37
+msgid "Codice del modulo"
+msgstr "Codice del modulo"
+
+#: modules/viste/edit.php:41
+msgid "Nome del modulo"
+msgstr "Nome del modulo"
+
+#: modules/viste/edit.php:47
+msgid "Query di default"
+msgstr "Query di default"
+
+#: modules/viste/edit.php:51
+msgid "Query personalizzata"
+msgstr "Query personalizzata"
+
+#: modules/viste/edit.php:68
+msgid "Query risultante"
+msgstr "Query risultante"
+
+#: modules/viste/edit.php:90
+msgid "Campi disponibili"
+msgstr "Campi disponibili"
+
+#: modules/viste/edit.php:118
+msgid "Campo in posizione _POSITION_"
+msgstr "Campo in posizione _POSITION_"
+
+#: modules/viste/edit.php:141 modules/viste/edit.php:281
+msgid "Query prevista"
+msgstr "Query prevista"
+
+#: modules/viste/edit.php:151 modules/viste/edit.php:287
+msgid "Gruppi con accesso"
+msgstr "Gruppi con accesso"
+
+#: modules/viste/edit.php:162 modules/viste/edit.php:291
+msgid "Visibilità"
+msgstr "Visibilità"
+
+#: modules/viste/edit.php:162 modules/viste/edit.php:291
+msgid "Nascosto (variabili di stato)"
+msgstr "Nascosto (variabili di stato)"
+
+#: modules/viste/edit.php:162 modules/viste/edit.php:291
+msgid "Visibile nella sezione"
+msgstr "Visibile nella sezione"
+
+#: modules/viste/edit.php:172 modules/viste/edit.php:297
+msgid "Ricercabile"
+msgstr "Ricercabile"
+
+#: modules/viste/edit.php:180 modules/viste/edit.php:301
+msgid "Ricerca lenta"
+msgstr "Ricerca lenta"
+
+#: modules/viste/edit.php:188 modules/viste/edit.php:305
+msgid "Sommabile"
+msgstr "Sommabile"
+
+#: modules/viste/edit.php:196 modules/viste/edit.php:309
+msgid "Formattabile"
+msgstr "Formattabile"
+
+#: modules/viste/edit.php:206 modules/viste/edit.php:315
+msgid "Ricerca tramite"
+msgstr "Ricerca tramite"
+
+#: modules/viste/edit.php:210
+msgid "Query personalizzata per la ricerca (consigliata per colori e icone)"
+msgstr "Query personalizzata per la ricerca (consigliata per colori e icone)"
+
+#: modules/viste/edit.php:214 modules/viste/edit.php:319
+msgid "Ordina tramite"
+msgstr "Ordina tramite"
+
+#: modules/viste/edit.php:218
+msgid ""
+"Query personalizzata per l'ordinamento (date e numeri formattati tramite "
+"query)"
+msgstr ""
+"Query personalizzata per l'ordinamento (date e numeri formattati tramite "
+"query)"
+
+#: modules/viste/edit.php:241
+msgid "Ordine di visualizzazione"
+msgstr "Ordine di visualizzazione"
+
+#: modules/viste/edit.php:270
+msgid "Nuovo campo"
+msgstr "Nuovo campo"
+
+#: modules/viste/edit.php:334
+msgid "Filtri per gruppo di utenti"
+msgstr "Filtri per gruppo di utenti"
+
+#: modules/viste/edit.php:362
+msgid "Filtro _NUM_"
+msgstr "Filtro _NUM_"
+
+#: modules/viste/edit.php:371
+msgid "Disabilitare questo elemento?"
+msgstr "Disabilitare questo elemento?"
+
+#: modules/viste/edit.php:371
+msgid "Abilitare questo elemento?"
+msgstr "Abilitare questo elemento?"
+
+#: modules/viste/edit.php:371 modules/viste/edit.php:372
+msgid "Disabilita"
+msgstr "Disabilita"
+
+#: modules/viste/edit.php:371 modules/viste/edit.php:372
+msgid "Abilita"
+msgstr "Abilita"
+
+#: modules/viste/edit.php:381 modules/viste/edit.php:432
+msgid "Query"
+msgstr "Query"
+
+#: modules/viste/edit.php:389 modules/viste/edit.php:436
+msgid "Gruppo"
+msgstr "Gruppo"
+
+#: modules/viste/edit.php:397 modules/viste/edit.php:440
+msgid "WHERE"
+msgstr "WHERE"
+
+#: modules/viste/edit.php:397 modules/viste/edit.php:440
+msgid "HAVING"
+msgstr "HAVING"
+
+#: modules/viste/edit.php:425
+msgid "Nuovo filtro"
+msgstr "Nuovo filtro"
+
+#: modules/voci_servizio/actions.php:23
+msgid "Nuova voce di servizio aggiunta!"
+msgstr "Nuova voce di servizio aggiunta!"
+
+#: modules/zone/actions.php:16
+msgid "Zona già esistente!"
+msgstr "Zona già esistente!"
+
+#: modules/zone/actions.php:41
+msgid "Aggiunta una nuova zona!"
+msgstr "Aggiunta una nuova zona!"
+
+#: modules/zone/actions.php:51
+msgid "Zona eliminata!"
+msgstr "Zona eliminata!"
+
+#: pdfgen.php:69
+msgid "Non hai i permessi per creare directory e files in _DIRECTORY_"
+msgstr "Non hai i permessi per creare directory e files in _DIRECTORY_"
+
+#: templates/interventi/actions.php:23
+msgid "Telefono azienda"
+msgstr "Telefono azienda"
+
+#: templates/interventi/actions.php:86 templates/interventi/actions.php:203
+#: templates/interventi/actions.php:406
+msgid "Prezzo listino"
+msgstr "Prezzo listino"
+
+#: templates/interventi/actions.php:94 templates/interventi/actions.php:211
+#: templates/interventi/actions.php:410
+msgid "Subtot. netto"
+msgstr "Subtot. netto"
+
+#: templates/interventi/actions.php:161
+msgid "Totale materiale utilizzato"
+msgstr "Totale materiale utilizzato"
+
+#: templates/interventi/actions.php:273
+msgid "Totale spese aggiuntive"
+msgstr "Totale spese aggiuntive"
+
+#: templates/interventi/actions.php:295 templates/interventi/actions.php:420
+msgid "Ore tecnici"
+msgstr "Ore tecnici"
+
+#: templates/interventi/actions.php:311
+msgid "Dalle"
+msgstr "Dalle"
+
+#: templates/interventi/actions.php:315
+msgid "Alle"
+msgstr "Alle"
+
+#: templates/interventi/actions.php:452
+msgid "Km / viaggio"
+msgstr "Km / viaggio"
+
+#: templates/interventi/actions.php:482 templates/interventi/actions.php:576
+msgid "Totale intervento"
+msgstr "Totale intervento"
+
+#: templates/interventi/actions.php:529
+msgid "Sconto incondizionato"
+msgstr "Sconto incondizionato"
+
+#: templates/interventi/actions.php:600
+msgid "Si dichiara che i lavori sono stati eseguiti ed i materiali installati"
+msgstr "Si dichiara che i lavori sono stati eseguiti ed i materiali installati"
+
+#: templates/interventi/actions.php:601
+msgid "I dati del ricevente verrano trattati in base al D.lgs n. 196/2003"
+msgstr "I dati del ricevente verrano trattati in base al D.lgs n. 196/2003"
+
+#: templates/interventi/actions.php:605
+msgid "Timbro e firma leggibile"
+msgstr "Timbro e firma leggibile"
+
+#: templates/pdfgen_variables.php:120
+msgid "Stampato con OpenSTAManager"
+msgstr "Stampato con OpenSTAManager"
+
+#: templates/pdfgen_variables.php:124
+msgid "Pagina _PAGE_ di _TOTAL_"
+msgstr "Pagina _PAGE_ di _TOTAL_"
+
+#~ msgid "Costo orario tecnico"
+#~ msgstr "Costo orario tecnico"
+
+#~ msgid "Costo km tecnico"
+#~ msgstr "Costo km tecnico"
+
+#~ msgid "Diritto ch. tecnico"
+#~ msgstr "Diritto ch. tecnico"
+
+#~| msgid "Impianti disponibili"
+#~ msgid "Filtri disponibili"
+#~ msgstr "Filtri disponibili"
+
+#~ msgid "Tipologia di file non permessa!"
+#~ msgstr "Tipologia di file non permessa!"
+
+#~ msgid "Online"
+#~ msgstr "Online"
+
+#~ msgid "Database inserito nella configurazione non esistente!"
+#~ msgstr "Database inserito nella configurazione non esistente!"
+
+#~ msgid "Aggiungi categoria"
+#~ msgstr "Aggiungi categoria"
+
+#~ msgid "Aggiungi sottocategoria"
+#~ msgstr "Aggiungi sottocategoria"
+
+#~ msgid "Aggiungi unità di misura"
+#~ msgstr "Aggiungi unità di misura"
+
+#~ msgid ""
+#~ "Puoi generare delle combinazioni di prodotti specifici con lotto, serial "
+#~ "number ed un campo aggiuntivo libero"
+#~ msgstr ""
+#~ "Puoi generare delle combinazioni di prodotti specifici con lotto, serial "
+#~ "number ed un campo aggiuntivo libero"
+
+#~ msgid "Lotto da"
+#~ msgstr "Lotto da"
+
+#~ msgid "Ultimo lotto inserito"
+#~ msgstr "Ultimo lotto inserito"
+
+#~ msgid "Altro codice da"
+#~ msgstr "Altro codice da"
+
+#~ msgid "Ultimo codice aggiuntivo inserito"
+#~ msgstr "Ultimo codice aggiuntivo inserito"
+
+#~ msgid ""
+#~ "Puoi ricercare un prodotto venduto o acquistato a partire dal lotto, "
+#~ "serial number o campo \"Altro codice\""
+#~ msgstr ""
+#~ "Puoi ricercare un prodotto venduto o acquistato a partire dal lotto, "
+#~ "serial number o campo \"Altro codice\""
+
+#~ msgid "Altro codice"
+#~ msgstr "Altro codice"
+
+#~ msgid "Avvia ricerca"
+#~ msgstr "Avvia ricerca"
+
+#~ msgid "Mostra solo gli ultimi 20 prodotti"
+#~ msgstr "Mostra solo gli ultimi 20 prodotti"
+
+#~ msgid "Mostra tutti i prodotti (_TOT_)"
+#~ msgstr "Mostra tutti i prodotti (_TOT_)"
+
+#~ msgid "Ordine aggiornato!"
+#~ msgstr "Ordine aggiornato!"
+
+#~ msgid "Non ci sono articoli"
+#~ msgstr "Non ci sono articoli"
+
+#~ msgid "Non ci sono contratti per questa anagrafica"
+#~ msgstr "Non ci sono contratti per questa anagrafica"
+
+#~ msgid "Non ci sono interventi per questa anagrafica"
+#~ msgstr "Non ci sono interventi per questa anagrafica"
+
+#~ msgid "Non ci sono preventivi per questa anagrafica"
+#~ msgstr "Non ci sono preventivi per questa anagrafica"
+
+#~ msgid "Buono ordine"
+#~ msgstr "Buono ordine"
+
+#~ msgid "Non hai i permessi per apportare queste modifiche!"
+#~ msgstr "Non hai i permessi per apportare queste modifiche!"
+
+#~ msgid "Errore durante il salvataggio della sessione di lavoro _NUM_!"
+#~ msgstr "Errore durante il salvataggio della sessione di lavoro _NUM_!"
+
+#~ msgid "Sessione di lavoro _NUM_ eliminata!"
+#~ msgstr "Sessione di lavoro _NUM_ eliminata!"
+
+#~ msgid "Errore durante eliminazione!"
+#~ msgstr "Errore durante eliminazione!"
+
+#~ msgid "Il tipo di intervento scelto non è valido!"
+#~ msgstr "Il tipo di intervento scelto non è valido!"
+
+#~ msgid "Nessun tecnico disponibile"
+#~ msgstr "Nessun tecnico disponibile"
+
+#~ msgid "Aggiungi sessione di lavoro"
+#~ msgstr "Aggiungi sessione di lavoro"
+
+#~ msgid "Clicca per aprire l'intervento su una nuova finestra"
+#~ msgstr "Clicca per aprire l'intervento su una nuova finestra"
+
+#~ msgid "Fine mese"
+#~ msgstr "Fine mese"
+
+#~ msgid "Distanza in giorni esatta"
+#~ msgstr "Distanza in giorni esatta"
+
+#~ msgid "Definisci giorno"
+#~ msgstr "Definisci giorno"
+
+#~ msgid "Nome personalizzato"
+#~ msgstr "Nome personalizzato"
+
+#~ msgid ""
+#~ "Per cortesia indica la pagina in cui si è verificato e specifica dopo "
+#~ "quale operazione"
+#~ msgstr ""
+#~ "Per cortesia indica la pagina in cui si è verificato e specifica dopo "
+#~ "quale operazione"
+
+#~ msgid "Gen"
+#~ msgstr "Gen"
+
+#~ msgid "Feb"
+#~ msgstr "Feb"
+
+#~ msgid "Mar"
+#~ msgstr "Mar"
+
+#~ msgid "Apr"
+#~ msgstr "Apr"
+
+#~ msgid "Mag"
+#~ msgstr "Mag"
+
+#~ msgid "Giu"
+#~ msgstr "Giu"
+
+#~ msgid "Lug"
+#~ msgstr "Lug"
+
+#~ msgid "Ago"
+#~ msgstr "Ago"
+
+#~ msgid "Set"
+#~ msgstr "Set"
+
+#~ msgid "Ott"
+#~ msgstr "Ott"
+
+#~ msgid "Dic"
+#~ msgstr "Dic"
+
+#~ msgid "Domenica"
+#~ msgstr "Domenica"
+
+#~ msgid "Lunedì"
+#~ msgstr "Lunedì"
+
+#~ msgid "Martedì"
+#~ msgstr "Martedì"
+
+#~ msgid "Mercoledì"
+#~ msgstr "Mercoledì"
+
+#~ msgid "Giovedì"
+#~ msgstr "Giovedì"
+
+#~ msgid "Venerdì"
+#~ msgstr "Venerdì"
+
+#~ msgid "Savato"
+#~ msgstr "Savato"
+
+#~ msgid "Do"
+#~ msgstr "Do"
+
+#~ msgid "Lu"
+#~ msgstr "Lu"
+
+#~ msgid "Me"
+#~ msgstr "Me"
+
+#~ msgid "Gi"
+#~ msgstr "Gi"
+
+#~ msgid "Ve"
+#~ msgstr "Ve"
+
+#~ msgid "Sa"
+#~ msgstr "Sa"
+
+#~ msgid "Errori"
+#~ msgstr "Errori"
+
+#~ msgid "Eliminare questo articolo?"
+#~ msgstr "Eliminare questo articolo?"
+
+#~ msgid "Elimina articolo"
+#~ msgstr "Elimina articolo"
+
+#~ msgid "Rimuovi questa riga"
+#~ msgstr "Rimuovi questa riga"
+
+#~ msgid "Vuoi eliminare questo prodotto?"
+#~ msgstr "Vuoi eliminare questo prodotto?"
+
+#~ msgid "Nessun movimento"
+#~ msgstr "Nessun movimento"
+
+#~ msgid "Inserisci nome:"
+#~ msgstr "Inserisci nome:"
+
+#~ msgid "Inserisci targa:"
+#~ msgstr "Inserisci targa:"
+
+#~ msgid "Non sono stati inseriti tipi di documenti"
+#~ msgstr "Non sono stati inseriti tipi di documenti"
+
+#~ msgid "Inserisci nome e cognome"
+#~ msgstr "Inserisci nome e cognome"
+
+#~ msgid "Eliminare questo impianto?"
+#~ msgstr "Eliminare questo impianto?"
+
+#~ msgid "Elimina impianto"
+#~ msgstr "Elimina impianto"
+
+#~ msgid "Ricomincia"
+#~ msgstr "Ricomincia"
+
+#~ msgid "step corrente:"
+#~ msgstr "step corrente:"
+
+#~ msgid "Paginazione"
+#~ msgstr "Paginazione"
+
+#~ msgid "INSTALLA"
+#~ msgstr "INSTALLA"
+
+#~ msgid "Caricamento"
+#~ msgstr "Caricamento"
+
+#~ msgid "Aggiornamento del modulo _MODULE_ alla versione _VERSION_ completato"
+#~ msgstr ""
+#~ "Aggiornamento del modulo _MODULE_ alla versione _VERSION_ completato"

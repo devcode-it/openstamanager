@@ -61,7 +61,15 @@ if (empty($records)) {
     $name = $module['title'];
 
     echo '
-					<a data-toggle="tab" href="#tab_0"><i class="'.$module['icon'].'"></i> '.$name.'</a>
+					<a data-toggle="tab" href="#tab_0">
+						<i class="'.$module['icon'].'"></i> '.$name;
+// Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
+if (file_exists($docroot.'/modules/'.$module_dir.'/add.php') && $module['permessi'] == 'rw') {
+    echo '
+						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'._('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'"><i class="fa fa-plus"></i></button>';
+}
+echo '
+					</a>
 					<a class="back-btn" href="controller.php?id_module='.$id_module.'"><i class="fa fa-chevron-left"></i> '._("Torna all'elenco").'</a>
 				</li>';
 

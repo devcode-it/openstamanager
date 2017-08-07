@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 $module_name = 'Contratti';
 
-$additional_where['Contratti'] = str_replace('|idtecnico|', "'".$user_idanagrafica."'", $additional_where['Contratti']);
+$additional_where['Contratti'] = str_replace('|idtecnico|', "'".$user['idanagrafica']."'", $additional_where['Contratti']);
 
 // carica parametri di ricerca
 $search_numero = save($_GET['search_numerocontratto']);

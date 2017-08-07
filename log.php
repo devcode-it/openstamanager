@@ -32,7 +32,7 @@ echo '
 /*
     LEGGO DALLA TABELLA ZZ_LOG
 */
-if (Auth::isAdmin()) {
+if (Auth::admin()) {
     $q = 'SELECT * FROM `zz_logs` ORDER BY `created_at` DESC LIMIT 0, 100';
 } else {
     $q = 'SELECT * FROM `zz_logs` WHERE `idutente`='.prepare($_SESSION['idutente']).' ORDER BY `created_at` DESC LIMIT 0, 100';
@@ -48,18 +48,19 @@ for ($i = 0; $i < $n; ++$i) {
 
     $timestamp = Translator::timestampToLocale($rs[$i]['created_at']);
 
-    if ($rs[$i]['stato'] == 1) {
+    $status = Auth::getStatus();
+    if ($rs[$i]['stato'] == $status['success']['code']) {
         $type = 'success';
-        $stato = _('Login riuscito!');
-    } elseif ($rs[$i]['stato'] == 2) {
+        $stato = $status['success']['message'];
+    } elseif ($rs[$i]['stato'] == $status['disabled']['code']) {
         $type = 'warning';
-        $stato = _('Utente non abilitato!');
-    } elseif ($rs[$i]['stato'] == 3) {
+        $stato = $status['disabled']['message'];
+    } elseif ($rs[$i]['stato'] == $status['unauthorized']['code']) {
         $type = 'warning';
-        $stato = _("L'utente non ha nessun permesso impostato!");
+        $stato = $status['unauthorized']['message'];
     } else {
         $type = 'danger';
-        $stato = _('Autenticazione fallita!');
+        $stato = $status['failed']['message'];
     }
 
     echo '

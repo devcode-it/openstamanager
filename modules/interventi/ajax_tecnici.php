@@ -32,7 +32,7 @@ $show_costi = true;
 
 // Limitazione delle azioni dei tecnici
 if ($user['gruppo'] == 'Tecnici') {
-    $show_costi = !empty($user_idanagrafica) && get_var('Mostra i prezzi al tecnico');
+    $show_costi = !empty($user['idanagrafica']) && get_var('Mostra i prezzi al tecnico');
 }
 
 // RECUPERO IL TIPO DI INTERVENTO
@@ -205,7 +205,7 @@ if (!empty($rs2)) {
         // Sconto ore
         echo '
             <td style="border-right:1px solid #aaa;">';
-        if ($user_idanagrafica == 0 || $show_costi) {
+        if ($user['idanagrafica'] == 0 || $show_costi) {
             echo '
                 {[ "type": "number", "name": "sconto['.$id.']", "value": "'.$sconto_unitario.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}';
         } else {
@@ -220,7 +220,7 @@ if (!empty($rs2)) {
         // Sconto km
         echo '
             <td style="border-right:1px solid #aaa;">';
-        if ($user_idanagrafica == 0 || $show_costi) {
+        if ($user['idanagrafica'] == 0 || $show_costi) {
             echo '
                 {[ "type": "number", "name": "scontokm['.$id.']", "value": "'.$scontokm_unitario.'", "icon-after": "choice|untprc|'.$tipo_scontokm.'" ]}';
         } else {

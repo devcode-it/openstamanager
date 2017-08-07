@@ -345,7 +345,7 @@ switch ($module_name) {
                     for ($i = 0; $i < sizeof($fatture); ++$i) {
                         ($fatture[$i]['n2_fattura'] != '') ? $n_fattura = $fatture[$i]['n2_fattura'] : $n_fattura = $fatture[$i]['n_fattura'];
 
-                        $id_module = $modules_info['Fatture di vendita']['id'];
+                        $id_module = Modules::getModule('Fatture di vendita')['id'];
                         echo "<tr><td class='first_cell text-left'><a href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fattura n<sup>o</sup> ".$n_fattura."</a></td>\n";
 
                         echo "<td class='table_cell text-left'>".Translator::dateToLocale($fatture[$i]['data_fattura'])."</td>\n";
@@ -377,7 +377,7 @@ switch ($module_name) {
                 for ($i = 0; $i < sizeof($fatture); ++$i) {
                     ($fatture[$i]['n2_fattura'] != '') ? $n_fattura = $fatture[$i]['n2_fattura'] : $n_fattura = $fatture[$i]['n_fattura'];
 
-                    $id_module = $modules_info['Fatture di vendita']['id'];
+                    $id_module = Modules::getModule('Fatture di vendita')['id'];
                     echo "<tr><td class='first_cell text-left'><a href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fattura n<sup>o</sup> ".$n_fattura."</a></td>\n";
 
                     echo "<td class='table_cell text-left'>".Translator::dateToLocale($fatture[$i]['data_fattura'])."</td>\n";
@@ -408,7 +408,7 @@ switch ($module_name) {
                 for ($i = 0; $i < sizeof($fatture); ++$i) {
                     ($fatture[$i]['n2_fattura'] != '') ? $n_fattura = $fatture[$i]['n2_fattura'] : $n_fattura = $fatture[$i]['n_fattura'];
 
-                    $id_module = $modules_info['Fatture di vendita']['id'];
+                    $id_module = Modules::getModule('Fatture di vendita')['id'];
                     echo "<tr><td class='first_cell text-left'><a href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fattura n<sup>o</sup> ".$n_fattura."</a></td>\n";
 
                     echo "<td class='table_cell text-left'>".Translator::dateToLocale($fatture[$i]['data_fattura'])."</td>\n";

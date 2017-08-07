@@ -13,11 +13,10 @@ Un software gestionale, identificato nell'insieme degli applicativi che automati
 
 Secondo questa definizione, OpenSTAManager riesce a generalizzare al proprio interno le funzionalità caratteristiche della contabilità e della gestione del magazzino, presentando inoltre moduli piuttosto avanzati e destinati a complementare l'attività aziendale in relazione agli interventi di assistenza della realtà lavorativa in oggetto.
 
-## Tabella dei contenuti
+La documentazione ufficiale risulta disponibile all'indirizzo <https://devcode-it.github.io/openstamanager/>.
 
 <!-- TOC depthFrom:2 depthTo:6 orderedList:false updateOnSave:true withLinks:true -->
 
-- [Tabella dei contenuti](#tabella-dei-contenuti)
 - [Requisiti](#requisiti)
 - [Installazione](#installazione)
     - [Versioni](#versioni)
@@ -37,10 +36,10 @@ Prima di iniziare l'installazione, è necessario procedere al download di una ve
 
 L'installazione del gestionale richiede la presenza di un server web con abilitato il [DBMS (Database Management System)](https://it.wikipedia.org/wiki/Database_management_system) MySQL e il linguaggio di programmazione [PHP](http://php.net/).
 
-- PHP >= 5.4 (si consiglia come minimo la versione 5.6 per poter usufruire di tutte le funzionalità del progetto)
+- PHP >= 5.4 (si consiglia la versione 5.6 per poter usufruire di tutte le funzionalità del progetto)
 - MySQL >= 5.0
 
-Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Informazioni](https://devcode-it.github.io/openstamanager/installazione.html) della documentazione.
+Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Installazione](https://devcode-it.github.io/openstamanager/installazione.html) della documentazione.
 
 ## Installazione
 
@@ -69,7 +68,6 @@ Nel caso si stia utilizzando la versione direttamente ottenuta dalla repository 
 
 ```bash
 php composer.phar install
-php composer.phar update
 yarn global add gulp
 yarn install
 gulp

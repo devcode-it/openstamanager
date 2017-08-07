@@ -73,7 +73,7 @@ vendor/
 *.old
 *.mo
 .couscous/
-assets/dist
+assets/dist/
 backup/*
 !backup/.htaccess
 files/*

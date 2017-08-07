@@ -7,7 +7,7 @@ $rss = $dbo->fetchArray('SELECT idtipointervento, sconto_globale, tipo_sconto_gl
 $sconto = $rss[0]['sconto_globale'];
 $tipo_sconto = $rss[0]['tipo_sconto_globale'];
 
-if (Auth::isAdmin() || $_SESSION['gruppo'] != 'Tecnici') {
+if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
     $rsr = $dbo->fetchArray('SELECT * FROM vw_activity_subtotal WHERE id='.prepare($id_record));
 
     $manodopera_costo = $rsr[0]['manodopera_costo'];

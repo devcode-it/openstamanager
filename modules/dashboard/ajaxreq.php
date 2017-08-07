@@ -2,8 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (!isset($user_idanagrafica)) {
-    $user_idanagrafica = '';
+if (!isset($user['idanagrafica'])) {
+    $user['idanagrafica'] = '';
 }
 
 switch (get('op')) {

@@ -34,7 +34,7 @@ class API extends \Util\Singleton
 
     public function __construct($token)
     {
-        $user = Auth::getUser();
+        $user = Auth::user();
 
         if (!self::isAPIRequest() || empty($user)) {
             throw new InvalidArgumentException();

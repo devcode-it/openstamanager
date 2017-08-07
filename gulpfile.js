@@ -231,7 +231,7 @@ gulp.task('release', function () {
     var archiver = require('archiver');
     var fs = require('fs');
 
-    // shell.exec('svn info --show-item=revision . > REVISION');
+    shell.exec('git rev-parse --short HEAD > REVISION');
 
     del([
         './vendor/tecnickcom/tcpdf/fonts/*',
@@ -242,7 +242,7 @@ gulp.task('release', function () {
     var archive = archiver('zip');
 
     output.on('close', function() {
-        console.log('done!');
+        console.log('ZIP completato!');
     });
 
     archive.on('error', function(err) {
@@ -258,6 +258,7 @@ gulp.task('release', function () {
             'node_modules/**',
             'backup/**',
             'files/**',
+            'logs/**',
             'config.inc.php',
             '*.lock',
             '*.phar',
@@ -271,6 +272,7 @@ gulp.task('release', function () {
     archive.file('backup/.htaccess');
     archive.file('files/.htaccess');
     archive.file('files/my_impianti/componente.ini');
+    archive.file('logs/.htaccess');
 
     archive.finalize();
 });

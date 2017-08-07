@@ -13,7 +13,7 @@ if (count($rs2) > 0) {
         <th width="8%">'._('Q.tà').'</th>
         <th width="15%">'._('Prezzo di acquisto').'</th>';
 
-    if (Auth::isAdmin() || $_SESSION['gruppo'] != 'Tecnici') {
+    if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
         echo '
         <th width="15%">'._('Prezzo di vendita').'</th>
         <th width="15%">'._('Subtotale').'</th>';
@@ -46,7 +46,7 @@ if (count($rs2) > 0) {
             '.Translator::numberToLocale($r['prezzo_acquisto']).' &euro;
         </td>';
 
-        if (Auth::isAdmin() || $_SESSION['gruppo'] != 'Tecnici') {
+        if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
             // Prezzo unitario
             $netto = $r['prezzo_vendita'] - $r['sconto_unitario'];
 

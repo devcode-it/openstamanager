@@ -90,16 +90,18 @@ class Database extends Util\Singleton
      */
     public static function getConnection($new = false)
     {
-        if (empty(parent::$instance) || !parent::$instance->isConnected() || $new) {
+        $class = get_called_class(); // late-static-bound class name
+
+        if (empty(parent::$instance[$class]) || !parent::$instance[$class]->isConnected() || $new) {
             global $db_host;
             global $db_username;
             global $db_password;
             global $db_name;
 
-            parent::$instance = new self($db_host, $db_username, $db_password, $db_name);
+            parent::$instance[$class] = new self($db_host, $db_username, $db_password, $db_name);
         }
 
-        return parent::$instance;
+        return parent::$instance[$class];
     }
 
     public static function getInstance()

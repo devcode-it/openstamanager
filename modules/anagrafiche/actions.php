@@ -161,7 +161,7 @@ switch (post('op')) {
             // Lettura tipologia dell'utente loggato
             $agente_is_logged = false;
 
-            $rs = $dbo->fetchArray('SELECT descrizione FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica = an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica = '.prepare($user_idanagrafica));
+            $rs = $dbo->fetchArray('SELECT descrizione FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica = an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica = '.prepare($user['idanagrafica']));
 
             for ($i = 0; $i < count($rs); ++$i) {
                 if ($rs[$i]['descrizione'] == 'Agente') {
@@ -170,7 +170,7 @@ switch (post('op')) {
                 }
             }
 
-           $idagente = ($agente_is_logged && strpos($tipoanagrafica_dst, 'Cliente') !== false) ? $user_idanagrafica :  0;
+           $idagente = ($agente_is_logged && strpos($tipoanagrafica_dst, 'Cliente') !== false) ? $user['idanagrafica'] :  0;
 
            // Inserisco l'anagrafica
            $query = 'INSERT INTO an_anagrafiche(ragione_sociale, codice, idagente) VALUES ('.prepare($ragione_sociale).', '.prepare($codice).', '.prepare($idagente).')';

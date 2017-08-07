@@ -5,10 +5,10 @@ namespace Util;
 /**
  * @since 2.3
  */
-class Singleton
+abstract class Singleton
 {
     /** @var \Util\Singleton Oggetto istanziato */
-    protected static $instance = null;
+    protected static $instance = [];
 
     protected function __construct()
     {
@@ -21,11 +21,13 @@ class Singleton
      */
     public static function getInstance()
     {
-        if (self::$instance === null) {
-            self::$instance = new static();
+        $class = get_called_class(); // late-static-bound class name
+
+        if (self::$instance[$class] === null) {
+            self::$instance[$class] = new static();
         }
 
-        return self::$instance;
+        return self::$instance[$class];
     }
 
     private function __clone()

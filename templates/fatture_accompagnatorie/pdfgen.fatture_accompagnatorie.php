@@ -14,7 +14,7 @@ if ($rs[0]['dir'] == 'entrata') {
     $module_name = 'Fatture di acquisto';
 }
 
-$additional_where[$module_name] = str_replace('|idanagrafica|', "'".$user_idanagrafica."'", $additional_where[$module_name]);
+$additional_where[$module_name] = str_replace('|idanagrafica|', "'".$user['idanagrafica']."'", $additional_where[$module_name]);
 
 // Lettura info fattura
 $q = 'SELECT *, (SELECT descrizione FROM co_tipidocumento WHERE id=idtipodocumento) AS tipo_doc, (SELECT descrizione FROM co_pagamenti WHERE id=idpagamento) AS tipo_pagamento, (SELECT dir FROM co_tipidocumento WHERE id=idtipodocumento) AS dir FROM co_documenti WHERE id="'.$iddocumento.'" '.$additional_where[$module_name];
@@ -27,7 +27,7 @@ $idcliente = $rs[0]['idanagrafica'];
 $report = file_get_contents($docroot.'/templates/fatture_accompagnatorie/fattura.html');
 $body = file_get_contents($docroot.'/templates/fatture_accompagnatorie/fattura_body.html');
 
-if (!($idcliente == $user_idanagrafica || Auth::isAdmin())) {
+if (!($idcliente == $user['idanagrafica'] || Auth::admin())) {
     die('Non hai i permessi per questa stampa!');
 }
 

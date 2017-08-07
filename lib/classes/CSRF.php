@@ -135,10 +135,6 @@ class CSRF extends Util\Singleton
             return $this->storage;
         }
 
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-
         if (!array_key_exists($this->prefix, $_SESSION)) {
             $_SESSION[$this->prefix] = [];
         }

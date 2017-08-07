@@ -10,7 +10,7 @@ switch ($op) {
     case 'login':
         $username = filter('username');
         $password = filter('password');
-        if ($dbo->isConnected() && $dbo->isInstalled() && $auth->attempt($username, $password)) {
+        if ($dbo->isConnected() && $dbo->isInstalled() && Auth::getInstance()->attempt($username, $password)) {
             $_SESSION['keep_alive'] = (filter('keep_alive') != null);
 
             // Auto backup del database giornaliero
@@ -59,7 +59,7 @@ switch ($op) {
 }
 
 if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) {
-    $module = $auth->getFirstModule();
+    $module = Auth::firstModule();
 
     if (!empty($module)) {
         redirect(ROOTDIR.'/controller.php?id_module='.$module, 'js');

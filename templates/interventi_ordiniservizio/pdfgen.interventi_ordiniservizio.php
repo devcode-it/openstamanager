@@ -4,8 +4,8 @@ include_once __DIR__.'/../../core.php';
 
 $module_name = 'Interventi';
 
-$additional_where['Interventi'] = str_replace('|idtecnico|', "'".$user_idanagrafica."'", $additional_where['Interventi']);
-$additional_where['Interventi'] = str_replace('|idanagrafica|', "'".$user_idanagrafica."'", $additional_where['Interventi']);
+$additional_where['Interventi'] = str_replace('|idtecnico|', "'".$user['idanagrafica']."'", $additional_where['Interventi']);
+$additional_where['Interventi'] = str_replace('|idanagrafica|', "'".$user['idanagrafica']."'", $additional_where['Interventi']);
 
 // ############mostro o nascondo i costi dell'intervento..#################
 // true o false

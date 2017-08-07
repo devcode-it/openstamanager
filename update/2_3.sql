@@ -628,7 +628,7 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALU
 
 -- Aggiunta del campo per permettere la modifica delle prima pagina di OSM
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES
-('Prima pagina', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Dashboard'), 'query=SELECT id, title AS \'descrizione\' FROM zz_modules WHERE enabled=1', 1, 'Generali');
+('Prima pagina', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Dashboard'), 'query=SELECT id, title AS \'descrizione\' FROM zz_modules WHERE enabled = 1 AND options != \'\' AND options != \'menu\' AND options IS NOT NULL ORDER BY `order` ASC', 1, 'Generali');
 
 -- Aggiunta del campo idagente in Anagrafiche per la visione da parte degli agenti
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche'), 'idagente', 'idagente', 9, 0, 0, 0, 1);

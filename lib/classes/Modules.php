@@ -28,7 +28,7 @@ class Modules
         if (empty(self::$modules)) {
             $database = Database::getConnection();
 
-            $user = Auth::getUser();
+            $user = Auth::user();
 
             $results = $database->fetchArray('SELECT * FROM `zz_modules` LEFT JOIN (SELECT `idmodule`, `permessi` FROM `zz_permissions` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `idutente` = '.prepare($user['idutente']).')) AS `zz_permissions` ON `zz_modules`.`id`=`zz_permissions`.`idmodule` LEFT JOIN (SELECT `idmodule`, `clause`, `position` FROM `zz_group_module` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `idutente` = '.prepare($user['idutente']).') AND `enabled` = 1) AS `zz_group_module` ON `zz_modules`.`id`=`zz_group_module`.`idmodule`');
 
@@ -48,7 +48,7 @@ class Modules
 
                 if (empty($modules[$result['id']])) {
                     if (empty($result['permessi'])) {
-                        if (Auth::isAdmin()) {
+                        if (Auth::admin()) {
                             $result['permessi'] = 'rw';
                         } else {
                             $result['permessi'] = '-';
@@ -200,7 +200,7 @@ class Modules
             if (strpos($options, '|select|') !== false) {
                 $query = $options;
 
-                $user = Auth::getUser();
+                $user = Auth::user();
 
                 $datas = $database->fetchArray('SELECT * FROM `zz_views` WHERE `id_module`='.prepare($id).' AND `id` IN (SELECT `id_vista` FROM `zz_group_view` WHERE `id_gruppo`=(SELECT `idgruppo` FROM `zz_users` WHERE `idutente`='.prepare($user['idutente']).')) ORDER BY `order` ASC');
 
@@ -270,7 +270,7 @@ class Modules
 
     public static function replacePlaceholder($query, $custom = null)
     {
-        $user = Auth::getUser();
+        $user = Auth::user();
 
         $custom = empty($custom) ? $user['idanagrafica'] : $custom;
         $result = str_replace(['|idagente|', '|idtecnico|', '|idanagrafica|'], prepare($custom), $query);

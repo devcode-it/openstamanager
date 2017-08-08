@@ -190,16 +190,7 @@ switch (post('op')) {
         $iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
         $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
 
-        // Se la riga che sto inserendo è simile ad altre già inserite, aggiorno solo la quantità e l'iva...
-        $query = 'SELECT id FROM dt_righe_ddt WHERE idddt='.prepare($id_record).' AND descrizione='.prepare($descrizione).' AND (iva/qta)='.prepare($iva / $qta).' AND (iva_indetraibile/qta)='.prepare($iva_indetraibile / $qta).' AND (subtotale/qta)='.prepare($subtot / $qta).' AND um='.prepare($um).' AND sconto='.prepare($sconto);
-        $rs = $dbo->fetchArray($query);
-        if (sizeof($rs) > 0) {
-            $query = 'UPDATE dt_righe_ddt SET qta=qta+'.$qta.', iva=iva+'.$iva.', iva_indetraibile=iva_indetraibile+'.$iva_indetraibile.' WHERE id='.prepare($rs[0]['id']);
-        }
-        // ...altrimenti aggiungo una nuova riga
-        else {
-            $query = 'INSERT INTO dt_righe_ddt(idddt, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idgruppo, `order`) VALUES('.prepare($id_record).', '.prepare($idiva).', '.prepare($rs[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`idgruppo`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($id_record).'), (SELECT IFNULL(MAX(`order`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($id_record).'))';
-        }
+        $query = 'INSERT INTO dt_righe_ddt(idddt, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idgruppo, `order`) VALUES('.prepare($id_record).', '.prepare($idiva).', '.prepare($rs[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`idgruppo`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($id_record).'), (SELECT IFNULL(MAX(`order`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($id_record).'))';
 
         if ($dbo->query($query)) {
             $_SESSION['infos'][] = _('Riga aggiunta!');

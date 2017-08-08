@@ -6,8 +6,10 @@ $module = Modules::getModule($id_module);
 
 if ($module['name'] == 'Ordini cliente') {
     $dir = 'entrata';
+    $module_name = 'Ddt di vendita';
 } else {
     $dir = 'uscita';
+    $module_name = 'Ddt di acquisto';
 }
 
 // Info documento
@@ -24,7 +26,7 @@ $idconto = $rs[0]['idconto'];
 echo "<p>Ordine numero $numero</p>";
 echo "Seleziona le righe che vuoi inserire nel ddt e la quantità:<br><br>";
 
-echo '<form id="link_form" action="'.$rootdir.'/editor.php?id_module='.Modules::getModule('Ddt di acquisto')['id'].'&id_record='.$id_record."\" method=\"post\">";
+echo '<form id="link_form" action="'.$rootdir.'/editor.php?id_module='.Modules::getModule($module_name)['id'].'&id_record='.$id_record."\" method=\"post\">";
 
 // Altri id utili
 echo "	<input type='hidden' name='idordine' value='".$id_record."' />";

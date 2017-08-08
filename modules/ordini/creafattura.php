@@ -6,8 +6,10 @@ $module = Modules::getModule($id_module);
 
 if ($module['name'] == 'Ordini cliente') {
     $dir = 'entrata';
+    $module_name = 'Fatture di vendita';
 } else {
     $dir = 'uscita';
+    $module_name = 'Fatture di acquisto';
 }
 
 // Info documento
@@ -24,7 +26,7 @@ $idconto = $rs[0]['idconto'];
 echo "<h4>Ordine numero $numero</h4>\n";
 echo "Seleziona le righe che vuoi inserire nella fattura e la quantità:<br><br>\n";
 
-echo '<form id="link_form" action="'.$rootdir.'/editor.php?id_module='.Modules::getModule('Fatture di acquisto')['id'].'&id_record='.$id_record."\" method=\"post\">\n";
+echo '<form id="link_form" action="'.$rootdir.'/editor.php?id_module='.Modules::getModule($module_name)['id'].'&id_record='.$id_record."\" method=\"post\">\n";
 
 // Altri id utili
 echo "	<input type='hidden' name='idordine' value='".$id_record."' />\n";

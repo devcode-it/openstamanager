@@ -14,7 +14,7 @@ $type = $_POST['type'];
 
 if (!extension_loaded('zip')) {
     $_SESSION['errors'][] = _('Estensione php_zip non caricata!').'<br>'._('Verifica e attivala sul tuo php.ini');
-} elseif (strstr($filename, '.zip')) {
+} elseif (!ends_with($filename, '.zip')) {
     $_SESSION['errors'][] = _('Il file non è un archivio zip!');
 } elseif (!empty($tmp) && is_file($tmp)) {
     $zip = new ZipArchive();

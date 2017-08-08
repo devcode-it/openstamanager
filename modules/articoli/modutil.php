@@ -15,7 +15,7 @@ function add_movimento_magazzino($idarticolo, $qta, $array = [], $descrizone = '
 
     // DDT
     if (!empty($array['idddt'])) {
-        $rs = $dbo->fetchArray('SELECT numero, numero_esterno, dt_ddt.descrizione AS tipo, dt_ddt.dir FROM dt_ddt LEFT JOIN dt_tipiddt ON dt_tipiddt.id = dt_ddt.idtipoddt WHERE dt_ddt.id='.prepare($array['idddt']));
+        $rs = $dbo->fetchArray('SELECT numero, numero_esterno, dt_tipiddt.descrizione AS tipo, dt_tipiddt.dir FROM dt_ddt LEFT JOIN dt_tipiddt ON dt_tipiddt.id = dt_ddt.idtipoddt WHERE dt_ddt.id='.prepare($array['idddt']));
         $numero = (!empty($rs[0]['numero_esterno'])) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
         $tipo = strtolower($rs[0]['tipo']);
     }

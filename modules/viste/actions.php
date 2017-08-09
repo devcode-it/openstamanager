@@ -22,6 +22,8 @@ switch (filter('op')) {
 
         if (check_query($post['options2'])) {
             $dbo->query('UPDATE `zz_modules` SET `title`='.prepare($post['title']).', `options2`='.prepare($post['options2']).' WHERE `id`='.prepare($id_record));
+
+            $rs = true;
         } else {
             $rs = false;
         }
@@ -53,6 +55,7 @@ switch (filter('op')) {
                     'summable' => $post['sum'][$c],
                     'search_inside' => $post['search_inside'][$c],
                     'order_by' => $post['order_by'][$c],
+                    'id_module' => $id_record,
                 ];
 
                 if (!empty($post['id'][$c]) && !empty($post['query'][$c])) {
@@ -95,6 +98,7 @@ switch (filter('op')) {
             if (check_query($post['query'][$c])) {
                 $array = [
                     'idgruppo' => $post['gruppo'][$c],
+                    'idmodule' => $id_record,
                     'clause' => $post['query'][$c],
                     'position' => !empty($post['position'][$c]) ? 'HVN' : 'WHR',
                 ];

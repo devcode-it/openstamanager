@@ -48,7 +48,7 @@ if (!extension_loaded('zip')) {
             elseif (file_exists($docroot.'/'.$tmpdir.'/MODULE')) {
                 $module_info = parse_ini_file($docroot.'/'.$tmpdir.'/MODULE', true);
                 $module_name = $module_info['module_name'];
-                $module_dir = $module_info['module_dir'];
+                $module_dir = $module_info['module_directory'];
 
                 // Copio i file nella cartella "modules/<nomemodulo>/"
                 copyr($docroot.'/'.$tmpdir, $docroot.'/modules/'.$module_dir.'/');
@@ -76,7 +76,7 @@ if (!extension_loaded('zip')) {
                 $module_info = parse_ini_file($docroot.'/'.$tmpdir.'/MODULE', true);
                 $module_name = $module_info['module_name'];
                 $module_version = $module_info['module_version'];
-                $module_dir = $module_info['directory'];
+                $module_dir = $module_info['module_directory'];
 
                 // Copio i file nella cartella "modules/<nomemodulo>/"
                 copyr($docroot.'/'.$tmpdir, $docroot.'/modules/'.$module_dir.'/');

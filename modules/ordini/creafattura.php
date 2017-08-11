@@ -173,29 +173,29 @@ function creafattura_acquisto(){
 }
 
 function ricalcola_subtotale_riga( r ){
-    subtot = force_decimal( $("#subtot_"+r).val() );
+    subtot = $("#subtot_"+r).val().toEnglish();
 
-    sconto = force_decimal( $("#sconto_"+r).val() );
+    sconto = $("#sconto_"+r).val().toEnglish();
     subtot = subtot-sconto;
 
-    qta = force_decimal( $("#qta_"+r).val() );
+    qta = $("#qta_"+r).val().toEnglish();
 
     if( isNaN(qta) ){
         qta = 0;
     }
 
-    qtamax = force_decimal( $("#qtamax_"+r).val() );
+    qtamax = $("#qtamax_"+r).val().toEnglish();
 
     if( isNaN(qtamax) ){
         qtamax = 0;
     }
 
-    iva = force_decimal( $("#iva_"+r).val() );
+    iva = $("#iva_"+r).val().toEnglish();
 
 
     // Se inserisco una quantità da evadere maggiore di quella rimanente, la imposto al massimo possibile
     if( qta>qtamax ){
-        qta = qtamax.toFixed(2).toString().replace('.', ',');
+        qta = qtamax.toFixedLocale(2);
         $('#qta_'+r).val( qta );
     }
 
@@ -204,8 +204,7 @@ function ricalcola_subtotale_riga( r ){
         qta = 0;
     }
 
-    subtotale = (subtot*qta+iva*qta).toFixed(2).toString();
-    subtotale = subtotale.replace( '.', ',' );
+    subtotale = (subtot*qta+iva*qta).toFixedLocale();
 
     $("#subtotale_"+r).html(subtotale+" &euro;");
     $("#subtotaledettagli_"+r).html( (subtot*qta).toFixed(2)+" + " + (iva*qta).toFixed(2) );
@@ -218,25 +217,25 @@ function ricalcola_totale(){
     r = 0;
     totale = 0.00;
     $('input[id*=qta_]').each( function(){
-        qta = force_decimal( $(this).val() );
+        qta = $(this).val().toEnglish();
 
         if( !$('#checked_'+r).is(':checked') || isNaN(qta) ){
             qta = 0;
         }
 
-        subtot = force_decimal( $("#subtot_"+r).val() );
+        subtot = $("#subtot_"+r).val().toEnglish();
 
-        sconto = force_decimal( $("#sconto_"+r).val() );
+        sconto = $("#sconto_"+r).val().toEnglish();
         subtot = subtot-sconto;
 
-        iva = force_decimal( $("#iva_"+r).val() );
+        iva = $("#iva_"+r).val().toEnglish();
 
         totale += subtot*qta+iva*qta;
 
         r++;
     });
 
-    $('#totale').html( (totale.toFixed(2).replace( '.', ',' )) + " &euro;" );
+    $('#totale').html( (totale.toFixedLocale()) + " &euro;" );
 
     if( totale==0 )
         $('#submit_btn').hide();

@@ -169,31 +169,21 @@ echo '
 
 <script type="text/javascript">
 	function ricalcola_subtotale_riga( r ){
-		subtot = $("#subtot_"+r).val();
-		subtot = subtot.replace(',', '.');
-		subtot = parseFloat(subtot);
+		subtot = $("#subtot_"+r).val().toEnglish();
 
-		sconto = $("#sconto_"+r).val();
-		sconto = sconto.replace(',', '.');
-		sconto = parseFloat(sconto);
+		sconto = $("#sconto_"+r).val().toEnglish();
+
 		subtot = subtot-sconto;
 
-		qta = $("#qta_"+r).val();
-		qta = qta.replace(',', '.');
-		qta = parseFloat(qta);
+		qta = $("#qta_"+r).val().toEnglish();
 		if( isNaN(qta) )
 			qta = 0;
 
-		qtamax = $("#qtamax_"+r).val();
-		qtamax = qtamax.replace(',', '.');
-		qtamax = parseFloat(qtamax);
+		qtamax = $("#qtamax_"+r).val().toEnglish();
 		if( isNaN(qtamax) )
 			qtamax = 0;
 
-		iva = $("#iva_"+r).val();
-		iva = iva.replace(',', '.');
-		iva = parseFloat(iva);
-
+		iva = $("#iva_"+r).val().toEnglish();
 
 		// Se inserisco una quantità da evadere maggiore di quella rimanente, la imposto al massimo possibile
 		if( qta>qtamax ){
@@ -205,8 +195,7 @@ echo '
 		if( !$('#checked_'+r).is(':checked') )
 			qta = 0;
 
-		subtotale = (subtot*qta+iva*qta).toFixed(2).toString();
-		subtotale = subtotale.replace( '.', ',' );
+		subtotale = (subtot*qta+iva*qta).toFixedLocale();
 
 		$("#subtotale_"+r).html(subtotale+" &euro;");
 		$("#subtotaledettagli_"+r).html( (subtot*qta).toFixed(2)+" + " + (iva*qta).toFixed(2) );
@@ -219,32 +208,25 @@ echo '
 		r = 0;
 		totale = 0.00;
 		$('input[id*=qta_]').each( function(){
-			qta = $(this).val();
-			qta = qta.replace(',', '.');
-			qta = parseFloat(qta);
+			qta = $(this).val().toEnglish();
 
 			if( !$('#checked_'+r).is(':checked') || isNaN(qta) )
 				qta = 0;
 
-			subtot = $("#subtot_"+r).val();
-			subtot = subtot.replace(',', '.');
-			subtot = parseFloat(subtot);
+			subtot = $("#subtot_"+r).val().toEnglish();
 
-			sconto = $("#sconto_"+r).val();
-			sconto = sconto.replace(',', '.');
-			sconto = parseFloat(sconto);
+            sconto = $("#sconto_"+r).val().toEnglish();
+
 			subtot = subtot-sconto;
 
-			iva = $("#iva_"+r).val();
-			iva = iva.replace(',', '.');
-			iva = parseFloat(iva);
+			iva = $("#iva_"+r).val().toEnglish();
 
 			totale += subtot*qta+iva*qta;
 
 			r++;
 		});
 
-		$('#totale').html( (totale.toFixed(2).replace( '.', ',' )) + " &euro;" );
+		$('#totale').html( (totale.toFixedLocale()) + " &euro;" );
 
 		if( totale==0 )
 			$('#submit_btn').hide();

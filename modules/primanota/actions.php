@@ -25,18 +25,15 @@ switch (post('op')) {
             $dare = $post['dare'][$i];
             $avere = $post['avere'][$i];
 
-            if ($dare != '' && $dare != 0) {
-                $totale = $dare;
-                $totale_pagato += $dare;
-            } elseif ($avere != '' && $avere != 0) {
-                $totale = -$avere;
-                $totale_pagato -= $dare;
-            } else {
-                $totale = 0;
-                $totale_pagato += 0;
-            }
+            if (!empty($dare) || !empty($avere)) {
+                if (!empty($avere)) {
+                    $totale = -$avere;
+                } else {
+                    $totale = $dare;
+                }
 
-            if ($totale != 0) {
+                $totale_pagato += $totale;
+
                 $query = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).', '.prepare($descrizione).', '.prepare($idconto).', '.prepare($totale).", '1')";
                 if (!$dbo->query($query)) {
                     $all_ok = false;
@@ -112,7 +109,7 @@ switch (post('op')) {
         }
 
         // Eliminazione prima nota
-        $dbo->query('DELETE FROM co_movimenti WHERE idmastrino='.prepare($idmastrino)." AND primanota=1");
+        $dbo->query('DELETE FROM co_movimenti WHERE idmastrino='.prepare($idmastrino).' AND primanota=1');
 
         // Lettura info fattura
         $query = 'SELECT *, co_documenti.note, co_documenti.idpagamento, co_documenti.id AS iddocumento, co_statidocumento.descrizione AS `stato`, co_tipidocumento.descrizione AS `descrizione_tipodoc` FROM ((co_documenti LEFT OUTER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);

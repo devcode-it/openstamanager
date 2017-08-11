@@ -146,11 +146,11 @@ echo '
 	});
 
 	function totale_ok(){
-		totale_da_pagare	= force_decimal( $('#totale_da_pagare').val() );
+		totale_da_pagare	= $('#totale_da_pagare').val().toEnglish();
 		totale_utente		= 0;
 
 		$('input[name*=scadenza]').each( function(){
-			totale_utente += force_decimal( $(this).val() );
+			totale_utente += $(this).val().toEnglish();
 		});
 
 		if( isNaN(totale_utente) ){
@@ -173,7 +173,7 @@ echo '
 			$('#totale').removeClass('hide');
 		}
 
-		$('#diff').html( (diff.toFixed(<?php echo get_var('Cifre decimali per importi') ?>)).replace('.', ',') );
-		$('#totale_utente').html( (totale_utente.toFixed(<?php echo get_var('Cifre decimali per importi') ?>)).replace('.', ',') );
+		$('#diff').html(diff.toFixedLocale());
+		$('#totale_utente').html(totale_utente.toFixedLocale());
 	}
 </script>

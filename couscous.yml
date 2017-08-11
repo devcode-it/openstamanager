@@ -18,7 +18,7 @@ fontAwesomeIcon: fa fa-cog
 
 scripts:
     after:
-        - php sami.phar update sami.config.php
+        - php sami.phar update .sami
 
 # The left menu bar
 menu:

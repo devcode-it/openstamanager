@@ -1,20 +1,20 @@
 <?php
 
-return PhpCsFixer\Config::create()
-    ->setRules(array(
+$finder = PhpCsFixer\Finder::create()
+    ->files()
+    ->exclude('.couscous')
+    ->exclude('node_modules')
+    ->exclude('vendor')
+    ->exclude('tests')
+    ->ignoreDotFiles(true)
+    ->ignoreVCS(true)
+    ->in(__DIR__);
+
+$config = PhpCsFixer\Config::create()
+    ->setRules([
         '@Symfony' => true,
-        'array_syntax' => array('syntax' => 'short'),
-    ))
-    ->setFinder(
-		PhpCsFixer\Finder::create()
-			->files()
-			->in(__DIR__)
-			->exclude('vendor')
-			->exclude('resources/views')
-			->exclude('storage')
-			->exclude('public')
-			->notName("*.txt")
-			->ignoreDotFiles(true)
-			->ignoreVCS(true)
-	)
-;
+        'array_syntax' => ['syntax' => 'short'],
+    ])
+    ->setFinder($finder);
+
+return $config;

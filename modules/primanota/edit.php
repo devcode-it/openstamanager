@@ -201,18 +201,18 @@ include_once __DIR__.'/../../core.php';
 				// Calcolo il totale dare e totale avere
 				$('input[id*=dare]').each( function(){
 					if( $(this).val() == '' ) valore = 0;
-					else valore = parseFloat( $(this).val().replace(",", ".") );
+					else valore = $(this).val().toEnglish();
 					totale_dare += valore;
 				});
 
 				$('input[id*=avere]').each( function(){
 					if( $(this).val() == '' ) valore = 0;
-					else valore = parseFloat( $(this).val().replace(",", ".") );
+					else valore = $(this).val().toEnglish();
 					totale_avere += valore;
 				});
 
-				$('#totale_dare').text( ( totale_dare.toFixed(<?php echo get_var('Cifre decimali per importi') ?>) ).replace('.', ',') );
-				$('#totale_avere').text( ( totale_avere.toFixed(<?php echo get_var('Cifre decimali per importi') ?>) ).replace('.', ',') );
+				$('#totale_dare').text(totale_dare.toFixedLocale());
+				$('#totale_avere').text(totale_avere.toFixedLocale());
 
 				bilancio = totale_dare-totale_avere;
 
@@ -221,8 +221,7 @@ include_once __DIR__.'/../../core.php';
 					$("button[type=submit]").removeClass('hide');
 				}
 				else{
-					bilancio = bilancio.toFixed(<?php echo get_var('Cifre decimali per importi') ?>);
-					$("#testo_aggiuntivo").addClass('text-danger').html("sbilancio di "+bilancio.replace(".", ",")+" &euro;" );
+					$("#testo_aggiuntivo").addClass('text-danger').html("sbilancio di " + bilancio.toFixedLocale() + " &euro;" );
 
 					$("button[type=submit]").addClass('hide');
 				}

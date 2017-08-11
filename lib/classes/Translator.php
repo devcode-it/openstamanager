@@ -236,7 +236,7 @@ class Translator extends Util\Singleton
      */
     public static function numberToEnglish($string)
     {
-        return self::getLocaleFormatter()->convertNumberTo(self::getEnglishFormatter(), $string);
+        return floatval(self::getLocaleFormatter()->convertNumberTo(self::getEnglishFormatter(), $string));
     }
 
     /**

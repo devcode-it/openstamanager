@@ -173,7 +173,7 @@ $(document).ready(function(){
 		var tot = 0;
 
 		$(this).find('[id*=percentuale]').each(function(){
-            prc = parseFloat($(this).inputmask('unmaskedvalue'));
+            prc = $(this).val().toEnglish();
             prc = !isNaN(prc) ? prc : 0;
 
 			tot += prc;

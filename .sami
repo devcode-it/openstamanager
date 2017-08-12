@@ -1,6 +1,7 @@
 <?php
 
 use Sami\Sami;
+use Sami\Parser\Filter\TrueFilter;
 use Symfony\Component\Finder\Finder;
 
 $finder = Finder::create()
@@ -22,7 +23,7 @@ $sami = new Sami($finder, [
 ]);
 
 $sami['filter'] = function () {
-    return new Sami\Parser\Filter\TrueFilter();
+    return new TrueFilter();
 };
 
 return $sami;

@@ -121,7 +121,7 @@ Per poter contribuire, si consiglia di seguire le indicazioni descritte all'inte
 ## Sviluppatori
 
 - **Fabio Lovato**, il fondatore ([loviuz](https://github.com/loviuz))
-- **Fabio Piovan** ([magreba](https://sourceforge.net/u/magreba/profile/))
+- **Fabio Piovan** ([fpsoftware](https://github.com/fpsoftware))
 - **Luca Salvà** ([lucasalva87](https://github.com/lucasalva87))
 - **Matteo Baccarin**
 - **Thomas Zilio** ([Dasc3er](https://github.com/Dasc3er))

@@ -97,7 +97,7 @@ function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
     $dbo->query($query);
 
     // Elimino la riga dal ddt
-    $dbo->query('DELETE FROM `dt_righe_ddt` WHERE idgruppo='.prepare($idgruppo));
+    $dbo->query('DELETE FROM `dt_righe_ddt` WHERE idgruppo='.prepare($idgruppo).' AND idddt='.prepare($idddt));
 
     return true;
 }
@@ -109,7 +109,7 @@ function get_imponibile_ddt($idddt)
 {
     global $dbo;
 
-    $query = "SELECT SUM(subtotale-sconto) AS imponibile FROM dt_righe_ddt GROUP BY idddt HAVING idddt='".$idddt."'";
+    $query = 'SELECT SUM(subtotale-sconto) AS imponibile FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt);
     $rs = $dbo->fetchArray($query);
 
     return $rs[0]['imponibile'];

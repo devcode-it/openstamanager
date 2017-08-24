@@ -337,7 +337,9 @@ class Database extends Util\Singleton
      */
     protected function quote($string)
     {
-        return '`'.str_replace('`', '', $string).'`';
+        $char = '`';
+
+        return $char.str_replace($char, '', $string).$char;
     }
 
     /**
@@ -483,6 +485,77 @@ class Database extends Util\Singleton
             return $query;
         } else {
             return $this->fetchArray($query);
+        }
+    }
+
+    public function sync($table, $conditions, $list)
+    {
+        if (
+            !is_string($table) ||
+            !is_array($conditions) ||
+            !is_array($list)
+            ) {
+            throw new UnexpectedValueException();
+        }
+
+        $field = key($list);
+        $sync = array_unique((array) current($list));
+
+        if (!empty($field)) {
+            $results = array_column($this->fetchArray('SELECT '.$this->quote($field).' FROM '.$this->quote($table).' WHERE '.$this->whereStatement($conditions)), $field);
+
+            $detachs = array_unique(array_diff($results, $sync));
+            $this->detach($table, $conditions, [$field => $detachs]);
+
+            $this->attach($table, $conditions, $list);
+        }
+    }
+
+    public function attach($table, $conditions, $list)
+    {
+        if (
+            !is_string($table) ||
+            !is_array($conditions) ||
+            !is_array($list)
+            ) {
+            throw new UnexpectedValueException();
+        }
+
+        $field = key($list);
+        $sync = array_unique((array) current($list));
+
+        if (!empty($field)) {
+            $results = array_column($this->fetchArray('SELECT '.$this->quote($field).' FROM '.$this->quote($table).' WHERE '.$this->whereStatement($conditions)), $field);
+
+            $inserts = array_unique(array_diff($sync, $results));
+            foreach ($inserts as $insert) {
+                $this->insert($table, array_merge($conditions, [$field => $insert]));
+            }
+        }
+    }
+
+    public function detach($table, $conditions, $list)
+    {
+        if (
+            !is_string($table) ||
+            !is_array($conditions) ||
+            !is_array($list)
+            ) {
+            throw new UnexpectedValueException();
+        }
+
+        $field = key($list);
+        $sync = array_unique((array) current($list));
+
+        if (!empty($field) && !empty($sync)) {
+            $where = $this->whereStatement($conditions);
+
+            $in = [];
+            foreach ($sync as $value) {
+                $in[] = $this->prepare($value);
+            }
+
+            $this->query('DELETE FROM '.$this->quote($table).' WHERE '.$where.(!empty($where) ? ' AND ' : '').$this->quote($field).' IN ('.implode(', ', $in).')');
         }
     }
 

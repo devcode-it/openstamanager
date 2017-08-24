@@ -910,20 +910,8 @@ switch (post('op')) {
 
                 // Inserimento riga normale
                 elseif ($qta != 0) {
-                    // Se la riga che sto inserendo è simile ad altre già inserite, aggiorno solo la quantità...
-                    $query = 'SELECT id FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND descrizione='.prepare($descrizione).' AND (subtotale/qta)='.($subtot / $qta).' AND um='.prepare($um).' AND sconto='.prepare($sconto / $qta).' AND idiva='.prepare($idiva);
-                    $rs = $dbo->fetchArray($query);
-
-                    if (sizeof($rs) > 0) {
-                        $dbo->query('UPDATE co_righe_documenti SET qta=qta+'.$qta.' WHERE id='.prepare($rs[0]['id']));
-                        $idriga = $rs[0]['id'];
-                    }
-
-                    // ...altrimenti aggiungo una nuova riga
-                    else {
-                        $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idarticolo, idordine, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, um, qta, idgruppo, `order`) VALUES('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idordine).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`idgruppo`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'), (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))');
-                        $idriga = $dbo->lastInsertedID();
-                    }
+                    $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idarticolo, idordine, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, um, qta, idgruppo, `order`) VALUES('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idordine).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`idgruppo`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'), (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))');
+                    $idriga = $dbo->lastInsertedID();
                 }
 
                 // Scalo la quantità dall'ordine

@@ -39,7 +39,6 @@ switch (filter('op')) {
     case 'fields':
         $rs = true;
 
-        $dbo->query('DELETE FROM `zz_group_view` WHERE `id_vista` IN (SELECT `id` FROM `zz_views` WHERE `id_module`='.prepare($id_record).')');
         foreach ((array) $post['query'] as $c => $k) {
             // Fix per la protezone contro XSS
             $post['query'][$c] = htmlspecialchars_decode($post['query'][$c], ENT_QUOTES);
@@ -70,11 +69,8 @@ switch (filter('op')) {
                     $id = $dbo->lastInsertedID();
                 }
 
-                // Aggiunta dei permessi relativi
-                $gruppi = array_unique((array) $post['gruppi'][$c]);
-                foreach ($gruppi as $gruppo) {
-                    $dbo->query('INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES ('.prepare($gruppo).', '.prepare($id).')');
-                }
+                // Aggiornamento dei permessi relativi
+                $dbo->sync('zz_group_view', ['id_vista' => $id], ['id_gruppo' => (array) $post['gruppi'][$c]]);
             } else {
                 $rs = false;
             }

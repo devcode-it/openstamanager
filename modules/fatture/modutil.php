@@ -735,7 +735,7 @@ function rimuovi_articolo_dafattura($idarticolo, $iddocumento, $idrigadocumento)
     }
 
     // Elimino la riga dal documento
-    $dbo->query('DELETE FROM `co_righe_documenti` WHERE idgruppo='.prepare($idgruppo));
+    $dbo->query('DELETE FROM `co_righe_documenti` WHERE idgruppo='.prepare($idgruppo).' AND iddocumento='.prepare($iddocumento));
 
     // Elimino i movimenti avvenuti nel magazzino per questo articolo lotto, serial, altro
     $dbo->query('DELETE FROM `mg_movimenti` WHERE idarticolo = '.prepare($idarticolo).' AND iddocumento = '.prepare($iddocumento).' AND id = '.prepare($idrigadocumento));

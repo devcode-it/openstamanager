@@ -26,13 +26,13 @@ class Auth extends \Util\Singleton
         ],
     ];
 
-    protected $infos;
-    protected $first_module;
-
-    protected $passwordOptions = [
+    protected static $passwordOptions = [
         'algorithm' => PASSWORD_BCRYPT,
         'options' => [],
     ];
+
+    protected $infos;
+    protected $first_module;
 
     protected function __construct()
     {
@@ -126,7 +126,7 @@ class Auth extends \Util\Singleton
 
         // Nuova versione
         if (password_verify($password, $hash)) {
-            $rehash = password_needs_rehash($hash, $this->passwordOptions['algorithm'], $this->passwordOptions['options']);
+            $rehash = password_needs_rehash($hash, self::$passwordOptions['algorithm'], self::$passwordOptions['options']);
 
             $result = true;
         }
@@ -134,7 +134,7 @@ class Auth extends \Util\Singleton
         // Controllo in automatico per futuri cambiamenti dell'algoritmo di password
         if ($rehash) {
             $database = Database::getConnection();
-            $database->update('zz_users', ['password' => password_hash($password, $this->passwordOptions['algorithm'], $this->passwordOptions['options'])], ['idutente' => $user_id]);
+            $database->update('zz_users', ['password' => self::hashPassword($password)], ['idutente' => $user_id]);
         }
 
         return $result;
@@ -202,7 +202,7 @@ class Auth extends \Util\Singleton
         if (empty($this->first_module)) {
             $query = 'SELECT id FROM zz_modules WHERE enabled = 1';
             if (!$this->isAdmin()) {
-                $query .= ' AND id IN (SELECT idmodule FROM zz_permissions WHERE idgruppo = (SELECT id FROM zz_groups WHERE nome = '.prepare($_SESSION['gruppo']).") AND permessi IN ('r', 'rw'))";
+                $query .= ' AND id IN (SELECT idmodule FROM zz_permissions WHERE idgruppo = (SELECT id FROM zz_groups WHERE nome = '.prepare($this->getUser()['gruppo']).") AND permessi IN ('r', 'rw'))";
             }
 
             $database = Database::getConnection();
@@ -223,6 +223,11 @@ class Auth extends \Util\Singleton
         }
 
         return $this->first_module;
+    }
+
+    public static function hashPassword($password)
+    {
+        return password_hash($password, self::$passwordOptions['algorithm'], self::$passwordOptions['options']);
     }
 
     public static function check()

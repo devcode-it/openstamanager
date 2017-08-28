@@ -239,7 +239,7 @@ if (!empty($rs2)) {
         // Pulsante aggiunta nuova sessione
         echo '
             <td>
-                <a class="btn btn-danger" id="delbtn_'.$id.'" onclick="elimina_sessione(\''.$id.'\', \''.$id_record.'\', \''.$idzona.'\');" title="Elimina riga" class="only_rw"><i class="fa fa-trash-o"></i></a>
+                <a class="btn btn-danger" id="delbtn_'.$id.'" onclick="elimina_sessione(\''.$id.'\', \''.$id_record.'\', \''.$idzona.'\');" title="Elimina riga" class="only_rw"><i class="fa fa-trash"></i></a>
             </td>
         </tr>';
 

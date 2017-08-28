@@ -68,10 +68,10 @@ if (count($utenti) != 0) {
         // Eliminazione utente, se diverso da idutente #1 (admin)
         if ($utenti[$u]['idutente'] != '1') {
             echo '
-			<a href="javascript:;" onclick="if( confirm(\'Sei sicuro di voler eliminare questo utente?\') ){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete&idutente='.$utenti[$u]['idutente'].'&idgruppo='.$record['id'].'\'; }" title="Elimina utente" class="text-danger tip"><i class="fa fa-2x fa-trash-o"></i></a>';
+			<a href="javascript:;" onclick="if( confirm(\'Sei sicuro di voler eliminare questo utente?\') ){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete&idutente='.$utenti[$u]['idutente'].'&idgruppo='.$record['id'].'\'; }" title="Elimina utente" class="text-danger tip"><i class="fa fa-2x fa-trash"></i></a>';
         } else {
             echo '
-			<span onclick="alert(\"'._("Non è possibile eliminare l'utente admin").'\")" class="text-muted tip"><i class="fa fa-2x fa-trash-o"></i></span>';
+			<span onclick="alert(\"'._("Non è possibile eliminare l'utente admin").'\")" class="text-muted tip"><i class="fa fa-2x fa-trash"></i></span>';
         }
 
         echo '

@@ -151,7 +151,7 @@ foreach ($modules as $module) {
     // Possibilità di disinstallare solo se il modulo non è tra quelli predefiniti
     if (empty($module['default'])) {
         echo "
-                    <a href=\"javascript:;\" data-toggle='tooltip' title=\""._('Disinstalla')."...\" onclick=\"if( confirm('"._('Vuoi disinstallare questo modulo?').' '._('Tutti i dati salvati andranno persi!')."') ){ if( confirm('"._('Sei veramente sicuro?')."') ){ $.post( '".$rootdir.'/editor.php?id_module='.$id_module."', { op: 'uninstall', id: '".$module['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); } }\"><i class='fa fa-trash-o'></i></a>";
+                    <a href=\"javascript:;\" data-toggle='tooltip' title=\""._('Disinstalla')."...\" onclick=\"if( confirm('"._('Vuoi disinstallare questo modulo?').' '._('Tutti i dati salvati andranno persi!')."') ){ if( confirm('"._('Sei veramente sicuro?')."') ){ $.post( '".$rootdir.'/editor.php?id_module='.$id_module."', { op: 'uninstall', id: '".$module['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); } }\"><i class='fa fa-trash'></i></a>";
     }
     echo '
                 </td>
@@ -207,7 +207,7 @@ foreach ($modules as $module) {
     // Possibilità di disinstallare solo se il modulo non è tra quelli predefiniti
     if (empty($sub['default'])) {
         echo "
-                    <a href=\"javascript:;\" data-toggle='tooltip' title=\""._('Disinstalla')."...\" onclick=\"if( confirm('"._('Vuoi disinstallare questo modulo?').' '._('Tutti i dati salvati andranno persi!')."') ){ if( confirm('"._('Sei veramente sicuro?')."') ){ $.post( '".$rootdir.'/editor.php?id_module='.$id_module."', { op: 'uninstall', id: '".$sub['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); } }\"><i class='fa fa-trash-o'></i></a>";
+                    <a href=\"javascript:;\" data-toggle='tooltip' title=\""._('Disinstalla')."...\" onclick=\"if( confirm('"._('Vuoi disinstallare questo modulo?').' '._('Tutti i dati salvati andranno persi!')."') ){ if( confirm('"._('Sei veramente sicuro?')."') ){ $.post( '".$rootdir.'/editor.php?id_module='.$id_module."', { op: 'uninstall', id: '".$sub['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); } }\"><i class='fa fa-trash'></i></a>";
     }
         echo '
                 </td>

@@ -168,7 +168,7 @@ if (!empty($rs)) {
                     </a>
 
                     <a class='btn btn-xs btn-danger' title='Rimuovi questa riga...' onclick=\"if( confirm('Rimuovere questa riga dal ddt?') ){ $('#delete-form-".$r['id']."').submit(); }\">
-                        <i class='fa fa-trash-o'></i>
+                        <i class='fa fa-trash'></i>
                     </a>
                 </div>
             </form>";

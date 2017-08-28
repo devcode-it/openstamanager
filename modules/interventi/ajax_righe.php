@@ -77,7 +77,7 @@ if (count($rs2) > 0) {
             echo '
         <td>
             <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''._('Modifica spesa').'\', \''.$rootdir.'/modules/interventi/add_righe.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'\', 1);"><i class="fa fa-edit"></i></button>
-            <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="if(confirm(\''._('Eliminare questa spesa?').'\')){ elimina_riga( \''.$r['id'].'\' ); }"><i class="fa fa-trash-o"></i></button>
+            <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="if(confirm(\''._('Eliminare questa spesa?').'\')){ elimina_riga( \''.$r['id'].'\' ); }"><i class="fa fa-trash"></i></button>
         </td>';
         }
         echo '

@@ -13,7 +13,7 @@ foreach ($subcategorie as $sub) {
 					<td>
 						<a class="btn btn-warning btn-sm" title="Modifica riga" onclick="launch_modal(\''._('Modifica sottocategoria').'\', \''.$rootdir.'/add.php?id_module='.$id_module.'&id_record='.$sub['id'].'&id_original='.$id_record.'\', 1 );"><i class="fa fa-edit"></i></a>
                         <a class="btn btn-sm btn-danger ask" data-backto="record-edit" data-id="'.$sub['id'].'">
-                            <i class="fa fa-trash-o"></i>
+                            <i class="fa fa-trash"></i>
                         </a>
 					</td>
 				</tr>';

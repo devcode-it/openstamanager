@@ -4,6 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 // Necessaria per la funzione add_movimento_magazzino
 include_once $docroot.'/modules/articoli/modutil.php';
+include_once $docroot.'/modules/fatture/modutil.php';
 
 $module = Modules::getModule($id_module);
 
@@ -105,18 +106,13 @@ switch (post('op')) {
                 ' bollo=0, rivalsainps=0, ritenutaacconto=0, n_colli='.prepare($n_colli).' WHERE id='.prepare($id_record);
 
             if ($dbo->query($query)) {
-                $dbo->query("DELETE FROM dt_righe_ddt WHERE descrizione LIKE '%SCONTO%' AND idddt=".prepare($id_record));
-
-                // Sconto unitario, quello percentuale viene gestito a fondo pagina
-                if ($tipo_sconto == 'UNT' && $sconto > 0) {
-                    $subtotale = -$sconto;
-
-                    // Calcolo anche l'iva da scontare
-                    $rsi = $dbo->fetchArray('SELECT descrizione, percentuale FROM co_iva WHERE id='.prepare(get_var('Iva predefinita')));
-                    $iva = $subtotale / 100 * $rsi[0]['percentuale'];
-
-                    $dbo->query('INSERT INTO dt_righe_ddt(idddt, descrizione, idiva, desc_iva, iva, subtotale, sconto, qta, idgruppo, `order`) VALUES( '.prepare($id_record).", 'SCONTO', ".prepare($idiva).', '.prepare($rsi[0]['descrizione']).', '.prepare($iva).', '.prepare($subtotale).', 0, 1, (SELECT IFNULL(MAX(`idgruppo`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($id_record).'), (SELECT IFNULL(MAX(`order`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($id_record).'))');
-                }
+                aggiorna_sconto([
+                    'parent' => 'dt_ddt',
+                    'row' => 'dt_righe_ddt',
+                ], [
+                    'parent' => 'id',
+                    'row' => 'idddt',
+                ], $id_record);
 
                 $query = 'SELECT descrizione FROM dt_statiddt WHERE id='.prepare($idstatoddt);
                 $rs = $dbo->fetchArray($query);
@@ -496,23 +492,12 @@ switch (post('op')) {
         break;
 }
 
-if (post('op') !== null) {
-    $rs_sconto = $dbo->fetchArray('SELECT sconto_globale, tipo_sconto_globale FROM dt_ddt WHERE id='.prepare($id_record));
-
-    // Aggiorno l'eventuale sconto gestendolo con le righe in fattura
-    if ($rs_sconto[0]['tipo_sconto_globale'] == 'PRC' && !empty($rs_sconto[0]['sconto_globale'])) {
-        // Se lo sconto c'è già lo elimino e lo ricalcolo
-        $dbo->query("DELETE FROM dt_righe_ddt WHERE descrizione LIKE '%SCONTO %' AND idddt=".prepare($id_record));
-
-        $subtotale = get_imponibile_ddt($id_record);
-        $subtotale = -$subtotale / 100 * $rs_sconto[0]['sconto_globale'];
-
-        // Calcolo anche l'iva da scontare
-        $rsi = $dbo->fetchArray('SELECT descrizione, percentuale FROM co_iva WHERE id='.prepare(get_var('Iva predefinita')));
-        $iva = $subtotale / 100 * $rsi[0]['percentuale'];
-
-        $descrizione = 'SCONTO '.Translator::numberToLocale($rs_sconto[0]['sconto_globale']).'%';
-
-        $dbo->query('INSERT INTO dt_righe_ddt(idddt, descrizione, idiva, desc_iva, iva, subtotale, sconto, qta, digruppo, `order`) VALUES( '.prepare($id_record).', '.prepare($descrizione).', '.prepare($idiva).', '.prepare($rsi[0]['descrizione']).', '.prepare($iva).', '.prepare($subtotale).', 0, 1, (SELECT IFNULL(MAX(`idgruppo`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($id_record).'), (SELECT IFNULL(MAX(`order`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($id_record).'))');
-    }
+if (post('op') !== null && post('op') != 'update') {
+    aggiorna_sconto([
+        'parent' => 'dt_ddt',
+        'row' => 'dt_righe_ddt',
+    ], [
+        'parent' => 'id',
+        'row' => 'idddt',
+    ], $id_record);
 }

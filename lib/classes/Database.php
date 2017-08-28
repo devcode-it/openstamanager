@@ -640,8 +640,7 @@ class Database extends Util\Singleton
             try {
                 $this->pdo->query($queries[$i]);
             } catch (PDOException $e) {
-                $this->signal($e, _('Aggiornamento fallito').': '.$queries[$i], [
-                    'level' => \Monolog\Logger::EMERGENCY,
+                $this->signal($e, $queries[$i], [
                     'throw' => false,
                 ]);
 

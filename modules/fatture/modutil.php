@@ -742,3 +742,56 @@ function rimuovi_articolo_dafattura($idarticolo, $iddocumento, $idrigadocumento)
 
     return true;
 }
+
+function rimuovi_riga($iddocumento, $idriga)
+{
+}
+
+function aggiorna_sconto($tables, $fields, $id_record, $options = [])
+{
+    $dbo = Database::getConnection();
+
+    $descrizione = strtoupper(_('Sconto'));
+
+    // Rimozione dello sconto precedente
+    $dbo->query('DELETE FROM '.$tables['row']." WHERE descrizione LIKE '%".$descrizione."%' AND ".$fields['row'].'='.prepare($id_record));
+
+    // Individuazione del nuovo sconto
+    $sconto = $dbo->select($tables['parent'], ['sconto_globale', 'tipo_sconto_globale'], [$fields['parent'] => $id_record]);
+    $sconto[0]['sconto_globale'] = floatval($sconto[0]['sconto_globale']);
+
+    // Aggiorno l'eventuale sconto gestendolo con le righe in fattura
+    if (!empty($sconto[0]['sconto_globale'])) {
+        if ($sconto[0]['tipo_sconto_globale'] == 'PRC') {
+            $subtotale = $dbo->fetchArray('SELECT SUM('.$tables['row'].'.subtotale - '.$tables['row'].'.sconto) AS imponibile FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record))[0]['imponibile'];
+            $subtotale = -$subtotale / 100 * $sconto[0]['sconto_globale'];
+
+            $descrizione = $descrizione.' '.Translator::numberToLocale($sconto[0]['sconto_globale']).'%';
+        } else {
+            $subtotale = -$sconto[0]['sconto_globale'];
+        }
+
+        // Calcolo dell'IVA da scontare
+        $idiva = get_var('Iva predefinita');
+        $rsi = $dbo->select('co_iva', ['descrizione', 'percentuale'], ['id' => $idiva]);
+        $iva = $subtotale / 100 * $rsi[0]['percentuale'];
+
+        $values = [
+            $fields['row'] => $id_record,
+            'descrizione' => $descrizione,
+            'subtotale' => $subtotale,
+            'qta' => 1,
+            'idiva' => $idiva,
+            'desc_iva' => $rsi[0]['descrizione'],
+            'iva' => $iva,
+            '#order' => '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM '.$tables['row'].' AS t WHERE '.$fields['row'].'='.prepare($id_record).')',
+        ];
+
+        // Opzione per disabilitare l'idgruppo (per preventivi)
+        if (!isset($options['idgruppo']) || !empty($options['idgruppo'])) {
+            $values['#idgruppo'] = '(SELECT IFNULL(MAX(`idgruppo`) + 1, 0) FROM '.$tables['row'].' AS t WHERE '.$fields['row'].'='.prepare($id_record).')';
+        }
+
+        $dbo->insert($tables['row'], $values);
+    }
+}

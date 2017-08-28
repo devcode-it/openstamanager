@@ -23,14 +23,74 @@ if (post('db_host') !== null) {
     $db_name = post('db_name');
     $db_username = post('db_username');
     $db_password = post('db_password');
-    $_SESSION['osm_password'] = post('osm_password');
-    $_SESSION['osm_email'] = post('osm_email');
 
     $valid_config = isset($db_host) && isset($db_name) && isset($db_username) && isset($db_password);
 
     // Generazione di una nuova connessione al database
     $dbo = Database::getConnection(true);
 
+    // Test della configurazione
+    if (post('test') !== null) {
+        ob_end_clean();
+        $state = 2;
+
+        if ($dbo->isConnected()) {
+            $requirements = [
+                'SELECT',
+                'INSERT',
+                'UPDATE',
+                'CREATE',
+                'ALTER',
+                'DROP',
+                'CREATE VIEW',
+            ];
+
+            $db_host = str_replace('_', '\_', $db_name);
+            $db_name = str_replace('_', '\_', $db_name);
+            $db_username = str_replace('_', '\_', $db_name);
+
+            $user = " TO '".$db_username."'@'".$db_host."'";
+            $db = ' ON `'.$db_name.'`.*';
+
+            $results = $dbo->fetchArray('SHOW GRANTS FOR CURRENT_USER');
+            foreach ($results as $result) {
+                if (
+                    str_contains($result, $find) &&
+                    (
+                        str_contains($result, $db) ||
+                        str_contains($result, str_replace('`'.$db_name.'`', '*', $db))
+                    )
+                ) {
+                    $pieces = explode(', ', explode(' ON ', str_replace('GRANT ', '', current($result)))[0]);
+
+                    if (in_array('ALL', $pieces) || in_array('ALL PRIVILEGES', $pieces)) {
+                        break;
+                    }
+
+                    foreach ($requirements as $key => $value) {
+                        if (!in_array($value, $pieces)) {
+                            $state = 1;
+
+                            break 2;
+                        } else {
+                            unset($requirements[$key]);
+                        }
+                    }
+                }
+            }
+        } else {
+            $state = 0;
+        }
+
+        echo $state;
+        exit();
+    }
+
+    // Salvataggio dei valori da salvare successivamente
+    $_SESSION['osm_password'] = post('osm_password');
+    $_SESSION['osm_email'] = post('osm_email');
+
+    // Creazione della configurazione
     if ($dbo->isConnected()) {
         // Impostazioni di configurazione strettamente necessarie al funzionamento del progetto
         $backup_config = '<?php
@@ -158,6 +218,46 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                 $("html, body").animate({ scrollTop: $("#steps").offset().top }, 500);
 
                 return result;
+            });
+
+            $("#test").on("click", function(){
+                if($(this).closest("form").parsley().validate()){
+                    var form_data = new FormData();
+
+                    $(this).closest("form").find("input, textarea, select").each(function(){
+                        var name = $(this).attr("name");
+
+                        var data = $(this).val();
+                        data = (typeof data == "string") ? [data] : data;
+
+                        data.forEach(function(item){
+                            form_data.append(name, item);
+                        });
+                    });
+
+                    form_data.append("test", 1);
+
+                    $.ajax({
+                        url: "'.$rootdir.'/index.php",
+                        cache: false,
+                        type: "post",
+                        processData: false,
+                        contentType: false,
+                        dataType : "html",
+                        data: form_data,
+                        success: function(data) {
+                            data = parseFloat(data.trim());
+
+                            if(data == 0){
+                                swal("'._('Errore della configurazione').'", "'._('La configurazione fornita non è corretta!').'", "error");
+                            } else if(data == 1){
+                                swal("'._('Permessi insufficienti').'", "'._("L'utente inserito non possiede permessi sufficienti al corretto funzionamento del software.").'", "error");
+                            } else{
+                                swal("'._('Configurazione corretta').'", "'._('La configurazione funziona correttamente!').'", "success");
+                            }
+                        }
+                    });
+                }
             });
         });
         </script>';
@@ -425,7 +525,12 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                                 <div class="col-md-4">
                                     <span>*<small><small>'._('Campi obbligatori').'</small></small></span>
                                 </div>
-                                <div class="col-md-8 text-right">
+                                <div class="col-md-4 text-right">
+                                    <button type="button" id="test" class="btn btn-warning btn-block">
+                                        <i class="fa fa-file-text"></i> '._('Testa il database').'
+                                    </button>
+                                </div>
+                                <div class="col-md-4 text-right">
                                     <button type="submit" class="btn btn-success btn-block">
                                         <i class="fa fa-check"></i> '._('Prosegui').'
                                     </button>

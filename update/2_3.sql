@@ -686,7 +686,7 @@ ALTER TABLE `my_impianto_componenti` ADD FOREIGN KEY (`idsostituto`) REFERENCES 
 ALTER TABLE `zz_logs` CHANGE `timestamp` `timestamp` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00';
 
 -- Adeguamento dei contenuti di zz_files
-ALTER TABLE `zz_files` CHANGE `externalid` `id_record` int(11) NOT NULL, ADD `id_module` int(11) NOT NULL AFTER `filename`;
+ALTER TABLE `zz_files` CHANGE `externalid` `id_record` int(11) NOT NULL, ADD `id_module` int(11) NOT NULL AFTER `filename`, ADD `original` varchar(255) NOT NULL AFTER `filename`;
 UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`directory` = `zz_files`.`module`);
 ALTER TABLE `zz_files` DROP `module`;
 

@@ -15,12 +15,12 @@ if (!empty($id_plugin)) {
     $permesso = $id_module;
 }
 
+$upload_dir = $docroot.'/files/'.basename($directory);
+
 $dbo->query('START TRANSACTION');
 
 // GESTIONE UPLOAD
 if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
-    $upload_dir = $docroot.'/files/'.basename($directory);
-
     // Controllo sui permessi di scrittura per il modulo
     if (Modules::getPermission($id_module) != 'rw') {
         $_SESSION['errors'][] = str_replace('_MODULE_', '"'.Modules::getModule($id_module)['name'].'"', _('Non hai permessi di scrittura per il modulo _MODULE_'));
@@ -163,7 +163,13 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 
                 // Creazione file fisico
                 if (move_uploaded_file($src, $upload_dir.'/'.$filename)) {
-                    $dbo->query('INSERT INTO `zz_files`(nome, filename, id_module, id_record) VALUES('.prepare($nome).', '.prepare($filename).', '.prepare($id_module).', '.prepare($id_record).')');
+                    $dbo->insert('zz_files', [
+                        'nome' => $nome,
+                        'filename' => $filename,
+                        'original' => $_FILES['blob']['name'],
+                        'id_module' => $id_module,
+                        'id_record' => $id_record,
+                    ]);
 
                     $_SESSION['infos'][] = _('File caricato correttamente!');
                 } else {
@@ -194,6 +200,10 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 
         redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
     }
+} elseif (filter('op') == 'download_file') {
+    $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare(filter('filename')));
+
+    force_download($rs[0]['original'], $upload_dir.'/'.$rs[0]['filename']);
 }
 
 if (Modules::getPermission($permesso) == 'rw') {

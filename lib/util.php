@@ -227,6 +227,10 @@ if (!function_exists('force_download')) {
             header('Content-Transfer-Encoding: binary');
 
             if ($content) {
+                if (is_file($content)) {
+                    $content = file_get_contents($content);
+                }
+
                 header('Content-Length: '.strlen($content));
             }
 

@@ -35,7 +35,7 @@ class FileManager implements ManagerInterface
         <tr>
             <th>'._('Nome').'</th>
             <th>'._('Data').'</th>
-            <th style="width:5%;text-align:center;">#</th>
+            <th width="10%" class="text-center">#</th>
         </tr>';
 
             foreach ($rs as $r) {
@@ -47,7 +47,11 @@ class FileManager implements ManagerInterface
                 </a>
             </td>
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
-            <td>
+            <td class="text-center">
+                <a class="btn btn-primary" href="'.ROOTDIR.'/actions.php?id_module='.$options['id_module'].'&op=download_file&id='.$r['id'].'&filename='.$r['filename'].'" target="_blank">
+                    <i class="fa fa-download"></i>
+                </a>
+
                 <a class="btn btn-danger ask" data-backto="record-edit" data-msg="'._('Vuoi eliminare questo file?').'" data-op="unlink_file" data-id="'.$r['id'].'" data-filename="'.$r['filename'].'">
                     <i class="fa fa-trash"></i>
                 </a>

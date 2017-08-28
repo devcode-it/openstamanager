@@ -164,7 +164,7 @@ class Translator extends Util\Singleton
      */
     public static function translate($string, $parameters = [], $domain = null, $locale = null)
     {
-        $translator = self::getInstance();
+        $translator = self::getInstance()->getTranslator();
         if (!empty($translator)) {
             return $translator->trans($string, $parameters, $domain, $locale);
         } else {

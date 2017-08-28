@@ -7,7 +7,7 @@ namespace Util;
  */
 abstract class Singleton
 {
-    /** @var \Util\Singleton Oggetto istanziato */
+    /** @var \Util\Singleton Oggetti istanziati */
     protected static $instance = [];
 
     protected function __construct()
@@ -23,7 +23,7 @@ abstract class Singleton
     {
         $class = get_called_class(); // late-static-bound class name
 
-        if (self::$instance[$class] === null) {
+        if (!isset(self::$instance[$class])) {
             self::$instance[$class] = new static();
         }
 

@@ -136,7 +136,7 @@ class API extends \Util\Singleton
 
     public function update($resource)
     {
-        return $this->fileRequest($resource, 'generate');
+        return $this->fileRequest($resource, 'update');
     }
 
     public function delete($resource)
@@ -148,14 +148,23 @@ class API extends \Util\Singleton
     {
         $resources = self::getResources()[$kind];
 
-        if (!in_array($resource, $resources)) {
+        if (!in_array($resource, array_keys($resources))) {
             return self::error('notFound');
         }
 
+        // Database
         $dbo = Database::getConnection();
+
+        $dbo->query('START TRANSACTION');
+
+        // Variabili GET e POST
+        $post = Filter::getPOST();
+        $get = Filter::getGET();
 
         $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
         include $filename;
+
+        $dbo->query('COMMIT');
 
         return self::response($results);
     }
@@ -182,11 +191,13 @@ class API extends \Util\Singleton
                     $module = basename(dirname(dirname($operation)));
                     $kind = basename($operation, '.php');
 
+                    $resources[$kind] = (array) $resources[$kind];
+
                     $temp = str_replace('/api/', '/custom/api/', $operation);
                     $operation = file_exists($temp) ? $temp : $operation;
 
                     $api = include $operation;
-                    $api = array_unique($api);
+                    $api = is_array($api) ? array_unique($api) : [];
 
                     $keys = array_keys($resources[$kind]);
 
@@ -196,7 +207,7 @@ class API extends \Util\Singleton
                         $results[$value] = $module;
                     }
 
-                    $resources[$kind] = array_merge((array) $resources[$kind], $results);
+                    $resources[$kind] = array_merge($resources[$kind], $results);
                 }
             }
 

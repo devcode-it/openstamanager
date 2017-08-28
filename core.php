@@ -61,7 +61,7 @@ $handlers[] = new StreamHandler(__DIR__.'/logs/error.log', Monolog\Logger::ERROR
 $handlers[] = new StreamHandler(__DIR__.'/logs/setup.log', Monolog\Logger::EMERGENCY);
 
 // Impostazioni di debug
-if (!empty($debug)) {
+if (!empty($debug) && !API::isAPIRequest()) {
     // Ignoramento degli avvertimenti e delle informazioni relative alla deprecazione di componenti
     if (empty($strict)) {
         error_reporting(E_ALL & ~E_NOTICE & ~E_USER_DEPRECATED);
@@ -79,7 +79,7 @@ if (!empty($debug)) {
         $whoops->pushHandler($prettyPageHandler);
 
         // Abilita la gestione degli errori nel caso la richiesta sia di tipo AJAX
-        if (\Whoops\Util\Misc::isAjaxRequest()) {
+        if (Whoops\Util\Misc::isAjaxRequest()) {
             $whoops->pushHandler(new Whoops\Handler\JsonResponseHandler());
         }
 

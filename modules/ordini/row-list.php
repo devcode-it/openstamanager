@@ -84,7 +84,7 @@ if (!empty($rs)) {
 
         echo '
         <td class="text-center">';
-        if (strpos($r['descrizione'], 'SCONTO') === false) {
+        if (!str_contains($r['descrizione'], 'SCONTO')) {
             echo '
             <big>'.Translator::numberToLocale($r['qta'] - $r['qta_evasa']).'</big>
             <br><small>('._('Q.tà iniziale').': '.Translator::numberToLocale($r['qta']).')</small>';
@@ -130,7 +130,7 @@ if (!empty($rs)) {
         echo '
         <td class="text-center">';
 
-        if ($records[0]['stato'] != 'Evaso' && strpos($r['descrizione'], 'SCONTO') === false) {
+        if ($records[0]['stato'] != 'Evaso' && !str_contains($r['descrizione'], 'SCONTO')) {
             echo "
             <form action='".$rootdir.'/editor.php?id_module='.Modules::getModule($name)['id'].'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>
@@ -161,7 +161,7 @@ if (!empty($rs)) {
             </form>";
         }
 
-        if (strpos($r['descrizione'], 'SCONTO') === false) {
+        if (!str_contains($r['descrizione'], 'SCONTO')) {
             echo '
             <div class="handle clickable" style="padding:10px">
                 <i class="fa fa-sort"></i>

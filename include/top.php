@@ -226,9 +226,9 @@ if (Auth::check()) {
                 <section class="content">
                     <div class="row">';
 
-    if (strpos($_SERVER['SCRIPT_FILENAME'], 'editor.php') !== false) {
+    if (str_contains($_SERVER['SCRIPT_FILENAME'], 'editor.php')) {
         $location = 'editor_right';
-    } elseif (strpos($_SERVER['SCRIPT_FILENAME'], 'controller.php') !== false) {
+    } elseif (str_contains($_SERVER['SCRIPT_FILENAME'], 'controller.php')) {
         $location = 'controller_right';
     }
 

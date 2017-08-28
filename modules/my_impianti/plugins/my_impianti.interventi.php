@@ -123,7 +123,7 @@ foreach ($rs as $r) {
                 echo ' selected="selected"';
                 $list[] = $componente['id'];
             }
-            if (strpos($componente['contenuto'], '[Matricola]') !== false) {
+            if (str_contains($componente['contenuto'], '[Matricola]')) {
                 $ini_array = parse_ini_string($componente['contenuto'], true);
                 foreach ($ini_array as $sezione => $array_impostazioni) {
                     if ($sezione == 'Matricola') {

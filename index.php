@@ -82,7 +82,7 @@ if (file_exists($docroot.'/include/custom/top.php')) {
 }
 
 // Controllo se è una beta e in caso mostro un warning
-if (strpos($version, 'beta') !== false) {
+if (str_contains($version, 'beta')) {
     echo '
 			<div class="alert alert-warning alert-dismissable pull-right fade in">
 				<i class="fa fa-warning"></i> <b>'._('Attenzione!').'</b> '._('Stai utilizzando una versione <b>non stabile</b> di OSM.').'

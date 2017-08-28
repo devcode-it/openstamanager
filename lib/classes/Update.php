@@ -68,7 +68,7 @@ class Update
             foreach ($results as $result) {
                 // Individuazione di script e sql
                 $temp = explode('_', $result);
-                $file = DOCROOT.((strpos($result, '_') !== false) ? '/modules/'.implode('_', explode('_', $result, -1)) : '').'/update/'.str_replace('.', '_', end($temp));
+                $file = DOCROOT.((str_contains($result, '_')) ? '/modules/'.implode('_', explode('_', $result, -1)) : '').'/update/'.str_replace('.', '_', end($temp));
 
                 $sql = file_exists($file.'.sql') ? 1 : 0;
                 $script = file_exists($file.'.php') ? 1 : 0;
@@ -100,7 +100,7 @@ class Update
                 $temp = explode('_', $value['version']);
                 $updates[$key]['filename'] = str_replace('.', '_', end($temp));
 
-                $updates[$key]['directory'] = ((strpos($value['version'], '_') !== false) ? '/modules/'.implode('_', explode('_', $value['version'], -1)) : '').'/update/';
+                $updates[$key]['directory'] = ((str_contains($value['version'], '_')) ? '/modules/'.implode('_', explode('_', $value['version'], -1)) : '').'/update/';
             }
 
             self::$updates = $updates;
@@ -164,7 +164,7 @@ class Update
 
     protected static function getFile($file)
     {
-        $file = (strpos($file, DOCROOT.DIRECTORY_SEPARATOR) !== false) ? $file : DOCROOT.DIRECTORY_SEPARATOR.$file;
+        $file = (str_contains($file, DOCROOT.DIRECTORY_SEPARATOR)) ? $file : DOCROOT.DIRECTORY_SEPARATOR.$file;
 
         $result = '';
 

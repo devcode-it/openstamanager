@@ -287,7 +287,7 @@ if ($fornitore) {
 
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "select", "multiple": "1", "label": "<?php echo _('Tipo di anagrafica'); ?>", "name": "idtipoanagrafica[]", "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica  WHERE t.descrizione = 'Azienda'  AND deleted = 0) OR idtipoanagrafica IN (SELECT DISTINCT(z.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche z WHERE idanagrafica = <?php echo $records[0]['idanagrafica']; ?>) ORDER BY descrizione", "value": "$idtipianagrafica$"<?php if (strpos($records[0]['idtipianagrafica'], $id_azienda) !== false) {
+					{[ "type": "select", "multiple": "1", "label": "<?php echo _('Tipo di anagrafica'); ?>", "name": "idtipoanagrafica[]", "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica  WHERE t.descrizione = 'Azienda'  AND deleted = 0) OR idtipoanagrafica IN (SELECT DISTINCT(z.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche z WHERE idanagrafica = <?php echo $records[0]['idanagrafica']; ?>) ORDER BY descrizione", "value": "$idtipianagrafica$"<?php if (str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
     echo ', "readonly": 1';
 } ?> ]}
 				</div>
@@ -331,7 +331,7 @@ if ($fornitore) {
 	</div>
 </form>
 <?php
-if (strpos($records[0]['idtipianagrafica'], $id_azienda) === false) {
+if (!str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
                     echo '
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> '._('Elimina').'

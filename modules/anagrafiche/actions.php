@@ -170,7 +170,7 @@ switch (post('op')) {
                 }
             }
 
-           $idagente = ($agente_is_logged && strpos($tipoanagrafica_dst, 'Cliente') !== false) ? $user['idanagrafica'] :  0;
+           $idagente = ($agente_is_logged && str_contains($tipoanagrafica_dst, 'Cliente')) ? $user['idanagrafica'] :  0;
 
            // Inserisco l'anagrafica
            $query = 'INSERT INTO an_anagrafiche(ragione_sociale, codice, idagente) VALUES ('.prepare($ragione_sociale).', '.prepare($codice).', '.prepare($idagente).')';
@@ -185,13 +185,13 @@ switch (post('op')) {
             $dbo->query($query);
         }
 
-        if (strpos($tipoanagrafica_dst, 'Azienda') !== false) {
+        if (str_contains($tipoanagrafica_dst, 'Azienda')) {
             $dbo->query('UPDATE zz_settings SET valore='.prepare($new_id)." WHERE nome='Azienda predefinita'");
             $_SESSION['infos'][] = _('Anagrafica Azienda impostata come predefinita. Per ulteriori informazionioni, visitare "Strumenti -> Impostazioni -> Generali".');
         }
 
         // Creo il relativo conto nel partitario
-        if (strpos($tipoanagrafica_dst, 'Cliente') !== false) {
+        if (str_contains($tipoanagrafica_dst, 'Cliente')) {
             // Calcolo prossimo numero cliente
             $rs = $dbo->fetchArray("SELECT MAX(CAST(co_pianodeiconti3.numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti2.descrizione='Crediti clienti e crediti diversi'");
             $new_numero = $rs[0]['max_numero'] + 1;
@@ -203,7 +203,7 @@ switch (post('op')) {
 
             // Collegamento conto
             $dbo->query('UPDATE an_anagrafiche SET idconto_cliente='.prepare($idconto).' WHERE idanagrafica='.prepare($new_id));
-        } elseif (strpos($tipoanagrafica_dst, 'Fornitore') !== false) {
+        } elseif (str_contains($tipoanagrafica_dst, 'Fornitore')) {
             // Calcolo prossimo numero cliente
             $rs = $dbo->fetchArray("SELECT MAX(CAST(co_pianodeiconti3.numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti2.descrizione='Debiti fornitori e debiti diversi'");
             $new_numero = $rs[0]['max_numero'] + 1;
@@ -219,7 +219,7 @@ switch (post('op')) {
 
         $id_record = $new_id;
 
-        if (isAjaxRequest() && strpos($tipoanagrafica_dst, post('tipoanagrafica')) !== false) {
+        if (isAjaxRequest() && str_contains($tipoanagrafica_dst, post('tipoanagrafica'))) {
             echo json_encode(['id' => $id_record, 'text' => $ragione_sociale]);
         }
 
@@ -229,7 +229,7 @@ switch (post('op')) {
 
     case 'delete':
         // Disattivo l'anagrafica, solo se questa non è l'azienda principale
-        if (strpos($records[0]['idtipianagrafica'], $id_azienda) === false) {
+        if (str_contains($records[0]['idtipianagrafica'], $id_azienda) === false) {
             $dbo->query('UPDATE an_anagrafiche SET deleted = 1 WHERE idanagrafica = '.prepare($id_record).Modules::getAdditionalsQuery($id_module));
 
             $_SESSION['infos'][] = _('Anagrafica eliminata!');

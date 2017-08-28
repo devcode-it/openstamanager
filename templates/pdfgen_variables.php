@@ -110,7 +110,7 @@ foreach ($replace as $prefix => $values) {
 }
 
 // Aggiunta del footer standard
-if (strpos($body, '<page_footer>') === false && strpos($report, '<page_footer>') === false) {
+if (!str_contains($body, '<page_footer>') && !str_contains($report, '<page_footer>')) {
     $report .= '
 <!-- Footer -->
 <page_footer>

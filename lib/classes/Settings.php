@@ -44,7 +44,7 @@ class Settings
                 $result = $results[0];
                 $value = $result['valore'];
 
-                if (!empty($descrizione) && strpos($result['tipo'], 'query=') !== false) {
+                if (!empty($descrizione) && str_contains($result['tipo'], 'query=')) {
                     $data = $database->fetchArray(str_replace('query=', '', $result['tipo']));
                     if (!empty($data)) {
                         $value = $data[0]['descrizione'];

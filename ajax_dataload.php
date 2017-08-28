@@ -45,7 +45,7 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
     $search_filters = [];
     for ($i = 0; $i < count($columns); ++$i) {
         if (!empty($columns[$i]['search']['value'])) {
-            if (strpos($total['search_inside'][$i], '|search|') !== false) {
+            if (str_contains($total['search_inside'][$i], '|search|')) {
                 $pieces = explode(',', $columns[$i]['search']['value']);
                 foreach ($pieces as $piece) {
                     $piece = trim($piece);
@@ -83,7 +83,7 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
         if (!empty($sums)) {
             $r = [];
             foreach ($sums as $key => $sum) {
-                if (strpos($key, 'sum_') !== false) {
+                if (str_contains($key, 'sum_')) {
                     $r[str_replace('sum_', '', $key)] = Translator::numberToLocale($sum);
                 }
             }

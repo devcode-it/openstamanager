@@ -26,7 +26,7 @@ if (!function_exists('completeResults')) {
     {
         $dbo = Database::getConnection();
 
-        if (strpos($query, '|filter|') !== false) {
+        if (str_contains($query, '|filter|')) {
             $query = str_replace('|filter|', !empty($filter) ? 'WHERE '.implode(' OR ', $filter) : '', $query);
         } elseif (!empty($filter)) {
             $where[] = '('.implode(' OR ', $filter).')';

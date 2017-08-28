@@ -235,6 +235,7 @@ if (Modules::getPermission($permesso) == 'rw') {
     // Esecuzione delle operazioni di gruppo
     $id_records = post('id_records');
     $id_records = is_array($id_records) ? $id_records : explode(',', $id_records);
+    $id_records = array_unique($id_records);
 
     $bulk = null;
     if (file_exists($docroot.$directory.'/custom/bulk.php')) {

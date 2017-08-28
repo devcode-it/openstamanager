@@ -197,7 +197,7 @@ class Modules
             $select = '*';
 
             $options = !empty($module['options2']) ? $module['options2'] : $module['options'];
-            if (strpos($options, '|select|') !== false) {
+            if (str_contains($options, '|select|')) {
                 $query = $options;
 
                 $user = Auth::user();

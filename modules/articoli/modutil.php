@@ -85,10 +85,10 @@ function add_movimento_magazzino($idarticolo, $qta, $array = [], $descrizone = '
     // Registrazione della movimentazione
     $dbo->insert('mg_movimenti', array_merge($array, [
         'idarticolo' => $idarticolo,
-        'descrizione_articolo' => '#(SELECT descrizione FROM mg_articoli WHERE id='.prepare($idarticolo).')#',
+        '#descrizione_articolo' => '(SELECT descrizione FROM mg_articoli WHERE id='.prepare($idarticolo).')',
         'qta' => $qta,
         'movimento' => $movimento,
-        'data' => '#NOW()#',
+        '#data' => 'NOW()',
     ]));
 
     return true;

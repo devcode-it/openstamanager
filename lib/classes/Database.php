@@ -339,7 +339,7 @@ class Database extends Util\Singleton
     {
         $char = '`';
 
-        return $char.str_replace($char, '', $string).$char;
+        return $char.str_replace([$char, '#'], '', $string).$char;
     }
 
     /**
@@ -372,7 +372,7 @@ class Database extends Util\Singleton
         $inserts = [];
         foreach ($array as $values) {
             foreach ($values as $key => $value) {
-                $values[$key] = $this->getValue($value);
+                $values[$key] = $this->prepareValue($key, $value);
             }
 
             $inserts[] = '('.implode(array_values($values), ', ').')';
@@ -407,12 +407,12 @@ class Database extends Util\Singleton
 
         $update = [];
         foreach ($array as $key => $value) {
-            $update[] = $this->quote($key).' = '.$this->getValue($value);
+            $update[] = $this->quote($key).' = '.$this->prepareValue($key, $value);
         }
 
         $where = [];
         foreach ($conditions as $key => $value) {
-            $where[] = $this->quote($key).' = '.$this->getValue($value);
+            $where[] = $this->quote($key).' = '.$this->prepareValue($key, $value);
         }
 
         $query = 'UPDATE '.$this->quote($table).' SET '.implode($update, ', ').' WHERE '.implode($where, ' AND ');
@@ -568,15 +568,15 @@ class Database extends Util\Singleton
      *
      * @return string
      */
-    protected function getValue($value)
+    protected function prepareValue($field, $value)
     {
         $value = (is_null($value)) ? 'NULL' : $value;
         $value = is_bool($value) ? intval($value) : $value;
 
-        if (starts_with($value, '#') && ends_with($value, '#')) {
-            $value = substr($value, 1, -1);
-        } elseif ($value != 'NULL') {
-            $value = $this->prepare($value);
+        if (!starts_with($field, '#')) {
+            if ($value != 'NULL') {
+                $value = $this->prepare($value);
+            }
         }
 
         return $value;
@@ -606,12 +606,12 @@ class Database extends Util\Singleton
                 } elseif (starts_with($value, '#') && ends_with($value, '#')) {
                     $result[] = substr($value, 1, -1);
                 } elseif (starts_with($value, '%') || ends_with($value, '%')) {
-                    $result[] = $this->quote($key).' LIKE '.$this->getValue($value);
+                    $result[] = $this->quote($key).' LIKE '.$this->prepareValue($key, $value);
                 } elseif (str_contains($value, '|')) {
                     $pieces = explode('|', $value);
-                    $result[] = $this->quote($key).' BETWEEN '.$this->getValue($pieces[0]).' AND '.$this->getValue($pieces[1]);
+                    $result[] = $this->quote($key).' BETWEEN '.$this->prepareValue($key, $pieces[0]).' AND '.$this->prepareValue($key, $pieces[1]);
                 } else {
-                    $result[] = $this->quote($key).' = '.$this->getValue($value);
+                    $result[] = $this->quote($key).' = '.$this->prepareValue($key, $value);
                 }
             }
         } else {

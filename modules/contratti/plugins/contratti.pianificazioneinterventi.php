@@ -28,7 +28,7 @@ switch (filter('op')) {
         $dbo->query('DELETE FROM `co_righe_contratti` WHERE id='.prepare($id));
         $_SESSION['infos'][] = _('Pianificazione eliminata!');
 
-        redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_3');
+        redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
 
         break;
 }
@@ -78,7 +78,7 @@ if (count($rsp) != 0) {
         if (!empty($rsp[$i]['idintervento'])) {
             $rsp2 = $dbo->fetchArray('SELECT id, codice, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS data FROM in_interventi WHERE id='.prepare($rsp[$i]['idintervento']));
 
-            $info_intervento = Modules::link('Interventi', $rsp2[0]['id'], str_replace(['_NUM_', '_DATE_'], [$rsp2[0]['codice'],Translator::dateToLocale($rsp2[0]['data'])], _('Intervento _NUM_ del _DATE_')));
+            $info_intervento = Modules::link('Interventi', $rsp2[0]['id'], str_replace(['_NUM_', '_DATE_'], [$rsp2[0]['codice'], Translator::dateToLocale($rsp2[0]['data'])], _('Intervento _NUM_ del _DATE_')));
         } else {
             $info_intervento = '- '.('Nessuno').' -';
         }

@@ -42,7 +42,7 @@ switch ($operazione) {
 
 if (filter('add') != null) {
     echo '
-<form action="#tab_3" method="post" role="form">
+<form action="" method="post" role="form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="addreferente">
 

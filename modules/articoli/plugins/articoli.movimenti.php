@@ -29,10 +29,10 @@ $rs2 = $dbo->fetchArray($query);
 if (!empty($rs2)) {
     if (empty($_GET['show_all1'])) {
         echo '
-        <p><a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&show_all1=1#tab_2">[ '._('Mostra tutti i movimenti').' ]</a></p>';
+        <p><a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&show_all1=1#tab_'.$id_plugin.'">[ '._('Mostra tutti i movimenti').' ]</a></p>';
     } else {
         echo '
-        <p><a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&show_all1=0#tab_2">[ '._('Mostra solo gli ultimi 20 movimenti').' ]</a></p>';
+        <p><a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&show_all1=0#tab_'.$id_plugin.'">[ '._('Mostra solo gli ultimi 20 movimenti').' ]</a></p>';
     }
 
     echo '

@@ -85,7 +85,7 @@ if ($dir == 'uscita') {
                     } ?>
 
                 <?php
-                if ($records[0]['stato'] == 'Emessa') {
+                if ($records[0]['stato'] != 'Bozza' && $records[0]['stato'] != 'Annullata') {
                     $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento = '.prepare($id_record));
                     echo '
                 <div class="col-md-3">
@@ -192,7 +192,11 @@ if ($records[0]['stato'] == 'Pagato') {
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo _('Sconto totale') ?>", "name": "sconto_generico", "value": "$sconto_globale$", "icon-after": "choice|untprc|$tipo_sconto_globale$" ]}
+                    {[ "type": "number", "label": "<?php echo _('Sconto totale') ?>", "name": "sconto_generico", "value": "$sconto_globale$", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
+if ($records[0]['stato'] == 'Emessa') {
+    echo ', "disabled" : 1';
+}
+?> ]}
                 </div>
             </div>
 

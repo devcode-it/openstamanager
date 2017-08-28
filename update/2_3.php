@@ -42,7 +42,6 @@ $tables = [
     'co_tipidocumento',
     'dt_aspettobeni',
     'dt_automezzi',
-    'dt_automezzi_tagliandi',
     'dt_automezzi_tecnici',
     'dt_causalet',
     'dt_ddt',
@@ -95,9 +94,12 @@ $tables = [
 $latest_ver = version_compare($mysql_ver, '5.6.5') >= 0;
 foreach ($tables as $table) {
     if ($latest_ver) {
-        $database->query('ALTER TABLE `'.$table.'` ADD (`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)');
+        $database->query('ALTER TABLE `'.$table.'` ADD (`created_at` timestamp DEFAULT CURRENT_TIMESTAMP, `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)');
     } else {
-        $database->query('ALTER TABLE `'.$table."` ADD (`created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00', `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)");
+        $database->query('ALTER TABLE `'.$table.'` ADD (`created_at` timestamp DEFAULT NULL, `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)');
+        $database->query('UPDATE '.$table.' SET created_at = updated_at');
+
+        // Trigger per l'inizializzazione automatica di created_at
         $database->query('CREATE TRIGGER '.$table.'_creation BEFORE INSERT ON '.$table.' FOR EACH ROW SET NEW.created_at = CURRENT_TIMESTAMP');
     }
 }
@@ -145,7 +147,13 @@ if (!empty($array)) {
 $database->query("UPDATE mg_articoli SET contenuto = REPLACE(REPLACE(REPLACE(contenuto, '&quot;', '\"'), '\n', ".prepare(PHP_EOL)."), '`', '\"')");
 $database->query("UPDATE my_impianto_componenti SET contenuto = REPLACE(REPLACE(REPLACE(contenuto, '&quot;', '\"'), '\n', ".prepare(PHP_EOL)."), '`', '\"')");
 
-// Fix dei timestamp delle tabelle zz_logs e zz_files
+// Fix dei timestamp delle tabelle mg_prodotti, mg_movimenti, zz_logs e zz_files
+$database->query('UPDATE `mg_prodotti` SET `created_at` = `data`, `updated_at` = `data`');
+$database->query('ALTER TABLE `mg_prodotti` DROP `data`');
+
+$database->query('UPDATE `mg_movimenti` SET `created_at` = `data`, `updated_at` = `data`');
+$database->query('ALTER TABLE `mg_movimenti` DROP `data`');
+
 $database->query('UPDATE `zz_logs` SET `created_at` = `timestamp`, `updated_at` = `timestamp`');
 $database->query('ALTER TABLE `zz_logs` DROP `timestamp`');
 

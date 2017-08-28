@@ -65,6 +65,7 @@ DROP TABLE `mk_attivita`;
 DROP TABLE `mk_email`;
 DROP TABLE `mk_statoattivita`;
 DROP TABLE `mk_tipoattivita`;
+DROP TABLE `dt_automezzi_tagliandi`;
 DROP TABLE `co_contratti_interventi`;
 
 -- RELEASE 2.2.1 [NON UFFICIALE] --
@@ -682,9 +683,6 @@ ALTER TABLE `my_impianto_componenti` CHANGE `idsostituto` `idsostituto` int(11);
 UPDATE `my_impianto_componenti` SET `idsostituto` = NULL WHERE `idsostituto` = 0;
 ALTER TABLE `my_impianto_componenti` ADD FOREIGN KEY (`idsostituto`) REFERENCES `my_impianto_componenti`(`id`) ON DELETE CASCADE;
 
--- Fix dei timestamp delle tabelle zz_logs
-ALTER TABLE `zz_logs` CHANGE `timestamp` `timestamp` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00';
-
 -- Adeguamento dei contenuti di zz_files
 ALTER TABLE `zz_files` CHANGE `externalid` `id_record` int(11) NOT NULL, ADD `id_module` int(11) NOT NULL AFTER `filename`, ADD `original` varchar(255) NOT NULL AFTER `filename`;
 UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`directory` = `zz_files`.`module`);
@@ -873,13 +871,69 @@ OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota') AN
 -- Disabilitazione dei plugin instabili
 UPDATE `zz_plugins` SET `enabled` = 0 WHERE `name` = 'Pianificazione fatturazione' OR `name` = 'Pianificazione ordini di servizio';
 
--- Fix per le date delle tabelle dei documenti
-ALTER TABLE `co_documenti` CHANGE `data` `data` date NOT NULL;
-ALTER TABLE `or_ordini` CHANGE `data` `data` date NOT NULL;
-ALTER TABLE `dt_ddt` CHANGE `data` `data` date NOT NULL;
-
-ALTER TABLE `co_preventivi` CHANGE `data_bozza` `data_bozza` date NOT NULL, CHANGE `data_accettazione` `data_accettazione` date NOT NULL, CHANGE `data_rifiuto` `data_rifiuto` date NOT NULL, CHANGE `data_conclusione` `data_conclusione` date NOT NULL, CHANGE `data_pagamento` `data_pagamento` date NOT NULL;
-ALTER TABLE `co_contratti` CHANGE `data_bozza` `data_bozza` date NOT NULL, CHANGE `data_accettazione` `data_accettazione` date NOT NULL, CHANGE `data_rifiuto` `data_rifiuto` date NOT NULL, CHANGE `data_conclusione` `data_conclusione` date NOT NULL;
-
 -- Fix del tipo di alcune impostazioni
 UPDATE `zz_settings` SET `tipo` = 'decimal' WHERE `nome` = 'Soglia minima per l\'applicazione della marca da bollo' OR `nome` = 'Importo marca da bollo';
+
+-- Fix per le date in varie tabelle
+ALTER TABLE `co_documenti` CHANGE `data` `data` datetime;
+ALTER TABLE `or_ordini` CHANGE `data` `data` datetime;
+ALTER TABLE `dt_ddt` CHANGE `data` `data` datetime;
+
+ALTER TABLE `co_preventivi` CHANGE `data_bozza` `data_bozza` datetime, CHANGE `data_accettazione` `data_accettazione` datetime, CHANGE `data_rifiuto` `data_rifiuto` datetime, CHANGE `data_conclusione` `data_conclusione` datetime, CHANGE `data_pagamento` `data_pagamento` datetime;
+ALTER TABLE `co_contratti` CHANGE `data_bozza` `data_bozza` datetime, CHANGE `data_accettazione` `data_accettazione` datetime, CHANGE `data_rifiuto` `data_rifiuto` datetime, CHANGE `data_conclusione` `data_conclusione` datetime;
+
+ALTER TABLE `co_movimenti` CHANGE `data` `data` datetime, CHANGE `data_documento` `data_documento` datetime;
+ALTER TABLE `co_ordiniservizio` CHANGE `data_scadenza` `data_scadenza` datetime;
+ALTER TABLE `co_ordiniservizio_pianificazionefatture` CHANGE `data_scadenza` `data_scadenza` datetime;
+ALTER TABLE `co_righe_contratti` CHANGE `data_richiesta` `data_richiesta` datetime;
+ALTER TABLE `co_righe_preventivi` CHANGE `data_evasione` `data_evasione` datetime;
+ALTER TABLE `co_scadenziario` CHANGE `data_emissione` `data_emissione` datetime, CHANGE `scadenza` `scadenza` datetime, CHANGE `data_pagamento` `data_pagamento` datetime;
+ALTER TABLE `dt_automezzi_tecnici` CHANGE `data_inizio` `data_inizio` datetime, CHANGE `data_fine` `data_fine` datetime;
+ALTER TABLE `my_impianto_componenti` CHANGE `data` `data` datetime, CHANGE `data_sostituzione` `data_sostituzione` datetime;
+ALTER TABLE `or_righe_ordini` CHANGE `data_evasione` `data_evasione` datetime;
+
+UPDATE `co_documenti` SET `data` = NULL WHERE `data` = '0000-00-00 00:00:00';
+UPDATE `or_ordini` SET `data` = NULL WHERE `data` = '0000-00-00 00:00:00';
+UPDATE `dt_ddt` SET `data` = NULL WHERE `data` = '0000-00-00 00:00:00';
+
+UPDATE `co_preventivi` SET `data_bozza` = NULL WHERE `data_bozza` = '0000-00-00 00:00:00';
+UPDATE `co_preventivi` SET `data_accettazione` = NULL WHERE `data_accettazione` = '0000-00-00 00:00:00';
+UPDATE `co_preventivi` SET `data_rifiuto` = NULL WHERE `data_rifiuto` = '0000-00-00 00:00:00';
+UPDATE `co_preventivi` SET `data_conclusione` = NULL WHERE `data_conclusione` = '0000-00-00 00:00:00';
+UPDATE `co_preventivi` SET `data_pagamento` = NULL WHERE `data_pagamento` = '0000-00-00 00:00:00';
+UPDATE `co_contratti` SET `data_bozza` = NULL WHERE `data_bozza` = '0000-00-00 00:00:00';
+UPDATE `co_contratti` SET `data_accettazione` = NULL WHERE `data_accettazione` = '0000-00-00 00:00:00';
+UPDATE `co_contratti` SET `data_rifiuto` = NULL WHERE `data_rifiuto` = '0000-00-00 00:00:00';
+UPDATE `co_contratti` SET `data_conclusione` = NULL WHERE `data_conclusione` = '0000-00-00 00:00:00';
+
+UPDATE `co_movimenti` SET `data` = NULL WHERE `data` = '0000-00-00 00:00:00';
+UPDATE `co_movimenti` SET `data_documento` = NULL WHERE `data_documento` = '0000-00-00 00:00:00';
+UPDATE `co_ordiniservizio` SET `data_scadenza` = NULL WHERE `data_scadenza` = '0000-00-00 00:00:00';
+UPDATE `co_ordiniservizio_pianificazionefatture` SET `data_scadenza` = NULL WHERE `data_scadenza` = '0000-00-00 00:00:00';
+UPDATE `co_righe_contratti` SET `data_richiesta` = NULL WHERE `data_richiesta` = '0000-00-00 00:00:00';
+UPDATE `co_righe_preventivi` SET `data_evasione` = NULL WHERE `data_evasione` = '0000-00-00 00:00:00';
+UPDATE `co_scadenziario` SET `data_emissione` = NULL WHERE `data_emissione` = '0000-00-00 00:00:00';
+UPDATE `co_scadenziario` SET `scadenza` = NULL WHERE `scadenza` = '0000-00-00 00:00:00';
+UPDATE `co_scadenziario` SET `data_pagamento` = NULL WHERE `data_pagamento` = '0000-00-00 00:00:00';
+UPDATE `dt_automezzi_tecnici` SET `data_inizio` = NULL WHERE `data_inizio` = '0000-00-00 00:00:00';
+UPDATE `dt_automezzi_tecnici` SET `data_fine` = NULL WHERE `data_fine` = '0000-00-00 00:00:00';
+UPDATE `my_impianto_componenti` SET `data` = NULL WHERE `data` = '0000-00-00 00:00:00';
+UPDATE `my_impianto_componenti` SET `data_sostituzione` = NULL WHERE `data_sostituzione` = '0000-00-00 00:00:00';
+UPDATE `or_righe_ordini` SET `data_evasione` = NULL WHERE `data_evasione` = '0000-00-00 00:00:00';
+
+ALTER TABLE `co_documenti` CHANGE `data` `data` date;
+ALTER TABLE `or_ordini` CHANGE `data` `data` date;
+ALTER TABLE `dt_ddt` CHANGE `data` `data` date;
+
+ALTER TABLE `co_preventivi` CHANGE `data_bozza` `data_bozza` date, CHANGE `data_accettazione` `data_accettazione` date, CHANGE `data_rifiuto` `data_rifiuto` date, CHANGE `data_conclusione` `data_conclusione` date, CHANGE `data_pagamento` `data_pagamento` date;
+ALTER TABLE `co_contratti` CHANGE `data_bozza` `data_bozza` date, CHANGE `data_accettazione` `data_accettazione` date, CHANGE `data_rifiuto` `data_rifiuto` date, CHANGE `data_conclusione` `data_conclusione` date;
+
+ALTER TABLE `co_movimenti` CHANGE `data` `data` date, CHANGE `data_documento` `data_documento` date;
+ALTER TABLE `co_ordiniservizio` CHANGE `data_scadenza` `data_scadenza` date;
+ALTER TABLE `co_ordiniservizio_pianificazionefatture` CHANGE `data_scadenza` `data_scadenza` date;
+ALTER TABLE `co_righe_contratti` CHANGE `data_richiesta` `data_richiesta` date;
+ALTER TABLE `co_righe_preventivi` CHANGE `data_evasione` `data_evasione` date;
+ALTER TABLE `co_scadenziario` CHANGE `data_emissione` `data_emissione` date, CHANGE `scadenza` `scadenza` date, CHANGE `data_pagamento` `data_pagamento` date;
+ALTER TABLE `dt_automezzi_tecnici` CHANGE `data_inizio` `data_inizio` date, CHANGE `data_fine` `data_fine` date;
+ALTER TABLE `my_impianto_componenti` CHANGE `data` `data` date, CHANGE `data_sostituzione` `data_sostituzione` date;
+ALTER TABLE `or_righe_ordini` CHANGE `data_evasione` `data_evasione` date;

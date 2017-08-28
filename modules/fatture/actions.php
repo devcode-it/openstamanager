@@ -73,9 +73,6 @@ switch (post('op')) {
             $totale_imponibile = get_imponibile_fattura($id_record);
             $totale_fattura = get_totale_fattura($id_record);
 
-            $tipo_sconto = $post['tipo_sconto_generico'];
-            $sconto = $post['sconto_generico'];
-
             if ($dir == 'uscita') {
                 $idrivalsainps = post('idrivalsainps');
                 $idritenutaacconto = post('idritenutaacconto');
@@ -107,8 +104,6 @@ switch (post('op')) {
                 ' n_colli='.prepare($n_colli).','.
                 ' idsede='.prepare($idsede).','.
                 ' numero_esterno='.prepare($numero_esterno).','.
-                ' tipo_sconto_globale='.prepare($tipo_sconto).','.
-                ' sconto_globale='.prepare($sconto).','.
                 ' note='.prepare($note).','.
                 ' note_aggiuntive='.prepare($note_aggiuntive).','.
                 ' idconto='.prepare($idconto).','.
@@ -121,13 +116,23 @@ switch (post('op')) {
             $query = 'SELECT descrizione FROM co_statidocumento WHERE id='.prepare($idstatodocumento);
             $rs = $dbo->fetchArray($query);
 
-            aggiorna_sconto([
-                'parent' => 'co_documenti',
-                'row' => 'co_righe_documenti',
-            ], [
-                'parent' => 'id',
-                'row' => 'iddocumento',
-            ], $id_record);
+            if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa' && str_contains($r['descrizione'], 'SCONTO')) {
+                $tipo_sconto = $post['tipo_sconto_generico'];
+                $sconto = $post['sconto_generico'];
+
+                $dbo->update('co_documenti', [
+                    'tipo_sconto_globale' => $tipo_sconto,
+                    'sconto_globale' => $sconto,
+                ], ['id' => $id_record]);
+
+                aggiorna_sconto([
+                    'parent' => 'co_documenti',
+                    'row' => 'co_righe_documenti',
+                ], [
+                    'parent' => 'id',
+                    'row' => 'iddocumento',
+                ], $id_record);
+            }
 
             // Ricalcolo inps, ritenuta e bollo (se la fattura non è stata pagata)
             if ($dir == 'entrata') {

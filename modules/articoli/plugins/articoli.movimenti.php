@@ -19,7 +19,7 @@ echo '
 <p>'._('Quantità calcolata dai movimenti').': '.Translator::numberToLocale($qta_totale).' '.$rs[0]['unita_misura'].'</p>';
 
 // Elenco movimenti magazzino
-$query = 'SELECT * FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' ORDER BY data DESC';
+$query = 'SELECT * FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' ORDER BY created_at DESC';
 if (empty($_GET['show_all1'])) {
     $query .= ' LIMIT 0, 20';
 }

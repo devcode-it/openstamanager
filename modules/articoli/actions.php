@@ -154,7 +154,7 @@ switch (post('op')) {
         $n_prodotti = $n_lotti * $n_serial * $n_altro;
 
         // Creo la query per le combinazioni prodotto con ogni combinazione
-        $query = 'INSERT INTO mg_prodotti(idarticolo, lotto, serial, altro, data) VALUES';
+        $query = 'INSERT INTO mg_prodotti(idarticolo, lotto, serial, altro) VALUES';
 
         // Contatore prodotti da inserire
         $c = 0;
@@ -165,7 +165,7 @@ switch (post('op')) {
             for ($s = 0; $s < $n_serial; ++$s) {
                 // Combinazione con "Altro"
                 for ($a = 0; $a < $n_altro; ++$a) {
-                    $insert = '('.prepare($id_record).', |lotto|, |serial|, |altro|, NOW())';
+                    $insert = '('.prepare($id_record).', |lotto|, |serial|, |altro|)';
 
                     $this_lotto = ($lotto__start != '') ? $lotto_prefix.(str_pad($lotto_start + $l, $lotto_pad_length, '0', STR_PAD_LEFT)) : '';
                     $insert = str_replace('|lotto|', prepare($this_lotto), $insert);

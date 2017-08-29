@@ -153,7 +153,7 @@ $rs = $dbo->fetchArray('SELECT COUNT(id) AS tot FROM mg_prodotti WHERE idarticol
 $tot_prodotti = $rs[0]['tot'];
 
 // Visualizzazione di tutti i prodotti
-$query = 'SELECT * FROM mg_prodotti WHERE idarticolo='.prepare($id_record).' AND lotto LIKE '.prepare('%'.$search_lotto.'%').' AND serial LIKE '.prepare('%'.$search_serial.'%').' AND altro LIKE '.prepare('%'.$search_altro.'%').' ORDER BY data DESC, lotto DESC, serial DESC, altro DESC';
+$query = 'SELECT * FROM mg_prodotti WHERE idarticolo='.prepare($id_record).' AND lotto LIKE '.prepare('%'.$search_lotto.'%').' AND serial LIKE '.prepare('%'.$search_serial.'%').' AND altro LIKE '.prepare('%'.$search_altro.'%').' ORDER BY created_at DESC, lotto DESC, serial DESC, altro DESC';
 
 if (!empty($get['show_all3']) && $search_lotto == '' && $search_serial == '' && $search_altro == '') {
     $query .= ' LIMIT 0, 20';

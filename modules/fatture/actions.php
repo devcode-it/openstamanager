@@ -116,7 +116,7 @@ switch (post('op')) {
             $query = 'SELECT descrizione FROM co_statidocumento WHERE id='.prepare($idstatodocumento);
             $rs = $dbo->fetchArray($query);
 
-            if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa' && str_contains($r['descrizione'], 'SCONTO')) {
+            if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
                 $tipo_sconto = $post['tipo_sconto_generico'];
                 $sconto = $post['sconto_generico'];
 

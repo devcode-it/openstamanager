@@ -49,6 +49,7 @@ switch (post('op')) {
         $dbo->query('INSERT INTO co_preventivi(idanagrafica, nome, numero, idagente, idstato, idtipointervento, data_bozza, data_conclusione, idiva, idpagamento) VALUES ('.prepare($idanagrafica).', '.prepare($nome).', '.prepare($numero).', '.prepare($idagente).", (SELECT `id` FROM `co_statipreventivi` WHERE `descrizione`='Bozza'), ".prepare($idtipointervento).', NOW(), DATE_ADD(NOW(), INTERVAL +1 MONTH), '.prepare($idiva).', '.prepare($idpagamento).')');
         $id_record = $dbo->lastInsertedID();
 
+        /*
         // inserisco righe standard preventivo
         // ore lavoro
         $costo = $costo_orario;
@@ -62,6 +63,7 @@ switch (post('op')) {
         $iva = $costo / 100 * $rs_iva[0]['percentuale'];
         $iva_indetraibile = $iva / 100 * $rs_iva[0]['indetraibile'];
         $dbo->query('INSERT INTO co_righe_preventivi(idpreventivo, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, `order`) VALUES ('.prepare($id_record).", '0', ".prepare($idiva).', '.prepare($rs_iva[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).", 'Diritto chiamata', ".prepare($costo).", '', 1, 0, 0, 'UNT', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_preventivi AS t WHERE idpreventivo=".prepare($id_record).'))');
+        */
 
         // update_budget_preventivo( $id_record );
         $_SESSION['infos'][] = str_replace('_NUM_', $numero, _('Aggiunto preventivo numero _NUM_!'));

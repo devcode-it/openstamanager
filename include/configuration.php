@@ -49,7 +49,7 @@ if (post('db_host') !== null) {
             $db_name = str_replace('_', '\_', $db_name);
             $db_username = str_replace('_', '\_', $db_name);
 
-            $user = " TO '".$db_username."'@'".$db_host."'";
+            $user = " TO '".$db_username."'";
             $db = ' ON `'.$db_name.'`.*';
 
             $results = $dbo->fetchArray('SHOW GRANTS FOR CURRENT_USER');

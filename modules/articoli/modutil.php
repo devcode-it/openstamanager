@@ -88,7 +88,6 @@ function add_movimento_magazzino($idarticolo, $qta, $array = [], $descrizone = '
         '#descrizione_articolo' => '(SELECT descrizione FROM mg_articoli WHERE id='.prepare($idarticolo).')',
         'qta' => $qta,
         'movimento' => $movimento,
-        '#data' => 'NOW()',
     ]));
 
     return true;

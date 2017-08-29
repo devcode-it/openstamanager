@@ -7,6 +7,7 @@
  */
 class Auth extends \Util\Singleton
 {
+    /** @var array Stati previsti dal sistema di autenticazione */
     protected static $status = [
         'success' => [
             'code' => 1,
@@ -26,12 +27,15 @@ class Auth extends \Util\Singleton
         ],
     ];
 
+    /** @var array Opzioni di sicurezza relative all'hashing delle password */
     protected static $passwordOptions = [
         'algorithm' => PASSWORD_BCRYPT,
         'options' => [],
     ];
 
+    /** @var array Informazioni riguardanti l'utente autenticato */
     protected $infos;
+    /** @var string Nome del primo modulo su cui l'utente ha permessi di navigazione */
     protected $first_module;
 
     protected function __construct()
@@ -40,7 +44,8 @@ class Auth extends \Util\Singleton
 
         if ($database->isInstalled()) {
             if (API::isAPIRequest()) {
-                $token = filter('token');
+                $token = API::getRequest()['token'];
+                $token = !empty($token) ? $token : get('token');
 
                 $id = $database->fetchArray('SELECT `id_utente` FROM `zz_tokens` WHERE `token` = '.prepare($token))[0]['id_utente'];
             }
@@ -59,6 +64,14 @@ class Auth extends \Util\Singleton
         }
     }
 
+    /**
+     * Effettua un tentativo di accesso con le credenziali fornite.
+     *
+     * @param string $username
+     * @param string $password
+     *
+     * @return bool
+     */
     public function attempt($username, $password)
     {
         session_regenerate_id();
@@ -113,6 +126,13 @@ class Auth extends \Util\Singleton
         return $this->isAuthenticated();
     }
 
+    /**
+     * Controlla la corrispondeza delle password ed eventalmente effettua un rehashing.
+     *
+     * @param string $password
+     * @param string $hash
+     * @param int    $user_id
+     */
     protected function password_check($password, $hash, $user_id = null)
     {
         $result = false;
@@ -140,6 +160,9 @@ class Auth extends \Util\Singleton
         return $result;
     }
 
+    /**
+     * Memorizza le informazioni riguardanti l'utente all'interno della sessione.
+     */
     protected function saveToSession()
     {
         foreach ($this->infos as $key => $value) {
@@ -153,6 +176,11 @@ class Auth extends \Util\Singleton
         }
     }
 
+    /**
+     * Identifica l'utente interessato dall'autenticazione.
+     *
+     * @param int $user_id
+     */
     protected function identifyUser($user_id)
     {
         $database = Database::getConnection();
@@ -165,21 +193,39 @@ class Auth extends \Util\Singleton
         }
     }
 
+    /**
+     * Controlla se l'utente è autenticato.
+     *
+     * @return bool
+     */
     public function isAuthenticated()
     {
         return !empty($this->infos);
     }
 
+    /**
+     * Controlla se l'utente appartiene al gruppo degli Amministratori.
+     *
+     * @return bool
+     */
     public function isAdmin()
     {
         return $this->isAuthenticated() && !empty($this->infos['is_admin']);
     }
 
+    /**
+     * Restituisce le informazioni riguardanti l'utente autenticato.
+     *
+     * @return array
+     */
     public function getUser()
     {
         return $this->infos;
     }
 
+    /**
+     * Distrugge le informazioni riguardanti l'utente autenticato, forzando il logout.
+     */
     public function destory()
     {
         if ($this->isAuthenticated() || !empty($_SESSION['idutente'])) {
@@ -197,6 +243,11 @@ class Auth extends \Util\Singleton
         }
     }
 
+    /**
+     * Restituisce il nome del primo modulo navigabile dall'utente autenticato.
+     *
+     * @return string
+     */
     public function getFirstModule()
     {
         if (empty($this->first_module)) {
@@ -225,6 +276,13 @@ class Auth extends \Util\Singleton
         return $this->first_module;
     }
 
+    /**
+     * Restituisce l'hashing della password per la relativa memorizzazione nel database.
+     *
+     * @param string $password
+     *
+     * @return string
+     */
     public static function hashPassword($password)
     {
         return password_hash($password, self::$passwordOptions['algorithm'], self::$passwordOptions['options']);
@@ -255,6 +313,11 @@ class Auth extends \Util\Singleton
         return self::getInstance()->getFirstModule();
     }
 
+    /**
+     * Restituisce l'elenco degli stati del sistema di autenticazione.
+     *
+     * @return array
+     */
     public static function getStatus()
     {
         return self::$status;

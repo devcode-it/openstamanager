@@ -124,7 +124,7 @@ if (!API::isAPIRequest()) {
 
 $dbo = Database::getConnection();
 
-$continue = $dbo->isInstalled() && Auth::check() && !Update::isUpdateAvailable();
+$continue = $dbo->isInstalled() && (Auth::check() || API::isAPIRequest()) && !Update::isUpdateAvailable();
 
 // Controllo sulla presenza dei permessi di accesso basilari
 if (!$continue && slashes($_SERVER['SCRIPT_FILENAME']) != slashes(DOCROOT.'/index.php')) {

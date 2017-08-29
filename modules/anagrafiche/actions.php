@@ -79,18 +79,11 @@ switch (post('op')) {
 
         // Se l'agente di default è stato elencato anche tra gli agenti secondari lo rimuovo
         if(!empty($post['idagente'])){
-                $dbo->query('DELETE FROM an_anagrafiche_agenti WHERE idanagrafica='.prepare($id_record).' AND idagente='.prepare($post['idagente']));
+            $dbo->query('DELETE FROM an_anagrafiche_agenti WHERE idanagrafica='.prepare($id_record).' AND idagente='.prepare($post['idagente']));
         }
 
         // Aggiorno le tipologie di anagrafica
-        $dbo->query('DELETE FROM an_tipianagrafiche_anagrafiche WHERE idanagrafica='.prepare($id_record));
-
-        $tipi = array_unique($post['idtipoanagrafica']);
-        if (!empty($tipi)) {
-            foreach ($tipi as $idtipoanagrafica) {
-                $dbo->query('INSERT INTO an_tipianagrafiche_anagrafiche(idtipoanagrafica, idanagrafica) VALUES('.prepare($idtipoanagrafica).', '.prepare($id_record).')');
-            }
-        }
+        $dbo->sync('an_tipianagrafiche_anagrafiche', ['idanagrafica' => $id_record], ['idtipoanagrafica' => (array) $post['idtipoanagrafica']]);
 
         // Verifico se esiste già l'associazione dell'anagrafica a conti del partitario
         $rs = $dbo->fetchArray('SELECT idconto_cliente, idconto_fornitore FROM an_anagrafiche WHERE idanagrafica='.prepare($id_record));
@@ -180,10 +173,7 @@ switch (post('op')) {
         }
 
         // Inserisco il rapporto dell'anagrafica (cliente, tecnico, ecc)
-        for ($t = 0; $t < count($idtipoanagrafica); ++$t) {
-            $query = 'INSERT INTO an_tipianagrafiche_anagrafiche(idanagrafica, idtipoanagrafica) VALUES ('.prepare($new_id).', '.prepare($idtipoanagrafica[$t]).')';
-            $dbo->query($query);
-        }
+        $dbo->sync('an_tipianagrafiche_anagrafiche', ['idanagrafica' => $new_id], ['idtipoanagrafica' => (array) $idtipoanagrafica]);
 
         if (str_contains($tipoanagrafica_dst, 'Azienda')) {
             $dbo->query('UPDATE zz_settings SET valore='.prepare($new_id)." WHERE nome='Azienda predefinita'");
@@ -228,7 +218,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        // Disattivo l'anagrafica, solo se questa non è l'azienda principale
+        // Se l'anagrafica non è l'azienda principale, la disattivo
         if (str_contains($records[0]['idtipianagrafica'], $id_azienda) === false) {
             $dbo->query('UPDATE an_anagrafiche SET deleted = 1 WHERE idanagrafica = '.prepare($id_record).Modules::getAdditionalsQuery($id_module));
 

@@ -1,5 +1,5 @@
 {
-    "name": "openstamanager/openstamanager",
+    "name": "devcode/openstamanager",
     "description": "Gestionale open source per assistenza tecnica e fatturazione",
     "version": "2.3.0",
     "license": "GPL-3.0",
@@ -44,9 +44,6 @@
             "lib/util.php",
             "lib/deprecated.php"
         ]
-    },
-    "scripts": {
-        "post-create-project-cmd": "yarn run release-OSM"
     },
     "config": {
         "sort-packages": true,

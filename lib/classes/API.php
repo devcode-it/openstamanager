@@ -7,8 +7,10 @@
  */
 class API extends \Util\Singleton
 {
+    /** @var array Elenco delle risorse disponibili suddivise per categoria */
     protected static $resources;
 
+    /** @var array Stati previsti dall'API */
     protected static $status = [
         'ok' => [
             'code' => 200,
@@ -32,7 +34,10 @@ class API extends \Util\Singleton
         ],
     ];
 
-    public function __construct($token)
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function __construct()
     {
         $user = Auth::user();
 
@@ -41,18 +46,25 @@ class API extends \Util\Singleton
         }
     }
 
-    public function retrieve($resource)
+    /**
+     * Gestisce le richieste di informazioni riguardanti gli elementi esistenti.
+     *
+     * @param array $request
+     *
+     * @return string
+     */
+    public function retrieve($request)
     {
         $table = '';
 
         $select = '*';
         // Selezione personalizzata
-        $display = filter('display');
+        $display = $request['display'];
         $select = !empty($display) ? explode(',', substr($display, 1, -1)) : $select;
 
         $where = [];
         // Ricerca personalizzata
-        $filter = (array) filter('filter');
+        $filter = (array) $request['filter'];
         foreach ($filter as $key => $value) {
             $value = substr($value, 1, -1);
             $result = [];
@@ -75,20 +87,21 @@ class API extends \Util\Singleton
 
         $order = [];
         // Ordinamento personalizzato
-        $order_request = (array) filter('order');
+        $order_request = (array) $request['order'];
         foreach ($order_request as $value) {
             $pieces = explode('|', $value);
             $order[] = empty($pieces[1]) ? $pieces[0] : [$pieces[0] => $pieces[1]];
         }
 
         // Date di interesse
-        $updated = filter('upd');
-        $created = filter('crd');
+        $updated = $request['upd'];
+        $created = $request['crd'];
 
         $dbo = Database::getConnection();
 
         $kind = 'retrieve';
         $resources = self::getResources()[$kind];
+        $resource = $request['resource'];
 
         if (!in_array($resource, $resources)) {
             $excluded = explode(',', Settings::get('Tabelle escluse per la sincronizzazione API automatica'));
@@ -105,7 +118,7 @@ class API extends \Util\Singleton
         }
 
         // Paginazione dell'API
-        $page = (int) filter('page') ?: 0;
+        $page = (int) $request['page'] ?: 0;
         $length = Settings::get('Lunghezza pagine per API');
 
         // Generazione automatica delle query
@@ -129,24 +142,53 @@ class API extends \Util\Singleton
         return self::response($results);
     }
 
-    public function create($resource)
+    /**
+     * Gestisce le richieste di creazione nuovi elementi.
+     *
+     * @param array $request
+     *
+     * @return string
+     */
+    public function create($request)
     {
-        return $this->fileRequest($resource, 'create');
+        return $this->fileRequest($request, 'create');
     }
 
-    public function update($resource)
+    /**
+     * Gestisce le richieste di aggiornamento di elementi esistenti.
+     *
+     * @param array $request
+     *
+     * @return string
+     */
+    public function update($request)
     {
-        return $this->fileRequest($resource, 'update');
+        return $this->fileRequest($request, 'update');
     }
 
-    public function delete($resource)
+    /**
+     * Gestisce le richieste di eliminazione di elementi esistenti.
+     *
+     * @param array $request
+     *
+     * @return string
+     */
+    public function delete($request)
     {
-        return $this->fileRequest($resource, 'delete');
+        return $this->fileRequest($request, 'delete');
     }
 
-    protected function fileRequest($resource, $kind)
+    /**
+     * Gestisce le richieste in modo generalizzato, con il relativo richiamo ai file specifici responsabili dell'operazione.
+     *
+     * @param array $request
+     *
+     * @return string
+     */
+    protected function fileRequest($request, $kind)
     {
         $resources = self::getResources()[$kind];
+        $resource = $request['resource'];
 
         if (!in_array($resource, array_keys($resources))) {
             return self::error('notFound');
@@ -157,10 +199,6 @@ class API extends \Util\Singleton
 
         $dbo->query('START TRANSACTION');
 
-        // Variabili GET e POST
-        $post = Filter::getPOST();
-        $get = Filter::getGET();
-
         $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
         include $filename;
 
@@ -169,10 +207,19 @@ class API extends \Util\Singleton
         return self::response($results);
     }
 
+    /**
+     * Genera i contenuti di risposta nel caso si verifichi un errore.
+     *
+     * @param string|int $error
+     *
+     * @return string
+     */
     public static function error($error)
     {
         $keys = array_keys(self::$status);
         $error = (in_array($error, $keys)) ? $error : end($keys);
+
+        http_response_code(self::$status[$error]['code']);
 
         return self::response([
             'status' => self::$status[$error]['code'],
@@ -180,6 +227,11 @@ class API extends \Util\Singleton
         ]);
     }
 
+    /**
+     * Restituisce l'elenco delle risorse disponibili per l'API, suddivise per categoria.
+     *
+     * @return array
+     */
     public static function getResources()
     {
         if (!is_array(self::$resources)) {
@@ -217,6 +269,13 @@ class API extends \Util\Singleton
         return self::$resources;
     }
 
+    /**
+     * Formatta i contentuti della risposta secondo il formato JSON.
+     *
+     * @param array $array
+     *
+     * @return string
+     */
     public static function response($array)
     {
         if (empty($array['status'])) {
@@ -225,15 +284,38 @@ class API extends \Util\Singleton
         }
 
         $flags = JSON_FORCE_OBJECT;
-        if (filter('beautify') !== null) {
+        if (get('beautify') !== null) {
             $flags |= JSON_PRETTY_PRINT;
         }
 
         return json_encode($array, $flags);
     }
 
+    /**
+     * Restituisce l'elenco degli stati dell'API.
+     *
+     * @return array
+     */
+    public static function getStatus()
+    {
+        return self::$status;
+    }
+
+    /**
+     * Controlla se la richiesta effettuata è rivolta all'API.
+     *
+     * @return bool
+     */
     public static function isAPIRequest()
     {
         return slashes($_SERVER['SCRIPT_FILENAME']) == slashes(DOCROOT.'/api/index.php');
+    }
+
+    /**
+     * Restituisce i parametri specificati dalla richiesta.
+     */
+    public static function getRequest()
+    {
+        return (array) json_decode(file_get_contents('php://input'), true);
     }
 }

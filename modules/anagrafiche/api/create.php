@@ -7,12 +7,12 @@ switch ($resource) {
 
         // Inserisco l'anagrafica
         $dbo->insert('an_anagrafiche', [
-            'ragione_sociale' => $post['data']['ragione_sociale'],
+            'ragione_sociale' => $request['data']['ragione_sociale'],
             'codice' => $codice,
         ]);
 
         // Inserisco il rapporto dell'anagrafica (cliente, tecnico, ecc)
-        $dbo->sync('an_tipianagrafiche_anagrafiche', ['idanagrafica' => $dbo->lastInsertedID()], ['idtipoanagrafica' => (array) $post['data']['tipi']]);
+        $dbo->sync('an_tipianagrafiche_anagrafiche', ['idanagrafica' => $dbo->lastInsertedID()], ['idtipoanagrafica' => (array) $request['data']['tipi']]);
 
         break;
 }

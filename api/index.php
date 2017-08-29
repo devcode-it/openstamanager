@@ -2,7 +2,9 @@
 
 function serverError()
 {
-    if (!empty(error_get_last())) {
+    $error = error_get_last();
+    if ($error['type'] == E_ERROR) {
+        ob_end_clean();
         die(API::error('serverError'));
     }
 }
@@ -21,29 +23,35 @@ header('Access-Control-Allow-Origin: *');
 
 // Attenzione: al momento l'API permette la lettura di tutte le tabelle rpesenti nel database (non limitate a quelle del progetto).
 
-// Controlli sulla chiave di accesso
 try {
-    $api = new API(filter('token'));
+    // Controlli sulla chiave di accesso
+    $api = new API();
 
-    $resource = filter('resource');
+    // Lettura delle informazioni
+    $request = API::getRequest();
 
     $method = $_SERVER['REQUEST_METHOD'];
     switch ($method) {
         case 'PUT':
-            $result = $api->update($resource);
+            $result = $api->update($request);
             break;
         case 'POST':
-            $result = $api->create($resource);
+            $result = $api->create($request);
             break;
         case 'GET':
-            if (!empty($resource)) {
-                $result = $api->retrieve($resource);
+            if (empty($request)) {
+                $request = Filter::getGET();
+                unset($request['token']);
+            }
+
+            if (!empty($request)) {
+                $result = $api->retrieve($request);
             } else {
                 $result = API::response(API::getResources()['retrieve']);
             }
             break;
         case 'DELETE':
-            $result = $api->delete($resource);
+            $result = $api->delete($request);
             break;
     }
 } catch (InvalidArgumentException $e) {

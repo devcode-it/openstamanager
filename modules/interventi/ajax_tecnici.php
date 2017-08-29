@@ -88,30 +88,9 @@ if (!empty($rs2)) {
         $costo_km_consuntivo = $r['prezzo_km_consuntivo'];
         $costo_ore_consuntivo = $r['prezzo_ore_consuntivo'];
 
-        $orario_inizio = '0000-00-00 00:00:00';
-        $orario_fine = '0000-00-00 00:00:00';
-
-        $pausa_inizio = '0000-00-00 00:00:00';
-        $pausa_fine = '0000-00-00 00:00:00';
-
-        if (!empty($r['orario_inizio'])) {
-            $orario_inizio = Translator::timestampToLocale($r['orario_inizio']);
-        }
-
-        if (!empty($r['orario_fine'])) {
-            $orario_fine = Translator::timestampToLocale($r['orario_fine']);
-        }
-
-        if (!empty($r['pausa_inizio'])) {
-            $pausa_inizio = Translator::timestampToLocale($r['pausa_inizio']);
-        }
-
-        if (!empty($r['pausa_fine'])) {
-            $pausa_fine = Translator::timestampToLocale($r['pausa_fine']);
-        }
-
+        $orario_inizio = !empty($r['orario_inizio']) ? Translator::timestampToLocale($r['orario_inizio']) : $r['orario_inizio'];
+        $orario_fine = !empty($r['orario_fine']) ? Translator::timestampToLocale($r['orario_fine']) : $r['orario_fine'];
         $orario = $orario_inizio.' - '.$orario_fine;
-        $pausa = $pausa_inizio.' - '.$pausa_fine;
 
         $km = $r['km'];
         $ore = $r['ore'];

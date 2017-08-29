@@ -64,10 +64,12 @@ class HTMLWrapper implements WrapperInterface
             unset($values['show-help']);
         }
 
-        $values['data-parsley-errors-container'] = '#'.$values['id'].'-errors';
+        $rand = rand(0, 99);
+
+        $values['data-parsley-errors-container'] = '#'.$values['id'].$rand.'-errors';
 
         $result .= '
-        <div id="'.$values['id'].'-errors"></div>';
+        <div id="'.$values['id'].$rand.'-errors"></div>';
 
         if (!empty($values['label'])) {
             $result .= '

@@ -39,15 +39,11 @@ foreach ($replace as $prefix => $values) {
         $keys = array_keys($values);
     }
 
-    if (empty($values)) {
-        // Azienda predefinita non impostata
-        if ($prefix == 'f_') {
-            $values = [];
-            foreach ($keys as $key) {
-                $values[$key] = '';
-            }
-        } else {
-            die(_('Accesso negato'));
+    // Azienda predefinita non impostata
+    if (empty($values) && $prefix == 'f_') {
+        $values = [];
+        foreach ($keys as $key) {
+            $values[$key] = '';
         }
     }
 

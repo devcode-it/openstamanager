@@ -260,7 +260,7 @@ else {
     // Calcolo mese iniziale e finale del contratto
     $rs2 = $dbo->fetchArray('SELECT data_accettazione, data_conclusione, TIMESTAMPDIFF(MONTH, data_accettazione, data_conclusione) AS mesi FROM co_contratti WHERE id='.prepare($id_record));
 
-    if ($rs2[0]['data_accettazione'] != '0000-00-00 00:00:00' && $rs2[0]['data_conclusione'] != '0000-00-00 00:00:00') {
+    if (!empty($rs2[0]['data_accettazione']) && !empty($rs2[0]['data_conclusione'])) {
         $n_mesi = $rs2[0]['mesi'] + 1;
         $mese_start = date('m', strtotime($rs2[0]['data_accettazione']));
 

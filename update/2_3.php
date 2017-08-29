@@ -4,7 +4,7 @@
 * Creazione dei campi per l'API (created_at e updated_at)
 */
 
-// I record precedenti vengono impostati a 0000-00-00 00:00:00
+// I record precedenti vengono impostati a NULL
 $tables = [
     'an_anagrafiche',
     'an_anagrafiche_agenti',

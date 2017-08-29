@@ -142,7 +142,7 @@ if (!empty($rs2)) {
         $nome_componente = $rs2[$j]['nome'];
         $filename = $rs2[$j]['filename'];
 
-        if ($rs2[$j]['data_sostituzione'] == '0000-00-00 00:00:00') {
+        if (empty($rs2[$j]['data_sostituzione'])) {
             $statocomponente = str_replace('_DATE_', Translator::dateToLocale($rs2[$j]['data']), _('INSTALLATO in data _DATE_'));
         } else {
             $statocomponente = str_replace('_DATE_', Translator::dateToLocale($rs2[$j]['data_sostituzione']), _('SOSTITUITO in data _DATE_'));
@@ -257,7 +257,7 @@ if (!empty($rs2)) {
         // Sostituisci componente con un altro dello stesso tipo, posso sostituire solo i componenti installati
         echo '
                             <div class="col-md-12">';
-        if ($rs2[$j]['data_sostituzione'] == '0000-00-00 00:00:00') {
+        if (empty($rs2[$j]['data_sostituzione'])) {
             echo "
                                 <a href=\"javascript:;\" class=\"text-warning\" onclick=\"if( confirm('"._('Vuoi sostituire questo componente con un altro dello stesso tipo?')."') ){ location.href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituiscicomponente&backto=record-edit&filename='.$filename.'&id='.$rs2[$j]['id']."'; }\"><i class='fa fa-refresh'></i> "._('Sostituisci questo componente').'</a><br><br>';
         } else {

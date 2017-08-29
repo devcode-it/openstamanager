@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 if (!get_var('Attiva aggiornamenti')) {
-    die(_('Accesso negato!'));
+    die(_('Accesso negato'));
 }
 
 $tmp = $_FILES['blob']['tmp_name'];

@@ -63,7 +63,7 @@ if ($options != '' && $options != 'menu' && $options != 'custom') {
 			<div class="row">
 				<div class="col-xs-12 col-md-12">
 					<p><strong>'._('Query risultante').':</strong></p>
-					<p>'.$module_query.'</p>
+					<p>'.htmlentities($module_query).'</p>
 				</div>
 			</div>';
 }

@@ -14,7 +14,7 @@ include_once __DIR__.'/../../core.php';
 
 		<div class="col-md-12">
 			<a href="#" class="pull-right" id="default">[Default]</a>
-			{[ "type": "textarea", "label": "<?php echo _('Contenuto'); ?>", "name": "contenuto", "required": 1, "class": "autosize", "value": "", "extra": "rows='10'" ]}
+			{[ "type": "textarea", "label": "<?php echo _('Contenuto'); ?>", "name": "contenuto", "id": "contenuto_add", "required": 1, "class": "autosize", "value": "", "extra": "rows='10'" ]}
 		</div>
 	</div>
 
@@ -33,7 +33,7 @@ include_once __DIR__.'/../../core.php';
 
 				var ini = '[Nome]\ntipo = span\nvalore = "Componente di esempio"\n\n[Marca]\ntipo = input\nvalore =\n\n[Tipo]\ntipo = select\nvalore =\nopzioni = "Tipo 1", "Tipo 2"\n\n[Data di installazione]\ntipo = date\nvalore =\n\n[Note]\ntipo = textarea\nvalore =\n';
 
-				$( "#contenuto" ).val(ini);
+				$("#contenuto_add").val(ini);
 			}
 		});
 	});

@@ -153,7 +153,8 @@ if(!empty($fk)){
     $database->query("ALTER TABLE `in_interventi_tecnici` DROP FOREIGN KEY `in_interventi_tecnici_ibfk_1`");
 }
 
-$database->query("ALTER TABLE `in_interventi` CHANGE `idintervento` `codice` varchar(25) NOT NULL UNIQUE");
+$database->query("ALTER TABLE `in_interventi` DROP PRIMARY KEY, CHANGE `idintervento` `codice` varchar(25) NOT NULL UNIQUE, ADD PRIMARY KEY (`id`)");
+$database->query("DROP INDEX primary_key ON `in_interventi`");
 
 // Fix dei timestamp delle tabelle mg_prodotti, mg_movimenti, zz_logs e zz_files
 $database->query('UPDATE `mg_prodotti` SET `created_at` = `data`, `updated_at` = `data`');

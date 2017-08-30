@@ -40,7 +40,7 @@ if (!empty($rsddt)) {
                 '.Modules::link('Ddt di vendita', $rsddt[$i]['idddt'], $rsddt[$i]['numero_esterno']).'
             </td>
             <td>
-                <span>'.Translator::dateToLocale($rsddt[$i]['data']).'</span>
+                <span>'.(!empty($rsddt[$i]['data']) ? Translator::dateToLocale($rsddt[$i]['data']) : '').'</span>
             </td>
             <td>
                 <span>'.$rsddt[$i]['descrizione'].'</span>

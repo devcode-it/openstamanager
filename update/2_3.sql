@@ -15,7 +15,9 @@ ALTER TABLE `zz_modules` CHANGE `module_dir` `directory` varchar(50) NOT NULL, C
 UPDATE `zz_modules` SET `name` = REPLACE(`name`, '&agrave;', 'à'), `title` = REPLACE(`title`, '&agrave;', 'à');
 
 -- Adattamento della tabella in_interventi
-ALTER TABLE `in_interventi` DROP PRIMARY KEY, ADD `id` int(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);
+ALTER TABLE `in_interventi` ADD `id` int(11) NOT NULL;
+CREATE INDEX primary_key ON `in_interventi` (`id`);
+ALTER TABLE `in_interventi` CHANGE `id` `id` int(11) NOT NULL AUTO_INCREMENT FIRST;
 
 ALTER TABLE `my_impianti_interventi` DROP PRIMARY KEY;
 

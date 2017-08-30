@@ -15,23 +15,20 @@ ALTER TABLE `zz_modules` CHANGE `module_dir` `directory` varchar(50) NOT NULL, C
 UPDATE `zz_modules` SET `name` = REPLACE(`name`, '&agrave;', 'à'), `title` = REPLACE(`title`, '&agrave;', 'à');
 
 -- Adattamento della tabella in_interventi
-ALTER TABLE `in_interventi_tecnici`
-  ADD CONSTRAINT `in_interventi_tecnici_ibfk_1` FOREIGN KEY (`idintervento`) REFERENCES `in_interventi` (`idintervento`) ON DELETE CASCADE;
-ALTER TABLE `in_interventi_tecnici` DROP FOREIGN KEY `in_interventi_tecnici_ibfk_1`;
-ALTER TABLE `in_interventi` DROP PRIMARY KEY, CHANGE `idintervento` `codice` varchar(25) NOT NULL UNIQUE, ADD `id` int(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);
+ALTER TABLE `in_interventi` DROP PRIMARY KEY, ADD `id` int(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `my_impianti_interventi` DROP PRIMARY KEY;
 
-UPDATE `co_ordiniservizio` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `co_ordiniservizio`.`idintervento`);
-UPDATE `co_preventivi_interventi` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `co_preventivi_interventi`.`idintervento`);
-UPDATE `co_righe_contratti` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `co_righe_contratti`.`idintervento`);
-UPDATE `co_righe_documenti` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `co_righe_documenti`.`idintervento`);
-UPDATE `in_interventi_tecnici` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `in_interventi_tecnici`.`idintervento`);
-UPDATE `in_righe_interventi` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `in_righe_interventi`.`idintervento`);
-UPDATE `mg_movimenti` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `mg_movimenti`.`idintervento`);
-UPDATE `my_impianti_interventi` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `my_impianti_interventi`.`idintervento`);
-UPDATE `my_impianto_componenti` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `my_impianto_componenti`.`idintervento`);
-UPDATE `my_componenti_interventi` SET `id_intervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `my_componenti_interventi`.`id_intervento`);
+UPDATE `co_ordiniservizio` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `co_ordiniservizio`.`idintervento`);
+UPDATE `co_preventivi_interventi` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `co_preventivi_interventi`.`idintervento`);
+UPDATE `co_righe_contratti` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `co_righe_contratti`.`idintervento`);
+UPDATE `co_righe_documenti` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `co_righe_documenti`.`idintervento`);
+UPDATE `in_interventi_tecnici` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `in_interventi_tecnici`.`idintervento`);
+UPDATE `in_righe_interventi` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `in_righe_interventi`.`idintervento`);
+UPDATE `mg_movimenti` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `mg_movimenti`.`idintervento`);
+UPDATE `my_impianti_interventi` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `my_impianti_interventi`.`idintervento`);
+UPDATE `my_impianto_componenti` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `my_impianto_componenti`.`idintervento`);
+UPDATE `my_componenti_interventi` SET `id_intervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `my_componenti_interventi`.`id_intervento`);
 
 ALTER TABLE `co_ordiniservizio` CHANGE `idintervento` `idintervento` varchar(25);
 ALTER TABLE `co_preventivi_interventi` CHANGE `idintervento` `idintervento` varchar(25);

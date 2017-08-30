@@ -215,7 +215,7 @@ class Database extends Util\Singleton
      *
      * @return array
      */
-    public function fetchArray($query, $numeric = false)
+    public function fetchArray($query, $numeric = false, $options = [])
     {
         try {
             $mode = empty($numeric) ? PDO::FETCH_ASSOC : PDO::FETCH_NUM;
@@ -224,7 +224,7 @@ class Database extends Util\Singleton
 
             return $result;
         } catch (PDOException $e) {
-            $this->signal($e, $query);
+            $this->signal($e, $query, $options);
         }
     }
 

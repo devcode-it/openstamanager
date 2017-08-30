@@ -54,7 +54,7 @@ if (!empty($rs2)) {
 
         // Data
         echo '
-                <td>'.Translator::timestampToLocale($r['data']).'</td>
+                <td>'.Translator::timestampToLocale($r['created_at']).'</td>
             </tr>';
     }
     echo '

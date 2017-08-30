@@ -186,7 +186,8 @@ class Auth extends \Util\Singleton
         $database = Database::getConnection();
 
         try {
-            $results = $database->fetchArray('SELECT idutente, idanagrafica, username, (SELECT nome FROM zz_groups WHERE id=idgruppo) AS gruppo FROM zz_users WHERE idutente = '.prepare($user_id).' AND enabled = 1 LIMIT 1');
+            $results = $database->fetchArray('SELECT idutente, idanagrafica, username, (SELECT nome FROM zz_groups WHERE id=idgruppo) AS gruppo FROM zz_users WHERE idutente = '.prepare($user_id).' AND enabled = 1 LIMIT 1', false, ['session' => false]);
+
             if (!empty($results)) {
                 $results[0]['is_admin'] = ($results[0]['gruppo'] == 'Amministratori');
 

@@ -4,7 +4,7 @@ if (file_exists($docroot.'/lib/jscripts/fullcalendar.min.js')) {
     @unlink($docroot.'/lib/jscripts/fullcalendar.min.js');
 }
 
-//Riporto su ogni riga della fattura la relativa rivalsa inps e ritenuta d'acconto se impostate
+// Riporto su ogni riga della fattura la relativa rivalsa inps e ritenuta d'acconto se impostate
 $rivalsainps = get_var('Percentuale rivalsa inps');
 $ritenuta = get_var("Percentuale ritenuta d'acconto");
 

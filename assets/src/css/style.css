@@ -522,12 +522,6 @@ span.form-control {
     }
 }
 
-.push {
-    position: fixed;
-    z-index: 3;
-    right: 10;
-}
-
 @media screen and (max-width:1023px) {
     .push {
         position: static;

@@ -7,7 +7,6 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 ?><form action="" method="post" role="form" enctype="multipart/form-data">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
-	<input type="hidden" name="id_record" value="<?php echo $id_record ?>">
 
 	<!-- DATI ANAGRAFICI -->
 	<div class="panel panel-primary">

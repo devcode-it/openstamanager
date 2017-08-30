@@ -147,6 +147,14 @@ if (!empty($array)) {
 $database->query("UPDATE mg_articoli SET contenuto = REPLACE(REPLACE(REPLACE(contenuto, '&quot;', '\"'), '\n', ".prepare(PHP_EOL)."), '`', '\"')");
 $database->query("UPDATE my_impianto_componenti SET contenuto = REPLACE(REPLACE(REPLACE(contenuto, '&quot;', '\"'), '\n', ".prepare(PHP_EOL)."), '`', '\"')");
 
+// Fix per la presenza della Foreign Key in in_interventi_tecnici
+$fk = $database->fetchArray('SELECT TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_SCHEMA = '.prepare($database->getDatabaseName())." AND REFERENCED_TABLE_NAME = 'in_interventi' AND CONSTRAINT_NAME = 'in_interventi_tecnici_ibfk_1'");
+if(!empty($fk)){
+    $database->query("ALTER TABLE `in_interventi_tecnici` DROP FOREIGN KEY `in_interventi_tecnici_ibfk_1`");
+}
+
+$database->query("ALTER TABLE `in_interventi` CHANGE `idintervento` `codice` varchar(25) NOT NULL UNIQUE");
+
 // Fix dei timestamp delle tabelle mg_prodotti, mg_movimenti, zz_logs e zz_files
 $database->query('UPDATE `mg_prodotti` SET `created_at` = `data`, `updated_at` = `data`');
 $database->query('ALTER TABLE `mg_prodotti` DROP `data`');

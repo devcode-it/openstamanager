@@ -25,7 +25,6 @@ UPDATE `co_ordiniservizio` SET `idintervento` = (SELECT `id` FROM `in_interventi
 UPDATE `co_preventivi_interventi` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `co_preventivi_interventi`.`idintervento`);
 UPDATE `co_righe_contratti` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `co_righe_contratti`.`idintervento`);
 UPDATE `co_righe_documenti` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `co_righe_documenti`.`idintervento`);
-UPDATE `in_interventi_tecnici` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `in_interventi_tecnici`.`idintervento`);
 UPDATE `in_righe_interventi` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `in_righe_interventi`.`idintervento`);
 UPDATE `mg_movimenti` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `mg_movimenti`.`idintervento`);
 UPDATE `my_impianti_interventi` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `my_impianti_interventi`.`idintervento`);
@@ -36,7 +35,6 @@ ALTER TABLE `co_ordiniservizio` CHANGE `idintervento` `idintervento` varchar(25)
 ALTER TABLE `co_preventivi_interventi` CHANGE `idintervento` `idintervento` varchar(25);
 ALTER TABLE `co_righe_contratti` CHANGE `idintervento` `idintervento` varchar(25);
 ALTER TABLE `co_righe_documenti` CHANGE `idintervento` `idintervento` varchar(25);
-ALTER TABLE `in_interventi_tecnici` CHANGE `idintervento` `idintervento` varchar(25);
 ALTER TABLE `in_righe_interventi` CHANGE `idintervento` `idintervento` varchar(25);
 ALTER TABLE `mg_movimenti` CHANGE `idintervento` `idintervento` varchar(25);
 ALTER TABLE `my_impianti_interventi` CHANGE `idintervento` `idintervento` varchar(25);
@@ -47,7 +45,6 @@ UPDATE `co_ordiniservizio` SET `idintervento` = NULL WHERE `idintervento` = 0 OR
 UPDATE `co_preventivi_interventi` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
 UPDATE `co_righe_contratti` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
 UPDATE `co_righe_documenti` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
-UPDATE `in_interventi_tecnici` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
 UPDATE `in_righe_interventi` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
 UPDATE `mg_movimenti` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
 UPDATE `my_impianti_interventi` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
@@ -58,7 +55,6 @@ ALTER TABLE `co_ordiniservizio` CHANGE `idintervento` `idintervento` int(11), AD
 ALTER TABLE `co_preventivi_interventi` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `co_righe_contratti` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `co_righe_documenti` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
-ALTER TABLE `in_interventi_tecnici` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `in_righe_interventi` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `mg_movimenti` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `my_impianti_interventi` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;

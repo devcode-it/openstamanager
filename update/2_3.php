@@ -155,7 +155,7 @@ if(!empty($fk)){
 
 $database->query("ALTER TABLE `in_interventi` DROP PRIMARY KEY, CHANGE `idintervento` `codice` varchar(25) NOT NULL UNIQUE, ADD PRIMARY KEY (`id`)");
 $database->query("DROP INDEX primary_key ON `in_interventi`");
-$database->query("UPDATE `in_interventi_tecnici` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `in_interventi_tecnici`.`idintervento`)");
+$database->query("UPDATE `in_interventi_tecnici` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `in_interventi_tecnici`.`idintervento`)");
 $database->query("ALTER TABLE `in_interventi_tecnici` CHANGE `idintervento` `idintervento` varchar(25)");
 $database->query("UPDATE `in_interventi_tecnici` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = ''");
 $database->query("ALTER TABLE `in_interventi_tecnici` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE");

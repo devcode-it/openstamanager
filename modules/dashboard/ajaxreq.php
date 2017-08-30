@@ -39,7 +39,6 @@ switch (get('op')) {
                 "borderColor":"'.$color.'",
                 "allDay": false
             }';
-            //echo "\"tip\":\"".html_entity_decode($tooltip_text)."\",";
         }
         echo '['.implode(',', $results).']';
 

@@ -87,11 +87,15 @@ if (get('anteprima') !== null) {
         var signaturePad = new SignaturePad(canvas);
 
         function resizeCanvas() {
+            image_data = signaturePad.toDataURL();
+
             var ratio =  Math.max(window.devicePixelRatio || 1, 1);
             canvas.width = canvas.offsetWidth * ratio;
             canvas.height = canvas.offsetHeight * ratio;
             canvas.getContext("2d").scale(ratio, ratio);
-            signaturePad.clear(); // otherwise isEmpty() might return incorrect value
+            signaturePad.clear();
+
+            signaturePad.fromDataURL(image_data);
         }
 
         window.addEventListener("resize", resizeCanvas);

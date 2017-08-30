@@ -337,54 +337,6 @@ span.form-control {
     }
 }
 
-#back-to-top {
-    display: inline-block;
-    height: 60px;
-    width: 60px;
-    position: fixed;
-    bottom: 60px;
-    right: 10px;
-    z-index: 10;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-    /* image replacement properties */
-    color: #fff;
-    overflow: hidden;
-    white-space: nowrap;
-    background: rgba(255, 78, 0, 0.8);
-    visibility: hidden;
-    opacity: 0;
-    -webkit-transition: opacity .3s 0s, visibility 0s .3s;
-    -moz-transition: opacity .3s 0s, visibility 0s .3s;
-    transition: opacity .3s 0s, visibility 0s .3s;
-}
-
-#back-to-top>span {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 30px;
-    height: 30px;
-    text-align: center;
-    margin-left: -15px;
-    margin-top: -15px;
-}
-
-#back-to-top.cd-is-visible {
-    visibility: visible;
-    opacity: 0.8;
-    z-index: 900;
-}
-
-#back-to-top.cd-is-visible:hover {
-    visibility: visible;
-    opacity: 1;
-    z-index: 900;
-}
-
-#back-to-top.cd-fade-out {
-    opacity: 0.5;
-}
-
 .input-searching {
     background: #FFBF91;
 }
@@ -558,4 +510,26 @@ span.form-control {
 
 .input-group-addon.no-padding>* {
     border-radius: 0px;
+}
+
+@media screen and (max-width:767px) {
+    .main-header .logo {
+        display: none;
+    }
+    .fixed .content-wrapper,
+    .fixed .right-side {
+        padding-top: 50px;
+    }
+}
+
+.push {
+    position: fixed;
+    z-index: 3;
+    right: 10;
+}
+
+@media screen and (max-width:1023px) {
+    .push {
+        position: static;
+    }
 }

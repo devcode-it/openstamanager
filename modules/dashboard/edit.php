@@ -445,12 +445,20 @@ if (get_var('Abilitare orario lavorativo') == '1') {
             maxTime: '20:00:00',";
 }
 ?>
-			selectable: true,
+            selectable: true,
+            lazyFetching: true,
 			selectHelper: true,
 			editable: true,
 			eventLimit: false, // allow "more" link when too many events
 			allDaySlot: false,
             droppable: true,
+            loading: function(isLoading, view) {
+                if(isLoading) {
+                    setTimeout("$('#mini-loader').show()", 1000);
+                } else {
+                    setTimeout("$('#mini-loader').hide()", 1000);
+                }
+            },
             drop: function(date, jsEvent, ui, resourceId) {
                 data = moment(date).format("YYYY-MM-DD");
 				ora_dal = moment(date).format("HH:mm");
@@ -487,7 +495,7 @@ if (get_var('Abilitare orario lavorativo') == '1') {
 			},
 			events: {
 				url: globals.rootdir + "/modules/dashboard/ajaxreq.php?op=get_current_month",
-				type: 'GET',
+                type: 'GET',
 				error: function() {
 					alert('<?php echo _('Errore durante la creazione degli eventi'); ?>');
 				}
@@ -522,7 +530,7 @@ if (get_var('Abilitare orario lavorativo') == '1') {
 					}
 				});
 			},
-			eventAfterRender : function(event, element) {
+			eventAfterRender: function(event, element) {
 				//alert(element.find('.fc-event-title').html();
 				element.find('.fc-title').html(event.title);
 				<?php if (get_var('Utilizzare i tooltip sul calendario') == '1') {

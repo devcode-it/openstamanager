@@ -224,6 +224,9 @@ switch (post('op')) {
                 $numero_esterno = '';
             }
 
+            // Duplicazione righe
+            $righe = $dbo->fetchArray('SELECT * FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
+
             // Lettura dati fattura attuale
             $rs = $dbo->fetchArray('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
 
@@ -231,17 +234,17 @@ switch (post('op')) {
             $dbo->query('INSERT INTO co_documenti(numero, numero_esterno, data, idanagrafica, idcausalet, idspedizione, idporto, idaspettobeni, idvettore, n_colli, idsede, idtipodocumento, idstatodocumento, idpagamento, idconto, idrivalsainps, idritenutaacconto, rivalsainps, iva_rivalsainps, ritenutaacconto, bollo, note, note_aggiuntive, buono_ordine) VALUES('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($rs[0]['data']).', '.prepare($rs[0]['idanagrafica']).', '.prepare($rs[0]['idcausalet']).', '.prepare($rs[0]['idspedizione']).', '.prepare($rs[0]['idporto']).', '.prepare($rs[0]['idaspettobeni']).', '.prepare($rs[0]['idvettore']).', '.prepare($rs[0]['n_colli']).', '.prepare($rs[0]['idsede']).', '.prepare($rs[0]['idtipodocumento']).', (SELECT id FROM co_statidocumento WHERE descrizione=\'Bozza\'), '.prepare($rs[0]['idpagamento']).', '.prepare($rs[0]['idconto']).', '.prepare($rs[0]['idrivalsainps']).', '.prepare($rs[0]['idritenutaacconto']).', '.prepare($rs[0]['rivalsainps']).', '.prepare($rs[0]['iva_rivalsainps']).', '.prepare($rs[0]['ritenutaacconto']).', '.prepare($rs[0]['bollo']).', '.prepare($rs[0]['note']).', '.prepare($rs[0]['note_aggiuntive']).', '.prepare($rs[0]['buono_ordine']).')');
             $id_record = $dbo->lastInsertedID();
 
-            // Duplicazione righe
-            $rs = $dbo->fetchArray('SELECT * FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
-
-            for ($i = 0; $i < sizeof($rs); ++$i) {
-                $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idordine, idddt, idintervento, idarticolo, idpreventivo, idcontratto, idtecnico, idagente, idautomezzo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, idritenutaacconto, ritenutaacconto, idrivalsainps, rivalsainps, um, qta, lotto, serial, altro, idgruppo, `order`) VALUES('.prepare($id_record).', 0, 0, 0, '.prepare($rs[$i]['idarticolo']).', '.prepare($rs[$i]['idpreventivo']).', '.prepare($rs[$i]['idcontratto']).', '.prepare($rs[$i]['idtecnico']).', '.prepare($rs[$i]['idagente']).', '.prepare($rs[$i]['idautomezzo']).', '.prepare($rs[$i]['idiva']).', '.prepare($rs[$i]['desc_iva']).', '.prepare($rs[$i]['iva']).', '.prepare($rs[$i]['iva_indetraibile']).', '.prepare($rs[$i]['descrizione']).', '.prepare($rs[$i]['subtotale']).', '.prepare($rs[$i]['sconto']).', '.prepare($rs[$i]['idritenutaacconto']).', '.prepare($rs[$i]['ritenutaacconto']).', '.prepare($rs[$i]['idrivalsainps']).', '.prepare($rs[$i]['rivalsainps']).', '.prepare($rs[$i]['um']).', '.prepare($rs[$i]['qta']).', '.prepare($rs[$i]['lotto']).', '.prepare($rs[$i]['serial']).', '.prepare($rs[$i]['altro']).', (SELECT IFNULL(MAX(`idgruppo`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'), (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))');
+            // TODO: sistemare la duplicazione delle righe generiche e degli articoli, ingorando interventi, ddt, ordini, preventivi
+            /*
+            foreach ($righe as $riga) {
+                $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idordine, idddt, idintervento, idarticolo, idpreventivo, idcontratto, idtecnico, idagente, idautomezzo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, idritenutaacconto, ritenutaacconto, idrivalsainps, rivalsainps, um, qta, lotto, serial, altro, idgruppo, `order`) VALUES('.prepare($id_record).', 0, 0, 0, '.prepare($riga['idarticolo']).', '.prepare($riga['idpreventivo']).', '.prepare($riga['idcontratto']).', '.prepare($riga['idtecnico']).', '.prepare($riga['idagente']).', '.prepare($riga['idautomezzo']).', '.prepare($riga['idiva']).', '.prepare($riga['desc_iva']).', '.prepare($riga['iva']).', '.prepare($riga['iva_indetraibile']).', '.prepare($riga['descrizione']).', '.prepare($riga['subtotale']).', '.prepare($riga['sconto']).', '.prepare($riga['idritenutaacconto']).', '.prepare($riga['ritenutaacconto']).', '.prepare($riga['idrivalsainps']).', '.prepare($riga['rivalsainps']).', '.prepare($riga['um']).', '.prepare($riga['qta']).', '.prepare($riga['lotto']).', '.prepare($riga['serial']).', '.prepare($riga['altro']).', (SELECT IFNULL(MAX(`idgruppo`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'), (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))');
 
                 // Scarico/carico nuovamente l'articolo da magazzino
-                if (!empty($rs[$i]['idarticolo'])) {
-                    add_articolo_infattura($id_record, $rs[$i]['idarticolo'], $rs[$i]['descrizione'], $rs[$i]['idiva'], $rs[$i]['qta'], $rs[$i]['subtotale'], 0, 0, 0);
+                if (!empty($riga['idarticolo'])) {
+                    add_articolo_infattura($id_record, $riga['idarticolo'], $riga['descrizione'], $riga['idiva'], $riga['qta'], $riga['subtotale'], 0, 0, 0);
                 }
             }
+            */
 
             // Ricalcolo inps, ritenuta e bollo (se la fattura non è stata pagata)
             if ($dir == 'entrata') {
@@ -251,8 +254,6 @@ switch (post('op')) {
             }
 
             $_SESSION['infos'][] = _('Fattura duplicata correttamente!');
-
-            redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
         }
 
         break;

@@ -56,7 +56,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Handler\RotatingFileHandler;
 
 $handlers = [];
-// File di log di base (logs/all.log)
+// File di log di base (logs/error.log)
 $handlers[] = new StreamHandler(__DIR__.'/logs/error.log', Monolog\Logger::ERROR);
 $handlers[] = new StreamHandler(__DIR__.'/logs/setup.log', Monolog\Logger::EMERGENCY);
 
@@ -124,9 +124,9 @@ if (!API::isAPIRequest()) {
 
 $dbo = Database::getConnection();
 
-$continue = $dbo->isInstalled() && (Auth::check() || API::isAPIRequest()) && !Update::isUpdateAvailable();
-
 // Controllo sulla presenza dei permessi di accesso basilari
+$continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (Auth::check() || API::isAPIRequest());
+
 if (!$continue && slashes($_SERVER['SCRIPT_FILENAME']) != slashes(DOCROOT.'/index.php')) {
     redirect(ROOTDIR.'/index.php?op=logout');
     exit();

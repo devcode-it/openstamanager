@@ -8,7 +8,7 @@ $tipodoc = $rs[0]['descrizione'];
 
 ?>
 <form action="" class="text-right" method="post" id="form-copy">
-    <input type="hidden" name="backto" value="record-list">
+    <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="op" value="copy">
 </form>
 

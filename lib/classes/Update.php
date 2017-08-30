@@ -290,6 +290,12 @@ class Update
 
             $database->query('SET foreign_key_checks = 1');
         }
+
+        // Normalizzazione dell'engine MySQL
+        $engines = $database->fetchArray('SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '.prepare($database_name)." AND ENGINE != 'InnoDB'");
+        foreach ($engines as $engine) {
+            $database->query('ALTER TABLE `'.$engine['TABLE_NAME'].'` ENGINE=InnoDB');
+        }
     }
 
     protected static function executeScript($script)

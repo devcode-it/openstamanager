@@ -15,8 +15,12 @@ ALTER TABLE `zz_modules` CHANGE `module_dir` `directory` varchar(50) NOT NULL, C
 UPDATE `zz_modules` SET `name` = REPLACE(`name`, '&agrave;', 'à'), `title` = REPLACE(`title`, '&agrave;', 'à');
 
 -- Adattamento della tabella in_interventi
+ALTER TABLE `in_interventi_tecnici`
+  ADD CONSTRAINT `in_interventi_tecnici_ibfk_1` FOREIGN KEY (`idintervento`) REFERENCES `in_interventi` (`idintervento`) ON DELETE CASCADE;
 ALTER TABLE `in_interventi_tecnici` DROP FOREIGN KEY `in_interventi_tecnici_ibfk_1`;
 ALTER TABLE `in_interventi` DROP PRIMARY KEY, CHANGE `idintervento` `codice` varchar(25) NOT NULL UNIQUE, ADD `id` int(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `my_impianti_interventi` DROP PRIMARY KEY;
 
 UPDATE `co_ordiniservizio` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `co_ordiniservizio`.`idintervento`);
 UPDATE `co_preventivi_interventi` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `co_preventivi_interventi`.`idintervento`);
@@ -29,16 +33,27 @@ UPDATE `my_impianti_interventi` SET `idintervento` = (SELECT `id` FROM `in_inter
 UPDATE `my_impianto_componenti` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `my_impianto_componenti`.`idintervento`);
 UPDATE `my_componenti_interventi` SET `id_intervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `my_componenti_interventi`.`id_intervento`);
 
-UPDATE `co_ordiniservizio` SET `idintervento` = NULL WHERE `idintervento` = 0;
-UPDATE `co_preventivi_interventi` SET `idintervento` = NULL WHERE `idintervento` = 0;
-UPDATE `co_righe_contratti` SET `idintervento` = NULL WHERE `idintervento` = 0;
-UPDATE `co_righe_documenti` SET `idintervento` = NULL WHERE `idintervento` = 0;
-UPDATE `in_interventi_tecnici` SET `idintervento` = NULL WHERE `idintervento` = 0;
-UPDATE `in_righe_interventi` SET `idintervento` = NULL WHERE `idintervento` = 0;
-UPDATE `mg_movimenti` SET `idintervento` = NULL WHERE `idintervento` = 0;
-UPDATE `my_impianti_interventi` SET `idintervento` = NULL WHERE `idintervento` = 0;
-UPDATE `my_impianto_componenti` SET `idintervento` = NULL WHERE `idintervento` = 0;
-UPDATE `my_componenti_interventi` SET `id_intervento` = NULL WHERE `id_intervento` = 0;
+ALTER TABLE `co_ordiniservizio` CHANGE `idintervento` `idintervento` varchar(25);
+ALTER TABLE `co_preventivi_interventi` CHANGE `idintervento` `idintervento` varchar(25);
+ALTER TABLE `co_righe_contratti` CHANGE `idintervento` `idintervento` varchar(25);
+ALTER TABLE `co_righe_documenti` CHANGE `idintervento` `idintervento` varchar(25);
+ALTER TABLE `in_interventi_tecnici` CHANGE `idintervento` `idintervento` varchar(25);
+ALTER TABLE `in_righe_interventi` CHANGE `idintervento` `idintervento` varchar(25);
+ALTER TABLE `mg_movimenti` CHANGE `idintervento` `idintervento` varchar(25);
+ALTER TABLE `my_impianti_interventi` CHANGE `idintervento` `idintervento` varchar(25);
+ALTER TABLE `my_impianto_componenti` CHANGE `idintervento` `idintervento` varchar(25);
+ALTER TABLE `my_componenti_interventi` CHANGE `id_intervento` `id_intervento` varchar(25);
+
+UPDATE `co_ordiniservizio` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
+UPDATE `co_preventivi_interventi` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
+UPDATE `co_righe_contratti` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
+UPDATE `co_righe_documenti` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
+UPDATE `in_interventi_tecnici` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
+UPDATE `in_righe_interventi` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
+UPDATE `mg_movimenti` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
+UPDATE `my_impianti_interventi` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
+UPDATE `my_impianto_componenti` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
+UPDATE `my_componenti_interventi` SET `id_intervento` = NULL WHERE `id_intervento` = 0 OR `id_intervento` = '';
 
 ALTER TABLE `co_ordiniservizio` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `co_preventivi_interventi` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
@@ -47,13 +62,12 @@ ALTER TABLE `co_righe_documenti` CHANGE `idintervento` `idintervento` int(11), A
 ALTER TABLE `in_interventi_tecnici` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `in_righe_interventi` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `mg_movimenti` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
-ALTER TABLE `my_impianti_interventi` CHANGE `idintervento` `idintervento` int(11);
+ALTER TABLE `my_impianti_interventi` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `my_impianto_componenti` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
-ALTER TABLE `my_componenti_interventi` CHANGE `id_intervento` `id_intervento` int(11);
+ALTER TABLE `my_componenti_interventi` CHANGE `id_intervento` `id_intervento` int(11), ADD FOREIGN KEY (`id_intervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in my_componenti_interventi
-ALTER TABLE `my_componenti_interventi` ENGINE = InnoDB;
-ALTER TABLE `my_componenti_interventi` ADD FOREIGN KEY (`id_intervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE, CHANGE `id_componente` `id_componente` int(11) NOT NULL, ADD FOREIGN KEY (`id_componente`) REFERENCES `my_impianto_componenti`(`id`) ON DELETE CASCADE, ADD PRIMARY KEY (`id_intervento`, `id_componente`);
+ALTER TABLE `my_componenti_interventi` CHANGE `id_componente` `id_componente` int(11) NOT NULL, ADD FOREIGN KEY (`id_componente`) REFERENCES `my_impianto_componenti`(`id`) ON DELETE CASCADE;
 
 -- Aggiornamento dei filtri per i gruppo di utenti
 UPDATE `zz_group_module` SET `clause` = ' AND in_interventi.id IN (SELECT idintervento FROM in_interventi_tecnici WHERE idintervento=in_interventi.id AND idtecnico=|idtecnico|)' WHERE `id` = 1;
@@ -470,9 +484,10 @@ ALTER TABLE `my_impianto_componenti` ADD `idimpianto` int(11);
 UPDATE `my_impianto_componenti` SET `idimpianto` = (SELECT `id` FROM `my_impianti` WHERE `my_impianti`.`matricola` = `my_impianto_componenti`.`matricola`);
 ALTER TABLE `my_impianto_componenti` DROP COLUMN `matricola`, ADD FOREIGN KEY (`idimpianto`) REFERENCES `my_impianti`(`id`) ON DELETE CASCADE;
 
-ALTER TABLE `my_impianti_interventi` DROP PRIMARY KEY, ADD `idimpianto` int(11);
+ALTER TABLE `my_impianti_interventi` ADD `idimpianto` int(11);
 UPDATE `my_impianti_interventi` SET `idimpianto` = (SELECT `id` FROM `my_impianti` WHERE `my_impianti`.`matricola` = `my_impianti_interventi`.`matricola`);
-ALTER TABLE `my_impianti_interventi` DROP COLUMN `matricola`, ADD FOREIGN KEY (`idimpianto`) REFERENCES `my_impianti`(`id`) ON DELETE CASCADE, ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE, ADD PRIMARY KEY (`idintervento`, `idimpianto`);
+DELETE FROM `my_impianti_interventi` WHERE `idimpianto` IS NULL;
+ALTER TABLE `my_impianti_interventi` DROP COLUMN `matricola`, ADD FOREIGN KEY (`idimpianto`) REFERENCES `my_impianti`(`id`) ON DELETE CASCADE;
 
 ALTER TABLE `my_impianti_contratti` ADD `idimpianto` int(11), ADD FOREIGN KEY (`idimpianto`) REFERENCES `my_impianti`(`id`) ON DELETE CASCADE;
 UPDATE `my_impianti_contratti` SET `idimpianto` = (SELECT `id` FROM `my_impianti` WHERE `my_impianti`.`matricola` = `my_impianti_contratti`.`matricola`);
@@ -751,7 +766,7 @@ UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Movimen
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), 'Articolo', 'IF(mg_articoli.descrizione != \'\', CONCAT(mg_articoli.codice, \'-\', mg_articoli.descrizione), mg_articoli.codice)', 2, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), 'Data', 'data', 5, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), 'Data', 'mg_movimenti.created_at', 5, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), 'Quantità', 'mg_movimenti.qta', 4, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), 'Descrizione', 'movimento', 3, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), 'id', 'mg_movimenti.id', 1, 1, 0, 0, 1),
@@ -937,3 +952,6 @@ ALTER TABLE `co_scadenziario` CHANGE `data_emissione` `data_emissione` date, CHA
 ALTER TABLE `dt_automezzi_tecnici` CHANGE `data_inizio` `data_inizio` date, CHANGE `data_fine` `data_fine` date;
 ALTER TABLE `my_impianto_componenti` CHANGE `data` `data` date, CHANGE `data_sostituzione` `data_sostituzione` date;
 ALTER TABLE `or_righe_ordini` CHANGE `data_evasione` `data_evasione` date;
+
+-- ALTER TABLE `my_componenti_interventi` ADD PRIMARY KEY (`id_intervento`, `id_componente`);
+-- ALTER TABLE `my_impianti_interventi` ADD PRIMARY KEY (`idintervento`, `idimpianto`);

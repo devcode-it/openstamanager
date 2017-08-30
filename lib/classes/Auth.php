@@ -185,11 +185,15 @@ class Auth extends \Util\Singleton
     {
         $database = Database::getConnection();
 
-        $results = $database->fetchArray('SELECT idutente, idanagrafica, username, (SELECT nome FROM zz_groups WHERE id=idgruppo) AS gruppo FROM zz_users WHERE idutente = '.prepare($user_id).' AND enabled = 1 LIMIT 1');
-        if (!empty($results)) {
-            $results[0]['is_admin'] = ($results[0]['gruppo'] == 'Amministratori');
+        try {
+            $results = $database->fetchArray('SELECT idutente, idanagrafica, username, (SELECT nome FROM zz_groups WHERE id=idgruppo) AS gruppo FROM zz_users WHERE idutente = '.prepare($user_id).' AND enabled = 1 LIMIT 1');
+            if (!empty($results)) {
+                $results[0]['is_admin'] = ($results[0]['gruppo'] == 'Amministratori');
 
-            $this->infos = $results[0];
+                $this->infos = $results[0];
+            }
+        } catch (PDOException $e) {
+            $this->destory();
         }
     }
 

@@ -123,7 +123,7 @@ echo '
 
     </head>
 
-	<body class="skin-'.$theme.' fixed'.(!empty(get_var('Nascondere la barra sinistra di default')) ? ' sidebar-collapse' : '').(!Auth::check() ? ' hold-transition login-page' : '').'">
+	<body class="skin-'.$theme.(!empty(get_var('Nascondere la barra sinistra di default')) ? ' sidebar-collapse' : '').(!Auth::check() ? ' hold-transition login-page' : '').'">
 		<div class="wrapper">';
 
 if (Auth::check()) {

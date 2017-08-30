@@ -17,10 +17,7 @@ if (Auth::check()) {
 			</footer>
 
 			<div class="modal fade" id="bs-popup" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false"></div>
-			<div class="modal fade" id="bs-popup2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false"></div>
-			<a href="#" id="back-to-top">
-                <span><i class="fa fa-2x fa-chevron-up"></i></span>
-            </a>';
+			<div class="modal fade" id="bs-popup2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false"></div>';
 }
 echo '
         </div><!-- ./wrapper -->';

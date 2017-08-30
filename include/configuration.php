@@ -49,16 +49,13 @@ if (post('db_host') !== null) {
             $db_name = str_replace('_', '\_', $db_name);
             $db_username = str_replace('_', '\_', $db_name);
 
-            $user = " TO '".$db_username."'";
-            $db = ' ON `'.$db_name.'`.*';
-
             $results = $dbo->fetchArray('SHOW GRANTS FOR CURRENT_USER');
             foreach ($results as $result) {
                 if (
                     str_contains($result, $find) &&
                     (
-                        str_contains($result, $db) ||
-                        str_contains($result, str_replace('`'.$db_name.'`', '*', $db))
+                        str_contains($result, ' ON `'.$db_name.'`.*') ||
+                        str_contains($result, ' ON *.*')
                     )
                 ) {
                     $pieces = explode(', ', explode(' ON ', str_replace('GRANT ', '', current($result)))[0]);

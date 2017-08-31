@@ -282,7 +282,7 @@ $qp = "SELECT id, idcontratto, richiesta, data_richiesta, 'intervento' AS ref, (
 UNION SELECT id, idcontratto, '', data_scadenza, 'ordine', (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento='ODS') AS tipointervento FROM co_ordiniservizio WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL ORDER BY data_richiesta ASC";
 $rsp = $dbo->fetchArray($qp);
 
-if(!empty($rsp)){
+if (!empty($rsp)) {
     echo '
 <div class="row">
     <div class="col-xs-12 col-md-10">';
@@ -291,23 +291,22 @@ if(!empty($rsp)){
 echo '
 <div id="calendar"></div>';
 
-if(!empty($rsp)){
+if (!empty($rsp)) {
     echo '
     </div>
 
     <div id="external-events" class="hidden-xs hidden-sm col-md-2">
         <h4>'._('Interventi da pianificare').'</h4>';
 
-        foreach ($rsp as $r) {
+    foreach ($rsp as $r) {
         echo '
-        <div class="fc-event " data-id="'.$r['id'].'" data-idcontratto="'.$r['idcontratto'].'">'.Translator::dateToLocale($r['data_richiesta']).' ('.$r['tipointervento'].')'.(!empty($r['richiesta']) ? ' - '.$r['richiesta'] : '' ).'</div>';
-        }
+        <div class="fc-event " data-id="'.$r['id'].'" data-idcontratto="'.$r['idcontratto'].'">'.Translator::dateToLocale($r['data_richiesta']).' ('.$r['tipointervento'].')'.(!empty($r['richiesta']) ? ' - '.$r['richiesta'] : '').'</div>';
+    }
 
     echo '
     </div>
 </div>';
 }
-
 
 $vista = get_var('Vista dashboard');
 if ($vista == 'mese') {
@@ -459,6 +458,9 @@ if (get_var('Abilitare orario lavorativo') == '1') {
                     setTimeout("$('#mini-loader').hide()", 1000);
                 }
             },
+    <?php
+if (Modules::getPermission($id_module) == 'rw') {
+    ?>
             drop: function(date, jsEvent, ui, resourceId) {
                 data = moment(date).format("YYYY-MM-DD");
 				ora_dal = moment(date).format("HH:mm");
@@ -466,17 +468,18 @@ if (get_var('Abilitare orario lavorativo') == '1') {
 
                 var name = ($(this).data('ref') == 'ordine') ? 'idordineservizio' : 'idcontratto_riga';
 
-				<?php
-                if (Modules::getPermission($id_module) == 'rw') {
-                    ?>
                 launch_modal('<?php echo _('Pianifica intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::getModule('Interventi')['id'] ?>&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al+'&ref=dashboard&idcontratto=' + $(this).data('idcontratto') + '&' + name + '=' + $(this).data('id'), 1);
-				<?php
-
-                }
-                ?>
 
                 $(this).remove();
-			},
+
+                $('#bs-popup').on('hidden.bs.modal', function () {
+                    $('#calendar').fullCalendar('refetchEvents');
+                });
+            },
+            <?php
+
+}
+            ?>
 			select: function(start, end, allDay) {
 				data = moment(start).format("YYYY-MM-DD");
 				ora_dal = moment(start).format("HH:mm");

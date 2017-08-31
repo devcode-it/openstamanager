@@ -234,6 +234,9 @@ class Update
 
                 $database->query('UPDATE `updates` SET `done` = 0 WHERE id = '.prepare($update['id']));
 
+                // Normalizzazione dei campi per l'API
+                self::executeScript(DOCROOT.'/update/api.php');
+
                 // Esecuzione script release
                 if (!empty($update['script']) && file_exists($file.'.php')) {
                     self::executeScript($file.'.php');

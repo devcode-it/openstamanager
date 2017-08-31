@@ -29,7 +29,7 @@ include $docroot.'/actions.php';
 $advanced_sessions = get_var('Attiva notifica di presenza utenti sul record');
 if ($advanced_sessions) {
     $dbo->query('DELETE FROM zz_semaphores WHERE id_utente='.prepare($_SESSION['idutente']).' AND posizione='.prepare($id_module.', '.$id_record));
-    $dbo->query('INSERT INTO zz_semaphores (id_utente, posizione) VALUES ('.prepare($_SESSION['idutente']).', '.prepare($id_module.', '.$id_record).')');
+    $dbo->query('INSERT INTO zz_semaphores (id_utente, posizione, updated) VALUES ('.prepare($_SESSION['idutente']).', '.prepare($id_module.', '.$id_record).', NOW())');
 
     echo '
 		<div class="box box-warning box-solid text-center info-active hide">

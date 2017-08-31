@@ -1,110 +1,6 @@
 <?php
 
 /*
-* Creazione dei campi per l'API (created_at e updated_at)
-*/
-
-// I record precedenti vengono impostati a NULL
-$tables = [
-    'an_anagrafiche',
-    'an_anagrafiche_agenti',
-    'an_nazioni',
-    'an_referenti',
-    'an_relazioni',
-    'an_sedi',
-    'an_tipianagrafiche',
-    'an_tipianagrafiche_anagrafiche',
-    'an_zone',
-    'co_contratti',
-    'co_contratti_tipiintervento',
-    'co_documenti',
-    'co_iva',
-    'co_movimenti',
-    'co_ordiniservizio',
-    'co_ordiniservizio_pianificazionefatture',
-    'co_ordiniservizio_vociservizio',
-    'co_pagamenti',
-    'co_pianodeiconti1',
-    'co_pianodeiconti2',
-    'co_pianodeiconti3',
-    'co_preventivi',
-    'co_preventivi_interventi',
-    'co_righe2_contratti',
-    'co_righe_contratti',
-    'co_righe_documenti',
-    'co_righe_preventivi',
-    'co_ritenutaacconto',
-    'co_rivalsainps',
-    'co_scadenziario',
-    'co_staticontratti',
-    'co_statidocumento',
-    'co_statipreventivi',
-    'co_tipidocumento',
-    'dt_aspettobeni',
-    'dt_automezzi',
-    'dt_automezzi_tecnici',
-    'dt_causalet',
-    'dt_ddt',
-    'dt_porto',
-    'dt_righe_ddt',
-    'dt_spedizione',
-    'dt_statiddt',
-    'dt_tipiddt',
-    'in_interventi',
-    'in_interventi_tecnici',
-    'in_righe_interventi',
-    'in_statiintervento',
-    'in_tariffe',
-    'in_tipiintervento',
-    'in_vociservizio',
-    'mg_articoli',
-    'mg_articoli_automezzi',
-    'mg_articoli_interventi',
-    'mg_categorie',
-    'mg_listini',
-    'mg_movimenti',
-    'mg_prodotti',
-    'mg_unitamisura',
-    'my_componenti_interventi',
-    'my_impianti',
-    'my_impianti_contratti',
-    'my_impianti_interventi',
-    'my_impianto_componenti',
-    'or_ordini',
-    'or_righe_ordini',
-    'or_statiordine',
-    'or_tipiordine',
-    'zz_tokens',
-    'zz_files',
-    'zz_groups',
-    'zz_group_module',
-    'zz_settings',
-    'zz_logs',
-    'zz_modules',
-    'zz_plugins',
-    'zz_permissions',
-    'zz_users',
-    'zz_widgets',
-    'zz_views',
-    'zz_group_view',
-    'zz_semaphores',
-];
-
-// created_at e updated_at
-$latest_ver = version_compare($mysql_ver, '5.6.5') >= 0;
-foreach ($tables as $table) {
-    if ($latest_ver) {
-        $database->query('ALTER TABLE `'.$table.'` ADD (`created_at` timestamp DEFAULT CURRENT_TIMESTAMP, `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)');
-    } else {
-        $database->query('ALTER TABLE `'.$table.'` ADD (`created_at` timestamp DEFAULT NULL, `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)');
-        $database->query('UPDATE '.$table.' SET created_at = updated_at');
-
-        // Trigger per l'inizializzazione automatica di created_at
-        $database->query('CREATE TRIGGER '.$table.'_creation BEFORE INSERT ON '.$table.' FOR EACH ROW SET NEW.created_at = CURRENT_TIMESTAMP');
-    }
-}
-
-/*
 * Inserimento valori di default
 */
 
@@ -149,28 +45,28 @@ $database->query("UPDATE my_impianto_componenti SET contenuto = REPLACE(REPLACE(
 
 // Fix per la presenza della Foreign Key in in_interventi_tecnici
 $fk = $database->fetchArray('SELECT TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_SCHEMA = '.prepare($database->getDatabaseName())." AND REFERENCED_TABLE_NAME = 'in_interventi' AND CONSTRAINT_NAME = 'in_interventi_tecnici_ibfk_1'");
-if(!empty($fk)){
-    $database->query("ALTER TABLE `in_interventi_tecnici` DROP FOREIGN KEY `in_interventi_tecnici_ibfk_1`");
+if (!empty($fk)) {
+    $database->query('ALTER TABLE `in_interventi_tecnici` DROP FOREIGN KEY `in_interventi_tecnici_ibfk_1`');
 }
 
-$database->query("ALTER TABLE `in_interventi` DROP PRIMARY KEY, CHANGE `idintervento` `codice` varchar(25) NOT NULL UNIQUE, ADD PRIMARY KEY (`id`)");
-$database->query("DROP INDEX primary_key ON `in_interventi`");
-$database->query("UPDATE `in_interventi_tecnici` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `in_interventi_tecnici`.`idintervento`)");
-$database->query("ALTER TABLE `in_interventi_tecnici` CHANGE `idintervento` `idintervento` varchar(25)");
+$database->query('ALTER TABLE `in_interventi` DROP PRIMARY KEY, CHANGE `idintervento` `codice` varchar(25) NOT NULL UNIQUE, ADD PRIMARY KEY (`id`)');
+$database->query('DROP INDEX primary_key ON `in_interventi`');
+$database->query('UPDATE `in_interventi_tecnici` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `in_interventi_tecnici`.`idintervento`)');
+$database->query('ALTER TABLE `in_interventi_tecnici` CHANGE `idintervento` `idintervento` varchar(25)');
 $database->query("UPDATE `in_interventi_tecnici` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = ''");
-$database->query("ALTER TABLE `in_interventi_tecnici` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE");
+$database->query('ALTER TABLE `in_interventi_tecnici` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE');
 
 // Fix dei timestamp delle tabelle mg_prodotti, mg_movimenti, zz_logs e zz_files
-$database->query('UPDATE `mg_prodotti` SET `created_at` = `data`, `updated_at` = `data`');
+$database->query('UPDATE `mg_prodotti` SET `created_at` = `data`');
 $database->query('ALTER TABLE `mg_prodotti` DROP `data`');
 
-$database->query('UPDATE `mg_movimenti` SET `created_at` = `data`, `updated_at` = `data`');
+$database->query('UPDATE `mg_movimenti` SET `created_at` = `data`');
 $database->query('ALTER TABLE `mg_movimenti` DROP `data`');
 
-$database->query('UPDATE `zz_logs` SET `created_at` = `timestamp`, `updated_at` = `timestamp`');
+$database->query('UPDATE `zz_logs` SET `created_at` = `timestamp`');
 $database->query('ALTER TABLE `zz_logs` DROP `timestamp`');
 
-$database->query('UPDATE `zz_files` SET `created_at` = `data`, `updated_at` = `data`');
+$database->query('UPDATE `zz_files` SET `created_at` = `data`');
 $database->query('ALTER TABLE `zz_files` DROP `data`');
 
 /*
@@ -227,17 +123,46 @@ foreach ($files as $file) {
 // File .html dei moduli di default
 // Per un problema sulla lunghezza massima del path su glob è necessario dividere le cartelle dei moduli di default da pulire
 $dirs = [
-    'aggiornamenti,anagrafiche,articoli,automezzi,backup',
-    'beni,categorie,causali,contratti,dashboard',
-    'ddt,fatture,gestione_componenti,interventi,iva',
-    'listini,misure,my_impianti,opzioni,ordini,pagamenti',
-    'partitario,porti,preventivi,primanota,scadenzario',
-    'stati_intervento,tecnici_tariffe,tipi_anagrafiche,tipi_intervento',
-    'utenti,viste,voci_servizio,zone',
+    'aggiornamenti',
+    'anagrafiche',
+    'articoli',
+    'automezzi',
+    'backup',
+    'beni',
+    'categorie',
+    'causali',
+    'contratti',
+    'dashboard',
+    'ddt',
+    'fatture',
+    'gestione_componenti',
+    'interventi',
+    'iva',
+    'listini',
+    'misure',
+    'my_impianti',
+    'opzioni',
+    'ordini',
+    'pagamenti',
+    'partitario',
+    'porti',
+    'preventivi',
+    'primanota',
+    'scadenzario',
+    'stati_intervento',
+    'tecnici_tariffe',
+    'tipi_anagrafiche',
+    'tipi_intervento',
+    'utenti',
+    'viste',
+    'voci_servizio',
+    'zone',
 ];
 
-foreach ($dirs as $dir) {
-    $files = glob($docroot.'/modules/{'.$dir.'}/*.html', GLOB_BRACE);
+$pieces = array_chunk($tables, 5);
+
+foreach ($pieces as $piece) {
+    $files = glob($docroot.'/modules/{'.implode(',', $piece).'}/*.html', GLOB_BRACE);
     foreach ($files as $file) {
         unlink($file);
     }

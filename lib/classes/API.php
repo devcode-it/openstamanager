@@ -32,6 +32,10 @@ class API extends \Util\Singleton
             'code' => 500,
             'message' => 'Errore del server',
         ],
+        'incompatible' => [
+            'code' => 503,
+            'message' => 'Servizio non disponibile',
+        ],
     ];
 
     /**
@@ -217,13 +221,14 @@ class API extends \Util\Singleton
     public static function error($error)
     {
         $keys = array_keys(self::$status);
-        $error = (in_array($error, $keys)) ? $error : end($keys);
+        $error = (in_array($error, $keys)) ? $error : 'serverError';
 
-        http_response_code(self::$status[$error]['code']);
+        $code = self::$status[$error]['code'];
+
+        http_response_code($code);
 
         return self::response([
-            'status' => self::$status[$error]['code'],
-            'message' => self::$status[$error]['message'],
+            'status' => $code,
         ]);
     }
 
@@ -278,9 +283,21 @@ class API extends \Util\Singleton
      */
     public static function response($array)
     {
+        if (!self::isCompatible()) {
+            $array = [
+                'status' => self::$status['incompatible']['code'],
+            ];
+        }
+
         if (empty($array['status'])) {
             $array['status'] = self::$status['ok']['code'];
-            $array['message'] = self::$status['ok']['message'];
+        }
+
+        if (empty($array['message'])) {
+            $codes = array_column(self::$status, 'code');
+            $messages = array_column(self::$status, 'message');
+
+            $array['message'] = $messages[array_search($array['status'], $codes)];
         }
 
         $flags = JSON_FORCE_OBJECT;
@@ -317,5 +334,17 @@ class API extends \Util\Singleton
     public static function getRequest()
     {
         return (array) json_decode(file_get_contents('php://input'), true);
+    }
+
+    /**
+     * Controlla se il database è compatibile con l'API.
+     *
+     * @return bool
+     */
+    public static function isCompatible()
+    {
+        $database = Database::getConnection();
+
+        return version_compare($database->getMySQLVersion(), '5.6.5') >= 0;
     }
 }

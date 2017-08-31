@@ -62,14 +62,20 @@ class Database extends Util\Singleton
 
         if (!empty($this->host) && !empty($this->database_name)) {
             try {
-                $this->pdo = new \DebugBar\DataCollector\PDO\TraceablePDO(new PDO(
+                $this->pdo = new PDO(
                     'mysql:host='.$this->host.(!empty($this->port) ? ';port='.$this->port : '').';dbname='.$this->database_name,
                     $this->username,
                     $this->password,
                     $this->option
-                ));
+                );
 
-                $this->query("SET NAMES '".$this->charset."'");
+                // Fix per problemi di compatibilità delle password MySQL 4.1+ (da versione precedente)
+                $this->query('SET SESSION old_passwords = 0');
+                //$this->query('SET PASSWORD = PASSWORD('.$this->prepare($this->password).')');
+
+                $this->pdo = new \DebugBar\DataCollector\PDO\TraceablePDO($this->pdo);
+
+                //$this->query("SET NAMES '".$this->charset."'");
                 $this->query("SET sql_mode = ''");
             } catch (PDOException $e) {
                 if ($e->getCode() == 1049 || $e->getCode() == 1044) {

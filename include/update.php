@@ -3,7 +3,7 @@
 include_once __DIR__.'/../core.php';
 
 $updateRate = 20;
-$scriptValue = $updateRate * 3;
+$scriptValue = $updateRate * 5;
 
 /*
 * Aggiornamento tramite AJAX
@@ -205,18 +205,19 @@ if (filter('action') == 'do_update') {
 
     $total = 0;
     $updates = Update::getTodos();
+
     foreach ($updates as $update) {
-        if ($update['sql'] && $update['done'] !== 0) {
+        if ($update['sql'] && (!empty($update['done']) || is_null($update['done']))) {
             $queries = readSQLFile(DOCROOT.$update['directory'].$update['filename'].'.sql', ';');
             $total += count($queries);
+
+            if (intval($update['done']) > 1) {
+                $total -= intval($update['done']) - 2;
+            }
         }
 
         if ($update['script']) {
             $total += $scriptValue;
-        }
-
-        if ($update['done'] > 1) {
-            $total -= $update['done'] - 2;
         }
     }
 

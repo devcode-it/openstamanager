@@ -375,7 +375,8 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALU
 -- Aggiunta tabella per le sessioni avanazate
 CREATE TABLE IF NOT EXISTS `zz_semaphores` (
   `id_utente` int(11) NOT NULL,
-  `posizione` varchar(255) NOT NULL
+  `posizione` varchar(255) NOT NULL,
+  `updated` datetime
 ) ENGINE=InnoDB;
 
 -- Aggiornamento zz_modules
@@ -668,7 +669,7 @@ ALTER TABLE `zz_plugins` ADD FOREIGN KEY (`idmodule_from`) REFERENCES `zz_module
 ALTER TABLE `zz_users` CHANGE `idutente` `idutente` int(11) NOT NULL AUTO_INCREMENT, ADD FOREIGN KEY (`idgruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_logs
-ALTER TABLE `zz_logs` DROP `password`, CHANGE `idutente` `idutente` int(11);
+ALTER TABLE `zz_logs` DROP `password`, CHANGE `idutente` `idutente` int(11), CHANGE `timestamp` `timestamp` datetime;
 UPDATE `zz_logs` SET `idutente` = NULL WHERE `idutente` = 0;
 ALTER TABLE `zz_logs` ADD FOREIGN KEY (`idutente`) REFERENCES `zz_users`(`idutente`) ON DELETE CASCADE;
 
@@ -950,3 +951,6 @@ ALTER TABLE `or_righe_ordini` CHANGE `data_evasione` `data_evasione` date;
 
 -- ALTER TABLE `my_componenti_interventi` ADD PRIMARY KEY (`id_intervento`, `id_componente`);
 -- ALTER TABLE `my_impianti_interventi` ADD PRIMARY KEY (`idintervento`, `idimpianto`);
+
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(qta),2), ",", "#"), ".", ","), "#", "."), "unit&agrave;") AS dato FROM mg_articoli WHERE qta>0' WHERE `name` = 'Articoli in magazzino';
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(prezzo_acquisto*qta),2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM mg_articoli WHERE qta>0' WHERE `name` = 'Valore magazzino';

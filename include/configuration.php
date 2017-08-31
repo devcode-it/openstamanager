@@ -246,11 +246,11 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                             data = parseFloat(data.trim());
 
                             if(data == 0){
-                                swal("'._('Errore della configurazione').'", "'._('La configurazione fornita non è corretta!').'", "error");
+                                swal("'._('Errore della configurazione').'", "'._("La configurazione non è corretta.").'", "error");
                             } else if(data == 1){
-                                swal("'._('Permessi insufficienti').'", "'._("L'utente inserito non possiede permessi sufficienti al corretto funzionamento del software.").'", "error");
+                                swal("'._('Permessi insufficienti').'", "'._("L'utente non possiede permessi sufficienti per il corretto funzionamento del software.").'", "error");
                             } else{
-                                swal("'._('Configurazione corretta').'", "'._('La configurazione funziona correttamente!').'", "success");
+                                swal("'._('Configurazione corretta').'", "'._("Ti sei connesso con successo al database. Clicca su 'Prosegui' per installare.").'", "success");
                             }
                         }
                     });
@@ -529,7 +529,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                                 </div>
                                 <div class="col-md-4 text-right">
                                     <button type="submit" class="btn btn-success btn-block">
-                                        <i class="fa fa-check"></i> '._('Prosegui').'
+                                        <i class="fa fa-check"></i> '._('Installa').'
                                     </button>
                                 </div>
                             </div>

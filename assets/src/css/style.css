@@ -199,6 +199,19 @@ a.disabled {
     background: transparent url(../img/ajax-loader.gif) top left no-repeat;
 }
 
+
+#tiny-loader {
+	
+	position: fixed;
+    z-index: 9000;
+    width: 100%;
+    height: 100%;
+	top: 50%;
+    left: 50%;
+    background: transparent url(../img/ajax-loader.gif) top left no-repeat;
+	
+}
+
 body .header .logo {
     font-family: inherit;
 }
@@ -526,4 +539,11 @@ span.form-control {
     .push {
         position: static;
     }
+}
+
+/* Interventi da pianificare in Dashboard */
+#external-events .fc-event{
+		margin-top:10px;
+		padding:10px;
+		cursor:pointer;
 }

@@ -141,6 +141,9 @@ if (Auth::check()) {
             <div id="mini-loader" style="display:none;">
                 <div></div>
             </div>
+			
+			<!-- Loader senza overlay -->
+			<div id="tiny-loader" style="display:none;"></div>
 
 			<header class="main-header">
 				<a href="http://www.openstamanager.com" class="logo" target="_blank">

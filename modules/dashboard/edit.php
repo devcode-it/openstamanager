@@ -453,9 +453,11 @@ if (get_var('Abilitare orario lavorativo') == '1') {
             droppable: true,
             loading: function(isLoading, view) {
                 if(isLoading) {
-                    setTimeout("$('#mini-loader').show()", 1000);
+					//setTimeout("$('#tiny-loader').show()", 10);
+					$('#tiny-loader').fadeIn();
                 } else {
-                    setTimeout("$('#mini-loader').hide()", 1000);
+                    //setTimeout("$('#tiny-loader').hide()", 10);
+					$('#tiny-loader').hide();
                 }
             },
     <?php

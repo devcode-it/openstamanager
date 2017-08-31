@@ -68,14 +68,8 @@ switch (post('op')) {
             $dbo->query('UPDATE an_anagrafiche SET codice='.prepare($post['codice']).' WHERE idanagrafica='.prepare($id_record));
         }
 
-        // Aggiorno gli agenti secondari collegati
-        $dbo->query('DELETE FROM an_anagrafiche_agenti WHERE idanagrafica='.prepare($id_record));
-
-        if (!empty($post['idagenti'])) {
-            foreach ($post['idagenti'] as $idagente) {
-                $dbo->query('INSERT INTO an_anagrafiche_agenti(idanagrafica, idagente) VALUES ('.prepare($id_record).', '.prepare($idagente).')');
-            }
-        }
+        // Aggiorno gli agenti collegati
+        $dbo->sync('an_anagrafiche_agenti', ['idanagrafica' => $id_record], ['idagente' => (array) $post['idagenti']]);
 
         // Se l'agente di default è stato elencato anche tra gli agenti secondari lo rimuovo
         if(!empty($post['idagente'])){

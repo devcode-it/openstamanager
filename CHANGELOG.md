@@ -4,11 +4,8 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-## Tabella dei contenuti
-
 <!-- TOC depthFrom:2 depthTo:2 orderedList:false updateOnSave:true withLinks:true -->
 
-- [Tabella dei contenuti](#tabella-dei-contenuti)
 - [2.3 (In sviluppo)](#23-in-sviluppo)
 - [2.2 (2016-11-10)](#22-2016-11-10)
 - [2.1 (2015-04-02)](#21-2015-04-02)
@@ -21,55 +18,26 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 - Creazione della documentazione ufficiale per sviluppatori (disponibile nel Wiki e in `docs/`)
 - Creazione di un sistema API ufficiale
-- Creazione di un sistema per controllare gli accessi degli utenti
-- Nuovi moduli _Viste_, _Utenti e permessi_, _Opzioni_, con ulteriori moduli per la gestione di tabelle secondarie (_IVA_, _Pagamenti_, ...)
-- Nuova struttura per permettere il richiamo via AJAX delle procedure per la creazione di nuovi elementi all'esterno del modulo specifico (tramite il file `add.php`)
-- Possibilità di vedere se ci sono altri utenti che stanno visualizzando lo stesso record (opzione "Sessione avanzata" nel modulo _Opzioni_)
-- Nuove funzioni PHP (con commenti) in `lib/functions.php`
-  - getRevision
-  - str\_replace\_once
-  - filter
-  - post
-  - get
-  - readSQLFile
-  - array\_pluck
-  - starts_with
-  - ends_with
-  - slashes
-  - prepare
-  - tr (con aggiunta della funzione di gettext nel caso questi non sia abilitato - `_`)
-  - safe\_truncate (in sostituzione a cut\_text)
-  - secure\_random\_string
-  - random\_string
-  - safe\_truncate
-  - force\_download
-  - isHTTPS
-- Nuovi oggetti per la gestione delle operazioni di base (posizionati in `lib/classes/`)
-  - Auth
-  - Database
-  - Filter (in sostituzione a HTMLHelper, ora deprecato ma ancora presente)
-  - HTMLBuilder
-  - Modules
-  - Options
-  - Permissions
-  - Translator (per la futura internazionalizzazione e traduzione del progetto, inoltre disponibile in `locale/it/`)
-  - Update
-  - Widgtes (modificati per lavorare secondo una metodologia statica)
+- Creazione di sistemi centralizzati per la gestione della connessione al database, dell'autenticazione, degli input degli utenti, dei permessi, delle impostazioni, delle traduzioni e degli aggiornamenti (secondo una logica ad oggetti)
 - Nuova gestione delle operazioni di debugging e logging
+- Nuovi plugins e widgets
+- Nuovi moduli _Viste_, _Utenti e permessi_, _Opzioni_, con ulteriori moduli per la gestione di tabelle secondarie (_IVA_, _Pagamenti_, ...)
+- Possibilità di vedere se ci sono altri utenti che stanno visualizzando lo stesso record (opzione "Sessione avanzata" nel modulo _Opzioni_)
+- Possibilità di creare nuovi elementi dei moduli all'interno del record (oltre che dalla visualizzazione generale del modulo)
+- Nuova struttura per permettere il richiamo via AJAX delle procedure per la creazione di nuovi elementi all'esterno del modulo specifico (tramite il file `add.php`)
+- Miglioramento della documentazione integrata delle funzioni PHP in `lib/functions.php`
 - Nuovo file `lib/init.js` per permettere una rapida inizializzazione dei componenti JS
 - Creazione di cartelle di default per i backup (`backup/`) e i log (`logs/`)
 - Nuovo pulsante per resettare i filtri di ricerca (nella sezione generica dei moduli)
 - Nuovo modulo per gestire i file `.ini` dei componenti degli impianti
-- Nuovi plugins e widgets
 - Nuova gestione generalizzata degli upload
 - Nuove funzioni relative ai diversi moduli
-  - Possibilità di inserire in fattura un range di serial number
   - Possibilità di individuare i componenti dell'impianto su cui l'intervento viene effettuato
   - Possibilità di gestire le ritenute d'acconto
   - Firma degli interventi
   - Selezione della tipologia di attività per ogni sessione di lavoro
   - Tabella riepilogativa più completa dei costi
-  - Sconto incondizionato in _Interventi_
+  - Sconto globale in _Interventi_, _Fatture_, _DDT_, _Ordini_, _Preventivi_
 
 ### Modificato (Changed)
 
@@ -80,16 +48,16 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Miglioramenti delle informazioni disponibili sul progetto e della procedura di segnalazione dei bug
 - Impianti ora identificati tramite numerazione univoca (non più tramite matricola)
 - Sostituzione di Chosen con Select2
-- Miglioramento dell'interpretazione del template per la generazione degli input (`lib/htmlbuilder.php`), ora inoltre disponibile ovunque all'interno del progetto
+- Miglioramento dell'interpretazione del template per la generazione degli input, ora disponibile ovunque all'interno del progetto
 - Miglioramento generale sull'identificazione del modulo attualmente in uso e sull'inclusione dei file necessari per il funzionamento
 - Miglioramento della gestione dei permessi
-- Gestione della connessione al database tramite Medoo (possibile futuro ampliamento dei DMBS supportati)
+- Gestione della connessione al database tramite PDO (con possibile futuro ampliamento dei DMBS supportati)
 - Gestione delle tabelle ora completamente basata su Datatables
 - Ottimizzazione della schermata per aggiunta dell'intervento
 - Miglioramento dei riquadri delle spese aggiuntive e degli articoli
 - La prima anagrafica di tipo Azienda caricata viene impostata come Azienda predefinita
 - Passaggio completo all'estensione `.php` per tutti i file dei moduli
-- Miglioramento dei permessi di visione per il modulo _MyImpianti_, per cui ora ogni cliente vede solo i propri impianti
+- Miglioramento dei permessi di visione per il modulo _MyImpianti_ (ora ogni cliente vede solo i propri impianti)
 - Miglioramento della procedura di aggiornamento del gestionale
   - Aggiunto sistema di ripresa dell'aggiornamento (se questi è stato bloccato in una fase intermedia tra i singoli aggiornamenti)
   - Aggiunto sistema di bloccaggio dell'aggiornamento, per evitare problemi nel caso molteplici richieste di update
@@ -99,20 +67,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Deprecato (Deprecated)
 
 - Classe HTMLHelper, a favore della nuova classe Filter
-- Funzioni PHP
-  - readDateTime
-  - readDateTimePrint
-  - get\_permessi
-  - saveDateTime
-  - saveDate
-  - fix\_str
-  - clean
-  - makeid
-  - read
-  - readTime
-  - readDate
-  - build\_html\_element
-
+- Funzioni PHP (`lib/deprecated.php`)
 
 ### Rimosso (Removed)
 
@@ -148,8 +103,9 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 ### Sicurezza (Security)
 
-- Aggiunta protezione contro l'XSS
+- Aggiunta protezione contro attacchi di tipo XSS
 - Aggiunta base per contrastare l'SQL Injection
+- Aggiunta protezione (temporaneamente disabilitata) contro attacchi CSRF
 - Passaggio della codifica della password con algoritmo di hashing BCrypt
 
 ## 2.2 (2016-11-10)

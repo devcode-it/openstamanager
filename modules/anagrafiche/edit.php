@@ -186,9 +186,6 @@ if ($fornitore) {
 					{[ "type": "select", "label": "<?php echo _('Tipo attività'); ?>", "name": "idtipointervento_default", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "$idtipointervento_default$" ]}
 				</div>
 
-				<!--div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo _('Agente principale'); ?>", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN an_anagrafiche_agenti ON an_anagrafiche.idanagrafica=an_anagrafiche_agenti.idagente WHERE an_anagrafiche_agenti.idanagrafica='<?php echo $id_record ?>' AND deleted=0 ORDER BY ragione_sociale", "value": "$idagente$" ]}
-				</div-->
                 <div class="col-md-3">
                   {[ "type": "select", "label": "Agente principale", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, IF(deleted=1, CONCAT(ragione_sociale, ' (Eliminato)'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione='Agente' AND deleted=0)<?php echo isset($records[0]['idagente']) ? 'OR (an_anagrafiche.idanagrafica = '.prepare($records[0]['idagente']).'AND deleted=1) ' : ''; ?>ORDER BY ragione_sociale", "value": "$idagente$" ]}
               </div>

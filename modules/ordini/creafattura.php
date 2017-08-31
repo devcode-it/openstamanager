@@ -39,7 +39,7 @@ echo "	<input type='hidden' name='backto' value='record-edit'>\n";
 echo "	<input type='hidden' name='dir' value='".$dir."'>\n";
 
 // Selezione articoli dell'ordine da portare nella fattura
-$query = "SELECT * FROM or_ordini INNER JOIN or_righe_ordini ON or_ordini.id=or_righe_ordini.idordine WHERE or_ordini.id='".$id_record."' GROUP BY idgruppo";
+$query = "SELECT * FROM or_ordini INNER JOIN or_righe_ordini ON or_ordini.id=or_righe_ordini.idordine WHERE or_ordini.id='".$id_record."' GROUP BY idgruppo HAVING qta_rimanente > 0";
 $rs = $dbo->fetchArray($query);
 $n = sizeof($rs);
 

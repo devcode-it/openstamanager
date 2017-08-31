@@ -69,7 +69,7 @@ if ($dir == 'uscita') {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo _('Destinazione merce'); ?>", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi" ]}
+					{[ "type": "select", "label": "<?php echo _('Destinazione merce'); ?>", "name": "idsede", "values": "query=SELECT id, CONCAT_WS(', ', nomesede, citta) AS descrizione FROM an_sedi WHERE (idanagrafica='<php echo $idanagrafica; ?>' OR idanagrafica=(SELECT valore FROM zz_impostazioni WHERE nome='Azienda predefinita')) UNION SELECT '0' AS id, 'Sede legale' AS descrizione ORDER BY descrizione", "value": "$idsede$" ]}
 				</div>
 			</div>
 

@@ -180,7 +180,7 @@ $rs2 = $dbo->fetchArray($query);
                 <td>'.$rs2[$i]['serial'].'</td>';
 
         echo '
-                <td>'.Translator::timestampToLocale($rs2[$i]['data']).'</td>';
+                <td>'.Translator::timestampToLocale($rs2[$i]['created_at']).'</td>';
 
         // Ricerca vendite su ddt
         $query3 = 'SELECT *, ( SELECT descrizione FROM dt_tipiddt WHERE id=(SELECT idtipoddt FROM dt_ddt WHERE id=idddt) ) AS tipo_documento, ( SELECT `dir` FROM dt_tipiddt WHERE id=(SELECT idtipoddt FROM dt_ddt WHERE id=idddt) ) AS `dir`, ( SELECT numero FROM dt_ddt WHERE id=idddt ) AS numero, ( SELECT numero_esterno FROM dt_ddt WHERE id=idddt ) AS numero_esterno, ( SELECT data FROM dt_ddt WHERE id=idddt ) AS data FROM dt_righe_ddt WHERE idarticolo='.prepare($id_record).' AND lotto='.prepare($rs2[$i]['lotto']).' AND serial='.prepare($rs2[$i]['serial']).' AND altro='.prepare($rs2[$i]['altro']);

@@ -72,7 +72,7 @@ switch (post('op')) {
         $dbo->sync('an_anagrafiche_agenti', ['idanagrafica' => $id_record], ['idagente' => (array) $post['idagenti']]);
 
         // Se l'agente di default è stato elencato anche tra gli agenti secondari lo rimuovo
-        if(!empty($post['idagente'])){
+        if (!empty($post['idagente'])) {
             $dbo->query('DELETE FROM an_anagrafiche_agenti WHERE idanagrafica='.prepare($id_record).' AND idagente='.prepare($post['idagente']));
         }
 
@@ -85,42 +85,30 @@ switch (post('op')) {
         $idconto_fornitore = $rs[0]['idconto_fornitore'];
 
         // Creo il relativo conto nel partitario se non esiste
-        if (empty($idconto_cliente)) {
-            foreach ($post['idtipoanagrafica'] as $idtipoanagrafica) {
-                $rs = $dbo->fetchArray('SELECT descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica='.prepare($idtipoanagrafica));
+        if (empty($idconto_cliente) && in_array($id_cliente, $post['idtipoanagrafica'])) {
+            // Calcolo prossimo numero cliente
+            $rs = $dbo->fetchArray("SELECT MAX(CAST(co_pianodeiconti3.numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti2.descrizione='Crediti clienti e crediti diversi'");
+            $new_numero = $rs[0]['max_numero'] + 1;
+            $new_numero = str_pad($new_numero, 6, '0', STR_PAD_LEFT);
 
-                if ($rs[0]['descrizione'] == 'Cliente') {
-                    // Calcolo prossimo numero cliente
-                    $rs = $dbo->fetchArray("SELECT MAX(CAST(co_pianodeiconti3.numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti2.descrizione='Crediti clienti e crediti diversi'");
-                    $new_numero = $rs[0]['max_numero'] + 1;
-                    $new_numero = str_pad($new_numero, 6, '0', STR_PAD_LEFT);
+            $dbo->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, can_delete, can_edit) VALUES('.prepare($new_numero).', '.prepare($post['ragione_sociale']).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Crediti clienti e crediti diversi'), 1, 1)");
+            $idconto = $dbo->lastInsertedID();
 
-                    $dbo->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, can_delete, can_edit) VALUES('.prepare($new_numero).', '.prepare($post['ragione_sociale']).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Crediti clienti e crediti diversi'), 1, 1)");
-                    $idconto = $dbo->lastInsertedID();
-
-                    // Collegamento conto
-                    $dbo->query('UPDATE an_anagrafiche SET idconto_cliente='.prepare($idconto).' WHERE idanagrafica='.prepare($id_record));
-                }
-            }
+            // Collegamento conto
+            $dbo->query('UPDATE an_anagrafiche SET idconto_cliente='.prepare($idconto).' WHERE idanagrafica='.prepare($id_record));
         }
 
-        if (empty($idconto_fornitore)) {
-            foreach ($post['idtipoanagrafica'] as $idtipoanagrafica) {
-                $rs = $dbo->fetchArray('SELECT descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica='.prepare($idtipoanagrafica));
+        if (empty($idconto_fornitore) && in_array($id_fornitore, $post['idtipoanagrafica'])) {
+            // Calcolo prossimo numero cliente
+                $rs = $dbo->fetchArray("SELECT MAX(CAST(co_pianodeiconti3.numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti2.descrizione='Debiti fornitori e debiti diversi'");
+            $new_numero = $rs[0]['max_numero'] + 1;
+            $new_numero = str_pad($new_numero, 6, '0', STR_PAD_LEFT);
 
-                if ($rs[0]['descrizione'] == 'Fornitore') {
-                    // Calcolo prossimo numero cliente
-                    $rs = $dbo->fetchArray("SELECT MAX(CAST(co_pianodeiconti3.numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti2.descrizione='Debiti fornitori e debiti diversi'");
-                    $new_numero = $rs[0]['max_numero'] + 1;
-                    $new_numero = str_pad($new_numero, 6, '0', STR_PAD_LEFT);
+            $dbo->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, can_delete, can_edit) VALUES('.prepare($new_numero).', '.prepare($post['ragione_sociale']).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Debiti fornitori e debiti diversi'), 1, 1)");
+            $idconto = $dbo->lastInsertedID();
 
-                    $dbo->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, can_delete, can_edit) VALUES('.prepare($new_numero).', '.prepare($post['ragione_sociale']).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Debiti fornitori e debiti diversi'), 1, 1)");
-                    $idconto = $dbo->lastInsertedID();
-
-                    // Collegamento conto
-                    $dbo->query('UPDATE an_anagrafiche SET idconto_fornitore='.prepare($idconto).' WHERE idanagrafica='.prepare($id_record));
-                }
-            }
+                // Collegamento conto
+                $dbo->query('UPDATE an_anagrafiche SET idconto_fornitore='.prepare($idconto).' WHERE idanagrafica='.prepare($id_record));
         }
 
         break;
@@ -130,52 +118,44 @@ switch (post('op')) {
         $ragione_sociale = post('ragione_sociale');
 
         // Inserimento anagrafica base
-        if (count($idtipoanagrafica) > 0 && $ragione_sociale != '') {
-            // Leggo l'ultimo codice anagrafica per calcolare il successivo
-            $rs = $dbo->fetchArray('SELECT codice FROM an_anagrafiche ORDER BY CAST(codice AS SIGNED) DESC LIMIT 0, 1');
-            $codice = get_next_code($rs[0]['codice'], 1, get_var('Formato codice anagrafica'));
+        // Leggo l'ultimo codice anagrafica per calcolare il successivo
+        $rs = $dbo->fetchArray('SELECT codice FROM an_anagrafiche ORDER BY CAST(codice AS SIGNED) DESC LIMIT 0, 1');
+        $codice = get_next_code($rs[0]['codice'], 1, get_var('Formato codice anagrafica'));
 
-            // Se ad aggiungere un cliente è un agente, lo imposto come agente di quel cliente
-            // Lettura tipologia della nuova anagrafica
-            for ($t = 0; $t < count($idtipoanagrafica); ++$t) {
-                $rs = $dbo->fetchArray('SELECT descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica='.prepare($idtipoanagrafica[$t]));
-                $tipoanagrafica_dst .= $rs[0]['descrizione'];
-                if ($t < count($idtipoanagrafica) - 1) {
-                    $tipoanagrafica_dst .= ', ';
-                }
+        // Se ad aggiungere un cliente è un agente, lo imposto come agente di quel cliente
+        // Lettura tipologia dell'utente loggato
+        $agente_is_logged = false;
+
+        $rs = $dbo->fetchArray('SELECT descrizione FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica = an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica = '.prepare($user['idanagrafica']));
+
+        for ($i = 0; $i < count($rs); ++$i) {
+            if ($rs[$i]['descrizione'] == 'Agente') {
+                $agente_is_logged = true;
+                $i = count($rs);
             }
-
-            // Lettura tipologia dell'utente loggato
-            $agente_is_logged = false;
-
-            $rs = $dbo->fetchArray('SELECT descrizione FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica = an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica = '.prepare($user['idanagrafica']));
-
-            for ($i = 0; $i < count($rs); ++$i) {
-                if ($rs[$i]['descrizione'] == 'Agente') {
-                    $agente_is_logged = true;
-                    $i = count($rs);
-                }
-            }
-
-           $idagente = ($agente_is_logged && str_contains($tipoanagrafica_dst, 'Cliente')) ? $user['idanagrafica'] :  0;
-
-           // Inserisco l'anagrafica
-           $query = 'INSERT INTO an_anagrafiche(ragione_sociale, codice, idagente) VALUES ('.prepare($ragione_sociale).', '.prepare($codice).', '.prepare($idagente).')';
-           $dbo->query($query);
-
-           $new_id = $dbo->lastInsertedID();
         }
+
+        $idagente = ($agente_is_logged && in_array($id_cliente, $post['idtipoanagrafica'])) ? $user['idanagrafica'] : 0;
+
+        // Inserisco l'anagrafica
+        $dbo->insert('an_anagrafiche', [
+            'ragione_sociale' => $ragione_sociale,
+            'codice' => $codice,
+            'idagente' => $idagente,
+        ]);
+
+        $new_id = $dbo->lastInsertedID();
 
         // Inserisco il rapporto dell'anagrafica (cliente, tecnico, ecc)
         $dbo->sync('an_tipianagrafiche_anagrafiche', ['idanagrafica' => $new_id], ['idtipoanagrafica' => (array) $idtipoanagrafica]);
 
-        if (str_contains($tipoanagrafica_dst, 'Azienda')) {
+        if (in_array($id_azienda, $post['idtipoanagrafica'])) {
             $dbo->query('UPDATE zz_settings SET valore='.prepare($new_id)." WHERE nome='Azienda predefinita'");
             $_SESSION['infos'][] = _('Anagrafica Azienda impostata come predefinita. Per ulteriori informazionioni, visitare "Strumenti -> Impostazioni -> Generali".');
         }
 
-        // Creo il relativo conto nel partitario
-        if (str_contains($tipoanagrafica_dst, 'Cliente')) {
+        // Creo il relativo conto nel partitario (cliente)
+        if (in_array($id_cliente, $post['idtipoanagrafica'])) {
             // Calcolo prossimo numero cliente
             $rs = $dbo->fetchArray("SELECT MAX(CAST(co_pianodeiconti3.numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti2.descrizione='Crediti clienti e crediti diversi'");
             $new_numero = $rs[0]['max_numero'] + 1;
@@ -187,7 +167,10 @@ switch (post('op')) {
 
             // Collegamento conto
             $dbo->query('UPDATE an_anagrafiche SET idconto_cliente='.prepare($idconto).' WHERE idanagrafica='.prepare($new_id));
-        } elseif (str_contains($tipoanagrafica_dst, 'Fornitore')) {
+        }
+
+        // Creo il relativo conto nel partitario (fornitore)
+        if (in_array($id_fornitore, $post['idtipoanagrafica'])) {
             // Calcolo prossimo numero cliente
             $rs = $dbo->fetchArray("SELECT MAX(CAST(co_pianodeiconti3.numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti2.descrizione='Debiti fornitori e debiti diversi'");
             $new_numero = $rs[0]['max_numero'] + 1;
@@ -202,6 +185,12 @@ switch (post('op')) {
         }
 
         $id_record = $new_id;
+
+        // Lettura tipologia della nuova anagrafica
+        if (!empty($idtipoanagrafica)) {
+            $rs = $dbo->fetchArray('SELECT descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica IN ('.implode(',', $idtipoanagrafica).')');
+            $tipoanagrafica_dst = implode(', ', array_column($rs, 'descrizione'));
+        }
 
         if (isAjaxRequest() && str_contains($tipoanagrafica_dst, post('tipoanagrafica'))) {
             echo json_encode(['id' => $id_record, 'text' => $ragione_sociale]);

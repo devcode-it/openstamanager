@@ -108,6 +108,16 @@ if(empty($records[0]['abilita_serial'])){
 				</div>
 			</div>
 
+            <div class="row">
+				<div class="col-md-4">
+					{[ "type": "number", "label": "<?php echo _('Peso lordo'); ?>", "name": "peso_lordo", "value": "$peso_lordo$", "icon-after": "KG" ]}
+				</div>
+
+				<div class="col-md-4">
+					{[ "type": "number", "label": "<?php echo _('Volume'); ?>", "name": "volume", "value": "$volume$", "icon-after": "M<sup>3</sup>" ]}
+				</div>
+			</div>
+
 
 			<div class="row">
 				<div class="col-md-12">

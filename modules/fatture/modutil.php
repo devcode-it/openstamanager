@@ -103,12 +103,20 @@ function aggiungi_scadenza($iddocumento, $pagamento = '')
 
         // Ultimo del mese
         elseif ($rs[$i]['giorno'] < 0) {
-            $scadenza = date('Y-m-t', strtotime($data.' +'.$rs[$i]['num_giorni'].' day'));
+            $date = new DateTime($data);
+
+            $add = floor($rs[$i]['num_giorni'] / 30);
+            for ($c = 0; $c < $add; ++$c) {
+                $date->modify('last day of next month');
+            }
 
             // Ultimo del mese più X giorni
-            if ($rs[$i]['giorno'] != -1) {
-                $scadenza = date('Y-m-d', strtotime($scadenza.' +'.(-$rs[$i]['giorno'] - 1).' day'));
+            $giorni = -$rs[$i]['giorno'] - 1;
+            if ($giorni > 0) {
+                $date->modify('+'.($giorni).' day');
             }
+
+            $scadenza = $date->format('Y-m-d');
         }
 
         // Giorno preciso del mese

@@ -103,6 +103,8 @@ class FileManager implements ManagerInterface
             form_data.append("id_record","'.$options['id_record'].'");
             form_data.append("id_module", "'.$options['id_module'].'");
 
+            $("#main_loading").fadeIn();
+
             $.ajax({
                 url: "'.ROOTDIR.'/actions.php",
                 cache: false,

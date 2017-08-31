@@ -6,6 +6,8 @@ $rs = $dbo->fetchArray('SELECT co_tipidocumento.descrizione, dir FROM co_tipidoc
 $dir = $rs[0]['dir'];
 $tipodoc = $rs[0]['descrizione'];
 
+$_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
+
 ?>
 <form action="" class="text-right" method="post" id="form-copy">
     <input type="hidden" name="backto" value="record-edit">
@@ -78,7 +80,7 @@ if ($dir == 'uscita') {
 				<?php if ($dir == 'entrata') {
                         ?>
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo _('Agente di riferimento'); ?>", "name": "idagente", "values": "query=SELECT an_anagrafiche_agenti.idagente AS id, ragione_sociale AS descrizione FROM an_anagrafiche_agenti INNER JOIN an_anagrafiche ON an_anagrafiche_agenti.idagente=an_anagrafiche.idanagrafica WHERE an_anagrafiche_agenti.idanagrafica='$idanagrafica$' ORDER BY ragione_sociale", "value": "$idagente$" ]}
+					{[ "type": "select", "label": "<?php echo _('Agente di riferimento'); ?>", "name": "idagente", "ajax-source": "agenti", "value": "$idagente_fattura$" ]}
 				</div>
 				<?php
 
@@ -145,6 +147,17 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
 						{[ "type": "text", "label": "<?php echo _('N<sup>o</sup> colli'); ?>", "name": "n_colli", "value": "$n_colli$" ]}
 					</div>
 				</div>
+
+                <div class="row">
+					<div class="col-md-3">
+						{[ "type": "select", "label": "<?php echo _('Tipo di spedizione'); ?>", "name": "idspedizione", "values": "query=SELECT id, descrizione FROM dt_spedizione ORDER BY descrizione ASC", "value": "$idspedizione$" ]}
+					</div>
+
+					<div class="col-md-3">
+						{[ "type": "select", "label": "<?php echo _('Vettore'); ?>", "name": "idvettore", "values": "query=SELECT DISTINCT an_anagrafiche.idanagrafica AS id, an_anagrafiche.ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE an_tipianagrafiche_anagrafiche.idtipoanagrafica=(SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Vettore') ORDER BY descrizione ASC", "value": "$idvettore$"" ]}
+					</div>
+				</div>
+
 <?php
 
                     }

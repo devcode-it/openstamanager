@@ -110,7 +110,7 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALU
 
 -- 2016-12-20
 -- Aggiunto peso lordo e volume (per ddt e fatture accompagnatorie)
-ALTER TABLE `mg_articoli` ADD `peso_lordo` decimal(12,4) NOT NULL AFTER `gg_garanzia`, ADD `volume` decimal(12,4) NOT NULL AFTER `peso_lordo`;
+ALTER TABLE `mg_articoli` ADD `peso_lordo` decimal(12, 4) NOT NULL AFTER `gg_garanzia`, ADD `volume` decimal(12, 4) NOT NULL AFTER `peso_lordo`;
 
 -- 2016-02-15
 -- Aggiunta sconto percentuale e unitario su fatture e righe, ddt e righe, ordini e righe, preventivi e righe, contratti e righe

@@ -136,7 +136,7 @@ switch (post('op')) {
         $iva = ($prezzo - ($sconto * $qta)) / 100 * $rs2[0]['percentuale'];
         $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
 
-        $dbo->query('INSERT INTO co_righe2_contratti(idcontratto,  idiva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto) VALUES ('.prepare($idcontratto).', '.prepare($idiva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).')');
+        $dbo->query('INSERT INTO co_righe2_contratti(idcontratto, idiva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto) VALUES ('.prepare($idcontratto).', '.prepare($idiva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).')');
 
         $_SESSION['infos'][] = _('Articolo aggiunto!');
 

@@ -105,6 +105,20 @@ foreach ($replace as $prefix => $values) {
     $report = str_replace(array_keys($values), array_values($values), $report);
 }
 
+// Valori aggiuntivi per la sostituzione
+$values = [
+    'dicitura_fissa_fattura' => get_var('Dicitura fissa fattura'),
+];
+
+foreach ($values as $key => $value) {
+    $values['$'.$key.'$'] = empty($value) ? $value : $value.'<br/>';
+    unset($values[$key]);
+}
+
+// Sostituisce alle variabili del template i valori
+$body = str_replace(array_keys($values), array_values($values), $body);
+$report = str_replace(array_keys($values), array_values($values), $report);
+
 // Aggiunta del footer standard
 if (!str_contains($body, '<page_footer>') && !str_contains($report, '<page_footer>')) {
     $report .= '

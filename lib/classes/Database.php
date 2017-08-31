@@ -7,19 +7,28 @@
  */
 class Database extends Util\Singleton
 {
+    /** @var string Host del database */
     protected $host;
+    /** @var int Porta di accesso del database */
     protected $port;
+    /** @var string Username di accesso */
     protected $username;
+    /** @var string Password di accesso */
     protected $password;
+    /** @var string Nome del database */
     protected $database_name;
 
+    /** @var string Charset della comunicazione */
     protected $charset;
+    /** @var array Opzioni riguardanti la comunicazione (PDO) */
     protected $option = [];
 
-    protected static $connection;
+    /** @var DebugBar\DataCollector\PDO\TraceablePDO Classe PDO tracciabile */
     protected $pdo;
 
+    /** @var bool Stato di installazione del database */
     protected $is_installed;
+    /** @var string Versione corrente di MySQL */
     protected $mysql_version;
 
     /**
@@ -37,7 +46,7 @@ class Database extends Util\Singleton
      *
      * @return Database
      */
-    protected function __construct($server, $username, $password, $database_name, $charset = 'utf8mb4', $option = [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION])
+    protected function __construct($server, $username, $password, $database_name, $charset = null, $option = [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION])
     {
         if (is_array($server)) {
             $host = $server['host'];
@@ -62,21 +71,28 @@ class Database extends Util\Singleton
 
         if (!empty($this->host) && !empty($this->database_name)) {
             try {
-                $this->pdo = new PDO(
+                $this->pdo = new \DebugBar\DataCollector\PDO\TraceablePDO(new PDO(
                     'mysql:host='.$this->host.(!empty($this->port) ? ';port='.$this->port : '').';dbname='.$this->database_name,
                     $this->username,
                     $this->password,
                     $this->option
-                );
+                ));
+
+                if (empty($this->charset) && version_compare($this->getMySQLVersion(), '5.5.3') >= 0) {
+                    $this->charset = 'utf8mb4';
+                }
 
                 // Fix per problemi di compatibilità delle password MySQL 4.1+ (da versione precedente)
-                $this->query('SET SESSION old_passwords = 0');
-                //$this->query('SET PASSWORD = PASSWORD('.$this->prepare($this->password).')');
+                $this->pdo->query('SET SESSION old_passwords = 0');
+                //$this->pdo->query('SET PASSWORD = PASSWORD('.$this->prepare($this->password).')');
 
-                $this->pdo = new \DebugBar\DataCollector\PDO\TraceablePDO($this->pdo);
+                // Impostazione del charset della comunicazione
+                if (!empty($this->charset)) {
+                    $this->pdo->query("SET NAMES '".$this->charset."'");
+                }
 
-                //$this->query("SET NAMES '".$this->charset."'");
-                $this->query("SET sql_mode = ''");
+                // Reset della modalità di esecuzione MySQL per la sessione corrente
+                $this->pdo->query("SET sql_mode = ''");
             } catch (PDOException $e) {
                 if ($e->getCode() == 1049 || $e->getCode() == 1044) {
                     $e = new PDOException(($e->getCode() == 1049) ? _('Database non esistente!') : _('Credenziali di accesso invalide!'));
@@ -494,6 +510,15 @@ class Database extends Util\Singleton
         }
     }
 
+    /**
+     * Sincronizza i valori indicati associati alle condizioni, rimuovendo le combinazioni aggiuntive e inserendo quelle non ancora presenti.
+     *
+     * @since 2.3
+     *
+     * @param string $table
+     * @param array  $conditions Condizioni di sincronizzazione
+     * @param array  $list       Valori da sincronizzare
+     */
     public function sync($table, $conditions, $list)
     {
         if (
@@ -517,6 +542,15 @@ class Database extends Util\Singleton
         }
     }
 
+    /**
+     * Inserisce le le combinazioni tra i valori indicati e le condizioni.
+     *
+     * @since 2.3
+     *
+     * @param string $table
+     * @param array  $conditions Condizioni
+     * @param array  $list       Valori da aggiungere
+     */
     public function attach($table, $conditions, $list)
     {
         if (
@@ -540,6 +574,15 @@ class Database extends Util\Singleton
         }
     }
 
+    /**
+     * Rimuove le le combinazioni tra i valori indicati e le condizioni.
+     *
+     * @since 2.3
+     *
+     * @param string $table
+     * @param array  $conditions Condizioni
+     * @param array  $list       Valori da rimuovere
+     */
     public function detach($table, $conditions, $list)
     {
         if (

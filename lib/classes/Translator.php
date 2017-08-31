@@ -236,7 +236,7 @@ class Translator extends Util\Singleton
      */
     public static function numberToEnglish($string)
     {
-        return floatval(self::getLocaleFormatter()->convertNumberTo(self::getEnglishFormatter(), $string));
+        return floatval(self::getLocaleFormatter()->formatNumberTo(self::getEnglishFormatter(), $string));
     }
 
     /**
@@ -257,7 +257,7 @@ class Translator extends Util\Singleton
             $string = number_format($string, $decimals, self::getEnglishFormatter()->getNumberSeparators()['decimals'], self::getEnglishFormatter()->getNumberSeparators()['thousands']);
         }
 
-        return self::getEnglishFormatter()->convertNumberTo(self::getLocaleFormatter(), $string);
+        return self::getEnglishFormatter()->formatNumberTo(self::getLocaleFormatter(), $string);
     }
 
     /**
@@ -269,7 +269,7 @@ class Translator extends Util\Singleton
      */
     public static function dateToEnglish($string)
     {
-        return self::getLocaleFormatter()->convertDateTo(self::getEnglishFormatter(), $string);
+        return self::getLocaleFormatter()->formatDateTo(self::getEnglishFormatter(), $string);
     }
 
     /**
@@ -286,7 +286,7 @@ class Translator extends Util\Singleton
             return $fail;
         }
 
-        return self::getEnglishFormatter()->convertDateTo(self::getLocaleFormatter(), $string);
+        return self::getEnglishFormatter()->formatDateTo(self::getLocaleFormatter(), $string);
     }
 
     /**
@@ -298,7 +298,7 @@ class Translator extends Util\Singleton
      */
     public static function timeToEnglish($string)
     {
-        return self::getLocaleFormatter()->convertTimeTo(self::getEnglishFormatter(), $string);
+        return self::getLocaleFormatter()->formatTimeTo(self::getEnglishFormatter(), $string);
     }
 
     /**
@@ -315,7 +315,7 @@ class Translator extends Util\Singleton
             return $fail;
         }
 
-        return self::getEnglishFormatter()->convertTimeTo(self::getLocaleFormatter(), $string);
+        return self::getEnglishFormatter()->formatTimeTo(self::getLocaleFormatter(), $string);
     }
 
     /**
@@ -327,7 +327,7 @@ class Translator extends Util\Singleton
      */
     public static function timestampToEnglish($string)
     {
-        return self::getLocaleFormatter()->convertTimestampTo(self::getEnglishFormatter(), $string);
+        return self::getLocaleFormatter()->formatTimestampTo(self::getEnglishFormatter(), $string);
     }
 
     /**
@@ -344,7 +344,7 @@ class Translator extends Util\Singleton
             return $fail;
         }
 
-        return self::getEnglishFormatter()->convertTimestampTo(self::getLocaleFormatter(), $string);
+        return self::getEnglishFormatter()->formatTimestampTo(self::getLocaleFormatter(), $string);
     }
 
     /**

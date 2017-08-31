@@ -7,9 +7,12 @@
  */
 class Update
 {
-    /** @var array Lista degli aggiornamenti da completare */
+    /** @var array Elenco degli aggiornamenti da completare */
     protected static $updates;
 
+    /**
+     * Controlla la presenza di aggiornamenti e prepara il database per la procedura.
+     */
     protected static function prepareToUpdate()
     {
         $database = Database::getConnection();
@@ -53,6 +56,7 @@ class Update
 
         $reset = count(array_intersect($results, $versions)) != count($results);
 
+        // Memorizzazione degli aggiornamenti
         if ($reset && $database->isConnected()) {
             // Individua le versioni che sono state installate, anche solo parzialmente
             $done = ($database_ready) ? $database->fetchArray('SELECT version, done FROM updates WHERE `done` IS NOT NULL') : [];
@@ -85,6 +89,11 @@ class Update
         }
     }
 
+    /**
+     * Restituisce l'elenco degli aggiornamento incompleti o non ancora effettuati.
+     *
+     * @return array
+     */
     public static function getTodos()
     {
         if (!is_array(self::$updates)) {
@@ -109,6 +118,11 @@ class Update
         return self::$updates;
     }
 
+    /**
+     * Restituisce il primo aggiornamento che deve essere completato.
+     *
+     * @return array
+     */
     public static function getUpdate()
     {
         if (!empty(self::getTodos())) {
@@ -116,21 +130,43 @@ class Update
         }
     }
 
+    /**
+     * Controlla che la stringa inserita possieda una struttura corrispondente a quella di una versione.
+     *
+     * @param string $string
+     *
+     * @return bool
+     */
     public static function isVersion($string)
     {
         return preg_match('/^\d+(?:\.\d+)+$/', $string);
     }
 
+    /**
+     * Controlla ci sono aggiornamenti da fare per il database.
+     *
+     * @return bool
+     */
     public static function isUpdateAvailable()
     {
         return !empty(self::getTodos());
     }
 
+    /**
+     * Controlla se la procedura di aggiornamento è conclusa.
+     *
+     * @return bool
+     */
     public static function isUpdateCompleted()
     {
         return !self::isUpdateAvailable();
     }
 
+    /**
+     * Controlla se l'aggiornamento è in esecuzione.
+     *
+     * @return bool
+     */
     public static function isUpdateLocked()
     {
         $todos = array_column(self::getTodos(), 'done');
@@ -143,6 +179,11 @@ class Update
         return false;
     }
 
+    /**
+     * Restituisce la versione corrente del software gestita dal database.
+     *
+     * @return string
+     */
     public static function getDatabaseVersion()
     {
         $database = Database::getConnection();
@@ -152,16 +193,33 @@ class Update
         return $results[0]['version'];
     }
 
+    /**
+     * Restituisce la versione corrente del software gestita dal file system (file VERSION nella root).
+     *
+     * @return string
+     */
     public static function getVersion()
     {
         return self::getFile('VERSION');
     }
 
+    /**
+     * Restituisce la revisione corrente del software gestita dal file system (file REVISION nella root).
+     *
+     * @return string
+     */
     public static function getRevision()
     {
         return self::getFile('REVISION');
     }
 
+    /**
+     * Ottiene i contenuti di un file.
+     *
+     * @param string $file
+     *
+     * @return string
+     */
     protected static function getFile($file)
     {
         $file = (str_contains($file, DOCROOT.DIRECTORY_SEPARATOR)) ? $file : DOCROOT.DIRECTORY_SEPARATOR.$file;
@@ -177,6 +235,11 @@ class Update
         return trim($result);
     }
 
+    /**
+     * Effettua una pulizia del database a seguito del completamento dell'aggiornamento.
+     *
+     * @return bool
+     */
     public static function updateCleanup()
     {
         if (self::isUpdateCompleted()) {
@@ -194,6 +257,14 @@ class Update
         return false;
     }
 
+    /**
+     * Esegue una precisa sezione dell'aggiornamento fa fare, partendo dalle query e passando poi allo script relativo.
+     * Prima dell'esecuzione dello script viene inoltre eseguita un'operazione di normalizzazione dei campi delle tabelle del database finalizzata a generalizzare la gestione delle informazioni per l'API: vengono quindi aggiunti i campi <b>created_at</b> e, se permesso dalla versione di MySQL, <b>updated_at</b> ad ogni tabella registrata del software.
+     *
+     * @param int $rate Numero di singole query da eseguire dell'aggiornamento corrente
+     *
+     * @return array|bool
+     */
     public static function doUpdate($rate = 20)
     {
         global $logger;
@@ -209,7 +280,7 @@ class Update
             $database = Database::getConnection();
 
             try {
-                // Esecuzione query release
+                // Esecuzione delle query
                 if (!empty($update['sql']) && (!empty($update['done']) || is_null($update['done'])) && file_exists($file.'.sql')) {
                     $queries = readSQLFile($file.'.sql', ';');
                     $count = count($queries);
@@ -224,6 +295,7 @@ class Update
                             $database->query('UPDATE `updates` SET `done` = '.prepare($i + 3).' WHERE id = '.prepare($update['id']));
                         }
 
+                        // Restituisce l'indice della prima e dell'ultima query eseguita, con la differenza relativa per l'avanzamento dell'aggiornamento
                         return [
                             $start,
                             $end,
@@ -232,16 +304,18 @@ class Update
                     }
                 }
 
+                // Imposta l'aggiornamento nello stato di esecuzione dello script
                 $database->query('UPDATE `updates` SET `done` = 0 WHERE id = '.prepare($update['id']));
 
                 // Normalizzazione dei campi per l'API
                 self::executeScript(DOCROOT.'/update/api.php');
 
-                // Esecuzione script release
+                // Esecuzione dello script
                 if (!empty($update['script']) && file_exists($file.'.php')) {
                     self::executeScript($file.'.php');
                 }
 
+                // Imposta l'aggiornamento come completato
                 $database->query('UPDATE `updates` SET `done` = 1 WHERE id = '.prepare($update['id']));
 
                 // Normalizzazione di charset e collation
@@ -256,6 +330,12 @@ class Update
         }
     }
 
+    /**
+     * Normalizza l'infrastruttura del database indicato, generalizzando charset e collation all'interno del database e delle tabelle ed effettuando una conversione delle tabelle all'engine InnoDB.
+     * <b>Attenzione</b>: se l'engine InnoDB non è supportato, il server ignorerà la conversione dell'engine e le foreign key del gestionale non funzioneranno adeguatamente.
+     *
+     * @param [type] $database_name
+     */
     protected static function normalizeDatabase($database_name)
     {
         set_time_limit(0);
@@ -301,11 +381,15 @@ class Update
         }
     }
 
+    /**
+     * Esegue uno script PHP in un'ambiente il più possibile protetto.
+     *
+     * @param string $script
+     */
     protected static function executeScript($script)
     {
-        include __DIR__.'/../../core.php';
-
-        $database = $dbo;
+        $database = Database::getConnection();
+        $dbo = $database;
 
         // Informazioni relative a MySQL
         $mysql_ver = $database->getMySQLVersion();

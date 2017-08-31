@@ -10,9 +10,9 @@ class Filter
     /** @var HTMLPurifier */
     protected static $purifier;
 
-    /** @var array Lista dei contenuti inviati via POST */
+    /** @var array Elenco dei contenuti inviati via POST */
     protected static $post;
-    /** @var array Lista dei contenuti inviati via GET */
+    /** @var array Elenco dei contenuti inviati via GET */
     protected static $get;
 
     /**

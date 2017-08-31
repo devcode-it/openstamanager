@@ -7,6 +7,7 @@
  */
 class Settings
 {
+    /** @var array Elenco delle impostazioni ottenute */
     protected static $values = [];
 
     /**

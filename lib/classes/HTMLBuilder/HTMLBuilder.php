@@ -5,6 +5,8 @@ namespace HTMLBuilder;
 /**
  * Classe dedicata alla gestione della conversione di tag in codice HTML.
  *
+ * <b>Tag di input</b>
+ *
  * Campo di input generico:
  * {[ "type": "text", "required": 1, "value": "$idintervento$" ]}
  *
@@ -15,6 +17,11 @@ namespace HTMLBuilder;
  * {[ "type": "select", "required": 1, "values": "query=SELECT id, descrizione FROM co_contratti WHERE idanagrafica=$idanagrafica$", "value": "$idcontratto$" ]}
  *
  * La sostituzione dei parametri compresi tra $$ viene effettuata attraverso il parametro $records.
+ *
+ * <b>Tag personalizzati</b>
+ *
+ * Struttura per l'inserimento e la visualizzazione dei file:
+ * {( "name": "filelist_and_upload", "id_module": "3", "id_record": "17" )}
  *
  * @since 2.3
  */
@@ -32,7 +39,7 @@ class HTMLBuilder
         'manager' => ')}',
     ];
 
-    /** @var array Lista degli attributi inseriit nel formato che necessitano solo di essere presenti */
+    /** @var array Elenco degli attributi che necessitano esclusivamente di essere presenti */
     protected static $specifics = [
         'multiple',
         'checked',
@@ -41,7 +48,7 @@ class HTMLBuilder
         'required',
     ];
 
-    /** @var array Lista dei gestori dei campi HTML */
+    /** @var array Elenco dei gestori dei campi HTML */
     protected static $handlers = [
         'list' => [
             'default' => 'HTMLBuilder\Handler\DefaultHandler',
@@ -63,7 +70,7 @@ class HTMLBuilder
         'istance' => null,
     ];
 
-    /** @var array Lista dei gestori delle strutture HTML */
+    /** @var array Elenco dei gestori delle strutture HTML */
     protected static $managers = [
         'list' => [
             'filelist_and_upload' => 'HTMLBuilder\Manager\FileManager',
@@ -72,6 +79,13 @@ class HTMLBuilder
         'instances' => [],
     ];
 
+    /**
+     * Esegue la sostituzione dei tag personalizzati con il relativo codice HTML.
+     *
+     * @param string $html
+     *
+     * @return string
+     */
     public static function replace($html)
     {
         preg_match_all('/'.preg_quote(self::$open['manager']).'(.+?)'.preg_quote(self::$close['manager']).'/i', $html, $managers);
@@ -93,6 +107,13 @@ class HTMLBuilder
         return $html;
     }
 
+    /**
+     * Genera il codice HTML per i singoli tag di input.
+     *
+     * @param string $json
+     *
+     * @return string
+     */
     protected static function generate($json)
     {
         // Elaborazione del formato
@@ -118,6 +139,14 @@ class HTMLBuilder
         return $result;
     }
 
+    /**
+     * Decodifica i tag personalizzati e li converte in un array basato sul formato JSON.
+     *
+     * @param string $string
+     * @param string $type
+     *
+     * @return array
+     */
     protected static function decode($string, $type)
     {
         $string = '{'.substr($string, strlen(self::$open[$type]), -strlen(self::$close[$type])).'}';
@@ -127,6 +156,13 @@ class HTMLBuilder
         return $json;
     }
 
+    /**
+     * Elabora l'array contenente le impostazioni del tag per renderlo fruibile alla conversione in HTML (per i tag di input).
+     *
+     * @param array $json
+     *
+     * @return array
+     */
     protected static function elaborate($json)
     {
         global $records;
@@ -203,6 +239,15 @@ class HTMLBuilder
         return [$values, $extras];
     }
 
+    /**
+     * Sostituisce i placeholder delle impostazioni con i relativi valori (per i tag di input).
+     *
+     * @param string $result
+     * @param array  $values
+     * @param array  $extras
+     *
+     * @return string
+     */
     protected static function process($result, $values, $extras)
     {
         unset($values['label']);
@@ -226,6 +271,13 @@ class HTMLBuilder
         return $result;
     }
 
+    /**
+     * Restituisce il nome della classe resposabile per la gestione di una determinata tipologia di tag di input.
+     *
+     * @param string $input
+     *
+     * @return string
+     */
     public static function getHandlerName($input)
     {
         $result = empty(self::$handlers['list'][$input]) ? self::$handlers['list']['default'] : self::$handlers['list'][$input];
@@ -233,6 +285,13 @@ class HTMLBuilder
         return $result;
     }
 
+    /**
+     * Restituisce l'istanza della classe resposabile per la gestione di una determinata tipologia di tag di input.
+     *
+     * @param string $input
+     *
+     * @return mixed
+     */
     public static function getHandler($input)
     {
         $class = self::getHandlerName($input);
@@ -243,6 +302,12 @@ class HTMLBuilder
         return self::$handlers['instances'][$class];
     }
 
+    /**
+     * Imposta una determinata classe come resposabile per la gestione di una determinata tipologia di tag di input.
+     *
+     * @param string       $input
+     * @param string|mixed $class
+     */
     public static function setHandler($input, $class)
     {
         $original = $class;
@@ -255,6 +320,11 @@ class HTMLBuilder
         }
     }
 
+    /**
+     * Restituisce l'oggetto responsabile per la costruzione del codice HTML contenente gli input effettivi.
+     *
+     * @return mixed
+     */
     public static function getWrapper()
     {
         if (empty(self::$wrapper['instance'])) {
@@ -265,6 +335,11 @@ class HTMLBuilder
         return self::$wrapper['instance'];
     }
 
+    /**
+     * Imposta l'oggetto responsabile per la costruzione del codice HTML contenente gli input effettivi.
+     *
+     * @param string|mixed $class
+     */
     public static function setWrapper($class)
     {
         $original = $class;
@@ -277,6 +352,13 @@ class HTMLBuilder
         }
     }
 
+    /**
+     * Restituisce l'oggetto responsabile per la costruzione del codice HTML per il tag personalizzato.
+     *
+     * @param string $input
+     *
+     * @return mixed
+     */
     public static function getManager($input)
     {
         $result = null;
@@ -293,6 +375,12 @@ class HTMLBuilder
         return $result;
     }
 
+    /**
+     * Imposta l'oggetto responsabile per la costruzione del codice HTML per il tag personalizzato.
+     *
+     * @param string       $input
+     * @param string|mixed $class
+     */
     public static function setManager($input, $class)
     {
         $original = $class;
@@ -306,6 +394,13 @@ class HTMLBuilder
     }
 }
 
+/**
+ * Predispone un testo per l'inserimento all'interno di un attributo HTML.
+ *
+ * @param string $string
+ *
+ * @return string
+ */
 function prepareToField($string)
 {
     return str_replace('"', '&quot;', $string);

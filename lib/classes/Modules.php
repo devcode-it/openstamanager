@@ -7,15 +7,23 @@
  */
 class Modules
 {
+    /** @var int Identificativo del modulo corrente */
     protected static $current_module;
+    /** @var int Identificativo dell'elemento corrente */
     protected static $current_element;
 
+    /** @var array Elenco dei moduli disponibili */
     protected static $modules = [];
+    /** @var array Elenco delle condizioni aggiuntive disponibili */
     protected static $additionals = [];
+    /** @var array Elenco delle query generiche dei moduli */
     protected static $queries = [];
 
+    /** @var array Elenco gerarchico dei moduli */
     protected static $hierarchy = [];
+    /** @var array Profondità dell'elenco gerarchico */
     protected static $depth;
+    /** @var array Struttura HTML dedicata al menu principale */
     protected static $menu;
 
     /**

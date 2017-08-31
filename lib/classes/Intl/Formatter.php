@@ -7,16 +7,20 @@ use UnexpectedValueException;
 use Exception;
 
 /**
- * Classe per gestire le conversione di date e numeri tra diversi formati.
+ * Classe per gestire la formattazione di date e numeri in convenzioni differenti.
  *
  * @since 2.3
  */
 class Formatter
 {
+    /** @var array Separatori per la formattazione dei numeri */
     protected $numberSeparators;
 
+    /** @var string Pattern per le date */
     protected $datePattern;
+    /** @var string Pattern per gli orari */
     protected $timePattern;
+    /** @var string Pattern per i timestamp */
     protected $timestampPattern;
 
     public function __construct($numberSeparators = [], $date = null, $time = null, $timestamp = null)
@@ -356,7 +360,7 @@ class Formatter
      *
      * @return string
      */
-    public function convertNumberTo($formatter, $value)
+    public function formatNumberTo($formatter, $value)
     {
         $pieces = $this->toNumberObject($value);
 
@@ -379,7 +383,7 @@ class Formatter
      *
      * @return string
      */
-    public function convertTimestampTo($formatter, $value)
+    public function formatTimestampTo($formatter, $value)
     {
         $result = $this->toTimestampObject($value);
 
@@ -394,7 +398,7 @@ class Formatter
      *
      * @return string
      */
-    public function convertDateTo($formatter, $value)
+    public function formatDateTo($formatter, $value)
     {
         $result = $this->toDateObject($value);
 
@@ -409,7 +413,7 @@ class Formatter
      *
      * @return string
      */
-    public function convertTimeTo($formatter, $value)
+    public function formatTimeTo($formatter, $value)
     {
         $result = $this->toTimeObject($value);
 
@@ -424,9 +428,9 @@ class Formatter
      *
      * @return string
      */
-    public function getNumberFrom($formatter, $value)
+    public function formatNumberFrom($formatter, $value)
     {
-        return $formatter->convertNumberTo($this, $value);
+        return $formatter->formatNumberTo($this, $value);
     }
 
     /**
@@ -437,9 +441,9 @@ class Formatter
      *
      * @return string
      */
-    public function getTimestampFrom($formatter, $value)
+    public function formatTimestampFrom($formatter, $value)
     {
-        return $formatter->convertTimestampTo($this, $value);
+        return $formatter->formatTimestampTo($this, $value);
     }
 
     /**
@@ -450,9 +454,9 @@ class Formatter
      *
      * @return string
      */
-    public function getDateFrom($formatter, $value)
+    public function formatDateFrom($formatter, $value)
     {
-        return $formatter->convertDateTo($this, $value);
+        return $formatter->formatDateTo($this, $value);
     }
 
     /**
@@ -463,8 +467,8 @@ class Formatter
      *
      * @return string
      */
-    public function getTimeFrom($formatter, $value)
+    public function formatTimeFrom($formatter, $value)
     {
-        return $formatter->convertTimeTo($this, $value);
+        return $formatter->formatTimeTo($this, $value);
     }
 }

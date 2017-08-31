@@ -7,7 +7,9 @@
  */
 class Permissions
 {
+    /** @var array Elenco dei permessi necessari */
     protected static $permissions = [];
+    /** @var bool Condizione riguardante il controllo effettivo dei permessi */
     protected static $skip_permissions = false;
 
     /**

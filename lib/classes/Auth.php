@@ -293,31 +293,6 @@ class Auth extends \Util\Singleton
         return password_hash($password, self::$passwordOptions['algorithm'], self::$passwordOptions['options']);
     }
 
-    public static function check()
-    {
-        return self::getInstance()->isAuthenticated();
-    }
-
-    public static function admin()
-    {
-        return self::getInstance()->isAdmin();
-    }
-
-    public static function user()
-    {
-        return self::getInstance()->getUser();
-    }
-
-    public static function logout()
-    {
-        return self::getInstance()->destory();
-    }
-
-    public static function firstModule()
-    {
-        return self::getInstance()->getFirstModule();
-    }
-
     /**
      * Restituisce l'elenco degli stati del sistema di autenticazione.
      *
@@ -326,5 +301,53 @@ class Auth extends \Util\Singleton
     public static function getStatus()
     {
         return self::$status;
+    }
+
+    /**
+     * Controlla se l'utente è autenticato.
+     *
+     * @return bool
+     */
+    public static function check()
+    {
+        return self::getInstance()->isAuthenticated();
+    }
+
+    /**
+     * Controlla se l'utente appartiene al gruppo degli Amministratori.
+     *
+     * @return bool
+     */
+    public static function admin()
+    {
+        return self::getInstance()->isAdmin();
+    }
+
+    /**
+     * Restituisce le informazioni riguardanti l'utente autenticato.
+     *
+     * @return array
+     */
+    public static function user()
+    {
+        return self::getInstance()->getUser();
+    }
+
+    /**
+     * Distrugge le informazioni riguardanti l'utente autenticato, forzando il logout.
+     */
+    public static function logout()
+    {
+        return self::getInstance()->destory();
+    }
+
+    /**
+     * Restituisce il nome del primo modulo navigabile dall'utente autenticato.
+     *
+     * @return string
+     */
+    public static function firstModule()
+    {
+        return self::getInstance()->getFirstModule();
     }
 }

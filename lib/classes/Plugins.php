@@ -7,7 +7,9 @@
  */
 class Plugins
 {
+    /** @var array Elenco dei plugin disponibili */
     protected static $plugins = [];
+    /** @var array Elenco delle query generiche dei plugin */
     protected static $queries = [];
 
     /**

@@ -7,14 +7,14 @@
  */
 class Widgets
 {
+    /** @var array Elenco delle strutture HTML dei widget */
     public static $widgets = [];
 
     /**
-     * Funzione addModuleWidgets
-     * $id_modulo: modulo in cui ci si trova
-     * $location: location all'interno del modulo, per esempio controller oppure inserimento/modifica
-     * Prende da database tutti i widget associati al modulo passato come parametro e li aggiunge con createWidget
-     * alla pagina.
+     * Prende da database tutti i widget associati al modulo passato come parametro e li aggiunge alla pagina.
+     *
+     * @param string $id_module Modulo a cui aggiungere i widget
+     * @param string $location  Posizione all'interno del modulo
      */
     public static function addModuleWidgets($id_module, $location)
     {
@@ -55,11 +55,14 @@ class Widgets
     }
 
     /**
-     * Funzione createWidget
-     * $id_widget: l'id numerico del widget da creare ed inserire nella pagina
-     * Sa seconda del tipo di widget inserisce il codice HTML per la sua creazione nella pagina.
-     * Ottiene i dati per la creazione
-     * del widget da tabella, in maniera da crearli in maniera dinamica a seconda dei campi.
+     * A seconda del tipo di widget inserisce il codice HTML per la sua creazione nella pagina.
+     * Ottiene i dati per la creazione del widget dalla tabella, in maniera da crearli in maniera dinamica a seconda dei campi.
+     *
+     * @param int    $id_widget   Identificativo numerico del widget
+     * @param string $class
+     * @param int    $totalNumber
+     *
+     * @return string
      */
     protected static function createWidget($id_widget, $class, $totalNumber = 4)
     {

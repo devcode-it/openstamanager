@@ -45,7 +45,7 @@ class API extends \Util\Singleton
     {
         $user = Auth::user();
 
-        if (!self::isAPIRequest() || empty($user)) {
+        if (!self::isAPIRequest() || (empty($user) && self::getRequest()['resource'] != 'login')) {
             throw new InvalidArgumentException();
         }
     }
@@ -101,13 +101,18 @@ class API extends \Util\Singleton
         $updated = $request['upd'];
         $created = $request['crd'];
 
-        $dbo = Database::getConnection();
+        // Paginazione dell'API
+        $page = (int) $request['page'] ?: 0;
+        $length = Settings::get('Lunghezza pagine per API');
+
+        $database = Database::getConnection();
+        $dbo = $database;
 
         $kind = 'retrieve';
         $resources = self::getResources()[$kind];
         $resource = $request['resource'];
 
-        if (!in_array($resource, $resources)) {
+        if (!in_array($resource, array_keys($resources))) {
             $excluded = explode(',', Settings::get('Tabelle escluse per la sincronizzazione API automatica'));
             if (!in_array($resource, $excluded)) {
                 $table = $resource;
@@ -120,10 +125,6 @@ class API extends \Util\Singleton
             $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
             include $filename;
         }
-
-        // Paginazione dell'API
-        $page = (int) $request['page'] ?: 0;
-        $length = Settings::get('Lunghezza pagine per API');
 
         // Generazione automatica delle query
         if (empty($results) && !empty($table)) {
@@ -199,7 +200,8 @@ class API extends \Util\Singleton
         }
 
         // Database
-        $dbo = Database::getConnection();
+        $database = Database::getConnection();
+        $dbo = $database;
 
         $dbo->query('START TRANSACTION');
 
@@ -333,7 +335,13 @@ class API extends \Util\Singleton
      */
     public static function getRequest()
     {
-        return (array) json_decode(file_get_contents('php://input'), true);
+        $request = (array) json_decode(file_get_contents('php://input'), true);
+
+        if ($_SERVER['REQUEST_METHOD'] == 'GET' && empty($request)) {
+            $request = Filter::getGET();
+        }
+
+        return $request;
     }
 
     /**

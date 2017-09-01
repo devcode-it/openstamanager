@@ -53,13 +53,14 @@ if (!empty($rs2)) {
 <div class="table-responsive">
     <table class="table table-striped table-hover table-condensed '.$class_tecnico.'">
         <tr>
-            <th width="200"><i class="fa fa-user"></i> '.$r['ragione_sociale'].'</th>
-            <th width="300">'._('Orario').'</th>
-            <th width="190">'._('Ore').'</th>
-            <th width="190">'._('Km').'</th>
-            <th width="100">'._('Sconto ore').'</th>
-            <th width="100">'._('Sconto km').'</th>
-            <th width="40"></th>
+            <th><i class="fa fa-user"></i> '.$r['ragione_sociale'].'</th>
+            <th>'._('Orario inizio').'</th>
+            <th>'._('Orario fine').'</th>
+            <th>'._('Ore').'</th>
+            <th>'._('Km').'</th>
+            <th>'._('Sconto ore').'</th>
+            <th>'._('Sconto km').'</th>
+            <th></th>
         </tr>';
         }
 
@@ -88,9 +89,8 @@ if (!empty($rs2)) {
         $costo_km_consuntivo = $r['prezzo_km_consuntivo'];
         $costo_ore_consuntivo = $r['prezzo_ore_consuntivo'];
 
-        $orario_inizio = !empty($r['orario_inizio']) ? Translator::timestampToLocale($r['orario_inizio']) : $r['orario_inizio'];
-        $orario_fine = !empty($r['orario_fine']) ? Translator::timestampToLocale($r['orario_fine']) : $r['orario_fine'];
-        $orario = $orario_inizio.' - '.$orario_fine;
+        $orario_inizio = $r['orario_inizio'];
+        $orario_fine = $r['orario_fine'];
 
         $km = $r['km'];
         $ore = $r['ore'];
@@ -120,19 +120,33 @@ if (!empty($rs2)) {
         echo '
             </td>';
 
-        // Orario
+        // Orario di inizio
         echo '
             <td>';
         if ($rs[0]['stato'] == 'Fatturato') {
             echo '
-                <span>'.$ora_dal1.'</span>
-                <input type="hidden" id="orario_'.$id.'" name="orario['.$id.']" style="'.$display.'" value="'.$orario.'">';
+                <span>'.$orario_inizio.'</span>
+                <input type="hidden" name="orario_inizio['.$id.']" value="'.$orario_inizio.'">';
         } else {
             echo '
-                <input class="form-control text-center datetimepicker" type="text" id="orario_'.$id.'" name="orario['.$id.']" value="'.$orario.'">';
+            {[ "type": "timestamp", "name": "orario_inizio['.$id.']", "id": "inizio_'.$id.'", "value": "'.$orario_inizio.'", "class": "orari" ]}';
         }
         echo '
             </td>';
+
+        // Orario di fine
+        echo '
+        <td>';
+        if ($rs[0]['stato'] == 'Fatturato') {
+            echo '
+            <span>'.$orario_fine.'</span>
+            <input type="hidden" name="orario_fine['.$id.']" value="'.$orario_fine.'">';
+        } else {
+            echo '
+        {[ "type": "timestamp", "name": "orario_fine['.$id.']", "id": "fine_'.$id.'", "value": "'.$orario_fine.'", "class": "orari", "min-date": "'.$orario_inizio.'" ]}';
+        }
+        echo '
+        </td>';
 
         // ORE
         echo '
@@ -251,36 +265,29 @@ echo '
 
 ?>
 
-<script type="text/javascript" charset="utf-8">
-    $(document).ready( function(){
-        $('.datetimepicker').daterangepicker({
-                timePicker: true,
-                timePickerIncrement: 5,
-                locale: {
-                    format: globals.timestampFormat,
-                    customRangeLabel: globals.translations.custom,
-                    applyLabel: globals.translations.apply,
-                    cancelLabel: globals.translations.cancel,
-                    fromLabel: globals.translations.from,
-                    toLabel: globals.translations.to,
-                },
-                timePicker24Hour: true,
-                applyClass: 'btn btn-success btn-sm',
-                cancelClass: 'btn btn-danger btn-sm',
-            }
-        ).on('change', function(){
-            id = $(this).attr('id').split('_');
-            idriga = id[1];
+<script src="<?php echo $rootdir ?>/lib/init.js"></script>
 
-            orario = $('#orario_'+idriga).val();
-            o = orario.split(' - ');
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.orari').on("dp.change", function(){
+            idriga = $(this).attr('id').split('_')[1];
 
-            start = o[0];
-            end = o[1];
+            start = $('#inizio_' + idriga).val();
+            end = $('#fine_' + idriga).val();
 
             calcola_ore(idriga, start, end);
         });
+
+        $(".orari[id^=inizio]").on("dp.change", function (e) {
+            var fine = $(this).closest("tr").find(".orari[id^=fine]").data("DateTimePicker");
+
+            fine.minDate(e.date);
+
+            if(fine.date() < e.date){
+                date = moment(e.date).add(1, 'h');
+
+                fine.date(date);
+            }
+        });
     });
 </script>
-
-<script type="text/javascript" src="<?php echo $rootdir ?>/lib/init.js"></script>

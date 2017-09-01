@@ -54,6 +54,7 @@ class DateHandler implements HandlerInterface
     {
         $values['class'][] = 'text-center';
         $values['class'][] = 'timestamp-picker';
+        $values['class'][] = 'timestamp-mask';
 
         $values['value'] = (\Translator::getLocaleFormatter()->isTimestamp($values['value'])) ? $values['value'] : '';
     }

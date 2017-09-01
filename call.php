@@ -10,9 +10,9 @@ if (isset($id_record)) {
     $posizione .= ', '.$id_record;
 }
 
-$dbo->query('UPDATE zz_semaphores SET updated = NOW() WHERE id_utente = '.prepare($_SESSION['idutente']).' AND posizione = '.prepare($posizione));
+$dbo->query('UPDATE zz_semaphores SET updated = NOW() WHERE id_utente = '.prepare($_SESSION['id_utente']).' AND posizione = '.prepare($posizione));
 $dbo->query('DELETE FROM zz_semaphores WHERE DATE_ADD(updated, INTERVAL '.(get_var('Timeout notifica di presenza (minuti)') * 2).' SECOND) <= NOW()');
-$datas = $dbo->fetchArray('SELECT DISTINCT * FROM zz_semaphores INNER JOIN zz_users ON zz_semaphores.id_utente=zz_users.idutente WHERE id_utente != '.prepare($_SESSION['idutente']).' AND posizione = '.prepare($posizione));
+$datas = $dbo->fetchArray('SELECT DISTINCT * FROM zz_semaphores INNER JOIN zz_users ON zz_semaphores.id_utente=zz_users.id_utente WHERE zz_semaphores.id_utente != '.prepare($_SESSION['id_utente']).' AND posizione = '.prepare($posizione));
 
 $result = [];
 if ($datas != null) {

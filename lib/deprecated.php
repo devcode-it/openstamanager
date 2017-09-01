@@ -133,7 +133,7 @@ function get_permessi($nome_modulo)
     trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $dbo = \Database::getConnection();
-    $query = 'SELECT *, (SELECT idanagrafica FROM zz_users WHERE idutente='.prepare($_SESSION['idutente']).') AS idanagrafica FROM zz_permissions WHERE idgruppo=(SELECT idgruppo FROM zz_users WHERE idutente='.prepare($_SESSION['idutente']).') AND idmodule=(SELECT id FROM zz_modules WHERE name='.prepare($nome_modulo).')';
+    $query = 'SELECT *, (SELECT idanagrafica FROM zz_users WHERE id_utente='.prepare($_SESSION['id_utente']).') AS idanagrafica FROM zz_permissions WHERE idgruppo=(SELECT idgruppo FROM zz_users WHERE id_utente='.prepare($_SESSION['id_utente']).') AND idmodule=(SELECT id FROM zz_modules WHERE name='.prepare($nome_modulo).')';
     $rs = $dbo->fetchArray($query);
     if (count($rs) <= 0) {
         // Ultimo tentativo: se non ci sono i permessi ma sono l'amministratore posso comunque leggere il modulo

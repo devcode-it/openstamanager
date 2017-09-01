@@ -5,6 +5,7 @@ function serverError()
     $error = error_get_last();
     if ($error['type'] == E_ERROR) {
         ob_end_clean();
+        print_r($error);
         die(API::error('serverError'));
     }
 }
@@ -39,11 +40,6 @@ try {
             $result = $api->create($request);
             break;
         case 'GET':
-            if (empty($request)) {
-                $request = Filter::getGET();
-                unset($request['token']);
-            }
-
             if (!empty($request)) {
                 $result = $api->retrieve($request);
             } else {

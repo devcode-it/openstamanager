@@ -235,7 +235,7 @@ if (!API::isAPIRequest()) {
         // Retrocompatibilità
         $user_idanagrafica = $user['idanagrafica'];
 
-        $rs = $dbo->fetchArray('SELECT * FROM `zz_modules` LEFT JOIN (SELECT `idmodule`, `permessi` FROM `zz_permissions` WHERE `idgruppo`=(SELECT `idgruppo` FROM `zz_users` WHERE `idutente`='.prepare($_SESSION['idutente']).')) AS `zz_permissions` ON `zz_modules`.`id`=`zz_permissions`.`idmodule` LEFT JOIN (SELECT `idmodule`, `clause` FROM `zz_group_module` WHERE `idgruppo`=(SELECT `idgruppo` FROM `zz_users` WHERE `idutente`='.prepare($_SESSION['idutente']).')) AS `zz_group_module` ON `zz_modules`.`id`=`zz_group_module`.`idmodule`');
+        $rs = $dbo->fetchArray('SELECT * FROM `zz_modules` LEFT JOIN (SELECT `idmodule`, `permessi` FROM `zz_permissions` WHERE `idgruppo`=(SELECT `idgruppo` FROM `zz_users` WHERE `id_utente`='.prepare($_SESSION['id_utente']).')) AS `zz_permissions` ON `zz_modules`.`id`=`zz_permissions`.`idmodule` LEFT JOIN (SELECT `idmodule`, `clause` FROM `zz_group_module` WHERE `idgruppo`=(SELECT `idgruppo` FROM `zz_users` WHERE `id_utente`='.prepare($_SESSION['id_utente']).')) AS `zz_group_module` ON `zz_modules`.`id`=`zz_group_module`.`idmodule`');
 
         $modules_info = [];
         for ($i = 0; $i < count($rs); ++$i) {

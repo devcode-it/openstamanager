@@ -47,14 +47,14 @@ if (count($utenti) != 0) {
          */
         echo '
 			<td>';
-        // Disabilitazione utente, se diverso da idutente #1 (admin)
-        if ($utenti[$u]['idutente'] != '1') {
+        // Disabilitazione utente, se diverso da id_utente #1 (admin)
+        if ($utenti[$u]['id_utente'] != '1') {
             if ($utenti[$u]['enabled'] == 1) {
                 echo '
-				<a href="javascript:;" onclick="if( confirm(\''._('Disabilitare questo utente?').'\') ){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=disable&idutente='.$utenti[$u]['idutente'].'&idgruppo='.$record['id'].'\'; }" title="Disabilita utente" class="text-danger tip"><i class="fa fa-2x fa-eye-slash"></i></a>';
+				<a href="javascript:;" onclick="if( confirm(\''._('Disabilitare questo utente?').'\') ){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=disable&id_utente='.$utenti[$u]['id_utente'].'&idgruppo='.$record['id'].'\'; }" title="Disabilita utente" class="text-danger tip"><i class="fa fa-2x fa-eye-slash"></i></a>';
             } else {
                 echo '
-				<a href="javascript:;" onclick="if( confirm(\'Abilitare questo utente?\') ){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=enable&idutente='.$utenti[$u]['idutente'].'&idgruppo='.$record['id'].'\'; }" title="Abilita utente" class="text-success tip"><i class="fa fa-2x fa-eye"></i></a>';
+				<a href="javascript:;" onclick="if( confirm(\'Abilitare questo utente?\') ){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=enable&id_utente='.$utenti[$u]['id_utente'].'&idgruppo='.$record['id'].'\'; }" title="Abilita utente" class="text-success tip"><i class="fa fa-2x fa-eye"></i></a>';
             }
         } else {
             echo '
@@ -63,12 +63,12 @@ if (count($utenti) != 0) {
 
             // Cambio password e nome utente
         echo '
-				<a href="" data-href="'.$rootdir.'/modules/'.Modules::getModule($id_module)['directory'].'/user.php?idutente='.$utenti[$u]['idutente'].'&idgruppo='.$record['id'].'" class="text-warning tip" data-toggle="modal" data-target="#bs-popup" title="Aggiorna dati utente""  data-title="Aggiorna dati utente"><i class="fa fa-2x fa-unlock-alt"></i></a>';
+				<a href="" data-href="'.$rootdir.'/modules/'.Modules::getModule($id_module)['directory'].'/user.php?id_utente='.$utenti[$u]['id_utente'].'&idgruppo='.$record['id'].'" class="text-warning tip" data-toggle="modal" data-target="#bs-popup" title="Aggiorna dati utente""  data-title="Aggiorna dati utente"><i class="fa fa-2x fa-unlock-alt"></i></a>';
 
-        // Eliminazione utente, se diverso da idutente #1 (admin)
-        if ($utenti[$u]['idutente'] != '1') {
+        // Eliminazione utente, se diverso da id_utente #1 (admin)
+        if ($utenti[$u]['id_utente'] != '1') {
             echo '
-			<a href="javascript:;" onclick="if( confirm(\'Sei sicuro di voler eliminare questo utente?\') ){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete&idutente='.$utenti[$u]['idutente'].'&idgruppo='.$record['id'].'\'; }" title="Elimina utente" class="text-danger tip"><i class="fa fa-2x fa-trash"></i></a>';
+			<a href="javascript:;" onclick="if( confirm(\'Sei sicuro di voler eliminare questo utente?\') ){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete&id_utente='.$utenti[$u]['id_utente'].'&idgruppo='.$record['id'].'\'; }" title="Elimina utente" class="text-danger tip"><i class="fa fa-2x fa-trash"></i></a>';
         } else {
             echo '
 			<span onclick="alert(\"'._("Non è possibile eliminare l'utente admin").'\")" class="text-muted tip"><i class="fa fa-2x fa-trash"></i></span>';

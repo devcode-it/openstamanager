@@ -86,8 +86,8 @@ class Database extends Util\Singleton
 
                 $this->pdo = $pdo;
 
-                if (empty($this->charset)) {
-                    $this->charset = version_compare($this->getMySQLVersion(), '5.5.3') >= 0 ? 'utf8mb4' : 'utf8';
+                if (empty($this->charset) && version_compare($this->getMySQLVersion(), '5.5.3') >= 0) {
+                    $this->charset = 'utf8mb4';
                 }
 
                 // Fix per problemi di compatibilità delle password MySQL 4.1+ (da versione precedente)

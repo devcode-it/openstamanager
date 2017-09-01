@@ -74,12 +74,9 @@ switch (post('op')) {
         }
 
         foreach ($lista as $idriga) {
-            // Lettura delle date di inizio e fine intervento (dd/mm/yyyy hh:mm - dd/mm/yyyy hh:mm)
-            $orario = post('orario')[$idriga];
-            $v = explode(' - ', $orario);
-
-            $orario_inizio = Translator::timestampToEnglish($v[0]);
-            $orario_fine = Translator::timestampToEnglish($v[1]);
+            // Lettura delle date di inizio e fine intervento
+            $orario_inizio = post('orario_inizio')[$idriga];
+            $orario_fine = post('orario_fine')[$idriga];
 
             $km = post('km')[$idriga];
             $ore = post('ore')[$idriga];

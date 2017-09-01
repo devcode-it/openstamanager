@@ -6,11 +6,11 @@ include_once __DIR__.'/../../core.php';
 $min_length = 8;
 $min_length_username = 4;
 $idgruppo = intval(filter('idgruppo'));
-$id_utente = filter('idutente');
+$id_utente = filter('id_utente');
 if (!empty($id_utente)) {
     $value = 'change_pwd';
 
-    $rs = $dbo->fetchArray('SELECT username FROM zz_users WHERE idutente='.prepare($id_utente));
+    $rs = $dbo->fetchArray('SELECT username FROM zz_users WHERE id_utente='.prepare($id_utente));
     $username = $rs[0]['username'];
     $message = _('Modifica');
 } else {
@@ -27,7 +27,7 @@ echo '
 	<input type="hidden" name="min_length_username" value="'.$min_length_username.'">';
 if (!empty($id_utente)) {
     echo '
-    <input type="hidden" name="idutente" value="'.$id_utente.'">';
+    <input type="hidden" name="id_utente" value="'.$id_utente.'">';
 }
 echo '
 

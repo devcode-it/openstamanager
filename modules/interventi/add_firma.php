@@ -36,7 +36,7 @@ if (get('anteprima') !== null) {
 
 <div class="hide" id="pdf">
     <object data="'.$rootdir.'/files/interventi/'.$rapportino_nome.'#view=fitH&scrollbar=0&toolbar=0&navpanes=0" id ="rapportino_pdf"  type="application/pdf" width="100%">
-        alt : <a href="'.$rootdir.'/files/interventi/'.$rapportino_nome.'">'.$rapportino_nome.'</a>
+        alt : <a href="'.$rootdir.'/files/interventi/'.$rapportino_nome.'" target="_blank">'.$rapportino_nome.'</a>
         <span>'._('Plugin PDF mancante').'</span>
     </object>
 </div>';

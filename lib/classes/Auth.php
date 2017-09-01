@@ -45,22 +45,19 @@ class Auth extends \Util\Singleton
         if ($database->isInstalled()) {
             if (API::isAPIRequest()) {
                 $token = API::getRequest()['token'];
-                $token = !empty($token) ? $token : get('token');
 
                 $id = $database->fetchArray('SELECT `id_utente` FROM `zz_tokens` WHERE `token` = '.prepare($token))[0]['id_utente'];
             }
             // Controllo sulla sessione attiva
-            elseif (!empty($_SESSION['idutente'])) {
-                $id = $_SESSION['idutente'];
+            elseif (!empty($_SESSION['id_utente'])) {
+                $id = $_SESSION['id_utente'];
             }
 
             if (!empty($id)) {
                 $this->identifyUser($id);
             }
 
-            if (!empty($_SESSION['idutente']) && $this->isAuthenticated()) {
-                $this->saveToSession();
-            }
+            $this->saveToSession();
         }
     }
 
@@ -83,20 +80,20 @@ class Auth extends \Util\Singleton
         $log['ip'] = get_client_ip();
         $log['stato'] = self::$status['failed']['code'];
 
-        $users = $database->fetchArray('SELECT idutente, password, enabled FROM zz_users WHERE username = '.prepare($username).' LIMIT 1');
+        $users = $database->fetchArray('SELECT id_utente, password, enabled FROM zz_users WHERE username = '.prepare($username).' LIMIT 1');
         if (!empty($users)) {
             $user = $users[0];
 
             if (!empty($user['enabled'])) {
-                $this->identifyUser($user['idutente']);
+                $this->identifyUser($user['id_utente']);
                 $module = $this->getFirstModule();
 
                 if (
                     $this->isAuthenticated() &&
-                    $this->password_check($password, $user['password'], $user['idutente']) &&
+                    $this->password_check($password, $user['password'], $user['id_utente']) &&
                     !empty($module)
                 ) {
-                    $log['idutente'] = $this->infos['idutente'];
+                    $log['id_utente'] = $this->infos['id_utente'];
                     $log['stato'] = self::$status['success']['code'];
 
                     $this->saveToSession();
@@ -105,7 +102,7 @@ class Auth extends \Util\Singleton
                         $log['stato'] = self::$status['unauthorized']['code'];
                     }
 
-                    $this->logout();
+                    $this->destory();
                 }
             } else {
                 $log['stato'] = self::$status['disabled']['code'];
@@ -154,7 +151,7 @@ class Auth extends \Util\Singleton
         // Controllo in automatico per futuri cambiamenti dell'algoritmo di password
         if ($rehash) {
             $database = Database::getConnection();
-            $database->update('zz_users', ['password' => self::hashPassword($password)], ['idutente' => $user_id]);
+            $database->update('zz_users', ['password' => self::hashPassword($password)], ['id_utente' => $user_id]);
         }
 
         return $result;
@@ -165,14 +162,16 @@ class Auth extends \Util\Singleton
      */
     protected function saveToSession()
     {
-        foreach ($this->infos as $key => $value) {
-            $_SESSION[$key] = $value;
-        }
+        if(session_status() == PHP_SESSION_ACTIVE && $this->isAuthenticated()){
+            foreach ($this->infos as $key => $value) {
+                $_SESSION[$key] = $value;
+            }
 
-        $identifier = md5($_SESSION['idutente'].$_SERVER['HTTP_USER_AGENT']);
-        if ((empty($_SESSION['last_active']) || time() < $_SESSION['last_active'] + (60 * 60)) && (empty($_SESSION['identifier']) || $_SESSION['identifier'] == $identifier)) {
-            $_SESSION['last_active'] = time();
-            $_SESSION['identifier'] = $identifier;
+            $identifier = md5($_SESSION['id_utente'].$_SERVER['HTTP_USER_AGENT']);
+            if ((empty($_SESSION['last_active']) || time() < $_SESSION['last_active'] + (60 * 60)) && (empty($_SESSION['identifier']) || $_SESSION['identifier'] == $identifier)) {
+                $_SESSION['last_active'] = time();
+                $_SESSION['identifier'] = $identifier;
+            }
         }
     }
 
@@ -186,7 +185,7 @@ class Auth extends \Util\Singleton
         $database = Database::getConnection();
 
         try {
-            $results = $database->fetchArray('SELECT idutente, idanagrafica, username, (SELECT nome FROM zz_groups WHERE id=idgruppo) AS gruppo FROM zz_users WHERE idutente = '.prepare($user_id).' AND enabled = 1 LIMIT 1', false, ['session' => false]);
+            $results = $database->fetchArray('SELECT id_utente, idanagrafica, username, (SELECT nome FROM zz_groups WHERE id=idgruppo) AS gruppo FROM zz_users WHERE id_utente = '.prepare($user_id).' AND enabled = 1 LIMIT 1', false, ['session' => false]);
 
             if (!empty($results)) {
                 $results[0]['is_admin'] = ($results[0]['gruppo'] == 'Amministratori');
@@ -233,7 +232,7 @@ class Auth extends \Util\Singleton
      */
     public function destory()
     {
-        if ($this->isAuthenticated() || !empty($_SESSION['idutente'])) {
+        if ($this->isAuthenticated() || !empty($_SESSION['id_utente'])) {
             $this->infos = null;
             $this->first_module = null;
 

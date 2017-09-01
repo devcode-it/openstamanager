@@ -526,8 +526,10 @@ span.form-control {
     .main-header .logo {
         display: none;
     }
-    .fixed .content-wrapper,
-    .fixed .right-side {
+    .content-wrapper,
+    .right-side,
+    .left-side,
+    .main-sidebar {
         padding-top: 50px;
     }
 }
@@ -551,4 +553,10 @@ div.DTS tbody td,
 div.DTS tbody th {
     word-wrap: break-word;
     max-width: 500px;
+}
+
+.table-responsive th,
+.table-responsive td,
+input {
+    min-width: 200px;
 }

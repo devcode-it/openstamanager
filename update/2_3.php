@@ -21,20 +21,6 @@ if (!empty($array)) {
     $database->insert('zz_group_view', $array);
 }
 
-// Generazione delle chiavi di default per gli utenti
-$utenti = $database->fetchArray('SELECT `idutente` FROM `zz_users`');
-
-$array = [];
-foreach ($utenti as $utente) {
-    $array[] = [
-        'id_utente' => $utente['idutente'],
-        'token' => secure_random_string(),
-    ];
-}
-if (!empty($array)) {
-    $database->insert('zz_tokens', $array);
-}
-
 /*
 * Fix
 */

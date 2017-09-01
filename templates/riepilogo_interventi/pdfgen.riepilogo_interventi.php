@@ -8,7 +8,7 @@ $id_module = $html->form('id_module');
 
 $fields = [];
 $select = '*';
-$datas = $dbo->fetchArray('SELECT * FROM zz_views WHERE id_module='.$id_module.' AND id IN (SELECT id_vista FROM zz_group_view WHERE id_gruppo=(SELECT idgruppo FROM zz_users WHERE idutente='.$_SESSION['idutente'].')) ORDER BY `order` ASC');
+$datas = $dbo->fetchArray('SELECT * FROM zz_views WHERE id_module='.$id_module.' AND id IN (SELECT id_vista FROM zz_group_view WHERE id_gruppo=(SELECT idgruppo FROM zz_users WHERE id_utente='.$_SESSION['id_utente'].')) ORDER BY `order` ASC');
 if ($datas != null) {
     $select = '';
     foreach ($datas as $data) {

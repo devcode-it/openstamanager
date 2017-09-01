@@ -35,14 +35,14 @@ echo '
 if (Auth::admin()) {
     $q = 'SELECT * FROM `zz_logs` ORDER BY `created_at` DESC LIMIT 0, 100';
 } else {
-    $q = 'SELECT * FROM `zz_logs` WHERE `idutente`='.prepare($_SESSION['idutente']).' ORDER BY `created_at` DESC LIMIT 0, 100';
+    $q = 'SELECT * FROM `zz_logs` WHERE `id_utente`='.prepare($_SESSION['id_utente']).' ORDER BY `created_at` DESC LIMIT 0, 100';
 }
 $rs = $dbo->fetchArray($q);
 $n = sizeof($rs);
 
 for ($i = 0; $i < $n; ++$i) {
     $id = $rs[$i]['id'];
-    $idutente = $rs[$i]['idutente'];
+    $id_utente = $rs[$i]['id_utente'];
     $username = $rs[$i]['username'];
     $ip = $rs[$i]['ip'];
 

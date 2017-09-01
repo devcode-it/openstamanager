@@ -182,6 +182,7 @@ switch (post('op')) {
         break;
 
     case 'add':
+        /*
         $codice = post('codice');
 
         // Controlli sul codice
@@ -196,8 +197,11 @@ switch (post('op')) {
             $_SESSION['warnings'][] = str_replace('_NUM_', "'".$codice."'", _('Numero intervento _NUM_ saltato perchè già esistente!'));
             $_SESSION['warnings'][] = str_replace('_NUM_', "'".$new_codice."'", _('Nuovo numero intervento calcolato _NUM_'));
         }
+        */
+        $formato = get_var('Formato codice intervento');
 
-        $codice = $new_codice;
+        $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE concat("", codice * 1) = codice AND LENGTH(codice) = '.strlen($formato).' ORDER BY CAST(codice AS SIGNED) DESC LIMIT 1');
+        $codice = get_next_code($rs[0]['codice'], 1, $formato);
 
         // Informazioni di base
         $idpreventivo = post('idpreventivo');

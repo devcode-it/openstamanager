@@ -159,7 +159,7 @@ $dirs = [
     'zone',
 ];
 
-$pieces = array_chunk($tables, 5);
+$pieces = array_chunk($dirs, 5);
 
 foreach ($pieces as $piece) {
     $files = glob($docroot.'/modules/{'.implode(',', $piece).'}/*.html', GLOB_BRACE);

@@ -423,7 +423,7 @@ if ($vista == 'mese') {
 		var calendar = $('#calendar').fullCalendar({
             locale: globals.locale,
 <?php
-if (!get_var('Visualizzare la domenica sul calendario')) {
+if (!empty(get_var('Visualizzare la domenica sul calendario'))) {
     echo '
             hiddenDays: [ 0 ],';
 }
@@ -438,31 +438,27 @@ if (!get_var('Visualizzare la domenica sul calendario')) {
 			slotDuration: '00:15:00',
             defaultView: '<?php echo $def; ?>',
 <?php
-if (get_var('Abilitare orario lavorativo') == '1') {
+if (!empty(get_var('Abilitare orario lavorativo'))) {
     echo "
             minTime: '08:00:00',
             maxTime: '20:00:00',";
 }
 ?>
-            selectable: true,
             lazyFetching: true,
 			selectHelper: true,
-			editable: true,
 			eventLimit: false, // allow "more" link when too many events
 			allDaySlot: false,
-            droppable: true,
             loading: function(isLoading, view) {
                 if(isLoading) {
-					//setTimeout("$('#tiny-loader').show()", 10);
-					$('#tiny-loader').fadeIn();
+ 					$('#tiny-loader').fadeIn();
                 } else {
-                    //setTimeout("$('#tiny-loader').hide()", 10);
-					$('#tiny-loader').hide();
+                    $('#tiny-loader').hide();
                 }
             },
     <?php
 if (Modules::getPermission($id_module) == 'rw') {
     ?>
+            droppable: true,
             drop: function(date, jsEvent, ui, resourceId) {
                 data = moment(date).format("YYYY-MM-DD");
 				ora_dal = moment(date).format("HH:mm");
@@ -478,49 +474,20 @@ if (Modules::getPermission($id_module) == 'rw') {
                     $('#calendar').fullCalendar('refetchEvents');
                 });
             },
-            <?php
 
-}
-            ?>
+            selectable: true,
 			select: function(start, end, allDay) {
 				data = moment(start).format("YYYY-MM-DD");
 				ora_dal = moment(start).format("HH:mm");
 				ora_al = moment(end).format("HH:mm");
 
-				<?php
-                if (Modules::getPermission($id_module) == 'rw') {
-                    ?>
-					launch_modal('<?php echo _('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::getModule('Interventi')['id'] ?>&ref=dashboard&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al, 1 );
-				<?php
-
-                }
-                ?>
+                launch_modal('<?php echo _('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::getModule('Interventi')['id'] ?>&ref=dashboard&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al, 1 );
 
 				$('#calendar').fullCalendar('unselect');
 			},
-			events: {
-				url: globals.rootdir + "/modules/dashboard/ajaxreq.php?op=get_current_month",
-                type: 'GET',
-				error: function() {
-					alert('<?php echo _('Errore durante la creazione degli eventi'); ?>');
-				}
-			},
-			eventResize: function(event,dayDelta,minuteDelta,revertFunc) {
-				$.get(globals.rootdir + "/modules/dashboard/ajaxreq.php?op=update_intervento&id="+event.id+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
-					if( response=="success" ){
-						data = $.trim(data);
-						if(data != "ok"){
-							alert(data);
-							$('#calendar').fullCalendar('refetchEvents');
-							revertFunc();
-						}
-						else{
-							return false;
-						}
-					}
-				});
-			},
-			eventDrop: function(event,dayDelta,minuteDelta,revertFunc) {
+
+            editable: true,
+            eventDrop: function(event,dayDelta,minuteDelta,revertFunc) {
 				$.get(globals.rootdir + "/modules/dashboard/ajaxreq.php?op=update_intervento&id="+event.id+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
 					if( response=="success" ){
 						data = $.trim(data);
@@ -535,11 +502,31 @@ if (Modules::getPermission($id_module) == 'rw') {
 					}
 				});
 			},
+            eventResize: function(event,dayDelta,minuteDelta,revertFunc) {
+				$.get(globals.rootdir + "/modules/dashboard/ajaxreq.php?op=update_intervento&id="+event.id+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
+					if( response=="success" ){
+						data = $.trim(data);
+						if(data != "ok"){
+							alert(data);
+							$('#calendar').fullCalendar('refetchEvents');
+							revertFunc();
+						}
+						else{
+							return false;
+						}
+					}
+				});
+			},
+            <?php
+
+}
+
+if (get_var('Utilizzare i tooltip sul calendario') == '1') {
+    ?>
 			eventAfterRender: function(event, element) {
 				//alert(element.find('.fc-event-title').html();
 				element.find('.fc-title').html(event.title);
-				<?php if (get_var('Utilizzare i tooltip sul calendario') == '1') {
-                    ?>
+
 				$.get(globals.rootdir + "/modules/dashboard/ajaxreq.php?op=get_more_info&id="+event.id+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
 					if( response=="success" ){
 						data = $.trim(data);
@@ -565,9 +552,20 @@ if (Modules::getPermission($id_module) == 'rw') {
 						}
 					}
 				});
-				<?php
+			},
+            <?php
 
-                } ?>
+}
+            ?>
+            events: {
+				url: globals.rootdir + "/modules/dashboard/ajaxreq.php?op=get_current_month",
+                type: 'GET',
+                success: function(data) {
+                    console.log(data);
+                },
+				error: function() {
+					alert('<?php echo _('Errore durante la creazione degli eventi'); ?>');
+				}
 			}
 		});
 	}

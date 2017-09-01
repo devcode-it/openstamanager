@@ -48,6 +48,8 @@ class Database extends Util\Singleton
      */
     protected function __construct($server, $username, $password, $database_name, $charset = null, $option = [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION])
     {
+        global $debug;
+
         if (is_array($server)) {
             $host = $server['host'];
             $port = !empty($server['port']) ? $server['port'] : null;
@@ -71,15 +73,21 @@ class Database extends Util\Singleton
 
         if (!empty($this->host) && !empty($this->database_name)) {
             try {
-                $this->pdo = new \DebugBar\DataCollector\PDO\TraceablePDO(new PDO(
+                $pdo = new PDO(
                     'mysql:host='.$this->host.(!empty($this->port) ? ';port='.$this->port : '').';dbname='.$this->database_name,
                     $this->username,
                     $this->password,
                     $this->option
-                ));
+                );
 
-                if (empty($this->charset) && version_compare($this->getMySQLVersion(), '5.5.3') >= 0) {
-                    $this->charset = 'utf8mb4';
+                if (!empty($debug)) {
+                    $pdo = new \DebugBar\DataCollector\PDO\TraceablePDO($pdo);
+                }
+
+                $this->pdo = $pdo;
+
+                if (empty($this->charset)) {
+                    $this->charset = version_compare($this->getMySQLVersion(), '5.5.3') >= 0 ? 'utf8mb4' : 'utf8';
                 }
 
                 // Fix per problemi di compatibilità delle password MySQL 4.1+ (da versione precedente)

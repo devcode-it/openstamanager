@@ -3,6 +3,7 @@
 namespace HTMLBuilder\Wrapper;
 
 /**
+ * Interfaccia di base per la gestione della struttura HTML contenente gli input effettivi (generati dai tag di input).
  *
  * @since 2.3
  */

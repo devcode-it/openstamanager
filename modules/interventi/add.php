@@ -97,7 +97,6 @@ if (empty($new_codice)) {
 
 <form action="editor.php?id_module=$id_module$" method="post" id="add-form" onsubmit="if($(this).parsley().validate()) { return add_intervento(); }">
 	<input type="hidden" name="op" value="add">
-	<input type="hidden" name="id_module" value="<?php echo $id_module ?>">
 	<input type="hidden" name="ref" value="<?php echo $_GET['ref']; ?>">
 	<input type="hidden" name="backto" value="record-edit">
 
@@ -156,19 +155,19 @@ if (empty($new_codice)) {
 		<div class="panel-body">
 			<!-- RIGA 3 -->
 			<div class="row">
-				<div class="col-md-3">
+				<!--div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo _('Codice intervento'); ?>", "name": "codice", "required": 1, "class": "text-center", "value": "<?php echo $new_codice ?>" ]}
-				</div>
+				</div-->
 
-				<div class="col-md-3">
+				<div class="col-md-4">
 					{[ "type": "date", "label": "<?php echo _('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "-now-" ]}
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-4">
 					{[ "type": "date", "label": "<?php echo _('Data intervento'); ?>", "name": "data", "required": 1, "value": "<?php echo $data ?>" ]}
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-4">
 					{[ "type": "select", "label": "<?php echo _('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, nome AS descrizione FROM an_zone ORDER BY nome", "value": "<?php echo $idzona ?>" ]}
 				</div>
 			</div>

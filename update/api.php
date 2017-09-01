@@ -90,33 +90,20 @@ $tables = [
     'zz_semaphores',
 ];
 
-$pieces = array_chunk($tables, 10);
+foreach ($tables as $table) {
+    if ($database->fetchNum('SHOW TABLES WHERE `Tables_in_'.$database->getDatabaseName().'` = '.prepare($table))) {
+        $query = 'SHOW COLUMNS FROM '.$table.' FROM '.$database->getDatabaseName()." WHERE Field='|field|'";
 
-foreach ($pieces as $piece) {
-    $implode = [];
-    foreach ($piece as $table) {
-        $implode[] = prepare($table);
-    }
+        $created_at = $database->fetchArray(str_replace('|field|', 'created_at', $query));
+        if (empty($created_at)) {
+            $database->query('ALTER TABLE `'.$table.'` ADD `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP');
+        }
 
-    $query = 'SELECT table_name FROM INFORMATION_SCHEMA.TABLES T WHERE T.TABLE_SCHEMA = '.prepare($database->getDatabaseName()).' AND
-    T.TABLE_NAME IN('.implode(',', $implode).") AND
-    NOT EXISTS (
-        SELECT table_name
-        FROM INFORMATION_SCHEMA.COLUMNS C
-        WHERE
-            C.TABLE_SCHEMA = T.TABLE_SCHEMA AND
-            C.TABLE_NAME = T.TABLE_NAME AND
-            C.COLUMN_NAME = '|field|')";
-
-    $created_at = $database->fetchArray(str_replace('|field|', 'created_at', $query));
-    foreach ($created_at as $table) {
-        $database->query('ALTER TABLE `'.$table['table_name'].'` ADD `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP');
-    }
-
-    if (API::isCompatible()) {
-        $updated_at = $database->fetchArray(str_replace('|field|', 'updated_at', $query));
-        foreach ($updated_at as $table) {
-            $database->query('ALTER TABLE `'.$table['table_name'].'` `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP');
+        if (API::isCompatible()) {
+            $updated_at = $database->fetchArray(str_replace('|field|', 'updated_at', $query));
+            if (empty($updated_at)) {
+                $database->query('ALTER TABLE `'.$table.'` ADD `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP');
+            }
         }
     }
 }

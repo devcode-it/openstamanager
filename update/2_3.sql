@@ -952,5 +952,9 @@ ALTER TABLE `or_righe_ordini` CHANGE `data_evasione` `data_evasione` date;
 -- ALTER TABLE `my_componenti_interventi` ADD PRIMARY KEY (`id_intervento`, `id_componente`);
 -- ALTER TABLE `my_impianti_interventi` ADD PRIMARY KEY (`idintervento`, `idimpianto`);
 
+-- Fix di alcuni problemi con le query dei widget
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(qta),2), ",", "#"), ".", ","), "#", "."), "unit&agrave;") AS dato FROM mg_articoli WHERE qta>0' WHERE `name` = 'Articoli in magazzino';
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(prezzo_acquisto*qta),2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM mg_articoli WHERE qta>0' WHERE `name` = 'Valore magazzino';
+
+-- Fix per le sessioni di lavoro dei tecnici precedenti
+UPDATE `in_interventi_tecnici` SET `idtipointervento` = (SELECT `idtipointervento` FROM `in_interventi` WHERE `idintervento` = `in_interventi`.`id`) WHERE `idtipointervento` = '';

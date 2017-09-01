@@ -560,9 +560,6 @@ if (get_var('Utilizzare i tooltip sul calendario') == '1') {
             events: {
 				url: globals.rootdir + "/modules/dashboard/ajaxreq.php?op=get_current_month",
                 type: 'GET',
-                success: function(data) {
-                    console.log(data);
-                },
 				error: function() {
 					alert('<?php echo _('Errore durante la creazione degli eventi'); ?>');
 				}

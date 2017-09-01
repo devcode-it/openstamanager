@@ -304,7 +304,7 @@ if (empty($new_codice)) {
             $('#add-form').find('[type=submit]').prop("disabled", true).addClass("disabled");
             $('#add-form').find('input:disabled, select:disabled, textarea:disabled').removeAttr('disabled');
 
-            $.post(globals.rootdir + '/actions.php', $('#add-form').serialize(), function(data,response){
+            $.post(globals.rootdir + '/actions.php?id_module=<?php echo Modules::getModule('Interventi')['id'] ?>', $('#add-form').serialize(), function(data,response){
                 if(response=="success"){
                     // Se l'aggiunta intervento proviene dalla scheda di pianificazione ordini di servizio della dashboard, la ricarico
                     if(ref == "dashboard"){

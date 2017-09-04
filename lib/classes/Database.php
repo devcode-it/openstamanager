@@ -472,7 +472,7 @@ class Database extends Util\Singleton
     {
         if (
             !is_string($table) ||
-            (!empty($order) && !is_string($order) && !is_array($limit)) ||
+            (!empty($order) && !is_string($order) && !is_array($order)) ||
             (!empty($limit) && !is_string($limit) && !is_array($limit))
         ) {
             throw new UnexpectedValueException();
@@ -541,7 +541,7 @@ class Database extends Util\Singleton
         $sync = array_unique((array) current($list));
 
         if (!empty($field)) {
-            $results = array_column($this->fetchArray('SELECT '.$this->quote($field).' FROM '.$this->quote($table).' WHERE '.$this->whereStatement($conditions)), $field);
+            $results = array_column($this->select($table, $field, $conditions), $field);
 
             $detachs = array_unique(array_diff($results, $sync));
             $this->detach($table, $conditions, [$field => $detachs]);
@@ -573,7 +573,7 @@ class Database extends Util\Singleton
         $sync = array_unique((array) current($list));
 
         if (!empty($field)) {
-            $results = array_column($this->fetchArray('SELECT '.$this->quote($field).' FROM '.$this->quote($table).' WHERE '.$this->whereStatement($conditions)), $field);
+            $results = array_column($this->select($table, $field, $conditions), $field);
 
             $inserts = array_unique(array_diff($sync, $results));
             foreach ($inserts as $insert) {
@@ -605,14 +605,9 @@ class Database extends Util\Singleton
         $sync = array_unique((array) current($list));
 
         if (!empty($field) && !empty($sync)) {
-            $where = $this->whereStatement($conditions);
+            $conditions[$field] = $sync;
 
-            $in = [];
-            foreach ($sync as $value) {
-                $in[] = $this->prepare($value);
-            }
-
-            $this->query('DELETE FROM '.$this->quote($table).' WHERE '.$where.(!empty($where) ? ' AND ' : '').$this->quote($field).' IN ('.implode(', ', $in).')');
+            $this->query('DELETE FROM '.$this->quote($table).' WHERE '.$this->whereStatement($conditions));
         }
     }
 
@@ -653,26 +648,40 @@ class Database extends Util\Singleton
     {
         $result = [];
 
-        if (is_array($where)) {
-            foreach ($where as $key => $value) {
-                if (is_array($value)) {
-                    $key = strtoupper($key);
-                    $key = (in_array($key, ['AND', 'OR'])) ? $key : 'AND';
-
+        foreach ($where as $key => $value) {
+            // Query personalizzata
+            if (starts_with($key, '#')) {
+                $result[] = $this->prepareValue($key, $value);
+            } else {
+                // Ulteriori livelli di complessità
+                if (is_array($value) && in_array(strtoupper($key), ['AND', 'OR'])) {
                     $result[] = '('.$this->whereStatement($value, $key == 'AND').')';
-                } elseif (starts_with($value, '#') && ends_with($value, '#')) {
-                    $result[] = substr($value, 1, -1);
-                } elseif (starts_with($value, '%') || ends_with($value, '%')) {
+                }
+                // Condizione IN
+                elseif (is_array($value)) {
+                    if (!empty($value)) {
+                        $in = [];
+                        foreach ($value as $v) {
+                            $in[] = $this->prepareValue($key, $v);
+                        }
+
+                        $result[] = $this->quote($key).' IN ('.implode(',', $in).')';
+                    }
+                }
+                // Condizione LIKE
+                elseif (str_contains($value, '%') || str_contains($value, '_')) {
                     $result[] = $this->quote($key).' LIKE '.$this->prepareValue($key, $value);
-                } elseif (str_contains($value, '|')) {
+                }
+                // Condizione BETWEEN
+                elseif (str_contains($value, '|')) {
                     $pieces = explode('|', $value);
                     $result[] = $this->quote($key).' BETWEEN '.$this->prepareValue($key, $pieces[0]).' AND '.$this->prepareValue($key, $pieces[1]);
-                } else {
+                }
+                // Condizione di uguaglianza
+                else {
                     $result[] = $this->quote($key).' = '.$this->prepareValue($key, $value);
                 }
             }
-        } else {
-            $result[] = $where;
         }
 
         $cond = !empty($and) ? 'AND' : 'OR';

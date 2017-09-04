@@ -43,9 +43,7 @@ class API extends \Util\Singleton
      */
     public function __construct()
     {
-        $user = Auth::user();
-
-        if (!self::isAPIRequest() || (empty($user) && self::getRequest()['resource'] != 'login')) {
+        if (!self::isAPIRequest() || (!Auth::check() && self::getRequest()['resource'] != 'login')) {
             throw new InvalidArgumentException();
         }
     }
@@ -62,81 +60,70 @@ class API extends \Util\Singleton
         $user = Auth::user();
 
         $table = '';
-
         $select = '*';
-        // Selezione personalizzata
-        $display = $request['display'];
-        $select = !empty($display) ? explode(',', substr($display, 1, -1)) : $select;
-
         $where = [];
+        $order = [];
+
+        // Selezione personalizzata
+        $select = !empty($request['display']) ? explode(',', substr($request['display'], 1, -1)) : $select;
+
         // Ricerca personalizzata
-        $filter = (array) $request['filter'];
-        foreach ($filter as $key => $value) {
+        foreach ((array) $request['filter'] as $key => $value) {
+            // Rimozione delle parentesi
             $value = substr($value, 1, -1);
-            $result = [];
 
-            if (str_contains($value, ',')) {
-                $or = [];
-
-                $temp = explode(',', $value);
-                foreach ($temp as $value) {
-                    $or[] = [$key => $value];
-                }
-
-                $result[] = ['OR' => $or];
-            } else {
-                $result[$key] = $value;
-            }
-
-            $where[] = $result;
+            // Individuazione della tipologia (array o string)
+            $where[$key] = str_contains($value, ',') ? explode(',', $value) : $value;
         }
 
-        $order = [];
         // Ordinamento personalizzato
-        $order_request = (array) $request['order'];
-        foreach ($order_request as $value) {
+        foreach ((array) $request['order'] as $value) {
             $pieces = explode('|', $value);
             $order[] = empty($pieces[1]) ? $pieces[0] : [$pieces[0] => $pieces[1]];
         }
 
-        // Date di interesse
-        $updated = $request['upd'];
-        $created = $request['crd'];
-
-        // Paginazione dell'API
+        // Paginazione automatica dell'API
         $page = (int) $request['page'] ?: 0;
         $length = Settings::get('Lunghezza pagine per API');
 
         $database = Database::getConnection();
-        $dbo = $database;
 
         $kind = 'retrieve';
         $resources = self::getResources()[$kind];
         $resource = $request['resource'];
 
-        if (!in_array($resource, array_keys($resources))) {
-            $excluded = explode(',', Settings::get('Tabelle escluse per la sincronizzazione API automatica'));
-            if (!in_array($resource, $excluded)) {
-                $table = $resource;
+        if (in_array($resource, array_keys($resources))) {
+            $dbo = $database;
 
-                if (empty($order)) {
-                    $order[] = $dbo->fetchArray('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '.prepare($table)." AND EXTRA LIKE '%AUTO_INCREMENT%' AND TABLE_SCHEMA = ".prepare($dbo->getDatabaseName()))[0]['COLUMN_NAME'];
-                }
-            }
-        } else {
+            // Esecuzione delle operazioni personalizzate
             $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
             include $filename;
+        } elseif (!in_array($resource, explode(',', Settings::get('Tabelle escluse per la sincronizzazione API automatica')))) {
+            $table = $resource;
+
+            // Individuazione della colonna AUTO_INCREMENT per l'ordinamento automatico
+            if (empty($order)) {
+                $order[] = $database->fetchArray('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '.prepare($table)." AND EXTRA LIKE '%AUTO_INCREMENT%' AND TABLE_SCHEMA = ".prepare($database->getDatabaseName()))[0]['COLUMN_NAME'];
+            }
         }
 
         // Generazione automatica delle query
         if (empty($results) && !empty($table)) {
             try {
+                // Date di interesse
+                if (!empty($request['upd'])) {
+                    $where['#updated_at'] = 'updated_at >= '.prepare($request['upd']);
+                }
+                if (!empty($request['crd'])) {
+                    $where['#created_at'] = 'created_at >= '.prepare($request['crd']);
+                }
+
                 // Query per ottenere le informazioni
-                $results = $dbo->select($table, $select, $where, $order, [$page * $length, $length]);
+                $results = $database->select($table, $select, $where, $order, [$page * $length, $length]);
 
                 // Informazioni aggiuntive
-                $query = $dbo->select($table, $select, $where, $order, [], true);
-                $cont = $dbo->fetchArray('SELECT COUNT(*) as `records`, CEIL(COUNT(*) / '.$length.') as `pages` FROM ('.$query.') AS `count`');
+                $query = $database->select($table, $select, $where, $order, [], true);
+                $cont = $database->fetchArray('SELECT COUNT(*) as `records`, CEIL(COUNT(*) / '.$length.') as `pages` FROM ('.$query.') AS `count`');
                 if (!empty($cont)) {
                     $results['records'] = $cont[0]['records'];
                     $results['pages'] = $cont[0]['pages'];
@@ -207,12 +194,13 @@ class API extends \Util\Singleton
         $database = Database::getConnection();
         $dbo = $database;
 
-        $dbo->query('START TRANSACTION');
+        $database->query('START TRANSACTION');
 
+        // Esecuzione delle operazioni
         $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
         include $filename;
 
-        $dbo->query('COMMIT');
+        $database->query('COMMIT');
 
         return self::response($results);
     }
@@ -249,29 +237,32 @@ class API extends \Util\Singleton
             $resources = [];
 
             $operations = glob(DOCROOT.'/modules/*/api/{retrieve,create,update,delete}.php', GLOB_BRACE);
-            if (!empty($operations)) {
-                foreach ($operations as $operation) {
-                    $module = basename(dirname(dirname($operation)));
-                    $kind = basename($operation, '.php');
+            foreach ($operations as $operation) {
+                // Individua la tipologia e il modulo delle operazioni
+                $module = basename(dirname(dirname($operation)));
+                $kind = basename($operation, '.php');
 
-                    $resources[$kind] = (array) $resources[$kind];
+                $resources[$kind] = (array) $resources[$kind];
 
-                    $temp = str_replace('/api/', '/custom/api/', $operation);
-                    $operation = file_exists($temp) ? $temp : $operation;
+                // Controllo sulla presenza di eventuali personalizzazioni
+                $temp = str_replace('/api/', '/custom/api/', $operation);
+                $operation = file_exists($temp) ? $temp : $operation;
 
-                    $api = include $operation;
-                    $api = is_array($api) ? array_unique($api) : [];
+                // Individuazione delle operazioni
+                $api = include $operation;
+                $api = is_array($api) ? array_unique($api) : [];
 
-                    $keys = array_keys($resources[$kind]);
+                $keys = array_keys($resources[$kind]);
 
-                    $results = [];
-                    foreach ($api as $value) {
-                        $value .= in_array($value, $keys) ? $module : '';
-                        $results[$value] = $module;
-                    }
-
-                    $resources[$kind] = array_merge($resources[$kind], $results);
+                // Registrazione delle operazioni individuate
+                $results = [];
+                foreach ($api as $value) {
+                    $value .= in_array($value, $keys) ? $module : '';
+                    $results[$value] = $module;
                 }
+
+                // Salvataggio delle operazioni
+                $resources[$kind] = array_merge($resources[$kind], $results);
             }
 
             self::$resources = $resources;
@@ -289,16 +280,19 @@ class API extends \Util\Singleton
      */
     public static function response($array)
     {
+        // Controllo sulla compatibilità dell'API
         if (!self::isCompatible()) {
             $array = [
                 'status' => self::$status['incompatible']['code'],
             ];
         }
 
+        // Agiunta dello status di default
         if (empty($array['status'])) {
             $array['status'] = self::$status['ok']['code'];
         }
 
+        // Aggiunta del messaggio in base allo status
         if (empty($array['message'])) {
             $codes = array_column(self::$status, 'code');
             $messages = array_column(self::$status, 'message');
@@ -307,6 +301,7 @@ class API extends \Util\Singleton
         }
 
         $flags = JSON_FORCE_OBJECT;
+        // Beautify forzato dei risultati
         if (get('beautify') !== null) {
             $flags |= JSON_PRETTY_PRINT;
         }
@@ -339,10 +334,15 @@ class API extends \Util\Singleton
      */
     public static function getRequest()
     {
-        $request = (array) json_decode(file_get_contents('php://input'), true);
+        $request = [];
 
-        if ($_SERVER['REQUEST_METHOD'] == 'GET' && empty($request)) {
-            $request = Filter::getGET();
+        if (self::isAPIRequest()) {
+            $request = (array) json_decode(file_get_contents('php://input'), true);
+
+            // Fallback nel caso la richiesta sia effettuata da browser
+            if ($_SERVER['REQUEST_METHOD'] == 'GET' && empty($request)) {
+                $request = Filter::getGET();
+            }
         }
 
         return $request;

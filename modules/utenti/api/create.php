@@ -10,6 +10,7 @@ switch ($resource) {
             $tokens = $database->fetchArray('SELECT `token` FROM `zz_tokens` WHERE `enabled` = 1 AND `id_utente` = '.prepare($user['id_utente']));
             if (empty($tokens)) {
                 $token = secure_random_string();
+
                 $database->insert('zz_tokens', [
                     'id_utente' => $user['id_utente'],
                     'token' => $token,
@@ -38,6 +39,7 @@ switch ($resource) {
     // Operazione di logout
     case 'logout':
         if (!empty($request['token']) && !empty($user)) {
+            // Cancellazione della chiave
             $database->query('DELETE FROM `zz_tokens` WHERE `token` = '.prepare($request['token']).' AND `id_utente` = '.prepare($user['id_utente']));
         } else {
             $results = [

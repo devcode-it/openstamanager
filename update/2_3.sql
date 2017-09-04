@@ -680,7 +680,7 @@ ALTER TABLE `zz_semaphores` ADD FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(
 CREATE TABLE IF NOT EXISTS `zz_tokens` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_utente` int(11) NOT NULL,
-  `token` varchar(255) NOT NULL UNIQUE,
+  `token` varchar(255) NOT NULL,
   `descrizione` varchar(255),
   `enabled` boolean NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),

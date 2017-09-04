@@ -90,7 +90,7 @@ In particolare, ogni modulo può specificare una determinata serie di operazioni
 Di seguito lo schema attraverso cui l'API individua la presenza delle possibili richieste supportate dai moduli (cartelle **api/** e **custom/api/**):
 
 - `POST` - File `create.php`.
-- `GET` - File `eetrieve.php`.
+- `GET` - File `retrieve.php`.
 - `PUT` - File `update.php`.
 - `DELETE` - File `delete.php`.
 

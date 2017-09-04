@@ -51,6 +51,7 @@ class Auth extends \Util\Singleton
         $database = Database::getConnection();
 
         if ($database->isInstalled()) {
+            // Controllo dell'accesso da API
             if (API::isAPIRequest()) {
                 $token = API::getRequest()['token'];
 
@@ -81,6 +82,7 @@ class Auth extends \Util\Singleton
     {
         session_regenerate_id();
 
+        // Controllo sulla disponibilità dell'accesso (brute-forcing non in corso)
         if (self::isBrute()) {
             return false;
         }
@@ -105,15 +107,18 @@ class Auth extends \Util\Singleton
                     $this->password_check($password, $user['password'], $user['id_utente']) &&
                     !empty($module)
                 ) {
+                    // Accesso completato
                     $log['id_utente'] = $this->infos['id_utente'];
                     $log['stato'] = self::$status['success']['code'];
 
+                    // Salvataggio nella sessione
                     $this->saveToSession();
                 } else {
                     if (empty($module)) {
                         $log['stato'] = self::$status['unauthorized']['code'];
                     }
 
+                    // Logout automatico
                     $this->destory();
                 }
             } else {
@@ -121,6 +126,7 @@ class Auth extends \Util\Singleton
             }
         }
 
+        // Salvataggio dello stato nella sessione
         if ($log['stato'] != self::$status['success']['code']) {
             foreach (self::$status as $key => $value) {
                 if ($log['stato'] == $value['code']) {
@@ -130,6 +136,7 @@ class Auth extends \Util\Singleton
             }
         }
 
+        // Salvataggio del tentativo nel database
         $database->insert('zz_logs', $log);
 
         return $this->isAuthenticated();

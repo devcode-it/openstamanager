@@ -666,15 +666,15 @@ ALTER TABLE `zz_permissions` ADD FOREIGN KEY (`idmodule`) REFERENCES `zz_modules
 ALTER TABLE `zz_plugins` ADD FOREIGN KEY (`idmodule_from`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE, ADD FOREIGN KEY (`idmodule_to`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_users
-ALTER TABLE `zz_users` CHANGE `idutente` `id_utente` int(11) NOT NULL AUTO_INCREMENT, ADD FOREIGN KEY (`idgruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE;
+ALTER TABLE `zz_users` CHANGE `idutente` `id` int(11) NOT NULL AUTO_INCREMENT, ADD FOREIGN KEY (`idgruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_logs
 ALTER TABLE `zz_logs` DROP `password`, CHANGE `idutente` `id_utente` int(11), CHANGE `timestamp` `timestamp` datetime;
 UPDATE `zz_logs` SET `id_utente` = NULL WHERE `id_utente` = 0;
-ALTER TABLE `zz_logs` ADD FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id_utente`) ON DELETE CASCADE;
+ALTER TABLE `zz_logs` ADD FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_semaphores
-ALTER TABLE `zz_semaphores` ADD FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id_utente`) ON DELETE CASCADE;
+ALTER TABLE `zz_semaphores` ADD FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta della tabella per gestire le chiavi di accesso all'API
 CREATE TABLE IF NOT EXISTS `zz_tokens` (
@@ -684,7 +684,7 @@ CREATE TABLE IF NOT EXISTS `zz_tokens` (
   `descrizione` varchar(255),
   `enabled` boolean NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id_utente`) ON DELETE CASCADE
+  FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Modifica di an_sedi per sostituire le nazioni con i corrispettivi nella tabella apposita

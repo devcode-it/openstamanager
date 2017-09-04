@@ -91,6 +91,39 @@ if (str_contains($version, 'beta')) {
 			</div>';
 }
 
+// Controllo se è una beta e in caso mostro un warning
+if (Auth::isBrute()) {
+    echo '
+            <div class="box box-danger box-center" id="brute">
+                <div class="box-header with-border text-center">
+                    <h3 class="box-title">'._('Attenzione').'</h3>
+                </div>
+
+                <div class="box-body text-center">
+                <p>'._('Sono stati effettuati troppi tentativi di accesso consecutivi!').'</p>
+                <p>'._('Tempo rimanente (in secondi)').': <span id="brute-timeout">'.(Auth::getBruteTimeout() + 1).'</span></p>
+                </div>
+            </div>
+            <script>
+            $(document).ready(function(){
+                $(".login-box").fadeOut();
+                brute();
+            });
+
+            function brute() {
+                var value = parseFloat($("#brute-timeout").html()) - 1;
+                $("#brute-timeout").html(value);
+
+                if(value > 0){
+                    setTimeout("brute()", 1000);
+                } else{
+                    $("#brute").fadeOut();
+                    $(".login-box").fadeIn();
+                }
+            }
+            </script>';
+}
+
 if (!empty($_SESSION['errors'])) {
     echo '
             <script>

@@ -13,10 +13,10 @@ include_once $docroot.'/templates/pdfgen_variables.php';
 /*
     Dati scadenzario
 */
-if ($html->form('type') == 'clienti') {
+if (get('type') == 'clienti') {
     $titolo = 'Scadenzario clienti';
     $add_where = "AND an_tipianagrafiche.descrizione='Cliente'";
-} elseif ($html->form('type') == 'fornitori') {
+} elseif (get('type') == 'fornitori') {
     $titolo = 'Scadenzario fornitori';
     $add_where = "AND an_tipianagrafiche.descrizione='Fornitore'";
 } else {

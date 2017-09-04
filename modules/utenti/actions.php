@@ -7,14 +7,14 @@ $id_utente = filter('id_utente');
 switch (filter('op')) {
     // Abilita utente
     case 'enable':
-        if ($dbo->query('UPDATE zz_users SET enabled=1 WHERE id_utente='.prepare($id_utente))) {
+        if ($dbo->query('UPDATE zz_users SET enabled=1 WHERE id='.prepare($id_utente))) {
             $_SESSION['infos'][] = _('Utente abilitato!');
         }
         break;
 
     // Disabilita utente
     case 'disable':
-        if ($dbo->query('UPDATE zz_users SET enabled=0 WHERE id_utente='.prepare($id_utente))) {
+        if ($dbo->query('UPDATE zz_users SET enabled=0 WHERE id='.prepare($id_utente))) {
             $_SESSION['infos'][] = _('Utente disabilitato!');
         }
         break;
@@ -34,7 +34,7 @@ switch (filter('op')) {
         } elseif ($password != $password_rep) {
             $_SESSION['errors'][] = _('Le password non coincidono');
         } else {
-            $dbo->query('UPDATE zz_users SET password='.prepare(Auth::hashPassword($password)).' WHERE id_utente='.prepare($id_utente));
+            $dbo->query('UPDATE zz_users SET password='.prepare(Auth::hashPassword($password)).' WHERE id='.prepare($id_utente));
 
             $_SESSION['infos'][] = _('Password aggiornata!');
         }
@@ -42,13 +42,13 @@ switch (filter('op')) {
         $username = filter('username');
 
         // Se ho modificato l'username, verifico che questo non sia già stato usato
-        $rs = $dbo->fetchArray('SELECT username FROM zz_users WHERE id_utente='.prepare($id_utente));
+        $rs = $dbo->fetchArray('SELECT username FROM zz_users WHERE id='.prepare($id_utente));
 
         if ($rs[0]['username'] != $username) {
-            $n = $dbo->fetchNum('SELECT id_utente FROM zz_users WHERE username='.prepare($username));
+            $n = $dbo->fetchNum('SELECT id FROM zz_users WHERE username='.prepare($username));
 
             if ($n == 0) {
-                $dbo->query('UPDATE zz_users SET username='.prepare($username).' WHERE id_utente='.prepare($id_utente));
+                $dbo->query('UPDATE zz_users SET username='.prepare($username).' WHERE id='.prepare($id_utente));
 
                 $_SESSION['infos'][] = _('Username aggiornato!');
             } else {
@@ -111,7 +111,7 @@ switch (filter('op')) {
 
     // Elimina utente
    case 'delete':
-        if ($dbo->query('DELETE FROM zz_users WHERE id_utente='.prepare($id_utente))) {
+        if ($dbo->query('DELETE FROM zz_users WHERE id='.prepare($id_utente))) {
             $_SESSION['infos'][] = _('Utente eliminato!');
         }
         break;

@@ -5,8 +5,7 @@ function serverError()
     $error = error_get_last();
     if ($error['type'] == E_ERROR) {
         ob_end_clean();
-        print_r($error);
-        die(API::error('serverError'));
+        echo API::error('serverError');
     }
 }
 

@@ -17,9 +17,24 @@ switch ($resource) {
                 $token = $tokens[0]['token'];
             }
 
-            $results = $dbo->fetchArray('SELECT `ragione_sociale`, `codice`, `piva`, `codice_fiscale`, `indirizzo`, `citta`, `provincia`, (SELECT `nome` FROM `an_nazioni` WHERE `an_nazioni`.`id` = `an_anagrafiche`.`id_nazione`) AS nazione, `telefono`, `fax`,  `indirizzo`, `citta`, `provincia`, `indirizzo`, `citta`, `an_anagrafiche`.`email` FROM `zz_users` LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica` WHERE `id_utente` = '.prepare($user['id_utente']))[0];
+            $results = $dbo->fetchArray('SELECT `ragione_sociale`, `codice`, `piva`, `codice_fiscale`, `indirizzo`, `citta`, `provincia`, (SELECT `nome` FROM `an_nazioni` WHERE `an_nazioni`.`id` = `an_anagrafiche`.`id_nazione`) AS nazione, `telefono`, `fax`, `cellulare`, `an_anagrafiche`.`email` FROM `zz_users` LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica` WHERE `id` = '.prepare($user['id_utente']))[0];
 
             $results['token'] = $token;
+        } else {
+            $results = [
+                'status' => API::getStatus()['unauthorized']['code'],
+            ];
+
+            if (Auth::isBrute()) {
+                $results['timeout'] = Auth::getBruteTimeout();
+            }
+        }
+
+        break;
+
+    case 'logout':
+        if (!empty($request['token']) && !empty($user)) {
+            $database->query('DELETE FROM `zz_tokens` WHERE `token` = '.prepare($request['token']).' AND `id_utente` = '.prepare($user['id_utente']));
         } else {
             $results = [
                 'status' => API::getStatus()['unauthorized']['code'],

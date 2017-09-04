@@ -10,7 +10,7 @@ $id_utente = filter('id_utente');
 if (!empty($id_utente)) {
     $value = 'change_pwd';
 
-    $rs = $dbo->fetchArray('SELECT username FROM zz_users WHERE id_utente='.prepare($id_utente));
+    $rs = $dbo->fetchArray('SELECT username FROM zz_users WHERE id='.prepare($id_utente));
     $username = $rs[0]['username'];
     $message = _('Modifica');
 } else {

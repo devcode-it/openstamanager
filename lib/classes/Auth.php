@@ -33,6 +33,12 @@ class Auth extends \Util\Singleton
         'options' => [],
     ];
 
+    /** @var int Opzioni per la protezione contro attacchi brute-force */
+    protected static $brute = [
+        'attemps' => 3,
+        'timeout' => 180,
+    ];
+
     /** @var array Informazioni riguardanti l'utente autenticato */
     protected $infos;
     /** @var string Nome del primo modulo su cui l'utente ha permessi di navigazione */
@@ -73,6 +79,10 @@ class Auth extends \Util\Singleton
     {
         session_regenerate_id();
 
+        if (self::isBrute()) {
+            return false;
+        }
+
         $database = Database::getConnection();
 
         $log = [];
@@ -80,7 +90,7 @@ class Auth extends \Util\Singleton
         $log['ip'] = get_client_ip();
         $log['stato'] = self::$status['failed']['code'];
 
-        $users = $database->fetchArray('SELECT id_utente, password, enabled FROM zz_users WHERE username = '.prepare($username).' LIMIT 1');
+        $users = $database->fetchArray('SELECT id AS id_utente, password, enabled FROM zz_users WHERE username = '.prepare($username).' LIMIT 1');
         if (!empty($users)) {
             $user = $users[0];
 
@@ -162,7 +172,7 @@ class Auth extends \Util\Singleton
      */
     protected function saveToSession()
     {
-        if(session_status() == PHP_SESSION_ACTIVE && $this->isAuthenticated()){
+        if (session_status() == PHP_SESSION_ACTIVE && $this->isAuthenticated()) {
             foreach ($this->infos as $key => $value) {
                 $_SESSION[$key] = $value;
             }
@@ -185,7 +195,7 @@ class Auth extends \Util\Singleton
         $database = Database::getConnection();
 
         try {
-            $results = $database->fetchArray('SELECT id_utente, idanagrafica, username, (SELECT nome FROM zz_groups WHERE id=idgruppo) AS gruppo FROM zz_users WHERE id_utente = '.prepare($user_id).' AND enabled = 1 LIMIT 1', false, ['session' => false]);
+            $results = $database->fetchArray('SELECT id AS id_utente, idanagrafica, username, (SELECT nome FROM zz_groups WHERE id=idgruppo) AS gruppo FROM zz_users WHERE id = '.prepare($user_id).' AND enabled = 1 LIMIT 1', false, ['session' => false]);
 
             if (!empty($results)) {
                 $results[0]['is_admin'] = ($results[0]['gruppo'] == 'Amministratori');
@@ -348,5 +358,33 @@ class Auth extends \Util\Singleton
     public static function firstModule()
     {
         return self::getInstance()->getFirstModule();
+    }
+
+    /**
+     * Controlla se sono in corso molti tentativi di accesso (possibile brute-forcing).
+     *
+     * @return bool
+     */
+    public static function isBrute()
+    {
+        $database = Database::getConnection();
+
+        $results = $database->fetchArray('SELECT COUNT(*) AS tot FROM zz_logs WHERE ip = '.prepare(get_client_ip()).' AND stato = '.prepare(self::getStatus()['failed']['code']).' AND DATE_ADD(created_at, INTERVAL '.self::$brute['timeout'].' SECOND) >= NOW()');
+
+        return $results[0]['tot'] > self::$brute['attemps'];
+    }
+
+    /**
+     * Restituisce il tempo di attesa rimanente per lo sblocco automatico dellla protezione contro attacchi brute-forc.
+     *
+     * @return int
+     */
+    public static function getBruteTimeout()
+    {
+        $database = Database::getConnection();
+
+        $results = $database->fetchArray('SELECT TIME_TO_SEC(TIMEDIFF(DATE_ADD(created_at, INTERVAL '.self::$brute['timeout'].' SECOND), NOW())) AS diff FROM zz_logs WHERE ip = '.prepare(get_client_ip()).' AND stato = '.prepare(self::getStatus()['failed']['code']).' AND DATE_ADD(created_at, INTERVAL '.self::$brute['timeout'].' SECOND) >= NOW() ORDER BY created_at DESC LIMIT 1');
+
+        return intval($results[0]['diff']);
     }
 }

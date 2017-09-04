@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$idconto = $html->form('idconto');
+$idconto = get('idconto');
 $module_name = 'Piano dei conti';
 
 // carica report html
@@ -11,7 +11,7 @@ $body = file_get_contents($docroot.'/templates/partitario_mastrino/partitario_bo
 include_once $docroot.'/templates/pdfgen_variables.php';
 
 // Calcolo il percorso piano dei conti
-if ($html->form('lev') == '3') {
+if (get('lev') == '3') {
     $rs = $dbo->fetchArray("SELECT idpianodeiconti2, CONCAT_WS(' ', numero, descrizione ) AS descrizione FROM co_pianodeiconti3 WHERE id=\"".$idconto.'"');
     $percorso = $rs[0]['descrizione'];
     $idpianodeiconti2 = $rs[0]['idpianodeiconti2'];
@@ -24,7 +24,7 @@ if ($html->form('lev') == '3') {
 
     ($rs[0]['descrizione'] == '01 Patrimoniale') ? $descrizione = 'Stato patrimoniale' : $descrizione = 'Conto economico';
     $percorso = $descrizione.'<br>&nbsp;&nbsp;'.$percorso;
-} elseif ($html->form('lev') == '2') {
+} elseif (get('lev') == '2') {
     $rs = $dbo->fetchArray("SELECT idpianodeiconti1, CONCAT_WS(' ', numero, descrizione ) AS descrizione FROM co_pianodeiconti2 WHERE id=\"".$idconto.'"');
     $percorso = $rs[0]['descrizione'].'<br>&nbsp;&nbsp;&nbsp;&nbsp;'.$percorso;
     $idpianodeiconti1 = $rs[0]['idpianodeiconti1'];
@@ -33,7 +33,7 @@ if ($html->form('lev') == '3') {
 
     ($rs[0]['descrizione'] == '01 Patrimoniale') ? $descrizione = 'Stato patrimoniale' : $descrizione = 'Conto economico';
     $percorso = $descrizione.'<br>&nbsp;&nbsp;'.$percorso;
-} elseif ($html->form('lev') == '1') {
+} elseif (get('lev') == '1') {
     $rs = $dbo->fetchArray("SELECT CONCAT_WS(' ', numero, descrizione ) AS descrizione FROM co_pianodeiconti1 WHERE id=\"".$idconto.'"');
 
     ($rs[0]['descrizione'] == '01 Patrimoniale') ? $descrizione = 'Stato patrimoniale' : $descrizione = 'Conto economico';
@@ -46,7 +46,7 @@ $body = str_replace('|period_start|', Translator::dateToLocale($_SESSION['period
 $body = str_replace('|period_end|', Translator::dateToLocale($_SESSION['period_end']), $body);
 
 // Stampa da livello 3
-if ($html->form('lev') == '3') {
+if (get('lev') == '3') {
     $body .= "<table style='table-layout:fixed; border-bottom:1px solid #777; border-right:1px solid #777; border-left:1px solid #777;' cellpadding='0' cellspacing='0'>
                     <col width='80'><col width='452'><col width='80'><col width='80'>
                     <tbody>\n";
@@ -101,7 +101,7 @@ if ($html->form('lev') == '3') {
 }
 
 // Stampa da livello 2
-elseif ($html->form('lev') == '2') {
+elseif (get('lev') == '2') {
     $body .= "<table style='table-layout:fixed; border-bottom:1px solid #777; border-right:1px solid #777; border-left:1px solid #777;' cellpadding='0' cellspacing='0'>
                     <col width='80'><col width='452'><col width='80'><col width='80'>
                     <tbody>\n";
@@ -155,7 +155,7 @@ elseif ($html->form('lev') == '2') {
 }
 
 // Stampa completa bilancio
-elseif ($html->form('lev') == '1') {
+elseif (get('lev') == '1') {
     $ricavi = 0;
     $costi = 0;
     $totale_attivita = 0;

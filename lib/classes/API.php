@@ -59,6 +59,8 @@ class API extends \Util\Singleton
      */
     public function retrieve($request)
     {
+        $user = Auth::user();
+
         $table = '';
 
         $select = '*';
@@ -192,6 +194,8 @@ class API extends \Util\Singleton
      */
     protected function fileRequest($request, $kind)
     {
+        $user = Auth::user();
+
         $resources = self::getResources()[$kind];
         $resource = $request['resource'];
 

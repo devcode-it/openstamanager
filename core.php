@@ -56,41 +56,43 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Handler\RotatingFileHandler;
 
 $handlers = [];
-// File di log di base (logs/error.log)
-$handlers[] = new StreamHandler(__DIR__.'/logs/error.log', Monolog\Logger::ERROR);
-$handlers[] = new StreamHandler(__DIR__.'/logs/setup.log', Monolog\Logger::EMERGENCY);
+if (!API::isAPIRequest()) {
+    // File di log di base (logs/error.log)
+    $handlers[] = new StreamHandler(__DIR__.'/logs/error.log', Monolog\Logger::ERROR);
+    $handlers[] = new StreamHandler(__DIR__.'/logs/setup.log', Monolog\Logger::EMERGENCY);
 
-// Impostazioni di debug
-if (!empty($debug) && !API::isAPIRequest()) {
-    // Ignoramento degli avvertimenti e delle informazioni relative alla deprecazione di componenti
-    if (empty($strict)) {
-        error_reporting(E_ALL & ~E_NOTICE & ~E_USER_DEPRECATED);
-    }
-
-    // File di log ordinato in base alla data
-    $handlers[] = new RotatingFileHandler(__DIR__.'/logs/error.log', 0, Monolog\Logger::ERROR);
-    $handlers[] = new RotatingFileHandler(__DIR__.'/logs/setup.log', 0, Monolog\Logger::EMERGENCY);
-
-    if (version_compare(PHP_VERSION, '5.5.9') >= 0) {
-        $prettyPageHandler = new Whoops\Handler\PrettyPageHandler();
-
-        // Imposta Whoops come gestore delle eccezioni di default
-        $whoops = new Whoops\Run();
-        $whoops->pushHandler($prettyPageHandler);
-
-        // Abilita la gestione degli errori nel caso la richiesta sia di tipo AJAX
-        if (Whoops\Util\Misc::isAjaxRequest()) {
-            $whoops->pushHandler(new Whoops\Handler\JsonResponseHandler());
+    // Impostazioni di debug
+    if (!empty($debug)) {
+        // Ignoramento degli avvertimenti e delle informazioni relative alla deprecazione di componenti
+        if (empty($strict)) {
+            error_reporting(E_ALL & ~E_NOTICE & ~E_USER_DEPRECATED);
         }
 
-        $whoops->register();
-    }
+        // File di log ordinato in base alla data
+        $handlers[] = new RotatingFileHandler(__DIR__.'/logs/error.log', 0, Monolog\Logger::ERROR);
+        $handlers[] = new RotatingFileHandler(__DIR__.'/logs/setup.log', 0, Monolog\Logger::EMERGENCY);
 
-    // Istanziamento della barra di debug
-    $debugbar = new DebugBar\StandardDebugBar();
-    $debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
+        if (version_compare(PHP_VERSION, '5.5.9') >= 0) {
+            $prettyPageHandler = new Whoops\Handler\PrettyPageHandler();
+
+            // Imposta Whoops come gestore delle eccezioni di default
+            $whoops = new Whoops\Run();
+            $whoops->pushHandler($prettyPageHandler);
+
+            // Abilita la gestione degli errori nel caso la richiesta sia di tipo AJAX
+            if (Whoops\Util\Misc::isAjaxRequest()) {
+                $whoops->pushHandler(new Whoops\Handler\JsonResponseHandler());
+            }
+
+            $whoops->register();
+        }
+    }
 } else {
-    // Disabilita la segnalazione degli errori
+    $handlers[] = new StreamHandler(__DIR__.'/logs/api.log', Monolog\Logger::ERROR);
+}
+
+// Disabilita la segnalazione degli errori (se il debug è disabilitato)
+if (empty($debug)) {
     error_reporting(0);
 }
 
@@ -100,7 +102,7 @@ foreach ($handlers as $handler) {
     $logger->pushHandler($handler->setFormatter($monologFormatter));
 }
 
-// Imposta Monolog come gestore degli errori (si sovrappone a Whoops)
+// Imposta Monolog come gestore degli errori
 Monolog\ErrorHandler::register($logger);
 
 // Istanziamento della gestione di date e numeri
@@ -117,6 +119,7 @@ $translator->addLocalePath($docroot.'/modules/*/locale');
 $version = Update::getVersion();
 $revision = Update::getRevision();
 
+// Inizializzazione della sessione
 if (!API::isAPIRequest()) {
     session_set_cookie_params(0, $rootdir);
     session_start();
@@ -207,7 +210,10 @@ if (!API::isAPIRequest()) {
     }
 
     if ($continue) {
-        if (!empty($debugbar)) {
+        // Istanziamento della barra di debug
+        if (!empty($debug)) {
+            $debugbar = new DebugBar\StandardDebugBar();
+            $debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
             $debugbar->addCollector(new DebugBar\DataCollector\PDO\PDOCollector($dbo->getPDO()));
         }
 
@@ -235,7 +241,7 @@ if (!API::isAPIRequest()) {
         // Retrocompatibilità
         $user_idanagrafica = $user['idanagrafica'];
 
-        $rs = $dbo->fetchArray('SELECT * FROM `zz_modules` LEFT JOIN (SELECT `idmodule`, `permessi` FROM `zz_permissions` WHERE `idgruppo`=(SELECT `idgruppo` FROM `zz_users` WHERE `id_utente`='.prepare($_SESSION['id_utente']).')) AS `zz_permissions` ON `zz_modules`.`id`=`zz_permissions`.`idmodule` LEFT JOIN (SELECT `idmodule`, `clause` FROM `zz_group_module` WHERE `idgruppo`=(SELECT `idgruppo` FROM `zz_users` WHERE `id_utente`='.prepare($_SESSION['id_utente']).')) AS `zz_group_module` ON `zz_modules`.`id`=`zz_group_module`.`idmodule`');
+        $rs = $dbo->fetchArray('SELECT * FROM `zz_modules` LEFT JOIN (SELECT `idmodule`, `permessi` FROM `zz_permissions` WHERE `idgruppo`=(SELECT `idgruppo` FROM `zz_users` WHERE `id`='.prepare($_SESSION['id_utente']).')) AS `zz_permissions` ON `zz_modules`.`id`=`zz_permissions`.`idmodule` LEFT JOIN (SELECT `idmodule`, `clause` FROM `zz_group_module` WHERE `idgruppo`=(SELECT `idgruppo` FROM `zz_users` WHERE `id`='.prepare($_SESSION['id_utente']).')) AS `zz_group_module` ON `zz_modules`.`id`=`zz_group_module`.`idmodule`');
 
         $modules_info = [];
         for ($i = 0; $i < count($rs); ++$i) {
@@ -260,8 +266,8 @@ if (!API::isAPIRequest()) {
 
     // Istanziamento di HTMLHelper (retrocompatibilità)
     $html = new HTMLHelper();
-}
 
-// Variabili GET e POST
-$post = Filter::getPOST();
-$get = Filter::getGET();
+    // Variabili GET e POST
+    $post = Filter::getPOST();
+    $get = Filter::getGET();
+}

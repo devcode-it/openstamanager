@@ -38,7 +38,7 @@ class Modules
 
             $user = Auth::user();
 
-            $results = $database->fetchArray('SELECT * FROM `zz_modules` LEFT JOIN (SELECT `idmodule`, `permessi` FROM `zz_permissions` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id_utente` = '.prepare($user['id_utente']).')) AS `zz_permissions` ON `zz_modules`.`id`=`zz_permissions`.`idmodule` LEFT JOIN (SELECT `idmodule`, `clause`, `position` FROM `zz_group_module` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id_utente` = '.prepare($user['id_utente']).') AND `enabled` = 1) AS `zz_group_module` ON `zz_modules`.`id`=`zz_group_module`.`idmodule`');
+            $results = $database->fetchArray('SELECT * FROM `zz_modules` LEFT JOIN (SELECT `idmodule`, `permessi` FROM `zz_permissions` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).')) AS `zz_permissions` ON `zz_modules`.`id`=`zz_permissions`.`idmodule` LEFT JOIN (SELECT `idmodule`, `clause`, `position` FROM `zz_group_module` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).') AND `enabled` = 1) AS `zz_group_module` ON `zz_modules`.`id`=`zz_group_module`.`idmodule`');
 
             $modules = [];
             $additionals = [];
@@ -210,7 +210,7 @@ class Modules
 
                 $user = Auth::user();
 
-                $datas = $database->fetchArray('SELECT * FROM `zz_views` WHERE `id_module`='.prepare($id).' AND `id` IN (SELECT `id_vista` FROM `zz_group_view` WHERE `id_gruppo`=(SELECT `idgruppo` FROM `zz_users` WHERE `id_utente`='.prepare($user['id_utente']).')) ORDER BY `order` ASC');
+                $datas = $database->fetchArray('SELECT * FROM `zz_views` WHERE `id_module`='.prepare($id).' AND `id` IN (SELECT `id_vista` FROM `zz_group_view` WHERE `id_gruppo`=(SELECT `idgruppo` FROM `zz_users` WHERE `id`='.prepare($user['id_utente']).')) ORDER BY `order` ASC');
 
                 if (!empty($datas)) {
                     $select = '';

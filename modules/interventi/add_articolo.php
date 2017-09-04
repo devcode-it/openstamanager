@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 // Prezzo modificabile solo se l'utente loggato è un tecnico (+ può vedere i prezzi) o se è amministratore
-$rs = $dbo->fetchArray('SELECT nome FROM zz_groups WHERE id IN(SELECT idgruppo FROM zz_users WHERE id_utente='.prepare($_SESSION['id_utente']).')');
+$rs = $dbo->fetchArray('SELECT nome FROM zz_groups WHERE id IN(SELECT idgruppo FROM zz_users WHERE id='.prepare($_SESSION['id_utente']).')');
 for ($i = 0; $i < count($rs); ++$i) {
     $gruppi[$i] = $rs[$i]['nome'];
 }

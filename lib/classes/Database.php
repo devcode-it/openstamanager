@@ -393,12 +393,14 @@ class Database extends Util\Singleton
             $array = [$array];
         }
 
+        // Chiavi dei valori
         $keys = [];
         $temp = array_keys($array[0]);
         foreach ($temp as $value) {
             $keys[] = $this->quote($value);
         }
 
+        // Valori da inserire
         $inserts = [];
         foreach ($array as $values) {
             foreach ($values as $key => $value) {
@@ -408,6 +410,7 @@ class Database extends Util\Singleton
             $inserts[] = '('.implode(array_values($values), ', ').')';
         }
 
+        // Costruzione della query
         $query = 'INSERT INTO '.$this->quote($table).' ('.implode(',', $keys).') VALUES '.implode($inserts, ', ');
 
         if (!empty($return)) {
@@ -435,16 +438,19 @@ class Database extends Util\Singleton
             throw new UnexpectedValueException();
         }
 
+        // Valori da aggiornare
         $update = [];
         foreach ($array as $key => $value) {
             $update[] = $this->quote($key).' = '.$this->prepareValue($key, $value);
         }
 
+        // Condizioni di aggiornamento
         $where = [];
         foreach ($conditions as $key => $value) {
             $where[] = $this->quote($key).' = '.$this->prepareValue($key, $value);
         }
 
+        // Costruzione della query
         $query = 'UPDATE '.$this->quote($table).' SET '.implode($update, ', ').' WHERE '.implode($where, ' AND ');
 
         if (!empty($return)) {
@@ -478,19 +484,23 @@ class Database extends Util\Singleton
             throw new UnexpectedValueException();
         }
 
+        // Valori da ottenere
         $select = [];
         foreach ((array) $array as $key => $value) {
             $select[] = $value.(is_numeric($key) ? '' : 'AS '.$this->quote($key));
         }
         $select = !empty($select) ? $select : ['*'];
 
+        // Costruzione della query
         $query = 'SELECT '.implode(', ', $select).' FROM '.$this->quote($table);
 
+        // Condizioni di selezione
         $where = $this->whereStatement($conditions);
         if (!empty($where)) {
             $query .= ' WHERE '.$where;
         }
 
+        // Impostazioni di ordinamento
         if (!empty($order)) {
             $list = [];
             $allow = ['ASC', 'DESC'];
@@ -507,6 +517,7 @@ class Database extends Util\Singleton
             $query .= ' ORDER BY '.implode(', ', $list);
         }
 
+        // Eventuali limiti
         if (!empty($limit)) {
             $query .= ' LIMIT '.(is_array($limit) ? $limit[0].', '.$limit[1] : $limit);
         }

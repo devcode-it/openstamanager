@@ -12,9 +12,9 @@ if (!empty($rs_art)) {
     echo '
 <table class="table table-striped table-hover table-condensed">
     <tr>
-        <th>'._('Tecnico').'</th>
-        <th width="25%">'._('dal').'</th>
-        <th width="25%">'._('al').'</th>
+        <th>'.tr('Tecnico').'</th>
+        <th width="25%">'.tr('dal').'</th>
+        <th width="25%">'.tr('al').'</th>
         <th width="5%"></th>
     </tr>';
 
@@ -42,7 +42,7 @@ if (!empty($rs_art)) {
         // Pulsanti per aggiornamento date tecnici
         echo '
         <td>
-            <a class="btn btn-danger ask" data-backto="record-edit" data-op="deltech" data-id="'.$r['id'].'" data-msg="'._("Rimuovere il tecnico responsabile dell'automezzo?").'">
+            <a class="btn btn-danger ask" data-backto="record-edit" data-op="deltech" data-id="'.$r['id'].'" data-msg="'.tr("Rimuovere il tecnico responsabile dell'automezzo?").'">
                 <i class="fa fa-trash"></i>
             </a>
         </td>
@@ -62,5 +62,5 @@ if (!empty($rs_art)) {
 </table>';
 } else {
     echo '
-<p>'._('Nessun tecnico inserito').'...</p>';
+<p>'.tr('Nessun tecnico inserito').'...</p>';
 }

@@ -15,7 +15,7 @@ $idautomezzo = (get('idautomezzo') == 'undefined') ? '' : get('idautomezzo');
 
 if (empty($idriga)) {
     $op = 'addarticolo';
-    $button = '<i class="fa fa-plus"></i> '._('Aggiungi');
+    $button = '<i class="fa fa-plus"></i> '.tr('Aggiungi');
 
     // valori default
     $idarticolo = '';
@@ -30,7 +30,7 @@ if (empty($idriga)) {
     $idimpianto = 0;
 } else {
     $op = 'editarticolo';
-    $button = '<i class="fa fa-edit"></i> '._('Modifica');
+    $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
 
     // carico record da modificare
     $q = "SELECT *, (SELECT codice FROM mg_articoli WHERE id=mg_articoli_interventi.idarticolo) AS codice_articolo, (SELECT CONCAT(codice, ' - ', descrizione) FROM mg_articoli WHERE id=mg_articoli_interventi.idarticolo) AS descrizione_articolo FROM mg_articoli_interventi WHERE id=".prepare($idriga);
@@ -75,7 +75,7 @@ if ($idarticolo != '') {
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'._('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$idarticolo.'", "ajax-source": "articoli" ]}
+            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$idarticolo.'", "ajax-source": "articoli" ]}
         </div>
     </div>';
 
@@ -83,7 +83,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'._('Descrizione').'", "name": "descrizione", "required": 1, "value": "'.$descrizione.'" ]}
+            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "required": 1, "value": "'.$descrizione.'" ]}
         </div>
     </div>
     <br>';
@@ -92,19 +92,19 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "number", "label": "'._('Q.tà').'", "name": "qta", "required": 1, "value": "'.$qta.'", "decimals": "qta" ]}
+            {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "'.$qta.'", "decimals": "qta" ]}
         </div>';
 
 // Unità di misura
 echo '
         <div class="col-md-4">
-            {[ "type": "select", "label": "'._('Unità di misura').'", "icon-after": "add|'.Modules::getModule('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
+            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::getModule('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
         </div>';
 
 // Impianto
 echo '
         <div class="col-md-4">
-            {[ "type": "select", "label": "'._('Impianto su cui installare').'", "name": "idimpianto", "value": "'.$idimpianto.'", "ajax-source": "impianti" ]}
+            {[ "type": "select", "label": "'.tr('Impianto su cui installare').'", "name": "idimpianto", "value": "'.$idimpianto.'", "ajax-source": "impianti" ]}
         </div>
     </div>';
 
@@ -112,13 +112,13 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "number", "label": "'._('Costo unitario').'", "name": "prezzo_vendita", "required": 1, "value": "'.$prezzo_vendita.'", "icon-after": "&euro;" ]}
+            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo_vendita", "required": 1, "value": "'.$prezzo_vendita.'", "icon-after": "&euro;" ]}
         </div>';
 
 // Sconto
 echo '
         <div class="col-md-6">
-            {[ "type": "number", "label": "'._('Sconto unitario').'", "name": "sconto", "icon-after": "choice|untprc|'.$tipo_sconto.'", "value": "'.$sconto_unitario.'" ]}
+            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "icon-after": "choice|untprc|'.$tipo_sconto.'", "value": "'.$sconto_unitario.'" ]}
         </div>
     </div>';
 
@@ -127,21 +127,21 @@ echo '
     <div class="row" id="prezzi_articolo">
         <div class="col-md-4 text-center">
             <button type="button" class="btn btn-sm btn-info btn-block disabled" onclick="$(\'#prezzi\').toggleClass(\'hide\'); $(\'#prezzi\').load(\''.$rootdir."/ajax_autocomplete.php?module=Articoli&op=getprezzi&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$idanagrafica.'\');" disabled>
-                <i class="fa fa-search"></i> '._('Visualizza ultimi prezzi (cliente)').'
+                <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (cliente)').'
             </button>
             <div id="prezzi" class="hide"></div>
         </div>
 
         <div class="col-md-4 text-center">
             <button type="button" class="btn btn-sm btn-info btn-block disabled" onclick="$(\'#prezziacquisto\').toggleClass(\'hide\'); $(\'#prezziacquisto\').load(\''.$rootdir."/ajax_autocomplete.php?module=Articoli&op=getprezziacquisto&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$idanagrafica.'\');" disabled>
-                <i class="fa fa-search"></i> '._('Visualizza ultimi prezzi (acquisto)').'
+                <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (acquisto)').'
             </button>
             <div id="prezziacquisto" class="hide"></div>
         </div>
 
         <div class="col-md-4 text-center">
             <button type="button" class="btn btn-sm btn-info btn-block disabled" onclick="$(\'#prezzivendita\').toggleClass(\'hide\'); $(\'#prezzivendita\').load(\''.$rootdir."/ajax_autocomplete.php?module=Articoli&op=getprezzivendita&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$idanagrafica.'\');" disabled>
-                <i class="fa fa-search"></i> '._('Visualizza ultimi prezzi (vendita)').'
+                <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (vendita)').'
             </button>
             <div id="prezzivendita" class="hide"></div>
         </div>
@@ -177,7 +177,7 @@ echo '
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> '._('Aggiungi').'</button>
+			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
 		</div>
     </div>
 </form>';

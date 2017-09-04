@@ -22,14 +22,14 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 	<!-- INTESTAZIONE -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo _('Intestazione') ?></h3>
+			<h3 class="panel-title"><?php echo tr('Intestazione') ?></h3>
 		</div>
 
 		<div class="panel-body">
             <div class="pull-right">
-                <button type="button" class="btn btn-primary" onclick="if( confirm('Duplicare questa fattura?') ){ $('#form-copy').submit(); }"><i class="fa fa-copy"></i> <?php echo _('Duplica fattura'); ?></button>
+                <button type="button" class="btn btn-primary" onclick="if( confirm('Duplicare questa fattura?') ){ $('#form-copy').submit(); }"><i class="fa fa-copy"></i> <?php echo tr('Duplica fattura'); ?></button>
 
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo _('Salva modifiche'); ?></button>
+				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
 			</div>
 			<div class="clearfix"></div>
 
@@ -38,20 +38,20 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 if ($dir == 'uscita') {
     echo '
 				<div class="col-md-3">
-					{[ "type": "span", "label": "'._('Numero fattura').'", "name": "numero","class": "text-center", "value": "$numero$" ]}
+					{[ "type": "span", "label": "'.tr('Numero fattura').'", "name": "numero","class": "text-center", "value": "$numero$" ]}
                 </div>';
 }
 ?>
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo _('Numero secondario'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Numero secondario'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo _('Data emissione'); ?>", "maxlength": 10, "name": "data", "required": 1, "value": "$data$" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data emissione'); ?>", "maxlength": 10, "name": "data", "required": 1, "value": "$data$" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo _('Stato'); ?>", "name": "idstatodocumento", "required": 1, "values": "query=SELECT * FROM co_statidocumento", "value": "$idstatodocumento$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatodocumento", "required": 1, "values": "query=SELECT * FROM co_statidocumento", "value": "$idstatodocumento$" ]}
 				</div>
 
 			</div>
@@ -61,12 +61,12 @@ if ($dir == 'uscita') {
 					<?php
                     if ($dir == 'entrata') {
                         ?>
-						{[ "type": "select", "label": "<?php echo _('Cliente'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "clienti", "value": "$idanagrafica$" ]}
+						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "clienti", "value": "$idanagrafica$" ]}
 					<?php
 
                     } else {
                         ?>
-						{[ "type": "select", "label": "<?php echo _('Fornitore'); ?>", "name": "idanagrafica", "required": 1,  "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
+						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1,  "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
 					<?php
 
                     }
@@ -74,13 +74,13 @@ if ($dir == 'uscita') {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo _('Riferimento sede cliente'); ?>", "name": "idsede", "ajax-source": "sedi", "value": "$idsede$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Riferimento sede cliente'); ?>", "name": "idsede", "ajax-source": "sedi", "value": "$idsede$" ]}
 				</div>
 
 				<?php if ($dir == 'entrata') {
                         ?>
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo _('Agente di riferimento'); ?>", "name": "idagente", "ajax-source": "agenti", "value": "$idagente_fattura$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Agente di riferimento'); ?>", "name": "idagente", "ajax-source": "agenti", "value": "$idagente_fattura$" ]}
 				</div>
 				<?php
 
@@ -91,7 +91,7 @@ if ($dir == 'uscita') {
                     $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento = '.prepare($id_record));
                     echo '
                 <div class="col-md-3">
-                    <p><strong>'._('Scadenze').'</strong></p>';
+                    <p><strong>'.tr('Scadenze').'</strong></p>';
                     foreach ($scadenze as $scadenza) {
                         echo '
                     <p>'.Translator::dateToLocale($scadenza['scadenza']).' - '.Translator::numberToLocale($scadenza['da_pagare']).'&euro;</p>';
@@ -106,7 +106,7 @@ if ($dir == 'uscita') {
 
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo _('Tipo fattura'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, descrizione FROM co_tipidocumento WHERE dir='<?php echo $dir ?>'", "value": "$idtipodocumento$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo fattura'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, descrizione FROM co_tipidocumento WHERE dir='<?php echo $dir ?>'", "value": "$idtipodocumento$" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -117,11 +117,11 @@ if ($dir == 'uscita') {
                         $ajaxsource = 'conti-acquisti';
                     }
                     ?>
-					{[ "type": "select", "label": "<?php echo _('Conto'); ?>", "name": "idconto", "required": 1, "value": "$idconto$", "ajax-source": "<?php echo $ajaxsource ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Conto'); ?>", "name": "idconto", "required": 1, "value": "$idconto$", "ajax-source": "<?php echo $ajaxsource ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo _('Pagamento'); ?>", "name": "idpagamento", "required": 1, "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$" ]}
 				</div>
 
 			</div>
@@ -132,29 +132,29 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
                         ?>
 				<div class="row">
 					<div class="col-md-3">
-						{[ "type": "select", "label": "<?php echo _('Aspetto beni'); ?>", "name": "idaspettobeni", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_aspettobeni ORDER BY descrizione ASC", "value": "$idaspettobeni$" ]}
+						{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "idaspettobeni", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_aspettobeni ORDER BY descrizione ASC", "value": "$idaspettobeni$" ]}
 					</div>
 
 					<div class="col-md-3">
-						{[ "type": "select", "label": "<?php echo _('Causale trasporto'); ?>", "name": "idcausalet", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_causalet ORDER BY descrizione ASC", "value": "$idcausalet$" ]}
+						{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_causalet ORDER BY descrizione ASC", "value": "$idcausalet$" ]}
 					</div>
 
 					<div class="col-md-3">
-						{[ "type": "select", "label": "<?php echo _('Porto'); ?>", "name": "idporto", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_porto ORDER BY descrizione ASC", "value": "$idporto$" ]}
+						{[ "type": "select", "label": "<?php echo tr('Porto'); ?>", "name": "idporto", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_porto ORDER BY descrizione ASC", "value": "$idporto$" ]}
 					</div>
 
 					<div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo _('N<sup>o</sup> colli'); ?>", "name": "n_colli", "value": "$n_colli$" ]}
+						{[ "type": "text", "label": "<?php echo tr('N<sup>o</sup> colli'); ?>", "name": "n_colli", "value": "$n_colli$" ]}
 					</div>
 				</div>
 
                 <div class="row">
 					<div class="col-md-3">
-						{[ "type": "select", "label": "<?php echo _('Tipo di spedizione'); ?>", "name": "idspedizione", "values": "query=SELECT id, descrizione FROM dt_spedizione ORDER BY descrizione ASC", "value": "$idspedizione$" ]}
+						{[ "type": "select", "label": "<?php echo tr('Tipo di spedizione'); ?>", "name": "idspedizione", "values": "query=SELECT id, descrizione FROM dt_spedizione ORDER BY descrizione ASC", "value": "$idspedizione$" ]}
 					</div>
 
 					<div class="col-md-3">
-						{[ "type": "select", "label": "<?php echo _('Vettore'); ?>", "name": "idvettore", "values": "query=SELECT DISTINCT an_anagrafiche.idanagrafica AS id, an_anagrafiche.ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE an_tipianagrafiche_anagrafiche.idtipoanagrafica=(SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Vettore') ORDER BY descrizione ASC", "value": "$idvettore$"" ]}
+						{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "values": "query=SELECT DISTINCT an_anagrafiche.idanagrafica AS id, an_anagrafiche.ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE an_tipianagrafiche_anagrafiche.idtipoanagrafica=(SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Vettore') ORDER BY descrizione ASC", "value": "$idvettore$"" ]}
 					</div>
 				</div>
 
@@ -166,7 +166,7 @@ if ($dir == 'uscita') {
     ?>
 				<div class="row">
 					<div class="col-md-3">
-						{[ "type": "number", "label": "<?php echo _('Marca da bollo'); ?>", "name": "bollo", "value": "$bollo$" ]}
+						{[ "type": "number", "label": "<?php echo tr('Marca da bollo'); ?>", "name": "bollo", "value": "$bollo$" ]}
 					</div>
 				</div>
 <?php
@@ -205,7 +205,7 @@ if ($records[0]['stato'] == 'Pagato') {
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo _('Sconto totale') ?>", "name": "sconto_generico", "value": "$sconto_globale$", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
+                    {[ "type": "number", "label": "<?php echo tr('Sconto totale') ?>", "name": "sconto_generico", "value": "$sconto_globale$", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
 if ($records[0]['stato'] == 'Emessa') {
     echo ', "disabled" : 1';
 }
@@ -215,19 +215,19 @@ if ($records[0]['stato'] == 'Emessa') {
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo _('Note'); ?>", "name": "note", "value": "$note$" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo _('Note aggiuntive'); ?>", "name": "note_aggiuntive", "value": "$note_aggiuntive$" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Note aggiuntive'); ?>", "name": "note_aggiuntive", "value": "$note_aggiuntive$" ]}
 				</div>
 			</div>
 
 
 			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo _('Salva modifiche'); ?></button>
+				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
 			</div>
 		</div>
 	</div>
@@ -282,7 +282,7 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
 
         } else {
             ?>
-								<a class="btn btn-sm btn-primary tip"  title="<?php echo _('Nessun Intervento'); ?>" style="opacity:0.5;cursor:default;"  ><i class="fa fa-plus"></i> Intervento</a>
+								<a class="btn btn-sm btn-primary tip"  title="<?php echo tr('Nessun Intervento'); ?>" style="opacity:0.5;cursor:default;"  ><i class="fa fa-plus"></i> Intervento</a>
             <?php
 
         }
@@ -294,7 +294,7 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
 
         } else {
             ?>
-								<a class="btn btn-sm btn-primary tip"  title="<?php echo _('Nessun Preventivo'); ?>" style="opacity:0.5;cursor:default;"  ><i class="fa fa-plus"></i> Preventivo</a>
+								<a class="btn btn-sm btn-primary tip"  title="<?php echo tr('Nessun Preventivo'); ?>" style="opacity:0.5;cursor:default;"  ><i class="fa fa-plus"></i> Preventivo</a>
 							<?php
 
         }
@@ -306,7 +306,7 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
 
         } else {
             ?>
-								<a class="btn btn-sm btn-primary tip"  title="<?php echo _('Nessun Contratto'); ?>" style="opacity:0.5;cursor:default;"  ><i class="fa fa-plus"></i> Contratto</a>
+								<a class="btn btn-sm btn-primary tip"  title="<?php echo tr('Nessun Contratto'); ?>" style="opacity:0.5;cursor:default;"  ><i class="fa fa-plus"></i> Contratto</a>
 							<?php
 
         }
@@ -356,7 +356,7 @@ if ($dir == 'entrata') {
     if ($dir == 'entrata') {
         if (sizeof($campi_mancanti) > 0) {
             echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere alla stampa completa i seguenti campi dell'anagrafica:<br/><b>".implode(', ', $campi_mancanti).'</b><br/>
-            '.Modules::link('Anagrafiche', $records[0]['idanagrafica'], _('Vai alla scheda anagrafica <i class="fa fa-chevron-right"></i>'), null).'</div>';
+            '.Modules::link('Anagrafiche', $records[0]['idanagrafica'], tr('Vai alla scheda anagrafica <i class="fa fa-chevron-right"></i>'), null).'</div>';
         } else {
             if ($records[0]['descrizione_tipodoc'] == 'Fattura accompagnatoria di vendita') {
                 ?>
@@ -400,5 +400,5 @@ include $docroot.'/modules/fatture/row-list.php';
 </script>
 
 <a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo _('Elimina'); ?>
+    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>

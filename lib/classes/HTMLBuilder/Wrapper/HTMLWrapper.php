@@ -109,7 +109,7 @@ class HTMLWrapper implements WrapperInterface
         $module = \Modules::getModule($id_module);
         if (in_array($module['permessi'], ['r', 'rw'])) {
             $result = '
-<button data-href="'.ROOTDIR.'/add.php?id_module='.$id_module.$extra.'&select='.$values['id'].'&ajax=yes" data-target="#bs-popup2" data-toggle="modal" data-title="'._('Aggiungi').'" type="button" class="btn'.$classes.'">
+<button data-href="'.ROOTDIR.'/add.php?id_module='.$id_module.$extra.'&select='.$values['id'].'&ajax=yes" data-target="#bs-popup2" data-toggle="modal" data-title="'.tr('Aggiungi').'" type="button" class="btn'.$classes.'">
     <i class="fa fa-plus"></i>
 </button>';
         }
@@ -124,7 +124,7 @@ class HTMLWrapper implements WrapperInterface
         $choices = [
             [
                 'id' => 'UNT',
-                'descrizione' => _('&euro;'),
+                'descrizione' => tr('&euro;'),
             ],
             [
                 'id' => 'PRC',

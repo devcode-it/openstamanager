@@ -354,7 +354,7 @@ switch ($module_name) {
                     }
                     echo "</table>\n";
                 } else {
-                    echo '<br/>'._('Nessuna vendita di questo articolo al cliente selezionato')."...<br/>\n";
+                    echo '<br/>'.tr('Nessuna vendita di questo articolo al cliente selezionato')."...<br/>\n";
                 }
             }
             echo '</small>';
@@ -385,7 +385,7 @@ switch ($module_name) {
                 }
                 echo "</table>\n";
             } else {
-                echo '<br/>'._('Questo articolo non è mai stato venduto')."...<br/>\n";
+                echo '<br/>'.tr('Questo articolo non è mai stato venduto')."...<br/>\n";
             }
             echo '</small>';
             echo '<br/>';
@@ -416,7 +416,7 @@ switch ($module_name) {
                 }
                 echo "</table>\n";
             } else {
-                echo '<br/>'._('Questo articolo non è mai stato acquistato')."...<br/>\n";
+                echo '<br/>'.tr('Questo articolo non è mai stato acquistato')."...<br/>\n";
             }
             echo '</small>';
             echo '<br/>';
@@ -485,7 +485,7 @@ switch ($module_name) {
                 }
                 echo "</select>\n";
             } else {
-                echo _('Nessuna fattura trovata').'...';
+                echo tr('Nessuna fattura trovata').'...';
             }
         }
 
@@ -521,7 +521,7 @@ switch ($module_name) {
                 }
                 echo "</select>\n";
             } else {
-                echo _('Nessun ddt trovato')."...\n";
+                echo tr('Nessun ddt trovato')."...\n";
             }
         }
         break;

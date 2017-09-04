@@ -8,20 +8,20 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-12">
-			{[ "type": "text", "label": "<?php echo _('Nome file'); ?>", "name": "nomefile", "required": 1, "value": "" ]}
+			{[ "type": "text", "label": "<?php echo tr('Nome file'); ?>", "name": "nomefile", "required": 1, "value": "" ]}
 		</div>
 
 
 		<div class="col-md-12">
 			<a href="#" class="pull-right" id="default">[Default]</a>
-			{[ "type": "textarea", "label": "<?php echo _('Contenuto'); ?>", "name": "contenuto", "id": "contenuto_add", "required": 1, "class": "autosize", "value": "", "extra": "rows='10'" ]}
+			{[ "type": "textarea", "label": "<?php echo tr('Contenuto'); ?>", "name": "contenuto", "id": "contenuto_add", "required": 1, "class": "autosize", "value": "", "extra": "rows='10'" ]}
 		</div>
 	</div>
 
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo _('Aggiungi'); ?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 		</div>
 	</div>
 </form>

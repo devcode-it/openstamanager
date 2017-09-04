@@ -17,7 +17,7 @@ switch (filter('op')) {
         $query = 'UPDATE my_impianto_componenti SET data='.prepare($data).', contenuto='.prepare($contenuto).' WHERE idimpianto='.prepare($id_record).' AND id='.prepare($idcomponente);
         $dbo->query($query);
 
-        $_SESSION['infos'][] = _('Informazioni componente aggiornate correttamente!');
+        $_SESSION['infos'][] = tr('Informazioni componente aggiornate correttamente!');
 
         $_SESSION['idcomponente'] = $idcomponente;
     break;
@@ -35,7 +35,7 @@ switch (filter('op')) {
             $idcomponente = $dbo->lastInsertedID();
             $_SESSION['idcomponente'] = $idcomponente;
 
-            $_SESSION['infos'][] = _("Aggiunto un nuovo componente all'impianto!");
+            $_SESSION['infos'][] = tr("Aggiunto un nuovo componente all'impianto!");
         }
     break;
 
@@ -62,9 +62,9 @@ switch (filter('op')) {
             $query = 'UPDATE my_impianto_componenti SET data_sostituzione = NOW() WHERE idimpianto = '.prepare($id_record).' AND id = '.prepare($id);
             $dbo->query($query);
 
-            $_SESSION['infos'][] = _('Aggiunto un nuovo componente in sostituzione al precedente!');
+            $_SESSION['infos'][] = tr('Aggiunto un nuovo componente in sostituzione al precedente!');
         } else {
-            $_SESSION['errors'][] = _('Questo componente è già stato sostituito!').' '.('Nessuna modifica applicata');
+            $_SESSION['errors'][] = tr('Questo componente è già stato sostituito!').' '.('Nessuna modifica applicata');
         }
     break;
 
@@ -74,7 +74,7 @@ switch (filter('op')) {
         $query = 'DELETE FROM my_impianto_componenti WHERE id='.prepare($idcomponente).' AND idimpianto='.prepare($id_record);
         $dbo->query($query);
 
-        $_SESSION['infos'][] = _("Rimosso componente dall'impianto!");
+        $_SESSION['infos'][] = tr("Rimosso componente dall'impianto!");
     break;
 }
 
@@ -86,7 +86,7 @@ if ($id_list == '') {
 echo '
 <div class="box">
     <div class="box-header with-border">
-        <h3 class="box-title">'._('Componenti installati').'</h3>
+        <h3 class="box-title">'.tr('Componenti installati').'</h3>
     </div>
     <div class="box-body">';
 
@@ -100,14 +100,14 @@ echo '
 
 if (count($cmp) > 0) {
     echo '
-                    <option value="0">- '._('Aggiungi un componente').' -</option>';
+                    <option value="0">- '.tr('Aggiungi un componente').' -</option>';
     for ($c = 0; $c < count($cmp); ++$c) {
         echo '
                     <option value="'.$cmp[$c][0].'">'.$cmp[$c][1].'</option>';
     }
 } else {
     echo '
-                    <option value="0">- '._('Hai già aggiunto tutti i componenti').' -</option>';
+                    <option value="0">- '.tr('Hai già aggiunto tutti i componenti').' -</option>';
 }
 
 echo '
@@ -116,7 +116,7 @@ echo '
 
             <div class="col-md-2 col-md-push-6">';
 echo "
-                <a class=\"btn btn-primary btn-block\" id=\"addta\" href=\"javascript:;\" onclick=\"if ( $('#filename').val()!='0' ){ redirect('".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."&op=linkcomponente&backto=record-edit&filename='+$('#filename').val());}else{ alert('"._('Seleziona prima un componente')."'); $('#filename').focus(); }\"><i class='fa fa-plus'></i> "._('Aggiungi').'</a>';
+                <a class=\"btn btn-primary btn-block\" id=\"addta\" href=\"javascript:;\" onclick=\"if ( $('#filename').val()!='0' ){ redirect('".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."&op=linkcomponente&backto=record-edit&filename='+$('#filename').val());}else{ alert('".tr('Seleziona prima un componente')."'); $('#filename').focus(); }\"><i class='fa fa-plus'></i> ".tr('Aggiungi').'</a>';
 echo '
             </div>
         </div>
@@ -143,9 +143,9 @@ if (!empty($rs2)) {
         $filename = $rs2[$j]['filename'];
 
         if (empty($rs2[$j]['data_sostituzione'])) {
-            $statocomponente = str_replace('_DATE_', Translator::dateToLocale($rs2[$j]['data']), _('INSTALLATO in data _DATE_'));
+            $statocomponente = str_replace('_DATE_', Translator::dateToLocale($rs2[$j]['data']), tr('INSTALLATO in data _DATE_'));
         } else {
-            $statocomponente = str_replace('_DATE_', Translator::dateToLocale($rs2[$j]['data_sostituzione']), _('SOSTITUITO in data _DATE_'));
+            $statocomponente = str_replace('_DATE_', Translator::dateToLocale($rs2[$j]['data_sostituzione']), tr('SOSTITUITO in data _DATE_'));
         }
 
         // Per più "versioni" dello stesso componente mostro un riga meno evidente
@@ -179,13 +179,13 @@ if (!empty($rs2)) {
         // Nome
         echo '
                             <div class="col-md-6">
-                                {[ "type": "span", "label": "'._('Nome').':", "name": "nome", "value": "'.$rs2[$j]['nome'].'" ]}
+                                {[ "type": "span", "label": "'.tr('Nome').':", "name": "nome", "value": "'.$rs2[$j]['nome'].'" ]}
                             </div>';
 
         // Data
         echo '
                             <div class="col-md-6">
-                                {[ "type": "date", "label": "'._('Data').':", "name": "data_componente", "id": "data_componente'.$j.'", "value": "'.$rs2[$j]['data'].'" ]}
+                                {[ "type": "date", "label": "'.tr('Data').':", "name": "data_componente", "id": "data_componente'.$j.'", "value": "'.$rs2[$j]['data'].'" ]}
                             </div>';
 
         $fields = \Util\Ini::getFields($contenuto);
@@ -203,14 +203,14 @@ if (!empty($rs2)) {
             // Collegamento a intervento se c'è
             echo '
                             <div class="col-md-12">
-                                <b>'._('Interventi collegati').':</b>
+                                <b>'.tr('Interventi collegati').':</b>
                                 <table class="table table-condensed">
                                     <tr>
-                                        <th>'._('Codice').'</th>
-                                        <th>'._('Tipo').'</th>
-                                        <th>'._('Stato').'</th>
-                                        <th>'._('Data richiesta').'</th>
-                                        <th>'._('Dettagli').'</th>
+                                        <th>'.tr('Codice').'</th>
+                                        <th>'.tr('Tipo').'</th>
+                                        <th>'.tr('Stato').'</th>
+                                        <th>'.tr('Data richiesta').'</th>
+                                        <th>'.tr('Dettagli').'</th>
                                     </tr>';
 
             foreach ($interventi as $intervento) {
@@ -231,7 +231,7 @@ if (!empty($rs2)) {
             echo '
                             <div class="clearfix"></div>
                             <div class="col-md-12">
-                                <div class="alert alert-info">'._('Nessun intervento collegato a questo componente!').'</div>
+                                <div class="alert alert-info">'.tr('Nessun intervento collegato a questo componente!').'</div>
                             </div>';
         }
 
@@ -247,10 +247,10 @@ if (!empty($rs2)) {
         // Pulsante Salva/Elimina
         echo '
                             <div class="col-md-12">
-                                <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '._('Salva modifiche').'</button>
+                                <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>
 
                                 <a class="btn btn-danger ask" data-backto="record-edit" data-op="unlinkcomponente" data-id="'.$rs2[$j]['id'].'">
-                                    <i class="fa fa-trash"></i> '._('Elimina').'
+                                    <i class="fa fa-trash"></i> '.tr('Elimina').'
                                 </a>
                             </div>';
 
@@ -259,10 +259,10 @@ if (!empty($rs2)) {
                             <div class="col-md-12">';
         if (empty($rs2[$j]['data_sostituzione'])) {
             echo "
-                                <a href=\"javascript:;\" class=\"text-warning\" onclick=\"if( confirm('"._('Vuoi sostituire questo componente con un altro dello stesso tipo?')."') ){ location.href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituiscicomponente&backto=record-edit&filename='.$filename.'&id='.$rs2[$j]['id']."'; }\"><i class='fa fa-refresh'></i> "._('Sostituisci questo componente').'</a><br><br>';
+                                <a href=\"javascript:;\" class=\"text-warning\" onclick=\"if( confirm('".tr('Vuoi sostituire questo componente con un altro dello stesso tipo?')."') ){ location.href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituiscicomponente&backto=record-edit&filename='.$filename.'&id='.$rs2[$j]['id']."'; }\"><i class='fa fa-refresh'></i> ".tr('Sostituisci questo componente').'</a><br><br>';
         } else {
             echo '
-                                <p class="text-danger">'._('Componente già sostituito').'</p>';
+                                <p class="text-danger">'.tr('Componente già sostituito').'</p>';
         }
 
         echo '
@@ -278,7 +278,7 @@ if (!empty($rs2)) {
         </div>';
 } else {
     echo '
-        <p>'._('Nessun componente inserito').'.</p>';
+        <p>'.tr('Nessun componente inserito').'.</p>';
 }
 
 echo '

@@ -7,7 +7,7 @@ include_once __DIR__.'/../../../core.php';
 echo '
 <div class="box">
     <div class="box-header with-border">
-        <h3 class="box-title">'._('Movimenti').'</h3>
+        <h3 class="box-title">'.tr('Movimenti').'</h3>
     </div>
     <div class="box-body">';
 
@@ -16,7 +16,7 @@ $rst = $dbo->fetchArray('SELECT SUM(qta) AS qta_totale FROM mg_movimenti WHERE i
 $qta_totale = $rst[0]['qta_totale'];
 
 echo '
-<p>'._('Quantità calcolata dai movimenti').': '.Translator::numberToLocale($qta_totale).' '.$rs[0]['unita_misura'].'</p>';
+<p>'.tr('Quantità calcolata dai movimenti').': '.Translator::numberToLocale($qta_totale).' '.$rs[0]['unita_misura'].'</p>';
 
 // Elenco movimenti magazzino
 $query = 'SELECT * FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' ORDER BY created_at DESC';
@@ -29,18 +29,18 @@ $rs2 = $dbo->fetchArray($query);
 if (!empty($rs2)) {
     if (empty($_GET['show_all1'])) {
         echo '
-        <p><a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&show_all1=1#tab_'.$id_plugin.'">[ '._('Mostra tutti i movimenti').' ]</a></p>';
+        <p><a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&show_all1=1#tab_'.$id_plugin.'">[ '.tr('Mostra tutti i movimenti').' ]</a></p>';
     } else {
         echo '
-        <p><a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&show_all1=0#tab_'.$id_plugin.'">[ '._('Mostra solo gli ultimi 20 movimenti').' ]</a></p>';
+        <p><a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&show_all1=0#tab_'.$id_plugin.'">[ '.tr('Mostra solo gli ultimi 20 movimenti').' ]</a></p>';
     }
 
     echo '
         <table class="table table-striped table-condensed table-bordered">
             <tr>
-                <th class="text-center" width="100">'._('Q.tà').'</th>
-                <th width="720">'._('Causale').'</th>
-                <th>'._('Data').'</th>
+                <th class="text-center" width="100">'.tr('Q.tà').'</th>
+                <th width="720">'.tr('Causale').'</th>
+                <th>'.tr('Data').'</th>
             </tr>';
     foreach($rs2 as $r){
         // Quantità
@@ -61,7 +61,7 @@ if (!empty($rs2)) {
         </table>';
 } else {
     echo '
-        <p>'._('Nessun movimento disponibile').'...</p>';
+        <p>'.tr('Nessun movimento disponibile').'...</p>';
 }
 
 echo '

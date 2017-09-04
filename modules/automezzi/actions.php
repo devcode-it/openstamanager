@@ -14,10 +14,10 @@ switch (post('op')) {
         if ($dbo->fetchNum('SELECT targa FROM dt_automezzi WHERE targa='.prepare($targa).' AND NOT id='.prepare($id_record)) == 0) {
             $query = 'UPDATE dt_automezzi SET targa='.prepare($targa).', descrizione='.prepare($descrizione).', nome='.prepare($nome).' WHERE id='.prepare($id_record);
             if ($dbo->query($query)) {
-                $_SESSION['infos'][] = _('Informazioni salvate correttamente!');
+                $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
             }
         } else {
-            $_SESSION['errors'][] = _('Esiste già un automezzo con questa targa!');
+            $_SESSION['errors'][] = tr('Esiste già un automezzo con questa targa!');
         }
 
         break;
@@ -34,9 +34,9 @@ switch (post('op')) {
 
             $id_record = $dbo->lastInsertedID();
 
-            $_SESSION['infos'][] = _('Aggiunto un nuovo automezzo!');
+            $_SESSION['infos'][] = tr('Aggiunto un nuovo automezzo!');
         } else {
-            $_SESSION['errors'][] = _('Esiste già un automezzo con questa targa!');
+            $_SESSION['errors'][] = tr('Esiste già un automezzo con questa targa!');
         }
         break;
 
@@ -58,7 +58,7 @@ switch (post('op')) {
         $query = 'INSERT INTO dt_automezzi_tecnici(idtecnico, idautomezzo, data_inizio, data_fine) VALUES ('.prepare($idtecnico).', '.prepare($id_record).', '.prepare($data_inizio).', '.prepare($data_fine).')';
         $dbo->query($query);
 
-        $_SESSION['infos'][] = _('Collegato un nuovo tecnico!');
+        $_SESSION['infos'][] = tr('Collegato un nuovo tecnico!');
         break;
 
     // Salvataggio tecnici collegati
@@ -86,9 +86,9 @@ switch (post('op')) {
         }
 
         if ($errors == 0) {
-            $_SESSION['infos'][] = _('Informazioni salvate correttamente!');
+            $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
         } else {
-            $_SESSION['errors'][] = _('Errore durante il salvataggio del tecnico!');
+            $_SESSION['errors'][] = tr('Errore durante il salvataggio del tecnico!');
         }
         break;
 
@@ -99,7 +99,7 @@ switch (post('op')) {
         $query = 'DELETE FROM dt_automezzi_tecnici WHERE id='.prepare($idautomezzotecnico);
 
         if ($dbo->query($query)) {
-            $_SESSION['infos'][] = _('Tecnico rimosso!');
+            $_SESSION['infos'][] = tr('Tecnico rimosso!');
         }
         break;
 
@@ -121,7 +121,7 @@ switch (post('op')) {
             $dbo->query('INSERT INTO mg_articoli_automezzi(idarticolo, idautomezzo, qta) VALUES ('.prepare($idarticolo).', '.prepare($id_record).', '.prepare($qta).')');
         }
 
-        $_SESSION['infos'][] = _("Caricato il magazzino dell'automezzo!");
+        $_SESSION['infos'][] = tr("Caricato il magazzino dell'automezzo!");
         break;
 
     // Spostamento scorta da automezzo a magazzino generale
@@ -138,7 +138,7 @@ switch (post('op')) {
             // Aggiungo la quantità al magazzino
             add_movimento_magazzino($rs[0]['idarticolo'], $rs[0]['qta'], ['idautomezzo' => $id_record]);
 
-            $_SESSION['infos'][] = _('Articoli riportati nel magazzino centrale!');
+            $_SESSION['infos'][] = tr('Articoli riportati nel magazzino centrale!');
         }
         break;
 
@@ -156,7 +156,7 @@ switch (post('op')) {
         // Elimino definitivamente l'automezzo
         $dbo->query('DELETE FROM dt_automezzi WHERE id='.prepare($id_record));
 
-        $_SESSION['infos'][] = _('Automezzo eliminato e articoli riportati in magazzino!');
+        $_SESSION['infos'][] = tr('Automezzo eliminato e articoli riportati in magazzino!');
 
         break;
 }

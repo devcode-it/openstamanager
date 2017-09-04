@@ -11,44 +11,44 @@ echo '
 	<input type="hidden" name="op" value="update">
 
 	<div class="pull-right">
-		<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '._('Salva modifiche').'</button>
+		<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>
 	</div>
 	<div class="clearfix"></div><br>
 
 	<!-- DATI -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">'._('Opzioni di visualizzazione').'</h3>
+			<h3 class="panel-title">'.tr('Opzioni di visualizzazione').'</h3>
 		</div>
 
 		<div class="panel-body">';
 $options = ($record['options2'] == '') ? $record['options'] : $record['options2'];
 if ($options == 'menu') {
     echo '
-			<p><strong>'._('Il modulo che stai analizzando è un semplice menu').'.</strong></p>';
+			<p><strong>'.tr('Il modulo che stai analizzando è un semplice menu').'.</strong></p>';
 } elseif ($options == 'custom') {
     echo '
-			<p><strong>'._("Il modulo che stai analizzando possiede una struttura complessa, che prevede l'utilizzo di file personalizzati per la gestione delle viste").'.</strong></p>';
+			<p><strong>'.tr("Il modulo che stai analizzando possiede una struttura complessa, che prevede l'utilizzo di file personalizzati per la gestione delle viste").'.</strong></p>';
 }
 
 echo '
 			<div class="row">
 				<div class="col-xs-12 col-md-6">
-					{[ "type": "text", "label": "'._('Codice del modulo').'", "name": "name", "value": "'.$record['name'].'", "readonly": "1" ]}
+					{[ "type": "text", "label": "'.tr('Codice del modulo').'", "name": "name", "value": "'.$record['name'].'", "readonly": "1" ]}
 				</div>
 
 				<div class="col-xs-12 col-md-6">
-					{[ "type": "text", "label": "'._('Nome del modulo').'", "name": "title", "value": "'.$record['title'].'", "help": "Il nome che identifica il modulo" ]}
+					{[ "type": "text", "label": "'.tr('Nome del modulo').'", "name": "title", "value": "'.$record['title'].'", "help": "Il nome che identifica il modulo" ]}
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-xs-12 col-md-6">
-					{[ "type": "textarea", "label": "'._('Query di default').'", "name": "options", "value": "'.str_replace(']}', '] }', $record['options']).'", "readonly": "1", "class": "autosize" ]}
+					{[ "type": "textarea", "label": "'.tr('Query di default').'", "name": "options", "value": "'.str_replace(']}', '] }', $record['options']).'", "readonly": "1", "class": "autosize" ]}
 				</div>
 
 				<div class="col-xs-12 col-md-6">
-					{[ "type": "textarea", "label": "'._('Query personalizzata').'", "name": "options2", "value": "'.str_replace(']}', '] }', $record['options2']).'", "class": "autosize", "help": "La query in sostituzione a quella di default: custom, menu oppure <SQL>" ]}
+					{[ "type": "textarea", "label": "'.tr('Query personalizzata').'", "name": "options2", "value": "'.str_replace(']}', '] }', $record['options2']).'", "class": "autosize", "help": "La query in sostituzione a quella di default: custom, menu oppure <SQL>" ]}
 				</div>
 			</div>';
 if ($options != '' && $options != 'menu' && $options != 'custom') {
@@ -62,7 +62,7 @@ if ($options != '' && $options != 'menu' && $options != 'custom') {
     echo '
 			<div class="row">
 				<div class="col-xs-12 col-md-12">
-					<p><strong>'._('Query risultante').':</strong></p>
+					<p><strong>'.tr('Query risultante').':</strong></p>
 					<p>'.htmlentities($module_query).'</p>
 				</div>
 			</div>';
@@ -84,13 +84,13 @@ if (!empty($options) && $options != 'custom') {
 		<div class="col-xs-12 col-md-9">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					<h3 class="panel-title">'._('Campi disponibili').'</h3>
+					<h3 class="panel-title">'.tr('Campi disponibili').'</h3>
 				</div>
 
 				<div class="panel-body">
                     <div class="row">
                         <div class="col-xs-12 text-right">
-                            <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '._('Salva').'</button>
+                            <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
                         </div>
                     </div>
                     <hr>
@@ -112,12 +112,12 @@ if (!empty($options) && $options != 'custom') {
         echo '">
 							<div class="box-header with-border">
 								<h3 class="box-title">
-									<a data-toggle="collapse" href="#field-'.$field['id'].'">'.str_replace('_POSITION_', $field['order'], _('Campo in posizione _POSITION_')).' ('.$field['name'].')</a>
+									<a data-toggle="collapse" href="#field-'.$field['id'].'">'.str_replace('_POSITION_', $field['order'], tr('Campo in posizione _POSITION_')).' ('.$field['name'].')</a>
 								</h3>';
         if ($editable) {
             echo '
                                 <a class="btn btn-danger ask pull-right" data-backto="record-edit" data-id="'.$field['id'].'">
-                                    <i class="fa fa-trash"></i> '._('Elimina').'
+                                    <i class="fa fa-trash"></i> '.tr('Elimina').'
                                 </a>';
         }
         echo '
@@ -127,7 +127,7 @@ if (!empty($options) && $options != 'custom') {
 									<input type="hidden" value="'.$field['id'].'" name="id['.$key.']">
 
 									<div class="col-xs-12 col-md-6">
-										{[ "type": "text", "label": "'._('Nome').'", "name": "name['.$key.']", "value": "'.$field['name'].'"';
+										{[ "type": "text", "label": "'.tr('Nome').'", "name": "name['.$key.']", "value": "'.$field['name'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }
@@ -135,7 +135,7 @@ if (!empty($options) && $options != 'custom') {
 									</div>
 
 									<div class="col-xs-12 col-md-6">
-										{[ "type": "text", "label": "'._('Query prevista').'", "name": "query['.$key.']", "value": "'.$field['query'].'"';
+										{[ "type": "text", "label": "'.tr('Query prevista').'", "name": "query['.$key.']", "value": "'.$field['query'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }
@@ -145,7 +145,7 @@ if (!empty($options) && $options != 'custom') {
 
 								<div class="row">
 									<div class="col-xs-12 col-md-6">
-										{[ "type": "select", "label": "'._('Gruppi con accesso').'", "name": "gruppi['.$key.'][]", "multiple": "1",  "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "';
+										{[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi['.$key.'][]", "multiple": "1",  "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "';
         $results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT id_gruppo SEPARATOR \',\') AS gruppi FROM zz_group_view WHERE id_vista='.prepare($field['id']));
 
         echo $results[0]['gruppi'].'"';
@@ -156,7 +156,7 @@ if (!empty($options) && $options != 'custom') {
 									</div>
 
 									<div class="col-xs-12 col-md-6">
-										{[ "type": "select", "label": "'._('Visibilità').'", "name": "enabled['.$key.']", "values": "list=\"0\":\"'._('Nascosto (variabili di stato)').'\",\"1\": \"'._('Visibile nella sezione').'\"", "value": "'.$field['enabled'].'"';
+										{[ "type": "select", "label": "'.tr('Visibilità').'", "name": "enabled['.$key.']", "values": "list=\"0\":\"'.tr('Nascosto (variabili di stato)').'\",\"1\": \"'.tr('Visibile nella sezione').'\"", "value": "'.$field['enabled'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }
@@ -166,7 +166,7 @@ if (!empty($options) && $options != 'custom') {
 
 								<div class="row">
 									<div class="col-xs-12 col-md-3">
-										{[ "type": "checkbox", "label": "'._('Ricercabile').'", "name": "search['.$key.']", "value": "'.$field['search'].'"';
+										{[ "type": "checkbox", "label": "'.tr('Ricercabile').'", "name": "search['.$key.']", "value": "'.$field['search'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }
@@ -174,7 +174,7 @@ if (!empty($options) && $options != 'custom') {
 									</div>
 
 									<div class="col-xs-12 col-md-3">
-										{[ "type": "checkbox", "label": "'._('Ricerca lenta').'", "name": "slow['.$key.']", "value": "'.$field['slow'].'"';
+										{[ "type": "checkbox", "label": "'.tr('Ricerca lenta').'", "name": "slow['.$key.']", "value": "'.$field['slow'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }
@@ -182,7 +182,7 @@ if (!empty($options) && $options != 'custom') {
 									</div>
 
 									<div class="col-xs-12 col-md-3">
-										{[ "type": "checkbox", "label": "'._('Sommabile').'", "name": "sum['.$key.']", "value": "'.$field['summable'].'"';
+										{[ "type": "checkbox", "label": "'.tr('Sommabile').'", "name": "sum['.$key.']", "value": "'.$field['summable'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }
@@ -190,7 +190,7 @@ if (!empty($options) && $options != 'custom') {
 									</div>
 
                                     <div class="col-xs-12 col-md-3">
-										{[ "type": "checkbox", "label": "'._('Formattabile').'", "name": "format['.$key.']", "value": "'.$field['format'].'"';
+										{[ "type": "checkbox", "label": "'.tr('Formattabile').'", "name": "format['.$key.']", "value": "'.$field['format'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }
@@ -200,19 +200,19 @@ if (!empty($options) && $options != 'custom') {
 
 								<div class="row">
 									<div class="col-xs-12 col-md-6">
-										{[ "type": "text", "label": "'._('Ricerca tramite').'", "name": "search_inside['.$key.']", "value": "'.$field['search_inside'].'"';
+										{[ "type": "text", "label": "'.tr('Ricerca tramite').'", "name": "search_inside['.$key.']", "value": "'.$field['search_inside'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }
-        echo ', "help": "'._('Query personalizzata per la ricerca (consigliata per colori e icone)').'" ]}
+        echo ', "help": "'.tr('Query personalizzata per la ricerca (consigliata per colori e icone)').'" ]}
 									</div>
 
 									<div class="col-xs-12 col-md-6">
-										{[ "type": "text", "label": "'._('Ordina tramite').'", "name": "order_by['.$key.']", "value": "'.$field['order_by'].'"';
+										{[ "type": "text", "label": "'.tr('Ordina tramite').'", "name": "order_by['.$key.']", "value": "'.$field['order_by'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }
-        echo ', "help": "'._("Query personalizzata per l'ordinamento (date e numeri formattati tramite query)").'" ]}
+        echo ', "help": "'.tr("Query personalizzata per l'ordinamento (date e numeri formattati tramite query)").'" ]}
 									</div>
 								</div>
 							</div>
@@ -223,8 +223,8 @@ if (!empty($options) && $options != 'custom') {
 
                 <div class="row">
                     <div class="col-xs-12 text-right">
-                        <button type="button" class="btn btn-info" id="add"><i class="fa fa-plus"></i> '._('Aggiungi').'</button>
-                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '._('Salva').'</button>
+                        <button type="button" class="btn btn-info" id="add"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
+                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
                     </div>
                 </div>
 
@@ -235,7 +235,7 @@ if (!empty($options) && $options != 'custom') {
 		<div class="col-xs-12 col-md-3">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					<h3 class="panel-title">'._('Ordine di visualizzazione').'</h3>
+					<h3 class="panel-title">'.tr('Ordine di visualizzazione').'</h3>
 				</div>
 
 				<div class="panel-body sortable">';
@@ -264,56 +264,56 @@ if (!empty($options) && $options != 'custom') {
 <form class="hide" id="template">
 	<div class="box">
 		<div class="box-header with-border">
-			<h3 class="box-title">'._('Nuovo campo').'</h3>
+			<h3 class="box-title">'.tr('Nuovo campo').'</h3>
 		</div>
 		<div class="box-body">
 			<div class="row">
 				<input type="hidden" value="" name="id[-id-]">
 
 				<div class="col-xs-12 col-md-6">
-					{[ "type": "text", "label": "'._('Nome').'", "name": "name[-id-]" ]}
+					{[ "type": "text", "label": "'.tr('Nome').'", "name": "name[-id-]" ]}
 				</div>
 
 				<div class="col-xs-12 col-md-6">
-					{[ "type": "text", "label": "'._('Query prevista').'", "name": "query[-id-]" ]}
+					{[ "type": "text", "label": "'.tr('Query prevista').'", "name": "query[-id-]" ]}
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-xs-12 col-md-6">
-					{[ "type": "select", "label": "'._('Gruppi con accesso').'", "name": "gruppi[-id-][]", "multiple": "1",  "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC" ]}
+					{[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[-id-][]", "multiple": "1",  "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC" ]}
 				</div>
 
 				<div class="col-xs-12 col-md-6">
-					{[ "type": "select", "label": "'._('Visibilità').'", "name": "enabled[-id-]", "values": "list=\"0\":\"'._('Nascosto (variabili di stato)').'\",\"1\": \"'._('Visibile nella sezione').'\"" ]}
+					{[ "type": "select", "label": "'.tr('Visibilità').'", "name": "enabled[-id-]", "values": "list=\"0\":\"'.tr('Nascosto (variabili di stato)').'\",\"1\": \"'.tr('Visibile nella sezione').'\"" ]}
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-xs-12 col-md-3">
-					{[ "type": "checkbox", "label": "'._('Ricercabile').'", "name": "search[-id-]" ]}
+					{[ "type": "checkbox", "label": "'.tr('Ricercabile').'", "name": "search[-id-]" ]}
 				</div>
 
 				<div class="col-xs-12 col-md-3">
-					{[ "type": "checkbox", "label": "'._('Ricerca lenta').'", "name": "slow[-id-]" ]}
+					{[ "type": "checkbox", "label": "'.tr('Ricerca lenta').'", "name": "slow[-id-]" ]}
 				</div>
 
 				<div class="col-xs-12 col-md-3">
-					{[ "type": "checkbox", "label": "'._('Sommabile').'", "name": "sum[-id-]" ]}
+					{[ "type": "checkbox", "label": "'.tr('Sommabile').'", "name": "sum[-id-]" ]}
 				</div>
 
                 <div class="col-xs-12 col-md-3">
-					{[ "type": "checkbox", "label": "'._('Formattabile').'", "name": "format[-id-]" ]}
+					{[ "type": "checkbox", "label": "'.tr('Formattabile').'", "name": "format[-id-]" ]}
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-xs-12 col-md-6">
-					{[ "type": "text", "label": "'._('Ricerca tramite').'", "name": "search_inside[-id-]" ]}
+					{[ "type": "text", "label": "'.tr('Ricerca tramite').'", "name": "search_inside[-id-]" ]}
 				</div>
 
 				<div class="col-xs-12 col-md-6">
-					{[ "type": "text", "label": "'._('Ordina tramite').'", "name": "order_by[-id-]" ]}
+					{[ "type": "text", "label": "'.tr('Ordina tramite').'", "name": "order_by[-id-]" ]}
 				</div>
 			</div>
 		</div>
@@ -328,13 +328,13 @@ if (!empty($options) && $options != 'custom') {
     <div class="col-xs-12 col-md-12">
         <div class="panel panel-warning">
             <div class="panel-heading">
-                <h3 class="panel-title">'._('Filtri per gruppo di utenti').'</h3>
+                <h3 class="panel-title">'.tr('Filtri per gruppo di utenti').'</h3>
             </div>
 
             <div class="panel-body">
                 <div class="row">
                     <div class="col-xs-12 text-right">
-                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '._('Salva').'</button>
+                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
                     </div>
                 </div>
                 <hr>
@@ -356,17 +356,17 @@ if (!empty($options) && $options != 'custom') {
         echo '">
                             <div class="box-header with-border">
                                 <h3 class="box-title">
-                                    <a data-toggle="collapse" href="#additional-'.$additional['id'].'">'.str_replace('_NUM_', $num, _('Filtro _NUM_')).'</a>
+                                    <a data-toggle="collapse" href="#additional-'.$additional['id'].'">'.str_replace('_NUM_', $num, tr('Filtro _NUM_')).'</a>
                                 </h3>';
         if ($editable) {
             echo '
                                 <a class="btn btn-danger ask pull-right" data-backto="record-edit" data-op="delete_filter" data-id="'.$additional['id'].'">
-                                    <i class="fa fa-trash"></i> '._('Elimina').'
+                                    <i class="fa fa-trash"></i> '.tr('Elimina').'
                                 </a>';
         }
         echo '
-                                <a class="btn btn-warning ask pull-right" data-backto="record-edit" data-msg="'.($additional['enabled'] ? _('Disabilitare questo elemento?') : _('Abilitare questo elemento?')).'" data-op="change" data-id="'.$additional['id'].'" data-class="btn btn-lg btn-warning" data-button="'.($additional['enabled'] ? _('Disabilita') : _('Abilita')).'">
-                                    <i class="fa fa-eye-slash"></i> '.($additional['enabled'] ? _('Disabilita') : _('Abilita')).'
+                                <a class="btn btn-warning ask pull-right" data-backto="record-edit" data-msg="'.($additional['enabled'] ? tr('Disabilitare questo elemento?') : tr('Abilitare questo elemento?')).'" data-op="change" data-id="'.$additional['id'].'" data-class="btn btn-lg btn-warning" data-button="'.($additional['enabled'] ? tr('Disabilita') : tr('Abilita')).'">
+                                    <i class="fa fa-eye-slash"></i> '.($additional['enabled'] ? tr('Disabilita') : tr('Abilita')).'
                                 </a>';
         echo '
                             </div>
@@ -375,7 +375,7 @@ if (!empty($options) && $options != 'custom') {
                                     <input type="hidden" value="'.$additional['id'].'" name="id['.$num.']">
 
                                     <div class="col-xs-12 col-md-6">
-                                        {[ "type": "textarea", "label": "'._('Query').'", "name": "query['.$num.']", "value": "'.$additional['clause'].'"';
+                                        {[ "type": "textarea", "label": "'.tr('Query').'", "name": "query['.$num.']", "value": "'.$additional['clause'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }
@@ -383,7 +383,7 @@ if (!empty($options) && $options != 'custom') {
                                     </div>
 
                                     <div class="col-xs-12 col-md-3">
-                                        {[ "type": "select", "label": "'._('Gruppo').'", "name": "gruppo['.$num.']",  "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "'.$additional['idgruppo'].'"';
+                                        {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo['.$num.']",  "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "'.$additional['idgruppo'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }
@@ -391,7 +391,7 @@ if (!empty($options) && $options != 'custom') {
                                     </div>
 
                                     <div class="col-xs-12 col-md-3">
-                                        {[ "type": "select", "label": "'._('Posizione').'", "name": "position['.$num.']", "values": "list=\"0\":\"'._('WHERE').'\",\"1\": \"'._('HAVING').'\"", "value": "'.$additional['position'].'"';
+                                        {[ "type": "select", "label": "'.tr('Posizione').'", "name": "position['.$num.']", "values": "list=\"0\":\"'.tr('WHERE').'\",\"1\": \"'.tr('HAVING').'\"", "value": "'.$additional['position'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }
@@ -406,8 +406,8 @@ if (!empty($options) && $options != 'custom') {
 
                 <div class="row">
                     <div class="col-xs-12 text-right">
-                        <button type="button" class="btn btn-info" id="add"><i class="fa fa-plus"></i> '._('Aggiungi').'</button>
-                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '._('Salva').'</button>
+                        <button type="button" class="btn btn-info" id="add"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
+                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
                     </div>
                 </div>
             </div>
@@ -419,22 +419,22 @@ if (!empty($options) && $options != 'custom') {
 <form class="hide" id="template_filter">
 	<div class="box">
 		<div class="box-header with-border">
-			<h3 class="box-title">'._('Nuovo filtro').'</h3>
+			<h3 class="box-title">'.tr('Nuovo filtro').'</h3>
 		</div>
 		<div class="box-body">
 			<div class="row">
 				<input type="hidden" value="" name="id[-id-]">
 
 				<div class="col-xs-12 col-md-6">
-					{[ "type": "textarea", "label": "'._('Query').'", "name": "query[-id-]" ]}
+					{[ "type": "textarea", "label": "'.tr('Query').'", "name": "query[-id-]" ]}
 				</div>
 
 				<div class="col-xs-12 col-md-3">
-					{[ "type": "select", "label": "'._('Gruppo').'", "name": "gruppo[-id-]", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC" ]}
+					{[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo[-id-]", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC" ]}
 				</div>
 
                 <div class="col-xs-12 col-md-3">
-                    {[ "type": "select", "label": "'._('Posizione').'", "name": "position[-id-]",  "list=\"0\":\"'._('WHERE').'\",\"1\": \"'._('HAVING').'\"" ]}
+                    {[ "type": "select", "label": "'.tr('Posizione').'", "name": "position[-id-]",  "list=\"0\":\"'.tr('WHERE').'\",\"1\": \"'.tr('HAVING').'\"" ]}
 			</div>
 		</div>
 	</div>

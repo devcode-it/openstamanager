@@ -9,7 +9,7 @@ $q2 = 'SELECT * FROM mg_articoli_interventi INNER JOIN in_interventi ON mg_artic
 $rs2 = $dbo->fetchArray($q2);
 
 echo '
-<p>'._('Articolo').': '.$rs2[0]['codice'].' - '.$rs2[0]['descrizione'].'</p>
+<p>'.tr('Articolo').': '.$rs2[0]['codice'].' - '.$rs2[0]['descrizione'].'</p>
 
 <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="add_serial">
@@ -29,7 +29,7 @@ foreach ($array as $value) {
     echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'._('Serial').'", "name": "serial[]", "multiple": 1, "value": "'.implode(',', $serials).'", "values": "query=SELECT serial AS id, serial AS descrizione FROM vw_serials WHERE dir=\'uscita\' AND serial NOT IN (SELECT serial FROM vw_serials WHERE dir=\'entrata\' AND record != \'int-'.$id_record.'\')", "extra": "data-maximum=\"'.count($rs2).'\"" ]}
+            {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial[]", "multiple": 1, "value": "'.implode(',', $serials).'", "values": "query=SELECT serial AS id, serial AS descrizione FROM vw_serials WHERE dir=\'uscita\' AND serial NOT IN (SELECT serial FROM vw_serials WHERE dir=\'entrata\' AND record != \'int-'.$id_record.'\')", "extra": "data-maximum=\"'.count($rs2).'\"" ]}
         </div>
     </div>';
 
@@ -38,7 +38,7 @@ echo '
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-barcode"></i> '._('Aggiorna').'</button>
+			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-barcode"></i> '.tr('Aggiorna').'</button>
 		</div>
     </div>
 </form>';

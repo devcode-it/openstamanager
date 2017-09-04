@@ -7,12 +7,12 @@ $module = Modules::getModule($id_module);
 if ($module['name'] == 'Ordini cliente') {
     $dir = 'entrata';
 
-    $tipo_anagrafica = _('Cliente');
+    $tipo_anagrafica = tr('Cliente');
     $ajax = 'clienti';
 } else {
     $dir = 'uscita';
 
-    $tipo_anagrafica = _('Fornitore');
+    $tipo_anagrafica = tr('Fornitore');
     $ajax = 'fornitori';
 }
 
@@ -23,7 +23,7 @@ if ($module['name'] == 'Ordini cliente') {
 
 	<div class="row">
 		<div class="col-md-6">
-            {[ "type": "date", "label": "<?php echo _('Data'); ?>", "name": "data", "required": 1, "value": "-now-" ]}
+            {[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "-now-" ]}
 		</div>
 
 		<div class="col-md-6">
@@ -34,7 +34,7 @@ if ($module['name'] == 'Ordini cliente') {
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo _('Aggiungi'); ?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 		</div>
 	</div>
 </form>

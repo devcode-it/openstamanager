@@ -13,7 +13,7 @@ if (file_exists($docroot.'/include/custom/top.php')) {
 echo '
     <div class="box">
         <div class="box-header">
-            <h3 class="box-title"><i class="fa fa-book"></i> '._('Ultimi 100 accessi').'</h3>
+            <h3 class="box-title"><i class="fa fa-book"></i> '.tr('Ultimi 100 accessi').'</h3>
         </div>
 
         <!-- /.box-header -->
@@ -21,10 +21,10 @@ echo '
             <table class="datatables table table-hover">
                 <thead>
                     <tr>
-                        <th>'._('Username').'</th>
-                        <th>'._('Data').'</th>
-                        <th>'._('Stato').'</th>
-                        <th>'._('Indirizzo IP').'</th>
+                        <th>'.tr('Username').'</th>
+                        <th>'.tr('Data').'</th>
+                        <th>'.tr('Stato').'</th>
+                        <th>'.tr('Indirizzo IP').'</th>
                     </tr>
                 </thead>
                 <tbody>';

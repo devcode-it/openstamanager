@@ -84,12 +84,12 @@ if ($total == 0) {
 <div class="row">
 	<!-- STATI INTERVENTO -->
 	<div class="dropdown col-md-3">
-		<a class="btn <?php echo $class ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idstati_count"><i class="fa fa-filter"></i> <?php echo _('Stati intervento'); ?> (<?php echo $count.'/'.$total ?>) <i class="caret"></i></a>
+		<a class="btn <?php echo $class ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idstati_count"><i class="fa fa-filter"></i> <?php echo tr('Stati intervento'); ?> (<?php echo $count.'/'.$total ?>) <i class="caret"></i></a>
 
 		<ul class="dropdown-menu" role="menu" id="idstati_ul">
 			<?php echo $checks ?>
 			<div class="btn-group pull-right">
-				<button  id="selectallstati" onclick="<?php echo $allchecksstati; ?>" class="btn btn-primary btn-xs" type="button"><?php echo _('Tutti'); ?></button>
+				<button  id="selectallstati" onclick="<?php echo $allchecksstati; ?>" class="btn btn-primary btn-xs" type="button"><?php echo tr('Tutti'); ?></button>
 				<button id="deselectallstati" class="btn btn-danger btn-xs" type="button"><i class="fa fa-times"></i></button>
 			</div>
 
@@ -135,12 +135,12 @@ if ($total == 0) {
 ?>
 	<!-- TIPI DI INTERVENTO -->
 	<div class="dropdown col-md-3">
-		<a class="btn <?php echo $class ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idtipi_count"><i class="fa fa-filter"></i> <?php echo _('Tipi intervento'); ?> (<?php echo $count.'/'.$total ?>) <i class="caret"></i></a>
+		<a class="btn <?php echo $class ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idtipi_count"><i class="fa fa-filter"></i> <?php echo tr('Tipi intervento'); ?> (<?php echo $count.'/'.$total ?>) <i class="caret"></i></a>
 
 		<ul class="dropdown-menu" role="menu" id="idtipi_ul">
 			<?php echo $checks ?>
 			<div class="btn-group pull-right">
-				<button  id="selectalltipi" onclick="<?php echo $allcheckstipi; ?>" class="btn btn-primary btn-xs" type="button"><?php echo _('Tutti'); ?></button>
+				<button  id="selectalltipi" onclick="<?php echo $allcheckstipi; ?>" class="btn btn-primary btn-xs" type="button"><?php echo tr('Tutti'); ?></button>
 				<button id="deselectalltipi" class="btn btn-danger btn-xs" type="button"><i class="fa fa-times"></i></button>
 			</div>
 
@@ -215,12 +215,12 @@ if ($totale_tecnici == 0) {
 ?>
 	<!-- TECNICI -->
 	<div class="dropdown col-md-3">
-		<a class="btn <?php echo $class ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idtecnici_count"><i class="fa fa-filter"></i> <?php echo _('Tecnici'); ?> (<?php echo $count.'/'.$totale_tecnici ?>) <i class="caret"></i></a>
+		<a class="btn <?php echo $class ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idtecnici_count"><i class="fa fa-filter"></i> <?php echo tr('Tecnici'); ?> (<?php echo $count.'/'.$totale_tecnici ?>) <i class="caret"></i></a>
 
 		<ul class="dropdown-menu" role="menu" id="idtecnici_ul">
 			<?php echo $checks ?>
 			<div class="btn-group pull-right">
-				<button id="selectalltecnici" onclick="<?php echo $allchecktecnici; ?>" class="btn btn-primary btn-xs" type="button"><?php echo _('Tutti'); ?></button>
+				<button id="selectalltecnici" onclick="<?php echo $allchecktecnici; ?>" class="btn btn-primary btn-xs" type="button"><?php echo tr('Tutti'); ?></button>
 				<button id="deselectalltecnici" class="btn btn-danger btn-xs" type="button"><i class="fa fa-times"></i></button>
 			</div>
 		</ul>
@@ -265,12 +265,12 @@ if ($total == 0) {
 ?>
 	<!-- ZONE -->
 	<div class="dropdown col-md-3">
-		<a class="btn <?php echo $class ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idzone_count"><i class="fa fa-filter"></i> <?php echo _('Zone'); ?> (<?php echo $count.'/'.$total ?>) <i class="caret"></i></a>
+		<a class="btn <?php echo $class ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idzone_count"><i class="fa fa-filter"></i> <?php echo tr('Zone'); ?> (<?php echo $count.'/'.$total ?>) <i class="caret"></i></a>
 
 		<ul class="dropdown-menu" role="menu" id="idzone_ul">
 			<?php echo $checks ?>
 			<div class="btn-group pull-right">
-				<button id="selectallzone" onclick="<?php echo $allcheckzone; ?>" class="btn btn-primary btn-xs" type="button"><?php echo _('Tutti'); ?></button>
+				<button id="selectallzone" onclick="<?php echo $allcheckzone; ?>" class="btn btn-primary btn-xs" type="button"><?php echo tr('Tutti'); ?></button>
 				<button id="deselectallzone" class="btn btn-danger btn-xs" type="button"><i class="fa fa-times"></i></button>
 			</div>
 		</ul>
@@ -296,7 +296,7 @@ if (!empty($rsp)) {
     </div>
 
     <div id="external-events" class="hidden-xs hidden-sm col-md-2">
-        <h4>'._('Interventi da pianificare').'</h4>';
+        <h4>'.tr('Interventi da pianificare').'</h4>';
 
     foreach ($rsp as $r) {
         echo '
@@ -466,7 +466,7 @@ if (Modules::getPermission($id_module) == 'rw') {
 
                 var name = ($(this).data('ref') == 'ordine') ? 'idordineservizio' : 'idcontratto_riga';
 
-                launch_modal('<?php echo _('Pianifica intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::getModule('Interventi')['id'] ?>&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al+'&ref=dashboard&idcontratto=' + $(this).data('idcontratto') + '&' + name + '=' + $(this).data('id'), 1);
+                launch_modal('<?php echo tr('Pianifica intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::getModule('Interventi')['id'] ?>&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al+'&ref=dashboard&idcontratto=' + $(this).data('idcontratto') + '&' + name + '=' + $(this).data('id'), 1);
 
                 $(this).remove();
 
@@ -481,7 +481,7 @@ if (Modules::getPermission($id_module) == 'rw') {
 				ora_dal = moment(start).format("HH:mm");
 				ora_al = moment(end).format("HH:mm");
 
-                launch_modal('<?php echo _('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::getModule('Interventi')['id'] ?>&ref=dashboard&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al, 1 );
+                launch_modal('<?php echo tr('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::getModule('Interventi')['id'] ?>&ref=dashboard&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al, 1 );
 
 				$('#calendar').fullCalendar('unselect');
 			},
@@ -561,7 +561,7 @@ if (get_var('Utilizzare i tooltip sul calendario') == '1') {
 				url: globals.rootdir + "/modules/dashboard/ajaxreq.php?op=get_current_month",
                 type: 'GET',
 				error: function() {
-					alert('<?php echo _('Errore durante la creazione degli eventi'); ?>');
+					alert('<?php echo tr('Errore durante la creazione degli eventi'); ?>');
 				}
 			}
 		});

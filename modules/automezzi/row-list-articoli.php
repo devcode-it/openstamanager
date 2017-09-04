@@ -10,9 +10,9 @@ if (!empty($rs2)) {
     echo '
 <table class="table table-striped table-hover table-condensed">
     <tr>
-        <th>'._('Articolo').'</th>
-        <th width="25%">'._('Q.tà').'</th>
-        <th width="25%">'._('Prezzo di vendita').'</th>
+        <th>'.tr('Articolo').'</th>
+        <th width="25%">'.tr('Q.tà').'</th>
+        <th width="25%">'.tr('Prezzo di vendita').'</th>
         <th width="5%"></th>
     </tr>';
 
@@ -29,7 +29,7 @@ if (!empty($rs2)) {
         echo '
         <td class="first_cell center">
             <span><big>'.Translator::numberToLocale($r['qta_automezzo']).'</big></span><br/>
-            <small>'._('Q.tà magazzino').': '.Translator::numberToLocale($r['qta_magazzino']).'</small><br/>
+            <small>'.tr('Q.tà magazzino').': '.Translator::numberToLocale($r['qta_magazzino']).'</small><br/>
         </td>';
 
         // Prezzo di vendita
@@ -45,7 +45,7 @@ if (!empty($rs2)) {
         // Pulsanti
         echo '
         <td class="text-center">
-            <a class="btn btn-danger ask" data-backto="record-edit" data-op="moverow" data-idautomezzotecnico="'.$r['id'].'" data-msg="'._("Rimuovere articolo dell'automezzo?").'">
+            <a class="btn btn-danger ask" data-backto="record-edit" data-op="moverow" data-idautomezzotecnico="'.$r['id'].'" data-msg="'.tr("Rimuovere articolo dell'automezzo?").'">
                 <i class="fa fa-trash"></i>
             </a>
         </td>
@@ -58,5 +58,5 @@ if (!empty($rs2)) {
 </table>';
 } else {
     echo '
-<p>'._('Nessun articolo presente').'...</p>';
+<p>'.tr('Nessun articolo presente').'...</p>';
 }

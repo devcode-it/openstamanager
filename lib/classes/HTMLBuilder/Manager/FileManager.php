@@ -21,7 +21,7 @@ class FileManager implements ManagerInterface
             $result .= '
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title">'._('Allegati').'</h3>
+            <h3 class="panel-title">'.tr('Allegati').'</h3>
         </div>
         <div class="panel-body">';
         }
@@ -33,8 +33,8 @@ class FileManager implements ManagerInterface
             $result .= '
     <table class="table table-condensed table-hover table-bordered">
         <tr>
-            <th>'._('Nome').'</th>
-            <th>'._('Data').'</th>
+            <th>'.tr('Nome').'</th>
+            <th>'.tr('Data').'</th>
             <th width="10%" class="text-center">#</th>
         </tr>';
 
@@ -52,7 +52,7 @@ class FileManager implements ManagerInterface
                     <i class="fa fa-download"></i>
                 </a>
 
-                <a class="btn btn-danger ask" data-backto="record-edit" data-msg="'._('Vuoi eliminare questo file?').'" data-op="unlink_file" data-id="'.$r['id'].'" data-filename="'.$r['filename'].'">
+                <a class="btn btn-danger ask" data-backto="record-edit" data-msg="'.tr('Vuoi eliminare questo file?').'" data-op="unlink_file" data-id="'.$r['id'].'" data-filename="'.$r['filename'].'">
                     <i class="fa fa-trash"></i>
                 </a>
             </td>
@@ -70,16 +70,16 @@ class FileManager implements ManagerInterface
     <b>'.$options['label'].'</b>
     <div class="row">
         <div class="col-lg-4">
-            {[ "type": "text", "placeholder": "'._('Nome').'", "name": "nome_allegato", "required": 1 ]}
+            {[ "type": "text", "placeholder": "'.tr('Nome').'", "name": "nome_allegato", "required": 1 ]}
         </div>
 
         <div class="col-lg-6">
-            {[ "type": "file", "placeholder": "'._('File').'", "name": "blob", "required": 1 ]}
+            {[ "type": "file", "placeholder": "'.tr('File').'", "name": "blob", "required": 1 ]}
         </div>
 
         <div class="col-lg-2 text-right">
             <button type="button" class="btn btn-success" id="upload_button"  onclick="SaveFile();">
-                <i class="fa fa-upload"></i> '._('Carica').'
+                <i class="fa fa-upload"></i> '.tr('Carica').'
             </button>
         </div>
     </div>';

@@ -69,7 +69,7 @@ for ($x = 0; $x < $n1; ++$x) {
 
             if ($nr <= 0 && $rs3[$z]['can_delete'] == '1') {
                 $tools .= '
-                                    <a class="btn btn-danger btn-xs ask" data-toggle="tooltip" title="'._('Elimina').'" data-backto="record-list" data-op="del" data-idconto="'.$rs3[$z]['id'].'">
+                                    <a class="btn btn-danger btn-xs ask" data-toggle="tooltip" title="'.tr('Elimina').'" data-backto="record-list" data-op="del" data-idconto="'.$rs3[$z]['id'].'">
                                         <i class="fa fa-trash"></i>
                                     </a>';
             }

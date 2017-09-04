@@ -9,60 +9,60 @@ echo '
 
 	<div class="row">
 		<div class="col-xs-12 col-md-4">
-			{[ "type": "text", "label": "'._('Nome sede').'", "name": "nomesede", "required": 1 ]}
+			{[ "type": "text", "label": "'.tr('Nome sede').'", "name": "nomesede", "required": 1 ]}
 		</div>
 
 		<div class="col-xs-12 col-md-4">
-			{[ "type": "text", "label": "'._('Indirizzo').'", "name": "indirizzo", "required": 1 ]}
+			{[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "indirizzo", "required": 1 ]}
 		</div>
 
 		<div class="col-xs-12 col-md-4">
-			{[ "type": "text", "label": "'._('Secondo indirizzo').'", "name": "indirizzo2" ]}
+			{[ "type": "text", "label": "'.tr('Secondo indirizzo').'", "name": "indirizzo2" ]}
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-xs-12 col-md-3">
-			{[ "type": "text", "label": "'._('Città').'", "name": "citta" ]}
+			{[ "type": "text", "label": "'.tr('Città').'", "name": "citta" ]}
 		</div>
 
 		<div class="col-xs-12 col-md-3">
-			{[ "type": "text", "label": "'._('C.A.P.').'", "name": "cap" ]}
+			{[ "type": "text", "label": "'.tr('C.A.P.').'", "name": "cap" ]}
 		</div>
 
 		<div class="col-xs-12 col-md-3">
-			{[ "type": "text", "label": "'._('Provincia').'", "name": "provincia" ]}
+			{[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia" ]}
 		</div>
 
 		<div class="col-xs-12 col-md-3">
-			{[ "type": "text", "label": "'._('Km').'", "name": "km" ]}
+			{[ "type": "text", "label": "'.tr('Km').'", "name": "km" ]}
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-xs-12 col-md-4">
-			{[ "type": "text", "label": "'._('Cellulare').'", "name": "cellulare" ]}
+			{[ "type": "text", "label": "'.tr('Cellulare').'", "name": "cellulare" ]}
 		</div>
 
         <div class="col-xs-12 col-md-4">
-			{[ "type": "text", "label": "'._('Telefono').'", "name": "telefono" ]}
+			{[ "type": "text", "label": "'.tr('Telefono').'", "name": "telefono" ]}
 		</div>
 
 		<div class="col-xs-12 col-md-4">
-			{[ "type": "text", "label": "'._('Indirizzo email').'", "name": "email" ]}
+			{[ "type": "text", "label": "'.tr('Indirizzo email').'", "name": "email" ]}
 		</div>
 	</div>
 
 	<div class="row">
         <div class="col-xs-12 col-md-12">
-			{[ "type": "select", "label": "'._('Zona').'", "name": "idzona", "values": "query=SELECT `id`, CONCAT(`nome`, \' - \', `descrizione`) AS `descrizione` FROM `an_zone` ORDER BY `descrizione` ASC" ]}
+			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT `id`, CONCAT(`nome`, \' - \', `descrizione`) AS `descrizione` FROM `an_zone` ORDER BY `descrizione` ASC" ]}
 		</div>
 	</div>
 
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> '._('Aggiungi').'</button>
+			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
 		</div>
 	</div>
 </form>

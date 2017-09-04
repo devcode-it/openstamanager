@@ -6,18 +6,18 @@ include_once __DIR__.'/../../../core.php';
     GESTIONE ORDINI DI SERVIZIO
 */
 $mesi = [
-    _('Gennaio'),
-    _('Febbraio'),
-    _('Marzo'),
-    _('Aprile'),
-    _('Maggio'),
-    _('Giugno'),
-    _('Luglio'),
-    _('Agosto'),
-    _('Settembre'),
-    _('Ottobre'),
-    _('Novembre'),
-    _('Dicembre'),
+    tr('Gennaio'),
+    tr('Febbraio'),
+    tr('Marzo'),
+    tr('Aprile'),
+    tr('Maggio'),
+    tr('Giugno'),
+    tr('Luglio'),
+    tr('Agosto'),
+    tr('Settembre'),
+    tr('Ottobre'),
+    tr('Novembre'),
+    tr('Dicembre'),
 ];
 
 // Pianificazione fatture
@@ -46,7 +46,7 @@ if ($get['op'] == 'add_fatturazione') {
         }
     }
 
-    $_SESSION['infos'][] = _('Pianificazione generata correttamente!');
+    $_SESSION['infos'][] = tr('Pianificazione generata correttamente!');
 }
 
 // Eliminazione pianificazione specifica
@@ -58,7 +58,7 @@ elseif ($get['op'] == 'del_pianificazione') {
     if ($n == 1) {
         // Eliminazione ordine di servizio
         if ($dbo->query('DELETE FROM co_ordiniservizio_pianificazionefatture WHERE id='.prepare($idpianificazione))) {
-            $_SESSION['infos'][] = _('Pianificazione eliminata correttamente!');
+            $_SESSION['infos'][] = tr('Pianificazione eliminata correttamente!');
         }
     }
 }
@@ -130,12 +130,12 @@ elseif ($get['op'] == 'addfattura') {
 echo '
 <div class="box">
     <div class="box-header with-border">
-        <h3 class="box-title">'._('Pianificazione fatturazione').'</h3>
+        <h3 class="box-title">'.tr('Pianificazione fatturazione').'</h3>
     </div>
     <div class="box-body">';
 
 echo '
-<p>'._('Qui puoi programmare la fatturazione del contratto').'.</p>';
+<p>'.tr('Qui puoi programmare la fatturazione del contratto').'.</p>';
 
 /*
     Fatture pianificate
@@ -144,7 +144,7 @@ $rs = $dbo->fetchArray('SELECT *, (SELECT SUM(subtotale) FROM co_righe2_contratt
 
 if (empty($rs)) {
     echo '
-<p>'._('Non sono ancora state pianificate fatture').'...</p>';
+<p>'.tr('Non sono ancora state pianificate fatture').'...</p>';
 } else {
     $rs2 = $dbo->fetchArray('SELECT * FROM co_ordiniservizio_pianificazionefatture WHERE idcontratto='.prepare($id_record).' ORDER BY idzona');
 
@@ -160,11 +160,11 @@ if (empty($rs)) {
     echo '
 <table class="table table-bordered table-striped table-hover table-condensed">
     <tr>
-        <th width="10%">'._('Scadenza').'</th>
-        <th width="15%">'._('Zona').'</th>
-        <th width="15%">'._('Importo').'</th>
-        <th>'._('Documento').'</th>
-        <th width="20%">'._('Stato').'</th>
+        <th width="10%">'.tr('Scadenza').'</th>
+        <th width="15%">'.tr('Zona').'</th>
+        <th width="15%">'.tr('Importo').'</th>
+        <th>'.tr('Documento').'</th>
+        <th width="20%">'.tr('Stato').'</th>
         <th width="12%"></th>
     </tr>';
 
@@ -205,9 +205,9 @@ if (empty($rs)) {
         }
 
         if ($n_sedi_pianificate == 1) {
-            $n_sedi = _('1 sede');
+            $n_sedi = tr('1 sede');
         } else {
-            $n_sedi = str_replace('_NUM_', $n_sedi_pianificate, _('_NUM_ sedi'));
+            $n_sedi = str_replace('_NUM_', $n_sedi_pianificate, tr('_NUM_ sedi'));
         }
 
         echo '
@@ -241,12 +241,12 @@ if (empty($rs)) {
                 $numero_doc = $rsf[0]['numero'];
             }
 
-            $documento = Modules::link('Fatture di vendita', $rs[$i]['iddocumento'], str_replace(['_NUM_', '_DATE_'], [$numero_doc, Translator::dateToLocale($rsf[0]['data'])], _('Fattura n<sup>o</sup> _NUM_ del _DATE_')));
+            $documento = Modules::link('Fatture di vendita', $rs[$i]['iddocumento'], str_replace(['_NUM_', '_DATE_'], [$numero_doc, Translator::dateToLocale($rsf[0]['data'])], tr('Fattura n<sup>o</sup> _NUM_ del _DATE_')));
 
             $stato = '<i class="'.$rsf[0]['icona'].'"></i> '.$rsf[0]['stato'];
         } else {
             $documento = '';
-            $stato = '<i class="fa fa-clock-o"></i> '._('Non ancora fatturato');
+            $stato = '<i class="fa fa-clock-o"></i> '.tr('Non ancora fatturato');
         }
 
         // Link a fattura
@@ -264,12 +264,12 @@ if (empty($rs)) {
             // Creazione fattura
             echo "
             <button type='button' class='btn btn-primary btn-sm' onclick=\"launch_modal( 'Crea fattura', '".$rootdir.'/modules/contratti/plugins/addfattura.php?idcontratto='.$id_record.'&idpianificazione='.$rs[$i]['id'].'&importo='.$importo.'&n_rata='.$n_rata."', 1 );\">
-                <i class='fa fa-euro'></i> "._('Crea fattura').'
+                <i class='fa fa-euro'></i> ".tr('Crea fattura').'
             </button>';
 
             // Eliminazione pianificazione
             echo '
-            <a class="btn btn-danger ask" data-backto="record-edit" data-method="get" data-op="del_pianificazione" data-idpianificazione="'.$rs[$i]['id'].'" data-msg="'._('Vuoi eliminare questa pianificazione?').'">
+            <a class="btn btn-danger ask" data-backto="record-edit" data-method="get" data-op="del_pianificazione" data-idpianificazione="'.$rs[$i]['id'].'" data-msg="'.tr('Vuoi eliminare questa pianificazione?').'">
                 <i class="fa fa-trash"></i>
             </a>';
         }
@@ -293,7 +293,7 @@ $rs = $dbo->fetchArray('SELECT id, descrizione FROM an_zone WHERE ( id IN (SELEC
 
 if (sizeof($rs) == 0) {
     echo '
-<p>'._('Non sono ancora stati pianificati ordini di servizio').'...</p>';
+<p>'.tr('Non sono ancora stati pianificati ordini di servizio').'...</p>';
 }
 
 // Elenco voci di servizio con mesi in cui eseguirle
@@ -305,7 +305,7 @@ else {
 
     echo "
 <button type='button' class='btn btn-primary' onclick=\"$(this).next().next().removeClass('hide'); $(this).remove();\">
-    <i class='fa fa-calendar'></i> "._('Pianifica la fatturazione').'
+    <i class='fa fa-calendar'></i> ".tr('Pianifica la fatturazione').'
 </button>
 <br>';
 
@@ -317,7 +317,7 @@ else {
     echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'._('Zone di cui pianificare la fatturazione').'", "name": "idzona[]", "value": "", "values": "query=SELECT id, descrizione FROM an_zone WHERE (id IN (SELECT idzona FROM an_sedi WHERE id IN (SELECT idsede FROM my_impianti WHERE id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).')))) OR ( id=(SELECT idzona FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id='.prepare($id_record).') AND idzona=an_zone.id) ) UNION SELECT 0, \'Altro\'", "multiple": 1, "extra": "onchange=\"$(this).find(\'option\').each( function(){ if( $(this).is(\':selected\') ){ $(\'#zona_\'+$(this).val()).removeClass(\'hide\'); }else{ $(\'#zona_\'+$(this).val()).addClass(\'hide\'); } });\"" ]}
+            {[ "type": "select", "label": "'.tr('Zone di cui pianificare la fatturazione').'", "name": "idzona[]", "value": "", "values": "query=SELECT id, descrizione FROM an_zone WHERE (id IN (SELECT idzona FROM an_sedi WHERE id IN (SELECT idsede FROM my_impianti WHERE id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).')))) OR ( id=(SELECT idzona FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id='.prepare($id_record).') AND idzona=an_zone.id) ) UNION SELECT 0, \'Altro\'", "multiple": 1, "extra": "onchange=\"$(this).find(\'option\').each( function(){ if( $(this).is(\':selected\') ){ $(\'#zona_\'+$(this).val()).removeClass(\'hide\'); }else{ $(\'#zona_\'+$(this).val()).addClass(\'hide\'); } });\"" ]}
         </div>
     </div>';
 
@@ -351,7 +351,7 @@ else {
     // Pianificazione
     echo "
     <button type='button' class='btn btn-primary' onclick=\"if( $('input[type=checkbox]:checked').length>0 ){ if( confirm('Pianificare la fatturazione?') ){ $('#pianifica_form').submit(); } }\">
-        <i class='fa fa-plus'></i> "._('Pianifica ora').'
+        <i class='fa fa-plus'></i> ".tr('Pianifica ora').'
     </button>';
 
     echo '

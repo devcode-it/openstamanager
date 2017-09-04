@@ -127,11 +127,11 @@ if (!str_contains($body, '<page_footer>') && !str_contains($report, '<page_foote
 	<table style="color:#aaa; font-size:10px;">
 		<tr>
 			<td align="left" style="width:97mm;">
-				'._('Stampato con OpenSTAManager').'
+				'.tr('Stampato con OpenSTAManager').'
 			</td>
 
 			<td align="right" style="width:97mm;">
-				'.str_replace(['_PAGE_', '_TOTAL_'], ['[[page_cu]]', '[[page_nb]]'], _('Pagina _PAGE_ di _TOTAL_')).'
+				'.str_replace(['_PAGE_', '_TOTAL_'], ['[[page_cu]]', '[[page_nb]]'], tr('Pagina _PAGE_ di _TOTAL_')).'
 			</td>
 		</tr>
 	</table>

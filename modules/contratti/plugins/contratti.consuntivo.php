@@ -75,7 +75,7 @@ if (!empty($rscontratti)) {
         $totale_ore_impiegate += $t;
 
         $desc = nl2br($r['descrizione']);
-        $line = Modules::link('Interventi', $r['id'], str_replace(['_NUM_', '_DATE_'], [$r['codice'], Translator::dateToLocale($r['data'])], _('Intervento <b>_NUM_</b> del <b>_DATE_</b>'))).'<br>'.$desc;
+        $line = Modules::link('Interventi', $r['id'], str_replace(['_NUM_', '_DATE_'], [$r['codice'], Translator::dateToLocale($r['data'])], tr('Intervento <b>_NUM_</b> del <b>_DATE_</b>'))).'<br>'.$desc;
 
         // Inutilizzati
         $contratti[] = $line;
@@ -96,9 +96,9 @@ if (!empty($rscontratti)) {
     echo '
 <table class="table table-bordered table-condensed">
     <tr>
-        <th width="20%">'._('Interventi').'</th>
-        <th>'._('Tecnici').'</th>
-        <th width="160">'._('Subtotale contratto').'</th>';
+        <th width="20%">'.tr('Interventi').'</th>
+        <th>'.tr('Tecnici').'</th>
+        <th width="160">'.tr('Subtotale contratto').'</th>';
 
     if ($stato == 'aperto' || $stato == 'in attesa') {
         echo '
@@ -148,15 +148,15 @@ if (!empty($rscontratti)) {
             <table width="100%" cellspacing="0" align="center">
                 <tr>
                     <th width="20"></th>
-                    <th colspan="2">'._('Articoli utilizzati').':</th>
+                    <th colspan="2">'.tr('Articoli utilizzati').':</th>
                 </tr>
 
                 <tr>
                     <td></td>
-                    <th>'._('Articolo').'</th>
-                    <th>'._('Q.tà').'</th>
-                    <th>'._('Prezzo unitario').'</th>
-                    <th>'._('Subtot').'</th>
+                    <th>'.tr('Articolo').'</th>
+                    <th>'.tr('Q.tà').'</th>
+                    <th>'.tr('Prezzo unitario').'</th>
+                    <th>'.tr('Subtot').'</th>
                 </tr>';
 
             for ($j = 0; $j < sizeof($rs2); ++$j) {
@@ -170,10 +170,10 @@ if (!empty($rscontratti)) {
                         '.Modules::link('Articoli', $rs2[$j]['idarticolo'], $rs2[$j]['descrizione']);
 
                 if ($rs2[$i]['lotto'] != '') {
-                    echo '<br>'._('Lotto').': '.$rs2[$i]['lotto'];
+                    echo '<br>'.tr('Lotto').': '.$rs2[$i]['lotto'];
                 }
                 if ($rs2[$i]['serial'] != '') {
-                    echo '<br>'._('SN').': '.$rs2[$i]['serial'];
+                    echo '<br>'.tr('SN').': '.$rs2[$i]['serial'];
                 }
                 if ($rs2[$i]['altro'] != '') {
                     echo '<br>'.$rs2[$i]['altro'];
@@ -218,15 +218,15 @@ if (!empty($rscontratti)) {
             <table class="table table-striped table-hover table-bordered">
                 <tr>
                     <th></th>
-                    <th colspan="4">'._('Spese aggiuntive').':</th>
+                    <th colspan="4">'.tr('Spese aggiuntive').':</th>
                 </tr>
 
                 <tr>
                     <td></td>
-                    <th>'._('Descrizione').'</th>
-                    <th>'._('Q.tà').'</th>
-                    <th>'._('Prezzo unitario').'</th>
-                    <th>'._('Subtot').'</th>
+                    <th>'.tr('Descrizione').'</th>
+                    <th>'.tr('Q.tà').'</th>
+                    <th>'.tr('Prezzo unitario').'</th>
+                    <th>'.tr('Subtot').'</th>
                 </tr>';
 
             // Righe
@@ -269,7 +269,7 @@ if (!empty($rscontratti)) {
     // Totali
     echo '
     <tr>
-        <td colspan="2" align="right"><b>'._('Totale').'</b></td>
+        <td colspan="2" align="right"><b>'.tr('Totale').'</b></td>
         <td align="right">
             <big><b>'.Translator::numberToLocale($totale).'</b></big>
         </td>
@@ -278,7 +278,7 @@ if (!empty($rscontratti)) {
     // Totali per stato
     echo '
     <tr>
-        <td colspan="3"><br><b>'.strtoupper(_('Totale interventi per stato')).'</b></td>
+        <td colspan="3"><br><b>'.strtoupper(tr('Totale interventi per stato')).'</b></td>
     </tr>';
 
     foreach ($totale_x_stato as $stato => $tot) {
@@ -338,6 +338,6 @@ echo '
 echo '
 <div class="text-center">
     <a class="btn btn-primary" href="'.$rootdir.'/pdfgen.php?ptype=contratti_cons&amp;idcontratto='.$id_record.'" target="_blank">
-        <i class="fa fa-print"></i><br>'._('Stampa consuntivo').'
+        <i class="fa fa-print"></i><br>'.tr('Stampa consuntivo').'
     </a>
 </div>';

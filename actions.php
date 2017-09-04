@@ -23,12 +23,12 @@ $dbo->query('START TRANSACTION');
 if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     // Controllo sui permessi di scrittura per il modulo
     if (Modules::getPermission($id_module) != 'rw') {
-        $_SESSION['errors'][] = str_replace('_MODULE_', '"'.Modules::getModule($id_module)['name'].'"', _('Non hai permessi di scrittura per il modulo _MODULE_'));
+        $_SESSION['errors'][] = str_replace('_MODULE_', '"'.Modules::getModule($id_module)['name'].'"', tr('Non hai permessi di scrittura per il modulo _MODULE_'));
     }
 
     // Controllo sui permessi di scrittura per il file system
     elseif ((!is_dir($upload_dir) && !mkdir($upload_dir)) || (is_dir($upload_dir) && !is_writable($upload_dir))) {
-        $_SESSION['errors'][] = str_replace('_DIR_', '"files"', _('Non hai i permessi di scrittura nella cartella _DIR_!'));
+        $_SESSION['errors'][] = str_replace('_DIR_', '"files"', tr('Non hai i permessi di scrittura nella cartella _DIR_!'));
     }
 
     // Gestione delle operazioni
@@ -171,13 +171,13 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
                         'id_record' => $id_record,
                     ]);
 
-                    $_SESSION['infos'][] = _('File caricato correttamente!');
+                    $_SESSION['infos'][] = tr('File caricato correttamente!');
                 } else {
-                    $_SESSION['errors'][] = _('Errore durante il caricamento del file!');
+                    $_SESSION['errors'][] = tr('Errore durante il caricamento del file!');
                 }
             /*
             } else {
-                $_SESSION['errors'][] = _('Tipologia di file non permessa!');
+                $_SESSION['errors'][] = tr('Tipologia di file non permessa!');
             }
             */
         }
@@ -191,10 +191,10 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
             if (unlink($upload_dir.'/'.$filename)) {
                 $query = 'DELETE FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare($filename);
                 if ($dbo->query($query)) {
-                    $_SESSION['infos'][] = str_replace('_FILE_', '"'.$rs[0]['nome'].'"', _('File _FILE_ eliminato!'));
+                    $_SESSION['infos'][] = str_replace('_FILE_', '"'.$rs[0]['nome'].'"', tr('File _FILE_ eliminato!'));
                 }
             } else {
-                $_SESSION['errors'][] = str_replace(['_FILE_', '_DIR_'], ['"'.$filename.'"', '"files/'.$module_dir.'/"'], _("Errore durante l'eliminazione del file _FILE_ in _DIR_!"));
+                $_SESSION['errors'][] = str_replace(['_FILE_', '_DIR_'], ['"'.$filename.'"', '"files/'.$module_dir.'/"'], tr("Errore durante l'eliminazione del file _FILE_ in _DIR_!"));
             }
         }
 

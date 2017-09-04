@@ -137,7 +137,7 @@ if ($n > 0) {
     echo "</div>\n";
 } else {
     $show_btn = false;
-    echo '<b>'._('Non ci sono articoli da evadere in questo ordine')."...</b><br>\n";
+    echo '<b>'.tr('Non ci sono articoli da evadere in questo ordine')."...</b><br>\n";
 }
 ?>
 

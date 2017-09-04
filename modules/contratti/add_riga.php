@@ -13,7 +13,7 @@ $idanagrafica = $rs[0]['idanagrafica'];
 
 if (empty($idriga)) {
     $op = 'addriga';
-    $button = _('Aggiungi');
+    $button = tr('Aggiungi');
 
     // valori default
     $descrizione = '';
@@ -27,7 +27,7 @@ if (empty($idriga)) {
     $idiva = (!empty($rsa[0]['idiva'])) ? $rsa[0]['idiva'] : get_var('Iva predefinita');
 } else {
     $op = 'editriga';
-    $button = _('Modifica');
+    $button = tr('Modifica');
 
     $rsr = $dbo->fetchArray('SELECT * FROM co_righe2_contratti WHERE idcontratto='.prepare($idcontratto).' AND id='.prepare($idriga));
 
@@ -48,26 +48,26 @@ echo '
 // Descrizione
 echo '
     <div class="col-md-12">
-        {[ "type": "textarea", "label": "'._('Descrizione').'", "name": "descrizione", "value": "'.$descrizione.'", "required": 1 ]}
+        {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "value": "'.$descrizione.'", "required": 1 ]}
     </div>';
 
 // Iva
 
 echo '
     <div class="col-md-4">
-        {[ "type": "select", "label": "'._('Iva').'", "name": "idiva_articolo", "required": 1, "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "'.$idiva.'" ]}
+        {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva_articolo", "required": 1, "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "'.$idiva.'" ]}
     </div>';
 
 // Quantità
 echo '
     <div class="col-md-4">
-        {[ "type": "number", "label": "'._('Q.tà').'", "name": "qta", "value": "'.$qta.'", "required": 1, "decimals": "qta" ]}
+        {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "value": "'.$qta.'", "required": 1, "decimals": "qta" ]}
     </div>';
 
 // Unità di misura
 echo '
     <div class="col-md-4">
-        {[ "type": "select", "label": "'._('Unità di misura').'", "icon-after": "add|'.Modules::getModule('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
+        {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::getModule('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
     </div>';
 
 /*
@@ -113,13 +113,13 @@ if( get_var("Percentuale ritenuta d'acconto") != "" ){
 // Costo unitario
 echo '
     <div class="col-md-6">
-        {[ "type": "number", "label": "'._('Costo unitario').'", "name": "prezzo", "required": 1, "value": "'.$prezzo.'", "icon-after": "&euro;" ]}
+        {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "value": "'.$prezzo.'", "icon-after": "&euro;" ]}
     </div>';
 
 // Sconto unitario
 echo '
     <div class="col-md-6">
-        {[ "type": "number", "label": "'._('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "&euro;" ]}
+        {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "&euro;" ]}
     </div>';
 
 echo '

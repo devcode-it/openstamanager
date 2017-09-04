@@ -13,12 +13,12 @@ switch (post('op')) {
 
         // Zona già esistente
         if ($n > 0) {
-            $_SESSION['errors'][] = _('Zona già esistente!');
+            $_SESSION['errors'][] = tr('Zona già esistente!');
         }
         // Zona non esistente
         else {
             $dbo->query('UPDATE an_zone SET nome='.prepare($nome).', descrizione='.prepare($descrizione).' WHERE id='.prepare($id_zona).' AND `default`=0');
-            $_SESSION['infos'][] = _('Informazioni salvate correttamente!');
+            $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
         }
 
         break;
@@ -31,14 +31,14 @@ switch (post('op')) {
         $n = $dbo->fetchNum('SELECT id FROM an_zone WHERE nome='.prepare($nome).' OR descrizione='.prepare($descrizione));
 
         if ($n > 0) {
-            $_SESSION['errors'][] = _('Nome già esistente!');
+            $_SESSION['errors'][] = tr('Nome già esistente!');
         } else {
             $query = 'INSERT INTO an_zone(`nome`, `descrizione`, `default`) VALUES ('.prepare($nome).', '.prepare($descrizione).', 0)';
             $dbo->query($query);
 
             $id_record = $dbo->lastInsertedID();
 
-            $_SESSION['infos'][] = _('Aggiunta una nuova zona!');
+            $_SESSION['infos'][] = tr('Aggiunta una nuova zona!');
         }
         break;
 
@@ -48,7 +48,7 @@ switch (post('op')) {
         // Reimposto a 0 tutti gli idzona su an_anagrafiche (scollego la zona da tutte le anagrafiche associate)
         $dbo->query('UPDATE an_anagrafiche SET idzona = 0 WHERE idanagrafica='.prepare($id_record));
 
-        $_SESSION['infos'][] = _('Zona eliminata!');
+        $_SESSION['infos'][] = tr('Zona eliminata!');
 
         break;
 }

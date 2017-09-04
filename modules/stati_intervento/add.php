@@ -8,22 +8,22 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-2">
-			{[ "type": "text", "label": "<?php echo _('Codice'); ?>", "name": "idstatointervento", "required": 1, "value": "" ]}
+			{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "idstatointervento", "required": 1, "value": "" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo _('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "" ]}
+			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "" ]}
 		</div>
 
 		<div class="col-md-2">
-			{[ "type": "text", "label": "<?php echo _('Colore'); ?>", "name": "colore", "required": 1, "class": "colorpicker text-center", "value": "#ffffff", "extra": "maxlength='7'", "icon-after": "<div class='img-circle square'></div>" ]}
+			{[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "required": 1, "class": "colorpicker text-center", "value": "#ffffff", "extra": "maxlength='7'", "icon-after": "<div class='img-circle square'></div>" ]}
 		</div>
 	</div>
 
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo _('Aggiungi'); ?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 		</div>
 	</div>
 </form>

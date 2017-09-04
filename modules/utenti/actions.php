@@ -8,14 +8,14 @@ switch (filter('op')) {
     // Abilita utente
     case 'enable':
         if ($dbo->query('UPDATE zz_users SET enabled=1 WHERE id='.prepare($id_utente))) {
-            $_SESSION['infos'][] = _('Utente abilitato!');
+            $_SESSION['infos'][] = tr('Utente abilitato!');
         }
         break;
 
     // Disabilita utente
     case 'disable':
         if ($dbo->query('UPDATE zz_users SET enabled=0 WHERE id='.prepare($id_utente))) {
-            $_SESSION['infos'][] = _('Utente disabilitato!');
+            $_SESSION['infos'][] = tr('Utente disabilitato!');
         }
         break;
 
@@ -30,13 +30,13 @@ switch (filter('op')) {
 
         // Verifico che la password sia di almeno x caratteri
         if (strlen($password) < $min_length) {
-            $_SESSION['errors'][] = str_replace('_MIN_', $min_length, _('La password deve essere lunga almeno _MIN_ caratteri!'));
+            $_SESSION['errors'][] = str_replace('_MIN_', $min_length, tr('La password deve essere lunga almeno _MIN_ caratteri!'));
         } elseif ($password != $password_rep) {
-            $_SESSION['errors'][] = _('Le password non coincidono');
+            $_SESSION['errors'][] = tr('Le password non coincidono');
         } else {
             $dbo->query('UPDATE zz_users SET password='.prepare(Auth::hashPassword($password)).' WHERE id='.prepare($id_utente));
 
-            $_SESSION['infos'][] = _('Password aggiornata!');
+            $_SESSION['infos'][] = tr('Password aggiornata!');
         }
 
         $username = filter('username');
@@ -50,9 +50,9 @@ switch (filter('op')) {
             if ($n == 0) {
                 $dbo->query('UPDATE zz_users SET username='.prepare($username).' WHERE id='.prepare($id_utente));
 
-                $_SESSION['infos'][] = _('Username aggiornato!');
+                $_SESSION['infos'][] = tr('Username aggiornato!');
             } else {
-                $_SESSION['errors'][] = _('Utente già esistente!');
+                $_SESSION['errors'][] = tr('Utente già esistente!');
             }
         }
         break;
@@ -80,18 +80,18 @@ switch (filter('op')) {
         if ($n == 0) {
             // Verifico che la password sia di almeno x caratteri
             if (strlen($password) < $min_length) {
-                $_SESSION['errors'][] = str_replace('_MIN_', $min_length, _('La password deve essere lunga almeno _MIN_ caratteri!'));
+                $_SESSION['errors'][] = str_replace('_MIN_', $min_length, tr('La password deve essere lunga almeno _MIN_ caratteri!'));
             } elseif ($password != $password_rep) {
-                $_SESSION['errors'][] = _('Le password non coincidono');
+                $_SESSION['errors'][] = tr('Le password non coincidono');
             } else {
                 if ($dbo->query('INSERT INTO zz_users(idgruppo, username, password, idanagrafica, idtipoanagrafica, enabled, email) VALUES('.prepare($id_record).', '.prepare($username).', '.prepare(Auth::hashPassword($password)).', '.prepare($idanagrafica).', '.prepare($idtipoanagrafica).", 1, '')")) {
                     $dbo->query('INSERT INTO `zz_tokens` (`id_utente`, `token`) VALUES ('.prepare($dbo->lastInsertedID()).', '.prepare(secure_random_string()).')');
 
-                    $_SESSION['infos'][] = _('Utente aggiunto!');
+                    $_SESSION['infos'][] = tr('Utente aggiunto!');
                 }
             }
         } else {
-            $_SESSION['errors'][] = _('Utente già esistente!');
+            $_SESSION['errors'][] = tr('Utente già esistente!');
         }
         break;
 
@@ -102,17 +102,17 @@ switch (filter('op')) {
         // Verifico che questo username non sia già stato usato
         if ($dbo->fetchNum('SELECT nome FROM zz_groups WHERE nome='.prepare($nome)) == 0) {
             $dbo->query('INSERT INTO zz_groups( nome, editable ) VALUES('.prepare($nome).', 1)');
-            $_SESSION['infos'][] = _('Gruppo aggiunto!');
+            $_SESSION['infos'][] = tr('Gruppo aggiunto!');
             $id_record = $dbo->lastInsertedID();
         } else {
-            $_SESSION['errors'][] = _('Gruppo già esistente!');
+            $_SESSION['errors'][] = tr('Gruppo già esistente!');
         }
         break;
 
     // Elimina utente
    case 'delete':
         if ($dbo->query('DELETE FROM zz_users WHERE id='.prepare($id_utente))) {
-            $_SESSION['infos'][] = _('Utente eliminato!');
+            $_SESSION['infos'][] = tr('Utente eliminato!');
         }
         break;
 
@@ -126,10 +126,10 @@ switch (filter('op')) {
             if ($dbo->query('DELETE FROM zz_groups WHERE id='.prepare($id_record))) {
                 $dbo->query('DELETE FROM zz_users WHERE idgruppo='.prepare($id_record));
                 $dbo->query('DELETE FROM zz_permissions WHERE idgruppo='.prepare($id_record));
-                $_SESSION['infos'][] = _('Gruppo eliminato!');
+                $_SESSION['infos'][] = tr('Gruppo eliminato!');
             }
         } else {
-            $_SESSION['errors'][] = _('Questo gruppo non si può eliminare!');
+            $_SESSION['errors'][] = tr('Questo gruppo non si può eliminare!');
         }
 
         break;

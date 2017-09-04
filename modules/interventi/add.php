@@ -103,7 +103,7 @@ if (empty($new_codice)) {
 	<!-- DATI CLIENTE -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo _('Dati cliente'); ?></h3>
+			<h3 class="panel-title"><?php echo tr('Dati cliente'); ?></h3>
 		</div>
 
 		<div class="panel-body">
@@ -111,36 +111,36 @@ if (empty($new_codice)) {
 			<!-- RIGA 1 -->
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo _('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $idanagrafica ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo Modules::getModule('Anagrafiche')['id']; ?>|tipoanagrafica=Cliente", "data-heavy": 0 ]}
+					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $idanagrafica ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo Modules::getModule('Anagrafiche')['id']; ?>|tipoanagrafica=Cliente", "data-heavy": 0 ]}
 				</div>
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo _('Sede'); ?>", "name": "idsede",  "value": "<?php echo $idsede ?>", "placheholder": "<?php echo _('Seleziona prima un cliente'); ?>...", "ajax-source": "sedi" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede",  "value": "<?php echo $idsede ?>", "placheholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "sedi" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo _('Per conto di'); ?>", "name": "idclientefinale", "value": "", "ajax-source": "clienti" ]}
+					{[ "type": "select", "label": "<?php echo tr('Per conto di'); ?>", "name": "idclientefinale", "value": "", "ajax-source": "clienti" ]}
 				</div>
 			</div>
 
 			<!-- RIGA 2 -->
 			<div class="row">
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo _('Preventivo'); ?>", "name": "idpreventivo", "value": "<?php echo $idpreventivo ?>", "placeholder": "<?php echo _('Seleziona prima un cliente'); ?>...", "ajax-source": "preventivi" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Preventivo'); ?>", "name": "idpreventivo", "value": "<?php echo $idpreventivo ?>", "placeholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "preventivi" ]}
 				</div>
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo _('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $idcontratto ?>", "placeholder": "<?php echo _('Seleziona prima un cliente'); ?>...", "ajax-source": "contratti" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $idcontratto ?>", "placeholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "contratti" ]}
 				</div>
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo _('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto ?>", "placeholder": "<?php echo _('Seleziona prima un cliente'); ?>...", "ajax-source": "impianti" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto ?>", "placeholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "impianti" ]}
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-xs-12">
-                    {[ "type": "select", "label": "<?php echo _('Componenti'); ?>", "multiple": 1, "name": "componenti[]", "value": "<?php echo $componenti ?>", "placeholder": "<?php echo _('Seleziona prima un impianto'); ?>...", "ajax-source": "componenti" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Componenti'); ?>", "multiple": 1, "name": "componenti[]", "value": "<?php echo $componenti ?>", "placeholder": "<?php echo tr('Seleziona prima un impianto'); ?>...", "ajax-source": "componenti" ]}
 				</div>
 			</div>
 		</div>
@@ -149,56 +149,56 @@ if (empty($new_codice)) {
 	<!-- DATI INTERVENTO -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo _('Dati intervento'); ?></h3>
+			<h3 class="panel-title"><?php echo tr('Dati intervento'); ?></h3>
 		</div>
 
 		<div class="panel-body">
 			<!-- RIGA 3 -->
 			<div class="row">
 				<!--div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo _('Codice intervento'); ?>", "name": "codice", "required": 1, "class": "text-center", "value": "<?php echo $new_codice ?>" ]}
+					{[ "type": "text", "label": "<?php echo tr('Codice intervento'); ?>", "name": "codice", "required": 1, "class": "text-center", "value": "<?php echo $new_codice ?>" ]}
 				</div-->
 
 				<div class="col-md-4">
-					{[ "type": "date", "label": "<?php echo _('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "-now-" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "-now-" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "date", "label": "<?php echo _('Data intervento'); ?>", "name": "data", "required": 1, "value": "<?php echo $data ?>" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data intervento'); ?>", "name": "data", "required": 1, "value": "<?php echo $data ?>" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo _('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, nome AS descrizione FROM an_zone ORDER BY nome", "value": "<?php echo $idzona ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, nome AS descrizione FROM an_zone ORDER BY nome", "value": "<?php echo $idzona ?>" ]}
 				</div>
 			</div>
 
 			<!-- RIGA 4 -->
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo _('Tipo intervento'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento", "value": "<?php echo $idtipointervento ?>", "ajax-source": "tipiintervento" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo intervento'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento", "value": "<?php echo $idtipointervento ?>", "ajax-source": "tipiintervento" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo _('Stato intervento'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento", "value": "<?php echo $idstatointervento ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Stato intervento'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento", "value": "<?php echo $idstatointervento ?>" ]}
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "time", "label": "<?php echo _('Orario inizio'); ?>", "name": "orario_inizio", "required": 1, "value": "<?php echo $orario_inizio ?>" ]}
+					{[ "type": "time", "label": "<?php echo tr('Orario inizio'); ?>", "name": "orario_inizio", "required": 1, "value": "<?php echo $orario_inizio ?>" ]}
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "time", "label": "<?php echo _('Orario fine'); ?>", "name": "orario_fine", "required": 1, "value": "<?php echo $orario_fine ?>" ]}
+					{[ "type": "time", "label": "<?php echo tr('Orario fine'); ?>", "name": "orario_fine", "required": 1, "value": "<?php echo $orario_fine ?>" ]}
 				</div>
 			</div>
 
 			<!-- RIGA 5 -->
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "select", "label": "<?php echo _('Tecnici'); ?>", "multiple": "1", "name": "idtecnico[]", "required": 1, "ajax-source": "tecnici", "value": "<?php echo $idtecnico ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tecnici'); ?>", "multiple": "1", "name": "idtecnico[]", "required": 1, "ajax-source": "tecnici", "value": "<?php echo $idtecnico ?>" ]}
 				</div>
 
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo _('Richiesta'); ?>", "name": "richiesta", "required": 1, "value": "<?php echo $richiesta ?>", "extra": "style='max-height:80px; ' " ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Richiesta'); ?>", "name": "richiesta", "required": 1, "value": "<?php echo $richiesta ?>", "extra": "style='max-height:80px; ' " ]}
 				</div>
 
 				<?php
@@ -218,7 +218,7 @@ if (empty($new_codice)) {
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo _('Aggiungi'); ?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 		</div>
 	</div>
 </form>

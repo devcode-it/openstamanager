@@ -16,20 +16,20 @@ echo '
 // Seleziona articolo
 echo '
     <div class="col-md-8">
-        {[ "type": "select", "label": "'._('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$idarticolo.'", "ajax-source": "articoli" ]}
+        {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$idarticolo.'", "ajax-source": "articoli" ]}
     </div>';
 
 // Quantità
 echo '
     <div class="col-md-4">
-        {[ "type": "number", "label": "'._('Q.tà su questo automezzo').'", "name": "qta", "value": "1", "decimals": "qta" ]}
+        {[ "type": "number", "label": "'.tr('Q.tà su questo automezzo').'", "name": "qta", "value": "1", "decimals": "qta" ]}
     </div>';
 
 echo '
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> '._('Aggiungi').'</button>
+			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
 		</div>
 	</div>
 </form>';

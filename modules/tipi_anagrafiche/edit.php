@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 // Se lo stato intervento è uno di quelli di default, non lo lascio modificare
 if ($records[0]['default']) {
     $attr = "readonly='true'";
-    $warning_text = '<div class="alert alert-warning">'._('Non puoi modificare questo tipo di anagrafica!').'</div>';
+    $warning_text = '<div class="alert alert-warning">'.tr('Non puoi modificare questo tipo di anagrafica!').'</div>';
 } else {
     $attr = '';
     $warning_text = '';
@@ -24,7 +24,7 @@ echo $warning_text;
 if (!$records[0]['default']) {
     ?>
 	<div class="pull-right">
-		<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo _('Salva modifiche'); ?></button>
+		<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
 	</div>
 	<div class="clearfix"></div>
 <?php
@@ -35,7 +35,7 @@ if (!$records[0]['default']) {
 	<div class="row">
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo _('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$", "extra": "<?php echo $attr ?>" ]}
+			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$", "extra": "<?php echo $attr ?>" ]}
 		</div>
 
 	</div>
@@ -46,7 +46,7 @@ if (!$records[0]['default']) {
 if (!$records[0]['default']) {
     ?>
         <a class="btn btn-danger ask" data-backto="record-list">
-            <i class="fa fa-trash"></i> <?php echo _('Elimina') ?>
+            <i class="fa fa-trash"></i> <?php echo tr('Elimina') ?>
         </a>
 
 <?php

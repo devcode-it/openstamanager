@@ -11,20 +11,20 @@ if (!empty($rsddt)) {
     <thead>
         <tr>
             <th >#</th>
-            <th>'._('Numero').'</th>
-            <th>'._('Data').'</th>
-            <th>'._('Articolo').'</th>
-            <th>'._('Qtà').'</th>
+            <th>'.tr('Numero').'</th>
+            <th>'.tr('Data').'</th>
+            <th>'.tr('Articolo').'</th>
+            <th>'.tr('Qtà').'</th>
         </tr>
     </thead>
 
     <tfoot>
         <tr>
             <th>#</th>
-            <th>'._('Numero').'</th>
-            <th>'._('Data').'</th>
-            <th>'._('Articolo').'</th>
-            <th>'._('Qtà').'</th>
+            <th>'.tr('Numero').'</th>
+            <th>'.tr('Data').'</th>
+            <th>'.tr('Articolo').'</th>
+            <th>'.tr('Qtà').'</th>
         </tr>
     </tfoot>
 
@@ -94,6 +94,6 @@ $(document).ready(function() {
 } else {
     echo '
 <div class="alert alert-info" role="alert">
-    <i class="fa fa-info-circle"></i> '._('Nessun ddt di vendita per questa anagrafica').'.
+    <i class="fa fa-info-circle"></i> '.tr('Nessun ddt di vendita per questa anagrafica').'.
 </div>';
 }

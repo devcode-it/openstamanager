@@ -10,14 +10,14 @@ if ($module['name'] == 'Ddt di vendita') {
     $rs = $dbo->fetchArray("SELECT id FROM dt_tipiddt WHERE descrizione='Ddt di vendita' LIMIT 0,1");
     $id_tipoddt = $rs[0]['id'];
 
-    $tipo_anagrafica = _('Cliente');
+    $tipo_anagrafica = tr('Cliente');
 } else {
     $dir = 'uscita';
 
     $rs = $dbo->fetchArray("SELECT id FROM dt_tipiddt WHERE descrizione='Ddt di acquisto' LIMIT 0,1");
     $id_tipoddt = $rs[0]['id'];
 
-    $tipo_anagrafica = _('Fornitore');
+    $tipo_anagrafica = tr('Fornitore');
 }
 
 ?><form action="editor.php?id_module=$id_module$" method="post">
@@ -27,7 +27,7 @@ if ($module['name'] == 'Ddt di vendita') {
 
 	<div class="row">
 		<div class="col-md-4">
-			 {[ "type": "date", "label": "<?php echo _('Data'); ?>", "name": "data", "required": 1, "value": "-now-" ]}
+			 {[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "-now-" ]}
 		</div>
 
 		<div class="col-md-4">
@@ -35,14 +35,14 @@ if ($module['name'] == 'Ddt di vendita') {
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "<?php echo _('Tipo ddt'); ?>", "name": "idtipoddt", "required": 1, "values": "query=SELECT id, descrizione FROM dt_tipiddt WHERE dir='<?php echo $dir ?>'", "value": "<?php echo $id_tipoddt ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Tipo ddt'); ?>", "name": "idtipoddt", "required": 1, "values": "query=SELECT id, descrizione FROM dt_tipiddt WHERE dir='<?php echo $dir ?>'", "value": "<?php echo $id_tipoddt ?>" ]}
 		</div>
 	</div>
 
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo _('Aggiungi'); ?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 		</div>
 	</div>
 </form>

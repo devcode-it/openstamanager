@@ -17,7 +17,7 @@ $q2 = 'SELECT * FROM or_righe_ordini INNER JOIN mg_articoli ON or_righe_ordini.i
 $rs2 = $dbo->fetchArray($q2);
 
 echo '
-<p>'._('Articolo').': '.$rs2[0]['codice'].' - '.$rs2[0]['descrizione'].'</p>
+<p>'.tr('Articolo').': '.$rs2[0]['codice'].' - '.$rs2[0]['descrizione'].'</p>
 
 <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="add_serial">
@@ -37,12 +37,12 @@ if ($dir == 'entrata') {
     echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'._('Serial').'", "name": "serial[]", "multiple": 1, "value": "'.implode(',', $serials).'", "values": "query=SELECT serial AS id, serial AS descrizione FROM vw_serials WHERE dir=\'uscita\' AND serial NOT IN (SELECT serial FROM vw_serials WHERE dir=\'entrata\' AND record != \'fat-'.$id_record.'\')", "extra": "data-maximum=\"'.count($rs2).'\"" ]}
+            {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial[]", "multiple": 1, "value": "'.implode(',', $serials).'", "values": "query=SELECT serial AS id, serial AS descrizione FROM vw_serials WHERE dir=\'uscita\' AND serial NOT IN (SELECT serial FROM vw_serials WHERE dir=\'entrata\' AND record != \'fat-'.$id_record.'\')", "extra": "data-maximum=\"'.count($rs2).'\"" ]}
         </div>
     </div>';
 } else {
     echo '
-    <p>'._('Inserisci i numeri seriali degli articoli aggiunti:').'</p>';
+    <p>'.tr('Inserisci i numeri seriali degli articoli aggiunti:').'</p>';
 
     foreach ($array as $key => $serial) {
         if ($key % 3 == 0) {
@@ -77,7 +77,7 @@ if ($dir == 'entrata') {
             }
 
             echo '
-        '.Modules::link($modulo, $pieces[1], _('Visualizza vendita').' <i class="fa fa-external-link"></i>', null);
+        '.Modules::link($modulo, $pieces[1], tr('Visualizza vendita').' <i class="fa fa-external-link"></i>', null);
         }
         echo '
         </div>';
@@ -99,7 +99,7 @@ echo '
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-barcode"></i> '._('Aggiorna').'</button>
+			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-barcode"></i> '.tr('Aggiorna').'</button>
 		</div>
     </div>
 </form>';

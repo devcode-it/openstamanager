@@ -16,7 +16,7 @@ $numero = (!empty($rs[0]['numero_esterno'])) ? $rs[0]['numero_esterno'] : $rs[0]
 $idanagrafica = $rs[0]['idanagrafica'];
 
 if (!empty($get['idriga'])) {
-    $button = _('Modifica');
+    $button = tr('Modifica');
 
     $idriga = $get['idriga'];
 
@@ -30,7 +30,7 @@ if (!empty($get['idriga'])) {
     $sconto = $rsr[0]['sconto_unitario'];
     $tipo_sconto = $rsr[0]['tipo_sconto'];
 } else {
-    $button = _('Aggiungi');
+    $button = tr('Aggiungi');
 
     $descrizione = '';
     $qta = 1;
@@ -41,7 +41,7 @@ if (!empty($get['idriga'])) {
 }
 
 echo '
-<p>'.str_replace('_NUM_', $numero, _('Ddt numero _NUM_')).'</p>
+<p>'.str_replace('_NUM_', $numero, tr('Ddt numero _NUM_')).'</p>
 
 <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="'.(!empty($idriga) ? 'editriga' : 'addriga').'">
@@ -57,7 +57,7 @@ if (!empty($idriga)) {
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'._('Descrizione').'", "name": "descrizione", "required": 1, "value": "'.$descrizione.'" ]}
+            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "required": 1, "value": "'.$descrizione.'" ]}
         </div>
     </div>';
 
@@ -65,13 +65,13 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "number", "label": "'._('Q.tà').'", "name": "qta", "required": 1, "value": "'.$qta.'", "decimals": "qta" ]}
+            {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "'.$qta.'", "decimals": "qta" ]}
         </div>';
 
 // Unità di misura
         echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'._('Unità di misura').'", "icon-after": "add|'.Modules::getModule('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
+            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::getModule('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
         </div>
     </div>';
 
@@ -79,19 +79,19 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'._('Iva').'", "name": "idiva", "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "'.$idiva.'" ]}
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "'.$idiva.'" ]}
         </div>';
 
 // Costo unitario
 echo '
         <div class="col-md-4">
-            {[ "type": "number", "label": "'._('Costo unitario').'", "name": "prezzo", "required": 1, "value": "'.$subtot.'", "icon-after": "&euro;" ]}
+            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "value": "'.$subtot.'", "icon-after": "&euro;" ]}
         </div>';
 
 // Sconto unitario
 echo '
         <div class="col-md-4">
-            {[ "type": "number", "label": "'._('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
+            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
         </div>
     </div>';
 

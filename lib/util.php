@@ -278,6 +278,30 @@ if (!function_exists('safe_truncate')) {
     }
 }
 
+if (!function_exists('isHTTPS')) {
+    /**
+     * Checks to see if the page is being served over SSL or not.
+     *
+     * @since 2.3
+     *
+     * @return bool
+     */
+    function isHTTPS($trust_proxy_headers = false)
+    {
+        if (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') {
+            // Check the standard HTTPS headers
+            return true;
+        } elseif ($trust_proxy_headers && isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+            // Check proxy headers if allowed
+            return true;
+        } elseif (!empty($_SERVER['HTTP_FRONT_END_HTTPS']) && strtolower($_SERVER['HTTP_FRONT_END_HTTPS']) !== 'off') {
+            return true;
+        }
+
+        return false;
+    }
+}
+
 /**
  * Scurisce un determinato colore.
  *
@@ -395,26 +419,4 @@ function readSQLFile($filename, $delimiter = ';')
     } while (next($sqlRows) !== false);
 
     return $queryLine;
-}
-
-/**
- * Checks to see if the page is being served over SSL or not.
- *
- * @since 2.3
- *
- * @return bool
- */
-function isHTTPS($trust_proxy_headers = false)
-{
-    if (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') {
-        // Check the standard HTTPS headers
-        return true;
-    } elseif ($trust_proxy_headers && isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
-        // Check proxy headers if allowed
-        return true;
-    } elseif (!empty($_SERVER['HTTP_FRONT_END_HTTPS']) && strtolower($_SERVER['HTTP_FRONT_END_HTTPS']) !== 'off') {
-        return true;
-    }
-
-    return false;
 }

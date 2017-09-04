@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 if (!get_var('Attiva aggiornamenti')) {
-    die(_('Accesso negato'));
+    die(tr('Accesso negato'));
 }
 
 $tmp = $_FILES['blob']['tmp_name'];
@@ -13,9 +13,9 @@ $size = $_FILES['blob']['size'];
 $type = $_POST['type'];
 
 if (!extension_loaded('zip')) {
-    $_SESSION['errors'][] = _('Estensione php_zip non caricata!').'<br>'._('Verifica e attivala sul tuo php.ini');
+    $_SESSION['errors'][] = tr('Estensione php_zip non caricata!').'<br>'.tr('Verifica e attivala sul tuo php.ini');
 } elseif (!ends_with($filename, '.zip')) {
-    $_SESSION['errors'][] = _('Il file non è un archivio zip!');
+    $_SESSION['errors'][] = tr('Il file non è un archivio zip!');
 } elseif (!empty($tmp) && is_file($tmp)) {
     $zip = new ZipArchive();
 
@@ -61,7 +61,7 @@ if (!extension_loaded('zip')) {
 
                 redirect($rootdir, 'php');
             } else {
-                $_SESSION['errors'][] = _('File di aggiornamento non riconosciuto!');
+                $_SESSION['errors'][] = tr('File di aggiornamento non riconosciuto!');
             }
 
             // Ripristino il file di configurazione dell'utente
@@ -123,7 +123,7 @@ if (!extension_loaded('zip')) {
 
             // File zip non contiene il file MODULE
             else {
-                $_SESSION['errors'][] = _('File di installazione non valido!');
+                $_SESSION['errors'][] = tr('File di installazione non valido!');
             }
         }
 

@@ -3,18 +3,18 @@
 include_once __DIR__.'/../../../core.php';
 
 $mesi = [
-    _('Gennaio'),
-    _('Febbraio'),
-    _('Marzo'),
-    _('Aprile'),
-    _('Maggio'),
-    _('Giugno'),
-    _('Luglio'),
-    _('Agosto'),
-    _('Settembre'),
-    _('Ottobre'),
-    _('Novembre'),
-    _('Dicembre'),
+    tr('Gennaio'),
+    tr('Febbraio'),
+    tr('Marzo'),
+    tr('Aprile'),
+    tr('Maggio'),
+    tr('Giugno'),
+    tr('Luglio'),
+    tr('Agosto'),
+    tr('Settembre'),
+    tr('Ottobre'),
+    tr('Novembre'),
+    tr('Dicembre'),
 ];
 
 // Righe inserite
@@ -46,10 +46,10 @@ if (!empty($rsp)) {
     <table class="table table-hover table-striped">
         <thead>
             <tr>
-                <th width="10%">'._('Entro il').'</th>
-                <th width="45%">'._('Ragione sociale').'</th>
-                <th width="20%">'._('Sede').'</th>
-                <th width="20%">'._('Impianto').'</th>
+                <th width="10%">'.tr('Entro il').'</th>
+                <th width="45%">'.tr('Ragione sociale').'</th>
+                <th width="20%">'.tr('Sede').'</th>
+                <th width="20%">'.tr('Impianto').'</th>
                 <th width="5%"></th>
             </tr>
         </thead>
@@ -70,7 +70,7 @@ if (!empty($rsp)) {
         if ($r['idsede'] == '-1') {
             echo '- '.('Nessuna').' -';
         } elseif (empty($r['idsede'])) {
-            echo _('Sede legale');
+            echo tr('Sede legale');
         } else {
             $rsp2 = $dbo->fetchArray("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($r['idsede']));
 
@@ -106,5 +106,5 @@ if (!empty($rsp)) {
     }
 } else {
     echo '
-<p>'._('Non ci sono ordini di servizio da pianificare').'.</p>';
+<p>'.tr('Non ci sono ordini di servizio da pianificare').'.</p>';
 }

@@ -37,15 +37,15 @@ $rs = $dbo->fetchArray($query);
 
 if (!empty($rs)) {
     echo '
-    <p>'._('Seleziona le righe che vuoi inserire nella fattura e la quantità').':</p>
+    <p>'.tr('Seleziona le righe che vuoi inserire nella fattura e la quantità').':</p>
 
     <table class="table table-striped table-hover table-condensed">
         <tr>
-            <th>'._('Descrizione').'</th>
-            <th width="10%">'._('Q.tà').'</th>
-            <th width="20%" class="text-center">'._('Q.tà da evadere').'</th>
-            <th width="25%" class="text-right">'._('Subtot.').'</th>
-            <th width="15%" class="text-right">'._('Da evadere').'</th>
+            <th>'.tr('Descrizione').'</th>
+            <th width="10%">'.tr('Q.tà').'</th>
+            <th width="20%" class="text-center">'.tr('Q.tà da evadere').'</th>
+            <th width="25%" class="text-right">'.tr('Subtot.').'</th>
+            <th width="15%" class="text-right">'.tr('Da evadere').'</th>
         </tr>';
 
     $totale = 0.00;
@@ -138,7 +138,7 @@ if (!empty($rs)) {
     </table>';
 } else {
     echo '
-    <p>'._('Non ci sono articoli da evadere in questo ddt').'...</p>';
+    <p>'.tr('Non ci sono articoli da evadere in questo ddt').'...</p>';
 }
 
 echo '
@@ -146,7 +146,7 @@ echo '
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> '._('Aggiungi').'</button>
+			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
 		</div>
     </div>
 </form>';

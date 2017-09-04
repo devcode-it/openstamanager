@@ -25,7 +25,7 @@ Form di inserimento riga documento
 */
 
 echo '
-<p>'.str_replace('_NUM_', $numero, _('Ddt numero _NUM_')).'</p>';
+<p>'.str_replace('_NUM_', $numero, tr('Ddt numero _NUM_')).'</p>';
 
 //Selezione articoli del ddt da portare nella fattura, escludo quelli completamente evasi
 $query = 'SELECT *, (qta - qta_evasa) AS qta_rimanente FROM dt_ddt INNER JOIN dt_righe_ddt ON dt_ddt.id=dt_righe_ddt.idddt WHERE dt_ddt.id='.prepare($idddt).' HAVING qta_rimanente > 0';
@@ -33,7 +33,7 @@ $rs = $dbo->fetchArray($query);
 
 if (!empty($rs)) {
     echo '
-<p>'._('Seleziona le righe che vuoi inserire nella fattura e la relativa quantità').'.</p><br/><br/>';
+<p>'.tr('Seleziona le righe che vuoi inserire nella fattura e la relativa quantità').'.</p><br/><br/>';
 
     echo '
 <form id="link_form" action="'.$rootdir.'/editor.php?id_module='.Modules::getModule($module_name)['id'].'&id_record='.$idddt.'" method="post">
@@ -49,7 +49,7 @@ if (!empty($rs)) {
     echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "date", "label": "'._('Data fattura').'", "name": "data", "required": 1, "value": "-now-" ]}
+            {[ "type": "date", "label": "'.tr('Data fattura').'", "name": "data", "required": 1, "value": "-now-" ]}
         </div>
     </div>';
 
@@ -59,11 +59,11 @@ if (!empty($rs)) {
 
     <table class="table table-striped table-hover table-condensed">
         <tr>
-            <th>'._('Descrizione').'</th>
-            <th width="10%%">'._('Q.tà').'</th>
-            <th width="15%">'._('Q.tà da evadere').'</th>
-            <th width="20%">'._('Subtot.').'</th>
-            <th width="10%">'._('Da evadere').'</th>
+            <th>'.tr('Descrizione').'</th>
+            <th width="10%%">'.tr('Q.tà').'</th>
+            <th width="15%">'.tr('Q.tà da evadere').'</th>
+            <th width="20%">'.tr('Subtot.').'</th>
+            <th width="10%">'.tr('Da evadere').'</th>
             <th width="2%"></th>
         </tr>';
     $totale = 0.00;
@@ -80,10 +80,10 @@ if (!empty($rs)) {
                 '.nl2br($r['descrizione']).'
                 <small>';
         if ($r['lotto'] != '') {
-            echo '<br/>'._('Lotto').': '.$r['lotto'];
+            echo '<br/>'.tr('Lotto').': '.$r['lotto'];
         }
         if ($r['serial'] != '') {
-            echo '<br/>'._('SN').': '.$r['serial'];
+            echo '<br/>'.tr('SN').': '.$r['serial'];
         }
         if ($r['altro'] != '') {
             echo '<br/>'.$r['altro'];
@@ -150,7 +150,7 @@ echo '
 	<div class="row">
 		<div class="col-md-12 text-right">
 			<button type="submit" id="submit_btn" class="btn btn-primary pull-right">
-                <i class="fa fa-plus"></i> '.($dir == 'entrata' ? _('Crea fattura di vendita') : _('Crea fattura di acquisto')).'
+                <i class="fa fa-plus"></i> '.($dir == 'entrata' ? tr('Crea fattura di vendita') : tr('Crea fattura di acquisto')).'
             </button>
 		</div>
     </div>';
@@ -159,7 +159,7 @@ echo '
 </form>';
 } else {
     echo '
-    <b>'._('Non ci sono articoli da evadere in questo ddt').'...</b>';
+    <b>'.tr('Non ci sono articoli da evadere in questo ddt').'...</b>';
 }
 
 echo '

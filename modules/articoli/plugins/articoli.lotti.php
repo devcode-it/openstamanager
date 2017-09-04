@@ -7,7 +7,7 @@ include_once __DIR__.'/../../../core.php';
 echo '
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <h3 class="panel-title">'._('Produzione').'</h3>
+        <h3 class="panel-title">'.tr('Produzione').'</h3>
     </div>
     <div class="panel-body">';
 
@@ -35,7 +35,7 @@ echo '
 echo '
             <div class="row form-group">
                 <div class="col-md-12">
-                    <h4>'._('Inserimento nuovi prodotti').'</h4>
+                    <h4>'.tr('Inserimento nuovi prodotti').'</h4>
                 </div>
             </div>';
 
@@ -43,7 +43,7 @@ echo '
 // Lotto
 echo '
             <div class="row form-group">
-                <label class="col-md-2 control-label" for="lotto_start">'._('Lotto da').':</label>
+                <label class="col-md-2 control-label" for="lotto_start">'.tr('Lotto da').':</label>
                 <div class="col-md-2">
                     <input type="text" class="form-control input-md" name="lotto_start" onkeyup="$(\'input[name=lotto_end]\').val( $(\'input[name=lotto_start]\').val() ); $(\'#warn_lotto\').hide(); ricalcola_totale_prodotti();" value="'.$next_lotto.'">
                 </div>
@@ -55,7 +55,7 @@ echo '
 if (!empty($max_lotto)) {
     echo '
                 <div class="col-md-3">
-                    <p id="warn_lotto" class="text-danger"><b>'._('Ultimo lotto inserito').': </b> '.$max_lotto.'</p>
+                    <p id="warn_lotto" class="text-danger"><b>'.tr('Ultimo lotto inserito').': </b> '.$max_lotto.'</p>
                 </div>';
 }
 echo '
@@ -64,7 +64,7 @@ echo '
 // Serial
 echo '
             <div class="row form-group">
-                <label class="col-md-2 control-label" for="serial_start">'._('Serial number da').':</label>
+                <label class="col-md-2 control-label" for="serial_start">'.tr('Serial number da').':</label>
                 <div class="col-md-2">
                     <input type="text" class="form-control input-md" name="serial_start" onkeyup="$(\'input[name=serial_end]\').val( $(\'input[name=serial_start]\').val() ); $(\'#warn_serial\').hide(); ricalcola_totale_prodotti();" value="'.$next_serial.'" />
                 </div>
@@ -77,7 +77,7 @@ echo '
 if (!empty($max_serial)) {
     echo '
                 <div class="col-md-3">
-                    <p id="warn_serial" class="text-danger"><b>'._('Ultimo serial number inserito').': </b> '.$max_serial.'</p>
+                    <p id="warn_serial" class="text-danger"><b>'.tr('Ultimo serial number inserito').': </b> '.$max_serial.'</p>
                 </div>';
 }
 echo '
@@ -87,7 +87,7 @@ echo '
 // Altro
 echo '
             <div class="row form-group">
-                <label class="col-md-2 control-label" for="altro_start">'._('Altro codice da').':</label>
+                <label class="col-md-2 control-label" for="altro_start">'.tr('Altro codice da').':</label>
                 <div class="col-md-2">
                     <input type="text" class="form-control input-md" name="altro_start" onkeyup="$(\'input[name=altro_end]\').val( $(\'input[name=altro_start]\').val() ); $(\'#warn_altro\').hide(); ricalcola_totale_prodotti();" value="'.$next_altro.'" />
                 </div>
@@ -99,7 +99,7 @@ echo '
 if (!empty($max_altro)) {
     echo '
                 <div class="col-md-3">
-                    <p id="warn_altro" class="text-danger"><b>'._('Ultimo codice aggiuntivo inserito').': </b> '.$max_altro.'</p>
+                    <p id="warn_altro" class="text-danger"><b>'.tr('Ultimo codice aggiuntivo inserito').': </b> '.$max_altro.'</p>
                 </div>';
 }
 echo '
@@ -110,16 +110,16 @@ echo '
 echo '
             <div class="row">
                 <div class="col-md-12">
-                    <p class="text-danger text-center">'._('Totale prodotti da inserire').': <span id="totale_prodotti">0</span></p>
-                    <button type="submit" id="inserisci" class="btn btn-success" onclick="if( confirm(\'Confermi l\\\'inserimento di \' + globalsp.n_prodotti + \' prodotti?\') ){ $(\'#insert_form\').submit(); }"><i class="fa fa-check"></i> '._('Salva modifiche').'</button>';
+                    <p class="text-danger text-center">'.tr('Totale prodotti da inserire').': <span id="totale_prodotti">0</span></p>
+                    <button type="submit" id="inserisci" class="btn btn-success" onclick="if( confirm(\'Confermi l\\\'inserimento di \' + globalsp.n_prodotti + \' prodotti?\') ){ $(\'#insert_form\').submit(); }"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>';
 
 // Visualizzo, in base alle impostazioni scelte, se il magazzino verrà movimentato
 if (get_var("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number") == true) {
     echo '
-                    <small>'._("L'inserimento incrementerà la quantità dell'articolo!").'</small>';
+                    <small>'.tr("L'inserimento incrementerà la quantità dell'articolo!").'</small>';
 } else {
     echo '
-                    <small>'._("L'inserimento non movimenterà la quantità dell'articolo!").'</small>';
+                    <small>'.tr("L'inserimento non movimenterà la quantità dell'articolo!").'</small>';
 }
 
 echo '
@@ -133,16 +133,16 @@ echo '
 echo '
 <div class="box">
     <div class="box-header with-border">
-        <h3 class="box-title">'._('Ricerca prodotti').'</h3>
+        <h3 class="box-title">'.tr('Ricerca prodotti').'</h3>
     </div>
     <div class="box-body">
         <div class="text-right">
             <small style="color:#f00;">';
 // Visualizzo, in base alle impostazioni scelte, se il magazzino verrà movimentato
 if (get_var("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
-    echo _("La cancellazione decrementerà la quantità dell'articolo!");
+    echo tr("La cancellazione decrementerà la quantità dell'articolo!");
 } else {
-    echo _("L'inserimento decrementerà la quantità dell'articolo!");
+    echo tr("L'inserimento decrementerà la quantità dell'articolo!");
 }
 echo '
             </small>
@@ -164,10 +164,10 @@ $rs2 = $dbo->fetchArray($query);
     <table class="table table-striped table-hover table-condensed table-bordered text-center datatables">
         <thead>
             <tr>
-                <th id="th_Serial">'._('Serial').'</th>
-                <th id="th_Data di creazione">'._('Data di creazione').'</th>
-                <th id="th_Documento di vendita">'._('Documento di vendita').'</th>
-                <th id="th_Totale">'._('Totale').'</th>
+                <th id="th_Serial">'.tr('Serial').'</th>
+                <th id="th_Data di creazione">'.tr('Data di creazione').'</th>
+                <th id="th_Documento di vendita">'.tr('Documento di vendita').'</th>
+                <th id="th_Totale">'.tr('Totale').'</th>
                 <th></th>
             </tr>
         </thead>
@@ -240,9 +240,9 @@ $rs2 = $dbo->fetchArray($query);
                 $numero = ($rs6[0]['numero_esterno'] != '') ? $rs6[0]['numero_esterno'] : $rs6[0]['numero'];
                 $module_id = Modules::getModule('Interventi')['id'];
                 $id = $rs6[0]['idintervento'];
-                $documento = _('Intervento').' '.$rs6[0]['codice'];
+                $documento = tr('Intervento').' '.$rs6[0]['codice'];
                 $data = $rs6[0]['data'];
-                $extra = str_replace('_QTA_', $rs6[0]['qta'], _('(q.tà _QTA_)'));
+                $extra = str_replace('_QTA_', $rs6[0]['qta'], tr('(q.tà _QTA_)'));
 
                 $totale = $rs6[0]['prezzo_vendita'] * $rs6[0]['qta'];
             }
@@ -251,7 +251,7 @@ $rs2 = $dbo->fetchArray($query);
                 $totale = $subtotale + $iva;
             }
 
-            $text = str_replace(['_DOC_', '_NUM_', '_DATE_'], [$documento, $numero, Translator::dateToLocale($data)], _('_DOC_ n<sup>o</sup> _NUM_ del _DATE_')).(!empty($extra) ? ' '.$extra : '');
+            $text = str_replace(['_DOC_', '_NUM_', '_DATE_'], [$documento, $numero, Translator::dateToLocale($data)], tr('_DOC_ n<sup>o</sup> _NUM_ del _DATE_')).(!empty($extra) ? ' '.$extra : '');
 
             echo '
                 <td>

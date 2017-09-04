@@ -67,9 +67,9 @@ if (filter('op') == 'send') {
         $mail->AddBCC($dati['email_bcc']);
     }
 
-    $mail->Subject = 'Segnalazione bug OSM '.$version.' ('.(!empty($revision) ? 'R'.$revision : _('In sviluppo')).')';
-    $mail->AltBody = _('Questa email arriva dal modulo bug di segnalazione bug di OSM');
-    $body = $dati['body'].'<hr><br>'._('IP').': '.get_client_ip()."<br>\n";
+    $mail->Subject = 'Segnalazione bug OSM '.$version.' ('.(!empty($revision) ? 'R'.$revision : tr('In sviluppo')).')';
+    $mail->AltBody = tr('Questa email arriva dal modulo bug di segnalazione bug di OSM');
+    $body = $dati['body'].'<hr><br>'.tr('IP').': '.get_client_ip()."<br>\n";
 
     // Se ho scelto di inoltrare i file di log, allego
     if (!empty($post['log']) && file_exists($docroot.'/logs/error.log')) {
@@ -86,9 +86,9 @@ if (filter('op') == 'send') {
 
         if (file_put_contents($docroot.'/'.$backup_file, $dump)) {
             $mail->AddAttachment($docroot.'/'.$backup_file);
-            $_SESSION['infos'][] = _('Backup del database eseguito ed allegato correttamente!');
+            $_SESSION['infos'][] = tr('Backup del database eseguito ed allegato correttamente!');
         } else {
-            $_SESSION['errors'][] = _('Errore durante la creazione del file di backup!');
+            $_SESSION['errors'][] = tr('Errore durante la creazione del file di backup!');
         }
     }
 
@@ -101,9 +101,9 @@ if (filter('op') == 'send') {
 
     // Invio mail
     if (!$mail->send()) {
-        $_SESSION['errors'][] = _("Errore durante l'invio della segnalazione").': '.$mail->ErrorInfo;
+        $_SESSION['errors'][] = tr("Errore durante l'invio della segnalazione").': '.$mail->ErrorInfo;
     } else {
-        $_SESSION['infos'][] = _('Email inviata correttamente!');
+        $_SESSION['infos'][] = tr('Email inviata correttamente!');
     }
 
     $mail->SmtpClose();
@@ -141,8 +141,8 @@ if (!empty($alert)) {
     echo '
 	<div class="alert alert-warning">
 		<i class="fa fa-warning"></i>
-		<b>'._('Attenzione!').'</b> '._('Per utilizzare correttamente il modulo di segnalazione bug devi configurare alcuni parametri email nella scheda impostazioni').'.
-        '.Modules::link('Opzioni', $dbo->fetchArray("SELECT `idimpostazione` FROM `zz_settings` WHERE sezione='Email'")[0]['idimpostazione'], _('Correggi'), null, 'class="btn btn-warning pull-right"').'
+		<b>'.tr('Attenzione!').'</b> '.tr('Per utilizzare correttamente il modulo di segnalazione bug devi configurare alcuni parametri email nella scheda impostazioni').'.
+        '.Modules::link('Opzioni', $dbo->fetchArray("SELECT `idimpostazione` FROM `zz_settings` WHERE sezione='Email'")[0]['idimpostazione'], tr('Correggi'), null, 'class="btn btn-warning pull-right"').'
 		<div class="clearfix"></div>
 	</div>';
 }
@@ -150,76 +150,76 @@ if (!empty($alert)) {
 echo '
 	<div class="box">
 		<div class="box-header">
-			<h3 class="box-title"><i class="fa fa-bug"></i>'._('Segnalazione bug').'</h3></h3>
+			<h3 class="box-title"><i class="fa fa-bug"></i>'.tr('Segnalazione bug').'</h3></h3>
 		</div>
 
 		<div class="box-body">
 			<form method="post" action="'.$rootdir.'/bug.php?op=send">
 				<table class="table table-bordered table-condensed table-striped table-hover">
 					<tr>
-						<th width="150" class="text-right">'._('Da').':</th>
+						<th width="150" class="text-right">'.tr('Da').':</th>
 						<td>
-                            {[ "type": "email", "placeholder": "'._('Mittente').'", "name": "email_from", "value": "'.$email_from.'", "required": 1 ]}
+                            {[ "type": "email", "placeholder": "'.tr('Mittente').'", "name": "email_from", "value": "'.$email_from.'", "required": 1 ]}
 						</td>
 					</tr>
 
 					<!-- A -->
 					<tr>
-						<th class="text-right">'._('A').':</th>
+						<th class="text-right">'.tr('A').':</th>
 						<td>
-                            {[ "type": "email", "placeholder": "'._('Destinatario').'", "name": "email_to", "value": "'.$email_to.'", "required": 1 ]}
+                            {[ "type": "email", "placeholder": "'.tr('Destinatario').'", "name": "email_to", "value": "'.$email_to.'", "required": 1 ]}
 						</td>
 					</tr>
 
 					<!-- Cc -->
 					<tr>
-						<th class="text-right">'._('Cc').':</th>
+						<th class="text-right">'.tr('Cc').':</th>
 						<td>
-                            {[ "type": "email", "placeholder": "'._('Copia a').'...", "name": "email_cc" ]}
+                            {[ "type": "email", "placeholder": "'.tr('Copia a').'...", "name": "email_cc" ]}
 						</td>
 					</tr>
 
 					<!-- Bcc -->
 					<tr>
-						<th class="text-right">'._('Bcc').':</th>
+						<th class="text-right">'.tr('Bcc').':</th>
 						<td>
-                            {[ "type": "email", "placeholder": "'._('Copia nascosta a').'...", "name": "email_bcc" ]}
+                            {[ "type": "email", "placeholder": "'.tr('Copia nascosta a').'...", "name": "email_bcc" ]}
 						</td>
 					</tr>
 
 					<!-- Versione -->
 					<tr>
-						<th class="text-right">'._('Versione OSM').':</th>
+						<th class="text-right">'.tr('Versione OSM').':</th>
 
 						<td>
-                            {[ "type": "span", "placeholder": "'._('Versione OSM').'", "value": "'.$version.' ('.(!empty($revision) ? 'R'.$revision : _('In sviluppo')).')" ]}
+                            {[ "type": "span", "placeholder": "'.tr('Versione OSM').'", "value": "'.$version.' ('.(!empty($revision) ? 'R'.$revision : tr('In sviluppo')).')" ]}
 						</td>
 					</tr>
 				</table>
 
 				<div class="row">
                     <div class="col-xs-12 col-md-4">
-                        {[ "type": "checkbox", "placeholder": "'._('Allega file di log').'", "name": "log", "value": "1" ]}
+                        {[ "type": "checkbox", "placeholder": "'.tr('Allega file di log').'", "name": "log", "value": "1" ]}
 					</div>
 
                     <div class="col-xs-12 col-md-4">
-                        {[ "type": "checkbox", "placeholder": "'._('Allega copia del database').'", "name": "sql", "value": "0" ]}
+                        {[ "type": "checkbox", "placeholder": "'.tr('Allega copia del database').'", "name": "sql", "value": "0" ]}
 					</div>
 
                     <div class="col-xs-12 col-md-4">
-                        {[ "type": "checkbox", "placeholder": "'._('Allega informazioni sul PC').'", "name": "info", "value": "1" ]}
+                        {[ "type": "checkbox", "placeholder": "'.tr('Allega informazioni sul PC').'", "name": "info", "value": "1" ]}
 					</div>
 				</div>
 
                 <div class="clearfix"></div>
                 <br>
 
-                {[ "type": "textarea", "label": "'._('Descrizione del bug').'", "name": "body" ]}
+                {[ "type": "textarea", "label": "'.tr('Descrizione del bug').'", "name": "body" ]}
 
                 <!-- PULSANTI -->
                 <div class="row">
                     <div class="col-md-12 text-right">
-                        <button type="submit" class="btn btn-primary" id="send" disabled><i class="fa fa-envelope"></i> '._('Invia segnalazione').'</button>
+                        <button type="submit" class="btn btn-primary" id="send" disabled><i class="fa fa-envelope"></i> '.tr('Invia segnalazione').'</button>
                     </div>
                 </div>
 			</form>
@@ -228,14 +228,14 @@ echo '
 
 	<script>
 		$(document).ready(function(){
-			var html = "<p>'._('Se hai riscontrato un bug ricordati di specificare').':</p>" +
+			var html = "<p>'.tr('Se hai riscontrato un bug ricordati di specificare').':</p>" +
 			"<ul>" +
-				"<li>'._('Modulo esatto (o pagina relativa) in cui questi si è verificato').';</li>" +
-				"<li>'._('Dopo quali specifiche operazioni hai notato il malfunzionameto').'.</li>" +
+				"<li>'.tr('Modulo esatto (o pagina relativa) in cui questi si è verificato').';</li>" +
+				"<li>'.tr('Dopo quali specifiche operazioni hai notato il malfunzionameto').'.</li>" +
 			"</ul>" +
-			"<p>'._('Assicurati inoltre di controllare che il checkbox relativo ai file di log sia contrassegnato, oppure riporta qui l\'errore visualizzato').'.</p>" +
-			"<p>'._('Ti ringraziamo per il tuo contributo').',<br>" +
-			"'._('Lo staff di OSM').'</p>";
+			"<p>'.tr('Assicurati inoltre di controllare che il checkbox relativo ai file di log sia contrassegnato, oppure riporta qui l\'errore visualizzato').'.</p>" +
+			"<p>'.tr('Ti ringraziamo per il tuo contributo').',<br>" +
+			"'.tr('Lo staff di OSM').'</p>";
 
 			var firstFocus = 1;
 

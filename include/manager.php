@@ -23,7 +23,7 @@ if (!empty($id_plugin)) {
 
     if (file_exists($docroot.'/plugins/'.$info['directory'].'/add.php')) {
         echo '
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-title="'._('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_parent='.$id_record.'"><i class="fa fa-plus"></i></button>';
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_parent='.$id_record.'"><i class="fa fa-plus"></i></button>';
     }
 
     echo '
@@ -125,15 +125,15 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
     $bulk = (array) $bulk;
 
     $tr = [
-        'delete' => _('Elimina selezione'),
+        'delete' => tr('Elimina selezione'),
     ];
 
         echo '
     <div class="row" data-target="'.$table_id.'">
         <div class="col-xs-12 col-md-5">
             <div class="btn-group" role="group">
-                <button type="button" class="btn btn-primary btn-select-all">'._('Seleziona tutto').'</button>
-                <button type="button" class="btn btn-default btn-select-none">'._('Deseleziona tutto').'</button>
+                <button type="button" class="btn btn-primary btn-select-all">'.tr('Seleziona tutto').'</button>
+                <button type="button" class="btn btn-default btn-select-none">'.tr('Deseleziona tutto').'</button>
             </div>
         </div>
 
@@ -141,7 +141,7 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
 
     if (!empty($bulk)) {
         echo '
-            <button class="btn btn-primary btn-block dropdown-toggle bulk-container disabled" type="button" data-toggle="dropdown" disabled>'._('Azioni di gruppo').' <span class="caret"></span></button>
+            <button class="btn btn-primary btn-block dropdown-toggle bulk-container disabled" type="button" data-toggle="dropdown" disabled>'.tr('Azioni di gruppo').' <span class="caret"></span></button>
             <ul class="dropdown-menu" data-target="'.$table_id.'" role="menu">';
 
         foreach ($bulk as $key => $value) {
@@ -158,9 +158,9 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
 
         <div class="col-xs-12 col-md-5 text-right">
             <div class="btn-group" role="group">
-                <button type="button" class="btn btn-primary btn-csv disabled" disabled>'._('Esporta').'</button>
-                <button type="button" class="btn btn-default btn-copy disabled" disabled>'._('Copia').'</button>
-                <button type="button" class="btn btn-default btn-print disabled" disabled>'._('Stampa').'</button>
+                <button type="button" class="btn btn-primary btn-csv disabled" disabled>'.tr('Esporta').'</button>
+                <button type="button" class="btn btn-default btn-copy disabled" disabled>'.tr('Copia').'</button>
+                <button type="button" class="btn btn-default btn-print disabled" disabled>'.tr('Stampa').'</button>
             </div>
         </div>
     </div>';

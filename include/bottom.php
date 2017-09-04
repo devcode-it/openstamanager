@@ -10,10 +10,10 @@ if (Auth::check()) {
 
 			<footer class="main-footer">
 				<span class="pull-right hidden-xs">
-                    <strong>'._('Versione').' '.$version.'</strong>
-                    <small class="text-muted">('.(!empty($revision) ? 'R'.$revision : _('In sviluppo')).')</small>
+                    <strong>'.tr('Versione').' '.$version.'</strong>
+                    <small class="text-muted">('.(!empty($revision) ? 'R'.$revision : tr('In sviluppo')).')</small>
                 </span>
-				'._('OpenSTAManager').'
+				'.tr('OpenSTAManager').'
 			</footer>
 
 			<div class="modal fade" id="bs-popup" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false"></div>

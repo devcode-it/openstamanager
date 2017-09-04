@@ -3,22 +3,22 @@
 include_once __DIR__.'/../../../core.php';
 
 $mesi = [
-    _('Gennaio'),
-    _('Febbraio'),
-    _('Marzo'),
-    _('Aprile'),
-    _('Maggio'),
-    _('Giugno'),
-    _('Luglio'),
-    _('Agosto'),
-    _('Settembre'),
-    _('Ottobre'),
-    _('Novembre'),
-    _('Dicembre'),
+    tr('Gennaio'),
+    tr('Febbraio'),
+    tr('Marzo'),
+    tr('Aprile'),
+    tr('Maggio'),
+    tr('Giugno'),
+    tr('Luglio'),
+    tr('Agosto'),
+    tr('Settembre'),
+    tr('Ottobre'),
+    tr('Novembre'),
+    tr('Dicembre'),
 ];
 
 echo '
-<h3>'._('Fatture da emettere').'</h3>
+<h3>'.tr('Fatture da emettere').'</h3>
 <hr>';
 
 // Righe inserite
@@ -68,10 +68,10 @@ if (!empty($rsp)) {
     <table class="table table-hover table-striped">
         <thead>
             <tr>
-                <th width="10%">'._('Entro il').'</th>
-                <th width="40%">'._('Ragione sociale').'</th>
-                <th width="20%">'._('Zona').'</th>
-                <th width="20%">'._('Impianto').'</th>
+                <th width="10%">'.tr('Entro il').'</th>
+                <th width="40%">'.tr('Ragione sociale').'</th>
+                <th width="20%">'.tr('Zona').'</th>
+                <th width="20%">'.tr('Impianto').'</th>
                 <th width="10%"></th>
             </tr>
         </thead>
@@ -92,15 +92,15 @@ if (!empty($rsp)) {
 
         // Sede
         if ($r['zona'] == '') {
-            $zona = _('Altro');
+            $zona = tr('Altro');
         } else {
             $zona = $r['zona'];
         }
 
         if ($n_sedi_pianificate == 1) {
-            $n_sedi = _('1 sede');
+            $n_sedi = tr('1 sede');
         } else {
-            $n_sedi = str_replace('_NUM_', $n_sedi_pianificate, _('_NUM_ sedi'));
+            $n_sedi = str_replace('_NUM_', $n_sedi_pianificate, tr('_NUM_ sedi'));
         }
 
         // Visualizzo solo le rate non pagate
@@ -140,5 +140,5 @@ if (!empty($rsp)) {
     }
 } else {
     echo '
-<p>'._('Non ci sono fatture da emettere').'.</p>';
+<p>'.tr('Non ci sono fatture da emettere').'.</p>';
 }

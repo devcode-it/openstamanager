@@ -20,14 +20,14 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "date", "label": "'._('Data').'", "name": "data", "required": 1, "class": "text-center", "value": "-now-", "extra": "" ]}
+            {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "class": "text-center", "value": "-now-", "extra": "" ]}
         </div>';
 
 
 // Tipo di documento
 echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'._('Tipo di fattura').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT * FROM co_tipidocumento WHERE dir=\'entrata\'", "extra": "" ]}
+            {[ "type": "select", "label": "'.tr('Tipo di fattura').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT * FROM co_tipidocumento WHERE dir=\'entrata\'", "extra": "" ]}
         </div>
     </div>';
 
@@ -36,7 +36,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-xs-12">
-            {[ "type": "textarea", "label": "'._('Descrizione').'", "name": "note", "value": "Rata '.$n_rata.' del contratto numero '.$numero.', zona '.$zona.'", "extra": "" ]}
+            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "note", "value": "Rata '.$n_rata.' del contratto numero '.$numero.', zona '.$zona.'", "extra": "" ]}
         </div>
     </div>';
 
@@ -45,7 +45,7 @@ echo '
 	<div class="row">
 		<div class="col-md-12 text-right">
 			<button type="submit" class="btn btn-primary pull-right">
-                <i class="fa fa-plus"></i> '._('Aggiungi').'
+                <i class="fa fa-plus"></i> '.tr('Aggiungi').'
             </button>
 		</div>
     </div>

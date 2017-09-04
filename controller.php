@@ -12,7 +12,7 @@ if (file_exists($docroot.'/include/custom/top.php')) {
 $module = Modules::getModule($id_module);
 
 if (empty($module) || empty($module['enabled'])) {
-    die(_('Accesso negato'));
+    die(tr('Accesso negato'));
 }
 
 $module_dir = $module['directory'];
@@ -39,7 +39,7 @@ echo '
 // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
 if (file_exists($docroot.'/modules/'.$module_dir.'/add.php') && $module['permessi'] == 'rw') {
     echo '
-						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'._('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'"><i class="fa fa-plus"></i></button>';
+						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'"><i class="fa fa-plus"></i></button>';
 }
 echo '
 					</a>

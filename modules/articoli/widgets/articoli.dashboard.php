@@ -8,8 +8,8 @@ if (!empty($rs)) {
     echo '
 <table class="table table-hover table-striped">
     <tr>
-        <th width="80%">'._('Articolo').'</th>
-        <th width="20%">'._('Q.tà').'</th>
+        <th width="80%">'.tr('Articolo').'</th>
+        <th width="20%">'.tr('Q.tà').'</th>
     </tr>';
 
     foreach($rs as $r){
@@ -27,5 +27,5 @@ if (!empty($rs)) {
     echo '
 </table>';
 } else {
-    echo '<p>'._('Non ci sono articoli in esaurimento').".</p>\n";
+    echo '<p>'.tr('Non ci sono articoli in esaurimento').".</p>\n";
 }

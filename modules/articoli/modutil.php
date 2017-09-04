@@ -33,11 +33,11 @@ function add_movimento_magazzino($idarticolo, $qta, $array = [], $descrizone = '
         $nome = $rs[0]['nome'];
 
         if (empty($array['idintervento'])) {
-            $movimento = ($qta < 0) ? _("Carico dal magazzino sull'automezzo _NAME_") : _("Scarico nel magazzino dall'automezzo _NAME_");
+            $movimento = ($qta < 0) ? tr("Carico dal magazzino sull'automezzo _NAME_") : tr("Scarico nel magazzino dall'automezzo _NAME_");
         }
         // Automezzo legato a intervento
         else {
-            $movimento = ($qta > 0) ? _("Carico sull'automezzo _NAME_") : _("Scarico dall'automezzo _NAME_");
+            $movimento = ($qta > 0) ? tr("Carico sull'automezzo _NAME_") : tr("Scarico dall'automezzo _NAME_");
 
             $qta = -$qta;
         }
@@ -49,7 +49,7 @@ function add_movimento_magazzino($idarticolo, $qta, $array = [], $descrizone = '
 
     // Intervento
     elseif (!empty($array['idintervento'])) {
-        $movimento = ($qta > 0) ? _('Ripristino articolo da intervento _NUM_') : _('Scarico magazzino per intervento _NUM_');
+        $movimento = ($qta > 0) ? tr('Ripristino articolo da intervento _NUM_') : tr('Scarico magazzino per intervento _NUM_');
         $numero = $array['idintervento'];
     }
 
@@ -59,14 +59,14 @@ function add_movimento_magazzino($idarticolo, $qta, $array = [], $descrizone = '
         $descrizone = '';
 
         if (empty($movimento)) {
-            $movimento = ($qta > 0) ? _('Carico magazzino') : _('Scarico magazzino');
+            $movimento = ($qta > 0) ? tr('Carico magazzino') : tr('Scarico magazzino');
         }
     }
 
     // Descrizione di default
     if (empty($movimento)) {
-        $carico = (!empty($rs[0]['dir']) && $rs[0]['dir'] == 'entrata') ? _('Ripristino articolo da _TYPE_ _NUM_') : _('Carico magazzino da _TYPE_ numero _NUM_');
-        $scarico = (!empty($rs[0]['dir']) && $rs[0]['dir'] == 'uscita') ? _('Rimozione articolo da _TYPE_ _NUM_') : _('Scarico magazzino per _TYPE_ numero _NUM_');
+        $carico = (!empty($rs[0]['dir']) && $rs[0]['dir'] == 'entrata') ? tr('Ripristino articolo da _TYPE_ _NUM_') : tr('Carico magazzino da _TYPE_ numero _NUM_');
+        $scarico = (!empty($rs[0]['dir']) && $rs[0]['dir'] == 'uscita') ? tr('Rimozione articolo da _TYPE_ _NUM_') : tr('Scarico magazzino per _TYPE_ numero _NUM_');
 
         $movimento = ($qta > 0) ? $carico : $scarico;
     }

@@ -11,7 +11,7 @@ $prc_sconto = $rs[0]['prc_sconto'];
 
 if (empty($idriga)) {
     $op = 'addriga';
-    $button = '<i class="fa fa-plus"></i> '._('Aggiungi');
+    $button = '<i class="fa fa-plus"></i> '.tr('Aggiungi');
 
     // valori default
     $descrizione = '';
@@ -21,7 +21,7 @@ if (empty($idriga)) {
     $prezzo_acquisto = '0';
 } else {
     $op = 'editriga';
-    $button = '<i class="fa fa-edit"></i> '._('Modifica');
+    $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
 
     // carico record da modificare
     $q = 'SELECT * FROM in_righe_interventi WHERE id='.prepare($idriga);
@@ -49,7 +49,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'._('Descrizione').'", "id": "descrizione_riga", "name": "descrizione", "required": 1, "value": "'.$descrizione.'" ]}
+            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "id": "descrizione_riga", "name": "descrizione", "required": 1, "value": "'.$descrizione.'" ]}
         </div>
     </div>
     <br>';
@@ -58,13 +58,13 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "number", "label": "'._('Q.tà').'", "name": "qta", "required": 1, "value": "'.$qta.'", "decimals": "qta" ]}
+            {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "'.$qta.'", "decimals": "qta" ]}
         </div>';
 
 // Unità di misura
 echo '
         <div class="col-md-4">
-            {[ "type": "select", "label": "'._('Unità di misura').'", "icon-after": "add|'.Modules::getModule('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
+            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::getModule('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
         </div>
     </div>';
 
@@ -72,19 +72,19 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "number", "label": "'._('Prezzo di acquisto (un.)').'", "name": "prezzo_acquisto", "required": 1, "value": "'.$prezzo_acquisto.'", "icon-after": "&euro;" ]}
+            {[ "type": "number", "label": "'.tr('Prezzo di acquisto (un.)').'", "name": "prezzo_acquisto", "required": 1, "value": "'.$prezzo_acquisto.'", "icon-after": "&euro;" ]}
         </div>';
 
 // Prezzo di vendita
 echo '
         <div class="col-md-4">
-            {[ "type": "number", "label": "'._('Prezzo di vendita (un.)').'", "name": "prezzo_vendita", "required": 1, "value": "'.$prezzo_vendita.'", "icon-after": "&euro;" ]}
+            {[ "type": "number", "label": "'.tr('Prezzo di vendita (un.)').'", "name": "prezzo_vendita", "required": 1, "value": "'.$prezzo_vendita.'", "icon-after": "&euro;" ]}
         </div>';
 
 // Sconto unitario
 echo '
         <div class="col-md-4">
-            {[ "type": "number", "label": "'._('Sconto unitario').'", "name": "sconto", "icon-after": "choice|untprc|'.$tipo_sconto.'", "value": "'.$sconto_unitario.'" ]}
+            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "icon-after": "choice|untprc|'.$tipo_sconto.'", "value": "'.$sconto_unitario.'" ]}
         </div>
     </div>';
 

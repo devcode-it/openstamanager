@@ -14,16 +14,16 @@ switch (filter('op')) {
         $file = filter('file');
 
         if (deltree($backup_dir.$file)) {
-            $_SESSION['infos'][] = str_replace('_FILE_', '"'.$file.'"', _('Backup _FILE_ eliminato!'));
+            $_SESSION['infos'][] = str_replace('_FILE_', '"'.$file.'"', tr('Backup _FILE_ eliminato!'));
         } else {
-            $_SESSION['errors'][] = str_replace('_FILE_', '"'.$file.'"', _("Errore durante l'eliminazione del backup _FILE_!"));
+            $_SESSION['errors'][] = str_replace('_FILE_', '"'.$file.'"', tr("Errore durante l'eliminazione del backup _FILE_!"));
         }
 
         break;
 
     case 'backup':
         if (!do_backup()) {
-            $_SESSION['errors'][] = _('Errore durante la creazione del backup!').' '.tr_replace('_DIR_', '"'.$backup_dir.'"', _('Verifica che la cartella _DIR_ abbia i permessi di scrittura!'));
+            $_SESSION['errors'][] = tr('Errore durante la creazione del backup!').' '.tr_replace('_DIR_', '"'.$backup_dir.'"', tr('Verifica che la cartella _DIR_ abbia i permessi di scrittura!'));
         }
 
         break;

@@ -458,7 +458,7 @@ class Modules
      */
     public static function link($modulo, $id_record, $testo = null, $alternativo = true, $extra = null, $blank = true)
     {
-        $testo = isset($testo) ? nl2br($testo) : _('Visualizza scheda').' <i class="fa fa-external-link"></i>';
+        $testo = isset($testo) ? nl2br($testo) : tr('Visualizza scheda').' <i class="fa fa-external-link"></i>';
         $alternativo = is_bool($alternativo) && $alternativo ? $testo : $alternativo;
 
         $module = self::getModule($modulo);

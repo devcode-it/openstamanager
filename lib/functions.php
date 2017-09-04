@@ -130,7 +130,7 @@ function copyr($source, $dest, $exclude = [])
 function create_zip($source, $destination)
 {
     if (!extension_loaded('zip') || !file_exists($source)) {
-        $_SESSION['errors'][] = _('Estensione zip non supportata!');
+        $_SESSION['errors'][] = tr('Estensione zip non supportata!');
 
         return false;
     }
@@ -161,7 +161,7 @@ function create_zip($source, $destination)
 
         return true;
     } else {
-        $_SESSION['errors'][] = _("Errore durante la creazione dell'archivio!");
+        $_SESSION['errors'][] = tr("Errore durante la creazione dell'archivio!");
 
         return false;
     }
@@ -182,33 +182,33 @@ function checkZip($zip_file)
     if (!is_resource($errno)) {
         // using constant name as a string to make this function PHP4 compatible
         $errors = [
-            ZIPARCHIVE::ER_MULTIDISK => _('archivi multi-disco non supportati'),
-            ZIPARCHIVE::ER_RENAME => _('ridenominazione del file temporaneo fallita'),
-            ZIPARCHIVE::ER_CLOSE => _('impossibile chiudere il file zip'),
-            ZIPARCHIVE::ER_SEEK => _('errore durante la ricerca dei file'),
-            ZIPARCHIVE::ER_READ => _('errore di lettura'),
-            ZIPARCHIVE::ER_WRITE => _('errore di scrittura'),
-            ZIPARCHIVE::ER_CRC => _('errore CRC'),
-            ZIPARCHIVE::ER_ZIPCLOSED => _("l'archivio zip è stato chiuso"),
-            ZIPARCHIVE::ER_NOENT => _('file non trovato'),
-            ZIPARCHIVE::ER_EXISTS => _('il file esiste già'),
-            ZIPARCHIVE::ER_OPEN => _('impossibile aprire il file'),
-            ZIPARCHIVE::ER_TMPOPEN => _('impossibile creare il file temporaneo'),
-            ZIPARCHIVE::ER_ZLIB => _('errore nella libreria Zlib'),
-            ZIPARCHIVE::ER_MEMORY => _("fallimento nell'allocare memoria"),
-            ZIPARCHIVE::ER_CHANGED => _('voce modificata'),
-            ZIPARCHIVE::ER_COMPNOTSUPP => _('metodo di compressione non supportato'),
-            ZIPARCHIVE::ER_EOF => _('fine del file non prevista'),
-            ZIPARCHIVE::ER_INVAL => _('argomento non valido'),
-            ZIPARCHIVE::ER_NOZIP => _('file zip non valido'),
-            ZIPARCHIVE::ER_INTERNAL => _('errore interno'),
-            ZIPARCHIVE::ER_INCONS => _('archivio zip inconsistente'),
-            ZIPARCHIVE::ER_REMOVE => _('impossibile rimuovere la voce'),
-            ZIPARCHIVE::ER_DELETED => _('voce eliminata'),
+            ZIPARCHIVE::ER_MULTIDISK => tr('archivi multi-disco non supportati'),
+            ZIPARCHIVE::ER_RENAME => tr('ridenominazione del file temporaneo fallita'),
+            ZIPARCHIVE::ER_CLOSE => tr('impossibile chiudere il file zip'),
+            ZIPARCHIVE::ER_SEEK => tr('errore durante la ricerca dei file'),
+            ZIPARCHIVE::ER_READ => tr('errore di lettura'),
+            ZIPARCHIVE::ER_WRITE => tr('errore di scrittura'),
+            ZIPARCHIVE::ER_CRC => tr('errore CRC'),
+            ZIPARCHIVE::ER_ZIPCLOSED => tr("l'archivio zip è stato chiuso"),
+            ZIPARCHIVE::ER_NOENT => tr('file non trovato'),
+            ZIPARCHIVE::ER_EXISTS => tr('il file esiste già'),
+            ZIPARCHIVE::ER_OPEN => tr('impossibile aprire il file'),
+            ZIPARCHIVE::ER_TMPOPEN => tr('impossibile creare il file temporaneo'),
+            ZIPARCHIVE::ER_ZLIB => tr('errore nella libreria Zlib'),
+            ZIPARCHIVE::ER_MEMORY => tr("fallimento nell'allocare memoria"),
+            ZIPARCHIVE::ER_CHANGED => tr('voce modificata'),
+            ZIPARCHIVE::ER_COMPNOTSUPP => tr('metodo di compressione non supportato'),
+            ZIPARCHIVE::ER_EOF => tr('fine del file non prevista'),
+            ZIPARCHIVE::ER_INVAL => tr('argomento non valido'),
+            ZIPARCHIVE::ER_NOZIP => tr('file zip non valido'),
+            ZIPARCHIVE::ER_INTERNAL => tr('errore interno'),
+            ZIPARCHIVE::ER_INCONS => tr('archivio zip inconsistente'),
+            ZIPARCHIVE::ER_REMOVE => tr('impossibile rimuovere la voce'),
+            ZIPARCHIVE::ER_DELETED => tr('voce eliminata'),
         ];
 
         if (isset($errors[$errno])) {
-            return _('Errore').': '.$errors[$errno];
+            return tr('Errore').': '.$errors[$errno];
         }
 
         return false;
@@ -257,12 +257,12 @@ function do_backup()
         // Creazione zip
         if (extension_loaded('zip')) {
             if (create_zip($backup_dir.$tmp_backup_dir, $backup_dir.$backup_file)) {
-                $_SESSION['infos'][] = _('Nuovo backup creato!');
+                $_SESSION['infos'][] = tr('Nuovo backup creato!');
             } else {
-                $_SESSION['errors'][] = _('Errore durante la creazione del backup!');
+                $_SESSION['errors'][] = tr('Errore durante la creazione del backup!');
             }
         } else {
-            $_SESSION['infos'][] = _('Nuovo backup creato!');
+            $_SESSION['infos'][] = tr('Nuovo backup creato!');
         }
         // Rimozione cartella temporanea
         if (extension_loaded('zip')) {
@@ -490,7 +490,7 @@ function getOS()
         }
     }
 
-    return _('Altro');
+    return tr('Altro');
 }
 
 /**

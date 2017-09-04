@@ -12,11 +12,11 @@ if (!empty($id_utente)) {
 
     $rs = $dbo->fetchArray('SELECT username FROM zz_users WHERE id='.prepare($id_utente));
     $username = $rs[0]['username'];
-    $message = _('Modifica');
+    $message = tr('Modifica');
 } else {
     $value = 'adduser';
     $username = '';
-    $message = _('Aggiungi');
+    $message = tr('Aggiungi');
 }
 
 echo '
@@ -33,19 +33,19 @@ echo '
 
 	<div class="row">
 		<div class="col-xs-12">
-		{[ "type": "text", "label": "'._('Username').'", "name": "username", "required": 1, "value": "'.$rs[0]['username'].'" ]}
+		{[ "type": "text", "label": "'.tr('Username').'", "name": "username", "required": 1, "value": "'.$rs[0]['username'].'" ]}
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-xs-12">
-		{[ "type": "password", "label": "'._('Password').'", "name": "password1", "required": 1, "value": "" ]}
+		{[ "type": "password", "label": "'.tr('Password').'", "name": "password1", "required": 1, "value": "" ]}
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-xs-12">
-		{[ "type": "password", "label": "'._('Ripeti la password').'", "name": "password2", "value": "" ]}
+		{[ "type": "password", "label": "'.tr('Ripeti la password').'", "name": "password2", "value": "" ]}
 		</div>
 	</div>';
 
@@ -54,7 +54,7 @@ if (empty($id_utente)) {
 
 	<div class="row">
 		<div class="col-xs-12">
-		{[ "type": "select", "label": "'._('Collega ad una anagrafica').'", "name": "idanag", "values": "query=SELECT CONCAT(`an_tipianagrafiche`.`idtipoanagrafica`, \'-\', `an_anagrafiche`.`idanagrafica`) AS \'id\', `ragione_sociale` AS \'descrizione\', `descrizione` AS \'optgroup\' FROM `an_tipianagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` ORDER BY `descrizione` ASC", "value": "" ]}
+		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "values": "query=SELECT CONCAT(`an_tipianagrafiche`.`idtipoanagrafica`, \'-\', `an_anagrafiche`.`idanagrafica`) AS \'id\', `ragione_sociale` AS \'descrizione\', `descrizione` AS \'optgroup\' FROM `an_tipianagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` ORDER BY `descrizione` ASC", "value": "" ]}
 		</div>
 	</div>';
 }
@@ -68,13 +68,13 @@ echo '
 	var min_length_username = '.$min_length_username.';
 	function do_submit(){
 		if( $("#password1").val() == "" || $("#password2").val() == "" )
-			alert("'._('Inserire una password valida').'.");
+			alert("'.tr('Inserire una password valida').'.");
 		else if( $("#password1").val() != $("#password2").val() )
-			alert("'._('Le password non coincidono').'.");
+			alert("'.tr('Le password non coincidono').'.");
 		else if( $("#password1").val().length < min_length )
-			alert("'.str_replace('_MIN_', $min_length, _('La password deve essere lunga minimo _MIN_ caratteri!')).'");
+			alert("'.str_replace('_MIN_', $min_length, tr('La password deve essere lunga minimo _MIN_ caratteri!')).'");
 		else if( $("#username").val().length < min_length_username )
-			alert("'.str_replace('_MIN_', $min_length_username, _("L'username deve essere lungo minimo _MIN_ caratteri!")).'");
+			alert("'.str_replace('_MIN_', $min_length_username, tr("L'username deve essere lungo minimo _MIN_ caratteri!")).'");
 		else
 			$("#link_form").submit();
 	}

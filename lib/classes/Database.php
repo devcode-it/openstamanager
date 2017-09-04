@@ -103,10 +103,10 @@ class Database extends Util\Singleton
                 $this->pdo->query("SET sql_mode = ''");
             } catch (PDOException $e) {
                 if ($e->getCode() == 1049 || $e->getCode() == 1044) {
-                    $e = new PDOException(($e->getCode() == 1049) ? _('Database non esistente!') : _('Credenziali di accesso invalide!'));
+                    $e = new PDOException(($e->getCode() == 1049) ? tr('Database non esistente!') : tr('Credenziali di accesso invalide!'));
                 }
 
-                $this->signal($e, _('Errore durante la connessione al database'), ['throw' => false, 'session' => false]);
+                $this->signal($e, tr('Errore durante la connessione al database'), ['throw' => false, 'session' => false]);
             }
         }
     }
@@ -337,7 +337,7 @@ class Database extends Util\Singleton
         try {
             return $this->pdo->lastInsertId();
         } catch (PDOException $e) {
-            $this->signal($e, _("Impossibile ottenere l'ultimo identificativo creato"));
+            $this->signal($e, tr("Impossibile ottenere l'ultimo identificativo creato"));
         }
     }
 
@@ -724,10 +724,10 @@ class Database extends Util\Singleton
         ], $options);
 
         if (!empty($options['session'])) {
-            $msg = _("Si è verificato un'errore").'.';
+            $msg = tr("Si è verificato un'errore").'.';
 
             if (Auth::check()) {
-                $msg .= ' '._('Se il problema persiste siete pregati di chiedere assistenza tramite la sezione Bug').'. <a href="'.ROOTDIR.'/bug.php"><i class="fa fa-external-link"></i></a>';
+                $msg .= ' '.tr('Se il problema persiste siete pregati di chiedere assistenza tramite la sezione Bug').'. <a href="'.ROOTDIR.'/bug.php"><i class="fa fa-external-link"></i></a>';
             }
 
             $msg .= '<br><small>'.$e->getMessage().'</small>';

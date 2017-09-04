@@ -79,7 +79,7 @@ $(document).ready(function(){
 					$("#bs-popup2").modal("hide");
 				},
 				error: function() {
-					alert("'._('Errore').': " + form_data);
+					alert("'.tr('Errore').': " + form_data);
 				}
 			});
 		}

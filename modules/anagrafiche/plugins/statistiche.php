@@ -21,16 +21,16 @@ echo '
 		<div class="col-xs-12 col-md-6">
 			<div class="box box-info">
 				<div class="box-header with-border">
-					<h3 class="box-title">'._('Interventi').'</h3>
+					<h3 class="box-title">'.tr('Interventi').'</h3>
 				</div>
 				<div class="box-body">';
 if (count($rsi) > 0) {
     echo '
-					<p>'.str_replace(['_NUMBER_', '_EUR_'], [count($rsi), Translator::numberToLocale($totale_interventi)], _('Sono stati svolti <strong>_NUMBER_ interventi</strong> per un totale di _EUR_ &euro;')).'</p>
-					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Interventi')['id'].'&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'._('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
+					<p>'.str_replace(['_NUMBER_', '_EUR_'], [count($rsi), Translator::numberToLocale($totale_interventi)], tr('Sono stati svolti <strong>_NUMBER_ interventi</strong> per un totale di _EUR_ &euro;')).'</p>
+					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Interventi')['id'].'&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
     echo '
-					<p>'._('Nessun intervento').'.</p>';
+					<p>'.tr('Nessun intervento').'.</p>';
 }
 
 echo '
@@ -56,16 +56,16 @@ echo '
 		<div class="col-xs-12 col-md-6">
 			<div class="box box-info">
 				<div class="box-header with-border">
-					<h3 class="box-title">'._('Preventivi').'</h3>
+					<h3 class="box-title">'.tr('Preventivi').'</h3>
 				</div>
 				<div class="box-body">';
 if (count($rsi) > 0) {
     echo '
-					<p>'.str_replace(['_NUMBER_', '_EUR_'], [count($rsi), Translator::numberToLocale($totale_preventivi)], _('Si è lavorato per <strong>_NUMBER_ preventivi</strong> per un totale di _EUR_ &euro;')).'</p>
-					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Preventivi')['id'].'&search_Cliente='.$rsi[0]['ragione_sociale'].'">'._('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
+					<p>'.str_replace(['_NUMBER_', '_EUR_'], [count($rsi), Translator::numberToLocale($totale_preventivi)], tr('Si è lavorato per <strong>_NUMBER_ preventivi</strong> per un totale di _EUR_ &euro;')).'</p>
+					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Preventivi')['id'].'&search_Cliente='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
     echo '
-					<p>'._('Nessun preventivo').'.</p>';
+					<p>'.tr('Nessun preventivo').'.</p>';
 }
 
 echo '
@@ -93,16 +93,16 @@ echo '
 		<div class="col-xs-12 col-md-6">
 			<div class="box box-info">
 				<div class="box-header with-border">
-					<h3 class="box-title">'._('Contratti').'</h3>
+					<h3 class="box-title">'.tr('Contratti').'</h3>
 				</div>
 				<div class="box-body">';
 if (count($rsi) > 0) {
     echo '
-					<p>'.str_replace(['_NUMBER_', '_EUR_'], [count($rsi), Translator::numberToLocale($totale_contratti)], _('Si è lavorato per <strong>_NUMBER_ contratti</strong> per un totale di _EUR_ &euro;')).'</p>
-					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Contratti')['id'].'&search_Cliente='.$rsi[0]['ragione_sociale'].'">'._('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
+					<p>'.str_replace(['_NUMBER_', '_EUR_'], [count($rsi), Translator::numberToLocale($totale_contratti)], tr('Si è lavorato per <strong>_NUMBER_ contratti</strong> per un totale di _EUR_ &euro;')).'</p>
+					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Contratti')['id'].'&search_Cliente='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
     echo '
-					<p>'._('Nessun contratto').'.</p>';
+					<p>'.tr('Nessun contratto').'.</p>';
 }
 echo '
 				</div>
@@ -114,7 +114,7 @@ echo '
 		<div class="col-xs-12 col-md-6">
 			<div class="box box-info">
 				<div class="box-header with-border">
-					<h3 class="box-title">'._('Fatture').'</h3>
+					<h3 class="box-title">'.tr('Fatture').'</h3>
 				</div>
 				<div class="box-body">';
 // Fatture di vendita
@@ -133,11 +133,11 @@ for ($i = 0; $i < count($rsi); ++$i) {
 }
 if (count($rsi) > 0) {
     echo '
-					<p>'.str_replace(['_NUMBER_', '_EUR_'], [count($rsi), Translator::numberToLocale($totale_fatture_vendita)], _('Sono state emesse <strong>_NUMBER_ fatture di vendita</strong> per un totale di _EUR_ &euro;')).'</p>
-					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Fatture di vendita')['id'].'&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'._('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
+					<p>'.str_replace(['_NUMBER_', '_EUR_'], [count($rsi), Translator::numberToLocale($totale_fatture_vendita)], tr('Sono state emesse <strong>_NUMBER_ fatture di vendita</strong> per un totale di _EUR_ &euro;')).'</p>
+					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Fatture di vendita')['id'].'&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
     echo '
-					<p>'._('Nessuna fattura di vendita').'.</p>';
+					<p>'.tr('Nessuna fattura di vendita').'.</p>';
 }
 
 echo '
@@ -159,11 +159,11 @@ for ($i = 0; $i < count($rsi); ++$i) {
 }
 if (count($rsi) > 0) {
     echo '
-					<p>'.str_replace(['_NUMBER_', '_EUR_'], [count($rsi), Translator::numberToLocale($totale_fatture_acquisto)], _('Sono state registrate <strong>_NUMBER_ fatture di acquisto</strong> per un totale di _EUR_ &euro;')).'</p>
-					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Fatture di acquisto')['id'].'&dir=uscita&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'._('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
+					<p>'.str_replace(['_NUMBER_', '_EUR_'], [count($rsi), Translator::numberToLocale($totale_fatture_acquisto)], tr('Sono state registrate <strong>_NUMBER_ fatture di acquisto</strong> per un totale di _EUR_ &euro;')).'</p>
+					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Fatture di acquisto')['id'].'&dir=uscita&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
     echo '
-					<p>'._('Nessuna fattura di acquisto').'.</p>';
+					<p>'.tr('Nessuna fattura di acquisto').'.</p>';
 }
 echo '
 				</div>

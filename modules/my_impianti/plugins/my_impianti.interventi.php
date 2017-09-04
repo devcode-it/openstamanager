@@ -29,7 +29,7 @@ if (filter('op') == 'link_myimpianti') {
         }
     }
 
-    $_SESSION['infos'][] = _('Informazioni impianti salvate!');
+    $_SESSION['infos'][] = tr('Informazioni impianti salvate!');
 } elseif (filter('op') == 'link_componenti') {
     $components = (array) $post['componenti'];
 
@@ -46,17 +46,17 @@ if (filter('op') == 'link_myimpianti') {
         }
     }
 
-    $_SESSION['infos'][] = _('Informazioni componenti salvate!');
+    $_SESSION['infos'][] = tr('Informazioni componenti salvate!');
 }
 
 // IMPIANTI
 echo '
 <div class="box">
     <div class="box-header with-border">
-        <h3 class="box-title">'._("Impianti dell'intervento").'</h3>
+        <h3 class="box-title">'.tr("Impianti dell'intervento").'</h3>
     </div>
     <div class="box-body">
-        <p>'._("Impianti su cui è stato effettuato l'intervento").'</p>';
+        <p>'.tr("Impianti su cui è stato effettuato l'intervento").'</p>';
 
 $query = 'SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto=my_impianti.id WHERE idintervento='.prepare($id_record);
 $rs = $dbo->fetchArray($query);
@@ -74,14 +74,14 @@ foreach ($rs as $r) {
     // MATRICOLA
     echo '
                     <tr>
-                        <td align="right">'._('Matricola').':</td>
+                        <td align="right">'.tr('Matricola').':</td>
                         <td valign="top">'.$r['matricola'].'</td>
                     </tr>';
 
     // NOME
     echo '
                     <tr>
-                        <td align="right">'._('Nome').':</td>
+                        <td align="right">'.tr('Nome').':</td>
                         <td valign="top">
                             '.Modules::link('MyImpianti', $r['id'], $r['nome']).'
                         </td>
@@ -90,20 +90,20 @@ foreach ($rs as $r) {
     // DATA
     echo '
                     <tr>
-                        <td align="right">'._('Data').':</td>
+                        <td align="right">'.tr('Data').':</td>
                         <td valign="top">'.Translator::dateToLocale($r['data']).'</td>
                     </tr>';
 
     // DESCRIZIONE
     echo '
                     <tr>
-                        <td align="right">'._('Descrizione').':</td>
+                        <td align="right">'.tr('Descrizione').':</td>
                         <td valign="top">'.$r['descrizione'].'</td>
                     </tr>';
 
     echo '
                     <tr>
-                        <td valign="top" align="right">'._("Componenti soggetti all'intervento").'</td>
+                        <td valign="top" align="right">'.tr("Componenti soggetti all'intervento").'</td>
                         <td valign="top">
                             <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=link_componenti&matricola='.$r['id'].'" method="post">
                                 <input type="hidden" name="backto" value="record-edit">
@@ -139,7 +139,7 @@ foreach ($rs as $r) {
                                 </select><br><br>
                                 <input type="hidden" name="list" value="'.implode(',', $list).'">
 
-                                <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '._('Salva componenti').'</button>
+                                <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva componenti').'</button>
                             </form>
                         </td>
                     </tr>
@@ -161,7 +161,7 @@ $matricole = !empty($matricole) ? array_column($matricole, 'idimpianto') : [];
 $sedi = $dbo->fetchArray('SELECT id, nomesede, citta FROM an_sedi WHERE idanagrafica='.prepare($records[0]['idanagrafica'])." UNION SELECT 0, 'Sede legale', '' ORDER BY id");
 
 echo '
-        <p><strong>'._('Impianti disponibili').'</strong></p>
+        <p><strong>'.tr('Impianti disponibili').'</strong></p>
         <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=link_myimpianti" method="post">
             <input type="hidden" name="backto" value="record-edit">
             <div class="row">
@@ -171,7 +171,7 @@ echo '
             </div>
             <br><br>
 
-            <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '._('Salva impianti').'</button></a>
+            <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva impianti').'</button></a>
         </form>';
 
 echo '

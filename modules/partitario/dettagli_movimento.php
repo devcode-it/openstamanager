@@ -11,10 +11,10 @@ $rs = $dbo->fetchArray($query);
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
     <tr>
-        <th>'._('Descrizione riga').'</th>
-        <th width="100">'._('Imponibile').'</th>
-        <th width="100">'._('Q.tà').'</th
-        <th width="100">'._('Um').'</th>
+        <th>'.tr('Descrizione riga').'</th>
+        <th width="100">'.tr('Imponibile').'</th>
+        <th width="100">'.tr('Q.tà').'</th
+        <th width="100">'.tr('Um').'</th>
     </tr>';
 
 $totale_imponibile = 0;
@@ -45,7 +45,7 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
 
 echo '
     <tr>
-        <th>'._('Totali').': </th>
+        <th>'.tr('Totali').': </th>
         <th width="100"><span>'.Translator::numberToLocale($totale_imponibile).' &euro;</span></th>
         <th width="100"><span>'.Translator::numberToLocale($totale_qta).'</span></th>
         <th width="100"></th>

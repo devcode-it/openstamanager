@@ -16,7 +16,7 @@ switch (post('op')) {
             }
         }
 
-        $_SESSION['infos'][] = _('Anagrafiche eliminate!');
+        $_SESSION['infos'][] = tr('Anagrafiche eliminate!');
 
         break;
 }

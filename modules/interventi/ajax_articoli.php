@@ -11,18 +11,18 @@ if (!empty($rs)) {
     echo '
 <table class="table table-striped table-condensed table-hover table-bordered">
     <tr>
-        <th>'._('Articolo').'</th>
-        <th width="8%">'._('Q.tà').'</th>';
+        <th>'.tr('Articolo').'</th>
+        <th width="8%">'.tr('Q.tà').'</th>';
 
     if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
         echo '
-        <th width="15%">'._('Prezzo di acquisto').'</th>';
+        <th width="15%">'.tr('Prezzo di acquisto').'</th>';
     }
 
     if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
         echo '
-        <th width="15%">'._('Prezzo di vendita').'</th>
-        <th width="15%">'._('Subtotale').'</th>';
+        <th width="15%">'.tr('Prezzo di vendita').'</th>
+        <th width="15%">'.tr('Subtotale').'</th>';
     }
 
     if ($rs[0]['stato'] != 'Fatturato' && $rs[0]['stato'] != 'Completato') {
@@ -64,20 +64,20 @@ if (!empty($rs)) {
         if (!empty($r['abilita_serial'])) {
             if (!empty($mancanti)) {
                 echo '
-            <br><b><small class="text-danger">'.str_replace('_NUM_', $mancanti, _('_NUM_ serial mancanti')).'</small></b>';
+            <br><b><small class="text-danger">'.str_replace('_NUM_', $mancanti, tr('_NUM_ serial mancanti')).'</small></b>';
             }
             if (!empty($serials)) {
                 echo '
-            <br>'._('SN').': '.implode(', ', $serials);
+            <br>'.tr('SN').': '.implode(', ', $serials);
             }
         } else {
             if ($r['lotto'] != '') {
                 echo '
-                <br>'._('Lotto').': '.$r['lotto'];
+                <br>'.tr('Lotto').': '.$r['lotto'];
             }
             if ($r['serial'] != '') {
                 echo '
-                <br>'._('SN').': '.$r['serial'];
+                <br>'.tr('SN').': '.$r['serial'];
             }
             if ($r['altro'] != '') {
                 echo '
@@ -132,14 +132,14 @@ if (!empty($rs)) {
 
             if ($r['abilita_serial']) {
                 echo '
-            <button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" onclick="launch_modal(\''._('Modifica articoli').'\', \''.$rootdir.'/modules/interventi/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idarticolo='.$r['idriga'].'&idgruppo='.$r['idgruppo'].'\', 1);"><i class="fa fa-barcode"></i></button>';
+            <button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica articoli').'\', \''.$rootdir.'/modules/interventi/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idarticolo='.$r['idriga'].'&idgruppo='.$r['idgruppo'].'\', 1);"><i class="fa fa-barcode"></i></button>';
             }
 
             echo '
 
-            <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''._('Modifica articoli').'\', \''.$rootdir.'/modules/interventi/add_articolo.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['idriga'].'\', 1);"><i class="fa fa-edit"></i></button>
+            <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica articoli').'\', \''.$rootdir.'/modules/interventi/add_articolo.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['idriga'].'\', 1);"><i class="fa fa-edit"></i></button>
 
-            <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" title="Riporta in magazzino" onclick="if(confirm(\''._('Riportare questo articolo in magazzino?').'\') ){ ritorna_al_magazzino(\''.$r['id'].'\'); }"><i class="fa fa-angle-double-left"></i> <i class="fa fa-truck"></i></button>
+            <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" title="Riporta in magazzino" onclick="if(confirm(\''.tr('Riportare questo articolo in magazzino?').'\') ){ ritorna_al_magazzino(\''.$r['id'].'\'); }"><i class="fa fa-angle-double-left"></i> <i class="fa fa-truck"></i></button>
         </td>';
         }
         echo '

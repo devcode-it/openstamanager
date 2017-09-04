@@ -47,7 +47,7 @@ switch (post('op')) {
 
         $id_record = $dbo->lastInsertedID();
 
-        $_SESSION['infos'][] = str_replace('_NUM_', $numero, _('Aggiunta fattura numero _NUM_!'));
+        $_SESSION['infos'][] = str_replace('_NUM_', $numero, tr('Aggiunta fattura numero _NUM_!'));
 
         break;
 
@@ -157,7 +157,7 @@ switch (post('op')) {
                 aggiungi_movimento($id_record, $dir);
             }
 
-            $_SESSION['infos'][] = _('Fattura modificata correttamente!');
+            $_SESSION['infos'][] = tr('Fattura modificata correttamente!');
         }
 
         break;
@@ -167,7 +167,7 @@ switch (post('op')) {
         if ($dir == 'uscita') {
             $non_rimovibili = $dbo->fetchArray("SELECT COUNT(*) AS non_rimovibili FROM co_righe_documenti WHERE serial IN (SELECT serial FROM vw_serials WHERE dir = 'entrata') AND iddocumento=".prepare($id_record))[0]['non_rimovibili'];
             if ($non_rimovibili != 0) {
-                $_SESSION['errors'][] = _('Alcuni serial number sono già stati utilizzati!');
+                $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
 
                 return;
             }
@@ -220,7 +220,7 @@ switch (post('op')) {
         elimina_scadenza($id_record);
         elimina_movimento($id_record);
 
-        $_SESSION['infos'][] = _('Fattura eliminata!');
+        $_SESSION['infos'][] = tr('Fattura eliminata!');
 
         break;
 
@@ -265,7 +265,7 @@ switch (post('op')) {
                 ricalcola_costiagg_fattura($id_record, $rs[0]['idrivalsainps'], $rs[0]['idritenutaacconto'], $rs[0]['bollo']);
             }
 
-            $_SESSION['infos'][] = _('Fattura duplicata correttamente!');
+            $_SESSION['infos'][] = tr('Fattura duplicata correttamente!');
         }
 
         break;
@@ -276,7 +276,7 @@ switch (post('op')) {
                 elimina_scadenza($id_record);
                 elimina_movimento($id_record, 1);
                 ricalcola_costiagg_fattura($id_record);
-                $_SESSION['infos'][] = _('Fattura riaperta!');
+                $_SESSION['infos'][] = tr('Fattura riaperta!');
             }
         }
 
@@ -409,9 +409,9 @@ switch (post('op')) {
                     // Metto l'intervento in stato "Fatturato"
                     $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id=".prepare($idintervento));
 
-                    $_SESSION['infos'][] = str_replace('_NUM_', $idintervento, _('Intervento _NUM_ aggiunto!'));
+                    $_SESSION['infos'][] = str_replace('_NUM_', $idintervento, tr('Intervento _NUM_ aggiunto!'));
                 } else {
-                    $_SESSION['errors'][] = str_replace('_NUM_', $idintervento, _("Errore durante l'inserimento dell'intervento _NUM_ in fattura!"));
+                    $_SESSION['errors'][] = str_replace('_NUM_', $idintervento, tr("Errore durante l'inserimento dell'intervento _NUM_ in fattura!"));
                 }
             }
         }
@@ -502,7 +502,7 @@ switch (post('op')) {
                 }
             }
 
-            $_SESSION['infos'][] = str_replace('_NUM_', $numero, _('Preventivo _NUM_ aggiunto!'));
+            $_SESSION['infos'][] = str_replace('_NUM_', $numero, tr('Preventivo _NUM_ aggiunto!'));
 
             // Aggiorno il budget sul preventivo con l'importo inserito in fattura e imposto lo stato del preventivo "In attesa di pagamento" (se selezionato)
             if ($aggiorna_budget) {
@@ -564,7 +564,7 @@ switch (post('op')) {
             // Aggiunta riga contratto sul documento
             $query = 'INSERT INTO co_righe_documenti(iddocumento, idcontratto, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, idgruppo, `order`) VALUES('.prepare($id_record).', '.prepare($idcontratto).', '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).", '-', 1, ".prepare(get_var('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(get_var("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', (SELECT IFNULL(MAX(`idgruppo`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'), (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
             if ($dbo->query($query)) {
-                $_SESSION['infos'][] = str_replace('_NUM_', $numero, _('Contratto _NUM_ aggiunto!'));
+                $_SESSION['infos'][] = str_replace('_NUM_', $numero, tr('Contratto _NUM_ aggiunto!'));
 
                 // Aggiorno il budget sul contratto con l'importo inserito in fattura e imposto lo stato del contratto "In attesa di pagamento" (se selezionato)
                 if ($aggiorna_budget) {
@@ -607,7 +607,7 @@ switch (post('op')) {
 
             add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva, $qta, $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto, '0', $lotto, $serial, $altro, $idgruppo, $idconto, $idum);
 
-            $_SESSION['infos'][] = _('Articolo aggiunto!');
+            $_SESSION['infos'][] = tr('Articolo aggiunto!');
         }
         break;
 
@@ -654,7 +654,7 @@ switch (post('op')) {
             $query = 'INSERT INTO co_righe_documenti(iddocumento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, idgruppo, `order`) VALUES('.prepare($id_record).', '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', '.prepare(post('idrivalsainps')).', '.prepare($rivalsainps).', '.prepare(post('idritenutaacconto')).', '.prepare($ritenutaacconto).', (SELECT IFNULL(MAX(`idgruppo`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'), (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
 
             if ($dbo->query($query)) {
-                $_SESSION['infos'][] = _('Riga aggiunta!');
+                $_SESSION['infos'][] = tr('Riga aggiunta!');
 
                 // Ricalcolo inps, ritenuta e bollo
                 if ($dir == 'entrata') {
@@ -730,7 +730,7 @@ switch (post('op')) {
                         } else {
                             if ($dir == 'uscita') {
                                 if ($new_qta > $dbo->fetchArray("SELECT COUNT(*) AS rimovibili FROM co_righe_documenti WHERE serial NOT IN (SELECT serial FROM vw_serials WHERE dir = 'entrata') AND idgruppo=".prepare($idgruppo).' AND iddocumento='.prepare($iddocumento))[0]['rimovibili']) {
-                                    $_SESSION['errors'][] = _('Alcuni serial number sono già stati utilizzati!');
+                                    $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
 
                                     return;
                                 } else {
@@ -752,7 +752,7 @@ switch (post('op')) {
                     add_movimento_magazzino($idarticolo, $new_qta, ['iddocumento' => $id_record]);
                 }
 
-                $_SESSION['infos'][] = _('Riga modificata!');
+                $_SESSION['infos'][] = tr('Riga modificata!');
 
                 // Ricalcolo inps, ritenuta e bollo
                 if ($dir == 'entrata') {
@@ -855,7 +855,7 @@ switch (post('op')) {
 
         ricalcola_costiagg_fattura($id_record);
 
-        $_SESSION['infos'][] = _('Creata una nuova fattura!');
+        $_SESSION['infos'][] = tr('Creata una nuova fattura!');
 
         break;
 
@@ -934,7 +934,7 @@ switch (post('op')) {
         }
 
         ricalcola_costiagg_fattura($id_record);
-        $_SESSION['infos'][] = _('Creata una nuova fattura!');
+        $_SESSION['infos'][] = tr('Creata una nuova fattura!');
 
         break;
 
@@ -1003,7 +1003,7 @@ switch (post('op')) {
 
         ricalcola_costiagg_fattura($id_record);
 
-        $_SESSION['infos'][] = _('Aggiunti nuovi articoli in fattura!');
+        $_SESSION['infos'][] = tr('Aggiunti nuovi articoli in fattura!');
 
         break;
 
@@ -1045,7 +1045,7 @@ switch (post('op')) {
                 }
             }
 
-            $_SESSION['infos'][] = str_replace('_NUM_', $idintervento, _('Intervento _NUM_ rimosso!'));
+            $_SESSION['infos'][] = str_replace('_NUM_', $idintervento, tr('Intervento _NUM_ rimosso!'));
         }
         break;
 
@@ -1058,7 +1058,7 @@ switch (post('op')) {
             $res = rimuovi_articolo_dafattura($idarticolo, $id_record, $idriga);
 
             if (!$res) {
-                $_SESSION['errors'][] = _('Alcuni serial number sono già stati utilizzati!');
+                $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
 
                 return;
             }
@@ -1071,7 +1071,7 @@ switch (post('op')) {
                     ricalcola_costiagg_fattura($id_record, 0, 0, 0);
                 }
 
-                $_SESSION['infos'][] = _('Articolo rimosso!');
+                $_SESSION['infos'][] = tr('Articolo rimosso!');
             }
         }
         break;
@@ -1122,7 +1122,7 @@ switch (post('op')) {
                     ricalcola_costiagg_fattura($id_record, 0, 0, 0);
                 }
 
-                $_SESSION['infos'][] = _('Preventivo rimosso!');
+                $_SESSION['infos'][] = tr('Preventivo rimosso!');
             }
         }
         break;
@@ -1172,7 +1172,7 @@ switch (post('op')) {
                     ricalcola_costiagg_fattura($id_record, 0, 0, 0);
                 }
 
-                $_SESSION['infos'][] = _('Contratto rimosso!');
+                $_SESSION['infos'][] = tr('Contratto rimosso!');
             }
         }
         break;
@@ -1206,7 +1206,7 @@ switch (post('op')) {
                     ricalcola_costiagg_fattura($id_record, 0, 0, 0);
                 }
 
-                $_SESSION['infos'][] = _('Riga rimossa!');
+                $_SESSION['infos'][] = tr('Riga rimossa!');
             }
         }
         break;

@@ -290,7 +290,7 @@ class Update
 
                     if ($start < $end) {
                         for ($i = $start; $i < $end; ++$i) {
-                            $database->query($queries[$i], _('Aggiornamento fallito').': '.$queries[$i]);
+                            $database->query($queries[$i], tr('Aggiornamento fallito').': '.$queries[$i]);
 
                             $database->query('UPDATE `updates` SET `done` = '.prepare($i + 3).' WHERE id = '.prepare($update['id']));
                         }

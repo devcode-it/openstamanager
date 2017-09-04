@@ -48,7 +48,7 @@ switch (post('op')) {
 
             $id_record = $dbo->lastInsertedID();
 
-            $_SESSION['infos'][] = str_replace('_NUM_', $numero, _('Aggiunto ordine numero _NUM_!'));
+            $_SESSION['infos'][] = str_replace('_NUM_', $numero, tr('Aggiunto ordine numero _NUM_!'));
         }
         break;
 
@@ -125,7 +125,7 @@ switch (post('op')) {
                     }
                 }
 
-                $_SESSION['infos'][] = _('Ordine modificato correttamente!');
+                $_SESSION['infos'][] = tr('Ordine modificato correttamente!');
             }
         }
         break;
@@ -150,7 +150,7 @@ switch (post('op')) {
 
             add_articolo_inordine($id_record, $idarticolo, $descrizione, $idiva, $qta, $prezzo_vendita * $qta, $sconto, $sconto_unitario, $tipo_sconto, '', '', '', $idgruppo);
 
-            $_SESSION['infos'][] = _('Articolo aggiunto!');
+            $_SESSION['infos'][] = tr('Articolo aggiunto!');
         }
         ricalcola_costiagg_ordine($id_record);
         break;
@@ -180,7 +180,7 @@ switch (post('op')) {
             $query = 'INSERT INTO or_righe_ordini(idordine, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idgruppo, `order`) VALUES('.prepare($id_record).', '.prepare($idiva).', '.prepare($rs[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`idgruppo`) + 1, 0) FROM or_righe_ordini AS t WHERE idordine='.prepare($id_record).'), (SELECT IFNULL(MAX(`order`) + 1, 0) FROM or_righe_ordini AS t WHERE idordine='.prepare($id_record).'))';
 
             if ($dbo->query($query)) {
-                $_SESSION['infos'][] = _('Riga aggiunta!');
+                $_SESSION['infos'][] = tr('Riga aggiunta!');
 
                 // Ricalcolo inps, ritenuta e bollo
                 if ($dir == 'entrata') {
@@ -208,7 +208,7 @@ switch (post('op')) {
                 ricalcola_costiagg_ordine($id_record, 0, 0, 0);
             }
 
-            $_SESSION['infos'][] = _('Articolo rimosso!');
+            $_SESSION['infos'][] = tr('Articolo rimosso!');
         }
 
         break;
@@ -229,7 +229,7 @@ switch (post('op')) {
                 ricalcola_costiagg_ordine($id_record, 0, 0, 0);
             }
 
-            $_SESSION['infos'][] = _('Riga rimossa!');
+            $_SESSION['infos'][] = tr('Riga rimossa!');
         }
         break;
 
@@ -284,7 +284,7 @@ switch (post('op')) {
                         } else {
                             if ($dir == 'uscita') {
                                 if ($new_qta > $dbo->fetchArray("SELECT COUNT(*) AS rimovibili FROM or_righe_ordini WHERE serial NOT IN (SELECT serial FROM vw_serials WHERE dir = 'entrata') AND idgruppo=".prepare($idgruppo).' AND idordine='.prepare($idordine))[0]['rimovibili']) {
-                                    $_SESSION['errors'][] = _('Alcuni serial number sono già stati utilizzati!');
+                                    $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
 
                                     return;
                                 } else {
@@ -301,7 +301,7 @@ switch (post('op')) {
                     }
                 }
 
-                $_SESSION['infos'][] = _('Riga modificata!');
+                $_SESSION['infos'][] = tr('Riga modificata!');
 
                 // Ricalcolo inps, ritenuta e bollo
                 if ($dir == 'entrata') {
@@ -318,7 +318,7 @@ switch (post('op')) {
         if ($dir == 'uscita') {
             $non_rimovibili = $dbo->fetchArray("SELECT COUNT(*) AS non_rimovibili FROM or_righe_ordini WHERE serial IN (SELECT serial FROM vw_serials WHERE dir = 'entrata') AND idordine=".prepare($id_record))[0]['non_rimovibili'];
             if ($non_rimovibili != 0) {
-                $_SESSION['errors'][] = _('Alcuni serial number sono già stati utilizzati!');
+                $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
 
                 return;
             }
@@ -326,7 +326,7 @@ switch (post('op')) {
 
         $dbo->query('DELETE FROM or_ordini WHERE id='.prepare($id_record));
         $dbo->query('DELETE FROM or_righe_ordini WHERE idordine='.prepare($id_record));
-        $_SESSION['infos'][] = _('Ordine eliminato!');
+        $_SESSION['infos'][] = tr('Ordine eliminato!');
 
         break;
 

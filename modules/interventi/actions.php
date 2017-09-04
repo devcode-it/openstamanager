@@ -174,7 +174,7 @@ switch (post('op')) {
             'tipo_sconto_globale' => $tipo_sconto,
         ], ['id' => $id_record]);
 
-        $_SESSION['infos'][] = _('Informazioni salvate correttamente!');
+        $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
 
         break;
 
@@ -191,8 +191,8 @@ switch (post('op')) {
         } while (!empty($rs) || empty($new_codice));
 
         if ($count > 0) {
-            $_SESSION['warnings'][] = str_replace('_NUM_', "'".$codice."'", _('Numero intervento _NUM_ saltato perchè già esistente!'));
-            $_SESSION['warnings'][] = str_replace('_NUM_', "'".$new_codice."'", _('Nuovo numero intervento calcolato _NUM_'));
+            $_SESSION['warnings'][] = str_replace('_NUM_', "'".$codice."'", tr('Numero intervento _NUM_ saltato perchè già esistente!'));
+            $_SESSION['warnings'][] = str_replace('_NUM_', "'".$new_codice."'", tr('Nuovo numero intervento calcolato _NUM_'));
         }
         */
         $formato = get_var('Formato codice intervento');
@@ -226,7 +226,7 @@ switch (post('op')) {
 
             $id_record = $dbo->lastInsertedID();
 
-            $_SESSION['infos'][] = _('Aggiunto nuovo intervento!');
+            $_SESSION['infos'][] = tr('Aggiunto nuovo intervento!');
         }
 
         // Collego l'intervento al preventivo
@@ -359,7 +359,7 @@ switch (post('op')) {
         // Eliminazione movimenti riguardanti l'intervento cancellato
         $dbo->query('DELETE FROM mg_movimenti WHERE idintervento='.prepare($id_record));
 
-        $_SESSION['infos'][] = str_replace('_NUM_', "'".$id_record."'", _('Intervento _NUM_ eliminato!'));
+        $_SESSION['infos'][] = str_replace('_NUM_', "'".$id_record."'", tr('Intervento _NUM_ eliminato!'));
 
         break;
 
@@ -543,18 +543,18 @@ switch (post('op')) {
                 });
 
                 if (!$img->save($docroot.'/files/interventi/'.$firma_file)) {
-                    $_SESSION['errors'][] = _('Impossibile creare il file!');
+                    $_SESSION['errors'][] = tr('Impossibile creare il file!');
                 } elseif ($dbo->query('UPDATE in_interventi SET firma_file='.prepare($firma_file).', firma_data=NOW(), firma_nome = '.prepare($firma_nome).', idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE completato = 1 LIMIT 0, 1) WHERE id='.prepare($id_record))) {
-                    $_SESSION['infos'][] = _('Firma salvata correttamente!');
-                    $_SESSION['infos'][] = _('Attività completata!');
+                    $_SESSION['infos'][] = tr('Firma salvata correttamente!');
+                    $_SESSION['infos'][] = tr('Attività completata!');
                 } else {
-                    $_SESSION['errors'][] = _('Errore durante il salvataggio della firma nel database!');
+                    $_SESSION['errors'][] = tr('Errore durante il salvataggio della firma nel database!');
                 }
             } else {
-                $_SESSION['errors'][] = _('Errore durante il salvataggio della firma!')._('La firma risulta vuota').'...';
+                $_SESSION['errors'][] = tr('Errore durante il salvataggio della firma!').tr('La firma risulta vuota').'...';
             }
         } else {
-            $_SESSION['errors'][] = str_replace('_DIRECTORY_', '<b>/files/interventi</b>', _("Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della firma!"));
+            $_SESSION['errors'][] = str_replace('_DIRECTORY_', '<b>/files/interventi</b>', tr("Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della firma!"));
         }
 
         break;
@@ -613,10 +613,10 @@ switch (post('op')) {
         }
 
         if (!$mail->Send()) {
-            $_SESSION['errors'][] = _("Errore durante l'invio dell'email").': '.$mail->ErrorInfo;
+            $_SESSION['errors'][] = tr("Errore durante l'invio dell'email").': '.$mail->ErrorInfo;
         } else {
             $dbo->query('UPDATE in_interventi SET data_invio=NOW() WHERE id='.prepare($id_record));
-            $_SESSION['infos'][] = _('Email inviata!');
+            $_SESSION['infos'][] = tr('Email inviata!');
         }
 
         break;

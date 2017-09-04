@@ -13,17 +13,17 @@ $idconto = get('id');
     <div class="row">
 
         <div class="col-md-4">
-            {[ "type": "text", "label": "<?php echo _('Numero'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "000000", "extra": "maxlength=\"6\"" ]}
+            {[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "000000", "extra": "maxlength=\"6\"" ]}
         </div>
 
         <div class="col-md-8">
-            {[ "type": "text", "label": "<?php echo _('Descrizione'); ?>", "name": "descrizione", "required": 1 ]}
+            {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1 ]}
         </div>
     </div>
     <br>
 
     <div class="pull-right">
-        <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo _('Aggiungi'); ?></button>
+        <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
     </div>
     <div class="clearfix"></div>
 </form>

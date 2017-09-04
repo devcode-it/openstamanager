@@ -11,7 +11,7 @@ $utenti = $dbo->fetchArray("SELECT *, (SELECT ragione_sociale FROM an_anagrafich
 echo '
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">'.str_replace('_GROUP_', $records[0]['nome'], _('Utenti _GROUP_')).'</h3>
+			<h3 class="panel-title">'.str_replace('_GROUP_', $records[0]['nome'], tr('Utenti _GROUP_')).'</h3>
 		</div>
 
 		<div class="panel-body">';
@@ -19,10 +19,10 @@ if (count($utenti) != 0) {
     echo '
 		<table class="table table-hover table-condensed table-striped">
 		<tr>
-			<th>'._('Nome utente').'</th>
-			<th>'._('Ragione sociale').'</th>
-			<th>'._('Tipo di anagrafica').'</th>
-			<th>'._('Opzioni').'</th>
+			<th>'.tr('Nome utente').'</th>
+			<th>'.tr('Ragione sociale').'</th>
+			<th>'.tr('Tipo di anagrafica').'</th>
+			<th>'.tr('Opzioni').'</th>
 		</tr>';
 
     for ($u = 0; $u < count($utenti); ++$u) {
@@ -51,14 +51,14 @@ if (count($utenti) != 0) {
         if ($utenti[$u]['id_utente'] != '1') {
             if ($utenti[$u]['enabled'] == 1) {
                 echo '
-				<a href="javascript:;" onclick="if( confirm(\''._('Disabilitare questo utente?').'\') ){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=disable&id_utente='.$utenti[$u]['id_utente'].'&idgruppo='.$record['id'].'\'; }" title="Disabilita utente" class="text-danger tip"><i class="fa fa-2x fa-eye-slash"></i></a>';
+				<a href="javascript:;" onclick="if( confirm(\''.tr('Disabilitare questo utente?').'\') ){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=disable&id_utente='.$utenti[$u]['id_utente'].'&idgruppo='.$record['id'].'\'; }" title="Disabilita utente" class="text-danger tip"><i class="fa fa-2x fa-eye-slash"></i></a>';
             } else {
                 echo '
 				<a href="javascript:;" onclick="if( confirm(\'Abilitare questo utente?\') ){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=enable&id_utente='.$utenti[$u]['id_utente'].'&idgruppo='.$record['id'].'\'; }" title="Abilita utente" class="text-success tip"><i class="fa fa-2x fa-eye"></i></a>';
             }
         } else {
             echo '
-				<a href="javascript:;" onclick="alert(\"'._("Non è possibile disabilitare l'utente admin").'\")" class="text-muted tip"><i class="fa fa-2x fa-eye-slash"></i></<>';
+				<a href="javascript:;" onclick="alert(\"'.tr("Non è possibile disabilitare l'utente admin").'\")" class="text-muted tip"><i class="fa fa-2x fa-eye-slash"></i></<>';
         }
 
             // Cambio password e nome utente
@@ -71,7 +71,7 @@ if (count($utenti) != 0) {
 			<a href="javascript:;" onclick="if( confirm(\'Sei sicuro di voler eliminare questo utente?\') ){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete&id_utente='.$utenti[$u]['id_utente'].'&idgruppo='.$record['id'].'\'; }" title="Elimina utente" class="text-danger tip"><i class="fa fa-2x fa-trash"></i></a>';
         } else {
             echo '
-			<span onclick="alert(\"'._("Non è possibile eliminare l'utente admin").'\")" class="text-muted tip"><i class="fa fa-2x fa-trash"></i></span>';
+			<span onclick="alert(\"'.tr("Non è possibile eliminare l'utente admin").'\")" class="text-muted tip"><i class="fa fa-2x fa-trash"></i></span>';
         }
 
         echo '
@@ -83,10 +83,10 @@ if (count($utenti) != 0) {
 			</table>';
 } else {
     echo '
-			<p>'._('Non ci sono utenti in questo gruppo').'...</p>';
+			<p>'.tr('Non ci sono utenti in questo gruppo').'...</p>';
 }
 echo '
-			<a data-toggle="modal" data-target="#bs-popup" data-href="'.$rootdir.'/modules/utenti/user.php?idgruppo='.$record['id'].'" data-title="'._('Aggiungi utente').'" class="pull-right btn btn-primary"><i class="fa fa-plus"></i> '._('Aggiungi utente').'</a>
+			<a data-toggle="modal" data-target="#bs-popup" data-href="'.$rootdir.'/modules/utenti/user.php?idgruppo='.$record['id'].'" data-title="'.tr('Aggiungi utente').'" class="pull-right btn btn-primary"><i class="fa fa-plus"></i> '.tr('Aggiungi utente').'</a>
 		</div>
 	</div>';
 
@@ -97,7 +97,7 @@ echo '
 echo '
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">'._('Permessi').'</h3>
+			<h3 class="panel-title">'.tr('Permessi').'</h3>
 		</div>
 
 		<div class="panel-body">';
@@ -105,12 +105,12 @@ if ($record['nome'] != 'Amministratori') {
     echo '
 			<table class="table table-hover table-condensed table-striped">
 				<tr>
-					<th>'._('Modulo').'</th>
-					<th>'._('Permessi').'</th>
+					<th>'.tr('Modulo').'</th>
+					<th>'.tr('Permessi').'</th>
 				</tr>';
     for ($m = 0; $m < count($moduli); ++$m) {
         $perms_values = ['-', 'r', 'rw'];
-        $perms_names = [_('Nessun permesso'), _('Sola lettura'), _('Lettura e scrittura')];
+        $perms_names = [tr('Nessun permesso'), tr('Sola lettura'), tr('Lettura e scrittura')];
         echo menuSelection($moduli[$m], -1, $perms_values, $perms_names);
     }
 
@@ -118,7 +118,7 @@ if ($record['nome'] != 'Amministratori') {
 			</table>';
 } else {
     echo '
-			<p>'._('Gli amministratori hanno accesso a qualsiasi modulo').'.</p>';
+			<p>'.tr('Gli amministratori hanno accesso a qualsiasi modulo').'.</p>';
 }
 echo '
 		</div>
@@ -128,8 +128,8 @@ echo '
 if ($record['editable'] == 1) {
     echo '
 	<div class="pull-right">
-		<a class="btn btn-danger ask" data-backto="record-list" data-msg="'._('Eliminando questo gruppo verranno eliminati anche i permessi e gli utenti collegati').'" data-op="deletegroup">
-            <i class="fa fa-trash"></i> '._('Elimina').'
+		<a class="btn btn-danger ask" data-backto="record-list" data-msg="'.tr('Eliminando questo gruppo verranno eliminati anche i permessi e gli utenti collegati').'" data-op="deletegroup">
+            <i class="fa fa-trash"></i> '.tr('Elimina').'
         </a>
 	</div>';
 }
@@ -141,10 +141,10 @@ echo '
             globals.rootdir + "/actions.php?id_module='.$id_module.'&id_record='.$id_record.'&op=update_permission&idmodulo=" + id + "&permesso=" + value,
             function(data){
                 if(data == "ok"){
-                    swal("'._('Salvataggio completato').'", "'._('Permessi aggiornati!').'", "success");
+                    swal("'.tr('Salvataggio completato').'", "'.tr('Permessi aggiornati!').'", "success");
                 }
                 else{
-                    swal("'._('Errore').'", "'._("Errore durante l'aggiornamento dei permessi!").'", "error");
+                    swal("'.tr('Errore').'", "'.tr("Errore durante l'aggiornamento dei permessi!").'", "error");
                 }
             }
         );

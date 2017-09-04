@@ -22,7 +22,7 @@ switch ($operazione) {
 
         $dbo->insert('an_sedi', $array);
 
-        $_SESSION['infos'][] = _('Aggiunta una nuova sede!');
+        $_SESSION['infos'][] = tr('Aggiunta una nuova sede!');
 
         break;
 
@@ -47,7 +47,7 @@ switch ($operazione) {
 
         $dbo->update('an_sedi', $array, ['id' => $post['id']]);
 
-        $_SESSION['infos'][] = _('Salvataggio completato!');
+        $_SESSION['infos'][] = tr('Salvataggio completato!');
 
         break;
 
@@ -55,7 +55,7 @@ switch ($operazione) {
         $idsede = filter('id');
         $dbo->query("DELETE FROM `an_sedi` WHERE `id`=".prepare($idsede));
 
-        $_SESSION['infos'][] = _('Sede eliminata!');
+        $_SESSION['infos'][] = tr('Sede eliminata!');
 
         break;
 }

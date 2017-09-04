@@ -60,7 +60,7 @@ class SelectHandler implements HandlerInterface
             $result .= $this->selectJSON(json_decode('[{'.$matches[1][0].'}]', true), $values['value']);
         }
 
-        $values['placeholder'] = !empty($values['placeholder']) ? $values['placeholder'] : '- '._("Seleziona un'opzione").' -';
+        $values['placeholder'] = !empty($values['placeholder']) ? $values['placeholder'] : '- '.tr("Seleziona un'opzione").' -';
         $values['data-placeholder'] = $values['placeholder'];
 
         unset($values['values']);

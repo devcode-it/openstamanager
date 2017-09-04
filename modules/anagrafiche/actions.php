@@ -63,7 +63,7 @@ switch (post('op')) {
 
         // Verifica dell'esistenza codice anagrafica
         if ($esiste) {
-            $_SESSION['errors'][] = _("Il codice anagrafica inserito esiste già! Inserirne un'altro...");
+            $_SESSION['errors'][] = tr("Il codice anagrafica inserito esiste già! Inserirne un'altro...");
         } else {
             $dbo->query('UPDATE an_anagrafiche SET codice='.prepare($post['codice']).' WHERE idanagrafica='.prepare($id_record));
         }
@@ -151,7 +151,7 @@ switch (post('op')) {
 
         if (in_array($id_azienda, $post['idtipoanagrafica'])) {
             $dbo->query('UPDATE zz_settings SET valore='.prepare($new_id)." WHERE nome='Azienda predefinita'");
-            $_SESSION['infos'][] = _('Anagrafica Azienda impostata come predefinita. Per ulteriori informazionioni, visitare "Strumenti -> Impostazioni -> Generali".');
+            $_SESSION['infos'][] = tr('Anagrafica Azienda impostata come predefinita. Per ulteriori informazionioni, visitare "Strumenti -> Impostazioni -> Generali".');
         }
 
         // Creo il relativo conto nel partitario (cliente)
@@ -196,7 +196,7 @@ switch (post('op')) {
             echo json_encode(['id' => $id_record, 'text' => $ragione_sociale]);
         }
 
-        $_SESSION['infos'][] = str_replace('_TYPE_', '"'.$tipoanagrafica_dst.'"', _('Aggiunta nuova anagrafica di tipo _TYPE_'));
+        $_SESSION['infos'][] = str_replace('_TYPE_', '"'.$tipoanagrafica_dst.'"', tr('Aggiunta nuova anagrafica di tipo _TYPE_'));
 
         break;
 
@@ -205,7 +205,7 @@ switch (post('op')) {
         if (str_contains($records[0]['idtipianagrafica'], $id_azienda) === false) {
             $dbo->query('UPDATE an_anagrafiche SET deleted = 1 WHERE idanagrafica = '.prepare($id_record).Modules::getAdditionalsQuery($id_module));
 
-            $_SESSION['infos'][] = _('Anagrafica eliminata!');
+            $_SESSION['infos'][] = tr('Anagrafica eliminata!');
         }
 
         break;

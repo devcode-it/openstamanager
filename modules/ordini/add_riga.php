@@ -20,7 +20,7 @@ $idriga = $get['idriga'];
 
 if (empty($idriga)) {
     $op = 'addriga';
-    $button = _('Aggiungi');
+    $button = tr('Aggiungi');
 
     // valori default
     $descrizione = '';
@@ -39,7 +39,7 @@ if (empty($idriga)) {
     $idiva = $idiva ?: get_var('Iva predefinita');
 } else {
     $op = 'editriga';
-    $button = _('Modifica');
+    $button = tr('Modifica');
 
     $rsr = $dbo->fetchArray('SELECT * FROM or_righe_ordini WHERE idordine='.prepare($id_record).' AND id='.prepare($idriga));
 
@@ -56,7 +56,7 @@ if (empty($idriga)) {
     Form di inserimento riga documento
 */
 echo '
-<p>'.str_replace('_NUM_', $numero, _('Ordine numero _NUM_')).'</p>
+<p>'.str_replace('_NUM_', $numero, tr('Ordine numero _NUM_')).'</p>
 
 <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="'.$op.'">
@@ -72,7 +72,7 @@ if (!empty($idriga)) {
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'._('Descrizione').'", "name": "descrizione", "required": 1, "value": "'.$descrizione.'" ]}
+            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "required": 1, "value": "'.$descrizione.'" ]}
         </div>
     </div>';
 
@@ -80,19 +80,19 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'._('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
         </div>';
 
 // Quantità
 echo '
         <div class="col-md-4">
-            {[ "type": "number", "label": "'._('Q.tà').'", "name": "qta", "required": 1, "value": "'.$qta.'", "decimals": "qta" ]}
+            {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "'.$qta.'", "decimals": "qta" ]}
         </div>';
 
 // Unità di misura
 echo '
         <div class="col-md-4">
-            {[ "type": "select", "label": "'._('Unità di misura').'", "icon-after": "add|'.Modules::getModule('Unità di misura')['id'].'", "name": "um", "ajax-source": "misure", "value": "'.$um.'" ]}
+            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::getModule('Unità di misura')['id'].'", "name": "um", "ajax-source": "misure", "value": "'.$um.'" ]}
         </div>
     </div>';
 
@@ -100,13 +100,13 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "number", "label": "'._('Costo unitario').'", "name": "prezzo", "required": 1, "icon-after": "&euro;", "value": "'.$prezzo.'" ]}
+            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "icon-after": "&euro;", "value": "'.$prezzo.'" ]}
         </div>';
 
 // Sconto unitario
 echo '
         <div class="col-md-6">
-            {[ "type": "number", "label": "'._('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
+            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
         </div>
     </div>';
 

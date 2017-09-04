@@ -22,7 +22,7 @@ $prc_guadagno = $rs[0]['prc_guadagno'];
     Form di inserimento riga documento
 */
 echo '
-<p>'.str_replace('_NUM_', $numero, _('Ddt numero _NUM_')).'</p>
+<p>'.str_replace('_NUM_', $numero, tr('Ddt numero _NUM_')).'</p>
 
 <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="addarticolo">
@@ -33,7 +33,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'._('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$idarticolo.'", "ajax-source": "articoli" ]}
+            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$idarticolo.'", "ajax-source": "articoli" ]}
         </div>
     </div>';
 
@@ -41,7 +41,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'._('Descrizione').'", "name": "descrizione", "required": 1 ]}
+            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "required": 1 ]}
         </div>
     </div>';
 
@@ -58,25 +58,25 @@ $idiva = $idiva ?: get_var('Iva predefinita');
 echo '
     <div class="row">
         <div class="col-md-3">
-            {[ "type": "select", "label": "'._('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
         </div>';
 
 // Quantità
 echo '
         <div class="col-md-3">
-            {[ "type": "number", "label": "'._('Q.tà').'", "name": "qta", "required": 1, "value": "1", "decimals": "qta" ]}
+            {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "1", "decimals": "qta" ]}
         </div>';
 
 // Costo unitario
 echo '
         <div class="col-md-3">
-            {[ "type": "number", "label": "'._('Costo unitario').'", "name": "prezzo", "required": 1, "icon-after": "&euro;" ]}
+            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "icon-after": "&euro;" ]}
         </div>';
 
 // Sconto unitario
 echo '
         <div class="col-md-3">
-            {[ "type": "number", "label": "'._('Sconto unitario').'", "name": "sconto", "icon-after": "choice|untprc" ]}
+            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "icon-after": "choice|untprc" ]}
         </div>
     </div>';
 
@@ -85,21 +85,21 @@ echo '
     <div class="row" id="prezzi_articolo">
         <div class="col-md-4 text-center">
             <button type="button" class="btn btn-sm btn-info btn-block disabled" onclick="$(\'#prezzi\').toggleClass(\'hide\'); $(\'#prezzi\').load(\''.$rootdir."/ajax_autocomplete.php?module=Articoli&op=getprezzi&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$idanagrafica.'\');" disabled>
-                <i class="fa fa-search"></i> '._('Visualizza ultimi prezzi (cliente)').'
+                <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (cliente)').'
             </button>
             <div id="prezzi" class="hide"></div>
         </div>
 
         <div class="col-md-4 text-center">
             <button type="button" class="btn btn-sm btn-info btn-block disabled" onclick="$(\'#prezziacquisto\').toggleClass(\'hide\'); $(\'#prezziacquisto\').load(\''.$rootdir."/ajax_autocomplete.php?module=Articoli&op=getprezziacquisto&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$idanagrafica.'\');" disabled>
-                <i class="fa fa-search"></i> '._('Visualizza ultimi prezzi (acquisto)').'
+                <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (acquisto)').'
             </button>
             <div id="prezziacquisto" class="hide"></div>
         </div>
 
         <div class="col-md-4 text-center">
             <button type="button" class="btn btn-sm btn-info btn-block disabled" onclick="$(\'#prezzivendita\').toggleClass(\'hide\'); $(\'#prezzivendita\').load(\''.$rootdir."/ajax_autocomplete.php?module=Articoli&op=getprezzivendita&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$idanagrafica.'\');" disabled>
-                <i class="fa fa-search"></i> '._('Visualizza ultimi prezzi (vendita)').'
+                <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (vendita)').'
             </button>
             <div id="prezzivendita" class="hide"></div>
         </div>
@@ -135,7 +135,7 @@ echo '
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> '._('Aggiungi').'</button>
+			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
 		</div>
     </div>
 </form>';

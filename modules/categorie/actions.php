@@ -10,9 +10,9 @@ switch (filter('op')) {
 
         if (isset($nome) && isset($nota) && isset($colore)) {
             $dbo->query('UPDATE `mg_categorie` SET `nome`='.prepare($nome).', `nota`='.prepare($nota).', `colore`='.prepare($colore).' WHERE `id`='.prepare($id_record));
-            $_SESSION['infos'][] = _('Salvataggio completato!');
+            $_SESSION['infos'][] = tr('Salvataggio completato!');
         } else {
-            $_SESSION['errors'][] = _('Ci sono stati alcuni errori durante il salvataggio!');
+            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
         }
 
         break;
@@ -29,9 +29,9 @@ switch (filter('op')) {
                 echo json_encode(['id' => $id_record, 'text' => $nome]);
             }
 
-            $_SESSION['infos'][] = str_replace('_TYPE_', 'categoria', _('Aggiunta nuova tipologia di _TYPE_'));
+            $_SESSION['infos'][] = str_replace('_TYPE_', 'categoria', tr('Aggiunta nuova tipologia di _TYPE_'));
         } else {
-            $_SESSION['errors'][] = _('Ci sono stati alcuni errori durante il salvataggio!');
+            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
         }
 
         break;
@@ -46,10 +46,10 @@ switch (filter('op')) {
 
         if ($res) {
             $dbo->query('DELETE FROM `mg_categorie` WHERE `id`='.prepare($id));
-            $_SESSION['infos'][] = str_replace('_TYPE_', 'categoria', _('Tipologia di _TYPE_ eliminata con successo!'));
+            $_SESSION['infos'][] = str_replace('_TYPE_', 'categoria', tr('Tipologia di _TYPE_ eliminata con successo!'));
         } else {
             $_POST['backto'] = 'record-edit';
-            $_SESSION['errors'][] = _('Esistono ancora alcuni articoli sotto questa categoria!');
+            $_SESSION['errors'][] = tr('Esistono ancora alcuni articoli sotto questa categoria!');
         }
 
         break;
@@ -72,10 +72,10 @@ switch (filter('op')) {
                     echo json_encode(['id' => $id_record, 'text' => $nome]);
                 }
             }
-            $_SESSION['infos'][] = _('Salvataggio completato!');
+            $_SESSION['infos'][] = tr('Salvataggio completato!');
             $id_record = $original;
         } else {
-            $_SESSION['errors'][] = _('Ci sono stati alcuni errori durante il salvataggio!');
+            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
         }
 
         break;

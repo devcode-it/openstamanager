@@ -9,14 +9,14 @@ if (count($rs2) > 0) {
     echo '
 <table class="table table-striped table-condensed table-hover table-bordered">
     <tr>
-        <th>'._('Descrizione').'</th>
-        <th width="8%">'._('Q.tà').'</th>
-        <th width="15%">'._('Prezzo di acquisto').'</th>';
+        <th>'.tr('Descrizione').'</th>
+        <th width="8%">'.tr('Q.tà').'</th>
+        <th width="15%">'.tr('Prezzo di acquisto').'</th>';
 
     if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
         echo '
-        <th width="15%">'._('Prezzo di vendita').'</th>
-        <th width="15%">'._('Subtotale').'</th>';
+        <th width="15%">'.tr('Prezzo di vendita').'</th>
+        <th width="15%">'.tr('Subtotale').'</th>';
     }
 
     if ($records[0]['stato'] != 'Fatturato' && $records[0]['stato'] != 'Completato') {
@@ -76,8 +76,8 @@ if (count($rs2) > 0) {
         if ($records[0]['stato'] != 'Fatturato' && $records[0]['stato'] != 'Completato') {
             echo '
         <td>
-            <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''._('Modifica spesa').'\', \''.$rootdir.'/modules/interventi/add_righe.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'\', 1);"><i class="fa fa-edit"></i></button>
-            <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="if(confirm(\''._('Eliminare questa spesa?').'\')){ elimina_riga( \''.$r['id'].'\' ); }"><i class="fa fa-trash"></i></button>
+            <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica spesa').'\', \''.$rootdir.'/modules/interventi/add_righe.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'\', 1);"><i class="fa fa-edit"></i></button>
+            <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="if(confirm(\''.tr('Eliminare questa spesa?').'\')){ elimina_riga( \''.$r['id'].'\' ); }"><i class="fa fa-trash"></i></button>
         </td>';
         }
         echo '

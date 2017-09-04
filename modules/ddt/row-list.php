@@ -5,12 +5,12 @@ include_once __DIR__.'/../../core.php';
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
     <tr>
-        <th>'._('Descrizione').'</th>
-        <th width="120">'._('Q.tà').'</th>
-        <th width="80">'._('U.m.').'</th>
-        <th width="120">'._('Costo unitario').'</th>
-        <th width="120">'._('Iva').'</th>
-        <th width="120">'._('Imponibile').'</th>
+        <th>'.tr('Descrizione').'</th>
+        <th width="120">'.tr('Q.tà').'</th>
+        <th width="80">'.tr('U.m.').'</th>
+        <th width="120">'.tr('Costo unitario').'</th>
+        <th width="120">'.tr('Iva').'</th>
+        <th width="120">'.tr('Imponibile').'</th>
         <th width="60"></th>
     </tr>
 
@@ -58,11 +58,11 @@ if (!empty($rs)) {
             if (!empty($r['abilita_serial'])) {
                 if (!empty($mancanti)) {
                     echo '
-            <br><b><small class="text-danger">'.str_replace('_NUM_', $mancanti, _('_NUM_ serial mancanti')).'</small></b>';
+            <br><b><small class="text-danger">'.str_replace('_NUM_', $mancanti, tr('_NUM_ serial mancanti')).'</small></b>';
                 }
                 if (!empty($serials)) {
                     echo '
-            <br>'._('SN').': '.implode(', ', $serials);
+            <br>'.tr('SN').': '.implode(', ', $serials);
                 }
             } else {
                 if ($r['lotto'] != '') {
@@ -93,7 +93,7 @@ if (!empty($rs)) {
         if (!str_contains($r['descrizione'], 'SCONTO')) {
             echo '
             <big>'.Translator::numberToLocale($r['qta'] - $r['qta_evasa']).'</big>
-            <br><small>('._('Q.tà iniziale').': '.Translator::numberToLocale($r['qta']).')</small>';
+            <br><small>('.tr('Q.tà iniziale').': '.Translator::numberToLocale($r['qta']).')</small>';
         } else {
             echo '1';
         }
@@ -215,7 +215,7 @@ $netto_a_pagare = sum([
 echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Imponibile')).':</b>
+            <b>'.strtoupper(tr('Imponibile')).':</b>
         </td>
 
         <td align="right">
@@ -230,7 +230,7 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Sconto')).':</b>
+            <b>'.strtoupper(tr('Sconto')).':</b>
         </td>
 
         <td align="right">
@@ -244,7 +244,7 @@ if (abs($sconto) > 0) {
 echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Imponibile scontato')).':</b>
+            <b>'.strtoupper(tr('Imponibile scontato')).':</b>
         </td>
 
         <td align="right">
@@ -260,7 +260,7 @@ if (abs($records[0]['rivalsainps']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Rivalsa INPS')).':</b>
+            <b>'.strtoupper(tr('Rivalsa INPS')).':</b>
         </td>
 
         <td align="right">
@@ -275,7 +275,7 @@ if (abs($totale_iva) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('IVA')).':</b>
+            <b>'.strtoupper(tr('IVA')).':</b>
         </td>
 
         <td align="right">
@@ -290,7 +290,7 @@ if (abs($totale_iva) > 0) {
 echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Totale')).':</b>
+            <b>'.strtoupper(tr('Totale')).':</b>
         </td>
 
         <td align="right">
@@ -305,7 +305,7 @@ if (abs($records[0]['bollo']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Marca da bollo')).':</b>
+            <b>'.strtoupper(tr('Marca da bollo')).':</b>
         </td>
 
         <td align="right">
@@ -321,7 +321,7 @@ if (abs($records[0]['ritenutaacconto']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_("Ritenuta d'acconto")).':</b>
+            <b>'.strtoupper(tr("Ritenuta d'acconto")).':</b>
         </td>
 
         <td align="right">
@@ -337,7 +337,7 @@ if ($totale != $netto_a_pagare) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Netto a pagare')).':</b>
+            <b>'.strtoupper(tr('Netto a pagare')).':</b>
         </td>
 
         <td align="right">

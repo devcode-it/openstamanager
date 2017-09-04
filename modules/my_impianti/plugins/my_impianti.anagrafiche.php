@@ -7,14 +7,14 @@ if (filter('op') == 'unlink_my_impianti') {
     $matricola = filter('matricola');
     $dbo->query('DELETE FROM my_impianti WHERE idanagrafica='.prepare($id_record).' AND id='.prepare($matricola));
 
-    $_SESSION['infos'][] = _('Impianto rimosso!');
+    $_SESSION['infos'][] = tr('Impianto rimosso!');
 }
 
 // IMPIANTI
 echo '
 <div class="box">
     <div class="box-header with-border">
-        <h3 class="box-title">'._('Impianti del cliente').'</h3>
+        <h3 class="box-title">'.tr('Impianti del cliente').'</h3>
     </div>
     <div class="box-body">';
 
@@ -33,7 +33,7 @@ if (!empty($rs)) {
             // MATRICOLA
             echo '
                 <tr>
-                    <td>'._('Matricola').':</td>
+                    <td>'.tr('Matricola').':</td>
                     <td>
                         '.Modules::link('MyImpianti', $r['id'], '<strong>'.$r['matricola'].'</strong>').'
 
@@ -46,21 +46,21 @@ if (!empty($rs)) {
             // NOME
             echo '
                 <tr>
-                    <td>'._('Nome').':</td>
+                    <td>'.tr('Nome').':</td>
                     <td>'.$r['nome'].'</td>
                 </tr>';
 
             // DATA
             echo '
                 <tr>
-                    <td>'._('Data').':</td>
+                    <td>'.tr('Data').':</td>
                     <td>'.Translator::dateToLocale($r['data']).'</td>
                 </tr>';
 
             // DESCRIZIONE
             echo '
                 <tr>
-                    <td>'._('Descrizione').':</td>
+                    <td>'.tr('Descrizione').':</td>
                     <td>'.$r['descrizione'].'</td>
                 </tr>
             </table>
@@ -68,11 +68,11 @@ if (!empty($rs)) {
         }
     } else {
         echo '
-        <p>'._('Questa anagrafica non ha impianti').'...</p>';
+        <p>'.tr('Questa anagrafica non ha impianti').'...</p>';
     }
 } else {
     echo '
-        <p>'._("L'anagrafica corrente non è di tipo 'Cliente'").'.</p>';
+        <p>'.tr("L'anagrafica corrente non è di tipo 'Cliente'").'.</p>';
 }
 
 echo '

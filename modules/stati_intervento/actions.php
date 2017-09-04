@@ -14,7 +14,7 @@ switch (post('op')) {
         $query = 'UPDATE in_statiintervento SET descrizione='.prepare($descrizione).' WHERE idstatointervento='.prepare($id_record).' AND `default`=0';
         $dbo->query($query);
 
-        $_SESSION['infos'][] = _('Informazioni salvate correttamente!');
+        $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
 
         break;
 
@@ -27,7 +27,7 @@ switch (post('op')) {
         $dbo->query($query);
         $id_record = $idstatointervento;
 
-        $_SESSION['infos'][] = _('Nuovo stato di intervento aggiunto!');
+        $_SESSION['infos'][] = tr('Nuovo stato di intervento aggiunto!');
 
         break;
 
@@ -35,7 +35,7 @@ switch (post('op')) {
         $query = 'DELETE FROM in_statiintervento WHERE idstatointervento='.prepare($id_record).' AND `default`=0';
         $dbo->query($query);
 
-        $_SESSION['infos'][] = _('Stato di intervento eliminato!');
+        $_SESSION['infos'][] = tr('Stato di intervento eliminato!');
 
         break;
 }

@@ -18,10 +18,10 @@ switch (post('op')) {
                 $query = 'INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, dir, can_edit, can_delete) VALUES('.prepare($numero).', '.prepare($descrizione).', '.prepare($idpianodeiconti2).', (SELECT dir FROM co_pianodeiconti2 WHERE id='.prepare($idpianodeiconti2).'), 1, 1)';
 
                 if ($dbo->query($query)) {
-                    $_SESSION['infos'][] = _('Nuovo conto aggiunto!');
+                    $_SESSION['infos'][] = tr('Nuovo conto aggiunto!');
                 }
             } else {
-                $_SESSION['errors'][] = _('Il numero scelto è già esistente!');
+                $_SESSION['errors'][] = tr('Il numero scelto è già esistente!');
             }
         }
         break;
@@ -41,10 +41,10 @@ switch (post('op')) {
                 $query = 'UPDATE co_pianodeiconti3 SET numero='.prepare($numero).', descrizione='.prepare($descrizione).' WHERE id='.prepare($idconto);
 
                 if ($dbo->query($query)) {
-                    $_SESSION['infos'][] = _('Descrizione conto modificata!');
+                    $_SESSION['infos'][] = tr('Descrizione conto modificata!');
                 }
             } else {
-                $_SESSION['errors'][] = _('Il numero scelto è già esistente!');
+                $_SESSION['errors'][] = tr('Il numero scelto è già esistente!');
             }
         }
 
@@ -58,7 +58,7 @@ switch (post('op')) {
             $query = 'DELETE FROM co_pianodeiconti3 WHERE id='.prepare($idconto);
 
             if ($dbo->query($query)) {
-                $_SESSION['infos'][] = _('Conto eliminato!');
+                $_SESSION['infos'][] = tr('Conto eliminato!');
             }
         }
         break;

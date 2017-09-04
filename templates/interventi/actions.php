@@ -13,18 +13,18 @@ $body .= '
 
     <tr>
         <td align="left">
-            '._('Cliente').': <b>'.$c_codiceanagrafica.' '.$c_ragionesociale.'</b><br>
-            '._('Indirizzo').': <b>'.$c_indirizzo.'-'.$c_cap.' '.$c_citta.' ('.strtoupper($c_provincia).')</b><br>
+            '.tr('Cliente').': <b>'.$c_codiceanagrafica.' '.$c_ragionesociale.'</b><br>
+            '.tr('Indirizzo').': <b>'.$c_indirizzo.'-'.$c_cap.' '.$c_citta.' ('.strtoupper($c_provincia).')</b><br>
         </td>
         <td align="left">
-            '._('Referente').': <b>'.$referente.'</b>';
+            '.tr('Referente').': <b>'.$referente.'</b>';
     if ($c_telefono != '') {
         $body .= '
-        <br>'._('Telefono azienda').': <b>'.$c_telefono.'</b>';
+        <br>'.tr('Telefono azienda').': <b>'.$c_telefono.'</b>';
     }
     if ($c_email != '') {
         $body .= '
-        <br>'._('Email').': <b>'.$c_email.'</b>';
+        <br>'.tr('Email').': <b>'.$c_email.'</b>';
     }
     $body .= '
         </td>
@@ -33,7 +33,7 @@ $body .= '
 //  Richiesta
 $body .= '
     <tr>
-        <td align="left" colspan="2" valign="top"><b>'._('Richiesta').':</b></td>
+        <td align="left" colspan="2" valign="top"><b>'.tr('Richiesta').':</b></td>
     </tr>
     <tr>
         <td colspan="2" align="left" valign="top" style="height:5mm;">'.nl2br($records[0]['richiesta']).'</td>
@@ -43,7 +43,7 @@ $body .= '
 if ($records[0]['descrizione_intervento'] != '') {
     $body .= '
     <tr>
-        <td colspan="2" align="left" valign="top"><b>'._('Descrizione').':</b></td>
+        <td colspan="2" align="left" valign="top"><b>'.tr('Descrizione').':</b></td>
     </tr>
     <tr>
         <td colspan="2" valign="top" align="left" style="height:5mm;">'.nl2br($records[0]['descrizione_intervento']).'</td>
@@ -65,33 +65,33 @@ if (!empty($rs2)) {
 
     <tr>
         <td align="center" colspan="6" valign="middle" style="font-size:11pt;" bgcolor="#cccccc">
-            <b>'.strtoupper(_('Materiale utilizzato')).'</b>
+            <b>'.strtoupper(tr('Materiale utilizzato')).'</b>
         </td>
     </tr>
 
     <tr>
         <td style="font-size:8pt;" align="center" bgcolor="#dedede">
-            <b>'._('Codice').'</b>
+            <b>'.tr('Codice').'</b>
         </td>
 
         <td style="font-size:8pt;" align="center" bgcolor="#dedede">
-            <b>'._('Descrizione').'</b>
+            <b>'.tr('Descrizione').'</b>
         </td>
 
         <td style="font-size:8pt;" align="center" bgcolor="#dedede">
-            <b>'._('Q.tà').'</b>
+            <b>'.tr('Q.tà').'</b>
         </td>
 
         <td style="font-size:8pt;" align="center" bgcolor="#dedede">
-            <b>'._('Prezzo listino').'</b>
+            <b>'.tr('Prezzo listino').'</b>
         </td>
 
         <td style="font-size:8pt;" align="center" bgcolor="#dedede">
-            <b>'._('Sconto').'</b>
+            <b>'.tr('Sconto').'</b>
         </td>
 
         <td style="font-size:8pt;" align="center" bgcolor="#dedede">
-            <b>'._('Subtot. netto').'</b>
+            <b>'.tr('Subtot. netto').'</b>
         </td>
     </tr>';
 
@@ -158,7 +158,7 @@ if (!empty($rs2)) {
         $body .= '
     <tr>
         <td colspan="5" align="right">
-            <b>'.strtoupper(_('Totale materiale utilizzato')).':</b>
+            <b>'.strtoupper(tr('Totale materiale utilizzato')).':</b>
         </td>
 
         <td align="right" bgcolor="#dddddd">
@@ -182,7 +182,7 @@ if (!empty($rs2)) {
 
     <tr>
         <td align="center" colspan="6" valign="middle" style="font-size:11pt;" bgcolor="#cccccc">
-            <b>'.strtoupper(_('Spese aggiuntive')).'</b>
+            <b>'.strtoupper(tr('Spese aggiuntive')).'</b>
         </td>
     </tr>
 
@@ -192,23 +192,23 @@ if (!empty($rs2)) {
         </td>
 
         <td style="font-size:8pt;" align="center" bgcolor="#dedede">
-            <b>'._('Descrizione').'</b>
+            <b>'.tr('Descrizione').'</b>
         </td>
 
         <td style="font-size:8pt;" align="center" bgcolor="#dedede">
-            <b>'._('Q.tà').'</b>
+            <b>'.tr('Q.tà').'</b>
         </td>
 
         <td style="font-size:8pt;" align="center" bgcolor="#dedede">
-            <b>'._('Prezzo listino').'</b>
+            <b>'.tr('Prezzo listino').'</b>
         </td>
 
         <td style="font-size:8pt;" align="center" bgcolor="#dedede">
-            <b>'._('Sconto').'</b>
+            <b>'.tr('Sconto').'</b>
         </td>
 
         <td style="font-size:8pt;" align="center" bgcolor="#dedede">
-            <b>'._('Subtot. netto').'</b>
+            <b>'.tr('Subtot. netto').'</b>
         </td>
     </tr>';
 
@@ -270,7 +270,7 @@ if (!empty($rs2)) {
         $body .= '
     <tr>
         <td colspan="5" align="right">
-            <b>'.strtoupper(_('Totale spese aggiuntive')).':</b>
+            <b>'.strtoupper(tr('Totale spese aggiuntive')).':</b>
         </td>
 
         <td align="right" bgcolor="#dddddd">
@@ -292,7 +292,7 @@ $body .= '
 
     <tr>
         <td align="center" colspan="5" valign="middle" style="font-size:11pt;" bgcolor="#cccccc">
-            <b>'.strtoupper(_('Ore tecnici')).'</b>
+            <b>'.strtoupper(tr('Ore tecnici')).'</b>
         </td>
     </tr>';
 
@@ -300,23 +300,23 @@ $body .= '
 $body .= '
     <tr>
         <td align="center" style="font-size:8pt;" bgcolor="#dddddd">
-            <b>'._('Tecnico').'</b>
+            <b>'.tr('Tecnico').'</b>
         </td>
 
         <td align="center" style="font-size:8pt;" bgcolor="#dddddd">
-            <b>'._('Data').'</b>
+            <b>'.tr('Data').'</b>
         </td>
 
         <td align="center" style="font-size:8pt;" bgcolor="#dddddd">
-            <b>'._('Dalle').'</b>
+            <b>'.tr('Dalle').'</b>
         </td>
 
         <td align="center" style="font-size:8pt;" bgcolor="#dddddd">
-            <b>'._('Alle').'</b>
+            <b>'.tr('Alle').'</b>
         </td>
 
         <td align="center" style="font-size:8pt;" bgcolor="#dddddd">
-            <b>'._('Sconto').'</b>
+            <b>'.tr('Sconto').'</b>
         </td>
     </tr>';
 
@@ -395,19 +395,19 @@ $body .= '
         <td style="font-size:8pt;" align="center" bgcolor="#dedede"></td>
 
         <td style="font-size:8pt;" align="center" bgcolor="#dedede">
-            <b>'._('Descrizione').'</b>
+            <b>'.tr('Descrizione').'</b>
         </td>
 
         <td style="font-size:8pt;" align="center" bgcolor="#dedede">
-            <b>'._('Q.tà').'</b>
+            <b>'.tr('Q.tà').'</b>
         </td>
 
         <td style="font-size:8pt;" align="center" bgcolor="#dedede">
-            <b>'._('Prezzo listino').'</b>
+            <b>'.tr('Prezzo listino').'</b>
         </td>
 
         <td style="font-size:8pt;" align="center" bgcolor="#dedede">
-            <b>'._('Subtot. netto').'</b>
+            <b>'.tr('Subtot. netto').'</b>
         </td>
     </tr>';
 
@@ -417,7 +417,7 @@ $body .= '
         <td></td>
 
         <td>
-            '._('Ore tecnici').'
+            '.tr('Ore tecnici').'
         </td>
 
         <td align="center">
@@ -449,7 +449,7 @@ if ($totale_km > 0) {
         <td></td>
 
         <td>
-            '._('Km / viaggio').'
+            '.tr('Km / viaggio').'
         </td>
 
         <td align="center">
@@ -479,7 +479,7 @@ if ($visualizza_costi) {
     $body .= '
     <tr>
         <td colspan="4" align="right">
-            <b>'.strtoupper(_('Totale intervento')).':</b>
+            <b>'.strtoupper(tr('Totale intervento')).':</b>
         </td>
 
         <td align="right" bgcolor="#dddddd">
@@ -506,7 +506,7 @@ if ($visualizza_costi) {
     $body .= '
     <tr>
         <td valign="middle" align="right">
-            <b>'.strtoupper(_('Imponibile')).':</b>
+            <b>'.strtoupper(tr('Imponibile')).':</b>
         </td>
 
         <td align="right" bgcolor="#cccccc">
@@ -526,7 +526,7 @@ if ($visualizza_costi) {
         $body .= '
     <tr>
         <td valign="middle" align="right">
-            <b>'.strtoupper(_('Sconto incondizionato')).':</b>
+            <b>'.strtoupper(tr('Sconto incondizionato')).':</b>
         </td>
 
         <td align="right" bgcolor="#cccccc">
@@ -538,7 +538,7 @@ if ($visualizza_costi) {
         $body .= '
     <tr>
         <td valign="middle" align="right">
-            <b>'.strtoupper(_('Imponibile scontato')).':</b>
+            <b>'.strtoupper(tr('Imponibile scontato')).':</b>
         </td>
 
         <td align="right" bgcolor="#cccccc">
@@ -559,7 +559,7 @@ if ($visualizza_costi) {
     $body .= '
     <tr>
         <td valign="middle" align="right">
-            <b>'.strtoupper(_('Iva')).' ('.Translator::numberToLocale($percentuale_iva, 0).'%):</b>
+            <b>'.strtoupper(tr('Iva')).' ('.Translator::numberToLocale($percentuale_iva, 0).'%):</b>
         </td>
 
         <td align="right" bgcolor="#cccccc">
@@ -573,7 +573,7 @@ if ($visualizza_costi) {
     $body .= '
     <tr>
     	<td valign="middle" align="right">
-            <b>'.strtoupper(_('Totale intervento')).':</b>
+            <b>'.strtoupper(tr('Totale intervento')).':</b>
     	</td>
     	<td align="right" bgcolor="#cccccc">
     		<b>'.Translator::numberToLocale($totale, 2).' &euro;</b>
@@ -597,12 +597,12 @@ $body .= '
     <col width="454"><col width="280">
     <tr>
         <td align="left" valign="middle">
-            <b>'._('Si dichiara che i lavori sono stati eseguiti ed i materiali installati').'.</b><br>
-            '._('I dati del ricevente verrano trattati in base al D.lgs n. 196/2003').'.
+            <b>'.tr('Si dichiara che i lavori sono stati eseguiti ed i materiali installati').'.</b><br>
+            '.tr('I dati del ricevente verrano trattati in base al D.lgs n. 196/2003').'.
         </td>
         <td align="center" valign="bottom" style="border:1px solid #888; height:20mm; font-size:8pt;">
             '.$firma.'<br>
-            <i>('._('Timbro e firma leggibile').'.)</i>
+            <i>('.tr('Timbro e firma leggibile').'.)</i>
         </td>
     </tr>
 </table>';

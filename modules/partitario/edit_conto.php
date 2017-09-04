@@ -18,11 +18,11 @@ $idpianodeiconti2 = $rs[0]['idpianodeiconti2'];
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "text", "label": "<?php echo _('Numero'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "<?php echo $numero ?>", "extra": "maxlength=\"6\"" ]}
+            {[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "<?php echo $numero ?>", "extra": "maxlength=\"6\"" ]}
         </div>
 
         <div class="col-md-8">
-            {[ "type": "text", "label": "<?php echo _('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo $descrizione ?>" ]}
+            {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo $descrizione ?>" ]}
         </div>
     </div>
     <br>

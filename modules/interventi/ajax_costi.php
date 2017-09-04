@@ -39,48 +39,48 @@ if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
 <table class="table table condensed table-striped table-hover table-bordered">
     <tr>
         <th width="40%"></th>
-        <th width="20%" class="text-center">'.strtoupper(_('Costo')).'</th>
-        <th width="20%" class="text-center">'.strtoupper(_('Addebito')).'</th>
-        <th width="20%" class="text-center">'.strtoupper(_('Tot. Scontato')).'</th>
+        <th width="20%" class="text-center">'.strtoupper(tr('Costo')).'</th>
+        <th width="20%" class="text-center">'.strtoupper(tr('Addebito')).'</th>
+        <th width="20%" class="text-center">'.strtoupper(tr('Tot. Scontato')).'</th>
     </tr>
 
     <tr>
-        <th>'.strtoupper(_('Totale manodopera')).'</th>
+        <th>'.strtoupper(tr('Totale manodopera')).'</th>
         <td class="text-right">'.Translator::numberToLocale($manodopera_costo).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($manodopera_addebito).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($manodopera_scontato).' &euro;</td>
     </tr>
 
     <tr>
-        <th>'.strtoupper(_('Totale viaggio')).'</th>
+        <th>'.strtoupper(tr('Totale viaggio')).'</th>
         <td class="text-right">'.Translator::numberToLocale($viaggio_costo).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($viaggio_addebito).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($viaggio_scontato).' &euro;</td>
     </tr>
 
     <tr>
-        <th>'.strtoupper(_('Totale articoli')).'</th>
+        <th>'.strtoupper(tr('Totale articoli')).'</th>
         <td class="text-right">'.Translator::numberToLocale($ricambi_costo).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($ricambi_addebito).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($ricambi_scontato).' &euro;</td>
     </tr>
 
     <tr>
-        <th>'.strtoupper(_('Totale altre spese')).'</th>
+        <th>'.strtoupper(tr('Totale altre spese')).'</th>
         <td class="text-right">'.Translator::numberToLocale($altro_costo).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($altro_addebito).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($altro_scontato).' &euro;</td>
     </tr>
 
     <tr>
-        <th>'.strtoupper(_('Sconto totale')).'</th>
+        <th>'.strtoupper(tr('Sconto totale')).'</th>
         <td class="text-right">-</td>
         <td class="text-right">-</td>
         <td class="text-right">'.Translator::numberToLocale(-$sconto_globale).' &euro;</td>
     </tr>
 
     <tr>
-        <th>'.strtoupper(_('Totale')).'</th>
+        <th>'.strtoupper(tr('Totale')).'</th>
         <th class="text-right">'.Translator::numberToLocale($manodopera_costo + $viaggio_costo + $ricambi_costo + $altro_costo).' &euro;</th>
         <th class="text-right">'.Translator::numberToLocale($manodopera_addebito + $viaggio_addebito + $ricambi_addebito + $altro_addebito).' &euro;</th>
         <th class="text-right">'.Translator::numberToLocale($manodopera_scontato + $viaggio_scontato + $ricambi_scontato + $altro_scontato - $sconto_globale).' &euro;</th>
@@ -93,6 +93,6 @@ echo '
 <!-- AGGIUNTA TECNICO -->
 <div class="row">
     <div class="col-md-4 pull-right">
-        {[ "type": "number", "label": "'._('Sconto globale').'", "name": "sconto_globale", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
+        {[ "type": "number", "label": "'.tr('Sconto globale').'", "name": "sconto_globale", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
     </div>
 </div>';

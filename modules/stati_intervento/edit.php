@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 //Se lo stato intervento è uno di quelli di default, non lo lascio modificare
 if ($records[0]['default']) {
     $attr = "readonly='true'";
-    $warning_text = '<div class="alert alert-warning">'._('Puoi modificare solo il colore di questo intervento!').'</div>';
+    $warning_text = '<div class="alert alert-warning">'.tr('Puoi modificare solo il colore di questo intervento!').'</div>';
 } else {
     $attr = '';
     $warning_text = '';
@@ -19,21 +19,21 @@ echo $warning_text;
 
 
 	<div class="pull-right">
-		<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo _('Salva modifiche'); ?></button>
+		<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
 	</div>
 	<div class="clearfix"></div>
 
 	<div class="row">
 		<div class="col-md-2">
-			{[ "type": "span", "label": "<?php echo _('Codice'); ?>", "name": "idstatointervento", "value": "$idstatointervento$" ]}
+			{[ "type": "span", "label": "<?php echo tr('Codice'); ?>", "name": "idstatointervento", "value": "$idstatointervento$" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo _('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$", "extra": "<?php echo $attr ?>" ]}
+			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$", "extra": "<?php echo $attr ?>" ]}
 		</div>
 
 		<div class="col-md-2">
-			{[ "type": "text", "label": "<?php echo _('Colore'); ?>", "name": "colore", "required": 1, "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength='7'", "icon-after": "<div class='img-circle square'></div>" ]}
+			{[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "required": 1, "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength='7'", "icon-after": "<div class='img-circle square'></div>" ]}
 		</div>
 	</div>
 </form>
@@ -43,7 +43,7 @@ echo $warning_text;
 if (!$records[0]['default']) {
     ?>
         <a class="btn btn-danger ask" data-backto="record-list">
-            <i class="fa fa-trash"></i> <?php echo _('Elimina') ?>
+            <i class="fa fa-trash"></i> <?php echo tr('Elimina') ?>
         </a>
 <?php
 

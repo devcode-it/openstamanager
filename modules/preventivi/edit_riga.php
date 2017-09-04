@@ -12,7 +12,7 @@ $idanagrafica = $rs[0]['idanagrafica'];
 
 if (empty($idriga)) {
     $op = 'addriga';
-    $button = _('Aggiungi');
+    $button = tr('Aggiungi');
 
     // valori default
     $idarticolo = '';
@@ -24,7 +24,7 @@ if (empty($idriga)) {
     $sconto = 0;
 } else {
     $op = 'editriga';
-    $button = _('Modifica');
+    $button = tr('Modifica');
 
     // carico record da modificare
     $q = 'SELECT * FROM co_righe_preventivi WHERE idpreventivo='.prepare($id_record).' AND id='.prepare($idriga);
@@ -49,7 +49,7 @@ if (empty($idriga)) {
     Form add / edit
 */
 echo '
-<p>'.str_replace('_NUM_', $numero, _('Preventivo numero _NUM_')).'</p>
+<p>'.str_replace('_NUM_', $numero, tr('Preventivo numero _NUM_')).'</p>
 <form id="form" action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="'.$op.'">
     <input type="hidden" name="idriga" value="'.$idriga.'">
@@ -59,7 +59,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'._('Articolo').'", "name": "idarticolo", "value": "'.$idarticolo.'", "ajax-source": "articoli", "extra": "onchange=\"session_set(\'superselect,idarticolo\', $(this).val(), 0); $data = $(this).selectData(); $(\'#prezzo\').val($data.prezzo_vendita); $(\'#desc\').val($data.descrizione); $(\'#um\').selectSetNew($data.um, $data.um);\"" ]}
+            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "value": "'.$idarticolo.'", "ajax-source": "articoli", "extra": "onchange=\"session_set(\'superselect,idarticolo\', $(this).val(), 0); $data = $(this).selectData(); $(\'#prezzo\').val($data.prezzo_vendita); $(\'#desc\').val($data.descrizione); $(\'#um\').selectSetNew($data.um, $data.um);\"" ]}
         </div>
     </div>';
 
@@ -67,7 +67,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'._('Descrizione').'", "name": "descrizione", "id": "desc", "value": "'.$descrizione.'", "required": 1 ]}
+            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "id": "desc", "value": "'.$descrizione.'", "required": 1 ]}
         </div>
     </div>';
 
@@ -75,19 +75,19 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-3">
-            {[ "type": "number", "label": "'._('Q.tà').'", "name": "qta", "value": "'.$qta.'", "required": 1, "decimals": "qta" ]}
+            {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "value": "'.$qta.'", "required": 1, "decimals": "qta" ]}
         </div>';
 
 // Unità di misura
 echo '
         <div class="col-md-3">
-            {[ "type": "select", "label": "'._('Unità di misura').'", "icon-after": "add|'.Modules::getModule('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
+            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::getModule('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
         </div>';
 
 // Sconto
 echo '
         <div class="col-md-6">
-            {[ "type": "number", "label": "'._('Sconto/rincaro articoli per questo cliente').'", "icon-after": "%", "name": "prc_guadagno", "value": "'.$prc_guadagno.'" ]}
+            {[ "type": "number", "label": "'.tr('Sconto/rincaro articoli per questo cliente').'", "icon-after": "%", "name": "prc_guadagno", "value": "'.$prc_guadagno.'" ]}
         </div>
     </div>';
 
@@ -100,7 +100,7 @@ if (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d
     if (get_var('Percentuale rivalsa INPS') != '') {
         echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'._('Rivalsa INPS').'", "name": "idrivalsainps", "required": 1, "value": "'.get_var('Percentuale rivalsa INPS').'", "values": "query=SELECT * FROM co_rivalsainps" ]}
+            {[ "type": "select", "label": "'.tr('Rivalsa INPS').'", "name": "idrivalsainps", "required": 1, "value": "'.get_var('Percentuale rivalsa INPS').'", "values": "query=SELECT * FROM co_rivalsainps" ]}
         </div>';
     }
 
@@ -108,7 +108,7 @@ if (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d
     if (get_var("Percentuale ritenuta d'acconto") != '') {
         echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'._("Ritenuta d'acconto").'", "name": "idritenutaacconto", "required": 1, "value": "'.get_var("Percentuale ritenuta d'acconto").'", "values": "query=SELECT * FROM co_ritenutaacconto" ]}
+            {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "idritenutaacconto", "required": 1, "value": "'.get_var("Percentuale ritenuta d'acconto").'", "values": "query=SELECT * FROM co_ritenutaacconto" ]}
         </div>';
     }
 
@@ -122,19 +122,19 @@ if (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'._('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
         </div>';
 
 // Costo unitario
 echo '
         <div class="col-md-3">
-            {[ "type": "number", "label": "'._('Costo unitario').'", "name": "prezzo", "required": 1, "value": "'.$subtot.'", "icon-after": "&euro;" ]}
+            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "value": "'.$subtot.'", "icon-after": "&euro;" ]}
         </div>';
 
 // Sconto unitario
 echo '
         <div class="col-md-3">
-            {[ "type": "number", "label": "'._('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
+            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
         </div>
     </div>';
 

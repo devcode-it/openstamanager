@@ -12,12 +12,12 @@ switch (filter('op')) {
         if (isset($descrizione) && isset($percentuale) && isset($indetraibile)) {
             if ($dbo->fetchNum('SELECT * FROM `co_iva` WHERE `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
                 $dbo->query('UPDATE `co_iva` SET `descrizione`='.prepare($descrizione).', `percentuale`='.prepare($percentuale).', `indetraibile`='.prepare($indetraibile).', `dicitura`='.prepare($dicitura).' WHERE `id`='.prepare($id_record));
-                $_SESSION['infos'][] = _('Salvataggio completato!');
+                $_SESSION['infos'][] = tr('Salvataggio completato!');
             } else {
-                $_SESSION['errors'][] = str_replace('_TYPE_', 'IVA', _("E' già presente una tipologia di _TYPE_ con la stessa descrizione!"));
+                $_SESSION['errors'][] = str_replace('_TYPE_', 'IVA', tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione!"));
             }
         } else {
-            $_SESSION['errors'][] = _('Ci sono stati alcuni errori durante il salvataggio!');
+            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
         }
 
         break;
@@ -32,12 +32,12 @@ switch (filter('op')) {
                 $dbo->query('INSERT INTO `co_iva` (`descrizione`, `percentuale`, `indetraibile`) VALUES ('.prepare($descrizione).', '.prepare($percentuale).', '.prepare($indetraibile).')');
                 $id_record = $dbo->lastInsertedID();
 
-                $_SESSION['infos'][] = str_replace('_TYPE_', 'IVA', _('Aggiunta nuova tipologia di _TYPE_'));
+                $_SESSION['infos'][] = str_replace('_TYPE_', 'IVA', tr('Aggiunta nuova tipologia di _TYPE_'));
             } else {
-                $_SESSION['errors'][] = str_replace('_TYPE_', 'IVA', _("E' già presente una tipologia di _TYPE_ con la stessa descrizione!"));
+                $_SESSION['errors'][] = str_replace('_TYPE_', 'IVA', tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione!"));
             }
         } else {
-            $_SESSION['errors'][] = _('Ci sono stati alcuni errori durante il salvataggio!');
+            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
         }
 
         break;
@@ -46,7 +46,7 @@ switch (filter('op')) {
         if (isset($id_record)) {
             $dbo->query('DELETE FROM `co_iva` WHERE `id`='.prepare($id_record));
 
-            $_SESSION['infos'][] = str_replace('_TYPE_', 'IVA', _('Tipologia di _TYPE_ eliminata con successo!'));
+            $_SESSION['infos'][] = str_replace('_TYPE_', 'IVA', tr('Tipologia di _TYPE_ eliminata con successo!'));
         }
 
         break;

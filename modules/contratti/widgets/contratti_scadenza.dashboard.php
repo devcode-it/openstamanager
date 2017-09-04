@@ -8,10 +8,10 @@ if (!empty($rs)) {
     echo '
 <table class="table table-hover">
     <tr>
-        <th width="50%">'._('Contratto').'</th>
-        <th width="15%">'._('Data inizio').'</th>
-        <th width="15%">'._('Data conclusione').'</th>
-        <th width="20%">'._('Rinnovo').'</th>
+        <th width="50%">'.tr('Contratto').'</th>
+        <th width="15%">'.tr('Data inizio').'</th>
+        <th width="15%">'.tr('Data conclusione').'</th>
+        <th width="20%">'.tr('Rinnovo').'</th>
     </tr>';
 
     foreach ($rs as $r) {
@@ -22,7 +22,7 @@ if (!empty($rs)) {
         // Se scaduto, segna la riga in rosso
         $class = (strtotime($r['data_conclusione']) < strtotime(date('Y-m-d')) && !empty($data_conclusione)) ? 'danger' : '';
 
-        $scadenza = ($r['giorni_rimanenti'] > 0) ? _('scade fra _DAYS_ giorni') : _('scaduto da _DAYS_ giorni');
+        $scadenza = ($r['giorni_rimanenti'] > 0) ? tr('scade fra _DAYS_ giorni') : tr('scaduto da _DAYS_ giorni');
         $scadenza = str_replace('_DAYS_', $r['giorni_rimanenti'], $scadenza);
 
         echo '
@@ -40,5 +40,5 @@ if (!empty($rs)) {
 </table>';
 } else {
     echo '
-<p>'._('Non ci sono contratti in scadenza').'.</p>';
+<p>'.tr('Non ci sono contratti in scadenza').'.</p>';
 }

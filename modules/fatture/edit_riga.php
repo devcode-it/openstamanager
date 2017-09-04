@@ -27,7 +27,7 @@ $idarticolo = $rsr[0]['idarticolo'];
 $idconto = $rsr[0]['idconto'];
 
 echo '
-<p>'.str_replace('_NUM_', $numero, _('Documento numero _NUM_')).'</p>
+<p>'.str_replace('_NUM_', $numero, tr('Documento numero _NUM_')).'</p>
 
 <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="editriga">
@@ -39,7 +39,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'._('Descrizione').'", "name": "descrizione", "required": 1, "value": "'.$rsr[0]['descrizione'].'" ]}
+            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "required": 1, "value": "'.$rsr[0]['descrizione'].'" ]}
         </div>
     </div>';
 
@@ -51,7 +51,7 @@ if (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d
     if (get_var('Percentuale rivalsa INPS') != '' || $dir == 'uscita') {
         echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'._('Rivalsa INPS').'", "name": "idrivalsainps", "value": "'.$rsr[0]['idrivalsainps'].'", "values": "query=SELECT * FROM co_rivalsainps" ]}
+            {[ "type": "select", "label": "'.tr('Rivalsa INPS').'", "name": "idrivalsainps", "value": "'.$rsr[0]['idrivalsainps'].'", "values": "query=SELECT * FROM co_rivalsainps" ]}
         </div>';
     }
 
@@ -59,7 +59,7 @@ if (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d
     if (get_var("Percentuale ritenuta d'acconto") != '' || $dir == 'uscita') {
         echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'._("Ritenuta d'acconto").'", "name": "idritenutaacconto", "value": "'.$rsr[0]['idritenutaacconto'].'", "values": "query=SELECT * FROM co_ritenutaacconto" ]}
+            {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "idritenutaacconto", "value": "'.$rsr[0]['idritenutaacconto'].'", "values": "query=SELECT * FROM co_ritenutaacconto" ]}
         </div>';
     }
 
@@ -71,12 +71,12 @@ if (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'._('Iva').'", "name": "idiva", "required": 1, "value": "'.$rsr[0]['idiva'].'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$rsr[0]['idiva'].'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
         </div>';
 
 echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'._('Conto').'", "name": "idconto", "required": 1, "value": "'.$idconto.'", "ajax-source": "'.$conti.'" ]}
+            {[ "type": "select", "label": "'.tr('Conto').'", "name": "idconto", "required": 1, "value": "'.$idconto.'", "ajax-source": "'.$conti.'" ]}
         </div>
     </div>';
 
@@ -84,25 +84,25 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-3">
-            {[ "type": "number", "label": "'._('Q.tà').'", "name": "qta", "required": 1, "value": "'.$rsr[0]['qta'].'", "decimals": "qta" ]}
+            {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "'.$rsr[0]['qta'].'", "decimals": "qta" ]}
         </div>';
 
 // Unità di misura
 echo '
         <div class="col-md-3">
-            {[ "type": "select", "label": "'._('Unità di misura').'", "icon-after": "add|'.Modules::getModule('Unità di misura')['id'].'", "name": "um", "ajax-source": "misure", "value": "'.$rsr[0]['um'].'" ]}
+            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::getModule('Unità di misura')['id'].'", "name": "um", "ajax-source": "misure", "value": "'.$rsr[0]['um'].'" ]}
         </div>';
 
 // Costo unitario
 echo '
         <div class="col-md-3">
-            {[ "type": "number", "label": "'._('Costo unitario').'", "name": "prezzo", "required": 1, "value": "'.($rsr[0]['subtotale']/$rsr[0]['qta']).'", "icon-after": "&euro;" ]}
+            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "value": "'.($rsr[0]['subtotale']/$rsr[0]['qta']).'", "icon-after": "&euro;" ]}
         </div>';
 
 // Sconto unitario
 echo '
         <div class="col-md-3">
-            {[ "type": "number", "label": "'._('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
+            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
         </div>
     </div>';
 
@@ -111,7 +111,7 @@ echo '
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-pencil"></i> '._('Modifica').'</button>
+			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-pencil"></i> '.tr('Modifica').'</button>
 		</div>
     </div>
 </form>';

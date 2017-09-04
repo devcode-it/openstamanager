@@ -9,7 +9,7 @@ if (get('anteprima') !== null) {
     $rs = $dbo->fetchArray($query);
 
     if (empty($rs)) {
-        echo _('Intervento inesistente!');
+        echo tr('Intervento inesistente!');
         exit();
     }
 
@@ -30,14 +30,14 @@ if (get('anteprima') !== null) {
     // HTML per la visualizzazione
     echo '
 <button type="button" class="btn btn-success btn-block btn-lg" id="firma" onclick="$(\'.canvas\').removeClass(\'hide\'); $(this).addClass(\'hide\'); $(\'#pdf\').addClass(\'hide\');">
-    <i class="fa fa-pencil"></i> '._('Firma').'
+    <i class="fa fa-pencil"></i> '.tr('Firma').'
 </button>
 <div class="clearfix"></div>
 
 <div class="hide" id="pdf">
     <object data="'.$rootdir.'/files/interventi/'.$rapportino_nome.'#view=fitH&scrollbar=0&toolbar=0&navpanes=0" id ="rapportino_pdf"  type="application/pdf" width="100%">
         alt : <a href="'.$rootdir.'/files/interventi/'.$rapportino_nome.'" target="_blank">'.$rapportino_nome.'</a>
-        <span>'._('Plugin PDF mancante').'</span>
+        <span>'.tr('Plugin PDF mancante').'</span>
     </object>
 </div>';
 }
@@ -49,7 +49,7 @@ if (get('anteprima') !== null) {
 
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "text", "label": "<?php echo _('Nome e cognome'); ?>", "name": "firma_nome", "required": 1 ]}
+            {[ "type": "text", "label": "<?php echo tr('Nome e cognome'); ?>", "name": "firma_nome", "required": 1 ]}
         </div>
     </div>
 
@@ -61,10 +61,10 @@ if (get('anteprima') !== null) {
 
     <div class="btn-group pull-right">
         <button type="button" class="btn btn-danger" data-action="clear">
-            <i class="fa fa-eraser"></i> <?php echo _('Cancella firma'); ?>
+            <i class="fa fa-eraser"></i> <?php echo tr('Cancella firma'); ?>
         </button>
         <button type="submit" class="btn btn-success" data-action="save">
-            <i class="fa fa-check"></i> <?php echo _('Salva firma'); ?>
+            <i class="fa fa-check"></i> <?php echo tr('Salva firma'); ?>
         </button>
     </div>
 

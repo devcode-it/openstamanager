@@ -11,12 +11,12 @@ $rs = $dbo->fetchArray($q);
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
     <tr>
-        <th>'._('Descrizione').'</th>
-        <th width="120">'._('Q.tà').'</th>
-        <th width="80">'._('U.m.').'</th>
-        <th width="120">'._('Costo unitario').'</th>
-        <th width="120">'._('Iva').'</th>
-        <th width="120">'._('Imponibile').'</th>
+        <th>'.tr('Descrizione').'</th>
+        <th width="120">'.tr('Q.tà').'</th>
+        <th width="80">'.tr('U.m.').'</th>
+        <th width="120">'.tr('Costo unitario').'</th>
+        <th width="120">'.tr('Iva').'</th>
+        <th width="120">'.tr('Imponibile').'</th>
         <th width="60"></th>
     </tr>
     <tbody class="sortable">';
@@ -95,20 +95,20 @@ if (!empty($rs)) {
         if (!empty($r['abilita_serial'])) {
             if (!empty($mancanti)) {
                 echo '
-            <br><b><small class="text-danger">'.str_replace('_NUM_', $mancanti, _('_NUM_ serial mancanti')).'</small></b>';
+            <br><b><small class="text-danger">'.str_replace('_NUM_', $mancanti, tr('_NUM_ serial mancanti')).'</small></b>';
             }
             if (!empty($serials)) {
                 echo '
-            <br>'._('SN').': '.implode(', ', $serials);
+            <br>'.tr('SN').': '.implode(', ', $serials);
             }
         } else {
             if ($r['lotto'] != '') {
                 echo '
-                <br>'._('Lotto').': '.$r['lotto'];
+                <br>'.tr('Lotto').': '.$r['lotto'];
             }
             if ($r['serial'] != '') {
                 echo '
-                <br>'._('SN').': '.$r['serial'];
+                <br>'.tr('SN').': '.$r['serial'];
             }
             if ($r['altro'] != '') {
                 echo '
@@ -121,16 +121,16 @@ if (!empty($rs)) {
             $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM or_ordini WHERE id='.prepare($r['idordine']));
             $numero = ($rso[0]['numero_esterno'] != '') ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
             echo '
-        <br>'.str_replace(['_NUM_', '_DATE_'], [$numero, Translator::dateToLocale($rso[0]['data'])], _('Rif. ordine _NUM_ del _DATE_'));
+        <br>'.str_replace(['_NUM_', '_DATE_'], [$numero, Translator::dateToLocale($rso[0]['data'])], tr('Rif. ordine _NUM_ del _DATE_'));
         } elseif (!empty($r['idddt'])) {
             $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM dt_ddt WHERE id='.prepare($r['idddt']));
             $numero = ($rso[0]['numero_esterno'] != '') ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
             echo '
-        <br>'.str_replace(['_NUM_', '_DATE_'], [$numero, Translator::dateToLocale($rso[0]['data'])], _('Rif. ddt _NUM_ del _DATE_'));
+        <br>'.str_replace(['_NUM_', '_DATE_'], [$numero, Translator::dateToLocale($rso[0]['data'])], tr('Rif. ddt _NUM_ del _DATE_'));
         } elseif (!empty($r['idpreventivo'])) {
             $rso = $dbo->fetchArray('SELECT numero, data_bozza FROM co_preventivi WHERE id='.prepare($r['idpreventivo']));
             echo '
-        <br>'.str_replace(['_NUM_', '_DATE_'], [$rso[0]['numero'], Translator::dateToLocale($rso[0]['data_bozza'])], _('Rif. preventivo _NUM_ del _DATE_'));
+        <br>'.str_replace(['_NUM_', '_DATE_'], [$rso[0]['numero'], Translator::dateToLocale($rso[0]['data_bozza'])], tr('Rif. preventivo _NUM_ del _DATE_'));
         }
 
         echo '
@@ -246,7 +246,7 @@ $netto_a_pagare = sum([
 echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Imponibile')).':</b>
+            <b>'.strtoupper(tr('Imponibile')).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($imponibile).' &euro;
@@ -259,7 +259,7 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Sconto')).':</b>
+            <b>'.strtoupper(tr('Sconto')).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($sconto).' &euro;
@@ -271,7 +271,7 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Imponibile scontato')).':</b>
+            <b>'.strtoupper(tr('Imponibile scontato')).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($imponibile_scontato).' &euro;
@@ -285,7 +285,7 @@ if (abs($records[0]['rivalsainps']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Rivalsa INPS')).':</b>
+            <b>'.strtoupper(tr('Rivalsa INPS')).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($records[0]['rivalsainps']).' &euro;
@@ -299,7 +299,7 @@ if (abs($totale_iva) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Iva')).':</b>
+            <b>'.strtoupper(tr('Iva')).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($totale_iva).' &euro;
@@ -312,7 +312,7 @@ if (abs($totale_iva) > 0) {
 echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Totale')).':</b>
+            <b>'.strtoupper(tr('Totale')).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($totale).' &euro;
@@ -325,7 +325,7 @@ if (abs($records[0]['bollo']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Marca da bollo')).':</b>
+            <b>'.strtoupper(tr('Marca da bollo')).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($records[0]['bollo']).' &euro;
@@ -339,7 +339,7 @@ if (abs($records[0]['ritenutaacconto']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_("Ritenuta d'acconto")).':</b>
+            <b>'.strtoupper(tr("Ritenuta d'acconto")).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($records[0]['ritenutaacconto']).' &euro;
@@ -355,7 +355,7 @@ if ($totale != $netto_a_pagare) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Netto a pagare')).':</b>
+            <b>'.strtoupper(tr('Netto a pagare')).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($netto_a_pagare).' &euro;

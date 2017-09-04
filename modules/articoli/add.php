@@ -11,19 +11,19 @@ unset($_SESSION['superselect']['id_categoria']);
 	<div class="row">
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo _('Inserisci il codice:'); ?>", "name": "codice", "required": 1, "value": "" ]}
+			{[ "type": "text", "label": "<?php echo tr('Inserisci il codice:'); ?>", "name": "codice", "required": 1, "value": "" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo _('Inserisci la descrizione:'); ?>", "name": "descrizione", "required": 1, "value": "" ]}
+			{[ "type": "text", "label": "<?php echo tr('Inserisci la descrizione:'); ?>", "name": "descrizione", "required": 1, "value": "" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo _('Inserisci la categoria:'); ?>", "name": "categoria", "required": 1, "value": "", "ajax-source": "categorie", "icon-after": "add|<?php echo Modules::getModule('Categorie')['id']; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Inserisci la categoria:'); ?>", "name": "categoria", "required": 1, "value": "", "ajax-source": "categorie", "icon-after": "add|<?php echo Modules::getModule('Categorie')['id']; ?>" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo _('Inserisci la subcategoria:'); ?>", "name": "subcategoria", "value": "", "ajax-source": "sottocategorie", "icon-after": "add|<?php echo Modules::getModule('Categorie')['id']; ?>||hide" ]}
+			{[ "type": "select", "label": "<?php echo tr('Inserisci la subcategoria:'); ?>", "name": "subcategoria", "value": "", "ajax-source": "sottocategorie", "icon-after": "add|<?php echo Modules::getModule('Categorie')['id']; ?>||hide" ]}
 		</div>
 
 	</div>
@@ -31,7 +31,7 @@ unset($_SESSION['superselect']['id_categoria']);
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo _('Aggiungi'); ?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 		</div>
 	</div>
 </form>

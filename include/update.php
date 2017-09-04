@@ -27,7 +27,7 @@ if (filter('action') == 'do_update') {
                 if (!empty($update['sql']) && $result[1] == $result[2]) {
                     echo '
         <script>
-            $("#progress .info").html($("#progress .info").html() + "<p>&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"fa fa-check\"></i> '.str_replace('_FILENAME_', '<i>'.$update['filename'].'.sql</i>', _('Aggiornamento del database (_FILENAME_)')).'</p>");
+            $("#progress .info").html($("#progress .info").html() + "<p>&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"fa fa-check\"></i> '.str_replace('_FILENAME_', '<i>'.$update['filename'].'.sql</i>', tr('Aggiornamento del database (_FILENAME_)')).'</p>");
         </script>';
                 }
 
@@ -36,7 +36,7 @@ if (filter('action') == 'do_update') {
                 // Aggiunta del messaggio riguardante la conclusione dello script
                 echo '
         <script>
-            $("#progress .info").html($("#progress .info").html() + "<p>&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"fa fa-check\"></i> '.str_replace('_FILENAME_', '<i>'.$update['filename'].'.php</i>', _('Esecuzione dello script di aggiornamento (_FILENAME_)')).'</p>");
+            $("#progress .info").html($("#progress .info").html() + "<p>&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"fa fa-check\"></i> '.str_replace('_FILENAME_', '<i>'.$update['filename'].'.php</i>', tr('Esecuzione dello script di aggiornamento (_FILENAME_)')).'</p>");
         </script>';
 
                 $rate = $scriptValue;
@@ -58,7 +58,7 @@ if (filter('action') == 'do_update') {
             // Fallimento
             echo '
             <div class="alert alert-danger">
-                <i class="fa fa-times"></i> '.str_replace('_VERSION_', $update['version'], _("Errore durante l'esecuzione dell'aggiornamento alla versione _VERSION_")).'
+                <i class="fa fa-times"></i> '.str_replace('_VERSION_', $update['version'], tr("Errore durante l'esecuzione dell'aggiornamento alla versione _VERSION_")).'
             </div>';
         }
     }
@@ -67,7 +67,7 @@ if (filter('action') == 'do_update') {
         Update::updateCleanup();
 
         echo '
-        <p><strong>'._('Aggiornamento completato!!!').'</strong> <i class="fa fa-smile-o"></i></p>';
+        <p><strong>'.tr('Aggiornamento completato!!!').'</strong> <i class="fa fa-smile-o"></i></p>';
 
         // Rimostro la finestra di login
         echo '
@@ -84,10 +84,10 @@ if (filter('action') == 'do_update') {
             }
 
             echo '
-        <p>'._('Puoi procedere al login con i seguenti dati').':</p>
-        <p>'._('Username').': <i>admin</i></p>
-        <p>'._('Password').': <i> '.$password.'</i></p>
-        <p class="text-danger">'.str_replace('_FILE_', '<b>config.inc.php</b>', _("E' fortemente consigliato rimuovere i permessi di scrittura dal file _FILE_")).'.</p>';
+        <p>'.tr('Puoi procedere al login con i seguenti dati').':</p>
+        <p>'.tr('Username').': <i>admin</i></p>
+        <p>'.tr('Password').': <i> '.$password.'</i></p>
+        <p class="text-danger">'.str_replace('_FILE_', '<b>config.inc.php</b>', tr("E' fortemente consigliato rimuovere i permessi di scrittura dal file _FILE_")).'.</p>';
 
             // Imposto la password di admin che l'utente ha selezionato all'inizio
             if (isset($_SESSION['osm_password'])) {
@@ -109,7 +109,7 @@ if (filter('action') == 'do_update') {
 } elseif (Update::isUpdateAvailable()) {
     // Controllo se l'aggiornamento è in esecuzione
     if (Update::isUpdateLocked() && filter('force') === null) {
-        $pageTitle = _('Aggiornamento in corso!');
+        $pageTitle = tr('Aggiornamento in corso!');
 
         if (file_exists($docroot.'/include/custom/top.php')) {
             include_once $docroot.'/include/custom/top.php';
@@ -120,12 +120,12 @@ if (filter('action') == 'do_update') {
         echo '
         <div class="box box-center box-danger box-solid text-center">
             <div class="box-header with-border">
-                <h3 class="box-title">'._('Aggiornamento in corso!').'</h3>
+                <h3 class="box-title">'.tr('Aggiornamento in corso!').'</h3>
             </div>
             <div class="box-body">
-                <p>'._("E' attualmente in corso la procedura di aggiornamento del software, e pertanto siete pregati di attendere fino alla sua conclusione").'.</p>
-                <p>'._("Nel caso il problema persista, rivolgersi all'amministratore o all'assistenza ufficiale").'.</p>
-                <a class="btn btn-info" href="'.$rootdir.'/index.php"><i class="fa fa-repeat"></i> '._('Riprova').'</a>
+                <p>'.tr("E' attualmente in corso la procedura di aggiornamento del software, e pertanto siete pregati di attendere fino alla sua conclusione").'.</p>
+                <p>'.tr("Nel caso il problema persista, rivolgersi all'amministratore o all'assistenza ufficiale").'.</p>
+                <a class="btn btn-info" href="'.$rootdir.'/index.php"><i class="fa fa-repeat"></i> '.tr('Riprova').'</a>
             </div>
         </div>';
 
@@ -140,8 +140,8 @@ if (filter('action') == 'do_update') {
 
     $firstuse = !$dbo->isInstalled() ? 'true' : 'false';
 
-    $button = !$dbo->isInstalled() ? _('Installa!') : _('Aggiorna!');
-    $pageTitle = !$dbo->isInstalled() ? _('Installazione') : _('Aggiornamento');
+    $button = !$dbo->isInstalled() ? tr('Installa!') : tr('Aggiorna!');
+    $pageTitle = !$dbo->isInstalled() ? tr('Installazione') : tr('Aggiornamento');
 
     if (file_exists($docroot.'/include/custom/top.php')) {
         include_once $docroot.'/include/custom/top.php';
@@ -152,29 +152,29 @@ if (filter('action') == 'do_update') {
     echo '
         <div class="box box-center-large box-warning text-center">
             <div class="box-header with-border">
-                <h3 class="box-title">'.(!$dbo->isInstalled() ? _('Installazione') : _('Aggiornamento')).'</h3>
+                <h3 class="box-title">'.(!$dbo->isInstalled() ? tr('Installazione') : tr('Aggiornamento')).'</h3>
             </div>
             <div class="box-body">';
     if (!$dbo->isInstalled()) {
         echo '
-                <p><strong>'._("E' la prima volta che avvii OpenSTAManager e non hai ancora installato il database").'.</strong></p>';
+                <p><strong>'.tr("E' la prima volta che avvii OpenSTAManager e non hai ancora installato il database").'.</strong></p>';
     } else {
         echo '
-                <p>'._("E' necessario aggiornare il database a una nuova versione").'.</p>';
+                <p>'.tr("E' necessario aggiornare il database a una nuova versione").'.</p>';
     }
     echo '
-                <p>'.str_replace('_BUTTON_', '<b>"'.$button.'"</b>', _("Premi il tasto _BUTTON_ per procedere con l'aggiornamento!")).'</p>
+                <p>'.str_replace('_BUTTON_', '<b>"'.$button.'"</b>', tr("Premi il tasto _BUTTON_ per procedere con l'aggiornamento!")).'</p>
                 <input type="button" class="btn btn-primary" value="'.$button.'" onclick="continue_update()" id="contine_button">
 
                 <script>
                 function continue_update(){
                     swal({
-                        title: "'._('Sei sicuro?').'",
-                        text: "'._("Continuare con l'aggiornamento?").'",
+                        title: "'.tr('Sei sicuro?').'",
+                        text: "'.tr("Continuare con l'aggiornamento?").'",
                         type: "warning",
                         showCancelButton: true,
                         confirmButtonClass: "btn btn-lg btn-success",
-                        confirmButtonText: "'._('Procedi').'",
+                        confirmButtonText: "'.tr('Procedi').'",
                     }).then(
                     function(){
                         $("#progress").show();
@@ -193,7 +193,7 @@ if (filter('action') == 'do_update') {
                     <hr>
                     <div class="box box-info text-center collapsed-box">
                         <div class="box-header with-border">
-                            <h3 class="box-title"><a class="clickable" data-widget="collapse">'._('Log').'</a></h3>
+                            <h3 class="box-title"><a class="clickable" data-widget="collapse">'.tr('Log').'</a></h3>
                             <div class="box-tools pull-right">
                                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
                             </div>
@@ -248,7 +248,7 @@ if (filter('action') == 'do_update') {
                             versions.push(version);
                             current += 1;
 
-                            $("#progress .info").html($("#progress .info").html() + "<p><strong>'.str_replace(['_DONE_', '_TODO_', '_VERSION_'], ['" + current + "', '" + count + "', '" + version + "'], _('Aggiornamento _DONE_ di _TODO_ (_VERSION_)')).'</strong></p>");
+                            $("#progress .info").html($("#progress .info").html() + "<p><strong>'.str_replace(['_DONE_', '_TODO_', '_VERSION_'], ['" + current + "', '" + count + "', '" + version + "'], tr('Aggiornamento _DONE_ di _TODO_ (_VERSION_)')).'</strong></p>");
                         }
                     }
                 </script>

@@ -9,13 +9,13 @@ include_once __DIR__.'/../../core.php';
 	<!-- DATI -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo _('Dati') ?></h3>
+			<h3 class="panel-title"><?php echo tr('Dati') ?></h3>
 		</div>
 
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-xs-12 col-md-12">
-					{[ "type": "text", "label": "<?php echo _('Descrizione') ?>", "name": "descrizione",  "value": "$descrizione$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Descrizione') ?>", "name": "descrizione",  "value": "$descrizione$" ]}
 				</div>
 			</div>
 		</div>
@@ -23,7 +23,7 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo _('Rate') ?></h3>
+			<h3 class="panel-title"><?php echo tr('Rate') ?></h3>
 		</div>
 
 		<div class="panel-body">
@@ -43,21 +43,21 @@ foreach ($results as $result) {
     echo '
 				<div class="box box-success">
 					<div class="box-header with-border">
-						<h3 class="box-title">'.str_replace('_NUMBER_', $cont, _('Rata _NUMBER_')).'</h3>
+						<h3 class="box-title">'.str_replace('_NUMBER_', $cont, tr('Rata _NUMBER_')).'</h3>
 						<a class=" btn btn-danger pull-right" onclick="';
-    echo "if(confirm('"._('Eliminare questo elemento?')."')){ location.href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete_rata&id='.$result['id']."'; }";
-    echo '"><i class="fa fa-trash"></i> '._('Elimina').'</a>
+    echo "if(confirm('".tr('Eliminare questo elemento?')."')){ location.href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete_rata&id='.$result['id']."'; }";
+    echo '"><i class="fa fa-trash"></i> '.tr('Elimina').'</a>
 					</div>
 					<div class="box-body">
 						<input type="hidden" value="'.$result['id'].'" name="id[]">
 
 						<div class="row">
 							<div class="col-xs-12 col-md-6">
-								{[ "type": "number", "label": "'._('Percentuale').'", "name": "percentuale[]", "value": "'.$result['prc'].'", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+								{[ "type": "number", "label": "'.tr('Percentuale').'", "name": "percentuale[]", "value": "'.$result['prc'].'", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
 							</div>
 
 							<div class="col-xs-12 col-md-6">
-								{[ "type": "select", "label": "'._('Scadenza').'", "name": "scadenza[]", "values": "list=\"1\":\"'._('Data fatturazione').'\",\"2\":\"'._('Data fatturazione fine mese').'\",\"3\":\"'._('Data fatturazione giorno fisso').'\",\"4\":\"'._('Data fatturazione fine mese (giorno fisso)').'\"", "value": "';
+								{[ "type": "select", "label": "'.tr('Scadenza').'", "name": "scadenza[]", "values": "list=\"1\":\"'.tr('Data fatturazione').'\",\"2\":\"'.tr('Data fatturazione fine mese').'\",\"3\":\"'.tr('Data fatturazione giorno fisso').'\",\"4\":\"'.tr('Data fatturazione fine mese (giorno fisso)').'\"", "value": "';
     if ($select['giorno'] == 0) {
         $select = 1;
     } elseif ($select['giorno'] == -1) {
@@ -74,7 +74,7 @@ foreach ($results as $result) {
 
                         <div class="row">
 							<div class="col-xs-12 col-md-6">
-								{[ "type": "select", "label": "'._('Giorno').'", "name": "giorno[]", "values": "list='.$values.'", "value": "';
+								{[ "type": "select", "label": "'.tr('Giorno').'", "name": "giorno[]", "values": "list='.$values.'", "value": "';
     if ($result['giorno'] != 0 && $result['giorno'] != -1) {
         echo ($result['giorno'] < -1) ? -$result['giorno'] - 1 : $result['giorno'];
     }
@@ -86,7 +86,7 @@ foreach ($results as $result) {
 							</div>
 
 							<div class="col-xs-12 col-md-6">
-								{[ "type": "number", "label": "'._('Distanza in giorni').'", "name": "distanza[]", "decimals": "0", "value": "'.$result['num_giorni'].'" ]}
+								{[ "type": "number", "label": "'.tr('Distanza in giorni').'", "name": "distanza[]", "decimals": "0", "value": "'.$result['num_giorni'].'" ]}
 							</div>
 						</div>
 					</div>
@@ -96,8 +96,8 @@ foreach ($results as $result) {
 ?>
 			</div>
 			<div class="pull-right">
-				<button type="button" class="btn btn-info" id="add"><i class="fa fa-plus"></i> <?php echo _('Aggiungi'); ?></button>
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo _('Salva'); ?></button>
+				<button type="button" class="btn btn-info" id="add"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
+				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva'); ?></button>
 			</div>
 		</div>
 	</div>
@@ -106,43 +106,43 @@ foreach ($results as $result) {
 
 <div class="box box-warning box-solid text-center hide" id="wait">
 	<div class="box-header with-border">
-		<h3 class="box-title"><i class="fa fa-warning"></i> <?php echo _('Attenzione!'); ?></h3>
+		<h3 class="box-title"><i class="fa fa-warning"></i> <?php echo tr('Attenzione!'); ?></h3>
 	</div>
 	<div class="box-body">
-		<p><?php echo _('Prima di poter continuare con il salvataggio è necessario che i valori percentuali raggiungano in totale il 100%'); ?>.</p>
+		<p><?php echo tr('Prima di poter continuare con il salvataggio è necessario che i valori percentuali raggiungano in totale il 100%'); ?>.</p>
 	</div>
 </div>
 
 <a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo _('Elimina'); ?>
+    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
 <?php
 echo '
 <form class="hide" id="template">
     <div class="box">
         <div class="box-header with-border">
-            <h3 class="box-title">'._('Nuova rata').'</h3>
+            <h3 class="box-title">'.tr('Nuova rata').'</h3>
         </div>
         <div class="box-body">
             <input type="hidden" value="" name="id[]">
 
             <div class="row">
                 <div class="col-xs-12 col-md-6">
-                    {[ "type": "number", "label": "'._('Percentuale').'", "name": "percentuale[]", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+                    {[ "type": "number", "label": "'.tr('Percentuale').'", "name": "percentuale[]", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
                 </div>
 
                 <div class="col-xs-12 col-md-6">
-                    {[ "type": "select", "label": "'._('Scadenza').'", "name": "scadenza[]", "values": "list=\"1\":\"'._('Data fatturazione').'\",\"2\":\"'._('Data fatturazione fine mese').'\",\"3\":\"'._('Data fatturazione giorno fisso').'\",\"4\":\"'._('Data fatturazione fine mese (giorno fisso)').'\"", "value": 1 ]}
+                    {[ "type": "select", "label": "'.tr('Scadenza').'", "name": "scadenza[]", "values": "list=\"1\":\"'.tr('Data fatturazione').'\",\"2\":\"'.tr('Data fatturazione fine mese').'\",\"3\":\"'.tr('Data fatturazione giorno fisso').'\",\"4\":\"'.tr('Data fatturazione fine mese (giorno fisso)').'\"", "value": 1 ]}
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-xs-12 col-md-6">
-                    {[ "type": "select", "label": "'._('Giorno').'", "name": "giorno[]", "values": "list='.$values.'" ]}
+                    {[ "type": "select", "label": "'.tr('Giorno').'", "name": "giorno[]", "values": "list='.$values.'" ]}
                 </div>
 
                 <div class="col-xs-12 col-md-6">
-                    {[ "type": "number", "label": "'._('Distanza in giorni').'", "name": "distanza[]", "decimals": "0" ]}
+                    {[ "type": "number", "label": "'.tr('Distanza in giorni').'", "name": "distanza[]", "decimals": "0" ]}
                 </div>
             </div>
         </div>

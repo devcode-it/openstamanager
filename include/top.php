@@ -13,7 +13,7 @@ echo '
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>'.$pageTitle.' - '._('OpenSTAManager').'</title>
+        <title>'.$pageTitle.' - '.tr('OpenSTAManager').'</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
@@ -48,34 +48,34 @@ if (Auth::check()) {
     echo '
             translations = {';
     $translations = [
-        'day' => _('Giorno'),
-        'week' => _('Settimana'),
-        'month' => _('Mese'),
-        'today' => _('Oggi'),
-        'yesterday' => _('Ieri'),
-        'last7Days' => _('Ultimi 7 giorni'),
-        'last30Days' => _('Ultimi 30 giorni'),
-        'thisMonth' => _('Questo mese'),
-        'lastMonth' => _('Mese scorso'),
-        'thisYear' => _("Quest'anno"),
-        'lastYear' => _('Anno scorso'),
-        'apply' => _('Applica'),
-        'cancel' => _('Annulla'),
-        'from' => _('Da'),
-        'to' => _('A'),
-        'custom' => _('Personalizzato'),
-        'delete' => _('Elimina'),
-        'deleteTitle' => _('Sei sicuro?'),
-        'deleteMessage' => _('Eliminare questo elemento?'),
-        'close' => _('Chiudi'),
-        'filter' => _('Filtra'),
-        'long' => _('La ricerca potrebbe richiedere del tempo'),
-        'details' => _('Dettagli'),
-        'csv' => _('Esporta'),
-        'print' => _('Stampa'),
-        'copy' => _('Copia'),
-        'waiting' => _('Impossibile procedere'),
-        'waiting_msg' => _('Prima di proseguire devi selezionare alcuni elementi!'),
+        'day' => tr('Giorno'),
+        'week' => tr('Settimana'),
+        'month' => tr('Mese'),
+        'today' => tr('Oggi'),
+        'yesterday' => tr('Ieri'),
+        'last7Days' => tr('Ultimi 7 giorni'),
+        'last30Days' => tr('Ultimi 30 giorni'),
+        'thisMonth' => tr('Questo mese'),
+        'lastMonth' => tr('Mese scorso'),
+        'thisYear' => tr("Quest'anno"),
+        'lastYear' => tr('Anno scorso'),
+        'apply' => tr('Applica'),
+        'cancel' => tr('Annulla'),
+        'from' => tr('Da'),
+        'to' => tr('A'),
+        'custom' => tr('Personalizzato'),
+        'delete' => tr('Elimina'),
+        'deleteTitle' => tr('Sei sicuro?'),
+        'deleteMessage' => tr('Eliminare questo elemento?'),
+        'close' => tr('Chiudi'),
+        'filter' => tr('Filtra'),
+        'long' => tr('La ricerca potrebbe richiedere del tempo'),
+        'details' => tr('Dettagli'),
+        'csv' => tr('Esporta'),
+        'print' => tr('Stampa'),
+        'copy' => tr('Copia'),
+        'waiting' => tr('Impossibile procedere'),
+        'waiting_msg' => tr('Prima di proseguire devi selezionare alcuni elementi!'),
     ];
     foreach ($translations as $key => $value) {
         echo '
@@ -111,7 +111,7 @@ echo '
                 buttonsStyling: false,
                 confirmButtonClass: "btn btn-lg btn-primary",
                 cancelButtonClass: "btn btn-lg",
-                cancelButtonText: "'._('Annulla').'",
+                cancelButtonText: "'.tr('Annulla').'",
             });
         </script>';
 
@@ -148,15 +148,15 @@ if (Auth::check()) {
 			<header class="main-header">
 				<a href="http://www.openstamanager.com" class="logo" target="_blank">
 					<!-- mini logo for sidebar mini 50x50 pixels -->
-					<span class="logo-mini">'._('OSM').'</span>
+					<span class="logo-mini">'.tr('OSM').'</span>
 					<!-- logo for regular state and mobile devices -->
-					<span class="logo-lg">'._('OpenSTAManager').'</span>
+					<span class="logo-lg">'.tr('OpenSTAManager').'</span>
 				</a>
 				<!-- Header Navbar: style can be found in header.less -->
 				<nav class="navbar navbar-static-top" role="navigation">
 					<!-- Sidebar toggle button-->
 					<a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-						<span class="sr-only">'._('Mostra/nascondi menu').'</span>
+						<span class="sr-only">'.tr('Mostra/nascondi menu').'</span>
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
@@ -167,19 +167,19 @@ if (Auth::check()) {
 					</div>
 
 					<div id="right-menu" class="pull-right">
-                        <button onclick="window.print()" class="btn btn-sm btn-info tip" title="'._('Stampa').'">
+                        <button onclick="window.print()" class="btn btn-sm btn-info tip" title="'.tr('Stampa').'">
                             <i class="fa fa-print"></i>
                         </button>
-						<a href="'.$rootdir.'/bug.php" class="btn btn-sm btn-github tip" title="'._('Segnalazione bug').'">
+						<a href="'.$rootdir.'/bug.php" class="btn btn-sm btn-github tip" title="'.tr('Segnalazione bug').'">
                             <i class="fa fa-bug"></i>
                         </a>
-						<a href="'.$rootdir.'/log.php" class="btn btn-sm btn-github tip" title="'._('Log accessi').'">
+						<a href="'.$rootdir.'/log.php" class="btn btn-sm btn-github tip" title="'.tr('Log accessi').'">
                             <i class="fa fa-book"></i>
                         </a>
-						<a href="'.$rootdir.'/info.php" class="btn btn-sm btn-github tip" title="'._('Informazioni').'">
+						<a href="'.$rootdir.'/info.php" class="btn btn-sm btn-github tip" title="'.tr('Informazioni').'">
                             <i class="fa fa-info"></i>
                         </a>
-						<a href="'.$rootdir.'/index.php?op=logout" class="btn btn-sm btn-danger tip" title="'._('Esci').'">
+						<a href="'.$rootdir.'/index.php?op=logout" class="btn btn-sm btn-danger tip" title="'.tr('Esci').'">
                             <i class="fa fa-power-off"></i>
                         </a>
 					</div>
@@ -197,14 +197,14 @@ if (Auth::check()) {
                         </div>
 
                         <div class="image">
-                            <img src="'.$img.'/logo.png" class="img-circle img-responsive" alt="'._('OpenSTAManager').'" />
+                            <img src="'.$img.'/logo.png" class="img-circle img-responsive" alt="'.tr('OpenSTAManager').'" />
                         </div>
                     </div>
 
                     <!-- search form -->
                     <div class="sidebar-form">
                         <div class="input-group">
-                            <input type="text" name="q" class="form-control" id="supersearch" placeholder="'._('Cerca').'..."/>
+                            <input type="text" name="q" class="form-control" id="supersearch" placeholder="'.tr('Cerca').'..."/>
 							<span class="input-group-btn">
 								<button class="btn btn-flat" id="search-btn" name="search" type="submit" ><i class="fa fa-search"></i>
 								</button>
@@ -241,7 +241,7 @@ if (Auth::check()) {
     echo '
             <div class="box box-warning box-center">
                 <div class="box-header with-border text-center">
-                    <h3 class="box-title">'._('Informazioni').'</h3>
+                    <h3 class="box-title">'.tr('Informazioni').'</h3>
                 </div>
 
                 <div class="box-body">';

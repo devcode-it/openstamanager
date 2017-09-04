@@ -28,7 +28,7 @@ switch (post('op')) {
                 }
 
                 deltree($docroot.'/modules/'.$module_dir.'/');
-                $_SESSION['infos'][] = str_replace('_MODULE_', '"'.$modulo.'"', _('Modulo _MODULE_ disinstallato!'));
+                $_SESSION['infos'][] = str_replace('_MODULE_', '"'.$modulo.'"', tr('Modulo _MODULE_ disinstallato!'));
             }
         }
 
@@ -38,7 +38,7 @@ switch (post('op')) {
         $dbo->query('UPDATE zz_modules SET enabled=0 WHERE id='.prepare($id));
         $rs = $dbo->fetchArray('SELECT id, name FROM zz_modules WHERE id='.prepare($id));
         $modulo = $rs[0]['name'];
-        $_SESSION['infos'][] = str_replace('_MODULE_', '"'.$modulo.'"', _('Modulo _MODULE_ disabilitato!'));
+        $_SESSION['infos'][] = str_replace('_MODULE_', '"'.$modulo.'"', tr('Modulo _MODULE_ disabilitato!'));
 
         break;
 
@@ -46,7 +46,7 @@ switch (post('op')) {
         $dbo->query('UPDATE zz_modules SET enabled=1 WHERE id='.prepare($id));
         $rs = $dbo->fetchArray('SELECT id, name FROM zz_modules WHERE id='.prepare($id));
         $modulo = $rs[0]['name'];
-        $_SESSION['infos'][] = str_replace('_MODULE_', '"'.$modulo.'"', _('Modulo _MODULE_ abilitato!'));
+        $_SESSION['infos'][] = str_replace('_MODULE_', '"'.$modulo.'"', tr('Modulo _MODULE_ abilitato!'));
 
         break;
 
@@ -55,7 +55,7 @@ switch (post('op')) {
             $dbo->query('UPDATE zz_widgets SET enabled=0 WHERE id='.prepare($id));
             $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
             $widget = $rs[0]['name'];
-            $_SESSION['infos'][] = str_replace('_WIDGET_', '"'.$widget.'"', _('Widget _WIDGET_ disabilitato!'));
+            $_SESSION['infos'][] = str_replace('_WIDGET_', '"'.$widget.'"', tr('Widget _WIDGET_ disabilitato!'));
         }
 
         break;
@@ -65,7 +65,7 @@ switch (post('op')) {
             $dbo->query('UPDATE zz_widgets SET enabled=1 WHERE id='.prepare($id));
             $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
             $widget = $rs[0]['name'];
-            $_SESSION['infos'][] = str_replace('_WIDGET_', '"'.$widget.'"', _('Widget _WIDGET_ abilitato!'));
+            $_SESSION['infos'][] = str_replace('_WIDGET_', '"'.$widget.'"', tr('Widget _WIDGET_ abilitato!'));
         }
 
         break;
@@ -75,7 +75,7 @@ switch (post('op')) {
             $dbo->query("UPDATE zz_widgets SET location='controller_top' WHERE id=".prepare($id));
             $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
             $widget = $rs[0]['name'];
-            $_SESSION['infos'][] = str_replace('_WIDGET_', '"'.$widget.'"', _('Posizione del widget _WIDGET_ aggiornata!'));
+            $_SESSION['infos'][] = str_replace('_WIDGET_', '"'.$widget.'"', tr('Posizione del widget _WIDGET_ aggiornata!'));
         }
 
         break;
@@ -85,7 +85,7 @@ switch (post('op')) {
             $dbo->query("UPDATE zz_widgets SET location='controller_right' WHERE id=".prepare($id));
             $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
             $widget = $rs[0]['name'];
-            $_SESSION['infos'][] = str_replace('_WIDGET_', '"'.$widget.'"', _('Posizione del widget _WIDGET_ aggiornata!'));
+            $_SESSION['infos'][] = str_replace('_WIDGET_', '"'.$widget.'"', tr('Posizione del widget _WIDGET_ aggiornata!'));
         }
 
         break;

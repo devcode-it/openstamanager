@@ -6,10 +6,10 @@ $module = Modules::getModule($id_module);
 
 if ($module['name'] == 'Fatture di vendita') {
     $dir = 'entrata';
-    $tipo_anagrafica = _('Cliente');
+    $tipo_anagrafica = tr('Cliente');
 } else {
     $dir = 'uscita';
-    $tipo_anagrafica = _('Fornitore');
+    $tipo_anagrafica = tr('Fornitore');
 }
 
 ?>
@@ -20,7 +20,7 @@ if ($module['name'] == 'Fatture di vendita') {
 
 	<div class="row">
 		<div class="col-md-4">
-			 {[ "type": "date", "label": "<?php echo _('Data'); ?>", "name": "data", "required": 1, "value": "-now-" ]}
+			 {[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "-now-" ]}
 		</div>
 
 		<div class="col-md-4">
@@ -28,14 +28,14 @@ if ($module['name'] == 'Fatture di vendita') {
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "<?php echo _('Tipo fattura'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, descrizione FROM co_tipidocumento WHERE dir='<?php echo $dir ?>'", "value": "" ]}
+			{[ "type": "select", "label": "<?php echo tr('Tipo fattura'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, descrizione FROM co_tipidocumento WHERE dir='<?php echo $dir ?>'", "value": "" ]}
 		</div>
 	</div>
 
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo _('Aggiungi'); ?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 		</div>
 	</div>
 </form>

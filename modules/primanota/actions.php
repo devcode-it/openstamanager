@@ -51,10 +51,10 @@ switch (post('op')) {
 
         // Se non va a buon fine qualcosa elimino il mastrino per non lasciare incongruenze nel db
         if (!$all_ok) {
-            $_SESSION['errors'][] = _("Errore durante l'aggiunta del movimento!");
+            $_SESSION['errors'][] = tr("Errore durante l'aggiunta del movimento!");
             $dbo->query('DELETE FROM co_movimenti WHERE idmastrino='.prepare($idmastrino));
         } else {
-            $_SESSION['infos'][] = _('Movimento aggiunto in prima nota!');
+            $_SESSION['infos'][] = tr('Movimento aggiunto in prima nota!');
 
             // Verifico se la fattura è stata pagata tutta, così imposto lo stato a "Pagato"
             $query = 'SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
@@ -183,10 +183,10 @@ switch (post('op')) {
 
         // Se non va a buon fine qualcosa elimino il mastrino per non lasciare incongruenze nel db
         if (!$all_ok) {
-            $_SESSION['errors'][] = _("Errore durante l'aggiunta del movimento!");
+            $_SESSION['errors'][] = tr("Errore durante l'aggiunta del movimento!");
             $dbo->query('DELETE FROM co_movimenti WHERE idmastrino='.prepare($idmastrino));
         } else {
-            $_SESSION['infos'][] = _('Movimento modificato in prima nota!');
+            $_SESSION['infos'][] = tr('Movimento modificato in prima nota!');
 
             // Verifico se la fattura è stata pagata, così imposto lo stato a "Pagato"
             $query = 'SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
@@ -292,7 +292,7 @@ switch (post('op')) {
                 $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id=".prepare($rs[$i]['idintervento']));
             }
 
-            $_SESSION['infos'][] = _('Movimento eliminato!');
+            $_SESSION['infos'][] = tr('Movimento eliminato!');
         }
         break;
 }

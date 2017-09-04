@@ -17,7 +17,7 @@ switch ($operazione) {
             $query = 'INSERT INTO `an_referenti` (`nome`, `mansione`, `telefono`, `email`, `idanagrafica`, `idsede`) VALUES ('.prepare($nome).', '.prepare($mansione).', '.prepare($telefono).', '.prepare($email).', '.prepare($id_record).', '.prepare($idsede).')';
 
             $dbo->query($query);
-            $_SESSION['infos'][] = _('Aggiunto nuovo referente!');
+            $_SESSION['infos'][] = tr('Aggiunto nuovo referente!');
         }
 
         break;
@@ -28,14 +28,14 @@ switch ($operazione) {
 
             $dbo->query($query);
         }
-        $_SESSION['infos'][] = _('Salvataggio completato!');
+        $_SESSION['infos'][] = tr('Salvataggio completato!');
 
         break;
 
     case 'deletereferente':
         $idreferente = filter('id');
         $dbo->query("DELETE FROM `an_referenti` WHERE `id`=".prepare($idreferente));
-        $_SESSION['infos'][] = _('Referente eliminato!');
+        $_SESSION['infos'][] = tr('Referente eliminato!');
 
         break;
 }
@@ -48,34 +48,34 @@ if (filter('add') != null) {
 
 	<div class="row">
 		<div class="col-xs-12 col-md-6">
-			{[ "type": "text", "label": "'._('Nominativo').'", "name": "nome", "required": 1 ]}
+			{[ "type": "text", "label": "'.tr('Nominativo').'", "name": "nome", "required": 1 ]}
 		</div>
 
 		<div class="col-xs-12 col-md-6">
-			{[ "type": "text", "label": "'._('Mansione').'", "name": "mansione", "required": 1 ]}
+			{[ "type": "text", "label": "'.tr('Mansione').'", "name": "mansione", "required": 1 ]}
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-xs-12 col-md-6">
-			{[ "type": "text", "label": "'._('Telefono').'", "name": "telefono" ]}
+			{[ "type": "text", "label": "'.tr('Telefono').'", "name": "telefono" ]}
 		</div>
 
 		<div class="col-xs-12 col-md-6">
-			{[ "type": "text", "label": "'._('Indirizzo email').'", "name": "email" ]}
+			{[ "type": "text", "label": "'.tr('Indirizzo email').'", "name": "email" ]}
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			{[ "type": "select", "label": "'._('Sede').'", "name": "idsede", "values": "query=SELECT -1 AS id, \'Sede legale\' AS descrizione UNION SELECT id, CONCAT_WS(\' - \', nomesede, citta) AS descrizione FROM an_sedi WHERE idanagrafica='.$id_record.'" ]}
+			{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "values": "query=SELECT -1 AS id, \'Sede legale\' AS descrizione UNION SELECT id, CONCAT_WS(\' - \', nomesede, citta) AS descrizione FROM an_sedi WHERE idanagrafica='.$id_record.'" ]}
 		</div>
 	</div>
 
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-xs-12 col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> '._('Aggiungi').'</button>
+			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
 		</div>
 	</div>
 </form>
@@ -85,11 +85,11 @@ if (filter('add') != null) {
     echo '
 	<div class="box">
 		<div class="box-header with-border">
-			<h3 class="box-title">'._('Referenti').'</h3>
-			<a class="btn btn-primary pull-right" data-toggle="modal" data-target="#bs-popup" data-title="Nuovo referente" data-href="'.$rootdir.'/modules/anagrafiche/plugins/referenti.php?add=1&id_record='.$id_record.'"><i class="fa fa-plus"></i> '._('Nuovo referente').'</a>
+			<h3 class="box-title">'.tr('Referenti').'</h3>
+			<a class="btn btn-primary pull-right" data-toggle="modal" data-target="#bs-popup" data-title="Nuovo referente" data-href="'.$rootdir.'/modules/anagrafiche/plugins/referenti.php?add=1&id_record='.$id_record.'"><i class="fa fa-plus"></i> '.tr('Nuovo referente').'</a>
 		</div>
 		<div class="box-body">
-			<p>'._('Qui hai la possibilità di gestire i referenti di questa anagrafica').'.</p>
+			<p>'.tr('Qui hai la possibilità di gestire i referenti di questa anagrafica').'.</p>
 			<form action="" method="post">
 				<input type="hidden" name="backto" value="record-edit">
 				<input type="hidden" name="op" value="updatereferenti">';
@@ -101,12 +101,12 @@ if (filter('add') != null) {
 				<table class="table table-condensed table-striped table-hover">
 					<thead>
 						<tr>
-							<th>'._('Nominativo').'</th>
-							<th>'._('Mansione').'</th>
-							<th>'._('Telefono').'</th>
-							<th>'._('Indirizzo email').'</th>
-							<th>'._('Sede').'</th>
-							<th>'._('Opzioni').'</th>
+							<th>'.tr('Nominativo').'</th>
+							<th>'.tr('Mansione').'</th>
+							<th>'.tr('Telefono').'</th>
+							<th>'.tr('Indirizzo email').'</th>
+							<th>'.tr('Sede').'</th>
+							<th>'.tr('Opzioni').'</th>
 						</tr>
 					</thead>
 					<tbody>';
@@ -115,23 +115,23 @@ if (filter('add') != null) {
 						<tr>
 							<td>
 								<input type="hidden" name="idreferente[]" value="'.$result['id'].'">
-								{[ "type": "text", "placeholder": "'._('Nominativo').'", "name": "nome[]", "required": 1, "value": "'.$result['nome'].'" ]}
+								{[ "type": "text", "placeholder": "'.tr('Nominativo').'", "name": "nome[]", "required": 1, "value": "'.$result['nome'].'" ]}
 							</td>
 							<td>
-								{[ "type": "text", "placeholder": "'._('Mansione').'", "name": "mansione[]", "required": 1, "value": "'.$result['mansione'].'" ]}
+								{[ "type": "text", "placeholder": "'.tr('Mansione').'", "name": "mansione[]", "required": 1, "value": "'.$result['mansione'].'" ]}
 							</td>
 							<td>
-								{[ "type": "text", "placeholder": "'._('Telefono').'", "name": "telefono[]", "value": "'.$result['telefono'].'" ]}
+								{[ "type": "text", "placeholder": "'.tr('Telefono').'", "name": "telefono[]", "value": "'.$result['telefono'].'" ]}
 							</td>
 							<td>
-								{[ "type": "text", "placeholder": "'._('Indirizzo email').'", "name": "email[]", "value": "'.$result['email'].'" ]}
+								{[ "type": "text", "placeholder": "'.tr('Indirizzo email').'", "name": "email[]", "value": "'.$result['email'].'" ]}
 							</td>
 							<td>
-								{[ "type": "select", "placeholder": "'._('Sede').'", "name": "idsede[]", "values": "query=SELECT -1 AS id, \'Sede legale\' AS descrizione UNION SELECT id, CONCAT( CONCAT_WS( \' (\', CONCAT_WS(\', \', `nomesede`, `citta`), `indirizzo` ), \')\') AS descrizione FROM an_sedi WHERE idanagrafica='.$id_record.'", "value": "'.$result['idsede'].'" ]}
+								{[ "type": "select", "placeholder": "'.tr('Sede').'", "name": "idsede[]", "values": "query=SELECT -1 AS id, \'Sede legale\' AS descrizione UNION SELECT id, CONCAT( CONCAT_WS( \' (\', CONCAT_WS(\', \', `nomesede`, `citta`), `indirizzo` ), \')\') AS descrizione FROM an_sedi WHERE idanagrafica='.$id_record.'", "value": "'.$result['idsede'].'" ]}
 							</td>
 							<td>
 								<a class="btn btn-danger pull-right ask" data-op="deletereferente" data-id="'.$result['id'].'">
-                                    <i class="fa fa-trash"></i> '._('Elimina').'
+                                    <i class="fa fa-trash"></i> '.tr('Elimina').'
                                 </a>
 							</td>
 						</tr>';
@@ -141,7 +141,7 @@ if (filter('add') != null) {
 				</table>
 
 				<div class="pull-right">
-					<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '._('Salva modifiche').'</button>
+					<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>
 				</div>
 				<div class="clearfix"></div>';
     }

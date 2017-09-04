@@ -48,7 +48,7 @@ if (!empty($redirectHTTPS) && !isHTTPS(true)) {
 // $debug = true;
 
 // Logger per la segnalazione degli errori
-$logger = new Monolog\Logger(_('OpenSTAManager'));
+$logger = new Monolog\Logger(tr('OpenSTAManager'));
 $logger->pushProcessor(new Monolog\Processor\UidProcessor());
 $logger->pushProcessor(new Monolog\Processor\WebProcessor());
 
@@ -140,7 +140,7 @@ if (!API::isAPIRequest()) {
     /*
     // Controllo CSRF
     if(!CSRF::getInstance()->validate()){
-        die(_('Constrollo CSRF fallito!'));
+        die(tr('Constrollo CSRF fallito!'));
     }*/
 
     // Aggiunta del wrapper personalizzato per la generazione degli input

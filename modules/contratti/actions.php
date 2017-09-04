@@ -32,7 +32,7 @@ switch (post('op')) {
                 $dbo->query('INSERT INTO co_contratti_tipiintervento(idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) VALUES('.prepare($id_record).', '.prepare($rsi[$i]['idtipointervento']).', '.prepare($rsi[$i]['costo_orario']).', '.prepare($rsi[$i]['costo_km']).', '.prepare($rsi[$i]['costo_diritto_chiamata']).', '.prepare($rsi[$i]['costo_orario_tecnico']).', '.prepare($rsi[$i]['costo_km_tecnico']).', '.prepare($rsi[$i]['costo_diritto_chiamata_tecnico']).')');
             }
 
-            $_SESSION['infos'][] = str_replace('_NUM_', $numero, _('Aggiunto contratto numero _NUM_!'));
+            $_SESSION['infos'][] = str_replace('_NUM_', $numero, tr('Aggiunto contratto numero _NUM_!'));
         }
 
         break;
@@ -111,7 +111,7 @@ switch (post('op')) {
                 }
             }
 
-            $_SESSION['infos'][] = _('Contratto modificato correttamente!');
+            $_SESSION['infos'][] = tr('Contratto modificato correttamente!');
         }
 
         break;
@@ -138,7 +138,7 @@ switch (post('op')) {
 
         $dbo->query('INSERT INTO co_righe2_contratti(idcontratto, idiva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto) VALUES ('.prepare($idcontratto).', '.prepare($idiva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).')');
 
-        $_SESSION['infos'][] = _('Articolo aggiunto!');
+        $_SESSION['infos'][] = tr('Articolo aggiunto!');
 
         break;
 
@@ -166,7 +166,7 @@ switch (post('op')) {
         $query = 'UPDATE co_righe2_contratti SET idiva='.prepare($idiva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
         $dbo->query($query);
 
-        $_SESSION['infos'][] = _('Riga modificata!');
+        $_SESSION['infos'][] = tr('Riga modificata!');
 
         break;
 
@@ -179,7 +179,7 @@ switch (post('op')) {
             $query = 'DELETE FROM `co_righe2_contratti` WHERE idcontratto='.prepare($idcontratto).' AND id='.prepare($idriga);
 
             if ($dbo->query($query)) {
-                $_SESSION['infos'][] = _('Riga eliminata!');
+                $_SESSION['infos'][] = tr('Riga eliminata!');
             }
         }
 
@@ -197,7 +197,7 @@ switch (post('op')) {
             $query = 'DELETE FROM `co_righe_contratti` WHERE idcontratto='.prepare($idcontratto).' AND idintervento='.prepare($idintervento);
             $dbo->query($query);
 
-            $_SESSION['infos'][] = str_replace('_NUM_', $idintervento, _('Intervento _NUM_ rimosso!'));
+            $_SESSION['infos'][] = str_replace('_NUM_', $idintervento, tr('Intervento _NUM_ rimosso!'));
         }
         break;
 
@@ -207,7 +207,7 @@ switch (post('op')) {
         $dbo->query('DELETE FROM co_righe_contratti WHERE idcontratto='.prepare($id_record));
         $dbo->query('DELETE FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record));
 
-        $_SESSION['infos'][] = _('Contratto eliminato!');
+        $_SESSION['infos'][] = tr('Contratto eliminato!');
 
         break;
 }
@@ -241,11 +241,11 @@ switch (get('op')) {
                     $dbo->query('INSERT INTO co_righe2_contratti(idcontratto, descrizione, subtotale, um, qta) VALUES('.prepare($new_idcontratto).', '.prepare($rs[$i]['descrizione']).', '.prepare($rs[$i]['subtotale']).', '.prepare($rs[$i]['um']).', '.prepare($rs[$i]['qta']).')');
                 }
 
-                $_SESSION['infos'][] = _('Contratto rinnovato!');
+                $_SESSION['infos'][] = tr('Contratto rinnovato!');
 
                 redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$new_idcontratto);
             } else {
-                $_SESSION['errors'][] = _('Errore durante il rinnovo del contratto!');
+                $_SESSION['errors'][] = tr('Errore durante il rinnovo del contratto!');
             }
         }
 

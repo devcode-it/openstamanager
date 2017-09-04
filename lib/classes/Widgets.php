@@ -100,7 +100,7 @@ class Widgets
                     // inserisco il widget
                     $result .= '
         <li class="col-xs-12 col-sm-6 col-md-4 col-lg-'.intval(12 / $totalNumber).' li-widget" id="widget_'.$results[0]['id'].'">
-            <button type="button" class="close" onclick="if(confirm(\'Disabilitare questo widget?\')) { $.post( \''.$rootdir.'/modules/aggiornamenti/actions.php?id_module='.$results[0]['id_module'].'\', { op: \'disable_widget\', id: \''.$results[0]['id'].'\' }, function(response){ location.href = \''.$rootdir.'/controller.php?id_module='.$results[0]['id_module'].'\';  }); };" ><span aria-hidden="true">&times;</span><span class="sr-only">'._('Chiudi').'</span></button>';
+            <button type="button" class="close" onclick="if(confirm(\'Disabilitare questo widget?\')) { $.post( \''.$rootdir.'/modules/aggiornamenti/actions.php?id_module='.$results[0]['id_module'].'\', { op: \'disable_widget\', id: \''.$results[0]['id'].'\' }, function(response){ location.href = \''.$rootdir.'/controller.php?id_module='.$results[0]['id_module'].'\';  }); };" ><span aria-hidden="true">&times;</span><span class="sr-only">'.tr('Chiudi').'</span></button>';
                     if (!empty($results[0]['more_link'])) {
                         $result .= '
             <a class="clickable" ';

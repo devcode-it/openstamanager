@@ -22,7 +22,7 @@ if (!isset($id_original)) {
 
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			{[ "type": "text", "label": "<?php echo _('Nome') ?>", "name": "nome", "required": 1 ]}
+			{[ "type": "text", "label": "<?php echo tr('Nome') ?>", "name": "nome", "required": 1 ]}
 		</div>
 	</div>
 <?php
@@ -34,17 +34,17 @@ if (!isset($id_original)) {
 
 	<div class="row">
         <div class="col-xs-12 col-md-8">
-            {[ "type": "text", "label": "<?php echo  _('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$", "extra": "" ]}
+            {[ "type": "text", "label": "<?php echo  tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$", "extra": "" ]}
         </div>
 
         <div class="col-xs-12 col-md-4">
-            {[ "type": "text", "label": "<?php echo  _('Colore'); ?>", "name": "colore", "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength=\"7\"", "icon-after": "<div class=\"img-circle square\"></div>" ]}
+            {[ "type": "text", "label": "<?php echo  tr('Colore'); ?>", "name": "colore", "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength=\"7\"", "icon-after": "<div class=\"img-circle square\"></div>" ]}
         </div>
     </div>
 
     <div class="row">
         <div class="col-xs-12 col-md-12">
-            {[ "type": "textarea", "label": "<?php echo  _('Nota'); ?>", "name": "nota", "value": "$nota$" ]}
+            {[ "type": "textarea", "label": "<?php echo  tr('Nota'); ?>", "name": "nota", "value": "$nota$" ]}
         </div>
     </div>
 
@@ -68,12 +68,12 @@ if (!isset($id_original)) {
 	<?php
 if (isset($id_record)) {
     ?>
-			<button type="submit" class="btn btn-success"><i class="fa fa-save"></i> <?php echo _('Salva'); ?></button>
+			<button type="submit" class="btn btn-success"><i class="fa fa-save"></i> <?php echo tr('Salva'); ?></button>
 <?php
 
 } else {
     ?>
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo _('Aggiungi'); ?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 <?php
 
 }

@@ -45,7 +45,7 @@ switch ($op) {
                 ' WHERE id='.prepare($id_record);
             $dbo->query($query);
 
-            $_SESSION['infos'][] = _('Informazioni salvate correttamente!');
+            $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
 
             // Upload file
             if (!empty($_FILES) && !empty($_FILES['immagine']['name'])) {
@@ -57,7 +57,7 @@ switch ($op) {
                 if (move_uploaded_file($tmp, $upload_dir.'/'.$filename)) {
                     $dbo->query('UPDATE my_impianti SET immagine='.prepare($filename).' WHERE id='.prepare($id_record));
                 } else {
-                    $_SESSION['warnings'][] = str_replace('_DIR_', $upload_dir, _('Errore durante il caricamento del file in _DIR_!'));
+                    $_SESSION['warnings'][] = str_replace('_DIR_', $upload_dir, tr('Errore durante il caricamento del file in _DIR_!'));
                 }
             }
 
@@ -83,7 +83,7 @@ switch ($op) {
 
             $id_record = $dbo->lastInsertedID();
 
-            $_SESSION['infos'][] = _('Aggiunto nuovo impianto!');
+            $_SESSION['infos'][] = tr('Aggiunto nuovo impianto!');
         }
 
         break;
@@ -116,6 +116,6 @@ switch ($op) {
     case 'delete':
         $dbo->query('DELETE FROM my_impianti WHERE id='.prepare($id_record));
 
-        $_SESSION['infos'][] = _('Impianto e relativi componenti eliminati!');
+        $_SESSION['infos'][] = tr('Impianto e relativi componenti eliminati!');
         break;
 }

@@ -42,7 +42,7 @@ switch (post('op')) {
 
             $id_record = $dbo->lastInsertedID();
 
-            $_SESSION['infos'][] = str_replace(['_TYPE_', '_NUM_'], [$dir, $numero], _('Aggiunto DDT in _TYPE_ numero _NUM_!'));
+            $_SESSION['infos'][] = str_replace(['_TYPE_', '_NUM_'], [$dir, $numero], tr('Aggiunto DDT in _TYPE_ numero _NUM_!'));
         }
         break;
 
@@ -128,7 +128,7 @@ switch (post('op')) {
                     }
                 }
 
-                $_SESSION['infos'][] = _('Ddt modificato correttamente!');
+                $_SESSION['infos'][] = tr('Ddt modificato correttamente!');
             }
         }
         break;
@@ -159,7 +159,7 @@ switch (post('op')) {
             // Ricalcolo inps, ritenuta e bollo
             ricalcola_costiagg_ddt($id_record);
 
-            $_SESSION['infos'][] = _('Articolo aggiunto!');
+            $_SESSION['infos'][] = tr('Articolo aggiunto!');
         }
         break;
 
@@ -189,7 +189,7 @@ switch (post('op')) {
         $query = 'INSERT INTO dt_righe_ddt(idddt, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idgruppo, `order`) VALUES('.prepare($id_record).', '.prepare($idiva).', '.prepare($rs[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`idgruppo`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($id_record).'), (SELECT IFNULL(MAX(`order`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($id_record).'))';
 
         if ($dbo->query($query)) {
-            $_SESSION['infos'][] = _('Riga aggiunta!');
+            $_SESSION['infos'][] = tr('Riga aggiunta!');
 
             // Ricalcolo inps, ritenuta e bollo
             if ($dir == 'entrata') {
@@ -269,7 +269,7 @@ switch (post('op')) {
         }
 
         ricalcola_costiagg_ddt($id_record);
-            $_SESSION['infos'][] = _('Creato un nuovo ddt!');
+            $_SESSION['infos'][] = tr('Creato un nuovo ddt!');
         break;
 
     // Scollegamento articolo da ddt
@@ -281,7 +281,7 @@ switch (post('op')) {
             $res = rimuovi_articolo_daddt($idarticolo, $id_record, $idriga);
 
             if (!$res) {
-                $_SESSION['errors'][] = _('Alcuni serial number sono già stati utilizzati!');
+                $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
 
                 return;
             }
@@ -293,7 +293,7 @@ switch (post('op')) {
                 ricalcola_costiagg_ddt($id_record, 0, 0, 0);
             }
 
-            $_SESSION['infos'][] = _('Articolo rimosso!');
+            $_SESSION['infos'][] = tr('Articolo rimosso!');
         }
         break;
 
@@ -320,7 +320,7 @@ switch (post('op')) {
                     ricalcola_costiagg_ddt($id_record, 0, 0, 0);
                 }
 
-                $_SESSION['infos'][] = _('Riga rimossa!');
+                $_SESSION['infos'][] = tr('Riga rimossa!');
             }
         }
         break;
@@ -381,7 +381,7 @@ switch (post('op')) {
                         } else {
                             if ($dir == 'uscita') {
                                 if ($new_qta > $dbo->fetchArray("SELECT COUNT(*) AS rimovibili FROM dt_righe_ddt WHERE serial NOT IN (SELECT serial FROM vw_serials WHERE dir = 'entrata') AND idgruppo=".prepare($idgruppo).' AND idddt='.prepare($idddt))[0]['rimovibili']) {
-                                    $_SESSION['errors'][] = _('Alcuni serial number sono già stati utilizzati!');
+                                    $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
 
                                     return;
                                 } else {
@@ -415,7 +415,7 @@ switch (post('op')) {
                     add_movimento_magazzino($idarticolo, $new_qta, ['idddt' => $id_record]);
                 }
 
-                $_SESSION['infos'][] = _('Riga modificata!');
+                $_SESSION['infos'][] = tr('Riga modificata!');
 
                 // Ricalcolo inps, ritenuta e bollo
                 if ($dir == 'entrata') {
@@ -432,7 +432,7 @@ switch (post('op')) {
         if ($dir == 'uscita') {
             $non_rimovibili = $dbo->fetchArray("SELECT COUNT(*) AS non_rimovibili FROM dt_righe_ddt WHERE serial IN (SELECT serial FROM vw_serials WHERE dir = 'entrata') AND idddt=".prepare($id_record))[0]['non_rimovibili'];
             if ($non_rimovibili != 0) {
-                $_SESSION['errors'][] = _('Alcuni serial number sono già stati utilizzati!');
+                $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
 
                 return;
             }
@@ -459,7 +459,7 @@ switch (post('op')) {
         $dbo->query('DELETE FROM dt_righe_ddt WHERE idddt='.prepare($id_record));
         $dbo->query('DELETE FROM mg_movimenti WHERE idddt='.prepare($id_record));
 
-        $_SESSION['infos'][] = _('Ddt eliminato!');
+        $_SESSION['infos'][] = tr('Ddt eliminato!');
 
         break;
 

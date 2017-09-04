@@ -30,12 +30,12 @@ if (!empty($rsi)) {
     echo '
 <table class="table table-bordered table-condensed">
     <tr>
-        <th>'._('Attività').'</th>
-        <th width="100">'._('Ore').'</th>
-        <th width="100">'._('Km').'</th>
-        <th width="120">'._('Costo').'</th>
-        <th width="120">'._('Addebito').'</th>
-        <th width="120">'._('Tot. scontato').'</th>
+        <th>'.tr('Attività').'</th>
+        <th width="100">'.tr('Ore').'</th>
+        <th width="100">'.tr('Km').'</th>
+        <th width="120">'.tr('Costo').'</th>
+        <th width="120">'.tr('Addebito').'</th>
+        <th width="120">'.tr('Tot. scontato').'</th>
     </tr>';
 
     // Tabella con i dati
@@ -84,16 +84,16 @@ if (!empty($rsi)) {
             echo '
             <table class="table table-striped table-condensed table-bordered">
                 <tr>
-                    <th>'._('Tecnico').'</th>
-                    <th width="230">'._('Tipo attività').'</th>
-                    <th width="120">'._('Ore').'</th>
-                    <th width="120">'._('Km').'</th>
-                    <th width="120">'._('Costo orario').'</th>
-                    <th width="120">'._('Costo km').'</th>
-                    <th width="120">'._('Diritto ch.').'</th>
-                    <th width="120">'._('Prezzo orario').'</th>
-                    <th width="120">'._('Prezzo km').'</th>
-                    <th width="120">'._('Diritto ch.').'</th>
+                    <th>'.tr('Tecnico').'</th>
+                    <th width="230">'.tr('Tipo attività').'</th>
+                    <th width="120">'.tr('Ore').'</th>
+                    <th width="120">'.tr('Km').'</th>
+                    <th width="120">'.tr('Costo orario').'</th>
+                    <th width="120">'.tr('Costo km').'</th>
+                    <th width="120">'.tr('Diritto ch.').'</th>
+                    <th width="120">'.tr('Prezzo orario').'</th>
+                    <th width="120">'.tr('Prezzo km').'</th>
+                    <th width="120">'.tr('Diritto ch.').'</th>
                 </tr>';
 
             foreach ($rst as $r) {
@@ -128,10 +128,10 @@ if (!empty($rsi)) {
             echo '
             <table class="table table-striped table-condensed table-bordered">
                 <tr>
-                    <th>'._('Materiale').'</th>
-                    <th width="120">'._('Q.tà').'</th>
-                    <th width="150">'._('Prezzo di acquisto').'</th>
-                    <th width="150">'._('Prezzo di vendita').'</th>
+                    <th>'.tr('Materiale').'</th>
+                    <th width="120">'.tr('Q.tà').'</th>
+                    <th width="150">'.tr('Prezzo di acquisto').'</th>
+                    <th width="150">'.tr('Prezzo di vendita').'</th>
                 </tr>';
 
             foreach ($rst as $r) {
@@ -141,13 +141,13 @@ if (!empty($rsi)) {
                 // Info extra (lotto, serial, altro)
                 $extra = [];
                 if (!empty($r['lotto'])) {
-                    $extra[] = '<b>'._('Lotto').'</b>: '.$r['lotto'];
+                    $extra[] = '<b>'.tr('Lotto').'</b>: '.$r['lotto'];
                 }
                 if (!empty($r['serial'])) {
-                    $extra[] = '<b>'._('Serial').'</b>: '.$r['serial'];
+                    $extra[] = '<b>'.tr('Serial').'</b>: '.$r['serial'];
                 }
                 if (!empty($r['altro'])) {
-                    $extra[] = '<b>'._('Altro').'</b>: '.$r['altro'];
+                    $extra[] = '<b>'.tr('Altro').'</b>: '.$r['altro'];
                 }
 
                 echo '
@@ -173,10 +173,10 @@ if (!empty($rsi)) {
             echo '
             <table class="table table-striped table-condensed table-bordered">
                 <tr>
-                    <th>'._('Altre spese').'</th>
-                    <th width="120">'._('Q.tà').'</th>
-                    <th width="150">'._('Prezzo di acquisto').'</th>
-                    <th width="150">'._('Prezzo di vendita').'</th>
+                    <th>'.tr('Altre spese').'</th>
+                    <th width="120">'.tr('Q.tà').'</th>
+                    <th width="150">'.tr('Prezzo di acquisto').'</th>
+                    <th width="150">'.tr('Prezzo di vendita').'</th>
                 </tr>';
 
             foreach ($rst as $r) {
@@ -213,7 +213,7 @@ if (!empty($rsi)) {
     echo '
     <tr>
         <td align="right">
-            <b><big>'._('Totale').'</big></b>
+            <b><big>'.tr('Totale').'</big></b>
         </td>';
 
     echo '
@@ -246,7 +246,7 @@ if (!empty($rsi)) {
     echo '
     <tr>
         <td colspan="6">
-            <br><b>'.strtoupper(_('Totale interventi per stato')).'</b>
+            <br><b>'.strtoupper(tr('Totale interventi per stato')).'</b>
         </td>
     </tr>';
 
@@ -277,7 +277,7 @@ $diff = sum($budget, -$totale_scontato);
 echo '
 <div class="well text-center">
     <br><span><big>
-        <b>'._('Rapporto budget/spesa').':<br>';
+        <b>'.tr('Rapporto budget/spesa').':<br>';
 if ($budget > $totale_scontato) {
     echo '
         <span class="text-success"><big>+'.Translator::numberToLocale($diff).' &euro;</big></span>';
@@ -315,7 +315,7 @@ if ($stato == 'Accettato' || $stato == 'In lavorazione' || $stato = 'Pagato') {
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'._('Aggiungi un altro intervento a questo preventivo').'", "name": "idintervento", "values": "query=SELECT id, CONCAT(\'Intervento \', codice, \' del \',  DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione FROM in_interventi WHERE id NOT IN( SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_righe_contratti WHERE idintervento IS NOT NULL) AND idanagrafica='.prepare($records[0]['idanagrafica']).'" ]}
+            {[ "type": "select", "label": "'.tr('Aggiungi un altro intervento a questo preventivo').'", "name": "idintervento", "values": "query=SELECT id, CONCAT(\'Intervento \', codice, \' del \',  DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione FROM in_interventi WHERE id NOT IN( SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_righe_contratti WHERE idintervento IS NOT NULL) AND idanagrafica='.prepare($records[0]['idanagrafica']).'" ]}
         </div>
     </div>
 
@@ -323,7 +323,7 @@ if ($stato == 'Accettato' || $stato == 'In lavorazione' || $stato = 'Pagato') {
 	<div class="row">
 		<div class="col-md-12 text-right">
 			<button type="submit" class="btn btn-primary pull-right" onclick="if($(\'#idintervento\').val() && confirm(\'Aggiungere questo intervento al preventivo?\'){ $(this).parent().submit(); }">
-                <i class="fa fa-plus"></i> '._('Aggiungi').'
+                <i class="fa fa-plus"></i> '.tr('Aggiungi').'
             </button>
 		</div>
     </div>

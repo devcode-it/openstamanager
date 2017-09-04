@@ -8,7 +8,7 @@ echo '
 	<input type="hidden" name="backto" value="record-list">
 
 	<div class="pull-right">
-		<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '._('Salva modifiche').'</button>
+		<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>
 	</div>
 
 	<div class="clearfix"></div>
@@ -22,14 +22,14 @@ for ($t = 0; $t < count($rst); ++$t) {
     echo '
 			<tr>
 				<th>'.$rst[$t]['ragione_sociale'].'</th>
-				<th>'._('Attività').'</th>
-				<th>'._('Addebito orario').'</th>
-				<th>'._('Addebito km').'</th>
-				<th>'._('Addebito diritto ch.').'</th>
+				<th>'.tr('Attività').'</th>
+				<th>'.tr('Addebito orario').'</th>
+				<th>'.tr('Addebito km').'</th>
+				<th>'.tr('Addebito diritto ch.').'</th>
 
-				<th>'._('Costo orario').'</th>
-				<th>'._('Costo km').'</th>
-				<th>'._('Costo diritto ch.').'</th>
+				<th>'.tr('Costo orario').'</th>
+				<th>'.tr('Costo km').'</th>
+				<th>'.tr('Costo diritto ch.').'</th>
                 <th width="40"></th>
 			</tr>';
 
@@ -80,6 +80,6 @@ echo '
 	</table>
 
 	<div class="pull-right">
-		<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '._('Salva modifiche').'</button>
+		<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>
 	</div>
 	<div class="clearfix"></div>';

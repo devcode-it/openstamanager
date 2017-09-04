@@ -11,12 +11,12 @@ $rs = $dbo->fetchArray($q_art);
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
     <tr>
-        <th>'._('Descrizione').'</th>
-        <th width="120">'._('Q.tà').'</th>
-        <th width="80">'._('U.m.').'</th>
-        <th width="120">'._('Costo unitario').'</th>
-        <th width="120">'._('Iva').'</th>
-        <th width="120">'._('Imponibile').'</th>
+        <th>'.tr('Descrizione').'</th>
+        <th width="120">'.tr('Q.tà').'</th>
+        <th width="80">'.tr('U.m.').'</th>
+        <th width="120">'.tr('Costo unitario').'</th>
+        <th width="120">'.tr('Iva').'</th>
+        <th width="120">'.tr('Imponibile').'</th>
         <th width="60"></th>
     </tr>
     <tbody class="sortable">';
@@ -126,7 +126,7 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Imponibile')).':</b>
+            <b>'.strtoupper(tr('Imponibile')).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($imponibile).' &euro;
@@ -137,7 +137,7 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Sconto')).':</b>
+            <b>'.strtoupper(tr('Sconto')).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($sconto).' &euro;
@@ -149,7 +149,7 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Imponibile scontato')).':</b>
+            <b>'.strtoupper(tr('Imponibile scontato')).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($imponibile_scontato).' &euro;
@@ -161,7 +161,7 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Imponibile')).':</b>
+            <b>'.strtoupper(tr('Imponibile')).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($imponibile).' &euro;
@@ -174,7 +174,7 @@ if (abs($sconto) > 0) {
 echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('IVA')).':</b>
+            <b>'.strtoupper(tr('IVA')).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($iva).' &euro;
@@ -186,7 +186,7 @@ echo '
 echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(_('Totale')).':</b>
+            <b>'.strtoupper(tr('Totale')).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($totale).' &euro;

@@ -6,18 +6,18 @@ include_once __DIR__.'/../../../core.php';
     GESTIONE ORDINI DI SERVIZIO
 */
 $mesi = [
-    _('Gennaio'),
-    _('Febbraio'),
-    _('Marzo'),
-    _('Aprile'),
-    _('Maggio'),
-    _('Giugno'),
-    _('Luglio'),
-    _('Agosto'),
-    _('Settembre'),
-    _('Ottobre'),
-    _('Novembre'),
-    _('Dicembre'),
+    tr('Gennaio'),
+    tr('Febbraio'),
+    tr('Marzo'),
+    tr('Aprile'),
+    tr('Maggio'),
+    tr('Giugno'),
+    tr('Luglio'),
+    tr('Agosto'),
+    tr('Settembre'),
+    tr('Ottobre'),
+    tr('Novembre'),
+    tr('Dicembre'),
 ];
 
 // Generazione ordini di servizio
@@ -45,7 +45,7 @@ if ($get['op'] == 'add_ordineservizio') {
         }
     }
 
-    $_SESSION['infos'][] = _('Ordini di servizio generati correttamente!');
+    $_SESSION['infos'][] = tr('Ordini di servizio generati correttamente!');
 }
 
 // Eliminazione pianificazione specifica
@@ -60,25 +60,25 @@ elseif ($get['op'] == 'del_ordineservizio') {
             // Eliminazione voci di servizio collegate
             $dbo->query('DELETE FROM co_ordiniservizio_vociservizio WHERE idordineservizio='.prepare($idordineservizio));
 
-            $_SESSION['infos'][] = _('Ordine di servizio eliminato correttamente!');
+            $_SESSION['infos'][] = tr('Ordine di servizio eliminato correttamente!');
         }
     }
 
     // Non si può eliminare l'ordine di servizio perché è chiuso
     else {
-        $_SESSION['infos'][] = _('Ordine di servizio già chiuso, impossibile eliminarlo!');
+        $_SESSION['infos'][] = tr('Ordine di servizio già chiuso, impossibile eliminarlo!');
     }
 }
 
 echo '
 <div class="box">
     <div class="box-header with-border">
-        <h3 class="box-title">'._('Pianificazione ordini di servizio').'</h3>
+        <h3 class="box-title">'.tr('Pianificazione ordini di servizio').'</h3>
     </div>
     <div class="box-body">';
 
 echo '
-<p>'._('Qui puoi programmare gli ordini di servizio del contratto').'.</p>';
+<p>'.tr('Qui puoi programmare gli ordini di servizio del contratto').'.</p>';
 
 /*
     Ordini di servizio pianificati
@@ -90,16 +90,16 @@ $rs = $dbo->fetchArray("SELECT *, (SELECT CONCAT_WS(' ', nomesede, citta) FROM a
 
 if (empty($rs)) {
     echo '
-<p>'._('Non sono ancora stati pianificati ordini di servizio').'...</p>';
+<p>'.tr('Non sono ancora stati pianificati ordini di servizio').'...</p>';
 } else {
     echo '
 <table class="table table-striped table-hover table-bordered table-condensed">
     <tr>
-        <th width="10%">'._('Entro').'</th>
-        <th>'._('Sede').'</th>
-        <th width="20%">'._('Impianto').'</th>
-        <th width="10%">'._('Voci di servizio').'</th>
-        <th width="10%">'._('Stato').'</th>
+        <th width="10%">'.tr('Entro').'</th>
+        <th>'.tr('Sede').'</th>
+        <th width="20%">'.tr('Impianto').'</th>
+        <th width="10%">'.tr('Voci di servizio').'</th>
+        <th width="10%">'.tr('Stato').'</th>
         <th width="3%"></th>
     </tr>';
 
@@ -141,7 +141,7 @@ if (empty($rs)) {
         echo '
         <td class="text-center">
             <button type="button" class="btn btn-primary btn-sm" onclick="launch_modal(\'Pianifica intervento\', \'#voci_'.$r['id'].'\' );">
-                <i class="fa fa-list"></i> '._('Visualizza').'... ('.sizeof($rs2).')
+                <i class="fa fa-list"></i> '.tr('Visualizza').'... ('.sizeof($rs2).')
             </button>';
 
         // Popup voci di servizio
@@ -151,13 +151,13 @@ if (empty($rs)) {
 
         if (empty($rs2)) {
             echo '
-                    <p>'._('Non sono state pianificate voci di servizio').'...</p>';
+                    <p>'.tr('Non sono state pianificate voci di servizio').'...</p>';
         } else {
             echo '
                     <table class="table table-bordered table-condensed table-hover table-striped">
                         <tr>
-                            <th>'._('Voci di servizio').'</th>
-                            <th width="40%">'._('Eseguito').'</th>
+                            <th>'.tr('Voci di servizio').'</th>
+                            <th width="40%">'.tr('Eseguito').'</th>
                         </tr>';
 
             $prev_cat = '';
@@ -180,7 +180,7 @@ if (empty($rs)) {
                 if (empty($r['idintervento'])) {
                     echo '
                                 <span class="text-warning">
-                                    <i class="fa fa-clock-o"></i> '._('non ancora eseguito').'
+                                    <i class="fa fa-clock-o"></i> '.tr('non ancora eseguito').'
                                 </span>';
                 } else {
                     $res = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE id='.prepare($rsp[$i]['idintervento']));
@@ -188,7 +188,7 @@ if (empty($rs)) {
                     echo '
                                 <span class="text-success">
                                     <i class="fa fa-check"></i>
-                                    '.Modules::link('Interventi', $r['idintervento'], str_replace(['_NUM_', '_DATE_'], [$res['codice'], Translator::dateToLocale($r['data_intervento'])], _('Intervento n<sup>o</sup> _NUM_ del _DATE_'))).'
+                                    '.Modules::link('Interventi', $r['idintervento'], str_replace(['_NUM_', '_DATE_'], [$res['codice'], Translator::dateToLocale($r['data_intervento'])], tr('Intervento n<sup>o</sup> _NUM_ del _DATE_'))).'
                                 </span>';
                 }
                 echo '
@@ -211,10 +211,10 @@ if (empty($rs)) {
         <td class="text-center">';
         if (empty($r['idintervento'])) {
             echo '
-            <span class="text-warning"><i class="fa fa-clock-o"></i> '._('aperto').'</span>';
+            <span class="text-warning"><i class="fa fa-clock-o"></i> '.tr('aperto').'</span>';
         } else {
             echo '
-            <span class="text-success"><i class="fa fa-check"></i> '._('chiuso').'/span>';
+            <span class="text-success"><i class="fa fa-check"></i> '.tr('chiuso').'/span>';
         }
         echo '
         </td>';
@@ -224,7 +224,7 @@ if (empty($rs)) {
         <td>';
         if (empty($r['idintervento'])) {
             echo '
-            <a class="btn btn-danger ask" data-backto="record-edit" data-method="get" data-op="del_ordineservizio" data-idordineservizio="'.$r['id'].'" data-msg="'._('Vuoi eliminare questa pianificazione?').'">
+            <a class="btn btn-danger ask" data-backto="record-edit" data-method="get" data-op="del_ordineservizio" data-idordineservizio="'.$r['id'].'" data-msg="'.tr('Vuoi eliminare questa pianificazione?').'">
                 <i class="fa fa-trash"></i>
             </a>';
         }
@@ -250,8 +250,8 @@ $rs = $dbo->fetchArray('SELECT * FROM in_vociservizio ORDER BY categoria ASC');
 if (empty($rs)) {
     echo '
 <p>
-    '._('Non sono ancora state inserite voci di servizio').'.
-    <a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Voci di servizio')['id'].'">'._('Inizia ora').'...</a>
+    '.tr('Non sono ancora state inserite voci di servizio').'.
+    <a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Voci di servizio')['id'].'">'.tr('Inizia ora').'...</a>
 </p>';
 }
 
@@ -266,7 +266,7 @@ else {
 
         echo '
 <button type="button" class="btn btn-primary" onclick="$(this).next().removeClass(\'hide\'); $(this).remove();">
-    <i class="fa fa-calendar"></i> '._('Pianifica nuovi ordini di servizio').'
+    <i class="fa fa-calendar"></i> '.tr('Pianifica nuovi ordini di servizio').'
 </button>
 
 <form action="'.$rootdir.'/editor.php?id_module='.Modules::getModule('Contratti')['id'].'&id_record='.$id_record.'&op=add_ordineservizio" id="plan_form" method="post" class="no-check hide">
@@ -276,13 +276,13 @@ else {
     echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'._('Impianto').'", "name": "matricola", "values": "query=SELECT my_impianti.id, CONCAT(my_impianti.matricola, \" - \", my_impianti.nome) AS descrizione, an_sedi.optgroup FROM my_impianti INNER JOIN (SELECT id, CONCAT(an_sedi.nomesede, \"(\", an_sedi.citta, \")\") AS optgroup FROM an_sedi WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' UNION SELECT 0, \'Sede legale\') AS an_sedi ON my_impianti.idsede = an_sedi.id WHERE my_impianti.idanagrafica='.prepare($records[0]['idanagrafica']).' AND my_impianti.id NOT IN(SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).') ORDER BY idsede ASC, matricola ASC" ]}
+            {[ "type": "select", "label": "'.tr('Impianto').'", "name": "matricola", "values": "query=SELECT my_impianti.id, CONCAT(my_impianti.matricola, \" - \", my_impianti.nome) AS descrizione, an_sedi.optgroup FROM my_impianti INNER JOIN (SELECT id, CONCAT(an_sedi.nomesede, \"(\", an_sedi.citta, \")\") AS optgroup FROM an_sedi WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' UNION SELECT 0, \'Sede legale\') AS an_sedi ON my_impianti.idsede = an_sedi.id WHERE my_impianti.idanagrafica='.prepare($records[0]['idanagrafica']).' AND my_impianti.id NOT IN(SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).') ORDER BY idsede ASC, matricola ASC" ]}
         </div>';
 
     // Indice voci di servizio
     echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'._('Voci di servizio da pianificare').'", "name": "idvoce[]", "values": "query=SELECT id, descrizione, categoria AS optgroup FROM in_vociservizio ORDER BY categoria ASC", "multiple": 1, "extra": "onchange=\"$(this).find(\'option\').each( function(){ if( $(this).is(\':selected\') ){ $(\'#voce_\'+$(this).val()).removeClass(\'hide\'); }else{ $(\'#voce_\'+$(this).val()).addClass(\'hide\'); } });\"" ]}
+            {[ "type": "select", "label": "'.tr('Voci di servizio da pianificare').'", "name": "idvoce[]", "values": "query=SELECT id, descrizione, categoria AS optgroup FROM in_vociservizio ORDER BY categoria ASC", "multiple": 1, "extra": "onchange=\"$(this).find(\'option\').each( function(){ if( $(this).is(\':selected\') ){ $(\'#voce_\'+$(this).val()).removeClass(\'hide\'); }else{ $(\'#voce_\'+$(this).val()).addClass(\'hide\'); } });\"" ]}
         </div>
     </div>';
 
@@ -314,7 +314,7 @@ else {
 
         echo '
     <button type="button" class="btn btn-primary" onclick="if($(\'#matricola\').val() && $(\'#idvoce\').val() ){ if( confirm(\'Pianificare questo ordine di servizio?\') ){ $(\'#plan_form\').submit(); } } else { if ( !$(\'#matricola\').val()) {alert (\'Seleziona un impianto.\'); $(\'#matricola\').focus();}else { alert (\'Seleziona le voci di servizio da pianificare.\'); $(\'#idvoce\').focus(); } }">
-        <i class="fa fa-plus"></i> '._('Aggiungi').'
+        <i class="fa fa-plus"></i> '.tr('Aggiungi').'
     </button>';
 
     /*
@@ -331,7 +331,7 @@ else {
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'._('Copiare la pianificazione da un altro impianto').'", "name": "matricola_src", "values": "query=SELECT my_impianti.id, CONCAT(my_impianti.matricola, \" - \", my_impianti.nome) AS descrizione, an_sedi.optgroup FROM my_impianti INNER JOIN (SELECT id, CONCAT(an_sedi.nomesede, \"(\", an_sedi.citta, \")\") AS optgroup FROM an_sedi WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' UNION SELECT 0, \'Sede legale\') AS an_sedi ON my_impianti.idsede = an_sedi.id WHERE my_impianti.idanagrafica='.prepare($records[0]['idanagrafica']).' AND my_impianti.id IN(SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).') ORDER BY idsede ASC, matricola ASC" ]}
+            {[ "type": "select", "label": "'.tr('Copiare la pianificazione da un altro impianto').'", "name": "matricola_src", "values": "query=SELECT my_impianti.id, CONCAT(my_impianti.matricola, \" - \", my_impianti.nome) AS descrizione, an_sedi.optgroup FROM my_impianti INNER JOIN (SELECT id, CONCAT(an_sedi.nomesede, \"(\", an_sedi.citta, \")\") AS optgroup FROM an_sedi WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' UNION SELECT 0, \'Sede legale\') AS an_sedi ON my_impianti.idsede = an_sedi.id WHERE my_impianti.idanagrafica='.prepare($records[0]['idanagrafica']).' AND my_impianti.id IN(SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).') ORDER BY idsede ASC, matricola ASC" ]}
         </div>
     </div>';
 
@@ -340,7 +340,7 @@ else {
 
             echo '
     <button type="button" class="btn btn-primary" onclick="copia_pianificazione_os( \''.$id_record.'\', $(\'#matricola_src option:selected\').val() );">
-        <i class="fa fa-upload"></i>'._('Carica questa pianificazione').'
+        <i class="fa fa-upload"></i>'.tr('Carica questa pianificazione').'
     </button>';
         }
 
@@ -349,7 +349,7 @@ else {
 
     } else {
         echo '
-<p>'._('Le date di accettazione e conclusione del contratto non sono ancora state impostate').'</p>';
+<p>'.tr('Le date di accettazione e conclusione del contratto non sono ancora state impostate').'</p>';
     }
 }
 

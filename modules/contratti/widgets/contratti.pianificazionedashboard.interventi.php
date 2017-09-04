@@ -3,18 +3,18 @@
 include_once __DIR__.'/../../../core.php';
 
 $mesi = [
-    _('Gennaio'),
-    _('Febbraio'),
-    _('Marzo'),
-    _('Aprile'),
-    _('Maggio'),
-    _('Giugno'),
-    _('Luglio'),
-    _('Agosto'),
-    _('Settembre'),
-    _('Ottobre'),
-    _('Novembre'),
-    _('Dicembre'),
+    tr('Gennaio'),
+    tr('Febbraio'),
+    tr('Marzo'),
+    tr('Aprile'),
+    tr('Maggio'),
+    tr('Giugno'),
+    tr('Luglio'),
+    tr('Agosto'),
+    tr('Settembre'),
+    tr('Ottobre'),
+    tr('Novembre'),
+    tr('Dicembre'),
 ];
 
 // Righe inserite
@@ -46,11 +46,11 @@ if (!empty($rsp)) {
     <table class="table table-hover table-striped">
         <thead>
             <tr>
-                <th width="70">'._('Entro il').'</th>
-                <th width="200">'._('Tipo intervento').'</th>
-                <th width="300">'._('Descrizione').'</th>
-                <th width="200">'._('Intervento collegato').'</th>
-                <th width="100">'._('Sede').'</th>
+                <th width="70">'.tr('Entro il').'</th>
+                <th width="200">'.tr('Tipo intervento').'</th>
+                <th width="300">'.tr('Descrizione').'</th>
+                <th width="200">'.tr('Intervento collegato').'</th>
+                <th width="100">'.tr('Sede').'</th>
                 <th width="18"></th>
             </tr>
         </thead>
@@ -69,7 +69,7 @@ if (!empty($rsp)) {
         if (!empty($r['idintervento'])) {
             $rsp2 = $dbo->fetchArray('SELECT id, codice, data FROM in_interventi WHERE id='.prepare($r['idintervento']));
 
-            echo Modules::link('Interventi', $rsp2[0]['id'], str_replace(['_NUM_', '_DATE_'], [$rsp2[0]['codice'],Translator::dateToLocale($rsp2[0]['data'])], _('Intervento _NUM_ del _DATE_')));
+            echo Modules::link('Interventi', $rsp2[0]['id'], str_replace(['_NUM_', '_DATE_'], [$rsp2[0]['codice'],Translator::dateToLocale($rsp2[0]['data'])], tr('Intervento _NUM_ del _DATE_')));
         } else {
             echo '- '.('Nessuno').' -';
         }
@@ -81,7 +81,7 @@ if (!empty($rsp)) {
         if ($r['idsede'] == '-1') {
             echo '- '.('Nessuna').' -';
         } elseif (empty($r['idsede'])) {
-            echo _('Sede legale');
+            echo tr('Sede legale');
         } else {
             $rsp2 = $dbo->fetchArray("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($r['idsede']));
 
@@ -112,5 +112,5 @@ if (!empty($rsp)) {
     }
 } else {
     echo '
-<p>'._('Non ci sono interventi da pianificare').'.</p>';
+<p>'.tr('Non ci sono interventi da pianificare').'.</p>';
 }

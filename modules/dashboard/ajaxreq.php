@@ -34,7 +34,7 @@ switch (get('op')) {
             {
                 "id": "'.$rs[$i]['idintervento'].'",
                 "idtecnico":"'.$rs[$i]['idtecnico'].'",
-                "title":"<b>Int. '.$rs[$i]['idintervento'].'</b>'.addslashes($rs[$i]['cliente']).'<br><b>'._('Tecnici').':</b> '.addslashes($rs[$i]['nome_tecnico']).'",
+                "title":"<b>Int. '.$rs[$i]['idintervento'].'</b>'.addslashes($rs[$i]['cliente']).'<br><b>'.tr('Tecnici').':</b> '.addslashes($rs[$i]['nome_tecnico']).'",
                 "start": "'.$rs[$i]['orario_inizio'].'",
                 "end": "'.$rs[$i]['orario_fine'].'",
                 "url":"'.$rootdir.'/editor.php?id_module='.Modules::getModule('Interventi')['id'].'&id_record='.$rs[$i]['idintervento'].'",
@@ -71,7 +71,7 @@ switch (get('op')) {
             $dbo->query('UPDATE in_interventi_tecnici SET orario_inizio = '.prepare($timeStart).', orario_fine = '.prepare($timeEnd).', ore='.prepare($t).', prezzo_ore_consuntivo='.prepare($t * $prezzo_ore_unitario).' WHERE id='.prepare($id));
             echo 'ok';
         } else {
-            echo _('Attività completata, non è possibile modificarla!');
+            echo tr('Attività completata, non è possibile modificarla!');
         }
 
         break;
@@ -97,41 +97,41 @@ switch (get('op')) {
 
             $desc_tipointervento = $rs[0]['tipo'];
 
-            $tooltip_text = '<b>'._('Numero intervento').'</b>: '.$id.'<br/>';
-            $tooltip_text .= '<b>'._('Ragione sociale').'</b>: '.nl2br($rs[0]['ragione_sociale']).'<br/>';
+            $tooltip_text = '<b>'.tr('Numero intervento').'</b>: '.$id.'<br/>';
+            $tooltip_text .= '<b>'.tr('Ragione sociale').'</b>: '.nl2br($rs[0]['ragione_sociale']).'<br/>';
 
             if (!empty($rs[0]['telefono'] != '')) {
-                $tooltip_text .= '<b>'._('Telefono').'</b>: '.nl2br($rs[0]['telefono']).'<br/>';
+                $tooltip_text .= '<b>'.tr('Telefono').'</b>: '.nl2br($rs[0]['telefono']).'<br/>';
             }
 
             if (!empty($rs[0]['cellulare'])) {
-                $tooltip_text .= '<b>'._('Cellulare').'</b>: '.nl2br($rs[0]['cellulare']).'<br/>';
+                $tooltip_text .= '<b>'.tr('Cellulare').'</b>: '.nl2br($rs[0]['cellulare']).'<br/>';
             }
 
             if (!empty($rs[0]['indirizzo']) || !empty($rs[0]['citta']) || !empty($rs[0]['provincia'])) {
-                $tooltip_text .= '<b>'._('Indirizzo').'</b>: '.nl2br($rs[0]['indirizzo'].' '.$rs[0]['citta'].' ('.$rs[0]['provincia'].')').'<br/>';
+                $tooltip_text .= '<b>'.tr('Indirizzo').'</b>: '.nl2br($rs[0]['indirizzo'].' '.$rs[0]['citta'].' ('.$rs[0]['provincia'].')').'<br/>';
             }
 
             if (!empty($rs[0]['note'])) {
-                $tooltip_text .= '<b>'._('Note').'</b>: '.nl2br($rs[0]['note']).'<br/>';
+                $tooltip_text .= '<b>'.tr('Note').'</b>: '.nl2br($rs[0]['note']).'<br/>';
             }
 
-            $tooltip_text .= '<b>'._('Data richiesta').'</b>: '.Translator::timestampToLocale($rs[0]['data_richiesta']).'<br/>';
+            $tooltip_text .= '<b>'.tr('Data richiesta').'</b>: '.Translator::timestampToLocale($rs[0]['data_richiesta']).'<br/>';
 
-            $tooltip_text .= '<b>'._('Tipo intervento').'</b>: '.nl2br($desc_tipointervento).'<br/>';
+            $tooltip_text .= '<b>'.tr('Tipo intervento').'</b>: '.nl2br($desc_tipointervento).'<br/>';
 
-            $tooltip_text .= '<b>'._('Tecnici').'</b>: '.implode(', ', $tecnici).'<br/>';
+            $tooltip_text .= '<b>'.tr('Tecnici').'</b>: '.implode(', ', $tecnici).'<br/>';
 
             if ($rs[0]['richiesta'] != '') {
-                $tooltip_text .= '<b>'._('Richiesta').'</b>: '.nl2br($rs[0]['richiesta']).'<br/>';
+                $tooltip_text .= '<b>'.tr('Richiesta').'</b>: '.nl2br($rs[0]['richiesta']).'<br/>';
             }
 
             if ($rs[0]['descrizione'] != '') {
-                $tooltip_text .= '<b>'._('Descrizione').'</b>: '.nl2br($rs[0]['descrizione']).'<br/>';
+                $tooltip_text .= '<b>'.tr('Descrizione').'</b>: '.nl2br($rs[0]['descrizione']).'<br/>';
             }
 
             if ($rs[0]['informazioniaggiuntive'] != '') {
-                $tooltip_text .= '<b>'._('Informazioni aggiuntive').'</b>: '.nl2br($rs[0]['informazioniaggiuntive']).'<br/>';
+                $tooltip_text .= '<b>'.tr('Informazioni aggiuntive').'</b>: '.nl2br($rs[0]['informazioniaggiuntive']).'<br/>';
             }
 
             echo $tooltip_text;

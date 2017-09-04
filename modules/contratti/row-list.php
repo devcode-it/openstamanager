@@ -19,12 +19,12 @@ $iva_art = 0.0;
 echo '
 <table class="table table-striped table-hover table-condensed">
     <tr>
-        <th>'._('Descrizione').'</th>
-        <th width="10%" class="text-center">'._('Q.tà').'</th>
-        <th width="10%" class="text-center">'._('U.m.').'</th>
-        <th width="12%" class="text-center">'._('Costo unitario').'</th>
-        <th width="12%" class="text-center">'._('Iva').'</th>
-        <th width="10%" class="text-center">'._('Imponibile').'</th>
+        <th>'.tr('Descrizione').'</th>
+        <th width="10%" class="text-center">'.tr('Q.tà').'</th>
+        <th width="10%" class="text-center">'.tr('U.m.').'</th>
+        <th width="12%" class="text-center">'.tr('Costo unitario').'</th>
+        <th width="12%" class="text-center">'.tr('Iva').'</th>
+        <th width="10%" class="text-center">'.tr('Imponibile').'</th>
         <th width="80"></th>
     </tr>';
 
@@ -115,7 +115,7 @@ if (abs($sconto_art) > 0) {
     echo '
     <tr>
         <td colspan="5"" class="text-right">
-            <b>'.strtoupper(_('Imponibile')).':</b>
+            <b>'.strtoupper(tr('Imponibile')).':</b>
         </td>
         <td class="text-right">
             <span id="budget">'.Translator::numberToLocale($imponibile_nosconto).' &euro;</span>
@@ -126,7 +126,7 @@ if (abs($sconto_art) > 0) {
     echo '
     <tr>
         <td colspan="5"" class="text-right">
-            <b>'.strtoupper(_('Sconto')).':</b>
+            <b>'.strtoupper(tr('Sconto')).':</b>
         </td>
         <td class="text-right">
             '.Translator::numberToLocale($sconto_art).' &euro;
@@ -138,7 +138,7 @@ if (abs($sconto_art) > 0) {
     echo '
     <tr>
         <td colspan="5"" class="text-right">
-            <b>'.strtoupper(_('Imponibile scontato')).':</b>
+            <b>'.strtoupper(tr('Imponibile scontato')).':</b>
         </td>
         <td class="text-right">
             '.Translator::numberToLocale($imponibile_art).' &euro;
@@ -150,7 +150,7 @@ if (abs($sconto_art) > 0) {
     echo '
     <tr>
         <td colspan="5"" class="text-right">
-            <b>'.strtoupper(_('Imponibile')).':</b>
+            <b>'.strtoupper(tr('Imponibile')).':</b>
         </td>
         <td class="text-right">
             <span id="budget">'.Translator::numberToLocale($imponibile_art).' &euro;</span>
@@ -163,7 +163,7 @@ if (abs($sconto_art) > 0) {
 echo '
     <tr>
         <td colspan="5"" class="text-right">
-            <b>'.strtoupper(_('Iva')).':</b>
+            <b>'.strtoupper(tr('Iva')).':</b>
         </td>
         <td class="text-right">
             '.Translator::numberToLocale($iva_art).' &euro;
@@ -175,7 +175,7 @@ echo '
 echo '
     <tr>
         <td colspan="5"" class="text-right">
-            <b>'.strtoupper(_('Totale')).':</b>
+            <b>'.strtoupper(tr('Totale')).':</b>
         </td>
         <td class="text-right">
             '.Translator::numberToLocale($imponibile_art + $iva_art).' &euro;

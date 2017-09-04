@@ -29,19 +29,19 @@ switch ($op) {
                 }
 
                 if ($found) {
-                    $_SESSION['infos'][] = _('Backup saltato perché già esistente!');
+                    $_SESSION['infos'][] = tr('Backup saltato perché già esistente!');
                 } elseif (do_backup()) {
-                    $_SESSION['infos'][] = _('Backup automatico eseguito correttamente!');
+                    $_SESSION['infos'][] = tr('Backup automatico eseguito correttamente!');
                 } elseif (empty($backup_dir)) {
-                    $_SESSION['errors'][] = _('Non è possibile eseguire i backup poichè la cartella di backup non esiste!!!');
+                    $_SESSION['errors'][] = tr('Non è possibile eseguire i backup poichè la cartella di backup non esiste!!!');
                 } elseif (!file_exists($backup_dir)) {
                     if (mkdir($backup_dir)) {
-                        $_SESSION['infos'][] = _('La cartella di backup è stata creata correttamente.');
+                        $_SESSION['infos'][] = tr('La cartella di backup è stata creata correttamente.');
                         if (do_backup()) {
-                            $_SESSION['infos'][] = _('Backup automatico eseguito correttamente!');
+                            $_SESSION['infos'][] = tr('Backup automatico eseguito correttamente!');
                         }
                     } else {
-                        $_SESSION['errors'][] = _('Non è stato possibile creare la cartella di backup!');
+                        $_SESSION['errors'][] = tr('Non è stato possibile creare la cartella di backup!');
                     }
                 }
             }
@@ -73,7 +73,7 @@ include_once $docroot.'/include/configuration.php';
 
 include_once $docroot.'/include/update.php';
 
-$pageTitle = _('Login');
+$pageTitle = tr('Login');
 
 if (file_exists($docroot.'/include/custom/top.php')) {
     include_once $docroot.'/include/custom/top.php';
@@ -85,7 +85,7 @@ if (file_exists($docroot.'/include/custom/top.php')) {
 if (str_contains($version, 'beta')) {
     echo '
 			<div class="alert alert-warning alert-dismissable pull-right fade in">
-				<i class="fa fa-warning"></i> <b>'._('Attenzione!').'</b> '._('Stai utilizzando una versione <b>non stabile</b> di OSM.').'
+				<i class="fa fa-warning"></i> <b>'.tr('Attenzione!').'</b> '.tr('Stai utilizzando una versione <b>non stabile</b> di OSM.').'
 
                 <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
 			</div>';
@@ -96,12 +96,12 @@ if (Auth::isBrute()) {
     echo '
             <div class="box box-danger box-center" id="brute">
                 <div class="box-header with-border text-center">
-                    <h3 class="box-title">'._('Attenzione').'</h3>
+                    <h3 class="box-title">'.tr('Attenzione').'</h3>
                 </div>
 
                 <div class="box-body text-center">
-                <p>'._('Sono stati effettuati troppi tentativi di accesso consecutivi!').'</p>
-                <p>'._('Tempo rimanente (in secondi)').': <span id="brute-timeout">'.(Auth::getBruteTimeout() + 1).'</span></p>
+                <p>'.tr('Sono stati effettuati troppi tentativi di accesso consecutivi!').'</p>
+                <p>'.tr('Tempo rimanente (in secondi)').': <span id="brute-timeout">'.(Auth::getBruteTimeout() + 1).'</span></p>
                 </div>
             </div>
             <script>
@@ -136,14 +136,14 @@ if (!empty($_SESSION['errors'])) {
 echo '
 			<form action="?op=login" method="post" class="login-box box">
 				<div class="box-header with-border text-center">
-					<img src="'.$img.'/logo.png" alt="'._('OSM Logo').'">
-					<h3 class="box-title">'._('OpenSTAManager').'</h3>
+					<img src="'.$img.'/logo.png" alt="'.tr('OSM Logo').'">
+					<h3 class="box-title">'.tr('OpenSTAManager').'</h3>
 				</div>
 				<!-- /.box-header -->
 				<div class="login-box-body box-body">
 					<div class="form-group input-group">
 						<span class="input-group-addon"><i class="fa fa-user"></i> </span>
-						<input type="text" name="username" autocomplete="off" class="form-control" placeholder="'._('Nome utente').'"';
+						<input type="text" name="username" autocomplete="off" class="form-control" placeholder="'.tr('Nome utente').'"';
 if (isset($username)) {
     echo ' value="'.$username.'"';
 }
@@ -151,19 +151,19 @@ echo'>
 					</div>
 					<div class="form-group input-group">
 						<span class="input-group-addon"><i class="fa fa-lock"></i> </span>
-						<input type="password" name="password" autocomplete="off" class="form-control" placeholder="'._('Password').'">
+						<input type="password" name="password" autocomplete="off" class="form-control" placeholder="'.tr('Password').'">
 					</div>
 					<div class="form-group">
 						<input type="checkbox" name="keep_alive"';
 if (filter('keep_alive') != null) {
     echo ' checked';
 }
-echo '/> '._('Mantieni attiva la sessione').'
+echo '/> '.tr('Mantieni attiva la sessione').'
 					</div>
 				</div>
 				<!-- /.box-body -->
 				<div class="box-footer">
-					<button type="submit" id="login" class="btn btn-danger btn-block">'._('Accedi').'</button>
+					<button type="submit" id="login" class="btn btn-danger btn-block">'.tr('Accedi').'</button>
 				</div>
 				<!-- box-footer -->
 			</form>
@@ -174,9 +174,9 @@ echo '/> '._('Mantieni attiva la sessione').'
                 $("#login").click(function(){
                     $("#login").text("';
     if ($dbo->isInstalled() && get_var('Backup automatico')) {
-        echo _('Backup automatico in corso');
+        echo tr('Backup automatico in corso');
     } else {
-        echo _('Autenticazione');
+        echo tr('Autenticazione');
     }
     echo '...");
                 });

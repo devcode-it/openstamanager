@@ -33,7 +33,7 @@ class MediaHandler implements HandlerInterface
             return '
     <img src="|value|" |attr|><br>
     <label>
-        <input type="checkbox" name="delete_|name|" id="delete_|id|"> '._('Elimina').'
+        <input type="checkbox" name="delete_|name|" id="delete_|id|"> '.tr('Elimina').'
     </label>
     <input type="hidden" name="|name|" value="|value|" id="|id|">';
         }

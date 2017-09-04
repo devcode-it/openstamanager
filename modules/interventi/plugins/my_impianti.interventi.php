@@ -6,7 +6,7 @@ include_once __DIR__.'/../../../core.php';
 echo '
 <div class="box">
     <div class="box-header with-border">
-        <h3 class="box-title">'._('Interventi eseguiti su questo impianto').'</h3>
+        <h3 class="box-title">'.tr('Interventi eseguiti su questo impianto').'</h3>
     </div>
     <div class="box-body">';
 
@@ -16,15 +16,15 @@ if (!empty($results)) {
     echo '
         <table class="table table-striped table-hover">
             <tr>
-                <th width="25%">'._('Intervento').'</th>
-                <th>'._('Descrizione').'</th>
+                <th width="25%">'.tr('Intervento').'</th>
+                <th>'.tr('Descrizione').'</th>
             </tr>';
 
     foreach ($results as $result) {
         echo '
             <tr>
                 <td>
-                    '.Modules::link('Interventi', $result['codice'], str_replace(['_NUM_', '_DATE_'], [$result['idintervento'], Translator::dateToLocale($result['data'])], _('Intervento _NUM_ del _DATE_'))).'
+                    '.Modules::link('Interventi', $result['codice'], str_replace(['_NUM_', '_DATE_'], [$result['idintervento'], Translator::dateToLocale($result['data'])], tr('Intervento _NUM_ del _DATE_'))).'
                 </td>
                 <td>'.nl2br($result['descrizione']).'</td>
             </tr>';
@@ -34,7 +34,7 @@ if (!empty($results)) {
         </table>';
 } else {
     echo '
-<p>'._('Nessun intervento su questo impianto').'...</p>';
+<p>'.tr('Nessun intervento su questo impianto').'...</p>';
 }
 
 echo '

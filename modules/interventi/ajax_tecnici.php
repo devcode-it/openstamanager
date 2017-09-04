@@ -54,12 +54,12 @@ if (!empty($rs2)) {
     <table class="table table-striped table-hover table-condensed '.$class_tecnico.'">
         <tr>
             <th><i class="fa fa-user"></i> '.$r['ragione_sociale'].'</th>
-            <th>'._('Orario inizio').'</th>
-            <th>'._('Orario fine').'</th>
-            <th>'._('Ore').'</th>
-            <th>'._('Km').'</th>
-            <th>'._('Sconto ore').'</th>
-            <th>'._('Sconto km').'</th>
+            <th>'.tr('Orario inizio').'</th>
+            <th>'.tr('Orario fine').'</th>
+            <th>'.tr('Ore').'</th>
+            <th>'.tr('Km').'</th>
+            <th>'.tr('Sconto ore').'</th>
+            <th>'.tr('Sconto km').'</th>
             <th></th>
         </tr>';
         }
@@ -155,9 +155,9 @@ if (!empty($rs2)) {
 
                 <div class="extra hide">
                     <table class="table table-condensed table-bordered">
-                    <tr><th class="text-danger">'._('Costo').':</th><td align="right">'.Translator::numberToLocale($costo_ore_consuntivo_tecnico)."<small class='help-block'>".Translator::numberToLocale($costo_ore_unitario_tecnico).'x'.Translator::numberToLocale($ore).'<br>+'.Translator::numberToLocale($costo_dirittochiamata_tecnico).'</small></td></tr>
-                    <tr><th>'._('Addebito').':</th><td align="right">'.Translator::numberToLocale($costo_ore_consuntivo).'<small class="help-block">'.Translator::numberToLocale($costo_ore_unitario).'x'.Translator::numberToLocale($ore).'<br>+'.Translator::numberToLocale($costo_dirittochiamata).'</small></td></tr>
-                    <tr><th>'._('Scontato').':</th><td align="right">'.Translator::numberToLocale($costo_ore_consuntivo - $sconto).'</td></tr>
+                    <tr><th class="text-danger">'.tr('Costo').':</th><td align="right">'.Translator::numberToLocale($costo_ore_consuntivo_tecnico)."<small class='help-block'>".Translator::numberToLocale($costo_ore_unitario_tecnico).'x'.Translator::numberToLocale($ore).'<br>+'.Translator::numberToLocale($costo_dirittochiamata_tecnico).'</small></td></tr>
+                    <tr><th>'.tr('Addebito').':</th><td align="right">'.Translator::numberToLocale($costo_ore_consuntivo).'<small class="help-block">'.Translator::numberToLocale($costo_ore_unitario).'x'.Translator::numberToLocale($ore).'<br>+'.Translator::numberToLocale($costo_dirittochiamata).'</small></td></tr>
+                    <tr><th>'.tr('Scontato').':</th><td align="right">'.Translator::numberToLocale($costo_ore_consuntivo - $sconto).'</td></tr>
                     </table>
                 </div>
             </td>';
@@ -170,7 +170,7 @@ if (!empty($rs2)) {
                 <div class="extra hide">
                     <table class="table table-condensed table-bordered">
                     <tr>
-                        <th class="text-danger">'._('Costo').':</th>
+                        <th class="text-danger">'.tr('Costo').':</th>
                         <td align="right">
                             '.Translator::numberToLocale($costo_km_consuntivo_tecnico).'
                             <small class="help-block">
@@ -179,7 +179,7 @@ if (!empty($rs2)) {
                         </td>
                     </tr>
                     <tr>
-                        <th>'._('Addebito').':</th>
+                        <th>'.tr('Addebito').':</th>
                         <td align="right">
                             '.Translator::numberToLocale($costo_km_consuntivo).'
                             <small class="help-block">
@@ -188,7 +188,7 @@ if (!empty($rs2)) {
                         </td>
                     </tr>
                     <tr>
-                        <th>'._('Scontato').':</th>
+                        <th>'.tr('Scontato').':</th>
                         <td align="right">'.Translator::numberToLocale($costo_km_consuntivo - $scontokm).'</td>
                     </tr>
                     </table>
@@ -245,20 +245,20 @@ if (!empty($rs2)) {
     }
 } else {
     echo
-'<p>'._('Nessun tecnico presente').'.</p>';
+'<p>'.tr('Nessun tecnico presente').'.</p>';
 }
 
 echo '
 <!-- AGGIUNTA TECNICO -->
 <div class="row">
     <div class="col-md-offset-6 col-md-3">
-        {[ "type": "select", "label": "'._('Aggiungi tecnico').'", "name": "nuovotecnico", "ajax-source": "tecnici" ]}
+        {[ "type": "select", "label": "'.tr('Aggiungi tecnico').'", "name": "nuovotecnico", "ajax-source": "tecnici" ]}
     </div>
 
     <div class="col-md-3">
         <br>
         <button type="button" class="btn btn-primary btn-block" onclick="if($(\'#nuovotecnico\').val()){ add_tecnici( \''.$id_record.'\', $(\'#nuovotecnico\').val()); }else{ alert(\'Seleziona un tecnico!\'); }">
-            <i class="fa fa-plus"></i> '._('Aggiungi tecnico').'
+            <i class="fa fa-plus"></i> '.tr('Aggiungi tecnico').'
         </button>
     </div>
 </div>';

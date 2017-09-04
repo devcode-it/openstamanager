@@ -6,7 +6,7 @@ include_once __DIR__.'/core.php';
 $info = Plugins::getPlugin($id_plugin);
 
 if (empty($info) || empty($info['enabled'])) {
-    die(_('Accesso negato'));
+    die(tr('Accesso negato'));
 }
 
 if (!empty($info['script'])) {
@@ -42,7 +42,7 @@ if (!empty($info['script'])) {
 
     if (empty($records)) {
         echo '
-		<p>'._('Record non trovato').'.</p>';
+		<p>'.tr('Record non trovato').'.</p>';
     } else {
         // Lettura template modulo (verifico se ci sono template personalizzati, altrimenti uso quello base)
         if (file_exists($docroot.'/plugins/'.$info['directory'].'/custom/edit.php')) {

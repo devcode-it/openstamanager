@@ -11,7 +11,7 @@ switch (filter('op')) {
             // integer
             if ($result['tipo'] == 'integer') {
                 if (!preg_match('/^\d*$/', $value)) {
-                    $_SESSION['errors'][] = str_replace('_NAME_', '"'.$result['nome'].'"', _('Il valore inserito del parametro _NAME_ deve essere un numero intero!'));
+                    $_SESSION['errors'][] = str_replace('_NAME_', '"'.$result['nome'].'"', tr('Il valore inserito del parametro _NAME_ deve essere un numero intero!'));
                 }
             }
 
@@ -27,7 +27,7 @@ switch (filter('op')) {
                 }
 
                 if (!$continue) {
-                    $_SESSION['errors'][] = str_replace('_NAME_', '"'.$result['nome'].'"', _('Il valore inserito del parametro _NAME_ deve essere un compreso tra i valori previsti!'));
+                    $_SESSION['errors'][] = str_replace('_NAME_', '"'.$result['nome'].'"', tr('Il valore inserito del parametro _NAME_ deve essere un compreso tra i valori previsti!'));
                 }
             }
 
@@ -42,7 +42,7 @@ switch (filter('op')) {
         }
 
         if (count($_SESSION['errors']) <= 0) {
-            $_SESSION['infos'][] = _('Impostazioni aggiornate correttamente!');
+            $_SESSION['infos'][] = tr('Impostazioni aggiornate correttamente!');
         }
 
         break;

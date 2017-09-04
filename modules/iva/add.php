@@ -8,24 +8,24 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			{[ "type": "text", "label": "<?php echo _('Descrizione') ?>", "name": "descrizione", "required": 1,  "value": "" ]}
+			{[ "type": "text", "label": "<?php echo tr('Descrizione') ?>", "name": "descrizione", "required": 1,  "value": "" ]}
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-xs-12 col-md-6">
-			{[ "type": "number", "label": "<?php echo _('Percentuale') ?>", "name": "percentuale", "value": "", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+			{[ "type": "number", "label": "<?php echo tr('Percentuale') ?>", "name": "percentuale", "value": "", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
 		</div>
 
 		<div class="col-xs-12 col-md-6">
-			{[ "type": "number", "label": "<?php echo _('Indetraibile') ?>", "name": "indetraibile", "value": "", "icon-after": "<i class=\"fa fa-usd\"></i>" ]}
+			{[ "type": "number", "label": "<?php echo tr('Indetraibile') ?>", "name": "indetraibile", "value": "", "icon-after": "<i class=\"fa fa-usd\"></i>" ]}
 		</div>
 	</div>
 
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo _('Aggiungi'); ?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 		</div>
 	</div>
 </form>

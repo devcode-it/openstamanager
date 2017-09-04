@@ -79,7 +79,7 @@ switch (post('op')) {
             if (create_thumbnails($tmp, $filename, $upload_dir)) {
                 $dbo->query('UPDATE mg_articoli SET immagine01='.prepare($filename).' WHERE id='.prepare($id_record));
             } else {
-                $_SESSION['warnings'][] = str_replace('_DIR_', $upload_dir, _('Errore durante il caricamento del file in _DIR_!'));
+                $_SESSION['warnings'][] = str_replace('_DIR_', $upload_dir, tr('Errore durante il caricamento del file in _DIR_!'));
             }
         }
 
@@ -95,7 +95,7 @@ switch (post('op')) {
             $dbo->query("UPDATE mg_articoli SET immagine01 = '' WHERE id=".prepare($id_record));
         }
 
-        $_SESSION['infos'][] = _('Informazioni salvate correttamente!');
+        $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
         break;
 
     // Aggiunta articolo
@@ -109,13 +109,13 @@ switch (post('op')) {
         if ($dbo->fetchNum('SELECT * FROM mg_articoli WHERE codice='.prepare($codice)) == 0) {
             $query = 'INSERT INTO mg_articoli(codice, descrizione, id_categoria, id_sottocategoria, attivo) VALUES ('.prepare($codice).', '.prepare($descrizione).', '.prepare($categoria).', '.prepare($subcategoria).', 1)';
             $dbo->query($query);
-            $_SESSION['infos'][] = _('Aggiunto un nuovo articolo!');
+            $_SESSION['infos'][] = tr('Aggiunto un nuovo articolo!');
 
             $query = 'SELECT * FROM mg_articoli WHERE codice='.prepare($codice);
             $rs = $dbo->fetchArray($query);
             $id_record = $rs[0]['id'];
         } else {
-            $_SESSION['errors'][] = _('Esiste già un articolo con questo codice!');
+            $_SESSION['errors'][] = tr('Esiste già un articolo con questo codice!');
         }
         break;
 
@@ -200,12 +200,12 @@ switch (post('op')) {
             if ($dbo->query($query)) {
                 // Movimento il magazzino se l'ho specificato nelle impostazioni
                 if (get_var("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
-                    add_movimento_magazzino($id_record, $n_prodotti, [], str_replace(['_SERIAL_INIZIO_', '_SERIAL_FINE_'], [$serial__start, $serial__end], _('Carico magazzino con serial da _SERIAL_INIZIO_ a _SERIAL_FINE_')));
+                    add_movimento_magazzino($id_record, $n_prodotti, [], str_replace(['_SERIAL_INIZIO_', '_SERIAL_FINE_'], [$serial__start, $serial__end], tr('Carico magazzino con serial da _SERIAL_INIZIO_ a _SERIAL_FINE_')));
                 }
 
-                $_SESSION['infos'][] = str_replace('_NUM_', $n_prodotti, _('Aggiunti _NUM_ prodotti!'));
+                $_SESSION['infos'][] = str_replace('_NUM_', $n_prodotti, tr('Aggiunti _NUM_ prodotti!'));
             } else {
-                $_SESSION['errors'][] = _("Errore durante l'inserimento!");
+                $_SESSION['errors'][] = tr("Errore durante l'inserimento!");
             }
         }
         break;
@@ -220,10 +220,10 @@ switch (post('op')) {
         if ($dbo->query($query)) {
             // Movimento il magazzino se l'ho specificato nelle impostazioni
             if (get_var("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
-                add_movimento_magazzino($id_record, -1, [], str_replace(['_LOTTO_', '_SERIAL_', '_ALTRO_'], [$rs[0]['lotto'], $rs[0]['serial'], $rs[0]['altro']], _('Eliminazione dal magazzino del prodotto con serial _SERIAL_')));
+                add_movimento_magazzino($id_record, -1, [], str_replace(['_LOTTO_', '_SERIAL_', '_ALTRO_'], [$rs[0]['lotto'], $rs[0]['serial'], $rs[0]['altro']], tr('Eliminazione dal magazzino del prodotto con serial _SERIAL_')));
             }
 
-            $_SESSION['infos'][] = _('Prodotto rimosso!');
+            $_SESSION['infos'][] = tr('Prodotto rimosso!');
         }
         break;
 
@@ -233,6 +233,6 @@ switch (post('op')) {
         $dbo->query('DELETE FROM mg_prodotti WHERE idarticolo='.prepare($id_record));
         $dbo->query('DELETE FROM mg_articoli_automezzi WHERE idarticolo='.prepare($id_record));
 
-        $_SESSION['infos'][] = _('Articolo eliminato!');
+        $_SESSION['infos'][] = tr('Articolo eliminato!');
         break;
 }

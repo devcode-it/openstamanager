@@ -136,7 +136,7 @@ if ($n > 0) {
     echo "</div>";
 } else {
     $show_btn = false;
-    echo '		<b>'._('Non ci sono articoli da evadere in questo ordine')."...</b><br>";
+    echo '		<b>'.tr('Non ci sono articoli da evadere in questo ordine')."...</b><br>";
 }
 
 echo "		<div class=\"clearfix\"></div>";
@@ -149,10 +149,10 @@ echo '
 if ($show_btn) {
     if ($dir == 'entrata') {
         echo '
-        <a onclick="creaddt_vendita();" class="btn btn-primary"><i class="fa fa-plus"></i> '._('Crea ddt di vendita').'</a>';
+        <a onclick="creaddt_vendita();" class="btn btn-primary"><i class="fa fa-plus"></i> '.tr('Crea ddt di vendita').'</a>';
     } else {
         echo '
-        <a onclick="creaddt_acquisto();" class="btn btn-primary"><i class="fa fa-plus"></i> '._('Crea ddt di acquisto').'</a>';
+        <a onclick="creaddt_acquisto();" class="btn btn-primary"><i class="fa fa-plus"></i> '.tr('Crea ddt di acquisto').'</a>';
     }
 }
 echo '

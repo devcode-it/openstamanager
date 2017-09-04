@@ -13,7 +13,7 @@
  */
 function save($text)
 {
-    trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $text = htmlentities($text, ENT_QUOTES, 'UTF-8');
 
@@ -31,7 +31,7 @@ function save($text)
  */
 function force_decimal($str)
 {
-    trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $str = str_replace(',', '.', $str);
 
@@ -49,7 +49,7 @@ function force_decimal($str)
  */
 function saveTime($time)
 {
-    trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $result = str_replace([',', '.'], ':', $time);
 
@@ -70,7 +70,7 @@ function saveTime($time)
  */
 function readDateTime($datetime)
 {
-    trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $data = substr($datetime, 0, -9);
     $date = explode('-', $data);
@@ -100,7 +100,7 @@ function readDateTime($datetime)
  */
 function readDateTimePrint($datetime, $view)
 {
-    trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $data = substr($datetime, 0, -9);
     $date = explode('-', $data);
@@ -130,7 +130,7 @@ function readDateTimePrint($datetime, $view)
  */
 function get_permessi($nome_modulo)
 {
-    trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $dbo = \Database::getConnection();
     $query = 'SELECT *, (SELECT idanagrafica FROM zz_users WHERE id='.prepare($_SESSION['id_utente']).') AS idanagrafica FROM zz_permissions WHERE idgruppo=(SELECT idgruppo FROM zz_users WHERE id='.prepare($_SESSION['id_utente']).') AND idmodule=(SELECT id FROM zz_modules WHERE name='.prepare($nome_modulo).')';
@@ -162,7 +162,7 @@ function get_permessi($nome_modulo)
  */
 function saveDateTime($datetime)
 {
-    trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $data = substr($datetime, 0, -6);
     $date = explode('/', $data);
@@ -190,7 +190,7 @@ function saveDateTime($datetime)
  */
 function fix_str($text)
 {
-    trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $text = str_replace("\r\n", '<br/>', $text);
     $text = str_replace("'", '&rsquo;', $text);
@@ -210,7 +210,7 @@ function fix_str($text)
  */
 function mres($value)
 {
-    trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $search = ['\\', "\x00", "\n", "\r", "'", '"', "\x1a"];
     $replace = ['\\\\', '\\0', '\\n', '\\r', "\'", '\"', '\\Z'];
@@ -229,7 +229,7 @@ function mres($value)
  */
 function clean($string)
 {
-    trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
     $string = preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
@@ -248,7 +248,7 @@ function clean($string)
  */
 function makeid($text)
 {
-    trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $text = strtolower($text);
     $text = str_replace(' ', '_', $text);
@@ -265,7 +265,7 @@ function makeid($text)
  */
 function read($text)
 {
-    trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     return str_replace('&quot;', '"', $text);
 }
@@ -281,7 +281,7 @@ function read($text)
  */
 function readTime($time)
 {
-    trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $vtime = explode(':', $time);
     $hour = $vtime[0];
@@ -300,7 +300,7 @@ function readTime($time)
  */
 function saveDate($data)
 {
-    trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     if (empty($data)) {
         return '0000-00-00';
@@ -322,7 +322,7 @@ function saveDate($data)
  */
 function readDate($data)
 {
-    trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $date = $data;
     if ($date != '') {
@@ -352,7 +352,7 @@ function build_html_element($string)
     global $docroot;
     global $records;
 
-    trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $dbo = \Database::getConnection();
 
@@ -723,7 +723,7 @@ function build_html_element($string)
 			<img src="'.$json['value'].'" class="'.implode(' ', $valori['class']).'" id="img_'.$element_id.'" '.$attr.' '.$json['extra'].'><br>
 			<label>
 				<input type="checkbox" onclick="if( $(this).is(\':checked\') ){ $(\'#'.$element_id.'\').val(\'deleteme\'); }else{ $(\'#'.$element_id.'\').val( $(\'#prev_'.$element_id.'\').val() ); }">
-				'._('Elimina').'
+				'.tr('Elimina').'
 			</label>
 			<input type="hidden" name="'.$json['name'].'" value="'.$json['value'].'" id="'.$element_id.'">
 			<input type="hidden" name="prev_'.$json['name'].'" value="'.$json['value'].'" id="prev_'.$element_id.'">';
@@ -806,7 +806,7 @@ function get_plugins($module, $position)
     global $dbo;
     global $docroot;
 
-    trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $q = 'SELECT * FROM zz_plugins WHERE idmodule_to=( SELECT id FROM zz_modules WHERE name="'.$module.'" ) AND position="'.$position.'"';
     $rs = $dbo->fetchArray($q);
@@ -842,7 +842,7 @@ function get_plugins($module, $position)
  */
 function estensione_del_file($filename)
 {
-    trigger_error(_('Funzione deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     return pathinfo($filename, PATHINFO_EXTENSION);
 }
@@ -859,7 +859,7 @@ class HTMLHelper
      */
     public function form($param, $method = 'get', $escape = true, $rule = 'text')
     {
-        trigger_error(_('Classe deprecata!'), E_USER_DEPRECATED);
+        trigger_error(tr('Classe deprecata!'), E_USER_DEPRECATED);
 
         // method
         if ($method == 'get') {
@@ -904,7 +904,7 @@ class HTMLHelper
  */
 function filelist_and_upload($id_module, $id_record, $label = 'Nuovo allegato:', $showpanel = true)
 {
-    trigger_error(_('Procedura deprecata!'), E_USER_DEPRECATED);
+    trigger_error(tr('Procedura deprecata!'), E_USER_DEPRECATED);
 
     global $docroot;
     global $rootdir;
@@ -918,7 +918,7 @@ function filelist_and_upload($id_module, $id_record, $label = 'Nuovo allegato:',
         echo '
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title">'._('Allegati').'</h3>
+            <h3 class="panel-title">'.tr('Allegati').'</h3>
         </div>
         <div class="panel-body">';
     }
@@ -930,9 +930,9 @@ function filelist_and_upload($id_module, $id_record, $label = 'Nuovo allegato:',
         echo '
     <table class="table table-condensed table-hover table-bordered">
         <tr>
-            <th>'._('Descrizione').'</th>
-            <th>'._('File').'</th>
-            <th>'._('Data').'</th>
+            <th>'.tr('Descrizione').'</th>
+            <th>'.tr('File').'</th>
+            <th>'.tr('Data').'</th>
             <th style="width:5%;text-align:center;">#</th>
         </tr>';
 
@@ -945,7 +945,7 @@ function filelist_and_upload($id_module, $id_record, $label = 'Nuovo allegato:',
             </td>
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
             <td>
-                <a class="btn btn-danger ask" data-backto="record-edit" data-msg="'._('Vuoi eliminare questo file?').'" data-op="unlink_file" data-id="'.$r['id'].'" data-filename="'.$r['filename'].'">
+                <a class="btn btn-danger ask" data-backto="record-edit" data-msg="'.tr('Vuoi eliminare questo file?').'" data-op="unlink_file" data-id="'.$r['id'].'" data-filename="'.$r['filename'].'">
                     <i class="fa fa-trash"></i>
                 </a>
             </td>
@@ -966,16 +966,16 @@ function filelist_and_upload($id_module, $id_record, $label = 'Nuovo allegato:',
     <b>'.$label.'</b>
     <div class="row">
         <div class="col-lg-4">
-            {[ "type": "text", "placeholder": "'._('Nome').'", "name": "nome_allegato", "required": 1 ]}
+            {[ "type": "text", "placeholder": "'.tr('Nome').'", "name": "nome_allegato", "required": 1 ]}
         </div>
 
         <div class="col-lg-6">
-            {[ "type": "file", "placeholder": "'._('Nome').'", "name": "blob", "required": 1 ]}
+            {[ "type": "file", "placeholder": "'.tr('Nome').'", "name": "blob", "required": 1 ]}
         </div>
 
         <div class="col-lg-2 text-right">
             <button type="button" class="btn btn-success" id="upload_button"  onclick="SaveFile();">
-                <i class="fa fa-upload"></i> '._('Carica').'
+                <i class="fa fa-upload"></i> '.tr('Carica').'
             </button>
         </div>
     </div>';

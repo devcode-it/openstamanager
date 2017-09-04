@@ -119,7 +119,7 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
                 }
 
                 // Allineamento al centro se il valore della prima riga risulta relativo a date o icone
-                elseif ((Translator::getEnglishFormatter()->isDate($value) || Translator::getEnglishFormatter()->isDate($value)) || preg_match('/^icon_(.+?)$/', $field)) {
+                elseif ((Translator::getEnglishFormatter()->isDate($value) || Translator::getEnglishFormatter()->isDate($value)) || preg_match('/^icontr(.+?)$/', $field)) {
                     $align[$field] = 'text-center';
                 }
             }
@@ -155,7 +155,7 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
             }
 
             // Icona
-            if (preg_match('/^color_(.+?)$/', $field, $m)) {
+            if (preg_match('/^colortr(.+?)$/', $field, $m)) {
                 $value = $r['color_title_'.$m[1]] ?: '';
 
                 $column['class'] = 'text-center small';
@@ -176,7 +176,7 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
             }
 
             // Icona
-            elseif (preg_match('/^icon_(.+?)$/', trim($field), $m)) {
+            elseif (preg_match('/^icontr(.+?)$/', trim($field), $m)) {
                 $value = '<i class="'.$r[$field].'"></i> <small>'.$r['icon_title_'.$m[1]].'</small>';
             }
 

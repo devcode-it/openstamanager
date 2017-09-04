@@ -10,12 +10,12 @@ echo '
 	<!-- DATI -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">'._('Valori della sezione').'</h3>
+			<h3 class="panel-title">'.tr('Valori della sezione').'</h3>
 		</div>
 
 		<div class="panel-body">
 			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '._('Salva modifiche').'</button>
+				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>
 			</div>
 			<div class="clearfix"></div><br>
 			';
@@ -45,7 +45,7 @@ foreach ($records as $record) {
     // Boolean (checkbox)
     elseif ($record['tipo'] == 'boolean') {
         echo '
-				{[ "type": "checkbox", "label": "'.$record['nome'].'", "name": "'.$record['idimpostazione'].'", "placeholder": "'._('Attivo').'", "value": "'.$record['valore'].'" ]}';
+				{[ "type": "checkbox", "label": "'.$record['nome'].'", "name": "'.$record['idimpostazione'].'", "placeholder": "'.tr('Attivo').'", "value": "'.$record['valore'].'" ]}';
     } elseif ($record['tipo'] == 'textarea') {
         echo '
 				{[ "type": "textarea", "label": "'.$record['nome'].'", "name": "'.$record['idimpostazione'].'", "value": '.json_encode($record['valore']).' ]}';
@@ -66,7 +66,7 @@ foreach ($records as $record) {
 echo '
 			<div class="clearfix"></div><hr>
             <div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '._('Salva modifiche').'</button>
+				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>
 			</div>
 		</div>
 	</div>

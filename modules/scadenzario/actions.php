@@ -20,9 +20,9 @@ switch (post('op')) {
                 $dbo->query('UPDATE co_scadenziario SET da_pagare='.prepare($da_pagare).', pagato='.prepare(post('pagato')[$idscadenza]).', scadenza='.prepare(post('data')[$idscadenza]).' WHERE id='.prepare($idscadenza));
             }
 
-            $_SESSION['infos'][] = _('Scadenze aggiornate!');
+            $_SESSION['infos'][] = tr('Scadenze aggiornate!');
         } else {
-            $_SESSION['errors'][] = _('Il totale degli importi inseriti non corrisponde al totale da pagare!');
+            $_SESSION['errors'][] = tr('Il totale degli importi inseriti non corrisponde al totale da pagare!');
         }
 
         break;

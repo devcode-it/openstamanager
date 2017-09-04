@@ -39,9 +39,9 @@ switch (filter('op')) {
                     $dbo->INSERT('co_pagamenti', $array);
                 }
             }
-            $_SESSION['infos'][] = _('Salvataggio completato!');
+            $_SESSION['infos'][] = tr('Salvataggio completato!');
         } else {
-            $_SESSION['errors'][] = _('Ci sono stati alcuni errori durante il salvataggio!');
+            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
         }
 
         break;
@@ -53,9 +53,9 @@ switch (filter('op')) {
             $dbo->query('INSERT INTO `co_pagamenti` (`descrizione`) VALUES ('.prepare($descrizione).')');
             $id_record = $dbo->lastInsertedID();
 
-            $_SESSION['infos'][] = str_replace('_TYPE_', 'pagamento', _('Aggiunta nuova tipologia di _TYPE_'));
+            $_SESSION['infos'][] = str_replace('_TYPE_', 'pagamento', tr('Aggiunta nuova tipologia di _TYPE_'));
         } else {
-            $_SESSION['errors'][] = _('Ci sono stati alcuni errori durante il salvataggio!');
+            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
         }
 
         break;
@@ -63,7 +63,7 @@ switch (filter('op')) {
     case 'delete':
         if (isset($id_record)) {
             $dbo->query('DELETE FROM `co_pagamenti` WHERE `descrizione`='.prepare($records[0]['descrizione']));
-            $_SESSION['infos'][] = str_replace('_TYPE_', 'pagamento', _('Tipologia di _TYPE_ eliminata con successo!'));
+            $_SESSION['infos'][] = str_replace('_TYPE_', 'pagamento', tr('Tipologia di _TYPE_ eliminata con successo!'));
         }
 
         break;
@@ -72,7 +72,7 @@ switch (filter('op')) {
         $id = filter('id');
         if (isset($id)) {
             $dbo->query('DELETE FROM `co_pagamenti` WHERE `id`='.prepare($id));
-            $_SESSION['infos'][] = _('Elemento eliminato con successo!');
+            $_SESSION['infos'][] = tr('Elemento eliminato con successo!');
 
             if ($id_record == $id) {
                 $res = $dbo->fetchArray('SELECT * FROM `co_pagamenti` WHERE `id`!='.prepare($id).' AND `descrizione`='.prepare($records[0]['descrizione']));

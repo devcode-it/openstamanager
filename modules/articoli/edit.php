@@ -11,12 +11,12 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 	<!-- DATI ANAGRAFICI -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo _('Articolo'); ?></h3>
+			<h3 class="panel-title"><?php echo tr('Articolo'); ?></h3>
 		</div>
 
 		<div class="panel-body">
 			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo _('Salva modifiche'); ?></button>
+				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
 			</div>
 			<div class="clearfix"></div>
 
@@ -25,31 +25,31 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 					<?php
                     $immagine01 = ($records[0]['immagine01'] == '') ? '' : $rootdir.'/files/articoli/'.$records[0]['immagine01'];
                     ?>
-					{[ "type": "image", "label": "<?php echo _('Immagine'); ?>", "name": "immagine01", "class": "img-thumbnail", "value": "<?php echo $immagine01 ?>" ]}
+					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine01", "class": "img-thumbnail", "value": "<?php echo $immagine01 ?>" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo _('Codice'); ?>", "name": "codice", "required": 1, "value": "$codice$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "required": 1, "value": "$codice$" ]}
 				</div>
 
 				<div class="col-md-5">
-					{[ "type": "select", "label": "<?php echo _('Categoria'); ?>", "name": "categoria", "required": 1, "value": "$id_categoria$", "ajax-source": "categorie" ]}
+					{[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 1, "value": "$id_categoria$", "ajax-source": "categorie" ]}
 					<br>
-					{[ "type": "select", "label": "<?php echo _('Subcategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie" ]}
+					{[ "type": "select", "label": "<?php echo tr('Subcategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie" ]}
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo _('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo _('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta|0" ]}
+					{[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta|0" ]}
 				</div>
 				<div class="col-md-4">
-					{[ "type": "checkbox", "label": "<?php echo _('Modifica manualmente quantità'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo _('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo _('Quantità manuale'); ?>" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Modifica manualmente quantità'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>" ]}
 
 					<script type="text/javascript">
 
@@ -62,25 +62,25 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
                 </div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo _('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo Modules::getModule('Unità di misura')['id'] ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo Modules::getModule('Unità di misura')['id'] ?>" ]}
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "number", "label": "<?php echo _('Prezzo di vendita base'); ?>", "name": "prezzo_vendita", "value": "$prezzo_vendita$", "icon-after": "&euro;" ]}
+					{[ "type": "number", "label": "<?php echo tr('Prezzo di vendita base'); ?>", "name": "prezzo_vendita", "value": "$prezzo_vendita$", "icon-after": "&euro;" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo _('Iva di vendita'); ?>", "name": "idiva_vendita", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC", "value": "$idiva_vendita$", "valore_predefinito": "Iva predefinita" ]}
+					{[ "type": "select", "label": "<?php echo tr('Iva di vendita'); ?>", "name": "idiva_vendita", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC", "value": "$idiva_vendita$", "valore_predefinito": "Iva predefinita" ]}
                 </div>
 
 				<div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo _("Seleziona per rendere visibile l'articolo"); ?>", "name": "attivo", "value": "$attivo$", "help": "", "placeholder": "<?php echo _('ATTIVO'); ?>" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr("Seleziona per rendere visibile l'articolo"); ?>", "name": "attivo", "value": "$attivo$", "help": "", "placeholder": "<?php echo tr('ATTIVO'); ?>" ]}
                 </div>
 
                 <div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo _("Abilita serial number"); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "", "placeholder": "<?php echo _('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr("Abilita serial number"); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "", "placeholder": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>" ]}
                 </div>
 <?php
 if(empty($records[0]['abilita_serial'])){
@@ -96,32 +96,32 @@ if(empty($records[0]['abilita_serial'])){
 
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo _('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "value": "$prezzo_acquisto$", "icon-after": "&euro;" ]}
+					{[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "value": "$prezzo_acquisto$", "icon-after": "&euro;" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo _('Soglia minima quantità'); ?>", "name": "threshold_qta", "value": "$threshold_qta$", "decimals": "qta" ]}
+					{[ "type": "number", "label": "<?php echo tr('Soglia minima quantità'); ?>", "name": "threshold_qta", "value": "$threshold_qta$", "decimals": "qta" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo _('Giorni di garanzia'); ?>", "name": "gg_garanzia", "decimals": 0, "value": "$gg_garanzia$" ]}
+					{[ "type": "number", "label": "<?php echo tr('Giorni di garanzia'); ?>", "name": "gg_garanzia", "decimals": 0, "value": "$gg_garanzia$" ]}
 				</div>
 			</div>
 
             <div class="row">
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo _('Peso lordo'); ?>", "name": "peso_lordo", "value": "$peso_lordo$", "icon-after": "KG" ]}
+					{[ "type": "number", "label": "<?php echo tr('Peso lordo'); ?>", "name": "peso_lordo", "value": "$peso_lordo$", "icon-after": "KG" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo _('Volume'); ?>", "name": "volume", "value": "$volume$", "icon-after": "M<sup>3</sup>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Volume'); ?>", "name": "volume", "value": "$volume$", "icon-after": "M<sup>3</sup>" ]}
 				</div>
 			</div>
 
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo _('Note'); ?>", "name": "note", "value": "$note$" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
 				</div>
 			</div>
 		</div>
@@ -129,12 +129,12 @@ if(empty($records[0]['abilita_serial'])){
 
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo _('Aggiungi informazioni componente personalizzato'); ?></h3>
+			<h3 class="panel-title"><?php echo tr('Aggiungi informazioni componente personalizzato'); ?></h3>
 		</div>
 
 		<div class="panel-body">
 			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo _('Salva modifiche'); ?></button>
+				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
 			</div>
 			<div class="clearfix"></div>
 
@@ -147,7 +147,7 @@ if(empty($records[0]['abilita_serial'])){
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label for="componente_filename">'._('Seleziona un componente').':</label>';
+                        <label for="componente_filename">'.tr('Seleziona un componente').':</label>';
     echo "
                         <select class=\"form-control superselect\" id=\"componente_filename\" name=\"componente_filename\" onchange=\"$.post('".$rootdir."/modules/my_impianti/actions.php', {op: 'load_componente', idarticolo: '".$id_record."', filename: $(this).find('option:selected').val() }, function(response){ $('#info_componente').html( response ); } );\">\n";
     echo '
@@ -183,7 +183,7 @@ echo '
 
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">'._('Prezzo articolo per listino').'</h3>
+			<h3 class="panel-title">'.tr('Prezzo articolo per listino').'</h3>
 		</div>
 
 		<div class="panel-body">';
@@ -198,14 +198,14 @@ echo '
                 <div class="col-md-12 col-lg-6">
                     <table class="table table-striped table-condensed table-bordered">
                         <tr>
-                            <th>'._('Listino').'</th>
-                            <th>'._('Prezzo di vendita finale').'</th>
+                            <th>'.tr('Listino').'</th>
+                            <th>'.tr('Prezzo di vendita finale').'</th>
                         </tr>';
 
             // listino base
             echo '
                         <tr>
-                            <td>'._('Base').'</td>
+                            <td>'.tr('Base').'</td>
                             <td>'.Translator::numberToLocale($rsart[0]['prezzo_vendita']).' &euro;</td>
                         </tr>';
 
@@ -229,7 +229,7 @@ echo '
 
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">'._('Questo articolo è presente nei seguenti automezzi').':</h3>
+			<h3 class="panel-title">'.tr('Questo articolo è presente nei seguenti automezzi').':</h3>
 		</div>
 		<div class="panel-body">';
 
@@ -242,9 +242,9 @@ echo '
                 <div class="col-md-12 col-lg-6">
                     <table class="table table-striped table-condensed table-bordered">
                         <tr>
-                            <th>'._('Nome automezzo').'</th>
-                            <th>'._('Targa').'</th>
-                            <th>'._('Q.tà').'</th>
+                            <th>'.tr('Nome automezzo').'</th>
+                            <th>'.tr('Targa').'</th>
+                            <th>'.tr('Q.tà').'</th>
                         </tr>';
 
             for ($i = 0; $i < count($rsa); ++$i) {
@@ -274,5 +274,5 @@ $("#categoria").change( function(){
 </script>
 
 <a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo _('Elimina'); ?>
+    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>

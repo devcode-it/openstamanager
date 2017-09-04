@@ -21,7 +21,7 @@ $idanagrafica = $record[0]['idanagrafica'];
     Form di inserimento riga documento
 */
 echo '
-<p>'.str_replace('_NUM_', $numero, _('Documento numero _NUM_')).'</p>
+<p>'.str_replace('_NUM_', $numero, tr('Documento numero _NUM_')).'</p>
 
 <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="addcontratto">
@@ -32,7 +32,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'._('Contratto').'", "name": "idcontratto", "required": 1, "values": "query=SELECT id, CONCAT(\'Contratto numero \', numero, \' - \', nome) AS descrizione, budget, (SELECT SUM(subtotale) FROM co_righe2_contratti WHERE idcontratto=co_contratti.id) AS subtot, (SELECT SUM(sconto) FROM co_righe2_contratti WHERE idcontratto=co_contratti.id) AS sconto FROM co_contratti WHERE idanagrafica='.prepare($idanagrafica).' AND id NOT IN (SELECT idcontratto FROM co_righe_documenti WHERE NOT idcontratto=NULL) AND idstato IN( SELECT id FROM co_staticontratti WHERE  fatturabile = 1 AND descrizione != \'Pagato\')", "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.text); $(\'#prezzo\').val($data.subtot); $(\'#sconto\').val($data.sconto);\"" ]}
+            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "required": 1, "values": "query=SELECT id, CONCAT(\'Contratto numero \', numero, \' - \', nome) AS descrizione, budget, (SELECT SUM(subtotale) FROM co_righe2_contratti WHERE idcontratto=co_contratti.id) AS subtot, (SELECT SUM(sconto) FROM co_righe2_contratti WHERE idcontratto=co_contratti.id) AS sconto FROM co_contratti WHERE idanagrafica='.prepare($idanagrafica).' AND id NOT IN (SELECT idcontratto FROM co_righe_documenti WHERE NOT idcontratto=NULL) AND idstato IN( SELECT id FROM co_staticontratti WHERE  fatturabile = 1 AND descrizione != \'Pagato\')", "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.text); $(\'#prezzo\').val($data.subtot); $(\'#sconto\').val($data.sconto);\"" ]}
         </div>
     </div>';
 
@@ -40,7 +40,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'._('Descrizione').'", "name": "descrizione", "required": 1 ]}
+            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "required": 1 ]}
         </div>
     </div>';
 
@@ -51,12 +51,12 @@ $idiva = $idiva ?: get_var('Iva predefinita');
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'._('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
         </div>';
 
 echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'._('Conto').'", "name": "idconto", "required": 1, "value": "'.$idconto.'", "ajax-source": "'.$conti.'" ]}
+            {[ "type": "select", "label": "'.tr('Conto').'", "name": "idconto", "required": 1, "value": "'.$idconto.'", "ajax-source": "'.$conti.'" ]}
         </div>
     </div>';
 
@@ -64,13 +64,13 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "number", "label": "'._('Costo unitario').'", "name": "prezzo", "required": 1, "icon-after": "&euro;" ]}
+            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "icon-after": "&euro;" ]}
         </div>';
 
 // Sconto unitario
 echo '
         <div class="col-md-6">
-            {[ "type": "number", "label": "'._('Sconto unitario').'", "name": "sconto", "icon-after": "choice|untprc" ]}
+            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "icon-after": "choice|untprc" ]}
         </div>
     </div>';
 
@@ -79,7 +79,7 @@ echo '
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> '._('Aggiungi').'</button>
+			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
 		</div>
     </div>
 </form>';

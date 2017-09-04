@@ -102,11 +102,11 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-4">
-			{[ "type": "date", "label": "<?php echo _('Data movimento'); ?>", "name": "data", "required": 1, "value": "-now-" ]}
+			{[ "type": "date", "label": "<?php echo tr('Data movimento'); ?>", "name": "data", "required": 1, "value": "-now-" ]}
 		</div>
 
 		<div class="col-md-8">
-			{[ "type": "text", "label": "<?php echo _('Causale'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo $descrizione ?>" ]}
+			{[ "type": "text", "label": "<?php echo tr('Causale'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo $descrizione ?>" ]}
 		</div>
 	</div>
 
@@ -124,9 +124,9 @@ include_once __DIR__.'/../../core.php';
     echo '
     <table class="table table-striped table-condensed table-hover table-bordered"
         <tr>
-            <th>'._('Conto').'</th>
-            <th width="20%">'._('Dare').'</th>
-            <th width="20%">'._('Avere').'</th>
+            <th>'.tr('Conto').'</th>
+            <th width="20%">'.tr('Dare').'</th>
+            <th width="20%">'.tr('Avere').'</th>
         </tr>';
 
     for ($i = 0; $i < 10; ++$i) {
@@ -182,7 +182,7 @@ include_once __DIR__.'/../../core.php';
     // Totale per controllare sbilancio
     echo '
             <tr>
-                <td align="right"><b>'._('Totale').':</b></td>';
+                <td align="right"><b>'.tr('Totale').':</b></td>';
 
     // Totale dare
     echo '
@@ -211,7 +211,7 @@ include_once __DIR__.'/../../core.php';
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo _('Aggiungi'); ?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 		</div>
 	</div>
 

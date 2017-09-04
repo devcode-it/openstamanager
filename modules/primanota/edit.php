@@ -15,7 +15,7 @@ include_once __DIR__.'/../../core.php';
         $rs = $dbo->fetchArray('SELECT dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($records[0]['iddocumento']));
         $modulo = ($rs[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto'; ?>
 		<div class="pull-left">
-			<a href="<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::getModule($modulo)['id'] ?>&id_record=<?php echo $records[0]['iddocumento'] ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo _('Torna alla fattura') ?></a>
+			<a href="<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::getModule($modulo)['id'] ?>&id_record=<?php echo $records[0]['iddocumento'] ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Torna alla fattura') ?></a>
 		</div>
 	<?php
 
@@ -23,7 +23,7 @@ include_once __DIR__.'/../../core.php';
     ?>
 
 	<div class="pull-right">
-		<button type="submit" id="btn-save" class="btn btn-success"><i class="fa fa-check"></i> <?php echo _('Salva modifiche'); ?></button>
+		<button type="submit" id="btn-save" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
 	</div>
 	<div class="clearfix"></div>
 	<br>
@@ -31,11 +31,11 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-2">
-			{[ "type": "date", "label": "<?php echo _('Data movimento'); ?>", "name": "data", "required": 1, "value": "$data$" ]}
+			{[ "type": "date", "label": "<?php echo tr('Data movimento'); ?>", "name": "data", "required": 1, "value": "$data$" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo _('Causale'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
+			{[ "type": "text", "label": "<?php echo tr('Causale'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
 		</div>
 	</div>
 
@@ -71,9 +71,9 @@ include_once __DIR__.'/../../core.php';
     echo '
     <table class="table table-striped table-condensed table-hover table-bordered"
         <tr>
-            <th>'._('Conto').'</th>
-            <th width="20%">'._('Dare').'</th>
-            <th width="20%">'._('Avere').'</th>
+            <th>'.tr('Conto').'</th>
+            <th width="20%">'.tr('Dare').'</th>
+            <th width="20%">'.tr('Avere').'</th>
         </tr>';
 
     for ($i = 0; $i < 10; ++$i) {
@@ -238,5 +238,5 @@ include_once __DIR__.'/../../core.php';
 </form>
 
 <a class="btn btn-danger ask" data-backto="record-list" data-idmastrino="<?php echo $records[0]['idmastrino'] ?>">
-    <i class="fa fa-trash"></i> <?php echo _('Elimina'); ?>
+    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>

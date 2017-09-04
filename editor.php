@@ -18,7 +18,7 @@ if (file_exists($docroot.'/include/custom/top.php')) {
 $module = Modules::getModule($id_module);
 
 if (empty($module) || empty($module['enabled'])) {
-    die(_('Accesso negato'));
+    die(tr('Accesso negato'));
 }
 
 $module_dir = $module['directory'];
@@ -34,20 +34,20 @@ if ($advanced_sessions) {
     echo '
 		<div class="box box-warning box-solid text-center info-active hide">
 			<div class="box-header with-border">
-				<h3 class="box-title"><i class="fa fa-warning"></i> '._('Attenzione!').'</h3>
+				<h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Attenzione!').'</h3>
 			</div>
 			<div class="box-body">
-				<p>'._('I seguenti utenti stanno visualizzando questa pagina').':</p>
+				<p>'.tr('I seguenti utenti stanno visualizzando questa pagina').':</p>
 				<ul class="list">
 				</ul>
-				<p>'._('Prestare attenzione prima di effettuare modifiche, poichè queste potrebbero essere perse a causa di multipli salvataggi contemporanei').'.</p>
+				<p>'.tr('Prestare attenzione prima di effettuare modifiche, poichè queste potrebbero essere perse a causa di multipli salvataggi contemporanei').'.</p>
 			</div>
 		</div>';
 }
 
 if (empty($records)) {
     echo '
-		<p>'._('Record non trovato').'.</p>';
+		<p>'.tr('Record non trovato').'.</p>';
 } else {
     /*
         * Lettura eventuali plugins modulo da inserire come tab
@@ -66,11 +66,11 @@ if (empty($records)) {
 // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
 if (file_exists($docroot.'/modules/'.$module_dir.'/add.php') && $module['permessi'] == 'rw') {
     echo '
-						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'._('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'"><i class="fa fa-plus"></i></button>';
+						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'"><i class="fa fa-plus"></i></button>';
 }
 echo '
 					</a>
-					<a class="back-btn" href="controller.php?id_module='.$id_module.'"><i class="fa fa-chevron-left"></i> '._("Torna all'elenco").'</a>
+					<a class="back-btn" href="controller.php?id_module='.$id_module.'"><i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'</a>
 				</li>';
 
     $plugins = $dbo->fetchArray('SELECT id, title FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1");
@@ -133,7 +133,7 @@ if (!empty($backto)) {
 
 echo '
 		<hr>
-		<a href="controller.php?id_module='.$id_module.'"><i class="fa fa-chevron-left"></i> '._('Indietro').'</a>';
+		<a href="controller.php?id_module='.$id_module.'"><i class="fa fa-chevron-left"></i> '.tr('Indietro').'</a>';
 
 /*
 * Widget laterali

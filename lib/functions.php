@@ -742,6 +742,7 @@ function tr($string, $parameters = [], $domain = null, $locale = null)
     return Translator::translate($string, $parameters, $domain, $locale);
 }
 
+// Retrocompatibilità
 if (!function_exists('_')) {
     function _($string, $parameters = [], $domain = null, $locale = null)
     {
@@ -775,7 +776,7 @@ function get_var($nome, $sezione = null, $descrizione = false, $again = false)
  *
  * @return string
  */
-function filter($param, $rule = 'text', $method = null)
+function filter($param, $method = null)
 {
     return Filter::getValue($param, $method = null);
 }
@@ -810,11 +811,25 @@ function get($param, $rule = 'text')
     return Filter::getValue($param, 'get');
 }
 
+/**
+ * Controlla se è in corso una richiesta AJAX generata dal progetto.
+ *
+ * @return bool
+ */
 function isAjaxRequest()
 {
     return \Whoops\Util\Misc::isAjaxRequest() && filter('ajax') !== null;
 }
 
+/**
+ * Esegue una somma precisa tra due interi/array.
+ *
+ * @param array|float $first
+ * @param array|float $second
+ * @param int         $decimals
+ *
+ * @return float
+ */
 function sum($first, $second = null, $decimals = null)
 {
     $first = (array) $first;

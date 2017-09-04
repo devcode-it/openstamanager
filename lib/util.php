@@ -302,121 +302,127 @@ if (!function_exists('isHTTPS')) {
     }
 }
 
-/**
- * Scurisce un determinato colore.
- *
- * @param unknown $color
- * @param number  $dif
- *
- * @return string
- */
-function color_darken($color, $dif = 20)
-{
-    $color = str_replace('#', '', $color);
-    if (strlen($color) != 6) {
-        return '000000';
-    }
-    $rgb = '';
-    for ($x = 0; $x < 3; ++$x) {
-        $c = hexdec(substr($color, (2 * $x), 2)) - $dif;
-        $c = ($c < 0) ? 0 : dechex($c);
-        $rgb .= (strlen($c) < 2) ? '0'.$c : $c;
-    }
-
-    return '#'.$rgb;
-}
-
-/**
- * Inverte il colore inserito.
- *
- * @see http://www.splitbrain.org/blog/2008-09/18-calculating_color_contrast_with_php
- *
- * @param string $start_colour
- *
- * @return string
- */
-function color_inverse($start_colour)
-{
-    $R1 = hexdec(substr($start_colour, 1, 2));
-    $G1 = hexdec(substr($start_colour, 3, 2));
-    $B1 = hexdec(substr($start_colour, 5, 2));
-    $R2 = 255;
-    $G2 = 255;
-    $B2 = 255;
-    $L1 = 0.2126 * pow($R1 / 255, 2.2) + 0.7152 * pow($G1 / 255, 2.2) + 0.0722 * pow($B1 / 255, 2.2);
-    $L2 = 0.2126 * pow($R2 / 255, 2.2) + 0.7152 * pow($G2 / 255, 2.2) + 0.0722 * pow($B2 / 255, 2.2);
-    if ($L1 > $L2) {
-        $lum = ($L1 + 0.05) / ($L2 + 0.05);
-    } else {
-        $lum = ($L2 + 0.05) / ($L1 + 0.05);
-    }
-    if ($lum >= 2.5) {
-        return '#fff';
-    } else {
-        return '#000';
-    }
-}
-
-/**
- * Restituisce l'insieme delle query presente nel file specificato.
- *
- * @param string $filename  Percorso per il file
- * @param string $delimiter Delimitatore delle query
- *
- * @since 2.3
- *
- * @return array
- */
-function readSQLFile($filename, $delimiter = ';')
-{
-    $inString = false;
-    $escChar = false;
-    $query = '';
-    $stringChar = '';
-    $queryLine = [];
-    $queryBlock = file_get_contents($filename);
-    $sqlRows = explode("\n", $queryBlock);
-    $delimiterLen = strlen($delimiter);
-    do {
-        $sqlRow = current($sqlRows)."\n";
-        $sqlRowLen = strlen($sqlRow);
-        for ($i = 0; $i < $sqlRowLen; ++$i) {
-            if ((substr(ltrim($sqlRow), $i, 2) === '--') && !$inString) {
-                break;
-            }
-            $znak = substr($sqlRow, $i, 1);
-            if ($znak === '\'' || $znak === '"') {
-                if ($inString) {
-                    if (!$escChar && $znak === $stringChar) {
-                        $inString = false;
-                    }
-                } else {
-                    $stringChar = $znak;
-                    $inString = true;
-                }
-            }
-            if ($znak === '\\' && substr($sqlRow, $i - 1, 2) !== '\\\\') {
-                $escChar = !$escChar;
-            } else {
-                $escChar = false;
-            }
-            if (substr($sqlRow, $i, $delimiterLen) === $delimiter) {
-                if (!$inString) {
-                    $query = trim($query);
-                    $delimiterMatch = [];
-                    if (preg_match('/^DELIMITER[[:space:]]*([^[:space:]]+)$/i', $query, $delimiterMatch)) {
-                        $delimiter = $delimiterMatch[1];
-                        $delimiterLen = strlen($delimiter);
-                    } else {
-                        $queryLine[] = $query;
-                    }
-                    $query = '';
-                    continue;
-                }
-            }
-            $query .= $znak;
+if (!function_exists('color_darken')) {
+    /**
+     * Scurisce un determinato colore.
+     *
+     * @param unknown $color
+     * @param number  $dif
+     *
+     * @return string
+     */
+    function color_darken($color, $dif = 20)
+    {
+        $color = str_replace('#', '', $color);
+        if (strlen($color) != 6) {
+            return '000000';
         }
-    } while (next($sqlRows) !== false);
+        $rgb = '';
+        for ($x = 0; $x < 3; ++$x) {
+            $c = hexdec(substr($color, (2 * $x), 2)) - $dif;
+            $c = ($c < 0) ? 0 : dechex($c);
+            $rgb .= (strlen($c) < 2) ? '0'.$c : $c;
+        }
 
-    return $queryLine;
+        return '#'.$rgb;
+    }
+}
+
+if (!function_exists('color_inverse')) {
+    /**
+     * Inverte il colore inserito.
+     *
+     * @see http://www.splitbrain.org/blog/2008-09/18-calculating_color_contrast_with_php
+     *
+     * @param string $start_colour
+     *
+     * @return string
+     */
+    function color_inverse($start_colour)
+    {
+        $R1 = hexdec(substr($start_colour, 1, 2));
+        $G1 = hexdec(substr($start_colour, 3, 2));
+        $B1 = hexdec(substr($start_colour, 5, 2));
+        $R2 = 255;
+        $G2 = 255;
+        $B2 = 255;
+        $L1 = 0.2126 * pow($R1 / 255, 2.2) + 0.7152 * pow($G1 / 255, 2.2) + 0.0722 * pow($B1 / 255, 2.2);
+        $L2 = 0.2126 * pow($R2 / 255, 2.2) + 0.7152 * pow($G2 / 255, 2.2) + 0.0722 * pow($B2 / 255, 2.2);
+        if ($L1 > $L2) {
+            $lum = ($L1 + 0.05) / ($L2 + 0.05);
+        } else {
+            $lum = ($L2 + 0.05) / ($L1 + 0.05);
+        }
+        if ($lum >= 2.5) {
+            return '#fff';
+        } else {
+            return '#000';
+        }
+    }
+}
+
+if (!function_exists('readSQLFile')) {
+    /**
+     * Restituisce l'insieme delle query presente nel file specificato.
+     *
+     * @param string $filename  Percorso per il file
+     * @param string $delimiter Delimitatore delle query
+     *
+     * @since 2.3
+     *
+     * @return array
+     */
+    function readSQLFile($filename, $delimiter = ';')
+    {
+        $inString = false;
+        $escChar = false;
+        $query = '';
+        $stringChar = '';
+        $queryLine = [];
+        $queryBlock = file_get_contents($filename);
+        $sqlRows = explode("\n", $queryBlock);
+        $delimiterLen = strlen($delimiter);
+        do {
+            $sqlRow = current($sqlRows)."\n";
+            $sqlRowLen = strlen($sqlRow);
+            for ($i = 0; $i < $sqlRowLen; ++$i) {
+                if ((substr(ltrim($sqlRow), $i, 2) === '--') && !$inString) {
+                    break;
+                }
+                $znak = substr($sqlRow, $i, 1);
+                if ($znak === '\'' || $znak === '"') {
+                    if ($inString) {
+                        if (!$escChar && $znak === $stringChar) {
+                            $inString = false;
+                        }
+                    } else {
+                        $stringChar = $znak;
+                        $inString = true;
+                    }
+                }
+                if ($znak === '\\' && substr($sqlRow, $i - 1, 2) !== '\\\\') {
+                    $escChar = !$escChar;
+                } else {
+                    $escChar = false;
+                }
+                if (substr($sqlRow, $i, $delimiterLen) === $delimiter) {
+                    if (!$inString) {
+                        $query = trim($query);
+                        $delimiterMatch = [];
+                        if (preg_match('/^DELIMITER[[:space:]]*([^[:space:]]+)$/i', $query, $delimiterMatch)) {
+                            $delimiter = $delimiterMatch[1];
+                            $delimiterLen = strlen($delimiter);
+                        } else {
+                            $queryLine[] = $query;
+                        }
+                        $query = '';
+                        continue;
+                    }
+                }
+                $query .= $znak;
+            }
+        } while (next($sqlRows) !== false);
+
+        return $queryLine;
+    }
 }

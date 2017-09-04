@@ -42,8 +42,8 @@ switch (post('op')) {
             ' prezzo_acquisto='.prepare($prezzo_acquisto).','.
             ' idiva_vendita='.prepare($idiva_vendita).','.
             ' gg_garanzia='.prepare($gg_garanzia).','.
-            ' volume='.prepare($idiva_vendita).','.
-            ' peso_lordo='.prepare($gg_garanzia).','.
+            ' volume='.prepare($volume).','.
+            ' peso_lordo='.prepare($peso_lordo).','.
             ' componente_filename='.prepare($componente_filename).','.
             ' attivo='.prepare($attivo).', '.
             ' note='.prepare($note).

@@ -887,6 +887,7 @@ UPDATE `zz_plugins` SET `enabled` = 0 WHERE `name` = 'Pianificazione fatturazion
 
 -- Fix del tipo di alcune impostazioni
 UPDATE `zz_settings` SET `tipo` = 'decimal' WHERE `nome` = 'Soglia minima per l\'applicazione della marca da bollo' OR `nome` = 'Importo marca da bollo';
+UPDATE `zz_settings` SET `valore` = '82' WHERE `nome` = 'Tipo di pagamento predefinito' AND `valore` = '20';
 
 -- Fix per le date in varie tabelle
 ALTER TABLE `co_documenti` CHANGE `data` `data` datetime;

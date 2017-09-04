@@ -771,7 +771,7 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
     // Aggiorno l'eventuale sconto gestendolo con le righe in fattura
     if (!empty($sconto[0]['sconto_globale'])) {
         if ($sconto[0]['tipo_sconto_globale'] == 'PRC') {
-            $subtotale = $dbo->fetchArray('SELECT SUM('.$tables['row'].'.subtotale - '.$tables['row'].'.sconto) AS imponibile FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record))[0]['imponibile'];
+            $subtotale = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS imponibile FROM (SELECT '.$tables['row'].'.subtotale,  '.$tables['row'].'.sconto FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record).((!isset($options['idgruppo']) || !empty($options['idgruppo'])) ? ' GROUP BY idgruppo' : '').') AS t')[0]['imponibile'];
             $subtotale = -$subtotale / 100 * $sconto[0]['sconto_globale'];
 
             $descrizione = $descrizione.' '.Translator::numberToLocale($sconto[0]['sconto_globale']).'%';

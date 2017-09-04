@@ -44,8 +44,26 @@ switch (post('op')) {
 
         $query = 'INSERT INTO co_documenti (numero, numero_esterno, idanagrafica, idconto, idtipodocumento, idpagamento, data, idstatodocumento, idsede) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idconto).', '.prepare($idtipodocumento).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza'), (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica=".prepare($idanagrafica).') )';
         $dbo->query($query);
-
         $id_record = $dbo->lastInsertedID();
+
+        if ($dir == 'entrata') {
+            $listino = $dbo->fetchArray('SELECT prc_guadagno FROM mg_listini WHERE id = (SELECT idlistino FROM an_anagrafiche WHERE idanagrafica = '.prepare($idanagrafica).')');
+
+            if (!empty($listino)) {
+                $dbo->update('co_documenti', [
+                    'tipo_sconto_globale' => 'PRC',
+                    'sconto_globale' => abs($listino[0]['prc_guadagno']),
+                ], ['id' => $id_record]);
+
+                aggiorna_sconto([
+                    'parent' => 'co_documenti',
+                    'row' => 'co_righe_documenti',
+                ], [
+                    'parent' => 'id',
+                    'row' => 'iddocumento',
+                ], $id_record);
+            }
+        }
 
         $_SESSION['infos'][] = str_replace('_NUM_', $numero, tr('Aggiunta fattura numero _NUM_!'));
 

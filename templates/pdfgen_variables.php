@@ -105,9 +105,30 @@ foreach ($replace as $prefix => $values) {
     $report = str_replace(array_keys($values), array_values($values), $report);
 }
 
+// Aggiunta del footer standard
+if (!str_contains($body, '<page_footer>') && !str_contains($report, '<page_footer>')) {
+    $report .= '
+<!-- Footer -->
+<page_footer>
+    $pagination$
+</page_footer>';
+}
+
 // Valori aggiuntivi per la sostituzione
 $values = [
     'dicitura_fissa_fattura' => get_var('Dicitura fissa fattura'),
+    'pagination' => '
+<table style="color:#aaa; font-size:10px;">
+<tr>
+    <td align="left" style="width:97mm;">
+        '.tr('Stampato con OpenSTAManager').'
+    </td>
+
+    <td align="right" style="width:97mm;">
+        '.str_replace(['_PAGE_', '_TOTAL_'], ['[[page_cu]]', '[[page_nb]]'], tr('Pagina _PAGE_ di _TOTAL_')).'
+    </td>
+</tr>
+</table>',
 ];
 
 foreach ($values as $key => $value) {
@@ -118,22 +139,3 @@ foreach ($values as $key => $value) {
 // Sostituisce alle variabili del template i valori
 $body = str_replace(array_keys($values), array_values($values), $body);
 $report = str_replace(array_keys($values), array_values($values), $report);
-
-// Aggiunta del footer standard
-if (!str_contains($body, '<page_footer>') && !str_contains($report, '<page_footer>')) {
-    $report .= '
-<!-- Footer -->
-<page_footer>
-	<table style="color:#aaa; font-size:10px;">
-		<tr>
-			<td align="left" style="width:97mm;">
-				'.tr('Stampato con OpenSTAManager').'
-			</td>
-
-			<td align="right" style="width:97mm;">
-				'.str_replace(['_PAGE_', '_TOTAL_'], ['[[page_cu]]', '[[page_nb]]'], tr('Pagina _PAGE_ di _TOTAL_')).'
-			</td>
-		</tr>
-	</table>
-</page_footer>';
-}

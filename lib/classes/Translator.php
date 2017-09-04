@@ -60,7 +60,7 @@ class Translator extends Util\Singleton
      */
     protected function addLocales($path)
     {
-        if (!empty($this->$translator)) {
+        if (!empty($this->translator)) {
             // Individua i linguaggi disponibili
             $dirs = glob($path.DIRECTORY_SEPARATOR.'*', GLOB_ONLYDIR);
             foreach ($dirs as $dir) {
@@ -126,7 +126,7 @@ class Translator extends Util\Singleton
     {
         if (!empty($locale) && $this->isLocaleAvailable($locale)) {
             if (!empty($this->translator)) {
-                self::$translator->setLocale($locale);
+                $this->translator->setLocale($locale);
             }
             $this->locale = $locale;
         }

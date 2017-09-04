@@ -176,7 +176,7 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
             }
 
             // Icona
-            elseif (preg_match('/^icontr(.+?)$/', trim($field), $m)) {
+            elseif (preg_match('/^icon_(.+?)$/', trim($field), $m)) {
                 $value = '<i class="'.$r[$field].'"></i> <small>'.$r['icon_title_'.$m[1]].'</small>';
             }
 

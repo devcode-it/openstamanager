@@ -111,9 +111,10 @@ Translator::setLocaleFormatter($formatter);
 
 // Istanziamento del gestore delle traduzioni del progetto
 $lang = !empty($lang) ? $lang : 'it';
-$translator = new Translator($lang);
+$translator = Translator::getInstance();
 $translator->addLocalePath($docroot.'/locale');
 $translator->addLocalePath($docroot.'/modules/*/locale');
+$translator->setLocale($lang);
 
 // Individuazione di versione e revisione del progetto
 $version = Update::getVersion();

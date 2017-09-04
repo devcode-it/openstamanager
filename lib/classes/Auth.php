@@ -377,6 +377,7 @@ class Auth extends \Util\Singleton
 
         if (!isset(self::$is_brute)) {
             $results = $database->fetchArray('SELECT COUNT(*) AS tot FROM zz_logs WHERE ip = '.prepare(get_client_ip()).' AND stato = '.prepare(self::getStatus()['failed']['code']).' AND DATE_ADD(created_at, INTERVAL '.self::$brute['timeout'].' SECOND) >= NOW()');
+
             self::$is_brute = $results[0]['tot'] > self::$brute['attemps'];
         }
 

@@ -328,6 +328,30 @@ if (!empty($records[0]['idcontratto_prev'])) {
 }
 ?>
 
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#data_accettazione').on("dp.change", function(){
+            if($(this).val()){
+                $('#data_rifiuto').attr('disabled', true);
+            }else{
+                $('#data_rifiuto').attr('disabled', false);
+            }
+        });
+
+        $('#data_rifiuto').on("dp.change", function(){
+            console.log($(this).val());
+            if($(this).val()){
+                $('#data_accettazione').attr('disabled', true);
+            }else{
+                $('#data_accettazione').attr('disabled', false);
+            }
+        });
+
+        $("#data_accettazione").trigger("dp.change");
+        $("#data_rifiuto").trigger("dp.change");
+    });
+</script>
+
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo _('Elimina'); ?>
 </a>

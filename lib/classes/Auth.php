@@ -38,6 +38,8 @@ class Auth extends \Util\Singleton
         'attemps' => 3,
         'timeout' => 180,
     ];
+    /** @var bool Informazioni riguardanti la condizione brute-force */
+    protected static $is_brute;
 
     /** @var array Informazioni riguardanti l'utente autenticato */
     protected $infos;
@@ -161,7 +163,7 @@ class Auth extends \Util\Singleton
         // Controllo in automatico per futuri cambiamenti dell'algoritmo di password
         if ($rehash) {
             $database = Database::getConnection();
-            $database->update('zz_users', ['password' => self::hashPassword($password)], ['id_utente' => $user_id]);
+            $database->update('zz_users', ['password' => self::hashPassword($password)], ['id' => $user_id]);
         }
 
         return $result;
@@ -195,7 +197,7 @@ class Auth extends \Util\Singleton
         $database = Database::getConnection();
 
         try {
-            $results = $database->fetchArray('SELECT id AS id_utente, idanagrafica, username, (SELECT nome FROM zz_groups WHERE id=idgruppo) AS gruppo FROM zz_users WHERE id = '.prepare($user_id).' AND enabled = 1 LIMIT 1', false, ['session' => false]);
+            $results = $database->fetchArray('SELECT id AS id_utente, idanagrafica, username, (SELECT nome FROM zz_groups WHERE zz_groups.id=zz_users.idgruppo) AS gruppo FROM zz_users WHERE id = '.prepare($user_id).' AND enabled = 1 LIMIT 1', false, ['session' => false]);
 
             if (!empty($results)) {
                 $results[0]['is_admin'] = ($results[0]['gruppo'] == 'Amministratori');
@@ -361,7 +363,7 @@ class Auth extends \Util\Singleton
     }
 
     /**
-     * Controlla se sono in corso molti tentativi di accesso (possibile brute-forcing).
+     * Controlla se sono in corso molti tentativi di accesso (possibile brute-forcing in corso).
      *
      * @return bool
      */
@@ -369,18 +371,29 @@ class Auth extends \Util\Singleton
     {
         $database = Database::getConnection();
 
-        $results = $database->fetchArray('SELECT COUNT(*) AS tot FROM zz_logs WHERE ip = '.prepare(get_client_ip()).' AND stato = '.prepare(self::getStatus()['failed']['code']).' AND DATE_ADD(created_at, INTERVAL '.self::$brute['timeout'].' SECOND) >= NOW()');
+        if ($database->isInstalled()) {
+            return false;
+        }
 
-        return $results[0]['tot'] > self::$brute['attemps'];
+        if (!isset(self::$is_brute)) {
+            $results = $database->fetchArray('SELECT COUNT(*) AS tot FROM zz_logs WHERE ip = '.prepare(get_client_ip()).' AND stato = '.prepare(self::getStatus()['failed']['code']).' AND DATE_ADD(created_at, INTERVAL '.self::$brute['timeout'].' SECOND) >= NOW()');
+            self::$is_brute = $results[0]['tot'] > self::$brute['attemps'];
+        }
+
+        return self::$is_brute;
     }
 
     /**
-     * Restituisce il tempo di attesa rimanente per lo sblocco automatico dellla protezione contro attacchi brute-forc.
+     * Restituisce il tempo di attesa rimanente per lo sblocco automatico dellla protezione contro attacchi brute-force.
      *
      * @return int
      */
     public static function getBruteTimeout()
     {
+        if (self::isBrute()) {
+            return 0;
+        }
+
         $database = Database::getConnection();
 
         $results = $database->fetchArray('SELECT TIME_TO_SEC(TIMEDIFF(DATE_ADD(created_at, INTERVAL '.self::$brute['timeout'].' SECOND), NOW())) AS diff FROM zz_logs WHERE ip = '.prepare(get_client_ip()).' AND stato = '.prepare(self::getStatus()['failed']['code']).' AND DATE_ADD(created_at, INTERVAL '.self::$brute['timeout'].' SECOND) >= NOW() ORDER BY created_at DESC LIMIT 1');

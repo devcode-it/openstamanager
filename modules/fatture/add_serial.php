@@ -5,16 +5,16 @@ include_once __DIR__.'/../../core.php';
 $module = Modules::getModule($id_module);
 
 // Controllo sulla direzione monetaria
-$entrate = [
-    'Fatture di vendita',
-    'Ddt di vendita',
-    'Ordini cliente',
+$uscite = [
+    'Fatture di acquisto',
+    'Ddt di acquisto',
+    'Ordini fornitore',
 ];
 
-if (in_array($module['name'], $entrate)) {
-    $dir = 'entrata';
-} else {
+if (in_array($module['name'], $uscite)) {
     $dir = 'uscita';
+} else {
+    $dir = 'entrata';
 }
 
 $data = [
@@ -51,10 +51,9 @@ $table = $data[$modulo]['table'];
 $id = $data[$modulo]['id'];
 $riga = str_replace('id', 'id_riga_', $id);
 
-$idarticolo = get('idarticolo');
 $idriga = get('idriga');
 
-$rs = $dbo->fetchArray('SELECT mg_articoli.codice, mg_articoli.descrizione, '.$table.'.qta FROM '.$table.' INNER JOIN mg_articoli ON '.$table.'.idarticolo=mg_articoli.id WHERE '.$table.'.'.$id.'='.prepare($id_record).' AND '.$table.'.id='.prepare($idriga));
+$rs = $dbo->fetchArray('SELECT mg_articoli.id AS idarticolo, mg_articoli.codice, mg_articoli.descrizione, '.$table.'.qta FROM '.$table.' INNER JOIN mg_articoli ON '.$table.'.idarticolo=mg_articoli.id WHERE '.$table.'.'.$id.'='.prepare($id_record).' AND '.$table.'.id='.prepare($idriga));
 
 echo '
 <p>'.tr('Articolo').': '.$rs[0]['codice'].' - '.$rs[0]['descrizione'].'</p>
@@ -63,7 +62,7 @@ echo '
     <input type="hidden" name="op" value="add_serial">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="idriga" value="'.$idriga.'">
-    <input type="hidden" name="idarticolo" value="'.$idarticolo.'">
+    <input type="hidden" name="idarticolo" value="'.$rs[0]['idarticolo'].'">
     <input type="hidden" name="dir" value="'.$dir.'">';
 
 $info = $dbo->fetchArray('SELECT * FROM mg_prodotti WHERE serial IS NOT NULL AND '.$riga.'='.prepare($idriga));

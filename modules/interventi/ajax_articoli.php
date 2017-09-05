@@ -61,19 +61,6 @@ if (!empty($rs)) {
                 echo '
             <br>'.tr('SN').': '.implode(', ', $serials);
             }
-        } else {
-            if ($r['lotto'] != '') {
-                echo '
-                <br>'.tr('Lotto').': '.$r['lotto'];
-            }
-            if ($r['serial'] != '') {
-                echo '
-                <br>'.tr('SN').': '.$r['serial'];
-            }
-            if ($r['altro'] != '') {
-                echo '
-                <br>'.$r['altro'];
-            }
         }
 
         echo '

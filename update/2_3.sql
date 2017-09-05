@@ -963,3 +963,4 @@ ALTER TABLE `co_righe_documenti` DROP `serial`, DROP `altro`, DROP `lotto`;
 ALTER TABLE `mg_articoli_interventi` DROP `serial`, DROP `altro`, DROP `lotto`;
 ALTER TABLE `dt_righe_ddt` DROP `serial`, DROP `altro`, DROP `lotto`;
 ALTER TABLE `or_righe_ordini` DROP `serial`, DROP `altro`, DROP `lotto`;
+ALTER TABLE `co_righe_preventivi` DROP `serial`, DROP `altro`, DROP `lotto`;

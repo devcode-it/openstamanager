@@ -427,15 +427,15 @@ switch (post('op')) {
         $idarticolo_originale = post('idarticolo_originale');
 
         // Leggo la quantità attuale nell'intervento
-        $q = 'SELECT qta, idautomezzo, idimpianto, serial FROM mg_articoli_interventi WHERE idarticolo='.prepare($idarticolo_originale).' AND idintervento='.prepare($id_record);
+        $q = 'SELECT qta, idautomezzo, idimpianto FROM mg_articoli_interventi WHERE idarticolo='.prepare($idarticolo_originale).' AND idintervento='.prepare($id_record);
         $rs = $dbo->fetchArray($q);
-        $qta = $rs[0]['qta'];
+        $old_qta = $rs[0]['qta'];
         $idimpianto = $rs[0]['idimpianto'];
         $idautomezzo = $rs[0]['idautomezzo'];
 
-        $serials = array_column($rs, 'serial');
+        $serials = array_column($dbo->select('mg_prodotti', 'serial', ['id_riga_intervento' => $idriga]), 'serial');
 
-        add_movimento_magazzino($idarticolo_originale, $qta, ['idautomezzo' => $idautomezzo, 'idintervento' => $id_record]);
+        add_movimento_magazzino($idarticolo_originale, $old_qta, ['idautomezzo' => $idautomezzo, 'idintervento' => $id_record]);
 
         // Elimino questo articolo dall'intervento
         $dbo->query('DELETE FROM mg_articoli_interventi WHERE id='.prepare($idriga));
@@ -467,12 +467,17 @@ switch (post('op')) {
         $dbo->query('UPDATE in_interventi SET idautomezzo='.prepare($idautomezzo).' WHERE id='.prepare($id_record).' '.Modules::getAdditionalsQuery($id_module));
 
         $rsart = $dbo->fetchArray('SELECT abilita_serial, prezzo_acquisto FROM mg_articoli WHERE id='.prepare($idarticolo));
-        $qta_in = !empty($rsart[0]['abilita_serial']) ? $qta : 1;
         $prezzo_acquisto = $rsart[0]['prezzo_acquisto'];
 
-        for ($i = 0; $i < $qta_in; ++$i) {
-            // Aggiunto il collegamento fra l'articolo e l'intervento
-            $dbo->query('INSERT INTO mg_articoli_interventi(idarticolo, idintervento, idimpianto, idautomezzo, descrizione, prezzo_vendita, prezzo_acquisto, sconto, sconto_unitario, tipo_sconto, idiva_vendita, qta, um, abilita_serial, serial) VALUES ('.prepare($idarticolo).', '.prepare($id_record).', '.(empty($idimpianto) ? 'NULL' : prepare($idimpianto)).', '.prepare($idautomezzo).', '.prepare($descrizione).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', (SELECT idiva_vendita FROM mg_articoli WHERE id='.prepare($idarticolo).'), '.prepare($qta).', '.prepare($um).', '.prepare($rsart[0]['abilita_serial']).', '.prepare(!empty($serials[$i]) ? $serials[$i] : '').')');
+        // Aggiunto il collegamento fra l'articolo e l'intervento
+        $idriga = $dbo->query('INSERT INTO mg_articoli_interventi(idarticolo, idintervento, idimpianto, idautomezzo, descrizione, prezzo_vendita, prezzo_acquisto, sconto, sconto_unitario, tipo_sconto, idiva_vendita, qta, um, abilita_serial) VALUES ('.prepare($idarticolo).', '.prepare($id_record).', '.(empty($idimpianto) ? 'NULL' : prepare($idimpianto)).', '.prepare($idautomezzo).', '.prepare($descrizione).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', (SELECT idiva_vendita FROM mg_articoli WHERE id='.prepare($idarticolo).'), '.prepare($qta).', '.prepare($um).', '.prepare($rsart[0]['abilita_serial']).')');
+
+        if (!empty($serials)) {
+            if ($old_qta > $qta) {
+                $serials = array_slice($serials, 0, $qta);
+            }
+
+            $dbo->sync('mg_prodotti', ['id_riga_intervento' => $idriga, 'dir' => 'uscita', 'id_articolo' => $idarticolo], ['serial' => $serials]);
         }
 
         link_componente_to_articolo($id_record, $idimpianto, $idarticolo, $qta);
@@ -515,7 +520,7 @@ switch (post('op')) {
             }
         }
 
-        $dbo->sync('mg_prodotti', ['id_riga_intervento' => $idriga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => $serials]);
+        $dbo->sync('mg_prodotti', ['id_riga_intervento' => $idriga, 'dir' => 'uscita', 'id_articolo' => $idarticolo], ['serial' => $serials]);
 
         break;
 

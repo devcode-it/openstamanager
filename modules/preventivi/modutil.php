@@ -11,7 +11,7 @@ include_once __DIR__.'/../../core.php';
  * $qta			float		quantità dell'articolo nell'ordine
  * $prezzo			float		prezzo totale degli articoli (prezzounitario*qtà).
  */
-function add_articolo_inpreventivo($idpreventivo, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $lotto = '', $serial = '', $altro = '')
+function add_articolo_inpreventivo($idpreventivo, $idarticolo, $descrizione, $idiva, $qta, $prezzo)
 {
     global $dbo;
     global $dir;
@@ -34,18 +34,7 @@ function add_articolo_inpreventivo($idpreventivo, $idarticolo, $descrizione, $id
         $iva = $prezzo / 100 * $rs2[0]['percentuale'];
         $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
 
-        // Verifico se nell'ordine c'è già questo articolo allo stesso prezzo unitario
-        $rs = $dbo->fetchArray('SELECT id, qta FROM co_righe_preventivi WHERE idarticolo='.prepare($idarticolo).' AND idpreventivo='.prepare($idpreventivo).' AND lotto='.prepare($lotto).' AND serial='.prepare($serial).' AND altro='.prepare($altro));
-
-        // Inserisco la riga nell'ordine: se nell'ordine c'è già questo articolo incremento la quantità...
-        if (sizeof($rs) > 0) {
-            $dbo->query('UPDATE co_righe_preventivi SET qta=qta+'.$qta.', subtotale=subtotale+'.$prezzo.' WHERE id='.prepare($rs[0]['id']));
-        }
-
-        // ...altrimenti inserisco la scorta nell'ordine da zero
-        else {
-            $dbo->query('INSERT INTO co_righe_preventivi(idpreventivo, idarticolo, idiva, iva, iva_indetraibile, descrizione, subtotale, um, qta, lotto, serial, altro, `order`) VALUES ('.prepare($idpreventivo).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($um).', '.prepare($qta).', '.prepare($lotto).', '.prepare($serial).', '.prepare($altro).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_preventivi AS t WHERE idpreventivo='.prepare($idpreventivo).'))');
-        }
+        $dbo->query('INSERT INTO co_righe_preventivi(idpreventivo, idarticolo, idiva, iva, iva_indetraibile, descrizione, subtotale, um, qta, `order`) VALUES ('.prepare($idpreventivo).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_preventivi AS t WHERE idpreventivo='.prepare($idpreventivo).'))');
     }
 
     /*

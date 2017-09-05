@@ -3,59 +3,6 @@
 include_once __DIR__.'/../../core.php';
 
 /**
- * Questa funzione aggiunge un articolo nell'ordine. E' comoda quando si devono inserire
- * degli interventi con articoli collegati o preventivi che hanno interventi con articoli collegati!
- * $idpreventivo	integer		id del preventivo
- * $idarticolo		integer		id dell'articolo da inserire nel preventivo
- * $idiva			integer		id del codice iva associato all'articolo
- * $qta			float		quantità dell'articolo nell'ordine
- * $prezzo			float		prezzo totale degli articoli (prezzounitario*qtà).
- */
-function add_articolo_inpreventivo($idpreventivo, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $lotto = '', $serial = '', $altro = '')
-{
-    global $dbo;
-    global $dir;
-
-    // Lettura unità di misura dell'articolo
-    // $query = "SELECT valore FROM mg_unitamisura WHERE id=(SELECT idum FROM mg_articoli WHERE id='".$idarticolo."')";
-    // $rs = $dbo->fetchArray($query);
-    // $um = $rs[0]['valore'];
-
-    $query = 'SELECT um FROM mg_articoli WHERE id='.prepare($idarticolo);
-    $rs = $dbo->fetchArray($query);
-    $um = $rs[0]['um'];
-
-    /*
-        Ordine cliente
-    */
-    if ($dir == 'entrata') {
-        // Lettura iva dell'articolo
-        $rs2 = $dbo->fetchArray('SELECT percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva));
-        $iva = $prezzo / 100 * $rs2[0]['percentuale'];
-        $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
-
-        // Verifico se nell'ordine c'è già questo articolo allo stesso prezzo unitario
-        $rs = $dbo->fetchArray('SELECT id, qta FROM co_righe_preventivi WHERE idarticolo='.prepare($idarticolo).' AND idpreventivo='.prepare($idpreventivo).' AND lotto='.prepare($lotto).' AND serial='.prepare($serial).' AND altro='.prepare($altro));
-
-        // Inserisco la riga nell'ordine: se nell'ordine c'è già questo articolo incremento la quantità...
-        if (sizeof($rs) > 0) {
-            $dbo->query('UPDATE co_righe_preventivi SET qta=qta+'.$qta.', subtotale=subtotale+'.$prezzo.' WHERE id='.prepare($rs[0]['id']));
-        }
-
-        // ...altrimenti inserisco la scorta nell'ordine da zero
-        else {
-            $dbo->query('INSERT INTO co_righe_preventivi(idpreventivo, idarticolo, idiva, iva, iva_indetraibile, descrizione, subtotale, um, qta, lotto, serial, altro, `order`) VALUES ('.prepare($idpreventivo).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($um).', '.prepare($qta).', '.prepare($lotto).', '.prepare($serial).', '.prepare($altro).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_preventivi AS t WHERE idpreventivo='.prepare($idpreventivo).'))');
-        }
-    }
-
-    /*
-        Ordine fornitore
-    */
-    elseif ($dir == 'uscita') {
-    }
-}
-
-/**
  * Questa funzione rimuove un articolo dal ddt data e lo riporta in magazzino
  * 	$idarticolo		integer		codice dell'articolo da scollegare dall'ordine
  * 	$idordine	 	integer		codice dell'ordine da cui scollegare l'articolo.

@@ -138,18 +138,6 @@ if (!empty($rsi)) {
                 // Visualizzo lo sconto su ore o km se c'è
                 $sconto = ($r['sconto'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['sconto'] * $r['qta']).'</span>' : '';
 
-                // Info extra (lotto, serial, altro)
-                $extra = [];
-                if (!empty($r['lotto'])) {
-                    $extra[] = '<b>'.tr('Lotto').'</b>: '.$r['lotto'];
-                }
-                if (!empty($r['serial'])) {
-                    $extra[] = '<b>'.tr('Serial').'</b>: '.$r['serial'];
-                }
-                if (!empty($r['altro'])) {
-                    $extra[] = '<b>'.tr('Altro').'</b>: '.$r['altro'];
-                }
-
                 echo '
                 <tr>
                     <td>

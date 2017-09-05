@@ -144,7 +144,7 @@ if (!empty($rs)) {
         // Q.tà da evadere
         echo '
         <td>
-            {[ "type": "number", "name": "qta_da_evadere[]", "id": "qta_'.$i.'", "required": 1, "value": "'.$r['qta_rimanente'].'", "extra" : "onchange=\"ricalcola_subtotale_riga('.$i.');\"" ]}
+            {[ "type": "number", "name": "qta_da_evadere[]", "id": "qta_'.$i.'", "required": 1, "value": "'.$r['qta_rimanente'].'", "extra" : "onchange=\"ricalcola_subtotale_riga('.$i.');\"", "decimals": "qta|0" ]}
         </td>';
 
         // Subtotale

@@ -665,7 +665,7 @@ function rimuovi_articolo_dafattura($idarticolo, $iddocumento, $idrigadocumento)
     global $dir;
 
     // Leggo la quantità di questo articolo in fattura
-    $query = 'SELECT qta, idintervento, idpreventivo, idordine, idddt, subtotale, descrizione, lotto, serial, altro FROM co_righe_documenti WHERE id='.prepare($idrigadocumento);
+    $query = 'SELECT qta, idintervento, idpreventivo, idordine, idddt, subtotale, descrizione FROM co_righe_documenti WHERE id='.prepare($idrigadocumento);
     $rs = $dbo->fetchArray($query);
     $idintervento = $rs[0]['idintervento'];
     $idpreventivo = $rs[0]['idpreventivo'];
@@ -701,26 +701,18 @@ function rimuovi_articolo_dafattura($idarticolo, $iddocumento, $idrigadocumento)
             }
         }
 
+        // TODO: possibile ambiguità tra righe molto simili tra loro
         // Se l'articolo è stato inserito in fattura tramite un ddt devo sanare la qta_evasa
         if (!empty($idddt)) {
-            $dbo->query('UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$qta.' WHERE qta='.prepare($qta).' AND idarticolo='.prepare($idarticolo).' AND idddt='.prepare($idddt).' AND  lotto='.prepare($rs[0]['lotto']).' AND serial='.prepare($rs[0]['serial']).' AND altro='.prepare($rs[0]['altro']));
+            $dbo->query('UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$qta.' WHERE qta='.prepare($qta).' AND idarticolo='.prepare($idarticolo).' AND idddt='.prepare($idddt));
         }
 
+        // TODO: possibile ambiguità tra righe molto simili tra loro
         // Se l'articolo è stato inserito in fattura tramite un ordine devo sanare la qta_evasa
         if (!empty($idordine)) {
             $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$qta.' WHERE qta='.prepare($qta).' AND idarticolo='.prepare($idarticolo).' AND idordine='.prepare($idordine));
         }
     }
-
-    if ($dir == 'uscita') {
-        // Elimino eventuali articoli caricati in mg_prodotti esclusivamente con la fattura di acquisto
-        $query = 'SELECT lotto, serial, altro, id_articolo FROM co_righe_documenti WHERE id='.prepare($idrigadocumento).' AND idddt = 0 AND idordine = 0';
-        $rs = $dbo->fetchArray($query);
-        if (sizeof($rs) > 0) {
-            $dbo->query('DELETE FROM `mg_prodotti` WHERE lotto='.prepare($rs[0]['lotto']).' AND serial='.prepare($rs[0]['serial']).' AND altro='.prepare($rs[0]['altro']).' AND  id_articolo='.prepare($rs[0]['id_articolo']));
-        }
-    }
-
     // Elimino la riga dal documento
     $dbo->query('DELETE FROM `co_righe_documenti` WHERE id='.prepare($idrigadocumento).' AND iddocumento='.prepare($iddocumento));
 

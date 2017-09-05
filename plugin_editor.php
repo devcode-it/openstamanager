@@ -60,6 +60,7 @@ if (!empty($info['script'])) {
     // Scelta del redirect dopo un submit
     if (!empty($backto)) {
         $hash = filter('hash');
+        $hash = !starts_with($hash, '#') ? '#'.$hash : $hash;
         if ($backto == 'record-edit') {
             redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_parent.$hash);
             exit();

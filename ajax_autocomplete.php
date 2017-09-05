@@ -240,7 +240,7 @@ switch ($module_name) {
         // Elenco lotti in base all'articolo
         elseif ($op == 'getlotti') {
             $idarticolo = $get['idarticolo'];
-            $q = 'SELECT DISTINCT(lotto) FROM mg_prodotti WHERE idarticolo="'.$idarticolo.'" '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY lotto ASC';
+            $q = 'SELECT DISTINCT(lotto) FROM mg_prodotti WHERE id_articolo="'.$idarticolo.'" '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY lotto ASC';
             $rs = $dbo->fetchArray($q);
             $n = sizeof($rs);
 
@@ -249,7 +249,7 @@ switch ($module_name) {
             for ($i = 0; $i < $n; ++$i) {
                 $dir = 'entrata';
 
-                $qs = 'SELECT COUNT(serial) AS num_seriali FROM mg_prodotti WHERE idarticolo='.prepare($idarticolo).' AND lotto='.prepare($rs[$i]['lotto']).' '.
+                $qs = 'SELECT COUNT(serial) AS num_seriali FROM mg_prodotti WHERE id_articolo='.prepare($idarticolo).' AND lotto='.prepare($rs[$i]['lotto']).' '.
                 'AND (serial NOT IN(SELECT serial FROM co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento =  co_documenti.id INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id   WHERE lotto='.prepare($rs[$i]['lotto']).' AND serial=mg_prodotti.serial AND dir = '.prepare($dir).') '.
                 'AND  serial NOT IN(SELECT serial FROM or_righe_ordini INNER JOIN or_ordini ON or_righe_ordini.idordine =  or_ordini.id INNER JOIN or_tipiordine ON or_ordini.idtipoordine = or_tipiordine.id WHERE lotto='.prepare($rs[$i]['lotto']).' AND serial=mg_prodotti.serial AND dir = '.prepare($dir).') '.
                 'AND  serial NOT IN(SELECT serial FROM dt_righe_ddt INNER JOIN dt_ddt ON dt_righe_ddt.idddt =  dt_ddt.id INNER JOIN dt_tipiddt ON dt_ddt.idtipoddt = dt_tipiddt.id  WHERE lotto='.prepare($rs[$i]['lotto']).' AND serial=mg_prodotti.serial AND dir = '.prepare($dir).') '.
@@ -283,7 +283,7 @@ switch ($module_name) {
             }
 
             if ($dir == 'entrata') {
-                $q = 'SELECT DISTINCT(serial) FROM mg_prodotti WHERE idarticolo='.prepare($idarticolo).' AND lotto='.prepare($lotto).
+                $q = 'SELECT DISTINCT(serial) FROM mg_prodotti WHERE id_articolo='.prepare($idarticolo).' AND lotto='.prepare($lotto).
                 ' AND (serial NOT IN(SELECT serial FROM co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento =  co_documenti.id INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento = co_tipidocumento.id   WHERE lotto='.prepare($lotto).' AND serial=mg_prodotti.serial AND dir = '.prepare($dir).')'.
                 ' AND serial NOT IN(SELECT serial FROM or_righe_ordini INNER JOIN or_ordini ON or_righe_ordini.idordine =  or_ordini.id INNER JOIN or_tipiordine ON or_ordini.idtipoordine = or_tipiordine.id WHERE lotto='.prepare($lotto).' AND serial=mg_prodotti.serial AND dir = '.prepare($dir).') '.
                 ' AND  serial NOT IN(SELECT serial FROM dt_righe_ddt INNER JOIN dt_ddt ON dt_righe_ddt.idddt =  dt_ddt.id INNER JOIN dt_tipiddt ON dt_ddt.idtipoddt = dt_tipiddt.id  WHERE lotto='.prepare($lotto).' AND serial=mg_prodotti.serial AND dir = '.prepare($dir).') '.
@@ -292,7 +292,7 @@ switch ($module_name) {
                 $rs = $dbo->fetchArray($q);
                 $n = sizeof($rs);
             } else {
-                $q = 'SELECT DISTINCT(serial) FROM mg_prodotti WHERE idarticolo='.prepare($idarticolo).' AND lotto='.prepare($lotto).' AND (serial NOT IN(SELECT serial FROM co_righe_documenti   WHERE lotto='.prepare($lotto).' AND serial=mg_prodotti.serial ) AND serial NOT IN(SELECT serial FROM or_righe_ordini WHERE lotto='.prepare($lotto).' AND serial=mg_prodotti.serial)    AND  serial NOT IN(SELECT serial FROM dt_righe_ddt WHERE lotto='.prepare($lotto).' AND serial=mg_prodotti.serial)   AND   serial NOT IN(SELECT serial FROM mg_articoli_interventi WHERE lotto='.prepare($lotto).' AND serial=mg_prodotti.serial) '.$additional_where_serial.' ) '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY serial ASC';
+                $q = 'SELECT DISTINCT(serial) FROM mg_prodotti WHERE id_articolo='.prepare($idarticolo).' AND lotto='.prepare($lotto).' AND (serial NOT IN(SELECT serial FROM co_righe_documenti   WHERE lotto='.prepare($lotto).' AND serial=mg_prodotti.serial ) AND serial NOT IN(SELECT serial FROM or_righe_ordini WHERE lotto='.prepare($lotto).' AND serial=mg_prodotti.serial)    AND  serial NOT IN(SELECT serial FROM dt_righe_ddt WHERE lotto='.prepare($lotto).' AND serial=mg_prodotti.serial)   AND   serial NOT IN(SELECT serial FROM mg_articoli_interventi WHERE lotto='.prepare($lotto).' AND serial=mg_prodotti.serial) '.$additional_where_serial.' ) '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY serial ASC';
                 $rs = $dbo->fetchArray($q);
                 $n = sizeof($rs);
             }
@@ -314,7 +314,7 @@ switch ($module_name) {
             $idarticolo = $get['idarticolo'];
             $lotto = $get['lotto'];
             $serial = $get['serial'];
-            $q = 'SELECT DISTINCT(altro) FROM mg_prodotti WHERE idarticolo="'.$idarticolo.'" AND lotto="'.$lotto.'" AND serial="'.$serial.'"    AND    (altro NOT IN(SELECT altro FROM co_righe_documenti WHERE lotto="'.$lotto.'" AND serial="'.$serial.'" AND altro=mg_prodotti.altro)    AND    altro NOT IN(SELECT altro FROM or_righe_ordini WHERE lotto="'.$lotto.'" AND serial="'.$serial.'" AND altro=mg_prodotti.altro)    AND    altro NOT IN(SELECT altro FROM dt_righe_ddt WHERE lotto="'.$lotto.'" AND serial="'.$serial.'" AND altro=mg_prodotti.altro)   AND    altro NOT IN(SELECT altro FROM mg_articoli_interventi WHERE lotto="'.$lotto.'" AND serial="'.$serial.'" AND altro=mg_prodotti.altro)) '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY altro ASC';
+            $q = 'SELECT DISTINCT(altro) FROM mg_prodotti WHERE id_articolo="'.$idarticolo.'" AND lotto="'.$lotto.'" AND serial="'.$serial.'"    AND    (altro NOT IN(SELECT altro FROM co_righe_documenti WHERE lotto="'.$lotto.'" AND serial="'.$serial.'" AND altro=mg_prodotti.altro)    AND    altro NOT IN(SELECT altro FROM or_righe_ordini WHERE lotto="'.$lotto.'" AND serial="'.$serial.'" AND altro=mg_prodotti.altro)    AND    altro NOT IN(SELECT altro FROM dt_righe_ddt WHERE lotto="'.$lotto.'" AND serial="'.$serial.'" AND altro=mg_prodotti.altro)   AND    altro NOT IN(SELECT altro FROM mg_articoli_interventi WHERE lotto="'.$lotto.'" AND serial="'.$serial.'" AND altro=mg_prodotti.altro)) '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY altro ASC';
             $rs = $dbo->fetchArray($q);
             $n = sizeof($rs);
 

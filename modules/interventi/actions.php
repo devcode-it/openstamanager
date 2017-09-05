@@ -437,11 +437,8 @@ switch (post('op')) {
 
         add_movimento_magazzino($idarticolo_originale, $qta, ['idautomezzo' => $idautomezzo, 'idintervento' => $id_record]);
 
-        $rs = $dbo->fetchArray('SELECT idgruppo FROM mg_articoli_interventi WHERE id='.prepare($idriga));
-        $idgruppo = $rs[0]['idgruppo'];
-
         // Elimino questo articolo dall'intervento
-        $dbo->query('DELETE FROM mg_articoli_interventi WHERE idgruppo='.prepare($idgruppo));
+        $dbo->query('DELETE FROM mg_articoli_interventi WHERE id='.prepare($idriga));
 
         // Elimino il collegamento al componente
         $dbo->query('DELETE FROM my_impianto_componenti WHERE idimpianto='.prepare($idimpianto).' AND idintervento='.prepare($id_record));
@@ -469,17 +466,13 @@ switch (post('op')) {
         // Aggiorno l'automezzo dell'intervento
         $dbo->query('UPDATE in_interventi SET idautomezzo='.prepare($idautomezzo).' WHERE id='.prepare($id_record).' '.Modules::getAdditionalsQuery($id_module));
 
-        // Calcolo idgruppo per questo inserimento
-        $ridgruppo = $dbo->fetchArray('SELECT IFNULL(MAX(idgruppo) + 1, 0) AS idgruppo FROM mg_articoli_interventi WHERE idintervento = '.prepare($id_record));
-        $idgruppo = $ridgruppo[0]['idgruppo'];
-
         $rsart = $dbo->fetchArray('SELECT abilita_serial, prezzo_acquisto FROM mg_articoli WHERE id='.prepare($idarticolo));
         $qta_in = !empty($rsart[0]['abilita_serial']) ? $qta : 1;
         $prezzo_acquisto = $rsart[0]['prezzo_acquisto'];
 
         for ($i = 0; $i < $qta_in; ++$i) {
             // Aggiunto il collegamento fra l'articolo e l'intervento
-            $dbo->query('INSERT INTO mg_articoli_interventi(idarticolo, idintervento, idimpianto, idautomezzo, descrizione, prezzo_vendita, prezzo_acquisto, sconto, sconto_unitario, tipo_sconto, idiva_vendita, qta, um, abilita_serial, serial, idgruppo) VALUES ('.prepare($idarticolo).', '.prepare($id_record).', '.(empty($idimpianto) ? 'NULL' : prepare($idimpianto)).', '.prepare($idautomezzo).', '.prepare($descrizione).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', (SELECT idiva_vendita FROM mg_articoli WHERE id='.prepare($idarticolo).'), '.prepare($qta).', '.prepare($um).', '.prepare($rsart[0]['abilita_serial']).', '.prepare(!empty($serials[$i]) ? $serials[$i] : '').', '.prepare($idgruppo).')');
+            $dbo->query('INSERT INTO mg_articoli_interventi(idarticolo, idintervento, idimpianto, idautomezzo, descrizione, prezzo_vendita, prezzo_acquisto, sconto, sconto_unitario, tipo_sconto, idiva_vendita, qta, um, abilita_serial, serial) VALUES ('.prepare($idarticolo).', '.prepare($id_record).', '.(empty($idimpianto) ? 'NULL' : prepare($idimpianto)).', '.prepare($idautomezzo).', '.prepare($descrizione).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', (SELECT idiva_vendita FROM mg_articoli WHERE id='.prepare($idarticolo).'), '.prepare($qta).', '.prepare($um).', '.prepare($rsart[0]['abilita_serial']).', '.prepare(!empty($serials[$i]) ? $serials[$i] : '').')');
         }
 
         link_componente_to_articolo($id_record, $idimpianto, $idarticolo, $qta);
@@ -502,10 +495,8 @@ switch (post('op')) {
 
             add_movimento_magazzino($idarticolo, $qta, ['idautomezzo' => $idautomezzo, 'idintervento' => $id_record]);
 
-            $idgruppo = $dbo->fetchArray('SELECT idgruppo FROM mg_articoli_interventi WHERE id='.prepare($idriga).' AND idintervento='.prepare($id_record))[0]['idgruppo'];
-
             // Elimino questo articolo dall'intervento
-            $dbo->query('DELETE FROM mg_articoli_interventi WHERE idgruppo='.prepare($idgruppo).' AND idintervento='.prepare($id_record));
+            $dbo->query('DELETE FROM mg_articoli_interventi WHERE id='.prepare($idriga).' AND idintervento='.prepare($id_record));
 
             // Elimino il collegamento al componente
             $dbo->query('DELETE FROM my_impianto_componenti WHERE idimpianto='.prepare($idimpianto).' AND idintervento='.prepare($id_record));
@@ -514,15 +505,17 @@ switch (post('op')) {
         break;
 
     case 'add_serial':
-        $idgruppo = $post['idgruppo'];
-        $serial = $post['serial'];
+        $idriga = $post['idriga'];
+        $idarticolo = $post['idarticolo'];
 
-        $q = 'SELECT * FROM mg_articoli_interventi WHERE idintervento='.prepare($id_record).' AND idgruppo='.prepare($idgruppo).' ORDER BY id';
-        $rs = $dbo->fetchArray($q);
-
-        foreach ($rs as $i => $r) {
-            $dbo->query('UPDATE mg_articoli_interventi SET serial='.prepare($serial[$i]).' WHERE id='.prepare($r['id']));
+        $serials = (array) $post['serial'];
+        foreach ($serials as $key => $value) {
+            if (empty($value)) {
+                unset($serials[$key]);
+            }
         }
+
+        $dbo->sync('mg_prodotti', ['id_riga_intervento' => $idriga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => $serials]);
 
         break;
 

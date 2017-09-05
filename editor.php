@@ -68,7 +68,7 @@ if (file_exists($docroot.'/modules/'.$module_dir.'/add.php') && $module['permess
     echo '
 						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'"><i class="fa fa-plus"></i></button>';
 }
-echo '
+    echo '
 					</a>
 					<a class="back-btn" href="controller.php?id_module='.$id_module.'"><i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'</a>
 				</li>';
@@ -122,6 +122,7 @@ $backto = filter('backto');
 // Scelta del redirect dopo un submit
 if (!empty($backto)) {
     $hash = filter('hash');
+    $hash = !starts_with($hash, '#') ? '#'.$hash : $hash;
     if ($backto == 'record-edit') {
         redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash);
         exit();

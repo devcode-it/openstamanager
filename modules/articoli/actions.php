@@ -159,7 +159,7 @@ switch (post('op')) {
         $n_prodotti = $n_lotti * $n_serial * $n_altro;
 
         // Creo la query per le combinazioni prodotto con ogni combinazione
-        $query = 'INSERT INTO mg_prodotti(idarticolo, lotto, serial, altro) VALUES';
+        $query = 'INSERT INTO mg_prodotti(id_articolo, lotto, serial, altro) VALUES';
 
         // Contatore prodotti da inserire
         $c = 0;
@@ -182,7 +182,7 @@ switch (post('op')) {
                     $insert = str_replace('|altro|', prepare($this_altro), $insert);
 
                     // Verifico che questa combinazione non esista già
-                    $np = $dbo->fetchNum('SELECT id FROM mg_prodotti WHERE idarticolo='.prepare($id_record).' AND lotto='.prepare($this_lotto).' AND serial='.prepare($this_serial).' AND altro='.prepare($this_altro));
+                    $np = $dbo->fetchNum('SELECT id FROM mg_prodotti WHERE id_articolo='.prepare($id_record).' AND lotto='.prepare($this_lotto).' AND serial='.prepare($this_serial).' AND altro='.prepare($this_altro));
                     if ($np == 0) {
                         $query .= $insert.', ';
                         ++$c;
@@ -227,10 +227,19 @@ switch (post('op')) {
         }
         break;
 
+    case 'delmovimento':
+        $idmovimento = post('idmovimento');
+
+        $query = 'DELETE FROM mg_movimenti WHERE id='.prepare($idmovimento);
+        if ($dbo->query($query)) {
+            $_SESSION['infos'][] = tr('Movimento rimosso!');
+        }
+        break;
+
     case 'delete':
         $dbo->query('DELETE FROM mg_articoli WHERE id='.prepare($id_record));
         $dbo->query('DELETE FROM mg_movimenti WHERE idarticolo='.prepare($id_record));
-        $dbo->query('DELETE FROM mg_prodotti WHERE idarticolo='.prepare($id_record));
+        $dbo->query('DELETE FROM mg_prodotti WHERE id_articolo='.prepare($id_record));
         $dbo->query('DELETE FROM mg_articoli_automezzi WHERE idarticolo='.prepare($id_record));
 
         $_SESSION['infos'][] = tr('Articolo eliminato!');

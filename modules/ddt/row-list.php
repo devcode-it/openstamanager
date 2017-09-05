@@ -19,31 +19,21 @@ echo '
 /*
     Articoli e righe generiche
 */
-$q_art = 'SELECT *, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice FROM `dt_righe_ddt` WHERE idddt='.prepare($id_record).' GROUP BY idgruppo ORDER BY `order`';
+$q_art = 'SELECT *, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice FROM `dt_righe_ddt` WHERE idddt='.prepare($id_record).' ORDER BY `order`';
 $rs = $dbo->fetchArray($q_art);
 
 if (!empty($rs)) {
     foreach ($rs as $r) {
-        if (!empty($r['idarticolo'])) {
-            $qserial = 'SELECT * FROM dt_righe_ddt WHERE idddt='.prepare($id_record).' AND idarticolo='.prepare($r['idarticolo']).' AND idgruppo='.prepare($r['idgruppo']);
-            $rsserial = $dbo->fetchArray($qserial);
 
-            $mancanti = 0;
-            $serials = [];
-
-            if (!empty($r['abilita_serial'])) {
-                foreach ($rsserial as $seriali) {
-                    $seriali['serial'] = trim($seriali['serial']);
-                    if (!empty($seriali['serial'])) {
-                        $serials[] = $seriali['serial'];
-                    } else {
-                        ++$mancanti;
-                    }
-                }
-            }
+        // Individuazione dei seriali
+        if (!empty($r['idarticolo']) && !empty($r['abilita_serial'])) {
+            $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_ddt='.prepare($r['id'])), 'serial');
+            $mancanti = $r['qta'] - count($serials);
 
             if ($mancanti > 0) {
                 $extra = 'class="warning"';
+            } else {
+                $mancanti = 0;
             }
         }
 
@@ -60,19 +50,10 @@ if (!empty($rs)) {
                     echo '
             <br><b><small class="text-danger">'.str_replace('_NUM_', $mancanti, tr('_NUM_ serial mancanti')).'</small></b>';
                 }
+
                 if (!empty($serials)) {
                     echo '
             <br>'.tr('SN').': '.implode(', ', $serials);
-                }
-            } else {
-                if ($r['lotto'] != '') {
-                    echo '<br>Lotto: '.$r['lotto'];
-                }
-                if ($r['serial'] != '') {
-                    echo '<br>SN: '.$r['serial'];
-                }
-                if ($r['altro'] != '') {
-                    echo '<br>'.$r['altro'];
                 }
             }
         } else {
@@ -81,10 +62,20 @@ if (!empty($rs)) {
 
         // Aggiunta riferimento a ordine
         if (!empty($r['idordine'])) {
-            $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM or_ordini WHERE id='.prepare($r['idordine']));
+            $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data, dir FROM or_ordini JOIN or_tipiordine ON or_tipiordine.id = or_ordini.idtipoordine WHERE or_ordini.id='.prepare($r['idordine']));
             $numero = ($rso[0]['numero_esterno'] != '') ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
-            echo '<br>Rif. ordine n<sup>o</sup>'.$numero.' del '.Translator::dateToLocale($rso[0]['data']);
+
+            $ref = $rso[0]['dir'] == 'entrata' ? 'Ordini cliente' : 'Ordini fornitore';
+            $ref_id = $r['idordine'];
+
+            $descrizione = str_replace(['_NUM_', '_DATE_'], [$numero, Translator::dateToLocale($rso[0]['data'])], tr('Rif. ordine _NUM_ del _DATE_'));
         }
+
+        if(!empty($descrizione)){
+            echo '
+            <br>'.Modules::link($ref, $ref_id, $descrizione.' <i class="fa fa-external-link"></i>', $descrizione);
+        }
+
         echo '
         </td>';
 
@@ -159,7 +150,7 @@ if (!empty($rs)) {
 
             if (!empty($r['idarticolo']) && $r['abilita_serial']) {
                 echo "
-                    <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/ddt/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idgruppo='.$r['idgruppo'].'&idarticolo='.$r['idarticolo']."', 1 );\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
+                    <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&idarticolo='.$r['idarticolo']."', 1 );\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
             }
 
             echo "

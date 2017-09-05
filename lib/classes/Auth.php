@@ -378,7 +378,7 @@ class Auth extends \Util\Singleton
     {
         $database = Database::getConnection();
 
-        if ($database->isInstalled()) {
+        if ($database->isInstalled() || !$database->fetchNum("SHOW TABLES LIKE 'zz_logs'")) {
             return false;
         }
 

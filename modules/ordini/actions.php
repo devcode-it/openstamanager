@@ -144,11 +144,7 @@ switch (post('op')) {
             $sconto = ($tipo_sconto == 'PRC') ? ($prezzo * $sconto_unitario) / 100 : $sconto_unitario;
             $sconto = $sconto * $qta;
 
-            // Calcolo idgruppo per questo inserimento
-            $ridgruppo = $dbo->fetchArray('SELECT IFNULL(MAX(idgruppo) + 1, 0) AS idgruppo FROM or_righe_ordini WHERE idordine = '.prepare($id_record));
-            $idgruppo = $ridgruppo[0]['idgruppo'];
-
-            add_articolo_inordine($id_record, $idarticolo, $descrizione, $idiva, $qta, $prezzo_vendita * $qta, $sconto, $sconto_unitario, $tipo_sconto, '', '', '', $idgruppo);
+            add_articolo_inordine($id_record, $idarticolo, $descrizione, $idiva, $qta, $prezzo_vendita * $qta, $sconto, $sconto_unitario, $tipo_sconto);
 
             $_SESSION['infos'][] = tr('Articolo aggiunto!');
         }
@@ -177,7 +173,7 @@ switch (post('op')) {
             $iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
             $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
 
-            $query = 'INSERT INTO or_righe_ordini(idordine, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idgruppo, `order`) VALUES('.prepare($id_record).', '.prepare($idiva).', '.prepare($rs[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`idgruppo`) + 1, 0) FROM or_righe_ordini AS t WHERE idordine='.prepare($id_record).'), (SELECT IFNULL(MAX(`order`) + 1, 0) FROM or_righe_ordini AS t WHERE idordine='.prepare($id_record).'))';
+            $query = 'INSERT INTO or_righe_ordini(idordine, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, `order`) VALUES('.prepare($id_record).', '.prepare($idiva).', '.prepare($rs[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM or_righe_ordini AS t WHERE idordine='.prepare($id_record).'))';
 
             if ($dbo->query($query)) {
                 $_SESSION['infos'][] = tr('Riga aggiunta!');
@@ -198,7 +194,11 @@ switch (post('op')) {
         $idriga = post('idriga');
 
         if ($id_record != '' && $idarticolo != '') {
-            rimuovi_articolo_daordine($idarticolo, $id_record, $idriga);
+            if (!rimuovi_articolo_daordine($idarticolo, $id_record, $idriga)) {
+                $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
+
+                return;
+            }
 
             // if( $dbo->query($query) ){
                 // Ricalcolo inps, ritenuta e bollo
@@ -250,6 +250,22 @@ switch (post('op')) {
             $sconto = ($tipo_sconto == 'PRC') ? ($prezzo * $sconto_unitario) / 100 : $sconto_unitario;
             $sconto = $sconto * $qta;
 
+            // Lettura idarticolo dalla riga documento
+            $rs = $dbo->fetchArray('SELECT idordine, idarticolo, qta, abilita_serial FROM or_righe_ordini WHERE id='.prepare($idriga));
+            $idarticolo = $rs[0]['idarticolo'];
+            $old_qta = $rs[0]['qta'];
+            $idordine = $rs[0]['idordine'];
+            $abilita_serial = $rs[0]['abilita_serial'];
+
+            // Controllo per gestire i serial
+            if (!empty($idarticolo)) {
+                if (!controlla_seriali('id_riga_ordine', $idriga, $old_qta, $qta, $dir)) {
+                    $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
+
+                    return;
+                }
+            }
+
             // Calcolo iva
             $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
             $rs = $dbo->fetchArray($query);
@@ -257,50 +273,9 @@ switch (post('op')) {
             $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
             $desc_iva = $rs[0]['descrizione'];
 
-            // Lettura idarticolo dalla riga documento
-            $rs = $dbo->fetchArray('SELECT idgruppo, idordine, idarticolo, qta, abilita_serial FROM or_righe_ordini WHERE id='.prepare($idriga));
-            $idarticolo = $rs[0]['idarticolo'];
-            $old_qta = $rs[0]['qta'];
-            $idgruppo = $rs[0]['idgruppo'];
-            $idordine = $rs[0]['idordine'];
-            $abilita_serial = $rs[0]['abilita_serial'];
-
             // Modifica riga generica sul documento
-            $query = 'UPDATE or_righe_ordini SET idiva='.prepare($idiva).', desc_iva='.prepare($rs[0]['descrizione']).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).' WHERE idgruppo='.prepare($idgruppo).' AND idordine='.prepare($idordine);
+            $query = 'UPDATE or_righe_ordini SET idiva='.prepare($idiva).', desc_iva='.prepare($rs[0]['descrizione']).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
             if ($dbo->query($query)) {
-                // Modifica della quantità
-                $dbo->query('UPDATE or_righe_ordini SET qta='.prepare($qta).' WHERE idgruppo='.prepare($idgruppo));
-
-                // Modifica per gestire i serial
-                if (!empty($idarticolo)) {
-                    $new_qta = $qta - $old_qta;
-                    $new_qta = ($old_qta < $qta) ? $new_qta : -$new_qta;
-
-                    if (!empty($abilita_serial)) {
-                        if ($old_qta < $qta) {
-                            for ($i = 0; $i < $new_qta; ++$i) {
-                                $dbo->query('INSERT INTO or_righe_ordini(idordine, idarticolo, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idgruppo, `order`) SELECT idordine, idarticolo, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idgruppo, `order` FROM or_righe_ordini WHERE id='.prepare($idriga));
-                            }
-                        } else {
-                            if ($dir == 'uscita') {
-                                if ($new_qta > $dbo->fetchArray("SELECT COUNT(*) AS rimovibili FROM or_righe_ordini WHERE serial NOT IN (SELECT serial FROM vw_serials WHERE dir = 'entrata') AND idgruppo=".prepare($idgruppo).' AND idordine='.prepare($idordine))[0]['rimovibili']) {
-                                    $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
-
-                                    return;
-                                } else {
-                                    $deletes = $dbo->fetchArray('SELECT id FROM or_righe_ordini AS t WHERE idgruppo = '.prepare($idgruppo).' AND idordine='.prepare($idordine)." AND serial NOT IN (SELECT serial FROM vw_serials WHERE dir = 'entrata') ORDER BY serial ASC LIMIT ".$new_qta);
-                                }
-                            } else {
-                                $deletes = $dbo->fetchArray('SELECT id FROM or_righe_ordini AS t WHERE idgruppo = '.prepare($idgruppo).' AND idordine='.prepare($idordine).' ORDER BY serial ASC LIMIT '.$new_qta);
-                            }
-
-                            foreach ((array) $deletes as $delete) {
-                                $dbo->query('DELETE FROM or_righe_ordini WHERE id = '.prepare($delete['id']));
-                            }
-                        }
-                    }
-                }
-
                 $_SESSION['infos'][] = tr('Riga modificata!');
 
                 // Ricalcolo inps, ritenuta e bollo
@@ -315,9 +290,13 @@ switch (post('op')) {
 
     // eliminazione ordine
     case 'delete':
-        if ($dir == 'uscita') {
-            $non_rimovibili = $dbo->fetchArray("SELECT COUNT(*) AS non_rimovibili FROM or_righe_ordini WHERE serial IN (SELECT serial FROM vw_serials WHERE dir = 'entrata') AND idordine=".prepare($id_record))[0]['non_rimovibili'];
-            if ($non_rimovibili != 0) {
+        // Se ci sono degli articoli collegati (ma non collegati a preventivi o interventi) li rimetto nel magazzino
+        $query = 'SELECT id, idarticolo FROM or_righe_ordini WHERE idordine='.prepare($id_record).' AND NOT idarticolo=0';
+        $rs = $dbo->fetchArray($query);
+
+        foreach ($rs as $value) {
+            $non_rimovibili = seriali_non_rimuovibili('id_riga_documenti', $value['id'], $dir);
+            if (!empty($non_rimovibili)) {
                 $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
 
                 return;
@@ -331,15 +310,17 @@ switch (post('op')) {
         break;
 
     case 'add_serial':
-        $idgruppo = $post['idgruppo'];
-        $serial = $post['serial'];
+        $idriga = $post['idriga'];
+        $idarticolo = $post['idarticolo'];
 
-        $q = 'SELECT * FROM or_righe_ordini WHERE idordine='.prepare($id_record).' AND idgruppo='.prepare($idgruppo).' ORDER BY id';
-        $rs = $dbo->fetchArray($q);
-
-        foreach ($rs as $i => $r) {
-            $dbo->query('UPDATE or_righe_ordini SET serial='.prepare($serial[$i]).' WHERE id='.prepare($r['id']));
+        $serials = (array) $post['serial'];
+        foreach ($serials as $key => $value) {
+            if (empty($value)) {
+                unset($serials[$key]);
+            }
         }
+
+        $dbo->sync('mg_prodotti', ['id_riga_ordine' => $idriga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => $serials]);
 
         break;
 

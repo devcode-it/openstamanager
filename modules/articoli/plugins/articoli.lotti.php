@@ -16,10 +16,10 @@ $search_serial = $get['search_serial'];
 $search_altro = $get['search_altro'];
 
 // Calcolo prossimo lotto e serial number
-$rs = $dbo->fetchArray('SELECT MAX(lotto) AS max_lotto, MAX(serial) AS max_serial, MAX(altro) AS max_altro FROM mg_prodotti WHERE idarticolo='.prepare($id_record));
-$max_lotto = $rs[0]['max_lotto'];
+$rs = $dbo->fetchArray('SELECT MAX(lotto) AS max_lotto, MAX(serial) AS max_serial, MAX(altro) AS max_altro FROM mg_prodotti WHERE id_articolo='.prepare($id_record));
+//$max_lotto = $rs[0]['max_lotto'];
 $max_serial = $rs[0]['max_serial'];
-$max_altro = $rs[0]['max_altro'];
+//$max_altro = $rs[0]['max_altro'];
 
 //$next_lotto = get_next_code($max_lotto);
 $next_serial = get_next_code($max_serial);
@@ -138,29 +138,27 @@ echo '
     <div class="box-body">
         <div class="text-right">
             <small style="color:#f00;">';
+
 // Visualizzo, in base alle impostazioni scelte, se il magazzino verrà movimentato
 if (get_var("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
     echo tr("La cancellazione decrementerà la quantità dell'articolo!");
 } else {
     echo tr("L'inserimento decrementerà la quantità dell'articolo!");
 }
+
 echo '
             </small>
         </div>';
 
 // Conteggio totale prodotti
-$rs = $dbo->fetchArray('SELECT COUNT(id) AS tot FROM mg_prodotti WHERE idarticolo='.prepare($id_record));
+$rs = $dbo->fetchArray('SELECT COUNT(id) AS tot FROM mg_prodotti WHERE id_articolo='.prepare($id_record));
 $tot_prodotti = $rs[0]['tot'];
 
 // Visualizzazione di tutti i prodotti
-$query = 'SELECT * FROM mg_prodotti WHERE idarticolo='.prepare($id_record).' AND lotto LIKE '.prepare('%'.$search_lotto.'%').' AND serial LIKE '.prepare('%'.$search_serial.'%').' AND altro LIKE '.prepare('%'.$search_altro.'%').' ORDER BY created_at DESC, lotto DESC, serial DESC, altro DESC';
-
-if (!empty($get['show_all3']) && $search_lotto == '' && $search_serial == '' && $search_altro == '') {
-    $query .= ' LIMIT 0, 20';
-}
-
+$query = 'SELECT * FROM mg_prodotti WHERE id_articolo='.prepare($id_record).(!empty($search_serial) ? ' AND serial LIKE '.prepare('%'.$search_serial.'%') : '').' ORDER BY created_at DESC, lotto DESC, serial DESC, altro DESC';
 $rs2 = $dbo->fetchArray($query);
-    echo '
+
+echo '
     <table class="table table-striped table-hover table-condensed table-bordered text-center datatables">
         <thead>
             <tr>
@@ -168,129 +166,135 @@ $rs2 = $dbo->fetchArray($query);
                 <th id="th_Data di creazione">'.tr('Data di creazione').'</th>
                 <th id="th_Documento di vendita">'.tr('Documento di vendita').'</th>
                 <th id="th_Totale">'.tr('Totale').'</th>
-                <th></th>
+                <th class="text-center">#</th>
             </tr>
         </thead>
         <tbody>';
 
-    for ($i = 0; $i < count($rs2); ++$i) {
+for ($i = 0; $i < count($rs2); ++$i) {
+    echo '
+        <tr>
+
+            <td>'.$rs2[$i]['serial'].'</td>';
+
+    echo '
+            <td>'.Translator::timestampToLocale($rs2[$i]['created_at']).'</td>';
+
+    // Ricerca vendite
+    $vendite = $dbo->fetchArray('SELECT * FROM mg_prodotti WHERE dir=\'entrata\' AND id_articolo='.prepare($id_record).' AND serial='.prepare($rs2[$i]['serial']));
+
+    if (!empty($vendite)) {
         echo '
-            <tr>
+            <td>';
 
-                <td>'.$rs2[$i]['serial'].'</td>';
+        $totali = [];
 
-        echo '
-                <td>'.Translator::timestampToLocale($rs2[$i]['created_at']).'</td>';
-
-        // Ricerca vendite su ddt
-        $query3 = 'SELECT *, ( SELECT descrizione FROM dt_tipiddt WHERE id=(SELECT idtipoddt FROM dt_ddt WHERE id=idddt) ) AS tipo_documento, ( SELECT `dir` FROM dt_tipiddt WHERE id=(SELECT idtipoddt FROM dt_ddt WHERE id=idddt) ) AS `dir`, ( SELECT numero FROM dt_ddt WHERE id=idddt ) AS numero, ( SELECT numero_esterno FROM dt_ddt WHERE id=idddt ) AS numero_esterno, ( SELECT data FROM dt_ddt WHERE id=idddt ) AS data FROM dt_righe_ddt WHERE idarticolo='.prepare($id_record).' AND lotto='.prepare($rs2[$i]['lotto']).' AND serial='.prepare($rs2[$i]['serial']).' AND altro='.prepare($rs2[$i]['altro']);
-        $rs3 = $dbo->fetchArray($query3);
-
-        // Ricerca vendite su fatture
-        $query4 = 'SELECT *, ( SELECT descrizione FROM co_tipidocumento WHERE id=(SELECT idtipodocumento FROM co_documenti WHERE id=iddocumento) ) AS tipo_documento, ( SELECT `dir` FROM co_tipidocumento WHERE id=(SELECT idtipodocumento FROM co_documenti WHERE id=iddocumento) ) AS `dir`, ( SELECT numero FROM co_documenti WHERE id=iddocumento ) AS numero, ( SELECT numero_esterno FROM co_documenti WHERE id=iddocumento ) AS numero_esterno, ( SELECT data FROM co_documenti WHERE id=iddocumento ) AS data FROM co_righe_documenti WHERE idarticolo='.prepare($id_record).' AND lotto='.prepare($rs2[$i]['lotto']).' AND serial='.prepare($rs2[$i]['serial']).' AND altro='.prepare($rs2[$i]['altro']);
-        $rs4 = $dbo->fetchArray($query4);
-
-        // Ricerca inserimenti su ordini
-        $query5 = 'SELECT *, ( SELECT descrizione FROM or_tipiordine WHERE id=(SELECT idtipoordine FROM or_ordini WHERE id=idordine) ) AS tipo_documento, ( SELECT `dir` FROM or_tipiordine WHERE id=(SELECT idtipoordine FROM or_ordini WHERE id=idordine) ) AS `dir`, ( SELECT numero FROM or_ordini WHERE id=idordine ) AS numero, ( SELECT numero_esterno FROM or_ordini WHERE id=idordine ) AS numero_esterno, ( SELECT data FROM or_ordini WHERE id=idordine ) AS data FROM or_righe_ordini WHERE idarticolo='.prepare($id_record).' AND lotto='.prepare($rs2[$i]['lotto']).' AND serial='.prepare($rs2[$i]['serial']).' AND altro='.prepare($rs2[$i]['altro']);
-        $rs5 = $dbo->fetchArray($query5);
-
-        // Ricerca inserimenti su interventi
-        $query6 = 'SELECT mg_articoli_interventi.*, in_interventi.codice, ( SELECT orario_inizio FROM in_interventi_tecnici WHERE idintervento=mg_articoli_interventi.idintervento LIMIT 0,1 ) AS data FROM mg_articoli_interventi JOIN in_interventi ON in_interventi.id = mg_articoli_interventi.idintervento WHERE idarticolo='.prepare($id_record).' AND lotto='.prepare($rs2[$i]['lotto']).' AND serial='.prepare($rs2[$i]['serial']).' AND altro='.prepare($rs2[$i]['altro']);
-        $rs6 = $dbo->fetchArray($query6);
-
-        if (!empty($rs3) || !empty($rs4) || !empty($rs5) || !empty($rs6)) {
+        foreach ($vendite as $vendita) {
             // Venduto su fatture
-            if (!empty($rs4)) {
-                $numero = ($rs4[0]['numero_esterno'] != '') ? $rs4[0]['numero_esterno'] : $rs4[0]['numero'];
+            if (!empty($vendita['id_riga_documento'])) {
                 $module_id = Modules::getModule('Fatture di vendita')['id'];
-                $id = $rs4[0]['iddocumento'];
-                $documento = $rs4[0]['tipo_documento'];
-                $data = $rs4[0]['data'];
 
-                $subtotale = $rs4[0]['subtotale'];
-                $iva = $rs4[0]['iva'];
+                // Ricerca vendite su fatture
+                $query = 'SELECT *, ( SELECT descrizione FROM co_tipidocumento WHERE id=(SELECT idtipodocumento FROM co_documenti WHERE id=iddocumento) ) AS tipo_documento, ( SELECT `dir` FROM co_tipidocumento WHERE id=(SELECT idtipodocumento FROM co_documenti WHERE id=iddocumento) ) AS `dir`, ( SELECT numero FROM co_documenti WHERE id=iddocumento ) AS numero, ( SELECT numero_esterno FROM co_documenti WHERE id=iddocumento ) AS numero_esterno, ( SELECT data FROM co_documenti WHERE id=iddocumento ) AS data FROM co_righe_documenti WHERE co_righe_documenti.id='.prepare($vendita['id_riga_documento']);
+                $data = $dbo->fetchArray($query);
+
+                $id = $data[0]['iddocumento'];
             }
 
             // Venduto su ddt
-            elseif (!empty($rs3)) {
+            elseif (!empty($vendita['id_riga_ddt'])) {
                 $numero = ($rs3[0]['numero_esterno'] != '') ? $rs3[0]['numero_esterno'] : $rs3[0]['numero'];
                 $module_id = Modules::getModule('Ddt di vendita')['id'];
-                $id = $rs3[0]['idddt'];
-                $documento = $rs3[0]['tipo_documento'];
-                $data = $rs3[0]['data'];
 
-                $subtotale = $rs3[0]['subtotale'];
-                $iva = $rs3[0]['iva'];
+                $query = 'SELECT *, ( SELECT descrizione FROM dt_tipiddt WHERE id=(SELECT idtipoddt FROM dt_ddt WHERE id=idddt) ) AS tipo_documento, ( SELECT `dir` FROM dt_tipiddt WHERE id=(SELECT idtipoddt FROM dt_ddt WHERE id=idddt) ) AS `dir`, ( SELECT numero FROM dt_ddt WHERE id=idddt ) AS numero, ( SELECT numero_esterno FROM dt_ddt WHERE id=idddt ) AS numero_esterno, ( SELECT data FROM dt_ddt WHERE id=idddt ) AS data FROM dt_righe_ddt WHERE dt_righe_ddt.id='.prepare($vendita['id_riga_ddt']);
+                $data = $dbo->fetchArray($query);
+
+                $id = $data[0]['idddt'];
             }
 
             // Inserito su ordini
-            elseif (!empty($rs5)) {
-                $numero = ($rs5[0]['numero_esterno'] != '') ? $rs5[0]['numero_esterno'] : $rs5[0]['numero'];
+            elseif (!empty($vendita['id_riga_ordine'])) {
                 $module_id = Modules::getModule('Ordini cliente')['id'];
-                $id = $rs5[0]['idordine'];
-                $documento = $rs5[0]['tipo_documento'];
-                $data = $rs5[0]['data'];
 
-                $subtotale = $rs5[0]['subtotale'];
-                $iva = $rs5[0]['iva'];
+                // Ricerca inserimenti su ordini
+                $query = 'SELECT *, ( SELECT descrizione FROM or_tipiordine WHERE id=(SELECT idtipoordine FROM or_ordini WHERE id=idordine) ) AS tipo_documento, ( SELECT `dir` FROM or_tipiordine WHERE id=(SELECT idtipoordine FROM or_ordini WHERE id=idordine) ) AS `dir`, ( SELECT numero FROM or_ordini WHERE id=idordine ) AS numero, ( SELECT numero_esterno FROM or_ordini WHERE id=idordine ) AS numero_esterno, ( SELECT data FROM or_ordini WHERE id=idordine ) AS data FROM or_righe_ordini WHERE  or_righe_ordini.id='.prepare($vendita['id_riga_ordine']);
+                $data = $dbo->fetchArray($query);
+
+                $id = $data[0]['idordine'];
             }
 
             // Inserito su intervento
-            elseif (!empty($rs6)) {
-                $numero = ($rs6[0]['numero_esterno'] != '') ? $rs6[0]['numero_esterno'] : $rs6[0]['numero'];
+            elseif (!empty($vendita['id_riga_intervento'])) {
                 $module_id = Modules::getModule('Interventi')['id'];
-                $id = $rs6[0]['idintervento'];
-                $documento = tr('Intervento').' '.$rs6[0]['codice'];
-                $data = $rs6[0]['data'];
-                $extra = str_replace('_QTA_', $rs6[0]['qta'], tr('(q.tà _QTA_)'));
 
-                $totale = $rs6[0]['prezzo_vendita'] * $rs6[0]['qta'];
+                // Ricerca inserimenti su interventi
+                $query = 'SELECT mg_articoli_interventi.*, in_interventi.codice, ( SELECT orario_inizio FROM in_interventi_tecnici WHERE idintervento=mg_articoli_interventi.idintervento LIMIT 0,1 ) AS data FROM mg_articoli_interventi JOIN in_interventi ON in_interventi.id = mg_articoli_interventi.idintervento WHERE mg_articoli_interventi.id='.prepare($vendita['id_riga_intervento']);
+                $data = $dbo->fetchArray($query);
+
+                $id = $data[0]['idintervento'];
+
+                $data[0]['tipo_documento'] = tr('Intervento').' '.$data[0]['codice'];
+                $data[0]['subtotale'] = $data[0]['prezzo_vendita'] * $data[0]['qta'];
+                $data[0]['iva'] = 0;
+
+                $extra = str_replace('_QTA_', $data[0]['qta'], tr('(q.tà _QTA_)'));
             }
 
-            if (empty($totale) && !empty($subtotale) && !empty($iva)) {
-                $totale = $subtotale + $iva;
-            }
+            $totali[] = [$data[0]['subtotale'], $data[0]['iva']];
 
-            $text = str_replace(['_DOC_', '_NUM_', '_DATE_'], [$documento, $numero, Translator::dateToLocale($data)], tr('_DOC_ n<sup>o</sup> _NUM_ del _DATE_')).(!empty($extra) ? ' '.$extra : '');
+            $numero = !empty($rs6[0]['numero_esterno']) ? $data[0]['numero_esterno'] : $data[0]['numero'];
+
+            $text = str_replace(['_DOC_', '_NUM_', '_DATE_', '_TOT_'], [$data[0]['tipo_documento'], $numero, Translator::dateToLocale($data[0]['data'])], tr('_DOC_ n<sup>o</sup> _NUM_ del _DATE_')).(!empty($extra) ? ' '.$extra : '');
 
             echo '
-                <td>
-                    '.Modules::link($module_id, $id, $text).'
-                </td>
+            '.Modules::link($module_id, $id, $text).'<br>';
+        }
 
-                <td class="text-center">
-                    <span>&euro; '.Translator::numberToLocale($totale).'</span>';
+        echo '
+            </td>
+
+            <td class="text-center">';
+        foreach ($totali as $value) {
+            $subtotale = $value[0];
+            $iva = $value[1];
+
+            echo '
+                <span>&euro; '.Translator::numberToLocale($subtotale + $iva).'</span>';
             if (!empty($subtotale) && !empty($iva)) {
                 echo '
-                    <br/>
-                    <small style="color:#555;">'.Translator::numberToLocale($subtotale).' + '.Translator::numberToLocale($iva).'</small>';
+                <small style="color:#555;">('.Translator::numberToLocale($subtotale).' + '.Translator::numberToLocale($iva).')</small>';
             }
             echo '
-                </td>
-
-                <td></td>';
+                <br>';
         }
-        // Non venduto
-        else {
-            // Documento di vendita
-            echo '
-                <td></td>';
 
-            // Totale
-            echo '
-                <td></td>';
-
-            echo '
-                <td>
-                    <a class="btn btn-danger btn-sm ask" data-backto="record-edit" data-op="delprodotto" data-idprodotto="'.$rs2[$i]['id'].'">
-                        <i class="fa fa-trash"></i>
-                    </a>
-                </td>';
-        }
         echo '
-                </tr>';
+            </td>
+
+            <td></td>';
+    }
+
+    // Non venduto
+    else {
+        // Documento di vendita
+        echo '
+            <td></td>';
+
+        // Totale
+        echo '
+            <td></td>';
+
+        echo '
+            <td class="text-center">
+                <a class="btn btn-danger btn-sm ask" data-backto="record-edit" data-op="delprodotto" data-idprodotto="'.$rs2[$i]['id'].'">
+                    <i class="fa fa-trash"></i>
+                </a>
+            </td>';
     }
     echo '
+            </tr>';
+}
+echo '
             </tbody>
         </table>
     </div>

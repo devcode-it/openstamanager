@@ -4,91 +4,123 @@ include_once __DIR__.'/../../core.php';
 
 $module = Modules::getModule($id_module);
 
-if ($module['name'] == 'Fatture di vendita') {
+// Controllo sulla direzione monetaria
+$entrate = [
+    'Fatture di vendita',
+    'Ddt di vendita',
+    'Ordini cliente',
+];
+
+if (in_array($module['name'], $entrate)) {
     $dir = 'entrata';
 } else {
     $dir = 'uscita';
 }
 
-$idarticolo = get('idarticolo');
-$idgruppo = get('idgruppo');
+$data = [
+    'fat' => [
+        'table' => 'co_righe_documenti',
+        'id' => 'iddocumento',
+    ],
+    'ddt' => [
+        'table' => 'dt_righe_ddt',
+        'id' => 'idddt',
+    ],
+    'ord' => [
+        'table' => 'or_righe_ordini',
+        'id' => 'idordine',
+    ],
+    'int' => [
+        'table' => 'mg_articoli_interventi',
+        'id' => 'idintervento',
+    ],
+];
 
-$q2 = 'SELECT * FROM co_righe_documenti INNER JOIN mg_articoli ON co_righe_documenti.idarticolo=mg_articoli.id WHERE co_righe_documenti.iddocumento='.prepare($id_record).' AND co_righe_documenti.idgruppo='.prepare($idgruppo);
-$rs2 = $dbo->fetchArray($q2);
+// Individuazione delle tabelle interessate
+if (in_array($module['name'], ['Fatture di vendita', 'Fatture di acquisto'])) {
+    $modulo = 'fat';
+} elseif (in_array($module['name'], ['Ddt di vendita', 'Ddt di acquisto'])) {
+    $modulo = 'ddt';
+} elseif (in_array($module['name'], ['Ordini cliente', 'Ordini fornitore'])) {
+    $modulo = 'ord';
+} else {
+    $modulo = 'int';
+}
+
+$table = $data[$modulo]['table'];
+$id = $data[$modulo]['id'];
+$riga = str_replace('id', 'id_riga_', $id);
+
+$idarticolo = get('idarticolo');
+$idriga = get('idriga');
+
+$rs = $dbo->fetchArray('SELECT mg_articoli.codice, mg_articoli.descrizione, '.$table.'.qta FROM '.$table.' INNER JOIN mg_articoli ON '.$table.'.idarticolo=mg_articoli.id WHERE '.$table.'.'.$id.'='.prepare($id_record).' AND '.$table.'.id='.prepare($idriga));
 
 echo '
-<p>'.tr('Articolo').': '.$rs2[0]['codice'].' - '.$rs2[0]['descrizione'].'</p>
+<p>'.tr('Articolo').': '.$rs[0]['codice'].' - '.$rs[0]['descrizione'].'</p>
 
 <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="add_serial">
     <input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="idgruppo" value="'.$rs2[0]['idgruppo'].'">
+    <input type="hidden" name="idriga" value="'.$idriga.'">
+    <input type="hidden" name="idarticolo" value="'.$idarticolo.'">
     <input type="hidden" name="dir" value="'.$dir.'">';
 
-$serials = [];
-$array = array_column($rs2, 'serial');
-foreach ($array as $value) {
-    if (!empty($value)) {
-        $serials[] = $value;
-    }
-}
+$info = $dbo->fetchArray('SELECT * FROM mg_prodotti WHERE serial IS NOT NULL AND '.$riga.'='.prepare($idriga));
+$serials = array_column($info, 'serial');
 
 if ($dir == 'entrata') {
     echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial[]", "multiple": 1, "value": "'.implode(',', $serials).'", "values": "query=SELECT serial AS id, serial AS descrizione FROM vw_serials WHERE dir=\'uscita\' AND serial NOT IN (SELECT serial FROM vw_serials WHERE dir=\'entrata\' AND record != \'fat-'.$id_record.'\')", "extra": "data-maximum=\"'.count($rs2).'\"" ]}
+            {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial[]", "multiple": 1, "value": "'.implode(',', $serials).'", "values": "query=SELECT DISTINCT serial AS id, serial AS descrizione FROM mg_prodotti WHERE dir=\'uscita\' AND serial NOT IN (SELECT serial FROM mg_prodotti WHERE dir=\'entrata\' AND '.$riga.' != \''.$idriga.'\')", "extra": "data-maximum=\"'.intval($rs[0]['qta']).'\"" ]}
         </div>
     </div>';
 } else {
     echo '
     <p>'.tr('Inserisci i numeri seriali degli articoli aggiunti:').'</p>';
-
-    foreach ($array as $key => $serial) {
-        if ($key % 3 == 0) {
+    for ($i = 0; $i < $rs[0]['qta']; ++$i) {
+        if ($i % 3 == 0) {
             echo '
     <div class="row">';
         }
 
-        $res = $dbo->fetchArray("SELECT record FROM vw_serials WHERE dir='entrata' AND serial = ".prepare($serial));
+        $res = $dbo->fetchArray("SELECT * FROM mg_prodotti WHERE dir='entrata' AND serial = ".prepare($serials[$i]));
 
         echo '
         <div class="col-md-4">
-            {[ "type": "text", "name": "serial[]", "value": "'.$serial.'"'.(!empty($res) ? ', "readonly": 1' : '').' ]}';
+            {[ "type": "text", "name": "serial[]", "value": "'.$serials[$i].'"'.(!empty($res) ? ', "readonly": 1' : '').' ]}';
 
-        if(!empty($res)){
-            $pieces = explode('-', $res[0]['record']);
-            switch($pieces[0]){
-                case 'int':
-                    $modulo = 'Interventi';
-                    break;
-
-                case 'ddt':
-                    $modulo = 'Ddt di vendita';
-                    break;
-
-                case 'fat':
-                    $modulo = 'Fatture di vendita';
-                    break;
-
-                case 'ord':
-                    $modulo = 'Ordini cliente';
-                    break;
+        if (!empty($res)) {
+            if (!empty($res[0]['id_riga_intervento'])) {
+                $modulo = 'Interventi';
+                $pos = 'int';
+            } elseif (!empty($res[0]['id_riga_ddt'])) {
+                $modulo = 'Ddt di vendita';
+                $pos = 'ddt';
+            } elseif (!empty($res[0]['id_riga_documento'])) {
+                $modulo = 'Fatture di vendita';
+                $pos = 'fat';
+            } elseif (!empty($res[0]['id_riga_ordine'])) {
+                $modulo = 'Ordini cliente';
+                $pos = 'ord';
             }
 
+            $r = $dbo->select($data[$pos]['table'], $data[$pos]['id'], ['id' => $res[0][str_replace('id', 'id_riga_', $data[$pos]['id'])]]);
+
             echo '
-        '.Modules::link($modulo, $pieces[1], tr('Visualizza vendita').' <i class="fa fa-external-link"></i>', null);
+        '.Modules::link($modulo, $r[0][$data[$pos]['id']], tr('Visualizza vendita').' <i class="fa fa-external-link"></i>', null);
         }
         echo '
         </div>';
 
-        if (($key + 1) % 3 == 0) {
+        if (($i + 1) % 3 == 0) {
             echo '
     </div>
     <br>';
         }
     }
-    if (($key + 1) % 3 != 0) {
+    if ($i % 3 != 0) {
         echo '
     </div>';
     }

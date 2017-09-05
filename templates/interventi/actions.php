@@ -57,7 +57,7 @@ $totale = [];
 // MATERIALE UTILIZZATO
 
 // Conteggio articoli utilizzati
-$rs2 = $dbo->fetchArray('SELECT *, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice_art, SUM(qta) AS sumqta FROM `mg_articoli_interventi` GROUP BY idgruppo HAVING idintervento='.prepare($idintervento)." AND NOT idarticolo='0' ORDER BY idarticolo ASC");
+$rs2 = $dbo->fetchArray('SELECT *, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice_art, SUM(qta) AS sumqta FROM `mg_articoli_interventi` HAVING idintervento='.prepare($idintervento)." AND NOT idarticolo='0' ORDER BY idarticolo ASC");
 if (!empty($rs2)) {
     $body .= '
 <table class="table_values" cellspacing="0" cellpadding="0" style="font-size:11px; table-layout:fixed; border-color:#aaa;">

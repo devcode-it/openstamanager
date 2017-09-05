@@ -232,6 +232,7 @@ switch ($op) {
 
         if (!empty($search)) {
             $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'codice LIKE '.prepare('%'.$search.'%');
         }
 
         $wh = '';
@@ -522,7 +523,7 @@ switch ($op) {
         if (Modules::getModule('Magazzino')['permessi'] != '-') {
             $query = 'SELECT DISTINCT serial AS descrizione FROM mg_prodotti |where|';
 
-            $where[] = 'idarticolo='.prepare($superselect['idarticolo']);
+            $where[] = 'id_articolo='.prepare($superselect['idarticolo']);
             $where[] = 'lotto='.prepare($superselect['lotto']);
 
             foreach ($elements as $element) {
@@ -540,7 +541,7 @@ switch ($op) {
         if (Modules::getModule('Magazzino')['permessi'] != '-') {
             $query = 'SELECT DISTINCT altro AS descrizione FROM mg_prodotti |where|';
 
-            $where[] = 'idarticolo='.prepare($superselect['idarticolo']);
+            $where[] = 'id_articolo='.prepare($superselect['idarticolo']);
             $where[] = 'lotto='.prepare($superselect['lotto']);
             $where[] = 'serial='.prepare($superselect['serial']);
 

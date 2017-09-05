@@ -41,8 +41,9 @@ if (!empty($rs2)) {
                 <th class="text-center" width="100">'.tr('Q.tà').'</th>
                 <th width="720">'.tr('Causale').'</th>
                 <th>'.tr('Data').'</th>
+                <th class="text-center">#</th>
             </tr>';
-    foreach($rs2 as $r){
+    foreach ($rs2 as $r) {
         // Quantità
         echo '
             <tr>
@@ -54,7 +55,21 @@ if (!empty($rs2)) {
 
         // Data
         echo '
-                <td>'.Translator::timestampToLocale($r['created_at']).'</td>
+                <td>'.Translator::timestampToLocale($r['created_at']).'</td>';
+
+        // Operazioni
+        echo '
+                <td class="text-center">';
+
+        if (Auth::admin()) {
+            echo '
+                    <a class="btn btn-danger btn-sm ask" data-backto="record-edit" data-op="delmovimento" data-idmovimento="'.$r['id'].'">
+                        <i class="fa fa-trash"></i>
+                    </a>';
+        }
+
+        echo '
+                </td>
             </tr>';
     }
     echo '

@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 include_once $docroot.'/modules/articoli/modutil.php';
 
-$query = 'SELECT *, (SELECT codice FROM mg_articoli WHERE id=mg_articoli_interventi.idarticolo) AS codice, mg_articoli_interventi.id AS idriga, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM in_interventi WHERE id=mg_articoli_interventi.idintervento) ) ) AS prc_guadagno FROM mg_articoli_interventi WHERE idintervento='.prepare($id_record).' '.Modules::getAdditionalsQuery('Magazzino').' GROUP BY idgruppo';
+$query = 'SELECT *, (SELECT codice FROM mg_articoli WHERE id=mg_articoli_interventi.idarticolo) AS codice, mg_articoli_interventi.id AS idriga, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM in_interventi WHERE id=mg_articoli_interventi.idintervento) ) ) AS prc_guadagno FROM mg_articoli_interventi WHERE idintervento='.prepare($id_record).' '.Modules::getAdditionalsQuery('Magazzino');
 $rs = $dbo->fetchArray($query);
 
 if (!empty($rs)) {
@@ -33,25 +33,16 @@ if (!empty($rs)) {
     </tr>';
 
     foreach ($rs as $r) {
-        $qserial = 'SELECT * FROM mg_articoli_interventi WHERE idintervento='.prepare($id_record).' AND idarticolo='.prepare($r['idarticolo']).' AND idgruppo='.prepare($r['idgruppo']);
-        $rsserial = $dbo->fetchArray($qserial);
+        // Individuazione dei seriali
+        if (!empty($r['idarticolo']) && !empty($r['abilita_serial'])) {
+            $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_intervento='.prepare($r['id'])), 'serial');
+            $mancanti = $r['qta'] - count($serials);
 
-        $mancanti = 0;
-        $serials = [];
-
-        if (!empty($r['abilita_serial'])) {
-            foreach ($rsserial as $seriali) {
-                $seriali['serial'] = trim($seriali['serial']);
-                if (!empty($seriali['serial'])) {
-                    $serials[] = $seriali['serial'];
-                } else {
-                    ++$mancanti;
-                }
+            if ($mancanti > 0) {
+                $extra = 'class="warning"';
+            } else {
+                $mancanti = 0;
             }
-        }
-
-        if ($mancanti > 0) {
-            $extra = 'class="warning"';
         }
 
         echo '
@@ -132,7 +123,7 @@ if (!empty($rs)) {
 
             if ($r['abilita_serial']) {
                 echo '
-            <button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica articoli').'\', \''.$rootdir.'/modules/interventi/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idarticolo='.$r['idriga'].'&idgruppo='.$r['idgruppo'].'\', 1);"><i class="fa fa-barcode"></i></button>';
+            <button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica articoli').'\', \''.$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idarticolo='.$r['idriga'].'&idriga='.$r['id'].'\', 1);"><i class="fa fa-barcode"></i></button>';
             }
 
             echo '

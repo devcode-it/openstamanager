@@ -124,7 +124,7 @@ function get_ivaindetraibile_ordine($idordine)
  * $qta			float		quantità dell'articolo nell'ordine
  * $prezzo			float		prezzo totale degli articoli (prezzounitario*qtà).
  */
-function add_articolo_inordine($idordine, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT', $lotto = '', $serial = '', $altro = '', $idgruppo = 0)
+function add_articolo_inordine($idordine, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT')
 {
     global $dbo;
     global $dir;
@@ -145,20 +145,7 @@ function add_articolo_inordine($idordine, $idarticolo, $descrizione, $idiva, $qt
 
     if ($qta > 0) {
         $rsart = $dbo->fetchArray('SELECT abilita_serial FROM mg_articoli WHERE id='.prepare($idarticolo));
-        $qta_in = !empty($rsart[0]['abilita_serial']) ? $qta : 1;
-
-        for ($i = 0; $i < $qta_in; ++$i) {
-            /*
-            $iva = $iva / $qta_in;
-            $qta = $qta / $qta_in;
-            $ubtotale = $subtotale / $qta_in;
-            $sconto = $sconto / $qta_in;
-
-            $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
-            */
-
-            $dbo->query('INSERT INTO or_righe_ordini(idordine, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, abilita_serial, idgruppo, `order`) VALUES ('.prepare($idordine).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($rs2[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', '.prepare($rsart[0]['abilita_serial']).', '.prepare($idgruppo).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM or_righe_ordini AS t WHERE idordine='.prepare($idordine).'))');
-        }
+        $dbo->query('INSERT INTO or_righe_ordini(idordine, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, abilita_serial, `order`) VALUES ('.prepare($idordine).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($rs2[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', '.prepare($rsart[0]['abilita_serial']).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM or_righe_ordini AS t WHERE idordine='.prepare($idordine).'))');
     }
 }
 
@@ -173,16 +160,9 @@ function rimuovi_articolo_daordine($idarticolo, $idordine, $idrigaordine)
     global $dbo;
     global $dir;
 
-    // Leggo la quantità di questo articolo in fattura
-    $query = 'SELECT idgruppo FROM or_righe_ordini WHERE id='.prepare($idrigaordine);
-    $rs = $dbo->fetchArray($query);
-    $idgruppo = $rs[0]['idgruppo'];
-
-    if ($dir == 'uscita') {
-        $non_rimovibili = $dbo->fetchArray("SELECT COUNT(*) AS non_rimovibili FROM or_righe_ordini WHERE serial IN (SELECT serial FROM vw_serials WHERE dir = 'entrata') AND idgruppo=".prepare($idgruppo).' AND idordine='.prepare($idordine))[0]['non_rimovibili'];
-        if ($non_rimovibili != 0) {
-            return false;
-        }
+    $non_rimovibili = seriali_non_rimuovibili('id_riga_ordine', $idrigaordine, $dir);
+    if (!empty($non_rimovibili)) {
+        return false;
     }
 
     // Elimino la riga dall'ordine

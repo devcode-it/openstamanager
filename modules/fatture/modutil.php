@@ -597,7 +597,7 @@ function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenu
  * $prezzo			float		prezzo totale dell'articolo (prezzounitario*qtà)
  * $idintervento	integer		id dell'intervento da cui arriva l'articolo (per non creare casini quando si rimuoverà un articolo dalla fattura).
  */
-function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT', $idintervento = 0, $lotto = '', $serial = '', $altro = '', $idgruppo = 0, $idconto = 0, $idum = 0)
+function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT', $idintervento = 0, $idconto = 0, $idum = 0)
 {
     global $dbo;
     global $dir;
@@ -616,10 +616,6 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
         $um = $idum;
     }
 
-    if (empty($idgruppo)) {
-        $idgruppo = $dbo->fetchArray('SELECT IFNULL(MAX(`idgruppo`) + 1, 0) AS idgruppo FROM co_righe_documenti AS t WHERE iddocumento='.prepare($iddocumento))[0]['idgruppo'];
-    }
-
     // Lettura iva dell'articolo
     $rs2 = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare($idiva));
     $iva = ($prezzo - $sconto) / 100 * $rs2[0]['percentuale'];
@@ -627,21 +623,8 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
 
     if ($qta > 0) {
         $rsart = $dbo->fetchArray('SELECT abilita_serial FROM mg_articoli WHERE id='.prepare($idarticolo));
-        $qta_in = !empty($rsart[0]['abilita_serial']) ? $qta : 1;
 
-        for ($i = 0; $i < $qta_in; ++$i) {
-            /*
-            $iva = $iva / $qta_in;
-            $qta = $qta / $qta_in;
-            $ubtotale = $subtotale / $qta_in;
-            $sconto = $sconto / $qta_in;
-
-            $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
-            */
-
-            $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idarticolo, idintervento, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, qta, abilita_serial, serial, idconto, um, idgruppo, `order`) VALUES ('.prepare($iddocumento).', '.prepare($idarticolo).', '.(!empty($idintervento) ? prepare($idintervento) : 'NULL').', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($qta).', '.prepare($rsart[0]['abilita_serial']).', '.prepare($serial).', '.prepare($idconto).', '.prepare($um).', '.prepare($idgruppo).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($iddocumento).'))');
-        }
-
+        $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idarticolo, idintervento, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, qta, abilita_serial, idconto, um, `order`) VALUES ('.prepare($iddocumento).', '.prepare($idarticolo).', '.(!empty($idintervento) ? prepare($idintervento) : 'NULL').', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($qta).', '.prepare($rsart[0]['abilita_serial']).', '.prepare($idconto).', '.prepare($um).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($iddocumento).'))');
         $idriga = $dbo->lastInsertedID();
 
         /*
@@ -682,7 +665,7 @@ function rimuovi_articolo_dafattura($idarticolo, $iddocumento, $idrigadocumento)
     global $dir;
 
     // Leggo la quantità di questo articolo in fattura
-    $query = 'SELECT idgruppo, qta, idintervento, idpreventivo, idordine, idddt, subtotale, descrizione, lotto, serial, altro FROM co_righe_documenti WHERE id='.prepare($idrigadocumento);
+    $query = 'SELECT qta, idintervento, idpreventivo, idordine, idddt, subtotale, descrizione, lotto, serial, altro FROM co_righe_documenti WHERE id='.prepare($idrigadocumento);
     $rs = $dbo->fetchArray($query);
     $idintervento = $rs[0]['idintervento'];
     $idpreventivo = $rs[0]['idpreventivo'];
@@ -691,19 +674,15 @@ function rimuovi_articolo_dafattura($idarticolo, $iddocumento, $idrigadocumento)
     $qta = $rs[0]['qta'];
     $subtotale = $rs[0]['subtotale'];
 
-    $idgruppo = $rs[0]['idgruppo'];
-
     $descrizione = $rs[0]['descrizione'];
 
     $lotto = $rs[0]['lotto'];
     $serial = $rs[0]['serial'];
     $altro = $rs[0]['altro'];
 
-    if ($dir == 'uscita') {
-        $non_rimovibili = $dbo->fetchArray("SELECT COUNT(*) AS non_rimovibili FROM co_righe_documenti WHERE serial IN (SELECT serial FROM vw_serials WHERE dir = 'entrata') AND idgruppo=".prepare($idgruppo).' AND iddocumento='.prepare($iddocumento))[0]['non_rimovibili'];
-        if ($non_rimovibili != 0) {
-            return false;
-        }
+    $non_rimovibili = seriali_non_rimuovibili('id_riga_documento', $idrigadocumento, $dir);
+    if (!empty($non_rimovibili)) {
+        return false;
     }
 
     // Se l'articolo è stato aggiunto in fattura perché era collegato ad un intervento o
@@ -735,15 +714,15 @@ function rimuovi_articolo_dafattura($idarticolo, $iddocumento, $idrigadocumento)
 
     if ($dir == 'uscita') {
         // Elimino eventuali articoli caricati in mg_prodotti esclusivamente con la fattura di acquisto
-        $query = 'SELECT lotto, serial, altro, idarticolo FROM co_righe_documenti WHERE id='.prepare($idrigadocumento).' AND idddt = 0 AND idordine = 0';
+        $query = 'SELECT lotto, serial, altro, id_articolo FROM co_righe_documenti WHERE id='.prepare($idrigadocumento).' AND idddt = 0 AND idordine = 0';
         $rs = $dbo->fetchArray($query);
         if (sizeof($rs) > 0) {
-            $dbo->query('DELETE FROM `mg_prodotti` WHERE lotto='.prepare($rs[0]['lotto']).' AND serial='.prepare($rs[0]['serial']).' AND altro='.prepare($rs[0]['altro']).' AND  idarticolo='.prepare($rs[0]['idarticolo']));
+            $dbo->query('DELETE FROM `mg_prodotti` WHERE lotto='.prepare($rs[0]['lotto']).' AND serial='.prepare($rs[0]['serial']).' AND altro='.prepare($rs[0]['altro']).' AND  id_articolo='.prepare($rs[0]['id_articolo']));
         }
     }
 
     // Elimino la riga dal documento
-    $dbo->query('DELETE FROM `co_righe_documenti` WHERE idgruppo='.prepare($idgruppo).' AND iddocumento='.prepare($iddocumento));
+    $dbo->query('DELETE FROM `co_righe_documenti` WHERE id='.prepare($idrigadocumento).' AND iddocumento='.prepare($iddocumento));
 
     // Elimino i movimenti avvenuti nel magazzino per questo articolo lotto, serial, altro
     $dbo->query('DELETE FROM `mg_movimenti` WHERE idarticolo = '.prepare($idarticolo).' AND iddocumento = '.prepare($iddocumento).' AND id = '.prepare($idrigadocumento));
@@ -761,9 +740,6 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
 
     $descrizione = strtoupper(tr('Sconto'));
 
-    // Opzione per disabilitare l'idgruppo (per preventivi)
-    $id_gruppo = !isset($options['idgruppo']) || !empty($options['idgruppo']);
-
     // Rimozione dello sconto precedente
     $dbo->query('DELETE FROM '.$tables['row']." WHERE descrizione LIKE '%".$descrizione."%' AND ".$fields['row'].'='.prepare($id_record));
 
@@ -774,7 +750,7 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
     // Aggiorno l'eventuale sconto gestendolo con le righe in fattura
     if (!empty($sconto[0]['sconto_globale'])) {
         if ($sconto[0]['tipo_sconto_globale'] == 'PRC') {
-            $subtotale = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS imponibile FROM (SELECT '.$tables['row'].'.subtotale, '.$tables['row'].'.sconto FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record).($id_gruppo ? ' GROUP BY idgruppo' : '').') AS t')[0]['imponibile'];
+            $subtotale = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS imponibile FROM (SELECT '.$tables['row'].'.subtotale, '.$tables['row'].'.sconto FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record).') AS t')[0]['imponibile'];
             $subtotale = -$subtotale / 100 * $sconto[0]['sconto_globale'];
 
             $descrizione = $descrizione.' '.Translator::numberToLocale($sconto[0]['sconto_globale']).'%';
@@ -798,10 +774,44 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
             '#order' => '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM '.$tables['row'].' AS t WHERE '.$fields['row'].'='.prepare($id_record).')',
         ];
 
-        if ($id_gruppo) {
-            $values['#idgruppo'] = '(SELECT IFNULL(MAX(`idgruppo`) + 1, 0) FROM '.$tables['row'].' AS t WHERE '.$fields['row'].'='.prepare($id_record).')';
-        }
-
         $dbo->insert($tables['row'], $values);
     }
+}
+
+function controlla_seriali($field, $id_riga, $old_qta, $new_qta, $dir)
+{
+    $dbo = Database::getConnection();
+
+    if ($old_qta >= $new_qta) {
+        // Controllo sulla possibilità di rimuovere i seriali (se non utilizzati da documenti di vendita)
+        if ($dir == 'uscita' && $new_qta < count(seriali_non_rimuovibili($field, $id_riga, $dir))) {
+            return false;
+        } else {
+            // Controllo sul numero di seriali effettivi da rimuovere
+            $count = $dbo->fetchArray('SELECT COUNT(*) AS tot FROM mg_prodotti WHERE '.$field.'='.prepare($id_riga))[0]['tot'];
+            if ($new_qta < $count) {
+                $deletes = $dbo->fetchArray("SELECT id FROM mg_prodotti WHERE serial NOT IN (SELECT serial FROM mg_prodotti WHERE dir = 'entrata' AND ".$field.'!='.prepare($id_riga).') AND '.$field.'='.prepare($id_riga).' ORDER BY serial DESC LIMIT '.abs($count - $new_qta));
+
+                // Rimozione
+                foreach ($deletes as $delete) {
+                    $dbo->query('DELETE FROM mg_prodotti WHERE id = '.prepare($delete['id']));
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
+function seriali_non_rimuovibili($field, $id_riga, $dir)
+{
+    $dbo = Database::getConnection();
+
+    $results = [];
+
+    if ($dir == 'uscita') {
+        $results = $dbo->fetchArray("SELECT serial FROM mg_prodotti WHERE serial IN (SELECT serial FROM mg_prodotti WHERE dir = 'entrata') AND ".$field.'='.prepare($id_riga));
+    }
+
+    return $results;
 }

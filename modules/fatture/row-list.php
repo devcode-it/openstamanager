@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 /*
     Righe fattura
 */
-$q = "SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice, (SELECT descrizione FROM co_pianodeiconti3 WHERE co_pianodeiconti3.id=IF(co_righe_documenti.idconto = 0, (SELECT idconto FROM co_documenti WHERE iddocumento=".prepare($id_record)." LIMIT 1), co_righe_documenti.idconto)) AS descrizione_conto FROM `co_righe_documenti` WHERE iddocumento=".prepare($id_record).' GROUP BY idgruppo ORDER BY `order`';
+$q = "SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice, (SELECT descrizione FROM co_pianodeiconti3 WHERE co_pianodeiconti3.id=IF(co_righe_documenti.idconto = 0, (SELECT idconto FROM co_documenti WHERE iddocumento=".prepare($id_record)." LIMIT 1), co_righe_documenti.idconto)) AS descrizione_conto FROM `co_righe_documenti` WHERE iddocumento=".prepare($id_record).' ORDER BY `order`';
 $rs = $dbo->fetchArray($q);
 
 echo '
@@ -34,26 +34,18 @@ if (!empty($rs)) {
 
             $delete = 'unlink_articolo';
 
-            $qserial = 'SELECT * FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idarticolo='.prepare($r['idarticolo']).' AND idgruppo='.prepare($r['idgruppo']);
-            $rsserial = $dbo->fetchArray($qserial);
-
-            $mancanti = 0;
-            $serials = [];
-
+            // Individuazione dei seriali
             if (!empty($r['abilita_serial'])) {
-                foreach ($rsserial as $seriali) {
-                    $seriali['serial'] = trim($seriali['serial']);
-                    if (!empty($seriali['serial'])) {
-                        $serials[] = $seriali['serial'];
-                    } else {
-                        ++$mancanti;
-                    }
+                $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_documento='.prepare($r['id'])), 'serial');
+                $mancanti = $r['qta'] - count($serials);
+
+                if ($mancanti > 0) {
+                    $extra = 'class="warning"';
+                } else {
+                    $mancanti = 0;
                 }
             }
 
-            if ($mancanti > 0) {
-                $extra = 'class="warning"';
-            }
         }
         // Preventivi
         elseif (!empty($r['idpreventivo'])) {
@@ -101,36 +93,37 @@ if (!empty($rs)) {
                 echo '
             <br>'.tr('SN').': '.implode(', ', $serials);
             }
-        } else {
-            if ($r['lotto'] != '') {
-                echo '
-                <br>'.tr('Lotto').': '.$r['lotto'];
-            }
-            if ($r['serial'] != '') {
-                echo '
-                <br>'.tr('SN').': '.$r['serial'];
-            }
-            if ($r['altro'] != '') {
-                echo '
-                <br>'.$r['altro'];
-            }
         }
 
         // Aggiunta riferimento a ordine
         if (!empty($r['idordine'])) {
-            $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM or_ordini WHERE id='.prepare($r['idordine']));
+            $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data, dir FROM or_ordini JOIN or_tipiordine ON or_tipiordine.id = or_ordini.idtipoordine WHERE or_ordini.id='.prepare($r['idordine']));
             $numero = ($rso[0]['numero_esterno'] != '') ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
-            echo '
-        <br>'.str_replace(['_NUM_', '_DATE_'], [$numero, Translator::dateToLocale($rso[0]['data'])], tr('Rif. ordine _NUM_ del _DATE_'));
+
+            $ref = $rso[0]['dir'] == 'entrata' ? 'Ordini cliente' : 'Ordini fornitore';
+            $ref_id = $r['idordine'];
+
+            $descrizione = str_replace(['_NUM_', '_DATE_'], [$numero, Translator::dateToLocale($rso[0]['data'])], tr('Rif. ordine _NUM_ del _DATE_'));
         } elseif (!empty($r['idddt'])) {
-            $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM dt_ddt WHERE id='.prepare($r['idddt']));
+            $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM dt_ddt JOIN dt_tipiddt ON dt_tipiddt.id = dt_ddt.idtipoddt WHERE dt_ddt.id='.prepare($r['idddt']));
             $numero = ($rso[0]['numero_esterno'] != '') ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
-            echo '
-        <br>'.str_replace(['_NUM_', '_DATE_'], [$numero, Translator::dateToLocale($rso[0]['data'])], tr('Rif. ddt _NUM_ del _DATE_'));
+
+            $ref = $rso[0]['dir'] == 'entrata' ? 'Ddt di vendita' : 'Ddt di acquisto';
+            $ref_id = $r['idddt'];
+
+            $descrizione = str_replace(['_NUM_', '_DATE_'], [$numero, Translator::dateToLocale($rso[0]['data'])], tr('Rif. ddt _NUM_ del _DATE_'));
         } elseif (!empty($r['idpreventivo'])) {
             $rso = $dbo->fetchArray('SELECT numero, data_bozza FROM co_preventivi WHERE id='.prepare($r['idpreventivo']));
+
+            $ref = 'Preventivi';
+            $ref_id = $r['idpreventivo'];
+
+            $descrizione = str_replace(['_NUM_', '_DATE_'], [$rso[0]['numero'], Translator::dateToLocale($rso[0]['data_bozza'])], tr('Rif. preventivo _NUM_ del _DATE_'));
+        }
+
+        if(!empty($descrizione)){
             echo '
-        <br>'.str_replace(['_NUM_', '_DATE_'], [$rso[0]['numero'], Translator::dateToLocale($rso[0]['data_bozza'])], tr('Rif. preventivo _NUM_ del _DATE_'));
+            <br>'.Modules::link($ref, $ref_id, $descrizione.' <i class="fa fa-external-link"></i>', $descrizione);
         }
 
         echo '
@@ -194,7 +187,7 @@ if (!empty($rs)) {
 
             if (!empty($r['idarticolo']) && $r['abilita_serial'] && (empty($r['idddt']) || empty($r['idintervento']))) {
                 echo "
-                    <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idgruppo='.$r['idgruppo'].'&idarticolo='.$r['idarticolo']."', 1 );\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
+                    <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&idarticolo='.$r['idarticolo']."', 1 );\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
             }
 
             echo "

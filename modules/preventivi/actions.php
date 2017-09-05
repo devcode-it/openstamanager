@@ -132,7 +132,7 @@ switch (post('op')) {
             ], [
                 'parent' => 'id',
                 'row' => 'idpreventivo',
-            ], $id_record, ['idgruppo' => false]);
+            ], $id_record);
 
             // update_budget_preventivo( $id_record );
             $_SESSION['infos'][] = tr('Preventivo modificato correttamente!');
@@ -285,5 +285,5 @@ if (post('op') !== null && post('op') != 'update') {
     ], [
         'parent' => 'id',
         'row' => 'idpreventivo',
-    ], $id_record, ['idgruppo' => false]);
+    ], $id_record);
 }

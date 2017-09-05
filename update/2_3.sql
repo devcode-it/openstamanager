@@ -27,6 +27,7 @@ UPDATE `co_righe_contratti` SET `idintervento` = (SELECT `id` FROM `in_intervent
 UPDATE `co_righe_documenti` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `co_righe_documenti`.`idintervento`);
 UPDATE `in_righe_interventi` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `in_righe_interventi`.`idintervento`);
 UPDATE `mg_movimenti` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `mg_movimenti`.`idintervento`);
+UPDATE `mg_articoli_interventi` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `mg_articoli_interventi`.`idintervento`);
 UPDATE `my_impianti_interventi` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `my_impianti_interventi`.`idintervento`);
 UPDATE `my_impianto_componenti` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `my_impianto_componenti`.`idintervento`);
 UPDATE `my_componenti_interventi` SET `id_intervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `my_componenti_interventi`.`id_intervento`);
@@ -37,6 +38,7 @@ ALTER TABLE `co_righe_contratti` CHANGE `idintervento` `idintervento` varchar(25
 ALTER TABLE `co_righe_documenti` CHANGE `idintervento` `idintervento` varchar(25);
 ALTER TABLE `in_righe_interventi` CHANGE `idintervento` `idintervento` varchar(25);
 ALTER TABLE `mg_movimenti` CHANGE `idintervento` `idintervento` varchar(25);
+ALTER TABLE `mg_articoli_interventi` CHANGE `idintervento` `idintervento` varchar(25);
 ALTER TABLE `my_impianti_interventi` CHANGE `idintervento` `idintervento` varchar(25);
 ALTER TABLE `my_impianto_componenti` CHANGE `idintervento` `idintervento` varchar(25);
 ALTER TABLE `my_componenti_interventi` CHANGE `id_intervento` `id_intervento` varchar(25);
@@ -47,6 +49,7 @@ UPDATE `co_righe_contratti` SET `idintervento` = NULL WHERE `idintervento` = 0 O
 UPDATE `co_righe_documenti` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
 UPDATE `in_righe_interventi` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
 UPDATE `mg_movimenti` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
+UPDATE `mg_articoli_interventi` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
 UPDATE `my_impianti_interventi` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
 UPDATE `my_impianto_componenti` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
 UPDATE `my_componenti_interventi` SET `id_intervento` = NULL WHERE `id_intervento` = 0 OR `id_intervento` = '';
@@ -57,6 +60,7 @@ ALTER TABLE `co_righe_contratti` CHANGE `idintervento` `idintervento` int(11), A
 ALTER TABLE `co_righe_documenti` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `in_righe_interventi` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `mg_movimenti` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
+ALTER TABLE `mg_articoli_interventi` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `my_impianti_interventi` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `my_impianto_componenti` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `my_componenti_interventi` CHANGE `id_intervento` `id_intervento` int(11), ADD FOREIGN KEY (`id_intervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
@@ -78,17 +82,6 @@ DROP TABLE `dt_automezzi_tagliandi`;
 DROP TABLE `co_contratti_interventi`;
 
 -- RELEASE 2.2.1 [NON UFFICIALE] --
--- Aggiunta del campo idgruppo per differenziare le righe in fatture, ddt e interventi (contenenti gruppi di seriali)
-ALTER TABLE `co_righe_documenti` ADD `idgruppo` int(11) NOT NULL AFTER `qta`;
-ALTER TABLE `mg_articoli_interventi` ADD `idgruppo` int(11) NOT NULL AFTER `qta`;
-ALTER TABLE `dt_righe_ddt` ADD `idgruppo` int(11) NOT NULL AFTER `qta_evasa`;
-ALTER TABLE `or_righe_ordini` ADD `idgruppo` int(11) NOT NULL AFTER `qta_evasa`;
-
-UPDATE `co_righe_documenti` SET `idgruppo`=`id`;
-UPDATE `dt_righe_ddt` SET `idgruppo`=`id`;
-UPDATE `or_righe_ordini` SET `idgruppo`=`id`;
-UPDATE `mg_articoli_interventi` SET `idgruppo`=`id`;
-
 -- Aggiunta del campo desc_iva anche per Preventivi, DDT e Ordini
 ALTER TABLE `dt_righe_ddt` ADD `desc_iva` varchar(255) NOT NULL AFTER `idiva`;
 ALTER TABLE `co_righe_preventivi` ADD `desc_iva` varchar(255) NOT NULL AFTER `idiva`;
@@ -746,25 +739,13 @@ ALTER TABLE `dt_righe_ddt` ADD `abilita_serial` boolean NOT NULL DEFAULT '0' AFT
 ALTER TABLE `mg_articoli_interventi` ADD `abilita_serial` boolean NOT NULL DEFAULT '0' AFTER `um`;
 ALTER TABLE `or_righe_ordini` ADD `abilita_serial` boolean NOT NULL DEFAULT '0' AFTER `um`;
 
--- Creazione della vista per la gestione dei seriali (la prima del progetto)
-CREATE VIEW vw_serials (id_articolo, record, serial, dir) AS
-    (SELECT idarticolo, CONCAT('ord-', or_ordini.id), serial, or_tipiordine.dir FROM or_righe_ordini LEFT JOIN or_ordini ON or_ordini.id = or_righe_ordini.idordine LEFT JOIN or_tipiordine ON or_tipiordine.id = or_ordini.idtipoordine WHERE or_tipiordine.dir = 'entrata' AND serial != '')
-
-    UNION (SELECT idarticolo, CONCAT('fat-', co_documenti.id), serial, co_tipidocumento.dir FROM co_righe_documenti LEFT JOIN co_documenti ON co_documenti.id = co_righe_documenti.iddocumento LEFT JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento WHERE serial != '')
-
-    UNION (SELECT idarticolo, CONCAT('ddt-', dt_ddt.id), serial, dt_tipiddt.dir FROM dt_righe_ddt LEFT JOIN dt_ddt ON dt_ddt.id = dt_righe_ddt.idddt LEFT JOIN dt_tipiddt ON dt_tipiddt.id = dt_ddt.idtipoddt WHERE serial != '')
-
-    UNION (SELECT idarticolo, CONCAT('int-', mg_articoli_interventi.idintervento), serial, 'entrata' FROM mg_articoli_interventi WHERE serial != '')
-
-    UNION (SELECT idarticolo, CONCAT('art-', idarticolo), serial, 'uscita' FROM mg_prodotti WHERE serial != '');
-
 -- Aggiunto modulo per visualizzare i movimenti di magazzino
 INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Movimenti', '', 'SELECT |select| FROM `mg_movimenti` JOIN `mg_articoli` ON `mg_articoli`.id = `mg_movimenti`.`idarticolo` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.3', '2.3', '1', 1, '1', '1');
 
 UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Movimenti' AND `t2`.`name` = 'Magazzino') SET `t1`.`parent` = `t2`.`id`;
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), 'Articolo', 'IF(mg_articoli.descrizione != \'\', CONCAT(mg_articoli.codice, \'-\', mg_articoli.descrizione), mg_articoli.codice)', 2, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), 'Articolo', 'IF(mg_articoli.descrizione != \'\', CONCAT(mg_articoli.codice, \' - \', mg_articoli.descrizione), mg_articoli.codice)', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), 'Data', 'mg_movimenti.created_at', 5, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), 'Quantità', 'mg_movimenti.qta', 4, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), 'Descrizione', 'movimento', 3, 1, 0, 1, 1),
@@ -962,3 +943,23 @@ UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE
 
 -- Fix per le sessioni di lavoro dei tecnici precedenti
 UPDATE `in_interventi_tecnici` SET `idtipointervento` = (SELECT `idtipointervento` FROM `in_interventi` WHERE `idintervento` = `in_interventi`.`id`) WHERE `idtipointervento` = '';
+
+-- Fix per i serial number
+ALTER TABLE `mg_prodotti` ADD `id_riga_documento` int(11), ADD FOREIGN KEY (`id_riga_documento`) REFERENCES `co_righe_documenti`(`id`) ON DELETE CASCADE, ADD `id_riga_ordine` int(11), ADD FOREIGN KEY (`id_riga_ordine`) REFERENCES `or_righe_ordini`(`id`) ON DELETE CASCADE, ADD `id_riga_ddt` int(11), ADD FOREIGN KEY (`id_riga_ddt`) REFERENCES `dt_righe_ddt`(`id`) ON DELETE CASCADE, ADD `id_riga_intervento` int(11), ADD FOREIGN KEY (`id_riga_intervento`) REFERENCES `mg_articoli_interventi`(`id`) ON DELETE CASCADE, ADD `dir` enum('entrata', 'uscita') DEFAULT 'uscita', CHANGE `idarticolo` `id_articolo` int(11), ADD FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE, CHANGE `serial` `serial` varchar(50), CHANGE `lotto` `lotto` varchar(50), CHANGE `altro` `altro` varchar(50);
+
+INSERT INTO `mg_prodotti` (`id_riga_documento`, `dir`, `id_articolo`, `serial`, `lotto`, `altro`) SELECT `id`, (SELECT `dir` FROM `co_tipidocumento` JOIN `co_documenti` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`), `idarticolo`, `serial`, `lotto`, `altro` FROM `co_righe_documenti`;
+
+INSERT INTO `mg_prodotti` (`id_riga_ordine`, `dir`, `id_articolo`, `serial`, `lotto`, `altro`) SELECT `id`, (SELECT `dir` FROM `or_tipiordine` JOIN `or_ordini` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine` WHERE `or_ordini`.`id` = `or_righe_ordini`.`idordine`), `idarticolo`, `serial`, `lotto`, `altro` FROM `or_righe_ordini`;
+
+INSERT INTO `mg_prodotti` (`id_riga_ddt`, `dir`, `id_articolo`, `serial`, `lotto`, `altro`) SELECT `id`, (SELECT `dir` FROM `dt_tipiddt` JOIN `dt_ddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` WHERE `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`), `idarticolo`, `serial`, `lotto`, `altro` FROM `dt_righe_ddt`;
+
+INSERT INTO `mg_prodotti` (`id_riga_intervento`, `dir`, `id_articolo`, `serial`, `lotto`, `altro`) SELECT `id`, 'entrata', `idarticolo`, `serial`, `lotto`, `altro` FROM `mg_articoli_interventi`;
+
+UPDATE `mg_prodotti` SET `serial` = NULL WHERE `serial` = '';
+UPDATE `mg_prodotti` SET `lotto` = NULL WHERE `lotto` = '';
+UPDATE `mg_prodotti` SET `altro` = NULL WHERE `altro` = '';
+
+ALTER TABLE `co_righe_documenti` DROP `serial`, DROP `altro`, DROP `lotto`;
+ALTER TABLE `mg_articoli_interventi` DROP `serial`, DROP `altro`, DROP `lotto`;
+ALTER TABLE `dt_righe_ddt` DROP `serial`, DROP `altro`, DROP `lotto`;
+ALTER TABLE `or_righe_ordini` DROP `serial`, DROP `altro`, DROP `lotto`;

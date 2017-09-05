@@ -55,23 +55,19 @@ function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
     global $dir;
 
     // Leggo la quantità di questo articolo in ddt
-    $query = 'SELECT idgruppo, qta, subtotale FROM dt_righe_ddt WHERE id='.prepare($idrigaddt);
+    $query = 'SELECT qta, subtotale FROM dt_righe_ddt WHERE id='.prepare($idrigaddt);
     $rs = $dbo->fetchArray($query);
     $qta = floatval($rs[0]['qta']);
     $subtotale = $rs[0]['subtotale'];
-
-    $idgruppo = $rs[0]['idgruppo'];
 
     // Leggo l'idordine
     $query = 'SELECT idordine FROM dt_righe_ddt WHERE id='.prepare($idrigaddt);
     $rs = $dbo->fetchArray($query);
     $idordine = $rs[0]['idordine'];
 
-    if ($dir == 'uscita') {
-        $non_rimovibili = $dbo->fetchArray("SELECT COUNT(*) AS non_rimovibili FROM dt_righe_ddt WHERE serial IN (SELECT serial FROM vw_serials WHERE dir = 'entrata') AND idgruppo=".prepare($idgruppo).' AND idddt='.prepare($idddt))[0]['non_rimovibili'];
-        if ($non_rimovibili != 0) {
-            return false;
-        }
+    $non_rimovibili = seriali_non_rimuovibili('id_riga_ddt', $idrigaddt, $dir);
+    if (!empty($non_rimovibili)) {
+        return false;
     }
 
     // Ddt di vendita
@@ -97,7 +93,7 @@ function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
     $dbo->query($query);
 
     // Elimino la riga dal ddt
-    $dbo->query('DELETE FROM `dt_righe_ddt` WHERE idgruppo='.prepare($idgruppo).' AND idddt='.prepare($idddt));
+    $dbo->query('DELETE FROM `dt_righe_ddt` WHERE id='.prepare($idrigaddt).' AND idddt='.prepare($idddt));
 
     return true;
 }
@@ -274,7 +270,7 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
  * $qta			float		quantità dell'articolo nell'ordine
  * $prezzo			float		prezzo totale degli articoli (prezzounitario*qtà).
  */
-function add_articolo_inddt($idddt, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT', $lotto = '', $serial = '', $altro = '', $idgruppo = 0)
+function add_articolo_inddt($idddt, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT')
 {
     global $dbo;
     global $dir;
@@ -300,20 +296,8 @@ function add_articolo_inddt($idddt, $idarticolo, $descrizione, $idiva, $qta, $pr
 
     if ($qta > 0) {
         $rsart = $dbo->fetchArray('SELECT abilita_serial FROM mg_articoli WHERE id='.prepare($idarticolo));
-        $qta_in = !empty($rsart[0]['abilita_serial']) ? $qta : 1;
 
-        for ($i = 0; $i < $qta_in; ++$i) {
-            /*
-            $iva = $iva / $qta_in;
-            $qta = $qta / $qta_in;
-            $ubtotale = $subtotale / $qta_in;
-            $sconto = $sconto / $qta_in;
-
-            $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
-            */
-
-            $dbo->query('INSERT INTO dt_righe_ddt(idddt, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, qta, abilita_serial, serial, um, idgruppo, `order`) VALUES ('.prepare($idddt).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($qta).', '.prepare($rsart[0]['abilita_serial']).', '.prepare($serial).', '.prepare($um).', '.prepare($idgruppo).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($idddt).'))');
-        }
+        $dbo->query('INSERT INTO dt_righe_ddt(idddt, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, qta, abilita_serial, um, `order`) VALUES ('.prepare($idddt).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($qta).', '.prepare($rsart[0]['abilita_serial']).', '.prepare($um).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($idddt).'))');
 
         $idriga = $dbo->lastInsertedID();
 

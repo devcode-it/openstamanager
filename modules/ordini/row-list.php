@@ -17,33 +17,22 @@ echo '
 
     <tbody class="sortable">';
 
-$q = 'SELECT *, (SELECT codice FROM mg_articoli WHERE mg_articoli.id=`or_righe_ordini`.`idarticolo`) AS codice FROM `or_righe_ordini` WHERE idordine='.prepare($id_record).' GROUP BY idgruppo ORDER BY `order`';
+$q = 'SELECT *, (SELECT codice FROM mg_articoli WHERE mg_articoli.id=`or_righe_ordini`.`idarticolo`) AS codice FROM `or_righe_ordini` WHERE idordine='.prepare($id_record).' ORDER BY `order`';
 $rs = $dbo->fetchArray($q);
 
 if (!empty($rs)) {
     foreach ($rs as $r) {
         $delete = !empty($r['idarticolo']) ? 'unlink_articolo' : 'unlink_riga';
 
-        if (!empty($r['idarticolo'])) {
-            $qserial = 'SELECT * FROM or_righe_ordini WHERE idordine='.prepare($id_record).' AND idarticolo='.prepare($r['idarticolo']).' AND idgruppo='.prepare($r['idgruppo']);
-            $rsserial = $dbo->fetchArray($qserial);
-
-            $mancanti = 0;
-            $serials = [];
-
-            if (!empty($r['abilita_serial'])) {
-                foreach ($rsserial as $seriali) {
-                    $seriali['serial'] = trim($seriali['serial']);
-                    if (!empty($seriali['serial'])) {
-                        $serials[] = $seriali['serial'];
-                    } else {
-                        ++$mancanti;
-                    }
-                }
-            }
+        // Individuazione dei seriali
+        if (!empty($r['idarticolo']) && !empty($r['abilita_serial'])) {
+            $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_ordine='.prepare($r['id'])), 'serial');
+            $mancanti = $r['qta'] - count($serials);
 
             if ($mancanti > 0) {
                 $extra = 'class="warning"';
+            } else {
+                $mancanti = 0;
             }
         }
 
@@ -150,7 +139,7 @@ if (!empty($rs)) {
 
             if (!empty($r['idarticolo']) && $r['abilita_serial']) {
                 echo "
-                    <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/ordini/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idgruppo='.$r['idgruppo'].'&idarticolo='.$r['idarticolo']."', 1 );\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
+                    <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&idarticolo='.$r['idarticolo']."', 1 );\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
             }
 
             echo "

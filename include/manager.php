@@ -141,15 +141,23 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
             <ul class="dropdown-menu" data-target="'.$table_id.'" role="menu">';
 
         foreach ($bulk as $key => $value) {
+            $text = is_array($value) ? $value['text'] : $value;
+
+            $data = is_array($value) ? $value['data'] : [];
+            $extra = [];
+            foreach ($data as $k => $v) {
+                $extra[] = 'data-'.$k.'="'.$v.'"';
+            }
+
             echo '
-                <li role="presentation"><a class="bulk-action" data-op="'.$value.'">'.$key.'</a></li>';
+                <li role="presentation"><a class="bulk-action" data-op="'.$key.'" '.implode(' ', $extra).'>'.$text.'</a></li>';
         }
 
         echo '
             </ul>';
     }
 
-        echo '
+    echo '
         </div>
 
         <div class="col-xs-12 col-md-5 text-right">

@@ -51,6 +51,9 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
     } else {
         include $docroot.'/templates/'.$ptype.'/pdfgen.'.$ptype.'.php';
     }
+
+    // Operazioni di sostituzione
+    include $docroot.'/templates/pdfgen_variables.php';
 }
 
 // Sostituzione di variabili generiche

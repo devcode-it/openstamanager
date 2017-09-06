@@ -80,8 +80,8 @@ $interventi = $dbo->fetchArray('SELECT COUNT(*) AS tot_interventi FROM in_interv
 $tot_interventi = $interventi[0]['tot_interventi'];
 if ($tot_interventi > 0) {
     echo '
-    <div class="alert alert-danger" style="margin:0px;">
+    <div class="alert alert-danger">
         '.str_replace('_NUM_', $tot_interventi, tr('Ci sono _NUM_ interventi collegati')).'.
-        '.tr('Eliminando questo tipo di attività, vengono rimossi anche gli interventi collegati!').'.
+        '.tr('Eliminando questo tipo di attività, vengono rimossi anche gli interventi collegati!').'
     </div>';
 }

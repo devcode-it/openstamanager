@@ -80,17 +80,17 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
                 </div>
 
                 <div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr("Abilita serial number"); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "", "placeholder": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "", "placeholder": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>" ]}
                 </div>
 <?php
-if(empty($records[0]['abilita_serial'])){
-    $plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Serial'");
+if (empty($records[0]['abilita_serial'])) {
+                        $plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Serial'");
 
-    echo '
+                        echo '
     <script>
         $("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");
     </script>';
-}
+                    }
 ?>
 			</div>
 
@@ -174,8 +174,8 @@ if(empty($records[0]['abilita_serial'])){
 
     genera_form_componente($records[0]['contenuto']);
 
-    echo "
-            </div>";
+    echo '
+            </div>';
 
 echo '
 		</div>
@@ -190,7 +190,7 @@ echo '
 
         $rsl = $dbo->fetchArray('SELECT * FROM mg_listini ORDER BY id ASC');
 
-        $rsart = $dbo->fetchArray("SELECT id, prezzo_vendita FROM mg_articoli WHERE id=".prepare($id_record));
+        $rsart = $dbo->fetchArray('SELECT id, prezzo_vendita FROM mg_articoli WHERE id='.prepare($id_record));
 
         if (count($rsl) > 0) {
             echo '
@@ -234,7 +234,7 @@ echo '
 		<div class="panel-body">';
 
         // Quantità nell'automezzo
-        $rsa = $dbo->fetchArray("SELECT qta, (SELECT nome FROM dt_automezzi WHERE id=idautomezzo) AS nome, (SELECT targa FROM dt_automezzi WHERE id=idautomezzo) AS targa FROM mg_articoli_automezzi WHERE idarticolo=".prepare($id_record));
+        $rsa = $dbo->fetchArray('SELECT qta, (SELECT nome FROM dt_automezzi WHERE id=idautomezzo) AS nome, (SELECT targa FROM dt_automezzi WHERE id=idautomezzo) AS targa FROM mg_articoli_automezzi WHERE idarticolo='.prepare($id_record));
 
         if (count($rsa) > 0) {
             echo '
@@ -276,3 +276,21 @@ $("#categoria").change( function(){
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
+
+<?php
+
+$count = $dbo->fetchArray('SELECT COUNT(*) AS tot FROM (
+    SELECT `idarticolo` FROM `co_righe_documenti` WHERE `idarticolo` = '.prepare($id_record).' UNION
+    SELECT `idarticolo` FROM `dt_righe_ddt` WHERE `idarticolo` = '.prepare($id_record).' UNION
+    SELECT `idarticolo` FROM `or_righe_ordini` WHERE `idarticolo` = '.prepare($id_record).' UNION
+    SELECT `idarticolo` FROM `mg_articoli_interventi` WHERE `idarticolo` = '.prepare($id_record).'
+) AS count');
+
+$tot = $count[0]['tot'];
+if ($tot > 0) {
+    echo '
+    <div class="alert alert-danger">
+        '.str_replace('_NUM_', $tot, tr('Ci sono _NUM_ righe di documenti collegate')).'.
+        '.tr('Eliminando questo articolo si potrebbero verificare problemi nelle altre sezioni del gestionale!').'
+    </div>';
+}

@@ -237,9 +237,12 @@ switch (post('op')) {
         break;
 
     case 'delete':
+        // Fix per i seriali utilizzati
+        $dbo->query('UPDATE mg_prodotti SET id_articolo = NULL WHERE id_articolo='.prepare($id_record));
+
         $dbo->query('DELETE FROM mg_articoli WHERE id='.prepare($id_record));
         $dbo->query('DELETE FROM mg_movimenti WHERE idarticolo='.prepare($id_record));
-        $dbo->query('DELETE FROM mg_prodotti WHERE id_articolo='.prepare($id_record));
+        //$dbo->query('DELETE FROM mg_prodotti WHERE id_articolo='.prepare($id_record));
         $dbo->query('DELETE FROM mg_articoli_automezzi WHERE idarticolo='.prepare($id_record));
 
         $_SESSION['infos'][] = tr('Articolo eliminato!');

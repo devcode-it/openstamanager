@@ -235,25 +235,24 @@ function do_backup()
     }
 
     // Creazione cartella temporanea
-    if (!file_exists($backup_dir.$tmp_backup_dir)) {
-        if (@mkdir($backup_dir.$tmp_backup_dir)) {
-            $do_backup = true;
-        } else {
-            $do_backup = false;
-        }
-    } else {
+    if (file_exists($backup_dir.$tmp_backup_dir) || @mkdir($backup_dir.$tmp_backup_dir)) {
         $do_backup = true;
+    } else {
+        $do_backup = false;
     }
 
     if ($do_backup) {
         $database_file = 'backup database.sql';
         $backup_file = 'OSM backup '.date('Y-m-d').' '.date('H_i_s').'.zip';
+
         // Dump database
         $dump = "SET foreign_key_checks = 0;\n";
         $dump .= backup_tables();
         file_put_contents($backup_dir.$tmp_backup_dir.$database_file, $dump);
+
         // Copia file di OSM (escludendo la cartella di backup)
         copyr(DOCROOT, $backup_dir.$tmp_backup_dir, [slashes($backup_dir), '.svn', '.git', 'config.inc.php', 'node_modules']);
+
         // Creazione zip
         if (extension_loaded('zip')) {
             if (create_zip($backup_dir.$tmp_backup_dir, $backup_dir.$backup_file)) {
@@ -261,13 +260,13 @@ function do_backup()
             } else {
                 $_SESSION['errors'][] = tr('Errore durante la creazione del backup!');
             }
+
+            // Rimozione cartella temporanea
+            deltree($backup_dir.$tmp_backup_dir);
         } else {
             $_SESSION['infos'][] = tr('Nuovo backup creato!');
         }
-        // Rimozione cartella temporanea
-        if (extension_loaded('zip')) {
-            deltree($backup_dir.$tmp_backup_dir);
-        }
+
         // Eliminazione vecchi backup se ce ne sono
         $max_backups = intval(get_var('Numero di backup da mantenere'));
         // Lettura file di backup
@@ -281,6 +280,7 @@ function do_backup()
                 }
             }
             closedir($handle);
+
             if (count($backups) > $max_backups) {
                 // Fondo e ordino i backup dal più recente al più vecchio
                 arsort($backups);
@@ -314,6 +314,7 @@ function do_backup()
 function backup_tables($tables = '*')
 {
     $dbo = Database::getConnection();
+
     if ($tables == '*') {
         $tables = [];
         $result = $dbo->fetchArray('SHOW TABLES', true);
@@ -325,10 +326,12 @@ function backup_tables($tables = '*')
     } else {
         $tables = is_array($tables) ? $tables : explode(',', $tables);
     }
+
     // Eliminazione di tutte le tabelle
     foreach ($tables as $table) {
         $return .= "DROP TABLE IF EXISTS `$table`;\n";
     }
+
     // Ricreazione della struttura di ogni tabella e ri-popolazione database
     foreach ($tables as $table) {
         $result = $dbo->fetchArray('SELECT * FROM '.$table, true);

@@ -22,5 +22,5 @@ switch (post('op')) {
 }
 
 return [
-    tr('Elimina selezione') => 'delete-bulk',
+    'delete-bulk' => tr('Elimina selezione'),
 ];

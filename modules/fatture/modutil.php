@@ -719,6 +719,9 @@ function rimuovi_articolo_dafattura($idarticolo, $iddocumento, $idrigadocumento)
     // Elimino i movimenti avvenuti nel magazzino per questo articolo lotto, serial, altro
     $dbo->query('DELETE FROM `mg_movimenti` WHERE idarticolo = '.prepare($idarticolo).' AND iddocumento = '.prepare($iddocumento).' AND id = '.prepare($idrigadocumento));
 
+    // Elimino i seriali utilizzati dalla riga
+    $dbo->query('DELETE FROM `mg_prodotti` WHERE id_articolo = '.prepare($idarticolo).' AND id_riga_documento = '.prepare($idrigadocumento));
+
     return true;
 }
 

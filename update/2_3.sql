@@ -947,13 +947,13 @@ UPDATE `in_interventi_tecnici` SET `idtipointervento` = (SELECT `idtipointervent
 -- Fix per i serial number
 ALTER TABLE `mg_prodotti` ADD `id_riga_documento` int(11), ADD FOREIGN KEY (`id_riga_documento`) REFERENCES `co_righe_documenti`(`id`) ON DELETE CASCADE, ADD `id_riga_ordine` int(11), ADD FOREIGN KEY (`id_riga_ordine`) REFERENCES `or_righe_ordini`(`id`) ON DELETE CASCADE, ADD `id_riga_ddt` int(11), ADD FOREIGN KEY (`id_riga_ddt`) REFERENCES `dt_righe_ddt`(`id`) ON DELETE CASCADE, ADD `id_riga_intervento` int(11), ADD FOREIGN KEY (`id_riga_intervento`) REFERENCES `mg_articoli_interventi`(`id`) ON DELETE CASCADE, ADD `dir` enum('entrata', 'uscita') DEFAULT 'uscita', CHANGE `idarticolo` `id_articolo` int(11), ADD FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE, CHANGE `serial` `serial` varchar(50), CHANGE `lotto` `lotto` varchar(50), CHANGE `altro` `altro` varchar(50);
 
-INSERT INTO `mg_prodotti` (`id_riga_documento`, `dir`, `id_articolo`, `serial`, `lotto`, `altro`) SELECT `id`, (SELECT `dir` FROM `co_tipidocumento` JOIN `co_documenti` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`), `idarticolo`, `serial`, `lotto`, `altro` FROM `co_righe_documenti`;
+INSERT INTO `mg_prodotti` (`id_riga_documento`, `dir`, `id_articolo`, `serial`, `lotto`, `altro`) SELECT `id`, (SELECT `dir` FROM `co_tipidocumento` JOIN `co_documenti` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`), IF(`idarticolo` IN (SELECT `id` FROM `mg_articoli`), `idarticolo`, NULL), `serial`, `lotto`, `altro` FROM `co_righe_documenti`;
 
-INSERT INTO `mg_prodotti` (`id_riga_ordine`, `dir`, `id_articolo`, `serial`, `lotto`, `altro`) SELECT `id`, (SELECT `dir` FROM `or_tipiordine` JOIN `or_ordini` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine` WHERE `or_ordini`.`id` = `or_righe_ordini`.`idordine`), `idarticolo`, `serial`, `lotto`, `altro` FROM `or_righe_ordini`;
+INSERT INTO `mg_prodotti` (`id_riga_ordine`, `dir`, `id_articolo`, `serial`, `lotto`, `altro`) SELECT `id`, (SELECT `dir` FROM `or_tipiordine` JOIN `or_ordini` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine` WHERE `or_ordini`.`id` = `or_righe_ordini`.`idordine`), IF(`idarticolo` IN (SELECT `id` FROM `mg_articoli`), `idarticolo`, NULL), `serial`, `lotto`, `altro` FROM `or_righe_ordini`;
 
-INSERT INTO `mg_prodotti` (`id_riga_ddt`, `dir`, `id_articolo`, `serial`, `lotto`, `altro`) SELECT `id`, (SELECT `dir` FROM `dt_tipiddt` JOIN `dt_ddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` WHERE `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`), `idarticolo`, `serial`, `lotto`, `altro` FROM `dt_righe_ddt`;
+INSERT INTO `mg_prodotti` (`id_riga_ddt`, `dir`, `id_articolo`, `serial`, `lotto`, `altro`) SELECT `id`, (SELECT `dir` FROM `dt_tipiddt` JOIN `dt_ddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` WHERE `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`), IF(`idarticolo` IN (SELECT `id` FROM `mg_articoli`), `idarticolo`, NULL), `serial`, `lotto`, `altro` FROM `dt_righe_ddt`;
 
-INSERT INTO `mg_prodotti` (`id_riga_intervento`, `dir`, `id_articolo`, `serial`, `lotto`, `altro`) SELECT `id`, 'entrata', `idarticolo`, `serial`, `lotto`, `altro` FROM `mg_articoli_interventi`;
+INSERT INTO `mg_prodotti` (`id_riga_intervento`, `dir`, `id_articolo`, `serial`, `lotto`, `altro`) SELECT `id`, 'entrata', IF(`idarticolo` IN (SELECT `id` FROM `mg_articoli`), `idarticolo`, NULL), `serial`, `lotto`, `altro` FROM `mg_articoli_interventi`;
 
 UPDATE `mg_prodotti` SET `serial` = NULL WHERE `serial` = '';
 UPDATE `mg_prodotti` SET `lotto` = NULL WHERE `lotto` = '';
@@ -964,3 +964,9 @@ ALTER TABLE `mg_articoli_interventi` DROP `serial`, DROP `altro`, DROP `lotto`;
 ALTER TABLE `dt_righe_ddt` DROP `serial`, DROP `altro`, DROP `lotto`;
 ALTER TABLE `or_righe_ordini` DROP `serial`, DROP `altro`, DROP `lotto`;
 ALTER TABLE `co_righe_preventivi` DROP `serial`, DROP `altro`, DROP `lotto`;
+
+UPDATE `mg_articoli` SET `abilita_serial` = 1 WHERE `id` IN (SELECT `id_articolo` FROM `mg_prodotti`);
+UPDATE `co_righe_documenti` SET `abilita_serial` = 1 WHERE `idarticolo` IN (SELECT `id_articolo` FROM `mg_prodotti`);
+UPDATE `dt_righe_ddt` SET `abilita_serial` = 1 WHERE `idarticolo` IN (SELECT `id_articolo` FROM `mg_prodotti`);
+UPDATE `mg_articoli_interventi` SET `abilita_serial` = 1 WHERE `idarticolo` IN (SELECT `id_articolo` FROM `mg_prodotti`);
+UPDATE `or_righe_ordini` SET `abilita_serial` = 1 WHERE `idarticolo` IN (SELECT `id_articolo` FROM `mg_prodotti`);

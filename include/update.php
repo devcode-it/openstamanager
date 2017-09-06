@@ -238,6 +238,7 @@ if (filter('action') == 'do_update') {
                         progress += rate;
                         percent = progress / total * 100;
                         percent = Math.round(percent);
+                        percent = percent > 100 ? 100 : percent;
 
                         $("#progress .progress-bar").width(percent + "%");
                         $("#progress .progress-bar span").text(percent + "%");

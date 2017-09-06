@@ -69,10 +69,16 @@ $info = $dbo->fetchArray('SELECT * FROM mg_prodotti WHERE serial IS NOT NULL AND
 $serials = array_column($info, 'serial');
 
 if ($dir == 'entrata') {
+    $in = [];
+    foreach ($serials as $value) {
+        $in[] = prepare($value);
+    }
+    $in = implode(',', $in);
+
     echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial[]", "multiple": 1, "value": "'.implode(',', $serials).'", "values": "query=SELECT DISTINCT serial AS id, serial AS descrizione FROM mg_prodotti WHERE dir=\'uscita\' AND serial NOT IN (SELECT serial FROM mg_prodotti WHERE dir=\'entrata\' AND '.$riga.' != \''.$idriga.'\')", "extra": "data-maximum=\"'.intval($rs[0]['qta']).'\"" ]}
+            {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial[]", "multiple": 1, "value": "'.implode(',', $serials).'", "values": "query=SELECT DISTINCT serial AS id, serial AS descrizione FROM mg_prodotti WHERE dir=\'uscita\' AND serial NOT IN (SELECT serial FROM mg_prodotti WHERE dir=\'entrata\' AND serial NOT IN (SELECT serial WHERE '.$riga.' = \''.$idriga.'\'))'.(!empty($in) ? ' OR serial IN ('.$in.')' : '' ).'", "extra": "data-maximum=\"'.intval($rs[0]['qta']).'\"" ]}
         </div>
     </div>';
 } else {
@@ -84,7 +90,10 @@ if ($dir == 'entrata') {
     <div class="row">';
         }
 
-        $res = $dbo->fetchArray("SELECT * FROM mg_prodotti WHERE dir='entrata' AND serial = ".prepare($serials[$i]));
+        $res = [];
+        if(!empty($serials[$i])){
+            $res = $dbo->fetchArray("SELECT * FROM mg_prodotti WHERE dir='entrata' AND serial = ".prepare($serials[$i]));
+        }
 
         echo '
         <div class="col-md-4">

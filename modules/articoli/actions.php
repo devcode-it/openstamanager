@@ -173,13 +173,13 @@ switch (post('op')) {
                     $insert = '('.prepare($id_record).', |lotto|, |serial|, |altro|)';
 
                     $this_lotto = ($lotto__start != '') ? $lotto_prefix.(str_pad($lotto_start + $l, $lotto_pad_length, '0', STR_PAD_LEFT)) : '';
-                    $insert = str_replace('|lotto|', prepare($this_lotto), $insert);
+                    $insert = str_replace('|lotto|', 'NULL', $insert); // prepare($this_lotto)
 
                     $this_serial = ($serial__start != '') ? $serial_prefix.(str_pad($serial_start + $s, $serial_pad_length, '0', STR_PAD_LEFT)) : '';
                     $insert = str_replace('|serial|', prepare($this_serial), $insert);
 
                     $this_altro = ($altro__start != '') ? $altro_prefix.(str_pad($altro_start + $a, $altro_pad_length, '0', STR_PAD_LEFT)) : '';
-                    $insert = str_replace('|altro|', prepare($this_altro), $insert);
+                    $insert = str_replace('|altro|', 'NULL', $insert); // prepare($this_altro)
 
                     // Verifico che questa combinazione non esista già
                     $np = $dbo->fetchNum('SELECT id FROM mg_prodotti WHERE id_articolo='.prepare($id_record).' AND lotto='.prepare($this_lotto).' AND serial='.prepare($this_serial).' AND altro='.prepare($this_altro));

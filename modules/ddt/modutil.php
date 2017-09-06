@@ -95,6 +95,9 @@ function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
     // Elimino la riga dal ddt
     $dbo->query('DELETE FROM `dt_righe_ddt` WHERE id='.prepare($idrigaddt).' AND idddt='.prepare($idddt));
 
+    // Elimino i seriali utilizzati dalla riga
+    $dbo->query('DELETE FROM `mg_prodotti` WHERE id_articolo = '.prepare($idarticolo).' AND id_riga_ddt = '.prepare($idrigaddt));
+
     return true;
 }
 

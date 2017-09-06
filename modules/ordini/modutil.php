@@ -168,6 +168,9 @@ function rimuovi_articolo_daordine($idarticolo, $idordine, $idrigaordine)
     // Elimino la riga dall'ordine
     $dbo->query('DELETE FROM `or_righe_ordini` WHERE id='.prepare($idrigaordine));
 
+    // Elimino i seriali utilizzati dalla riga
+    $dbo->query('DELETE FROM `mg_prodotti` WHERE id_articolo = '.prepare($idarticolo).' AND id_riga_ordine = '.prepare($idrigaordine));
+
     return true;
 }
 

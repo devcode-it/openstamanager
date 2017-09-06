@@ -124,11 +124,7 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
     }
     $bulk = (array) $bulk;
 
-    $tr = [
-        'delete' => tr('Elimina selezione'),
-    ];
-
-        echo '
+    echo '
     <div class="row" data-target="'.$table_id.'">
         <div class="col-xs-12 col-md-5">
             <div class="btn-group" role="group">
@@ -146,7 +142,7 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
 
         foreach ($bulk as $key => $value) {
             echo '
-                <li role="presentation"><a class="bulk-action" data-op="'.$value.'">'.$tr[$key].'</a></li>';
+                <li role="presentation"><a class="bulk-action" data-op="'.$value.'">'.$key.'</a></li>';
         }
 
         echo '

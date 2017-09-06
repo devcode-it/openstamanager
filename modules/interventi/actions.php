@@ -477,7 +477,7 @@ switch (post('op')) {
                 $serials = array_slice($serials, 0, $qta);
             }
 
-            $dbo->sync('mg_prodotti', ['id_riga_intervento' => $idriga, 'dir' => 'uscita', 'id_articolo' => $idarticolo], ['serial' => $serials]);
+            $dbo->sync('mg_prodotti', ['id_riga_intervento' => $idriga, 'dir' => 'entrata', 'id_articolo' => $idarticolo], ['serial' => $serials]);
         }
 
         link_componente_to_articolo($id_record, $idimpianto, $idarticolo, $qta);
@@ -505,6 +505,9 @@ switch (post('op')) {
 
             // Elimino il collegamento al componente
             $dbo->query('DELETE FROM my_impianto_componenti WHERE idimpianto='.prepare($idimpianto).' AND idintervento='.prepare($id_record));
+
+            // Elimino i seriali utilizzati dalla riga
+            $dbo->query('DELETE FROM `mg_prodotti` WHERE id_articolo = '.prepare($idarticolo).' AND id_riga_intervento = '.prepare($id_record));
         }
 
         break;
@@ -520,7 +523,7 @@ switch (post('op')) {
             }
         }
 
-        $dbo->sync('mg_prodotti', ['id_riga_intervento' => $idriga, 'dir' => 'uscita', 'id_articolo' => $idarticolo], ['serial' => $serials]);
+        $dbo->sync('mg_prodotti', ['id_riga_intervento' => $idriga, 'dir' => 'entrata', 'id_articolo' => $idarticolo], ['serial' => $serials]);
 
         break;
 

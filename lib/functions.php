@@ -82,16 +82,21 @@ function deltree($path)
  *
  * @return bool Returns TRUE on success, FALSE on failure
  */
-function copyr($source, $dest, $exclude = [])
+function copyr($source, $dest, $ignores = [])
 {
+    $path = realpath($source);
+    $exclude = !empty(array_intersect([slashes($path), slashes($path.'/'), $entry], $ignores));
+
     // Simple copy for a file
-    if (is_file($source) && !in_array(slashes(realpath($source)), $exclude) && !in_array($source, $exclude)) {
+    if (is_file($source) && !$exclude) {
         return copy($source, $dest);
     }
+
     // Make destination directory
     if (!is_dir($dest)) {
         mkdir($dest);
     }
+
     // If the source is a symlink
     if (is_link($source)) {
         $link_dest = readlink($source);
@@ -107,8 +112,11 @@ function copyr($source, $dest, $exclude = [])
             continue;
         }
 
+        $path = realpath($source.'/'.$entry.'/');
+        $exclude = !empty(array_intersect([slashes($path), slashes($path.'/'), $entry], $ignores));
+
         // Deep copy directories
-        if ($dest !== $source.'/'.$entry && !in_array(slashes(realpath($source.'/'.$entry.'/')), $exclude) && !in_array(slashes(realpath($source.'/'.$entry.'/').'/'), $exclude) && !in_array($entry, $exclude)) {
+        if ($dest !== $source.'/'.$entry && !$exclude) {
             copyr($source.'/'.$entry, $dest.'/'.$entry, $exclude);
         }
     }
@@ -136,8 +144,8 @@ function create_zip($source, $destination)
     }
 
     $zip = new ZipArchive();
-
-    if ($zip->open($destination, ZIPARCHIVE::CREATE)) {
+    $result = $zip->open($destination, ZIPARCHIVE::CREATE);
+    if ($result === true && is_writable(dirname($destination))) {
         $source = slashes(realpath($source));
 
         if (is_dir($source) === true) {
@@ -145,12 +153,12 @@ function create_zip($source, $destination)
 
             foreach ($files as $file) {
                 $file = slashes(realpath($file));
-                $file = str_replace($source.DIRECTORY_SEPARATOR, '', $file);
+                $filename = str_replace($source.DIRECTORY_SEPARATOR, '', $file);
 
                 if (is_dir($file) === true) {
-                    $zip->addEmptyDir($file);
+                    $zip->addEmptyDir($filename);
                 } elseif (is_file($file) === true) {
-                    $zip->addFromString($file, file_get_contents($file));
+                    $zip->addFromString($filename, file_get_contents($file));
                 }
             }
         } elseif (is_file($source) === true) {
@@ -158,13 +166,11 @@ function create_zip($source, $destination)
         }
 
         $zip->close();
-
-        return true;
     } else {
         $_SESSION['errors'][] = tr("Errore durante la creazione dell'archivio!");
-
-        return false;
     }
+
+    return $result === true;
 }
 
 /**
@@ -242,12 +248,13 @@ function do_backup()
     }
 
     if ($do_backup) {
-        $database_file = 'backup database.sql';
+        $database_file = 'database.sql';
         $backup_file = 'OSM backup '.date('Y-m-d').' '.date('H_i_s').'.zip';
 
         // Dump database
         $dump = "SET foreign_key_checks = 0;\n";
         $dump .= backup_tables();
+        $dump .= "SET foreign_key_checks = 1;\n";
         file_put_contents($backup_dir.$tmp_backup_dir.$database_file, $dump);
 
         // Copia file di OSM (escludendo la cartella di backup)
@@ -336,37 +343,38 @@ function backup_tables($tables = '*')
     foreach ($tables as $table) {
         $result = $dbo->fetchArray('SELECT * FROM '.$table, true);
         $num_fields = count($result[0]);
+
         $row2 = $dbo->fetchArray('SHOW CREATE TABLE '.$table);
         $return .= "\n".$row2[1].";\n";
+
         for ($i = 0; $i < $num_fields; ++$i) {
-            if ($result != false) {
-                foreach ($result as $row) {
-                    $return .= 'INSERT INTO '.$table.' VALUES(';
-                    for ($j = 0; $j < $num_fields; ++$j) {
-                        $row[$j] = addslashes($row[$j]);
-                        $row[$j] = str_replace("\r\n", '\\n', $row[$j]);
-                        $row[$j] = str_replace("\n", '\\n', $row[$j]);
-                        if (isset($row[$j])) {
-                            $return .= '"'.$row[$j].'"';
-                        } else {
-                            $return .= '""';
-                        }
-                        if ($j < ($num_fields - 1)) {
-                            $return .= ',';
-                        }
+            foreach ($result as $row) {
+                $return .= 'INSERT INTO '.$table.' VALUES(';
+
+                for ($j = 0; $j < $num_fields; ++$j) {
+                    $row[$j] = addslashes($row[$j]);
+                    $row[$j] = str_replace("\r\n", '\\n', $row[$j]);
+                    $row[$j] = str_replace("\n", '\\n', $row[$j]);
+
+                    if (isset($row[$j])) {
+                        $return .= '"'.$row[$j].'"';
+                    } else {
+                        $return .= '""';
                     }
-                    $return .= ");\n";
+
+                    if ($j < ($num_fields - 1)) {
+                        $return .= ',';
+                    }
                 }
+
+                $return .= ");\n";
             }
         }
+
         $return .= "\n";
     }
 
     return $return;
-    // save file
-    // $handle = fopen('db-backup-'.time().'-'.(md5(implode(',',$tables))).'.sql','w+');
-    // fwrite($handle,$return);
-    // fclose($handle);
 }
 
 /**

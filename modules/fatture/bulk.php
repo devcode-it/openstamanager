@@ -30,15 +30,13 @@ switch (post('op')) {
         // Creazione zip
         if (extension_loaded('zip')) {
             create_zip($dir, $file);
-        } else {
-            system('zip -9 -r -j "'.$file.'" "'.$dir.'"');
+
+            // Invio al browser dello zip
+            force_download($file);
+
+            // Rimozione dei contenuti
+            deltree($dir);
         }
-
-        // Invio al browser dello zip
-        force_download($dir.'/fatture.zip');
-
-        // Rimozione cartella temporeanea
-        deltree($dir);
 
         break;
 }

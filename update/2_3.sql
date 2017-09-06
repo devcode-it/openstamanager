@@ -107,24 +107,24 @@ ALTER TABLE `mg_articoli` ADD `peso_lordo` decimal(12, 4) NOT NULL AFTER `gg_gar
 
 -- 2016-02-15
 -- Aggiunta sconto percentuale e unitario su fatture e righe, ddt e righe, ordini e righe, preventivi e righe, contratti e righe
-ALTER TABLE `co_documenti` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` varchar(3) NOT NULL;
-ALTER TABLE `co_preventivi` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` varchar(3) NOT NULL;
-ALTER TABLE `co_contratti` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` varchar(3) NOT NULL;
-ALTER TABLE `or_ordini` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` varchar(3) NOT NULL;
-ALTER TABLE `dt_ddt` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` varchar(3) NOT NULL;
-ALTER TABLE `in_interventi` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` varchar(3) NOT NULL;
+ALTER TABLE `co_documenti` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
+ALTER TABLE `co_preventivi` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
+ALTER TABLE `co_contratti` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
+ALTER TABLE `or_ordini` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
+ALTER TABLE `dt_ddt` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
+ALTER TABLE `in_interventi` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
 
-ALTER TABLE `co_righe_documenti` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` varchar(3) NOT NULL AFTER `sconto_unitario`;
-ALTER TABLE `co_righe_preventivi` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` varchar(3) NOT NULL AFTER `sconto_unitario`;
-ALTER TABLE `co_righe2_contratti` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` varchar(3) NOT NULL AFTER `sconto_unitario`;
-ALTER TABLE `or_righe_ordini` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` varchar(3) NOT NULL AFTER `sconto_unitario`;
-ALTER TABLE `dt_righe_ddt` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` varchar(3) NOT NULL AFTER `sconto_unitario`;
+ALTER TABLE `co_righe_documenti` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
+ALTER TABLE `co_righe_preventivi` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
+ALTER TABLE `co_righe2_contratti` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
+ALTER TABLE `or_righe_ordini` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
+ALTER TABLE `dt_righe_ddt` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
 
-ALTER TABLE `in_righe_interventi` ADD `sconto` decimal(12, 4) NOT NULL, ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` varchar(3) NOT NULL AFTER `sconto_unitario`;
-ALTER TABLE `mg_articoli_interventi` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` varchar(3) NOT NULL AFTER `sconto_unitario`;
+ALTER TABLE `in_righe_interventi` ADD `sconto` decimal(12, 4) NOT NULL, ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
+ALTER TABLE `mg_articoli_interventi` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
 ALTER TABLE `in_interventi_tecnici`
-    ADD `sconto` decimal(12, 4) NOT NULL, ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` varchar(3) NOT NULL AFTER `sconto_unitario`,
-    ADD `scontokm` decimal(12, 4) NOT NULL AFTER `tipo_sconto`, ADD `scontokm_unitario` decimal(12, 4) NOT NULL AFTER `scontokm`, ADD `tipo_scontokm` varchar(3) NOT NULL AFTER `scontokm_unitario`;
+    ADD `sconto` decimal(12, 4) NOT NULL, ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`,
+    ADD `scontokm` decimal(12, 4) NOT NULL AFTER `tipo_sconto`, ADD `scontokm_unitario` decimal(12, 4) NOT NULL AFTER `scontokm`, ADD `tipo_scontokm` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `scontokm_unitario`;
 
 -- Inizializzo a vuoto il valore per le impostazioni Percentuale ritenuta d'acconto e Percentuale rivalsa INPS
 UPDATE `zz_settings` SET `valore` = '' WHERE `zz_settings`.`nome` = "Percentuale ritenuta d'acconto";
@@ -573,7 +573,7 @@ UPDATE `co_statipreventivi` SET `icona` = 'fa fa-check-circle text-success' WHER
 UPDATE `co_statipreventivi` SET `icona` = 'fa fa-money text-primary' WHERE `descrizione` = 'In attesa di pagamento';
 
 -- Aggiunta sconto incondizionato sull'attività
-ALTER TABLE `in_interventi` ADD `tipo_sconto` varchar(3) NOT NULL AFTER `ora_sla`;
+ALTER TABLE `in_interventi` ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `ora_sla`;
 
 -- Aggiunta sconto in euro e percentuale su ore e km, e quantità ore nella riga tecnico-intervento
 ALTER TABLE `in_interventi_tecnici` ADD `ore` decimal(12, 4) NOT NULL AFTER `orario_fine`;
@@ -702,7 +702,7 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.idanagrafica) AS 
 UPDATE `zz_group_module` SET `clause` = IF(SUBSTRING(TRIM(`clause`), 1, 4) = 'AND ', SUBSTRING(TRIM(`clause`), 4), TRIM(`clause`));
 
 -- Aggiunta dei campi position e default in zz_group_module
-ALTER TABLE `zz_group_module` ADD `default` boolean NOT NULL DEFAULT 0 AFTER `clause`, ADD `enabled` boolean NOT NULL DEFAULT 1 AFTER `clause`, ADD `position` varchar(3) NOT NULL DEFAULT 'WHR' AFTER `clause`;
+ALTER TABLE `zz_group_module` ADD `default` boolean NOT NULL DEFAULT 0 AFTER `clause`, ADD `enabled` boolean NOT NULL DEFAULT 1 AFTER `clause`, ADD `position` enum('WHR', 'HVN') NOT NULL DEFAULT 'WHR' AFTER `clause`;
 UPDATE `zz_group_module` SET `default` = 1;
 
 -- Fix per lo spostamento di pdfgen.php
@@ -763,70 +763,6 @@ ALTER TABLE `co_iva` ADD `dicitura` varchar(255);
 -- Miglioramento della gestione dei pagamenti predefiniti
 ALTER TABLE `an_anagrafiche` CHANGE `idpagamento` `idpagamento_vendite` int(11), ADD `idpagamento_acquisti` int(11);
 UPDATE `an_anagrafiche` SET `idpagamento_acquisti` = `idpagamento_vendite` WHERE `idpagamento_acquisti` IS NULL;
-
--- Creazione della vista per gestire i calcoli relativi agli interventi
-CREATE VIEW vw_activity_subtotal AS
-    SELECT in_interventi.id,
-        (SELECT COALESCE(SUM(
-            ROUND(prezzo_ore_consuntivo_tecnico, 2)
-        ), 0) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS manodopera_costo,
-        (SELECT COALESCE(SUM(
-            ROUND(prezzo_ore_consuntivo, 2)
-        ), 0) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS manodopera_addebito,
-        (SELECT ROUND(COALESCE(SUM(
-            ROUND(prezzo_ore_consuntivo, 2) - ROUND(sconto, 2)
-        ), 0), 2) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS manodopera_scontato,
-
-        (SELECT COALESCE(SUM(
-            ROUND(prezzo_km_consuntivo_tecnico, 2)
-        ), 0) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS viaggio_costo,
-        (SELECT COALESCE(SUM(
-            ROUND(prezzo_km_consuntivo, 2)
-        ), 0) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS viaggio_addebito,
-        (SELECT ROUND(COALESCE(SUM(
-            ROUND(prezzo_km_consuntivo, 2) - ROUND(scontokm, 2)
-        ), 0), 2) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS viaggio_scontato,
-
-        (SELECT ROUND(COALESCE(SUM(
-            ROUND(prezzo_acquisto, 2) * ROUND(qta, 2)
-        ), 0), 2) FROM mg_articoli_interventi WHERE idintervento=in_interventi.id) AS ricambi_costo,
-        (SELECT ROUND(COALESCE(SUM(
-            ROUND(prezzo_vendita, 2) * ROUND(qta, 2)
-        ), 0), 2) FROM mg_articoli_interventi WHERE idintervento=in_interventi.id) AS ricambi_addebito,
-        (SELECT ROUND(COALESCE(SUM(
-            ROUND(prezzo_vendita, 2) * ROUND(qta, 2) - ROUND(sconto, 2) * ROUND(qta, 2)
-        ), 0), 2) FROM mg_articoli_interventi WHERE idintervento=in_interventi.id) AS ricambi_scontato,
-
-        (SELECT ROUND(COALESCE(SUM(
-            ROUND(prezzo_acquisto, 2) * ROUND(qta, 2)
-        ), 0), 2) FROM in_righe_interventi WHERE idintervento=in_interventi.id) AS altro_costo,
-        (SELECT ROUND(COALESCE(SUM(
-            ROUND(prezzo_vendita, 2) * ROUND(qta, 2)
-        ), 0), 2) FROM in_righe_interventi WHERE idintervento=in_interventi.id) AS altro_addebito,
-        (SELECT ROUND(COALESCE(SUM(
-            ROUND(prezzo_vendita, 2) * ROUND(qta, 2) - ROUND(sconto, 2) * ROUND(qta, 2)
-        ), 0), 2) FROM in_righe_interventi WHERE idintervento=in_interventi.id) AS altro_scontato,
-
-        ROUND(COALESCE(
-            IF(tipo_sconto = 'PRC',
-
-            (SELECT ROUND(COALESCE(SUM(
-                ROUND(prezzo_ore_consuntivo, 2) - ROUND(sconto, 2)
-            ), 0), 2) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id)
-            + (SELECT ROUND(COALESCE(SUM(
-                ROUND(prezzo_km_consuntivo, 2) - ROUND(scontokm, 2)
-            ), 0), 2) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id)
-            + (SELECT ROUND(COALESCE(SUM(
-                ROUND(prezzo_vendita, 2) * ROUND(qta, 2) - ROUND(sconto, 2) * ROUND(qta, 2)
-            ), 0), 2) FROM mg_articoli_interventi WHERE idintervento=in_interventi.id)
-            + (SELECT ROUND(COALESCE(SUM(
-                ROUND(prezzo_vendita, 2) * ROUND(qta, 2) - ROUND(sconto, 2) * ROUND(qta, 2)
-            ), 0), 2) FROM in_righe_interventi WHERE idintervento=in_interventi.id)
-            * sconto_globale / 100,
-
-            sconto_globale), 0), 2) AS sconto_globale
-
-    FROM in_interventi;
 
 -- Rimozione data_sla e ora_sla
 ALTER TABLE `in_interventi` DROP `data_sla`, DROP `ora_sla`;

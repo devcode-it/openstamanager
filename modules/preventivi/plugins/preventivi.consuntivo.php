@@ -1,6 +1,7 @@
 <?php
 
 include_once __DIR__.'/../../../core.php';
+include_once $docroot.'/modules/interventi/modutil.php';
 
 /*
 CONSUNTIVO
@@ -25,7 +26,7 @@ $totale_scontato = 0;
 $totale_stato = [];
 
 // Tabella con riepilogo interventi
-$rsi = $dbo->fetchArray('SELECT *, in_interventi.id, vw_activity_subtotal.*, (manodopera_scontato + viaggio_scontato + ricambi_scontato + altro_scontato - vw_activity_subtotal.sconto_globale) AS subtotale, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM co_preventivi_interventi INNER JOIN in_interventi ON co_preventivi_interventi.idintervento=in_interventi.id JOIN vw_activity_subtotal ON vw_activity_subtotal.id = in_interventi.id WHERE co_preventivi_interventi.idpreventivo='.prepare($id_record).' ORDER BY co_preventivi_interventi.idintervento DESC');
+$rsi = $dbo->fetchArray('SELECT *, in_interventi.id, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM co_preventivi_interventi INNER JOIN in_interventi ON co_preventivi_interventi.idintervento=in_interventi.id WHERE co_preventivi_interventi.idpreventivo='.prepare($id_record).' ORDER BY co_preventivi_interventi.idintervento DESC');
 if (!empty($rsi)) {
     echo '
 <table class="table table-bordered table-condensed">
@@ -40,7 +41,8 @@ if (!empty($rsi)) {
 
     // Tabella con i dati
     foreach ($rsi as $int) {
-        $totale_stato[$int['idstatointervento']] = sum($totale_stato[$int['idstatointervento']], $int['subtotale']);
+        $int = array_merge($int, get_costi_intervento($int['id']));
+        $totale_stato[$int['idstatointervento']] = sum($totale_stato[$int['idstatointervento']], $int['totale_manodopera']);
 
         // Riga intervento singolo
         echo '

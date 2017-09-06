@@ -148,3 +148,91 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto)
         'prezzo_dirittochiamata_tecnico' => $costo_dirittochiamata_tecnico,
     ]);
 }
+
+function get_costi_intervento($id_intervento)
+{
+    $dbo = Database::getConnection();
+
+    $decimals = Settings::get('Cifre decimali per importi');
+
+    $tecnici = $dbo->fetchArray('SELECT
+    COALESCE(SUM(
+        ROUND(prezzo_ore_consuntivo_tecnico, '.$decimals.')
+    ), 0) AS manodopera_costo,
+    COALESCE(SUM(
+        ROUND(prezzo_ore_consuntivo, '.$decimals.')
+    ), 0) AS manodopera_addebito,
+    COALESCE(SUM(
+        ROUND(prezzo_ore_consuntivo, '.$decimals.') - ROUND(sconto, '.$decimals.')
+    ), 0) AS manodopera_scontato,
+
+    COALESCE(SUM(
+        ROUND(prezzo_km_consuntivo_tecnico, '.$decimals.')
+    ), 0) AS viaggio_costo,
+    COALESCE(SUM(
+        ROUND(prezzo_km_consuntivo, '.$decimals.')
+    ), 0) viaggio_addebito,
+    COALESCE(SUM(
+        ROUND(prezzo_km_consuntivo, '.$decimals.') - ROUND(scontokm, '.$decimals.')
+    ), 0) AS viaggio_scontato
+
+    FROM in_interventi_tecnici WHERE idintervento='.prepare($id_intervento));
+
+    $articoli = $dbo->fetchArray('SELECT
+    COALESCE(SUM(
+        ROUND(prezzo_acquisto, '.$decimals.') * ROUND(qta, '.$decimals.')
+    ), 0) AS ricambi_costo,
+    COALESCE(SUM(
+        ROUND(prezzo_vendita, '.$decimals.') * ROUND(qta, '.$decimals.')
+    ), 0) AS ricambi_addebito,
+    COALESCE(SUM(
+        ROUND(prezzo_vendita, '.$decimals.') * ROUND(qta, '.$decimals.') - ROUND(sconto, '.$decimals.') * ROUND(qta, '.$decimals.')
+    ), 0) AS ricambi_scontato
+
+    FROM mg_articoli_interventi WHERE idintervento='.prepare($id_intervento));
+
+    $altro = $dbo->fetchArray('SELECT
+    COALESCE(SUM(
+        ROUND(prezzo_acquisto, '.$decimals.') * ROUND(qta, '.$decimals.')
+    ), 0) AS altro_costo,
+    COALESCE(SUM(
+        ROUND(prezzo_vendita, '.$decimals.') * ROUND(qta, '.$decimals.')
+    ), 0) AS altro_addebito,
+    COALESCE(SUM(
+        ROUND(prezzo_vendita, '.$decimals.') * ROUND(qta, '.$decimals.') - ROUND(sconto, '.$decimals.') * ROUND(qta, '.$decimals.')
+    ), 0) AS altro_scontato
+
+    FROM in_righe_interventi WHERE idintervento='.prepare($id_intervento));
+
+    $result = array_merge($tecnici[0], $articoli[0], $altro[0]);
+
+    $result['totale_costi'] = sum([
+        $result['manodopera_costo'],
+        $result['viaggio_costo'],
+        $result['ricambi_costo'],
+        $result['altro_costo'],
+    ]);
+
+    $result['totale_addebito'] = sum([
+        $result['manodopera_addebito'],
+        $result['viaggio_addebito'],
+        $result['ricambi_addebito'],
+        $result['altro_addebito'],
+    ]);
+
+    $totale_manodopera = sum([
+        $result['manodopera_scontato'],
+        $result['viaggio_scontato'],
+        $result['ricambi_scontato'],
+        $result['altro_scontato'],
+    ]);
+
+    // Calcolo dello sconto globale
+    $sconto = $dbo->fetchArray('SELECT sconto_globale, tipo_sconto_globale FROM in_interventi WHERE id='.prepare($id_intervento))[0];
+    $result['sconto_globale'] = ($sconto['tipo_sconto_globale'] == 'PRC') ? $totale_manodopera * $sconto['sconto_globale'] / 100 : $sconto['sconto_globale'];
+    $result['sconto_globale'] = round($result['sconto_globale'], $decimals);
+
+    $result['totale_manodopera'] = sum($totale_manodopera, -$result['sconto_globale']);
+
+    return $result;
+}

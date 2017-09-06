@@ -397,9 +397,8 @@ switch (post('op')) {
                     }
                 }
 
-                $intervento = $dbo->fetchArray('SELECT (manodopera_scontato + viaggio_scontato - vw_activity_subtotal.sconto_globale) AS prezzo FROM in_interventi JOIN vw_activity_subtotal ON vw_activity_subtotal.id = in_interventi.id WHERE in_interventi.id = '.prepare($idintervento));
-
-                $prezzo = $intervento[0]['prezzo'];
+                $costi_intervento = get_costi_intervento($idintervento);
+                $prezzo = $costi_intervento['manodopera_scontato'] + $costi_intervento['viaggio_scontato'] - $costi_intervento['sconto_globale'];
 
                 // Calcolo iva
                 $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);

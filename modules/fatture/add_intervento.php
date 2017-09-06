@@ -1,6 +1,7 @@
 <?php
 
 include_once __DIR__.'/../../core.php';
+include_once $docroot.'/modules/interventi/modutil.php';
 
 $module = Modules::getModule($id_module);
 
@@ -29,11 +30,16 @@ echo '
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="dir" value="'.$dir.'">';
 
+$rs = $dbo->fetchArray('SELECT in_interventi.id, CONCAT(\'Intervento numero \', codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione, IF(idclientefinale='.prepare($idanagrafica).', \'Interventi conto terzi\', \'Interventi diretti\')  AS `optgroup`FROM in_interventi WHERE (idanagrafica='.prepare($idanagrafica).' OR idclientefinale='.prepare($idanagrafica).') AND NOT idstatointervento=\'DENY\' AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND NOT in_interventi.id IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND NOT in_interventi.id IN (SELECT idintervento FROM co_righe_contratti WHERE idintervento IS NOT NULL)');
+foreach ($rs as $key => $value) {
+    $rs[$key]['prezzo'] = get_costi_intervento($value['id'])['totale_manodopera'];
+}
+
 // Intervento
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Intervento').'", "name": "idintervento", "required": 1, "values": "query=SELECT in_interventi.id, CONCAT(\'Intervento numero \', codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione, (manodopera_scontato + viaggio_scontato + ricambi_scontato + altro_scontato - vw_activity_subtotal.sconto_globale) AS prezzo, IF(idclientefinale='.prepare($idanagrafica).', \'Interventi conto terzi\', \'Interventi diretti\')  AS `optgroup`FROM in_interventi JOIN vw_activity_subtotal ON vw_activity_subtotal.id = in_interventi.id WHERE (idanagrafica='.prepare($idanagrafica).' OR idclientefinale='.prepare($idanagrafica).') AND NOT idstatointervento=\'DENY\' AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND NOT in_interventi.id IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND NOT in_interventi.id IN (SELECT idintervento FROM co_righe_contratti WHERE idintervento IS NOT NULL)", "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.descrizione); $(\'#prezzo\').val($data.prezzo);\"" ]}
+            {[ "type": "select", "label": "'.tr('Intervento').'", "name": "idintervento", "required": 1, "values": "json='.substr(str_replace('"', '\"', json_encode($rs)), 2, -2).'", "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.descrizione); $(\'#prezzo\').val($data.prezzo);\"" ]}
         </div>
     </div>';
 

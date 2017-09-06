@@ -465,7 +465,7 @@ class Modules
 
         $extra .= !empty($blank) ? ' target="_blank"' : '';
 
-        if (!empty($module) && in_array($module['permessi'], ['r', 'rw'])) {
+        if (!empty($module) && !empty($id_record) && in_array($module['permessi'], ['r', 'rw'])) {
             return '<a href="'.ROOTDIR.'/editor.php?id_module='.$module['id'].'&id_record='.$id_record.'" '.$extra.'>'.$testo.'</a>';
         } else {
             return $alternativo;

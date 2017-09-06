@@ -555,8 +555,7 @@ div.DTS tbody th {
     max-width: 500px;
 }
 
-.table-responsive th,
-.table-responsive td,
-.table input {
+.table-responsive th > input,
+.table-responsive td > input{
     min-width: 200px;
 }

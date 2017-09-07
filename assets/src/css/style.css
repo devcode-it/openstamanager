@@ -555,7 +555,13 @@ div.DTS tbody th {
     max-width: 500px;
 }
 
-.table-responsive th > input,
-.table-responsive td > input{
+.table-responsive th>input,
+.table-responsive td>input {
     min-width: 200px;
+}
+
+table.table:not(.dataTable) th,
+table.table:not(.dataTable) td {
+    word-wrap: break-word;
+    word-break: break-all;
 }

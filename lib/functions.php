@@ -872,6 +872,9 @@ function sum($first, $second = null, $decimals = null)
 
 function redirectOperation()
 {
+    $id_module = filter('id_module');
+    $id_record = filter('id_record');
+
     $backto = filter('backto');
     // Scelta del redirect dopo un submit
     if (!empty($backto)) {

@@ -38,6 +38,7 @@ $tot_righe = sizeof($righe);
 
 foreach ($righe as $i => $riga) {
     $n_rows += ceil(strlen($riga['descrizione']) / $words4row);
+    $n_rows += substr_count($riga['descrizione'], PHP_EOL);
 
     echo "
         <tr class='".($i % 2 != 0 ? 'bg-default' : '')."'>
@@ -138,7 +139,8 @@ if (!empty($v_iva)) {
     // Controllo se è stata applicata questa tipologia di iva
     foreach ($elenco as $e => $testo) {
         if (in_array($e, $keys)) {
-            $n_rows += nl2br($testo) / $words4row;
+            $n_rows += strlen($testo) / $words4row;
+            $n_rows += substr_count($riga['descrizione'], PHP_EOL);
 
             echo "
         <tr>

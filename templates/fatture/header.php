@@ -67,7 +67,7 @@ echo '
     <div class="col-xs-5 col-xs-offset-1">
         <table class="table" style="width:100%;margin-top:5mm;">
             <tr>
-                <td class="border-full" style="height:16mm;">
+                <td colspan=2 class="border-full" style="height:16mm;">
                     <p class="small-bold">'.strtoupper(tr('Spett.le')).'</p>
                     <p>$c_ragionesociale$</p>
                     <p>$c_indirizzo$ $c_citta$</p>
@@ -75,16 +75,20 @@ echo '
             </tr>
 
             <tr>
-                <td class="border-right border-bottom border-left">
+                <td class="border-bottom border-left">
                     <p class="small-bold">'.strtoupper(tr('Partita IVA')).'</p>
-                    <p>$c_piva$</p>
+                </td>
+                <td class="border-right border-bottom text-right">
+                    <small>$c_piva$</small>
                 </td>
             </tr>
 
             <tr>
-                <td class="border-right border-bottom border-left">
+                <td class="border-bottom border-left">
                     <p class="small-bold">'.strtoupper(tr('Codice fiscale')).'</p>
-                    <p>$c_codicefiscale$</p>
+                </td>
+                <td class="border-right border-bottom text-right">
+                    <small>$c_codicefiscale$</small>
                 </td>
             </tr>
         </table>

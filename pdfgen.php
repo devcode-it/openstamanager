@@ -124,6 +124,7 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
     ];
 
     $mpdf = new mPDF('utf-8', $settings['dimension'], $settings['font-size'], '', 12, 12, $settings['header'], $settings['footer'], 9, 9, $settings['orientation']);
+
     $mpdf->SetHTMLFooter($foot);
     $mpdf->SetHTMLHeader($head);
 

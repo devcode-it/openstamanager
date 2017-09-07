@@ -1,10 +1,16 @@
 body {
     background-color: white;
     color: black;
+    font-family: 'FreeSans', sans-serif, monospace;
 }
 
 .small-bold {
     font-weight: bold;
+}
+
+small,
+.small,
+.small-bold {
     font-size: 70%;
 }
 
@@ -88,6 +94,7 @@ p {
 
 table {
     width: 100%;
+    overflow: wrap
 }
 
 table td {
@@ -112,6 +119,6 @@ table td {
     padding: 4px;
 }
 
-.bg-default{
+.bg-default {
     background-color: #eee;
 }

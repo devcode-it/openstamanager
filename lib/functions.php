@@ -77,14 +77,15 @@ function deltree($path)
  *                        Source path
  * @param string $dest
  *                        Destination path
- * @param string $exclude
- *                        Path to exclude
+ * @param array|string $ignores
+ *                        Paths to ingore
  *
  * @return bool Returns TRUE on success, FALSE on failure
  */
 function copyr($source, $dest, $ignores = [])
 {
     $path = realpath($source);
+    $ignores = (array) $ignores;
     $exclude = !empty(array_intersect([slashes($path), slashes($path.'/'), $entry], $ignores));
 
     // Simple copy for a file
@@ -143,6 +144,8 @@ function create_zip($source, $destination)
         return false;
     }
 
+    $destination = slashes($destination);
+
     $zip = new ZipArchive();
     $result = $zip->open($destination, ZIPARCHIVE::CREATE);
     if ($result === true && is_writable(dirname($destination))) {
@@ -157,11 +160,11 @@ function create_zip($source, $destination)
 
                 if (is_dir($file) === true) {
                     $zip->addEmptyDir($filename);
-                } elseif (is_file($file) === true) {
+                } elseif (is_file($file) === true && $destination != $file) {
                     $zip->addFromString($filename, file_get_contents($file));
                 }
             }
-        } elseif (is_file($source) === true) {
+        } elseif (is_file($source) === true && $destination != $source) {
             $zip->addFromString(basename($source), file_get_contents($source));
         }
 
@@ -865,4 +868,20 @@ function sum($first, $second = null, $decimals = null)
     }
 
     return $result;
+}
+
+function redirectOperation(){
+    $backto = filter('backto');
+    // Scelta del redirect dopo un submit
+    if (!empty($backto)) {
+        $hash = filter('hash');
+        $hash = !starts_with($hash, '#') ? '#'.$hash : $hash;
+        if ($backto == 'record-edit') {
+            redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash);
+            exit();
+        } elseif ($backto == 'record-list') {
+            redirect(ROOTDIR.'/controller.php?id_module='.$id_module.$hash);
+            exit();
+        }
+    }
 }

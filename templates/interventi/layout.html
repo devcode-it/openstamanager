@@ -1,65 +1,59 @@
 <style>
-.table_values {
-	border-top: 1px solid #888;
-	border-left: 1px solid #888;
-}
+    .table_values {
+        border-top: 1px solid #888;
+        border-left: 1px solid #888;
+    }
 
-.table_values td{
-	border-right: 1px solid #888;
-	border-bottom: 1px solid #888;
-	padding: 4px;
-}
+    .table_values td {
+        border-right: 1px solid #888;
+        border-bottom: 1px solid #888;
+        padding: 4px;
+    }
 
-.check{
-	width: 10px;
-	height: 14px;
-	display: inline;
-	background: transparent url($docroot$/templates/interventi/custom/check.png) center center no-repeat;
-	margin-right: 6px;
-	margin-bottom: 4px;
-}
+    .check {
+        width: 10px;
+        height: 14px;
+        display: inline;
+        background: transparent url($docroot$/templates/interventi/custom/check.png) center center no-repeat;
+        margin-right: 6px;
+        margin-bottom: 4px;
+    }
 
-.checked{
-	width: 10px;
-	height: 14px;
-	display: inline;
-	background: transparent url($docroot$/templates/interventi/custom/checked.png) center center no-repeat;
-	margin-right: 6px;
-	margin-bottom: 4px;
-}
+    .checked {
+        width: 10px;
+        height: 14px;
+        display: inline;
+        background: transparent url($docroot$/templates/interventi/custom/checked.png) center center no-repeat;
+        margin-right: 6px;
+        margin-bottom: 4px;
+    }
 
-h5{
-	margin: 4px 0 2px 0;
-}
+    h5 {
+        margin: 4px 0 2px 0;
+    }
 
-h2{
-	font-size: 15pt;
-	margin: 10px 0 2px 0;
-}
+    h2 {
+        font-size: 15pt;
+        margin: 10px 0 2px 0;
+    }
+
 </style>
 
 <page backcolor="#ffffff" backtop="30mm" backbottom="3mm" backleft="0mm" backright="0mm" footer="" style="font-size: $font_size$">
-	$body$
+    $body$
 </page>
 
 <page_header>
-	<table style="height:35mm;border:0px;">
-	<tr>
-		<td style="width:97mm;" align="left">
-			<img src="$docroot$/templates/interventi/logo_azienda.jpg" alt="Logo" border="0" style="width:60mm;" />
-		</td>
+    <table style="height:35mm;border:0px;">
+        <tr>
+            <td style="width:97mm;" align="left">
+                <img src="$docroot$/templates/interventi/logo_azienda.jpg" alt="Logo" border="0" style="width:60mm;" />
+            </td>
 
-		<td style="width:97mm; font-size:10pt;text-align:right;">
-			<b>$f_ragionesociale$</b>
-			$f_indirizzo$
-			$f_citta$
-			$f_piva$
-			$f_codicefiscale$
-			$f_capsoc$
-			$f_telefono$
-			$f_sitoweb$
-			$f_email$
-		</td>
-	</tr>
-	</table>
+            <td style="width:97mm; font-size:10pt;text-align:right;">
+                <b>$f_ragionesociale$</b> $f_indirizzo$ $f_citta$ $f_piva$ $f_codicefiscale$ $f_capsoc$ $f_telefono$ $f_sitoweb$
+                $f_email$
+            </td>
+        </tr>
+    </table>
 </page_header>

@@ -2,17 +2,7 @@
 
 // Impostazioni per la corretta interpretazione di UTF-8
 header('Content-Type: text/html; charset=UTF-8');
-
-$handler = null;
-if (extension_loaded('mbstring')) {
-    mb_internal_encoding('UTF-8');
-    mb_http_output('UTF-8');
-    mb_http_input('UTF-8');
-    mb_language('uni');
-    mb_regex_encoding('UTF-8');
-    $handler = 'mb_output_handler';
-}
-ob_start($handler);
+ob_start();
 
 // Impostazioni di configurazione PHP
 date_default_timezone_set('Europe/Rome');

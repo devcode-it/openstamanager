@@ -226,12 +226,12 @@ if (!function_exists('force_download')) {
             header('Content-Type: application/force-download');
             header('Content-Transfer-Encoding: binary');
 
-            if ($content) {
-                if (is_file($content)) {
-                    $content = file_get_contents($content);
-                }
+            if (empty($content) && is_file($filename)) {
+                $content = $filename;
+            }
 
-                header('Content-Length: '.strlen($content));
+            if (is_file($content)) {
+                $content = file_get_contents($content);
             }
 
             ob_clean();

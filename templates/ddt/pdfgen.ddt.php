@@ -114,7 +114,7 @@ $sconto = 0.00;
 /*
     Articoli
 */
-$q_art = "SELECT *, GROUP_CONCAT( CONCAT_WS(lotto, 'Lotto: ', ', '), CONCAT_WS(serial, 'SN: ', ', '), CONCAT_WS(altro, 'Altro: ', '') SEPARATOR '<br/>') AS codice, SUM(qta) AS sumqta FROM `dt_righe_ddt` GROUP BY idarticolo, idddt, lotto HAVING idddt='$idddt' AND NOT idarticolo='0' ORDER BY idarticolo ASC";
+$q_art = "SELECT *, CONCAT_WS(serial, 'SN: ', ', ') AS codice, SUM(qta) AS sumqta FROM `dt_righe_ddt` JOIN mg_prodotti ON dt_righe_ddt.idarticolo = mg_prodotti.id_articolo GROUP BY idarticolo, idddt, lotto HAVING idddt='$idddt' AND NOT idarticolo='0' ORDER BY idarticolo ASC";
 $rs_art = $dbo->fetchArray($q_art);
 $tot_art = sizeof($rs_art);
 $imponibile_art = 0.0;

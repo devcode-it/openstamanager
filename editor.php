@@ -118,19 +118,7 @@ if (file_exists($docroot.'/modules/'.$module_dir.'/add.php') && $module['permess
 		</div>';
 }
 
-$backto = filter('backto');
-// Scelta del redirect dopo un submit
-if (!empty($backto)) {
-    $hash = filter('hash');
-    $hash = !starts_with($hash, '#') ? '#'.$hash : $hash;
-    if ($backto == 'record-edit') {
-        redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash);
-        exit();
-    } elseif ($backto == 'record-list') {
-        redirect(ROOTDIR.'/controller.php?id_module='.$id_module.$hash);
-        exit();
-    }
-}
+redirectOperation();
 
 echo '
 		<hr>

@@ -49,6 +49,23 @@ switch (post('op')) {
         $dbo->query('INSERT INTO co_preventivi(idanagrafica, nome, numero, idagente, idstato, idtipointervento, data_bozza, data_conclusione, idiva, idpagamento) VALUES ('.prepare($idanagrafica).', '.prepare($nome).', '.prepare($numero).', '.prepare($idagente).", (SELECT `id` FROM `co_statipreventivi` WHERE `descrizione`='Bozza'), ".prepare($idtipointervento).', NOW(), DATE_ADD(NOW(), INTERVAL +1 MONTH), '.prepare($idiva).', '.prepare($idpagamento).')');
         $id_record = $dbo->lastInsertedID();
 
+        $listino = $dbo->fetchArray('SELECT prc_guadagno FROM mg_listini WHERE id = (SELECT idlistino FROM an_anagrafiche WHERE idanagrafica = '.prepare($idanagrafica).')');
+
+        if (!empty($listino)) {
+            $dbo->update('co_preventivi', [
+                'tipo_sconto_globale' => 'PRC',
+                'sconto_globale' => abs($listino[0]['prc_guadagno']),
+            ], ['id' => $id_record]);
+
+            aggiorna_sconto([
+                'parent' => 'co_preventivi',
+                'row' => 'co_righe_preventivi',
+            ], [
+                'parent' => 'id',
+                'row' => 'idpreventivo',
+            ], $id_record);
+        }
+
         /*
         // inserisco righe standard preventivo
         // ore lavoro
@@ -216,8 +233,6 @@ switch (post('op')) {
 
         $subtot = $prezzo * $qta;
 
-        $prc_guadagno = post('prc_guadagno');
-
         $um = post('um');
 
         // Lettura iva dell'articolo
@@ -225,7 +240,7 @@ switch (post('op')) {
         $iva = ($subtot - $sconto) / 100 * $rs2[0]['percentuale'];
         $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
 
-        $dbo->query('INSERT INTO co_righe_preventivi(idpreventivo, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, prc_guadagno, `order`) VALUES ('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($rs2[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($prc_guadagno).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_preventivi AS t WHERE idpreventivo='.prepare($id_record).'))');
+        $dbo->query('INSERT INTO co_righe_preventivi(idpreventivo, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, `order`) VALUES ('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($rs2[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_preventivi AS t WHERE idpreventivo='.prepare($id_record).'))');
 
         $_SESSION['infos'][] = tr('Articolo aggiunto!');
 
@@ -245,8 +260,6 @@ switch (post('op')) {
         $sconto = ($tipo_sconto == 'PRC') ? ($prezzo * $sconto_unitario) / 100 : $sconto_unitario;
         $sconto = $sconto * $qta;
 
-        $prc_guadagno = post('prc_guadagno');
-
         $idiva = post('idiva');
         $um = post('um');
 
@@ -256,7 +269,7 @@ switch (post('op')) {
         $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
 
         // Modifica riga generica sul documento
-        $query = 'UPDATE co_righe_preventivi SET idiva='.prepare($idiva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', prc_guadagno='.prepare($prc_guadagno).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
+        $query = 'UPDATE co_righe_preventivi SET idiva='.prepare($idiva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
         $dbo->query($query);
 
         $_SESSION['infos'][] = 'Riga modificata!';

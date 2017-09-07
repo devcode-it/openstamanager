@@ -162,7 +162,7 @@ if (sizeof($contratti) > 0) {
 $body .= "<br/>\n";
 
 // Conteggio articoli utilizzati
-$query = "SELECT *, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=mg_articoli_interventi.idintervento) AS data_intervento, (SELECT percentuale FROM co_iva WHERE id=mg_articoli_interventi.idiva_vendita) AS prciva_vendita, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice_art, GROUP_CONCAT( CONCAT_WS(lotto, 'Lotto: ', ', '), CONCAT_WS(serial, 'SN: ', ', '), CONCAT_WS(altro, 'Altro: ', '') SEPARATOR '<br/>') AS codice, SUM(qta) AS sumqta FROM `mg_articoli_interventi` GROUP BY idarticolo, idintervento, lotto HAVING idintervento IN(".implode(',', $idinterventi).") AND NOT idarticolo='0' ORDER BY idarticolo ASC";
+$query = "SELECT *, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=mg_articoli_interventi.idintervento) AS data_intervento, (SELECT percentuale FROM co_iva WHERE id=mg_articoli_interventi.idiva_vendita) AS prciva_vendita, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice_art, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM in_interventi WHERE id=mg_articoli_interventi.idintervento) ) ) AS prc_guadagno, CONCAT_WS(serial, 'SN: ', ', ') AS codice, SUM(qta) AS sumqta FROM `mg_articoli_interventi` JOIN mg_prodotti ON mg_articoli_interventi.idarticolo = mg_prodotti.id_articolo GROUP BY idarticolo, idintervento, lotto HAVING idintervento IN(".implode(',', $idinterventi).") AND NOT idarticolo='0' ORDER BY idarticolo ASC";
 $rs2 = $dbo->fetchArray($query);
 
 if (sizeof($rs2) > 0) {

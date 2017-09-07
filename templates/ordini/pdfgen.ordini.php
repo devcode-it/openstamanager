@@ -53,7 +53,7 @@ $sconto = 0.00;
 /*
     Articoli
 */
-$q_art = "SELECT *, GROUP_CONCAT( CONCAT_WS(lotto, 'Lotto: ', ', '), CONCAT_WS(serial, 'SN: ', ', '), CONCAT_WS(altro, 'Altro: ', '') SEPARATOR '<br/>') AS codice, SUM(qta) AS sumqta FROM `or_righe_ordini` GROUP BY idarticolo, idordine, lotto HAVING idordine='$idordine' AND NOT idarticolo='0' ORDER BY idarticolo ASC";
+$q_art = "SELECT *, CONCAT_WS(serial, 'SN: ', ', ') AS codice, SUM(qta) AS sumqta FROM `or_righe_ordini` JOIN mg_prodotti ON or_righe_ordini.idarticolo = mg_prodotti.id_articolo GROUP BY idarticolo, idordine, lotto HAVING idordine='$idordine' AND NOT idarticolo='0' ORDER BY idarticolo ASC";
 $rs_art = $dbo->fetchArray($q_art);
 $tot_art = sizeof($rs_art);
 $imponibile_art = 0.0;

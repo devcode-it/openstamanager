@@ -1,0 +1,227 @@
+<page_header>
+
+	<br/>
+	<table align="left">
+	<tr>
+		<td style="width:110mm;">
+			<img src="$docroot$/templates/ddt/logo_azienda.jpg" alt="Logo" style="width:80mm;" border="0">
+		</td>
+		<td style="width:110mm;">
+			<p align='left' style='margin:15px 9px;'>
+				<b>$f_ragionesociale$</b><br/>
+				$f_indirizzo$
+				$f_citta$
+				$f_piva$
+				$f_codicefiscale$
+				$f_capsoc$
+				$f_telefono$
+			</p>			
+		</td>			
+	</tr>
+	</table>
+	<br/><br/>
+
+	<table align="center" style="font-size:11px;">
+		<tr>
+			<!-- Dati Fattura -->
+			<td cellspacing="0" cellpadding="0" valign="top">
+
+				<div style="text-align:center; width:105mm; height:5mm; font-size:14px;">
+					<b>$tipo_doc$</b><br>
+				</div>
+
+				<table cellspacing="0" style="table-layout:fixed;">
+					<col width="27"><col width="35"><col width="21.3"><col width="12">
+					<tr>
+						<td valign="top" class="full_cell1" align="center" style="width:27mm;">
+							<small><small><b>NR. DOCUMENTO</b></small></small><br>
+							$numero_doc$
+						</td>
+						<td class="full_cell" align="center" style="width:35mm;">
+							<small><small><b>DATA DOCUMENTO</b></small></small><br>
+							$data$
+						</td>
+						<td class="full_cell" align="center" style="width:21.3mm;">
+							<small><small><b>CLIENTE</b></small></small><br>
+							$c_codice$
+						</td>
+						<td class="full_cell" align="center" style="width:12mm;">
+							<small><small><b>FOGLIO</b></small></small><br>
+							&nbsp;&nbsp;&nbsp;&nbsp;[[page_cu]]/[[page_nb]]
+						</td>
+					</tr>
+
+					<tr>
+						<tr><td class="first_cell" colspan="4">
+							<div style="height:8mm; overflow:hidden;">
+								<table style="width:100%;" cellspacing="0" cellpadding="0">
+								<tr><td style="width:50%;">
+									<small><small><b>PARTITA IVA</b></small></small><br>
+									$c_piva$
+								</td>
+
+								<td style="width:50%;">
+									<small><small><b>CODICE FISCALE</b></small></small><br>
+									$c_codicefiscale$
+								</td></tr>
+								</table>
+							</div>
+						</td></tr>
+
+						<tr>
+							<td class="first_cell" colspan="4">
+								<div style="height:8.5mm; overflow:hidden;">
+									<small><small><b>PAGAMENTO</b></small></small><br>
+									$pagamento$
+								</div>
+							</td>
+						</tr>
+
+						<tr>
+							<td class="first_cell" colspan="4">
+								<div style="height:8.5mm; overflow:hidden;">
+									<small><small><b>&nbsp;</b></small></small><br>
+									&nbsp;
+								</div>
+							</td>
+						</tr>
+					</tr>
+				</table>
+			</td>
+
+			<td style="width:2mm;"></td>
+
+
+			<td style="width:83mm;" valign="top">
+				<div style="height:5mm;">
+					&nbsp;<br>
+				</div>
+
+				<!-- Intestazione cliente -->
+				<table cellspacing="0">
+					<tr>
+						<!-- cliente -->
+						<td style="width:80mm; height:16mm; font-size:9pt; border:1px solid #aaa;" valign="top">
+							<small><small><b>SPETT.LE</b></small></small><br/>
+							<div style="padding:1mm;">
+								$c_ragionesociale$
+								$c_indirizzo$
+								$c_citta$
+							</div>
+						</td>
+					</tr>
+
+
+					<tr>
+						<!-- Destinazione cliente -->
+						<td style="height:15mm; font-size:9pt; border-left:1px solid #aaa; border-right:1px solid #aaa; border-bottom:1px solid #aaa;" valign="top">
+							<small><small><b>DESTINAZIONE DIVERSA</b></small></small><br/>
+							<div style="padding:1mm;">
+								$c_destinazione$
+							</div>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+	<br>
+</page_header>
+
+
+<!-- Footer -->
+<page_footer>
+	<table style='margin-left:3mm; border:1px solid #aaa; border-bottom:none;' cellspacing='0'>
+		$footer$
+	</table>
+
+	<table style='margin-left:3mm; border:1px solid #aaa; border-bottom:none;' class='table_values' cellspacing='0'>
+		<col width="227.5"><col width="228"><col width="228">
+		<tr>
+			<th class="b-bottom b-right" valign="top">
+				<small><small><b>ASPETTO BENI</b></small></small>
+			</th>
+
+			<th class="b-bottom b-right" valign="top">
+				<small><small><b>CAUSALE TRASPORTO</b></small></small>
+			</th>
+
+			<th class="b-bottom" valign="top">
+				<small><small><b>PORTO</b></small></small>
+			</th>
+		</tr>
+
+		<tr>
+			<td valign="top" class="cell-padded b-right">
+				$aspettobeni$&nbsp;
+			</td>
+			<td valign="top" class="cell-padded b-right">
+				$causalet$&nbsp;
+			</td>
+			<td valign="top" class="cell-padded">
+				$porto$&nbsp;
+			</td>
+		</tr>
+	</table>
+
+
+	<table style='margin-left:3mm; border:1px solid #aaa; border-bottom:none;' class='table_values' cellspacing='0'>
+		<col width="227.5"><col width="228"><col width="228">
+		<tr>
+			<th class="b-bottom b-right" valign="top">
+				<small><small><b>N<sup>o</sup> COLLI</b></small></small>
+			</th>
+
+			<th class="b-bottom b-right" valign="top">
+				<small><small><b>TIPO DI SPEDIZIONE</b></small></small>
+			</th>
+
+			<th class="b-bottom" valign="top">
+				<small><small><b>VETTORE</b></small></small>
+			</th>
+		</tr>
+
+		<tr>
+			<td valign="top" class="cell-padded b-right">
+				$n_colli$&nbsp;
+			</td>
+			<td valign="top" class="cell-padded b-right">
+				$spedizione$&nbsp;
+			</td>
+			<td valign="top" class="cell-padded">
+				$vettore$&nbsp;
+			</td>
+		</tr>
+	</table>
+
+
+
+	<table style='margin-left:3mm; border:1px solid #aaa;' class='table_values' cellspacing='0'>
+		<col width="227.5"><col width="228"><col width="228">
+		<tr>
+			<th class="b-bottom b-right" valign="top">
+				<small><small><b>FIRMA CONDUCENTE</b></small></small>
+			</th>
+
+			<th class="b-bottom b-right" valign="top">
+				<small><small><b>FIRMA VETTORE</b></small></small>
+			</th>
+
+			<th class="b-bottom" valign="top">
+				<small><small><b>FIRMA DESTINATARIO</b></small></small>
+			</th>
+		</tr>
+
+		<tr>
+			<td valign="top" class="cell-padded b-right">
+				&nbsp;<br>&nbsp;<br>&nbsp;
+			</td>
+			<td valign="top" class="cell-padded b-right">
+				&nbsp;<br>&nbsp;<br>&nbsp;
+			</td>
+			<td valign="top" class="cell-padded">
+				&nbsp;<br>&nbsp;<br>&nbsp;
+			</td>
+		</tr>
+	</table>
+</page_footer>

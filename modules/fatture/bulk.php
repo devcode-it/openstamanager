@@ -6,6 +6,12 @@ switch (post('op')) {
     case 'export-bulk':
         $dir = DOCROOT.'/files/export_fatture/';
 
+        // Rimozione dei contenuti precedenti
+        $files = glob($dir.'/*.zip');
+        foreach ($files as $file) {
+            unlink($file);
+        }
+
         // Selezione delle fatture da stampare
         $records = $dbo->fetchArray('SELECT co_documenti.id, numero_esterno, data, ragione_sociale, co_tipidocumento.descrizione FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).')');
 
@@ -15,7 +21,7 @@ switch (post('op')) {
 
             // Gestione della stampa
             $rapportino_nome = sanitizeFilename($numero.' '.$r['data'].' '.$r['ragione_sociale'].'.pdf');
-            $filename = slashes($dir.$rapportino_nome);
+            $filename = slashes($dir.'tmp/'.$rapportino_nome);
 
             $_GET['iddocumento'] = $r['id']; // Fix temporaneo per la stampa
             $iddocumento = $r['id']; // Fix temporaneo per la stampa
@@ -25,17 +31,17 @@ switch (post('op')) {
         }
 
         $dir = slashes($dir);
-        $file = slashes($dir.'fatture.zip');
+        $file = slashes($dir.'fatture_'.time().'.zip');
 
         // Creazione zip
         if (extension_loaded('zip')) {
-            create_zip($dir, $file);
+            create_zip($dir.'tmp/', $file);
 
             // Invio al browser dello zip
             force_download($file);
 
             // Rimozione dei contenuti
-            deltree($dir);
+            deltree($dir.'tmp/');
         }
 
         break;
@@ -48,6 +54,7 @@ return [
             'msg' => tr('Vuoi davvero esportare tutte le stampe in un archivio?'),
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
+            'blank' => true,
         ],
     ],
 ];

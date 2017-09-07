@@ -79,7 +79,9 @@ foreach ($plugins as $plugin) {
 echo '
 			</div>
 		</div>
-	</div>';
+    </div>';
+
+redirectOperation();
 
 /**
  * Widget laterali.

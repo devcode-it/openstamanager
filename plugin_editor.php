@@ -56,19 +56,7 @@ if (!empty($info['script'])) {
         }
     }
 
-    $backto = filter('backto');
-    // Scelta del redirect dopo un submit
-    if (!empty($backto)) {
-        $hash = filter('hash');
-        $hash = !starts_with($hash, '#') ? '#'.$hash : $hash;
-        if ($backto == 'record-edit') {
-            redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_parent.$hash);
-            exit();
-        } elseif ($backto == 'record-list') {
-            redirect($rootdir.'/controller.php?id_module='.$id_module.$hash);
-            exit();
-        }
-    }
+    redirectOperation();
 
     $module = Modules::getModule($info['idmodule_to']);
 

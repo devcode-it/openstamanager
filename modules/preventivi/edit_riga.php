@@ -38,11 +38,6 @@ if (empty($idriga)) {
     $subtot = $rsr[0]['subtotale'] / $rsr[0]['qta'];
     $sconto = $rsr[0]['sconto_unitario'];
     $tipo_sconto = $rsr[0]['tipo_sconto'];
-
-    $prc_guadagno = $rsr[0]['prc_guadagno'];
-    if ($prc_guadagno > 0) {
-        $prc_guadagno = '+'.$prc_guadagno;
-    }
 }
 
 /*
@@ -74,20 +69,20 @@ echo '
 // Quantità
 echo '
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
             {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "value": "'.$qta.'", "required": 1, "decimals": "qta" ]}
         </div>';
 
 // Unità di misura
 echo '
-        <div class="col-md-3">
+        <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::getModule('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
         </div>';
 
-// Sconto
+// Iva
 echo '
-        <div class="col-md-6">
-            {[ "type": "number", "label": "'.tr('Sconto/rincaro articoli per questo cliente').'", "icon-after": "%", "name": "prc_guadagno", "value": "'.$prc_guadagno.'" ]}
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
         </div>
     </div>';
 
@@ -118,22 +113,16 @@ if (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d
 
 */
 
-// Iva
+// Costo unitario
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
-        </div>';
-
-// Costo unitario
-echo '
-        <div class="col-md-3">
             {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "value": "'.$subtot.'", "icon-after": "&euro;" ]}
         </div>';
 
 // Sconto unitario
 echo '
-        <div class="col-md-3">
+        <div class="col-md-6">
             {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
         </div>
     </div>';

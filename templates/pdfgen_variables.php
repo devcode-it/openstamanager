@@ -5,6 +5,36 @@
  */
 include_once __DIR__.'/../core.php';
 
+// Valori aggiuntivi per la sostituzione
+$values = [
+    'footer' => !empty($footer) ? $footer : '',
+    'dicitura_fissa_fattura' => get_var('Dicitura fissa fattura'),
+    'pagination' => '
+<table style="color:#aaa; font-size:10px;">
+<tr>
+    <td align="left" style="width:97mm;">
+        '.tr('Stampato con OpenSTAManager').'
+    </td>
+
+    <td align="right" style="width:97mm;">
+        '.str_replace(['_PAGE_', '_TOTAL_'], ['{PAGENO}', '{nb}'], tr('Pagina _PAGE_ di _TOTAL_')).'
+    </td>
+</tr>
+</table>',
+];
+
+$values = array_merge($values, (array) $replaces);
+
+foreach ($values as $key => $value) {
+    $values['$'.$key.'$'] = $value;
+    unset($values[$key]);
+}
+
+// Sostituisce alle variabili del template i valori
+$head = str_replace(array_keys($values), array_values($values), $head);
+$foot = str_replace(array_keys($values), array_values($values), $foot);
+$report = str_replace(array_keys($values), array_values($values), $report);
+
 // Retrocompatibilità
 $id_cliente = $id_cliente ?: $idcliente;
 
@@ -57,7 +87,6 @@ foreach ($replace as $prefix => $values) {
     }
 
     $values['codice'] = !empty($values['codice']) ? $values['codice'].',' : '';
-    $values['ragionesociale'] = !empty($values['ragionesociale']) ? $values['ragionesociale'].',' : '';
     $values['provincia'] = !empty($values['provincia']) ? '('.$values['provincia'].')' : '';
 
     $citta = '';
@@ -71,7 +100,7 @@ foreach ($replace as $prefix => $values) {
     if ($values['provincia'] != '') {
         $citta .= ' '.$values['provincia'];
     }
-    $citta .= '<br/>';
+    //$citta .= '<br/>';
 
     $values['citta'] = $citta;
 
@@ -96,46 +125,12 @@ foreach ($replace as $prefix => $values) {
     }
 
     foreach ($values as $key => $value) {
-        $values['$'.$prefix.$key.'$'] = empty($value) ? $value : $value.'<br/>';
+        $values['$'.$prefix.$key.'$'] = empty($value) ? $value : $value; // .'<br/>'
         unset($values[$key]);
     }
 
     // Sostituisce alle variabili del template i valori
-    $body = str_replace(array_keys($values), array_values($values), $body);
+    $head = str_replace(array_keys($values), array_values($values), $head);
+    $foot = str_replace(array_keys($values), array_values($values), $foot);
     $report = str_replace(array_keys($values), array_values($values), $report);
 }
-
-// Aggiunta del footer standard
-if (!str_contains($body, '<page_footer>') && !str_contains($report, '<page_footer>')) {
-    $report .= '
-<!-- Footer -->
-<page_footer>
-    $pagination$
-</page_footer>';
-}
-
-// Valori aggiuntivi per la sostituzione
-$values = [
-    'dicitura_fissa_fattura' => get_var('Dicitura fissa fattura'),
-    'pagination' => '
-<table style="color:#aaa; font-size:10px;">
-<tr>
-    <td align="left" style="width:97mm;">
-        '.tr('Stampato con OpenSTAManager').'
-    </td>
-
-    <td align="right" style="width:97mm;">
-        '.str_replace(['_PAGE_', '_TOTAL_'], ['[[page_cu]]', '[[page_nb]]'], tr('Pagina _PAGE_ di _TOTAL_')).'
-    </td>
-</tr>
-</table>',
-];
-
-foreach ($values as $key => $value) {
-    $values['$'.$key.'$'] = empty($value) ? $value : $value.'<br/>';
-    unset($values[$key]);
-}
-
-// Sostituisce alle variabili del template i valori
-$body = str_replace(array_keys($values), array_values($values), $body);
-$report = str_replace(array_keys($values), array_values($values), $report);

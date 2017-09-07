@@ -29,6 +29,7 @@
         "ircmaxell/password-compat": "^1.0",
         "maximebf/debugbar": "^1.13",
         "monolog/monolog": "^1.22",
+        "mpdf/mpdf": "^6.1",
         "paragonie/random_compat": "^2.0",
         "phpmailer/phpmailer": "^5.2",
         "spipu/html2pdf": "^4.6",

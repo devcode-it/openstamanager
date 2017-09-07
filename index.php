@@ -35,7 +35,7 @@ switch ($op) {
                 } elseif (empty($backup_dir)) {
                     $_SESSION['errors'][] = tr('Non è possibile eseguire i backup poichè la cartella di backup non esiste!!!');
                 } elseif (!file_exists($backup_dir)) {
-                    if (mkdir($backup_dir)) {
+                    if (create_dir($backup_dir)) {
                         $_SESSION['infos'][] = tr('La cartella di backup è stata creata correttamente.');
                         if (do_backup()) {
                             $_SESSION['infos'][] = tr('Backup automatico eseguito correttamente!');

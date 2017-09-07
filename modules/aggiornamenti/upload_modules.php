@@ -22,7 +22,7 @@ if (!extension_loaded('zip')) {
     if ($zip->open($tmp)) {
         $tmpdir = 'tmp/';
         if (!file_exists($docroot.'/'.$tmpdir)) {
-            mkdir($docroot.'/'.$tmpdir, 0755, true);
+            create_dir($docroot.'/'.$tmpdir, 0755, true);
         }
         $zip->extractTo($docroot.'/'.$tmpdir);
 

@@ -38,7 +38,7 @@ echo '
 
 // Se la cartella di backup non esiste provo a crearla
 if (!file_exists($backup_dir)) {
-    mkdir($backup_dir);
+    create_dir($backup_dir);
 }
 
 //Lettura file di backup

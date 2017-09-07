@@ -73,12 +73,12 @@ function deltree($path)
  *
  * @see http://aidanlister.com/repos/v/function.copyr.php
  *
- * @param string $source
- *                        Source path
- * @param string $dest
- *                        Destination path
+ * @param string       $source
+ *                              Source path
+ * @param string       $dest
+ *                              Destination path
  * @param array|string $ignores
- *                        Paths to ingore
+ *                              Paths to ingore
  *
  * @return bool Returns TRUE on success, FALSE on failure
  */
@@ -95,7 +95,7 @@ function copyr($source, $dest, $ignores = [])
 
     // Make destination directory
     if (!is_dir($dest)) {
-        mkdir($dest);
+        create_dir($dest);
     }
 
     // If the source is a symlink
@@ -244,7 +244,7 @@ function do_backup()
     }
 
     // Creazione cartella temporanea
-    if (file_exists($backup_dir.$tmp_backup_dir) || @mkdir($backup_dir.$tmp_backup_dir)) {
+    if (file_exists($backup_dir.$tmp_backup_dir) || @create_dir($backup_dir.$tmp_backup_dir)) {
         $do_backup = true;
     } else {
         $do_backup = false;
@@ -592,7 +592,7 @@ function create_thumbnails($tmp, $filename, $dir)
     $name = $infos['filename'];
     $extension = strtolower($infos['extension']);
 
-    if ((is_dir($dir) && !is_writable($dir)) || (!is_dir($dir) && !mkdir($dir))) {
+    if ((is_dir($dir) && !is_writable($dir)) || (!is_dir($dir) && !create_dir($dir))) {
         return false;
     }
 
@@ -870,7 +870,8 @@ function sum($first, $second = null, $decimals = null)
     return $result;
 }
 
-function redirectOperation(){
+function redirectOperation()
+{
     $backto = filter('backto');
     // Scelta del redirect dopo un submit
     if (!empty($backto)) {
@@ -884,4 +885,9 @@ function redirectOperation(){
             exit();
         }
     }
+}
+
+function create_dir($path)
+{
+    return create_dir($path, 0777, true);
 }

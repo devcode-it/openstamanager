@@ -27,7 +27,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     }
 
     // Controllo sui permessi di scrittura per il file system
-    elseif ((!is_dir($upload_dir) && !mkdir($upload_dir)) || (is_dir($upload_dir) && !is_writable($upload_dir))) {
+    elseif ((!is_dir($upload_dir) && !create_dir($upload_dir)) || (is_dir($upload_dir) && !is_writable($upload_dir))) {
         $_SESSION['errors'][] = str_replace('_DIR_', '"files"', tr('Non hai i permessi di scrittura nella cartella _DIR_!'));
     }
 

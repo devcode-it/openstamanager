@@ -101,7 +101,7 @@ $report = str_replace('$rootdir$', $rootdir, $report);
 
 // Individuazione dellla configurazione
 $directory = dirname($filename);
-if (!empty($filename) && ((is_dir($directory) && !is_writable($directory)) || (!is_dir($directory) && !mkdir($directory)))) {
+if (!empty($filename) && ((is_dir($directory) && !is_writable($directory)) || (!is_dir($directory) && !create_dir($directory)))) {
     $error = str_replace('_DIRECTORY_', $directory, tr('Non hai i permessi per creare directory e files in _DIRECTORY_'));
 
     $_SESSION['errors'][] = $error;

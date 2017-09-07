@@ -889,5 +889,5 @@ function redirectOperation()
 
 function create_dir($path)
 {
-    return create_dir($path, 0777, true);
+    return mkdir($path, 0777, true);
 }

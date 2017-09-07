@@ -34,7 +34,7 @@ switch (get('op')) {
             {
                 "id": "'.$rs[$i]['idintervento'].'",
                 "idtecnico":"'.$rs[$i]['idtecnico'].'",
-                "title":"<b>Int. '.$rs[$i]['idintervento'].'</b>'.addslashes($rs[$i]['cliente']).'<br><b>'.tr('Tecnici').':</b> '.addslashes($rs[$i]['nome_tecnico']).'",
+                "title":"<b>Int. '.$rs[$i]['idintervento'].'</b> '.addslashes($rs[$i]['cliente']).'<br><b>'.tr('Tecnici').':</b> '.addslashes($rs[$i]['nome_tecnico']).'",
                 "start": "'.$rs[$i]['orario_inizio'].'",
                 "end": "'.$rs[$i]['orario_fine'].'",
                 "url":"'.$rootdir.'/editor.php?id_module='.Modules::getModule('Interventi')['id'].'&id_record='.$rs[$i]['idintervento'].'",

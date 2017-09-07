@@ -86,7 +86,7 @@
         "gulp": "gulp",
         "release-OSM": "yarn run develop-OSM && gulp release",
         "develop-OSM": "yarn install && yarn run install-OSM && yarn run assets-OSM",
-        "install-OSM": "php composer.phar install",
+        "install-OSM": "php composer.phar update",
         "assets-OSM": "yarn upgrade && yarn run build-OSM",
         "build-OSM": "gulp",
         "dump-OSM": "php composer.phar dump-autoload",

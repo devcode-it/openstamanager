@@ -156,6 +156,7 @@ if (!empty($v_iva)) {
     }
 }
 
+// % 20 -> < 19 righe
 for ($i = (floor($n_rows) % 20); $i < 15; ++$i) {
     echo '
     <tr>

@@ -1,6 +1,5 @@
 <?php
 
-
 // SCADENZE  |  TOTALI
 // TABELLA PRINCIPALE
 echo "

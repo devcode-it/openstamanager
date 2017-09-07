@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 // Necessaria per la funzione add_movimento_magazzino
 include_once $docroot.'/modules/articoli/modutil.php';
-//var_dump(get_totale_fattura($id_record));exit();
+include_once $docroot.'/modules/interventi/modutil.php';
 
 $module = Modules::getModule($id_module);
 

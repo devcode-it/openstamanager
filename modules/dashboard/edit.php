@@ -455,7 +455,7 @@ if (!empty(get_var('Abilitare orario lavorativo'))) {
                     $('#tiny-loader').hide();
                 }
             },
-    <?php
+<?php
 if (Modules::getPermission($id_module) == 'rw') {
     ?>
             droppable: true,
@@ -517,16 +517,16 @@ if (Modules::getPermission($id_module) == 'rw') {
 					}
 				});
 			},
-            <?php
+<?php
 
 }
+?>
+			eventAfterRender: function(event, element) {
+				element.find('.fc-title').html(event.title);
+<?php
 
 if (get_var('Utilizzare i tooltip sul calendario') == '1') {
     ?>
-			eventAfterRender: function(event, element) {
-				//alert(element.find('.fc-event-title').html();
-				element.find('.fc-title').html(event.title);
-
 				$.get(globals.rootdir + "/modules/dashboard/ajaxreq.php?op=get_more_info&id="+event.id+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
 					if( response=="success" ){
 						data = $.trim(data);
@@ -551,12 +551,12 @@ if (get_var('Utilizzare i tooltip sul calendario') == '1') {
 							return false;
 						}
 					}
-				});
-			},
-            <?php
+                });
+<?php
 
 }
-            ?>
+?>
+			},
             events: {
 				url: globals.rootdir + "/modules/dashboard/ajaxreq.php?op=get_current_month",
                 type: 'GET',

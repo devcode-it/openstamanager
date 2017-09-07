@@ -68,7 +68,8 @@ if (file_exists($backup_dir)) {
         if (!empty($backups_zip)) {
             foreach ($backups_zip as $backup) {
                 $name = basename($backup);
-                preg_match('/^OSM backup ([0-9\-]{10}) ([0-9_]{8})\.zip$/', basename($file), $m);
+                preg_match('/^OSM backup ([0-9\-]{10}) ([0-9_]{8})\.zip$/', $name, $m);
+
                 echo '
             <div class="callout callout-info">
                 <h4>'.str_replace(['_DATE_', '_TIME_'], [Translator::dateToLocale($m[1]), date('H:i', strtotime(str_replace('_', ':', $m[2])))], tr('Backup del _DATE_ alle _TIME_')).'</h4>

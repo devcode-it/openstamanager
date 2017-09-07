@@ -84,12 +84,20 @@ function deltree($path)
  */
 function copyr($source, $dest, $ignores = [])
 {
-    $path = realpath($source);
     $ignores = (array) $ignores;
-    $exclude = !empty(array_intersect([slashes($path), slashes($path.'/'), $entry], $ignores));
+    foreach ($ignores as $key => $value) {
+        $ignores[$key] = slashes($value);
+    }
+
+    $path = realpath($source);
+    $exclude = !empty(array_intersect($ignores, [slashes($path), slashes($path.'/'), $entry]));
+
+    if ($exclude) {
+        return;
+    }
 
     // Simple copy for a file
-    if (is_file($source) && !$exclude) {
+    if (is_file($source)) {
         return copy($source, $dest);
     }
 
@@ -114,11 +122,11 @@ function copyr($source, $dest, $ignores = [])
         }
 
         $path = realpath($source.'/'.$entry.'/');
-        $exclude = !empty(array_intersect([slashes($path), slashes($path.'/'), $entry], $ignores));
+        $exclude = !empty(array_intersect($ignores, [slashes($path), slashes($path.'/'), $entry]));
 
         // Deep copy directories
-        if ($dest !== $source.'/'.$entry && !$exclude) {
-            copyr($source.'/'.$entry, $dest.'/'.$entry, $exclude);
+        if (slashes($dest) !== slashes($source.'/'.$entry) && !$exclude) {
+            copyr($source.'/'.$entry, $dest.'/'.$entry, $ignores);
         }
     }
 
@@ -244,7 +252,7 @@ function do_backup()
     }
 
     // Creazione cartella temporanea
-    if (file_exists($backup_dir.$tmp_backup_dir) || @create_dir($backup_dir.$tmp_backup_dir)) {
+    if (file_exists($backup_dir.$tmp_backup_dir) || create_dir($backup_dir.$tmp_backup_dir)) {
         $do_backup = true;
     } else {
         $do_backup = false;

@@ -528,7 +528,7 @@ switch (post('op')) {
         break;
 
     case 'firma':
-        $directory_exists = (file_exists($docroot.'/files/interventi') || @create_dir($docroot.'/files/interventi'));
+        $directory_exists = (file_exists($docroot.'/files/interventi') || create_dir($docroot.'/files/interventi'));
 
         if ($directory_exists) {
             if (post('firma_base64') != '') {

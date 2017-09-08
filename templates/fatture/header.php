@@ -8,9 +8,9 @@ echo '
     </div>
     <div class="col-xs-6 text-right">
         <p><b>$f_ragionesociale$</b></p>
-        <p>$f_indirizzo$ $f_citta$</p>
-        <p>$f_telefono$</p>
-        <p>$f_piva$</p>
+        <p>$f_indirizzo$ $f_citta_full$</p>
+        <p>'.(!empty($f_telefono) ? tr('Tel').': ' : '').'$f_telefono$</p>
+        <p>'.(!empty($f_piva) ? tr('P.Iva').': ' : '').'$f_piva$</p>
     </div>
 </div>
 
@@ -50,17 +50,23 @@ echo '
                 <td colspan="2" style="height:10mm;padding-top:2mm;">
                     <p class="small-bold">'.strtoupper(tr('Pagamento')).'</p>
                     <p>$pagamento$</p>
-
-                    <br>
-
-                    <p class="small-bold">'.tr('IBAN').'</p>
-                    <p>$f_codiceiban$</p>
                 </td>
                 <td colspan="2" style="height:10mm;padding-top:2mm;">
                     <p class="small-bold">'.strtoupper(tr('Banca di appoggio')).'</p>
                     <p>$f_appoggiobancario$</p>
                 </td>
             </tr>
+            <tr>
+                <td colspan="2" style="height:10mm;padding-top:2mm;">
+                    <p class="small-bold">'.tr('IBAN').'</p>
+                    <p>$f_codiceiban$</p>
+                </td>
+                <td colspan="2" style="height:10mm;padding-top:2mm;">
+                    <p class="small-bold">'.tr('BIC').'</p>
+                    <p>$f_bic$</p>
+                </td>
+            </tr>
+
         </table>
     </div>
 

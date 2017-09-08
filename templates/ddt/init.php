@@ -41,7 +41,7 @@ if (!empty($rs[0]['idsede'])) {
 }
 
 // Sostituzioni specifiche
-$replaces = [
+$custom = [
     'tipo_doc' => strtoupper($tipo_doc),
     'numero_doc' => $numero,
     'data' => Translator::numberToLocale($rs[0]['data']),

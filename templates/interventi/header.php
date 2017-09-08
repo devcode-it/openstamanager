@@ -7,12 +7,10 @@ echo '
     </div>
     <div class="col-xs-6 text-right">
         <p><b>$f_ragionesociale$</b></p>
-        <p>$f_indirizzo$ $f_citta$</p>
-        <p>$f_piva$</p>
-        <p>$f_codicefiscale$</p>
-        <p>$f_capsoc$</p>
-        <p>$f_telefono$</p>
-        <p>$f_sitoweb$</p>
-        <p>$f_email$</p>
+        <p>$f_indirizzo$ $f_citta_full$</p>
+        <p>'.(!empty($f_piva) ? tr('P.Iva').': ' : '').'$f_piva$</p>
+        <p>'.(!empty($f_codicefiscale) ? tr('C.F.').': ' : '').'$f_codicefiscale$</p>
+        <p>'.(!empty($f_capsoc) ? tr('Cap.Soc.').': ' : '').'$f_capsoc$</p>
+        <p>'.(!empty($f_telefono) ? tr('Tel').': ' : '').'$f_telefono$</p>
     </div>
 </div>';

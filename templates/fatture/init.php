@@ -46,10 +46,10 @@ if (!empty($rs[0]['idsede'])) {
 }
 
 // Sostituzioni specifiche
-$replaces = [
+$custom = [
     'tipo_doc' => strtoupper($tipo_doc),
     'numero_doc' => $numero,
-    'data' => Translator::numberToLocale($rs[0]['data']),
+    'data' => Translator::dateToLocale($rs[0]['data']),
     'pagamento' => $rs[0]['tipo_pagamento'],
     'c_destinazione' => $destinazione,
 ];

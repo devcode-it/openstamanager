@@ -2,17 +2,17 @@
 
 // TABELLA PRINCIPALE
 echo '
-<table class="border-full">';
+<table class="table-bordered">';
 
 if ($mostra_prezzi) {
     // Riga 1
     echo "
     <tr>
-        <td rowspan='7' class='border-full'>
+        <td rowspan='7'>
             <p class='small-bold'>".strtoupper(tr('Note')).'</p>
             <p>'.nl2br($rs[0]['note'])."</p>
         </td>
-        <td style='width:33mm;' class='border-bottom'>
+        <td style='width:33mm;'>
             <p class='small-bold'>".strtoupper(tr('Totale imponibile')).'</p>
         </td>
     </tr>';
@@ -20,7 +20,7 @@ if ($mostra_prezzi) {
     // Dati riga 1
     echo "
     <tr>
-        <td class='border-bottom cell-padded text-right'>
+        <td class='cell-padded text-right'>
             ".Translator::numberToLocale($imponibile_ddt, 2).' &euro;
         </td>
     </tr>';
@@ -28,13 +28,13 @@ if ($mostra_prezzi) {
     // Riga 2
     echo "
     <tr>
-        <td style='width:33mm;' class='border-bottom'>
+        <td style='width:33mm;'>
             <p class='small-bold'>".strtoupper(tr('Totale imposte'))."</p>
         </td>
     </tr>
 
     <tr>
-        <td class='border-bottom cell-padded text-right'>
+        <td class='cell-padded text-right'>
             ".Translator::numberToLocale($totale_iva, 2).' &euro;
         </td>
     </tr>';
@@ -42,13 +42,13 @@ if ($mostra_prezzi) {
     // Riga 3
     echo "
     <tr>
-        <td class='border-bottom'>
+        <td>
             <p class='small-bold'>".strtoupper(tr('Totale documento'))."</p>
         </td>
     </tr>
 
     <tr>
-        <td  class='cell-padded text-right' style='border-bottom:none;'>
+        <td class='cell-padded text-right'>
             ".Translator::numberToLocale($totale_ddt, 2).' &euro;
         </td>
     </tr>';
@@ -67,7 +67,7 @@ echo '
 </table>';
 
 echo '
-<table class="border-full">
+<table class="table-bordered">
     <tr>
         <th class="border-bottom border-right" style="width:33%">
             '.strtoupper(tr('Aspetto beni')).'

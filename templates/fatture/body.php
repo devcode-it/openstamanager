@@ -29,7 +29,7 @@ echo "
             <th class='text-center' style='width:7%'>".strtoupper(tr('Um'))."</th>
             <th class='text-center' style='width:16%'>".strtoupper(tr('Costo unitario'))."</th>
             <th class='text-center' style='width:20%'>".strtoupper(tr('Importo'))."</th>
-            <th class='text-center' style='width:7%'>".strtoupper(tr('IVA')).'</th>
+            <th class='text-center' style='width:7%'>".strtoupper(tr('IVA')).' (%)</th>
         </tr>
     </thead>
 
@@ -112,7 +112,7 @@ foreach ($righe as $r) {
             <td class='text-center'>";
     if ($r['perc_iva'] > 0) {
         echo '
-                '.$r['perc_iva'].'%';
+                '.$r['perc_iva'];
     }
     echo '
             </td>

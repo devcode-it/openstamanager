@@ -23,7 +23,8 @@ table {
     overflow: wrap
 }
 
-table td {
+table td,
+table th {
     vertical-align: top;
     padding: 4px;
 }
@@ -78,24 +79,31 @@ table.table-striped tbody tr:nth-child(2n+1) td {
     padding: 4px;
 }
 
-#contents{
+#contents {
     border: 1px solid #aaa;
 }
 
 #contents td {
-    padding: 4px;
-    white-space: normal;
     border-left: 1px solid #aaa;
     border-right: 1px solid #aaa;
 }
 
 #contents th,
-table.border-full th  {
+table.table-bordered th {
     background: #ddd;
-    padding: 4px;
-    font-size: 80%;
-    border: 1px solid #aaa;
 }
-table.border-full th {
+
+#contents th {
+    font-size: 80%;
+}
+
+table.table-bordered>th {
     font-size: 70%;
+}
+
+#contents th,
+table.table-bordered,
+table.table-bordered td,
+table.table-bordered th {
+    border: 1px solid #aaa;
 }

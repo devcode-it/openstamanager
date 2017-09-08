@@ -38,10 +38,16 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
         include $docroot.'/templates/'.$ptype.'/init.php';
     }
 
+    // Individuazione delle variabili per la sostituzione
+    include_once __DIR__.'/templates/info.php';
+
     if (!empty($id_module)) {
         Permissions::addModule($id_module);
     }
     Permissions::check();
+
+    // Operazioni di sostituzione
+    include $docroot.'/templates/pdfgen_variables.php';
 
     // Generazione dei contenuti della stampa
     ob_start();
@@ -52,14 +58,14 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
     }
     $report = ob_get_clean();
 
-    if(!empty($autofill)){
+    if (!empty($autofill)) {
         $result = '';
 
         // max($autofill['additional']) = $autofill['rows'] - 1
         for ($i = (floor($autofill['count']) % $autofill['rows']); $i < $autofill['additional']; ++$i) {
             $result .= '
             <tr>';
-            for($c = 0; $c < $autofill['columns']; $c++){
+            for ($c = 0; $c < $autofill['columns']; ++$c) {
                 $result .= '
                 <td>&nbsp;</td>';
             }
@@ -113,7 +119,7 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
 }
 
 // Operazioni di sostituzione
-include $docroot.'/templates/pdfgen_variables.php';
+include $docroot.'/templates/replace.php';
 
 // Individuazione dellla configurazione
 $directory = dirname($filename);

@@ -10,45 +10,86 @@ $report_name = 'intervento_'.$idintervento.'.pdf';
     Dati intervento
 */
 echo '
-<table class="table_values" cellspacing="0" cellpadding="0" style="table-layout:fixed;">
-    <col width="400"><col width="310">
+<table class="table table-bordered">
+    <tr>
+        <th colspan="4" style="dont-size:14pt;" class="text-center">RAPPORTO OPERAZIONI E INTERVENTI</th>
+    </tr>
 
     <tr>
-        <td align="left">
-            '.tr('Cliente').': <b>'.$c_codiceanagrafica.' '.$c_ragionesociale.'</b><br>
-            '.tr('Indirizzo').': <b>'.$c_indirizzo.'-'.$c_cap.' '.$c_citta.' ('.strtoupper($c_provincia).')</b><br>
-        </td>
-        <td align="left">
-            '.tr('Referente').': <b>'.$referente.'</b>';
-    if ($c_telefono != '') {
-        echo '
-        <br>'.tr('Telefono azienda').': <b>'.$c_telefono.'</b>';
-    }
-    if ($c_email != '') {
-        echo '
-        <br>'.tr('Email').': <b>'.$c_email.'</b>';
-    }
-    echo '
-        </td>
+        <td class="text-center" style="width:40%">Intervento numero: <b>'.$records[0]['codice'].'</b></td>
+        <td class="text-center" style="width:20%">Data: <b>'.Translator::dateToLocale($records[0]['data_richiesta']).'</b></td>
+        <td class="text-center" style="width:20%">Preventivo N<sup>o</sup>: <b>'.$records[0]['numero_preventivo'].'</b></td>
+        <td class="text-center" style="width:20%">Contratto N<sup>o</sup>: <b>'.$records[0]['numero_contratto'].'</b></td>
     </tr>';
 
-//  Richiesta
+    // Dati cliente
 echo '
     <tr>
-        <td align="left" colspan="2" valign="top"><b>'.tr('Richiesta').':</b></td>
-    </tr>
-    <tr>
-        <td colspan="2" align="left" valign="top" style="height:5mm;">'.nl2br($records[0]['richiesta']).'</td>
+        <td colspan=3>
+            Cliente: <b>'.$c_ragionesociale.'</b>
+        </td>';
+
+//Codice fiscale
+echo '
+        <td>
+            P.iva: <b>'.strtoupper($c_piva).'</b>
+        </td>
     </tr>';
 
-//  Descrizione
-if ($records[0]['descrizione_intervento'] != '') {
+//riga 2
+echo '
+    <tr>
+        <td colspan="4">
+            Via: <b>'.$c_indirizzo.'</b> -
+            Cap: <b>'.$c_cap.'</b> -
+            Comune: <b>'.$c_citta.' ('.strtoupper($c_provincia).')</b>
+        </td>
+    </tr>';
+
+echo '
+    <tr>
+        <td colspan="4">
+            Telefono: <b>'.$c_telefono.'</b>';
+if (!empty($c_cellulare)) {
+    echo' - Cellulare: <b>'.$c_cellulare.'</b>';
+}
+echo '
+        </td>
+    </tr>';
+
+//riga 3
+//Elenco impianti su cui è stato fatto l'intervento
+$rs2 = $dbo->fetchArray('SELECT *, (SELECT nome FROM my_impianti WHERE id=my_impianti_interventi.idimpianto) AS nome, (SELECT matricola FROM my_impianti WHERE id=my_impianti_interventi.idimpianto) AS matricola FROM my_impianti_interventi WHERE idintervento='.prepare($idintervento));
+$impianti = [];
+for ($j = 0; $j < sizeof($rs2); ++$j) {
+    $impianti[] = '<b>'.$rs2[$j]['nome']."</b> <small style='color:#777;'>(".$rs2[$j]['matricola'].')</small>';
+}
+echo '
+    <tr>
+        <td colspan="4">
+            Impianti: '.implode(', ', $impianti).'
+        </td>
+    </tr>';
+
+if (!empty($records[0]['richiesta'])) {
+    //Richiesta
     echo '
     <tr>
-        <td colspan="2" align="left" valign="top"><b>'.tr('Descrizione').':</b></td>
+        <td colspan="4" style="height:20mm;">
+            <b>Richiesta:</b>
+            <p>'.nl2br($records[0]['richiesta']).'</p>
+        </td>
+    </tr>';
+}
+
+if (!empty($records[0]['descrizione_intervento'])) {
+    //descrizione
+    echo '
+    <tr>
+        <td><b>Descrizione:</b></td>
     </tr>
     <tr>
-        <td colspan="2" valign="top" align="left" style="height:5mm;">'.nl2br($records[0]['descrizione_intervento']).'</td>
+        <td style="height:5mm;">'.nl2br($records[0]['descrizione_intervento']).'</td>
     </tr>';
 }
 echo '

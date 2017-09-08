@@ -31,9 +31,6 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
     // Individuazione delle impostazioni finali
     $settings = array_merge($default, (array) $custom);
 
-    // Fix per l'altezza minima del margine in alto
-    $settings['header-height'] = ($settings['header-height'] < $settings['margins']['top']) ? $settings['margins']['top'] : $settings['header-height'];
-
     // Individuazione delle variabili fondamentali per la sostituzione dei contenuti
     if (file_exists($docroot.'/templates/'.$ptype.'/custom/init.php')) {
         include $docroot.'/templates/'.$ptype.'/custom/init.php';
@@ -54,6 +51,24 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
         include $docroot.'/templates/'.$ptype.'/body.php';
     }
     $report = ob_get_clean();
+
+    if(!empty($autofill)){
+        $result = '';
+
+        // max($autofill['additional']) = $autofill['rows'] - 1
+        for ($i = (floor($autofill['count']) % $autofill['rows']); $i < $autofill['additional']; ++$i) {
+            $result .= '
+            <tr>';
+            for($c = 0; $c < $autofill['columns']; $c++){
+                $result .= '
+                <td>&nbsp;</td>';
+            }
+            $result .= '
+            </tr>';
+        }
+
+        $report = str_replace('|autofill|', $result, $report);
+    }
 
     // Generazione dei contenuti dell'header
     ob_start();
@@ -131,8 +146,8 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
         'helvetica',
         $settings['margins']['left'],
         $settings['margins']['right'],
-        $settings['header-height'],
-        $settings['footer-height'],
+        $settings['margins']['top'] + $settings['header-height'],
+        $settings['margins']['bottom'] + $settings['footer-height'],
         $settings['margins']['top'],
         $settings['margins']['bottom'],
         strtolower($settings['orientation']) == 'l' ? 'l' : 'p'

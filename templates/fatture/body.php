@@ -4,21 +4,24 @@ include_once __DIR__.'/../../core.php';
 
 $report_name = 'fattura_'.$numero.'.pdf';
 
-$n_rows = 0;
-$words4row = 70;
+$autofill = [
+    'count' => 0, // Conteggio delle righe
+    'words' => 70, // Numero di parolo dopo cui contare una riga nuova
+    'rows' => 20, // Numero di righe massimo presente nella pagina
+    'additional' => 15, // Numero di righe massimo da aggiungere
+    'columns' => 6, // Numero di colonne della tabella
+];
 
 $v_iva = [];
 $v_totale = [];
 
-$totale_documento = 0;
-$totale_iva = 0;
 $sconto = 0;
 $imponibile = 0;
 $iva = 0;
 
 // Intestazione tabella per righe
 echo "
-<table class='table border-full table-striped' id='contents'>
+<table class='table table-striped' id='contents'>
     <thead>
         <tr>
             <th class='text-center' style='width:50%'>".strtoupper(tr('Descrizione'))."</th>
@@ -36,69 +39,69 @@ echo "
 $righe = $dbo->fetchArray("SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice_articolo, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva FROM `co_righe_documenti` WHERE iddocumento=".prepare($iddocumento).' ORDER BY `order`');
 $tot_righe = sizeof($righe);
 
-foreach ($righe as $i => $riga) {
-    $n_rows += ceil(strlen($riga['descrizione']) / $words4row);
-    $n_rows += substr_count($riga['descrizione'], PHP_EOL);
+foreach ($righe as $r) {
+    $autofill['count'] += ceil(strlen($r['descrizione']) / $autofill['words']);
+    $autofill['count'] += substr_count($r['descrizione'], PHP_EOL);
 
-    echo "
+    echo '
         <tr>
-            <td class='border-right'>
-                ".nl2br($riga['descrizione']);
+            <td>
+                '.nl2br($r['descrizione']);
 
-    if (!empty($riga['codice_articolo'])) {
+    if (!empty($r['codice_articolo'])) {
         echo '
-                <br><small>'.str_replace('_COD_', $riga['codice_articolo'], tr('COD. _COD_')).'</small>';
-        $n_rows += 0.4;
+                <br><small>'.str_replace('_COD_', $r['codice_articolo'], tr('COD. _COD_')).'</small>';
+        $autofill['count'] += 0.4;
     }
 
     // Aggiunta riferimento a ordine
-    if (!empty($riga['idordine'])) {
-        $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM or_ordini WHERE id='.prepare($riga['idordine']));
+    if (!empty($r['idordine'])) {
+        $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM or_ordini WHERE id='.prepare($r['idordine']));
         $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
 
         echo '
                 <br><small>'.str_replace(['_NUM_', '_DATE_'], [$numero, Translator::dateToLocale($rso[0]['data'])], tr('Rif. ordine n<sup>o</sup>_NUM_ del _DATE_')).'</small>';
-        $n_rows += 0.4;
+        $autofill['count'] += 0.4;
     }
 
     // Aggiunta riferimento a ddt
-    elseif (!empty($riga['idddt'])) {
-        $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM dt_ddt WHERE id='.prepare($riga['idddt']));
+    elseif (!empty($r['idddt'])) {
+        $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM dt_ddt WHERE id='.prepare($r['idddt']));
         $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
 
         echo '
                 <br><small>'.str_replace(['_NUM_', '_DATE_'], [$numero, Translator::dateToLocale($rso[0]['data'])], tr('Rif. ddt n<sup>o</sup>_NUM_ del _DATE_')).'</small>';
-        $n_rows += 0.4;
+        $autofill['count'] += 0.4;
     }
     echo '
             </td>';
 
     echo "
-            <td class='center border-right text-center'>
-                ".(empty($riga['qta']) ? '' : Translator::numberToLocale($riga['qta'], 2)).'
+            <td class='text-center'>
+                ".(empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'], 2)).'
             </td>';
 
     // Unità di miusura
     echo "
-            <td class='border-right text-center'>
-                ".nl2br(strtoupper($riga['um'])).'
+            <td class='text-center'>
+                ".nl2br(strtoupper($r['um'])).'
             </td>';
 
     // Costo unitario
     echo "
-            <td class='border-right text-right'>
-                ".(empty($riga['qta']) || empty($riga['subtotale']) ? '' : Translator::numberToLocale($riga['subtotale'] / $riga['qta'], 2)).' &euro;
+            <td class='text-right'>
+                ".(empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'], 2)).' &euro;
             </td>';
 
     // Imponibile
     echo "
-            <td class='border-right text-right'>
-                ".(empty($riga['subtotale']) ? '' : Translator::numberToLocale($riga['subtotale'], 2)).' &euro;';
+            <td class='text-right'>
+                ".(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'], 2)).' &euro;';
 
-    if ($riga['sconto'] > 0) {
-        $n_rows += 0.4;
+    if ($r['sconto'] > 0) {
+        $autofill['count'] += 0.4;
         echo "
-                <br><small class='help-block'>- sconto ".Translator::numberToLocale($riga['sconto_unitario']).($riga['tipo_sconto'] == 'PRC' ? '%' : ' &euro;').'</small>';
+                <br><small class='help-block'>- sconto ".Translator::numberToLocale($r['sconto_unitario']).($r['tipo_sconto'] == 'PRC' ? '%' : ' &euro;').'</small>';
     }
 
     echo '
@@ -107,25 +110,21 @@ foreach ($righe as $i => $riga) {
     // Iva
     echo "
             <td class='text-center'>";
-    if (!empty($riga['idiva'])) {
+    if ($r['perc_iva'] > 0) {
         echo '
-                '.intval($riga['perc_iva']).'%';
+                '.$r['perc_iva'].'%';
     }
     echo '
             </td>
         </tr>';
 
-    $imponibile += $riga['subtotale'];
-    $iva += $riga['iva'];
-    $sconto += $riga['sconto'];
+    $imponibile += $r['subtotale'];
+    $iva += $r['iva'];
+    $sconto += $r['sconto'];
 
-    $v_iva[$riga['desc_iva']] += $riga['iva'];
-    $v_totale[$riga['desc_iva']] += $riga['subtotale'] - $riga['sconto'];
+    $v_iva[$r['desc_iva']] += $r['iva'];
+    $v_totale[$r['desc_iva']] += $r['subtotale'] - $r['sconto'];
 }
-
-$imponibile_documento += $imponibile;
-$totale_iva += $iva;
-$totale_documento += $imponibile;
 
 // Aggiungo diciture per condizioni iva particolari
 if (!empty($v_iva)) {
@@ -139,12 +138,12 @@ if (!empty($v_iva)) {
     // Controllo se è stata applicata questa tipologia di iva
     foreach ($elenco as $e => $testo) {
         if (in_array($e, $keys)) {
-            $n_rows += strlen($testo) / $words4row;
-            $n_rows += substr_count($riga['descrizione'], PHP_EOL);
+            $autofill['count'] += strlen($testo) / $autofill['words'];
+            $autofill['count'] += substr_count($r['descrizione'], PHP_EOL);
 
             echo "
         <tr>
-            <td class='border-right text-center'>
+            <td class='text-center'>
                 <b>".nl2br($testo)."</b>
             </td>
 
@@ -156,24 +155,10 @@ if (!empty($v_iva)) {
     }
 }
 
-// % 20 -> < 19 righe
-for ($i = (floor($n_rows) % 20); $i < 15; ++$i) {
-    echo '
-    <tr>
-        <td class="border-right">&nbsp;</td>
-        <td class="border-right"></td>
-        <td class="border-right"></td>
-        <td class="border-right"></td>
-        <td class="border-right"></td>
-        <td class="border-right"></td>
-    </tr>';
-}
 echo '
+        |autofill|
     </tbody>
 </table>';
-
-$imponibile_documento -= $sconto;
-$totale_documento = $totale_documento - $sconto + $totale_iva;
 
 if (!empty($rs[0]['note'])) {
     echo '
@@ -181,3 +166,8 @@ if (!empty($rs[0]['note'])) {
 <p class="small-bold">'.strtoupper(tr('Note')).':</p>
 <p>'.$rs[0]['note'].'</p>';
 }
+
+// Info per il footer
+$totale_iva = $iva;
+$imponibile_documento = $imponibile - $sconto;
+$totale_documento = $imponibile - $sconto + $totale_iva;

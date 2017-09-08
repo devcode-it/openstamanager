@@ -78,15 +78,24 @@ table.table-striped tbody tr:nth-child(2n+1) td {
     padding: 4px;
 }
 
+#contents{
+    border: 1px solid #aaa;
+}
+
 #contents td {
     padding: 4px;
     white-space: normal;
+    border-left: 1px solid #aaa;
+    border-right: 1px solid #aaa;
 }
 
-#contents th {
-    border-bottom: 1px solid #aaa;
-    border-right: 1px solid #aaa;
+#contents th,
+table.border-full th  {
     background: #ddd;
-    padding: 3px;
-    font-size: 90%;
+    padding: 4px;
+    font-size: 80%;
+    border: 1px solid #aaa;
+}
+table.border-full th {
+    font-size: 70%;
 }

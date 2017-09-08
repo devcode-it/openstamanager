@@ -2,5 +2,5 @@
 
 return [
     'header-height' => '80',
-    'footer-height' => '60',
+    'footer-height' => '80',
 ];

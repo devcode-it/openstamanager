@@ -4,11 +4,6 @@ include_once __DIR__.'/core.php';
 
 ob_end_clean();
 
-$orientation = 'P';
-$body_table_params = "style='width:210mm;'";
-$table = 'margin-left:1.7mm';
-$font_size = '10pt';
-
 // Assegnazione di tutte le variabile GET
 foreach ($get as $key => $value) {
     ${$key} = !empty(${$key}) ? ${$key} : $value;
@@ -19,20 +14,25 @@ $visualizza_costi = get_var('Visualizza i costi sulle stampe degli interventi');
 
 // Nuovo sistema di generazione stampe
 if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
-    // Impostazioni della stampa
+    // Impostazioni di default
     if (file_exists($docroot.'/templates/base/custom/settings.php')) {
         $default = include $docroot.'/templates/base/custom/settings.php';
     } else {
         $default = include $docroot.'/templates/base/settings.php';
     }
 
+    // Impostazioni personalizzate della stampa
     if (file_exists($docroot.'/templates/'.$ptype.'/custom/settings.php')) {
         $custom = include $docroot.'/templates/'.$ptype.'/custom/settings.php';
     } elseif (file_exists($docroot.'/templates/'.$ptype.'/settings.php')) {
         $custom = include $docroot.'/templates/'.$ptype.'/settings.php';
     }
 
+    // Individuazione delle impostazioni finali
     $settings = array_merge($default, (array) $custom);
+
+    // Fix per l'altezza minima del margine in alto
+    $settings['header-height'] = ($settings['header-height'] < $settings['margins']['top']) ? $settings['margins']['top'] : $settings['header-height'];
 
     // Individuazione delle variabili fondamentali per la sostituzione dei contenuti
     if (file_exists($docroot.'/templates/'.$ptype.'/custom/init.php')) {
@@ -73,10 +73,14 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
     }
     $foot = ob_get_clean();
 
-    if (empty($foot)) {
-        $foot = '$pagination$';
-    }
+    // Footer di default
+    $foot = !empty($foot) ? $foot : '$pagination$';
 } else {
+    $orientation = 'P';
+    $body_table_params = "style='width:210mm;'";
+    $table = 'margin-left:1.7mm';
+    $font_size = '10pt';
+
     // Decido se usare la stampa personalizzata (se esiste) oppure quella standard
     if (file_exists($ptype.'/custom/pdfgen.'.$ptype.'.php')) {
         include $docroot.'/templates/'.$ptype.'/custom/pdfgen.'.$ptype.'.php';
@@ -95,9 +99,6 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
 
 // Operazioni di sostituzione
 include $docroot.'/templates/pdfgen_variables.php';
-
-$report = str_replace('$docroot$', $docroot, $report);
-$report = str_replace('$rootdir$', $rootdir, $report);
 
 // Individuazione dellla configurazione
 $directory = dirname($filename);
@@ -123,7 +124,19 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
         'templates/base/style.css',
     ];
 
-    $mpdf = new mPDF('utf-8', $settings['dimension'], $settings['font-size'], '', 12, 12, $settings['header'], $settings['footer'], 9, 9, $settings['orientation']);
+    $mpdf = new mPDF(
+        'c',
+        $settings['dimension'],
+        $settings['font-size'],
+        'helvetica',
+        $settings['margins']['left'],
+        $settings['margins']['right'],
+        $settings['header-height'],
+        $settings['footer-height'],
+        $settings['margins']['top'],
+        $settings['margins']['bottom'],
+        strtolower($settings['orientation']) == 'l' ? 'l' : 'p'
+    );
 
     $mpdf->SetHTMLFooter($foot);
     $mpdf->SetHTMLHeader($head);
@@ -137,19 +150,10 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
 
     $mpdf->Output($filename, $mode);
 } else {
-    // HTML
-    $html = (get_var('Formato report') == 'html');
+    $html2pdf = new Spipu\Html2Pdf\Html2Pdf($orientation, 'A4', 'it', true, 'UTF-8');
 
-    try {
-        ob_end_clean();
-        $html2pdf = new HTML2PDF($orientation, 'A4', 'it', true, 'UTF-8');
+    $html2pdf->writeHTML($report);
+    $html2pdf->pdf->setTitle($title);
 
-        $html2pdf->writeHTML($report, $html);
-        $html2pdf->pdf->setTitle($title);
-
-        $html2pdf->output($filename, $mode);
-    } catch (HTML2PDF_exception $e) {
-        echo $e;
-        exit();
-    }
+    $html2pdf->output($filename, $mode);
 }

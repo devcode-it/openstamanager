@@ -81,7 +81,7 @@ echo '
 		</div>
     </div>';
 
-redirectOperation();
+redirectOperation($id_module, $id_record);
 
 /**
  * Widget laterali.

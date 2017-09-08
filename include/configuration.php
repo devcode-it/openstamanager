@@ -42,7 +42,6 @@ if (post('db_host') !== null) {
                 'CREATE',
                 'ALTER',
                 'DROP',
-                'CREATE VIEW',
             ];
 
             $db_host = str_replace('_', '\_', $db_name);

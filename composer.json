@@ -25,6 +25,7 @@
         "php": ">=5.4",
         "ezyang/htmlpurifier": "^4.8",
         "filp/whoops": "^2.1",
+        "ifsnop/mysqldump-php": "^2.3",
         "intervention/image": "^2.3",
         "ircmaxell/password-compat": "^1.0",
         "maximebf/debugbar": "^1.13",
@@ -32,7 +33,8 @@
         "mpdf/mpdf": "^6.1",
         "paragonie/random_compat": "^2.0",
         "phpmailer/phpmailer": "^5.2",
-        "spipu/html2pdf": "^4.6",
+        "spipu/html2pdf": "^5.0",
+        "symfony/finder": "^3.3",
         "symfony/translation": "^3.2"
     },
     "autoload": {

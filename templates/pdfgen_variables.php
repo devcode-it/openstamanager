@@ -7,6 +7,8 @@ include_once __DIR__.'/../core.php';
 
 // Valori aggiuntivi per la sostituzione
 $values = [
+    'docroot' => DOCROOT,
+    'rootdir' => ROOTDIR,
     'footer' => !empty($footer) ? $footer : '',
     'dicitura_fissa_fattura' => get_var('Dicitura fissa fattura'),
     'pagination' => '

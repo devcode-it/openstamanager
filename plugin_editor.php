@@ -56,7 +56,7 @@ if (!empty($info['script'])) {
         }
     }
 
-    redirectOperation();
+    redirectOperation($id_module, $id_parent);
 
     $module = Modules::getModule($info['idmodule_to']);
 

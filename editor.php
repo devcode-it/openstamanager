@@ -118,7 +118,7 @@ if (file_exists($docroot.'/modules/'.$module_dir.'/add.php') && $module['permess
 		</div>';
 }
 
-redirectOperation();
+redirectOperation($id_module, $id_record);
 
 echo '
 		<hr>

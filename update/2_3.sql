@@ -418,6 +418,7 @@ INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
 -- Eliminazione impostazioni inutilizzata
 DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Usa tabelle avanzate';
 DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Righe per pagina';
+DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Formato report';
 
 -- Aggiunta tabelle per la gestione dei campi "minori""
 INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Tabelle', '', '', '', 'fa fa-table', '2.3', '2.3', '1', 1, '1', '1');

@@ -12,8 +12,9 @@ switch (filter('op')) {
 
     case 'del':
         $file = filter('file');
+        deltree($backup_dir.$file);
 
-        if (deltree($backup_dir.$file)) {
+        if (!file_exists($backup_dir.$file)) {
             $_SESSION['infos'][] = str_replace('_FILE_', '"'.$file.'"', tr('Backup _FILE_ eliminato!'));
         } else {
             $_SESSION['errors'][] = str_replace('_FILE_', '"'.$file.'"', tr("Errore durante l'eliminazione del backup _FILE_!"));

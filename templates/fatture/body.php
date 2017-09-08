@@ -41,7 +41,7 @@ foreach ($righe as $i => $riga) {
     $n_rows += substr_count($riga['descrizione'], PHP_EOL);
 
     echo "
-        <tr class='".($i % 2 != 0 ? 'bg-default' : '')."'>
+        <tr>
             <td class='border-right'>
                 ".nl2br($riga['descrizione']);
 

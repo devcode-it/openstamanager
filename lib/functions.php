@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Esegue il redirect.
  *
@@ -82,100 +83,76 @@ function deltree($path)
  *
  * @return bool Returns TRUE on success, FALSE on failure
  */
-function copyr($source, $dest, $ignores = [])
+function copyr($source, $destination, $ignores = [])
 {
-    $ignores = (array) $ignores;
-    foreach ($ignores as $key => $value) {
-        $ignores[$key] = slashes($value);
+    $finder = Symfony\Component\Finder\Finder::create()
+        ->files()
+        ->exclude((array) $ignores['dirs'])
+        ->ignoreDotFiles(true)
+        ->ignoreVCS(true)
+        ->in($source);
+
+    foreach ((array) $ignores['files'] as $value) {
+        $finder->notName($value);
     }
 
-    $path = realpath($source);
-    $exclude = !empty(array_intersect($ignores, [slashes($path), slashes($path.'/'), $entry]));
+    foreach ($finder as $file) {
+        $filename = rtrim($destination, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$file->getRelativePathname();
 
-    if ($exclude) {
-        return;
-    }
-
-    // Simple copy for a file
-    if (is_file($source)) {
-        return copy($source, $dest);
-    }
-
-    // Make destination directory
-    if (!is_dir($dest)) {
-        create_dir($dest);
-    }
-
-    // If the source is a symlink
-    if (is_link($source)) {
-        $link_dest = readlink($source);
-
-        return symlink($link_dest, $dest);
-    }
-
-    // Loop through the folder
-    $dir = dir($source);
-    while (false !== $entry = $dir->read()) {
-        // Skip pointers
-        if ($entry == '.' || $entry == '..') {
-            continue;
+        // Creazione della cartella di base
+        if (!file_exists(dirname($filename))) {
+            create_dir(dirname($filename));
         }
 
-        $path = realpath($source.'/'.$entry.'/');
-        $exclude = !empty(array_intersect($ignores, [slashes($path), slashes($path.'/'), $entry]));
+        // Simple copy for a file
+        if (is_file($file)) {
+            copy($file, $filename);
+        }
 
-        // Deep copy directories
-        if (slashes($dest) !== slashes($source.'/'.$entry) && !$exclude) {
-            copyr($source.'/'.$entry, $dest.'/'.$entry, $ignores);
+        // If the source is a symlink
+        if (is_link($file)) {
+            $link_dest = readlink($file);
+
+            symlink($link_dest, $filename);
         }
     }
-
-    // Clean up
-    $dir->close();
 
     return true;
 }
 
 /**
  * Crea un file zip comprimendo ricorsivamente tutte le sottocartelle a partire da una cartella specificata.
+ * *.
  *
- * @see http://stackoverflow.com/questions/1334613/how-to-recursively-zip-a-directory-in-php
- *
- * @param unknown $source
- * @param unknown $destination
+ * @param string $source
+ * @param string $destination
+ * @param array  $ignores
  */
-function create_zip($source, $destination)
+function create_zip($source, $destination, $ignores = [])
 {
-    if (!extension_loaded('zip') || !file_exists($source)) {
+    if (!extension_loaded('zip')) {
         $_SESSION['errors'][] = tr('Estensione zip non supportata!');
 
         return false;
     }
 
-    $destination = slashes($destination);
-
     $zip = new ZipArchive();
     $result = $zip->open($destination, ZIPARCHIVE::CREATE);
     if ($result === true && is_writable(dirname($destination))) {
-        $source = slashes(realpath($source));
+        $finder = Symfony\Component\Finder\Finder::create()
+            ->files()
+            ->exclude((array) $ignores['dirs'])
+            ->ignoreDotFiles(true)
+            ->ignoreVCS(true)
+            ->in($source);
 
-        if (is_dir($source) === true) {
-            $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS), RecursiveIteratorIterator::SELF_FIRST);
-
-            foreach ($files as $file) {
-                $file = slashes(realpath($file));
-                $filename = str_replace($source.DIRECTORY_SEPARATOR, '', $file);
-
-                if (is_dir($file) === true) {
-                    $zip->addEmptyDir($filename);
-                } elseif (is_file($file) === true && $destination != $file) {
-                    $zip->addFromString($filename, file_get_contents($file));
-                }
-            }
-        } elseif (is_file($source) === true && $destination != $source) {
-            $zip->addFromString(basename($source), file_get_contents($source));
+        foreach ((array) $ignores['files'] as $value) {
+            $finder->notName($value);
         }
 
+        foreach ($finder as $file) {
+            $zip->addFile($file, $file->getRelativePathname());
+        }
         $zip->close();
     } else {
         $_SESSION['errors'][] = tr("Errore durante la creazione dell'archivio!");
@@ -239,49 +216,51 @@ function checkZip($zip_file)
  *
  * @return bool
  */
-function do_backup()
+function do_backup($path = null)
 {
     global $backup_dir;
 
     set_time_limit(0);
 
-    if (extension_loaded('zip')) {
-        $tmp_backup_dir = '/tmp/';
-    } else {
-        $tmp_backup_dir = '/OSM backup '.date('Y-m-d').' '.date('H_i_s').'/';
-    }
+    $path = !empty($path) ? $path : DOCROOT;
 
-    // Creazione cartella temporanea
-    if (file_exists($backup_dir.$tmp_backup_dir) || create_dir($backup_dir.$tmp_backup_dir)) {
-        $do_backup = true;
-    } else {
-        $do_backup = false;
-    }
+    $backup_name = 'OSM backup '.date('Y-m-d').' '.date('H_i_s');
+    if (
+        (extension_loaded('zip') && (file_exists($backup_dir.'tmp') || create_dir($backup_dir.'tmp'))) ||
+        (!extension_loaded('zip') && (file_exists($backup_dir.$backup_name) || create_dir($backup_dir.$backup_name)))
+    ) {
+        // Backup del database
+        $database_file = $backup_dir.(extension_loaded('zip') ? 'tmp' : $backup_name).'/database.sql';
+        backup_tables($database_file);
 
-    if ($do_backup) {
-        $database_file = 'database.sql';
-        $backup_file = 'OSM backup '.date('Y-m-d').' '.date('H_i_s').'.zip';
+        // Percorsi da ignorare di default
+        $ignores = [
+            'files' => [
+                'config.inc.php',
+            ],
+            'dirs' => [
+                basename($backup_dir),
+                '.couscous',
+                'node_modules',
+                'tests',
+            ],
+        ];
 
-        // Dump database
-        $dump = "SET foreign_key_checks = 0;\n";
-        $dump .= backup_tables();
-        $dump .= "SET foreign_key_checks = 1;\n";
-        file_put_contents($backup_dir.$tmp_backup_dir.$database_file, $dump);
-
-        // Copia file di OSM (escludendo la cartella di backup)
-        copyr(DOCROOT, $backup_dir.$tmp_backup_dir, [slashes($backup_dir), '.svn', '.git', 'config.inc.php', 'node_modules']);
-
-        // Creazione zip
+        // Creazione dello zip
         if (extension_loaded('zip')) {
-            if (create_zip($backup_dir.$tmp_backup_dir, $backup_dir.$backup_file)) {
+            if (create_zip([$path, dirname($database_file)], $backup_dir.$backup_name.'.zip', $ignores)) {
                 $_SESSION['infos'][] = tr('Nuovo backup creato!');
             } else {
                 $_SESSION['errors'][] = tr('Errore durante la creazione del backup!');
             }
 
             // Rimozione cartella temporanea
-            deltree($backup_dir.$tmp_backup_dir);
-        } else {
+            unlink($database_file);
+        }
+        // Copia dei file di OSM
+        else {
+            copyr($path, $backup_dir.$backup_name, $ignores);
+
             $_SESSION['infos'][] = tr('Nuovo backup creato!');
         }
 
@@ -315,9 +294,11 @@ function do_backup()
                 }
             }
         }
+
+        return true;
     }
 
-    return $do_backup;
+    return false;
 }
 
 /**
@@ -329,63 +310,16 @@ function do_backup()
  *
  * @return string
  */
-function backup_tables($tables = '*')
+function backup_tables($file)
 {
-    $dbo = Database::getConnection();
+    global $backup_dir;
+    global $db_host;
+    global $db_name;
+    global $db_username;
+    global $db_password;
 
-    if ($tables == '*') {
-        $tables = [];
-        $result = $dbo->fetchArray('SHOW TABLES', true);
-        if ($result != null) {
-            foreach ($result as $res) {
-                $tables[] = $res[0];
-            }
-        }
-    } else {
-        $tables = is_array($tables) ? $tables : explode(',', $tables);
-    }
-
-    // Eliminazione di tutte le tabelle
-    foreach ($tables as $table) {
-        $return .= "DROP TABLE IF EXISTS `$table`;\n";
-    }
-
-    // Ricreazione della struttura di ogni tabella e ri-popolazione database
-    foreach ($tables as $table) {
-        $result = $dbo->fetchArray('SELECT * FROM '.$table, true);
-        $num_fields = count($result[0]);
-
-        $row2 = $dbo->fetchArray('SHOW CREATE TABLE '.$table);
-        $return .= "\n".$row2[1].";\n";
-
-        for ($i = 0; $i < $num_fields; ++$i) {
-            foreach ($result as $row) {
-                $return .= 'INSERT INTO '.$table.' VALUES(';
-
-                for ($j = 0; $j < $num_fields; ++$j) {
-                    $row[$j] = addslashes($row[$j]);
-                    $row[$j] = str_replace("\r\n", '\\n', $row[$j]);
-                    $row[$j] = str_replace("\n", '\\n', $row[$j]);
-
-                    if (isset($row[$j])) {
-                        $return .= '"'.$row[$j].'"';
-                    } else {
-                        $return .= '""';
-                    }
-
-                    if ($j < ($num_fields - 1)) {
-                        $return .= ',';
-                    }
-                }
-
-                $return .= ");\n";
-            }
-        }
-
-        $return .= "\n";
-    }
-
-    return $return;
+    $dump = new Ifsnop\Mysqldump\Mysqldump('mysql:host='.$db_host.';dbname='.$db_name, $db_username, $db_password, ['add-drop-table' => true]);
+    $dump->start($file);
 }
 
 /**
@@ -878,11 +812,8 @@ function sum($first, $second = null, $decimals = null)
     return $result;
 }
 
-function redirectOperation()
+function redirectOperation($id_module, $id_record)
 {
-    $id_module = filter('id_module');
-    $id_record = filter('id_record');
-
     $backto = filter('backto');
     // Scelta del redirect dopo un submit
     if (!empty($backto)) {

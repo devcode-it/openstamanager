@@ -78,11 +78,7 @@ if (filter('op') == 'send') {
 
     // Se ho scelto di inoltrare copia del db
     if (!empty($post['sql'])) {
-        $dump = "SET foreign_key_checks = 0;\n";
-        $dump .= backup_tables();
-        $dump .= "SET foreign_key_checks = 1;\n";
-
-        $backup_file = 'Backup OSM '.date('Y-m-d').' '.date('H_i_s').'.sql';
+        backup_tables('Backup OSM '.date('Y-m-d').' '.date('H_i_s').'.sql');
 
         if (file_put_contents($docroot.'/'.$backup_file, $dump)) {
             $mail->AddAttachment($docroot.'/'.$backup_file);

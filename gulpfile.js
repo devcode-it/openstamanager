@@ -236,16 +236,19 @@ gulp.task('release', function () {
     del([
         './vendor/tecnickcom/tcpdf/fonts/*',
         '!./vendor/tecnickcom/tcpdf/fonts/*helvetica*',
+        './vendor/mpdf/mpdf/iccprofiles/*',
+        './vendor/mpdf/mpdf/qrcode/*',
+        './vendor/mpdf/mpdf/ttfonts/*',
     ]);
 
     var output = fs.createWriteStream('./release.zip');
     var archive = archiver('zip');
 
-    output.on('close', function() {
+    output.on('close', function () {
         console.log('ZIP completato!');
     });
 
-    archive.on('error', function(err) {
+    archive.on('error', function (err) {
         throw err;
     });
 

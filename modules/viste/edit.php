@@ -38,7 +38,7 @@ echo '
 				</div>
 
 				<div class="col-xs-12 col-md-6">
-					{[ "type": "text", "label": "'.tr('Nome del modulo').'", "name": "title", "value": "'.$record['title'].'", "help": "Il nome che identifica il modulo" ]}
+					{[ "type": "text", "label": "'.tr('Nome del modulo').'", "name": "title", "value": "'.$record['title'].'", "help": "'.tr('Il nome che identifica il modulo').'" ]}
 				</div>
 			</div>
 
@@ -48,7 +48,7 @@ echo '
 				</div>
 
 				<div class="col-xs-12 col-md-6">
-					{[ "type": "textarea", "label": "'.tr('Query personalizzata').'", "name": "options2", "value": "'.str_replace(']}', '] }', $record['options2']).'", "class": "autosize", "help": "La query in sostituzione a quella di default: custom, menu oppure <SQL>" ]}
+					{[ "type": "textarea", "label": "'.tr('Query personalizzata').'", "name": "options2", "value": "'.str_replace(']}', '] }', $record['options2']).'", "class": "autosize", "help": "'.tr('La query in sostituzione a quella di default: custom, menu oppure <SQL>').'" ]}
 				</div>
 			</div>';
 if ($options != '' && $options != 'menu' && $options != 'custom') {

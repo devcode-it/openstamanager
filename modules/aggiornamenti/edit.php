@@ -27,7 +27,9 @@ if (get_var('Attiva aggiornamenti')) {
     if (!empty($alerts)) {
         echo '
 <div class="alert alert-warning">
-    <p>'.str_replace('_CONFIG_', '<b>php.ini</b>', tr('Devi modificare il seguenti parametri del file di configurazione PHP (_CONFIG_) per poter caricare gli aggiornamenti')).':<ul>';
+    <p>'.tr('Devi modificare il seguenti parametri del file di configurazione PHP (_FILE_) per poter caricare gli aggiornamenti', [
+        '_FILE_' => '<b>php.ini</b>',
+    ]).':<ul>';
         foreach ($alerts as $key => $value) {
             echo '
         <li><b>'.$key.'</b> = '.$value.'</li>';

@@ -53,7 +53,9 @@ switch (filter('op')) {
             $dbo->query('INSERT INTO `co_pagamenti` (`descrizione`) VALUES ('.prepare($descrizione).')');
             $id_record = $dbo->lastInsertedID();
 
-            $_SESSION['infos'][] = str_replace('_TYPE_', 'pagamento', tr('Aggiunta nuova tipologia di _TYPE_'));
+            $_SESSION['infos'][] = tr('Aggiunta nuova tipologia di _TYPE_', [
+                '_TYPE_' => 'pagamento',
+            ]);
         } else {
             $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
         }
@@ -63,7 +65,9 @@ switch (filter('op')) {
     case 'delete':
         if (isset($id_record)) {
             $dbo->query('DELETE FROM `co_pagamenti` WHERE `descrizione`='.prepare($records[0]['descrizione']));
-            $_SESSION['infos'][] = str_replace('_TYPE_', 'pagamento', tr('Tipologia di _TYPE_ eliminata con successo!'));
+            $_SESSION['infos'][] = tr('Tipologia di _TYPE_ eliminata con successo!', [
+                '_TYPE_' => 'pagamento',
+            ]);
         }
 
         break;

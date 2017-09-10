@@ -27,7 +27,9 @@ if (filter('action') == 'do_update') {
                 if (!empty($update['sql']) && $result[1] == $result[2]) {
                     echo '
         <script>
-            $("#progress .info").html($("#progress .info").html() + "<p>&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"fa fa-check\"></i> '.str_replace('_FILENAME_', '<i>'.$update['filename'].'.sql</i>', tr('Aggiornamento del database (_FILENAME_)')).'</p>");
+            $("#progress .info").html($("#progress .info").html() + "<p>&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"fa fa-check\"></i> '.tr('Aggiornamento del database (_FILENAME_)', [
+                '_FILENAME_' => '<i>'.$update['filename'].'.sql</i>',
+            ]).'</p>");
         </script>';
                 }
 
@@ -36,7 +38,9 @@ if (filter('action') == 'do_update') {
                 // Aggiunta del messaggio riguardante la conclusione dello script
                 echo '
         <script>
-            $("#progress .info").html($("#progress .info").html() + "<p>&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"fa fa-check\"></i> '.str_replace('_FILENAME_', '<i>'.$update['filename'].'.php</i>', tr('Esecuzione dello script di aggiornamento (_FILENAME_)')).'</p>");
+            $("#progress .info").html($("#progress .info").html() + "<p>&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"fa fa-check\"></i> '.tr('Esecuzione dello script di aggiornamento (_FILENAME_)', [
+                '_FILENAME_' => '<i>'.$update['filename'].'.php</i>',
+            ]).'</p>");
         </script>';
 
                 $rate = $scriptValue;
@@ -58,7 +62,9 @@ if (filter('action') == 'do_update') {
             // Fallimento
             echo '
             <div class="alert alert-danger">
-                <i class="fa fa-times"></i> '.str_replace('_VERSION_', $update['version'], tr("Errore durante l'esecuzione dell'aggiornamento alla versione _VERSION_")).'
+                <i class="fa fa-times"></i> '.tr("Errore durante l'esecuzione dell'aggiornamento alla versione _VERSION_", [
+                    '_VERSION_' => $update['version'],
+                ]).'
             </div>';
         }
     }
@@ -87,7 +93,9 @@ if (filter('action') == 'do_update') {
         <p>'.tr('Puoi procedere al login con i seguenti dati').':</p>
         <p>'.tr('Username').': <i>admin</i></p>
         <p>'.tr('Password').': <i> '.$password.'</i></p>
-        <p class="text-danger">'.str_replace('_FILE_', '<b>config.inc.php</b>', tr("E' fortemente consigliato rimuovere i permessi di scrittura dal file _FILE_")).'.</p>';
+        <p class="text-danger">'.tr("E' fortemente consigliato rimuovere i permessi di scrittura dal file _FILE_", [
+            '_FILE_' => '<b>config.inc.php</b>',
+        ]).'.</p>';
 
             // Imposto la password di admin che l'utente ha selezionato all'inizio
             if (isset($_SESSION['osm_password'])) {
@@ -163,7 +171,9 @@ if (filter('action') == 'do_update') {
                 <p>'.tr("E' necessario aggiornare il database a una nuova versione").'.</p>';
     }
     echo '
-                <p>'.str_replace('_BUTTON_', '<b>"'.$button.'"</b>', tr("Premi il tasto _BUTTON_ per procedere con l'aggiornamento!")).'</p>
+                <p>'.tr("Premi il tasto _BUTTON_ per procedere con l'aggiornamento!", [
+                    '_BUTTON_' => '<b>"'.$button.'"</b>',
+                ]).'</p>
                 <input type="button" class="btn btn-primary" value="'.$button.'" onclick="continue_update()" id="contine_button">
 
                 <script>
@@ -249,7 +259,11 @@ if (filter('action') == 'do_update') {
                             versions.push(version);
                             current += 1;
 
-                            $("#progress .info").html($("#progress .info").html() + "<p><strong>'.str_replace(['_DONE_', '_TODO_', '_VERSION_'], ['" + current + "', '" + count + "', '" + version + "'], tr('Aggiornamento _DONE_ di _TODO_ (_VERSION_)')).'</strong></p>");
+                            $("#progress .info").html($("#progress .info").html() + "<p><strong>'.tr('Aggiornamento _DONE_ di _TODO_ (_VERSION_)', [
+                                '_DONE_' => '" + current + "',
+                                '_TODO_' => '" + count + "',
+                                '_VERSION_' => '" + version + "',
+                            ]).'</strong></p>");
                         }
                     }
                 </script>

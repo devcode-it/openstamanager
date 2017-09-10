@@ -290,7 +290,9 @@ $tot = $count[0]['tot'];
 if ($tot > 0) {
     echo '
     <div class="alert alert-danger">
-        '.str_replace('_NUM_', $tot, tr('Ci sono _NUM_ righe di documenti collegate')).'.
+        '.tr('Ci sono _NUM_ righe di documenti collegate', [
+            '_NUM_' => $tot,
+        ]).'.
         '.tr('Eliminando questo articolo si potrebbero verificare problemi nelle altre sezioni del gestionale!').'
     </div>';
 }

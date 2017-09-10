@@ -15,9 +15,13 @@ switch (filter('op')) {
         deltree($backup_dir.$file);
 
         if (!file_exists($backup_dir.$file)) {
-            $_SESSION['infos'][] = str_replace('_FILE_', '"'.$file.'"', tr('Backup _FILE_ eliminato!'));
+            $_SESSION['infos'][] = tr('Backup _FILE_ eliminato!', [
+                '_FILE_' => '"'.$file.'"',
+            ]);
         } else {
-            $_SESSION['errors'][] = str_replace('_FILE_', '"'.$file.'"', tr("Errore durante l'eliminazione del backup _FILE_!"));
+            $_SESSION['errors'][] = tr("Errore durante l'eliminazione del backup _FILE_!", [
+                '_FILE_' => '"'.$file.'"',
+            ]);
         }
 
         break;

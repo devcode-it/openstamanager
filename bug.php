@@ -78,14 +78,12 @@ if (filter('op') == 'send') {
 
     // Se ho scelto di inoltrare copia del db
     if (!empty($post['sql'])) {
-        backup_tables('Backup OSM '.date('Y-m-d').' '.date('H_i_s').'.sql');
+        $backup_file = $docroot.'/Backup OSM '.date('Y-m-d').' '.date('H_i_s').'.sql';
+        backup_tables($backup_file);
 
-        if (file_put_contents($docroot.'/'.$backup_file, $dump)) {
-            $mail->AddAttachment($docroot.'/'.$backup_file);
-            $_SESSION['infos'][] = tr('Backup del database eseguito ed allegato correttamente!');
-        } else {
-            $_SESSION['errors'][] = tr('Errore durante la creazione del file di backup!');
-        }
+        $mail->AddAttachment($backup_file);
+
+        $_SESSION['infos'][] = tr('Backup del database eseguito ed allegato correttamente!');
     }
 
     // Se ho scelto di inoltrare le INFO del mio sistema
@@ -105,7 +103,7 @@ if (filter('op') == 'send') {
     $mail->SmtpClose();
 
     if (!empty($post['sql'])) {
-        unlink($docroot.'/'.$backup_file);
+        unlink($backup_file);
     }
 
     redirect($rootdir.'/bug.php');

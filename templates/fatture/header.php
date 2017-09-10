@@ -28,33 +28,33 @@ echo '
         <table class="table">
             <tr>
                 <td valign="top" class="border-full text-center">
-                    <p class="small-bold">'.strtoupper(tr('Nr. documento')).'</p>
+                    <p class="small-bold">'.tr('Nr. documento', [], ['upper' => true]).'</p>
                     <p>$numero_doc$</p>
                 </td>
 
                 <td class="border-right border-bottom border-top text-center">
-                    <p class="small-bold">'.strtoupper(tr('Data documento')).'</p>
+                    <p class="small-bold">'.tr('Data documento', [], ['upper' => true]).'</p>
                     <p>$data$</p>
                 </td>
 
                 <td class="border-right border-bottom border-top text-center">
-                    <p class="small-bold">'.strtoupper(tr('Cliente')).'</p>
+                    <p class="small-bold">'.tr('Cliente', [], ['upper' => true]).'</p>
                     <p>$c_codice$</p>
                 </td>
 
                 <td class="border-right border-bottom border-top center text-center">
-                    <p class="small-bold">'.strtoupper(tr('Foglio')).'</p>
+                    <p class="small-bold">'.tr('Foglio', [], ['upper' => true]).'</p>
                     <p>{PAGENO}/{nb}</p>
                 </td>
             </tr>
 
             <tr>
                 <td colspan="2" style="height:10mm;padding-top:2mm;">
-                    <p class="small-bold">'.strtoupper(tr('Pagamento')).'</p>
+                    <p class="small-bold">'.tr('Pagamento', [], ['upper' => true]).'</p>
                     <p>$pagamento$</p>
                 </td>
                 <td colspan="2" style="height:10mm;padding-top:2mm;">
-                    <p class="small-bold">'.strtoupper(tr('Banca di appoggio')).'</p>
+                    <p class="small-bold">'.tr('Banca di appoggio', [], ['upper' => true]).'</p>
                     <p>$f_appoggiobancario$</p>
                 </td>
             </tr>
@@ -76,7 +76,7 @@ echo '
         <table class="table" style="width:100%;margin-top:5mm;">
             <tr>
                 <td colspan=2 class="border-full" style="height:16mm;">
-                    <p class="small-bold">'.strtoupper(tr('Spett.le')).'</p>
+                    <p class="small-bold">'.tr('Spett.le', [], ['upper' => true]).'</p>
                     <p>$c_ragionesociale$</p>
                     <p>$c_indirizzo$ $c_citta$</p>
                 </td>
@@ -84,7 +84,7 @@ echo '
 
             <tr>
                 <td class="border-bottom border-left">
-                    <p class="small-bold">'.strtoupper(tr('Partita IVA')).'</p>
+                    <p class="small-bold">'.tr('Partita IVA', [], ['upper' => true]).'</p>
                 </td>
                 <td class="border-right border-bottom text-right">
                     <small>$c_piva$</small>
@@ -93,7 +93,7 @@ echo '
 
             <tr>
                 <td class="border-bottom border-left">
-                    <p class="small-bold">'.strtoupper(tr('Codice fiscale')).'</p>
+                    <p class="small-bold">'.tr('Codice fiscale', [], ['upper' => true]).'</p>
                 </td>
                 <td class="border-right border-bottom text-right">
                     <small>$c_codicefiscale$</small>

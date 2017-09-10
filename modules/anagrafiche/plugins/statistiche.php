@@ -6,7 +6,7 @@ include_once __DIR__.'/../../../core.php';
 $rsi = $dbo->fetchArray('SELECT ragione_sociale, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS data, (SELECT SUM(prezzo_ore_consuntivo+prezzo_km_consuntivo+prezzo_dirittochiamata) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS totale FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.idanagrafica='.prepare($id_record));
 
 $totale_interventi = 0;
-$data_start = strtotime("now");
+$data_start = strtotime('now');
 
 for ($i = 0; $i < count($rsi); ++$i) {
     $totale_interventi += $rsi[$i]['totale'];
@@ -26,7 +26,10 @@ echo '
 				<div class="box-body">';
 if (count($rsi) > 0) {
     echo '
-					<p>'.str_replace(['_NUMBER_', '_EUR_'], [count($rsi), Translator::numberToLocale($totale_interventi)], tr('Sono stati svolti <strong>_NUMBER_ interventi</strong> per un totale di _EUR_ &euro;')).'</p>
+                    <p>'.tr('Sono stati svolti <strong>_NUMBER_ interventi</strong> per un totale di _EUR_ &euro;', [
+                        '_NUMBER_' => count($rsi),
+                        '_EUR_' => Translator::numberToLocale($totale_interventi),
+                    ]).'</p>
 					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Interventi')['id'].'&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
     echo '
@@ -42,7 +45,7 @@ echo '
 $rsi = $dbo->fetchArray('SELECT data_accettazione AS data, ragione_sociale, budget FROM co_preventivi INNER JOIN an_anagrafiche ON co_preventivi.idanagrafica=an_anagrafiche.idanagrafica WHERE co_preventivi.idanagrafica='.prepare($id_record));
 
 $totale_preventivi = 0;
-$data_start = strtotime("now");
+$data_start = strtotime('now');
 
 for ($i = 0; $i < count($rsi); ++$i) {
     $totale_preventivi += $rsi[$i]['budget'];
@@ -61,7 +64,10 @@ echo '
 				<div class="box-body">';
 if (count($rsi) > 0) {
     echo '
-					<p>'.str_replace(['_NUMBER_', '_EUR_'], [count($rsi), Translator::numberToLocale($totale_preventivi)], tr('Si è lavorato per <strong>_NUMBER_ preventivi</strong> per un totale di _EUR_ &euro;')).'</p>
+					<p>'.tr('Si è lavorato per <strong>_NUMBER_ preventivi</strong> per un totale di _EUR_ &euro;', [
+                        '_NUMBER_' => count($rsi),
+                        '_EUR_' => Translator::numberToLocale($totale_preventivi),
+                    ]).'</p>
 					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Preventivi')['id'].'&search_Cliente='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
     echo '
@@ -98,7 +104,10 @@ echo '
 				<div class="box-body">';
 if (count($rsi) > 0) {
     echo '
-					<p>'.str_replace(['_NUMBER_', '_EUR_'], [count($rsi), Translator::numberToLocale($totale_contratti)], tr('Si è lavorato per <strong>_NUMBER_ contratti</strong> per un totale di _EUR_ &euro;')).'</p>
+					<p>'.tr('Si è lavorato per <strong>_NUMBER_ contratti</strong> per un totale di _EUR_ &euro;', [
+                        '_NUMBER_' => count($rsi),
+                        '_EUR_' => Translator::numberToLocale($totale_contratti),
+                    ]).'</p>
 					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Contratti')['id'].'&search_Cliente='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
     echo '
@@ -121,7 +130,7 @@ echo '
 $rsi = $dbo->fetchArray("SELECT data, ragione_sociale, (SELECT SUM(subtotale+iva) FROM co_righe_documenti WHERE iddocumento=co_documenti.id) AS totale FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='entrata') AND co_documenti.idanagrafica=".prepare($id_record));
 
 $totale_fatture_vendita = 0;
-$data_start = strtotime("now");
+$data_start = strtotime('now');
 
 for ($i = 0; $i < count($rsi); ++$i) {
     $totale_fatture_vendita += $rsi[$i]['totale'];
@@ -133,7 +142,10 @@ for ($i = 0; $i < count($rsi); ++$i) {
 }
 if (count($rsi) > 0) {
     echo '
-					<p>'.str_replace(['_NUMBER_', '_EUR_'], [count($rsi), Translator::numberToLocale($totale_fatture_vendita)], tr('Sono state emesse <strong>_NUMBER_ fatture di vendita</strong> per un totale di _EUR_ &euro;')).'</p>
+					<p>'.tr('Sono state emesse <strong>_NUMBER_ fatture di vendita</strong> per un totale di _EUR_ &euro;', [
+                        '_NUMBER_' => count($rsi),
+                        '_EUR_' => Translator::numberToLocale($totale_fatture_vendita),
+                    ]).'</p>
 					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Fatture di vendita')['id'].'&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
     echo '
@@ -147,7 +159,7 @@ echo '
 $rsi = $dbo->fetchArray("SELECT data, ragione_sociale, (SELECT SUM(subtotale+iva) FROM co_righe_documenti WHERE iddocumento=co_documenti.id) AS totale FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='uscita') AND co_documenti.idanagrafica=".prepare($id_record));
 
 $totale_fatture_acquisto = 0;
-$data_start = strtotime("now");
+$data_start = strtotime('now');
 
 for ($i = 0; $i < count($rsi); ++$i) {
     $totale_fatture_acquisto += $rsi[$i]['totale'];
@@ -159,7 +171,10 @@ for ($i = 0; $i < count($rsi); ++$i) {
 }
 if (count($rsi) > 0) {
     echo '
-					<p>'.str_replace(['_NUMBER_', '_EUR_'], [count($rsi), Translator::numberToLocale($totale_fatture_acquisto)], tr('Sono state registrate <strong>_NUMBER_ fatture di acquisto</strong> per un totale di _EUR_ &euro;')).'</p>
+					<p>'.tr('Sono state registrate <strong>_NUMBER_ fatture di acquisto</strong> per un totale di _EUR_ &euro;', [
+                        '_NUMBER_' => count($rsi),
+                        '_EUR_' => Translator::numberToLocale($totale_fatture_acquisto),
+                    ]).'</p>
 					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Fatture di acquisto')['id'].'&dir=uscita&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
     echo '

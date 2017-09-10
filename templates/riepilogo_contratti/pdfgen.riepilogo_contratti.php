@@ -126,7 +126,7 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
     $body .= "</td>\n";
 
     $body .= "<td align=\"right\" style=\"width:20mm;\">\n";
-    $body .= '	'.str_replace(' ', ' ', Translator::numberToLocale($rs[$i]['budget_totale'], 2).' &euro;')."\n";
+    $body .= '	'.Translator::numberToLocale($rs[$i]['budget_totale'], 2).' &euro;\n';
     $body .= "</td></tr>\n";
 
     $totale += $rs[$i]['budget_totale'];
@@ -138,7 +138,7 @@ $body .= "	<b>TOTALE:</b>\n";
 $body .= "</td>\n";
 
 $body .= "<td align=\"right\">\n";
-$body .= '	<b>'.str_replace(' ', '&nbsp;', Translator::numberToLocale($totale, 2).' &euro;')."</b>\n";
+$body .= '	<b>'.Translator::numberToLocale($totale, 2)." &euro;</b>\n";
 $body .= "</td></tr>\n";
 
 $body .= "</tbody>\n";

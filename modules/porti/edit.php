@@ -34,7 +34,9 @@ UNION SELECT id FROM co_preventivi WHERE idporto='.prepare($id_record));
 
 echo '
 <div class="alert alert-danger">
-    '.str_replace('_NUM_', count($documenti), tr('Ci sono _NUM_ documenti collegati')).'.
+    '.tr('Ci sono _NUM_ documenti collegati', [
+        '_NUM_' => count($documenti),
+    ]).'.
 </div>';
 
 ?>

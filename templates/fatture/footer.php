@@ -7,7 +7,7 @@ echo "
     <tr>
         <td style='width:158.6mm;' class='border-top border-left'></td>
         <td style='width:33mm;' class='border-full'>
-            <p class='small-bold'>".strtoupper(tr('Totale imponibile'))."</p>
+            <p class='small-bold'>".tr('Totale imponibile', [], ['upper' => true])."</p>
         </td>
     </tr>
     <tr>
@@ -21,7 +21,7 @@ echo "
                         <table>
                             <tr>
                                 <td colspan='2' class='border-bottom'>
-                                    <p class='small-bold'>".strtoupper(tr('Scadenze pagamenti')).'</p>
+                                    <p class='small-bold'>".tr('Scadenze pagamenti', [], ['upper' => true]).'</p>
                                 </td>
                             </tr>';
 
@@ -67,15 +67,15 @@ if (!empty($v_iva)) {
                         <table>
                             <tr>
                                 <td style='width:40mm;' class='border-bottom'>
-                                    <p class='small-bold'>".strtoupper(tr('Aliquota IVA'))."</p>
+                                    <p class='small-bold'>".tr('Aliquota IVA', [], ['upper' => true])."</p>
                                 </td>
 
                                 <td style='width:20mm;' class='border-bottom text-center'>
-                                    <p class='small-bold'>".strtoupper(tr('Importo'))."</p>
+                                    <p class='small-bold'>".tr('Importo', [], ['upper' => true])."</p>
                                 </td>
 
                                 <td style='width:20mm;' class='border-bottom text-center'>
-                                    <p class='small-bold'>".strtoupper(tr('Importo IVA')).'</p>
+                                    <p class='small-bold'>".tr('Importo IVA', [], ['upper' => true]).'</p>
                                 </td>
                             </tr>';
 
@@ -125,7 +125,7 @@ echo "
 echo "
     <tr>
         <td style='width:33mm;' class='border-bottom border-right'>
-            <p class='small-bold'>".strtoupper(tr('Totale IVA'))."</p>
+            <p class='small-bold'>".tr('Totale IVA', [], ['upper' => true])."</p>
         </td>
     </tr>
 
@@ -137,7 +137,7 @@ echo "
 
     <tr>
         <td class='border-bottom border-right'>
-            <p class='small-bold'>".strtoupper(tr('Totale documento'))."</p>
+            <p class='small-bold'>".tr('Totale documento', [], ['upper' => true])."</p>
         </td>
     </tr>
 
@@ -154,7 +154,9 @@ if ($rs[0]['ritenutaacconto'] != 0) {
     echo "
     <tr>
         <td class='border-bottom b-top'>
-            <p class='small-bold'>".strtoupper(str_replace('_PRC_', $rs2[0]['percentuale'], tr("Ritenuta d'acconto _PRC_%")))."</p>
+            <p class='small-bold'>".tr("Ritenuta d'acconto _PRC_%", [
+                '_PRC_' => $rs2[0]['percentuale'],
+            ], ['upper' => true])."</p>
         </td>
     </tr>
 
@@ -166,7 +168,7 @@ if ($rs[0]['ritenutaacconto'] != 0) {
 
     <tr>
         <td class='border-bottom'>
-            <p class='small-bold'>".strtoupper(tr('Netto a pagare'))."</p>
+            <p class='small-bold'>".tr('Netto a pagare', [], ['upper' => true])."</p>
         </td>
     </tr>
 

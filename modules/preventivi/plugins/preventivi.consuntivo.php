@@ -49,7 +49,10 @@ if (!empty($rsi)) {
     <tr style="background:'.$colori[$int['idstatointervento']].';">
         <td>
             <a href="javascript:;" class="btn btn-primary btn-xs" onclick="$(\'#dettagli_'.$int['id'].'\').toggleClass(\'hide\'); $(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');"><i class="fa fa-plus"></i></a>
-            '.Modules::link('Interventi', $int['id'], str_replace(['_NUM_', '_DATE_'], [$int['id'], Translator::dateToLocale($int['inizio'])], 'Intervento _NUM_ del _DATE_')).'
+            '.Modules::link('Interventi', $int['id'], tr('Intervento _NUM_ del _DATE_', [
+                '_NUM_' => $int['id'],
+                '_DATE_' => Translator::dateToLocale($int['inizio']),
+            ])).'
         </td>
 
         <td class="text-right">
@@ -236,7 +239,7 @@ if (!empty($rsi)) {
     echo '
     <tr>
         <td colspan="6">
-            <br><b>'.strtoupper(tr('Totale interventi per stato')).'</b>
+            <br><b>'.tr('Totale interventi per stato', [], ['upper' => true]).'</b>
         </td>
     </tr>';
 

@@ -121,7 +121,7 @@ elseif ($get['op'] == 'addfattura') {
     $iva_indetraibile = $importo / 100 * $rs2[0]['indetraibile'];
 
     // Inserimento riga in fattura
-    $dbo->query('INSERT INTO co_righe_documenti(iddocumento, descrizione, desc_iva, iva, iva_indetraibile, subtotale, um, qta, `order`) VALUES('.prepare($iddocumento).', '.prepare($descrizione).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($importo).", '-', 1, (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento=".prepare($iddocumento)."))");
+    $dbo->query('INSERT INTO co_righe_documenti(iddocumento, descrizione, desc_iva, iva, iva_indetraibile, subtotale, um, qta, `order`) VALUES('.prepare($iddocumento).', '.prepare($descrizione).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($importo).", '-', 1, (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento=".prepare($iddocumento).'))');
 
     redirect($rootdir.'/editor.php?id_module='.Modules::getModule('Fatture di vendita')['id'].'&id_record='.$iddocumento.'&dir=entrata');
     exit();
@@ -207,7 +207,9 @@ if (empty($rs)) {
         if ($n_sedi_pianificate == 1) {
             $n_sedi = tr('1 sede');
         } else {
-            $n_sedi = str_replace('_NUM_', $n_sedi_pianificate, tr('_NUM_ sedi'));
+            $n_sedi = tr('_NUM_ sedi', [
+                '_NUM_' => $n_sedi_pianificate,
+            ]);
         }
 
         echo '
@@ -241,7 +243,10 @@ if (empty($rs)) {
                 $numero_doc = $rsf[0]['numero'];
             }
 
-            $documento = Modules::link('Fatture di vendita', $rs[$i]['iddocumento'], str_replace(['_NUM_', '_DATE_'], [$numero_doc, Translator::dateToLocale($rsf[0]['data'])], tr('Fattura n<sup>o</sup> _NUM_ del _DATE_')));
+            $documento = Modules::link('Fatture di vendita', $rs[$i]['iddocumento'], tr('Fattura n<sup>o</sup> _NUM_ del _DATE_', [
+                '_NUM_' => $numero_doc,
+                '_DATE_' => Translator::dateToLocale($rsf[0]['data']),
+            ]));
 
             $stato = '<i class="'.$rsf[0]['icona'].'"></i> '.$rsf[0]['stato'];
         } else {

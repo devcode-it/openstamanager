@@ -115,7 +115,7 @@ if (abs($sconto_art) > 0) {
     echo '
     <tr>
         <td colspan="5"" class="text-right">
-            <b>'.strtoupper(tr('Imponibile')).':</b>
+            <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
             <span id="budget">'.Translator::numberToLocale($imponibile_nosconto).' &euro;</span>
@@ -126,7 +126,7 @@ if (abs($sconto_art) > 0) {
     echo '
     <tr>
         <td colspan="5"" class="text-right">
-            <b>'.strtoupper(tr('Sconto')).':</b>
+            <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
             '.Translator::numberToLocale($sconto_art).' &euro;
@@ -138,7 +138,7 @@ if (abs($sconto_art) > 0) {
     echo '
     <tr>
         <td colspan="5"" class="text-right">
-            <b>'.strtoupper(tr('Imponibile scontato')).':</b>
+            <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
             '.Translator::numberToLocale($imponibile_art).' &euro;
@@ -150,7 +150,7 @@ if (abs($sconto_art) > 0) {
     echo '
     <tr>
         <td colspan="5"" class="text-right">
-            <b>'.strtoupper(tr('Imponibile')).':</b>
+            <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
             <span id="budget">'.Translator::numberToLocale($imponibile_art).' &euro;</span>
@@ -163,7 +163,7 @@ if (abs($sconto_art) > 0) {
 echo '
     <tr>
         <td colspan="5"" class="text-right">
-            <b>'.strtoupper(tr('Iva')).':</b>
+            <b>'.tr('Iva', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
             '.Translator::numberToLocale($iva_art).' &euro;
@@ -175,7 +175,7 @@ echo '
 echo '
     <tr>
         <td colspan="5"" class="text-right">
-            <b>'.strtoupper(tr('Totale')).':</b>
+            <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
             '.Translator::numberToLocale($imponibile_art + $iva_art).' &euro;

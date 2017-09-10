@@ -65,7 +65,9 @@ switch (post('op')) {
             }
         }
 
-        $_SESSION['infos'][] = str_replace('_NUM_', $numero, tr('Aggiunta fattura numero _NUM_!'));
+        $_SESSION['infos'][] = tr('Aggiunta fattura numero _NUM_!', [
+            '_NUM_' => $numero,
+        ]);
 
         break;
 
@@ -198,7 +200,6 @@ switch (post('op')) {
         for ($i = 0; $i < sizeof($rs); ++$i) {
             rimuovi_articolo_dafattura($rs[$i]['idarticolo'], $id_record, $rs[$i]['id']);
         }
-
 
         // Se ci sono dei preventivi collegati li rimetto nello stato "In attesa di pagamento"
         $query = 'SELECT idpreventivo FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idpreventivo IS NOT NULL';
@@ -432,9 +433,13 @@ switch (post('op')) {
                     // Metto l'intervento in stato "Fatturato"
                     $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id=".prepare($idintervento));
 
-                    $_SESSION['infos'][] = str_replace('_NUM_', $idintervento, tr('Intervento _NUM_ aggiunto!'));
+                    $_SESSION['infos'][] = tr('Intervento _NUM_ aggiunto!', [
+                        '_NUM_' => $idintervento,
+                    ]);
                 } else {
-                    $_SESSION['errors'][] = str_replace('_NUM_', $idintervento, tr("Errore durante l'inserimento dell'intervento _NUM_ in fattura!"));
+                    $_SESSION['errors'][] = tr("Errore durante l'inserimento dell'intervento _NUM_ in fattura!", [
+                        '_NUM_' => $idintervento,
+                    ]);
                 }
             }
         }
@@ -524,7 +529,9 @@ switch (post('op')) {
                 }
             }
 
-            $_SESSION['infos'][] = str_replace('_NUM_', $numero, tr('Preventivo _NUM_ aggiunto!'));
+            $_SESSION['infos'][] = tr('Preventivo _NUM_ aggiunto!', [
+                '_NUM_' => $numero,
+            ]);
 
             // Aggiorno il budget sul preventivo con l'importo inserito in fattura e imposto lo stato del preventivo "In attesa di pagamento" (se selezionato)
             if ($aggiorna_budget) {
@@ -586,7 +593,9 @@ switch (post('op')) {
             // Aggiunta riga contratto sul documento
             $query = 'INSERT INTO co_righe_documenti(iddocumento, idcontratto, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, `order`) VALUES('.prepare($id_record).', '.prepare($idcontratto).', '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).", '-', 1, ".prepare(get_var('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(get_var("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
             if ($dbo->query($query)) {
-                $_SESSION['infos'][] = str_replace('_NUM_', $numero, tr('Contratto _NUM_ aggiunto!'));
+                $_SESSION['infos'][] = tr('Contratto _NUM_ aggiunto!', [
+                    '_NUM_' => $numero,
+                ]);
 
                 // Aggiorno il budget sul contratto con l'importo inserito in fattura e imposto lo stato del contratto "In attesa di pagamento" (se selezionato)
                 if ($aggiorna_budget) {
@@ -1021,7 +1030,9 @@ switch (post('op')) {
                 }
             }
 
-            $_SESSION['infos'][] = str_replace('_NUM_', $idintervento, tr('Intervento _NUM_ rimosso!'));
+            $_SESSION['infos'][] = tr('Intervento _NUM_ rimosso!', [
+                '_NUM_' => $idintervento,
+            ]);
         }
         break;
 

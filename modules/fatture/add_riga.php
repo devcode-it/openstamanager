@@ -1,7 +1,6 @@
 <?php
 
 
-
 include_once __DIR__.'/../../core.php';
 
 $module = Modules::getModule($id_module);
@@ -23,7 +22,9 @@ $idanagrafica = $record[0]['idanagrafica'];
     Form di inserimento riga documento
 */
 echo '
-<p>'.str_replace('_NUM_', $numero, tr('Documento numero _NUM_')).'</p>
+<p>'.tr('Documento numero _NUM_', [
+    '_NUM_' => $numero,
+]).'</p>
 
 <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="addriga">
@@ -64,7 +65,7 @@ if (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d
 
 // Nelle fatture di acquisto leggo l'iva di acquisto dal fornitore
 if ($dir == 'uscita') {
-    $rsf = $dbo->fetchArray("SELECT idiva FROM an_anagrafiche WHERE idanagrafica=".prepare($idanagrafica));
+    $rsf = $dbo->fetchArray('SELECT idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
     $idiva_predefinita = $rsf[0]['idiva'];
 }
 

@@ -733,7 +733,7 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
 {
     $dbo = Database::getConnection();
 
-    $descrizione = strtoupper(tr('Sconto'));
+    $descrizione = tr('Sconto', [], ['upper' => true]);
 
     // Rimozione dello sconto precedente
     $dbo->query('DELETE FROM '.$tables['row']." WHERE descrizione LIKE '%".$descrizione."%' AND ".$fields['row'].'='.prepare($id_record));

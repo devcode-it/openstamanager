@@ -1,5 +1,7 @@
 <?php
 
+use Stringy\Stringy as S;
+
 if (!function_exists('parse_ini_string')) {
     /**
      * Simulazione di "parse_ini_string".
@@ -52,7 +54,8 @@ if (!function_exists('starts_with')) {
      */
     function starts_with($string, $starts_with)
     {
-        return strpos($string, $starts_with) === 0;
+        //return strpos($string, $starts_with) === 0;
+        return S::create($string)->startsWith($starts_with);
     }
 }
 
@@ -67,7 +70,8 @@ if (!function_exists('ends_with')) {
      */
     function ends_with($string, $ends_with)
     {
-        return substr($string, -strlen($ends_with)) === $ends_with;
+        //return substr($string, -strlen($ends_with)) === $ends_with;
+        return S::create($string)->endsWith($ends_with);
     }
 }
 
@@ -82,7 +86,8 @@ if (!function_exists('str_contains')) {
      */
     function str_contains($string, $contains)
     {
-        return strpos($string, $contains) !== false;
+        //return strpos($string, $contains) !== false;
+        return S::create($string)->contains($contains);
     }
 }
 

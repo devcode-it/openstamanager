@@ -10,7 +10,11 @@ if ($records[0]['firma_file'] == '') {
     $info_firma = '';
 } else {
     $frase = tr('Nuova anteprima e firma');
-    $info_firma = '<span class="label label-success"><i class="fa fa-edit"></i> '.str_replace(['_TIMESTAMP_', '_PERSON_'], ['<b>'.date('d/m/Y \\a\\l\\l\\e H:i', strtotime($records[0]['firma_data'])).'</b>', '<b>'.$records[0]['firma_nome'].'</b>'], tr('Firmato il _TIMESTAMP_ da _PERSON_')).'</span>';
+    $info_firma = '<span class="label label-success"><i class="fa fa-edit"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
+        '_DATE_' => Translator::dateToLocale($records[0]['firma_data']),
+        '_TIME_' => Translator::timeToLocale($records[0]['firma_data']),
+        '_NUM_' => '<b>'.$records[0]['firma_nome'].'</b>',
+    ]).'</span>';
 }
 
 ?><form action="" method="post">
@@ -193,11 +197,10 @@ if ($records[0]['firma_file'] == '') {
             </div>
 
             <?php if ($records[0]['stato'] != 'Fatturato' && $records[0]['stato'] != 'Completato') {
-        ?>
+                        ?>
                 <button type="button" class="btn btn-primary" onclick="launch_modal( '<?php echo tr('Aggiungi articolo') ?>', '<?php echo $rootdir ?>/modules/interventi/add_articolo.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>&idriga=0&idautomezzo='+$('#idautomezzo').find(':selected').val(), 1);"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi articolo') ?>...</button>
             <?php
-
-    } ?>
+                    } ?>
         </div>
     </div>
 
@@ -213,11 +216,10 @@ if ($records[0]['firma_file'] == '') {
             </div>
 
             <?php if ($records[0]['stato'] != 'Fatturato' && $records[0]['stato'] != 'Completato') {
-        ?>
+                        ?>
                 <button type="button" class="btn btn-primary" onclick="launch_modal( '<?php echo tr('Aggiungi altre spese') ?>', '<?php echo $rootdir ?>/modules/interventi/add_righe.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>', 1 );"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi altre spese') ?>...</button>
             <?php
-
-    } ?>
+                    } ?>
         </div>
     </div>
 
@@ -254,7 +256,11 @@ if ($records[0]['firma_file'] == '') {
     } else {
         echo '
     <img src="'.$rootdir.'/files/interventi/'.$records[0]['firma_file'].'" class="img-thumbnail"><br>
-    <div class="alert alert-success"><i class="fa fa-check"></i> '.str_replace(['_TIMESTAMP_', '_PERSON_'], ['<b>'.date('d/m/Y \\a\\l\\l\\e H:i', strtotime($records[0]['firma_data'])).'</b>', '<b>'.$records[0]['firma_nome'].'</b>'], tr('Firmato il _TIMESTAMP_ da _PERSON_')).'</div>';
+    <div class="alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
+        '_DATE_' => Translator::dateToLocale($records[0]['firma_data']),
+        '_TIME_' => Translator::timeToLocale($records[0]['firma_data']),
+        '_NUM_' => '<b>'.$records[0]['firma_nome'].'</b>',
+    ]).'</div>';
     }
     ?>
 </div>

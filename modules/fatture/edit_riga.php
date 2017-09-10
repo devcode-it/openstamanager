@@ -19,7 +19,7 @@ $idanagrafica = $record[0]['idanagrafica'];
 $idriga = get('idriga');
 
 // Info riga
-$q = "SELECT * FROM co_righe_documenti WHERE iddocumento=".prepare($id_record)." AND id=".prepare($idriga);
+$q = 'SELECT * FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
 $rsr = $dbo->fetchArray($q);
 $sconto = $rsr[0]['sconto_unitario'];
 $tipo_sconto = $rsr[0]['tipo_sconto'];
@@ -27,7 +27,9 @@ $idarticolo = $rsr[0]['idarticolo'];
 $idconto = $rsr[0]['idconto'];
 
 echo '
-<p>'.str_replace('_NUM_', $numero, tr('Documento numero _NUM_')).'</p>
+<p>'.tr('Documento numero _NUM_', [
+    '_NUM_' => $numero,
+]).'</p>
 
 <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="editriga">
@@ -96,7 +98,7 @@ echo '
 // Costo unitario
 echo '
         <div class="col-md-3">
-            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "value": "'.($rsr[0]['subtotale']/$rsr[0]['qta']).'", "icon-after": "&euro;" ]}
+            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "value": "'.($rsr[0]['subtotale'] / $rsr[0]['qta']).'", "icon-after": "&euro;" ]}
         </div>';
 
 // Sconto unitario

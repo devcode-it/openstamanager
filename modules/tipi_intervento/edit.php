@@ -81,7 +81,9 @@ $tot_interventi = $interventi[0]['tot_interventi'];
 if ($tot_interventi > 0) {
     echo '
     <div class="alert alert-danger">
-        '.str_replace('_NUM_', $tot_interventi, tr('Ci sono _NUM_ interventi collegati')).'.
+        '.tr('Ci sono _NUM_ interventi collegati', [
+            '_NUM_' => $tot_interventi,
+        ]).'.
         '.tr('Eliminando questo tipo di attività, vengono rimossi anche gli interventi collegati!').'
     </div>';
 }

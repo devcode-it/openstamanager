@@ -29,7 +29,9 @@ switch (filter('op')) {
                 echo json_encode(['id' => $id_record, 'text' => $nome]);
             }
 
-            $_SESSION['infos'][] = str_replace('_TYPE_', 'categoria', tr('Aggiunta nuova tipologia di _TYPE_'));
+            $_SESSION['infos'][] = tr('Aggiunta nuova tipologia di _TYPE_', [
+                '_TYPE_' => 'categoria',
+            ]);
         } else {
             $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
         }
@@ -46,7 +48,9 @@ switch (filter('op')) {
 
         if ($res) {
             $dbo->query('DELETE FROM `mg_categorie` WHERE `id`='.prepare($id));
-            $_SESSION['infos'][] = str_replace('_TYPE_', 'categoria', tr('Tipologia di _TYPE_ eliminata con successo!'));
+            $_SESSION['infos'][] = tr('Tipologia di _TYPE_ eliminata con successo!', [
+                '_TYPE_' => 'categoria',
+            ]);
         } else {
             $_POST['backto'] = 'record-edit';
             $_SESSION['errors'][] = tr('Esistono ancora alcuni articoli sotto questa categoria!');

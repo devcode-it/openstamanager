@@ -72,9 +72,13 @@ echo '
 		else if( $("#password1").val() != $("#password2").val() )
 			alert("'.tr('Le password non coincidono').'.");
 		else if( $("#password1").val().length < min_length )
-			alert("'.str_replace('_MIN_', $min_length, tr('La password deve essere lunga minimo _MIN_ caratteri!')).'");
+			alert("'.tr('La password deve essere lunga minimo _MIN_ caratteri!', [
+                '_MIN_' => $min_length,
+            ]).'");
 		else if( $("#username").val().length < min_length_username )
-			alert("'.str_replace('_MIN_', $min_length_username, tr("L'username deve essere lungo minimo _MIN_ caratteri!")).'");
+			alert("'.tr("L'username deve essere lungo minimo _MIN_ caratteri!", [
+                '_MIN_' => $min_length_username,
+            ]).'");
 		else
 			$("#link_form").submit();
 	}

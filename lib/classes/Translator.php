@@ -162,14 +162,29 @@ class Translator extends Util\Singleton
      *
      * @return string
      */
-    public static function translate($string, $parameters = [], $domain = null, $locale = null)
+    public static function translate($string, $parameters = [], $operations = [])
     {
         $translator = self::getInstance()->getTranslator();
-        if (!empty($translator)) {
-            return $translator->trans($string, $parameters, $domain, $locale);
-        } else {
-            return $string;
+
+        $result = !empty($translator) ? $translator->trans($string, $parameters) : $string;
+
+        // Sostituzione di default nel caso il traduttore non sia supportato
+        if (empty($translator)) {
+            $result = str_replace(array_keys($operations), array_values($operations), $result);
         }
+
+        // Operazioni aggiuntive sul risultato
+        if (!empty($operations)) {
+            $result = new Stringy\Stringy($result);
+
+            if (!empty($operations['upper'])) {
+                $result = $result->toUpperCase();
+            } elseif (!empty($operations['lower'])) {
+                $result = $result->toLowerCase();
+            }
+        }
+
+        return (string) $result;
     }
 
     /**

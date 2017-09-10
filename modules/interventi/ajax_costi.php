@@ -11,48 +11,48 @@ if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
 <table class="table table condensed table-striped table-hover table-bordered">
     <tr>
         <th width="40%"></th>
-        <th width="20%" class="text-center">'.strtoupper(tr('Costo')).'</th>
-        <th width="20%" class="text-center">'.strtoupper(tr('Addebito')).'</th>
-        <th width="20%" class="text-center">'.strtoupper(tr('Tot. Scontato')).'</th>
+        <th width="20%" class="text-center">'.tr('Costo', [], ['upper' => true]).'</th>
+        <th width="20%" class="text-center">'.tr('Addebito', [], ['upper' => true]).'</th>
+        <th width="20%" class="text-center">'.tr('Tot. Scontato', [], ['upper' => true]).'</th>
     </tr>
 
     <tr>
-        <th>'.strtoupper(tr('Totale manodopera')).'</th>
+        <th>'.tr('Totale manodopera', [], ['upper' => true]).'</th>
         <td class="text-right">'.Translator::numberToLocale($costi['manodopera_costo']).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($costi['manodopera_addebito']).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($costi['manodopera_scontato']).' &euro;</td>
     </tr>
 
     <tr>
-        <th>'.strtoupper(tr('Totale viaggio')).'</th>
+        <th>'.tr('Totale viaggio', [], ['upper' => true]).'</th>
         <td class="text-right">'.Translator::numberToLocale($costi['viaggio_costo']).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($costi['viaggio_addebito']).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($costi['viaggio_scontato']).' &euro;</td>
     </tr>
 
     <tr>
-        <th>'.strtoupper(tr('Totale articoli')).'</th>
+        <th>'.tr('Totale articoli', [], ['upper' => true]).'</th>
         <td class="text-right">'.Translator::numberToLocale($costi['ricambi_costo']).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($costi['ricambi_addebito']).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($costi['ricambi_scontato']).' &euro;</td>
     </tr>
 
     <tr>
-        <th>'.strtoupper(tr('Totale altre spese')).'</th>
+        <th>'.tr('Totale altre spese', [], ['upper' => true]).'</th>
         <td class="text-right">'.Translator::numberToLocale($costi['altro_costo']).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($costi['altro_addebito']).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($costi['altro_scontato']).' &euro;</td>
     </tr>
 
     <tr>
-        <th>'.strtoupper(tr('Sconto totale')).'</th>
+        <th>'.tr('Sconto totale', [], ['upper' => true]).'</th>
         <td class="text-right">-</td>
         <td class="text-right">-</td>
         <td class="text-right">'.Translator::numberToLocale(-$costi['sconto_globale']).' &euro;</td>
     </tr>
 
     <tr>
-        <th>'.strtoupper(tr('Totale')).'</th>
+        <th>'.tr('Totale', [], ['upper' => true]).'</th>
         <th class="text-right">'.Translator::numberToLocale($costi['totale_costi']).' &euro;</th>
         <th class="text-right">'.Translator::numberToLocale($costi['totale_addebito']).' &euro;</th>
         <th class="text-right">'.Translator::numberToLocale($costi['totale_manodopera']).' &euro;</th>

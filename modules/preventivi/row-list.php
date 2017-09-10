@@ -126,7 +126,7 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Imponibile')).':</b>
+            <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($imponibile).' &euro;
@@ -137,7 +137,7 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Sconto')).':</b>
+            <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($sconto).' &euro;
@@ -149,7 +149,7 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Imponibile scontato')).':</b>
+            <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($imponibile_scontato).' &euro;
@@ -161,7 +161,7 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Imponibile')).':</b>
+            <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($imponibile).' &euro;
@@ -174,7 +174,7 @@ if (abs($sconto) > 0) {
 echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('IVA')).':</b>
+            <b>'.tr('IVA', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($iva).' &euro;
@@ -186,7 +186,7 @@ echo '
 echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Totale')).':</b>
+            <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($totale).' &euro;

@@ -24,12 +24,12 @@ echo "
 <table class='table table-striped' id='contents'>
     <thead>
         <tr>
-            <th class='text-center' style='width:50%'>".strtoupper(tr('Descrizione'))."</th>
-            <th class='text-center' style='width:10%'>".strtoupper(tr('Q.TÀ'))."</th>
-            <th class='text-center' style='width:7%'>".strtoupper(tr('Um'))."</th>
-            <th class='text-center' style='width:16%'>".strtoupper(tr('Costo unitario'))."</th>
-            <th class='text-center' style='width:20%'>".strtoupper(tr('Importo'))."</th>
-            <th class='text-center' style='width:7%'>".strtoupper(tr('IVA')).' (%)</th>
+            <th class='text-center' style='width:50%'>".tr('Descrizione', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:10%'>".tr('Q.TÀ', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:7%'>".tr('Um', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:16%'>".tr('Costo unitario', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:20%'>".tr('Importo', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:7%'>".tr('IVA', [], ['upper' => true]).' (%)</th>
         </tr>
     </thead>
 
@@ -50,7 +50,9 @@ foreach ($righe as $r) {
 
     if (!empty($r['codice_articolo'])) {
         echo '
-                <br><small>'.str_replace('_COD_', $r['codice_articolo'], tr('COD. _COD_')).'</small>';
+                <br><small>'.tr('COD. _COD_', [
+                    '_COD_' => $r['codice_articolo'],
+                ]).'</small>';
         $autofill['count'] += 0.4;
     }
 
@@ -60,7 +62,10 @@ foreach ($righe as $r) {
         $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
 
         echo '
-                <br><small>'.str_replace(['_NUM_', '_DATE_'], [$numero, Translator::dateToLocale($rso[0]['data'])], tr('Rif. ordine n<sup>o</sup>_NUM_ del _DATE_')).'</small>';
+                <br><small>'.tr('Rif. ordine n<sup>o</sup>_NUM_ del _DATE_', [
+                    '_NUM_' => $numero,
+                    '_DATE_' => Translator::dateToLocale($rso[0]['data']),
+                ]).'</small>';
         $autofill['count'] += 0.4;
     }
 
@@ -70,7 +75,10 @@ foreach ($righe as $r) {
         $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
 
         echo '
-                <br><small>'.str_replace(['_NUM_', '_DATE_'], [$numero, Translator::dateToLocale($rso[0]['data'])], tr('Rif. ddt n<sup>o</sup>_NUM_ del _DATE_')).'</small>';
+                <br><small>'.tr('Rif. ddt n<sup>o</sup>_NUM_ del _DATE_', [
+                    '_NUM_' => $numero,
+                    '_DATE_' => Translator::dateToLocale($rso[0]['data']),
+                ]).'</small>';
         $autofill['count'] += 0.4;
     }
     echo '
@@ -163,7 +171,7 @@ echo '
 if (!empty($rs[0]['note'])) {
     echo '
 <br>
-<p class="small-bold">'.strtoupper(tr('Note')).':</p>
+<p class="small-bold">'.tr('Note', [], ['upper' => true]).':</p>
 <p>'.$rs[0]['note'].'</p>';
 }
 

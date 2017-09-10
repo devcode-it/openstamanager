@@ -23,6 +23,7 @@
     "type": "project",
     "require": {
         "php": ">=5.4",
+        "danielstjules/stringy": "^3.1",
         "ezyang/htmlpurifier": "^4.8",
         "filp/whoops": "^2.1",
         "ifsnop/mysqldump-php": "^2.3",

@@ -108,7 +108,7 @@ if (!empty($rs2)) {
 
     <tr>
         <td align="center" colspan="6" valign="middle" style="font-size:11pt;" bgcolor="#cccccc">
-            <b>'.strtoupper(tr('Materiale utilizzato')).'</b>
+            <b>'.tr('Materiale utilizzato', [], ['upper' => true]).'</b>
         </td>
     </tr>
 
@@ -201,7 +201,7 @@ if (!empty($rs2)) {
         echo '
     <tr>
         <td colspan="5" align="right">
-            <b>'.strtoupper(tr('Totale materiale utilizzato')).':</b>
+            <b>'.tr('Totale materiale utilizzato', [], ['upper' => true]).':</b>
         </td>
 
         <td align="right" bgcolor="#dddddd">
@@ -225,7 +225,7 @@ if (!empty($rs2)) {
 
     <tr>
         <td align="center" colspan="6" valign="middle" style="font-size:11pt;" bgcolor="#cccccc">
-            <b>'.strtoupper(tr('Spese aggiuntive')).'</b>
+            <b>'.tr('Spese aggiuntive', [], ['upper' => true]).'</b>
         </td>
     </tr>
 
@@ -313,7 +313,7 @@ if (!empty($rs2)) {
         echo '
     <tr>
         <td colspan="5" align="right">
-            <b>'.strtoupper(tr('Totale spese aggiuntive')).':</b>
+            <b>'.tr('Totale spese aggiuntive', [], ['upper' => true]).':</b>
         </td>
 
         <td align="right" bgcolor="#dddddd">
@@ -335,7 +335,7 @@ echo '
 
     <tr>
         <td align="center" colspan="5" valign="middle" style="font-size:11pt;" bgcolor="#cccccc">
-            <b>'.strtoupper(tr('Ore tecnici')).'</b>
+            <b>'.tr('Ore tecnici', [], ['upper' => true]).'</b>
         </td>
     </tr>';
 
@@ -522,7 +522,7 @@ if ($visualizza_costi) {
     echo '
     <tr>
         <td colspan="4" align="right">
-            <b>'.strtoupper(tr('Totale intervento')).':</b>
+            <b>'.tr('Totale intervento', [], ['upper' => true]).':</b>
         </td>
 
         <td align="right" bgcolor="#dddddd">
@@ -549,7 +549,7 @@ if ($visualizza_costi) {
     echo '
     <tr>
         <td valign="middle" align="right">
-            <b>'.strtoupper(tr('Imponibile')).':</b>
+            <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
         <td align="right" bgcolor="#cccccc">
@@ -569,7 +569,7 @@ if ($visualizza_costi) {
         echo '
     <tr>
         <td valign="middle" align="right">
-            <b>'.strtoupper(tr('Sconto incondizionato')).':</b>
+            <b>'.tr('Sconto incondizionato', [], ['upper' => true]).':</b>
         </td>
 
         <td align="right" bgcolor="#cccccc">
@@ -581,7 +581,7 @@ if ($visualizza_costi) {
         echo '
     <tr>
         <td valign="middle" align="right">
-            <b>'.strtoupper(tr('Imponibile scontato')).':</b>
+            <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
         </td>
 
         <td align="right" bgcolor="#cccccc">
@@ -602,7 +602,9 @@ if ($visualizza_costi) {
     echo '
     <tr>
         <td valign="middle" align="right">
-            <b>'.strtoupper(tr('Iva')).' ('.Translator::numberToLocale($percentuale_iva, 0).'%):</b>
+            <b>'.tr('Iva (_PRC_%)', [
+                '_PRC_' => Translator::numberToLocale($percentuale_iva, 0),
+            ], ['upper' => true]).':</b>
         </td>
 
         <td align="right" bgcolor="#cccccc">
@@ -616,7 +618,7 @@ if ($visualizza_costi) {
     echo '
     <tr>
     	<td valign="middle" align="right">
-            <b>'.strtoupper(tr('Totale intervento')).':</b>
+            <b>'.tr('Totale intervento', [], ['upper' => true]).':</b>
     	</td>
     	<td align="right" bgcolor="#cccccc">
     		<b>'.Translator::numberToLocale($totale, 2).' &euro;</b>

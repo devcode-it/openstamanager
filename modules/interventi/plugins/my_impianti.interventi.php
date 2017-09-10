@@ -24,7 +24,10 @@ if (!empty($results)) {
         echo '
             <tr>
                 <td>
-                    '.Modules::link('Interventi', $result['codice'], str_replace(['_NUM_', '_DATE_'], [$result['idintervento'], Translator::dateToLocale($result['data'])], tr('Intervento _NUM_ del _DATE_'))).'
+                    '.Modules::link('Interventi', $result['codice'], tr('Intervento _NUM_ del _DATE_', [
+                        '_NUM_' => $result['idintervento'],
+                        '_DATE_' => Translator::dateToLocale($result['data']),
+                    ])).'
                 </td>
                 <td>'.nl2br($result['descrizione']).'</td>
             </tr>';

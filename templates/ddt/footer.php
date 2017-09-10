@@ -9,11 +9,11 @@ if ($mostra_prezzi) {
     echo "
     <tr>
         <td rowspan='7'>
-            <p class='small-bold'>".strtoupper(tr('Note')).'</p>
+            <p class='small-bold'>".tr('Note', [], ['upper' => true]).'</p>
             <p>'.nl2br($rs[0]['note'])."</p>
         </td>
         <td style='width:33mm;'>
-            <p class='small-bold'>".strtoupper(tr('Totale imponibile')).'</p>
+            <p class='small-bold'>".tr('Totale imponibile', [], ['upper' => true]).'</p>
         </td>
     </tr>';
 
@@ -29,7 +29,7 @@ if ($mostra_prezzi) {
     echo "
     <tr>
         <td style='width:33mm;'>
-            <p class='small-bold'>".strtoupper(tr('Totale imposte'))."</p>
+            <p class='small-bold'>".tr('Totale imposte', [], ['upper' => true])."</p>
         </td>
     </tr>
 
@@ -43,7 +43,7 @@ if ($mostra_prezzi) {
     echo "
     <tr>
         <td>
-            <p class='small-bold'>".strtoupper(tr('Totale documento'))."</p>
+            <p class='small-bold'>".tr('Totale documento', [], ['upper' => true])."</p>
         </td>
     </tr>
 
@@ -57,7 +57,7 @@ if ($mostra_prezzi) {
     echo "
     <tr>
         <td style='height:40mm;'>
-            <p class='small-bold'>".strtoupper(tr('Note')).'</p>
+            <p class='small-bold'>".tr('Note', [], ['upper' => true]).'</p>
             '.nl2br($rs[0]['note']).'
         </td>
     </tr>';
@@ -70,15 +70,15 @@ echo '
 <table class="table-bordered">
     <tr>
         <th class="border-bottom border-right" style="width:33%">
-            '.strtoupper(tr('Aspetto beni')).'
+            '.tr('Aspetto beni', [], ['upper' => true]).'
         </th>
 
         <th class="border-bottom border-right" style="width:33%">
-        '.strtoupper(tr('Causale trasporto')).'
+        '.tr('Causale trasporto', [], ['upper' => true]).'
         </th>
 
         <th class="border-bottom" style="width:33%">
-        '.strtoupper(tr('Porto')).'
+        '.tr('Porto', [], ['upper' => true]).'
         </th>
     </tr>
 
@@ -96,15 +96,15 @@ echo '
 
     <tr>
         <th class="border-bottom border-right">
-            '.strtoupper(tr('N<sup>o</sup> colli')).'
+            '.tr('N<sup>o</sup> colli', [], ['upper' => true]).'
         </th>
 
         <th class="border-bottom border-right">
-            '.strtoupper(tr('Tipo di spedizione')).'
+            '.tr('Tipo di spedizione', [], ['upper' => true]).'
         </th>
 
         <th class="border-bottom">
-            '.strtoupper(tr('Vettore')).'
+            '.tr('Vettore', [], ['upper' => true]).'
         </th>
     </tr>
 
@@ -122,15 +122,15 @@ echo '
 
     <tr>
         <th class="border-bottom border-right">
-            '.strtoupper(tr('Firma conducente')).'
+            '.tr('Firma conducente', [], ['upper' => true]).'
         </th>
 
         <th class="border-bottom border-right">
-            '.strtoupper(tr('Firma vettore')).'
+            '.tr('Firma vettore', [], ['upper' => true]).'
         </th>
 
         <th class="border-bottom">
-            '.strtoupper(tr('Firma destinatario')).'
+            '.tr('Firma destinatario', [], ['upper' => true]).'
         </th>
     </tr>
 

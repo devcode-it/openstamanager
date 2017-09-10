@@ -6,12 +6,14 @@ $record = $records[0];
 
 $moduli = $dbo->fetchArray('SELECT * FROM zz_modules WHERE parent IS NULL ORDER BY `order` ASC');
 
-$utenti = $dbo->fetchArray("SELECT *, (SELECT ragione_sociale FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE an_anagrafiche.idanagrafica=zz_users.idanagrafica AND an_tipianagrafiche_anagrafiche.idtipoanagrafica=zz_users.idtipoanagrafica) AS ragione_sociale, (SELECT descrizione FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica=an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica=zz_users.idanagrafica AND an_tipianagrafiche.idtipoanagrafica=zz_users.idtipoanagrafica) AS tipo FROM zz_users WHERE idgruppo=".prepare($record['id']));
+$utenti = $dbo->fetchArray('SELECT *, (SELECT ragione_sociale FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE an_anagrafiche.idanagrafica=zz_users.idanagrafica AND an_tipianagrafiche_anagrafiche.idtipoanagrafica=zz_users.idtipoanagrafica) AS ragione_sociale, (SELECT descrizione FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica=an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica=zz_users.idanagrafica AND an_tipianagrafiche.idtipoanagrafica=zz_users.idtipoanagrafica) AS tipo FROM zz_users WHERE idgruppo='.prepare($record['id']));
 
 echo '
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">'.str_replace('_GROUP_', $records[0]['nome'], tr('Utenti _GROUP_')).'</h3>
+			<h3 class="panel-title">'.tr('Utenti _GROUP_', [
+                '_GROUP_' => $records[0]['nome'],
+            ]).'</h3>
 		</div>
 
 		<div class="panel-body">';
@@ -61,7 +63,7 @@ if (count($utenti) != 0) {
 				<a href="javascript:;" onclick="alert(\"'.tr("Non è possibile disabilitare l'utente admin").'\")" class="text-muted tip"><i class="fa fa-2x fa-eye-slash"></i></<>';
         }
 
-            // Cambio password e nome utente
+        // Cambio password e nome utente
         echo '
 				<a href="" data-href="'.$rootdir.'/modules/'.Modules::getModule($id_module)['directory'].'/user.php?id_utente='.$utenti[$u]['id_utente'].'&idgruppo='.$record['id'].'" class="text-warning tip" data-toggle="modal" data-target="#bs-popup" title="Aggiorna dati utente""  data-title="Aggiorna dati utente"><i class="fa fa-2x fa-unlock-alt"></i></a>';
 

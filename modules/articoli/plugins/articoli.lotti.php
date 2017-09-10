@@ -237,14 +237,20 @@ for ($i = 0; $i < count($rs2); ++$i) {
                 $data[0]['subtotale'] = $data[0]['prezzo_vendita'] * $data[0]['qta'];
                 $data[0]['iva'] = 0;
 
-                $extra = str_replace('_QTA_', $data[0]['qta'], tr('(q.tà _QTA_)'));
+                $extra = tr('(q.tà _QTA_)', [
+                    '_QTA_' => $data[0]['qta'],
+                ]);
             }
 
             $totali[] = [$data[0]['subtotale'], $data[0]['iva']];
 
             $numero = !empty($rs6[0]['numero_esterno']) ? $data[0]['numero_esterno'] : $data[0]['numero'];
 
-            $text = str_replace(['_DOC_', '_NUM_', '_DATE_', '_TOT_'], [$data[0]['tipo_documento'], $numero, Translator::dateToLocale($data[0]['data'])], tr('_DOC_ n<sup>o</sup> _NUM_ del _DATE_')).(!empty($extra) ? ' '.$extra : '');
+            $text = tr('_DOC_ n<sup>o</sup> _NUM_ del _DATE_', [
+                '_DOC_' => $data[0]['tipo_documento'],
+                '_NUM_' => $numero,
+                '_DATE_' => Translator::dateToLocale($data[0]['data']),
+                ]).(!empty($extra) ? ' '.$extra : '');
 
             echo '
             '.Modules::link($module_id, $id, $text).'<br>';

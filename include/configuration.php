@@ -119,7 +119,9 @@ $db_name = \'|database|\';
 				<h3 class="box-title">'.tr('Permessi di scrittura mancanti').'</h3>
 			</div>
 			<div class="box-body">
-				<p>'.str_replace('_FILE_', '<b>config.inc.php</b>', tr('Sembra che non ci siano i permessi di scrittura sul file _FILE_')).'</p>
+				<p>'.tr('Sembra che non ci siano i permessi di scrittura sul file _FILE_', [
+                    '_FILE_' => '<b>config.inc.php</b>',
+                ]).'</p>
 				<form action="'.$rootdir.'/index.php?action=updateconfig&firstuse=true" method="post">
 					<div class="hide">
 						<input type="hidden" name="db_name" value="'.$db_name.'">
@@ -139,7 +141,9 @@ $db_name = \'|database|\';
 						</div>
 					</div>
 					<div class="box-body">
-						<p>'.str_replace('_FILE_', '<b>config.inc.php</b>', tr('Inserire il seguente testo nel file _FILE_')).'</p>
+						<p>'.tr('Inserire il seguente testo nel file _FILE_', [
+                            '_FILE_' => '<b>config.inc.php</b>',
+                        ]).'</p>
 						<pre class="text-left">'.htmlentities($new_config).'</pre>
 					</div>
 				</div>
@@ -179,7 +183,9 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 			</div>
 			<div class="box-body">
 				<p>'.tr("L'avvio del software è fallito a causa dell'assenza di alcuni paramentri nella configurazione di base").'.</p>
-				<p>'.str_replace('_CONFIG_', '<b>config.inc.php</b>', tr("Si prega di controllare che il file _CONFIG_ contenga tutti i dati inseriti durante la configurazione iniziale (con l'eccezione di password e indirizzo email amministrativi)")).'.</p>
+				<p>'.tr("Si prega di controllare che il file _FILE_ contenga tutti i dati inseriti durante la configurazione iniziale (con l'eccezione di password e indirizzo email amministrativi)", [
+                    '_FILE_' => '<b>config.inc.php</b>',
+                ]).'.</p>
 				<p>'.tr("Nel caso il problema persista, rivolgersi all'assistenza ufficiale").'.</p>
 				<a class="btn btn-info" href="'.$rootdir.'/index.php"><i class="fa fa-repeat"></i> '.tr('Riprova').'</a>
             </div>
@@ -245,7 +251,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                             data = parseFloat(data.trim());
 
                             if(data == 0){
-                                swal("'.tr('Errore della configurazione').'", "'.tr("La configurazione non è corretta.").'", "error");
+                                swal("'.tr('Errore della configurazione').'", "'.tr('La configurazione non è corretta.').'", "error");
                             } else if(data == 1){
                                 swal("'.tr('Permessi insufficienti').'", "'.tr("L'utente non possiede permessi sufficienti per il corretto funzionamento del software.").'", "error");
                             } else{
@@ -295,7 +301,9 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
                         <div class="row">
                             <div class="col-xs-12 col-md-6">
-                                <p>'.str_replace('_FILE_', '<i>php.ini</i>', tr('Le seguenti estensioni PHP devono essere abilitate dal file di configurazione _FILE_')).':</p>
+                                <p>'.tr('Le seguenti estensioni PHP devono essere abilitate dal file di configurazione _FILE_', [
+                                    '_FILE_' => '<b>php.ini</b>',
+                                ]).':</p>
                                 <div class="list-group">';
     $extensions = [
         'zip' => tr("Necessario per l'utilizzo delle funzioni di aggiornamento automatico e backup, oltre che per eventuali moduli aggiuntivi"),
@@ -334,7 +342,9 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     echo '
 
                             <div class="col-xs-12 col-md-6">
-                                <p>'.str_replace('_FILE_', '<i>php.ini</i>', tr('Le seguenti impostazioni PHP devono essere modificate nel file di configurazione _FILE_')).':</p>
+                                <p>'.tr('Le seguenti impostazioni PHP devono essere modificate nel file di configurazione _FILE_', [
+                                    '_FILE_' => '<b>php.ini</b>',
+                                ]).':</p>
                                 <div class="list-group">';
     $values = [
         'display_errors' => true,
@@ -431,7 +441,9 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     // LICENZA
     echo '
                     <div id="step-2">
-                        <p>'.str_replace('_LICENSE_', 'GPL 3.0', tr('OpenSTAManager è tutelato dalla licenza _LICENSE_!')).'</p>
+                        <p>'.tr('OpenSTAManager è tutelato dalla licenza _LICENSE_!', [
+                            '_LICENSE_' => 'GPL 3.0',
+                        ]).'</p>
 
                         <div class="row">
                             <div class="col-xs-12 col-md-8">
@@ -462,7 +474,9 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                         <a href="http://www.openstamanager.com/contattaci/?subject=Assistenza%20installazione%20OSM" target="_blank" ><img class="pull-right" width="32" src="'.$img.'/help.png" alt="'.tr('Aiuto').'" title="'.tr('Contatta il nostro help-desk').'"/></a>
 
                         <p>'.tr('Non hai ancora configurato OpenSTAManager').'.</p>
-                        <p><small class="help-block">'.str_replace('_CONFIG_', '<b>config.inc.php</b>', tr('Configura correttamente il software con i seguenti parametri (modificabili successivamente dal file _CONFIG_)')).'</small></p>';
+                        <p><small class="help-block">'.tr('Configura correttamente il software con i seguenti parametri (modificabili successivamente dal file _FILE_)', [
+                            '_FILE_' => '<b>config.inc.php</b>',
+                        ]).'</small></p>';
 
     // Form dei parametri
     echo '

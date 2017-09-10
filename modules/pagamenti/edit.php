@@ -43,7 +43,9 @@ foreach ($results as $result) {
     echo '
 				<div class="box box-success">
 					<div class="box-header with-border">
-						<h3 class="box-title">'.str_replace('_NUMBER_', $cont, tr('Rata _NUMBER_')).'</h3>
+						<h3 class="box-title">'.tr('Rata _NUMBER_', [
+                            '_NUMBER_' => $cont,
+                        ]).'</h3>
 						<a class=" btn btn-danger pull-right" onclick="';
     echo "if(confirm('".tr('Eliminare questo elemento?')."')){ location.href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete_rata&id='.$result['id']."'; }";
     echo '"><i class="fa fa-trash"></i> '.tr('Elimina').'</a>

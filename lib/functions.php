@@ -693,16 +693,16 @@ function p($parameter)
  *
  * @return string
  */
-function tr($string, $parameters = [], $domain = null, $locale = null)
+function tr($string, $parameters = [], $operations = [])
 {
-    return Translator::translate($string, $parameters, $domain, $locale);
+    return Translator::translate($string, $parameters, $operations);
 }
 
-// Retrocompatibilità
+// Retrocompatibilità (con la funzione gettext)
 if (!function_exists('_')) {
-    function _($string, $parameters = [], $domain = null, $locale = null)
+    function _($string, $parameters = [], $operations = [])
     {
-        return tr($string, $parameters, $domain, $locale);
+        return tr($string, $parameters, $operations);
     }
 }
 

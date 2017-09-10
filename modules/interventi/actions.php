@@ -191,8 +191,12 @@ switch (post('op')) {
         } while (!empty($rs) || empty($new_codice));
 
         if ($count > 0) {
-            $_SESSION['warnings'][] = str_replace('_NUM_', "'".$codice."'", tr('Numero intervento _NUM_ saltato perchè già esistente!'));
-            $_SESSION['warnings'][] = str_replace('_NUM_', "'".$new_codice."'", tr('Nuovo numero intervento calcolato _NUM_'));
+            $_SESSION['warnings'][] = tr('Numero intervento _NUM_ saltato perchè già esistente!', [
+                '_NUM_' => "'".$codice."'"
+            ]);
+            $_SESSION['warnings'][] = tr('Nuovo numero intervento calcolato _NUM_', [
+                '_NUM_' => "'".$new_codice."'"
+            ]);
         }
         */
         $formato = get_var('Formato codice intervento');
@@ -359,7 +363,9 @@ switch (post('op')) {
         // Eliminazione movimenti riguardanti l'intervento cancellato
         $dbo->query('DELETE FROM mg_movimenti WHERE idintervento='.prepare($id_record));
 
-        $_SESSION['infos'][] = str_replace('_NUM_', "'".$id_record."'", tr('Intervento _NUM_ eliminato!'));
+        $_SESSION['infos'][] = tr('Intervento _NUM_ eliminato!', [
+            '_NUM_' => "'".$id_record."'",
+        ]);
 
         break;
 
@@ -446,6 +452,7 @@ switch (post('op')) {
         /* Ricollego l'articolo modificato all'intervento */
         /* ci può essere il caso in cui cambio idarticolo e anche qta */
 
+        // no break
     case 'addarticolo':
         $idarticolo = post('idarticolo');
         $idautomezzo = post('idautomezzo');
@@ -555,7 +562,9 @@ switch (post('op')) {
                 $_SESSION['errors'][] = tr('Errore durante il salvataggio della firma!').tr('La firma risulta vuota').'...';
             }
         } else {
-            $_SESSION['errors'][] = str_replace('_DIRECTORY_', '<b>/files/interventi</b>', tr("Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della firma!"));
+            $_SESSION['errors'][] = tr("Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della firma!", [
+                '_DIRECTORY_' => '<b>/files/interventi</b>',
+            ]);
         }
 
         break;

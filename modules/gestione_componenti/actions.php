@@ -31,11 +31,15 @@ switch (post('op')) {
         }
 
         if ($duplicato) {
-            $_SESSION['errors'][] = str_replace('_FILE_', "'".$nomefile."'", tr('Il file componente _FILE_ esiste già, nessun nuovo componente è stato creato!'));
+            $_SESSION['errors'][] = tr('Il file componente _FILE_ esiste già, nessun nuovo componente è stato creato!', [
+                '_FILE_' => "'".$nomefile."'",
+            ]);
         } elseif (!file_put_contents($path.$nomefile, $contenuto)) {
             $_SESSION['errors'][] = tr('Impossibile creare il file!');
         } else {
-            $_SESSION['infos'][] = str_replace('_FILE_', "'".$nomefile."'", tr('Componente _FILE_ aggiunto correttamente!'));
+            $_SESSION['infos'][] = tr('Componente _FILE_ aggiunto correttamente!', [
+                '_FILE_' => "'".$nomefile."'",
+            ]);
         }
 
     break;
@@ -45,7 +49,9 @@ switch (post('op')) {
 
         if (!empty($nomefile)) {
             unlink($path.$nomefile);
-            $_SESSION['infos'][] = str_replace('_FILE_', "'".$nomefile."'", tr('File _FILE_ rimosso correttamente!'));
+            $_SESSION['infos'][] = tr('File _FILE_ rimosso correttamente!', [
+                '_FILE_' => "'".$nomefile."'",
+            ]);
         }
 
     break;

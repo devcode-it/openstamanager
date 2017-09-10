@@ -55,7 +55,9 @@ if (!empty($rs)) {
         if (!empty($r['abilita_serial'])) {
             if (!empty($mancanti)) {
                 echo '
-            <br><b><small class="text-danger">'.str_replace('_NUM_', $mancanti, tr('_NUM_ serial mancanti')).'</small></b>';
+            <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
+                '_NUM_' => $mancanti,
+            ]).'</small></b>';
             }
             if (!empty($serials)) {
                 echo '

@@ -24,7 +24,6 @@ $rs = $dbo->fetchArray($q_art);
 
 if (!empty($rs)) {
     foreach ($rs as $r) {
-
         // Individuazione dei seriali
         if (!empty($r['idarticolo']) && !empty($r['abilita_serial'])) {
             $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_ddt='.prepare($r['id'])), 'serial');
@@ -48,7 +47,9 @@ if (!empty($rs)) {
             if (!empty($r['abilita_serial'])) {
                 if (!empty($mancanti)) {
                     echo '
-            <br><b><small class="text-danger">'.str_replace('_NUM_', $mancanti, tr('_NUM_ serial mancanti')).'</small></b>';
+            <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
+                '_NUM_' => $mancanti,
+            ]).'</small></b>';
                 }
 
                 if (!empty($serials)) {
@@ -68,10 +69,13 @@ if (!empty($rs)) {
             $ref = $rso[0]['dir'] == 'entrata' ? 'Ordini cliente' : 'Ordini fornitore';
             $ref_id = $r['idordine'];
 
-            $descrizione = str_replace(['_NUM_', '_DATE_'], [$numero, Translator::dateToLocale($rso[0]['data'])], tr('Rif. ordine _NUM_ del _DATE_'));
+            $descrizione = tr('Rif. ordine _NUM_ del _DATE_', [
+                '_NUM_' => $numero,
+                '_DATE_' => Translator::dateToLocale($rso[0]['data']),
+            ]);
         }
 
-        if(!empty($descrizione)){
+        if (!empty($descrizione)) {
             echo '
             <br>'.Modules::link($ref, $ref_id, $descrizione.' <i class="fa fa-external-link"></i>', $descrizione);
         }
@@ -206,7 +210,7 @@ $netto_a_pagare = sum([
 echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Imponibile')).':</b>
+            <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
         <td align="right">
@@ -221,7 +225,7 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Sconto')).':</b>
+            <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
 
         <td align="right">
@@ -232,10 +236,10 @@ if (abs($sconto) > 0) {
     </tr>';
 
     // IMPONIBILE SCONTATO
-echo '
+    echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Imponibile scontato')).':</b>
+            <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
         </td>
 
         <td align="right">
@@ -251,7 +255,7 @@ if (abs($records[0]['rivalsainps']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Rivalsa INPS')).':</b>
+            <b>'.tr('Rivalsa INPS', [], ['upper' => true]).':</b>
         </td>
 
         <td align="right">
@@ -266,7 +270,7 @@ if (abs($totale_iva) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('IVA')).':</b>
+            <b>'.tr('IVA', [], ['upper' => true]).':</b>
         </td>
 
         <td align="right">
@@ -281,7 +285,7 @@ if (abs($totale_iva) > 0) {
 echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Totale')).':</b>
+            <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
 
         <td align="right">
@@ -296,7 +300,7 @@ if (abs($records[0]['bollo']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Marca da bollo')).':</b>
+            <b>'.tr('Marca da bollo', [], ['upper' => true]).':</b>
         </td>
 
         <td align="right">
@@ -312,7 +316,7 @@ if (abs($records[0]['ritenutaacconto']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr("Ritenuta d'acconto")).':</b>
+            <b>'.tr("Ritenuta d'acconto", [], ['upper' => true]).':</b>
         </td>
 
         <td align="right">
@@ -328,7 +332,7 @@ if ($totale != $netto_a_pagare) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Netto a pagare')).':</b>
+            <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
         </td>
 
         <td align="right">

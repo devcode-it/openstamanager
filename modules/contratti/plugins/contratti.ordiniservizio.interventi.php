@@ -45,7 +45,10 @@ if (sizeof($rs) == 0) {
 <p>'.tr('Nessun collegamento a ordini di servizio')."...</p>\n";
 } else {
     echo '
-<p>'.str_replace(['_NUM_', '_DATE_'], ['<b>'.$rs[0]['id'].'</b>', Translator::dateToLocale($rs[0]['data_scadenza'])], tr('Ordine di servizio numero _NUM_ (termine massimo _DATE_)')).':</p>';
+<p>'.tr('Ordine di servizio numero _NUM_ (termine massimo _DATE_)', [
+    '_NUM_' => '<b>'.$rs[0]['id'].'</b>',
+    '_DATE_' => Translator::dateToLocale($rs[0]['data_scadenza']),
+]).':</p>';
 
     $rs = $dbo->fetchArray('SELECT * FROM co_ordiniservizio_vociservizio WHERE idordineservizio=(SELECT id FROM co_ordiniservizio WHERE idintervento='.prepare($idintervento).' LIMIT 0,1) ORDER BY categoria ASC');
 

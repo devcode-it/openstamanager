@@ -82,8 +82,9 @@ switch (post('op')) {
         $dbo->query('INSERT INTO co_righe_preventivi(idpreventivo, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, `order`) VALUES ('.prepare($id_record).", '0', ".prepare($idiva).', '.prepare($rs_iva[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).", 'Diritto chiamata', ".prepare($costo).", '', 1, 0, 0, 'UNT', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_preventivi AS t WHERE idpreventivo=".prepare($id_record).'))');
         */
 
-        // update_budget_preventivo( $id_record );
-        $_SESSION['infos'][] = str_replace('_NUM_', $numero, tr('Aggiunto preventivo numero _NUM_!'));
+        $_SESSION['infos'][] = tr('Aggiunto preventivo numero _NUM_!', [
+            '_NUM_' => $numero,
+        ]);
 
         break;
 
@@ -172,7 +173,9 @@ switch (post('op')) {
             $dbo->query("UPDATE `co_preventivi` SET idstato=(SELECT `id` FROM `co_statipreventivi` WHERE `descrizione`='In lavorazione') WHERE `id`=".prepare($id_record));
 
             // update_budget_preventivo( $id_record );
-            $_SESSION['infos'][] = str_replace('_NUM_', $rs[0]['codice'], tr('Intervento _NUM_ aggiunto!'));
+            $_SESSION['infos'][] = tr('Intervento _NUM_ aggiunto!', [
+                '_NUM_' => $rs[0]['codice'],
+            ]);
         }
         break;
 
@@ -203,7 +206,9 @@ switch (post('op')) {
             $query = 'DELETE FROM `co_preventivi_interventi` WHERE idpreventivo='.prepare($id_record).' AND idintervento='.prepare($idintervento);
 
             $dbo->query($query);
-            $_SESSION['infos'][] = str_replace('_NUM_', $idintervento, tr('Intervento _NUM_ rimosso!'));
+            $_SESSION['infos'][] = tr('Intervento _NUM_ rimosso!', [
+                '_NUM_' => $idintervento,
+            ]);
         }
         break;
 

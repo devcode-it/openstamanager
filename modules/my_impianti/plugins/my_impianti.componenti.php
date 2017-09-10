@@ -143,9 +143,13 @@ if (!empty($rs2)) {
         $filename = $rs2[$j]['filename'];
 
         if (empty($rs2[$j]['data_sostituzione'])) {
-            $statocomponente = str_replace('_DATE_', Translator::dateToLocale($rs2[$j]['data']), tr('INSTALLATO in data _DATE_'));
+            $statocomponente = tr('INSTALLATO in data _DATE_', [
+                '_DATE_' => Translator::dateToLocale($rs2[$j]['data']),
+            ]);
         } else {
-            $statocomponente = str_replace('_DATE_', Translator::dateToLocale($rs2[$j]['data_sostituzione']), tr('SOSTITUITO in data _DATE_'));
+            $statocomponente = tr('SOSTITUITO in data _DATE_', [
+                '_DATE_' => Translator::dateToLocale($rs2[$j]['data_sostituzione']),
+            ]);
         }
 
         // Per più "versioni" dello stesso componente mostro un riga meno evidente
@@ -237,7 +241,10 @@ if (!empty($rs2)) {
 
         if (!empty($rs2[$j]['idintervento'])) {
             echo '
-                            '.Modules::link('Interventi', $rs2[$j]['id'], str_replace(['_NUM_', '_DATE_'], [$rs2[$j]['codice'], Translator::dateToLocale($rs2[$j]['data_intervento'])], 'Intervento _NUM_ del _DATE_')).'<br>';
+                            '.Modules::link('Interventi', $rs2[$j]['id'], tr('Intervento _NUM_ del _DATE_', [
+                                '_NUM_' => $rs2[$j]['codice'],
+                                '_DATE_' => Translator::dateToLocale($rs2[$j]['dadata_interventota']),
+                            ])).'<br>';
         }
 
         echo '

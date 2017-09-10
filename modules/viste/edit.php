@@ -112,7 +112,9 @@ if (!empty($options) && $options != 'custom') {
         echo '">
 							<div class="box-header with-border">
 								<h3 class="box-title">
-									<a data-toggle="collapse" href="#field-'.$field['id'].'">'.str_replace('_POSITION_', $field['order'], tr('Campo in posizione _POSITION_')).' ('.$field['name'].')</a>
+									<a data-toggle="collapse" href="#field-'.$field['id'].'">'.tr('Campo in posizione _POSITION_', [
+                                        '_POSITION_' => $field['order'],
+                                    ]).' ('.$field['name'].')</a>
 								</h3>';
         if ($editable) {
             echo '
@@ -131,7 +133,7 @@ if (!empty($options) && $options != 'custom') {
         if (!$editable) {
             echo ', "readonly": "1"';
         }
-        echo ', "help": "Nome con cui il campo viene identificato e visualizzato nella tabella" ]}
+        echo ', "help": "'.tr('Nome con cui il campo viene identificato e visualizzato nella tabella').'" ]}
 									</div>
 
 									<div class="col-xs-12 col-md-6">
@@ -139,7 +141,7 @@ if (!empty($options) && $options != 'custom') {
         if (!$editable) {
             echo ', "readonly": "1"';
         }
-        echo ', "required": "1", "help": "Nome effettivo del campo sulla tabella oppure subquery che permette di ottenere il valore del campo" ]}
+        echo ', "required": "1", "help": "'.tr('Nome effettivo del campo sulla tabella oppure subquery che permette di ottenere il valore del campo').'" ]}
 									</div>
 								</div>
 
@@ -152,7 +154,7 @@ if (!empty($options) && $options != 'custom') {
         if (!$editable) {
             echo ', "readonly": "1"';
         }
-        echo ', "help": "Gruppi di utenti in grado di visualizzare questo campo" ]}
+        echo ', "help": "'.tr('Gruppi di utenti in grado di visualizzare questo campo').'" ]}
 									</div>
 
 									<div class="col-xs-12 col-md-6">
@@ -160,7 +162,7 @@ if (!empty($options) && $options != 'custom') {
         if (!$editable) {
             echo ', "readonly": "1"';
         }
-        echo ', "help": "Stato del campo: visibile nella tabella oppure nascosto" ]}
+        echo ', "help": "'.tr('Stato del campo: visibile nella tabella oppure nascosto').'" ]}
 									</div>
 								</div>
 
@@ -170,7 +172,7 @@ if (!empty($options) && $options != 'custom') {
         if (!$editable) {
             echo ', "readonly": "1"';
         }
-        echo ', "help": "Indica se il campo è ricercabile" ]}
+        echo ', "help": "'.tr('Indica se il campo è ricercabile').'" ]}
 									</div>
 
 									<div class="col-xs-12 col-md-3">
@@ -178,7 +180,7 @@ if (!empty($options) && $options != 'custom') {
         if (!$editable) {
             echo ', "readonly": "1"';
         }
-        echo ', "help": "Indica se la ricerca per questo campo è lenta (da utilizzare nel caso di evidenti rallentamenti, mostra solo un avviso all\'utente)" ]}
+        echo ', "help": "'.tr("Indica se la ricerca per questo campo è lenta (da utilizzare nel caso di evidenti rallentamenti, mostra solo un avviso all'utente").'" ]}
 									</div>
 
 									<div class="col-xs-12 col-md-3">
@@ -186,7 +188,7 @@ if (!empty($options) && $options != 'custom') {
         if (!$editable) {
             echo ', "readonly": "1"';
         }
-        echo ', "help": "Indica se il campo è da sommare" ]}
+        echo ', "help": "'.tr('Indica se il campo è da sommare').'" ]}
 									</div>
 
                                     <div class="col-xs-12 col-md-3">
@@ -194,7 +196,7 @@ if (!empty($options) && $options != 'custom') {
         if (!$editable) {
             echo ', "readonly": "1"';
         }
-        echo ', "help": "Indica se il campo è formattabile in modo automatico" ]}
+        echo ', "help": "'.tr('Indica se il campo è formattabile in modo automatico').'" ]}
 									</div>
 								</div>
 
@@ -356,7 +358,9 @@ if (!empty($options) && $options != 'custom') {
         echo '">
                             <div class="box-header with-border">
                                 <h3 class="box-title">
-                                    <a data-toggle="collapse" href="#additional-'.$additional['id'].'">'.str_replace('_NUM_', $num, tr('Filtro _NUM_')).'</a>
+                                    <a data-toggle="collapse" href="#additional-'.$additional['id'].'">'.tr('Filtro _NUM_', [
+                                        '_NUM_' => $num,
+                                    ]).'</a>
                                 </h3>';
         if ($editable) {
             echo '

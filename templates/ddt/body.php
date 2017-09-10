@@ -26,15 +26,15 @@ echo "
 <table class='table table-striped' id='contents'>
     <thead>
         <tr>
-            <th class='text-center'>".strtoupper(tr('Descrizione'))."</th>
-            <th class='text-center' style='width:7%'>".strtoupper(tr('Q.TÀ')).'</th>';
+            <th class='text-center'>".tr('Descrizione', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:7%'>".tr('Q.TÀ', [], ['upper' => true]).'</th>';
 
 if ($mostra_prezzi) {
     echo "
-            <th class='text-center' style='width:15%'>".strtoupper(tr('Prezzo u.'))."</th>
-            <th class='text-center' style='width:15%'>".strtoupper(tr('Importo'))."</th>
-            <th class='text-center' style='width:10%'>".strtoupper(tr('Sconto'))."</th>
-            <th class='text-center' style='width:7%'>".strtoupper(tr('IVA')).' (%)</th>';
+            <th class='text-center' style='width:15%'>".tr('Prezzo u.', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:15%'>".tr('Importo', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:10%'>".tr('Sconto', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:7%'>".tr('IVA', [], ['upper' => true]).' (%)</th>';
 }
 
             echo '
@@ -73,7 +73,10 @@ foreach ($rs_gen as $r) {
             $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM or_ordini WHERE id='.prepare($r['idordine']));
             $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
             echo '
-                <br/><small>'.strtoupper(str_replace(['_NUM_', '_DATE_'], [$numero, Translator::dateToLocale($rso[0]['data'])], tr('Rif. ordine n<sup>o</sup>_NUM_ del _DATE_'))).'</small>';
+                <br/><small>'.tr('Rif. ordine n<sup>o</sup>_NUM_ del _DATE_', [
+                    '_NUM_' => $numero,
+                    '_DATE_' => Translator::dateToLocale($rso[0]['data']),
+                ]).'</small>';
             $autofill['count'] += 0.4;
         }
 

@@ -93,9 +93,6 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
         include $docroot.'/templates/'.$ptype.'/footer.php';
     }
     $foot = ob_get_clean();
-
-    // Footer di default
-    $foot = !empty($foot) ? $foot : '$pagination$';
 } else {
     $orientation = 'P';
     $body_table_params = "style='width:210mm;'";
@@ -118,13 +115,18 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
     $report = str_replace('$table$', $table, $report);
 }
 
+// Footer di default
+$foot = !empty($foot) ? $foot : '$pagination$';
+
 // Operazioni di sostituzione
 include $docroot.'/templates/replace.php';
 
 // Individuazione dellla configurazione
 $directory = dirname($filename);
 if (!empty($filename) && ((is_dir($directory) && !is_writable($directory)) || (!is_dir($directory) && !create_dir($directory)))) {
-    $error = str_replace('_DIRECTORY_', $directory, tr('Non hai i permessi per creare directory e files in _DIRECTORY_'));
+    $error = tr('Non hai i permessi per creare directory e files in _DIRECTORY_', [
+        '_DIRECTORY_' => $directory,
+    ]);
 
     $_SESSION['errors'][] = $error;
 
@@ -171,6 +173,10 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
 
     $mpdf->Output($filename, $mode);
 } else {
+    if (!str_contains($report, '<page_footer>')) {
+        $report .= '<page_footer>'.$foot.'</page_footer>';
+    }
+
     $html2pdf = new Spipu\Html2Pdf\Html2Pdf($orientation, 'A4', 'it', true, 'UTF-8');
 
     $html2pdf->writeHTML($report);

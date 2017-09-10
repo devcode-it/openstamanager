@@ -57,7 +57,9 @@ switch ($op) {
                 if (move_uploaded_file($tmp, $upload_dir.'/'.$filename)) {
                     $dbo->query('UPDATE my_impianti SET immagine='.prepare($filename).' WHERE id='.prepare($id_record));
                 } else {
-                    $_SESSION['warnings'][] = str_replace('_DIR_', $upload_dir, tr('Errore durante il caricamento del file in _DIR_!'));
+                    $_SESSION['warnings'][] = tr('Errore durante il caricamento del file in _DIR_!', [
+                        '_DIR_' => $upload_dir,
+                    ]);
                 }
             }
 
@@ -104,7 +106,7 @@ switch ($op) {
         }
 
         // ...altrimenti carico dal file .ini
-        else if (file_exists($docroot.'/files/my_impianti/'.$filename)) {
+        elseif (file_exists($docroot.'/files/my_impianti/'.$filename)) {
             $contenuto = file_get_contents($docroot.'/files/my_impianti/'.$filename);
         }
 

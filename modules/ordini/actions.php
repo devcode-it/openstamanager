@@ -48,7 +48,9 @@ switch (post('op')) {
 
             $id_record = $dbo->lastInsertedID();
 
-            $_SESSION['infos'][] = str_replace('_NUM_', $numero, tr('Aggiunto ordine numero _NUM_!'));
+            $_SESSION['infos'][] = tr('Aggiunto ordine numero _NUM_!', [
+                '_NUM_' => $numero,
+            ]);
         }
         break;
 
@@ -201,7 +203,7 @@ switch (post('op')) {
             }
 
             // if( $dbo->query($query) ){
-                // Ricalcolo inps, ritenuta e bollo
+            // Ricalcolo inps, ritenuta e bollo
             if ($dir == 'entrata') {
                 ricalcola_costiagg_ordine($id_record);
             } else {

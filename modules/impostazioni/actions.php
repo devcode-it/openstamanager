@@ -11,7 +11,9 @@ switch (filter('op')) {
             // integer
             if ($result['tipo'] == 'integer') {
                 if (!preg_match('/^\d*$/', $value)) {
-                    $_SESSION['errors'][] = str_replace('_NAME_', '"'.$result['nome'].'"', tr('Il valore inserito del parametro _NAME_ deve essere un numero intero!'));
+                    $_SESSION['errors'][] = tr('Il valore inserito del parametro _NAME_ deve essere un numero intero!', [
+                        '_NAME_' => '"'.$result['nome'].'"',
+                    ]);
                 }
             }
 
@@ -27,7 +29,9 @@ switch (filter('op')) {
                 }
 
                 if (!$continue) {
-                    $_SESSION['errors'][] = str_replace('_NAME_', '"'.$result['nome'].'"', tr('Il valore inserito del parametro _NAME_ deve essere un compreso tra i valori previsti!'));
+                    $_SESSION['errors'][] = tr('Il valore inserito del parametro _NAME_ deve essere un compreso tra i valori previsti!', [
+                        '_NAME_' => '"'.$result['nome'].'"',
+                    ]);
                 }
             }
 

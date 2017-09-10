@@ -32,7 +32,9 @@ switch (post('op')) {
                 $dbo->query('INSERT INTO co_contratti_tipiintervento(idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) VALUES('.prepare($id_record).', '.prepare($rsi[$i]['idtipointervento']).', '.prepare($rsi[$i]['costo_orario']).', '.prepare($rsi[$i]['costo_km']).', '.prepare($rsi[$i]['costo_diritto_chiamata']).', '.prepare($rsi[$i]['costo_orario_tecnico']).', '.prepare($rsi[$i]['costo_km_tecnico']).', '.prepare($rsi[$i]['costo_diritto_chiamata_tecnico']).')');
             }
 
-            $_SESSION['infos'][] = str_replace('_NUM_', $numero, tr('Aggiunto contratto numero _NUM_!'));
+            $_SESSION['infos'][] = tr('Aggiunto contratto numero _NUM_!', [
+                '_NUM_' => $numero,
+            ]);
         }
 
         break;
@@ -197,7 +199,9 @@ switch (post('op')) {
             $query = 'DELETE FROM `co_righe_contratti` WHERE idcontratto='.prepare($idcontratto).' AND idintervento='.prepare($idintervento);
             $dbo->query($query);
 
-            $_SESSION['infos'][] = str_replace('_NUM_', $idintervento, tr('Intervento _NUM_ rimosso!'));
+            $_SESSION['infos'][] = tr('Intervento _NUM_ rimosso!', [
+                '_NUM_' => $idintervento,
+            ]);
         }
         break;
 

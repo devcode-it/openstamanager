@@ -24,8 +24,8 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
                 if ($records[0]['rinnovabile']) {
                     echo "
                 <button type=\"button\" class=\"btn btn-warning\" onclick=\"if( confirm('Rinnovare questo contratto?') ){ location.href='".$rootdir.'/editor.php?op=renew&id_module='.$id_module.'&id_record='.$id_record."'; }\">
-                    <i class=\"fa fa-refresh\"></i> ".tr('Rinnova')."...
-                </button>";
+                    <i class=\"fa fa-refresh\"></i> ".tr('Rinnova').'...
+                </button>';
                 }
                 ?>
 				<a class="btn btn-info" href="<?php echo $rootdir ?>/pdfgen.php?ptype=contratti&idcontratto=<?php echo $id_record ?>" target="_blank"><i class="fa fa-print"></i> <?php echo tr('Stampa contratto') ?></a>
@@ -260,7 +260,6 @@ if ($records[0]['stato'] != 'Pagato') {
     ?>
         <a class="btn btn-primary" data-href="<?php echo $rootdir ?>/modules/contratti/add_riga.php?idcontratto=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Riga'); ?></a><br>
     <?php
-
 }
 ?>
         <div class="clearfix"></div>
@@ -309,7 +308,9 @@ if (!empty($records[0]['idcontratto_prev'])) {
         echo '
                     <tr>
                         <td>
-                            '.Modules::link($id_module, $idcontratto_prev, str_replace('_NUM_', $rs[0]['numero'], tr('Contratto n<sup>o</sup> _NUM_')).'<br><small class="text-muted">'.$rs[0]['nome'].'</small>').'
+                            '.Modules::link($id_module, $idcontratto_prev, tr('Contratto n<sup>o</sup> _NUM_', [
+                                '_NUM_' => $rs[0]['numero'],
+                            ]).'<br><small class="text-muted">'.$rs[0]['nome'].'</small>').'
                         </td>
                         <td align="right">'.Translator::numberToLocale($rs[0]['budget']).' &euro;</td>
                         <td align="center">'.Translator::dateToLocale($rs[0]['data_accettazione']).'</td>

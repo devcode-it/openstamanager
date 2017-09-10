@@ -23,12 +23,16 @@ $dbo->query('START TRANSACTION');
 if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     // Controllo sui permessi di scrittura per il modulo
     if (Modules::getPermission($id_module) != 'rw') {
-        $_SESSION['errors'][] = str_replace('_MODULE_', '"'.Modules::getModule($id_module)['name'].'"', tr('Non hai permessi di scrittura per il modulo _MODULE_'));
+        $_SESSION['errors'][] = tr('Non hai permessi di scrittura per il modulo _MODULE_', [
+            '_MODULE_' => '"'.Modules::getModule($id_module)['name'].'"',
+        ]);
     }
 
     // Controllo sui permessi di scrittura per il file system
     elseif ((!is_dir($upload_dir) && !create_dir($upload_dir)) || (is_dir($upload_dir) && !is_writable($upload_dir))) {
-        $_SESSION['errors'][] = str_replace('_DIR_', '"files"', tr('Non hai i permessi di scrittura nella cartella _DIR_!'));
+        $_SESSION['errors'][] = tr('Non hai i permessi di scrittura nella cartella _DIR_!', [
+            '_DIR_' => '"files"',
+        ]);
     }
 
     // Gestione delle operazioni
@@ -157,13 +161,13 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 
             if (in_array($f['extension'], array_keys($allowed))) {
             */
-                do {
-                    $filename = random_string().'.'.$f['extension'];
-                } while (file_exists($upload_dir.'/'.$filename));
+            do {
+                $filename = random_string().'.'.$f['extension'];
+            } while (file_exists($upload_dir.'/'.$filename));
 
-                // Creazione file fisico
-                if (move_uploaded_file($src, $upload_dir.'/'.$filename)) {
-                    $dbo->insert('zz_files', [
+            // Creazione file fisico
+            if (move_uploaded_file($src, $upload_dir.'/'.$filename)) {
+                $dbo->insert('zz_files', [
                         'nome' => $nome,
                         'filename' => $filename,
                         'original' => $_FILES['blob']['name'],
@@ -171,10 +175,10 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
                         'id_record' => $id_record,
                     ]);
 
-                    $_SESSION['infos'][] = tr('File caricato correttamente!');
-                } else {
-                    $_SESSION['errors'][] = tr('Errore durante il caricamento del file!');
-                }
+                $_SESSION['infos'][] = tr('File caricato correttamente!');
+            } else {
+                $_SESSION['errors'][] = tr('Errore durante il caricamento del file!');
+            }
             /*
             } else {
                 $_SESSION['errors'][] = tr('Tipologia di file non permessa!');
@@ -191,10 +195,15 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
             if (unlink($upload_dir.'/'.$filename)) {
                 $query = 'DELETE FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare($filename);
                 if ($dbo->query($query)) {
-                    $_SESSION['infos'][] = str_replace('_FILE_', '"'.$rs[0]['nome'].'"', tr('File _FILE_ eliminato!'));
+                    $_SESSION['infos'][] = tr('File _FILE_ eliminato!', [
+                        '_FILE_' => '"'.$rs[0]['nome'].'"',
+                    ]);
                 }
             } else {
-                $_SESSION['errors'][] = str_replace(['_FILE_', '_DIR_'], ['"'.$filename.'"', '"files/'.$module_dir.'/"'], tr("Errore durante l'eliminazione del file _FILE_ in _DIR_!"));
+                $_SESSION['errors'][] = tr("Errore durante l'eliminazione del file _FILE_ in _DIR_!", [
+                    '_FILE_' => '"'.$rs[0]['nome'].'"',
+                    '_DIR_' => '"files/'.$module_dir.'/"',
+                ]);
             }
         }
 
@@ -235,7 +244,7 @@ if (Modules::getPermission($permesso) == 'rw') {
     // Esecuzione delle operazioni di gruppo
     $id_records = post('id_records');
     $id_records = is_array($id_records) ? $id_records : explode(',', $id_records);
-    $id_records = array_filter($id_records, function($var){return !empty($var);} );
+    $id_records = array_filter($id_records, function ($var) {return !empty($var); });
     $id_records = array_unique($id_records);
 
     $bulk = null;

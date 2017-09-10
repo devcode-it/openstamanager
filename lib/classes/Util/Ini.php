@@ -128,7 +128,9 @@ class Ini
 
             if (is_array($array)) {
                 $result[] = '
-                    <h4>'.str_replace('_NAME_', $array['Nome']['valore'], tr('Attributi per _NAME_')).'</h4>
+                    <h4>'.tr('Attributi per _NAME_', [
+                        '_NAME_' => $array['Nome']['valore'],
+                    ]).'</h4>
                     <input type="hidden" name="Nome" value="'.$array['Nome']['valore'].'">';
 
                 foreach ($array as $sezione => $array_impostazioni) {

@@ -15,7 +15,9 @@ if (!empty($backup_dir)) {
 }
 echo '
 			</p>
-			<p><small>'.str_replace('_CONFIG_', '<b>config.inc.php</b>', tr('Puoi modificare il percorso di backup dal tuo file _CONFIG_')).'</small></p>';
+			<p><small>'.tr('Puoi modificare il percorso di backup dal tuo file _FILE_', [
+                '_FILE_' => '<b>config.inc.php</b>',
+            ]).'</small></p>';
 if (strstr($backup_dir, $docroot)) {
     echo '
             <div class="alert alert-warning">
@@ -72,7 +74,10 @@ if (file_exists($backup_dir)) {
 
                 echo '
             <div class="callout callout-info">
-                <h4>'.str_replace(['_DATE_', '_TIME_'], [Translator::dateToLocale($m[1]), date('H:i', strtotime(str_replace('_', ':', $m[2])))], tr('Backup del _DATE_ alle _TIME_')).'</h4>
+                <h4>'.tr('Backup del _DATE_ alle _TIME_', [
+                    '_DATE_' => Translator::dateToLocale($m[1]),
+                    '_TIME_' => Translator::timeToLocale(str_replace('_', ':', $m[2])),
+                ]).'</h4>
                 <p><small>
                     '.tr('Nome del file').': '.$name.'<br>
                     '.tr('Dimensione').': '.Translator::numberToLocale(filesize($backup) / 1024 / 1024).'MB
@@ -97,7 +102,10 @@ if (file_exists($backup_dir)) {
 
                 echo '
             <div class="callout callout-warning">
-                <h4>'.str_replace(['_DATE_', '_TIME_'], [Translator::dateToLocale($m[1]), date('H:i', strtotime(str_replace('_', ':', $m[2])))], tr('Backup del _DATE_ alle _TIME_')).'</h4>
+                <h4>'.tr('Backup del _DATE_ alle _TIME_', [
+                    '_DATE_' => Translator::dateToLocale($m[1]),
+                    '_TIME_' => Translator::timeToLocale(str_replace('_', ':', $m[2])),
+                ]).'</h4>
                 <p><small>
                     '.tr('Nome del file').': '.$name.'<br>
                     '.tr('Dimensione').': '.Translator::numberToLocale(filesize($backup) / 1024 / 1024).'MB

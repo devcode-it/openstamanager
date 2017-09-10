@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 /*
     Righe fattura
 */
-$q = "SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice, (SELECT descrizione FROM co_pianodeiconti3 WHERE co_pianodeiconti3.id=IF(co_righe_documenti.idconto = 0, (SELECT idconto FROM co_documenti WHERE iddocumento=".prepare($id_record)." LIMIT 1), co_righe_documenti.idconto)) AS descrizione_conto FROM `co_righe_documenti` WHERE iddocumento=".prepare($id_record).' ORDER BY `order`';
+$q = "SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice, (SELECT descrizione FROM co_pianodeiconti3 WHERE co_pianodeiconti3.id=IF(co_righe_documenti.idconto = 0, (SELECT idconto FROM co_documenti WHERE iddocumento=".prepare($id_record).' LIMIT 1), co_righe_documenti.idconto)) AS descrizione_conto FROM `co_righe_documenti` WHERE iddocumento='.prepare($id_record).' ORDER BY `order`';
 $rs = $dbo->fetchArray($q);
 
 echo '
@@ -45,7 +45,6 @@ if (!empty($rs)) {
                     $mancanti = 0;
                 }
             }
-
         }
         // Preventivi
         elseif (!empty($r['idpreventivo'])) {
@@ -87,7 +86,9 @@ if (!empty($rs)) {
         if (!empty($r['abilita_serial'])) {
             if (!empty($mancanti)) {
                 echo '
-            <br><b><small class="text-danger">'.str_replace('_NUM_', $mancanti, tr('_NUM_ serial mancanti')).'</small></b>';
+            <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
+                '_NUM_' => $mancanti,
+            ]).'</small></b>';
             }
             if (!empty($serials)) {
                 echo '
@@ -103,7 +104,10 @@ if (!empty($rs)) {
             $ref = $rso[0]['dir'] == 'entrata' ? 'Ordini cliente' : 'Ordini fornitore';
             $ref_id = $r['idordine'];
 
-            $descrizione = str_replace(['_NUM_', '_DATE_'], [$numero, Translator::dateToLocale($rso[0]['data'])], tr('Rif. ordine _NUM_ del _DATE_'));
+            $descrizione = tr('Rif. ordine _NUM_ del _DATE_', [
+                '_NUM_' => $numero,
+                '_DATE_' => Translator::dateToLocale($rso[0]['data']),
+            ]);
         } elseif (!empty($r['idddt'])) {
             $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM dt_ddt JOIN dt_tipiddt ON dt_tipiddt.id = dt_ddt.idtipoddt WHERE dt_ddt.id='.prepare($r['idddt']));
             $numero = ($rso[0]['numero_esterno'] != '') ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
@@ -111,17 +115,23 @@ if (!empty($rs)) {
             $ref = $rso[0]['dir'] == 'entrata' ? 'Ddt di vendita' : 'Ddt di acquisto';
             $ref_id = $r['idddt'];
 
-            $descrizione = str_replace(['_NUM_', '_DATE_'], [$numero, Translator::dateToLocale($rso[0]['data'])], tr('Rif. ddt _NUM_ del _DATE_'));
+            $descrizione = tr('Rif. ddt _NUM_ del _DATE_', [
+                '_NUM_' => $numero,
+                '_DATE_' => Translator::dateToLocale($rso[0]['data']),
+            ]);
         } elseif (!empty($r['idpreventivo'])) {
             $rso = $dbo->fetchArray('SELECT numero, data_bozza FROM co_preventivi WHERE id='.prepare($r['idpreventivo']));
 
             $ref = 'Preventivi';
             $ref_id = $r['idpreventivo'];
 
-            $descrizione = str_replace(['_NUM_', '_DATE_'], [$rso[0]['numero'], Translator::dateToLocale($rso[0]['data_bozza'])], tr('Rif. preventivo _NUM_ del _DATE_'));
+            $descrizione = tr('Rif. preventivo _NUM_ del _DATE_', [
+                '_NUM_' => $rso[0]['numero'],
+                '_DATE_' => Translator::dateToLocale($rso[0]['data_bozza']),
+            ]);
         }
 
-        if(!empty($descrizione)){
+        if (!empty($descrizione)) {
             echo '
             <br>'.Modules::link($ref, $ref_id, $descrizione.' <i class="fa fa-external-link"></i>', $descrizione);
         }
@@ -239,7 +249,7 @@ $netto_a_pagare = sum([
 echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Imponibile')).':</b>
+            <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($imponibile).' &euro;
@@ -252,7 +262,7 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Sconto')).':</b>
+            <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($sconto).' &euro;
@@ -264,7 +274,7 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Imponibile scontato')).':</b>
+            <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($imponibile_scontato).' &euro;
@@ -278,7 +288,7 @@ if (abs($records[0]['rivalsainps']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Rivalsa INPS')).':</b>
+            <b>'.tr('Rivalsa INPS', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($records[0]['rivalsainps']).' &euro;
@@ -292,7 +302,7 @@ if (abs($totale_iva) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Iva')).':</b>
+            <b>'.tr('Iva', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($totale_iva).' &euro;
@@ -305,7 +315,7 @@ if (abs($totale_iva) > 0) {
 echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Totale')).':</b>
+            <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($totale).' &euro;
@@ -318,7 +328,7 @@ if (abs($records[0]['bollo']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Marca da bollo')).':</b>
+            <b>'.tr('Marca da bollo', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($records[0]['bollo']).' &euro;
@@ -332,7 +342,7 @@ if (abs($records[0]['ritenutaacconto']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr("Ritenuta d'acconto")).':</b>
+            <b>'.tr("Ritenuta d'acconto", [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($records[0]['ritenutaacconto']).' &euro;
@@ -348,7 +358,7 @@ if ($totale != $netto_a_pagare) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.strtoupper(tr('Netto a pagare')).':</b>
+            <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($netto_a_pagare).' &euro;

@@ -188,7 +188,10 @@ if (empty($rs)) {
                     echo '
                                 <span class="text-success">
                                     <i class="fa fa-check"></i>
-                                    '.Modules::link('Interventi', $r['idintervento'], str_replace(['_NUM_', '_DATE_'], [$res['codice'], Translator::dateToLocale($r['data_intervento'])], tr('Intervento n<sup>o</sup> _NUM_ del _DATE_'))).'
+                                    '.Modules::link('Interventi', $r['idintervento'], tr('Intervento n<sup>o</sup> _NUM_ del _DATE_', [
+                                        '_NUM_' => $res['codice'],
+                                        '_DATE_' => Translator::dateToLocale($r[0]['data_intervento']),
+                                    ])).'
                                 </span>';
                 }
                 echo '
@@ -272,42 +275,42 @@ else {
 <form action="'.$rootdir.'/editor.php?id_module='.Modules::getModule('Contratti')['id'].'&id_record='.$id_record.'&op=add_ordineservizio" id="plan_form" method="post" class="no-check hide">
     <input type="hidden" name="backto" value="record-edit">';
 
-    // Selezione impianto
-    echo '
+        // Selezione impianto
+        echo '
     <div class="row">
         <div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Impianto').'", "name": "matricola", "values": "query=SELECT my_impianti.id, CONCAT(my_impianti.matricola, \" - \", my_impianti.nome) AS descrizione, an_sedi.optgroup FROM my_impianti INNER JOIN (SELECT id, CONCAT(an_sedi.nomesede, \"(\", an_sedi.citta, \")\") AS optgroup FROM an_sedi WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' UNION SELECT 0, \'Sede legale\') AS an_sedi ON my_impianti.idsede = an_sedi.id WHERE my_impianti.idanagrafica='.prepare($records[0]['idanagrafica']).' AND my_impianti.id NOT IN(SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).') ORDER BY idsede ASC, matricola ASC" ]}
         </div>';
 
-    // Indice voci di servizio
-    echo '
+        // Indice voci di servizio
+        echo '
         <div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Voci di servizio da pianificare').'", "name": "idvoce[]", "values": "query=SELECT id, descrizione, categoria AS optgroup FROM in_vociservizio ORDER BY categoria ASC", "multiple": 1, "extra": "onchange=\"$(this).find(\'option\').each( function(){ if( $(this).is(\':selected\') ){ $(\'#voce_\'+$(this).val()).removeClass(\'hide\'); }else{ $(\'#voce_\'+$(this).val()).addClass(\'hide\'); } });\"" ]}
         </div>
     </div>';
 
-    // voci di servizio
-    foreach ($rs as $r) {
-        echo '
+        // voci di servizio
+        foreach ($rs as $r) {
+            echo '
     <div class="col-md-3 hide" id="voce_'.$r['id'].'">
         <big><b>'.$r['id'].' - '.$r['descrizione'].'</b></big>
         <hr>';
 
-        for ($j = 0; $j < $n_mesi; ++$j) {
-            $id_mese = date('Ym', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month'));
-            $nome_mese = $mesi[intval(date('m', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month'))) - 1].' '.date('Y', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month'));
-            echo '
+            for ($j = 0; $j < $n_mesi; ++$j) {
+                $id_mese = date('Ym', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month'));
+                $nome_mese = $mesi[intval(date('m', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month'))) - 1].' '.date('Y', strtotime($rs2[0]['data_accettazione'].' +'.$j.' month'));
+                echo '
         <small>
             <label for="m_'.$id_mese.'_'.$r['id'].'">
                 <input type="checkbox" id="m_'.$id_mese.'_'.$r['id'].'" name="voce['.$id_mese.'][]" value="'.$r['id'].'">
                 '.$nome_mese.'
             </label>
         </small><br>';
-        }
+            }
 
-        echo '
+            echo '
     </div>';
-    }
+        }
 
         echo '
     <div class="clearfix"></div><br>';
@@ -317,16 +320,16 @@ else {
         <i class="fa fa-plus"></i> '.tr('Aggiungi').'
     </button>';
 
-    /*
-        Copia pianificazione da una già fatta per un impianto ad un'altra
-    */
-    // Opzione di copia pianificazione solo se ci sono ancora impianti non pianificati
-    $query2 = 'SELECT * FROM my_impianti WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).')';
+        /*
+            Copia pianificazione da una già fatta per un impianto ad un'altra
+        */
+        // Opzione di copia pianificazione solo se ci sono ancora impianti non pianificati
+        $query2 = 'SELECT * FROM my_impianti WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).')';
         $cont = $dbo->fetchNum($query2);
 
         if ($cont > 0) {
             // Elenco impianti già pianificati
-        echo '
+            echo '
     <hr>
 
     <div class="row">
@@ -346,7 +349,6 @@ else {
 
         echo '
 </form>';
-
     } else {
         echo '
 <p>'.tr('Le date di accettazione e conclusione del contratto non sono ancora state impostate').'</p>';

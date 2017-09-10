@@ -100,15 +100,15 @@ switch (post('op')) {
 
         if (empty($idconto_fornitore) && in_array($id_fornitore, $post['idtipoanagrafica'])) {
             // Calcolo prossimo numero cliente
-                $rs = $dbo->fetchArray("SELECT MAX(CAST(co_pianodeiconti3.numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti2.descrizione='Debiti fornitori e debiti diversi'");
+            $rs = $dbo->fetchArray("SELECT MAX(CAST(co_pianodeiconti3.numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti2.descrizione='Debiti fornitori e debiti diversi'");
             $new_numero = $rs[0]['max_numero'] + 1;
             $new_numero = str_pad($new_numero, 6, '0', STR_PAD_LEFT);
 
             $dbo->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, can_delete, can_edit) VALUES('.prepare($new_numero).', '.prepare($post['ragione_sociale']).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Debiti fornitori e debiti diversi'), 1, 1)");
             $idconto = $dbo->lastInsertedID();
 
-                // Collegamento conto
-                $dbo->query('UPDATE an_anagrafiche SET idconto_fornitore='.prepare($idconto).' WHERE idanagrafica='.prepare($id_record));
+            // Collegamento conto
+            $dbo->query('UPDATE an_anagrafiche SET idconto_fornitore='.prepare($idconto).' WHERE idanagrafica='.prepare($id_record));
         }
 
         break;
@@ -196,7 +196,9 @@ switch (post('op')) {
             echo json_encode(['id' => $id_record, 'text' => $ragione_sociale]);
         }
 
-        $_SESSION['infos'][] = str_replace('_TYPE_', '"'.$tipoanagrafica_dst.'"', tr('Aggiunta nuova anagrafica di tipo _TYPE_'));
+        $_SESSION['infos'][] = tr('Aggiunta nuova anagrafica di tipo _TYPE_', [
+            '_TYPE_' => '"'.$tipoanagrafica_dst.'"',
+        ]);
 
         break;
 

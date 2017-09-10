@@ -41,7 +41,9 @@ if (!empty($get['idriga'])) {
 }
 
 echo '
-<p>'.str_replace('_NUM_', $numero, tr('Ddt numero _NUM_')).'</p>
+<p>'.tr('Ddt numero _NUM_', [
+    '_NUM_' => $numero,
+]).'</p>
 
 <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="'.(!empty($idriga) ? 'editriga' : 'addriga').'">

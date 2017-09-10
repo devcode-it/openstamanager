@@ -79,7 +79,9 @@ switch (post('op')) {
             if (create_thumbnails($tmp, $filename, $upload_dir)) {
                 $dbo->query('UPDATE mg_articoli SET immagine01='.prepare($filename).' WHERE id='.prepare($id_record));
             } else {
-                $_SESSION['warnings'][] = str_replace('_DIR_', $upload_dir, tr('Errore durante il caricamento del file in _DIR_!'));
+                $_SESSION['warnings'][] = tr('Errore durante il caricamento del file in _DIR_!', [
+                    '_DIR_' => $upload_dir,
+                ]);
             }
         }
 
@@ -200,10 +202,15 @@ switch (post('op')) {
             if ($dbo->query($query)) {
                 // Movimento il magazzino se l'ho specificato nelle impostazioni
                 if (get_var("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
-                    add_movimento_magazzino($id_record, $n_prodotti, [], str_replace(['_SERIAL_INIZIO_', '_SERIAL_FINE_'], [$serial__start, $serial__end], tr('Carico magazzino con serial da _SERIAL_INIZIO_ a _SERIAL_FINE_')));
+                    add_movimento_magazzino($id_record, $n_prodotti, [], tr('Carico magazzino con serial da _SERIAL_INIZIO_ a _SERIAL_FINE_', [
+                        '_SERIAL_INIZIO_' => $serial__start,
+                        '_SERIAL_FINE_' => $serial__end,
+                    ]));
                 }
 
-                $_SESSION['infos'][] = str_replace('_NUM_', $n_prodotti, tr('Aggiunti _NUM_ prodotti!'));
+                $_SESSION['infos'][] = tr('Aggiunti _NUM_ prodotti!', [
+                    '_NUM_' => $n_prodotti,
+                ]);
             } else {
                 $_SESSION['errors'][] = tr("Errore durante l'inserimento!");
             }
@@ -220,7 +227,9 @@ switch (post('op')) {
         if ($dbo->query($query)) {
             // Movimento il magazzino se l'ho specificato nelle impostazioni
             if (get_var("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
-                add_movimento_magazzino($id_record, -1, [], str_replace(['_LOTTO_', '_SERIAL_', '_ALTRO_'], [$rs[0]['lotto'], $rs[0]['serial'], $rs[0]['altro']], tr('Eliminazione dal magazzino del prodotto con serial _SERIAL_')));
+                add_movimento_magazzino($id_record, -1, [], tr('Eliminazione dal magazzino del prodotto con serial _SERIAL_', [
+                    '_SERIAL_' => $rs[0]['serial'],
+                ]));
             }
 
             $_SESSION['infos'][] = tr('Prodotto rimosso!');

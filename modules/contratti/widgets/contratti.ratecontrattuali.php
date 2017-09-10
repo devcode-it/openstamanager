@@ -100,7 +100,9 @@ if (!empty($rsp)) {
         if ($n_sedi_pianificate == 1) {
             $n_sedi = tr('1 sede');
         } else {
-            $n_sedi = str_replace('_NUM_', $n_sedi_pianificate, tr('_NUM_ sedi'));
+            $n_sedi = tr('_NUM_ sedi', [
+                '_NUM_' => $n_sedi_pianificate,
+            ]);
         }
 
         // Visualizzo solo le rate non pagate

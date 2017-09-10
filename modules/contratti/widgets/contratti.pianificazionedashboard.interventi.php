@@ -69,7 +69,10 @@ if (!empty($rsp)) {
         if (!empty($r['idintervento'])) {
             $rsp2 = $dbo->fetchArray('SELECT id, codice, data FROM in_interventi WHERE id='.prepare($r['idintervento']));
 
-            echo Modules::link('Interventi', $rsp2[0]['id'], str_replace(['_NUM_', '_DATE_'], [$rsp2[0]['codice'],Translator::dateToLocale($rsp2[0]['data'])], tr('Intervento _NUM_ del _DATE_')));
+            echo Modules::link('Interventi', $rsp2[0]['id'], tr('Intervento _NUM_ del _DATE_', [
+                '_NUM_' => $rsp2[0]['codice'],
+                '_DATE_' => Translator::dateToLocale($rsp2[0]['data']),
+            ]));
         } else {
             echo '- '.('Nessuno').' -';
         }

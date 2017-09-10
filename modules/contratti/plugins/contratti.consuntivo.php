@@ -75,7 +75,10 @@ if (!empty($rscontratti)) {
         $totale_ore_impiegate += $t;
 
         $desc = nl2br($r['descrizione']);
-        $line = Modules::link('Interventi', $r['id'], str_replace(['_NUM_', '_DATE_'], [$r['codice'], Translator::dateToLocale($r['data'])], tr('Intervento <b>_NUM_</b> del <b>_DATE_</b>'))).'<br>'.$desc;
+        $line = Modules::link('Interventi', $r['id'], tr('Intervento <b>_NUM_</b> del <b>_DATE_</b>', [
+            '_NUM_' => $r['codice'],
+            '_DATE_' => Translator::dateToLocale($r['data']),
+        ])).'<br>'.$desc;
 
         // Inutilizzati
         $contratti[] = $line;
@@ -278,7 +281,7 @@ if (!empty($rscontratti)) {
     // Totali per stato
     echo '
     <tr>
-        <td colspan="3"><br><b>'.strtoupper(tr('Totale interventi per stato')).'</b></td>
+        <td colspan="3"><br><b>'.tr('Totale interventi per stato', [], ['upper' => true]).'</b></td>
     </tr>';
 
     foreach ($totale_x_stato as $stato => $tot) {

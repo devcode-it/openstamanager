@@ -30,7 +30,9 @@ switch (filter('op')) {
 
         // Verifico che la password sia di almeno x caratteri
         if (strlen($password) < $min_length) {
-            $_SESSION['errors'][] = str_replace('_MIN_', $min_length, tr('La password deve essere lunga almeno _MIN_ caratteri!'));
+            $_SESSION['errors'][] = tr('La password deve essere lunga almeno _MIN_ caratteri!', [
+                '_MIN_' => $min_length,
+            ]);
         } elseif ($password != $password_rep) {
             $_SESSION['errors'][] = tr('Le password non coincidono');
         } else {
@@ -80,7 +82,9 @@ switch (filter('op')) {
         if ($n == 0) {
             // Verifico che la password sia di almeno x caratteri
             if (strlen($password) < $min_length) {
-                $_SESSION['errors'][] = str_replace('_MIN_', $min_length, tr('La password deve essere lunga almeno _MIN_ caratteri!'));
+                $_SESSION['errors'][] = tr('La password deve essere lunga almeno _MIN_ caratteri!', [
+                    '_MIN_' => $min_length,
+                ]);
             } elseif ($password != $password_rep) {
                 $_SESSION['errors'][] = tr('Le password non coincidono');
             } else {
@@ -150,7 +154,6 @@ switch (filter('op')) {
         // Aggiunta dei permessi relativi alle viste
         $count = $dbo->fetchArray('SELECT COUNT(*) AS count FROM `zz_group_view` WHERE `id_gruppo` = '.prepare($id_record).' AND `id_vista` IN (SELECT `id` FROM `zz_views` WHERE `id_module`='.prepare($idmodulo).')');
         if (empty($count[0]['count'])) {
-
             $results = $dbo->fetchArray('SELECT `id_vista` FROM `zz_group_view` WHERE `id_vista` IN (SELECT `id` FROM `zz_views` WHERE `id_module`='.prepare($idmodulo).')');
             foreach ($results as $result) {
                 $dbo->attach('zz_group_view', ['id_vista' => $result['id_vista']], ['id_gruppo' => $id_record]);

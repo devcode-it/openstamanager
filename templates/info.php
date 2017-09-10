@@ -14,7 +14,10 @@ $replaces = [
     </td>
 
     <td align="right" style="width:97mm;">
-        '.str_replace(['_PAGE_', '_TOTAL_'], ['{PAGENO}', '{nb}'], tr('Pagina _PAGE_ di _TOTAL_')).'
+        '.tr('Pagina _PAGE_ di _TOTAL_', [
+            '_PAGE_' => '{PAGENO}',
+            '_TOTAL_' => '{nb}',
+        ]).'
     </td>
 </tr>
 </table>',
@@ -73,35 +76,17 @@ foreach ($replace as $prefix => $values) {
 
     $citta = '';
 
-    if ($values['cap'] != '') {
+    if (!empty($values['cap'])) {
         $citta .= $values['cap'];
     }
-    if ($values['citta'] != '') {
+    if (!empty($values['citta'])) {
         $citta .= ' '.$values['citta'];
     }
-    if ($values['provincia'] != '') {
+    if (!empty($values['provincia'])) {
         $citta .= ' ('.$values['provincia'].')';
     }
 
     $values['citta_full'] = $citta;
-
-    /*
-    if ($values['piva'] != $values['codicefiscale']) {
-        $values['piva'] = !empty($values['piva']) ? 'P.Iva: '.$values['piva'] : '';
-        $values['codicefiscale'] = !empty($values['codicefiscale']) ? 'C.F.: '.$values['codicefiscale'] : '';
-    } else {
-        $values['piva'] = !empty($values['piva']) ? 'P.Iva/C.F.: '.$values['piva'] : '';
-        $values['codicefiscale'] = '';
-    }
-
-    $values['capsoc'] = !empty($values['capsoc']) ? 'Cap.Soc.: '.$values['capsoc'] : '';
-    $values['sitoweb'] = !empty($values['sitoweb']) ? 'Web: '.$values['sitoweb'] : '';
-    $values['telefono'] = !empty($values['telefono']) ? 'Tel: '.$values['telefono'] : '';
-    $values['fax'] = !empty($values['fax']) ? 'Fax: '.$values['fax'] : '';
-    $values['cellulare'] = !empty($values['cellulare']) ? 'Cell: '.$values['cellulare'] : '';
-    $values['email'] = !empty($values['email']) ? 'Email: '.$values['email'] : '';
-    $values['codiceiban'] = !empty($values['codiceiban']) ? 'IBAN: '.$values['codiceiban'] : '';
-*/
 
     if ($key == 'c_') {
         $keys = array_unique(array_merge($keys, array_keys($values)));

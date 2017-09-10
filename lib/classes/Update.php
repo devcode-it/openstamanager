@@ -125,9 +125,9 @@ class Update
      */
     public static function getUpdate()
     {
-        if (!empty(self::getTodos())) {
-            return self::getTodos()[0];
-        }
+        $todos = self::getTodos();
+
+        return !empty($todos) ? $todos()[0] : null;
     }
 
     /**
@@ -149,7 +149,9 @@ class Update
      */
     public static function isUpdateAvailable()
     {
-        return !empty(self::getTodos());
+        $todos = self::getTodos();
+
+        return !empty($todos);
     }
 
     /**

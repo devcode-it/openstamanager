@@ -119,11 +119,12 @@ if (!empty($debugbarRenderer) && Auth::check()) {
     echo $debugbarRenderer->renderHead();
 }
 
+$hide_sidebar = get_var('Nascondere la barra sinistra di default');
 echo '
 
     </head>
 
-	<body class="skin-'.$theme.(!empty(get_var('Nascondere la barra sinistra di default')) ? ' sidebar-collapse' : '').(!Auth::check() ? ' hold-transition login-page' : '').'">
+	<body class="skin-'.$theme.(!empty($hide_sidebar) ? ' sidebar-collapse' : '').(!Auth::check() ? ' hold-transition login-page' : '').'">
 		<div class="wrapper">';
 
 if (Auth::check()) {
@@ -141,7 +142,7 @@ if (Auth::check()) {
             <div id="mini-loader" style="display:none;">
                 <div></div>
             </div>
-			
+
 			<!-- Loader senza overlay -->
 			<div id="tiny-loader" style="display:none;"></div>
 

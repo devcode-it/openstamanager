@@ -61,8 +61,9 @@ class Filter
      */
     public static function post($property)
     {
-        if (!empty(self::getPOST()) && isset(self::getPOST()[$property])) {
-            return self::getPOST()[$property];
+        $post = self::getPOST();
+        if (!empty($post) && isset($post[$property])) {
+            return $post[$property];
         }
     }
 
@@ -89,8 +90,9 @@ class Filter
      */
     public static function get($property)
     {
-        if (!empty(self::getGET()) && isset(self::getGET()[$property])) {
-            return self::getGET()[$property];
+        $get = self::getGET();
+        if (!empty($get) && isset($get[$property])) {
+            return $get[$property];
         }
     }
 
@@ -111,7 +113,7 @@ class Filter
         } else {
             $output = trim(self::getPurifier()->purify($input));
 
-            if (!empty($output) && !empty(Translator::getLocaleFormatter())) {
+            if (!empty($output)) {
                 if (Translator::getLocaleFormatter()->isNumber($output)) {
                     $output = Translator::numberToEnglish($output);
                 } elseif (Translator::getLocaleFormatter()->isTimestamp($output)) {

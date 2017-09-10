@@ -2,28 +2,6 @@
 
 use Stringy\Stringy as S;
 
-if (!function_exists('parse_ini_string')) {
-    /**
-     * Simulazione di "parse_ini_string".
-     *
-     * @param unknown $ini
-     * @param string  $process_sections
-     * @param unknown $scanner_mode
-     */
-    function parse_ini_string($ini, $process_sections = false, $scanner_mode = null)
-    {
-        // Generate a temporary file.
-        $tempname = tempnam('/tmp', 'ini');
-        $fp = fopen($tempname, 'w');
-        fwrite($fp, $ini);
-        $ini = parse_ini_file($tempname, !empty($process_sections));
-        fclose($fp);
-        @unlink($tempname);
-
-        return $ini;
-    }
-}
-
 if (!function_exists('array_column')) {
     /**
      * Pluck an array of values from an array.

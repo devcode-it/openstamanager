@@ -36,7 +36,7 @@
         "phpmailer/phpmailer": "^5.2",
         "spipu/html2pdf": "^5.0",
         "symfony/finder": "^3.3",
-        "symfony/translation": "^3.2"
+        "symfony/translation": "^3.3"
     },
     "autoload": {
         "psr-4": {

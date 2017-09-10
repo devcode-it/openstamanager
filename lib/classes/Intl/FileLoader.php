@@ -22,8 +22,9 @@ class FileLoader extends \Symfony\Component\Translation\Loader\FileLoader
         $result = [];
 
         $extension = strtolower(pathinfo($resource, PATHINFO_EXTENSION));
-        if (!empty($extension) && $extension != 'po' && !empty($this->getLoader($extension))) {
-            $result = $this->getLoader($extension)->loadResource($resource);
+        $loader = $this->getLoader($extension);
+        if (!empty($extension) && $extension != 'po' && !empty($loader)) {
+            $result = $loader->loadResource($resource);
 
             if (!empty($this->include_filename)) {
                 $result = array_combine(

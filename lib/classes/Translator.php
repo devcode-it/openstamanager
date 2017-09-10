@@ -22,22 +22,14 @@ class Translator extends Util\Singleton
 
     public function __construct($default_locale = 'it', $fallback_locales = ['it'])
     {
-        if (!empty($instance)) {
-            throw new Exception();
-        }
+        $translator = new Symfony\Component\Translation\Translator($default_locale);
+        $this->locale = $default_locale;
+        $translator->setFallbackLocales($fallback_locales);
 
-        if (version_compare(PHP_VERSION, '5.5.9') >= 0) {
-            $translator = new Symfony\Component\Translation\Translator($default_locale);
-            $this->locale = $default_locale;
-            $translator->setFallbackLocales($fallback_locales);
+        // Imposta la classe per il caricamento
+        $translator->addLoader('default', new Intl\FileLoader());
 
-            // Imposta la classe per il caricamento
-            $translator->addLoader('default', new Intl\FileLoader());
-
-            $this->translator = $translator;
-        }
-
-        $instance = $this;
+        $this->translator = $translator;
     }
 
     /**
@@ -60,24 +52,22 @@ class Translator extends Util\Singleton
      */
     protected function addLocales($path)
     {
-        if (!empty($this->translator)) {
-            // Individua i linguaggi disponibili
-            $dirs = glob($path.DIRECTORY_SEPARATOR.'*', GLOB_ONLYDIR);
-            foreach ($dirs as $dir) {
-                $this->addLocale(basename($dir));
-            }
+        // Individua i linguaggi disponibili
+        $dirs = glob($path.DIRECTORY_SEPARATOR.'*', GLOB_ONLYDIR);
+        foreach ($dirs as $dir) {
+            $this->addLocale(basename($dir));
+        }
 
-            // Aggiunge le singole traduzioni
-            foreach ($this->locales as $lang) {
-                $done = [];
+        // Aggiunge le singole traduzioni
+        foreach ($this->locales as $lang) {
+            $done = [];
 
-                $files = glob($path.DIRECTORY_SEPARATOR.$lang.DIRECTORY_SEPARATOR.'*.*');
-                foreach ($files as $file) {
-                    if (!in_array(basename($file), $done)) {
-                        $this->translator->addResource('default', $file, $lang);
+            $files = glob($path.DIRECTORY_SEPARATOR.$lang.DIRECTORY_SEPARATOR.'*.*');
+            foreach ($files as $file) {
+                if (!in_array(basename($file), $done)) {
+                    $this->translator->addResource('default', $file, $lang);
 
-                        $done[] = basename($file);
-                    }
+                    $done[] = basename($file);
                 }
             }
         }
@@ -125,9 +115,7 @@ class Translator extends Util\Singleton
     public function setLocale($locale)
     {
         if (!empty($locale) && $this->isLocaleAvailable($locale)) {
-            if (!empty($this->translator)) {
-                $this->translator->setLocale($locale);
-            }
+            $this->translator->setLocale($locale);
             $this->locale = $locale;
         }
     }
@@ -164,14 +152,7 @@ class Translator extends Util\Singleton
      */
     public static function translate($string, $parameters = [], $operations = [])
     {
-        $translator = self::getInstance()->getTranslator();
-
-        $result = !empty($translator) ? $translator->trans($string, $parameters) : $string;
-
-        // Sostituzione di default nel caso il traduttore non sia supportato
-        if (empty($translator)) {
-            $result = str_replace(array_keys($operations), array_values($operations), $result);
-        }
+        $result = self::getInstance()->getTranslator()->trans($string, $parameters);
 
         // Operazioni aggiuntive sul risultato
         if (!empty($operations)) {

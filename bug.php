@@ -186,7 +186,7 @@ echo '
 						<th class="text-right">'.tr('Versione OSM').':</th>
 
 						<td>
-                            {[ "type": "span", "placeholder": "'.tr('Versione OSM').'", "value": "'.$version.' ('.(!empty($revision) ? 'R'.$revision : tr('In sviluppo')).')" ]}
+                            {[ "type": "span", "placeholder": "'.tr('Versione OSM').'", "value": "'.$version.' ('.(!empty($revision) ? $revision : tr('In sviluppo')).')" ]}
 						</td>
 					</tr>
 				</table>

@@ -11,7 +11,7 @@ if (Auth::check()) {
 			<footer class="main-footer">
 				<span class="pull-right hidden-xs">
                     <strong>'.tr('Versione').' '.$version.'</strong>
-                    <small class="text-muted">('.(!empty($revision) ? 'R'.$revision : tr('In sviluppo')).')</small>
+                    <small class="text-muted">('.(!empty($revision) ? $revision : tr('In sviluppo')).')</small>
                 </span>
 				'.tr('OpenSTAManager').'
 			</footer>

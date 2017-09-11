@@ -122,7 +122,11 @@ $dbo = Database::getConnection();
 $continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (Auth::check() || API::isAPIRequest());
 
 if (!$continue && slashes($_SERVER['SCRIPT_FILENAME']) != slashes(DOCROOT.'/index.php')) {
-    redirect(ROOTDIR.'/index.php?op=logout');
+    if (Auth::check()) {
+        Auth::logout();
+    }
+
+    redirect(ROOTDIR.'/index.php');
     exit();
 }
 

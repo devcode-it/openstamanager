@@ -32,13 +32,10 @@ switch ($op) {
                     $_SESSION['infos'][] = tr('Backup saltato perché già esistente!');
                 } elseif (empty($backup_dir)) {
                     $_SESSION['errors'][] = tr('Non è possibile eseguire i backup poichè la cartella di backup non è stata impostata!!!');
-                } elseif (directory($backup_dir)) {
-                    $_SESSION['infos'][] = tr('La cartella di backup è stata creata correttamente.');
-                    if (do_backup()) {
-                        $_SESSION['infos'][] = tr('Backup automatico eseguito correttamente!');
-                    }
+                } elseif (directory($backup_dir) && do_backup()) {
+                    $_SESSION['infos'][] = tr('Backup automatico eseguito correttamente!');
                 } else {
-                    $_SESSION['errors'][] = tr('Non è stato possibile creare la cartella di backup!');
+                    $_SESSION['errors'][] = tr('Errore durante la generazione del backup automatico!');
                 }
             }
         }

@@ -88,7 +88,7 @@ class HTMLBuilder
      */
     public static function replace($html)
     {
-        preg_match_all('/'.preg_quote(self::$open['manager']).'(.+?)'.preg_quote(self::$close['manager']).'/i', $html, $managers);
+        preg_match_all('/'.preg_quote(self::$open['manager']).'(.+?)'.preg_quote(self::$close['manager']).'/is', $html, $managers);
 
         foreach ($managers[0] as $value) {
             $json = self::decode($value, 'manager');
@@ -97,7 +97,7 @@ class HTMLBuilder
             $html = str_replace($value, !empty($class) ? $class->manage($json) : '', $html);
         }
 
-        preg_match_all('/'.preg_quote(self::$open['handler']).'(.+?)'.preg_quote(self::$close['handler']).'/i', $html, $handlers);
+        preg_match_all('/'.preg_quote(self::$open['handler']).'(.+?)'.preg_quote(self::$close['handler']).'/is', $html, $handlers);
 
         foreach ($handlers[0] as $value) {
             $json = self::decode($value, 'handler');
@@ -150,6 +150,9 @@ class HTMLBuilder
     protected static function decode($string, $type)
     {
         $string = '{'.substr($string, strlen(self::$open[$type]), -strlen(self::$close[$type])).'}';
+
+        // Fix per contenuti con newline integrate
+        $string = str_replace(["\n", "\r"], ['\\n', '\\r'], $string);
 
         $json = (array) json_decode($string, true, 2);
 

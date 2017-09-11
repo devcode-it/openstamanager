@@ -256,8 +256,6 @@ class Auth extends \Util\Singleton
             $this->first_module = null;
 
             session_unset();
-            session_destroy();
-            session_start();
             session_regenerate_id();
 
             $_SESSION['infos'] = [];

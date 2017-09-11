@@ -59,7 +59,7 @@ foreach ($rs_gen as $r) {
     $sconto = $r['sconto'];
     $iva = $r['iva'];
 
-    if (str_contains($r['descrizione'], 'SCONTO')) {
+    if (empty($r['sconto_globale'])) {
         $sconto_generico = $r['subtotale'];
         $iva_gen += $r['iva'];
     } else {

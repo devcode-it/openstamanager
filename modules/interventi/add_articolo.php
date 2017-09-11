@@ -13,6 +13,10 @@ $can_edit_prezzi = (in_array('Amministratori', $gruppi)) || (get_var('Mostra i p
 $idriga = get('idriga');
 $idautomezzo = (get('idautomezzo') == 'undefined') ? '' : get('idautomezzo');
 
+// Lettura idanagrafica cliente e percentuale di sconto/rincaro in base al listino
+$rs = $dbo->fetchArray('SELECT idanagrafica FROM in_interventi WHERE id='.prepare($id_record));
+
+$idanagrafica = $rs[0]['idanagrafica'];
 if (empty($idriga)) {
     $op = 'addarticolo';
     $button = '<i class="fa fa-plus"></i> '.tr('Aggiungi');
@@ -24,10 +28,15 @@ if (empty($idriga)) {
     $um = '';
 
     $prezzo_vendita = '0';
-
     $sconto_unitario = 0;
 
     $idimpianto = 0;
+
+    $listino = $dbo->fetchArray('SELECT prc_guadagno FROM mg_listini WHERE id = (SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica = '.prepare($idanagrafica).')');
+    if (!empty($listino[0]['prc_guadagno'])) {
+        $sconto = $listino[0]['prc_guadagno'];
+        $tipo_sconto = 'PRC';
+    }
 } else {
     $op = 'editarticolo';
     $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
@@ -52,10 +61,6 @@ if (empty($idriga)) {
 
     $idimpianto = $rsr[0]['idimpianto'];
 }
-
-// Lettura idanagrafica cliente e percentuale di sconto/rincaro in base al listino
-$rs = $dbo->fetchArray('SELECT idanagrafica FROM in_interventi WHERE id='.prepare($id_record));
-$idanagrafica = $rs[0]['idanagrafica'];
 
 /*
     Form di inserimento

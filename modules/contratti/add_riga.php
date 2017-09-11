@@ -6,7 +6,7 @@ $idcontratto = $get['idcontratto'];
 $idriga = $get['idriga'];
 
 // Info contratto
-$q = 'SELECT * FROM co_contratti WHERE id='.prepare($idcontratto);
+$q = 'SELECT *, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica=co_contratti.idanagrafica)) AS prc_guadagno FROM co_contratti WHERE id='.prepare($idcontratto);
 $rs = $dbo->fetchArray($q);
 $numero = $rs[0]['numero'];
 $idanagrafica = $rs[0]['idanagrafica'];
@@ -21,6 +21,12 @@ if (empty($idriga)) {
     $um = '';
     $prezzo = 0;
     $sconto = 0;
+    $tipo_sconto = '';
+
+    if (!empty($rs[0]['prc_guadagno'])) {
+        $sconto = $rs[0]['prc_guadagno'];
+        $tipo_sconto = 'PRC';
+    }
 
     // Leggo l'iva predefinita dall'anagrafica e se non c'è leggo quella predefinita generica
     $rsa = $dbo->fetchArray('SELECT idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
@@ -37,6 +43,7 @@ if (empty($idriga)) {
     $idiva = $rsr[0]['idiva'];
     $prezzo = $rsr[0]['subtotale'] / $rsr[0]['qta'];
     $sconto = $rsr[0]['sconto'];
+    $tipo_sconto = $rsr[0]['tipo_sconto'];
 }
 
 echo '
@@ -55,7 +62,7 @@ echo '
 
 echo '
     <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva_articolo", "required": 1, "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "'.$idiva.'" ]}
+        {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "'.$idiva.'" ]}
     </div>';
 
 // Quantità
@@ -119,7 +126,7 @@ echo '
 // Sconto unitario
 echo '
     <div class="col-md-6">
-        {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "&euro;" ]}
+        {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
     </div>';
 
 echo '

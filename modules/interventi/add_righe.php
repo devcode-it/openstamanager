@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 $idriga = filter('idriga');
 
 //Lettura idanagrafica cliente e percentuale di sconto/rincaro in base al listino
-$rs = $dbo->fetchArray('SELECT idanagrafica, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino FROM an_anagrafiche WHERE idanagrafica=.in_interventi.idanagrafica)) AS prc_sconto FROM in_interventi WHERE id='.prepare($id_record));
+$rs = $dbo->fetchArray('SELECT idanagrafica, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica=.in_interventi.idanagrafica)) AS prc_sconto FROM in_interventi WHERE id='.prepare($id_record));
 $idanagrafica = $rs[0]['idanagrafica'];
 $prc_sconto = $rs[0]['prc_sconto'];
 
@@ -19,6 +19,11 @@ if (empty($idriga)) {
     $um = '';
     $prezzo_vendita = '0';
     $prezzo_acquisto = '0';
+
+    if (!empty($rs[0]['prc_guadagno'])) {
+        $sconto = $rs[0]['prc_guadagno'];
+        $tipo_sconto = 'PRC';
+    }
 } else {
     $op = 'editriga';
     $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
@@ -90,8 +95,10 @@ echo '
 
 echo '
     <button type="submit" class="btn btn-primary pull-right">'.$button.'</button>
-</form>
-<div class="clearfix"></div>';
+</form>';
+
+echo '
+<script src="'.$rootdir.'/lib/init.js"></script>';
 
 ?>
 
@@ -115,5 +122,3 @@ echo '
         $('#add-righe').ajaxForm( options );
     });
 </script>
-
-<script type="text/javascript" src="<?php echo $rootdir ?>/lib/init.js"></script>

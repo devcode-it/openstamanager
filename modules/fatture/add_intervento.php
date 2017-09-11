@@ -72,14 +72,8 @@ echo '
 // Costo unitario
 echo '
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "icon-after": "&euro;", "disabled": 1 ]}
-        </div>';
-
-// Sconto unitario
-echo '
-        <div class="col-md-6">
-            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "icon-after": "choice|untprc" ]}
         </div>
     </div>';
 

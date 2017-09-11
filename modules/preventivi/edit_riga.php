@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 $idriga = get('idriga');
 
 // Info preventivo
-$q = 'SELECT numero, idanagrafica FROM co_preventivi WHERE id='.prepare($id_record);
+$q = 'SELECT numero, idanagrafica, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica=co_preventivi.idanagrafica)) AS prc_guadagno  FROM co_preventivi WHERE id='.prepare($id_record);
 $rs = $dbo->fetchArray($q);
 $numero = $rs[0]['numero'];
 $idanagrafica = $rs[0]['idanagrafica'];
@@ -22,6 +22,11 @@ if (empty($idriga)) {
     $idiva = get_var('Iva predefinita');
     $subtot = 0;
     $sconto = 0;
+
+    if (!empty($rs[0]['prc_guadagno'])) {
+        $sconto = $rs[0]['prc_guadagno'];
+        $tipo_sconto = 'PRC';
+    }
 } else {
     $op = 'editriga';
     $button = tr('Modifica');

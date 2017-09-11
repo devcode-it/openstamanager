@@ -68,9 +68,9 @@ if (!empty($rs_art)) {
         <td class="text-right">
             '.Translator::numberToLocale($r['subtotale']).' &euro;';
 
-        if ($r['sconto'] > 0) {
-            echo '<br>
-            <small class="help-block">- sconto '.Translator::numberToLocale($r['sconto'] * $r['qta']).' &euro;</small>';
+        if ($r['sconto_unitario'] > 0) {
+            echo '
+            <br><small class="label label-danger">- sconto '.Translator::numberToLocale($r['sconto_unitario']).($r['tipo_sconto'] == 'PRC' ? '%' : ' &euro;').'</small>';
         }
 
         echo '
@@ -80,7 +80,7 @@ if (!empty($rs_art)) {
         echo '
         <td class="text-center">';
 
-        if ($records[0]['stato'] != 'Pagato') {
+        if ($records[0]['stato'] != 'Pagato' && empty($r['sconto_globale'])) {
             echo '
             <form action="'.$rootdir.'/editor.php?id_module='.Modules::getModule('Contratti')['id'].'&id_record='.$id_record.'" method="post" id="delete-form-'.$r['id'].'" role="form">
                 <input type="hidden" name="backto" value="record-edit">
@@ -103,9 +103,9 @@ if (!empty($rs_art)) {
     </tr>';
 
         $iva_art += $r['iva'];
-        $imponibile_art += $r['subtotale'] - ($r['sconto'] * $r['qta']);
+        $imponibile_art += $r['subtotale'] - $r['sconto'];
         $imponibile_nosconto += $r['subtotale'];
-        $sconto_art += $r['sconto'] * $r['qta'];
+        $sconto_art += $r['sconto'];
     }
 }
 

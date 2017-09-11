@@ -6,17 +6,25 @@ $module = Modules::getModule($id_module);
 
 if ($module['name'] == 'Ddt di vendita') {
     $dir = 'entrata';
+
+    $listino = 'idlistino_vendite';
 } else {
     $dir = 'uscita';
+
+    $listino = 'idlistino_acquisti';
 }
 $_SESSION['superselect']['dir'] = $dir;
 
 // Info documento
-$q = 'SELECT *, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino FROM an_anagrafiche WHERE idanagrafica=dt_ddt.idanagrafica)) AS prc_guadagno FROM dt_ddt WHERE id='.prepare($id_record);
+$q = 'SELECT *, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT '.$listino.' FROM an_anagrafiche WHERE idanagrafica=dt_ddt.idanagrafica)) AS prc_guadagno FROM dt_ddt WHERE id='.prepare($id_record);
 $rs = $dbo->fetchArray($q);
 $numero = (!empty($rs[0]['numero_esterno'])) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
 $idanagrafica = $rs[0]['idanagrafica'];
-$prc_guadagno = $rs[0]['prc_guadagno'];
+
+if (!empty($rs[0]['prc_guadagno'])) {
+    $sconto = $rs[0]['prc_guadagno'];
+    $tipo_sconto = 'PRC';
+}
 
 /*
     Form di inserimento riga documento
@@ -78,7 +86,7 @@ echo '
 // Sconto unitario
 echo '
         <div class="col-md-3">
-            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "icon-after": "choice|untprc" ]}
+        {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|  '.$tipo_sconto.'" ]}
         </div>
     </div>';
 

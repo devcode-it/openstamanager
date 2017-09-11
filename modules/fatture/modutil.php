@@ -736,7 +736,7 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
     $descrizione = tr('Sconto', [], ['upper' => true]);
 
     // Rimozione dello sconto precedente
-    $dbo->query('DELETE FROM '.$tables['row']." WHERE descrizione LIKE '%".$descrizione."%' AND ".$fields['row'].'='.prepare($id_record));
+    $dbo->query('DELETE FROM '.$tables['row'].' WHERE sconto_globale = 1 AND '.$fields['row'].'='.prepare($id_record));
 
     // Individuazione del nuovo sconto
     $sconto = $dbo->select($tables['parent'], ['sconto_globale', 'tipo_sconto_globale'], [$fields['parent'] => $id_record]);
@@ -766,6 +766,7 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
             'idiva' => $idiva,
             'desc_iva' => $rsi[0]['descrizione'],
             'iva' => $iva,
+            'sconto_globale' => 1,
             '#order' => '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM '.$tables['row'].' AS t WHERE '.$fields['row'].'='.prepare($id_record).')',
         ];
 

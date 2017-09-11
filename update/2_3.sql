@@ -86,11 +86,13 @@ DROP TABLE `co_contratti_interventi`;
 ALTER TABLE `dt_righe_ddt` ADD `desc_iva` varchar(255) NOT NULL AFTER `idiva`;
 ALTER TABLE `co_righe_preventivi` ADD `desc_iva` varchar(255) NOT NULL AFTER `idiva`;
 ALTER TABLE `or_righe_ordini` ADD `desc_iva` varchar(255) NOT NULL AFTER `idiva`;
+ALTER TABLE `co_righe2_contratti` ADD `desc_iva` varchar(255) NOT NULL AFTER `idiva`;
 
 -- Fix per l'ordinamento delle righe in Preventivi, DDT e Ordini
 ALTER TABLE `co_righe_preventivi` ADD `order` tinyint(11) NOT NULL AFTER `qta`;
 ALTER TABLE `dt_righe_ddt` ADD `order` tinyint(11) NOT NULL AFTER `qta_evasa`;
 ALTER TABLE `or_righe_ordini` ADD `order` tinyint(11) NOT NULL AFTER `qta_evasa`;
+ALTER TABLE `co_righe2_contratti` ADD `order` tinyint(11) NOT NULL AFTER `qta`;
 ALTER TABLE `co_righe_documenti` CHANGE `ordine` `order` int(11) NOT NULL;
 
 -- Aggiungo idconto anche per le righe delle fatture e allineamento (copia idconto nelle righe delle fatture, solo per i conti di entrata  e uscita)
@@ -114,11 +116,11 @@ ALTER TABLE `or_ordini` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_
 ALTER TABLE `dt_ddt` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
 ALTER TABLE `in_interventi` ADD `sconto_globale` decimal(12, 4) NOT NULL, ADD `tipo_sconto_globale` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT';
 
-ALTER TABLE `co_righe_documenti` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
-ALTER TABLE `co_righe_preventivi` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
-ALTER TABLE `co_righe2_contratti` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
-ALTER TABLE `or_righe_ordini` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
-ALTER TABLE `dt_righe_ddt` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
+ALTER TABLE `co_righe_documenti` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`, ADD `sconto_globale` boolean NOT NULL DEFAULT 0 AFTER `tipo_sconto`;
+ALTER TABLE `co_righe_preventivi` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`, ADD `sconto_globale` boolean NOT NULL DEFAULT 0 AFTER `tipo_sconto`;
+ALTER TABLE `co_righe2_contratti` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`, ADD `sconto_globale` boolean NOT NULL DEFAULT 0 AFTER `tipo_sconto`;
+ALTER TABLE `or_righe_ordini` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`, ADD `sconto_globale` boolean NOT NULL DEFAULT 0 AFTER `tipo_sconto`;
+ALTER TABLE `dt_righe_ddt` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`, ADD `sconto_globale` boolean NOT NULL DEFAULT 0 AFTER `tipo_sconto`;
 
 ALTER TABLE `in_righe_interventi` ADD `sconto` decimal(12, 4) NOT NULL, ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
 ALTER TABLE `mg_articoli_interventi` ADD `sconto_unitario` decimal(12, 4) NOT NULL AFTER `sconto`, ADD `tipo_sconto` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `sconto_unitario`;
@@ -762,8 +764,14 @@ UPDATE `zz_modules` SET `title` = `name` WHERE `title` = '';
 ALTER TABLE `co_iva` ADD `dicitura` varchar(255);
 
 -- Miglioramento della gestione dei pagamenti predefiniti
-ALTER TABLE `an_anagrafiche` CHANGE `idpagamento` `idpagamento_vendite` int(11), ADD `idpagamento_acquisti` int(11);
-UPDATE `an_anagrafiche` SET `idpagamento_acquisti` = `idpagamento_vendite` WHERE `idpagamento_acquisti` IS NULL;
+ALTER TABLE `an_anagrafiche` CHANGE `idpagamento` `idpagamento_vendite` int(11), ADD `idpagamento_acquisti` int(11) AFTER `idpagamento_vendite`;
+UPDATE `an_anagrafiche` SET `idpagamento_vendite` = NULL WHERE `idpagamento_vendite` = 0;
+UPDATE `an_anagrafiche` SET `idpagamento_acquisti` = `idpagamento_vendite` WHERE `idpagamento_vendite` IS NOT NULL;
+
+-- Miglioramento della gestione dei listini predefiniti
+ALTER TABLE `an_anagrafiche` CHANGE `idlistino` `idlistino_vendite` int(11), ADD `idlistino_acquisti` int(11) AFTER `idlistino_vendite`;
+UPDATE `an_anagrafiche` SET `idlistino_vendite` = NULL WHERE `idlistino_vendite` = 0;
+UPDATE `an_anagrafiche` SET `idlistino_acquisti` = `idlistino_vendite` WHERE `idlistino_vendite` IS NOT NULL;
 
 -- Rimozione data_sla e ora_sla
 ALTER TABLE `in_interventi` DROP `data_sla`, DROP `ora_sla`;

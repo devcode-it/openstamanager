@@ -78,7 +78,7 @@ if (!empty($rs)) {
         echo '
             <td class="text-center">';
 
-        if ($records[0]['stato'] != 'Pagato' && !str_contains($r['descrizione'], 'SCONTO')) {
+        if ($records[0]['stato'] != 'Pagato' && empty($r['sconto_globale'])) {
             echo "
                 <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
                     <input type='hidden' name='backto' value='record-edit'>
@@ -94,7 +94,7 @@ if (!empty($rs)) {
                 </form>";
         }
 
-        if (!str_contains($r['descrizione'], 'SCONTO')) {
+        if (empty($r['sconto_globale'])) {
             echo '
                 <div class="handle clickable" style="padding:10px">
                     <i class="fa fa-sort"></i>

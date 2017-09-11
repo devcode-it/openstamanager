@@ -49,23 +49,6 @@ switch (post('op')) {
         $dbo->query('INSERT INTO co_preventivi(idanagrafica, nome, numero, idagente, idstato, idtipointervento, data_bozza, data_conclusione, idiva, idpagamento) VALUES ('.prepare($idanagrafica).', '.prepare($nome).', '.prepare($numero).', '.prepare($idagente).", (SELECT `id` FROM `co_statipreventivi` WHERE `descrizione`='Bozza'), ".prepare($idtipointervento).', NOW(), DATE_ADD(NOW(), INTERVAL +1 MONTH), '.prepare($idiva).', '.prepare($idpagamento).')');
         $id_record = $dbo->lastInsertedID();
 
-        $listino = $dbo->fetchArray('SELECT prc_guadagno FROM mg_listini WHERE id = (SELECT idlistino FROM an_anagrafiche WHERE idanagrafica = '.prepare($idanagrafica).')');
-
-        if (!empty($listino)) {
-            $dbo->update('co_preventivi', [
-                'tipo_sconto_globale' => 'PRC',
-                'sconto_globale' => abs($listino[0]['prc_guadagno']),
-            ], ['id' => $id_record]);
-
-            aggiorna_sconto([
-                'parent' => 'co_preventivi',
-                'row' => 'co_righe_preventivi',
-            ], [
-                'parent' => 'id',
-                'row' => 'idpreventivo',
-            ], $id_record);
-        }
-
         /*
         // inserisco righe standard preventivo
         // ore lavoro

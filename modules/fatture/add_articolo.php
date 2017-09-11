@@ -7,16 +7,25 @@ $module = Modules::getModule($id_module);
 if ($module['name'] == 'Fatture di vendita') {
     $dir = 'entrata';
     $conti = 'conti-vendite';
+
+    $listino = 'idlistino_vendite';
+
 } else {
     $dir = 'uscita';
     $conti = 'conti-acquisti';
+
+    $listino = 'idlistino_acquisti';
 }
 
 // Info documento
-$q = 'SELECT *, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino FROM an_anagrafiche WHERE idanagrafica=co_documenti.idanagrafica)) AS prc_guadagno FROM co_documenti WHERE id='.prepare($id_record);
+$q = 'SELECT *, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT '.$listino.' FROM an_anagrafiche WHERE idanagrafica=co_documenti.idanagrafica)) AS prc_guadagno FROM co_documenti WHERE id='.prepare($id_record);
 $record = $dbo->fetchArray($q);
 $numero = ($record[0]['numero_esterno'] != '') ? $record[0]['numero_esterno'] : $record[0]['numero'];
-$prc_guadagno = $record[0]['prc_guadagno'];
+
+if (!empty($rs[0]['prc_guadagno'])) {
+    $sconto = $rs[0]['prc_guadagno'];
+    $tipo_sconto = 'PRC';
+}
 
 $idconto = $record[0]['idconto'];
 $idanagrafica = $record[0]['idanagrafica'];
@@ -99,7 +108,7 @@ echo '
 // Sconto unitario
 echo '
         <div class="col-md-3">
-            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "icon-after": "choice|untprc" ]}
+            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|  '.$tipo_sconto.'" ]}
         </div>
     </div>';
 

@@ -73,3 +73,6 @@ echo '
         {[ "type": "number", "label": "'.tr('Sconto globale').'", "name": "sconto_globale", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
     </div>
 </div>';
+
+echo '
+<script src="'.$rootdir.'/lib/init.js"></script>';

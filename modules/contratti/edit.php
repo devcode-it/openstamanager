@@ -103,6 +103,17 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
 			</div>
 
+            <div class="row">
+                <div class="col-md-3">
+                    {[ "type": "number", "label": "<?php echo tr('Sconto totale') ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr("Sconto complessivo del contratto"); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
+if ($records[0]['stato'] == 'Emessa') {
+    echo ', "disabled" : 1';
+}
+?> ]}
+                </div>
+            </div>
+
+
 			<div class="row">
 				<div class="col-md-12">
 					{[ "type": "textarea", "label": "<?php echo tr('Esclusioni'); ?>", "name": "esclusioni", "class": "autosize", "value": "$esclusioni$" ]}

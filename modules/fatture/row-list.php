@@ -25,6 +25,9 @@ if (!empty($rs)) {
     foreach ($rs as $r) {
         $extra = '';
 
+        $modulo = null;
+        $id  = null;
+
         // Articoli
         if (!empty($r['idarticolo'])) {
             $modulo = Modules::getModule('Articoli')['id'];
@@ -69,9 +72,6 @@ if (!empty($rs)) {
         }
         // Righe generiche
         else {
-            $modulo = 0;
-            $id = 0;
-
             $delete = 'unlink_riga';
         }
 
@@ -95,6 +95,10 @@ if (!empty($rs)) {
             <br>'.tr('SN').': '.implode(', ', $serials);
             }
         }
+
+        $descrizione = null;
+        $ref = null;
+        $ref_id  = null;
 
         // Aggiunta riferimento a ordine
         if (!empty($r['idordine'])) {
@@ -180,7 +184,7 @@ if (!empty($rs)) {
         echo '
         <td class="text-center">';
 
-        if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa' && !str_contains($r['descrizione'], 'SCONTO')) {
+        if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa' && empty($r['sconto_globale'])) {
             echo "
             <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>
@@ -207,7 +211,7 @@ if (!empty($rs)) {
             </form>";
         }
 
-        if (!str_contains($r['descrizione'], 'SCONTO')) {
+        if (empty($r['sconto_globale'])) {
             echo '
             <div class="handle clickable" style="padding:10px">
                 <i class="fa fa-sort"></i>

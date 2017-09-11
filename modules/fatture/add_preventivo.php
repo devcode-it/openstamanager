@@ -34,7 +34,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "required": 1, "values": "query=SELECT id, CONCAT(\'Preventivo numero \', numero, \' - \', nome) AS descrizione, (SELECT SUM(subtotale) FROM co_righe_preventivi WHERE idpreventivo=co_preventivi.id GROUP BY idpreventivo) AS subtot, (SELECT SUM(sconto) FROM co_righe_preventivi WHERE idpreventivo=co_preventivi.id GROUP BY idpreventivo) AS sconto FROM co_preventivi WHERE idanagrafica='.prepare($idanagrafica).' AND id NOT IN (SELECT idpreventivo FROM co_righe_documenti WHERE NOT idpreventivo=NULL) AND idstato IN( SELECT id FROM co_statipreventivi WHERE descrizione=\'Accettato\' OR descrizione=\'In lavorazione\' OR descrizione=\'In attesa di conferma\')", "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.text); $(\'#prezzo\').val($data.subtot); $(\'#sconto\').val($data.sconto);\"" ]}
+            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "required": 1, "values": "query=SELECT id, CONCAT(\'Preventivo numero \', numero, \' - \', nome) AS descrizione, (SELECT SUM(subtotale) FROM co_righe_preventivi WHERE idpreventivo=co_preventivi.id GROUP BY idpreventivo) - (SELECT SUM(sconto) FROM co_righe_preventivi WHERE idpreventivo=co_preventivi.id GROUP BY idpreventivo) AS subtot FROM co_preventivi WHERE idanagrafica='.prepare($idanagrafica).' AND id NOT IN (SELECT idpreventivo FROM co_righe_documenti WHERE NOT idpreventivo=NULL) AND idstato IN( SELECT id FROM co_statipreventivi WHERE descrizione=\'Accettato\' OR descrizione=\'In lavorazione\' OR descrizione=\'In attesa di conferma\')", "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.text); $(\'#prezzo\').val($data.subtot);\"" ]}
         </div>
 
         <div class="col-md-6">
@@ -69,14 +69,8 @@ echo '
 // Costo unitario
 echo '
     <div class="row">
-        <div class="col-md-6">
-            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "icon-after": "&euro;" ]}
-        </div>';
-
-// Sconto unitario
-echo '
-        <div class="col-md-6">
-            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "icon-after": "choice|untprc" ]}
+        <div class="col-md-12">
+            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "icon-after": "&euro;", "disabled": 1 ]}
         </div>
     </div>';
 

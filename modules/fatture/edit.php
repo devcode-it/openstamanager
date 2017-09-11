@@ -205,7 +205,7 @@ if ($records[0]['stato'] == 'Pagato') {
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo tr('Sconto totale') ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr("Sconto complessivo della fattura. Viene impostato automaticamente se il cliente ha un listino associato."); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
+                    {[ "type": "number", "label": "<?php echo tr('Sconto totale') ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr('Sconto complessivo della fattura'); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
 if ($records[0]['stato'] == 'Emessa') {
     echo ', "disabled" : 1';
 }

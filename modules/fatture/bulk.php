@@ -9,7 +9,7 @@ switch (post('op')) {
         // Rimozione dei contenuti precedenti
         $files = glob($dir.'/*.zip');
         foreach ($files as $file) {
-            unlink($file);
+            delete($file);
         }
 
         // Selezione delle fatture da stampare
@@ -38,10 +38,10 @@ switch (post('op')) {
             create_zip($dir.'tmp/', $file);
 
             // Invio al browser dello zip
-            force_download($file);
+            download($file);
 
             // Rimozione dei contenuti
-            deltree($dir.'tmp/');
+            delete($dir.'tmp/');
         }
 
         break;

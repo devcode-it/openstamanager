@@ -29,7 +29,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     }
 
     // Controllo sui permessi di scrittura per il file system
-    elseif ((!is_dir($upload_dir) && !create_dir($upload_dir)) || (is_dir($upload_dir) && !is_writable($upload_dir))) {
+    elseif (!directory($upload_dir)) {
         $_SESSION['errors'][] = tr('Non hai i permessi di scrittura nella cartella _DIR_!', [
             '_DIR_' => '"files"',
         ]);
@@ -192,7 +192,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 
             $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare($filename));
 
-            if (unlink($upload_dir.'/'.$filename)) {
+            if (delete($upload_dir.'/'.$filename)) {
                 $query = 'DELETE FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare($filename);
                 if ($dbo->query($query)) {
                     $_SESSION['infos'][] = tr('File _FILE_ eliminato!', [
@@ -212,7 +212,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 } elseif (filter('op') == 'download_file') {
     $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare(filter('filename')));
 
-    force_download($rs[0]['original'], $upload_dir.'/'.$rs[0]['filename']);
+    download($upload_dir.'/'.$rs[0]['filename'], $rs[0]['original']);
 }
 
 if (Modules::getPermission($permesso) == 'rw') {

@@ -48,7 +48,8 @@ switch (post('op')) {
         $nomefile = post('nomefile');
 
         if (!empty($nomefile)) {
-            unlink($path.$nomefile);
+            delete($path.$nomefile);
+
             $_SESSION['infos'][] = tr('File _FILE_ rimosso correttamente!', [
                 '_FILE_' => "'".$nomefile."'",
             ]);

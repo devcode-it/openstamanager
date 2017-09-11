@@ -90,9 +90,9 @@ switch (post('op')) {
             $filename = post('immagine01');
             $f = pathinfo($filename);
 
-            unlink($upload_dir.'/'.$f['filename'].'.'.$f['extension']);
-            unlink($upload_dir.'/'.$f['filename'].'_thumb100.'.$f['extension']);
-            unlink($upload_dir.'/'.$f['filename'].'_thumb250.'.$f['extension']);
+            delete($upload_dir.'/'.$f['filename'].'.'.$f['extension']);
+            delete($upload_dir.'/'.$f['filename'].'_thumb100.'.$f['extension']);
+            delete($upload_dir.'/'.$f['filename'].'_thumb250.'.$f['extension']);
 
             $dbo->query("UPDATE mg_articoli SET immagine01 = '' WHERE id=".prepare($id_record));
         }

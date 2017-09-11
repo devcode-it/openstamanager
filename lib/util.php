@@ -174,7 +174,7 @@ if (!function_exists('secure_random_string')) {
     }
 }
 
-if (!function_exists('force_download')) {
+if (!function_exists('download')) {
     /**
      * Transmit headers that force a browser to display the download file
      * dialog. Cross browser compatible. Only fires if headers have not
@@ -190,9 +190,12 @@ if (!function_exists('force_download')) {
      *
      * @return bool
      */
-    function force_download($filename, $content = false)
+    function download($file, $filename = null)
     {
         if (!headers_sent()) {
+            $filename = !empty($filename) ? $filename : basename($file);
+            $content = !is_file($file) ? $file : file_get_contents($file);
+
             // Required for some browsers
             if (ini_get('zlib.output_compression')) {
                 @ini_set('zlib.output_compression', 'Off');
@@ -209,20 +212,10 @@ if (!function_exists('force_download')) {
             header('Content-Type: application/force-download');
             header('Content-Transfer-Encoding: binary');
 
-            if (empty($content) && is_file($filename)) {
-                $content = $filename;
-            }
-
-            if (is_file($content)) {
-                $content = file_get_contents($content);
-            }
-
             ob_clean();
             flush();
 
-            if ($content) {
-                echo $content;
-            }
+            echo $content;
 
             return true;
         }

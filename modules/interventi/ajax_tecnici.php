@@ -129,7 +129,7 @@ if (!empty($rs2)) {
                 <input type="hidden" name="orario_inizio['.$id.']" value="'.$orario_inizio.'">';
         } else {
             echo '
-            {[ "type": "timestamp", "name": "orario_inizio['.$id.']", "id": "inizio_'.$id.'", "value": "'.$orario_inizio.'", "class": "orari" ]}';
+            {[ "type": "timestamp", "name": "orario_inizio['.$id.']", "id": "inizio_'.$id.'", "value": "'.$orario_inizio.'", "class": "orari min-width" ]}';
         }
         echo '
             </td>';
@@ -143,7 +143,7 @@ if (!empty($rs2)) {
             <input type="hidden" name="orario_fine['.$id.']" value="'.$orario_fine.'">';
         } else {
             echo '
-        {[ "type": "timestamp", "name": "orario_fine['.$id.']", "id": "fine_'.$id.'", "value": "'.$orario_fine.'", "class": "orari", "min-date": "'.$orario_inizio.'" ]}';
+        {[ "type": "timestamp", "name": "orario_fine['.$id.']", "id": "fine_'.$id.'", "value": "'.$orario_fine.'", "class": "orari min-width", "min-date": "'.$orario_inizio.'" ]}';
         }
         echo '
         </td>';
@@ -151,7 +151,7 @@ if (!empty($rs2)) {
         // ORE
         echo '
             <td style="border-right:1px solid #aaa;">
-                {[ "type": "number", "name": "ore['.$id.']", "value": "'.$ore.'", "disabled": 1 ]}
+                {[ "type": "number", "name": "ore['.$id.']", "value": "'.$ore.'", "disabled": 1, "class": "small-width" ]}
 
                 <div class="extra hide">
                     <table class="table table-condensed table-bordered">
@@ -165,7 +165,7 @@ if (!empty($rs2)) {
         // KM
         echo '
             <td style="border-right:1px solid #aaa;">
-                {[ "type": "number", "name": "km['.$id.']", "value": "'.$km.'" ]}
+                {[ "type": "number", "name": "km['.$id.']", "value": "'.$km.'", "class": "small-width" ]}
 
                 <div class="extra hide">
                     <table class="table table-condensed table-bordered">
@@ -200,7 +200,7 @@ if (!empty($rs2)) {
             <td style="border-right:1px solid #aaa;">';
         if ($user['idanagrafica'] == 0 || $show_costi) {
             echo '
-                {[ "type": "number", "name": "sconto['.$id.']", "value": "'.$sconto_unitario.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}';
+                {[ "type": "number", "name": "sconto['.$id.']", "value": "'.$sconto_unitario.'", "icon-after": "choice|untprc|'.$tipo_sconto.'", "class": "small-width" ]}';
         } else {
             echo '
                 <input type="hidden" name="sconto['.$id.']" value="'.Translator::numberToLocale($sconto_unitario).'" />
@@ -215,7 +215,7 @@ if (!empty($rs2)) {
             <td style="border-right:1px solid #aaa;">';
         if ($user['idanagrafica'] == 0 || $show_costi) {
             echo '
-                {[ "type": "number", "name": "scontokm['.$id.']", "value": "'.$scontokm_unitario.'", "icon-after": "choice|untprc|'.$tipo_scontokm.'" ]}';
+                {[ "type": "number", "name": "scontokm['.$id.']", "value": "'.$scontokm_unitario.'", "icon-after": "choice|untprc|'.$tipo_scontokm.'", "class": "small-width" ]}';
         } else {
             echo '
                 <input type="hidden" name="scontokm['.$id.']" value="'.Translator::numberToLocale($scontokm_unitario).'" />

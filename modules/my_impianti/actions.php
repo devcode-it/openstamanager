@@ -66,7 +66,7 @@ switch ($op) {
             // Eliminazione file
             if (post('delete_immagine') !== null) {
                 $filename = basename(post('immagine'));
-                unlink($upload_dir.'/'.$filename);
+                delete($upload_dir.'/'.$filename);
 
                 $dbo->query("UPDATE my_impianti SET immagine='' WHERE id=".prepare($id_record));
             }

@@ -103,7 +103,7 @@ if (filter('op') == 'send') {
     $mail->SmtpClose();
 
     if (!empty($post['sql'])) {
-        unlink($backup_file);
+        delete($backup_file);
     }
 
     redirect($rootdir.'/bug.php');

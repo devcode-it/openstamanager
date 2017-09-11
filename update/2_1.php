@@ -1,7 +1,7 @@
 <?php
 
 if (file_exists($docroot.'/lib/jscripts/fullcalendar.min.js')) {
-    @unlink($docroot.'/lib/jscripts/fullcalendar.min.js');
+    delete($docroot.'/lib/jscripts/fullcalendar.min.js');
 }
 
 // Riporto su ogni riga della fattura la relativa rivalsa inps e ritenuta d'acconto se impostate

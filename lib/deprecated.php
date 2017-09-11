@@ -1023,3 +1023,34 @@ function filelist_and_upload($id_module, $id_record, $label = 'Nuovo allegato:',
 </div>';
     }
 }
+
+/**
+ * Rimuove ricorsivamente una directory.
+ *
+ * @param unknown $path
+ *
+ * @return bool
+ */
+function deltree($path)
+{
+    trigger_error('Funzione deprecata!', E_USER_DEPRECATED);
+
+    $path = realpath($path);
+
+    if (is_dir($path)) {
+        $files = scandir($path);
+        if (empty($files)) {
+            $files = [];
+        }
+
+        foreach ($files as $file) {
+            if ($file != '.' && $file != '..') {
+                deltree($path.DIRECTORY_SEPARATOR.$file);
+            }
+        }
+
+        return rmdir($path);
+    } elseif (file_exists($path)) {
+        return unlink($path);
+    }
+}

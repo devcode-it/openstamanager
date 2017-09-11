@@ -36,33 +36,39 @@ function sanitizeFilename($filename)
     return $filename;
 }
 
-/**
- * Rimuove ricorsivamente una directory.
- *
- * @param unknown $path
- *
- * @return bool
- */
-function deltree($path)
+function delete($files)
 {
-    $path = realpath($path);
+    // Filesystem Symfony
+    $fs = new Symfony\Component\Filesystem\Filesystem();
 
-    if (is_dir($path)) {
-        $files = scandir($path);
-        if (empty($files)) {
-            $files = [];
-        }
-
-        foreach ($files as $file) {
-            if ($file != '.' && $file != '..') {
-                deltree($path.DIRECTORY_SEPARATOR.$file);
-            }
-        }
-
-        return rmdir($path);
-    } elseif (file_exists($path)) {
-        return unlink($path);
+    // Eliminazione
+    try {
+        $fs->remove($files);
+    } catch (Symfony\Component\Filesystem\Exception\IOException $e) {
+        return false;
     }
+
+    return true;
+}
+
+function directory($path)
+{
+    if (is_dir($path) && is_writable($path)) {
+        return true;
+    } elseif (!is_dir($path)) {
+        // Filesystem Symfony
+        $fs = new Symfony\Component\Filesystem\Filesystem();
+
+        // Tentativo di creazione
+        try {
+            $fs->mkdir($path);
+
+            return true;
+        } catch (Symfony\Component\Filesystem\Exception\IOException $e) {
+        }
+    }
+
+    return false;
 }
 
 /**
@@ -99,21 +105,13 @@ function copyr($source, $destination, $ignores = [])
     foreach ($finder as $file) {
         $filename = rtrim($destination, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$file->getRelativePathname();
 
-        // Creazione della cartella di base
-        if (!file_exists(dirname($filename))) {
-            create_dir(dirname($filename));
-        }
+        // Filesystem Symfony
+        $fs = new Symfony\Component\Filesystem\Filesystem();
 
-        // Simple copy for a file
-        if (is_file($file)) {
-            copy($file, $filename);
-        }
-
-        // If the source is a symlink
-        if (is_link($file)) {
-            $link_dest = readlink($file);
-
-            symlink($link_dest, $filename);
+        // Copia
+        try {
+            $fs->copy($file, $filename);
+        } catch (Symfony\Component\Filesystem\Exception\IOException $e) {
         }
     }
 
@@ -226,8 +224,8 @@ function do_backup($path = null)
 
     $backup_name = 'OSM backup '.date('Y-m-d').' '.date('H_i_s');
     if (
-        (extension_loaded('zip') && (file_exists($backup_dir.'tmp') || create_dir($backup_dir.'tmp'))) ||
-        (!extension_loaded('zip') && (file_exists($backup_dir.$backup_name) || create_dir($backup_dir.$backup_name)))
+        (extension_loaded('zip') && directory($backup_dir.'tmp')) ||
+        (!extension_loaded('zip') && directory($backup_dir.$backup_name))
     ) {
         // Backup del database
         $database_file = $backup_dir.(extension_loaded('zip') ? 'tmp' : $backup_name).'/database.sql';
@@ -255,7 +253,7 @@ function do_backup($path = null)
             }
 
             // Rimozione cartella temporanea
-            unlink($database_file);
+            delete($database_file);
         }
         // Copia dei file di OSM
         else {
@@ -284,11 +282,7 @@ function do_backup($path = null)
                 $cont = 1;
                 foreach ($backups as $backup) {
                     if ($cont > $max_backups) {
-                        if (preg_match('/^OSM backup ([0-9\-]{10}) ([0-9_]{8})$/', $backup, $m)) {
-                            deltree($backup_dir.'/'.$backup);
-                        } elseif (preg_match('/^OSM backup ([0-9\-]{10}) ([0-9_]{8})\.zip$/', $backup, $m)) {
-                            unlink($backup_dir.'/'.$backup);
-                        }
+                        delete($backup_dir.'/'.$backup);
                     }
                     ++$cont;
                 }
@@ -534,7 +528,7 @@ function create_thumbnails($tmp, $filename, $dir)
     $name = $infos['filename'];
     $extension = strtolower($infos['extension']);
 
-    if ((is_dir($dir) && !is_writable($dir)) || (!is_dir($dir) && !create_dir($dir))) {
+    if (!directory($dir)) {
         return false;
     }
 
@@ -827,9 +821,4 @@ function redirectOperation($id_module, $id_record)
             exit();
         }
     }
-}
-
-function create_dir($path)
-{
-    return mkdir($path, 0777, true);
 }

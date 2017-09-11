@@ -306,7 +306,7 @@ switch (post('op')) {
         $rs = $dbo->fetchArray('SELECT filename FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare($id_record));
 
         for ($i = 0; $i < count($rs); ++$i) {
-            @unlink($docroot.'/files/interventi/'.$rs[$i]['filename']);
+            delete($docroot.'/files/interventi/'.$rs[$i]['filename']);
         }
 
         $dbo->query('DELETE FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare($id_record));
@@ -535,9 +535,7 @@ switch (post('op')) {
         break;
 
     case 'firma':
-        $directory_exists = (file_exists($docroot.'/files/interventi') || create_dir($docroot.'/files/interventi'));
-
-        if ($directory_exists) {
+        if (directory($docroot.'/files/interventi')) {
             if (post('firma_base64') != '') {
                 // Salvataggio firma
                 $firma_file = 'firma_'.time().'.png';

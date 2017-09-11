@@ -27,10 +27,11 @@ switch (post('op')) {
                     include_once $uninstall_script;
                 }
 
-                deltree($docroot.'/modules/'.$module_dir.'/');
+                delete($docroot.'/modules/'.$module_dir.'/');
+
                 $_SESSION['infos'][] = tr('Modulo _MODULE_ disinstallato!', [
-'_MODULE_' => '"'.$modulo.'"',
-]);
+                    '_MODULE_' => '"'.$modulo.'"',
+                ]);
             }
         }
 

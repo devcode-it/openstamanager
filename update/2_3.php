@@ -59,23 +59,12 @@ $database->query('ALTER TABLE `zz_files` DROP `data`');
 * Rimozione file e cartelle deprecati
 */
 
-// Cartelle deprecate
-$dirs = [
+// File e cartelle deprecate
+$files = [
     'lib/jscripts',
     'lib/html2pdf',
     'widgets',
     'share',
-];
-
-foreach ($dirs as $dir) {
-    $dir = realpath($docroot.'/'.$dir);
-    if (is_dir($dir)) {
-        deltree($dir);
-    }
-}
-
-// File deprecati
-$files = [
     'lib/class.phpmailer.php',
     'lib/class.pop3.php',
     'lib/class.smtp.php',
@@ -99,12 +88,11 @@ $files = [
     'README',
 ];
 
-foreach ($files as $file) {
-    $file = realpath($docroot.'/'.$file);
-    if (file_exists($file)) {
-        unlink($file);
-    }
+foreach ($files as $key => $value) {
+    $files[$key] = realpath($docroot.'/'.$value);
 }
+
+delete($files);
 
 // File .html dei moduli di default
 // Per un problema sulla lunghezza massima del path su glob è necessario dividere le cartelle dei moduli di default da pulire
@@ -149,7 +137,5 @@ $pieces = array_chunk($dirs, 5);
 
 foreach ($pieces as $piece) {
     $files = glob($docroot.'/modules/{'.implode(',', $piece).'}/*.html', GLOB_BRACE);
-    foreach ($files as $file) {
-        unlink($file);
-    }
+    delete($files);
 }

@@ -87,8 +87,11 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
 }
 
 // Eliminazione vecchi file
-@unlink($docroot.'/share/themes/default/css/font-awesome.css');
-@deltree($docroot.'/modules/preventivi/js/');
+$files = [
+    $docroot.'/share/themes/default/css/font-awesome.css',
+    $docroot.'/modules/preventivi/js/'
+];
+delete($files);
 
 /*
 * Spostamento agente di riferimento su nuova tabella an_anagrafiche_agenti

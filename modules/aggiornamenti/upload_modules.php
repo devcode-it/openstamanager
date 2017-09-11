@@ -21,9 +21,10 @@ if (!extension_loaded('zip')) {
 
     if ($zip->open($tmp)) {
         $tmpdir = 'tmp/';
-        if (!file_exists($docroot.'/'.$tmpdir)) {
-            create_dir($docroot.'/'.$tmpdir, 0755, true);
-        }
+
+        // Controllo sulla cartella
+        directory($docroot.'/'.$tmpdir);
+
         $zip->extractTo($docroot.'/'.$tmpdir);
 
         // AGGIORNAMENTO
@@ -87,25 +88,18 @@ if (!extension_loaded('zip')) {
                 // Sposto il file di versione nella root per forzare l'aggiornamento del db
                 file_put_contents($docroot.'/VERSION_'.$module_dir, $module_version);
 
-                // Sposto i file della cartella "share/" nella root
-                $share_dir = $docroot.'/modules/'.$module_dir.'/share/';
-                if (is_dir($share_dir)) {
-                    copyr($share_dir, $docroot.'/share');
-                    deltree($share_dir);
-                }
-
                 // Sposto i file della cartella "lib/" nella root
                 $lib_dir = $docroot.'/modules/'.$module_dir.'/lib/';
                 if (is_dir($lib_dir)) {
                     copyr($lib_dir, $docroot.'/lib');
-                    deltree($lib_dir);
+                    delete($lib_dir);
                 }
 
                 // Sposto i file della cartella "files/" nella root
                 $files_dir = $docroot.'/modules/'.$module_dir.'/files/';
                 if (is_dir($files_dir)) {
                     copyr($files_dir, $docroot.'/files');
-                    deltree($files_dir);
+                    delete($files_dir);
                 }
 
                 // Inserimento delle voci del modulo nel db per ogni sezione [sezione]
@@ -114,7 +108,7 @@ if (!extension_loaded('zip')) {
                 $n = $dbo->fetchNum($query);
 
                 if ($n == 0) {
-                    $query = 'INSERT INTO zz_modules(`name`, `title`, `directory`, `options`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES('.prepare($module_name).', '.prepare($module_name).', '.prepare($module_dir).', '.prepare($module_info['module_options']).', '.prepare($module_info['module_icon']).', '.prepare($module_version).', '.prepare($module_info['module_compatibility']).', "100", '.prepare($module_info['module_parent']).", 0, 1)";
+                    $query = 'INSERT INTO zz_modules(`name`, `title`, `directory`, `options`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES('.prepare($module_name).', '.prepare($module_name).', '.prepare($module_dir).', '.prepare($module_info['module_options']).', '.prepare($module_info['module_icon']).', '.prepare($module_version).', '.prepare($module_info['module_compatibility']).', "100", '.prepare($module_info['module_parent']).', 0, 1)';
                     $dbo->query($query);
                 }
 
@@ -127,7 +121,7 @@ if (!extension_loaded('zip')) {
             }
         }
 
-        deltree($docroot.'/'.$tmpdir);
+        delete($docroot.'/'.$tmpdir);
     } else {
         $_SESSION['errors'][] = checkZip($tmp);
     }

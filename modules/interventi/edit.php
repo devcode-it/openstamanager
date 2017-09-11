@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 unset($_SESSION['superselect']['idanagrafica']);
 $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
-if ($records[0]['firma_file'] == '') {
+if (empty($records[0]['firma_file'])) {
     $frase = tr('Anteprima e firma');
     $info_firma = '';
 } else {
@@ -13,7 +13,7 @@ if ($records[0]['firma_file'] == '') {
     $info_firma = '<span class="label label-success"><i class="fa fa-edit"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
         '_DATE_' => Translator::dateToLocale($records[0]['firma_data']),
         '_TIME_' => Translator::timeToLocale($records[0]['firma_data']),
-        '_NUM_' => '<b>'.$records[0]['firma_nome'].'</b>',
+        '_PERSON_' => '<b>'.$records[0]['firma_nome'].'</b>',
     ]).'</span>';
 }
 
@@ -259,7 +259,7 @@ if ($records[0]['firma_file'] == '') {
     <div class="alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
         '_DATE_' => Translator::dateToLocale($records[0]['firma_data']),
         '_TIME_' => Translator::timeToLocale($records[0]['firma_data']),
-        '_NUM_' => '<b>'.$records[0]['firma_nome'].'</b>',
+        '_PERSON_' => '<b>'.$records[0]['firma_nome'].'</b>',
     ]).'</div>';
     }
     ?>

@@ -123,7 +123,7 @@ include $docroot.'/templates/replace.php';
 
 // Individuazione dellla configurazione
 $directory = dirname($filename);
-if (!empty($filename) && ((is_dir($directory) && !is_writable($directory)) || (!is_dir($directory) && !create_dir($directory)))) {
+if (!empty($filename) && !directory($directory)) {
     $error = tr('Non hai i permessi per creare directory e files in _DIRECTORY_', [
         '_DIRECTORY_' => $directory,
     ]);

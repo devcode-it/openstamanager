@@ -35,6 +35,7 @@
         "paragonie/random_compat": "^2.0",
         "phpmailer/phpmailer": "^5.2",
         "spipu/html2pdf": "^5.0",
+        "symfony/filesystem": "^3.3",
         "symfony/finder": "^3.3",
         "symfony/translation": "^3.3"
     },

@@ -93,6 +93,10 @@ table.table-bordered th {
     background: #ddd;
 }
 
+table.table-bordered thead tr:nth-child(2) th {
+    background: #eee;
+}
+
 #contents th {
     font-size: 80%;
 }
@@ -106,4 +110,8 @@ table.table-bordered,
 table.table-bordered td,
 table.table-bordered th {
     border: 1px solid #aaa;
+}
+
+td.middle {
+    vertical-align: middle !important;
 }

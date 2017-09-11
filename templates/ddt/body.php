@@ -112,7 +112,7 @@ foreach ($rs_gen as $r) {
 
             if ($r['perc_iva'] > 0) {
                 echo '
-                '.$r['perc_iva'];
+                '.Translator::numberToLocale($r['perc_iva'], 2);
             }
 
             echo '

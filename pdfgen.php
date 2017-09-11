@@ -47,7 +47,7 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
     Permissions::check();
 
     // Operazioni di sostituzione
-    include $docroot.'/templates/pdfgen_variables.php';
+    include $docroot.'/templates/info.php';
 
     // Generazione dei contenuti della stampa
     ob_start();

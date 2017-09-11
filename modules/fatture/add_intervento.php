@@ -34,7 +34,7 @@ echo '
 
 $rs = $dbo->fetchArray('SELECT in_interventi.id, CONCAT(\'Intervento numero \', codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione, IF(idclientefinale='.prepare($idanagrafica).', \'Interventi conto terzi\', \'Interventi diretti\')  AS `optgroup`FROM in_interventi WHERE (idanagrafica='.prepare($idanagrafica).' OR idclientefinale='.prepare($idanagrafica).') AND NOT idstatointervento=\'DENY\' AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND NOT in_interventi.id IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND NOT in_interventi.id IN (SELECT idintervento FROM co_righe_contratti WHERE idintervento IS NOT NULL)');
 foreach ($rs as $key => $value) {
-    $rs[$key]['prezzo'] = get_costi_intervento($value['id'])['totale_manodopera'];
+    $rs[$key]['prezzo'] = get_costi_intervento($value['id'])['totale'];
 }
 
 // Intervento

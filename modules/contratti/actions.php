@@ -159,7 +159,7 @@ switch (post('op')) {
         $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
         $desc_iva = $rs2[0]['descrizione'];
 
-        $dbo->query('INSERT INTO co_righe2_contratti(idcontratto, idiva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto) VALUES ('.prepare($id_record).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe2_contratti AS t WHERE idcontratto='.prepare($id_record).'))');
+        $dbo->query('INSERT INTO co_righe2_contratti(idcontratto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, `order`) VALUES ('.prepare($id_record).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe2_contratti AS t WHERE idcontratto='.prepare($id_record).'))');
 
         $_SESSION['infos'][] = tr('Articolo aggiunto!');
 
@@ -227,6 +227,21 @@ switch (post('op')) {
                 '_NUM_' => $idintervento,
             ]);
         }
+        break;
+
+    case 'update_position':
+        $start = filter('start');
+        $end = filter('end');
+        $id = filter('id');
+
+        if ($start > $end) {
+            $dbo->query('UPDATE `co_righe2_contratti` SET `order`=`order` + 1 WHERE `order`>='.prepare($end).' AND `order`<'.prepare($start).' AND `idcontratto`='.prepare($id_record));
+            $dbo->query('UPDATE `co_righe2_contratti` SET `order`='.prepare($end).' WHERE id='.prepare($id));
+        } elseif ($end != $start) {
+            $dbo->query('UPDATE `co_righe2_contratti` SET `order`=`order` - 1 WHERE `order`>'.prepare($start).' AND `order`<='.prepare($end).' AND `idcontratto`='.prepare($id_record));
+            $dbo->query('UPDATE `co_righe2_contratti` SET `order`='.prepare($end).' WHERE id='.prepare($id));
+        }
+
         break;
 
     // eliminazione contratto

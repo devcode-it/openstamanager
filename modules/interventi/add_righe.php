@@ -94,7 +94,12 @@ echo '
     </div>';
 
 echo '
-    <button type="submit" class="btn btn-primary pull-right">'.$button.'</button>
+    <!-- PULSANTI -->
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <button type="submit" class="btn btn-primary pull-right">'.$button.'</button>
+        </div>
+    </div>
 </form>';
 
 echo '

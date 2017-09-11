@@ -120,7 +120,7 @@ foreach ($righe as $r) {
             <td class='text-center'>";
     if ($r['perc_iva'] > 0) {
         echo '
-                '.$r['perc_iva'];
+                '.Translator::numberToLocale($r['perc_iva'], 2);
     }
     echo '
             </td>

@@ -186,7 +186,7 @@ function get_costi_intervento($id_intervento)
         ROUND(prezzo_vendita, '.$decimals.') * ROUND(qta, '.$decimals.')
     ), 0) AS ricambi_addebito,
     COALESCE(SUM(
-        ROUND(prezzo_vendita, '.$decimals.') * ROUND(qta, '.$decimals.') - ROUND(sconto, '.$decimals.') * ROUND(qta, '.$decimals.')
+        ROUND(prezzo_vendita, '.$decimals.') * ROUND(qta, '.$decimals.') - ROUND(sconto, '.$decimals.')
     ), 0) AS ricambi_scontato
 
     FROM mg_articoli_interventi WHERE idintervento='.prepare($id_intervento));
@@ -199,7 +199,7 @@ function get_costi_intervento($id_intervento)
         ROUND(prezzo_vendita, '.$decimals.') * ROUND(qta, '.$decimals.')
     ), 0) AS altro_addebito,
     COALESCE(SUM(
-        ROUND(prezzo_vendita, '.$decimals.') * ROUND(qta, '.$decimals.') - ROUND(sconto, '.$decimals.') * ROUND(qta, '.$decimals.')
+        ROUND(prezzo_vendita, '.$decimals.') * ROUND(qta, '.$decimals.') - ROUND(sconto, '.$decimals.')
     ), 0) AS altro_scontato
 
     FROM in_righe_interventi WHERE idintervento='.prepare($id_intervento));
@@ -220,7 +220,7 @@ function get_costi_intervento($id_intervento)
         $result['altro_addebito'],
     ]);
 
-    $totale_manodopera = sum([
+    $result['totale_scontato'] = sum([
         $result['manodopera_scontato'],
         $result['viaggio_scontato'],
         $result['ricambi_scontato'],
@@ -229,10 +229,10 @@ function get_costi_intervento($id_intervento)
 
     // Calcolo dello sconto globale
     $sconto = $dbo->fetchArray('SELECT sconto_globale, tipo_sconto_globale FROM in_interventi WHERE id='.prepare($id_intervento))[0];
-    $result['sconto_globale'] = ($sconto['tipo_sconto_globale'] == 'PRC') ? $totale_manodopera * $sconto['sconto_globale'] / 100 : $sconto['sconto_globale'];
+    $result['sconto_globale'] = ($sconto['tipo_sconto_globale'] == 'PRC') ? $result['totale_scontato'] * $sconto['sconto_globale'] / 100 : $sconto['sconto_globale'];
     $result['sconto_globale'] = round($result['sconto_globale'], $decimals);
 
-    $result['totale_manodopera'] = sum($totale_manodopera, -$result['sconto_globale']);
+    $result['totale'] = sum($result['totale_scontato'], -$result['sconto_globale']);
 
     return $result;
 }

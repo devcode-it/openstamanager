@@ -202,19 +202,24 @@ switch (post('op')) {
             if ($dbo->query($query)) {
                 // Movimento il magazzino se l'ho specificato nelle impostazioni
                 if (get_var("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
-                    add_movimento_magazzino($id_record, $n_prodotti, [], tr('Carico magazzino con serial da _SERIAL_INIZIO_ a _SERIAL_FINE_', [
+                    add_movimento_magazzino($id_record, $c, [], tr('Carico magazzino con serial da _SERIAL_INIZIO_ a _SERIAL_FINE_', [
                         '_SERIAL_INIZIO_' => $serial__start,
                         '_SERIAL_FINE_' => $serial__end,
                     ]));
                 }
 
                 $_SESSION['infos'][] = tr('Aggiunti _NUM_ prodotti!', [
-                    '_NUM_' => $n_prodotti,
+                    '_NUM_' => $c,
                 ]);
             } else {
                 $_SESSION['errors'][] = tr("Errore durante l'inserimento!");
             }
         }
+
+        if ($c != $n_prodotti) {
+            $_SESSION['warnings'][] = tr('Alcuni seriali erano già presenti').'...';
+        }
+
         break;
 
     case 'delprodotto':

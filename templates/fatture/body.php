@@ -21,13 +21,13 @@ $iva = 0;
 
 // Intestazione tabella per righe
 echo "
-<table class='table table-striped' id='contents'>
+<table class='table table-striped table-bordered' id='contents'>
     <thead>
         <tr>
             <th class='text-center' style='width:50%'>".tr('Descrizione', [], ['upper' => true])."</th>
             <th class='text-center' style='width:10%'>".tr('Q.tà', [], ['upper' => true])."</th>
             <th class='text-center' style='width:7%'>".tr('Um', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:16%'>".tr('Costo unitario', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:16%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
             <th class='text-center' style='width:20%'>".tr('Importo', [], ['upper' => true])."</th>
             <th class='text-center' style='width:7%'>".tr('IVA', [], ['upper' => true]).' (%)</th>
         </tr>
@@ -93,7 +93,7 @@ foreach ($righe as $r) {
                 ".nl2br(strtoupper($r['um'])).'
             </td>';
 
-    // Costo unitario
+    // Prezzo unitario
     echo "
             <td class='text-right'>
                 ".(empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'], 2)).' &euro;

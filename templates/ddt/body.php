@@ -23,7 +23,7 @@ $sconto_generico = 0.00;
 
 // Intestazione tabella per righe
 echo "
-<table class='table table-striped' id='contents'>
+<table class='table table-striped table-bordered' id='contents'>
     <thead>
         <tr>
             <th class='text-center'>".tr('Descrizione', [], ['upper' => true])."</th>
@@ -31,7 +31,7 @@ echo "
 
 if ($mostra_prezzi) {
     echo "
-            <th class='text-center' style='width:15%'>".tr('Prezzo u.', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:15%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
             <th class='text-center' style='width:15%'>".tr('Importo', [], ['upper' => true])."</th>
             <th class='text-center' style='width:10%'>".tr('Sconto', [], ['upper' => true])."</th>
             <th class='text-center' style='width:7%'>".tr('IVA', [], ['upper' => true]).' (%)</th>';

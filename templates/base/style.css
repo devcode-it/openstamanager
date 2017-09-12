@@ -8,12 +8,6 @@ p {
     margin: 0px;
 }
 
-small,
-.small,
-.small-bold {
-    font-size: 70%;
-}
-
 .small-bold {
     font-weight: bold;
 }
@@ -35,6 +29,42 @@ table.table-striped tbody tr:nth-child(2n) td {
 
 table.table-striped tbody tr:nth-child(2n+1) td {
     background-color: #fff;
+}
+
+table.table-bordered th {
+    background: #ddd;
+}
+
+table.table-bordered thead tr:nth-child(2) th {
+    background: #eee;
+}
+
+small,
+.small,
+.small-bold,
+table.table-bordered>th {
+    font-size: 70%;
+}
+
+table.table-bordered,
+table.table-bordered td,
+table.table-bordered th {
+    border: 1px solid #aaa;
+}
+
+table thead th,
+table.vertical-middle td,
+table.vertical-middle th {
+    vertical-align: middle;
+}
+
+table#contents td {
+    border-top: 0;
+    border-bottom: 0;
+}
+
+table #contents thead th {
+    font-size: 80%;
 }
 
 .row,
@@ -77,41 +107,4 @@ table.table-striped tbody tr:nth-child(2n+1) td {
 
 .cell-padded {
     padding: 4px;
-}
-
-#contents {
-    border: 1px solid #aaa;
-}
-
-#contents td {
-    border-left: 1px solid #aaa;
-    border-right: 1px solid #aaa;
-}
-
-#contents th,
-table.table-bordered th {
-    background: #ddd;
-}
-
-table.table-bordered thead tr:nth-child(2) th {
-    background: #eee;
-}
-
-#contents thead th {
-    font-size: 80%;
-}
-
-table.table-bordered>th {
-    font-size: 70%;
-}
-
-#contents th,
-table.table-bordered,
-table.table-bordered td,
-table.table-bordered th {
-    border: 1px solid #aaa;
-}
-
-td.middle {
-    vertical-align: middle !important;
 }

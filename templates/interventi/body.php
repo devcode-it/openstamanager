@@ -267,7 +267,7 @@ if (!empty($rs2)) {
 
 // INTESTAZIONE ELENCO TECNICI
 echo '
-<table class="table table-bordered">
+<table class="table table-bordered vertical-middle">
     <thead>
         <tr>
             <th class="text-center" colspan="5" style="font-size:11pt;">
@@ -308,25 +308,25 @@ foreach ($rst as $i => $r) {
 
     // nome tecnico
     echo '
-    	<td style="vertical-align:middle">
+    	<td>
     	    '.$r['ragione_sociale'].'
     	</td>';
 
     // data
     echo '
-    	<td class="text-center" style="vertical-align:middle">
+    	<td class="text-center">
             '.Translator::dateToLocale($r['orario_inizio'], '-').'
     	</td>';
 
     // ora inizio
     echo '
-    	<td class="text-center" style="vertical-align:middle">
+    	<td class="text-center">
             '.Translator::timeToLocale($r['orario_inizio'], '-').'
     	</td>';
 
     // ora fine
     echo '
-    	<td class="text-center" style="vertical-align:middle">
+    	<td class="text-center">
             '.Translator::timeToLocale($r['orario_fine'], '-').'
         </td>';
 
@@ -359,13 +359,13 @@ if ($mostra_prezzi) {
     }
 
     echo '
-        <td class="text-center" style="vertical-align:middle">
+        <td class="text-center">
         '.tr('Ore lavorate').':<br/><b>'.Translator::numberToLocale($ore, 2).'</b>
         </td>';
 
     // Costo orario
     echo '
-        <td class="text-center" style="vertical-align:middle">
+        <td class="text-center">
             '.tr('Costo orario').':<br/><b>'.Translator::numberToLocale($costo_orario, 2).'</b>';
 
     if ($records[0]['tot_dirittochiamata'] != 0) {
@@ -378,7 +378,7 @@ if ($mostra_prezzi) {
 
     // Costo totale manodopera
     echo '
-        <td colspan="2" class="text-center" style="vertical-align:middle">
+        <td colspan="2" class="text-center">
         '.tr('Manodopera').':<br/><b>'.Translator::numberToLocale($costi_intervento['manodopera_scontato'], 2).'</b>
         </td>';
 } else {

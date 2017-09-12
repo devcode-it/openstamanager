@@ -211,12 +211,11 @@ if (!function_exists('download')) {
             header('Content-Type: application/octet-stream');
             header('Content-Transfer-Encoding: binary');
 
-            header('Content-Length: ' . filesize($file));
+            header('Content-Length: '.filesize($file));
 
-            $open = fopen($file, "rb");
-            while(!feof($open))
-            {
-                print(fread($open, 1024*8));
+            $open = fopen($file, 'rb');
+            while (!feof($open)) {
+                echo fread($open, 1024 * 8);
                 ob_flush();
                 flush();
             }

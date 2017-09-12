@@ -33,6 +33,7 @@ switch (get('op')) {
             $results[] = '
             {
                 "id": "'.$rs[$i]['id'].'",
+                "idintervento": "'.$rs[$i]['idintervento'].'",
                 "idtecnico":"'.$rs[$i]['idtecnico'].'",
                 "title":"<b>Int. '.$rs[$i]['idintervento'].'</b> '.addslashes($rs[$i]['cliente']).'<br><b>'.tr('Tecnici').':</b> '.addslashes($rs[$i]['nome_tecnico']).'",
                 "start": "'.$rs[$i]['orario_inizio'].'",

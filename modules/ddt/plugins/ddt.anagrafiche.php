@@ -37,16 +37,16 @@ if (!empty($rsddt)) {
                 <span>'.($key + 1).'</span>
             </td>
             <td>
-                '.Modules::link('Ddt di vendita', $rsddt[$i]['idddt'], $rsddt[$i]['numero_esterno']).'
+                '.Modules::link('Ddt di vendita', $r['idddt'], !empty($r['numero_esterno']) ? $r['numero_esterno'] : $r['numero']).'
             </td>
             <td>
-                <span>'.(!empty($rsddt[$i]['data']) ? Translator::dateToLocale($rsddt[$i]['data']) : '').'</span>
+                <span>'.(!empty($r['data']) ? Translator::dateToLocale($r['data']) : '').'</span>
             </td>
             <td>
-                <span>'.$rsddt[$i]['descrizione'].'</span>
+                <span>'.$r['descrizione'].'</span>
             </td>
             <td>
-                <span>'.Translator::numberToLocale($rsddt[$i]['qta']).' '.$rsddt[$i]['um'].'</span>
+                <span>'.Translator::numberToLocale($r['qta']).' '.$r['um'].'</span>
             </td>
         </tr>';
     } ?>
@@ -54,40 +54,6 @@ if (!empty($rsddt)) {
 
     </tbody>
 </table>
-
-<script>
-
-function attivaricerca (){
-    // Setup - add a text input to each footer cell
-    $('#tabella thead th').each( function () {
-        var title = $(this).text();
-        $(this).html( '<b>'+title+'</b><br><input type="text" class="filter form-control" placeholder="Filtra... '+title+'" />' );
-    });
-
-    table.columns.adjust().draw();
-
-    // Apply the search
-    table.columns().eq(0).each(function(colIdx) {
-        $('input', table.column(colIdx).header()).on('keyup change', function() {
-            table
-                .column(colIdx)
-                .search(this.value)
-                .draw();
-        });
-
-        $('input', table.column(colIdx).header()).on('click', function(e) {
-            e.stopPropagation();
-        });
-    });
-}
-
-$(document).ready(function() {
-    setTimeout(function(){
-        attivaricerca()
-    }, 1000);
-});
-
-</script>
 
 <?php
 

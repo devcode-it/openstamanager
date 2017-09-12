@@ -155,7 +155,7 @@ $rs = $dbo->fetchArray('SELECT COUNT(id) AS tot FROM mg_prodotti WHERE id_artico
 $tot_prodotti = $rs[0]['tot'];
 
 // Visualizzazione di tutti i prodotti
-$query = 'SELECT serial, created_at FROM mg_prodotti WHERE serial IS NOT NULL AND id_articolo='.prepare($id_record).(!empty($search_serial) ? ' AND serial LIKE '.prepare('%'.$search_serial.'%') : '').' GROUP BY serial ORDER BY created_at DESC, serial DESC, lotto DESC, altro DESC';
+$query = 'SELECT id, serial, created_at FROM mg_prodotti WHERE serial IS NOT NULL AND id_articolo='.prepare($id_record).(!empty($search_serial) ? ' AND serial LIKE '.prepare('%'.$search_serial.'%') : '').' GROUP BY serial ORDER BY created_at DESC, serial DESC, lotto DESC, altro DESC';
 $rs2 = $dbo->fetchArray($query);
 
 echo '

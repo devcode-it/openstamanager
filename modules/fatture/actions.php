@@ -385,7 +385,6 @@ switch (post('op')) {
                     $rs = $dbo->fetchArray($query);
                     $desc_iva = $rs[0]['descrizione'];
 
-                    $subtot = $rsr[$i]['prezzo_vendita'] * $rsr[$i]['qta'];
                     $iva = ($subtot) / 100 * $rs[0]['percentuale'];
                     $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
 

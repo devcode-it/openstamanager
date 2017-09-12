@@ -805,6 +805,7 @@ OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto
 OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti') AND `name` = 'Data')
 OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente') AND `name` = 'Data')
 OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti') AND `name` = 'Data')
+OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti') AND `name` = 'Quantità')
 OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota') AND `name` = 'Dare')
 OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota') AND `name` = 'Avere');
 

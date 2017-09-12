@@ -15,10 +15,10 @@ include_once $docroot.'/templates/pdfgen_variables.php';
 */
 if (get('type') == 'clienti') {
     $titolo = 'Scadenzario clienti';
-    $add_where = "AND an_tipianagrafiche.descrizione='Cliente'";
+    $add_where = "AND co_tipidocumento.dir='entrata'";
 } elseif (get('type') == 'fornitori') {
     $titolo = 'Scadenzario fornitori';
-    $add_where = "AND an_tipianagrafiche.descrizione='Fornitore'";
+    $add_where = "AND co_tipidocumento.dir='uscita'";
 } else {
     $titolo = 'Scadenzario';
     $add_where = '';

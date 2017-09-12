@@ -7,11 +7,11 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="backto" value="record-edit">
 
 	<div class="row">
-		<div class="col-md-2">
-			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "" ]}
+		<div class="col-md-4">
+			{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "nome", "required": 1, "value": "" ]}
 		</div>
 
-		<div class="col-md-6">
+		<div class="col-md-8">
 			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "" ]}
 		</div>
 	</div>

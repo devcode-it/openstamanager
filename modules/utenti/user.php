@@ -11,14 +11,17 @@ $id_utente = filter('id_utente');
 
 if (!empty($id_utente)) {
     $value = 'change_pwd';
-
-    $rs = $dbo->fetchArray('SELECT username FROM zz_users WHERE id='.prepare($id_utente));
-    $username = $rs[0]['username'];
     $message = tr('Modifica');
+
+    $rs = $dbo->fetchArray('SELECT idanagrafica, idtipoanagrafica, username FROM zz_users WHERE id='.prepare($id_utente));
+    $username = $rs[0]['username'];
+    $id_anagrafica = $rs[0]['idtipoanagrafica'].'-'.$rs[0]['idanagrafica'];
 } else {
     $value = 'adduser';
-    $username = '';
     $message = tr('Aggiungi');
+
+    $username = '';
+    $id_anagrafica = '';
 }
 
 echo '
@@ -51,15 +54,13 @@ echo '
 		</div>
 	</div>';
 
-if (empty($id_utente)) {
-    echo '
+echo '
 
 	<div class="row">
 		<div class="col-xs-12">
-		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "values": "query=SELECT CONCAT(`an_tipianagrafiche`.`idtipoanagrafica`, \'-\', `an_anagrafiche`.`idanagrafica`) AS \'id\', `ragione_sociale` AS \'descrizione\', `descrizione` AS \'optgroup\' FROM `an_tipianagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` ORDER BY `descrizione` ASC", "value": "" ]}
+		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "values": "query=SELECT CONCAT(`an_tipianagrafiche`.`idtipoanagrafica`, \'-\', `an_anagrafiche`.`idanagrafica`) AS \'id\', `ragione_sociale` AS \'descrizione\', `descrizione` AS \'optgroup\' FROM `an_tipianagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` ORDER BY `descrizione` ASC", "value": "'.$id_anagrafica.'" ]}
 		</div>
 	</div>';
-}
 
 echo '
 

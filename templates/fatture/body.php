@@ -25,7 +25,7 @@ echo "
     <thead>
         <tr>
             <th class='text-center' style='width:50%'>".tr('Descrizione', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:10%'>".tr('Q.TÀ', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:10%'>".tr('Q.tà', [], ['upper' => true])."</th>
             <th class='text-center' style='width:7%'>".tr('Um', [], ['upper' => true])."</th>
             <th class='text-center' style='width:16%'>".tr('Costo unitario', [], ['upper' => true])."</th>
             <th class='text-center' style='width:20%'>".tr('Importo', [], ['upper' => true])."</th>
@@ -37,8 +37,6 @@ echo "
 
 // RIGHE FATTURA CON ORDINAMENTO UNICO
 $righe = $dbo->fetchArray("SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice_articolo, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva FROM `co_righe_documenti` WHERE iddocumento=".prepare($iddocumento).' ORDER BY `order`');
-$tot_righe = sizeof($righe);
-
 foreach ($righe as $r) {
     $autofill['count'] += ceil(strlen($r['descrizione']) / $autofill['words']);
     $autofill['count'] += substr_count($r['descrizione'], PHP_EOL);
@@ -150,11 +148,11 @@ foreach ($v_iva as $key => $value) {
     }
 }
 
-if (!empty($rs[0]['note'])) {
+if (!empty($records[0]['note'])) {
     echo '
 <br>
 <p class="small-bold">'.tr('Note', [], ['upper' => true]).':</p>
-<p>'.$rs[0]['note'].'</p>';
+<p>'.nl2br($records[0]['note']).'</p>';
 }
 
 // Info per il footer

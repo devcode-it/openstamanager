@@ -36,7 +36,11 @@ switch (filter('op')) {
         } elseif ($password != $password_rep) {
             $_SESSION['errors'][] = tr('Le password non coincidono');
         } else {
-            $dbo->query('UPDATE zz_users SET password='.prepare(Auth::hashPassword($password)).' WHERE id='.prepare($id_utente));
+            $idanag = explode('-', filter('idanag'));
+            $idtipoanagrafica = $idanag[0];
+            $idanagrafica = $idanag[1];
+
+            $dbo->query('UPDATE zz_users SET password='.prepare(Auth::hashPassword($password)).', idanagrafica='.prepare($idanagrafica).', idtipoanagrafica='.prepare($idtipoanagrafica).' WHERE id='.prepare($id_utente));
 
             $_SESSION['infos'][] = tr('Password aggiornata!');
         }
@@ -69,12 +73,9 @@ switch (filter('op')) {
         $password = filter('password1');
         $password_rep = filter('password2');
 
-        $idtipoanagrafica = '';
         $idanag = explode('-', filter('idanag'));
-        if (count($idanag) == 2) {
-            $idtipoanagrafica = $idanag[0];
-            $idanagrafica = $idanag[1];
-        }
+        $idtipoanagrafica = $idanag[0];
+        $idanagrafica = $idanag[1];
 
         // Verifico che questo username non sia già stato usato
         $n = $dbo->fetchNum('SELECT * FROM zz_users WHERE username='.prepare($username));

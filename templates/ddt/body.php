@@ -27,7 +27,7 @@ echo "
     <thead>
         <tr>
             <th class='text-center'>".tr('Descrizione', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:7%'>".tr('Q.TÀ', [], ['upper' => true]).'</th>';
+            <th class='text-center' style='width:7%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
 if ($mostra_prezzi) {
     echo "

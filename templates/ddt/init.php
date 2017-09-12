@@ -4,24 +4,24 @@ include_once __DIR__.'/../../core.php';
 
 // Lettura info ddt
 $q = 'SELECT *, (SELECT dir FROM dt_tipiddt WHERE id=idtipoddt) AS dir, (SELECT descrizione FROM dt_tipiddt WHERE id=idtipoddt) AS tipo_doc, (SELECT descrizione FROM dt_causalet WHERE id=idcausalet) AS causalet, (SELECT descrizione FROM dt_porto WHERE id=idporto) AS porto, (SELECT descrizione FROM dt_aspettobeni WHERE id=idaspettobeni) AS aspettobeni, (SELECT descrizione FROM dt_spedizione WHERE id=idspedizione) AS spedizione, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idvettore) AS vettore FROM dt_ddt WHERE id='.prepare($idddt);
-$rs = $dbo->fetchArray($q);
+$records = $dbo->fetchArray($q);
 
-$module_name = ($rs[0]['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
+$module_name = ($records[0]['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
 
-$id_cliente = $rs[0]['idanagrafica'];
-$id_sede = $rs[0]['idsede'];
+$id_cliente = $records[0]['idanagrafica'];
+$id_sede = $records[0]['idsede'];
 
-$numero = !empty($rs[0]['numero_esterno']) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
+$numero = !empty($records[0]['numero_esterno']) ? $records[0]['numero_esterno'] : $records[0]['numero'];
 
-if (empty($rs[0]['numero_esterno'])) {
+if (empty($records[0]['numero_esterno'])) {
     $numero = 'pro-forma '.$numero;
     $tipo_doc = 'DDT PRO-FORMA';
 }
 
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
 $destinazione = '';
-if (!empty($rs[0]['idsede'])) {
-    $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale FROM an_sedi WHERE idanagrafica='.prepare($id_cliente).' AND id='.prepare($rs[0]['idsede']));
+if (!empty($records[0]['idsede'])) {
+    $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale FROM an_sedi WHERE idanagrafica='.prepare($id_cliente).' AND id='.prepare($records[0]['idsede']));
 
     if (!empty($rsd[0]['indirizzo'])) {
         $destinazione .= $rsd[0]['indirizzo'].'<br/>';
@@ -44,15 +44,15 @@ if (!empty($rs[0]['idsede'])) {
 $custom = [
     'tipo_doc' => strtoupper($tipo_doc),
     'numero_doc' => $numero,
-    'data' => Translator::numberToLocale($rs[0]['data']),
-    'pagamento' => $rs[0]['tipo_pagamento'],
+    'data' => Translator::numberToLocale($records[0]['data']),
+    'pagamento' => $records[0]['tipo_pagamento'],
     'c_destinazione' => $destinazione,
-    'aspettobeni' => $rs[0]['aspettobeni'],
-    'causalet' => $rs[0]['causalet'],
-    'porto' => $rs[0]['porto'],
-    'n_colli' => !empty($rs[0]['n_colli']) ? $rs[0]['n_colli'] : '',
-    'spedizione' => $rs[0]['spedizione'],
-    'vettore' => $rs[0]['vettore'],
+    'aspettobeni' => $records[0]['aspettobeni'],
+    'causalet' => $records[0]['causalet'],
+    'porto' => $records[0]['porto'],
+    'n_colli' => !empty($records[0]['n_colli']) ? $records[0]['n_colli'] : '',
+    'spedizione' => $records[0]['spedizione'],
+    'vettore' => $records[0]['vettore'],
 ];
 
 // Controllo sui permessi

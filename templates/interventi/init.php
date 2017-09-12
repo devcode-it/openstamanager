@@ -23,4 +23,4 @@ $custom = [
     'commessa_numero' => !empty($records[0]['numero_preventivo']) ? $records[0]['codice'] : '&nbsp;',
 ];
 
-$visualizza_costi = get_var("Visualizza i costi sulle stampe degli interventi");
+$mostra_prezzi = get_var("Visualizza i costi sulle stampe degli interventi");

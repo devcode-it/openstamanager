@@ -148,7 +148,7 @@ echo "
     </tr>';
 
 // Riga 4 (opzionale, solo se c'è la ritenuta d'acconto)
-if ($rs[0]['ritenutaacconto'] != 0) {
+if ($records[0]['ritenutaacconto'] != 0) {
     $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenutaacconto WHERE id=(SELECT idritenutaacconto FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' AND idritenutaacconto!=0 LIMIT 0,1)');
 
     echo "
@@ -162,7 +162,7 @@ if ($rs[0]['ritenutaacconto'] != 0) {
 
     <tr>
         <td style='text-align:right;' class='border-bottom border-right cell-padded'>
-            ".Translator::numberToLocale($rs[0]['ritenutaacconto'], 2)." &euro;
+            ".Translator::numberToLocale($records[0]['ritenutaacconto'], 2)." &euro;
         </td>
     </tr>
 
@@ -174,7 +174,7 @@ if ($rs[0]['ritenutaacconto'] != 0) {
 
     <tr>
         <td style='text-align:right;' class='border-bottom border-right cell-padded'>
-            ".Translator::numberToLocale($totale_documento - $rs[0]['ritenutaacconto'], 2).' &euro;
+            ".Translator::numberToLocale($totale_documento - $records[0]['ritenutaacconto'], 2).' &euro;
         </td>
     </tr>';
 }

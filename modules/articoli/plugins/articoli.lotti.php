@@ -28,8 +28,7 @@ $next_serial = get_next_code($max_serial);
 echo '
         <form action="" method="post" role="form">
             <input type="hidden" name="backto" value="record-edit">
-            <input type="hidden" name="op" value="addprodotto">
-            <input type="hidden" name="id_record" value="'.$id_record.'">';
+            <input type="hidden" name="op" value="addprodotto">';
 
 // Campi di inserimento lotti
 echo '

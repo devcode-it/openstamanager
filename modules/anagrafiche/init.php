@@ -7,5 +7,5 @@ if (isset($id_record)) {
 }
 
 $id_azienda = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Azienda'")[0]['idtipoanagrafica'];
-$id_cliente = $dbo->fetchArray("SELECT descrizione FROM an_tipianagrafiche WHERE descrizione='Cliente'");
-$id_fornitore = $dbo->fetchArray("SELECT descrizione FROM an_tipianagrafiche WHERE descrizione='Fornitore'");
+$id_cliente = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Cliente'")[0]['idtipoanagrafica'];
+$id_fornitore = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Fornitore'")[0]['idtipoanagrafica'];

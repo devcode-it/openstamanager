@@ -184,7 +184,7 @@ switch (post('op')) {
                     $insert = str_replace('|altro|', 'NULL', $insert); // prepare($this_altro)
 
                     // Verifico che questa combinazione non esista già
-                    $np = $dbo->fetchNum('SELECT id FROM mg_prodotti WHERE id_articolo='.prepare($id_record).' AND lotto='.prepare($this_lotto).' AND serial='.prepare($this_serial).' AND altro='.prepare($this_altro));
+                    $np = $dbo->fetchNum('SELECT id FROM mg_prodotti WHERE id_articolo='.prepare($id_record).' AND serial='.prepare($this_serial));
                     if ($np == 0) {
                         $query .= $insert.', ';
                         ++$c;

@@ -97,7 +97,7 @@ table.table-bordered thead tr:nth-child(2) th {
     background: #eee;
 }
 
-#contents th {
+#contents thead th {
     font-size: 80%;
 }
 

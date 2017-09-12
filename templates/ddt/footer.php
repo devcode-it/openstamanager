@@ -10,7 +10,7 @@ if ($mostra_prezzi) {
     <tr>
         <td rowspan='7'>
             <p class='small-bold'>".tr('Note', [], ['upper' => true]).'</p>
-            <p>'.nl2br($rs[0]['note'])."</p>
+            <p>'.nl2br($records[0]['note'])."</p>
         </td>
         <td style='width:33mm;'>
             <p class='small-bold'>".tr('Totale imponibile', [], ['upper' => true]).'</p>
@@ -58,7 +58,7 @@ if ($mostra_prezzi) {
     <tr>
         <td style='height:40mm;'>
             <p class='small-bold'>".tr('Note', [], ['upper' => true]).'</p>
-            '.nl2br($rs[0]['note']).'
+            '.nl2br($records[0]['note']).'
         </td>
     </tr>';
 }
@@ -74,11 +74,11 @@ echo '
         </th>
 
         <th class="border-bottom border-right" style="width:33%">
-        '.tr('Causale trasporto', [], ['upper' => true]).'
+            '.tr('Causale trasporto', [], ['upper' => true]).'
         </th>
 
         <th class="border-bottom" style="width:33%">
-        '.tr('Porto', [], ['upper' => true]).'
+            '.tr('Porto', [], ['upper' => true]).'
         </th>
     </tr>
 

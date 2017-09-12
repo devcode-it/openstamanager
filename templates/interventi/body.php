@@ -153,7 +153,7 @@ if (!empty($rs2)) {
         $netto = $r['prezzo_vendita'] * $r['qta'] - $r['sconto'];
         echo '
             <td class="text-center">
-                '.($visualizza_costi ? Translator::numberToLocale($netto, 2) : '-').'
+                '.($mostra_prezzi ? Translator::numberToLocale($netto, 2) : '-').'
             </td>
         </tr>';
     }
@@ -162,7 +162,7 @@ if (!empty($rs2)) {
     </tbody>';
 
     // Totale spesa articoli
-    if ($visualizza_costi) {
+    if ($mostra_prezzi) {
         echo '
     <tr>
         <td colspan="2" class="text-right">
@@ -231,21 +231,21 @@ if (!empty($rs2)) {
         // Prezzo unitario
         echo '
         <td class="text-center">
-            '.($visualizza_costi ? Translator::numberToLocale($r['prezzo_vendita'], 2).' &euro;' : '-').'
+            '.($mostra_prezzi ? Translator::numberToLocale($r['prezzo_vendita'], 2).' &euro;' : '-').'
         </td>';
 
         // Prezzo totale
         $netto = $r['prezzo_vendita'] * $r['qta'] - $r['sconto'];
         echo '
         <td class="text-center">
-            '.($visualizza_costi ? Translator::numberToLocale($netto, 2) : '-').'
+            '.($mostra_prezzi ? Translator::numberToLocale($netto, 2) : '-').'
         </td>
     </tr>';
     }
     echo '
     </tbody>';
 
-    if ($visualizza_costi) {
+    if ($mostra_prezzi) {
         // Totale spese aggiuntive
         echo '
     <tr>
@@ -349,7 +349,7 @@ echo '
     <tr>';
 
 // Ore lavorate
-if ($visualizza_costi) {
+if ($mostra_prezzi) {
     $ore = get_ore_intervento($idintervento);
 
     $costo_orario = $records[0]['tot_ore_consuntivo'] - $records[0]['tot_dirittochiamata'];
@@ -396,7 +396,7 @@ echo '
     </tr>';
 
 // TOTALE COSTI FINALI
-if ($visualizza_costi) {
+if ($mostra_prezzi) {
     // Totale imponibile
     echo '
     <tr>

@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenSTAManager\n"
-"POT-Creation-Date: 2017-09-11 18:22+0200\n"
+"POT-Creation-Date: 2017-09-12 10:41+0200\n"
 "PO-Revision-Date: 2017-09-06 09:35+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1112,7 +1112,8 @@ msgstr ""
 msgid "Carica"
 msgstr ""
 
-#: lib/functions.php:132 modules/backup/edit.php:10
+#: lib/functions.php:132 modules/aggiornamenti/upload_modules.php:16
+#: modules/backup/edit.php:10
 msgid "Estensione zip non supportata!"
 msgstr ""
 
@@ -1387,22 +1388,18 @@ msgid "Cambiare la posizione di questo widget?"
 msgstr ""
 
 #: modules/aggiornamenti/upload_modules.php:16
-msgid "Estensione php_zip non caricata!"
+msgid "Verifica e attivala sul tuo file _FILE_"
 msgstr ""
 
-#: modules/aggiornamenti/upload_modules.php:16
-msgid "Verifica e attivala sul tuo php.ini"
-msgstr ""
-
-#: modules/aggiornamenti/upload_modules.php:18
+#: modules/aggiornamenti/upload_modules.php:20
 msgid "Il file non è un archivio zip!"
 msgstr ""
 
-#: modules/aggiornamenti/upload_modules.php:65
+#: modules/aggiornamenti/upload_modules.php:63
 msgid "File di aggiornamento non riconosciuto!"
 msgstr ""
 
-#: modules/aggiornamenti/upload_modules.php:120
+#: modules/aggiornamenti/upload_modules.php:116
 msgid "File di installazione non valido!"
 msgstr ""
 

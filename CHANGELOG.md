@@ -16,53 +16,72 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 ### Aggiunto (Added)
 
+- Creazione di sistemi centralizzati per la gestione della funzioni principali del progetto (secondo una logica ad oggetti)
+  - Connessione al database (tramite PDO, con possibile ampliamento dei DMBS supportati)
+  - Autenticazione degli utenti
+  - Gestione e controllo dei permessi
+  - Gestione degli input degli utenti
+  - Personalizzazione delle impostazioni
+  - Traduzione e conversione dei formati (date e numeri)
+  - Gestione degli aggiornamenti
 - Creazione della documentazione ufficiale per sviluppatori (disponibile nel Wiki e in `docs/`)
 - Creazione di un sistema API ufficiale
-- Creazione di sistemi centralizzati per la gestione della connessione al database, dell'autenticazione, degli input degli utenti, dei permessi, delle impostazioni, delle traduzioni e degli aggiornamenti (secondo una logica ad oggetti)
-- Nuova gestione delle operazioni di debugging e logging
-- Nuovi plugins e widgets
-- Nuovi moduli _Viste_, _Utenti e permessi_, _Opzioni_, con ulteriori moduli per la gestione di tabelle secondarie (_IVA_, _Pagamenti_, ...)
-- Possibilità di vedere se ci sono altri utenti che stanno visualizzando lo stesso record (opzione "Sessione avanzata" nel modulo _Opzioni_)
+- Creazione di cartelle di default per i backup (`backup/`) e i log (`logs/`)
+- Completo supporto alla traduzione del progetto
+- Possibilità di vedere se ci sono altri utenti che stanno visualizzando lo stesso record (opzione "Attiva notifica di presenza utenti sul record" nel modulo **Impostazioni**)
 - Possibilità di creare nuovi elementi dei moduli all'interno del record (oltre che dalla visualizzazione generale del modulo)
 - Nuova struttura per permettere il richiamo via AJAX delle procedure per la creazione di nuovi elementi all'esterno del modulo specifico (tramite il file `add.php`)
-- Miglioramento della documentazione integrata delle funzioni PHP in `lib/functions.php`
-- Nuovo file `lib/init.js` per permettere una rapida inizializzazione dei componenti JS
-- Creazione di cartelle di default per i backup (`backup/`) e i log (`logs/`)
+- Nuovo sistema di gestione delle operazioni di debugging e logging
+- Nuovi plugins e widgets
+- Introduzione di nuovi moduli primari e secondari
+  - **Viste**
+  - **Utenti e permessi** (convertito)
+  - **Impostazioni** (convertito)
+  - **IVA**
+  - **Pagamenti**
+  - **Porto**
+  - **Unità di misura**
+  - **Aspetto beni**
+  - **Causali**
+  - **Categorie**
+  - **Ritenute acconto**
+  - **Movimenti**
+- Nuovo modulo per gestire i file `.ini` dei componenti degli impianti (**Gestione componenti**)
 - Nuovo pulsante per resettare i filtri di ricerca (nella sezione generica dei moduli)
-- Nuovo modulo per gestire i file `.ini` dei componenti degli impianti
 - Nuova gestione generalizzata degli upload
+- Nuova sistema di gestione delle operazioni _bulk_ degli upload
+- Nuova documentazione integrata delle funzioni PHP in `lib/functions.php`
+- Nuovo file `lib/init.js` per permettere una rapida inizializzazione dei componenti JS
 - Nuove funzioni relative ai diversi moduli
-  - Possibilità di individuare i componenti dell'impianto su cui l'intervento viene effettuato
-  - Possibilità di gestire le ritenute d'acconto
-  - Firma degli interventi
-  - Selezione della tipologia di attività per ogni sessione di lavoro
-  - Tabella riepilogativa più completa dei costi
-  - Sconto globale in _Interventi_, _Fatture_, _DDT_, _Ordini_, _Preventivi_
+  - Introduzione della numerazione univoca per gli impianti (**MyImpianti**)
+  - Possibilità di individuare i componenti dell'impianto su cui l'intervento viene effettuato (**Interventi**)
+  - Possibilità di firmare degli interventi (**Interventi**)
+  - Possibilità di selezionare della tipologia di attività per ogni sessione di lavoro (**Interventi**)
+  - Introduzione di una tabella riepilogativa più completa dei costi (**Interventi**)
+  - Introduzione di sconti globali e specifici (unitari e percentuali) in **Contratti**, **DDT**, **Fatture**, **Interventi**, **Preventivi**, **Ordini**
 
 ### Modificato (Changed)
 
 - Gestione delle librerie e dipendenze PHP tramite _Composer_
-- Gestione degli assets tramite Yarn e Gulp
-- Miglioramenti grafici
-- Miglioramento della procedura di installazione
-- Miglioramenti delle informazioni disponibili sul progetto e della procedura di segnalazione dei bug
-- Impianti ora identificati tramite numerazione univoca (non più tramite matricola)
-- Sostituzione di Chosen con Select2
-- Miglioramento dell'interpretazione del template per la generazione degli input, ora disponibile ovunque all'interno del progetto
-- Miglioramento generale sull'identificazione del modulo attualmente in uso e sull'inclusione dei file necessari per il funzionamento
-- Miglioramento della gestione dei permessi
-- Gestione della connessione al database tramite PDO (con possibile futuro ampliamento dei DMBS supportati)
-- Gestione delle tabelle ora completamente basata su Datatables
-- Ottimizzazione della schermata per aggiunta dell'intervento
-- Miglioramento dei riquadri delle spese aggiuntive e degli articoli
-- La prima anagrafica di tipo Azienda caricata viene impostata come Azienda predefinita
-- Passaggio completo all'estensione `.php` per tutti i file dei moduli
-- Miglioramento dei permessi di visione per il modulo _MyImpianti_ (ora ogni cliente vede solo i propri impianti)
-- Miglioramento della procedura di aggiornamento del gestionale
+- Gestione degli assets tramite _Yarn_ e _Gulp_
+  - Miglioramenti grafici
+  - Sostituzione di _Chosen_ con _Select2_
+  - Gestione delle tabelle ora completamente basata su _Datatables_
+- Miglioramento della procedura di installazione e aggiornamento del gestionale
   - Aggiunto sistema di ripresa dell'aggiornamento (se questi è stato bloccato in una fase intermedia tra i singoli aggiornamenti)
   - Aggiunto sistema di bloccaggio dell'aggiornamento, per evitare problemi nel caso molteplici richieste di update
-  - Semplificazione della procedura manuale, che ora non richiede nessuna modifica dei file VERSION da parte dell'utente (la versione dell'aggiornamento viene memorizzata nel file VERSION.new)
+  - Semplificazione della procedura manuale, che ora non richiede nessuna modifica dei file VERSION da parte dell'utente
   - Modificata la struttura della tabella `updates`
+- Passaggio completo all'estensione `.php` per tutti i file dei moduli
+- Miglioramento dell'interpretazione del template per la generazione degli input, ora disponibile ovunque all'interno del progetto
+- Miglioramento della gestione dei permessi
+- Miglioramento delle stampe principali
+- Miglioramento delle informazioni disponibili sul progetto e della procedura di segnalazione dei bug
+- Miglioramento generale sull'identificazione del modulo attualmente in uso e sull'inclusione dei file necessari per il funzionamento
+- La prima anagrafica di tipo Azienda caricata viene impostata come "Azienda predefinita"
+- Ottimizzazione della schermata per aggiunta dell'intervento
+- Miglioramento dei riquadri delle spese aggiuntive e degli articoli
+- Miglioramento dei permessi di visione per il modulo **MyImpianti** (ogni cliente vede solo i propri impianti)
 
 ### Deprecato (Deprecated)
 
@@ -72,30 +91,29 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Rimosso (Removed)
 
 - Funzioni PHP non utilizzate (`lib/functions.php`)
-  - is\_id\_ok
-  - write\_error
-  - write\_ok
+  - is_id_ok
+  - write_error
+  - write_ok
   - getAvailableModules
-  - read\_file
+  - read_file
   - dateadd
-  - show\_info\_messages
-  - show\_error\_messages
-  - get\_module\_name
+  - show_info_messages
+  - show_error_messages
+  - get_module_name
   - mytruncate
-  - get\_user\_browser
+  - get_user_browser
   - RemoveNonASCIICharacters
-  - full\_html\_entity\_decode
-  - data\_italiana
-  - gestione\_sessioni
-  - get\_text\_around
+  - full_html_entity_decode
+  - data_italiana
+  - gestione_sessioni
+  - get_text_around
   - coolDate
-  - get\_module\_name\_by\_id
-  - cut\_text
+  - get_module_name_by_id
+  - cut_text
   - getLastPathSegment
-  - cut\_text
+  - cut_text
 - Funzioni JS non utilizzate (`lib/functionsjs.php`)
-- Cartelle non più utilizzate (`lib/jscripts/`, `lib/html2pdf/`, `widgets`, `share`, ...)
-- File non più utilizzati (`lib/dbo.class.php`, `lib/widgets.class.php`, ...)
+- Cartelle e file non più utilizzati (`lib/jscripts`, `widgets`, `share`, `lib/dbo.class.php`, `lib/widgets.class.php`, ...)
 
 ### Fixed
 
@@ -106,6 +124,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Aggiunta protezione contro attacchi di tipo XSS
 - Aggiunta base per contrastare l'SQL Injection
 - Aggiunta protezione (temporaneamente disabilitata) contro attacchi CSRF
+- Aggiunto sistema basilare contro attacchi brute-force all'accesso
 - Passaggio della codifica della password con algoritmo di hashing BCrypt
 
 ## 2.2 (2016-11-10)

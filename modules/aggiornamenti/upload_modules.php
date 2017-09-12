@@ -13,19 +13,21 @@ $size = $_FILES['blob']['size'];
 $type = $_POST['type'];
 
 if (!extension_loaded('zip')) {
-    $_SESSION['errors'][] = tr('Estensione php_zip non caricata!').'<br>'.tr('Verifica e attivala sul tuo php.ini');
+    $_SESSION['errors'][] = tr('Estensione zip non supportata!').'<br>'.tr('Verifica e attivala sul tuo file _FILE_', [
+        '_FILE_' => '<b>php.ini</b>'
+    ]);
 } elseif (!ends_with($filename, '.zip')) {
     $_SESSION['errors'][] = tr('Il file non è un archivio zip!');
 } elseif (!empty($tmp) && is_file($tmp)) {
     $zip = new ZipArchive();
 
     if ($zip->open($tmp)) {
-        $tmpdir = 'tmp/';
+        $tmp_dir = $docroot.'/tmp';
 
         // Controllo sulla cartella
-        directory($docroot.'/'.$tmpdir);
+        directory($tmp_dir);
 
-        $zip->extractTo($docroot.'/'.$tmpdir);
+        $zip->extractTo($tmp_dir);
 
         // AGGIORNAMENTO
         if ($type == 'update') {
@@ -33,34 +35,30 @@ if (!extension_loaded('zip')) {
             $old_config = file_get_contents($docroot.'/config.inc.php');
 
             // Aggiornamento del CORE
-            if (file_exists($docroot.'/'.$tmpdir.'/VERSION')) {
+            if (file_exists($tmp_dir.'/VERSION')) {
                 //rename($docroot.'/VERSION', $docroot.'/VERSION.old');
 
                 // Copia i file dalla cartella temporanea alla root
-                copyr($docroot.'/'.$tmpdir, $docroot);
+                copyr($tmp_dir, $docroot);
 
                 // Scollego l'utente per eventuali aggiornamenti del db
                 Auth::logout();
-
-                redirect($rootdir, 'php');
             }
 
             // Aggiornamento di un MODULO
-            elseif (file_exists($docroot.'/'.$tmpdir.'/MODULE')) {
-                $module_info = parse_ini_file($docroot.'/'.$tmpdir.'/MODULE', true);
+            elseif (file_exists($tmp_dir.'/MODULE')) {
+                $module_info = parse_ini_file($tmp_dir.'/MODULE', true);
                 $module_name = $module_info['module_name'];
                 $module_dir = $module_info['module_directory'];
 
                 // Copio i file nella cartella "modules/<nomemodulo>/"
-                copyr($docroot.'/'.$tmpdir, $docroot.'/modules/'.$module_dir.'/');
+                copyr($tmp_dir, $docroot.'/modules/'.$module_dir.'/');
 
                 // Rinomino il file di versione per forzare l'aggiornamento
                 //rename($docroot.'/VERSION_'.$module, $docroot.'/VERSION_'.$module.'.old');
 
                 // Scollego l'utente per eventuali aggiornamenti del db
                 Auth::logout();
-
-                redirect($rootdir, 'php');
             } else {
                 $_SESSION['errors'][] = tr('File di aggiornamento non riconosciuto!');
             }
@@ -72,15 +70,15 @@ if (!extension_loaded('zip')) {
         // NUOVO MODULO
         elseif ($type == 'new') {
             // Se non c'è il file MODULE non é un modulo
-            if (is_file($docroot.'/'.$tmpdir.'/MODULE')) {
+            if (is_file($tmp_dir.'/MODULE')) {
                 // Leggo le info dal file di configurazione del modulo
-                $module_info = parse_ini_file($docroot.'/'.$tmpdir.'/MODULE', true);
+                $module_info = parse_ini_file($tmp_dir.'/MODULE', true);
                 $module_name = $module_info['module_name'];
                 $module_version = $module_info['module_version'];
                 $module_dir = $module_info['module_directory'];
 
                 // Copio i file nella cartella "modules/<nomemodulo>/"
-                copyr($docroot.'/'.$tmpdir, $docroot.'/modules/'.$module_dir.'/');
+                copyr($tmp_dir, $docroot.'/modules/'.$module_dir.'/');
 
                 // Scollego l'utente per eventuali aggiornamenti del db
                 Auth::logout();
@@ -111,8 +109,6 @@ if (!extension_loaded('zip')) {
                     $query = 'INSERT INTO zz_modules(`name`, `title`, `directory`, `options`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES('.prepare($module_name).', '.prepare($module_name).', '.prepare($module_dir).', '.prepare($module_info['module_options']).', '.prepare($module_info['module_icon']).', '.prepare($module_version).', '.prepare($module_info['module_compatibility']).', "100", '.prepare($module_info['module_parent']).', 0, 1)';
                     $dbo->query($query);
                 }
-
-                redirect($rootdir, 'php');
             }
 
             // File zip non contiene il file MODULE
@@ -121,7 +117,8 @@ if (!extension_loaded('zip')) {
             }
         }
 
-        delete($docroot.'/'.$tmpdir);
+        delete($tmp_dir);
+        redirect($rootdir);
     } else {
         $_SESSION['errors'][] = checkZip($tmp);
     }

@@ -456,7 +456,7 @@ if (!empty(get_var('Abilitare orario lavorativo'))) {
                 }
             },
 <?php
-if (Modules::getPermission($id_module) == 'rw') {
+if (Modules::getPermission('Interventi') == 'rw') {
     ?>
             droppable: true,
             drop: function(date, jsEvent, ui, resourceId) {

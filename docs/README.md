@@ -10,7 +10,7 @@ Benvenuti nella wiki di OpenSTAManager!
 > Per rispondere a queste esigenze nasce il gestionale per il servizio di assistenza tecnica OpenSTAManager, che rende disponibile un supporto informatico per la gestione di questa tipologia di pratiche in un contesto talvolta povero di alternative.
 
 La documentazione del progetto presenta informazioni valide a partire dalla versione 2.3 dello stesso.
-Si avverte pertanto che questa documentazione non è utilizzabile con efficacia per le versioni precedenti del progetto, con particolare riguardo verso le strutture relative ad assets e framework, oltre che alle procedure di sviluppo di moduli.
+Si avverte pertanto che questa documentazione non è utilizzabile con efficacia per le versioni precedenti del progetto, con particolare riguardo verso le strutture relative ad assets e framework, oltre che alle procedure di sviluppo dei moduli.
 
 <!-- TOC depthFrom:2 depthTo:6 orderedList:false updateOnSave:true withLinks:true -->
 

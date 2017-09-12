@@ -194,7 +194,6 @@ if (!function_exists('download')) {
     {
         if (!headers_sent()) {
             $filename = !empty($filename) ? $filename : basename($file);
-            $content = !is_file($file) ? $file : file_get_contents($file);
 
             // Required for some browsers
             if (ini_get('zlib.output_compression')) {
@@ -209,13 +208,18 @@ if (!function_exists('download')) {
             header('Cache-Control: private', false);
 
             header('Content-Disposition: attachment; filename="'.basename(str_replace('"', '', $filename)).'";');
-            header('Content-Type: application/force-download');
+            header('Content-Type: application/octet-stream');
             header('Content-Transfer-Encoding: binary');
 
-            ob_clean();
-            flush();
+            header('Content-Length: ' . filesize($file));
 
-            echo $content;
+            $open = fopen($file, "rb");
+            while(!feof($open))
+            {
+                print(fread($open, 1024*8));
+                ob_flush();
+                flush();
+            }
 
             return true;
         }

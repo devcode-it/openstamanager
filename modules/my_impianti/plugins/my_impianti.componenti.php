@@ -116,7 +116,7 @@ echo '
 
             <div class="col-md-2 col-md-push-6">';
 echo "
-                <a class=\"btn btn-primary btn-block\" id=\"addta\" href=\"javascript:;\" onclick=\"if ( $('#filename').val()!='0' ){ redirect('".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."&op=linkcomponente&backto=record-edit&filename='+$('#filename').val());}else{ alert('".tr('Seleziona prima un componente')."'); $('#filename').focus(); }\"><i class='fa fa-plus'></i> ".tr('Aggiungi').'</a>';
+                <a class=\"btn btn-primary btn-block\" id=\"addta\" href=\"javascript:;\" onclick=\"if ( $('#filename').val()!='0' ){ redirect('".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."&op=linkcomponente&backto=record-edit&filename='+$('#filename').val() + '&hash=tab_".$id_plugin."');}else{ alert('".tr('Seleziona prima un componente')."'); $('#filename').focus(); }\"><i class='fa fa-plus'></i> ".tr('Aggiungi').'</a>';
 echo '
             </div>
         </div>
@@ -243,7 +243,7 @@ if (!empty($rs2)) {
             echo '
                             '.Modules::link('Interventi', $rs2[$j]['id'], tr('Intervento _NUM_ del _DATE_', [
                                 '_NUM_' => $rs2[$j]['codice'],
-                                '_DATE_' => Translator::dateToLocale($rs2[$j]['dadata_interventota']),
+                                '_DATE_' => Translator::dateToLocale($rs2[$j]['data_intervento']),
                             ])).'<br>';
         }
 

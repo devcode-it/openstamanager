@@ -23,7 +23,7 @@ include_once __DIR__.'/../../core.php';
 					{[ "type": "text", "label": "<?php echo tr("Nome"); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
 				</div>
 				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr("Guadagno/sconto"); ?>", "name": "prc_guadagno", "required": 1, "class": "text-right", "value": "$prc_guadagno$", "icon-after": "%" ]}
+					{[ "type": "number", "label": "<?php echo tr("Guadagno/sconto"); ?>", "name": "prc_guadagno", "required": 1, "value": "$prc_guadagno$", "icon-after": "%" ]}
 				</div>
 
 			</div>

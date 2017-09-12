@@ -30,11 +30,11 @@ include_once __DIR__.'/../../core.php';
 
 
 	<div class="row">
-		<div class="col-md-2">
+		<div class="col-md-4">
 			{[ "type": "date", "label": "<?php echo tr('Data movimento'); ?>", "name": "data", "required": 1, "value": "$data$" ]}
 		</div>
 
-		<div class="col-md-6">
+		<div class="col-md-8">
 			{[ "type": "text", "label": "<?php echo tr('Causale'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
 		</div>
 	</div>

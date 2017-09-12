@@ -38,8 +38,8 @@ if (!empty($rs2)) {
         echo '
         <td class="table_cell center">
             <span>'.Translator::numberToLocale($netto + $iva).' &euro;</span><br/>
-            <small>netto: '.Translator::numberToLocale($netto).' &euro;</small><br/>
-            <small>iva: '.Translator::numberToLocale($iva).' &euro;</small><br/>
+            <small>'.tr('Netto').': '.Translator::numberToLocale($netto).' &euro;</small><br/>
+            <small>'.tr('Iva').': '.Translator::numberToLocale($iva).' &euro;</small><br/>
         </td>';
 
         // Pulsanti

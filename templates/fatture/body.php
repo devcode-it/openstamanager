@@ -116,13 +116,9 @@ foreach ($righe as $r) {
             </td>';
 
     // Iva
-    echo "
-            <td class='text-center'>";
-    if ($r['perc_iva'] > 0) {
-        echo '
-                '.Translator::numberToLocale($r['perc_iva'], 2);
-    }
     echo '
+            <td class="text-center">
+                '.Translator::numberToLocale($r['perc_iva'], 2).'
             </td>
         </tr>';
 
@@ -134,39 +130,25 @@ foreach ($righe as $r) {
     $v_totale[$r['desc_iva']] += $r['subtotale'] - $r['sconto'];
 }
 
-// Aggiungo diciture per condizioni iva particolari
-if (!empty($v_iva)) {
-    $elenco = [
-        'Reverse charge ex art. 17, comma 6, DPR 633/72' => tr('Operazione soggetta a reverse charge ex art. 17, comma 6, DPR 633/72'),
-        'Esente ex art. 74' => tr('Senza addebito iva ex art. 74 comma 8-9 del DPR 633/72'),
-    ];
-
-    $keys = array_keys($v_iva);
-
-    // Controllo se è stata applicata questa tipologia di iva
-    foreach ($elenco as $e => $testo) {
-        if (in_array($e, $keys)) {
-            $autofill['count'] += strlen($testo) / $autofill['words'];
-            $autofill['count'] += substr_count($r['descrizione'], PHP_EOL);
-
-            echo "
-        <tr>
-            <td class='text-center'>
-                <b>".nl2br($testo)."</b>
-            </td>
-
-            <td class='center border-right'></td>
-            <td class='center border-right'></td>
-            <td class='center border-right'></td>
-        </tr>";
-        }
-    }
-}
-
 echo '
         |autofill|
     </tbody>
 </table>';
+
+
+// Aggiungo diciture per condizioni iva particolari
+foreach ($v_iva as $key => $value) {
+    $dicitura = $dbo->fetchArray('SELECT dicitura FROM co_iva WHERE descrizione = '.prepare($key));
+
+    if (!empty($dicitura[0]['dicitura'])) {
+        $testo = $dicitura[0]['dicitura'];
+
+        echo "
+<p class='text-center'>
+    <b>".nl2br($testo)."</b>
+</p>";
+    }
+}
 
 if (!empty($rs[0]['note'])) {
     echo '

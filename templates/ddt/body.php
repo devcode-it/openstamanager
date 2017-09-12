@@ -108,14 +108,8 @@ foreach ($rs_gen as $r) {
 
             // Iva
             echo "
-            <td align='center' valign='top'>";
-
-            if ($r['perc_iva'] > 0) {
-                echo '
-                '.Translator::numberToLocale($r['perc_iva'], 2);
-            }
-
-            echo '
+            <td align='center' valign='top'>
+                ".Translator::numberToLocale($r['perc_iva'], 2).'
             </td>';
         }
         echo '

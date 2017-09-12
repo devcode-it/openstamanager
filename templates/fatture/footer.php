@@ -153,7 +153,7 @@ if ($rs[0]['ritenutaacconto'] != 0) {
 
     echo "
     <tr>
-        <td class='border-bottom b-top'>
+        <td class='border-bottom border-right'>
             <p class='small-bold'>".tr("Ritenuta d'acconto _PRC_%", [
                 '_PRC_' => $rs2[0]['percentuale'],
             ], ['upper' => true])."</p>
@@ -161,19 +161,19 @@ if ($rs[0]['ritenutaacconto'] != 0) {
     </tr>
 
     <tr>
-        <td style='text-align:right;' class='border-bottom cell-padded'>
+        <td style='text-align:right;' class='border-bottom border-right cell-padded'>
             ".Translator::numberToLocale($rs[0]['ritenutaacconto'], 2)." &euro;
         </td>
     </tr>
 
     <tr>
-        <td class='border-bottom'>
+        <td class='border-bottom border-right'>
             <p class='small-bold'>".tr('Netto a pagare', [], ['upper' => true])."</p>
         </td>
     </tr>
 
     <tr>
-        <td style='text-align:right;' class='cell-padded'>
+        <td style='text-align:right;' class='border-bottom border-right cell-padded'>
             ".Translator::numberToLocale($totale_documento - $rs[0]['ritenutaacconto'], 2).' &euro;
         </td>
     </tr>';

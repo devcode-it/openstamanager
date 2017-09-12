@@ -54,14 +54,20 @@ Per ulteriori informazioni, consultare la [documentazione ufficiale di Composer]
 
 ## Framework predefiniti
 
+- danielstjules/stringy
 - ezyang/htmlpurifier
 - filp/whoops
+- ifsnop/mysqldump-php
 - intervention/image
 - ircmaxell/password-compat
 - maximebf/debugbar
 - monolog/monolog
+- mpdf/mpdf
+- paragonie/random_compat
 - phpmailer/phpmailer
 - spipu/html2pdf
+- symfony/filesystem
+- symfony/finder
 - symfony/translation
 
 _I nomi sono indicati secondo la notazione tipica dei progetti pubblici su Github._

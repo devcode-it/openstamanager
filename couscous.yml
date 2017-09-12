@@ -40,15 +40,18 @@ menu:
                 assets:
                     text: Assets
                     relativeUrl: assets.html
-                moduli:
-                    text: Moduli
-                    relativeUrl: moduli.html
-        other:
-            name: Approfondimenti
-            items:
                 api:
                     text: API
                     relativeUrl: api.html
+        other:
+            name: Approfondimenti
+            items:
+                struttura:
+                    text: Struttura
+                    relativeUrl: struttura.html
+                moduli:
+                    text: Moduli
+                    relativeUrl: moduli.html
                 docs:
                     text: Documentazione completa
                     relativeUrl: docs/

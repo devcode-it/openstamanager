@@ -2,6 +2,7 @@
 
 include_once __DIR__.'/info.php';
 
+// Retrocompatibilità con le stampe gestite da HTML2PDF
 $replaces['pagination'] = str_replace(['{PAGENO}', '{nb}'], ['[[page_cu]]', '[[page_nb]]'], $replaces['pagination']);
 
 $prefixes = [

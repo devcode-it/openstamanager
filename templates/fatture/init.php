@@ -12,8 +12,8 @@ FROM co_documenti WHERE id='.prepare($iddocumento));
 
 $module_name = ($rs[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
 
-$idcliente = $rs[0]['idanagrafica'];
-$idsede = $rs[0]['idsede'];
+$id_cliente = $rs[0]['idanagrafica'];
+$id_sede = $rs[0]['idsede'];
 
 $tipo_doc = $rs[0]['tipo_doc'];
 if ($rs[0]['stato_doc'] != 'Bozza') {

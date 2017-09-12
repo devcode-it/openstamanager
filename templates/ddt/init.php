@@ -8,8 +8,8 @@ $rs = $dbo->fetchArray($q);
 
 $module_name = ($rs[0]['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
 
-$idcliente = $rs[0]['idanagrafica'];
-$idsede = $rs[0]['idsede'];
+$id_cliente = $rs[0]['idanagrafica'];
+$id_sede = $rs[0]['idsede'];
 
 $numero = !empty($rs[0]['numero_esterno']) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
 

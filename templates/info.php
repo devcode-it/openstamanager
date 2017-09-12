@@ -36,13 +36,14 @@ $rsc = $dbo->fetchArray($queryc);
 
 // Lettura dati aziendali
 $rsf = $dbo->fetchArray("SELECT * FROM an_anagrafiche WHERE idanagrafica = (SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')");
-$id_azienda = $rsd[0]['id'];
 
+// Prefissi e contenuti del replace
 $replace = [
     'c_' => $rsc[0],
     'f_' => $rsf[0],
 ];
 
+// Rinominazione di particolari campi all'interno delle informazioni su anagrafica e azienda
 $rename = [
     'capitale_sociale' => 'capsoc',
     'ragione_sociale' => 'ragionesociale',
@@ -51,13 +52,15 @@ $rename = [
 
 $keys = [];
 
+// Predisposizione delle informazioni delle anagrafiche per la sostituzione automatica
 foreach ($replace as $prefix => $values) {
+    // Individuazione dei campi minimi
     $values = (array) $values;
     if ($prefix == 'c_') {
         $keys = array_keys($values);
     }
 
-    // Azienda predefinita non impostata
+    // Se l'azienda predefinita non è impostata
     if (empty($values) && $prefix == 'f_') {
         $values = [];
         foreach ($keys as $key) {
@@ -65,17 +68,19 @@ foreach ($replace as $prefix => $values) {
         }
     }
 
+    // Rinominazione dei campi
     foreach ($rename as $key => $value) {
         $values[$value] = $values[$key];
         unset($values[$key]);
     }
 
+    // Salvataggio dei campi come variabili PHP
     foreach ($values as $key => $value) {
         ${$prefix.$key} = $value;
     }
 
+    // Eventuali estensioni dei contenuti
     $citta = '';
-
     if (!empty($values['cap'])) {
         $citta .= $values['cap'];
     }
@@ -88,10 +93,12 @@ foreach ($replace as $prefix => $values) {
 
     $values['citta_full'] = $citta;
 
+    // Completamento dei campi minimi
     if ($key == 'c_') {
         $keys = array_unique(array_merge($keys, array_keys($values)));
     }
 
+    // Aggiunta delle informazioni per la sostituzione automatica
     foreach ($values as $key => $value) {
         $replaces[$prefix.$key] = $value;
     }

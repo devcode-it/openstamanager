@@ -5,8 +5,10 @@ include_once __DIR__.'/../../core.php';
 // Decido la lunghezza minima della password, e la lunghezza minima del nome utente
 $min_length = 8;
 $min_length_username = 4;
+
 $idgruppo = intval(filter('idgruppo'));
 $id_utente = filter('id_utente');
+
 if (!empty($id_utente)) {
     $value = 'change_pwd';
 
@@ -33,7 +35,7 @@ echo '
 
 	<div class="row">
 		<div class="col-xs-12">
-		{[ "type": "text", "label": "'.tr('Username').'", "name": "username", "required": 1, "value": "'.$rs[0]['username'].'" ]}
+		{[ "type": "text", "label": "'.tr('Username').'", "name": "username", "required": 1, "value": "'.$username.'" ]}
 		</div>
 	</div>
 

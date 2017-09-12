@@ -488,7 +488,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
 
             editable: true,
             eventDrop: function(event,dayDelta,minuteDelta,revertFunc) {
-				$.get(globals.rootdir + "/modules/dashboard/ajaxreq.php?op=update_intervento&id="+event.idintervento+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
+				$.get(globals.rootdir + "/modules/dashboard/ajaxreq.php?op=update_intervento&id="+event.id+"&idintervento="+event.idintervento+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
 					if( response=="success" ){
 						data = $.trim(data);
 						if( data!="ok" ){
@@ -503,7 +503,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
 				});
 			},
             eventResize: function(event,dayDelta,minuteDelta,revertFunc) {
-				$.get(globals.rootdir + "/modules/dashboard/ajaxreq.php?op=update_intervento&id="+event.idintervento+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
+				$.get(globals.rootdir + "/modules/dashboard/ajaxreq.php?op=update_intervento&id="+event.id+"&idintervento="+event.idintervento+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
 					if( response=="success" ){
 						data = $.trim(data);
 						if(data != "ok"){
@@ -527,7 +527,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
 
 if (get_var('Utilizzare i tooltip sul calendario') == '1') {
     ?>
-				$.get(globals.rootdir + "/modules/dashboard/ajaxreq.php?op=get_more_info&id="+event.id+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
+				$.get(globals.rootdir + "/modules/dashboard/ajaxreq.php?op=get_more_info&id="+event.idintervento+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
 					if( response=="success" ){
 						data = $.trim(data);
 						if( data!="ok" ){

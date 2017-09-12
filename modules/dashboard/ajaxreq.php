@@ -50,12 +50,13 @@ switch (get('op')) {
         break;
 
     case 'update_intervento':
-        $id = get('id');
+        $sessione = get('id');
+        $idintervento = get('idintervento');
         $timeStart = get('timeStart');
         $timeEnd = get('timeEnd');
 
         //Aggiornamento prezzo totale
-        $q = 'SELECT in_interventi_tecnici.prezzo_ore_unitario, idtecnico, in_statiintervento.completato FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento =  in_statiintervento.idstatointervento WHERE in_interventi.id='.prepare($id).' AND in_statiintervento.completato = 0 '.Modules::getAdditionalsQuery('Interventi');
+        $q = 'SELECT in_interventi_tecnici.prezzo_ore_unitario, idtecnico, in_statiintervento.completato FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento =  in_statiintervento.idstatointervento WHERE in_interventi.id='.prepare($idintervento).' AND in_statiintervento.completato = 0 '.Modules::getAdditionalsQuery('Interventi');
         $rs = $dbo->fetchArray($q);
         $prezzo_ore = 0.00;
 
@@ -69,7 +70,7 @@ switch (get('op')) {
 
         if (count($rs) > 0) {
             // Aggiornamento orario tecnico
-            $dbo->query('UPDATE in_interventi_tecnici SET orario_inizio = '.prepare($timeStart).', orario_fine = '.prepare($timeEnd).', ore='.prepare($t).', prezzo_ore_consuntivo='.prepare($t * $prezzo_ore_unitario).' WHERE id='.prepare($id));
+            $dbo->query('UPDATE in_interventi_tecnici SET orario_inizio = '.prepare($timeStart).', orario_fine = '.prepare($timeEnd).', ore='.prepare($t).', prezzo_ore_consuntivo='.prepare($t * $prezzo_ore_unitario).' WHERE id='.prepare($sessione));
             echo 'ok';
         } else {
             echo tr('Attività completata, non è possibile modificarla!');

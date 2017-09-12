@@ -18,29 +18,21 @@ switch (get('op')) {
         $tipi = (array) $_SESSION['dashboard']['idtipiintervento'];
 
         $query = 'SELECT in_interventi_tecnici.idintervento, colore, in_interventi_tecnici.id, idtecnico, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico, (SELECT colore FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS colore_tecnico, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS cliente FROM in_interventi_tecnici INNER JOIN (in_interventi LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento) ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi_tecnici.orario_inizio >= '.prepare($start).' AND in_interventi_tecnici.orario_fine <= '.prepare($end).' AND idtecnico IN('.implode(',', $_SESSION['dashboard']['idtecnici']).') AND in_interventi.idstatointervento IN('.implode(',', $stati).') AND in_interventi_tecnici.idtipointervento IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery('Interventi');
-
         $rs = $dbo->fetchArray($query);
-        $n = count($rs);
 
         $results = [];
-        for ($i = 0; $i < $n; ++$i) {
-            if ($rs[$i]['colore_tecnico'] == '#FFFFFF') {
-                $color = color_darken($rs[$i]['colore_tecnico'], 100);
-            } else {
-                $color = $rs[$i]['colore_tecnico'];
-            }
-
+        foreach ($rs as $r) {
             $results[] = [
-                'id' => $rs[$i]['id'],
-                'idintervento' => $rs[$i]['idintervento'],
-                'idtecnico' => $rs[$i]['idtecnico'],
-                'title' => '<b>Int. '.$rs[$i]['idintervento'].'</b> '.addslashes($rs[$i]['cliente']).'<br><b>'.tr('Tecnici').':</b> '.addslashes($rs[$i]['nome_tecnico']),
-                'start' => $rs[$i]['orario_inizio'],
-                'end' => $rs[$i]['orario_fine'],
-                'url' => $rootdir.'/editor.php?id_module='.Modules::getModule('Interventi')['id'].'&id_record='.$rs[$i]['idintervento'],
-                'backgroundColor' => $rs[$i]['colore'],
-                'textColor' => color_inverse($rs[$i]['colore']),
-                'borderColor' => $color,
+                'id' => $r['id'],
+                'idintervento' => $r['idintervento'],
+                'idtecnico' => $r['idtecnico'],
+                'title' => '<b>Int. '.$r['idintervento'].'</b> '.$r['cliente'].'<br><b>'.tr('Tecnici').':</b> '.$r['nome_tecnico'],
+                'start' => $r['orario_inizio'],
+                'end' => $r['orario_fine'],
+                'url' => $rootdir.'/editor.php?id_module='.Modules::getModule('Interventi')['id'].'&id_record='.$r['idintervento'],
+                'backgroundColor' => $r['colore'],
+                'textColor' => color_inverse($r['colore']),
+                'borderColor' => ($r['colore_tecnico'] == '#FFFFFF') ? color_darken($r['colore_tecnico'], 100) : $r['colore_tecnico'],
                 'allDay' => false,
             ];
         }

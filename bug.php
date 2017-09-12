@@ -136,7 +136,7 @@ if (!empty($alert)) {
 	<div class="alert alert-warning">
 		<i class="fa fa-warning"></i>
 		<b>'.tr('Attenzione!').'</b> '.tr('Per utilizzare correttamente il modulo di segnalazione bug devi configurare alcuni parametri email nella scheda impostazioni').'.
-        '.Modules::link('Opzioni', $dbo->fetchArray("SELECT `idimpostazione` FROM `zz_settings` WHERE sezione='Email'")[0]['idimpostazione'], tr('Correggi'), null, 'class="btn btn-warning pull-right"').'
+        '.Modules::link('Impostazioni', $dbo->fetchArray("SELECT `idimpostazione` FROM `zz_settings` WHERE sezione='Email'")[0]['idimpostazione'], tr('Correggi'), null, 'class="btn btn-warning pull-right"').'
 		<div class="clearfix"></div>
 	</div>';
 }

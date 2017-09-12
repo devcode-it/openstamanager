@@ -127,7 +127,7 @@ class Update
     {
         $todos = self::getTodos();
 
-        return !empty($todos) ? $todos()[0] : null;
+        return !empty($todos) ? $todos[0] : null;
     }
 
     /**

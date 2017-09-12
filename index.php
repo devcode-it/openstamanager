@@ -8,8 +8,8 @@ $op = filter('op');
 // LOGIN
 switch ($op) {
     case 'login':
-        $username = filter('username');
-        $password = filter('password');
+        $username = post('username');
+        $password = post('password');
         if ($dbo->isConnected() && $dbo->isInstalled() && Auth::getInstance()->attempt($username, $password)) {
             $_SESSION['keep_alive'] = (filter('keep_alive') != null);
 

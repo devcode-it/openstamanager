@@ -246,20 +246,14 @@ function do_backup($path = null)
 
         // Creazione dello zip
         if (extension_loaded('zip')) {
-            if (create_zip([$path, dirname($database_file)], $backup_dir.$backup_name.'.zip', $ignores)) {
-                $_SESSION['infos'][] = tr('Nuovo backup creato!');
-            } else {
-                $_SESSION['errors'][] = tr('Errore durante la creazione del backup!');
-            }
+            $result = create_zip([$path, dirname($database_file)], $backup_dir.$backup_name.'.zip', $ignores);
 
             // Rimozione cartella temporanea
             delete($database_file);
         }
         // Copia dei file di OSM
         else {
-            copyr($path, $backup_dir.$backup_name, $ignores);
-
-            $_SESSION['infos'][] = tr('Nuovo backup creato!');
+            $result = copyr($path, $backup_dir.$backup_name, $ignores);
         }
 
         // Eliminazione vecchi backup se ce ne sono
@@ -289,7 +283,7 @@ function do_backup($path = null)
             }
         }
 
-        return true;
+        return $result;
     }
 
     return false;

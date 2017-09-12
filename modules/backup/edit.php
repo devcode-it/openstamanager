@@ -50,7 +50,10 @@ echo '
     <div class="col-md-12 text-right">
     <button type="button" class="btn btn-primary pull-right" onclick="continue_backup()"><i class="fa fa-database"></i> '.tr('Crea backup').'...</button>
     </div>
-</div>';
+</div>
+
+<div class="clearfix"></div>
+<br>';
 
 //Lettura file di backup
 if (file_exists($backup_dir)) {

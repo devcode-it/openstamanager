@@ -28,7 +28,9 @@ switch (filter('op')) {
         break;
 
     case 'backup':
-        if (!do_backup()) {
+        if (do_backup()) {
+            $_SESSION['infos'][] = tr('Nuovo backup creato correttamente!');
+        } else {
             $_SESSION['errors'][] = tr('Errore durante la creazione del backup!').' '.tr_replace('_DIR_', '"'.$backup_dir.'"', tr('Verifica che la cartella _DIR_ abbia i permessi di scrittura!'));
         }
 

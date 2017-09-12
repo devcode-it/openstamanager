@@ -157,9 +157,9 @@ if (!API::isAPIRequest()) {
     register_shutdown_function('translateTemplate');
 
     // Impostazione della sessione di base
-    $_SESSION['infos'] = (array) $_SESSION['infos'];
-    $_SESSION['warnings'] = (array) $_SESSION['warnings'];
-    $_SESSION['errors'] = (array) $_SESSION['errors'];
+    $_SESSION['infos'] = array_unique((array) $_SESSION['infos']);
+    $_SESSION['warnings'] = array_unique((array) $_SESSION['warnings']);
+    $_SESSION['errors'] = array_unique((array) $_SESSION['errors']);
 
     // Imposto il periodo di visualizzazione dei record dal 01-01-yyy al 31-12-yyyy
     if (!empty($_GET['period_start'])) {

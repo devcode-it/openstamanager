@@ -3,7 +3,7 @@
 return [
     'orientation' => 'p',
     'dimension' => 'A4',
-    'font-size' => '11pt',
+    'font-size' => 10,
     'margins' => [
         'top' => 10,
         'bottom' => 10,

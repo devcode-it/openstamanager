@@ -58,12 +58,12 @@ table.vertical-middle th {
     vertical-align: middle;
 }
 
-table#contents td {
+table#contents tbody td {
     border-top: 0;
     border-bottom: 0;
 }
 
-table #contents thead th {
+table#contents thead th {
     font-size: 80%;
 }
 

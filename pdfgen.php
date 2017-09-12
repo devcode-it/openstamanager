@@ -147,6 +147,7 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
         'templates/base/style.css',
     ];
 
+    // Instanziamento dell'oggetto mPDF
     $mpdf = new mPDF(
         'c',
         $settings['dimension'],
@@ -161,16 +162,25 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
         strtolower($settings['orientation']) == 'l' ? 'l' : 'p'
     );
 
+    // Impostazione di header e footer
     $mpdf->SetHTMLFooter($foot);
     $mpdf->SetHTMLHeader($head);
 
+    // Impostazione del titolo del PDF
     $mpdf->SetTitle($title);
 
+    // Inclusione dei fogli di stile CSS
     foreach ($styles as $value) {
         $mpdf->WriteHTML(file_get_contents(__DIR__.'/'.$value), 1);
     }
+
+    // Impostazione del font-size
+    $mpdf->WriteHTML('body {font-size: '.$settings['font-size'].'pt;}', 1);
+
+    // Aggiunta dei contenuti
     $mpdf->WriteHTML($report);
 
+    // Creazione effettiva del PDF
     $mpdf->Output($filename, $mode);
 } else {
     if (!str_contains($report, '<page_footer>')) {

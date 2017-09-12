@@ -30,22 +30,22 @@ switch (get('op')) {
                 $color = $rs[$i]['colore_tecnico'];
             }
 
-            $results[] = '
-            {
-                "id": "'.$rs[$i]['id'].'",
-                "idintervento": "'.$rs[$i]['idintervento'].'",
-                "idtecnico":"'.$rs[$i]['idtecnico'].'",
-                "title":"<b>Int. '.$rs[$i]['idintervento'].'</b> '.addslashes($rs[$i]['cliente']).'<br><b>'.tr('Tecnici').':</b> '.addslashes($rs[$i]['nome_tecnico']).'",
-                "start": "'.$rs[$i]['orario_inizio'].'",
-                "end": "'.$rs[$i]['orario_fine'].'",
-                "url":"'.$rootdir.'/editor.php?id_module='.Modules::getModule('Interventi')['id'].'&id_record='.$rs[$i]['idintervento'].'",
-                "backgroundColor":"'.$rs[$i]['colore'].'",
-                "textColor":"'.color_inverse($rs[$i]['colore']).'",
-                "borderColor":"'.$color.'",
-                "allDay": false
-            }';
+            $results[] = [
+                'id' => $rs[$i]['id'],
+                'idintervento' => $rs[$i]['idintervento'],
+                'idtecnico' => $rs[$i]['idtecnico'],
+                'title' => '<b>Int. '.$rs[$i]['idintervento'].'</b> '.addslashes($rs[$i]['cliente']).'<br><b>'.tr('Tecnici').':</b> '.addslashes($rs[$i]['nome_tecnico']),
+                'start' => $rs[$i]['orario_inizio'],
+                'end' => $rs[$i]['orario_fine'],
+                'url' => $rootdir.'/editor.php?id_module='.Modules::getModule('Interventi')['id'].'&id_record='.$rs[$i]['idintervento'],
+                'backgroundColor' => $rs[$i]['colore'],
+                'textColor' => color_inverse($rs[$i]['colore']),
+                'borderColor' => $color,
+                'allDay' => false,
+            ];
         }
-        echo '['.implode(',', $results).']';
+
+        echo json_encode($results);
 
         break;
 

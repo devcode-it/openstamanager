@@ -2,64 +2,15 @@
 
 include_once __DIR__.'/../../core.php';
 
-$report_name = 'preventivo_'.$idpreventivo.'.pdf';
+$report_name = 'ordine_'.$numero_ord.'.pdf';
 
 $autofill = [
     'count' => 0, // Conteggio delle righe
     'words' => 70, // Numero di parolo dopo cui contare una riga nuova
     'rows' => 20, // Numero di righe massimo presente nella pagina
-    'additional' => 10, // Numero di righe massimo da aggiungere
+    'additional' => 15, // Numero di righe massimo da aggiungere
     'columns' => 5, // Numero di colonne della tabella
 ];
-
-echo '
-<div class="row">
-    <div class="col-xs-6">
-        <div class="text-center" style="height:5mm;">
-            <b>'.tr('Preventivo N<sup>o</sup> _NUM_ del _DATE_', [
-                '_NUM_' => $records[0]['numero'],
-                '_DATE_' => Translator::dateToLocale($records[0]['data']),
-            ], ['upper' => true]).'</b>
-        </div>
-    </div>
-
-    <div class="col-xs-5 col-xs-offset-1">
-        <table class="table" style="width:100%;margin-top:5mm;">
-            <tr>
-                <td colspan=2 class="border-full" style="height:16mm;">
-                    <p class="small-bold">'.tr('Spett.le', [], ['upper' => true]).'</p>
-                    <p>$c_ragionesociale$</p>
-                    <p>$c_indirizzo$ $c_citta_full$</p>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="border-bottom border-left">
-                    <p class="small-bold">'.tr('Partita IVA', [], ['upper' => true]).'</p>
-                </td>
-                <td class="border-right border-bottom text-right">
-                    <small>$c_piva$</small>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="border-bottom border-left">
-                    <p class="small-bold">'.tr('Codice fiscale', [], ['upper' => true]).'</p>
-                </td>
-                <td class="border-right border-bottom text-right">
-                    <small>$c_codicefiscale$</small>
-                </td>
-            </tr>
-        </table>
-    </div>
-</div>';
-
-// Descrizione
-if (!empty($records[0]['descrizione'])) {
-    echo '
-<p>'.nl2br($records[0]['descrizione']).'</p>
-<br>';
-}
 
 $sconto = [];
 $imponibile = [];
@@ -81,7 +32,7 @@ echo "
     <tbody>';
 
 // RIGHE PREVENTIVO CON ORDINAMENTO UNICO
-$righe = $dbo->fetchArray("SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva FROM `co_righe_preventivi` WHERE idpreventivo=".prepare($idpreventivo).' ORDER BY `order`');
+$righe = $dbo->fetchArray("SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice_articolo, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva FROM `or_righe_ordini` WHERE idordine=".prepare($idordine).' ORDER BY `order`');
 foreach ($righe as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
@@ -233,77 +184,9 @@ if ($mostra_prezzi) {
 echo'
 </table>';
 
-// CONDIZIONI GENERALI DI FORNITURA
-
-// Lettura pagamenti
-$rs = $dbo->fetchArray('SELECT * FROM co_pagamenti WHERE id = '.$records[0]['idpagamento']);
-$pagamento = $rs[0]['descrizione'];
-
-// Lettura resa
-$rs = $dbo->fetchArray('SELECT * FROM dt_porto WHERE id = '.$records[0]['idporto']);
-$resa_materiale = $rs[0]['descrizione'];
-
-echo '
-<table class="table table-bordered">
-    <tr>
-        <th colspan="2" class="text-center">
-            '.tr('Condizioni generali di fornitura', [], ['upper' => true]).'
-        </th>
-    </tr>
-
-    <tr>
-        <th style="width:25%">
-            '.tr('Pagamento', [], ['upper' => true]).'
-        </th>
-
-        <td>
-            '.$pagamento.'
-        </td>
-    </tr>
-
-    <tr>
-        <th>
-            '.tr('Resa materiale', [], ['upper' => true]).'
-        </th>
-
-        <td>
-            '.$resa_materiale.'
-        </td>
-    </tr>
-
-    <tr>
-        <th>
-            '.tr('Validità offerta', [], ['upper' => true]).'
-        </th>
-
-        <td>
-            '.tr('_TOT_ giorni', [
-                '_TOT_' => $records[0]['validita'],
-            ]).' giorni
-        </td>
-    </tr>
-
-    <tr>
-        <th>
-            '.tr('Tempi consegna', [], ['upper' => true]).'
-        </th>
-
-        <td>
-            '.$records[0]['tempi_consegna'].'
-        </td>
-    </tr>
-
-    <tr>
-        <th>
-            '.tr('Esclusioni', [], ['upper' => true]).'
-        </th>
-
-        <td>
-            '.nl2br($records[0]['esclusioni']).'
-        </td>
-    </tr>
-</table>';
-
-// Conclusione
-echo '
-<p class="text-center">'.tr("In attesa di un Vostro Cortese riscontro, colgo l'occasione per porgere Cordiali Saluti").'</p>';
+if (!empty($records[0]['note'])) {
+    echo '
+<br>
+<p class="small-bold">'.tr('Note', [], ['upper' => true]).':</p>
+<p>'.nl2br($records[0]['note']).'</p>';
+}

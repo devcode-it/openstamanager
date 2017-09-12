@@ -44,7 +44,7 @@ if (!empty($records[0]['idsede'])) {
 $custom = [
     'tipo_doc' => strtoupper($tipo_doc),
     'numero_doc' => $numero,
-    'data' => Translator::numberToLocale($records[0]['data']),
+    'data' => Translator::dateToLocale($records[0]['data']),
     'pagamento' => $records[0]['tipo_pagamento'],
     'c_destinazione' => $destinazione,
     'aspettobeni' => $records[0]['aspettobeni'],

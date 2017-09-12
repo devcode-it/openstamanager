@@ -2,23 +2,23 @@
 
 include_once __DIR__.'/../../core.php';
 
-$report_name = 'preventivo_'.$idpreventivo.'.pdf';
+$report_name = 'contratto_'.$idcontratto.'.pdf';
 
 $autofill = [
     'count' => 0, // Conteggio delle righe
     'words' => 70, // Numero di parolo dopo cui contare una riga nuova
     'rows' => 20, // Numero di righe massimo presente nella pagina
     'additional' => 10, // Numero di righe massimo da aggiungere
-    'columns' => 5, // Numero di colonne della tabella
+    'columns' => 4, // Numero di colonne della tabella
 ];
 
 echo '
 <div class="row">
     <div class="col-xs-6">
         <div class="text-center" style="height:5mm;">
-            <b>'.tr('Preventivo N<sup>o</sup> _NUM_ del _DATE_', [
+            <b>'.tr('Contratto N<sup>o</sup> _NUM_ del _DATE_', [
                 '_NUM_' => $records[0]['numero'],
-                '_DATE_' => Translator::dateToLocale($records[0]['data']),
+                '_DATE_' => Translator::dateToLocale($records[0]['data_bozza']),
             ], ['upper' => true]).'</b>
         </div>
     </div>
@@ -72,16 +72,15 @@ echo "
         <tr>
             <th class='text-center' style='width:50%'>".tr('Descrizione', [], ['upper' => true])."</th>
             <th class='text-center' style='width:10%'>".tr('Q.tà', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:15%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:15%'>".tr('Imponibile', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>
+            <th class='text-center' style='width:20%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:20%'>".tr('Imponibile', [], ['upper' => true]).'</th>
         </tr>
     </thead>
 
     <tbody>';
 
 // RIGHE PREVENTIVO CON ORDINAMENTO UNICO
-$righe = $dbo->fetchArray("SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva FROM `co_righe_preventivi` WHERE idpreventivo=".prepare($idpreventivo).' ORDER BY `order`');
+$righe = $dbo->fetchArray('SELECT * FROM co_righe2_contratti WHERE idcontratto='.prepare($idcontratto).' ORDER BY `order`');
 foreach ($righe as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
@@ -140,23 +139,17 @@ foreach ($righe as $r) {
             <td class="text-center">-</td>';
     }
 
-    // Iva
     echo '
-            <td class="text-center">
-                '.Translator::numberToLocale($r['perc_iva'], 2).'
-            </td>
         </tr>';
 
     $autofill['count'] += $count;
 
     $sconto[] = $r['sconto'];
     $imponibile[] = $r['subtotale'];
-    $iva[] = $r['iva'];
 }
 
 $sconto = sum($sconto);
 $imponibile = sum($imponibile);
-$iva = sum($iva);
 
 $totale = $imponibile - $sconto;
 
@@ -166,57 +159,31 @@ echo '
 
 // TOTALE COSTI FINALI
 if ($mostra_prezzi) {
-    // Totale imponibile
-    echo '
+    // Eventuale sconto incondizionato
+    if (!empty($sconto)) {
+        // Totale imponibile
+        echo '
     <tr>
         <td colspan="3" class="text-right border-top">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
-        <th colspan="2" class="text-center">
+        <th class="text-center">
             <b>'.Translator::numberToLocale($imponibile, 2).' &euro;</b>
         </th>
     </tr>';
 
-    // Eventuale sconto incondizionato
-    if (!empty($sconto)) {
         echo '
     <tr>
         <td colspan="3" class="text-right border-top">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
 
-        <th colspan="2" class="text-center">
+        <th class="text-center">
             <b>-'.Translator::numberToLocale($sconto, 2).' &euro;</b>
         </th>
     </tr>';
-
-        // Imponibile scontato
-        echo '
-    <tr>
-        <td colspan="3" class="text-right border-top">
-            <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
-        </td>
-
-        <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($totale, 2).' &euro;</b>
-        </th>
-    </tr>';
     }
-
-    // IVA
-    echo '
-    <tr>
-        <td colspan="3" class="text-right border-top">
-            <b>'.tr('Totale IVA', [], ['upper' => true]).':</b>
-        </td>
-
-        <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($iva, 2).' &euro;</b>
-        </th>
-    </tr>';
-
-    $totale = sum($totale, $iva);
 
     // TOTALE
     echo '
@@ -224,12 +191,11 @@ if ($mostra_prezzi) {
     	<td colspan="3" class="text-right border-top">
             <b>'.tr('Quotazione totale', [], ['upper' => true]).':</b>
     	</td>
-    	<th colspan="2" class="text-center">
+    	<th class="text-center">
     		<b>'.Translator::numberToLocale($totale, 2).' &euro;</b>
     	</th>
     </tr>';
 }
-
 echo'
 </table>';
 
@@ -238,10 +204,6 @@ echo'
 // Lettura pagamenti
 $rs = $dbo->fetchArray('SELECT * FROM co_pagamenti WHERE id = '.$records[0]['idpagamento']);
 $pagamento = $rs[0]['descrizione'];
-
-// Lettura resa
-$rs = $dbo->fetchArray('SELECT * FROM dt_porto WHERE id = '.$records[0]['idporto']);
-$resa_materiale = $rs[0]['descrizione'];
 
 echo '
 <table class="table table-bordered">
@@ -263,16 +225,6 @@ echo '
 
     <tr>
         <th>
-            '.tr('Resa materiale', [], ['upper' => true]).'
-        </th>
-
-        <td>
-            '.$resa_materiale.'
-        </td>
-    </tr>
-
-    <tr>
-        <th>
             '.tr('Validità offerta', [], ['upper' => true]).'
         </th>
 
@@ -285,11 +237,14 @@ echo '
 
     <tr>
         <th>
-            '.tr('Tempi consegna', [], ['upper' => true]).'
+            '.tr('Validità contratto', [], ['upper' => true]).'
         </th>
 
         <td>
-            '.$records[0]['tempi_consegna'].'
+            '.tr('dal _START_ al _END_', [
+                '_START_' => Translator::dateToLocale($records[0]['data_accettazione']),
+                '_END_' => Translator::dateToLocale($records[0]['data_conclusione']),
+            ]).'
         </td>
     </tr>
 
@@ -306,4 +261,5 @@ echo '
 
 // Conclusione
 echo '
+<p class="text-center"><b>'.tr('Il tutto S.E. & O.').'</b></p>
 <p class="text-center">'.tr("In attesa di un Vostro Cortese riscontro, colgo l'occasione per porgere Cordiali Saluti").'</p>';

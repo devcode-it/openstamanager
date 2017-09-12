@@ -78,7 +78,7 @@ echo '
                 <td colspan=2 class="border-full" style="height:16mm;">
                     <p class="small-bold">'.tr('Spett.le', [], ['upper' => true]).'</p>
                     <p>$c_ragionesociale$</p>
-                    <p>$c_indirizzo$ $c_citta$</p>
+                    <p>$c_indirizzo$ $c_citta_full$</p>
                 </td>
             </tr>
 

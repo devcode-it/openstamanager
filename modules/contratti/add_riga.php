@@ -42,7 +42,7 @@ if (empty($idriga)) {
     $um = $rsr[0]['um'];
     $idiva = $rsr[0]['idiva'];
     $prezzo = $rsr[0]['subtotale'] / $rsr[0]['qta'];
-    $sconto = $rsr[0]['sconto'];
+    $sconto = $rsr[0]['sconto_unitario'];
     $tipo_sconto = $rsr[0]['tipo_sconto'];
 }
 

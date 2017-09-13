@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    // Fix per il menu principale
     var animationSpeed = 500;
     $(document).off('click', '.sidebar li a')
         .on('click', '.sidebar li a', function (e) {
@@ -59,12 +60,15 @@ $(document).ready(function () {
         opacity: '.7',
         'display': 'none'
     });
+
     slideToTop.on('mouseenter', function () {
         $(this).css('opacity', '1');
     });
+
     slideToTop.on('mouseout', function () {
         $(this).css('opacity', '.7');
     });
+
     $('.wrapper').append(slideToTop);
     $(window).scroll(function () {
         if ($(window).scrollTop() >= 150) {
@@ -75,18 +79,10 @@ $(document).ready(function () {
             $(slideToTop).fadeOut(500);
         }
     });
+
     $(slideToTop).click(function () {
-        $("body").animate({
+        $("html, body").animate({
             scrollTop: 0
         }, 500);
-    });
-    $(".sidebar-menu li:not(.treeview) a").click(function () {
-        var $this = $(this);
-        var target = $this.attr("href");
-        if (typeof target === 'string') {
-            $("body").animate({
-                scrollTop: ($(target).offset().top) + "px"
-            }, 500);
-        }
     });
 });

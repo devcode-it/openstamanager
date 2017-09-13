@@ -48,7 +48,6 @@ if (empty($idriga)) {
     $idarticolo = $rsr[0]['idarticolo'];
     $codice_articolo = $rsr[0]['codice_articolo'];
     $descrizione = $rsr[0]['descrizione'];
-    $descrizione_articolo = $rsr[0]['descrizione_articolo']; // necessario per inizializzazione select2 idarticolo
     $qta = $rsr[0]['qta'];
     $um = $rsr[0]['um'];
 

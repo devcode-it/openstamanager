@@ -562,9 +562,3 @@ input.min-width {
 input.small-width {
     min-width: 100px;
 }
-
-table.table:not(.dataTable) th,
-table.table:not(.dataTable) td {
-    word-wrap: break-word;
-    word-break: break-all;
-}

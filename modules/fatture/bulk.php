@@ -5,6 +5,7 @@ include_once __DIR__.'/../../core.php';
 switch (post('op')) {
     case 'export-bulk':
         $dir = DOCROOT.'/files/export_fatture/';
+        directory($dir.'tmp/');
 
         // Rimozione dei contenuti precedenti
         $files = glob($dir.'/*.zip');

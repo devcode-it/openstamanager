@@ -919,6 +919,9 @@ UPDATE `dt_righe_ddt` SET `abilita_serial` = 1 WHERE `idarticolo` IN (SELECT `id
 UPDATE `mg_articoli_interventi` SET `abilita_serial` = 1 WHERE `idarticolo` IN (SELECT `id_articolo` FROM `mg_prodotti`);
 UPDATE `or_righe_ordini` SET `abilita_serial` = 1 WHERE `idarticolo` IN (SELECT `id_articolo` FROM `mg_prodotti`);
 
+-- Rimozione del campo descrizione_articolo (inutilizzato) da mg_movimenti
+ALTER TABLE `mg_movimenti` DROP `descrizione_articolo`;
+
 -- Rimozione sconto/rincaro per i preventivi
 UPDATE `co_righe_preventivi` SET `sconto_unitario` = `prc_guadagno`, `tipo_sconto` = 'PRC', `sconto` = `prc_guadagno` * `qta` WHERE `prc_guadagno` != 0;
 ALTER TABLE `co_righe_preventivi` DROP `prc_guadagno`;

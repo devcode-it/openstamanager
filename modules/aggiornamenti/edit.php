@@ -2,7 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-
 if (get_var('Attiva aggiornamenti')) {
     $alerts = [];
 
@@ -98,7 +97,7 @@ echo '
                 <th width="50">'.tr('Versione').'</th>
                 <th width="30">'.tr('Stato').'</th>
                 <th width="30">'.tr('Compatibilità').'</th>
-                <th width="20"></th>
+                <th width="20">'.tr('Opzioni').'</th>
             </tr>';
 
 $modules = $dbo->fetchArray('SELECT * FROM zz_modules WHERE parent IS NULL ORDER BY `order` ASC');
@@ -150,11 +149,18 @@ foreach ($modules as $module) {
 
     echo '
                 <td>';
+
     // Possibilità di disinstallare solo se il modulo non è tra quelli predefiniti
     if (empty($module['default'])) {
         echo "
                     <a href=\"javascript:;\" data-toggle='tooltip' title=\"".tr('Disinstalla')."...\" onclick=\"if( confirm('".tr('Vuoi disinstallare questo modulo?').' '.tr('Tutti i dati salvati andranno persi!')."') ){ if( confirm('".tr('Sei veramente sicuro?')."') ){ $.post( '".$rootdir.'/editor.php?id_module='.$id_module."', { op: 'uninstall', id: '".$module['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); } }\"><i class='fa fa-trash'></i></a>";
+    } else {
+        echo "
+                    <a class='disabled text-muted'>
+                        <i class='fa fa-trash'></i>
+                    </a>";
     }
+
     echo '
                 </td>
             </tr>';
@@ -185,33 +191,43 @@ foreach ($modules as $module) {
     $compatibilities = explode(',', $sub['compatibility']);
     // Controllo per ogni versione se la regexp combacia per dire che è compatibile o meno
     $comp = false;
-        foreach ($compatibilities as $compatibility) {
-            $comp = (preg_match('/'.$compatibility.'/', $osm_version)) ? true : $comp;
-        }
 
-        if ($comp) {
-            $compatible = '<i class="fa fa-check-circle text-success" data-toggle="tooltip" title="'.tr('Compatibile').'"></i>';
-            $class = 'success';
-        } else {
-            $compatible = '<i class="fa fa-warning text-danger" data-toggle="tooltip" title="'.tr('Non compabitile!').tr('Questo modulo è compatibile solo con le versioni').': '.$sub['compatibility'].'"></i>';
-            $class = 'danger';
-        }
+    foreach ($compatibilities as $compatibility) {
+        $comp = (preg_match('/'.$compatibility.'/', $osm_version)) ? true : $comp;
+    }
 
-        echo '
+    if ($comp) {
+        $compatible = '<i class="fa fa-check-circle text-success" data-toggle="tooltip" title="'.tr('Compatibile').'"></i>';
+        $class = 'success';
+    } else {
+        $compatible = '<i class="fa fa-warning text-danger" data-toggle="tooltip" title="'.tr('Non compabitile!').tr('Questo modulo è compatibile solo con le versioni').': '.$sub['compatibility'].'"></i>';
+        $class = 'danger';
+    }
+
+    echo '
             <tr class="'.$class.'">
                 <td><small>&nbsp;&nbsp;- '.$sub['name'].'</small></td>
                 <td align="right">'.$sub['version'].'</td>
                 <td align="center">'.$stato.'</td>
                 <td align="center">'.$compatible.'</td>';
 
-        echo '
+    echo '
                 <td>';
+
     // Possibilità di disinstallare solo se il modulo non è tra quelli predefiniti
     if (empty($sub['default'])) {
         echo "
-                    <a href=\"javascript:;\" data-toggle='tooltip' title=\"".tr('Disinstalla')."...\" onclick=\"if( confirm('".tr('Vuoi disinstallare questo modulo?').' '.tr('Tutti i dati salvati andranno persi!')."') ){ if( confirm('".tr('Sei veramente sicuro?')."') ){ $.post( '".$rootdir.'/editor.php?id_module='.$id_module."', { op: 'uninstall', id: '".$sub['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); } }\"><i class='fa fa-trash'></i></a>";
+                    <a href=\"javascript:;\" data-toggle='tooltip' title=\"".tr('Disinstalla')."...\" onclick=\"if( confirm('".tr('Vuoi disinstallare questo modulo?').' '.tr('Tutti i dati salvati andranno persi!')."') ){ if( confirm('".tr('Sei veramente sicuro?')."') ){ $.post( '".$rootdir.'/editor.php?id_module='.$id_module."', { op: 'uninstall', id: '".$sub['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); } }\">
+                        <i class='fa fa-trash'></i>
+                    </a>";
+    } else {
+        echo "
+                    <a class='disabled text-muted'>
+                        <i class='fa fa-trash'></i>
+                    </a>";
     }
-        echo '
+
+    echo '
                 </td>
             </tr>';
     }

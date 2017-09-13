@@ -16,33 +16,35 @@ switch (post('op')) {
         // Selezione delle fatture da stampare
         $records = $dbo->fetchArray('SELECT co_documenti.id, numero_esterno, data, ragione_sociale, co_tipidocumento.descrizione FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).')');
 
-        foreach ($records as $r) {
-            $numero = !empty($r['numero_esterno']) ? $r['numero_esterno'] : $r['numero'];
-            $numero = str_replace(['/', '\\'], '-', $numero);
+        if (!empty($records)) {
+            foreach ($records as $r) {
+                $numero = !empty($r['numero_esterno']) ? $r['numero_esterno'] : $r['numero'];
+                $numero = str_replace(['/', '\\'], '-', $numero);
 
-            // Gestione della stampa
-            $rapportino_nome = sanitizeFilename($numero.' '.$r['data'].' '.$r['ragione_sociale'].'.pdf');
-            $filename = slashes($dir.'tmp/'.$rapportino_nome);
+                // Gestione della stampa
+                $rapportino_nome = sanitizeFilename($numero.' '.$r['data'].' '.$r['ragione_sociale'].'.pdf');
+                $filename = slashes($dir.'tmp/'.$rapportino_nome);
 
-            $_GET['iddocumento'] = $r['id']; // Fix temporaneo per la stampa
-            $iddocumento = $r['id']; // Fix temporaneo per la stampa
-            $ptype = ($r['descrizione'] == 'Fattura accompagnatoria di vendita') ? 'fatture_accompagnatorie' : 'fatture';
+                $_GET['iddocumento'] = $r['id']; // Fix temporaneo per la stampa
+                $iddocumento = $r['id']; // Fix temporaneo per la stampa
+                $ptype = ($r['descrizione'] == 'Fattura accompagnatoria di vendita') ? 'fatture_accompagnatorie' : 'fatture';
 
-            require DOCROOT.'/pdfgen.php';
-        }
+                require DOCROOT.'/pdfgen.php';
+            }
 
-        $dir = slashes($dir);
-        $file = slashes($dir.'fatture_'.time().'.zip');
+            $dir = slashes($dir);
+            $file = slashes($dir.'fatture_'.time().'.zip');
 
-        // Creazione zip
-        if (extension_loaded('zip')) {
-            create_zip($dir.'tmp/', $file);
+            // Creazione zip
+            if (extension_loaded('zip')) {
+                create_zip($dir.'tmp/', $file);
 
-            // Invio al browser dello zip
-            download($file);
+                // Invio al browser dello zip
+                download($file);
 
-            // Rimozione dei contenuti
-            delete($dir.'tmp/');
+                // Rimozione dei contenuti
+                delete($dir.'tmp/');
+            }
         }
 
         break;

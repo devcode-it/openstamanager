@@ -103,36 +103,44 @@ if (!empty($rs)) {
         // Aggiunta riferimento a ordine
         if (!empty($r['idordine'])) {
             $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data, dir FROM or_ordini JOIN or_tipiordine ON or_tipiordine.id = or_ordini.idtipoordine WHERE or_ordini.id='.prepare($r['idordine']));
-            $numero = ($rso[0]['numero_esterno'] != '') ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
 
             $ref = $rso[0]['dir'] == 'entrata' ? 'Ordini cliente' : 'Ordini fornitore';
             $ref_id = $r['idordine'];
 
-            $descrizione = tr('Rif. ordine _NUM_ del _DATE_', [
-                '_NUM_' => $numero,
-                '_DATE_' => Translator::dateToLocale($rso[0]['data']),
-            ]);
+            if(!empty($rso)){
+                $numero = ($rso[0]['numero_esterno'] != '') ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
+
+                $descrizione = tr('Rif. ordine _NUM_ del _DATE_', [
+                    '_NUM_' => $numero,
+                    '_DATE_' => Translator::dateToLocale($rso[0]['data']),
+                ]);
+            }
         } elseif (!empty($r['idddt'])) {
             $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM dt_ddt JOIN dt_tipiddt ON dt_tipiddt.id = dt_ddt.idtipoddt WHERE dt_ddt.id='.prepare($r['idddt']));
-            $numero = ($rso[0]['numero_esterno'] != '') ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
 
             $ref = $rso[0]['dir'] == 'entrata' ? 'Ddt di vendita' : 'Ddt di acquisto';
             $ref_id = $r['idddt'];
 
-            $descrizione = tr('Rif. ddt _NUM_ del _DATE_', [
-                '_NUM_' => $numero,
-                '_DATE_' => Translator::dateToLocale($rso[0]['data']),
-            ]);
+            if(!empty($rso)){
+                $numero = ($rso[0]['numero_esterno'] != '') ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
+
+                $descrizione = tr('Rif. ddt _NUM_ del _DATE_', [
+                    '_NUM_' => $numero,
+                    '_DATE_' => Translator::dateToLocale($rso[0]['data']),
+                ]);
+            }
         } elseif (!empty($r['idpreventivo'])) {
             $rso = $dbo->fetchArray('SELECT numero, data_bozza FROM co_preventivi WHERE id='.prepare($r['idpreventivo']));
 
             $ref = 'Preventivi';
             $ref_id = $r['idpreventivo'];
 
-            $descrizione = tr('Rif. preventivo _NUM_ del _DATE_', [
-                '_NUM_' => $rso[0]['numero'],
-                '_DATE_' => Translator::dateToLocale($rso[0]['data_bozza']),
-            ]);
+            if(!empty($rso)){
+                $descrizione = tr('Rif. preventivo _NUM_ del _DATE_', [
+                    '_NUM_' => $rso[0]['numero'],
+                    '_DATE_' => Translator::dateToLocale($rso[0]['data_bozza']),
+                ]);
+            }
         }
 
         if (!empty($descrizione)) {

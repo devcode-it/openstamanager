@@ -51,6 +51,10 @@ foreach ($righe as $r) {
                 <br><small>'.tr('COD. _COD_', [
                     '_COD_' => $r['codice_articolo'],
                 ]).'</small>';
+
+        if ($count <= 1) {
+            $count += 0.4;
+        }
     }
 
     // Aggiunta riferimento a ordine
@@ -58,11 +62,12 @@ foreach ($righe as $r) {
         $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM or_ordini WHERE id='.prepare($r['idordine']));
         $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
 
-        echo '
-                <br><small>'.tr('Rif. ordine n<sup>o</sup>_NUM_ del _DATE_', [
-                    '_NUM_' => $numero,
-                    '_DATE_' => Translator::dateToLocale($rso[0]['data']),
-                ]).'</small>';
+        if (!empty($rso)) {
+            $descrizione = tr('Rif. ordine _NUM_ del _DATE_', [
+                '_NUM_' => $numero,
+                '_DATE_' => Translator::dateToLocale($rso[0]['data']),
+            ]);
+        }
     }
 
     // Aggiunta riferimento a ddt
@@ -70,15 +75,29 @@ foreach ($righe as $r) {
         $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM dt_ddt WHERE id='.prepare($r['idddt']));
         $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
 
-        echo '
-                <br><small>'.tr('Rif. ddt n<sup>o</sup>_NUM_ del _DATE_', [
-                    '_NUM_' => $numero,
-                    '_DATE_' => Translator::dateToLocale($rso[0]['data']),
-                ]).'</small>';
+        if (!empty($rso)) {
+            $descrizione = tr('Rif. ddt _NUM_ del _DATE_', [
+                '_NUM_' => $numero,
+                '_DATE_' => Translator::dateToLocale($rso[0]['data']),
+            ]);
+        }
+    }
+
+    // Aggiunta riferimento al preventivo
+    elseif (!empty($r['idpreventivo'])) {
+        $rso = $dbo->fetchArray('SELECT numero, data_bozza FROM co_preventivi WHERE id='.prepare($r['idpreventivo']));
+
+        if (!empty($rso)) {
+            $descrizione = tr('Rif. preventivo _NUM_ del _DATE_', [
+                '_NUM_' => $rso[0]['numero'],
+                '_DATE_' => Translator::dateToLocale($rso[0]['data_bozza']),
+            ]);
+        }
     }
 
     // Aumento del conteggio
-    if ((!empty($r['codice_articolo']) || !empty($r['idordine']) || !empty($r['idddt'])) && $count <= 1) {
+    if ((!empty($r['idordine']) || !empty($r['idddt']) || !empty($r['idpreventivo'])) && $count <= 1 && !empty($descrizione)) {
+        echo '<br><small>'.$descrizione.'</small>';
         $count += 0.4;
     }
 

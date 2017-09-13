@@ -168,8 +168,10 @@ if (!empty($rs)) {
         echo '
         <td>';
         if (!empty($r['abilita_serial'])) {
+            $values = $dbo->fetchArray('SELECT DISTINCT serial FROM mg_prodotti WHERE dir=\''.$dir.'\' AND '.$row.' = \''.$r['id'].'\' AND serial IS NOT NULL AND serial NOT IN (SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND dir=\''.$dir.'\' AND '.$data[$pos]['condition'].')');
+
             echo '
-                {[ "type": "select", "name": "serial['.$i.'][]", "id": "serial_'.$i.'", "multiple": 1, "values": "query=SELECT DISTINCT serial AS id, serial AS descrizione FROM mg_prodotti WHERE dir=\''.$dir.'\' AND '.$row.' = \''.$r['id'].'\' AND serial NOT IN (SELECT serial FROM mg_prodotti WHERE dir=\''.$dir.'\' AND '.$data[$pos]['condition'].' AND dir=\''.$dir.'\')", "extra": "data-maximum=\"'.intval($r['qta_rimanente']).'\"" ]}
+            {[ "type": "select", "name": "serial['.$i.'][]", "id": "serial_'.$i.'", "multiple": 1, "values": "query=SELECT DISTINCT serial AS id, serial AS descrizione FROM mg_prodotti WHERE dir=\''.$dir.'\' AND '.$row.' = \''.$r['id'].'\' AND serial IS NOT NULL AND serial NOT IN (SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND dir=\''.$dir.'\' AND '.$data[$pos]['condition'].')", "value": "'.implode(',', array_column($values, 'serial')).'", "extra": "data-maximum=\"'.intval($r['qta_rimanente']).'\"" ]}
                 ';
         } else {
             echo '-';

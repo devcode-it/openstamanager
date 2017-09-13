@@ -828,7 +828,10 @@ switch (post('op')) {
                     $idriga = add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva_acquisto, $qta, $prezzo_acquisto, $sconto, $sconto_unitario, $tipo_sconto);
 
                     // Aggiornamento seriali dalla riga dell'ordine
-                    $dbo->sync('mg_prodotti', ['id_riga_documento' => $idriga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => (array) $post['serial'][$i]]);
+                    $serials = is_array($post['serial'][$i]) ? $post['serial'][$i] : [];
+                    $serials = array_filter($serials, function ($value) { return !empty($value); });
+
+                    $dbo->sync('mg_prodotti', ['id_riga_documento' => $idriga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => $serials]);
                 }
 
                 // Inserimento riga normale
@@ -905,7 +908,10 @@ switch (post('op')) {
                     $idriga = add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva_acquisto, $qta, $prezzo_acquisto, $sconto, $sconto_unitario, $tipo_sconto);
 
                     // Aggiornamento seriali dalla riga dell'ordine
-                    $dbo->sync('mg_prodotti', ['id_riga_documento' => $idriga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => (array) $post['serial'][$i]]);
+                    $serials = is_array($post['serial'][$i]) ? $post['serial'][$i] : [];
+                    $serials = array_filter($serials, function ($value) { return !empty($value); });
+
+                    $dbo->sync('mg_prodotti', ['id_riga_documento' => $idriga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => $serials]);
 
                     // Imposto la provenienza dell'ordine
                     $dbo->query('UPDATE co_righe_documenti SET idordine='.prepare($idordine).' WHERE id='.prepare($idriga));

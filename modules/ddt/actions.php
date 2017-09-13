@@ -248,7 +248,10 @@ switch (post('op')) {
                 $riga = $dbo->lastInsertedID();
 
                 // Aggiornamento seriali dalla riga dell'ordine
-                $dbo->sync('mg_prodotti', ['id_riga_ddt' => $riga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => (array) $post['serial'][$i]]);
+                $serials = is_array($post['serial'][$i]) ? $post['serial'][$i] : [];
+                $serials = array_filter($serials, function ($value) { return !empty($value); });
+
+                $dbo->sync('mg_prodotti', ['id_riga_ddt' => $riga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => $serials]);
 
                 // Scalo la quantità dall'ordine
                 $dbo->query('UPDATE or_righe_ordini SET qta_evasa = qta_evasa+'.$qta.' WHERE id='.prepare($idrigaordine));

@@ -905,6 +905,8 @@ UPDATE `mg_prodotti` SET `serial` = NULL WHERE `serial` = '';
 UPDATE `mg_prodotti` SET `lotto` = NULL WHERE `lotto` = '';
 UPDATE `mg_prodotti` SET `altro` = NULL WHERE `altro` = '';
 
+DELETE FROM `mg_prodotti` WHERE `serial` IS NULL AND `lotto` IS NULL AND `altro` IS NULL;
+
 ALTER TABLE `co_righe_documenti` DROP `serial`, DROP `altro`, DROP `lotto`;
 ALTER TABLE `mg_articoli_interventi` DROP `serial`, DROP `altro`, DROP `lotto`;
 ALTER TABLE `dt_righe_ddt` DROP `serial`, DROP `altro`, DROP `lotto`;

@@ -246,7 +246,7 @@ $resa_materiale = $rs[0]['descrizione'];
 echo '
 <table class="table table-bordered">
     <tr>
-        <th colspan="2" class="text-center">
+        <th colspan="2" class="text-center" style="font-size:13pt;">
             '.tr('Condizioni generali di fornitura', [], ['upper' => true]).'
         </th>
     </tr>

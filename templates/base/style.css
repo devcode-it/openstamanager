@@ -8,6 +8,7 @@ p {
     margin: 0px;
 }
 
+.text-bold,
 .small-bold {
     font-weight: bold;
 }
@@ -42,8 +43,22 @@ table.table-bordered thead tr:nth-child(2) th {
 small,
 .small,
 .small-bold,
-table.table-bordered>th {
+table.table-bordered thead th,
+table#contents thead th {
     font-size: 70%;
+}
+
+table.table-normal,
+table.table-normal td,
+table.table-normal th {
+    border: 0;
+}
+
+table.border-bottom,
+table.border-bottom td,
+table.border-bottom th {
+    border: 0;
+    border-bottom: 1px solid #aaa;
 }
 
 table.table-bordered,
@@ -61,10 +76,6 @@ table.vertical-middle th {
 table#contents tbody td {
     border-top: 0;
     border-bottom: 0;
-}
-
-table#contents thead th {
-    font-size: 80%;
 }
 
 .row,

@@ -12,7 +12,7 @@ $report_name = 'intervento_'.$idintervento.'.pdf';
 echo '
 <table class="table table-bordered">
     <tr>
-        <th colspan="4" style="font-size:14pt;" class="text-center">'.tr('Rapporto operazioni e interventi', [], ['upper' => true]).'</th>
+        <th colspan="4" style="font-size:13pt;" class="text-center">'.tr('Rapporto operazioni e interventi', [], ['upper' => true]).'</th>
     </tr>
 
     <tr>

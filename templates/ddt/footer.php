@@ -21,7 +21,7 @@ if ($mostra_prezzi) {
     echo "
     <tr>
         <td class='cell-padded text-right'>
-            ".Translator::numberToLocale($imponibile_ddt, 2).' &euro;
+            ".Translator::numberToLocale($imponibile, 2).' &euro;
         </td>
     </tr>';
 
@@ -35,7 +35,7 @@ if ($mostra_prezzi) {
 
     <tr>
         <td class='cell-padded text-right'>
-            ".Translator::numberToLocale($totale_iva, 2).' &euro;
+            ".Translator::numberToLocale($iva, 2).' &euro;
         </td>
     </tr>';
 
@@ -49,7 +49,7 @@ if ($mostra_prezzi) {
 
     <tr>
         <td class='cell-padded text-right'>
-            ".Translator::numberToLocale($totale_ddt, 2).' &euro;
+            ".Translator::numberToLocale($totale, 2).' &euro;
         </td>
     </tr>';
 } else {
@@ -66,84 +66,103 @@ if ($mostra_prezzi) {
 echo '
 </table>';
 
+// Informazioni aggiuntive
 echo '
 <table class="table-bordered">
     <tr>
-        <th class="border-bottom border-right" style="width:33%">
+        <th class="small" class style="width:25%">
             '.tr('Aspetto beni', [], ['upper' => true]).'
         </th>
 
-        <th class="border-bottom border-right" style="width:33%">
+        <th class="small" class style="width:20%">
+            '.tr('N<sup>o</sup> colli', [], ['upper' => true]).'
+        </th>
+
+        <th class="small" style="width:30%">
             '.tr('Causale trasporto', [], ['upper' => true]).'
         </th>
 
-        <th class="border-bottom" style="width:33%">
+        <th class="small" style="width:25%">
             '.tr('Porto', [], ['upper' => true]).'
         </th>
     </tr>
 
     <tr>
-        <td class="cell-padded border-right">
+        <td class="cell-padded">
             $aspettobeni$ &nbsp;
         </td>
-        <td class="cell-padded border-right">
+
+        <td class="cell-padded">
+            $n_colli$ &nbsp;
+        </td>
+
+        <td class="cell-padded">
             $causalet$ &nbsp;
         </td>
+
         <td class="cell-padded">
             $porto$ &nbsp;
         </td>
     </tr>
 
     <tr>
-        <th class="border-bottom border-right">
-            '.tr('N<sup>o</sup> colli', [], ['upper' => true]).'
+        <th class="small">
+            '.tr('Peso lordo', [], ['upper' => true]).'
         </th>
 
-        <th class="border-bottom border-right">
-            '.tr('Tipo di spedizione', [], ['upper' => true]).'
+        <th class="small">
+        '.tr('Volume', [], ['upper' => true]).'
         </th>
 
-        <th class="border-bottom">
+        <th class="small">
             '.tr('Vettore', [], ['upper' => true]).'
+        </th>
+
+        <th class="small">
+            '.tr('Tipo di spedizione', [], ['upper' => true]).'
         </th>
     </tr>
 
     <tr>
-        <td class="cell-padded border-right">
-            $n_colli$ &nbsp;
+        <td class="cell-padded">
+        '.(!empty($peso_lordo) ? Translator::numberToLocale($peso_lordo) : '').' &nbsp;
         </td>
-        <td class="cell-padded border-right">
-            $spedizione$ &nbsp;
+
+        <td class="cell-padded">
+            '.(!empty($volume) ? Translator::numberToLocale($volume) : '').' &nbsp;
         </td>
+
         <td class="cell-padded">
             $vettore$ &nbsp;
         </td>
-    </tr>
 
+        <td class="cell-padded">
+            $spedizione$ &nbsp;
+        </td>
+    </tr>
+</table>';
+
+// Firme
+echo '
+<table class="table-bordered">
     <tr>
-        <th class="border-bottom border-right">
+        <th class="small" style="width:33%">
             '.tr('Firma conducente', [], ['upper' => true]).'
         </th>
 
-        <th class="border-bottom border-right">
+        <th class="small" style="width:33%">
             '.tr('Firma vettore', [], ['upper' => true]).'
         </th>
 
-        <th class="border-bottom">
+        <th class="small" style="width:33%">
             '.tr('Firma destinatario', [], ['upper' => true]).'
         </th>
     </tr>
 
     <tr>
-        <td class="cell-padded border-right">
-            &nbsp;<br>&nbsp;
-        </td>
-        <td class="cell-padded border-right">
-            &nbsp;<br>&nbsp;
-        </td>
-        <td class="cell-padded">
-            &nbsp;<br>&nbsp;
-        </td>
+        <td style="height: 10mm"></td>
+        <td style="height: 10mm"></td>
+        <td style="height: 10mm"></td>
     </tr>
 </table>';
 

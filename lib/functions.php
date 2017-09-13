@@ -797,7 +797,7 @@ function sum($first, $second = null, $decimals = null)
         }
     }
 
-    return $result;
+    return floatval($result);
 }
 
 function redirectOperation($id_module, $id_record)

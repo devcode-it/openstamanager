@@ -3,24 +3,20 @@
 // SCADENZE  |  TOTALI
 // TABELLA PRINCIPALE
 echo "
-<table>
+<table class='table-bordered'>
     <tr>
-        <td style='width:158.6mm;' class='border-top border-left'></td>
-        <td style='width:33mm;' class='border-full'>
-            <p class='small-bold'>".tr('Totale imponibile', [], ['upper' => true])."</p>
-        </td>
-    </tr>
-    <tr>
-        <td rowspan=10 class='border-right border-bottom border-left cell-padded'>";
+        <td colspan=".(!empty($sconto) ? 5 : 3)." class='cell-padded' style='height:".(!empty($records[0]['ritenutaacconto']) ? 20 : 30)."mm'>";
 
 // Tabella (scadenze + iva)
 echo "
-            <table>
+            <table class='table-normal'>
                 <tr>
+                    <td style='width:10mm;'>&nbsp;</td>
+
                     <td style='width:45mm;'>
-                        <table>
+                        <table class='border-bottom'>
                             <tr>
-                                <td colspan='2' class='border-bottom'>
+                                <td colspan='2'>
                                     <p class='small-bold'>".tr('Scadenze pagamenti', [], ['upper' => true]).'</p>
                                 </td>
                             </tr>';
@@ -31,25 +27,16 @@ if (!empty($rs2)) {
     for ($i = 0; $i < sizeof($rs2); ++$i) {
         echo "
                             <tr>
-                                <td style='width:50%;' class='border-bottom'>
+                                <td style='width:50%;'>
                                     <small>".Translator::dateToLocale($rs2[$i]['scadenza'])."</small>
                                 </td>
-                                <td style='width:50%;' align='right' class='border-bottom'>
+                                <td style='width:50%;' class='text-right'>
                                     <small>".Translator::numberToLocale($rs2[$i]['da_pagare'], 2).' &euro;</small>
                                 </td>
                             </tr>';
     }
-} else {
-    echo "
-                            <tr>
-                                <td style='width:50%;'>
-                                    &nbsp;
-                                </td>
-                                <td style='width:50%;' align='right'>
-                                    &nbsp;
-                                </td>
-                            </tr>";
 }
+
 echo '
                         </table>
                     </td>';
@@ -64,34 +51,34 @@ echo "
                     <td style='width:75mm;'>";
 if (!empty($v_iva)) {
     echo "
-                        <table>
+                        <table class='border-bottom'>
                             <tr>
-                                <td style='width:40mm;' class='border-bottom'>
+                                <td style='width:40mm;'>
                                     <p class='small-bold'>".tr('Aliquota IVA', [], ['upper' => true])."</p>
                                 </td>
 
-                                <td style='width:20mm;' class='border-bottom text-center'>
+                                <td style='width:20mm;' class='text-center'>
                                     <p class='small-bold'>".tr('Importo', [], ['upper' => true])."</p>
                                 </td>
 
-                                <td style='width:20mm;' class='border-bottom text-center'>
+                                <td style='width:20mm;' class='text-center'>
                                     <p class='small-bold'>".tr('Importo IVA', [], ['upper' => true]).'</p>
                                 </td>
                             </tr>';
 
     foreach ($v_iva as $desc_iva => $tot_iva) {
         if (!empty($desc_iva)) {
-            echo "
+            echo '
                             <tr>
-                                <td style='' class='border-bottom'>
-                                    <small>".$desc_iva."</small>
+                                <td>
+                                    <small>'.$desc_iva."</small>
                                 </td>
 
-                                <td style='' align='right' class='border-bottom'>
+                                <td class='text-right'>
                                     <small>".Translator::numberToLocale($v_totale[$desc_iva], 2)." &euro;</small>
                                 </td>
 
-                                <td style='' align='right' class='border-bottom'>
+                                <td class='text-right'>
                                     <small>".Translator::numberToLocale($v_iva[$desc_iva], 2).' &euro;</small>
                                 </td>
                             </tr>';
@@ -114,67 +101,86 @@ echo '
 echo '
         </td>';
 
-// TOTALE IMPONIBILE
+// TOTALI
+$width = round(100/(!empty($sconto) ? 5 : 3), 2);
 echo "
-        <td style='text-align:right;' class='border-bottom border-right cell-padded'>
-            ".Translator::numberToLocale($imponibile_documento, 2).' &euro;
+    <tr>
+        <th class='text-center small' style='width:".$width."'>
+            ".tr('Imponibile', [], ['upper' => true])."
+        </th>";
+
+if (!empty($sconto)) {
+        echo "
+        <th class='text-center small' style='width:".$width."'>
+            ".tr('Sconto', [], ['upper' => true])."
+        </th>
+
+        <th class='text-center small' style='width:".$width."'>
+            ".tr('Imponibile scontato', [], ['upper' => true])."
+        </th>";
+}
+
+echo "
+        <th class='text-center small' style='width:".$width."'>
+            ".tr('Totale IVA', [], ['upper' => true])."
+        </th>
+
+        <th class='text-center small' style='width:".$width."'>
+            ".tr('Totale documento', [], ['upper' => true])."
+        </th>
+    </tr>
+
+    <tr>
+        <td class='cell-padded text-center'>
+            ".Translator::numberToLocale($imponibile, 2)." &euro;
+        </td>";
+
+if (!empty($sconto)) {
+    echo "
+
+        <td class='cell-padded text-center'>
+            ".Translator::numberToLocale($sconto, 2)." &euro;
+        </td>
+
+        <td class='cell-padded text-center'>
+            ".Translator::numberToLocale($imponibile - $sconto, 2)." &euro;
+        </td>";
+}
+
+    echo "
+        <td class='cell-padded text-center'>
+            ".Translator::numberToLocale($iva, 2)." &euro;
+        </td>
+
+        <td class='cell-padded text-center'>
+            ".Translator::numberToLocale($totale, 2).' &euro;
         </td>
     </tr>';
 
-// Riga 2
-echo "
-    <tr>
-        <td style='width:33mm;' class='border-bottom border-right'>
-            <p class='small-bold'>".tr('Totale IVA', [], ['upper' => true])."</p>
-        </td>
-    </tr>
-
-    <tr>
-        <td style='text-align:right;' class='border-bottom border-right cell-padded'>
-            ".Translator::numberToLocale($totale_iva, 2)." &euro;
-        </td>
-    </tr>
-
-    <tr>
-        <td class='border-bottom border-right'>
-            <p class='small-bold'>".tr('Totale documento', [], ['upper' => true])."</p>
-        </td>
-    </tr>
-
-    <tr>
-        <td style='text-align:right;' class='border-bottom border-right cell-padded'>
-            ".Translator::numberToLocale($totale_documento, 2).' &euro;
-        </td>
-    </tr>';
-
-// Riga 4 (opzionale, solo se c'è la ritenuta d'acconto)
+// Ritenuta d'acconto
 if ($records[0]['ritenutaacconto'] != 0) {
     $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenutaacconto WHERE id=(SELECT idritenutaacconto FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' AND idritenutaacconto!=0 LIMIT 0,1)');
 
     echo "
     <tr>
-        <td class='border-bottom border-right'>
-            <p class='small-bold'>".tr("Ritenuta d'acconto _PRC_%", [
-                '_PRC_' => $rs2[0]['percentuale'],
-            ], ['upper' => true])."</p>
-        </td>
+        <th class='text-center small' colspan=".(!empty($sconto) ? 3 : 2).">
+            ".tr("Ritenuta d'acconto _PRC_%", [
+                '_PRC_' => Translator::numberToLocale($rs2[0]['percentuale'], 0),
+            ], ['upper' => true])."
+        </th>
+
+        <th class='text-center small' colspan=".(!empty($sconto) ? 2 : 1).">
+            ".tr('Netto a pagare', [], ['upper' => true])."
+        </th>
     </tr>
 
     <tr>
-        <td style='text-align:right;' class='border-bottom border-right cell-padded'>
+        <td class='cell-padded text-center' colspan=".(!empty($sconto) ? 3 : 2).">
             ".Translator::numberToLocale($records[0]['ritenutaacconto'], 2)." &euro;
         </td>
-    </tr>
 
-    <tr>
-        <td class='border-bottom border-right'>
-            <p class='small-bold'>".tr('Netto a pagare', [], ['upper' => true])."</p>
-        </td>
-    </tr>
-
-    <tr>
-        <td style='text-align:right;' class='border-bottom border-right cell-padded'>
-            ".Translator::numberToLocale($totale_documento - $records[0]['ritenutaacconto'], 2).' &euro;
+        <td class='cell-padded text-center' colspan=".(!empty($sconto) ? 2 : 1).">
+            ".Translator::numberToLocale($totale - $records[0]['ritenutaacconto'], 2).' &euro;
         </td>
     </tr>';
 }
@@ -183,13 +189,12 @@ echo '
 </table>';
 
 echo '
-<br>
 <table style="font-size:7pt; color:#999;">
-    <tr><td style="text-align:center;">
-        $dicitura_fissa_fattura$
-    </td></tr>
+    <tr>
+        <td style="text-align:center;">
+            $dicitura_fissa_fattura$
+        </td>
+    </tr>
 </table>
-
-<br>
 
 $pagination$';

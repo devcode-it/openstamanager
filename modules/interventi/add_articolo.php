@@ -194,16 +194,13 @@ echo '
 <script type="text/javascript">
     $(document).ready(function() {
         $('#add_form').ajaxForm({
-            beforeSubmit: function(){
-                return ($('#idarticolo').val() && $('#qta').val() && $('#qta').val());
-            },
-
             success: function(){
                 $('#bs-popup').modal('hide');
 
-                // ricarico la pagina ajax_referente
+                // Ricarico gli articoli
                 $('#articoli').load(globals.rootdir + '/modules/interventi/ajax_articoli.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>');
 
+                // Ricarico la tabella dei costi
                 $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>');
             }
         });

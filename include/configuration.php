@@ -224,39 +224,25 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
             $("#test").on("click", function(){
                 if($(this).closest("form").parsley().validate()){
-                    var form_data = new FormData();
-
-                    $(this).closest("form").find("input, textarea, select").each(function(){
-                        var name = $(this).attr("name");
-
-                        var data = $(this).val();
-                        data = (typeof data == "string") ? [data] : data;
-
-                        data.forEach(function(item){
-                            form_data.append(name, item);
-                        });
-                    });
-
-                    form_data.append("test", 1);
-
-                    $.ajax({
+                    $(this).closest("form").ajaxSubmit({
                         url: "'.$rootdir.'/index.php",
-                        cache: false,
+                        data: {
+                            test: 1,
+                        },
                         type: "post",
-                        processData: false,
-                        contentType: false,
-                        dataType : "html",
-                        data: form_data,
-                        success: function(data) {
+                        success: function(data){
                             data = parseFloat(data.trim());
 
                             if(data == 0){
-                                swal("'.tr('Errore della configurazione').'", "'.tr('La configurazione non è corretta.').'", "error");
+                                swal("'.tr('Errore della configurazione').'", "'.tr('La configurazione non è corretta').'.", "error");
                             } else if(data == 1){
-                                swal("'.tr('Permessi insufficienti').'", "'.tr("L'utente non possiede permessi sufficienti per il corretto funzionamento del software.").'", "error");
-                            } else{
-                                swal("'.tr('Configurazione corretta').'", "'.tr("Ti sei connesso con successo al database. Clicca su 'Prosegui' per installare.").'", "success");
+                                swal("'.tr('Permessi insufficienti').'", "'.tr("L'utente non possiede permessi sufficienti per il corretto funzionamento del software").'.", "error");
+                            } else {
+                                swal("'.tr('Configurazione corretta').'", "'.tr('Ti sei connesso con successo al database').'. '.tr("Clicca su 'Installa' per proseguire").'.", "success");
                             }
+                        },
+                        error: function(data) {
+                            alert("'.tr('Errore').': " + data);
                         }
                     });
                 }

@@ -109,21 +109,16 @@ echo '
 
 <script type="text/javascript">
     $(document).ready(function() {
-        var options = {
-            beforeSubmit:	function(){
-                        return ( $('#descrizione_riga').val() != '' && $('#qta').val() != '' && $('#prezzo_vendita').val() != '' );
-                        },
+        $('#add-righe').ajaxForm({
+            success: function(){
+                $('#bs-popup').modal('hide');
 
-            success:	function(){
-                        $('#bs-popup').modal('hide');
+                // Ricarico le righe
+                $('#righe').load(globals.rootdir + '/modules/interventi/ajax_righe.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>');
 
-                        // ricarico la pagina ajax_referente
-                        $('#righe').load(globals.rootdir + '/modules/interventi/ajax_righe.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>');
-
-                        $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>');
-                    }
-        }
-
-        $('#add-righe').ajaxForm( options );
+                // Ricarico la tabella dei costi
+                $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>');
+            }
+        });
     });
 </script>

@@ -134,6 +134,18 @@ switch (filter('op')) {
 
         break;
 
+    case 'test':
+        $total = Modules::getQuery($id_record);
+        $module_query = $total['query'];
+
+        $module_query = str_replace('|period_start|', $_SESSION['period_start'], $module_query);
+        $module_query = str_replace('|period_end|', $_SESSION['period_end'], $module_query);
+        $module_query = str_replace('|select|', $total['select'], $module_query);
+
+        $dbo->fetchArray($module_query.' LIMIT 1');
+
+        break;
+
     case 'delete':
         $id = filter('id');
 

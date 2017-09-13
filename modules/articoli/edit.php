@@ -252,7 +252,7 @@ echo '
                         <tr>
                             <td>'.$rsa[$i]['nome'].'</td>
                             <td>'.$rsa[$i]['targa'].'</td>
-                            <td>'.$rsa[$i]['qta'].' '.$rs[0]['unita_misura'].'</td>
+                            <td>'.Translator::numberToLocale($rsa[$i]['qta']).' '.$rs[0]['unita_misura'].'</td>
                         </tr>';
             }
 

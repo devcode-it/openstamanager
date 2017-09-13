@@ -63,7 +63,13 @@ if ($options != '' && $options != 'menu' && $options != 'custom') {
 			<div class="row">
 				<div class="col-xs-12 col-md-12">
 					<p><strong>'.tr('Query risultante').':</strong></p>
-					<p>'.htmlentities($module_query).'</p>
+                    <p>'.htmlentities($module_query).'</p>
+
+                    <div class="row">
+                        <div class="col-md-12 text-right">
+                            <button type="button" class="btn btn-warning pull-righ" onclick="testQuery()"><i class="fa fa-file-text-o "></i> '.tr('Testa la query').'</button>
+                        </div>
+                    </div>
 				</div>
 			</div>';
 }
@@ -446,6 +452,29 @@ if (!empty($options) && $options != 'custom') {
 
     echo '
 <script>
+function testQuery(){
+    $("#main_loading").fadeIn();
+
+    $.ajax({
+        url: "'.ROOTDIR.'/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=test",
+        cache: false,
+        type: "post",
+        processData: false,
+        contentType: false,
+        dataType : "html",
+        success: function(data) {
+            $("#main_loading").fadeOut();
+
+            swal("'.tr('Query funzionante').'", "'.tr('La query attuale funziona correttamente!').'", "success");
+        },
+        error: function(data) {
+            $("#main_loading").fadeOut();
+
+            swal("'.tr('Errore').'", "'.tr('Errore durante il test della query!').'", "error");
+        }
+    })
+}
+
 function replaceAll(str, find, replace) {
   return str.replace(new RegExp(find, "g"), replace);
 }

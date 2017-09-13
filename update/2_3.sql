@@ -927,3 +927,6 @@ ALTER TABLE `co_righe_preventivi` DROP `prc_guadagno`;
 ALTER TABLE `co_iva` DROP `descrizione2`;
 UPDATE `co_iva` SET `dicitura` = 'Senza addebito iva ex art. 74 comma 8-9 del DPR 633/72' WHERE `descrizione` = 'Esente art. 74';
 UPDATE `co_iva` SET `dicitura` = 'Operazione soggetta a reverse charge ex art. 17, comma 6, DPR 633/72' WHERE `descrizione` = 'Art. 17 comma 6 DPR 633/72' OR `descrizione` = 'Art. 17 comma 6 DPR 633/72 4%' OR `descrizione` = 'Art. 17 comma 6 DPR 633/72 10%' OR `descrizione` = 'Art. 17 comma 6 DPR 633/72 20%' OR `descrizione` = 'Art. 17 comma 6 DPR 633/72 22%';
+
+-- Aggiunta campi in co_pagamenti per la selezione del conto di default
+ALTER TABLE `co_pagamenti` ADD `idconto_vendite` int(11),  ADD `idconto_acquisti` int(11);

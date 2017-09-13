@@ -10,7 +10,7 @@ class FileManager implements ManagerInterface
     public function manage($options)
     {
         $options['showpanel'] = isset($options['showpanel']) ? $options['showpanel'] : true;
-        $options['label'] = isset($options['label']) ? $options['label'] : 'Nuovo allegato:';
+        $options['label'] = isset($options['label']) ? $options['label'] : tr('Nuovo allegato').':';
 
         $dbo = \Database::getConnection();
 
@@ -70,7 +70,7 @@ class FileManager implements ManagerInterface
     <b>'.$options['label'].'</b>
     <div class="row">
         <div class="col-lg-4">
-            {[ "type": "text", "placeholder": "'.tr('Nome').'", "name": "nome_allegato", "required": 1 ]}
+            {[ "type": "text", "placeholder": "'.tr('Nome').'", "name": "nome_allegato" ]}
         </div>
 
         <div class="col-lg-6">
@@ -78,7 +78,7 @@ class FileManager implements ManagerInterface
         </div>
 
         <div class="col-lg-2 text-right">
-            <button type="button" class="btn btn-success" id="upload_button"  onclick="SaveFile();">
+            <button type="button" class="btn btn-success" onclick="saveFile();">
                 <i class="fa fa-upload"></i> '.tr('Carica').'
             </button>
         </div>
@@ -86,12 +86,9 @@ class FileManager implements ManagerInterface
 
         $result .= '
     <script>
-        function SaveFile(){
+        function saveFile(){
             if(!$("#blob").val()){
-                alert("Devi selezionare un file con il tasto Sfoglia...");
-                return false;
-            } else if(!$("input[name=nome_allegato]").val()){
-                alert("Devi inserire un nome per il file!");
+                swal("'.addslashes(tr('Attenzione!')).'", "'.addslashes(tr('Devi selezionare un file con il tasto "Sfoglia"')).'...", "warning");
                 return false;
             }
 

@@ -12,20 +12,29 @@ include_once __DIR__.'/../../core.php';
     $iddocumento = get('iddocumento');
     $dir = get('dir');
 
-    if ($iddocumento != '') {
+    if (!empty($iddocumento)) {
         // Lettura numero e tipo di documento
         $query = 'SELECT dir, numero, numero_esterno, data, co_tipidocumento.descrizione AS tdescrizione, idanagrafica AS parent_idanagrafica, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=parent_idanagrafica AND deleted=0) AS ragione_sociale FROM co_documenti LEFT OUTER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
         $rs = $dbo->fetchArray($query);
         $dir = $rs[0]['dir'];
-        $numero_doc = (!empty($rs[0]['numero_esterno'])) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
+        $numero_doc = !empty($rs[0]['numero_esterno']) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
         $tipo_doc = $rs[0]['tdescrizione'];
-        $descrizione = "$tipo_doc numero $numero_doc del ".Translator::dateToLocale($rs[0]['data']).' ('.$rs[0]['ragione_sociale'].')';
+
+        $descrizione = tr('_DOC_ numero _NUM_ del _DATE_ (_NAME_)', [
+            '_DOC_' => $tipo_doc,
+            '_NUM_' => $numero_doc,
+            '_DATE_' => Translator::dateToLocale($rs[0]['data']),
+            '_NAME_' => $rs[0]['ragione_sociale'],
+        ]);
 
         /*
             Predisposizione prima riga
         */
+        $field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
+        $idconto_aziendale = $dbo->fetchArray('SELECT '.$field.' FROM co_pagamenti WHERE id = (SELECT idpagamento FROM co_documenti WHERE id='.prepare($iddocumento).') GROUP BY descrizione')[0][$field];
+
         // Lettura conto cassa di default
-        $idconto_aziendale = get_var('Conto aziendale predefinito');
+        $idconto_aziendale = !empty($idconto_aziendale) ? $idconto_aziendale : get_var('Conto aziendale predefinito');
 
         // Generazione causale (incasso fattura)
         $descrizione_conto_aziendale = $descrizione;

@@ -31,6 +31,8 @@ switch (filter('op')) {
                     'giorno' => $giorno,
                     'prc' => $post['percentuale'][$key],
                     'descrizione' => $descrizione,
+                    'idconto_vendite' => $post['idconto_vendite'],
+                    'idconto_acquisti' => $post['idconto_acquisti'],
                 ];
 
                 if (!empty($id)) {

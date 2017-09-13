@@ -228,10 +228,18 @@ echo '
             '.tr('Validità offerta', [], ['upper' => true]).'
         </th>
 
-        <td>
+        <td>';
+
+        if (!empty($records[0]['validita'])) {
+            echo'
             '.tr('_TOT_ giorni', [
                 '_TOT_' => $records[0]['validita'],
-            ]).' giorni
+            ]);
+        } else {
+            echo '-';
+        }
+
+        echo '
         </td>
     </tr>
 
@@ -240,11 +248,19 @@ echo '
             '.tr('Validità contratto', [], ['upper' => true]).'
         </th>
 
-        <td>
+        <td>';
+
+        if (!empty($records[0]['data_accettazione']) && !empty($records[0]['data_conclusione'])) {
+            echo '
             '.tr('dal _START_ al _END_', [
                 '_START_' => Translator::dateToLocale($records[0]['data_accettazione']),
                 '_END_' => Translator::dateToLocale($records[0]['data_conclusione']),
-            ]).'
+            ]);
+        } else {
+            echo '-';
+        }
+
+        echo '
         </td>
     </tr>
 

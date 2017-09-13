@@ -40,6 +40,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
         // UPLOAD
         if (filter('op') == 'link_file' && !empty($_FILES) && !empty($_FILES['blob']['name'])) {
             $nome = filter('nome_allegato');
+            $nome = !empty($nome) ? $nome : $_FILES['blob']['name'];
 
             $src = $_FILES['blob']['tmp_name'];
             $f = pathinfo($_FILES['blob']['name']);

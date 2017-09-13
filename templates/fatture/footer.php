@@ -5,7 +5,7 @@
 echo "
 <table class='table-bordered'>
     <tr>
-        <td colspan=".(!empty($sconto) ? 5 : 3)." class='cell-padded' style='height:".(!empty($records[0]['ritenutaacconto']) ? 20 : 30)."mm'>";
+        <td colspan=".(!empty($sconto) ? 5 : 3)." class='cell-padded' style='height:".($records[0]['ritenutaacconto'] != 0 ? 20 : 30)."mm'>";
 
 // Tabella (scadenze + iva)
 echo "

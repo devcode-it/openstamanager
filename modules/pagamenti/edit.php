@@ -14,8 +14,16 @@ include_once __DIR__.'/../../core.php';
 
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-xs-12 col-md-12">
+				<div class="col-xs-12 col-md-4">
 					{[ "type": "text", "label": "<?php echo tr('Descrizione') ?>", "name": "descrizione",  "value": "$descrizione$" ]}
+                </div>
+
+                <div class="col-xs-12 col-md-4">
+					{[ "type": "select", "label": "<?php echo tr('Conto predefinito per le vendite') ?>", "name": "idconto_vendite",  "value": "$idconto_vendite$", "ajax-source": "conti"  ]}
+                </div>
+
+                <div class="col-xs-12 col-md-4">
+					{[ "type": "select", "label": "<?php echo tr('Conto predefinito per gli acquisti') ?>", "name": "idconto_acquisti",  "value": "$idconto_acquisti$", "ajax-source": "conti" ]}
 				</div>
 			</div>
 		</div>

@@ -321,14 +321,16 @@ $body .= "<td align=\"left\" bgcolor=\"#cccccc\" width=\"24mm\">\n";
 $body .= '<b>'.$diff." &euro;</b>\n";
 $body .= "</td></tr>\n";
 
-$body .= "<tr><td align=\"right\" width=\"131mm\">\n";
-$body .= "<b>ORE RESIDUE:</b>\n";
-$body .= "</td>\n";
+if(!empty($contratto_tot_ore)){
+    $body .= "<tr><td align=\"right\" width=\"131mm\">\n";
+    $body .= "<b>ORE RESIDUE:</b>\n";
+    $body .= "</td>\n";
 
-$body .= "<td align=\"center\" bgcolor=\"#cccccc\" width=\"24mm\">\n";
-$diff2 = Translator::numberToLocale($contratto_tot_ore - $totale_ore_impiegate, 2);
-$body .= "<b>$diff2&nbsp;&nbsp;(ore erogate: ".Translator::numberToLocale($totale_ore_impiegate, 2).'&nbsp;-&nbsp;ore in contratto: '.Translator::numberToLocale($contratto_tot_ore, 2).")</b>\n";
-$body .= "</td></tr>\n";
+    $body .= "<td align=\"center\" bgcolor=\"#cccccc\" width=\"24mm\">\n";
+    $diff2 = Translator::numberToLocale($contratto_tot_ore - $totale_ore_impiegate, 2);
+    $body .= "<b>$diff2&nbsp;&nbsp;(ore erogate: ".Translator::numberToLocale($totale_ore_impiegate, 2).'&nbsp;-&nbsp;ore in contratto: '.Translator::numberToLocale($contratto_tot_ore, 2).")</b>\n";
+    $body .= "</td></tr>\n";
+}
 
 $body .= "</table>\n";
 

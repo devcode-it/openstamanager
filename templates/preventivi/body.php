@@ -276,10 +276,18 @@ echo '
             '.tr('Validità offerta', [], ['upper' => true]).'
         </th>
 
-        <td>
+        <td>';
+
+        if (!empty($records[0]['validita'])) {
+            echo'
             '.tr('_TOT_ giorni', [
                 '_TOT_' => $records[0]['validita'],
-            ]).' giorni
+            ]);
+        } else {
+            echo '-';
+        }
+
+        echo '
         </td>
     </tr>
 

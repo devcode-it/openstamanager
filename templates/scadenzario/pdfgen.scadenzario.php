@@ -41,7 +41,12 @@ $body .= "</thead>\n";
 
 $body .= "<tbody>\n";
 
-$rs = $dbo->fetchArray("SELECT co_scadenziario.id AS id, ragione_sociale AS `Anagrafica`, co_pagamenti.descrizione AS `Tipo di pagamento`, CONCAT( co_tipidocumento.descrizione, CONCAT( ' numero ', IF(numero_esterno<>'', numero_esterno, numero) ) ) AS `Documento`, DATE_FORMAT(data_emissione, '%d/%m/%Y') AS `Data emissione`, DATE_FORMAT(scadenza, '%d/%m/%Y') AS `Data scadenza`, da_pagare AS `Importo`, pagato AS `Pagato`, IF(scadenza<NOW(), '#ff7777', '') AS _bg_ FROM (((((co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_pagamenti ON co_documenti.idpagamento=co_pagamenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id) INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica) INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica WHERE ABS(pagato) < ABS(da_pagare) ".$add_where." AND scadenza >= '".$_SESSION['period_start']."' AND scadenza <= '".$_SESSION['period_end']."' ORDER BY scadenza ASC");
+$rs = $dbo->fetchArray("SELECT co_scadenziario.id AS id, ragione_sociale AS `Anagrafica`, co_pagamenti.descrizione AS `Tipo di pagamento`, CONCAT( co_tipidocumento.descrizione, CONCAT( ' numero ', IF(numero_esterno<>'', numero_esterno, numero) ) ) AS `Documento`, DATE_FORMAT(data_emissione, '%d/%m/%Y') AS `Data emissione`, DATE_FORMAT(scadenza, '%d/%m/%Y') AS `Data scadenza`, da_pagare AS `Importo`, pagato AS `Pagato`, IF(scadenza<NOW(), '#ff7777', '') AS _bg_ FROM co_scadenziario
+    INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id
+    INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica
+    INNER JOIN co_pagamenti ON co_documenti.idpagamento=co_pagamenti.id
+    INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id
+WHERE ABS(pagato) < ABS(da_pagare) ".$add_where." AND scadenza >= '".$_SESSION['period_start']."' AND scadenza <= '".$_SESSION['period_end']."' ORDER BY scadenza ASC");
 
 for ($i = 0; $i < sizeof($rs); ++$i) {
     $body .= '	<tr>';

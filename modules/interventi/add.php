@@ -238,7 +238,7 @@ if (empty($new_codice)) {
             // Disabilito i campi che non devono essere modificati per poter collegare l'intervento all'ordine di servizio
 
             echo '
-        $("#idcliente").prop("disabled", true);
+        $("#idanagrafica").prop("disabled", true);
         $("#idclientefinale").prop("disabled", true);
         $("#idzona").prop("disabled", true);
 		$("#idtipointervento").prop("disabled", true);';

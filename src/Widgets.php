@@ -42,10 +42,7 @@ class Widgets
                 }
 
                 $result .= '
-			</ul>
-			<script>
-				equalHeight("#widget-'.$location.' .li-widget .box");
-			</script>';
+			</ul>';
             }
 
             self::$widgets[$id_module][$location] = $result;

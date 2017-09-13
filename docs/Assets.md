@@ -80,7 +80,6 @@ yarn run build-OSM
 - bootstrap
 - bootstrap-colorpicker
 - bootstrap-daterangepicker
-- bootstrap-switch
 - ckeditor
 - components-jqueryui
 - datatables.net-bs
@@ -88,7 +87,6 @@ yarn run build-OSM
 - eonasdan-bootstrap-datetimepicker
 - font-awesome
 - fullcalendar
-- html5shiv
 - inputmask
 - jquery
 - jquery-form
@@ -96,7 +94,7 @@ yarn run build-OSM
 - jquery-ui-touch-punch
 - moment
 - parsleyjs
-- respond.js
+- promise-polyfill
 - select2
 - select2-bootstrap-theme
 - signature_pad

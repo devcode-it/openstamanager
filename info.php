@@ -111,8 +111,7 @@ else{
 							<p><?php echo tr("OpenSTAManager è software libero ed è nato e cresciuto con il lavoro volontario di alcuni programmatori") ?>.</p>
 
 							<p><?php echo tr("La filosofia del software libero fa sì che il progetto sia <b>accessibile a tutti</b> e nel nostro caso specifico lo è, anche dal punto di vista della gratuità") ?>.</p>
-							<p><?php echo tr("Offriamo supporto a pagamento professionale a chi fosse interessato, ma a chi non interessa il supporto a pagamento e sta comunque utilizzando il software chiediamo una donazione per il lavoro svolto finora e per la possibilità di continuare questo progetto con lo stesso spirito con cui è nato. Con le donazioni non diventiamo ricchi, ma è un <b>grande
-							simbolo di apprezzamento</b>") ?>.</p>
+							<p><?php echo tr("Offriamo supporto a pagamento professionale a chi fosse interessato, ma a chi non interessa il supporto a pagamento e sta comunque utilizzando il software chiediamo una donazione per il lavoro svolto finora e per la possibilità di continuare questo progetto con lo stesso spirito con cui è nato. Con le donazioni non diventiamo ricchi, ma è un <b>grande simbolo di apprezzamento</b>") ?>.</p>
 
 							<a href="http://sourceforge.net/donate/index.php?group_id=236538" class="btn btn-lg btn-success" target="_blank"><i class="fa fa-usd"></i> <?php echo tr("Supporta questo progetto") ?></a>
 						</div>

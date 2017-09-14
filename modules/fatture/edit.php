@@ -356,7 +356,7 @@ if ($dir == 'entrata') {
     if ($dir == 'entrata') {
         if (sizeof($campi_mancanti) > 0) {
             echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere alla stampa completa i seguenti campi dell'anagrafica:<br/><b>".implode(', ', $campi_mancanti).'</b><br/>
-            '.Modules::link('Anagrafiche', $records[0]['idanagrafica'], tr('Vai alla scheda anagrafica <i class="fa fa-chevron-right"></i>'), null).'</div>';
+            '.Modules::link('Anagrafiche', $records[0]['idanagrafica'], tr('Vai alla scheda anagrafica'), null).'</div>';
         } else {
             if ($records[0]['descrizione_tipodoc'] == 'Fattura accompagnatoria di vendita') {
                 ?>

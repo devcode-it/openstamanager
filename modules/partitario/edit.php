@@ -9,7 +9,7 @@ $query1 = 'SELECT * FROM `co_pianodeiconti1` ORDER BY id DESC';
 $rs1 = $dbo->fetchArray($query1);
 $n1 = sizeof($rs1);
 
-//Livello 1
+// Livello 1
 for ($x = 0; $x < $n1; ++$x) {
     $totale_attivita = 0.00;
     $totale_passivita = 0.00;
@@ -28,7 +28,7 @@ for ($x = 0; $x < $n1; ++$x) {
     echo "</div>\n";
     echo "<div class=\"clearfix\"></div>\n";
 
-    //Livello 2
+    // Livello 2
     $query2 = "SELECT * FROM `co_pianodeiconti2` WHERE idpianodeiconti1='".$rs1[$x]['id']."' ORDER BY numero ASC";
     $rs2 = $dbo->fetchArray($query2);
     $n2 = sizeof($rs2);
@@ -36,16 +36,16 @@ for ($x = 0; $x < $n1; ++$x) {
     echo "<div style='padding-left:10px;'>\n";
 
     for ($y = 0; $y < $n2; ++$y) {
-        //Livello 2
+        // Livello 2
         echo "	<div>\n";
 
-        //Stampa mastrino
+        // Stampa mastrino
         echo "		<a class='btn btn-info btn-xs' data-toggle='tooltip' title='Stampa mastrino...' href=\"".$rootdir.'/pdfgen.php?ptype=partitario_mastrino&idconto='.$rs2[$y]['id']."&lev=2\" target=\"_blank\"><i class='fa fa-print'></i></a>\n";
         echo '		<b>'.$rs2[$y]['numero'].' '.htmlentities($rs2[$y]['descrizione'], ENT_QUOTES, 'ISO-8859-1')."</b><br>\n";
 
         echo "	</div>\n";
 
-        //Livello 3
+        // Livello 3
         $query3 = "SELECT * FROM `co_pianodeiconti3` WHERE idpianodeiconti2='".$rs2[$y]['id']."' ORDER BY numero ASC";
         $rs3 = $dbo->fetchArray($query3);
         $n3 = sizeof($rs3);
@@ -58,14 +58,20 @@ for ($x = 0; $x < $n1; ++$x) {
 
             echo "		<tr><td>\n";
 
-            //Se il conto non ha documenti collegati posso eliminarlo
+            // Se il conto non ha documenti collegati posso eliminarlo
             $query = "SELECT id FROM co_movimenti WHERE idconto='".$rs3[$z]['id']."'";
             $nr = $dbo->fetchNum($query);
 
-            $tools = "			<div class='pull-left hide' >\n";
+            // Calcolo totale conto da elenco movimenti di questo conto
+            $query = "SELECT co_movimenti.*, dir FROM (co_movimenti LEFT OUTER JOIN co_documenti ON co_movimenti.iddocumento=co_documenti.id) LEFT OUTER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_movimenti.idconto='".$rs3[$z]['id']."' AND co_movimenti.data >= '".$_SESSION['period_start']."' AND co_movimenti.data <= '".$_SESSION['period_end']."' ORDER BY co_movimenti.data ASC";
+            $rs = $dbo->fetchArray($query);
 
-            //Stampa mastrino
-            $tools .= "			    <a class='btn btn-info btn-xs' data-toggle='tooltip' title='Stampa mastrino...' href=\"".$rootdir.'/pdfgen.php?ptype=partitario_mastrino&idconto='.$rs3[$z]['id']."&lev=3\" target=\"_blank\"><i class='fa fa-print'></i></a>\n";
+            $tools = "			<span class='hide tools'>\n";
+
+            // Stampa mastrino
+            if (!empty($rs)) {
+                $tools .= "			    <a class='btn btn-info btn-xs' data-toggle='tooltip' title='Stampa mastrino...' href=\"".$rootdir.'/pdfgen.php?ptype=partitario_mastrino&idconto='.$rs3[$z]['id']."&lev=3\" target=\"_blank\"><i class='fa fa-print'></i></a>\n";
+            }
 
             if ($nr <= 0 && $rs3[$z]['can_delete'] == '1') {
                 $tools .= '
@@ -74,20 +80,26 @@ for ($x = 0; $x < $n1; ++$x) {
                                     </a>';
             }
 
-            //Possibilità di modificare il nome del conto livello3
+            // Possibilità di modificare il nome del conto livello3
             if ($rs3[$z]['can_edit'] == '1') {
                 $tools .= "			<button type='button' class='btn btn-warning btn-xs' data-toggle='tooltip' title='Modifica questo conto...' onclick=\"launch_modal( 'Modifica conto', '".$rootdir.'/modules/partitario/edit_conto.php?id='.$rs3[$z]['id']."', 1 );\"><i class='fa fa-edit'></i></button>\n";
             }
 
-            $tools .= "			</div>\n";
+            $tools .= "			</span>\n";
 
-            echo "			<span class='clickable'onmouseover=\"$(this).children().removeClass('hide');\" onmouseleave=\"$(this).children().addClass('hide');\" onclick=\"$('#conto_".$rs3[$z]['id']."').slideToggle();\">".$tools.'&nbsp;'.$rs2[$y]['numero'].'.'.$rs3[$z]['numero'].' '.$rs3[$z]['descrizione']."</span>\n";
+            echo "
+                <span class='clickable' onmouseover=\"$(this).find('.tools').removeClass('hide');\" onmouseleave=\"$(this).find('.tools').addClass('hide');\" onclick=\"$('#conto_".$rs3[$z]['id']."').slideToggle(); $(this).find('.plus-btn i').toggleClass('fa-plus').toggleClass('fa-minus');\">";
+
+            if (!empty($rs)) {
+                echo '
+                    <a href="javascript:;" class="btn btn-primary btn-xs plus-btn"><i class="fa fa-plus"></i></a>';
+            }
+
+            echo '
+                    '.$tools.'&nbsp;'.$rs2[$y]['numero'].'.'.$rs3[$z]['numero'].' '.$rs3[$z]['descrizione'].'
+                </span>';
 
             echo '			<div id="conto_'.$rs3[$z]['id']."\" style=\"display:none;\">\n";
-
-            //Calcolo totale conto da elenco movimenti di questo conto
-            $query = "SELECT co_movimenti.*, dir FROM (co_movimenti LEFT OUTER JOIN co_documenti ON co_movimenti.iddocumento=co_documenti.id) LEFT OUTER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_movimenti.idconto='".$rs3[$z]['id']."' AND co_movimenti.data >= '".$_SESSION['period_start']."' AND co_movimenti.data <= '".$_SESSION['period_end']."' ORDER BY co_movimenti.data ASC";
-            $rs = $dbo->fetchArray($query);
 
             if (sizeof($rs) > 0) {
                 $totale_conto_liv3 = 0.00;
@@ -98,26 +110,26 @@ for ($x = 0; $x < $n1; ++$x) {
                 echo "				<th width='100'>Dare</th>\n";
                 echo "				<th width='100'>Avere</th></tr>\n";
 
-                //Elenco righe del partitario
+                // Elenco righe del partitario
                 for ($i = 0; $i < sizeof($rs); ++$i) {
                     echo "				<tr><td>\n";
 
                     if ($rs[$i]['iddocumento'] != '') {
                         ($rs[$i]['dir'] == 'entrata') ? $id_module = Modules::getModule('Fatture di vendita')['id'] : $id_module = Modules::getModule('Fatture di acquisto')['id'];
-                        echo "<a data-toggle='modal' data-title='Dettagli movimento...' data-target='#bs-popup' class='clickable' data-href='".$rootdir."/modules/partitario/dettagli_movimento.php?id_movimento=".$rs[$i]['id']."&id_conto=".$rs[$i]['idconto']."&id_module=".$id_module."' >".$rs[$i]['descrizione']."</a>\n";
-                        //echo "					<a href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$rs[$i]['iddocumento']."'>".$rs[$i]['descrizione']."</a>\n";
+                        echo "<a data-toggle='modal' data-title='Dettagli movimento...' data-target='#bs-popup' class='clickable' data-href='".$rootdir.'/modules/partitario/dettagli_movimento.php?id_movimento='.$rs[$i]['id'].'&id_conto='.$rs[$i]['idconto'].'&id_module='.$id_module."' >".$rs[$i]['descrizione']."</a>\n";
+                        // echo "					<a href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$rs[$i]['iddocumento']."'>".$rs[$i]['descrizione']."</a>\n";
                     } else {
                         echo '					<span>'.$rs[$i]['descrizione']."</span>\n";
                     }
 
                     echo "				</td>\n";
 
-                    //Data
+                    // Data
                     echo "				<td>\n";
                     echo date('d/m/Y', strtotime($rs[$i]['data']));
                     echo                "</td>\n";
 
-                    //Dare
+                    // Dare
                     if ($rs[$i]['totale'] > 0) {
                         echo "				<td align='right'>\n";
                         echo Translator::numberToLocale(abs($rs[$i]['totale']))." &euro;\n";
@@ -131,7 +143,7 @@ for ($x = 0; $x < $n1; ++$x) {
                         }
                     }
 
-                    //Avere
+                    // Avere
                     else {
                         echo "				<td></td><td  align='right'>\n";
                         echo Translator::numberToLocale(abs($rs[$i]['totale']))." &euro;\n";
@@ -146,7 +158,7 @@ for ($x = 0; $x < $n1; ++$x) {
                     echo "				</td></tr>\n";
                 }
 
-                //Somma dei totali
+                // Somma dei totali
                 if ($rs1[$x]['descrizione'] == 'Patrimoniale') {
                     if ($totale_conto_liv3 > 0) {
                         $totale_attivita += $totale_conto_liv3;
@@ -168,19 +180,19 @@ for ($x = 0; $x < $n1; ++$x) {
             echo "		<td width='100' align='right' valign='top'>\n";
             echo Translator::numberToLocale($totale_conto_liv3)." &euro;\n";
             echo "		</td></tr>\n";
-        } //Fine livello3
+        } // Fine livello3
 
         echo "	</table>\n";
 
-        //Possibilità di inserire un nuovo conto
+        // Possibilità di inserire un nuovo conto
         echo "	<button type='button' class='btn btn-xs btn-primary' data-toggle='tooltip' title='Aggiungi un nuovo conto...' onclick=\"launch_modal( 'Nuovo conto', '".$rootdir.'/modules/partitario/add_conto.php?id='.$rs2[$y]['id']."', 1 );\"><i class='fa fa-plus-circle'></i></button><br><br>\n";
         echo "</div>\n";
-    } //Fine livello 2
+    } // Fine livello 2
 
     echo "</div>\n";
 
     if ($rs1[$x]['descrizione'] == 'Patrimoniale') {
-        //Riepilogo
+        // Riepilogo
         $attivita = abs($totale_attivita);
         $passivita = abs($totale_passivita);
         $utile_perdita = abs($totale_ricavi) - abs($totale_costi);
@@ -194,7 +206,7 @@ for ($x = 0; $x < $n1; ++$x) {
 
         echo "<table class='table table-condensed table-hover'>\n";
 
-        //Attività
+        // Attività
         echo "<tr><th>\n";
         echo "	<p align='right'><big>Totale attività:</big></p>\n";
         echo "</th>\n";
@@ -204,7 +216,7 @@ for ($x = 0; $x < $n1; ++$x) {
         echo "</td>\n";
         echo "<td width='50'></td>\n";
 
-        //Passività
+        // Passività
         echo "<th align='right'>\n";
         echo "	<p align='right'><big>Passività:</big></p>\n";
         echo "</th>\n";
@@ -212,7 +224,7 @@ for ($x = 0; $x < $n1; ++$x) {
         echo "	<p align='right'><big>".Translator::numberToLocale($passivita)." &euro;</big></p>\n";
         echo "</td></tr>\n";
 
-        //Perdita d'esercizio
+        // Perdita d'esercizio
         if ($utile_perdita < 0) {
             echo "<tr><th align='right'>\n";
             echo "	<p align='right'><big>Perdita d'esercizio:</big></p>\n";
@@ -231,7 +243,7 @@ for ($x = 0; $x < $n1; ++$x) {
             echo "</td></tr>\n";
         }
 
-        //Totale a pareggio
+        // Totale a pareggio
         echo "<tr><th align='right'>\n";
         echo "	<p align='right'><big>Totale a pareggio:</big></p>\n";
         echo "</th>\n";
@@ -240,7 +252,7 @@ for ($x = 0; $x < $n1; ++$x) {
         echo "</td>\n";
         echo "<td></td>\n";
 
-        //Totale a pareggio
+        // Totale a pareggio
         echo "<th align='right'>\n";
         echo "	<p align='right'><big>Totale a pareggio:</big></p>\n";
         echo "</th>\n";

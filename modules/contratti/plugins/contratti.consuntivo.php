@@ -1,9 +1,10 @@
 <?php
 
 include_once __DIR__.'/../../../core.php';
+include_once $docroot.'/modules/interventi/modutil.php';
 
 /*
-    CONSUNTIVO
+CONSUNTIVO
 */
 
 // Salvo i colori e gli stati degli stati intervento su un array
@@ -16,263 +17,217 @@ for ($i = 0; $i < sizeof($rsc); ++$i) {
     $stati[$rsc[$i]['idstatointervento']] = $rsc[$i]['descrizione'];
 }
 
-// Contenitore per i totali interventi per stato
-$totale_x_stato = [];
-
-// Interventi collegati
-$q = 'SELECT *, (SELECT orario_inizio FROM in_interventi_tecnici GROUP BY idintervento HAVING idintervento = in_interventi.id) AS data, (SELECT costo_orario FROM in_tipiintervento WHERE idtipointervento=in_interventi.idtipointervento) AS costo_ore_unitario, (SELECT costo_km FROM in_tipiintervento WHERE idtipointervento=in_interventi.idtipointervento) AS costo_km_unitario, (SELECT SUM(costo_diritto_chiamata) FROM in_tipiintervento WHERE idtipointervento=in_interventi.idtipointervento) AS dirittochiamata, (SELECT SUM(km) FROM in_interventi_tecnici GROUP BY idintervento HAVING idintervento=in_interventi.id) AS km, (SELECT SUM(prezzo_ore_consuntivo) FROM in_interventi_tecnici GROUP BY idintervento HAVING idintervento=in_interventi.id) AS `tot_ore_consuntivo`, (SELECT SUM(prezzo_km_consuntivo) FROM in_interventi_tecnici GROUP BY idintervento HAVING idintervento=in_interventi.id) AS `tot_km_consuntivo` FROM co_righe_contratti INNER JOIN in_interventi ON co_righe_contratti.idintervento=in_interventi.id WHERE co_righe_contratti.idcontratto='.prepare($id_record).' ORDER BY data DESC';
-$rscontratti = $dbo->fetchArray($q);
-
-$totale_ore = 0.0;
-$totale_km = 0.0;
+$totale_costo = 0;
+$totale_addebito = 0;
 $totale = 0;
-$interventi = [];
-$ore = [];
-$km = [];
-$ntecnici = [];
-$tecnici = [];
-$costi_orari = [];
-$costi_km = [];
-$idinterventi = [];
 
-$tot_ore_consuntivo = [];
-$tot_km_consuntivo = [];
-$tot_diritto_chiamata = [];
+$totale_stato = [];
 
-if (!empty($rscontratti)) {
-    foreach ($rscontratti as $r) {
-        $totale_ore = 0;
-        $totale_km = 0;
-        $totale_diritto_chiamata = 0;
-
-        // Lettura numero tecnici collegati all'intervento
-        $query = 'SELECT an_anagrafiche.idanagrafica, prezzo_ore_consuntivo, prezzo_km_consuntivo, prezzo_ore_unitario, prezzo_km_unitario, prezzo_dirittochiamata, ragione_sociale, orario_inizio, orario_fine, in_interventi_tecnici.km FROM in_interventi_tecnici LEFT OUTER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico=an_anagrafiche.idanagrafica WHERE idintervento='.prepare($r['id']);
-        $rst = $dbo->fetchArray($query);
-        $n_tecnici = sizeof($rst);
-        $tecnici_full = '';
-
-        $t = 0;
-
-        for ($j = 0; $j < $n_tecnici; ++$j) {
-            $t1 = datediff('n', $rst[$j]['orario_inizio'], $rst[$j]['orario_fine']);
-
-            $orario = '';
-
-            if (floatval($t1) > 0) {
-                $orario .= date('d/m/Y H:i', strtotime($rst[$j]['orario_inizio'])).' - '.date('d/m/Y H:i', strtotime($rst[$j]['orario_fine']));
-            }
-
-            $tecnici_full .= $rst[$j]['ragione_sociale'].' ('.$orario.')<br><small>'.Translator::numberToLocale($t1 / 60).'h x '.Translator::numberToLocale($rst[$j]['prezzo_ore_unitario']).' &euro;/h<br>'.Translator::numberToLocale($rst[$j]['km']).'km x '.Translator::numberToLocale($rst[$j]['prezzo_km_unitario']).' km/h<br>'.Translator::numberToLocale($rst[$j]['prezzo_dirittochiamata']).'&euro; d.c.</small><br><br>';
-
-            // Conteggio ore totali
-            $t += $t1 / 60;
-
-            $totale_ore += $rst[$j]['prezzo_ore_consuntivo'];
-            $totale_km += $rst[$j]['prezzo_km_consuntivo'];
-            $totale_diritto_chiamata += $rst[$j]['prezzo_dirittochiamata'];
-        }
-
-        $totale_ore_impiegate += $t;
-
-        $desc = nl2br($r['descrizione']);
-        $line = Modules::link('Interventi', $r['id'], tr('Intervento <b>_NUM_</b> del <b>_DATE_</b>', [
-            '_NUM_' => $r['codice'],
-            '_DATE_' => Translator::dateToLocale($r['data']),
-        ])).'<br>'.$desc;
-
-        // Inutilizzati
-        $contratti[] = $line;
-        $tot_ore_consuntivo[] = $totale_ore;
-        $tot_dirittochiamata[] = $totale_diritto_chiamata;
-        $idinterventi[] = "'".$rscontrattii[0]['idintervento']."'";
-        $ntecnici[] = $n_tecnici;
-
-        // Utilizzati
-        $tot_km_consuntivo[] = $totale_km;
-        $tecnici[] = $tecnici_full;
-        $interventi[] = $line;
-    }
-}
-
-// Tabella con riepilogo interventi e ore
-if (!empty($rscontratti)) {
+// Tabella con riepilogo interventi
+$rsi = $dbo->fetchArray('SELECT *, in_interventi.id, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM co_righe_contratti INNER JOIN in_interventi ON co_righe_contratti.idintervento=in_interventi.id WHERE co_righe_contratti.idcontratto='.prepare($id_record).' ORDER BY co_righe_contratti.idintervento DESC');
+if (!empty($rsi)) {
     echo '
 <table class="table table-bordered table-condensed">
     <tr>
-        <th width="20%">'.tr('Interventi').'</th>
-        <th>'.tr('Tecnici').'</th>
-        <th width="160">'.tr('Subtotale contratto').'</th>';
-
-    if ($stato == 'aperto' || $stato == 'in attesa') {
-        echo '
-        <th></th>';
-    }
-    echo '
+        <th>'.tr('Attività').'</th>
+        <th width="100">'.tr('Ore').'</th>
+        <th width="100">'.tr('Km').'</th>
+        <th width="120">'.tr('Costo').'</th>
+        <th width="120">'.tr('Addebito').'</th>
+        <th width="120">'.tr('Tot. scontato').'</th>
     </tr>';
 
-    //  Tabella con i dati
-    for ($i = 0; $i < sizeof($interventi); ++$i) {
-        echo '
-    <tr style="background:'.$colori[$r['idstatointervento']].';">
-        <td width="250">
-            '.$interventi[$i].'
-        </td>';
+    // Tabella con i dati
+    foreach ($rsi as $int) {
+        $int = array_merge($int, get_costi_intervento($int['id']));
+        $totale_stato[$int['idstatointervento']] = sum($totale_stato[$int['idstatointervento']], $int['totale']);
 
+        // Riga intervento singolo
         echo '
+    <tr style="background:'.$colori[$int['idstatointervento']].';">
         <td>
-            '.$tecnici[$i].'
-        </td>';
+            <a href="javascript:;" class="btn btn-primary btn-xs" onclick="$(\'#dettagli_'.$int['id'].'\').toggleClass(\'hide\'); $(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');"><i class="fa fa-plus"></i></a>
+            '.Modules::link('Interventi', $int['id'], tr('Intervento _NUM_ del _DATE_', [
+                '_NUM_' => $int['id'],
+                '_DATE_' => Translator::dateToLocale($int['inizio']),
+            ])).'
+        </td>
 
-        $subtotale = $tot_ore_consuntivo[$i] + $km[$i] * $costo_km[$i] + $diritto_chiamata[$i];
-        echo '
-        <td align="right">
-            '.Translator::numberToLocale($subtotale).'
-        </td>';
+        <td class="text-right">
+            '.Translator::numberToLocale($int['ore']).'
+        </td>
 
-        if ($stato == 'Accettato' || $stato == 'In lavorazione') {
-            echo "
-        <td>
-            <a href=\"javascript:;\" onclick=\"if( confirm('Rimuovere questo intervento dal contratto?') ){ location.href='".$rootdir.'/editor.php?id_module='.Modules::getModule('Contratti')['id'].'&id_record='.$id_record.'&op=unlink&idintervento='.$r['id']."'; }\"><i class='fa fa-unlink'></i></a>
-        </td>";
-        }
-        echo '
+        <td class="text-right">
+            '.Translator::numberToLocale($int['km']).'
+        </td>
+
+        <td class="text-right">
+            '.Translator::numberToLocale($int['totale_costo']).'
+        </td>
+
+        <td class="text-right">
+            '.Translator::numberToLocale($int['totale_addebito']).'
+        </td>
+
+        <td class="text-right">
+            '.Translator::numberToLocale($int['totale']).'
+        </td>
     </tr>';
 
-        $totale += $subtotale;
-        $totale_x_stato[$r['idstatointervento']] += $subtotale;
+        // Riga con dettagli
+        echo '
+    <tr class="hide" id="dettagli_'.$int['id'].'">
+        <td colspan="6">';
 
-        // Mostro gli articoli collegati a questo intervento
-        $query = 'SELECT * FROM mg_articoli_interventi WHERE idintervento='.prepare($r['id']);
-        $rs2 = $dbo->fetchArray($query);
-        if (sizeof($rs2) > 0) {
+        /**
+         * Lettura sessioni di lavoro.
+         */
+        $rst = $dbo->fetchArray('SELECT in_interventi_tecnici.*, ragione_sociale FROM in_interventi_tecnici LEFT OUTER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico=an_anagrafiche.idanagrafica WHERE idintervento='.prepare($int['id']));
+        if (!empty($rst)) {
             echo '
-    <tr>
-        <td colspan="9">
-            <table width="100%" cellspacing="0" align="center">
+            <table class="table table-striped table-condensed table-bordered">
                 <tr>
-                    <th width="20"></th>
-                    <th colspan="2">'.tr('Articoli utilizzati').':</th>
-                </tr>
-
-                <tr>
-                    <td></td>
-                    <th>'.tr('Articolo').'</th>
-                    <th>'.tr('Q.tà').'</th>
-                    <th>'.tr('Prezzo unitario').'</th>
-                    <th>'.tr('Subtot').'</th>
+                    <th>'.tr('Tecnico').'</th>
+                    <th width="230">'.tr('Tipo attività').'</th>
+                    <th width="120">'.tr('Ore').'</th>
+                    <th width="120">'.tr('Km').'</th>
+                    <th width="120">'.tr('Costo orario').'</th>
+                    <th width="120">'.tr('Costo km').'</th>
+                    <th width="120">'.tr('Diritto ch.').'</th>
+                    <th width="120">'.tr('Prezzo orario').'</th>
+                    <th width="120">'.tr('Prezzo km').'</th>
+                    <th width="120">'.tr('Diritto ch.').'</th>
                 </tr>';
 
-            for ($j = 0; $j < sizeof($rs2); ++$j) {
+            foreach ($rst as $r) {
+                // Visualizzo lo sconto su ore o km se c'è
+                $sconto_ore = ($r['sconto'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['sconto']).' &euro;</span>' : '';
+                $sconto_km = ($r['scontokm'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['scontokm']).' &euro;</span>' : '';
+
                 echo '
                 <tr>
-                    <td></td>';
+                    <td>'.$r['ragione_sociale'].'</td>
+                    <td>'.$r['idtipointervento'].'</td>
+                    <td class="text-right">'.Translator::numberToLocale($r['ore']).'</td>
+                    <td class="text-right">'.Translator::numberToLocale($r['km']).'</td>
+                    <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_ore_consuntivo_tecnico']).'</td>
+                    <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_km_consuntivo_tecnico']).'</td>
+                    <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_dirittochiamata_tecnico']).'</td>
+                    <td class="text-right success">'.Translator::numberToLocale($r['prezzo_ore_consuntivo']).$sconto_ore.'</td>
+                    <td class="text-right success">'.Translator::numberToLocale($r['prezzo_km_consuntivo']).$sconto_km.'</td>
+                    <td class="text-right success">'.Translator::numberToLocale($r['prezzo_dirittochiamata']).'</td>
+                </tr>';
+            }
 
-                // Articolo
+            echo '
+            </table>';
+        }
+
+        /**
+         * Lettura articoli utilizzati.
+         */
+        $rst = $dbo->fetchArray('SELECT * FROM mg_articoli_interventi WHERE idintervento='.prepare($int['id']));
+        if (!empty($rst)) {
+            echo '
+            <table class="table table-striped table-condensed table-bordered">
+                <tr>
+                    <th>'.tr('Materiale').'</th>
+                    <th width="120">'.tr('Q.tà').'</th>
+                    <th width="150">'.tr('Prezzo di acquisto').'</th>
+                    <th width="150">'.tr('Prezzo di vendita').'</th>
+                </tr>';
+
+            foreach ($rst as $r) {
+                // Visualizzo lo sconto su ore o km se c'è
+                $sconto = ($r['sconto'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['sconto']).' &euro;</span>' : '';
+
                 echo '
+                <tr>
                     <td>
-                        '.Modules::link('Articoli', $rs2[$j]['idarticolo'], $rs2[$j]['descrizione']);
-
-                if ($rs2[$i]['lotto'] != '') {
-                    echo '<br>'.tr('Lotto').': '.$rs2[$i]['lotto'];
-                }
-                if ($rs2[$i]['serial'] != '') {
-                    echo '<br>'.tr('SN').': '.$rs2[$i]['serial'];
-                }
-                if ($rs2[$i]['altro'] != '') {
-                    echo '<br>'.$rs2[$i]['altro'];
-                }
-
-                echo '
-                    </td>';
-
-                // Q.tà
-                echo '
-                    <td>'.Translator::numberToLocale($rs2[$j]['qta']).'</td>';
-
-                // Prezzo di vendita
-                echo '
-                    <td>'.Translator::numberToLocale($rs2[$j]['prezzo_vendita']).'</td>';
-
-                // Subtotale consuntivo
-                $netto = $rs2[$j]['prezzo_vendita'] * $rs2[$j]['qta'];
-                echo '
-                    <td>'.Translator::numberToLocale($netto).'</td>
+                        '.Modules::link('Articoli', $r['idarticolo'], $r['descrizione']).(!empty($extra) ? '<small class="help-block">'.implode(', ', $extra).'</small>' : '').'
+                    </td>
+                    <td class="text-right">'.Translator::numberToLocale($r['qta']).'</td>
+                    <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_acquisto'] * $r['qta']).'</td>
+                    <td class="text-right success">'.Translator::numberToLocale($r['prezzo_vendita'] * $r['qta']).$sconto.'</td>
                 </tr>';
-
-                $totale += $netto;
-                $totale += $netto;
-                $totale_x_stato[$r['idstatointervento']] += $netto;
             }
+
             echo '
-            </table>
-        </td>
-    </tr>';
+            </table>';
         }
 
-        /*
-            Elenco righe di spese aggiuntive
-        */
-        $query = 'SELECT * FROM in_righe_interventi WHERE idintervento='.prepare($r['id']).' ORDER BY id ASC';
-        $rs2 = $dbo->fetchArray($query);
-        if (sizeof($rs2) > 0) {
+        /**
+         * Lettura spese aggiuntive.
+         */
+        $rst = $dbo->fetchArray('SELECT * FROM in_righe_interventi WHERE idintervento='.prepare($int['id']));
+        if (!empty($rst)) {
             echo '
-    <tr>
-        <td colspan="9">
-            <table class="table table-striped table-hover table-bordered">
+            <table class="table table-striped table-condensed table-bordered">
                 <tr>
-                    <th></th>
-                    <th colspan="4">'.tr('Spese aggiuntive').':</th>
-                </tr>
-
-                <tr>
-                    <td></td>
-                    <th>'.tr('Descrizione').'</th>
-                    <th>'.tr('Q.tà').'</th>
-                    <th>'.tr('Prezzo unitario').'</th>
-                    <th>'.tr('Subtot').'</th>
+                    <th>'.tr('Altre spese').'</th>
+                    <th width="120">'.tr('Q.tà').'</th>
+                    <th width="150">'.tr('Prezzo di acquisto').'</th>
+                    <th width="150">'.tr('Prezzo di vendita').'</th>
                 </tr>';
 
-            // Righe
-            for ($j = 0; $j < sizeof($rs2); ++$j) {
+            foreach ($rst as $r) {
+                // Visualizzo lo sconto su ore o km se c'è
+                $sconto = ($r['sconto'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['sconto']).' &euro;</span>' : '';
+
                 echo '
                 <tr>
-                    <td></td>';
-
-                // Descrizione
-                echo '
-                    <td>'.$rs2[$j]['descrizione'].'</td>';
-
-                // Quantità
-                $qta = $rs2[$j]['qta'];
-                echo '
-                    <td>'.Translator::numberToLocale($rs2[$j]['qta']).'</td>';
-
-                // Prezzo unitario
-                $netto = $rs2[$j]['prezzo'];
-                echo '
-                    <td>'.Translator::numberToLocale($netto).'</td>';
-
-                // Prezzo totale
-                $subtotale = $rs2[$j]['prezzo'] * $rs2[$j]['qta'];
-                echo '
-                    <td>'.Translator::numberToLocale($subtotale).'</td>
+                    <td>
+                        '.$r['descrizione'].'
+                    </td>
+                    <td class="text-right">'.Translator::numberToLocale($r['qta']).'</td>
+                    <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_acquisto'] * $r['qta']).'</td>
+                    <td class="text-right success">'.Translator::numberToLocale($r['prezzo_vendita'] * $r['qta']).$sconto.'</td>
                 </tr>';
-
-                $totale += $subtotale;
-                $totale += $subtotale;
-                $totale_x_stato[$r['idstatointervento']] += $subtotale;
             }
+
             echo '
-            </table>
+            </table>';
+        }
+
+        echo '
         </td>
     </tr>';
-        }
+
+        $totale_ore += $int['ore'];
+        $totale_km += $int['km'];
+        $totale_costo += $int['totale_costo'];
+        $totale_addebito += $int['totale_addebito'];
+        $totale += $int['totale'];
     }
 
     // Totali
     echo '
     <tr>
-        <td colspan="2" align="right"><b>'.tr('Totale').'</b></td>
+        <td align="right">
+            <b><big>'.tr('Totale').'</big></b>
+        </td>';
+
+    echo '
+        <td align="right">
+            <big><b>'.Translator::numberToLocale($totale_ore).'</b></big>
+        </td>';
+
+    echo '
+        <td align="right">
+            <big><b>'.Translator::numberToLocale($totale_km).'</b></big>
+        </td>';
+
+    echo '
+        <td align="right">
+            <big><b>'.Translator::numberToLocale($totale_costo).'</b></big>
+        </td>';
+
+    echo '
+        <td align="right">
+            <big><b>'.Translator::numberToLocale($totale_addebito).'</b></big>
+        </td>';
+
+    echo '
         <td align="right">
             <big><b>'.Translator::numberToLocale($totale).'</b></big>
         </td>
@@ -281,14 +236,18 @@ if (!empty($rscontratti)) {
     // Totali per stato
     echo '
     <tr>
-        <td colspan="3"><br><b>'.tr('Totale interventi per stato', [], ['upper' => true]).'</b></td>
+        <td colspan="6">
+            <br><b>'.tr('Totale interventi per stato', [], ['upper' => true]).'</b>
+        </td>
     </tr>';
 
-    foreach ($totale_x_stato as $stato => $tot) {
+    foreach ($totale_stato as $stato => $tot) {
         echo '
     <tr>
-        <td align="right" colspan="2">
-            <big><b style="background:'.$colori[$stato].';">'.$stati[$stato].':</b></big>
+        <td colspan="3"></td>
+
+        <td align="right" colspan="2" style="background:'.$colori[$stato].';">
+            <big><b>'.$stati[$stato].':</b></big>
         </td>
 
         <td align="right">
@@ -296,6 +255,7 @@ if (!empty($rscontratti)) {
         </td>
     </tr>';
     }
+
     echo '
 </table>';
 }
@@ -309,19 +269,19 @@ $budget = $rs[0]['budget'];
 $rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe2_contratti` WHERE um='ore' AND idcontratto=".prepare($id_record));
 $contratto_tot_ore = $rs[0]['totale_ore'];
 
-$diff = Translator::numberToLocale(floatval($budget) - floatval($totale));
+$diff = floatval($budget) - floatval($totale);
 if ($diff > 0) {
-    $bilancio = '<span class="text-success"><big>'.$diff.' &euro;</big></span>';
+    $bilancio = '<span class="text-success"><big>'.Translator::numberToLocale($diff).' &euro;</big></span>';
 } elseif ($diff < 0) {
-    $bilancio = '<span class="text-danger"><big>'.$diff.' &euro;</big></span>';
+    $bilancio = '<span class="text-danger"><big>'.Translator::numberToLocale($diff).' &euro;</big></span>';
 } else {
-    $bilancio = '<span><big>'.$diff.' &euro;</big></span>';
+    $bilancio = '<span><big>'.Translator::numberToLocale($diff).' &euro;</big></span>';
 }
 
 echo '
 <div class="well text-center">
     <big>
-        <b>Rapporto budget/spesa</b>:<br>
+        <b>'.tr('Rapporto budget/spesa').'</b>:<br>
         '.$bilancio.'
     </big>
     <br><br>';
@@ -329,9 +289,9 @@ echo '
 $diff2 = Translator::numberToLocale(floatval($contratto_tot_ore) - floatval($totale_ore_impiegate));
 echo '
     <big>
-        Ore residue: '.$diff2.'<br>
-        Ore erogate: '.Translator::numberToLocale($totale_ore_impiegate).'<br>
-        Ore in contratto: '.Translator::numberToLocale($contratto_tot_ore).'
+        '.tr('Ore residue').': '.$diff2.'<br>
+        '.tr('Ore erogate').': '.Translator::numberToLocale($totale_ore_impiegate).'<br>
+        '.tr('Ore in contratto').': '.Translator::numberToLocale($contratto_tot_ore).'
     </big>
 </div>';
 

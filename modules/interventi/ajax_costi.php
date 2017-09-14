@@ -53,7 +53,7 @@ if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
 
     <tr>
         <th>'.tr('Totale', [], ['upper' => true]).'</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totale_costi']).' &euro;</th>
+        <th class="text-right">'.Translator::numberToLocale($costi['totale_costo']).' &euro;</th>
         <th class="text-right">'.Translator::numberToLocale($costi['totale_addebito']).' &euro;</th>
         <th class="text-right">'.Translator::numberToLocale($costi['totale']).' &euro;</th>
     </tr>

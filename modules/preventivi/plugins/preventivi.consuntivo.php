@@ -21,7 +21,7 @@ $budget = get_imponibile_preventivo($id_record);
 
 $totale_costo = 0;
 $totale_addebito = 0;
-$totale_scontato = 0;
+$totale = 0;
 
 $totale_stato = [];
 
@@ -64,15 +64,15 @@ if (!empty($rsi)) {
         </td>
 
         <td class="text-right">
-            '.Translator::numberToLocale($int['manodopera_costo'] + $int['viaggio_costo']).'
+            '.Translator::numberToLocale($int['totale_costo']).'
         </td>
 
         <td class="text-right">
-            '.Translator::numberToLocale($int['manodopera_addebito'] + $int['viaggio_addebito']).'
+            '.Translator::numberToLocale($int['totale_addebito']).'
         </td>
 
         <td class="text-right">
-            '.Translator::numberToLocale($int['manodopera_scontato'] + $int['viaggio_scontato']).'
+            '.Translator::numberToLocale($int['totale']).'
         </td>
     </tr>';
 
@@ -103,8 +103,8 @@ if (!empty($rsi)) {
 
             foreach ($rst as $r) {
                 // Visualizzo lo sconto su ore o km se c'è
-                $sconto_ore = ($r['sconto'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['sconto']).'</span>' : '';
-                $sconto_km = ($r['scontokm'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['scontokm']).'</span>' : '';
+                $sconto_ore = ($r['sconto'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['sconto']).' &euro;</span>' : '';
+                $sconto_km = ($r['scontokm'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['scontokm']).' &euro;</span>' : '';
 
                 echo '
                 <tr>
@@ -141,7 +141,7 @@ if (!empty($rsi)) {
 
             foreach ($rst as $r) {
                 // Visualizzo lo sconto su ore o km se c'è
-                $sconto = ($r['sconto'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['sconto'] * $r['qta']).'</span>' : '';
+                $sconto = ($r['sconto'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['sconto']).' &euro;</span>' : '';
 
                 echo '
                 <tr>
@@ -174,7 +174,7 @@ if (!empty($rsi)) {
 
             foreach ($rst as $r) {
                 // Visualizzo lo sconto su ore o km se c'è
-                $sconto = ($r['sconto'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['sconto'] * $r['qta']).'</span>' : '';
+                $sconto = ($r['sconto'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['sconto']).' &euro;</span>' : '';
 
                 echo '
                 <tr>
@@ -197,9 +197,9 @@ if (!empty($rsi)) {
 
         $totale_ore += $int['ore'];
         $totale_km += $int['km'];
-        $totale_costo += $int['manodopera_costo'] + $int['viaggio_costo'];
-        $totale_addebito += $int['manodopera_addebito'] + $int['viaggio_addebito'];
-        $totale_scontato += $int['manodopera_scontato'] + $int['viaggio_scontato'];
+        $totale_costo += $int['totale_costo'];
+        $totale_addebito += $int['totale_addebito'];
+        $totale += $int['totale'];
     }
 
     // Totali
@@ -231,7 +231,7 @@ if (!empty($rsi)) {
 
     echo '
         <td align="right">
-            <big><b>'.Translator::numberToLocale($totale_scontato).'</b></big>
+            <big><b>'.Translator::numberToLocale($totale).'</b></big>
         </td>
     </tr>';
 
@@ -265,21 +265,21 @@ if (!empty($rsi)) {
 /*
     Bilancio del preventivo
 */
-$diff = sum($budget, -$totale_scontato);
+$diff = sum($budget, -$totale);
 
 echo '
 <div class="well text-center">
     <br><span><big>
         <b>'.tr('Rapporto budget/spesa').':<br>';
-if ($budget > $totale_scontato) {
+if ($budget > $totale) {
     echo '
         <span class="text-success"><big>+'.Translator::numberToLocale($diff).' &euro;</big></span>';
 } elseif ($diff < 0) {
     echo '
-        <span class="text-danger"><big>'.$diff.' &euro;</big></span>';
+        <span class="text-danger"><big>'.Translator::numberToLocale($diff).' &euro;</big></span>';
 } else {
     echo '
-        <span><big>'.$diff.' &euro;</big></span>';
+        <span><big>'.Translator::numberToLocale($diff).' &euro;</big></span>';
 }
     echo '
     </b></big></span>
@@ -293,7 +293,7 @@ echo '
 <div class="text-center">
     <a class="btn btn-primary" href="'.$rootdir.'/pdfgen.php?ptype=preventivi_cons&idpreventivo='.$id_record.'" target="_blank">
         <i class="fa fa-print"></i><br>
-        Stampa consuntivo
+        '.tr('Stampa consuntivo').'
     </a>
 </div>';
 

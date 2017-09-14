@@ -213,7 +213,7 @@ function get_costi_intervento($id_intervento)
 
     $result = array_merge($tecnici[0], $articoli[0], $altro[0]);
 
-    $result['totale_costi'] = sum([
+    $result['totale_costo'] = sum([
         $result['manodopera_costo'],
         $result['viaggio_costo'],
         $result['ricambi_costo'],

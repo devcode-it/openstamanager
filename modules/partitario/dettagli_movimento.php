@@ -13,7 +13,7 @@ echo '
     <tr>
         <th>'.tr('Descrizione riga').'</th>
         <th width="100">'.tr('Imponibile').'</th>
-        <th width="100">'.tr('Q.tà').'</th
+        <th width="100">'.tr('Q.tà').'</th>
         <th width="100">'.tr('Um').'</th>
     </tr>';
 

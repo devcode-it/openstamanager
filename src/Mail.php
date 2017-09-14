@@ -17,8 +17,8 @@ class Mail extends PHPMailer
         $config = [
             'host' => Settings::get('Server SMTP'),
             'username' => Settings::get('Username SMTP'),
+            'password' => Settings::get('Password SMTP'),
             'port' => Settings::get('Porta SMTP'),
-            'port' => Settings::get('Password SMTP'),
             'secure' => Settings::get('Sicurezza SMTP'),
         ];
 

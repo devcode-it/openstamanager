@@ -52,9 +52,12 @@ if (Auth::check()) {
         'week' => tr('Settimana'),
         'month' => tr('Mese'),
         'today' => tr('Oggi'),
-        'yesterday' => tr('Ieri'),
-        'last7Days' => tr('Ultimi 7 giorni'),
-        'last30Days' => tr('Ultimi 30 giorni'),
+        'firstThreemester' => tr('I trimestre'),
+        'secondThreemester' => tr('II trimestre'),
+        'thirdThreemester' => tr('III trimestre'),
+        'fourthThreemester' => tr('IV trimestre'),
+        'firstSemester' => tr('I semestre'),
+        'secondSemester' => tr('II semestre'),
         'thisMonth' => tr('Questo mese'),
         'lastMonth' => tr('Mese scorso'),
         'thisYear' => tr("Quest'anno"),
@@ -161,8 +164,12 @@ if (Auth::check()) {
 					</a>
 
 					<div class="input-group btn-calendar pull-left">
-						<button id="daterange" class="btn"><i class="fa fa-calendar" style="color:'.$calendar.'"></i> <i class="fa fa-caret-down"></i></button>
-					</div>
+                        <button id="daterange" class="btn"><i class="fa fa-calendar" style="color:'.$calendar.'"></i> <i class="fa fa-caret-down"></i></button>
+                        <span class="hidden-xs" style="vertical-align:middle">
+                            '.Translator::dateToLocale($_SESSION['period_start']).' - '.Translator::dateToLocale($_SESSION['period_end']).'
+                        </span>
+                    </div>
+
 
 					<div id="right-menu" class="pull-right">
                         <button onclick="window.print()" class="btn btn-sm btn-info tip" title="'.tr('Stampa').'">

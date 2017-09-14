@@ -757,9 +757,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), '_link_record_', 'mg_movimenti.idarticolo', 7, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), '_link_hash_', 'CONCAT(\'tab_\', (SELECT `id` FROM `zz_plugins` WHERE `name` = \'Movimenti\' AND idmodule_to = (SELECT `id` FROM `zz_modules` WHERE `name` = \'Articoli\')))', 7, 1, 0, 0, 1);
 
--- Impostazione dei titoli di default
-UPDATE `zz_modules` SET `title` = `name` WHERE `title` = '';
-
 -- Aggiunta del campo di dicitura fissa per la fatturazione
 ALTER TABLE `co_iva` ADD `dicitura` varchar(255);
 
@@ -772,6 +769,11 @@ UPDATE `an_anagrafiche` SET `idpagamento_acquisti` = `idpagamento_vendite` WHERE
 ALTER TABLE `an_anagrafiche` CHANGE `idlistino` `idlistino_vendite` int(11), ADD `idlistino_acquisti` int(11) AFTER `idlistino_vendite`;
 UPDATE `an_anagrafiche` SET `idlistino_vendite` = NULL WHERE `idlistino_vendite` = 0;
 UPDATE `an_anagrafiche` SET `idlistino_acquisti` = `idlistino_vendite` WHERE `idlistino_vendite` IS NOT NULL;
+
+-- Miglioramento della gestione dell'iva predefinita
+ALTER TABLE `an_anagrafiche` CHANGE `idiva` `idiva_vendite` int(11), ADD `idiva_acquisti` int(11) AFTER `idiva_vendite`;
+UPDATE `an_anagrafiche` SET `idiva_vendite` = NULL WHERE `idiva_vendite` = 0;
+UPDATE `an_anagrafiche` SET `idiva_acquisti` = `idiva_vendite` WHERE `idiva_vendite` IS NOT NULL;
 
 -- Rimozione data_sla e ora_sla
 ALTER TABLE `in_interventi` DROP `data_sla`, DROP `ora_sla`;
@@ -933,3 +935,10 @@ UPDATE `co_iva` SET `dicitura` = 'Operazione soggetta a reverse charge ex art. 1
 
 -- Aggiunta campi in co_pagamenti per la selezione del conto di default
 ALTER TABLE `co_pagamenti` ADD `idconto_vendite` int(11),  ADD `idconto_acquisti` int(11);
+
+-- Aggiunta del modulo Stampe contabili
+INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Stampe contabili', 'stampe_contabili', 'custom', '', 'fa fa-angle-right', '2.3', '2.3', '1', 1, '1', '1');
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Stampe contabili' AND `t2`.`name` = 'Contabilità') SET `t1`.`parent` = `t2`.`id`;
+
+-- Impostazione dei titoli di default
+UPDATE `zz_modules` SET `title` = `name` WHERE `title` = '';

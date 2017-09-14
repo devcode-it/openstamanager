@@ -124,6 +124,13 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto)
         }
     }
 
+    // Azzeramento forzato del diritto di chiamata nel caso questa non sia la prima sessione dell'intervento per il giorno di inizio [Luca]
+    $rs = $dbo->fetchArray('SELECT id FROM in_interventi_tecnici WHERE (DATE(orario_inizio)=DATE('.prepare($inizio).') OR DATE(orario_fine)=DATE('.prepare($inizio).')) AND idintervento='.prepare($idintervento));
+    if (!empty($rs)) {
+        $costo_dirittochiamata_tecnico = 0;
+        $costo_dirittochiamata = 0;
+    }
+
     // Inserisco le ore dei tecnici nella tabella "in_interventi_tecnici"
     $dbo->insert('in_interventi_tecnici', [
         'idintervento' => $idintervento,

@@ -526,12 +526,13 @@ span.form-control {
     .main-header .logo {
         display: none;
     }
+    /*
     .content-wrapper,
     .right-side,
     .left-side,
     .main-sidebar {
         padding-top: 50px;
-    }
+    }*/
 }
 
 @media screen and (max-width:1023px) {

@@ -39,7 +39,7 @@ if ($user['gruppo'] == 'Tecnici') {
 $rss = $dbo->fetchArray('SELECT idtipointervento FROM in_interventi WHERE id='.prepare($id_record));
 $idtipointervento = $rs[0]['idtipointervento'];
 
-$query = 'SELECT * FROM an_anagrafiche JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE deleted=0 AND idintervento='.prepare($id_record)." AND idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica = (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = 'Tecnico')) ORDER BY ragione_sociale ASC, in_interventi_tecnici.orario_inizio ASC";
+$query = 'SELECT * FROM an_anagrafiche JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE deleted=0 AND idintervento='.prepare($id_record)." AND idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica = (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = 'Tecnico')) ORDER BY ragione_sociale ASC, in_interventi_tecnici.orario_inizio ASC, in_interventi_tecnici.id ASC";
 $rs2 = $dbo->fetchArray($query);
 $prev_tecnico = '';
 
@@ -49,9 +49,11 @@ if (!empty($rs2)) {
 
         // Intestazione tecnico
         if ($prev_tecnico != $r['ragione_sociale']) {
+            $prev_tecnico = $r['ragione_sociale'];
+
             echo '
 <div class="table-responsive">
-    <table class="table table-striped table-hover table-condensed '.$class_tecnico.'">
+    <table class="table table-striped table-hover table-condensed">
         <tr>
             <th><i class="fa fa-user"></i> '.$r['ragione_sociale'].'</th>
             <th>'.tr('Orario inizio').'</th>
@@ -108,7 +110,7 @@ if (!empty($rs2)) {
         <input type="hidden" name="prezzo_dirittochiamata_tecnico['.$id.']" value="'.$costo_dirittochiamata_tecnico.'" />';
 
         echo '
-        <tr class="'.$class_tecnico.'">
+        <tr>
             <td class="tecn_'.$r['idtecnico'].'">';
 
         if ($rs[0]['stato'] != 'Fatturato') {

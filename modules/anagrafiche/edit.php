@@ -148,42 +148,46 @@ if ($cliente || $fornitore) {
 
 		<div class="panel-body">
 
-			<div class="row">
 <?php
 if ($fornitore) {
         ?>
+            <div class="row">
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento predefinito per acquisti'); ?>", "name": "idpagamento_acquisti", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento_acquisti$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento predefinito (per acquisti)'); ?>", "name": "idpagamento_acquisti", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento_acquisti$" ]}
                 </div>
 
                 <div class="col-md-3">
                     {[ "type": "select", "label": "<?php echo tr('Listino articoli (per acquisti)'); ?>", "name": "idlistino_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_acquisti$" ]}
                 </div>
+
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Iva predefinita (per acquisti)'); ?>", "name": "idiva_acquisti", "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "$idiva_acquisti$" ]}
+                </div>
+            </div>
 <?php
 
     }
 
     if ($cliente) {
         ?>
+            <div class="row">
                 <div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento predefinito per vendite'); ?>", "name": "idpagamento_vendite", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento_vendite$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento predefinito (per vendite)'); ?>", "name": "idpagamento_vendite", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento_vendite$" ]}
                 </div>
 
                 <div class="col-md-3">
                     {[ "type": "select", "label": "<?php echo tr('Listino articoli (per vendite)'); ?>", "name": "idlistino_vendite", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_vendite$" ]}
                 </div>
+
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Iva predefinita (per vendite)'); ?>", "name": "idiva_vendite", "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "$idiva_vendite$" ]}
+                </div>
+            </div>
 <?php
 
     } ?>
 
-			</div>
-
-
             <div class="row">
-                <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Iva predefinita'); ?>", "name": "idiva", "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "$idiva$" ]}
-                </div>
-
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Indirizzo di fatturazione'); ?>", "name": "idsede_fatturazione", "values": "query=SELECT id, CONCAT_WS(', ', nomesede, citta) AS descrizione FROM an_sedi WHERE idanagrafica='$id_record'  UNION SELECT '0' AS id, 'Sede legale' AS descrizione ORDER BY descrizione", "value": "$idsede_fatturazione$" ]}
 				</div>

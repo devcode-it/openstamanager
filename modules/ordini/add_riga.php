@@ -29,14 +29,9 @@ if (empty($idriga)) {
     $prezzo = 0;
     $sconto = 0;
 
-    // Nelle fatture di acquisto leggo l'iva di acquisto dal fornitore
-    if ($dir == 'uscita') {
-        $rsf = $dbo->fetchArray('SELECT idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
-        $idiva = $rsf[0]['idiva'];
-    }
-
-    // Leggo l'iva predefinita dall'articolo e se non c'è leggo quella predefinita generica
-    $idiva = $idiva ?: get_var('Iva predefinita');
+    // Leggo l'iva predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
+    $iva = $dbo->fetchArray('SELECT idiva_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
+    $idiva = $iva[0]['idiva'] ?: get_var('Iva predefinita');
 } else {
     $op = 'editriga';
     $button = tr('Modifica');

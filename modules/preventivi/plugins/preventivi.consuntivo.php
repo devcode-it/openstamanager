@@ -64,15 +64,15 @@ if (!empty($rsi)) {
         </td>
 
         <td class="text-right">
-            '.Translator::numberToLocale($int['manodopera_costo']).'
+            '.Translator::numberToLocale($int['manodopera_costo'] + $int['viaggio_costo']).'
         </td>
 
         <td class="text-right">
-            '.Translator::numberToLocale($int['manodopera_addebito']).'
+            '.Translator::numberToLocale($int['manodopera_addebito'] + $int['viaggio_addebito']).'
         </td>
 
         <td class="text-right">
-            '.Translator::numberToLocale($int['manodopera_scontato']).'
+            '.Translator::numberToLocale($int['manodopera_scontato'] + $int['viaggio_scontato']).'
         </td>
     </tr>';
 
@@ -197,9 +197,9 @@ if (!empty($rsi)) {
 
         $totale_ore += $int['ore'];
         $totale_km += $int['km'];
-        $totale_costo += $int['manodopera_costo'];
-        $totale_addebito += $int['manodopera_addebito'];
-        $totale_scontato += $int['manodopera_scontato'];
+        $totale_costo += $int['manodopera_costo'] + $int['viaggio_costo'];
+        $totale_addebito += $int['manodopera_addebito'] + $int['viaggio_addebito'];
+        $totale_scontato += $int['manodopera_scontato'] + $int['viaggio_scontato'];
     }
 
     // Totali

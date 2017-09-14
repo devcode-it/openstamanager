@@ -130,7 +130,7 @@ switch (post('op')) {
                 'km' => $km,
 
                 'prezzo_ore_unitario' => $prezzo_ore_unitario,
-                'prezzo_km_unitario' => $prezzo_km_unitari,
+                'prezzo_km_unitario' => $prezzo_km_unitario,
                 'prezzo_dirittochiamata' => $prezzo_dirittochiamata,
                 'prezzo_ore_unitario_tecnico' => $prezzo_ore_unitario_tecnico,
                 'prezzo_km_unitario_tecnico' => $prezzo_km_unitario_tecnico,

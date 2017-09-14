@@ -286,13 +286,36 @@ echo '
     </big>
     <br><br>';
 
-$diff2 = Translator::numberToLocale(floatval($contratto_tot_ore) - floatval($totale_ore_impiegate));
-echo '
-    <big>
-        '.tr('Ore residue').': '.$diff2.'<br>
-        '.tr('Ore erogate').': '.Translator::numberToLocale($totale_ore_impiegate).'<br>
-        '.tr('Ore in contratto').': '.Translator::numberToLocale($contratto_tot_ore).'
-    </big>
+if (!empty($contratto_tot_ore)) {
+    echo '
+    <div class="row">
+        <big class="col-md-2 col-md-offset-5 text-center">
+            <table class="table text-left">
+                <tr>
+                    <td>'.tr('Ore residue').':</td>
+                    <td class="text-right">'.Translator::numberToLocale(floatval($contratto_tot_ore) - floatval($totale_ore_impiegate)).'</td>
+                </tr>
+
+                <tr>
+                    <td>'.tr('Ore erogate').':</td>
+                    <td class="text-right">'.Translator::numberToLocale($totale_ore_impiegate).'</td>
+                </tr>
+
+                <tr>
+                    <td>'.tr('Ore in contratto').':</td>
+                    <td class="text-right">'.Translator::numberToLocale($contratto_tot_ore).'</td>
+                </tr>
+            </table>
+        </big>
+    </div>';
+} else {
+    echo '
+    <div class="alert alert-info">
+        <p>'.tr('Per monitorare il consumo ore, inserisci almeno una riga con unità di misura "ore"').'.</p>
+    </div>';
+}
+
+    echo '
 </div>';
 
 /*

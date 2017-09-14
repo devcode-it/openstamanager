@@ -29,7 +29,7 @@ if (empty($idriga)) {
     }
 
     // Leggo l'iva predefinita dall'anagrafica e se non c'è leggo quella predefinita generica
-    $rsa = $dbo->fetchArray('SELECT idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
+    $rsa = $dbo->fetchArray('SELECT idiva_vendite AS idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
     $idiva = (!empty($rsa[0]['idiva'])) ? $rsa[0]['idiva'] : get_var('Iva predefinita');
 } else {
     $op = 'editriga';

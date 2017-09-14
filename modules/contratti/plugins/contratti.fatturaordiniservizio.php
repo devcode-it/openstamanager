@@ -106,7 +106,7 @@ elseif ($get['op'] == 'addfattura') {
     $importo = $rs2[0]['totale'] / sizeof($rs);
 
     // Lettura iva del cliente o predefinita
-    $rs2 = $dbo->fetchArray('SELECT idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
+    $rs2 = $dbo->fetchArray('SELECT idiva_vendite AS idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
     $idiva = $rs2[0]['idiva'];
 
     if ($idiva != 0) {

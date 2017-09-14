@@ -28,9 +28,16 @@ if (Auth::check()) {
 		<script> setInterval("session_keep_alive()", 5*60*1000); </script>';
     }
 
-    if (get_var('CSS Personalizzato') != '') {
+    $custom_css = get_var('CSS Personalizzato');
+    if (!empty($debug)) {
+        $custom_css .= 'div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-database:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-duration:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-memory:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-row-count:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-stmt-id:before {
+            font-family: FontAwesome;
+        }';
+    }
+
+    if (!empty($custom_css)) {
         echo '
-		<style>'.get_var('CSS Personalizzato').'</style>';
+		<style>'.$custom_css.'</style>';
     }
 
     if (!empty($debugbarRenderer)) {

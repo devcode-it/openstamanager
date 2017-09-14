@@ -578,31 +578,10 @@ switch (post('op')) {
         $testo_email = post('body');
         $allegato = post('allegato');
 
-        $mail = new PHPMailer();
-
-        $mail->IsSMTP();
-        $mail->Host = get_var('Server SMTP');
-
-        if (get_var('Username SMTP') != '') {
-            $mail->SMTPAuth = 1;
-            $mail->Username = get_var('Username SMTP');
-            $mail->Password = get_var('Password SMTP');
-        }
-
-        if (get_var('Sicurezza SMTP') == 'SSL') {
-            $mail->SMTPSecure = 'ssl';
-        } elseif (get_var('Sicurezza SMTP') == 'TLS') {
-            $mail->SMTPSecure = 'tls';
-        }
-
-        $mail->Port = get_var('Porta SMTP');
+        $mail = new Mail();
 
         $mail->AddReplyTo($from_address, $from_name);
         $mail->SetFrom($from_address, $from_name);
-
-        $mail->WordWrap = 60; // a capo dopo 60 caratteri
-        $mail->IsHTML(true); // invio mail in formato HTML
-        $mail->AltBody = strip_tags($testo_email);
 
         $mail->AddAddress($destinatario, '');
 
@@ -616,11 +595,11 @@ switch (post('op')) {
 
         $mail->MsgHTML($testo_email);
 
-        if ($allegato != '') {
+        if (!empty($allegato)) {
             $mail->AddAttachment($allegato);
         }
 
-        if (!$mail->Send()) {
+        if (!$mail->send()) {
             $_SESSION['errors'][] = tr("Errore durante l'invio dell'email").': '.$mail->ErrorInfo;
         } else {
             $dbo->query('UPDATE in_interventi SET data_invio=NOW() WHERE id='.prepare($id_record));

@@ -6,70 +6,28 @@ $pageTitle = 'Bug';
 $jscript_modules[] = $js.'/ckeditor.js';
 
 if (filter('op') == 'send') {
-    $dati = $post;
-
-    // Parametri e-mail
-    $replace = [
-        'Server SMTP' => 'email_host',
-        'Username SMTP' => 'email_username',
-        'Porta SMTP' => 'email_porta',
-        'Sicurezza SMTP' => 'email_secure',
-        'Password SMTP' => 'email_password',
-    ];
-    $rs = $dbo->fetchArray("SELECT * FROM zz_settings WHERE sezione = 'Email'");
-    foreach ($rs as $r) {
-        if (!empty($replace[$r['nome']])) {
-            $dati[$replace[$r['nome']]] = $r['valore'];
-        }
-    }
-
     // Preparazione email
-    $mail = new PHPMailer();
-
-    // Se non specificato l'host uso le impostazioni di invio mail di default del server
-    if (!empty($dati['email_host'])) {
-        $mail->IsSMTP();
-        $mail->IsHTML();
-        $mail->SMTPDebug = 2;
-
-        $mail->Host = $dati['email_host'];
-        $mail->Port = $dati['email_porta'];
-
-        // Controllo se è necessaria l'autenticazione per il server di posta
-        if (!empty($dati['email_username'])) {
-            $mail->SMTPAuth = true;
-            $mail->Username = $dati['email_username'];
-            $mail->Password = $dati['email_password'];
-        }
-
-        if (in_array(strtolower($dati['email_secure']), ['ssl', 'tls'])) {
-            $mail->SMTPSecure = strtolower($dati['email_secure']);
-        }
-    }
-
-    $mail->WordWrap = 50;
+    $mail = new Mail();
 
     // Mittente
-    $mail->From = $dati['email_from'];
+    $mail->From = $post['email_from'];
     $mail->FromName = $_SESSION['username'];
-    $mail->AddReplyTo($dati['email_from']);
+    $mail->AddReplyTo($post['email_from']);
 
     // Destinatario
-    $mail->AddAddress($dati['email_to']);
+    $mail->AddAddress($post['email_to']);
 
     // Copia
-    if (!empty($dati['email_cc'])) {
-        $mail->AddCC($dati['email_cc']);
+    if (!empty($post['email_cc'])) {
+        $mail->AddCC($post['email_cc']);
     }
 
     // Copia nascosta
-    if (!empty($dati['email_bcc'])) {
-        $mail->AddBCC($dati['email_bcc']);
+    if (!empty($post['email_bcc'])) {
+        $mail->AddBCC($post['email_bcc']);
     }
 
     $mail->Subject = 'Segnalazione bug OSM '.$version.' ('.(!empty($revision) ? 'R'.$revision : tr('In sviluppo')).')';
-    $mail->AltBody = tr('Questa email arriva dal modulo bug di segnalazione bug di OSM');
-    $body = $dati['body'].'<hr><br>'.tr('IP').': '.get_client_ip()."<br>\n";
 
     // Se ho scelto di inoltrare i file di log, allego
     if (!empty($post['log']) && file_exists($docroot.'/logs/error.log')) {
@@ -86,6 +44,8 @@ if (filter('op') == 'send') {
         $_SESSION['infos'][] = tr('Backup del database eseguito ed allegato correttamente!');
     }
 
+    $body = $post['body'].'<hr><br>'.tr('IP').': '.get_client_ip();
+
     // Se ho scelto di inoltrare le INFO del mio sistema
     if (!empty($post['info'])) {
         $body .= $_SERVER['HTTP_USER_AGENT'].' - '.getOS();
@@ -93,14 +53,14 @@ if (filter('op') == 'send') {
 
     $mail->Body = $body;
 
+    $mail->AltBody = 'Questa email arriva dal modulo bug di segnalazione bug di OSM';
+
     // Invio mail
     if (!$mail->send()) {
         $_SESSION['errors'][] = tr("Errore durante l'invio della segnalazione").': '.$mail->ErrorInfo;
     } else {
         $_SESSION['infos'][] = tr('Email inviata correttamente!');
     }
-
-    $mail->SmtpClose();
 
     if (!empty($post['sql'])) {
         delete($backup_file);

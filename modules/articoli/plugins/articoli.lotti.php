@@ -243,13 +243,13 @@ for ($i = 0; $i < count($rs2); ++$i) {
 
             $totali[] = [$data[0]['subtotale'], $data[0]['iva']];
 
-            $numero = !empty($rs6[0]['numero_esterno']) ? $data[0]['numero_esterno'] : $data[0]['numero'];
+            $numero = !empty($data[0]['numero_esterno']) ? $data[0]['numero_esterno'] : $data[0]['numero'];
 
-            $text = tr('_DOC_ n<sup>o</sup> _NUM_ del _DATE_', [
+            $text = tr('_DOC_ num. _NUM_ del _DATE_', [
                 '_DOC_' => $data[0]['tipo_documento'],
                 '_NUM_' => $numero,
                 '_DATE_' => Translator::dateToLocale($data[0]['data']),
-                ]).(!empty($extra) ? ' '.$extra : '');
+            ]).(!empty($extra) ? ' '.$extra : '');
 
             echo '
             '.Modules::link($module_id, $id, $text).'<br>';

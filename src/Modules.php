@@ -458,8 +458,13 @@ class Modules
      */
     public static function link($modulo, $id_record, $testo = null, $alternativo = true, $extra = null, $blank = true)
     {
-        $testo = isset($testo) ? nl2br($testo) : tr('Visualizza scheda').' <i class="fa fa-external-link"></i>';
+        $testo = isset($testo) ? nl2br($testo) : tr('Visualizza scheda');
         $alternativo = is_bool($alternativo) && $alternativo ? $testo : $alternativo;
+
+        // Aggiunta automatica dell'icona di riferimento
+        if (!str_contains($testo, '<i ')) {
+            $testo = $testo.' <i class="fa fa-external-link"></i>';
+        }
 
         $module = self::getModule($modulo);
 

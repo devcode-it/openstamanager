@@ -161,3 +161,34 @@ include $docroot.'/modules/preventivi/row-list.php';
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
+
+<?php
+
+$fatture = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idpreventivo` = '.prepare($id_record).')');
+if (!empty($fatture)) {
+    echo '
+    <div class="alert alert-danger">
+        <p>'.tr('Ci sono _NUM_ documenti collegate a questo elemento', [
+            '_NUM_' => count($fatture),
+        ]).'.</p>
+    <ul>';
+
+    foreach ($fatture as $fattura) {
+        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
+            '_DOC_' => $fattura['tipo_documento'],
+            '_NUM_' => !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'],
+            '_DATE_' => Translator::dateToLocale($fattura['data']),
+        ]);
+
+        $modulo = ($fattura['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
+        $id = $fattura['id'];
+
+        echo '
+        <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+    }
+
+    echo '
+        </ul>
+        <p>'.tr('Eliminando questo elemento si potrebbero verificare problemi nelle altre sezioni del gestionale!').'</p>
+    </div>';
+}

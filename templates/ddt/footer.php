@@ -75,7 +75,7 @@ echo '
         </th>
 
         <th class="small" class style="width:20%">
-            '.tr('N<sup>o</sup> colli', [], ['upper' => true]).'
+            '.tr('Num. colli', [], ['upper' => true]).'
         </th>
 
         <th class="small" style="width:30%">

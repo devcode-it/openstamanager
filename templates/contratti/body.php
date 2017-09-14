@@ -16,7 +16,7 @@ echo '
 <div class="row">
     <div class="col-xs-6">
         <div class="text-center" style="height:5mm;">
-            <b>'.tr('Contratto N<sup>o</sup> _NUM_ del _DATE_', [
+            <b>'.tr('Contratto Num. _NUM_ del _DATE_', [
                 '_NUM_' => $records[0]['numero'],
                 '_DATE_' => Translator::dateToLocale($records[0]['data_bozza']),
             ], ['upper' => true]).'</b>

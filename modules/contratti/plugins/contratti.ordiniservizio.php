@@ -188,7 +188,7 @@ if (empty($rs)) {
                     echo '
                                 <span class="text-success">
                                     <i class="fa fa-check"></i>
-                                    '.Modules::link('Interventi', $r['idintervento'], tr('Intervento n<sup>o</sup> _NUM_ del _DATE_', [
+                                    '.Modules::link('Interventi', $r['idintervento'], tr('Intervento num. _NUM_ del _DATE_', [
                                         '_NUM_' => $res['codice'],
                                         '_DATE_' => Translator::dateToLocale($r[0]['data_intervento']),
                                     ])).'

@@ -144,7 +144,7 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
 					</div>
 
 					<div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo tr('N<sup>o</sup> colli'); ?>", "name": "n_colli", "value": "$n_colli$" ]}
+						{[ "type": "text", "label": "<?php echo tr('Num. colli'); ?>", "name": "n_colli", "value": "$n_colli$" ]}
 					</div>
 				</div>
 

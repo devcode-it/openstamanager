@@ -23,19 +23,19 @@ if ($module['name'] == 'Ordini cliente') {
 			<div class="row">
 
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr("Numero ordine"); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "$numero$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Numero ordine'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "$numero$" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr("Numero secondario"); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Numero secondario'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr("Data"); ?>", "maxlength": 10, "name": "data", "required": 1, "value": "$data$" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data'); ?>", "maxlength": 10, "name": "data", "required": 1, "value": "$data$" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr("Stato"); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine", "value": "$idstatoordine$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine", "value": "$idstatoordine$" ]}
 				</div>
 
 			</div>
@@ -43,22 +43,22 @@ if ($module['name'] == 'Ordini cliente') {
 			<div class="row">
 				<div class="col-md-3">
 					<?php
-					if( $dir == 'entrata' ){
-					?>
-						{[ "type": "select", "label": "<?php echo tr("Cliente"); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted=0 ORDER BY ragione_sociale", "value": "$idanagrafica$", "ajax-source": "clienti" ]}
+                    if ($dir == 'entrata') {
+                        ?>
+						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted=0 ORDER BY ragione_sociale", "value": "$idanagrafica$", "ajax-source": "clienti" ]}
 					<?php
-					}
 
-					else{
-					?>
-						{[ "type": "select", "label": "<?php echo tr("Fornitore"); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Fornitore' AND deleted=0 ORDER BY ragione_sociale", "value": "$idanagrafica$" ]}
+                    } else {
+                        ?>
+						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Fornitore' AND deleted=0 ORDER BY ragione_sociale", "value": "$idanagrafica$" ]}
 					<?php
-					}
-					?>
+
+                    }
+                    ?>
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr("Pagamento"); ?>", "name": "idpagamento", "required": 1, "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$" ]}
 				</div>
 			</div>
 
@@ -70,7 +70,7 @@ if ($module['name'] == 'Ordini cliente') {
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr("Note"); ?>", "name": "note", "value": "$note$" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
 				</div>
 			</div>
 
@@ -91,18 +91,22 @@ if ($module['name'] == 'Ordini cliente') {
 
 	<div class="panel-body">
 		<div class="pull-left">
-			<?php if( $records[0]['stato'] != 'Evaso' ){ ?>
+			<?php if ($records[0]['stato'] != 'Evaso') {
+                        ?>
 				<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/ordini/add_articolo.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup"><i class="fa fa-plus"></i> Articolo</a>
 				<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/ordini/add_riga.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> Riga generica</a>
-			<?php } ?>
+			<?php
+                    } ?>
 		</div>
 
 		<div class="pull-right">
 			<!-- Stampe -->
-			<?php if( $records[0]['stato'] != 'Evaso' ){ ?>
+			<?php if ($records[0]['stato'] != 'Evaso') {
+                        ?>
 				<a  class="btn btn-sm btn-info" data-href="<?php echo $rootdir ?>/modules/fatture/crea_documento.php?id_module=<?php echo $id_module ?>&&id_record=<?php echo $id_record ?>&documento=ddt" data-toggle="modal" data-title="Crea ddt" data-target="#bs-popup" ><i class="fa fa-magic"></i> Crea ddt da ordine...</i></a>
 				<a  class="btn btn-sm btn-info" data-href="<?php echo $rootdir ?>/modules/fatture/crea_documento.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>&documento=fattura" data-toggle="modal" data-title="Crea fattura" data-target="#bs-popup" ><i class="fa fa-magic"></i> Crea fattura da ordine...</i></a>
-			<?php } ?>
+			<?php
+                    } ?>
 
 			<a  class="btn btn-sm btn-info" target="_blank" href="<?php echo $rootdir ?>/pdfgen.php?ptype=ordini&idordine=<?php echo $id_record ?>" data-title="Stampa ordine"><i class="fa fa-print"></i> Stampa ordine</a>
 		</div>
@@ -112,7 +116,7 @@ if ($module['name'] == 'Ordini cliente') {
 
 		<div class="row">
 			<div class="col-md-12">
-				<?php include($docroot."/modules/ordini/row-list.php"); ?>
+				<?php include $docroot.'/modules/ordini/row-list.php'; ?>
 			</div>
 		</div>
 	</div>
@@ -121,3 +125,40 @@ if ($module['name'] == 'Ordini cliente') {
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
+
+<?php
+
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idordine` = '.prepare($id_record).') UNION
+SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt`.`descrizione` AS tipo_documento, `dt_tipiddt`.`dir` FROM `dt_ddt` JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` WHERE `dt_ddt`.`id` IN (SELECT `idddt` FROM `dt_righe_ddt` WHERE `idordine` = '.prepare($id_record).')');
+if (!empty($elementi)) {
+    echo '
+    <div class="alert alert-danger">
+        <p>'.tr('Ci sono _NUM_ documenti collegate a questo elemento', [
+            '_NUM_' => count($elementi),
+        ]).'.</p>
+    <ul>';
+
+    foreach ($elementi as $elemento) {
+        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
+            '_DOC_' => $elemento['tipo_documento'],
+            '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
+            '_DATE_' => Translator::dateToLocale($elemento['data']),
+        ]);
+
+        if (!in_array($elemento['tipo_documento'], ['Ddt di vendita', 'Ddt di acquisto'])) {
+            $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
+        } else {
+            $modulo = ($elemento['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
+        }
+
+        $id = $elemento['id'];
+
+        echo '
+        <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+    }
+
+    echo '
+        </ul>
+        <p>'.tr('Eliminando questo elemento si potrebbero verificare problemi nelle altre sezioni del gestionale!').'</p>
+    </div>';
+}

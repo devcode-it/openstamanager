@@ -55,7 +55,7 @@ foreach ($rs_gen as $r) {
         $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
 
         echo '
-            <br/><small>'.tr('Rif. ordine n<sup>o</sup>_NUM_ del _DATE_', [
+            <br/><small>'.tr('Rif. ordine num._NUM_ del _DATE_', [
                 '_NUM_' => $numero,
                 '_DATE_' => Translator::dateToLocale($rso[0]['data']),
             ]).'</small>';

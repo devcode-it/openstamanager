@@ -243,7 +243,7 @@ if (empty($rs)) {
                 $numero_doc = $rsf[0]['numero'];
             }
 
-            $documento = Modules::link('Fatture di vendita', $rs[$i]['iddocumento'], tr('Fattura n<sup>o</sup> _NUM_ del _DATE_', [
+            $documento = Modules::link('Fatture di vendita', $rs[$i]['iddocumento'], tr('Fattura num. _NUM_ del _DATE_', [
                 '_NUM_' => $numero_doc,
                 '_DATE_' => Translator::dateToLocale($rsf[0]['data']),
             ]));

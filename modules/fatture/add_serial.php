@@ -117,7 +117,7 @@ if ($dir == 'entrata') {
             $r = $dbo->select($data[$pos]['table'], $data[$pos]['id'], ['id' => $res[0][str_replace('id', 'id_riga_', $data[$pos]['id'])]]);
 
             echo '
-        '.Modules::link($modulo, $r[0][$data[$pos]['id']], tr('Visualizza vendita').' <i class="fa fa-external-link"></i>', null);
+        '.Modules::link($modulo, $r[0][$data[$pos]['id']], tr('Visualizza vendita'), null);
         }
         echo '
         </div>';

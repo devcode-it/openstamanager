@@ -105,10 +105,10 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo tr('Sconto totale') ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr("Sconto complessivo del contratto"); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
+                    {[ "type": "number", "label": "<?php echo tr('Sconto totale') ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr('Sconto complessivo del contratto'); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
 if ($records[0]['stato'] == 'Emessa') {
-    echo ', "disabled" : 1';
-}
+                    echo ', "disabled" : 1';
+                }
 ?> ]}
                 </div>
             </div>
@@ -271,6 +271,7 @@ if ($records[0]['stato'] != 'Pagato') {
     ?>
         <a class="btn btn-primary" data-href="<?php echo $rootdir ?>/modules/contratti/add_riga.php?idcontratto=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Riga'); ?></a><br>
     <?php
+
 }
 ?>
         <div class="clearfix"></div>
@@ -319,7 +320,7 @@ if (!empty($records[0]['idcontratto_prev'])) {
         echo '
                     <tr>
                         <td>
-                            '.Modules::link($id_module, $idcontratto_prev, tr('Contratto n<sup>o</sup> _NUM_', [
+                            '.Modules::link($id_module, $idcontratto_prev, tr('Contratto num. _NUM_', [
                                 '_NUM_' => $rs[0]['numero'],
                             ]).'<br><small class="text-muted">'.$rs[0]['nome'].'</small>').'
                         </td>
@@ -367,3 +368,34 @@ if (!empty($records[0]['idcontratto_prev'])) {
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
+
+<?php
+
+$fatture = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idcontratto` = '.prepare($id_record).')');
+if (!empty($fatture)) {
+    echo '
+    <div class="alert alert-danger">
+        <p>'.tr('Ci sono _NUM_ documenti collegate a questo elemento', [
+            '_NUM_' => count($fatture),
+        ]).'.</p>
+    <ul>';
+
+    foreach ($fatture as $fattura) {
+        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
+            '_DOC_' => $fattura['tipo_documento'],
+            '_NUM_' => !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'],
+            '_DATE_' => Translator::dateToLocale($fattura['data']),
+        ]);
+
+        $modulo = ($fattura['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
+        $id = $fattura['id'];
+
+        echo '
+        <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+    }
+
+    echo '
+        </ul>
+        <p>'.tr('Eliminando questo elemento si potrebbero verificare problemi nelle altre sezioni del gestionale!').'</p>
+    </div>';
+}

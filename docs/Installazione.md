@@ -6,7 +6,6 @@ currentMenu: installazione
 
 <!-- TOC depthFrom:2 depthTo:6 orderedList:false updateOnSave:true withLinks:true -->
 
-- [Tabella dei contenuti](#tabella-dei-contenuti)
 - [Requisiti](#requisiti)
 - [Installazione](#installazione)
   - [Versioni](#versioni)
@@ -23,41 +22,46 @@ currentMenu: installazione
 
 ## Requisiti
 
-Prima di iniziare l'installazione, è necessario procedere al download di una versione del progetto da [Github](https://github.com/devcode-it/openstamanager). Si consiglia inoltre di controllare che i prerequisiti del software, elencati di seguito, siano soddisfatti.
+L'installazione del gestionale richiede la presenza di un server web con abilitato il [DBMS MySQL](https://www.mysql.com)  e il linguaggio di programmazione [PHP](http://php.net).
 
-L'installazione del gestionale richiede la presenza di un server web con abilitato il [DBMS (Database Management System)](https://it.wikipedia.org/wiki/Database_management_system) MySQL e il linguaggio di programmazione [PHP](http://php.net/).
-
-- PHP >= 5.4 (si consiglia come minimo la versione 5.6 per poter usufruire di tutte le funzionalità del progetto)
+- PHP >= 5.4
 - MySQL >= 5.0
+
+Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Installazione](https://devcode-it.github.io/openstamanager/installazione.html) della documentazione.
 
 ## Installazione
 
 Per procedere all'installazione è necessario seguire i seguenti punti:
 
-1. Creare una cartella (ad esempio `openstamanager`) nella root del sever web installato ed estrarvi il contenuto della release scaricata. Il percorso della cartella root del server varia in base al software in utilizzo:
+1. [Scaricare una release ufficiale del progetto](https://github.com/devcode-it/openstamanager/releases).
+2. Creare una cartella (ad esempio `openstamanager`) nella root del sever web installato ed estrarvi il contenuto della release scaricata. Il percorso della cartella root del server varia in base al software in utilizzo:
 
-   - LAMP (`/var/www/html`);
-   - XAMPP (`C:/xampp/htdocs` per Windows, `/opt/lampp/htdocs/` per Linux, `/Applications/XAMPP/htdocs/` per MAC);
-   - WAMP (`C:\wamp\www`);
-   - MAMP (`C:\MAMP\htdocs` per Windows, `/Applications/MAMP/htdocs` per MAC).
+   - LAMP (`/var/www/html`)
+   - XAMPP (`C:/xampp/htdocs` per Windows, `/opt/lampp/htdocs/` per Linux, `/Applications/XAMPP/htdocs/` per MAC)
+   - WAMP (`C:\wamp\www`)
+   - MAMP (`C:\MAMP\htdocs` per Windows, `/Applications/MAMP/htdocs` per MAC)
 
-2. Creare un database vuoto (tramite [PHPMyAdmin](http://localhost/phpmyadmin/) o riga di comando).
-3. Accedere a <http://localhost/openstamanager> dal vostro browser.
-4. Inserire i dati per collegarsi al database e cliccare su **Installa** per completare l'installazione.
+3. Creare un database vuoto (tramite [PHPMyAdmin](http://localhost/phpmyadmin/) o riga di comando).
+4. Accedere a <http://localhost/openstamanager> dal vostro browser.
+5. Inserire i dati di configurazione per collegarsi al database.
+6. Procedere all'installazione del software, cliccando sul pulsante **Installa**.
 
 **Attenzione**: è possibile che l'installazione richieda del tempo. Si consiglia pertanto di attendere almeno qualche minuto senza alcun cambiamento nella pagina di installazione (in particolare, della progress bar presente) prima di cercare una possibile soluzione nelle discussioni del forum o nella sezione dedicata.
 
 ### Versioni
 
-Per mantenere un elevato grado di trasparenza riguardo al ciclo delle release, seguiamo le linee guida [Semantic Versioning (SemVer)](http://semver.org/) per definire le versioni del progetto. Per vedere tutte le versioni disponibili al download, visitare la [pagina relativa](https://github.com/devcode-it/openstamanager/releases) su Github (per versioni precedenti alla 2.3, visitare [SourceForge](https://sourceforge.net/projects/openstamanager/files/)).
+Per mantenere un elevato grado di trasparenza riguardo al ciclo delle release, seguiamo le linee guida [Semantic Versioning (SemVer)](http://semver.org/) per definire le versioni del progetto.
+Per vedere tutte le versioni disponibili al download, visitare la [pagina relativa](https://github.com/devcode-it/openstamanager/releases) su Github (per versioni precedenti alla 2.3, visitare [SourceForge](https://sourceforge.net/projects/openstamanager/files)).
+
+Nel caso utilizziate il programma per uso commerciale, si consiglia di scaricare le release disponibili nel sito ufficiale del progetto (<http://www.openstamanager.com>), evitando di utilizzare direttamente il codice della repository.
+Se siete inoltre interessati a supporto e assistenza professionali, li potete richiedere nella [sezione dedicata](http://www.openstamanager.com/per-le-aziende/).
 
 ### Github
 
-Nel caso si stia utilizzando la versione direttamente ottenuta dalla repository di Github, è necessario eseguire i seguenti comandi da linea di comando per completare le dipendenze PHP (tramite [Composer](https://getcomposer.org/)) e gli asssets (tramite [Yarn](https://yarnpkg.com/)) del progetto.
+Nel caso si stia utilizzando la versione direttamente ottenuta dalla repository di Github, è necessario eseguire i seguenti comandi da linea di comando per completare le dipendenze PHP (tramite [Composer](https://getcomposer.org)) e gli asssets (tramite [Yarn](https://yarnpkg.com)) del progetto.
 
 ```bash
 php composer.phar install
-php composer.phar update
 yarn global add gulp
 yarn install
 gulp

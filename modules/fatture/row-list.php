@@ -145,7 +145,7 @@ if (!empty($rs)) {
 
         if (!empty($descrizione)) {
             echo '
-            <br>'.Modules::link($ref, $ref_id, $descrizione.' <i class="fa fa-external-link"></i>', $descrizione);
+            <br>'.Modules::link($ref, $ref_id, $descrizione, $descrizione);
         }
 
         echo '

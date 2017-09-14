@@ -346,7 +346,7 @@ switch ($module_name) {
                         ($fatture[$i]['n2_fattura'] != '') ? $n_fattura = $fatture[$i]['n2_fattura'] : $n_fattura = $fatture[$i]['n_fattura'];
 
                         $id_module = Modules::getModule('Fatture di vendita')['id'];
-                        echo "<tr><td class='first_cell text-left'><a href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fattura n<sup>o</sup> ".$n_fattura."</a></td>\n";
+                        echo "<tr><td class='first_cell text-left'><a href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fattura num. ".$n_fattura."</a></td>\n";
 
                         echo "<td class='table_cell text-left'>".Translator::dateToLocale($fatture[$i]['data_fattura'])."</td>\n";
                         echo "<td class='table_cell text-right'>".Translator::numberToLocale($fatture[$i]['costo_unitario'])." &euro;</td></tr>\n";
@@ -378,7 +378,7 @@ switch ($module_name) {
                     ($fatture[$i]['n2_fattura'] != '') ? $n_fattura = $fatture[$i]['n2_fattura'] : $n_fattura = $fatture[$i]['n_fattura'];
 
                     $id_module = Modules::getModule('Fatture di vendita')['id'];
-                    echo "<tr><td class='first_cell text-left'><a href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fattura n<sup>o</sup> ".$n_fattura."</a></td>\n";
+                    echo "<tr><td class='first_cell text-left'><a href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fattura num. ".$n_fattura."</a></td>\n";
 
                     echo "<td class='table_cell text-left'>".Translator::dateToLocale($fatture[$i]['data_fattura'])."</td>\n";
                     echo "<td class='table_cell text-right'>".Translator::numberToLocale($fatture[$i]['costo_unitario'])." &euro;</td></tr>\n";
@@ -409,7 +409,7 @@ switch ($module_name) {
                     ($fatture[$i]['n2_fattura'] != '') ? $n_fattura = $fatture[$i]['n2_fattura'] : $n_fattura = $fatture[$i]['n_fattura'];
 
                     $id_module = Modules::getModule('Fatture di vendita')['id'];
-                    echo "<tr><td class='first_cell text-left'><a href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fattura n<sup>o</sup> ".$n_fattura."</a></td>\n";
+                    echo "<tr><td class='first_cell text-left'><a href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fattura num. ".$n_fattura."</a></td>\n";
 
                     echo "<td class='table_cell text-left'>".Translator::dateToLocale($fatture[$i]['data_fattura'])."</td>\n";
                     echo "<td class='table_cell text-right'>".Translator::numberToLocale($fatture[$i]['costo_unitario'])." &euro;</td></tr>\n";
@@ -813,7 +813,7 @@ if ($op == 'supersearch') {
                 }
 
                 $result[$r + $i]['link'] = $rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$rs[$r]['iddocumento'];
-                $result[$r + $i]['title'] = $rs[$r]['descrizione'].' n<sup>o</sup> '.$numero.' del '.Translator::dateToLocale($rs[$r]['data']);
+                $result[$r + $i]['title'] = $rs[$r]['descrizione'].' num. '.$numero.' del '.Translator::dateToLocale($rs[$r]['data']);
                 $result[$r + $i]['category'] = $rs[$r]['descrizione'];
                 $result[$r + $i]['labels'] = [];
 
@@ -877,7 +877,7 @@ if ($op == 'supersearch') {
                 }
 
                 $result[$r + $i]['link'] = $rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$rs[$r]['iddocumento'];
-                $result[$r + $i]['title'] = $rs[$r]['tipodoc'].' n<sup>o</sup> '.$numero.' del '.Translator::dateToLocale($rs[$r]['data']);
+                $result[$r + $i]['title'] = $rs[$r]['tipodoc'].' num. '.$numero.' del '.Translator::dateToLocale($rs[$r]['data']);
                 $result[$r + $i]['category'] = $rs[$r]['tipodoc'];
                 $result[$r + $i]['labels'] = [];
 
@@ -1035,7 +1035,7 @@ if ($op == 'supersearch') {
                 }
 
                 $result[$r + $i]['link'] = $rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$rs[$r]['idddt'];
-                $result[$r + $i]['title'] = $rs[$r]['descrizione'].' n<sup>o</sup> '.$numero.' del '.Translator::dateToLocale($rs[$r]['data']);
+                $result[$r + $i]['title'] = $rs[$r]['descrizione'].' num. '.$numero.' del '.Translator::dateToLocale($rs[$r]['data']);
                 $result[$r + $i]['category'] = $rs[$r]['descrizione'];
                 $result[$r + $i]['labels'] = [];
 
@@ -1100,7 +1100,7 @@ if ($op == 'supersearch') {
 
                 $result[$r + $i]['link'] = $rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$rs[$r]['idddt'];
                 // $result[$r+$i]['link']		= $rootdir."/modules/magazzino/ddt/ddt.php?idddt=".$rs[$r]['iddocumento']."&dir=".$rs[$r]['dir'];
-                $result[$r + $i]['title'] = $rs[$r]['tipodoc'].' n<sup>o</sup> '.$numero.' del '.Translator::dateToLocale($rs[$r]['data']);
+                $result[$r + $i]['title'] = $rs[$r]['tipodoc'].' num. '.$numero.' del '.Translator::dateToLocale($rs[$r]['data']);
                 $result[$r + $i]['category'] = $rs[$r]['tipodoc'];
                 $result[$r + $i]['labels'] = [];
 

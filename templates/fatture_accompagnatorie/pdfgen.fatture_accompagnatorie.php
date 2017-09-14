@@ -103,7 +103,7 @@ if ($rs[0]['buono_ordine'] != '') {
 
 $body .= "<table class='table_values' border='0' cellspacing='1'>\n";
 $body .= "<tr>\n";
-$body .= "<td width='".$width."' class='center'><b>".$rs[0]['tipo_doc']."</b><br/>n<sup>o</sup> $numero</td>\n";
+$body .= "<td width='".$width."' class='center'><b>".$rs[0]['tipo_doc']."</b><br/>num. $numero</td>\n";
 $body .= "<td width='".$width."' class='center'><b>Data:</b><br/>".Translator::dateToLocale($rs[0]['data'])."</td>\n";
 $body .= "<td width='".$width."' class='center'><b>Pagamento:</b><br/>".$rs[0]['tipo_pagamento']."</td>\n";
 
@@ -331,14 +331,14 @@ if ($tot > 0) {
             if (!empty($rsr[$i]['idordine'])) {
                 $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM or_ordini WHERE id="'.$rsr[$i]['idordine'].'"');
                 ($rso[0]['numero_esterno'] != '') ? $numero = $rso[0]['numero_esterno'] : $numero = $rso[0]['numero'];
-                $body .= '<br/><small>Rif. ordine n<sup>o</sup>'.$numero.' del '.Translator::dateToLocale($rso[0]['data']).'</small>';
+                $body .= '<br/><small>Rif. ordine num.'.$numero.' del '.Translator::dateToLocale($rso[0]['data']).'</small>';
             }
 
             // Aggiunta riferimento a ddt
             elseif (!empty($rsr[$i]['idddt'])) {
                 $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM dt_ddt WHERE id="'.$rsr[$i]['idddt'].'"');
                 ($rso[0]['numero_esterno'] != '') ? $numero = $rso[0]['numero_esterno'] : $numero = $rso[0]['numero'];
-                $body .= '<br/><small>Rif. ddt n<sup>o</sup>'.$numero.' del '.Translator::dateToLocale($rso[0]['data']).'</small>';
+                $body .= '<br/><small>Rif. ddt num.'.$numero.' del '.Translator::dateToLocale($rso[0]['data']).'</small>';
             }
             $body .= "</td>\n";
 

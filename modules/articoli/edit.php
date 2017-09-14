@@ -293,6 +293,6 @@ if ($tot > 0) {
         '.tr('Ci sono _NUM_ righe di documenti collegate', [
             '_NUM_' => $tot,
         ]).'.
-        '.tr('Eliminando questo articolo si potrebbero verificare problemi nelle altre sezioni del gestionale!').'
+        '.tr('Eliminando questo elemento si potrebbero verificare problemi nelle altre sezioni del gestionale!').'
     </div>';
 }

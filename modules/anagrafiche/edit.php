@@ -225,7 +225,7 @@ if ($fornitore) {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('N<sup>o</sup> iscr. C.C.I.A.A.'); ?>", "name": "cciaa", "value": "$cciaa$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Num. iscr. C.C.I.A.A.'); ?>", "name": "cciaa", "value": "$cciaa$" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -271,19 +271,19 @@ if ($fornitore) {
 
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('N<sup>o</sup> dipendenti'); ?>", "name": "dipendenti", "value": "$dipendenti$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Num. dipendenti'); ?>", "name": "dipendenti", "value": "$dipendenti$" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('N<sup>o</sup> macchine'); ?>", "name": "macchine", "value": "$macchine$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Num. macchine'); ?>", "name": "macchine", "value": "$macchine$" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('N<sup>o</sup> iscr. tribunale'); ?>", "name": "iscrizione_tribunale", "value": "$iscrizione_tribunale$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Num. iscr. tribunale'); ?>", "name": "iscrizione_tribunale", "value": "$iscrizione_tribunale$" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('N<sup>o</sup> iscr. albo artigiani'); ?>", "name": "n_alboartigiani", "value": "$n_alboartigiani$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Num. iscr. albo artigiani'); ?>", "name": "n_alboartigiani", "value": "$n_alboartigiani$" ]}
 				</div>
 			</div>
 

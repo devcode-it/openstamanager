@@ -40,7 +40,7 @@ $body .= "<tr><td align=\"center\" colspan=\"2\" valign=\"middle\" style=\"font-
 
 // Titolo "ordine di servizio" e tecnico
 $body .= "<tr>\n";
-$body .= '<td style="width:50%;">ORDINE DI SERVIZIO N<sup>o</sup> '.$rs[0]['id']."</td>\n";
+$body .= '<td style="width:50%;">ORDINE DI SERVIZIO Num. '.$rs[0]['id']."</td>\n";
 $body .= '<td style="width:50%;">TECNICO: '.$rs[0]['tecnico']."</td>\n";
 $body .= "</tr>\n";
 
@@ -56,7 +56,7 @@ $body .= "<table class=\"table_values\" cellspacing=\"0\" border=\"0\" cellpaddi
 // Informazioni a sinistra
 $body .= "<tr>\n";
 $body .= "<td style=\"width:50%;\" valign=\"top\">\n";
-$body .= '	<b>Contratto n<sup>o</sup> '.$rs2[0]['numero'].":</b><br/>\n";
+$body .= '	<b>Contratto num. '.$rs2[0]['numero'].":</b><br/>\n";
 $body .= '	durata dal '.Translator::dateToLocale($rs2[0]['data_accettazione']).' al '.Translator::dateToLocale($rs2[0]['data_conclusione'])."<br/>\n";
 $body .= '	Tipologia: '.$rs2[0]['nome']."<br/><br/>\n";
 

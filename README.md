@@ -1,4 +1,19 @@
-# OpenSTAManager
+<p align="center">
+  <a href="http://openstamanager.com">
+    <img src="https://www.openstamanager.com/wp-content/uploads/2015/04/logo_full-2.png">
+  </a>
+
+  <p align="center">
+    Il gestionale open source per l'assistenza tecnica e la fatturazione.
+    <br>
+    <br>
+    <a href="https://devcode-it.github.io/openstamanager">Documentazione tecnica</a>
+    &middot;
+    <a href="http://openstamanager.com">Sito ufficiale</a>
+  </p>
+</p>
+
+<br>
 
 Il gestionale OpenSTAManager è un software open-source e web based, sviluppato dall'azienda informatica DevCode di Este per gestire ed archiviare il servizio di assistenza tecnica e la relativa fatturazione.
 Il nome del progetto deriva dalla parziale traduzione in inglese degli elementi principali che lo compongono: la natura open source e il suo obiettivo quale Gestore del Servizio Tecnico di Assistenza.
@@ -13,7 +28,7 @@ Un software gestionale, identificato nell'insieme degli applicativi che automati
 
 Secondo questa definizione, OpenSTAManager riesce a generalizzare al proprio interno le funzionalità caratteristiche della contabilità e della gestione del magazzino, presentando inoltre moduli piuttosto avanzati e destinati a complementare l'attività aziendale in relazione agli interventi di assistenza della realtà lavorativa in oggetto.
 
-La documentazione ufficiale risulta disponibile all'indirizzo <https://devcode-it.github.io/openstamanager/>.
+La documentazione ufficiale è disponibile all'indirizzo <https://devcode-it.github.io/openstamanager>.
 
 <!-- TOC depthFrom:2 depthTo:6 orderedList:false updateOnSave:true withLinks:true -->
 
@@ -22,7 +37,6 @@ La documentazione ufficiale risulta disponibile all'indirizzo <https://devcode-i
     - [Versioni](#versioni)
     - [Github](#github)
 - [Perché software open source](#perché-software-open-source)
-- [Componenti esterni](#componenti-esterni)
 - [Community](#community)
 - [Contribuire](#contribuire)
 - [Sviluppatori](#sviluppatori)
@@ -32,11 +46,9 @@ La documentazione ufficiale risulta disponibile all'indirizzo <https://devcode-i
 
 ## Requisiti
 
-Prima di iniziare l'installazione, è necessario procedere al download di una versione del progetto da [Github](https://github.com/devcode-it/openstamanager). Si consiglia inoltre di controllare che i prerequisiti del software, elencati di seguito, siano soddisfatti.
+L'installazione del gestionale richiede la presenza di un server web con abilitato il [DBMS MySQL](https://www.mysql.com)  e il linguaggio di programmazione [PHP](http://php.net).
 
-L'installazione del gestionale richiede la presenza di un server web con abilitato il [DBMS (Database Management System)](https://it.wikipedia.org/wiki/Database_management_system) MySQL e il linguaggio di programmazione [PHP](http://php.net/).
-
-- PHP >= 5.4 (si consiglia la versione 5.6 per poter usufruire di tutte le funzionalità del progetto)
+- PHP >= 5.4
 - MySQL >= 5.0
 
 Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Installazione](https://devcode-it.github.io/openstamanager/installazione.html) della documentazione.
@@ -45,26 +57,32 @@ Per ulteriori informazioni sui pacchetti che forniscono questi elementi di defau
 
 Per procedere all'installazione è necessario seguire i seguenti punti:
 
-1. Creare una cartella (ad esempio `openstamanager`) nella root del sever web installato ed estrarvi il contenuto della release scaricata. Il percorso della cartella root del server varia in base al software in utilizzo:
+1. [Scaricare una release ufficiale del progetto](https://github.com/devcode-it/openstamanager/releases).
+2. Creare una cartella (ad esempio `openstamanager`) nella root del sever web installato ed estrarvi il contenuto della release scaricata. Il percorso della cartella root del server varia in base al software in utilizzo:
 
-   - LAMP (`/var/www/html`);
-   - XAMPP (`C:/xampp/htdocs` per Windows, `/opt/lampp/htdocs/` per Linux, `/Applications/XAMPP/htdocs/` per MAC);
-   - WAMP (`C:\wamp\www`);
-   - MAMP (`C:\MAMP\htdocs` per Windows, `/Applications/MAMP/htdocs` per MAC).
+   - LAMP (`/var/www/html`)
+   - XAMPP (`C:/xampp/htdocs` per Windows, `/opt/lampp/htdocs/` per Linux, `/Applications/XAMPP/htdocs/` per MAC)
+   - WAMP (`C:\wamp\www`)
+   - MAMP (`C:\MAMP\htdocs` per Windows, `/Applications/MAMP/htdocs` per MAC)
 
-2. Creare un database vuoto (tramite [PHPMyAdmin](http://localhost/phpmyadmin/) o riga di comando).
-3. Accedere a <http://localhost/openstamanager> dal vostro browser.
-4. Inserire i dati per collegarsi al database e cliccare su **Installa** per completare l'installazione.
+3. Creare un database vuoto (tramite [PHPMyAdmin](http://localhost/phpmyadmin/) o riga di comando).
+4. Accedere a <http://localhost/openstamanager> dal vostro browser.
+5. Inserire i dati di configurazione per collegarsi al database.
+6. Procedere all'installazione del software, cliccando sul pulsante **Installa**.
 
 **Attenzione**: è possibile che l'installazione richieda del tempo. Si consiglia pertanto di attendere almeno qualche minuto senza alcun cambiamento nella pagina di installazione (in particolare, della progress bar presente) prima di cercare una possibile soluzione nelle discussioni del forum o nella sezione dedicata.
 
 ### Versioni
 
-Per mantenere un elevato grado di trasparenza riguardo al ciclo delle release, seguiamo le linee guida [Semantic Versioning (SemVer)](http://semver.org/) per definire le versioni del progetto. Per vedere tutte le versioni disponibili al download, visitare la [pagina relativa](https://github.com/devcode-it/openstamanager/releases) su Github (per versioni precedenti alla 2.3, visitare [SourceForge](https://sourceforge.net/projects/openstamanager/files/)).
+Per mantenere un elevato grado di trasparenza riguardo al ciclo delle release, seguiamo le linee guida [Semantic Versioning (SemVer)](http://semver.org/) per definire le versioni del progetto.
+Per vedere tutte le versioni disponibili al download, visitare la [pagina relativa](https://github.com/devcode-it/openstamanager/releases) su Github (per versioni precedenti alla 2.3, visitare [SourceForge](https://sourceforge.net/projects/openstamanager/files)).
+
+Nel caso utilizziate il programma per uso commerciale, si consiglia di scaricare le release disponibili nel sito ufficiale del progetto (<http://www.openstamanager.com>), evitando di utilizzare direttamente il codice della repository.
+Se siete inoltre interessati a supporto e assistenza professionali, li potete richiedere nella [sezione dedicata](http://www.openstamanager.com/per-le-aziende/).
 
 ### Github
 
-Nel caso si stia utilizzando la versione direttamente ottenuta dalla repository di Github, è necessario eseguire i seguenti comandi da linea di comando per completare le dipendenze PHP (tramite [Composer](https://getcomposer.org/)) e gli asssets (tramite [Yarn](https://yarnpkg.com/)) del progetto.
+Nel caso si stia utilizzando la versione direttamente ottenuta dalla repository di Github, è necessario eseguire i seguenti comandi da linea di comando per completare le dipendenze PHP (tramite [Composer](https://getcomposer.org)) e gli asssets (tramite [Yarn](https://yarnpkg.com)) del progetto.
 
 ```bash
 php composer.phar install
@@ -87,19 +105,6 @@ Il progetto è un software open source perché permette agli utilizzatori di stu
 
 In questo modo è possibile ottenere un'ulteriore garanzia sul funzionamento del software, poiché chiunque ne abbia le capacità può verificarlo, escludendo mancanze in relazione alla sicurezza e alla privacy dei dati (caratteristica che il software proprietario non può offrire).
 
-Nel caso utilizziate il programma per uso commerciale, si consiglia di non utilizzare le versioni ottenibili direttamente dalla repository su Github ma di scaricare le release ufficiali disponibili nel nostro sito ufficiale <http://www.openstamanager.com>; se siete inoltre interessati a supporto e assistenza professionali, li potete richiedere nella [sezione dedicata](http://www.openstamanager.com/per-le-aziende/).
-
-## Componenti esterni
-
-OpenSTAManager è stato progettato utilizzando altro software open source, tra cui principalmente:
-
-- [PHP](https://secure.php.net/) - A popular general-purpose scripting language especially suited to web development
-- [MySQL](https://www.mysql.com/) - The world's most popular open source database
-- [JQuery](https://jquery.com/) - New Wave JavaScript
-- [Bootstrap](http://getbootstrap.com/) - The world's most popular mobile-first and responsive front-end framework
-- [FontAwesome](http://fontawesome.io/) - The iconic font and CSS toolkit
-- [HTML2PDF](http://html2pdf.fr/en/default) - HTML to PDF converter written in PHP
-
 ## Community
 
 La community è una componente importante in un progetto open source, perché mette in contatto utenti e programmatori tra di loro e permette pertanto l'individuazione di soluzioni innovative e migliori.
@@ -116,7 +121,10 @@ Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), e il nost
 
 ## Contribuire
 
-Per poter contribuire, si consiglia di seguire le indicazioni descritte all'interno della [documentazione ufficiale](https://devcode-it.github.io/openstamanager/contribuire.html); in particolare, prestare attenzione al codice di condotta e allo stile del codice.
+Per poter contribuire, si consiglia di seguire le indicazioni descritte all'interno della [documentazione ufficiale](https://devcode-it.github.io/openstamanager/contribuire.html).
+
+Le impostazione di base per il codice sono disponibili attraverso [editor config](https://github.com/devcode-it/openstamanager/blob/master/.editorconfig) per l'utilizzo semplificato negli editor più comuni.
+Maggiori informazioni sulla configurazione e sul plugin sono disponibili nel sito <http://editorconfig.org>.
 
 ## Sviluppatori
 
@@ -126,8 +134,6 @@ Per poter contribuire, si consiglia di seguire le indicazioni descritte all'inte
 - **Matteo Baccarin**
 - **Thomas Zilio** ([Dasc3er](https://github.com/Dasc3er))
 
-Per la lista completa delle persone che hanno partecipato al progetto, consultare la [pagina principale della documentazione](https://devcode-it.github.io/openstamanager/index.html) su Github.
-
 ## Licenza
 
-Questo progetto è tutelato dalla licenza **GPL 3** (si veda [LICENSE](https://github.com/devcode-it/openstamanager/blob/master/LICENSE) per ulteriori dettagli).
+Questo progetto è tutelato dalla licenza [**GPL 3**](https://github.com/devcode-it/openstamanager/blob/master/LICENSE).

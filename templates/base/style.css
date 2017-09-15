@@ -15,7 +15,9 @@ p {
 
 table {
     width: 100%;
-    overflow: wrap
+    overflow: wrap;
+    word-break: break-all;
+    word-wrap: break-word;
 }
 
 table td,
@@ -24,6 +26,7 @@ table th {
     padding: 4px;
 }
 
+.row-bg,
 table.table-striped tbody tr:nth-child(2n) td {
     background-color: #eee;
 }

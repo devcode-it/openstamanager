@@ -9,11 +9,11 @@ foreach ($get as $key => $value) {
     ${$key} = !empty(${$key}) ? ${$key} : $value;
 }
 
-// Mostro o nascondo i costi dell'intervento...
-$visualizza_costi = get_var('Visualizza i costi sulle stampe degli interventi');
+// Individuazione del formato della stampa
+$old_format = file_exists($docroot.'/templates/'.$ptype.'/pdfgen.'.$ptype.'.php') || file_exists($docroot.'/templates/'.$ptype.'/custom/pdfgen.'.$ptype.'.php');
 
 // Nuovo sistema di generazione stampe
-if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
+if (!$old_format) {
     // Impostazioni di default
     if (file_exists($docroot.'/templates/base/custom/settings.php')) {
         $default = include $docroot.'/templates/base/custom/settings.php';
@@ -34,7 +34,7 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
     // Individuazione delle variabili fondamentali per la sostituzione dei contenuti
     if (file_exists($docroot.'/templates/'.$ptype.'/custom/init.php')) {
         include $docroot.'/templates/'.$ptype.'/custom/init.php';
-    } else {
+    } elseif (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
         include $docroot.'/templates/'.$ptype.'/init.php';
     }
 
@@ -141,16 +141,19 @@ $mode = !empty($filename) ? 'F' : 'I';
 $filename = !empty($filename) ? $filename : sanitizeFilename($report_name);
 $title = basename($filename);
 
-if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
+if (!$old_format) {
     $styles = [
         'templates/base/bootstrap.css',
         'templates/base/style.css',
     ];
 
+    $settings['orientation'] = strtoupper($settings['orientation']) == 'L' ? 'L' : 'P';
+    $settings['format'] = is_string($settings['format']) ? $settings['format'].($settings['orientation'] == 'L' ? '-L' : '') : $settings['format'];
+
     // Instanziamento dell'oggetto mPDF
     $mpdf = new mPDF(
         'c',
-        $settings['dimension'],
+        $settings['format'],
         $settings['font-size'],
         'helvetica',
         $settings['margins']['left'],
@@ -159,7 +162,7 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
         $settings['margins']['bottom'] + $settings['footer-height'],
         $settings['margins']['top'],
         $settings['margins']['bottom'],
-        strtolower($settings['orientation']) == 'l' ? 'l' : 'p'
+        $settings['orientation']
     );
 
     // Impostazione di header e footer
@@ -177,6 +180,7 @@ if (file_exists($docroot.'/templates/'.$ptype.'/init.php')) {
     // Impostazione del font-size
     $mpdf->WriteHTML('body {font-size: '.$settings['font-size'].'pt;}', 1);
 
+    $mpdf->shrink_tables_to_fit = 1;
     // Aggiunta dei contenuti
     $mpdf->WriteHTML($report);
 

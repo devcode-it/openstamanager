@@ -299,10 +299,8 @@ switch (post('op')) {
             $data = $rs[0]['data'];
             $codice = $rs[0]['codice'];
 
-            $dati = $dbo->fetchArray('SELECT (SELECT SUM(km) FROM in_interventi_tecnici GROUP BY idintervento HAVING idintervento=in_interventi.id) AS km, (SELECT costo_orario FROM in_tipiintervento WHERE idtipointervento=in_interventi.idtipointervento) AS prezzo_ore_unitario, (SELECT costo_km FROM in_tipiintervento WHERE idtipointervento=in_interventi.idtipointervento) AS prezzo_km_unitario, (SELECT costo_diritto_chiamata FROM in_tipiintervento WHERE idtipointervento=in_interventi.idtipointervento) AS prezzo_diritto_chiamata, (SELECT SUM(TIME_TO_SEC(TIMEDIFF(orario_fine, orario_inizio))) FROM in_interventi_tecnici GROUP BY idintervento HAVING in_interventi_tecnici.idintervento=in_interventi.id) AS t1, (SELECT SUM(km) FROM in_interventi_tecnici GROUP BY idintervento HAVING idintervento=in_interventi.id) AS km, (SELECT SUM(prezzo_ore_consuntivo) FROM in_interventi_tecnici GROUP BY idintervento HAVING idintervento=in_interventi.id) AS tot_ore_consuntivo, (SELECT SUM(prezzo_km_consuntivo) FROM in_interventi_tecnici GROUP BY idintervento HAVING idintervento=in_interventi.id) AS tot_km_consuntivo, (SELECT COUNT(idtecnico) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS n_tecnici FROM `in_interventi` WHERE in_interventi.id='.prepare($idintervento).' AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL AND NOT idintervento IS NULL)');
-
             $costi_intervento = get_costi_intervento($idintervento);
-            $prezzo = $costi_intervento['manodopera_scontato'] + $costi_intervento['viaggio_scontato'];
+            $prezzo = $costi_intervento['manodopera_scontato'];
 
             // Calcolo iva
             $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
@@ -366,39 +364,30 @@ switch (post('op')) {
                 }
             }
 
-            if (!empty($dati)) {
-                // Subtot
-                $prezzo_ore_consuntivo = $dati[0]['tot_ore_consuntivo'];
-                $prezzo_km_consuntivo = $dati[0]['tot_km_consuntivo'];
-                $prezzo_ore_unitario = $dati[0]['prezzo_ore_unitario'];
-                $prezzo_km_unitario = $dati[0]['prezzo_km_unitario'];
-                $prezzo_diritto_chiamata = $dati[0]['prezzo_diritto_chiamata'];
-                $km = $dati[0]['km'];
+            // Aggiunta km come "Trasferta" (se c'è)
+            if ($costi_intervento['viaggio_addebito'] > 0) {
+                // Calcolo iva
+                $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
+                $dati = $dbo->fetchArray($query);
+                $desc_iva = $dati[0]['descrizione'];
 
-                // Aggiunta km come "Trasferta" (se c'è)
-                if ($prezzo_km_consuntivo > 0) {
-                    // Calcolo iva
-                    $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
-                    $dati = $dbo->fetchArray($query);
-                    $desc_iva = $dati[0]['descrizione'];
+                $subtot = $costi_intervento['viaggio_addebito'];
+                $sconto = $costi_intervento['viaggio_addebito'] - $costi_intervento['viaggio_scontato'];
+                $iva = ($subtot - $sconto) / 100 * $dati[0]['percentuale'];
+                $iva_indetraibile = $iva / 100 * $dati[0]['indetraibile'];
 
-                    $subtot = $prezzo_km_consuntivo;
-                    $iva = ($subtot) / 100 * $dati[0]['percentuale'];
-                    $iva_indetraibile = $iva / 100 * $dati[0]['indetraibile'];
+                // Calcolo rivalsa inps
+                $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(get_var('Percentuale rivalsa INPS'));
+                $dati = $dbo->fetchArray($query);
+                $rivalsainps = ($subtot - $sconto) / 100 * $dati[0]['percentuale'];
 
-                    // Calcolo rivalsa inps
-                    $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(get_var('Percentuale rivalsa INPS'));
-                    $dati = $dbo->fetchArray($query);
-                    $rivalsainps = ($subtot) / 100 * $dati[0]['percentuale'];
+                // Calcolo ritenuta d'acconto
+                $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(get_var("Percentuale ritenuta d'acconto"));
+                $dati = $dbo->fetchArray($query);
+                $ritenutaacconto = ($subtot - $sconto + $rivalsainps) / 100 * $dati[0]['percentuale'];
 
-                    // Calcolo ritenuta d'acconto
-                    $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(get_var("Percentuale ritenuta d'acconto"));
-                    $dati = $dbo->fetchArray($query);
-                    $ritenutaacconto = ($subtot + $rivalsainps) / 100 * $dati[0]['percentuale'];
-
-                    $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, `order`) VALUES('.prepare($id_record).', '.prepare($idintervento).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare('Trasferta intervento '.$codice.' del '.Translator::dateToLocale($data)).', '.prepare($subtot).", 'km', ".prepare($km).', '.prepare(get_var('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(get_var("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
-                    $dbo->query($query);
-                }
+                $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, `order`) VALUES('.prepare($id_record).', '.prepare($idintervento).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare('Trasferta intervento '.$codice.' del '.Translator::dateToLocale($data)).', '.prepare($subtot).", ".prepare($sconto).', '.prepare($sconto).", 'UNT', '', 1, ".prepare(get_var('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(get_var("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
+                $dbo->query($query);
             }
 
             // Aggiunta sconto

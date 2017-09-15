@@ -30,9 +30,9 @@ switch (post('op')) {
                     $totale = -$avere;
                 } else {
                     $totale = $dare;
-                }
 
-                $totale_pagato += $totale;
+                    $totale_pagato += $totale;
+                }
 
                 $query = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).', '.prepare($descrizione).', '.prepare($idconto).', '.prepare($totale).", '1')";
                 if (!$dbo->query($query)) {

@@ -855,3 +855,15 @@ function prepareToField($string)
 {
     return str_replace('"', '&quot;', $string);
 }
+
+/**
+ * Restituisce la configurazione dell'installazione.
+ *
+ * @return array
+ */
+function getConfig()
+{
+    include DOCROOT.'/config.inc.php';
+
+    return get_defined_vars();
+}

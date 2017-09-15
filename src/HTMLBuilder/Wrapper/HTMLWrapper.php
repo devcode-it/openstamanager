@@ -2,9 +2,6 @@
 
 namespace HTMLBuilder\Wrapper;
 
-// Utilizzo della funzione prepareToField (PHP 5.6+)
-// use function \HTMLBuilder\prepareToField;
-
 /**
  * @since 2.3
  */
@@ -22,7 +19,7 @@ class HTMLWrapper implements WrapperInterface
         if (!empty($values['label'])) {
             $result .= '
 <div class="form-group">
-    <label for="'.\HTMLBuilder\prepareToField($values['id']).'">'.(empty($values['help']) ? $values['label'] : '<span class="tip" title="'.\HTMLBuilder\prepareToField($values['help']).'">'.$values['label'].' <i class="fa fa-question-circle-o"></i></span>').'</label>';
+    <label for="'.prepareToField($values['id']).'">'.(empty($values['help']) ? $values['label'] : '<span class="tip" title="'.prepareToField($values['help']).'">'.$values['label'].' <i class="fa fa-question-circle-o"></i></span>').'</label>';
         }
 
         if (!empty($values['icon-before']) || !empty($values['icon-after'])) {
@@ -138,7 +135,7 @@ class HTMLWrapper implements WrapperInterface
         $value = (empty($pieces[2]) || !in_array($pieces[2], array_column($choices, 'id'))) ? 'UNT' : $pieces[2];
 
         if ($type == 'untprc') {
-            $result = '{[ "type": "select", "name": "tipo_'.\HTMLBuilder\prepareToField($values['name']).'", "value": "'.\HTMLBuilder\prepareToField($value).'", "values": "json='.substr(str_replace('"', '\"', json_encode($choices)), 2, -2).'", "class": "no-search" ]}';
+            $result = '{[ "type": "select", "name": "tipo_'.prepareToField($values['name']).'", "value": "'.prepareToField($value).'", "values": "json='.substr(str_replace('"', '\"', json_encode($choices)), 2, -2).'", "class": "no-search" ]}';
 
             $result = \HTMLBuilder\HTMLBuilder::replace($result);
         }

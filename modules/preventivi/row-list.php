@@ -55,7 +55,10 @@ if (!empty($rs)) {
 
         if ($r['sconto_unitario'] > 0) {
             echo '
-            <br><small class="label label-danger">- sconto '.Translator::numberToLocale($r['sconto_unitario']).($r['tipo_sconto'] == 'PRC' ? '%' : ' &euro;').'</small>';
+            <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
+                '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : ' &euro;'),
+            ]).'</small>';
         }
 
         echo '

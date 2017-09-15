@@ -64,12 +64,12 @@ if (!empty($rs)) {
         // Aggiunta riferimento a ordine
         if (!empty($r['idordine'])) {
             $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data, dir FROM or_ordini JOIN or_tipiordine ON or_tipiordine.id = or_ordini.idtipoordine WHERE or_ordini.id='.prepare($r['idordine']));
-            $numero = ($rso[0]['numero_esterno'] != '') ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
+            $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
 
             $ref = $rso[0]['dir'] == 'entrata' ? 'Ordini cliente' : 'Ordini fornitore';
             $ref_id = $r['idordine'];
 
-            $descrizione = tr('Rif. ordine _NUM_ del _DATE_', [
+            $descrizione = tr('Rif. ordine num. _NUM_ del _DATE_', [
                 '_NUM_' => $numero,
                 '_DATE_' => Translator::dateToLocale($rso[0]['data']),
             ]);
@@ -108,7 +108,10 @@ if (!empty($rs)) {
 
         if ($r['sconto_unitario'] > 0) {
             echo '
-            <br><small class="label label-danger">- sconto '.Translator::numberToLocale($r['sconto_unitario']).($r['tipo_sconto'] == 'PRC' ? '%' : ' &euro;').'</small>';
+            <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
+                '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : ' &euro;'),
+            ]).'</small>';
         }
 
         echo '

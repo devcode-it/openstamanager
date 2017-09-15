@@ -311,6 +311,8 @@ switch (post('op')) {
 
         $dbo->query('DELETE FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare($id_record));
 
+        $codice = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE id='.prepare($id_record))[0]['codice'];
+
         /*
             Riporto in magazzino gli articoli presenti nell'intervento in cancellazine
         */
@@ -364,7 +366,7 @@ switch (post('op')) {
         $dbo->query('DELETE FROM mg_movimenti WHERE idintervento='.prepare($id_record));
 
         $_SESSION['infos'][] = tr('Intervento _NUM_ eliminato!', [
-            '_NUM_' => "'".$id_record."'",
+            '_NUM_' => "'".$codice."'",
         ]);
 
         break;

@@ -63,7 +63,7 @@ foreach ($righe as $r) {
         $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
 
         if (!empty($rso)) {
-            $descrizione = tr('Rif. ordine _NUM_ del _DATE_', [
+            $descrizione = tr('Rif. ordine num. _NUM_ del _DATE_', [
                 '_NUM_' => $numero,
                 '_DATE_' => Translator::dateToLocale($rso[0]['data']),
             ]);
@@ -76,7 +76,7 @@ foreach ($righe as $r) {
         $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
 
         if (!empty($rso)) {
-            $descrizione = tr('Rif. ddt _NUM_ del _DATE_', [
+            $descrizione = tr('Rif. ddt num. _NUM_ del _DATE_', [
                 '_NUM_' => $numero,
                 '_DATE_' => Translator::dateToLocale($rso[0]['data']),
             ]);
@@ -88,7 +88,7 @@ foreach ($righe as $r) {
         $rso = $dbo->fetchArray('SELECT numero, data_bozza FROM co_preventivi WHERE id='.prepare($r['idpreventivo']));
 
         if (!empty($rso)) {
-            $descrizione = tr('Rif. preventivo _NUM_ del _DATE_', [
+            $descrizione = tr('Rif. preventivo num. _NUM_ del _DATE_', [
                 '_NUM_' => $rso[0]['numero'],
                 '_DATE_' => Translator::dateToLocale($rso[0]['data_bozza']),
             ]);
@@ -125,7 +125,10 @@ foreach ($righe as $r) {
             $count += 0.4;
         }
         echo "
-                <br><small class='help-block'>- sconto ".Translator::numberToLocale($r['sconto_unitario']).($r['tipo_sconto'] == 'PRC' ? '%' : ' &euro;').'</small>';
+                <br><small class='help-block'>- ".tr('sconto _TOT_ _TYPE_', [
+                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : ' &euro;'),
+                ]).'</small>';
     }
 
     echo '

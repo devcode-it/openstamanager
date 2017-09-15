@@ -942,3 +942,6 @@ UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Stampe 
 
 -- Impostazione dei titoli di default
 UPDATE `zz_modules` SET `title` = `name` WHERE `title` = '';
+
+-- Aggiunta del campo per introdurre l'help nei widget
+ALTER TABLE `zz_widgets` ADD `help` VARCHAR(255) NULL;

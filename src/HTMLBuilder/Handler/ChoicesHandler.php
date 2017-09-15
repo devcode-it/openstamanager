@@ -2,9 +2,6 @@
 
 namespace HTMLBuilder\Handler;
 
-// Utilizzo della funzione prepareToField (PHP 5.6+)
-// use function \HTMLBuilder\prepareToField;
-
 /**
  * @since 2.3
  */

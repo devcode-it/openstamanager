@@ -120,7 +120,10 @@ class Widgets
                     <i class="'.$results[0]['icon'].'"></i>
                 </span>
                 <div class="info-box-content">
-                    <span class="info-box-text">'.$results[0]['text'].'</span>
+                    <span class="info-box-text'.(!empty($results[0]['help']) ? ' tip' : '').'"'.(!empty($results[0]['help']) ? ' title="'.prepareToField($results[0]['help']).'" data-position="bottom"' : '').'>
+                        '.$results[0]['text'].'
+                        '.(!empty($results[0]['help']) ? '<i class="fa fa-question-circle-o"></i>' : '').'
+                    </span>
                     <span class="info-box-number">'.$dato.'</span>
                 </div>
             </div>';

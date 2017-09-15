@@ -25,15 +25,15 @@ if (!empty($rs)) {
     foreach ($rs as $r) {
         $extra = '';
 
-        $modulo = null;
-        $id  = null;
+        $ref_modulo = null;
+        $ref_id = null;
 
         // Articoli
         if (!empty($r['idarticolo'])) {
-            $modulo = Modules::getModule('Articoli')['id'];
-            $id = $r['idarticolo'];
+            $ref_modulo = Modules::getModule('Articoli')['id'];
+            $ref_id = $r['idarticolo'];
 
-            $r['descrizione'] = $r['codice'].' - '.$r['descrizione'];
+            $r['descrizione'] = (!empty($r['codice']) ? $r['codice'].' - ' : '').$r['descrizione'];
 
             $delete = 'unlink_articolo';
 
@@ -51,23 +51,14 @@ if (!empty($rs)) {
         }
         // Preventivi
         elseif (!empty($r['idpreventivo'])) {
-            $modulo = Modules::getModule('Preventivi')['id'];
-            $id = $r['idpreventivo'];
-
             $delete = 'unlink_preventivo';
         }
         // Contratti
         elseif (!empty($r['idcontratto'])) {
-            $modulo = Modules::getModule('Contratti')['id'];
-            $id = $r['idcontratto'];
-
             $delete = 'unlink_contratto';
         }
         // Intervento
         elseif (!empty($r['idintervento'])) {
-            $modulo = Modules::getModule('Interventi')['id'];
-            $id = $r['idintervento'];
-
             $delete = 'unlink_intervento';
         }
         // Righe generiche
@@ -80,7 +71,7 @@ if (!empty($rs)) {
 
         echo '
         <td>
-            '.Modules::link($modulo, $id, $r['descrizione']).'
+            '.Modules::link($ref_modulo, $ref_id, $r['descrizione']).'
             <small class="pull-right text-muted">'.$r['descrizione_conto'].'</small>';
 
         if (!empty($r['abilita_serial'])) {
@@ -97,20 +88,20 @@ if (!empty($rs)) {
         }
 
         $descrizione = null;
-        $ref = null;
-        $ref_id  = null;
+        $ref_modulo = null;
+        $ref_id = null;
 
         // Aggiunta riferimento a ordine
         if (!empty($r['idordine'])) {
             $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data, dir FROM or_ordini JOIN or_tipiordine ON or_tipiordine.id = or_ordini.idtipoordine WHERE or_ordini.id='.prepare($r['idordine']));
 
-            $ref = $rso[0]['dir'] == 'entrata' ? 'Ordini cliente' : 'Ordini fornitore';
+            $ref_modulo = $rso[0]['dir'] == 'entrata' ? 'Ordini cliente' : 'Ordini fornitore';
             $ref_id = $r['idordine'];
 
-            if(!empty($rso)){
-                $numero = ($rso[0]['numero_esterno'] != '') ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
+            if (!empty($rso)) {
+                $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
 
-                $descrizione = tr('Rif. ordine _NUM_ del _DATE_', [
+                $descrizione = tr('Rif. ordine num. _NUM_ del _DATE_', [
                     '_NUM_' => $numero,
                     '_DATE_' => Translator::dateToLocale($rso[0]['data']),
                 ]);
@@ -118,13 +109,13 @@ if (!empty($rs)) {
         } elseif (!empty($r['idddt'])) {
             $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM dt_ddt JOIN dt_tipiddt ON dt_tipiddt.id = dt_ddt.idtipoddt WHERE dt_ddt.id='.prepare($r['idddt']));
 
-            $ref = $rso[0]['dir'] == 'entrata' ? 'Ddt di vendita' : 'Ddt di acquisto';
+            $ref_modulo = $rso[0]['dir'] == 'entrata' ? 'Ddt di vendita' : 'Ddt di acquisto';
             $ref_id = $r['idddt'];
 
-            if(!empty($rso)){
-                $numero = ($rso[0]['numero_esterno'] != '') ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
+            if (!empty($rso)) {
+                $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
 
-                $descrizione = tr('Rif. ddt _NUM_ del _DATE_', [
+                $descrizione = tr('Rif. ddt num. _NUM_ del _DATE_', [
                     '_NUM_' => $numero,
                     '_DATE_' => Translator::dateToLocale($rso[0]['data']),
                 ]);
@@ -132,20 +123,44 @@ if (!empty($rs)) {
         } elseif (!empty($r['idpreventivo'])) {
             $rso = $dbo->fetchArray('SELECT numero, data_bozza FROM co_preventivi WHERE id='.prepare($r['idpreventivo']));
 
-            $ref = 'Preventivi';
+            $ref_modulo = 'Preventivi';
             $ref_id = $r['idpreventivo'];
 
-            if(!empty($rso)){
-                $descrizione = tr('Rif. preventivo _NUM_ del _DATE_', [
+            if (!empty($rso)) {
+                $descrizione = tr('Rif. preventivo num. _NUM_ del _DATE_', [
                     '_NUM_' => $rso[0]['numero'],
                     '_DATE_' => Translator::dateToLocale($rso[0]['data_bozza']),
+                ]);
+            }
+        } elseif (!empty($r['idcontratto'])) {
+            $rso = $dbo->fetchArray('SELECT numero, data_bozza FROM co_contratti WHERE id='.prepare($r['idcontratto']));
+
+            $ref_modulo = 'Preventivi';
+            $ref_id = $r['idcontratto'];
+
+            if (!empty($rso)) {
+                $descrizione = tr('Rif. contratto num. _NUM_ del _DATE_', [
+                    '_NUM_' => $rso[0]['numero'],
+                    '_DATE_' => Translator::dateToLocale($rso[0]['data_bozza']),
+                ]);
+            }
+        } elseif (!empty($r['idintervento'])) {
+            $rso = $dbo->fetchArray('SELECT codice, data_richiesta FROM in_interventi WHERE id='.prepare($r['idintervento']));
+
+            $ref_modulo = 'Interventi';
+            $ref_id = $r['idintervento'];
+
+            if (!empty($rso)) {
+                $descrizione = tr('Rif. intervento num. _NUM_ del _DATE_', [
+                    '_NUM_' => $rso[0]['codice'],
+                    '_DATE_' => Translator::dateToLocale($rso[0]['data_richiesta']),
                 ]);
             }
         }
 
         if (!empty($descrizione)) {
             echo '
-            <br>'.Modules::link($ref, $ref_id, $descrizione, $descrizione);
+            <br>'.Modules::link($ref_modulo, $ref_id, $descrizione, $descrizione);
         }
 
         echo '
@@ -169,7 +184,10 @@ if (!empty($rs)) {
 
         if ($r['sconto_unitario'] > 0) {
             echo '
-            <br><small class="label label-danger">- sconto '.Translator::numberToLocale($r['sconto_unitario']).($r['tipo_sconto'] == 'PRC' ? '%' : ' &euro;').'</small>';
+            <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
+                '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : ' &euro;'),
+            ]).'</small>';
         }
 
         echo '

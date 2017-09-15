@@ -55,7 +55,7 @@ foreach ($rs_gen as $r) {
         $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
 
         echo '
-            <br/><small>'.tr('Rif. ordine num._NUM_ del _DATE_', [
+            <br/><small>'.tr('Rif. ordine num. _NUM_ del _DATE_', [
                 '_NUM_' => $numero,
                 '_DATE_' => Translator::dateToLocale($rso[0]['data']),
             ]).'</small>';
@@ -88,8 +88,11 @@ foreach ($rs_gen as $r) {
             if ($count <= 1) {
                 $count += 0.4;
             }
-            echo "
-                    <br><small class='help-block'>- sconto ".Translator::numberToLocale($r['sconto_unitario']).($r['tipo_sconto'] == 'PRC' ? '%' : ' &euro;').'</small>';
+            echo '
+            <br><small class="help-block">- '.tr('sconto _TOT_ _TYPE_', [
+                '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : ' &euro;'),
+            ]).'</small>';
         }
 
         echo '

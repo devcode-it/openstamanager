@@ -2,9 +2,6 @@
 
 namespace HTMLBuilder\Handler;
 
-// Utilizzo della funzione prepareToField (PHP 5.6+)
-// use function \HTMLBuilder\prepareToField;
-
 /**
  * @since 2.3
  */
@@ -75,11 +72,11 @@ class SelectHandler implements HandlerInterface
 
         if (in_array('readonly', $extras) && empty($values['ajax-source'])) {
             $result .= '
-	<select class="hide" name="'.\HTMLBuilder\prepareToField($values['name']).'"'.((in_array('multiple', $extras)) ? ' multiple' : '').'>';
+	<select class="hide" name="'.prepareToField($values['name']).'"'.((in_array('multiple', $extras)) ? ' multiple' : '').'>';
 
             foreach ($values['value'] as $value) {
                 $result .= '
-		<option value="'.\HTMLBuilder\prepareToField($value).'" selected></option>';
+		<option value="'.prepareToField($value).'" selected></option>';
             }
 
             $result .= '
@@ -119,12 +116,12 @@ class SelectHandler implements HandlerInterface
             // Leggo ulteriori campi oltre a id e descrizione per inserirli nell'option nella forma "data-nomecampo1", "data-nomecampo2", ecc
             foreach ($element as $key => $value) {
                 if (!in_array($key, $exclude)) {
-                    $attributes[] = 'data-'.$key.'="'.\HTMLBuilder\prepareToField($value).'"';
+                    $attributes[] = 'data-'.$key.'="'.prepareToField($value).'"';
                 }
             }
 
             $result .= '
-        <option value="'.\HTMLBuilder\prepareToField($element['id']).'" '.implode(' ', $attributes).'>'.$element['text'].'</option>';
+        <option value="'.prepareToField($element['id']).'" '.implode(' ', $attributes).'>'.$element['text'].'</option>';
         }
 
         return $result;
@@ -137,7 +134,7 @@ class SelectHandler implements HandlerInterface
             if (!empty($element['optgroup'])) {
                 if ($prev != $element['optgroup']) {
                     $result .= '
-        <optgroup label="'.\HTMLBuilder\prepareToField($element['optgroup']).'"></optgroup>';
+        <optgroup label="'.prepareToField($element['optgroup']).'"></optgroup>';
                     $prev = $element['optgroup'];
                 }
             }
@@ -157,12 +154,12 @@ class SelectHandler implements HandlerInterface
             // Leggo ulteriori campi oltre a id e descrizione per inserirli nell'option nella forma "data-nomecampo1", "data-nomecampo2", ecc
             foreach ($element as $key => $value) {
                 if (!in_array($key, $exclude)) {
-                    $attributes[] = 'data-'.$key.'="'.\HTMLBuilder\prepareToField($value).'"';
+                    $attributes[] = 'data-'.$key.'="'.prepareToField($value).'"';
                 }
             }
 
             $result .= '
-        <option value="'.\HTMLBuilder\prepareToField($element['id']).'" '.implode(' ', $attributes).'>'.$element['text'].'</option>';
+        <option value="'.prepareToField($element['id']).'" '.implode(' ', $attributes).'>'.$element['text'].'</option>';
         }
 
         return $result;
@@ -191,7 +188,7 @@ class SelectHandler implements HandlerInterface
                 }
 
                 $result .= '
-            <option value="'.\HTMLBuilder\prepareToField($key).'" '.implode(' ', $attributes).'>'.$value.'</option>';
+            <option value="'.prepareToField($key).'" '.implode(' ', $attributes).'>'.$value.'</option>';
             } elseif (empty($values['placeholder'])) {
                 $values['placeholder'] = $value;
             }

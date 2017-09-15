@@ -758,6 +758,8 @@ function get($param, $rule = 'text')
 /**
  * Controlla se è in corso una richiesta AJAX generata dal progetto.
  *
+ * @since 2.3
+ *
  * @return bool
  */
 function isAjaxRequest()
@@ -771,6 +773,8 @@ function isAjaxRequest()
  * @param array|float $first
  * @param array|float $second
  * @param int         $decimals
+ *
+ * @since 2.3
  *
  * @return float
  */
@@ -800,6 +804,14 @@ function sum($first, $second = null, $decimals = null)
     return floatval($result);
 }
 
+/**
+ * Effettua le operazioni automatiche di redirect tra le pagine.
+ *
+ * @param int $id_module
+ * @param int $id_record
+ *
+ * @since 2.3
+ */
 function redirectOperation($id_module, $id_record)
 {
     $backto = filter('backto');
@@ -815,4 +827,16 @@ function redirectOperation($id_module, $id_record)
             exit();
         }
     }
+}
+
+/**
+ * Predispone un testo per l'inserimento all'interno di un attributo HTML.
+ *
+ * @param string $string
+ *
+ * @return string
+ */
+function prepareToField($string)
+{
+    return str_replace('"', '&quot;', $string);
 }

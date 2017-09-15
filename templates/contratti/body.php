@@ -123,8 +123,11 @@ foreach ($righe as $r) {
                 ".(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'], 2)).' &euro;';
 
         if ($r['sconto'] > 0) {
-            echo "
-                <br><small class='help-block'>- sconto ".Translator::numberToLocale($r['sconto_unitario']).($r['tipo_sconto'] == 'PRC' ? '%' : ' &euro;').'</small>';
+            echo '
+                <br><small class="help-block">- '.tr('sconto _TOT_ _TYPE_', [
+                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : ' &euro;'),
+                ]).'</small>';
 
             if ($count <= 1) {
                 $count += 0.4;

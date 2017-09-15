@@ -42,7 +42,7 @@ switch (post('op')) {
 
             $id_record = $dbo->lastInsertedID();
 
-            $_SESSION['infos'][] = tr('Aggiunto DDT in _TYPE_ numero _NUM_!', [
+            $_SESSION['infos'][] = tr('Aggiunto ddt in _TYPE_ numero _NUM_!', [
                 '_TYPE_' => $dir,
                 '_NUM_' => $numero,
             ]);

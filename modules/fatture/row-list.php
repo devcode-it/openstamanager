@@ -5,8 +5,7 @@ include_once __DIR__.'/../../core.php';
 /*
     Righe fattura
 */
-$q = "SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice, (SELECT descrizione FROM co_pianodeiconti3 WHERE co_pianodeiconti3.id=IF(co_righe_documenti.idconto = 0, (SELECT idconto FROM co_documenti WHERE iddocumento=".prepare($id_record).' LIMIT 1), co_righe_documenti.idconto)) AS descrizione_conto FROM `co_righe_documenti` WHERE iddocumento='.prepare($id_record).' ORDER BY `order`';
-$rs = $dbo->fetchArray($q);
+$rs = $dbo->fetchArray("SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice, (SELECT descrizione FROM co_pianodeiconti3 WHERE co_pianodeiconti3.id=IF(co_righe_documenti.idconto = 0, (SELECT idconto FROM co_documenti WHERE iddocumento=".prepare($id_record).' LIMIT 1), co_righe_documenti.idconto)) AS descrizione_conto FROM `co_righe_documenti` WHERE iddocumento='.prepare($id_record).' ORDER BY `order`');
 
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
@@ -87,78 +86,63 @@ if (!empty($rs)) {
             }
         }
 
-        $descrizione = null;
         $ref_modulo = null;
         $ref_id = null;
 
         // Aggiunta riferimento a ordine
         if (!empty($r['idordine'])) {
-            $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data, dir FROM or_ordini JOIN or_tipiordine ON or_tipiordine.id = or_ordini.idtipoordine WHERE or_ordini.id='.prepare($r['idordine']));
+            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM or_ordini or_ordini.id=".prepare($r['idordine']));
 
-            $ref_modulo = $rso[0]['dir'] == 'entrata' ? 'Ordini cliente' : 'Ordini fornitore';
+            $ref_modulo = ($dir == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
             $ref_id = $r['idordine'];
 
-            if (!empty($rso)) {
-                $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
-
-                $descrizione = tr('Rif. ordine num. _NUM_ del _DATE_', [
-                    '_NUM_' => $numero,
-                    '_DATE_' => Translator::dateToLocale($rso[0]['data']),
-                ]);
-            }
+            $documento = tr('Ordine');
         } elseif (!empty($r['idddt'])) {
-            $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM dt_ddt JOIN dt_tipiddt ON dt_tipiddt.id = dt_ddt.idtipoddt WHERE dt_ddt.id='.prepare($r['idddt']));
+            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM dt_ddt WHERE dt_ddt.id=".prepare($r['idddt']));
 
-            $ref_modulo = $rso[0]['dir'] == 'entrata' ? 'Ddt di vendita' : 'Ddt di acquisto';
+            $ref_modulo = ($dir == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
             $ref_id = $r['idddt'];
 
-            if (!empty($rso)) {
-                $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
-
-                $descrizione = tr('Rif. ddt num. _NUM_ del _DATE_', [
-                    '_NUM_' => $numero,
-                    '_DATE_' => Translator::dateToLocale($rso[0]['data']),
-                ]);
-            }
+            $documento = tr('Ddt');
         } elseif (!empty($r['idpreventivo'])) {
-            $rso = $dbo->fetchArray('SELECT numero, data_bozza FROM co_preventivi WHERE id='.prepare($r['idpreventivo']));
+            $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_preventivi WHERE id='.prepare($r['idpreventivo']));
 
             $ref_modulo = 'Preventivi';
             $ref_id = $r['idpreventivo'];
 
-            if (!empty($rso)) {
-                $descrizione = tr('Rif. preventivo num. _NUM_ del _DATE_', [
-                    '_NUM_' => $rso[0]['numero'],
-                    '_DATE_' => Translator::dateToLocale($rso[0]['data_bozza']),
-                ]);
-            }
+            $documento = tr('Preventivo');
         } elseif (!empty($r['idcontratto'])) {
-            $rso = $dbo->fetchArray('SELECT numero, data_bozza FROM co_contratti WHERE id='.prepare($r['idcontratto']));
+            $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_contratti WHERE id='.prepare($r['idcontratto']));
 
-            $ref_modulo = 'Preventivi';
+            $ref_modulo = 'Contratti';
             $ref_id = $r['idcontratto'];
 
-            if (!empty($rso)) {
-                $descrizione = tr('Rif. contratto num. _NUM_ del _DATE_', [
-                    '_NUM_' => $rso[0]['numero'],
-                    '_DATE_' => Translator::dateToLocale($rso[0]['data_bozza']),
-                ]);
-            }
+            $documento = tr('Contratto');
         } elseif (!empty($r['idintervento'])) {
-            $rso = $dbo->fetchArray('SELECT codice, data_richiesta FROM in_interventi WHERE id='.prepare($r['idintervento']));
+            $data = $dbo->fetchArray('SELECT codice AS numero, data_richiesta AS data FROM in_interventi WHERE id='.prepare($r['idintervento']));
 
             $ref_modulo = 'Interventi';
             $ref_id = $r['idintervento'];
 
-            if (!empty($rso)) {
-                $descrizione = tr('Rif. intervento num. _NUM_ del _DATE_', [
-                    '_NUM_' => $rso[0]['codice'],
-                    '_DATE_' => Translator::dateToLocale($rso[0]['data_richiesta']),
-                ]);
-            }
+            $documento = tr('Intervento');
         }
 
-        if (!empty($descrizione)) {
+        if (!empty($ref_modulo) && !empty($ref_id)) {
+            $documento = Stringy\Stringy::create($documento)->toLowerCase();
+
+            if (!empty($data)) {
+                $descrizione = tr('Rif. _DOC_ num. _NUM_ del _DATE_', [
+                    '_DOC_' => $documento,
+                    '_NUM_' => $data[0]['numero'],
+                    '_DATE_' => Translator::dateToLocale($data[0]['data']),
+                ]);
+            } else {
+                $descrizione = tr('_DOC_ di riferimento _ID_ eliminato', [
+                    '_DOC_' => $documento->upperCaseFirst(),
+                    '_ID_' => $ref_id,
+                ]);
+            }
+
             echo '
             <br>'.Modules::link($ref_modulo, $ref_id, $descrizione, $descrizione);
         }

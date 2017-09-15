@@ -15,7 +15,7 @@ $numero = !empty($records[0]['numero_esterno']) ? $records[0]['numero_esterno'] 
 
 if (empty($records[0]['numero_esterno'])) {
     $numero = 'pro-forma '.$numero;
-    $tipo_doc = 'DDT PRO-FORMA';
+    $tipo_doc = tr('Ddt pro-forma', [], ['upper' => true]);
 }
 
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
@@ -42,7 +42,7 @@ if (!empty($records[0]['idsede'])) {
 
 // Sostituzioni specifiche
 $custom = [
-    'tipo_doc' => strtoupper($tipo_doc),
+    'tipo_doc' => $tipo_doc,
     'numero_doc' => $numero,
     'data' => Translator::dateToLocale($records[0]['data']),
     'pagamento' => $records[0]['tipo_pagamento'],

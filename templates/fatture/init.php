@@ -19,7 +19,7 @@ $tipo_doc = $records[0]['tipo_doc'];
 if ($records[0]['stato_doc'] != 'Bozza') {
     $numero = !empty($records[0]['numero_esterno']) ? $records[0]['numero_esterno'] : $records[0]['numero'];
 } else {
-    $tipo_doc = 'Fattura pro forma';
+    $tipo_doc = tr('Fattura pro forma');
     $numero = 'PRO-'.$records[0]['numero'];
 }
 
@@ -47,7 +47,7 @@ if (!empty($records[0]['idsede'])) {
 
 // Sostituzioni specifiche
 $custom = [
-    'tipo_doc' => strtoupper($tipo_doc),
+    'tipo_doc' => Stringy\Stringy::create($tipo_doc)->toUpperCase(),
     'numero_doc' => $numero,
     'data' => Translator::dateToLocale($records[0]['data']),
     'pagamento' => $records[0]['tipo_pagamento'],

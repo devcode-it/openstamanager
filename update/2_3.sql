@@ -57,7 +57,7 @@ UPDATE `my_componenti_interventi` SET `id_intervento` = NULL WHERE `id_intervent
 ALTER TABLE `co_ordiniservizio` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `co_preventivi_interventi` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `co_righe_contratti` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
-ALTER TABLE `co_righe_documenti` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
+ALTER TABLE `co_righe_documenti` CHANGE `idintervento` `idintervento` int(11);
 ALTER TABLE `in_righe_interventi` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `mg_movimenti` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `mg_articoli_interventi` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
@@ -82,13 +82,13 @@ DROP TABLE `dt_automezzi_tagliandi`;
 DROP TABLE `co_contratti_interventi`;
 
 -- RELEASE 2.2.1 [NON UFFICIALE] --
--- Aggiunta del campo desc_iva anche per Preventivi, DDT e Ordini
+-- Aggiunta del campo desc_iva anche per Preventivi, Ddt e Ordini
 ALTER TABLE `dt_righe_ddt` ADD `desc_iva` varchar(255) NOT NULL AFTER `idiva`;
 ALTER TABLE `co_righe_preventivi` ADD `desc_iva` varchar(255) NOT NULL AFTER `idiva`;
 ALTER TABLE `or_righe_ordini` ADD `desc_iva` varchar(255) NOT NULL AFTER `idiva`;
 ALTER TABLE `co_righe2_contratti` ADD `desc_iva` varchar(255) NOT NULL AFTER `idiva`;
 
--- Fix per l'ordinamento delle righe in Preventivi, DDT e Ordini
+-- Fix per l'ordinamento delle righe in Preventivi, Ddt e Ordini
 ALTER TABLE `co_righe_preventivi` ADD `order` tinyint(11) NOT NULL AFTER `qta`;
 ALTER TABLE `dt_righe_ddt` ADD `order` tinyint(11) NOT NULL AFTER `qta_evasa`;
 ALTER TABLE `or_righe_ordini` ADD `order` tinyint(11) NOT NULL AFTER `qta_evasa`;
@@ -882,9 +882,6 @@ ALTER TABLE `dt_automezzi_tecnici` CHANGE `data_inizio` `data_inizio` date, CHAN
 ALTER TABLE `my_impianto_componenti` CHANGE `data` `data` date, CHANGE `data_sostituzione` `data_sostituzione` date;
 ALTER TABLE `or_righe_ordini` CHANGE `data_evasione` `data_evasione` date;
 
--- ALTER TABLE `my_componenti_interventi` ADD PRIMARY KEY (`id_intervento`, `id_componente`);
--- ALTER TABLE `my_impianti_interventi` ADD PRIMARY KEY (`idintervento`, `idimpianto`);
-
 -- Fix di alcuni problemi con le query dei widget
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(qta),2), ",", "#"), ".", ","), "#", "."), "unit&agrave;") AS dato FROM mg_articoli WHERE qta>0' WHERE `name` = 'Articoli in magazzino';
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(prezzo_acquisto*qta),2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM mg_articoli WHERE qta>0' WHERE `name` = 'Valore magazzino';
@@ -893,7 +890,7 @@ UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE
 UPDATE `in_interventi_tecnici` SET `idtipointervento` = (SELECT `idtipointervento` FROM `in_interventi` WHERE `idintervento` = `in_interventi`.`id`) WHERE `idtipointervento` = '';
 
 -- Fix per i serial number
-ALTER TABLE `mg_prodotti` ADD `id_riga_documento` int(11), ADD FOREIGN KEY (`id_riga_documento`) REFERENCES `co_righe_documenti`(`id`) ON DELETE CASCADE, ADD `id_riga_ordine` int(11), ADD FOREIGN KEY (`id_riga_ordine`) REFERENCES `or_righe_ordini`(`id`) ON DELETE CASCADE, ADD `id_riga_ddt` int(11), ADD FOREIGN KEY (`id_riga_ddt`) REFERENCES `dt_righe_ddt`(`id`) ON DELETE CASCADE, ADD `id_riga_intervento` int(11), ADD FOREIGN KEY (`id_riga_intervento`) REFERENCES `mg_articoli_interventi`(`id`) ON DELETE CASCADE, ADD `dir` enum('entrata', 'uscita') DEFAULT 'uscita', CHANGE `idarticolo` `id_articolo` int(11), ADD FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE, CHANGE `serial` `serial` varchar(50), CHANGE `lotto` `lotto` varchar(50), CHANGE `altro` `altro` varchar(50);
+ALTER TABLE `mg_prodotti` ADD `id_riga_documento` int(11), ADD FOREIGN KEY (`id_riga_documento`) REFERENCES `co_righe_documenti`(`id`) ON DELETE CASCADE, ADD `id_riga_ordine` int(11), ADD FOREIGN KEY (`id_riga_ordine`) REFERENCES `or_righe_ordini`(`id`) ON DELETE CASCADE, ADD `id_riga_ddt` int(11), ADD FOREIGN KEY (`id_riga_ddt`) REFERENCES `dt_righe_ddt`(`id`) ON DELETE CASCADE, ADD `id_riga_intervento` int(11), ADD FOREIGN KEY (`id_riga_intervento`) REFERENCES `mg_articoli_interventi`(`id`) ON DELETE CASCADE, ADD `dir` enum('entrata', 'uscita') DEFAULT 'uscita', CHANGE `idarticolo` `id_articolo` int(11), ADD FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`) ON DELETE SET NULL, CHANGE `serial` `serial` varchar(50), CHANGE `lotto` `lotto` varchar(50), CHANGE `altro` `altro` varchar(50);
 
 INSERT INTO `mg_prodotti` (`id_riga_documento`, `dir`, `id_articolo`, `serial`, `lotto`, `altro`) SELECT `id`, (SELECT `dir` FROM `co_tipidocumento` JOIN `co_documenti` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`), IF(`idarticolo` IN (SELECT `id` FROM `mg_articoli`), `idarticolo`, NULL), `serial`, `lotto`, `altro` FROM `co_righe_documenti`;
 
@@ -945,3 +942,7 @@ UPDATE `zz_modules` SET `title` = `name` WHERE `title` = '';
 
 -- Aggiunta del campo per introdurre l'help nei widget
 ALTER TABLE `zz_widgets` ADD `help` VARCHAR(255) NULL;
+
+-- ALTER TABLE `my_componenti_interventi` ADD PRIMARY KEY (`id_intervento`, `id_componente`);
+-- ALTER TABLE `my_impianti_interventi` ADD PRIMARY KEY (`idintervento`, `idimpianto`);
+-- ALTER TABLE `co_righe_documenti`ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;

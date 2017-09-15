@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 function check_query($query)
 {
-    $query = strtoupper($query);
+    $query = mb_strtoupper($query);
 
     $blacklist = ['INSERT', 'UPDATE', 'TRUNCATE', 'DELETE', 'DROP', 'GRANT', 'CREATE', 'REVOKE'];
     foreach ($blacklist as $value) {

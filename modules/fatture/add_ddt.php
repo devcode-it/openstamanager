@@ -19,7 +19,7 @@ $idanagrafica = $record[0]['idanagrafica'];
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('DDT').'", "name": "id_ddt", "required": 1, "values": "query=SELECT id, CONCAT(\'nr. \', if(numero_esterno != \'\', numero_esterno, numero), \' del \', DATE_FORMAT(data, \'%d-%m-%Y\')) AS descrizione, numero, numero_esterno, DATE_FORMAT(data, \'%d-%m-%Y\') AS data FROM dt_ddt WHERE idanagrafica='.prepare($idanagrafica).' AND idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione=\'Bozza\') AND idtipoddt=(SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir).') ORDER BY data DESC, numero DESC" ]}
+            {[ "type": "select", "label": "'.tr('Ddt').'", "name": "id_ddt", "required": 1, "values": "query=SELECT id, CONCAT(\'nr. \', if(numero_esterno != \'\', numero_esterno, numero), \' del \', DATE_FORMAT(data, \'%d-%m-%Y\')) AS descrizione, numero, numero_esterno, DATE_FORMAT(data, \'%d-%m-%Y\') AS data FROM dt_ddt WHERE idanagrafica='.prepare($idanagrafica).' AND idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione=\'Bozza\') AND idtipoddt=(SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir).') ORDER BY data DESC, numero DESC" ]}
         </div>
     </div>';
 

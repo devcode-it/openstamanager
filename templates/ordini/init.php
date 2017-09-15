@@ -15,7 +15,6 @@ $numero = !empty($records[0]['numero_esterno']) ?$records[0]['numero_esterno'] :
 
 // Sostituzioni specifiche
 $custom = [
-    'tipo_doc' => strtoupper($records[0]['tipo_doc']),
     'numero_doc' => $numero,
     'data' => Translator::dateToLocale($records[0]['data']),
     'pagamento' => $records[0]['tipo_pagamento'],

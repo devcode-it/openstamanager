@@ -17,7 +17,7 @@ $redirectHTTPS = false;
 
 // Impostazioni di debug
 $debug = false;
-$strict = false;
+$operations_log = false;
 
 // Personalizzazione dei gestori dei tag personalizzati
 $HTMLWrapper = null;

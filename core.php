@@ -38,7 +38,7 @@ if (!empty($redirectHTTPS) && !isHTTPS(true)) {
 // $debug = true;
 
 // Logger per la segnalazione degli errori
-$logger = new Monolog\Logger(tr('OpenSTAManager'));
+$logger = new Monolog\Logger('OpenSTAManager');
 $logger->pushProcessor(new Monolog\Processor\UidProcessor());
 $logger->pushProcessor(new Monolog\Processor\WebProcessor());
 
@@ -54,9 +54,7 @@ if (!API::isAPIRequest()) {
     // Impostazioni di debug
     if (!empty($debug)) {
         // Ignoramento degli avvertimenti e delle informazioni relative alla deprecazione di componenti
-        if (empty($strict)) {
-            error_reporting(E_ALL & ~E_NOTICE & ~E_USER_DEPRECATED);
-        }
+        error_reporting(E_ALL & ~E_NOTICE & ~E_USER_DEPRECATED);
 
         // File di log ordinato in base alla data
         $handlers[] = new RotatingFileHandler(__DIR__.'/logs/error.log', 0, Monolog\Logger::ERROR);
@@ -155,6 +153,17 @@ if (!API::isAPIRequest()) {
 
     // Registrazione globale del template per gli input HTML
     register_shutdown_function('translateTemplate');
+
+    // Impostazione dei log estesi (per monitorare in modo completo le azioni degli utenti)
+    if (!empty($operations_log)) {
+        $operations = $logger->withName('Debug');
+
+        $operationsFormatter = new Monolog\Formatter\LineFormatter('[%datetime%] %channel%.%level_name%: %message% %context% %extra%'.PHP_EOL);
+
+        $handler = new StreamHandler(__DIR__.'/logs/info.log', Monolog\Logger::INFO);
+
+        $operations->pushHandler($handler->setFormatter($operationsFormatter));
+    }
 
     // Impostazione della sessione di base
     $_SESSION['infos'] = array_unique((array) $_SESSION['infos']);

@@ -586,7 +586,7 @@ function translateTemplate()
     global $id_module;
     global $id_record;
     global $id_plugin;
-    global $operations;
+    global $operations_log;
 
     $template = ob_get_clean();
 
@@ -597,13 +597,14 @@ function translateTemplate()
     $template = str_replace('$id_record$', $id_record, $template);
 
     // Completamento delle informazioni estese sulle azioni dell'utente
-    if (Auth::check() && !empty($operations) && !empty($_SESSION['infos'])) {
+    if (Auth::check() && !empty($operations_log) && !empty($_SESSION['infos'])) {
         $user = Auth::user();
+        $logger = Monolog\Registry::getInstance('logs');
 
         foreach ($_SESSION['infos'] as $value) {
-            $operations->addRecord(\Monolog\Logger::INFO, $value, [
+            $logger->info($value.PHP_EOL.json_encode([
                 'user' => $user['username'],
-            ]);
+            ]));
         }
     }
 
@@ -827,17 +828,19 @@ function sum($first, $second = null, $decimals = null)
 function redirectOperation($id_module, $id_record)
 {
     $backto = filter('backto');
+
     // Scelta del redirect dopo un submit
     if (!empty($backto)) {
         $hash = filter('hash');
         $hash = !starts_with($hash, '#') ? '#'.$hash : $hash;
+
         if ($backto == 'record-edit') {
             redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash);
-            exit();
         } elseif ($backto == 'record-list') {
             redirect(ROOTDIR.'/controller.php?id_module='.$id_module.$hash);
-            exit();
         }
+
+        exit();
     }
 }
 

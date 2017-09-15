@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'orientation' => 'L',
+    'orientation' => 'P',
     'format' => 'A4',
     'font-size' => 10,
     'margins' => [

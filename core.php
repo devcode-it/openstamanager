@@ -38,11 +38,15 @@ if (!empty($redirectHTTPS) && !isHTTPS(true)) {
 // $debug = true;
 
 // Logger per la segnalazione degli errori
-$logger = new Monolog\Logger('OpenSTAManager');
+$logger = new Monolog\Logger('Logs');
 $logger->pushProcessor(new Monolog\Processor\UidProcessor());
 $logger->pushProcessor(new Monolog\Processor\WebProcessor());
 
+// Registrazione globale del logger
+Monolog\Registry::addLogger($logger, 'logs');
+
 use Monolog\Handler\StreamHandler;
+use Monolog\Handler\FilterHandler;
 use Monolog\Handler\RotatingFileHandler;
 
 $handlers = [];
@@ -50,6 +54,9 @@ if (!API::isAPIRequest()) {
     // File di log di base (logs/error.log)
     $handlers[] = new StreamHandler(__DIR__.'/logs/error.log', Monolog\Logger::ERROR);
     $handlers[] = new StreamHandler(__DIR__.'/logs/setup.log', Monolog\Logger::EMERGENCY);
+
+    // Impostazione dei log estesi (per monitorare in modo completo le azioni degli utenti)
+    $handlers[] = new StreamHandler(__DIR__.'/logs/info.log', Monolog\Logger::INFO);
 
     // Impostazioni di debug
     if (!empty($debug)) {
@@ -85,9 +92,10 @@ if (empty($debug)) {
 }
 
 // Imposta il formato di salvataggio dei log
-$monologFormatter = new Monolog\Formatter\LineFormatter('[%datetime%] %channel%.%level_name%: %message% %extra%'.PHP_EOL);
+$monologFormatter = new Monolog\Formatter\LineFormatter('[%datetime%] %channel%.%level_name%: %message%'.PHP_EOL.'%extra% '.PHP_EOL);
 foreach ($handlers as $handler) {
-    $logger->pushHandler($handler->setFormatter($monologFormatter));
+    $handler->setFormatter($monologFormatter);
+    $logger->pushHandler(new FilterHandler($handler, [$handler->getLevel()]));
 }
 
 // Imposta Monolog come gestore degli errori
@@ -153,17 +161,6 @@ if (!API::isAPIRequest()) {
 
     // Registrazione globale del template per gli input HTML
     register_shutdown_function('translateTemplate');
-
-    // Impostazione dei log estesi (per monitorare in modo completo le azioni degli utenti)
-    if (!empty($operations_log)) {
-        $operations = $logger->withName('Debug');
-
-        $operationsFormatter = new Monolog\Formatter\LineFormatter('[%datetime%] %channel%.%level_name%: %message% %context% %extra%'.PHP_EOL);
-
-        $handler = new StreamHandler(__DIR__.'/logs/info.log', Monolog\Logger::INFO);
-
-        $operations->pushHandler($handler->setFormatter($operationsFormatter));
-    }
 
     // Impostazione della sessione di base
     $_SESSION['infos'] = array_unique((array) $_SESSION['infos']);

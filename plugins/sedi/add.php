@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 echo '
-<form action="plugin_editor.php?id_plugin=$id_plugin$&id_module=$id_module$&id_parent='.$id_parent.'" method="post" role="form">
+<form action="plugin_editor.php?id_plugin=$id_plugin$&id_module=$id_module$&id_parent=$id_parent$" method="post" role="form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="addsede">
 

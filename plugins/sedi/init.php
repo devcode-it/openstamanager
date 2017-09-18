@@ -2,4 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-$records = $dbo->fetchArray('SELECT * FROM an_sedi WHERE an_sedi.id='.prepare($id_record).' ORDER BY an_sedi.id DESC');
+if (isset($id_record)) {
+    $records = $dbo->fetchArray('SELECT * FROM an_sedi WHERE id='.prepare($id_record));
+
+    $records[0]['lat'] = floatval($records[0]['lat']);
+    $records[0]['lng'] = floatval($records[0]['lng']);
+}

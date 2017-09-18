@@ -14,7 +14,7 @@ $type = $_POST['type'];
 
 if (!extension_loaded('zip')) {
     $_SESSION['errors'][] = tr('Estensione zip non supportata!').'<br>'.tr('Verifica e attivala sul tuo file _FILE_', [
-        '_FILE_' => '<b>php.ini</b>'
+        '_FILE_' => '<b>php.ini</b>',
     ]);
 } elseif (!ends_with($filename, '.zip')) {
     $_SESSION['errors'][] = tr('Il file non è un archivio zip!');
@@ -30,7 +30,7 @@ if (!extension_loaded('zip')) {
         $zip->extractTo($tmp_dir);
 
         // AGGIORNAMENTO
-        if ($type == 'update') {
+        if ('update' == $type) {
             // Salvo i file di configurazione e versione attuale
             $old_config = file_get_contents($docroot.'/config.inc.php');
 
@@ -68,7 +68,7 @@ if (!extension_loaded('zip')) {
         }
 
         // NUOVO MODULO
-        elseif ($type == 'new') {
+        elseif ('new' == $type) {
             // Se non c'è il file MODULE non é un modulo
             if (is_file($tmp_dir.'/MODULE')) {
                 // Leggo le info dal file di configurazione del modulo
@@ -83,16 +83,6 @@ if (!extension_loaded('zip')) {
                 // Scollego l'utente per eventuali aggiornamenti del db
                 Auth::logout();
 
-                // Sposto il file di versione nella root per forzare l'aggiornamento del db
-                file_put_contents($docroot.'/VERSION_'.$module_dir, $module_version);
-
-                // Sposto i file della cartella "lib/" nella root
-                $lib_dir = $docroot.'/modules/'.$module_dir.'/lib/';
-                if (is_dir($lib_dir)) {
-                    copyr($lib_dir, $docroot.'/lib');
-                    delete($lib_dir);
-                }
-
                 // Sposto i file della cartella "files/" nella root
                 $files_dir = $docroot.'/modules/'.$module_dir.'/files/';
                 if (is_dir($files_dir)) {
@@ -102,11 +92,12 @@ if (!extension_loaded('zip')) {
 
                 // Inserimento delle voci del modulo nel db per ogni sezione [sezione]
                 // Verifico che il modulo non esista già
-                $query = 'SELECT name FROM zz_modules WHERE name='.prepare($module_name);
-                $n = $dbo->fetchNum($query);
+                $n = $dbo->fetchNum('SELECT name FROM zz_modules WHERE name='.prepare($module_name));
 
-                if ($n == 0) {
-                    $query = 'INSERT INTO zz_modules(`name`, `title`, `directory`, `options`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES('.prepare($module_name).', '.prepare($module_name).', '.prepare($module_dir).', '.prepare($module_info['module_options']).', '.prepare($module_info['module_icon']).', '.prepare($module_version).', '.prepare($module_info['module_compatibility']).', "100", '.prepare($module_info['module_parent']).', 0, 1)';
+                if (0 == $n) {
+                    $module_info['module_parent'] = $dbo->fetchNum('SELECT name FROM zz_modules WHERE id='.prepare($module_info['module_parent'])) ? prepare($module_info['module_parent']) : 'NULL';
+
+                    $query = 'INSERT INTO zz_modules(`name`, `title`, `directory`, `options`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES('.prepare($module_name).', '.prepare($module_name).', '.prepare($module_dir).', '.prepare($module_info['module_options']).', '.prepare($module_info['module_icon']).', '.prepare($module_version).', '.prepare($module_info['module_compatibility']).', "100", '.$module_info['module_parent'].', 0, 1)';
                     $dbo->query($query);
                 }
             }

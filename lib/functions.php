@@ -586,6 +586,7 @@ function translateTemplate()
     global $id_module;
     global $id_record;
     global $id_plugin;
+    global $id_parent;
     global $operations_log;
 
     $template = ob_get_clean();
@@ -595,6 +596,7 @@ function translateTemplate()
     $template = str_replace('$id_module$', $id_module, $template);
     $template = str_replace('$id_plugin$', $id_plugin, $template);
     $template = str_replace('$id_record$', $id_record, $template);
+    $template = str_replace('$id_parent$', $id_parent, $template);
 
     // Completamento delle informazioni estese sulle azioni dell'utente
     if (Auth::check() && !empty($operations_log) && !empty($_SESSION['infos'])) {

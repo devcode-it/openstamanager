@@ -716,9 +716,9 @@ ADD `directory` varchar(50) NOT NULL AFTER `script`, ADD `options` text AFTER `s
 UPDATE `zz_plugins` SET `name` = 'Serial' WHERE `name` = 'Lotti';
 UPDATE `zz_plugins` SET `title` = `name` WHERE `title` = '';
 
--- Nuova struttura per il plugin Sedi in Anagrafiche
-UPDATE `zz_plugins` SET `script` = '', `options` = '	{ "main_query": [	{	"type": "table", "fields": "Nome, Indirizzo, Citta, CAP, Provincia, Referente",	"query": "SELECT an_sedi.id, nomesede AS Nome, indirizzo AS Indirizzo, citta AS Città, cap AS CAP, provincia AS Provincia, (an_referenti.id) AS Referente FROM an_sedi LEFT OUTER JOIN an_referenti ON idsede = an_sedi.id WHERE 1=1 AND an_sedi.idanagrafica=|idanagrafica| HAVING 2=2 ORDER BY an_sedi.id DESC"}	]}', `directory` = 'sedi', `version` = '2.3', `compatibility` = '2.*' WHERE `name` = 'Sedi';
-
+-- Nuova struttura per i plugin Sedi e Referenti in Anagrafiche
+UPDATE `zz_plugins` SET `script` = '', `options` = '	{ "main_query": [	{	"type": "table", "fields": "Nome, Indirizzo, Citta, CAP, Provincia, Referente",	"query": "SELECT an_sedi.id, nomesede AS Nome, indirizzo AS Indirizzo, citta AS Città, cap AS CAP, provincia AS Provincia, an_referenti.nome AS Referente FROM an_sedi LEFT OUTER JOIN an_referenti ON idsede = an_sedi.id WHERE 1=1 AND an_sedi.idanagrafica=|idanagrafica| HAVING 2=2 ORDER BY an_sedi.id DESC"}	]}', `directory` = 'sedi', `version` = '2.3', `compatibility` = '2.*' WHERE `name` = 'Sedi';
+UPDATE `zz_plugins` SET `script` = '', `options` = '	{ "main_query": [	{	"type": "table", "fields": "Nominativo, Mansione, Telefono, Indirizzo email, Sede",	"query": "SELECT an_referenti.id, an_referenti.nome AS Nominativo, mansione AS Mansione, an_referenti.telefono AS Telefono, an_referenti.email AS \'Indirizzo email\', an_sedi.nomesede AS Sede FROM an_referenti LEFT OUTER JOIN an_sedi ON idsede = an_sedi.id WHERE 1=1 AND an_referenti.idanagrafica=|idanagrafica| HAVING 2=2 ORDER BY an_referenti.id DESC"}	]}', `directory` = 'referenti', `version` = '2.3', `compatibility` = '2.*' WHERE `name` = 'Referenti';
 
 -- Cleanup della tabella zz_settings
 DELETE FROM `zz_settings` WHERE (`idimpostazione` = 33 AND `nome` = 'osmcloud_username') OR (`idimpostazione` = 34 AND `nome` = 'osmcloud_password') OR (`idimpostazione` = 3 AND `nome` = 'max_idintervento') OR (`idimpostazione` = 30 AND `nome` = 'Numero di mesi prima da cui iniziare a visualizzare gli interventi') OR (`idimpostazione` = 35 AND `nome` = 'osm_installed');

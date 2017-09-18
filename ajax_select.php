@@ -346,7 +346,7 @@ switch ($op) {
             $query = 'SELECT id, CONCAT(matricola, " - ", nome) AS descrizione FROM my_impianti |where| ORDER BY idsede';
 
             foreach ($elements as $element) {
-                $filter[] = 'idsede='.prepare($element);
+                $filter[] = 'id='.prepare($element);
             }
 
             $where[] = 'idanagrafica='.prepare($superselect['idanagrafica']);

@@ -129,6 +129,8 @@ $(document).ready(function() {
 // Clienti top
 $clienti = $dbo->fetchArray("SELECT SUM(subtotale - sconto) AS totale, (SELECT COUNT(*) FROM co_documenti WHERE co_documenti.idanagrafica =an_anagrafiche.idanagrafica) AS qta, an_anagrafiche.idanagrafica, an_anagrafiche.ragione_sociale FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=co_documenti.idanagrafica WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY an_anagrafiche.idanagrafica ORDER BY SUM(subtotale - sconto) DESC LIMIT 15');
 
+$totale = $dbo->fetchArray("SELECT SUM(subtotale - sconto) AS totale FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end));
+
 echo '
 <div class="row">
     <div class="col-xs-12 col-md-6">
@@ -145,18 +147,24 @@ echo '
             <div class="box-body collapse in">';
 if (!empty($clienti)) {
     echo '
-                <ul>';
+                <table class="table table-striped">
+                    <tr>
+                        <th>'.tr('Ragione sociale').'</th>
+                        <th class="text-center">'.tr('Num. fatture').'</th>
+                        <th class="text-right">'.tr('Totale').'</th>
+                        <th class="text-right">'.tr('Percentuale').'</th>
+                    </tr>';
     foreach ($clienti as $cliente) {
         echo '
-                    <li>'.Modules::link('Anagrafiche', $cliente['idanagrafica'], tr('_PERSON_, con _TOT_ fatture', [
-                        '_PERSON_' => $cliente['ragione_sociale'],
-                        '_TOT_' => intval($cliente['qta']),
-                    ])).'
-                        <span class="label label-success pull-right">'.Translator::numberToLocale($cliente['totale']).' &euro;</span>
-                    </li>';
+                    <tr>
+                        <td>'.Modules::link('Anagrafiche', $cliente['idanagrafica'], $cliente['ragione_sociale']).'</td>
+                        <td class="text-center">'.intval($cliente['qta']).'</td>
+                        <td class="text-right">'.Translator::numberToLocale($cliente['totale']).' &euro;</td>
+                        <td class="text-right">'.Translator::numberToLocale($cliente['totale'] * 100 / $totale[0]['totale']).' %</td>
+                    </tr>';
     }
     echo '
-                </ul>';
+                </table>';
 } else {
     echo '
                 <p>'.tr('Nessun articolo è stato venduto').'...</p>';
@@ -185,15 +193,22 @@ echo '
             <div class="box-body collapse in">';
 if (!empty($articoli)) {
     echo '
-                <ul>';
+                <table class="table table-striped">
+                    <tr>
+                        <th>'.tr('Codice').'</th>
+                        <th>'.tr('Descrizione').'</th>
+                        <th class="text-right">'.tr('Q.tà').'</th>
+                    </tr>';
     foreach ($articoli as $articolo) {
         echo '
-                    <li>'.Modules::link('Articoli', $articolo['id'], $articolo['codice'].' - '.$articolo['descrizione']).'
-                        <span class="label label-info pull-right">'.Translator::numberToLocale($articolo['qta']).' '.$articolo['um'].'</span>
-                    </li>';
+                    <tr>
+                        <td>'.Modules::link('Articoli', $articolo['id'], $articolo['codice']).'</td>
+                        <td>'.$articolo['descrizione'].'</td>
+                        <td class="text-right">'.Translator::numberToLocale($articolo['qta']).' '.$articolo['um'].'</td>
+                    </tr>';
     }
     echo '
-                </ul>';
+                </table>';
 } else {
     echo '
                 <p>'.tr('Nessun articolo è stato venduto').'...</p>';

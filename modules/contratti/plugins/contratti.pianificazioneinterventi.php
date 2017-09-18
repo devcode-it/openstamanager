@@ -95,8 +95,12 @@ if (count($rsp) != 0) {
                     <td align="right">';
 
         if (empty($rsp[$i]['idintervento'])) {
+            if($records[0]['stato'] != 'Bozza' && $records[0]['stato'] != 'Rifiutato'){
+                echo '
+                        <button type="button" class="btn btn-primary btn-sm" title="Pianifica ora..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.$rootdir.'/add.php?id_module='.Modules::getModule('Interventi')['id'].'&ref=interventi_contratti&idcontratto='.$id_record.'&idcontratto_riga='.$rsp[$i]['id'].'\');"><i class="fa fa-calendar"></i></button>';
+            }
+
             echo '
-                        <button type="button" class="btn btn-primary btn-sm" title="Pianifica ora..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.$rootdir.'/add.php?id_module='.Modules::getModule('Interventi')['id'].'&ref=interventi_contratti&idcontratto='.$id_record.'&idcontratto_riga='.$rsp[$i]['id'].'\');"><i class="fa fa-calendar"></i></button>
                         <button type="button" class="btn btn-danger btn-sm ask" data-op="depianifica" data-id="'.$rsp[$i]['id'].'">
                             <i class="fa fa-trash"></i>
                         </button>';

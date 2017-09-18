@@ -14,6 +14,8 @@ unset($_SESSION['superselect']['idsede']);
 $idanagrafica = filter('idanagrafica');
 $idsede = filter('idsede');
 
+$impianti = [];
+
 if (!empty($idanagrafica)) {
     $rs = $dbo->fetchArray('SELECT idtipointervento_default FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
     $idtipointervento = $rs[0]['idtipointervento_default'];
@@ -22,7 +24,7 @@ if (!empty($idanagrafica)) {
 }
 
 // Calcolo orario di inizio e fine di default
-if (filter('orario_inizio') !== null && filter('orario_inizio') != '00:00:00') {
+if (null !== filter('orario_inizio') && '00:00:00' != filter('orario_inizio')) {
     $orario_inizio = filter('orario_inizio');
     $orario_fine = filter('orario_fine');
 } else {
@@ -61,9 +63,12 @@ elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
     // Info riga pianificata
     $rs = $dbo->fetchArray('SELECT * FROM co_righe_contratti WHERE idcontratto='.prepare($idcontratto).' AND id='.prepare($idcontratto_riga));
     $idtipointervento = $rs[0]['idtipointervento'];
-    $data = (filter('data') !== null) ? filter('data') : $rs[0]['data_richiesta'];
+    $data = (null !== filter('data')) ? filter('data') : $rs[0]['data_richiesta'];
     $richiesta = $rs[0]['richiesta'];
     $idsede = $rs[0]['idsede'];
+
+    $rs = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE idcontratto='.prepare($idcontratto));
+    $idimpianto = implode(',', array_column($rs, 'idimpianto'));
 
     // Seleziono "In programmazione" come stato
     $rs = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE descrizione='In programmazione'");
@@ -71,7 +76,7 @@ elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
 }
 
 if (empty($data)) {
-    if (filter('data') !== null) {
+    if (null !== filter('data')) {
         $data = filter('data');
     } else {
         $data = date(Translator::getLocaleFormatter()->getDatePattern());
@@ -111,11 +116,11 @@ if (empty($new_codice)) {
 			<!-- RIGA 1 -->
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $idanagrafica ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo Modules::getModule('Anagrafiche')['id']; ?>|tipoanagrafica=Cliente", "data-heavy": 0 ]}
+					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $idanagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo Modules::getModule('Anagrafiche')['id']; ?>|tipoanagrafica=Cliente", "data-heavy": 0 ]}
 				</div>
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede",  "value": "<?php echo $idsede ?>", "placheholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "sedi" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede",  "value": "<?php echo $idsede; ?>", "placheholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "sedi" ]}
 				</div>
 
 				<div class="col-md-4">
@@ -126,21 +131,21 @@ if (empty($new_codice)) {
 			<!-- RIGA 2 -->
 			<div class="row">
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Preventivo'); ?>", "name": "idpreventivo", "value": "<?php echo $idpreventivo ?>", "placeholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "preventivi" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Preventivo'); ?>", "name": "idpreventivo", "value": "<?php echo $idpreventivo; ?>", "placeholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "preventivi" ]}
 				</div>
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $idcontratto ?>", "placeholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "contratti" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $idcontratto; ?>", "placeholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "contratti" ]}
 				</div>
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto ?>", "placeholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "impianti" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto; ?>", "placeholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "impianti" ]}
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-xs-12">
-                    {[ "type": "select", "label": "<?php echo tr('Componenti'); ?>", "multiple": 1, "name": "componenti[]", "value": "<?php echo $componenti ?>", "placeholder": "<?php echo tr('Seleziona prima un impianto'); ?>...", "ajax-source": "componenti" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Componenti'); ?>", "multiple": 1, "name": "componenti[]", "value": "<?php echo $componenti; ?>", "placeholder": "<?php echo tr('Seleziona prima un impianto'); ?>...", "ajax-source": "componenti" ]}
 				</div>
 			</div>
 		</div>
@@ -156,7 +161,7 @@ if (empty($new_codice)) {
 			<!-- RIGA 3 -->
 			<div class="row">
 				<!--div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Codice intervento'); ?>", "name": "codice", "required": 1, "class": "text-center", "value": "<?php echo $new_codice ?>" ]}
+					{[ "type": "text", "label": "<?php echo tr('Codice intervento'); ?>", "name": "codice", "required": 1, "class": "text-center", "value": "<?php echo $new_codice; ?>" ]}
 				</div-->
 
 				<div class="col-md-4">
@@ -164,41 +169,41 @@ if (empty($new_codice)) {
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "date", "label": "<?php echo tr('Data intervento'); ?>", "name": "data", "required": 1, "value": "<?php echo $data ?>" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data intervento'); ?>", "name": "data", "required": 1, "value": "<?php echo $data; ?>" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, nome AS descrizione FROM an_zone ORDER BY nome", "value": "<?php echo $idzona ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, nome AS descrizione FROM an_zone ORDER BY nome", "value": "<?php echo $idzona; ?>" ]}
 				</div>
 			</div>
 
 			<!-- RIGA 4 -->
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Tipo intervento'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento", "value": "<?php echo $idtipointervento ?>", "ajax-source": "tipiintervento" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo intervento'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento", "value": "<?php echo $idtipointervento; ?>", "ajax-source": "tipiintervento" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Stato intervento'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento", "value": "<?php echo $idstatointervento ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Stato intervento'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento", "value": "<?php echo $idstatointervento; ?>" ]}
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "time", "label": "<?php echo tr('Orario inizio'); ?>", "name": "orario_inizio", "required": 1, "value": "<?php echo $orario_inizio ?>" ]}
+					{[ "type": "time", "label": "<?php echo tr('Orario inizio'); ?>", "name": "orario_inizio", "required": 1, "value": "<?php echo $orario_inizio; ?>" ]}
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "time", "label": "<?php echo tr('Orario fine'); ?>", "name": "orario_fine", "required": 1, "value": "<?php echo $orario_fine ?>" ]}
+					{[ "type": "time", "label": "<?php echo tr('Orario fine'); ?>", "name": "orario_fine", "required": 1, "value": "<?php echo $orario_fine; ?>" ]}
 				</div>
 			</div>
 
 			<!-- RIGA 5 -->
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "select", "label": "<?php echo tr('Tecnici'); ?>", "multiple": "1", "name": "idtecnico[]", "required": 1, "ajax-source": "tecnici", "value": "<?php echo $idtecnico ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tecnici'); ?>", "multiple": "1", "name": "idtecnico[]", "required": 1, "ajax-source": "tecnici", "value": "<?php echo $idtecnico; ?>" ]}
 				</div>
 
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Richiesta'); ?>", "name": "richiesta", "required": 1, "value": "<?php echo $richiesta ?>", "extra": "style='max-height:80px; ' " ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Richiesta'); ?>", "name": "richiesta", "required": 1, "value": "<?php echo $richiesta; ?>", "extra": "style='max-height:80px; ' " ]}
 				</div>
 
 				<?php
@@ -223,7 +228,7 @@ if (empty($new_codice)) {
 	</div>
 </form>
 
-<script src="<?php echo $rootdir ?>/lib/init.js"></script>
+<script src="<?php echo $rootdir; ?>/lib/init.js"></script>
 
 <script type="text/javascript">
 	$(document).ready(function(){
@@ -296,7 +301,7 @@ if (empty($new_codice)) {
         $("#componenti").selectReset();
 	});
 
-	var ref = "<?php echo $get['ref'] ?>";
+	var ref = "<?php echo $get['ref']; ?>";
 
 	function add_intervento(){
         // Se l'aggiunta intervento proviene dal calendario, faccio il submit via ajax e ricarico gli eventi...
@@ -304,7 +309,7 @@ if (empty($new_codice)) {
             $('#add-form').find('[type=submit]').prop("disabled", true).addClass("disabled");
             $('#add-form').find('input:disabled, select:disabled, textarea:disabled').removeAttr('disabled');
 
-            $.post(globals.rootdir + '/actions.php?id_module=<?php echo Modules::getModule('Interventi')['id'] ?>', $('#add-form').serialize(), function(data,response){
+            $.post(globals.rootdir + '/actions.php?id_module=<?php echo Modules::getModule('Interventi')['id']; ?>', $('#add-form').serialize(), function(data,response){
                 if(response=="success"){
                     // Se l'aggiunta intervento proviene dalla scheda di pianificazione ordini di servizio della dashboard, la ricarico
                     if(ref == "dashboard"){
@@ -317,7 +322,7 @@ if (empty($new_codice)) {
 
                     // Se l'aggiunta intervento proviene dai contratti, faccio il submit via ajax e ricarico la tabella dei contratti
                     else if(ref == "interventi_contratti"){
-                        $('#elenco_interventi > tbody').load(globals.rootdir + '/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto=<?php echo $idcontratto ?>');
+                        $('#elenco_interventi > tbody').load(globals.rootdir + '/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto=<?php echo $idcontratto; ?>');
                         $("#bs-popup").modal('hide');
                     }
                 }

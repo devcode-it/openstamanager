@@ -61,8 +61,6 @@ echo '
 $query = 'SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto=my_impianti.id WHERE idintervento='.prepare($id_record);
 $rs = $dbo->fetchArray($query);
 
-$impianti = array_column($rs, 'id');
-
 echo '
         <div class="row">';
 
@@ -154,8 +152,8 @@ echo '
     Aggiunta impianti all'intervento
 */
 // Elenco impianti collegati all'intervento
-$matricole = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
-$matricole = !empty($matricole) ? array_column($matricole, 'idimpianto') : [];
+$impianti = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
+$impianti = !empty($impianti) ? array_column($impianti, 'idimpianto') : [];
 
 // Elenco sedi
 $sedi = $dbo->fetchArray('SELECT id, nomesede, citta FROM an_sedi WHERE idanagrafica='.prepare($records[0]['idanagrafica'])." UNION SELECT 0, 'Sede legale', '' ORDER BY id");

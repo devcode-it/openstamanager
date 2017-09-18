@@ -44,20 +44,20 @@ switch ($periodo[0]) {
         break;
 }*/
 
-if ($dir == 'entrata') {
+if ('entrata' == $dir) {
     $query = "SELECT *, SUM(subtotale-co_righe_documenti.sconto) AS subtotale, SUM(iva) AS iva, (SELECT ragione_sociale FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica=co_documenti.idanagrafica) AS ragione_sociale FROM co_documenti INNER JOIN co_righe_documenti ON co_documenti.id=co_righe_documenti.iddocumento INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir='entrata' AND co_documenti.data>='".$date_start."' AND co_documenti.data<='".$date_end."' GROUP BY co_documenti.id, co_righe_documenti.idiva";
-} elseif ($dir == 'uscita') {
+} elseif ('uscita' == $dir) {
     $query = "SELECT *, SUM(subtotale-co_righe_documenti.sconto) AS subtotale, SUM(iva) AS iva, (SELECT ragione_sociale FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica=co_documenti.idanagrafica) AS ragione_sociale FROM co_documenti INNER JOIN co_righe_documenti ON co_documenti.id=co_righe_documenti.iddocumento INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir='uscita' AND co_documenti.data>='".$date_start."' AND co_documenti.data<='".$date_end."' GROUP BY co_documenti.id, co_righe_documenti.idiva";
 }
 
 $rs = $dbo->fetchArray($query);
 
-if ($dir == 'entrata') {
+if ('entrata' == $dir) {
     $body .= "<span style='font-size:15pt; margin-left:6px;'><b>".tr('Registro iva vendita dal _START_ al _END_', [
         '_START_' => Translator::dateToLocale($_SESSION['period_start']),
         '_END_' => Translator::dateToLocale($_SESSION['period_end']),
     ], ['upper' => true]).'</b></span><br><br>';
-} elseif ($dir == 'uscita') {
+} elseif ('uscita' == $dir) {
     $body .= "<span style='font-size:15pt; margin-left:6px;'><b>".tr('Registro iva acquisto dal _START_ al _END_', [
         '_START_' => Translator::dateToLocale($_SESSION['period_start']),
         '_END_' => Translator::dateToLocale($_SESSION['period_end']),
@@ -69,9 +69,8 @@ $body .= "
             <col width='40'><col width='100'><col width='100'><col width='362'><col width='160'><col width='90'><col width='90'>
             <thead>
             <tr>
-                <th bgcolor='#dddddd' class='full_cell1 cell-padded'>Prot.</th>
-                <th bgcolor='#dddddd' class='full_cell1 cell-padded'>Data</th>
                 <th bgcolor='#dddddd' class='full_cell1 cell-padded'>N° Documento</th>
+                <th bgcolor='#dddddd' class='full_cell1 cell-padded'>Data</th>
                 <th bgcolor='#dddddd' class='full_cell1 cell-padded'>Causale<br>Ragione sociale</th>
                 <th bgcolor='#dddddd' class='full_cell1 cell-padded'>Aliquota</th>
                 <th bgcolor='#dddddd' class='full_cell1 cell-padded'>Imponibile</th>
@@ -86,16 +85,16 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
         $body .= "	<td class='first_cell cell-padded text-center'></td>";
         $body .= "	<td class='table_cell cell-padded text-center'></td>";
     } else {
-        $body .= "	<td class='first_cell cell-padded text-center'>".$rs[$i]['numero'].'</td>';
+        $body .= "	<td class='first_cell cell-padded text-center'>".(!empty($rs[$i]['numero_esterno']) ? $rs[$i]['numero_esterno'] : $rs[$i]['numero']).'</td>';
         $body .= "	<td class='table_cell cell-padded text-center'>".date('d/m/Y', strtotime($rs[$i]['data'])).'</td>';
     }
-    $body .= "	<td class='table_cell cell-padded text-center'>".$rs[$i]['numero_esterno'].'</td>';
-    if ($dir == 'entrata') {
+
+    if ('entrata' == $dir) {
         $body .= "<td class='table_cell cell-padded'>
                     Fattura di vendita<br>
                     ".$rs[$i]['ragione_sociale'].'
                     </td>';
-    } elseif ($dir == 'uscita') {
+    } elseif ('uscita' == $dir) {
         $body .= "<td class='table_cell cell-padded'>
                     Fattura di acquisto<br>
                     ".$rs[$i]['ragione_sociale'].'
@@ -131,7 +130,7 @@ $body .= "
         ";
 
 foreach ($v_iva as $desc_iva => $tot_iva) {
-    if ($desc_iva != '') {
+    if ('' != $desc_iva) {
         $body .= "<tr><td valign='top' class='first_cell cell-padded'>\n";
         $body .= $desc_iva."\n";
         $body .= "</td>\n";

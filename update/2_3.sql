@@ -377,8 +377,6 @@ CREATE TABLE IF NOT EXISTS `zz_semaphores` (
 -- Aggiornamento zz_modules
 INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `level`, `parent`, `default`, `enabled`) VALUES (NULL, 'Strumenti', '', '', '', 'fa fa-cog', '2.3', '2.3', '1', '0', '', '1', '1');
 
-UPDATE `zz_modules` `t1` INNER JOIN (SELECT MAX(`order`) AS `order` FROM `zz_modules`) `t2` ON (`t1`.`name` = 'Strumenti') SET `t1`.`order` = `t2`.`order`+1;
-
 ALTER TABLE `zz_modules` DROP `level`;
 
 UPDATE `zz_modules` SET `options` = 'menu' WHERE `options` = '';
@@ -934,11 +932,8 @@ UPDATE `co_iva` SET `dicitura` = 'Operazione soggetta a reverse charge ex art. 1
 ALTER TABLE `co_pagamenti` ADD `idconto_vendite` int(11),  ADD `idconto_acquisti` int(11);
 
 -- Aggiunta del modulo Stampe contabili
-INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Stampe contabili', 'stampe_contabili', 'custom', '', 'fa fa-angle-right', '2.3', '2.3', '1', 1, '1', '1');
+INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Stampe contabili', 'stampe_contabili', 'custom', '', 'fa fa-angle-right', '2.3', '2.3', '1', NULL, '1', '1');
 UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Stampe contabili' AND `t2`.`name` = 'Contabilità') SET `t1`.`parent` = `t2`.`id`;
-
--- Impostazione dei titoli di default
-UPDATE `zz_modules` SET `title` = `name` WHERE `title` = '';
 
 -- Aggiunta del campo per introdurre l'help nei widget
 ALTER TABLE `zz_widgets` ADD `help` varchar(255);
@@ -951,3 +946,12 @@ ALTER TABLE `zz_widgets` ADD `help` varchar(255);
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES ('Google Maps API key', '', 'string', '1', 'Generali');
 
 ALTER TABLE `an_anagrafiche` ADD `gaddress` varchar(255),  ADD `lat` float(10, 5),  ADD `lng` float(10, 5);
+
+-- Aggiunta del modulo Statistiche
+INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Statistiche', 'statistiche', 'custom', '', 'fa fa-bar-chart', '2.3', '2.3', '1', NULL, '1', '1');
+
+UPDATE `zz_modules` `t1` INNER JOIN (SELECT MAX(`order`) AS `order` FROM `zz_modules`) `t2` ON (`t1`.`name` = 'Statistiche') SET `t1`.`order` = `t2`.`order`+1;
+UPDATE `zz_modules` `t1` INNER JOIN (SELECT MAX(`order`) AS `order` FROM `zz_modules`) `t2` ON (`t1`.`name` = 'Strumenti') SET `t1`.`order` = `t2`.`order`+1;
+
+-- Impostazione dei titoli di default
+UPDATE `zz_modules` SET `title` = `name` WHERE `title` = '';

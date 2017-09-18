@@ -198,6 +198,14 @@ gulp.task('colorpicker', function () {
         .pipe(gulp.dest(config.production + '/' + config.paths.images + '/bootstrap-colorpicker'));
 });
 
+gulp.task('chartjs', function () {
+    gulp.src([
+            config.main.bowerDirectory + '/chart.js/dist/Chart.min.js',
+        ])
+        .pipe(flatten())
+        .pipe(gulp.dest(config.production + '/' + config.paths.js + '/chartjs'));
+});
+
 // Elaborazione e minificazione delle informazioni sull'internazionalizzazione
 gulp.task('i18n', function () {
     gulp.src([
@@ -298,6 +306,7 @@ gulp.task('bower', ['clean'], function () {
 gulp.task('other', ['clean'], function () {
     gulp.start('ckeditor');
     gulp.start('colorpicker');
+    gulp.start('chartjs');
     gulp.start('i18n');
     gulp.start('php-debugbar');
 });

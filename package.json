@@ -35,6 +35,7 @@
         "bootstrap": "^3.3.7",
         "bootstrap-colorpicker": "^2.5.1",
         "bootstrap-daterangepicker": "^2.1.25",
+        "chart.js": "^2.7.0",
         "ckeditor": "^4.6.2",
         "components-jqueryui": "^1.12.1",
         "core-js": "^2.5.1",
@@ -96,6 +97,9 @@
             "ignore": true
         },
         "ckeditor": {
+            "ignore": true
+        },
+        "chart.js": {
             "ignore": true
         },
         "admin-lte": {

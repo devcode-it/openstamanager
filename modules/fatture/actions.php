@@ -77,11 +77,9 @@ switch (post('op')) {
             if ($dir == 'uscita') {
                 $idrivalsainps = post('idrivalsainps');
                 $idritenutaacconto = post('idritenutaacconto');
-                $bollo = post('bollo');
             } else {
                 $idrivalsainps = 0;
                 $idritenutaacconto = 0;
-                $bollo = 0;
             }
 
             // Leggo la descrizione del pagamento

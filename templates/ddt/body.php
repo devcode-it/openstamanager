@@ -38,7 +38,7 @@ if ($mostra_prezzi) {
     <tbody>';
 
 // Righe
-$rs_gen = $dbo->fetchArray('SELECT *, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva, IFNULL((SELECT peso_lordo FROM mg_articoli WHERE id=idarticolo),0) AS peso_lordo, IFNULL((SELECT volume FROM mg_articoli WHERE id=idarticolo),0) AS volume FROM `dt_righe_ddt` WHERE idddt='.prepare($idddt));
+$rs_gen = $dbo->fetchArray('SELECT *, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva, IFNULL((SELECT peso_lordo FROM mg_articoli WHERE id=idarticolo),0) * qta AS peso_lordo, IFNULL((SELECT volume FROM mg_articoli WHERE id=idarticolo),0) * qta AS volume FROM `dt_righe_ddt` WHERE idddt='.prepare($idddt));
 foreach ($rs_gen as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);

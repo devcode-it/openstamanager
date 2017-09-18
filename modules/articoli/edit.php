@@ -25,7 +25,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 					<?php
                     $immagine01 = ($records[0]['immagine01'] == '') ? '' : $rootdir.'/files/articoli/'.$records[0]['immagine01'];
                     ?>
-					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine01", "class": "img-thumbnail", "value": "<?php echo $immagine01 ?>" ]}
+					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine01", "class": "img-thumbnail", "value": "<?php echo $immagine01; ?>" ]}
 				</div>
 
 				<div class="col-md-4">
@@ -62,7 +62,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
                 </div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo Modules::getModule('Unità di misura')['id'] ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo Modules::getModule('Unità di misura')['id']; ?>" ]}
 				</div>
 			</div>
 
@@ -221,6 +221,11 @@ echo '
                     </table>
                 </div>
             </div>';
+        } else {
+            echo '
+            <div class="alert alert-info">
+                '.tr('Non ci sono listini caricati').'... '.Modules::link('Listini', null, tr('Crea il primo listino!')).'.
+            </div>';
         }
 echo '
 		</div>
@@ -259,6 +264,11 @@ echo '
             echo '
                     </table>
                 </div>
+            </div>';
+        } else {
+            echo '
+            <div class="alert alert-info">
+                '.tr('Non ci sono automezzi collegati').'... '.Modules::link('Automezzi', null, tr('Collega il primo automezzo!')).'.
             </div>';
         }
 ?>

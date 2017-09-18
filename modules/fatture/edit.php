@@ -166,7 +166,9 @@ if ($dir == 'uscita') {
     ?>
 				<div class="row">
 					<div class="col-md-3">
-						{[ "type": "number", "label": "<?php echo tr('Marca da bollo'); ?>", "name": "bollo", "value": "$bollo$" ]}
+						{[ "type": "number", "label": "<?php echo tr('Marca da bollo'); ?>", "name": "bollo", "value": "$bollo$", "help": "<?php echo tr('Valorizzato solo se il totale della fattura è maggiore di _TOT_ €', [
+                            '_TOT_' => Translator::numberToLocale(get_var("Soglia minima per l'applicazione della marca da bollo")),
+                        ]),'.'; ?>" ]}
 					</div>
 				</div>
 <?php

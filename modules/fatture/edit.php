@@ -74,7 +74,7 @@ if ($dir == 'uscita') {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Riferimento sede cliente'); ?>", "name": "idsede", "ajax-source": "sedi", "value": "$idsede$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Riferimento sede'); ?>", "name": "idsede", "ajax-source": "sedi", "value": "$idsede$" ]}
 				</div>
 
 				<?php if ($dir == 'entrata') {
@@ -166,7 +166,7 @@ if ($dir == 'uscita') {
     ?>
 				<div class="row">
 					<div class="col-md-3">
-						{[ "type": "number", "label": "<?php echo tr('Marca da bollo'); ?>", "name": "bollo", "value": "$bollo$", "help": "<?php echo tr('Valorizzato solo se il totale della fattura è maggiore di _TOT_ €', [
+						{[ "type": "number", "label": "<?php echo tr('Marca da bollo'); ?>", "name": "bollo", "value": "$bollo$", "help": "<?php echo tr('Applicato solo se il totale della fattura è maggiore di _TOT_ €', [
                             '_TOT_' => Translator::numberToLocale(get_var("Soglia minima per l'applicazione della marca da bollo")),
                         ]),'.'; ?>" ]}
 					</div>
@@ -207,7 +207,7 @@ if ($records[0]['stato'] == 'Pagato') {
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo tr('Sconto totale') ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr('Sconto complessivo della fattura'); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
+                    {[ "type": "number", "label": "<?php echo tr('Sconto totale') ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr('Sconto complessivo della fattura.'); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
 if ($records[0]['stato'] == 'Emessa') {
     echo ', "disabled" : 1';
 }
@@ -217,13 +217,13 @@ if ($records[0]['stato'] == 'Emessa') {
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "help": "<?php echo tr('Note visibili anche in stampa.'); ?>", "value": "$note$" ]}
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Note aggiuntive'); ?>", "name": "note_aggiuntive", "value": "$note_aggiuntive$" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Note aggiuntive'); ?>", "name": "note_aggiuntive", "help": "<?php echo tr('Note interne.'); ?>", "value": "$note_aggiuntive$" ]}
 				</div>
 			</div>
 

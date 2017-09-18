@@ -125,11 +125,11 @@ echo '
 
     <tr>
         <td class="cell-padded">
-        '.(!empty($peso_lordo) ? Translator::numberToLocale($peso_lordo) : '').' &nbsp;
+        '.(!empty($peso_lordo) ? Translator::numberToLocale($peso_lordo) : '').'&nbsp;KG
         </td>
 
         <td class="cell-padded">
-            '.(!empty($volume) ? Translator::numberToLocale($volume) : '').' &nbsp;
+            '.(!empty($volume) ? Translator::numberToLocale($volume) : '').'&nbsp;M<sup>3</sup>
         </td>
 
         <td class="cell-padded">

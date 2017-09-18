@@ -139,7 +139,7 @@ if (empty($records[0]['firma_file'])) {
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Automezzo'); ?>", "name": "idautomezzo", "values": "query=SELECT id, CONCAT_WS( ')', CONCAT_WS( ' (', CONCAT_WS( ', ', nome, descrizione), targa ), '' ) AS descrizione FROM dt_automezzi", "value": "$idautomezzo$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Automezzo'); ?>", "name": "idautomezzo", "values": "query=SELECT id, CONCAT_WS( ')', CONCAT_WS( ' (', CONCAT_WS( ', ', nome, descrizione), targa ), '' ) AS descrizione FROM dt_automezzi", "help": "<?php echo tr('Se selezionato i materiali verranno presi prima dall&rsquo;automezzo e poi dal magazzino centrale.'); ?>", "value": "$idautomezzo$" ]}
 				</div>
 			</div>
 

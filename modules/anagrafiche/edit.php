@@ -370,6 +370,11 @@ if (!empty($google)) {
         echo '
             <div id="map" style="height:400px; width:100%"></div>';
     }
+} else {
+    echo '
+            <div class="alert alert-info">
+                '.Modules::link('Impostazioni', $dbo->fetchArray("SELECT `idimpostazione` FROM `zz_settings` WHERE sezione='Generali'")[0]['idimpostazione'], tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni')).'.
+            </div>';
 }
 
 ?>

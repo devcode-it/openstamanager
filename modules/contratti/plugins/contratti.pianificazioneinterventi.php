@@ -37,6 +37,8 @@ switch (filter('op')) {
 $qp = 'SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento FROM co_righe_contratti WHERE idcontratto='.prepare($id_record).' ORDER BY data_richiesta ASC';
 $rsp = $dbo->fetchArray($qp);
 
+$pianificabile = $dbo->fetchNum('SELECT id FROM co_staticontratti WHERE pianificabile = 1 AND descrizione = '.prepare($records[0]['stato']));
+
 echo '
 <div class="box">
     <div class="box-header with-border">
@@ -95,10 +97,8 @@ if (count($rsp) != 0) {
                     <td align="right">';
 
         if (empty($rsp[$i]['idintervento'])) {
-            if($records[0]['stato'] != 'Bozza' && $records[0]['stato'] != 'Rifiutato'){
                 echo '
-                        <button type="button" class="btn btn-primary btn-sm" title="Pianifica ora..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.$rootdir.'/add.php?id_module='.Modules::getModule('Interventi')['id'].'&ref=interventi_contratti&idcontratto='.$id_record.'&idcontratto_riga='.$rsp[$i]['id'].'\');"><i class="fa fa-calendar"></i></button>';
-            }
+                        <button type="button" class="btn btn-primary btn-sm" title="Pianifica ora..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.$rootdir.'/add.php?id_module='.Modules::getModule('Interventi')['id'].'&ref=interventi_contratti&idcontratto='.$id_record.'&idcontratto_riga='.$rsp[$i]['id'].'\');"'.(!empty($pianificabile) ? '' : ' disabled').'><i class="fa fa-calendar"></i></button>';
 
             echo '
                         <button type="button" class="btn btn-danger btn-sm ask" data-op="depianifica" data-id="'.$rsp[$i]['id'].'">

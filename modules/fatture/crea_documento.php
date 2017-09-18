@@ -218,43 +218,42 @@ echo '
 
 <script type="text/javascript">
     function ricalcola_subtotale_riga( r ){
-        subtot = $("#subtot_"+r).val().toEnglish();
+        subtot = $("#subtot_"+r).val();
+        sconto = $("#sconto_"+r).val();
+        iva = $("#iva_"+r).val();
 
-        sconto = $("#sconto_"+r).val().toEnglish();
-        subtot = subtot-sconto;
+        qtamax = $("#qtamax_"+r).val() ? $("#qtamax_"+r).val() : 0;
 
-        qta = $("#qta_"+r).val().toEnglish();
-        if( isNaN(qta) ){
-            qta = 0;
-        }
+        subtot = parseFloat(subtot);
+        sconto = parseFloat(sconto);
+        iva = parseFloat(iva);
+        qtamax = parseFloat(qtamax);
 
-        qtamax = $("#qtamax_"+r).val().toEnglish();
-        if( isNaN(qtamax) ){
-            qtamax = 0;
-        }
-
-        iva = $("#iva_"+r).val().toEnglish();
-
-        // Se inserisco una quantità da evadere maggiore di quella rimanente, la imposto al massimo possibile
-        if( qta>qtamax ){
-            qta = qtamax.toFixedLocale(2);
-            $('#qta_'+r).val( qta );
-        }
+        subtot = subtot - sconto;
 
         $("#serial_"+r).selectClear();
         $("#serial_"+r).select2("destroy");
         $("#serial_"+r).data('maximum', qta);
         start_superselect();
 
+        qta = $("#qta_"+r).val().toEnglish();
+
+        // Se inserisco una quantità da evadere maggiore di quella rimanente, la imposto al massimo possibile
+        if(qta > qtamax){
+            qta = qtamax;
+
+            $('#qta_'+r).val(qta);
+        }
+
         // Se tolgo la spunta della casella dell'evasione devo azzerare i conteggi
-        if( !$('#checked_'+r).is(':checked') ){
+        if(isNaN(qta) || !$('#checked_'+r).is(':checked')){
             qta = 0;
         }
 
-        subtotale = (subtot*qta+iva*qta).toFixedLocale(2);
+        subtotale = (subtot * qta + iva * qta).toFixedLocale(2);
 
         $("#subtotale_"+r).html(subtotale+" &euro;");
-        $("#subtotaledettagli_"+r).html( (subtot*qta).toFixed(2)+" + " + (iva*qta).toFixed(2) );
+        $("#subtotaledettagli_"+r).html((subtot * qta).toFixedLocale(2) + " + " + (iva * qta).toFixedLocale(2));
 
         ricalcola_totale();
     }
@@ -269,12 +268,15 @@ echo '
                 qta = 0;
             }
 
-            subtot = $("#subtot_"+r).val().toEnglish();
+            subtot = $("#subtot_"+r).val();
+            sconto = $("#sconto_"+r).val();
+            iva = $("#iva_"+r).val();
 
-            sconto = $("#sconto_"+r).val().toEnglish();
+            subtot = parseFloat(subtot);
+            sconto = parseFloat(sconto);
+            iva = parseFloat(iva);
+
             subtot = subtot-sconto;
-
-            iva = $("#iva_"+r).val().toEnglish();
 
             totale += subtot*qta+iva*qta;
 

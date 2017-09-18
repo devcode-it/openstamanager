@@ -108,18 +108,15 @@ switch (post('op')) {
         $idarticolo = post('idarticolo');
         $qta = post('qta');
 
-        // Decremento la quantità dal magazzino centrale
-        add_movimento_magazzino($idarticolo, -$qta, ['idautomezzo' => $id_record]);
-
-        // Verifico se nell'automezzo c'è già questo articolo
         $rs = $dbo->fetchArray("SELECT id, qta FROM mg_articoli_automezzi WHERE idarticolo=".prepare($idarticolo)." AND idautomezzo=".prepare($id_record));
 
-        // Se nell'automezzo c'è già questo articolo incremento la quantità...
-        if (!empty($rs) && $rs[0]['qta'] >= 0) {
-            $dbo->query('UPDATE mg_articoli_automezzi SET qta=qta+'.$qta." WHERE id=".prepare($rs[0]['id']));
-        } else {  // ...altrimenti inserisco la scorta nell'automezzo da zero
-            $dbo->query('INSERT INTO mg_articoli_automezzi(idarticolo, idautomezzo, qta) VALUES ('.prepare($idarticolo).', '.prepare($id_record).', '.prepare($qta).')');
+        // Se nell'automezzo non c'è già questo articolo inserisco la scorta nell'automezzo da zero
+        if (empty($rs)) {
+            $dbo->query('INSERT INTO mg_articoli_automezzi(idarticolo, idautomezzo, qta) VALUES ('.prepare($idarticolo).', '.prepare($id_record).', 0)');
         }
+
+        // Decremento la quantità dal magazzino centrale
+        add_movimento_magazzino($idarticolo, -$qta, ['idautomezzo' => $id_record]);
 
         $_SESSION['infos'][] = tr("Caricato il magazzino dell'automezzo!");
         break;

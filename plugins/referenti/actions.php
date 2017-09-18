@@ -13,7 +13,7 @@ switch ($operazione) {
         $idsede = filter('idsede');
 
         if (isset($nome) && isset($idsede)) {
-            $query = 'INSERT INTO `an_referenti` (`nome`, `mansione`, `telefono`, `email`, `idanagrafica`, `idsede`) VALUES ('.prepare($nome).', '.prepare($mansione).', '.prepare($telefono).', '.prepare($email).', '.prepare($id_record).', '.prepare($idsede).')';
+            $query = 'INSERT INTO `an_referenti` (`nome`, `mansione`, `telefono`, `email`, `idanagrafica`, `idsede`) VALUES ('.prepare($nome).', '.prepare($mansione).', '.prepare($telefono).', '.prepare($email).', '.prepare($id_parent).', '.prepare($idsede).')';
 
             $dbo->query($query);
             $_SESSION['infos'][] = tr('Aggiunto nuovo referente!');

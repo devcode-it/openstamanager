@@ -45,6 +45,7 @@
         "eonasdan-bootstrap-datetimepicker": "^4.17.47",
         "font-awesome": "^4.7.0",
         "fullcalendar": "^3.4.0",
+        "geocomplete": "^1.7.0",
         "inputmask": "^3.3.6",
         "jquery": "^3.2.1",
         "jquery-form": "^4.2.1",

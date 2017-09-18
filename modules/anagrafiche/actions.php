@@ -56,6 +56,9 @@ switch (post('op')) {
             'foro_competenza' => $post['foro_competenza'],
             'colore' => $post['colore'],
             'idtipointervento_default' => $post['idtipointervento_default'],
+            'gaddress' => $post['gaddress'],
+            'lat' => $post['lat'],
+            'lng' => $post['lng'],
         ], ['idanagrafica' => $id_record]);
 
         $_SESSION['infos'][] = str_replace('_NAME_', '"'.$post['ragione_sociale'].'"', "Informazioni per l'anagrafica _NAME_ salvate correttamente!");

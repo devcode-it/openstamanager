@@ -2,8 +2,14 @@
 
 include_once __DIR__.'/../../core.php';
 
-?>
-<form action="" method="post" role="form">
+$google = Settings::get('Google Maps API key');
+
+if (!empty($google)) {
+    echo '
+<script src="http://maps.googleapis.com/maps/api/js?libraries=places&key='.$google.'"></script>';
+}
+
+?><form action="" method="post" role="form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
 
@@ -165,7 +171,6 @@ if ($fornitore) {
                 </div>
             </div>
 <?php
-
     }
 
     if ($cliente) {
@@ -184,7 +189,6 @@ if ($fornitore) {
                 </div>
             </div>
 <?php
-
     } ?>
 
             <div class="row">
@@ -203,7 +207,6 @@ if ($fornitore) {
 		</div>
 	</div>
 <?php
-
 }
 ?>
 
@@ -305,7 +308,6 @@ if ($fornitore) {
 					{[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength='7'", "icon-after": "<div class='img-circle square'></div>" ]}
 				</div>
 				<?php
-
                 } ?>
 				<?php
                 if (in_array('Cliente', explode(',', $records[0]['tipianagrafica']))) {
@@ -318,14 +320,11 @@ if ($fornitore) {
 						{[ "type": "select", "label": "<?php echo tr('Relazione con il cliente'); ?>", "name": "idrelazione", "values": "query=SELECT id, descrizione, colore AS _bgcolor_ FROM an_relazioni ORDER BY descrizione", "value": "$idrelazione$" ]}
 					</div>
 				<?php
-
                 } ?>
 
 				<div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo tr('Capitale sociale'); ?>", "name": "capitale_sociale", "value": "$capitale_sociale$" ]}
 				</div>
-
-
 			</div>
 
 
@@ -333,26 +332,76 @@ if ($fornitore) {
 				<div class="col-md-12">
 					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
 				</div>
-			</div>
+            </div>
+<?php
+
+if (!empty($google)) {
+    echo '
+            <div class="row">
+				<div class="col-md-9">
+					<div class="row">
+                        <div class="col-md-4" id="geocomplete">
+                            {[ "type": "text", "label": "'.tr('Indirizzo Google').'", "name": "gaddress", "value": "$gaddress$", "extra": "data-geo=\'formatted_address\'" ]}
+                        </div>
+
+                        <div class="col-md-4">
+                            {[ "type": "text", "label": "'.tr('Latitudine').'", "name": "lat", "value": "$lat$", "extra": "data-geo=\'lat\'", "class": "text-right" ]}
+                        </div>
+
+                        <div class="col-md-4">
+                            {[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right" ]}
+                        </div>
+                    </div>
+                </div>';
+
+    // Calcola percorso
+    if (empty($records[0]['gaddress']) || (empty($records[0]['lat']) && empty($records[0]['lng']))) {
+        echo '
+                <div class="col-md-3">
+                    <label>&nbsp;</label><br>
+                    <a class="btn btn-info" onclick="window.open(\'https://maps.google.com/maps/search/\'+encodeURI( $(\'#indirizzo\').val() )+\', \'+encodeURI( $(\'#citta\').val() ) );"><i class="fa fa-map-marker"></i> Cerca su Google Maps...</a>
+                </div>';
+    }
+
+    echo '
+            </div>';
+
+    if (!empty($records[0]['gaddress']) || (!empty($records[0]['lat']) && !empty($records[0]['lng']))) {
+        echo '
+            <div id="map" style="height:400px; width:100%"></div>';
+    }
+}
+
+?>
 		</div>
 	</div>
 </form>
 <?php
 if (!str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
-                    echo '
+    echo '
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'
 </a>';
-                }
+}
 ?>
 
 <script>
 	$(document).ready( function(){
 		$('.colorpicker').colorpicker().on('changeColor', function(){
-			$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
+			$('#colore').parent().find('.square').css('background', $('#colore').val());
 		});
 
-		$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
+		$('#colore').parent().find('.square').css('background', $('#colore').val());
+
+        $("#geocomplete input").geocomplete({
+            map: $('#map').length ? "#map" : false,
+            location: $('#gaddress').val() ? $('#gaddress').val() : [$('#lat').val(), $('#lng').val()],
+            details: ".details",
+            detailsAttribute: "data-geo"
+        }).bind("geocode:result", function (event, result) {
+			$("#lat").val(result.geometry.location.lat());
+			$("#lng").val(result.geometry.location.lng());
+        });
 	});
 </script>
 

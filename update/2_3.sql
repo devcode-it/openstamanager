@@ -941,8 +941,13 @@ UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Stampe 
 UPDATE `zz_modules` SET `title` = `name` WHERE `title` = '';
 
 -- Aggiunta del campo per introdurre l'help nei widget
-ALTER TABLE `zz_widgets` ADD `help` VARCHAR(255) NULL;
+ALTER TABLE `zz_widgets` ADD `help` varchar(255);
 
 -- ALTER TABLE `my_componenti_interventi` ADD PRIMARY KEY (`id_intervento`, `id_componente`);
 -- ALTER TABLE `my_impianti_interventi` ADD PRIMARY KEY (`idintervento`, `idimpianto`);
 -- ALTER TABLE `co_righe_documenti`ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
+
+-- Aggiunta delle mappe Google
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES ('Google Maps API key', '', 'string', '1', 'Generali');
+
+ALTER TABLE `an_anagrafiche` ADD `gaddress` varchar(255),  ADD `lat` float(10, 5),  ADD `lng` float(10, 5);

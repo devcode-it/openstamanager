@@ -563,3 +563,7 @@ input.min-width {
 input.small-width {
     min-width: 100px;
 }
+
+.pac-container {
+    z-index: 1100 !important;
+}

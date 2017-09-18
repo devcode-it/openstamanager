@@ -43,6 +43,9 @@ switch ($operazione) {
             'fax' => $post['fax'],
             'id_nazione' => !empty($post['id_nazione']) ? $post['id_nazione'] : null,
             'idzona' => $post['idzona'],
+            'gaddress' => $post['gaddress'],
+            'lat' => $post['lat'],
+            'lng' => $post['lng'],
         ];
 
         $dbo->update('an_sedi', $array, ['id' => $post['id']]);

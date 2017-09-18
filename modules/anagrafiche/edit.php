@@ -381,6 +381,7 @@ if (!empty($google)) {
 		</div>
 	</div>
 </form>
+
 <?php
 if (!str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
     echo '

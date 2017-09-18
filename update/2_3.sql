@@ -945,7 +945,8 @@ ALTER TABLE `zz_widgets` ADD `help` varchar(255);
 -- Aggiunta delle mappe Google
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES ('Google Maps API key', '', 'string', '1', 'Generali');
 
-ALTER TABLE `an_anagrafiche` ADD `gaddress` varchar(255),  ADD `lat` float(10, 5),  ADD `lng` float(10, 5);
+ALTER TABLE `an_anagrafiche` ADD `gaddress` varchar(255),  ADD `lat` float(10, 6),  ADD `lng` float(10, 6);
+ALTER TABLE `an_sedi` ADD `gaddress` varchar(255),  ADD `lat` float(10, 6),  ADD `lng` float(10, 6);
 
 -- Aggiunta del modulo Statistiche
 INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Statistiche', 'statistiche', 'custom', '', 'fa fa-bar-chart', '2.3', '2.3', '1', NULL, '1', '1');

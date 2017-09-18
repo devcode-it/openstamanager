@@ -12,9 +12,8 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "number", "label": "<?php echo tr('Guadagno/sconto'); ?>", "name": "prc_guadagno", "required": 1, "value": "0", "icon-after": "%" ]}
+			{[ "type": "number", "label": "<?php echo tr('Rincaro/sconto'); ?>", "name": "prc_guadagno", "required": 1, "value": "0", "icon-after": "%", "help": "<?php echo tr('Il valore positivo indica uno sconto').'. '.tr('Per applicare una percentuale di rincaro inserire un valore negativo').'.'; ?>" ]}
 		</div>
-
 	</div>
 
 	<!-- PULSANTI -->

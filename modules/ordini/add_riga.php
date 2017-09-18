@@ -11,8 +11,7 @@ if ($module['name'] == 'Ordini cliente') {
 }
 
 // Info documento
-$q = 'SELECT * FROM or_ordini WHERE id='.prepare($id_record);
-$rs = $dbo->fetchArray($q);
+$rs = $dbo->fetchArray('SELECT * FROM or_ordini WHERE id='.prepare($id_record));
 $numero = (!empty($rs[0]['numero_esterno'])) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
 $idanagrafica = $rs[0]['idanagrafica'];
 
@@ -32,6 +31,13 @@ if (empty($idriga)) {
     // Leggo l'iva predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
     $iva = $dbo->fetchArray('SELECT idiva_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
     $idiva = $iva[0]['idiva'] ?: get_var('Iva predefinita');
+
+    // Sconto unitario
+    $rss = $dbo->fetchArray('SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')');
+    if (!empty($rss)) {
+        $sconto = $rss[0]['prc_guadagno'];
+        $tipo_sconto = 'PRC';
+    }
 } else {
     $op = 'editriga';
     $button = tr('Modifica');

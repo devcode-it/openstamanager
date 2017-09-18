@@ -6,24 +6,14 @@ $module = Modules::getModule($id_module);
 
 if ($module['name'] == 'Ordini cliente') {
     $dir = 'entrata';
-
-    $listino = 'idlistino_vendite';
 } else {
     $dir = 'uscita';
-
-    $listino = 'idlistino_acquisti';
 }
 
-//Info documento
-$q = 'SELECT *, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT '.$listino.' FROM an_anagrafiche WHERE idanagrafica=or_ordini.idanagrafica) ) AS prc_guadagno FROM or_ordini WHERE id='.prepare($id_record);
-$rs = $dbo->fetchArray($q);
+// Info documento
+$rs = $dbo->fetchArray('SELECT * FROM or_ordini WHERE id='.prepare($id_record));
 $numero = (!empty($rs[0]['numero_esterno'])) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
 $idanagrafica = $rs[0]['idanagrafica'];
-
-if (!empty($rs[0]['prc_guadagno'])) {
-    $sconto = $rs[0]['prc_guadagno'];
-    $tipo_sconto = 'PRC';
-}
 
 // Seleziona articolo
 // - per i documenti di vendita deve esserci almeno 1 unità
@@ -88,9 +78,15 @@ echo '
         </div>';
 
 // Sconto unitario
+$rss = $dbo->fetchArray('SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')');
+if (!empty($rss)) {
+    $sconto = $rss[0]['prc_guadagno'];
+    $tipo_sconto = 'PRC';
+}
+
 echo '
         <div class="col-md-6">
-            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|  '.$tipo_sconto.'" ]}
+            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
         </div>
     </div>';
 

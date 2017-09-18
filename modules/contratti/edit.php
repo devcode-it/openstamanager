@@ -269,7 +269,7 @@ if (sizeof($rs) > 0) {
 <?php
 if ($records[0]['stato'] != 'Pagato') {
     ?>
-        <a class="btn btn-primary" data-href="<?php echo $rootdir ?>/modules/contratti/add_riga.php?idcontratto=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Riga'); ?></a><br>
+        <a class="btn btn-primary" data-href="<?php echo $rootdir ?>/modules/contratti/add_riga.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Riga'); ?></a><br>
     <?php
 
 }

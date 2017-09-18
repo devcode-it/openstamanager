@@ -2,12 +2,10 @@
 
 include_once __DIR__.'/../../core.php';
 
-$idcontratto = $get['idcontratto'];
 $idriga = $get['idriga'];
 
 // Info contratto
-$q = 'SELECT *, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica=co_contratti.idanagrafica)) AS prc_guadagno FROM co_contratti WHERE id='.prepare($idcontratto);
-$rs = $dbo->fetchArray($q);
+$rs = $dbo->fetchArray('SELECT * FROM co_contratti WHERE id='.prepare($id_record));
 $numero = $rs[0]['numero'];
 $idanagrafica = $rs[0]['idanagrafica'];
 
@@ -23,14 +21,16 @@ if (empty($idriga)) {
     $sconto = 0;
     $tipo_sconto = '';
 
-    if (!empty($rs[0]['prc_guadagno'])) {
-        $sconto = $rs[0]['prc_guadagno'];
+    // Leggo l'iva predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
+    $iva = $dbo->fetchArray('SELECT idiva_vendite AS idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
+    $idiva = $iva[0]['idiva'] ?: get_var('Iva predefinita');
+
+    // Sconto unitario
+    $rss = $dbo->fetchArray('SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')');
+    if (!empty($rss)) {
+        $sconto = $rss[0]['prc_guadagno'];
         $tipo_sconto = 'PRC';
     }
-
-    // Leggo l'iva predefinita dall'anagrafica e se non c'è leggo quella predefinita generica
-    $rsa = $dbo->fetchArray('SELECT idiva_vendite AS idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
-    $idiva = (!empty($rsa[0]['idiva'])) ? $rsa[0]['idiva'] : get_var('Iva predefinita');
 } else {
     $op = 'editriga';
     $button = tr('Modifica');

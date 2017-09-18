@@ -7,24 +7,14 @@ $module = Modules::getModule($id_module);
 if ($module['name'] == 'Fatture di vendita') {
     $dir = 'entrata';
     $conti = 'conti-vendite';
-
-    $listino = 'idlistino_vendite';
 } else {
     $dir = 'uscita';
     $conti = 'conti-acquisti';
-
-    $listino = 'idlistino_acquisti';
 }
 
 // Info documento
-$q = 'SELECT *, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT '.$listino.' FROM an_anagrafiche WHERE idanagrafica=co_documenti.idanagrafica)) AS prc_guadagno FROM co_documenti WHERE id='.prepare($id_record);
-$record = $dbo->fetchArray($q);
+$record = $dbo->fetchArray('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
 $numero = ($record[0]['numero_esterno'] != '') ? $record[0]['numero_esterno'] : $record[0]['numero'];
-
-if (!empty($rs[0]['prc_guadagno'])) {
-    $sconto = $rs[0]['prc_guadagno'];
-    $tipo_sconto = 'PRC';
-}
 
 $idconto = $record[0]['idconto'];
 $idanagrafica = $record[0]['idanagrafica'];
@@ -100,9 +90,15 @@ echo '
         </div>';
 
 // Sconto unitario
+$rss = $dbo->fetchArray('SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')');
+if (!empty($rss)) {
+    $sconto = $rss[0]['prc_guadagno'];
+    $tipo_sconto = 'PRC';
+}
+
 echo '
         <div class="col-md-3">
-            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|  '.$tipo_sconto.'" ]}
+            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
         </div>
     </div>';
 

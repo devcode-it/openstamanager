@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__.'/../../core.php';
 
 ?><form action="" method="post" role="form">
@@ -8,7 +9,7 @@ include_once __DIR__.'/../../core.php';
 	<!-- DATI ARTICOLO -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr("Listino"); ?></h3>
+			<h3 class="panel-title"><?php echo tr('Listino'); ?></h3>
 		</div>
 
 		<div class="panel-body">
@@ -17,22 +18,21 @@ include_once __DIR__.'/../../core.php';
 			</div>
 			<div class="clearfix"></div>
 
-
 			<div class="row">
-				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr("Nome"); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
-				</div>
-				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr("Guadagno/sconto"); ?>", "name": "prc_guadagno", "required": 1, "value": "$prc_guadagno$", "icon-after": "%" ]}
+				<div class="col-md-6">
+					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
 				</div>
 
+				<div class="col-md-6">
+					{[ "type": "number", "label": "<?php echo tr('Rincaro/sconto'); ?>", "name": "prc_guadagno", "required": 1, "value": "$prc_guadagno$", "icon-after": "%", "help": "<?php echo tr('Il valore positivo indica uno sconto').'. '.tr('Per applicare una percentuale di rincaro inserire un valore negativo').'.'; ?>" ]}
+				</div>
 			</div>
+
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr("Note"); ?>", "name": "note", "value": "$note$" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
 				</div>
 			</div>
-
 
 		</div>
 	</div>

@@ -100,9 +100,15 @@ echo '
         </div>';
 
 // Sconto unitario
+$rss = $dbo->fetchArray('SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')');
+if (!empty($rss)) {
+    $sconto = $rss[0]['prc_guadagno'];
+    $tipo_sconto = 'PRC';
+}
+
 echo '
         <div class="col-md-3">
-            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "icon-after": "choice|untprc" ]}
+            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
         </div>
     </div>';
 

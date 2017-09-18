@@ -149,7 +149,7 @@ switch (post('op')) {
         $sconto = ($tipo_sconto == 'PRC') ? ($prezzo * $sconto_unitario) / 100 : $sconto_unitario;
         $sconto = $sconto * $qta;
 
-        $subtot = $prezzo_vendita * $qta;
+        $subtot = $prezzo * $qta;
 
         $um = post('um');
 

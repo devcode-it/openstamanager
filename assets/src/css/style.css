@@ -552,7 +552,6 @@ span.form-control {
 
 div.DTS tbody td,
 div.DTS tbody th {
-    word-wrap: break-word;
     max-width: 500px;
 }
 

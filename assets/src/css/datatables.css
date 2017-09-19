@@ -173,7 +173,6 @@ div.DTS {
     display: block !important;
 }
 
-div.DTS tbody th,
 div.DTS tbody td {
     white-space: normal;
 }
@@ -194,6 +193,7 @@ div.DTS div.dataTables_paginate,
 div.DTS div.dataTables_length {
     display: none;
 }
+
 
 /* Custom */
 
@@ -216,6 +216,6 @@ div.dataTables_wrapper {
     transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
 }
 
-.dataTables_info .select-info{
+.dataTables_info .select-info {
     display: none;
 }

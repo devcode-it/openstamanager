@@ -79,7 +79,7 @@ if (empty($data)) {
     if (null !== filter('data')) {
         $data = filter('data');
     } else {
-        $data = date(Translator::getLocaleFormatter()->getDatePattern());
+        $data = date(Translator::getFormatter()->getDatePattern());
     }
 }
 

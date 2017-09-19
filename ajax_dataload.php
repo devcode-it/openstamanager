@@ -114,12 +114,12 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
                 $value = trim($r[$field]);
 
                 // Allineamento a destra se il valore della prima riga risulta numerica
-                if (Translator::getEnglishFormatter()->isNumber($value) || Translator::getEnglishFormatter()->isNumber($value)) {
+                if (Translator::getFormatter()->isStandardNumber($value)) {
                     $align[$field] = 'text-right';
                 }
 
                 // Allineamento al centro se il valore della prima riga risulta relativo a date o icone
-                elseif ((Translator::getEnglishFormatter()->isDate($value) || Translator::getEnglishFormatter()->isDate($value)) || preg_match('/^icontr(.+?)$/', $field)) {
+                elseif (Translator::getFormatter()->isStandardDate($value) || preg_match('/^icontr(.+?)$/', $field)) {
                     $align[$field] = 'text-center';
                 }
             }
@@ -142,14 +142,14 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
             $value = trim($r[$field]);
 
             // Formattazione automatica
-            if (!empty($total['format'][$pos]) && !empty($value) && !empty(Translator::getEnglishFormatter())) {
-                if (Translator::getEnglishFormatter()->isNumber($value)) {
+            if (!empty($total['format'][$pos]) && !empty($value)) {
+                if (Translator::getFormatter()->isStandardNumber($value)) {
                     $value = Translator::numberToLocale($value);
-                } elseif (Translator::getEnglishFormatter()->isTimestamp($value)) {
+                } elseif (Translator::getFormatter()->isStandardTimestamp($value)) {
                     $value = Translator::timestampToLocale($value);
-                } elseif (Translator::getEnglishFormatter()->isDate($value)) {
+                } elseif (Translator::getFormatter()->isStandardDate($value)) {
                     $value = Translator::dateToLocale($value);
-                } elseif (Translator::getEnglishFormatter()->isTime($value)) {
+                } elseif (Translator::getFormatter()->isStandardTime($value)) {
                     $value = Translator::timeToLocale($value);
                 }
             }

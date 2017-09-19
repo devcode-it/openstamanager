@@ -26,7 +26,7 @@ if ($get['op'] == 'add_ordineservizio') {
 
     // Ciclo fra le voci in arrivo dal form
     foreach ($post['voce'] as $data_scadenza => $ordiniservizio) {
-        $data_scadenza = date_create_from_format('Ym', $data_scadenza)->format(Translator::getEnglishFormatter()->getTimestampPattern());
+        $data_scadenza = date_create_from_format('Ym', $data_scadenza)->format(Intl\Formatter::getStandardFormats()['date']);
 
         // Ogni data può avere più voci di servizio da salvare
         foreach ($ordiniservizio as $n => $idvoce) {

@@ -45,7 +45,7 @@ if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
     </tr>
 
     <tr>
-        <th>'.tr('Sconto totale', [], ['upper' => true]).'</th>
+        <th>'.tr('Sconto incondizionato', [], ['upper' => true]).'</th>
         <td class="text-right">-</td>
         <td class="text-right">-</td>
         <td class="text-right">'.Translator::numberToLocale(-$costi['sconto_globale']).' &euro;</td>
@@ -60,7 +60,7 @@ if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
 </table>';
 }
 
-// Lettura dello sconto globale
+// Lettura dello sconto incondizionato
 $rss = $dbo->fetchArray('SELECT sconto_globale, tipo_sconto_globale FROM in_interventi WHERE id='.prepare($id_record));
 $sconto = $rss[0]['sconto_globale'];
 $tipo_sconto = $rss[0]['tipo_sconto_globale'];
@@ -70,7 +70,7 @@ echo '
 <!-- SCONTO -->
 <div class="row">
     <div class="col-md-4 pull-right">
-        {[ "type": "number", "label": "'.tr('Sconto globale').'", "name": "sconto_globale", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
+        {[ "type": "number", "label": "'.tr('Sconto incondizionato').'", "name": "sconto_globale", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
     </div>
 </div>';
 

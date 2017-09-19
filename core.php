@@ -101,16 +101,13 @@ foreach ($handlers as $handler) {
 // Imposta Monolog come gestore degli errori
 Monolog\ErrorHandler::register($logger);
 
-// Istanziamento della gestione di date e numeri
-$formatter = !empty($formatter) ? $formatter : [];
-Translator::setLocaleFormatter($formatter);
-
 // Istanziamento del gestore delle traduzioni del progetto
 $lang = !empty($lang) ? $lang : 'it';
+$formatter = !empty($formatter) ? $formatter : [];
 $translator = Translator::getInstance();
 $translator->addLocalePath($docroot.'/locale');
 $translator->addLocalePath($docroot.'/modules/*/locale');
-$translator->setLocale($lang);
+$translator->setLocale($lang, $formatter);
 
 // Individuazione di versione e revisione del progetto
 $version = Update::getVersion();
@@ -279,3 +276,4 @@ if (!API::isAPIRequest()) {
     $post = Filter::getPOST();
     $get = Filter::getGET();
 }
+

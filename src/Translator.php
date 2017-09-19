@@ -8,9 +8,7 @@
 class Translator extends Util\Singleton
 {
     /** @var Intl\Formatter Oggetto per la conversione di date e numeri nella lingua selezionata */
-    protected static $localeFormatter;
-    /** @var Intl\Formatter Oggetto per la conversione di date e numeri nella formattazione originale */
-    protected static $englishFormatter;
+    protected static $formatter;
 
     /** @var Symfony\Component\Translation\Translator Oggetto dedicato alle traduzioni */
     protected $translator;
@@ -112,11 +110,20 @@ class Translator extends Util\Singleton
      *
      * @param string $locale
      */
-    public function setLocale($locale)
+    public function setLocale($locale, $formatter = [])
     {
         if (!empty($locale) && $this->isLocaleAvailable($locale)) {
             $this->translator->setLocale($locale);
             $this->locale = $locale;
+
+            self::$formatter = new Intl\Formatter(
+                $this->locale,
+                empty($formatter['timestamp']) ? 'd/m/Y H:i' : $formatter['timestamp'],
+                empty($formatter['date']) ? 'd/m/Y' : $formatter['date'],
+                empty($formatter['time']) ? 'H:i' : $formatter['time']
+            );
+
+            self::$formatter->setPrecision(Settings::get('Cifre decimali per importi'));
         }
     }
 
@@ -169,58 +176,13 @@ class Translator extends Util\Singleton
     }
 
     /**
-     * Genera l'oggetto dedicato alla gestione delle conversioni nella lingua locale.
-     *
-     * @param array $formatter
-     */
-    public static function setLocaleFormatter($formatter = [])
-    {
-        self::$localeFormatter = new Intl\Formatter(
-            empty($formatter['numbers']) ? [
-                'decimals' => ',',
-                'thousands' => '.',
-            ] : $formatter['numbers'],
-            empty($formatter['date']) ? 'd/m/Y' : $formatter['date'],
-            empty($formatter['time']) ? 'H:i' : $formatter['time'],
-            empty($formatter['timestamp']) ? null : $formatter['timestamp']);
-    }
-
-    /**
      * Restituisce il formato locale della data.
      *
      * @return Intl\Formatter
      */
-    public static function getLocaleFormatter()
+    public static function getFormatter()
     {
-        if (empty(self::$localeFormatter)) {
-            self::setLocaleFormatter();
-        }
-
-        return self::$localeFormatter;
-    }
-
-    /**
-     * Restituisce il formato locale della data.
-     *
-     * @return Intl\Formatter
-     */
-    public static function getEnglishFormatter()
-    {
-        if (empty(self::$englishFormatter)) {
-            self::$englishFormatter = new Intl\Formatter();
-        }
-
-        return self::$englishFormatter;
-    }
-
-    /**
-     * Restituisce il formato locale della data.
-     *
-     * @return string
-     */
-    public static function getLocaleDatePattern()
-    {
-        return self::getLocaleFormatter()->getDatePattern();
+        return self::$formatter;
     }
 
     /**
@@ -232,7 +194,7 @@ class Translator extends Util\Singleton
      */
     public static function numberToEnglish($string)
     {
-        return floatval(self::getLocaleFormatter()->formatNumberTo(self::getEnglishFormatter(), $string));
+        return floatval(self::getFormatter()->parseNumber($string));
     }
 
     /**
@@ -243,17 +205,11 @@ class Translator extends Util\Singleton
      *
      * @return string
      */
-    public static function numberToLocale($string, $decimals = true)
+    public static function numberToLocale($string, $decimals = null)
     {
         $string = !isset($string) ? 0 : $string;
 
-        if (isset($decimals) && (is_int($decimals) || !empty($decimals))) {
-            $decimals = is_numeric($decimals) ? $decimals : Settings::get('Cifre decimali per importi');
-
-            $string = number_format($string, $decimals, self::getEnglishFormatter()->getNumberSeparators()['decimals'], self::getEnglishFormatter()->getNumberSeparators()['thousands']);
-        }
-
-        return self::getEnglishFormatter()->formatNumberTo(self::getLocaleFormatter(), $string);
+        return self::getFormatter()->formatNumber($string, $decimals);
     }
 
     /**
@@ -265,7 +221,7 @@ class Translator extends Util\Singleton
      */
     public static function dateToEnglish($string)
     {
-        return self::getLocaleFormatter()->formatDateTo(self::getEnglishFormatter(), $string);
+        return self::getFormatter()->parseDate($string);
     }
 
     /**
@@ -276,13 +232,9 @@ class Translator extends Util\Singleton
      *
      * @return string
      */
-    public static function dateToLocale($string, $fail = null)
+    public static function dateToLocale($string)
     {
-        if (!self::isValid($string)) {
-            return $fail;
-        }
-
-        return self::getEnglishFormatter()->formatDateTo(self::getLocaleFormatter(), $string);
+        return self::getFormatter()->formatDate($string);
     }
 
     /**
@@ -294,7 +246,7 @@ class Translator extends Util\Singleton
      */
     public static function timeToEnglish($string)
     {
-        return self::getLocaleFormatter()->formatTimeTo(self::getEnglishFormatter(), $string);
+        return self::getFormatter()->parseTime($string);
     }
 
     /**
@@ -305,13 +257,9 @@ class Translator extends Util\Singleton
      *
      * @return string
      */
-    public static function timeToLocale($string, $fail = null)
+    public static function timeToLocale($string)
     {
-        if (!self::isValid($string)) {
-            return $fail;
-        }
-
-        return self::getEnglishFormatter()->formatTimeTo(self::getLocaleFormatter(), $string);
+        return self::getFormatter()->formatTime($string);
     }
 
     /**
@@ -323,7 +271,7 @@ class Translator extends Util\Singleton
      */
     public static function timestampToEnglish($string)
     {
-        return self::getLocaleFormatter()->formatTimestampTo(self::getEnglishFormatter(), $string);
+        return self::getFormatter()->parseTimestamp($string);
     }
 
     /**
@@ -334,24 +282,8 @@ class Translator extends Util\Singleton
      *
      * @return string
      */
-    public static function timestampToLocale($string, $fail = null)
+    public static function timestampToLocale($string)
     {
-        if (!self::isValid($string)) {
-            return $fail;
-        }
-
-        return self::getEnglishFormatter()->formatTimestampTo(self::getLocaleFormatter(), $string);
-    }
-
-    /**
-     * Controlla se una data inserita nella formattazione inglese è valida.
-     *
-     * @param string $timestamp
-     *
-     * @return bool
-     */
-    protected static function isValid($string)
-    {
-        return !in_array($string, ['0000-00-00 00:00:00', '0000-00-00', '00:00:00']);
+        return self::getFormatter()->formatTimestamp($string);
     }
 }

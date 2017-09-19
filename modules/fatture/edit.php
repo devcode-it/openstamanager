@@ -63,12 +63,10 @@ if ($dir == 'uscita') {
                         ?>
 						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "clienti", "value": "$idanagrafica$" ]}
 					<?php
-
                     } else {
                         ?>
 						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1,  "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
 					<?php
-
                     }
                     ?>
 				</div>
@@ -83,7 +81,6 @@ if ($dir == 'uscita') {
 					{[ "type": "select", "label": "<?php echo tr('Agente di riferimento'); ?>", "name": "idagente", "ajax-source": "agenti", "value": "$idagente_fattura$" ]}
 				</div>
 				<?php
-
                     } ?>
 
                 <?php
@@ -159,7 +156,6 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
 				</div>
 
 <?php
-
                     }
 
 if ($dir == 'uscita') {
@@ -172,14 +168,13 @@ if ($dir == 'uscita') {
 					</div>
 				</div>
 <?php
-
 }
 ?>
 
 
 			<div class="pull-right">
 <?php
-//Aggiunta prima nota solo se non c'è già, se non si è in bozza o se il pagamento non è completo
+// Aggiunta prima nota solo se non c'è già, se non si è in bozza o se il pagamento non è completo
 $query2 = 'SELECT id FROM co_movimenti WHERE iddocumento='.$id_record.' AND primanota=1';
 $n2 = $dbo->fetchNum($query2);
 
@@ -192,14 +187,12 @@ if (($n2 <= 0 && $records[0]['stato'] == 'Emessa') || $differenza != 0) {
     ?>
 					<a class="btn btn-sm btn-primary" href="javascript:;" onclick="launch_modal( 'Aggiungi prima nota', '<?php echo $rootdir ?>/add.php?id_module=<?php echo Modules::getModule('Prima nota')['id'] ?>&iddocumento=<?php echo $id_record ?>&dir=<?php echo $dir ?>', 1 );"><i class="fa fa-euro"></i> Aggiungi prima nota...</a><br><br>
 <?php
-
 }
 
 if ($records[0]['stato'] == 'Pagato') {
     ?>
 					<a class="btn btn-sm btn-primary" href="javascript:;" onclick="if( confirm('Se riapri questa fattura verrà azzerato lo scadenzario e la prima nota. Continuare?') ){ $.post( '<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::getModule($name)['id'] ?>&id_record=<?php echo $id_record ?>', { id_module: '<?php echo Modules::getModule($name)['id'] ?>', id_record: '<?php echo $id_record ?>', op: 'reopen' }, function(){ location.href='<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::getModule($name)['id'] ?>&id_record=<?php echo $id_record ?>'; } ); }" title="Aggiungi prima nota"><i class="fa fa-folder-open"></i> Riapri fattura...</a>
 <?php
-
 }
 ?>
 			</div>
@@ -207,7 +200,7 @@ if ($records[0]['stato'] == 'Pagato') {
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo tr('Sconto totale') ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr('Sconto complessivo della fattura.'); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
+                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato') ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr('Sconto complessivo della fattura.'); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
 if ($records[0]['stato'] == 'Emessa') {
     echo ', "disabled" : 1';
 }
@@ -250,67 +243,62 @@ if ($records[0]['stato'] == 'Emessa') {
 <?php
 if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
     if ($dir == 'entrata') {
-        //Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti
+        // Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti
         $qi = 'SELECT id FROM in_interventi WHERE idanagrafica='.prepare($records[0]['idanagrafica'])." AND NOT idstatointervento='DENY' AND id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND id NOT IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND id NOT IN (SELECT idintervento FROM co_righe_contratti WHERE idintervento IS NOT NULL)";
         $rsi = $dbo->fetchArray($qi);
         $ni = sizeof($rsi);
 
-        //Se non trovo niente provo a vedere se ce ne sono per clienti terzi
+        // Se non trovo niente provo a vedere se ce ne sono per clienti terzi
         if ($ni == 0) {
-            //Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti (clienti terzi)
+            // Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti (clienti terzi)
             $qi = 'SELECT id FROM in_interventi WHERE idclientefinale='.prepare($records[0]['idanagrafica'])." AND NOT idstatointervento='DENY' AND id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND id NOT IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND id NOT IN (SELECT idintervento FROM co_righe_contratti WHERE idintervento IS NOT NULL)";
             $rsi = $dbo->fetchArray($qi);
             $ni = sizeof($rsi);
         }
 
-        //Lettura preventivi accettati, in attesa di conferma o in lavorazione
+        // Lettura preventivi accettati, in attesa di conferma o in lavorazione
         $qp = 'SELECT id FROM co_preventivi WHERE idanagrafica='.prepare($records[0]['idanagrafica'])." AND id NOT IN (SELECT idpreventivo FROM co_righe_documenti WHERE NOT idpreventivo=NULL) AND idstato IN( SELECT id FROM co_statipreventivi WHERE descrizione='Accettato' OR descrizione='In lavorazione' OR descrizione='In attesa di conferma')";
         $rsp = $dbo->fetchArray($qp);
         $np = sizeof($rsp);
 
-        //Lettura contratti accettati, in attesa di conferma o in lavorazione
+        // Lettura contratti accettati, in attesa di conferma o in lavorazione
         $qc = 'SELECT id FROM co_contratti WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND id NOT IN (SELECT idcontratto FROM co_righe_documenti WHERE NOT idcontratto=NULL) AND idstato IN( SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND NOT EXISTS (SELECT id FROM co_righe_documenti WHERE co_righe_documenti.idcontratto = co_contratti.id)';
         $rsc = $dbo->fetchArray($qc);
         $nc = sizeof($rsc);
 
-        //Lettura ddt
-        $qd = 'SELECT id FROM dt_ddt WHERE idanagrafica='.prepare($records[0]['idanagrafica']);
+        // Lettura ddt
+        $qd = 'SELECT id FROM dt_ddt WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione=\'Bozza\') AND idtipoddt=(SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir).') AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
         $rsd = $dbo->fetchArray($qd);
         $nd = sizeof($rsd);
+
         if ($ni > 0) {
             ?>
 								<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/fatture/add_intervento.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> Intervento</a>
             <?php
-
         } else {
             ?>
 								<a class="btn btn-sm btn-primary tip"  title="<?php echo tr('Nessun Intervento'); ?>" style="opacity:0.5;cursor:default;"  ><i class="fa fa-plus"></i> Intervento</a>
             <?php
-
         }
 
         if ($np > 0) {
             ?>
 								<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/fatture/add_preventivo.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i  class="fa fa-plus"></i> Preventivo</a>
 							<?php
-
         } else {
             ?>
 								<a class="btn btn-sm btn-primary tip"  title="<?php echo tr('Nessun Preventivo'); ?>" style="opacity:0.5;cursor:default;"  ><i class="fa fa-plus"></i> Preventivo</a>
 							<?php
-
         }
 
         if ($nc > 0) {
             ?>
 								<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/fatture/add_contratto.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i  class="fa fa-plus"></i> Contratto</a>
 							<?php
-
         } else {
             ?>
 								<a class="btn btn-sm btn-primary tip"  title="<?php echo tr('Nessun Contratto'); ?>" style="opacity:0.5;cursor:default;"  ><i class="fa fa-plus"></i> Contratto</a>
 							<?php
-
         }
 
         $numero_doc = ($records[0]['numero_esterno'] != '') ? $records[0]['numero_esterno'] : $records[0]['numero'];
@@ -322,12 +310,16 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
             echo '
                                 <a class="btn btn-sm btn-primary tip" title="Nessun ddt" style="opacity:0.5;cursor:default;"><i class="fa fa-plus"></i> Ddt</a>';
         }
+    }
+
+    if ($dbo->fetchNum('SELECT * FROM mg_articoli WHERE qta > 0')) {
+        echo '
+                                <a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/fatture/add_articolo.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup"><i class="fa fa-plus"></i> Articolo</a>';
     } ?>
 
-						<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/fatture/add_articolo.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup"><i class="fa fa-plus"></i> Articolo</a>
+
 						<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/fatture/add_riga.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> Riga generica</a>
 					<?php
-
 }
                     ?>
 				</div>
@@ -364,12 +356,10 @@ if ($dir == 'entrata') {
                 ?>
                     <a class="btn btn-info btn-sm pull-right" href="<?php echo $rootdir ?>/pdfgen.php?ptype=fatture_accompagnatorie&iddocumento=<?php echo $id_record ?>" target="_blank"><i class="fa fa-print"></i> Stampa fattura</a>
             <?php
-
             } else {
                 ?>
                     <a class="btn btn-info btn-sm pull-right" href="<?php echo $rootdir ?>/pdfgen.php?ptype=fatture&iddocumento=<?php echo $id_record ?>" target="_blank"><i class="fa fa-print"></i> Stampa fattura</a>
             <?php
-
             }
         }
     }

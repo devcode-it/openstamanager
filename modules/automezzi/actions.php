@@ -48,7 +48,7 @@ switch (post('op')) {
 
         // Controllo sull'effettivo inserimento di una data di fine successiva a quella di inizio
         if (!empty($post['data_fine'])) {
-            if (Translator::getEnglishFormatter()->toDateObject(post('data_fine')) >= Translator::getEnglishFormatter()->toDateObject($data_inizio)) {
+            if (new DateTime(post('data_fine')) >= new DateTime($data_inizio)) {
                 $data_fine = post('data_fine');
             }
         }
@@ -72,7 +72,7 @@ switch (post('op')) {
 
             // Controllo sull'effettivo inserimento di una data di fine successiva a quella di inizio
             if (!empty($post['data_fine'][$idautomezzotecnico])) {
-                if (Translator::getEnglishFormatter()->toDateObject(post('data_fine')[$idautomezzotecnico]) >= Translator::getEnglishFormatter()->toDateObject($data_inizio)) {
+                if (new DateTime(post('data_fine')[$idautomezzotecnico]) >= new DateTime($data_inizio)) {
                     $data_fine = post('data_fine')[$idautomezzotecnico];
                 }
             }

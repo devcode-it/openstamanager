@@ -52,7 +52,6 @@ switch (filter('op')) {
                 '_TYPE_' => 'categoria',
             ]);
         } else {
-            $_POST['backto'] = 'record-edit';
             $_SESSION['errors'][] = tr('Esistono ancora alcuni articoli sotto questa categoria!');
         }
 

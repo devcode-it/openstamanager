@@ -89,7 +89,7 @@ if (Auth::check()) {
                 id_record: \''.$id_record.'\',
                 aggiornamenti_id: \''.($dbo->isInstalled() ? Modules::getModule('Aggiornamenti')['id'] : '').'\',
                 cifre_decimali: '.get_var('Cifre decimali per importi').',
-                decimals: "'.Translator::getLocaleFormatter()->getNumberSeparators()['decimals'].'", thousands: "'.Translator::getLocaleFormatter()->getNumberSeparators()['thousands'].'",
+                decimals: "'.Translator::getFormatter()->getNumberSeparators()['decimals'].'", thousands: "'.Translator::getFormatter()->getNumberSeparators()['thousands'].'",
                 search: search,
                 translations: translations,
                 start_date: \''.Translator::dateToLocale($_SESSION['period_start']).'\',

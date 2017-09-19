@@ -53,6 +53,10 @@ if (!empty($rs_art)) {
         $(function () {
             $("#data_inizio'.$r['id'].'").on("dp.change", function (e) {
                 $("#data_fine'.$r['id'].'").data("DateTimePicker").minDate(e.date);
+
+                if($("#data_fine'.$r['id'].'").data("DateTimePicker").date() < e.date){
+                    $("#data_fine'.$r['id'].'").data("DateTimePicker").date(e.date);
+                }
             })
         });
     </script>';

@@ -50,6 +50,10 @@ echo '
     $(function () {
         $("#data_inizio").on("dp.change", function (e) {
             $("#data_fine").data("DateTimePicker").minDate(e.date);
+
+            if($("#data_fine").data("DateTimePicker").date() < e.date){
+                $("#data_fine").data("DateTimePicker").date(e.date);
+            }
         })
     });
 </script>';

@@ -3,8 +3,7 @@
 namespace Intl;
 
 use DateTime;
-use UnexpectedValueException;
-use Exception;
+use NumberFormatter;
 
 /**
  * Classe per gestire la formattazione di date e numeri in convenzioni differenti.
@@ -13,8 +12,14 @@ use Exception;
  */
 class Formatter
 {
-    /** @var array Separatori per la formattazione dei numeri */
-    protected $numberSeparators;
+    protected static $standards = [
+        'timestamp' => 'Y-m-d H:i:s',
+        'date' => 'Y-m-d',
+        'time' => 'H:i:s',
+    ];
+
+    /** @var NumberFormatter Oggetto dedicato alla formattazione dei numeri */
+    protected $numberFormatter;
 
     /** @var string Pattern per le date */
     protected $datePattern;
@@ -23,135 +28,64 @@ class Formatter
     /** @var string Pattern per i timestamp */
     protected $timestampPattern;
 
-    public function __construct($numberSeparators = [], $date = null, $time = null, $timestamp = null)
+    public function __construct($locale, $timestamp = null, $date = null, $time = null)
     {
-        $this->setNumberSeparators($numberSeparators);
+        $this->numberFormatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+
+        $this->setTimestampPattern($timestamp);
 
         $this->setDatePattern($date);
 
         $this->setTimePattern($time);
-
-        $this->setTimestampPattern($timestamp);
     }
 
     /**
-     * Imposta il formato dei numeri.
-     *
-     * @param string $values
-     */
-    protected function setNumberSeparators($values)
-    {
-        $decimals = empty($values['decimals']) ? '.' : $values['decimals'];
-        $thousands = !isset($values['thousands']) ? '' : $values['thousands'];
-
-        if ($decimals == $thousands) {
-            throw new Exception('Bad separators');
-        }
-
-        $this->numberSeparators = [
-            'decimals' => $decimals,
-            'thousands' => $thousands,
-        ];
-    }
-
-    /**
-     * Restituisce i separatori utilizzati per la formattazione.
+     * Restituisce gli elementi di separazione secondo la formattazione in utilizzo.
      *
      * @return array
      */
-    public function getNumberSeparators()
+    public function getStandardFormats()
     {
-        return $this->numberSeparators;
+        return static::$standards;
     }
 
+    // Gestione della conversione dei numeri
+
     /**
-     * Imposta il formato della data.
+     * Converte un numero da una formattazione all'altra.
      *
      * @param string $value
-     */
-    protected function setDatePattern($value)
-    {
-        $value = empty($value) ? 'Y-m-d' : $value;
-
-        if (is_array($value)) {
-            $pattern = implode($value['separator'], $value['order']);
-            $pattern = str_replace(['day', 'month', 'year'], ['d', 'm', 'Y'], $pattern);
-        } else {
-            $pattern = $value;
-        }
-
-        $this->datePattern = $pattern;
-    }
-
-    /**
-     * Restituisce il formato della data.
      *
      * @return string
      */
-    public function getDatePattern()
+    public function formatNumber($value, $decimals = null)
     {
-        return $this->datePattern;
-    }
+        $value = trim($value);
 
-    /**
-     * Imposta il formato dell'orario.
-     *
-     * @param string $value
-     */
-    protected function setTimePattern($value)
-    {
-        $value = empty($value) ? 'H:i:s' : $value;
-
-        if (is_array($value)) {
-            $pattern = implode($value['separator'], $value['order']);
-            $pattern = str_replace(['hours', 'minutes', 'seconds'], ['H', 'i', 's'], $pattern);
-        } else {
-            $pattern = $value;
+        if (!empty($decimals)) {
+            $original = $this->numberFormatter->getAttribute(NumberFormatter::FRACTION_DIGITS);
+            $this->numberFormatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $decimals);
         }
 
-        $this->timePattern = $pattern;
+        $result = $this->numberFormatter->format($value);
+
+        if (!empty($decimals)) {
+            $this->numberFormatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $original);
+        }
+
+        return $result;
     }
 
     /**
-     * Restituisce il formato dell'orario.
+     * Converte un numero da una formattazione all'altra.
+     *
+     * @param string $value
      *
      * @return string
      */
-    public function getTimePattern()
+    public function parseNumber($value)
     {
-        return $this->timePattern;
-    }
-
-    /**
-     * Imposta il formato del timestamp.
-     *
-     * @param string $value
-     */
-    protected function setTimestampPattern($value)
-    {
-        $value = empty($value) ? [
-            'order' => ['date', 'time'],
-            'separator' => ' ',
-         ] : $value;
-
-        if (is_array($value)) {
-            $pattern = implode($value['separator'], $value['order']);
-            $pattern = str_replace(['date', 'time'], [$this->getDatePattern(), $this->getTimePattern()], $pattern);
-        } else {
-            $pattern = $value;
-        }
-
-        $this->timestampPattern = $pattern;
-    }
-
-    /**
-     * Restituisce il formato del timestamp.
-     *
-     * @return string
-     */
-    public function getTimestampPattern()
-    {
-        return $this->timestampPattern;
+        return $this->numberFormatter->parse($value);
     }
 
     /**
@@ -161,15 +95,80 @@ class Formatter
      *
      * @return bool
      */
-    public function isNumber($value)
+    public function isStandardNumber($value)
     {
-        try {
-            $this->toNumberObject($value);
-        } catch (Exception $e) {
-            return false;
-        }
+        $result = $this->formatNumber($value);
 
-        return true;
+        return is_numeric($value) && !empty($result);
+    }
+
+    /**
+     * Controlla se l'elemento indicato è un numero.
+     *
+     * @param string $value
+     *
+     * @return bool
+     */
+    public function isFormattedNumber($value)
+    {
+        $result = $this->parseNumber($value);
+
+        return !empty($result);
+    }
+
+    /**
+     * Imposta la precisione di default per i numeri da formattare.
+     *
+     * @param int $decimals
+     */
+    public function setPrecision($decimals)
+    {
+        $this->numberFormatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $decimals);
+    }
+
+    /**
+     * Restituisce gli elementi di separazione secondo la formattazione in utilizzo.
+     *
+     * @return array
+     */
+    public function getNumberSeparators()
+    {
+        return [
+            'decimals' => $this->numberFormatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL),
+            'thousands' => $this->numberFormatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL),
+        ];
+    }
+
+    // Gestione della conversione dei timestamp
+
+    /**
+     * Converte un timestamp da una formattazione all'altra.
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function formatTimestamp($value)
+    {
+        $object = DateTime::createFromFormat(static::$standards['timestamp'], $value);
+        $result = is_object($object) ? $object->format($this->getTimestampPattern()) : false;
+
+        return $result;
+    }
+
+    /**
+     * Converte un timestamp da una formattazione all'altra.
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function parseTimestamp($value)
+    {
+        $object = DateTime::createFromFormat($this->getTimestampPattern(), $value);
+        $result = is_object($object) ? $object->format(static::$standards['timestamp']) : false;
+
+        return $result;
     }
 
     /**
@@ -179,15 +178,81 @@ class Formatter
      *
      * @return bool
      */
-    public function isTimestamp($value)
+    public function isStandardTimestamp($value)
     {
-        try {
-            $this->toTimestampObject($value);
-        } catch (Exception $e) {
-            return false;
-        }
+        $result = $this->formatTimestamp($value);
 
-        return true;
+        return !empty($result);
+    }
+
+    /**
+     * Controlla se l'elemento indicato è un timestamp.
+     *
+     * @param string $value
+     *
+     * @return bool
+     */
+    public function isFormattedTimestamp($value)
+    {
+        $result = $this->parseTimestamp($value);
+
+        return !empty($result);
+    }
+
+    /**
+     * Restituisce il formato del timestamp.
+     *
+     * @return string
+     */
+    public function getTimestampPattern($type = null)
+    {
+        return $this->timestampPattern;
+    }
+
+    /**
+     * Imposta il formato del timestamp.
+     *
+     * @return string
+     */
+    public function setTimestampPattern($pattern)
+    {
+        return $this->timestampPattern = $pattern;
+    }
+
+    // Gestione della conversione delle date
+
+    /**
+     * Converte una data da una formattazione all'altra.
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function formatDate($value)
+    {
+        $object = DateTime::createFromFormat(static::$standards['date'], $value);
+
+        // Fallback per la gestione dei timestamp
+        $object = !is_object($object) ? DateTime::createFromFormat(static::$standards['timestamp'], $value) : $object;
+
+        $result = is_object($object) ? $object->format($this->getDatePattern()) : false;
+
+        return $result;
+    }
+
+    /**
+     * Converte una data da una formattazione all'altra.
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function parseDate($value)
+    {
+        $object = DateTime::createFromFormat($this->getDatePattern(), $value);
+        $result = is_object($object) ? $object->format(static::$standards['date']) : false;
+
+        return $result;
     }
 
     /**
@@ -197,15 +262,81 @@ class Formatter
      *
      * @return bool
      */
-    public function isDate($value)
+    public function isStandardDate($value)
     {
-        try {
-            $this->toDateObject($value);
-        } catch (Exception $e) {
-            return false;
-        }
+        $result = $this->formatDate($value);
 
-        return true;
+        return !empty($result);
+    }
+
+    /**
+     * Controlla se l'elemento indicato è una data.
+     *
+     * @param string $value
+     *
+     * @return bool
+     */
+    public function isFormattedDate($value)
+    {
+        $result = $this->parseDate($value);
+
+        return !empty($result);
+    }
+
+    /**
+     * Restituisce il formato del timestamp.
+     *
+     * @return string
+     */
+    public function getDatePattern($type = null)
+    {
+        return $this->timestampPattern;
+    }
+
+    /**
+     * Imposta il formato del timestamp.
+     *
+     * @return string
+     */
+    public function setDatePattern($pattern)
+    {
+        return $this->timestampPattern = $pattern;
+    }
+
+    // Gestione della conversione degli orarii
+
+    /**
+     * Converte un orario da una formattazione all'altra.
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function formatTime($value)
+    {
+        $object = DateTime::createFromFormat(static::$standards['time'], $value);
+
+        // Fallback per la gestione dei timestamp
+        $object = !is_object($object) ? DateTime::createFromFormat(static::$standards['timestamp'], $value) : $object;
+
+        $result = is_object($object) ? $object->format($this->getTimePattern()) : false;
+
+        return $result;
+    }
+
+    /**
+     * Converte un orario da una formattazione all'altra.
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function parseTime($value)
+    {
+        $object = DateTime::createFromFormat($this->getTimePattern(), $value);
+        $result = is_object($object) ? $object->format(static::$standards['time']) : false;
+
+        return $result;
     }
 
     /**
@@ -215,260 +346,44 @@ class Formatter
      *
      * @return bool
      */
-    public function isTime($value)
+    public function isStandardTime($value)
     {
-        try {
-            $this->toTimeObject($value);
-        } catch (Exception $e) {
-            return false;
-        }
+        $result = $this->formatTime($value);
 
-        return true;
+        return !empty($result);
     }
 
     /**
-     * Converte l'elemento in una rappresentazione numerica.
+     * Controlla se l'elemento indicato è un orario.
      *
      * @param string $value
      *
-     * @return array
+     * @return bool
      */
-    public function toNumberObject($value)
+    public function isFormattedTime($value)
     {
-        $value = trim($value);
+        $result = $this->parseTime($value);
 
-        if (strlen($value) == 0) {
-            throw new UnexpectedValueException('Format not supported');
-        }
-
-        $sign = null;
-        if ($value[0] == '+' || $value[0] == '-') {
-            $sign = $value[0];
-            $value = trim(substr($value, 1));
-        } elseif (!is_numeric($value[0])) {
-            throw new UnexpectedValueException('Format not supported');
-        }
-
-        if (strlen($value) == 0) {
-            throw new UnexpectedValueException('Format not supported');
-        }
-
-        $pieces = explode($this->getNumberSeparators()['decimals'], $value);
-        if (count($pieces) > 2) {
-            throw new UnexpectedValueException('Format not supported');
-        }
-        $integer = $pieces[0];
-        $decimal = (isset($pieces[1])) ? $pieces[1] : null;
-
-        if (!empty($this->getNumberSeparators()['thousands'])) {
-            $error = true;
-            if (floor(strlen($integer) / 4) == substr_count($integer, $this->getNumberSeparators()['thousands'])) {
-                $values = str_split(strrev($integer), 4);
-
-                foreach ($values as $key => $value) {
-                    if (strlen($value) == 4 && ends_with($value, '.')) {
-                        $values[$key] = substr($value, 0, -1);
-                    }
-                }
-
-                $integer = strrev(implode($values));
-
-                $error = substr_count($integer, $this->getNumberSeparators()['thousands']);
-            }
-
-            if (!empty($error)) {
-                throw new UnexpectedValueException('Format not supported');
-            }
-        }
-
-        if (!ctype_digit($integer) || (strlen($integer) != strlen((int) $integer)) || (isset($decimal) && !ctype_digit($decimal))) {
-            throw new UnexpectedValueException('Format not supported');
-        }
-
-        return [$sign, $integer, $decimal];
+        return !empty($result);
     }
 
     /**
-     * Converte l'elemento dal formato personalizzato a quello predefinito di PHP.
-     *
-     * @param string $value
+     * Restituisce il formato del orario.
      *
      * @return string
      */
-    public function toTimestampObject($value)
+    public function getTimePattern($type = null)
     {
-        $value = trim($value);
-
-        $result = DateTime::createFromFormat($this->getTimestampPattern(), $value);
-
-        if (!is_object($result)) {
-            throw new UnexpectedValueException('Format not supported');
-        }
-
-        return $result;
+        return $this->orarioPattern;
     }
 
     /**
-     * Converte l'elemento dal formato personalizzato a quello predefinito di PHP.
-     *
-     * @param string $value
+     * Imposta il formato del orario.
      *
      * @return string
      */
-    public function toDateObject($value)
+    public function setTimePattern($pattern)
     {
-        $value = trim($value);
-
-        $result = DateTime::createFromFormat($this->getDatePattern(), $value);
-
-        $result = !is_object($result) ? $this->toTimestampObject($value) : $result;
-
-        if (!is_object($result)) {
-            throw new UnexpectedValueException('Format not supported');
-        }
-
-        return $result;
-    }
-
-    /**
-     * Converte l'elemento dal formato personalizzato a quello predefinito di PHP.
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    public function toTimeObject($value)
-    {
-        $value = trim($value);
-
-        $result = DateTime::createFromFormat($this->getTimePattern(), $value);
-
-        $result = !is_object($result) ? $this->toTimestampObject($value) : $result;
-
-        if (!is_object($result)) {
-            throw new UnexpectedValueException('Format not supported');
-        }
-
-        return $result;
-    }
-
-    /**
-     * Converte un numero da una formattazione all'altra.
-     *
-     * @param Formatter $formatter
-     * @param string    $value
-     *
-     * @return string
-     */
-    public function formatNumberTo($formatter, $value)
-    {
-        $pieces = $this->toNumberObject($value);
-
-        $result = (!empty($pieces[0])) ? $pieces[0] : '';
-
-        $result .= number_format($pieces[1], 0, '', $formatter->getNumberSeparators()['thousands']);
-
-        if (isset($pieces[2])) {
-            $result .= $formatter->getNumberSeparators()['decimals'].$pieces[2];
-        }
-
-        return $result;
-    }
-
-    /**
-     * Converte un timestamp da una formattazione all'altra.
-     *
-     * @param Formatter $formatter
-     * @param string    $value
-     *
-     * @return string
-     */
-    public function formatTimestampTo($formatter, $value)
-    {
-        $result = $this->toTimestampObject($value);
-
-        return $result->format($formatter->getTimestampPattern());
-    }
-
-    /**
-     * Converte una data da una formattazione all'altra.
-     *
-     * @param Formatter $formatter
-     * @param string    $value
-     *
-     * @return string
-     */
-    public function formatDateTo($formatter, $value)
-    {
-        $result = $this->toDateObject($value);
-
-        return $result->format($formatter->getDatePattern());
-    }
-
-    /**
-     * Converte un orario da una formattazione all'altra.
-     *
-     * @param Formatter $formatter
-     * @param string    $value
-     *
-     * @return string
-     */
-    public function formatTimeTo($formatter, $value)
-    {
-        $result = $this->toTimeObject($value);
-
-        return $result->format($formatter->getTimePattern());
-    }
-
-    /**
-     * Converte un numero da una formattazione all'altra.
-     *
-     * @param Formatter $formatter
-     * @param string    $value
-     *
-     * @return string
-     */
-    public function formatNumberFrom($formatter, $value)
-    {
-        return $formatter->formatNumberTo($this, $value);
-    }
-
-    /**
-     * Converte un timestamp da una formattazione all'altra.
-     *
-     * @param Formatter $formatter
-     * @param string    $value
-     *
-     * @return string
-     */
-    public function formatTimestampFrom($formatter, $value)
-    {
-        return $formatter->formatTimestampTo($this, $value);
-    }
-
-    /**
-     * Converte una data da una formattazione all'altra.
-     *
-     * @param Formatter $formatter
-     * @param string    $value
-     *
-     * @return string
-     */
-    public function formatDateFrom($formatter, $value)
-    {
-        return $formatter->formatDateTo($this, $value);
-    }
-
-    /**
-     * Converte un orario da una formattazione all'altra.
-     *
-     * @param Formatter $formatter
-     * @param string    $value
-     *
-     * @return string
-     */
-    public function formatTimeFrom($formatter, $value)
-    {
-        return $formatter->formatTimeTo($this, $value);
+        return $this->orarioPattern = $pattern;
     }
 }

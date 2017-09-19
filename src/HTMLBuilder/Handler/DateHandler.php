@@ -11,32 +11,24 @@ class DateHandler implements HandlerInterface
     {
         // Impostazione alla data corrente se il contenuto corrisponde a "now"
         if ($values['value'] == '-now-') {
-            $values['value'] = date(\Translator::getEnglishFormatter()->getTimestampPattern());
+            $values['value'] = date(\Translator::getFormatter()->getStandardFormats()['timestamp']);
         }
 
         if ($values['max-date'] == '-now-') {
-            $values['max-date'] = date(\Translator::getEnglishFormatter()->getTimestampPattern());
+            $values['max-date'] = date(\Translator::getFormatter()->getStandardFormats()['timestamp']);
         }
 
         if ($values['min-date'] == '-now-') {
-            $values['min-date'] = date(\Translator::getEnglishFormatter()->getTimestampPattern());
+            $values['min-date'] = date(\Translator::getFormatter()->getStandardFormats()['timestamp']);
         }
 
-        if (\Translator::getEnglishFormatter()->isTimestamp($values['value']) && $values['type'] == 'timestamp') {
+        if ($values['type'] == 'timestamp') {
             $values['value'] = \Translator::timestampToLocale($values['value']);
-        } elseif (\Translator::getEnglishFormatter()->isDate($values['value']) && $values['type'] == 'date') {
+        } elseif ($values['type'] == 'date') {
             $values['value'] = \Translator::dateToLocale($values['value']);
-        } elseif (\Translator::getEnglishFormatter()->isTime($values['value']) && $values['type'] == 'time') {
+        } elseif ($values['type'] == 'time') {
             $values['value'] = \Translator::timeToLocale($values['value']);
         }
-
-        $resetValues = [
-            \Translator::timestampToLocale('0000-00-00 00:00:00'),
-            \Translator::dateToLocale('0000-00-00'),
-            \Translator::timeToLocale('00:00:00'),
-        ];
-
-        $values['value'] = in_array($values['value'], $resetValues) ? '' : $values['value'];
 
         $result = $this->{$values['type']}($values, $extras);
 
@@ -55,8 +47,6 @@ class DateHandler implements HandlerInterface
         $values['class'][] = 'text-center';
         $values['class'][] = 'timestamp-picker';
         $values['class'][] = 'timestamp-mask';
-
-        $values['value'] = (\Translator::getLocaleFormatter()->isTimestamp($values['value'])) ? $values['value'] : '';
     }
 
     protected function date(&$values, &$extras)
@@ -64,15 +54,11 @@ class DateHandler implements HandlerInterface
         $values['class'][] = 'text-center';
         $values['class'][] = 'datepicker';
         $values['class'][] = 'date-mask';
-
-        $values['value'] = (\Translator::getLocaleFormatter()->isDate($values['value'])) ? $values['value'] : '';
     }
 
     protected function time(&$values, &$extras)
     {
         $values['class'][] = 'text-center';
         $values['class'][] = 'timepicker';
-
-        $values['value'] = (\Translator::getLocaleFormatter()->isTime($values['value'])) ? $values['value'] : '';
     }
 }

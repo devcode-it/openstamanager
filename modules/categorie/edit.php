@@ -77,6 +77,17 @@ include_once __DIR__.'/../../core.php';
 	});
 </script>
 
+<?php
+
+$res = $dbo->fetchNum('SELECT * FROM `mg_articoli` WHERE `id_categoria`='.prepare($id).' OR `id_sottocategoria`='.prepare($id).' OR `id_sottocategoria` IN (SELECT id FROM `mg_categorie` WHERE `parent`='.prepare($id).')');
+if ($res) {
+    echo '
 <a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-</a>
+    <i class="fa fa-trash"></i> '.tr('Elimina').'
+</a>';
+} else {
+    echo '
+    <div class="alert alert-danger">
+        <p>'.tr('Esistono ancora alcuni articoli sotto questa categoria!').'</p>
+    </div>';
+}

@@ -492,19 +492,23 @@ UPDATE `zz_plugins` SET `script` = 'referenti.php' WHERE `zz_plugins`.`name` = '
 UPDATE `zz_plugins` SET `script` = 'sedi.php' WHERE `zz_plugins`.`name` = 'Sedi';
 
 -- Aggiornamento dei vari campi per le Viste
-UPDATE `zz_views` SET `order_by` = 'data' WHERE `zz_views`.`id` = 125;
-UPDATE `zz_views` SET `order_by` = 'data' WHERE `zz_views`.`id` = 113;
-UPDATE `zz_views` SET `order_by` = 'data' WHERE `zz_views`.`id` = 103;
-UPDATE `zz_views` SET `order_by` = 'data' WHERE `zz_views`.`id` = 96;
-UPDATE `zz_views` SET `order_by` = 'scadenza' WHERE `zz_views`.`id` = 65;
-UPDATE `zz_views` SET `order_by` = 'data' WHERE `zz_views`.`id` = 55;
-UPDATE `zz_views` SET `order_by` = 'data' WHERE `zz_views`.`id` = 48;
-UPDATE `zz_views` SET `order_by` = 'data' WHERE `zz_views`.`id` = 40;
-UPDATE `zz_views` SET `order_by` = 'orario_fine' WHERE `zz_views`.`id` = 12;
-UPDATE `zz_views` SET `order_by` = 'orario_inizio' WHERE `zz_views`.`id` = 11;
-UPDATE `zz_views` SET `search` = '0' WHERE `zz_views`.`id` = 16;
-UPDATE `zz_views` SET `search_inside` = 'color_title_Rel.' WHERE `zz_views`.`id` = 6;
-UPDATE `zz_views` SET `order_by` = 'data_emissione' WHERE `zz_views`.`id` = 64;
+UPDATE `zz_views` SET `order_by` = 'data' WHERE
+(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita')) OR
+(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto')) OR
+(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota')) OR
+(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto')) OR
+(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti')) OR
+(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente')) OR
+(`name` = 'Data' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'));
+
+UPDATE `zz_views` SET `order_by` = 'scadenza' WHERE (`name` = 'Data scadenza' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'));
+
+UPDATE `zz_views` SET `order_by` = 'orario_fine' WHERE (`name` = 'Orario fine' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'));
+UPDATE `zz_views` SET `order_by` = 'orario_inizio' WHERE (`name` = 'Orario inizio' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'));
+
+UPDATE `zz_views` SET `search_inside` = 'color_title_Rel' WHERE (`name` = 'color_Rel.' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche'));
+
+UPDATE `zz_views` SET `search` = '0' WHERE `name` = '_print_';
 
 -- Aggiornamento icona di default per i moduli senza icona specifica
 UPDATE `zz_modules` SET `icon`='fa fa-angle-right' WHERE `icon`='fa fa-external-link';

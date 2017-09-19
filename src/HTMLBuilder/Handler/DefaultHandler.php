@@ -75,7 +75,7 @@ class DefaultHandler implements HandlerInterface
             }
         }
 
-        $values['value'] = (\Translator::getEnglishFormatter()->isNumber($values['value'])) ? \Translator::numberToLocale($values['value'], $decimals) : $values['value'];
+        $values['value'] = (\Translator::getFormatter()->isStandardNumber($values['value'])) ? \Translator::numberToLocale($values['value'], $decimals) : $values['value'];
 
         $values['type'] = 'text';
 

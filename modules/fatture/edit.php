@@ -245,83 +245,59 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
     if ($dir == 'entrata') {
         // Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti
         $qi = 'SELECT id FROM in_interventi WHERE idanagrafica='.prepare($records[0]['idanagrafica'])." AND NOT idstatointervento='DENY' AND id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND id NOT IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND id NOT IN (SELECT idintervento FROM co_righe_contratti WHERE idintervento IS NOT NULL)";
-        $rsi = $dbo->fetchArray($qi);
-        $ni = sizeof($rsi);
+        $interventi = $dbo->fetchNum($qi);
 
         // Se non trovo niente provo a vedere se ce ne sono per clienti terzi
-        if ($ni == 0) {
+        if (empty($interventi)) {
             // Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti (clienti terzi)
             $qi = 'SELECT id FROM in_interventi WHERE idclientefinale='.prepare($records[0]['idanagrafica'])." AND NOT idstatointervento='DENY' AND id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND id NOT IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND id NOT IN (SELECT idintervento FROM co_righe_contratti WHERE idintervento IS NOT NULL)";
-            $rsi = $dbo->fetchArray($qi);
-            $ni = sizeof($rsi);
+            $interventi = $dbo->fetchNum($qi);
         }
+
+        echo '
+                        <a class="btn btn-sm btn-primary'.(!empty($interventi) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_intervento.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi intervento" data-target="#bs-popup">
+                            <i class="fa fa-plus"></i> Intervento
+                        </a>';
 
         // Lettura preventivi accettati, in attesa di conferma o in lavorazione
         $qp = 'SELECT id FROM co_preventivi WHERE idanagrafica='.prepare($records[0]['idanagrafica'])." AND id NOT IN (SELECT idpreventivo FROM co_righe_documenti WHERE NOT idpreventivo=NULL) AND idstato IN( SELECT id FROM co_statipreventivi WHERE descrizione='Accettato' OR descrizione='In lavorazione' OR descrizione='In attesa di conferma')";
-        $rsp = $dbo->fetchArray($qp);
-        $np = sizeof($rsp);
+        $preventivi = $dbo->fetchNum($qp);
+        echo '
+                        <a class="btn btn-sm btn-primary'.(!empty($preventivi) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_preventivo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi preventivo" data-target="#bs-popup">
+                            <i class="fa fa-plus"></i> Preventivo
+                        </a>';
 
         // Lettura contratti accettati, in attesa di conferma o in lavorazione
         $qc = 'SELECT id FROM co_contratti WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND id NOT IN (SELECT idcontratto FROM co_righe_documenti WHERE NOT idcontratto=NULL) AND idstato IN( SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND NOT EXISTS (SELECT id FROM co_righe_documenti WHERE co_righe_documenti.idcontratto = co_contratti.id)';
-        $rsc = $dbo->fetchArray($qc);
-        $nc = sizeof($rsc);
+        $contratti = $dbo->fetchNum($qc);
+        echo '
+
+                        <a class="btn btn-sm btn-primary'.(!empty($contratti) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_contratto.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi contratto" data-target="#bs-popup">
+                            <i class="fa fa-plus"></i> Contratto
+                        </a>';
 
         // Lettura ddt
         $qd = 'SELECT id FROM dt_ddt WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione=\'Bozza\') AND idtipoddt=(SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir).') AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
-        $rsd = $dbo->fetchArray($qd);
-        $nd = sizeof($rsd);
-
-        if ($ni > 0) {
-            ?>
-								<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/fatture/add_intervento.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> Intervento</a>
-            <?php
-        } else {
-            ?>
-								<a class="btn btn-sm btn-primary tip"  title="<?php echo tr('Nessun Intervento'); ?>" style="opacity:0.5;cursor:default;"  ><i class="fa fa-plus"></i> Intervento</a>
-            <?php
-        }
-
-        if ($np > 0) {
-            ?>
-								<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/fatture/add_preventivo.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i  class="fa fa-plus"></i> Preventivo</a>
-							<?php
-        } else {
-            ?>
-								<a class="btn btn-sm btn-primary tip"  title="<?php echo tr('Nessun Preventivo'); ?>" style="opacity:0.5;cursor:default;"  ><i class="fa fa-plus"></i> Preventivo</a>
-							<?php
-        }
-
-        if ($nc > 0) {
-            ?>
-								<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/fatture/add_contratto.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i  class="fa fa-plus"></i> Contratto</a>
-							<?php
-        } else {
-            ?>
-								<a class="btn btn-sm btn-primary tip"  title="<?php echo tr('Nessun Contratto'); ?>" style="opacity:0.5;cursor:default;"  ><i class="fa fa-plus"></i> Contratto</a>
-							<?php
-        }
-
-        $numero_doc = ($records[0]['numero_esterno'] != '') ? $records[0]['numero_esterno'] : $records[0]['numero'];
-
-        if ($nd > 0) {
-            echo '
-                                <a class="btn btn-sm btn-primary" data-href="'.$rootdir.'/modules/fatture/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi ddt su fattura nr. '.$numero_doc.'" data-target="#bs-popup"><i class="fa fa-plus"></i> Ddt</a>';
-        } else {
-            echo '
-                                <a class="btn btn-sm btn-primary tip" title="Nessun ddt" style="opacity:0.5;cursor:default;"><i class="fa fa-plus"></i> Ddt</a>';
-        }
+        $ddt = $dbo->fetchNum($qd);
+        echo '
+                        <a class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi ddt" data-target="#bs-popup">
+                            <i class="fa fa-plus"></i> Ddt
+                        </a>';
     }
 
-    if ($dbo->fetchNum('SELECT * FROM mg_articoli WHERE qta > 0')) {
-        echo '
-                                <a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/fatture/add_articolo.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup"><i class="fa fa-plus"></i> Articolo</a>';
-    } ?>
+    // Lettura articoli
+    $articoli = $dbo->fetchNum('SELECT * FROM mg_articoli WHERE qta > 0');
+    echo '
+                        <a class="btn btn-sm btn-primary'.(!empty($articoli) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_articolo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup">
+                            <i class="fa fa-plus"></i> Articolo
+                        </a>';
 
-
-						<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/fatture/add_riga.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> Riga generica</a>
-					<?php
+    echo '
+                        <a class="btn btn-sm btn-primary" data-href="'.$rootdir.'/modules/fatture/add_riga.php?id_module='.$id_module.'&id_record=='.$id_record.'" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup">
+                            <i class="fa fa-plus"></i> Riga generica
+                        </a>';
 }
-                    ?>
+?>
 				</div>
 
 				<div class="pull-right">

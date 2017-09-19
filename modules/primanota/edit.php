@@ -211,8 +211,8 @@ include_once __DIR__.'/../../core.php';
 					totale_avere += valore;
 				});
 
-				$('#totale_dare').text(totale_dare.toFixedLocale());
-				$('#totale_avere').text(totale_avere.toFixedLocale());
+				$('#totale_dare').text(totale_dare.toLocale());
+				$('#totale_avere').text(totale_avere.toLocale());
 
 				bilancio = totale_dare-totale_avere;
 
@@ -221,7 +221,7 @@ include_once __DIR__.'/../../core.php';
 					$("button[type=submit]").removeClass('hide');
 				}
 				else{
-					$("#testo_aggiuntivo").addClass('text-danger').html("sbilancio di " + bilancio.toFixedLocale() + " &euro;" );
+					$("#testo_aggiuntivo").addClass('text-danger').html("sbilancio di " + bilancio.toLocale() + " &euro;" );
 
 					$("button[type=submit]").addClass('hide');
 				}

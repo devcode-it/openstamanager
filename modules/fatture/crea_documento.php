@@ -250,10 +250,10 @@ echo '
         $("#serial_"+r).data('maximum', qta);
         start_superselect();
 
-        subtotale = (subtot * qta + iva * qta).toFixedLocale(2);
+        subtotale = (subtot * qta + iva * qta).toLocale();
 
         $("#subtotale_"+r).html(subtotale+" &euro;");
-        $("#subtotaledettagli_"+r).html((subtot * qta).toFixedLocale(2) + " + " + (iva * qta).toFixedLocale(2));
+        $("#subtotaledettagli_"+r).html((subtot * qta).toLocale() + " + " + (iva * qta).toLocale());
 
         ricalcola_totale();
     }
@@ -283,7 +283,7 @@ echo '
             r++;
         });
 
-        $('#totale').html( (totale.toFixedLocale()) + " &euro;" );
+        $('#totale').html( (totale.toLocale()) + " &euro;" );
 
         if( totale==0 )
             $('#submit_btn').hide();

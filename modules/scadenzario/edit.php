@@ -175,7 +175,7 @@ echo '
 			$('#totale').removeClass('hide');
 		}
 
-		$('#diff').html(diff.toFixedLocale());
-		$('#totale_utente').html(totale_utente.toFixedLocale());
+		$('#diff').html(diff.toLocale());
+		$('#totale_utente').html(totale_utente.toLocale());
 	}
 </script>

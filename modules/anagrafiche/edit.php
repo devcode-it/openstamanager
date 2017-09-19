@@ -2,11 +2,26 @@
 
 include_once __DIR__.'/../../core.php';
 
+$fornitore = in_array('Fornitore', explode(',', $records[0]['tipianagrafica']));
+$cliente = in_array('Cliente', explode(',', $records[0]['tipianagrafica']));
+
 $google = Settings::get('Google Maps API key');
 
 if (!empty($google)) {
     echo '
 <script src="http://maps.googleapis.com/maps/api/js?libraries=places&key='.$google.'"></script>';
+}
+
+if (!$cliente) {
+    $plugins = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Impianti del cliente' OR name='Ddt del cliente'");
+
+    foreach ($plugins as $plugin) {
+        echo '
+<script>
+    $("#link-tab_'.$plugin['id'].'").addClass("disabled");
+</script>';
+    }
+
 }
 
 ?><form action="" method="post" role="form">
@@ -142,8 +157,7 @@ if (!empty($google)) {
 	</div>
 
 <?php
-$fornitore = in_array('Fornitore', explode(',', $records[0]['tipianagrafica']));
-$cliente = in_array('Cliente', explode(',', $records[0]['tipianagrafica']));
+
 if ($cliente || $fornitore) {
     ?>
 	<!-- INTERVENTI -->

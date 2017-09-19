@@ -75,6 +75,8 @@ $files = [
     'lib/widgets.class.php',
     'modules/anagrafiche/plugins/sedi.php',
     'modules/anagrafiche/plugins/referenti.php',
+    'modules/ddt/plugins/ddt.anagrafiche.php',
+    'modules/my_impianti/plugins/my_impianti.anagrafiche.php',
     'templates/pdfgen.php',
     'templates/interventi/intervento_body.html',
     'templates/interventi/intervento.html',

@@ -91,7 +91,7 @@ if (!empty($rs)) {
 
         // Aggiunta riferimento a ordine
         if (!empty($r['idordine'])) {
-            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM or_ordini or_ordini.id=".prepare($r['idordine']));
+            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM or_ordini.id=".prepare($r['idordine']));
 
             $ref_modulo = ($dir == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
             $ref_id = $r['idordine'];

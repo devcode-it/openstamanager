@@ -231,11 +231,6 @@ echo '
 
         subtot = subtot - sconto;
 
-        $("#serial_"+r).selectClear();
-        $("#serial_"+r).select2("destroy");
-        $("#serial_"+r).data('maximum', qta);
-        start_superselect();
-
         qta = $("#qta_"+r).val().toEnglish();
 
         // Se inserisco una quantità da evadere maggiore di quella rimanente, la imposto al massimo possibile
@@ -249,6 +244,11 @@ echo '
         if(isNaN(qta) || !$('#checked_'+r).is(':checked')){
             qta = 0;
         }
+
+        $("#serial_"+r).selectClear();
+        $("#serial_"+r).select2("destroy");
+        $("#serial_"+r).data('maximum', qta);
+        start_superselect();
 
         subtotale = (subtot * qta + iva * qta).toFixedLocale(2);
 

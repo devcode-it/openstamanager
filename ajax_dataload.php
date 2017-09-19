@@ -143,14 +143,14 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
 
             // Formattazione automatica
             if (!empty($total['format'][$pos]) && !empty($value)) {
-                if (Translator::getFormatter()->isStandardNumber($value)) {
-                    $value = Translator::numberToLocale($value);
-                } elseif (Translator::getFormatter()->isStandardTimestamp($value)) {
-                    $value = Translator::timestampToLocale($value);
-                } elseif (Translator::getFormatter()->isStandardDate($value)) {
+                if (Translator::getFormatter()->isStandardDate($value)) {
                     $value = Translator::dateToLocale($value);
                 } elseif (Translator::getFormatter()->isStandardTime($value)) {
                     $value = Translator::timeToLocale($value);
+                } elseif (Translator::getFormatter()->isStandardTimestamp($value)) {
+                    $value = Translator::timestampToLocale($value);
+                } elseif (Translator::getFormatter()->isStandardNumber($value)) {
+                    $value = Translator::numberToLocale($value);
                 }
             }
 

@@ -73,7 +73,7 @@ class Formatter
             $this->numberFormatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $original);
         }
 
-        return $result;
+        return is_numeric($value) ? $result : false;
     }
 
     /**
@@ -85,7 +85,7 @@ class Formatter
      */
     public function parseNumber($value)
     {
-        return $this->numberFormatter->parse($value);
+        return ctype_digit(str_replace(array_values($this->getNumberSeparators()), '', $value)) ? $this->numberFormatter->parse($value) : false;
     }
 
     /**
@@ -99,7 +99,7 @@ class Formatter
     {
         $result = $this->formatNumber($value);
 
-        return is_numeric($value) && !empty($result);
+        return !empty($result);
     }
 
     /**

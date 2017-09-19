@@ -456,7 +456,7 @@ class Modules
      *
      * @return string
      */
-    public static function link($modulo, $id_record, $testo = null, $alternativo = true, $extra = null, $blank = true)
+    public static function link($modulo, $id_record = null, $testo = null, $alternativo = true, $extra = null, $blank = true)
     {
         $testo = isset($testo) ? nl2br($testo) : tr('Visualizza scheda');
         $alternativo = is_bool($alternativo) && $alternativo ? $testo : $alternativo;
@@ -471,7 +471,9 @@ class Modules
         $extra .= !empty($blank) ? ' target="_blank"' : '';
 
         if (!empty($module) && in_array($module['permessi'], ['r', 'rw'])) {
-            return '<a href="'.ROOTDIR.'/editor.php?id_module='.$module['id'].'&id_record='.$id_record.'" '.$extra.'>'.$testo.'</a>';
+            $link = !empty($id_record) ? 'editor.php?id_module='.$module['id'].'&id_record='.$id_record : 'controller.php?id_module='.$module['id'];
+
+            return '<a href="'.ROOTDIR.'/'.$link.'" '.$extra.'>'.$testo.'</a>';
         } else {
             return $alternativo;
         }

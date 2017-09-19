@@ -24,7 +24,7 @@ $HTMLWrapper = null;
 $HTMLHandlers = [];
 $HTMLManagers = [];
 
-// Lingua del progetto
+// Lingua del progetto (per la traduzione e la conversione numerica)
 $lang = 'it';
-// Personalizzazione della formattazione di date e numeri
+// Personalizzazione della formattazione di timestamp, date e orari
 $formatter = [];

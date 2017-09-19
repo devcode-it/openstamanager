@@ -276,4 +276,3 @@ if (!API::isAPIRequest()) {
     $post = Filter::getPOST();
     $get = Filter::getGET();
 }
-

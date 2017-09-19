@@ -293,7 +293,7 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
                         </a>';
 
     echo '
-                        <a class="btn btn-sm btn-primary" data-href="'.$rootdir.'/modules/fatture/add_riga.php?id_module='.$id_module.'&id_record=='.$id_record.'" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup">
+                        <a class="btn btn-sm btn-primary" data-href="'.$rootdir.'/modules/fatture/add_riga.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Riga generica
                         </a>';
 }

@@ -114,14 +114,14 @@ class Filter
             $output = trim(self::getPurifier()->purify($input));
 
             if (!empty($output)) {
-                if (Translator::getFormatter()->isFormattedNumber($output)) {
-                    $output = Translator::numberToEnglish($output);
-                } elseif (Translator::getFormatter()->isFormattedTimestamp($output)) {
-                    $output = Translator::timestampToEnglish($output);
-                } elseif (Translator::getFormatter()->isFormattedDate($output)) {
+                if (Translator::getFormatter()->isFormattedDate($output)) {
                     $output = Translator::dateToEnglish($output);
                 } elseif (Translator::getFormatter()->isFormattedTime($output)) {
                     $output = Translator::timeToEnglish($output);
+                } elseif (Translator::getFormatter()->isFormattedTimestamp($output)) {
+                    $output = Translator::timestampToEnglish($output);
+                } elseif (Translator::getFormatter()->isFormattedNumber($output)) {
+                    $output = Translator::numberToEnglish($output);
                 }
             }
         }

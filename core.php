@@ -61,7 +61,7 @@ if (!API::isAPIRequest()) {
     // Impostazioni di debug
     if (!empty($debug)) {
         // Ignoramento degli avvertimenti e delle informazioni relative alla deprecazione di componenti
-        error_reporting(E_ALL & ~E_NOTICE & ~E_USER_DEPRECATED);
+        error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE & ~E_USER_DEPRECATED);
 
         // File di log ordinato in base alla data
         $handlers[] = new RotatingFileHandler(__DIR__.'/logs/error.log', 0, Monolog\Logger::ERROR);

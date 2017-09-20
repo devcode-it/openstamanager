@@ -130,9 +130,9 @@ class Modules
     {
         $array = self::getAdditionals($module);
         if (!empty($type) && isset($array[$type])) {
-            $result = $array[$type];
+            $result = (array) $array[$type];
         } else {
-            $result = array_merge($array['WHR'], $array['HVN']);
+            $result = array_merge((array) $array['WHR'], (array) $array['HVN']);
         }
 
         $result = implode(' AND ', $result);

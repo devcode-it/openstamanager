@@ -120,7 +120,11 @@ class Translator extends Util\Singleton
                 $this->locale,
                 empty($formatter['timestamp']) ? 'd/m/Y H:i' : $formatter['timestamp'],
                 empty($formatter['date']) ? 'd/m/Y' : $formatter['date'],
-                empty($formatter['time']) ? 'H:i' : $formatter['time']
+                empty($formatter['time']) ? 'H:i' : $formatter['time'],
+                empty($formatter['number']) ? [
+                    'decimals' => ',',
+                    'thousands' => '.',
+                ] : $formatter['number']
             );
 
             self::$formatter->setPrecision(Settings::get('Cifre decimali per importi'));

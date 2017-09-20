@@ -27,4 +27,12 @@ $HTMLManagers = [];
 // Lingua del progetto (per la traduzione e la conversione numerica)
 $lang = 'it';
 // Personalizzazione della formattazione di timestamp, date e orari
-$formatter = [];
+$formatter = [
+    'timestamp' => 'd/m/Y H:i',
+    'date' => 'd/m/Y',
+    'time' => 'H:i',
+    'number' => [
+        'decimals' => ',',
+        'thousands' => '.',
+    ],
+];

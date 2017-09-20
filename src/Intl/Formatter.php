@@ -16,10 +16,15 @@ class Formatter
         'timestamp' => 'Y-m-d H:i:s',
         'date' => 'Y-m-d',
         'time' => 'H:i:s',
+        'number' => [
+            'decimals' => '.',
+            'thousands' => '',
+        ],
     ];
 
-    /** @var NumberFormatter Oggetto dedicato alla formattazione dei numeri */
+    /** @var NumberFormatter|array Oggetto dedicato alla formattazione dei numeri */
     protected $numberFormatter;
+    protected $precision;
 
     /** @var string Pattern per i timestamp */
     protected $timestampPattern;
@@ -28,9 +33,13 @@ class Formatter
     /** @var string Pattern per gli orari */
     protected $timePattern;
 
-    public function __construct($locale, $timestamp = null, $date = null, $time = null)
+    public function __construct($locale, $timestamp = null, $date = null, $time = null, $number = [])
     {
-        $this->numberFormatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+        if (class_exists('NumberFormatter')) {
+            $this->numberFormatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+        } else {
+            $this->numberFormatter = $number;
+        }
 
         $this->setTimestampPattern($timestamp);
 
@@ -62,15 +71,23 @@ class Formatter
     {
         $value = trim($value);
 
-        if (!empty($decimals)) {
-            $original = $this->numberFormatter->getAttribute(NumberFormatter::FRACTION_DIGITS);
-            $this->numberFormatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $decimals);
-        }
+        if (is_object($this->numberFormatter)) {
+            if (!empty($decimals)) {
+                $original = $this->numberFormatter->getAttribute(NumberFormatter::FRACTION_DIGITS);
+                $this->numberFormatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $decimals);
+            }
 
-        $result = $this->numberFormatter->format($value);
+            $result = $this->numberFormatter->format($value);
 
-        if (!empty($decimals)) {
-            $this->numberFormatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $original);
+            if (!empty($decimals)) {
+                $this->numberFormatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $original);
+            }
+        } else {
+            $decimals = !empty($decimals) ? $decimals : $this->precision;
+
+            $number = number_format($value, $decimals, $this->getStandardFormats()['number']['decimals'], $this->getStandardFormats()['number']['thousands']);
+
+            $result = $this->customNumber($number, $this->getStandardFormats()['number'], $this->getNumberSeparators());
         }
 
         return is_numeric($value) ? $result : false;
@@ -85,7 +102,17 @@ class Formatter
      */
     public function parseNumber($value)
     {
-        return ctype_digit(str_replace(array_values($this->getNumberSeparators()), '', $value)) ? $this->numberFormatter->parse($value) : false;
+        if (!ctype_digit(str_replace(array_values($this->getNumberSeparators()), '', $value))) {
+            return false;
+        }
+
+        if (is_object($this->numberFormatter)) {
+            $result = $this->numberFormatter->parse($value);
+        } else {
+            $result = $this->customNumber($value, $this->getNumberSeparators(), $this->getStandardFormats()['number']);
+        }
+
+        return $result;
     }
 
     /**
@@ -123,7 +150,11 @@ class Formatter
      */
     public function setPrecision($decimals)
     {
-        $this->numberFormatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $decimals);
+        if (is_object($this->numberFormatter)) {
+            $this->numberFormatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $decimals);
+        } else {
+            $this->precision = $decimals;
+        }
     }
 
     /**
@@ -134,9 +165,77 @@ class Formatter
     public function getNumberSeparators()
     {
         return [
-            'decimals' => $this->numberFormatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL),
-            'thousands' => $this->numberFormatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL),
+            'decimals' => is_object($this->numberFormatter) ? $this->numberFormatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL) : $this->numberFormatter['decimals'],
+            'thousands' => is_object($this->numberFormatter) ? $this->numberFormatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL) : $this->numberFormatter['thousands'],
         ];
+    }
+
+    /**
+     * Converte l'elemento in una rappresentazione numerica.
+     *
+     * @param string $value
+     *
+     * @return array
+     */
+    public function customNumber($value, $current, $format)
+    {
+        $value = trim($value);
+
+        if (strlen($value) == 0) {
+            return false;
+        }
+
+        $sign = null;
+        if ($value[0] == '+' || $value[0] == '-') {
+            $sign = $value[0];
+            $value = trim(substr($value, 1));
+        } elseif (!is_numeric($value[0])) {
+            return false;
+        }
+
+        if (strlen($value) == 0) {
+            return false;
+        }
+
+        $pieces = explode($current['decimals'], $value);
+        if (count($pieces) > 2) {
+            return false;
+        }
+        $integer = $pieces[0];
+        $decimal = (isset($pieces[1])) ? $pieces[1] : null;
+
+        if (!empty($current['thousands'])) {
+            $error = true;
+            if (floor(strlen($integer) / 4) == substr_count($integer, $current['thousands'])) {
+                $values = str_split(strrev($integer), 4);
+
+                foreach ($values as $key => $value) {
+                    if (strlen($value) == 4 && ends_with($value, $current['thousands'])) {
+                        $values[$key] = substr($value, 0, -1);
+                    }
+                }
+
+                $integer = strrev(implode($values));
+
+                $error = substr_count($integer, $current['thousands']);
+            }
+
+            if (!empty($error)) {
+                return false;
+            }
+        }
+
+        if (!ctype_digit($integer) || (strlen($integer) != strlen((int) $integer)) || (isset($decimal) && !ctype_digit($decimal))) {
+            return false;
+        }
+
+        $result = $sign.number_format($integer, 0, '', $format['thousands']);
+
+        if (isset($decimal)) {
+            $result .= $format['decimals'].$decimal;
+        }
+
+        return $result;
     }
 
     // Gestione della conversione dei timestamp

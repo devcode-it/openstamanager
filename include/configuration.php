@@ -294,7 +294,8 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     $extensions = [
         'zip' => tr("Necessario per l'utilizzo delle funzioni di aggiornamento automatico e backup, oltre che per eventuali moduli aggiuntivi"),
         'pdo_mysql' => tr('Necessario per la connessione al database'),
-        'openssl' => tr('Utile per la generazione di chiavi complesse (non obbligatorio)'),
+        'openssl' => tr('Utile per la generazione di chiavi complesse (facoltativo)'),
+        'intl' => tr('Utile per la gestione automatizzata della conversione numerica (facoltativo)'),
     ];
     foreach ($extensions as $key => $value) {
         $check = extension_loaded($key);

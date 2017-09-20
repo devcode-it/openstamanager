@@ -161,135 +161,139 @@ if (sizeof($contratti) > 0) {
 }
 $body .= "<br/>\n";
 
-// Conteggio articoli utilizzati
-$query = "SELECT *, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=mg_articoli_interventi.idintervento) AS data_intervento, (SELECT percentuale FROM co_iva WHERE id=mg_articoli_interventi.idiva_vendita) AS prciva_vendita, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice_art, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM in_interventi WHERE id=mg_articoli_interventi.idintervento) ) ) AS prc_guadagno, CONCAT_WS(serial, 'SN: ', ', ') AS codice, SUM(qta) AS sumqta FROM `mg_articoli_interventi` JOIN mg_prodotti ON mg_articoli_interventi.idarticolo = mg_prodotti.id_articolo GROUP BY idarticolo, idintervento, lotto HAVING idintervento IN(".implode(',', $idinterventi).") AND NOT idarticolo='0' ORDER BY idarticolo ASC";
-$rs2 = $dbo->fetchArray($query);
+if (!empty($idinterventi)) {
+    // Conteggio articoli utilizzati
+    $query = "SELECT *, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=mg_articoli_interventi.idintervento) AS data_intervento, (SELECT percentuale FROM co_iva WHERE id=mg_articoli_interventi.idiva_vendita) AS prciva_vendita, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice_art, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM in_interventi WHERE id=mg_articoli_interventi.idintervento) ) ) AS prc_guadagno, CONCAT_WS(serial, 'SN: ', ', ') AS codice, SUM(qta) AS sumqta FROM `mg_articoli_interventi` JOIN mg_prodotti ON mg_articoli_interventi.idarticolo = mg_prodotti.id_articolo GROUP BY idarticolo, idintervento, lotto HAVING idintervento IN(".implode(',', $idinterventi).") AND NOT idarticolo='0' ORDER BY idarticolo ASC";
+    $rs2 = $dbo->fetchArray($query);
 
-if (sizeof($rs2) > 0) {
-    $body .= "<table style=\"width:100%;\" class=\"table_values\" cellspacing=\"2\" cellpadding=\"5\" style=\"border-color:#aaa;\">\n";
-    $body .= "<tr><th align='center' colspan='4'><b>Materiale utilizzato per gli interventi</b></th></tr>\n";
+    if (sizeof($rs2) > 0) {
+        $body .= "<table style=\"width:100%;\" class=\"table_values\" cellspacing=\"2\" cellpadding=\"5\" style=\"border-color:#aaa;\">\n";
+        $body .= "<tr><th align='center' colspan='4'><b>Materiale utilizzato per gli interventi</b></th></tr>\n";
 
-    $body .= "<tr><th style=\"width:130mm;\">\n";
-    $body .= "<b>Articolo</b>\n";
-    $body .= "</th>\n";
+        $body .= "<tr><th style=\"width:130mm;\">\n";
+        $body .= "<b>Articolo</b>\n";
+        $body .= "</th>\n";
 
-    $body .= "<th style=\"width:10mm;\" align=\"center\">\n";
-    $body .= "<b>Q.tà</b>\n";
-    $body .= "</th>\n";
+        $body .= "<th style=\"width:10mm;\" align=\"center\">\n";
+        $body .= "<b>Q.tà</b>\n";
+        $body .= "</th>\n";
 
-    $body .= "<th style=\"width:20mm;\" align=\"center\">\n";
-    $body .= "<b>Prezzo unitario</b>\n";
-    $body .= "</th>\n";
+        $body .= "<th style=\"width:20mm;\" align=\"center\">\n";
+        $body .= "<b>Prezzo unitario</b>\n";
+        $body .= "</th>\n";
 
-    $body .= "<th style=\"width:20mm;\" align=\"center\">\n";
-    $body .= "<b>Subtot</b>\n";
-    $body .= "</th></tr>\n";
+        $body .= "<th style=\"width:20mm;\" align=\"center\">\n";
+        $body .= "<b>Subtot</b>\n";
+        $body .= "</th></tr>\n";
 
-    $totale_articoli = 0.00;
+        $totale_articoli = 0.00;
 
-    for ($i = 0; $i < sizeof($rs2); ++$i) {
-        // Articolo
-        $body .= "<tr><td class='first_cell'>\n";
-        $body .= '<span>'.nl2br($rs2[$i]['descrizione'])."</span>\n";
-        if ($rs2[$i]['codice'] != '' && $rs2[$i]['codice'] != 'Lotto: , SN: , Altro: ') {
-            $body .= '<br/><small>'.$rs2[$i]['codice']."</small>\n";
+        for ($i = 0; $i < sizeof($rs2); ++$i) {
+            // Articolo
+            $body .= "<tr><td class='first_cell'>\n";
+            $body .= '<span>'.nl2br($rs2[$i]['descrizione'])."</span>\n";
+            if ($rs2[$i]['codice'] != '' && $rs2[$i]['codice'] != 'Lotto: , SN: , Altro: ') {
+                $body .= '<br/><small>'.$rs2[$i]['codice']."</small>\n";
+            }
+
+            $body .= '<br/><span><small style="color:#777;">Intervento del '.Translator::dateToLocale($rs2[$i]['data_intervento'])."</small></span>\n";
+            $body .= "</td>\n";
+
+            // Quantità
+            $qta = $rs2[$i]['sumqta'];
+            $body .= "<td class='table_cell' align='center'>\n";
+            $body .= '<span>'.$rs2[$i]['sumqta']."</span>\n";
+            $body .= "</td>\n";
+
+            // Prezzo unitario
+            $body .= "<td class='table_cell' align='center'>\n";
+            $netto = $rs2[$i]['prezzo_vendita'];
+            $netto = $netto + $netto / 100 * $rs2[$i]['prc_guadagno'];
+            $iva = $netto / 100 * $rs2[$i]['prciva_vendita'];
+            $body .= '<span>'.Translator::numberToLocale($netto, 2)." &euro;</span>\n";
+            $body .= "</td>\n";
+
+            // Prezzo di vendita
+            $body .= "<td class='table_cell' align='center'>\n";
+            $body .= "<span><span class='prezzo_articolo'>".Translator::numberToLocale($netto * $qta, 2)."</span> &euro;</span>\n";
+            $body .= "</td></tr>\n";
+            $totale_articoli += $netto * $qta;
         }
 
-        $body .= '<br/><span><small style="color:#777;">Intervento del '.Translator::dateToLocale($rs2[$i]['data_intervento'])."</small></span>\n";
+        // Totale spesa articoli
+        $body .= "<tr><td colspan=\"3\" align=\"right\">\n";
+        $body .= "<b>TOTALE MATERIALE UTILIZZATO:</b>\n";
         $body .= "</td>\n";
 
-        // Quantità
-        $qta = $rs2[$i]['sumqta'];
-        $body .= "<td class='table_cell' align='center'>\n";
-        $body .= '<span>'.$rs2[$i]['sumqta']."</span>\n";
-        $body .= "</td>\n";
-
-        // Prezzo unitario
-        $body .= "<td class='table_cell' align='center'>\n";
-        $netto = $rs2[$i]['prezzo_vendita'];
-        $netto = $netto + $netto / 100 * $rs2[$i]['prc_guadagno'];
-        $iva = $netto / 100 * $rs2[$i]['prciva_vendita'];
-        $body .= '<span>'.Translator::numberToLocale($netto, 2)." &euro;</span>\n";
-        $body .= "</td>\n";
-
-        // Prezzo di vendita
-        $body .= "<td class='table_cell' align='center'>\n";
-        $body .= "<span><span class='prezzo_articolo'>".Translator::numberToLocale($netto * $qta, 2)."</span> &euro;</span>\n";
+        $body .= "<td align=\"center\" bgcolor=\"#dddddd\">\n";
+        $body .= '<b>'.Translator::numberToLocale($totale_articoli, 2)." &euro;</b>\n";
         $body .= "</td></tr>\n";
-        $totale_articoli += $netto * $qta;
+        $body .= "</table><br/>\n";
     }
-
-    // Totale spesa articoli
-    $body .= "<tr><td colspan=\"3\" align=\"right\">\n";
-    $body .= "<b>TOTALE MATERIALE UTILIZZATO:</b>\n";
-    $body .= "</td>\n";
-
-    $body .= "<td align=\"center\" bgcolor=\"#dddddd\">\n";
-    $body .= '<b>'.Translator::numberToLocale($totale_articoli, 2)." &euro;</b>\n";
-    $body .= "</td></tr>\n";
-    $body .= "</table><br/>\n";
 }
 
-// Conteggio spese aggiuntive
-$query = 'SELECT *, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_righe_interventi.idintervento) AS data_intervento FROM in_righe_interventi WHERE idintervento IN('.implode(',', $idinterventi).') ORDER BY id ASC';
-$rs2 = $dbo->fetchArray($query);
+if (!empty($idinterventi)) {
+    // Conteggio spese aggiuntive
+    $query = 'SELECT *, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_righe_interventi.idintervento) AS data_intervento FROM in_righe_interventi WHERE idintervento IN('.implode(',', $idinterventi).') ORDER BY id ASC';
+    $rs2 = $dbo->fetchArray($query);
 
-if (sizeof($rs2) > 0) {
-    $body .= "<table style=\"width:100%;\" class=\"table_values\" cellspacing=\"2\" cellpadding=\"5\" style=\"border-color:#aaa;\">\n";
-    $body .= "<tr><th align='center' colspan='4'><b>Spese aggiuntive</b></th></tr>\n";
+    if (sizeof($rs2) > 0) {
+        $body .= "<table style=\"width:100%;\" class=\"table_values\" cellspacing=\"2\" cellpadding=\"5\" style=\"border-color:#aaa;\">\n";
+        $body .= "<tr><th align='center' colspan='4'><b>Spese aggiuntive</b></th></tr>\n";
 
-    $body .= "<tr><th style=\"width:130mm;\">\n";
-    $body .= "<b>Descrizione</b>\n";
-    $body .= "</th>\n";
+        $body .= "<tr><th style=\"width:130mm;\">\n";
+        $body .= "<b>Descrizione</b>\n";
+        $body .= "</th>\n";
 
-    $body .= "<th style=\"width:10mm;\" align=\"center\">\n";
-    $body .= "<b>Q.tà</b>\n";
-    $body .= "</th>\n";
+        $body .= "<th style=\"width:10mm;\" align=\"center\">\n";
+        $body .= "<b>Q.tà</b>\n";
+        $body .= "</th>\n";
 
-    $body .= "<th style=\"width:20mm;\" align=\"center\">\n";
-    $body .= "<b>Prezzo unitario</b>\n";
-    $body .= "</th>\n";
+        $body .= "<th style=\"width:20mm;\" align=\"center\">\n";
+        $body .= "<b>Prezzo unitario</b>\n";
+        $body .= "</th>\n";
 
-    $body .= "<th style=\"width:20mm;\" align=\"center\">\n";
-    $body .= "<b>Subtot</b>\n";
-    $body .= "</th></tr>\n";
+        $body .= "<th style=\"width:20mm;\" align=\"center\">\n";
+        $body .= "<b>Subtot</b>\n";
+        $body .= "</th></tr>\n";
 
-    $totale_spese = 0.00;
+        $totale_spese = 0.00;
 
-    for ($i = 0; $i < sizeof($rs2); ++$i) {
-        // Articolo
-        $body .= "<tr><td class='first_cell'>\n";
-        $body .= '<span>'.$rs2[$i]['descrizione']."</span><br/>\n";
-        $body .= '<span><small style="color:#777;">Intervento del '.Translator::dateToLocale($rs2[$i]['data_intervento'])."</small></span>\n";
+        for ($i = 0; $i < sizeof($rs2); ++$i) {
+            // Articolo
+            $body .= "<tr><td class='first_cell'>\n";
+            $body .= '<span>'.$rs2[$i]['descrizione']."</span><br/>\n";
+            $body .= '<span><small style="color:#777;">Intervento del '.Translator::dateToLocale($rs2[$i]['data_intervento'])."</small></span>\n";
+            $body .= "</td>\n";
+
+            // Quantità
+            $qta = $rs2[$i]['qta'];
+            $body .= "<td class='table_cell' align='center'>\n";
+            $body .= '<span>'.Translator::numberToLocale($rs2[$i]['qta'], 2)."</span>\n";
+            $body .= "</td>\n";
+
+            // Prezzo unitario
+            $body .= "<td class='table_cell' align='center'>\n";
+            $netto = $rs2[$i]['prezzo'];
+            $body .= '<span>'.Translator::numberToLocale($netto, 2)." &euro;</span>\n";
+            $body .= "</td>\n";
+
+            // Prezzo di vendita
+            $body .= "<td class='table_cell' align='center'>\n";
+            $body .= '<span>'.Translator::numberToLocale($netto * $qta, 2)." &euro;</span>\n";
+            $body .= "</td></tr>\n";
+            $totale_spese += $netto * $qta;
+        }
+        // Totale spese aggiuntive
+        $body .= "<tr><td colspan=\"3\" align=\"right\">\n";
+        $body .= "<b>ALTRE SPESE:</b>\n";
         $body .= "</td>\n";
 
-        // Quantità
-        $qta = $rs2[$i]['qta'];
-        $body .= "<td class='table_cell' align='center'>\n";
-        $body .= '<span>'.Translator::numberToLocale($rs2[$i]['qta'], 2)."</span>\n";
-        $body .= "</td>\n";
-
-        // Prezzo unitario
-        $body .= "<td class='table_cell' align='center'>\n";
-        $netto = $rs2[$i]['prezzo'];
-        $body .= '<span>'.Translator::numberToLocale($netto, 2)." &euro;</span>\n";
-        $body .= "</td>\n";
-
-        // Prezzo di vendita
-        $body .= "<td class='table_cell' align='center'>\n";
-        $body .= '<span>'.Translator::numberToLocale($netto * $qta, 2)." &euro;</span>\n";
+        $body .= "<td align=\"center\" bgcolor=\"#dddddd\">\n";
+        $body .= '<b>'.Translator::numberToLocale($totale_spese, 2)." &euro;</b>\n";
         $body .= "</td></tr>\n";
-        $totale_spese += $netto * $qta;
+        $body .= "</table><br/>\n";
     }
-    // Totale spese aggiuntive
-    $body .= "<tr><td colspan=\"3\" align=\"right\">\n";
-    $body .= "<b>ALTRE SPESE:</b>\n";
-    $body .= "</td>\n";
-
-    $body .= "<td align=\"center\" bgcolor=\"#dddddd\">\n";
-    $body .= '<b>'.Translator::numberToLocale($totale_spese, 2)." &euro;</b>\n";
-    $body .= "</td></tr>\n";
-    $body .= "</table><br/>\n";
 }
 
 // Totale complessivo intervento
@@ -321,7 +325,7 @@ $body .= "<td align=\"left\" bgcolor=\"#cccccc\" width=\"24mm\">\n";
 $body .= '<b>'.$diff." &euro;</b>\n";
 $body .= "</td></tr>\n";
 
-if(!empty($contratto_tot_ore)){
+if (!empty($contratto_tot_ore)) {
     $body .= "<tr><td align=\"right\" width=\"131mm\">\n";
     $body .= "<b>ORE RESIDUE:</b>\n";
     $body .= "</td>\n";

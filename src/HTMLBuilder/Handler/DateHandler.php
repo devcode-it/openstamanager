@@ -22,12 +22,20 @@ class DateHandler implements HandlerInterface
             $values['min-date'] = date(\Translator::getFormatter()->getStandardFormats()['timestamp']);
         }
 
-        if ($values['type'] == 'timestamp') {
+        if ($values['type'] == 'timestamp' && \Translator::getFormatter()->isStandardTimestamp($values['value'])) {
             $values['value'] = \Translator::timestampToLocale($values['value']);
-        } elseif ($values['type'] == 'date') {
+        } elseif ($values['type'] == 'date' && \Translator::getFormatter()->isStandardDate($values['value'])) {
             $values['value'] = \Translator::dateToLocale($values['value']);
-        } elseif ($values['type'] == 'time') {
+        } elseif ($values['type'] == 'time' && \Translator::getFormatter()->isStandardTime($values['value'])) {
             $values['value'] = \Translator::timeToLocale($values['value']);
+        }
+
+        if (!(
+            ($values['type'] == 'timestamp' && \Translator::getFormatter()->isFormattedTimestamp($values['value'])) ||
+            ($values['type'] == 'date' && \Translator::getFormatter()->isFormattedDate($values['value'])) ||
+            ($values['type'] == 'time' && \Translator::getFormatter()->isFormattedTime($values['value']))
+        )) {
+            $values['value'] = '';
         }
 
         $result = $this->{$values['type']}($values, $extras);

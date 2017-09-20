@@ -21,12 +21,12 @@ class Formatter
     /** @var NumberFormatter Oggetto dedicato alla formattazione dei numeri */
     protected $numberFormatter;
 
+    /** @var string Pattern per i timestamp */
+    protected $timestampPattern;
     /** @var string Pattern per le date */
     protected $datePattern;
     /** @var string Pattern per gli orari */
     protected $timePattern;
-    /** @var string Pattern per i timestamp */
-    protected $timestampPattern;
 
     public function __construct($locale, $timestamp = null, $date = null, $time = null)
     {
@@ -290,7 +290,7 @@ class Formatter
      */
     public function getDatePattern($type = null)
     {
-        return $this->timestampPattern;
+        return $this->datePattern;
     }
 
     /**
@@ -300,7 +300,7 @@ class Formatter
      */
     public function setDatePattern($pattern)
     {
-        return $this->timestampPattern = $pattern;
+        return $this->datePattern = $pattern;
     }
 
     // Gestione della conversione degli orarii
@@ -374,7 +374,7 @@ class Formatter
      */
     public function getTimePattern($type = null)
     {
-        return $this->orarioPattern;
+        return $this->timePattern;
     }
 
     /**
@@ -384,6 +384,6 @@ class Formatter
      */
     public function setTimePattern($pattern)
     {
-        return $this->orarioPattern = $pattern;
+        return $this->timePattern = $pattern;
     }
 }

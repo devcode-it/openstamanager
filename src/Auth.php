@@ -376,7 +376,7 @@ class Auth extends \Util\Singleton
     {
         $database = Database::getConnection();
 
-        if ($database->isInstalled() || !$database->fetchNum("SHOW TABLES LIKE 'zz_logs'")) {
+        if (!$database->isInstalled() || !$database->fetchNum("SHOW TABLES LIKE 'zz_logs'")) {
             return false;
         }
 
@@ -396,7 +396,7 @@ class Auth extends \Util\Singleton
      */
     public static function getBruteTimeout()
     {
-        if (self::isBrute()) {
+        if (!self::isBrute()) {
             return 0;
         }
 

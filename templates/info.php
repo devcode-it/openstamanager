@@ -1,28 +1,5 @@
 <?php
 
-// Valori aggiuntivi per la sostituzione
-$replaces = [
-    'docroot' => DOCROOT,
-    'rootdir' => ROOTDIR,
-    'footer' => !empty($footer) ? $footer : '',
-    'dicitura_fissa_fattura' => get_var('Dicitura fissa fattura'),
-    'pagination' => '
-<table style="color:#aaa; font-size:10px;">
-<tr>
-    <td align="left" style="width:97mm;">
-        '.tr('Stampato con OpenSTAManager').'
-    </td>
-
-    <td align="right" style="width:97mm;">
-        '.tr('Pagina _PAGE_ di _TOTAL_', [
-            '_PAGE_' => '{PAGENO}',
-            '_TOTAL_' => '{nb}',
-        ]).'
-    </td>
-</tr>
-</table>',
-];
-
 // Retrocompatibilità
 $id_cliente = $id_cliente ?: $idcliente;
 
@@ -103,3 +80,13 @@ foreach ($replace as $prefix => $values) {
         $replaces[$prefix.$key] = $value;
     }
 }
+
+// Valori aggiuntivi per la sostituzione
+$replaces = [
+    'docroot' => DOCROOT,
+    'rootdir' => ROOTDIR,
+    'footer' => !empty($footer) ? $footer : '',
+    'dicitura_fissa_fattura' => get_var('Dicitura fissa fattura'),
+    'default_header' => include DOCROOT.'/templates/base/header.php',
+    'default_footer' => include DOCROOT.'/templates/base/footer.php',
+];

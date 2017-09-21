@@ -88,6 +88,9 @@ if (!$old_format) {
     }
     $head = ob_get_clean();
 
+    // Footer di default
+    $head = !empty($head) ? $head : '$default_header$';
+
     // Generazione dei contenuti del footer
     ob_start();
     if (file_exists($docroot.'/templates/'.$ptype.'/custom/footer.php')) {
@@ -119,7 +122,7 @@ if (!$old_format) {
 }
 
 // Footer di default
-$foot = !empty($foot) ? $foot : '$pagination$';
+$foot = !empty($foot) ? $foot : '$default_footer$';
 
 // Operazioni di sostituzione
 include $docroot.'/templates/replace.php';

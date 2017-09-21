@@ -197,4 +197,4 @@ echo '
     </tr>
 </table>
 
-$pagination$';
+$default_footer$';

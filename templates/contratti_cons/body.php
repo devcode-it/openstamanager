@@ -4,14 +4,14 @@ include_once __DIR__.'/../../core.php';
 
 include_once $docroot.'/modules/interventi/modutil.php';
 
-$report_name = 'preventivo_'.$idpreventivo.'_cons.pdf';
+$report_name = 'contratto_'.$idcontratto.'_cons.pdf';
 
 echo '
 <div class="row">
     <div class="col-xs-6">
         <div class="text-center">
             <h4 class="text-bold">'.tr('Consuntivo', [], ['upper' => true]).'</h4>
-            <b>'.tr('Preventivo num. _NUM_ del _DATE_', [
+            <b>'.tr('Contratto num. _NUM_ del _DATE_', [
                 '_NUM_' => $records[0]['numero'],
                 '_DATE_' => Translator::dateToLocale($records[0]['data']),
             ], ['upper' => true]).'</b>
@@ -56,10 +56,12 @@ if (!empty($records[0]['descrizione'])) {
 <br>';
 }
 
+$totale_ore_impiegate = 0;
+
 $sconto = [];
 $imponibile = [];
 
-$interventi = $dbo->fetchArray('SELECT *, in_interventi.id, in_interventi.codice, (SELECT GROUP_CONCAT(DISTINCT ragione_sociale) FROM in_interventi_tecnici JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = in_interventi_tecnici.idtecnico WHERE idintervento=in_interventi.id) AS tecnici, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT SUM(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM co_preventivi_interventi JOIN in_interventi ON co_preventivi_interventi.idintervento=in_interventi.id WHERE co_preventivi_interventi.idpreventivo='.prepare($idpreventivo).' ORDER BY inizio DESC');
+$interventi = $dbo->fetchArray('SELECT *, in_interventi.id, in_interventi.codice, (SELECT GROUP_CONCAT(DISTINCT ragione_sociale) FROM in_interventi_tecnici JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = in_interventi_tecnici.idtecnico WHERE idintervento=in_interventi.id) AS tecnici, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT SUM(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM co_righe_contratti JOIN in_interventi ON co_righe_contratti.idintervento=in_interventi.id WHERE co_righe_contratti.idcontratto='.prepare($idcontratto).' ORDER BY inizio DESC');
 
 if (!empty($interventi)) {
     // Interventi
@@ -120,6 +122,12 @@ if (!empty($interventi)) {
                 '.Translator::numberToLocale($int['subtotale']).' &euro;
             </td>
         </tr>';
+
+        // Calcolo il totale delle ore lavorate
+        $tecnici = $dbo->fetchArray('SELECT orario_inizio, orario_fine FROM in_interventi_tecnici WHERE idintervento='.prepare($int['id']));
+        foreach ($tecnici as $tecnico) {
+            $totale_ore_impiegate += datediff('n', $tecnico['orario_inizio'], $tecnico['orario_fine']) / 60;
+        }
 
         $ore[] = $int['ore'];
         $km[] = $int['km'];
@@ -456,8 +464,11 @@ $imponibile = sum($imponibile);
 
 $totale = $imponibile - $sconto;
 
-$rs = $dbo->fetchArray('SELECT SUM(subtotale) as budget FROM `co_righe_preventivi` WHERE idpreventivo = '.prepare($idpreventivo));
+$rs = $dbo->fetchArray("SELECT SUM(subtotale) as budget FROM `co_righe2_contratti` WHERE idcontratto = ".prepare($idcontratto));
 $budget = $rs[0]['budget'];
+
+$rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe2_contratti` WHERE um='ore' AND idcontratto = ".prepare($idcontratto));
+$totale_ore = $rs[0]['totale_ore'];
 
 $rapporto = $budget - $totale;
 
@@ -552,6 +563,21 @@ echo '
             <b>'.Translator::numberToLocale($rapporto).' &euro;</b>
         </th>
     </tr>';
+
+// ORE RESIDUE
+if (!empty($totale_ore)) {
+    echo '
+<tr>
+    <td colspan="3" class="text-right border-top">
+        <b>'.tr('Ore residue', [], ['upper' => true]).':</b>
+    </td>
+    <th colspan="2" class="text-center">
+        <b>'.Translator::numberToLocale($totale_ore - $totale_ore_impiegate).'</b><br>
+        <p>'.tr('Ore erogate').': '.Translator::numberToLocale($totale_ore_impiegate).'</p>
+        <p>'.tr('Ore in contratto').': '.Translator::numberToLocale($totale_ore).'</p>
+    </th>
+</tr>';
+}
 
 echo'
 </table>';

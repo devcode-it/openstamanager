@@ -147,25 +147,27 @@ class Prints
         return $result;
     }
 
-    protected static function isOldStandard($id)
+    protected static function isOldStandard($print)
     {
         $infos = self::getPrint($print);
 
-        return file_exists($infos['full_directory'].'/pdfgen.'.$ptype.'.php') || file_exists($infos['full_directory'].'/custom/pdfgen.'.$ptype.'.php');
+        return file_exists($infos['full_directory'].'/pdfgen.'.$infos['directory'].'.php') || file_exists($infos['full_directory'].'/custom/pdfgen.'.$infos['directory'].'.php');
     }
 
-    protected static function isNewStandard($id)
+    protected static function isNewStandard($print)
     {
-        return !self::isOldStandard($id);
+        return !self::isOldStandard($print);
     }
 
     protected static function oldLoader($id_print, $id_record, $filename = null)
     {
         $infos = self::getPrint($id_print);
         $options = self::readOptions($infos['options']);
-var_dump($infos);exit();
+
         $database = Database::getConnection();
         $dbo = $database;
+
+        $docroot = DOCROOT;
 
         $_GET[$infos['previous']] = $id_record;
         ${$infos['previous']} = $id_record;
@@ -177,10 +179,10 @@ var_dump($infos);exit();
         $font_size = '10pt';
 
         // Decido se usare la stampa personalizzata (se esiste) oppure quella standard
-        if (file_exists($infos['full_directory'].'/custom/pdfgen.'.$ptype.'.php')) {
-            include $infos['full_directory'].'/custom/pdfgen.'.$ptype.'.php';
+        if (file_exists($infos['full_directory'].'/custom/pdfgen.'.$infos['directory'].'.php')) {
+            include $infos['full_directory'].'/custom/pdfgen.'.$infos['directory'].'.php';
         } else {
-            include $infos['full_directory'].'/pdfgen.'.$ptype.'.php';
+            include $infos['full_directory'].'/pdfgen.'.$infos['directory'].'.php';
         }
 
         // Sostituzione di variabili generiche
@@ -219,6 +221,8 @@ var_dump($infos);exit();
 
         $database = Database::getConnection();
         $dbo = $database;
+
+        $docroot = DOCROOT;
 
         // Impostazioni di default
         if (file_exists(DOCROOT.'/templates/base/custom/settings.php')) {

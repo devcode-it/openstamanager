@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `zz_prints` (
 
 -- Inserimento delle stampe di base
 INSERT INTO `zz_prints` (`id_module`, `name`, `directory`, `options`, `previous`, `enabled`, `default`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Fattura di vendita', 'fatture', 'iddocumento', '', 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Fattura di vendita', 'fatture', '', 'iddocumento', 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Riepilogo intervento', 'riepilogo_interventi', '', '', 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Inventario magazzino', 'magazzino_inventario', '', '', 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Piano dei conti'), 'Mastrino', 'partitario_mastrino', '', 'idconto', 1, 1),

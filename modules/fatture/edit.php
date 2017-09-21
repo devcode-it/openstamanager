@@ -328,15 +328,9 @@ if ($dir == 'entrata') {
             echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere alla stampa completa i seguenti campi dell'anagrafica:<br/><b>".implode(', ', $campi_mancanti).'</b><br/>
             '.Modules::link('Anagrafiche', $records[0]['idanagrafica'], tr('Vai alla scheda anagrafica'), null).'</div>';
         } else {
-            if ($records[0]['descrizione_tipodoc'] == 'Fattura accompagnatoria di vendita') {
-                ?>
-                    <a class="btn btn-info btn-sm pull-right" href="<?php echo $rootdir ?>/pdfgen.php?ptype=fatture_accompagnatorie&iddocumento=<?php echo $id_record ?>" target="_blank"><i class="fa fa-print"></i> Stampa fattura</a>
-            <?php
-            } else {
                 ?>
                     <a class="btn btn-info btn-sm pull-right" href="<?php echo $rootdir ?>/pdfgen.php?ptype=fatture&iddocumento=<?php echo $id_record ?>" target="_blank"><i class="fa fa-print"></i> Stampa fattura</a>
             <?php
-            }
         }
     }
 }

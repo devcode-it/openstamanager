@@ -62,7 +62,7 @@ $default_header$
     <div class="col-xs-5 col-xs-offset-1">
         <table class="table" style="width:100%;margin-top:5mm;">
             <tr>
-                <td colspan=2 class="border-full" style="height:20mm;">
+                <td colspan=2 class="border-full"'.(!$fattura_accompagnatoria ? ' style="height:20mm;"' : '').'>
                     <p class="small-bold">'.tr('Spett.le', [], ['upper' => true]).'</p>
                     <p>$c_ragionesociale$</p>
                     <p>$c_indirizzo$ $c_citta_full$</p>
@@ -85,7 +85,21 @@ $default_header$
                 <td class="border-right border-bottom text-right">
                     <small>$c_codicefiscale$</small>
                 </td>
-            </tr>
+            </tr>';
+
+if ($fattura_accompagnatoria) {
+    echo '
+            <tr>
+                <td colspan=2 class="border-full">
+                    <p class="small-bold">'.tr('Destinazione diversa', [], ['upper' => true]).'</p>
+                    <p>$c_destinazione$</p>
+                </td>
+            </tr>';
+
+    $settings['header-height'] += 13;
+}
+
+echo '
         </table>
     </div>
 </div>';

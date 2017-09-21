@@ -27,7 +27,7 @@ switch (post('op')) {
 
                 $_GET['iddocumento'] = $r['id']; // Fix temporaneo per la stampa
                 $iddocumento = $r['id']; // Fix temporaneo per la stampa
-                $ptype = ($r['descrizione'] == 'Fattura accompagnatoria di vendita') ? 'fatture_accompagnatorie' : 'fatture';
+                $ptype = 'fatture';
 
                 require DOCROOT.'/pdfgen.php';
             }

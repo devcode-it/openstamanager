@@ -7,8 +7,8 @@ $report_name = 'fattura_'.$numero.'.pdf';
 $autofill = [
     'count' => 0, // Conteggio delle righe
     'words' => 70, // Numero di parolo dopo cui contare una riga nuova
-    'rows' => 20, // Numero di righe massimo presente nella pagina
-    'additional' => 15, // Numero di righe massimo da aggiungere
+    'rows' => $fattura_accompagnatoria ? 15 : 20, // Numero di righe massimo presente nella pagina
+    'additional' => $fattura_accompagnatoria ? 10 : 15, // Numero di righe massimo da aggiungere
     'columns' => 5, // Numero di colonne della tabella
 ];
 

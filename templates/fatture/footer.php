@@ -102,22 +102,22 @@ echo '
         </td>';
 
 // TOTALI
-$width = round(100/(!empty($sconto) ? 5 : 3), 2);
+$width = round(100 / (!empty($sconto) ? 5 : 3), 2);
 echo "
     <tr>
         <th class='text-center small' style='width:".$width."'>
-            ".tr('Imponibile', [], ['upper' => true])."
-        </th>";
+            ".tr('Imponibile', [], ['upper' => true]).'
+        </th>';
 
 if (!empty($sconto)) {
-        echo "
+    echo "
         <th class='text-center small' style='width:".$width."'>
             ".tr('Sconto', [], ['upper' => true])."
         </th>
 
         <th class='text-center small' style='width:".$width."'>
-            ".tr('Imponibile scontato', [], ['upper' => true])."
-        </th>";
+            ".tr('Imponibile scontato', [], ['upper' => true]).'
+        </th>';
 }
 
 echo "
@@ -132,8 +132,8 @@ echo "
 
     <tr>
         <td class='cell-padded text-center'>
-            ".Translator::numberToLocale($imponibile)." &euro;
-        </td>";
+            ".Translator::numberToLocale($imponibile).' &euro;
+        </td>';
 
 if (!empty($sconto)) {
     echo "
@@ -143,8 +143,8 @@ if (!empty($sconto)) {
         </td>
 
         <td class='cell-padded text-center'>
-            ".Translator::numberToLocale($imponibile - $sconto)." &euro;
-        </td>";
+            ".Translator::numberToLocale($imponibile - $sconto).' &euro;
+        </td>';
 }
 
     echo "
@@ -163,30 +163,96 @@ if ($records[0]['ritenutaacconto'] != 0) {
 
     echo "
     <tr>
-        <th class='text-center small' colspan=".(!empty($sconto) ? 3 : 2).">
-            ".tr("Ritenuta d'acconto _PRC_%", [
+        <th class='text-center small' colspan=".(!empty($sconto) ? 3 : 2).'>
+            '.tr("Ritenuta d'acconto _PRC_%", [
                 '_PRC_' => Translator::numberToLocale($rs2[0]['percentuale'], 0),
             ], ['upper' => true])."
         </th>
 
-        <th class='text-center small' colspan=".(!empty($sconto) ? 2 : 1).">
-            ".tr('Netto a pagare', [], ['upper' => true])."
+        <th class='text-center small' colspan=".(!empty($sconto) ? 2 : 1).'>
+            '.tr('Netto a pagare', [], ['upper' => true])."
         </th>
     </tr>
 
     <tr>
-        <td class='cell-padded text-center' colspan=".(!empty($sconto) ? 3 : 2).">
-            ".Translator::numberToLocale($records[0]['ritenutaacconto'])." &euro;
+        <td class='cell-padded text-center' colspan=".(!empty($sconto) ? 3 : 2).'>
+            '.Translator::numberToLocale($records[0]['ritenutaacconto'])." &euro;
         </td>
 
-        <td class='cell-padded text-center' colspan=".(!empty($sconto) ? 2 : 1).">
-            ".Translator::numberToLocale($totale - $records[0]['ritenutaacconto']).' &euro;
+        <td class='cell-padded text-center' colspan=".(!empty($sconto) ? 2 : 1).'>
+            '.Translator::numberToLocale($totale - $records[0]['ritenutaacconto']).' &euro;
         </td>
     </tr>';
 }
 
 echo '
 </table>';
+
+if ($fattura_accompagnatoria) {
+    // Informazioni aggiuntive
+    echo '
+<table class="table-bordered">
+    <tr>
+        <th class="small" class style="width:25%">
+            '.tr('Aspetto beni', [], ['upper' => true]).'
+        </th>
+
+        <th class="small" class style="width:20%">
+            '.tr('Num. colli', [], ['upper' => true]).'
+        </th>
+
+        <th class="small" style="width:30%">
+            '.tr('Causale trasporto', [], ['upper' => true]).'
+        </th>
+
+        <th class="small" style="width:25%">
+            '.tr('Porto', [], ['upper' => true]).'
+        </th>
+    </tr>
+
+    <tr>
+        <td class="cell-padded">
+            $aspettobeni$ &nbsp;
+        </td>
+
+        <td class="cell-padded">
+            $n_colli$ &nbsp;
+        </td>
+
+        <td class="cell-padded">
+            $causalet$ &nbsp;
+        </td>
+
+        <td class="cell-padded">
+            $porto$ &nbsp;
+        </td>
+    </tr>
+</table>';
+
+    // Firme
+    echo '
+<table class="table-bordered">
+    <tr>
+        <th class="small" style="width:33%">
+            '.tr('Tipo di spedizione', [], ['upper' => true]).'
+        </th>
+
+        <th class="small" style="width:33%">
+            '.tr('Firma conducente', [], ['upper' => true]).'
+        </th>
+
+        <th class="small" style="width:33%">
+            '.tr('Firma destinatario', [], ['upper' => true]).'
+        </th>
+    </tr>
+
+    <tr>
+        <td style="height: 10mm">$spedizione$ $vettore$</td>
+        <td style="height: 10mm"></td>
+        <td style="height: 10mm"></td>
+    </tr>
+</table>';
+}
 
 echo '
 <table style="font-size:7pt; color:#999;">

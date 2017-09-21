@@ -89,10 +89,9 @@ class Widgets
                 $dato = '';
                 if ($query != '') {
                     $dato = $dbo->fetchArray($query);
-                }
 
-                if (!empty($dato)) {
                     $dato = $dato[0]['dato'];
+                }
 
                     // inserisco il widget
                     $result .= '
@@ -131,11 +130,10 @@ class Widgets
                     if (!empty($results[0]['more_link'])) {
                         $result .= '
             </a>';
-                    }
 
-                    $result .= '
+                        $result .= '
         </li>';
-                }
+                    }
 
                 break;
 

@@ -14,17 +14,9 @@ echo '
             </div>
 
             <div class="panel-body">
-                <a class="btn btn-primary" href="'.$rootdir.'/pdfgen.php?ptype=registro_iva&dir=entrata" target="_blank">
-                    <i class="fa fa-print fa-2x"></i><br>
-                    '.tr('Stampa registro').'<br>
-                    '.tr('IVA vendite').'
-                </a>
+                '.Prints::getLink('Registro IVA', $id_record, 'btn-primary', '<br>'.tr('Stampa registro').'<br>'.tr('IVA vendite'), '|default| fa-2x', 'dir=entrata').'
 
-                <a class="btn btn-primary" href="'.$rootdir.'/pdfgen.php?ptype=registro_iva&dir=uscita" target="_blank">
-                    <i class="fa fa-print fa-2x"></i><br>
-                    '.tr('Stampa registro').'<br>
-                    '.tr('IVA acquisti').'
-                </a>
+                '.Prints::getLink('Registro IVA', $id_record, 'btn-primary', '<br>'.tr('Stampa registro').'<br>'.tr('IVA acquisti'), '|default| fa-2x', 'dir=uscita').'
             </div>
         </div>
     </div>
@@ -39,11 +31,7 @@ echo '
             </div>
 
             <div class="panel-body">
-                <a class="btn btn-primary" href="'.$rootdir.'/pdfgen.php?ptype=spesometro" target="_blank">
-                    <i class="fa fa-print fa-2x"></i><br>
-                    '.tr('Stampa').'<br>
-                    '.tr('Spesometro').'
-                </a>
+                '.Prints::getLink('Spesometro', $id_record, 'btn-primary', '<br>'.tr('Stampa').'<br>'.tr('spesometro'), '|default| fa-2x', 'dir=uscita').'
             </div>
         </div>
     </div>
@@ -58,17 +46,9 @@ echo '
             </div>
 
             <div class="panel-body">
-                <a class="btn btn-primary" href="'.$rootdir.'/pdfgen.php?ptype=fatturato&dir=entrata" target="_blank">
-                    <i class="fa fa-print fa-2x"></i><br>
-                    '.tr('Stampa fatturato').'<br>
-                    '.tr('in entrata').'
-                </a>
+                '.Prints::getLink('Fatturato', $id_record, 'btn-primary', '<br>'.tr('Stampa fatturato').'<br>'.tr('in entrata'), '|default| fa-2x', 'dir=entrata').'
 
-                <a class="btn btn-primary" href="'.$rootdir.'/pdfgen.php?ptype=fatturato&dir=uscita" target="_blank">
-                    <i class="fa fa-print fa-2x"></i><br>
-                    '.tr('Stampa fatturato').'<br>
-                    '.tr('in uscita').'
-                </a>
+                '.Prints::getLink('Fatturato', $id_record, 'btn-primary', '<br>'.tr('Stampa fatturato').'<br>'.tr('in uscita'), '|default| fa-2x', 'dir=uscita').'
             </div>
         </div>
     </div>

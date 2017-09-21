@@ -34,7 +34,9 @@ if (empty($records[0]['firma_file'])) {
 			<div class="pull-right">
 				<button type="button" class="btn btn-primary " onclick="launch_modal( '<?php echo tr('Anteprima e firma') ?>', '<?php echo $rootdir ?>/modules/interventi/add_firma.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>&anteprima=1', 1 );"><i class="fa fa-desktop"></i> <?php echo $frase ?>...</button>
 
-				<a class="btn btn-info" target="_blank" href="<?php echo $rootdir ?>/pdfgen.php?ptype=interventi&idintervento=<?php echo $id_record ?>"><i class="fa fa-print"></i> <?php echo tr('Stampa intervento') ?></a>
+                <?php
+                echo Prints::getDropdown($id_module, $id_record);
+                ?>
 				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
 				<br>
 			</div>

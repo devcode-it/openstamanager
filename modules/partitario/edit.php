@@ -23,8 +23,8 @@ for ($x = 0; $x < $n1; ++$x) {
         echo "<hr><h2 class=\"pull-left\">Stato patrimoniale</h2>\n";
     }
 
-    echo "<div class=\"pull-right\">\n";
-    echo '	<br><a href="'.$rootdir.'/pdfgen.php?ptype=partitario_mastrino&lev=1&idconto='.$rs1[$x]['id']."\" class=\"btn btn-info\" target=\"_blank\"><i class=\"fa fa-print\"></i> Stampa</a>\n";
+    echo "<div class=\"pull-right\"><br>\n";
+    echo Prints::getLink('Mastrino', $rs1[$x]['id'], null, tr('Stampa'), null, 'lev=1');
     echo "</div>\n";
     echo "<div class=\"clearfix\"></div>\n";
 
@@ -40,7 +40,8 @@ for ($x = 0; $x < $n1; ++$x) {
         echo "	<div>\n";
 
         // Stampa mastrino
-        echo "		<a class='btn btn-info btn-xs' data-toggle='tooltip' title='Stampa mastrino...' href=\"".$rootdir.'/pdfgen.php?ptype=partitario_mastrino&idconto='.$rs2[$y]['id']."&lev=2\" target=\"_blank\"><i class='fa fa-print'></i></a>\n";
+        echo Prints::getLink('Mastrino', $rs2[$y]['id'], 'btn-info btn-xs', '', null, 'lev=2');
+
         echo '		<b>'.$rs2[$y]['numero'].' '.htmlentities($rs2[$y]['descrizione'], ENT_QUOTES, 'ISO-8859-1')."</b><br>\n";
 
         echo "	</div>\n";
@@ -70,7 +71,7 @@ for ($x = 0; $x < $n1; ++$x) {
 
             // Stampa mastrino
             if (!empty($rs)) {
-                $tools .= "			    <a class='btn btn-info btn-xs' data-toggle='tooltip' title='Stampa mastrino...' href=\"".$rootdir.'/pdfgen.php?ptype=partitario_mastrino&idconto='.$rs3[$z]['id']."&lev=3\" target=\"_blank\"><i class='fa fa-print'></i></a>\n";
+                $tools .= Prints::getLink('Mastrino', $rs3[$z]['id'], 'btn-info btn-xs', '', null, 'lev=3');
             }
 
             if ($nr <= 0 && $rs3[$z]['can_delete'] == '1') {

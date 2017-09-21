@@ -163,9 +163,10 @@ if ($records[0]['stato'] != 'Evaso') {
 <?php
 
 }
-?>
 
-			<a class="btn btn-sm btn-info" target="_blank" href="<?php echo $rootdir ?>/pdfgen.php?ptype=ddt&idddt=<?php echo $id_record ?>" data-title="Stampa ddt"><i class="fa fa-print"></i> <?php echo tr('Stampa ddt'); ?></a>
+echo Prints::getDropdown($id_module, $id_record);
+
+?>
 		</div>
 
 		<div class="clearfix"></div>

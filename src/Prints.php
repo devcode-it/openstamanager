@@ -339,29 +339,49 @@ class Prints
         $mpdf->Output($filename, $mode);
     }
 
-    protected static function getHref($print, $id_record)
+    public static function getHref($print, $id_record, $get = '')
     {
         $infos = self::getPrint($print);
+
+        if (empty($infos)) {
+            return false;
+        }
 
         $link = ROOTDIR.'/pdfgen.php?';
 
         if (self::isOldStandard($infos['id'])) {
-            $link .= 'ptype='.$infos['directory'].'&'.$infos['previous'].'='.$id_record;
+            $link .= 'ptype='.$infos['directory'];
+
+            $link .= !empty($infos['previous']) && !empty($id_record) ? '&'.$infos['previous'].'='.$id_record : '';
         } else {
-            $link .= 'id_print='.$infos['id'].'&id_record='.$id_record;
+            $link .= 'id_print='.$infos['id'];
+
+            $link .= !empty($id_record) ? '&id_record='.$id_record : '';
         }
+
+        $link .= !empty($get) ? '&'.$get : '';
 
         return $link;
     }
 
-    protected static function getLink($id_print, $id_record, $class = 'btn-info')
+    public static function getLink($print, $id_record, $btn = null, $title = null, $icon = null, $get = '')
     {
-        $print = self::getPrint($id_print);
+        $print = self::getPrint($print);
 
+        if (empty($print)) {
+            return false;
+        }
+
+        $class = isset($btn) ? $btn : 'btn-info';
         $class = !empty($class) ? ' class="btn '.$class.'" ' : '';
 
+        $title = isset($title) ? $title : $print['title'];
+
+        $icon = !empty($icon) ? $icon : $print['icon'];
+        $icon = str_replace('|default|', $print['icon'], $icon);
+
         return '
-<a '.$class.' href="'.self::getHref($print['id'], $id_record).'" target="_blank"><i class="'.$print['icon'].'"></i> '.$print['title'].'</a>';
+<a '.$class.' href="'.self::getHref($print['id'], $id_record, $get).'" target="_blank"><i class="'.$icon.'"></i> '.$title.'</a>';
     }
 
     public static function getDropdown($module, $id_record, $class = 'btn-info')

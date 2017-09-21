@@ -323,7 +323,5 @@ if (!empty($contratto_tot_ore)) {
 */
 echo '
 <div class="text-center">
-    <a class="btn btn-primary" href="'.$rootdir.'/pdfgen.php?ptype=contratti_cons&amp;idcontratto='.$id_record.'" target="_blank">
-        <i class="fa fa-print"></i><br>'.tr('Stampa consuntivo').'
-    </a>
+    '.Prints::getLink('Consuntivo contratto', $id_record, 'btn-primary', tr('Stampa consuntivo')).'
 </div>';

@@ -291,10 +291,7 @@ if ($budget > $totale) {
 */
 echo '
 <div class="text-center">
-    <a class="btn btn-primary" href="'.$rootdir.'/pdfgen.php?ptype=preventivi_cons&idpreventivo='.$id_record.'" target="_blank">
-        <i class="fa fa-print"></i><br>
-        '.tr('Stampa consuntivo').'
-    </a>
+    '.Prints::getLink('Consuntivo preventivo', $id_record, 'btn-primary', tr('Stampa consuntivo')).'
 </div>';
 
 /*

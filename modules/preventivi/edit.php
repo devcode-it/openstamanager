@@ -17,7 +17,9 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
 		<div class="panel-body">
 			<div class="pull-right">
-				<a class="btn btn-info" href="<?php echo $rootdir ?>/pdfgen.php?ptype=preventivi&idpreventivo=<?php echo $id_record ?>" target="_blank"><i class="fa fa-print"></i> Stampa preventivo</a>
+                <?php
+                echo Prints::getDropdown($id_module, $id_record);
+                ?>
 				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
 				<br/><br/>
 			</div>
@@ -131,16 +133,17 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
     <div class="panel-body">
         <?php if ($records[0]['stato'] != 'Pagato') {
-    ?>
+                    ?>
         <div class="pull-left">
             <a class="btn btn-primary" data-href="<?php echo $rootdir ?>/modules/preventivi/edit_riga.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> Riga</a><br>
         </div>
         <?php
-
-} ?>
+                } ?>
 
         <div class="pull-right">
-            <a class="btn btn-info" href="<?php echo $rootdir ?>/pdfgen.php?ptype=preventivi&idpreventivo=<?php echo $id_record ?>" target="_blank"><i class="fa fa-print"></i> Stampa preventivo</a>
+            <?php
+            echo Prints::getDropdown($id_module, $id_record);
+            ?>
         </div>
         <div class="clearfix"></div>
         <br>

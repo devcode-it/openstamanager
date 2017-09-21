@@ -27,8 +27,10 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
                     <i class=\"fa fa-refresh\"></i> ".tr('Rinnova').'...
                 </button>';
                 }
+
+                echo Prints::getDropdown($id_module, $id_record);
+
                 ?>
-				<a class="btn btn-info" href="<?php echo $rootdir ?>/pdfgen.php?ptype=contratti&idcontratto=<?php echo $id_record ?>" target="_blank"><i class="fa fa-print"></i> <?php echo tr('Stampa contratto') ?></a>
 				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
 				<br><br>
 			</div>

@@ -246,8 +246,6 @@ if (sizeof($rs) == 0) {
     */
     echo '
 <div class="text-center">
-    <a class="btn btn-primary" href="'.$rootdir.'/pdfgen.php?ptype=interventi_ordiniservizio&idintervento='.$idintervento.'" target="_blank">
-        <i class="fa fa-print"></i> '.tr('Stampa ordine di servizio').'
-    </a>
+    '.Prints::getLink('Ordine di servizio', $id_record, 'btn-primary', tr('Stampa ordine di servizio')).'
 </div>';
 }

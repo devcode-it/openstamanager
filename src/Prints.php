@@ -414,7 +414,7 @@ class Prints
 
             foreach ($prints as $print) {
                 $result .= '
-        <li>'.self::getLink($print['id'], $id_record, null).'</li>';
+        <li>'.self::getLink($print['id'], $id_record, false).'</li>';
             }
 
             $result .= '

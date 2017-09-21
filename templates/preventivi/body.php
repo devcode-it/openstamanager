@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$report_name = 'preventivo_'.$idpreventivo.'.pdf';
+$report_name = 'preventivo_'.$id_record.'.pdf';
 
 $autofill = [
     'count' => 0, // Conteggio delle righe
@@ -81,7 +81,7 @@ echo "
     <tbody>';
 
 // RIGHE PREVENTIVO CON ORDINAMENTO UNICO
-$righe = $dbo->fetchArray("SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva FROM `co_righe_preventivi` WHERE idpreventivo=".prepare($idpreventivo).' ORDER BY `order`');
+$righe = $dbo->fetchArray("SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva FROM `co_righe_preventivi` WHERE idpreventivo=".prepare($id_record).' ORDER BY `order`');
 foreach ($righe as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
@@ -111,7 +111,7 @@ foreach ($righe as $r) {
                 ".(empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'])).' '.$r['um'].'
             </td>';
 
-    if ($mostra_prezzi) {
+    if ($options['pricing']) {
         // Prezzo unitario
         echo "
             <td class='text-right'>
@@ -182,7 +182,7 @@ echo '
     </tbody>';
 
 // TOTALE COSTI FINALI
-if ($mostra_prezzi) {
+if ($options['pricing']) {
     // Totale imponibile
     echo '
     <tr>

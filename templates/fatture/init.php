@@ -8,7 +8,7 @@ $records = $dbo->fetchArray('SELECT *,
     (SELECT descrizione FROM co_tipidocumento WHERE id=idtipodocumento) AS tipo_doc,
     (SELECT descrizione FROM co_pagamenti WHERE id=idpagamento) AS tipo_pagamento,
     (SELECT dir FROM co_tipidocumento WHERE id=idtipodocumento) AS dir
-FROM co_documenti WHERE id='.prepare($iddocumento));
+FROM co_documenti WHERE id='.prepare($id_record));
 
 $module_name = ($records[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
 

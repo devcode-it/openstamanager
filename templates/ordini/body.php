@@ -32,7 +32,7 @@ echo "
     <tbody>';
 
 // RIGHE PREVENTIVO CON ORDINAMENTO UNICO
-$righe = $dbo->fetchArray("SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice_articolo, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva FROM `or_righe_ordini` WHERE idordine=".prepare($idordine).' ORDER BY `order`');
+$righe = $dbo->fetchArray("SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice_articolo, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva FROM `or_righe_ordini` WHERE idordine=".prepare($id_record).' ORDER BY `order`');
 foreach ($righe as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
@@ -62,7 +62,7 @@ foreach ($righe as $r) {
                 ".(empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'])).' '.$r['um'].'
             </td>';
 
-    if ($mostra_prezzi) {
+    if ($options['pricing']) {
         // Prezzo unitario
         echo "
             <td class='text-right'>
@@ -133,7 +133,7 @@ echo '
     </tbody>';
 
 // TOTALE COSTI FINALI
-if ($mostra_prezzi) {
+if ($options['pricing']) {
     // Totale imponibile
     echo '
     <tr>

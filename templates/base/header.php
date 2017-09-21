@@ -12,7 +12,7 @@
 return '
 <div class="row">
     <div class="col-xs-6">
-        <img src="'.DOCROOT.'/templates/'.$ptype.'/logo_azienda.jpg" alt="Logo" border="0"/>
+        <img src="$directory$/logo_azienda.jpg" alt="Logo" border="0"/>
     </div>
     <div class="col-xs-6 text-right">
         <p><b>'.$f_ragionesociale.'</b></p>

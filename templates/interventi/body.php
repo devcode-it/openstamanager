@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 include_once $docroot.'/modules/interventi/modutil.php';
 
-$report_name = 'intervento_'.$idintervento.'.pdf';
+$report_name = 'intervento_'.$id_record.'.pdf';
 
 /*
     Dati intervento
@@ -59,7 +59,7 @@ echo '
 
 // riga 3
 // Elenco impianti su cui è stato fatto l'intervento
-$rs2 = $dbo->fetchArray('SELECT *, (SELECT nome FROM my_impianti WHERE id=my_impianti_interventi.idimpianto) AS nome, (SELECT matricola FROM my_impianti WHERE id=my_impianti_interventi.idimpianto) AS matricola FROM my_impianti_interventi WHERE idintervento='.prepare($idintervento));
+$rs2 = $dbo->fetchArray('SELECT *, (SELECT nome FROM my_impianti WHERE id=my_impianti_interventi.idimpianto) AS nome, (SELECT matricola FROM my_impianti WHERE id=my_impianti_interventi.idimpianto) AS matricola FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
 $impianti = [];
 for ($j = 0; $j < sizeof($rs2); ++$j) {
     $impianti[] = '<b>'.$rs2[$j]['nome']."</b> <small style='color:#777;'>(".$rs2[$j]['matricola'].')</small>';
@@ -95,7 +95,7 @@ echo '
 $totale = [];
 
 // MATERIALE UTILIZZATO
-$rs2 = $dbo->fetchArray('SELECT *, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice_art FROM `mg_articoli_interventi` WHERE idintervento='.prepare($idintervento)." AND NOT idarticolo='0' ORDER BY idarticolo ASC");
+$rs2 = $dbo->fetchArray('SELECT *, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice_art FROM `mg_articoli_interventi` WHERE idintervento='.prepare($id_record)." AND NOT idarticolo='0' ORDER BY idarticolo ASC");
 if (!empty($rs2)) {
     echo '
 <table class="table table-bordered">
@@ -153,7 +153,7 @@ if (!empty($rs2)) {
         $netto = $r['prezzo_vendita'] * $r['qta'] - $r['sconto'];
         echo '
             <td class="text-center">
-                '.($mostra_prezzi ? Translator::numberToLocale($netto) : '-').'
+                '.($options['pricing'] ? Translator::numberToLocale($netto) : '-').'
             </td>
         </tr>';
     }
@@ -162,7 +162,7 @@ if (!empty($rs2)) {
     </tbody>';
 
     // Totale spesa articoli
-    if ($mostra_prezzi) {
+    if ($options['pricing']) {
         echo '
     <tr>
         <td colspan="2" class="text-right">
@@ -182,7 +182,7 @@ if (!empty($rs2)) {
 // FINE MATERIALE UTILIZZATO
 
 // Conteggio SPESE AGGIUNTIVE
-$rs2 = $dbo->fetchArray('SELECT * FROM in_righe_interventi WHERE idintervento='.prepare($idintervento).' ORDER BY id ASC');
+$rs2 = $dbo->fetchArray('SELECT * FROM in_righe_interventi WHERE idintervento='.prepare($id_record).' ORDER BY id ASC');
 if (!empty($rs2)) {
     echo '
 <table class="table table-bordered">
@@ -231,21 +231,21 @@ if (!empty($rs2)) {
         // Prezzo unitario
         echo '
         <td class="text-center">
-            '.($mostra_prezzi ? Translator::numberToLocale($r['prezzo_vendita']).' &euro;' : '-').'
+            '.($options['pricing'] ? Translator::numberToLocale($r['prezzo_vendita']).' &euro;' : '-').'
         </td>';
 
         // Prezzo totale
         $netto = $r['prezzo_vendita'] * $r['qta'] - $r['sconto'];
         echo '
         <td class="text-center">
-            '.($mostra_prezzi ? Translator::numberToLocale($netto) : '-').'
+            '.($options['pricing'] ? Translator::numberToLocale($netto) : '-').'
         </td>
     </tr>';
     }
     echo '
     </tbody>';
 
-    if ($mostra_prezzi) {
+    if ($options['pricing']) {
         // Totale spese aggiuntive
         echo '
     <tr>
@@ -300,7 +300,7 @@ echo '
     <tbody>';
 
 // Sessioni di lavoro dei tecnici
-$rst = $dbo->fetchArray('SELECT an_anagrafiche.*, in_interventi_tecnici.* FROM in_interventi_tecnici JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico=an_anagrafiche.idanagrafica WHERE in_interventi_tecnici.idintervento='.prepare($idintervento).' ORDER BY in_interventi_tecnici.orario_inizio');
+$rst = $dbo->fetchArray('SELECT an_anagrafiche.*, in_interventi_tecnici.* FROM in_interventi_tecnici JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico=an_anagrafiche.idanagrafica WHERE in_interventi_tecnici.idintervento='.prepare($id_record).' ORDER BY in_interventi_tecnici.orario_inizio');
 
 foreach ($rst as $i => $r) {
     echo '
@@ -349,8 +349,8 @@ echo '
     <tr>';
 
 // Ore lavorate
-if ($mostra_prezzi) {
-    $ore = get_ore_intervento($idintervento);
+if ($options['pricing']) {
+    $ore = get_ore_intervento($id_record);
 
     $costo_orario = $records[0]['tot_ore_consuntivo'] - $records[0]['tot_dirittochiamata'];
 
@@ -396,7 +396,7 @@ echo '
     </tr>';
 
 // TOTALE COSTI FINALI
-if ($mostra_prezzi) {
+if ($options['pricing']) {
     // Totale imponibile
     echo '
     <tr>

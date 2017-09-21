@@ -13,10 +13,10 @@ include_once $docroot.'/templates/pdfgen_variables.php';
 /*
     Dati scadenzario
 */
-if (get('type') == 'clienti') {
+if ($_GET['type'] == 'clienti') {
     $titolo = 'Scadenzario clienti';
     $add_where = "AND co_tipidocumento.dir='entrata'";
-} elseif (get('type') == 'fornitori') {
+} elseif ($_GET['type'] == 'fornitori') {
     $titolo = 'Scadenzario fornitori';
     $add_where = "AND co_tipidocumento.dir='uscita'";
 } else {

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Classe per la gestione delle informazioni relative ai moduli installati.
+ * Classe per la gestione delle informazioni relative ai plugin installati.
  *
  * @since 2.3
  */
@@ -13,7 +13,7 @@ class Plugins
     protected static $queries = [];
 
     /**
-     * Restituisce tutte le informazioni di tutti i moduli installati.
+     * Restituisce tutte le informazioni di tutti i plugin installati.
      *
      * @return array
      */
@@ -40,27 +40,17 @@ class Plugins
     /**
      * Restituisce le informazioni relative a un singolo modulo specificato.
      *
-     * @param int $id
+     * @param string|int $plugin
      *
      * @return array
      */
-    public static function getPlugin($id)
+    public static function getPlugin($plugin)
     {
-        return self::getPlugins()[$id];
-    }
-
-    /**
-     * Restituisce le informazioni relative a un singolo modulo specificato, ricercato in base al nome.
-     *
-     * @param string $name
-     *
-     * @return array
-     */
-    public static function getPluginByName($name)
-    {
-        if (!empty(self::getPlugins()[$name])) {
-            return self::getPlugin(self::getPlugins()[$name]);
+        if (!is_numeric($plugin) && !empty(self::getModules()[$plugin])) {
+            $plugin = self::getPlugins()[$plugin];
         }
+
+        return self::getPlugins()[$plugin];
     }
 
     /**

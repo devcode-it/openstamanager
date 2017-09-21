@@ -85,10 +85,11 @@ foreach ($replace as $prefix => $values) {
 
 // Valori aggiuntivi per la sostituzione
 $replaces = array_merge($replaces, [
-    'docroot' => DOCROOT,
-    'rootdir' => ROOTDIR,
-    'footer' => !empty($footer) ? $footer : '',
-    'dicitura_fissa_fattura' => get_var('Dicitura fissa fattura'),
     'default_header' => include DOCROOT.'/templates/base/header.php',
     'default_footer' => include DOCROOT.'/templates/base/footer.php',
+    'docroot' => DOCROOT,
+    'rootdir' => ROOTDIR,
+    'directory' => Prints::getPrint($id_print)['full_directory'],
+    'footer' => !empty($footer) ? $footer : '',
+    'dicitura_fissa_fattura' => get_var('Dicitura fissa fattura'),
 ]);

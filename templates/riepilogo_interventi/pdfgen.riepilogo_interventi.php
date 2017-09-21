@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 $module_name = 'Interventi';
 
-$id_module = get('id_module');
+$id_module = $_GET['id_module'];
 
 $fields = [];
 $select = '*';

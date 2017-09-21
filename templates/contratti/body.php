@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$report_name = 'contratto_'.$idcontratto.'.pdf';
+$report_name = 'contratto_'.$id_record.'.pdf';
 
 $autofill = [
     'count' => 0, // Conteggio delle righe
@@ -80,7 +80,7 @@ echo "
     <tbody>';
 
 // RIGHE PREVENTIVO CON ORDINAMENTO UNICO
-$righe = $dbo->fetchArray('SELECT * FROM co_righe2_contratti WHERE idcontratto='.prepare($idcontratto).' ORDER BY `order`');
+$righe = $dbo->fetchArray('SELECT * FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record).' ORDER BY `order`');
 foreach ($righe as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
@@ -110,7 +110,7 @@ foreach ($righe as $r) {
                 ".(empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'])).' '.$r['um'].'
             </td>';
 
-    if ($mostra_prezzi) {
+    if ($options['pricing']) {
         // Prezzo unitario
         echo "
             <td class='text-right'>
@@ -161,7 +161,7 @@ echo '
     </tbody>';
 
 // TOTALE COSTI FINALI
-if ($mostra_prezzi) {
+if ($options['pricing']) {
     // Eventuale sconto incondizionato
     if (!empty($sconto)) {
         // Totale imponibile

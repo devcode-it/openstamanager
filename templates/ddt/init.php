@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 // Lettura info ddt
-$q = 'SELECT *, (SELECT dir FROM dt_tipiddt WHERE id=idtipoddt) AS dir, (SELECT descrizione FROM dt_tipiddt WHERE id=idtipoddt) AS tipo_doc, (SELECT descrizione FROM dt_causalet WHERE id=idcausalet) AS causalet, (SELECT descrizione FROM dt_porto WHERE id=idporto) AS porto, (SELECT descrizione FROM dt_aspettobeni WHERE id=idaspettobeni) AS aspettobeni, (SELECT descrizione FROM dt_spedizione WHERE id=idspedizione) AS spedizione, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idvettore) AS vettore FROM dt_ddt WHERE id='.prepare($idddt);
+$q = 'SELECT *, (SELECT dir FROM dt_tipiddt WHERE id=idtipoddt) AS dir, (SELECT descrizione FROM dt_tipiddt WHERE id=idtipoddt) AS tipo_doc, (SELECT descrizione FROM dt_causalet WHERE id=idcausalet) AS causalet, (SELECT descrizione FROM dt_porto WHERE id=idporto) AS porto, (SELECT descrizione FROM dt_aspettobeni WHERE id=idaspettobeni) AS aspettobeni, (SELECT descrizione FROM dt_spedizione WHERE id=idspedizione) AS spedizione, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idvettore) AS vettore FROM dt_ddt WHERE id='.prepare($id_record);
 $records = $dbo->fetchArray($q);
 
 $module_name = ($records[0]['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
@@ -59,5 +59,3 @@ $custom = [
 if ($id_cliente != Auth::user()['idanagrafica'] && !Auth::admin()) {
     die(tr('Non hai i permessi per questa stampa!'));
 }
-
-$mostra_prezzi = get_var("Stampa i prezzi sui ddt");

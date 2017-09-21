@@ -4,7 +4,7 @@
 echo '
 <table class="table-bordered">';
 
-if ($mostra_prezzi) {
+if ($options['pricing']) {
     // Riga 1
     echo "
     <tr>

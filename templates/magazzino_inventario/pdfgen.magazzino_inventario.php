@@ -6,10 +6,10 @@ include_once __DIR__.'/../../core.php';
 $report = file_get_contents($docroot.'/templates/magazzino_inventario/magazzino_inventario.html');
 $body = file_get_contents($docroot.'/templates/magazzino_inventario/magazzino_inventario_body.html');
 
-$search_codice = get('search_codice');
-$search_descrizione = get('search_descrizione');
-$search_categoria = get('search_categoria').' '.get('search_subcategoria');
-$search_tipo = get('search_tipo');
+$search_codice = $_GET['search_codice'];
+$search_descrizione = $_GET['search_descrizione'];
+$search_categoria = $_GET['search_categoria'].' '.$_GET['search_subcategoria'];
+$search_tipo = $_GET['search_tipo'];
 
 if ($search_tipo == '') {
     $search_tipo = 'solo prodotti attivi';

@@ -9,7 +9,7 @@ $autofill = [
     'words' => 70,
     'rows' => 16,
     'additional' => 15,
-    'columns' => $mostra_prezzi ? 5 : 2,
+    'columns' => $options['pricing'] ? 5 : 2,
 ];
 
 $imponibile = [];
@@ -24,7 +24,7 @@ echo "
             <th class='text-center'>".tr('Descrizione', [], ['upper' => true])."</th>
             <th class='text-center' style='width:10%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
-if ($mostra_prezzi) {
+if ($options['pricing']) {
     echo "
             <th class='text-center' style='width:15%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
             <th class='text-center' style='width:15%'>".tr('Importo', [], ['upper' => true])."</th>
@@ -38,7 +38,7 @@ if ($mostra_prezzi) {
     <tbody>';
 
 // Righe
-$rs_gen = $dbo->fetchArray('SELECT *, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva, IFNULL((SELECT peso_lordo FROM mg_articoli WHERE id=idarticolo),0) * qta AS peso_lordo, IFNULL((SELECT volume FROM mg_articoli WHERE id=idarticolo),0) * qta AS volume FROM `dt_righe_ddt` WHERE idddt='.prepare($idddt));
+$rs_gen = $dbo->fetchArray('SELECT *, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva, IFNULL((SELECT peso_lordo FROM mg_articoli WHERE id=idarticolo),0) * qta AS peso_lordo, IFNULL((SELECT volume FROM mg_articoli WHERE id=idarticolo),0) * qta AS volume FROM `dt_righe_ddt` WHERE idddt='.prepare($id_record));
 foreach ($rs_gen as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
@@ -73,7 +73,7 @@ foreach ($rs_gen as $r) {
             ".Translator::numberToLocale($r['qta']).' '.$r['um'].'
         </td>';
 
-    if ($mostra_prezzi) {
+    if ($options['pricing']) {
         echo "
         <td class='text-right'>
             ".Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;

@@ -92,7 +92,7 @@ if (!empty($rs)) {
             <br><span class="label label-danger">
                 - '.tr('sconto _TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : ' &euro;'),
+                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
                 ]).'
             </span>';
             }

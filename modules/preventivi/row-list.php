@@ -57,7 +57,7 @@ if (!empty($rs)) {
             echo '
             <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
                 '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : ' &euro;'),
+                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
             ]).'</small>';
         }
 

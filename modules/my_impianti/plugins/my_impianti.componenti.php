@@ -241,7 +241,7 @@ if (!empty($rs2)) {
 
         if (!empty($rs2[$j]['idintervento'])) {
             echo '
-                            '.Modules::link('Interventi', $rs2[$j]['id'], tr('Intervento _NUM_ del _DATE_', [
+                            '.Modules::link('Interventi', $rs2[$j]['id'], tr('Intervento num. _NUM_ del _DATE_', [
                                 '_NUM_' => $rs2[$j]['codice'],
                                 '_DATE_' => Translator::dateToLocale($rs2[$j]['data_intervento']),
                             ])).'<br>';

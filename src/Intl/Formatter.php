@@ -58,6 +58,50 @@ class Formatter
         return static::$standards;
     }
 
+    /**
+     * Restituisce gli elementi di separazione secondo la formattazione in utilizzo.
+     *
+     * @return mixed
+     */
+    public function format($value)
+    {
+        if (!empty($value)) {
+            if ($this->isStandardDate($value)) {
+                $value = $this->formatDate($value);
+            } elseif ($this->isStandardTime($value)) {
+                $value = $this->formatTime($value);
+            } elseif ($this->isStandardTimestamp($value)) {
+                $value = $this->formatTimestamp($value);
+            } elseif ($this->isStandardNumber($value)) {
+                $value = $this->formatNumber($value);
+            }
+        }
+
+        return $value;
+    }
+
+    /**
+     * Restituisce gli elementi di separazione secondo la formattazione in utilizzo.
+     *
+     * @return mixed
+     */
+    public function parse($value)
+    {
+        if (!empty($value)) {
+            if ($this->isFormattedDate($value)) {
+                $value = $this->parseDate($value);
+            } elseif ($this->isFormattedTime($value)) {
+                $value = $this->parseTime($value);
+            } elseif ($this->isFormattedTimestamp($value)) {
+                $value = $this->parseTimestamp($value);
+            } elseif ($this->isFormattedNumber($value)) {
+                $value = $this->parseNumber($value);
+            }
+        }
+
+        return $value;
+    }
+
     // Gestione della conversione dei numeri
 
     /**
@@ -71,23 +115,21 @@ class Formatter
     {
         $value = trim($value);
 
+        if (isset($decimals)) {
+            $original = $this->getPrecision();
+            $this->setPrecision($decimals);
+        }
+
         if (is_object($this->numberFormatter)) {
-            if (!empty($decimals)) {
-                $original = $this->numberFormatter->getAttribute(NumberFormatter::FRACTION_DIGITS);
-                $this->numberFormatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $decimals);
-            }
-
             $result = $this->numberFormatter->format($value);
-
-            if (!empty($decimals)) {
-                $this->numberFormatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $original);
-            }
         } else {
-            $decimals = !empty($decimals) ? $decimals : $this->precision;
-
-            $number = number_format($value, $decimals, $this->getStandardFormats()['number']['decimals'], $this->getStandardFormats()['number']['thousands']);
+            $number = number_format($value, $this->getPrecision(), $this->getStandardFormats()['number']['decimals'], $this->getStandardFormats()['number']['thousands']);
 
             $result = $this->customNumber($number, $this->getStandardFormats()['number'], $this->getNumberSeparators());
+        }
+
+        if (isset($decimals)) {
+            $this->setPrecision($original);
         }
 
         return is_numeric($value) ? $result : false;
@@ -111,6 +153,8 @@ class Formatter
         } else {
             $result = $this->customNumber($value, $this->getNumberSeparators(), $this->getStandardFormats()['number']);
         }
+
+        $result = is_numeric($result) ? floatval($result) : $result;
 
         return $result;
     }
@@ -155,6 +199,16 @@ class Formatter
         } else {
             $this->precision = $decimals;
         }
+    }
+
+    /**
+     * Restituisce la precisione di default per i numeri da formattare.
+     *
+     * @return int
+     */
+    public function getPrecision()
+    {
+        return is_object($this->numberFormatter) ? $this->numberFormatter->getAttribute(NumberFormatter::FRACTION_DIGITS) : $this->precision;
     }
 
     /**

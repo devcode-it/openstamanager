@@ -146,14 +146,14 @@ if (!empty($rs2)) {
         // Quantità
         echo '
             <td class="text-center">
-                '.Translator::numberToLocale($r['qta'], 2).' '.$r['um'].'
+                '.Translator::numberToLocale($r['qta']).' '.$r['um'].'
             </td>';
 
         // Netto
         $netto = $r['prezzo_vendita'] * $r['qta'] - $r['sconto'];
         echo '
             <td class="text-center">
-                '.($mostra_prezzi ? Translator::numberToLocale($netto, 2) : '-').'
+                '.($mostra_prezzi ? Translator::numberToLocale($netto) : '-').'
             </td>
         </tr>';
     }
@@ -170,7 +170,7 @@ if (!empty($rs2)) {
         </td>
 
         <th colspan="2" class="text-center">
-            <b>'.Translator::numberToLocale($costi_intervento['ricambi_scontato'], 2).' &euro;</b>
+            <b>'.Translator::numberToLocale($costi_intervento['ricambi_scontato']).' &euro;</b>
         </th>
     </tr>';
     }
@@ -225,20 +225,20 @@ if (!empty($rs2)) {
         // Quantità
         echo '
         <td class="text-center">
-            '.Translator::numberToLocale($r['qta'], 2).'
+            '.Translator::numberToLocale($r['qta']).'
         </td>';
 
         // Prezzo unitario
         echo '
         <td class="text-center">
-            '.($mostra_prezzi ? Translator::numberToLocale($r['prezzo_vendita'], 2).' &euro;' : '-').'
+            '.($mostra_prezzi ? Translator::numberToLocale($r['prezzo_vendita']).' &euro;' : '-').'
         </td>';
 
         // Prezzo totale
         $netto = $r['prezzo_vendita'] * $r['qta'] - $r['sconto'];
         echo '
         <td class="text-center">
-            '.($mostra_prezzi ? Translator::numberToLocale($netto, 2) : '-').'
+            '.($mostra_prezzi ? Translator::numberToLocale($netto) : '-').'
         </td>
     </tr>';
     }
@@ -254,7 +254,7 @@ if (!empty($rs2)) {
         </td>
 
         <th class="text-center">
-            <b>'.Translator::numberToLocale($costi_intervento['altro_scontato'], 2).' &euro;</b>
+            <b>'.Translator::numberToLocale($costi_intervento['altro_scontato']).' &euro;</b>
         </th>
     </tr>';
     }
@@ -360,17 +360,17 @@ if ($mostra_prezzi) {
 
     echo '
         <td class="text-center">
-        '.tr('Ore lavorate').':<br/><b>'.Translator::numberToLocale($ore, 2).'</b>
+        '.tr('Ore lavorate').':<br/><b>'.Translator::numberToLocale($ore).'</b>
         </td>';
 
     // Costo orario
     echo '
         <td class="text-center">
-            '.tr('Costo orario').':<br/><b>'.Translator::numberToLocale($costo_orario, 2).'</b>';
+            '.tr('Costo orario').':<br/><b>'.Translator::numberToLocale($costo_orario).'</b>';
 
     if ($records[0]['tot_dirittochiamata'] != 0) {
         echo '
-            <small> + '.Translator::numberToLocale($records[0]['tot_dirittochiamata'], 2).' d.c.</small>';
+            <small> + '.Translator::numberToLocale($records[0]['tot_dirittochiamata']).' d.c.</small>';
     }
 
     echo '
@@ -379,7 +379,7 @@ if ($mostra_prezzi) {
     // Costo totale manodopera
     echo '
         <td colspan="2" class="text-center">
-        '.tr('Manodopera').':<br/><b>'.Translator::numberToLocale($costi_intervento['manodopera_scontato'], 2).'</b>
+        '.tr('Manodopera').':<br/><b>'.Translator::numberToLocale($costi_intervento['manodopera_scontato']).'</b>
         </td>';
 } else {
     echo '
@@ -405,7 +405,7 @@ if ($mostra_prezzi) {
         </td>
 
         <th class="text-center">
-            <b>'.Translator::numberToLocale($costi_intervento['totale_scontato'], 2).' &euro;</b>
+            <b>'.Translator::numberToLocale($costi_intervento['totale_scontato']).' &euro;</b>
         </th>
     </tr>';
 
@@ -418,7 +418,7 @@ if ($mostra_prezzi) {
         </td>
 
         <th class="text-center">
-            <b>-'.Translator::numberToLocale($costi_intervento['sconto_globale'], 2).' &euro;</b>
+            <b>-'.Translator::numberToLocale($costi_intervento['sconto_globale']).' &euro;</b>
         </th>
     </tr>';
 
@@ -430,7 +430,7 @@ if ($mostra_prezzi) {
         </td>
 
         <th class="text-center">
-            <b>'.Translator::numberToLocale($costi_intervento['totale'], 2).' &euro;</b>
+            <b>'.Translator::numberToLocale($costi_intervento['totale']).' &euro;</b>
         </th>
     </tr>';
     }
@@ -452,7 +452,7 @@ if ($mostra_prezzi) {
         </td>
 
         <th class="text-center">
-            <b>'.Translator::numberToLocale($iva, 2).' &euro;</b>
+            <b>'.Translator::numberToLocale($iva).' &euro;</b>
         </th>
     </tr>';
 
@@ -465,7 +465,7 @@ if ($mostra_prezzi) {
             <b>'.tr('Totale intervento', [], ['upper' => true]).':</b>
     	</td>
     	<th class="text-center">
-    		<b>'.Translator::numberToLocale($totale, 2).' &euro;</b>
+    		<b>'.Translator::numberToLocale($totale).' &euro;</b>
     	</th>
     </tr>';
 }

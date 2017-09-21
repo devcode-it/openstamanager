@@ -21,7 +21,7 @@ if ($mostra_prezzi) {
     echo "
     <tr>
         <td class='cell-padded text-right'>
-            ".Translator::numberToLocale($imponibile, 2).' &euro;
+            ".Translator::numberToLocale($imponibile).' &euro;
         </td>
     </tr>';
 
@@ -35,7 +35,7 @@ if ($mostra_prezzi) {
 
     <tr>
         <td class='cell-padded text-right'>
-            ".Translator::numberToLocale($iva, 2).' &euro;
+            ".Translator::numberToLocale($iva).' &euro;
         </td>
     </tr>';
 
@@ -49,7 +49,7 @@ if ($mostra_prezzi) {
 
     <tr>
         <td class='cell-padded text-right'>
-            ".Translator::numberToLocale($totale, 2).' &euro;
+            ".Translator::numberToLocale($totale).' &euro;
         </td>
     </tr>';
 } else {

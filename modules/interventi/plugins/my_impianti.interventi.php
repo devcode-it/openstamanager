@@ -24,8 +24,8 @@ if (!empty($results)) {
         echo '
             <tr>
                 <td>
-                    '.Modules::link('Interventi', $result['codice'], tr('Intervento _NUM_ del _DATE_', [
-                        '_NUM_' => $result['idintervento'],
+                    '.Modules::link('Interventi', $result['codice'], tr('Intervento num. _NUM_ del _DATE_', [
+                        '_NUM_' => $result['codice'],
                         '_DATE_' => Translator::dateToLocale($result['data']),
                     ])).'
                 </td>

@@ -9,6 +9,9 @@ foreach ($get as $key => $value) {
     ${$key} = !empty(${$key}) ? ${$key} : $value;
 }
 
+// Impostazione automatica della precisione a 2 numeri decimali
+Translator::getFormatter()->setPrecision(2);
+
 // Individuazione del formato della stampa
 $old_format = file_exists($docroot.'/templates/'.$ptype.'/pdfgen.'.$ptype.'.php') || file_exists($docroot.'/templates/'.$ptype.'/custom/pdfgen.'.$ptype.'.php');
 

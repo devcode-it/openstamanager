@@ -803,7 +803,7 @@ function sum($first, $second = null, $decimals = null)
     $result = 0;
 
     if (!is_numeric($decimals)) {
-        $decimals = is_numeric($decimals) ? $decimals : Settings::get('Cifre decimali per importi');
+        $decimals = is_numeric($decimals) ? $decimals : Translator::getFormatter()->getPrecision();
     }
 
     $bcadd = function_exists('bcadd');

@@ -26,7 +26,7 @@ $totale = 0;
 $totale_stato = [];
 
 // Tabella con riepilogo interventi
-$rsi = $dbo->fetchArray('SELECT *, in_interventi.id, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM co_preventivi_interventi INNER JOIN in_interventi ON co_preventivi_interventi.idintervento=in_interventi.id WHERE co_preventivi_interventi.idpreventivo='.prepare($id_record).' ORDER BY co_preventivi_interventi.idintervento DESC');
+$rsi = $dbo->fetchArray('SELECT *, in_interventi.id, in_interventi.codice, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM co_preventivi_interventi INNER JOIN in_interventi ON co_preventivi_interventi.idintervento=in_interventi.id WHERE co_preventivi_interventi.idpreventivo='.prepare($id_record).' ORDER BY co_preventivi_interventi.idintervento DESC');
 if (!empty($rsi)) {
     echo '
 <table class="table table-bordered table-condensed">
@@ -49,8 +49,8 @@ if (!empty($rsi)) {
     <tr style="background:'.$colori[$int['idstatointervento']].';">
         <td>
             <a href="javascript:;" class="btn btn-primary btn-xs" onclick="$(\'#dettagli_'.$int['id'].'\').toggleClass(\'hide\'); $(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');"><i class="fa fa-plus"></i></a>
-            '.Modules::link('Interventi', $int['id'], tr('Intervento _NUM_ del _DATE_', [
-                '_NUM_' => $int['id'],
+            '.Modules::link('Interventi', $int['id'], tr('Intervento num. _NUM_ del _DATE_', [
+                '_NUM_' => $int['codice'],
                 '_DATE_' => Translator::dateToLocale($int['inizio']),
             ])).'
         </td>

@@ -152,7 +152,7 @@ if ($tot > 0) {
             $body .= "</td>\n";
 
             $qta = $rsr[$i]['qta'];
-            ($qta == 0) ? $qta = '-' : $qta = Translator::numberToLocale($qta, 2);
+            ($qta == 0) ? $qta = '-' : $qta = Translator::numberToLocale($qta);
             $body .= "<td class='table_cell center'>\n";
             $body .= $qta;
             $body .= "</td>\n";
@@ -164,21 +164,21 @@ if ($tot > 0) {
 
             // costo unitario
             $subtotale = $rsr[$i]['subtotale'] / $rsr[$i]['qta'];
-            ($subtotale == 0) ? $subtotale = '-' : $subtotale = Translator::numberToLocale($subtotale, 2).' &euro;';
+            ($subtotale == 0) ? $subtotale = '-' : $subtotale = Translator::numberToLocale($subtotale).' &euro;';
             $body .= "<td class='table_cell center'>\n";
             $body .= $subtotale."\n";
             $body .= "</td>\n";
 
             $body .= "<td class='table_cell center'>\n";
             $iva = $rsr[$i]['iva'];
-            $body .= '<br/>'.Translator::numberToLocale($iva, 2)." &euro;<br/><small style='color:#777;'>".$rsr[$i]['desc_iva']."</small>\n";
+            $body .= '<br/>'.Translator::numberToLocale($iva)." &euro;<br/><small style='color:#777;'>".$rsr[$i]['desc_iva']."</small>\n";
             $body .= "</td>\n";
 
             $body .= "<td class='table_cell' align='right'>\n";
             $subtot = $rsr[$i]['subtotale'];
-            $body .= Translator::numberToLocale($subtot, 2)." &euro;\n";
+            $body .= Translator::numberToLocale($subtot)." &euro;\n";
             if ($rsr[$i]['sconto'] > 0) {
-                $body .= "<br/>\n<small style='color:#555;'>- sconto ".Translator::numberToLocale($rsr[$i]['sconto'], 2)." &euro;</small>\n";
+                $body .= "<br/>\n<small style='color:#555;'>- sconto ".Translator::numberToLocale($rsr[$i]['sconto'])." &euro;</small>\n";
             }
             $body .= "</td></tr>\n";
 
@@ -208,15 +208,15 @@ if ($tot > 0) {
             // Iva
             $body .= "<td class='table_cell center'>\n";
             $iva = $rsr[$i]['iva'];
-            $body .= '<br/>'.Translator::numberToLocale($iva, 2)." &euro;<br/><small style='color:#777;'>".$rsr[$i]['desc_iva']."</small>\n";
+            $body .= '<br/>'.Translator::numberToLocale($iva)." &euro;<br/><small style='color:#777;'>".$rsr[$i]['desc_iva']."</small>\n";
             $body .= "</td>\n";
 
             // Imponibile
             $body .= "<td class='table_cell' align='right'>\n";
             $subtot = $rsr[$i]['subtotale'];
-            $body .= Translator::numberToLocale($subtot, 2)." &euro;\n";
+            $body .= Translator::numberToLocale($subtot)." &euro;\n";
             if ($rsr[$i]['sconto'] > 0) {
-                $body .= "<br/>\n<small style='color:#555;'>- sconto ".Translator::numberToLocale($rsr[$i]['sconto'], 2)." &euro;</small>\n";
+                $body .= "<br/>\n<small style='color:#555;'>- sconto ".Translator::numberToLocale($rsr[$i]['sconto'])." &euro;</small>\n";
             }
             $body .= "</td></tr>\n";
 
@@ -246,15 +246,15 @@ if ($tot > 0) {
             // Iva
             $body .= "<td class='table_cell center'>\n";
             $iva = $rsr[$i]['iva'];
-            $body .= '<br/>'.Translator::numberToLocale($iva, 2)." &euro;<br/><small style='color:#777;'>".$rsr[$i]['desc_iva']."</small>\n";
+            $body .= '<br/>'.Translator::numberToLocale($iva)." &euro;<br/><small style='color:#777;'>".$rsr[$i]['desc_iva']."</small>\n";
             $body .= "</td>\n";
 
             // Imponibile
             $body .= "<td class='table_cell' align='right'>\n";
             $subtot = $rsr[$i]['subtotale'];
-            $body .= Translator::numberToLocale($subtot, 2)." &euro;\n";
+            $body .= Translator::numberToLocale($subtot)." &euro;\n";
             if ($rsr[$i]['sconto'] > 0) {
-                $body .= "<br/>\n<small style='color:#555;'>- sconto ".Translator::numberToLocale($rsr[$i]['sconto'], 2)." &euro;</small>\n";
+                $body .= "<br/>\n<small style='color:#555;'>- sconto ".Translator::numberToLocale($rsr[$i]['sconto'])." &euro;</small>\n";
             }
             $body .= "</td></tr>\n";
 
@@ -292,7 +292,7 @@ if ($tot > 0) {
             $body .= "</td>\n";
 
             $body .= "<td class='table_cell center'>\n";
-            $body .= Translator::numberToLocale($rsr[$i]['qta'], 2);
+            $body .= Translator::numberToLocale($rsr[$i]['qta']);
             $body .= "</td>\n";
 
             $body .= "<td class='table_cell center'>\n";
@@ -301,19 +301,19 @@ if ($tot > 0) {
 
             // costo unitario
             $body .= "<td class='table_cell center'>\n";
-            $body .= Translator::numberToLocale($rsr[$i]['subtotale'] / $rsr[$i]['sumqta'], 2)." &euro;\n";
+            $body .= Translator::numberToLocale($rsr[$i]['subtotale'] / $rsr[$i]['sumqta'])." &euro;\n";
             $body .= "</td>\n";
 
             $body .= "<td class='table_cell center'>\n";
             $iva = $rsr[$i]['iva'];
-            $body .= '<br/>'.Translator::numberToLocale($iva, 2)." &euro;<br/><small style='color:#777;'>".$rsr[$i]['desc_iva']."</small>\n";
+            $body .= '<br/>'.Translator::numberToLocale($iva)." &euro;<br/><small style='color:#777;'>".$rsr[$i]['desc_iva']."</small>\n";
             $body .= "</td>\n";
 
             $body .= "<td class='table_cell' align='right'>\n";
             $subtot = $rsr[$i]['subtotale'];
-            $body .= Translator::numberToLocale($subtot, 2)." &euro;\n";
+            $body .= Translator::numberToLocale($subtot)." &euro;\n";
             if ($rsr[$i]['sconto'] > 0) {
-                $body .= "<br/>\n<small style='color:#555;'>- sconto ".Translator::numberToLocale($rsr[$i]['sconto'], 2)." &euro;</small>\n";
+                $body .= "<br/>\n<small style='color:#555;'>- sconto ".Translator::numberToLocale($rsr[$i]['sconto'])." &euro;</small>\n";
             }
             $body .= "</td></tr>\n";
 
@@ -343,7 +343,7 @@ if ($tot > 0) {
             $body .= "</td>\n";
 
             $body .= "<td class='table_cell center'>\n";
-            $body .= Translator::numberToLocale($rsr[$i]['qta'], 2)."\n";
+            $body .= Translator::numberToLocale($rsr[$i]['qta'])."\n";
             $body .= "</td>\n";
 
             $body .= "<td class='table_cell center'>\n";
@@ -351,21 +351,21 @@ if ($tot > 0) {
             $body .= "</td>\n";
 
             $body .= "<td class='table_cell center'>\n";
-            $body .= Translator::numberToLocale($rsr[$i]['subtotale'] / $rsr[$i]['qta'], 2)." &euro;\n";
+            $body .= Translator::numberToLocale($rsr[$i]['subtotale'] / $rsr[$i]['qta'])." &euro;\n";
             $body .= "</td>\n";
 
             // Iva
             $body .= "<td class='table_cell center'>\n";
             $iva = $rsr[$i]['iva'];
-            $body .= '<br/>'.Translator::numberToLocale($iva, 2)." &euro;<br/><small style='color:#777;'>".$rsr[$i]['desc_iva']."</small>\n";
+            $body .= '<br/>'.Translator::numberToLocale($iva)." &euro;<br/><small style='color:#777;'>".$rsr[$i]['desc_iva']."</small>\n";
             $body .= "</td>\n";
 
             // Imponibile
             $body .= "<td class='table_cell' align='right'>\n";
             $subtot = $rsr[$i]['subtotale'];
-            $body .= Translator::numberToLocale($subtot, 2)." &euro;\n";
+            $body .= Translator::numberToLocale($subtot)." &euro;\n";
             if ($rsr[$i]['sconto'] > 0) {
-                $body .= "<br/>\n<small style='color:#555;'>- sconto ".Translator::numberToLocale($rsr[$i]['sconto'], 2)." &euro;</small>\n";
+                $body .= "<br/>\n<small style='color:#555;'>- sconto ".Translator::numberToLocale($rsr[$i]['sconto'])." &euro;</small>\n";
             }
             $body .= "</td></tr>\n";
 
@@ -404,7 +404,7 @@ $body .= "</td>\n";
 // Imponibile
 $body .= "<td class='table_cell' align='right'>\n";
 $totale_documento = $imponibile_documento;
-$body .= Translator::numberToLocale($totale_documento, 2)." &euro;\n";
+$body .= Translator::numberToLocale($totale_documento)." &euro;\n";
 $body .= "</td></tr>\n";
 
 // Mostra sconto se c'è
@@ -415,7 +415,7 @@ if (abs($sconto) > 0) {
 
     // Sconto
     $body .= "<td class='table_cell' align='right'>\n";
-    $body .= Translator::numberToLocale($sconto, 2)." &euro;\n";
+    $body .= Translator::numberToLocale($sconto)." &euro;\n";
     $body .= '</td></tr>';
 
     // Totale scontato
@@ -426,7 +426,7 @@ if (abs($sconto) > 0) {
     // Sconto
     $body .= "<td class='table_cell' align='right'>\n";
     $totale_documento -= $sconto;
-    $body .= Translator::numberToLocale($totale_documento, 2)." &euro;\n";
+    $body .= Translator::numberToLocale($totale_documento)." &euro;\n";
     $body .= "</td></tr>\n";
 }
 
@@ -438,7 +438,7 @@ if (abs($rs[0]['rivalsainps']) > 0) {
 
     // Rivalsa INPS
     $body .= "<td class='table_cell' align='right'>\n";
-    $body .= Translator::numberToLocale($rs[0]['rivalsainps'], 2)." &euro;\n";
+    $body .= Translator::numberToLocale($rs[0]['rivalsainps'])." &euro;\n";
     $body .= "</td></tr>\n";
     $totale_documento += $rs[0]['rivalsainps'];
 }
@@ -452,7 +452,7 @@ if (abs($totale_iva) > 0) {
 
     // Iva
     $body .= "<td class='table_cell' align='right'>\n";
-    $body .= Translator::numberToLocale($totale_iva, 2)." &euro;\n";
+    $body .= Translator::numberToLocale($totale_iva)." &euro;\n";
     $body .= "</td></tr>\n";
     $totale_documento += $totale_iva;
 }
@@ -465,7 +465,7 @@ $body .= '<b>Totale documento:</b>';
 $body .= "</td>\n";
 
 $body .= "<td class='table_cell_h' align='right'>\n";
-$body .= '<b>'.Translator::numberToLocale($totale_documento, 2)." &euro;</b>\n";
+$body .= '<b>'.Translator::numberToLocale($totale_documento)." &euro;</b>\n";
 $body .= "</td></tr>\n";
 $netto_a_pagare = $totale_documento;
 
@@ -478,7 +478,7 @@ if (abs($rs[0]['bollo']) > 0) {
     // Marca da bollo
     $body .= "<td class='table_cell' align='right'>\n";
     $marca_da_bollo = str_replace(',', '.', $rs[0]['bollo']);
-    $body .= Translator::numberToLocale($marca_da_bollo, 2).' &euro;';
+    $body .= Translator::numberToLocale($marca_da_bollo).' &euro;';
     $body .= "</td></tr>\n";
     $netto_a_pagare += $marca_da_bollo;
 }
@@ -491,7 +491,7 @@ if (abs($rs[0]['ritenutaacconto']) > 0) {
 
     // Ritenuta d'acconto
     $body .= "<td class='table_cell' align='right'>\n";
-    $body .= Translator::numberToLocale($rs[0]['ritenutaacconto'], 2).' &euro;';
+    $body .= Translator::numberToLocale($rs[0]['ritenutaacconto']).' &euro;';
     $body .= "</td></tr>\n";
     $netto_a_pagare -= $rs[0]['ritenutaacconto'];
 }
@@ -505,7 +505,7 @@ if ($totale_documento != $netto_a_pagare) {
     $body .= "</td>\n";
 
     $body .= "<td class='table_cell_h' align='right'>\n";
-    $body .= '<b>'.Translator::numberToLocale($netto_a_pagare, 2)." &euro;</b>\n";
+    $body .= '<b>'.Translator::numberToLocale($netto_a_pagare)." &euro;</b>\n";
     $body .= "</td></tr>\n";
 }
 $body .= "</tbody>\n";

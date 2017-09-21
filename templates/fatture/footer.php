@@ -31,7 +31,7 @@ if (!empty($rs2)) {
                                     <small>".Translator::dateToLocale($rs2[$i]['scadenza'])."</small>
                                 </td>
                                 <td style='width:50%;' class='text-right'>
-                                    <small>".Translator::numberToLocale($rs2[$i]['da_pagare'], 2).' &euro;</small>
+                                    <small>".Translator::numberToLocale($rs2[$i]['da_pagare']).' &euro;</small>
                                 </td>
                             </tr>';
     }
@@ -75,11 +75,11 @@ if (!empty($v_iva)) {
                                 </td>
 
                                 <td class='text-right'>
-                                    <small>".Translator::numberToLocale($v_totale[$desc_iva], 2)." &euro;</small>
+                                    <small>".Translator::numberToLocale($v_totale[$desc_iva])." &euro;</small>
                                 </td>
 
                                 <td class='text-right'>
-                                    <small>".Translator::numberToLocale($v_iva[$desc_iva], 2).' &euro;</small>
+                                    <small>".Translator::numberToLocale($v_iva[$desc_iva]).' &euro;</small>
                                 </td>
                             </tr>';
         }
@@ -132,28 +132,28 @@ echo "
 
     <tr>
         <td class='cell-padded text-center'>
-            ".Translator::numberToLocale($imponibile, 2)." &euro;
+            ".Translator::numberToLocale($imponibile)." &euro;
         </td>";
 
 if (!empty($sconto)) {
     echo "
 
         <td class='cell-padded text-center'>
-            ".Translator::numberToLocale($sconto, 2)." &euro;
+            ".Translator::numberToLocale($sconto)." &euro;
         </td>
 
         <td class='cell-padded text-center'>
-            ".Translator::numberToLocale($imponibile - $sconto, 2)." &euro;
+            ".Translator::numberToLocale($imponibile - $sconto)." &euro;
         </td>";
 }
 
     echo "
         <td class='cell-padded text-center'>
-            ".Translator::numberToLocale($iva, 2)." &euro;
+            ".Translator::numberToLocale($iva)." &euro;
         </td>
 
         <td class='cell-padded text-center'>
-            ".Translator::numberToLocale($totale, 2).' &euro;
+            ".Translator::numberToLocale($totale).' &euro;
         </td>
     </tr>';
 
@@ -176,11 +176,11 @@ if ($records[0]['ritenutaacconto'] != 0) {
 
     <tr>
         <td class='cell-padded text-center' colspan=".(!empty($sconto) ? 3 : 2).">
-            ".Translator::numberToLocale($records[0]['ritenutaacconto'], 2)." &euro;
+            ".Translator::numberToLocale($records[0]['ritenutaacconto'])." &euro;
         </td>
 
         <td class='cell-padded text-center' colspan=".(!empty($sconto) ? 2 : 1).">
-            ".Translator::numberToLocale($totale - $records[0]['ritenutaacconto'], 2).' &euro;
+            ".Translator::numberToLocale($totale - $records[0]['ritenutaacconto']).' &euro;
         </td>
     </tr>';
 }

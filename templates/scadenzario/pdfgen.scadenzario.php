@@ -54,8 +54,8 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
     $body .= '		<td>'.$rs[$i]['Anagrafica']."</td>\n";
     $body .= '		<td>'.$rs[$i]['Tipo di pagamento']."</td>\n";
     $body .= "		<td align='center'>".$rs[$i]['Data scadenza']."</td>\n";
-    $body .= "		<td align='right'>".Translator::numberToLocale($rs[$i]['Importo'], 2)."</td>\n";
-    $body .= "		<td align='right'>".Translator::numberToLocale($rs[$i]['Pagato'], 2)."</td>\n";
+    $body .= "		<td align='right'>".Translator::numberToLocale($rs[$i]['Importo'])."</td>\n";
+    $body .= "		<td align='right'>".Translator::numberToLocale($rs[$i]['Pagato'])."</td>\n";
     $body .= "	</tr>\n";
 
     $totale_da_pagare += $rs[$i]['Importo'];
@@ -63,7 +63,7 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
 }
 
 $body .= "	<tr>\n";
-$body .= "		<td colspan='4' align='right'><b>TOTALE:</b></td><td align='right'>".Translator::numberToLocale($totale_da_pagare, 2)."</td><td align='right'>".Translator::numberToLocale($totale_pagato, 2)."</td>\n";
+$body .= "		<td colspan='4' align='right'><b>TOTALE:</b></td><td align='right'>".Translator::numberToLocale($totale_da_pagare)."</td><td align='right'>".Translator::numberToLocale($totale_pagato)."</td>\n";
 $body .= "	</tr>\n";
 
 $body .= "</tbody>\n";

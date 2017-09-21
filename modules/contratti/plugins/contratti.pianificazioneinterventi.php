@@ -80,7 +80,7 @@ if (count($rsp) != 0) {
         if (!empty($rsp[$i]['idintervento'])) {
             $rsp2 = $dbo->fetchArray('SELECT id, codice, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS data FROM in_interventi WHERE id='.prepare($rsp[$i]['idintervento']));
 
-            $info_intervento = Modules::link('Interventi', $rsp2[0]['id'], tr('Intervento _NUM_ del _DATE_', [
+            $info_intervento = Modules::link('Interventi', $rsp2[0]['id'], tr('Intervento num. _NUM_ del _DATE_', [
                 '_NUM_' => $rsp2[0]['codice'],
                 '_DATE_' => Translator::dateToLocale($rsp2[0]['data']),
             ]));

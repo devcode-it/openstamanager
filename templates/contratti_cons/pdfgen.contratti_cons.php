@@ -70,7 +70,7 @@ for ($r = 0; $r < sizeof($rs_righe); ++$r) {
                     $orario .= Translator::timestampToLocale($rst[$j]['orario_inizio']).' - '.Translator::timestampToLocale($rst[$j]['orario_fine']);
                 }
 
-                $tecnici_full .= '<b>'.$rst[$j]['ragione_sociale'].'</b> ('.$orario.')<br/>'.Translator::numberToLocale($t1 / 60, 2).'h x '.Translator::numberToLocale($rst[$j]['prezzo_ore_unitario'], 2).' &euro;/h<br>'.Translator::numberToLocale($rst[$j]['km'], 2).'km x '.Translator::numberToLocale($rst[$j]['prezzo_km_unitario'], 2).' km/h<br>'.Translator::numberToLocale($rst[$j]['prezzo_dirittochiamata'], 2)."&euro; d.c.<br><br>\n";
+                $tecnici_full .= '<b>'.$rst[$j]['ragione_sociale'].'</b> ('.$orario.')<br/>'.Translator::numberToLocale($t1 / 60).'h x '.Translator::numberToLocale($rst[$j]['prezzo_ore_unitario']).' &euro;/h<br>'.Translator::numberToLocale($rst[$j]['km']).'km x '.Translator::numberToLocale($rst[$j]['prezzo_km_unitario']).' km/h<br>'.Translator::numberToLocale($rst[$j]['prezzo_dirittochiamata'])."&euro; d.c.<br><br>\n";
 
                 // Conteggio ore totali
                 $t += $t1 / 60;
@@ -143,7 +143,7 @@ if (sizeof($contratti) > 0) {
         // Subtotale
         $subtotale = $tot_ore_consuntivo[$j] + $km[$j] * $costo_km[$j] + $diritto_chiamata[$j];
         $body .= "<td valign=\"top\" align='right'>\n";
-        $body .= '	'.Translator::numberToLocale($subtotale, 2)."\n";
+        $body .= '	'.Translator::numberToLocale($subtotale)."\n";
         $body .= "</td></tr>\n";
         $totale += $subtotale;
         $totale_consuntivo += $tot_ore_consuntivo[$j] + $tot_km_consuntivo[$j];
@@ -154,7 +154,7 @@ if (sizeof($contratti) > 0) {
     $body .= "</td>\n";
 
     $body .= "<td align=\"right\" bgcolor=\"#dddddd\">\n";
-    $body .= '<span><b>'.Translator::numberToLocale($totale, 2)." &euro;</b></span>\n";
+    $body .= '<span><b>'.Translator::numberToLocale($totale)." &euro;</b></span>\n";
     $body .= "</td></tr>\n";
     $body .= "</tbody>\n";
     $body .= "</table>\n";
@@ -210,12 +210,12 @@ if (!empty($idinterventi)) {
             $netto = $rs2[$i]['prezzo_vendita'];
             $netto = $netto + $netto / 100 * $rs2[$i]['prc_guadagno'];
             $iva = $netto / 100 * $rs2[$i]['prciva_vendita'];
-            $body .= '<span>'.Translator::numberToLocale($netto, 2)." &euro;</span>\n";
+            $body .= '<span>'.Translator::numberToLocale($netto)." &euro;</span>\n";
             $body .= "</td>\n";
 
             // Prezzo di vendita
             $body .= "<td class='table_cell' align='center'>\n";
-            $body .= "<span><span class='prezzo_articolo'>".Translator::numberToLocale($netto * $qta, 2)."</span> &euro;</span>\n";
+            $body .= "<span><span class='prezzo_articolo'>".Translator::numberToLocale($netto * $qta)."</span> &euro;</span>\n";
             $body .= "</td></tr>\n";
             $totale_articoli += $netto * $qta;
         }
@@ -226,7 +226,7 @@ if (!empty($idinterventi)) {
         $body .= "</td>\n";
 
         $body .= "<td align=\"center\" bgcolor=\"#dddddd\">\n";
-        $body .= '<b>'.Translator::numberToLocale($totale_articoli, 2)." &euro;</b>\n";
+        $body .= '<b>'.Translator::numberToLocale($totale_articoli)." &euro;</b>\n";
         $body .= "</td></tr>\n";
         $body .= "</table><br/>\n";
     }
@@ -269,18 +269,18 @@ if (!empty($idinterventi)) {
             // Quantità
             $qta = $rs2[$i]['qta'];
             $body .= "<td class='table_cell' align='center'>\n";
-            $body .= '<span>'.Translator::numberToLocale($rs2[$i]['qta'], 2)."</span>\n";
+            $body .= '<span>'.Translator::numberToLocale($rs2[$i]['qta'])."</span>\n";
             $body .= "</td>\n";
 
             // Prezzo unitario
             $body .= "<td class='table_cell' align='center'>\n";
             $netto = $rs2[$i]['prezzo'];
-            $body .= '<span>'.Translator::numberToLocale($netto, 2)." &euro;</span>\n";
+            $body .= '<span>'.Translator::numberToLocale($netto)." &euro;</span>\n";
             $body .= "</td>\n";
 
             // Prezzo di vendita
             $body .= "<td class='table_cell' align='center'>\n";
-            $body .= '<span>'.Translator::numberToLocale($netto * $qta, 2)." &euro;</span>\n";
+            $body .= '<span>'.Translator::numberToLocale($netto * $qta)." &euro;</span>\n";
             $body .= "</td></tr>\n";
             $totale_spese += $netto * $qta;
         }
@@ -290,7 +290,7 @@ if (!empty($idinterventi)) {
         $body .= "</td>\n";
 
         $body .= "<td align=\"center\" bgcolor=\"#dddddd\">\n";
-        $body .= '<b>'.Translator::numberToLocale($totale_spese, 2)." &euro;</b>\n";
+        $body .= '<b>'.Translator::numberToLocale($totale_spese)." &euro;</b>\n";
         $body .= "</td></tr>\n";
         $body .= "</table><br/>\n";
     }
@@ -303,7 +303,7 @@ $body .= "<tr><td align=\"right\" width=\"131mm\">\n";
 $body .= "<b>TOTALE CONSUNTIVO:</b>\n";
 $body .= "</td>\n";
 $body .= "<td align=\"left\" bgcolor=\"#cccccc\" width=\"24mm\">\n";
-$totale_intervento_consuntivo = Translator::numberToLocale($totale + $totale_articoli + $totale_spese, 2);
+$totale_intervento_consuntivo = Translator::numberToLocale($totale + $totale_articoli + $totale_spese);
 $body .= '<b>'.$totale_intervento_consuntivo." &euro;</b>\n";
 $body .= "</td></tr>\n";
 
@@ -312,7 +312,7 @@ $body .= "<b>BUDGET TOTALE (NO IVA):</b>\n";
 $body .= "</td>\n";
 
 $body .= "<td align=\"left\" bgcolor=\"#cccccc\" width=\"24mm\">\n";
-$contratto_tot_budget = Translator::numberToLocale($contratto_tot_budget, 2);
+$contratto_tot_budget = Translator::numberToLocale($contratto_tot_budget);
 $body .= '<b>'.$contratto_tot_budget." &euro;</b>\n";
 $body .= "</td></tr>\n";
 
@@ -320,7 +320,7 @@ $body .= "<tr><td align=\"right\" width=\"131mm\">\n";
 $body .= "<b>RAPPORTO BUDGET/SPESA (NO IVA):</b>\n";
 $body .= "</td>\n";
 
-$diff = Translator::numberToLocale($contratto_tot_budget - $totale_intervento_consuntivo, 2);
+$diff = Translator::numberToLocale($contratto_tot_budget - $totale_intervento_consuntivo);
 $body .= "<td align=\"left\" bgcolor=\"#cccccc\" width=\"24mm\">\n";
 $body .= '<b>'.$diff." &euro;</b>\n";
 $body .= "</td></tr>\n";
@@ -331,8 +331,8 @@ if (!empty($contratto_tot_ore)) {
     $body .= "</td>\n";
 
     $body .= "<td align=\"center\" bgcolor=\"#cccccc\" width=\"24mm\">\n";
-    $diff2 = Translator::numberToLocale($contratto_tot_ore - $totale_ore_impiegate, 2);
-    $body .= "<b>$diff2&nbsp;&nbsp;(ore erogate: ".Translator::numberToLocale($totale_ore_impiegate, 2).'&nbsp;-&nbsp;ore in contratto: '.Translator::numberToLocale($contratto_tot_ore, 2).")</b>\n";
+    $diff2 = Translator::numberToLocale($contratto_tot_ore - $totale_ore_impiegate);
+    $body .= "<b>$diff2&nbsp;&nbsp;(ore erogate: ".Translator::numberToLocale($totale_ore_impiegate).'&nbsp;-&nbsp;ore in contratto: '.Translator::numberToLocale($contratto_tot_ore).")</b>\n";
     $body .= "</td></tr>\n";
 }
 

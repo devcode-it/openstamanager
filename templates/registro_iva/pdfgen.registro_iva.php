@@ -101,8 +101,8 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
                     </td>';
     }
     $body .= "	<td class='table_cell cell-padded'>".$rs[$i]['desc_iva'].'</td>';
-    $body .= "	<td class='table_cell cell-padded text-right'>".Translator::numberToLocale($rs[$i]['subtotale'], 2).' &euro;</td>';
-    $body .= "	<td class='table_cell cell-padded text-right'>".Translator::numberToLocale($rs[$i]['iva'], 2).' &euro;</td>';
+    $body .= "	<td class='table_cell cell-padded text-right'>".Translator::numberToLocale($rs[$i]['subtotale']).' &euro;</td>';
+    $body .= "	<td class='table_cell cell-padded text-right'>".Translator::numberToLocale($rs[$i]['iva']).' &euro;</td>';
     $body .= '</tr>';
 
     $v_iva[$rs[$i]['desc_iva']] += $rs[$i]['iva'];
@@ -136,19 +136,19 @@ foreach ($v_iva as $desc_iva => $tot_iva) {
         $body .= "</td>\n";
 
         $body .= "<td valign='top' align='right' class='table_cell cell-padded'>\n";
-        $body .= Translator::numberToLocale($v_totale[$desc_iva], 2)." &euro;\n";
+        $body .= Translator::numberToLocale($v_totale[$desc_iva])." &euro;\n";
         $body .= "</td>\n";
 
         $body .= "<td valign='top' align='right' class='table_cell cell-padded'>\n";
-        $body .= Translator::numberToLocale($v_iva[$desc_iva], 2)." &euro;\n";
+        $body .= Translator::numberToLocale($v_iva[$desc_iva])." &euro;\n";
         $body .= "</td></tr>\n";
     }
 }
 
 $body .= "	<tr bgcolor='#dddddd'>
                 <td class='full_cell1 cell-padded text-right'><b>TOTALE</b></td>
-                <td class='full_cell1 cell-padded text-right'>".Translator::numberToLocale($totale_subtotale, 2)." &euro;</td>
-                <td class='full_cell1 cell-padded text-right'>".Translator::numberToLocale($totale_iva, 2).' &euro;</td>
+                <td class='full_cell1 cell-padded text-right'>".Translator::numberToLocale($totale_subtotale)." &euro;</td>
+                <td class='full_cell1 cell-padded text-right'>".Translator::numberToLocale($totale_iva).' &euro;</td>
             </tr>';
 
 $body .= '

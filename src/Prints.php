@@ -72,14 +72,12 @@ class Prints
     {
         $module_id = Modules::getModule($module)['id'];
 
+        self::getPrints();
+
         $result = [];
 
         foreach ((array) self::$modules[$module_id] as $value) {
-            $result[] = $value;
-        }
-
-        if (!is_numeric($print) && !empty(self::getPrints()[$print])) {
-            $print = self::getPrints()[$print];
+            $result[] = self::getPrint($value);
         }
 
         return $result;
@@ -120,21 +118,6 @@ class Prints
         } else {
             self::loader($infos['id'], $id_record, $filename);
         }
-    }
-
-    protected static function getLink($print, $id_record)
-    {
-        $infos = self::getPrint($print);
-
-        $link = ROOTDIR.'/pdfgen.php?';
-
-        if (self::isOldStandard($infos['id'])) {
-            $link .= 'ptype='.$infos['directory'].'&'.$infos['previous'].'='.$id_record;
-        } else {
-            $link .= 'id_print='.$infos['id'].'&id_record='.$id_record;
-        }
-
-        return $link;
     }
 
     protected static function readOptions($string)
@@ -354,5 +337,73 @@ class Prints
 
         // Creazione effettiva del PDF
         $mpdf->Output($filename, $mode);
+    }
+
+    protected static function getHref($print, $id_record)
+    {
+        $infos = self::getPrint($print);
+
+        $link = ROOTDIR.'/pdfgen.php?';
+
+        if (self::isOldStandard($infos['id'])) {
+            $link .= 'ptype='.$infos['directory'].'&'.$infos['previous'].'='.$id_record;
+        } else {
+            $link .= 'id_print='.$infos['id'].'&id_record='.$id_record;
+        }
+
+        return $link;
+    }
+
+    protected static function getLink($id_print, $id_record, $class = 'btn-info')
+    {
+        $print = self::getPrint($id_print);
+
+        $class = !empty($class) ? ' class="btn '.$class.'" ' : '';
+
+        return '
+<a '.$class.' href="'.self::getHref($print['id'], $id_record).'" target="_blank"><i class="'.$print['icon'].'"></i> '.$print['title'].'</a>';
+    }
+
+    public static function getDropdown($module, $id_record, $class = 'btn-info')
+    {
+        $prints = self::getModulePrints($module);
+
+        if (empty($prints) || empty($id_record)) {
+            return false;
+        }
+
+        if (count($prints) > 1) {
+            $result = '
+<div class="btn-group">';
+
+            $main = array_search(1, array_column($prints, 'main'));
+            if ($main !== false) {
+                $print = $prints[$main];
+
+                $result .= self::getLink($print['id'], $id_record, $class);
+
+                unset($prints[$main]);
+            }
+
+            $result .= '
+    <button type="button" class="btn '.$class.' dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        '.($main === false ? '<i class="fa fa-print"></i> '.tr('Stampe').' ' : '').'<span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <ul class="dropdown-menu">';
+
+            foreach ($prints as $print) {
+                $result .= '
+        <li>'.self::getLink($print['id'], $id_record, null).'</li>';
+            }
+
+            $result .= '
+    </ul>
+</div>';
+        } else {
+            $result = self::getLink($prints[0]['id'], $id_record, $class);
+        }
+
+        return $result;
     }
 }

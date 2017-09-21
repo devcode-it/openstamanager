@@ -1,5 +1,7 @@
 <?php
 
+$replaces = [];
+
 // Retrocompatibilità
 $id_cliente = $id_cliente ?: $idcliente;
 
@@ -82,11 +84,11 @@ foreach ($replace as $prefix => $values) {
 }
 
 // Valori aggiuntivi per la sostituzione
-$replaces = [
+$replaces = array_merge($replaces, [
     'docroot' => DOCROOT,
     'rootdir' => ROOTDIR,
     'footer' => !empty($footer) ? $footer : '',
     'dicitura_fissa_fattura' => get_var('Dicitura fissa fattura'),
     'default_header' => include DOCROOT.'/templates/base/header.php',
     'default_footer' => include DOCROOT.'/templates/base/footer.php',
-];
+]);

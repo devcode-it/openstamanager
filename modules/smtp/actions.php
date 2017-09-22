@@ -28,7 +28,12 @@ switch (post('op')) {
             'from_address' => $post['from_address'],
             'encryption' => $post['encryption'],
             'pec' => $post['pec'],
+            'main' => $post['main'],
         ], ['id' => $id_record]);
+
+        if (!empty($post['main'])) {
+            $dbo->query('UPDATE zz_smtp SET main = 0 WHERE id != '.prepare($id_record));
+        }
 
         $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
 

@@ -76,27 +76,26 @@ if (file_exists($docroot.'/include/custom/top.php')) {
     include $docroot.'/include/top.php';
 }
 
-$email_to = '';
-$email_from = '';
-$rs = $dbo->fetchArray("SELECT * FROM zz_settings WHERE sezione = 'Email'");
-foreach ($rs as $r) {
-    if (($r['nome'] == 'Server SMTP' || $r['nome'] == 'Indirizzo per le email in uscita' || $r['nome'] == 'Destinatario') && $r['valore'] == '') {
-        $alert = true;
-    }
+$email_to = Settings::get('Destinatario');
+$email_from = Settings::get('Indirizzo per le email in uscita');
 
-    if ($r['nome'] == 'Destinatario') {
-        $email_to = $r['valore'];
-    } elseif ($r['nome'] == 'Indirizzo per le email in uscita') {
-        $email_from = $r['valore'];
-    }
-}
+$mail = Mail::get();
 
-if (!empty($alert)) {
+if (empty($email_to) || empty($email_from) || empty($mail['server'])) {
     echo '
 	<div class="alert alert-warning">
 		<i class="fa fa-warning"></i>
-		<b>'.tr('Attenzione!').'</b> '.tr('Per utilizzare correttamente il modulo di segnalazione bug devi configurare alcuni parametri email nella scheda Impostazioni').'.
-        '.Modules::link('Impostazioni', $dbo->fetchArray("SELECT `idimpostazione` FROM `zz_settings` WHERE sezione='Email'")[0]['idimpostazione'], tr('Correggi'), null, 'class="btn btn-warning pull-right"').'
+        <b>'.tr('Attenzione!').'</b> '.tr('Per utilizzare correttamente il modulo di segnalazione bug devi configurare alcuni parametri riguardanti le impostazione delle email').'.';
+
+    if (empty($email_to) || empty($email_from)) {
+        echo Modules::link('Impostazioni', $dbo->fetchArray("SELECT `idimpostazione` FROM `zz_settings` WHERE sezione='Email'")[0]['idimpostazione'], tr('Correggi impostazioni'), null, 'class="btn btn-warning pull-right"');
+    }
+
+    if (empty($mail['server'])) {
+        echo Modules::link('Account email', $mail['id'], tr('Correggi account'), null, 'class="btn btn-warning pull-right"');
+    }
+
+    echo '
 		<div class="clearfix"></div>
 	</div>';
 }

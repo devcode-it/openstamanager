@@ -52,7 +52,7 @@ class Prints
      *
      * @return array
      */
-    public static function getPrint($print)
+    public static function get($print)
     {
         if (!is_numeric($print) && !empty(self::getPrints()[$print])) {
             $print = self::getPrints()[$print];
@@ -77,7 +77,7 @@ class Prints
         $result = [];
 
         foreach ((array) self::$modules[$module_id] as $value) {
-            $result[] = self::getPrint($value);
+            $result[] = self::get($value);
         }
 
         return $result;
@@ -87,7 +87,7 @@ class Prints
     {
         ob_end_clean();
 
-        $infos = self::getPrint($print);
+        $infos = self::get($print);
 
         Permissions::addModule($infos['id_module']);
 
@@ -132,7 +132,7 @@ class Prints
 
     protected static function isOldStandard($print)
     {
-        $infos = self::getPrint($print);
+        $infos = self::get($print);
 
         return file_exists($infos['full_directory'].'/pdfgen.'.$infos['directory'].'.php') || file_exists($infos['full_directory'].'/custom/pdfgen.'.$infos['directory'].'.php');
     }
@@ -144,7 +144,7 @@ class Prints
 
     protected static function oldLoader($id_print, $id_record, $filename = null)
     {
-        $infos = self::getPrint($id_print);
+        $infos = self::get($id_print);
         $options = self::readOptions($infos['options']);
 
         $database = Database::getConnection();
@@ -199,7 +199,7 @@ class Prints
 
     protected static function loader($id_print, $id_record, $filename = null)
     {
-        $infos = self::getPrint($id_print);
+        $infos = self::get($id_print);
         $options = self::readOptions($infos['options']);
 
         $database = Database::getConnection();
@@ -341,7 +341,7 @@ class Prints
 
     public static function getHref($print, $id_record, $get = '')
     {
-        $infos = self::getPrint($print);
+        $infos = self::get($print);
 
         if (empty($infos)) {
             return false;
@@ -366,7 +366,7 @@ class Prints
 
     public static function getLink($print, $id_record, $btn = null, $title = null, $icon = null, $get = '')
     {
-        $print = self::getPrint($print);
+        $print = self::get($print);
 
         if (empty($print)) {
             return false;

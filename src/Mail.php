@@ -7,20 +7,66 @@
  */
 class Mail extends PHPMailer
 {
+    /** @var array Elenco degli account email disponibili */
+    protected static $accounts = [];
+
     protected $infos = [];
 
-    public function __construct($exceptions = null)
+    /**
+     * Restituisce tutte le informazioni di tutti i plugin installati.
+     *
+     * @return array
+     */
+    public static function getAccounts()
+    {
+        if (empty(self::$accounts)) {
+            $database = Database::getConnection();
+
+            $results = $database->fetchArray('SELECT * FROM zz_smtp WHERE deleted = 0');
+
+            $accounts = [];
+
+            foreach ($results as $result) {
+                $accounts[$result['id']] = $result;
+                $accounts[$result['name']] = $result['id'];
+
+                if (!empty($result['main'])) {
+                    $accounts['default'] = $result['id'];
+                }
+            }
+
+            self::$accounts = $accounts;
+        }
+
+        return self::$accounts;
+    }
+
+    /**
+     * Restituisce le informazioni relative a un singolo modulo specificato.
+     *
+     * @param string|int $plugin
+     *
+     * @return array
+     */
+    public static function get($account = null)
+    {
+        if (!is_numeric($account) && !empty(self::getAccounts()[$account])) {
+            $account = self::getAccounts()[$account];
+        }
+
+        if (empty($account)) {
+            $account = self::getAccounts()['default'];
+        }
+
+        return self::getAccounts()[$account];
+    }
+
+    public function __construct($account = null, $exceptions = null)
     {
         parent::__construct($exceptions);
 
         // Configurazione di base
-        $config = [
-            'host' => Settings::get('Server SMTP'),
-            'username' => Settings::get('Username SMTP'),
-            'password' => Settings::get('Password SMTP'),
-            'port' => Settings::get('Porta SMTP'),
-            'secure' => Settings::get('Sicurezza SMTP'),
-        ];
+        $config = self::get($account);
 
         // Preparazione email
         $this->IsHTML(true);
@@ -46,8 +92,8 @@ class Mail extends PHPMailer
             }
 
             // Impostazioni di sicurezza
-            if (in_array(strtolower($config['secure']), ['ssl', 'tls'])) {
-                $this->SMTPSecure = strtolower($config['secure']);
+            if (in_array(strtolower($config['encryption']), ['ssl', 'tls'])) {
+                $this->SMTPSecure = strtolower($config['encryption']);
             }
         }
 

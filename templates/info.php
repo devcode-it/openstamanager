@@ -89,7 +89,7 @@ $replaces = array_merge($replaces, [
     'default_footer' => include DOCROOT.'/templates/base/footer.php',
     'docroot' => DOCROOT,
     'rootdir' => ROOTDIR,
-    'directory' => Prints::getPrint($id_print)['full_directory'],
+    'directory' => Prints::get($id_print)['full_directory'],
     'footer' => !empty($footer) ? $footer : '',
     'dicitura_fissa_fattura' => get_var('Dicitura fissa fattura'),
 ]);

@@ -20,12 +20,16 @@ include_once __DIR__.'/../../core.php';
             <div class="clearfix"></div><br>
 
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-md-6">
                     {[ "type": "text", "label": "<?php echo tr('Nome account') ?>", "name": "name", "value": "$name$", "required": 1 ]}
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Indirizzo PEC') ?>", "name": "pec",  "value": "$pec$", "placeholder": "PEC" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Indirizzo PEC') ?>", "name": "pec",  "value": "$pec$" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Indirizzo predefinito') ?>", "name": "main",  "value": "$main$" ]}
                 </div>
             </div>
 

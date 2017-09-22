@@ -82,6 +82,7 @@ CREATE TABLE IF NOT EXISTS `zz_smtp` (
   `from_address` varchar(255) NOT NULL,
   `encryption` enum('','tls','ssl') NOT NULL,
   `pec` tinyint(1) NOT NULL,
+  `main` tinyint(1) NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
@@ -101,6 +102,7 @@ CREATE TABLE IF NOT EXISTS `zz_emails` (
   `bcc` varchar(255) NOT NULL,
   `body` text NOT NULL,
   `read_notify` tinyint(1) NOT NULL,
+  `main` tinyint(1) NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE
@@ -154,3 +156,13 @@ INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `option
 
 UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Account email' AND `t2`.`name` = 'Gestione email') SET `t1`.`parent` = `t2`.`id`;
 UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Template email' AND `t2`.`name` = 'Gestione email') SET `t1`.`parent` = `t2`.`id`;
+
+-- Importazione dell'account email di default
+INSERT INTO `zz_smtp` (`id`, `name`, `server`, `port`, `username`, `password`, `encryption`, `main`) VALUES (NULL, 'Account email da Impostazioni', (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Server SMTP'), (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Porta SMTP'), (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Username SMTP'), (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Password SMTP'), (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Sicurezza SMTP'), 1);
+
+DELETE FROM `zz_settings` WHERE
+(`nome` = 'Server SMTP') OR
+(`nome` = 'Porta SMTP') OR
+(`nome` = 'Username SMTP') OR
+(`nome` = 'Password SMTP') OR
+(`nome` = 'Sicurezza SMTP');

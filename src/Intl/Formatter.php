@@ -144,6 +144,18 @@ class Formatter
      */
     public function parseNumber($value)
     {
+        if ($value[0] == '+' || $value[0] == '-') {
+            $sign = $value[0];
+            $value = substr($value, 1);
+        }
+
+        // Controllo sull'effettiva natura del numero
+        if (!ctype_digit(str_replace(array_values($this->getNumberSeparators()), '', $value))) {
+            return false;
+        }
+
+        $value = $sign.$value;
+
         if (is_object($this->numberFormatter)) {
             $result = $this->numberFormatter->parse($value);
         } else {

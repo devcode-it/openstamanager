@@ -23,6 +23,7 @@
     "type": "project",
     "require": {
         "php": ">=5.4",
+        "aluguest/ical-easy-reader": "^1.5",
         "danielstjules/stringy": "^3.1",
         "ezyang/htmlpurifier": "^4.8",
         "filp/whoops": "^2.1",

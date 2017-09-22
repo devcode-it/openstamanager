@@ -14,10 +14,13 @@ if (file_exists(__DIR__.'/config.inc.php')) {
 
 // Individuazione dei percorsi di base
 $docroot = __DIR__;
-$rootdir = substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/'));
+$rootdir = substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/')).'/';
 if (strrpos($rootdir, '/'.basename($docroot).'/') !== false) {
     $rootdir = substr($rootdir, 0, strrpos($rootdir, '/'.basename($docroot).'/')).'/'.basename($docroot);
+} else {
+    $rootdir = '/';
 }
+$rootdir = rtrim($rootdir, '/');
 $rootdir = str_replace('%2F', '/', rawurlencode($rootdir));
 
 // Aggiunta delle variabili globali

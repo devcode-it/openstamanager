@@ -25,7 +25,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Indirizzo PEC?') ?>", "name": "pec",  "value": "$pec$", "placeholder": "PEC" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Indirizzo PEC') ?>", "name": "pec",  "value": "$pec$", "placeholder": "PEC" ]}
                 </div>
             </div>
 

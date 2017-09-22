@@ -345,7 +345,7 @@ switch ($module_name) {
                     for ($i = 0; $i < sizeof($fatture); ++$i) {
                         ($fatture[$i]['n2_fattura'] != '') ? $n_fattura = $fatture[$i]['n2_fattura'] : $n_fattura = $fatture[$i]['n_fattura'];
 
-                        $id_module = Modules::getModule('Fatture di vendita')['id'];
+                        $id_module = Modules::get('Fatture di vendita')['id'];
                         echo "<tr><td class='first_cell text-left'><a href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fattura num. ".$n_fattura."</a></td>\n";
 
                         echo "<td class='table_cell text-left'>".Translator::dateToLocale($fatture[$i]['data_fattura'])."</td>\n";
@@ -377,7 +377,7 @@ switch ($module_name) {
                 for ($i = 0; $i < sizeof($fatture); ++$i) {
                     ($fatture[$i]['n2_fattura'] != '') ? $n_fattura = $fatture[$i]['n2_fattura'] : $n_fattura = $fatture[$i]['n_fattura'];
 
-                    $id_module = Modules::getModule('Fatture di vendita')['id'];
+                    $id_module = Modules::get('Fatture di vendita')['id'];
                     echo "<tr><td class='first_cell text-left'><a href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fattura num. ".$n_fattura."</a></td>\n";
 
                     echo "<td class='table_cell text-left'>".Translator::dateToLocale($fatture[$i]['data_fattura'])."</td>\n";
@@ -408,7 +408,7 @@ switch ($module_name) {
                 for ($i = 0; $i < sizeof($fatture); ++$i) {
                     ($fatture[$i]['n2_fattura'] != '') ? $n_fattura = $fatture[$i]['n2_fattura'] : $n_fattura = $fatture[$i]['n_fattura'];
 
-                    $id_module = Modules::getModule('Fatture di acquisto')['id'];
+                    $id_module = Modules::get('Fatture di acquisto')['id'];
                     echo "<tr><td class='first_cell text-left'><a href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$fatture[$i]['iddocumento']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">Fattura num. ".$n_fattura."</a></td>\n";
 
                     echo "<td class='table_cell text-left'>".Translator::dateToLocale($fatture[$i]['data_fattura'])."</td>\n";
@@ -681,7 +681,7 @@ if ($op == 'supersearch') {
         $campi = ['codice', '(SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id)', 'data_richiesta', 'info_sede', 'richiesta', 'descrizione', 'informazioniaggiuntive'];
         $campi_text = ['Codice intervento', 'Data intervento', 'Data richiesta intervento', 'Sede intervento', 'Richiesta', 'Descrizione', 'Informazioni aggiuntive'];
 
-        $id_module = Modules::getModule('Interventi')['id'];
+        $id_module = Modules::get('Interventi')['id'];
 
         $build_query = '';
 

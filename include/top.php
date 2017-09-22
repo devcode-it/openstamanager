@@ -87,7 +87,7 @@ if (Auth::check()) {
                 rootdir: \''.$rootdir.'\', js: \''.$js.'\', css: \''.$css.'\', img: \''.$img.'\',
                 id_module: \''.$id_module.'\',
                 id_record: \''.$id_record.'\',
-                aggiornamenti_id: \''.($dbo->isInstalled() ? Modules::getModule('Aggiornamenti')['id'] : '').'\',
+                aggiornamenti_id: \''.($dbo->isInstalled() ? Modules::get('Aggiornamenti')['id'] : '').'\',
                 cifre_decimali: '.get_var('Cifre decimali per importi').',
                 decimals: "'.Translator::getFormatter()->getNumberSeparators()['decimals'].'", thousands: "'.Translator::getFormatter()->getNumberSeparators()['thousands'].'",
                 search: search,

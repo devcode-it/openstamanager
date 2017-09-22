@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$module = Modules::getModule($id_module);
+$module = Modules::get($id_module);
 
 if ($module['name'] == 'Ordini cliente') {
     $dir = 'entrata';
@@ -66,7 +66,7 @@ echo '
 // Unità di misura
 echo '
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::getModule('Unità di misura')['id'].'", "name": "um", "ajax-source": "misure" ]}
+            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "ajax-source": "misure" ]}
         </div>
     </div>';
 

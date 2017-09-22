@@ -3,13 +3,13 @@
 include_once __DIR__.'/core.php';
 
 if (!empty($id_plugin)) {
-    $info = Plugins::getPlugin($id_plugin);
+    $info = Plugins::get($id_plugin);
 
     $directory = '/plugins/'.$info['directory'];
 } else {
     Permissions::check('rw');
 
-    $module = Modules::getModule($id_module);
+    $module = Modules::get($id_module);
 
     $directory = '/modules/'.$module['directory'];
 }

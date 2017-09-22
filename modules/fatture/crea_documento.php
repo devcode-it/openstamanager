@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$module = Modules::getModule($id_module);
+$module = Modules::get($id_module);
 
 $data = [
     'ddt' => [
@@ -79,7 +79,7 @@ if (!empty($rs)) {
     echo '
 <p>'.tr('Seleziona le righe che vuoi inserire nel documento e la quantità').'.</p>
 
-<form action="'.$rootdir.'/editor.php?id_module='.Modules::getModule($module_name)['id'].(!empty($get['iddocumento']) ? '&id_record='.$get['iddocumento'] : '').'" method="post">
+<form action="'.$rootdir.'/editor.php?id_module='.Modules::get($module_name)['id'].(!empty($get['iddocumento']) ? '&id_record='.$get['iddocumento'] : '').'" method="post">
     <input type="hidden" name="'.$id.'" value="'.$id_record.'">
     <input type="hidden" name="idanagrafica" value="'.$idanagrafica.'">
     <input type="hidden" name="idconto" value="'.$idconto.'">

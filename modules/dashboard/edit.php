@@ -466,7 +466,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
 
                 var name = ($(this).data('ref') == 'ordine') ? 'idordineservizio' : 'idcontratto_riga';
 
-                launch_modal('<?php echo tr('Pianifica intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::getModule('Interventi')['id'] ?>&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al+'&ref=dashboard&idcontratto=' + $(this).data('idcontratto') + '&' + name + '=' + $(this).data('id'), 1);
+                launch_modal('<?php echo tr('Pianifica intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id'] ?>&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al+'&ref=dashboard&idcontratto=' + $(this).data('idcontratto') + '&' + name + '=' + $(this).data('id'), 1);
 
                 $(this).remove();
 
@@ -481,7 +481,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
 				ora_dal = moment(start).format("HH:mm");
 				ora_al = moment(end).format("HH:mm");
 
-                launch_modal('<?php echo tr('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::getModule('Interventi')['id'] ?>&ref=dashboard&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al, 1 );
+                launch_modal('<?php echo tr('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id'] ?>&ref=dashboard&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al, 1 );
 
 				$('#calendar').fullCalendar('unselect');
 			},

@@ -4,7 +4,7 @@ include_once __DIR__.'/../core.php';
 
 // Lettura parametri iniziali del modulo
 if (!empty($id_plugin)) {
-    $info = Plugins::getPlugin($id_plugin);
+    $info = Plugins::get($id_plugin);
 
     if (!empty($info['script'])) {
         // Inclusione di eventuale plugin personalizzato
@@ -33,7 +33,7 @@ if (!empty($id_plugin)) {
 
     $directory = '/plugins/'.$info['directory'];
 } else {
-    $info = Modules::getModule($id_module);
+    $info = Modules::get($id_module);
 
     $total = Modules::getQuery($id_module);
 

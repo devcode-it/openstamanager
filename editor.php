@@ -15,7 +15,7 @@ if (file_exists($docroot.'/include/custom/top.php')) {
 }
 
 // Lettura parametri iniziali del modulo
-$module = Modules::getModule($id_module);
+$module = Modules::get($id_module);
 
 if (empty($module) || empty($module['enabled'])) {
     die(tr('Accesso negato'));

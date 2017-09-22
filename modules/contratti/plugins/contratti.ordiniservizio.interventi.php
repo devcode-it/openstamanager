@@ -53,7 +53,7 @@ if (sizeof($rs) == 0) {
     $rs = $dbo->fetchArray('SELECT * FROM co_ordiniservizio_vociservizio WHERE idordineservizio=(SELECT id FROM co_ordiniservizio WHERE idintervento='.prepare($idintervento).' LIMIT 0,1) ORDER BY categoria ASC');
 
     echo '
-<form action="'.$rootdir.'/editor.php?id_module='.Modules::getModule('Interventi')['id'].'&id_record='.$id_record.'&idordineservizio='.$rs[0]['idordineservizio'].'&op=save_ordineservizio" method="post" id="form-ordineservizio">
+<form action="'.$rootdir.'/editor.php?id_module='.Modules::get('Interventi')['id'].'&id_record='.$id_record.'&idordineservizio='.$rs[0]['idordineservizio'].'&op=save_ordineservizio" method="post" id="form-ordineservizio">
     <div class="row">
         <div class="col-md-9">
     		<table class="table table-hover table-striped">

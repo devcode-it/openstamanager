@@ -10,7 +10,7 @@ $numero = $rs[0]['numero'];
 $descrizione = $rs[0]['descrizione'];
 $idpianodeiconti2 = $rs[0]['idpianodeiconti2'];
 
-?><form action="<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::getModule('Piano dei conti')['id'] ?>" method="post">
+?><form action="<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::get('Piano dei conti')['id'] ?>" method="post">
     <input type="hidden" name="op" value="edit">
     <input type="hidden" name="backto" value="record-list">
     <input type="hidden" name="idpianodeiconti2" value="<?php echo $idpianodeiconti2 ?>">

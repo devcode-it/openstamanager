@@ -4,12 +4,12 @@ include_once __DIR__.'/core.php';
 
 // Lettura parametri iniziali
 if (!empty($id_plugin)) {
-    $info = Plugins::getPlugin($id_plugin);
+    $info = Plugins::get($id_plugin);
 
     $directory = '/plugins/'.$info['directory'];
     $permesso = $info['idmodule_to'];
 } else {
-    $info = Modules::getModule($id_module);
+    $info = Modules::get($id_module);
 
     $directory = '/modules/'.$info['directory'];
     $permesso = $id_module;
@@ -24,7 +24,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     // Controllo sui permessi di scrittura per il modulo
     if (Modules::getPermission($id_module) != 'rw') {
         $_SESSION['errors'][] = tr('Non hai permessi di scrittura per il modulo _MODULE_', [
-            '_MODULE_' => '"'.Modules::getModule($id_module)['name'].'"',
+            '_MODULE_' => '"'.Modules::get($id_module)['name'].'"',
         ]);
     }
 

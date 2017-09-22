@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$upload_dir = $docroot.'/files/'.Modules::getModule('Articoli')['directory'];
+$upload_dir = $docroot.'/files/'.Modules::get('Articoli')['directory'];
 
 switch (post('op')) {
     case 'update':

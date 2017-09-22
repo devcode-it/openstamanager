@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 include $docroot.'/modules/articoli/modutil.php';
 include_once $docroot.'/modules/fatture/modutil.php';
 
-$module = Modules::getModule($id_module);
+$module = Modules::get($id_module);
 
 if ($module['name'] == 'Ordini cliente') {
     $dir = 'entrata';

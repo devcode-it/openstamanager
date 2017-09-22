@@ -47,7 +47,7 @@ if (empty($idriga)) {
 }
 
 echo '
-<form action="'.$rootdir.'/editor.php?id_module='.Modules::getModule('Contratti')['id'].'&id_record='.$idcontratto.'" method="post">
+<form action="'.$rootdir.'/editor.php?id_module='.Modules::get('Contratti')['id'].'&id_record='.$idcontratto.'" method="post">
     <input type="hidden" name="op" value="'.$op.'">
     <input type="hidden" name="idriga" value="'.$idriga.'">
     <input type="hidden" name="backto" value="record-edit">';
@@ -74,7 +74,7 @@ echo '
 // Unità di misura
 echo '
     <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::getModule('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
+        {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
     </div>';
 
 /*

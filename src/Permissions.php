@@ -19,7 +19,7 @@ class Permissions
      */
     public static function addModule($module)
     {
-        $id = Modules::getModule($module)['id'];
+        $id = Modules::get($module)['id'];
         if (!in_array($id, self::$permissions)) {
             self::$permissions[] = $id;
         }

@@ -230,7 +230,7 @@ if (!API::isAPIRequest()) {
         $user = Auth::user();
 
         if (!empty($id_module)) {
-            $module = Modules::getModule($id_module);
+            $module = Modules::get($id_module);
 
             $pageTitle = $module['title'];
 

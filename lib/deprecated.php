@@ -941,7 +941,7 @@ function filelist_and_upload($id_module, $id_record, $label = 'Nuovo allegato:',
         <tr>
             <td align="left">'.$r['nome'].'</td>
             <td>
-                <a href="'.$rootdir.'/files/'.\Modules::getModule($id_module)['directory'].'/'.$r['filename'].'" target="_blank">'.$r['filename'].'</a>
+                <a href="'.$rootdir.'/files/'.\Modules::get($id_module)['directory'].'/'.$r['filename'].'" target="_blank">'.$r['filename'].'</a>
             </td>
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
             <td>

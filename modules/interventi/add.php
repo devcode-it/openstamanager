@@ -116,7 +116,7 @@ if (empty($new_codice)) {
 			<!-- RIGA 1 -->
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $idanagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo Modules::getModule('Anagrafiche')['id']; ?>|tipoanagrafica=Cliente", "data-heavy": 0 ]}
+					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $idanagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Cliente", "data-heavy": 0 ]}
 				</div>
 
 				<div class="col-md-4">
@@ -309,7 +309,7 @@ if (empty($new_codice)) {
             $('#add-form').find('[type=submit]').prop("disabled", true).addClass("disabled");
             $('#add-form').find('input:disabled, select:disabled, textarea:disabled').removeAttr('disabled');
 
-            $.post(globals.rootdir + '/actions.php?id_module=<?php echo Modules::getModule('Interventi')['id']; ?>', $('#add-form').serialize(), function(data,response){
+            $.post(globals.rootdir + '/actions.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>', $('#add-form').serialize(), function(data,response){
                 if(response=="success"){
                     // Se l'aggiunta intervento proviene dalla scheda di pianificazione ordini di servizio della dashboard, la ricarico
                     if(ref == "dashboard"){

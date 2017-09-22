@@ -29,7 +29,7 @@ switch (get('op')) {
                 'title' => '<b>Int. '.$r['idintervento'].'</b> '.$r['cliente'].'<br><b>'.tr('Tecnici').':</b> '.$r['nome_tecnico'],
                 'start' => $r['orario_inizio'],
                 'end' => $r['orario_fine'],
-                'url' => $rootdir.'/editor.php?id_module='.Modules::getModule('Interventi')['id'].'&id_record='.$r['idintervento'],
+                'url' => $rootdir.'/editor.php?id_module='.Modules::get('Interventi')['id'].'&id_record='.$r['idintervento'],
                 'backgroundColor' => $r['colore'],
                 'textColor' => color_inverse($r['colore']),
                 'borderColor' => ($r['colore_tecnico'] == '#FFFFFF') ? color_darken($r['colore_tecnico'], 100) : $r['colore_tecnico'],

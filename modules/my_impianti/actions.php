@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 $op = post('op');
 
-$upload_dir = $docroot.'/files/'.Modules::getModule('MyImpianti')['directory'];
+$upload_dir = $docroot.'/files/'.Modules::get('MyImpianti')['directory'];
 
 switch ($op) {
     // Aggiorno informazioni di base impianto

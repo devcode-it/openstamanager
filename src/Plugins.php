@@ -44,9 +44,9 @@ class Plugins
      *
      * @return array
      */
-    public static function getPlugin($plugin)
+    public static function get($plugin)
     {
-        if (!is_numeric($plugin) && !empty(self::getModules()[$plugin])) {
+        if (!is_numeric($plugin) && !empty(self::getPlugins()[$plugin])) {
             $plugin = self::getPlugins()[$plugin];
         }
 
@@ -65,7 +65,7 @@ class Plugins
         if (empty(self::$queries[$id])) {
             $database = Database::getConnection();
 
-            $module = self::getPlugin($id);
+            $module = self::get($id);
 
             $fields = [];
             $summable = [];

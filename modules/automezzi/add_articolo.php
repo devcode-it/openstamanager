@@ -8,7 +8,7 @@ $idautomezzo = $get['idautomezzo'];
     Form di inserimento riga documento
 */
 echo '
-<form id="link_form" action="'.$rootdir.'/editor.php?id_module='.Modules::getModule('Automezzi')['id'].'&id_record='.$idautomezzo.'" method="post">
+<form id="link_form" action="'.$rootdir.'/editor.php?id_module='.Modules::get('Automezzi')['id'].'&id_record='.$idautomezzo.'" method="post">
     <input type="hidden" name="op" value="addrow">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="id_record" value="'.$idautomezzo.'">';

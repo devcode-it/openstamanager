@@ -25,7 +25,7 @@ if (!empty($id_utente)) {
 }
 
 echo '
-<form id="link_form" action="'.$rootdir.'/editor.php?id_module='.Modules::getModule('Utenti e permessi')['id'].'&id_record='.$idgruppo.'" method="post">
+<form id="link_form" action="'.$rootdir.'/editor.php?id_module='.Modules::get('Utenti e permessi')['id'].'&id_record='.$idgruppo.'" method="post">
 	<input type="hidden" name="op" value="'.$value.'">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="min_length" value="'.$min_length.'">

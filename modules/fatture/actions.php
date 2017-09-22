@@ -6,7 +6,7 @@ include_once __DIR__.'/../../core.php';
 include_once $docroot.'/modules/articoli/modutil.php';
 include_once $docroot.'/modules/interventi/modutil.php';
 
-$module = Modules::getModule($id_module);
+$module = Modules::get($id_module);
 
 if ($module['name'] == 'Fatture di vendita') {
     $dir = 'entrata';

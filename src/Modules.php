@@ -86,7 +86,7 @@ class Modules
      *
      * @return array
      */
-    public static function getModule($module)
+    public static function get($module)
     {
         if (!is_numeric($module) && !empty(self::getModules()[$module])) {
             $module = self::getModules()[$module];
@@ -104,7 +104,7 @@ class Modules
      */
     public static function getPermission($module)
     {
-        return self::getModule($module)['permessi'];
+        return self::get($module)['permessi'];
     }
 
     /**
@@ -116,7 +116,7 @@ class Modules
      */
     public static function getAdditionals($module)
     {
-        return (array) self::$additionals[self::getModule($module)['id']];
+        return (array) self::$additionals[self::get($module)['id']];
     }
 
     /**
@@ -166,7 +166,7 @@ class Modules
             self::$current_module = filter('id_module');
         }
 
-        return self::getModule(self::$current_module);
+        return self::get(self::$current_module);
     }
 
     /**
@@ -194,7 +194,7 @@ class Modules
     {
         if (empty(self::$queries[$id])) {
             $database = Database::getConnection();
-            $module = self::getModule($id);
+            $module = self::get($id);
 
             $fields = [];
             $summable = [];
@@ -342,7 +342,7 @@ class Modules
         if (!empty($module['t'.$actual.'.id'])) {
             $pos = array_search($module['t'.$actual.'.id'], array_column($data, 'id'));
             if ($pos === false && !empty($module['t'.$actual.'.id'])) {
-                $array = self::getModule($module['t'.$actual.'.id']);
+                $array = self::get($module['t'.$actual.'.id']);
                 $array['childrens'] = [];
 
                 $data[] = $array;
@@ -466,7 +466,7 @@ class Modules
             $testo = $testo.' <i class="fa fa-external-link"></i>';
         }
 
-        $module = self::getModule($modulo);
+        $module = self::get($modulo);
 
         $extra .= !empty($blank) ? ' target="_blank"' : '';
 

@@ -28,7 +28,7 @@ echo '
                 </div>
 
                 <div class="col-md-2">
-                    {[ "type": "span", "label": "<?php echo tr('Modulo del template') ?>", "name": "module", "values": "query=SELECT id, title AS descrizione FROM zz_modules WHERE enabled = 1", "value": "<?php echo Modules::getModule($records[0]['id_module'])['title']; ?>" ]}
+                    {[ "type": "span", "label": "<?php echo tr('Modulo del template') ?>", "name": "module", "values": "query=SELECT id, title AS descrizione FROM zz_modules WHERE enabled = 1", "value": "<?php echo Modules::get($records[0]['id_module'])['title']; ?>" ]}
                 </div>
 
                 <div class="col-md-4">

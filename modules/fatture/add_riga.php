@@ -3,7 +3,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$module = Modules::getModule($id_module);
+$module = Modules::get($id_module);
 
 if ($module['name'] == 'Fatture di vendita') {
     $dir = 'entrata';
@@ -90,7 +90,7 @@ echo '
 // Unità di misura
 echo '
         <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::getModule('Unità di misura')['id'].'", "name": "um", "ajax-source": "misure" ]}
+            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "ajax-source": "misure" ]}
         </div>';
 
 // Costo unitario

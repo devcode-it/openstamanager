@@ -15,7 +15,7 @@ include_once __DIR__.'/../../core.php';
         $rs = $dbo->fetchArray('SELECT dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($records[0]['iddocumento']));
         $modulo = ($rs[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto'; ?>
 		<div class="pull-left">
-			<a href="<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::getModule($modulo)['id'] ?>&id_record=<?php echo $records[0]['iddocumento'] ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Torna alla fattura') ?></a>
+			<a href="<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::get($modulo)['id'] ?>&id_record=<?php echo $records[0]['iddocumento'] ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Torna alla fattura') ?></a>
 		</div>
 	<?php
 

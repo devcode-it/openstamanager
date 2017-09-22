@@ -60,7 +60,7 @@ include_once __DIR__.'/../../core.php';
 					<th><?php echo tr('Opzioni'); ?></th>
 				</tr>
 
-				<?php include $docroot.'/modules/'.Modules::getModule($id_module)['directory'].'/row-list.php'; ?>
+				<?php include $docroot.'/modules/'.Modules::get($id_module)['directory'].'/row-list.php'; ?>
 				</table>
 			</div>
 		</div>

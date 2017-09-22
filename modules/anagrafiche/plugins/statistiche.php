@@ -30,7 +30,7 @@ if (count($rsi) > 0) {
                         '_NUMBER_' => count($rsi),
                         '_EUR_' => Translator::numberToLocale($totale_interventi),
                     ]).'</p>
-					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Interventi')['id'].'&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
+					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Interventi')['id'].'&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
     echo '
 					<p>'.tr('Nessun intervento').'.</p>';
@@ -68,7 +68,7 @@ if (count($rsi) > 0) {
                         '_NUMBER_' => count($rsi),
                         '_EUR_' => Translator::numberToLocale($totale_preventivi),
                     ]).'</p>
-					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Preventivi')['id'].'&search_Cliente='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
+					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Preventivi')['id'].'&search_Cliente='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
     echo '
 					<p>'.tr('Nessun preventivo').'.</p>';
@@ -108,7 +108,7 @@ if (count($rsi) > 0) {
                         '_NUMBER_' => count($rsi),
                         '_EUR_' => Translator::numberToLocale($totale_contratti),
                     ]).'</p>
-					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Contratti')['id'].'&search_Cliente='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
+					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Contratti')['id'].'&search_Cliente='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
     echo '
 					<p>'.tr('Nessun contratto').'.</p>';
@@ -146,7 +146,7 @@ if (count($rsi) > 0) {
                         '_NUMBER_' => count($rsi),
                         '_EUR_' => Translator::numberToLocale($totale_fatture_vendita),
                     ]).'</p>
-					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Fatture di vendita')['id'].'&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
+					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Fatture di vendita')['id'].'&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
     echo '
 					<p>'.tr('Nessuna fattura di vendita').'.</p>';
@@ -175,7 +175,7 @@ if (count($rsi) > 0) {
                         '_NUMBER_' => count($rsi),
                         '_EUR_' => Translator::numberToLocale($totale_fatture_acquisto),
                     ]).'</p>
-					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Fatture di acquisto')['id'].'&dir=uscita&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
+					<p><a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Fatture di acquisto')['id'].'&dir=uscita&search_Ragione-sociale='.$rsi[0]['ragione_sociale'].'">'.tr('Visualizza').' <i class="fa fa-chevron-right"></i></a></p>';
 } else {
     echo '
 					<p>'.tr('Nessuna fattura di acquisto').'.</p>';

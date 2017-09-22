@@ -55,7 +55,7 @@ include_once __DIR__.'/../../core.php';
 
 		<div class="row">
 			<div class="col-md-6" style="border-right:1px solid #DDD;">
-				<form action="<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::getModule('Automezzi')['id'] ?>&id_record=<?php echo $id_record ?>" id="updatetech-form" method="post" role="form">
+				<form action="<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::get('Automezzi')['id'] ?>&id_record=<?php echo $id_record ?>" id="updatetech-form" method="post" role="form">
 					<input type="hidden" name="backto" value="record-edit">
 					<input type="hidden" name="id_record" value="<?php echo $id_record ?>">
 					<input type="hidden" name="op" value="">

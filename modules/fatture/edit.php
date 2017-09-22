@@ -185,13 +185,13 @@ $da_pagare = $rs3[0]['da_pagare'];
 
 if (($n2 <= 0 && $records[0]['stato'] == 'Emessa') || $differenza != 0) {
     ?>
-					<a class="btn btn-sm btn-primary" href="javascript:;" onclick="launch_modal( 'Aggiungi prima nota', '<?php echo $rootdir ?>/add.php?id_module=<?php echo Modules::getModule('Prima nota')['id'] ?>&iddocumento=<?php echo $id_record ?>&dir=<?php echo $dir ?>', 1 );"><i class="fa fa-euro"></i> Aggiungi prima nota...</a><br><br>
+					<a class="btn btn-sm btn-primary" href="javascript:;" onclick="launch_modal( 'Aggiungi prima nota', '<?php echo $rootdir ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id'] ?>&iddocumento=<?php echo $id_record ?>&dir=<?php echo $dir ?>', 1 );"><i class="fa fa-euro"></i> Aggiungi prima nota...</a><br><br>
 <?php
 }
 
 if ($records[0]['stato'] == 'Pagato') {
     ?>
-					<a class="btn btn-sm btn-primary" href="javascript:;" onclick="if( confirm('Se riapri questa fattura verrà azzerato lo scadenzario e la prima nota. Continuare?') ){ $.post( '<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::getModule($name)['id'] ?>&id_record=<?php echo $id_record ?>', { id_module: '<?php echo Modules::getModule($name)['id'] ?>', id_record: '<?php echo $id_record ?>', op: 'reopen' }, function(){ location.href='<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::getModule($name)['id'] ?>&id_record=<?php echo $id_record ?>'; } ); }" title="Aggiungi prima nota"><i class="fa fa-folder-open"></i> Riapri fattura...</a>
+					<a class="btn btn-sm btn-primary" href="javascript:;" onclick="if( confirm('Se riapri questa fattura verrà azzerato lo scadenzario e la prima nota. Continuare?') ){ $.post( '<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::get($name)['id'] ?>&id_record=<?php echo $id_record ?>', { id_module: '<?php echo Modules::get($name)['id'] ?>', id_record: '<?php echo $id_record ?>', op: 'reopen' }, function(){ location.href='<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::get($name)['id'] ?>&id_record=<?php echo $id_record ?>'; } ); }" title="Aggiungi prima nota"><i class="fa fa-folder-open"></i> Riapri fattura...</a>
 <?php
 }
 ?>

@@ -216,7 +216,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     download($upload_dir.'/'.$rs[0]['filename'], $rs[0]['original']);
 }
 
-if (Modules::getPermission($permesso) == 'rw') {
+if (Modules::getPermission($permesso) == 'r' || Modules::getPermission($permesso) == 'rw') {
     if (!empty($info['script'])) {
         // Inclusione di eventuale plugin personalizzato
         if (file_exists($docroot.'/modules/'.$info['module_dir'].'/plugins/custom/'.$info['script'])) {
@@ -242,28 +242,30 @@ if (Modules::getPermission($permesso) == 'rw') {
         include $docroot.$directory.'/init.php';
     }
 
-    // Esecuzione delle operazioni di gruppo
-    $id_records = post('id_records');
-    $id_records = is_array($id_records) ? $id_records : explode(';', $id_records);
-    $id_records = array_filter($id_records, function ($var) {return !empty($var); });
-    $id_records = array_unique($id_records);
+    if(Modules::getPermission($permesso) == 'rw'){
+        // Esecuzione delle operazioni di gruppo
+        $id_records = post('id_records');
+        $id_records = is_array($id_records) ? $id_records : explode(';', $id_records);
+        $id_records = array_filter($id_records, function ($var) {return !empty($var); });
+        $id_records = array_unique($id_records);
 
-    $bulk = null;
-    if (file_exists($docroot.$directory.'/custom/bulk.php')) {
-        $bulk = include $docroot.$directory.'/custom/bulk.php';
-    } elseif (file_exists($docroot.$directory.'/bulk.php')) {
-        $bulk = include $docroot.$directory.'/bulk.php';
-    }
-    $bulk = (array) $bulk;
+        $bulk = null;
+        if (file_exists($docroot.$directory.'/custom/bulk.php')) {
+            $bulk = include $docroot.$directory.'/custom/bulk.php';
+        } elseif (file_exists($docroot.$directory.'/bulk.php')) {
+            $bulk = include $docroot.$directory.'/bulk.php';
+        }
+        $bulk = (array) $bulk;
 
-    if (in_array(post('op'), array_keys($bulk))) {
-        redirect(ROOTDIR.'/controller.php?id_module='.$id_module, 'js');
-    } else {
-        // Esecuzione delle operazioni del modulo
-        if (file_exists($docroot.$directory.'/custom/actions.php')) {
-            include $docroot.$directory.'/custom/actions.php';
-        } elseif (file_exists($docroot.$directory.'/actions.php')) {
-            include $docroot.$directory.'/actions.php';
+        if (in_array(post('op'), array_keys($bulk))) {
+            redirect(ROOTDIR.'/controller.php?id_module='.$id_module, 'js');
+        } else {
+            // Esecuzione delle operazioni del modulo
+            if (file_exists($docroot.$directory.'/custom/actions.php')) {
+                include $docroot.$directory.'/custom/actions.php';
+            } elseif (file_exists($docroot.$directory.'/actions.php')) {
+                include $docroot.$directory.'/actions.php';
+            }
         }
     }
 }

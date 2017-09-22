@@ -56,7 +56,7 @@ if (!function_exists('completeResults')) {
 
 switch ($op) {
     case 'clienti':
-        if (Modules::getModule('Anagrafiche')['permessi'] != '-') {
+        if (Modules::get('Anagrafiche')['permessi'] != '-') {
             $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
             foreach ($elements as $element) {
@@ -80,7 +80,7 @@ switch ($op) {
         break;
 
     case 'fornitori':
-        if (Modules::getModule('Anagrafiche')['permessi'] != '-') {
+        if (Modules::get('Anagrafiche')['permessi'] != '-') {
             $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
             foreach ($elements as $element) {
@@ -103,7 +103,7 @@ switch ($op) {
         break;
 
     case 'agenti':
-        if (Modules::getModule('Anagrafiche')['permessi'] != '-') {
+        if (Modules::get('Anagrafiche')['permessi'] != '-') {
             $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
             foreach ($elements as $element) {
@@ -140,7 +140,7 @@ switch ($op) {
         break;
 
     case 'tecnici':
-        if (Modules::getModule('Anagrafiche')['permessi'] != '-') {
+        if (Modules::get('Anagrafiche')['permessi'] != '-') {
             $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
             foreach ($elements as $element) {
@@ -164,7 +164,7 @@ switch ($op) {
 
     // Nota Bene: nel campo id viene specificato idtipoanagrafica-idanagrafica -> modulo Utenti e permessi, creazione nuovo utente
     case 'anagrafiche':
-        if (Modules::getModule('Anagrafiche')['permessi'] != '-') {
+        if (Modules::get('Anagrafiche')['permessi'] != '-') {
             $query = "SELECT CONCAT(an_tipianagrafiche.idtipoanagrafica, '-', an_anagrafiche.idanagrafica) AS id, CONCAT_WS('', ragione_sociale, ' (', citta, ' ', provincia, ')') AS descrizione idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
             foreach ($elements as $element) {
@@ -186,7 +186,7 @@ switch ($op) {
         break;
 
     case 'sedi':
-        if (Modules::getModule('Anagrafiche')['permessi'] != '-' && isset($superselect['idanagrafica'])) {
+        if (Modules::get('Anagrafiche')['permessi'] != '-' && isset($superselect['idanagrafica'])) {
             $query = "SELECT * FROM (SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab |filter| ORDER BY id";
 
             foreach ($elements as $element) {
@@ -203,7 +203,7 @@ switch ($op) {
         break;
 
     case 'referenti':
-        if (Modules::getModule('Anagrafiche')['permessi'] != '-' && isset($superselect['idanagrafica'])) {
+        if (Modules::get('Anagrafiche')['permessi'] != '-' && isset($superselect['idanagrafica'])) {
             $query = 'SELECT id, nome AS descrizione FROM an_referenti |where| ORDER BY id';
 
             foreach ($elements as $element) {
@@ -264,7 +264,7 @@ switch ($op) {
         break;
 
     case 'conti':
-        if (Modules::getModule('Piano dei conti')['permessi'] != '-') {
+        if (Modules::get('Piano dei conti')['permessi'] != '-') {
             $query = 'SELECT * FROM co_pianodeiconti2';
 
             $rs = $dbo->fetchArray($query);
@@ -308,7 +308,7 @@ switch ($op) {
         break;
 
     case 'conti-vendite':
-        if (Modules::getModule('Piano dei conti')['permessi'] != '-') {
+        if (Modules::get('Piano dei conti')['permessi'] != '-') {
             $query = "SELECT co_pianodeiconti3.id, CONCAT_WS( ' ', co_pianodeiconti3.numero, co_pianodeiconti3.descrizione ) AS descrizione FROM co_pianodeiconti3 INNER JOIN (co_pianodeiconti2 INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id) ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id |where| ORDER BY co_pianodeiconti3.numero ASC";
 
             foreach ($elements as $element) {
@@ -325,7 +325,7 @@ switch ($op) {
         break;
 
     case 'conti-acquisti':
-        if (Modules::getModule('Piano dei conti')['permessi'] != '-') {
+        if (Modules::get('Piano dei conti')['permessi'] != '-') {
             $query = "SELECT co_pianodeiconti3.id, CONCAT_WS( ' ', co_pianodeiconti3.numero, co_pianodeiconti3.descrizione ) AS descrizione FROM co_pianodeiconti3 INNER JOIN (co_pianodeiconti2 INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id) ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id |where| ORDER BY co_pianodeiconti3.numero ASC";
 
             foreach ($elements as $element) {
@@ -342,7 +342,7 @@ switch ($op) {
         break;
 
     case 'impianti':
-        if (Modules::getModule('MyImpianti')['permessi'] != '-' && isset($superselect['idanagrafica'])) {
+        if (Modules::get('MyImpianti')['permessi'] != '-' && isset($superselect['idanagrafica'])) {
             $query = 'SELECT id, CONCAT(matricola, " - ", nome) AS descrizione FROM my_impianti |where| ORDER BY idsede';
 
             foreach ($elements as $element) {
@@ -360,7 +360,7 @@ switch ($op) {
         break;
 
     case 'componenti':
-        if (Modules::getModule('Gestione componenti')['permessi'] != '-' && isset($superselect['marticola'])) {
+        if (Modules::get('Gestione componenti')['permessi'] != '-' && isset($superselect['marticola'])) {
             $query = 'SELECT id, nome AS descrizione, contenuto FROM my_impianto_componenti |where| ORDER BY id';
 
             foreach ($elements as $element) {
@@ -393,7 +393,7 @@ switch ($op) {
         break;
 
     case 'categorie':
-        if (Modules::getModule('Magazzino')['permessi'] != '-') {
+        if (Modules::get('Magazzino')['permessi'] != '-') {
             $query = 'SELECT id, nome AS descrizione FROM mg_categorie |where| ORDER BY id';
 
             foreach ($elements as $element) {
@@ -409,7 +409,7 @@ switch ($op) {
         break;
 
     case 'sottocategorie':
-        if (Modules::getModule('Magazzino')['permessi'] != '-' && isset($superselect['id_categoria'])) {
+        if (Modules::get('Magazzino')['permessi'] != '-' && isset($superselect['id_categoria'])) {
             $query = 'SELECT id, nome AS descrizione FROM mg_categorie |where| ORDER BY id';
 
             foreach ($elements as $element) {
@@ -425,7 +425,7 @@ switch ($op) {
         break;
 
     case 'preventivi':
-        if (Modules::getModule('Preventivi')['permessi'] != '-' && isset($superselect['idanagrafica'])) {
+        if (Modules::get('Preventivi')['permessi'] != '-' && isset($superselect['idanagrafica'])) {
             $query = 'SELECT co_preventivi.id AS id, an_anagrafiche.idanagrafica, CONCAT(numero, " ", nome) AS descrizione, co_preventivi.idtipointervento, (SELECT descrizione descrizione FROM in_tipiintervento WHERE in_tipiintervento.idtipointervento = co_preventivi.idtipointervento) AS idtipointervento_descrizione FROM co_preventivi INNER JOIN an_anagrafiche ON co_preventivi.idanagrafica=an_anagrafiche.idanagrafica |where| ORDER BY id';
 
             foreach ($elements as $element) {
@@ -445,7 +445,7 @@ switch ($op) {
         break;
 
     case 'preventivi_aperti':
-        if (Modules::getModule('Preventivi')['permessi'] != '-') {
+        if (Modules::get('Preventivi')['permessi'] != '-') {
             $query = 'SELECT co_preventivi.id AS id, CONCAT(numero, " ", nome, " (", ragione_sociale, ")") AS descrizione FROM co_preventivi INNER JOIN an_anagrafiche ON co_preventivi.idanagrafica=an_anagrafiche.idanagrafica |where| ORDER BY id';
 
             foreach ($elements as $element) {
@@ -459,7 +459,7 @@ switch ($op) {
         break;
 
     case 'contratti':
-        if (Modules::getModule('Contratti')['permessi'] != '-') {
+        if (Modules::get('Contratti')['permessi'] != '-') {
             $query = 'SELECT co_contratti.id AS id, CONCAT(numero, " ", nome) AS descrizione FROM co_contratti INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica |where| ORDER BY id';
 
             foreach ($elements as $element) {
@@ -476,7 +476,7 @@ switch ($op) {
         break;
 
     case 'tipiintervento':
-        if (Modules::getModule('Interventi')['permessi'] != '-') {
+        if (Modules::get('Interventi')['permessi'] != '-') {
             $query = 'SELECT idtipointervento AS id, descrizione FROM in_tipiintervento |where| ORDER BY idtipointervento';
 
             foreach ($elements as $element) {
@@ -489,7 +489,7 @@ switch ($op) {
         break;
 
     case 'misure':
-        if (Modules::getModule('Magazzino')['permessi'] != '-') {
+        if (Modules::get('Magazzino')['permessi'] != '-') {
             $query = 'SELECT valore AS id, valore AS descrizione FROM mg_unitamisura |where| ORDER BY valore';
 
             foreach ($elements as $element) {
@@ -502,7 +502,7 @@ switch ($op) {
         break;
 
     case 'prodotti_lotti':
-        if (Modules::getModule('Magazzino')['permessi'] != '-') {
+        if (Modules::get('Magazzino')['permessi'] != '-') {
             $query = 'SELECT DISTINCT lotto AS descrizione FROM mg_prodotti |where|';
 
             $where[] = 'idarticolo='.prepare($superselect['idarticolo']);
@@ -520,7 +520,7 @@ switch ($op) {
         break;
 
     case 'prodotti_serial':
-        if (Modules::getModule('Magazzino')['permessi'] != '-') {
+        if (Modules::get('Magazzino')['permessi'] != '-') {
             $query = 'SELECT DISTINCT serial AS descrizione FROM mg_prodotti |where|';
 
             $where[] = 'id_articolo='.prepare($superselect['idarticolo']);
@@ -538,7 +538,7 @@ switch ($op) {
         break;
 
     case 'prodotti_altro':
-        if (Modules::getModule('Magazzino')['permessi'] != '-') {
+        if (Modules::get('Magazzino')['permessi'] != '-') {
             $query = 'SELECT DISTINCT altro AS descrizione FROM mg_prodotti |where|';
 
             $where[] = 'id_articolo='.prepare($superselect['idarticolo']);

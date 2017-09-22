@@ -13,7 +13,7 @@ $numero = $rs[0]['numero'];
 $zona = $rs[0]['zona'];
 
 echo '
-<form id="add_form" action="'.$rootdir.'/editor.php?id_module='.Modules::getModule('Contratti')['id']."&id_record=".$idcontratto."&op=addfattura&idpianificazione=".$idpianificazione."&importo=".$importo.'" method="post">
+<form id="add_form" action="'.$rootdir.'/editor.php?id_module='.Modules::get('Contratti')['id']."&id_record=".$idcontratto."&op=addfattura&idpianificazione=".$idpianificazione."&importo=".$importo.'" method="post">
     <input type="hidden" name="backto" value="record-edit">';
 
 // Data

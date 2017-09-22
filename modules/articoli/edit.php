@@ -62,7 +62,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
                 </div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo Modules::getModule('Unità di misura')['id']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo Modules::get('Unità di misura')['id']; ?>" ]}
 				</div>
 			</div>
 

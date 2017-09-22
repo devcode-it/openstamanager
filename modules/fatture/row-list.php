@@ -29,7 +29,7 @@ if (!empty($rs)) {
 
         // Articoli
         if (!empty($r['idarticolo'])) {
-            $ref_modulo = Modules::getModule('Articoli')['id'];
+            $ref_modulo = Modules::get('Articoli')['id'];
             $ref_id = $r['idarticolo'];
 
             $r['descrizione'] = (!empty($r['codice']) ? $r['codice'].' - ' : '').$r['descrizione'];

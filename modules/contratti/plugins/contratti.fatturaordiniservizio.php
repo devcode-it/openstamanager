@@ -123,7 +123,7 @@ elseif ($get['op'] == 'addfattura') {
     // Inserimento riga in fattura
     $dbo->query('INSERT INTO co_righe_documenti(iddocumento, descrizione, desc_iva, iva, iva_indetraibile, subtotale, um, qta, `order`) VALUES('.prepare($iddocumento).', '.prepare($descrizione).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($importo).", '-', 1, (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento=".prepare($iddocumento).'))');
 
-    redirect($rootdir.'/editor.php?id_module='.Modules::getModule('Fatture di vendita')['id'].'&id_record='.$iddocumento.'&dir=entrata');
+    redirect($rootdir.'/editor.php?id_module='.Modules::get('Fatture di vendita')['id'].'&id_record='.$iddocumento.'&dir=entrata');
     exit();
 }
 
@@ -315,7 +315,7 @@ else {
 <br>';
 
     echo "
-<form action='".$rootdir.'/editor.php?id_module='.Modules::getModule('Contratti')['id'].'&id_record='.$id_record."&op=add_fatturazione' id='pianifica_form' method='post' class='hide'>
+<form action='".$rootdir.'/editor.php?id_module='.Modules::get('Contratti')['id'].'&id_record='.$id_record."&op=add_fatturazione' id='pianifica_form' method='post' class='hide'>
     <input type='hidden' name='backto' value='record-edit'>";
 
     // Indice zone fatturabili

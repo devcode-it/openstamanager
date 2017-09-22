@@ -40,27 +40,17 @@ class Plugins
     /**
      * Restituisce le informazioni relative a un singolo modulo specificato.
      *
-     * @param int $id
+     * @param string|int $plugin
      *
      * @return array
      */
-    public static function getPlugin($id)
+    public static function get($plugin)
     {
-        return self::getPlugins()[$id];
-    }
-
-    /**
-     * Restituisce le informazioni relative a un singolo modulo specificato, ricercato in base al nome.
-     *
-     * @param string $name
-     *
-     * @return array
-     */
-    public static function getPluginByName($name)
-    {
-        if (!empty(self::getPlugins()[$name])) {
-            return self::getPlugin(self::getPlugins()[$name]);
+        if (!is_numeric($plugin) && !empty(self::getPlugins()[$plugin])) {
+            $plugin = self::getPlugins()[$plugin];
         }
+
+        return self::getPlugins()[$plugin];
     }
 
     /**
@@ -75,7 +65,7 @@ class Plugins
         if (empty(self::$queries[$id])) {
             $database = Database::getConnection();
 
-            $module = self::getPlugin($id);
+            $module = self::get($id);
 
             $fields = [];
             $summable = [];

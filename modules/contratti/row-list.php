@@ -87,7 +87,7 @@ if (!empty($rs_art)) {
 
         if ($records[0]['stato'] != 'Pagato' && empty($r['sconto_globale'])) {
             echo '
-                <form action="'.$rootdir.'/editor.php?id_module='.Modules::getModule('Contratti')['id'].'&id_record='.$id_record.'" method="post" id="delete-form-'.$r['id'].'" role="form">
+                <form action="'.$rootdir.'/editor.php?id_module='.Modules::get('Contratti')['id'].'&id_record='.$id_record.'" method="post" id="delete-form-'.$r['id'].'" role="form">
                     <input type="hidden" name="backto" value="record-edit">
                     <input type="hidden" name="id_record" value="'.$id_record.'">
                     <input type="hidden" name="op" value="delriga">

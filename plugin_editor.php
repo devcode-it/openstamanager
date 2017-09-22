@@ -3,7 +3,7 @@
 include_once __DIR__.'/core.php';
 
 // Lettura parametri iniziali
-$info = Plugins::getPlugin($id_plugin);
+$info = Plugins::get($id_plugin);
 
 if (empty($info) || empty($info['enabled'])) {
     die(tr('Accesso negato'));
@@ -58,7 +58,7 @@ if (!empty($info['script'])) {
 
     redirectOperation($id_module, $id_parent);
 
-    $module = Modules::getModule($info['idmodule_to']);
+    $module = Modules::get($info['idmodule_to']);
 
     if ($module['permessi'] != 'rw') {
         ?>

@@ -111,7 +111,7 @@ if (!empty($rsp)) {
             <tr id='fat_".$r['id']."'>
                 <td>".Translator::dateToLocale($r['data_scadenza'])."</td>
                 <td>
-                    <a href='".$rootdir.'/editor.php?id_module='.Modules::getModule('Anagrafiche')['id'].'&id_record='.$r['idcliente']."'>".nl2br($r['ragione_sociale']).'</a>
+                    <a href='".$rootdir.'/editor.php?id_module='.Modules::get('Anagrafiche')['id'].'&id_record='.$r['idcliente']."'>".nl2br($r['ragione_sociale']).'</a>
                 </td>
                 <td>'.$zona.' ('.$n_sedi.')</td>
                 <td>
@@ -124,7 +124,7 @@ if (!empty($rsp)) {
                 <td>';
             if (empty($r['idintervento'])) {
                 echo "
-                    <a class='btn btn-primary' title=\"Crea fattura\" onclick=\"launch_modal( 'Crea fattura', '".$rootdir.'/add.php?id_module='.Modules::getModule('Fatture di vendita')['id'].'&id_record='.$r['idcontratto'].'&idpianificazione='.$r['id'].'&importo='.$importo.'&n_rata='.$n_rata[$r['idzona']][$r['idcontratto']]."', '1' );\">
+                    <a class='btn btn-primary' title=\"Crea fattura\" onclick=\"launch_modal( 'Crea fattura', '".$rootdir.'/add.php?id_module='.Modules::get('Fatture di vendita')['id'].'&id_record='.$r['idcontratto'].'&idpianificazione='.$r['id'].'&importo='.$importo.'&n_rata='.$n_rata[$r['idzona']][$r['idcontratto']]."', '1' );\">
                         <i class='fa fa-euro'></i>
                     </a>";
             }

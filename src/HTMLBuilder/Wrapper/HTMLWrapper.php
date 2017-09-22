@@ -103,7 +103,7 @@ class HTMLWrapper implements WrapperInterface
 
         $classes = empty($pieces[3]) ? '' : ' '.$pieces[3];
 
-        $module = \Modules::getModule($id_module);
+        $module = \Modules::get($id_module);
         if (in_array($module['permessi'], ['r', 'rw'])) {
             $result = '
 <button data-href="'.ROOTDIR.'/add.php?id_module='.$id_module.$extra.'&select='.$values['id'].'&ajax=yes" data-target="#bs-popup2" data-toggle="modal" data-title="'.tr('Aggiungi').'" type="button" class="btn'.$classes.'">

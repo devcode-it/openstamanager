@@ -254,7 +254,7 @@ if (empty($rs)) {
     echo '
 <p>
     '.tr('Non sono ancora state inserite voci di servizio').'.
-    <a href="'.$rootdir.'/controller.php?id_module='.Modules::getModule('Voci di servizio')['id'].'">'.tr('Inizia ora').'...</a>
+    <a href="'.$rootdir.'/controller.php?id_module='.Modules::get('Voci di servizio')['id'].'">'.tr('Inizia ora').'...</a>
 </p>';
 }
 
@@ -272,7 +272,7 @@ else {
     <i class="fa fa-calendar"></i> '.tr('Pianifica nuovi ordini di servizio').'
 </button>
 
-<form action="'.$rootdir.'/editor.php?id_module='.Modules::getModule('Contratti')['id'].'&id_record='.$id_record.'&op=add_ordineservizio" id="plan_form" method="post" class="no-check hide">
+<form action="'.$rootdir.'/editor.php?id_module='.Modules::get('Contratti')['id'].'&id_record='.$id_record.'&op=add_ordineservizio" id="plan_form" method="post" class="no-check hide">
     <input type="hidden" name="backto" value="record-edit">';
 
         // Selezione impianto

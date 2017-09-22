@@ -42,7 +42,7 @@ class FileManager implements ManagerInterface
                 $result .= '
         <tr>
             <td align="left">
-                <a href="'.ROOTDIR.'/files/'.\Modules::getModule($options['id_module'])['directory'].'/'.$r['filename'].'" target="_blank">
+                <a href="'.ROOTDIR.'/files/'.\Modules::get($options['id_module'])['directory'].'/'.$r['filename'].'" target="_blank">
                     <i class="fa fa-external-link"></i> '.$r['nome'].'
                 </a>
             </td>

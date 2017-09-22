@@ -144,17 +144,13 @@ class Formatter
      */
     public function parseNumber($value)
     {
-        if (!ctype_digit(str_replace(array_values($this->getNumberSeparators()), '', $value))) {
-            return false;
-        }
-
         if (is_object($this->numberFormatter)) {
             $result = $this->numberFormatter->parse($value);
         } else {
             $result = $this->customNumber($value, $this->getNumberSeparators(), $this->getStandardFormats()['number']);
         }
 
-        $result = is_numeric($result) ? floatval($result) : $result;
+        $result = is_numeric($result) ? floatval($result) : false;
 
         return $result;
     }

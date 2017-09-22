@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS `zz_email_print` (
 ) ENGINE=InnoDB;
 
 -- Aggiunta dei moduli dedicati alla gestione delle email
-INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Account email', 'Account email', 'smtp', 'SELECT |select| FROM zz_smtp WHERE 1=1 AND deleted = 0 HAVING 2=2 ORDER BY `name`', 'fa fa-envelope', '2.3', '2.3', '10', NULL, 1, 1);
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Account email', 'Account email', 'smtp', 'SELECT |select| FROM zz_smtp WHERE 1=1 AND deleted = 0 HAVING 2=2 ORDER BY `name`', 'fa fa-user-o', '2.3', '2.3', '10', NULL, 1, 1);
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Template email', 'Template email', 'emails', 'SELECT |select| FROM zz_emails WHERE 1=1 AND deleted = 0 HAVING 2=2 ORDER BY `name`', 'fa fa-pencil-square-o', '2.3', '2.3', '10', NULL, 1, 1);
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
@@ -148,3 +148,9 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Template email'), '#', 'id', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Template email'), 'Nome', 'name', 3, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Template email'), 'Oggetto', 'subject', 4, 1, 0, 1, 1);
+
+-- Raggruppamento dei moduli per le email
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Gestione email', 'Gestione email', '', '', '', 'fa fa-envelope', '2.3', '2.3', '1', NULL, '1', '1');
+
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Account email' AND `t2`.`name` = 'Gestione email') SET `t1`.`parent` = `t2`.`id`;
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Template email' AND `t2`.`name` = 'Gestione email') SET `t1`.`parent` = `t2`.`id`;

@@ -180,14 +180,14 @@ gulp.task('srcFonts', function () {
 
 gulp.task('ckeditor', function () {
     gulp.src([
-            config.main.bowerDirectory + '/ckeditor/{adapters,lang,skins}/**/*',
+            config.main.bowerDirectory + '/ckeditor/{adapters,lang,skins,plugins}/**/*.{js,json,css,png}',
         ])
-        .pipe(gulp.dest(config.production + '/' + config.paths.js));
+        .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor'));
 
     gulp.src([
-            config.main.bowerDirectory + '/ckeditor/{ckeditor,styles}.js',
+            config.main.bowerDirectory + '/ckeditor/*.{js,css}',
         ])
-        .pipe(gulp.dest(config.production + '/' + config.paths.js));
+        .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor'));
 });
 
 gulp.task('colorpicker', function () {

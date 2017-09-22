@@ -3,7 +3,7 @@
 include_once __DIR__.'/core.php';
 
 $pageTitle = 'Bug';
-$jscript_modules[] = $js.'/ckeditor.js';
+$jscript_modules[] = $js.'/ckeditor/ckeditor.js';
 
 if (filter('op') == 'send') {
     // Preparazione email

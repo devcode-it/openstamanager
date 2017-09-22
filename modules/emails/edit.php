@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 echo '
-<script src="'.$rootdir.'/assets/dist/js/ckeditor.js"></script>';
+<script src="'.$rootdir.'/assets/dist/js/ckeditor/ckeditor.js"></script>';
 
 ?>
 <form action="" method="post" id="add-form">
@@ -77,11 +77,6 @@ echo '
 
 <script>
     $(document).ready(function(){
-        CKEDITOR.replace("body", {
-            toolbar: [
-                { name: "document", items: [ "NewPage", "Preview", "-", "Templates" ] }, // Defines toolbar group with name (used to create voice label) and items in 3 subgroups
-                ["Bold","Italic","Underline","Superscript","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Format",], // Defines toolbar group without name
-            ]
-        });
+        CKEDITOR.replace("body");
     });
 </script>

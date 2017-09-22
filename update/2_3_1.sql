@@ -65,3 +65,32 @@ UPDATE `zz_prints` SET `icon` = 'fa fa-print' WHERE `icon` = '';
 -- DELETE FROM `zz_settings` WHERE `nome` = 'Visualizza i costi sulle stampe degli interventi';
 -- DELETE FROM `zz_settings` WHERE `nome` = 'Stampa i prezzi sugli ordini';
 -- DELETE FROM `zz_settings` WHERE `nome` = 'Stampa i prezzi sui preventivi';
+
+--
+-- Struttura della tabella `zz_smtp`
+--
+
+CREATE TABLE IF NOT EXISTS `zz_smtp` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `note` varchar(255) NOT NULL,
+  `server` varchar(255) NOT NULL,
+  `port` varchar(255) NOT NULL,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `from_name` varchar(255) NOT NULL,
+  `from_address` varchar(255) NOT NULL,
+  `encryption` enum('','tls','ssl') NOT NULL,
+  `pec` tinyint(1) NOT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Account email', 'Account email', 'smtp', 'SELECT |select| FROM zz_smtp WHERE 1=1 HAVING 2=2 ORDER BY `name`', 'fa fa-envelope', '2.3', '2.3', '10', NULL, 1, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Account email'), 'id', 'id', 1, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Account email'), '#', 'id', 2, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Account email'), 'Nome account', 'name', 3, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Account email'), 'Nome visualizzato', 'from_name', 4, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Account email'), 'Email mittente', 'from_address', 5, 1, 0, 1, 1);

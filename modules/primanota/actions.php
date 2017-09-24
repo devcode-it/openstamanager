@@ -26,7 +26,7 @@ switch (post('op')) {
             $avere = $post['avere'][$i];
 
             if (!empty($dare) || !empty($avere)) {
-                if (is_float($avere)) {
+                if (!empty($avere)) {
                     $totale = -$avere;
                 } else {
                     $totale = $dare;

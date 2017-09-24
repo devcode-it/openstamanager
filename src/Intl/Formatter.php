@@ -178,7 +178,7 @@ class Formatter
     {
         $result = $this->formatNumber($value);
 
-        return !empty($result);
+        return !is_bool($result);
     }
 
     /**
@@ -192,7 +192,7 @@ class Formatter
     {
         $result = $this->parseNumber($value);
 
-        return !empty($result);
+        return !is_bool($result);
     }
 
     /**
@@ -343,7 +343,7 @@ class Formatter
     {
         $result = $this->formatTimestamp($value);
 
-        return !empty($result);
+        return !is_bool($result);
     }
 
     /**
@@ -357,7 +357,7 @@ class Formatter
     {
         $result = $this->parseTimestamp($value);
 
-        return !empty($result);
+        return !is_bool($result);
     }
 
     /**
@@ -427,7 +427,7 @@ class Formatter
     {
         $result = $this->formatDate($value);
 
-        return !empty($result);
+        return !is_bool($result);
     }
 
     /**
@@ -441,7 +441,7 @@ class Formatter
     {
         $result = $this->parseDate($value);
 
-        return !empty($result);
+        return !is_bool($result);
     }
 
     /**
@@ -511,7 +511,7 @@ class Formatter
     {
         $result = $this->formatTime($value);
 
-        return !empty($result);
+        return !is_bool($result);
     }
 
     /**
@@ -525,7 +525,7 @@ class Formatter
     {
         $result = $this->parseTime($value);
 
-        return !empty($result);
+        return !is_bool($result);
     }
 
     /**

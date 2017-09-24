@@ -94,14 +94,18 @@ class HTMLBuilder
             $json = self::decode($value, 'manager');
             $class = self::getManager($json['name']);
 
-            $html = str_replace($value, !empty($class) ? $class->manage($json) : '', $html);
+            $result = !empty($class) ? $class->manage($json) : '';
+
+            $html = str_replace($value, !empty($result) ? $result : $value, $html);
         }
 
         preg_match_all('/'.preg_quote(self::$open['handler']).'(.+?)'.preg_quote(self::$close['handler']).'/is', $html, $handlers);
 
         foreach ($handlers[0] as $value) {
             $json = self::decode($value, 'handler');
-            $html = str_replace($value, self::generate($json), $html);
+            $result = self::generate($json);
+
+            $html = str_replace($value, !empty($result) ? $result : $value, $html);
         }
 
         return $html;
@@ -395,16 +399,4 @@ class HTMLBuilder
             self::$managers['instances'][$original] = $class;
         }
     }
-}
-
-/**
- * Predispone un testo per l'inserimento all'interno di un attributo HTML.
- *
- * @param string $string
- *
- * @return string
- */
-function prepareToField($string)
-{
-    return str_replace('"', '&quot;', $string);
 }

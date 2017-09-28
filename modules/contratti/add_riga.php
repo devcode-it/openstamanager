@@ -55,7 +55,7 @@ echo '
 // Descrizione
 echo '
     <div class="col-md-12">
-        {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "value": "'.$descrizione.'", "required": 1 ]}
+        {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "value": '.json_encode($descrizione).', "required": 1 ]}
     </div>';
 
 // Iva

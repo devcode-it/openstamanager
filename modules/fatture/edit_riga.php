@@ -41,7 +41,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "required": 1, "value": "'.$rsr[0]['descrizione'].'" ]}
+            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "required": 1, "value": '.json_encode($rsr[0]['descrizione']).' ]}
         </div>
     </div>';
 

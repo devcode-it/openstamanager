@@ -150,7 +150,8 @@ class Formatter
         }
 
         // Controllo sull'effettiva natura del numero
-        if (!ctype_digit(str_replace(array_values($this->getNumberSeparators()), '', $value))) {
+        $integer = str_replace(array_values($this->getNumberSeparators()), '', $value);
+        if (!ctype_digit($integer) || (strlen($integer) != strlen((int) $integer))) {
             return false;
         }
 

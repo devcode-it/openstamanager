@@ -213,7 +213,7 @@ echo '
                 echo '
                         <tr>
                             <td>'.$rsl[$i]['nome'].'</td>
-                            <td>'.Translator::numberToLocale($rsart[0]['prezzo_vendita'] + $rsart[0]['prezzo_vendita'] / 100 * $rsl[$i]['prc_guadagno']).' &euro;</td>
+                            <td>'.Translator::numberToLocale($rsart[0]['prezzo_vendita'] - $rsart[0]['prezzo_vendita'] / 100 * $rsl[$i]['prc_guadagno']).' &euro;</td>
                         </tr>';
             }
 

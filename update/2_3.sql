@@ -968,3 +968,6 @@ UPDATE `zz_plugins` SET `script` = '', `options` = '	{ "main_query": [	{	"type":
 -- Aggiunta del supporto alla sincronizzazione interventi
 ALTER TABLE `in_interventi_tecnici` ADD `uid` VARCHAR(255) NOT NULL AFTER `prezzo_dirittochiamata_tecnico`, ADD `summary` VARCHAR(255) NOT NULL AFTER `uid`;
 ALTER TABLE `in_interventi` ADD `deleted` TINYINT NOT NULL DEFAULT '0' AFTER `data_invio`;
+
+-- Fix nella conversione dei listini precedenti
+UPDATE `mg_listini` SET `prc_guadagno` = - `prc_guadagno`;

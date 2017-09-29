@@ -82,7 +82,12 @@ switch (post('op')) {
         }
 
         // Aggiorno le tipologie di anagrafica
-        $dbo->sync('an_tipianagrafiche_anagrafiche', ['idanagrafica' => $id_record], ['idtipoanagrafica' => (array) $post['idtipoanagrafica']]);
+        $post['idtipoanagrafica'] = (array) $post['idtipoanagrafica'];
+        if (str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
+            $post['idtipoanagrafica'][] = $id_azienda;
+        }
+
+        $dbo->sync('an_tipianagrafiche_anagrafiche', ['idanagrafica' => $id_record], ['idtipoanagrafica' => $post['idtipoanagrafica']]);
 
         // Verifico se esiste già l'associazione dell'anagrafica a conti del partitario
         $rs = $dbo->fetchArray('SELECT idconto_cliente, idconto_fornitore FROM an_anagrafiche WHERE idanagrafica='.prepare($id_record));
@@ -209,7 +214,7 @@ switch (post('op')) {
 
     case 'delete':
         // Se l'anagrafica non è l'azienda principale, la disattivo
-        if (str_contains($records[0]['idtipianagrafica'], $id_azienda) === false) {
+        if (!str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
             $dbo->query('UPDATE an_anagrafiche SET deleted = 1 WHERE idanagrafica = '.prepare($id_record).Modules::getAdditionalsQuery($id_module));
 
             $_SESSION['infos'][] = tr('Anagrafica eliminata!');

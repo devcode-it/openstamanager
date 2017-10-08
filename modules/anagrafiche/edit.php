@@ -13,15 +13,14 @@ if (!empty($google)) {
 }
 
 if (!$cliente) {
-    $plugins = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Impianti del cliente' OR name='Ddt del cliente'");
+    $ignore = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Impianti del cliente' OR name='Ddt del cliente'");
 
-    foreach ($plugins as $plugin) {
+    foreach ($ignore as $plugin) {
         echo '
 <script>
     $("#link-tab_'.$plugin['id'].'").addClass("disabled");
 </script>';
     }
-
 }
 
 ?><form action="" method="post" role="form">
@@ -411,15 +410,15 @@ if (!str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
 
 <script>
 	$(document).ready( function(){
-		$('.colorpicker').colorpicker().on('changeColor', function(){
-			$('#colore').parent().find('.square').css('background', $('#colore').val());
+		$(".colorpicker").colorpicker().on("changeColor", function(){
+			$("#colore").parent().find(".square").css("background", $("#colore").val());
 		});
 
-		$('#colore').parent().find('.square').css('background', $('#colore').val());
+		$("#colore").parent().find(".square").css("background", $("#colore").val());
 
         $("#geocomplete input").geocomplete({
-            map: $('#map').length ? "#map" : false,
-            location: $('#gaddress').val() ? $('#gaddress').val() : [$('#lat').val(), $('#lng').val()],
+            map: $("#map").length ? "#map" : false,
+            location: $("#gaddress").val() ? $("#gaddress").val() : [$("#lat").val(), $("#lng").val()],
             details: ".details",
             detailsAttribute: "data-geo"
         }).bind("geocode:result", function (event, result) {

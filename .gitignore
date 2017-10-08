@@ -82,3 +82,4 @@ files/my_impianti/*
 !files/my_impianti/componente.ini
 config.inc.php
 REVISION
+.php_cs.cache

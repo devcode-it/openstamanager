@@ -91,7 +91,7 @@ if ($dir == 'uscita') {
                     <p><strong>'.tr('Scadenze').'</strong></p>';
                     foreach ($scadenze as $scadenza) {
                         echo '
-                    <p>'.Translator::dateToLocale($scadenza['scadenza']).' - '.Translator::numberToLocale($scadenza['da_pagare']).'&euro;</p>';
+                    <p>'.Translator::dateToLocale($scadenza['scadenza']).': '.Translator::numberToLocale($scadenza['da_pagare']).'&euro;</p>';
                     }
                     echo '
                 </div>';

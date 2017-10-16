@@ -229,6 +229,7 @@ gulp.task('i18n', function () {
 gulp.task('php-debugbar', function () {
     gulp.src([
             './vendor/maximebf/debugbar/src/DebugBar/Resources/**/*',
+            '!./vendor/maximebf/debugbar/src/DebugBar/Resources/vendor/**/*',
         ])
         .pipe(gulpIf('*.css', minifyCSS(), gulpIf('*.js', minifyJS())))
         .pipe(gulp.dest(config.production + '/php-debugbar'));
@@ -247,6 +248,7 @@ gulp.task('release', function () {
         './vendor/mpdf/mpdf/iccprofiles/*',
         './vendor/mpdf/mpdf/qrcode/*',
         './vendor/mpdf/mpdf/ttfonts/*',
+        './vendor/maximebf/debugbar/src/DebugBar/Resources/vendor/*',
     ]);
 
     var output = fs.createWriteStream('./release.zip');

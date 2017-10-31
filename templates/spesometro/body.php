@@ -14,8 +14,8 @@ echo "
 <table class='table table-bordered'>
     <thead>
         <tr>
-            <th class='text-center' style='width:10%'>".tr('P.Iva', [], ['upper' => true])."</th>
-            <th class='text-center' style='width:15%'>".tr('Ragione sociale', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:10%'>".tr('Ragione sociale', [], ['upper' => true])."</th>
+            <th class='text-center' style='width:15%'>".tr('P.Iva', [], ['upper' => true])."</th>
             <th class='text-center' style='width:25%'>".tr('Documento', [], ['upper' => true])."</th>
             <th class='text-center' style='width:20%'>".tr('Aliquota', [], ['upper' => true])."</th>
             <th class='text-center' style='width:10%'>".tr('Imponibile', [], ['upper' => true])."</th>

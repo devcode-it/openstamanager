@@ -137,7 +137,7 @@ Maggiori informazioni sulla configurazione e sul plugin sono disponibili nel sit
 - **Fabio Lovato**, il fondatore ([loviuz](https://github.com/loviuz))
 - **Fabio Piovan** ([fpsoftware](https://github.com/fpsoftware))
 - **Luca Salvà** ([lucasalva87](https://github.com/lucasalva87))
-- **Matteo Baccarin** ([Bacca1997](https://github.com/orgs/devcode-it/people/Bacca1997))
+- **Matteo Baccarin** ([Bacca1997](https://github.com/Bacca1997))
 - **Thomas Zilio** ([Dasc3er](https://github.com/Dasc3er))
 
 ## Licenza

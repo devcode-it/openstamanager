@@ -971,3 +971,7 @@ ALTER TABLE `in_interventi` ADD `deleted` TINYINT NOT NULL DEFAULT '0' AFTER `da
 
 -- Fix nella conversione dei listini precedenti
 UPDATE `mg_listini` SET `prc_guadagno` = - `prc_guadagno`;
+
+
+-- Aggiunta pagamento di default "Bonifico bancario"
+INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `created_at`, `idconto_vendite`, `idconto_acquisti`) VALUES (NULL, 'Bonifico bancario', '0', '10', '100', CURRENT_TIMESTAMP, NULL, NULL);

@@ -66,15 +66,15 @@ if ('entrata' == $dir) {
 
 $body .= "
         <table cellspacing='0' style='table-layout:fixed;'>
-            <col width='40'><col width='100'><col width='100'><col width='362'><col width='160'><col width='90'><col width='90'>
+            <col width='90'><col width='90'><col width='450'><col width='120'><col width='120'><col width='90'><col width='90'>
             <thead>
             <tr>
-                <th bgcolor='#dddddd' class='full_cell1 cell-padded'>N° Documento</th>
-                <th bgcolor='#dddddd' class='full_cell1 cell-padded'>Data</th>
-                <th bgcolor='#dddddd' class='full_cell1 cell-padded'>Causale<br>Ragione sociale</th>
-                <th bgcolor='#dddddd' class='full_cell1 cell-padded'>Aliquota</th>
-                <th bgcolor='#dddddd' class='full_cell1 cell-padded'>Imponibile</th>
-                <th bgcolor='#dddddd' class='full_cell1 cell-padded'>Imposta</th>
+                <th bgcolor='#dddddd' class='full_cell1 cell-padded'>N° doc.</th>
+                <th bgcolor='#dddddd' class='full_cell cell-padded'>Data</th>
+                <th bgcolor='#dddddd' class='full_cell cell-padded'>Causale<br>Ragione sociale</th>
+                <th bgcolor='#dddddd' class='full_cell cell-padded'>Aliquota</th>
+                <th bgcolor='#dddddd' class='full_cell cell-padded'>Imponibile</th>
+                <th bgcolor='#dddddd' class='full_cell cell-padded'>Imposta</th>
             </tr>
             </thead>
         ";

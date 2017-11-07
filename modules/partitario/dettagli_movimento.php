@@ -13,8 +13,6 @@ echo '
     <tr>
         <th>'.tr('Descrizione riga').'</th>
         <th width="100">'.tr('Imponibile').'</th>
-        <th width="100">'.tr('Q.tà').'</th>
-        <th width="100">'.tr('Um').'</th>
     </tr>';
 
 $totale_imponibile = 0;
@@ -26,16 +24,8 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
             <span>'.$rs[$i]['desc_riga'].'</span>
         </td>
 
-        <td>
+        <td class="text-right">
             <span>'.Translator::numberToLocale($rs[$i]['imponibile']).' &euro; </span>
-        </td>
-
-        <td
-            <span>'.Translator::numberToLocale($rs[$i]['qta']).'</span>
-        </td>
-
-        <td>
-            <span>'.$rs[$i]['um'].'</span>
         </td>
     </tr>';
 
@@ -45,10 +35,8 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
 
 echo '
     <tr>
-        <th>'.tr('Totali').': </th>
-        <th width="100"><span>'.Translator::numberToLocale($totale_imponibile).' &euro;</span></th>
-        <th width="100"><span>'.Translator::numberToLocale($totale_qta).'</span></th>
-        <th width="100"></th>
+        <th class="text-right">'.tr('Totali').': </th>
+        <th width="100" class="text-right"><span>'.Translator::numberToLocale($totale_imponibile).' &euro;</span></th>
     </tr>
 </table>
 

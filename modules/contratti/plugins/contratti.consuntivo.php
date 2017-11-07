@@ -94,7 +94,7 @@ if (!empty($rsi)) {
                     <th width="120">'.tr('Costo orario').'</th>
                     <th width="120">'.tr('Costo km').'</th>
                     <th width="120">'.tr('Diritto ch.').'</th>
-                    <th width="120">'.tr('Prezzo orario').'</th>
+                    <th width="120">'.tr('Costo addebitato').'</th>
                     <th width="120">'.tr('Prezzo km').'</th>
                     <th width="120">'.tr('Diritto ch.').'</th>
                 </tr>';
@@ -293,12 +293,12 @@ if (!empty($contratto_tot_ore)) {
             <table class="table text-left">
                 <tr>
                     <td>'.tr('Ore residue').':</td>
-                    <td class="text-right">'.Translator::numberToLocale(floatval($contratto_tot_ore) - floatval($totale_ore_impiegate)).'</td>
+                    <td class="text-right">'.Translator::numberToLocale(floatval($contratto_tot_ore) - floatval($totale_ore)).'</td>
                 </tr>
 
                 <tr>
                     <td>'.tr('Ore erogate').':</td>
-                    <td class="text-right">'.Translator::numberToLocale($totale_ore_impiegate).'</td>
+                    <td class="text-right">'.Translator::numberToLocale($totale_ore).'</td>
                 </tr>
 
                 <tr>

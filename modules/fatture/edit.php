@@ -34,16 +34,19 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 			<div class="clearfix"></div>
 
 			<div class="row">
-<?php
-if ($dir == 'uscita') {
-    echo '
+                <?php
+                if ($dir == 'uscita') {
+                    echo '
+                				<div class="col-md-3">
+                					{[ "type": "span", "label": "'.tr('Numero fattura').'", "name": "numero","class": "text-center", "value": "$numero$" ]}
+                                </div>';
+                    $label = tr('Numero secondario');
+                } else {
+                        $label = tr('Numero fattura');
+                }
+                ?>
 				<div class="col-md-3">
-					{[ "type": "span", "label": "'.tr('Numero fattura').'", "name": "numero","class": "text-center", "value": "$numero$" ]}
-                </div>';
-}
-?>
-				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Numero secondario'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
+					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
 				</div>
 
 				<div class="col-md-3">

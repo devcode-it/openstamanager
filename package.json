@@ -58,7 +58,7 @@
         "select2-bootstrap-theme": "^0.1.0-beta.10",
         "signature_pad": "^2.1.1",
         "smartwizard": "^4.2.2",
-        "sweetalert2": "^6.6.5",
+        "sweetalert2": "^6.11.4",
         "tooltipster": "^4.2.5"
     },
     "devDependencies": {

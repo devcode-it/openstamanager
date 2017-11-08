@@ -30,7 +30,7 @@
     },
     "main": "gulpfile.js",
     "dependencies": {
-        "admin-lte": "^2.3.11",
+        "admin-lte": "~2.3.11",
         "autosize": "^3.0.21",
         "bootstrap": "^3.3.7",
         "bootstrap-colorpicker": "^2.5.1",
@@ -47,7 +47,7 @@
         "font-awesome": "^4.7.0",
         "fullcalendar": "^3.4.0",
         "geocomplete": "^1.7.0",
-        "inputmask": "^3.3.6",
+        "inputmask": "3.3.9",
         "jquery": "^3.2.1",
         "jquery-form": "^4.2.1",
         "jquery-ui-touch-punch": "^0.2.3",

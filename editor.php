@@ -54,7 +54,7 @@ if (empty($records)) {
         */
     echo '
 		<div class="nav-tabs-custom">
-			<ul class="nav nav-tabs pull-right" role="tablist">
+			<ul class="nav nav-tabs pull-right" id="tabs" role="tablist">
 				<li class="pull-left active header">';
 
     // Verifico se ho impostato un nome modulo personalizzato
@@ -63,17 +63,18 @@ if (empty($records)) {
     echo '
 					<a data-toggle="tab" href="#tab_0">
 						<i class="'.$module['icon'].'"></i> '.$name;
-// Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
-if (file_exists($docroot.'/modules/'.$module_dir.'/add.php') && $module['permessi'] == 'rw') {
-    echo '
+    // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
+    if (file_exists($docroot.'/modules/'.$module_dir.'/add.php') && $module['permessi'] == 'rw') {
+        echo '
 						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'"><i class="fa fa-plus"></i></button>';
-}
+    }
     echo '
 					</a>
 					<a class="back-btn" href="controller.php?id_module='.$id_module.'"><i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'</a>
 				</li>';
 
     $plugins = $dbo->fetchArray('SELECT id, title FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1");
+
     foreach ($plugins as $plugin) {
         echo '
 				<li>
@@ -148,7 +149,6 @@ if ($module['permessi'] == 'r') {
 				$('a.btn-info, button.btn-info, input[type=button].btn-info', 'section.content').show();
 			});
 <?php
-
 } ?>
 
 		var content_was_modified = false;
@@ -173,7 +173,7 @@ if ($module['permessi'] == 'r') {
 		};
 <?php
 if ($advanced_sessions) {
-    ?>
+        ?>
 
 		function getActiveUsers(){
 			$.getJSON('<?php echo ROOTDIR; ?>/call.php', {
@@ -196,8 +196,7 @@ if ($advanced_sessions) {
 
 		setInterval(getActiveUsers, <?php echo get_var('Timeout notifica di presenza (minuti)') * 1000; ?>);
 <?php
-
-}
+    }
 ?>
 	</script>
 <?php

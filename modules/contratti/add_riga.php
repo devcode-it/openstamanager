@@ -35,7 +35,7 @@ if (empty($idriga)) {
     $op = 'editriga';
     $button = tr('Modifica');
 
-    $rsr = $dbo->fetchArray('SELECT * FROM co_righe2_contratti WHERE idcontratto='.prepare($idcontratto).' AND id='.prepare($idriga));
+    $rsr = $dbo->fetchArray('SELECT * FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record).' AND id='.prepare($idriga));
 
     $descrizione = $rsr[0]['descrizione'];
     $qta = $rsr[0]['qta'];
@@ -47,7 +47,7 @@ if (empty($idriga)) {
 }
 
 echo '
-<form action="'.$rootdir.'/editor.php?id_module='.Modules::get('Contratti')['id'].'&id_record='.$idcontratto.'" method="post">
+<form action="'.$rootdir.'/editor.php?id_module='.Modules::get('Contratti')['id'].'&id_record='.$id_record.'" method="post">
     <input type="hidden" name="op" value="'.$op.'">
     <input type="hidden" name="idriga" value="'.$idriga.'">
     <input type="hidden" name="backto" value="record-edit">';
@@ -55,7 +55,7 @@ echo '
 // Descrizione
 echo '
     <div class="col-md-12">
-        {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "value": "'.$descrizione.'", "required": 1 ]}
+        {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "value": '.json_encode($descrizione).', "required": 1 ]}
     </div>';
 
 // Iva

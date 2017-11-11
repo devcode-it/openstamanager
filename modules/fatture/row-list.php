@@ -91,14 +91,14 @@ if (!empty($rs)) {
 
         // Aggiunta riferimento a ordine
         if (!empty($r['idordine'])) {
-            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM or_ordini.id=".prepare($r['idordine']));
+            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM or_ordini WHERE id=".prepare($r['idordine']));
 
             $ref_modulo = ($dir == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
             $ref_id = $r['idordine'];
 
             $documento = tr('Ordine');
         } elseif (!empty($r['idddt'])) {
-            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM dt_ddt WHERE dt_ddt.id=".prepare($r['idddt']));
+            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM dt_ddt WHERE id=".prepare($r['idddt']));
 
             $ref_modulo = ($dir == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
             $ref_id = $r['idddt'];

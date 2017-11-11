@@ -144,9 +144,22 @@ class Formatter
      */
     public function parseNumber($value)
     {
-        if (!ctype_digit(str_replace(array_values($this->getNumberSeparators()), '', $value))) {
+        if ($value[0] == '+' || $value[0] == '-') {
+            $sign = $value[0];
+            $value = substr($value, 1);
+        }
+
+        // Controllo sull'effettiva natura del numero
+        $number = str_replace(array_values($this->getNumberSeparators()), '', $value);
+
+        $pieces = explode($this->getNumberSeparators()['decimals'], $value);
+        $integer = str_replace(array_values($this->getNumberSeparators()), '', $pieces[0]);
+
+        if (!ctype_digit($number) || (strlen($integer) != strlen((int) $integer))) {
             return false;
         }
+
+        $value = $sign.$value;
 
         if (is_object($this->numberFormatter)) {
             $result = $this->numberFormatter->parse($value);
@@ -154,7 +167,7 @@ class Formatter
             $result = $this->customNumber($value, $this->getNumberSeparators(), $this->getStandardFormats()['number']);
         }
 
-        $result = is_numeric($result) ? floatval($result) : $result;
+        $result = is_numeric($result) ? floatval($result) : false;
 
         return $result;
     }
@@ -170,7 +183,7 @@ class Formatter
     {
         $result = $this->formatNumber($value);
 
-        return !empty($result);
+        return !is_bool($result);
     }
 
     /**
@@ -184,7 +197,7 @@ class Formatter
     {
         $result = $this->parseNumber($value);
 
-        return !empty($result);
+        return !is_bool($result);
     }
 
     /**
@@ -335,7 +348,7 @@ class Formatter
     {
         $result = $this->formatTimestamp($value);
 
-        return !empty($result);
+        return !is_bool($result);
     }
 
     /**
@@ -349,7 +362,7 @@ class Formatter
     {
         $result = $this->parseTimestamp($value);
 
-        return !empty($result);
+        return !is_bool($result);
     }
 
     /**
@@ -419,7 +432,7 @@ class Formatter
     {
         $result = $this->formatDate($value);
 
-        return !empty($result);
+        return !is_bool($result);
     }
 
     /**
@@ -433,7 +446,7 @@ class Formatter
     {
         $result = $this->parseDate($value);
 
-        return !empty($result);
+        return !is_bool($result);
     }
 
     /**
@@ -503,7 +516,7 @@ class Formatter
     {
         $result = $this->formatTime($value);
 
-        return !empty($result);
+        return !is_bool($result);
     }
 
     /**
@@ -517,7 +530,7 @@ class Formatter
     {
         $result = $this->parseTime($value);
 
-        return !empty($result);
+        return !is_bool($result);
     }
 
     /**

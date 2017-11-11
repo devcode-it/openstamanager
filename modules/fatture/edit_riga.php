@@ -41,7 +41,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "required": 1, "value": "'.$rsr[0]['descrizione'].'" ]}
+            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "required": 1, "value": '.json_encode($rsr[0]['descrizione']).' ]}
         </div>
     </div>';
 
@@ -53,7 +53,7 @@ if (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d
     if (get_var('Percentuale rivalsa INPS') != '' || $dir == 'uscita') {
         echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Rivalsa INPS').'", "name": "idrivalsainps", "value": "'.$rsr[0]['idrivalsainps'].'", "values": "query=SELECT * FROM co_rivalsainps" ]}
+            {[ "type": "select", "label": "'.tr('Rivalsa INPS').'", "name": "idrivalsainps", "value": "'.$rsr[0]['idrivalsainps'].'", "values": "query=SELECT * FROM co_rivalsainps", "required": '.intval($dir != 'uscita').' ]}
         </div>';
     }
 
@@ -61,7 +61,7 @@ if (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d
     if (get_var("Percentuale ritenuta d'acconto") != '' || $dir == 'uscita') {
         echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "idritenutaacconto", "value": "'.$rsr[0]['idritenutaacconto'].'", "values": "query=SELECT * FROM co_ritenutaacconto" ]}
+            {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "idritenutaacconto", "value": "'.$rsr[0]['idritenutaacconto'].'", "values": "query=SELECT * FROM co_ritenutaacconto", "required": '.intval($dir != 'uscita').' ]}
         </div>';
     }
 

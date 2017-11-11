@@ -12,8 +12,11 @@ switch (post('op')) {
 
         // Verifico se il totale sommato è uguale al totale da pagare
         foreach ($post['scadenza'] as $idscadenza => $da_pagare) {
-            $totale_utente += $da_pagare;
+            $totale_utente += floatval($da_pagare);
         }
+
+        // Fix per problemi di comparazione tra float
+        $totale_utente = (string) $totale_utente;
 
         if ($totale_utente == $totale_da_pagare) {
             foreach ($post['scadenza'] as $idscadenza => $da_pagare) {

@@ -27,7 +27,7 @@ echo Widgets::addModuleWidgets($id_module, 'controller_top');
 // Lettura eventuali plugins modulo da inserire come tab
 echo '
 		<div class="nav-tabs-custom">
-			<ul class="nav nav-tabs pull-right" role="tablist">
+			<ul class="nav nav-tabs pull-right" id="tabs" role="tablist">
 				<li class="pull-left active header">';
 
 // Verifico se ho impostato un nome modulo personalizzato

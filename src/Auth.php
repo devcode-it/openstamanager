@@ -90,7 +90,7 @@ class Auth extends \Util\Singleton
         $database = Database::getConnection();
 
         $log = [];
-        $log['username'] = $username;
+        $log['username'] = (string) $username;
         $log['ip'] = get_client_ip();
         $log['stato'] = self::$status['failed']['code'];
 

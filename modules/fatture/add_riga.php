@@ -47,7 +47,7 @@ if (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d
     if (get_var('Percentuale rivalsa INPS') != '' || $dir == 'uscita') {
         echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Rivalsa INPS').'", "name": "idrivalsainps", "required": 1, "value": "'.get_var('Percentuale rivalsa INPS').'", "values": "query=SELECT * FROM co_rivalsainps" ]}
+            {[ "type": "select", "label": "'.tr('Rivalsa INPS').'", "name": "idrivalsainps",  "value": "'.get_var('Percentuale rivalsa INPS').'", "values": "query=SELECT * FROM co_rivalsainps", "required": '.intval($dir != 'uscita').' ]}
         </div>';
     }
 
@@ -55,7 +55,7 @@ if (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d
     if (get_var("Percentuale ritenuta d'acconto") != '' || $dir == 'uscita') {
         echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "idritenutaacconto", "required": 1, "value": "'.get_var("Percentuale ritenuta d'acconto").'", "values": "query=SELECT * FROM co_ritenutaacconto" ]}
+            {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "idritenutaacconto", "value": "'.get_var("Percentuale ritenuta d'acconto").'", "values": "query=SELECT * FROM co_ritenutaacconto", "required": '.intval($dir != 'uscita').' ]}
         </div>';
     }
 

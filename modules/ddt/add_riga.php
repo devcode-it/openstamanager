@@ -69,7 +69,7 @@ if (!empty($idriga)) {
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "required": 1, "value": "'.$descrizione.'" ]}
+            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "required": 1, "value": '.json_encode($descrizione).' ]}
         </div>
     </div>';
 

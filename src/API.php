@@ -59,6 +59,13 @@ class API extends \Util\Singleton
     {
         $user = Auth::user();
 
+        // Controllo sulla compatibilità dell'API
+        if (!self::isCompatible()) {
+            return self::response([
+                'status' => self::$status['incompatible']['code'],
+            ]);
+        }
+
         $table = '';
         $select = '*';
         $where = [];
@@ -183,6 +190,13 @@ class API extends \Util\Singleton
     {
         $user = Auth::user();
 
+        // Controllo sulla compatibilità dell'API
+        if (!self::isCompatible()) {
+            return self::response([
+                'status' => self::$status['incompatible']['code'],
+            ]);
+        }
+
         $resources = self::getResources()[$kind];
         $resource = $request['resource'];
 
@@ -280,33 +294,32 @@ class API extends \Util\Singleton
      */
     public static function response($array)
     {
-        // Controllo sulla compatibilità dell'API
-        if (!self::isCompatible()) {
-            $array = [
-                'status' => self::$status['incompatible']['code'],
-            ];
+        if (empty($array['custom'])) {
+            // Agiunta dello status di default
+            if (empty($array['status'])) {
+                $array['status'] = self::$status['ok']['code'];
+            }
+
+            // Aggiunta del messaggio in base allo status
+            if (empty($array['message'])) {
+                $codes = array_column(self::$status, 'code');
+                $messages = array_column(self::$status, 'message');
+
+                $array['message'] = $messages[array_search($array['status'], $codes)];
+            }
+
+            $flags = JSON_FORCE_OBJECT;
+            // Beautify forzato dei risultati
+            if (get('beautify') !== null) {
+                $flags |= JSON_PRETTY_PRINT;
+            }
+
+            $result = json_encode($array, $flags);
+        } else {
+            $result = $array['custom'];
         }
 
-        // Agiunta dello status di default
-        if (empty($array['status'])) {
-            $array['status'] = self::$status['ok']['code'];
-        }
-
-        // Aggiunta del messaggio in base allo status
-        if (empty($array['message'])) {
-            $codes = array_column(self::$status, 'code');
-            $messages = array_column(self::$status, 'message');
-
-            $array['message'] = $messages[array_search($array['status'], $codes)];
-        }
-
-        $flags = JSON_FORCE_OBJECT;
-        // Beautify forzato dei risultati
-        if (get('beautify') !== null) {
-            $flags |= JSON_PRETTY_PRINT;
-        }
-
-        return json_encode($array, $flags);
+        return $result;
     }
 
     /**

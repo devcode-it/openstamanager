@@ -73,7 +73,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "id": "desc", "value": "'.$descrizione.'", "required": 1 ]}
+            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "id": "desc", "value": '.json_encode($descrizione).', "required": 1 ]}
         </div>
     </div>';
 
@@ -96,33 +96,6 @@ echo '
             {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
         </div>
     </div>';
-
-/*
-if (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d'acconto") != '') {
-    echo '
-    <div class="row">';
-
-    // Rivalsa INPS
-    if (get_var('Percentuale rivalsa INPS') != '') {
-        echo '
-        <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Rivalsa INPS').'", "name": "idrivalsainps", "required": 1, "value": "'.get_var('Percentuale rivalsa INPS').'", "values": "query=SELECT * FROM co_rivalsainps" ]}
-        </div>';
-    }
-
-    // Ritenuta d'acconto
-    if (get_var("Percentuale ritenuta d'acconto") != '') {
-        echo '
-        <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "idritenutaacconto", "required": 1, "value": "'.get_var("Percentuale ritenuta d'acconto").'", "values": "query=SELECT * FROM co_ritenutaacconto" ]}
-        </div>';
-    }
-
-    echo '
-    </div>';
-}
-
-*/
 
 // Costo unitario
 echo '

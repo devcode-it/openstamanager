@@ -13,15 +13,14 @@ if (!empty($google)) {
 }
 
 if (!$cliente) {
-    $plugins = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Impianti del cliente' OR name='Ddt del cliente'");
+    $ignore = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Impianti del cliente' OR name='Ddt del cliente'");
 
-    foreach ($plugins as $plugin) {
+    foreach ($ignore as $plugin) {
         echo '
 <script>
     $("#link-tab_'.$plugin['id'].'").addClass("disabled");
 </script>';
     }
-
 }
 
 ?>
@@ -312,9 +311,13 @@ if ($fornitore) {
 
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Tipo di anagrafica'); ?>", "name": "idtipoanagrafica[]", "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica  WHERE t.descrizione = 'Azienda'  AND deleted = 0) OR idtipoanagrafica IN (SELECT DISTINCT(z.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche z WHERE idanagrafica = <?php echo $records[0]['idanagrafica']; ?>) ORDER BY descrizione", "value": "$idtipianagrafica$"<?php if (str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
-    echo ', "readonly": 1';
-} ?> ]}
+					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Tipo di anagrafica'); ?>", "name": "idtipoanagrafica[]", "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica WHERE t.descrizione = 'Azienda'  AND deleted = 0) ORDER BY descrizione", "value": "$idtipianagrafica$" ]}
+<?php
+if (str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
+    echo '
+                    <p>'.tr('Questa anagrafica appartiene alla tipologia "Azienda"').'.</p>';
+}
+?>
 				</div>
 				<?php
                 if (in_array('Tecnico', explode(',', $records[0]['tipianagrafica']))) {
@@ -408,15 +411,15 @@ if (!str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
 
 <script>
 	$(document).ready( function(){
-		$('.colorpicker').colorpicker().on('changeColor', function(){
-			$('#colore').parent().find('.square').css('background', $('#colore').val());
+		$(".colorpicker").colorpicker().on("changeColor", function(){
+			$("#colore").parent().find(".square").css("background", $("#colore").val());
 		});
 
-		$('#colore').parent().find('.square').css('background', $('#colore').val());
+		$("#colore").parent().find(".square").css("background", $("#colore").val());
 
         $("#geocomplete input").geocomplete({
-            map: $('#map').length ? "#map" : false,
-            location: $('#gaddress').val() ? $('#gaddress').val() : [$('#lat').val(), $('#lng').val()],
+            map: $("#map").length ? "#map" : false,
+            location: $("#gaddress").val() ? $("#gaddress").val() : [$("#lat").val(), $("#lng").val()],
             details: ".details",
             detailsAttribute: "data-geo"
         }).bind("geocode:result", function (event, result) {

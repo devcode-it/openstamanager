@@ -31,8 +31,8 @@ switch (post('op')) {
         }
 
         /*
-            Collegamento intervento a contratto (se impostato).
-            Oltre al collegamento al contratto, l'intervento è collegato ad una riga di pianificazione, perciò è importante considerarla se è impostata
+        Collegamento intervento a contratto (se impostato).
+        Oltre al collegamento al contratto, l'intervento è collegato ad una riga di pianificazione, perciò è importante considerarla se è impostata
         */
         $array = [
             'idintervento' => $id_record,
@@ -217,7 +217,8 @@ switch (post('op')) {
         */
         $formato = get_var('Formato codice intervento');
 
-        $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE concat("", codice * 1) = codice AND LENGTH(codice) = '.strlen($formato).' ORDER BY CAST(codice AS SIGNED) DESC LIMIT 1');
+        // Condizioni aggiuntive: WHERE concat("", codice * 1) = codice AND LENGTH(codice) = '.strlen($formato).'
+        $rs = $dbo->fetchArray('SELECT codice FROM in_interventi ORDER BY id DESC LIMIT 1');
         $codice = get_next_code($rs[0]['codice'], 1, $formato);
 
         // Informazioni di base

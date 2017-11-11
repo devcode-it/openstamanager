@@ -62,7 +62,7 @@ class DefaultHandler implements HandlerInterface
 
         $values['value'] = !empty($values['value']) ? $values['value'] : 0;
 
-        $decimals = true;
+        $decimals = null;
         if (isset($values['decimals'])) {
             if (is_numeric($values['decimals'])) {
                 $decimals = $values['decimals'];

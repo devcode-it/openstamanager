@@ -87,7 +87,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "required": 1, "value": "'.$descrizione.'" ]}
+            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "id": "descrizione_articolo", "required": 1, "value": '.json_encode($descrizione).' ]}
         </div>
     </div>
     <br>';
@@ -162,8 +162,9 @@ echo '
 
                 session_set("superselect,idarticolo", $(this).val(), 0);
                 $data = $(this).selectData();
-                $("#prezzo").val($data.prezzo_vendita);
-                $("#descrizione").val($data.descrizione);
+
+                $("#prezzo_vendita").val($data.prezzo_vendita);
+                $("#descrizione_articolo").val($data.descrizione);
                 $("#um").selectSetNew($data.um, $data.um);
             }else{
                 $("#prezzi_articolo button").addClass("disabled");

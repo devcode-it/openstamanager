@@ -52,6 +52,12 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
                     $search_filters[] = str_replace('|search|', prepare('%'.$piece.'%'), $total['search_inside'][$i]);
                 }
             } else {
+				
+				//per le icone cerco per il campo icon_title
+				if (preg_match('/^icon_(.+?)$/', $total['search_inside'][$i], $m)) {
+					$total['search_inside'][$i] = "icon_title_".$m[1];
+				}
+				
                 $search_filters[] = '`'.$total['search_inside'][$i].'` LIKE '.prepare('%'.trim($columns[$i]['search']['value'].'%'));
             }
         }
@@ -177,7 +183,7 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
 
             // Icona
             elseif (preg_match('/^icon_(.+?)$/', trim($field), $m)) {
-                $value = '<i class="'.$r[$field].'"></i> <small>'.$r['icon_title_'.$m[1]].'</small>';
+                $value = '<i class="'.$r[$field].'" title="'.$r['icon_title_'.$m[1]].'" ></i> <small>'.$r['icon_title_'.$m[1]].'</small>';
             }
 
             // Colore del testo

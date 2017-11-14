@@ -975,3 +975,6 @@ UPDATE `mg_listini` SET `prc_guadagno` = - `prc_guadagno`;
 
 -- Aggiunta pagamento di default "Bonifico bancario"
 INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `created_at`, `idconto_vendite`, `idconto_acquisti`) VALUES (NULL, 'Bonifico bancario', '0', '10', '100', CURRENT_TIMESTAMP, NULL, NULL);
+
+-- Per la Dashboard i widgets vanno in alto
+UPDATE `zz_widgets` SET `location` = 'controller_top' WHERE `zz_widgets`.`id_module` = 1;

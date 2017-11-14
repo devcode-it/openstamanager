@@ -10,10 +10,10 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
 
-	<div class="pull-right">
+	<!--div class="pull-right">
 		<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>
 	</div>
-	<div class="clearfix"></div><br>
+	<div class="clearfix"></div><br-->
 
 	<!-- DATI -->
 	<div class="panel panel-primary">
@@ -68,6 +68,7 @@ if ($options != '' && $options != 'menu' && $options != 'custom') {
                     <div class="row">
                         <div class="col-md-12 text-right">
                             <button type="button" class="btn btn-warning pull-righ" onclick="testQuery()"><i class="fa fa-file-text-o "></i> '.tr('Testa la query').'</button>
+							<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>
                         </div>
                     </div>
 				</div>
@@ -94,12 +95,12 @@ if (!empty($options) && $options != 'custom') {
 				</div>
 
 				<div class="panel-body">
-                    <div class="row">
+                    <!--div class="row">
                         <div class="col-xs-12 text-right">
                             <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
                         </div>
                     </div>
-                    <hr>
+                    <hr-->
 
 					<div class="data">';
 
@@ -340,12 +341,12 @@ if (!empty($options) && $options != 'custom') {
             </div>
 
             <div class="panel-body">
-                <div class="row">
+                <!--div class="row">
                     <div class="col-xs-12 text-right">
                         <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
                     </div>
                 </div>
-                <hr>
+                <hr-->
 
                 <div class="data">';
 
@@ -471,6 +472,7 @@ function testQuery(){
             $("#main_loading").fadeOut();
 
             swal("'.tr('Errore').'", "'.tr('Errore durante il test della query!').'", "error");
+			session_set ("errors,0", 0, 1);
         }
     })
 }

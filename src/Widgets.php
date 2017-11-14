@@ -20,9 +20,17 @@ class Widgets
     {
         if (empty(self::$widgets[$id_module][$location])) {
             $dbo = Database::getConnection();
-
+			
+			//se sono mobile mostro su controller_right anche quello che è su controller_top
+			if ((isMobile())and($location=='controller_right')){
+				$extra_where = " OR location = 'controller_top' "; 
+			}else{
+				$extra_where = "";
+			}
+			
+		
             // ottengo da db gli id dei widget associati al modulo
-            $results = $dbo->fetchArray('SELECT id, location, class FROM zz_widgets WHERE id_module='.prepare($id_module).' AND location='.prepare($location).' AND enabled=1 ORDER BY `order` ASC');
+            $results = $dbo->fetchArray('SELECT id, location, class FROM zz_widgets WHERE id_module='.prepare($id_module).' AND ( location='.prepare($location).' '.$extra_where.' ) AND enabled=1 ORDER BY `order` ASC');
 
             $result = '';
 

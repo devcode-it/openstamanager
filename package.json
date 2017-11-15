@@ -54,7 +54,7 @@
         "moment": "^2.18.1",
         "numeral": "^2.0.6",
         "parsleyjs": "^2.7.2",
-        "select2": "4.0.3",
+        "select2": "^4.0.3",
         "select2-bootstrap-theme": "^0.1.0-beta.10",
         "signature_pad": "^2.1.1",
         "smartwizard": "^4.2.2",

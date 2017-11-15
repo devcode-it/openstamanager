@@ -35,7 +35,7 @@ $(document).ready(function () {
                 });
             }
             //if this isn't a link, prevent the page from being redirected
-            if (checkElement.is('.treeview-menu') && $(e.target).is('.pull-right-container')) {
+            if (checkElement.is('.treeview-menu') && $(event.target).is('.pull-right-container')) {
                 e.preventDefault();
             }
         });

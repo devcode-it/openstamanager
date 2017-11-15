@@ -183,7 +183,7 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
 
             // Icona
             elseif (preg_match('/^icon_(.+?)$/', trim($field), $m)) {
-                $value = '<i class="'.$r[$field].'" title="'.$r['icon_title_'.$m[1]].'" ></i> <small>'.$r['icon_title_'.$m[1]].'</small>';
+                $value = '<span class=\'label text-black\' style=\'font-weight:normal;\'  ><i class="'.$r[$field].'" title="'.$r['icon_title_'.$m[1]].'" ></i> <span>'.$r['icon_title_'.$m[1]].'</span></span>';
             }
 
             // Colore del testo

@@ -227,7 +227,7 @@ switch ($op) {
 
         $where[] = 'attivo=1';
         if (!empty($superselect['dir']) && $superselect['dir'] == 'entrata') {
-            $where[] = 'qta>0';
+            //$where[] = 'qta>0';
         }
 
         if (!empty($search)) {

@@ -978,3 +978,6 @@ INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, 
 
 -- Per la Dashboard i widgets vanno in alto
 UPDATE `zz_widgets` SET `location` = 'controller_top' WHERE `zz_widgets`.`id_module` = 1;
+
+-- Per gli Articoli i widgets vanno in alto
+UPDATE `zz_widgets` SET `location` = 'controller_top' WHERE `zz_widgets`.`id_module` = 21;

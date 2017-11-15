@@ -232,7 +232,7 @@ if (!empty($options) && $options != 'custom') {
 
                 <div class="row">
                     <div class="col-xs-12 text-right">
-                        <button type="button" class="btn btn-info" id="add"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
+                        <button type="button" class="btn btn-info" id="add"><i class="fa fa-plus"></i> '.tr('Aggiungi nuovo campo').'</button>
                         <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
                     </div>
                 </div>
@@ -417,7 +417,7 @@ if (!empty($options) && $options != 'custom') {
 
                 <div class="row">
                     <div class="col-xs-12 text-right">
-                        <button type="button" class="btn btn-info" id="add"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
+                        <button type="button" class="btn btn-info" id="add"><i class="fa fa-plus"></i> '.tr('Aggiungi nuovo filtro').'</button>
                         <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
                     </div>
                 </div>

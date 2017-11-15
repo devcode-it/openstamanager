@@ -183,6 +183,8 @@ include $docroot.'/modules/ddt/row-list.php';
 	</div>
 </div>
 
+{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module ?>", "id_record": "<?php echo $id_record ?>" )}
+
 <script>
 	$('#idanagrafica').change( function(){
 		session_set('superselect,idanagrafica', $(this).val(), 0);

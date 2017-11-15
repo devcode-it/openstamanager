@@ -29,7 +29,11 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 				</div>
 
 				<div class="col-md-4">
+				
 					{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "required": 1, "value": "$codice$" ]}
+					<br>
+					{[ "type": "checkbox", "label": "<?php echo tr("Seleziona per rendere visibile l'articolo"); ?>", "name": "attivo", "value": "$attivo$", "help": "", "placeholder": "<?php echo tr('ATTIVO'); ?>" ]}
+              
 				</div>
 
 				<div class="col-md-5">
@@ -45,10 +49,10 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 			</div>
 
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-md-2">
 					{[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta|undefined" ]}
 				</div>
-				<div class="col-md-4">
+				<div class="col-md-3">
 					{[ "type": "checkbox", "label": "<?php echo tr('Modifica manualmente quantità'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>" ]}
 
 					<script type="text/javascript">
@@ -61,59 +65,62 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 
                 </div>
 
-				<div class="col-md-4">
+				<div class="col-md-2">
 					{[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo Modules::get('Unità di misura')['id']; ?>" ]}
 				</div>
+				
+				<div class="col-md-2">
+					{[ "type": "number", "label": "<?php echo tr('Soglia minima quantità'); ?>", "name": "threshold_qta", "value": "$threshold_qta$", "decimals": "qta" ]}
+				</div>
+				
+				<?php
+				if (empty($records[0]['abilita_serial'])) {
+						$plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Serial'");
+						echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
+				}
+				?>
+				
+				  <div class="col-md-3">
+					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "", "placeholder": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>" ]}
+                </div>
+				
+				
 			</div>
 
+			
+
 			<div class="row">
-				<div class="col-md-3">
+				<div class="col-md-2">
+					{[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "value": "$prezzo_acquisto$", "icon-after": "&euro;" ]}
+				</div>
+			</div>
+			
+			
+			<div class="row">
+				<div class="col-md-2">
 					{[ "type": "number", "label": "<?php echo tr('Prezzo di vendita base'); ?>", "name": "prezzo_vendita", "value": "$prezzo_vendita$", "icon-after": "&euro;" ]}
 				</div>
 
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Iva di vendita'); ?>", "name": "idiva_vendita", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC", "value": "$idiva_vendita$", "valore_predefinito": "Iva predefinita" ]}
                 </div>
+				
+				<div class="col-md-2">
+					{[ "type": "number", "label": "<?php echo tr('Garanzia'); ?>", "name": "gg_garanzia", "decimals": 0, "value": "$gg_garanzia$", "icon-after": "GG" ]}
+				</div>
 
-				<div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr("Seleziona per rendere visibile l'articolo"); ?>", "name": "attivo", "value": "$attivo$", "help": "", "placeholder": "<?php echo tr('ATTIVO'); ?>" ]}
-                </div>
-
-                <div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "", "placeholder": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>" ]}
-                </div>
-<?php
-if (empty($records[0]['abilita_serial'])) {
-                        $plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Serial'");
-
-                        echo '
-    <script>
-        $("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");
-    </script>';
-                    }
-?>
+				
 			</div>
-
-			<div class="row">
-				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "value": "$prezzo_acquisto$", "icon-after": "&euro;" ]}
-				</div>
-
-				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Soglia minima quantità'); ?>", "name": "threshold_qta", "value": "$threshold_qta$", "decimals": "qta" ]}
-				</div>
-
-				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Giorni di garanzia'); ?>", "name": "gg_garanzia", "decimals": 0, "value": "$gg_garanzia$" ]}
-				</div>
-			</div>
+			
+			
 
             <div class="row">
-				<div class="col-md-4">
+				
+				<div class="col-md-2">
 					{[ "type": "number", "label": "<?php echo tr('Peso lordo'); ?>", "name": "peso_lordo", "value": "$peso_lordo$", "icon-after": "KG" ]}
 				</div>
 
-				<div class="col-md-4">
+				<div class="col-md-2">
 					{[ "type": "number", "label": "<?php echo tr('Volume'); ?>", "name": "volume", "value": "$volume$", "icon-after": "M<sup>3</sup>" ]}
 				</div>
 			</div>

@@ -290,26 +290,55 @@ $("#categoria").change( function(){
 });
 </script>
 
-<a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-</a>
 
 <?php
 
-$count = $dbo->fetchArray('SELECT COUNT(*) AS tot FROM (
-    SELECT `idarticolo` FROM `co_righe_documenti` WHERE `idarticolo` = '.prepare($id_record).' UNION
-    SELECT `idarticolo` FROM `dt_righe_ddt` WHERE `idarticolo` = '.prepare($id_record).' UNION
-    SELECT `idarticolo` FROM `or_righe_ordini` WHERE `idarticolo` = '.prepare($id_record).' UNION
-    SELECT `idarticolo` FROM `mg_articoli_interventi` WHERE `idarticolo` = '.prepare($id_record).'
-) AS count');
+//fatture, ddt, preventivi collegati a questo articolo
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idarticolo` = '.prepare($id_record).') UNION
+SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt`.`descrizione` AS tipo_documento, `dt_tipiddt`.`dir` FROM `dt_ddt` JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` WHERE `dt_ddt`.`id` IN (SELECT `idddt` FROM `dt_righe_ddt` WHERE `idarticolo` = '.prepare($id_record).') UNION
+SELECT `co_preventivi`.`id`, `co_preventivi`.`data_bozza`, `co_preventivi`.`numero`,  0 AS numero_esterno , "Preventivo" AS tipo_documento, 0 AS dir FROM `co_preventivi` WHERE `co_preventivi`.`id` IN (SELECT `idpreventivo` FROM `co_righe_preventivi` WHERE `idarticolo` = '.prepare($id_record).')  ORDER BY `data`');
 
-$tot = $count[0]['tot'];
-if ($tot > 0) {
+
+if (!empty($elementi)) {
     echo '
-    <div class="alert alert-danger">
-        '.tr('Ci sono _NUM_ righe di documenti collegate', [
-            '_NUM_' => $tot,
-        ]).'.
-        '.tr('Eliminando questo elemento si potrebbero verificare problemi nelle altre sezioni del gestionale!').'
+    <div class="alert alert-warning">
+        <p>'.tr('_NUM_ altr_I_ document_I_ collegat_I_', [
+            '_NUM_' => count($elementi),
+			'_I_' => (count($elementi)>1) ? tr('i') : tr('o')
+        ]).':</p>
+    <ul>';
+
+    foreach ($elementi as $elemento) {
+        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
+            '_DOC_' => $elemento['tipo_documento'],
+            '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
+            '_DATE_' => Translator::dateToLocale($elemento['data']),
+        ]);
+			
+			//se non è un preventivo è un ddt o una fattura
+			//se non è un ddt è una fattura.
+			if (in_array($elemento['tipo_documento'], ['Preventivo'])) {
+				$modulo ='Preventivi';
+			}  else if (!in_array($elemento['tipo_documento'], ['Ddt di vendita', 'Ddt di acquisto'])) {
+				$modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
+			} else {
+				$modulo = ($elemento['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
+			}
+		
+        $id = $elemento['id'];
+
+        echo '
+        <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+    }
+
+    echo '
+        </ul>
+        <p>'.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale.').'</p>
     </div>';
 }
+
+?>
+
+<a class="btn btn-danger ask" data-backto="record-list">
+    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
+</a>

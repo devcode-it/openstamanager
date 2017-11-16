@@ -365,19 +365,18 @@ if (!empty($records[0]['idcontratto_prev'])) {
     });
 </script>
 
-<a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-</a>
+
 
 <?php
-
+//fatture collegate a questo contratto
 $fatture = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idcontratto` = '.prepare($id_record).') ORDER BY `data`');
 if (!empty($fatture)) {
     echo '
-    <div class="alert alert-danger">
-        <p>'.tr('Ci sono _NUM_ documenti collegate a questo elemento', [
+    div class="alert alert-warning">
+        <p>'.tr('_NUM_ altr_I_ document_I_ collegat_I_', [
             '_NUM_' => count($fatture),
-        ]).'.</p>
+			'_I_' => (count($fatture)>1) ? tr('i') : tr('o')
+        ]).':</p>
     <ul>';
 
     foreach ($fatture as $fattura) {
@@ -396,6 +395,13 @@ if (!empty($fatture)) {
 
     echo '
         </ul>
-        <p>'.tr('Eliminando questo elemento si potrebbero verificare problemi nelle altre sezioni del gestionale!').'</p>
+		<p>'.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale.').'</p>
     </div>';
 }
+
+?>
+
+
+<a class="btn btn-danger ask" data-backto="record-list">
+    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
+</a>

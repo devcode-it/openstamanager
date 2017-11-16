@@ -372,7 +372,7 @@ if (!empty($records[0]['idcontratto_prev'])) {
 $fatture = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idcontratto` = '.prepare($id_record).') ORDER BY `data`');
 if (!empty($fatture)) {
     echo '
-    div class="alert alert-warning">
+    <div class="alert alert-warning">
         <p>'.tr('_NUM_ altr_I_ document_I_ collegat_I_', [
             '_NUM_' => count($fatture),
 			'_I_' => (count($fatture)>1) ? tr('i') : tr('o')

@@ -111,12 +111,12 @@ if (!empty($rs2)) {
 
         echo '
         <tr>
-            <td class="tecn_'.$r['idtecnico'].'">';
+            <td class="tecn_'.$r['idtecnico'].'" style="min-width:200px;" >';
 
         if ($rs[0]['stato'] != 'Fatturato') {
             // Elenco tipologie di interventi
             echo '
-                {[ "type": "select", "name": "idtipointerventot['.$id.']", "value": "'.$r['idtipointervento'].'", "values": "query=SELECT idtipointervento AS id, descrizione, IFNULL((SELECT costo_ore FROM in_tariffe WHERE idtipointervento=in_tipiintervento.idtipointervento AND idtecnico='.prepare($r['idtecnico']).'), 0) AS costo_orario FROM in_tipiintervento ORDER BY descrizione" ]}';
+                {[ "type": "select", "name": "idtipointerventot['.$id.']", "value": "'.$r['idtipointervento'].'", "values": "query=SELECT idtipointervento AS id, descrizione, IFNULL((SELECT costo_ore FROM in_tariffe WHERE idtipointervento=in_tipiintervento.idtipointervento AND idtecnico='.prepare($r['idtecnico']).'), 0) AS costo_orario FROM in_tipiintervento ORDER BY descrizione", "class": "", "extra": "" ]}';
         }
 
         echo '

@@ -972,12 +972,11 @@ ALTER TABLE `in_interventi` ADD `deleted` TINYINT NOT NULL DEFAULT '0' AFTER `da
 -- Fix nella conversione dei listini precedenti
 UPDATE `mg_listini` SET `prc_guadagno` = - `prc_guadagno`;
 
-
 -- Aggiunta pagamento di default "Bonifico bancario"
 INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `created_at`, `idconto_vendite`, `idconto_acquisti`) VALUES (NULL, 'Bonifico bancario', '0', '10', '100', CURRENT_TIMESTAMP, NULL, NULL);
 
--- Per la Dashboard i widgets vanno in alto
-UPDATE `zz_widgets` SET `location` = 'controller_top' WHERE `zz_widgets`.`id_module` = 1;
+-- Per Dashboard e Articoli i widgets vanno in alto
+UPDATE `zz_widgets` SET `location` = 'controller_top' WHERE `zz_widgets`.`id_module` = (SELECT id FROM zz_modules WHERE name = 'Dashboard' ) OR `zz_widgets`.`id_module` = (SELECT id FROM zz_modules WHERE name = 'Articoli' );
 
--- Per gli Articoli i widgets vanno in alto
-UPDATE `zz_widgets` SET `location` = 'controller_top' WHERE `zz_widgets`.`id_module` = 21;
+-- Disabilito widgets 'Ordini di servizio da impostare' e 'Rate contrattuali'
+UPDATE `zz_widgets` SET `enabled` = '0' WHERE `zz_widgets`.`name` = 'Ordini di servizio da impostare' OR `zz_widgets`.`name` = 'Rate contrattuali';

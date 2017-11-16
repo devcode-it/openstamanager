@@ -566,3 +566,7 @@ input.small-width {
 .pac-container {
     z-index: 1100 !important;
 }
+
+.form-control#blob{
+	height: auto;
+}

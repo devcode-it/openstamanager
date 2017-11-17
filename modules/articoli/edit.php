@@ -29,7 +29,11 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 				</div>
 
 				<div class="col-md-4">
+				
 					{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "required": 1, "value": "$codice$" ]}
+					<br>
+					{[ "type": "checkbox", "label": "<?php echo tr("Seleziona per rendere visibile l'articolo"); ?>", "name": "attivo", "value": "$attivo$", "help": "", "placeholder": "<?php echo tr('ATTIVO'); ?>" ]}
+              
 				</div>
 
 				<div class="col-md-5">
@@ -45,10 +49,10 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 			</div>
 
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-md-2">
 					{[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta|undefined" ]}
 				</div>
-				<div class="col-md-4">
+				<div class="col-md-3">
 					{[ "type": "checkbox", "label": "<?php echo tr('Modifica manualmente quantità'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>" ]}
 
 					<script type="text/javascript">
@@ -61,59 +65,62 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 
                 </div>
 
-				<div class="col-md-4">
+				<div class="col-md-2">
 					{[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo Modules::get('Unità di misura')['id']; ?>" ]}
 				</div>
+				
+				<div class="col-md-2">
+					{[ "type": "number", "label": "<?php echo tr('Soglia minima quantità'); ?>", "name": "threshold_qta", "value": "$threshold_qta$", "decimals": "qta" ]}
+				</div>
+				
+				<?php
+				if (empty($records[0]['abilita_serial'])) {
+						$plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Serial'");
+						echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
+				}
+				?>
+				
+				  <div class="col-md-3">
+					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "", "placeholder": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>" ]}
+                </div>
+				
+				
 			</div>
 
+			
+
 			<div class="row">
-				<div class="col-md-3">
+				<div class="col-md-2">
+					{[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "value": "$prezzo_acquisto$", "icon-after": "&euro;" ]}
+				</div>
+			</div>
+			
+			
+			<div class="row">
+				<div class="col-md-2">
 					{[ "type": "number", "label": "<?php echo tr('Prezzo di vendita base'); ?>", "name": "prezzo_vendita", "value": "$prezzo_vendita$", "icon-after": "&euro;" ]}
 				</div>
 
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Iva di vendita'); ?>", "name": "idiva_vendita", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC", "value": "$idiva_vendita$", "valore_predefinito": "Iva predefinita" ]}
                 </div>
+				
+				<div class="col-md-2">
+					{[ "type": "number", "label": "<?php echo tr('Garanzia'); ?>", "name": "gg_garanzia", "decimals": 0, "value": "$gg_garanzia$", "icon-after": "GG" ]}
+				</div>
 
-				<div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr("Seleziona per rendere visibile l'articolo"); ?>", "name": "attivo", "value": "$attivo$", "help": "", "placeholder": "<?php echo tr('ATTIVO'); ?>" ]}
-                </div>
-
-                <div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "", "placeholder": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>" ]}
-                </div>
-<?php
-if (empty($records[0]['abilita_serial'])) {
-                        $plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Serial'");
-
-                        echo '
-    <script>
-        $("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");
-    </script>';
-                    }
-?>
+				
 			</div>
-
-			<div class="row">
-				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "value": "$prezzo_acquisto$", "icon-after": "&euro;" ]}
-				</div>
-
-				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Soglia minima quantità'); ?>", "name": "threshold_qta", "value": "$threshold_qta$", "decimals": "qta" ]}
-				</div>
-
-				<div class="col-md-4">
-					{[ "type": "number", "label": "<?php echo tr('Giorni di garanzia'); ?>", "name": "gg_garanzia", "decimals": 0, "value": "$gg_garanzia$" ]}
-				</div>
-			</div>
+			
+			
 
             <div class="row">
-				<div class="col-md-4">
+				
+				<div class="col-md-2">
 					{[ "type": "number", "label": "<?php echo tr('Peso lordo'); ?>", "name": "peso_lordo", "value": "$peso_lordo$", "icon-after": "KG" ]}
 				</div>
 
-				<div class="col-md-4">
+				<div class="col-md-2">
 					{[ "type": "number", "label": "<?php echo tr('Volume'); ?>", "name": "volume", "value": "$volume$", "icon-after": "M<sup>3</sup>" ]}
 				</div>
 			</div>
@@ -283,26 +290,55 @@ $("#categoria").change( function(){
 });
 </script>
 
-<a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-</a>
 
 <?php
 
-$count = $dbo->fetchArray('SELECT COUNT(*) AS tot FROM (
-    SELECT `idarticolo` FROM `co_righe_documenti` WHERE `idarticolo` = '.prepare($id_record).' UNION
-    SELECT `idarticolo` FROM `dt_righe_ddt` WHERE `idarticolo` = '.prepare($id_record).' UNION
-    SELECT `idarticolo` FROM `or_righe_ordini` WHERE `idarticolo` = '.prepare($id_record).' UNION
-    SELECT `idarticolo` FROM `mg_articoli_interventi` WHERE `idarticolo` = '.prepare($id_record).'
-) AS count');
+//fatture, ddt, preventivi collegati a questo articolo
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idarticolo` = '.prepare($id_record).') UNION
+SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt`.`descrizione` AS tipo_documento, `dt_tipiddt`.`dir` FROM `dt_ddt` JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` WHERE `dt_ddt`.`id` IN (SELECT `idddt` FROM `dt_righe_ddt` WHERE `idarticolo` = '.prepare($id_record).') UNION
+SELECT `co_preventivi`.`id`, `co_preventivi`.`data_bozza`, `co_preventivi`.`numero`,  0 AS numero_esterno , "Preventivo" AS tipo_documento, 0 AS dir FROM `co_preventivi` WHERE `co_preventivi`.`id` IN (SELECT `idpreventivo` FROM `co_righe_preventivi` WHERE `idarticolo` = '.prepare($id_record).')  ORDER BY `data`');
 
-$tot = $count[0]['tot'];
-if ($tot > 0) {
+
+if (!empty($elementi)) {
     echo '
-    <div class="alert alert-danger">
-        '.tr('Ci sono _NUM_ righe di documenti collegate', [
-            '_NUM_' => $tot,
-        ]).'.
-        '.tr('Eliminando questo elemento si potrebbero verificare problemi nelle altre sezioni del gestionale!').'
+    <div class="alert alert-warning">
+        <p>'.tr('_NUM_ altr_I_ document_I_ collegat_I_', [
+            '_NUM_' => count($elementi),
+			'_I_' => (count($elementi)>1) ? tr('i') : tr('o')
+        ]).':</p>
+    <ul>';
+
+    foreach ($elementi as $elemento) {
+        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
+            '_DOC_' => $elemento['tipo_documento'],
+            '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
+            '_DATE_' => Translator::dateToLocale($elemento['data']),
+        ]);
+			
+			//se non è un preventivo è un ddt o una fattura
+			//se non è un ddt è una fattura.
+			if (in_array($elemento['tipo_documento'], ['Preventivo'])) {
+				$modulo ='Preventivi';
+			}  else if (!in_array($elemento['tipo_documento'], ['Ddt di vendita', 'Ddt di acquisto'])) {
+				$modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
+			} else {
+				$modulo = ($elemento['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
+			}
+		
+        $id = $elemento['id'];
+
+        echo '
+        <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+    }
+
+    echo '
+        </ul>
+        <p>'.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale.').'</p>
     </div>';
 }
+
+?>
+
+<a class="btn btn-danger ask" data-backto="record-list">
+    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
+</a>

@@ -67,7 +67,7 @@ a.disabled {
 }
 
 #right-menu .fa-info {
-    padding: 0px 5px
+    padding: 0 5px
 }
 
 .ui-menu {
@@ -565,4 +565,8 @@ input.small-width {
 
 .pac-container {
     z-index: 1100 !important;
+}
+
+.form-control#blob{
+	height: auto;
 }

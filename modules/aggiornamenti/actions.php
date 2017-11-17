@@ -58,50 +58,50 @@ switch (post('op')) {
         break;
 
     case 'disable_widget':
-        if (Modules::getPermission($module_name) == 'rw') {
+        //if (Modules::getPermission($module_name) == 'rw') {
             $dbo->query('UPDATE zz_widgets SET enabled=0 WHERE id='.prepare($id));
             $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
             $widget = $rs[0]['name'];
             $_SESSION['infos'][] = tr('Widget _WIDGET_ disabilitato!', [
                 '_WIDGET_' => '"'.$widget.'"',
             ]);
-        }
+        //}
 
         break;
 
     case 'enable_widget':
-        if (Modules::getPermission($module_name) == 'rw') {
+        //if (Modules::getPermission($module_name) == 'rw') {
             $dbo->query('UPDATE zz_widgets SET enabled=1 WHERE id='.prepare($id));
             $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
             $widget = $rs[0]['name'];
             $_SESSION['infos'][] = tr('Widget _WIDGET_ abilitato!', [
                 '_WIDGET_' => '"'.$widget.'"',
             ]);
-        }
+        //}
 
         break;
 
     case 'change_position_widget_top':
-        if (Modules::getPermission($module_name) == 'rw') {
+        //if (Modules::getPermission($module_name) == 'rw') {
             $dbo->query("UPDATE zz_widgets SET location='controller_top' WHERE id=".prepare($id));
             $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
             $widget = $rs[0]['name'];
             $_SESSION['infos'][] = tr('Posizione del widget _WIDGET_ aggiornata!', [
                 '_WIDGET_' => '"'.$widget.'"',
             ]);
-        }
+        //}
 
         break;
 
     case 'change_position_widget_right':
-        if (Modules::getPermission($module_name) == 'rw') {
+        //if (Modules::getPermission($module_name) == 'rw') {
             $dbo->query("UPDATE zz_widgets SET location='controller_right' WHERE id=".prepare($id));
             $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
             $widget = $rs[0]['name'];
             $_SESSION['infos'][] = tr('Posizione del widget _WIDGET_ aggiornata!', [
                 '_WIDGET_' => '"'.$widget.'"',
             ]);
-        }
+        //}
 
         break;
 

@@ -57,7 +57,10 @@ if (!function_exists('completeResults')) {
 switch ($op) {
     case 'clienti':
         if (Modules::get('Anagrafiche')['permessi'] != '-') {
-            $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
+			
+			//$citta_cliente = ", IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))";
+            
+			$query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale $citta_cliente) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
             foreach ($elements as $element) {
                 $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
@@ -227,7 +230,7 @@ switch ($op) {
 
         $where[] = 'attivo=1';
         if (!empty($superselect['dir']) && $superselect['dir'] == 'entrata') {
-            $where[] = 'qta>0';
+            //$where[] = 'qta>0';
         }
 
         if (!empty($search)) {

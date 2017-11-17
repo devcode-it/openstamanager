@@ -118,9 +118,9 @@ foreach ($modules as $module) {
     // Possibilità di disabilitare o abilitare i moduli tranne quello degli aggiornamenti
     if ($module['id'] != $id_module) {
         if ($module['enabled']) {
-            $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Disabilitare questo modulo?')."') ){ $.post( '".$rootdir.'/editor.php?id_module='.$id_module."', { op: 'disable', id: '".$module['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\">".$stato."</a>\n";
+            $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Disabilitare questo modulo?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'disable', id: '".$module['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\">".$stato."</a>\n";
         } else {
-            $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Abilitare questo modulo?')."') ){ $.post( '".$rootdir.'/editor.php?id_module='.$id_module."', { op: 'enable', id: '".$module['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\"\">".$stato."</a>\n";
+            $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Abilitare questo modulo?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'enable', id: '".$module['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\"\">".$stato."</a>\n";
         }
     }
 
@@ -153,7 +153,7 @@ foreach ($modules as $module) {
     // Possibilità di disinstallare solo se il modulo non è tra quelli predefiniti
     if (empty($module['default'])) {
         echo "
-                    <a href=\"javascript:;\" data-toggle='tooltip' title=\"".tr('Disinstalla')."...\" onclick=\"if( confirm('".tr('Vuoi disinstallare questo modulo?').' '.tr('Tutti i dati salvati andranno persi!')."') ){ if( confirm('".tr('Sei veramente sicuro?')."') ){ $.post( '".$rootdir.'/editor.php?id_module='.$id_module."', { op: 'uninstall', id: '".$module['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); } }\"><i class='fa fa-trash'></i></a>";
+                    <a href=\"javascript:;\" data-toggle='tooltip' title=\"".tr('Disinstalla')."...\" onclick=\"if( confirm('".tr('Vuoi disinstallare questo modulo?').' '.tr('Tutti i dati salvati andranno persi!')."') ){ if( confirm('".tr('Sei veramente sicuro?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'uninstall', id: '".$module['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); } }\"><i class='fa fa-trash'></i></a>";
     } else {
         echo "
                     <a class='disabled text-muted'>
@@ -181,9 +181,9 @@ foreach ($modules as $module) {
     // Possibilità di disabilitare o abilitare i moduli tranne quello degli aggiornamenti
     if ($sub['id'] != $id_module) {
         if ($sub['enabled']) {
-            $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Disabilitare questo modulo?')."') ){ $.post( '".$rootdir.'/editor.php?id_module='.$id_module."', { op: 'disable', id: '".$sub['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\">".$stato."</a>\n";
+            $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Disabilitare questo modulo?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'disable', id: '".$sub['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\">".$stato."</a>\n";
         } else {
-            $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Abilitare questo modulo?')."') ){ $.post( '".$rootdir.'/editor.php?id_module='.$id_module."', { op: 'enable', id: '".$sub['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\"\">".$stato."</a>\n";
+            $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Abilitare questo modulo?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'enable', id: '".$sub['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\"\">".$stato."</a>\n";
         }
     }
 
@@ -217,7 +217,7 @@ foreach ($modules as $module) {
     // Possibilità di disinstallare solo se il modulo non è tra quelli predefiniti
     if (empty($sub['default'])) {
         echo "
-                    <a href=\"javascript:;\" data-toggle='tooltip' title=\"".tr('Disinstalla')."...\" onclick=\"if( confirm('".tr('Vuoi disinstallare questo modulo?').' '.tr('Tutti i dati salvati andranno persi!')."') ){ if( confirm('".tr('Sei veramente sicuro?')."') ){ $.post( '".$rootdir.'/editor.php?id_module='.$id_module."', { op: 'uninstall', id: '".$sub['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); } }\">
+                    <a href=\"javascript:;\" data-toggle='tooltip' title=\"".tr('Disinstalla')."...\" onclick=\"if( confirm('".tr('Vuoi disinstallare questo modulo?').' '.tr('Tutti i dati salvati andranno persi!')."') ){ if( confirm('".tr('Sei veramente sicuro?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'uninstall', id: '".$sub['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); } }\">
                         <i class='fa fa-trash'></i>
                     </a>";
     } else {
@@ -273,9 +273,9 @@ foreach ($widgets as $widget) {
 
     // Possibilità di disabilitare o abilitare i moduli tranne quello degli aggiornamenti
     if ($widget['enabled']) {
-        $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Disabilitare questo widget?')."') ){ $.post( '".$rootdir.'/editor.php?id_module='.$id_module."', { op: 'disable_widget', id: '".$widget['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\">".$stato."</a>\n";
+        $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Disabilitare questo widget?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'disable_widget', id: '".$widget['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\">".$stato."</a>\n";
     } else {
-        $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Abilitare questo widget?')."') ){ $.post( '".$rootdir.'/editor.php?id_module='.$id_module."', { op: 'enable_widget', id: '".$widget['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\"\">".$stato."</a>\n";
+        $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Abilitare questo widget?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'enable_widget', id: '".$widget['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\"\">".$stato."</a>\n";
     }
 
     // POSIZIONE
@@ -287,10 +287,10 @@ foreach ($widgets as $widget) {
 
     if ($widget['location'] == 'controller_right') {
         $posizione = "<i class='fa fa-arrow-up text-warning' data-toggle='tooltip' title=\"".tr('Clicca per cambiare la posizione...')."\"></i>&nbsp;<i class='fa fa-arrow-right text-success' data-toggle='tooltip' title=\"\"></i>";
-        $posizione = "<a href='javascript:;' onclick=\"if( confirm('".tr('Cambiare la posizione di questo widget?')."') ){ $.post( '".$rootdir.'/editor.php?id_module='.$id_module."', { op: 'change_position_widget_top', id: '".$widget['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\"\">".$posizione."</a>\n";
+        $posizione = "<a href='javascript:;' onclick=\"if( confirm('".tr('Cambiare la posizione di questo widget?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'change_position_widget_top', id: '".$widget['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\"\">".$posizione."</a>\n";
     } elseif ($widget['location'] == 'controller_top') {
         $posizione = "<i class='fa fa-arrow-up text-success' data-toggle='tooltip' title=\"\"></i>&nbsp;<i class='fa fa-arrow-right text-warning' data-toggle='tooltip' title=\"".tr('Clicca per cambiare la posizione...').'"></i></i>';
-        $posizione = "<a href='javascript:;' onclick=\"if( confirm('".tr('Cambiare la posizione di questo widget?')."') ){ $.post( '".$rootdir.'/editor.php?id_module='.$id_module."', { op: 'change_position_widget_right', id: '".$widget['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\"\">".$posizione."</a>\n";
+        $posizione = "<a href='javascript:;' onclick=\"if( confirm('".tr('Cambiare la posizione di questo widget?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'change_position_widget_right', id: '".$widget['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\"\">".$posizione."</a>\n";
     }
 
     echo '

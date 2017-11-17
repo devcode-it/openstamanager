@@ -220,23 +220,23 @@ switch (post('op')) {
         $id_record = $dbo->lastInsertedID();
 
         // Lettura di tutte le righe della tabella in arrivo
-        for ($i = 0; $i < sizeof($post['qta_da_evadere']); ++$i) {
+        foreach ($post['qta_da_evadere'] AS $idriga=>$value) {
             // Processo solo le righe da evadere
-            if ($post['evadere'][$i] == 'on') {
-                $idrigaordine = post('idriga')[$i];
-                $idarticolo = post('idarticolo')[$i];
-                $descrizione = post('descrizione')[$i];
+            if ($post['evadere'][$idriga] == 'on') {
+            
+                $idarticolo = post('idarticolo')[$idriga];
+                $descrizione = post('descrizione')[$idriga];
 
-                $qta = $post['qta_da_evadere'][$i];
-                $um = post('um')[$i];
-                $abilita_serial = post('abilita_serial')[$i];
+                $qta = $post['qta_da_evadere'][$idriga];
+                $um = post('um')[$idriga];
+                $abilita_serial = post('abilita_serial')[$idriga];
 
-                $subtot = $post['subtot'][$i] * $qta;
-                $sconto = $post['sconto'][$i];
+                $subtot = $post['subtot'][$idriga] * $qta;
+                $sconto = $post['sconto'][$idriga];
                 $sconto = $sconto * $qta;
 
-                $idiva = post('idiva')[$i];
-                $iva = $post['iva'][$i] * $qta;
+                $idiva = post('idiva')[$idriga];
+                $iva = $post['iva'][$idriga] * $qta;
 
                 // Calcolo l'iva indetraibile
                 $q = 'SELECT descrizione, indetraibile FROM co_iva WHERE id='.prepare($idiva);
@@ -248,13 +248,13 @@ switch (post('op')) {
                 $riga = $dbo->lastInsertedID();
 
                 // Aggiornamento seriali dalla riga dell'ordine
-                $serials = is_array($post['serial'][$i]) ? $post['serial'][$i] : [];
+                $serials = is_array($post['serial'][$idriga]) ? $post['serial'][$idriga] : [];
                 $serials = array_filter($serials, function ($value) { return !empty($value); });
 
                 $dbo->sync('mg_prodotti', ['id_riga_ddt' => $riga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => $serials]);
 
                 // Scalo la quantità dall'ordine
-                $dbo->query('UPDATE or_righe_ordini SET qta_evasa = qta_evasa+'.$qta.' WHERE id='.prepare($idrigaordine));
+                $dbo->query('UPDATE or_righe_ordini SET qta_evasa = qta_evasa+'.$qta.' WHERE id='.prepare($idriga));
 
                 // Movimento il magazzino
                 // vendita

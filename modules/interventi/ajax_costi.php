@@ -3,6 +3,10 @@
 include_once __DIR__.'/../../core.php';
 include_once __DIR__.'/modutil.php';
 
+$idiva = get_var('Iva predefinita');
+$rs_iva = $dbo->fetchArray('SELECT descrizione, percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva));
+($rs_iva[0]['percentuale']>0) ? $hide = '' : $hide = 'hide';
+
 if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
     $costi = get_costi_intervento($id_record);
 
@@ -50,12 +54,28 @@ if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
         <td class="text-right">-</td>
         <td class="text-right">'.Translator::numberToLocale(-$costi['sconto_globale']).' &euro;</td>
     </tr>
+	
+	
+	<tr class='.$hide.' >
+        <th>'.tr('Imponibile', [], ['upper' => true]).'</th>
+        <td class="text-right">'.Translator::numberToLocale($costi['totale_costo']).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['totale_addebito']).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['totale']).' &euro;</td>
+    </tr>
+	
+	
+	<tr class='.$hide.' >
+        <th>'.tr('IVA (_DESC_)', [ _DESC_ => $rs_iva[0]['descrizione']], ['upper' => true]).'</th>
+        <td class="text-right">'.Translator::numberToLocale(($costi['totale_costo']/100*$rs_iva[0]['percentuale'])).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale(($costi['totale_addebito']/100*$rs_iva[0]['percentuale'])).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale(($costi['totale']/100*$rs_iva[0]['percentuale'])).' &euro;</td>
+    </tr>
 
     <tr>
         <th>'.tr('Totale', [], ['upper' => true]).'</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totale_costo']).' &euro;</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totale_addebito']).' &euro;</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totale']).' &euro;</th>
+        <th class="text-right">'.Translator::numberToLocale($costi['totale_costo']+($costi['totale_costo']/100*$rs_iva[0]['percentuale'])).' &euro;</th>
+        <th class="text-right">'.Translator::numberToLocale($costi['totale_addebito']+($costi['totale_addebito']/100*$rs_iva[0]['percentuale'])).' &euro;</th>
+        <th class="text-right">'.Translator::numberToLocale($costi['totale']+($costi['totale']/100*$rs_iva[0]['percentuale'])).' &euro;</th>
     </tr>
 </table>';
 }

@@ -77,7 +77,7 @@ $rs = $dbo->fetchArray('SELECT *, (qta - qta_evasa) AS qta_rimanente FROM '.$tab
 
 if (!empty($rs)) {
     echo '
-<p>'.tr('Seleziona le righe che vuoi inserire nel documento e la quantità').'.</p>
+<p>'.tr('Seleziona le righe e le relative quantità da inserire nel documento').'.</p>
 
 <form action="'.$rootdir.'/editor.php?id_module='.Modules::get($module_name)['id'].(!empty($get['iddocumento']) ? '&id_record='.$get['iddocumento'] : '').'" method="post">
     <input type="hidden" name="'.$id.'" value="'.$id_record.'">
@@ -119,14 +119,14 @@ if (!empty($rs)) {
         echo '
         <tr>
             <td>
-                <input type="hidden" name="idriga[]" value="'.$r['id'].'" />
-                <input type="hidden" name="abilita_serial[]" value="'.$r['abilita_serial'].'" />
-                <input type="hidden" id="idarticolo_'.$i.'" name="idarticolo[]" value="'.$r['idarticolo'].'" />
-                <input type="hidden" id="descrizione_'.$i.'" name="descrizione[]" value="'.$r['descrizione'].'" />';
+            
+                <input type="hidden" name="abilita_serial['.$r['id'].']" value="'.$r['abilita_serial'].'" />
+                <input type="hidden" id="idarticolo_'.$i.'" name="idarticolo['.$r['id'].']" value="'.$r['idarticolo'].'" />
+                <input type="hidden" id="descrizione_'.$i.'" name="descrizione['.$r['id'].']" value="'.$r['descrizione'].'" />';
 
         // Checkbox - da evadere?
         echo '
-                <input type="checkbox" checked="checked" id="checked_'.$i.'" name="evadere[]" value="on" onclick="ricalcola_subtotale_riga('.$i.');" />';
+                <input type="checkbox" checked="checked" id="checked_'.$i.'" name="evadere['.$r['id'].']" value="on" onclick="ricalcola_subtotale_riga('.$i.');" />';
 
         echo nl2br($r['descrizione']);
 
@@ -137,14 +137,14 @@ if (!empty($rs)) {
         echo '
         <td>
             <input type="hidden" id="qtamax_'.$i.'" value="'.($r['qta'] - $r['qta_evasa']).'" />
-            <input type="hidden" id="um_'.$i.'" name="um[]" value="'.$r['um'].'" />
+            <input type="hidden" id="um_'.$i.'" name="um['.$r['id'].']" value="'.$r['um'].'" />
             <p class="text-center">'.Translator::numberToLocale($r['qta_rimanente']).'</p>
         </td>';
 
         // Q.tà da evadere
         echo '
         <td>
-            {[ "type": "number", "name": "qta_da_evadere[]", "id": "qta_'.$i.'", "required": 1, "value": "'.$r['qta_rimanente'].'", "extra" : "onchange=\"ricalcola_subtotale_riga('.$i.');\"", "decimals": "qta|0" ]}
+            {[ "type": "number", "name": "qta_da_evadere['.$r['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$r['qta_rimanente'].'", "extra" : "onkeyup=\"ricalcola_subtotale_riga('.$i.');\"", "decimals": "qta|0" ]}
         </td>';
 
         // Subtotale
@@ -154,10 +154,10 @@ if (!empty($rs)) {
 
         echo '
         <td>
-            <input type="hidden" id="subtot_'.$i.'" name="subtot[]" value="'.($r['subtotale'] / $r['qta']).'" />
-            <input type="hidden" id="sconto_'.$i.'" name="sconto[]" value="'.($r['sconto'] / $r['qta']).'" />
-            <input type="hidden" id="idiva_'.$i.'" name="idiva[]" value="'.$r['idiva'].'" />
-            <input type="hidden" id="iva_'.$i.'" name="iva[]" value="'.($r['iva'] / $r['qta']).'" />
+            <input type="hidden" id="subtot_'.$i.'" name="subtot['.$r['id'].']" value="'.($r['subtotale'] / $r['qta']).'" />
+            <input type="hidden" id="sconto_'.$i.'" name="sconto['.$r['id'].']" value="'.($r['sconto'] / $r['qta']).'" />
+            <input type="hidden" id="idiva_'.$i.'" name="idiva['.$r['id'].']" value="'.$r['idiva'].'" />
+            <input type="hidden" id="iva_'.$i.'" name="iva['.$r['id'].']" value="'.($r['iva'] / $r['qta']).'" />
 
             <big id="subtotale_'.$i.'">'.Translator::numberToLocale($subtotale - $sconto + $iva).' &euro;</big><br/>
 
@@ -171,7 +171,7 @@ if (!empty($rs)) {
             $values = $dbo->fetchArray('SELECT DISTINCT serial FROM mg_prodotti WHERE dir=\''.$dir.'\' AND '.$row.' = \''.$r['id'].'\' AND serial IS NOT NULL AND serial NOT IN (SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND dir=\''.$dir.'\' AND '.$data[$pos]['condition'].')');
 
             echo '
-            {[ "type": "select", "name": "serial['.$i.'][]", "id": "serial_'.$i.'", "multiple": 1, "values": "query=SELECT DISTINCT serial AS id, serial AS descrizione FROM mg_prodotti WHERE dir=\''.$dir.'\' AND '.$row.' = \''.$r['id'].'\' AND serial IS NOT NULL AND serial NOT IN (SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND dir=\''.$dir.'\' AND '.$data[$pos]['condition'].')", "value": "'.implode(',', array_column($values, 'serial')).'", "extra": "data-maximum=\"'.intval($r['qta_rimanente']).'\"" ]}
+            {[ "type": "select", "name": "serial['.$i.']['.$r['id'].']", "id": "serial_'.$i.'", "multiple": 1, "values": "query=SELECT DISTINCT serial AS id, serial AS descrizione FROM mg_prodotti WHERE dir=\''.$dir.'\' AND '.$row.' = \''.$r['id'].'\' AND serial IS NOT NULL AND serial NOT IN (SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND dir=\''.$dir.'\' AND '.$data[$pos]['condition'].')", "value": "'.implode(',', array_column($values, 'serial')).'", "extra": "data-maximum=\"'.intval($r['qta_rimanente']).'\"" ]}
                 ';
         } else {
             echo '-';

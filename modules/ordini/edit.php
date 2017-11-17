@@ -122,20 +122,19 @@ if ($module['name'] == 'Ordini cliente') {
 	</div>
 </div>
 
-<a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-</a>
+{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module ?>", "id_record": "<?php echo $id_record ?>" )}
 
 <?php
-
+//fatture o ddt collegati a questo ordine
 $elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idordine` = '.prepare($id_record).') UNION
 SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt`.`descrizione` AS tipo_documento, `dt_tipiddt`.`dir` FROM `dt_ddt` JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` WHERE `dt_ddt`.`id` IN (SELECT `idddt` FROM `dt_righe_ddt` WHERE `idordine` = '.prepare($id_record).') ORDER BY `data`');
 if (!empty($elementi)) {
     echo '
-    <div class="alert alert-danger">
-        <p>'.tr('Ci sono _NUM_ documenti collegate a questo elemento', [
+    <div class="alert alert-warning">
+        <p>'.tr('_NUM_ altr_I_ document_I_ collegat_I_', [
             '_NUM_' => count($elementi),
-        ]).'.</p>
+			'_I_' => (count($elementi)>1) ? tr('i') : tr('o')
+        ]).':</p>
     <ul>';
 
     foreach ($elementi as $elemento) {
@@ -159,6 +158,12 @@ if (!empty($elementi)) {
 
     echo '
         </ul>
-        <p>'.tr('Eliminando questo elemento si potrebbero verificare problemi nelle altre sezioni del gestionale!').'</p>
+        <p>'.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale.').'</p>
     </div>';
 }
+
+?>
+
+<a class="btn btn-danger ask" data-backto="record-list">
+    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
+</a>

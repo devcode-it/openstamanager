@@ -324,7 +324,7 @@ switch (post('op')) {
             $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, `order`) VALUES('.prepare($id_record).', '.prepare($idintervento).', '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot-$diritto_chiamata).', '.prepare($sconto).', '.prepare($sconto).", 'UNT', 'ore', ".prepare($ore).", ".prepare(get_var('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(get_var("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
             $dbo->query($query);
             
-            
+            //Aggiunta diritto di chiamata se >0
             if( $diritto_chiamata > 0 ){
                 // Calcolo iva
                 $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
@@ -378,7 +378,7 @@ switch (post('op')) {
                             '.prepare($sconto).",
                             'UNT',
                             '-',
-                            ".prepare($rs[0]['diritto_chiamata']).",
+							'1',
                             ".prepare(get_var('Percentuale rivalsa INPS')).',
                             '.prepare($rivalsainps).',
                             '.prepare(get_var("Percentuale ritenuta d'acconto")).',

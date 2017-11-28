@@ -850,7 +850,7 @@ switch (post('op')) {
         $id_record = $dbo->lastInsertedID();
 
         // Lettura di tutte le righe della tabella in arrivo
-        for ($i = 0; $i < sizeof($post['qta_da_evadere']); ++$i) {
+        foreach ($post['qta_da_evadere'] AS $i => $value) {
             // Processo solo le righe da evadere
             if ($post['evadere'][$i] == 'on') {
                 $idrigaddt = post('idriga')[$i];

@@ -36,7 +36,7 @@ if (empty($records[0]['firma_file'])) {
 
 				<a class="btn btn-info" target="_blank" href="<?php echo $rootdir ?>/pdfgen.php?ptype=interventi&idintervento=<?php echo $id_record ?>"><i class="fa fa-print"></i> <?php echo tr('Stampa intervento') ?></a>
 				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-				<br>
+				<div class="clearfix" >&nbsp;</div>
 			</div>
 			<div class="clearfix"></div>
 

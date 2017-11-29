@@ -72,12 +72,7 @@ vendor/
 *.new
 *.old
 .couscous/
-assets/dist/js/*
-assets/dist/img/*
-assets/dist/fonts/*
-assets/dist/css/*
-assets/dist/php-debugbar/*
-!assets/dist/js/ViewerJS/
+assets/dist/
 backup/*
 !backup/.htaccess
 files/*

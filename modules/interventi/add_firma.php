@@ -34,19 +34,18 @@ if (get('anteprima') !== null) {
 </button>
 <div class="clearfix"></div>';
 
-	echo '<div class="hide" id="pdf">';
-	
-if (isMobile()){
-	echo '<iframe src="'.$rootdir.'/assets/dist/js/ViewerJS/#'.$rootdir.'/files/interventi/'.$rapportino_nome.'" allowfullscreen="" webkitallowfullscreen="" width="100%" height="550" ></iframe>';
-}else{
-	echo  '<object data="'.$rootdir.'/files/interventi/'.$rapportino_nome.'#view=fitH&scrollbar=0&toolbar=0&navpanes=0" id ="rapportino_pdf"  type="application/pdf" width="100%">
+    echo '<div class="hide" id="pdf">';
+
+    if (isMobile()) {
+        echo '<iframe src="'.$rootdir.'/assets/dist/viewerjs/#'.$rootdir.'/files/interventi/'.$rapportino_nome.'" allowfullscreen="" webkitallowfullscreen="" width="100%" height="550" ></iframe>';
+    } else {
+        echo  '<object data="'.$rootdir.'/files/interventi/'.$rapportino_nome.'#view=fitH&scrollbar=0&toolbar=0&navpanes=0" id ="rapportino_pdf"  type="application/pdf" width="100%">
         alt : <a href="'.$rootdir.'/files/interventi/'.$rapportino_nome.'" target="_blank">'.$rapportino_nome.'</a>
         <span>'.tr('Plugin PDF mancante').'</span>
     </object>';
-}
-	
-	echo '</div>';
+    }
 
+    echo '</div>';
 }
 
 ?>

@@ -72,7 +72,7 @@ echo '
             </button>
         </div>
     </div>
-    <canvas class="box-body collapse in" id="fatturato" height="100"></canvas>
+    <canvas class="box-body collapse in" id="fatturato"></canvas>
 </div>';
 
 // Script per il grafico del fatturato
@@ -204,12 +204,12 @@ echo '
     </div>
 </div>';
 
-// Interventi per tipologia
-$tipi = $dbo->fetchArray('SELECT * FROM `in_tipiintervento`');
+// Interventi per stato
+$stati = $dbo->fetchArray('SELECT * FROM `in_statiintervento`');
 
 $dataset = '';
-foreach ($tipi as $tipo) {
-    $interventi = $dbo->fetchArray('SELECT COUNT(*) AS totale, YEAR(in_interventi.data_richiesta) AS year, MONTH(in_interventi.data_richiesta) AS month FROM in_interventi WHERE in_interventi.idtipointervento = '.prepare($tipo['idtipointervento']).' AND in_interventi.data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(in_interventi.data_richiesta), MONTH(in_interventi.data_richiesta) ORDER BY YEAR(in_interventi.data_richiesta) ASC, MONTH(in_interventi.data_richiesta) ASC');
+foreach ($stati as $stato) {
+    $interventi = $dbo->fetchArray('SELECT COUNT(*) AS totale, YEAR(in_interventi.data_richiesta) AS year, MONTH(in_interventi.data_richiesta) AS month FROM in_interventi WHERE in_interventi.idstatointervento = '.prepare($stato['idstatointervento']).' AND in_interventi.data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(in_interventi.data_richiesta), MONTH(in_interventi.data_richiesta) ORDER BY YEAR(in_interventi.data_richiesta) ASC, MONTH(in_interventi.data_richiesta) ASC');
 
     $month = intval($d1->format('m')) - 1;
     for ($i = 0; $i < $count; ++$i) {
@@ -224,12 +224,9 @@ foreach ($tipi as $tipo) {
         ++$month;
     }
 
-    //Random color
-    $background = '#' . dechex(rand(256,16777215));
-
     $dataset .= '{
-        label: "'.$tipo['descrizione'].'",
-        backgroundColor: "'.$background.'",
+        label: "'.$stato['descrizione'].'",
+        backgroundColor: "'.$stato['colore'].'",
         data: [
             '.implode(',', array_column($interventi, 'totale')).'
         ]
@@ -239,7 +236,7 @@ foreach ($tipi as $tipo) {
 echo '
 <div class="box box-info">
     <div class="box-header with-border">
-        <h3 class="box-title">'.tr('Interventi per tipologia').'</h3>
+        <h3 class="box-title">'.tr('Interventi per stato').'</h3>
 
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -247,7 +244,7 @@ echo '
             </button>
         </div>
     </div>
-    <canvas class="box-body collapse in" id="interventi" height="100"></canvas>
+    <canvas class="box-body collapse in" id="interventi"></canvas>
 </div>';
 
 // Script per il grafico del fatturato

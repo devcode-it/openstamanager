@@ -34,7 +34,7 @@ if (empty($idriga)) {
 
     $listino = $dbo->fetchArray('SELECT prc_guadagno FROM mg_listini WHERE id = (SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica = '.prepare($idanagrafica).')');
     if (!empty($listino[0]['prc_guadagno'])) {
-        $sconto = $listino[0]['prc_guadagno'];
+        $sconto_unitario = $listino[0]['prc_guadagno'];
         $tipo_sconto = 'PRC';
     }
 } else {

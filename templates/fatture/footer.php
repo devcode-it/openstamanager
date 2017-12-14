@@ -157,6 +157,34 @@ if (!empty($sconto)) {
         </td>
     </tr>';
 
+    // Rivalsa INPS
+    if ($records[0]['rivalsainps'] != 0) {
+        $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_rivalsainps WHERE id=(SELECT idrivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' AND idrivalsainps!=0 LIMIT 0,1)');
+
+        echo "
+        <tr>
+            <th class='text-center small' colspan=".(!empty($sconto) ? 3 : 2).">
+                ".tr("Rivalsa INPS _PRC_%", [
+                    '_PRC_' => Translator::numberToLocale($rs2[0]['percentuale'], 0),
+                ], ['upper' => true])."
+            </th>
+
+            <th class='text-center small' colspan=".(!empty($sconto) ? 2 : 1).">
+                ".tr('Totale documento', [], ['upper' => true])."
+            </th>
+        </tr>
+
+        <tr>
+            <td class='cell-padded text-center' colspan=".(!empty($sconto) ? 3 : 2).">
+                ".Translator::numberToLocale($records[0]['rivalsainps'])." &euro;
+            </td>
+
+            <td class='cell-padded text-center' colspan=".(!empty($sconto) ? 2 : 1).">
+                ".Translator::numberToLocale($totale + $records[0]['rivalsainps']).' &euro;
+            </td>
+        </tr>';
+    }
+
 // Ritenuta d'acconto
 if ($records[0]['ritenutaacconto'] != 0) {
     $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenutaacconto WHERE id=(SELECT idritenutaacconto FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' AND idritenutaacconto!=0 LIMIT 0,1)');

@@ -49,7 +49,7 @@ if (!empty($rs)) {
     <tr '.$extra.'>
         <td>
             <input type="hidden" name="id" value="'.$r['id'].'">
-            '.Modules::link('Articoli', $r['idarticolo'], $r['descrizione']);
+            '.Modules::link('Articoli', $r['idarticolo'], (!empty($r['codice']) ? $r['codice'].' - ' : '').$r['descrizione']);
 
         // Info extra (lotto, serial, altro)
         if (!empty($r['abilita_serial'])) {

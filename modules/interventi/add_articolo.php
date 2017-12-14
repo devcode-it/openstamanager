@@ -70,7 +70,7 @@ echo '
     <input type="hidden" id="idautomezzo" name="idautomezzo" value="'.$idautomezzo.'">
     <input type="hidden" name="idriga" value="'.$idriga.'">';
 
-if ($idarticolo != '') {
+if (!empty($idarticolo)) {
     echo '
     <input type="hidden" id="idarticolo_originale" name="idarticolo_originale" value="'.$idarticolo.'">';
 }
@@ -78,7 +78,7 @@ if ($idarticolo != '') {
 // Articolo
 echo '
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$idarticolo.'", "ajax-source": "articoli" ]}
         </div>
     </div>';

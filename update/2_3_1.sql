@@ -166,3 +166,50 @@ DELETE FROM `zz_settings` WHERE
 (`nome` = 'Username SMTP') OR
 (`nome` = 'Password SMTP') OR
 (`nome` = 'Sicurezza SMTP');
+
+-- SEZIONALI
+-- Modifico co_documenti per aggiungere riferimento al sezionale
+ALTER TABLE `co_documenti` ADD `idsezionale` INT( 11 ) NOT NULL ;
+
+-- Creo tabella sezionali
+CREATE TABLE IF NOT EXISTS `co_sezionali` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(255) NOT NULL,
+  `maschera` varchar(255) NOT NULL,
+  `dir` varchar(50) NOT NULL,
+  `idautomezzo` int(11) NULL ,
+  `note` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+
+-- Popolo con i sezionali di default
+INSERT INTO `co_sezionali` (`id`, `nome`, `maschera`, `dir`, idautomezzo, `note`) VALUES
+(1, 'Standard vendite', '###YY', 'entrata', NULL, ''),
+(2, 'Standard acquisti', '####', 'uscita', NULL,'');
+
+
+-- Collego le fatture esistenti al sezionale di default
+UPDATE `co_documenti` SET idsezionale='1' WHERE `idtipodocumento` IN(SELECT `id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir`='entrata');
+UPDATE `co_documenti` SET idsezionale='2' WHERE `idtipodocumento` IN(SELECT `id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir`='uscita');
+
+
+-- Innesto modulo sezionali sotto "Contabilità"
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES
+(NULL, 'Sezionali', 'Sezionali', 'sezionali', '{	"main_query": [	{	"type": "table", "fields": "Tipo documenti, Nome,  Maschera, Magazzino, Note", "query": "SELECT `id`, `nome` AS `Nome`, `maschera` AS `Maschera`, (SELECT nome FROM dt_automezzi WHERE dt_automezzi.id = idautomezzo) AS Magazzino, IF(`dir`=''entrata'', ''Documenti di vendita'', ''Documenti di acquisto'') AS `Tipo documenti`, `note` AS `Note`  FROM `co_sezionali` HAVING 2=2 ORDER BY `Tipo documenti`, `Nome`"}	]}', '', 'fa fa-database', '2.2', '2.2', 1, 12, 1, 1);
+
+
+-- Aggiungo impostazione predefinita
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES
+(NULL, 'Sezionale predefinito fatture di vendita', '1', 'query=SELECT id, CONCAT(nome, '': '', maschera) AS descrizione FROM co_sezionali WHERE dir=''entrata'' ORDER BY nome', 1, 'Fatturazione'),
+(NULL, 'Sezionale predefinito fatture di acquisto', '2', 'query=SELECT id, CONCAT(nome, '': '', maschera) AS descrizione FROM co_sezionali WHERE dir=''uscita'' ORDER BY nome', 1, 'Fatturazione');
+
+
+-- Aggiorno widget Fatturato con |idsezionale|
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="entrata")  |idsezionale| AND data >= "|period_start|" AND data <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';
+
+-- Aggiorno widget Acquisti con |idsezionale|
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir=''uscita'' |idsezionale| AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|"' WHERE `zz_widgets`.`name` = 'Acquisti';
+
+-- Aggiorno widget Crediti da clienti con |idsezionale|
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), ",", "#"), ".", ","), "#", "."), "€") AS dato FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="entrata") AND idstatodocumento = (SELECT id FROM co_statidocumento WHERE descrizione="Emessa")   |idsezionale| AND data >= "|period_start|" AND data <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Crediti da clienti' ;

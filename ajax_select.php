@@ -57,10 +57,9 @@ if (!function_exists('completeResults')) {
 switch ($op) {
     case 'clienti':
         if (Modules::get('Anagrafiche')['permessi'] != '-') {
+            //$citta_cliente = ", IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))";
 
-			//$citta_cliente = ", IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))";
-
-			$query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale $citta_cliente) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
+            $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale $citta_cliente) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
             foreach ($elements as $element) {
                 $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
@@ -224,12 +223,12 @@ switch ($op) {
     case 'articoli':
         $query = 'SELECT mg_articoli.*, co_iva.descrizione AS iva_vendita FROM mg_articoli LEFT OUTER JOIN co_iva ON mg_articoli.idiva_vendita=co_iva.id |where| ORDER BY mg_articoli.id_categoria ASC, mg_articoli.id_sottocategoria ASC';
 
-        $idiva_predefinita = get_var("Iva predefinita");
+        $idiva_predefinita = get_var('Iva predefinita');
         $rs = $dbo->fetchArray("SELECT descrizione FROM co_iva WHERE id='".$idiva_predefinita."'");
         $iva_predefinita = $rs[0]['descrizione'];
 
         foreach ($elements as $element) {
-            $filter[] = 'id='.prepare($element);
+            $filter[] = 'mg_articoli.id='.prepare($element);
         }
 
         $where[] = 'attivo=1';
@@ -246,6 +245,11 @@ switch ($op) {
         if (!empty($search_fields)) {
             $where[] = '('.implode(' OR ', $search_fields).')';
         }
+
+        if (!empty($filter)) {
+            $where[] = '('.implode(' OR ', $filter).')';
+        }
+
         if (count($where) != 0) {
             $wh = 'WHERE '.implode(' AND ', $where);
         }
@@ -259,7 +263,7 @@ switch ($op) {
                 $results[] = ['text' => $dbo->fetchArray('SELECT `nome` FROM `mg_categorie` WHERE `id`='.prepare($r['id_categoria']))[0]['nome'], 'children' => []];
             }
 
-            if( empty($r['idiva_vendita']) ){
+            if (empty($r['idiva_vendita'])) {
                 $idiva = $idiva_predefinita;
                 $iva = $iva_predefinita;
             } else {

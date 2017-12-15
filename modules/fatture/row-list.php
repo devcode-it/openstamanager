@@ -255,7 +255,7 @@ $totale = sum([
 
 $netto_a_pagare = sum([
     $totale,
-    $marca_da_bollo,
+    $records[0]['bollo'],
     -$records[0]['ritenutaacconto'],
 ]);
 
@@ -363,8 +363,6 @@ if (abs($records[0]['ritenutaacconto']) > 0) {
         </td>
         <td></td>
     </tr>';
-
-    //$netto_a_pagare -= $records[0]['ritenutaacconto'];
 }
 
 // NETTO A PAGARE

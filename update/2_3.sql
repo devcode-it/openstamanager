@@ -73,13 +73,13 @@ UPDATE `zz_group_module` SET `clause` = ' AND in_interventi.id IN (SELECT idinte
 UPDATE `zz_group_module` SET `clause` = ' AND an_anagrafiche.idanagrafica IN (SELECT idanagrafica FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.idanagrafica=an_anagrafiche.idanagrafica AND idtecnico=|idtecnico|)' WHERE `id` = 2;
 
 -- Eliminazione tabelle inutilizzate
-DROP TABLE `mk_allegati`;
-DROP TABLE `mk_attivita`;
-DROP TABLE `mk_email`;
-DROP TABLE `mk_statoattivita`;
-DROP TABLE `mk_tipoattivita`;
-DROP TABLE `dt_automezzi_tagliandi`;
-DROP TABLE `co_contratti_interventi`;
+DROP TABLE IF EXISTS `mk_allegati`;
+DROP TABLE IF EXISTS `mk_attivita`;
+DROP TABLE IF EXISTS `mk_email`;
+DROP TABLE IF EXISTS `mk_statoattivita`;
+DROP TABLE IF EXISTS `mk_tipoattivita`;
+DROP TABLE IF EXISTS `dt_automezzi_tagliandi`;
+DROP TABLE IF EXISTS `co_contratti_interventi`;
 
 -- RELEASE 2.2.1 [NON UFFICIALE] --
 -- Aggiunta del campo desc_iva anche per Preventivi, Ddt e Ordini

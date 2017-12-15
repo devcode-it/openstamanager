@@ -207,7 +207,7 @@ if (abs($records[0]['bollo']) > 0) {
 
 // Info per il footer
 $imponibile = sum($imponibile);
-$iva = sum($iva);
+$iva = sum($iva) + $records[0]['iva_rivalsainps'];
 $sconto = sum($sconto);
 
-$totale = $imponibile + $iva - $sconto;
+$totale = $imponibile + $iva - $sconto + $records[0]['rivalsainps'];

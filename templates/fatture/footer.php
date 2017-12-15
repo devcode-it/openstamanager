@@ -213,7 +213,7 @@ if (!empty($records[0]['rivalsainps'])) {
     echo '
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.Translator::numberToLocale($totale + $records[0]['rivalsainps']).' &euro;
+            '.Translator::numberToLocale($totale).' &euro;
         </td>
     </tr>';
 }

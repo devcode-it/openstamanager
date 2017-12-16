@@ -38,7 +38,7 @@ if (empty($records[0]['firma_file'])) {
                 echo Prints::getDropdown($id_module, $id_record);
                 ?>
 				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-				<br>
+				<div class="clearfix" >&nbsp;</div>
 			</div>
 			<div class="clearfix"></div>
 

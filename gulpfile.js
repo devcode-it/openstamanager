@@ -206,6 +206,14 @@ gulp.task('chartjs', function () {
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/chartjs'));
 });
 
+gulp.task('viewerjs', function () {
+    gulp.src([
+            config.main.bowerDirectory + '/viewerjs/ViewerJS/**/*',
+            '!' + config.main.bowerDirectory + '/viewerjs/ViewerJS/example.local.css',
+        ])
+        .pipe(gulp.dest(config.production + '/viewerjs'));
+});
+
 // Elaborazione e minificazione delle informazioni sull'internazionalizzazione
 gulp.task('i18n', function () {
     gulp.src([
@@ -308,9 +316,13 @@ gulp.task('bower', ['clean'], function () {
 gulp.task('other', ['clean'], function () {
     gulp.start('ckeditor');
     gulp.start('colorpicker');
-    gulp.start('chartjs');
     gulp.start('i18n');
+
+    gulp.start('viewerjs');
+    gulp.start('chartjs');
+
     gulp.start('php-debugbar');
+
 });
 
 gulp.task('default', ['clean', 'bower']);

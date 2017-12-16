@@ -192,9 +192,22 @@ if (!empty($records[0]['note'])) {
 <p>'.nl2br($records[0]['note']).'</p>';
 }
 
+if (abs($records[0]['bollo']) > 0) {
+    echo '
+<br>
+<table style="width: 20mm; font-size: 50%; text-align: center" class="table-bordered">
+    <tr>
+        <td style="height: 20mm;">
+            <br><br>
+            '.tr('Spazio per applicazione marca da bollo', [], ['upper' => true]).'
+        </td>
+    </tr>
+</table>';
+}
+
 // Info per il footer
 $imponibile = sum($imponibile);
-$iva = sum($iva);
+$iva = sum($iva) + $records[0]['iva_rivalsainps'];
 $sconto = sum($sconto);
 
-$totale = $imponibile + $iva - $sconto;
+$totale = $imponibile + $iva - $sconto + $records[0]['rivalsainps'];

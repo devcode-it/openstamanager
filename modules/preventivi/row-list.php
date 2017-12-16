@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 /*
 ARTICOLI + RIGHE GENERICHE
 */
-$q_art = "SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice, IFNULL((SELECT descrizione FROM co_iva WHERE id=idiva),'') AS desc_iva  FROM co_righe_preventivi WHERE idpreventivo=".prepare($id_record).' ORDER BY `order`';
+$q_art = "SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo), '') AS codice FROM co_righe_preventivi WHERE idpreventivo=".prepare($id_record).' ORDER BY `order`';
 $rs = $dbo->fetchArray($q_art);
 
 echo '

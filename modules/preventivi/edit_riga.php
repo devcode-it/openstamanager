@@ -65,7 +65,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "value": "'.$idarticolo.'", "ajax-source": "articoli", "extra": "onchange=\"session_set(\'superselect,idarticolo\', $(this).val(), 0); $data = $(this).selectData(); $(\'#prezzo\').val($data.prezzo_vendita); $(\'#desc\').val($data.descrizione); $(\'#um\').selectSetNew($data.um, $data.um);\"" ]}
+            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "value": "'.$idarticolo.'", "ajax-source": "articoli", "extra": "onchange=\"session_set(\'superselect,idarticolo\', $(this).val(), 0); $data = $(this).selectData(); $(\'#prezzo\').val($data.prezzo_vendita); $(\'#desc\').val($data.descrizione); $(\'#um\').selectSetNew($data.um, $data.um); $(\'#idiva\').selectSet($data.iva_vendita, $data.iva_vendita);\"" ]}
         </div>
     </div>';
 

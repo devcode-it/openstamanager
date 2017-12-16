@@ -22,7 +22,7 @@ unset($_SESSION['superselect']['id_categoria']);
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Inserisci la subcategoria:'); ?>", "name": "subcategoria", "value": "", "ajax-source": "sottocategorie", "icon-after": "add|<?php echo Modules::get('Categorie')['id']; ?>||hide" ]}
+			{[ "type": "select", "label": "<?php echo tr('Inserisci la subcategoria:'); ?>", "name": "subcategoria", "id": "subcategoria_add", "value": "", "ajax-source": "sottocategorie", "icon-after": "add|<?php echo Modules::get('Categorie')['id']; ?>||hide" ]}
 		</div>
 	</div>
 
@@ -36,7 +36,7 @@ unset($_SESSION['superselect']['id_categoria']);
 
 <script>
 $(document).ready(function () {
-    var sub = $('#add_form').find('#subcategoria');
+    var sub = $('#add_form').find('#subcategoria_add');
     var original = sub.parent().find(".input-group-addon button").data("href");
 
     $('#add_form').find('#categoria').change( function(){

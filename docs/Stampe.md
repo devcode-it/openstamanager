@@ -4,14 +4,23 @@ currentMenu: stampe
 
 # Stampe
 
-<!-- TOC depthFrom:2 depthTo:6 orderedList:false updateOnSave:true withLinks:true -->
+- [MPDF](#mpdf)
+- [HTML2PDF](#html2pdf)
+    - [Struttura](#struttura)
+        - [pdfgen.php](#pdfgenphp)
+        - [pdfgen_variables.php (INCLUDE)](#pdfgenvariablesphp-include)
+        - [Struttura interna](#struttura-interna)
 
-- [Struttura](#struttura)
-    - [pdfgen.php](#pdfgenphp)
-    - [pdfgen_variables.php (INCLUDE)](#pdfgen_variablesphp-include)
-    - [Struttura interna](#struttura-interna)
 
-<!-- /TOC -->
+## MPDF
+
+**Attenzione**: come indicato nel secondo punto in http://mpdf.github.io/tables/auto-layout-algorithm.html, MPDF effettua un resizing del font nel caso il contenuto di una cella superi l'altezza totale di una pagina.
+Fino a quel punto, il rendering funziona perfettamente.
+
+Nel caso fosse per esempio aumentare le dimensioni del font, si consiglia di effettuare alcuni test per controllare se le tabelle vengono renderizzate nel modo corretto e previsto.
+
+
+## HTML2PDF
 
 ### Struttura
 
@@ -31,7 +40,7 @@ La cartella _templates_ contiene tutti i template per la creazione dei PDF relat
 
     .
     └── contratti
-        ├── contratto_body.html (OPEN) - Struttura di base del PDF
-        ├── contratto.html (OPEN) - Contenitore personalizzato della struttura del PDF
-        ├── logo_azienda.jpg (HTML) - Logo dell'azienda specifico per il PDF
-        └── pdfgen.contratti.php (INCLUDE) - Individuazione delle informazioni da visualizzare e generazione della loro struttura
+        ├── contratto_body.html - Struttura di base del PDF
+        ├── contratto.html - Contenitore personalizzato della struttura del PDF
+        ├── logo_azienda.jpg - Logo dell'azienda specifico per il PDF
+        └── pdfgen.contratti.php - Individuazione delle informazioni da visualizzare e generazione della loro struttura

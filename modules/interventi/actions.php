@@ -133,7 +133,7 @@ switch (post('op')) {
 
             $scontokm_unitario = post('scontokm')[$idriga];
             $tipo_scontokm = post('tipo_scontokm')[$idriga];
-            $scontokm = ($tipo_scontokm == 'PRC') ? ($prezzo_km_consuntivo * $scontokm_unitario) / 100 : $scontokm_unitario;
+            $scontokm = ($tipo_scontokm == 'PRC') ? ($prezzo_km_consuntivo * $sconto_unitario) / 100 : $scontokm_unitario;
 
             $dbo->update('in_interventi_tecnici', [
                 'idintervento' => $id_record,

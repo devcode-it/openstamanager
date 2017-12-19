@@ -24,7 +24,7 @@ echo '
 
 	<div class="row">
 		<div class="col-xs-12 col-md-6">
-			{[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "indirizzo", "id": "indirizzo_",  "required": 1, "value": "$indirizzo$" ]}
+			{[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "indirizzo", "required": 1, "value": "$indirizzo$" ]}
 		</div>
 
 		<div class="col-xs-12 col-md-6">
@@ -44,7 +44,7 @@ echo '
 
 	<div class="row">
 		<div class="col-xs-12 col-md-3">
-			{[ "type": "text", "label": "'.tr('Città').'", "name": "citta", "id": "citta_", "value": "$citta$" ]}
+			{[ "type": "text", "label": "'.tr('Città').'", "name": "citta", "value": "$citta$" ]}
 		</div>
 
 		<div class="col-xs-12 col-md-3">
@@ -91,40 +91,39 @@ echo '
     </div>';
 
 if (!empty($google)) {
-	echo '
-	<div class="row">
-		<div class="col-md-6" id="geocomplete">
-			{[ "type": "text", "label": "'.tr('Indirizzo Google').'", "name": "gaddress", "value": "$gaddress$", "extra": "data-geo=\'formatted_address\'" ]}
-		</div>
+    echo '
+    <div class="row">
+        <div class="col-md-9">
+            <div class="row">
+                <div class="col-md-4" id="geocomplete">
+                    {[ "type": "text", "label": "'.tr('Indirizzo Google').'", "name": "gaddress", "value": "$gaddress$", "extra": "data-geo=\'formatted_address\'" ]}
+                </div>
 
-		<div class="col-md-2">
-			{[ "type": "text", "label": "'.tr('Latitudine').'", "name": "lat", "id": "lat_", "value": "$lat$", "extra": "data-geo=\'lat\'", "class": "text-right" ]}
-		</div>
+                <div class="col-md-4">
+                    {[ "type": "text", "label": "'.tr('Latitudine').'", "name": "lat", "value": "$lat$", "extra": "data-geo=\'lat\'", "class": "text-right" ]}
+                </div>
 
-		<div class="col-md-2">
-			{[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "id": "lng_",  "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right" ]}
-		</div>';
+                <div class="col-md-4">
+                    {[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right" ]}
+                </div>
+            </div>
+        </div>';
 
-    // Vedi su google maps
-    if (!empty($records[0]['indirizzo']) || (empty($records[0]['citta'])) ) {
-		
+    // Calcola percorso
+    if (empty($records[0]['gaddress']) || (empty($records[0]['lat']) && empty($records[0]['lng']))) {
         echo '
-			<div  class="btn-group col-md-2"  >
-				<label>&nbsp;</label><br>
-				<a class="btn btn-info" title="'.tr('Mostra la sede su Google Maps').'"  onclick="window.open(\'https://maps.google.com/maps/search/\'+encodeURI( $(\'#indirizzo_\').val() )+\', \'+encodeURI( $(\'#citta_\').val() ) );">&nbsp;<i class="fa fa-map-marker">&nbsp;</i></a>
-			';
-			
-		 echo '
-				<a title="'.tr('Calcola percoso da sede legale a questa sede').'" class="btn btn-primary btn-secondary" onclick="window.open(\'https://maps.google.com/maps/dir/\'+encodeURI( $(\'#indirizzo_\').val() )+\', \'+encodeURI( $(\'#citta_\').val() )+\'/\'+encodeURI( $(\'#indirizzo\').val() )+\',\'+encodeURI( $(\'#citta\').val() )+\',8z\');"><i class="fa fa-car"></i></a>
-			</div>';
+        <div class="col-md-3">
+            <label>&nbsp;</label><br>
+            <a class="btn btn-info" onclick="window.open(\'https://maps.google.com/maps/search/\'+encodeURI( $(\'#indirizzo\').val() )+\', \'+encodeURI( $(\'#citta\').val() ) );"><i class="fa fa-map-marker"></i> Cerca su Google Maps...</a>
+        </div>';
     }
 
     echo '
     </div>';
 
     if (!empty($records[0]['gaddress']) || (!empty($records[0]['lat']) && !empty($records[0]['lng']))) {
-	echo '
-    <div id="map" style="height:400px; width:100%"></div><br>';
+        echo '
+    <div id="map" style="height:400px; width:100%"></div>';
     }
 } else {
     echo '
@@ -154,12 +153,12 @@ echo '
 $(document).ready( function(){
     $("#form_sedi #geocomplete input").geocomplete({
         map: $("#form_sedi #map").length ? "#form_sedi #map" : false,
-        location: $("#form_sedi #gaddress").val() ? $("#form_sedi #gaddress").val() : [$("#form_sedi #lat_").val(), $("#form_sedi #lng_").val()],
+        location: $("#form_sedi #gaddress").val() ? $("#form_sedi #gaddress").val() : [$("#form_sedi #lat").val(), $("#form_sedi #lng").val()],
         details: "#form_sedi .details",
         detailsAttribute: "data-geo"
     }).bind("geocode:result", function (event, result) {
-        $("#form_sedi #lat_").val(result.geometry.location.lat());
-        $("#form_sedi #lng_").val(result.geometry.location.lng());
+        $("#form_sedi #lat").val(result.geometry.location.lat());
+        $("#form_sedi #lng").val(result.geometry.location.lng());
     });
 });
 </script>';

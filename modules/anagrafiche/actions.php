@@ -163,29 +163,6 @@ switch (post('op')) {
             $dbo->query('UPDATE zz_settings SET valore='.prepare($new_id)." WHERE nome='Azienda predefinita'");
             $_SESSION['infos'][] = tr('Anagrafica Azienda impostata come predefinita. Per ulteriori informazionioni, visitare "Strumenti -> Impostazioni -> Generali".');
         }
-		
-		
-		//se sto inserendo un tecnico, mi copio già le tariffe per le varie attività
-		if (in_array($id_tecnico, $post['idtipoanagrafica'])) {
-			
-			//per ogni tipo di attività
-			$rs_tipiintervento = $dbo->fetchArray('SELECT * FROM in_tipiintervento');
-		
-			for ($i = 0; $i < count($rs_tipiintervento); $i++) {
-				
-				 if ($dbo->query('INSERT INTO in_tariffe( idtecnico, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico ) VALUES( '.prepare($new_id).', '.prepare($rs_tipiintervento[$i]['idtipointervento']).', (SELECT costo_orario FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_km FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_diritto_chiamata FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'),   (SELECT costo_orario_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_km_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_diritto_chiamata_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).') )')) {
-					 
-					$_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
-					
-				} else {
-					
-					$_SESSION['errors'][] = tr("Errore durante l'importazione tariffe!");
-					
-				}
-			
-			}
-			
-		}
 
         // Creo il relativo conto nel partitario (cliente)
         if (in_array($id_cliente, $post['idtipoanagrafica'])) {

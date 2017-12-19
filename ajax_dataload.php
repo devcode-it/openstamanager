@@ -52,11 +52,12 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
                     $search_filters[] = str_replace('|search|', prepare('%'.$piece.'%'), $total['search_inside'][$i]);
                 }
             } else {
-                // Per le icone cerco per il campo icon_title
-                if (preg_match('/^icon_(.+?)$/', $total['search_inside'][$i], $m)) {
-                    $total['search_inside'][$i] = 'icon_title_'.$m[1];
-                }
-
+				
+				//per le icone cerco per il campo icon_title
+				if (preg_match('/^icon_(.+?)$/', $total['search_inside'][$i], $m)) {
+					$total['search_inside'][$i] = "icon_title_".$m[1];
+				}
+				
                 $search_filters[] = '`'.$total['search_inside'][$i].'` LIKE '.prepare('%'.trim($columns[$i]['search']['value'].'%'));
             }
         }
@@ -67,9 +68,7 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
     }
 
     // Filtri derivanti dai permessi (eventuali)
-    if (empty($id_plugin)) {
-        $module_query = Modules::replaceAdditionals($id_module, $module_query);
-    }
+    $module_query = Modules::replaceAdditionals($id_module, $module_query);
 
     // Ordinamento dei risultati
     if (isset($order['dir']) && isset($order['column'])) {

@@ -21,7 +21,7 @@ if (empty($idriga)) {
     $prezzo_acquisto = '0';
 
     if (!empty($rs[0]['prc_guadagno'])) {
-        $sconto_unitario = $rs[0]['prc_guadagno'];
+        $sconto = $rs[0]['prc_guadagno'];
         $tipo_sconto = 'PRC';
     }
 } else {

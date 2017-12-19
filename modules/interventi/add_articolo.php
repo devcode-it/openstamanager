@@ -34,7 +34,7 @@ if (empty($idriga)) {
 
     $listino = $dbo->fetchArray('SELECT prc_guadagno FROM mg_listini WHERE id = (SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica = '.prepare($idanagrafica).')');
     if (!empty($listino[0]['prc_guadagno'])) {
-        $sconto_unitario = $listino[0]['prc_guadagno'];
+        $sconto = $listino[0]['prc_guadagno'];
         $tipo_sconto = 'PRC';
     }
 } else {
@@ -70,7 +70,7 @@ echo '
     <input type="hidden" id="idautomezzo" name="idautomezzo" value="'.$idautomezzo.'">
     <input type="hidden" name="idriga" value="'.$idriga.'">';
 
-if (!empty($idarticolo)) {
+if ($idarticolo != '') {
     echo '
     <input type="hidden" id="idarticolo_originale" name="idarticolo_originale" value="'.$idarticolo.'">';
 }
@@ -78,7 +78,7 @@ if (!empty($idarticolo)) {
 // Articolo
 echo '
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$idarticolo.'", "ajax-source": "articoli" ]}
         </div>
     </div>';

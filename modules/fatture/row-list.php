@@ -255,7 +255,7 @@ $totale = sum([
 
 $netto_a_pagare = sum([
     $totale,
-    $records[0]['bollo'],
+    $marca_da_bollo,
     -$records[0]['ritenutaacconto'],
 ]);
 

@@ -206,7 +206,7 @@ if (!empty($rs2)) {
         } else {
             echo '
                 <input type="hidden" name="sconto['.$id.']" value="'.Translator::numberToLocale($sconto_unitario).'" />
-                <input type="hidden" name="tipo_sconto['.$id.']" value="'.Translator::numberToLocale($tipo_sconto).'" />';
+                <input type="hidden" name="sconto['.$id.']" value="'.Translator::numberToLocale($tipo_sconto).'" />';
         }
 
         echo '

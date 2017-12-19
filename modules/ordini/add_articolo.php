@@ -128,7 +128,6 @@ echo '
                 $data = $(this).selectData();
                 $("#prezzo").val($data.prezzo_'.($dir == 'entrata' ? 'vendita' : 'acquisto').');
                 $("#descrizione").val($data.descrizione);
-                $("#idiva").selectSet($data.idiva_vendita, $data.iva_vendita);
                 $("#um").selectSetNew($data.um, $data.um);
             }else{
                 $("#prezzi_articolo button").addClass("disabled");

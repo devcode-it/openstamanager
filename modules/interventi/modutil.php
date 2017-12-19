@@ -81,7 +81,7 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto)
 
     // Calcolo il totale delle ore lavorate
     $diff = date_diff(date_create($inizio), date_create($fine));
-    $ore = ($diff->h + ($diff->i/60) );
+    $ore = $diff->h + $diff->m / 60;
 
     // Leggo i costi unitari dalle tariffe se almeno un valore è stato impostato
     $rsc = $dbo->fetchArray('SELECT * FROM in_tariffe WHERE idtecnico='.prepare($idtecnico).' AND idtipointervento='.prepare($idtipointervento));

@@ -30,7 +30,7 @@ switch (post('op')) {
 			$idautomezzo = post('idautomezzo');
 			$note = post('note');
 			
-			$dbo->query("INSERT INTO co_sezionali( nome, maschera, dir, idautomezzo, note ) VALUES ( \"$nome\", \"####YYYY\", \"$dir\", \"$idautomezzo\", \"$note\" )");
+			$dbo->query("INSERT INTO co_sezionali( nome, maschera, dir, idautomezzo, note ) VALUES ( \"$nome\", \"$maschera\", \"$dir\", \"$idautomezzo\", \"$note\" )");
 			$id_record = $dbo->last_inserted_id();
 			
 			$_SESSION['infos'][] = tr('Nuovo sezionale aggiunto.');

@@ -39,10 +39,7 @@ $d2 = new DateTime($end);
 $count = $d1->diff($d2)->m + ($d1->diff($d2)->y * 12) + 1;
 
 $fatturato = $dbo->fetchArray("SELECT SUM(subtotale - sconto) AS totale, YEAR(co_documenti.data) AS year, MONTH(co_documenti.data) AS month FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_tipidocumento.dir='entrata' AND co_tipidocumento.descrizione!='Bozza' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY YEAR(co_documenti.data), MONTH(co_documenti.data) ORDER BY YEAR(co_documenti.data) ASC, MONTH(co_documenti.data) ASC');
-
-$entrate = $dbo->fetchArray("SELECT SUM(subtotale - sconto) AS totale, YEAR(co_documenti.data) AS year, MONTH(co_documenti.data) AS month FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN co_movimenti ON co_movimenti.iddocumento=co_documenti.id AND primanota=1 WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY YEAR(co_documenti.data), MONTH(co_documenti.data) ORDER BY YEAR(co_documenti.data) ASC, MONTH(co_documenti.data) ASC');
-
-$uscite = $dbo->fetchArray("SELECT SUM(subtotale - sconto) AS totale, YEAR(co_documenti.data) AS year, MONTH(co_documenti.data) AS month FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN co_movimenti ON co_movimenti.iddocumento=co_documenti.id AND primanota=1 WHERE co_tipidocumento.dir='uscita' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY YEAR(co_documenti.data), MONTH(co_documenti.data) ORDER BY YEAR(co_documenti.data) ASC, MONTH(co_documenti.data) ASC');
+$acquisti = $dbo->fetchArray("SELECT SUM(subtotale - sconto) AS totale, YEAR(co_documenti.data) AS year, MONTH(co_documenti.data) AS month FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_tipidocumento.dir='uscita' AND co_tipidocumento.descrizione!='Bozza' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY YEAR(co_documenti.data), MONTH(co_documenti.data) ORDER BY YEAR(co_documenti.data) ASC, MONTH(co_documenti.data) ASC');
 
 $month = intval($d1->format('m')) - 1;
 for ($i = 0; $i < $count; ++$i) {
@@ -54,14 +51,8 @@ for ($i = 0; $i < $count; ++$i) {
         ]]);
     }
 
-    if (intval($entrate[$i]['month']) != $month + 1) {
-        array_splice($entrate, $i, 0, [[
-            'totale' => 0,
-        ]]);
-    }
-
-    if (intval($uscite[$i]['month']) != $month + 1) {
-        array_splice($uscite, $i, 0, [[
+    if (intval($acquisti[$i]['month']) != $month + 1) {
+        array_splice($acquisti, $i, 0, [[
             'totale' => 0,
         ]]);
     }
@@ -73,7 +64,7 @@ for ($i = 0; $i < $count; ++$i) {
 echo '
 <div class="box box-success">
     <div class="box-header with-border">
-        <h3 class="box-title">'.tr('Fatturato').'</h3>
+        <h3 class="box-title">'.tr('Vendite e acquisti').'</h3>
 
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -81,7 +72,7 @@ echo '
             </button>
         </div>
     </div>
-    <canvas class="box-body collapse in" id="fatturato"></canvas>
+    <canvas class="box-body collapse in" id="fatturato" height="100"></canvas>
 </div>';
 
 // Script per il grafico del fatturato
@@ -95,23 +86,16 @@ $(document).ready(function() {
             datasets: [
                 {
                     label: "'.tr('Fatturato').'",
-                    backgroundColor: "yellow",
+                    backgroundColor: "#63E360",
                     data: [
                         '.implode(',', array_column($fatturato, 'totale')).'
                     ]
                 },
                 {
-                    label: "'.tr('Entrate').'",
-                    backgroundColor: "green",
+                    label: "'.tr('Acquisti').'",
+                    backgroundColor: "#EE4B4B",
                     data: [
-                        '.implode(',', array_column($entrate, 'totale')).'
-                    ]
-                },
-                {
-                    label: "'.tr('Uscite').'",
-                    backgroundColor: "red",
-                    data: [
-                        '.implode(',', array_column($uscite, 'totale')).'
+                        '.implode(',', array_column($acquisti, 'totale')).'
                     ]
                 }
             ]
@@ -220,12 +204,12 @@ echo '
     </div>
 </div>';
 
-// Interventi per stato
-$stati = $dbo->fetchArray('SELECT * FROM `in_statiintervento`');
+// Interventi per tipologia
+$tipi = $dbo->fetchArray('SELECT * FROM `in_tipiintervento`');
 
 $dataset = '';
-foreach ($stati as $stato) {
-    $interventi = $dbo->fetchArray('SELECT COUNT(*) AS totale, YEAR(in_interventi.data_richiesta) AS year, MONTH(in_interventi.data_richiesta) AS month FROM in_interventi WHERE in_interventi.idstatointervento = '.prepare($stato['idstatointervento']).' AND in_interventi.data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(in_interventi.data_richiesta), MONTH(in_interventi.data_richiesta) ORDER BY YEAR(in_interventi.data_richiesta) ASC, MONTH(in_interventi.data_richiesta) ASC');
+foreach ($tipi as $tipo) {
+    $interventi = $dbo->fetchArray('SELECT COUNT(*) AS totale, YEAR(in_interventi.data_richiesta) AS year, MONTH(in_interventi.data_richiesta) AS month FROM in_interventi WHERE in_interventi.idtipointervento = '.prepare($tipo['idtipointervento']).' AND in_interventi.data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(in_interventi.data_richiesta), MONTH(in_interventi.data_richiesta) ORDER BY YEAR(in_interventi.data_richiesta) ASC, MONTH(in_interventi.data_richiesta) ASC');
 
     $month = intval($d1->format('m')) - 1;
     for ($i = 0; $i < $count; ++$i) {
@@ -240,9 +224,12 @@ foreach ($stati as $stato) {
         ++$month;
     }
 
+    //Random color
+    $background = '#' . dechex(rand(256,16777215));
+
     $dataset .= '{
-        label: "'.$stato['descrizione'].'",
-        backgroundColor: "'.$stato['colore'].'",
+        label: "'.$tipo['descrizione'].'",
+        backgroundColor: "'.$background.'",
         data: [
             '.implode(',', array_column($interventi, 'totale')).'
         ]
@@ -252,7 +239,7 @@ foreach ($stati as $stato) {
 echo '
 <div class="box box-info">
     <div class="box-header with-border">
-        <h3 class="box-title">'.tr('Interventi per stato').'</h3>
+        <h3 class="box-title">'.tr('Interventi per tipologia').'</h3>
 
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -260,7 +247,7 @@ echo '
             </button>
         </div>
     </div>
-    <canvas class="box-body collapse in" id="interventi"></canvas>
+    <canvas class="box-body collapse in" id="interventi" height="100"></canvas>
 </div>';
 
 // Script per il grafico del fatturato

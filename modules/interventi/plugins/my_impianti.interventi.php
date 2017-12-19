@@ -10,7 +10,7 @@ echo '
     </div>
     <div class="box-body">';
 
-$results = $dbo->fetchArray('SELECT in_interventi.codice, descrizione, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=my_impianti_interventi.idintervento) AS data FROM my_impianti_interventi INNER JOIN in_interventi ON my_impianti_interventi.idintervento=in_interventi.id WHERE idimpianto='.prepare($id_record).' ORDER BY data DESC');
+$results = $dbo->fetchArray('SELECT in_interventi.id, in_interventi.codice, descrizione, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=my_impianti_interventi.idintervento) AS data FROM my_impianti_interventi INNER JOIN in_interventi ON my_impianti_interventi.idintervento=in_interventi.id WHERE idimpianto='.prepare($id_record).' ORDER BY data DESC');
 
 if (!empty($results)) {
     echo '
@@ -24,7 +24,7 @@ if (!empty($results)) {
         echo '
             <tr>
                 <td>
-                    '.Modules::link('Interventi', $result['codice'], tr('Intervento num. _NUM_ del _DATE_', [
+                    '.Modules::link('Interventi', $result['id'], tr('Intervento num. _NUM_ del _DATE_', [
                         '_NUM_' => $result['codice'],
                         '_DATE_' => Translator::dateToLocale($result['data']),
                     ])).'

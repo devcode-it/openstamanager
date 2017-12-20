@@ -208,8 +208,8 @@ gulp.task('chartjs', function () {
 
 gulp.task('viewerjs', function () {
     gulp.src([
-            config.main.bowerDirectory + '/viewerjs/ViewerJS/**/*',
-            '!' + config.main.bowerDirectory + '/viewerjs/ViewerJS/example.local.css',
+            config.main.bowerDirectory + '/ViewerJS_release/ViewerJS/**/*',
+            '!' + config.main.bowerDirectory + '/ViewerJS_release/ViewerJS/example.local.css',
         ])
         .pipe(gulp.dest(config.production + '/viewerjs'));
 });

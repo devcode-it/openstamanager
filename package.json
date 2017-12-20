@@ -59,7 +59,8 @@
         "signature_pad": "^2.1.1",
         "smartwizard": "^4.2.2",
         "sweetalert2": "^6.11.4",
-        "tooltipster": "^4.2.5"
+        "tooltipster": "^4.2.5",
+        "viewerjs": "git://github.com/kogmbh/ViewerJS_release.git"
     },
     "devDependencies": {
         "archiver": "^2.0.0",

@@ -15,6 +15,10 @@ $records = $dbo->fetchArray('SELECT *,
     (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idvettore) AS vettore
 FROM co_documenti WHERE id='.prepare($id_record));
 
+$records[0]['rivalsainps'] = floatval($records[0]['rivalsainps']);
+$records[0]['ritenutaacconto'] = floatval($records[0]['ritenutaacconto']);
+$records[0]['bollo'] = floatval($records[0]['bollo']);
+
 $module_name = ($records[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
 
 $id_cliente = $records[0]['idanagrafica'];

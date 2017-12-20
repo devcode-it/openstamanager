@@ -11,12 +11,14 @@ $module_name = ($records[0]['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di ac
 $id_cliente = $records[0]['idanagrafica'];
 $id_sede = $records[0]['idsede'];
 
-$numero = !empty($records[0]['numero_esterno']) ? $records[0]['numero_esterno'] : $records[0]['numero'];
-
+$tipo_doc = $records[0]['tipo_doc'];
 if (empty($records[0]['numero_esterno'])) {
     $numero = 'pro-forma '.$numero;
     $tipo_doc = tr('Ddt pro-forma', [], ['upper' => true]);
+} else {
+    $numero = !empty($records[0]['numero_esterno']) ? $records[0]['numero_esterno'] : $records[0]['numero'];
 }
+
 
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
 $destinazione = '';

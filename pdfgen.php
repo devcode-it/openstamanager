@@ -106,7 +106,7 @@ if (!$old_format) {
     $font_size = '10pt';
 
     // Decido se usare la stampa personalizzata (se esiste) oppure quella standard
-    if (file_exists($ptype.'/custom/pdfgen.'.$ptype.'.php')) {
+    if (file_exists($docroot.'/templates/'.$ptype.'/custom/pdfgen.'.$ptype.'.php')) {
         include $docroot.'/templates/'.$ptype.'/custom/pdfgen.'.$ptype.'.php';
     } else {
         include $docroot.'/templates/'.$ptype.'/pdfgen.'.$ptype.'.php';

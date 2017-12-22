@@ -339,7 +339,7 @@ class API extends \Util\Singleton
      */
     public static function isAPIRequest()
     {
-        return slashes($_SERVER['SCRIPT_FILENAME']) == slashes(DOCROOT.'/api/index.php');
+        return getURLPath() == slashes(ROOTDIR.'/api/index.php');
     }
 
     /**

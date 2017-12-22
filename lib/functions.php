@@ -879,3 +879,20 @@ function isMobile()
 {
     return preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $_SERVER['HTTP_USER_AGENT']);
 }
+
+/**
+ * Restituisce il percorso derivante dal file in esecuzione.
+ *
+ * @return string
+ */
+function getURLPath()
+{
+    $path = $_SERVER['SCRIPT_FILENAME'];
+    $prefix = $_SERVER['DOCUMENT_ROOT'];
+
+    if (substr($path, 0, strlen($prefix)) == $prefix) {
+        $path = substr($path, strlen($prefix));
+    }
+
+    return slashes($path);
+}

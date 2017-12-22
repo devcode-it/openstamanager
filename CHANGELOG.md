@@ -4,13 +4,20 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-<!-- TOC depthFrom:2 depthTo:2 orderedList:false updateOnSave:true withLinks:true -->
-
 - [2.3 (In sviluppo)](#23-in-sviluppo)
+    - [Aggiunto (Added)](#aggiunto-added)
+    - [Modificato (Changed)](#modificato-changed)
+    - [Deprecato (Deprecated)](#deprecato-deprecated)
+    - [Rimosso (Removed)](#rimosso-removed)
+    - [Fixed](#fixed)
+    - [Sicurezza (Security)](#sicurezza-security)
 - [2.2 (2016-11-10)](#22-2016-11-10)
+    - [Aggiunto (Added)](#aggiunto-added)
+    - [Fixed](#fixed)
 - [2.1 (2015-04-02)](#21-2015-04-02)
-
-<!-- /TOC -->
+    - [Aggiunto (Added)](#aggiunto-added)
+    - [Modificato (Changed)](#modificato-changed)
+    - [Fixed](#fixed)
 
 ## 2.3 (In sviluppo)
 
@@ -91,27 +98,28 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Rimosso (Removed)
 
 - Funzioni PHP non utilizzate (`lib/functions.php`)
+  - coolDate
+  - cut_text
+  - data_italiana
+  - dateadd
+  - full_html_entity_decode
+  - gestione_sessioni
+  - get_module_name
+  - get_module_name_by_id
+  - get_text_around
+  - get_user_browser
+  - getAvailableModules
+  - getLastPathSegment
+  - getSistemaOperativo
+  - getVersion
   - is_id_ok
+  - mytruncate
+  - read_file
+  - RemoveNonASCIICharacters
+  - show_error_messages
+  - show_info_messages
   - write_error
   - write_ok
-  - getAvailableModules
-  - read_file
-  - dateadd
-  - show_info_messages
-  - show_error_messages
-  - get_module_name
-  - mytruncate
-  - get_user_browser
-  - RemoveNonASCIICharacters
-  - full_html_entity_decode
-  - data_italiana
-  - gestione_sessioni
-  - get_text_around
-  - coolDate
-  - get_module_name_by_id
-  - cut_text
-  - getLastPathSegment
-  - cut_text
 - Funzioni JS non utilizzate (`lib/functionsjs.php`)
 - Cartelle e file non più utilizzati (`lib/jscripts`, `widgets`, `share`, `lib/dbo.class.php`, `lib/widgets.class.php`, ...)
 

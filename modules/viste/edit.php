@@ -44,13 +44,14 @@ echo '
 
 			<div class="row">
 				<div class="col-xs-12 col-md-6">
-					{[ "type": "textarea", "label": "'.tr('Query di default').'", "name": "options", "value": "'.str_replace(']}', '] }', $record['options']).'", "readonly": "1", "class": "autosize" ]}
+					{[ "type": "textarea", "label": "'.tr('Query di default').'", "name": "options", "value": '.json_encode(str_replace(']}', '] }', $record['options'])).', "readonly": "1", "class": "autosize" ]}
 				</div>
 
 				<div class="col-xs-12 col-md-6">
-					{[ "type": "textarea", "label": "'.tr('Query personalizzata').'", "name": "options2", "value": "'.str_replace(']}', '] }', $record['options2']).'", "class": "autosize", "help": "'.tr('La query in sostituzione a quella di default: custom, menu oppure SQL').'" ]}
+					{[ "type": "textarea", "label": "'.tr('Query personalizzata').'", "name": "options2", "value": '.json_encode(str_replace(']}', '] }', $record['options2'])).', "class": "autosize", "help": "'.tr('La query in sostituzione a quella di default: custom, menu oppure SQL').'" ]}
 				</div>
-			</div>';
+            </div>';
+
 if ($options != '' && $options != 'menu' && $options != 'custom') {
     $total = Modules::getQuery($id_record);
     $module_query = $total['query'];

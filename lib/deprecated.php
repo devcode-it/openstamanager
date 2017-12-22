@@ -1,6 +1,6 @@
 <?php
 
-// trigger_error('Funzione deprecata!', E_USER_DEPRECATED);
+// trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
 /**
  * Sostituisce ", < e > per evitare hacking del database e risolvere vari problemi.
@@ -1033,7 +1033,7 @@ function filelist_and_upload($id_module, $id_record, $label = 'Nuovo allegato:',
  */
 function deltree($path)
 {
-    trigger_error('Funzione deprecata!', E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $path = realpath($path);
 
@@ -1062,7 +1062,7 @@ function deltree($path)
  */
 function loadJscriptModules($array)
 {
-    trigger_error('Funzione deprecata!', E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $result = '';
 
@@ -1081,7 +1081,7 @@ function loadJscriptModules($array)
  */
 function loadCSSModules($array)
 {
-    trigger_error('Funzione deprecata!', E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $result = '';
 

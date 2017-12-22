@@ -1054,3 +1054,46 @@ function deltree($path)
         return unlink($path);
     }
 }
+
+/**
+ * Carica gli script JavaScript inclusi nell'array indicato.
+ *
+ * @param array $jscript_modules_array
+ */
+function loadJscriptModules($array)
+{
+    trigger_error('Funzione deprecata!', E_USER_DEPRECATED);
+
+    $result = '';
+
+    foreach ($array as $js) {
+        $result .= '
+<script type="text/javascript" charset="utf-8" src="'.$js.'"></script>';
+    }
+
+    echo $result;
+}
+
+/**
+ * Carica i file di stile CSS inclusi nell'array indicato.
+ *
+ * @param array $css_modules_array
+ */
+function loadCSSModules($array)
+{
+    trigger_error('Funzione deprecata!', E_USER_DEPRECATED);
+
+    $result = '';
+
+    foreach ($array as $css) {
+        if (is_array($css)) {
+            $result .= '
+<link rel="stylesheet" type="text/css" media="'.$css['media'].'" href="'.$css['dir'].'"/>';
+        } else {
+            $result .= '
+<link rel="stylesheet" type="text/css" media="screen" href="'.$css.'"/>';
+        }
+    }
+
+    echo $result;
+}

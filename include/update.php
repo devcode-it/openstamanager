@@ -106,7 +106,7 @@ if (filter('action') == 'do_update') {
 
             if (isset($_SESSION['osm_email'])) {
                 if (!empty($_SESSION['osm_email'])) {
-                    $dbo->query('UPDATE `zz_users` SET `email`='.preare($_SESSION['osm_email'])." WHERE `username`='admin' ");
+                    $dbo->query('UPDATE `zz_users` SET `email`='.prepare($_SESSION['osm_email'])." WHERE `username`='admin' ");
                 }
                 unset($_SESSION['osm_email']);
             }

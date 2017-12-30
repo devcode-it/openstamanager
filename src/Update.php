@@ -202,7 +202,13 @@ class Update
      */
     public static function getVersion()
     {
-        return self::getFile('VERSION');
+        $result = self::getFile('VERSION');
+
+        if (empty($result)) {
+            $result = self::getDatabaseVersion();
+        }
+
+        return $result;
     }
 
     /**

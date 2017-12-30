@@ -88,7 +88,7 @@ Se siete inoltre interessati a supporto e assistenza professionali, li potete ri
 
 ### Github
 
-Nel caso si stia utilizzando la versione direttamente ottenuta dalla repository di Github, è necessario eseguire i seguenti comandi da linea di comando per completare le dipendenze PHP (tramite [Composer](https://getcomposer.org)) e gli asssets (tramite [Yarn](https://yarnpkg.com)) del progetto.
+Nel caso si stia utilizzando la versione direttamente ottenuta dalla repository di Github, è necessario eseguire i seguenti comandi da linea di comando per completare le dipendenze PHP (tramite [Composer](https://getcomposer.org)) e gli assets  (tramite [Yarn](https://yarnpkg.com)) del progetto.
 
 ```bash
 php composer.phar install

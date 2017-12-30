@@ -30,6 +30,7 @@
     },
     "main": "gulpfile.js",
     "dependencies": {
+        "ViewerJS_release": "git://github.com/kogmbh/ViewerJS_release.git",
         "admin-lte": "~2.3.11",
         "autosize": "^3.0.21",
         "bootstrap": "^3.3.7",
@@ -79,6 +80,7 @@
         "gulp-stylus": "^2.6.0",
         "gulp-uglify": "^1.5.3",
         "gulp-util": "^3.0.8",
+        "inquirer": "^4.0.1",
         "main-bower-files": "^2.13.1",
         "shelljs": "^0.7.7"
     },

@@ -1,6 +1,6 @@
 <?php
 
-// trigger_error('Funzione deprecata!', E_USER_DEPRECATED);
+// trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
 /**
  * Sostituisce ", < e > per evitare hacking del database e risolvere vari problemi.
@@ -1033,7 +1033,7 @@ function filelist_and_upload($id_module, $id_record, $label = 'Nuovo allegato:',
  */
 function deltree($path)
 {
-    trigger_error('Funzione deprecata!', E_USER_DEPRECATED);
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
 
     $path = realpath($path);
 
@@ -1053,4 +1053,47 @@ function deltree($path)
     } elseif (file_exists($path)) {
         return unlink($path);
     }
+}
+
+/**
+ * Carica gli script JavaScript inclusi nell'array indicato.
+ *
+ * @param array $jscript_modules_array
+ */
+function loadJscriptModules($array)
+{
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
+
+    $result = '';
+
+    foreach ($array as $js) {
+        $result .= '
+<script type="text/javascript" charset="utf-8" src="'.$js.'"></script>';
+    }
+
+    echo $result;
+}
+
+/**
+ * Carica i file di stile CSS inclusi nell'array indicato.
+ *
+ * @param array $css_modules_array
+ */
+function loadCSSModules($array)
+{
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
+
+    $result = '';
+
+    foreach ($array as $css) {
+        if (is_array($css)) {
+            $result .= '
+<link rel="stylesheet" type="text/css" media="'.$css['media'].'" href="'.$css['dir'].'"/>';
+        } else {
+            $result .= '
+<link rel="stylesheet" type="text/css" media="screen" href="'.$css.'"/>';
+        }
+    }
+
+    echo $result;
 }

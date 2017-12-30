@@ -127,7 +127,7 @@ $dbo = Database::getConnection();
 // Controllo sulla presenza dei permessi di accesso basilari
 $continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (Auth::check() || API::isAPIRequest());
 
-if (!$continue && slashes($_SERVER['SCRIPT_FILENAME']) != slashes(DOCROOT.'/index.php')) {
+if (!$continue && getURLPath() != slashes(ROOTDIR.'/index.php')) {
     if (Auth::check()) {
         Auth::logout();
     }

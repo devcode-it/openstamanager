@@ -237,8 +237,8 @@ switch ($op) {
         }
 
         if (!empty($search)) {
-            $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = 'codice LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'mg_articoli.descrizione LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'mg_articoli.codice LIKE '.prepare('%'.$search.'%');
         }
 
         $wh = '';
@@ -259,8 +259,12 @@ switch ($op) {
         $rs = $dbo->fetchArray($query);
         foreach ($rs as $r) {
             if ($prev != $r['id_sottocategoria']) {
+                $categoria = $dbo->fetchArray('SELECT `nome` FROM `mg_categorie` WHERE `id`='.prepare($r['id_categoria']))[0]['nome'];
+
+                $sottocategoria = $dbo->fetchArray('SELECT `nome` FROM `mg_categorie` WHERE `id`='.prepare($r['id_sottocategoria']))[0]['nome'];
+
                 $prev = $r['id_sottocategoria'];
-                $results[] = ['text' => $dbo->fetchArray('SELECT `nome` FROM `mg_categorie` WHERE `id`='.prepare($r['id_categoria']))[0]['nome'], 'children' => []];
+                $results[] = ['text' => $categoria.' ('.(!empty($r['id_sottocategoria']) ? $sottocategoria : '-').')', 'children' => []];
             }
 
             if (empty($r['idiva_vendita'])) {

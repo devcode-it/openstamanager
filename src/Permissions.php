@@ -67,7 +67,7 @@ class Permissions
         $result = true;
 
         if (!self::getSkip()) {
-            if (!Auth::check() && slashes($_SERVER['SCRIPT_FILENAME']) == slashes(DOCROOT.'/index.php')) {
+            if (!Auth::check() && getURLPath() == slashes(ROOTDIR.'/index.php')) {
                 redirect(ROOTDIR.'/index.php');
                 exit();
                 $result = false;

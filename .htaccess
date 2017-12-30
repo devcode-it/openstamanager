@@ -1,10 +1,17 @@
 # Remove autoindex
-IndexIgnore *
-## Options -Indexes
+<IfModule mod_autoindex.c>
+    IndexIgnore */*
+</IfModule>
 
 # Try to set PHP settings
-php_value upload_max_filesize 20M
-php_value post_max_size 20M
+<IfModule mod_php5.c>
+    php_value upload_max_filesize 20M
+    php_value post_max_size 20M
+</IfModule>
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 20M
+    php_value post_max_size 20M
+</IfModule>
 
 # Deny access to files starting with dot
 <FilesMatch "^\.">
@@ -24,7 +31,7 @@ php_value post_max_size 20M
      Deny from all
 </Files>
 
-# Disable OSM indexing of php, html, htm, pdf files
+# Disable indexing of php, html, htm, pdf files
 <IfModule mod_headers.c>
 	<FilesMatch "\.(php|html|htm|pdf|log)$">
 		Header set X-Robots-Tag: "noindex"

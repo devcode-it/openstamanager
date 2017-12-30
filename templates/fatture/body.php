@@ -162,8 +162,10 @@ foreach ($righe as $r) {
     $iva[] = $r['iva'];
     $sconto[] = $r['sconto'];
 
-    $v_iva[$r['desc_iva']] += $r['iva'];
-    $v_totale[$r['desc_iva']] += $r['subtotale'] - $r['sconto'];
+    $v_iva[$r['desc_iva']] = sum($v_iva[$r['desc_iva']], $r['iva']);
+    $v_totale[$r['desc_iva']] = sum($v_totale[$r['desc_iva']], [
+        $r['subtotale'], -$r['sconto'],
+    ]);
 }
 
 echo '

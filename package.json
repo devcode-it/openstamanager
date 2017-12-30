@@ -30,7 +30,6 @@
     },
     "main": "gulpfile.js",
     "dependencies": {
-        "ViewerJS_release": "git://github.com/kogmbh/ViewerJS_release.git",
         "admin-lte": "~2.3.11",
         "autosize": "^3.0.21",
         "bootstrap": "^3.3.7",
@@ -55,6 +54,8 @@
         "moment": "^2.18.1",
         "numeral": "^2.0.6",
         "parsleyjs": "^2.7.2",
+        "pdf": "git://github.com/mozilla/pdf.js#gh-pages",
+        "pdfjs": "git://github.com/mozilla/pdf.js#gh-pages",
         "select2": "4.0.3",
         "select2-bootstrap-theme": "^0.1.0-beta.10",
         "signature_pad": "^2.1.1",

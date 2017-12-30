@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$module = Modules::getModule('Interventi');
+$module = Modules::get('Interventi');
 $id_module = $module['id'];
 
 $total = Modules::getQuery($id_module);

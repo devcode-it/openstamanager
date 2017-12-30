@@ -27,6 +27,8 @@ $rootdir = str_replace('%2F', '/', rawurlencode($rootdir));
 define('DOCROOT', $docroot);
 define('ROOTDIR', $rootdir);
 
+$pdfjs = '../../../..';
+
 // Caricamento delle dipendenze e delle librerie del progetto
 require_once __DIR__.'/vendor/autoload.php';
 

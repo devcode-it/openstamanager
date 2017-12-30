@@ -35,6 +35,12 @@ $files = [
     'templates/riepilogo_contratti/contratto.html',
     'templates/riepilogo_contratti/pdfgen.riepilogo_contratti.php',
     'templates/riepilogo_contratti/logo_azienda.jpg',
+    'assets/dist/viewerjs',
+    'assets/dist/js/adapters',
+    'assets/dist/js/lang',
+    'assets/dist/js/skins',
+    'assets/dist/js/ckeditor.js',
+    'assets/dist/js/styles.js',
 ];
 
 foreach ($files as $key => $value) {

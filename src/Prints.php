@@ -70,7 +70,7 @@ class Prints
      */
     public static function getModulePrints($module)
     {
-        $module_id = Modules::getModule($module)['id'];
+        $module_id = Modules::get($module)['id'];
 
         self::getPrints();
 
@@ -81,6 +81,26 @@ class Prints
         }
 
         return $result;
+    }
+
+    /**
+     * Restituisce le informazioni relative alle stampe di un singolo modulo specificato.
+     *
+     * @param string|int $module
+     *
+     * @return array
+     */
+    public static function getModuleMainPrint($module)
+    {
+        $prints = self::getModulePrints($module);
+
+        $main = array_search(1, array_column($prints, 'main'));
+
+        if ($main !== false) {
+            return $prints[$main];
+        }
+
+        return false;
     }
 
     public static function render($print, $id_record, $filename = null)
@@ -176,6 +196,11 @@ class Prints
         $report = str_replace('$body_table_params$', $body_table_params, $report);
         $report = str_replace('$table$', $table, $report);
 
+        // Footer di default
+        if (!str_contains($report, '<page_footer>')) {
+            $report .= '<page_footer>$default_footer$</page_footer>';
+        }
+
         // Operazioni di sostituzione
         include DOCROOT.'/templates/replace.php';
 
@@ -183,11 +208,6 @@ class Prints
 
         $filename = !empty($filename) ? $filename : sanitizeFilename($report_name);
         $title = basename($filename);
-
-        // Footer di default
-        if (!str_contains($report, '<page_footer>')) {
-            $report .= '<page_footer>$default_footer$</page_footer>';
-        }
 
         $html2pdf = new Spipu\Html2Pdf\Html2Pdf($orientation, 'A4', 'it', true, 'UTF-8');
 
@@ -331,7 +351,6 @@ class Prints
         // Impostazione del font-size
         $mpdf->WriteHTML('body {font-size: '.$settings['font-size'].'pt;}', 1);
 
-        $mpdf->shrink_tables_to_fit = 1;
         // Aggiunta dei contenuti
         $mpdf->WriteHTML($report);
 

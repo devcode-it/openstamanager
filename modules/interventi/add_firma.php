@@ -20,12 +20,9 @@ if (get('anteprima') !== null) {
     // Gestione della stampa
     $rapportino_nome = sanitizeFilename('Rapportino'.$rs[0]['codice'].'.pdf');
     $filename = $docroot.'/files/interventi/'.$rapportino_nome;
+    $id_print = Prints::getModuleMainPrint($id_record)['id'];
 
-    $_GET['idintervento'] = $id_record; // Fix temporaneo per la stampa
-    $idintervento = $id_record; // Fix temporaneo per la stampa
-    $ptype = 'interventi';
-
-    require $docroot.'/pdfgen.php';
+    Prints::render($id_print, $id_record, $filename);
 
     // HTML per la visualizzazione
     echo '
@@ -37,7 +34,7 @@ if (get('anteprima') !== null) {
     echo '<div class="hide" id="pdf">';
 
     if (isMobile()) {
-        echo '<iframe src="'.$rootdir.'/assets/dist/viewerjs/#'.$rootdir.'/files/interventi/'.$rapportino_nome.'" allowfullscreen="" webkitallowfullscreen="" width="100%" height="550" ></iframe>';
+        echo '<iframe src="'.$rootdir.'/assets/dist/pdfjs/web/viewer.html?file='.$pdfjs.'/files/interventi/'.$rapportino_nome.'" allowfullscreen="" webkitallowfullscreen="" width="100%" height="550" ></iframe>';
     } else {
         echo  '<object data="'.$rootdir.'/files/interventi/'.$rapportino_nome.'#view=fitH&scrollbar=0&toolbar=0&navpanes=0" id ="rapportino_pdf"  type="application/pdf" width="100%">
         alt : <a href="'.$rootdir.'/files/interventi/'.$rapportino_nome.'" target="_blank">'.$rapportino_nome.'</a>

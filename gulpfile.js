@@ -306,17 +306,25 @@ gulp.task('release', function () {
     });
 
     // Opzioni sulla release
-    inquirer.prompt({
+    inquirer.prompt([{
+        type: 'input',
+        name: 'version',
+        message: 'Numero di versione:',
+    }, {
         type: 'confirm',
         name: 'beta',
         message: 'Versione beta?',
         default: false,
-    }).then(function (result) {
+    }]).then(function (result) {
+        version = result.version;
+
         if (result.beta) {
-            archive.append('beta', {
-                name: 'VERSION'
-            });
+            version += 'beta';
         }
+
+        archive.append(version, {
+            name: 'VERSION'
+        });
 
         // Completamento dello zip
         archive.finalize();

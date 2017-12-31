@@ -219,10 +219,14 @@ class Modules
                         $select .= $data['query'].(!empty($data['name']) ? " AS '".$data['name']."', " : '');
 
                         if ($data['enabled']) {
+                            $data['name'] = trim($data['name']);
+                            $data['search_inside'] = trim($data['search_inside']);
+                            $data['order_by'] = trim($data['order_by']);
+
                             $fields[] = trim($data['name']);
 
-                            $search_inside[] = !empty(trim($data['search_inside'])) ? trim($data['search_inside']) : trim($data['name']);
-                            $order_by[] = !empty(trim($data['order_by'])) ? trim($data['order_by']) : trim($data['name']);
+                            $search_inside[] = !empty($data['search_inside']) ? $data['search_inside'] : $data['name'];
+                            $order_by[] = !empty($data['order_by']) ? $data['order_by'] : $data['name'];
                             $search[] = $data['search'];
                             $slow[] = $data['slow'];
                             $format[] = $data['format'];

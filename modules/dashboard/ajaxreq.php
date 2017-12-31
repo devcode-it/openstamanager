@@ -94,7 +94,7 @@ switch (get('op')) {
             $tooltip_text = '<b>'.tr('Numero intervento').'</b>: '.$id.'<br/>';
             $tooltip_text .= '<b>'.tr('Ragione sociale').'</b>: '.nl2br($rs[0]['ragione_sociale']).'<br/>';
 
-            if (!empty($rs[0]['telefono'] != '')) {
+            if (!empty($rs[0]['telefono'])) {
                 $tooltip_text .= '<b>'.tr('Telefono').'</b>: '.nl2br($rs[0]['telefono']).'<br/>';
             }
 

@@ -423,7 +423,8 @@ if ($vista == 'mese') {
 		var calendar = $('#calendar').fullCalendar({
             locale: globals.locale,
 <?php
-if (!empty(get_var('Visualizzare la domenica sul calendario'))) {
+$domenica = get_var('Visualizzare la domenica sul calendario');
+if (empty($domenica)) {
     echo '
             hiddenDays: [ 0 ],';
 }
@@ -438,7 +439,8 @@ if (!empty(get_var('Visualizzare la domenica sul calendario'))) {
 			slotDuration: '00:15:00',
             defaultView: '<?php echo $def; ?>',
 <?php
-if (!empty(get_var('Abilitare orario lavorativo'))) {
+$orario_lavorativo = get_var('Abilitare orario lavorativo');
+if (!empty($orario_lavorativo)) {
     echo "
             minTime: '08:00:00',
             maxTime: '20:00:00',";
@@ -518,7 +520,6 @@ if (Modules::getPermission('Interventi') == 'rw') {
 				});
 			},
 <?php
-
 }
 ?>
 			eventAfterRender: function(event, element) {
@@ -553,7 +554,6 @@ if (get_var('Utilizzare i tooltip sul calendario') == '1') {
 					}
                 });
 <?php
-
 }
 ?>
 			},

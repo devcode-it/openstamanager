@@ -5,7 +5,7 @@
  *
  * @since 2.3
  */
-class Mail extends PHPMailer
+class Mail extends PHPMailer\PHPMailer\PHPMailer
 {
     /** @var array Elenco degli account email disponibili */
     protected static $accounts = [];

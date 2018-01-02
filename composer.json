@@ -22,7 +22,7 @@
     }],
     "type": "project",
     "require": {
-        "php": ">=5.4",
+        "php": ">=5.6",
         "aluguest/ical-easy-reader": "^1.5",
         "danielstjules/stringy": "^3.1",
         "ezyang/htmlpurifier": "^4.8",
@@ -30,15 +30,16 @@
         "ifsnop/mysqldump-php": "^2.3",
         "intervention/image": "^2.3",
         "ircmaxell/password-compat": "^1.0",
-        "maximebf/debugbar": "^1.13",
+        "maximebf/debugbar": "^1.15",
         "monolog/monolog": "^1.22",
-        "mpdf/mpdf": "^6.1",
+        "mpdf/mpdf": "^7.0",
         "paragonie/random_compat": "^2.0",
-        "phpmailer/phpmailer": "^5.2",
+        "phpmailer/phpmailer": "^6.0",
         "spipu/html2pdf": "^5.0",
         "symfony/filesystem": "^3.3",
         "symfony/finder": "^3.3",
-        "symfony/translation": "^3.3"
+        "symfony/translation": "^3.3",
+        "symfony/var-dumper": "^3.3"
     },
     "autoload": {
         "psr-4": {

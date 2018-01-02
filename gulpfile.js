@@ -260,8 +260,7 @@ gulp.task('release', function () {
     del([
         './vendor/tecnickcom/tcpdf/fonts/*',
         '!./vendor/tecnickcom/tcpdf/fonts/*helvetica*',
-        './vendor/mpdf/mpdf/iccprofiles/*',
-        './vendor/mpdf/mpdf/qrcode/*',
+        './vendor/mpdf/mpdf/tmp/*',
         './vendor/mpdf/mpdf/ttfonts/*',
         './vendor/maximebf/debugbar/src/DebugBar/Resources/vendor/*',
     ]);

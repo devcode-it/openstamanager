@@ -892,6 +892,8 @@ function getURLPath()
 
     if (substr($path, 0, strlen($prefix)) == $prefix) {
         $path = substr($path, strlen($prefix));
+    } else {
+        $path = str_replace(DOCROOT, ROOTDIR, $path);
     }
 
     return slashes($path);

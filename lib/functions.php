@@ -888,7 +888,7 @@ function isMobile()
 function getURLPath()
 {
     $path = $_SERVER['SCRIPT_FILENAME'];
-    $prefix = $_SERVER['DOCUMENT_ROOT'];
+    $prefix = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\');
 
     if (substr($path, 0, strlen($prefix)) == $prefix) {
         $path = substr($path, strlen($prefix));

@@ -28,6 +28,13 @@ if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
     </tr>
 
     <tr>
+        <th>'.tr('Totale diritto di chiamata', [], ['upper' => true]).'</th>
+        <td class="text-right">'.Translator::numberToLocale($costi['dirittochiamata_costo']).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['dirittochiamata_addebito']).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['dirittochiamata_scontato']).' &euro;</td>
+    </tr>
+
+    <tr>
         <th>'.tr('Totale viaggio', [], ['upper' => true]).'</th>
         <td class="text-right">'.Translator::numberToLocale($costi['viaggio_costo']).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($costi['viaggio_addebito']).' &euro;</td>
@@ -54,16 +61,16 @@ if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
         <td class="text-right">-</td>
         <td class="text-right">'.Translator::numberToLocale(-$costi['sconto_globale']).' &euro;</td>
     </tr>
-	
-	
+
+
 	<tr class='.$hide.' >
         <th>'.tr('Imponibile', [], ['upper' => true]).'</th>
         <td class="text-right">'.Translator::numberToLocale($costi['totale_costo']).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($costi['totale_addebito']).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($costi['totale']).' &euro;</td>
     </tr>
-	
-	
+
+
 	<tr class='.$hide.' >
         <th>'.tr('IVA (_DESC_)', [ _DESC_ => $rs_iva[0]['descrizione']], ['upper' => true]).'</th>
         <td class="text-right">'.Translator::numberToLocale(($costi['totale_costo']/100*$rs_iva[0]['percentuale'])).' &euro;</td>

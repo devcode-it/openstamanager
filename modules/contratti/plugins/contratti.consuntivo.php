@@ -110,10 +110,10 @@ if (!empty($rsi)) {
                     <td>'.$r['idtipointervento'].'</td>
                     <td class="text-right">'.Translator::numberToLocale($r['ore']).'</td>
                     <td class="text-right">'.Translator::numberToLocale($r['km']).'</td>
-                    <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_ore_consuntivo_tecnico']).'</td>
+                    <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_ore_consuntivo_tecnico'] - $r['prezzo_dirittochiamata_tecnico']).'</td>
                     <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_km_consuntivo_tecnico']).'</td>
                     <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_dirittochiamata_tecnico']).'</td>
-                    <td class="text-right success">'.Translator::numberToLocale($r['prezzo_ore_consuntivo']).$sconto_ore.'</td>
+                    <td class="text-right success">'.Translator::numberToLocale($r['prezzo_ore_consuntivo'] - $r['prezzo_dirittochiamata']).$sconto_ore.'</td>
                     <td class="text-right success">'.Translator::numberToLocale($r['prezzo_km_consuntivo']).$sconto_km.'</td>
                     <td class="text-right success">'.Translator::numberToLocale($r['prezzo_dirittochiamata']).'</td>
                 </tr>';

@@ -132,11 +132,11 @@ foreach ($righe as $r) {
     // Imponibile
     echo "
             <td class='text-right'>
-                ".(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'])).' &euro;';
+                ".(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] - $r['sconto'])).' &euro;';
 
     if ($r['sconto'] > 0) {
         echo "
-                <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
+                <br><small class='text-muted'>".tr('sconto di _TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($r['sconto']),
                     '_TYPE_' => '&euro;',
                 ]).'</small>';

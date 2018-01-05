@@ -809,10 +809,12 @@ function sum($first, $second = null, $decimals = null)
     $bcadd = function_exists('bcadd');
 
     foreach ($array as $value) {
+        $value = round($value, $decimals);
+
         if ($bcadd) {
             $result = bcadd($result, $value, $decimals);
         } else {
-            $result = round($result, $decimals) + round($value, $decimals);
+            $result += $value;
         }
     }
 

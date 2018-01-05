@@ -269,7 +269,36 @@ if (!empty($records[0]['ritenutaacconto'])) {
 
     echo '
 
-            <td class="cell-padded text-center" colspan="'.$second_colspan.'">
+        <td class="cell-padded text-center" colspan="'.$second_colspan.'">
+            '.Translator::numberToLocale($totale - $records[0]['ritenutaacconto']).' &euro;
+        </td>
+    </tr>';
+}
+
+if (empty($records[0]['ritenutaacconto']) && empty($records[0]['rivalsainps']) && abs($records[0]['bollo']) > 0) {
+    $first_colspan = 3;
+    $second_colspan = 2;
+    if (empty($sconto)) {
+        $first_colspan = 1;
+    }
+
+    echo '
+    <tr>
+        <th class="text-center small" colspan="'.$first_colspan.'">
+            '.tr('Marca da bollo', [], ['upper' => true]).'
+        </th>
+
+        <th class="text-center small" colspan="'.$second_colspan.'">
+            '.tr('Totale documento', [], ['upper' => true]).'
+        </th>
+    </tr>
+
+    <tr>
+        <td class="cell-padded text-center" colspan="'.$first_colspan.'">
+        '.Translator::numberToLocale($records[0]['bollo']).' &euro;
+        </td>
+
+        <td class="cell-padded text-center" colspan="'.$second_colspan.'">
             '.Translator::numberToLocale($totale - $records[0]['ritenutaacconto']).' &euro;
         </td>
     </tr>';

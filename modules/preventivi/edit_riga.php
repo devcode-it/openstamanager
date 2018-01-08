@@ -65,7 +65,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "value": "'.$idarticolo.'", "ajax-source": "articoli", "extra": "onchange=\"session_set(\'superselect,idarticolo\', $(this).val(), 0); $data = $(this).selectData(); $(\'#prezzo\').val($data.prezzo_vendita); $(\'#desc\').val($data.descrizione); $(\'#um\').selectSetNew($data.um, $data.um); $(\'#idiva\').selectSet($data.iva_vendita, $data.iva_vendita);\"" ]}
+            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "value": "'.$idarticolo.'", "ajax-source": "articoli" ]}
         </div>
     </div>';
 
@@ -73,7 +73,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "id": "desc", "value": '.json_encode($descrizione).', "required": 1 ]}
+            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "id": "descrizione_riga", "value": '.json_encode($descrizione).', "required": 1 ]}
         </div>
     </div>';
 
@@ -110,6 +110,23 @@ echo '
             {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
         </div>
     </div>';
+
+echo '
+    <script>
+    $(document).ready(function () {
+        $("#idarticolo").on("change", function(){
+            if($(this).val()){
+                session_set("superselect,idarticolo", $(this).val(), 0);
+                $data = $(this).selectData();
+
+                $("#prezzo").val($data.prezzo_'.($dir == 'entrata' ? 'vendita' : 'acquisto').');
+                $("#descrizione_riga").val($data.descrizione);
+                $("#idiva").selectSet($data.idiva_vendita, $data.iva_vendita);
+                $("#um").selectSetNew($data.um, $data.um);
+            }
+        });
+    });
+    </script>';
 
 echo '
 

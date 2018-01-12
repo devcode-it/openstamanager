@@ -3,6 +3,8 @@
 namespace HTMLBuilder\Handler;
 
 /**
+ * Gestione dell'input di tipo "timestamp", "date" e "time".
+ *
  * @since 2.3
  */
 class DateHandler implements HandlerInterface
@@ -10,26 +12,34 @@ class DateHandler implements HandlerInterface
     public function handle(&$values, &$extras)
     {
         // Impostazione alla data corrente se il contenuto corrisponde a "now"
-        if ($values['value'] == '-now-') {
-            $values['value'] = date(\Translator::getFormatter()->getStandardFormats()['timestamp']);
+        $detect = [
+            'value',
+            'max-date',
+            'min-date',
+        ];
+        foreach ($detect as $attr) {
+            if ($values[$attr] == '-now-') {
+                $values[$attr] = date(\Translator::getFormatter()->getStandardFormats()['timestamp']);
+            }
         }
 
-        if ($values['max-date'] == '-now-') {
-            $values['max-date'] = date(\Translator::getFormatter()->getStandardFormats()['timestamp']);
-        }
-
-        if ($values['min-date'] == '-now-') {
-            $values['min-date'] = date(\Translator::getFormatter()->getStandardFormats()['timestamp']);
-        }
-
+        // Restrizione dei valori permessi
+        // Timestamp
         if ($values['type'] == 'timestamp' && \Translator::getFormatter()->isStandardTimestamp($values['value'])) {
             $values['value'] = \Translator::timestampToLocale($values['value']);
-        } elseif ($values['type'] == 'date' && \Translator::getFormatter()->isStandardDate($values['value'])) {
+        }
+
+        // Data
+        elseif ($values['type'] == 'date' && \Translator::getFormatter()->isStandardDate($values['value'])) {
             $values['value'] = \Translator::dateToLocale($values['value']);
-        } elseif ($values['type'] == 'time' && \Translator::getFormatter()->isStandardTime($values['value'])) {
+        }
+
+        // Orario
+        elseif ($values['type'] == 'time' && \Translator::getFormatter()->isStandardTime($values['value'])) {
             $values['value'] = \Translator::timeToLocale($values['value']);
         }
 
+        // Controllo sulla correttezza sintattica del valore impostato
         if (!(
             ($values['type'] == 'timestamp' && \Translator::getFormatter()->isFormattedTimestamp($values['value'])) ||
             ($values['type'] == 'date' && \Translator::getFormatter()->isFormattedDate($values['value'])) ||
@@ -38,10 +48,12 @@ class DateHandler implements HandlerInterface
             $values['value'] = '';
         }
 
+        // Delega della gestione al metodo specifico per il tipo di input richiesto
         $result = $this->{$values['type']}($values, $extras);
 
         $values['type'] = 'text';
 
+        // Generazione del codice HTML di default
         if (empty($result)) {
             $result = '
     <input |attr|>';
@@ -50,6 +62,15 @@ class DateHandler implements HandlerInterface
         return $result;
     }
 
+    /**
+     * Gestione dell'input di tipo "timestamp".
+     * Esempio: {[ "type": "timestamp", "label": "Timestamp di test", "name": "timestamp", "value": "2018-01-01 12:00:30" ]}.
+     *
+     * @param array $values
+     * @param array $extras
+     *
+     * @return string
+     */
     protected function timestamp(&$values, &$extras)
     {
         $values['class'][] = 'text-center';
@@ -57,6 +78,15 @@ class DateHandler implements HandlerInterface
         $values['class'][] = 'timestamp-mask';
     }
 
+    /**
+     * Gestione dell'input di tipo "date".
+     * Esempio: {[ "type": "date", "label": "Data di test", "name": "date", "value": "2018-01-01" ]}.
+     *
+     * @param array $values
+     * @param array $extras
+     *
+     * @return string
+     */
     protected function date(&$values, &$extras)
     {
         $values['class'][] = 'text-center';
@@ -64,6 +94,15 @@ class DateHandler implements HandlerInterface
         $values['class'][] = 'date-mask';
     }
 
+    /**
+     * Gestione dell'input di tipo "time".
+     * Esempio: {[ "type": "time", "label": "Orario di test", "name": "time", "value": "12:00:30" ]}.
+     *
+     * @param array $values
+     * @param array $extras
+     *
+     * @return string
+     */
     protected function time(&$values, &$extras)
     {
         $values['class'][] = 'text-center';

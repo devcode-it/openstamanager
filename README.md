@@ -4,12 +4,14 @@
   </a>
 
   <p align="center">
-    Il gestionale open source per l'assistenza tecnica e la fatturazione.
+    Il software gestionale open source per l'assistenza tecnica e la fatturazione.
     <br>
     <br>
+    <a href="http://openstamanager.com">Sito web</a>
+    &middot;
     <a href="https://devcode-it.github.io/openstamanager">Documentazione tecnica</a>
     &middot;
-    <a href="http://openstamanager.com">Sito ufficiale</a>
+    <a href="http://openstamanager.com/forum">Forum</a>
   </p>
 </p>
 

@@ -4,6 +4,8 @@ currentMenu: stampe
 
 # Stampe
 
+Pagina in costruzione.
+
 - [MPDF](#mpdf)
 - [HTML2PDF](#html2pdf)
     - [Struttura](#struttura)

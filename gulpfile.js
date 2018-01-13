@@ -255,6 +255,8 @@ gulp.task('release', function () {
         '!./vendor/tecnickcom/tcpdf/fonts/*helvetica*',
         './vendor/mpdf/mpdf/tmp/*',
         './vendor/mpdf/mpdf/ttfonts/*',
+        '!./vendor/mpdf/mpdf/ttfonts/DejaVuinfo.txt',
+        '!./vendor/mpdf/mpdf/ttfonts/DejaVu*Condensed*',
         './vendor/maximebf/debugbar/src/DebugBar/Resources/vendor/*',
     ]);
 

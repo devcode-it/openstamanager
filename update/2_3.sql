@@ -717,7 +717,7 @@ UPDATE `zz_group_module` SET `default` = 1;
 UPDATE `zz_widgets` SET `more_link` = REPLACE(TRIM(`more_link`), 'templates/pdfgen.php', 'pdfgen.php');
 
 -- Nuova struttura per i plugins
-ALTER TABLE `zz_plugins` ADD `title` varchar(255) NOT NULL AFTER `name`, CHANGE `idmodule_from` `idmodule_from` int(11), CHANGE `idmodule_to` `idmodule_to` int(11),
+ALTER TABLE `zz_plugins` ADD `title` varchar(255) NOT NULL AFTER `name`,
 ADD `directory` varchar(50) NOT NULL AFTER `script`, ADD `options` text AFTER `script`, ADD `options2` text AFTER `script`, ADD `version` varchar(15) NOT NULL AFTER `script`, ADD `compatibility` varchar(1000) NOT NULL AFTER `script`, ADD `order` int(11) NOT NULL AFTER `script`, ADD `default` boolean NOT NULL DEFAULT 0 AFTER `script`, ADD `enabled` boolean NOT NULL DEFAULT 1 AFTER `script`;
 
 UPDATE `zz_plugins` SET `name` = 'Serial' WHERE `name` = 'Lotti';

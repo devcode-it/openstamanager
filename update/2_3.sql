@@ -658,9 +658,12 @@ ALTER TABLE `zz_widgets` ADD FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`
 ALTER TABLE `zz_group_module` ADD FOREIGN KEY (`idmodule`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE, ADD FOREIGN KEY (`idgruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_permissions
+DELETE FROM `zz_permissions` WHERE `idmodule` NOT IN (SELECT `id` FROM `zz_modules`);
 ALTER TABLE `zz_permissions` ADD FOREIGN KEY (`idmodule`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE, ADD FOREIGN KEY (`idgruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_plugins
+DELETE FROM `zz_plugins` WHERE `idmodule_to` NOT IN (SELECT `id` FROM `zz_modules`);
+DELETE FROM `zz_plugins` WHERE `idmodule_from` NOT IN (SELECT `id` FROM `zz_modules`);
 ALTER TABLE `zz_plugins` ADD FOREIGN KEY (`idmodule_from`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE, ADD FOREIGN KEY (`idmodule_to`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_users

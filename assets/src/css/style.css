@@ -274,6 +274,7 @@ span.form-control {
     margin-top: 0;
 }
 
+
 /* Aggiustamenti per i widget */
 
 .widget li {
@@ -475,6 +476,7 @@ span.form-control {
     border-radius: 0px;
 }
 
+
 /* Interventi da pianificare in Dashboard */
 
 #external-events .fc-event {
@@ -500,10 +502,28 @@ input.small-width {
     z-index: 1100;
 }
 
-@media screen and (max-width:767px) {
+.form-control#blob {
+    height: auto;
+}
+
+@media (max-width: 480px) {
+    #main_loading>div>i {
+        font-size: 160px;
+        margin-top: -80px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .box-center,
+    .box-center-large {
+        width: 90%;
+        margin-top: 20px
+    }
+
     .main-header .logo {
         display: none;
     }
+
     /*
     .content-wrapper,
     .right-side,
@@ -513,15 +533,28 @@ input.small-width {
     }*/
 }
 
-@media ( max-width:768px) {
-    .box-center,
-    .box-center-large {
-        width: 90%;
-        margin-top: 20px
+@media screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+    .signature-pad {
+        margin: 10%;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .table-bordered>thead>tr>th,
+    .table-bordered>tbody>tr>th,
+    .table-bordered>tfoot>tr>th,
+    .table-bordered>thead>tr>td,
+    .table-bordered>tbody>tr>td,
+    .table-bordered>tfoot>tr>td {
+        word-break: break-all;
     }
 }
 
 @media screen and (max-width: 1024px) {
+    .push {
+        position: static;
+    }
+
     .signature-pad {
         top: 0;
         left: 0;
@@ -533,38 +566,4 @@ input.small-width {
         min-height: 140px;
         margin: 5%;
     }
-}
-
-@media screen and (min-device-width: 768px) and (max-device-width: 1024px) {
-    .signature-pad {
-        margin: 10%;
-    }
-}
-
-@media ( max-width: 480px) {
-    #main_loading>div>i {
-        font-size: 160px;
-        margin-top: -80px;
-    }
-}
-
-@media ( max-width: 992px) {
-    .table-bordered>thead>tr>th,
-    .table-bordered>tbody>tr>th,
-    .table-bordered>tfoot>tr>th,
-    .table-bordered>thead>tr>td,
-    .table-bordered>tbody>tr>td,
-    .table-bordered>tfoot>tr>td {
-        word-break: break-all;
-    }
-}
-
-@media screen and (max-width:1023px) {
-    .push {
-        position: static;
-    }
-}
-
-.form-control#blob{
-	height: auto;
 }

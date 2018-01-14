@@ -284,6 +284,10 @@ switch (get('op')) {
                     $dbo->query('INSERT INTO co_righe2_contratti(idcontratto, descrizione, subtotale, um, qta) VALUES('.prepare($new_idcontratto).', '.prepare($rs[$i]['descrizione']).', '.prepare($rs[$i]['subtotale']).', '.prepare($rs[$i]['um']).', '.prepare($rs[$i]['qta']).')');
                 }
 
+                // Replicazione degli impianti
+                $impianti = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE idcontratto='.prepare($id_record));
+                $dbo->sync('my_impianti_contratti', ['idcontratto' => $new_idcontratto], ['idimpianto' => array_column($impianti, 'idimpianto')]);
+
                 $_SESSION['infos'][] = tr('Contratto rinnovato!');
 
                 redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$new_idcontratto);

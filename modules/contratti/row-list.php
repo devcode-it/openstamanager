@@ -16,7 +16,7 @@ $imponibile_art = 0.0;
 $iva_art = 0.0;
 
 echo '
-<table class="table table-striped table-hover table-condensed">
+<table class="table table-striped table-hover table-condensed table-bordered">
     <thead>
         <tr>
             <th>'.tr('Descrizione').'</th>

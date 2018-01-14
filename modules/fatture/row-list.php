@@ -9,15 +9,17 @@ $rs = $dbo->fetchArray("SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE i
 
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
-    <tr>
-        <th>'.tr('Descrizione').'</th>
-        <th width="120">'.tr('Q.tà').'</th>
-        <th width="80">'.tr('U.m.').'</th>
-        <th width="120">'.tr('Costo unitario').'</th>
-        <th width="120">'.tr('Iva').'</th>
-        <th width="120">'.tr('Imponibile').'</th>
-        <th width="60"></th>
-    </tr>
+    <thead>
+        <tr>
+            <th>'.tr('Descrizione').'</th>
+            <th width="120">'.tr('Q.tà').'</th>
+            <th width="80">'.tr('U.m.').'</th>
+            <th width="120">'.tr('Costo unitario').'</th>
+            <th width="120">'.tr('Iva').'</th>
+            <th width="120">'.tr('Imponibile').'</th>
+            <th width="60"></th>
+        </tr>
+    </thead>
     <tbody class="sortable">';
 
 if (!empty($rs)) {

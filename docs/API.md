@@ -13,6 +13,7 @@ Di seguito sono elencate le basi per connettersi al sistema e ottenere i dati a 
 
 <!-- TOC depthFrom:2 depthTo:6 orderedList:false updateOnSave:true withLinks:true -->
 
+- [Requisiti aggiuntivi](#requisiti-aggiuntivi)
 - [Standard di comunicazione](#standard-di-comunicazione)
     - [Ottenere la chiave](#ottenere-la-chiave)
     - [Formato dei componenti](#formato-dei-componenti)
@@ -28,6 +29,18 @@ Di seguito sono elencate le basi per connettersi al sistema e ottenere i dati a 
         - [Eliminazioni](#eliminazioni)
 
 <!-- /TOC -->
+
+## Requisiti aggiuntivi
+
+Per rendere la gestione dell'API maggiormente mantenibile e unificata, il suo funzionamento è stato sottoposto al seguente requisito aggiuntivo:
+
+- MySQL >= 5.6.5
+
+Se queste requisito non viene soddisfatto, l'installazione del gestionale procederà correttamente, ma i tentativi di connessione con l'API saranno rifiutati con il codice di errore `503` e lo stato `Servizio non disponibile`.
+
+Nel caso, a seguito dell'installazione di OpenSTAManager, venisse aggiornato il servizio MySQL per permettere il funzionamento dell'API, sarà necessaro causare l'esecuzione della procedura di aggiornamento del gestionale, che organizzarà correttamente il database per la compatibilità con l'API.
+
+**Attenzione**: il solo aggiornamento del servizio MySQL senza il successivo aggiornamento del gestionale potrebbe causare malfunzionamenti di vario genere nell'utilizzo dell'API.
 
 ## Standard di comunicazione
 

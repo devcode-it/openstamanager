@@ -49,6 +49,9 @@ menu:
                 moduli:
                     text: Moduli
                     relativeUrl: moduli.html
+                upload:
+                    text: Gestione degli upload
+                    relativeUrl: upload.html
                 widget:
                     text: Plugin
                     relativeUrl: widget.html

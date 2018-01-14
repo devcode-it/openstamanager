@@ -26,13 +26,13 @@ Segue un'analisi della struttura fisica e logica del nucleo dei moduli supportat
     - [actions.php](#actionsphp)
     - [add.php e edit.php](#addphp-e-editphp)
     - [init.php](#initphp)
-    - [controller_after.php e controller_before.php](#controller_afterphp-e-controller_beforephp)
+    - [controller_after.php e controller_before.php](#controllerafterphp-e-controllerbeforephp)
     - [modutil.php](#modutilphp)
 - [Database](#database)
-    - [zz_modules](#zz_modules)
-    - [zz_permissions e zz_group_module](#zz_permissions-e-zz_group_module)
-    - [zz_views e zz_group_view](#zz_views-e-zz_group_view)
-    - [zz_plugins e zz_widgets](#zz_plugins-e-zz_widgets)
+    - [zz_modules](#zzmodules)
+    - [zz_permissions e zz_group_module](#zzpermissions-e-zzgroupmodule)
+    - [zz_views e zz_group_view](#zzviews-e-zzgroupview)
+    - [zz_plugins e zz_widgets](#zzplugins-e-zzwidgets)
 - [Consigli per lo sviluppo](#consigli-per-lo-sviluppo)
     - [Progettazione](#progettazione)
     - [Sviluppo](#sviluppo)
@@ -40,7 +40,7 @@ Segue un'analisi della struttura fisica e logica del nucleo dei moduli supportat
 - [Installazione](#installazione)
     - [Archivio ZIP](#archivio-zip)
         - [update/VERSIONE.sql](#updateversionesql)
-        - [update/unistall.php (INCLUDE)](#updateunistallphp-include)
+        - [update/unistall.php](#updateunistallphp)
         - [MODULE](#module)
 - [Moduli di base](#moduli-di-base)
 
@@ -202,7 +202,7 @@ L'archivio scaricato deve contenere direttamente al proprio interno i contenuti 
 
 Il file `VERSIONE.sql` (dove VERSIONE sta per la versione del modulo con `_`[underscore] al posto di `.`[punto]) contiene le operazioni di installazione del modulo a livello del database, comprendenti la creazione delle tabelle di base del modulo e l'inserimento di ulteriori dati nelle altre tabelle.
 
-#### update/unistall.php (INCLUDE)
+#### update/unistall.php
 
 Il file `unistall.php` contiene le operazioni di disinstallazione del modulo a livello del database, comprendenti l'eliminazione delle tabelle non più necessarie e dei dati inutilizzati.
 

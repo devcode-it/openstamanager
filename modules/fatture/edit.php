@@ -62,6 +62,9 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 			<div class="row">
 				<div class="col-md-3">
 					<?php
+
+                    echo Modules::link('Anagrafiche', $records[0]['idanagrafica'], null, null, 'class="pull-right"');
+
                     if ($dir == 'entrata') {
                         ?>
 						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "clienti", "value": "$idanagrafica$" ]}

@@ -50,14 +50,13 @@ if (post('db_host') !== null) {
 
             $results = $dbo->fetchArray('SHOW GRANTS FOR CURRENT_USER');
             foreach ($results as $result) {
+                $privileges = current($result);
+
                 if (
-                    str_contains($result, $find) &&
-                    (
-                        str_contains($result, ' ON `'.$db_name.'`.*') ||
-                        str_contains($result, ' ON *.*')
-                    )
+                    str_contains($privileges, ' ON `'.$db_name.'`.*') ||
+                    str_contains($privileges, ' ON *.*')
                 ) {
-                    $pieces = explode(', ', explode(' ON ', str_replace('GRANT ', '', current($result)))[0]);
+                    $pieces = explode(', ', explode(' ON ', str_replace('GRANT ', '', $privileges))[0]);
 
                     if (in_array('ALL', $pieces) || in_array('ALL PRIVILEGES', $pieces)) {
                         break;

@@ -983,3 +983,13 @@ UPDATE `zz_widgets` SET `location` = 'controller_top' WHERE `zz_widgets`.`id_mod
 
 -- Disabilito widgets 'Ordini di servizio da impostare' e 'Rate contrattuali'
 UPDATE `zz_widgets` SET `enabled` = '0' WHERE `zz_widgets`.`name` = 'Ordini di servizio da impostare' OR `zz_widgets`.`name` = 'Rate contrattuali';
+
+-- Aggiunta articolo su contratti
+ALTER TABLE `co_righe2_contratti` ADD `idarticolo` INT NOT NULL AFTER `idcontratto`;
+
+-- Campo per identificare le righe descrittive documenti/ddt/preventivi/contratti/ordini
+ALTER TABLE `co_righe_documenti` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idcontratto`;
+ALTER TABLE `dt_righe_ddt` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idarticolo`;
+ALTER TABLE `co_righe_preventivi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idarticolo`; 
+ALTER TABLE `co_righe2_contratti` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idarticolo`;
+ALTER TABLE `or_righe_ordini` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idarticolo`;

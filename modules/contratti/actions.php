@@ -138,6 +138,7 @@ switch (post('op')) {
     // Aggiungo una riga al contratto
     case 'addriga':
         $idiva = post('idiva');
+        $idarticolo = post('idarticolo');
         $descrizione = post('descrizione');
 
         $qta = $post['qta'];
@@ -159,14 +160,30 @@ switch (post('op')) {
         $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
         $desc_iva = $rs2[0]['descrizione'];
 
-        $dbo->query('INSERT INTO co_righe2_contratti(idcontratto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, `order`) VALUES ('.prepare($id_record).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe2_contratti AS t WHERE idcontratto='.prepare($id_record).'))');
+        $dbo->query('INSERT INTO co_righe2_contratti(idcontratto, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, `order`) VALUES ('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe2_contratti AS t WHERE idcontratto='.prepare($id_record).'))');
 
         $_SESSION['infos'][] = tr('Articolo aggiunto!');
 
         break;
+        
+    case 'adddescrizione':
+        if (!empty($id_record)) {
+            $descrizione = post('descrizione');
+            $query = 'INSERT INTO co_righe2_contratti(idcontratto, descrizione, is_descrizione) VALUES('.prepare($id_record).', '.prepare($descrizione).', 1)';
+        
+            if ($dbo->query($query)) {
+                $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
+            }
+        }
+        break;
 
     case 'editriga':
         $idriga = post('idriga');
+        
+        $rs = $dbo->fetchArray("SELECT * FROM co_righe2_contratti WHERE id='".$idriga."'");
+        $is_descrizione = $rs[0]['is_descrizione'];
+        
+        $idarticolo = post('idarticolo');
         $descrizione = post('descrizione');
 
         $qta = $post['qta'];
@@ -190,7 +207,11 @@ switch (post('op')) {
         $desc_iva = $rs[0]['descrizione'];
 
         // Modifica riga generica sul documento
-        $query = 'UPDATE co_righe2_contratti SET idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
+        if($is_descrizione==0){
+            $query = 'UPDATE co_righe2_contratti SET idarticolo='.prepare($idarticolo).', idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
+        }else{
+            $query = 'UPDATE co_righe2_contratti SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga);
+        }
         $dbo->query($query);
 
         $_SESSION['infos'][] = tr('Riga modificata!');

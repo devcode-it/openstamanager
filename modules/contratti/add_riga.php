@@ -37,6 +37,7 @@ if (empty($idriga)) {
 
     $rsr = $dbo->fetchArray('SELECT * FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record).' AND id='.prepare($idriga));
 
+    $idarticolo = $rsr[0]['idarticolo'];
     $descrizione = $rsr[0]['descrizione'];
     $qta = $rsr[0]['qta'];
     $um = $rsr[0]['um'];
@@ -52,35 +53,43 @@ echo '
     <input type="hidden" name="idriga" value="'.$idriga.'">
     <input type="hidden" name="backto" value="record-edit">';
 
+// Elenco articoli raggruppati per gruppi e sottogruppi
+if($rsr[0]['is_descrizione']!=1){
+    echo '
+    <div class="col-md-12">
+        {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "value": "'.$idarticolo.'", "ajax-source": "articoli" ]}
+    </div>';
+}
+
 // Descrizione
 echo '
     <div class="col-md-12">
-        {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "value": '.json_encode($descrizione).', "required": 1 ]}
+        {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "id": "descrizione_riga", "value": '.json_encode($descrizione).', "required": 1 ]}
     </div>';
 
-// Iva
-
-echo '
+if($rsr[0]['is_descrizione']!=1){
+    // Iva
+    echo '
     <div class="col-md-4">
         {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "'.$idiva.'" ]}
     </div>';
 
-// Quantità
-echo '
+    // Quantità
+    echo '
     <div class="col-md-4">
         {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "value": "'.$qta.'", "required": 1, "decimals": "qta" ]}
     </div>';
 
-// Unità di misura
-echo '
+    // Unità di misura
+    echo '
     <div class="col-md-4">
         {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
     </div>';
 
-/*
-if (!empty($idriga)) {
-//Rivalsa INPS
-if( get_var("Percentuale rivalsa INPS") != "" ){
+    /*
+    if (!empty($idriga)) {
+    //Rivalsa INPS
+    if( get_var("Percentuale rivalsa INPS") != "" ){
     echo "		<div class='col-md-3'>\n";
     echo "			<label>Rivalsa INPS:</label>\n";
     echo "			<select id='idrivalsainps' class='superselect' name=\"idrivalsainps\">\n";
@@ -95,10 +104,10 @@ if( get_var("Percentuale rivalsa INPS") != "" ){
 
     echo "			</select>\n";
     echo "		</div>\n";
-}
+    }
 
-//Ritenuta d'acconto
-if( get_var("Percentuale ritenuta d'acconto") != "" ){
+    //Ritenuta d'acconto
+    if( get_var("Percentuale ritenuta d'acconto") != "" ){
     echo "		<div class='col-md-3'>\n";
     echo "			<label>Ritenuta d'acconto:</label>\n";
     echo "			<select id='idritenutaacconto' class='superselect' name=\"idritenutaacconto\">\n";
@@ -113,21 +122,39 @@ if( get_var("Percentuale ritenuta d'acconto") != "" ){
 
     echo "			</select>\n";
     echo "		</div>\n";
-}
-}
-*/
+    }
+    }
+    */
 
-// Costo unitario
-echo '
+    // Costo unitario
+    echo '
     <div class="col-md-6">
         {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "value": "'.$prezzo.'", "icon-after": "&euro;" ]}
     </div>';
 
-// Sconto unitario
-echo '
+    // Sconto unitario
+    echo '
     <div class="col-md-6">
         {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
     </div>';
+}
+
+echo '
+    <script>
+    $(document).ready(function () {
+        $("#idarticolo").on("change", function(){
+            if($(this).val()){
+                session_set("superselect,idarticolo", $(this).val(), 0);
+                $data = $(this).selectData();
+
+                $("#prezzo").val($data.prezzo_vendita);
+                $("#descrizione_riga").val($data.descrizione);
+                $("#idiva").selectSet($data.idiva_vendita, $data.iva_vendita);
+                $("#um").selectSetNew($data.um, $data.um);
+            }
+        });
+    });
+    </script>';
 
 echo '
 

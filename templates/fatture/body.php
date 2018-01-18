@@ -104,25 +104,32 @@ foreach ($righe as $r) {
     echo '
             </td>';
 
-    echo "
-            <td class='text-center'>
-                ".Translator::numberToLocale($r['qta']).' '.$r['um'].'
+    echo '
+            <td class="text-center">';
+    if($r['is_descrizione']==0){
+        echo 
+                Translator::numberToLocale($r['qta']).' '.$r['um'];
+    }
+    echo '
             </td>';
 
     // Prezzo unitario
     echo "
-            <td class='text-right'>
-                ".(empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
+            <td class='text-right'>";
+    if($r['is_descrizione']==0){
+        echo
+                (empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
 
-    if ($r['sconto'] > 0) {
-        echo "
-                <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
-                ]).'</small>';
+        if ($r['sconto'] > 0) {
+            echo "
+                    <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
+                        '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                        '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                    ]).'</small>';
 
-        if ($count <= 1) {
-            $count += 0.4;
+            if ($count <= 1) {
+                $count += 0.4;
+            }
         }
     }
 
@@ -131,28 +138,34 @@ foreach ($righe as $r) {
 
     // Imponibile
     echo "
-            <td class='text-right'>
-                ".(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] - $r['sconto'])).' &euro;';
+            <td class='text-right'>";
+    if($r['is_descrizione']==0){
+        echo
+                (empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] - $r['sconto'])).' &euro;';
+    
+        if ($r['sconto'] > 0) {
+            echo "
+                    <br><small class='text-muted'>".tr('sconto di _TOT_ _TYPE_', [
+                        '_TOT_' => Translator::numberToLocale($r['sconto']),
+                        '_TYPE_' => '&euro;',
+                    ]).'</small>';
 
-    if ($r['sconto'] > 0) {
-        echo "
-                <br><small class='text-muted'>".tr('sconto di _TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($r['sconto']),
-                    '_TYPE_' => '&euro;',
-                ]).'</small>';
-
-        if ($count <= 1) {
-            $count += 0.4;
+            if ($count <= 1) {
+                $count += 0.4;
+            }
         }
     }
-
     echo '
             </td>';
 
     // Iva
     echo '
-            <td class="text-center">
-                '.Translator::numberToLocale($r['perc_iva']).'
+            <td class="text-center">';
+    if($r['is_descrizione']==0){
+        echo
+                Translator::numberToLocale($r['perc_iva']);
+    }
+    echo '
             </td>
         </tr>';
 

@@ -743,6 +743,17 @@ switch (post('op')) {
             }
         }
         break;
+    
+    case 'adddescrizione':
+        if (!empty($id_record)) {
+            $descrizione = post('descrizione');
+            $query = 'INSERT INTO co_righe_documenti(iddocumento, descrizione, is_descrizione) VALUES('.prepare($id_record).', '.prepare($descrizione).', 1)';
+        
+            if ($dbo->query($query)) {
+                $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
+            }
+        }
+        break;
 
     case 'editriga':
         if (isset($post['idriga'])) {
@@ -765,11 +776,12 @@ switch (post('op')) {
             $subtot = $prezzo * $qta;
 
             // Lettura idarticolo dalla riga documento
-            $rs = $dbo->fetchArray('SELECT iddocumento, idarticolo, qta, abilita_serial FROM co_righe_documenti WHERE id='.prepare($idriga));
+            $rs = $dbo->fetchArray('SELECT iddocumento, idarticolo, qta, abilita_serial, is_descrizione FROM co_righe_documenti WHERE id='.prepare($idriga));
             $idarticolo = $rs[0]['idarticolo'];
             $old_qta = $rs[0]['qta'];
             $iddocumento = $rs[0]['iddocumento'];
             $abilita_serial = $rs[0]['abilita_serial'];
+            $is_descrizione = $rs[0]['is_descrizione'];
 
             // Controllo per gestire i serial
             if (!empty($idarticolo)) {
@@ -797,8 +809,14 @@ switch (post('op')) {
             $rs = $dbo->fetchArray($query);
             $ritenutaacconto = (($prezzo * $qta) - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
 
-            // Modifica riga generica sul documento
-            $query = 'UPDATE co_righe_documenti SET idconto='.prepare($idconto).', idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', idritenutaacconto='.prepare(post('idritenutaacconto')).', ritenutaacconto='.prepare($ritenutaacconto).', idrivalsainps='.prepare(post('idrivalsainps')).', rivalsainps='.prepare($rivalsainps).', qta='.prepare($qta).' WHERE id='.prepare($idriga).' AND iddocumento='.prepare($iddocumento);
+            
+            if($is_descrizione==0){
+                // Modifica riga generica sul documento
+                $query = 'UPDATE co_righe_documenti SET idconto='.prepare($idconto).', idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', idritenutaacconto='.prepare(post('idritenutaacconto')).', ritenutaacconto='.prepare($ritenutaacconto).', idrivalsainps='.prepare(post('idrivalsainps')).', rivalsainps='.prepare($rivalsainps).', qta='.prepare($qta).' WHERE id='.prepare($idriga).' AND iddocumento='.prepare($iddocumento);
+            }else{
+                // Modifica riga descrizione sul documento
+                $query = 'UPDATE co_righe_documenti SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga).' AND iddocumento='.prepare($iddocumento);
+            }
             if ($dbo->query($query)) {
                 // Modifica per gestire i serial
                 if (!empty($idarticolo)) {

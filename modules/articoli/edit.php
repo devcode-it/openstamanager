@@ -93,10 +93,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 				<div class="col-md-2">
 					{[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "value": "$prezzo_acquisto$", "icon-after": "&euro;" ]}
 				</div>
-			</div>
 
-
-			<div class="row">
 				<div class="col-md-2">
 					{[ "type": "number", "label": "<?php echo tr('Prezzo di vendita base'); ?>", "name": "prezzo_vendita", "value": "$prezzo_vendita$", "icon-after": "&euro;" ]}
 				</div>
@@ -108,8 +105,10 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 				<div class="col-md-2">
 					{[ "type": "number", "label": "<?php echo tr('Garanzia'); ?>", "name": "gg_garanzia", "decimals": 0, "value": "$gg_garanzia$", "icon-after": "GG" ]}
 				</div>
-
-
+				
+				<div class="col-md-3">
+					{[ "type": "checkbox", "label": "<?php echo tr("Questo articolo è un servizio"); ?>", "name": "servizio", "value": "$servizio$", "help": "", "placeholder": "<?php echo tr('SERVIZIO'); ?>" ]}
+				</div>
 			</div>
 
 

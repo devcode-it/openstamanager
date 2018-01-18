@@ -106,34 +106,44 @@ foreach ($righe as $r) {
             </td>';
 
     echo "
-            <td class='text-center'>
-                ".(empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'])).' '.$r['um'].'
+            <td class='text-center'>";
+    if($r['is_descrizione']==0){
+        echo
+                (empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'])).' '.$r['um'];
+    }
+    echo '
             </td>';
 
     if ($mostra_prezzi) {
         // Prezzo unitario
         echo "
-            <td class='text-right'>
-                ".(empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;
+            <td class='text-right'>";
+        if($r['is_descrizione']==0){
+            echo
+                (empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
+        }
+        echo '
             </td>';
 
         // Imponibile
         echo "
-            <td class='text-right'>
-                ".(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'])).' &euro;';
+            <td class='text-right'>";
+        if($r['is_descrizione']==0){
+            echo
+                (empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'])).' &euro;';
 
-        if ($r['sconto'] > 0) {
-            echo '
-                <br><small class="help-block">- '.tr('sconto _TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
-                ]).'</small>';
+            if ($r['sconto'] > 0) {
+                echo '
+                    <br><small class="help-block">- '.tr('sconto _TOT_ _TYPE_', [
+                        '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                        '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                    ]).'</small>';
 
-            if ($count <= 1) {
-                $count += 0.4;
+                if ($count <= 1) {
+                    $count += 0.4;
+                }
             }
         }
-
         echo '
             </td>';
     } else {

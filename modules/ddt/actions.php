@@ -198,6 +198,17 @@ switch (post('op')) {
             }
         }
         break;
+        
+    case 'adddescrizione':
+        if (!empty($id_record)) {
+            $descrizione = post('descrizione');
+            $query = 'INSERT INTO dt_righe_ddt(idddt, descrizione, is_descrizione) VALUES('.prepare($id_record).', '.prepare($descrizione).', 1)';
+        
+            if ($dbo->query($query)) {
+                $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
+            }
+        }
+        break;
 
     // Creazione ddt da ordine
     case 'ddt_da_ordine':
@@ -351,6 +362,7 @@ switch (post('op')) {
             $idordine = $rs[0]['idordine'];
             $old_qta = $rs[0]['qta'];
             $idddt = $rs[0]['idddt'];
+            $is_descrizione = $rs[0]['is_descrizione'];
 
             // Controllo per gestire i serial
             if (!empty($idarticolo)) {
@@ -369,7 +381,11 @@ switch (post('op')) {
             $desc_iva = $rs[0]['descrizione'];
 
             // Modifica riga generica sul ddt
-            $query = 'UPDATE dt_righe_ddt SET idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
+            if($is_descrizione==0){
+                $query = 'UPDATE dt_righe_ddt SET idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
+            }else{
+                $query = 'UPDATE dt_righe_ddt SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga);
+            }
             if ($dbo->query($query)) {
                 if (!empty($idarticolo)) {
                     // Controlli aggiuntivi sulle quantità evase degli ordini

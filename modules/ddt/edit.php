@@ -145,6 +145,9 @@ if ($records[0]['stato'] != 'Evaso') {
 				<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/ddt/add_riga.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>&dir=<?php echo $dir ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup">
                     <i class="fa fa-plus"></i> <?php echo tr('Riga generica'); ?>
                 </a>
+                <a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/ddt/add_descrizione.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>&dir=<?php echo $dir ?>" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup">
+                    <i class="fa fa-plus"></i> <?php echo tr('Descrizione'); ?>
+                </a>
 <?php
 
 }

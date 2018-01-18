@@ -21,6 +21,7 @@ switch (post('op')) {
 
         $idiva_vendita = post('idiva_vendita');
         $gg_garanzia = post('gg_garanzia');
+        $servizio = post('servizio');
         $componente_filename = post('componente_filename');
 
         $volume = post('volume');
@@ -42,6 +43,7 @@ switch (post('op')) {
             ' prezzo_acquisto='.prepare($prezzo_acquisto).','.
             ' idiva_vendita='.prepare($idiva_vendita).','.
             ' gg_garanzia='.prepare($gg_garanzia).','.
+            ' servizio='.prepare($servizio).','.
             ' volume='.prepare($volume).','.
             ' peso_lordo='.prepare($peso_lordo).','.
             ' componente_filename='.prepare($componente_filename).','.

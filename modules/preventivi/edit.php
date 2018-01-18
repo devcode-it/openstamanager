@@ -139,9 +139,11 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
     <div class="panel-body">
         <?php if ($records[0]['stato'] != 'Pagato') {
     ?>
-        <div class="pull-left">
-            <a class="btn btn-primary" data-href="<?php echo $rootdir ?>/modules/preventivi/edit_riga.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> Riga</a><br>
-        </div>
+
+            <a class="btn btn-primary" data-href="<?php echo $rootdir ?>/modules/preventivi/edit_riga.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> Riga</a>
+
+            <a class="btn btn-primary" data-href="<?php echo $rootdir ?>/modules/preventivi/add_descrizione.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup"><i class="fa fa-plus"></i> Descrizione</a>
+
         <?php
 
 } ?>

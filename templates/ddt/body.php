@@ -67,41 +67,55 @@ foreach ($rs_gen as $r) {
 
     echo '
         </td>';
-
-    echo "
-        <td class='text-center'>
-            ".Translator::numberToLocale($r['qta']).' '.$r['um'].'
+        
+    echo '
+        <td class="text-center">';
+    if($r['is_descrizione']==0){
+        echo 
+            Translator::numberToLocale($r['qta']).' '.$r['um'];
+    }
+    echo '
         </td>';
 
     if ($mostra_prezzi) {
-        echo "
-        <td class='text-right'>
-            ".Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;
+        echo '
+        <td class="text-right">';
+        if($r['is_descrizione']==0){
+            echo 
+            Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
+        }
+        echo '
         </td>';
 
         // Imponibile
         echo "
-        <td class='text-right'>
-            ".Translator::numberToLocale($r['subtotale']).' &euro;';
+        <td class='text-right'>";
+        if($r['is_descrizione']==0){
+            echo
+            Translator::numberToLocale($r['subtotale']).' &euro;';
 
-        if ($r['sconto'] > 0) {
-            if ($count <= 1) {
-                $count += 0.4;
+            if ($r['sconto'] > 0) {
+                if ($count <= 1) {
+                    $count += 0.4;
+                }
+                echo '
+                <br><small class="help-block">- '.tr('sconto _TOT_ _TYPE_', [
+                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                ]).'</small>';
             }
-            echo '
-            <br><small class="help-block">- '.tr('sconto _TOT_ _TYPE_', [
-                '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
-            ]).'</small>';
         }
-
         echo '
         </td>';
 
         // Iva
         echo "
-        <td class='text-center'>
-            ".Translator::numberToLocale($r['perc_iva']).'
+        <td class='text-center'>";
+        if($r['is_descrizione']==0){
+            echo
+            Translator::numberToLocale($r['perc_iva']);
+        }
+        echo '
         </td>';
     }
     echo '

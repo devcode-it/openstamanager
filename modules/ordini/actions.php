@@ -189,6 +189,17 @@ switch (post('op')) {
             }
         }
         break;
+        
+    case 'adddescrizione':
+        if (!empty($id_record)) {
+            $descrizione = post('descrizione');
+            $query = 'INSERT INTO or_righe_ordini(idordine, descrizione, is_descrizione) VALUES('.prepare($id_record).', '.prepare($descrizione).', 1)';
+        
+            if ($dbo->query($query)) {
+                $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
+            }
+        }
+        break;
 
     // Scollegamento articolo da ordine
     case 'unlink_articolo':
@@ -253,11 +264,12 @@ switch (post('op')) {
             $sconto = $sconto * $qta;
 
             // Lettura idarticolo dalla riga documento
-            $rs = $dbo->fetchArray('SELECT idordine, idarticolo, qta, abilita_serial FROM or_righe_ordini WHERE id='.prepare($idriga));
+            $rs = $dbo->fetchArray('SELECT idordine, idarticolo, qta, abilita_serial, is_descrizione FROM or_righe_ordini WHERE id='.prepare($idriga));
             $idarticolo = $rs[0]['idarticolo'];
             $old_qta = $rs[0]['qta'];
             $idordine = $rs[0]['idordine'];
             $abilita_serial = $rs[0]['abilita_serial'];
+            $is_descrizione = $rs[0]['is_descrizione'];
 
             // Controllo per gestire i serial
             if (!empty($idarticolo)) {
@@ -275,8 +287,12 @@ switch (post('op')) {
             $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
             $desc_iva = $rs[0]['descrizione'];
 
-            // Modifica riga generica sul documento
-            $query = 'UPDATE or_righe_ordini SET idiva='.prepare($idiva).', desc_iva='.prepare($rs[0]['descrizione']).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
+            if($is_descrizione==0){
+                // Modifica riga generica sul documento
+                $query = 'UPDATE or_righe_ordini SET idiva='.prepare($idiva).', desc_iva='.prepare($rs[0]['descrizione']).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
+            }else{
+                $query = 'UPDATE or_righe_ordini SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga);
+            }
             if ($dbo->query($query)) {
                 $_SESSION['infos'][] = tr('Riga modificata!');
 

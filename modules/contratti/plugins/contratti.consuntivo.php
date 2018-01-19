@@ -104,16 +104,21 @@ if (!empty($rsi)) {
                 $sconto_ore = ($r['sconto'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['sconto']).' &euro;</span>' : '';
                 $sconto_km = ($r['scontokm'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['scontokm']).' &euro;</span>' : '';
 
+                // Aggiungo lo sconto globale nel totale ore
+                if( $int['sconto_globale'] > 0 ){
+                    $sconto_ore .= ' <span class="label label-danger">'.Translator::numberToLocale(-$int['sconto_globale']).' &euro;</span>';
+                }
+
                 echo '
                 <tr>
                     <td>'.$r['ragione_sociale'].'</td>
                     <td>'.$r['idtipointervento'].'</td>
                     <td class="text-right">'.Translator::numberToLocale($r['ore']).'</td>
                     <td class="text-right">'.Translator::numberToLocale($r['km']).'</td>
-                    <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_ore_consuntivo_tecnico'] - $r['prezzo_dirittochiamata_tecnico']).'</td>
+                    <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_ore_consuntivo_tecnico']).'</td>
                     <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_km_consuntivo_tecnico']).'</td>
                     <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_dirittochiamata_tecnico']).'</td>
-                    <td class="text-right success">'.Translator::numberToLocale($r['prezzo_ore_consuntivo'] - $r['prezzo_dirittochiamata']).$sconto_ore.'</td>
+                    <td class="text-right success">'.Translator::numberToLocale($r['prezzo_ore_consuntivo']).$sconto_ore.'</td>
                     <td class="text-right success">'.Translator::numberToLocale($r['prezzo_km_consuntivo']).$sconto_km.'</td>
                     <td class="text-right success">'.Translator::numberToLocale($r['prezzo_dirittochiamata']).'</td>
                 </tr>';

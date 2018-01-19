@@ -164,13 +164,13 @@ function get_costi_intervento($id_intervento)
 
     $tecnici = $dbo->fetchArray('SELECT
     COALESCE(SUM(
-        ROUND(prezzo_ore_consuntivo_tecnico, '.$decimals.') - ROUND(prezzo_dirittochiamata_tecnico, '.$decimals.')
+        ROUND(prezzo_ore_consuntivo_tecnico, '.$decimals.')
     ), 0) AS manodopera_costo,
     COALESCE(SUM(
-        ROUND(prezzo_ore_consuntivo, '.$decimals.') - ROUND(prezzo_dirittochiamata, '.$decimals.')
+        ROUND(prezzo_ore_consuntivo, '.$decimals.')
     ), 0) AS manodopera_addebito,
     COALESCE(SUM(
-        ROUND(prezzo_ore_consuntivo, '.$decimals.') - ROUND(prezzo_dirittochiamata, '.$decimals.') - ROUND(sconto, '.$decimals.')
+        ROUND(prezzo_ore_consuntivo, '.$decimals.') - ROUND(sconto, '.$decimals.')
     ), 0) AS manodopera_scontato,
 
     COALESCE(SUM(

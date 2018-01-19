@@ -120,10 +120,10 @@ switch (post('op')) {
             }
 
             // Totali
-            $prezzo_ore_consuntivo = $prezzo_ore_unitario * $ore + $prezzo_dirittochiamata;
+            $prezzo_ore_consuntivo = $prezzo_ore_unitario * $ore;
             $prezzo_km_consuntivo = $prezzo_km_unitario * $km;
 
-            $prezzo_ore_consuntivo_tecnico = $prezzo_ore_unitario_tecnico * $ore + $prezzo_dirittochiamata_tecnico;
+            $prezzo_ore_consuntivo_tecnico = $prezzo_ore_unitario_tecnico * $ore;
             $prezzo_km_consuntivo_tecnico = $prezzo_km_unitario_tecnico * $km;
 
             // Sconti

@@ -993,3 +993,7 @@ ALTER TABLE `dt_righe_ddt` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idart
 ALTER TABLE `co_righe_preventivi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idarticolo`; 
 ALTER TABLE `co_righe2_contratti` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idarticolo`;
 ALTER TABLE `or_righe_ordini` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idarticolo`;
+
+
+-- Aggiunta flag "servizio" su articolo
+ALTER TABLE `mg_articoli` ADD `servizio` TINYINT(1) NOT NULL AFTER `id_sottocategoria`;

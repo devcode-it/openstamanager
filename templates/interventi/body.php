@@ -450,8 +450,10 @@ if ($mostra_prezzi) {
 
     $sconto_addebito = $costi_intervento['totale_addebito'] - $costi_intervento['totale_scontato'];
 
+    $totale_sconto = $costi_intervento['sconto_globale'] + $sconto_addebito;
+
     // Eventuale sconto totale
-    if (!empty($sconto_addebito)) {
+    if (!empty($totale_sconto)) {
         echo '
         <tr>
             <td colspan="4" class="text-right">
@@ -459,35 +461,21 @@ if ($mostra_prezzi) {
             </td>
 
             <th class="text-center">
-                <b>-'.Translator::numberToLocale($sconto_addebito).' &euro;</b>
+                <b>-'.Translator::numberToLocale($totale_sconto).' &euro;</b>
             </th>
         </tr>';
-    }
-
-    // Eventuale sconto incondizionato
-    if (!empty($costi_intervento['sconto_globale'])) {
-        echo '
-    <tr>
-        <td colspan="4" class="text-right">
-            <b>'.tr('Sconto incondizionato', [], ['upper' => true]).':</b>
-        </td>
-
-        <th class="text-center">
-            <b>-'.Translator::numberToLocale($costi_intervento['sconto_globale']).' &euro;</b>
-        </th>
-    </tr>';
 
         // Imponibile scontato
         echo '
-    <tr>
-        <td colspan="4" class="text-right">
-            <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
-        </td>
+        <tr>
+            <td colspan="4" class="text-right">
+                <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
+            </td>
 
-        <th class="text-center">
-            <b>'.Translator::numberToLocale($costi_intervento['totale']).' &euro;</b>
-        </th>
-    </tr>';
+            <th class="text-center">
+                <b>'.Translator::numberToLocale($costi_intervento['totale']).' &euro;</b>
+            </th>
+        </tr>';
     }
 
     // Leggo iva da applicare

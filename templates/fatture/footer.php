@@ -289,7 +289,7 @@ if (empty($records[0]['ritenutaacconto']) && empty($records[0]['rivalsainps']) &
         </th>
 
         <th class="text-center small" colspan="'.$second_colspan.'">
-            '.tr('Totale documento', [], ['upper' => true]).'
+            '.tr('Netto a pagare', [], ['upper' => true]).'
         </th>
     </tr>
 

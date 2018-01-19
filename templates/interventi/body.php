@@ -71,6 +71,14 @@ echo '
         </td>
     </tr>';
 
+// Tipo intervento
+echo '
+    <tr>
+        <td colspan="4">
+            <b>'.tr('Tipo intervento').':</b> '.$records[0]['tipointervento'].'
+        </td>
+    </tr>';
+
 // Richiesta
 echo '
     <tr>
@@ -352,7 +360,7 @@ echo '
 if ($mostra_prezzi) {
     $ore = get_ore_intervento($idintervento);
 
-    $costo_orario = $records[0]['tot_ore_consuntivo'] - $records[0]['tot_dirittochiamata'];
+    $costo_orario = $records[0]['tot_ore_consuntivo'];
 
     if ($ore > 0) {
         $costo_orario /= $ore;
@@ -360,26 +368,19 @@ if ($mostra_prezzi) {
 
     echo '
         <td class="text-center">
-        '.tr('Ore lavorate').':<br/><b>'.Translator::numberToLocale($ore).'</b>
+            <small>'.tr('Ore lavorate').':</small><br/><b>'.Translator::numberToLocale($ore).'</b>
         </td>';
 
     // Costo orario
     echo '
         <td class="text-center">
-            '.tr('Costo orario').':<br/><b>'.Translator::numberToLocale($costo_orario).'</b>';
-
-    if ($records[0]['tot_dirittochiamata'] != 0) {
-        echo '
-            <small> + '.Translator::numberToLocale($records[0]['tot_dirittochiamata']).' d.c.</small>';
-    }
-
-    echo '
+            <small>'.tr('Costo orario').':</small><br/><b>'.Translator::numberToLocale($costo_orario).' &euro;</b>
         </td>';
 
     // Costo totale manodopera
     echo '
         <td colspan="2" class="text-center">
-        '.tr('Manodopera').':<br/><b>'.Translator::numberToLocale($costi_intervento['manodopera_scontato']).'</b>
+            <small>'.tr('Totale manodopera').':</small><br/><b>'.Translator::numberToLocale($costi_intervento['manodopera_scontato']).' &euro;</b>
         </td>';
 } else {
     echo '
@@ -389,11 +390,49 @@ if ($mostra_prezzi) {
 // Timbro e firma
 $firma = !empty($records[0]['firma_file']) ? '<img src="'.$docroot.'/files/interventi/'.$records[0]['firma_file'].'" style="width:70mm;">' : '';
 echo '
-        <td class="text-center" style="font-size:8pt;height:30mm;vertical-align:bottom">
+        <td rowspan="2" class="text-center" style="font-size:8pt;height:30mm;vertical-align:bottom">
             '.$firma.'<br>
             <i>('.tr('Timbro e firma leggibile').'.)</i>
         </td>
     </tr>';
+
+
+// Totale km
+echo '
+    <tr>';
+
+if ($mostra_prezzi) {
+    $km = $records[0]['tot_km'];
+
+    $costo_km = $records[0]['tot_km_consuntivo'];
+
+    echo '
+        <td class="text-center">
+            <small>'.tr('Km percorsi').':</small><br/><b>'.Translator::numberToLocale($km).'</b>
+        </td>';
+
+    // Costo totale km
+    echo '
+        <td class="text-center">
+            <small>'.tr('Costo km').':</small><br/><b>'.Translator::numberToLocale($costo_km).' &euro;</b>
+        </td>';
+
+    // Costo diritto di chiamata
+    echo '
+    <td colspan="2" class="text-center">';
+
+    if ($records[0]['tot_dirittochiamata'] > 0) {
+        echo '<small>'.tr('Diritto di chiamata').':</small><br/><b>'.Translator::numberToLocale($records[0]['tot_dirittochiamata']).' &euro;</b>';
+    } else {
+        echo '<small>'.tr('Diritto di chiamata').':</small><br/><b>-</b>';
+    }
+
+    echo '</td>';
+} else {
+    echo '
+        <td colspan="4"></td>';
+}
+
 
 // TOTALE COSTI FINALI
 if ($mostra_prezzi) {
@@ -405,9 +444,25 @@ if ($mostra_prezzi) {
         </td>
 
         <th class="text-center">
-            <b>'.Translator::numberToLocale($costi_intervento['totale_scontato']).' &euro;</b>
+            <b>'.Translator::numberToLocale($costi_intervento['totale_addebito']).' &euro;</b>
         </th>
     </tr>';
+
+    $sconto_addebito = $costi_intervento['totale_addebito'] - $costi_intervento['totale_scontato'];
+
+    // Eventuale sconto totale
+    if (!empty($sconto_addebito)) {
+        echo '
+        <tr>
+            <td colspan="4" class="text-right">
+            <b>'.tr('Sconto', [], ['upper' => true]).':</b>
+            </td>
+
+            <th class="text-center">
+                <b>-'.Translator::numberToLocale($sconto_addebito).' &euro;</b>
+            </th>
+        </tr>';
+    }
 
     // Eventuale sconto incondizionato
     if (!empty($costi_intervento['sconto_globale'])) {

@@ -5,6 +5,7 @@ include_once __DIR__.'/../../core.php';
 // Necessaria per la funzione add_movimento_magazzino
 include_once $docroot.'/modules/articoli/modutil.php';
 include_once $docroot.'/modules/interventi/modutil.php';
+include_once $docroot.'/modules/ddt/modutil.php';
 
 $module = Modules::get($id_module);
 
@@ -776,8 +777,10 @@ switch (post('op')) {
             $subtot = $prezzo * $qta;
 
             // Lettura idarticolo dalla riga documento
-            $rs = $dbo->fetchArray('SELECT iddocumento, idarticolo, qta, abilita_serial, is_descrizione FROM co_righe_documenti WHERE id='.prepare($idriga));
+            $rs = $dbo->fetchArray('SELECT * FROM co_righe_documenti WHERE id='.prepare($idriga));
             $idarticolo = $rs[0]['idarticolo'];
+            $idddt = $rs[0]['idddt'];
+            $idordine = $rs[0]['idordine'];
             $old_qta = $rs[0]['qta'];
             $iddocumento = $rs[0]['iddocumento'];
             $abilita_serial = $rs[0]['abilita_serial'];
@@ -790,6 +793,11 @@ switch (post('op')) {
 
                     return;
                 }
+            }
+            
+            // Se c'è un collegamento ad un ddt, aggiorno la quantità evasa
+            if (!empty($idddt)) {
+                $dbo->query( 'UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$old_qta.' + '.$qta.' WHERE descrizione='.prepare($rs[0]['descrizione']).' AND idarticolo='.prepare($rs[0]['idarticolo']).' AND idddt='.prepare($idddt).' AND idiva='.prepare($rs[0]['idiva']) );
             }
 
             // Calcolo iva
@@ -919,15 +927,6 @@ switch (post('op')) {
 
                 // Scalo la quantità dal ddt
                 $dbo->query('UPDATE dt_righe_ddt SET qta_evasa = qta_evasa+'.$qta.' WHERE id='.prepare($idrigaddt));
-                
-                // Aggiorno lo stato ddt in base alle quantità totali evase
-                $rs = $dbo->fetchArray( "SELECT SUM(qta) AS tot_qta, SUM(qta_evasa) AS tot_qta_evasa FROM dt_righe_ddt WHERE idddt=".prepare($idddt) );
-                
-                if( $rs[0]['tot_qta_evasa'] == $rs[0]['tot_qta'] ){
-                    $dbo->query( 'UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="Fatturato")' );
-                } elseif( $rs[0]['tot_qta_evasa'] > 0 ){
-                    $dbo->query( 'UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="Parzialmente fatturato")' );
-                }
             }
         }
 
@@ -1319,6 +1318,16 @@ switch (post('op')) {
         break;
 }
 
+// Aggiornamento stato dei ddt presenti in questa fattura in base alle quantità totali evase
+if( !empty($id_record) ){
+    $rs = $dbo->fetchArray( 'SELECT idddt FROM co_righe_documenti WHERE iddocumento='.prepare($id_record) );
+    
+    for( $i=0; $i<sizeof($rs); $i++ ){
+        $dbo->query( 'UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="'.get_stato_ddt($rs[$i]['idddt']).'")' );
+    }
+}
+
+// Aggiornamento sconto sulle righe
 if (post('op') !== null && post('op') != 'update') {
     aggiorna_sconto([
         'parent' => 'co_documenti',

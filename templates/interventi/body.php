@@ -283,19 +283,19 @@ echo '
             </th>
         </tr>
         <tr>
-            <th class="text-center" style="font-size:8pt;width:30%">
+            <th class="text-center" style="font-size:8pt;">
                 <b>'.tr('Tecnico').'</b>
             </th>
 
-            <th class="text-center" style="font-size:8pt;width:15%">
+            <th class="text-center" style="font-size:8pt;width:14%">
                 <b>'.tr('Data').'</b>
             </th>
 
-            <th class="text-center" style="font-size:8pt;width:10%">
+            <th class="text-center" style="font-size:8pt;width:7%">
                 <b>'.tr('Dalle').'</b>
             </th>
 
-            <th class="text-center" style="font-size:8pt;width:10%">
+            <th class="text-center" style="font-size:8pt;width:7%">
                 <b>'.tr('Alle').'</b>
             </th>
 
@@ -353,38 +353,26 @@ foreach ($rst as $i => $r) {
     </tr>';
 }
 
-echo '
-    <tr>';
+
 
 // Ore lavorate
-if ($mostra_prezzi) {
-    $ore = get_ore_intervento($idintervento);
+$ore = get_ore_intervento($idintervento);
 
-    $costo_orario = $records[0]['tot_ore_consuntivo'];
-
-    if ($ore > 0) {
-        $costo_orario /= $ore;
-    }
-
-    echo '
+echo '
+    <tr>
         <td class="text-center">
             <small>'.tr('Ore lavorate').':</small><br/><b>'.Translator::numberToLocale($ore).'</b>
         </td>';
 
-    // Costo orario
+// Costo totale manodopera
+if ($mostra_prezzi) {
     echo '
-        <td class="text-center">
-            <small>'.tr('Costo orario').':</small><br/><b>'.Translator::numberToLocale($costo_orario).' &euro;</b>
-        </td>';
-
-    // Costo totale manodopera
-    echo '
-        <td colspan="2" class="text-center">
-            <small>'.tr('Totale manodopera').':</small><br/><b>'.Translator::numberToLocale($costi_intervento['manodopera_scontato']).' &euro;</b>
+        <td colspan="3" class="text-center">
+            <small>'.tr('Totale manodopera').':</small><br/><b>'.Translator::numberToLocale($costi_intervento['manodopera_addebito']).' &euro;</b>
         </td>';
 } else {
     echo '
-        <td colspan="4"></td>';
+        <td colspan="3" class="text-center">-</td>';
 }
 
 // Timbro e firma
@@ -399,38 +387,33 @@ echo '
 
 // Totale km
 echo '
-    <tr>';
+    <tr>
+        <td class="text-center">
+            <small>'.tr('Km percorsi').':</small><br/><b>'.Translator::numberToLocale($records[0]['tot_km']).'</b>
+        </td>';
 
+
+// Costo trasferta
 if ($mostra_prezzi) {
-    $km = $records[0]['tot_km'];
-
-    $costo_km = $records[0]['tot_km_consuntivo'];
-
     echo '
         <td class="text-center">
-            <small>'.tr('Km percorsi').':</small><br/><b>'.Translator::numberToLocale($km).'</b>
+            <small>'.tr('Costi di trasferta').':</small><br/><b>'.Translator::numberToLocale($records[0]['tot_km_consuntivo']).' &euro;</b>
         </td>';
-
-    // Costo totale km
-    echo '
-        <td class="text-center">
-            <small>'.tr('Costo km').':</small><br/><b>'.Translator::numberToLocale($costo_km).' &euro;</b>
-        </td>';
-
-    // Costo diritto di chiamata
-    echo '
-    <td colspan="2" class="text-center">';
-
-    if ($records[0]['tot_dirittochiamata'] > 0) {
-        echo '<small>'.tr('Diritto di chiamata').':</small><br/><b>'.Translator::numberToLocale($records[0]['tot_dirittochiamata']).' &euro;</b>';
-    } else {
-        echo '<small>'.tr('Diritto di chiamata').':</small><br/><b>-</b>';
-    }
-
-    echo '</td>';
 } else {
     echo '
-        <td colspan="4"></td>';
+        <td class="text-center">-</td>';
+}
+
+// Diritto di chiamata
+if ($mostra_prezzi) {
+    echo '
+        <td class="text-center" colspan="2">
+            <small>'.tr('Diritto di chiamata').':</small><br/><b>'.Translator::numberToLocale($records[0]['tot_dirittochiamata']).' &euro;</b>
+        </td>';
+} else {
+    echo '
+        <td class="text-center" colspan="2">-</td>
+        ';
 }
 
 

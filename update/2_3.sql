@@ -381,7 +381,7 @@ ALTER TABLE `zz_modules` DROP `level`;
 
 UPDATE `zz_modules` SET `options` = 'menu' WHERE `options` = '';
 
-INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Viste', 'viste', 'SELECT |select| FROM `zz_modules` WHERE 1=1 HAVING 2=2 ORDER BY `name`, `title` ASC', '', 'fa fa-eye', '2.3', '2.3', '1', 1, '1', '1');
+INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Viste', 'viste', 'SELECT |select| FROM `zz_modules` WHERE 1=1 HAVING 2=2 ORDER BY `name`, `title` ASC', '', 'fa fa-eye', '2.3', '2.3', '1', 1, '1', '0');
 
 INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Utenti e permessi', 'utenti', 'SELECT |select| FROM `zz_groups` WHERE 1=1 HAVING 2=2 ORDER BY `id`, `nome` ASC', '', 'fa fa-lock', '2.3', '2.3', '1', 1, '1', '1');
 

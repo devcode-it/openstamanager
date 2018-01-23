@@ -150,7 +150,7 @@ class DefaultHandler implements HandlerInterface
                 $decimals = $values['decimals'];
             } elseif (starts_with($values['decimals'], 'qta')) {
                 // Se non è previsto un valore minimo, lo imposta a 1
-                $values['min-value'] = isset($values['min-value']) ? $values['min-value'] : 1;
+                $values['min-value'] = isset($values['min-value']) ? $values['min-value'] : 0;
 
                 $decimals = \Settings::get('Cifre decimali per quantità');
                 $values['decimals'] = $decimals;

@@ -332,13 +332,17 @@ function get_stato_ddt($idddt)
 
     $rs = $dbo->fetchArray('SELECT SUM(qta) AS qta, SUM(qta_evasa) AS qta_evasa FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt));
 
-    if ($rs[0]['qta_evasa'] > 0) {
-        if ($rs[0]['qta'] > $rs[0]['qta_evasa']) {
-            return 'Parzialmente fatturato';
-        } elseif ($rs[0]['qta'] == $rs[0]['qta_evasa']) {
-            return 'Fatturato';
-        }
+    if ($rs[0]['qta'] == 0) {
+        return 'Bozza';
     } else {
-        return 'Evaso';
+        if ($rs[0]['qta_evasa'] > 0) {
+            if ($rs[0]['qta'] > $rs[0]['qta_evasa']) {
+                return 'Parzialmente fatturato';
+            } elseif ($rs[0]['qta'] == $rs[0]['qta_evasa']) {
+                return 'Fatturato';
+            }
+        } else {
+            return 'Evaso';
+        }
     }
 }

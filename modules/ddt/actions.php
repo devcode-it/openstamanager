@@ -5,6 +5,7 @@ include_once __DIR__.'/../../core.php';
 // Necessaria per la funzione add_movimento_magazzino
 include_once $docroot.'/modules/articoli/modutil.php';
 include_once $docroot.'/modules/fatture/modutil.php';
+include_once $docroot.'/modules/ordini/modutil.php';
 
 $module = Modules::get($id_module);
 
@@ -357,7 +358,7 @@ switch (post('op')) {
             $subtot = $prezzo * $qta;
 
             // Lettura idarticolo dalla riga ddt
-            $rs = $dbo->fetchArray('SELECT idddt, abilita_serial, idarticolo, idordine, qta FROM dt_righe_ddt WHERE id='.prepare($idriga));
+            $rs = $dbo->fetchArray('SELECT * FROM dt_righe_ddt WHERE id='.prepare($idriga));
             $idarticolo = $rs[0]['idarticolo'];
             $idordine = $rs[0]['idordine'];
             $old_qta = $rs[0]['qta'];
@@ -371,6 +372,11 @@ switch (post('op')) {
 
                     return;
                 }
+            }
+            
+            // Se c'è un collegamento ad un ordine, aggiorno la quantità evasa
+            if (!empty($idddt)) {
+                $dbo->query( 'UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$old_qta.' + '.$qta.' WHERE descrizione='.prepare($rs[0]['descrizione']).' AND idarticolo='.prepare($rs[0]['idarticolo']).' AND idordine='.prepare($idordine).' AND idiva='.prepare($rs[0]['idiva']) );
             }
 
             // Calcolo iva
@@ -483,6 +489,16 @@ switch (post('op')) {
         break;
 }
 
+// Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase
+if( !empty($id_record) ){
+    $rs = $dbo->fetchArray( 'SELECT idordine FROM dt_righe_ddt WHERE idddt='.prepare($id_record) );
+    
+    for( $i=0; $i<sizeof($rs); $i++ ){
+        $dbo->query( 'UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[$i]['idordine']).'")' );
+    }
+}
+
+// Aggiornamento sconto sulle righe
 if (post('op') !== null && post('op') != 'update') {
     aggiorna_sconto([
         'parent' => 'dt_ddt',

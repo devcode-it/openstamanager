@@ -919,6 +919,15 @@ switch (post('op')) {
 
                 // Scalo la quantità dal ddt
                 $dbo->query('UPDATE dt_righe_ddt SET qta_evasa = qta_evasa+'.$qta.' WHERE id='.prepare($idrigaddt));
+                
+                // Aggiorno lo stato ddt in base alle quantità totali evase
+                $rs = $dbo->fetchArray( "SELECT SUM(qta) AS tot_qta, SUM(qta_evasa) AS tot_qta_evasa FROM dt_righe_ddt WHERE idddt=".prepare($idddt) );
+                
+                if( $rs[0]['tot_qta_evasa'] == $rs[0]['tot_qta'] ){
+                    $dbo->query( 'UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="Fatturato")' );
+                } elseif( $rs[0]['tot_qta_evasa'] > 0 ){
+                    $dbo->query( 'UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="Parzialmente fatturato")' );
+                }
             }
         }
 

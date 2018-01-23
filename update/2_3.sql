@@ -997,3 +997,8 @@ ALTER TABLE `or_righe_ordini` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `id
 
 -- Aggiunta flag "servizio" su articolo
 ALTER TABLE `mg_articoli` ADD `servizio` TINYINT(1) NOT NULL AFTER `id_sottocategoria`;
+
+
+-- Aggiunto lo stato ddt "Parzialmente fatturato" e cambiato lo stato "Pagato" in "Fatturato"
+UPDATE `dt_statiddt` SET `descrizione` = 'Fatturato' WHERE `dt_statiddt`.`descrizione` = 'Pagato';
+INSERT INTO `dt_statiddt` (`id`, `descrizione`, `icona`, `created_at`) VALUES (NULL, 'Parzialmente fatturato', 'fa fa-clock-o text-warning', CURRENT_TIMESTAMP);

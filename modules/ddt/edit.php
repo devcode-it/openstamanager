@@ -158,7 +158,7 @@ if ($records[0]['stato'] != 'Evaso') {
             <!-- Stampe -->
 <?php
 
-if ($records[0]['stato'] != 'Evaso') {
+if ( $records[0]['stato'] != 'Pagato') {
     ?>
 				<a class="btn btn-sm btn-info" data-href="<?php echo $rootdir ?>/modules/fatture/crea_documento.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>&documento=fattura" data-toggle="modal" data-title="Crea fattura" data-target="#bs-popup">
                     <i class="fa fa-magic"></i> <?php echo tr('Crea fattura da ddt'); ?>...</i>

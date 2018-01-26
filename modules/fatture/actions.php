@@ -6,6 +6,7 @@ include_once __DIR__.'/../../core.php';
 include_once $docroot.'/modules/articoli/modutil.php';
 include_once $docroot.'/modules/interventi/modutil.php';
 include_once $docroot.'/modules/ddt/modutil.php';
+include_once $docroot.'/modules/ordini/modutil.php';
 
 $module = Modules::get($id_module);
 
@@ -794,15 +795,15 @@ switch (post('op')) {
                     return;
                 }
             }
-            
+
             // Se c'è un collegamento ad un ddt, aggiorno la quantità evasa
             if (!empty($idddt)) {
-                $dbo->query( 'UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$old_qta.' + '.$qta.' WHERE descrizione='.prepare($rs[0]['descrizione']).' AND idarticolo='.prepare($rs[0]['idarticolo']).' AND idddt='.prepare($idddt).' AND idiva='.prepare($rs[0]['idiva']) );
+                $dbo->query('UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$old_qta.' + '.$qta.' WHERE descrizione='.prepare($rs[0]['descrizione']).' AND idarticolo='.prepare($rs[0]['idarticolo']).' AND idddt='.prepare($idddt).' AND idiva='.prepare($rs[0]['idiva']));
             }
-            
+
             // Se c'è un collegamento ad un ordine, aggiorno la quantità evasa
             if (!empty($idddt)) {
-                $dbo->query( 'UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$old_qta.' + '.$qta.' WHERE descrizione='.prepare($rs[0]['descrizione']).' AND idarticolo='.prepare($rs[0]['idarticolo']).' AND idordine='.prepare($idordine).' AND idiva='.prepare($rs[0]['idiva']) );
+                $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$old_qta.' + '.$qta.' WHERE descrizione='.prepare($rs[0]['descrizione']).' AND idarticolo='.prepare($rs[0]['idarticolo']).' AND idordine='.prepare($idordine).' AND idiva='.prepare($rs[0]['idiva']));
             }
 
             // Calcolo iva
@@ -822,11 +823,10 @@ switch (post('op')) {
             $rs = $dbo->fetchArray($query);
             $ritenutaacconto = (($prezzo * $qta) - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
 
-
-            if($is_descrizione==0){
+            if ($is_descrizione == 0) {
                 // Modifica riga generica sul documento
                 $query = 'UPDATE co_righe_documenti SET idconto='.prepare($idconto).', idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', idritenutaacconto='.prepare(post('idritenutaacconto')).', ritenutaacconto='.prepare($ritenutaacconto).', idrivalsainps='.prepare(post('idrivalsainps')).', rivalsainps='.prepare($rivalsainps).', qta='.prepare($qta).' WHERE id='.prepare($idriga).' AND iddocumento='.prepare($iddocumento);
-            }else{
+            } else {
                 // Modifica riga descrizione sul documento
                 $query = 'UPDATE co_righe_documenti SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga).' AND iddocumento='.prepare($iddocumento);
             }
@@ -1324,20 +1324,20 @@ switch (post('op')) {
 }
 
 // Aggiornamento stato dei ddt presenti in questa fattura in base alle quantità totali evase
-if( !empty($id_record) ){
-    $rs = $dbo->fetchArray( 'SELECT idddt FROM co_righe_documenti WHERE iddocumento='.prepare($id_record) );
-    
-    for( $i=0; $i<sizeof($rs); $i++ ){
-        $dbo->query( 'UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="'.get_stato_ddt($rs[$i]['idddt']).'")' );
+if (!empty($id_record)) {
+    $rs = $dbo->fetchArray('SELECT idddt FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
+
+    for ($i = 0; $i < sizeof($rs); ++$i) {
+        $dbo->query('UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="'.get_stato_ddt($rs[$i]['idddt']).'")');
     }
 }
 
 // Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase
-if( !empty($id_record) ){
-    $rs = $dbo->fetchArray( 'SELECT idordine FROM co_righe_documenti WHERE iddocumento='.prepare($id_record) );
-    
-    for( $i=0; $i<sizeof($rs); $i++ ){
-        $dbo->query( 'UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[$i]['idordine']).'")' );
+if (!empty($id_record)) {
+    $rs = $dbo->fetchArray('SELECT idordine FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
+
+    for ($i = 0; $i < sizeof($rs); ++$i) {
+        $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[$i]['idordine']).'")');
     }
 }
 

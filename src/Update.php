@@ -242,7 +242,8 @@ class Update
             if ($database->isInstalled()) {
                 $result = self::getDatabaseVersion();
             } else {
-                $result = end(self::getCoreUpdates());
+                $updatelist = self::getCoreUpdates();
+                $result = end($updatelist);
             }
         }
 

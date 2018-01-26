@@ -68,13 +68,14 @@ foreach ($results as $result) {
 
 							<div class="col-xs-12 col-md-6">
 								{[ "type": "select", "label": "'.tr('Scadenza').'", "name": "scadenza[]", "values": "list=\"1\":\"'.tr('Data fatturazione').'\",\"2\":\"'.tr('Data fatturazione fine mese').'\",\"3\":\"'.tr('Data fatturazione giorno fisso').'\",\"4\":\"'.tr('Data fatturazione fine mese (giorno fisso)').'\"", "value": "';
-    if ($select['giorno'] == 0) {
+
+    if ($result['giorno'] == 0) {
         $select = 1;
-    } elseif ($select['giorno'] == -1) {
+    } elseif ($result['giorno'] == -1) {
         $select = 2;
-    } elseif ($select['giorno'] < -1) {
+    } elseif ($result['giorno'] < -1) {
         $select = 4;
-    } elseif ($select['giorno'] > 0) {
+    } elseif ($result['giorno'] > 0) {
         $select = 3;
     }
     echo $select;

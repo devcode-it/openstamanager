@@ -106,7 +106,8 @@ class Update
         foreach ($modules as $value) {
             $infos = pathinfo($value);
 
-            $module = end(explode('/', dirname($infos['dirname'])));
+            $temp = explode('/', dirname($infos['dirname']));
+            $module = end($temp);
 
             $value = str_replace('_', '.', $infos['filename']);
 

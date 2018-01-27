@@ -199,12 +199,12 @@ switch (post('op')) {
             }
         }
         break;
-        
+
     case 'adddescrizione':
         if (!empty($id_record)) {
             $descrizione = post('descrizione');
             $query = 'INSERT INTO dt_righe_ddt(idddt, descrizione, is_descrizione) VALUES('.prepare($id_record).', '.prepare($descrizione).', 1)';
-        
+
             if ($dbo->query($query)) {
                 $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
             }
@@ -235,7 +235,7 @@ switch (post('op')) {
         foreach ($post['qta_da_evadere'] AS $idriga=>$value) {
             // Processo solo le righe da evadere
             if ($post['evadere'][$idriga] == 'on') {
-            
+
                 $idarticolo = post('idarticolo')[$idriga];
                 $descrizione = post('descrizione')[$idriga];
 
@@ -250,13 +250,19 @@ switch (post('op')) {
                 $idiva = post('idiva')[$idriga];
                 $iva = $post['iva'][$idriga] * $qta;
 
+                $qprc = 'SELECT tipo_sconto, sconto_unitario FROM or_righe_ordini WHERE id='.prepare($idriga);
+                $rsprc = $dbo->fetchArray($qprc);
+
+                $sconto_unitario = $rsprc[0]['sconto_unitario'];
+                $tipo_sconto = $rsprc[0]['tipo_sconto'];
+
                 // Calcolo l'iva indetraibile
                 $q = 'SELECT descrizione, indetraibile FROM co_iva WHERE id='.prepare($idiva);
                 $rs = $dbo->fetchArray($q);
                 $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
 
                 // Inserisco la riga in ddt
-                $dbo->query('INSERT INTO dt_righe_ddt(idddt, idordine, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, um, qta, abilita_serial, `order`) VALUES('.prepare($id_record).', '.prepare($idordine).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($rs[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($um).', '.prepare($qta).', '.prepare($abilita_serial).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($id_record).'))');
+                $dbo->query('INSERT INTO dt_righe_ddt(idddt, idordine, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, abilita_serial, `order`) VALUES('.prepare($id_record).', '.prepare($idordine).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($rs[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', '.prepare($abilita_serial).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($id_record).'))');
                 $riga = $dbo->lastInsertedID();
 
                 // Aggiornamento seriali dalla riga dell'ordine
@@ -373,7 +379,7 @@ switch (post('op')) {
                     return;
                 }
             }
-            
+
             // Se c'è un collegamento ad un ordine, aggiorno la quantità evasa
             if (!empty($idddt)) {
                 $dbo->query( 'UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$old_qta.' + '.$qta.' WHERE descrizione='.prepare($rs[0]['descrizione']).' AND idarticolo='.prepare($rs[0]['idarticolo']).' AND idordine='.prepare($idordine).' AND idiva='.prepare($rs[0]['idiva']) );
@@ -492,7 +498,7 @@ switch (post('op')) {
 // Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase
 if( !empty($id_record) ){
     $rs = $dbo->fetchArray( 'SELECT idordine FROM dt_righe_ddt WHERE idddt='.prepare($id_record) );
-    
+
     for( $i=0; $i<sizeof($rs); $i++ ){
         $dbo->query( 'UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[$i]['idordine']).'")' );
     }

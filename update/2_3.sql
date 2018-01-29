@@ -672,6 +672,7 @@ ALTER TABLE `zz_users` CHANGE `idutente` `id` int(11) NOT NULL AUTO_INCREMENT, A
 -- Aggiunta di chiavi esterne in zz_logs
 ALTER TABLE `zz_logs` DROP `password`, CHANGE `idutente` `id_utente` int(11), CHANGE `timestamp` `timestamp` datetime;
 UPDATE `zz_logs` SET `id_utente` = NULL WHERE `id_utente` = 0;
+DELETE FROM `zz_logs` WHERE `id_utente` IS NOT NULL AND `id_utente` NOT IN (SELECT `id` FROM `zz_users`);
 ALTER TABLE `zz_logs` ADD FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_semaphores
@@ -700,7 +701,13 @@ ALTER TABLE `my_impianto_componenti` ADD FOREIGN KEY (`idsostituto`) REFERENCES 
 
 -- Adeguamento dei contenuti di zz_files
 ALTER TABLE `zz_files` CHANGE `externalid` `id_record` int(11) NOT NULL, ADD `id_module` int(11) NOT NULL AFTER `filename`, ADD `original` varchar(255) NOT NULL AFTER `filename`;
-UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`directory` = `zz_files`.`module`);
+
+-- Adeguamento delle fatture (zz_files)
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di vendita') WHERE `module`= 'fatture' AND `id_record` IN (SELECT `id` FROM `co_documenti` WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `dir` = 'entrata'));
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di acquisto') WHERE `module`= 'fatture' AND `id_record` IN (SELECT `id` FROM `co_documenti` WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `dir` = 'uscita'));
+
+-- Adeguamento generico di zz_files
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`directory` = `zz_files`.`module`) WHERE `id_module` IS NULL;
 ALTER TABLE `zz_files` DROP `module`;
 
 -- Fix del widget 'Tutte le anagrafiche'

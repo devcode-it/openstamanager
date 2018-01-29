@@ -976,7 +976,7 @@ ALTER TABLE `in_interventi` ADD `deleted` TINYINT NOT NULL DEFAULT '0' AFTER `da
 UPDATE `mg_listini` SET `prc_guadagno` = - `prc_guadagno`;
 
 -- Aggiunta pagamento di default "Bonifico bancario"
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `created_at`, `idconto_vendite`, `idconto_acquisti`) VALUES (NULL, 'Bonifico bancario', '0', '10', '100', CURRENT_TIMESTAMP, NULL, NULL);
+INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`) VALUES (NULL, 'Bonifico bancario', '0', '10', '100', NULL, NULL);
 
 -- Per Dashboard e Articoli i widgets vanno in alto
 UPDATE `zz_widgets` SET `location` = 'controller_top' WHERE `zz_widgets`.`id_module` = (SELECT id FROM zz_modules WHERE name = 'Dashboard' ) OR `zz_widgets`.`id_module` = (SELECT id FROM zz_modules WHERE name = 'Articoli' );
@@ -990,7 +990,7 @@ ALTER TABLE `co_righe2_contratti` ADD `idarticolo` INT NOT NULL AFTER `idcontrat
 -- Campo per identificare le righe descrittive documenti/ddt/preventivi/contratti/ordini
 ALTER TABLE `co_righe_documenti` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idcontratto`;
 ALTER TABLE `dt_righe_ddt` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idarticolo`;
-ALTER TABLE `co_righe_preventivi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idarticolo`; 
+ALTER TABLE `co_righe_preventivi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idarticolo`;
 ALTER TABLE `co_righe2_contratti` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idarticolo`;
 ALTER TABLE `or_righe_ordini` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idarticolo`;
 
@@ -1001,4 +1001,4 @@ ALTER TABLE `mg_articoli` ADD `servizio` TINYINT(1) NOT NULL AFTER `id_sottocate
 
 -- Aggiunto lo stato ddt "Parzialmente fatturato" e cambiato lo stato "Pagato" in "Fatturato"
 UPDATE `dt_statiddt` SET `descrizione` = 'Fatturato' WHERE `dt_statiddt`.`descrizione` = 'Pagato';
-INSERT INTO `dt_statiddt` (`id`, `descrizione`, `icona`, `created_at`) VALUES (NULL, 'Parzialmente fatturato', 'fa fa-clock-o text-warning', CURRENT_TIMESTAMP);
+INSERT INTO `dt_statiddt` (`id`, `descrizione`, `icona`) VALUES (NULL, 'Parzialmente fatturato', 'fa fa-clock-o text-warning');

@@ -40,8 +40,8 @@ switch (filter('op')) {
         $rs = true;
 
         foreach ((array) $post['query'] as $c => $k) {
-            // Fix per la protezone contro XSS
-            $post['query'][$c] = htmlspecialchars_decode($post['query'][$c], ENT_QUOTES);
+            // Fix per la protezone contro XSS, che interpreta la sequenza "<testo" come un tag HTML
+            $post['query'][$c] = $_POST['query'][$c];
 
             if (check_query($post['query'][$c])) {
                 $array = [

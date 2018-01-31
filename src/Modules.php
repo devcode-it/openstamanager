@@ -316,7 +316,15 @@ class Modules
                 $query .= ' LEFT JOIN `zz_modules` AS `t'.$i.'` ON `t'.$i.'`.`parent` = `t'.($i - 1).'`.`id`';
             }
 
-            $query .= ' WHERE `t0`.`parent` IS NULL ORDER BY `t0`.`order` ASC, `t1`.`order` ASC, `t2`.`order` ASC';
+            $query .= ' WHERE `t0`.`parent` IS NULL ORDER BY ';
+
+            for ($i = 0; $i < $depth; ++$i) {
+                $query .= '`t'.$i.'`.`order` ASC';
+
+                if ($i != $depth - 1) {
+                    $query .= ', ';
+                }
+            }
 
             $modules = $database->fetchArray($query);
 

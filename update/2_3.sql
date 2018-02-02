@@ -375,7 +375,7 @@ CREATE TABLE IF NOT EXISTS `zz_semaphores` (
 ) ENGINE=InnoDB;
 
 -- Aggiornamento zz_modules
-INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `level`, `parent`, `default`, `enabled`) VALUES (NULL, 'Strumenti', '', '', '', 'fa fa-cog', '2.3', '2.3', '1', '0', '', '1', '1');
+INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `level`, `parent`, `default`, `enabled`) VALUES (NULL, 'Strumenti', '', '', '', 'fa fa-cog', '2.3', '2.3', '1', '0', 0, '1', '1');
 
 ALTER TABLE `zz_modules` DROP `level`;
 

@@ -65,13 +65,13 @@ foreach ($replace as $prefix => $values) {
     if (!empty($values['provincia'])) {
         $citta .= ' ('.$values['provincia'].')';
     }
+
+    $values['citta_full'] = $citta;
     
     // Salvataggio dei campi come variabili PHP
     foreach ($values as $key => $value) {
         ${$prefix.$key} = $value;
     }
-
-    $values['citta_full'] = $citta;
 
     // Completamento dei campi minimi
     if ($key == 'c_') {

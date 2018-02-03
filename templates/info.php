@@ -53,11 +53,7 @@ foreach ($replace as $prefix => $values) {
         unset($values[$key]);
     }
 
-    // Salvataggio dei campi come variabili PHP
-    foreach ($values as $key => $value) {
-        ${$prefix.$key} = $value;
-    }
-
+    
     // Eventuali estensioni dei contenuti
     $citta = '';
     if (!empty($values['cap'])) {
@@ -68,6 +64,11 @@ foreach ($replace as $prefix => $values) {
     }
     if (!empty($values['provincia'])) {
         $citta .= ' ('.$values['provincia'].')';
+    }
+    
+    // Salvataggio dei campi come variabili PHP
+    foreach ($values as $key => $value) {
+        ${$prefix.$key} = $value;
     }
 
     $values['citta_full'] = $citta;

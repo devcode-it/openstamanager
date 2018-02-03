@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/core.php';
 
-if (!isset($superselect)) {
+if (!isset($resource)) {
     $op = empty($op) ? filter('op') : $op;
     $search = filter('q');
 
@@ -11,10 +11,13 @@ if (!isset($superselect)) {
     }
     $elements = (!is_array($elements)) ? explode(',', $elements) : $elements;
 
-    $results = AJAX::getSelectValues($op, $elements, $search);
+    $results = AJAX::select($op, $elements, $search);
 
     echo json_encode($results);
-} else {
+}
+
+// Casi particolari
+else {
     switch ($resource) {
         case 'articoli':
             $query = 'SELECT mg_articoli.*, co_iva.descrizione AS iva_vendita FROM mg_articoli LEFT OUTER JOIN co_iva ON mg_articoli.idiva_vendita=co_iva.id |where| ORDER BY mg_articoli.id_categoria ASC, mg_articoli.id_sottocategoria ASC';
@@ -201,7 +204,7 @@ if (!isset($superselect)) {
 
                 $custom['contenuto'] = 'contenuto';
 
-                $results = completeResults($query, $where, $filter, $search, $custom);
+                $results = AJAX::completeResults($query, $where, $filter, $search, $custom);
                 foreach ($results as $key => $value) {
                     $matricola = \Util\Ini::getValue($r['contenuto'], 'Matricola');
 

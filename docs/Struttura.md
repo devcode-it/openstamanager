@@ -13,7 +13,7 @@ currentMenu: struttura
 - [Struttura](#struttura)
 - [Root](#root)
     - [add.php](#addphp)
-    - [ajax_autocomplete.php](#ajax_autocompletephp)
+    - [ajax_complete.php](#ajax_completephp)
     - [ajax_dataload.php](#ajax_dataloadphp)
     - [ajax_select.php](#ajax_selectphp)
     - [bug.php](#bugphp)
@@ -107,7 +107,7 @@ Il file `add.php` è dedicato alla gestione dei form di creazione nuovi elementi
 
 In particolare si occupa parallelamente della funzionalità di aggiunta al volo, visibile in azione nei modulo **Interventi**, **Articoli** e in alcuni altri punti del software.
 
-### ajax_autocomplete.php
+### ajax_complete.php
 
 Il file `ajax_dataload.php` gestisce il caricamento dinamico dei dati in varie sezioni del sito, relativamente alle operazioni di auto-completamento dei form e della ricerca globale.
 

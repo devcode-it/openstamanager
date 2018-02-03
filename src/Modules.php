@@ -80,6 +80,24 @@ class Modules
     }
 
     /**
+     * Restituisce l'elenco dei moduli con permessi di accesso accordati.
+     *
+     * @return array
+     */
+    public static function getAvailableModules()
+    {
+        // Individuazione dei moduli con permesso di accesso
+        $modules = self::getModules();
+        foreach ($modules as $key => $module) {
+            if ($module['permessi'] == '-') {
+                unset($modules[$key]);
+            }
+        }
+
+        return $modules;
+    }
+
+    /**
      * Restituisce le informazioni relative a un singolo modulo specificato.
      *
      * @param string|int $module

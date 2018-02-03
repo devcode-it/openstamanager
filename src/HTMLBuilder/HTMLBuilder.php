@@ -123,7 +123,9 @@ class HTMLBuilder
     protected static function generate($json)
     {
         // Elaborazione del formato
-        list($values, $extras) = self::elaborate($json);
+        $elaboration = self::elaborate($json);
+        $values = $elaboration[0];
+        $extras = $elaboration[1];
 
         $result = null;
         if (!empty($values)) {

@@ -17,9 +17,9 @@ $totale_iva = 0;
 $totale = 0;
 
 if ($dir == 'entrata') {
-    $addwhere = $additional_where['Fatture di vendita'];
+    $addwhere = Modules::getAdditionalsQuery('Fatture di vendita');
 } else {
-    $addwhere = $additional_where['Fatture di acquisto'];
+    $addwhere = Modules::getAdditionalsQuery('Fatture di acquisto');
 }
 
 // Ciclo tra le fatture selezionate

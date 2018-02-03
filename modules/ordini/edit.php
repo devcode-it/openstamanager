@@ -42,9 +42,12 @@ if ($module['name'] == 'Ordini cliente') {
 
 			<div class="row">
 				<div class="col-md-3">
-					<?php
+                    <?php
+
+                    echo Modules::link('Anagrafiche', $records[0]['idanagrafica'], null, null, 'class="pull-right"');
+
                     if ($dir == 'entrata') {
-                        ?>
+                    ?>
 						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted=0 ORDER BY ragione_sociale", "value": "$idanagrafica$", "ajax-source": "clienti" ]}
 					<?php
                     } else {
@@ -93,6 +96,7 @@ if ($module['name'] == 'Ordini cliente') {
                         ?>
 				<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/ordini/add_articolo.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup"><i class="fa fa-plus"></i> Articolo</a>
 				<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/ordini/add_riga.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> Riga generica</a>
+                <a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/ordini/add_descrizione.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup"><i class="fa fa-plus"></i> Descrizione</a>
 			<?php
                     } ?>
 		</div>

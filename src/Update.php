@@ -20,35 +20,12 @@ class Update
         $database_ready = $database->isConnected() && $database->fetchNum("SHOW TABLES LIKE 'updates'");
 
         // Individuazione di tutti gli aggiornamenti fisicamente presenti
-        $results = [];
-
         // Aggiornamenti del gestionale
-        $core = (array) glob(DOCROOT.'/update/*.{php,sql}', GLOB_BRACE);
-        foreach ($core as $value) {
-            $infos = pathinfo($value);
-            $value = str_replace('_', '.', $infos['filename']);
-
-            if (self::isVersion($value)) {
-                $results[] = $value;
-            }
-        }
-
+        $core = self::getCoreUpdates();
         // Aggiornamenti dei moduli
-        $modules = (array) glob(DOCROOT.'/modules/*/update/*.{php,sql}', GLOB_BRACE);
-        foreach ($modules as $value) {
-            $infos = pathinfo($value);
+        $modules = self::getModulesUpdates();
 
-            $module = end(explode('/', dirname($infos['dirname'])));
-
-            $value = str_replace('_', '.', $infos['filename']);
-
-            if (self::isVersion($value)) {
-                $results[] = $module.'_'.$value;
-            }
-        }
-
-        $results = array_unique($results);
-        asort($results);
+        $results = array_merge($core, $modules);
 
         // Individuazione di tutti gli aggiornamenti inseriti
         $updates = ($database_ready) ? $database->fetchArray('SELECT * FROM `updates`') : [];
@@ -87,6 +64,62 @@ class Update
             // Normalizzazione di charset e collation
             self::normalizeDatabase($database->getDatabaseName());
         }
+    }
+
+    /**
+     * Restituisce l'elenco degli aggiornamento del gestionale presenti nella cartella <b>update<b>.
+     *
+     * @return array
+     */
+    protected static function getCoreUpdates()
+    {
+        $results = [];
+
+        // Aggiornamenti del gestionale
+        $core = (array) glob(DOCROOT.'/update/*.{php,sql}', GLOB_BRACE);
+        foreach ($core as $value) {
+            $infos = pathinfo($value);
+            $value = str_replace('_', '.', $infos['filename']);
+
+            if (self::isVersion($value)) {
+                $results[] = $value;
+            }
+        }
+
+        $results = array_unique($results);
+        asort($results);
+
+        return $results;
+    }
+
+    /**
+     * Restituisce l'elenco degli aggiornamento dei moduli, presenti nella cartella <b>update<b> dei singoli moduli.
+     *
+     * @return array
+     */
+    protected static function getModulesUpdates()
+    {
+        $results = [];
+
+        // Aggiornamenti dei moduli
+        $modules = (array) glob(DOCROOT.'/modules/*/update/*.{php,sql}', GLOB_BRACE);
+        foreach ($modules as $value) {
+            $infos = pathinfo($value);
+
+            $temp = explode('/', dirname($infos['dirname']));
+            $module = end($temp);
+
+            $value = str_replace('_', '.', $infos['filename']);
+
+            if (self::isVersion($value)) {
+                $results[] = $module.'_'.$value;
+            }
+        }
+
+        $results = array_unique($results);
+        asort($results);
+
+        return $results;
     }
 
     /**
@@ -205,7 +238,14 @@ class Update
         $result = self::getFile('VERSION');
 
         if (empty($result)) {
-            $result = self::getDatabaseVersion();
+            $database = Database::getConnection();
+
+            if ($database->isInstalled()) {
+                $result = self::getDatabaseVersion();
+            } else {
+                $updatelist = self::getCoreUpdates();
+                $result = end($updatelist);
+            }
         }
 
         return $result;

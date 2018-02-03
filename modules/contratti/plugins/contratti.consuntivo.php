@@ -104,6 +104,11 @@ if (!empty($rsi)) {
                 $sconto_ore = ($r['sconto'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['sconto']).' &euro;</span>' : '';
                 $sconto_km = ($r['scontokm'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['scontokm']).' &euro;</span>' : '';
 
+                // Aggiungo lo sconto globale nel totale ore
+                if( $int['sconto_globale'] > 0 ){
+                    $sconto_ore .= ' <span class="label label-danger">'.Translator::numberToLocale(-$int['sconto_globale']).' &euro;</span>';
+                }
+
                 echo '
                 <tr>
                     <td>'.$r['ragione_sociale'].'</td>

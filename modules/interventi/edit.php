@@ -45,7 +45,7 @@ if (empty($records[0]['firma_file'])) {
 			<!-- RIGA 1 -->
 			<div class="row">
 				<div class="col-md-3">
-					<?php
+                    <?php
                         echo Modules::link('Anagrafiche', $records[0]['idanagrafica'], null, null, 'class="pull-right"');
                     ?>
 					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted=0 ORDER BY ragione_sociale", "value": "$idanagrafica$", "ajax-source": "clienti" ]}
@@ -56,6 +56,9 @@ if (empty($records[0]['firma_file'])) {
 				</div>
 
 				<div class="col-md-3">
+					<?php
+                        echo Modules::link('Anagrafiche', $records[0]['idclientefinale'], null, null, 'class="pull-right"');
+                    ?>
 					{[ "type": "select", "label": "<?php echo tr('Per conto di'); ?>", "name": "idclientefinale", "value": "$idclientefinale$", "ajax-source": "clienti" ]}
 				</div>
 

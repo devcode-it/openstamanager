@@ -62,6 +62,9 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 			<div class="row">
 				<div class="col-md-3">
 					<?php
+
+                    echo Modules::link('Anagrafiche', $records[0]['idanagrafica'], null, null, 'class="pull-right"');
+
                     if ($dir == 'entrata') {
                         ?>
 						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "clienti", "value": "$idanagrafica$" ]}
@@ -298,6 +301,11 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
     echo '
                         <a class="btn btn-sm btn-primary" data-href="'.$rootdir.'/modules/fatture/add_riga.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Riga generica
+                        </a>';
+                        
+    echo '
+                        <a class="btn btn-sm btn-primary" data-href="'.$rootdir.'/modules/fatture/add_descrizione.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup">
+                            <i class="fa fa-plus"></i> Descrizione
                         </a>';
 }
 ?>

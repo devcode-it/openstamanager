@@ -41,7 +41,7 @@ foreach ($rs as $key => $value) {
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Intervento').'", "name": "idintervento", "required": 1, "values": "json='.substr(str_replace('"', '\"', json_encode($rs)), 2, -2).'", "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.descrizione); $(\'#prezzo\').val($data.prezzo);\"" ]}
+            {[ "type": "select", "label": "'.tr('Intervento').'", "name": "idintervento", "required": 1, "values": '.json_encode($rs).', "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.descrizione); $(\'#prezzo\').val($data.prezzo);\"" ]}
         </div>
     </div>';
 

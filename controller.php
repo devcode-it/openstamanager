@@ -2,6 +2,12 @@
 
 include_once __DIR__.'/core.php';
 
+if (!empty($id_record) && !empty($id_module)) {
+    redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
+} elseif (empty($id_module)) {
+    redirect(ROOTDIR.'/index.php');
+}
+
 if (file_exists($docroot.'/include/custom/top.php')) {
     include $docroot.'/include/custom/top.php';
 } else {
@@ -22,10 +28,10 @@ include $docroot.'/actions.php';
 /*
  * Widget top
  */
- 
+
  //se non sono mobile nascondo i widget controller_top
-if (!isMobile()){
-	echo Widgets::addModuleWidgets($id_module, 'controller_top');
+if (!isMobile()) {
+    echo Widgets::addModuleWidgets($id_module, 'controller_top');
 }
 
 // Lettura eventuali plugins modulo da inserire come tab
@@ -87,20 +93,19 @@ echo '
 
 redirectOperation($id_module, $id_record);
 
-/**
+/*
  * Widget laterali.
  */
 // Controllo se ho widget per il lato destro dello schermo, altrimenti non creo la colonna di destra
 
 //se sono mobile pesco anche i widget di controller_top
-if (isMobile()){
-	$extra_where = " OR location = 'controller_top'";
-}else{
-	$extra_where = "";
+if (isMobile()) {
+    $extra_where = " OR location = 'controller_top'";
+} else {
+    $extra_where = '';
 }
 
-
-$result_widgets = $dbo->fetchArray('SELECT `id`, `location`, `class` FROM `zz_widgets` WHERE `id_module`='.prepare($id_module)." AND (`location`='controller_right' ".$extra_where." ) AND `enabled`=1 ORDER BY `order` ASC");
+$result_widgets = $dbo->fetchArray('SELECT `id`, `location`, `class` FROM `zz_widgets` WHERE `id_module`='.prepare($id_module)." AND (`location`='controller_right' ".$extra_where.' ) AND `enabled`=1 ORDER BY `order` ASC');
 if (count($result_widgets) > 0) {
     echo '
 	<div class="col-md-12">';

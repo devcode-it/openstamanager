@@ -79,39 +79,41 @@ echo '
         </div>
     </div>';
 
-// Iva
-echo '
+if($rsr[0]['is_descrizione']!=1){
+    // Iva
+    echo '
     <div class="row">
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
         </div>';
 
-// Quantità
-echo '
+    // Quantità
+    echo '
         <div class="col-md-4">
             {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "'.$qta.'", "decimals": "qta" ]}
         </div>';
 
-// Unità di misura
-echo '
+    // Unità di misura
+    echo '
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "ajax-source": "misure", "value": "'.$um.'" ]}
         </div>
     </div>';
 
-// Costo unitario
-echo '
+    // Costo unitario
+    echo '
     <div class="row">
         <div class="col-md-6">
             {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "icon-after": "&euro;", "value": "'.$prezzo.'" ]}
         </div>';
 
-// Sconto unitario
-echo '
+    // Sconto unitario
+    echo '
         <div class="col-md-6">
             {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
         </div>
     </div>';
+}
 
 echo '
 

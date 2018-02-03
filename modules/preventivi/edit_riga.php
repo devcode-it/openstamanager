@@ -61,55 +61,77 @@ echo '
     <input type="hidden" name="idriga" value="'.$idriga.'">
     <input type="hidden" name="backto" value="record-edit">';
 
-// Elenco articoli raggruppati per gruppi e sottogruppi
-echo '
+if($rsr[0]['is_descrizione']!=1){
+    // Elenco articoli raggruppati per gruppi e sottogruppi
+    echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "value": "'.$idarticolo.'", "ajax-source": "articoli", "extra": "onchange=\"session_set(\'superselect,idarticolo\', $(this).val(), 0); $data = $(this).selectData(); $(\'#prezzo\').val($data.prezzo_vendita); $(\'#desc\').val($data.descrizione); $(\'#um\').selectSetNew($data.um, $data.um); $(\'#idiva\').selectSet($data.iva_vendita, $data.iva_vendita);\"" ]}
+            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "value": "'.$idarticolo.'", "ajax-source": "articoli" ]}
         </div>
     </div>';
+}
 
 // Descrizione
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "id": "desc", "value": '.json_encode($descrizione).', "required": 1 ]}
+            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "id": "descrizione_riga", "value": '.json_encode($descrizione).', "required": 1 ]}
         </div>
     </div>';
 
-// Quantità
-echo '
+if($rsr[0]['is_descrizione']!=1){
+    // Quantità
+    echo '
     <div class="row">
         <div class="col-md-4">
             {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "value": "'.$qta.'", "required": 1, "decimals": "qta" ]}
         </div>';
 
-// Unità di misura
-echo '
+    // Unità di misura
+    echo '
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
         </div>';
 
-// Iva
-echo '
+    // Iva
+    echo '
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
         </div>
     </div>';
 
-// Costo unitario
-echo '
+    // Costo unitario
+    echo '
     <div class="row">
         <div class="col-md-6">
             {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "value": "'.$subtot.'", "icon-after": "&euro;" ]}
         </div>';
 
-// Sconto unitario
-echo '
+    // Sconto unitario
+    echo '
         <div class="col-md-6">
             {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
         </div>
     </div>';
+    
+}
+
+echo '
+    <script>
+    $(document).ready(function () {
+        $("#idarticolo").on("change", function(){
+            if($(this).val()){
+                session_set("superselect,idarticolo", $(this).val(), 0);
+                $data = $(this).selectData();
+
+                $("#prezzo").val($data.prezzo_vendita);
+                $("#descrizione_riga").val($data.descrizione);
+                $("#idiva").selectSet($data.idiva_vendita, $data.iva_vendita);
+                $("#um").selectSetNew($data.um, $data.um);
+            }
+        });
+    });
+    </script>';
 
 echo '
 

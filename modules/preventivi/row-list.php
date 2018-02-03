@@ -38,27 +38,38 @@ if (!empty($rs)) {
 
         // q.tà
         echo '
-            <td class="text-center">
-                '.Translator::numberToLocale($r['qta'] - $r['qta_evasa']).'
+            <td class="text-center">';
+        if($r['is_descrizione']==0){
+            echo
+                Translator::numberToLocale($r['qta'] - $r['qta_evasa']);
+        }
+        echo '
             </td>';
 
         // um
         echo '
-            <td class="text-center">
-                '.$r['um'].'
+            <td class="text-center">';
+        if($r['is_descrizione']==0){
+            echo
+                $r['um'];
+        }
+        echo '
             </td>';
 
         // costo unitario
         echo '
-            <td class="text-right">
-                '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
+            <td class="text-right">';
+        if($r['is_descrizione']==0){
+            echo
+                Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
 
-        if ($r['sconto_unitario'] > 0) {
-            echo '
-            <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
-                '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
-            ]).'</small>';
+            if ($r['sconto_unitario'] > 0) {
+                echo '
+                <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
+                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                ]).'</small>';
+            }
         }
 
         echo '
@@ -66,15 +77,23 @@ if (!empty($rs)) {
 
         // iva
         echo '
-            <td class="text-right">
-                '.Translator::numberToLocale($r['iva']).' &euro;
-                <br><small class="help-block">'.$r['desc_iva'].'</small>
+            <td class="text-right">';
+        if($r['is_descrizione']==0){
+            echo
+                Translator::numberToLocale($r['iva']).' &euro;
+                <br><small class="help-block">'.$r['desc_iva'].'</small>';
+        }
+        echo'
             </td>';
 
         // Imponibile
         echo '
-            <td class="text-right">
-                '.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;
+            <td class="text-right">';
+        if($r['is_descrizione']==0){
+            echo
+                Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
+        }
+        echo'
             </td>';
 
         // Possibilità di rimuovere una riga solo se il preventivo non è stato pagato

@@ -13,10 +13,10 @@ github:
     repo: openstamanager
 
 title: OpenSTAManager
-subTitle: Il gestionale open source per l'assistenza tecnica e la fatturazione
+subTitle: Il software gestionale open source per l'assistenza tecnica e la fatturazione
 fontAwesomeIcon: fa fa-cog
-footerText: 'Progettato e sviluppato da DevCode.'
-##googleAnalyticsCode: GOOGLE-ANALYTICS-CODE
+footerText: 'Progettato e sviluppato da <a href="http://devcode.it/">DevCode</a>.'
+googleAnalyticsCode: UA-42808312-1
 
 scripts:
     after:
@@ -26,24 +26,21 @@ scripts:
 menu:
     sections:
         main:
-            name: Documentazione di base
+            name: Introduzione
             items:
                 home:
-                    text: Home page
+                    text: Home
                     relativeUrl: index.html
                 installazione:
                     text: Installazione
                     relativeUrl: installazione.html
-                framework:
-                    text: Framework
-                    relativeUrl: framework.html
-                assets:
-                    text: Assets
-                    relativeUrl: assets.html
+                aggiornamento:
+                    text: Aggiornamento
+                    relativeUrl: aggiornamento.html
                 api:
                     text: API
                     relativeUrl: api.html
-        other:
+        structure:
             name: Approfondimenti
             items:
                 struttura:
@@ -52,9 +49,36 @@ menu:
                 moduli:
                     text: Moduli
                     relativeUrl: moduli.html
+                upload:
+                    text: Gestione degli upload
+                    relativeUrl: upload.html
+                widget:
+                    text: Plugin
+                    relativeUrl: widget.html
+                stampe:
+                    text: Stampe
+                    relativeUrl: stampe.html
+                widget:
+                    text: Widget
+                    relativeUrl: widget.html
+        custom:
+            name: Personalizzazione
+            items:
+                framework:
+                    text: Framework
+                    relativeUrl: framework.html
+                assets:
+                    text: Assets
+                    relativeUrl: assets.html
+        more:
+            name: Link utili
+            items:
                 docs:
-                    text: Documentazione completa
+                    text: Documentazione
                     relativeUrl: docs/
                 osm:
-                    text: Sito ufficiale
-                    absoluteUrl: http://www.openstamanager.com/
+                    text: Sito web
+                    absoluteUrl: http://www.openstamanager.com
+                forum:
+                    text: Forum
+                    absoluteUrl: http://www.openstamanager.com/forum

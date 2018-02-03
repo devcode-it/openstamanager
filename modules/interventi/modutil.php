@@ -174,6 +174,16 @@ function get_costi_intervento($id_intervento)
     ), 0) AS manodopera_scontato,
 
     COALESCE(SUM(
+        ROUND(prezzo_dirittochiamata_tecnico, '.$decimals.')
+    ), 0) AS dirittochiamata_costo,
+    COALESCE(SUM(
+        ROUND(prezzo_dirittochiamata, '.$decimals.')
+    ), 0) AS dirittochiamata_addebito,
+    COALESCE(SUM(
+        ROUND(prezzo_dirittochiamata, '.$decimals.')
+    ), 0) AS dirittochiamata_scontato,
+
+    COALESCE(SUM(
         ROUND(prezzo_km_consuntivo_tecnico, '.$decimals.')
     ), 0) AS viaggio_costo,
     COALESCE(SUM(
@@ -215,6 +225,7 @@ function get_costi_intervento($id_intervento)
 
     $result['totale_costo'] = sum([
         $result['manodopera_costo'],
+        $result['dirittochiamata_costo'],
         $result['viaggio_costo'],
         $result['ricambi_costo'],
         $result['altro_costo'],
@@ -222,6 +233,7 @@ function get_costi_intervento($id_intervento)
 
     $result['totale_addebito'] = sum([
         $result['manodopera_addebito'],
+        $result['dirittochiamata_addebito'],
         $result['viaggio_addebito'],
         $result['ricambi_addebito'],
         $result['altro_addebito'],
@@ -229,6 +241,7 @@ function get_costi_intervento($id_intervento)
 
     $result['totale_scontato'] = sum([
         $result['manodopera_scontato'],
+        $result['dirittochiamata_scontato'],
         $result['viaggio_scontato'],
         $result['ricambi_scontato'],
         $result['altro_scontato'],

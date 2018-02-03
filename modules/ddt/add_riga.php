@@ -72,40 +72,44 @@ echo '
             {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "required": 1, "value": '.json_encode($descrizione).' ]}
         </div>
     </div>';
+    
+if($rsr[0]['is_descrizione']==0){
 
-// Quantità
-echo '
+    // Quantità
+    echo '
     <div class="row">
         <div class="col-md-6">
             {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "'.$qta.'", "decimals": "qta" ]}
         </div>';
 
-// Unità di misura
+    // Unità di misura
         echo '
         <div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
         </div>
     </div>';
 
-// Iva
-echo '
+    // Iva
+    echo '
     <div class="row">
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "'.$idiva.'" ]}
         </div>';
 
-// Costo unitario
-echo '
+    // Costo unitario
+    echo '
         <div class="col-md-4">
             {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "value": "'.$subtot.'", "icon-after": "&euro;" ]}
         </div>';
 
-// Sconto unitario
-echo '
+    // Sconto unitario
+    echo '
         <div class="col-md-4">
             {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
         </div>
     </div>';
+
+}
 
 echo '
 

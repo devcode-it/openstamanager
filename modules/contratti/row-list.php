@@ -11,12 +11,12 @@ $totale_da_evadere = 0.00;
 /*
 ARTICOLI
 */
-$rs_art = $dbo->fetchArray('SELECT * FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record).' ORDER BY `order`');
+$rs_art = $dbo->fetchArray('SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo), "") AS codice FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record).' ORDER BY `order`');
 $imponibile_art = 0.0;
 $iva_art = 0.0;
 
 echo '
-<table class="table table-striped table-hover table-condensed">
+<table class="table table-striped table-hover table-condensed table-bordered">
     <thead>
         <tr>
             <th>'.tr('Descrizione').'</th>
@@ -36,48 +36,72 @@ if (!empty($rs_art)) {
         // descrizione
         echo '
         <tr data-id="'.$r['id'].'">
-            <td>
-            '.nl2br($r['descrizione']).'
+            <td>';
+        if (!empty($r['idarticolo'])) {
+            echo Modules::link('Articoli', $r['idarticolo'], $r['codice'].' - '.$r['descrizione']);
+        } else {
+            echo nl2br($r['descrizione']);
+        }
+
+        echo '
             </td>';
 
         // q.tà
         echo '
-            <td class="text-center">
-                '.Translator::numberToLocale($r['qta']).'
+            <td class="text-center">';
+        if($r['is_descrizione']==0){
+            echo
+                Translator::numberToLocale($r['qta']);
+        }
+        echo '
             </td>';
 
         // um
         echo '
-            <td class="text-center">
-                '.$r['um'].'
+            <td class="text-center">';
+        if($r['is_descrizione']==0){
+            echo
+                $r['um'];
+        }
+        echo '
             </td>';
 
         // costo unitario
         echo '
-            <td class="text-center">
-                '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;
+            <td class="text-center">';
+        if($r['is_descrizione']==0){
+            echo
+                Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
+        }
+        echo'
             </td>';
 
         // iva
         echo '
-            <td class="text-right">
-                '.Translator::numberToLocale($r['iva'])." &euro;<br>
-                <small class='help-block'>".$r['desc_iva'].'</small>
+            <td class="text-right">';
+        if($r['is_descrizione']==0){
+            echo
+                Translator::numberToLocale($r['iva'])." &euro;<br>
+                <small class='help-block'>".$r['desc_iva'].'</small>';
+        }
+        echo '
             </td>';
 
         // Imponibile
         echo '
-            <td class="text-right">
-                '.Translator::numberToLocale($r['subtotale']).' &euro;';
+            <td class="text-right">';
+        if($r['is_descrizione']==0){
+            echo
+                Translator::numberToLocale($r['subtotale']).' &euro;';
 
-        if ($r['sconto_unitario'] > 0) {
-            echo '
-                <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
-                ]).'</small>';
+            if ($r['sconto_unitario'] > 0) {
+                echo '
+                    <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
+                        '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                        '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                    ]).'</small>';
+            }
         }
-
         echo '
             </td>';
 

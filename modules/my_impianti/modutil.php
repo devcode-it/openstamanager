@@ -11,5 +11,5 @@ function genera_form_componente($contenuto)
         $fields[$key] = '<div class="col-md-4">'.$value.'</div>';
     }
 
-    echo $title.PHP_EOL.implode(PHP_EOL, $fields).PHP_EOL.'<script src="'.ROOTDIR.'/lib/init.js"></script>';
+    echo $title.PHP_EOL.implode(PHP_EOL, $fields).PHP_EOL.'<script>start_inputmask( "#info_componente" );</script>';
 }

@@ -44,70 +44,73 @@ echo '
             {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "required": 1, "value": '.json_encode($rsr[0]['descrizione']).' ]}
         </div>
     </div>';
+    
+if($rsr[0]['is_descrizione']==0){
 
-if (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d'acconto") != '' || $dir == 'uscita') {
-    echo '
-    <div class="row">';
-
-    // Rivalsa INPS
-    if (get_var('Percentuale rivalsa INPS') != '' || $dir == 'uscita') {
+    if (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d'acconto") != '' || $dir == 'uscita') {
         echo '
-        <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Rivalsa INPS').'", "name": "idrivalsainps", "value": "'.$rsr[0]['idrivalsainps'].'", "values": "query=SELECT * FROM co_rivalsainps", "required": '.intval($dir != 'uscita').' ]}
+        <div class="row">';
+
+        // Rivalsa INPS
+        if (get_var('Percentuale rivalsa INPS') != '' || $dir == 'uscita') {
+            echo '
+            <div class="col-md-6">
+                {[ "type": "select", "label": "'.tr('Rivalsa INPS').'", "name": "idrivalsainps", "value": "'.$rsr[0]['idrivalsainps'].'", "values": "query=SELECT * FROM co_rivalsainps", "required": '.intval($dir != 'uscita').' ]}
+            </div>';
+        }
+
+        // Ritenuta d'acconto
+        if (get_var("Percentuale ritenuta d'acconto") != '' || $dir == 'uscita') {
+            echo '
+            <div class="col-md-6">
+                {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "idritenutaacconto", "value": "'.$rsr[0]['idritenutaacconto'].'", "values": "query=SELECT * FROM co_ritenutaacconto", "required": '.intval($dir != 'uscita').' ]}
+            </div>';
+        }
+
+        echo '
         </div>';
     }
 
-    // Ritenuta d'acconto
-    if (get_var("Percentuale ritenuta d'acconto") != '' || $dir == 'uscita') {
-        echo '
-        <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "idritenutaacconto", "value": "'.$rsr[0]['idritenutaacconto'].'", "values": "query=SELECT * FROM co_ritenutaacconto", "required": '.intval($dir != 'uscita').' ]}
-        </div>';
-    }
+    // Iva
+    echo '
+        <div class="row">
+            <div class="col-md-6">
+                {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$rsr[0]['idiva'].'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
+            </div>';
 
     echo '
-    </div>';
+            <div class="col-md-6">
+                {[ "type": "select", "label": "'.tr('Conto').'", "name": "idconto", "required": 1, "value": "'.$idconto.'", "ajax-source": "'.$conti.'" ]}
+            </div>
+        </div>';
+
+    // Quantità
+    echo '
+        <div class="row">
+            <div class="col-md-3">
+                {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "'.$rsr[0]['qta'].'", "decimals": "qta" ]}
+            </div>';
+
+    // Unità di misura
+    echo '
+            <div class="col-md-3">
+                {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "ajax-source": "misure", "value": "'.$rsr[0]['um'].'" ]}
+            </div>';
+
+    // Costo unitario
+    echo '
+            <div class="col-md-3">
+                {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "value": "'.($rsr[0]['subtotale'] / $rsr[0]['qta']).'", "icon-after": "&euro;" ]}
+            </div>';
+
+    // Sconto unitario
+    echo '
+            <div class="col-md-3">
+                {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
+            </div>
+        </div>';
+
 }
-
-// Iva
-echo '
-    <div class="row">
-        <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$rsr[0]['idiva'].'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
-        </div>';
-
-echo '
-        <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Conto').'", "name": "idconto", "required": 1, "value": "'.$idconto.'", "ajax-source": "'.$conti.'" ]}
-        </div>
-    </div>';
-
-// Quantità
-echo '
-    <div class="row">
-        <div class="col-md-3">
-            {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "'.$rsr[0]['qta'].'", "decimals": "qta" ]}
-        </div>';
-
-// Unità di misura
-echo '
-        <div class="col-md-3">
-            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "ajax-source": "misure", "value": "'.$rsr[0]['um'].'" ]}
-        </div>';
-
-// Costo unitario
-echo '
-        <div class="col-md-3">
-            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "required": 1, "value": "'.($rsr[0]['subtotale'] / $rsr[0]['qta']).'", "icon-after": "&euro;" ]}
-        </div>';
-
-// Sconto unitario
-echo '
-        <div class="col-md-3">
-            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
-        </div>
-    </div>';
-
 echo '
 
     <!-- PULSANTI -->

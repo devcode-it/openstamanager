@@ -21,7 +21,7 @@ session_write_close();
 // Permesso di accesso all'API da ogni dispositivo
 header('Access-Control-Allow-Origin: *');
 
-// Attenzione: al momento l'API permette la lettura di tutte le tabelle rpesenti nel database (non limitate a quelle del progetto).
+// Attenzione: al momento l'API permette la lettura di tutte le tabelle presenti nel database (non limitate a quelle del progetto)
 
 try {
     // Controlli sulla chiave di accesso
@@ -30,21 +30,33 @@ try {
     // Lettura delle informazioni
     $request = API::getRequest();
 
+    // Gestione della richiesta
     $method = $_SERVER['REQUEST_METHOD'];
     switch ($method) {
+        // Richiesta PUT (modifica elementi)
         case 'PUT':
             $result = $api->update($request);
             break;
+
+        // Richiesta POST (creazione elementi)
         case 'POST':
             $result = $api->create($request);
             break;
+
+        // Richiesta GET (ottenimento elementi)
         case 'GET':
+            // Risorsa specificata
             if (!empty($request)) {
                 $result = $api->retrieve($request);
-            } else {
+            }
+
+            // Risorsa non specificata (lista delle risorse disponibili)
+            else {
                 $result = API::response(API::getResources()['retrieve']);
             }
             break;
+
+        // Richiesta DELETE (eliminazione elementi)
         case 'DELETE':
             $result = $api->delete($request);
             break;
@@ -55,4 +67,5 @@ try {
     $result = API::error('serverError');
 }
 
+// Stampa dei risultati
 echo $result;

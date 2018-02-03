@@ -323,7 +323,7 @@ class Prints
 
         // Instanziamento dell'oggetto mPDF
         $mpdf = new \Mpdf\Mpdf([
-            'mode' => 'c',
+            'mode' => 'utf-8',
             'format' => $settings['format'],
             'orientation' => $settings['orientation'],
             'font-size' => $settings['font-size'],

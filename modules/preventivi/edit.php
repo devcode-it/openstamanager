@@ -31,10 +31,17 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 				</div>
 
 				<div class="col-md-4">
+                    <?php
+                        echo Modules::link('Anagrafiche', $records[0]['idanagrafica'], null, null, 'class="pull-right"');
+                    ?>
 					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted=0 ORDER BY ragione_sociale", "value": "$idanagrafica$", "ajax-source": "clienti" ]}
 				</div>
 
 				<div class="col-md-3">
+                    <?php
+                        if($records[0]['idagente']!=0)
+                            echo Modules::link('Anagrafiche', $records[0]['idagente'], null, null, 'class="pull-right"');
+                    ?>
 					{[ "type": "select", "label": "<?php echo tr('Agente'); ?>", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Agente' AND deleted=0 ORDER BY ragione_sociale", "value": "$idagente$" ]}
 				</div>
 
@@ -133,10 +140,12 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
     <div class="panel-body">
         <?php if ($records[0]['stato'] != 'Pagato') {
-                    ?>
-        <div class="pull-left">
-            <a class="btn btn-primary" data-href="<?php echo $rootdir ?>/modules/preventivi/edit_riga.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> Riga</a><br>
-        </div>
+    ?>
+
+            <a class="btn btn-primary" data-href="<?php echo $rootdir ?>/modules/preventivi/edit_riga.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> Riga</a>
+
+            <a class="btn btn-primary" data-href="<?php echo $rootdir ?>/modules/preventivi/add_descrizione.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup"><i class="fa fa-plus"></i> Descrizione</a>
+
         <?php
                 } ?>
 

@@ -375,13 +375,13 @@ CREATE TABLE IF NOT EXISTS `zz_semaphores` (
 ) ENGINE=InnoDB;
 
 -- Aggiornamento zz_modules
-INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `level`, `parent`, `default`, `enabled`) VALUES (NULL, 'Strumenti', '', '', '', 'fa fa-cog', '2.3', '2.3', '1', '0', '', '1', '1');
+INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `level`, `parent`, `default`, `enabled`) VALUES (NULL, 'Strumenti', '', '', '', 'fa fa-cog', '2.3', '2.3', '1', '0', 0, '1', '1');
 
 ALTER TABLE `zz_modules` DROP `level`;
 
 UPDATE `zz_modules` SET `options` = 'menu' WHERE `options` = '';
 
-INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Viste', 'viste', 'SELECT |select| FROM `zz_modules` WHERE 1=1 HAVING 2=2 ORDER BY `name`, `title` ASC', '', 'fa fa-eye', '2.3', '2.3', '1', 1, '1', '1');
+INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Viste', 'viste', 'SELECT |select| FROM `zz_modules` WHERE 1=1 HAVING 2=2 ORDER BY `name`, `title` ASC', '', 'fa fa-eye', '2.3', '2.3', '1', 1, '1', '0');
 
 INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Utenti e permessi', 'utenti', 'SELECT |select| FROM `zz_groups` WHERE 1=1 HAVING 2=2 ORDER BY `id`, `nome` ASC', '', 'fa fa-lock', '2.3', '2.3', '1', 1, '1', '1');
 
@@ -658,9 +658,12 @@ ALTER TABLE `zz_widgets` ADD FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`
 ALTER TABLE `zz_group_module` ADD FOREIGN KEY (`idmodule`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE, ADD FOREIGN KEY (`idgruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_permissions
+DELETE FROM `zz_permissions` WHERE `idmodule` NOT IN (SELECT `id` FROM `zz_modules`);
 ALTER TABLE `zz_permissions` ADD FOREIGN KEY (`idmodule`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE, ADD FOREIGN KEY (`idgruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_plugins
+DELETE FROM `zz_plugins` WHERE `idmodule_to` NOT IN (SELECT `id` FROM `zz_modules`);
+DELETE FROM `zz_plugins` WHERE `idmodule_from` NOT IN (SELECT `id` FROM `zz_modules`);
 ALTER TABLE `zz_plugins` ADD FOREIGN KEY (`idmodule_from`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE, ADD FOREIGN KEY (`idmodule_to`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_users
@@ -669,6 +672,7 @@ ALTER TABLE `zz_users` CHANGE `idutente` `id` int(11) NOT NULL AUTO_INCREMENT, A
 -- Aggiunta di chiavi esterne in zz_logs
 ALTER TABLE `zz_logs` DROP `password`, CHANGE `idutente` `id_utente` int(11), CHANGE `timestamp` `timestamp` datetime;
 UPDATE `zz_logs` SET `id_utente` = NULL WHERE `id_utente` = 0;
+DELETE FROM `zz_logs` WHERE `id_utente` IS NOT NULL AND `id_utente` NOT IN (SELECT `id` FROM `zz_users`);
 ALTER TABLE `zz_logs` ADD FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_semaphores
@@ -697,7 +701,13 @@ ALTER TABLE `my_impianto_componenti` ADD FOREIGN KEY (`idsostituto`) REFERENCES 
 
 -- Adeguamento dei contenuti di zz_files
 ALTER TABLE `zz_files` CHANGE `externalid` `id_record` int(11) NOT NULL, ADD `id_module` int(11) NOT NULL AFTER `filename`, ADD `original` varchar(255) NOT NULL AFTER `filename`;
-UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`directory` = `zz_files`.`module`);
+
+-- Adeguamento delle fatture (zz_files)
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di vendita') WHERE `module`= 'fatture' AND `id_record` IN (SELECT `id` FROM `co_documenti` WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `dir` = 'entrata'));
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di acquisto') WHERE `module`= 'fatture' AND `id_record` IN (SELECT `id` FROM `co_documenti` WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `dir` = 'uscita'));
+
+-- Adeguamento generico di zz_files
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`directory` = `zz_files`.`module`) WHERE `id_module` IS NULL;
 ALTER TABLE `zz_files` DROP `module`;
 
 -- Fix del widget 'Tutte le anagrafiche'
@@ -714,7 +724,7 @@ UPDATE `zz_group_module` SET `default` = 1;
 UPDATE `zz_widgets` SET `more_link` = REPLACE(TRIM(`more_link`), 'templates/pdfgen.php', 'pdfgen.php');
 
 -- Nuova struttura per i plugins
-ALTER TABLE `zz_plugins` ADD `title` varchar(255) NOT NULL AFTER `name`, CHANGE `idmodule_from` `idmodule_from` int(11), CHANGE `idmodule_to` `idmodule_to` int(11),
+ALTER TABLE `zz_plugins` ADD `title` varchar(255) NOT NULL AFTER `name`,
 ADD `directory` varchar(50) NOT NULL AFTER `script`, ADD `options` text AFTER `script`, ADD `options2` text AFTER `script`, ADD `version` varchar(15) NOT NULL AFTER `script`, ADD `compatibility` varchar(1000) NOT NULL AFTER `script`, ADD `order` int(11) NOT NULL AFTER `script`, ADD `default` boolean NOT NULL DEFAULT 0 AFTER `script`, ADD `enabled` boolean NOT NULL DEFAULT 1 AFTER `script`;
 
 UPDATE `zz_plugins` SET `name` = 'Serial' WHERE `name` = 'Lotti';
@@ -973,10 +983,27 @@ ALTER TABLE `in_interventi` ADD `deleted` TINYINT NOT NULL DEFAULT '0' AFTER `da
 UPDATE `mg_listini` SET `prc_guadagno` = - `prc_guadagno`;
 
 -- Aggiunta pagamento di default "Bonifico bancario"
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `created_at`, `idconto_vendite`, `idconto_acquisti`) VALUES (NULL, 'Bonifico bancario', '0', '10', '100', CURRENT_TIMESTAMP, NULL, NULL);
+INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`) VALUES (NULL, 'Bonifico bancario', '0', '10', '100', NULL, NULL);
 
 -- Per Dashboard e Articoli i widgets vanno in alto
 UPDATE `zz_widgets` SET `location` = 'controller_top' WHERE `zz_widgets`.`id_module` = (SELECT id FROM zz_modules WHERE name = 'Dashboard' ) OR `zz_widgets`.`id_module` = (SELECT id FROM zz_modules WHERE name = 'Articoli' );
 
 -- Disabilito widgets 'Ordini di servizio da impostare' e 'Rate contrattuali'
 UPDATE `zz_widgets` SET `enabled` = '0' WHERE `zz_widgets`.`name` = 'Ordini di servizio da impostare' OR `zz_widgets`.`name` = 'Rate contrattuali';
+
+-- Aggiunta articolo su contratti
+ALTER TABLE `co_righe2_contratti` ADD `idarticolo` INT NOT NULL AFTER `idcontratto`;
+
+-- Campo per identificare le righe descrittive documenti/ddt/preventivi/contratti/ordini
+ALTER TABLE `co_righe_documenti` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idcontratto`;
+ALTER TABLE `dt_righe_ddt` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idarticolo`;
+ALTER TABLE `co_righe_preventivi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idarticolo`;
+ALTER TABLE `co_righe2_contratti` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idarticolo`;
+ALTER TABLE `or_righe_ordini` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idarticolo`;
+
+-- Aggiunta flag "servizio" su articolo
+ALTER TABLE `mg_articoli` ADD `servizio` TINYINT(1) NOT NULL AFTER `id_sottocategoria`;
+
+-- Aggiunto lo stato ddt "Parzialmente fatturato" e cambiato lo stato "Pagato" in "Fatturato"
+UPDATE `dt_statiddt` SET `descrizione` = 'Fatturato' WHERE `dt_statiddt`.`descrizione` = 'Pagato';
+INSERT INTO `dt_statiddt` (`id`, `descrizione`, `icona`) VALUES (NULL, 'Parzialmente fatturato', 'fa fa-clock-o text-warning');

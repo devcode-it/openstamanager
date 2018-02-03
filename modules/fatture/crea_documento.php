@@ -119,7 +119,7 @@ if (!empty($rs)) {
         echo '
         <tr>
             <td>
-            
+
                 <input type="hidden" name="abilita_serial['.$r['id'].']" value="'.$r['abilita_serial'].'" />
                 <input type="hidden" id="idarticolo_'.$i.'" name="idarticolo['.$r['id'].']" value="'.$r['idarticolo'].'" />
                 <input type="hidden" id="descrizione_'.$i.'" name="descrizione['.$r['id'].']" value="'.$r['descrizione'].'" />';
@@ -144,7 +144,7 @@ if (!empty($rs)) {
         // Q.tà da evadere
         echo '
         <td>
-            {[ "type": "number", "name": "qta_da_evadere['.$r['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$r['qta_rimanente'].'", "extra" : "onkeyup=\"ricalcola_subtotale_riga('.$i.');\"", "decimals": "qta|0" ]}
+            {[ "type": "number", "name": "qta_da_evadere['.$r['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$r['qta_rimanente'].'", "extra" : "onkeyup=\"ricalcola_subtotale_riga('.$i.');\"", "decimals": "qta", "min-value": "0" ]}
         </td>';
 
         // Subtotale

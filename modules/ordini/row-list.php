@@ -75,49 +75,65 @@ if (!empty($rs)) {
 
         echo '
         <td class="text-center">';
-        if (empty($r['sconto_globale'])) {
-            echo '
-            <big>'.Translator::numberToLocale($r['qta'] - $r['qta_evasa']).'</big>
-            <br><small>('.tr('Q.tà iniziale').': '.Translator::numberToLocale($r['qta']).')</small>';
-        } else {
-            echo '1';
+        if($r['is_descrizione']==0){
+            if (empty($r['sconto_globale'])) {
+                echo '
+                <big>'.Translator::numberToLocale($r['qta'] - $r['qta_evasa']).'</big>
+                <br><small>('.tr('Q.tà iniziale').': '.Translator::numberToLocale($r['qta']).')</small>';
+            } else {
+                echo '1';
+            }
         }
         echo '
         </td>';
 
         // Unità di misura
         echo '
-        <td class="text-center">
-            '.$r['um'].'
+        <td class="text-center">';
+        if($r['is_descrizione']==0){
+            echo
+            $r['um'];
+        }
+        echo '
         </td>';
 
         // Costo unitario
         echo '
-        <td class="text-right">
-            '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
+        <td class="text-right">';
+        if($r['is_descrizione']==0){
+            echo
+            Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
 
-        if ($r['sconto_unitario'] > 0) {
-            echo '
-            <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
-                '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
-            ]).'</small>';
+            if ($r['sconto_unitario'] > 0) {
+                echo '
+                <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
+                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                ]).'</small>';
+            }
         }
-
         echo '
         </td>';
 
         // Iva
         echo '
-        <td class="text-right">
-            '.Translator::numberToLocale($r['iva']).' &euro;
-            <br><small class="help-block">'.$r['desc_iva'].'</small>
+        <td class="text-right">';
+        if($r['is_descrizione']==0){
+            echo
+            Translator::numberToLocale($r['iva']).' &euro;
+            <br><small class="help-block">'.$r['desc_iva'].'</small>';
+        }
+        echo '
         </td>';
 
         // Imponibile
         echo '
-        <td class="text-right">
-            '.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;
+        <td class="text-right">';
+        if($r['is_descrizione']==0){
+            echo
+            Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
+        }
+        echo '
         </td>';
 
         // Possibilità di rimuovere una riga solo se l'ordine non è evaso

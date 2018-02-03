@@ -4,11 +4,13 @@ currentMenu: stampe
 
 # Stampe
 
+Pagina in costruzione.
+
 - [MPDF](#mpdf)
 - [HTML2PDF](#html2pdf)
     - [Struttura](#struttura)
         - [pdfgen.php](#pdfgenphp)
-        - [pdfgen_variables.php (INCLUDE)](#pdfgenvariablesphp-include)
+        - [pdfgen_variables.php](#pdfgenvariablesphp)
         - [Struttura interna](#struttura-interna)
 
 
@@ -30,7 +32,7 @@ La cartella _templates_ contiene tutti i template per la creazione dei PDF, ragg
 
 Il file `pdfgen.php` si occupa della formattazione dei contenuti dei template per la visualizzazione vera e propria del PDF, inizializzando l'oggetto relativo ed eseguendone l'output.
 
-#### pdfgen_variables.php (INCLUDE)
+#### pdfgen_variables.php
 
 Il file `pdfgen_variables.php` si occupa della sostituzione delle variabili comuni a tutti i template, e viene richiamata dal file `pdfgen.MODULO.php` descritto di seguito.
 

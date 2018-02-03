@@ -32,7 +32,6 @@ if (post('db_host') !== null) {
     // Test della configurazione
     if (post('test') !== null) {
         ob_end_clean();
-        $state = 2;
 
         if ($dbo->isConnected()) {
             $requirements = [
@@ -50,31 +49,42 @@ if (post('db_host') !== null) {
 
             $results = $dbo->fetchArray('SHOW GRANTS FOR CURRENT_USER');
             foreach ($results as $result) {
-                if (
-                    str_contains($result, $find) &&
-                    (
-                        str_contains($result, ' ON `'.$db_name.'`.*') ||
-                        str_contains($result, ' ON *.*')
-                    )
-                ) {
-                    $pieces = explode(', ', explode(' ON ', str_replace('GRANT ', '', current($result)))[0]);
+                $privileges = current($result);
 
+                if (
+                    str_contains($privileges, ' ON `'.$db_name.'`.*') ||
+                    str_contains($privileges, ' ON *.*')
+                ) {
+                    $pieces = explode(', ', explode(' ON ', str_replace('GRANT ', '', $privileges))[0]);
+
+                    // Permessi generici sul database
                     if (in_array('ALL', $pieces) || in_array('ALL PRIVILEGES', $pieces)) {
+                        $requirements = [];
                         break;
                     }
 
+                    // Permessi specifici sul database
                     foreach ($requirements as $key => $value) {
-                        if (!in_array($value, $pieces)) {
-                            $state = 1;
-
-                            break 2;
-                        } else {
+                        if (in_array($value, $pieces)) {
                             unset($requirements[$key]);
                         }
                     }
                 }
             }
-        } else {
+
+            // Permessi insufficienti
+            if (!empty($requirements)) {
+                $state = 1;
+            }
+
+            // Permessi completi
+            else {
+                $state = 2;
+            }
+        }
+
+        // Connessione fallita
+        else {
             $state = 0;
         }
 

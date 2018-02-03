@@ -4,12 +4,14 @@
   </a>
 
   <p align="center">
-    Il gestionale open source per l'assistenza tecnica e la fatturazione.
+    Il software gestionale open source per l'assistenza tecnica e la fatturazione.
     <br>
     <br>
+    <a href="http://openstamanager.com">Sito web</a>
+    &middot;
     <a href="https://devcode-it.github.io/openstamanager">Documentazione tecnica</a>
     &middot;
-    <a href="http://openstamanager.com">Sito ufficiale</a>
+    <a href="http://openstamanager.com/forum">Forum</a>
   </p>
 </p>
 
@@ -54,7 +56,7 @@ La documentazione ufficiale è disponibile all'indirizzo <https://devcode-it.git
 
 L'installazione del gestionale richiede la presenza di un server web con abilitato il [DBMS MySQL](https://www.mysql.com)  e il linguaggio di programmazione [PHP](http://php.net).
 
-- PHP >= 5.4
+- PHP >= 5.6
 - MySQL >= 5.0
 
 Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Installazione](https://devcode-it.github.io/openstamanager/installazione.html) della documentazione.
@@ -64,7 +66,7 @@ Per ulteriori informazioni sui pacchetti che forniscono questi elementi di defau
 Per procedere all'installazione è necessario seguire i seguenti punti:
 
 1. [Scaricare una release ufficiale del progetto](https://github.com/devcode-it/openstamanager/releases).
-2. Creare una cartella (ad esempio `openstamanager`) nella root del sever web installato ed estrarvi il contenuto della release scaricata. Il percorso della cartella root del server varia in base al software in utilizzo:
+2. Creare una cartella (ad esempio `openstamanager`) nella root del server web installato ed estrarvi il contenuto della release scaricata. Il percorso della cartella root del server varia in base al software in utilizzo:
 
    - LAMP (`/var/www/html`)
    - XAMPP (`C:/xampp/htdocs` per Windows, `/opt/lampp/htdocs/` per Linux, `/Applications/XAMPP/htdocs/` per MAC)
@@ -88,7 +90,7 @@ Se siete inoltre interessati a supporto e assistenza professionali, li potete ri
 
 ### Github
 
-Nel caso si stia utilizzando la versione direttamente ottenuta dalla repository di Github, è necessario eseguire i seguenti comandi da linea di comando per completare le dipendenze PHP (tramite [Composer](https://getcomposer.org)) e gli assets  (tramite [Yarn](https://yarnpkg.com)) del progetto.
+Nel caso si stia utilizzando la versione direttamente ottenuta dalla repository di Github, è necessario eseguire i seguenti comandi da linea di comando per completare le dipendenze PHP (tramite [Composer](https://getcomposer.org)) e gli assets (tramite [Yarn](https://yarnpkg.com)) del progetto.
 
 ```bash
 php composer.phar install

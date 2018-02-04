@@ -5,95 +5,115 @@ include_once __DIR__.'/../../../core.php';
 /*
     Anagrafiche
 */
-$campi = ['codice', 'ragione_sociale', 'piva', 'codice_fiscale', 'indirizzo', 'indirizzo2', 'citta', 'cap', 'provincia', 'telefono', 'fax', 'cellulare', 'email', 'sitoweb', 'note', 'codicerea', 'settore', 'marche', 'cciaa', 'n_alboartigiani'];
-$campi_text = ['Codice', 'Ragione sociale', 'Partita iva', 'Codice fiscale', 'Indirizzo', 'Indirizzo2', 'Città', 'C.A.P.', 'Provincia', 'Telefono', 'Fax', 'Cellulare', 'Email', 'Sito web', 'Note', 'Codice REA', 'Settore', 'Marche', 'CCIAA', 'Numero di iscrizione albo artigiani'];
 
-$rs = $dbo->fetchArray("SELECT id FROM zz_modules WHERE name='Anagrafiche'");
-$id_module = $rs[0]['id'];
+$id_module = Modules::get('Anagrafiche')['id'];
 
-$build_query = '';
+$fields = [
+    'Codice' => 'codice',
+    'Ragione sociale' => 'ragione_sociale',
+    'Partita iva' => 'piva',
+    'Codice fiscale' => 'codice_fiscale',
+    'Indirizzo' => 'indirizzo',
+    'Indirizzo2' => 'indirizzo2',
+    'Città' => 'citta',
+    'C.A.P.' => 'cap',
+    'Provincia' => 'provincia',
+    'Telefono' => 'telefono',
+    'Fax' => 'fax',
+    'Cellulare' => 'cellulare',
+    'Email' => 'email',
+    'Sito web' => 'sitoweb',
+    'Note' => 'note',
+    'Codice REA' => 'codicerea',
+    'Settore' => 'settore',
+    'Marche' => 'marche',
+    'CCIAA' => 'cciaa',
+    'Numero di iscrizione albo artigiani' => 'n_alboartigiani',
+];
 
-for ($c = 0; $c < sizeof($campi); ++$c) {
-    $build_query .= ' OR '.$campi[$c].' LIKE "%'.$term.'%" AND deleted = 0';
+$query = 'SELECT *, idanagrafica AS id';
+
+foreach ($fields as $name => $value) {
+    $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$rs = $dbo->fetchArray('SELECT * FROM an_anagrafiche WHERE 1=0 '.$build_query);
+$query .= ' FROM an_anagrafiche WHERE 1=0 ';
 
-if (sizeof($rs) > 0) {
-    // Loop record corrispondenti alla ricerca
-    for ($r = 0; $r < sizeof($rs); ++$r) {
-        $result = [];
-
-        $result['link'] = ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$rs[$r]['idanagrafica'];
-        $result['title'] = $rs[$r]['ragione_sociale'];
-        $result['category'] = 'Anagrafiche';
-        $result['labels'] = [];
-
-        // Loop campi da evidenziare
-        for ($c = 0; $c < sizeof($campi); ++$c) {
-            if (preg_match('/'.$term.'/i', $rs[$r][$campi[$c]])) {
-                $text = $rs[$r][$campi[$c]];
-
-                // Evidenzio la parola cercata nei valori dei campi
-                preg_match('/'.$term.'/i', $rs[$r][$campi[$c]], $matches);
-
-                for ($m = 0; $m < sizeof($matches); ++$m) {
-                    $text = str_replace($matches[$m], "<span class='highlight'>".$matches[$m].'</span>', $r[$name]);
-                }
-
-                $result['labels'][] = $campi_text[$c].': '.$text.'<br/>';
-            }
-        }
-
-        $results[] = $result;
-    }
+foreach ($fields as $name => $value) {
+    $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
 }
 
-/*
-    Referenti anagrafiche
-*/
-$campi = ['nome', 'mansione', 'telefono', 'email'];
-$campi_text = ['Nome', 'Mansione', 'Telefono', 'Email'];
+$query .= Modules::getAdditionalsQuery('Anagrafiche');
 
-$build_query = '';
+$rs = $dbo->fetchArray($query);
 
-for ($c = 0; $c < sizeof($campi); ++$c) {
-    $build_query .= ' OR '.$campi[$c].' LIKE "%'.$term.'%"';
-}
-
-$rs = $dbo->fetchArray('SELECT * FROM an_referenti WHERE idanagrafica IN('.implode(',', $idanagrafiche).') '.$build_query);
-
-if (sizeof($rs) > 0) {
+foreach ($rs as $r) {
     $result = [];
 
-    // Loop record corrispondenti alla ricerca
-    for ($r = 0; $r < sizeof($rs); ++$r) {
-        $result['link'] = ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$rs[$r]['idanagrafica'].'#tabs-2';
-        $result['title'] = $rs[$r]['nome'];
-        $result['category'] = 'Referenti';
-        $result['labels'] = [];
+    $result['link'] = ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$r['id'];
+    $result['title'] = $r['ragione_sociale'];
+    $result['category'] = 'Anagrafiche';
 
-        // Loop campi da evidenziare
-        for ($c = 0; $c < sizeof($campi); ++$c) {
-            if (preg_match('/'.$term.'/i', $rs[$r][$campi[$c]])) {
-                $text = $rs[$r][$campi[$c]];
+    // Campi da evidenziare
+    $result['labels'] = [];
+    foreach ($fields as $name => $value) {
+        if (str_contains($r[$name], $term)) {
+            $text = str_replace($term, "<span class='highlight'>".$term.'</span>', $r[$name]);
 
-                // Evidenzio la parola cercata nei valori dei campi
-                preg_match('/'.$term.'/i', $rs[$r][$campi[$c]], $matches);
-
-                for ($m = 0; $m < sizeof($matches); ++$m) {
-                    $text = str_replace($matches[$m], "<span class='highlight'>".$matches[$m].'</span>', $r[$name]);
-                }
-
-                $result['labels'][] = $campi_text[$c].': '.$text.'<br/>';
-            }
+            $result['labels'][] = $name.': '.$text.'<br/>';
         }
-
-        // Aggiunta nome anagrafica come ultimo campo
-        if (sizeof($ragioni_sociali) > 1) {
-            $result['labels'][] = 'Anagrafica: '.$ragioni_sociali[$rs[$r]['idanagrafica']].'<br/>';
-        }
-
-        $results[] = $result;
     }
+
+    $results[] = $result;
+}
+
+// Referenti anagrafiche
+$fields = [
+    'Nome' => 'nome',
+    'Mansione' => 'mansione',
+    'Telefono' => 'telefono',
+    'Email' => 'email',
+];
+
+$query = 'SELECT *, idanagrafica as id';
+
+foreach ($fields as $name => $value) {
+    $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
+}
+
+$query .= ' FROM an_referenti WHERE idanagrafica IN('.implode(',', $idanagrafiche).') ';
+
+foreach ($fields as $name => $value) {
+    $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
+}
+
+//$query .= Modules::getAdditionalsQuery('Anagrafiche');
+
+$rs = $dbo->fetchArray($query);
+
+$plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Referenti'");
+
+foreach ($rs as $r) {
+    $result = [];
+
+    $result['link'] = ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$r['id'].'#tab_'.$plugin[0]['id'];
+    $result['title'] = $r['nome'];
+    $result['category'] = 'Referenti';
+
+    // Campi da evidenziare
+    $result['labels'] = [];
+    foreach ($fields as $name => $value) {
+        if (str_contains($r[$name], $term)) {
+            $text = str_replace($term, "<span class='highlight'>".$term.'</span>', $r[$name]);
+
+            $result['labels'][] = $name.': '.$text.'<br/>';
+        }
+    }
+
+    // Aggiunta nome anagrafica come ultimo campo
+    if (sizeof($ragioni_sociali) > 1) {
+        $result['labels'][] = 'Anagrafica: '.$ragioni_sociali[$r['idanagrafica']].'<br/>';
+    }
+
+    $results[] = $result;
 }

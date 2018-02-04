@@ -87,51 +87,6 @@ else {
             }
             break;
 
-        case 'categorie':
-            if (Modules::get('Magazzino')['permessi'] != '-') {
-                $query = 'SELECT id, nome AS descrizione FROM mg_categorie |where| ORDER BY id';
-
-                foreach ($elements as $element) {
-                    $filter[] = 'id='.prepare($element);
-                }
-
-                $where[] = '`parent` IS NULL';
-
-                if (!empty($search)) {
-                    $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
-                }
-            }
-            break;
-
-        case 'sottocategorie':
-            if (Modules::get('Magazzino')['permessi'] != '-' && isset($superselect['id_categoria'])) {
-                $query = 'SELECT id, nome AS descrizione FROM mg_categorie |where| ORDER BY id';
-
-                foreach ($elements as $element) {
-                    $filter[] = 'id='.prepare($element);
-                }
-
-                $where[] = '`parent`='.prepare($superselect['id_categoria']);
-
-                if (!empty($search)) {
-                    $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
-                }
-            }
-            break;
-
-        case 'misure':
-            if (Modules::get('Magazzino')['permessi'] != '-') {
-                $query = 'SELECT valore AS id, valore AS descrizione FROM mg_unitamisura |where| ORDER BY valore';
-
-                foreach ($elements as $element) {
-                    $filter[] = 'valore='.prepare($element).'';
-                }
-                if (!empty($search)) {
-                    $search_fields[] = 'valore LIKE '.prepare('%'.$search.'%');
-                }
-            }
-            break;
-
         case 'prodotti_lotti':
             if (Modules::get('Magazzino')['permessi'] != '-') {
                 $query = 'SELECT DISTINCT lotto AS descrizione FROM mg_prodotti |where|';
@@ -184,6 +139,51 @@ else {
                 }
 
                 $custom['id'] = 'descrizione';
+            }
+            break;
+
+        case 'categorie':
+            if (Modules::get('Magazzino')['permessi'] != '-') {
+                $query = 'SELECT id, nome AS descrizione FROM mg_categorie |where| ORDER BY id';
+
+                foreach ($elements as $element) {
+                    $filter[] = 'id='.prepare($element);
+                }
+
+                $where[] = '`parent` IS NULL';
+
+                if (!empty($search)) {
+                    $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
+                }
+            }
+            break;
+
+        case 'sottocategorie':
+            if (Modules::get('Magazzino')['permessi'] != '-' && isset($superselect['id_categoria'])) {
+                $query = 'SELECT id, nome AS descrizione FROM mg_categorie |where| ORDER BY id';
+
+                foreach ($elements as $element) {
+                    $filter[] = 'id='.prepare($element);
+                }
+
+                $where[] = '`parent`='.prepare($superselect['id_categoria']);
+
+                if (!empty($search)) {
+                    $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
+                }
+            }
+            break;
+
+        case 'misure':
+            if (Modules::get('Magazzino')['permessi'] != '-') {
+                $query = 'SELECT valore AS id, valore AS descrizione FROM mg_unitamisura |where| ORDER BY valore';
+
+                foreach ($elements as $element) {
+                    $filter[] = 'valore='.prepare($element).'';
+                }
+                if (!empty($search)) {
+                    $search_fields[] = 'valore LIKE '.prepare('%'.$search.'%');
+                }
             }
             break;
     }

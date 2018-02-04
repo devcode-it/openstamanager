@@ -384,64 +384,6 @@ class Prints
 
     public static function getLink($print, $id_record, $btn = null, $title = null, $icon = null, $get = '')
     {
-        $print = self::get($print);
-
-        if (empty($print)) {
-            return false;
-        }
-
-        $class = isset($btn) ? $btn : 'btn-info';
-        $class = !empty($class) ? ' class="btn '.$class.'" ' : '';
-
-        $title = isset($title) ? $title : $print['title'];
-
-        $icon = !empty($icon) ? $icon : $print['icon'];
-        $icon = str_replace('|default|', $print['icon'], $icon);
-
-        return '
-<a '.$class.' href="'.self::getHref($print['id'], $id_record, $get).'" target="_blank"><i class="'.$icon.'"></i> '.$title.'</a>';
-    }
-
-    public static function getDropdown($module, $id_record, $class = 'btn-info')
-    {
-        $prints = self::getModulePrints($module);
-
-        if (empty($prints) || empty($id_record)) {
-            return false;
-        }
-
-        if (count($prints) > 1) {
-            $result = '
-<div class="btn-group">';
-
-            $main = array_search(1, array_column($prints, 'main'));
-            if ($main !== false) {
-                $print = $prints[$main];
-
-                $result .= self::getLink($print['id'], $id_record, $class);
-
-                unset($prints[$main]);
-            }
-
-            $result .= '
-    <button type="button" class="btn '.$class.' dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        '.($main === false ? '<i class="fa fa-print"></i> '.tr('Stampe').' ' : '').'<span class="caret"></span>
-        <span class="sr-only">Toggle Dropdown</span>
-    </button>
-    <ul class="dropdown-menu">';
-
-            foreach ($prints as $print) {
-                $result .= '
-        <li>'.self::getLink($print['id'], $id_record, false).'</li>';
-            }
-
-            $result .= '
-    </ul>
-</div>';
-        } else {
-            $result = self::getLink($prints[0]['id'], $id_record, $class);
-        }
-
-        return $result;
+        return '{( "name": "button", "type": "print", "id": "'.$print.'", "id_record": "'.$id_record.'", "label": "'.$title.'", "icon": "'.$icon.'", "parameters": "'.$get.'", "class": "'.$btn.'" )}';
     }
 }

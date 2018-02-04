@@ -74,6 +74,7 @@ class HTMLBuilder
     protected static $managers = [
         'list' => [
             'filelist_and_upload' => 'HTMLBuilder\Manager\FileManager',
+            'button' => 'HTMLBuilder\Manager\ButtonManager',
             'csrf' => 'HTMLBuilder\Manager\CSRFManager',
         ],
         'instances' => [],

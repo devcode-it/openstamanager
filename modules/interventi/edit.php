@@ -34,9 +34,8 @@ if (empty($records[0]['firma_file'])) {
 			<div class="pull-right">
 				<button type="button" class="btn btn-primary " onclick="launch_modal( '<?php echo tr('Anteprima e firma') ?>', '<?php echo $rootdir ?>/modules/interventi/add_firma.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>&anteprima=1', 1 );"><i class="fa fa-desktop"></i> <?php echo $frase ?>...</button>
 
-                <?php
-                echo Prints::getDropdown($id_module, $id_record);
-                ?>
+                {( "name": "button", "type": "print", "id_module": "<?php echo $id_module ?>", "id_record": "<?php echo $id_record ?>" )}
+
 				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
 				<div class="clearfix" >&nbsp;</div>
 			</div>
@@ -310,7 +309,7 @@ if (!empty($fatture)) {
     <div class="alert alert-warning">
         <p>'.tr('_NUM_ altr_I_ document_I_ collegat_I_', [
             '_NUM_' => count($fatture),
-			'_I_' => (count($fatture)>1) ? tr('i') : tr('o')
+            '_I_' => (count($fatture) > 1) ? tr('i') : tr('o'),
         ]).':</p>
     <ul>';
 

@@ -51,11 +51,11 @@ if ($_GET['lev'] == '3') {
                     <col width='80'><col width='452'><col width='80'><col width='80'>
                     <tbody>\n";
 
-                    // Inizializzo saldo finale
-                    $saldo_finale = 0;
+    // Inizializzo saldo finale
+    $saldo_finale = 0;
 
-                    // Calcolo saldo iniziale
-                    $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$idconto.'" AND data < "'.$_SESSION['period_start'].'"');
+    // Calcolo saldo iniziale
+    $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$idconto.'" AND data < "'.$_SESSION['period_start'].'"');
     $saldo_iniziale = $rs[0]['totale'];
     $saldo_finale = $saldo_iniziale;
 
@@ -93,8 +93,8 @@ if ($_GET['lev'] == '3') {
         $avere = '';
     }
 
-                    // Mostro il saldo finale
-                    $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'><b>SALDO FINALE</b></td><td class='br bb padded text-right'><b>".Translator::numberToLocale(abs($dare))."</b></td><td class='bb padded text-right'><b>".Translator::numberToLocale(abs($avere))."</b></td></tr>\n";
+    // Mostro il saldo finale
+    $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'><b>SALDO FINALE</b></td><td class='br bb padded text-right'><b>".Translator::numberToLocale(abs($dare))."</b></td><td class='bb padded text-right'><b>".Translator::numberToLocale(abs($avere))."</b></td></tr>\n";
 
     $body .= "		</tbody>
                 </table>\n";
@@ -106,15 +106,15 @@ elseif ($_GET['lev'] == '2') {
                     <col width='80'><col width='452'><col width='80'><col width='80'>
                     <tbody>\n";
 
-                    // Ciclo fra i sotto-conti di livello 2
-                    $rs3 = $dbo->fetchArray('SELECT id, numero, descrizione FROM co_pianodeiconti3 WHERE idpianodeiconti2="'.$idconto.'"');
+    // Ciclo fra i sotto-conti di livello 2
+    $rs3 = $dbo->fetchArray('SELECT id, numero, descrizione FROM co_pianodeiconti3 WHERE idpianodeiconti2="'.$idconto.'"');
 
     for ($z = 0; $z < sizeof($rs3); ++$z) {
         // Inizializzo saldo finale
-                        $saldo_finale = 0;
+        $saldo_finale = 0;
 
-                        // Calcolo saldo iniziale
-                        $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data < "'.$_SESSION['period_start'].'"');
+        // Calcolo saldo iniziale
+        $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data < "'.$_SESSION['period_start'].'"');
         $saldo_iniziale = $rs[0]['totale'];
         $saldo_finale = $saldo_iniziale;
 
@@ -146,8 +146,8 @@ elseif ($_GET['lev'] == '2') {
             $avere = Translator::numberToLocale(abs($totale));
         }
 
-                        // Mostro il saldo finale del conto di livello 3
-                        $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'>".$rs3[$z]['numero'].' '.$rs3[$z]['descrizione']."</td><td class='br bb padded text-right'>".$dare."</td><td class='bb padded text-right'>".$avere."</td></tr>\n";
+        // Mostro il saldo finale del conto di livello 3
+        $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'>".$rs3[$z]['numero'].' '.$rs3[$z]['descrizione']."</td><td class='br bb padded text-right'>".$dare."</td><td class='bb padded text-right'>".$avere."</td></tr>\n";
     }
 
     $body .= "		</tbody>
@@ -165,18 +165,18 @@ elseif ($_GET['lev'] == '1') {
                     <col width='80'><col width='452'><col width='80'><col width='80'>
                     <tbody>\n";
 
-                    // Ciclo fra il conto principale scelto (Economico o Patrimoniale)
-                    $rs1 = $dbo->fetchArray('SELECT id, numero, descrizione FROM co_pianodeiconti1 WHERE id="'.$idconto.'" ORDER BY numero DESC');
+    // Ciclo fra il conto principale scelto (Economico o Patrimoniale)
+    $rs1 = $dbo->fetchArray('SELECT id, numero, descrizione FROM co_pianodeiconti1 WHERE id="'.$idconto.'" ORDER BY numero DESC');
 
     for ($x = 0; $x < sizeof($rs1); ++$x) {
         // Ciclo fra i sotto-conti di livello 1
-                        $rs2 = $dbo->fetchArray('SELECT id, numero, descrizione FROM co_pianodeiconti2 WHERE idpianodeiconti1="'.$rs1[$x]['id'].'"');
+        $rs2 = $dbo->fetchArray('SELECT id, numero, descrizione FROM co_pianodeiconti2 WHERE idpianodeiconti1="'.$rs1[$x]['id'].'"');
 
         for ($y = 0; $y < sizeof($rs2); ++$y) {
             $body .= "		<tr><th class='bb padded' colspan='4'><b>".$rs2[$y]['numero'].' '.$rs2[$y]['descrizione']."</b></th></tr>\n";
 
-                            // Ciclo fra i sotto-conti di livello 2
-                            $rs3 = $dbo->fetchArray('SELECT id, numero, descrizione FROM co_pianodeiconti3 WHERE idpianodeiconti2="'.$rs2[$y]['id'].'"');
+            // Ciclo fra i sotto-conti di livello 2
+            $rs3 = $dbo->fetchArray('SELECT id, numero, descrizione FROM co_pianodeiconti3 WHERE idpianodeiconti2="'.$rs2[$y]['id'].'"');
 
             for ($z = 0; $z < sizeof($rs3); ++$z) {
                 $dare = 0;
@@ -206,8 +206,8 @@ elseif ($_GET['lev'] == '1') {
                     $ricavi += abs($avere);
                 }
 
-                                // Mostro il saldo finale del conto di livello 3
-                                $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'>".$rs3[$z]['numero'].' '.$rs3[$z]['descrizione']."</td><td class='br bb padded text-right'>".Translator::numberToLocale(abs($dare))."</td><td class='bb padded text-right'>".Translator::numberToLocale(abs($avere))."</td></tr>\n";
+                // Mostro il saldo finale del conto di livello 3
+                $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'>".$rs3[$z]['numero'].' '.$rs3[$z]['descrizione']."</td><td class='br bb padded text-right'>".Translator::numberToLocale(abs($dare))."</td><td class='bb padded text-right'>".Translator::numberToLocale(abs($avere))."</td></tr>\n";
             }
         }
     }

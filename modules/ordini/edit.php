@@ -47,7 +47,7 @@ if ($module['name'] == 'Ordini cliente') {
                     echo Modules::link('Anagrafiche', $records[0]['idanagrafica'], null, null, 'class="pull-right"');
 
                     if ($dir == 'entrata') {
-                    ?>
+                        ?>
 						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted=0 ORDER BY ragione_sociale", "value": "$idanagrafica$", "ajax-source": "clienti" ]}
 					<?php
                     } else {
@@ -109,10 +109,9 @@ if ($module['name'] == 'Ordini cliente') {
 				<a  class="btn btn-sm btn-info" data-href="<?php echo $rootdir ?>/modules/fatture/crea_documento.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>&documento=fattura" data-toggle="modal" data-title="Crea fattura" data-target="#bs-popup" ><i class="fa fa-magic"></i> Crea fattura da ordine...</i></a>
 			<?php
                     }
+            ?>
 
-                    echo Prints::getDropdown($id_module, $id_record);
-
-                    ?>
+            {( "name": "button", "type": "print", "id_module": "<?php echo $id_module ?>", "id_record": "<?php echo $id_record ?>" )}
 		</div>
 		<div class="clearfix"></div>
 		<br>
@@ -137,7 +136,7 @@ if (!empty($elementi)) {
     <div class="alert alert-warning">
         <p>'.tr('_NUM_ altr_I_ document_I_ collegat_I_', [
             '_NUM_' => count($elementi),
-			'_I_' => (count($elementi)>1) ? tr('i') : tr('o')
+            '_I_' => (count($elementi) > 1) ? tr('i') : tr('o'),
         ]).':</p>
     <ul>';
 

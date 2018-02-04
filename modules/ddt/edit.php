@@ -58,12 +58,10 @@ if ($dir == 'uscita') {
                         ?>
 						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
 					<?php
-
                     } else {
                         ?>
 						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "fornitori" ]}
 					<?php
-
                     }
                     ?>
 				</div>
@@ -149,7 +147,6 @@ if ($records[0]['stato'] != 'Evaso') {
                     <i class="fa fa-plus"></i> <?php echo tr('Descrizione'); ?>
                 </a>
 <?php
-
 }
 ?>
 		</div>
@@ -158,18 +155,16 @@ if ($records[0]['stato'] != 'Evaso') {
             <!-- Stampe -->
 <?php
 
-if( !in_array( $records[0]['stato'], array( 'Bozza', 'Fatturato')) ) {
+if (!in_array($records[0]['stato'], ['Bozza', 'Fatturato'])) {
     ?>
 				<a class="btn btn-sm btn-info" data-href="<?php echo $rootdir ?>/modules/fatture/crea_documento.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>&documento=fattura" data-toggle="modal" data-title="Crea fattura" data-target="#bs-popup">
                     <i class="fa fa-magic"></i> <?php echo tr('Crea fattura da ddt'); ?>...</i>
                 </a>
 <?php
-
 }
-
-echo Prints::getDropdown($id_module, $id_record);
-
 ?>
+
+            {( "name": "button", "type": "print", "id_module": "<?php echo $id_module ?>", "id_record": "<?php echo $id_record ?>" )}
 		</div>
 
 		<div class="clearfix"></div>
@@ -206,9 +201,9 @@ if (!empty($fatture)) {
     echo '
 	<div class="alert alert-warning">
 		<p>'.tr('_NUM_ altr_I_ document_I_ collegat_I_', [
-			'_NUM_' => count($fatture),
-			'_I_' => (count($fatture)>1) ? tr('i') : tr('o')
-		]).':</p>
+            '_NUM_' => count($fatture),
+            '_I_' => (count($fatture) > 1) ? tr('i') : tr('o'),
+        ]).':</p>
 	<ul>';
 
     foreach ($fatture as $fattura) {

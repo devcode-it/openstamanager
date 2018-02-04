@@ -42,7 +42,7 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
                                 </div>';
                     $label = tr('Numero secondario');
                 } else {
-                        $label = tr('Numero fattura');
+                    $label = tr('Numero fattura');
                 }
                 ?>
 				<div class="col-md-3">
@@ -302,7 +302,7 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
                         <a class="btn btn-sm btn-primary" data-href="'.$rootdir.'/modules/fatture/add_riga.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Riga generica
                         </a>';
-                        
+
     echo '
                         <a class="btn btn-sm btn-primary" data-href="'.$rootdir.'/modules/fatture/add_descrizione.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Descrizione
@@ -339,7 +339,7 @@ if ($dir == 'entrata') {
             echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere alla stampa completa i seguenti campi dell'anagrafica:<br/><b>".implode(', ', $campi_mancanti).'</b><br/>
             '.Modules::link('Anagrafiche', $records[0]['idanagrafica'], tr('Vai alla scheda anagrafica'), null).'</div>';
         } else {
-            echo Prints::getDropdown($id_module, $id_record);
+            echo '{( "name": "button", "type": "print", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}';
         }
     }
 }

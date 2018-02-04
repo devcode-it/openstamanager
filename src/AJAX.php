@@ -84,7 +84,7 @@ class AJAX
         return $results;
     }
 
-    private static function getSelectResults($file, $resource, $elements = [], $search = null)
+    protected static function getSelectResults($file, $resource, $elements = [], $search = null)
     {
         $superselect = self::getSelectInfo();
 
@@ -110,7 +110,7 @@ class AJAX
         return $results;
     }
 
-    private static function getSelectInfo()
+    protected static function getSelectInfo()
     {
         return !empty($_SESSION['superselect']) ? $_SESSION['superselect'] : [];
     }
@@ -149,7 +149,7 @@ class AJAX
         return $results;
     }
 
-    private static function getSearchResults($file, $term)
+    protected static function getSearchResults($file, $term)
     {
         // Database
         $database = Database::getConnection();
@@ -208,7 +208,7 @@ class AJAX
         return $result;
     }
 
-    private static function getCompleteResults($file, $resource)
+    protected static function getCompleteResults($file, $resource)
     {
         // Database
         $database = Database::getConnection();

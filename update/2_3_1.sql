@@ -3,3 +3,6 @@ UPDATE `zz_plugins` SET `options` = '	{ "main_query": [	{	"type": "table", "fiel
 
 -- Aggiunta possibilità di collegare allegati anche ai plugins
 ALTER TABLE `zz_files` ADD `id_plugin` int(11) AFTER `id_module`;
+
+ALTER TABLE `co_righe2_contratti` CHANGE `idarticolo` `idarticolo` int(11);
+UPDATE `co_righe2_contratti` SET `idarticolo` = NULL WHERE `idarticolo` = 0;

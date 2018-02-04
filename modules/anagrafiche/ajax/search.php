@@ -38,7 +38,7 @@ if (sizeof($rs) > 0) {
                 preg_match('/'.$term.'/i', $rs[$r][$campi[$c]], $matches);
 
                 for ($m = 0; $m < sizeof($matches); ++$m) {
-                    $text = str_replace($matches[$m], "<span class='highlight'>".$matches[$m].'</span>', $text);
+                    $text = str_replace($matches[$m], "<span class='highlight'>".$matches[$m].'</span>', $r[$name]);
                 }
 
                 $result['labels'][] = $campi_text[$c].': '.$text.'<br/>';
@@ -82,7 +82,7 @@ if (sizeof($rs) > 0) {
                 preg_match('/'.$term.'/i', $rs[$r][$campi[$c]], $matches);
 
                 for ($m = 0; $m < sizeof($matches); ++$m) {
-                    $text = str_replace($matches[$m], "<span class='highlight'>".$matches[$m].'</span>', $text);
+                    $text = str_replace($matches[$m], "<span class='highlight'>".$matches[$m].'</span>', $r[$name]);
                 }
 
                 $result['labels'][] = $campi_text[$c].': '.$text.'<br/>';

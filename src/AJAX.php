@@ -29,7 +29,7 @@ class AJAX
         $modules = Modules::getAvailableModules();
 
         // Individuazione dei select esistenti
-        $dirs = array_column($modules, 'directory');
+        $dirs = array_unique(array_column($modules, 'directory'));
         $pieces = array_chunk($dirs, 5);
 
         $customs = [];
@@ -124,7 +124,7 @@ class AJAX
         $modules = Modules::getAvailableModules();
 
         // Individuazione dei select esistenti
-        $dirs = array_column($modules, 'directory');
+        $dirs = array_unique(array_column($modules, 'directory'));
         $pieces = array_chunk($dirs, 5);
 
         $customs = [];
@@ -183,7 +183,7 @@ class AJAX
         $modules = Modules::getAvailableModules();
 
         // Individuazione dei select esistenti
-        $dirs = array_column($modules, 'directory');
+        $dirs = array_unique(array_column($modules, 'directory'));
         $pieces = array_chunk($dirs, 5);
 
         $customs = [];

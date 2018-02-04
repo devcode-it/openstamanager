@@ -8,8 +8,7 @@ if (!empty($debugbar)) {
     $debugbarRenderer->setBaseUrl($assets.'/php-debugbar');
 }
 
-echo '
-<!DOCTYPE html>
+echo '<!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">

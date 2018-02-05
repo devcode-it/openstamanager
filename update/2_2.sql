@@ -50,7 +50,6 @@ UPDATE `zz_modules` SET `options` = '{	"main_query": [	{	"type": "table", "field
 UPDATE `zz_modules` SET `options` = '{	"main_query": [	{	"type": "table", "fields": "Documento, Anagrafica, Tipo di pagamento, Data emissione, Data scadenza, Importo, Pagato", "query": "SELECT co_scadenziario.id AS id, ragione_sociale AS `Anagrafica`, co_pagamenti.descrizione AS `Tipo di pagamento`, CONCAT(co_tipidocumento.descrizione, CONCAT('' numero '', IF(numero_esterno<>'''', numero_esterno, numero))) AS `Documento`, DATE_FORMAT(data_emissione, ''%d/%m/%Y'') AS `Data emissione`, DATE_FORMAT(scadenza, ''%d/%m/%Y'') AS `Data scadenza`, REPLACE(REPLACE(REPLACE(FORMAT(da_pagare, 2), '','', ''#''), ''.'', '',''), ''#'', ''.'') AS `Importo`, REPLACE(REPLACE(REPLACE(FORMAT(pagato, 2), '','', ''#''), ''.'', '',''), ''#'', ''.'') AS `Pagato`, IF(scadenza<NOW(), ''#ff7777'', '''') AS _bg_, da_pagare, pagato, co_statidocumento.descrizione FROM (co_scadenziario INNER JOIN (((co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_pagamenti ON co_documenti.idpagamento=co_pagamenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id) ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id HAVING 1=1 AND (ABS(pagato) < ABS(da_pagare) AND co_statidocumento.descrizione IN(''Emessa'',''Parzialmente pagato'')) ORDER BY scadenza ASC"}	]}' WHERE `zz_modules`.`name` = 'Scadenzario';
 UPDATE `zz_impostazioni` SET `valore` = '100' WHERE `nome` = 'Righe per pagina';
 
-
 --
 -- Modifica menu fatture, ordini, ecc in Vendita, Acquisti, Contabilità
 --
@@ -67,16 +66,13 @@ UPDATE `zz_modules` SET `order`=7 WHERE `name`='MyImpianti';
 UPDATE `zz_modules` SET `order`=8 WHERE `name`='Backup';
 UPDATE `zz_modules` SET `order`=9 WHERE `name`='Aggiornamenti';
 
-
 -- Collegamento sottomenu di Contabilità al giusto "contenitore" (vendite o acquisti)
-UPDATE `zz_modules` SET `parent`=(SELECT `id` FROM (SELECT `id` FROM `zz_modules` `m2` WHERE `name`='Vendite') AS `m2`) WHERE `name` IN('Preventivi', 'Contratti', 'Fatture di vendita', 'Ordini cliente');
-UPDATE `zz_modules` SET `parent`=(SELECT `id` FROM (SELECT `id` FROM `zz_modules` `m2` WHERE `name`='Acquisti') AS `m2`) WHERE `name` IN('Fatture di acquisto', 'Ordini fornitore');
-
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` IN('Preventivi', 'Contratti', 'Fatture di vendita', 'Ordini cliente') AND `t2`.`name` = 'Vendite') SET `t1`.`parent` = `t2`.`id`;
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` IN('Fatture di acquisto', 'Ordini fornitore') AND `t2`.`name` = 'Acquisti') SET `t1`.`parent` = `t2`.`id`;
 
 -- Aggiunta nuovi campi nelle righe preventivi
 ALTER TABLE `co_righe_preventivi` ADD `sconto` DECIMAL(12, 4) NOT NULL AFTER `subtotale`;
 ALTER TABLE `co_preventivi` ADD `idiva` INT(11) NOT NULL AFTER `idtipointervento`;
-
 
 -- Creazione collegamento multiplo fra clienti e agenti
 CREATE TABLE IF NOT EXISTS `an_anagrafiche_agenti` (
@@ -84,7 +80,6 @@ CREATE TABLE IF NOT EXISTS `an_anagrafiche_agenti` (
   `idagente` int(11) NOT NULL,
   PRIMARY KEY(`idanagrafica`, `idagente`)
 ) ENGINE=InnoDB;
-
 
 -- Aggiunta filtro su Prima nota per mostrare solo quelle dell'agente loggato
 INSERT INTO `zz_gruppi_modules` (`idgruppo`, `idmodule`, `clause`) VALUES ((SELECT `id` FROM `zz_gruppi` WHERE `nome`='Agenti'), (SELECT `id` FROM `zz_modules` WHERE `name`='Prima nota'), 'AND idagente=|idanagrafica|');
@@ -105,11 +100,9 @@ CREATE TABLE IF NOT EXISTS `zz_log` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
-
 -- Aggiunta tipologia di scadenza
 ALTER TABLE `co_scadenziario` ADD `tipo` VARCHAR(50) NOT NULL AFTER `iddocumento`;
 UPDATE `co_scadenziario` SET `tipo` = 'fattura';
-
 
 -- Aggiunto campo bic per l'anagrafica
 ALTER TABLE `an_anagrafiche` ADD `bic` VARCHAR(25) NOT NULL AFTER `codiceiban`;
@@ -120,14 +113,13 @@ ALTER TABLE `my_impianto_componenti` CHANGE `idintervento` `idintervento` VARCHA
 -- Aggiunto campo ordine per poter ordinare le righe in fattura
 ALTER TABLE `co_righe_documenti` ADD `ordine` INT(11) NOT NULL AFTER `altro`;
 
-
 -- Aggiunto widget per vedere il valore del magazzino + il totale degli articoli disponibili
 INSERT INTO `zz_widget_modules` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`) VALUES (NULL, 'Valore magazzino', 'stats', '21', 'controller_right', 'col-md-12', 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT (SUM(prezzo_acquisto*qta),2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM mg_articoli WHERE qta>0', '#A15D2D', 'fa fa-money', '', '', '', '', 'Valore magazzino', '1', '1');
 INSERT INTO `zz_widget_modules` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`) VALUES (NULL, 'Articoli in magazzino', 'stats', '21', 'controller_right', 'col-md-12', 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT (SUM(qta),2), ",", "#"), ".", ","), "#", "."), "unit&agrave;") AS dato FROM mg_articoli WHERE qta>0', '#45A9F1', 'fa fa-check-square-o', '', '', '', '', 'Articoli in magazzino', '1', '1');
 -- Controllo scadenze per contratti con data conclusione > 1970
 UPDATE `zz_widget_modules` SET `query` = 'SELECT COUNT(id) AS dato FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE descrizione="Accettato" OR descrizione="In lavorazione" OR descrizione="In attesa di pagamento") AND rinnovabile=1 AND NOW() > DATE_ADD(data_conclusione, INTERVAL -ABS(giorni_preavviso_rinnovo) DAY) AND YEAR(data_conclusione) > 1970' WHERE `zz_widget_modules`.`name` = 'Contratti in scadenza';
 
--- aumento dimensione campo descrizione su co_pagamenti
+-- Aumento dimensione campo descrizione su co_pagamenti
 ALTER TABLE `co_pagamenti` CHANGE `descrizione` `descrizione` VARCHAR(255) NOT NULL;
 
 -- Aggiunta filtro su MyImpianti per mostrare solo quelli del cliente loggato
@@ -145,12 +137,10 @@ ALTER TABLE `co_righe2_contratti` ADD `iva_indetraibile` DECIMAL(12, 4) NOT NULL
 -- Aggiunto stato concluso anche ai contratti
 INSERT INTO `co_staticontratti` (`id`, `descrizione`, `icona`, `completato`, `annullato`) VALUES (NULL, 'Concluso', 'fa fa-2x fa-check text-success', '0', '0');
 
-
 -- Aggiunto modulo per gestire componenti
 -- (SELECT `id` FROM `zz_modules` WHERE `name`='MyImpianti')
 INSERT INTO `zz_modules` (`id`, `name`, `name2`, `module_dir`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `level`, `parent`, `default`, `enabled`, `type`, `new`) VALUES (NULL, 'Gestione componenti', '', 'gestione_componenti', '{ "main_query": [ { "type": "custom" } ]}', '', 'fa fa-external-link', '2.2', '2.2', '0', '1', '30', '1', '1', 'menu', '0');
-UPDATE `zz_modules` SET `parent` = (SELECT `id` FROM (SELECT * FROM zz_modules) AS table1 WHERE `name`='MyImpianti')  WHERE `zz_modules`.`name` = 'Gestione componenti';
-
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Gestione componenti' AND `t2`.`name` = 'MyImpianti') SET `t1`.`parent` = `t2`.`id`;
 
 -- Aggiunti campi per gestire firma rapportini
 ALTER TABLE `in_interventi` ADD  `firma_file` varchar(255) NOT NULL AFTER `ora_sla`;
@@ -172,7 +162,6 @@ CREATE TABLE IF NOT EXISTS `my_componenti_interventi` (
 
 -- Aggiunto campo prc_guadagno in co_righe_preventivi
 ALTER TABLE `co_righe_preventivi` ADD `prc_guadagno` DECIMAL(5,2) NOT NULL AFTER `sconto`;
-
 
 -- 2016-11-09 (r1509)
 CREATE TABLE IF NOT EXISTS `co_contratti_tipiintervento` (

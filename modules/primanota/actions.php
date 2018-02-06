@@ -242,36 +242,42 @@ switch (post('op')) {
 
             for ($i = 0; $i < sizeof($rs); ++$i) {
                 if (abs($rimanente) > 0) {
-                    if (abs($rs[$i]['da_pagare']) >= abs($rimanente)) {
-                        $query2 = 'SELECT pagato FROM co_scadenziario WHERE id='.prepare($rs[$i]['id']);
-                        $rs2 = $dbo->fetchArray($query2);
-                        $pagato = $rs2[0]['pagato'];
-                        ($pagato < 0) ? $sign = -1 : $sign = 1;
-                        $new_value = ((abs($pagato) - abs($rimanente)) * $sign);
+                        if (abs($rs[$i]['pagato']) >= abs($rimanente)) {
+                            $query2 = 'SELECT pagato FROM co_scadenziario WHERE id='.prepare($rs[$i]['id']);
+                            $rs2 = $dbo->fetchArray($query2);
+                            $pagato = $rs2[0]['pagato'];
+                            
+                            ($pagato < 0) ? $sign = -1 : $sign = 1;
+                            $new_value = ((abs($pagato) - abs($rimanente)) * $sign);
 
-                        // Se resta ancora un po' di pagato cambio solo l'importo...
-                        if ($new_value > 0) {
-                            $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($new_value).' WHERE id='.prepare($rs[$i]['id']));
+                            // Se resta ancora un po' di pagato cambio solo l'importo...
+                            if ($new_value > 0) {
+                                $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($new_value).' WHERE id='.prepare($rs[$i]['id']));
+                            }
+
+                            // ...se l'importo è a zero, azzero anche la data di pagamento
+                            else {
+                                $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($new_value).", data_pagamento='0000-00-00' WHERE id=".prepare($rs[$i]['id']));
+                            }
+
+                            $rimanente = 0;
+                        } else {
+                            $dbo->query("UPDATE co_scadenziario SET pagato='0', data_pagamento='0000-00-00' WHERE id=".prepare($rs[$i]['id']));
+                            $rimanente -= abs($rs[$i]['pagato']);
                         }
-
-                        // ...se l'importo è a zero, azzero anche la data di pagamento
-                        else {
-                            $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($new_value).", data_pagamento='0000-00-00' WHERE id=".prepare($rs[$i]['id']));
-                        }
-
-                        $rimanente = 0;
-                    } else {
-                        $dbo->query("UPDATE co_scadenziario SET pagato='0' WHERE id=".prepare($rs[$i]['id']));
-                        $rimanente -= abs($rs[$i]['da_pagare']);
-                    }
                 }
             }
 
             // Eliminazione prima nota
             $dbo->query('DELETE FROM co_movimenti WHERE idmastrino='.prepare($idmastrino).' AND primanota=1');
 
-            // Aggiorno lo stato della fattura a "Emessa"
-            $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Emessa') WHERE id=".prepare($iddocumento));
+            // Aggiorno lo stato della fattura a "Emessa" o "Parzialmente pagato"
+            $rs_pagamenti = $dbo->fetchArray("SELECT SUM(pagato) AS pagato FROM co_scadenziario WHERE iddocumento='".$iddocumento."'");
+            if($rs_pagamenti[0]['pagato']>0){
+                $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Parzialmente pagato') WHERE id=".prepare($iddocumento));
+            }else{
+                $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Emessa') WHERE id=".prepare($iddocumento));
+            }
 
             // Aggiorno lo stato dei preventivi collegati alla fattura se ce ne sono
             $query = 'SELECT idpreventivo FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' AND NOT idpreventivo=0 AND idpreventivo IS NOT NULL';

@@ -1,7 +1,3 @@
----
-currentMenu: contribuire
----
-
 # Contribuire
 
 Sei interessato a contribuire allo sviluppo di OpenSTAManger? Ottimo, sei il benvenuto!
@@ -13,19 +9,6 @@ Non serve essere degli esperti programmatori per aiutarci! :smile_cat:
 
 Leggi le seguenti sezioni per scoprire come ti consigliamo di procedere.
 Se ti serve un aiuto, crea una issue su GitHub.
-
-<!-- TOC depthFrom:2 depthTo:6 orderedList:false updateOnSave:true withLinks:true -->
-
-- [Linee guida](#linee-guida)
-    - [Codice di condotta](#codice-di-condotta)
-    - [Stile del codice](#stile-del-codice)
-- [Prima contribuzione](#prima-contribuzione)
-- [Problemi di sicurezza](#problemi-di-sicurezza)
-- [Segnalare un bug](#segnalare-un-bug)
-- [Pull Request](#pull-request)
-- [Community](#community)
-
-<!-- /TOC -->
 
 ## Linee guida
 

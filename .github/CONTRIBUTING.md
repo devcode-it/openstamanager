@@ -4,7 +4,7 @@ Sei interessato a contribuire allo sviluppo di OpenSTAManger? Ottimo, sei il ben
 Siamo entusiasti di ogni nuova contribuzione che otteniamo dalla nostra community.
 Ci sono molti modi per contribuire: segnalare bug, richiedere miglioramenti, scrivere tutorial, migliorare la documentazione...
 
-Non serve essere degli esperti programmatori per aiutarci! :smile_cat
+Non serve essere degli esperti programmatori per aiutarci! :smile_cat:
 Leggi le seguenti sezione per scoprire come ti consigliamo di procedere. Se ti serve un aiuto, crea una issue su GitHub.
 
 ## Linee guida

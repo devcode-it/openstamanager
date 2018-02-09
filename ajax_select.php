@@ -231,9 +231,9 @@ switch ($op) {
             $filter[] = 'mg_articoli.id='.prepare($element);
         }
 
-        $where[] = 'attivo=1';
+        $where[] = 'attivo = 1';
         if (!empty($superselect['dir']) && $superselect['dir'] == 'entrata') {
-            //$where[] = 'qta>0';
+            //$where[] = '(qta > 0 OR servizio = 1)';
         }
 
         if (!empty($search)) {
@@ -241,7 +241,6 @@ switch ($op) {
             $search_fields[] = 'mg_articoli.codice LIKE '.prepare('%'.$search.'%');
         }
 
-        $wh = '';
         if (!empty($search_fields)) {
             $where[] = '('.implode(' OR ', $search_fields).')';
         }
@@ -250,6 +249,7 @@ switch ($op) {
             $where[] = '('.implode(' OR ', $filter).')';
         }
 
+        $wh = '';
         if (count($where) != 0) {
             $wh = 'WHERE '.implode(' AND ', $where);
         }

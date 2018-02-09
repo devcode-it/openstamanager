@@ -3,7 +3,10 @@
 include_once __DIR__.'/info.php';
 
 // Retrocompatibilità con le stampe gestite da HTML2PDF
-$replaces['pagination'] = str_replace(['{PAGENO}', '{nb}'], ['[[page_cu]]', '[[page_nb]]'], $replaces['pagination']);
+$replaces['default_header'] = str_replace(['{PAGENO}', '{nb}'], ['[[page_cu]]', '[[page_nb]]'], $replaces['default_header']);
+
+$replaces['footer'] = str_replace(['{PAGENO}', '{nb}'], ['[[page_cu]]', '[[page_nb]]'], $replaces['footer']);
+$replaces['default_footer'] = str_replace(['{PAGENO}', '{nb}'], ['[[page_cu]]', '[[page_nb]]'], $replaces['default_footer']);
 
 $prefixes = [
     'c_',

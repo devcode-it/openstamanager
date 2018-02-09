@@ -93,11 +93,18 @@ class Widgets
                 }
                 $query = str_replace('|period_start|', $_SESSION['period_start'], $query);
                 $query = str_replace('|period_end|', $_SESSION['period_end'], $query);
+				
+				
+				
+				if( isset($_SESSION[$dir]['idsezionale']) ):
+					$query = str_replace( "|idsezionale|", " AND idsezionale='".$_SESSION[$dir]['idsezionale']."'", $query );
+				else:
+					$query = str_replace( "|idsezionale|", "", $query );
+				endif;
 
                 $dato = '';
                 if ($query != '') {
                     $dato = $dbo->fetchArray($query);
-
                     $dato = $dato[0]['dato'];
                 }
 

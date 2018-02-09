@@ -292,7 +292,7 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
     }
 
     // Lettura articoli
-    $articoli = $dbo->fetchNum('SELECT * FROM mg_articoli WHERE qta > 0');
+    $articoli = $dbo->fetchNum('SELECT * FROM mg_articoli WHERE qta > 0 OR servizio = 1');
     echo '
                         <a class="btn btn-sm btn-primary'.(!empty($articoli) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_articolo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Articolo

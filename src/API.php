@@ -250,17 +250,29 @@ class API extends \Util\Singleton
         if (!is_array(self::$resources)) {
             $resources = [];
 
-            $operations = glob(DOCROOT.'/modules/*/api/{retrieve,create,update,delete}.php', GLOB_BRACE);
+            // File nativi
+            $files = glob(DOCROOT.'/modules/*/api/{retrieve,create,update,delete}.php', GLOB_BRACE);
+
+            // File personalizzati
+            $custom_files = glob(DOCROOT.'/modules/*/custom/api/{retrieve,create,update,delete}.php', GLOB_BRACE);
+
+            // Pulizia dei file nativi che sono stati personalizzati
+            foreach ($custom_files as $key => $value) {
+                $index = array_search(str_replace('custom/api/', 'api/', $value), $files);
+                if ($index !== false) {
+                    unset($files[$index]);
+                }
+            }
+
+            $operations = array_merge($files, $custom_files);
+            asort($operations);
+
             foreach ($operations as $operation) {
                 // Individua la tipologia e il modulo delle operazioni
                 $module = basename(dirname(dirname($operation)));
                 $kind = basename($operation, '.php');
 
                 $resources[$kind] = (array) $resources[$kind];
-
-                // Controllo sulla presenza di eventuali personalizzazioni
-                $temp = str_replace('/api/', '/custom/api/', $operation);
-                $operation = file_exists($temp) ? $temp : $operation;
 
                 // Individuazione delle operazioni
                 $api = include $operation;

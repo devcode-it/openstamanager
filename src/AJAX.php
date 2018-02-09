@@ -10,13 +10,46 @@ class AJAX
     /**
      * Controlla se è in corso una richiesta AJAX generata dal progetto.
      *
-     * @since 2.4
-     *
      * @return bool
      */
     public static function isAjaxRequest()
     {
         return \Whoops\Util\Misc::isAjaxRequest() && filter('ajax') !== null;
+    }
+
+    protected static function find($file)
+    {
+        $dirname = substr($file, 0, strrpos($file, '/') + 1);
+
+        // Individuazione delle cartelle accessibili
+        $modules = Modules::getAvailableModules();
+
+        $dirs = array_unique(array_column($modules, 'directory'));
+        $pieces = array_chunk($dirs, 5);
+
+        // Individuazione dei file esistenti
+        $list = [];
+        foreach ($pieces as $piece) {
+            // File nativi
+            $files = glob(DOCROOT.'/modules/{'.implode(',', $piece).'}/'.$file, GLOB_BRACE);
+
+            // File personalizzati
+            $custom_files = glob(DOCROOT.'/modules/{'.implode(',', $piece).'}/custom/'.$file, GLOB_BRACE);
+
+            // Pulizia dei file nativi che sono stati personalizzati
+            foreach ($custom_files as $key => $value) {
+                $index = array_search(str_replace('custom/'.$dirname, $dirname, $value), $files);
+                if ($index !== false) {
+                    unset($files[$index]);
+                }
+            }
+
+            $list = array_merge($list, $files, $custom_files);
+        }
+
+        asort($list);
+
+        return $list;
     }
 
     public static function select($resource, $elements = [], $search = null)
@@ -26,25 +59,12 @@ class AJAX
         }
         $elements = (!is_array($elements)) ? explode(',', $elements) : $elements;
 
-        $modules = Modules::getAvailableModules();
-
-        // Individuazione dei select esistenti
-        $dirs = array_unique(array_column($modules, 'directory'));
-        $pieces = array_chunk($dirs, 5);
-
-        $customs = [];
-        foreach ($pieces as $piece) {
-            $files = glob(DOCROOT.'/modules/{'.implode(',', $piece).'}/ajax/select.php', GLOB_BRACE);
-            $customs = array_merge($customs, $files);
-        }
+        $files = self::find('ajax/select.php');
 
         // File di gestione predefinita
-        array_unshift($customs, DOCROOT.'/ajax_select.php');
+        array_unshift($files, DOCROOT.'/ajax_select.php');
 
-        foreach ($customs as $custom) {
-            $temp = str_replace('/ajax/', '/custom/ajax/', $custom);
-            $file = file_exists($temp) ? $temp : $custom;
-
+        foreach ($files as $file) {
             $results = self::getSelectResults($file, $resource, $elements, $search);
             if (isset($results)) {
                 break;
@@ -121,26 +141,13 @@ class AJAX
             return;
         }
 
-        $modules = Modules::getAvailableModules();
-
-        // Individuazione dei select esistenti
-        $dirs = array_unique(array_column($modules, 'directory'));
-        $pieces = array_chunk($dirs, 5);
-
-        $customs = [];
-        foreach ($pieces as $piece) {
-            $files = glob(DOCROOT.'/modules/{'.implode(',', $piece).'}/ajax/search.php', GLOB_BRACE);
-            $customs = array_merge($customs, $files);
-        }
+        $files = self::find('ajax/search.php');
 
         // File di gestione predefinita
-        array_unshift($customs, DOCROOT.'/ajax_search.php');
+        array_unshift($files, DOCROOT.'/ajax_search.php');
 
         $results = [];
-        foreach ($customs as $custom) {
-            $temp = str_replace('/ajax/', '/custom/ajax/', $custom);
-            $file = file_exists($temp) ? $temp : $custom;
-
+        foreach ($files as $file) {
             $module_results = self::getSearchResults($file, $term);
 
             $results = array_merge($results, $module_results);
@@ -180,25 +187,12 @@ class AJAX
 
     public static function complete($resource)
     {
-        $modules = Modules::getAvailableModules();
-
-        // Individuazione dei select esistenti
-        $dirs = array_unique(array_column($modules, 'directory'));
-        $pieces = array_chunk($dirs, 5);
-
-        $customs = [];
-        foreach ($pieces as $piece) {
-            $files = glob(DOCROOT.'/modules/{'.implode(',', $piece).'}/ajax/complete.php', GLOB_BRACE);
-            $customs = array_merge($customs, $files);
-        }
+        $files = self::find('ajax/complete.php');
 
         // File di gestione predefinita
-        array_unshift($customs, DOCROOT.'/ajax_complete.php');
+        array_unshift($files, DOCROOT.'/ajax_complete.php');
 
-        foreach ($customs as $custom) {
-            $temp = str_replace('/ajax/', '/custom/ajax/', $custom);
-            $file = file_exists($temp) ? $temp : $custom;
-
+        foreach ($files as $file) {
             $result = self::getCompleteResults($file, $resource);
             if (!empty($result)) {
                 break;

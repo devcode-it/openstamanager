@@ -70,4 +70,4 @@ Per ulteriori informazioni, consultare la [documentazione ufficiale di Composer]
 - symfony/finder
 - symfony/translation
 
-_I nomi sono indicati secondo la notazione tipica dei progetti pubblici su Github._
+_I nomi sono indicati secondo la notazione tipica dei progetti pubblici su GitHub._

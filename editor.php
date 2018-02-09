@@ -73,7 +73,7 @@ if (empty($records)) {
 					<a class="back-btn" href="controller.php?id_module='.$id_module.'"><i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'</a>
 				</li>';
 
-    $plugins = $dbo->fetchArray('SELECT id, title FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1");
+    $plugins = $dbo->fetchArray('SELECT id, title FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1 ORDER BY zz_plugins.order DESC");
 
     foreach ($plugins as $plugin) {
         echo '

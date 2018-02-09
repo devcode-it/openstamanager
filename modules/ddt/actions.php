@@ -232,10 +232,9 @@ switch (post('op')) {
         $id_record = $dbo->lastInsertedID();
 
         // Lettura di tutte le righe della tabella in arrivo
-        foreach ($post['qta_da_evadere'] AS $idriga=>$value) {
+        foreach ($post['qta_da_evadere'] as $idriga => $value) {
             // Processo solo le righe da evadere
             if ($post['evadere'][$idriga] == 'on') {
-
                 $idarticolo = post('idarticolo')[$idriga];
                 $descrizione = post('descrizione')[$idriga];
 
@@ -382,7 +381,7 @@ switch (post('op')) {
 
             // Se c'è un collegamento ad un ordine, aggiorno la quantità evasa
             if (!empty($idddt)) {
-                $dbo->query( 'UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$old_qta.' + '.$qta.' WHERE descrizione='.prepare($rs[0]['descrizione']).' AND idarticolo='.prepare($rs[0]['idarticolo']).' AND idordine='.prepare($idordine).' AND idiva='.prepare($rs[0]['idiva']) );
+                $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$old_qta.' + '.$qta.' WHERE descrizione='.prepare($rs[0]['descrizione']).' AND idarticolo='.prepare($rs[0]['idarticolo']).' AND idordine='.prepare($idordine).' AND idiva='.prepare($rs[0]['idiva']));
             }
 
             // Calcolo iva
@@ -393,9 +392,9 @@ switch (post('op')) {
             $desc_iva = $rs[0]['descrizione'];
 
             // Modifica riga generica sul ddt
-            if($is_descrizione==0){
+            if ($is_descrizione == 0) {
                 $query = 'UPDATE dt_righe_ddt SET idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
-            }else{
+            } else {
                 $query = 'UPDATE dt_righe_ddt SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga);
             }
             if ($dbo->query($query)) {
@@ -496,11 +495,11 @@ switch (post('op')) {
 }
 
 // Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase
-if( !empty($id_record) ){
-    $rs = $dbo->fetchArray( 'SELECT idordine FROM dt_righe_ddt WHERE idddt='.prepare($id_record) );
+if (!empty($id_record)) {
+    $rs = $dbo->fetchArray('SELECT idordine FROM dt_righe_ddt WHERE idddt='.prepare($id_record));
 
-    for( $i=0; $i<sizeof($rs); $i++ ){
-        $dbo->query( 'UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[$i]['idordine']).'")' );
+    for ($i = 0; $i < sizeof($rs); ++$i) {
+        $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[$i]['idordine']).'") WHERE id = '.prepare($rs[$i]['idordine']));
     }
 }
 

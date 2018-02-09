@@ -170,7 +170,7 @@ switch (post('op')) {
         $rs = $dbo->fetchArray($query);
 
         foreach ($rs as $value) {
-            $non_rimovibili = seriali_non_rimuovibili('id_riga_documenti', $value['id'], $dir);
+            $non_rimovibili = seriali_non_rimuovibili('id_riga_documento', $value['id'], $dir);
             if (!empty($non_rimovibili)) {
                 $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
 
@@ -293,14 +293,14 @@ switch (post('op')) {
             $idanagrafica = $rs[0]['idanagrafica'];
             $data = $rs[0]['data'];
             $codice = $rs[0]['codice'];
-            
+
             //Fatturo le ore di lavoro raggruppate per costo orario
             $rst = $dbo->fetchArray('SELECT SUM( ROUND( TIMESTAMPDIFF( MINUTE, orario_inizio, orario_fine ) / 60, '.get_var('Cifre decimali per quantità').' ) ) AS tot_ore, SUM(prezzo_ore_consuntivo) AS tot_prezzo_ore_consuntivo, prezzo_ore_unitario FROM in_interventi_tecnici WHERE idintervento='.prepare($idintervento).' GROUP BY prezzo_ore_unitario');
-            
+
             //Aggiunta riga intervento sul documento
-            for( $i=0; $i<sizeof($rst); $i++ ){
+            for ($i = 0; $i < sizeof($rst); ++$i) {
                 $ore = $rst[$i]['tot_ore'];
-                
+
                 // Calcolo iva
                 $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
                 $rs = $dbo->fetchArray($query);
@@ -320,7 +320,7 @@ switch (post('op')) {
                 $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(get_var("Percentuale ritenuta d'acconto"));
                 $rs = $dbo->fetchArray($query);
                 $ritenutaacconto = ($subtot - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
-                
+
                 $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, `order`) VALUES('.prepare($id_record).', '.prepare($idintervento).', '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto).", 'UNT', 'ore', ".prepare($ore).', '.prepare(get_var('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(get_var("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
                 $dbo->query($query);
             }

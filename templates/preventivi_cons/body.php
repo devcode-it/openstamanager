@@ -205,7 +205,7 @@ if (!empty($interventi)) {
 
         // Articoli per intervento
         foreach ($interventi as $int) {
-            $righe = $dbo->fetchArray("SELECT *, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice, (SELECT CONCAT_WS(serial, 'SN: ', ', ') FROM mg_prodotti WHERE mg_articoli_interventi.idarticolo = mg_prodotti.id_articolo) AS serials FROM `mg_articoli_interventi` WHERE idintervento =".prepare($int['id']).' ORDER BY idarticolo ASC');
+            $righe = $dbo->fetchArray("SELECT *, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice, (SELECT CONCAT_WS(serial, 'SN: ', ', ') FROM mg_prodotti WHERE mg_articoli_interventi.idarticolo = mg_prodotti.id_articolo AND mg_prodotti.id_riga_intervento = mg_articoli_interventi.idintervento) AS serials FROM `mg_articoli_interventi` WHERE idintervento =".prepare($int['id']).' ORDER BY idarticolo ASC');
 
             foreach ($righe as $r) {
                 echo '

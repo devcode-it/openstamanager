@@ -14,3 +14,6 @@ UPDATE `zz_views` SET `order_by` = 'CAST(numero_esterno AS UNSIGNED)' WHERE `nam
 UPDATE `zz_views` SET `order_by` = 'CAST(in_interventi.codice AS UNSIGNED)' WHERE `name` = 'Numero' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
 
 UPDATE `zz_views` SET `order_by` = 'CAST(numero AS UNSIGNED)' WHERE `name` = 'Numero' AND `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN ('Ordini Preventivi', 'Contratti'));
+
+-- Query per ignorare i punti nella ricerca in Ragione sociale
+-- UPDATE `zz_views` SET `search_inside` = CONCAT('REPLACE(', `query`, ', ''.'', '''') LIKE |search|') WHERE `name` = 'Ragione sociale';

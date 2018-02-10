@@ -34,6 +34,25 @@ if (file_exists($docroot.$directory.'/custom/add.php')) {
 echo '
 </div>';
 
+// Campi personalizzati
+echo '
+
+<div class="hide" id="custom_fields_top">
+    {( "name": "custom_fields", "id_module": "'.$id_module.'", "position": "top" )}
+</div>
+
+<div class="hide" id="custom_fields_bottom">
+    {( "name": "custom_fields", "id_module": "'.$id_module.'", "position": "bottom" )}
+</div>
+
+<script>
+$(document).ready(function(){
+    $("#form_'.$id_module.'-'.$id_plugin.' form:first").prepend($("#custom_fields_top").html());
+
+    $("#form_'.$id_module.'-'.$id_plugin.' form:first .panel").last().after($("#custom_fields_bottom").html());
+});
+</script>';
+
 if (isAjaxRequest()) {
     echo '
 <script>

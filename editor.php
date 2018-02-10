@@ -86,7 +86,7 @@ if (empty($records)) {
 			</ul>
 
 			<div class="tab-content">
-				<div id="tab_0" class="tab-pane active">';
+                <div id="tab_0" class="tab-pane active">';
 
     // Lettura template modulo (verifico se ci sono template personalizzati, altrimenti uso quello base)
     if (file_exists($docroot.'/modules/'.$module_dir.'/custom/edit.php')) {
@@ -101,6 +101,25 @@ if (empty($records)) {
 
     echo '
             </div>';
+
+    // Campi personalizzati
+    echo '
+
+            <div class="hide" id="custom_fields_top">
+                {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top" )}
+            </div>
+
+            <div class="hide" id="custom_fields_bottom">
+                {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}
+            </div>
+
+            <script>
+            $(document).ready(function(){
+                $("#tab_0 form:first").prepend($("#custom_fields_top").html());
+
+                $("#tab_0 form:first .panel").last().after($("#custom_fields_bottom").html());
+            });
+            </script>';
 
     foreach ($plugins as $plugin) {
         echo '

@@ -216,3 +216,32 @@ UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE
 
 -- Help text per widget Fatturato
 UPDATE `zz_widgets` SET `help` = 'Fatturato IVA inclusa.' WHERE `zz_widgets`.`name` = 'Fatturato';
+
+--
+-- Struttura della tabella `zz_fields`
+--
+
+CREATE TABLE IF NOT EXISTS `zz_fields` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_module` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `content` text NOT NULL,
+  `options` text,
+  `order` int(11) NOT NULL,
+  `top` boolean NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+--
+-- Struttura della tabella `zz_fields`
+--
+
+CREATE TABLE IF NOT EXISTS `zz_field_record` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_field` int(11) NOT NULL,
+  `id_record` int(11) NOT NULL,
+  `value` text NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`id_field`) REFERENCES `zz_fields`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;

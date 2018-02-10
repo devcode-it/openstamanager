@@ -76,6 +76,7 @@ class HTMLBuilder
             'filelist_and_upload' => 'HTMLBuilder\Manager\FileManager',
             'button' => 'HTMLBuilder\Manager\ButtonManager',
             'csrf' => 'HTMLBuilder\Manager\CSRFManager',
+            'custom_fields' => 'HTMLBuilder\Manager\FieldManager',
         ],
         'instances' => [],
     ];

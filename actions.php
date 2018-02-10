@@ -242,7 +242,7 @@ if (Modules::getPermission($permesso) == 'r' || Modules::getPermission($permesso
         include $docroot.$directory.'/init.php';
     }
 
-    if(Modules::getPermission($permesso) == 'rw'){
+    if (Modules::getPermission($permesso) == 'rw') {
         // Esecuzione delle operazioni di gruppo
         $id_records = post('id_records');
         $id_records = is_array($id_records) ? $id_records : explode(';', $id_records);
@@ -265,6 +265,46 @@ if (Modules::getPermission($permesso) == 'r' || Modules::getPermission($permesso
                 include $docroot.$directory.'/custom/actions.php';
             } elseif (file_exists($docroot.$directory.'/actions.php')) {
                 include $docroot.$directory.'/actions.php';
+            }
+
+            // Operazioni generiche per i campi personalizzati
+            if (post('op') != null && post('op') != 'delete') {
+                $customs = $dbo->fetchArray('SELECT `id`, `name` FROM `zz_fields` WHERE `id_module` = '.prepare($id_module));
+
+                $values = [];
+                foreach ($customs as $custom) {
+                    if (isset($post[$custom['name']])) {
+                        $values[$custom['id']] = $post[$custom['name']];
+                    }
+                }
+
+                // Inserimento iniziale
+                if (post('op') == 'add') {
+                    foreach ($values as $key => $value) {
+                        $dbo->insert('zz_field_record', [
+                            'id_record' => $id_record,
+                            'id_field' => $key,
+                            'value' => $value,
+                        ]);
+                    }
+                }
+
+                // Aggiornamento
+                elseif (post('op') == 'update') {
+                    foreach ($values as $key => $value) {
+                        $dbo->update('zz_field_record', [
+                            'value' => $value,
+                        ], [
+                            'id_record' => $id_record,
+                            'id_field' => $key,
+                        ]);
+                    }
+                }
+            }
+
+            // Eliminazione
+            elseif (post('op') == 'delete') {
+                $dbo->query('DELETE FROM `zz_field_record` WHERE `id_record` = '.prepare($id_record).' AND `id_field` IN (SELECT `id` FROM `zz_fields` WHERE `id_module` = '.prepare($id_module).')');
             }
         }
     }

@@ -208,8 +208,8 @@ gulp.task('chartjs', function () {
 
 gulp.task('pdfjs', function () {
     gulp.src([
-            config.main.bowerDirectory + '/pdfjs/web/*',
-            '!' + config.main.bowerDirectory + '/pdfjs/web/cmaps/',
+            config.main.bowerDirectory + '/pdfjs/web/**/*',
+            '!' + config.main.bowerDirectory + '/pdfjs/web/cmaps/*',
             '!' + config.main.bowerDirectory + '/pdfjs/web/*.map',
             '!' + config.main.bowerDirectory + '/pdfjs/web/*.pdf',
         ])

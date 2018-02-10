@@ -27,8 +27,6 @@ $rootdir = str_replace('%2F', '/', rawurlencode($rootdir));
 define('DOCROOT', $docroot);
 define('ROOTDIR', $rootdir);
 
-$pdfjs = '../../../..';
-
 // Caricamento delle dipendenze e delle librerie del progetto
 require_once __DIR__.'/vendor/autoload.php';
 
@@ -38,6 +36,10 @@ if (!empty($redirectHTTPS) && !isHTTPS(true)) {
     header('Location: https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
     exit();
 }
+
+// Individuazione del percorso BASEURL
+$baseurl = (isHTTPS(true) ? 'https' : 'http').'://'.$_SERVER['SERVER_NAME'].$rootdir;
+define('BASEURL', $baseurl);
 
 // Forzamento del debug
 // $debug = true;

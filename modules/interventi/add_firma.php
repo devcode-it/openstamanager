@@ -5,7 +5,7 @@ $module_name = 'Interventi';
 
 if (get('anteprima') !== null) {
     // Lettura dati intervento
-    $query = "SELECT id, codice, idanagrafica, (SELECT MIN(DATE_FORMAT(`orario_inizio`, '%d/%m/%Y')) FROM in_interventi_tecnici WHERE in_interventi_tecnici.`idintervento`=in_interventi.id ) AS data_inizio, (SELECT MAX(DATE_FORMAT(`orario_inizio`, '%d/%m/%Y')) FROM in_interventi_tecnici WHERE in_interventi_tecnici.`idintervento`=in_interventi.id )  AS data_fine FROM in_interventi WHERE in_interventi.id=".prepare($id_record);
+    $query = 'SELECT codice FROM in_interventi WHERE id='.prepare($id_record);
     $rs = $dbo->fetchArray($query);
 
     if (empty($rs)) {
@@ -13,40 +13,27 @@ if (get('anteprima') !== null) {
         exit();
     }
 
-    $idanagrafica = $rs[0]['idanagrafica'];
-    $idcliente = $rs[0]['idanagrafica'];
-    $data_intervento = $rs[0]['data_inizio'];
-
     // Gestione della stampa
     $rapportino_nome = sanitizeFilename('Rapportino'.$rs[0]['codice'].'.pdf');
     $filename = $docroot.'/files/interventi/'.$rapportino_nome;
-    $id_print = Prints::getModuleMainPrint($id_record)['id'];
-
-    Prints::render($id_print, $id_record, $filename);
+    $id_print = Prints::getModuleMainPrint($id_module)['id'];
 
     // HTML per la visualizzazione
     echo '
-<button type="button" class="btn btn-success btn-block btn-lg" id="firma" onclick="$(\'.canvas\').removeClass(\'hide\'); $(this).addClass(\'hide\'); $(\'#pdf\').addClass(\'hide\');">
-    <i class="fa fa-pencil"></i> '.tr('Firma').'
-</button>
-<div class="clearfix"></div>';
+<div id="preview">
+    <button type="button" class="btn btn-success btn-block btn-lg" id="firma">
+        <i class="fa fa-pencil"></i> '.tr('Firma').'
+    </button>
+    <br>
 
-    echo '<div class="hide" id="pdf">';
+    <div class="clearfix"></div>
 
-    if (isMobile()) {
-        echo '<iframe src="'.$rootdir.'/assets/dist/pdfjs/web/viewer.html?file='.$pdfjs.'/files/interventi/'.$rapportino_nome.'" allowfullscreen="" webkitallowfullscreen="" width="100%" height="550" ></iframe>';
-    } else {
-        echo  '<object data="'.$rootdir.'/files/interventi/'.$rapportino_nome.'#view=fitH&scrollbar=0&toolbar=0&navpanes=0" id ="rapportino_pdf"  type="application/pdf" width="100%">
-        alt : <a href="'.$rootdir.'/files/interventi/'.$rapportino_nome.'" target="_blank">'.$rapportino_nome.'</a>
-        <span>'.tr('Plugin PDF mancante').'</span>
-    </object>';
-    }
-
-    echo '</div>';
+    <iframe src="'.Prints::getPreviewLink($id_print, $id_record, $filename).'" allowfullscreen="" webkitallowfullscreen="" width="100%" height="550"></iframe>
+</div>';
 }
 
 ?>
-<form class="canvas" action="<?php echo $rootdir ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" method="post" id="form-firma">
+<form action="<?php echo $rootdir; ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" method="post" id="form-firma" class="hide">
     <input type="hidden" name="op" value="firma">
     <input type="hidden" name="backto" value="record-edit">
 
@@ -76,11 +63,11 @@ if (get('anteprima') !== null) {
 
 <script type="text/javascript">
     $(document).ready( function(){
-        $('button').removeClass('hide');
-        $('#pdf').removeClass('hide');
-        $('.canvas').addClass('hide');
-        $('#firma').removeClass('hide');
-        $('#rapportino_pdf').css('height', ($(window).height()-200));
+        $('#firma').on('click', function(){
+            $('#preview').addClass('hide');
+
+            $('#form-firma').removeClass('hide');
+        })
 
         var wrapper = document.getElementById("signature-pad"),
             clearButton = document.querySelector("[data-action=clear]"),

@@ -386,4 +386,11 @@ class Prints
     {
         return '{( "name": "button", "type": "print", "id": "'.$print.'", "id_record": "'.$id_record.'", "label": "'.$title.'", "icon": "'.$icon.'", "parameters": "'.$get.'", "class": "'.$btn.'" )}';
     }
+
+    public static function getPreviewLink($print, $id_record, $filename)
+    {
+        self::render($print, $id_record, $filename);
+
+        return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file=../../../../'.ltrim(str_replace(DOCROOT, '', $filename), '/');
+    }
 }

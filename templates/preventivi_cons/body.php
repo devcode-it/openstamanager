@@ -86,6 +86,7 @@ if (!empty($interventi)) {
         $int = array_merge($int, get_costi_intervento($int['id']));
         $int['sconto'] = ($int['manodopera_addebito'] - $int['manodopera_scontato']) + ($int['viaggio_addebito'] - $int['viaggio_scontato']);
         $int['subtotale'] = $int['manodopera_scontato'] + $int['viaggio_scontato'];
+        $sconto[] = $int['sconto_globale'];
 
         echo '
         <tr>

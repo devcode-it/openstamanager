@@ -49,7 +49,7 @@ if (get('anteprima') !== null) {
 }
 
 ?>
-<form class="canvas" action="<?php echo $rootdir ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" method="post" id="form-firma">
+<form class="canvas" action="<?php echo $rootdir; ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" method="post" id="form-firma">
     <input type="hidden" name="op" value="firma">
     <input type="hidden" name="backto" value="record-edit">
 
@@ -90,7 +90,9 @@ if (get('anteprima') !== null) {
             saveButton = document.querySelector("[data-action=save]"),
             canvas = document.getElementById("canvas");
 
-        var signaturePad = new SignaturePad(canvas);
+        var signaturePad = new SignaturePad(canvas, {
+            backgroundColor: 'rgb(255,255,255)'
+        });
 
         function resizeCanvas() {
             image_data = signaturePad.toDataURL();
@@ -115,7 +117,7 @@ if (get('anteprima') !== null) {
             if (signaturePad.isEmpty()) {
                 alert("Please provide signature first.");
             } else {
-                image_data = signaturePad.toDataURL();
+                image_data = signaturePad.toDataURL("image/jpeg", 100);
                 $('#firma_base64').val(image_data);
             }
         });

@@ -563,7 +563,7 @@ switch (post('op')) {
         if (directory($docroot.'/files/interventi')) {
             if (post('firma_base64') != '') {
                 // Salvataggio firma
-                $firma_file = 'firma_'.time().'.png';
+                $firma_file = 'firma_'.time().'.jpg';
                 $firma_nome = post('firma_nome');
 
                 $data = explode(',', post('firma_base64'));

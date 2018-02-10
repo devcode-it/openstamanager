@@ -1,3 +1,7 @@
+---
+currentMenu: contribuire
+---
+
 # Contribuire
 
 Sei interessato a contribuire allo sviluppo di OpenSTAManger? Ottimo, sei il benvenuto!

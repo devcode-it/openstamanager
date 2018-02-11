@@ -86,7 +86,7 @@
     },
     "scripts": {
         "gulp": "gulp",
-        "release-OSM": "yarn run develop-OSM && gulp release",
+        "release-OSM": "yarn run develop-OSM && php composer.phar install --no-dev && gulp release",
         "develop-OSM": "yarn install && yarn run install-OSM && yarn run assets-OSM",
         "install-OSM": "php composer.phar update",
         "assets-OSM": "yarn upgrade && yarn run build-OSM",

@@ -11,11 +11,11 @@ $n1 = sizeof($rs1);
 
 // Livello 1
 for ($x = 0; $x < $n1; ++$x) {
-    $totale_attivita = 0.00;
-    $totale_passivita = 0.00;
+    $totale_attivita = [];
+    $totale_passivita = [];
 
-    $costi = 0.00;
-    $ricavi = 0.00;
+    $costi = [];
+    $ricavi = [];
 
     if ($rs1[$x]['descrizione'] == 'Economico') {
         echo "<hr><h2 class=\"pull-left\">Conto economico</h2>\n";
@@ -55,7 +55,7 @@ for ($x = 0; $x < $n1; ++$x) {
         echo "		<table class='table table-striped table-hover table-condensed' style='margin-bottom:0;'>\n";
 
         for ($z = 0; $z < $n3; ++$z) {
-            $totale_conto_liv3 = 0.00;
+            $totale_conto_liv3 = [];
 
             echo "		<tr><td>\n";
 
@@ -103,7 +103,7 @@ for ($x = 0; $x < $n1; ++$x) {
             echo '			<div id="conto_'.$rs3[$z]['id']."\" style=\"display:none;\">\n";
 
             if (sizeof($rs) > 0) {
-                $totale_conto_liv3 = 0.00;
+                $totale_conto_liv3 = [];
 
                 echo "				<table class='table table-bordered table-hover table-condensed table-striped'>\n";
                 echo "				<tr><th>Causale</th>\n";
@@ -118,7 +118,7 @@ for ($x = 0; $x < $n1; ++$x) {
                     if ($rs[$i]['iddocumento'] != '') {
                         $module = ($rs[$i]['dir'] == 'entrata') ? Modules::get('Fatture di vendita')['id'] : Modules::get('Fatture di acquisto')['id'];
                         echo "<a data-toggle='modal' data-title='Dettagli movimento...' data-target='#bs-popup' class='clickable' data-href='".$rootdir.'/modules/partitario/dettagli_movimento.php?id_movimento='.$rs[$i]['id'].'&id_conto='.$rs[$i]['idconto'].'&id_module='.$module."' >".$rs[$i]['descrizione']."</a>\n";
-                        // echo "					<a href='".$rootdir.'/editor.php?id_module='.$module.'&id_record='.$rs[$i]['iddocumento']."'>".$rs[$i]['descrizione']."</a>\n";
+                    // echo "					<a href='".$rootdir.'/editor.php?id_module='.$module.'&id_record='.$rs[$i]['iddocumento']."'>".$rs[$i]['descrizione']."</a>\n";
                     } else {
                         echo '					<span>'.$rs[$i]['descrizione']."</span>\n";
                     }
@@ -138,9 +138,9 @@ for ($x = 0; $x < $n1; ++$x) {
                         echo "				<td></td></tr>\n";
 
                         if ($rs1[$x]['descrizione'] == 'Patrimoniale') {
-                            $totale_conto_liv3 += $rs[$i]['totale'];
+                            $totale_conto_liv3[] = $rs[$i]['totale'];
                         } else {
-                            $totale_conto_liv3 -= $rs[$i]['totale'];
+                            $totale_conto_liv3[] = -$rs[$i]['totale'];
                         }
                     }
 
@@ -151,9 +151,9 @@ for ($x = 0; $x < $n1; ++$x) {
                         echo "				</td>\n";
 
                         if ($rs1[$x]['descrizione'] == 'Patrimoniale') {
-                            $totale_conto_liv3 += $rs[$i]['totale'];
+                            $totale_conto_liv3[] = $rs[$i]['totale'];
                         } else {
-                            $totale_conto_liv3 -= $rs[$i]['totale'];
+                            $totale_conto_liv3[] = -$rs[$i]['totale'];
                         }
                     }
                     echo "				</td></tr>\n";
@@ -161,16 +161,16 @@ for ($x = 0; $x < $n1; ++$x) {
 
                 // Somma dei totali
                 if ($rs1[$x]['descrizione'] == 'Patrimoniale') {
-                    if ($totale_conto_liv3 > 0) {
-                        $totale_attivita += $totale_conto_liv3;
+                    if (sum($totale_conto_liv3) > 0) {
+                        $totale_attivita[] = abs(sum($totale_conto_liv3));
                     } else {
-                        $totale_passivita += $totale_conto_liv3;
+                        $totale_passivita[] = abs(sum($totale_conto_liv3));
                     }
                 } else {
-                    if ($totale_conto_liv3 > 0) {
-                        $totale_ricavi += $totale_conto_liv3;
+                    if (sum($totale_conto_liv3) > 0) {
+                        $totale_ricavi[] = abs(sum($totale_conto_liv3));
                     } else {
-                        $totale_costi += $totale_conto_liv3;
+                        $totale_costi[] = abs(sum($totale_conto_liv3));
                     }
                 }
                 echo "				</table>\n";
@@ -179,7 +179,7 @@ for ($x = 0; $x < $n1; ++$x) {
             echo "		</td>\n";
 
             echo "		<td width='100' align='right' valign='top'>\n";
-            echo Translator::numberToLocale($totale_conto_liv3)." &euro;\n";
+            echo Translator::numberToLocale(sum($totale_conto_liv3))." &euro;\n";
             echo "		</td></tr>\n";
         } // Fine livello3
 
@@ -194,9 +194,9 @@ for ($x = 0; $x < $n1; ++$x) {
 
     if ($rs1[$x]['descrizione'] == 'Patrimoniale') {
         // Riepilogo
-        $attivita = abs($totale_attivita);
-        $passivita = abs($totale_passivita);
-        $utile_perdita = abs($totale_ricavi) - abs($totale_costi);
+        $attivita = abs(sum($totale_attivita));
+        $passivita = abs(sum($totale_passivita));
+        $utile_perdita = abs(sum($totale_ricavi)) - abs(sum($totale_costi));
         if ($utile_perdita < 0) {
             $pareggio1 = $attivita + abs($utile_perdita);
             $pareggio2 = abs($passivita);
@@ -231,7 +231,7 @@ for ($x = 0; $x < $n1; ++$x) {
             echo "	<p align='right'><big>Perdita d'esercizio:</big></p>\n";
             echo "</th>\n";
             echo "<td align='right'>\n";
-            echo "	<p align='right'><big>".Translator::numberToLocale($utile_perdita)." &euro;</big></p>\n";
+            echo "	<p align='right'><big>".Translator::numberToLocale(sum($utile_perdita))." &euro;</big></p>\n";
             echo "</td>\n";
             echo "<td></td>\n";
             echo "<td></td><td></td></tr>\n";
@@ -240,7 +240,7 @@ for ($x = 0; $x < $n1; ++$x) {
             echo "	<p align='right'><big>Utile:</big></p>\n";
             echo "</th>\n";
             echo "<td align='right'>\n";
-            echo "	<p align='right'><big>".Translator::numberToLocale($utile_perdita)." &euro;</big></p>\n";
+            echo "	<p align='right'><big>".Translator::numberToLocale(sum($utile_perdita))." &euro;</big></p>\n";
             echo "</td></tr>\n";
         }
 
@@ -249,7 +249,7 @@ for ($x = 0; $x < $n1; ++$x) {
         echo "	<p align='right'><big>Totale a pareggio:</big></p>\n";
         echo "</th>\n";
         echo "<td align='right'>\n";
-        echo "	<p align='right'><big>".Translator::numberToLocale($pareggio1)." &euro;</big></p>\n";
+        echo "	<p align='right'><big>".Translator::numberToLocale(sum($pareggio1))." &euro;</big></p>\n";
         echo "</td>\n";
         echo "<td></td>\n";
 
@@ -258,13 +258,13 @@ for ($x = 0; $x < $n1; ++$x) {
         echo "	<p align='right'><big>Totale a pareggio:</big></p>\n";
         echo "</th>\n";
         echo "<td align='right'>\n";
-        echo "	<p align='right'><big>".Translator::numberToLocale($pareggio2)." &euro;</big></p>\n";
+        echo "	<p align='right'><big>".Translator::numberToLocale(sum($pareggio2))." &euro;</big></p>\n";
         echo "</td></tr>\n";
 
         echo '</table>';
     } else {
-        echo "<p align='right'><big><b>RICAVI:</b> ".Translator::numberToLocale($totale_ricavi)." &euro;</big></p>\n";
-        echo "<p align='right'><big><b>COSTI:</b> ".Translator::numberToLocale(abs($totale_costi))." &euro;</big></p>\n";
-        echo "<p align='right'><big><b>UTILE/PERDITA:</b> ".Translator::numberToLocale($totale_ricavi - abs($totale_costi))." &euro;</big></p>\n";
+        echo "<p align='right'><big><b>RICAVI:</b> ".Translator::numberToLocale(sum($totale_ricavi))." &euro;</big></p>\n";
+        echo "<p align='right'><big><b>COSTI:</b> ".Translator::numberToLocale(sum(abs($totale_costi)))." &euro;</big></p>\n";
+        echo "<p align='right'><big><b>UTILE/PERDITA:</b> ".Translator::numberToLocale(sum($totale_ricavi) - sum(abs($totale_costi)))." &euro;</big></p>\n";
     }
 }

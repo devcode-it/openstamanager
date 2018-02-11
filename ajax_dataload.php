@@ -96,7 +96,7 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
             unset($pieces[$cont - 1]);
         }
 
-        $module_query = implode('ORDER', $pieces).' ORDER BY `'.$total['order_by'][$order['column']].'` '.$order['dir'];
+        $module_query = implode('ORDER', $pieces).' ORDER BY '.$total['order_by'][$order['column']].' '.$order['dir'];
     }
 
     // Calcolo di eventuali somme

@@ -1,3 +1,7 @@
+---
+currentMenu: contribuire
+---
+
 # Contribuire
 
 Sei interessato a contribuire allo sviluppo di OpenSTAManger? Ottimo, sei il benvenuto!
@@ -28,7 +32,7 @@ PHP CS Fixer viene utilizzato per formattare automaticamente il codice PHP e aum
 La configurazione può essere trovata nel file [.php_cs](https://github.com/devcode-it/openstamanager/blob/master/.php_cs).
 
 EditorConfig viene sfruttato per mantenere la consistenza nella formattazione di base dei diversi altri file utilizzati nel progetto.
-La configurazione può essere trovata nel file [.php_cs](https://github.com/devcode-it/openstamanager/blob/master/.editorconfig).
+La configurazione può essere trovata nel file [.editorconfig](https://github.com/devcode-it/openstamanager/blob/master/.editorconfig).
 
 Maggiori informazioni sui plugin che permettono di integrare questi strumenti sono disponibili nei relativi siti.
 

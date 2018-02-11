@@ -40,6 +40,9 @@ menu:
                 api:
                     text: API
                     relativeUrl: api.html
+                contribuire:
+                    text: Contribuire
+                    relativeUrl: contributing.html
         structure:
             name: Approfondimenti
             items:

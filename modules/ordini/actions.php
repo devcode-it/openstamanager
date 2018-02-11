@@ -189,12 +189,12 @@ switch (post('op')) {
             }
         }
         break;
-        
+
     case 'adddescrizione':
         if (!empty($id_record)) {
             $descrizione = post('descrizione');
             $query = 'INSERT INTO or_righe_ordini(idordine, descrizione, is_descrizione) VALUES('.prepare($id_record).', '.prepare($descrizione).', 1)';
-        
+
             if ($dbo->query($query)) {
                 $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
             }
@@ -287,10 +287,10 @@ switch (post('op')) {
             $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
             $desc_iva = $rs[0]['descrizione'];
 
-            if($is_descrizione==0){
+            if ($is_descrizione == 0) {
                 // Modifica riga generica sul documento
                 $query = 'UPDATE or_righe_ordini SET idiva='.prepare($idiva).', desc_iva='.prepare($rs[0]['descrizione']).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
-            }else{
+            } else {
                 $query = 'UPDATE or_righe_ordini SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga);
             }
             if ($dbo->query($query)) {
@@ -313,7 +313,7 @@ switch (post('op')) {
         $rs = $dbo->fetchArray($query);
 
         foreach ($rs as $value) {
-            $non_rimovibili = seriali_non_rimuovibili('id_riga_documenti', $value['id'], $dir);
+            $non_rimovibili = seriali_non_rimuovibili('id_riga_documento', $value['id'], $dir);
             if (!empty($non_rimovibili)) {
                 $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
 

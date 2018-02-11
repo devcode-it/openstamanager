@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'header-height' => 55,
+    'header-height' => 65,
 ];

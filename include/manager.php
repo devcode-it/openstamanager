@@ -116,14 +116,6 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
         </tfoot>
     </table>';
 
-    $bulk = null;
-    if (file_exists($docroot.$directory.'/custom/bulk.php')) {
-        $bulk = include $docroot.$directory.'/custom/bulk.php';
-    } elseif (file_exists($docroot.$directory.'/bulk.php')) {
-        $bulk = include $docroot.$directory.'/bulk.php';
-    }
-    $bulk = (array) $bulk;
-
     echo '
     <div class="row" data-target="'.$table_id.'">
         <div class="col-xs-12 col-md-5">

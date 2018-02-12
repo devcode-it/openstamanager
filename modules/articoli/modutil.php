@@ -12,7 +12,7 @@ function add_movimento_magazzino($idarticolo, $qta, $array = [], $descrizone = '
     if (empty($qta)) {
         return false;
     }
-    
+
     //Info Articolo
     $rs_art = $dbo->fetchArray("SELECT * FROM mg_articoli WHERE id='".$idarticolo."'");
 
@@ -79,9 +79,9 @@ function add_movimento_magazzino($idarticolo, $qta, $array = [], $descrizone = '
     $movimento = str_replace(['_NAME_', '_TYPE_', '_NUM_'], [$nome, $tipo, $numero], $movimento);
 
     $new = ($qta > 0 ? '+' : '').$qta;
-    
+
     //Movimento il magazzino solo se l'articolo non è un servizio
-    if($rs_art[0]['servizio']==0){
+    if ($rs_art[0]['servizio'] == 0) {
         // Movimentazione effettiva
         if (empty($array['idintervento']) || empty($array['idautomezzo'])) {
             $dbo->query('UPDATE mg_articoli SET qta = qta + '.$new.' WHERE id = '.prepare($idarticolo));

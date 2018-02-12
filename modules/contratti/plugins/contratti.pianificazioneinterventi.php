@@ -31,6 +31,170 @@ switch (filter('op')) {
         redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
 
         break;
+		
+		
+		
+			//pianificazione
+	 case 'pianificazione':
+			 
+			$idcontratto_riga = filter('idcontratto_riga');
+			$intervallo = filter('intervallo');
+			$parti_da_oggi = post('parti_da_oggi');
+			
+			if (!empty($idcontratto_riga) and !empty($intervallo) ){
+				
+				$qp = 'SELECT *, (SELECT idanagrafica FROM co_contratti WHERE id = '.$id_record.' ) AS idanagrafica, (SELECT data_conclusione FROM co_contratti WHERE id = '.$id_record.' ) AS data_conclusione, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento FROM co_righe_contratti WHERE id = '.$idcontratto_riga;
+				$rsp = $dbo->fetchArray($qp);
+				
+				$idtipointervento = $rsp[0]['idtipointervento'];
+				$idsede = $rsp[0]['idsede'];
+				$richiesta = $rsp[0]['richiesta'];
+				
+				//mi serve per la pianificazione interventi
+				$idanagrafica = $rsp[0]['idanagrafica'];
+				
+				$data_conclusione = $rsp[0]['data_conclusione'];
+				$data_richiesta = $rsp[0]['data_richiesta'];
+				
+				
+				//se voglio pianificare anche le date precedenti ad oggi (parto da questo promemoria)
+				if ($parti_da_oggi){
+					
+					//oggi
+					$min_date = date('Y-m-d');
+					
+				
+				}else{
+					
+					$min_date = date('Y-m-d', strtotime($data_richiesta));
+				
+				}
+				
+				//inizio controllo data_conclusione, data valida e maggiore della $min_date
+				if ( (date('Y', strtotime($data_conclusione)) > 1970) and (date('Y-m-d', strtotime($min_date)) < date('Y-m-d', strtotime($data_conclusione))) ) {
+					
+					//Ciclo partendo dalla data_richiesta fino all data conclusione del contratto
+					 while  ( date('Y-m-d', strtotime($data_richiesta)) < date('Y-m-d', strtotime($data_conclusione)) ){
+						
+						//calcolo nuova data richiesta
+						$data_richiesta = date('Y-m-d', strtotime($data_richiesta. " + ".intval($intervallo)." days") );
+					
+					
+						//controllo nuova data richiesta --> solo  date maggiori o uguali di [oggi o data richiesta iniziale] ma che non superano la data di fine del contratto
+						if  ( (date('Y-m-d', strtotime($data_richiesta)) >= $min_date ) and  (date('Y-m-d', strtotime($data_richiesta)) <= date('Y-m-d', strtotime($data_conclusione)))  ){
+					
+							//Controllo che non esista già un promemoria idcontratto, idtipointervento e data_richiesta. 
+							if ( count($dbo->fetchArray("SELECT id FROM co_righe_contratti WHERE data_richiesta = '".$data_richiesta."' AND idtipointervento = '".$idtipointervento."' AND idcontratto = '".$id_record."' ")) == 0 ){
+								
+								$query = 'INSERT INTO `co_righe_contratti`(`idcontratto`, `idtipointervento`, `data_richiesta`, `richiesta`, `idsede`) VALUES('.prepare($id_record).', '.prepare($idtipointervento).', '.prepare($data_richiesta).', '.prepare($richiesta).', '.prepare($idsede).')';
+								
+								if ($dbo->query($query)) {
+									
+									$idriga = $dbo->lastInsertedID();
+									
+									$_SESSION['infos'][] = tr('Promemoria intervento pianificato!');
+									
+									
+									//pianificare anche l' intervento?
+									if ($post['pianifica_intervento']){
+										
+												/*$orario_inizio = post('orario_inizio');
+												$orario_fine = post('orario_fine');*/
+										
+												//$idanagrafica = 2;
+												
+												//intervento sempre nello stato "In programmazione"
+												$idstatointervento = 'WIP';
+												
+												//calcolo codice intervento
+												$formato = get_var('Formato codice intervento');
+												$template = str_replace('#', '%', $formato);
+
+												$rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
+												$codice = get_next_code($rs[0]['codice'], 1, $formato);
+
+												if (empty($codice)) {
+													$rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
+
+													$codice = get_next_code($rs[0]['codice'], 1, $formato);
+												}
+												
+												
+												
+												// Creo intervento
+												$dbo->insert('in_interventi', [
+													'idanagrafica' => $idanagrafica,
+													'idclientefinale' => post('idclientefinale') ?: 0,
+													'idstatointervento' => $idstatointervento,
+													'idtipointervento' => $idtipointervento,
+													'idsede' => $idsede ?: 0,
+													'idautomezzo' => $idautomezzo ?: 0,
+
+													'codice' => $codice,
+													'data_richiesta' => $data_richiesta,
+													'richiesta' => $richiesta,
+												]);
+
+												$idintervento = $dbo->lastInsertedID();
+												
+											
+												
+												$idtecnici = post('idtecnico');
+								
+												//aggiungo i tecnici
+												foreach ($idtecnici as $idtecnico) {
+													add_tecnico($idintervento, $idtecnico, $data_richiesta.' '.post('orario_inizio'), $data_richiesta.' '.post('orario_fine'), $id_record);
+												}
+												
+												//collego l'intervento ai promemoria
+											   $dbo->query('UPDATE co_righe_contratti SET idintervento='.prepare($idintervento).' WHERE id='.prepare($idriga));
+											   
+											  // $_SESSION['infos'][] = tr('Intervento '.$codice.' pianificato correttamente.');
+											
+											 $_SESSION['infos'][] = tr('Interventi pianificati correttamente.');
+										
+										
+									}
+									//fine if pianificazione intervento
+									
+									
+								}else{
+									
+									$_SESSION['errors'][] = tr('Errore durante esecuzione query di pianificazione.  #'.$idcontratto_riga);
+								
+								}
+									
+							}else{
+								
+								$_SESSION['warnings'][] = tr("Esiste già un promemoria pianificato per il ".readDate($data_richiesta).".");
+								
+								
+							}
+							
+						}
+						//fine controllo nuova data richiesta
+						
+					}
+					//fine ciclo while
+				
+				}else{
+					
+						$_SESSION['errors'][] = tr('Nessuna data di conclusione del contratto oppure quest\'ultima è già trascorsa, impossibile pianificare nuovi promemoria.');
+						
+				}
+				//fine controllo data_conclusione
+					
+				
+			}else{
+				
+				$_SESSION['errors'][] = tr('Errore durante la pianificazione.  #'.$idcontratto_riga);
+				
+			}
+			 
+			redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
+	break;
+	
+	
 }
 
 // Righe già inserite
@@ -84,27 +248,44 @@ if (count($rsp) != 0) {
                 '_NUM_' => $rsp2[0]['codice'],
                 '_DATE_' => Translator::dateToLocale($rsp2[0]['data']),
             ]));
+			
+			$disabled  = 'disabled';
+			
         } else {
             $info_intervento = '- '.('Nessuno').' -';
+			$disabled  = '';
         }
+		
+		
+		if (date('Y', strtotime($records[0]['data_conclusione']))<1971){
+			$records[0]['data_conclusione'] = '';
+		}
         echo '
                 <tr>
-                    <td>'.Translator::dateToLocale($rsp[$i]['data_richiesta']).'</td>
+                    <td>'.Translator::dateToLocale($rsp[$i]['data_richiesta']).'<!--br><small>'.Translator::dateToLocale($records[0]['data_conclusione']).'</small--></td>
                     <td>'.$rsp[$i]['tipointervento'].'</td>
                     <td>'.nl2br($rsp[$i]['richiesta']).'</td>
                     <td>'.$info_intervento.'</td>
                     <td>'.$info_sede.'</td>
                     <td align="right">';
+	
+		
+		
+	    echo '
+				<button type="button" class="btn btn-warning btn-sm" title="Pianifica altri promemoria..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica altri promemoria\', \''.$rootdir.'/modules/contratti/plugins/addpianficazione.php?id_module='.Modules::get('Contratti')['id'].'&id_plugin='.Plugins::get('Pianificazione interventi')['id'].'&ref=interventi_contratti&id_record='.$id_record.'&idcontratto_riga='.$rsp[$i]['id'].'\');"'.( ( !empty($pianificabile) and strtotime($records[0]['data_conclusione'])) ? '' : ' disabled').'><i class="fa fa-clock-o"></i></button>';
+				
+	
+					  
+					  
+        
+			echo '
+					<button type="button"  '.$disabled.'  class="btn btn-primary btn-sm '.$disabled.' " title="Pianifica intervento ora..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.$rootdir.'/add.php?id_module='.Modules::get('Interventi')['id'].'&ref=interventi_contratti&idcontratto='.$id_record.'&idcontratto_riga='.$rsp[$i]['id'].'\');"'.(!empty($pianificabile) ? '' : ' disabled').'><i class="fa fa-calendar"></i></button>';
 
-        if (empty($rsp[$i]['idintervento'])) {
-                echo '
-                        <button type="button" class="btn btn-primary btn-sm" title="Pianifica ora..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.$rootdir.'/add.php?id_module='.Modules::get('Interventi')['id'].'&ref=interventi_contratti&idcontratto='.$id_record.'&idcontratto_riga='.$rsp[$i]['id'].'\');"'.(!empty($pianificabile) ? '' : ' disabled').'><i class="fa fa-calendar"></i></button>';
+			echo '
+					<button type="button"  '.$disabled.' title="Elimina promemoria..." class="btn btn-danger btn-sm ask '.$disabled.' " data-op="depianifica" data-id="'.$rsp[$i]['id'].'">
+						<i class="fa fa-trash"></i>
+					</button>';
 
-            echo '
-                        <button type="button" class="btn btn-danger btn-sm ask" data-op="depianifica" data-id="'.$rsp[$i]['id'].'">
-                            <i class="fa fa-trash"></i>
-                        </button>';
-        }
         echo '
                     </td>
                 </tr>';

@@ -33,29 +33,12 @@ $keys = [];
 
 // Predisposizione delle informazioni delle anagrafiche per la sostituzione automatica
 foreach ($replace as $prefix => $values) {
-    // Individuazione dei campi minimi
     $values = (array) $values;
-    if ($prefix == 'c_') {
-        $keys = array_keys($values);
-    }
-
-    // Se l'azienda predefinita non è impostata
-    if (empty($values) && $prefix == 'f_') {
-        $values = [];
-        foreach ($keys as $key) {
-            $values[$key] = '';
-        }
-    }
 
     // Rinominazione dei campi
     foreach ($rename as $key => $value) {
         $values[$value] = $values[$key];
         unset($values[$key]);
-    }
-
-    // Salvataggio dei campi come variabili PHP
-    foreach ($values as $key => $value) {
-        ${$prefix.$key} = $value;
     }
 
     // Eventuali estensioni dei contenuti
@@ -72,23 +55,37 @@ foreach ($replace as $prefix => $values) {
 
     $values['citta_full'] = $citta;
 
-    // Completamento dei campi minimi
-    if ($key == 'c_') {
-        $keys = array_unique(array_merge($keys, array_keys($values)));
+    $replace[$prefix] = $values;
+
+    // Individuazione dei campi minimi
+    $keys = array_merge($keys, array_keys($values));
+}
+
+$keys = array_unique($keys);
+
+foreach ($replace as $prefix => $values) {
+    // Impostazione di default per le informazioni mancanti
+    foreach ($keys as $key) {
+        if (!isset($values[$key])) {
+            $values[$key] = '';
+        }
     }
 
-    // Aggiunta delle informazioni per la sostituzione automatica
+    // Salvataggio dei campi come variabili PHP e aggiunta delle informazioni per la sostituzione automatica
     foreach ($values as $key => $value) {
+        ${$prefix.$key} = $value;
         $replaces[$prefix.$key] = $value;
     }
 }
 
 // Valori aggiuntivi per la sostituzione
 $replaces = array_merge($replaces, [
+    'default_header' => include DOCROOT.'/templates/base/header.php',
+    'default_footer' => include DOCROOT.'/templates/base/footer.php',
     'docroot' => DOCROOT,
     'rootdir' => ROOTDIR,
     'footer' => !empty($footer) ? $footer : '',
     'dicitura_fissa_fattura' => get_var('Dicitura fissa fattura'),
-    'default_header' => include DOCROOT.'/templates/base/header.php',
-    'default_footer' => include DOCROOT.'/templates/base/footer.php',
 ]);
+
+unset($replace);

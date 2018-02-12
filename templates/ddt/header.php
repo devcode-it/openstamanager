@@ -6,7 +6,7 @@ $default_header$
 <br>
 
 <div class="row">
-    <!-- Dati Fattura -->
+    <!-- Dati Ddt -->
     <div class="col-xs-6">
         <div class="text-center" style="height:5mm;">
             <b>$tipo_doc$</b>
@@ -61,7 +61,7 @@ $default_header$
                 <td class="border-full" style="height:20mm;">
                     <p class="small-bold">'.tr('Spett.le', [], ['upper' => true]).'</p>
                     <p>$c_ragionesociale$</p>
-                    <p>$c_indirizzo$ $c_citta_full$</p>
+                    <p>$c_indirizzo$<br>$c_citta_full$</p>
                 </td>
             </tr>
 

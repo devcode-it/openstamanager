@@ -223,14 +223,18 @@ UPDATE `zz_widgets` SET `help` = 'Fatturato IVA inclusa.' WHERE `zz_widgets`.`na
 
 CREATE TABLE IF NOT EXISTS `zz_fields` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `id_module` int(11) NOT NULL,
+  `id_module` int(11),
+  `id_plugin` int(11),
   `name` varchar(255) NOT NULL,
+  `html_name` varchar(255) NOT NULL,
   `content` text NOT NULL,
   `options` text,
   `order` int(11) NOT NULL,
+  `on_add` boolean NOT NULL,
   `top` boolean NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE
+  FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 --

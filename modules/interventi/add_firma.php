@@ -33,7 +33,7 @@ if (get('anteprima') !== null) {
 }
 
 ?>
-<form class="canvas" action="<?php echo $rootdir; ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" method="post" id="form-firma">
+<form action="<?php echo $rootdir; ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" method="post" id="form-firma" class="hide">
     <input type="hidden" name="op" value="firma">
     <input type="hidden" name="backto" value="record-edit">
 

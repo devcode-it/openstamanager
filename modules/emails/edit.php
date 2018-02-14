@@ -38,7 +38,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-8">
-                    {[ "type": "email", "label": "<?php echo tr('Oggetto') ?>", "name": "subject", "value": "$subject$" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Oggetto') ?>", "name": "subject", "value": "$subject$" ]}
                 </div>
 
                 <div class="col-md-4">

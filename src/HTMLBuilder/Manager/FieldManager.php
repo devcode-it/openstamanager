@@ -30,6 +30,10 @@ class FieldManager implements ManagerInterface
             $query .= ' AND `id_record` = '.prepare($options['id_record']);
         }
 
+        if (isset($options['place']) && $options['place'] == 'add') {
+            $query .= ' AND `on_add` = 1';
+        }
+
         $query .= ' AND `top` = '.((isset($options['position']) && $options['position'] == 'top') ? 1 : 0).' ORDER BY `order`';
 
         $results = $database->fetchArray($query);
@@ -51,9 +55,19 @@ class FieldManager implements ManagerInterface
 
             $field['value'] = isset($field['value']) ? $field['value'] : '';
 
+            $replace = [
+                'value' => $field['value'],
+                'label' => $field['name'],
+                'name' => $field['html_name'],
+            ];
+
+            foreach ($replace as $key => $value) {
+                $field['content'] = str_replace('|'.$key.'|', $value, $field['content']);
+            }
+
             $result .= '
     <div class="col-xs-4">
-        '.str_replace('|value|', $field['value'], $field['content']).'
+        '.$field['content'].'
     </div>';
 
             if (($key + 1) % 3 == 0) {

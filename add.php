@@ -37,19 +37,19 @@ echo '
 // Campi personalizzati
 echo '
 
-<div class="hide" id="custom_fields_top">
-    {( "name": "custom_fields", "id_module": "'.$id_module.'", "position": "top" )}
+<div class="hide" id="custom_fields_top-add">
+    {( "name": "custom_fields", "id_module": "'.$id_module.'", "position": "top", "place": "add" )}
 </div>
 
-<div class="hide" id="custom_fields_bottom">
-    {( "name": "custom_fields", "id_module": "'.$id_module.'", "position": "bottom" )}
+<div class="hide" id="custom_fields_bottom-add">
+    {( "name": "custom_fields", "id_module": "'.$id_module.'", "position": "bottom", "place": "add" )}
 </div>
 
 <script>
 $(document).ready(function(){
-    $("#form_'.$id_module.'-'.$id_plugin.' form:first").prepend($("#custom_fields_top").html());
+    $("#form_'.$id_module.'-'.$id_plugin.' form:first").prepend($("#custom_fields_top-add").html());
 
-    $("#form_'.$id_module.'-'.$id_plugin.' form:first .panel").last().after($("#custom_fields_bottom").html());
+    $("#form_'.$id_module.'-'.$id_plugin.' form:first .panel").last().after($("#custom_fields_bottom-add").html());
 });
 </script>';
 

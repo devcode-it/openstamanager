@@ -100,6 +100,9 @@ class HTMLBuilder
             $result = !empty($class) ? $class->manage($json) : '';
 
             $html = str_replace($value, !empty($result) ? $result : $value, $html);
+
+            // Ricorsione
+            $html = self::replace($html);
         }
 
         // Gestione del formato di input HTML semplificato
@@ -110,6 +113,9 @@ class HTMLBuilder
             $result = self::generate($json);
 
             $html = str_replace($value, !empty($result) ? $result : $value, $html);
+
+            // Ricorsione
+            $html = self::replace($html);
         }
 
         return $html;

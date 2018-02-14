@@ -36,3 +36,9 @@ $formatter = [
         'thousands' => '.',
     ],
 ];
+
+// Ulteriori file CSS e JS da includere
+$assets = [
+    'css' => [],
+    'js' => [],
+];

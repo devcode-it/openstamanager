@@ -27,6 +27,11 @@ class Plugins
             $plugins = [];
 
             foreach ($results as $result) {
+                $result['options'] = App::replacePlaceholder($result['options'], filter('id_parent'));
+                $result['options2'] = App::replacePlaceholder($result['options2'], filter('id_parent'));
+
+                $result['option'] = empty($result['options2']) ? $result['options'] : $result['options2'];
+
                 $plugins[$result['id']] = $result;
                 $plugins[$result['name']] = $result['id'];
             }
@@ -51,59 +56,5 @@ class Plugins
         }
 
         return self::getPlugins()[$plugin];
-    }
-
-    /**
-     * Restituisce un'insieme di array comprendenti le informazioni per la costruzione della query del modulo indicato.
-     *
-     * @param int $id
-     *
-     * @return array
-     */
-    public static function getQuery($id)
-    {
-        if (empty(self::$queries[$id])) {
-            $database = Database::getConnection();
-
-            $module = self::get($id);
-
-            $fields = [];
-            $summable = [];
-            $search_inside = [];
-            $search = [];
-            $slow = [];
-            $order_by = [];
-            $select = '*';
-
-            $options = !empty($module['options2']) ? $module['options2'] : $module['options'];
-            $options = Modules::readOldQuery($options);
-
-            $query = $options['query'];
-            $fields = explode(',', $options['fields']);
-            foreach ($fields as $key => $value) {
-                $fields[$key] = trim($value);
-                $search[] = 1;
-                $slow[] = 0;
-                $format[] = 0;
-            }
-
-            $search_inside = $fields;
-            $order_by = $fields;
-
-            $result = [];
-            $result['query'] = $query;
-            $result['select'] = $select;
-            $result['fields'] = $fields;
-            $result['search_inside'] = $search_inside;
-            $result['order_by'] = $order_by;
-            $result['search'] = $search;
-            $result['slow'] = $slow;
-            $result['format'] = $format;
-            $result['summable'] = $summable;
-
-            self::$queries[$id] = $result;
-        }
-
-        return self::$queries[$id];
     }
 }

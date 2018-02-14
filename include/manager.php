@@ -4,14 +4,14 @@ include_once __DIR__.'/../core.php';
 
 // Lettura parametri iniziali del modulo
 if (!empty($id_plugin)) {
-    $info = Plugins::get($id_plugin);
+    $element = Plugins::get($id_plugin);
 
-    if (!empty($info['script'])) {
+    if (!empty($element['script'])) {
         // Inclusione di eventuale plugin personalizzato
-        if (file_exists($docroot.'/modules/'.$info['module_dir'].'/plugins/custom/'.$info['script'])) {
-            include $docroot.'/modules/'.$info['module_dir'].'/plugins/custom/'.$info['script'];
-        } elseif (file_exists($docroot.'/modules/'.$info['module_dir'].'/plugins/'.$info['script'])) {
-            include $docroot.'/modules/'.$info['module_dir'].'/plugins/'.$info['script'];
+        if (file_exists($docroot.'/modules/'.$element['module_dir'].'/plugins/custom/'.$element['script'])) {
+            include $docroot.'/modules/'.$element['module_dir'].'/plugins/custom/'.$element['script'];
+        } elseif (file_exists($docroot.'/modules/'.$element['module_dir'].'/plugins/'.$element['script'])) {
+            include $docroot.'/modules/'.$element['module_dir'].'/plugins/'.$element['script'];
         }
 
         return;
@@ -19,9 +19,9 @@ if (!empty($id_plugin)) {
 
     echo '
         <h4>
-            '.$info['name'];
+            '.$element['name'];
 
-    if (file_exists($docroot.'/plugins/'.$info['directory'].'/add.php')) {
+    if (file_exists($docroot.'/plugins/'.$element['directory'].'/add.php')) {
         echo '
         <button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_parent='.$id_record.'"><i class="fa fa-plus"></i></button>';
     }
@@ -29,18 +29,15 @@ if (!empty($id_plugin)) {
     echo '
     </h4>';
 
-    $total = Plugins::getQuery($id_plugin);
-
-    $directory = '/plugins/'.$info['directory'];
+    $directory = '/plugins/'.$element['directory'];
 } else {
-    $info = Modules::get($id_module);
+    $element = Modules::get($id_module);
 
-    $total = Modules::getQuery($id_module);
-
-    $directory = '/modules/'.$info['directory'];
+    $directory = '/modules/'.$element['directory'];
 }
+$total = App::readQuery($element);
 
-$module_options = (!empty($info['options2'])) ? $info['options2'] : $info['options'];
+$module_options = (!empty($element['options2'])) ? $element['options2'] : $element['options'];
 
 // Caricamento file aggiuntivo su elenco record
 if (file_exists($docroot.$directory.'/custom/controller_before.php')) {
@@ -174,9 +171,6 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
  * Inclusione modulo personalizzato
  */
 elseif ($module_options == 'custom') {
-    // Inclusione elementi fondamentali del modulo
-    include $docroot.'/actions.php';
-
     // Lettura template modulo (verifico se ci sono template personalizzati, altrimenti uso quello base)
     if (file_exists($docroot.$directory.'/custom/edit.php')) {
         include $docroot.$directory.'/custom/edit.php';

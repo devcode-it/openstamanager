@@ -207,6 +207,7 @@ class Auth extends \Util\Singleton
             $results = $database->fetchArray('SELECT id AS id_utente, idanagrafica, username, (SELECT nome FROM zz_groups WHERE zz_groups.id=zz_users.idgruppo) AS gruppo FROM zz_users WHERE id = '.prepare($user_id).' AND enabled = 1 LIMIT 1', false, ['session' => false]);
 
             if (!empty($results)) {
+                $results[0]['id'] = $results[0]['id_utente'];
                 $results[0]['is_admin'] = ($results[0]['gruppo'] == 'Amministratori');
 
                 $this->infos = $results[0];

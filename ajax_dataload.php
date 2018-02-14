@@ -13,18 +13,14 @@ array_shift($columns);
 
 // Lettura parametri iniziali
 if (!empty($id_plugin)) {
-    $total = Plugins::getQuery($id_plugin);
-
-    $total['query'] = Modules::replacePlaceholder($total['query'], $id_parent);
+    $element = Plugins::get($id_plugin);
 } else {
-    $total = Modules::getQuery($id_module);
+    $element = Modules::get($id_module);
 }
+$total = App::readQuery($element);
 
 // Lettura parametri modulo
-$module_query = $total['query'];
-$module_query = str_replace('|period_start|', $_SESSION['period_start'], $module_query);
-$module_query = str_replace('|period_end|', $_SESSION['period_end'], $module_query);
-$module_query = str_replace('|select|', $total['select'], $module_query);
+$result_query = $total['query'];
 
 // Predisposizione dela risposta
 $results = [];
@@ -33,12 +29,12 @@ $results['recordsTotal'] = 0;
 $results['recordsFiltered'] = 0;
 $results['summable'] = [];
 
-if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom') {
+if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom') {
     // Conteggio totale
-    $query = 'SELECT COUNT(*) as `tot` FROM ('.$module_query.') AS `count`';
-    $cont = $dbo->fetchArray($query);
-    if (!empty($cont)) {
-        $results['recordsTotal'] = $cont[0]['tot'];
+    $count_query = 'SELECT COUNT(*) as `tot` FROM ('.$result_query.') AS `count`';
+    $count = $dbo->fetchArray($count_query);
+    if (!empty($count)) {
+        $results['recordsTotal'] = $count[0]['tot'];
     }
 
     // Filtri di ricerica
@@ -61,48 +57,42 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
             }
         }
     }
-	
-	
-	
-	/*filtro sezionali*/
-	if (isset($_SESSION['entrata']['idsezionale']) AND (($modules_info[$id_module]['name'] == 'Fatture di vendita') or ($modules_info[$id_module]['name'] == 'Laboratorio') or ($modules_info[$id_module]['name'] == 'Ticket')) ){
-		
-		$module_query = str_replace('1=1', " 1=1 AND idsezionale = '".$_SESSION['entrata']["idsezionale"]."' ", $module_query);  
-		
-	}
-	
-	if (isset($_SESSION['uscita']['idsezionale']) AND ($modules_info[$id_module]['name'] == 'Fatture di acquisto') ){
-			
-			$module_query = str_replace('1=1', " 1=1 AND idsezionale = '".$_SESSION['uscita']["idsezionale"]."' ", $module_query);  
-	}
-	/*fine filtro sezionali*/
-	
-	
+
+    /*filtro sezionali*/
+    if (isset($_SESSION['entrata']['idsezionale']) and (($modules_info[$id_module]['name'] == 'Fatture di vendita') or ($modules_info[$id_module]['name'] == 'Laboratorio') or ($modules_info[$id_module]['name'] == 'Ticket'))) {
+        $result_query = str_replace('1=1', " 1=1 AND idsezionale = '".$_SESSION['entrata']['idsezionale']."' ", $result_query);
+    }
+
+    if (isset($_SESSION['uscita']['idsezionale']) and ($modules_info[$id_module]['name'] == 'Fatture di acquisto')) {
+        $result_query = str_replace('1=1', " 1=1 AND idsezionale = '".$_SESSION['uscita']['idsezionale']."' ", $result_query);
+    }
+    /*fine filtro sezionali*/
+
     if (!empty($search_filters)) {
-        $module_query = str_replace('2=2', '2=2 AND ('.implode(' AND ', $search_filters).') ', $module_query);
+        $result_query = str_replace('2=2', '2=2 AND ('.implode(' AND ', $search_filters).') ', $result_query);
     }
 
     // Filtri derivanti dai permessi (eventuali)
     if (empty($id_plugin)) {
-        $module_query = Modules::replaceAdditionals($id_module, $module_query);
+        $result_query = Modules::replaceAdditionals($id_module, $result_query);
     }
 
     // Ordinamento dei risultati
     if (isset($order['dir']) && isset($order['column'])) {
-        $pieces = explode('ORDER', $module_query);
+        $pieces = explode('ORDER', $result_query);
 
-        $cont = count($pieces);
-        if ($cont > 1) {
-            unset($pieces[$cont - 1]);
+        $count = count($pieces);
+        if ($count > 1) {
+            unset($pieces[$count - 1]);
         }
 
-        $module_query = implode('ORDER', $pieces).' ORDER BY '.$total['order_by'][$order['column']].' '.$order['dir'];
+        $result_query = implode('ORDER', $pieces).' ORDER BY '.$total['order_by'][$order['column']].' '.$order['dir'];
     }
 
     // Calcolo di eventuali somme
     if (!empty($total['summable'])) {
-        $query = str_replace_once('SELECT', 'SELECT '.implode(', ', $total['summable']).' FROM(SELECT ', $module_query).') AS `z`';
-        $sums = $dbo->fetchArray($query)[0];
+        $sum_query = str_replace_once('SELECT', 'SELECT '.implode(', ', $total['summable']).' FROM(SELECT ', $result_query).') AS `z`';
+        $sums = $dbo->fetchArray($sum_query)[0];
         if (!empty($sums)) {
             $r = [];
             foreach ($sums as $key => $sum) {
@@ -116,17 +106,17 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
 
     // Paginazione
     if ($length > 0) {
-        $module_query .= ' LIMIT '.$start.', '.$length;
+        $result_query .= ' LIMIT '.$start.', '.$length;
     }
 
     // Query effettiva
-    $query = str_replace_once('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $module_query);
+    $query = str_replace_once('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $result_query);
     $rs = $dbo->fetchArray($query);
 
     // Conteggio dei record filtrati
-    $cont = $dbo->fetchArray('SELECT FOUND_ROWS()');
-    if (!empty($cont)) {
-        $results['recordsFiltered'] = $cont[0]['FOUND_ROWS()'];
+    $count = $dbo->fetchArray('SELECT FOUND_ROWS()');
+    if (!empty($count)) {
+        $results['recordsFiltered'] = $count[0]['FOUND_ROWS()'];
     }
 
     // Creazione della tabella

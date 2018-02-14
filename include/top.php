@@ -2,10 +2,12 @@
 
 include_once __DIR__.'/../core.php';
 
+$paths = App::getPaths();
+
 if (!empty($debugbar)) {
     $debugbarRenderer = $debugbar->getJavascriptRenderer();
     $debugbarRenderer->setIncludeVendors(false);
-    $debugbarRenderer->setBaseUrl($assets.'/php-debugbar');
+    $debugbarRenderer->setBaseUrl($paths['assets'].'/php-debugbar');
 }
 
 echo '<!DOCTYPE html>
@@ -83,7 +85,7 @@ if (Auth::check()) {
     echo '
             };
 			globals = {
-                rootdir: \''.$rootdir.'\', js: \''.$js.'\', css: \''.$css.'\', img: \''.$img.'\',
+                rootdir: \''.$rootdir.'\', js: \''.$paths['js'].'\', css: \''.$paths['css'].'\', img: \''.$paths['img'].'\',
                 id_module: \''.$id_module.'\',
                 id_record: \''.$id_record.'\',
                 aggiornamenti_id: \''.($dbo->isInstalled() ? Modules::get('Aggiornamenti')['id'] : '').'\',
@@ -201,7 +203,7 @@ if (Auth::check()) {
                         </div>
 
                         <div class="image">
-                            <img src="'.$img.'/logo.png" class="img-circle img-responsive" alt="'.tr('OpenSTAManager').'" />
+                            <img src="'.$paths['img'].'/logo.png" class="img-circle img-responsive" alt="'.tr('OpenSTAManager').'" />
                         </div>
                     </div>
 

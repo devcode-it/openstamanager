@@ -49,8 +49,13 @@ class Modules
                     $additionals[$result['id']]['HVN'] = [];
                 }
 
+                $result['options'] = App::replacePlaceholder($result['options']);
+                $result['options2'] = App::replacePlaceholder($result['options2']);
+
+                $result['option'] = empty($result['options2']) ? $result['options'] : $result['options2'];
+
                 if (!empty($result['clause'])) {
-                    $result['clause'] = self::replacePlaceholder($result['clause']);
+                    $result['clause'] = App::replacePlaceholder($result['clause']);
                     $additionals[$result['id']][$result['position']][] = $result['clause'];
                 }
 
@@ -174,141 +179,6 @@ class Modules
     }
 
     /**
-     * Restituisce l'identificativo del modulo attualmente in utilizzo.
-     *
-     * @return int
-     */
-    public static function getCurrentModule()
-    {
-        if (empty(self::$current_module)) {
-            self::$current_module = filter('id_module');
-        }
-
-        return self::get(self::$current_module);
-    }
-
-    /**
-     * Restituisce l'identificativo dell'elemento attualmente in utilizzo.
-     *
-     * @return int
-     */
-    public static function getCurrentElement()
-    {
-        if (empty(self::$current_element)) {
-            self::$current_element = filter('id_record');
-        }
-
-        return self::$current_element;
-    }
-
-    /**
-     * Restituisce un'insieme di array comprendenti le informazioni per la costruzione della query del modulo indicato.
-     *
-     * @param int $id
-     *
-     * @return array
-     */
-    public static function getQuery($id)
-    {
-        if (empty(self::$queries[$id])) {
-            $database = Database::getConnection();
-            $module = self::get($id);
-
-            $fields = [];
-            $summable = [];
-            $search_inside = [];
-            $search = [];
-            $slow = [];
-            $order_by = [];
-            $select = '*';
-
-            $options = !empty($module['options2']) ? $module['options2'] : $module['options'];
-            if (str_contains($options, '|select|')) {
-                $query = $options;
-
-                $user = Auth::user();
-
-                $datas = $database->fetchArray('SELECT * FROM `zz_views` WHERE `id_module`='.prepare($id).' AND `id` IN (SELECT `id_vista` FROM `zz_group_view` WHERE `id_gruppo`=(SELECT `idgruppo` FROM `zz_users` WHERE `id`='.prepare($user['id_utente']).')) ORDER BY `order` ASC');
-
-                if (!empty($datas)) {
-                    $select = '';
-
-                    foreach ($datas as $data) {
-                        $select .= $data['query'].(!empty($data['name']) ? " AS '".$data['name']."', " : '');
-
-                        if ($data['enabled']) {
-                            $data['name'] = trim($data['name']);
-                            $data['search_inside'] = trim($data['search_inside']);
-                            $data['order_by'] = trim($data['order_by']);
-
-                            $fields[] = trim($data['name']);
-
-                            $search_inside[] = !empty($data['search_inside']) ? $data['search_inside'] : $data['name'];
-                            $order_by[] = !empty($data['order_by']) ? $data['order_by'] : $data['name'];
-                            $search[] = $data['search'];
-                            $slow[] = $data['slow'];
-                            $format[] = $data['format'];
-
-                            if ($data['summable']) {
-                                $summable[] = 'SUM(`'.trim($data['name']."`) AS 'sum_".(count($fields) - 1)."'");
-                            }
-                        }
-                    }
-
-                    $select = substr($select, 0, strlen($select) - 2);
-                }
-            } else {
-                $options = self::readOldQuery($options);
-
-                $query = $options['query'];
-                $fields = explode(',', $options['fields']);
-                foreach ($fields as $key => $value) {
-                    $fields[$key] = trim($value);
-                    $search[] = 1;
-                    $slow[] = 0;
-                    $format[] = 0;
-                }
-
-                $search_inside = $fields;
-                $order_by = $fields;
-            }
-
-            $result = [];
-            $result['query'] = $query;
-            $result['select'] = $select;
-            $result['fields'] = $fields;
-            $result['search_inside'] = $search_inside;
-            $result['order_by'] = $order_by;
-            $result['search'] = $search;
-            $result['slow'] = $slow;
-            $result['format'] = $format;
-            $result['summable'] = $summable;
-
-            self::$queries[$id] = $result;
-        }
-
-        return self::$queries[$id];
-    }
-
-    public static function readOldQuery($options)
-    {
-        $options = str_replace(["\r", "\n", "\t"], ' ', $options);
-        $options = json_decode($options, true);
-
-        return $options['main_query'][0];
-    }
-
-    public static function replacePlaceholder($query, $custom = null)
-    {
-        $user = Auth::user();
-
-        $custom = empty($custom) ? $user['idanagrafica'] : $custom;
-        $result = str_replace(['|idagente|', '|idtecnico|', '|idanagrafica|'], prepare($custom), $query);
-
-        return $result;
-    }
-
-    /**
      * Restituisce tutte le informazioni dei moduli installati in una scala gerarchica fino alla profondità indicata.
      *
      *
@@ -399,7 +269,7 @@ class Modules
         if (empty(self::$menu) || self::$depth != $depth) {
             $menus = self::getHierarchy($depth);
 
-            $module_name = self::getCurrentModule()['name'];
+            $module_name = App::getCurrentModule()['name'];
 
             $result = '';
             foreach ($menus as $menu) {

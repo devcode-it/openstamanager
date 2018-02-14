@@ -129,7 +129,7 @@ if (!empty($_SESSION['errors'])) {
 echo '
 			<form action="?op=login" method="post" class="login-box box">
 				<div class="box-header with-border text-center">
-					<img src="'.$img.'/logo.png" alt="'.tr('OSM Logo').'">
+					<img src="'.App::getPaths()['img'].'/logo.png" alt="'.tr('OSM Logo').'">
 					<h3 class="box-title">'.tr('OpenSTAManager').'</h3>
 				</div>
 				<!-- /.box-header -->

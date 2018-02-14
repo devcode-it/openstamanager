@@ -80,21 +80,12 @@ $files = [
     'templates/pdfgen.php',
     'templates/interventi/intervento_body.html',
     'templates/interventi/intervento.html',
-    'templates/interventi/pdfgen.interventiphp',
     'templates/ddt/ddt_body.html',
     'templates/ddt/ddt.html',
-    'templates/ddt/pdfgen.ddt',
     'templates/ordini/ordini_body.html',
     'templates/ordini/ordini.html',
-    'templates/ordini/pdfgen.ordini',
-    'templates/fatture/fatture_body.html',
-    'templates/fatture/fatture.html',
     'templates/fatture/pdfgen.fatture.php',
-    'templates/contratti/contratti_body.html',
-    'templates/contratti/contratti.html',
     'templates/contratti/pdfgen.contratti.php',
-    'templates/preventivi/preventivi_body.html',
-    'templates/preventivi/preventivi.html',
     'templates/preventivi/pdfgen.preventivi.php',
     'templates/preventivi_cons/preventivo_body.html',
     'templates/preventivi_cons/preventivo.html',
@@ -117,7 +108,7 @@ $files = [
 ];
 
 foreach ($files as $key => $value) {
-    $files[$key] = realpath($docroot.'/'.$value);
+    $files[$key] = realpath(DOCROOT.'/'.$value);
 }
 
 delete($files);
@@ -164,6 +155,6 @@ $dirs = [
 $pieces = array_chunk($dirs, 5);
 
 foreach ($pieces as $piece) {
-    $files = glob($docroot.'/modules/{'.implode(',', $piece).'}/*.html', GLOB_BRACE);
+    $files = glob(DOCROOT.'/modules/{'.implode(',', $piece).'}/*.html', GLOB_BRACE);
     delete($files);
 }

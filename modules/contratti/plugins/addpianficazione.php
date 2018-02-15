@@ -57,7 +57,7 @@ echo '
 ?>
 		
 		<div class="col-xs-12 col-md-7">
-			{[ "type": "select", "label": "<?php echo tr('Inizio pianificazione') ?>", "name": "parti_da_oggi", "values": "list= \"0\":\"<?php echo tr('Pianificare dal ').$data_richiesta ?>\", \"1\":\"<?php echo tr('Pianificare a partire da oggi ').date('d/m/Y') ?>\"", "value": "" ]}
+			{[ "type": "select", "label": "<?php echo tr('Inizio pianificazione') ?>", "name": "parti_da_oggi", "values": "list= \"0\":\"<?php echo tr('Pianificare a partire da questo promemoria ').$data_richiesta ?>\", \"1\":\"<?php echo tr('Pianificare a partire da oggi ').date('d/m/Y') ?>\"", "value": "" ]}
 		</div>
 		
 <?php
@@ -75,7 +75,7 @@ echo '
 	<div class="row">
 	
 		<div class="col-xs-12 col-md-4">
-			{[ "type": "checkbox", "label": "'.tr('Pianifica intervento').'", "name": "pianifica_intervento", "value": "0", "help": "", "placeholder": "'.tr('Pianificare anche gli interventi ').'" ]}
+			{[ "type": "checkbox", "label": "'.tr('Pianifica anche l\'intervento').'", "name": "pianifica_intervento", "value": "0", "help": "", "placeholder": "'.tr('Pianificare già l\'intervento ').'" ]}
 		</div>
 		
 		<div class="col-xs-12 col-md-4">

@@ -59,7 +59,7 @@ switch ($op) {
         if (Modules::get('Anagrafiche')['permessi'] != '-') {
             //$citta_cliente = ", IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))";
 
-            $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale $citta_cliente) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
+            $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale $citta_cliente) AS descrizione, idtipointervento_default, idzona FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
             foreach ($elements as $element) {
                 $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
@@ -77,6 +77,7 @@ switch ($op) {
             }
 
             $custom['idtipointervento'] = 'idtipointervento_default';
+			$custom['idzona'] = 'idzona';
         }
 
         break;
@@ -189,7 +190,7 @@ switch ($op) {
 
     case 'sedi':
         if (Modules::get('Anagrafiche')['permessi'] != '-' && isset($superselect['idanagrafica'])) {
-            $query = "SELECT * FROM (SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab |filter| ORDER BY id";
+             $query = "SELECT * FROM (SELECT 0 AS id, 'Sede legale' AS descrizione,  (SELECT an_anagrafiche.idzona FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica = ".prepare($superselect['idanagrafica']).") AS idzona  UNION SELECT id, CONCAT_WS(' - ', nomesede, citta), idzona AS idzona FROM an_sedi |where|) AS tab |filter| ORDER BY id";
 
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);
@@ -201,6 +202,8 @@ switch ($op) {
                 $search_fields[] = 'nomesede LIKE '.prepare('%'.$search.'%');
                 $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
             }
+			
+			$custom['idzona'] = 'idzona';
         }
         break;
 

@@ -56,7 +56,7 @@ if (!function_exists('completeResults')) {
 
 switch ($op) {
     case 'clienti':
-        if (Modules::get('Anagrafiche')['permessi'] != '-') {
+		if ((Modules::get('Anagrafiche')['permessi'] != '-') or (Modules::getAdditionalsQuery('Anagrafiche'))) {
             //$citta_cliente = ", IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))";
 
             $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale $citta_cliente) AS descrizione, idtipointervento_default, idzona FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
@@ -83,7 +83,7 @@ switch ($op) {
         break;
 
     case 'fornitori':
-        if (Modules::get('Anagrafiche')['permessi'] != '-') {
+        if ((Modules::get('Anagrafiche')['permessi'] != '-') or (Modules::getAdditionalsQuery('Anagrafiche'))) {
             $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
             foreach ($elements as $element) {
@@ -106,7 +106,7 @@ switch ($op) {
         break;
 
     case 'agenti':
-        if (Modules::get('Anagrafiche')['permessi'] != '-') {
+        if ((Modules::get('Anagrafiche')['permessi'] != '-') or (Modules::getAdditionalsQuery('Anagrafiche'))) {
             $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
             foreach ($elements as $element) {
@@ -143,7 +143,7 @@ switch ($op) {
         break;
 
     case 'tecnici':
-        if (Modules::get('Anagrafiche')['permessi'] != '-') {
+        if ((Modules::get('Anagrafiche')['permessi'] != '-') or (Modules::getAdditionalsQuery('Anagrafiche'))) {
             $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
             foreach ($elements as $element) {
@@ -167,7 +167,7 @@ switch ($op) {
 
     // Nota Bene: nel campo id viene specificato idtipoanagrafica-idanagrafica -> modulo Utenti e permessi, creazione nuovo utente
     case 'anagrafiche':
-        if (Modules::get('Anagrafiche')['permessi'] != '-') {
+        if ((Modules::get('Anagrafiche')['permessi'] != '-') or (Modules::getAdditionalsQuery('Anagrafiche'))) {
             $query = "SELECT CONCAT(an_tipianagrafiche.idtipoanagrafica, '-', an_anagrafiche.idanagrafica) AS id, CONCAT_WS('', ragione_sociale, ' (', citta, ' ', provincia, ')') AS descrizione idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
             foreach ($elements as $element) {

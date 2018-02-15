@@ -70,7 +70,7 @@ foreach ($rs_gen as $r) {
 
     echo '
         <td class="text-center">';
-    if ($r['is_descrizione'] == 0) {
+    if (empty($r['is_descrizione'])) {
         echo
             Translator::numberToLocale($r['qta']).' '.$r['um'];
     }
@@ -91,7 +91,7 @@ foreach ($rs_gen as $r) {
         // Imponibile
         echo "
         <td class='text-right'>";
-        if ($r['is_descrizione'] == 0) {
+        if (empty($r['is_descrizione'])) {
             echo
             Translator::numberToLocale($r['subtotale']).' &euro;';
 
@@ -112,7 +112,7 @@ foreach ($rs_gen as $r) {
         // Iva
         echo "
         <td class='text-center'>";
-        if ($r['is_descrizione'] == 0) {
+        if (empty($r['is_descrizione'])) {
             echo
             Translator::numberToLocale($r['perc_iva']);
         }

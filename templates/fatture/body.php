@@ -57,6 +57,73 @@ foreach ($righe as $r) {
         }
     }
 
+    // Aggiunta dei riferimenti ai documenti
+    $ref_modulo = null;
+    $ref_id = null;
+
+    // Ordine
+    if (!empty($r['idordine'])) {
+        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM or_ordini WHERE id=".prepare($r['idordine']));
+
+        $ref_modulo = ($records[0]['dir'] == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
+        $ref_id = $r['idordine'];
+
+        $documento = tr('Ordine');
+    }
+    // DDT
+    elseif (!empty($r['idddt'])) {
+        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM dt_ddt WHERE id=".prepare($r['idddt']));
+
+        $ref_modulo = ($records[0]['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
+        $ref_id = $r['idddt'];
+
+        $documento = tr('Ddt');
+    }
+    // Preventivo
+    elseif (!empty($r['idpreventivo'])) {
+        $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_preventivi WHERE id='.prepare($r['idpreventivo']));
+
+        $ref_modulo = 'Preventivi';
+        $ref_id = $r['idpreventivo'];
+
+        $documento = tr('Preventivo');
+    }
+    // Contratto
+    elseif (!empty($r['idcontratto'])) {
+        $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_contratti WHERE id='.prepare($r['idcontratto']));
+
+        $ref_modulo = 'Contratti';
+        $ref_id = $r['idcontratto'];
+
+        $documento = tr('Contratto');
+    }
+    // Intervento
+    elseif (!empty($r['idintervento'])) {
+        $data = $dbo->fetchArray('SELECT codice AS numero, data_richiesta AS data FROM in_interventi WHERE id='.prepare($r['idintervento']));
+
+        $ref_modulo = 'Interventi';
+        $ref_id = $r['idintervento'];
+
+        $documento = tr('Intervento');
+    }
+
+    if (!empty($ref_modulo) && !empty($ref_id)) {
+        $documento = Stringy\Stringy::create($documento)->toLowerCase();
+
+        if (!empty($data)) {
+            $descrizione = tr('Rif. _DOC_ num. _NUM_ del _DATE_', [
+                '_DOC_' => $documento,
+                '_NUM_' => $data[0]['numero'],
+                '_DATE_' => Translator::dateToLocale($data[0]['data']),
+            ]);
+        } else {
+            $descrizione = tr('_DOC_ di riferimento _ID_ eliminato', [
+                '_DOC_' => $documento->upperCaseFirst(),
+                '_ID_' => $ref_id,
+            ]);
+        }
+    }
+
     // Aggiunta riferimento a ordine
     if (!empty($r['idordine'])) {
         $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM or_ordini WHERE id='.prepare($r['idordine']));
@@ -96,9 +163,12 @@ foreach ($righe as $r) {
     }
 
     // Aumento del conteggio
-    if ((!empty($r['idordine']) || !empty($r['idddt']) || !empty($r['idpreventivo'])) && $count <= 1 && !empty($descrizione)) {
-        echo '<br><small>'.$descrizione.'</small>';
-        $count += 0.4;
+    if (!empty($descrizione)) {
+        echo '
+                <br><small>'.$descrizione.'</small>';
+        if ($count <= 1) {
+            $count += 0.4;
+        }
     }
 
     echo '
@@ -106,8 +176,8 @@ foreach ($righe as $r) {
 
     echo '
             <td class="text-center">';
-    if($r['is_descrizione']==0){
-        echo 
+    if (empty($r['is_descrizione'])) {
+        echo
                 Translator::numberToLocale($r['qta']).' '.$r['um'];
     }
     echo '
@@ -116,9 +186,8 @@ foreach ($righe as $r) {
     // Prezzo unitario
     echo "
             <td class='text-right'>";
-    if($r['is_descrizione']==0){
-        echo
-                (empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
+    if (empty($r['is_descrizione'])) {
+        echo(empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
 
         if ($r['sconto'] > 0) {
             echo "
@@ -139,10 +208,9 @@ foreach ($righe as $r) {
     // Imponibile
     echo "
             <td class='text-right'>";
-    if($r['is_descrizione']==0){
-        echo
-                (empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] - $r['sconto'])).' &euro;';
-    
+    if (empty($r['is_descrizione'])) {
+        echo(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] - $r['sconto'])).' &euro;';
+
         if ($r['sconto'] > 0) {
             echo "
                     <br><small class='text-muted'>".tr('sconto di _TOT_ _TYPE_', [
@@ -161,7 +229,7 @@ foreach ($righe as $r) {
     // Iva
     echo '
             <td class="text-center">';
-    if($r['is_descrizione']==0){
+    if (empty($r['is_descrizione'])) {
         echo
                 Translator::numberToLocale($r['perc_iva']);
     }

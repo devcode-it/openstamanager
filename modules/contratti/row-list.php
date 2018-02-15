@@ -49,7 +49,7 @@ if (!empty($rs_art)) {
         // q.tà
         echo '
             <td class="text-center">';
-        if ($r['is_descrizione'] == 0) {
+        if (empty($r['is_descrizione'])) {
             echo
                 Translator::numberToLocale($r['qta']);
         }
@@ -59,7 +59,7 @@ if (!empty($rs_art)) {
         // um
         echo '
             <td class="text-center">';
-        if ($r['is_descrizione'] == 0) {
+        if (empty($r['is_descrizione'])) {
             echo
                 $r['um'];
         }
@@ -69,7 +69,7 @@ if (!empty($rs_art)) {
         // costo unitario
         echo '
             <td class="text-center">';
-        if ($r['is_descrizione'] == 0) {
+        if (empty($r['is_descrizione'])) {
             echo
                 Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
         }
@@ -79,7 +79,7 @@ if (!empty($rs_art)) {
         // iva
         echo '
             <td class="text-right">';
-        if ($r['is_descrizione'] == 0) {
+        if (empty($r['is_descrizione'])) {
             echo
                 Translator::numberToLocale($r['iva'])." &euro;<br>
                 <small class='help-block'>".$r['desc_iva'].'</small>';
@@ -90,7 +90,7 @@ if (!empty($rs_art)) {
         // Imponibile
         echo '
             <td class="text-right">';
-        if ($r['is_descrizione'] == 0) {
+        if (empty($r['is_descrizione'])) {
             echo
                 Translator::numberToLocale($r['subtotale']).' &euro;';
 

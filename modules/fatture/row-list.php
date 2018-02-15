@@ -91,7 +91,8 @@ if (!empty($rs)) {
         $ref_modulo = null;
         $ref_id = null;
 
-        // Aggiunta riferimento a ordine
+        // Aggiunta dei riferimenti ai documenti
+        // Ordine
         if (!empty($r['idordine'])) {
             $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM or_ordini WHERE id=".prepare($r['idordine']));
 
@@ -99,28 +100,36 @@ if (!empty($rs)) {
             $ref_id = $r['idordine'];
 
             $documento = tr('Ordine');
-        } elseif (!empty($r['idddt'])) {
+        }
+        // DDT
+        elseif (!empty($r['idddt'])) {
             $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM dt_ddt WHERE id=".prepare($r['idddt']));
 
             $ref_modulo = ($dir == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
             $ref_id = $r['idddt'];
 
             $documento = tr('Ddt');
-        } elseif (!empty($r['idpreventivo'])) {
+        }
+        // Preventivo
+        elseif (!empty($r['idpreventivo'])) {
             $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_preventivi WHERE id='.prepare($r['idpreventivo']));
 
             $ref_modulo = 'Preventivi';
             $ref_id = $r['idpreventivo'];
 
             $documento = tr('Preventivo');
-        } elseif (!empty($r['idcontratto'])) {
+        }
+        // Contratto
+        elseif (!empty($r['idcontratto'])) {
             $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_contratti WHERE id='.prepare($r['idcontratto']));
 
             $ref_modulo = 'Contratti';
             $ref_id = $r['idcontratto'];
 
             $documento = tr('Contratto');
-        } elseif (!empty($r['idintervento'])) {
+        }
+        // Intervento
+        elseif (!empty($r['idintervento'])) {
             $data = $dbo->fetchArray('SELECT codice AS numero, data_richiesta AS data FROM in_interventi WHERE id='.prepare($r['idintervento']));
 
             $ref_modulo = 'Interventi';
@@ -154,32 +163,32 @@ if (!empty($rs)) {
 
         echo '
         <td class="text-right">';
-        
-        if($r['is_descrizione']==0){
-            echo 
+
+        if (empty($r['is_descrizione'])) {
+            echo
             Translator::numberToLocale($r['qta']);
         }
-        
-        echo '    
+
+        echo '
         </td>';
 
         // Unità di misura
         echo '
         <td class="text-center">';
-        
-        if($r['is_descrizione']==0){
+
+        if (empty($r['is_descrizione'])) {
             echo
             $r['um'];
         }
-        
+
         echo '
         </td>';
 
         // Costo unitario
         echo '
         <td class="text-right">';
-        
-        if($r['is_descrizione']==0){
+
+        if (empty($r['is_descrizione'])) {
             echo
             Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
 
@@ -191,27 +200,27 @@ if (!empty($rs)) {
                 ]).'</small>';
             }
         }
-        
+
         echo '
         </td>';
 
         // Iva
         echo '
         <td class="text-right">';
-        
-        if($r['is_descrizione']==0){
+
+        if (empty($r['is_descrizione'])) {
             echo
             Translator::numberToLocale($r['iva']).' &euro;
             <br><small class="help-block">'.$r['desc_iva'].'</small>';
         }
-        
+
         echo '
         </td>';
 
         // Imponibile
         echo '
         <td class="text-right">';
-        if($r['is_descrizione']==0){
+        if (empty($r['is_descrizione'])) {
             echo
             Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
         }

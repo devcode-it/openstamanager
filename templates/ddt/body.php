@@ -38,7 +38,13 @@ if ($mostra_prezzi) {
     <tbody>';
 
 // Righe
-$rs_gen = $dbo->fetchArray('SELECT *, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva, IFNULL((SELECT peso_lordo FROM mg_articoli WHERE id=idarticolo),0) * qta AS peso_lordo, IFNULL((SELECT volume FROM mg_articoli WHERE id=idarticolo),0) * qta AS volume FROM `dt_righe_ddt` WHERE idddt='.prepare($idddt));
+$rs_gen = $dbo->fetchArray("SELECT *,
+    IFNULL((SELECT `codice` FROM `mg_articoli` WHERE `id` = `dt_righe_ddt`.`idarticolo`), '') AS codice_articolo,
+    (SELECT GROUP_CONCAT(`serial` SEPARATOR ', ') FROM `mg_prodotti` WHERE `id_riga_ddt` = `dt_righe_ddt`.`id`) AS seriali,
+    (SELECT `percentuale` FROM `co_iva` WHERE `id` = `dt_righe_ddt`.`idiva`) AS perc_iva,
+    IFNULL((SELECT peso_lordo FROM mg_articoli WHERE id=idarticolo),0) * qta AS peso_lordo,
+    IFNULL((SELECT volume FROM mg_articoli WHERE id=idarticolo),0) * qta AS volume
+FROM `dt_righe_ddt` WHERE idddt=".prepare($idddt));
 foreach ($rs_gen as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
@@ -48,6 +54,28 @@ foreach ($rs_gen as $r) {
     <tr>
         <td>
             '.nl2br($r['descrizione']);
+
+    // Codice articolo
+    if (!empty($r['codice_articolo'])) {
+        echo '
+            <br><small>'.tr('COD. _COD_', [
+                '_COD_' => $r['codice_articolo'],
+            ]).'</small>';
+
+        if ($count <= 1) {
+            $count += 0.4;
+        }
+    }
+
+    // Seriali
+    if (!empty($r['seriali'])) {
+        echo '
+            <br><small>'.tr('SN').': '.$r['seriali'].'</small>';
+
+        if ($count <= 1) {
+            $count += 0.4;
+        }
+    }
 
     // Aggiunta riferimento a ordine
     if (!empty($r['idordine'])) {
@@ -67,11 +95,11 @@ foreach ($rs_gen as $r) {
 
     echo '
         </td>';
-        
+
     echo '
         <td class="text-center">';
-    if($r['is_descrizione']==0){
-        echo 
+    if ($r['is_descrizione'] == 0) {
+        echo
             Translator::numberToLocale($r['qta']).' '.$r['um'];
     }
     echo '
@@ -80,8 +108,8 @@ foreach ($rs_gen as $r) {
     if ($mostra_prezzi) {
         echo '
         <td class="text-right">';
-        if($r['is_descrizione']==0){
-            echo 
+        if ($r['is_descrizione'] == 0) {
+            echo
             Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
         }
         echo '
@@ -90,7 +118,7 @@ foreach ($rs_gen as $r) {
         // Imponibile
         echo "
         <td class='text-right'>";
-        if($r['is_descrizione']==0){
+        if ($r['is_descrizione'] == 0) {
             echo
             Translator::numberToLocale($r['subtotale']).' &euro;';
 
@@ -111,7 +139,7 @@ foreach ($rs_gen as $r) {
         // Iva
         echo "
         <td class='text-center'>";
-        if($r['is_descrizione']==0){
+        if ($r['is_descrizione'] == 0) {
             echo
             Translator::numberToLocale($r['perc_iva']);
         }

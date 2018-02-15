@@ -119,6 +119,8 @@ $files = [
     'templates/contratti/contratto.html',
     'templates/preventivo/preventivo_body.html',
     'templates/preventivo/preventivo.html',
+    'locale/it/it.po',
+    'locale/it/it.mo',
 ];
 
 foreach ($files as $key => $value) {

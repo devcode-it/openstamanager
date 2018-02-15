@@ -144,7 +144,7 @@ foreach ($righe as $r) {
         if($r['is_descrizione']==0){
             echo
                 (empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'])).' &euro;';
-                
+
             if ($r['sconto'] > 0) {
                 echo "
                     <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
@@ -185,7 +185,7 @@ foreach ($righe as $r) {
 
 $sconto = sum($sconto);
 $imponibile = sum($imponibile);
-$iva = sum($iva);
+$iva = sum($iva, null, 4);
 
 $totale = $imponibile - $sconto;
 

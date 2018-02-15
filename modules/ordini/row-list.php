@@ -190,7 +190,7 @@ echo '
 // Calcoli
 $imponibile = sum(array_column($rs, 'subtotale'));
 $sconto = sum(array_column($rs, 'sconto'));
-$iva = sum(array_column($rs, 'iva'));
+$iva = sum(array_column($rs, 'iva'), null, 4);
 
 $imponibile_scontato = sum($imponibile, -$sconto);
 

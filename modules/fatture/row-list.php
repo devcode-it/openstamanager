@@ -154,31 +154,31 @@ if (!empty($rs)) {
 
         echo '
         <td class="text-right">';
-        
+
         if($r['is_descrizione']==0){
-            echo 
+            echo
             Translator::numberToLocale($r['qta']);
         }
-        
-        echo '    
+
+        echo '
         </td>';
 
         // Unità di misura
         echo '
         <td class="text-center">';
-        
+
         if($r['is_descrizione']==0){
             echo
             $r['um'];
         }
-        
+
         echo '
         </td>';
 
         // Costo unitario
         echo '
         <td class="text-right">';
-        
+
         if($r['is_descrizione']==0){
             echo
             Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
@@ -191,20 +191,20 @@ if (!empty($rs)) {
                 ]).'</small>';
             }
         }
-        
+
         echo '
         </td>';
 
         // Iva
         echo '
         <td class="text-right">';
-        
+
         if($r['is_descrizione']==0){
             echo
             Translator::numberToLocale($r['iva']).' &euro;
             <br><small class="help-block">'.$r['desc_iva'].'</small>';
         }
-        
+
         echo '
         </td>';
 
@@ -269,7 +269,7 @@ echo '
 // Calcoli
 $imponibile = sum(array_column($rs, 'subtotale'));
 $sconto = sum(array_column($rs, 'sconto'));
-$iva = sum(array_column($rs, 'iva'));
+$iva = sum(array_column($rs, 'iva'), null, 4);
 
 $imponibile_scontato = sum($imponibile, -$sconto);
 

@@ -46,7 +46,7 @@ if (filter('action') == 'do_update') {
                 $rate = $scriptValue;
             }
 
-            // Aumento della percentuale di completameno totale
+            // Aumento della percentuale di completamento totale
             if (!empty($rate)) {
                 echo '
         <script>
@@ -171,7 +171,7 @@ if (filter('action') == 'do_update') {
                 <p>'.tr("E' necessario aggiornare il database a una nuova versione").'.</p>';
     }
     echo '
-                <p>'.tr("Premi il tasto _BUTTON_ per procedere con l'aggiornamento!", [
+                <p>'.tr("Premi il tasto _BUTTON_ per procedere con l'".(!$dbo->isInstalled() ? tr('installazione') : tr('aggiornamento'))."!", [
                     '_BUTTON_' => '<b>"'.$button.'"</b>',
                 ]).'</p>
                 <input type="button" class="btn btn-primary" value="'.$button.'" onclick="continue_update()" id="contine_button">
@@ -179,8 +179,8 @@ if (filter('action') == 'do_update') {
                 <script>
                 function continue_update(){
                     swal({
-                        title: "'.tr('Sei sicuro?').'",
-                        text: "'.tr("Continuare con l'aggiornamento?").'",
+                        title: "'.(!$dbo->isInstalled() ? tr('Procedere con l\'installazione?') : tr('Procedere l\'aggiornamento?')).'",
+                        text: "",
                         type: "warning",
                         showCancelButton: true,
                         confirmButtonClass: "btn btn-lg btn-success",

@@ -1,8 +1,8 @@
 <?php
 
 /**
-* Verifico se serve creare un conto per eventuali nuovi clienti o fornitori.
-*/
+ * Verifico se serve creare un conto per eventuali nuovi clienti o fornitori.
+ */
 $rs = $dbo->fetchArray('SELECT idanagrafica, ragione_sociale, (SELECT GROUP_CONCAT(an_tipianagrafiche.descrizione) FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica=an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica=an_anagrafiche.idanagrafica) AS idtipianagrafica FROM an_anagrafiche WHERE idconto_cliente=0 OR idconto_fornitore=0');
 
 for ($i = 0; $i < sizeof($rs); ++$i) {
@@ -88,8 +88,8 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
 
 // Eliminazione vecchi file
 $files = [
-    $docroot.'/share/themes/default/css/font-awesome.css',
-    $docroot.'/modules/preventivi/js/'
+    DOCROOT.'/share/themes/default/css/font-awesome.css',
+    DOCROOT.'/modules/preventivi/js/',
 ];
 delete($files);
 

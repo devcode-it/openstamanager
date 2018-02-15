@@ -17,3 +17,13 @@ UPDATE `zz_views` SET `order_by` = 'CAST(numero AS UNSIGNED)' WHERE `name` = 'Nu
 
 -- Query per ignorare i punti nella ricerca in Ragione sociale
 -- UPDATE `zz_views` SET `search_inside` = CONCAT('REPLACE(', `query`, ', ''.'', '''') LIKE |search|') WHERE `name` = 'Ragione sociale';
+
+-- Aggiornate le viste standard, separando i simboli < e > per non dare errore nell'aggiornamento
+UPDATE `zz_views` SET `query` = 'IF(scadenza < NOW(), \'#ff7777\', \'\')' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = '_bg_';
+UPDATE `zz_views` SET `query` = 'CONCAT(co_tipidocumento.descrizione, CONCAT(\' numero \', IF(numero_esterno <> \'\', numero_esterno, numero)))' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = 'Data emissione';
+UPDATE `zz_views` SET `query` = 'GROUP_CONCAT(CASE WHEN totale > 0 THEN co_pianodeiconti3.descrizione ELSE NULL END)' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota') AND `name` = 'Conto avere';
+UPDATE `zz_views` SET `query` = 'GROUP_CONCAT(CASE WHEN totale < 0 THEN co_pianodeiconti3.descrizione ELSE NULL END)' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota') AND `name` = 'Conto dare';
+
+
+-- Aggiungo 1=1 nel WHERE per il widget clienti in anagrafica
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.idanagrafica) AS dato FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE 1=1 AND descrizione="Cliente" AND deleted=0' WHERE `zz_widgets`.`name` = 'Numero di clienti';

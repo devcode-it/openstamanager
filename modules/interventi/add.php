@@ -173,7 +173,7 @@ if (empty($new_codice)) {
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, nome AS descrizione FROM an_zone ORDER BY nome", "value": "<?php echo $idzona; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "<?php echo $idzona; ?>", "extra": "readonly" ]}
 				</div>
 			</div>
 
@@ -270,11 +270,34 @@ if (empty($new_codice)) {
 
 		$("#idimpianti").prop("disabled", value);
 		$("#idimpianti").selectReset();
+		
+		if (($(this).val())) {
+			if (($(this).selectData().idzona)){
+				$('#idzona').val($(this).selectData().idzona).change();
+	
+			}else{
+				$('#idzona').val('').change();
+			}
+			//session_set('superselect,idzona', $(this).selectData().idzona, 0);
+		}
+		
+		
 	});
 
 	$('#idsede').change( function(){
 		session_set('superselect,idsede', $(this).val(), 0);
 		$("#idimpianti").selectReset();
+		
+				
+		if (($(this).val())) {
+			if (($(this).selectData().idzona)){
+				$('#idzona').val($(this).selectData().idzona).change();
+			}else{
+				$('#idzona').val('').change();
+			}
+			//session_set('superselect,idzona', $(this).selectData().idzona, 0);
+		}
+		
 	});
 
 	$('#idpreventivo').change( function(){

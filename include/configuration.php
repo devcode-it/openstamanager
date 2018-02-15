@@ -288,8 +288,8 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                 <div id="steps">
 
                     <div id="step-1">
-                        <p>'.tr('Un benvenuto da OpenSTAManager!').'</p>
-                        <p>'.tr("Prima di procedere alla configurazione e all'installazione del software, sono necessari alcuni accorgimenti per garantire il corretto funzionamento del gestionale").'.</p>
+                        <p>'.tr('Benvenuto in <strong>OpenSTAManager</strong>!').'</p>
+                        <p>'.tr("Prima di procedere alla configurazione e all'installazione del software, sono necessari alcuni accorgimenti per garantire il corretto funzionamento del gestionale. Stai utilizzando la versione PHP ".phpversion()."").'.</p>
                         <hr>';
 
     // Estensioni di PHP
@@ -483,7 +483,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     // db_host
     echo '
                                 <div class="col-xs-12">
-                                    {[ "type": "text", "label": "'.tr('Host del database').'", "name": "db_host", "placeholder": "'.tr("Indirizzo dell'host del database").'", "value": "'.$host.'", "help": "'.tr('Esempio').': <i>localhost</i>", "show-help": 1, "required": 1 ]}
+                                    {[ "type": "text", "label": "'.tr('Host del database').'", "name": "db_host", "placeholder": "'.tr("Indirizzo dell'host del database").'", "value": "'.$host.'", "help": "'.tr('Esempio').': localhost", "show-help": 1, "required": 1 ]}
                                 </div>
                             </div>
 
@@ -492,19 +492,19 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     // db_username
     echo '
                                 <div class="col-xs-12 col-md-4">
-                                    {[ "type": "text", "label": "'.tr("Username dell'utente MySQL").'", "name": "db_username", "placeholder": "'.tr("Username dell'utente MySQL").'", "value": "'.$username.'", "help": "'.tr('Esempio').': <i>root</i>", "show-help": 1, "required": 1 ]}
+                                    {[ "type": "text", "label": "'.tr("Username dell'utente MySQL").'", "name": "db_username", "placeholder": "'.tr("Username dell'utente MySQL").'", "value": "'.$username.'", "help": "'.tr('Esempio').': root", "show-help": 1, "required": 1 ]}
                                 </div>';
 
     // db_password
     echo '
                                 <div class="col-xs-12 col-md-4">
-                                    {[ "type": "password", "label": "'.tr("Password dell'utente MySQL").'", "name": "db_password", "placeholder": "'.tr("Password dell'utente MySQL").'", "value": "'.$password.'", "help": "'.tr('Esempio').': <i>mysql</i>", "show-help": 1 ]}
+                                    {[ "type": "password", "label": "'.tr("Password dell'utente MySQL").'", "name": "db_password", "placeholder": "'.tr("Password dell'utente MySQL").'", "value": "'.$password.'", "help": "'.tr('Esempio').': mysql", "show-help": 1 ]}
                                 </div>';
 
     // db_name
     echo '
                                 <div class="col-xs-12 col-md-4">
-                                    {[ "type": "text", "label": "'.tr('Nome del database').'", "name": "db_name", "placeholder": "'.tr('Nome del database').'", "value": "'.$name.'", "help": "'.tr('Esempio').': <i>openstamanager</i>", "show-help": 1, "required": 1 ]}
+                                    {[ "type": "text", "label": "'.tr('Nome del database').'", "name": "db_name", "placeholder": "'.tr('Nome del database').'", "value": "'.$name.'", "help": "'.tr('Esempio').': openstamanager", "show-help": 1, "required": 1 ]}
                                 </div>
                             </div>
 
@@ -513,7 +513,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     // Password utente admin
     echo '
                                 <div class="col-xs-12 col-md-6">
-                                    {[ "type": "password", "label": "'.tr("Password dell'amministratore").'", "name": "osm_password", "placeholder": "'.tr('Scegli la password di amministratore').'", "value": "'.$osm_password.'", "help": "'.tr('Valore di default').': <i>admin</i>", "show-help": 1 ]}
+                                    {[ "type": "password", "label": "'.tr("Password dell'amministratore").'", "name": "osm_password", "placeholder": "'.tr('Scegli la password di amministratore').'", "value": "'.$osm_password.'", "help": "'.tr('Valore di default').': admin", "show-help": 1 ]}
                                 </div>';
 
     // Email utente admin

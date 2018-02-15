@@ -193,7 +193,13 @@ switch (post('op')) {
             $rs = $dbo->fetchArray($query);
 
             // Aggiorno lo stato della fattura
-            $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Pagato') WHERE id=".prepare($iddocumento));
+            if( $rs[0]['tot_pagato'] == $rs[0]['tot_da_pagare'] ){
+                $stato = 'Pagato';
+            } else {
+                $stato = 'Parzialmente pagato';
+            }
+            
+            $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione=".prepare($stato).") WHERE id=".prepare($iddocumento));
 
             // Aggiorno lo stato dei preventivi collegati alla fattura se ce ne sono
             $query2 = 'SELECT idpreventivo FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' AND NOT idpreventivo=0 AND idpreventivo IS NOT NULL';

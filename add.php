@@ -38,18 +38,27 @@ echo '
 echo '
 
 <div class="hide" id="custom_fields_top-add">
-    {( "name": "custom_fields", "id_module": "'.$id_module.'", "position": "top", "place": "add" )}
+    {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "position": "top", "place": "add" )}
 </div>
 
 <div class="hide" id="custom_fields_bottom-add">
-    {( "name": "custom_fields", "id_module": "'.$id_module.'", "position": "bottom", "place": "add" )}
+    {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "position": "bottom", "place": "add" )}
 </div>
 
 <script>
 $(document).ready(function(){
-    $("#form_'.$id_module.'-'.$id_plugin.' form:first").prepend($("#custom_fields_top-add").html());
+    var form = $("#custom_fields_top-add").parent().find("form").first();
 
-    $("#form_'.$id_module.'-'.$id_plugin.' form:first .panel").last().after($("#custom_fields_bottom-add").html());
+    // Campi a inizio form
+    form.prepend($("#custom_fields_top-add").html());
+
+    // Campi a fine form
+    var last = form.find(".panel").last();
+    if (!last.length) {
+        last = form.find(".row").eq(-2);
+    }
+
+    last.after($("#custom_fields_bottom-add").html());
 });
 </script>';
 

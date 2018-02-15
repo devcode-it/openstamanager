@@ -6,7 +6,7 @@ $operazione = filter('op');
 
 switch ($operazione) {
     case 'addsede':
-        $array = [
+        $dbo->insert('an_sedi', [
             'idanagrafica' => $id_parent,
             'nomesede' => $post['nomesede'],
             'indirizzo' => $post['indirizzo'],
@@ -18,9 +18,8 @@ switch ($operazione) {
             'telefono' => $post['telefono'],
             'email' => $post['email'],
             'idzona' => $post['idzona'],
-        ];
-
-        $dbo->insert('an_sedi', $array);
+        ]);
+        $id_record = $dbo->lastInsertedID();
 
         $_SESSION['infos'][] = tr('Aggiunta una nuova sede!');
 
@@ -55,7 +54,7 @@ switch ($operazione) {
         break;
 
     case 'deletesede':
-        $dbo->query("DELETE FROM `an_sedi` WHERE `id`=".prepare($id_record));
+        $dbo->query('DELETE FROM `an_sedi` WHERE `id`='.prepare($id_record));
 
         $_SESSION['infos'][] = tr('Sede eliminata!');
 

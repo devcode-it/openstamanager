@@ -105,19 +105,28 @@ if (empty($records)) {
     // Campi personalizzati
     echo '
 
-            <div class="hide" id="custom_fields_top">
+            <div class="hide" id="custom_fields_top-edit">
                 {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top" )}
             </div>
 
-            <div class="hide" id="custom_fields_bottom">
+            <div class="hide" id="custom_fields_bottom-edit">
                 {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}
             </div>
 
             <script>
             $(document).ready(function(){
-                $("#tab_0 form:first").prepend($("#custom_fields_top").html());
+                var form = $("#custom_fields_top-edit").parent().find("form").first();
 
-                $("#tab_0 form:first .panel").last().after($("#custom_fields_bottom").html());
+                // Campi a inizio form
+                form.prepend($("#custom_fields_top-edit").html());
+
+                // Campi a fine form
+                var last = form.find(".panel").last();
+                if (!last.length) {
+                    last = form.find(".row").eq(-2);
+                }
+
+                last.after($("#custom_fields_bottom-edit").html());
             });
             </script>';
 

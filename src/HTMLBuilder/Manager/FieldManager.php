@@ -24,7 +24,13 @@ class FieldManager implements ManagerInterface
             $query .= ' LEFT JOIN `zz_field_record` ON `zz_fields`.`id` = `zz_field_record`.`id_field`';
         }
 
-        $query .= ' WHERE `id_module` = '.prepare($options['id_module']);
+        $query .= ' WHERE ';
+
+        if (isset($options['id_plugin'])) {
+            $query .= ' `id_plugin` = '.prepare($options['id_plugin']);
+        } else {
+            $query .= ' `id_module` = '.prepare($options['id_module']);
+        }
 
         if (isset($options['id_record'])) {
             $query .= ' AND `id_record` = '.prepare($options['id_record']);
@@ -50,7 +56,12 @@ class FieldManager implements ManagerInterface
         foreach ($fields as $key => $field) {
             if ($key % 3 == 0) {
                 $result .= '
-<div class="row">';
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">'.tr('Campi aggiuntivi').'</h3>
+    </div>
+    <div class="panel-body">
+        <div class="row">';
             }
 
             $field['value'] = isset($field['value']) ? $field['value'] : '';
@@ -66,20 +77,24 @@ class FieldManager implements ManagerInterface
             }
 
             $result .= '
-    <div class="col-xs-4">
-        '.$field['content'].'
-    </div>';
+            <div class="col-xs-4">
+                '.$field['content'].'
+            </div>';
 
             if (($key + 1) % 3 == 0) {
                 $result .= '
-</div>';
+        </div>';
             }
         }
 
         if (!empty($fields) && ($key + 1) % 3 != 0) {
             $result .= '
-</div>';
+        </div>';
         }
+
+        $result .= '
+    </div>
+</div>';
 
         return $result;
     }

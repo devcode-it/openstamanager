@@ -45,26 +45,28 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.idanagrafica) AS 
 -- Aggiungo 1=1 nel WHERE e 2=2 nel HAVING per il widget tutte le anagrafiche
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.idanagrafica) AS dato FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE 1=1 AND deleted=0 HAVING 2=2' WHERE `zz_widgets`.`name` = 'Tutte le anagrafiche';
 
-
 -- Aggiornamento widget "Crediti da clienti" anche con totali parziali
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(da_pagare-pagato, 2), ",", "#"), ".", ","), "#", "."), "€") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=\'entrata\'' WHERE `zz_widgets`.`name` = 'Crediti da clienti';
 
 -- Aggiornamento widget "Debiti verso fornitori" anche con totali parziali
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT( -(da_pagare-pagato), 2), ",", "#"), ".", ","), "#", "."), "€") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=\'uscita\'' WHERE `zz_widgets`.`name` = 'Debiti verso fornitori';
 
+-- Aggiungo flag deleted per gli stati intervento
+ALTER TABLE `in_statiintervento` ADD `deleted` BOOLEAN NOT NULL DEFAULT FALSE AFTER `completato`;
 
--- Aggiunta possibilità di specificare se uno stato intervento è eliminabile o meno (di default sì)
+-- Aggiorno query modulo stati intervento
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `in_statiintervento` WHERE 1=1 AND deleted = 0 HAVING 2=2' WHERE `zz_modules`.`name` = 'Stati di intervento';
+
+
+-- Aggiungo il flag can_delete ed elimino il flag `default` in quanto non serve più
 ALTER TABLE `in_statiintervento` ADD `can_delete` BOOLEAN NOT NULL DEFAULT TRUE AFTER `default`;
-
--- Ridenominazione campo `default` a `can_edit` per maggior chiarezza
-ALTER TABLE `in_statiintervento` CHANGE `default` `can_edit` TINYINT( 1 ) NOT NULL ;
-
+ALTER TABLE `in_statiintervento` DROP `default`;
 
 -- Aggiunti come eliminabili gli stati "Chiamata" e "In programmazione"
-UPDATE `in_statiintervento` SET `can_delete` = 1, `can_edit` = 1 WHERE `idstatointervento` IN( 'CALL', 'WIP' );
+UPDATE `in_statiintervento` SET `can_delete` = 1 WHERE `idstatointervento` IN( 'CALL', 'WIP' );
 
 -- Aggiunti come non eliminabili ma modificabili gli stati "Fatturato" e "Completato"
-UPDATE `in_statiintervento` SET `can_delete` = 0, `can_edit` = 1 WHERE `idstatointervento` IN( 'FAT', 'OK' );
+UPDATE `in_statiintervento` SET `can_delete` = 0 WHERE `idstatointervento` IN( 'FAT', 'OK' );
 
 -- Impostazione di tutti gli eventuali altri tipi di intervento a modificabili e cancellabili
-UPDATE `in_statiintervento` SET `can_delete` = 1, `can_edit` = 1 WHERE `idstatointervento` NOT IN( 'FAT', 'OK', 'CALL', 'WIP' );
+UPDATE `in_statiintervento` SET `can_delete` = 1 WHERE `idstatointervento` NOT IN( 'FAT', 'OK', 'CALL', 'WIP' );

@@ -82,7 +82,7 @@ class HTMLBuilder
     ];
 
     /** @var int Limite di ricorsione interna */
-    protected $max_recursion = 10;
+    protected static $max_recursion = 10;
 
     /**
      * Esegue la sostituzione dei tag personalizzati con il relativo codice HTML.
@@ -103,7 +103,7 @@ class HTMLBuilder
             $result = !empty($class) ? $class->manage($json) : '';
 
             // Ricorsione
-            if ($depth < $max_recursion) {
+            if ($depth < self::$max_recursion) {
                 $result = self::replace($result, $depth++);
             }
 
@@ -118,7 +118,7 @@ class HTMLBuilder
             $result = self::generate($json);
 
             // Ricorsione
-            if ($depth < $max_recursion) {
+            if ($depth < self::$max_recursion) {
                 $result = self::replace($result, $depth++);
             }
 

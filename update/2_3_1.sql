@@ -15,9 +15,6 @@ UPDATE `zz_views` SET `order_by` = 'CAST(in_interventi.codice AS UNSIGNED)' WHER
 
 UPDATE `zz_views` SET `order_by` = 'CAST(numero AS UNSIGNED)' WHERE `name` = 'Numero' AND `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` IN ('Ordini Preventivi', 'Contratti'));
 
--- Query per ignorare i punti nella ricerca in Ragione sociale
--- UPDATE `zz_views` SET `search_inside` = CONCAT('REPLACE(', `query`, ', ''.'', '''') LIKE |search|') WHERE `name` = 'Ragione sociale';
-
 -- Aggiornate le viste standard, separando i simboli < e > per non dare errore nell'aggiornamento
 UPDATE `zz_views` SET `query` = 'IF(scadenza < NOW(), \'#ff7777\', \'\')' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = '_bg_';
 UPDATE `zz_views` SET `query` = 'CONCAT(co_tipidocumento.descrizione, CONCAT(\' numero \', IF(numero_esterno <> \'\', numero_esterno, numero)))' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = 'Data emissione';
@@ -30,3 +27,10 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.idanagrafica) AS 
 
 -- Spostamento conti di apertura e chiusura stato patrimoniale sotto lo stato patrimoniale
 UPDATE `co_pianodeiconti2` SET `idpianodeiconti1`=1 WHERE `descrizione` = 'Perdite e profitti';
+
+
+-- Aggiornamento widget "Crediti da clienti" anche con totali parziali
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(da_pagare-pagato, 2), ",", "#"), ".", ","), "#", "."), "€") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=\'entrata\'' WHERE `zz_widgets`.`name` = 'Crediti da clienti';
+
+-- Aggiornamento widget "Debiti verso fornitori" anche con totali parziali
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT( -(da_pagare-pagato), 2), ",", "#"), ".", ","), "#", "."), "€") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=\'uscita\'' WHERE `zz_widgets`.`name` = 'Debiti verso fornitori';

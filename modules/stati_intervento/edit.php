@@ -1,18 +1,8 @@
 <?php
 include_once __DIR__.'/../../core.php';
+?>
 
-//Se lo stato intervento è uno di quelli di default, non lo lascio modificare
-if ($records[0]['default']) {
-    $attr = "readonly='true'";
-    $warning_text = '<div class="alert alert-warning">'.tr('Puoi modificare solo il colore di questo intervento!').'</div>';
-} else {
-    $attr = '';
-    $warning_text = '';
-}
-
-echo $warning_text;
-
-?><form action="" method="post">
+<form action="" method="post">
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="id_record" value="<?php echo $id_record ?>">
@@ -39,8 +29,8 @@ echo $warning_text;
 </form>
 
 <?php
-//Se lo stato intervento è uno di quelli di default, non lo lascio modificare
-if (!$records[0]['default']) {
+// Record eliminabile solo se permesso
+if ($records[0]['can_delete']) {
     ?>
         <a class="btn btn-danger ask" data-backto="record-list">
             <i class="fa fa-trash"></i> <?php echo tr('Elimina') ?>

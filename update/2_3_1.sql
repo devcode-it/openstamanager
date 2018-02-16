@@ -27,3 +27,6 @@ UPDATE `zz_views` SET `query` = 'GROUP_CONCAT(CASE WHEN totale < 0 THEN co_piano
 
 -- Aggiungo 1=1 nel WHERE per il widget clienti in anagrafica
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.idanagrafica) AS dato FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE 1=1 AND descrizione="Cliente" AND deleted=0' WHERE `zz_widgets`.`name` = 'Numero di clienti';
+
+-- Spostamento conti di apertura e chiusura stato patrimoniale sotto lo stato patrimoniale
+UPDATE `co_pianodeiconti2` SET `idpianodeiconti1`=1 WHERE `descrizione` = 'Perdite e profitti';

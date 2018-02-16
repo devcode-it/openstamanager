@@ -71,7 +71,7 @@ elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
     $idimpianto = implode(',', array_column($rs, 'idimpianto'));
 
     // Seleziono "In programmazione" come stato
-    $rs = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE descrizione='In programmazione'");
+    $rs = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE codice='WIP'");
     $idstatointervento = $rs[0]['idstatointervento'];
 }
 
@@ -184,7 +184,7 @@ if (empty($new_codice)) {
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Stato intervento'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento", "value": "<?php echo $idstatointervento; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Stato intervento'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted = 0", "value": "<?php echo $idstatointervento; ?>" ]}
 				</div>
 
 				<div class="col-md-2">

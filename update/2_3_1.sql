@@ -57,7 +57,6 @@ ALTER TABLE `in_statiintervento` ADD `deleted` BOOLEAN NOT NULL DEFAULT FALSE AF
 -- Aggiorno query modulo stati intervento
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `in_statiintervento` WHERE 1=1 AND deleted = 0 HAVING 2=2' WHERE `zz_modules`.`name` = 'Stati di intervento';
 
-
 -- Aggiungo il flag can_delete ed elimino il flag `default` in quanto non serve più
 ALTER TABLE `in_statiintervento` ADD `can_delete` BOOLEAN NOT NULL DEFAULT TRUE AFTER `default`;
 ALTER TABLE `in_statiintervento` DROP `default`;

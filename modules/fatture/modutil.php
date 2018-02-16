@@ -743,9 +743,13 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
     $sconto[0]['sconto_globale'] = floatval($sconto[0]['sconto_globale']);
 
     // Aggiorno l'eventuale sconto gestendolo con le righe in fattura
+    $iva = 0;
+    
     if (!empty($sconto[0]['sconto_globale'])) {
         if ($sconto[0]['tipo_sconto_globale'] == 'PRC') {
-            $subtotale = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS imponibile FROM (SELECT '.$tables['row'].'.subtotale, '.$tables['row'].'.sconto FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record).') AS t')[0]['imponibile'];
+            $rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS imponibile, SUM(iva) AS iva FROM (SELECT '.$tables['row'].'.subtotale, '.$tables['row'].'.sconto, '.$tables['row'].'.iva FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record).') AS t');
+            $subtotale = $rs[0]['imponibile'];
+            $iva += $rs[0]['iva'] / 100 * $sconto[0]['sconto_globale'];
             $subtotale = -$subtotale / 100 * $sconto[0]['sconto_globale'];
 
             $descrizione = $descrizione.' '.Translator::numberToLocale($sconto[0]['sconto_globale']).'%';
@@ -756,7 +760,6 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
         // Calcolo dell'IVA da scontare
         $idiva = get_var('Iva predefinita');
         $rsi = $dbo->select('co_iva', ['descrizione', 'percentuale'], ['id' => $idiva]);
-        $iva = $subtotale / 100 * $rsi[0]['percentuale'];
 
         $values = [
             $fields['row'] => $id_record,
@@ -765,7 +768,7 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
             'qta' => 1,
             'idiva' => $idiva,
             'desc_iva' => $rsi[0]['descrizione'],
-            'iva' => $iva,
+            'iva' => -$iva,
             'sconto_globale' => 1,
             '#order' => '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM '.$tables['row'].' AS t WHERE '.$fields['row'].'='.prepare($id_record).')',
         ];

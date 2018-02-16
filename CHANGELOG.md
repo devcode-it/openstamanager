@@ -4,7 +4,12 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.3 (In sviluppo)](#23-in-sviluppo)
+- [2.3.1 (2018-02-16)](#231)
+    - [Aggiunto (Added)](#aggiunto-added)
+    - [Modificato (Changed)](#modificato-changed)
+    - [Rimosso (Removed)](#rimosso-removed)
+    - [Fixed](#fixed)
+- [2.3 (2018-01-27)](#23-in-sviluppo)
     - [Aggiunto (Added)](#aggiunto-added)
     - [Modificato (Changed)](#modificato-changed)
     - [Deprecato (Deprecated)](#deprecato-deprecated)
@@ -19,7 +24,45 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
     - [Modificato (Changed)](#modificato-changed)
     - [Fixed](#fixed)
 
-## 2.3 (In sviluppo)
+
+## 2.3.1 (2018-02-16)
+
+### Aggiunto (Added)
+ - Aggiunti i seriali in stampa
+ - Aggiunta la zona nelle attività (in sola lettura dall'anagrafica)
+ - Aggiunta tramite flag la possibilità di inserire la descrizione dell'intervento in fattura
+ - Aggiunta esportazione bulk in zip dei pdf degli interventi selezionati
+ - Aggiunte informazioni del cliente e fornitore nelle relative stampe ordini
+ 
+### Modificato (Changed)
+ - Migliorati i widget di "Crediti da clienti" e "Debiti verso fornitori", con calcolo parziale del rimanente
+ - Disabilitato di default il modulo "Viste"
+ - Migliorata la gestione della pianificazione attività sui contratti, con la possibilità di eliminare tutte le pianificazioni
+   o di creare direttamente un intervento collegato
+ - Modificato l'inserimento di interventi in fattura raggruppando per costo orario nel caso ci siano più costi orari
+ - Spostato il conto "Perdite e profitti" nello stato patrimoniale
+
+### Fixed
+ - Corretti diversi problemi in fase di installazione
+ - Modifica e miglioramento dell'arrotondamento iva in fattura, sia a video che in stampa
+ - Corretto il caricamento di menu a tendina per gli utenti con permessi limitati
+ - Corretti i permessi per la stampa fattura per utenti con permessi limitati
+ - Corretto e migliorato il funzionamento delle viste
+ - Corretto il calcolo dello sconto incondizionato in percentuale nei principali moduli
+ - Corretta la stampa consuntivo del preventivo
+ - Corrette alcune funzioni dello scadenzario, in quanto sparivano delle scadenze in fase di modifica prima nota
+ - Corretto il cambio di stato automatico di ddt dopo la fatturazione
+ - Migliorato il caricamento dinamico del calendario via ajax in quanto a volte si bloccava
+ - Correzioni varie sulla gestione viste
+ - Corretto il piano dei conti per arrotondare gli importi come negli altri moduli
+ - Corretto il calcolo iva nei contratti
+ - Corretto il salvataggio delle sessioni tecnico nei propri interventi
+ - Corretto un problema nel salvataggio firma intervento su alcuni tablet
+ - Corretto ordinamento voci di menu laterale
+ - Altre correzioni minori e strutturali
+
+
+## 2.3 (2018-02-16)
 
 ### Aggiunto (Added)
 

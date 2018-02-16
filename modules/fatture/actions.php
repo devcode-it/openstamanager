@@ -295,7 +295,7 @@ switch (post('op')) {
             $codice = $rs[0]['codice'];
 
             //Fatturo le ore di lavoro raggruppate per costo orario
-            $rst = $dbo->fetchArray('SELECT SUM( ROUND( TIMESTAMPDIFF( MINUTE, orario_inizio, orario_fine ) / 60, '.get_var('Cifre decimali per quantità').' ) ) AS tot_ore, SUM(prezzo_ore_consuntivo) AS tot_prezzo_ore_consuntivo, prezzo_ore_unitario FROM in_interventi_tecnici WHERE idintervento='.prepare($idintervento).' GROUP BY prezzo_ore_unitario');
+            $rst = $dbo->fetchArray('SELECT SUM( ROUND( TIMESTAMPDIFF( MINUTE, orario_inizio, orario_fine ) / 60, '.get_var('Cifre decimali per quantità').' ) ) AS tot_ore, SUM(prezzo_ore_consuntivo) AS tot_prezzo_ore_consuntivo, SUM(sconto) AS tot_sconto, prezzo_ore_unitario FROM in_interventi_tecnici WHERE idintervento='.prepare($idintervento).' GROUP BY prezzo_ore_unitario');
             
             //Aggiunta riga intervento sul documento
             if( sizeof($rst) == 0 ){
@@ -310,7 +310,7 @@ switch (post('op')) {
                     $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
                     $rs = $dbo->fetchArray($query);
 
-                    $sconto = $rst[$i]['sconto'];
+                    $sconto = $rst[$i]['tot_sconto'];
                     $subtot = $rst[$i]['tot_prezzo_ore_consuntivo'];
                     $iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
                     $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];

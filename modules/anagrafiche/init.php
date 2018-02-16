@@ -8,8 +8,3 @@ if (isset($id_record)) {
     $records[0]['lat'] = floatval($records[0]['lat']);
     $records[0]['lng'] = floatval($records[0]['lng']);
 }
-
-$id_azienda = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Azienda'")[0]['idtipoanagrafica'];
-$id_cliente = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Cliente'")[0]['idtipoanagrafica'];
-$id_fornitore = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Fornitore'")[0]['idtipoanagrafica'];
-$id_tecnico = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Tecnico'")[0]['idtipoanagrafica'];

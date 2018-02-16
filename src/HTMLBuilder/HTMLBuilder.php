@@ -81,6 +81,9 @@ class HTMLBuilder
         'instances' => [],
     ];
 
+    /** @var int Limite di ricorsione interna */
+    protected $max_recursion = 10;
+
     /**
      * Esegue la sostituzione dei tag personalizzati con il relativo codice HTML.
      *
@@ -88,7 +91,7 @@ class HTMLBuilder
      *
      * @return string
      */
-    public static function replace($html)
+    public static function replace($html, $depth = 0)
     {
         // Gestione dei manager generici
         preg_match_all('/'.preg_quote(self::$open['manager']).'(.+?)'.preg_quote(self::$close['manager']).'/is', $html, $managers);
@@ -99,10 +102,12 @@ class HTMLBuilder
 
             $result = !empty($class) ? $class->manage($json) : '';
 
-            $html = str_replace($value, !empty($result) ? $result : $value, $html);
-
             // Ricorsione
-            $html = self::replace($html);
+            if ($depth < $max_recursion) {
+                $result = self::replace($result, $depth++);
+            }
+
+            $html = str_replace($value, !empty($result) ? $result : $value, $html);
         }
 
         // Gestione del formato di input HTML semplificato
@@ -112,10 +117,12 @@ class HTMLBuilder
             $json = self::decode($value, 'handler');
             $result = self::generate($json);
 
-            $html = str_replace($value, !empty($result) ? $result : $value, $html);
-
             // Ricorsione
-            $html = self::replace($html);
+            if ($depth < $max_recursion) {
+                $result = self::replace($result, $depth++);
+            }
+
+            $html = str_replace($value, !empty($result) ? $result : $value, $html);
         }
 
         return $html;

@@ -104,7 +104,7 @@ class HTMLBuilder
 
             // Ricorsione
             if ($depth < self::$max_recursion) {
-                $result = self::replace($result, $depth++);
+                $result = self::replace($result, $depth + 1);
             }
 
             $html = str_replace($value, !empty($result) ? $result : $value, $html);
@@ -119,7 +119,7 @@ class HTMLBuilder
 
             // Ricorsione
             if ($depth < self::$max_recursion) {
-                $result = self::replace($result, $depth++);
+                $result = self::replace($result, $depth + 1);
             }
 
             $html = str_replace($value, !empty($result) ? $result : $value, $html);

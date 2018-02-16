@@ -49,6 +49,18 @@ if (filter('op') == 'link_myimpianti') {
     $_SESSION['infos'][] = tr('Informazioni componenti salvate!');
 }
 
+//Blocco della modifica impianti se l'intervento è completato
+$rss = $dbo->fetchArray('SELECT in_statiintervento.completato FROM in_statiintervento INNER JOIN in_interventi ON in_statiintervento.idstatointervento=in_interventi.idstatointervento WHERE in_interventi.id='.prepare($id_record));
+$flg_completato = $rss[0]['completato'];
+
+if( $flg_completato ){
+    $readonly = 'readonly';
+    $disabled = 'disabled';
+} else {
+    $readonly = '';
+    $disabled = '';
+}
+
 // IMPIANTI
 echo '
 <div class="box">
@@ -106,7 +118,7 @@ foreach ($rs as $r) {
                             <form action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=link_componenti&matricola='.$r['id'].'" method="post">
                                 <input type="hidden" name="backto" value="record-edit">
 
-				                <select class="superselect" name="componenti[]" multiple>';
+				                <select class="superselect" name="componenti[]" multiple '.$readonly.' '.$disabled.'>';
     $inseriti = $dbo->fetchArray('SELECT * FROM my_componenti_interventi WHERE id_intervento='.prepare($id_record));
     $inseriti = !empty($inseriti) ? array_column($inseriti, 'id_componente') : [];
     $list = [];
@@ -137,7 +149,7 @@ foreach ($rs as $r) {
                                 </select><br><br>
                                 <input type="hidden" name="list" value="'.implode(',', $list).'">
 
-                                <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva componenti').'</button>
+                                <button type="submit" class="btn btn-success" '.$disabled.'><i class="fa fa-check"></i> '.tr('Salva componenti').'</button>
                             </form>
                         </td>
                     </tr>
@@ -164,12 +176,12 @@ echo '
             <input type="hidden" name="backto" value="record-edit">
             <div class="row">
                 <div class="col-xs-12 col-md-6">
-                    {[ "type": "select", "name": "matricole[]", "multiple": 1, "value": "'.implode(',', $impianti).'", "values": "query=SELECT my_impianti.id, CONCAT(matricola, \' - \', nome) AS descrizione, CONCAT(nomesede, IF(citta IS NULL OR citta = \'\', \'\', CONCAT(\' (\', citta, \')\'))) AS optgroup FROM my_impianti JOIN (SELECT id, nomesede, citta FROM an_sedi UNION SELECT 0, \'Sede legale\', \'\') AS t ON t.id = my_impianti.idsede WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' ORDER BY idsede ASC, matricola ASC" ]}
+                    {[ "type": "select", "name": "matricole[]", "multiple": 1, "value": "'.implode(',', $impianti).'", "values": "query=SELECT my_impianti.id, CONCAT(matricola, \' - \', nome) AS descrizione, CONCAT(nomesede, IF(citta IS NULL OR citta = \'\', \'\', CONCAT(\' (\', citta, \')\'))) AS optgroup FROM my_impianti JOIN (SELECT id, nomesede, citta FROM an_sedi UNION SELECT 0, \'Sede legale\', \'\') AS t ON t.id = my_impianti.idsede WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' ORDER BY idsede ASC, matricola ASC", "extra": "'.$readonly.'" ]}
                 </div>
             </div>
             <br><br>
 
-            <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva impianti').'</button></a>
+            <button type="submit" class="btn btn-success" '.$disabled.'><i class="fa fa-check"></i> '.tr('Salva impianti').'</button></a>
         </form>';
 
 echo '

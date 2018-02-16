@@ -576,7 +576,7 @@ switch (post('op')) {
 
                 if (!$img->save($docroot.'/files/interventi/'.$firma_file)) {
                     $_SESSION['errors'][] = tr('Impossibile creare il file!');
-                } elseif ($dbo->query('UPDATE in_interventi SET firma_file='.prepare($firma_file).', firma_data=NOW(), firma_nome = '.prepare($firma_nome).', idstatointervento = (SELECT idstatointervento FROM in_statiintervento WHERE completato = 1 LIMIT 0, 1) WHERE id='.prepare($id_record))) {
+                } elseif ($dbo->query('UPDATE in_interventi SET firma_file='.prepare($firma_file).', firma_data=NOW(), firma_nome = '.prepare($firma_nome).', idstatointervento = "OK" WHERE id='.prepare($id_record))) {
                     $_SESSION['infos'][] = tr('Firma salvata correttamente!');
                     $_SESSION['infos'][] = tr('Attività completata!');
                 } else {

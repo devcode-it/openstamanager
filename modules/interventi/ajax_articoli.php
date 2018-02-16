@@ -25,7 +25,7 @@ if (!empty($rs)) {
         <th width="15%">'.tr('Subtotale').'</th>';
     }
 
-    if ($rs[0]['stato'] != 'Fatturato' && $rs[0]['stato'] != 'Completato') {
+    if ( !$records[0]['flg_completato'] ) {
         echo '
         <th width="80"></th>';
     }
@@ -109,7 +109,7 @@ if (!empty($rs)) {
 
         // Pulsante per riportare nel magazzino centrale.
         // Visibile solo se l'intervento non è stato nè fatturato nè completato.
-        if ($rs[0]['stato'] != 'Fatturato' && $rs[0]['stato'] != 'Completato') {
+        if ( !$records[0]['flg_completato'] ) {
             echo '
         <td>';
 

@@ -9,6 +9,15 @@ $rs_iva = $dbo->fetchArray('SELECT descrizione, percentuale, indetraibile FROM c
 
 if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
     $costi = get_costi_intervento($id_record);
+    
+    $rss = $dbo->fetchArray('SELECT in_statiintervento.completato FROM in_statiintervento INNER JOIN in_interventi ON in_statiintervento.idstatointervento=in_interventi.idstatointervento WHERE in_interventi.id='.prepare($id_record));
+    $flg_completato = $rss[0]['completato'];
+    
+    if( $flg_completato ){
+        $readonly = 'readonly';
+    } else {
+        $readonly = '';
+    }
 
     echo '
 <!-- Riepilogo dei costi -->
@@ -97,7 +106,7 @@ echo '
 <!-- SCONTO -->
 <div class="row">
     <div class="col-md-4 pull-right">
-        {[ "type": "number", "label": "'.tr('Sconto incondizionato').'", "name": "sconto_globale", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
+        {[ "type": "number", "label": "'.tr('Sconto incondizionato').'", "name": "sconto_globale", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'", "extra": "'.$readonly.'" ]}
     </div>
 </div>';
 

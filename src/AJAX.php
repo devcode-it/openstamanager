@@ -17,12 +17,16 @@ class AJAX
         return \Whoops\Util\Misc::isAjaxRequest() && filter('ajax') !== null;
     }
 
-    protected static function find($file)
+    protected static function find($file, $permissions = true)
     {
         $dirname = substr($file, 0, strrpos($file, '/') + 1);
 
         // Individuazione delle cartelle accessibili
-        $modules = Modules::getAvailableModules();
+        if (!empty($permissions)) {
+            $modules = Modules::getAvailableModules();
+        } else {
+            $modules = Modules::getModules();
+        }
 
         $dirs = array_unique(array_column($modules, 'directory'));
         $pieces = array_chunk($dirs, 5);
@@ -59,7 +63,7 @@ class AJAX
         }
         $elements = (!is_array($elements)) ? explode(',', $elements) : $elements;
 
-        $files = self::find('ajax/select.php');
+        $files = self::find('ajax/select.php', false);
 
         // File di gestione predefinita
         array_unshift($files, DOCROOT.'/ajax_select.php');

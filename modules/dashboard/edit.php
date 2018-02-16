@@ -61,8 +61,8 @@ for ($i = 0; $i < count($rs); ++$i) {
             ++$count;
         }
     }
-
-    $checks .= "<li><input type='checkbox' id='idstato_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"session_set_array( 'dashboard,idstatiintervento', '".$rs[$i]['id']."' ); $('#calendar').fullCalendar('refetchEvents'); update_counter( 'idstati_count', $('#idstati_ul').find('input:checked').length );\"> <label for='idstato_".$rs[$i]['id']."'> <span class='badge' style=\"color:#333; background:".$rs[$i]['colore'].';">'.$rs[$i]['descrizione']."</span></label></li>\n";
+	
+    $checks .= "<li><input type='checkbox' id='idstato_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"$.when ( session_set_array( 'dashboard,idstatiintervento', '".$rs[$i]['id']."' ) ).promise().then(function( ){ $('#calendar').fullCalendar('refetchEvents'); });  update_counter( 'idstati_count', $('#idstati_ul').find('input:checked').length ); \"> <label for='idstato_".$rs[$i]['id']."'> <span class='badge' style=\"color:#333; background:".$rs[$i]['colore'].';">'.$rs[$i]['descrizione']."</span></label></li>\n";
 
     $allchecksstati .= "session_set_array( 'dashboard,idstatiintervento', '".$rs[$i]['id']."', 0 ); ";
 }
@@ -115,8 +115,9 @@ for ($i = 0; $i < count($rs); ++$i) {
             ++$count;
         }
     }
-
-    $checks .= "<li><input type='checkbox' id='idtipo_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"session_set_array( 'dashboard,idtipiintervento', '".$rs[$i]['id']."' ); $('#calendar').fullCalendar('refetchEvents'); update_counter( 'idtipi_count', $('#idtipi_ul').find('input:checked').length );\"> <label for='idtipo_".$rs[$i]['id']."'> ".$rs[$i]['descrizione']."</label></li>\n";
+	
+	
+    $checks .= "<li><input type='checkbox' id='idtipo_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"$.when ( session_set_array( 'dashboard,idtipiintervento', '".$rs[$i]['id']."' ) ).promise().then(function( ){ $('#calendar').fullCalendar('refetchEvents');  }); update_counter( 'idtipi_count', $('#idtipi_ul').find('input:checked').length ); \"> <label for='idtipo_".$rs[$i]['id']."'> ".$rs[$i]['descrizione']."</label></li>\n";
 
     $allcheckstipi .= "session_set_array( 'dashboard,idtipiintervento', '".$rs[$i]['id']."', 0 ); ";
 }
@@ -173,7 +174,9 @@ for ($i = 0; $i < count($rs); ++$i) {
         }
     }
 
-    $checks .= "<li><input type='checkbox' id='tech_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"session_set_array( 'dashboard,idtecnici', '".$rs[$i]['id']."' ); $('#calendar').fullCalendar('refetchEvents'); update_counter( 'idtecnici_count', $('#idtecnici_ul').find('input:checked').length );\"> <label for='tech_".$rs[$i]['id']."'> ".$rs[$i]['ragione_sociale']."</label></li>\n";
+	
+	
+    $checks .= "<li><input type='checkbox' id='tech_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"$.when ( session_set_array( 'dashboard,idtecnici', '".$rs[$i]['id']."' ) ).promise().then(function( ){ $('#calendar').fullCalendar('refetchEvents'); }); update_counter( 'idtecnici_count', $('#idtecnici_ul').find('input:checked').length );  \"> <label for='tech_".$rs[$i]['id']."'> ".$rs[$i]['ragione_sociale']."</label></li>\n";
 
     $allchecktecnici .= "session_set_array( 'dashboard,idtecnici', '".$rs[$i]['id']."', 0 ); ";
 }
@@ -195,8 +198,8 @@ if ($total > 0) {
                 ++$count;
             }
         }
-
-        $checks .= "<li><input type='checkbox' id='tech_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"session_set_array( 'dashboard,idtecnici', '".$rs[$i]['id']."' ); $('#calendar').fullCalendar('refetchEvents'); update_counter( 'idtecnici_count', $('#idtecnici_ul').find('input:checked').length );\"> <label for='tech_".$rs[$i]['id']."'> ".$rs[$i]['ragione_sociale']."</label></li>\n";
+		
+        $checks .= "<li><input type='checkbox' id='tech_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"$.when ( session_set_array( 'dashboard,idtecnici', '".$rs[$i]['id']."' ) ).promise().then(function( ){ $('#calendar').fullCalendar('refetchEvents');  }); update_counter( 'idtecnici_count', $('#idtecnici_ul').find('input:checked').length ); \"> <label for='tech_".$rs[$i]['id']."'> ".$rs[$i]['ragione_sociale']."</label></li>\n";
 
         $allchecktecnici .= "session_set_array( 'dashboard,idtecnici', '".$rs[$i]['id']."', 0 ); ";
     } // end for
@@ -248,7 +251,7 @@ for ($i = 0; $i < count($rs); ++$i) {
         }
     }
 
-    $checks .= "<li><input type='checkbox' id='idzone_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"session_set_array( 'dashboard,idzone', '".$rs[$i]['id']."' ); $('#calendar').fullCalendar('refetchEvents'); update_counter( 'idzone_count', $('#idzone_ul').find('input:checked').length );\"> <label for='idzone_".$rs[$i]['id']."'> ".$rs[$i]['descrizione']."</label></li>\n";
+    $checks .= "<li><input type='checkbox' id='idzone_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." 	onclick=\"$.when ( session_set_array( 'dashboard,idzone', '".$rs[$i]['id']."' ) ).promise().then(function( ){ $('#calendar').fullCalendar('refetchEvents'); update_counter( 'idzone_count', $('#idzone_ul').find('input:checked').length ); }); \"> <label for='idzone_".$rs[$i]['id']."'> ".$rs[$i]['descrizione']."</label></li>\n";
 
     $allcheckzone .= "session_set_array( 'dashboard,idzone', '".$rs[$i]['id']."', 0 ); ";
 }
@@ -324,80 +327,118 @@ if ($vista == 'mese') {
 	$(document).ready(function() {
         // Comandi seleziona tutti
         $('#selectallstati').click(function(event) {
-            $(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
-                this.checked = true;
+			
+            $(this).parent().parent().find('li input[type=checkbox]').each(function(i) { //loop through each checkbox
+             	this.checked = true;
+				$.when (session_set_array( 'dashboard,idstatiintervento', this.value, 0 )).promise().then(function() {
+					$('#calendar').fullCalendar('refetchEvents');
+				});
+				
+				i++;
+				update_counter( 'idstati_count',i);
+
             });
 
-            update_counter( 'idstati_count', $('#idstati_ul').find('input:checked').length );
-            $('#calendar').fullCalendar('refetchEvents');
         });
 
         $('#selectalltipi').click(function(event) {
-            $(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
-                this.checked = true;
-            });
+			
+            $(this).parent().parent().find('li input[type=checkbox]').each(function(i) { //loop through each checkbox
+				this.checked = true;
+				$.when (session_set_array( 'dashboard,idtipiintervento', this.value, 0 )).promise().then(function() {
+					$('#calendar').fullCalendar('refetchEvents');
+				});
+				i++;
+				update_counter( 'idtipi_count', i);
 
-            update_counter( 'idtipi_count', $('#idtipi_ul').find('input:checked').length );
-            $('#calendar').fullCalendar('refetchEvents');
+            });			
+			
         });
 
         $('#selectalltecnici').click(function(event) {
-            $(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
-                this.checked = true;
+			
+            $(this).parent().parent().find('li input[type=checkbox]').each(function(i) { //loop through each checkbox
+				this.checked = true;
+				$.when (session_set_array( 'dashboard,idtecnici', this.value, 0 )).promise().then(function() {			
+					$('#calendar').fullCalendar('refetchEvents');
+				});
+				i++;
+				update_counter( 'idtecnici_count', i);
             });
-
-            update_counter( 'idtecnici_count', $('#idtecnici_ul').find('input:checked').length );
-            $('#calendar').fullCalendar('refetchEvents');
+			
         });
 
         $('#selectallzone').click(function(event) {
-            $(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
-                this.checked = true;
-            });
+			
+            $(this).parent().parent().find('li input[type=checkbox]').each(function(i) { //loop through each checkbox
+				this.checked = true;
+				 $.when (session_set_array( 'dashboard,idzone', this.value, 0 )).promise().then(function() {		
+						$('#calendar').fullCalendar('refetchEvents');
+				});
+				
+				i++
+				update_counter( 'idzone_count', i);
 
-            update_counter( 'idzone_count', $('#idzone_ul').find('input:checked').length );
-            $('#calendar').fullCalendar('refetchEvents');
+            });
+				
         });
 
         // Comandi deseleziona tutti
         $('#deselectallstati').click(function(event) {
-            $(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
-                if( this.checked == true ) session_set_array( 'dashboard,idstatiintervento', this.value, 1 );
-                this.checked = false;
-            });
 
-            update_counter( 'idstati_count', $('#idstati_ul').find('input:checked').length );
-            $('#calendar').fullCalendar('refetchEvents');
+			$(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
+				this.checked = false;
+				 $.when (session_set_array( 'dashboard,idstatiintervento', this.value, 1 )).promise().then(function() {
+						$('#calendar').fullCalendar('refetchEvents');
+				});
+				
+				update_counter( 'idstati_count', 0);
+
+            });
+			
         });
 
         $('#deselectalltipi').click(function(event) {
-            $(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
-                if( this.checked == true ) session_set_array( 'dashboard,idtipiintervento', this.value, 1 );
-                this.checked = false;
-            });
+			
+			$(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
+				this.checked = false;
+				 $.when (session_set_array( 'dashboard,idtipiintervento', this.value, 1 )).promise().then(function() {
+						$('#calendar').fullCalendar('refetchEvents');
+				});
+				
+			
+				update_counter( 'idtipi_count', 0);
 
-            update_counter( 'idtipi_count', $('#idtipi_ul').find('input:checked').length );
-            $('#calendar').fullCalendar('refetchEvents');
+            });
+			
         });
 
         $('#deselectalltecnici').click(function(event) {
-            $(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
-                if( this.checked == true ) session_set_array( 'dashboard,idtecnici', this.value, 1 );
-                this.checked = false;
+          
+			$(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
+				this.checked = false;
+				 $.when (session_set_array( 'dashboard,idtecnici', this.value, 1 )).promise().then(function() {
+						$('#calendar').fullCalendar('refetchEvents');
+				});
+				
+				update_counter( 'idtecnici_count', 0);
+
             });
 
-            update_counter( 'idtecnici_count', $('#idtecnici_ul').find('input:checked').length );
-            $('#calendar').fullCalendar('refetchEvents');
         });
 
         $('#deselectallzone').click(function(event) {
-            $(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
-                if( this.checked == true ) session_set_array( 'dashboard,idzone', this.value, 1 );
-                this.checked = false;
+           
+			$(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
+				this.checked = false;
+				$.when (session_set_array( 'dashboard,idzone', this.value, 1 )).promise().then(function() {			
+						$('#calendar').fullCalendar('refetchEvents');
+				});
+
+				update_counter( 'idzone_count', 0);
+
             });
 
-            update_counter( 'idzone_count', $('#idzone_ul').find('input:checked').length );
-            $('#calendar').fullCalendar('refetchEvents');
         });
 
         // Creazione del calendario

@@ -63,15 +63,6 @@ if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom
         $result_query = str_replace('2=2', '2=2 AND ('.implode(' AND ', $search_filters).') ', $result_query);
     }
 
-    // Filtro sezionali
-    if (isset($_SESSION['entrata']['idsezionale']) && (($modules_info[$id_module]['name'] == 'Fatture di vendita') || ($modules_info[$id_module]['name'] == 'Laboratorio') || ($modules_info[$id_module]['name'] == 'Ticket'))) {
-        $result_query = str_replace('1=1', " 1=1 AND idsezionale = '".$_SESSION['entrata']['idsezionale']."' ", $result_query);
-    }
-
-    if (isset($_SESSION['uscita']['idsezionale']) && ($modules_info[$id_module]['name'] == 'Fatture di acquisto')) {
-        $result_query = str_replace('1=1', " 1=1 AND idsezionale = '".$_SESSION['uscita']['idsezionale']."' ", $result_query);
-    }
-
     // Filtri derivanti dai permessi (eventuali)
     if (empty($id_plugin)) {
         $result_query = Modules::replaceAdditionals($id_module, $result_query);

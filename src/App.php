@@ -254,7 +254,7 @@ class App
         $query = str_replace('|select|', $select, $query);
 
         return [
-            'query' => $query,
+            'query' => self::replacePlaceholder($query),
             'fields' => $fields,
             'search_inside' => $search_inside,
             'order_by' => $order_by,
@@ -284,7 +284,7 @@ class App
         $order_by = $fields;
 
         return [
-            'query' => $query,
+            'query' => self::replacePlaceholder($query),
             'fields' => $fields,
             'search_inside' => $search_inside,
             'order_by' => $order_by,
@@ -315,11 +315,21 @@ class App
     {
         $user = Auth::user();
 
+        // Sostituzione degli identificatori
         $id = empty($custom) ? $user['idanagrafica'] : $custom;
-
         $query = str_replace(['|idagente|', '|idtecnico|', '|idanagrafica|'], prepare($id), $query);
 
+        // Sostituzione delle date
         $query = str_replace(['|period_start|', '|period_end|'], [$_SESSION['period_start'], $_SESSION['period_end']], $query);
+
+        // Sostituzione dei sezionali
+        $sezionali = [
+            '|sezionale_uscita|' => $_SESSION['uscita']['id_sezionale'],
+            '|sezionale_entrata|' => $_SESSION['entrata']['id_sezionale'],
+        ];
+        foreach ($sezionali as $key => $value) {
+            $query = str_replace($key, !empty($value) ? ' AND id_sezionale = '.prepare($value) : '', $query);
+        }
 
         return $query;
     }

@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `zz_prints` (
   `enabled` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 -- Inserimento delle stampe di base
 INSERT INTO `zz_prints` (`id_module`, `name`, `directory`, `options`, `previous`, `enabled`, `default`) VALUES
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `zz_smtp` (
   `main` tinyint(1) NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Struttura della tabella `zz_emails`
@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS `zz_emails` (
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 --
 -- Struttura della tabella `zz_email_smtp_user`
@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS `zz_email_smtp_user` (
   FOREIGN KEY (`id_email`) REFERENCES `zz_emails`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`id_smtp`) REFERENCES `zz_smtp`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`id_user`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 --
 -- Struttura della tabella `zz_emails`
@@ -134,7 +134,7 @@ CREATE TABLE IF NOT EXISTS `zz_email_print` (
   PRIMARY KEY (`id`),
   FOREIGN KEY (`id_email`) REFERENCES `zz_emails`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`id_print`) REFERENCES `zz_prints`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 -- Aggiunta dei moduli dedicati alla gestione delle email
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Account email', 'Account email', 'smtp', 'SELECT |select| FROM zz_smtp WHERE 1=1 AND deleted = 0 HAVING 2=2 ORDER BY `name`', 'fa fa-user-o', '2.3', '2.3', '10', NULL, 1, 1);
@@ -169,7 +169,7 @@ DELETE FROM `zz_settings` WHERE
 
 -- SEZIONALI
 -- Modifico co_documenti per aggiungere riferimento al sezionale
-ALTER TABLE `co_documenti` ADD `idsezionale` INT( 11 ) NOT NULL ;
+ALTER TABLE `co_documenti` ADD `id_sezionale` int(11) NOT NULL ;
 
 -- Creo tabella sezionali
 CREATE TABLE IF NOT EXISTS `co_sezionali` (
@@ -180,39 +180,38 @@ CREATE TABLE IF NOT EXISTS `co_sezionali` (
   `idautomezzo` int(11) NULL ,
   `note` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
+);
 
 -- Popolo con i sezionali di default
-INSERT INTO `co_sezionali` (`id`, `nome`, `maschera`, `dir`, idautomezzo, `note`) VALUES
+INSERT INTO `co_sezionali` (`id`, `nome`, `maschera`, `dir`, `idautomezzo`, `note`) VALUES
 (1, 'Standard vendite', '###YY', 'entrata', NULL, ''),
 (2, 'Standard acquisti', '####', 'uscita', NULL,'');
 
-
 -- Collego le fatture esistenti al sezionale di default
-UPDATE `co_documenti` SET idsezionale='1' WHERE `idtipodocumento` IN(SELECT `id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir`='entrata');
-UPDATE `co_documenti` SET idsezionale='2' WHERE `idtipodocumento` IN(SELECT `id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir`='uscita');
-
+UPDATE `co_documenti` SET `id_sezionale`='1' WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir`='entrata');
+UPDATE `co_documenti` SET `id_sezionale`='2' WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir`='uscita');
 
 -- Innesto modulo sezionali sotto "Contabilità"
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES
 (NULL, 'Sezionali', 'Sezionali', 'sezionali', '{	"main_query": [	{	"type": "table", "fields": "Tipo documenti, Nome,  Maschera, Magazzino, Note", "query": "SELECT `id`, `nome` AS `Nome`, `maschera` AS `Maschera`, (SELECT nome FROM dt_automezzi WHERE dt_automezzi.id = idautomezzo) AS Magazzino, IF(`dir`=''entrata'', ''Documenti di vendita'', ''Documenti di acquisto'') AS `Tipo documenti`, `note` AS `Note`  FROM `co_sezionali` HAVING 2=2 ORDER BY `Tipo documenti`, `Nome`"}	]}', '', 'fa fa-database', '2.2', '2.2', 1, 12, 1, 1);
-
 
 -- Aggiungo impostazione predefinita
 INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES
 (NULL, 'Sezionale predefinito fatture di vendita', '1', 'query=SELECT id, CONCAT(nome, '': '', maschera) AS descrizione FROM co_sezionali WHERE dir=''entrata'' ORDER BY nome', 1, 'Fatturazione'),
 (NULL, 'Sezionale predefinito fatture di acquisto', '2', 'query=SELECT id, CONCAT(nome, '': '', maschera) AS descrizione FROM co_sezionali WHERE dir=''uscita'' ORDER BY nome', 1, 'Fatturazione');
 
+-- Aggiorno widget Fatturato con i sezionali
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM co_documenti WHERE idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir="entrata") |sezionale_entrata| AND data >= "|period_start|" AND data <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';
 
--- Aggiorno widget Fatturato con |idsezionale|
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="entrata")  |idsezionale| AND data >= "|period_start|" AND data <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';
+-- Aggiorno widget Acquisti con i sezionali
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir=''uscita'' |sezionale_uscita| AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|"' WHERE `zz_widgets`.`name` = 'Acquisti';
 
--- Aggiorno widget Acquisti con |idsezionale|
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir=''uscita'' |idsezionale| AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|"' WHERE `zz_widgets`.`name` = 'Acquisti';
+-- Aggiorno widget Crediti da clienti con i sezionali
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), ",", "#"), ".", ","), "#", "."), "€") AS dato FROM co_documenti WHERE idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir="entrata") AND idstatodocumento = (SELECT id FROM co_statidocumento WHERE descrizione="Emessa") |sezionale_entrata| AND data >= "|period_start|" AND data <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Crediti da clienti' ;
 
--- Aggiorno widget Crediti da clienti con |idsezionale|
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), ",", "#"), ".", ","), "#", "."), "€") AS dato FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="entrata") AND idstatodocumento = (SELECT id FROM co_statidocumento WHERE descrizione="Emessa")   |idsezionale| AND data >= "|period_start|" AND data <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Crediti da clienti' ;
+-- Aggiorno i moduli Fattura con i sezionali
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id` WHERE 1=1 AND `dir` = ''uscita'' |sezionale_uscita| AND `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 2=2 ORDER BY `data` DESC, CAST(IF(numero_esterno='''', numero, numero_esterno) AS UNSIGNED) DESC' WHERE `name` = 'Fatture di acquisto';
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id` WHERE 1=1 AND `dir` = ''entrata'' |sezionale_entrata| AND `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 2=2 ORDER BY `data` DESC, CAST(numero_esterno AS UNSIGNED) DESC' WHERE `name` = 'Fatture di vendita';
 
 -- Help text per widget Fatturato
 UPDATE `zz_widgets` SET `help` = 'Fatturato IVA inclusa.' WHERE `zz_widgets`.`name` = 'Fatturato';
@@ -235,7 +234,7 @@ CREATE TABLE IF NOT EXISTS `zz_fields` (
   PRIMARY KEY (`id`),
   FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE
   FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 --
 -- Struttura della tabella `zz_fields`
@@ -248,4 +247,4 @@ CREATE TABLE IF NOT EXISTS `zz_field_record` (
   `value` text NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`id_field`) REFERENCES `zz_fields`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB;
+);

@@ -4,7 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.3.1 (2018-02-16)](#231)
+- [2.3.1 (2018-02-19)](#231-2018-02-19)
     - [Aggiunto (Added)](#aggiunto-added)
     - [Modificato (Changed)](#modificato-changed)
     - [Rimosso (Removed)](#rimosso-removed)
@@ -25,7 +25,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
     - [Fixed](#fixed)
 
 
-## 2.3.1 (2018-02-16)
+## 2.3.1 (2018-02-19)
 
 ### Aggiunto (Added)
  - Aggiunti i seriali in stampa
@@ -33,7 +33,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta tramite flag la possibilità di inserire la descrizione dell'intervento in fattura
  - Aggiunta esportazione bulk in zip dei pdf degli interventi selezionati
  - Aggiunte informazioni del cliente e fornitore nelle relative stampe ordini
- 
+
 ### Modificato (Changed)
  - Migliorati i widget di "Crediti da clienti" e "Debiti verso fornitori", con calcolo parziale del rimanente
  - Disabilitato di default il modulo "Viste"

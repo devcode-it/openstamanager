@@ -145,7 +145,7 @@ if (!empty($options) && $options != 'custom') {
         if (!$editable) {
             echo ', "readonly": "1"';
         }
-        echo ', "required": "1", "help": "'.tr('Nome effettivo del campo sulla tabella oppure subquery che permette di ottenere il valore del campo').'" ]}
+        echo ', "required": "1", "help": "'.tr('Nome effettivo del campo sulla tabella oppure subquery che permette di ottenere il valore del campo').'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
 									</div>
 								</div>
 
@@ -210,7 +210,7 @@ if (!empty($options) && $options != 'custom') {
         if (!$editable) {
             echo ', "readonly": "1"';
         }
-        echo ', "help": "'.tr('Query personalizzata per la ricerca (consigliata per colori e icone)').'" ]}
+        echo ', "help": "'.tr('Query personalizzata per la ricerca (consigliata per colori e icone)').'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
 									</div>
 
 									<div class="col-xs-12 col-md-6">
@@ -218,7 +218,7 @@ if (!empty($options) && $options != 'custom') {
         if (!$editable) {
             echo ', "readonly": "1"';
         }
-        echo ', "help": "'.tr("Query personalizzata per l'ordinamento (date e numeri formattati tramite query)").'" ]}
+        echo ', "help": "'.tr("Query personalizzata per l'ordinamento (date e numeri formattati tramite query)").'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
 									</div>
 								</div>
 							</div>

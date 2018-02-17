@@ -107,9 +107,9 @@ foreach ($righe as $r) {
 
     echo "
             <td class='text-center'>";
-    if($r['is_descrizione']==0){
-        echo
-                (empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'])).' '.$r['um'];
+    if (empty($r['is_descrizione'])) {
+        echo '
+                '.(empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'])).' '.$r['um'];
     }
     echo '
             </td>';
@@ -118,9 +118,9 @@ foreach ($righe as $r) {
         // Prezzo unitario
         echo "
             <td class='text-right'>";
-        if($r['is_descrizione']==0){
-            echo
-                (empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
+        if (empty($r['is_descrizione'])) {
+            echo '
+                '.(empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
         }
         echo '
             </td>';
@@ -128,9 +128,9 @@ foreach ($righe as $r) {
         // Imponibile
         echo "
             <td class='text-right'>";
-        if($r['is_descrizione']==0){
-            echo
-                (empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'])).' &euro;';
+        if (empty($r['is_descrizione'])) {
+            echo '
+                '.(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'])).' &euro;';
 
             if ($r['sconto'] > 0) {
                 echo '

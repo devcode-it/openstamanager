@@ -195,7 +195,7 @@ switch (post('op')) {
         $rs = $dbo->fetchArray($query);
 
         for ($i = 0; $i < sizeof($rs); ++$i) {
-            $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Completato') WHERE id=".prepare($rs[$i]['idintervento']));
+            $dbo->query("UPDATE in_interventi SET idstatointervento='OK' WHERE id=".prepare($rs[$i]['idintervento']));
         }
 
         // Se delle righe sono state create da un ordine, devo riportare la quantità evasa nella tabella degli ordini al valore di prima, riaggiungendo la quantità che sto togliendo
@@ -1131,7 +1131,7 @@ switch (post('op')) {
 
             // Se ci sono degli interventi collegati li rimetto nello stato "Completato"
             for ($i = 0; $i < sizeof($rs); ++$i) {
-                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Completato') WHERE id=".prepare($rs[$i]['idintervento']));
+                $dbo->query("UPDATE in_interventi SET idstatointervento='OK' WHERE id=".prepare($rs[$i]['idintervento']));
 
                 // Rimuovo dalla fattura gli articoli collegati all'intervento
                 $rs2 = $dbo->fetchArray('SELECT idarticolo FROM mg_articoli_interventi WHERE idintervento='.prepare($idintervento));
@@ -1190,7 +1190,7 @@ switch (post('op')) {
                     $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='In lavorazione') WHERE id=".prepare($rsp[$i]['idpreventivo']));
 
                     // Aggiorno anche lo stato degli interventi collegati ai preventivi
-                    $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Completato') WHERE id IN (SELECT idintervento FROM co_preventivi_interventi WHERE idpreventivo=".prepare($rsp[$i]['idpreventivo']).')');
+                    $dbo->query("UPDATE in_interventi SET idstatointervento='OK' WHERE id IN (SELECT idintervento FROM co_preventivi_interventi WHERE idpreventivo=".prepare($rsp[$i]['idpreventivo']).')');
                 }
 
                 /*
@@ -1240,7 +1240,7 @@ switch (post('op')) {
                     $dbo->query("UPDATE co_contratti SET idstato=(SELECT id FROM co_staticontratti WHERE descrizione='In lavorazione') WHERE id=".prepare($rsp[$i]['idcontratto']));
 
                     // Aggiorno anche lo stato degli interventi collegati ai contratti
-                    $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Completato') WHERE id IN (SELECT idintervento FROM co_righe_contratti WHERE idcontratto=".prepare($rsp[$i]['idcontratto']).')');
+                    $dbo->query("UPDATE in_interventi SET idstatointervento='OK' WHERE id IN (SELECT idintervento FROM co_righe_contratti WHERE idcontratto=".prepare($rsp[$i]['idcontratto']).')');
                 }
 
                 /*

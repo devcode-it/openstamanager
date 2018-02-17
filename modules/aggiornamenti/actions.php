@@ -107,12 +107,22 @@ switch (post('op')) {
 
     // Ordinamento moduli di primo livello
     case 'sortmodules':
-        $ids = explode(',', post('ids'));
-
+        $ids = explode(',', $_POST['ids']);
+			
         for ($i = 0; $i < count($ids); ++$i) {
             $dbo->query('UPDATE zz_modules SET `order`='.prepare($i).' WHERE id='.prepare($ids[$i]));
+			
+			/*$rs = $dbo->fetchArray('SELECT id, name FROM zz_modules WHERE id='.prepare($ids[$i]));
+			$voce = $rs[0]['name'];
+				
+			$_SESSION['infos'][] = tr('Posizione della voce _VOCE_ aggiornata!', [
+					'_VOCE_' => '"'.$voce.'"',
+			]);*/
+		
         }
-
+		
+		$_SESSION['infos'][] = tr('Posizione voci di  menù aggiornate!');
+			
         break;
 
     case 'sortwidget':

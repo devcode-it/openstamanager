@@ -18,7 +18,8 @@ $idanagrafica = $rs[0]['idanagrafica'];
 // Seleziona articolo
 // - per i documenti di vendita deve esserci almeno 1 unità
 // - per i documenti di acquisto mostro tutti gli articoli
-$_SESSION['superselect']['dir'] = $dir;
+//$_SESSION['superselect']['dir'] = $dir;
+unset( $_SESSION['superselect']['dir'] );
 
 echo '
 <p>'.tr('Ordine numero _NUM_', [

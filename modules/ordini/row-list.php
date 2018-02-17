@@ -75,7 +75,7 @@ if (!empty($rs)) {
 
         echo '
         <td class="text-center">';
-        if($r['is_descrizione']==0){
+        if (empty($r['is_descrizione'])) {
             if (empty($r['sconto_globale'])) {
                 echo '
                 <big>'.Translator::numberToLocale($r['qta'] - $r['qta_evasa']).'</big>
@@ -90,9 +90,9 @@ if (!empty($rs)) {
         // Unità di misura
         echo '
         <td class="text-center">';
-        if($r['is_descrizione']==0){
-            echo
-            $r['um'];
+        if (empty($r['is_descrizione'])) {
+            echo '
+            '.$r['um'];
         }
         echo '
         </td>';
@@ -100,16 +100,16 @@ if (!empty($rs)) {
         // Costo unitario
         echo '
         <td class="text-right">';
-        if($r['is_descrizione']==0){
-            echo
-            Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
+        if (empty($r['is_descrizione'])) {
+            echo '
+            '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
 
             if ($r['sconto_unitario'] > 0) {
                 echo '
-                <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
-                ]).'</small>';
+            <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
+                '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+            ]).'</small>';
             }
         }
         echo '
@@ -118,9 +118,9 @@ if (!empty($rs)) {
         // Iva
         echo '
         <td class="text-right">';
-        if($r['is_descrizione']==0){
-            echo
-            Translator::numberToLocale($r['iva']).' &euro;
+        if (empty($r['is_descrizione'])) {
+            echo '
+            '.Translator::numberToLocale($r['iva']).' &euro;
             <br><small class="help-block">'.$r['desc_iva'].'</small>';
         }
         echo '
@@ -129,9 +129,9 @@ if (!empty($rs)) {
         // Imponibile
         echo '
         <td class="text-right">';
-        if($r['is_descrizione']==0){
-            echo
-            Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
+        if (empty($r['is_descrizione'])) {
+            echo '
+            '.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
         }
         echo '
         </td>';
@@ -190,7 +190,7 @@ echo '
 // Calcoli
 $imponibile = sum(array_column($rs, 'subtotale'));
 $sconto = sum(array_column($rs, 'sconto'));
-$iva = sum(array_column($rs, 'iva'));
+$iva = sum(array_column($rs, 'iva'), null, 4);
 
 $imponibile_scontato = sum($imponibile, -$sconto);
 

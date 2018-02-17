@@ -2,7 +2,11 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once $docroot.'/modules/interventi/modutil.php';
+if (file_exists($docroot.'/modules/interventi/custom/modutil.php')){
+    include_once $docroot.'/modules/interventi/custom/modutil.php';
+} else {
+    include_once $docroot.'/modules/interventi/modutil.php';
+}
 
 switch (get('op')) {
     // OPERAZIONI PER AGGIUNTA NUOVA SESSIONE DI LAVORO
@@ -36,12 +40,22 @@ if ($user['gruppo'] == 'Tecnici') {
 }
 
 // RECUPERO IL TIPO DI INTERVENTO
-$rss = $dbo->fetchArray('SELECT idtipointervento FROM in_interventi WHERE id='.prepare($id_record));
-$idtipointervento = $rs[0]['idtipointervento'];
+$rss = $dbo->fetchArray('SELECT idtipointervento, idstatointervento FROM in_interventi WHERE id='.prepare($id_record));
+$idtipointervento = $rss[0]['idtipointervento'];
+$idstatointervento = $rss[0]['idstatointervento'];
+
+$rss = $dbo->fetchArray('SELECT completato FROM in_statiintervento WHERE idstatointervento='.prepare($idstatointervento));
+$flg_completato = $rss[0]['completato'];
 
 $query = 'SELECT * FROM an_anagrafiche JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE deleted=0 AND idintervento='.prepare($id_record)." AND idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica = (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = 'Tecnico')) ORDER BY ragione_sociale ASC, in_interventi_tecnici.orario_inizio ASC, in_interventi_tecnici.id ASC";
 $rs2 = $dbo->fetchArray($query);
 $prev_tecnico = '';
+
+if( $flg_completato ){
+    $readonly = 'readonly';
+} else {
+    $readonly = '';
+}
 
 if (!empty($rs2)) {
     foreach ($rs2 as $key => $r) {
@@ -116,7 +130,7 @@ if (!empty($rs2)) {
         if ($rs[0]['stato'] != 'Fatturato') {
             // Elenco tipologie di interventi
             echo '
-                {[ "type": "select", "name": "idtipointerventot['.$id.']", "value": "'.$r['idtipointervento'].'", "values": "query=SELECT idtipointervento AS id, descrizione, IFNULL((SELECT costo_ore FROM in_tariffe WHERE idtipointervento=in_tipiintervento.idtipointervento AND idtecnico='.prepare($r['idtecnico']).'), 0) AS costo_orario FROM in_tipiintervento ORDER BY descrizione", "class": "", "extra": "" ]}';
+                {[ "type": "select", "name": "idtipointerventot['.$id.']", "value": "'.$r['idtipointervento'].'", "values": "query=SELECT idtipointervento AS id, descrizione, IFNULL((SELECT costo_ore FROM in_tariffe WHERE idtipointervento=in_tipiintervento.idtipointervento AND idtecnico='.prepare($r['idtecnico']).'), 0) AS costo_orario FROM in_tipiintervento ORDER BY descrizione", "class": "", "extra": "'.$readonly.'" ]}';
         }
 
         echo '
@@ -131,7 +145,7 @@ if (!empty($rs2)) {
                 <input type="hidden" name="orario_inizio['.$id.']" value="'.$orario_inizio.'">';
         } else {
             echo '
-            {[ "type": "timestamp", "name": "orario_inizio['.$id.']", "id": "inizio_'.$id.'", "value": "'.$orario_inizio.'", "class": "orari min-width" ]}';
+            {[ "type": "timestamp", "name": "orario_inizio['.$id.']", "id": "inizio_'.$id.'", "value": "'.$orario_inizio.'", "class": "orari min-width", "extra": "'.$readonly.'" ]}';
         }
         echo '
             </td>';
@@ -145,7 +159,7 @@ if (!empty($rs2)) {
             <input type="hidden" name="orario_fine['.$id.']" value="'.$orario_fine.'">';
         } else {
             echo '
-        {[ "type": "timestamp", "name": "orario_fine['.$id.']", "id": "fine_'.$id.'", "value": "'.$orario_fine.'", "class": "orari min-width", "min-date": "'.$orario_inizio.'" ]}';
+        {[ "type": "timestamp", "name": "orario_fine['.$id.']", "id": "fine_'.$id.'", "value": "'.$orario_fine.'", "class": "orari min-width", "min-date": "'.$orario_inizio.'", "extra": "'.$readonly.'" ]}';
         }
         echo '
         </td>';
@@ -167,7 +181,7 @@ if (!empty($rs2)) {
         // KM
         echo '
             <td style="border-right:1px solid #aaa;">
-                {[ "type": "number", "name": "km['.$id.']", "value": "'.$km.'", "class": "small-width" ]}
+                {[ "type": "number", "name": "km['.$id.']", "value": "'.$km.'", "class": "small-width", "extra": "'.$readonly.'" ]}
 
                 <div class="extra hide">
                     <table class="table table-condensed table-bordered">
@@ -202,7 +216,7 @@ if (!empty($rs2)) {
             <td style="border-right:1px solid #aaa;">';
         if ($user['idanagrafica'] == 0 || $show_costi) {
             echo '
-                {[ "type": "number", "name": "sconto['.$id.']", "value": "'.$sconto_unitario.'", "icon-after": "choice|untprc|'.$tipo_sconto.'", "class": "small-width" ]}';
+                {[ "type": "number", "name": "sconto['.$id.']", "value": "'.$sconto_unitario.'", "icon-after": "choice|untprc|'.$tipo_sconto.'", "class": "small-width", "extra": "'.$readonly.'" ]}';
         } else {
             echo '
                 <input type="hidden" name="sconto['.$id.']" value="'.Translator::numberToLocale($sconto_unitario).'" />
@@ -217,7 +231,7 @@ if (!empty($rs2)) {
             <td style="border-right:1px solid #aaa;">';
         if ($user['idanagrafica'] == 0 || $show_costi) {
             echo '
-                {[ "type": "number", "name": "scontokm['.$id.']", "value": "'.$scontokm_unitario.'", "icon-after": "choice|untprc|'.$tipo_scontokm.'", "class": "small-width" ]}';
+                {[ "type": "number", "name": "scontokm['.$id.']", "value": "'.$scontokm_unitario.'", "icon-after": "choice|untprc|'.$tipo_scontokm.'", "class": "small-width", "extra": "'.$readonly.'" ]}';
         } else {
             echo '
                 <input type="hidden" name="scontokm['.$id.']" value="'.Translator::numberToLocale($scontokm_unitario).'" />
@@ -231,10 +245,16 @@ if (!empty($rs2)) {
                 <input type="hidden" name="prezzo_km_consuntivotecnico['.$id.']" value="'.Translator::numberToLocale($costo_km_consuntivo_tecnico).'" />
             </td>';
 
-        // Pulsante aggiunta nuova sessione
+        // Pulsante eliminazione sessione
         echo '
-            <td>
-                <a class="btn btn-danger" id="delbtn_'.$id.'" onclick="elimina_sessione(\''.$id.'\', \''.$id_record.'\', \''.$idzona.'\');" title="Elimina riga" class="only_rw"><i class="fa fa-trash"></i></a>
+            <td>';
+            
+        if( !$flg_completato ){
+            echo '
+                <a class="btn btn-danger" id="delbtn_'.$id.'" onclick="elimina_sessione(\''.$id.'\', \''.$id_record.'\', \''.$idzona.'\');" title="Elimina riga" class="only_rw"><i class="fa fa-trash"></i></a>';
+        }
+        
+        echo '
             </td>
         </tr>';
 
@@ -250,21 +270,22 @@ if (!empty($rs2)) {
 '<p>'.tr('Nessun tecnico presente').'.</p>';
 }
 
-echo '
-<!-- AGGIUNTA TECNICO -->
-<div class="row">
-    <div class="col-md-offset-6 col-md-3">
-        {[ "type": "select", "label": "'.tr('Aggiungi tecnico').'", "name": "nuovotecnico", "ajax-source": "tecnici" ]}
-    </div>
+if ( !$flg_completato ) {
+    echo '
+    <!-- AGGIUNTA TECNICO -->
+    <div class="row">
+        <div class="col-md-offset-6 col-md-3">
+            {[ "type": "select", "label": "'.tr('Aggiungi tecnico').'", "name": "nuovotecnico", "ajax-source": "tecnici" ]}
+        </div>
 
-    <div class="col-md-3">
-        <br>
-        <button type="button" class="btn btn-primary btn-block" onclick="if($(\'#nuovotecnico\').val()){ add_tecnici( \''.$id_record.'\', $(\'#nuovotecnico\').val()); }else{ alert(\'Seleziona un tecnico!\'); }">
-            <i class="fa fa-plus"></i> '.tr('Aggiungi tecnico').'
-        </button>
-    </div>
-</div>';
-
+        <div class="col-md-3">
+            <br>
+            <button type="button" class="btn btn-primary btn-block" onclick="if($(\'#nuovotecnico\').val()){ add_tecnici( \''.$id_record.'\', $(\'#nuovotecnico\').val()); }else{ alert(\'Seleziona un tecnico!\'); }">
+                <i class="fa fa-plus"></i> '.tr('Aggiungi tecnico').'
+            </button>
+        </div>
+    </div>';
+}
 ?>
 
 <script src="<?php echo $rootdir ?>/lib/init.js"></script>

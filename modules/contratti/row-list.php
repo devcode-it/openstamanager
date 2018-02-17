@@ -50,8 +50,8 @@ if (!empty($rs_art)) {
         echo '
             <td class="text-center">';
         if (empty($r['is_descrizione'])) {
-            echo
-                Translator::numberToLocale($r['qta']);
+            echo '
+                '.Translator::numberToLocale($r['qta']);
         }
         echo '
             </td>';
@@ -60,8 +60,8 @@ if (!empty($rs_art)) {
         echo '
             <td class="text-center">';
         if (empty($r['is_descrizione'])) {
-            echo
-                $r['um'];
+            echo '
+                '.$r['um'];
         }
         echo '
             </td>';
@@ -70,8 +70,8 @@ if (!empty($rs_art)) {
         echo '
             <td class="text-center">';
         if (empty($r['is_descrizione'])) {
-            echo
-                Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
+            echo '
+                '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
         }
         echo'
             </td>';
@@ -80,8 +80,8 @@ if (!empty($rs_art)) {
         echo '
             <td class="text-right">';
         if (empty($r['is_descrizione'])) {
-            echo
-                Translator::numberToLocale($r['iva'])." &euro;<br>
+            echo '
+                '.Translator::numberToLocale($r['iva'])." &euro;<br>
                 <small class='help-block'>".$r['desc_iva'].'</small>';
         }
         echo '
@@ -91,15 +91,15 @@ if (!empty($rs_art)) {
         echo '
             <td class="text-right">';
         if (empty($r['is_descrizione'])) {
-            echo
-                Translator::numberToLocale($r['subtotale']).' &euro;';
+            echo '
+                '.Translator::numberToLocale($r['subtotale']).' &euro;';
 
             if ($r['sconto_unitario'] > 0) {
                 echo '
-                    <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
-                        '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                        '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
-                    ]).'</small>';
+                <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
+                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                ]).'</small>';
             }
         }
         echo '

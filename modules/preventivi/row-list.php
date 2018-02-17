@@ -39,9 +39,9 @@ if (!empty($rs)) {
         // q.tà
         echo '
             <td class="text-center">';
-        if($r['is_descrizione']==0){
-            echo
-                Translator::numberToLocale($r['qta'] - $r['qta_evasa']);
+        if (empty($r['is_descrizione'])) {
+            echo '
+                '.Translator::numberToLocale($r['qta'] - $r['qta_evasa']);
         }
         echo '
             </td>';
@@ -49,9 +49,9 @@ if (!empty($rs)) {
         // um
         echo '
             <td class="text-center">';
-        if($r['is_descrizione']==0){
-            echo
-                $r['um'];
+        if (empty($r['is_descrizione'])) {
+            echo '
+                '.$r['um'];
         }
         echo '
             </td>';
@@ -59,9 +59,9 @@ if (!empty($rs)) {
         // costo unitario
         echo '
             <td class="text-right">';
-        if($r['is_descrizione']==0){
-            echo
-                Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
+        if (empty($r['is_descrizione'])) {
+            echo '
+                '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
 
             if ($r['sconto_unitario'] > 0) {
                 echo '
@@ -78,9 +78,9 @@ if (!empty($rs)) {
         // iva
         echo '
             <td class="text-right">';
-        if($r['is_descrizione']==0){
-            echo
-                Translator::numberToLocale($r['iva']).' &euro;
+        if (empty($r['is_descrizione'])) {
+            echo '
+                '.Translator::numberToLocale($r['iva']).' &euro;
                 <br><small class="help-block">'.$r['desc_iva'].'</small>';
         }
         echo'
@@ -89,9 +89,9 @@ if (!empty($rs)) {
         // Imponibile
         echo '
             <td class="text-right">';
-        if($r['is_descrizione']==0){
-            echo
-                Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
+        if (empty($r['is_descrizione'])) {
+            echo '
+                '.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
         }
         echo'
             </td>';
@@ -131,7 +131,7 @@ if (!empty($rs)) {
 // Calcoli
 $imponibile = sum(array_column($rs, 'subtotale'));
 $sconto = sum(array_column($rs, 'sconto'));
-$iva = sum(array_column($rs, 'iva'));
+$iva = sum(array_column($rs, 'iva'), null, 4);
 
 $imponibile_scontato = sum($imponibile, -$sconto);
 

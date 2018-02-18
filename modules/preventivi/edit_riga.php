@@ -61,7 +61,7 @@ echo '
     <input type="hidden" name="idriga" value="'.$idriga.'">
     <input type="hidden" name="backto" value="record-edit">';
 
-if($rsr[0]['is_descrizione']!=1){
+if(empty($rsr[0]['is_descrizione'])){
     // Elenco articoli raggruppati per gruppi e sottogruppi
     echo '
     <div class="row">
@@ -79,7 +79,7 @@ echo '
         </div>
     </div>';
 
-if($rsr[0]['is_descrizione']!=1){
+if(empty($rsr[0]['is_descrizione'])){
     // Quantità
     echo '
     <div class="row">
@@ -113,7 +113,7 @@ if($rsr[0]['is_descrizione']!=1){
             {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
         </div>
     </div>';
-    
+
 }
 
 echo '

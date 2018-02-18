@@ -178,20 +178,6 @@ if (!API::isAPIRequest()) {
     $jscript_modules = $assets['js'];
 
     if ($continue) {
-        // Istanziamento della barra di debug
-        if (!empty($debug)) {
-            $debugbar = new DebugBar\DebugBar();
-
-            $debugbar->addCollector(new DebugBar\DataCollector\MemoryCollector());
-            $debugbar->addCollector(new DebugBar\DataCollector\PhpInfoCollector());
-
-            $debugbar->addCollector(new DebugBar\DataCollector\RequestDataCollector());
-            $debugbar->addCollector(new DebugBar\DataCollector\TimeDataCollector());
-
-            $debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
-            $debugbar->addCollector(new DebugBar\DataCollector\PDO\PDOCollector($dbo->getPDO()));
-        }
-
         $id_module = filter('id_module');
         $id_record = filter('id_record');
         $id_plugin = filter('id_plugin');

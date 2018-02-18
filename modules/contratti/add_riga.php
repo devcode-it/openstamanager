@@ -54,7 +54,7 @@ echo '
     <input type="hidden" name="backto" value="record-edit">';
 
 // Elenco articoli raggruppati per gruppi e sottogruppi
-if($rsr[0]['is_descrizione']!=1){
+if (empty($rsr[0]['is_descrizione'])) {
     echo '
     <div class="col-md-12">
         {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "value": "'.$idarticolo.'", "ajax-source": "articoli" ]}
@@ -67,7 +67,7 @@ echo '
         {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "id": "descrizione_riga", "value": '.json_encode($descrizione).', "required": 1 ]}
     </div>';
 
-if($rsr[0]['is_descrizione']!=1){
+if (empty($rsr[0]['is_descrizione'])) {
     // Iva
     echo '
     <div class="col-md-4">
@@ -85,46 +85,6 @@ if($rsr[0]['is_descrizione']!=1){
     <div class="col-md-4">
         {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
     </div>';
-
-    /*
-    if (!empty($idriga)) {
-    //Rivalsa INPS
-    if( get_var("Percentuale rivalsa INPS") != "" ){
-    echo "		<div class='col-md-3'>\n";
-    echo "			<label>Rivalsa INPS:</label>\n";
-    echo "			<select id='idrivalsainps' class='superselect' name=\"idrivalsainps\">\n";
-    echo "				<option value=''>-</option>\n";
-
-    $query = "SELECT * FROM co_rivalsainps";
-    $rs = $dbo->fetchArray($query);
-    for( $i=0; $i<sizeof($rs); $i++ ){
-        ( $rs[$i]['id'] == $rsr[$i]['idrivalsainps'] ) ? $attr='selected="true"' : $attr='';
-        echo "				<option value='".$rs[$i]['id']."' ".$attr.">".$rs[$i]['descrizione']."</option>\n";
-    }
-
-    echo "			</select>\n";
-    echo "		</div>\n";
-    }
-
-    //Ritenuta d'acconto
-    if( get_var("Percentuale ritenuta d'acconto") != "" ){
-    echo "		<div class='col-md-3'>\n";
-    echo "			<label>Ritenuta d'acconto:</label>\n";
-    echo "			<select id='idritenutaacconto' class='superselect' name=\"idritenutaacconto\">\n";
-    echo "				<option value=''>-</option>\n";
-
-    $query = "SELECT * FROM co_ritenutaacconto";
-    $rs = $dbo->fetchArray($query);
-    for( $i=0; $i<sizeof($rs); $i++ ){
-        ( $rs[$i]['id'] == $rsr[$i]['idritenutaacconto'] ) ? $attr='selected="true"' : $attr='';
-        echo "				<option value='".$rs[$i]['id']."' ".$attr.">".$rs[$i]['descrizione']."</option>\n";
-    }
-
-    echo "			</select>\n";
-    echo "		</div>\n";
-    }
-    }
-    */
 
     // Costo unitario
     echo '

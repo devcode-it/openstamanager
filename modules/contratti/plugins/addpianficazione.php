@@ -2,8 +2,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-
-#<form action="plugin_editor.php?id_plugin=$id_plugin$&id_module=$id_module$&id_parent=$id_parent$" method="post" role="form">
+//<form action="plugin_editor.php?id_plugin=$id_plugin$&id_module=$id_module$&id_parent=$id_parent$" method="post" role="form">
 
 $idcontratto_riga = $get['idcontratto_riga'];
 $qp = 'SELECT *, (SELECT data_conclusione FROM co_contratti WHERE id = '.$id_record.' ) AS data_conclusione, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento FROM co_righe_contratti WHERE id = '.$idcontratto_riga;
@@ -15,7 +14,7 @@ $orario_inizio = '09:00';
 $orario_fine = '17:00';
 
 echo '
-<form id="add_form" action="'.$rootdir.'/editor.php?id_module='.Modules::get('Contratti')['id']."&id_record=".$id_record."&idcontratto_riga=".$idcontratto_riga.'" method="post">
+<form id="add_form" action="'.$rootdir.'/editor.php?id_module='.Modules::get('Contratti')['id'].'&id_record='.$id_record.'&idcontratto_riga='.$idcontratto_riga.'" method="post">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="pianificazione">
 
@@ -49,7 +48,7 @@ echo '
 	
 		
 		<!--div class="col-xs-12 col-md-8">
-			{[ "type": "checkbox", "label": "'.tr('Pianifica anche date passate').'", "name": "date_passate", "value": "0", "help": "", "placeholder": "'.tr('Pianificare promemoria anche con date precedenti ad oggi: ').date("d/m/Y").'" ]}
+			{[ "type": "checkbox", "label": "'.tr('Pianifica anche date passate').'", "name": "date_passate", "value": "0", "help": "", "placeholder": "'.tr('Pianificare promemoria anche con date precedenti ad oggi: ').date('d/m/Y').'" ]}
 		</div-->
 		
 ';
@@ -57,11 +56,11 @@ echo '
 ?>
 		
 		<div class="col-xs-12 col-md-7">
-			{[ "type": "select", "label": "<?php echo tr('Inizio pianificazione') ?>", "name": "parti_da_oggi", "values": "list= \"0\":\"<?php echo tr('Pianificare a partire da questo promemoria ').$data_richiesta ?>\", \"1\":\"<?php echo tr('Pianificare a partire da oggi ').date('d/m/Y') ?>\"", "value": "" ]}
+			{[ "type": "select", "label": "<?php echo tr('Inizio pianificazione'); ?>", "name": "parti_da_oggi", "values": "list= \"0\":\"<?php echo tr('Pianificare a partire da questo promemoria ').$data_richiesta; ?>\", \"1\":\"<?php echo tr('Pianificare a partire da oggi ').date('d/m/Y'); ?>\"", "value": "" ]}
 		</div>
 		
 <?php
-	
+
 echo '
 		
 		

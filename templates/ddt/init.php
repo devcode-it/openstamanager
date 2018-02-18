@@ -19,7 +19,6 @@ if (empty($records[0]['numero_esterno'])) {
     $numero = !empty($records[0]['numero_esterno']) ? $records[0]['numero_esterno'] : $records[0]['numero'];
 }
 
-
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
 $destinazione = '';
 if (!empty($records[0]['idsede'])) {

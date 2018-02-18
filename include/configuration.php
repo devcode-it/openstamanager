@@ -289,7 +289,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
                     <div id="step-1">
                         <p>'.tr('Benvenuto in <strong>OpenSTAManager</strong>!').'</p>
-                        <p>'.tr("Prima di procedere alla configurazione e all'installazione del software, sono necessari alcuni accorgimenti per garantire il corretto funzionamento del gestionale. Stai utilizzando la versione PHP ".phpversion()."").'.</p>
+                        <p>'.tr("Prima di procedere alla configurazione e all'installazione del software, sono necessari alcuni accorgimenti per garantire il corretto funzionamento del gestionale. Stai utilizzando la versione PHP ".phpversion().'').'.</p>
                         <hr>';
 
     // Estensioni di PHP

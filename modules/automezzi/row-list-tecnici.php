@@ -48,7 +48,7 @@ if (!empty($rs_art)) {
         </td>
     </tr>';
 
-    echo '
+        echo '
     <script type="text/javascript">
         $(function () {
             $("#data_inizio'.$r['id'].'").on("dp.change", function (e) {

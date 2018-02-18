@@ -10,19 +10,19 @@ $numero = $rs[0]['numero'];
 $descrizione = $rs[0]['descrizione'];
 $idpianodeiconti2 = $rs[0]['idpianodeiconti2'];
 
-?><form action="<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::get('Piano dei conti')['id'] ?>" method="post">
+?><form action="<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get('Piano dei conti')['id']; ?>" method="post">
     <input type="hidden" name="op" value="edit">
     <input type="hidden" name="backto" value="record-list">
-    <input type="hidden" name="idpianodeiconti2" value="<?php echo $idpianodeiconti2 ?>">
-    <input type="hidden" name="idconto" value="<?php echo $idconto ?>">
+    <input type="hidden" name="idpianodeiconti2" value="<?php echo $idpianodeiconti2; ?>">
+    <input type="hidden" name="idconto" value="<?php echo $idconto; ?>">
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "<?php echo $numero ?>", "extra": "maxlength=\"6\"" ]}
+            {[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "<?php echo $numero; ?>", "extra": "maxlength=\"6\"" ]}
         </div>
 
         <div class="col-md-8">
-            {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo $descrizione ?>" ]}
+            {[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo $descrizione; ?>" ]}
         </div>
     </div>
     <br>

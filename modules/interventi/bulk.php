@@ -19,9 +19,9 @@ switch (post('op')) {
         if (!empty($records)) {
             foreach ($records as $r) {
                 //$numero = !empty($r['numero_esterno']) ? $r['numero_esterno'] : $r['numero'];
-                $numero =  $r['codice'];
-				
-				$numero = str_replace(['/', '\\'], '-', $numero);
+                $numero = $r['codice'];
+
+                $numero = str_replace(['/', '\\'], '-', $numero);
 
                 // Gestione della stampa
                 $rapportino_nome = sanitizeFilename($numero.' '.date('Y_m_d', strtotime($r['data_richiesta'])).' '.$r['ragione_sociale'].'.pdf');
@@ -30,9 +30,9 @@ switch (post('op')) {
                 $_GET['idintervento'] = $r['id']; // Fix temporaneo per la stampa
                 $idintervento = $r['id']; // Fix temporaneo per la stampa
                 //$ptype = ($r['descrizione'] == 'Fattura accompagnatoria di vendita') ? 'fatture_accompagnatorie' : 'fatture';
-				
-				$ptype = 'interventi';
-				
+
+                $ptype = 'interventi';
+
                 require DOCROOT.'/pdfgen.php';
             }
 

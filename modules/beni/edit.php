@@ -14,13 +14,13 @@ include_once __DIR__.'/../../core.php';
 	<!-- DATI -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Dati') ?></h3>
+			<h3 class="panel-title"><?php echo tr('Dati'); ?></h3>
 		</div>
 
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-xs-12 col-md-12">
-					{[ "type": "text", "label": "<?php echo tr('Descrizione') ?>", "name": "descrizione", "required": 1,  "value": "$descrizione$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1,  "value": "$descrizione$" ]}
 				</div>
 			</div>
 		</div>

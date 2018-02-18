@@ -11,7 +11,7 @@ $id_cliente = $records[0]['idanagrafica'];
 $id_sede = $records[0]['idsede'];
 
 $numero_ord = $records[0]['numero'];
-$numero = !empty($records[0]['numero_esterno']) ?$records[0]['numero_esterno'] : $records[0]['numero'];
+$numero = !empty($records[0]['numero_esterno']) ? $records[0]['numero_esterno'] : $records[0]['numero'];
 
 // Sostituzioni specifiche
 $custom = [

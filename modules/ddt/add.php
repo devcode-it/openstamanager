@@ -23,7 +23,7 @@ if ($module['name'] == 'Ddt di vendita') {
 ?><form action="editor.php?id_module=$id_module$" method="post">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
-	<input type="hidden" name="dir" value="<?php echo $dir ?>">
+	<input type="hidden" name="dir" value="<?php echo $dir; ?>">
 
 	<div class="row">
 		<div class="col-md-4">
@@ -31,11 +31,11 @@ if ($module['name'] == 'Ddt di vendita') {
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "<?php echo $tipo_anagrafica ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='<?php echo $tipo_anagrafica ?>' AND deleted=0 ORDER BY ragione_sociale", "value": "<?php echo $idanagrafica ?>" ]}
+			{[ "type": "select", "label": "<?php echo $tipo_anagrafica; ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='<?php echo $tipo_anagrafica; ?>' AND deleted=0 ORDER BY ragione_sociale", "value": "<?php echo $idanagrafica; ?>" ]}
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "<?php echo tr('Tipo ddt'); ?>", "name": "idtipoddt", "required": 1, "values": "query=SELECT id, descrizione FROM dt_tipiddt WHERE dir='<?php echo $dir ?>'", "value": "<?php echo $id_tipoddt ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Tipo ddt'); ?>", "name": "idtipoddt", "required": 1, "values": "query=SELECT id, descrizione FROM dt_tipiddt WHERE dir='<?php echo $dir; ?>'", "value": "<?php echo $id_tipoddt; ?>" ]}
 		</div>
 	</div>
 

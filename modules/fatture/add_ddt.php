@@ -37,6 +37,6 @@ echo '
 	$('#id_ddt').change( function(){
         $('#righeddt').html('<i>Caricamento in corso...</i>');
 
-        $('#righeddt').load(globals.rootdir + '/modules/fatture/crea_documento.php?id_module=' + <?php echo Modules::get('Ddt di vendita')['id'] ?> + '&id_record=' + $(this).find('option:selected').val() + '&documento=fattura&op=add_ddt&iddocumento=' + globals.id_record);
+        $('#righeddt').load(globals.rootdir + '/modules/fatture/crea_documento.php?id_module=' + <?php echo Modules::get('Ddt di vendita')['id']; ?> + '&id_record=' + $(this).find('option:selected').val() + '&documento=fattura&op=add_ddt&iddocumento=' + globals.id_record);
     });
 </script>

@@ -72,9 +72,8 @@ echo '
             {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "required": 1, "value": '.json_encode($descrizione).' ]}
         </div>
     </div>';
-    
-if($rsr[0]['is_descrizione']==0){
 
+if ($rsr[0]['is_descrizione'] == 0) {
     // Quantità
     echo '
     <div class="row">
@@ -83,7 +82,7 @@ if($rsr[0]['is_descrizione']==0){
         </div>';
 
     // Unità di misura
-        echo '
+    echo '
         <div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
         </div>
@@ -108,7 +107,6 @@ if($rsr[0]['is_descrizione']==0){
             {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
         </div>
     </div>';
-
 }
 
 echo '

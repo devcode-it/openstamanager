@@ -120,13 +120,13 @@ echo '
 
 					</table>
 
-					<a onclick="launch_modal( 'Aggiungi prima nota', '<?php echo $rootdir ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id'] ?>&iddocumento=<?php echo $records[0]['iddocumento'] ?>&dir=<?php echo $dir ?>', 1 );" class="btn btn-sm btn-primary pull-right"><i class="fa fa-euro"></i> <?php echo tr('Aggiungi prima nota...'); ?></a>
+					<a onclick="launch_modal( 'Aggiungi prima nota', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&iddocumento=<?php echo $records[0]['iddocumento']; ?>&dir=<?php echo $dir; ?>', 1 );" class="btn btn-sm btn-primary pull-right"><i class="fa fa-euro"></i> <?php echo tr('Aggiungi prima nota...'); ?></a>
 
 					<p class="text-danger hide" id="totale"><?php echo tr('Il totale da pagare deve essere pari a _NUM_', [
                         '_NUM_' => '<b>'.Translator::numberToLocale($totale_da_pagare).'&euro;</b>',
                     ]); ?>.<br><?php echo tr('Differenza di'); ?> <span id="diff"></span> &euro;.</p>
 
-					<input type="hidden" id="totale_da_pagare" value="<?php echo Translator::numberToLocale($totale_da_pagare) ?>">
+					<input type="hidden" id="totale_da_pagare" value="<?php echo Translator::numberToLocale($totale_da_pagare); ?>">
 				</div>
 			</div>
 

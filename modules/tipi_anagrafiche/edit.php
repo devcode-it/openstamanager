@@ -17,7 +17,7 @@ echo $warning_text;
 <form action="" method="post">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
-	<input type="hidden" name="id_record" value="<?php echo $id_record ?>">
+	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
 <?php
 // Se il tipo di anagrafica è uno di quelli di default, non lo lascio modificare
@@ -28,14 +28,13 @@ if (!$records[0]['default']) {
 	</div>
 	<div class="clearfix"></div>
 <?php
-
 }
 ?>
 
 	<div class="row">
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$", "extra": "<?php echo $attr ?>" ]}
+			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$", "extra": "<?php echo $attr; ?>" ]}
 		</div>
 
 	</div>
@@ -46,9 +45,8 @@ if (!$records[0]['default']) {
 if (!$records[0]['default']) {
     ?>
         <a class="btn btn-danger ask" data-backto="record-list">
-            <i class="fa fa-trash"></i> <?php echo tr('Elimina') ?>
+            <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
         </a>
 
 <?php
-
 }

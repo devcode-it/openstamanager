@@ -171,7 +171,7 @@ if (filter('action') == 'do_update') {
                 <p>'.tr("E' necessario aggiornare il database a una nuova versione").'.</p>';
     }
     echo '
-                <p>'.tr("Premi il tasto _BUTTON_ per procedere con l'".(!$dbo->isInstalled() ? tr('installazione') : tr('aggiornamento'))."!", [
+                <p>'.tr("Premi il tasto _BUTTON_ per procedere con l'".(!$dbo->isInstalled() ? tr('installazione') : tr('aggiornamento')).'!', [
                     '_BUTTON_' => '<b>"'.$button.'"</b>',
                 ]).'</p>
                 <input type="button" class="btn btn-primary" value="'.$button.'" onclick="continue_update()" id="contine_button">

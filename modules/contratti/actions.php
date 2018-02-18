@@ -156,7 +156,7 @@ switch (post('op')) {
 
         // Lettura iva dell'articolo
         $rs2 = $dbo->fetchArray('SELECT percentuale, descrizione, indetraibile FROM co_iva WHERE id='.prepare($idiva));
-        $iva = ($prezzo*$qta - $sconto) / 100 * $rs2[0]['percentuale'];
+        $iva = ($prezzo * $qta - $sconto) / 100 * $rs2[0]['percentuale'];
         $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
         $desc_iva = $rs2[0]['descrizione'];
 

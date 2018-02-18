@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 ?><form action="editor.php?id_module=$id_module$" method="post">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
-	<input type="hidden" name="iddocumento" value="<?php echo get('iddocumento') ?>">
+	<input type="hidden" name="iddocumento" value="<?php echo get('iddocumento'); ?>">
 
 	<?php
     $idconto = get('idconto');
@@ -115,7 +115,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="col-md-8">
-			{[ "type": "text", "label": "<?php echo tr('Causale'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo $descrizione ?>" ]}
+			{[ "type": "text", "label": "<?php echo tr('Causale'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo $descrizione; ?>" ]}
 		</div>
 	</div>
 
@@ -227,7 +227,7 @@ include_once __DIR__.'/../../core.php';
 	<script type="text/javascript">
 		$(document).ready( function(){
 			$('input[id*=dare], input[id*=avere]').each(function(){
-				if($(this).val() != "<?php echo Translator::numberToLocale(0) ?>") $(this).prop("disabled", false);
+				if($(this).val() != "<?php echo Translator::numberToLocale(0); ?>") $(this).prop("disabled", false);
 			});
 
 			$('select').on('change', function(){

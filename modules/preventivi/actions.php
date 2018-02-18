@@ -233,12 +233,12 @@ switch (post('op')) {
         $_SESSION['infos'][] = tr('Articolo aggiunto!');
 
         break;
-        
+
     case 'adddescrizione':
         if (!empty($id_record)) {
             $descrizione = post('descrizione');
             $query = 'INSERT INTO co_righe_preventivi(idpreventivo, descrizione, is_descrizione) VALUES('.prepare($id_record).', '.prepare($descrizione).', 1)';
-        
+
             if ($dbo->query($query)) {
                 $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
             }
@@ -248,7 +248,7 @@ switch (post('op')) {
     case 'editriga':
         $idriga = post('idriga');
         $descrizione = post('descrizione');
-        
+
         //Info riga Preventivo
         $rs = $dbo->fetchArray('SELECT * FROM co_righe_preventivi WHERE id='.prepare($idriga));
         $is_descrizione = $rs[0]['is_descrizione'];
@@ -272,10 +272,10 @@ switch (post('op')) {
         $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
         $desc_iva = $rs2[0]['descrizione'];
 
-        if($is_descrizione==0){
+        if ($is_descrizione == 0) {
             // Modifica riga generica sul documento
             $query = 'UPDATE co_righe_preventivi SET idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
-        }else{
+        } else {
             $query = 'UPDATE co_righe_preventivi SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga);
         }
         $dbo->query($query);

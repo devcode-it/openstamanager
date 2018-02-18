@@ -15,7 +15,7 @@ switch (post('op')) {
             $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
         } else {
             // Nome non consentito
-         $_SESSION['errors'][] = tr('Nome non consentito!');
+            $_SESSION['errors'][] = tr('Nome non consentito!');
         }
 
         break;

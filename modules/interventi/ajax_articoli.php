@@ -25,7 +25,7 @@ if (!empty($rs)) {
         <th width="15%">'.tr('Subtotale').'</th>';
     }
 
-    if ( !$records[0]['flg_completato'] ) {
+    if (!$records[0]['flg_completato']) {
         echo '
         <th width="80"></th>';
     }
@@ -109,7 +109,7 @@ if (!empty($rs)) {
 
         // Pulsante per riportare nel magazzino centrale.
         // Visibile solo se l'intervento non è stato nè fatturato nè completato.
-        if ( !$records[0]['flg_completato'] ) {
+        if (!$records[0]['flg_completato']) {
             echo '
         <td>';
 
@@ -135,12 +135,12 @@ if (!empty($rs)) {
 ?>
 <script type="text/javascript">
     function ritorna_al_magazzino( id ){
-        $.post(globals.rootdir + '/modules/interventi/actions.php', {op: 'unlink_articolo', idriga: id, id_record: '<?php echo $id_record ?>', id_module: '<?php echo $id_module ?>' }, function(data, result){
+        $.post(globals.rootdir + '/modules/interventi/actions.php', {op: 'unlink_articolo', idriga: id, id_record: '<?php echo $id_record; ?>', id_module: '<?php echo $id_module; ?>' }, function(data, result){
             if( result == 'success' ){
                 // ricarico l'elenco degli articoli
-                $('#articoli').load(globals.rootdir + '/modules/interventi/ajax_articoli.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>');
+                $('#articoli').load(globals.rootdir + '/modules/interventi/ajax_articoli.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
 
-                $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>');
+                $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
             }
         });
     }

@@ -53,7 +53,7 @@ if (filter('op') == 'link_myimpianti') {
 $rss = $dbo->fetchArray('SELECT in_statiintervento.completato FROM in_statiintervento INNER JOIN in_interventi ON in_statiintervento.idstatointervento=in_interventi.idstatointervento WHERE in_interventi.id='.prepare($id_record));
 $flg_completato = $rss[0]['completato'];
 
-if( $flg_completato ){
+if ($flg_completato) {
     $readonly = 'readonly';
     $disabled = 'disabled';
 } else {

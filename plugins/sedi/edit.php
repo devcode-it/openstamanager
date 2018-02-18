@@ -91,7 +91,7 @@ echo '
     </div>';
 
 if (!empty($google)) {
-	echo '
+    echo '
 	<div class="row">
 		<div class="col-md-6" id="geocomplete">
 			{[ "type": "text", "label": "'.tr('Indirizzo Google').'", "name": "gaddress", "value": "$gaddress$", "extra": "data-geo=\'formatted_address\'" ]}
@@ -106,15 +106,14 @@ if (!empty($google)) {
 		</div>';
 
     // Vedi su google maps
-    if (!empty($records[0]['indirizzo']) || (empty($records[0]['citta'])) ) {
-		
+    if (!empty($records[0]['indirizzo']) || (empty($records[0]['citta']))) {
         echo '
 			<div  class="btn-group col-md-2"  >
 				<label>&nbsp;</label><br>
 				<a class="btn btn-info" title="'.tr('Mostra la sede su Google Maps').'"  onclick="window.open(\'https://maps.google.com/maps/search/\'+encodeURI( $(\'#indirizzo_\').val() )+\', \'+encodeURI( $(\'#citta_\').val() ) );">&nbsp;<i class="fa fa-map-marker">&nbsp;</i></a>
 			';
-			
-		 echo '
+
+        echo '
 				<a title="'.tr('Calcola percoso da sede legale a questa sede').'" class="btn btn-primary btn-secondary" onclick="window.open(\'https://maps.google.com/maps/dir/\'+encodeURI( $(\'#indirizzo_\').val() )+\', \'+encodeURI( $(\'#citta_\').val() )+\'/\'+encodeURI( $(\'#indirizzo\').val() )+\',\'+encodeURI( $(\'#citta\').val() )+\',8z\');"><i class="fa fa-car"></i></a>
 			</div>';
     }
@@ -123,7 +122,7 @@ if (!empty($google)) {
     </div>';
 
     if (!empty($records[0]['gaddress']) || (!empty($records[0]['lat']) && !empty($records[0]['lng']))) {
-	echo '
+        echo '
     <div id="map" style="height:400px; width:100%"></div><br>';
     }
 } else {

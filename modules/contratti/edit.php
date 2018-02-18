@@ -5,17 +5,17 @@ include_once __DIR__.'/../../core.php';
 unset($_SESSION['superselect']['idanagrafica']);
 $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
-?><script src="<?php echo $rootdir ?>/modules/contratti/js/contratti_helper.js"></script>
+?><script src="<?php echo $rootdir; ?>/modules/contratti/js/contratti_helper.js"></script>
 
 <form action="" method="post" role="form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
-	<input type="hidden" name="id_record" value="<?php echo $id_record ?>">
+	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
 	<!-- DATI INTESTAZIONE -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Intestazione') ?></h3>
+			<h3 class="panel-title"><?php echo tr('Intestazione'); ?></h3>
 		</div>
 
 		<div class="panel-body">
@@ -29,7 +29,7 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
                 }
                 ?>
 
-                {( "name": "button", "type": "print", "id_module": "<?php echo $id_module ?>", "id_record": "<?php echo $id_record ?>" )}
+                {( "name": "button", "type": "print", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
 
 				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
 				<br><br>
@@ -116,7 +116,7 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato') ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr('Sconto complessivo del contratto'); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
+                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato'); ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr('Sconto complessivo del contratto'); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
 if ($records[0]['stato'] == 'Emessa') {
                         echo ', "disabled" : 1';
                     }
@@ -280,8 +280,8 @@ if (sizeof($rs) > 0) {
 <?php
 if ($records[0]['stato'] != 'Pagato') {
     ?>
-        <a class="btn btn-primary" data-href="<?php echo $rootdir ?>/modules/contratti/add_riga.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Riga'); ?></a>
-		<a class="btn btn-primary" data-href="<?php echo $rootdir ?>/modules/contratti/add_descrizione.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Descrizione'); ?></a>
+        <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/contratti/add_riga.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Riga'); ?></a>
+		<a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/contratti/add_descrizione.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Descrizione'); ?></a>
     <?php
 }
 ?>

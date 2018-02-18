@@ -12,7 +12,7 @@ if ($module['name'] == 'Ordini cliente') {
 ?><form action="" method="post" role="form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
-	<input type="hidden" name="id_record" value="<?php echo $id_record ?>">
+	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 	<!-- INTESTAZIONE -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
@@ -65,7 +65,7 @@ if ($module['name'] == 'Ordini cliente') {
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato') ?>", "name": "sconto_generico", "value": "$sconto_globale$", "icon-after": "choice|untprc|$tipo_sconto_globale$" ]}
+                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato'); ?>", "name": "sconto_generico", "value": "$sconto_globale$", "icon-after": "choice|untprc|$tipo_sconto_globale$" ]}
                 </div>
             </div>
 
@@ -94,9 +94,9 @@ if ($module['name'] == 'Ordini cliente') {
 		<div class="pull-left">
 			<?php if ($records[0]['stato'] != 'Evaso') {
                         ?>
-				<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/ordini/add_articolo.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup"><i class="fa fa-plus"></i> Articolo</a>
-				<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/ordini/add_riga.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> Riga generica</a>
-                <a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/ordini/add_descrizione.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup"><i class="fa fa-plus"></i> Descrizione</a>
+				<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir; ?>/modules/ordini/add_articolo.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup"><i class="fa fa-plus"></i> Articolo</a>
+				<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir; ?>/modules/ordini/add_riga.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> Riga generica</a>
+                <a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir; ?>/modules/ordini/add_descrizione.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup"><i class="fa fa-plus"></i> Descrizione</a>
 			<?php
                     } ?>
 		</div>
@@ -105,13 +105,13 @@ if ($module['name'] == 'Ordini cliente') {
 			<!-- Stampe -->
 			<?php if ($records[0]['stato'] != 'Evaso') {
                         ?>
-				<a  class="btn btn-sm btn-info" data-href="<?php echo $rootdir ?>/modules/fatture/crea_documento.php?id_module=<?php echo $id_module ?>&&id_record=<?php echo $id_record ?>&documento=ddt" data-toggle="modal" data-title="Crea ddt" data-target="#bs-popup" ><i class="fa fa-magic"></i> Crea ddt da ordine...</i></a>
-				<a  class="btn btn-sm btn-info" data-href="<?php echo $rootdir ?>/modules/fatture/crea_documento.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>&documento=fattura" data-toggle="modal" data-title="Crea fattura" data-target="#bs-popup" ><i class="fa fa-magic"></i> Crea fattura da ordine...</i></a>
+				<a  class="btn btn-sm btn-info" data-href="<?php echo $rootdir; ?>/modules/fatture/crea_documento.php?id_module=<?php echo $id_module; ?>&&id_record=<?php echo $id_record; ?>&documento=ddt" data-toggle="modal" data-title="Crea ddt" data-target="#bs-popup" ><i class="fa fa-magic"></i> Crea ddt da ordine...</i></a>
+				<a  class="btn btn-sm btn-info" data-href="<?php echo $rootdir; ?>/modules/fatture/crea_documento.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&documento=fattura" data-toggle="modal" data-title="Crea fattura" data-target="#bs-popup" ><i class="fa fa-magic"></i> Crea fattura da ordine...</i></a>
 			<?php
                     }
             ?>
 
-            {( "name": "button", "type": "print", "id_module": "<?php echo $id_module ?>", "id_record": "<?php echo $id_record ?>" )}
+            {( "name": "button", "type": "print", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
 		</div>
 		<div class="clearfix"></div>
 		<br>
@@ -125,7 +125,7 @@ if ($module['name'] == 'Ordini cliente') {
 	</div>
 </div>
 
-{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module ?>", "id_record": "<?php echo $id_record ?>" )}
+{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
 
 <?php
 //fatture o ddt collegati a questo ordine

@@ -85,16 +85,16 @@ if ($_GET['lev'] == '3') {
         $saldo_finale[] = $rs[$i]['totale'];
     }
 
-    if ( sum($saldo_finale) < 0) {
+    if (sum($saldo_finale) < 0) {
         $dare = '';
-        $avere = abs( sum($saldo_finale) );
+        $avere = abs(sum($saldo_finale));
     } else {
-        $dare = abs( sum($saldo_finale) );
+        $dare = abs(sum($saldo_finale));
         $avere = '';
     }
 
     // Mostro il saldo finale
-    $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'><b>SALDO FINALE</b></td><td class='br bb padded text-right'><b>".Translator::numberToLocale( abs( sum($dare) ) )."</b></td><td class='bb padded text-right'><b>".Translator::numberToLocale( abs( sum($avere) ) )."</b></td></tr>\n";
+    $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'><b>SALDO FINALE</b></td><td class='br bb padded text-right'><b>".Translator::numberToLocale(abs(sum($dare)))."</b></td><td class='bb padded text-right'><b>".Translator::numberToLocale(abs(sum($avere)))."</b></td></tr>\n";
 
     $body .= "		</tbody>
                 </table>\n";
@@ -121,10 +121,10 @@ elseif ($_GET['lev'] == '2') {
         $saldo_iniziale = $rs[0]['totale'];
         $saldo_finale[] = $saldo_iniziale;
 
-        if ( $saldo_iniziale < 0) {
-            $v_avere[] = abs( $saldo_iniziale );
+        if ($saldo_iniziale < 0) {
+            $v_avere[] = abs($saldo_iniziale);
         } else {
-            $v_dare[] = abs( $saldo_iniziale );
+            $v_dare[] = abs($saldo_iniziale);
         }
 
         $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= "'.$_SESSION['period_start'].'" AND data <= "'.$_SESSION['period_end'].'" ORDER BY data ASC');
@@ -215,9 +215,9 @@ elseif (get('lev') == '1') {
 
     // Stampa "Costi/Ricavi" se conto economico
     if ($rs1[0]['descrizione'] == 'Economico') {
-        $body .= "		<tr><th colspan='3' class='br bb padded'>RICAVI</th><th align='right' class='bb padded'>".Translator::numberToLocale( sum($ricavi) )."</th></tr>\n";
-        $body .= "		<tr><th colspan='3' class='br bb padded'>COSTI</th><th align='right' class='bb padded'>".Translator::numberToLocale( sum($costi) )."</th></tr>\n";
-        $body .= "		<tr><th colspan='3' class='br padded'>UTILE</th><th class='padded' align='right'>".Translator::numberToLocale( sum($ricavi) - sum($costi) )."</th></tr>\n";
+        $body .= "		<tr><th colspan='3' class='br bb padded'>RICAVI</th><th align='right' class='bb padded'>".Translator::numberToLocale(sum($ricavi))."</th></tr>\n";
+        $body .= "		<tr><th colspan='3' class='br bb padded'>COSTI</th><th align='right' class='bb padded'>".Translator::numberToLocale(sum($costi))."</th></tr>\n";
+        $body .= "		<tr><th colspan='3' class='br padded'>UTILE</th><th class='padded' align='right'>".Translator::numberToLocale(sum($ricavi) - sum($costi))."</th></tr>\n";
     }
 
     // Stampa "Attività/Passività" se stato patrimoniale
@@ -270,9 +270,9 @@ elseif (get('lev') == '1') {
         $body .= "	</table>\n";
 
         // Tabella di riepilogo finale
-        $totale_attivita = abs( sum($totale_attivita) );
-        $totale_passivita = abs( sum($totale_passivita) );
-        $utile_perdita = abs( sum($ricavi) ) - abs( sum($costi) );
+        $totale_attivita = abs(sum($totale_attivita));
+        $totale_passivita = abs(sum($totale_passivita));
+        $utile_perdita = abs(sum($ricavi)) - abs(sum($costi));
 
         if ($utile_perdita < 0) {
             $pareggio1 = $totale_attivita + abs($utile_perdita);

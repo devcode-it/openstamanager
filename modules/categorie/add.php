@@ -22,13 +22,12 @@ if (!isset($id_original)) {
 
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			{[ "type": "text", "label": "<?php echo tr('Nome') ?>", "name": "nome", "required": 1 ]}
+			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1 ]}
 		</div>
 	</div>
 <?php
-
 } else {
-    ?>
+        ?>
 	<input type="hidden" name="op" value="row">
 	<input type="hidden" name="id_original" value="<?php echo $id_original; ?>">
 
@@ -58,8 +57,7 @@ if (!isset($id_original)) {
 		});
 	</script>
 <?php
-
-}
+    }
 ?>
 
 	<!-- PULSANTI -->
@@ -70,13 +68,11 @@ if (isset($id_record)) {
     ?>
 			<button type="submit" class="btn btn-success"><i class="fa fa-save"></i> <?php echo tr('Salva'); ?></button>
 <?php
-
 } else {
-    ?>
+        ?>
 			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 <?php
-
-}
+    }
 ?>
 		</div>
 	</div>

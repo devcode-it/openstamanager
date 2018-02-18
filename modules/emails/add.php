@@ -8,17 +8,17 @@ include_once __DIR__.'/../../core.php';
 
     <div class="row">
 		<div class="col-xs-12 col-md-12">
-			{[ "type": "text", "label": "<?php echo tr('Nome') ?>", "name": "name", "required": 1 ]}
+			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "required": 1 ]}
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-xs-12 col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Modulo del template') ?>", "name": "module", "values": "query=SELECT id, title AS descrizione FROM zz_modules WHERE enabled = 1" ]}
+			{[ "type": "select", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "values": "query=SELECT id, title AS descrizione FROM zz_modules WHERE enabled = 1" ]}
 		</div>
 
 		<div class="col-xs-12 col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Oggetto') ?>", "name": "subject" ]}
+			{[ "type": "text", "label": "<?php echo tr('Oggetto'); ?>", "name": "subject" ]}
 		</div>
     </div>
 

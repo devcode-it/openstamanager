@@ -13,7 +13,7 @@ function menuSelection($element, $depth, $perms_values, $perms_names)
     ++$depth;
     $name = $element['title'];
 
-    $submenus = $dbo->fetchArray("SELECT * FROM zz_modules WHERE enabled='1' AND parent=".prepare($element['id'])." ORDER BY `order` ASC");
+    $submenus = $dbo->fetchArray("SELECT * FROM zz_modules WHERE enabled='1' AND parent=".prepare($element['id']).' ORDER BY `order` ASC');
 
     if ($submenus != null && count($submenus) != 0) {
         $temp = '';

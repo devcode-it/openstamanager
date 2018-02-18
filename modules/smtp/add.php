@@ -8,17 +8,17 @@ include_once __DIR__.'/../../core.php';
 
     <div class="row">
 		<div class="col-xs-12 col-md-12">
-			{[ "type": "text", "label": "<?php echo tr('Nome account') ?>", "name": "name", "required": 1 ]}
+			{[ "type": "text", "label": "<?php echo tr('Nome account'); ?>", "name": "name", "required": 1 ]}
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-xs-12 col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Nome visualizzato') ?>", "name": "from_name" ]}
+			{[ "type": "text", "label": "<?php echo tr('Nome visualizzato'); ?>", "name": "from_name" ]}
 		</div>
 
 		<div class="col-xs-12 col-md-6">
-			{[ "type": "email", "label": "<?php echo tr('Email mittente') ?>", "name": "from_address" ]}
+			{[ "type": "email", "label": "<?php echo tr('Email mittente'); ?>", "name": "from_address" ]}
 		</div>
     </div>
 

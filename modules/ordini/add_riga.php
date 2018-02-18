@@ -79,7 +79,7 @@ echo '
         </div>
     </div>';
 
-if(empty($rsr[0]['is_descrizione'])){
+if (empty($rsr[0]['is_descrizione'])) {
     // Iva
     echo '
     <div class="row">

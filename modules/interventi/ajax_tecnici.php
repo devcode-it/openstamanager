@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (file_exists($docroot.'/modules/interventi/custom/modutil.php')){
+if (file_exists($docroot.'/modules/interventi/custom/modutil.php')) {
     include_once $docroot.'/modules/interventi/custom/modutil.php';
 } else {
     include_once $docroot.'/modules/interventi/modutil.php';
@@ -51,7 +51,7 @@ $query = 'SELECT * FROM an_anagrafiche JOIN in_interventi_tecnici ON in_interven
 $rs2 = $dbo->fetchArray($query);
 $prev_tecnico = '';
 
-if( $flg_completato ){
+if ($flg_completato) {
     $readonly = 'readonly';
 } else {
     $readonly = '';
@@ -248,12 +248,12 @@ if (!empty($rs2)) {
         // Pulsante eliminazione sessione
         echo '
             <td>';
-            
-        if( !$flg_completato ){
+
+        if (!$flg_completato) {
             echo '
                 <a class="btn btn-danger" id="delbtn_'.$id.'" onclick="elimina_sessione(\''.$id.'\', \''.$id_record.'\', \''.$idzona.'\');" title="Elimina riga" class="only_rw"><i class="fa fa-trash"></i></a>';
         }
-        
+
         echo '
             </td>
         </tr>';
@@ -270,7 +270,7 @@ if (!empty($rs2)) {
 '<p>'.tr('Nessun tecnico presente').'.</p>';
 }
 
-if ( !$flg_completato ) {
+if (!$flg_completato) {
     echo '
     <!-- AGGIUNTA TECNICO -->
     <div class="row">
@@ -288,7 +288,7 @@ if ( !$flg_completato ) {
 }
 ?>
 
-<script src="<?php echo $rootdir ?>/lib/init.js"></script>
+<script src="<?php echo $rootdir; ?>/lib/init.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function(){

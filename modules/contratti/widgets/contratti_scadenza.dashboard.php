@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$rs = $dbo->fetchArray("SELECT *, DATEDIFF( data_conclusione, NOW() ) AS giorni_rimanenti, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_contratti.idanagrafica) AS ragione_sociale FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND NOT EXISTS (SELECT id FROM co_righe_documenti WHERE co_righe_documenti.idcontratto = co_contratti.id) AND rinnovabile=1 AND NOW() > DATE_ADD( data_conclusione, INTERVAL - ABS(giorni_preavviso_rinnovo) DAY) AND YEAR(data_conclusione) > 1970 ORDER BY giorni_rimanenti ASC");
+$rs = $dbo->fetchArray('SELECT *, DATEDIFF( data_conclusione, NOW() ) AS giorni_rimanenti, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_contratti.idanagrafica) AS ragione_sociale FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND NOT EXISTS (SELECT id FROM co_righe_documenti WHERE co_righe_documenti.idcontratto = co_contratti.id) AND rinnovabile=1 AND NOW() > DATE_ADD( data_conclusione, INTERVAL - ABS(giorni_preavviso_rinnovo) DAY) AND YEAR(data_conclusione) > 1970 ORDER BY giorni_rimanenti ASC');
 
 if (!empty($rs)) {
     echo '

@@ -8,7 +8,7 @@ switch (post('op')) {
         $prc_guadagno = post('prc_guadagno');
         $note = post('note');
 
-        if(abs($prc_guadagno) > 100){
+        if (abs($prc_guadagno) > 100) {
             $prc_guadagno = ($prc_guadagno > 0) ? 100 : -100;
         }
 
@@ -22,7 +22,7 @@ switch (post('op')) {
         $nome = post('nome');
         $prc_guadagno = post('prc_guadagno');
 
-        if(abs($prc_guadagno) > 100){
+        if (abs($prc_guadagno) > 100) {
             $prc_guadagno = ($prc_guadagno > 0) ? 100 : -100;
         }
 

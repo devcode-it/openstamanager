@@ -49,7 +49,7 @@ include __DIR__.'/../../core.php';
 
 <script>
 	$('.fields input').on('keyup change', function(){
-		$('#link').val( "<?php echo $rootdir ?>/modules/osmsync/sync_interventi.php?username="+$('#username').val()+"&password="+$('#password').val() );
+		$('#link').val( "<?php echo $rootdir; ?>/modules/osmsync/sync_interventi.php?username="+$('#username').val()+"&password="+$('#password').val() );
 	});
 
 	$('#link').on('click', function(){

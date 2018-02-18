@@ -44,9 +44,8 @@ echo '
             {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "required": 1, "value": '.json_encode($rsr[0]['descrizione']).' ]}
         </div>
     </div>';
-    
-if($rsr[0]['is_descrizione']==0){
 
+if ($rsr[0]['is_descrizione'] == 0) {
     if (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d'acconto") != '' || $dir == 'uscita') {
         echo '
         <div class="row">';
@@ -109,7 +108,6 @@ if($rsr[0]['is_descrizione']==0){
                 {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'" ]}
             </div>
         </div>';
-
 }
 echo '
 

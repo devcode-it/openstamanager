@@ -148,7 +148,7 @@ echo '
 ?>
 
 <script type="text/javascript">
-    dir = '<?php echo $dir ?>';
+    dir = '<?php echo $dir; ?>';
 
     // Se sono stati selezionati un serial number e/o altro codice, la quantità deve rimanere 1 (solo per la vendita)
     function check_qta(){

@@ -1,5 +1,4 @@
 <?php
-	if( $docroot == '' ){
-		die( _("Accesso negato!") );
-	}
-?>
+    if ($docroot == '') {
+        die(_('Accesso negato!'));
+    }

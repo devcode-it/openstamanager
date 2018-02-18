@@ -744,7 +744,7 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
 
     // Aggiorno l'eventuale sconto gestendolo con le righe in fattura
     $iva = 0;
-    
+
     if (!empty($sconto[0]['sconto_globale'])) {
         if ($sconto[0]['tipo_sconto_globale'] == 'PRC') {
             $rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS imponibile, SUM(iva) AS iva FROM (SELECT '.$tables['row'].'.subtotale, '.$tables['row'].'.sconto, '.$tables['row'].'.iva FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record).') AS t');

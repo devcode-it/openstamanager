@@ -7,7 +7,7 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 ?><form action="" method="post" role="form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
-	<input type="hidden" name="id_record" value="<?php echo $id_record ?>">
+	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
 	<!-- DATI INTESTAZIONE -->
 	<div class="panel panel-primary">
@@ -18,7 +18,7 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 		<div class="panel-body">
 			<div class="pull-right">
 
-                {( "name": "button", "type": "print", "id_module": "<?php echo $id_module ?>", "id_record": "<?php echo $id_record ?>" )}
+                {( "name": "button", "type": "print", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
 
 				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
 				<br/><br/>
@@ -107,7 +107,7 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato') ?>", "name": "sconto_generico", "value": "$sconto_globale$", "icon-after": "choice|untprc|$tipo_sconto_globale$" ]}
+                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato'); ?>", "name": "sconto_generico", "value": "$sconto_globale$", "icon-after": "choice|untprc|$tipo_sconto_globale$" ]}
                 </div>
             </div>
 
@@ -143,15 +143,15 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
         <?php if ($records[0]['stato'] != 'Pagato') {
                         ?>
 
-            <a class="btn btn-primary" data-href="<?php echo $rootdir ?>/modules/preventivi/edit_riga.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> Riga</a>
+            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/preventivi/edit_riga.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> Riga</a>
 
-            <a class="btn btn-primary" data-href="<?php echo $rootdir ?>/modules/preventivi/add_descrizione.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup"><i class="fa fa-plus"></i> Descrizione</a>
+            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/preventivi/add_descrizione.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup"><i class="fa fa-plus"></i> Descrizione</a>
 
         <?php
                     } ?>
 
         <div class="pull-right">
-            {( "name": "button", "type": "print", "id_module": "<?php echo $id_module ?>", "id_record": "<?php echo $id_record ?>" )}
+            {( "name": "button", "type": "print", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
         </div>
         <div class="clearfix"></div>
         <br>

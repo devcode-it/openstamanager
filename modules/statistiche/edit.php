@@ -225,7 +225,7 @@ foreach ($tipi as $tipo) {
     }
 
     //Random color
-    $background = '#' . dechex(rand(256,16777215));
+    $background = '#'.dechex(rand(256, 16777215));
 
     $dataset .= '{
         label: "'.$tipo['descrizione'].'",

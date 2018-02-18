@@ -14,7 +14,7 @@ if ($module['name'] == 'Ddt di vendita') {
 <form action="" method="post" role="form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
-	<input type="hidden" name="id_record" value="<?php echo $id_record ?>">
+	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
 	<!-- INTESTAZIONE -->
 	<div class="panel panel-primary">
@@ -107,7 +107,7 @@ if ($dir == 'uscita') {
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato') ?>", "name": "sconto_generico", "value": "$sconto_globale$", "icon-after": "choice|untprc|$tipo_sconto_globale$" ]}
+                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato'); ?>", "name": "sconto_generico", "value": "$sconto_globale$", "icon-after": "choice|untprc|$tipo_sconto_globale$" ]}
                 </div>
             </div>
 
@@ -137,13 +137,13 @@ if ($dir == 'uscita') {
 
 if ($records[0]['stato'] != 'Evaso') {
     ?>
-				<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/ddt/add_articolo.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>&dir=<?php echo $dir ?>" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup">
+				<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir; ?>/modules/ddt/add_articolo.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&dir=<?php echo $dir; ?>" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup">
                     <i class="fa fa-plus"></i> <?php echo tr('Articolo'); ?>
                 </a>
-				<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/ddt/add_riga.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>&dir=<?php echo $dir ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup">
+				<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir; ?>/modules/ddt/add_riga.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&dir=<?php echo $dir; ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup">
                     <i class="fa fa-plus"></i> <?php echo tr('Riga generica'); ?>
                 </a>
-                <a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir ?>/modules/ddt/add_descrizione.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>&dir=<?php echo $dir ?>" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup">
+                <a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir; ?>/modules/ddt/add_descrizione.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&dir=<?php echo $dir; ?>" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup">
                     <i class="fa fa-plus"></i> <?php echo tr('Descrizione'); ?>
                 </a>
 <?php
@@ -157,14 +157,14 @@ if ($records[0]['stato'] != 'Evaso') {
 
 if (!in_array($records[0]['stato'], ['Bozza', 'Fatturato'])) {
     ?>
-				<a class="btn btn-sm btn-info" data-href="<?php echo $rootdir ?>/modules/fatture/crea_documento.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>&documento=fattura" data-toggle="modal" data-title="Crea fattura" data-target="#bs-popup">
+				<a class="btn btn-sm btn-info" data-href="<?php echo $rootdir; ?>/modules/fatture/crea_documento.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&documento=fattura" data-toggle="modal" data-title="Crea fattura" data-target="#bs-popup">
                     <i class="fa fa-magic"></i> <?php echo tr('Crea fattura da ddt'); ?>...</i>
                 </a>
 <?php
 }
 ?>
 
-            {( "name": "button", "type": "print", "id_module": "<?php echo $id_module ?>", "id_record": "<?php echo $id_record ?>" )}
+            {( "name": "button", "type": "print", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
 		</div>
 
 		<div class="clearfix"></div>
@@ -182,7 +182,7 @@ include $docroot.'/modules/ddt/row-list.php';
 	</div>
 </div>
 
-{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module ?>", "id_record": "<?php echo $id_record ?>" )}
+{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
 
 <script>
 	$('#idanagrafica').change( function(){

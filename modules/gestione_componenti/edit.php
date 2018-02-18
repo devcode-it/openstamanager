@@ -17,7 +17,7 @@ if (empty($id_record)) {
         echo '
             <tr class="clickable" onclick="openLink(event, \''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$c.'\')">
                 <td>'.$c.'</td>
-                <td>'.$cmp[$c-1][0].'</td>
+                <td>'.$cmp[$c - 1][0].'</td>
 			</tr>';
     }
     echo '
@@ -64,5 +64,4 @@ if (empty($id_record)) {
     </a>
 
 <?php
-
 }

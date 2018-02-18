@@ -13,7 +13,7 @@ echo '
 	<!-- DATI -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Dati') ?></h3>
+			<h3 class="panel-title"><?php echo tr('Dati'); ?></h3>
 		</div>
 
 		<div class="panel-body">
@@ -24,45 +24,45 @@ echo '
 
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Nome') ?>", "name": "name", "value": "$name$", "required": 1 ]}
+                    {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "value": "$name$", "required": 1 ]}
                 </div>
 
                 <div class="col-md-2">
-                    {[ "type": "span", "label": "<?php echo tr('Modulo del template') ?>", "name": "module", "values": "query=SELECT id, title AS descrizione FROM zz_modules WHERE enabled = 1", "value": "<?php echo Modules::get($records[0]['id_module'])['title']; ?>" ]}
+                    {[ "type": "span", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "values": "query=SELECT id, title AS descrizione FROM zz_modules WHERE enabled = 1", "value": "<?php echo Modules::get($records[0]['id_module'])['title']; ?>" ]}
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Notifica di lettura') ?>", "name": "read_notify",  "value": "$read_notify$", "placeholder": "<?php echo tr('Abilita la notifica di lettura') ?>" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Notifica di lettura'); ?>", "name": "read_notify",  "value": "$read_notify$", "placeholder": "<?php echo tr('Abilita la notifica di lettura'); ?>" ]}
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-8">
-                    {[ "type": "text", "label": "<?php echo tr('Oggetto') ?>", "name": "subject", "value": "$subject$" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Oggetto'); ?>", "name": "subject", "value": "$subject$" ]}
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "text", "label": "<?php echo tr('Icona') ?>", "name": "icon", "value": "$icon$" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Icona'); ?>", "name": "icon", "value": "$icon$" ]}
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-4">
-                    {[ "type": "text", "label": "<?php echo tr('CC') ?>", "name": "cc", "value": "$cc$" ]}
+                    {[ "type": "text", "label": "<?php echo tr('CC'); ?>", "name": "cc", "value": "$cc$" ]}
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "text", "label": "<?php echo tr('BCC') ?>", "name": "port", "value": "$bcc$" ]}
+                    {[ "type": "text", "label": "<?php echo tr('BCC'); ?>", "name": "port", "value": "$bcc$" ]}
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "text", "label": "<?php echo tr('Reply to') ?>", "name": "reply_to", "value": "$reply_to$" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Reply to'); ?>", "name": "reply_to", "value": "$reply_to$" ]}
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "textarea", "label": "<?php echo tr('Contenuto') ?>", "name": "body", "value": "$body$" ]}
+                    {[ "type": "textarea", "label": "<?php echo tr('Contenuto'); ?>", "name": "body", "value": "$body$" ]}
                 </div>
             </div>
 

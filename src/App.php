@@ -333,4 +333,57 @@ class App
 
         return $query;
     }
+
+    public static function load($file, $result, $options, $directory = null)
+    {
+        $module = self::getCurrentModule();
+
+        $id_module = filter('id_module');
+        $id_record = filter('id_record');
+
+        $directory = empty($directory) ? 'include|custom|/common/' : $directory;
+        $directory = str_contains($directory, DOCROOT) ? $directory : DOCROOT.'/'.$directory;
+
+        ob_start();
+
+        $original_file = str_replace('|custom|', '', $directory).'form.php';
+        $custom_file = str_replace('|custom|', '/custom', $directory).'form.php';
+        if (file_exists($custom_file)) {
+            require $custom_file;
+        } elseif (file_exists($original_file)) {
+            require $original_file;
+        }
+
+        $form = ob_get_clean();
+
+        $response = self::internalLoad($file, $result, $options, $directory);
+        $form = str_replace('|response|', $response, $form);
+
+        return $form;
+    }
+
+    protected static function internalLoad($file, $result, $options, $directory = null)
+    {
+        $module = self::getCurrentModule();
+
+        $id_module = filter('id_module');
+        $id_record = filter('id_record');
+
+        $directory = empty($directory) ? 'include|custom|/common/' : $directory;
+        $directory = str_contains($directory, DOCROOT) ? $directory : DOCROOT.'/'.$directory;
+
+        ob_start();
+
+        $original_file = str_replace('|custom|', '', $directory).$file;
+        $custom_file = str_replace('|custom|', '/custom', $directory).$file;
+        if (file_exists($custom_file)) {
+            require $custom_file;
+        } elseif (file_exists($original_file)) {
+            require $original_file;
+        }
+
+        $response = ob_get_clean();
+
+        return $response;
+    }
 }

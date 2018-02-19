@@ -15,12 +15,15 @@ echo '
 echo '
     |response|';
 
+$button = $options['button'] == 'add' ? tr('Aggiungi') : tr('Modifica');
+$icon = $options['button'] == 'add' ? 'fa-plus' : 'fa-pencil';
+
 echo '
 
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> '.$options['button'].'</button>
+			<button type="submit" class="btn btn-primary pull-right"><i class="fa '.$icon.'"></i> '.$button.'</button>
 		</div>
     </div>
 </form>';

@@ -58,10 +58,12 @@ echo '
 echo '
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "value": "'.$result['um'].'", "ajax-source": "misure" ]}
-        </div>';
+        </div>
+    </div>';
 
-// Costo unitario
+    // Costo unitario
 echo '
+    <div class="row">
         <div class="col-md-6">
             {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "value": "'.$result['prezzo'].'", "required": 1, "icon-after": "&euro;" ]}
         </div>';

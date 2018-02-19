@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 // Info contratto
-$rs = $dbo->fetchArray('SELECT * FROM co_contratti WHERE id='.prepare($id_record));
+$rs = $dbo->fetchArray('SELECT * FROM co_preventivi WHERE id='.prepare($id_record));
 $idanagrafica = $rs[0]['idanagrafica'];
 
 // Impostazioni per la gestione
@@ -15,7 +15,7 @@ $options = [
 ];
 
 // Dati della riga
-$rsr = $dbo->fetchArray('SELECT * FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record).' AND id='.prepare($get['idriga']));
+$rsr = $dbo->fetchArray('SELECT * FROM co_righe_preventivi WHERE idpreventivo='.prepare($id_record).' AND id='.prepare($get['idriga']));
 
 $result = $rsr[0];
 $result['prezzo'] = $rsr[0]['subtotale'] / $rsr[0]['qta'];

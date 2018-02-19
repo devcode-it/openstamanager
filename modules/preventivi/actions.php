@@ -228,21 +228,17 @@ switch (post('op')) {
         $iva = ($subtot - $sconto) / 100 * $rs2[0]['percentuale'];
         $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
 
-        $dbo->query('INSERT INTO co_righe_preventivi(idpreventivo, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, `order`) VALUES ('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($rs2[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_preventivi AS t WHERE idpreventivo='.prepare($id_record).'))');
+        $dbo->query('INSERT INTO co_righe_preventivi(idpreventivo, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, is_descrizione, `order`) VALUES ('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($rs2[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare(empty($qta)).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_preventivi AS t WHERE idpreventivo='.prepare($id_record).'))');
 
-        $_SESSION['infos'][] = tr('Articolo aggiunto!');
-
-        break;
-
-    case 'adddescrizione':
-        if (!empty($id_record)) {
-            $descrizione = post('descrizione');
-            $query = 'INSERT INTO co_righe_preventivi(idpreventivo, descrizione, is_descrizione) VALUES('.prepare($id_record).', '.prepare($descrizione).', 1)';
-
-            if ($dbo->query($query)) {
-                $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
-            }
+        // Messaggi informativi
+        if (!empty($idarticolo)) {
+            $_SESSION['infos'][] = tr('Articolo aggiunto!');
+        } elseif (!empty($qta)) {
+            $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
+        } else {
+            $_SESSION['infos'][] = tr('Riga aggiunta!');
         }
+
         break;
 
     case 'editriga':

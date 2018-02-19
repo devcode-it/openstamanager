@@ -6,7 +6,10 @@ echo App::internalLoad('descrizione.php', $result, $options);
 // Informazioni aggiuntive per Fatture
 if ($module['name'] == 'Fatture di acquisto' || $module['name'] == 'Fatture di vendita') {
     // Percentuale rivalsa INPS e Percentuale ritenuta d'acconto
-    if (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d'acconto") != '' || $options['dir'] == 'uscita') {
+    if (
+        $options['action'] == 'edit' &&
+        (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d'acconto") != '' || $options['dir'] == 'uscita')
+    ) {
         echo '
     <div class="row">';
 

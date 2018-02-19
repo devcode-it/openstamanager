@@ -743,28 +743,23 @@ switch (post('op')) {
             $ritenutaacconto = (($prezzo * $qta) + $rivalsainps) / 100 * $rs[0]['percentuale'];
 
             // Aggiunta riga generica sul documento
-            $query = 'INSERT INTO co_righe_documenti(iddocumento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, `order`) VALUES('.prepare($id_record).', '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', '.prepare(post('idrivalsainps')).', '.prepare($rivalsainps).', '.prepare(post('idritenutaacconto')).', '.prepare($ritenutaacconto).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
+            $query = 'INSERT INTO co_righe_documenti(iddocumento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, is_descrizione, `order`) VALUES('.prepare($id_record).', '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', '.prepare(post('idrivalsainps')).', '.prepare($rivalsainps).', '.prepare(post('idritenutaacconto')).', '.prepare($ritenutaacconto).', '.prepare(empty($qta)).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
+            $dbo->query($query);
 
-            if ($dbo->query($query)) {
+            // Messaggi informativi
+            if (!empty($idarticolo)) {
+                $_SESSION['infos'][] = tr('Articolo aggiunto!');
+            } elseif (!empty($qta)) {
                 $_SESSION['infos'][] = tr('Riga aggiunta!');
-
-                // Ricalcolo inps, ritenuta e bollo
-                if ($dir == 'entrata') {
-                    ricalcola_costiagg_fattura($id_record);
-                } else {
-                    ricalcola_costiagg_fattura($id_record);
-                }
-            }
-        }
-        break;
-
-    case 'adddescrizione':
-        if (!empty($id_record)) {
-            $descrizione = post('descrizione');
-            $query = 'INSERT INTO co_righe_documenti(iddocumento, descrizione, is_descrizione) VALUES('.prepare($id_record).', '.prepare($descrizione).', 1)';
-
-            if ($dbo->query($query)) {
+            } else {
                 $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
+            }
+
+            // Ricalcolo inps, ritenuta e bollo
+            if ($dir == 'entrata') {
+                ricalcola_costiagg_fattura($id_record);
+            } else {
+                ricalcola_costiagg_fattura($id_record);
             }
         }
         break;

@@ -13,8 +13,8 @@ echo '
 echo '
     |response|';
 
-$button = $options['button'] == 'add' ? tr('Aggiungi') : tr('Modifica');
-$icon = $options['button'] == 'add' ? 'fa-plus' : 'fa-pencil';
+$button = $options['action'] == 'add' ? tr('Aggiungi') : tr('Modifica');
+$icon = $options['action'] == 'add' ? 'fa-plus' : 'fa-pencil';
 
 echo '
 

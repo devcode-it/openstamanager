@@ -332,18 +332,18 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
 
     $articoli = $dbo->fetchArray($art_query)[0]['tot'];
     echo '
-                        <a class="btn btn-sm btn-primary'.(!empty($articoli) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_articolo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup">
-                            <i class="fa fa-plus"></i> Articolo
+                        <a class="btn btn-sm btn-primary'.(!empty($articoli) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/row-add.php?id_module='.$id_module.'&id_record='.$id_record.'&is_articolo" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup">
+                            <i class="fa fa-plus"></i> '.tr('Articolo').'
                         </a>';
 
     echo '
-                        <a class="btn btn-sm btn-primary" data-href="'.$rootdir.'/modules/fatture/add_riga.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup">
-                            <i class="fa fa-plus"></i> Riga generica
+                        <a class="btn btn-sm btn-primary" data-href="'.$rootdir.'/modules/fatture/row-add.php?id_module='.$id_module.'&id_record='.$id_record.'&is_riga" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup">
+                            <i class="fa fa-plus"></i> '.tr('Riga').'
                         </a>';
 
     echo '
-                        <a class="btn btn-sm btn-primary" data-href="'.$rootdir.'/modules/fatture/add_descrizione.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup">
-                            <i class="fa fa-plus"></i> Descrizione
+                        <a class="btn btn-sm btn-primary" data-href="'.$rootdir.'/modules/fatture/row-add.php?id_module='.$id_module.'&id_record='.$id_record.'&is_descrizione" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup">
+                            <i class="fa fa-plus"></i> '.tr('Descrizione').'
                         </a>';
 }
 ?>

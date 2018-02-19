@@ -136,7 +136,7 @@ foreach ($modules as $module) {
         $compatible = '<i class="fa fa-check-circle text-success" data-toggle="tooltip" title="'.tr('Compatibile').'"></i>';
         $class = 'success';
     } else {
-        $compatible = '<i class="fa fa-warning text-danger" data-toggle="tooltip" title="'.tr('Non compabitile!').tr('Questo modulo è compatibile solo con le versioni').': '.$module['compatibility'].'"></i>';
+        $compatible = '<i class="fa fa-warning text-danger" data-toggle="tooltip" title="'.tr('Non compatibile!').tr('Questo modulo è compatibile solo con le versioni').': '.$module['compatibility'].'"></i>';
         $class = 'danger';
     }
 
@@ -200,7 +200,7 @@ foreach ($modules as $module) {
         $compatible = '<i class="fa fa-check-circle text-success" data-toggle="tooltip" title="'.tr('Compatibile').'"></i>';
         $class = 'success';
     } else {
-        $compatible = '<i class="fa fa-warning text-danger" data-toggle="tooltip" title="'.tr('Non compabitile!').tr('Questo modulo è compatibile solo con le versioni').': '.$sub['compatibility'].'"></i>';
+        $compatible = '<i class="fa fa-warning text-danger" data-toggle="tooltip" title="'.tr('Non compatibile!').tr('Questo modulo è compatibile solo con le versioni').': '.$sub['compatibility'].'"></i>';
         $class = 'danger';
     }
 

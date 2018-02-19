@@ -33,6 +33,9 @@ if (!empty($rs)) {
     </tr>';
 
     foreach ($rs as $r) {
+        $extra = '';
+        $mancanti = 0;
+
         // Individuazione dei seriali
         if (!empty($r['idarticolo']) && !empty($r['abilita_serial'])) {
             $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_intervento='.prepare($r['id'])), 'serial');

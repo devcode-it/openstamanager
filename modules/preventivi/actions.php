@@ -234,9 +234,9 @@ switch (post('op')) {
         if (!empty($idarticolo)) {
             $_SESSION['infos'][] = tr('Articolo aggiunto!');
         } elseif (!empty($qta)) {
-            $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
-        } else {
             $_SESSION['infos'][] = tr('Riga aggiunta!');
+        } else {
+            $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
         }
 
         break;

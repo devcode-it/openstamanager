@@ -38,6 +38,9 @@ if (!empty($rs)) {
 
             $delete = 'unlink_articolo';
 
+            $extra = '';
+            $mancanti = 0;
+
             // Individuazione dei seriali
             if (!empty($r['abilita_serial'])) {
                 $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_documento='.prepare($r['id'])), 'serial');

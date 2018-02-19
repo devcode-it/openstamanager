@@ -24,6 +24,9 @@ if (!empty($rs)) {
     foreach ($rs as $r) {
         $delete = !empty($r['idarticolo']) ? 'unlink_articolo' : 'unlink_riga';
 
+        $extra = '';
+        $mancanti = 0;
+
         // Individuazione dei seriali
         if (!empty($r['idarticolo']) && !empty($r['abilita_serial'])) {
             $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_ordine='.prepare($r['id'])), 'serial');

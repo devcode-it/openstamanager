@@ -71,7 +71,7 @@ elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
     $idimpianto = implode(',', array_column($rs, 'idimpianto'));
 
     // Seleziono "In programmazione" come stato
-    $rs = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE codice='WIP'");
+    $rs = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE idstatointervento='WIP'");
     $idstatointervento = $rs[0]['idstatointervento'];
 }
 

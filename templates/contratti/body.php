@@ -303,7 +303,7 @@ echo '<div style=\'position:absolute; bottom:'.($settings['margins']['bottom'] +
 
         <td align="center" style="vertical-align:bottom;" width="50%">
             FIRMA PER ACCETTAZIONE<br><br>
-            _____________________________________
+            _____________________________________________
         </td>
     </tr>
 </table>

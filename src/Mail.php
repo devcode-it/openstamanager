@@ -114,6 +114,33 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     }
 
     /**
+     * Restituisce le informazioni relative a un singolo template specificato.
+     *
+     * @param string|int $template
+     *
+     * @return array
+     */
+    public static function getTemplateVariables($template)
+    {
+        $template = self::getTemplate($template);
+        $module = Modules::get($template['id_module']);
+
+        $directory = DOCROOT.'/modules/'.$module['directory'].'|custom|/variables.php';
+
+        $original_file = str_replace('|custom|', '', $directory).'form.php';
+        $custom_file = str_replace('|custom|', '/custom', $directory).'form.php';
+
+        // Lettura delle variabili nei singoli moduli
+        if (file_exists($custom_file)) {
+            $variables = require $custom_file;
+        } elseif (file_exists($original_file)) {
+            $variables = require $original_file;
+        }
+
+        return (array) $variables;
+    }
+
+    /**
      * Restituisce le informazioni relative ai template di un singolo modulo specificato.
      *
      * @param string|int $module
@@ -123,6 +150,8 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     public static function getModuleTemplates($module)
     {
         $module_id = Modules::get($module)['id'];
+
+        self::getTemplates();
 
         $result = [];
 
@@ -168,6 +197,9 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
                 $this->SMTPSecure = strtolower($config['encryption']);
             }
         }
+
+        $this->From = $config['from_address'];
+        $this->FromName = $_SESSION['from_name'];
 
         $this->WordWrap = 78;
     }

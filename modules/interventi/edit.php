@@ -45,6 +45,8 @@ if (empty($records[0]['firma_file'])) {
 
                 {( "name": "button", "type": "print", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
 
+                {( "name": "button", "type": "email", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
+
 				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
 				<div class="clearfix" >&nbsp;</div>
 			</div>
@@ -138,13 +140,13 @@ if (empty($records[0]['firma_file'])) {
 				<div class="col-md-3">
 					{[ "type": "date", "label": "<?php echo tr('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "$data_richiesta$", "extra": "<?= $readonly; ?>" ]}
 				</div>
-				
+
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "$idzona$" ,"extra": "readonly" ]}
 				</div>
-				
-				
-				
+
+
+
 			</div>
 
 
@@ -292,17 +294,17 @@ if (empty($records[0]['firma_file'])) {
 		$("#idsede").selectReset();
 		$("#idpreventivo").selectReset();
 		$("#idcontratto").selectReset();
-		
+
 		if (($(this).val())) {
 			if (($(this).selectData().idzona)){
 				$('#idzona').val($(this).selectData().idzona).change();
-	
+
 			}else{
 				$('#idzona').val('').change();
 			}
 			//session_set('superselect,idzona', $(this).selectData().idzona, 0);
 		}
-		
+
 	});
 
 	$('#idpreventivo').change( function(){
@@ -321,7 +323,7 @@ if (empty($records[0]['firma_file'])) {
 	$('#matricola').change( function(){
 		session_set('superselect,marticola', $(this).val(), 0);
 	});
-	
+
 	$('#idsede').change( function(){
 		if (($(this).val())) {
 			if (($(this).selectData().idzona)){
@@ -332,8 +334,8 @@ if (empty($records[0]['firma_file'])) {
 			//session_set('superselect,idzona', $(this).selectData().idzona, 0);
 		}
 	});
-	
-	
+
+
 </script>
 
 

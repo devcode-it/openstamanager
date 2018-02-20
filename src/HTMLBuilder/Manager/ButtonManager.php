@@ -32,6 +32,15 @@ class ButtonManager implements ManagerInterface
                 'title' => $print['title'],
                 'icon' => $print['icon'],
             ];
+        } else {
+            $template = \Mail::getTemplate($options['id']);
+
+            $result = [
+                'link' => ROOTDIR.'/mail.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'],
+                'title' => $template['name'],
+                'icon' => $template['icon'],
+                'type' => 'modal',
+            ];
         }
 
         return $result;
@@ -49,8 +58,23 @@ class ButtonManager implements ManagerInterface
         $icon = !empty($options['icon']) ? $options['icon'] : $info['icon'];
         $icon = str_replace('|default|', $info['icon'], $icon);
 
-        return '
-<a '.$class.' href="'.$info['link'].'" target="_blank"><i class="'.$icon.'"></i> '.$title.'</a>';
+        // Modal
+        if (isset($info['type']) && $info['type'] == 'modal') {
+            $result = '
+<a '.$class.' data-href="'.$info['link'].'" data-toggle="modal" data-title="'.$title.'" data-target="#bs-popup">';
+        }
+
+        // Link normale
+        else {
+            $result = '
+<a '.$class.' href="'.$info['link'].'" target="_blank">';
+        }
+
+        $result .= '
+    <i class="'.$icon.'"></i> '.$title.'
+</a>';
+
+        return $result;
     }
 
     protected function getList($options)
@@ -59,6 +83,8 @@ class ButtonManager implements ManagerInterface
 
         if ($options['type'] == 'print') {
             $results = \Prints::getModulePrints($options['id_module']);
+        } else {
+            $results = \Mail::getModuleTemplates($options['id_module']);
         }
 
         return $results;
@@ -67,10 +93,11 @@ class ButtonManager implements ManagerInterface
     protected function dropdown($options)
     {
         $list = $this->getList($options);
+        $count = count($list);
 
         $options['class'] = isset($options['class']) ? $options['class'] : 'btn-info';
 
-        if (count($list) > 1) {
+        if ($count > 1) {
             $result = '
 <div class="btn-group">';
 
@@ -81,6 +108,7 @@ class ButtonManager implements ManagerInterface
                 $result .= $this->link([
                     'type' => $options['type'],
                     'id' => $element['id'],
+                    'id_module' => $options['id_module'],
                     'id_record' => $options['id_record'],
                     'class' => $options['class'],
                 ]);
@@ -100,6 +128,7 @@ class ButtonManager implements ManagerInterface
         <li>'.$this->link([
             'type' => $options['type'],
             'id' => $element['id'],
+            'id_module' => $options['id_module'],
             'id_record' => $options['id_record'],
             'class' => false,
         ]).'</li>';
@@ -108,13 +137,16 @@ class ButtonManager implements ManagerInterface
             $result .= '
     </ul>
 </div>';
-        } else {
+        } elseif ($count == 1) {
             $result = $this->link([
                 'type' => $options['type'],
                 'id' => $list[0]['id']['id'],
+                'id_module' => $options['id_module'],
                 'id_record' => $options['id_record'],
                 'class' => $options['class'],
             ]);
+        } else {
+            $result = ' ';
         }
 
         return $result;
@@ -126,6 +158,8 @@ class ButtonManager implements ManagerInterface
 
         if ($options['type'] == 'print') {
             $result = '<i class="fa fa-print"></i> '.tr('Stampe');
+        } else {
+            $result = '<i class="fa fa-envelope"></i> '.tr('Email');
         }
 
         return $result;

@@ -136,16 +136,17 @@ if (!empty($options) && $options != 'custom') {
 								<div class="row">
 									<input type="hidden" value="'.$field['id'].'" name="id['.$key.']">
 
-									<div class="col-xs-12 col-md-6">
+									<div class="col-xs-12 col-md-12">
 										{[ "type": "text", "label": "'.tr('Nome').'", "name": "name['.$key.']", "value": "'.$field['name'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }
         echo ', "help": "'.tr('Nome con cui il campo viene identificato e visualizzato nella tabella').'" ]}
 									</div>
-
-									<div class="col-xs-12 col-md-6">
-										{[ "type": "text", "label": "'.tr('Query prevista').'", "name": "query['.$key.']", "value": "'.$field['query'].'"';
+								</div>
+								<div class="row">
+									<div class="col-xs-12 col-md-12">
+										{[ "type": "textarea", "label": "'.tr('Query prevista').'", "name": "query['.$key.']", "value": "'.$field['query'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }
@@ -279,13 +280,13 @@ if (!empty($options) && $options != 'custom') {
 		<div class="box-body">
 			<div class="row">
 				<input type="hidden" value="" name="id[-id-]">
-
-				<div class="col-xs-12 col-md-6">
+				<div class="col-xs-12 col-md-12">
 					{[ "type": "text", "label": "'.tr('Nome').'", "name": "name[-id-]" ]}
 				</div>
-
-				<div class="col-xs-12 col-md-6">
-					{[ "type": "text", "label": "'.tr('Query prevista').'", "name": "query[-id-]" ]}
+			</div>
+			<div class="row">
+				<div class="col-xs-12 col-md-12">
+					{[ "type": "textarea", "label": "'.tr('Query prevista').'", "name": "query[-id-]" ]}
 				</div>
 			</div>
 

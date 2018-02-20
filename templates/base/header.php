@@ -9,10 +9,16 @@
  * La personalizzazione specifica dell'header deve comunque seguire lo standard della cartella custom: anche se il file header.php non esiste nella stampa originaria, se si vuole personalizzare l'header bisogna crearlo all'interno della cartella custom.
  */
 
+$logo_dir = 'base';
+if (file_exists(DOCROOT.'/templates/'.$ptype.'/logo_azienda.jpg')) {
+		$logo_dir = $ptype;
+}
+ 
+ 
 return '
 <div class="row">
     <div class="col-xs-6">
-        <img src="'.DOCROOT.'/templates/'.$ptype.'/logo_azienda.jpg" alt="Logo" border="0"/>
+        <img src="'.DOCROOT.'/templates/'.$logo_dir.'/logo_azienda.jpg" alt="Logo" border="0"/>
     </div>
     <div class="col-xs-6 text-right">
         <p><b>'.$f_ragionesociale.'</b></p>

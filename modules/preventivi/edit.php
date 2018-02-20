@@ -120,9 +120,9 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 				</div>
 			</div>
 
-            <div class="pull-right">
+            <!--div class="pull-right">
 				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-			</div>
+			</div-->
 
 		</div>
 	</div>
@@ -148,9 +148,9 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
 } ?>
 
-        <div class="pull-right">
+        <!--div class="pull-right">
             <a class="btn btn-info" href="<?php echo $rootdir ?>/pdfgen.php?ptype=preventivi&idpreventivo=<?php echo $id_record ?>" target="_blank"><i class="fa fa-print"></i> Stampa preventivo</a>
-        </div>
+        </div-->
         <div class="clearfix"></div>
         <br>
 

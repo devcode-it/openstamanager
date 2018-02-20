@@ -248,6 +248,37 @@ class Auth extends \Util\Singleton
     }
 
     /**
+     * Restituisce il token di accesso all'API per l'utente autenticato.
+     *
+     * @return string
+     */
+    public function getToken()
+    {
+        $token = null;
+
+        if ($this->isAuthenticated()) {
+            $user = self::user();
+
+            $database = Database::getConnection();
+            $tokens = $database->fetchArray('SELECT `token` FROM `zz_tokens` WHERE `enabled` = 1 AND `id_utente` = '.prepare($user['id_utente']));
+
+            // Generazione del token per l'utente
+            if (empty($tokens)) {
+                $token = secure_random_string();
+
+                $database->insert('zz_tokens', [
+                    'id_utente' => $user['id_utente'],
+                    'token' => $token,
+                ]);
+            } else {
+                $token = $tokens[0]['token'];
+            }
+        }
+
+        return $token;
+    }
+
+    /**
      * Distrugge le informazioni riguardanti l'utente autenticato, forzando il logout.
      */
     public function destory()

@@ -3,15 +3,15 @@ include_once __DIR__.'/core.php';
 $pageTitle = 'Info';
 
 if (file_exists($docroot.'/include/custom/top.php')) {
-     include($docroot.'/include/custom/top.php');
+    include $docroot.'/include/custom/top.php';
 } else {
-     include($docroot.'/include/top.php');
+    include $docroot.'/include/top.php';
 }
 ?>
 	<div class="box">
 		<div class="box-header">
 			<img src="<?php echo $img; ?>/logo.png" alt="<?php echo tr('OSM Logo'); ?>">
-			<h3 class="box-title"><?php echo  tr('OpenSTAManager'); ?></h3>
+			<h3 class="box-title"><?php echo tr('OpenSTAManager'); ?></h3>
 			<div class="pull-right">
 				<i class="fa fa-info"></i> <?php echo tr('Informazioni'); ?>
 			</div>
@@ -20,7 +20,7 @@ if (file_exists($docroot.'/include/custom/top.php')) {
 		<div class="box-body">
 <?php
 if (file_exists('assistenza.php')) {
-     include('assistenza.php');
+    include 'assistenza.php';
 } else {
     ?>
 			<div class="row">
@@ -144,9 +144,7 @@ if (file_exists('assistenza.php')) {
 
 <?php
 if (file_exists($docroot.'/include/custom/bottom.php')) {
-     include($docroot.'/include/custom/bottom.php');
+    include $docroot.'/include/custom/bottom.php';
 } else {
-     include($docroot.'/include/bottom.php');
+    include $docroot.'/include/bottom.php';
 }
-?>
-

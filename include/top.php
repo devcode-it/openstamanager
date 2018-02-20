@@ -3,6 +3,7 @@
 include_once __DIR__.'/../core.php';
 
 $paths = App::getPaths();
+$user = Auth::user();
 
 // Istanziamento della barra di debug
 if (!empty($debug)) {
@@ -210,7 +211,10 @@ if (Auth::check()) {
                     <!-- Sidebar user panel -->
                     <div class="user-panel text-center info">
                         <div class="info">
-                            <p>'.$_SESSION['username'].'</p>
+                            <p><a href="'.$rootdir.'/modules/utenti/info.php">
+                                <i class="fa fa-user"></i>
+                                '.$user['username'].'
+                            </a></p>
                             <p id="datetime"></p>
                         </div>
 

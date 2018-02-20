@@ -4,7 +4,7 @@
   </a>
 
   <p align="center">
-    Il software gestionale open source per l'assistenza tecnica e la fatturazione.
+    Il software gestionale open-source per l'assistenza tecnica e la fatturazione.
     <br>
     <br>
     <a href="http://openstamanager.com">Sito web</a>
@@ -24,7 +24,7 @@
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](http://sourceforge.net/donate/index.php?group_id=236538)
 
 Il gestionale OpenSTAManager è un software open-source e web based, sviluppato dall'azienda informatica DevCode di Este per gestire ed archiviare il servizio di assistenza tecnica e la relativa fatturazione.
-Il nome del progetto deriva dalla parziale traduzione in inglese degli elementi principali che lo compongono: la natura open source e il suo obiettivo quale Gestore del Servizio Tecnico di Assistenza.
+Il nome del progetto deriva dalla parziale traduzione in inglese degli elementi principali che lo compongono: la natura open-source e il suo obiettivo quale Gestore del Servizio Tecnico di Assistenza.
 
 Un software gestionale, identificato nell'insieme degli applicativi che automatizzano i processi di gestione all'interno delle aziende, appartiene solitamente a una specifica categoria del settore, specializzata negli ambiti di:
 
@@ -44,7 +44,7 @@ La documentazione ufficiale è disponibile all'indirizzo <https://devcode-it.git
 - [Installazione](#installazione)
     - [Versioni](#versioni)
     - [GitHub](#github)
-- [Perché software open source](#perch%C3%A9-software-open-source)
+- [Perché software open-source](#perch%C3%A9-software-open-source)
 - [Community](#community)
 - [Contribuire](#contribuire)
 - [Sviluppatori](#sviluppatori)
@@ -107,15 +107,15 @@ yarn run develop-OSM
 
 Per ulteriori informazioni, visitare le sezioni [Assets](https://devcode-it.github.io/openstamanager/assets.html) e [Framework](https://devcode-it.github.io/openstamanager/framework.html) della documentazione.
 
-## Perché software open source
+## Perché software open-source
 
-Il progetto è un software open source perché permette agli utilizzatori di studiarne il funzionamento ed adattarlo alle proprie esigenze; inoltre, in ambito commerciale, non obbliga l'utilizzatore ad essere legato allo stesso fornitore di assistenza.
+Il progetto è un software open-source perché permette agli utilizzatori di studiarne il funzionamento ed adattarlo alle proprie esigenze; inoltre, in ambito commerciale, non obbliga l'utilizzatore ad essere legato allo stesso fornitore di assistenza.
 
 In questo modo è possibile ottenere un'ulteriore garanzia sul funzionamento del software, poiché chiunque ne abbia le capacità può verificarlo, escludendo mancanze in relazione alla sicurezza e alla privacy dei dati (caratteristica che il software proprietario non può offrire).
 
 ## Community
 
-La community è una componente importante in un progetto open source, perché mette in contatto utenti e programmatori tra di loro e permette pertanto l'individuazione di soluzioni innovative e migliori.
+La community è una componente importante in un progetto open-source, perché mette in contatto utenti e programmatori tra di loro e permette pertanto l'individuazione di soluzioni innovative e migliori.
 
 Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), e il nostro forum ufficiale è disponibile all'indirizzo <http://www.openstamanager.com/forum/>, dove potete segnalare i vostri problemi e soddisfare le vostre curiosità nelle sezioni più adeguate:
 

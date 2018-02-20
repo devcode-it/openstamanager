@@ -7,7 +7,7 @@ currentMenu: struttura
 <!-- TOC depthFrom:2 depthTo:6 orderedList:false updateOnSave:true withLinks:true -->
 
 - [Caratteristiche](#caratteristiche)
-    - [Open source](#open-source)
+    - [open-source](#open-source)
     - [Modulare e personalizzabile](#modulare-e-personalizzabile)
     - [Multipiattaforma e user friendly](#multipiattaforma-e-user-friendly)
 - [Struttura](#struttura)
@@ -51,13 +51,13 @@ currentMenu: struttura
 
 ## Caratteristiche
 
-### Open source
+### open-source
 
-La natura open source (termine inglese che significa _sorgente aperta_) del progetto evidenzia lo spirito di collaborazione e condivisione che pervade l'attività di sviluppo del gestionale, di cui gli autori rendono pubblico il codice sorgente e ne favoriscono il libero studio, permettendo a programmatori indipendenti di apportarvi modifiche ed estensioni.
+La natura open-source (termine inglese che significa _sorgente aperta_) del progetto evidenzia lo spirito di collaborazione e condivisione che pervade l'attività di sviluppo del gestionale, di cui gli autori rendono pubblico il codice sorgente e ne favoriscono il libero studio, permettendo a programmatori indipendenti di apportarvi modifiche ed estensioni.
 
 Particolarmente espressiva in questo senso risulta essere la documentazione ufficiale del progetto:
 
-> Il progetto è un software open source perché permette agli utilizzatori di studiarne il funzionamento ed adattarlo alle proprie esigenze; inoltre, in ambito commerciale, non obbliga l'utilizzatore ad essere legato allo stesso fornitore di assistenza.
+> Il progetto è un software open-source perché permette agli utilizzatori di studiarne il funzionamento ed adattarlo alle proprie esigenze; inoltre, in ambito commerciale, non obbliga l'utilizzatore ad essere legato allo stesso fornitore di assistenza.
 
 La licenza in utilizzo è la GNU General Public License 3.0 (GPL 3.0).
 

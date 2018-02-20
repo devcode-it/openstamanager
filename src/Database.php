@@ -33,7 +33,7 @@ class Database extends Util\Singleton
 
     /**
      * Costruisce la nuova connessione al database.
-     * Basato sul framework open source Medoo.
+     * Ispirato dal framework open-source Medoo.
      *
      * @param string|array $server
      * @param string       $username

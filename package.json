@@ -1,10 +1,10 @@
 {
     "name": "openstamanager",
-    "description": "Gestionale open source per assistenza tecnica e fatturazione",
+    "description": "Gestionale open-source per assistenza tecnica e fatturazione",
     "version": "2.3.0",
     "license": "GPL-3.0",
     "keywords": [
-        "open source",
+        "open-source",
         "gestionale",
         "assistenza tecnica",
         "fatturazione"

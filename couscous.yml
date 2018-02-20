@@ -13,7 +13,7 @@ github:
     repo: openstamanager
 
 title: OpenSTAManager
-subTitle: Il software gestionale open source per l'assistenza tecnica e la fatturazione
+subTitle: Il software gestionale open-source per l'assistenza tecnica e la fatturazione
 fontAwesomeIcon: fa fa-cog
 footerText: 'Progettato e sviluppato da <a href="http://devcode.it/">DevCode</a>.'
 googleAnalyticsCode: UA-42808312-1

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Classe per gestire le email (framework open source PHPMailer) in base alle impostazioni.
+ * Classe per gestire le email (framework open-source PHPMailer) in base alle impostazioni.
  *
  * @since 2.3
  */

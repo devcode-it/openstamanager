@@ -232,7 +232,7 @@ CREATE TABLE IF NOT EXISTS `zz_fields` (
   `on_add` boolean NOT NULL,
   `top` boolean NOT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE
+  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE
 );
 

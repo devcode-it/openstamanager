@@ -7,7 +7,7 @@ $google = Settings::get('Google Maps API key');
 /*
 if (!empty($google)) {
     echo '
-<script src="http://maps.googleapis.com/maps/api/js?libraries=places&key='.$google.'"></script>';
+<script src="//maps.googleapis.com/maps/api/js?libraries=places&key='.$google.'"></script>';
 }
 */
 

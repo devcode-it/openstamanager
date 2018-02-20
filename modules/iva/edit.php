@@ -19,23 +19,23 @@ include_once __DIR__.'/../../core.php';
 
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-xs-12 col-md-12">
+				<div class="col-md-12">
 					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
 				</div>
 			</div>
 
 			<div class="row">
-				<div class="col-xs-12 col-md-6">
+				<div class="col-md-6">
 					{[ "type": "number", "label": "<?php echo tr('Percentuale'); ?>", "name": "percentuale", "value": "$percentuale$", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
 				</div>
 
-				<div class="col-xs-12 col-md-6">
+				<div class="col-md-6">
 					{[ "type": "number", "label": "<?php echo tr('Indetraibile'); ?>", "name": "indetraibile", "value": "$indetraibile$", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
 				</div>
 			</div>
 
             <div class="row">
-				<div class="col-xs-12 col-md-12">
+				<div class="col-md-12">
 					{[ "type": "textarea", "label": "<?php echo tr('Dicitura fissa in fattura'); ?>", "name": "dicitura", "value": "$dicitura$" ]}
 				</div>
 			</div>

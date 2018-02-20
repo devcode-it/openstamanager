@@ -17,75 +17,75 @@ echo '
 	<input type="hidden" name="op" value="updatesede">
 
 	<div class="row">
-		<div class="col-xs-12 col-md-12">
+		<div class="col-md-12">
 			{[ "type": "text", "label": "'.tr('Nome sede').'", "name": "nomesede", "required": 1, "value": "$nomesede$" ]}
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "indirizzo", "id": "indirizzo_",  "required": 1, "value": "$indirizzo$" ]}
 		</div>
 
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Secondo indirizzo').'", "name": "indirizzo2", "value": "$indirizzo2$" ]}
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('P.Iva').'", "name": "piva", "value": "$piva$" ]}
 		</div>
 
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Codice Fiscale').'", "name": "codice_fiscale", "value": "$codice_fiscale$" ]}
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-xs-12 col-md-3">
+		<div class="col-md-3">
 			{[ "type": "text", "label": "'.tr('Città').'", "name": "citta", "id": "citta_", "value": "$citta$" ]}
 		</div>
 
-		<div class="col-xs-12 col-md-3">
+		<div class="col-md-3">
 			{[ "type": "text", "label": "'.tr('C.A.P.').'", "name": "cap", "value": "$cap$" ]}
 		</div>
 
-		<div class="col-xs-12 col-md-3">
+		<div class="col-md-3">
 			{[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia", "value": "$provincia$" ]}
 		</div>
 
-		<div class="col-xs-12 col-md-3">
+		<div class="col-md-3">
 			{[ "type": "number", "label": "'.tr('Km').'", "name": "km", "value": "$km$" ]}
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "values": "query=SELECT `id`, `nome` AS `descrizione` FROM `an_nazioni` ORDER BY `descrizione` ASC", "value": "$id_nazione$" ]}
 		</div>
 
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Telefono').'", "name": "telefono", "value": "$telefono$" ]}
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Fax').'", "name": "fax", "value": "$fax$" ]}
 		</div>
 
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Cellulare').'", "name": "cellulare", "value": "$cellulare$" ]}
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Indirizzo email').'", "name": "email", "value": "$email$" ]}
 		</div>
 
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT `id`, CONCAT(`nome`, \' - \', `descrizione`) AS `descrizione` FROM `an_zone` ORDER BY `descrizione` ASC", "value": "$idzona$" ]}
 		</div>
     </div>';

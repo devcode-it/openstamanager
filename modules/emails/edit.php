@@ -23,12 +23,18 @@ echo '
             <div class="clearfix"></div><br>
 
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-8">
                     {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "value": "$name$", "required": 1 ]}
                 </div>
 
-                <div class="col-md-2">
+                <div class="col-md-4">
                     {[ "type": "span", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "values": "query=SELECT id, title AS descrizione FROM zz_modules WHERE enabled = 1", "value": "<?php echo Modules::get($records[0]['id_module'])['title']; ?>" ]}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    {[ "type": "select", "label": "<?php echo tr('Indirizzo email'); ?>", "name": "smtp",  "value": "$id_smtp$", "ajax-source": "smtp" ]}
                 </div>
 
                 <div class="col-md-4">

@@ -21,7 +21,7 @@ if (!isset($id_original)) {
 	<input type="hidden" name="op" value="add">
 
 	<div class="row">
-		<div class="col-xs-12 col-md-12">
+		<div class="col-md-12">
 			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1 ]}
 		</div>
 	</div>
@@ -32,17 +32,17 @@ if (!isset($id_original)) {
 	<input type="hidden" name="id_original" value="<?php echo $id_original; ?>">
 
 	<div class="row">
-        <div class="col-xs-12 col-md-8">
+        <div class="col-md-8">
             {[ "type": "text", "label": "<?php echo  tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$", "extra": "" ]}
         </div>
 
-        <div class="col-xs-12 col-md-4">
+        <div class="col-md-4">
             {[ "type": "text", "label": "<?php echo  tr('Colore'); ?>", "name": "colore", "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength=\"7\"", "icon-after": "<div class=\"img-circle square\"></div>" ]}
         </div>
     </div>
 
     <div class="row">
-        <div class="col-xs-12 col-md-12">
+        <div class="col-md-12">
             {[ "type": "textarea", "label": "<?php echo  tr('Nota'); ?>", "name": "nota", "value": "$nota$" ]}
         </div>
     </div>

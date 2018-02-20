@@ -158,7 +158,7 @@ echo '
 */
 echo '
 	</div>
-	<div class="col-xs-12 col-md-12">';
+	<div class="col-md-12">';
 echo Widgets::addModuleWidgets($id_module, 'editor_right');
 echo '
 	</div>';

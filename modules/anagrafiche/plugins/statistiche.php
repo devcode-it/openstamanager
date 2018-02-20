@@ -18,7 +18,7 @@ for ($i = 0; $i < count($rsi); ++$i) {
 }
 echo '
 	<div class="row">
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			<div class="box box-info">
 				<div class="box-header with-border">
 					<h3 class="box-title">'.tr('Interventi').'</h3>
@@ -56,7 +56,7 @@ for ($i = 0; $i < count($rsi); ++$i) {
     }
 }
 echo '
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			<div class="box box-info">
 				<div class="box-header with-border">
 					<h3 class="box-title">'.tr('Preventivi').'</h3>
@@ -96,7 +96,7 @@ for ($i = 0; $i < count($rsi); ++$i) {
 }
 echo '
 	<div class="row">
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			<div class="box box-info">
 				<div class="box-header with-border">
 					<h3 class="box-title">'.tr('Contratti').'</h3>
@@ -120,7 +120,7 @@ echo '
 
 // Fatture
 echo '
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			<div class="box box-info">
 				<div class="box-header with-border">
 					<h3 class="box-title">'.tr('Fatture').'</h3>

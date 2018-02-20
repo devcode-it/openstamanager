@@ -155,8 +155,8 @@ $count = 0;
 $total = 0;
 $totale_tecnici = 0; // conteggia tecnici eliminati e non
 
-$rs = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica 
-LEFT OUTER JOIN in_interventi_tecnici ON  in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica  INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id 
+$rs = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica
+LEFT OUTER JOIN in_interventi_tecnici ON  in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica  INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id
 WHERE an_anagrafiche.deleted=0 AND an_tipianagrafiche.descrizione='Tecnico' ".Modules::getAdditionalsQuery('Interventi').' GROUP BY an_anagrafiche.idanagrafica ORDER BY ragione_sociale ASC');
 $total = count($rs);
 
@@ -287,7 +287,7 @@ $rsp = $dbo->fetchArray($qp);
 if (!empty($rsp)) {
     echo '
 <div class="row">
-    <div class="col-xs-12 col-md-10">';
+    <div class="col-md-10">';
 }
 
 echo '
@@ -324,13 +324,13 @@ if ($vista == 'mese') {
 	$(document).ready(function() {
         // Comandi seleziona tutti
         $('#selectallstati').click(function(event) {
-			
+
             $(this).parent().parent().find('li input[type=checkbox]').each(function(i) { //loop through each checkbox
              	this.checked = true;
 				$.when (session_set_array( 'dashboard,idstatiintervento', this.value, 0 )).promise().then(function() {
 					$('#calendar').fullCalendar('refetchEvents');
 				});
-				
+
 				i++;
 				update_counter( 'idstati_count',i);
 
@@ -339,7 +339,7 @@ if ($vista == 'mese') {
         });
 
         $('#selectalltipi').click(function(event) {
-			
+
             $(this).parent().parent().find('li input[type=checkbox]').each(function(i) { //loop through each checkbox
 				this.checked = true;
 				$.when (session_set_array( 'dashboard,idtipiintervento', this.value, 0 )).promise().then(function() {
@@ -348,36 +348,36 @@ if ($vista == 'mese') {
 				i++;
 				update_counter( 'idtipi_count', i);
 
-            });			
-			
+            });
+
         });
 
         $('#selectalltecnici').click(function(event) {
-			
+
             $(this).parent().parent().find('li input[type=checkbox]').each(function(i) { //loop through each checkbox
 				this.checked = true;
-				$.when (session_set_array( 'dashboard,idtecnici', this.value, 0 )).promise().then(function() {			
+				$.when (session_set_array( 'dashboard,idtecnici', this.value, 0 )).promise().then(function() {
 					$('#calendar').fullCalendar('refetchEvents');
 				});
 				i++;
 				update_counter( 'idtecnici_count', i);
             });
-			
+
         });
 
         $('#selectallzone').click(function(event) {
-			
+
             $(this).parent().parent().find('li input[type=checkbox]').each(function(i) { //loop through each checkbox
 				this.checked = true;
-				 $.when (session_set_array( 'dashboard,idzone', this.value, 0 )).promise().then(function() {		
+				 $.when (session_set_array( 'dashboard,idzone', this.value, 0 )).promise().then(function() {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
-				
+
 				i++
 				update_counter( 'idzone_count', i);
 
             });
-				
+
         });
 
         // Comandi deseleziona tutti
@@ -388,36 +388,36 @@ if ($vista == 'mese') {
 				 $.when (session_set_array( 'dashboard,idstatiintervento', this.value, 1 )).promise().then(function() {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
-				
+
 				update_counter( 'idstati_count', 0);
 
             });
-			
+
         });
 
         $('#deselectalltipi').click(function(event) {
-			
+
 			$(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
 				this.checked = false;
 				 $.when (session_set_array( 'dashboard,idtipiintervento', this.value, 1 )).promise().then(function() {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
-				
-			
+
+
 				update_counter( 'idtipi_count', 0);
 
             });
-			
+
         });
 
         $('#deselectalltecnici').click(function(event) {
-          
+
 			$(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
 				this.checked = false;
 				 $.when (session_set_array( 'dashboard,idtecnici', this.value, 1 )).promise().then(function() {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
-				
+
 				update_counter( 'idtecnici_count', 0);
 
             });
@@ -425,10 +425,10 @@ if ($vista == 'mese') {
         });
 
         $('#deselectallzone').click(function(event) {
-           
+
 			$(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
 				this.checked = false;
-				$.when (session_set_array( 'dashboard,idzone', this.value, 1 )).promise().then(function() {			
+				$.when (session_set_array( 'dashboard,idzone', this.value, 1 )).promise().then(function() {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
 

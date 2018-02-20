@@ -144,7 +144,7 @@ if (empty($new_codice)) {
 			</div>
 
 			<div class="row">
-				<div class="col-xs-12">
+				<div class="">
                     {[ "type": "select", "label": "<?php echo tr('Componenti'); ?>", "multiple": 1, "name": "componenti[]", "value": "<?php echo $componenti; ?>", "placeholder": "<?php echo tr('Seleziona prima un impianto'); ?>...", "ajax-source": "componenti" ]}
 				</div>
 			</div>
@@ -270,25 +270,25 @@ if (empty($new_codice)) {
 
 		$("#idimpianti").prop("disabled", value);
 		$("#idimpianti").selectReset();
-		
+
 		if (($(this).val())) {
 			if (($(this).selectData().idzona)){
 				$('#idzona').val($(this).selectData().idzona).change();
-	
+
 			}else{
 				$('#idzona').val('').change();
 			}
 			//session_set('superselect,idzona', $(this).selectData().idzona, 0);
 		}
-		
-		
+
+
 	});
 
 	$('#idsede').change( function(){
 		session_set('superselect,idsede', $(this).val(), 0);
 		$("#idimpianti").selectReset();
-		
-				
+
+
 		if (($(this).val())) {
 			if (($(this).selectData().idzona)){
 				$('#idzona').val($(this).selectData().idzona).change();
@@ -297,7 +297,7 @@ if (empty($new_codice)) {
 			}
 			//session_set('superselect,idzona', $(this).selectData().idzona, 0);
 		}
-		
+
 	});
 
 	$('#idpreventivo').change( function(){

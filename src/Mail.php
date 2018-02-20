@@ -10,6 +10,11 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     /** @var array Elenco degli account email disponibili */
     protected static $accounts = [];
 
+    /** @var array Elenco dei template email disponibili */
+    protected static $templates = [];
+    /** @var array Elenco dei template email per modulo */
+    protected static $modules = [];
+
     protected $infos = [];
 
     /**
@@ -44,7 +49,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     /**
      * Restituisce le informazioni relative a un singolo modulo specificato.
      *
-     * @param string|int $plugin
+     * @param string|int $template
      *
      * @return array
      */
@@ -59,6 +64,73 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
         }
 
         return self::getAccounts()[$account];
+    }
+
+    /**
+     * Restituisce tutte le informazioni di tutti i plugin installati.
+     *
+     * @return array
+     */
+    public static function getTemplates()
+    {
+        if (empty(self::$templates)) {
+            $database = Database::getConnection();
+
+            $results = $database->fetchArray('SELECT * FROM zz_emails WHERE deleted = 0');
+
+            $templates = [];
+
+            foreach ($results as $result) {
+                $templates[$result['id']] = $result;
+                $templates[$result['name']] = $result['id'];
+
+                if (!isset(self::$modules[$result['id_module']])) {
+                    self::$modules[$result['id_module']] = [];
+                }
+
+                self::$modules[$result['id_module']][] = $result['id'];
+            }
+
+            self::$templates = $templates;
+        }
+
+        return self::$templates;
+    }
+
+    /**
+     * Restituisce le informazioni relative a un singolo template specificato.
+     *
+     * @param string|int $template
+     *
+     * @return array
+     */
+    public static function getTemplate($template)
+    {
+        if (!is_numeric($template) && !empty(self::getTemplates()[$template])) {
+            $template = self::getTemplates()[$template];
+        }
+
+        return self::getTemplates()[$template];
+    }
+
+    /**
+     * Restituisce le informazioni relative ai template di un singolo modulo specificato.
+     *
+     * @param string|int $module
+     *
+     * @return array
+     */
+    public static function getModuleTemplates($module)
+    {
+        $module_id = Modules::get($module)['id'];
+
+        $result = [];
+
+        foreach ((array) self::$modules[$module_id] as $value) {
+            $result[] = self::getTemplate($value);
+        }
+
+        return $result;
     }
 
     public function __construct($account = null, $exceptions = null)

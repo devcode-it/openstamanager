@@ -94,6 +94,7 @@ CREATE TABLE IF NOT EXISTS `zz_smtp` (
 CREATE TABLE IF NOT EXISTS `zz_emails` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_module` int(11) NOT NULL,
+  `id_smtp` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `icon` varchar(50) NOT NULL,
   `subject` varchar(255) NOT NULL,
@@ -105,22 +106,8 @@ CREATE TABLE IF NOT EXISTS `zz_emails` (
   `main` tinyint(1) NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE
-);
-
---
--- Struttura della tabella `zz_email_smtp_user`
---
-
-CREATE TABLE IF NOT EXISTS `zz_email_smtp_user` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `id_email` int(11) NOT NULL,
-  `id_smtp` int(11) NOT NULL,
-  `id_user` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_email`) REFERENCES `zz_emails`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_smtp`) REFERENCES `zz_smtp`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_user`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
+  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_smtp`) REFERENCES `zz_smtp`(`id`) ON DELETE CASCADE
 );
 
 --

@@ -115,14 +115,14 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
 
     echo '
     <div class="row" data-target="'.$table_id.'">
-        <div class="col-xs-12 col-md-5">
+        <div class="col-md-5">
             <div class="btn-group" role="group">
                 <button type="button" class="btn btn-primary btn-select-all">'.tr('Seleziona tutto').'</button>
                 <button type="button" class="btn btn-default btn-select-none">'.tr('Deseleziona tutto').'</button>
             </div>
         </div>
 
-        <div class="col-xs-12 col-md-2 dropdown">';
+        <div class="col-md-2 dropdown">';
 
     if (!empty($bulk)) {
         echo '
@@ -149,7 +149,7 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
     echo '
         </div>
 
-        <div class="col-xs-12 col-md-5 text-right">
+        <div class="col-md-5 text-right">
             <div class="btn-group" role="group">
                 <button type="button" class="btn btn-primary btn-csv disabled" disabled>'.tr('Esporta').'</button>
                 <button type="button" class="btn btn-default btn-copy disabled" disabled>'.tr('Copia').'</button>

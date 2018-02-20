@@ -33,21 +33,21 @@ if ($options == 'menu') {
 
 echo '
 			<div class="row">
-				<div class="col-xs-12 col-md-6">
+				<div class="col-md-6">
 					{[ "type": "text", "label": "'.tr('Codice del modulo').'", "name": "name", "value": "'.$record['name'].'", "readonly": "1" ]}
 				</div>
 
-				<div class="col-xs-12 col-md-6">
+				<div class="col-md-6">
 					{[ "type": "text", "label": "'.tr('Nome del modulo').'", "name": "title", "value": "'.$record['title'].'", "help": "'.tr('Il nome che identifica il modulo').'" ]}
 				</div>
 			</div>
 
 			<div class="row">
-				<div class="col-xs-12 col-md-6">
+				<div class="col-md-6">
 					{[ "type": "textarea", "label": "'.tr('Query di default').'", "name": "options", "value": '.json_encode(str_replace(']}', '] }', $record['options'])).', "readonly": "1", "class": "autosize" ]}
 				</div>
 
-				<div class="col-xs-12 col-md-6">
+				<div class="col-md-6">
 					{[ "type": "textarea", "label": "'.tr('Query personalizzata').'", "name": "options2", "value": '.json_encode(str_replace(']}', '] }', $record['options2'])).', "class": "autosize", "help": "'.tr('La query in sostituzione a quella di default: custom, menu oppure SQL').'" ]}
 				</div>
             </div>';
@@ -58,7 +58,7 @@ if ($options != '' && $options != 'menu' && $options != 'custom') {
 
     echo '
 			<div class="row">
-				<div class="col-xs-12 col-md-12">
+				<div class="col-md-12">
 					<p><strong>'.tr('Query risultante').':</strong></p>
                     <p>'.htmlentities($module_query).'</p>
 
@@ -85,7 +85,7 @@ if (!empty($options) && $options != 'custom') {
 	<input type="hidden" name="op" value="fields">
 
 	<div class="row">
-		<div class="col-xs-12 col-md-9">
+		<div class="col-md-9">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h3 class="panel-title">'.tr('Campi disponibili').'</h3>
@@ -93,7 +93,7 @@ if (!empty($options) && $options != 'custom') {
 
 				<div class="panel-body">
                     <!--div class="row">
-                        <div class="col-xs-12 text-right">
+                        <div class="text-right">
                             <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
                         </div>
                     </div>
@@ -132,7 +132,7 @@ if (!empty($options) && $options != 'custom') {
 								<div class="row">
 									<input type="hidden" value="'.$field['id'].'" name="id['.$key.']">
 
-									<div class="col-xs-12 col-md-6">
+									<div class="col-md-6">
 										{[ "type": "text", "label": "'.tr('Nome').'", "name": "name['.$key.']", "value": "'.$field['name'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
@@ -140,7 +140,7 @@ if (!empty($options) && $options != 'custom') {
         echo ', "help": "'.tr('Nome con cui il campo viene identificato e visualizzato nella tabella').'" ]}
 									</div>
 
-									<div class="col-xs-12 col-md-6">
+									<div class="col-md-6">
 										{[ "type": "text", "label": "'.tr('Query prevista').'", "name": "query['.$key.']", "value": "'.$field['query'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
@@ -150,7 +150,7 @@ if (!empty($options) && $options != 'custom') {
 								</div>
 
 								<div class="row">
-									<div class="col-xs-12 col-md-6">
+									<div class="col-md-6">
 										{[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi['.$key.'][]", "multiple": "1",  "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "';
         $results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT id_gruppo SEPARATOR \',\') AS gruppi FROM zz_group_view WHERE id_vista='.prepare($field['id']));
 
@@ -161,7 +161,7 @@ if (!empty($options) && $options != 'custom') {
         echo ', "help": "'.tr('Gruppi di utenti in grado di visualizzare questo campo').'" ]}
 									</div>
 
-									<div class="col-xs-12 col-md-6">
+									<div class="col-md-6">
 										{[ "type": "select", "label": "'.tr('Visibilità').'", "name": "enabled['.$key.']", "values": "list=\"0\":\"'.tr('Nascosto (variabili di stato)').'\",\"1\": \"'.tr('Visibile nella sezione').'\"", "value": "'.$field['enabled'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
@@ -171,7 +171,7 @@ if (!empty($options) && $options != 'custom') {
 								</div>
 
 								<div class="row">
-									<div class="col-xs-12 col-md-3">
+									<div class="col-md-3">
 										{[ "type": "checkbox", "label": "'.tr('Ricercabile').'", "name": "search['.$key.']", "value": "'.$field['search'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
@@ -179,7 +179,7 @@ if (!empty($options) && $options != 'custom') {
         echo ', "help": "'.tr('Indica se il campo è ricercabile').'" ]}
 									</div>
 
-									<div class="col-xs-12 col-md-3">
+									<div class="col-md-3">
 										{[ "type": "checkbox", "label": "'.tr('Ricerca lenta').'", "name": "slow['.$key.']", "value": "'.$field['slow'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
@@ -187,7 +187,7 @@ if (!empty($options) && $options != 'custom') {
         echo ', "help": "'.tr("Indica se la ricerca per questo campo è lenta (da utilizzare nel caso di evidenti rallentamenti, mostra solo un avviso all'utente").'" ]}
 									</div>
 
-									<div class="col-xs-12 col-md-3">
+									<div class="col-md-3">
 										{[ "type": "checkbox", "label": "'.tr('Sommabile').'", "name": "sum['.$key.']", "value": "'.$field['summable'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
@@ -195,7 +195,7 @@ if (!empty($options) && $options != 'custom') {
         echo ', "help": "'.tr('Indica se il campo è da sommare').'" ]}
 									</div>
 
-                                    <div class="col-xs-12 col-md-3">
+                                    <div class="col-md-3">
 										{[ "type": "checkbox", "label": "'.tr('Formattabile').'", "name": "format['.$key.']", "value": "'.$field['format'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
@@ -205,7 +205,7 @@ if (!empty($options) && $options != 'custom') {
 								</div>
 
 								<div class="row">
-									<div class="col-xs-12 col-md-6">
+									<div class="col-md-6">
 										{[ "type": "text", "label": "'.tr('Ricerca tramite').'", "name": "search_inside['.$key.']", "value": "'.$field['search_inside'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
@@ -213,7 +213,7 @@ if (!empty($options) && $options != 'custom') {
         echo ', "help": "'.tr('Query personalizzata per la ricerca (consigliata per colori e icone)').'.<br>'.tr('ATTENZIONE: utilizza sempre i caratteri < o > seguiti da spazio!').'" ]}
 									</div>
 
-									<div class="col-xs-12 col-md-6">
+									<div class="col-md-6">
 										{[ "type": "text", "label": "'.tr('Ordina tramite').'", "name": "order_by['.$key.']", "value": "'.$field['order_by'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
@@ -228,7 +228,7 @@ if (!empty($options) && $options != 'custom') {
 				</div>
 
                 <div class="row">
-                    <div class="col-xs-12 text-right">
+                    <div class="text-right">
                         <button type="button" class="btn btn-info" id="add"><i class="fa fa-plus"></i> '.tr('Aggiungi nuovo campo').'</button>
                         <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
                     </div>
@@ -238,7 +238,7 @@ if (!empty($options) && $options != 'custom') {
 			</div>
 		</div>
 
-		<div class="col-xs-12 col-md-3">
+		<div class="col-md-3">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h3 class="panel-title">'.tr('Ordine di visualizzazione').'</h3>
@@ -276,49 +276,49 @@ if (!empty($options) && $options != 'custom') {
 			<div class="row">
 				<input type="hidden" value="" name="id[-id-]">
 
-				<div class="col-xs-12 col-md-6">
+				<div class="col-md-6">
 					{[ "type": "text", "label": "'.tr('Nome').'", "name": "name[-id-]" ]}
 				</div>
 
-				<div class="col-xs-12 col-md-6">
+				<div class="col-md-6">
 					{[ "type": "text", "label": "'.tr('Query prevista').'", "name": "query[-id-]" ]}
 				</div>
 			</div>
 
 			<div class="row">
-				<div class="col-xs-12 col-md-6">
+				<div class="col-md-6">
 					{[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[-id-][]", "multiple": "1",  "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC" ]}
 				</div>
 
-				<div class="col-xs-12 col-md-6">
+				<div class="col-md-6">
 					{[ "type": "select", "label": "'.tr('Visibilità').'", "name": "enabled[-id-]", "values": "list=\"0\":\"'.tr('Nascosto (variabili di stato)').'\",\"1\": \"'.tr('Visibile nella sezione').'\"" ]}
 				</div>
 			</div>
 
 			<div class="row">
-				<div class="col-xs-12 col-md-3">
+				<div class="col-md-3">
 					{[ "type": "checkbox", "label": "'.tr('Ricercabile').'", "name": "search[-id-]" ]}
 				</div>
 
-				<div class="col-xs-12 col-md-3">
+				<div class="col-md-3">
 					{[ "type": "checkbox", "label": "'.tr('Ricerca lenta').'", "name": "slow[-id-]" ]}
 				</div>
 
-				<div class="col-xs-12 col-md-3">
+				<div class="col-md-3">
 					{[ "type": "checkbox", "label": "'.tr('Sommabile').'", "name": "sum[-id-]" ]}
 				</div>
 
-                <div class="col-xs-12 col-md-3">
+                <div class="col-md-3">
 					{[ "type": "checkbox", "label": "'.tr('Formattabile').'", "name": "format[-id-]" ]}
 				</div>
 			</div>
 
 			<div class="row">
-				<div class="col-xs-12 col-md-6">
+				<div class="col-md-6">
 					{[ "type": "text", "label": "'.tr('Ricerca tramite').'", "name": "search_inside[-id-]" ]}
 				</div>
 
-				<div class="col-xs-12 col-md-6">
+				<div class="col-md-6">
 					{[ "type": "text", "label": "'.tr('Ordina tramite').'", "name": "order_by[-id-]" ]}
 				</div>
 			</div>
@@ -331,7 +331,7 @@ if (!empty($options) && $options != 'custom') {
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="filters">
 
-    <div class="col-xs-12 col-md-12">
+    <div class="col-md-12">
         <div class="panel panel-warning">
             <div class="panel-heading">
                 <h3 class="panel-title">'.tr('Filtri per gruppo di utenti').'</h3>
@@ -339,7 +339,7 @@ if (!empty($options) && $options != 'custom') {
 
             <div class="panel-body">
                 <!--div class="row">
-                    <div class="col-xs-12 text-right">
+                    <div class="text-right">
                         <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
                     </div>
                 </div>
@@ -382,7 +382,7 @@ if (!empty($options) && $options != 'custom') {
                                 <div class="row">
                                     <input type="hidden" value="'.$additional['id'].'" name="id['.$num.']">
 
-                                    <div class="col-xs-12 col-md-6">
+                                    <div class="col-md-6">
                                         {[ "type": "textarea", "label": "'.tr('Query').'", "name": "query['.$num.']", "value": "'.$additional['clause'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
@@ -390,7 +390,7 @@ if (!empty($options) && $options != 'custom') {
         echo ' ]}
                                     </div>
 
-                                    <div class="col-xs-12 col-md-3">
+                                    <div class="col-md-3">
                                         {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo['.$num.']",  "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "'.$additional['idgruppo'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
@@ -398,7 +398,7 @@ if (!empty($options) && $options != 'custom') {
         echo ' ]}
                                     </div>
 
-                                    <div class="col-xs-12 col-md-3">
+                                    <div class="col-md-3">
                                         {[ "type": "select", "label": "'.tr('Posizione').'", "name": "position['.$num.']", "values": "list=\"0\":\"'.tr('WHERE').'\",\"1\": \"'.tr('HAVING').'\"", "value": "'.$additional['position'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
@@ -413,7 +413,7 @@ if (!empty($options) && $options != 'custom') {
                 </div>
 
                 <div class="row">
-                    <div class="col-xs-12 text-right">
+                    <div class="text-right">
                         <button type="button" class="btn btn-info" id="add"><i class="fa fa-plus"></i> '.tr('Aggiungi nuovo filtro').'</button>
                         <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
                     </div>
@@ -433,15 +433,15 @@ if (!empty($options) && $options != 'custom') {
 			<div class="row">
 				<input type="hidden" value="" name="id[-id-]">
 
-				<div class="col-xs-12 col-md-6">
+				<div class="col-md-6">
 					{[ "type": "textarea", "label": "'.tr('Query').'", "name": "query[-id-]" ]}
 				</div>
 
-				<div class="col-xs-12 col-md-3">
+				<div class="col-md-3">
 					{[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo[-id-]", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC" ]}
 				</div>
 
-                <div class="col-xs-12 col-md-3">
+                <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Posizione').'", "name": "position[-id-]",  "list=\"0\":\"'.tr('WHERE').'\",\"1\": \"'.tr('HAVING').'\"" ]}
 			</div>
 		</div>

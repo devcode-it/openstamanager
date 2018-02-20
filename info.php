@@ -29,13 +29,13 @@ if (file_exists($docroot.'/assistenza.php')) {
 } else {
     echo '
         <div class="row">
-            <div class="col-xs-12 col-md-8">
+            <div class="col-md-8">
                 <p>'.tr('<b>OpenSTAManager</b> è un <b>software libero</b> ideato e sviluppato da <a href="mailto:info@openstamanager.com">Fabio Lovato</a>').'.</p>
 
                 <p>'.tr('Il nome significa "Gestore di STA (<b>Servizio Tecnico Assistenza</b>) aperto" ed è stato creato per gestire e archiviare l\'assistenza tecnica fornita ai propri clienti').'.</p>
             </div>
 
-            <div class="col-xs-12 col-md-4">
+            <div class="col-md-4">
                 <p><b>'.tr('Sito web').':</b> <a href="https://www.openstamanager.com" target="_blank">www.openstamanager.com</a></p>
 
                 <p><b>'.tr('Versione').':</b> '.$version.' <small class="text-muted">('.(!empty($revision) ? 'R'.$revision : tr('In sviluppo')).')</small></p>
@@ -47,7 +47,7 @@ if (file_exists($docroot.'/assistenza.php')) {
         <hr>
 
         <div class="row">
-            <div class="col-xs-12 col-md-6">
+            <div class="col-md-6">
                 <div class="box box-primary">
                     <div class="box-header">
                         <h3 class="box-title text-uppercase"><i class="fa fa-globe"></i> '.tr('Perchè software libero').'</h3>
@@ -70,7 +70,7 @@ if (file_exists($docroot.'/assistenza.php')) {
                 </div>
             </div>
 
-            <div class="col-xs-12 col-md-6">
+            <div class="col-md-6">
                 <div class="box box-danger">
                     <div class="box-header">
                         <h3 class="box-title text-uppercase"><i class="fa fa-group"></i> '.tr('Community').'</h3>
@@ -126,7 +126,7 @@ if (file_exists($docroot.'/assistenza.php')) {
         </div>
 
         <div class="row">
-            <div class="col-xs-12 col-md-6">
+            <div class="col-md-6">
                 <div class="box box-warning">
                     <div class="box-header">
                         <h3 class="box-title text-uppercase"><i class="fa fa-money"></i> '.tr('Supporta il progetto').'</h3>
@@ -145,7 +145,7 @@ if (file_exists($docroot.'/assistenza.php')) {
             </div>
 
 
-            <div class="col-xs-12 col-md-6">
+            <div class="col-md-6">
                 <div class="box box-success">
                     <div class="box-header">
                         <h3 class="box-title text-uppercase"><i class="fa fa-euro"></i> '.tr('Servizi a pagamento').'</h3>

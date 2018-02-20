@@ -9,7 +9,7 @@ echo '
 </div>
 
 <div class="row">
-    <div class="col-xs-12 col-md-4">
+    <div class="col-md-4">
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">'.tr('Registri iva dal _START_ al _END_', [
@@ -26,7 +26,7 @@ echo '
         </div>
     </div>
 
-    <div class="col-xs-12 col-md-4">
+    <div class="col-md-4">
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">'.tr('Comunicazione dati fatture (ex-spesometro) dal _START_ al _END_', [
@@ -41,7 +41,7 @@ echo '
         </div>
     </div>
 
-    <div class="col-xs-12 col-md-4">
+    <div class="col-md-4">
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">'.tr('Fatturato dal _START_ al _END_', [

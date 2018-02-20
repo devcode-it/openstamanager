@@ -7,6 +7,7 @@ switch (post('op')) {
         $dbo->insert('zz_emails', [
             'name' => $post['name'],
             'id_module' => $post['module'],
+            'id_smtp' => $post['smtp'],
             'subject' => $post['subject'],
         ]);
 
@@ -19,6 +20,7 @@ switch (post('op')) {
     case 'update':
         $dbo->update('zz_emails', [
             'name' => $post['name'],
+            'id_smtp' => $post['smtp'],
             'icon' => $post['icon'],
             'subject' => $post['subject'],
             'reply_to' => $post['reply_to'],

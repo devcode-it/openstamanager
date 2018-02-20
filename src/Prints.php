@@ -9,7 +9,7 @@ class Prints
 {
     /** @var array Elenco delle stampe disponibili */
     protected static $prints = [];
-    /** @var array Elenco delle stampe disponibili */
+    /** @var array Elenco delle stampe per modulo */
     protected static $modules = [];
 
     /**
@@ -46,7 +46,7 @@ class Prints
     }
 
     /**
-     * Restituisce le informazioni relative a un singolo modulo specificato.
+     * Restituisce le informazioni relative a una singolo stampa specificata.
      *
      * @param string|int $print
      *

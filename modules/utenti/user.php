@@ -48,7 +48,7 @@ if ($self_edit) {
 	<input type="hidden" name="backto" value="record-edit">
 
 	<div class="row">
-		<div class="col-xs-12">
+		<div class="">
 		{[ "type": "text", "label": "'.tr('Username').'", "name": "username", "required": 1, "value": "'.$username.'" ]}
 		</div>
     </div>';
@@ -60,14 +60,14 @@ if ($self_edit) {
 echo '
 
 	<div class="row">
-		<div class="col-xs-12">
+		<div class="">
 		{[ "type": "password", "label": "'.tr('Password').'", "name": "password1", "required": 1, "value": "" ]}
 		</div>
     </div>';
 
 echo '
 	<div class="row">
-		<div class="col-xs-12">
+		<div class="">
 		{[ "type": "password", "label": "'.tr('Ripeti la password').'", "name": "password2", "value": "" ]}
 		</div>
 	</div>';
@@ -76,7 +76,7 @@ if ($self_edit) {
     echo '
 
 	<div class="row">
-		<div class="col-xs-12">
+		<div class="">
 		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "values": "query=SELECT CONCAT(`an_tipianagrafiche`.`idtipoanagrafica`, \'-\', `an_anagrafiche`.`idanagrafica`) AS \'id\', `ragione_sociale` AS \'descrizione\', `descrizione` AS \'optgroup\' FROM `an_tipianagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` ORDER BY `descrizione` ASC", "value": "'.$id_anagrafica.'" ]}
 		</div>
     </div>';

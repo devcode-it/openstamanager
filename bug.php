@@ -151,15 +151,15 @@ echo '
 				</table>
 
 				<div class="row">
-                    <div class="col-xs-12 col-md-4">
+                    <div class="col-md-4">
                         {[ "type": "checkbox", "placeholder": "'.tr('Allega file di log').'", "name": "log", "value": "1" ]}
 					</div>
 
-                    <div class="col-xs-12 col-md-4">
+                    <div class="col-md-4">
                         {[ "type": "checkbox", "placeholder": "'.tr('Allega copia del database').'", "name": "sql", "value": "0" ]}
 					</div>
 
-                    <div class="col-xs-12 col-md-4">
+                    <div class="col-md-4">
                         {[ "type": "checkbox", "placeholder": "'.tr('Allega informazioni sul PC').'", "name": "info", "value": "1" ]}
 					</div>
 				</div>

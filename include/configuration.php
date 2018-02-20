@@ -296,7 +296,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     echo '
 
                         <div class="row">
-                            <div class="col-xs-12 col-md-6">
+                            <div class="col-md-6">
                                 <p>'.tr('Le seguenti estensioni PHP devono essere abilitate dal file di configurazione _FILE_', [
                                     '_FILE_' => '<b>php.ini</b>',
                                 ]).':</p>
@@ -338,7 +338,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     // Impostazione di valore per PHP
     echo '
 
-                            <div class="col-xs-12 col-md-6">
+                            <div class="col-md-6">
                                 <p>'.tr('Le seguenti impostazioni PHP devono essere modificate nel file di configurazione _FILE_', [
                                     '_FILE_' => '<b>php.ini</b>',
                                 ]).':</p>
@@ -397,7 +397,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     echo '
 
                         <div class="row">
-                            <div class="col-xs-12">
+                            <div class="">
                                 <p>'.tr('Le seguenti cartelle devono risultare scrivibili da parte del gestionale').':</p>
                                 <div class="list-group">';
     $dirs = [
@@ -443,11 +443,11 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                         ]).'</p>
 
                         <div class="row">
-                            <div class="col-xs-12 col-md-8">
+                            <div class="col-md-8">
                                 <span class="pull-left" title='.tr('Visiona e accetta la licenza per proseguire').' >'.tr('Accetti la licenza GPLv3 di OpenSTAManager?').'*</span>
                             </div>
 
-                            <form class="col-xs-12 col-md-4">
+                            <form class="col-md-4">
                                 <input type="checkbox" id="agree" name="agree" data-parsley-required="true">
                                 <label for="agree">'.tr('Ho visionato e accetto').'.</label>
                             </form>
@@ -482,7 +482,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
     // db_host
     echo '
-                                <div class="col-xs-12">
+                                <div class="">
                                     {[ "type": "text", "label": "'.tr('Host del database').'", "name": "db_host", "placeholder": "'.tr("Indirizzo dell'host del database").'", "value": "'.$host.'", "help": "'.tr('Esempio').': localhost", "show-help": 1, "required": 1 ]}
                                 </div>
                             </div>
@@ -491,19 +491,19 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
     // db_username
     echo '
-                                <div class="col-xs-12 col-md-4">
+                                <div class="col-md-4">
                                     {[ "type": "text", "label": "'.tr("Username dell'utente MySQL").'", "name": "db_username", "placeholder": "'.tr("Username dell'utente MySQL").'", "value": "'.$username.'", "help": "'.tr('Esempio').': root", "show-help": 1, "required": 1 ]}
                                 </div>';
 
     // db_password
     echo '
-                                <div class="col-xs-12 col-md-4">
+                                <div class="col-md-4">
                                     {[ "type": "password", "label": "'.tr("Password dell'utente MySQL").'", "name": "db_password", "placeholder": "'.tr("Password dell'utente MySQL").'", "value": "'.$password.'", "help": "'.tr('Esempio').': mysql", "show-help": 1 ]}
                                 </div>';
 
     // db_name
     echo '
-                                <div class="col-xs-12 col-md-4">
+                                <div class="col-md-4">
                                     {[ "type": "text", "label": "'.tr('Nome del database').'", "name": "db_name", "placeholder": "'.tr('Nome del database').'", "value": "'.$name.'", "help": "'.tr('Esempio').': openstamanager", "show-help": 1, "required": 1 ]}
                                 </div>
                             </div>
@@ -512,13 +512,13 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
     // Password utente admin
     echo '
-                                <div class="col-xs-12 col-md-6">
+                                <div class="col-md-6">
                                     {[ "type": "password", "label": "'.tr("Password dell'amministratore").'", "name": "osm_password", "placeholder": "'.tr('Scegli la password di amministratore').'", "value": "'.$osm_password.'", "help": "'.tr('Valore di default').': admin", "show-help": 1 ]}
                                 </div>';
 
     // Email utente admin
     echo '
-                                <div class="col-xs-12 col-md-6">
+                                <div class="col-md-6">
                                     {[ "type": "email", "label": "'.tr("Email dell'amministratore").'", "name": "osm_email", "placeholder": "'.tr("Digita l'indirizzo email dell'amministratore").'", "value": "'.$osm_email.'" ]}
                                 </div>
                             </div>';

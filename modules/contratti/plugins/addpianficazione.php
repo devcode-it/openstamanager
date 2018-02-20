@@ -19,69 +19,69 @@ echo '
 	<input type="hidden" name="op" value="pianificazione">
 
 	<div class="row">
-	
-	
-		<div class="col-xs-12 col-md-7">
+
+
+		<div class="col-md-7">
 			 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$rsp[0]['idtipointervento'].'", "extra": "disabled" ]}
 		</div>
-		
-		
-		<div class="col-xs-12 col-md-5">
+
+
+		<div class="col-md-5">
 			{[ "type": "number", "label": "'.tr('Intervallo').'", "name": "intervallo", "class": "", "decimals": 0, "required": 1, "icon-after": "GG",  "min-value": "1"  ]}
 		</div>
 
-	
-	
+
+
 	</div>
-	
-	<div class="row">
-	
-		<div class="col-xs-12 col-md-12">
-			 {[ "type": "textarea", "label": "'.tr('Descrizione').'",  "placeholder": "'.tr('Descrizione').'", "name": "richiesta", "extra": "readonly", "value": "'.$rsp[0]['richiesta'].'"  ]}
-		</div>
-	
-	</div>
-	
 
 	<div class="row">
-	
-	
-		
-		<!--div class="col-xs-12 col-md-8">
+
+		<div class="col-md-12">
+			 {[ "type": "textarea", "label": "'.tr('Descrizione').'",  "placeholder": "'.tr('Descrizione').'", "name": "richiesta", "extra": "readonly", "value": "'.$rsp[0]['richiesta'].'"  ]}
+		</div>
+
+	</div>
+
+
+	<div class="row">
+
+
+
+		<!--div class="col-md-8">
 			{[ "type": "checkbox", "label": "'.tr('Pianifica anche date passate').'", "name": "date_passate", "value": "0", "help": "", "placeholder": "'.tr('Pianificare promemoria anche con date precedenti ad oggi: ').date('d/m/Y').'" ]}
 		</div-->
-		
+
 ';
 
 ?>
-		
-		<div class="col-xs-12 col-md-7">
+
+		<div class="col-md-7">
 			{[ "type": "select", "label": "<?php echo tr('Inizio pianificazione'); ?>", "name": "parti_da_oggi", "values": "list= \"0\":\"<?php echo tr('Pianificare a partire da questo promemoria ').$data_richiesta; ?>\", \"1\":\"<?php echo tr('Pianificare a partire da oggi ').date('d/m/Y'); ?>\"", "value": "" ]}
 		</div>
-		
+
 <?php
 
 echo '
-		
-		
-		<div class="col-xs-12 col-md-5">
+
+
+		<div class="col-md-5">
 			 {[ "type": "date", "label": "'.tr('Fine pianificazione <small>(Data conclusione contratto)</small>').'", "name": "data_conclusione", "extra": "readonly", "value": "'.$rsp[0]['data_conclusione'].'"  ]}
 		</div>
-		
-		
+
+
 	</div>
-	
+
 	<div class="row">
-	
-		<div class="col-xs-12 col-md-4">
+
+		<div class="col-md-4">
 			{[ "type": "checkbox", "label": "'.tr('Pianifica anche l\'intervento').'", "name": "pianifica_intervento", "value": "0", "help": "", "placeholder": "'.tr('Pianificare già l\'intervento ').'" ]}
 		</div>
-		
-		<div class="col-xs-12 col-md-4">
+
+		<div class="col-md-4">
 			{[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1",  "name": "idtecnico[]", "required": 0, "ajax-source": "tecnici", "value": "", "extra": "disabled" ]}
 		</div>
-		
-		
+
+
 		<div class="col-xs-6  col-md-2">
 			{[ "type": "time", "label": "'.tr('Orario inizio').'", "name": "orario_inizio", "required": 0, "value": "'.$orario_inizio.'", "extra": "disabled" ]}
 		</div>
@@ -89,14 +89,14 @@ echo '
 		<div class="col-xs-6  col-md-2">
 			{[ "type": "time", "label": "'.tr('Orario fine').'", "name": "orario_fine", "required": 0, "value": "'.$orario_fine.'", "extra": "disabled" ]}
 		</div>
-				
-				
-		
-		
+
+
+
+
 	</div>
-	
-	
-	
+
+
+
 
 	<!-- PULSANTI -->
 	<div class="row">
@@ -104,8 +104,8 @@ echo '
 			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> '.tr('Pianifica').'</button>
 		</div>
 	</div>
-	
-	
+
+
 </form>';
 
 echo '
@@ -113,10 +113,10 @@ echo '
 
 echo '
 	<script>
-		$( document ).ready(function() { 
-		
+		$( document ).ready(function() {
+
 			$( "#pianifica_intervento" ).click(function() {
-				
+
 					if ($(this).is(":checked")){
 						$("#idtecnico").removeAttr("disabled");
 						$("#orario_inizio").removeAttr("disabled");
@@ -126,7 +126,7 @@ echo '
 						$("#orario_inizio").prop("disabled", true);
 						$("#orario_fine").prop("disabled", true);
 					}
-					
+
 			});
 
 		});

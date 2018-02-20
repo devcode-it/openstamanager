@@ -22,7 +22,7 @@ echo '
 foreach ($records as $record) {
     // Scelta fra più valori
     echo '
-			<div class="col-xs-12 col-md-6">';
+			<div class="col-md-6">';
     if (preg_match("/list\[(.+?)\]/", $record['tipo'], $m)) {
         $m = explode(',', $m[1]);
         $list = '';

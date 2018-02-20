@@ -42,7 +42,7 @@ if (get_var('Attiva aggiornamenti')) {
         <div class="row">';
     // Aggiornamento
     echo '
-            <div class="col-xs-12 col-md-6">
+            <div class="col-md-6">
                 <div class="box box-success">
                     <div class="box-header with-border">
                         <h3 class="box-title">'.tr('Carica un aggiornamento').'</h3>
@@ -64,7 +64,7 @@ if (get_var('Attiva aggiornamenti')) {
 
     // Nuovo modulo
     echo '
-            <div class="col-xs-12 col-md-6">
+            <div class="col-md-6">
                 <div class="box box-info">
                     <div class="box-header with-border">
                         <h3 class="box-title">'.tr('Carica un nuovo modulo').'</h3>

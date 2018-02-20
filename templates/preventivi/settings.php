@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'footer-height' => 30,
+    'footer-height' => 35,
 ];

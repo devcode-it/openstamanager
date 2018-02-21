@@ -18,8 +18,8 @@ if (file_exists($docroot.'/include/custom/top.php')) {
 }
 
 // Controllo sull'esistenza di nuovi parametri di configurazione
-if (post('db_host') !== null) {
-    $db_host = post('db_host');
+if ($_POST['db_host'] !== null) {
+    $db_host = $_POST['db_host'];
     $db_name = post('db_name');
     $db_username = post('db_username');
     $db_password = post('db_password');

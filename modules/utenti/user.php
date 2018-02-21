@@ -60,14 +60,14 @@ if ($self_edit) {
 echo '
 
 	<div class="row">
-		<div class="">
+		<div class="col-md-12">
 		{[ "type": "password", "label": "'.tr('Password').'", "name": "password1", "required": 1, "value": "" ]}
 		</div>
     </div>';
 
 echo '
 	<div class="row">
-		<div class="">
+		<div class="col-md-12">
 		{[ "type": "password", "label": "'.tr('Ripeti la password').'", "name": "password2", "value": "" ]}
 		</div>
 	</div>';

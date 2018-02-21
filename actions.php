@@ -217,47 +217,57 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 } elseif (filter('op') == 'send-email') {
     $template = Mail::getTemplate($post['template']);
 
-    $final_attachments = [];
+    $attachments = [];
 
-    $prints = Prints::getModulePrints($id_module);
-    foreach ($prints as $print) {
-        if (!empty($post['print-'.$print['id']])) {
-            $filename = $upload_dir.'/'.$print['title'].' - '.$id_record.'.pdf';
+    // Stampe
+    foreach ($post['prints'] as $print) {
+        $print = Prints::get($print);
 
-            Prints::render($print['id'], $id_record, $filename);
+        $filename = $upload_dir.'/'.$print['title'].' - '.$id_record.'.pdf';
 
-            $final_attachments[] = [
-                'path' => $filename,
-                'name' => $print['title'],
-            ];
-        }
+        Prints::render($print['id'], $id_record, $filename);
+
+        $attachments[] = [
+            'path' => $filename,
+            'name' => $print['title'],
+        ];
     }
 
-    $attachments = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record));
-    foreach ($attachments as $attachment) {
-        if (!empty($post['attachment-'.$attachment['id']])) {
-            $final_attachments[] = [
-                'path' => $upload_dir.'/'.$attachment['filename'],
-                'name' => $attachment['nome'],
-            ];
-        }
+    // Allegati del record
+    $selected = [];
+    if (!empty($post['attachments'])) {
+        $selected = $dbo->fetchArray('SELECT * FROM zz_files WHERE id IN ('.implode($post['attachments']).') AND id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record));
     }
 
+    foreach ($selected as $attachment) {
+        $attachments[] = [
+            'path' => $upload_dir.'/'.$attachment['filename'],
+            'name' => $attachment['nome'],
+        ];
+    }
+
+    // Allegati dell'Azienda predefinita
     $anagrafiche = Modules::get('Anagrafiche');
-    $attachments = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module = '.prepare($anagrafiche['id'])." AND id_record = (SELECT valore FROM zz_settings WHERE nome = 'Azienda predefinita')");
-    foreach ($attachments as $attachment) {
-        if (!empty($post['default-'.$attachment['id']])) {
-            $final_attachments[] = [
-                'path' => DOCROOT.'/files/'.$anagrafiche['directory'].'/'.$attachment['filename'],
-                'name' => $attachment['nome'],
-            ];
-        }
+
+    $selected = [];
+    if (!empty($post['attachments'])) {
+        $selected = $dbo->fetchArray('SELECT * FROM zz_files WHERE id IN ('.implode(',', $post['attachments']).') AND id_module != '.prepare($id_module));
+    }
+
+    foreach ($selected as $attachment) {
+        $attachments[] = [
+            'path' => DOCROOT.'/files/'.$anagrafiche['directory'].'/'.$attachment['filename'],
+            'name' => $attachment['nome'],
+        ];
     }
 
     // Preparazione email
     $mail = new Mail();
 
-    $mail->AddAddress($post['email']);
+    // Conferma di lettura
+    if (!empty($post['read_notify'])) {
+        $mail->ConfirmReadingTo = $mail->From;
+    }
 
     // Reply To
     if (!empty($template['reply_to'])) {
@@ -274,6 +284,32 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
         $mail->AddBCC($template['bcc']);
     }
 
+    // Destinatari
+    foreach ($post['destinatari'] as $key => $destinatario) {
+        $type = $post['tipo_destinatari'][$key];
+
+        $pieces = explode('<', $destinatario);
+        $count = count($pieces);
+
+        $name = null;
+        if ($count > 1) {
+            $email = substr(end($pieces), 0, -1);
+            $name = substr($destinatario, 0, strpos($destinatario, '<'.$email));
+        } else {
+            $email = $destinatario;
+        }
+
+        if (!empty($email)) {
+            if ($type == 'a') {
+                $mail->AddAddress($email, $name);
+            } elseif ($type == 'cc') {
+                $mail->AddCC($email, $name);
+            } elseif ($type == 'bcc') {
+                $mail->AddBCC($email, $name);
+            }
+        }
+    }
+
     // Oggetto
     $mail->Subject = $post['subject'];
 
@@ -282,14 +318,18 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
         $mail->AddAttachment($attachment['path'], $attachment['name']);
     }
 
+    // Contenuto
     $mail->Body = $post['body'];
 
     // Invio mail
     if (!$mail->send()) {
-        $_SESSION['errors'][] = tr("Errore durante l'invio della segnalazione").': '.$mail->ErrorInfo;
+        $_SESSION['errors'][] = tr("Errore durante l'invio dell'email").': '.$mail->ErrorInfo;
     } else {
         $_SESSION['infos'][] = tr('Email inviata correttamente!');
     }
+
+    redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
+    exit();
 }
 
 if (Modules::getPermission($permesso) == 'r' || Modules::getPermission($permesso) == 'rw') {

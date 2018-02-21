@@ -75,6 +75,7 @@ a.disabled {
 }
 
 .ui-autocomplete {
+    z-index: 10000;
     min-width: 160px;
     padding: 10px;
     margin: 2px;
@@ -274,7 +275,6 @@ span.form-control {
     margin-top: 0;
 }
 
-
 /* Aggiustamenti per i widget */
 
 .widget li {
@@ -300,7 +300,6 @@ span.form-control {
     z-index: 1;
     opacity: 0.1;
 }
-
 
 /* Tooltip dark */
 
@@ -448,12 +447,11 @@ span.form-control {
     margin: 5px;
 }
 
-
 /* Personalizzazione del plugin Select2 */
 
 .select2-search,
 .select2-search__field {
-    width: 100%
+    width: 100% !important
 }
 
 .select2-results__option[aria-selected=true] {
@@ -475,7 +473,6 @@ span.form-control {
 .input-group-addon.no-padding>* {
     border-radius: 0px;
 }
-
 
 /* Interventi da pianificare in Dashboard */
 
@@ -519,11 +516,9 @@ input.small-width {
         width: 90%;
         margin-top: 20px
     }
-
     .main-header .logo {
         display: none;
     }
-
     /*
     .content-wrapper,
     .right-side,
@@ -554,7 +549,6 @@ input.small-width {
     .push {
         position: static;
     }
-
     .signature-pad {
         top: 0;
         left: 0;

@@ -118,27 +118,42 @@ class HTMLWrapper implements WrapperInterface
     {
         $result = null;
 
-        $choices = [
-            [
-                'id' => 'UNT',
-                'descrizione' => tr('&euro;'),
-            ],
-            [
-                'id' => 'PRC',
-                'descrizione' => '%',
-            ],
-        ];
-
         $pieces = explode('|', $string);
-
         $type = $pieces[1];
-        $value = (empty($pieces[2]) || !in_array($pieces[2], array_column($choices, 'id'))) ? 'UNT' : $pieces[2];
 
         if ($type == 'untprc') {
-            $result = '{[ "type": "select", "name": "tipo_'.prepareToField($values['name']).'", "value": "'.prepareToField($value).'", "values": '.json_encode($choices).', "class": "no-search" ]}';
-
-            $result = \HTMLBuilder\HTMLBuilder::replace($result);
+            $choices = [
+                [
+                    'id' => 'UNT',
+                    'descrizione' => tr('&euro;'),
+                ],
+                [
+                    'id' => 'PRC',
+                    'descrizione' => '%',
+                ],
+            ];
+        } elseif ($type == 'email') {
+            $choices = [
+                [
+                    'id' => 'a',
+                    'descrizione' => tr('A').'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+                ],
+                [
+                    'id' => 'cc',
+                    'descrizione' => tr('CC').'&nbsp;&nbsp;',
+                ],
+                [
+                    'id' => 'bcc',
+                    'descrizione' => tr('CCN'),
+                ],
+            ];
         }
+
+        $value = (empty($pieces[2]) || !in_array($pieces[2], array_column($choices, 'id'))) ? $choices[0]['id'] : $pieces[2];
+
+        $result = '{[ "type": "select", "name": "tipo_'.prepareToField($values['name']).'", "value": "'.prepareToField($value).'", "values": '.json_encode($choices).', "class": "no-search" ]}';
+
+        $result = \HTMLBuilder\HTMLBuilder::replace($result);
 
         return $result;
     }

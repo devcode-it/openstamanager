@@ -120,15 +120,18 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
      *
      * @return array
      */
-    public static function getTemplateVariables($template)
+    public static function getTemplateVariables($template, $id_record)
     {
         $template = self::getTemplate($template);
         $module = Modules::get($template['id_module']);
 
-        $directory = DOCROOT.'/modules/'.$module['directory'].'|custom|/variables.php';
+        $file = DOCROOT.'/modules/'.$module['directory'].'|custom|/variables.php';
 
-        $original_file = str_replace('|custom|', '', $directory).'form.php';
-        $custom_file = str_replace('|custom|', '/custom', $directory).'form.php';
+        $original_file = str_replace('|custom|', '', $file);
+        $custom_file = str_replace('|custom|', '/custom', $file);
+
+        $database = Database::getConnection();
+        $dbo = $database;
 
         // Lettura delle variabili nei singoli moduli
         if (file_exists($custom_file)) {

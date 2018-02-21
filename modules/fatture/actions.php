@@ -1114,10 +1114,6 @@ switch (post('op')) {
             $id_record = $rsp[0]['iddocumento'];
             $idintervento = $rsp[0]['idintervento'];
 
-            $query = 'DELETE FROM `co_righe_documenti` WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
-
-            $dbo->query($query);
-
             // Ricalcolo inps, ritenuta e bollo
             if ($dir == 'entrata') {
                 ricalcola_costiagg_fattura($id_record);
@@ -1126,19 +1122,23 @@ switch (post('op')) {
             }
 
             // Lettura interventi collegati
-            $query = 'SELECT id, idintervento FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idintervento IS NOT NULL';
-            $rs = $dbo->fetchArray($query);
+            //$query = 'SELECT id, idintervento FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idintervento IS NOT NULL';
+            //$rs = $dbo->fetchArray($query);
 
             // Se ci sono degli interventi collegati li rimetto nello stato "Completato"
-            for ($i = 0; $i < sizeof($rs); ++$i) {
-                $dbo->query("UPDATE in_interventi SET idstatointervento='OK' WHERE id=".prepare($rs[$i]['idintervento']));
+            //for ($i = 0; $i < sizeof($rs); ++$i) {
+			$dbo->query("UPDATE in_interventi SET idstatointervento='OK' WHERE id=".prepare($idintervento));
 
-                // Rimuovo dalla fattura gli articoli collegati all'intervento
-                $rs2 = $dbo->fetchArray('SELECT idarticolo FROM mg_articoli_interventi WHERE idintervento='.prepare($idintervento));
-                for ($j = 0; $j < sizeof($rs2); ++$j) {
-                    rimuovi_articolo_dafattura($rs[0]['idarticolo'], $id_record, $rs[0]['idrigadocumento']);
-                }
-            }
+			// Rimuovo dalla fattura gli articoli collegati all'intervento
+			$rs2 = $dbo->fetchArray('SELECT idarticolo FROM mg_articoli_interventi WHERE idintervento='.prepare($idintervento));
+			for ($j = 0; $j < sizeof($rs2); ++$j) {
+				rimuovi_articolo_dafattura($rs[0]['idarticolo'], $id_record, $rs[0]['idrigadocumento']);
+			}
+            //}
+			
+			//rimuovo riga da co_righe_documenti
+			$query = 'DELETE FROM `co_righe_documenti` WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
+            $dbo->query($query);
 
             $_SESSION['infos'][] = tr('Intervento _NUM_ rimosso!', [
                 '_NUM_' => $idintervento,

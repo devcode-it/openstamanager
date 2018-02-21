@@ -69,6 +69,3 @@ UPDATE `in_statiintervento` SET `can_delete` = 0 WHERE `idstatointervento` IN( '
 
 -- Impostazione di tutti gli eventuali altri tipi di intervento a modificabili e cancellabili
 UPDATE `in_statiintervento` SET `can_delete` = 1 WHERE `idstatointervento` NOT IN( 'FAT', 'OK', 'CALL', 'WIP' );
-
--- Lo stato 'FAT' è da considerarsi completato 
-UPDATE `in_statiintervento` SET `completato` = '1' WHERE `in_statiintervento`.`idstatointervento` = 'FAT';

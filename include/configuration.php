@@ -183,6 +183,8 @@ if ((file_exists('config.inc.php') || $valid_config) && !$dbo->isConnected()) {
     </div>';
 }
 
+$img = App::getPaths()['img'];
+
 // Visualizzazione dell'interfaccia di impostazione iniziale, nel caso il file di configurazione sia mancante oppure i paramentri non siano sufficienti
 if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     if (file_exists('config.inc.php')) {

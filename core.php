@@ -166,6 +166,10 @@ if (!API::isAPIRequest()) {
         $_SESSION['period_end'] = date('Y').'-12-31';
     }
 
+    // Impostazione automatica dei sezionali
+    $_SESSION['uscita']['id_sezionale'] = get_var('Sezionale predefinito fatture di acquisto');
+    $_SESSION['entrata']['id_sezionale'] = get_var('Sezionale predefinito fatture di vendita');
+
     // Impostazione del tema grafico di default
     $theme = !empty($theme) ? $theme : 'default';
 

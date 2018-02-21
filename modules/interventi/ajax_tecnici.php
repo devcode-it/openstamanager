@@ -267,7 +267,7 @@ if (!empty($rs2)) {
     }
 } else {
     echo
-'<p>'.tr('Nessun tecnico presente').'.</p>';
+'<div class=\'alert alert-info\' ><i class=\'fa fa-info-circle\'></i> '.tr('Nessun tecnico assegnato').'.</div>';
 }
 
 if ( !$flg_completato ) {

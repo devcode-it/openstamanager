@@ -37,6 +37,9 @@ if (!isset($_SESSION['dashboard']['idzone'])) {
     $rs = $dbo->fetchArray('SELECT id, descrizione FROM an_zone');
 
     $_SESSION['dashboard']['idzone'] = ["'-1'"];
+    
+    //"Nessuna zona" di default
+    $_SESSION['dashboard']['idzone'][] = "'0'";
 
     for ($i = 0; $i < count($rs); ++$i) {
         $_SESSION['dashboard']['idzone'][] = "'".$rs[$i]['id']."'";
@@ -235,7 +238,7 @@ $checks = '';
 $count = 0;
 $total = 0;
 
-$rs = $dbo->fetchArray('SELECT id, descrizione FROM an_zone ORDER BY descrizione ASC');
+$rs = $dbo->fetchArray('(SELECT 0 AS ordine, \'0\' AS id, \'Nessuna zona\' AS descrizione) UNION (SELECT 1 AS ordine, id, descrizione FROM an_zone) ORDER BY ordine, descrizione ASC');
 $total = count($rs);
 
 for ($i = 0; $i < count($rs); ++$i) {

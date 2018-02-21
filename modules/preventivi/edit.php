@@ -123,9 +123,9 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 				</div>
 			</div>
 
-            <div class="pull-right">
+            <!--div class="pull-right">
 				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-			</div>
+			</div-->
 
 		</div>
 	</div>
@@ -152,9 +152,10 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
         <?php
                     } ?>
 
-        <div class="pull-right">
+        <!--div class="pull-right">
             {( "name": "button", "type": "print", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
-        </div>
+        </div-->
+
         <div class="clearfix"></div>
         <br>
 

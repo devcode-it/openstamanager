@@ -344,3 +344,19 @@ echo '
 // Conclusione
 echo '
 <p class="text-center">'.tr("In attesa di un Vostro Cortese riscontro, colgo l'occasione per porgere Cordiali Saluti").'</p>';
+
+
+//Firma
+echo '<div style=\'position:absolute; bottom:'.($settings['margins']['bottom'] + $settings['footer-height']).'px\' > <table >
+    <tr>
+        <td style="vertical-align:bottom;" width="50%">
+            lì, ___________________________
+        </td>
+
+        <td align="center" style="vertical-align:bottom;" width="50%">
+            FIRMA PER ACCETTAZIONE<br><br>
+            _____________________________________________
+        </td>
+    </tr>
+</table>
+<br></div>';

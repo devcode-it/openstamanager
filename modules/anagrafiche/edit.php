@@ -145,7 +145,7 @@ if (!$cliente) {
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('Sito web'); ?>", "name": "sitoweb", "value": "$sitoweb$", "icon-before": "<i class='fa fa-globe'></i>" ]}
+					{[ "type": "text", "label": "<?php echo tr('Sito web'); ?>", "name": "sitoweb", "placeholder":"www.dominio.ext", "value": "$sitoweb$", "icon-before": "<i class='fa fa-globe'></i>" ]}
 				</div>
 
 				<div class="col-md-4">
@@ -175,11 +175,11 @@ if ($fornitore) {
 					{[ "type": "select", "label": "<?php echo tr('Pagamento predefinito (per acquisti)'); ?>", "name": "idpagamento_acquisti", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento_acquisti$" ]}
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     {[ "type": "select", "label": "<?php echo tr('Listino articoli (per acquisti)'); ?>", "name": "idlistino_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_acquisti$" ]}
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     {[ "type": "select", "label": "<?php echo tr('Iva predefinita (per acquisti)'); ?>", "name": "idiva_acquisti", "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "$idiva_acquisti$" ]}
                 </div>
             </div>
@@ -193,29 +193,28 @@ if ($fornitore) {
 					{[ "type": "select", "label": "<?php echo tr('Pagamento predefinito (per vendite)'); ?>", "name": "idpagamento_vendite", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento_vendite$" ]}
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     {[ "type": "select", "label": "<?php echo tr('Listino articoli (per vendite)'); ?>", "name": "idlistino_vendite", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_vendite$" ]}
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     {[ "type": "select", "label": "<?php echo tr('Iva predefinita (per vendite)'); ?>", "name": "idiva_vendite", "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "$idiva_vendite$" ]}
                 </div>
             </div>
 <?php
     } ?>
-
             <div class="row">
-				<div class="col-md-3">
+				<div class="col-md-4">
 					{[ "type": "select", "label": "<?php echo tr('Indirizzo di fatturazione'); ?>", "name": "idsede_fatturazione", "values": "query=SELECT id, IF(citta = '', nomesede, CONCAT_WS(', ', nomesede, citta)) AS descrizione FROM an_sedi WHERE idanagrafica='<?php echo $id_record; ?>' UNION SELECT '0' AS id, 'Sede legale' AS descrizione ORDER BY descrizione", "value": "$idsede_fatturazione$" ]}
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-4">
 					{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento_default", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "$idtipointervento_default$" ]}
 				</div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                   {[ "type": "select", "label": "Agente principale", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, IF(deleted=1, CONCAT(ragione_sociale, ' (Eliminato)'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione='Agente' AND deleted=0)<?php echo isset($records[0]['idagente']) ? 'OR (an_anagrafiche.idanagrafica = '.prepare($records[0]['idagente']).'AND deleted=1) ' : ''; ?>ORDER BY ragione_sociale", "value": "$idagente$" ]}
-              </div>
+              	</div>
 			</div>
 		</div>
 	</div>
@@ -252,52 +251,7 @@ if ($fornitore) {
 					{[ "type": "text", "label": "<?php echo tr('Città iscr. C.C.I.A.A.'); ?>", "name": "cciaa_citta", "value": "$cciaa_citta$" ]}
 				</div>
 			</div>
-
 			<div class="row">
-				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Appoggio bancario'); ?>", "name": "appoggiobancario", "value": "$appoggiobancario$" ]}
-				</div>
-
-				<div class="col-md-2">
-					{[ "type": "text", "label": "<?php echo tr('Filiale banca'); ?>", "name": "filiale", "value": "$filiale$" ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Codice IBAN'); ?>", "name": "codiceiban", "value": "$codiceiban$" ]}
-				</div>
-
-				<div class="col-md-2">
-					{[ "type": "text", "label": "<?php echo tr('Codice BIC'); ?>", "name": "bic", "value": "$bic$" ]}
-				</div>
-
-				<div class="col-md-2">
-					{[ "type": "text", "label": "<?php echo tr('Dicitura fissa fattura'); ?>", "name": "diciturafissafattura", "value": "$diciturafissafattura$" ]}
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Foro di competenza'); ?>", "name": "foro_competenza", "value": "$foro_competenza$" ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Settore merceologico'); ?>", "name": "settore", "value": "$settore$" ]}
-				</div>
-
-				<div class="col-md-6">
-					{[ "type": "text", "label": "<?php echo tr('Marche trattate'); ?>", "name": "marche", "value": "$marche$" ]}
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Num. dipendenti'); ?>", "name": "dipendenti", "value": "$dipendenti$" ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Num. macchine'); ?>", "name": "macchine", "value": "$macchine$" ]}
-				</div>
-
 				<div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo tr('Num. iscr. tribunale'); ?>", "name": "iscrizione_tribunale", "value": "$iscrizione_tribunale$" ]}
 				</div>
@@ -305,19 +259,69 @@ if ($fornitore) {
 				<div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo tr('Num. iscr. albo artigiani'); ?>", "name": "n_alboartigiani", "value": "$n_alboartigiani$" ]}
 				</div>
+
+				<div class="col-md-3">
+					{[ "type": "text", "label": "<?php echo tr('Foro di competenza'); ?>", "name": "foro_competenza", "value": "$foro_competenza$" ]}
+				</div>
+
+				<div class="col-md-3">
+					{[ "type": "number", "label": "<?php echo tr('Capitale sociale'); ?>", "name": "capitale_sociale", "decimals": 0, "value": "$capitale_sociale$", "icon-after":"&euro;" ]}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					{[ "type": "text", "label": "<?php echo tr('Appoggio bancario'); ?>", "name": "appoggiobancario", "value": "$appoggiobancario$" ]}
+				</div>
+
+				<div class="col-md-3">
+					{[ "type": "text", "label": "<?php echo tr('Filiale banca'); ?>", "name": "filiale", "value": "$filiale$" ]}
+				</div>
+
+				<div class="col-md-3">
+					{[ "type": "text", "label": "<?php echo tr('Codice IBAN'); ?>", "name": "codiceiban", "value": "$codiceiban$" ]}
+				</div>
+
+				<div class="col-md-3">
+					{[ "type": "text", "label": "<?php echo tr('Codice BIC'); ?>", "name": "bic", "value": "$bic$" ]}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					{[ "type": "text", "label": "<?php echo tr('Dicitura fissa in fattura'); ?>", "name": "diciturafissafattura", "value": "$diciturafissafattura$" ]}
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-3">
+					{[ "type": "text", "label": "<?php echo tr('Settore merceologico'); ?>", "name": "settore", "value": "$settore$" ]}
+				</div>
+
+				<div class="col-md-3">
+					{[ "type": "text", "label": "<?php echo tr('Marche trattate'); ?>", "name": "marche", "value": "$marche$" ]}
+				</div>
+			
+				<div class="col-md-3">
+					{[ "type": "number", "label": "<?php echo tr('Num. dipendenti'); ?>", "name": "dipendenti", "decimals": 0, "value": "$dipendenti$" ]}
+				</div>
+
+				<div class="col-md-3">
+					{[ "type": "number", "label": "<?php echo tr('Num. macchine'); ?>", "name": "macchine", "decimals": 0, "value": "$macchine$" ]}
+				</div>
 			</div>
 
 
 			<div class="row">
-				<div class="col-md-3">
+				<div class="col-md-12">
 					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Tipo di anagrafica'); ?>", "name": "idtipoanagrafica[]", "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica WHERE t.descrizione = 'Azienda'  AND deleted = 0) ORDER BY descrizione", "value": "$idtipianagrafica$" ]}
-<?php
-if (str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
-    echo '
-                    <p>'.tr('Questa anagrafica appartiene alla tipologia "Azienda"').'.</p>';
-}
-?>
+					<?php
+					if (str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
+					 echo '
+					<p>'.tr('Questa anagrafica appartiene alla tipologia "Azienda"').'.</p>';
+					}
+					?>
 				</div>
+			</div>
+			<div class="row">
 				<?php
                 if (in_array('Tecnico', explode(',', $records[0]['tipianagrafica']))) {
                     ?>
@@ -329,7 +333,7 @@ if (str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
 				<?php
                 if (in_array('Cliente', explode(',', $records[0]['tipianagrafica']))) {
                     ?>
-					<div class="col-md-3">
+					<div class="col-md-6">
                         {[ "type": "select", "label": "Agenti secondari", "multiple": "1", "name": "idagenti[]", "values": "query=SELECT an_anagrafiche.idanagrafica AS id,  IF(deleted=1, CONCAT(ragione_sociale, ' (Eliminato)'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione='Agente' AND deleted=0 AND an_anagrafiche.idanagrafica NOT IN (SELECT idagente FROM an_anagrafiche WHERE  idanagrafica = <?php echo prepare($records[0]['idanagrafica']); ?> )) OR (an_anagrafiche.idanagrafica IN (SELECT idagente FROM an_anagrafiche_agenti WHERE idanagrafica =  <?php echo prepare($records[0]['idanagrafica']); ?> ) ) ORDER BY ragione_sociale", "value": "$idagenti$" ]}
 					</div>
 
@@ -338,10 +342,6 @@ if (str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
 					</div>
 				<?php
                 } ?>
-
-				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Capitale sociale'); ?>", "name": "capitale_sociale", "value": "$capitale_sociale$" ]}
-				</div>
 			</div>
 
 

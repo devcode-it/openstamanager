@@ -30,6 +30,8 @@ switch (post('op')) {
             'read_notify' => $post['read_notify'],
         ], ['id' => $id_record]);
 
+        $dbo->sync('zz_email_print', ['id_email' => $id_record], ['id_print' => (array) $post['prints']]);
+
         $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
 
         break;

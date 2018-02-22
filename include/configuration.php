@@ -486,7 +486,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
     // db_host
     echo '
-                                <div class="">
+                                <div class="col-md-12">
                                     {[ "type": "text", "label": "'.tr('Host del database').'", "name": "db_host", "placeholder": "'.tr("Indirizzo dell'host del database").'", "value": "'.$host.'", "help": "'.tr('Esempio').': localhost", "show-help": 1, "required": 1 ]}
                                 </div>
                             </div>

@@ -66,6 +66,22 @@ echo '
                 </div>
             </div>
 
+<?php
+
+// Stampe
+$selected_prints = $dbo->fetchArray('SELECT id_print FROM zz_email_print WHERE id_email = '.prepare($id_record));
+$selected = array_column($selected_prints, 'id_print');
+
+echo '
+
+            <div class="row">
+                <div class="col-md-12">
+                    {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($records[0]['id_module']).'" ]}
+                </div>
+            </div>';
+
+?>
+
             <div class="row">
                 <div class="col-md-12">
                     {[ "type": "textarea", "label": "<?php echo tr('Contenuto'); ?>", "name": "body", "value": "$body$" ]}

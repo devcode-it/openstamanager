@@ -18,8 +18,8 @@ if (file_exists($docroot.'/include/custom/top.php')) {
 }
 
 // Controllo sull'esistenza di nuovi parametri di configurazione
-if ($_POST['db_host'] !== null) {
-    $db_host = $_POST['db_host'];
+if (post('db_host') !== null) {
+    $db_host = $_POST['db_host']; // Fix per evitare la conversione in numero
     $db_name = post('db_name');
     $db_username = post('db_username');
     $db_password = post('db_password');
@@ -289,7 +289,9 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
                     <div id="step-1">
                         <p>'.tr('Benvenuto in <strong>OpenSTAManager</strong>!').'</p>
-                        <p>'.tr("Prima di procedere alla configurazione e all'installazione del software, sono necessari alcuni accorgimenti per garantire il corretto funzionamento del gestionale. Stai utilizzando la versione PHP ".phpversion()."").'.</p>
+                        <p>'.tr("Prima di procedere alla configurazione e all'installazione del software, sono necessari alcuni accorgimenti per garantire il corretto funzionamento del gestionale").'. '.tr('Stai utilizzando la versione PHP _PHP_', [
+                            '_PHP_' => phpversion(),
+                        ]).'.</p>
                         <hr>';
 
     // Estensioni di PHP

@@ -238,7 +238,7 @@ class App
                 $fields[] = trim($view['name']);
 
                 $search_inside[] = !empty($view['search_inside']) ? $view['search_inside'] : $view['name'];
-                $order_by[] = !empty($view['order_by']) ? $view['order_by'] : $view['name'];
+                $order_by[] = !empty($view['order_by']) ? $view['order_by'] : '`'.$view['name'].'`';
                 $search[] = $view['search'];
                 $slow[] = $view['slow'];
                 $format[] = $view['format'];

@@ -77,6 +77,7 @@ class HTMLBuilder
             'button' => 'HTMLBuilder\Manager\ButtonManager',
             'csrf' => 'HTMLBuilder\Manager\CSRFManager',
             'custom_fields' => 'HTMLBuilder\Manager\FieldManager',
+            'widgets' => 'HTMLBuilder\Manager\WidgetManager',
         ],
         'instances' => [],
     ];

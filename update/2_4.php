@@ -39,6 +39,7 @@ $files = [
     'lib/modulebuilder.php',
     'lib/permissions_check.php',
     'lib/user_check.php',
+    'src/Widgets.php',
     'templates/fatture_accompagnatorie/fattura_body.html',
     'templates/fatture_accompagnatorie/fattura.html',
     'templates/fatture_accompagnatorie/pdfgen.fatture_accompagnatorie.php',

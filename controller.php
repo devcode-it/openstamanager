@@ -25,14 +25,8 @@ $module_dir = $module['directory'];
 
 include $docroot.'/actions.php';
 
-/*
- * Widget top
- */
-
- //se non sono mobile nascondo i widget controller_top
-if (!isMobile()) {
-    echo Widgets::addModuleWidgets($id_module, 'controller_top');
-}
+// Widget in alto
+echo '{( "name": "widgets", "id_module": "'.$id_module.'", "position": "top", "place": "controller" )}';
 
 // Lettura eventuali plugins modulo da inserire come tab
 echo '
@@ -88,31 +82,12 @@ foreach ($plugins as $plugin) {
 
 echo '
 			</div>
-		</div>
-    </div>';
+		</div>';
 
 redirectOperation($id_module, $id_record);
 
-/*
- * Widget laterali.
- */
-// Controllo se ho widget per il lato destro dello schermo, altrimenti non creo la colonna di destra
-
-//se sono mobile pesco anche i widget di controller_top
-if (isMobile()) {
-    $extra_where = " OR location = 'controller_top'";
-} else {
-    $extra_where = '';
-}
-
-$result_widgets = $dbo->fetchArray('SELECT `id`, `location`, `class` FROM `zz_widgets` WHERE `id_module`='.prepare($id_module)." AND (`location`='controller_right' ".$extra_where.' ) AND `enabled`=1 ORDER BY `order` ASC');
-if (count($result_widgets) > 0) {
-    echo '
-	<div class="col-md-12">';
-    echo Widgets::addModuleWidgets($id_module, 'controller_right');
-    echo '
-	</div>';
-}
+// Widget in basso
+echo '{( "name": "widgets", "id_module": "'.$id_module.'", "position": "right", "place": "controller" )}';
 
 if (file_exists($docroot.'/include/custom/bottom.php')) {
     include $docroot.'/include/custom/bottom.php';

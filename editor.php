@@ -26,6 +26,9 @@ $module_dir = $module['directory'];
 // Inclusione elementi fondamentali del modulo
 include $docroot.'/actions.php';
 
+// Widget in alto
+echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top", "place": "editor" )}';
+
 $advanced_sessions = get_var('Attiva notifica di presenza utenti sul record');
 if ($advanced_sessions) {
     $dbo->query('DELETE FROM zz_semaphores WHERE id_utente='.prepare($_SESSION['id_utente']).' AND posizione='.prepare($id_module.', '.$id_record));
@@ -215,25 +218,17 @@ if (empty($records)) {
 
 redirectOperation($id_module, $id_record);
 
+// Widget in basso
+echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "right", "place": "editor" )}';
+
 echo '
 		<hr>
         <a href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
             <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
         </a>';
 
-/*
-* Widget laterali
-*/
 echo '
-	</div>
-	<div class="col-md-12">';
-echo Widgets::addModuleWidgets($id_module, 'editor_right');
-echo '
-	</div>';
-
-?>
-<script>
-<?php
+<script>';
 
 // Se l'utente ha i permessi in sola lettura per il modulo, converto tutti i campi di testo in span
 if ($module['permessi'] == 'r') {

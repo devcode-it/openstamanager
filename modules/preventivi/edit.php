@@ -16,15 +16,6 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 		</div>
 
 		<div class="panel-body">
-			<div class="pull-right">
-
-                {( "name": "button", "type": "print", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
-
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-				<br/><br/>
-			</div>
-			<div class="clearfix"></div>
-
 			<div class="row">
 				<div class="col-md-2">
 					{[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "$numero$" ]}

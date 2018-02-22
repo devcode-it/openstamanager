@@ -15,11 +15,6 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 		</div>
 
 		<div class="panel-body">
-			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-			</div>
-			<div class="clearfix"></div>
-
 			<div class="row">
 				<div class="col-md-3">
 					<?php
@@ -105,7 +100,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 				<div class="col-md-2">
 					{[ "type": "number", "label": "<?php echo tr('Garanzia'); ?>", "name": "gg_garanzia", "decimals": 0, "value": "$gg_garanzia$", "icon-after": "GG" ]}
 				</div>
-				
+
 				<div class="col-md-3">
 					{[ "type": "checkbox", "label": "<?php echo tr('Questo articolo è un servizio'); ?>", "name": "servizio", "value": "$servizio$", "help": "", "placeholder": "<?php echo tr('SERVIZIO'); ?>" ]}
 				</div>

@@ -7,13 +7,6 @@ echo '
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-list">
 
-	<div class="pull-right">
-		<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>
-	</div>
-
-	<div class="clearfix"></div>
-	<br>
-
 	<table class="table table-striped table-condensed">';
 
 $rst = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica, ragione_sociale FROM (an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica) WHERE an_tipianagrafiche.descrizione='Tecnico' ORDER BY ragione_sociale");

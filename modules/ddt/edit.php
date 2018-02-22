@@ -23,11 +23,6 @@ if ($module['name'] == 'Ddt di vendita') {
 		</div>
 
 		<div class="panel-body">
-            <div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-			</div>
-			<div class="clearfix"></div>
-
 			<div class="row">
 <?php
 if ($dir == 'uscita') {

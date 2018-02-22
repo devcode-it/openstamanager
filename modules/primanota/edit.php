@@ -21,13 +21,6 @@ include_once __DIR__.'/../../core.php';
     }
     ?>
 
-	<div class="pull-right">
-		<button type="submit" id="btn-save" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-	</div>
-	<div class="clearfix"></div>
-	<br>
-
-
 	<div class="row">
 		<div class="col-md-4">
 			{[ "type": "date", "label": "<?php echo tr('Data movimento'); ?>", "name": "data", "required": 1, "value": "$data$" ]}

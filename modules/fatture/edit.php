@@ -10,11 +10,6 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 $_SESSION['superselect']['ddt'] = $dir;
 
 ?>
-<form action="" class="text-right" method="post" id="form-copy">
-    <input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="op" value="copy">
-</form>
-
 <form action="" method="post" role="form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -54,17 +49,6 @@ $_SESSION['superselect']['ddt'] = $dir;
                     }
                 }
             ?>
-
-
-            <div class="pull-right">
-
-                <button type="button" class="btn btn-primary" onclick="if( confirm('Duplicare questa fattura?') ){ $('#form-copy').submit(); }"><i class="fa fa-copy"></i> <?php echo tr('Duplica fattura'); ?></button>
-
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-
-			</div>
-
-			<div class="clearfix"></div>
 
 			<div class="row">
                 <?php

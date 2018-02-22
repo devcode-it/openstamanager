@@ -17,11 +17,6 @@ echo '
 		</div>
 
 		<div class="panel-body">
-            <div class="pull-right">
-                <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-            </div>
-            <div class="clearfix"></div><br>
-
             <div class="row">
                 <div class="col-md-8">
                     {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "value": "$name$", "required": 1 ]}

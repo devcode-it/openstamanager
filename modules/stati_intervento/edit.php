@@ -7,12 +7,6 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
-
-	<div class="pull-right">
-		<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-	</div>
-	<div class="clearfix"></div>
-
 	<div class="row">
 		<div class="col-md-2">
 			{[ "type": "span", "label": "<?php echo tr('Codice'); ?>", "name": "idstatointervento", "value": "$idstatointervento$" ]}

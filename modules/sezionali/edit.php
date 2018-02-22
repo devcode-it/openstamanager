@@ -6,34 +6,28 @@
 	<!-- DATI ARTICOLO -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">Sezionale</h3>
+			<h3 class="panel-title"><?php echo tr('Sezionale'); ?></h3>
 		</div>
 
 		<div class="panel-body">
-			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Salva modifiche</button>
-			</div>
-			<div class="clearfix"></div>
-
-
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "text", "label": "Nome", "name": "nome", "required": 1, "class": "", "value": "$nome$", "extra": "" ]}
+					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "class": "", "value": "$nome$", "extra": "" ]}
 				</div>
 				<div class="col-md-3">
-					{[ "type": "text", "label": "Maschera", "name": "maschera", "required": 1, "class": "", "value": "$maschera$", "extra": "" ]}
+					{[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "maschera", "required": 1, "class": "", "value": "$maschera$", "extra": "" ]}
 				</div>
 				<div class="col-md-3">
-					{[ "type": "select", "label": "Documenti", "name": "dir", "required": 1, "class": "", "values": "list=\"entrata\": \"Documenti di vendita\",  \"uscita\": \"Documenti di acquisto\"", "value": "$dir$", "extra": "" ]}
+					{[ "type": "select", "label": "<?php echo tr('Documenti'); ?>", "name": "dir", "required": 1, "class": "", "values": "list=\"entrata\": \"Documenti di vendita\",  \"uscita\": \"Documenti di acquisto\"", "value": "$dir$", "extra": "" ]}
 				</div>
 				<div class="col-md-3">
-					{[ "type": "select", "label": "Magazzino", "name": "idautomezzo", "required": 0, "class": "", "values": "query=SELECT id, nome AS descrizione FROM dt_automezzi", "value": "$idautomezzo$", "extra": "" ]}
+					{[ "type": "select", "label": "<?php echo tr('Magazzino'); ?>", "name": "idautomezzo", "required": 0, "class": "", "values": "query=SELECT id, nome AS descrizione FROM dt_automezzi", "value": "$idautomezzo$", "extra": "" ]}
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "Note", "name": "note", "required": 0, "class": "", "value": "$note$", "extra": "" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "required": 0, "class": "", "value": "$note$", "extra": "" ]}
 				</div>
 			</div>
 
@@ -41,14 +35,20 @@
 				<div class="col-md-12">
 
 					<div class="alert alert-info" style="margin:0;">
-						<p align="justify">
-						Istruzioni per il campo Maschera:<br/>
+						<h3><?php echo tr('Istruzioni per il campo _FIELD_', [
+                            '_FIELD_' => tr('Maschera'),
+                        ]); ?></h3>
 
-						<font style='font-size:20px;'><b>####</b></font> Questi caratteri vengono sostituiti con il numero progressivo della fattura, vengono aggiunti zeri non significativi per raggiungere il numero desiderato di caratteri;<br/><br/>
+						<p><font style='font-size:20px;'><b>####</b></font> <?php echo tr('Questi caratteri vengono sostituiti con il numero progressivo della fattura, vengono aggiunti zeri non significativi per raggiungere il numero desiderato di caratteri'); ?>.</p>
 
-						<font style='font-size:20px;'><b>YYYY</b></font> Questi caratteri vengono sosituiti con l'anno corrente a 4 cifre, è possibile specificare l'anno a 2 cifre con YY;<br/><br/>
+						<p><font style='font-size:20px;'><b>YYYY</b></font> <?php echo tr("Questi caratteri vengono sosituiti con l'anno corrente a 4 cifre, è possibile specificare l'anno a 2 cifre con _YY_", [
+                            '_YY_' => 'YY',
+                        ]); ?>.</p>
 
-						&Egrave; possibile aggiungere altri caratteri fissi, come lettere, trattini, eccetera, prima e/o dopo e/o tra le maschere #### e YYYY.<br/>
+						<p><?php echo tr("E' possibile aggiungere altri caratteri fissi, come lettere, trattini, eccetera, prima e/o dopo e/o tra le maschere _####_ e _YYYY_", [
+                            '_####_' => '####',
+                            '_YYYY_' => 'YYYY',
+                        ]); ?>.</p>
 						</p>
 					</div>
 

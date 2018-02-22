@@ -35,11 +35,6 @@ if (!$cliente) {
 		</div>
 
 		<div class="panel-body">
-			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-			</div>
-			<div class="clearfix"></div>
-
 			<div class="row">
 				<div class="col-md-8">
 					{[ "type": "text", "label": "<?php echo tr('Ragione sociale'); ?>", "name": "ragione_sociale", "required": 1, "value": "$ragione_sociale$" ]}
@@ -300,7 +295,7 @@ if ($fornitore) {
 				<div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo tr('Marche trattate'); ?>", "name": "marche", "value": "$marche$" ]}
 				</div>
-			
+
 				<div class="col-md-3">
 					{[ "type": "number", "label": "<?php echo tr('Num. dipendenti'); ?>", "name": "dipendenti", "decimals": 0, "value": "$dipendenti$" ]}
 				</div>
@@ -315,11 +310,11 @@ if ($fornitore) {
 				<div class="col-md-12">
 					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Tipo di anagrafica'); ?>", "name": "idtipoanagrafica[]", "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica WHERE t.descrizione = 'Azienda'  AND deleted = 0) ORDER BY descrizione", "value": "$idtipianagrafica$" ]}
 					<?php
-					if (str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
-					 echo '
+                    if (str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
+                        echo '
 					<p>'.tr('Questa anagrafica appartiene alla tipologia "Azienda"').'.</p>';
-					}
-					?>
+                    }
+                    ?>
 				</div>
 			</div>
 			<div class="row">

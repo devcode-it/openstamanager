@@ -5,27 +5,6 @@ include_once __DIR__.'/../../core.php';
 unset($_SESSION['superselect']['idanagrafica']);
 $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
-//Disabilito il tasto di firma per gli interventi completati
-if ($records[0]['flg_completato']) {
-    $disabled = 'disabled';
-    $readonly = 'readonly';
-} else {
-    $disabled = '';
-    $readonly = '';
-}
-
-if (empty($records[0]['firma_file'])) {
-    $frase = tr('Anteprima e firma');
-    $info_firma = '';
-} else {
-    $frase = tr('Nuova anteprima e firma');
-    $info_firma = '<span class="label label-success"><i class="fa fa-edit"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
-        '_DATE_' => Translator::dateToLocale($records[0]['firma_data']),
-        '_TIME_' => Translator::timeToLocale($records[0]['firma_data']),
-        '_PERSON_' => '<b>'.$records[0]['firma_nome'].'</b>',
-    ]).'</span>';
-}
-
 ?><form action="" method="post">
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">
@@ -38,42 +17,28 @@ if (empty($records[0]['firma_file'])) {
 		</div>
 
 		<div class="panel-body">
-            <!-- EVENTUALE FIRMA GIA' EFFETTUATA -->
-            <?php echo $info_firma; ?>
-			<div class="pull-right">
-				<button type="button" class="btn btn-primary " onclick="launch_modal( '<?php echo tr('Anteprima e firma'); ?>', '<?php echo $rootdir; ?>/modules/interventi/add_firma.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&anteprima=1', 1 );" <?= $disabled; ?>><i class="fa fa-desktop"></i> <?php echo $frase; ?>...</button>
-
-                {( "name": "button", "type": "print", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
-
-                {( "name": "button", "type": "email", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
-
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-				<div class="clearfix" >&nbsp;</div>
-			</div>
-			<div class="clearfix"></div>
-
 			<!-- RIGA 1 -->
 			<div class="row">
 				<div class="col-md-3">
                     <?php
                         echo Modules::link('Anagrafiche', $records[0]['idanagrafica'], null, null, 'class="pull-right"');
                     ?>
-					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted=0 ORDER BY ragione_sociale", "value": "$idanagrafica$", "ajax-source": "clienti", "extra": "<?= $readonly; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted=0 ORDER BY ragione_sociale", "value": "$idanagrafica$", "ajax-source": "clienti", "extra": "<?php echo $readonly; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "values": "query=SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica='$idanagrafica$'", "value": "$idsede$", "ajax-source": "sedi", "extra": "<?= $readonly; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "values": "query=SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica='$idanagrafica$'", "value": "$idsede$", "ajax-source": "sedi", "extra": "<?php echo $readonly; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
 					<?php
                         echo Modules::link('Anagrafiche', $records[0]['idclientefinale'], null, null, 'class="pull-right"');
                     ?>
-					{[ "type": "select", "label": "<?php echo tr('Per conto di'); ?>", "name": "idclientefinale", "value": "$idclientefinale$", "ajax-source": "clienti", "extra": "<?= $readonly; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Per conto di'); ?>", "name": "idclientefinale", "value": "$idclientefinale$", "ajax-source": "clienti", "extra": "<?php echo $readonly; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "extra": "<?= $readonly; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "extra": "<?php echo $readonly; ?>" ]}
 				</div>
 			</div>
 
@@ -89,7 +54,7 @@ if (empty($records[0]['firma_file'])) {
                     }
                     ?>
 
-					{[ "type": "select", "label": "<?php echo tr('Preventivo'); ?>", "name": "idpreventivo", "value": "$idpreventivo$", "ajax-source": "preventivi", "extra": "<?= $readonly; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Preventivo'); ?>", "name": "idpreventivo", "value": "$idpreventivo$", "ajax-source": "preventivi", "extra": "<?php echo $readonly; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -109,7 +74,7 @@ if (empty($records[0]['firma_file'])) {
                         }
                     ?>
 
-					{[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $idcontratto; ?>", "ajax-source": "contratti", "extra": "<?= $readonly; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $idcontratto; ?>", "ajax-source": "contratti", "extra": "<?php echo $readonly; ?>" ]}
 					<input type='hidden' name='idcontratto_riga' value='<?php echo $idcontratto_riga; ?>'>
 				</div>
 			</div>
@@ -134,11 +99,11 @@ if (empty($records[0]['firma_file'])) {
 			<!-- RIGA 3 -->
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "span", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$", "extra": "<?= $readonly; ?>" ]}
+					{[ "type": "span", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$", "extra": "<?php echo $readonly; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "$data_richiesta$", "extra": "<?= $readonly; ?>" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "$data_richiesta$", "extra": "<?php echo $readonly; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -153,7 +118,7 @@ if (empty($records[0]['firma_file'])) {
 			<!-- RIGA 4 -->
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento", "value": "$idtipointervento$", "extra": "<?= $readonly; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento", "value": "$idtipointervento$", "extra": "<?php echo $readonly; ?>" ]}
 				</div>
 
 				<div class="col-md-4">
@@ -161,7 +126,7 @@ if (empty($records[0]['firma_file'])) {
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Automezzo'); ?>", "name": "idautomezzo", "values": "query=SELECT id, CONCAT_WS( ')', CONCAT_WS( ' (', CONCAT_WS( ', ', nome, descrizione), targa ), '' ) AS descrizione FROM dt_automezzi", "help": "<?php echo tr('Se selezionato i materiali verranno presi prima dall&rsquo;automezzo e poi dal magazzino centrale.'); ?>", "value": "$idautomezzo$", "extra": "<?= $readonly; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Automezzo'); ?>", "name": "idautomezzo", "values": "query=SELECT id, CONCAT_WS( ')', CONCAT_WS( ' (', CONCAT_WS( ', ', nome, descrizione), targa ), '' ) AS descrizione FROM dt_automezzi", "help": "<?php echo tr('Se selezionato i materiali verranno presi prima dall&rsquo;automezzo e poi dal magazzino centrale.'); ?>", "value": "$idautomezzo$", "extra": "<?php echo $readonly; ?>" ]}
 				</div>
 			</div>
 
@@ -169,11 +134,11 @@ if (empty($records[0]['firma_file'])) {
 			<!-- RIGA 5 -->
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Richiesta'); ?>", "name": "richiesta", "required": 1, "class": "autosize", "value": "$richiesta$", "extra": "rows='5' <?= $readonly; ?>" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Richiesta'); ?>", "name": "richiesta", "required": 1, "class": "autosize", "value": "$richiesta$", "extra": "rows='5' <?php echo $readonly; ?>" ]}
 				</div>
 
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "class": "autosize", "value": "$descrizione$", "extra": "rows='10' <?= $readonly; ?>" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "class": "autosize", "value": "$descrizione$", "extra": "rows='10' <?php echo $readonly; ?>" ]}
 				</div>
 
 				<div class="col-md-12">

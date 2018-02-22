@@ -13,12 +13,8 @@ echo '
 			<h3 class="panel-title">'.tr('Valori della sezione').'</h3>
 		</div>
 
-		<div class="panel-body">
-			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>
-			</div>
-			<div class="clearfix"></div><br>
-			';
+		<div class="panel-body">';
+
 foreach ($records as $record) {
     // Scelta fra più valori
     echo '
@@ -63,6 +59,7 @@ foreach ($records as $record) {
     echo '
 			</div>';
 }
+
 echo '
 			<div class="clearfix"></div><hr>
             <div class="pull-right">

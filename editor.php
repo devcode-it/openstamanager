@@ -87,7 +87,7 @@ if (empty($records)) {
 			<div class="tab-content">
                 <div id="tab_0" class="tab-pane active">';
 
-    // Pulsanti
+    // Pulsanti di default
     echo '
                     <div id="pulsanti" data-spy="affix" data-offset-top="200">
                         <a class="btn btn-warning" href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
@@ -107,7 +107,7 @@ if (empty($records)) {
 
                     <script>
                     $(document).ready(function(){
-                        var form = $("#tab_0").find("form").first();
+                        var form = $("#module-edit").find("form").first();
 
                         // Aggiunta del submit
                         form.prepend(\'<button type="submit" id="submit" class="hide"></button>\');
@@ -129,6 +129,30 @@ if (empty($records)) {
                     <div class="clearfix"></div>
                     <br>';
 
+    // Pulsanti personalizzati
+    ob_start();
+    if (file_exists($docroot.'/modules/'.$module_dir.'/custom/buttons.php')) {
+        include $docroot.'/modules/'.$module_dir.'/custom/buttons.php';
+    } elseif (file_exists($docroot.'/modules/'.$module_dir.'/buttons.php')) {
+        include $docroot.'/modules/'.$module_dir.'/buttons.php';
+    }
+    $buttons = ob_get_clean();
+
+    if (!empty($buttons)) {
+        echo '
+                    <div class="pull-right" id="pulsanti-modulo">
+                        '.$buttons.'
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <br>';
+    }
+
+    // Contenuti del modulo
+    echo '
+
+                    <div id="module-edit">';
+
     // Lettura template modulo (verifico se ci sono template personalizzati, altrimenti uso quello base)
     if (file_exists($docroot.'/modules/'.$module_dir.'/custom/edit.php')) {
         include $docroot.'/modules/'.$module_dir.'/custom/edit.php';
@@ -141,35 +165,36 @@ if (empty($records)) {
     }
 
     echo '
-            </div>';
+                    </div>
+                </div>';
 
     // Campi personalizzati
     echo '
 
-            <div class="hide" id="custom_fields_top-edit">
-                {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top" )}
-            </div>
+                <div class="hide" id="custom_fields_top-edit">
+                    {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top" )}
+                </div>
 
-            <div class="hide" id="custom_fields_bottom-edit">
-                {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}
-            </div>
+                <div class="hide" id="custom_fields_bottom-edit">
+                    {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}
+                </div>
 
-            <script>
-            $(document).ready(function(){
-                var form = $("#custom_fields_top-edit").parent().find("form").first();
+                <script>
+                $(document).ready(function(){
+                    var form = $("#custom_fields_top-edit").parent().find("form").first();
 
-                // Campi a inizio form
-                form.prepend($("#custom_fields_top-edit").html());
+                    // Campi a inizio form
+                    form.prepend($("#custom_fields_top-edit").html());
 
-                // Campi a fine form
-                var last = form.find(".panel").last();
-                if (!last.length) {
-                    last = form.find(".row").eq(-2);
-                }
+                    // Campi a fine form
+                    var last = form.find(".panel").last();
+                    if (!last.length) {
+                        last = form.find(".row").eq(-2);
+                    }
 
-                last.after($("#custom_fields_bottom-edit").html());
-            });
-            </script>';
+                    last.after($("#custom_fields_bottom-edit").html());
+                });
+                </script>';
 
     foreach ($plugins as $plugin) {
         echo '

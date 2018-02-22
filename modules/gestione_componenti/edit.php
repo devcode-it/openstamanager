@@ -37,11 +37,6 @@ if (empty($id_record)) {
 
             <div class="panel-body">
 
-                <div class="pull-right">
-                    <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-                </div>
-                <div class="clearfix"></div>
-
                 <div class="row">
                     <div class="col-md-6">
                         {[ "type": "text", "label": "<?php echo tr('Nome file'); ?>", "name": "nomefile", "required": 1, "value": "$nomefile$", "readonly": 1 ]}

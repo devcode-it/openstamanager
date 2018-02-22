@@ -10,11 +10,6 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
 
-	<!--div class="pull-right">
-		<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>
-	</div>
-	<div class="clearfix"></div><br-->
-
 	<!-- DATI -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">

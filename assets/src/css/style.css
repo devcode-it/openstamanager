@@ -275,6 +275,14 @@ span.form-control {
     margin-top: 0;
 }
 
+#pulsanti.affix {
+    background-color: #fff;
+    top: 0;
+    padding: 10px 0;
+    width: 100%;
+    z-index: 800;
+}
+
 /* Aggiustamenti per i widget */
 
 .widget li {

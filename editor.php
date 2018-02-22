@@ -70,7 +70,6 @@ if (empty($records)) {
     }
     echo '
 					</a>
-					<a class="back-btn" href="controller.php?id_module='.$id_module.'"><i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'</a>
 				</li>';
 
     $plugins = $dbo->fetchArray('SELECT id, title FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1 ORDER BY zz_plugins.order DESC");
@@ -87,6 +86,48 @@ if (empty($records)) {
 
 			<div class="tab-content">
                 <div id="tab_0" class="tab-pane active">';
+
+    // Pulsanti
+    echo '
+                    <div id="pulsanti" data-spy="affix" data-offset-top="200">
+                        <a class="btn btn-warning" href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
+                            <i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'
+                        </a>
+
+                        <div class="pull-right">
+                            {( "name": "button", "type": "print", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}
+
+                            {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}
+
+                            <a class="btn btn-success" id="save">
+                                <i class="fa fa-check"></i> '.tr('Salva modifiche').'
+                            </a>
+                        </div>
+                    </div>
+
+                    <script>
+                    $(document).ready(function(){
+                        var form = $("#tab_0").find("form").first();
+
+                        // Aggiunta del submit
+                        form.prepend(\'<button type="submit" id="submit" class="hide"></button>\');
+
+                        $("#save").click(function(){
+                            $("#submit").trigger("click");
+                        });
+
+                        $("#pulsanti").on("affix.bs.affix", function(){
+                            $("#pulsanti").css("width", $("#tab_0").css("width"));
+                        });
+
+                        $("#pulsanti").on("affix-top.bs.affix", function(){
+                            $("#pulsanti").css("width", "100%");
+                        });
+                    });
+                    </script>
+
+                    <div class="clearfix"></div>
+                    <br>';
 
     // Lettura template modulo (verifico se ci sono template personalizzati, altrimenti uso quello base)
     if (file_exists($docroot.'/modules/'.$module_dir.'/custom/edit.php')) {
@@ -151,7 +192,9 @@ redirectOperation($id_module, $id_record);
 
 echo '
 		<hr>
-		<a href="controller.php?id_module='.$id_module.'"><i class="fa fa-chevron-left"></i> '.tr('Indietro').'</a>';
+        <a href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
+            <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
+        </a>';
 
 /*
 * Widget laterali

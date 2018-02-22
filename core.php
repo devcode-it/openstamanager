@@ -7,6 +7,16 @@ ob_start();
 // Impostazioni di configurazione PHP
 date_default_timezone_set('Europe/Rome');
 
+// Controllo sulla versione PHP
+$minimum = '5.6.0';
+if (version_compare(phpversion(), $minimum) < 0) {
+    echo '
+<p>Stai utilizzando la versione PHP '.phpversion().', non compatibile con OpenSTAManager.</p>
+
+<p>Aggiorna PHP alla versione >= '.$minimum.'.</p>';
+    exit();
+}
+
 // Caricamento delle impostazioni personalizzabili
 if (file_exists(__DIR__.'/config.inc.php')) {
     include_once __DIR__.'/config.inc.php';

@@ -12,7 +12,7 @@
 // Individuazione dell'immagine
 $logo = $infos['full_directory'].'/logo_azienda.jpg';
 if (!file_exists($logo)) {
-    $logo = __DIR__.'/logo_azienda.jpg';
+    $logo = '$default_logo$';
 }
 
 // Header

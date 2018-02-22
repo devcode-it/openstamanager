@@ -78,10 +78,53 @@ foreach ($replace as $prefix => $values) {
     }
 }
 
+// Header di default
+$header_file = DOCROOT.'/templates/base|custom|/header.php';
+
+$original_file = str_replace('|custom|', '', $header_file);
+$custom_file = str_replace('|custom|', '/custom', $header_file);
+
+if (file_exists($custom_file)) {
+    $header_file = $custom_file;
+} elseif (file_exists($original_file)) {
+    $header_file = $original_file;
+}
+
+$default_header = include $header_file;
+
+// Footer di default
+$footer_file = DOCROOT.'/templates/base|custom|/footer.php';
+
+$original_file = str_replace('|custom|', '', $footer_file);
+$custom_file = str_replace('|custom|', '/custom', $footer_file);
+
+if (file_exists($custom_file)) {
+    $footer_file = $custom_file;
+} elseif (file_exists($original_file)) {
+    $footer_file = $original_file;
+}
+
+$default_footer = include $footer_file;
+
+// Logo di default
+$logo_file = DOCROOT.'/templates/base|custom|/logo_azienda.jpg';
+
+$original_file = str_replace('|custom|', '', $logo_file);
+$custom_file = str_replace('|custom|', '/custom', $logo_file);
+
+if (file_exists($custom_file)) {
+    $logo_file = $custom_file;
+} elseif (file_exists($original_file)) {
+    $logo_file = $original_file;
+}
+
+$default_logo = $logo_file;
+
 // Valori aggiuntivi per la sostituzione
 $replaces = array_merge($replaces, [
-    'default_header' => include DOCROOT.'/templates/base/header.php',
-    'default_footer' => include DOCROOT.'/templates/base/footer.php',
+    'default_header' => $default_header,
+    'default_footer' => $default_footer,
+    'default_logo' => $default_logo,
     'docroot' => DOCROOT,
     'rootdir' => ROOTDIR,
     'directory' => Prints::get($id_print)['full_directory'],

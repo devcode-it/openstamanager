@@ -215,7 +215,9 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
                 $val = is_array($val) ? implode(' ', $val) : $val;
                 $attributes[] = $key.'="'.$val.'"';
             }
-
+            
+            //Replace rootdir per le query
+            $value = str_replace( 'ROOTDIR', ROOTDIR, $value );
             $result[] = str_replace('|attr|', implode(' ', $attributes), '<div |attr|>'.$value.'</div>');
         }
 

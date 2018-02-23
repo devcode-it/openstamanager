@@ -1,7 +1,7 @@
 {
     "name": "openstamanager",
     "description": "Gestionale open source per assistenza tecnica e fatturazione",
-    "version": "2.3.0",
+    "version": "2.3.1",
     "license": "GPL-3.0",
     "keywords": [
         "open source",
@@ -9,7 +9,7 @@
         "assistenza tecnica",
         "fatturazione"
     ],
-    "homepage": "http://openstamanager.com/",
+    "homepage": "https://www.openstamanager.com/",
     "author": {
         "name": "Fabio Lovato",
         "email": "info@openstamanager.com"

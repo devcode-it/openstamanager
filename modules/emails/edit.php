@@ -83,36 +83,40 @@ echo '
                 </div>
             </div>
 
-			<?php
-            // Variabili utilizzabili
-            $module_dir = DOCROOT.'/modules/'.Modules::get($records[0]['id_module'])['directory'];
-            $variables = [];
+<?php
 
-            if (file_exists($module_dir.'/custom/variables.php')) {
-                $variables = include $module_dir.'/custom/variables.php';
-            } elseif (file_exists($module_dir.'/variables.php')) {
-                $variables = include $module_dir.'/variables.php';
-            }
+// Variabili utilizzabili
+$module_dir = DOCROOT.'/modules/'.Modules::get($records[0]['id_module'])['directory'];
+$variables = [];
 
-            if (sizeof($variables) > 0) {
-                echo '
-					<div class="alert alert-info">
-						<p>Puoi utilizzare le seguenti variabili nell\'oggetto e nel corpo della mail:</p>
-						<ul>';
-                foreach ($variables as $variable => $value) {
-                    echo '<li>{'.$variable.'}</li>';
-                }
+if (file_exists($module_dir.'/custom/variables.php')) {
+    $variables = include $module_dir.'/custom/variables.php';
+} elseif (file_exists($module_dir.'/variables.php')) {
+    $variables = include $module_dir.'/variables.php';
+}
 
-                echo '
-						</ul>
-					</div>';
-            } else {
-                echo '
-					<div class="alert alert-warning">
-						<i class="fa fa-warning"></i> Non sono state definite variabili da utilizzare nel template.
-					</div>';
-            }
-            ?>
+if (sizeof($variables) > 0) {
+    echo '
+            <div class="alert alert-info">
+                <p>'.tr("Puoi utilizzare le seguenti variabili nell'oggetto e nel corpo della mail").':</p>
+                <ul>';
+
+    foreach ($variables as $variable => $value) {
+        echo '
+                    <li>{'.$variable.'}</li>';
+    }
+
+    echo '
+                </ul>
+            </div>';
+} else {
+    echo '
+            <div class="alert alert-warning">
+                <i class="fa fa-warning"></i> '.tr('Non sono state definite variabili da utilizzare nel template').'.
+            </div>';
+}
+
+?>
 
         </div>
     </div>

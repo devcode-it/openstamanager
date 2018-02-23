@@ -180,7 +180,7 @@ UPDATE `co_documenti` SET `id_sezionale`='2' WHERE `idtipodocumento` IN (SELECT 
 
 -- Innesto modulo sezionali sotto "Contabilità"
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES
-(NULL, 'Sezionali', 'Sezionali', 'sezionali', '{	"main_query": [	{	"type": "table", "fields": "Tipo documenti, Nome,  Maschera, Magazzino, Note", "query": "SELECT `id`, `nome` AS `Nome`, `maschera` AS `Maschera`, (SELECT nome FROM dt_automezzi WHERE dt_automezzi.id = idautomezzo) AS Magazzino, IF(`dir`=''entrata'', ''Documenti di vendita'', ''Documenti di acquisto'') AS `Tipo documenti`, `note` AS `Note`  FROM `co_sezionali` HAVING 2=2 ORDER BY `Tipo documenti`, `Nome`"}	]}', '', 'fa fa-database', '2.2', '2.2', 1, 12, 1, 1);
+(NULL, 'Sezionali', 'Sezionali', 'sezionali', '{	"main_query": [	{	"type": "table", "fields": "Tipo documenti, Nome,  Maschera, Magazzino, Note", "query": "SELECT `id`, `nome` AS `Nome`, `maschera` AS `Maschera`, (SELECT nome FROM dt_automezzi WHERE dt_automezzi.id = idautomezzo) AS Magazzino, IF(`dir`=''entrata'', ''Documenti di vendita'', ''Documenti di acquisto'') AS `Tipo documenti`, `note` AS `Note`  FROM `co_sezionali` HAVING 2=2 ORDER BY `Tipo documenti`, `Nome`"}	]}', '', 'fa fa-database', '2.4', '2.4', 1, 12, 1, 1);
 
 -- Aggiungo impostazione predefinita
 INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES
@@ -235,3 +235,8 @@ CREATE TABLE IF NOT EXISTS `zz_field_record` (
   PRIMARY KEY (`id`),
   FOREIGN KEY (`id_field`) REFERENCES `zz_fields`(`id`) ON DELETE CASCADE
 );
+
+-- Aggiunta modulo di importazione
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES
+(NULL, 'Import', 'Import', 'import', 'custom', '', 'fa fa-file-o', '2.4', '2.4', 1, NULL, 1, 1);
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Import' AND `t2`.`name` = 'Strumenti') SET `t1`.`parent` = `t2`.`id`;

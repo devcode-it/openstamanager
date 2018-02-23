@@ -84,35 +84,35 @@ echo '
             </div>
 
 			<?php
-			// Variabili utilizzabili
-			$module_dir = DOCROOT.'/modules/'.Modules::get($records[0]['id_module'])['directory'];
-			$variables = [];
+            // Variabili utilizzabili
+            $module_dir = DOCROOT.'/modules/'.Modules::get($records[0]['id_module'])['directory'];
+            $variables = [];
 
-			if (file_exists($module_dir.'/custom/variables.php') ) {
-				$variables = include $module_dir.'/custom/variables.php';
-			} elseif (file_exists($module_dir.'/variables.php') ) {
-				$variables = include $module_dir.'/variables.php';
-			}
+            if (file_exists($module_dir.'/custom/variables.php')) {
+                $variables = include $module_dir.'/custom/variables.php';
+            } elseif (file_exists($module_dir.'/variables.php')) {
+                $variables = include $module_dir.'/variables.php';
+            }
 
-			if (sizeof($variables) > 0) {
-				echo '
+            if (sizeof($variables) > 0) {
+                echo '
 					<div class="alert alert-info">
 						<p>Puoi utilizzare le seguenti variabili nell\'oggetto e nel corpo della mail:</p>
 						<ul>';
-				foreach ($variables as $variable => $value) {
-					echo '<li>{'.$variable.'}</li>';
-				}
+                foreach ($variables as $variable => $value) {
+                    echo '<li>{'.$variable.'}</li>';
+                }
 
-				echo '
+                echo '
 						</ul>
 					</div>';
-			} else {
-				echo '
+            } else {
+                echo '
 					<div class="alert alert-warning">
 						<i class="fa fa-warning"></i> Non sono state definite variabili da utilizzare nel template.
 					</div>';
-			}
-			?>
+            }
+            ?>
 
         </div>
     </div>
@@ -125,6 +125,8 @@ echo '
 
 <script>
     $(document).ready(function(){
-        CKEDITOR.replace("body");
+        CKEDITOR.replace("body", {
+            toolbar: globals.ckeditorToolbar
+        });
     });
 </script>

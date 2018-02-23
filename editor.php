@@ -92,7 +92,7 @@ if (empty($records)) {
 
     // Pulsanti di default
     echo '
-                    <div id="pulsanti" data-spy="affix" data-offset-top="200">
+                    <div id="pulsanti">
                         <a class="btn btn-warning" href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
                             <i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'
                         </a>
@@ -117,6 +117,15 @@ if (empty($records)) {
 
                         $("#save").click(function(){
                             $("#submit").trigger("click");
+                        });';
+
+    // Pulsanti dinamici
+    if (!isMobile()) {
+        echo '
+                        $("#pulsanti").affix({
+                            offset: {
+                                top: 200
+                            }
                         });
 
                         $("#pulsanti").on("affix.bs.affix", function(){
@@ -125,7 +134,10 @@ if (empty($records)) {
 
                         $("#pulsanti").on("affix-top.bs.affix", function(){
                             $("#pulsanti").css("width", "100%");
-                        });
+                        });';
+    }
+
+    echo '
                     });
                     </script>
 

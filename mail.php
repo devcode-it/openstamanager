@@ -119,11 +119,18 @@ echo '
             emails = JSON.parse(response);
 
             $(".destinatari").each(function(){
-                $(this).autocomplete({source: emails});
+                $(this).autocomplete({
+                    source: emails,
+                    minLength: 0
+                }).focus(function() {
+                    $(this).autocomplete("search", $(this).val())
+                });;
             });
         });
 
-        CKEDITOR.replace("body");
+        CKEDITOR.replace("body", {
+            toolbar: globals.ckeditorToolbar
+        });
     });
 
     function send(){

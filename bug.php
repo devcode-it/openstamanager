@@ -3,7 +3,7 @@
 include_once __DIR__.'/core.php';
 
 $pageTitle = 'Bug';
-$jscript_modules[] = $js.'/ckeditor/ckeditor.js';
+$jscript_modules[] = App::getPaths()['js'].'/ckeditor/ckeditor.js';
 
 if (filter('op') == 'send') {
     // Preparazione email
@@ -193,10 +193,7 @@ echo '
 			var firstFocus = 1;
 
 			CKEDITOR.replace("body", {
-				toolbar: [
-					{ name: "document", items: [ "NewPage", "Preview", "-", "Templates" ] }, // Defines toolbar group with name (used to create voice label) and items in 3 subgroups
-					["Bold","Italic","Underline","Superscript","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Format",], // Defines toolbar group without name
-				]
+				toolbar: globals.ckeditorToolbar
 			});
 
 			CKEDITOR.instances.body.on("key", function() {

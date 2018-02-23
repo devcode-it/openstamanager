@@ -98,17 +98,31 @@ if (Auth::check()) {
     echo '
             };
 			globals = {
-                rootdir: \''.$rootdir.'\', js: \''.$paths['js'].'\', css: \''.$paths['css'].'\', img: \''.$paths['img'].'\',
+                rootdir: \''.$rootdir.'\',
+                js: \''.$paths['js'].'\',
+                css: \''.$paths['css'].'\',
+                img: \''.$paths['img'].'\',
+
                 id_module: \''.$id_module.'\',
                 id_record: \''.$id_record.'\',
+
                 aggiornamenti_id: \''.($dbo->isInstalled() ? Modules::get('Aggiornamenti')['id'] : '').'\',
+
                 cifre_decimali: '.get_var('Cifre decimali per importi').',
-                decimals: "'.Translator::getFormatter()->getNumberSeparators()['decimals'].'", thousands: "'.Translator::getFormatter()->getNumberSeparators()['thousands'].'",
+
+                decimals: "'.Translator::getFormatter()->getNumberSeparators()['decimals'].'",
+                thousands: "'.Translator::getFormatter()->getNumberSeparators()['thousands'].'",
+
                 search: search,
                 translations: translations,
+                locale: \''.$lang.'\',
+
                 start_date: \''.Translator::dateToLocale($_SESSION['period_start']).'\',
                 end_date: \''.Translator::dateToLocale($_SESSION['period_end']).'\',
-                locale: \''.$lang.'\',
+
+                ckeditorToolbar: [
+					[ "Bold", "Italic", "Underline", "Superscript", "-", "NumberedList", "BulletedList", "Outdent", "Indent", "Blockquote", "-", "Format"],
+				],
             };
 		</script>';
 }

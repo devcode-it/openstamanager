@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-?><form action="editor.php?id_module=$id_module$" method="post">
+?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-list">
 

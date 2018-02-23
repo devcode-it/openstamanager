@@ -6,7 +6,7 @@ echo '
 <script src="'.$rootdir.'/assets/dist/js/ckeditor/ckeditor.js"></script>';
 
 ?>
-<form action="" method="post" id="add-form">
+<form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">
 

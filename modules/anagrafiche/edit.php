@@ -24,7 +24,7 @@ if (!$cliente) {
 }
 
 ?>
-<form action="" method="post" role="form">
+<form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
 

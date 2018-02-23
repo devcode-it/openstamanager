@@ -12,7 +12,7 @@ if (isset($id_record)) {
 if (isset($id_record)) {
     echo '&id_record='.$id_record;
 }
-?>" method="post">
+?>" method="post" id="add-form">
 	<input type="hidden" name="backto" value="record-edit">
 
 <?php

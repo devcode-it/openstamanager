@@ -100,7 +100,7 @@ if (empty($new_codice)) {
 
 ?>
 
-<form action="editor.php?id_module=$id_module$" method="post" id="add-form" onsubmit="if($(this).parsley().validate()) { return add_intervento(); }">
+<form action="" method="post" id="add-form" id="add-form" onsubmit="if($(this).parsley().validate()) { return add_intervento(); }">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="ref" value="<?php echo $_GET['ref']; ?>">
 	<input type="hidden" name="backto" value="record-edit">

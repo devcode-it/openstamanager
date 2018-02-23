@@ -20,7 +20,7 @@ if ($module['name'] == 'Ddt di vendita') {
     $tipo_anagrafica = tr('Fornitore');
 }
 
-?><form action="editor.php?id_module=$id_module$" method="post">
+?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="dir" value="<?php echo $dir; ?>">

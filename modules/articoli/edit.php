@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 
-?><form action="" method="post" role="form" enctype="multipart/form-data">
+?><form action="" method="post" id="edit-form" enctype="multipart/form-data">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
 

@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-?><form action="" method="post" role="form" id="check">
+?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
 
@@ -180,7 +180,7 @@ $(document).ready(function(){
         }
     });
 
-	$('#check').submit(function(event) {
+	$('#edit-form').submit(function(event) {
 		var tot = 0;
 
 		$(this).find('[id*=percentuale]').each(function(){

@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-?><form action="" method="post" role="form" enctype="multipart/form-data">
+?><form action="" method="post" id="edit-form" enctype="multipart/form-data">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="matricola" value="<?php echo $id_record; ?>">

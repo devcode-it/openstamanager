@@ -10,13 +10,13 @@ if (get('tipoanagrafica') != '') {
 }
 
 echo '
-<form action="editor.php?id_module=$id_module$" method="post" onsubmit="return add_anagrafica();">
+<form action="editor.php?id_module=$id_module$" method="post">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Ragione sociale').'", "name": "ragione_sociale", "required": 1, "value": "" ]}
+			{[ "type": "text", "label": "'.tr('Ragione sociale').'", "name": "ragione_sociale", "required": 1 ]}
 		</div>
 
 		<div class="col-md-6">
@@ -31,16 +31,3 @@ echo '
 		</div>
 	</div>
 </form>';
-?>
-<script>
-	function add_anagrafica(){
-		if ( $('#ragione_sociale').val()==''){
-			alert( "Specifica una ragione sociale." );
-			return false;
-		}
-		else if( $('#idtipoanagrafica option:selected').length == 0 ){
-			alert( "Seleziona almeno un tipo di anagrafica." );
-			return false;
-		}
-	}
-</script>

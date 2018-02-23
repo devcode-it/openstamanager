@@ -77,6 +77,9 @@ $(document).ready(function(){
 
     $("#form_'.$id_module.'-'.$id_plugin.'").find("form").ajaxForm({
         url: "'.$rootdir.$directory.'/actions.php",
+        beforeSubmit: function(arr, $form, options) {
+            return $form.parsley().validate();
+        },
         data: data,
         type: "post",
         success: function(data){

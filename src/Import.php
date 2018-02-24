@@ -101,6 +101,11 @@ class Import
 
         $file = DOCROOT.'/files/'.Modules::get('Import')['directory'].'/'.$import['files'][$find]['filename'];
 
+        // Impostazione automatica per i caratteri di fine riga
+        if (!ini_get('auto_detect_line_endings')) {
+            ini_set('auto_detect_line_endings', '1');
+        }
+
         // Gestione del file CSV
         $csv = League\Csv\Reader::createFromPath($file, 'r');
         $csv->setDelimiter(';');

@@ -213,6 +213,8 @@ if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom
                 $attributes[] = $key.'="'.$val.'"';
             }
 
+            // Replace rootdir per le query
+            $value = str_replace('ROOTDIR', ROOTDIR, $value);
             $result[] = str_replace('|attr|', implode(' ', $attributes), '<div |attr|>'.$value.'</div>');
         }
 

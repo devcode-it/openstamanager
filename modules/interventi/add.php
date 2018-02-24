@@ -17,8 +17,9 @@ $idsede = filter('idsede');
 $impianti = [];
 
 if (!empty($idanagrafica)) {
-    $rs = $dbo->fetchArray('SELECT idtipointervento_default FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
+    $rs = $dbo->fetchArray('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
     $idtipointervento = $rs[0]['idtipointervento_default'];
+	$idzona = $rs[0]['idzona'];
     $idstatointervento = 'WIP';
     $richiesta = filter('richiesta');
 }
@@ -38,9 +39,10 @@ $idordineservizio = filter('idordineservizio');
 $idcontratto_riga = filter('idcontratto_riga');
 
 if (!empty($idcontratto) && !empty($idordineservizio)) {
-    $rs = $dbo->fetchArray('SELECT * FROM co_contratti WHERE id='.prepare($idcontratto));
+    $rs = $dbo->fetchArray('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS idzona FROM co_contratti WHERE id='.prepare($idcontratto));
     $idanagrafica = $rs[0]['idanagrafica'];
-
+	$idzona = $rs[0]['idzona'];
+	
     // Info riga pianificata
     $rs = $dbo->fetchArray('SELECT * FROM co_ordiniservizio WHERE idcontratto='.prepare($idcontratto).' AND id='.prepare($idordineservizio));
     $data = $rs[0]['data_scadenza'];
@@ -57,8 +59,9 @@ if (!empty($idcontratto) && !empty($idordineservizio)) {
 
 // Se sto pianificando un contratto, leggo tutti i dati del contratto per predisporre l'aggiunta intervento
 elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
-    $rs = $dbo->fetchArray('SELECT * FROM co_contratti WHERE id='.prepare($idcontratto));
+    $rs = $dbo->fetchArray('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS idzona FROM co_contratti WHERE id='.prepare($idcontratto));
     $idanagrafica = $rs[0]['idanagrafica'];
+	$idzona = $rs[0]['idzona'];
 
     // Info riga pianificata
     $rs = $dbo->fetchArray('SELECT * FROM co_righe_contratti WHERE idcontratto='.prepare($idcontratto).' AND id='.prepare($idcontratto_riga));

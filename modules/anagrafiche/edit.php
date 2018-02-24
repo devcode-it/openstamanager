@@ -261,7 +261,7 @@ if ($fornitore) {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "number", "label": "<?php echo tr('Capitale sociale'); ?>", "name": "capitale_sociale", "decimals": 0, "value": "$capitale_sociale$", "icon-after":"&euro;" ]}
+					{[ "type": "text", "label": "<?php echo tr('Capitale sociale'); ?>", "name": "capitale_sociale", "value": "$capitale_sociale$" ]}
 				</div>
 			</div>
 			<div class="row">

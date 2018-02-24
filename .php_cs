@@ -15,6 +15,7 @@ $config = PhpCsFixer\Config::create()
         '@Symfony' => true,
         'array_syntax' => ['syntax' => 'short'],
         'yoda_style' => false,
+        'no_short_echo_tag' => true,
     ])
     ->setFinder($finder);
 

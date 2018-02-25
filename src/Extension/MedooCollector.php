@@ -20,13 +20,13 @@ class MedooCollector extends \DebugBar\DataCollector\PDO\PDOCollector
     public function getWidgets()
     {
         return [
-            'eloquent' => [
+            'medoo' => [
                 'icon' => 'inbox',
                 'widget' => 'PhpDebugBar.Widgets.SQLQueriesWidget',
                 'map' => 'medoo_pdo',
                 'default' => '[]',
             ],
-            'eloquent:badge' => [
+            'medoo:badge' => [
                 'map' => 'medoo_pdo.nb_statements',
                 'default' => 0,
             ],

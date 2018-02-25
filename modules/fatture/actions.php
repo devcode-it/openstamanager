@@ -296,16 +296,16 @@ switch (post('op')) {
 
             //Fatturo le ore di lavoro raggruppate per costo orario
             $rst = $dbo->fetchArray('SELECT SUM( ROUND( TIMESTAMPDIFF( MINUTE, orario_inizio, orario_fine ) / 60, '.get_var('Cifre decimali per quantità').' ) ) AS tot_ore, SUM(prezzo_ore_consuntivo) AS tot_prezzo_ore_consuntivo, SUM(sconto) AS tot_sconto, prezzo_ore_unitario FROM in_interventi_tecnici WHERE idintervento='.prepare($idintervento).' GROUP BY prezzo_ore_unitario');
-            
+
             //Aggiunta riga intervento sul documento
-            if( sizeof($rst) == 0 ){
+            if (sizeof($rst) == 0) {
                 $_SESSION['warnings'][] = tr('L\'intervento _NUM_ non ha sessioni di lavoro!', [
                     '_NUM_' => $idintervento,
                 ]);
             } else {
-                for( $i=0; $i<sizeof($rst); $i++ ){
+                for ($i = 0; $i < sizeof($rst); ++$i) {
                     $ore = $rst[$i]['tot_ore'];
-                    
+
                     // Calcolo iva
                     $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
                     $rs = $dbo->fetchArray($query);
@@ -325,20 +325,19 @@ switch (post('op')) {
                     $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(get_var("Percentuale ritenuta d'acconto"));
                     $rs = $dbo->fetchArray($query);
                     $ritenutaacconto = ($subtot - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
-                    
+
                     $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, `order`) VALUES('.prepare($id_record).', '.prepare($idintervento).', '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto).", 'UNT', 'ore', ".prepare($ore).', '.prepare(get_var('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(get_var("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
                     $dbo->query($query);
                 }
             }
-            
-            
+
             $costi_intervento = get_costi_intervento($idintervento);
 
             //Fatturo i diritti di chiamata raggruppati per costo
             $rst = $dbo->fetchArray('SELECT COUNT(id) AS qta, SUM(prezzo_dirittochiamata) AS tot_prezzo_dirittochiamata FROM in_interventi_tecnici WHERE idintervento='.prepare($idintervento).' AND prezzo_dirittochiamata > 0 GROUP BY prezzo_dirittochiamata');
 
             // Aggiunta diritto di chiamata se esiste
-            for( $i=0; $i<sizeof($rst); $i++ ){
+            for ($i = 0; $i < sizeof($rst); ++$i) {
                 // Calcolo iva
                 $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
                 $rs = $dbo->fetchArray($query);
@@ -574,7 +573,9 @@ switch (post('op')) {
                         'qta' => $riga['qta'],
                         'sconto' => $riga['sconto'],
                         'sconto_unitario' => $riga['sconto_unitario'],
-                        '#order' => '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).')',
+                        'order' => Medoo\Medoo::raw('(SELECT IFNULL(MAX(<order>) + 1, 0) FROM <co_righe_documenti> AS t WHERE <iddocumento> = :id)', [
+                            ':id' => $id_record,
+                        ]),
                         'idritenutaacconto' => get_var("Percentuale ritenuta d'acconto"),
                         'ritenutaacconto' => $ritenutaacconto,
                         'idrivalsainps' => get_var('Percentuale rivalsa INPS'),
@@ -1127,17 +1128,17 @@ switch (post('op')) {
 
             // Se ci sono degli interventi collegati li rimetto nello stato "Completato"
             //for ($i = 0; $i < sizeof($rs); ++$i) {
-			$dbo->query("UPDATE in_interventi SET idstatointervento='OK' WHERE id=".prepare($idintervento));
+            $dbo->query("UPDATE in_interventi SET idstatointervento='OK' WHERE id=".prepare($idintervento));
 
-			// Rimuovo dalla fattura gli articoli collegati all'intervento
-			$rs2 = $dbo->fetchArray('SELECT idarticolo FROM mg_articoli_interventi WHERE idintervento='.prepare($idintervento));
-			for ($j = 0; $j < sizeof($rs2); ++$j) {
-				rimuovi_articolo_dafattura($rs[0]['idarticolo'], $id_record, $rs[0]['idrigadocumento']);
-			}
+            // Rimuovo dalla fattura gli articoli collegati all'intervento
+            $rs2 = $dbo->fetchArray('SELECT idarticolo FROM mg_articoli_interventi WHERE idintervento='.prepare($idintervento));
+            for ($j = 0; $j < sizeof($rs2); ++$j) {
+                rimuovi_articolo_dafattura($rs[0]['idarticolo'], $id_record, $rs[0]['idrigadocumento']);
+            }
             //}
-			
-			//rimuovo riga da co_righe_documenti
-			$query = 'DELETE FROM `co_righe_documenti` WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
+
+            //rimuovo riga da co_righe_documenti
+            $query = 'DELETE FROM `co_righe_documenti` WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
             $dbo->query($query);
 
             $_SESSION['infos'][] = tr('Intervento _NUM_ rimosso!', [
@@ -1341,7 +1342,7 @@ if (!empty($id_record)) {
     $rs = $dbo->fetchArray('SELECT idddt FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
 
     for ($i = 0; $i < sizeof($rs); ++$i) {
-        $dbo->query('UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="'.get_stato_ddt($rs[$i]['idddt']).'") WHERE id = '.prepare($rs[$i]['idddt']));
+        $dbo->query('UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione='.prepare(get_stato_ddt($rs[$i]['idddt'])).') WHERE id = '.prepare($rs[$i]['idddt']));
     }
 }
 
@@ -1350,7 +1351,7 @@ if (!empty($id_record)) {
     $rs = $dbo->fetchArray('SELECT idordine FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
 
     for ($i = 0; $i < sizeof($rs); ++$i) {
-        $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[$i]['idordine']).'") WHERE id = '.prepare($rs[$i]['idordine']));
+        $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione='.prepare(get_stato_ordine($rs[$i]['idordine'])).') WHERE id = '.prepare($rs[$i]['idordine']));
     }
 }
 

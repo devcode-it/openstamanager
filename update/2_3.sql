@@ -129,8 +129,8 @@ ALTER TABLE `in_interventi_tecnici`
     ADD `scontokm` decimal(12, 4) NOT NULL AFTER `tipo_sconto`, ADD `scontokm_unitario` decimal(12, 4) NOT NULL AFTER `scontokm`, ADD `tipo_scontokm` enum('UNT', 'PRC') NOT NULL DEFAULT 'UNT' AFTER `scontokm_unitario`;
 
 -- Inizializzo a vuoto il valore per le impostazioni Percentuale ritenuta d'acconto e Percentuale rivalsa INPS
-UPDATE `zz_settings` SET `valore` = '' WHERE `zz_settings`.`nome` = "Percentuale ritenuta d'acconto";
-UPDATE `zz_settings` SET `valore` = '' WHERE `zz_settings`.`nome` = "Percentuale rivalsa INPS";
+UPDATE `zz_settings` SET `valore` = '' WHERE `zz_settings`.`nome` = 'Percentuale ritenuta d''acconto';
+UPDATE `zz_settings` SET `valore` = '' WHERE `zz_settings`.`nome` = 'Percentuale rivalsa INPS';
 
 -- Aggiornamento widget credito clienti e debito fornitori leggendo da scadenzario per includere anche il parzialmente pagato
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare-pagato))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir=''entrata'' AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|"' WHERE `zz_widgets`.`name` = 'Crediti da clienti';
@@ -420,7 +420,7 @@ DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Usa tabelle avanzate';
 DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Righe per pagina';
 DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Formato report';
 
--- Aggiunta tabelle per la gestione dei campi "minori""
+-- Aggiunta tabelle per la gestione dei campi "minori"
 INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Tabelle', '', '', '', 'fa fa-table', '2.3', '2.3', '1', 1, '1', '1');
 INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'IVA', 'iva', 'SELECT |select| FROM `co_iva` WHERE 1=1 HAVING 2=2', '', 'fa fa-percent', '2.3', '2.3', '1', 1, '1', '1');
 INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Causali', 'causali', 'SELECT |select| FROM `dt_causalet` WHERE 1=1 HAVING 2=2', '', 'fa fa-commenting-o', '2.3', '2.3', '1', 1, '1', '1');

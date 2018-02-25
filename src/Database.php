@@ -17,8 +17,6 @@ class Database extends Util\Singleton
 
     /** @var bool Stato di installazione del database */
     protected $is_installed;
-    /** @var string Versione corrente di MySQL */
-    protected $mysql_version;
 
     /**
      * Costruisce la nuova connessione al database.
@@ -177,11 +175,8 @@ class Database extends Util\Singleton
      */
     public function getMySQLVersion()
     {
-        if (empty($this->mysql_version) && $this->isConnected()) {
-            $ver = $this->fetchArray('SELECT VERSION()');
-            if (!empty($ver[0]['VERSION()'])) {
-                $this->mysql_version = explode('-', $ver[0]['VERSION()'])[0];
-            }
+        if ($this->isConnected()) {
+            return $this->database->info()['version'];
         }
 
         return $this->mysql_version;
@@ -346,35 +341,18 @@ class Database extends Util\Singleton
     }
 
     /**
-     * Prepara il campo per l'inserimento in uno statement SQL.
-     *
-     * @since 2.3
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    protected function quote($string)
-    {
-        $char = '`';
-
-        return $char.str_replace([$char, '#'], '', $string).$char;
-    }
-
-    /**
      * Costruisce la query per l'INSERT definito dagli argomenti.
      *
      * @since 2.3
      *
      * @param string $table
-     * @param array  $array
-     * @param bool   $return
+     * @param array  $data
      *
-     * @return string|array
+     * @return int|array
      */
-    public function insert($table, $array)
+    public function insert($table, $data)
     {
-        $this->database->insert($table, $array);
+        $this->database->insert($table, $data);
 
         return $this->database->id();
     }
@@ -385,38 +363,14 @@ class Database extends Util\Singleton
      * @since 2.3
      *
      * @param string $table
-     * @param array  $array
+     * @param array  $data
      * @param array  $conditions
-     * @param bool   $return
      *
-     * @return string|array
+     * @return string|PDOStatement
      */
-    public function update($table, $array, $conditions, $return = false)
+    public function update($table, $data, $conditions)
     {
-        if (!is_string($table) || !is_array($array) || !is_array($conditions)) {
-            throw new UnexpectedValueException();
-        }
-
-        // Valori da aggiornare
-        $update = [];
-        foreach ($array as $key => $value) {
-            $update[] = $this->quote($key).' = '.$this->prepareValue($key, $value);
-        }
-
-        // Condizioni di aggiornamento
-        $where = [];
-        foreach ($conditions as $key => $value) {
-            $where[] = $this->quote($key).' = '.$this->prepareValue($key, $value);
-        }
-
-        // Costruzione della query
-        $query = 'UPDATE '.$this->quote($table).' SET '.implode($update, ', ').' WHERE '.implode($where, ' AND ');
-
-        if (!empty($return)) {
-            return $query;
-        } else {
-            return $this->query($query);
-        }
+        return $this->database->update($table, $data, $conditions);
     }
 
     /**
@@ -424,68 +378,24 @@ class Database extends Util\Singleton
      *
      * @since 2.3
      *
-     * @param string       $table
-     * @param array        $array
-     * @param array        $conditions
-     * @param array        $order
-     * @param string|array $limit
-     * @param bool         $return
+     * @param string $table
+     * @param array  $fields
+     * @param array  $conditions
+     * @param bool   $return
      *
      * @return string|array
      */
-    public function select($table, $array = [], $conditions = [], $order = [], $limit = null, $return = false)
+    public function select($table, $fields = [], $conditions = [], $return = false)
     {
-        if (
-            !is_string($table) ||
-            (!empty($order) && !is_string($order) && !is_array($order)) ||
-            (!empty($limit) && !is_string($limit) && !is_array($limit))
-        ) {
-            throw new UnexpectedValueException();
-        }
-
-        // Valori da ottenere
-        $select = [];
-        foreach ((array) $array as $key => $value) {
-            $select[] = $value.(is_numeric($key) ? '' : 'AS '.$this->quote($key));
-        }
-        $select = !empty($select) ? $select : ['*'];
-
-        // Costruzione della query
-        $query = 'SELECT '.implode(', ', $select).' FROM '.$this->quote($table);
-
-        // Condizioni di selezione
-        $where = $this->whereStatement($conditions);
-        if (!empty($where)) {
-            $query .= ' WHERE '.$where;
-        }
-
-        // Impostazioni di ordinamento
-        if (!empty($order)) {
-            $list = [];
-            $allow = ['ASC', 'DESC'];
-            foreach ((array) $order as $key => $value) {
-                if (is_numeric($key)) {
-                    $key = $value;
-                    $value = $allow[0];
-                }
-
-                $value = in_array($value, $allow) ? $value : $allow[0];
-                $list[] = $this->quote($key).' '.$value;
-            }
-
-            $query .= ' ORDER BY '.implode(', ', $list);
-        }
-
-        // Eventuali limiti
-        if (!empty($limit)) {
-            $query .= ' LIMIT '.(is_array($limit) ? $limit[0].', '.$limit[1] : $limit);
-        }
-
-        if (!empty($return)) {
-            return $query;
+        if (empty($return)) {
+            $result = $this->database->select($table, $fields, $conditions);
         } else {
-            return $this->fetchArray($query);
+            ob_start();
+            $this->database->debug()->select($table, $fields, $conditions);
+            $result = ob_get_clean();
         }
+
+        return $result;
     }
 
     /**
@@ -577,86 +487,8 @@ class Database extends Util\Singleton
         if (!empty($field) && !empty($sync)) {
             $conditions[$field] = $sync;
 
-            $this->query('DELETE FROM '.$this->quote($table).' WHERE '.$this->whereStatement($conditions));
+            $database->delete($table, $conditions);
         }
-    }
-
-    /**
-     * Predispone una variabile per il relativo inserimento all'interno di uno statement SQL.
-     *
-     * @since 2.3
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    protected function prepareValue($field, $value)
-    {
-        $value = (is_null($value)) ? 'NULL' : $value;
-        $value = is_bool($value) ? intval($value) : $value;
-
-        if (!starts_with($field, '#')) {
-            if ($value != 'NULL') {
-                $value = $this->prepare($value);
-            }
-        }
-
-        return $value;
-    }
-
-    /**
-     * Predispone il contenuto di un array come clausola WHERE.
-     *
-     * @since 2.3
-     *
-     * @param string|array $where
-     * @param bool         $and
-     *
-     * @return string
-     */
-    protected function whereStatement($where, $and = true)
-    {
-        $result = [];
-
-        foreach ($where as $key => $value) {
-            // Query personalizzata
-            if (starts_with($key, '#')) {
-                $result[] = $this->prepareValue($key, $value);
-            } else {
-                // Ulteriori livelli di complessità
-                if (is_array($value) && in_array(strtoupper($key), ['AND', 'OR'])) {
-                    $result[] = '('.$this->whereStatement($value, $key == 'AND').')';
-                }
-                // Condizione IN
-                elseif (is_array($value)) {
-                    if (!empty($value)) {
-                        $in = [];
-                        foreach ($value as $v) {
-                            $in[] = $this->prepareValue($key, $v);
-                        }
-
-                        $result[] = $this->quote($key).' IN ('.implode(',', $in).')';
-                    }
-                }
-                // Condizione LIKE
-                elseif (str_contains($value, '%') || str_contains($value, '_')) {
-                    $result[] = $this->quote($key).' LIKE '.$this->prepareValue($key, $value);
-                }
-                // Condizione BETWEEN
-                elseif (str_contains($value, '|')) {
-                    $pieces = explode('|', $value);
-                    $result[] = $this->quote($key).' BETWEEN '.$this->prepareValue($key, $pieces[0]).' AND '.$this->prepareValue($key, $pieces[1]);
-                }
-                // Condizione di uguaglianza
-                else {
-                    $result[] = $this->quote($key).' = '.$this->prepareValue($key, $value);
-                }
-            }
-        }
-
-        $cond = !empty($and) ? 'AND' : 'OR';
-
-        return implode(' '.$cond.' ', $result);
     }
 
     /**

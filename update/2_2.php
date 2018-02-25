@@ -13,11 +13,11 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
         $idpianodeiconti2 = $rs2[0]['idpianodeiconti2'];
 
         // Creo il nuovo conto
-        $dbo->query('INSERT INTO co_pianodeiconti3( numero, descrizione, idpianodeiconti2, can_delete, can_edit ) VALUES( "'.$numero.'", "'.$rs[$i]['ragione_sociale'].'", "'.$idpianodeiconti2.'", 1, 1 )');
+        $dbo->query('INSERT INTO co_pianodeiconti3( numero, descrizione, idpianodeiconti2, can_delete, can_edit ) VALUES( '.prepare($numero).', '.prepare($rs[$i]['ragione_sociale']).', '.prepare($idpianodeiconti2).', 1, 1 )');
         $idconto = $dbo->lastInsertedID();
 
         // Collego questo conto al cliente
-        $dbo->query('UPDATE an_anagrafiche SET idconto_cliente="'.$idconto.'" WHERE idanagrafica="'.$rs[$i]['idanagrafica'].'"');
+        $dbo->query('UPDATE an_anagrafiche SET idconto_cliente='.prepare($idconto).' WHERE idanagrafica='.prepare($rs[$i]['idanagrafica']).'');
     }
 
     if (in_array('Fornitore', explode(',', $rs[$i]['idtipianagrafica']))) {
@@ -27,11 +27,11 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
         $idpianodeiconti2 = $rs2[0]['idpianodeiconti2'];
 
         // Creo il nuovo conto
-        $dbo->query('INSERT INTO co_pianodeiconti3( numero, descrizione, idpianodeiconti2, can_delete, can_edit ) VALUES( "'.$numero.'", "'.$rs[$i]['ragione_sociale'].'", "'.$idpianodeiconti2.'", 1, 1 )');
+        $dbo->query('INSERT INTO co_pianodeiconti3( numero, descrizione, idpianodeiconti2, can_delete, can_edit ) VALUES( '.prepare($numero).', '.prepare($rs[$i]['ragione_sociale']).', '.prepare($idpianodeiconti2).', 1, 1 )');
         $idconto = $dbo->lastInsertedID();
 
         // Collego questo conto al cliente
-        $dbo->query('UPDATE an_anagrafiche SET idconto_fornitore="'.$idconto.'" WHERE idanagrafica="'.$rs[$i]['idanagrafica'].'"');
+        $dbo->query('UPDATE an_anagrafiche SET idconto_fornitore='.prepare($idconto).' WHERE idanagrafica='.prepare($rs[$i]['idanagrafica']).'');
     }
 }
 
@@ -40,9 +40,9 @@ $rs = $dbo->fetchArray('SELECT co_movimenti.id, co_documenti.idanagrafica, dir F
 
 for ($i = 0; $i < sizeof($rs); ++$i) {
     if ($rs[$i]['dir'] == 'entrata') {
-        $query = 'UPDATE co_movimenti SET idconto=(SELECT idconto_cliente FROM an_anagrafiche WHERE idanagrafica="'.$rs[$i]['idanagrafica'].'") WHERE id="'.$rs[$i]['id']."\" AND idconto=(SELECT id FROM co_pianodeiconti3 WHERE descrizione='Riepilogativo clienti')";
+        $query = 'UPDATE co_movimenti SET idconto=(SELECT idconto_cliente FROM an_anagrafiche WHERE idanagrafica='.prepare($rs[$i]['idanagrafica']).') WHERE id='.prepare($rs[$i]['id'])." AND idconto=(SELECT id FROM co_pianodeiconti3 WHERE descrizione='Riepilogativo clienti')";
     } else {
-        $query = 'UPDATE co_movimenti SET idconto=(SELECT idconto_fornitore FROM an_anagrafiche WHERE idanagrafica="'.$rs[$i]['idanagrafica'].'") WHERE id="'.$rs[$i]['id']."\" AND idconto=(SELECT id FROM co_pianodeiconti3 WHERE descrizione='Riepilogativo fornitori')";
+        $query = 'UPDATE co_movimenti SET idconto=(SELECT idconto_fornitore FROM an_anagrafiche WHERE idanagrafica='.prepare($rs[$i]['idanagrafica']).') WHERE id='.prepare($rs[$i]['id'])." AND idconto=(SELECT id FROM co_pianodeiconti3 WHERE descrizione='Riepilogativo fornitori')";
     }
 
     $dbo->query($query);
@@ -58,7 +58,7 @@ if (sizeof($rs) == 0) {
 // Spostamento ore di lavoro e diritto di chiamata dei preventivi nella tabella
 $idiva = get_var('Iva predefinita');
 
-$rs = $dbo->fetchArray('SELECT percentuale, indetraibile FROM co_iva WHERE id="'.$idiva.'"');
+$rs = $dbo->fetchArray('SELECT percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva));
 $percentuale = $rs[0]['percentuale'];
 $indetraibile = $rs[0]['indetraibile'];
 
@@ -72,7 +72,7 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
         $iva = $imponibile / 100 * $percentuale;
         $iva_indetraibile = $imponibile / 100 * $indetraibile;
 
-        $dbo->query('INSERT INTO co_righe_preventivi( idpreventivo, idiva, iva, iva_indetraibile, descrizione, subtotale, sconto, um, qta ) VALUES( "'.$rs[$i]['id'].'", "'.$idiva.'", "'.$iva.'", "'.$iva_indetraibile.'", "Ore lavoro", "'.$imponibile.'", "0.00", "ore", "'.$rs[$i]['ore_lavoro'].'" )');
+        $dbo->query('INSERT INTO co_righe_preventivi( idpreventivo, idiva, iva, iva_indetraibile, descrizione, subtotale, sconto, um, qta ) VALUES( '.prepare($rs[$i]['id']).', '.prepare($idiva).', '.prepare($iva).', '.prepare($iva_indetraibile).", 'Ore lavoro', ".prepare($imponibile).", '0.00', 'ore', ".prepare($rs[$i]['ore_lavoro']).' )');
     }
 
     // Ore diritto chiamata
@@ -82,7 +82,7 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
         $iva = $imponibile / 100 * $percentuale;
         $iva_indetraibile = $imponibile / 100 * $indetraibile;
 
-        $dbo->query('INSERT INTO co_righe_preventivi( idpreventivo, idiva, iva, iva_indetraibile, descrizione, subtotale, sconto, um, qta ) VALUES( "'.$rs[$i]['id'].'", "'.$idiva.'", "'.$iva.'", "'.$iva_indetraibile.'", "Diritto chiamata", "'.$imponibile.'", "0.00", "", "'.$rs[$i]['costo_diritto_chiamata'].'" )');
+        $dbo->query('INSERT INTO co_righe_preventivi( idpreventivo, idiva, iva, iva_indetraibile, descrizione, subtotale, sconto, um, qta ) VALUES( '.prepare($rs[$i]['id']).', '.prepare($idiva).', '.prepare($iva).', '.prepare($iva_indetraibile).", 'Diritto chiamata', ".prepare($imponibile).", '0.00', '', ".prepare($rs[$i]['costo_diritto_chiamata']).' )');
     }
 }
 
@@ -99,7 +99,7 @@ delete($files);
 $rs = $dbo->fetchArray('SELECT idanagrafica, idagente FROM an_anagrafiche WHERE NOT idagente=0');
 
 for ($i = 0; $i < sizeof($rs); ++$i) {
-    $dbo->query('INSERT INTO an_anagrafiche_agenti( idanagrafica, idagente ) VALUES( "'.$rs[$i]['idanagrafica'].'", "'.$rs[$i]['idagente'].'" )');
+    $dbo->query('INSERT INTO an_anagrafiche_agenti( idanagrafica, idagente ) VALUES( '.prepare($rs[$i]['idanagrafica']).', '.prepare($rs[$i]['idagente']).' )');
 }
 
 /**
@@ -112,6 +112,6 @@ for ($c = 0; $c < sizeof($rsc); ++$c) {
     $rsi = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE (costo_orario!=0 OR costo_km!=0 OR costo_diritto_chiamata!=0)');
 
     for ($i = 0; $i < sizeof($rsi); ++$i) {
-        $dbo->query('INSERT INTO co_contratti_tipiintervento( idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico ) VALUES( "'.$rsc[$c]['id'].'", "'.$rsi[$i]['idtipointervento'].'", "'.$rsi[$i]['costo_orario'].'", "'.$rsi[$i]['costo_km'].'", "'.$rsi[$i]['costo_diritto_chiamata'].'", "'.$rsi[$i]['costo_orario_tecnico'].'", "'.$rsi[$i]['costo_km_tecnico'].'", "'.$rsi[$i]['costo_diritto_chiamata_tecnico'].'" )');
+        $dbo->query('INSERT INTO co_contratti_tipiintervento( idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico ) VALUES( '.prepare($rsc[$c]['id']).', '.prepare($rsi[$i]['idtipointervento']).', '.prepare($rsi[$i]['costo_orario']).', '.prepare($rsi[$i]['costo_km']).', '.prepare($rsi[$i]['costo_diritto_chiamata']).', '.prepare($rsi[$i]['costo_orario_tecnico']).', '.prepare($rsi[$i]['costo_km_tecnico']).', '.prepare($rsi[$i]['costo_diritto_chiamata_tecnico']).' )');
     }
 }

@@ -725,10 +725,6 @@ function rimuovi_articolo_dafattura($idarticolo, $iddocumento, $idrigadocumento)
     return true;
 }
 
-function rimuovi_riga($iddocumento, $idriga)
-{
-}
-
 function aggiorna_sconto($tables, $fields, $id_record, $options = [])
 {
     $dbo = Database::getConnection();
@@ -744,7 +740,7 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
 
     // Aggiorno l'eventuale sconto gestendolo con le righe in fattura
     $iva = 0;
-    
+
     if (!empty($sconto[0]['sconto_globale'])) {
         if ($sconto[0]['tipo_sconto_globale'] == 'PRC') {
             $rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS imponibile, SUM(iva) AS iva FROM (SELECT '.$tables['row'].'.subtotale, '.$tables['row'].'.sconto, '.$tables['row'].'.iva FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record).') AS t');
@@ -770,7 +766,9 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
             'desc_iva' => $rsi[0]['descrizione'],
             'iva' => -$iva,
             'sconto_globale' => 1,
-            '#order' => '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM '.$tables['row'].' AS t WHERE '.$fields['row'].'='.prepare($id_record).')',
+            'order' => Medoo\Medoo::raw('(SELECT IFNULL(MAX(<order>) + 1, 0) FROM <'.$tables['row'].'> AS t WHERE <'.$fields['row'].'> = :id)', [
+                ':id' => $id_record,
+            ]),
         ];
 
         $dbo->insert($tables['row'], $values);

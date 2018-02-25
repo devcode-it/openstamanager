@@ -62,7 +62,9 @@ switch (filter('op')) {
 
                     $dbo->update('zz_views', $array, ['id' => $id]);
                 } elseif (!empty($post['query'][$c])) {
-                    $array['#order'] = '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM zz_views AS t WHERE id_module='.prepare($id_record).')';
+                    $array['#order'] = Medoo\Medoo::raw('(SELECT IFNULL(MAX(<order>) + 1, 0) FROM <zz_views> AS t WHERE <id_module> = :id)', [
+                        ':id' => $id_record,
+                    ]);
 
                     $dbo->insert('zz_views', $array);
 

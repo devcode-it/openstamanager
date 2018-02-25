@@ -126,10 +126,13 @@ class API extends \Util\Singleton
                 }
 
                 // Query per ottenere le informazioni
-                $results = $database->select($table, $select, $where, $order, [$page * $length, $length]);
+                $results = $database->select($table, $select, array_merge($where, [
+                    'ORDER' => $order,
+                    'LIMIT' => [$page * $length, $length],
+                ]));
 
                 // Informazioni aggiuntive
-                $query = $database->select($table, $select, $where, $order, [], true);
+                $query = $database->select($table, $select, $where, true);
                 $cont = $database->fetchArray('SELECT COUNT(*) as `records`, CEIL(COUNT(*) / '.$length.') as `pages` FROM ('.$query.') AS `count`');
                 if (!empty($cont)) {
                     $results['records'] = $cont[0]['records'];

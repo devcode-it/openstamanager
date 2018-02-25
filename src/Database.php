@@ -1,5 +1,7 @@
 <?php
 
+use Medoo\Medoo;
+
 /**
  * Classe per gestire la connessione al database.
  *
@@ -7,24 +9,11 @@
  */
 class Database extends Util\Singleton
 {
-    /** @var string Host del database */
-    protected $host;
-    /** @var int Porta di accesso del database */
-    protected $port;
-    /** @var string Username di accesso */
-    protected $username;
-    /** @var string Password di accesso */
-    protected $password;
     /** @var string Nome del database */
     protected $database_name;
 
-    /** @var string Charset della comunicazione */
-    protected $charset;
-    /** @var array Opzioni riguardanti la comunicazione (PDO) */
-    protected $option = [];
-
-    /** @var DebugBar\DataCollector\PDO\TraceablePDO Classe PDO tracciabile */
-    protected $pdo;
+    /** @var Medoo\Medoo Classe per la gestione dei dati tracciabile */
+    protected $database;
 
     /** @var bool Stato di installazione del database */
     protected $is_installed;
@@ -46,7 +35,7 @@ class Database extends Util\Singleton
      *
      * @return Database
      */
-    protected function __construct($server, $username, $password, $database_name, $charset = null, $option = [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION])
+    protected function __construct($server, $username, $password, $database_name, $charset = null)
     {
         global $debug;
 
@@ -59,48 +48,48 @@ class Database extends Util\Singleton
             $port = !empty($temp[1]) ? $temp[1] : null;
         }
 
-        $this->host = $host;
         if (!empty($port) && is_int($port * 1)) {
-            $this->port = $port;
+            $port = $port;
+        } else {
+            $port = 3306;
         }
 
-        $this->username = $username;
-        $this->password = $password;
-        $this->database_name = $database_name;
-
-        $this->charset = $charset;
-        $this->option = $option;
-
-        if (!empty($this->host) && !empty($this->database_name)) {
+        if (!empty($host) && !empty($database_name)) {
             try {
-                $pdo = new PDO(
-                    'mysql:host='.$this->host.(!empty($this->port) ? ';port='.$this->port : '').';dbname='.$this->database_name,
-                    $this->username,
-                    $this->password,
-                    $this->option
-                );
+                $this->database = new Medoo([
+                    // required
+                    'database_type' => 'mysql',
+                    'database_name' => $database_name,
+                    'server' => $host,
+                    'port' => $port,
+                    'username' => $username,
+                    'password' => $password,
+                    'charset' => 'utf8',
 
-                if (!empty($debug)) {
-                    $pdo = new \DebugBar\DataCollector\PDO\TraceablePDO($pdo);
-                }
+                    'logging' => $debug,
 
-                $this->pdo = $pdo;
+                    'option' => [
+                        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                    ],
+                ]);
 
-                if (empty($this->charset) && version_compare($this->getMySQLVersion(), '5.5.3') >= 0) {
-                    $this->charset = 'utf8mb4';
+                $this->database_name = $database_name;
+
+                if (empty($charset) && version_compare($this->getMySQLVersion(), '5.5.3') >= 0) {
+                    $charset = 'utf8mb4';
                 }
 
                 // Fix per problemi di compatibilità delle password MySQL 4.1+ (da versione precedente)
-                $this->pdo->query('SET SESSION old_passwords = 0');
-                //$this->pdo->query('SET PASSWORD = PASSWORD('.$this->prepare($this->password).')');
+                $this->database->query('SET SESSION old_passwords = 0');
+                //$this->database->query('SET PASSWORD = PASSWORD('.$this->prepare($password).')');
 
                 // Impostazione del charset della comunicazione
-                if (!empty($this->charset)) {
-                    $this->pdo->query("SET NAMES '".$this->charset."'");
+                if (!empty($charset)) {
+                    $this->database->query("SET NAMES '".$charset."'");
                 }
 
                 // Reset della modalità di esecuzione MySQL per la sessione corrente
-                $this->pdo->query("SET sql_mode = ''");
+                //$this->database->query("SET sql_mode = ''");
             } catch (PDOException $e) {
                 if ($e->getCode() == 1049 || $e->getCode() == 1044) {
                     $e = new PDOException(($e->getCode() == 1049) ? tr('Database non esistente!') : tr('Credenziali di accesso invalide!'));
@@ -148,7 +137,7 @@ class Database extends Util\Singleton
      */
     public function getPDO()
     {
-        return $this->pdo;
+        return $this->database->pdo;
     }
 
     /**
@@ -160,7 +149,7 @@ class Database extends Util\Singleton
      */
     public function isConnected()
     {
-        return !empty($this->pdo);
+        return !empty($this->getPDO());
     }
 
     /**
@@ -222,7 +211,7 @@ class Database extends Util\Singleton
     public function query($query, $signal = null, $options = [])
     {
         try {
-            $this->pdo->query($query);
+            $this->database->query($query);
 
             $id = $this->lastInsertedID();
             if ($id == 0) {
@@ -250,7 +239,7 @@ class Database extends Util\Singleton
         try {
             $mode = empty($numeric) ? PDO::FETCH_ASSOC : PDO::FETCH_NUM;
 
-            $result = $this->pdo->query($query)->fetchAll($mode);
+            $result = $this->database->query($query)->fetchAll($mode);
 
             return $result;
         } catch (PDOException $e) {
@@ -335,7 +324,7 @@ class Database extends Util\Singleton
     public function lastInsertedID()
     {
         try {
-            return $this->pdo->lastInsertId();
+            return $this->database->lastInsertId();
         } catch (PDOException $e) {
             $this->signal($e, tr("Impossibile ottenere l'ultimo identificativo creato"));
         }
@@ -353,7 +342,7 @@ class Database extends Util\Singleton
      */
     public function prepare($parameter)
     {
-        return $this->pdo->quote($parameter);
+        return $this->database->quote($parameter);
     }
 
     /**
@@ -383,41 +372,11 @@ class Database extends Util\Singleton
      *
      * @return string|array
      */
-    public function insert($table, $array, $return = false)
+    public function insert($table, $array)
     {
-        if (!is_string($table) || !is_array($array)) {
-            throw new UnexpectedValueException();
-        }
+        $this->database->insert($table, $array);
 
-        if (!is_array($array[0])) {
-            $array = [$array];
-        }
-
-        // Chiavi dei valori
-        $keys = [];
-        $temp = array_keys($array[0]);
-        foreach ($temp as $value) {
-            $keys[] = $this->quote($value);
-        }
-
-        // Valori da inserire
-        $inserts = [];
-        foreach ($array as $values) {
-            foreach ($values as $key => $value) {
-                $values[$key] = $this->prepareValue($key, $value);
-            }
-
-            $inserts[] = '('.implode(array_values($values), ', ').')';
-        }
-
-        // Costruzione della query
-        $query = 'INSERT INTO '.$this->quote($table).' ('.implode(',', $keys).') VALUES '.implode($inserts, ', ');
-
-        if (!empty($return)) {
-            return $query;
-        } else {
-            return $this->query($query);
-        }
+        return $this->database->id();
     }
 
     /**
@@ -715,7 +674,7 @@ class Database extends Util\Singleton
 
         for ($i = $start; $i < $end; ++$i) {
             try {
-                $this->pdo->query($queries[$i]);
+                $this->database->query($queries[$i]);
             } catch (PDOException $e) {
                 $this->signal($e, $queries[$i], [
                     'throw' => false,

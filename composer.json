@@ -23,11 +23,10 @@
     "type": "project",
     "require": {
         "php": ">=5.6",
-
         "ext-mbstring": "*",
         "ext-pdo_mysql": "*",
-
         "aluguest/ical-easy-reader": "^1.5",
+        "catfan/medoo": "^1.5",
         "danielstjules/stringy": "^3.1",
         "ezyang/htmlpurifier": "^4.8",
         "filp/whoops": "^2.1",

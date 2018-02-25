@@ -232,7 +232,7 @@ if (!API::isAPIRequest()) {
             $debugbar->addCollector(new DebugBar\DataCollector\TimeDataCollector());
 
             $debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
-            $debugbar->addCollector(new DebugBar\DataCollector\PDO\PDOCollector($dbo->getPDO()));
+            $debugbar->addCollector(new Extension\MedooCollector($dbo));
         }
 
         $id_module = filter('id_module');

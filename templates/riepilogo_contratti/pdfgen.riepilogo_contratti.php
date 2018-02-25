@@ -8,7 +8,7 @@ $additional_where['Contratti'] = str_replace('|idtecnico|', "'".$user['idanagraf
 
 // carica parametri di ricerca
 $search_numero = save($_GET['search_numerocontratto']);
-($search_numero != '') ? $search_numerocontratto = ' AND numero="'.$search_numero.'"' : $search_numerocontratto = '';
+($search_numero != '') ? $search_numerocontratto = ' AND numero='.prepare($search_numero).'' : $search_numerocontratto = '';
 $search_nome = save($_GET['search_nome']);
 $search_ragione_sociale = save($_GET['search_ragione_sociale']);
 $search_idstato = save($_GET['search_idstato']);
@@ -22,7 +22,7 @@ if ($search_idstato != '') {
 }
 
 // Lettura contratti che soddisfano la ricerca
-$query = 'SELECT *, (SELECT SUM(subtotale) FROM co_righe2_contratti WHERE idcontratto=co_contratti.id) AS budget_totale, co_staticontratti.descrizione AS stato FROM co_staticontratti INNER JOIN (co_contratti INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica) ON co_contratti.idstato=co_staticontratti.id WHERE nome LIKE "%'.$search_nome."%\" AND ( replace(ragione_sociale,'.','') LIKE \"%$search_ragione_sociale%\" OR ragione_sociale LIKE \"%$search_ragione_sociale%\" ) ".$search_numerocontratto." AND ((data_bozza BETWEEN '".Translator::dateToEnglish($search_datastart)."' AND '".Translator::dateToEnglish($search_dataend)."') OR (data_accettazione BETWEEN '".Translator::dateToEnglish($search_datastart)."' AND '".Translator::dateToEnglish($search_dataend)."') OR (data_rifiuto BETWEEN '".Translator::dateToEnglish($search_datastart)."' AND '".Translator::dateToEnglish($search_dataend)."') OR (data_conclusione BETWEEN '".Translator::dateToEnglish($search_datastart)."' AND '".Translator::dateToEnglish($search_dataend)."')) $WHERE ".$additional_where['Contratti'].' ORDER BY data_bozza ASC, co_contratti.id DESC';
+$query = 'SELECT *, (SELECT SUM(subtotale) FROM co_righe2_contratti WHERE idcontratto=co_contratti.id) AS budget_totale, co_staticontratti.descrizione AS stato FROM co_staticontratti INNER JOIN (co_contratti INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica) ON co_contratti.idstato=co_staticontratti.id WHERE nome LIKE '.prepare('%'.$search_nome.'%')." AND ( replace(ragione_sociale,'.','') LIKE ".prepare('%'.$search_ragione_sociale.'%').' OR ragione_sociale LIKE '.prepare('%'.$search_ragione_sociale.'%').' ) '.$search_numerocontratto." AND ((data_bozza BETWEEN '".Translator::dateToEnglish($search_datastart)."' AND '".Translator::dateToEnglish($search_dataend)."') OR (data_accettazione BETWEEN '".Translator::dateToEnglish($search_datastart)."' AND '".Translator::dateToEnglish($search_dataend)."') OR (data_rifiuto BETWEEN '".Translator::dateToEnglish($search_datastart)."' AND '".Translator::dateToEnglish($search_dataend)."') OR (data_conclusione BETWEEN '".Translator::dateToEnglish($search_datastart)."' AND '".Translator::dateToEnglish($search_dataend)."')) $WHERE ".$additional_where['Contratti'].' ORDER BY data_bozza ASC, co_contratti.id DESC';
 $rs = $dbo->fetchArray($query);
 
 // Se il cliente è uno solo carico la sua intestazione, altrimenti la lascio in bianco

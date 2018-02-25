@@ -44,7 +44,7 @@ $body .= "<th bgcolor='#dddddd' class='full_cell cell-padded' width='100'>Totale
 
 for ($r = 0; $r < sizeof($rs); ++$r) {
     // Lettura totali
-    $rs2 = $dbo->fetchArray("SELECT SUM(subtotale-co_righe_documenti.sconto) AS imponibile, SUM(iva) AS iva, (SELECT SUM(bollo) FROM co_documenti WHERE DATE_FORMAT(data,'%m-%Y') = \"".$rs[$r]['periodo'].'" AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="'.$dir."\")) AS bollo, SUM(co_righe_documenti.rivalsainps) AS rivalsainps, SUM(co_righe_documenti.ritenutaacconto) AS ritenutaacconto FROM co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE DATE_FORMAT(data,'%m-%Y') = \"".$rs[$r]['periodo'].'" AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir="'.$dir.'")');
+    $rs2 = $dbo->fetchArray("SELECT SUM(subtotale-co_righe_documenti.sconto) AS imponibile, SUM(iva) AS iva, (SELECT SUM(bollo) FROM co_documenti WHERE DATE_FORMAT(data,'%m-%Y') = ".prepare($rs[$r]['periodo']).' AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='.prepare($dir).")) AS bollo, SUM(co_righe_documenti.rivalsainps) AS rivalsainps, SUM(co_righe_documenti.ritenutaacconto) AS ritenutaacconto FROM co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE DATE_FORMAT(data,'%m-%Y') = ".prepare($rs[$r]['periodo']).' AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='.prepare($dir).')');
 
     $body .= "<tr><td class='first_cell cell-padded'>".$mesi[intval(date('m', strtotime($rs[$r]['data'])))].' '.date('Y', strtotime($rs[$r]['data']))."</td>\n";
     $body .= "<td class='table_cell cell-padded text-right'>".Translator::numberToLocale($rs2[0]['imponibile'])." &euro;</td>\n";

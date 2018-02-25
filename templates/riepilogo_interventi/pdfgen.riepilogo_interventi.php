@@ -20,7 +20,7 @@ if ($datas != null) {
     $select = substr($select, 0, strlen($select) - 1);
 }
 
-$module = $dbo->fetchArray('SELECT * FROM zz_modules WHERE id="'.$id_module.'"')[0];
+$module = Modules::get($id_module);
 $module_query = ($module['options2'] != '') ? $module['options2'] : $module['options'];
 
 $module_query = str_replace('|select|', $select, $module_query);
@@ -97,7 +97,7 @@ $idinterventi = ['0'];
 if ($totrows > 0) {
     for ($i = 0; $i < $totrows; ++$i) {
         // Lettura dati dei tecnici dell'intervento corrente
-        $query = 'SELECT *, ( ( TIME_TO_SEC(orario_fine)-TIME_TO_SEC(orario_inizio) )  ) AS t, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico FROM in_interventi_tecnici WHERE idintervento="'.$rsi[$i]['id'].'"';
+        $query = 'SELECT *, ( ( TIME_TO_SEC(orario_fine)-TIME_TO_SEC(orario_inizio) )  ) AS t, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico FROM in_interventi_tecnici WHERE idintervento='.prepare($rsi[$i]['id']);
         $rs = $dbo->fetchArray($query);
         $n_tecnici = sizeof($rs);
 

@@ -29,7 +29,7 @@ include_once $docroot.'/templates/pdfgen_variables.php';
 // LEFT OUTER JOIN mg_unitamisura ON mg_unitamisura.id=mg_articoli.idum
 // mg_unitamisura.valore AS um
 // LEFT OUTER JOIN mg_categorie ON (mg_categorie.id=mg_articoli.id_categoria AND mg_categorie.parent = 0) OR (mg_categorie.id=mg_articoli.id_sottocategoria AND  mg_categorie.parent = 1)
-$rs = $dbo->fetchArray("SELECT *, mg_articoli.id AS id_articolo, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 0 AND mg_categorie.id = mg_articoli.id_categoria) AS categoria, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 1 AND mg_categorie.id = mg_articoli.id_sottocategoria) AS subcategoria  FROM mg_articoli WHERE ( replace(codice,'.','') LIKE \"%$search_codice%\" OR codice LIKE \"%$search_codice%\" ) AND replace(descrizione,'.','') LIKE \"%$search_descrizione%\"  ".$add_where." AND qta > 0 HAVING CONCAT_WS( ' ', categoria, subcategoria ) LIKE \"%".$search_categoria.'%" ORDER BY codice ASC');
+$rs = $dbo->fetchArray("SELECT *, mg_articoli.id AS id_articolo, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 0 AND mg_categorie.id = mg_articoli.id_categoria) AS categoria, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 1 AND mg_categorie.id = mg_articoli.id_sottocategoria) AS subcategoria  FROM mg_articoli WHERE ( replace(codice,'.','') LIKE ".prepare('%'.$search_codice.'%').' OR codice LIKE '.prepare('%'.$search_codice.'%')." ) AND replace(descrizione,'.','') LIKE ".prepare('%'.$search_descrizione.'%').'  '.$add_where." AND qta > 0 HAVING CONCAT_WS( ' ', categoria, subcategoria ) LIKE ".prepare('%'.$search_categoria.'%').' ORDER BY codice ASC');
 $totrows = sizeof($rs);
 
 $body .= '<h3>INVENTARIO AL '.date('d/m/Y')."</h3>\n";

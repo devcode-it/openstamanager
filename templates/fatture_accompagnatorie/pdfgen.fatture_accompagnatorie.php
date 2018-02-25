@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 $iddocumento = save($_GET['iddocumento']);
 
 // Lettura tipo documento
-$q = 'SELECT (SELECT dir FROM co_tipidocumento WHERE id=idtipodocumento) AS dir FROM co_documenti WHERE id="'.$iddocumento.'"';
+$q = 'SELECT (SELECT dir FROM co_tipidocumento WHERE id=idtipodocumento) AS dir FROM co_documenti WHERE id='.prepare($iddocumento);
 $rs = $dbo->fetchArray($q);
 
 if ($rs[0]['dir'] == 'entrata') {
@@ -17,7 +17,7 @@ if ($rs[0]['dir'] == 'entrata') {
 $additional_where[$module_name] = str_replace('|idanagrafica|', "'".$user['idanagrafica']."'", $additional_where[$module_name]);
 
 // Lettura info fattura
-$q = 'SELECT *, (SELECT descrizione FROM co_tipidocumento WHERE id=idtipodocumento) AS tipo_doc, (SELECT descrizione FROM co_pagamenti WHERE id=idpagamento) AS tipo_pagamento, (SELECT dir FROM co_tipidocumento WHERE id=idtipodocumento) AS dir FROM co_documenti WHERE id="'.$iddocumento.'" '.$additional_where[$module_name];
+$q = 'SELECT *, (SELECT descrizione FROM co_tipidocumento WHERE id=idtipodocumento) AS tipo_doc, (SELECT descrizione FROM co_pagamenti WHERE id=idpagamento) AS tipo_pagamento, (SELECT dir FROM co_tipidocumento WHERE id=idtipodocumento) AS dir FROM co_documenti WHERE id='.prepare($iddocumento).' '.$additional_where[$module_name];
 $rs = $dbo->fetchArray($q);
 $numero_doc = $rs[0]['numero'];
 $idcliente = $rs[0]['idanagrafica'];
@@ -278,14 +278,14 @@ if ($tot > 0) {
 
             // Aggiunta riferimento a ordine
             if (!empty($rsr[$i]['idordine'])) {
-                $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM or_ordini WHERE id="'.$rsr[$i]['idordine'].'"');
+                $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM or_ordini WHERE id='.prepare($rsr[$i]['idordine']));
                 ($rso[0]['numero_esterno'] != '') ? $numero = $rso[0]['numero_esterno'] : $numero = $rso[0]['numero'];
                 $body .= '<br/><small>Rif. ordine '.$numero.' del '.Translator::dateToLocale($rso[0]['data']).'</small>';
             }
 
             // Aggiunta riferimento a ddt
             elseif (!empty($rsr[$i]['idddt'])) {
-                $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM dt_ddt WHERE id="'.$rsr[$i]['idddt'].'"');
+                $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM dt_ddt WHERE id='.prepare($rsr[$i]['idddt']));
                 ($rso[0]['numero_esterno'] != '') ? $numero = $rso[0]['numero_esterno'] : $numero = $rso[0]['numero'];
                 $body .= '<br/><small>Rif. ddt '.$numero.' del '.Translator::dateToLocale($rso[0]['data']).'</small>';
             }
@@ -329,14 +329,14 @@ if ($tot > 0) {
 
             // Aggiunta riferimento a ordine
             if (!empty($rsr[$i]['idordine'])) {
-                $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM or_ordini WHERE id="'.$rsr[$i]['idordine'].'"');
+                $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM or_ordini WHERE id='.prepare($rsr[$i]['idordine']));
                 ($rso[0]['numero_esterno'] != '') ? $numero = $rso[0]['numero_esterno'] : $numero = $rso[0]['numero'];
                 $body .= '<br/><small>Rif. ordine num.'.$numero.' del '.Translator::dateToLocale($rso[0]['data']).'</small>';
             }
 
             // Aggiunta riferimento a ddt
             elseif (!empty($rsr[$i]['idddt'])) {
-                $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM dt_ddt WHERE id="'.$rsr[$i]['idddt'].'"');
+                $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM dt_ddt WHERE id='.prepare($rsr[$i]['idddt']));
                 ($rso[0]['numero_esterno'] != '') ? $numero = $rso[0]['numero_esterno'] : $numero = $rso[0]['numero'];
                 $body .= '<br/><small>Rif. ddt num.'.$numero.' del '.Translator::dateToLocale($rso[0]['data']).'</small>';
             }

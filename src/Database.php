@@ -178,8 +178,6 @@ class Database extends Util\Singleton
         if ($this->isConnected()) {
             return $this->database->info()['version'];
         }
-
-        return $this->mysql_version;
     }
 
     /**
@@ -319,7 +317,7 @@ class Database extends Util\Singleton
     public function lastInsertedID()
     {
         try {
-            return $this->database->lastInsertId();
+            return $this->database->id();
         } catch (PDOException $e) {
             $this->signal($e, tr("Impossibile ottenere l'ultimo identificativo creato"));
         }
@@ -352,9 +350,13 @@ class Database extends Util\Singleton
      */
     public function insert($table, $data)
     {
-        $this->database->insert($table, $data);
+        try {
+            $this->database->insert($table, $data);
 
-        return $this->database->id();
+            return $this->database->id();
+        } catch (PDOException $e) {
+            $this->signal($e, $this->database->last());
+        }
     }
 
     /**
@@ -370,7 +372,11 @@ class Database extends Util\Singleton
      */
     public function update($table, $data, $conditions)
     {
-        return $this->database->update($table, $data, $conditions);
+        try {
+            return $this->database->update($table, $data, $conditions);
+        } catch (PDOException $e) {
+            $this->signal($e, $this->database->last());
+        }
     }
 
     /**
@@ -387,15 +393,19 @@ class Database extends Util\Singleton
      */
     public function select($table, $fields = [], $conditions = [], $return = false)
     {
-        if (empty($return)) {
-            $result = $this->database->select($table, $fields, $conditions);
-        } else {
-            ob_start();
-            $this->database->debug()->select($table, $fields, $conditions);
-            $result = ob_get_clean();
-        }
+        try {
+            if (empty($return)) {
+                $result = $this->database->select($table, $fields, $conditions);
+            } else {
+                ob_start();
+                $this->database->debug()->select($table, $fields, $conditions);
+                $result = ob_get_clean();
+            }
 
-        return $result;
+            return $result;
+        } catch (PDOException $e) {
+            $this->signal($e, $this->database->last());
+        }
     }
 
     /**

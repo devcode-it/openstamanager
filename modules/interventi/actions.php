@@ -71,9 +71,9 @@ switch (post('op')) {
         foreach ($lista as $idriga) {
             //Lettura del tecnico proprietario della riga
             $rst = $dbo->fetchArray('SELECT idtecnico FROM in_interventi_tecnici WHERE id='.prepare($idriga));
-            
+
             // Limitazione delle azioni dei tecnici
-            if ( ($user['gruppo'] == 'Tecnici' && $user['idanagrafica'] == $rst[0]['idtecnico'] ) || $user['gruppo'] == 'Amministratori') {
+            if (($user['gruppo'] == 'Tecnici' && $user['idanagrafica'] == $rst[0]['idtecnico']) || $user['gruppo'] == 'Amministratori') {
                 // Lettura delle date di inizio e fine intervento
                 $orario_inizio = post('orario_inizio')[$idriga];
                 $orario_fine = post('orario_fine')[$idriga];

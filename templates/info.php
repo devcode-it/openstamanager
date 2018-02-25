@@ -112,19 +112,31 @@ $logo_file = DOCROOT.'/templates/base|custom|/logo_azienda.jpg';
 $original_file = str_replace('|custom|', '', $logo_file);
 $custom_file = str_replace('|custom|', '/custom', $logo_file);
 
+$default_logo = $original_file;
 if (file_exists($custom_file)) {
-    $logo_file = $custom_file;
-} elseif (file_exists($original_file)) {
-    $logo_file = $original_file;
+    $default_logo = $custom_file;
 }
 
-$default_logo = $logo_file;
+// Logo specifico della stampa
+$logo_file = DOCROOT.'/templates/'.Prints::get($id_print)['directory'].'|custom|/logo_azienda.jpg';
+
+$original_file = str_replace('|custom|', '', $logo_file);
+$custom_file = str_replace('|custom|', '/custom', $logo_file);
+
+if (file_exists($custom_file)) {
+    $logo = $custom_file;
+} elseif (file_exists($original_file)) {
+    $logo = $original_file;
+} else {
+    $logo = $default_logo;
+}
 
 // Valori aggiuntivi per la sostituzione
 $replaces = array_merge($replaces, [
     'default_header' => $default_header,
     'default_footer' => $default_footer,
     'default_logo' => $default_logo,
+    'logo' => $logo,
     'docroot' => DOCROOT,
     'rootdir' => ROOTDIR,
     'directory' => Prints::get($id_print)['full_directory'],

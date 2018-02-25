@@ -12,6 +12,6 @@ echo '
         <p>'.(!empty($f_telefono) ? tr('Tel').': ' : '').'$f_telefono$</p>
     </div>
     <div class="col-xs-6 text-right">
-        <img src="'.__DIR__.'/logo_azienda.jpg" alt="Logo" border="0"/>
+        <img src="$logo$" alt="Logo" border="0"/>
     </div>
 </div>';

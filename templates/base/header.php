@@ -9,17 +9,10 @@
  * La personalizzazione specifica dell'header deve comunque seguire lo standard della cartella custom: anche se il file header.php non esiste nella stampa originaria, se si vuole personalizzare l'header bisogna crearlo all'interno della cartella custom.
  */
 
-// Individuazione dell'immagine
-$logo = $infos['full_directory'].'/logo_azienda.jpg';
-if (!file_exists($logo)) {
-    $logo = '$default_logo$';
-}
-
-// Header
 return '
 <div class="row">
     <div class="col-xs-6">
-        <img src="'.$logo.'" alt="Logo" border="0"/>
+        <img src="$logo$" alt="Logo" border="0"/>
     </div>
     <div class="col-xs-6 text-right">
         <p><b>'.$f_ragionesociale.'</b></p>

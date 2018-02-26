@@ -9,18 +9,19 @@ switch (post('op')) {
 				
 			if (!empty($value)){
 				
-				unset($value['tipologia']);
+                $idtipoanagrafica = $data[$key]['tipologia']; 
+				unset($data[$key]['tipologia']);
 
 				$dbo->insert('an_anagrafiche', $data[$key]);
 				unset($data[$key]);
 				
 				//campi extra
-				if (!empty($data[$key]['tipologia'])){
+				if (!empty($idtipoanagrafica)){
 					// Aggiornamento della tipologia di anagrafiche
 					$dbo->sync('an_tipianagrafiche_anagrafiche', [
 						'idanagrafica' => $dbo->lastInsertedID(),
 					], [
-						'idtipoanagrafica' => (array) $data[$key]['tipologia'],
+						'idtipoanagrafica' => (array) $idtipoanagrafica,
 					]);
 				}
 			

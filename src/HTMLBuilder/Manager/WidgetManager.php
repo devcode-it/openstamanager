@@ -33,7 +33,7 @@ class WidgetManager implements ManagerInterface
         switch ($widget['type']) {
             // Stampa
             case 'print':
-                $result = $this->print($widget);
+                $result = $this->prints($widget);
 
                 break;
 
@@ -59,14 +59,14 @@ class WidgetManager implements ManagerInterface
         return $result;
     }
 
-    protected function print($widget)
+    protected function prints($widget)
     {
         return $this->stats($widget);
     }
 
     protected function stats($widget)
     {
-        // Indivduazione della query relativa
+        // Individuazione della query relativa
         $query = $widget['query'];
 
         $additionals = \Modules::getAdditionalsQuery($widget['id_module']);

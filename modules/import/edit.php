@@ -12,7 +12,7 @@ if (empty($id_record)) {
 
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "checkbox", "label": "'.tr('Importa prima riga').'", "name": "first_row" ]}
+            {[ "type": "checkbox", "label": "'.tr('Importa prima riga').'", "name": "first_row", "extra":"checked", "value": "1"  ]}
         </div>
     </div>';
 

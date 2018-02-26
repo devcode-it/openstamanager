@@ -21,7 +21,7 @@ foreach ($imports as $key => $value) {
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "id_record", "values": <?php echo json_encode($list); ?> ]}
+			{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "id_record", "required": 1, "values": <?php echo json_encode($list); ?> ]}
 		</div>
 	</div>
 

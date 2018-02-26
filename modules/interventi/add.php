@@ -147,7 +147,7 @@ if (empty($new_codice)) {
 			</div>
 
 			<div class="row">
-				<div class="">
+				<div class="col-md-12">
                     {[ "type": "select", "label": "<?php echo tr('Componenti'); ?>", "multiple": 1, "name": "componenti[]", "value": "<?php echo $componenti; ?>", "placeholder": "<?php echo tr('Seleziona prima un impianto'); ?>...", "ajax-source": "componenti" ]}
 				</div>
 			</div>

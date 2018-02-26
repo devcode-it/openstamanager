@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'import':
-        $first_row = post('first_row');
+        $first_row = !post('first_row');
         $selected = post('fields');
 
         // Pulizia dei campi inutilizzati
@@ -17,9 +17,9 @@ switch (post('op')) {
         $fields = Import::getFields($id_record);
 
         $csv = Import::getFile($id_record, $records[0]['id'], [
-            'headers' => empty($first_row),
+            'headers' =>   $first_row,
         ]);
-
+		
         // Interpretazione dei dati
         $data = [];
         foreach ($csv as $row) {

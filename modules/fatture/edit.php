@@ -244,9 +244,9 @@ if ($records[0]['stato'] == 'Emessa') {
 			</div>
 
 
-			<div class="pull-right">
+			<!--div class="pull-right">
 				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-			</div>
+			</div-->
 		</div>
 	</div>
 </form>
@@ -339,9 +339,9 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
 //stampa solo per fatture di vendita
 if ($dir == 'entrata') {
     if (sizeof($campi_mancanti) > 0) {
-        echo '{( "name": "button", "type": "print", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "class": "btn-info disabled" )}';
+        //echo '{( "name": "button", "type": "print", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "class": "btn-info disabled" )}';
     } else {
-        echo '{( "name": "button", "type": "print", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}';
+        //echo '{( "name": "button", "type": "print", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}';
     }
 }
 ?>

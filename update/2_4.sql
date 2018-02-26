@@ -136,7 +136,9 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Template email'), 'id', 'id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Template email'), '#', 'id', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Template email'), 'Nome', 'name', 3, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Template email'), 'Oggetto', 'subject', 4, 1, 0, 1, 1);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Template email'), 'Oggetto', 'subject', 4, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Template email'), 'Modulo', '(SELECT name FROM zz_modules WHERE id=zz_emails.id_module)', 5, 1, 0, 1, 1);
+
 
 -- Raggruppamento dei moduli per le email
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Gestione email', 'Gestione email', '', '', '', 'fa fa-envelope', '2.3', '2.3', '1', NULL, '1', '1');

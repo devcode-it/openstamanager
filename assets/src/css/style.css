@@ -569,3 +569,6 @@ input.small-width {
         margin: 5%;
     }
 }
+.bound{
+    cursor: pointer;
+}

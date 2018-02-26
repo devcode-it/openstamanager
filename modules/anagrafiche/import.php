@@ -4,21 +4,34 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'import':
-        foreach ($data as $key => $value) {
+		
+		foreach ($data as $key => $value) {
+				
+			if (!empty($value)){
+				
+				unset($value['tipologia']);
+
+				$dbo->insert('an_anagrafiche', $data[$key]);
+				unset($data[$key]);
+				
+				//campi extra
+				if (!empty($data[$key]['tipologia'])){
+					// Aggiornamento della tipologia di anagrafiche
+					$dbo->sync('an_tipianagrafiche_anagrafiche', [
+						'idanagrafica' => $dbo->lastInsertedID(),
+					], [
+						'idtipoanagrafica' => (array) $data[$key]['tipologia'],
+					]);
+				}
 			
-            unset($value['tipologia']);
-
-            $dbo->insert('an_anagrafiche', $value);
-
-            // Aggiornamento della tipologia di anagrafiche
-            $dbo->sync('an_tipianagrafiche_anagrafiche', [
-                'idanagrafica' => $dbo->lastInsertedID(),
-            ], [
-                'idtipoanagrafica' => (array) $data[$key]['tipologia'],
-            ]);
-        }
-
+			}
+				
+		}
+   
+		   
         break;
+		
+
 }
 
 return [

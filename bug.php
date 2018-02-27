@@ -156,7 +156,7 @@ echo '
 					</div>
 
                     <div class="col-md-4">
-                        {[ "type": "checkbox", "placeholder": "'.tr('Allega copia del database').'", "name": "sql", "value": "0" ]}
+                        {[ "type": "checkbox", "placeholder": "'.tr('Allega copia del database').'", "name": "sql", "value": "0", "extra":"'.((!$user['is_admin']) ? 'readonly' : '').'" ]}
 					</div>
 
                     <div class="col-md-4">

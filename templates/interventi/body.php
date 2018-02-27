@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 include_once $docroot.'/modules/interventi/modutil.php';
 
-$report_name = 'intervento_'.$idintervento.'.pdf';
+$report_name = 'intervento_'.$records[0]['codice'].'.pdf';
 
 /*
     Dati intervento
@@ -353,8 +353,6 @@ foreach ($rst as $i => $r) {
     </tr>';
 }
 
-
-
 // Ore lavorate
 $ore = get_ore_intervento($idintervento);
 
@@ -384,14 +382,12 @@ echo '
         </td>
     </tr>';
 
-
 // Totale km
 echo '
     <tr>
         <td class="text-center">
             <small>'.tr('Km percorsi').':</small><br/><b>'.Translator::numberToLocale($records[0]['tot_km']).'</b>
         </td>';
-
 
 // Costo trasferta
 if ($mostra_prezzi) {
@@ -415,7 +411,6 @@ if ($mostra_prezzi) {
         <td class="text-center" colspan="2">-</td>
         ';
 }
-
 
 // TOTALE COSTI FINALI
 if ($mostra_prezzi) {

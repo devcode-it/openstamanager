@@ -77,7 +77,7 @@ if ($self_edit) {
 
 	<div class="row">
 		<div class="">
-		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "values": "query=SELECT CONCAT(`an_tipianagrafiche`.`idtipoanagrafica`, \'-\', `an_anagrafiche`.`idanagrafica`) AS \'id\', `ragione_sociale` AS \'descrizione\', `descrizione` AS \'optgroup\' FROM `an_tipianagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` ORDER BY `descrizione` ASC", "value": "'.$id_anagrafica.'" ]}
+		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "values": "query=SELECT CONCAT(`an_tipianagrafiche`.`idtipoanagrafica`, \'-\', `an_anagrafiche`.`idanagrafica`) AS \'id\', `ragione_sociale` AS \'descrizione\', `descrizione` AS \'optgroup\' FROM `an_tipianagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` WHERE  an_anagrafiche.deleted= 0 ORDER BY `descrizione` ASC", "value": "'.$id_anagrafica.'" ]}
 		</div>
     </div>';
 } else {

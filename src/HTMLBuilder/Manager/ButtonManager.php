@@ -140,7 +140,7 @@ class ButtonManager implements ManagerInterface
         } elseif ($count == 1) {
             $result = $this->link([
                 'type' => $options['type'],
-                'id' => $list[0]['id']['id'],
+                'id' => $list[0]['id'],
                 'id_module' => $options['id_module'],
                 'id_record' => $options['id_record'],
                 'class' => $options['class'],

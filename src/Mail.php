@@ -175,7 +175,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
         // Preparazione email
         $this->IsHTML(true);
 
-        if (!empty($config['host'])) {
+        if (!empty($config['server'])) {
             $this->IsSMTP(true);
 
             // Impostazioni di debug
@@ -185,7 +185,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
             };
 
             // Impostazioni dell'host
-            $this->Host = $config['host'];
+            $this->Host = $config['server'];
             $this->Port = $config['port'];
 
             // Impostazioni di autenticazione

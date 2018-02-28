@@ -12,7 +12,7 @@ if (empty($id_record)) {
 
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "checkbox", "label": "'.tr('Importa prima riga').'", "name": "first_row", "extra":"checked", "value": "1"  ]}
+            {[ "type": "checkbox", "label": "'.tr('Importa prima riga').'", "name": "first_row", "extra":"", "value": "1"  ]}
         </div>
     </div>';
 
@@ -52,7 +52,10 @@ if (empty($id_record)) {
         // Individuazione delle corrispondenze
         $selected = null;
         foreach ($fields as $key => $value) {
+            //print_r($value);
+            //echo $rows[0][$column]."<br>";
             if (in_array($rows[0][$column], $value)) {
+                $first_row = 1;
                 $selected = $key;
                 break;
             }
@@ -91,4 +94,13 @@ if (empty($id_record)) {
     echo '
     </div>
 </form>';
+?>
+<script>
+$( document ).ready(function() {
+    <?php if ($first_row){ ?>
+    $('#first_row').prop('checked', true);
+    <?php } ?>
+)};
+</script>
+<?php
 }

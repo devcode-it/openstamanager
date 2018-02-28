@@ -4,19 +4,19 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'import':
-		
+		$i = 0;
 		foreach ($data as $key => $value) {
 				
 			if (!empty($value)){
-				
-                $idtipoanagrafica = $data[$key]['tipologia']; 
+				$i++;
+                (array) $idtipoanagrafica = $data[$key]['tipologia']; 
 				unset($data[$key]['tipologia']);
 
 				$dbo->insert('an_anagrafiche', $data[$key]);
 				unset($data[$key]);
 				
 				//campi extra
-				if (!empty($idtipoanagrafica)){
+				if (count($idtipoanagrafica)>0){
 					// Aggiornamento della tipologia di anagrafiche
 					$dbo->sync('an_tipianagrafiche_anagrafiche', [
 						'idanagrafica' => $dbo->lastInsertedID(),
@@ -92,7 +92,7 @@ return [
         'field' => 'note',
         'label' => 'Note',
     ],
-   [
+    [
         'field' => 'id_nazione',
         'label' => 'Nazione',
         'other' => 'nazione',

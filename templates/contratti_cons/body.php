@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 include_once $docroot.'/modules/interventi/modutil.php';
 
-$report_name = 'contratto_'.$id_record.'_cons.pdf';
+$report_name = sanitizeFilename('contratto_'.$records[0]['numero'].'_cons.pdf');
 
 echo '
 <div class="row">
@@ -371,7 +371,7 @@ if (!empty($interventi)) {
 
                 echo '
                 <br><small class="text-muted">'.tr('Intervento num. _NUM_ del _DATE_', [
-                    '_NUM_' => $int['id'],
+                    '_NUM_' => $int['codice'],
                     '_DATE_' => Translator::dateToLocale($int['inizio']),
                 ]).'.</small>';
 

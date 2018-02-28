@@ -99,7 +99,7 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 			<!-- RIGA 3 -->
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "span", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$", "extra": "<?php echo $readonly; ?>" ]}
+					{[ "type": "span", "label": "<?php echo tr('Numero'); ?>", "name": "codice", "value": "$codice$", "extra": "<?php echo $readonly; ?>" ]}
 				</div>
 
 				<div class="col-md-3">

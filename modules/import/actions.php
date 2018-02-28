@@ -48,7 +48,7 @@ switch (post('op')) {
         // Richiamo delle operazioni specifiche
         include $imports[$id_record]['import'];
 
-        $_SESSION['infos'][] = tr('Importazione completata. '.$i.' righe processate.');
+        $_SESSION['infos'][] = tr('Importazione completata. '.count($csv).' righe processate.');
 
         break;
 }

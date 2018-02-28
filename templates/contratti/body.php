@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$report_name = 'contratto_'.$id_record.'.pdf';
+$report_name = sanitizeFilename('contratto_'.$records[0]['numero'].'.pdf');
 
 $autofill = [
     'count' => 0, // Conteggio delle righe

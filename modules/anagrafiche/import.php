@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'import':
-		$i = 0;
+		
 		foreach ($data as $key => $value) {
 				
 			if (!empty($value)){

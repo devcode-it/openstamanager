@@ -96,11 +96,12 @@ if (empty($id_record)) {
 </form>';
 ?>
 <script>
-$( document ).ready(function() {
+$(document).ready(function(){
     <?php if ($first_row){ ?>
-    $('#first_row').prop('checked', true);
+    $('#first_row').prop('checked', false);
     <?php } ?>
-)};
+    $('#save').html( "<i class='fa fa-flag-checkered'></i> <?= 'Avvia importazione' ?> ");
+});
 </script>
 <?php
 }

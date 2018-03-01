@@ -13,8 +13,8 @@ switch (post('op')) {
         $dbo->update('an_anagrafiche', [
             'ragione_sociale' => $post['ragione_sociale'],
             'tipo' => $post['tipo'],
-            'piva' => $post['piva'],
-            'codice_fiscale' => $post['codice_fiscale'],
+            'piva' => trim(strtoupper($post['piva'])),
+            'codice_fiscale' => trim(strtoupper($post['codice_fiscale'])),
             'data_nascita' => $post['data_nascita'],
             'luogo_nascita' => $post['luogo_nascita'],
             'sesso' => $post['sesso'],
@@ -67,6 +67,21 @@ switch (post('op')) {
         ], ['idanagrafica' => $id_record]);
 
         $_SESSION['infos'][] = str_replace('_NAME_', '"'.$post['ragione_sociale'].'"', "Informazioni per l'anagrafica _NAME_ salvate correttamente!");
+
+
+        //validazione piva.
+        $check_vat_number = Validate::isValidVatNumber(strtoupper($post['piva']));
+        //print_r($check_vat_number);
+        //exit();
+        //se $check_vat_number non è null e la riposta è negativa --> mostro il messaggio di avviso.
+        if ((!is_null($check_vat_number)) and (!$check_vat_number->valid)){
+
+            if (!empty($check_vat_number->error->info)){
+                $_SESSION['errors'][] = $check_vat_number->error->info;
+            }else{
+                $_SESSION['errors'][] = tr('Attenzione questa partita IVA non sembra essere valida: ').strtoupper($post['piva']);
+            }
+        }
 
         // Aggiorno il codice anagrafica se non è già presente, altrimenti lo ignoro
         $esiste = $dbo->fetchNum('SELECT idanagrafica FROM an_anagrafiche WHERE codice='.prepare($post['codice']).' AND NOT idanagrafica='.prepare($id_record));

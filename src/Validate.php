@@ -7,6 +7,60 @@
  */
 class VALIDATE
 {
+    
+
+	/**
+     * Controlla se la partita iva inserita è valida.
+     *
+     * @param string $vat_number
+     *
+     * @return object
+     */
+    public static function isValidVatNumber($vat_number)
+    {
+
+    	$access_key = Settings::get('apilayer API key for VAT number');
+
+    	if ((!empty($vat_number)) and (!empty($access_key))){
+
+    		if (strpos($vat_number, 'IT') === false) {
+    			$vat_number = 'IT'.$vat_number;
+    		}
+
+    		$ch = curl_init();
+
+			$qs = "&vat_number=" . urlencode(strtoupper($vat_number));
+
+			$url = "http://apilayer.net/api/validate?access_key=$access_key" . $qs;
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_HEADER, 0);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			
+
+			$data = json_decode(curl_exec($ch));
+			curl_close($ch);
+
+			/*se la riposta è null imposto la relativa proprietà dell'oggetto a 0*/
+			if ($data->valid==null)
+				$data->valid = 0;
+
+			//$data->url = $url;
+			//$data->json_last_error = json_last_error();
+			//$data->json_last_error_msg = json_last_error_msg();
+
+
+    	}
+		
+
+
+    	return $data;
+
+    }
+
+
+
+
+
     /**
      * Controlla se l'email inserita è valida.
      *
@@ -19,7 +73,7 @@ class VALIDATE
     public static function isValidEmail($email, $format = 1, $smtp = 0)
     {
 
-    	$access_key = Settings::get('apilayer API key');
+    	$access_key = Settings::get('apilayer API key for Email');
 
     	/*$data = (object) [
 		    'format_valid' => NULL,
@@ -44,7 +98,7 @@ class VALIDATE
 			$data = json_decode(curl_exec($ch));
 			curl_close($ch);
 			
-			/*se la riposta è null verficando il formato, il record mx o il server smtp imposto a false*/
+			/*se la riposta è null verficando il formato, il record mx o il server smtp imposto la relativa proprietà dell'oggetto a 0*/
 			if (($data->format_valid==null)and($format))
 				$data->format_valid = 0;
 
@@ -64,31 +118,17 @@ class VALIDATE
 			*/
 			/* --- */
 
-			/*echo "format_valid: ".$data->format_valid; 
-			echo "<br>\n";
-			echo "smtp_check: ".$data->smtp_check; 
-			echo "<br>\n";
-			echo "mx_found: ".$data->mx_found;*/
 			
-			//echo json_last_error(); 
-			//echo json_last_error_msg();
-
+			
+			$data->json_last_error = json_last_error();
+			$data->json_last_error_msg = json_last_error_msg(); 
+			
 
 
 		}
 
-
-		/*return [
-			'email' => $email,
-	        'format_valid' => $data->format_valid,
-	        'smtp_check' => $data->smtp_check,
-	        'mx_found' => $data->mx_found,
-	        'json_last_error_msg' => json_last_error_msg(),
-         	'json_last_error' => json_last_error(),
-        ];*/
-
-        return $data;
-
-
+		
+    	return $data;
+  
 	}
 }

@@ -5,16 +5,6 @@ include_once __DIR__.'/../../core.php';
 if (empty($id_record)) {
     require $docroot.'/add.php';
 } else {
-    echo '
-<form action="" method="post" id="edit-form">
-    <input type="hidden" name="backto" value="record-list">
-    <input type="hidden" name="op" value="import">
-
-    <div class="row">
-        <div class="col-md-12">
-            {[ "type": "checkbox", "label": "'.tr('Importa prima riga').'", "name": "first_row", "extra":"", "value": "1"  ]}
-        </div>
-    </div>';
 
     // Inclusione del file del modulo per eventuale HTML personalizzato
     include $imports[$id_record]['import'];
@@ -22,12 +12,36 @@ if (empty($id_record)) {
     $fields = Import::getFields($id_record);
 
     $select = [];
+    $select2 = [];
     foreach ($fields as $key => $value) {
         $select[] = [
             'id' => $key,
             'text' => $value['label'],
         ];
+
+        $select2[] = [
+            'id' => $value['field'],
+            'text' => $value['label'],
+        ];
+
+        if ($value['primary_key']){
+            $primary_key = $value['field'];
+        }
     }
+
+    echo '
+<form action="" method="post" id="edit-form">
+    <input type="hidden" name="backto" value="record-list">
+    <input type="hidden" name="op" value="import">
+
+    <div class="row">
+        <div class="col-md-8">
+            {[ "type": "checkbox", "label": "'.tr('Importa prima riga').'", "name": "first_row", "extra":"", "value": "1"  ]}
+        </div>
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Chiave primaria').'", "name": "primary_key", "values": '.json_encode($select2).', "value": "'.$primary_key.'" ]}
+        </div>
+    </div>';
 
     $rows = Import::getFile($id_record, $records[0]['id'], [
         'limit' => 10,

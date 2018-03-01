@@ -8,22 +8,45 @@ switch (post('op')) {
 		foreach ($data as $key => $value) {
 				
 			if (!empty($value)){
-				$i++;
+				
                 (array) $idtipoanagrafica = $data[$key]['tipologia']; 
 				unset($data[$key]['tipologia']);
 
-				$dbo->insert('an_anagrafiche', $data[$key]);
+
+
+                //update
+				if (post('primary_key')!=''){
+
+                    $primary_key = post('primary_key');
+
+                    $rs = $dbo->select('an_anagrafiche', $primary_key, [$primary_key => $data[$key][$primary_key]]);
+
+                    if (!in_array($data[$key][$primary_key], $rs[0])) {
+
+                        //insert
+                        $dbo->insert('an_anagrafiche', $data[$key]);
+
+                        //campi extra
+                        if (count($idtipoanagrafica)>0){
+                            // Aggiornamento della tipologia di anagrafiche
+                            $dbo->sync('an_tipianagrafiche_anagrafiche', [
+                                'idanagrafica' => $dbo->lastInsertedID(),
+                            ], [
+                                'idtipoanagrafica' => (array) $idtipoanagrafica,
+                            ]);
+                        }
+
+                    }else{
+                        //update
+                        $dbo->update('an_anagrafiche', $data[$key], [$primary_key => $data[$key][$primary_key]]);
+                    }
+                }
+
+
+                
 				unset($data[$key]);
 				
-				//campi extra
-				if (count($idtipoanagrafica)>0){
-					// Aggiornamento della tipologia di anagrafiche
-					$dbo->sync('an_tipianagrafiche_anagrafiche', [
-						'idanagrafica' => $dbo->lastInsertedID(),
-					], [
-						'idtipoanagrafica' => (array) $idtipoanagrafica,
-					]);
-				}
+				
 			
 			}
 				
@@ -39,6 +62,7 @@ return [
     [
         'field' => 'codice',
         'label' => 'Codice',
+        'primary_key' => '1',
     ],
     [
         'field' => 'ragione_sociale',

@@ -268,3 +268,6 @@ INSERT INTO `zz_emails` (`id`, `id_module`, `id_smtp`, `name`, `icon`, `subject`
 INSERT INTO `zz_email_print` (`id`, `id_email`, `id_print`) VALUES
 (NULL, (SELECT `id` FROM `zz_emails` WHERE `name` = 'Consuntivo' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti')), (SELECT `id` FROM `zz_prints` WHERE `name` = 'Consuntivo contratto')),
 (NULL, (SELECT `id` FROM `zz_emails` WHERE `name` = 'Consuntivo' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi')), (SELECT `id` FROM `zz_prints` WHERE `name` = 'Consuntivo preventivo'));
+
+-- apilayer API key (per validazione email, piva, indirizzo ecc...)
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'apilayer API key', '', 'string', '1', 'Generali');

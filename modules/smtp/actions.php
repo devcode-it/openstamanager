@@ -36,6 +36,16 @@ switch (post('op')) {
         }
 
         $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
+        
+        //validazione indirizzo email mittente.
+        $check_email = Validate::isValidEmail($post['from_address'],1,1);
+        //print_r($check_email);
+        //exit();
+        //se $check_email non è null, l'indirizzo email è settato e la riposta è negativa --> mostro il messaggio di avviso.
+        if ((!is_null($check_email)) and (!$check_email->smtp_check) and (!empty($post['from_address']))){
+            $_SESSION['errors'][] = tr('Attenzione questo indirizzo non sembra essere valido: ').$post['from_address'];
+        }
+
 
         break;
 

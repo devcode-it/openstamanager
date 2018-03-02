@@ -242,11 +242,6 @@ if ($records[0]['stato'] == 'Emessa') {
 					{[ "type": "textarea", "label": "<?php echo tr('Note aggiuntive'); ?>", "name": "note_aggiuntive", "help": "<?php echo tr('Note interne.'); ?>", "value": "$note_aggiuntive$" ]}
 				</div>
 			</div>
-
-
-			<!--div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-			</div-->
 		</div>
 	</div>
 </form>

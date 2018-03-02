@@ -111,10 +111,6 @@ if ($dir == 'uscita') {
 					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
 				</div>
 			</div>
-
-			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-			</div>
 		</div>
 	</div>
 </form>
@@ -154,8 +150,6 @@ if (!in_array($records[0]['stato'], ['Bozza', 'Fatturato'])) {
 <?php
 }
 ?>
-
-            {( "name": "button", "type": "print", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
 		</div>
 
 		<div class="clearfix"></div>

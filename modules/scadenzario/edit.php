@@ -129,11 +129,6 @@ echo '
 					<input type="hidden" id="totale_da_pagare" value="<?php echo Translator::numberToLocale($totale_da_pagare); ?>">
 				</div>
 			</div>
-
-	        <div class="clearfix"></div><br>
-			<div class="pull-right">
-				<button type="submit" id="btn-saves" class="btn btn-success hide"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-			</div>
 		</div>
 	</div>
 

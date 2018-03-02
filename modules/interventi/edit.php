@@ -90,12 +90,6 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 		</div>
 
 		<div class="panel-body">
-			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-			</div>
-			<div class="clearfix"></div>
-
-
 			<!-- RIGA 3 -->
 			<div class="row">
 				<div class="col-md-3">
@@ -158,7 +152,6 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 			<div class="pull-right">
 				<a class='btn btn-default' onclick="$('.extra').removeClass('hide'); $(this).addClass('hide'); $('#dontshowall_dettagli').removeClass('hide');" id='showall_dettagli'><i class='fa fa-square-o'></i> <?php echo tr('Mostra dettagli costi'); ?></a>
 				<a class='btn btn-info hide' onclick="$('.extra').addClass('hide'); $(this).addClass('hide'); $('#showall_dettagli').removeClass('hide');" id='dontshowall_dettagli'><i class='fa fa-check-square-o'></i> <?php echo tr('Mostra dettagli costi'); ?></a>
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
 			</div>
 			<div class="clearfix"></div>
 			<br>
@@ -217,12 +210,6 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 		</div>
 
 		<div class="panel-body">
-			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-			</div>
-			<div class="clearfix"></div>
-			<br>
-
 			<div class="row">
 				<div class="col-md-12" id="costi">
 					<script>$('#costi').load('<?php echo $rootdir; ?>/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>

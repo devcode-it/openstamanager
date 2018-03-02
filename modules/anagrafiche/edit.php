@@ -116,11 +116,6 @@ if (!$cliente) {
 		</div>
 
 		<div class="panel-body">
-			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-			</div>
-			<div class="clearfix"></div>
-
 			<div class="row">
 				<div class="col-md-4">
 					{[ "type": "text", "label": "<?php echo tr('Telefono'); ?>", "name": "telefono", "class": "text-center", "value": "$telefono$", "icon-before": "<i class='fa fa-phone'></i>" ]}
@@ -224,12 +219,6 @@ if ($fornitore) {
 		</div>
 
 		<div class="panel-body">
-			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-			</div>
-			<div class="clearfix"></div>
-
-
 			<div class="row">
 				<div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo tr('Codice registro imprese'); ?>", "name": "codiceri", "value": "$codiceri$" ]}

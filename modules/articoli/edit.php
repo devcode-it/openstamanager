@@ -134,11 +134,6 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 		</div>
 
 		<div class="panel-body">
-			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-			</div>
-			<div class="clearfix"></div>
-
 <?php
 
     /* necesario per funzione \Util\Ini::getList */

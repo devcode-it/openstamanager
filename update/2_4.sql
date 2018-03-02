@@ -37,6 +37,7 @@ INSERT INTO `zz_prints` (`id_module`, `name`, `directory`, `options`, `previous`
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Contratto (senza costi)', 'contratti', '{"pricing":false}', 'idcontratto', 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Intervento (senza costi)', 'interventi', '{"pricing":false}', 'idintervento', 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'Ordine cliente (senza costi)', 'ordini', '{"pricing":false}', 'idordine', 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore'), 'Ordine fornitore', 'ordini', '{"pricing":false}', 'idordine', 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Ddt di vendita (senza costi)', 'ddt', '{"pricing":false}', 'idddt', 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'Preventivo (senza costi)', 'preventivi', '{"pricing":false}', 'idpreventivo', 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Consuntivo contratto (senza costi)', 'contratti_cons', '{"pricing":false}', 'idcontratto', 1, 1),
@@ -249,6 +250,7 @@ INSERT INTO `zz_emails` (`id`, `id_module`, `id_smtp`, `name`, `icon`, `subject`
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 1, 'Rapportino', '', 'Invio rapportino numero {numero} del {data}', '', '', '', '<p>Gentile Cliente,</p>\r\n<p>inviamo in allegato il rapportino numero {numero} del {data}.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0', '0', '0'),
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 1, 'Rapportino', '', 'Invio rapportino numero {numero} del {data}', '', '', '', '<p>Gentile Cliente,</p>\r\n<p>inviamo in allegato il rapportino numero {numero} del {data}.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0', '0', '0'),
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 1, 'Rapportino', '', 'Invio rapportino numero {numero} del {data}', '', '', '', '<p>Gentile Cliente,</p>\r\n<p>inviamo in allegato il rapportino numero {numero} del {data}.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0', '0', '0'),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore'), 1, 'Rapportino', '', 'Invio rapportino numero {numero} del {data}', '', '', '', '<p>Gentile Cliente,</p>\r\n<p>inviamo in allegato il rapportino numero {numero} del {data}.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0', '0', '0'),
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 1, 'Rapportino', '', 'Invio rapportino numero {numero} del {data}', '', '', '', '<p>Gentile Cliente,</p>\r\n<p>inviamo in allegato il rapportino numero {numero} del {data}.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0', '0', '0'),
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 1, 'Rapportino', '', 'Invio rapportino numero {numero} del {data}', '', '', '', '<p>Gentile Cliente,</p>\r\n<p>inviamo in allegato il rapportino numero {numero} del {data}.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0', '0', '0');
 
@@ -257,6 +259,7 @@ INSERT INTO `zz_email_print` (`id`, `id_email`, `id_print`) VALUES
 (NULL, (SELECT `id` FROM `zz_emails` WHERE `name` = 'Rapportino' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi')), (SELECT `id` FROM `zz_prints` WHERE `name` = 'Preventivo')),
 (NULL, (SELECT `id` FROM `zz_emails` WHERE `name` = 'Rapportino' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti')), (SELECT `id` FROM `zz_prints` WHERE `name` = 'Contratto')),
 (NULL, (SELECT `id` FROM `zz_emails` WHERE `name` = 'Rapportino' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente')), (SELECT `id` FROM `zz_prints` WHERE `name` = 'Ordine cliente')),
+(NULL, (SELECT `id` FROM `zz_emails` WHERE `name` = 'Rapportino' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore')), (SELECT `id` FROM `zz_prints` WHERE `name` = 'Ordine fornitore')),
 (NULL, (SELECT `id` FROM `zz_emails` WHERE `name` = 'Rapportino' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita')), (SELECT `id` FROM `zz_prints` WHERE `name` = 'Fattura di vendita')),
 (NULL, (SELECT `id` FROM `zz_emails` WHERE `name` = 'Rapportino' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita')), (SELECT `id` FROM `zz_prints` WHERE `name` = 'Ddt di vendita'));
 

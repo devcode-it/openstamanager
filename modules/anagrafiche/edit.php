@@ -47,11 +47,11 @@ if (!$cliente) {
 
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 13, "name": "piva", "class": "text-center text-uppercase", "value": "$piva$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask", "value": "$piva$" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('Codice fiscale'); ?>", "maxlength": 16, "name": "codice_fiscale", "class": "text-center text-uppercase", "value": "$codice_fiscale$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Codice fiscale'); ?>", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask", "value": "$codice_fiscale$" ]}
 				</div>
 
 				<div class="col-md-4">

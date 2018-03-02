@@ -19,7 +19,7 @@ include_once __DIR__.'/../../core.php';
 					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
 				</div>
 				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('Targa'); ?>", "name": "targa", "required": 1, "value": "$targa$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Targa'); ?>", "name": "targa", "required": 1, "maxlength": 10, "class": "alphanumeric-mask", "value": "$targa$" ]}
 				</div>
 
 			</div>

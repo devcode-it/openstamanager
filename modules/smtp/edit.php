@@ -44,7 +44,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "text", "label": "<?php echo tr('Porta SMTP'); ?>", "name": "port", "required": 1, "class": "text-center", "value": "$port$" ]}
+                    {[ "type": "number", "label": "<?php echo tr('Porta SMTP'); ?>", "name": "port", "required": 1, "class": "text-center", "decimals":"0", "max-value":"65535", "value": "$port$" ]}
                 </div>
 
                 <div class="col-md-3">

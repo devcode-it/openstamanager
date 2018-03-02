@@ -278,6 +278,10 @@ INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable
 -- apilayer API key (per validazione piva)
 INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'apilayer API key for VAT number', '', 'string', '1', 'Generali');
 
---
 -- Aggiorno query modulo movimenti per ordinarli in funzione della data del movimento
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_movimenti` JOIN `mg_articoli` ON `mg_articoli`.id = `mg_movimenti`.`idarticolo` WHERE 1=1 HAVING 2=2 ORDER BY `Data` DESC' WHERE `zz_modules`.`name` = 'Movimenti';
+
+-- Rimozione impostazioni inutilizzate
+DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Indirizzo per le email in uscita';
+DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Destinatario';
+DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Destinatario fisso in copia (campo CC)';

@@ -40,6 +40,12 @@ switch (post('op')) {
 
             $_SESSION['infos'][] = tr('Aggiunta una nuova zona!');
         }
+		
+		
+		if (isAjaxRequest()) {
+            echo json_encode(['id' => $id_record, 'text' => $nome.' - '.$descrizione]);
+        }
+		
         break;
 
     case 'delete':

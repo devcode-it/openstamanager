@@ -43,7 +43,7 @@ echo '
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "text", "label": "<?php echo tr('Icona'); ?>", "name": "icon", "value": "$icon$" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Icona'); ?>", "name": "icon", "value": "$icon$" ,"help":"<?php echo tr('Es. \'fa fa-envelope\''); ?>" ]}
                 </div>
             </div>
 
@@ -53,11 +53,11 @@ echo '
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "text", "label": "<?php echo tr('BCC'); ?>", "name": "port", "value": "$bcc$" ]}
+                    {[ "type": "text", "label": "<?php echo tr('BCC'); ?>", "name": "bcc", "value": "$bcc$" ]}
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "text", "label": "<?php echo tr('Reply to'); ?>", "name": "reply_to", "value": "$reply_to$" ]}
+                    {[ "type": "email", "label": "<?php echo tr('Reply to'); ?>", "name": "reply_to", "value": "$reply_to$" ]}
                 </div>
             </div>
 

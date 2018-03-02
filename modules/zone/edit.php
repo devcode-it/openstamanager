@@ -10,7 +10,7 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-4">
-			{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
+			{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "nome",  "required": 1,  "maxlength": 25, "class": "alphanumeric-mask", "value": "$nome$" ]}
 		</div>
 
 		<div class="col-md-8">

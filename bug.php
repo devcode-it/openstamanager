@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/core.php';
 
-$pageTitle = 'Bug';
+$pageTitle = tr('Bug');
 $jscript_modules[] = App::getPaths()['js'].'/ckeditor/ckeditor.js';
 
 if (filter('op') == 'send') {

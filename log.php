@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/core.php';
 
-$pageTitle = 'Log';
+$pageTitle = tr('Log');
 
 if (file_exists($docroot.'/include/custom/top.php')) {
     include $docroot.'/include/custom/top.php';

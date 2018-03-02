@@ -292,10 +292,8 @@ class Modules
      */
     protected static function sidebarMenu($element, $actual = null)
     {
-        global $rootdir;
-
         $options = ($element['options2'] != '') ? $element['options2'] : $element['options'];
-        $link = ($options != '' && $options != 'menu') ? $rootdir.'/controller.php?id_module='.$element['id'] : 'javascript:;';
+        $link = ($options != '' && $options != 'menu') ? ROOTDIR.'/controller.php?id_module='.$element['id'] : 'javascript:;';
         $title = $element['title'];
         $target = ($element['new'] == 1) ? '_blank' : '_self';
         $active = ($actual == $element['name']);

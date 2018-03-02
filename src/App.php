@@ -94,7 +94,12 @@ class App
 
         $defaultConfig = self::getDefaultConfig();
 
-        return array_merge($defaultConfig, $config);
+        $result = array_merge($defaultConfig, $config);
+
+        // Operazioni di normalizzazione sulla configurazione
+        $result['debug'] = !empty($result['debug']);
+
+        return $result;
     }
 
     /**
@@ -271,17 +276,25 @@ class App
         $options = json_decode($options, true);
         $options = $options['main_query'][0];
 
+        $fields = [];
+        $order_by = [];
+
+        $search = [];
+        $slow = [];
+        $format = [];
+
         $query = $options['query'];
-        $fields = explode(',', $options['fields']);
-        foreach ($fields as $key => $value) {
-            $fields[$key] = trim($value);
+        $views = explode(',', $options['fields']);
+        foreach ($views as $view) {
+            $fields[] = trim($view);
+            $order_by[] = '`'.trim($view).'`';
+
             $search[] = 1;
             $slow[] = 0;
             $format[] = 0;
         }
 
         $search_inside = $fields;
-        $order_by = $fields;
 
         return [
             'query' => self::replacePlaceholder($query),

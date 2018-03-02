@@ -48,8 +48,6 @@ class Database extends Util\Singleton
      */
     protected function __construct($server, $username, $password, $database_name, $charset = null, $option = [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION])
     {
-        global $debug;
-
         if (is_array($server)) {
             $host = $server['host'];
             $port = !empty($server['port']) ? $server['port'] : null;
@@ -80,7 +78,7 @@ class Database extends Util\Singleton
                     $this->option
                 );
 
-                if (!empty($debug)) {
+                if (App::getConfig()['debug']) {
                     $pdo = new \DebugBar\DataCollector\PDO\TraceablePDO($pdo);
                 }
 
@@ -120,15 +118,12 @@ class Database extends Util\Singleton
      */
     public static function getConnection($new = false)
     {
-        $class = get_called_class(); // late-static-bound class name
+        $class = get_called_class();
 
         if (empty(parent::$instance[$class]) || !parent::$instance[$class]->isConnected() || $new) {
-            global $db_host;
-            global $db_username;
-            global $db_password;
-            global $db_name;
+            $config = App::getConfig();
 
-            parent::$instance[$class] = new self($db_host, $db_username, $db_password, $db_name);
+            parent::$instance[$class] = new self($config['db_host'], $config['db_username'], $config['db_password'], $config['db_name']);
         }
 
         return parent::$instance[$class];

@@ -49,7 +49,7 @@ switch (filter('op')) {
             $intervallo = filter('intervallo');
             $parti_da_oggi = post('parti_da_oggi');
 
-            if (!empty($idcontratto_riga) and !empty($intervallo)) {
+            if (!empty($idcontratto_riga) && !empty($intervallo)) {
                 $qp = 'SELECT *, (SELECT idanagrafica FROM co_contratti WHERE id = '.$id_record.' ) AS idanagrafica, (SELECT data_conclusione FROM co_contratti WHERE id = '.$id_record.' ) AS data_conclusione, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento FROM co_righe_contratti WHERE id = '.$idcontratto_riga;
                 $rsp = $dbo->fetchArray($qp);
 
@@ -72,14 +72,14 @@ switch (filter('op')) {
                 }
 
                 //inizio controllo data_conclusione, data valida e maggiore della $min_date
-                if ((date('Y', strtotime($data_conclusione)) > 1970) and (date('Y-m-d', strtotime($min_date)) < date('Y-m-d', strtotime($data_conclusione)))) {
+                if ((date('Y', strtotime($data_conclusione)) > 1970) && (date('Y-m-d', strtotime($min_date)) < date('Y-m-d', strtotime($data_conclusione)))) {
                     //Ciclo partendo dalla data_richiesta fino all data conclusione del contratto
                     while (date('Y-m-d', strtotime($data_richiesta)) < date('Y-m-d', strtotime($data_conclusione))) {
                         //calcolo nuova data richiesta
                         $data_richiesta = date('Y-m-d', strtotime($data_richiesta.' + '.intval($intervallo).' days'));
 
                         //controllo nuova data richiesta --> solo  date maggiori o uguali di [oggi o data richiesta iniziale] ma che non superano la data di fine del contratto
-                        if ((date('Y-m-d', strtotime($data_richiesta)) >= $min_date) and (date('Y-m-d', strtotime($data_richiesta)) <= date('Y-m-d', strtotime($data_conclusione)))) {
+                        if ((date('Y-m-d', strtotime($data_richiesta)) >= $min_date) && (date('Y-m-d', strtotime($data_richiesta)) <= date('Y-m-d', strtotime($data_conclusione)))) {
                             //Controllo che non esista già un promemoria idcontratto, idtipointervento e data_richiesta.
                             if (count($dbo->fetchArray("SELECT id FROM co_righe_contratti WHERE data_richiesta = '".$data_richiesta."' AND idtipointervento = '".$idtipointervento."' AND idcontratto = '".$id_record."' ")) == 0) {
                                 $query = 'INSERT INTO `co_righe_contratti`(`idcontratto`, `idtipointervento`, `data_richiesta`, `richiesta`, `idsede`) VALUES('.prepare($id_record).', '.prepare($idtipointervento).', '.prepare($data_richiesta).', '.prepare($richiesta).', '.prepare($idsede).')';
@@ -237,7 +237,7 @@ if (count($rsp) != 0) {
                     <td align="right">';
 
         echo '
-				<button type="button" class="btn btn-warning btn-sm" title="Pianifica..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica\', \''.$rootdir.'/modules/contratti/plugins/addpianficazione.php?id_module='.Modules::get('Contratti')['id'].'&id_plugin='.Plugins::get('Pianificazione interventi')['id'].'&ref=interventi_contratti&id_record='.$id_record.'&idcontratto_riga='.$rsp[$i]['id'].'\');"'.((!empty($pianificabile) and strtotime($records[0]['data_conclusione'])) ? '' : ' disabled').'><i class="fa fa-clock-o"></i></button>';
+				<button type="button" class="btn btn-warning btn-sm" title="Pianifica..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica\', \''.$rootdir.'/modules/contratti/plugins/addpianficazione.php?id_module='.Modules::get('Contratti')['id'].'&id_plugin='.Plugins::get('Pianificazione interventi')['id'].'&ref=interventi_contratti&id_record='.$id_record.'&idcontratto_riga='.$rsp[$i]['id'].'\');"'.((!empty($pianificabile) && strtotime($records[0]['data_conclusione'])) ? '' : ' disabled').'><i class="fa fa-clock-o"></i></button>';
 
         echo '
 					<button type="button"  '.$disabled.'  class="btn btn-primary btn-sm '.$disabled.' " title="Pianifica intervento ora..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.$rootdir.'/add.php?id_module='.Modules::get('Interventi')['id'].'&ref=interventi_contratti&idcontratto='.$id_record.'&idcontratto_riga='.$rsp[$i]['id'].'\');"'.(!empty($pianificabile) ? '' : ' disabled').'><i class="fa fa-calendar"></i></button>';

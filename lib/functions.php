@@ -300,13 +300,12 @@ function do_backup($path = null)
  */
 function backup_tables($file)
 {
-    global $backup_dir;
-    global $db_host;
-    global $db_name;
-    global $db_username;
-    global $db_password;
+    $config = App::getConfig();
 
-    $dump = new Ifsnop\Mysqldump\Mysqldump('mysql:host='.$db_host.';dbname='.$db_name, $db_username, $db_password, ['add-drop-table' => true]);
+    $dump = new Ifsnop\Mysqldump\Mysqldump('mysql:host='.$config['db_host'].';dbname='.$config['db_name'], $config['db_username'], $config['db_password'], [
+        'add-drop-table' => true,
+    ]);
+
     $dump->start($file);
 }
 

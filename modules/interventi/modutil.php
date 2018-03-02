@@ -31,7 +31,6 @@ function get_ore_intervento($idintervento)
  */
 function link_componente_to_articolo($idintervento, $idimpianto, $idarticolo, $qta)
 {
-    global $docroot;
     $dbo = Database::getConnection();
 
     if (!empty($idimpianto) && !empty($idintervento)) {

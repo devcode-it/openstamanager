@@ -9,12 +9,15 @@ $id_tecnico = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche 
 
 switch (post('op')) {
     case 'update':
+        $post['piva'] = trim(strtoupper($post['piva']));
+        $post['codice_fiscale'] = trim(strtoupper($post['codice_fiscale']));
+
         // Leggo tutti i valori passati dal POST e li salvo in un array
         $dbo->update('an_anagrafiche', [
             'ragione_sociale' => $post['ragione_sociale'],
             'tipo' => $post['tipo'],
-            'piva' => trim(strtoupper($post['piva'])),
-            'codice_fiscale' => trim(strtoupper($post['codice_fiscale'])),
+            'piva' => $post['piva'],
+            'codice_fiscale' => $post['codice_fiscale'],
             'data_nascita' => $post['data_nascita'],
             'luogo_nascita' => $post['luogo_nascita'],
             'sesso' => $post['sesso'],
@@ -68,18 +71,16 @@ switch (post('op')) {
 
         $_SESSION['infos'][] = str_replace('_NAME_', '"'.$post['ragione_sociale'].'"', "Informazioni per l'anagrafica _NAME_ salvate correttamente!");
 
-
-        //validazione piva.
+        // Validazione della Partita IVA
         $check_vat_number = Validate::isValidVatNumber(strtoupper($post['piva']));
-        //print_r($check_vat_number);
-        //exit();
-        //se $check_vat_number non è null e la riposta è negativa --> mostro il messaggio di avviso.
-        if ((!is_null($check_vat_number)) and (!$check_vat_number->valid)){
-
-            if (!empty($check_vat_number->error->info)){
+        // Se $check_vat_number non è null e la riposta è negativa --> mostro il messaggio di avviso.
+        if ((!is_null($check_vat_number)) && (!$check_vat_number->valid)) {
+            if (!empty($check_vat_number->error->info)) {
                 $_SESSION['errors'][] = $check_vat_number->error->info;
-            }else{
-                $_SESSION['errors'][] = tr('Attenzione questa partita IVA non sembra essere valida: ').strtoupper($post['piva']);
+            } else {
+                $_SESSION['errors'][] = tr('Attenzione: la partita IVA _IVA_ sembra non essere valida', [
+                    '_IVA_' => $post['piva'],
+                ]);
             }
         }
 

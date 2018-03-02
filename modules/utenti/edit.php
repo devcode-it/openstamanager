@@ -113,7 +113,8 @@ if ($record['nome'] != 'Amministratori') {
     for ($m = 0; $m < count($moduli); ++$m) {
         $perms_values = ['-', 'r', 'rw'];
         $perms_names = [tr('Nessun permesso'), tr('Sola lettura'), tr('Lettura e scrittura')];
-        echo menuSelection($moduli[$m], -1, $perms_values, $perms_names);
+
+        echo menuSelection($moduli[$m], $id_record, -1, $perms_values, $perms_names);
     }
 
     echo '

@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 include_once $docroot.'/modules/interventi/modutil.php';
 
-$report_name = sanitizeFilename('intervento_'.$records[0]['codice'].'.pdf');
+$report_name = 'intervento_'.$records[0]['codice'].'.pdf';
 
 /*
     Dati intervento

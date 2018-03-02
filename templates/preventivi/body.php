@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$report_name = sanitizeFilename('preventivo_'.$records[0]['numero'].'.pdf');
+$report_name = 'preventivo_'.$records[0]['numero'].'.pdf';
 
 $autofill = [
     'count' => 0, // Conteggio delle righe
@@ -344,7 +344,6 @@ echo '
 // Conclusione
 echo '
 <p class="text-center">'.tr("In attesa di un Vostro Cortese riscontro, colgo l'occasione per porgere Cordiali Saluti").'</p>';
-
 
 //Firma
 echo '<div style=\'position:absolute; bottom:'.($settings['margins']['bottom'] + $settings['footer-height']).'px\' > <table >

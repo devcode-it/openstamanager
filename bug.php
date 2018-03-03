@@ -25,7 +25,7 @@ if (filter('op') == 'send') {
     // Aggiunta della copia del database (facoltativo)
     if (!empty($post['sql'])) {
         $backup_file = $docroot.'/Backup OSM '.date('Y-m-d').' '.date('H_i_s').'.sql';
-        backup_tables($backup_file);
+        Backup::database($backup_file);
 
         $mail->AddAttachment($backup_file);
 

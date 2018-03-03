@@ -210,106 +210,6 @@ function checkZip($zip_file)
 }
 
 /**
- * Esegue il backup dell'intero progetto.
- *
- * @return bool
- */
-function do_backup($path = null)
-{
-    global $backup_dir;
-
-    set_time_limit(0);
-
-    $path = !empty($path) ? $path : DOCROOT;
-
-    $backup_name = 'OSM backup '.date('Y-m-d').' '.date('H_i_s');
-    if (
-        (extension_loaded('zip') && directory($backup_dir.'tmp')) ||
-        (!extension_loaded('zip') && directory($backup_dir.$backup_name))
-    ) {
-        // Backup del database
-        $database_file = $backup_dir.(extension_loaded('zip') ? 'tmp' : $backup_name).'/database.sql';
-        backup_tables($database_file);
-
-        // Percorsi da ignorare di default
-        $ignores = [
-            'files' => [
-                'config.inc.php',
-            ],
-            'dirs' => [
-                basename($backup_dir),
-                '.couscous',
-                'node_modules',
-                'tests',
-            ],
-        ];
-
-        // Creazione dello zip
-        if (extension_loaded('zip')) {
-            $result = create_zip([$path, dirname($database_file)], $backup_dir.$backup_name.'.zip', $ignores);
-
-            // Rimozione cartella temporanea
-            delete($database_file);
-        }
-        // Copia dei file di OSM
-        else {
-            $result = copyr($path, $backup_dir.$backup_name, $ignores);
-        }
-
-        // Eliminazione vecchi backup se ce ne sono
-        $max_backups = intval(get_var('Numero di backup da mantenere'));
-        // Lettura file di backup
-        if ($handle = opendir($backup_dir)) {
-            $backups = [];
-            while (false !== ($file = readdir($handle))) {
-                // I nomi dei file di backup hanno questa forma:
-                // OSM backup yyyy-mm-dd HH_ii_ss.zip (oppure solo cartella senza zip)
-                if (preg_match('/^OSM backup ([0-9\-]{10}) ([0-9_]{8})/', $file, $m)) {
-                    $backups[] = $file;
-                }
-            }
-            closedir($handle);
-
-            if (count($backups) > $max_backups) {
-                // Fondo e ordino i backup dal più recente al più vecchio
-                arsort($backups);
-                $cont = 1;
-                foreach ($backups as $backup) {
-                    if ($cont > $max_backups) {
-                        delete($backup_dir.'/'.$backup);
-                    }
-                    ++$cont;
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    return false;
-}
-
-/**
- * Funzione per fare il dump del database.
- *
- * @see http://davidwalsh.name/backup-mysql-database-php
- *
- * @param string $tables
- *
- * @return string
- */
-function backup_tables($file)
-{
-    $config = App::getConfig();
-
-    $dump = new Ifsnop\Mysqldump\Mysqldump('mysql:host='.$config['db_host'].';dbname='.$config['db_name'], $config['db_username'], $config['db_password'], [
-        'add-drop-table' => true,
-    ]);
-
-    $dump->start($file);
-}
-
-/**
  * Individua la differenza tra le date indicate.
  * $interval può essere:
  * yyyy - Number of full years
@@ -427,6 +327,7 @@ function getOS()
         'OS/2' => 'OS/2',
         'AIX' => 'AIX',
     ];
+
     foreach ($os as $key => $value) {
         if (strpos($_SERVER['HTTP_USER_AGENT'], $key)) {
             return $value;
@@ -857,18 +758,6 @@ function redirectOperation($id_module, $id_record)
 function prepareToField($string)
 {
     return str_replace('"', '&quot;', $string);
-}
-
-/**
- * Restituisce la configurazione dell'installazione.
- *
- * @return array
- */
-function getConfig()
-{
-    include DOCROOT.'/config.inc.php';
-
-    return get_defined_vars();
 }
 
 /**

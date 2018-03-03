@@ -10,35 +10,24 @@ switch ($op) {
     case 'login':
         $username = post('username');
         $password = post('password');
+
         if ($dbo->isConnected() && $dbo->isInstalled() && Auth::getInstance()->attempt($username, $password)) {
             $_SESSION['keep_alive'] = (filter('keep_alive') != null);
 
             // Auto backup del database giornaliero
             if (get_var('Backup automatico')) {
-                $folders = glob($backup_dir.'*');
-                $regexp = '/'.date('Y\-m\-d').'/';
+                $result = Backup::daily();
 
-                // Controllo se esiste già un backup zip o folder creato per oggi
-                if (!empty($folders)) {
-                    $found = false;
-                    foreach ($folders as $folder) {
-                        if (preg_match($regexp, $folder, $matches)) {
-                            $found = true;
-                        }
-                    }
-                }
-
-                if ($found) {
+                if (!isset($result)) {
                     $_SESSION['infos'][] = tr('Backup saltato perché già esistente!');
-                } elseif (empty($backup_dir)) {
-                    $_SESSION['errors'][] = tr('Non è possibile eseguire i backup poichè la cartella di backup non è stata impostata!!!');
-                } elseif (directory($backup_dir) && do_backup()) {
+                } elseif (!empty($result)) {
                     $_SESSION['infos'][] = tr('Backup automatico eseguito correttamente!');
                 } else {
                     $_SESSION['errors'][] = tr('Errore durante la generazione del backup automatico!');
                 }
             }
         }
+
         break;
 
     case 'logout':
@@ -62,8 +51,10 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
     exit();
 }
 
+// Procedura di installazione
 include_once $docroot.'/include/configuration.php';
 
+// Procedura di aggiornamento
 include_once $docroot.'/include/update.php';
 
 $pageTitle = tr('Login');

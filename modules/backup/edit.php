@@ -60,14 +60,12 @@ if (file_exists($backup_dir)) {
     $backups_zip = [];
     $backups_file = [];
 
-    $files = glob($backup_dir.'*');
-    foreach ($files as $file) {
-        //I nomi dei file di backup hanno questa forma:
-        // OSM backup yyyy-mm-dd HH_ii_ss.zip (oppure solo cartella senza zip)
-        if (preg_match('/^OSM backup ([0-9\-]{10}) ([0-9_]{8})\.zip$/', basename($file), $m)) {
-            $backups_zip[] = $file;
-        } elseif (preg_match('/^OSM backup ([0-9\-]{10}) ([0-9_]{8})$/', basename($file), $m)) {
-            $backups_file[] = $file;
+    $backups = Backup::getList();
+    foreach ($backups as $backup) {
+        if (ends_with($backup, '.zip')) {
+            $backups_zip[] = $backup;
+        } else {
+            $backups_file[] = $backup;
         }
     }
 
@@ -78,10 +76,6 @@ if (file_exists($backup_dir)) {
     '.tr('Se hai già inserito dei dati su OSM crealo il prima possibile...').'
 </div>';
     } else {
-        // Ordino i backup dal più recente al più vecchio
-        arsort($backups_zip);
-        arsort($backups_file);
-
         echo '
 <div class="row">
     <div class="col-xs-12 col-md-6">
@@ -90,13 +84,16 @@ if (file_exists($backup_dir)) {
         if (!empty($backups_zip)) {
             foreach ($backups_zip as $backup) {
                 $name = basename($backup);
-                preg_match('/^OSM backup ([0-9\-]{10}) ([0-9_]{8})\.zip$/', $name, $m);
+                $info = Backup::readName($backup);
+
+                $data = $info['Y'].'-'.$info['m'].'-'.$info['d'];
+                $ora = $info['H'].':'.$info['i'].':'.$info['s'];
 
                 echo '
         <div class="callout callout-info">
             <h4>'.tr('Backup del _DATE_ alle _TIME_', [
-                '_DATE_' => Translator::dateToLocale($m[1]),
-                '_TIME_' => Translator::timeToLocale(str_replace('_', ':', $m[2])),
+                '_DATE_' => Translator::dateToLocale($data),
+                '_TIME_' => Translator::timeToLocale($ora),
             ]).'</h4>
             <p><small>
                 '.tr('Nome del file').': '.$name.'<br>
@@ -127,13 +124,16 @@ if (file_exists($backup_dir)) {
         if (!empty($backups_file)) {
             foreach ($backups_file as $backup) {
                 $name = basename($backup);
-                preg_match('/^OSM backup ([0-9\-]{10}) ([0-9_]{8})$/', $name, $m);
+                $info = Backup::readName($backup);
+
+                $data = $info['Y'].'-'.$info['m'].'-'.$info['d'];
+                $ora = $info['H'].':'.$info['i'].':'.$info['s'];
 
                 echo '
         <div class="callout callout-warning">
             <h4>'.tr('Backup del _DATE_ alle _TIME_', [
-                '_DATE_' => Translator::dateToLocale($m[1]),
-                '_TIME_' => Translator::timeToLocale(str_replace('_', ':', $m[2])),
+                '_DATE_' => Translator::dateToLocale($data),
+                '_TIME_' => Translator::timeToLocale($ora),
             ]).'</h4>
             <p><small>
                 '.tr('Nome del file').': '.$name.'<br>

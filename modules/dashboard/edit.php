@@ -305,7 +305,7 @@ if (!empty($rsp)) {
 
     foreach ($rsp as $r) {
         echo '
-        <div class="fc-event " data-id="'.$r['id'].'" data-idcontratto="'.$r['idcontratto'].'">'.Translator::dateToLocale($r['data_richiesta']).' ('.$r['tipointervento'].')'.(!empty($r['richiesta']) ? ' - '.$r['richiesta'] : '').'</div>';
+        <div class="fc-event " data-id="'.$r['id'].'" data-idcontratto="'.$r['idcontratto'].'"><b>'.$r['ragione_sociale'].'</b><br>'.Translator::dateToLocale($r['data_richiesta']).' ('.$r['tipointervento'].')'.(!empty($r['richiesta']) ? ' - '.$r['richiesta'] : '').'</div>';
     }
 
     echo '

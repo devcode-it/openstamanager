@@ -85,9 +85,9 @@ echo '
 
             <h4>'.tr('Configurazione').'</h4>
             <div>
-                <p>'.tr('Per _ANDROID_, scarica _LINK_', [
+                <p>'.tr("Per _ANDROID_, scarica un'applicazione dedicata dal _LINK_", [
                     '_ANDROID_' => '<b>'.tr('Android').'</b>',
-                    '_LINK_' => '<a href="https://play.google.com/store/apps/details?id=org.kc.and.ical&hl=it" target="_blank">'.tr('iCalSync2').'</a>',
+                    '_LINK_' => '<a href="https://play.google.com/store/search?q=iCalSync&c=apps" target="_blank">'.tr('Play Store').'</a>',
                 ]).'.</p>
 
                 <p>'.tr("Per _APPLE_, puoi configurare un nuovo calendario dall'app standard del calendario", [

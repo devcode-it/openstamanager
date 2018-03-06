@@ -167,11 +167,7 @@ if (!empty($options) && $options != 'custom') {
 									</div>
 
 									<div class="col-xs-12 col-md-6">
-										{[ "type": "select", "label": "'.tr('Visibilità').'", "name": "enabled['.$key.']", "values": "list=\"0\":\"'.tr('Nascosto (variabili di stato)').'\",\"1\": \"'.tr('Visibile nella sezione').'\"", "value": "'.$field['enabled'].'"';
-        if (!$editable) {
-            echo ', "readonly": "1"';
-        }
-        echo ', "help": "'.tr('Stato del campo: visibile nella tabella oppure nascosto').'" ]}
+										{[ "type": "select", "label": "'.tr('Visibilità').'", "name": "enabled['.$key.']", "values": "list=\"0\":\"'.tr('Nascosto (variabili di stato)').'\",\"1\": \"'.tr('Visibile nella sezione').'\"", "value": "'.$field['enabled'].'", "help": "'.tr('Stato del campo: visibile nella tabella oppure nascosto').'" ]}
 									</div>
 								</div>
 

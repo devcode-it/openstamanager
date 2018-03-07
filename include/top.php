@@ -116,12 +116,13 @@ if (Auth::check()) {
                 search: search,
                 translations: translations,
                 locale: \''.$lang.'\',
+				scayt_sLang: \''.$lang."_".strtoupper($lang).'\',
 
                 start_date: \''.Translator::dateToLocale($_SESSION['period_start']).'\',
                 end_date: \''.Translator::dateToLocale($_SESSION['period_end']).'\',
 
                 ckeditorToolbar: [
-					[ "Bold", "Italic", "Underline", "Superscript", "-", "NumberedList", "BulletedList", "Outdent", "Indent", "Blockquote", "-", "Format"],
+					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
 				],
             };
 		</script>';

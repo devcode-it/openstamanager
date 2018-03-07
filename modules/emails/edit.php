@@ -130,7 +130,11 @@ if (sizeof($variables) > 0) {
 <script>
     $(document).ready(function(){
         CKEDITOR.replace("body", {
-            toolbar: globals.ckeditorToolbar
+            toolbar: globals.ckeditorToolbar,
+            language: globals.locale,
+            scayt_autoStartup: true,
+            scayt_sLang: globals.scayt_sLang
         });
+
     });
 </script>

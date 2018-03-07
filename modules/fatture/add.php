@@ -34,29 +34,19 @@ if ($module['name'] == 'Fatture di vendita') {
 			{[ "type": "select", "label": "<?php echo tr('Tipo fattura'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, descrizione FROM co_tipidocumento WHERE dir='<?php echo $dir; ?>'", "value": "" ]}
 		</div>
 	<?php
-		if( $dir == "entrata" ){
 		
-			if (isset($_SESSION[$dir]['idsezionale'])){
-				$idsezionale_default = $_SESSION[$dir]['idsezionale'];
-			}
-			else{
-					
-				(!empty($_SESSION['idsezionale'])) ? $idsezionale_default = $_SESSION['idsezionale'] :$idsezionale_default = get_var("Sezionale predefinito fatture di vendita");		
-			}
-		
+		if( $dir == "entrata" ):
+		(!empty($_SESSION[$dir]['idsezionale'])) ? $idsezionale_default = $_SESSION[$dir]['idsezionale'] : $idsezionale_default = get_var("Sezionale predefinito fatture di vendita");
+		endif;
+
+		if( $dir == "uscita" ):
+		(!empty($_SESSION[$dir]['idsezionale'])) ? $idsezionale_default = $_SESSION[$dir]['idsezionale'] : $idsezionale_default = get_var("Sezionale predefinito fatture di acquisto");
+		endif;
+
 	?>			
-			<div class="col-md-6">
-				{[ "type": "select", "label": "<?php echo tr('Sezionale'); ?>", "name": "idsezionale", "required": 1, "class": "", "values": "query=SELECT id, nome AS descrizione FROM co_sezionali WHERE dir='entrata' ORDER BY nome", "value": "<?= $idsezionale_default ?>", "extra": "" ]}
-			</div>
-	<?php
-		}else{
-	?>
-			<div class="col-md-6">
-				{[ "type": "text", "label": "<?php echo tr('Numero fattura del fornitore'); ?>", "name": "numero_esterno", "required": 1, "class": "", "value": "", "extra": "" ]}
-			</div>
-	<?php
-		}
-	?>
+		<div class="col-md-6">
+			{[ "type": "select", "label": "<?php echo tr('Sezionale'); ?>", "name": "idsezionale", "required": 1, "class": "", "values": "query=SELECT id, nome AS descrizione FROM co_sezionali WHERE dir='<?php echo $dir; ?>' ORDER BY nome", "value": "<?php echo $idsezionale_default; ?>", "extra": "" ]}
+		</div>
 	</div>
 
 	<!-- PULSANTI -->

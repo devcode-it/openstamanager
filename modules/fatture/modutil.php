@@ -27,40 +27,42 @@ function get_new_numerosecondariofattura($data)
     global $idsezionale;
 
     // recupero maschera per questo sezionale
-    $maschera = $dbo->fetchArray("SELECT * FROM co_sezionali WHERE id='".$idsezionale."'");
+    $rs_maschera = $dbo->fetchArray("SELECT maschera FROM co_sezionali WHERE id='".$idsezionale."'");
     // esempio: ####YYYY
-    $numero_esterno = $maschera[0]['maschera'];
+    $maschera = $rs_maschera[0]['maschera'];
 
     // estraggo blocchi di caratteri standard da sostituire
-    preg_match('/[#]+/', $numero_esterno, $m1 );
-    preg_match('/[Y]+/', $numero_esterno, $m2 );
+    preg_match('/[#]+/', $maschera, $m1 );
+    preg_match('/[Y]+/', $maschera, $m2 );
 
-    // potrei inserire una fattura per l'anno scorso, quindi recupero l'anno dalla data impostata
-    $anno = substr( $data, 0, 4); // questo valore serve nella query
+    $anno = substr( $data, 0, 4);
 
-    // recupero ultimo numero di fattura per questo sezionale (idtipodocumento va considerato o no?)
-    //AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = '".$dir."')
-    $query = "SELECT numero_esterno FROM co_documenti WHERE DATE_FORMAT(data,'%Y')='".$anno."' AND idsezionale='".$idsezionale."' ";
+   
+
+    $query = "SELECT numero_esterno FROM co_documenti WHERE DATE_FORMAT(data,'%Y')='".$anno."' AND id_sezionale='".$idsezionale."' ";
     // Marzo 2017
     // nel caso ci fossero lettere prima della maschera ### per il numero (es. FT-0001-2017)
     // è necessario l'ordinamento alfabetico "ORDER BY numero_esterno" altrimenti 
     // nel caso di maschere del tipo 001-2017 è necessario l'ordinamento numerico "ORDER BY CAST(numero_esterno AS UNSIGNED)"
-    $pos1 = strpos( $numero_esterno, $m1[0] );
+    $pos1 = strpos( $maschera, $m1[0] );
     if( $pos1==0 ):
         $query .= " ORDER BY CAST(numero_esterno AS UNSIGNED) DESC LIMIT 0,1";
     else:
         $query .= " ORDER BY numero_esterno DESC LIMIT 0,1";
     endif;
     
-    
-    
-    $ultima_fattura = $dbo->fetchArray( $query );
+    $rs_ultima_fattura = $dbo->fetchArray( $query );
 
-    $numero_esterno = get_next_code( $ultima_fattura[0]['numero_esterno'], 1, $numero_esterno );
+
+
+    $numero_esterno = get_next_code( $rs_ultima_fattura[0]['numero_esterno'], 1, $maschera );
+
+    echo $numero_esterno;
+    exit();
 
     // sostituisco anno nella maschera
-    $anno_ = substr( $anno, -strlen($m2[0]) ); // nel caso ci fosse YY
-    $numero_esterno = str_replace( $m2[0], $anno_, $numero_esterno );
+    $anno = substr( $anno, -strlen($m2[0]) ); // nel caso ci fosse YY
+    $numero_esterno = str_replace( $m2[0], $anno, $numero_esterno );
 
    
     return $numero_esterno;

@@ -226,7 +226,24 @@ class Modules
                             $fields[] = trim($data['name']);
 
                             $search_inside[] = !empty($data['search_inside']) ? $data['search_inside'] : $data['name'];
-                            $order_by[] = !empty($data['order_by']) ? $data['order_by'] : $data['name'];
+                            
+                            // Se non è specificato `order_by`, uso il nome del campo
+                            if( empty($data['order_by']) ){
+                                // Se nel nome ci sono solo caratteri alfanumerici (quindi NON funzioni),
+                                // inserisco il simbolo ` a inizio e fine campo, altrimenti campi con gli spazi
+                                // danno errore nell'ordinamento
+                                if( preg_match( '/([a-zA-Z0-9\_\-]+)/', $data['name']) ){
+                                    $order_by[] = '`'.$data['name'].'`';
+                                } else {
+                                    $order_by[] = $data['name'];
+                                }
+                            }
+                            
+                            // ...altrimenti uso `order_by`
+                            else{
+                                $order_by[] = $data['order_by'];
+                            }
+                            
                             $search[] = $data['search'];
                             $slow[] = $data['slow'];
                             $format[] = $data['format'];

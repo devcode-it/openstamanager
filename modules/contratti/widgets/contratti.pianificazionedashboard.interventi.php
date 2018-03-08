@@ -18,7 +18,7 @@ $mesi = [
 ];
 
 // Righe inserite
-$qp = "SELECT *, DATE_FORMAT( data_richiesta, '%m-%Y') AS mese, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento, (SELECT idanagrafica FROM co_contratti WHERE id=idcontratto) AS idcliente FROM co_righe_contratti WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL ORDER BY DATE_FORMAT( data_richiesta, '%m-%Y') ASC";
+$qp = "SELECT *, DATE_FORMAT( data_richiesta, '%m-%Y') AS mese, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento, (SELECT idanagrafica FROM co_contratti WHERE id=idcontratto) AS idcliente, (SELECT ragione_sociale FROM co_contratti INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_contratti.id=idcontratto) AS ragione_sociale FROM co_righe_contratti WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL ORDER BY DATE_FORMAT( data_richiesta, '%m-%Y') ASC, ragione_sociale ASC";
 $rsp = $dbo->fetchArray($qp);
 
 if (!empty($rsp)) {
@@ -46,9 +46,10 @@ if (!empty($rsp)) {
     <table class="table table-hover table-striped">
         <thead>
             <tr>
+                <th width="120">'.tr('Cliente').'</th>
                 <th width="70">'.tr('Entro il').'</th>
                 <th width="200">'.tr('Tipo intervento').'</th>
-                <th width="300">'.tr('Descrizione').'</th>
+                <th>'.tr('Descrizione').'</th>
                 <th width="200">'.tr('Intervento collegato').'</th>
                 <th width="100">'.tr('Sede').'</th>
                 <th width="18"></th>
@@ -60,6 +61,7 @@ if (!empty($rsp)) {
 
         echo '
             <tr id="int_'.$r['id'].'">
+                <td>'.$r['ragione_sociale'].'</td>
                 <td>'.Translator::dateToLocale($r['data_richiesta']).'</td>
                 <td>'.$r['tipointervento'].'</td>
                 <td>'.nl2br($r['richiesta']).'</td>

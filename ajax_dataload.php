@@ -79,8 +79,14 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
         if ($cont > 1) {
             unset($pieces[$cont - 1]);
         }
+        
+        $order_by = $total['order_by'][$order['column']];
+        
+        if( strstr( $order_by, ' ' ) ){
+            $order_by = '`'.$order_by.'`';
+        }
 
-        $module_query = implode('ORDER', $pieces).' ORDER BY '.$total['order_by'][$order['column']].' '.$order['dir'];
+        $module_query = implode('ORDER', $pieces).' ORDER BY '.$order_by.' '.$order['dir'];
     }
 
     // Calcolo di eventuali somme

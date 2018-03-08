@@ -176,7 +176,7 @@ echo '
             <input type="hidden" name="backto" value="record-edit">
             <div class="row">
                 <div class="col-xs-12 col-md-6">
-                    {[ "type": "select", "name": "matricole[]", "multiple": 1, "value": "'.implode(',', $impianti).'", "values": "query=SELECT my_impianti.id, CONCAT(matricola, \' - \', nome) AS descrizione, CONCAT(nomesede, IF(citta IS NULL OR citta = \'\', \'\', CONCAT(\' (\', citta, \')\'))) AS optgroup FROM my_impianti JOIN (SELECT id, nomesede, citta FROM an_sedi UNION SELECT 0, \'Sede legale\', \'\') AS t ON t.id = my_impianti.idsede WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' ORDER BY idsede ASC, matricola ASC", "extra": "'.$readonly.'" ]}
+                    {[ "type": "select", "name": "matricole[]", "multiple": 1, "value": "'.implode(',', $impianti).'", "values": "query=SELECT my_impianti.id, CONCAT(matricola, \' - \', nome) AS descrizione, CONCAT(nomesede, IF(my_impianti.citta IS NULL OR my_impianti.citta = \'\', \'\', CONCAT(\' (\', my_impianti.citta, \')\'))) AS optgroup FROM my_impianti JOIN (SELECT id, nomesede, citta FROM an_sedi UNION SELECT 0, \'Sede legale\', \'\') AS t ON t.id = my_impianti.idsede WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' ORDER BY idsede ASC, matricola ASC", "extra": "'.$readonly.'" ]}
                 </div>
             </div>
             <br><br>

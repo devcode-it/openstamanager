@@ -146,7 +146,7 @@ if (!empty($options) && $options != 'custom') {
 								</div>
 								<div class="row">
 									<div class="col-xs-12 col-md-12">
-										{[ "type": "textarea", "label": "'.tr('Query prevista').'", "name": "query['.$key.']", "value": "'.$field['query'].'"';
+										{[ "type": "textarea", "label": "'.tr('Query prevista').'", "name": "query['.$key.']", "value": "'.str_replace( '"', '\"', $field['query'] ).'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }

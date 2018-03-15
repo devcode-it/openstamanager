@@ -255,6 +255,14 @@ if (empty($new_codice)) {
         $("#orario_inizio").on("dp.change", function (e) {
             $("#orario_fine").data("DateTimePicker").minDate(e.date);
         });
+        
+        // Refresh modulo dopo la chiusura di una pianificazione attività derivante dalle attività
+        // da pianificare, altrimenti il promemoria non si vede più nella lista a destra
+        if( $('input[name=idcontratto_riga]').val() != undefined ){
+            $('#bs-popup button.close').on('click', function(){
+                location.reload();
+            });
+        }
     });
 
 	$('#idanagrafica').change( function(){

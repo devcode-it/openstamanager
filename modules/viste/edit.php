@@ -136,7 +136,7 @@ if (!empty($options) && $options != 'custom') {
 								</div>
 								<div class="row">
 									<div class="col-md-12">
-										{[ "type": "textarea", "label": "'.tr('Query prevista').'", "name": "query['.$key.']", "value": "'.$field['query'].'"';
+										{[ "type": "textarea", "label": "'.tr('Query prevista').'", "name": "query['.$key.']", "value": "'.prepareToField($field['query']).'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }
@@ -374,7 +374,7 @@ if (!empty($options) && $options != 'custom') {
                                     <input type="hidden" value="'.$additional['id'].'" name="id['.$num.']">
 
                                     <div class="col-md-6">
-                                        {[ "type": "textarea", "label": "'.tr('Query').'", "name": "query['.$num.']", "value": "'.$additional['clause'].'"';
+                                        {[ "type": "textarea", "label": "'.tr('Query').'", "name": "query['.$num.']", "value": "'.prepareToField($additional['clause']).'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }

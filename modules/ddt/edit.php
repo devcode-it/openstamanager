@@ -62,7 +62,7 @@ if ($dir == 'uscita') {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede", "values": "query=SELECT id, CONCAT_WS(', ', nomesede, citta) AS descrizione FROM an_sedi WHERE (idanagrafica='<php echo $idanagrafica; ?>' OR idanagrafica=(SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')) UNION SELECT '0' AS id, 'Sede legale' AS descrizione ORDER BY descrizione", "value": "$idsede$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede", "values": "query=SELECT id, CONCAT_WS(', ', nomesede, citta) AS descrizione FROM an_sedi WHERE (idanagrafica='$idanagrafica$' OR idanagrafica=(SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')) UNION SELECT '0' AS id, 'Sede legale' AS descrizione ORDER BY descrizione", "value": "$idsede$" ]}
 				</div>
 			</div>
 
@@ -128,11 +128,17 @@ if ($dir == 'uscita') {
 
 if ($records[0]['stato'] != 'Evaso') {
     ?>
-            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ddt/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_articolo" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Articolo'); ?></a>
+            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ddt/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_articolo" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup">
+                <i class="fa fa-plus"></i> <?php echo tr('Articolo'); ?>
+            </a>
 
-            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ddt/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_riga" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Riga'); ?></a>
+            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ddt/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_riga" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup">
+                <i class="fa fa-plus"></i> <?php echo tr('Riga'); ?>
+            </a>
 
-            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ddt/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_descrizione" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Descrizione'); ?></a>
+            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ddt/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_descrizione" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup">
+                <i class="fa fa-plus"></i> <?php echo tr('Descrizione'); ?>
+            </a>
 <?php
 }
 ?>

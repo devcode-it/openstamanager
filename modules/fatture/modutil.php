@@ -37,8 +37,6 @@ function get_new_numerosecondariofattura($data)
 
     $anno = substr( $data, 0, 4);
 
-   
-
     $query = "SELECT numero_esterno FROM co_documenti WHERE DATE_FORMAT(data,'%Y')='".$anno."' AND id_sezionale='".$idsezionale."' ";
     // Marzo 2017
     // nel caso ci fossero lettere prima della maschera ### per il numero (es. FT-0001-2017)
@@ -53,17 +51,11 @@ function get_new_numerosecondariofattura($data)
     
     $rs_ultima_fattura = $dbo->fetchArray( $query );
 
-
-
     $numero_esterno = get_next_code( $rs_ultima_fattura[0]['numero_esterno'], 1, $maschera );
-
-    echo $numero_esterno;
-    exit();
 
     // sostituisco anno nella maschera
     $anno = substr( $anno, -strlen($m2[0]) ); // nel caso ci fosse YY
     $numero_esterno = str_replace( $m2[0], $anno, $numero_esterno );
-
    
     return $numero_esterno;
 }

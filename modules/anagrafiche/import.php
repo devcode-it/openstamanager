@@ -4,65 +4,54 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'import':
-		
-		foreach ($data as $key => $value) {
-				
-			if (!empty($value)){
-				
-                (array) $idtipoanagrafica = $data[$key]['tipologia']; 
-				unset($data[$key]['tipologia']);
 
+        foreach ($data as $key => $value) {
+            if (!empty($value)) {
+                $idtipoanagrafica = (array) $data[$key]['tipologia'];
+                unset($data[$key]['tipologia']);
 
+                // Insert o update
+                $insert = true;
+                if (!empty($primary_key)) {
+                    $rs = $dbo->select('an_anagrafiche', $primary_key, [
+                        $primary_key => $data[$key][$primary_key],
+                    ]);
 
-                //update
-				if (post('primary_key')!=''){
+                    $insert = !in_array($data[$key][$primary_key], $rs[0]);
+                }
 
-                    $primary_key = post('primary_key');
+                // Insert
+                if ($insert) {
+                    $dbo->insert('an_anagrafiche', $data[$key]);
 
-                    $rs = $dbo->select('an_anagrafiche', $primary_key, [$primary_key => $data[$key][$primary_key]]);
-
-                    if (!in_array($data[$key][$primary_key], $rs[0])) {
-
-                        //insert
-                        $dbo->insert('an_anagrafiche', $data[$key]);
-
-                        //campi extra
-                        if (count($idtipoanagrafica)>0){
-                            // Aggiornamento della tipologia di anagrafiche
-                            $dbo->sync('an_tipianagrafiche_anagrafiche', [
-                                'idanagrafica' => $dbo->lastInsertedID(),
-                            ], [
-                                'idtipoanagrafica' => (array) $idtipoanagrafica,
-                            ]);
-                        }
-
-                    }else{
-                        //update
-                        $dbo->update('an_anagrafiche', $data[$key], [$primary_key => $data[$key][$primary_key]]);
+                    // Campi extra
+                    if (count($idtipoanagrafica) > 0) {
+                        // Aggiornamento della tipologia di anagrafiche
+                        $dbo->sync('an_tipianagrafiche_anagrafiche', [
+                            'idanagrafica' => $dbo->lastInsertedID(),
+                        ], [
+                            'idtipoanagrafica' => (array) $idtipoanagrafica,
+                        ]);
                     }
                 }
 
+                // Update
+                else {
+                    $dbo->update('an_anagrafiche', $data[$key], [$primary_key => $data[$key][$primary_key]]);
+                }
 
-                
-				unset($data[$key]);
-				
-				
-			
-			}
-				
-		}
-   
-		   
+                unset($data[$key]);
+            }
+        }
+
         break;
-		
-
 }
 
 return [
     [
         'field' => 'codice',
         'label' => 'Codice',
-        'primary_key' => '1',
+        'primary_key' => true,
     ],
     [
         'field' => 'ragione_sociale',
@@ -119,7 +108,12 @@ return [
     [
         'field' => 'id_nazione',
         'label' => 'Nazione',
-        'other' => 'nazione',
+        'names' => [
+            'Nazione',
+            'id_nazione',
+            'idnazione',
+            'nazione',
+        ],
         'query' => 'SELECT id as result FROM an_nazioni WHERE LOWER(nome) = LOWER(|value|)',
     ],
     [
@@ -129,12 +123,22 @@ return [
     [
         'field' => 'idpagamento_vendite',
         'label' => 'ID Pagamento',
-        'other' => 'idpagamento',
+        'names' => [
+            'Pagamento',
+            'ID Pagamento',
+            'id_pagamento',
+            'idpagamento_vendite',
+            'idpagamento',
+        ],
     ],
     [
         'field' => 'tipologia',
         'label' => 'Tipologia',
-        'other' => 'idtipo',
+        'names' => [
+            'Tipologia',
+            'tipologia',
+            'idtipo',
+        ],
         'query' => 'SELECT idtipoanagrafica as result FROM an_tipianagrafiche WHERE descrizione = |value|',
     ],
 ];

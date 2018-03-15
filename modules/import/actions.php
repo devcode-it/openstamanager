@@ -19,7 +19,7 @@ switch (post('op')) {
         $csv = Import::getFile($id_record, $records[0]['id'], [
             'headers' =>   $first_row,
         ]);
-		
+
         // Interpretazione dei dati
         $data = [];
         foreach ($csv as $row) {
@@ -44,6 +44,8 @@ switch (post('op')) {
 
             $data[] = $data_row;
         }
+
+        $primary_key = post('primary_key');
 
         // Richiamo delle operazioni specifiche
         include $imports[$id_record]['import'];

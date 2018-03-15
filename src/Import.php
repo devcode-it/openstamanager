@@ -76,6 +76,16 @@ class Import
         $fields = require $import['import'];
         ob_end_clean();
 
+        // Impostazione automatica dei nomi "ufficiali" dei campi
+        foreach ($fields as $key => $value) {
+            if (!isset($value['names'])) {
+                $fields[$key]['names'] = [
+                    $value['field'],
+                    $value['label'],
+                ];
+            }
+        }
+
         return $fields;
     }
 

@@ -5,7 +5,6 @@ include_once __DIR__.'/../../core.php';
 if (empty($id_record)) {
     require $docroot.'/add.php';
 } else {
-
     // Inclusione del file del modulo per eventuale HTML personalizzato
     include $imports[$id_record]['import'];
 
@@ -24,7 +23,7 @@ if (empty($id_record)) {
             'text' => $value['label'],
         ];
 
-        if ($value['primary_key']){
+        if ($value['primary_key']) {
             $primary_key = $value['field'];
         }
     }
@@ -66,9 +65,7 @@ if (empty($id_record)) {
         // Individuazione delle corrispondenze
         $selected = null;
         foreach ($fields as $key => $value) {
-            //print_r($value);
-            //echo $rows[0][$column]."<br>";
-            if (in_array($rows[0][$column], $value)) {
+            if (in_array($rows[0][$column], $value['names'])) {
                 $first_row = 1;
                 $selected = $key;
                 break;
@@ -108,14 +105,18 @@ if (empty($id_record)) {
     echo '
     </div>
 </form>';
-?>
+
+    echo '
 <script>
-$(document).ready(function(){
-    <?php if ($first_row){ ?>
-    $('#first_row').prop('checked', false);
-    <?php } ?>
-    $('#save').html( "<i class='fa fa-flag-checkered'></i> <?= 'Avvia importazione' ?> ");
+$(document).ready(function(){';
+
+    if ($first_row) {
+        echo '
+    $("#first_row").prop("checked", false).trigger("change");';
+    }
+
+    echo '
+    $("#save").html("<i class=\"fa fa-flag-checkered\"></i> '.tr('Avvia importazione').'");
 });
-</script>
-<?php
+</script>';
 }

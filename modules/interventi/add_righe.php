@@ -35,9 +35,10 @@ if (empty($idriga)) {
     $descrizione = $rsr[0]['descrizione'];
     $qta = $rsr[0]['qta'];
     $um = $rsr[0]['um'];
+    $idiva = $rsr[0]['idiva'];
     $prezzo_vendita = $rsr[0]['prezzo_vendita'];
     $prezzo_acquisto = $rsr[0]['prezzo_acquisto'];
-
+    
     $sconto_unitario = $rsr[0]['sconto_unitario'];
     $tipo_sconto = $rsr[0]['tipo_sconto'];
 }
@@ -70,6 +71,12 @@ echo '
 echo '
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
+        </div>';
+    
+// Iva
+echo '
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
         </div>
     </div>';
 

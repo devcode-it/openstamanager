@@ -22,7 +22,8 @@ if (!empty($rs)) {
     if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
         echo '
         <th width="15%">'.tr('Prezzo di vendita').'</th>
-        <th width="15%">'.tr('Subtotale').'</th>';
+        <th width="10%">'.tr('Iva').'</th>
+        <th width="15%">'.tr('Imponibile').'</th>';
     }
 
     if ( !$records[0]['flg_completato'] ) {
@@ -97,6 +98,12 @@ if (!empty($rs)) {
             </span>';
             }
 
+            echo '
+        </td>';
+        
+            echo '
+        <td class="text-right">
+            <span>'.Translator::numberToLocale($r['iva']).'</span> &euro;';
             echo '
         </td>';
 

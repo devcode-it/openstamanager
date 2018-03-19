@@ -402,6 +402,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $qta = post('qta');
         $um = post('um');
+        $idiva = post('idiva');
         $prezzo_vendita = post('prezzo_vendita');
         $prezzo_acquisto = post('prezzo_acquisto');
 
@@ -409,8 +410,14 @@ switch (post('op')) {
         $tipo_sconto = $post['tipo_sconto'];
         $sconto = ($tipo_sconto == 'PRC') ? ($prezzo_vendita * $sconto_unitario) / 100 : $sconto_unitario;
         $sconto = $sconto * $qta;
+        
+        //Calcolo iva
+        $rs_iva = $dbo->fetchArray("SELECT * FROM co_iva WHERE id=".prepare($idiva)."");
+        $desc_iva = $rs_iva[0]['descrizione'];
+        
+        $iva = (($prezzo_vendita*$qta)-$sconto)*$rs_iva[0]['percentuale']/100;
 
-        $dbo->query('INSERT INTO in_righe_interventi(descrizione, qta, um, prezzo_vendita, prezzo_acquisto, sconto, sconto_unitario, tipo_sconto, idintervento) VALUES ('.prepare($descrizione).', '.prepare($qta).', '.prepare($um).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($id_record).')');
+        $dbo->query('INSERT INTO in_righe_interventi(descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto, idintervento) VALUES ('.prepare($descrizione).', '.prepare($qta).', '.prepare($um).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($id_record).')');
 
         break;
 
@@ -419,6 +426,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $qta = post('qta');
         $um = post('um');
+        $idiva = post('idiva');
         $prezzo_vendita = post('prezzo_vendita');
         $prezzo_acquisto = post('prezzo_acquisto');
 
@@ -426,6 +434,12 @@ switch (post('op')) {
         $tipo_sconto = $post['tipo_sconto'];
         $sconto = ($tipo_sconto == 'PRC') ? ($prezzo_vendita * $sconto_unitario) / 100 : $sconto_unitario;
         $sconto = $sconto * $qta;
+        
+        //Calcolo iva
+        $rs_iva = $dbo->fetchArray("SELECT * FROM co_iva WHERE id=".prepare($idiva)."");
+        $desc_iva = $rs_iva[0]['descrizione'];
+        
+        $iva = (($prezzo_vendita*$qta)-$sconto)*$rs_iva[0]['percentuale']/100;
 
         $dbo->query('UPDATE in_righe_interventi SET '.
             ' descrizione='.prepare($descrizione).','.
@@ -433,6 +447,9 @@ switch (post('op')) {
             ' um='.prepare($um).','.
             ' prezzo_vendita='.prepare($prezzo_vendita).','.
             ' prezzo_acquisto='.prepare($prezzo_acquisto).','.
+            ' idiva='.prepare($idiva).','.
+            ' desc_iva='.prepare($desc_iva).','.
+            ' iva='.prepare($iva).','.
             ' sconto='.prepare($sconto).','.
             ' sconto_unitario='.prepare($sconto_unitario).','.
             ' tipo_sconto='.prepare($tipo_sconto).
@@ -487,6 +504,7 @@ switch (post('op')) {
         $qta = post('qta');
         $um = post('um');
         $prezzo_vendita = post('prezzo_vendita');
+        $idiva = post('idiva');
 
         $sconto_unitario = $post['sconto'];
         $tipo_sconto = $post['tipo_sconto'];
@@ -501,9 +519,15 @@ switch (post('op')) {
 
         $rsart = $dbo->fetchArray('SELECT abilita_serial, prezzo_acquisto FROM mg_articoli WHERE id='.prepare($idarticolo));
         $prezzo_acquisto = $rsart[0]['prezzo_acquisto'];
+        
+        //Calcolo iva
+        $rs_iva = $dbo->fetchArray("SELECT * FROM co_iva WHERE id=".prepare($idiva)."");
+        $desc_iva = $rs_iva[0]['descrizione'];
+        
+        $iva = (($prezzo_vendita*$qta)-$sconto)*$rs_iva[0]['percentuale']/100;
 
         // Aggiunto il collegamento fra l'articolo e l'intervento
-        $idriga = $dbo->query('INSERT INTO mg_articoli_interventi(idarticolo, idintervento, idimpianto, idautomezzo, descrizione, prezzo_vendita, prezzo_acquisto, sconto, sconto_unitario, tipo_sconto, idiva_vendita, qta, um, abilita_serial) VALUES ('.prepare($idarticolo).', '.prepare($id_record).', '.(empty($idimpianto) ? 'NULL' : prepare($idimpianto)).', '.prepare($idautomezzo).', '.prepare($descrizione).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', (SELECT idiva_vendita FROM mg_articoli WHERE id='.prepare($idarticolo).'), '.prepare($qta).', '.prepare($um).', '.prepare($rsart[0]['abilita_serial']).')');
+        $idriga = $dbo->query('INSERT INTO mg_articoli_interventi(idarticolo, idintervento, idimpianto, idautomezzo, descrizione, prezzo_vendita, prezzo_acquisto, sconto, sconto_unitario, tipo_sconto, idiva, desc_iva, iva, qta, um, abilita_serial) VALUES ('.prepare($idarticolo).', '.prepare($id_record).', '.(empty($idimpianto) ? 'NULL' : prepare($idimpianto)).', '.prepare($idautomezzo).', '.prepare($descrizione).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($qta).', '.prepare($um).', '.prepare($rsart[0]['abilita_serial']).')');
 
         if (!empty($serials)) {
             if ($old_qta > $qta) {

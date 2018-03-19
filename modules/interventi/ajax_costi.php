@@ -76,22 +76,22 @@ if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
         <th>'.tr('Imponibile', [], ['upper' => true]).'</th>
         <td class="text-right">'.Translator::numberToLocale($costi['totale_costo']).' &euro;</td>
         <td class="text-right">'.Translator::numberToLocale($costi['totale_addebito']).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale($costi['totale']).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['totale_scontato']).' &euro;</td>
     </tr>
 
 
 	<tr class='.$hide.' >
-        <th>'.tr('IVA (_DESC_)', [ _DESC_ => $rs_iva[0]['descrizione']], ['upper' => true]).'</th>
-        <td class="text-right">'.Translator::numberToLocale(($costi['totale_costo']/100*$rs_iva[0]['percentuale'])).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale(($costi['totale_addebito']/100*$rs_iva[0]['percentuale'])).' &euro;</td>
-        <td class="text-right">'.Translator::numberToLocale(($costi['totale']/100*$rs_iva[0]['percentuale'])).' &euro;</td>
+        <th>'.tr('IVA', [], ['upper' => true]).'</th>
+        <td class="text-right">'.Translator::numberToLocale($costi['iva_costo']).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['iva_addebito']).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale($costi['iva_totale']).' &euro;</td>
     </tr>
 
     <tr>
         <th>'.tr('Totale', [], ['upper' => true]).'</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totale_costo']+($costi['totale_costo']/100*$rs_iva[0]['percentuale'])).' &euro;</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totale_addebito']+($costi['totale_addebito']/100*$rs_iva[0]['percentuale'])).' &euro;</th>
-        <th class="text-right">'.Translator::numberToLocale($costi['totale']+($costi['totale']/100*$rs_iva[0]['percentuale'])).' &euro;</th>
+        <th class="text-right">'.Translator::numberToLocale($costi['totaleivato_costo']).' &euro;</th>
+        <th class="text-right">'.Translator::numberToLocale($costi['totaleivato_addebito']).' &euro;</th>
+        <th class="text-right">'.Translator::numberToLocale($costi['totale']).' &euro;</th>
     </tr>
 </table>';
 }

@@ -50,7 +50,8 @@ if (empty($idriga)) {
     $descrizione = $rsr[0]['descrizione'];
     $qta = $rsr[0]['qta'];
     $um = $rsr[0]['um'];
-
+    $idiva = $rsr[0]['idiva'];
+    
     $prezzo_vendita = $rsr[0]['prezzo_vendita'];
 
     $sconto_unitario = $rsr[0]['sconto_unitario'];
@@ -111,17 +112,23 @@ echo '
             {[ "type": "select", "label": "'.tr('Impianto su cui installare').'", "name": "idimpianto", "value": "'.$idimpianto.'", "ajax-source": "impianti" ]}
         </div>
     </div>';
+    
+// Iva
+echo '
+    <div class="row">
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
+        </div>';
 
 // Prezzo di vendita
 echo '
-    <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo_vendita", "required": 1, "value": "'.$prezzo_vendita.'", "icon-after": "&euro;" ]}
         </div>';
 
 // Sconto
 echo '
-        <div class="col-md-6">
+        <div class="col-md-4">
             {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "icon-after": "choice|untprc|'.$tipo_sconto.'", "value": "'.$sconto_unitario.'" ]}
         </div>
     </div>';
@@ -165,6 +172,7 @@ echo '
 
                 $("#prezzo_vendita").val($data.prezzo_vendita);
                 $("#descrizione_articolo").val($data.descrizione);
+                $("#idiva").selectSet($data.idiva_vendita, $data.iva_vendita);
                 $("#um").selectSetNew($data.um, $data.um);
             }else{
                 $("#prezzi_articolo button").addClass("disabled");

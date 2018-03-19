@@ -24,10 +24,10 @@ function get_new_numerosecondariofattura($data)
     global $dbo;
     global $dir;
     global $idtipodocumento;
-    global $id_sezionale;
+    global $idsezionale;
 
     // recupero maschera per questo sezionale
-    $rs_maschera = $dbo->fetchArray("SELECT maschera FROM co_sezionali WHERE id='".$id_sezionale."'");
+    $rs_maschera = $dbo->fetchArray("SELECT maschera FROM co_sezionali WHERE id='".$idsezionale."'");
     // esempio: ####/YY
     $maschera = $rs_maschera[0]['maschera'];
 
@@ -37,7 +37,7 @@ function get_new_numerosecondariofattura($data)
 
     $anno = substr( $data, 0, 4);
 
-    $query = "SELECT numero_esterno FROM co_documenti WHERE DATE_FORMAT(data,'%Y')='".$anno."' AND id_sezionale='".$id_sezionale."' ";
+    $query = "SELECT numero_esterno FROM co_documenti WHERE DATE_FORMAT(data,'%Y')='".$anno."' AND idsezionale='".$idsezionale."' ";
     // Marzo 2017
     // nel caso ci fossero lettere prima della maschera ### per il numero (es. FT-0001-2017)
     // è necessario l'ordinamento alfabetico "ORDER BY numero_esterno" altrimenti 
@@ -54,7 +54,7 @@ function get_new_numerosecondariofattura($data)
     $numero_esterno = get_next_code( $rs_ultima_fattura[0]['numero_esterno'], 1, $maschera );
 	//$numero_esterno = Util\Generator::generate($maschera, $rs_ultima_fattura[0]['numero_esterno']);
 	
-	/*echo $id_sezionale."<br>";
+	/*echo $idsezionale."<br>";
 	echo $query."<br>";
 	echo  $rs_ultima_fattura[0]['numero_esterno']."<br>";
 	echo $maschera."<br>";

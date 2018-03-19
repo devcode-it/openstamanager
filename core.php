@@ -177,8 +177,9 @@ if (!API::isAPIRequest()) {
     }
 
     // Impostazione automatica dei sezionali
-    $_SESSION['uscita']['id_sezionale'] = get_var('Sezionale predefinito fatture di acquisto');
-    $_SESSION['entrata']['id_sezionale'] = get_var('Sezionale predefinito fatture di vendita');
+    (empty($_SESSION['entrata']['idsezionale'])) ? $_SESSION['entrata']['idsezionale'] = get_var('Sezionale predefinito fatture di vendita') : '';
+    (empty($_SESSION['uscita']['idsezionale'])) ? $_SESSION['uscita']['idsezionale'] = get_var('Sezionale predefinito fatture di acquisto'): '';
+    
 
     // Impostazione del tema grafico di default
     $theme = !empty($theme) ? $theme : 'default';

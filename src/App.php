@@ -337,11 +337,11 @@ class App
 
         // Sostituzione dei sezionali
         $sezionali = [
-            '|sezionale_uscita|' => $_SESSION['uscita']['id_sezionale'],
-            '|sezionale_entrata|' => $_SESSION['entrata']['id_sezionale'],
+            '|sezionale_uscita|' => $_SESSION['uscita']['idsezionale'],
+            '|sezionale_entrata|' => $_SESSION['entrata']['idsezionale'],
         ];
         foreach ($sezionali as $key => $value) {
-            $query = str_replace($key, !empty($value) ? ' AND id_sezionale = '.prepare($value) : '', $query);
+            $query = str_replace($key, !empty($value) ? ' AND idsezionale = '.prepare($value) : '', $query);
         }
 
         return $query;

@@ -159,7 +159,7 @@ DELETE FROM `zz_settings` WHERE
 
 -- SEZIONALI
 -- Modifico co_documenti per aggiungere riferimento al sezionale
-ALTER TABLE `co_documenti` ADD `id_sezionale` int(11) NOT NULL ;
+ALTER TABLE `co_documenti` ADD `idsezionale` int(11) NOT NULL ;
 
 -- Creo tabella sezionali
 CREATE TABLE IF NOT EXISTS `co_sezionali` (
@@ -174,12 +174,11 @@ CREATE TABLE IF NOT EXISTS `co_sezionali` (
 
 -- Popolo con i sezionali di default
 INSERT INTO `co_sezionali` (`id`, `nome`, `maschera`, `dir`, `idautomezzo`, `note`) VALUES
-(1, 'Standard vendite', '####/YY', 'entrata', NULL, ''),
-(2, 'Standard acquisti', '####', 'uscita', NULL,'');
+(1, 'Standard vendite', '####/YY', 'entrata', NULL, '');
 
 -- Collego le fatture esistenti al sezionale di default
-UPDATE `co_documenti` SET `id_sezionale`='1' WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir`='entrata');
-UPDATE `co_documenti` SET `id_sezionale`='2' WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir`='uscita');
+UPDATE `co_documenti` SET `idsezionale`='1' WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir`='entrata');
+UPDATE `co_documenti` SET `idsezionale`='2' WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir`='uscita');
 
 -- Innesto modulo sezionali sotto "Contabilità"
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES

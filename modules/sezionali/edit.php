@@ -63,7 +63,7 @@
 
 
 <?php
-    $fatture = $dbo->fetchArray('SELECT COUNT(*) AS tot_fatture FROM co_documenti WHERE id_sezionale='.prepare($id_record));
+    $fatture = $dbo->fetchArray('SELECT COUNT(*) AS tot_fatture FROM co_documenti WHERE idsezionale='.prepare($id_record));
     $tot_fatture = $fatture[0]['tot_fatture'];
     if ($tot_fatture > 0) {
         echo "<div class='alert alert-danger' style='margin:0px;'>Ci sono $tot_fatture fatture collegate a questo sezionale. Il comando elimina è stato disattivato, eliminare le fatture per attivare il comando \"Elimina sezionale\".</div>\n";

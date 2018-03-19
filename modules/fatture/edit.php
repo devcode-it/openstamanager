@@ -63,7 +63,7 @@ $_SESSION['superselect']['ddt'] = $dir;
                 }
                 ?>
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
+					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "alphanumeric-mask text-center", "value": "$numero_esterno$" ]}
 				</div>
 
 				<div class="col-md-3">

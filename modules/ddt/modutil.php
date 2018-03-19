@@ -23,20 +23,42 @@ function get_new_numerosecondarioddt($data)
 {
     global $dbo;
     global $dir;
-
-    $query = "SELECT numero_esterno FROM dt_ddt WHERE DATE_FORMAT( data, '%Y' ) = '".date('Y', strtotime($data))."' AND idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir='".$dir."') ORDER BY CAST(numero_esterno AS UNSIGNED) DESC LIMIT 0,1";
-    $rs = $dbo->fetchArray($query);
-    $numero_secondario = $rs[0]['numero_esterno'];
-
+	
+	
     // Calcolo il numero secondario se stabilito dalle impostazioni e se documento di vendita
     $formato_numero_secondario = get_var('Formato numero secondario ddt');
+	
+    $query = "SELECT numero_esterno FROM dt_ddt WHERE DATE_FORMAT( data, '%Y' ) = '".date('Y', strtotime($data))."' AND idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir='".$dir."')";
+	
+	// estraggo blocchi di caratteri standard da sostituire
+    preg_match('/[#]+/', $formato_numero_secondario, $m1 );
+    preg_match('/[Y]+/', $formato_numero_secondario, $m2 );
+	// Marzo 2017
+    // nel caso ci fossero lettere o numeri prima della maschera ### per il numero (es. 18-####)
+    // è necessario l'ordinamento alfabetico "ORDER BY numero_esterno" altrimenti 
+    // nel caso di maschere del tipo 0001-2018 è necessario l'ordinamento numerico "ORDER BY CAST(numero_esterno AS UNSIGNED)"
+	$pos1 = strpos( $formato_numero_secondario, $m1[0] );
+    if( $pos1==0 ):
+        $query .= " ORDER BY CAST(numero_esterno AS UNSIGNED) DESC LIMIT 0,1";
+    else:
+        $query .= " ORDER BY numero_esterno DESC LIMIT 0,1";
+    endif;
+	
+    $rs = $dbo->fetchArray($query);
+    $numero_secondario = $rs[0]['numero_esterno'];
 
     if ($numero_secondario == '') {
         $numero_secondario = $formato_numero_secondario;
     }
 
     if ($formato_numero_secondario != '' && $dir == 'entrata') {
-        $numero_esterno = get_next_code($numero_secondario, 1, $formato_numero_secondario);
+        //$numero_esterno = get_next_code($numero_secondario, 1, $formato_numero_secondario);
+		$numero_esterno = Util\Generator::generate($formato_numero_secondario, $numero_secondario);
+		/*echo $query."<br>";
+		echo $numero_secondario."<br>";
+		echo $formato_numero_secondario."<br>";
+		echo $numero_esterno."<br>";
+		exit;*/
     } else {
         $numero_esterno = '';
     }

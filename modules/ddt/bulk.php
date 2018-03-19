@@ -136,9 +136,32 @@ switch (post('op')) {
         }
 
     break;
+	
+	
+	
+	
+	case 'delete-bulk':
+
+	
+        foreach ($id_records as $id) {
+    
+			$dbo->query('DELETE  FROM dt_ddt  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
+			$dbo->query('DELETE FROM dt_righe_ddt WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
+			$dbo->query('DELETE FROM mg_movimenti WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
+      
+        }
+
+        $_SESSION['infos'][] = tr('Ddt eliminati!');
+
+	break;
+	
+	
 }
 
 return [
+
+    'delete-bulk' => tr('Elimina selezionati'),
+	
     'export-bulk' => [
         'text' => tr('Esporta stampe'),
         'data' => [

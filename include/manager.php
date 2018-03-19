@@ -139,7 +139,7 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
             }
 
             echo '
-                <li role="presentation"><a class="bulk-action" data-op="'.$key.'" data-backto="record-list" '.implode(' ', $extra).'>'.$text.'</a></li>';
+                <li role="presentation"><a class="bulk-action clickable" data-op="'.$key.'" data-backto="record-list" '.implode(' ', $extra).'>'.$text.'</a></li>';
         }
 
         echo '

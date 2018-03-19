@@ -174,7 +174,7 @@ CREATE TABLE IF NOT EXISTS `co_sezionali` (
 
 -- Popolo con i sezionali di default
 INSERT INTO `co_sezionali` (`id`, `nome`, `maschera`, `dir`, `idautomezzo`, `note`) VALUES
-(1, 'Standard vendite', '###YY', 'entrata', NULL, ''),
+(1, 'Standard vendite', '####/YY', 'entrata', NULL, ''),
 (2, 'Standard acquisti', '####', 'uscita', NULL,'');
 
 -- Collego le fatture esistenti al sezionale di default

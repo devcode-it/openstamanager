@@ -15,7 +15,7 @@
 					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "class": "", "value": "$nome$", "extra": "" ]}
 				</div>
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "maschera", "required": 1, "class": "", "value": "$maschera$", "extra": "" ]}
+					{[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "maschera", "required": 1, "class": "alphanumeric-mask", "value": "$maschera$", "maxlength": 25, "placeholder":"####/YY", "extra": "" ]}
 				</div>
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Documenti'); ?>", "name": "dir", "required": 1, "class": "", "values": "list=\"entrata\": \"Documenti di vendita\",  \"uscita\": \"Documenti di acquisto\"", "value": "$dir$", "extra": "" ]}

@@ -45,7 +45,7 @@ if ($module['name'] == 'Fatture di vendita') {
 
 	?>			
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Sezionale'); ?>", "name": "idsezionale", "required": 1, "class": "", "values": "query=SELECT id, nome AS descrizione FROM co_sezionali WHERE dir='<?php echo $dir; ?>' ORDER BY nome", "value": "<?php echo $idsezionale_default; ?>", "extra": "" ]}
+			{[ "type": "select", "label": "<?php echo tr('Sezionale'); ?>", "name": "id_sezionale", "required": 1, "class": "", "values": "query=SELECT id, nome AS descrizione FROM co_sezionali WHERE dir='<?php echo $dir; ?>' ORDER BY nome", "value": "<?php echo $idsezionale_default; ?>", "extra": "" ]}
 		</div>
 	</div>
 

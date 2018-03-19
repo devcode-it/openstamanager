@@ -9,7 +9,7 @@
 		</div>
 
 		<div class="col-md-6">
-				{[ "type": "text", "label": "Maschera", "name": "maschera", "required": 1, "class": "", "value": "####YYYY", "extra": "" ]}
+				{[ "type": "text", "label": "Maschera", "name": "maschera", "required": 1, "class": "alphanumeric-mask", "value": "", "maxlength": 25, "placeholder":"####/YY", "extra": "" ]}
 		</div>
 
 

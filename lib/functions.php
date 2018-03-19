@@ -24,7 +24,7 @@ function redirect($url, $type = 'php')
 /**
  * Verifica e corregge il nome di un file.
  *
- * @param unknown $filename
+ * @param string $filename
  *
  * @return mixed
  */
@@ -162,7 +162,7 @@ function create_zip($source, $destination, $ignores = [])
 /**
  * Controllo dei file zip e gestione errori.
  *
- * @param unknown $zip_file
+ * @param string $zip_file
  *
  * @return string|bool
  */
@@ -390,8 +390,8 @@ function get_next_code($str, $qty = 1, $mask = '')
 /**
  * Verifica che il nome del file non sia già usato nella cartella inserita, nel qual caso aggiungo un suffisso.
  *
- * @param unknown $filename
- * @param unknown $dir
+ * @param string $filename
+ * @param string $dir
  *
  * @return string
  */
@@ -410,9 +410,9 @@ function unique_filename($filename, $dir)
 /**
  * Crea le thumbnails di $filename da dentro $dir e le salva in $dir.
  *
- * @param unknown $tmp
- * @param unknown $filename
- * @param unknown $dir
+ * @param string $tmp
+ * @param string $filename
+ * @param string $dir
  *
  * @return bool
  */
@@ -452,7 +452,7 @@ function create_thumbnails($tmp, $filename, $dir)
 /**
  * Ottiene l'indirizzo IP del client.
  *
- * @return string|unknown
+ * @return string
  */
 function get_client_ip()
 {

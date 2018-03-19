@@ -86,7 +86,7 @@ if (file_exists($backup_dir)) {
                 $name = basename($backup);
                 $info = Backup::readName($backup);
 
-                $data = $info['Y'].'-'.$info['m'].'-'.$info['d'];
+                $data = $info['YYYY'].'-'.$info['m'].'-'.$info['d'];
                 $ora = $info['H'].':'.$info['i'].':'.$info['s'];
 
                 echo '
@@ -126,7 +126,7 @@ if (file_exists($backup_dir)) {
                 $name = basename($backup);
                 $info = Backup::readName($backup);
 
-                $data = $info['Y'].'-'.$info['m'].'-'.$info['d'];
+                $data = $info['YYYY'].'-'.$info['m'].'-'.$info['d'];
                 $ora = $info['H'].':'.$info['i'].':'.$info['s'];
 
                 echo '

@@ -8,23 +8,11 @@
 class Backup
 {
     /** @var string Pattern per i nomi dei backup */
-    const PATTERN = 'OSM backup Y-m-d H_i_s';
-
-    /** @var array Elenco delle varabili da sostituire nel pattern */
-    protected static $replaces = [
-        'Y' => [
-            'regex' => '([0-9]{4})',
-        ],
-        'm' => [],
-        'd' => [],
-        'H' => [],
-        'i' => [],
-        's' => [],
-    ];
+    const PATTERN = 'OSM backup YYYY-m-d H_i_s';
 
     /** @var array Elenco delle varabili che identificano i backup giornalieri */
     protected static $daily_replaces = [
-        'Y', 'm', 'd',
+        'YYYY', 'm', 'd',
     ];
 
     /**
@@ -97,19 +85,7 @@ class Backup
      */
     protected static function getReplaces()
     {
-        $replaces = self::$replaces;
-
-        foreach ($replaces as $key => $value) {
-            if (!isset($replaces[$key]['value'])) {
-                $replaces[$key]['value'] = date($key);
-            }
-
-            if (!isset($replaces[$key]['regex'])) {
-                $replaces[$key]['regex'] = '(.{'.strlen($replaces[$key]['value']).'})';
-            }
-        }
-
-        return $replaces;
+        return Util\Generator::getReplaces();
     }
 
     /**
@@ -119,13 +95,7 @@ class Backup
      */
     protected static function getNextName()
     {
-        // Costruzione del pattern
-        $replaces = self::getReplaces();
-        $values = array_column($replaces, 'value');
-
-        $pattern = str_replace(array_keys($replaces), array_values($values), self::PATTERN);
-
-        return $pattern;
+        return Util\Generator::generate(self::PATTERN);
     }
 
     /**
@@ -135,23 +105,7 @@ class Backup
      */
     public static function readName($string)
     {
-        // Costruzione del pattern
-        $replaces = self::getReplaces();
-        $values = array_column($replaces, 'regex');
-
-        $pattern = str_replace(array_keys($replaces), array_values($values), self::PATTERN);
-
-        // Individuazione dei valori
-        preg_match('/^'.$pattern.'/', basename($string), $m);
-
-        $keys = array_keys($replaces);
-
-        $results = [];
-        for ($i = 1; $i < count($m); ++$i) {
-            $results[$keys[$i - 1]] = $m[$i];
-        }
-
-        return $results;
+        return Util\Generator::read(self::PATTERN, basename($string));
     }
 
     /**

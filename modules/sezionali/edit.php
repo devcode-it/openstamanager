@@ -66,9 +66,29 @@
     $fatture = $dbo->fetchArray('SELECT COUNT(*) AS tot_fatture FROM co_documenti WHERE idsezionale='.prepare($id_record));
     $tot_fatture = $fatture[0]['tot_fatture'];
     if ($tot_fatture > 0) {
-        echo "<div class='alert alert-danger' style='margin:0px;'>Ci sono $tot_fatture fatture collegate a questo sezionale. Il comando elimina è stato disattivato, eliminare le fatture per attivare il comando \"Elimina sezionale\".</div>\n";
-    } else {
-        ?>
+
+        echo "<div class='alert alert-danger' style='margin:0px;'>";
+    	
+    	echo tr("Ci sono _TOT_ fatture collegate a questo sezionale. Il comando elimina è stato disattivato, eliminare le fatture per attivare il comando 'Elimina sezionale'.", [
+        	'_TOT_' => $tot_fatture,                  
+        ]);
+
+    	echo "</div>";
+
+
+
+    } else if ($records[0]['n_sezionali']<2) {
+
+    	echo "<div class='alert alert-danger' style='margin:0px;'>";
+    	
+    	echo tr("Questo è l'unico sezionale per i documenti in '_DIR_'. Il comando elimina è stato disattivato.", [
+        	'_DIR_' => $records[0]['dir'],                  
+        ]);
+
+    	echo "</div>";
+
+    }else{
+ ?>
 <form action="" method="post" role="form" id="form-delete">
 	<input type="hidden" name="backto" value="record-list">
 	<input type="hidden" name="op" value="delete">

@@ -18,7 +18,7 @@
 					{[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "maschera", "required": 1, "class": "alphanumeric-mask", "value": "$maschera$", "maxlength": 25, "placeholder":"####/YY", "extra": "" ]}
 				</div>
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Documenti'); ?>", "name": "dir", "required": 1, "class": "", "values": "list=\"entrata\": \"Documenti di vendita\",  \"uscita\": \"Documenti di acquisto\"", "value": "$dir$", "extra": "" ]}
+					{[ "type": "select", "label": "<?php echo tr('Documenti'); ?>", "name": "dir", "required": 1, "class": "", "values": "list=\"entrata\": \"Documenti di vendita\",  \"uscita\": \"Documenti di acquisto\"", "value": "$dir$", "extra": "<?php echo ($records[0]['n_sezionali']<2) ? 'readonly' : ''; ?>" ]}
 				</div>
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Magazzino'); ?>", "name": "idautomezzo", "required": 0, "class": "", "values": "query=SELECT id, nome AS descrizione FROM dt_automezzi", "value": "$idautomezzo$", "extra": "" ]}
@@ -35,7 +35,7 @@
 				<div class="col-md-12">
 
 					<div class="alert alert-info" style="margin:0;">
-						<h3><?php echo tr('Istruzioni per il campo _FIELD_', [
+						<h3 style="margin:0;"><?php echo tr('Istruzioni per il campo _FIELD_', [
                             '_FIELD_' => tr('Maschera'),
                         ]); ?></h3>
 

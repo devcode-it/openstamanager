@@ -20,9 +20,7 @@ function get_new_numerofattura($data)
         preg_match('/[#]+/', $maschera, $m1 );
         preg_match('/[Y]+/', $maschera, $m2 );
 
-        $anno = substr( $data, 0, 4);
-
-        $query = "SELECT numero FROM co_documenti WHERE DATE_FORMAT(data,'%Y')='".$anno."' AND id_segment='".$id_segment."' ";
+        $query = "SELECT numero FROM co_documenti WHERE DATE_FORMAT(data,'%Y') = ".prepare(date('Y', strtotime($data)))." AND id_segment = '".$id_segment."'";
        
         $pos1 = strpos( $maschera, $m1[0] );
         if( $pos1==0 ):
@@ -37,7 +35,7 @@ function get_new_numerofattura($data)
         $numero = Util\Generator::generate($maschera, $rs_ultima_fattura[0]['numero']);
 
         // sostituisco anno nella maschera
-        $anno = substr( $anno, -strlen($m2[0]) ); // nel caso ci fosse YY
+        $anno = substr( date('Y', strtotime($data)), -strlen($m2[0]) ); // nel caso ci fosse YY
         $numero = str_replace( $m2[0], $anno, $numero );
 
         /*echo $numero;
@@ -47,7 +45,7 @@ function get_new_numerofattura($data)
 
     }else{
 
-        $query = "SELECT IFNULL(MAX(numero),'0') AS max_numerofattura FROM co_documenti WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data))).' AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='.prepare($dir).') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0, 1';
+        $query = "SELECT IFNULL(MAX(numero),'0') AS max_numerofattura FROM co_documenti WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data)))." AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir = '".prepare($dir)."') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0, 1";
         $rs = $dbo->fetchArray($query);
 
         $numero = $rs[0]['max_numerofattura'] + 1;
@@ -76,9 +74,7 @@ function get_new_numerosecondariofattura($data)
     preg_match('/[#]+/', $maschera, $m1 );
     preg_match('/[Y]+/', $maschera, $m2 );
 
-    $anno = substr( $data, 0, 4);
-
-    $query = "SELECT numero_esterno FROM co_documenti WHERE DATE_FORMAT(data,'%Y')='".$anno."' AND id_segment='".$id_segment."' ";
+    $query = "SELECT numero_esterno FROM co_documenti WHERE DATE_FORMAT(data,'%Y') = ".prepare(date('Y', strtotime($data)))." AND id_segment='".$id_segment."'";
     // Marzo 2017
     // nel caso ci fossero lettere prima della maschera ### per il numero (es. FT-0001-2017)
     // è necessario l'ordinamento alfabetico "ORDER BY numero_esterno" altrimenti 
@@ -103,7 +99,7 @@ function get_new_numerosecondariofattura($data)
 	exit;*/
 
     // sostituisco anno nella maschera
-    $anno = substr( $anno, -strlen($m2[0]) ); // nel caso ci fosse YY
+    $anno = substr( date('Y', strtotime($data)), -strlen($m2[0]) ); // nel caso ci fosse YY
     $numero_esterno = str_replace( $m2[0], $anno, $numero_esterno );
    
     return $numero_esterno;

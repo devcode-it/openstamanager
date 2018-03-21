@@ -176,9 +176,9 @@ if (!API::isAPIRequest()) {
         $_SESSION['period_end'] = date('Y').'-12-31';
     }
 
-    // Impostazione automatica dei sezionali
-    (empty($_SESSION['entrata']['idsezionale'])) ? $_SESSION['entrata']['idsezionale'] = get_var('Sezionale predefinito fatture di vendita') : '';
-    (empty($_SESSION['uscita']['idsezionale'])) ? $_SESSION['uscita']['idsezionale'] = get_var('Sezionale predefinito fatture di acquisto'): '';
+    // Impostazione automatica dei segments
+    (empty($_SESSION[14]['id_segment'])) ? $_SESSION[14]['id_segment'] = get_var('Sezionale predefinito fatture di vendita') : '';
+    (empty($_SESSION[15]['id_segment'])) ? $_SESSION[15]['id_segment'] = get_var('Sezionale predefinito fatture di acquisto'): '';
     
 
     // Impostazione del tema grafico di default

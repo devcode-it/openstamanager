@@ -4,19 +4,19 @@
 	
 	
 	/*deve sempre essere impostato almeno un sezionale
-	if (isset($_SESSION[$dir]['idsezionale'])){
-		$idsezionale = $_SESSION[$dir]['idsezionale'];
+	if (isset($_SESSION[$id_module]['id_segment'])){
+		$id_segment = $_SESSION[$id_module]['id_segment'];
 	}
 	else{
 		
-		if ($dir=='entrata')
-			(!empty($_SESSION[$dir]['idsezionale'])) ? $idsezionale = $_SESSION[$dir]['idsezionale'] :$idsezionale = get_var("Sezionale predefinito fatture di vendita");		
+		if ($id_module=='14')
+			(!empty($_SESSION[$id_module]['id_segment'])) ? $id_segment = $_SESSION[$id_module]['id_segment'] :$id_segment = get_var("Sezionale predefinito fatture di vendita");		
 		
-		if ($dir=='uscita')
-			$idsezionale = get_var('Sezionale predefinito fatture di acquisto');		
+		if ($id_module=='15')
+			$id_segment = get_var('Sezionale predefinito fatture di acquisto');		
 		
 		
-		 $_SESSION[$dir]['idsezionale'] = $idsezionale;
+		 $_SESSION[$id_module]['id_segment'] = $id_segment;
 	}
 	*/
 	
@@ -26,7 +26,7 @@
 
 <div class="row">
 	<div class="col-md-4 pull-right">
-		{[ "type": "select", "label": "Sezionale", "name": "idsezionale_", "required": 0, "class": "", "values": "query=SELECT id, nome AS descrizione FROM co_sezionali WHERE dir = '<?php echo $dir; ?>'", "value": "<?php echo $_SESSION[$dir]['idsezionale']; ?>", "extra": "" ]}
+		{[ "type": "select", "label": "Sezionale", "name": "idsezionale_", "required": 0, "class": "", "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module = '<?php echo $id_module; ?>'", "value": "<?php echo $_SESSION[$id_module]['id_segment']; ?>", "extra": "" ]}
 	</div>
 </div>
 
@@ -35,13 +35,11 @@
 $(document).ready(function () {
 
 	$("#idsezionale_").on("change", function(){
-
-		//alert ('<?php echo $dir; ?>');
 		
 		if ($(this).val()<1){
-			session_set('<?php echo $dir; ?>,idsezionale', '', 1, 1);
+			session_set('<?php echo $id_module; ?>,id_segment', '', 1, 1);
 		}else{
-			session_set('<?php echo $dir; ?>,idsezionale', $(this).val(), 0, 1);
+			session_set('<?php echo $id_module; ?>,id_segment', $(this).val(), 0, 1);
 		}
 
   });

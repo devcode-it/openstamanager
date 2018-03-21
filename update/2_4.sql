@@ -157,37 +157,38 @@ DELETE FROM `zz_settings` WHERE
 (`nome` = 'Password SMTP') OR
 (`nome` = 'Sicurezza SMTP');
 
--- SEZIONALI
--- Modifico co_documenti per aggiungere riferimento al sezionale
-ALTER TABLE `co_documenti` ADD `idsezionale` int(11) NOT NULL ;
+-- SEGNENTI
+-- Modifico co_documenti per aggiungere riferimento al segmento
+ALTER TABLE `co_documenti` ADD `id_segment` int(11) NOT NULL ;
 
--- Creo tabella sezionali
-CREATE TABLE IF NOT EXISTS `co_sezionali` (
+-- Creo tabella segmenti
+CREATE TABLE IF NOT EXISTS `zz_segments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nome` varchar(255) NOT NULL,
-  `maschera` varchar(255) NOT NULL,
-  `dir` varchar(50) NOT NULL,
-  `idautomezzo` int(11) NULL ,
+  `id_module` int(11) NOT NULL,
+  `category` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `pattern` varchar(255) NOT NULL,
   `note` text NOT NULL,
   PRIMARY KEY (`id`)
 );
 
--- Popolo con i sezionali di default
-INSERT INTO `co_sezionali` (`id`, `nome`, `maschera`, `dir`, `idautomezzo`, `note`) VALUES
-(1, 'Standard vendite', '####/YY', 'entrata', NULL, '');
+-- Popolo con i segmenti di default
+INSERT INTO `zz_segments` (`id`, `id_module`, `category`, `name`, `pattern`,`note`) VALUES
+(1, 14, 'Fatture', 'Standard vendite', '####/YY', ''),
+(2, 15, 'Fatture', 'Standard acquisti', '####', '');
 
--- Collego le fatture esistenti al sezionale di default
-UPDATE `co_documenti` SET `idsezionale`='1' WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir`='entrata');
-UPDATE `co_documenti` SET `idsezionale`='2' WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir`='uscita');
+-- Collego le fatture esistenti al segmento di default
+UPDATE `co_documenti` SET `id_segment`='1' WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir`='entrata');
+UPDATE `co_documenti` SET `id_segment`='2' WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir`='uscita');
 
--- Innesto modulo sezionali sotto "Contabilità"
+-- Innesto modulo segmenti sotto "Strumenti"
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES
-(NULL, 'Sezionali', 'Sezionali', 'sezionali', '{	"main_query": [	{	"type": "table", "fields": "Tipo documenti, Nome,  Maschera, Magazzino, Note", "query": "SELECT `id`, `nome` AS `Nome`, `maschera` AS `Maschera`, (SELECT nome FROM dt_automezzi WHERE dt_automezzi.id = idautomezzo) AS Magazzino, IF(`dir`=''entrata'', ''Documenti di vendita'', ''Documenti di acquisto'') AS `Tipo documenti`, `note` AS `Note`  FROM `co_sezionali` HAVING 2=2 ORDER BY `Tipo documenti`, `Nome`"}	]}', '', 'fa fa-database', '2.4', '2.4', 1, 12, 1, 1);
+(NULL, 'Segmenti', 'Segmenti', 'segmenti', '{	"main_query": [	{	"type": "table", "fields": "Modulo, Categoria, Nome,  Maschera, Note", "query": "SELECT `id`, `category` AS `Categoria`,  `name` AS `Nome`, (SELECT name FROM zz_modules WHERE id = zz_segments.id_module) AS Modulo,  `pattern` AS `Maschera`, `note` AS `Note`  FROM `zz_segments` HAVING 2=2 ORDER BY name, id_module"}	]}', '', 'fa fa-database', '2.4', '2.4', 1, 36, 1, 1);
 
 -- Aggiungo impostazione predefinita
 INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES
-(NULL, 'Sezionale predefinito fatture di vendita', '1', 'query=SELECT id, CONCAT(nome, '': '', maschera) AS descrizione FROM co_sezionali WHERE dir=''entrata'' ORDER BY nome', 1, 'Fatturazione'),
-(NULL, 'Sezionale predefinito fatture di acquisto', '2', 'query=SELECT id, CONCAT(nome, '': '', maschera) AS descrizione FROM co_sezionali WHERE dir=''uscita'' ORDER BY nome', 1, 'Fatturazione');
+(NULL, 'Sezionale predefinito fatture di vendita', '1', 'query=SELECT id, CONCAT(name, '': '', pattern) AS descrizione FROM zz_segments WHERE id_module = 14 ORDER BY name', 1, 'Fatturazione'),
+(NULL, 'Sezionale predefinito fatture di acquisto', '2', 'query=SELECT id, CONCAT(name, '': '', pattern) AS descrizione FROM zz_segments WHERE id_module = 15 ORDER BY name', 1, 'Fatturazione');
 
 -- Aggiorno widget Fatturato con i sezionali
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM co_documenti WHERE idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir="entrata") |sezionale_entrata| AND data >= "|period_start|" AND data <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';

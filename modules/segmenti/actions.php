@@ -12,11 +12,11 @@ switch (post('op')) {
             $note = post('note');
 			$predefined = $post['predefined'];
 			 
-			if (count($dbo->query("SELECT id FROM zz_segments WHERE id_module =  \"$id_module_\"")==0))
+			if (count($dbo->fetchArray("SELECT id FROM zz_segments WHERE id_module = \"$id_module_\""))==0)
 				$predefined = 1;
 			
 			if ($predefined)
-				$dbo->query("UPDATE zz_segments SET predefined =  0 WHERE id_module =  \"$id_module_\"");
+				$dbo->query("UPDATE zz_segments SET predefined = 0 WHERE id_module = \"$id_module_\"");
 			
             $query = "UPDATE zz_segments SET name=\"$name\", pattern=\"$pattern\", id_module=\"$id_module_\", note=\"$note\", predefined=\"$predefined\" WHERE id=\"$id_record\"";
 
@@ -35,11 +35,11 @@ switch (post('op')) {
             $note = post('note');
 			$predefined = $post['predefined'];
 			
-			if (count($dbo->query("SELECT id FROM zz_segments WHERE id_module =  \"$id_module_\"")==0))
-				$predefined = 1;
-			
+			if (count($dbo->fetchArray("SELECT id FROM zz_segments WHERE id_module = \"$id_module_\""))==0)
+            	$predefined = 1;
+
 			if ($predefined)
-				$dbo->query("UPDATE zz_segments SET predefined =  0 WHERE id_module =  \"$id_module_\"");
+				$dbo->query("UPDATE zz_segments SET predefined = 0 WHERE id_module = \"$id_module_\"");
 			 
             $dbo->query("INSERT INTO zz_segments( name,  pattern, id_module, note, predefined ) VALUES ( \"$name\", \"$pattern\", \"$id_module_\", \"$note\", \"$predefined\" )");
             $id_record = $dbo->last_inserted_id();

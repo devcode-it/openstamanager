@@ -4,20 +4,25 @@
 
 	<div class="row">
 
-		<div class="col-md-3">
+		<div class="col-md-6">
 				{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "required": 1, "class": "", "value": "$name$", "extra": "" ]}
 		</div>
 		
-		<div class="col-md-3">
-				{[ "type": "text", "label": "<?php echo tr('Categoria'); ?>", "name": "category", "required": 1, "class": "", "value": "$category$", "extra": "" ]}
-		</div>
-
-		<div class="col-md-3">
+		<div class="col-md-6">
 				{[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "required": 1, "class": "alphanumeric-mask", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YY", "extra": "" ]}
 		</div>
 		
-		<div class="col-md-3">
+		
+	</div>
+	
+	<div class="row">
+		
+		<div class="col-md-6">
 				{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "id_module_", "required": 1, "class": "", "values": "list=\"14\": \"Fatture di vendita\",  \"15\": \"Fatture di acquisto\"", "value": "$id_module$", "extra": "" ]}
+		</div>
+		
+		<div class="col-md-6">
+				{[ "type": "checkbox", "label": "<?php echo tr('Predefinito'); ?>", "name": "predefined", "value": "0", "help": "<?php echo tr('Seleziona per rendere il segmento predefinito.'); ?>", "placeholder": "<?php echo tr('Segmento predefinito'); ?>" ]}
 		</div>
 
 	</div>

@@ -43,6 +43,13 @@ switch (get('op')) {
             unset($_SESSION[$array[0]][$array[1]]);
         } else {
             $_SESSION[$array[0]][$array[1]] = $value;
+			
+			echo $array[0];
+			echo $array[1];
+			
+			echo  $_SESSION[$array[0]][$array[1]];
+			print_r($_SESSION);
+			
         }
 
         break;

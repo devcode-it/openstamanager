@@ -174,12 +174,7 @@ if (!API::isAPIRequest()) {
     } elseif (!isset($_SESSION['period_start'])) {
         $_SESSION['period_start'] = date('Y').'-01-01';
         $_SESSION['period_end'] = date('Y').'-12-31';
-    }
-
-    // Impostazione automatica dei segments
-    (empty($_SESSION[14]['id_segment'])) ? $_SESSION[14]['id_segment'] = get_var('Sezionale predefinito fatture di vendita') : '';
-    (empty($_SESSION[15]['id_segment'])) ? $_SESSION[15]['id_segment'] = get_var('Sezionale predefinito fatture di acquisto'): '';
-    
+    }    
 
     // Impostazione del tema grafico di default
     $theme = !empty($theme) ? $theme : 'default';

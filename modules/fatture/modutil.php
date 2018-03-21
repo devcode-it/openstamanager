@@ -51,8 +51,8 @@ function get_new_numerosecondariofattura($data)
     
     $rs_ultima_fattura = $dbo->fetchArray( $query );
 
-    $numero_esterno = get_next_code( $rs_ultima_fattura[0]['numero_esterno'], 1, $maschera );
-	//$numero_esterno = Util\Generator::generate($maschera, $rs_ultima_fattura[0]['numero_esterno']);
+    //$numero_esterno = get_next_code( $rs_ultima_fattura[0]['numero_esterno'], 1, $maschera );
+	$numero_esterno = Util\Generator::generate($maschera, $rs_ultima_fattura[0]['numero_esterno']);
 	
 	/*echo $id_segment."<br>";
 	echo $query."<br>";

@@ -93,9 +93,16 @@ if (!empty($rs)) {
     if (empty($get['op'])) {
         echo '
     <div class="row">
-        <div class="col-md-12">
+
+        <div class="col-md-6">
             {[ "type": "date", "label": "'.tr('Data del documento').'", "name": "data", "required": 1, "value": "-now-" ]}
         </div>
+
+
+        <div class="col-md-6">
+           {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "class": "", "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare(Modules::get($module_name)['id']).' ORDER BY name", "value": "'.$_SESSION['m'.$id_module]['id_segment'].'", "extra": "" ]}
+        </div>
+
     </div>';
     }
 
@@ -285,7 +292,7 @@ echo '
 
         $('#totale').html( (totale.toLocale()) + " &euro;" );
 
-        if( totale==0 )
+        if( qta==0 )
             $('#submit_btn').hide();
         else
             $('#submit_btn').show();

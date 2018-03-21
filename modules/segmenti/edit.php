@@ -21,7 +21,7 @@
 				</div>
 				
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "id_module_", "required": 1, "class": "", "values": "list=\"14\": \"Fatture di vendita\",  \"15\": \"Fatture di acquisto\"", "value": "$id_module$", "extra": "<?php echo ($records[0]['n_sezionali']<2) ? 'readonly' : ''; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "id_module_", "required": 1, "class": "", "values": "list=\"14\": \"Fatture di vendita\",  \"15\": \"Fatture di acquisto\"", "value": "$id_module$", "extra": "<?php echo ($records[0]['predefined']) ? 'readonly' : ''; ?>" ]}
 				</div>
 				
 				<div class="col-md-3">

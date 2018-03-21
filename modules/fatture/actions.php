@@ -866,9 +866,9 @@ switch (post('op')) {
         $idarticolo = $post['idarticolo'];
         $idpagamento = $post['idpagamento'];
         $idddt = $post['idddt'];
-        $numero = get_new_numerofattura($data);
 
         $id_segment = post('id_segment');
+        $numero = get_new_numerofattura($data);
 
         if ($dir == 'entrata') {
             $numero_esterno = get_new_numerosecondariofattura($data);
@@ -960,13 +960,14 @@ switch (post('op')) {
         $idpagamento = $post['idpagamento'];
         $idconto = $post['idconto'];
         $idordine = $post['idordine'];
+        $id_segment = post('id_segment');
         $numero = get_new_numerofattura($data);
         $numero_esterno = get_new_numerosecondariofattura($data);
-
+        
         $tipo_documento = ($dir == 'entrata') ? 'Fattura immediata di vendita' : 'Fattura immediata di acquisto';
 
         // Creazione nuova fattura
-        $dbo->query('INSERT INTO co_documenti(numero, numero_esterno, data, idanagrafica, idtipodocumento, idstatodocumento, idpagamento, idconto) VALUES('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($data).', '.prepare($idanagrafica).', (SELECT id FROM co_tipidocumento WHERE descrizione='.prepare($tipo_documento)."), (SELECT id FROM co_statidocumento WHERE descrizione='Bozza'), ".prepare($idpagamento).', '.prepare($idconto).')');
+        $dbo->query('INSERT INTO co_documenti(numero, numero_esterno, data, idanagrafica, idtipodocumento, idstatodocumento, idpagamento, idconto, id_segment) VALUES('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($data).', '.prepare($idanagrafica).', (SELECT id FROM co_tipidocumento WHERE descrizione='.prepare($tipo_documento)."), (SELECT id FROM co_statidocumento WHERE descrizione='Bozza'), ".prepare($idpagamento).', '.prepare($idconto).','.prepare($id_segment).')');
         $id_record = $dbo->lastInsertedID();
 
         // Lettura di tutte le righe della tabella in arrivo

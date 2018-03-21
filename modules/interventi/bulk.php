@@ -65,6 +65,14 @@ switch (post('op')) {
         $dir = 'entrata';
         $idtipodocumento = '2';
 
+
+        if (empty($_SESSION['m'.Modules::get('Fatture di vendita')['id']]['id_segment'])){
+			$rs = $dbo->fetchArray("SELECT id  FROM zz_segments WHERE predefined = 1 AND id_module = ".prepare(Modules::get('Fatture di vendita')['id'])."LIMIT 0,1");
+			$_SESSION['m'.Modules::get('Fatture di vendita')['id']]['id_segment'] = $rs[0]['id'];
+		}
+
+        $id_segment = $_SESSION['m'.Modules::get('Fatture di vendita')['id']]['id_segment'];
+
         $numero = get_new_numerofattura($data);
 
         $numero_esterno = get_new_numerosecondariofattura($data);
@@ -108,7 +116,7 @@ switch (post('op')) {
 				//al primo ciclo preparo la fattura
 				if ($n_interventi == 0){
 					//preparo fattura
-					$dbo->query('INSERT INTO co_documenti (numero, numero_esterno, idanagrafica, idconto, idtipodocumento, idpagamento, data, idstatodocumento, idsede) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idconto).', '.prepare($idtipodocumento).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza'), (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica=".prepare($idanagrafica).') )');
+					$dbo->query('INSERT INTO co_documenti (numero, numero_esterno, idanagrafica, idconto, idtipodocumento, idpagamento, data, idstatodocumento, idsede, id_segment) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idconto).', '.prepare($idtipodocumento).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza'), (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica=".prepare($idanagrafica).'), '.$id_segment.' )');
 					$iddocumento = $dbo->lastInsertedID();
 				}
 				
@@ -231,7 +239,7 @@ return [
 	'export-bulk' => [
         'text' => tr('Esporta stampe'),
         'data' => [
-            'msg' => tr('Vuoi davvero esportare tutte le stampe in un archivio?'),
+            'msg' => tr('Vuoi davvero esportare queste stampe in un archivio?'),
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => true,
@@ -241,7 +249,7 @@ return [
     'creafatturavendita' => [
         'text' => tr('Crea fattura'),
         'data' => [
-            'msg' => tr('Vuoi davvero creare una fattura per questi interventi?'),
+            'msg' => tr('Vuoi davvero generare le fatture per questi interventi?'),
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,

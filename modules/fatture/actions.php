@@ -23,8 +23,9 @@ switch (post('op')) {
         $dir = $post['dir'];
         $idtipodocumento = post('idtipodocumento');
 
-        $numero = get_new_numerofattura($data);
         $id_segment = post('id_segment');
+        $numero = get_new_numerofattura($data);
+       
         if ($dir == 'entrata') {
             $numero_esterno = get_new_numerosecondariofattura($data);
             $idconto = get_var('Conto predefinito fatture di vendita');
@@ -77,12 +78,15 @@ switch (post('op')) {
             $totale_imponibile = get_imponibile_fattura($id_record);
             $totale_fattura = get_totale_fattura($id_record);
 
+
             if ($dir == 'uscita') {
                 $idrivalsainps = post('idrivalsainps');
                 $idritenutaacconto = post('idritenutaacconto');
+                $numero = prepare(post('numero'));
             } else {
                 $idrivalsainps = 0;
                 $idritenutaacconto = 0;
+                $numero = '(SELECT t.numero FROM (SELECT * FROM co_documenti) t WHERE t.id = '.prepare($post['id_record']).')';
             }
 
             // Leggo la descrizione del pagamento
@@ -93,6 +97,7 @@ switch (post('op')) {
             // Query di aggiornamento
             $query = 'UPDATE co_documenti SET '.
                 ' data='.prepare($data).','.
+                ' numero='.$numero.','.
                 ' idstatodocumento='.prepare($idstatodocumento).','.
                 ' idtipodocumento='.prepare($idtipodocumento).','.
                 ' idanagrafica='.prepare($idanagrafica).','.

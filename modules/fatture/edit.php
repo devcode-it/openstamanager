@@ -55,7 +55,7 @@ $_SESSION['superselect']['ddt'] = $dir;
                 if ($dir == 'uscita') {
                     echo '
                 				<div class="col-md-3">
-                					{[ "type": "span", "label": "'.tr('Numero fattura').'", "name": "numero","class": "text-center", "value": "$numero$" ]}
+                					{[ "type": "text", "label": "'.tr('Numero fattura').'", "required": 1, "name": "numero","class": "text-center", "value": "$numero$" ]}
                                 </div>';
                     $label = tr('Numero secondario');
                 } else {

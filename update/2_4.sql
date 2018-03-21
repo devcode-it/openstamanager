@@ -280,3 +280,6 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `mg_movimenti` JOIN `m
 DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Indirizzo per le email in uscita';
 DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Destinatario';
 DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Destinatario fisso in copia (campo CC)';
+
+-- Conversione numero co_documenti da int(11) a varchar(100)
+ALTER TABLE `co_documenti` CHANGE `numero` `numero` VARCHAR(100) NOT NULL;

@@ -23,15 +23,45 @@ if ($module['name'] == 'Ddt di vendita') {
 		</div>
 
 		<div class="panel-body">
+
+
+			<?php
+                if ($dir == 'entrata') {
+                    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche WHERE idanagrafica='.prepare($records[0]['idanagrafica']));
+                    $campi_mancanti = [];
+
+                    if ($rs2[0]['piva'] == '') {
+                        if ($rs2[0]['codice_fiscale'] == '') {
+                            array_push($campi_mancanti, 'codice fiscale');
+                        }
+                    }
+                    if ($rs2[0]['citta'] == '') {
+                        array_push($campi_mancanti, 'citta');
+                    }
+                    if ($rs2[0]['indirizzo'] == '') {
+                        array_push($campi_mancanti, 'indirizzo');
+                    }
+                    if ($rs2[0]['cap'] == '') {
+                        array_push($campi_mancanti, 'C.A.P.');
+                    }
+
+                    if (sizeof($campi_mancanti) > 0) {
+                        echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere alla stampa completa i seguenti campi dell'anagrafica:<br/><b>".implode(', ', $campi_mancanti).'</b><br/>
+						'.Modules::link('Anagrafiche', $records[0]['idanagrafica'], tr('Vai alla scheda anagrafica'), null).'</div>';
+                    }
+                }
+            ?>
+
+            
 			<div class="row">
-<?php
-if ($dir == 'uscita') {
-    echo '
-				<div class="col-md-3">
-					{[ "type": "span", "label": "'.tr('Numero ddt').'", "class": "text-center", "value": "$numero$" ]}
-				</div>';
-}
-?>
+				<?php
+					if ($dir == 'uscita') {
+					    echo '
+							<div class="col-md-3">
+								{[ "type": "span", "label": "'.tr('Numero ddt').'", "class": "text-center", "value": "$numero$" ]}
+							</div>';
+					}
+				?>
 
 				<div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo tr('Numero secondario'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}

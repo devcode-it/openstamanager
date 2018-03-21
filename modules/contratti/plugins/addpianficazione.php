@@ -22,7 +22,7 @@ echo '
 
 
 		<div class="col-md-7">
-			 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$rsp[0]['idtipointervento'].'", "extra": "disabled" ]}
+			 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "id": "idtipointervento_", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$rsp[0]['idtipointervento'].'", "extra": "disabled" ]}
 		</div>
 
 
@@ -37,7 +37,7 @@ echo '
 	<div class="row">
 
 		<div class="col-md-12">
-			 {[ "type": "textarea", "label": "'.tr('Descrizione').'",  "placeholder": "'.tr('Descrizione').'", "name": "richiesta", "extra": "readonly", "value": "'.$rsp[0]['richiesta'].'"  ]}
+			 {[ "type": "textarea", "label": "'.tr('Descrizione').'",  "placeholder": "'.tr('Descrizione').'", "name": "richiesta", "id": "richiesta_", "extra": "readonly", "value": "'.$rsp[0]['richiesta'].'"  ]}
 		</div>
 
 	</div>
@@ -65,7 +65,7 @@ echo '
 
 
 		<div class="col-md-5">
-			 {[ "type": "date", "label": "'.tr('Fine pianificazione <small>(Data conclusione contratto)</small>').'", "name": "data_conclusione", "extra": "readonly", "value": "'.$rsp[0]['data_conclusione'].'"  ]}
+			 {[ "type": "date", "label": "'.tr('Fine pianificazione <small>(Data conclusione contratto)</small>').'", "name": "data_conclusione", "id": "data_conclusione_", "extra": "readonly", "value": "'.$rsp[0]['data_conclusione'].'"  ]}
 		</div>
 
 

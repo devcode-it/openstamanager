@@ -177,7 +177,7 @@ echo '
         <h3 class="box-title"><span class="tip" title="'.tr('I promemoria  verranno visualizzati sulla \'Dashboard\' e serviranno per semplificare la pianificazione del giorno dell\'intervento, ad esempio nel caso di interventi con cadenza mensile.').'"" >'.tr('Pianificazione interventi').' <i class="fa fa-question-circle-o"></i></span> </h3>
     </div>
     <div class="box-body">
-        <p>'.tr('Puoi <b>pianificare dei "promemoria" o direttamente gli interventi</b> da effettuare entro determinate scadenze. Per poter pianificare i promemoria il contratto deve essere attivo e la data di conclusione definita').'.</p>';
+        <p>'.tr('Puoi <b>pianificare dei "promemoria" o direttamente gli interventi</b> da effettuare entro determinate scadenze. Per poter pianificare i promemoria il contratto deve essere <b>attivo</b> e la <b>data di conclusione</b> definita').'.</p>';
 
 // Nessun intervento pianificato
 if (count($rsp) != 0) {
@@ -274,8 +274,8 @@ echo '
             <table class="table table-condensed table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>'.tr('Entro il').'</th>
-                        <th>'.tr('Tipo intervento').'</th>
+                        <th>'.tr('Entro il').'*</th>
+                        <th>'.tr('Tipo intervento').'*</th>
                         <th>'.tr('Descrizione').'</th>
                         <th>'.tr('Sede').'</th>
                     </tr>
@@ -286,7 +286,7 @@ echo '
                             {[ "type": "date", "placeholder": "'.tr('Entro il').'", "name": "data_richiesta", "required": 1, "value": "" ]}
                         </td>
                         <td>
-                            {[ "type": "select", "placeholder": "'.tr('Tipo intervento').'", "name": "idtipointervento", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$rsp[0]['idtipointervento'].'" ]}
+                            {[ "type": "select", "placeholder": "'.tr('Tipo intervento').'", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$rsp[0]['idtipointervento'].'" ]}
                         </td>
                         <td>
                             {[ "type": "textarea", "placeholder": "'.tr('Descrizione').'", "name": "richiesta" ]}

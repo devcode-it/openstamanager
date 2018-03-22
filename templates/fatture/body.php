@@ -246,26 +246,48 @@ foreach ($v_iva as $key => $value) {
 </p>';
     }
 }
-
-if (!empty($records[0]['note'])) {
+echo '
+<table class="table">';
+echo '
+    <tr>';
+if(abs($records[0]['bollo']) > 0){
     echo '
-<br>
-<p class="small-bold">'.tr('Note', [], ['upper' => true]).':</p>
-<p>'.nl2br($records[0]['note']).'</p>';
+        <td width="85%">';
+}else{
+    echo '
+        <td width="100%">';
 }
-
+    if (!empty($records[0]['note'])) {
+        echo '
+            <p class="small-bold">'.tr('Note', [], ['upper' => true]).':</p>
+            <p>'.nl2br($records[0]['note']).'</p>';
+    }
+    echo '
+        </td>';
+if(abs($records[0]['bollo']) > 0){
+    echo '
+        <td width="15%" align="right">';
+}
 if (abs($records[0]['bollo']) > 0) {
     echo '
-<br>
-<table style="width: 20mm; font-size: 50%; text-align: center" class="table-bordered">
-    <tr>
-        <td style="height: 20mm;">
-            <br><br>
-            '.tr('Spazio per applicazione marca da bollo', [], ['upper' => true]).'
-        </td>
-    </tr>
-</table>';
+            <table style="width: 20mm; font-size: 50%; text-align: center" class="table-bordered">
+                <tr>
+                    <td style="height: 20mm;">
+                        <br><br>
+                        '.tr('Spazio per applicazione marca da bollo', [], ['upper' => true]).'
+                    </td>
+                </tr>
+            </table>';
 }
+if(abs($records[0]['bollo']) > 0){
+    echo '
+        </td>';
+}
+
+echo '
+    </tr>';
+echo '
+</table>';
 
 // Info per il footer
 $imponibile = sum($imponibile);

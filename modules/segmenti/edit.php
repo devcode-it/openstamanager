@@ -62,8 +62,16 @@
 
 		<div class="panel-body">
 			<div class="row">
+				<?php
+						$array = preg_match('/(?<=FROM)\s([^\s]+)\s/', $records[0]['options'], $table);
+						if (strpos($table[0], 'co_documenti') !== false) {
+							$righe = $dbo->fetchArray("SELECT COUNT(*) AS tot FROM ".$table[0]." WHERE id_segment = ".prepare($id_record));
+							$tot = $righe[0]['tot'];
+						}
+				?>
+				
 				<div class="col-md-3">
-							{[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "required": 1, "class": "alphanumeric-mask", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YY", "extra": "<?php echo ($records[0]['n_sezionali']>1) ? 'readonly' : ''; ?>" ]}
+							{[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "required": 1, "class": "alphanumeric-mask", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YY", "extra": "<?php echo ($tot>0) ? 'readonly' : ''; ?>" ]}
 				</div>
 			</div>
 			
@@ -102,52 +110,41 @@
 
 
 <?php
-	
-	$array = preg_match('/(?<=FROM)\s([^\s]+)\s/', $records[0]['options'], $table);
-
-   
-	
-	if (strpos($table[0], 'co_documenti') !== false) {
 		
-		$righe = $dbo->fetchArray("SELECT COUNT(*) AS tot FROM ".$table[0]." WHERE id_segment = ".prepare($id_record));
-		$tot = $righe[0]['tot'];
 	
-	
-		if ($tot > 0) {
+	if ($tot > 0) {
 
-			echo "<div class='alert alert-danger' style='margin:0px;'>";
-			
-			echo tr("Ci sono _TOT_ righe collegate al segmento per il modulo '_MODULO_'. Il comando elimina è stato disattivato, eliminare le righe per attivare il comando 'Elimina segmento'.", [
-				'_TOT_' => $tot,
-				'_MODULO_' => $records[0]['modulo'],       			
-			]);
+		echo "<div class='alert alert-danger' style='margin:0px;'>";
+		
+		echo tr("Ci sono _TOT_ righe collegate al segmento per il modulo '_MODULO_'. Il comando elimina è stato disattivato, eliminare le righe per attivare il comando 'Elimina segmento'.", [
+			'_TOT_' => $tot,
+			'_MODULO_' => $records[0]['modulo'],       			
+		]);
 
-			echo "</div>";
+		echo "</div>";
 
-		}
-		else if ($records[0]['predefined']) {
-
-			echo "<div class='alert alert-danger' style='margin:0px;'>";
-			
-			echo tr("Questo è il segmento predefinito per il modulo '_MODULO_'. Il comando elimina è stato disattivato.", [
-				'_MODULO_' => $records[0]['modulo'],                  
-			]);
-
-			echo "</div>";
-
-		}
-		else if ($records[0]['n_sezionali']<2) {
-
-			echo "<div class='alert alert-danger' style='margin:0px;'>";
-			
-			echo tr("Questo è l'unico segmento per il modulo '_MODULO_'. Il comando elimina è stato disattivato.", [
-				'_MODULO_' => $records[0]['modulo'],                  
-			]);
-
-			echo "</div>";
-		}
 	}
-	
+	else if ($records[0]['predefined']) {
+
+		echo "<div class='alert alert-danger' style='margin:0px;'>";
+		
+		echo tr("Questo è il segmento predefinito per il modulo '_MODULO_'. Il comando elimina è stato disattivato.", [
+			'_MODULO_' => $records[0]['modulo'],                  
+		]);
+
+		echo "</div>";
+
+	}
+	else if ($records[0]['n_sezionali']<2) {
+
+		echo "<div class='alert alert-danger' style='margin:0px;'>";
+		
+		echo tr("Questo è l'unico segmento per il modulo '_MODULO_'. Il comando elimina è stato disattivato.", [
+			'_MODULO_' => $records[0]['modulo'],                  
+		]);
+
+		echo "</div>";
+	}
 	else{
     	echo '
 			<a class="btn btn-danger ask" data-backto="record-list">

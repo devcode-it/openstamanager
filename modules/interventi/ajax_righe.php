@@ -16,6 +16,7 @@ if (count($rs2) > 0) {
     if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
         echo '
         <th width="15%">'.tr('Prezzo di vendita').'</th>
+        <th width="10%">'.tr('Iva').'</th>
         <th width="15%">'.tr('Subtotale').'</th>';
     }
 
@@ -64,6 +65,12 @@ if (count($rs2) > 0) {
             </span>';
             }
 
+            echo '
+        </td>';
+        
+            echo '
+        <td class="text-right">
+            <span>'.Translator::numberToLocale($r['iva']).'</span> &euro;';
             echo '
         </td>';
 

@@ -2,15 +2,32 @@
 
 include_once __DIR__.'/../../core.php';
 
-echo '<p>'.tr('Il backup è molto importante perchè permette di creare una copia della propria installazione con relativi dati per poterla ripristinare in seguito a errori, cancellazione di dati accidentale o guasti hardware').'.</p>';
+echo '<p>'.tr('Il backup è <b>molto importante</b> perché permette di creare una copia della propria installazione e relativi dati per poterla poi ripristinare in seguito a errori, cancellazioni accidentali o guasti hardware').'.</p>';
 
 if (!extension_loaded('zip')) {
     echo "
 <div class='alert alert-warning'>
-    <i class='fa fa-times'></i> ".tr('Estensione zip non supportata!').'
-    '.tr('Il backup verrà eseguito ma non in formato zip e quindi scaricabile solo tramite ftp o con copia-incolla').'.
+    <i class='fa fa-times'></i> ".tr('Estensione ZIP non supportata!').'
+    '.tr('Il backup verrà eseguito, ma non in formato ZIP. Sarà quindi scaricabile solo tramite FTP o con copia-incolla').'.
 </div>';
 }
+
+
+if (starts_with($backup_dir, $docroot)) {
+    echo '
+    <div class="alert alert-warning">
+        <i class="fa fa-warning"></i> '.tr('Per motivi di sicurezza si consiglia di modificare il percorso della cartella di backup al di fuori della cartella di OSM, possibilmente in una unità esterna').'.
+    </div>';
+}
+
+if (!is_writable($backup_dir)) {
+    echo '
+    <div class="alert alert-warning">
+        <i class="fa fa-warning"></i> '.tr('La cartella di backup presente nella configurazione non è utilizzabile dal gestionale').'.
+        '.tr('Verificare che la cartella abbia i permessi di scrittura abilitati').'.
+    </div>';
+}
+
 
 echo '
 <div class="callout callout-success">
@@ -28,32 +45,16 @@ echo '
         '_FILE_' => '<b>config.inc.php</b>',
     ]).'</small></p>';
 
-if (starts_with($backup_dir, $docroot)) {
-    echo '
-    <div class="alert alert-warning">
-        <i class="fa fa-warning"></i> '.tr('Per motivi di sicurezza si consiglia di modificare il percorso della cartella di backup al di fuori delle cartelle di OSM, possibilmente in una unità esterna').'.
-    </div>';
-}
-
-if (!is_writable($backup_dir)) {
-    echo '
-    <div class="alert alert-warning">
-        <i class="fa fa-warning"></i> '.tr('La cartella di backup presente nella configurazione non è utilizzabile dal gestionale!').'.
-        '.tr('Verificare che la cartella abbia i permessi di scrittura abilitati').'.
-    </div>';
-}
 echo '
 </div>
 
 <!-- PULSANTI -->
-<div class="row">
+<!--div class="row">
     <div class="col-md-12 text-right">
     <button type="button" class="btn btn-primary pull-right" onclick="continue_backup()"><i class="fa fa-database"></i> '.tr('Crea backup').'...</button>
     </div>
-</div>
+</div-->';
 
-<div class="clearfix"></div>
-<br>';
 
 //Lettura file di backup
 if (file_exists($backup_dir)) {
@@ -100,7 +101,7 @@ if (file_exists($backup_dir)) {
                 '.tr('Dimensione').': '.Translator::numberToLocale(filesize($backup) / 1024 / 1024).'MB
             </small></p>
 
-            <a class="btn btn-sm btn-primary" href="'.$rootdir.'/modules/backup/actions.php?op=getfile&file='.$name.'" target="_blank"><i class="fa fa-download"></i> '.tr('Scarica').'</a>
+            <a class="btn btn-primary" href="'.$rootdir.'/modules/backup/actions.php?op=getfile&file='.$name.'" target="_blank"><i class="fa fa-download"></i> '.tr('Scarica').'</a>
 
             <a class="btn btn-danger ask pull-right" title="'.tr('Elimina backup').'" data-backto="record-list" data-op="del" data-file="'.$name.'">
                 <i class="fa fa-trash"></i>
@@ -165,7 +166,7 @@ if (file_exists($backup_dir)) {
 
 if (!empty($backup_dir)) {
     echo '
-<button type="button" class="btn btn-primary" onclick="continue_backup()"><i class="fa fa-database"></i> '.tr('Crea backup').'...</button>
+<button type="button" class="btn btn-primary pull-right" onclick="continue_backup()"><i class="fa fa-database"></i> '.tr('Crea backup').'...</button><div class="clearfix"></div>
 
 <script>
     function continue_backup(){

@@ -52,7 +52,7 @@ include_once __DIR__.'/../../core.php';
 					<th><?php echo tr('Nome'); ?></th>
 					<th><?php echo tr('Colore'); ?></th>
 					<th><?php echo tr('Nota'); ?></th>
-					<th><?php echo tr('Opzioni'); ?></th>
+					<th width="20%"><?php echo tr('Opzioni'); ?></th>
 				</tr>
 
 				<?php include $docroot.'/modules/'.Modules::get($id_module)['directory'].'/row-list.php'; ?>
@@ -74,7 +74,7 @@ include_once __DIR__.'/../../core.php';
 
 <?php
 
-$res = $dbo->fetchNum('SELECT * FROM `mg_articoli` WHERE `id_categoria`='.prepare($id).' OR `id_sottocategoria`='.prepare($id).' OR `id_sottocategoria` IN (SELECT id FROM `mg_categorie` WHERE `parent`='.prepare($id).')');
+$res = $dbo->fetchNum('SELECT * FROM `mg_articoli` WHERE `id_categoria`='.prepare($id_record).' OR `id_sottocategoria`='.prepare($id_record).'  OR `id_sottocategoria` IN (SELECT id FROM `mg_categorie` WHERE `parent`='.prepare($id_record).')');
 
 if ($res) {
     echo '

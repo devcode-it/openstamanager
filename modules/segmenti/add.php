@@ -18,7 +18,7 @@
 	<div class="row">
 		
 		<div class="col-md-6">
-				{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "id_module_", "required": 1, "class": "", "values": "list=\"14\": \"Fatture di vendita\",  \"15\": \"Fatture di acquisto\"", "value": "$id_module$", "extra": "" ]}
+				{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "id_module_", "required": 1, "class": "", "values": "query=SELECT id, name AS descrizione FROM zz_modules  WHERE enabled = 1 AND options != 'custom' ORDER BY name ASC", "value": "$id_module$", "extra": "" ]}
 		</div>
 		
 		<div class="col-md-6">

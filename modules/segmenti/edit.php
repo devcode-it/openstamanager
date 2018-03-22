@@ -3,7 +3,7 @@
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
-	<!-- DATI ARTICOLO -->
+	<!-- DATI SEGMENTO -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
 			<h3 class="panel-title"><?php echo tr('Segmento'); ?></h3>
@@ -12,33 +12,63 @@
 		<div class="panel-body">
 			<div class="row">
 			
-				<div class="col-md-3">
+				<div class="col-md-4">
 					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "required": 1, "class": "", "value": "$name$", "extra": "" ]}
 				</div>
 				
-				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "required": 1, "class": "alphanumeric-mask", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YY", "extra": "" ]}
+				<div class="col-md-4">
+					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "id_module_", "required": 1, "class": "", "values": "query=SELECT id, name AS descrizione FROM zz_modules WHERE ( enabled = 1 AND options != 'custom' ) OR id = <?php echo $records[0]['id_module'] ?> ORDER BY name ASC", "value": "$id_module$", "extra": "<?php echo ($records[0]['predefined']) ? 'readonly' : ''; ?>" ]}
 				</div>
 				
-				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "id_module_", "required": 1, "class": "", "values": "list=\"14\": \"Fatture di vendita\",  \"15\": \"Fatture di acquisto\"", "value": "$id_module$", "extra": "<?php echo ($records[0]['predefined']) ? 'readonly' : ''; ?>" ]}
-				</div>
-				
-				<div class="col-md-3">
+				<div class="col-md-4">
 					<?php
-						($records[0]['n_sezionali']<2) ? $records[0]['predefined']=1 : '';
+						//($records[0]['n_sezionali']<2) ? $records[0]['predefined']=1 : '';
 					?>
 					{[ "type": "checkbox", "label": "<?php echo tr('Predefinito'); ?>", "name": "predefined", "value": "$predefined$", "help": "<?php echo tr('Seleziona per rendere il segmento predefinito.'); ?>", "placeholder": "<?php echo tr('Segmento predefinito'); ?>", "extra": "<?php echo ($records[0]['predefined']) ? 'readonly' : ''; ?>"  ]}
 				</div>
 					
 			</div>
-
+			
+			<div class="row">
+			
+				<div class="col-md-8">
+					{[ "type": "textarea", "label": "<?php echo tr('Filtro'); ?>", "name": "clause", "required": 1, "class": "", "value": "$clause$", "extra": "" ]}
+				</div>
+				
+				<div class="col-md-4">
+                    {[ "type": "select", "label": "<?php echo tr('Posizione'); ?>", "name": "position",   "required": 1, "values":"list=\"WHR\": \"WHERE\", \"HVN\": \"HAVING\"", "value": "$position$" ]}
+				</div>
+				
+				
+			</div>
+			
 			<div class="row">
 				<div class="col-md-12">
 					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "required": 0, "class": "", "value": "$note$", "extra": "" ]}
 				</div>
 			</div>
 
+			
+
+		</div>
+	</div>
+	
+	
+	<!-- Campi extra -->
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title"><?php echo tr('Extra'); ?></h3>
+		</div>
+
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-md-3">
+							{[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "required": 1, "class": "alphanumeric-mask", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YY", "extra": "" ]}
+				</div>
+			</div>
+			
+			
+			
 			<div class="row">
 				<div class="col-md-12">
 
@@ -62,7 +92,8 @@
 
 				</div>
 			</div>
-
+			
+			
 		</div>
 	</div>
 
@@ -71,45 +102,52 @@
 
 
 <?php
-
+	
 	$array = preg_match('/(?<=FROM)\s([^\s]+)\s/', $records[0]['options'], $table);
 
-   	$righe = $dbo->fetchArray("SELECT COUNT(*) AS tot FROM ".$table[0]." WHERE id_segment = ".prepare($id_record));
-   	$tot = $righe[0]['tot'];
+   
 	
-    if ($tot > 0) {
+	if (strpos($table[0], 'co_documenti') !== false) {
+		
+		$righe = $dbo->fetchArray("SELECT COUNT(*) AS tot FROM ".$table[0]." WHERE id_segment = ".prepare($id_record));
+		$tot = $righe[0]['tot'];
+	
+	
+		if ($tot > 0) {
 
-        echo "<div class='alert alert-danger' style='margin:0px;'>";
-    	
-    	echo tr("Ci sono _TOT_ righe collegate al segmento per il modulo '_MODULO_'. Il comando elimina è stato disattivato, eliminare le righe per attivare il comando 'Elimina segmento'.", [
-        	'_TOT_' => $tot,
-			'_MODULO_' => $records[0]['modulo'],       			
-        ]);
+			echo "<div class='alert alert-danger' style='margin:0px;'>";
+			
+			echo tr("Ci sono _TOT_ righe collegate al segmento per il modulo '_MODULO_'. Il comando elimina è stato disattivato, eliminare le righe per attivare il comando 'Elimina segmento'.", [
+				'_TOT_' => $tot,
+				'_MODULO_' => $records[0]['modulo'],       			
+			]);
 
-    	echo "</div>";
+			echo "</div>";
 
-    }
-    else if ($records[0]['predefined']) {
+		}
+		else if ($records[0]['predefined']) {
 
-    	echo "<div class='alert alert-danger' style='margin:0px;'>";
-    	
-    	echo tr("Questo è il segmento predefinito per il modulo '_MODULO_'. Il comando elimina è stato disattivato.", [
-        	'_MODULO_' => $records[0]['modulo'],                  
-        ]);
+			echo "<div class='alert alert-danger' style='margin:0px;'>";
+			
+			echo tr("Questo è il segmento predefinito per il modulo '_MODULO_'. Il comando elimina è stato disattivato.", [
+				'_MODULO_' => $records[0]['modulo'],                  
+			]);
 
-    	echo "</div>";
+			echo "</div>";
 
-    }
-    else if ($records[0]['n_sezionali']<2) {
+		}
+		else if ($records[0]['n_sezionali']<2) {
 
-    	echo "<div class='alert alert-danger' style='margin:0px;'>";
-    	
-    	echo tr("Questo è l'unico segmento per il modulo '_MODULO_'. Il comando elimina è stato disattivato.", [
-        	'_MODULO_' => $records[0]['modulo'],                  
-        ]);
+			echo "<div class='alert alert-danger' style='margin:0px;'>";
+			
+			echo tr("Questo è l'unico segmento per il modulo '_MODULO_'. Il comando elimina è stato disattivato.", [
+				'_MODULO_' => $records[0]['modulo'],                  
+			]);
 
-    	echo "</div>";
-    }
+			echo "</div>";
+		}
+	}
+	
 	else{
     	echo '
 			<a class="btn btn-danger ask" data-backto="record-list">

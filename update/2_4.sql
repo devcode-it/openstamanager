@@ -166,6 +166,8 @@ CREATE TABLE IF NOT EXISTS `zz_segments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_module` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
+  `clause` TEXT NOT NULL,
+  `position` enum('WHR', 'HVN') NOT NULL DEFAULT 'WHR',
   `pattern` varchar(255) NOT NULL,
   `note` text NOT NULL,
   `predefined` BOOLEAN NOT NULL,

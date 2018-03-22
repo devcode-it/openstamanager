@@ -434,7 +434,7 @@ if (!empty($options) && $options != 'custom') {
 
                 <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Posizione').'", "name": "position[-id-]",  "list=\"0\":\"'.tr('WHERE').'\",\"1\": \"'.tr('HAVING').'\"" ]}
-			</div>
+				</div>
 		</div>
 	</div>
 </form>';

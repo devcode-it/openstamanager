@@ -38,7 +38,7 @@ class Modules
 
             $user = Auth::user();
 
-            $results = $database->fetchArray('SELECT * FROM `zz_modules` LEFT JOIN (SELECT `idmodule`, `permessi` FROM `zz_permissions` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).')) AS `zz_permissions` ON `zz_modules`.`id`=`zz_permissions`.`idmodule` LEFT JOIN (SELECT `idmodule`, `clause`, `position` FROM `zz_group_module` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).') AND `enabled` = 1) AS `zz_group_module` ON `zz_modules`.`id`=`zz_group_module`.`idmodule`');
+            $results = $database->fetchArray('SELECT * FROM `zz_modules` LEFT JOIN (SELECT `idmodule`, `permessi` FROM `zz_permissions` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).')) AS `zz_permissions` ON `zz_modules`.`id`=`zz_permissions`.`idmodule`  LEFT JOIN (SELECT `id_module`, `clause`, `position` FROM `zz_segments`) AS `zz_segments` ON `zz_modules`.`id`=`zz_segments`.`id_module` LEFT JOIN (SELECT `idmodule`, `clause`, `position` FROM `zz_group_module` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).') AND `enabled` = 1) AS `zz_group_module` ON `zz_modules`.`id`=`zz_group_module`.`idmodule`');
 
             $modules = [];
             $additionals = [];

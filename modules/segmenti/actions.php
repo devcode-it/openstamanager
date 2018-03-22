@@ -10,7 +10,9 @@ switch (post('op')) {
             (strpos(post('pattern'), '#') !== false) ? $pattern = post('pattern') : $maschera = '####';
             $id_module_ = post('id_module_');
             $note = post('note');
+			$clause = post('clause');
 			$predefined = $post['predefined'];
+			$position = post('position');
 			 
 			if (count($dbo->fetchArray("SELECT id FROM zz_segments WHERE id_module = \"$id_module_\""))==0)
 				$predefined = 1;
@@ -18,7 +20,7 @@ switch (post('op')) {
 			if ($predefined)
 				$dbo->query("UPDATE zz_segments SET predefined = 0 WHERE id_module = \"$id_module_\"");
 			
-            $query = "UPDATE zz_segments SET name=\"$name\", pattern=\"$pattern\", id_module=\"$id_module_\", note=\"$note\", predefined=\"$predefined\" WHERE id=\"$id_record\"";
+            $query = "UPDATE zz_segments SET name=\"$name\", clause=\"$clause\",  position=\"$position\", pattern=\"$pattern\", id_module=\"$id_module_\", note=\"$note\", predefined=\"$predefined\" WHERE id=\"$id_record\"";
 
             $rs = $dbo->query($query);
 
@@ -34,6 +36,7 @@ switch (post('op')) {
             $id_module_ = post('id_module_');
             $note = post('note');
 			$predefined = $post['predefined'];
+			$clause = '1=1';
 			
 			if (count($dbo->fetchArray("SELECT id FROM zz_segments WHERE id_module = \"$id_module_\""))==0)
             	$predefined = 1;
@@ -41,7 +44,7 @@ switch (post('op')) {
 			if ($predefined)
 				$dbo->query("UPDATE zz_segments SET predefined = 0 WHERE id_module = \"$id_module_\"");
 			 
-            $dbo->query("INSERT INTO zz_segments( name,  pattern, id_module, note, predefined ) VALUES ( \"$name\", \"$pattern\", \"$id_module_\", \"$note\", \"$predefined\" )");
+            $dbo->query("INSERT INTO zz_segments( name, clause,  pattern, id_module, note, predefined ) VALUES ( \"$name\", \"$clause\", \"$pattern\", \"$id_module_\", \"$note\", \"$predefined\" )");
             $id_record = $dbo->last_inserted_id();
 
             $_SESSION['infos'][] = tr('Nuovo segmento aggiunto.');

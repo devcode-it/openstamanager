@@ -63,7 +63,7 @@
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-3">
-							{[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "required": 1, "class": "alphanumeric-mask", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YY", "extra": "" ]}
+							{[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "required": 1, "class": "alphanumeric-mask", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YY", "extra": "<?php echo ($records[0]['n_sezionali']>1) ? 'readonly' : ''; ?>" ]}
 				</div>
 			</div>
 			

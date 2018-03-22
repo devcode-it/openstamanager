@@ -176,8 +176,11 @@ CREATE TABLE IF NOT EXISTS `zz_segments` (
 
 -- Popolo con i segmenti di default
 INSERT INTO `zz_segments` (`id`, `id_module`, `name`,  `clause`, `position`, `pattern`,`note`, `predefined`) VALUES
-(1, 14, 'Standard vendite', '1=1', 'WHR', '####/YY', '', 1),
-(2, 15, 'Standard acquisti', '1=1', 'WHR', '####', '', 1);
+(1, 14, 'Standard vendite', '1=1', 'WHR', (SELECT valore FROM zz_settings WHERE nome = 'Formato numero secondario fattura'), '', 1),
+(2, 15, 'Standard acquisti', '1=1', 'WHR', '#', '', 1);
+
+-- Rimuovo impostazione per numero secondario fattura
+DELETE FROM `osm_24`.`zz_settings` WHERE `zz_settings`.`nome` = 'Formato numero secondario fattura';
 
 -- Collego le fatture esistenti al segmento di default
 UPDATE `co_documenti` SET `id_segment`='1' WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir`='entrata');

@@ -9,7 +9,7 @@ function get_new_numerofattura($data)
     global $dir;
     global $id_segment;
 
-    if ($dir = 'uscita'){
+    if ($dir == 'uscita'){
 
         // recupero maschera per questo segmento
         $rs_maschera = $dbo->fetchArray("SELECT pattern FROM zz_segments WHERE id = '".$id_segment."'");

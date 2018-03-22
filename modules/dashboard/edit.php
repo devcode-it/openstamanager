@@ -283,8 +283,8 @@ if ($total == 0) {
 </div>
 <br>
 <?php
-$qp = "SELECT co_righe_contratti.id, idcontratto, richiesta, data_richiesta, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento FROM (co_righe_contratti INNER JOIN co_contratti ON co_righe_contratti.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL
-UNION SELECT co_ordiniservizio.id, idcontratto, '', data_scadenza, an_anagrafiche.ragione_sociale, 'ordine' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento='ODS') AS tipointervento FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL ORDER BY data_richiesta ASC";
+$qp = "SELECT co_righe_contratti.id, idcontratto, richiesta, DATE_FORMAT( data_richiesta, '%m-%Y') AS mese, data_richiesta, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento FROM (co_righe_contratti INNER JOIN co_contratti ON co_righe_contratti.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL
+UNION SELECT co_ordiniservizio.id, idcontratto, '', data_scadenza, DATE_FORMAT( data_scadenza, '%m-%Y') AS mese, an_anagrafiche.ragione_sociale, 'ordine' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento='ODS') AS tipointervento FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL ORDER BY data_richiesta ASC";
 $rsp = $dbo->fetchArray($qp);
 
 if (!empty($rsp)) {
@@ -302,11 +302,45 @@ if (!empty($rsp)) {
 
     <div id="external-events" class="hidden-xs hidden-sm col-md-2">
         <h4>'.tr('Interventi da pianificare').'</h4>';
-
-    foreach ($rsp as $r) {
-        echo '
-        <div class="fc-event " data-id="'.$r['id'].'" data-idcontratto="'.$r['idcontratto'].'"><b>'.$r['ragione_sociale'].'</b><br>'.Translator::dateToLocale($r['data_richiesta']).' ('.$r['tipointervento'].')'.(!empty($r['richiesta']) ? ' - '.$r['richiesta'] : '').'</div>';
+        
+    //Controllo per pinanificazioni per mesi precedenti
+    $qp_old = "SELECT co_righe_contratti.id, idcontratto, richiesta, DATE_FORMAT( data_richiesta, '%m-%Y') AS mese, data_richiesta, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento FROM (co_righe_contratti INNER JOIN co_contratti ON co_righe_contratti.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL AND  DATE_FORMAT( data_richiesta, '%d%m%Y')<DATE_FORMAT( NOW(), '%d%m%Y')
+    UNION SELECT co_ordiniservizio.id, idcontratto, '', data_scadenza, DATE_FORMAT( data_scadenza, '%m-%Y') AS mese, an_anagrafiche.ragione_sociale, 'ordine' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento='ODS') AS tipointervento FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL AND  DATE_FORMAT( data_scadenza, '%d%m%Y')<DATE_FORMAT( NOW(), '%d%m%Y') ORDER BY data_richiesta ASC";
+    $rsp_old = $dbo->fetchArray($qp_old);
+    
+    if(sizeof($rsp_old)>0){
+        echo '<small class="text-danger"><i class="fa fa-exclamation-triangle"></i> Ci sono alcuni interventi da pianificare scaduti.</small><br>';
     }
+    
+    $mesi = array( 1 => 'Gennaio', 2 => 'Febbraio', 3 => 'Marzo', 4 => 'Aprile', 5 => 'Maggio', 6 => 'Giugno', 7 => 'Luglio', 8 => 'Agosto', 9 => 'Settembre', 10 => 'Ottobre', 11 => 'Novembre', 12 => 'Dicembre' );
+    
+    //Creo un array con tutti i mesi che contengono interventi
+    $mesi_interventi = array();
+    for( $i=0; $i<sizeof($rsp); $i++ ){
+        $mese_n = date("m", strtotime($rsp[$i]["data_richiesta"])).date("Y", strtotime($rsp[$i]["data_richiesta"]));
+        $mese_t = $mesi[ intval(date("m", strtotime($rsp[$i]["data_richiesta"]))) ].' '.date("Y", strtotime($rsp[$i]["data_richiesta"]));
+        $mesi_interventi[$mese_n] = $mese_t;
+    }
+    
+    //Aggiungo anche il mese corrente
+    $mesi_interventi[date("m").date("Y")] = $mesi[intval(date("m"))]." ".date("Y");
+    
+    //Rimuovo i mesi doppi
+    array_unique ( $mesi_interventi );
+    
+    //Ordino l'array per mese
+    ksort( $mesi_interventi );
+    
+    echo '<br>';
+    echo '<select class="superselect" id="select-intreventi-pianificare">';
+
+    foreach($mesi_interventi as $key => $mese_intervento){
+        echo '<option value="'.$key.'">'.$mese_intervento.'</option>';
+    }
+    
+    echo '</select>';
+    
+    echo '<div id="interventi-pianificare"></div>';
 
     echo '
     </div>
@@ -324,7 +358,42 @@ if ($vista == 'mese') {
 ?>
 
 <script type="text/javascript">
+    
+    $('#select-intreventi-pianificare').change(function(){
+        var mese = $(this).val();
+        $.get( '<?php echo $rootdir ?>/modules/dashboard/ajaxreq.php', { op: 'load_intreventi', mese: mese }, function(data){
+            $('#interventi-pianificare').html(data);
+            $('#external-events .fc-event').each(function() {
+                $(this).draggable({
+                    zIndex: 999,
+                    revert: true,
+                    revertDuration: 0
+                });
+            });
+        });
+    });
+
 	$(document).ready(function() {
+        //Seleziono il mese corrente per gli interventi da pianificare
+        var date = new Date();
+        var mese;
+        date.setDate(date.getDate() + 20);
+        mese = ('0' + (date.getMonth())).slice(-2) + date.getFullYear();
+
+        $('#select-intreventi-pianificare option[value='+mese+']').attr('selected','selected').trigger('change');
+
+        $.get( '<?php echo $rootdir ?>/modules/dashboard/ajaxreq.php', { op: 'load_intreventi', mese: mese }, function(data){
+            $('#interventi-pianificare').html(data);
+            $('#external-events .fc-event').each(function() {
+                $(this).draggable({
+                    zIndex: 999,
+                    revert: true,
+                    revertDuration: 0
+                });
+            });
+        });
+
+        
         // Comandi seleziona tutti
         $('#selectallstati').click(function(event) {
 

@@ -502,6 +502,16 @@ span.form-control {
     cursor: pointer;
 }
 
+.fc-event-primary {
+    background-color: #3a87ad;
+    border: 1px solid #3a87ad;
+}
+
+.fc-event-danger {
+    background-color: #dd4b46;
+    border: 1px solid #dd4b46;
+}
+
 div.DTS tbody td,
 div.DTS tbody th {
     max-width: 500px;

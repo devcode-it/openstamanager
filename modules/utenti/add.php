@@ -7,7 +7,7 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="backto" value="record-edit">
 
 	<div class="row">
-		<div class="">
+		<div class="col-md-12">
 			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "" ]}
 		</div>
 	</div>

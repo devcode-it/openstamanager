@@ -288,3 +288,6 @@ DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Destinatario fisso in co
 
 -- Conversione numero co_documenti da int(11) a varchar(100)
 ALTER TABLE `co_documenti` CHANGE `numero` `numero` VARCHAR(100) NOT NULL;
+
+-- Disabilito di default filtro tecnici che vedono solo le anagrafiche per i quali hanno eseguito un intervento
+UPDATE `zz_group_module` SET `enabled` = '1' WHERE `zz_group_module`.`id` = 2;

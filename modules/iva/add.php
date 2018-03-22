@@ -18,7 +18,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "number", "label": "<?php echo tr('Indetraibile'); ?>", "name": "indetraibile", "value": "", "icon-after": "<i class=\"fa fa-usd\"></i>" ]}
+			{[ "type": "number", "label": "<?php echo tr('Indetraibile'); ?>", "name": "indetraibile", "value": "", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
 		</div>
 	</div>
 

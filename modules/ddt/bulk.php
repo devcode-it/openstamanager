@@ -38,17 +38,13 @@ switch (post('op')) {
                     $data = date('Y-m-d');
                     $dir = 'entrata';
                     $idtipodocumento = '2';
-					
-					
-					
-					if (empty($_SESSION['m'.Modules::get('Fatture di vendita')['id']]['id_segment'])){
-						$rs = $dbo->fetchArray("SELECT id  FROM zz_segments WHERE predefined = 1 AND id_module = ".prepare(Modules::get('Fatture di vendita')['id'])."LIMIT 0,1");
-						$_SESSION['m'.Modules::get('Fatture di vendita')['id']]['id_segment'] = $rs[0]['id'];
-					}
 
-					$id_segment = $_SESSION['m'.Modules::get('Fatture di vendita')['id']]['id_segment'];
-					
-		
+                    if (empty($_SESSION['m'.Modules::get('Fatture di vendita')['id']]['id_segment'])) {
+                        $rs = $dbo->fetchArray('SELECT id  FROM zz_segments WHERE predefined = 1 AND id_module = '.prepare(Modules::get('Fatture di vendita')['id']).'LIMIT 0,1');
+                        $_SESSION['m'.Modules::get('Fatture di vendita')['id']]['id_segment'] = $rs[0]['id'];
+                    }
+
+                    $id_segment = $_SESSION['m'.Modules::get('Fatture di vendita')['id']]['id_segment'];
 
                     $numero = get_new_numerofattura($data);
 
@@ -147,32 +143,23 @@ switch (post('op')) {
         }
 
     break;
-	
-	
-	
-	
-	case 'delete-bulk':
 
-	
+    case 'delete-bulk':
+
         foreach ($id_records as $id) {
-    
-			$dbo->query('DELETE  FROM dt_ddt  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
-			$dbo->query('DELETE FROM dt_righe_ddt WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
-			$dbo->query('DELETE FROM mg_movimenti WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
-      
+            $dbo->query('DELETE  FROM dt_ddt  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
+            $dbo->query('DELETE FROM dt_righe_ddt WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
+            $dbo->query('DELETE FROM mg_movimenti WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
         }
 
         $_SESSION['infos'][] = tr('Ddt eliminati!');
 
-	break;
-	
-	
+    break;
 }
 
 return [
-
     'delete-bulk' => tr('Elimina selezionati'),
-	
+
     'export-bulk' => [
         'text' => tr('Esporta stampe'),
         'data' => [

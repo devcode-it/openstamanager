@@ -23,13 +23,12 @@ function get_new_numerosecondarioddt($data)
 {
     global $dbo;
     global $dir;
-	
-	
+
     // Calcolo il numero secondario se stabilito dalle impostazioni e se documento di vendita
     $formato_numero_secondario = get_var('Formato numero secondario ddt');
-	
+
     $query = "SELECT numero_esterno FROM dt_ddt WHERE DATE_FORMAT( data, '%Y' ) = '".date('Y', strtotime($data))."' AND idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir='".$dir."') ORDER BY numero_esterno DESC LIMIT 0,1";
-	
+
     $rs = $dbo->fetchArray($query);
     $numero_secondario = $rs[0]['numero_esterno'];
 
@@ -39,7 +38,7 @@ function get_new_numerosecondarioddt($data)
 
     if ($formato_numero_secondario != '' && $dir == 'entrata') {
         //$numero_esterno = get_next_code($numero_secondario, 1, $formato_numero_secondario);
-		$numero_esterno = Util\Generator::generate($formato_numero_secondario, $numero_secondario);
+        $numero_esterno = Util\Generator::generate($formato_numero_secondario, $numero_secondario);
     } else {
         $numero_esterno = '';
     }

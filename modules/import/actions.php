@@ -17,7 +17,7 @@ switch (post('op')) {
         $fields = Import::getFields($id_record);
 
         $csv = Import::getFile($id_record, $records[0]['id'], [
-            'headers' =>   $first_row,
+            'headers' => $first_row,
         ]);
 
         // Interpretazione dei dati

@@ -19,7 +19,7 @@ $impianti = [];
 if (!empty($idanagrafica)) {
     $rs = $dbo->fetchArray('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
     $idtipointervento = $rs[0]['idtipointervento_default'];
-	$idzona = $rs[0]['idzona'];
+    $idzona = $rs[0]['idzona'];
     $idstatointervento = 'WIP';
     $richiesta = filter('richiesta');
 }
@@ -41,8 +41,8 @@ $idcontratto_riga = filter('idcontratto_riga');
 if (!empty($idcontratto) && !empty($idordineservizio)) {
     $rs = $dbo->fetchArray('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS idzona FROM co_contratti WHERE id='.prepare($idcontratto));
     $idanagrafica = $rs[0]['idanagrafica'];
-	$idzona = $rs[0]['idzona'];
-	
+    $idzona = $rs[0]['idzona'];
+
     // Info riga pianificata
     $rs = $dbo->fetchArray('SELECT * FROM co_ordiniservizio WHERE idcontratto='.prepare($idcontratto).' AND id='.prepare($idordineservizio));
     $data = $rs[0]['data_scadenza'];
@@ -61,7 +61,7 @@ if (!empty($idcontratto) && !empty($idordineservizio)) {
 elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
     $rs = $dbo->fetchArray('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS idzona FROM co_contratti WHERE id='.prepare($idcontratto));
     $idanagrafica = $rs[0]['idanagrafica'];
-	$idzona = $rs[0]['idzona'];
+    $idzona = $rs[0]['idzona'];
 
     // Info riga pianificata
     $rs = $dbo->fetchArray('SELECT * FROM co_righe_contratti WHERE idcontratto='.prepare($idcontratto).' AND id='.prepare($idcontratto_riga));
@@ -202,7 +202,7 @@ if (empty($new_codice)) {
 			<!-- RIGA 5 -->
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "select", "label": "<?php echo tr('Tecnici'); ?>", "multiple": "1", "name": "idtecnico[]", "required": <?php echo ($get['ref']) ? 1:0; ?>, "ajax-source": "tecnici", "value": "<?php echo $idtecnico; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tecnici'); ?>", "multiple": "1", "name": "idtecnico[]", "required": <?php echo ($get['ref']) ? 1 : 0; ?>, "ajax-source": "tecnici", "value": "<?php echo $idtecnico; ?>" ]}
 				</div>
 
 				<div class="col-md-12">

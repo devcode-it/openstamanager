@@ -6,15 +6,15 @@ include_once __DIR__.'/../../core.php';
 $min_length = 8;
 $min_length_username = 4;
 
-$self_edit = Modules::getPermission('Utenti e permessi') == 'rw' && filter('id_utente') != null;
+$self_edit = Modules::getPermission('Utenti e permessi') != 'rw' || (filter('id_utente') == null && filter('idgruppo') == null);
 
 if ($self_edit) {
-    $idgruppo = intval(filter('idgruppo'));
-    $id_utente = filter('id_utente');
-} else {
     $user = Auth::user();
 
     $id_utente = $user['id'];
+} else {
+    $idgruppo = intval(filter('idgruppo'));
+    $id_utente = filter('id_utente');
 }
 
 if (!empty($id_utente)) {
@@ -33,7 +33,7 @@ if (!empty($id_utente)) {
 }
 
 echo '
-<form id="link_form" action="'.$rootdir.'/editor.php?id_module='.Modules::get('Utenti e permessi')['id'].'&id_record='.$idgruppo.'" method="post">
+<form action="" method="post" id="link_form">
 	<input type="hidden" name="op" value="'.$op.'">
 	<input type="hidden" name="min_length" value="'.$min_length.'">
     <input type="hidden" name="min_length_username" value="'.$min_length_username.'">';
@@ -43,12 +43,12 @@ if (!empty($id_utente)) {
     <input type="hidden" name="id_utente" value="'.$id_utente.'">';
 }
 
-if ($self_edit) {
+if (!$self_edit) {
     echo '
 	<input type="hidden" name="backto" value="record-edit">
 
 	<div class="row">
-		<div class="">
+		<div class="col-md-12">
 		{[ "type": "text", "label": "'.tr('Username').'", "name": "username", "required": 1, "value": "'.$username.'" ]}
 		</div>
     </div>';
@@ -72,11 +72,11 @@ echo '
 		</div>
 	</div>';
 
-if ($self_edit) {
+if (!$self_edit) {
     echo '
 
 	<div class="row">
-		<div class="">
+		<div class="col-md-12">
 		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "values": "query=SELECT CONCAT(`an_tipianagrafiche`.`idtipoanagrafica`, \'-\', `an_anagrafiche`.`idanagrafica`) AS \'id\', `ragione_sociale` AS \'descrizione\', `descrizione` AS \'optgroup\' FROM `an_tipianagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` WHERE  an_anagrafiche.deleted= 0 ORDER BY `descrizione` ASC", "value": "'.$id_anagrafica.'" ]}
 		</div>
     </div>';

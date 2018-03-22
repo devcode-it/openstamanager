@@ -45,7 +45,7 @@ function get_new_numerofattura($data)
 
     }else{
 
-        $query = "SELECT IFNULL(MAX(numero),'0') AS max_numerofattura FROM co_documenti WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data)))." AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir = '".prepare($dir)."') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0, 1";
+        $query = "SELECT IFNULL(MAX(numero),'0') AS max_numerofattura FROM co_documenti WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data)))." AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir = ".prepare($dir).") ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0, 1";
         $rs = $dbo->fetchArray($query);
 
         $numero = $rs[0]['max_numerofattura'] + 1;

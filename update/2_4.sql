@@ -176,11 +176,11 @@ CREATE TABLE IF NOT EXISTS `zz_segments` (
 
 -- Popolo con i segmenti di default
 INSERT INTO `zz_segments` (`id`, `id_module`, `name`,  `clause`, `position`, `pattern`,`note`, `predefined`) VALUES
-(1, 14, 'Standard vendite', '1=1', 'WHR', (SELECT valore FROM zz_settings WHERE nome = 'Formato numero secondario fattura'), '', 1),
-(2, 15, 'Standard acquisti', '1=1', 'WHR', '#', '', 1);
+(1, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Standard vendite', '1=1', 'WHR', IF((SELECT COUNT(id) FROM co_documenti) > 0, (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Formato numero secondario fattura'), '####/YYYY'), '', 1),
+(2, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Standard acquisti', '1=1', 'WHR', '#', '', 1);
 
 -- Rimuovo impostazione per numero secondario fattura
-DELETE FROM `osm_24`.`zz_settings` WHERE `zz_settings`.`nome` = 'Formato numero secondario fattura';
+DELETE FROM `zz_settings` WHERE `zz_settings`.`nome` = 'Formato numero secondario fattura';
 
 -- Collego le fatture esistenti al segmento di default
 UPDATE `co_documenti` SET `id_segment`='1' WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir`='entrata');
@@ -188,7 +188,7 @@ UPDATE `co_documenti` SET `id_segment`='2' WHERE `idtipodocumento` IN (SELECT `i
 
 -- Innesto modulo segmenti sotto "Strumenti"
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES
-(NULL, 'Segmenti', 'Segmenti', 'segmenti', '{	"main_query": [	{	"type": "table", "fields": "id, Nome, Modulo, Maschera, Note, Predefinito", "query": "SELECT `id`,  (IF(predefined=1, ''S&igrave;'', ''No'')) AS `Predefinito`, `name` AS `Nome`, (SELECT name FROM zz_modules WHERE id = zz_segments.id_module) AS Modulo,  `pattern` AS `Maschera`, `note` AS `Note`  FROM `zz_segments` HAVING 2=2 ORDER BY name, id_module"}	]}', '', 'fa fa-database', '2.4', '2.4', 1, 36, 1, 1);
+(NULL, 'Segmenti', 'Segmenti', 'segmenti', '{	"main_query": [	{	"type": "table", "fields": "id, Nome, Modulo, Maschera, Note, Predefinito", "query": "SELECT `id`,  (IF(predefined=1, ''S&igrave;'', ''No'')) AS `Predefinito`, `name` AS `Nome`, (SELECT name FROM zz_modules WHERE id = zz_segments.id_module) AS Modulo,  `pattern` AS `Maschera`, `note` AS `Note`  FROM `zz_segments` HAVING 2=2 ORDER BY name, id_module"}	]}', '', 'fa fa-database', '2.4', '2.4', 1, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Strumenti'), 1, 1);
 
 -- Aggiorno widget Fatturato con i sezionali
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM co_documenti WHERE idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir="entrata") |segment| AND data >= "|period_start|" AND data <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';

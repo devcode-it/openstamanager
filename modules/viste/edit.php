@@ -150,9 +150,7 @@ if (!empty($options) && $options != 'custom') {
         $results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT id_gruppo SEPARATOR \',\') AS gruppi FROM zz_group_view WHERE id_vista='.prepare($field['id']));
 
         echo $results[0]['gruppi'].'"';
-        if (!$editable) {
-            echo ', "readonly": "1"';
-        }
+
         echo ', "help": "'.tr('Gruppi di utenti in grado di visualizzare questo campo').'" ]}
 									</div>
 

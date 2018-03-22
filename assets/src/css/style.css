@@ -591,3 +591,6 @@ input.small-width {
         margin: 5%;
     }
 }
+.callout a{
+		text-decoration: none;
+}

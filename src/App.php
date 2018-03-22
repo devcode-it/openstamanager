@@ -326,7 +326,7 @@ class App
 
     public static function replacePlaceholder($query, $custom = null)
     {
-		$id_module = filter('id_module');
+        $id_module = filter('id_module');
         $user = Auth::user();
 
         // Sostituzione degli identificatori
@@ -337,8 +337,8 @@ class App
         $query = str_replace(['|period_start|', '|period_end|'], [$_SESSION['period_start'], $_SESSION['period_end']], $query);
 
         // Sostituzione dei segmenti
-		$query = str_replace('|segment|', !empty($_SESSION['m'.$id_module]['id_segment']) ? ' AND id_segment = '.prepare($_SESSION['m'.$id_module]['id_segment']) : '', $query);
-       
+        $query = str_replace('|segment|', !empty($_SESSION['m'.$id_module]['id_segment']) ? ' AND id_segment = '.prepare($_SESSION['m'.$id_module]['id_segment']) : '', $query);
+
         return $query;
     }
 

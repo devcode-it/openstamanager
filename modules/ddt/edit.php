@@ -55,13 +55,13 @@ if ($module['name'] == 'Ddt di vendita') {
             
 			<div class="row">
 				<?php
-					if ($dir == 'uscita') {
-					    echo '
+                    if ($dir == 'uscita') {
+                        echo '
 							<div class="col-md-3">
 								{[ "type": "span", "label": "'.tr('Numero ddt').'", "class": "text-center", "value": "$numero$" ]}
 							</div>';
-					}
-				?>
+                    }
+                ?>
 
 				<div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo tr('Numero secondario'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}

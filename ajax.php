@@ -42,7 +42,7 @@ switch (get('op')) {
         if ($clear == 1 || $value == '') {
             unset($_SESSION[$array[0]][$array[1]]);
         } else {
-            $_SESSION[$array[0]][$array[1]] = $value;			
+            $_SESSION[$array[0]][$array[1]] = $value;
         }
 
         break;

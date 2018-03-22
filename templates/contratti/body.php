@@ -293,7 +293,6 @@ echo '
 <p class="text-center"><b>'.tr('Il tutto S.E. & O.').'</b></p>
 <p class="text-center">'.tr("In attesa di un Vostro Cortese riscontro, colgo l'occasione per porgere Cordiali Saluti").'</p>';
 
-
 //Firma
 echo '<div style=\'position:absolute; bottom:'.($settings['margins']['bottom'] + $settings['footer-height']).'px\' > <table >
     <tr>

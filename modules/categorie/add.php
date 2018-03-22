@@ -37,7 +37,7 @@ if (!isset($id_original)) {
         </div>
 
         <div class="col-md-4">
-            {[ "type": "text", "label": "<?php echo  tr('Colore'); ?>", "name": "colore", "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength=\"7\"", "icon-after": "<div class=\"img-circle square\"></div>" ]}
+            {[ "type": "text", "label": "<?php echo  tr('Colore'); ?>", "name": "colore", "id": "colore_", "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength=\"7\"", "icon-after": "<div class=\"img-circle square\"></div>" ]}
         </div>
     </div>
 
@@ -50,10 +50,10 @@ if (!isset($id_original)) {
 	<script>
 		$(document).ready( function(){
 			$('.colorpicker').colorpicker().on('changeColor', function(){
-				$('#colore').parent().find('.square').css('background', $('#colore').val());
+				$('#colore_').parent().find('.square').css('background', $('#colore_').val());
 			});
 
-			$('#colore').parent().find('.square').css('background', $('#colore').val());
+			$('#colore_').parent().find('.square').css('background', $('#colore_').val());
 		});
 	</script>
 <?php

@@ -11,6 +11,10 @@ if (file_exists($docroot.'/include/custom/top.php')) {
     include $docroot.'/include/top.php';
 }
 
+if (post('op') == 'change_pwd') {
+    include __DIR__.'/actions.php';
+}
+
 $user = Auth::user();
 $token = Auth::getInstance()->getToken();
 

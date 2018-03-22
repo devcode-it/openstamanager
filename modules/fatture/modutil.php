@@ -9,47 +9,42 @@ function get_new_numerofattura($data)
     global $dir;
     global $id_segment;
 
-    if ($dir == 'uscita'){
-
+    if ($dir == 'uscita') {
         // recupero maschera per questo segmento
         $rs_maschera = $dbo->fetchArray("SELECT pattern FROM zz_segments WHERE id = '".$id_segment."'");
         // esempio: ####/YY
         $maschera = $rs_maschera[0]['pattern'];
 
         // estraggo blocchi di caratteri standard da sostituire
-        preg_match('/[#]+/', $maschera, $m1 );
-        preg_match('/[Y]+/', $maschera, $m2 );
+        preg_match('/[#]+/', $maschera, $m1);
+        preg_match('/[Y]+/', $maschera, $m2);
 
         $query = "SELECT numero FROM co_documenti WHERE DATE_FORMAT(data,'%Y') = ".prepare(date('Y', strtotime($data)))." AND id_segment = '".$id_segment."'";
-       
-        $pos1 = strpos( $maschera, $m1[0] );
-        if( $pos1==0 ):
-            $query .= " ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1";
-        else:
-            $query .= " ORDER BY numero DESC LIMIT 0,1";
+
+        $pos1 = strpos($maschera, $m1[0]);
+        if ($pos1 == 0):
+            $query .= ' ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1'; else:
+            $query .= ' ORDER BY numero DESC LIMIT 0,1';
         endif;
-        
-        $rs_ultima_fattura = $dbo->fetchArray( $query );
+
+        $rs_ultima_fattura = $dbo->fetchArray($query);
 
         //$numero = get_next_code( $rs_ultima_fattura[0]['numero'], 1, $maschera );
         $numero = Util\Generator::generate($maschera, $rs_ultima_fattura[0]['numero']);
 
         // sostituisco anno nella maschera
-        $anno = substr( date('Y', strtotime($data)), -strlen($m2[0]) ); // nel caso ci fosse YY
-        $numero = str_replace( $m2[0], $anno, $numero );
+        $anno = substr(date('Y', strtotime($data)), -strlen($m2[0])); // nel caso ci fosse YY
+        $numero = str_replace($m2[0], $anno, $numero);
 
-        /*echo $numero;
-        echo $maschera;
-        echo $query;
-        exit;*/
-
-    }else{
-
-        $query = "SELECT IFNULL(MAX(numero),'0') AS max_numerofattura FROM co_documenti WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data)))." AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir = ".prepare($dir).") ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0, 1";
+    /*echo $numero;
+    echo $maschera;
+    echo $query;
+    exit;*/
+    } else {
+        $query = "SELECT IFNULL(MAX(numero),'0') AS max_numerofattura FROM co_documenti WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data))).' AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir = '.prepare($dir).') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0, 1';
         $rs = $dbo->fetchArray($query);
 
         $numero = $rs[0]['max_numerofattura'] + 1;
-
     }
 
     return $numero;
@@ -71,37 +66,36 @@ function get_new_numerosecondariofattura($data)
     $maschera = $rs_maschera[0]['pattern'];
 
     // estraggo blocchi di caratteri standard da sostituire
-    preg_match('/[#]+/', $maschera, $m1 );
-    preg_match('/[Y]+/', $maschera, $m2 );
+    preg_match('/[#]+/', $maschera, $m1);
+    preg_match('/[Y]+/', $maschera, $m2);
 
     $query = "SELECT numero_esterno FROM co_documenti WHERE DATE_FORMAT(data,'%Y') = ".prepare(date('Y', strtotime($data)))." AND id_segment='".$id_segment."'";
     // Marzo 2017
     // nel caso ci fossero lettere prima della maschera ### per il numero (es. FT-0001-2017)
-    // è necessario l'ordinamento alfabetico "ORDER BY numero_esterno" altrimenti 
+    // è necessario l'ordinamento alfabetico "ORDER BY numero_esterno" altrimenti
     // nel caso di maschere del tipo 001-2017 è necessario l'ordinamento numerico "ORDER BY CAST(numero_esterno AS UNSIGNED)"
-    $pos1 = strpos( $maschera, $m1[0] );
-    if( $pos1==0 ):
-        $query .= " ORDER BY CAST(numero_esterno AS UNSIGNED) DESC LIMIT 0,1";
-    else:
-        $query .= " ORDER BY numero_esterno DESC LIMIT 0,1";
+    $pos1 = strpos($maschera, $m1[0]);
+    if ($pos1 == 0):
+        $query .= ' ORDER BY CAST(numero_esterno AS UNSIGNED) DESC LIMIT 0,1'; else:
+        $query .= ' ORDER BY numero_esterno DESC LIMIT 0,1';
     endif;
-    
-    $rs_ultima_fattura = $dbo->fetchArray( $query );
+
+    $rs_ultima_fattura = $dbo->fetchArray($query);
 
     //$numero_esterno = get_next_code( $rs_ultima_fattura[0]['numero_esterno'], 1, $maschera );
-	$numero_esterno = Util\Generator::generate($maschera, $rs_ultima_fattura[0]['numero_esterno']);
-	
-	/*echo $id_segment."<br>";
-	echo $query."<br>";
-	echo  $rs_ultima_fattura[0]['numero_esterno']."<br>";
-	echo $maschera."<br>";
-	echo $numero_esterno."<br>";
-	exit;*/
+    $numero_esterno = Util\Generator::generate($maschera, $rs_ultima_fattura[0]['numero_esterno']);
+
+    /*echo $id_segment."<br>";
+    echo $query."<br>";
+    echo  $rs_ultima_fattura[0]['numero_esterno']."<br>";
+    echo $maschera."<br>";
+    echo $numero_esterno."<br>";
+    exit;*/
 
     // sostituisco anno nella maschera
-    $anno = substr( date('Y', strtotime($data)), -strlen($m2[0]) ); // nel caso ci fosse YY
-    $numero_esterno = str_replace( $m2[0], $anno, $numero_esterno );
-   
+    $anno = substr(date('Y', strtotime($data)), -strlen($m2[0])); // nel caso ci fosse YY
+    $numero_esterno = str_replace($m2[0], $anno, $numero_esterno);
+
     return $numero_esterno;
 }
 

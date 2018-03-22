@@ -25,7 +25,7 @@ switch (post('op')) {
 
         $id_segment = post('id_segment');
         $numero = get_new_numerofattura($data);
-       
+
         if ($dir == 'entrata') {
             $numero_esterno = get_new_numerosecondariofattura($data);
             $idconto = get_var('Conto predefinito fatture di vendita');
@@ -77,7 +77,6 @@ switch (post('op')) {
             $idconto = post('idconto');
             $totale_imponibile = get_imponibile_fattura($id_record);
             $totale_fattura = get_totale_fattura($id_record);
-
 
             if ($dir == 'uscita') {
                 $idrivalsainps = post('idrivalsainps');
@@ -409,7 +408,7 @@ switch (post('op')) {
             // Collego in fattura eventuali articoli collegati all'intervento
             $rs2 = $dbo->fetchArray('SELECT mg_articoli_interventi.*, idarticolo FROM mg_articoli_interventi INNER JOIN mg_articoli ON mg_articoli_interventi.idarticolo=mg_articoli.id WHERE idintervento='.prepare($idintervento).' AND (idintervento NOT IN(SELECT idintervento FROM co_righe_preventivi WHERE idpreventivo IN(SELECT idpreventivo FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).')) AND idintervento NOT IN(SELECT idintervento FROM co_righe_contratti WHERE idcontratto IN(SELECT idcontratto FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).')) )');
             for ($i = 0; $i < sizeof($rs2); ++$i) {
-                $riga = add_articolo_infattura($id_record, $rs2[$i]['idarticolo'], $rs2[$i]['descrizione'], $idiva, $rs2[$i]['qta'], $rs2[$i]['prezzo_vendita'] * $rs2[$i]['qta'], $rs2[$i]['sconto'], $rs2[$i]['sconto_unitario'], $rs2[$i]['tipo_sconto'], $idintervento, 0, $rs2[$i]['um']);
+                $riga = add_articolo_infattura($id_record, $rs2[$i]['idarticolo'], $rs2[$i]['descrizione'], $rs2[$i]['idiva'], $rs2[$i]['qta'], $rs2[$i]['prezzo_vendita'] * $rs2[$i]['qta'], $rs2[$i]['sconto'], $rs2[$i]['sconto_unitario'], $rs2[$i]['tipo_sconto'], $idintervento, 0, $rs2[$i]['um']);
 
                 // Lettura lotto, serial, altro dalla riga dell'ordine
                 $dbo->query('INSERT INTO mg_prodotti (id_riga_documento, id_articolo, dir, serial, lotto, altro) SELECT '.prepare($riga).', '.prepare($rs2[$i]['idarticolo']).', '.prepare($dir).', serial, lotto, altro FROM mg_prodotti AS t WHERE id_riga_intervento='.prepare($rs2[$i]['id']));
@@ -421,7 +420,7 @@ switch (post('op')) {
             if (sizeof($rsr) > 0) {
                 for ($i = 0; $i < sizeof($rsr); ++$i) {
                     // Calcolo iva
-                    $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
+                    $query = 'SELECT * FROM co_iva WHERE id='.prepare($rsr[$i]['idiva']);
                     $rs = $dbo->fetchArray($query);
                     $desc_iva = $rs[0]['descrizione'];
 
@@ -968,7 +967,7 @@ switch (post('op')) {
         $id_segment = post('id_segment');
         $numero = get_new_numerofattura($data);
         $numero_esterno = get_new_numerosecondariofattura($data);
-        
+
         $tipo_documento = ($dir == 'entrata') ? 'Fattura immediata di vendita' : 'Fattura immediata di acquisto';
 
         // Creazione nuova fattura
@@ -1130,17 +1129,17 @@ switch (post('op')) {
 
             // Se ci sono degli interventi collegati li rimetto nello stato "Completato"
             //for ($i = 0; $i < sizeof($rs); ++$i) {
-			$dbo->query("UPDATE in_interventi SET idstatointervento='OK' WHERE id=".prepare($idintervento));
+            $dbo->query("UPDATE in_interventi SET idstatointervento='OK' WHERE id=".prepare($idintervento));
 
-			// Rimuovo dalla fattura gli articoli collegati all'intervento
-			$rs2 = $dbo->fetchArray('SELECT idarticolo FROM mg_articoli_interventi WHERE idintervento='.prepare($idintervento));
-			for ($j = 0; $j < sizeof($rs2); ++$j) {
-				rimuovi_articolo_dafattura($rs[0]['idarticolo'], $id_record, $rs[0]['idrigadocumento']);
-			}
+            // Rimuovo dalla fattura gli articoli collegati all'intervento
+            $rs2 = $dbo->fetchArray('SELECT idarticolo FROM mg_articoli_interventi WHERE idintervento='.prepare($idintervento));
+            for ($j = 0; $j < sizeof($rs2); ++$j) {
+                rimuovi_articolo_dafattura($rs[0]['idarticolo'], $id_record, $rs[0]['idrigadocumento']);
+            }
             //}
-			
-			//rimuovo riga da co_righe_documenti
-			$query = 'DELETE FROM `co_righe_documenti` WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
+
+            //rimuovo riga da co_righe_documenti
+            $query = 'DELETE FROM `co_righe_documenti` WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
             $dbo->query($query);
 
             $_SESSION['infos'][] = tr('Intervento _NUM_ rimosso!', [

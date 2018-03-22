@@ -50,21 +50,26 @@ switch (post('op')) {
         break;
 
         case 'delete-bulk':
+			
+			if ($debug){
+				foreach ($id_records as $id) {
+					$dbo->query('DELETE  FROM co_documenti  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
+					$dbo->query('DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
+					$dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
+					$dbo->query('DELETE FROM mg_movimenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
+				}
 
-        foreach ($id_records as $id) {
-            $dbo->query('DELETE  FROM co_documenti  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
-            $dbo->query('DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-            $dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-            $dbo->query('DELETE FROM mg_movimenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-        }
-
-        $_SESSION['infos'][] = tr('Fatture eliminate!');
-
+				$_SESSION['infos'][] = tr('Fatture eliminate!');
+			}else{
+				$_SESSION['warnings'][] = tr('Procedura in fase di sviluppo. Nessuna modifica apportata.');
+			}
+			
         break;
 }
 
 return [
-    'delete-bulk' => tr('Elimina selezionati'),
+	
+	'delete-bulk' => tr('Elimina selezionati'),
 
     'export-bulk' => [
         'text' => tr('Esporta stampe'),

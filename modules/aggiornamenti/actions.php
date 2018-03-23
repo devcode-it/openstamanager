@@ -123,26 +123,36 @@ switch (post('op')) {
 
     case 'sortwidget':
         $id_module = post('id_module');
+        $id_record = post('id_record');
         $location = post('location');
-        $class = post('class');
+        //$class = post('class');
 
-        $ids = explode(',', post('ids'));
+        (empty($id_record)) ? $location = 'controller_'.$location : $location = 'editor_'.$location;
 
-        for ($i = 0; $i < count($ids); ++$i) {
-            $id = explode('_', $ids[$i]);
-            $dbo->query('UPDATE zz_widgets SET `order`='.prepare($i).', class='.prepare($class).' WHERE id='.prepare($id[1]).' AND location='.prepare($location).' AND id_module='.prepare($id_module));
+        $rs = $dbo->fetchArray('SELECT CONCAT(\'widget_\',id) AS id FROM zz_widgets WHERE enabled = 1 AND location = '.prepare($location).' AND id_module = '.prepare($id_module).' ORDER BY `order` ASC');
+        
+        if ($_POST['ids'] != implode(',', array_column($rs, 'id'))) {
+
+            $ids = explode(',', $_POST['ids']);
+
+            for ($i = 0; $i < count($ids); ++$i) {
+                $id = explode('_', $ids[$i]);
+                $dbo->query('UPDATE zz_widgets SET `order`='.prepare($i).' WHERE id='.prepare($id[1]));
+            }
+            $_SESSION['infos'][] = tr('Posizioni widgets aggiornate!');
         }
-
         break;
 
     case 'updatewidget':
-        $class = post('class');
-
         $id_module = post('id_module');
+        $id_record = post('id_record');
         $location = post('location');
+        $class = post('class');
         $id = explode('_', post('id'));
+        (empty($id_record)) ? $location = 'controller_'.$location : $location = 'editor_'.$location;
 
-        $dbo->query('UPDATE zz_widgets SET location='.prepare($location).', class='.prepare($class).' WHERE id='.prepare($id[1]).' AND id_module='.prepare($id_module));
+        if (!empty($class))
+         $dbo->query('UPDATE zz_widgets SET class='.prepare($class).' WHERE id='.prepare($id[1]));
 
         break;
 }

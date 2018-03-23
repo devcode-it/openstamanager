@@ -77,7 +77,11 @@ class Prints
         $result = [];
 
         foreach ((array) self::$modules[$module_id] as $value) {
-            $result[] = self::get($value);
+            $print = self::get($value);
+
+            if (!empty($print['is_record'])) {
+                $result[] = $print;
+            }
         }
 
         return $result;

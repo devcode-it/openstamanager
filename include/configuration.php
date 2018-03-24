@@ -401,7 +401,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     echo '
 
                         <div class="row">
-                            <div class="">
+                            <div class="col-md-12">
                                 <p>'.tr('Le seguenti cartelle devono risultare scrivibili da parte del gestionale').':</p>
                                 <div class="list-group">';
     $dirs = [

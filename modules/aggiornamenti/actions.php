@@ -39,8 +39,10 @@ switch (post('op')) {
 
     case 'disable':
         $dbo->query('UPDATE zz_modules SET enabled=0 WHERE id='.prepare($id));
+
         $rs = $dbo->fetchArray('SELECT id, name FROM zz_modules WHERE id='.prepare($id));
         $modulo = $rs[0]['name'];
+
         $_SESSION['infos'][] = tr('Modulo _MODULE_ disabilitato!', [
             '_MODULE_' => '"'.$modulo.'"',
         ]);
@@ -49,8 +51,10 @@ switch (post('op')) {
 
     case 'enable':
         $dbo->query('UPDATE zz_modules SET enabled=1 WHERE id='.prepare($id));
+
         $rs = $dbo->fetchArray('SELECT id, name FROM zz_modules WHERE id='.prepare($id));
         $modulo = $rs[0]['name'];
+
         $_SESSION['infos'][] = tr('Modulo _MODULE_ abilitato!', [
             '_MODULE_' => '"'.$modulo.'"',
         ]);
@@ -59,8 +63,10 @@ switch (post('op')) {
 
     case 'disable_widget':
         $dbo->query('UPDATE zz_widgets SET enabled=0 WHERE id='.prepare($id));
+
         $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
         $widget = $rs[0]['name'];
+
         $_SESSION['infos'][] = tr('Widget _WIDGET_ disabilitato!', [
             '_WIDGET_' => '"'.$widget.'"',
         ]);
@@ -69,8 +75,10 @@ switch (post('op')) {
 
     case 'enable_widget':
         $dbo->query('UPDATE zz_widgets SET enabled=1 WHERE id='.prepare($id));
+
         $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
         $widget = $rs[0]['name'];
+
         $_SESSION['infos'][] = tr('Widget _WIDGET_ abilitato!', [
             '_WIDGET_' => '"'.$widget.'"',
         ]);
@@ -79,8 +87,10 @@ switch (post('op')) {
 
     case 'change_position_widget_top':
         $dbo->query("UPDATE zz_widgets SET location='controller_top' WHERE id=".prepare($id));
+
         $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
         $widget = $rs[0]['name'];
+
         $_SESSION['infos'][] = tr('Posizione del widget _WIDGET_ aggiornata!', [
             '_WIDGET_' => '"'.$widget.'"',
         ]);
@@ -89,8 +99,10 @@ switch (post('op')) {
 
     case 'change_position_widget_right':
         $dbo->query("UPDATE zz_widgets SET location='controller_right' WHERE id=".prepare($id));
+
         $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
         $widget = $rs[0]['name'];
+
         $_SESSION['infos'][] = tr('Posizione del widget _WIDGET_ aggiornata!', [
             '_WIDGET_' => '"'.$widget.'"',
         ]);
@@ -99,7 +111,6 @@ switch (post('op')) {
 
     // Ordinamento moduli di primo livello
     case 'sortmodules':
-
         $rs = $dbo->fetchArray('SELECT id FROM zz_modules WHERE enabled = 1 AND parent IS NULL ORDER BY `order` ASC');
 
         if ($_POST['ids'] != implode(',', array_column($rs, 'id'))) {
@@ -107,13 +118,6 @@ switch (post('op')) {
 
             for ($i = 0; $i < count($ids); ++$i) {
                 $dbo->query('UPDATE zz_modules SET `order`='.prepare($i).' WHERE id='.prepare($ids[$i]));
-
-                /*$rs = $dbo->fetchArray('SELECT id, name FROM zz_modules WHERE id='.prepare($ids[$i]));
-    			$voce = $rs[0]['name'];
-
-    			$_SESSION['infos'][] = tr('Posizione della voce _VOCE_ aggiornata!', [
-    					'_VOCE_' => '"'.$voce.'"',
-    			]);*/
             }
 
             $_SESSION['infos'][] = tr('Posizione voci di  menù aggiornate!');
@@ -125,20 +129,19 @@ switch (post('op')) {
         $id_module = post('id_module');
         $id_record = post('id_record');
         $location = post('location');
-        //$class = post('class');
 
-        (empty($id_record)) ? $location = 'controller_'.$location : $location = 'editor_'.$location;
+        $location = empty($id_record) ? 'controller_'.$location : 'editor_'.$location;
 
-        $rs = $dbo->fetchArray('SELECT CONCAT(\'widget_\',id) AS id FROM zz_widgets WHERE enabled = 1 AND location = '.prepare($location).' AND id_module = '.prepare($id_module).' ORDER BY `order` ASC');
-        
+        $rs = $dbo->fetchArray("SELECT CONCAT('widget_', id) AS id FROM zz_widgets WHERE enabled = 1 AND location = ".prepare($location).' AND id_module = '.prepare($id_module).' ORDER BY `order` ASC');
+
         if ($_POST['ids'] != implode(',', array_column($rs, 'id'))) {
-
             $ids = explode(',', $_POST['ids']);
 
             for ($i = 0; $i < count($ids); ++$i) {
                 $id = explode('_', $ids[$i]);
                 $dbo->query('UPDATE zz_widgets SET `order`='.prepare($i).' WHERE id='.prepare($id[1]));
             }
+
             $_SESSION['infos'][] = tr('Posizioni widgets aggiornate!');
         }
         break;
@@ -149,10 +152,12 @@ switch (post('op')) {
         $location = post('location');
         $class = post('class');
         $id = explode('_', post('id'));
-        (empty($id_record)) ? $location = 'controller_'.$location : $location = 'editor_'.$location;
 
-        if (!empty($class))
-         $dbo->query('UPDATE zz_widgets SET class='.prepare($class).' WHERE id='.prepare($id[1]));
+        $location = empty($id_record) ? 'controller_'.$location : 'editor_'.$location;
+
+        if (!empty($class)) {
+            $dbo->query('UPDATE zz_widgets SET class='.prepare($class).' WHERE id='.prepare($id[1]));
+        }
 
         break;
 }

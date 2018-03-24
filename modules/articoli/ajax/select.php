@@ -78,7 +78,7 @@ switch ($resource) {
         $where[] = 'idarticolo='.prepare($superselect['idarticolo']);
 
         foreach ($elements as $element) {
-            $filter[] = 'lotto='.prepare($element).'';
+            $filter[] = 'lotto='.prepare($element);
         }
 
         if (!empty($search)) {
@@ -96,7 +96,7 @@ switch ($resource) {
         $where[] = 'lotto='.prepare($superselect['lotto']);
 
         foreach ($elements as $element) {
-            $filter[] = 'serial='.prepare($element).'';
+            $filter[] = 'serial='.prepare($element);
         }
         if (!empty($search)) {
             $search_fields[] = 'serial LIKE '.prepare('%'.$search.'%');
@@ -114,7 +114,7 @@ switch ($resource) {
         $where[] = 'serial='.prepare($superselect['serial']);
 
         foreach ($elements as $element) {
-            $filter[] = 'altro='.prepare($element).'';
+            $filter[] = 'altro='.prepare($element);
         }
         if (!empty($search)) {
             $search_fields[] = 'altro LIKE '.prepare('%'.$search.'%');
@@ -159,7 +159,7 @@ switch ($resource) {
         $query = 'SELECT valore AS id, valore AS descrizione FROM mg_unitamisura |where| ORDER BY valore';
 
         foreach ($elements as $element) {
-            $filter[] = 'valore='.prepare($element).'';
+            $filter[] = 'valore='.prepare($element);
         }
         if (!empty($search)) {
             $search_fields[] = 'valore LIKE '.prepare('%'.$search.'%');

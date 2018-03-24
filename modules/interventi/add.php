@@ -92,11 +92,11 @@ $idintervento_template = str_replace('#', '%', $idintervento_template);
 
 // Calcolo codice intervento successivo
 $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare($idintervento_template).' ORDER BY codice DESC LIMIT 0,1');
-$new_codice = get_next_code($rs[0]['codice'], 1, get_var('Formato codice intervento'));
+$new_codice = Util\Generator(get_var('Formato codice intervento'), $rs[0]['codice']);
 
 if (empty($new_codice)) {
     $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice LIKE '.prepare($idintervento_template).' ORDER BY codice DESC LIMIT 0,1');
-    $new_codice = get_next_code($rs[0]['codice'], 1, get_var('Formato codice intervento'));
+    $new_codice = Util\Generator(get_var('Formato codice intervento'), $rs[0]['codice']);
 }
 
 ?>
@@ -253,7 +253,7 @@ if (empty($new_codice)) {
         $("#orario_inizio").on("dp.change", function (e) {
             $("#orario_fine").data("DateTimePicker").minDate(e.date);
         });
-        
+
         // Refresh modulo dopo la chiusura di una pianificazione attività derivante dalle attività
         // da pianificare, altrimenti il promemoria non si vede più nella lista a destra
         if( $('input[name=idcontratto_riga]').val() != undefined ){

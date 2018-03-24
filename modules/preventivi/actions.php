@@ -23,19 +23,16 @@ switch (post('op')) {
         $idpagamento = $rs[0]['idpagamento'];
 
         // Codice preventivo: calcolo il successivo in base al formato specificato
-        // $rs = $dbo->fetchArray("SELECT numero FROM co_preventivi ORDER BY id DESC LIMIT 0,1");
-        // $numero = get_next_code( $rs[0]['numero'], 1, get_var("Formato codice preventivi") );
-
         $numeropreventivo_template = get_var('Formato codice preventivi');
         $numeropreventivo_template = str_replace('#', '%', $numeropreventivo_template);
 
         // Codice preventivo: calcolo il successivo in base al formato specificato
         $rs = $dbo->fetchArray('SELECT numero FROM co_preventivi WHERE numero=(SELECT MAX(CAST(numero AS SIGNED)) FROM co_preventivi) AND numero LIKE('.prepare($numeropreventivo_template).') ORDER BY numero DESC LIMIT 0,1');
-        $numero = get_next_code($rs[0]['numero'], 1, get_var('Formato codice preventivi'));
+        $numero = Util\Generator(get_var('Formato codice preventivi'), $rs[0]['numero']);
 
         if (!is_numeric($numero)) {
             $rs = $dbo->fetchArray('SELECT numero FROM co_preventivi WHERE numero LIKE('.prepare($numeropreventivo_template).') ORDER BY numero DESC LIMIT 0,1');
-            $numero = get_next_code($rs[0]['numero'], 1, get_var('Formato codice preventivi'));
+            $numero = Util\Generator(get_var('Formato codice preventivi'), $rs[0]['numero']);
         }
 
         $idiva = get_var('Iva predefinita');

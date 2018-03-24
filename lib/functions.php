@@ -338,56 +338,6 @@ function getOS()
 }
 
 /**
- * Legge una stringa presumibilmente codificata (tipo "8D001") e, se possibile, restituisce il codice successivo ("8D002").
- *
- * @param $str string
- *        	Codice di partenza da incrementare
- * @param $qty int
- *        	Unità da aggiungere alla parte numerica del codice (di default incrementa di 1)
- * @param $mask string
- *        	Specifica i caratteri da sostituire con numeri nel caso di generazione di codici complessi (esempio: se un codice attuale fosse 56/D e volessi calcolare il successivo (57/D), dovrei usare una maschera. La maschera in questo caso potrebbe essere ##/D. In questo modo so che i caratteri ## vanno sostituiti da numeri e il totale di caratteri sarà 2. Quindi il primo codice non sarebbe 1/D, ma 01/D)
- */
-function get_next_code($str, $qty = 1, $mask = '')
-{
-    // Se è il primo codice che sto inserendo sostituisco gli zeri al carattere jolly #
-    if ($str == '') {
-        $str = str_replace('#', '0', $mask);
-    }
-    // Se non uso una maschera, estraggo l'ultima parte numerica a destra della stringa e la incremento
-    if ($mask == '') {
-        preg_match("/(.*?)([\d]*$)/", $str, $m);
-        $first_part = $m[1];
-        $numeric_part = $m[2];
-        // Se non c'è una parte numerica ritorno stringa vuota
-        if ($numeric_part == '') {
-            return '';
-        } else {
-            $pad_length = strlen($numeric_part);
-            $second_part = str_pad(intval($numeric_part) + $qty, $pad_length, '0', STR_PAD_LEFT);
-
-            return $first_part.$second_part;
-        }
-    }
-    // Utilizzo della maschera
-    else {
-        // Calcolo prima parte (se c'è)
-        $pos1 = strpos($mask, '#');
-        $first_part = substr($str, 0, $pos1);
-        // Calcolo terza parte (se c'è)
-        $pos2 = strlen($str) - strpos(strrev($mask), '#');
-        $third_part = substr($str, $pos2, strlen($mask));
-        // Calcolo parte numerica
-        $numeric_part = substr($str, $pos1, $pos2);
-        $pad_length = intval(strlen($numeric_part));
-        $first_part_length = intval(strlen($first_part));
-        $third_part_length = intval(strlen($third_part));
-        $numeric_part = str_pad(intval($numeric_part) + intval($qty), $pad_length, '0', STR_PAD_LEFT);
-        // $numeric_part = str_pad( intval($numeric_part)+intval($qty), ( $pad_length - $third_part_length ), "0", STR_PAD_LEFT );
-        return $first_part.$numeric_part.$third_part;
-    }
-}
-
-/**
  * Verifica che il nome del file non sia già usato nella cartella inserita, nel qual caso aggiungo un suffisso.
  *
  * @param string $filename

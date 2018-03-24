@@ -104,12 +104,12 @@ switch (filter('op')) {
                                         $template = str_replace('#', '%', $formato);
 
                                         $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
-                                        $codice = get_next_code($rs[0]['codice'], 1, $formato);
+                                        $codice = Util\Generator($formato, $rs[0]['codice']);
 
                                         if (empty($codice)) {
                                             $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
 
-                                            $codice = get_next_code($rs[0]['codice'], 1, $formato);
+                                            $codice = Util\Generator($formato, $rs[0]['codice']);
                                         }
 
                                         // Creo intervento

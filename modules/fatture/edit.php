@@ -201,7 +201,7 @@ if ($dir == 'uscita') {
 $query2 = 'SELECT id FROM co_movimenti WHERE iddocumento='.$id_record.' AND primanota=1';
 $n2 = $dbo->fetchNum($query2);
 
-$query3 = 'SELECT SUM(da_pagare-pagato) AS differenza, SUM(da_pagare) FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.$id_record.'';
+$query3 = 'SELECT SUM(da_pagare-pagato) AS differenza, SUM(da_pagare) FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.$id_record;
 $rs3 = $dbo->fetchArray($query3);
 $differenza = $rs3[0]['differenza'];
 $da_pagare = $rs3[0]['da_pagare'];

@@ -64,7 +64,7 @@ switch (post('op')) {
                 .' costo_ore_tecnico=(SELECT costo_orario_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare(post('idtipointervento')).'), '
                 .' costo_km_tecnico=(SELECT costo_km_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare(post('idtipointervento')).'), '
                 .' costo_dirittochiamata_tecnico=(SELECT costo_diritto_chiamata_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare(post('idtipointervento')).') '
-                .' WHERE idtecnico='.prepare(post('idtecnico')).' AND idtipointervento='.prepare(post('idtipointervento')).'');
+                .' WHERE idtecnico='.prepare(post('idtecnico')).' AND idtipointervento='.prepare(post('idtipointervento')));
             if ($result) {
                 $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
             } else {

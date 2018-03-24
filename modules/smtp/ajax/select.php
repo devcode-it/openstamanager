@@ -7,7 +7,7 @@ switch ($resource) {
         $query = 'SELECT id AS id, name AS descrizione FROM zz_smtp |where| ORDER BY name';
 
         foreach ($elements as $element) {
-            $filter[] = 'id = '.prepare($element).'';
+            $filter[] = 'id = '.prepare($element);
         }
         if (!empty($search)) {
             $search_fields[] = 'name LIKE '.prepare('%'.$search.'%');

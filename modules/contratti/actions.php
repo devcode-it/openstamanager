@@ -16,7 +16,7 @@ switch (post('op')) {
 
         // Codice contratto: calcolo il successivo in base al formato specificato
         $rs = $dbo->fetchArray('SELECT numero FROM co_contratti ORDER BY id DESC LIMIT 0,1');
-        $numero = get_next_code($rs[0]['numero'], 1, get_var('Formato codice contratti'));
+        $numero = Util\Generator(get_var('Formato codice contratti'), $rs[0]['numero']);
 
         // Uso il tipo di pagamento specificato in anagrafica se c'è, altrimenti quello di default
         $rsa = $dbo->fetchArray('SELECT idpagamento_vendite AS idpagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));

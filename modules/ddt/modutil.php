@@ -37,7 +37,6 @@ function get_new_numerosecondarioddt($data)
     }
 
     if ($formato_numero_secondario != '' && $dir == 'entrata') {
-        //$numero_esterno = get_next_code($numero_secondario, 1, $formato_numero_secondario);
         $numero_esterno = Util\Generator::generate($formato_numero_secondario, $numero_secondario);
     } else {
         $numero_esterno = '';

@@ -29,17 +29,7 @@ function get_new_numerofattura($data)
 
         $rs_ultima_fattura = $dbo->fetchArray($query);
 
-        //$numero = get_next_code( $rs_ultima_fattura[0]['numero'], 1, $maschera );
         $numero = Util\Generator::generate($maschera, $rs_ultima_fattura[0]['numero']);
-
-        // sostituisco anno nella maschera
-        $anno = substr(date('Y', strtotime($data)), -strlen($m2[0])); // nel caso ci fosse YY
-        $numero = str_replace($m2[0], $anno, $numero);
-
-    /*echo $numero;
-    echo $maschera;
-    echo $query;
-    exit;*/
     } else {
         $query = "SELECT IFNULL(MAX(numero),'0') AS max_numerofattura FROM co_documenti WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data))).' AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir = '.prepare($dir).') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0, 1';
         $rs = $dbo->fetchArray($query);
@@ -82,19 +72,7 @@ function get_new_numerosecondariofattura($data)
 
     $rs_ultima_fattura = $dbo->fetchArray($query);
 
-    //$numero_esterno = get_next_code( $rs_ultima_fattura[0]['numero_esterno'], 1, $maschera );
     $numero_esterno = Util\Generator::generate($maschera, $rs_ultima_fattura[0]['numero_esterno']);
-
-    /*echo $id_segment."<br>";
-    echo $query."<br>";
-    echo  $rs_ultima_fattura[0]['numero_esterno']."<br>";
-    echo $maschera."<br>";
-    echo $numero_esterno."<br>";
-    exit;*/
-
-    // sostituisco anno nella maschera
-    $anno = substr(date('Y', strtotime($data)), -strlen($m2[0])); // nel caso ci fosse YY
-    $numero_esterno = str_replace($m2[0], $anno, $numero_esterno);
 
     return $numero_esterno;
 }

@@ -159,7 +159,7 @@ if (!empty($rs2)) {
             <div class="panel panel-'.($same ? 'default' : 'primary').'">
                 <div class="panel-heading'.($same ? ' mini' : '').'">
                     <h4 class="panel-title'.($same ? ' mini' : '').'">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse_'.$j.'">'.($same ? '<small>' : '').''.$nome_componente.' ('.$statocomponente.')'.($same ? '</small>' : '').'</a>
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse_'.$j.'">'.($same ? '<small>' : '').$nome_componente.' ('.$statocomponente.')'.($same ? '</small>' : '').'</a>
                     </h4>
                 </div>';
 

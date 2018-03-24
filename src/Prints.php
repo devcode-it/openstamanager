@@ -176,6 +176,8 @@ class Prints
 
         $docroot = DOCROOT;
 
+        $user = Auth::user();
+
         $_GET[$infos['previous']] = $id_record;
         ${$infos['previous']} = $id_record;
         $ptype = $infos['directory'];
@@ -230,6 +232,8 @@ class Prints
         $dbo = $database;
 
         $docroot = DOCROOT;
+
+        $user = Auth::user();
 
         // Impostazioni di default
         if (file_exists(DOCROOT.'/templates/base/custom/settings.php')) {

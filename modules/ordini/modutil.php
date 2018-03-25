@@ -37,7 +37,7 @@ function get_new_numerosecondarioordine($data)
     }
 
     if ($formato_numero_secondario != '' && $dir == 'entrata') {
-        $numero_esterno = Util\Generator($formato_numero_secondario, $numero_secondario);
+        $numero_esterno = Util\Generator::generate($formato_numero_secondario, $numero_secondario);
     } else {
         $numero_esterno = '';
     }

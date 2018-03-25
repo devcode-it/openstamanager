@@ -202,7 +202,7 @@ switch (post('op')) {
         // Controlli sul codice
         $count = -1;
         do {
-            $new_codice = ($count < 0) ? $codice : Util\Generator(get_var('Formato codice intervento'), $codice);
+            $new_codice = ($count < 0) ? $codice : Util\Generator::generate(get_var('Formato codice intervento'), $codice);
             $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice='.prepare($new_codice));
             ++$count;
         } while (!empty($rs) || empty($new_codice));
@@ -220,12 +220,12 @@ switch (post('op')) {
         $template = str_replace('#', '%', $formato);
 
         $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
-        $codice = Util\Generator($formato, $rs[0]['codice']);
+        $codice = Util\Generator::generate($formato, $rs[0]['codice']);
 
         if (empty($codice)) {
             $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
 
-            $codice = Util\Generator($formato, $rs[0]['codice']);
+            $codice = Util\Generator::generate($formato, $rs[0]['codice']);
         }
 
         // Informazioni di base

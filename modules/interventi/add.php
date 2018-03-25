@@ -92,11 +92,11 @@ $idintervento_template = str_replace('#', '%', $idintervento_template);
 
 // Calcolo codice intervento successivo
 $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare($idintervento_template).' ORDER BY codice DESC LIMIT 0,1');
-$new_codice = Util\Generator(get_var('Formato codice intervento'), $rs[0]['codice']);
+$new_codice = Util\Generator::generate(get_var('Formato codice intervento'), $rs[0]['codice']);
 
 if (empty($new_codice)) {
     $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice LIKE '.prepare($idintervento_template).' ORDER BY codice DESC LIMIT 0,1');
-    $new_codice = Util\Generator(get_var('Formato codice intervento'), $rs[0]['codice']);
+    $new_codice = Util\Generator::generate(get_var('Formato codice intervento'), $rs[0]['codice']);
 }
 
 ?>

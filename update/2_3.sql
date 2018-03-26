@@ -700,10 +700,10 @@ UPDATE `my_impianto_componenti` SET `idsostituto` = NULL WHERE `idsostituto` = 0
 ALTER TABLE `my_impianto_componenti` ADD FOREIGN KEY (`idsostituto`) REFERENCES `my_impianto_componenti`(`id`) ON DELETE CASCADE;
 
 -- Adeguamento degli id di zz_files per interventi
-UPDATE `zz_files` SET `externalid` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `externalid`);
+UPDATE `zz_files` SET `externalid` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `externalid`) WHERE module = 'interventi' ;
 
 -- Adeguamento degli id di zz_files per impianti
-UPDATE `zz_files` SET `externalid` = (SELECT `id` FROM `my_impianti` WHERE `my_impianti`.`matricola` = `externalid`);
+UPDATE `zz_files` SET `externalid` = (SELECT `id` FROM `my_impianti` WHERE `my_impianti`.`matricola` = `externalid`) WHERE module = 'myimpianti' ;
 
 -- Adeguamento dei contenuti di zz_files
 ALTER TABLE `zz_files` CHANGE `externalid` `id_record` int(11) NOT NULL, ADD `id_module` int(11) NOT NULL AFTER `filename`, ADD `original` varchar(255) NOT NULL AFTER `filename`;

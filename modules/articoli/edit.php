@@ -69,6 +69,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 				</div>
 
 				<?php
+                ($records[0]['serial']>0) ? $records[0]['abilita_serial'] = 1 : $records[0]['abilita_serial'] = $records[0]['abilita_serial'];
                 if (empty($records[0]['abilita_serial'])) {
                     $plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Serial'");
                     echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
@@ -76,7 +77,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
                 ?>
 
 				  <div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "", "placeholder": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "", "placeholder": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "extra": "<?php echo ($records[0]['serial']>0) ? 'readonly' : ''; ?>" ]}
                 </div>
 
 

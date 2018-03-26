@@ -706,7 +706,15 @@ ALTER TABLE `zz_files` CHANGE `externalid` `id_record` int(11) NOT NULL, ADD `id
 UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di vendita') WHERE `module`= 'fatture' AND `id_record` IN (SELECT `id` FROM `co_documenti` WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `dir` = 'entrata'));
 UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di acquisto') WHERE `module`= 'fatture' AND `id_record` IN (SELECT `id` FROM `co_documenti` WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `dir` = 'uscita'));
 
--- Adeguamento generico di zz_files
+-- Adeguamento dei ddt (zz_files)
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Ddt di vendita') WHERE `module`= 'ddt' AND `id_record` IN (SELECT `id` FROM `dt_ddt` WHERE `idtipoddt` IN (SELECT `id` FROM `dt_tipiddt` WHERE `dir` = 'entrata'));
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Ddt di acquisto') WHERE `module`= 'ddt' AND `id_record` IN (SELECT `id` FROM `dt_ddt` WHERE `idtipoddt` IN (SELECT `id` FROM `dt_tipiddt` WHERE `dir` = 'uscita'));
+
+-- Adeguamento degli ordini (zz_files)
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Ordini cliente') WHERE `module`= 'ordini' AND `id_record` IN (SELECT `id` FROM `or_ordini` WHERE `idtipoordine` IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = 'entrata'));
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Ordini fornitore') WHERE `module`= 'ordini' AND `id_record` IN (SELECT `id` FROM `or_ordini` WHERE `idtipoordine` IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = 'uscita'));
+
+-- Adeguamento resto dei moduli (zz_files)
 UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`directory` = `zz_files`.`module`) WHERE `id_module` = 0;
 ALTER TABLE `zz_files` DROP `module`;
 

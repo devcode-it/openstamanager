@@ -25,7 +25,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 
 				<div class="col-md-4">
 
-					{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "required": 1, "value": "$codice$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "class":"alphanumeric-mask", "required": 1, "value": "$codice$" ]}
 					<br>
 					{[ "type": "checkbox", "label": "<?php echo tr("Seleziona per rendere visibile l'articolo"); ?>", "name": "attivo", "value": "$attivo$", "help": "", "placeholder": "<?php echo tr('ATTIVO'); ?>" ]}
 

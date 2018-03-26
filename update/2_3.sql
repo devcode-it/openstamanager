@@ -707,7 +707,7 @@ UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_mod
 UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di acquisto') WHERE `module`= 'fatture' AND `id_record` IN (SELECT `id` FROM `co_documenti` WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `dir` = 'uscita'));
 
 -- Adeguamento generico di zz_files
-UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`directory` = `zz_files`.`module`) WHERE `id_module` IS NULL;
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`directory` = `zz_files`.`module`);
 ALTER TABLE `zz_files` DROP `module`;
 
 -- Fix del widget 'Tutte le anagrafiche'

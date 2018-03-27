@@ -71,7 +71,7 @@
                 ?>
 				
 				<div class="col-md-3">
-							{[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "required": 1, "class": "alphanumeric-mask", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YY", "extra": "<?php echo ($tot > 0) ? 'readonly' : ''; ?>" ]}
+							{[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "required": 0, "class": "alphanumeric-mask", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YY", "extra": "<?php echo ($tot > 0) ? 'readonly' : ''; ?>" ]}
 				</div>
 			</div>
 			

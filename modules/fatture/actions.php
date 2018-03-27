@@ -1036,6 +1036,36 @@ switch (post('op')) {
         $_SESSION['infos'][] = tr('Creata una nuova fattura!');
 
         break;
+        
+    // Creazione fattura da contratto
+    case 'fattura_da_contratto':
+        $idcontratto = post('id_record');
+        $data = date('Y-m-d');
+        $numero = get_new_numerofattura($data);
+        $numero_esterno = get_new_numerosecondariofattura($data);
+        $tipo_documento = 'Fattura immediata di vendita';
+        
+        //Info contratto
+        $rs_contratto = $dbo->fetchArray("SELECT * FROM co_contratti WHERE id=".prepare($idcontratto));
+        $idanagrafica = $rs_contratto[0]['idanagrafica'];
+        $idpagamento = $rs_contratto[0]['idpagamento'];
+        $idconto = get_var("Conto predefinito fatture di vendita");
+        $rs_segment = $dbo->fetchArray("SELECT * FROM zz_segments WHERE id_module=".prepare($id_module)." AND predefined='1'");
+        $id_segment = $rs_segment[0]['id'];
+        
+        // Creazione nuova fattura
+        $dbo->query('INSERT INTO co_documenti(numero, numero_esterno, data, idanagrafica, idtipodocumento, idstatodocumento, idpagamento, idconto, id_segment) VALUES('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($data).', '.prepare($idanagrafica).', (SELECT id FROM co_tipidocumento WHERE descrizione='.prepare($tipo_documento)."), (SELECT id FROM co_statidocumento WHERE descrizione='Bozza'), ".prepare($idpagamento).', '.prepare($idconto).','.prepare($id_segment).')');
+        $id_record = $dbo->lastInsertedID();
+        
+        //Righe contratto
+        $rs_righe = $dbo->fetchArray("SELECT * FROM co_righe2_contratti WHERE idcontratto=".prepare($idcontratto));
+        
+        for($i=0;$i<sizeof($rs_righe);$i++){
+            $dbo->query("INSERT INTO co_righe_documenti(iddocumento, idcontratto, is_descrizione, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, sconto_globale, idiva, desc_iva, iva, iva_indetraibile, um, qta, `order`) values(".prepare($id_record).", ".prepare($idcontratto).", ".prepare($rs_righe[$i]['is_descrizione']).", ".prepare($rs_righe[$i]['descrizione']).", ".prepare($rs_righe[$i]['subtotale']).", ".prepare($rs_righe[$i]['sconto']).", ".prepare($rs_righe[$i]['sconto_unitario']).", ".prepare($rs_righe[$i]['tipo_sconto']).", ".prepare($rs_righe[$i]['sconto_globale']).", ".prepare($rs_righe[$i]['idiva']).", ".prepare($rs_righe[$i]['desc_iva']).", ".prepare($rs_righe[$i]['iva']).", ".prepare($rs_righe[$i]['iva_indetraibile']).", ".prepare($rs_righe[$i]['um']).", ".prepare($rs_righe[$i]['qta']).", ".prepare($rs_righe[$i]['order']).")");
+        }
+        
+        $_SESSION['infos'][] = tr('Creata una nuova fattura!');
+        break;
 
     // aggiungi righe da ddt
     case 'add_ddt':

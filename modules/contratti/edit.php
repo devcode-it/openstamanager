@@ -338,6 +338,12 @@ if (!empty($records[0]['idcontratto_prev'])) {
 }
 ?>
 
+<form action='<?=$rootdir?>/editor.php?id_module=<?=Modules::get('Fatture di vendita')['id']?>' method='post' id='form_creafattura'>
+	<input type="hidden" name="backto" value="record-edit">
+	<input type='hidden' name='op' value='fattura_da_contratto'>
+	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
+</form>
+
 <script type="text/javascript">
     $(document).ready(function(){
         $('#data_accettazione').on("dp.change", function(){
@@ -360,6 +366,10 @@ if (!empty($records[0]['idcontratto_prev'])) {
         $("#data_accettazione").trigger("dp.change");
         $("#data_rifiuto").trigger("dp.change");
     });
+	
+	function fattura_da_contratto(){
+		$('#form_creafattura').submit();
+	}
 </script>
 
 

@@ -28,25 +28,26 @@ $api = BASEURL.'/api/?token='.$token;
 
 echo '
 <div class="box">
-    <div class="box-header text-center">
-        <h3 class="box-title">'.$user['username'].'</h3>
+    <div class="box-header">
+        <h3 class="box-title">'.tr('Account').'</h3>
     </div>
 
     <div class="box-body">';
 
 // Cambio password e nome utente
 echo '
-        <div>
-            <p>'.tr('Gruppo').': '.$user['gruppo'].'</p>';
+        <div>'.
+            '<p>'.tr('Utente').': <b>'.$user['username'].'</b></p>'.
+            '<p>'.tr('Gruppo').': <b>'.$user['gruppo'].'</b></p>';
 
 if (!empty($anagrafica)) {
     echo '
-            <p>'.tr('Anagrafica associata').': '.$anagrafica['ragione_sociale'].'</p>';
+            <p>'.tr('Anagrafica associata').': <b>'.$anagrafica['ragione_sociale'].'</b></p>';
 }
 
 echo '
 
-            <a class="btn btn-info btn-block" data-href="'.$rootdir.'/modules/'.Modules::get('Utenti e permessi')['directory'].'/user.php" class="text-warning tip" data-toggle="modal" data-target="#bs-popup" data-title="Cambia password">
+            <a class="btn btn-info col-md-4" data-href="'.$rootdir.'/modules/'.Modules::get('Utenti e permessi')['directory'].'/user.php" class="text-warning tip" data-toggle="modal" data-target="#bs-popup" data-title="Cambia password">
                 <i class="fa fa-unlock-alt"></i> '.tr('Cambia password').'
             </a>
         </div>';
@@ -65,9 +66,9 @@ echo '
             </div>
 
             <div class="box-body">
-                <p>'.tr("Puoi utilizzare il token per accedere all'API del gestionale e per visualizzare il calendario su applicazioni esterne").'</p>
+                <p>'.tr("Puoi utilizzare il token per accedere all'API del gestionale e per visualizzare il calendario su applicazioni esterne").'.</p>
 
-                <p>'.tr('Token personale').': '.$token.'</p>
+                <p>'.tr('Token personale').': <b>'.$token.'</b></p>
                 <p>'.tr("URL dell'API").': <a href="'.$api.'" target="_blank">'.$api.'</a></p>
 
             </div>
@@ -86,8 +87,12 @@ echo '
             <div class="box-body">
             <p>'.tr("Per accedere al calendario eventi attraverso l'API, accedi al seguente link").':</p>
             <a href="'.$link.'" target="_blank">'.$link.'</a>
+            </div>
 
-            <h4>'.tr('Configurazione').'</h4>
+            <div class="box-header">
+                <h3 class="box-title">'.tr('Configurazione').'</h3>
+            </div>
+            <div class="box-body">
             <div>
                 <p>'.tr("Per _ANDROID_, scarica un'applicazione dedicata dal _LINK_", [
                     '_ANDROID_' => '<b>'.tr('Android').'</b>',
@@ -98,7 +103,7 @@ echo '
                     '_APPLE_' => '<b>'.tr('Apple').'</b>',
                 ]).'.</p>
 
-                <p>'.tr('Per _PC_ e altri client di posta, considerare le relative funzionalità o eventuali plugin delle relative applicazioni', [
+                <p>'.tr('Per _PC_ e altri client di posta, considerare le relative funzionalità o eventuali plugin', [
                     '_PC_' => '<b>'.tr('PC').'</b>',
                 ]).'.</p>
             </div>

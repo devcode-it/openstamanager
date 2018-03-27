@@ -304,3 +304,6 @@ ALTER TABLE `co_documenti` CHANGE `numero` `numero` VARCHAR(100) NOT NULL;
 
 -- Disabilito di default filtro tecnici che altrimento vedono solo le anagrafiche per i quali hanno eseguito un intervento (issue #190)
 UPDATE `zz_group_module` SET `enabled` = '0' WHERE `zz_group_module`.`id` = 2;
+
+-- Disattivazione funzionalità in attesa di approfondire alcuni problemi di rallentamento e ottimizzazione performance
+UPDATE `zz_settings` SET `valore` = '0' WHERE `nome` = 'Attiva notifica di presenza utenti sul record';

@@ -77,7 +77,11 @@ class Prints
         $result = [];
 
         foreach ((array) self::$modules[$module_id] as $value) {
-            $result[] = self::get($value);
+            $print = self::get($value);
+
+            if (!empty($print['is_record'])) {
+                $result[] = $print;
+            }
         }
 
         return $result;
@@ -172,6 +176,8 @@ class Prints
 
         $docroot = DOCROOT;
 
+        $user = Auth::user();
+
         $_GET[$infos['previous']] = $id_record;
         ${$infos['previous']} = $id_record;
         $ptype = $infos['directory'];
@@ -226,6 +232,8 @@ class Prints
         $dbo = $database;
 
         $docroot = DOCROOT;
+
+        $user = Auth::user();
 
         // Impostazioni di default
         if (file_exists(DOCROOT.'/templates/base/custom/settings.php')) {

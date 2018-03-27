@@ -33,7 +33,7 @@ echo '
 // Note
 echo '
     <div class="row">
-        <div class="">
+        <div class="col-md-12">
             {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "note", "value": "Rata '.$n_rata.' del contratto numero '.$numero.', zona '.$zona.'", "extra": "" ]}
         </div>
     </div>';

@@ -56,7 +56,9 @@ $custom = [
     'vettore' => $records[0]['vettore'],
 ];
 
+/*
 // Controllo sui permessi
-if ($id_cliente != Auth::user()['idanagrafica'] && !Auth::admin()) {
+if ($user['gruppo'] == 'Cliente' && $id_cliente != $user['idanagrafica']) {
     die(tr('Non hai i permessi per questa stampa!'));
 }
+*/

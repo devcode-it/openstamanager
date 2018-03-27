@@ -71,10 +71,11 @@ $custom = [
     'vettore' => $records[0]['vettore'],
 ];
 
+/*
 // Accesso solo a:
-// - cliente se è impostato l'idanagrafica di un Cliente
 // - utente qualsiasi con permessi almeno in lettura sul modulo
-// - admin
-if ((!empty(Auth::user()['idanagrafica']) && $id_cliente != Auth::user()['idanagrafica'] && !Auth::admin()) || Modules::getPermission($module_name) == '-') {
+// - cliente se è impostato l'idanagrafica di un Cliente
+if ($user['gruppo'] == 'Cliente' && $id_cliente != $user['idanagrafica']) {
     die(tr('Non hai i permessi per questa stampa!'));
 }
+*/

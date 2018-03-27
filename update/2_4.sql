@@ -1,3 +1,13 @@
+-- Lo stato 'FAT' è da considerarsi completato
+UPDATE `in_statiintervento` SET `completato` = '1' WHERE `in_statiintervento`.`idstatointervento` = 'FAT';
+
+-- Nuovi campi per iva su righe 'Materiale utilizzato' in interventi
+ALTER TABLE `mg_articoli_interventi` CHANGE `idiva_vendita` `idiva` INT(11) NOT NULL;
+ALTER TABLE `mg_articoli_interventi` ADD `desc_iva` VARCHAR(255) NOT NULL AFTER `idiva`, ADD `iva` DECIMAL(12,4) NOT NULL AFTER `desc_iva`;
+
+-- Nuovi campi per iva su righe 'Altre spese' in interventi
+ALTER TABLE `in_righe_interventi` ADD `idiva` INT(11) NOT NULL AFTER `prezzo_acquisto`, ADD `desc_iva` VARCHAR(255) NOT NULL AFTER `idiva`, ADD `iva` DECIMAL(12,4) NOT NULL AFTER `desc_iva`;
+
 --
 -- Struttura della tabella `zz_prints`
 --
@@ -5,6 +15,7 @@
 CREATE TABLE IF NOT EXISTS `zz_prints` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_module` int(11) NOT NULL,
+  `is_record` BOOLEAN NOT NULL DEFAULT 1,
   `name` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
   `directory` varchar(50) NOT NULL,
@@ -24,13 +35,15 @@ CREATE TABLE IF NOT EXISTS `zz_prints` (
 -- Inserimento delle stampe di base
 INSERT INTO `zz_prints` (`id_module`, `name`, `directory`, `options`, `previous`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Fattura di vendita', 'fatture', '', 'iddocumento', 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Riepilogo intervento', 'riepilogo_interventi', '', '', 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Riepilogo interventi', 'riepilogo_interventi', '', '', 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Inventario magazzino', 'magazzino_inventario', '', '', 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Piano dei conti'), 'Mastrino', 'partitario_mastrino', '', 'idconto', 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'Scadenzario', 'scadenzario', '', '', 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stampe contabili'), 'Registro IVA', 'registro_iva', '', '', 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stampe contabili'), 'Fatturato', 'fatturato', '', '', 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stampe contabili'), 'Spesometro', 'spesometro', '', '', 1, 1);
+
+UPDATE `zz_prints` SET `is_record` = 0 WHERE `name` = 'Riepilogo interventi';
 
 -- Inserimento delle stampe con prezzo disabilitato
 INSERT INTO `zz_prints` (`id_module`, `name`, `directory`, `options`, `previous`, `enabled`, `default`) VALUES

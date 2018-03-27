@@ -2,8 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-// Decido la lunghezza minima della password, e la lunghezza minima del nome utente
-$min_length = 8;
+// Lunghezza minima della password
+$min_length_password = 8;
+// Lunghezza minima del nome utente (username)
 $min_length_username = 4;
 
 $self_edit = Modules::getPermission('Utenti e permessi') != 'rw' || (filter('id_utente') == null && filter('idgruppo') == null);
@@ -35,7 +36,7 @@ if (!empty($id_utente)) {
 echo '
 <form action="" method="post" id="link_form">
 	<input type="hidden" name="op" value="'.$op.'">
-	<input type="hidden" name="min_length" value="'.$min_length.'">
+	<input type="hidden" name="min_length" value="'.$min_length_password.'">
     <input type="hidden" name="min_length_username" value="'.$min_length_username.'">';
 
 if (!empty($id_utente)) {
@@ -91,7 +92,7 @@ echo '
 </form>
 
 <script type="text/javascript">
-	var min_length = '.$min_length.';
+	var min_length = '.$min_length_password.';
 	var min_length_username = '.$min_length_username.';
 	function do_submit(){
 		if( $("#password1").val() == "" || $("#password2").val() == "" )
@@ -100,7 +101,7 @@ echo '
 			alert("'.tr('Le password non coincidono').'.");
 		else if( $("#password1").val().length < min_length )
 			alert("'.tr('La password deve essere lunga minimo _MIN_ caratteri!', [
-                '_MIN_' => $min_length,
+                '_MIN_' => $min_length_password,
             ]).'");
 		else if( $("#username").val().length < min_length_username )
 			alert("'.tr("L'username deve essere lungo minimo _MIN_ caratteri!", [

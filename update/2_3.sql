@@ -699,6 +699,12 @@ ALTER TABLE `my_impianto_componenti` CHANGE `idsostituto` `idsostituto` int(11);
 UPDATE `my_impianto_componenti` SET `idsostituto` = NULL WHERE `idsostituto` = 0;
 ALTER TABLE `my_impianto_componenti` ADD FOREIGN KEY (`idsostituto`) REFERENCES `my_impianto_componenti`(`id`) ON DELETE CASCADE;
 
+-- Adeguamento degli id di zz_files per interventi
+UPDATE `zz_files` SET `externalid` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `externalid`) WHERE module = 'interventi' ;
+
+-- Adeguamento degli id di zz_files per impianti
+UPDATE `zz_files` SET `externalid` = (SELECT `id` FROM `my_impianti` WHERE `my_impianti`.`matricola` = `externalid`) WHERE module = 'myimpianti' ;
+
 -- Adeguamento dei contenuti di zz_files
 ALTER TABLE `zz_files` CHANGE `externalid` `id_record` int(11) NOT NULL, ADD `id_module` int(11) NOT NULL AFTER `filename`, ADD `original` varchar(255) NOT NULL AFTER `filename`;
 
@@ -706,8 +712,16 @@ ALTER TABLE `zz_files` CHANGE `externalid` `id_record` int(11) NOT NULL, ADD `id
 UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di vendita') WHERE `module`= 'fatture' AND `id_record` IN (SELECT `id` FROM `co_documenti` WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `dir` = 'entrata'));
 UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di acquisto') WHERE `module`= 'fatture' AND `id_record` IN (SELECT `id` FROM `co_documenti` WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `dir` = 'uscita'));
 
--- Adeguamento generico di zz_files
-UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`directory` = `zz_files`.`module`) WHERE `id_module` IS NULL;
+-- Adeguamento dei ddt (zz_files)
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Ddt di vendita') WHERE `module`= 'ddt' AND `id_record` IN (SELECT `id` FROM `dt_ddt` WHERE `idtipoddt` IN (SELECT `id` FROM `dt_tipiddt` WHERE `dir` = 'entrata'));
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Ddt di acquisto') WHERE `module`= 'ddt' AND `id_record` IN (SELECT `id` FROM `dt_ddt` WHERE `idtipoddt` IN (SELECT `id` FROM `dt_tipiddt` WHERE `dir` = 'uscita'));
+
+-- Adeguamento degli ordini (zz_files)
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Ordini cliente') WHERE `module`= 'ordini' AND `id_record` IN (SELECT `id` FROM `or_ordini` WHERE `idtipoordine` IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = 'entrata'));
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Ordini fornitore') WHERE `module`= 'ordini' AND `id_record` IN (SELECT `id` FROM `or_ordini` WHERE `idtipoordine` IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = 'uscita'));
+
+-- Adeguamento resto dei moduli (zz_files)
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`directory` = `zz_files`.`module`) WHERE `id_module` = 0;
 ALTER TABLE `zz_files` DROP `module`;
 
 -- Fix del widget 'Tutte le anagrafiche'

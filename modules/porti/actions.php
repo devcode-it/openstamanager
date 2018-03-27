@@ -44,17 +44,20 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $documenti = $dbo->fetchArray('SELECT id FROM dt_ddt WHERE idporto='.prepare($id_record).'
-UNION SELECT id FROM co_documenti WHERE idporto='.prepare($id_record).'
-UNION SELECT id FROM co_preventivi WHERE idporto='.prepare($id_record));
+        
+        $documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE idporto='.prepare($id_record).'
+                     UNION SELECT id FROM co_documenti WHERE idporto='.prepare($id_record).'
+                     UNION SELECT id FROM co_preventivi WHERE idporto='.prepare($id_record));
 
-        if (isset($id_record) && !empty($documenti)) {
+        if (isset($id_record) && empty($documenti)) {
             $dbo->query('DELETE FROM `dt_porto` WHERE `id`='.prepare($id_record));
             $_SESSION['infos'][] = tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'porto',
             ]);
         } else {
+
             $_SESSION['errors'][] = tr('Sono presenti dei documenti collegati a questo porto!');
+        
         }
 
         break;

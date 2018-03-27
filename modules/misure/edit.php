@@ -23,6 +23,24 @@ include_once __DIR__.'/../../core.php';
 
 </form>
 
+<?php
+$righe = $dbo->fetchNum('SELECT id FROM co_righe_documenti WHERE um='.prepare($records[0]['valore']).'
+			 UNION SELECT id FROM dt_righe_ddt WHERE um='.prepare($records[0]['valore']).'
+			 UNION SELECT id FROM or_righe_ordini WHERE um='.prepare($records[0]['valore']).'
+			 UNION SELECT id FROM co_righe2_contratti WHERE um='.prepare($records[0]['valore']).'
+			 UNION SELECT id FROM mg_articoli WHERE um='.prepare($records[0]['valore']).'
+			 UNION SELECT id FROM co_righe_preventivi WHERE um='.prepare($records[0]['valore']));
+
+if (!empty($righe)){
+echo '
+<div class="alert alert-danger">
+    '.tr('Ci sono _NUM_ righe collegate', [
+        '_NUM_' => count($righe),
+    ]).'.
+</div>';
+}
+?>
+
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>

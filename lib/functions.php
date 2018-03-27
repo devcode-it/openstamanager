@@ -407,7 +407,9 @@ function create_thumbnails($tmp, $filename, $dir)
 function get_client_ip()
 {
     $ipaddress = '';
-    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+    if (getHostByName(getHostName())){
+        $ipaddress = getHostByName(getHostName());
+    }else if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
         $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
     } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
         $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];

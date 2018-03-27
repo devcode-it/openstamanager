@@ -800,13 +800,17 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
 
     if (!empty($sconto[0]['sconto_globale'])) {
         if ($sconto[0]['tipo_sconto_globale'] == 'PRC') {
-            $rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS imponibile, SUM(iva) AS iva FROM (SELECT '.$tables['row'].'.subtotale, '.$tables['row'].'.sconto, '.$tables['row'].'.iva FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record).') AS t');
+			$rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS imponibile, SUM(iva) AS iva FROM (SELECT '.$tables['row'].'.subtotale, '.$tables['row'].'.sconto, '.$tables['row'].'.iva FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record).') AS t');
             $subtotale = $rs[0]['imponibile'];
             $iva += $rs[0]['iva'] / 100 * $sconto[0]['sconto_globale'];
             $subtotale = -$subtotale / 100 * $sconto[0]['sconto_globale'];
 
-            $descrizione = $descrizione.' '.Translator::numberToLocale($sconto[0]['sconto_globale']).'%';
+            $descrizione = $descrizione.' '.Translator::numberToLocale($sconto[0]['sconto_globale']).'%';	
         } else {
+			$rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS imponibile, SUM(iva) AS iva FROM (SELECT '.$tables['row'].'.subtotale, '.$tables['row'].'.sconto, '.$tables['row'].'.iva FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record).') AS t');
+            $subtotale = $rs[0]['imponibile'];
+			$iva += $sconto[0]['sconto_globale'] * $rs[0]['iva'] / $subtotale;
+			
             $subtotale = -$sconto[0]['sconto_globale'];
         }
 

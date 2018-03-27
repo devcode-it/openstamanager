@@ -55,9 +55,9 @@ echo '
 </div>';
 
 // Descrizione
-if (!empty($records[0]['descrizione'])) {
+if (!empty($records[0]['desc_contratto'])) {
     echo '
-<p>'.nl2br($records[0]['descrizione']).'</p>
+<p>'.nl2br($records[0]['desc_contratto']).'</p>
 <br>';
 }
 

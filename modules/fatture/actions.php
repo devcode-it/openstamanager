@@ -29,24 +29,35 @@ switch (post('op')) {
         if ($dir == 'entrata') {
             $numero_esterno = get_new_numerosecondariofattura($data);
             $idconto = get_var('Conto predefinito fatture di vendita');
+            $conto = 'vendite';
         } else {
             $numero_esterno = '';
             $idconto = get_var('Conto predefinito fatture di acquisto');
+            $conto = 'acquisti';
         }
 
         $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
 
         // Tipo di pagamento predefinito dall'anagrafica
-        $query = 'SELECT id FROM co_pagamenti WHERE id=(SELECT '.$campo.' AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')';
+        $query = 'SELECT id, (SELECT idbanca_'.$conto.' FROM an_anagrafiche WHERE idanagrafica = '.prepare($idanagrafica).') AS idbanca FROM co_pagamenti WHERE id = (SELECT '.$campo.' AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')';
         $rs = $dbo->fetchArray($query);
         $idpagamento = $rs[0]['id'];
+        $idbanca = $rs[0]['idbanca'];
 
         // Se la fattura è di vendita e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
         if ($dir == 'entrata' && $idpagamento == '') {
             $idpagamento = get_var('Tipo di pagamento predefinito');
         }
 
-        $query = 'INSERT INTO co_documenti (numero, numero_esterno, idanagrafica, idconto, idtipodocumento, idpagamento, data, idstatodocumento, idsede, id_segment) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idconto).', '.prepare($idtipodocumento).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza'), (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica=".prepare($idanagrafica).'),  '.$id_segment.' )';
+        // Se non è impostata la banca dell'anagrafica, uso quella del pagamento.
+        if (empty($idbanca)) {
+            // Banca predefinita del pagamento
+            $query = 'SELECT id FROM co_banche WHERE id_pianodeiconti3 = (SELECT idconto_'.$conto.' FROM co_pagamenti WHERE id = '.prepare($idpagamento).')';
+            $rs = $dbo->fetchArray($query);
+            $idbanca = $rs[0]['id'];
+        }
+
+        $query = 'INSERT INTO co_documenti (numero, numero_esterno, idanagrafica, idconto, idtipodocumento, idpagamento, idbanca, data, idstatodocumento, idsede, id_segment) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idconto).', '.prepare($idtipodocumento).', '.prepare($idpagamento).', '.prepare($idbanca).', '.prepare($data).", (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza'), (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica=".prepare($idanagrafica).'),  '.$id_segment.' )';
         $dbo->query($query);
         $id_record = $dbo->lastInsertedID();
 

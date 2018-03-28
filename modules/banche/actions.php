@@ -43,6 +43,11 @@ switch (filter('op')) {
             $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
         }
 
+
+        if (isAjaxRequest()) {
+            echo json_encode(['id' => $id_record, 'text' => $nome]);
+        }
+
         break;
 
     case 'delete':

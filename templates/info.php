@@ -14,7 +14,7 @@ if (empty($id_sede) || $id_sede == '-1') {
 $rsc = $dbo->fetchArray($queryc);
 
 // Lettura dati aziendali
-$rsf = $dbo->fetchArray("SELECT * FROM an_anagrafiche WHERE idanagrafica = (SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')");
+$rsf = $dbo->fetchArray("SELECT *, (SELECT iban FROM co_banche WHERE id IN (SELECT idbanca FROM co_documenti WHERE id = ".prepare($id_record)." ) ) AS codiceiban, (SELECT nome FROM co_banche WHERE id IN (SELECT idbanca FROM co_documenti WHERE id = ".prepare($id_record)." ) ) AS appoggiobancario, (SELECT bic FROM co_banche WHERE id IN (SELECT idbanca FROM co_documenti WHERE id = ".prepare($id_record)." ) ) AS bic FROM an_anagrafiche WHERE idanagrafica = (SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')");
 
 // Prefissi e contenuti del replace
 $replace = [

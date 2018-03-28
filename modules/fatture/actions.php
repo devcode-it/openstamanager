@@ -38,7 +38,7 @@ switch (post('op')) {
 
         $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
 
-        // Tipo di pagamento predefinito dall'anagrafica
+        // Tipo di pagamento + banca predefinite dall'anagrafica
         $query = 'SELECT id, (SELECT idbanca_'.$conto.' FROM an_anagrafiche WHERE idanagrafica = '.prepare($idanagrafica).') AS idbanca FROM co_pagamenti WHERE id = (SELECT '.$campo.' AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')';
         $rs = $dbo->fetchArray($query);
         $idpagamento = $rs[0]['id'];

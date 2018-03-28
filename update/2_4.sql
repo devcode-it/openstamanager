@@ -341,3 +341,4 @@ ALTER TABLE `an_anagrafiche` ADD `idbanca_vendite` INT(11) NOT NULL AFTER `idcon
 
 -- Campo idbanca per fatture
 ALTER TABLE `co_documenti` ADD `idbanca` INT(11) NOT NULL AFTER `idpagamento`;
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'Metodologia calcolo ritenuta d''acconto predefinito', 'Imponibile', 'list[Imponibile,Imponibile + rivalsa inps]', 1, 'Fatturazione');

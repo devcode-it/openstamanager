@@ -313,8 +313,10 @@ CREATE TABLE IF NOT EXISTS `co_banche` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nome` varchar(255) NOT NULL,
   `filiale` varchar(255) NOT NULL,
-  `iban` varchar(50) NOT NULL,
+  `iban` varchar(32) NOT NULL,
+  `bic` varchar(11) NOT NULL,
   `id_pianodeiconti3` int(11) DEFAULT NULL,
+  `note` text NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
@@ -333,3 +335,6 @@ INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
 ((SELECT `id` FROM `zz_groups` WHERE `nome` = 'Amministratori'), (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'Nome')),
 ((SELECT `id` FROM `zz_groups` WHERE `nome` = 'Amministratori'), (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'Filiale')),
 ((SELECT `id` FROM `zz_groups` WHERE `nome` = 'Amministratori'), (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'IBAN'));
+
+-- Aggiungo campi in an_anagrafiche con riferimento banche
+ALTER TABLE `an_anagrafiche` ADD `idbanca_vendite` INT(11) NOT NULL AFTER `idconto_cliente`, ADD `idbanca_acquisti` INT(11) NOT NULL AFTER `idbanca_vendite`;

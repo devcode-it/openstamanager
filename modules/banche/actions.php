@@ -12,15 +12,14 @@ switch (filter('op')) {
 			$array = [
 				'nome' => $nome,
 				'filiale' => $post['filiale'],
-				'IBAN' => $post['IBAN'],
-				'BIC' => $post['BIC'],
-				'idconto_vendite' => $post['idconto_vendite'],
-				'idconto_acquisti' => $post['idconto_acquisti'],
+				'iban' => $post['iban'],
+				'bic' => $post['bic'],
+				'id_pianodeiconti3' => $post['id_pianodeiconti3'],
 				'note' => $post['note'],
 			];
 
 			if (!empty($id_record)) {
-				$dbo->update('co_banche', $array, ['id_record' => $id_record]);
+				$dbo->update('co_banche', $array, ['id' => $id_record]);
 			} 
         
             $_SESSION['infos'][] = tr('Salvataggio completato!');
@@ -47,12 +46,28 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        if (!empty($id_record)) {
+	   
+	   $documenti = $dbo->fetchNum('SELECT idanagrafica FROM an_anagrafiche WHERE idbanca_vendite='.prepare($id_record).'
+									UNION SELECT idanagrafica FROM an_anagrafiche WHERE idbanca_acquisti='.prepare($id_record));
+        
+        if (isset($id_record) && empty($documenti)) {
             $dbo->query('DELETE FROM `co_banche` WHERE `id`='.prepare($id_record));
             $_SESSION['infos'][] = tr('_TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'Banca',
             ]);
-        }
+			
+        }else{
+			
+			$array = [
+				'deleted' => 1,
+			];
+			
+			$dbo->update('co_banche', $array, ['id' => $id_record]);
+				
+		   $_SESSION['infos'][] = tr('_TYPE_ eliminata con successo!', [
+                '_TYPE_' => 'Banca',
+			]);
+		}
 
         break;
 }

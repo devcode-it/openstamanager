@@ -65,8 +65,8 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        if (isset($id_record)) {
-            $dbo->query('DELETE FROM `co_pagamenti` WHERE `descrizione`='.prepare($records[0]['descrizione']));
+        if (!empty($id_record)) {
+            $dbo->query('DELETE FROM `co_pagamenti` WHERE `id`='.prepare($id_record));
             $_SESSION['infos'][] = tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'pagamento',
             ]);

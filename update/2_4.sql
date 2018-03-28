@@ -307,3 +307,29 @@ UPDATE `zz_group_module` SET `enabled` = '0' WHERE `zz_group_module`.`id` = 2;
 
 -- Disattivazione funzionalità in attesa di approfondire alcuni problemi di rallentamento e ottimizzazione performance
 UPDATE `zz_settings` SET `valore` = '0' WHERE `nome` = 'Attiva notifica di presenza utenti sul record';
+
+-- Tabella co_banche
+CREATE TABLE IF NOT EXISTS `co_banche` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(255) NOT NULL,
+  `filiale` varchar(255) NOT NULL,
+  `iban` varchar(50) NOT NULL,
+  `id_pianodeiconti3` int(11) DEFAULT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+-- Innesto modulo per gestione banche
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Banche', 'Banche', 'banche', 'SELECT |select| FROM `co_banche` WHERE 1=1 AND deleted = 0 GROUP BY `nome` HAVING 2=2', '', 'fa fa-university', '2.4', '2.4', '1', (SELECT `id` FROM `zz_modules` m WHERE `name` = 'Tabelle'), '1', '1');
+
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `enabled`, `summable`, `default`) VALUES
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'id', 'co_banche.id', 0, 0, 0, 0, '', '', 1, 0, 0),
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'Nome', 'co_banche.nome', 0, 0, 0, 0, '', '', 1, 0, 0),
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'Filiale', 'co_banche.filiale', 0, 0, 0, 0, '', '', 1, 0, 0),
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'IBAN', 'co_banche.iban', 0, 0, 0, 0, '', '', 1, 0, 0);
+
+INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
+((SELECT `id` FROM `zz_groups` WHERE `nome` = 'Amministratori'), (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'id')),
+((SELECT `id` FROM `zz_groups` WHERE `nome` = 'Amministratori'), (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'Nome')),
+((SELECT `id` FROM `zz_groups` WHERE `nome` = 'Amministratori'), (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'Filiale')),
+((SELECT `id` FROM `zz_groups` WHERE `nome` = 'Amministratori'), (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'IBAN'));

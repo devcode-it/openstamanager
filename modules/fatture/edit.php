@@ -133,15 +133,17 @@ $_SESSION['superselect']['ddt'] = $dir;
 					<?php
                     if ($dir == 'entrata') {
                         $ajaxsource = 'conti-vendite';
+						$conto = 'vendite';
                     } else {
                         $ajaxsource = 'conti-acquisti';
+						$conto = 'acquisti';
                     }
                     ?>
 					{[ "type": "select", "label": "<?php echo tr('Conto'); ?>", "name": "idconto", "required": 1, "value": "$idconto$", "ajax-source": "<?php echo $ajaxsource; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "values": "query=SELECT id, descrizione, (SELECT id FROM co_banche WHERE id_pianodeiconti3 = co_pagamenti.idconto_acquisti ) AS idbanca_acquisti, (SELECT id FROM co_banche WHERE id_pianodeiconti3 = co_pagamenti.idconto_vendite ) AS idbanca_vendite FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$", "extra": "onchange=\"$('#idbanca').val( $(this).find('option:selected').data('idbanca_vendite') ).change(); \" " ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "values": "query=SELECT id, descrizione, (SELECT id FROM co_banche WHERE id_pianodeiconti3 = co_pagamenti.idconto_<?php echo $conto; ?> ) AS idbanca FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$", "extra": "onchange=\"$('#idbanca').val( $(this).find('option:selected').data('idbanca') ).change(); \" " ]}
 				</div>
 				
 				<div class="col-md-3">

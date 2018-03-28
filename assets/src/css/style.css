@@ -584,6 +584,19 @@ input.small-width {
 		text-decoration: none;
 }
 
+/*fix per tabs editor */
 .nav-tabs-custom > .nav-tabs > li{
-    border-top: 3px solid #ddd;
+		border-top: 3px solid #ddd;
+}
+.nav-tabs-custom > .nav-tabs.pull-right > li:first-of-type.active > a{
+		border-right-color: #f4f4f4;
+		border-right-width : 1px;
+		border-left-width : 0px;
+}
+.nav-tabs-custom > .nav-tabs > li.header{
+		padding:0px;
+}
+.nav-tabs-custom > .nav-tabs > li{
+		margin-bottom:-1px;
+		margin-right: 0px;
 }

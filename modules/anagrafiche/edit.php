@@ -150,65 +150,82 @@ if (!$cliente) {
 
 if ($cliente || $fornitore) {
     ?>
-	<!-- INTERVENTI -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Informazioni predefinite'); ?></h3>
+	
+	
+	<!-- ACQUISTI -->
+
+	<div  class="panel panel-primary col-md-5">
+		<div class="panel-heading row">
+			<h3 class="panel-title"><?php echo tr('Acquisti'); ?></h3>
 		</div>
 
 		<div class="panel-body">
 
-<?php
-if ($fornitore) {
-        ?>
-            <div class="row">
-				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento predefinito (per acquisti)'); ?>", "name": "idpagamento_acquisti", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento_acquisti$" ]}
-                </div>
-
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Listino articoli (per acquisti)'); ?>", "name": "idlistino_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_acquisti$" ]}
-                </div>
-
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Iva predefinita (per acquisti)'); ?>", "name": "idiva_acquisti", "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "$idiva_acquisti$" ]}
-                </div>
-            </div>
-<?php
-    }
-
-    if ($cliente) {
-        ?>
-            <div class="row">
-                <div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento predefinito (per vendite)'); ?>", "name": "idpagamento_vendite", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento_vendite$" ]}
-                </div>
-
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Listino articoli (per vendite)'); ?>", "name": "idlistino_vendite", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_vendite$" ]}
-                </div>
-
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Iva predefinita (per vendite)'); ?>", "name": "idiva_vendite", "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "$idiva_vendite$" ]}
-                </div>
-            </div>
-<?php
-    } ?>
-            <div class="row">
-				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Indirizzo di fatturazione'); ?>", "name": "idsede_fatturazione", "values": "query=SELECT id, IF(citta = '', nomesede, CONCAT_WS(', ', nomesede, citta)) AS descrizione FROM an_sedi WHERE idanagrafica='<?php echo $id_record; ?>' UNION SELECT '0' AS id, 'Sede legale' AS descrizione ORDER BY descrizione", "value": "$idsede_fatturazione$" ]}
+			<div class="row">
+				<div class="col-md-6">
+					{[ "type": "select", "label": "<?php echo tr('Pagamento predefinito'); ?>", "name": "idpagamento_acquisti", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento_acquisti$", "extra": "<?php echo ($fornitore) ? '' : 'readonly'; ?>" ]}
 				</div>
 
-				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento_default", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "$idtipointervento_default$" ]}
+				<div class="col-md-6">
+					{[ "type": "select", "label": "<?php echo tr('Listino articoli'); ?>", "name": "idlistino_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_acquisti$", "extra": "<?php echo ($fornitore) ? '' : 'readonly'; ?>" ]}
 				</div>
 
-                <div class="col-md-4">
-                  {[ "type": "select", "label": "Agente principale", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, IF(deleted=1, CONCAT(ragione_sociale, ' (Eliminato)'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione='Agente' AND deleted=0)<?php echo isset($records[0]['idagente']) ? 'OR (an_anagrafiche.idanagrafica = '.prepare($records[0]['idagente']).'AND deleted=1) ' : ''; ?>ORDER BY ragione_sociale", "value": "$idagente$" ]}
+				<div class="col-md-6">
+					{[ "type": "select", "label": "<?php echo tr('Iva predefinita'); ?>", "name": "idiva_acquisti", "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "$idiva_acquisti$", "extra": "<?php echo ($fornitore) ? '' : 'readonly'; ?>" ]}
+				</div>
+				
+				<div class="col-md-6">
+					{[ "type": "select", "label": "<?php echo tr('Banca predefinita'); ?>", "name": "idbanca_acquisti", "values": "query=SELECT id, nome AS descrizione FROM co_banche ORDER BY nome ASC", "value": "$idbanca_acquisti$", "extra": "<?php echo ($fornitore) ? '' : 'readonly'; ?>" ]}
+				</div>
+				
+			</div>
+
+		</div>
+	</div>
+	
+	
+	
+	<!-- VENDITE -->
+	<div  class="panel panel-primary  col-md-5  col-md-push-2">
+		<div class="panel-heading row">
+			<h3 class="panel-title"><?php echo tr('Vendite'); ?></h3>
+		</div>
+
+		<div class="panel-body">
+
+            <div class="row">
+                <div class="col-md-6">
+					{[ "type": "select", "label": "<?php echo tr('Pagamento predefinito'); ?>", "name": "idpagamento_vendite", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
+                </div>
+
+                <div class="col-md-6">
+                    {[ "type": "select", "label": "<?php echo tr('Listino articoli'); ?>", "name": "idlistino_vendite", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
+                </div>
+
+                <div class="col-md-6">
+                    {[ "type": "select", "label": "<?php echo tr('Iva predefinita'); ?>", "name": "idiva_vendite", "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "$idiva_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
+                </div>
+         
+				<div class="col-md-6">
+					{[ "type": "select", "label": "<?php echo tr('Banca predefinita'); ?>", "name": "idbanca_vendite", "values": "query=SELECT id, nome AS descrizione FROM co_banche ORDER BY nome ASC", "value": "$idbanca_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
+				</div>
+				
+				<div class="col-md-6">
+					{[ "type": "select", "label": "<?php echo tr('Indirizzo di fatturazione'); ?>", "name": "idsede_fatturazione", "values": "query=SELECT id, IF(citta = '', nomesede, CONCAT_WS(', ', nomesede, citta)) AS descrizione FROM an_sedi WHERE idanagrafica='<?php echo $id_record; ?>' UNION SELECT '0' AS id, 'Sede legale' AS descrizione ORDER BY descrizione", "value": "$idsede_fatturazione$" , "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
+				</div>
+				
+				<div class="col-md-6">
+					{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento_default", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "$idtipointervento_default$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
+				</div>
+
+                <div class="col-md-6">
+                  {[ "type": "select", "label": "Agente principale", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, IF(deleted=1, CONCAT(ragione_sociale, ' (Eliminato)'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione='Agente' AND deleted=0)<?php echo isset($records[0]['idagente']) ? 'OR (an_anagrafiche.idanagrafica = '.prepare($records[0]['idagente']).'AND deleted=1) ' : ''; ?>ORDER BY ragione_sociale", "value": "$idagente$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
               	</div>
 			</div>
 		</div>
 	</div>
+	<div class="clearfix" ></div>
+
 <?php
 }
 ?>
@@ -253,6 +270,11 @@ if ($fornitore) {
 					{[ "type": "text", "label": "<?php echo tr('Capitale sociale'); ?>", "name": "capitale_sociale", "value": "$capitale_sociale$" ]}
 				</div>
 			</div>
+			
+			<?php
+			//se non è l'anagrafica azienda, ma  cliente o fornitore
+			 if ((!str_contains($records[0]['idtipianagrafica'], $id_azienda)) or (($cliente or $fornitore)))  {
+			?>	
 			<div class="row">
 				<div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo tr('Appoggio bancario'); ?>", "name": "appoggiobancario", "value": "$appoggiobancario$" ]}
@@ -270,6 +292,11 @@ if ($fornitore) {
 					{[ "type": "text", "label": "<?php echo tr('Codice BIC'); ?>", "name": "bic", "value": "$bic$" ]}
 				</div>
 			</div>
+			<?php
+				}
+			?>
+			
+			
 			<div class="row">
 				<div class="col-md-12">
 					{[ "type": "text", "label": "<?php echo tr('Dicitura fissa in fattura'); ?>", "name": "diciturafissafattura", "value": "$diciturafissafattura$" ]}
@@ -301,7 +328,7 @@ if ($fornitore) {
 					<?php
                     if (str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
                         echo '
-					<p>'.tr('Questa anagrafica appartiene alla tipologia "Azienda"').'.</p>';
+					<p class=\'badge badge-info\' >'.tr('Questa anagrafica appartiene alla tipologia "Azienda"').'.</p>';
                     }
                     ?>
 				</div>

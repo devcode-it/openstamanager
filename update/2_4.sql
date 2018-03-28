@@ -338,3 +338,6 @@ INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
 
 -- Aggiungo campi in an_anagrafiche con riferimento banche
 ALTER TABLE `an_anagrafiche` ADD `idbanca_vendite` INT(11) NOT NULL AFTER `idconto_cliente`, ADD `idbanca_acquisti` INT(11) NOT NULL AFTER `idbanca_vendite`;
+
+-- Campo idbanca per fatture
+ALTER TABLE `co_documenti` ADD `idbanca` INT(11) NOT NULL AFTER `idpagamento`;

@@ -67,6 +67,7 @@ switch (post('op')) {
             $idtipodocumento = post('idtipodocumento');
             $idstatodocumento = post('idstatodocumento');
             $idpagamento = post('idpagamento');
+			$idbanca = post('idbanca');
             $idcausalet = post('idcausalet');
             $idspedizione = post('idspedizione');
             $idporto = post('idporto');
@@ -102,6 +103,7 @@ switch (post('op')) {
                 ' idanagrafica='.prepare($idanagrafica).','.
                 ' idagente='.prepare($idagente).','.
                 ' idpagamento='.prepare($idpagamento).','.
+				' idbanca='.prepare($idbanca).','.
                 ' idcausalet='.prepare($idcausalet).','.
                 ' idspedizione='.prepare($idspedizione).','.
                 ' idporto='.prepare($idporto).','.

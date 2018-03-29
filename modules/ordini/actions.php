@@ -118,11 +118,11 @@ switch (post('op')) {
 
                 // Ricalcolo inps, ritenuta e bollo (se l'ordine non è stato evaso)
                 if ($dir == 'entrata') {
-                    if ($rs[0]['descrizione'] != 'Pagato') {
+                    if ($rs[0]['descrizione'] != 'Evaso') {
                         ricalcola_costiagg_ordine($id_record);
                     }
                 } else {
-                    if ($rs[0]['descrizione'] != 'Pagato') {
+                    if ($rs[0]['descrizione'] != 'Evaso') {
                         ricalcola_costiagg_ordine($id_record, $idrivalsainps, $idritenutaacconto, $bollo);
                     }
                 }

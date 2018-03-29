@@ -55,7 +55,7 @@ echo '
 	</body>
 </html>';
 
-if ($id_record OR basename($_SERVER["PHP_SELF"])=='controller.php'){
+if ($id_record OR basename($_SERVER["PHP_SELF"])=='controller.php' OR basename($_SERVER["PHP_SELF"])=='index.php'){
     unset($_SESSION['infos']);
     unset($_SESSION['errors']);
     unset($_SESSION['warnings']);

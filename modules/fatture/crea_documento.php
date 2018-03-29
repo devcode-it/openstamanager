@@ -96,14 +96,17 @@ if (!empty($rs)) {
 
         <div class="col-md-6">
             {[ "type": "date", "label": "'.tr('Data del documento').'", "name": "data", "required": 1, "value": "-now-" ]}
-        </div>
+        </div>';
 
-
+        if ($module_name=='Fatture di vendita' || $module_name == 'Fatture di acquisto'){
+            echo '
         <div class="col-md-6">
-           {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "class": "", "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare(Modules::get($module_name)['id']).' ORDER BY name", "value": "'.$_SESSION['m'.$id_module]['id_segment'].'", "extra": "" ]}
-        </div>
-
-    </div>';
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "class": "", "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare(Modules::get($module_name)['id']).' ORDER BY name", "value": "'.Modules::get($module_name)['id_segment'].'", "extra": "" ]}
+        </div>';
+        }
+        
+        echo
+    '</div>';
     }
 
     echo '
@@ -264,8 +267,9 @@ echo '
 
         ricalcola_totale();
     }
-
+   
     function ricalcola_totale(){
+        tot_qta = 0;
         r = 0;
         totale = 0.00;
         $('input[id*=qta_]').each( function(){
@@ -288,13 +292,15 @@ echo '
             totale += subtot*qta+iva*qta;
 
             r++;
+
+            tot_qta +=qta;
         });
 
         $('#totale').html( (totale.toLocale()) + " &euro;" );
-
-        if( qta==0 )
-            $('#submit_btn').hide();
-        else
+        
+        if( tot_qta>0 )
             $('#submit_btn').show();
+        else
+            $('#submit_btn').hide();
     }
 </script>

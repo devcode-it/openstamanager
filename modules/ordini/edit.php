@@ -103,13 +103,13 @@ if ($module['name'] == 'Ordini cliente') {
 			<!-- Stampe -->
 			<?php if ($records[0]['stato'] != 'Evaso') {
                         ?>
-				<a  class="btn btn-sm btn-info" data-href="<?php echo $rootdir; ?>/modules/fatture/crea_documento.php?id_module=<?php echo $id_module; ?>&&id_record=<?php echo $id_record; ?>&documento=ddt" data-toggle="modal" data-title="Crea ddt" data-target="#bs-popup" ><i class="fa fa-magic"></i> Crea ddt da ordine...</i></a>
-				<a  class="btn btn-sm btn-info" data-href="<?php echo $rootdir; ?>/modules/fatture/crea_documento.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&documento=fattura" data-toggle="modal" data-title="Crea fattura" data-target="#bs-popup" ><i class="fa fa-magic"></i> Crea fattura da ordine...</i></a>
+				<a  class="btn btn-info" data-href="<?php echo $rootdir; ?>/modules/fatture/crea_documento.php?id_module=<?php echo $id_module; ?>&&id_record=<?php echo $id_record; ?>&documento=ddt" data-toggle="modal" data-title="Crea ddt" data-target="#bs-popup" ><i class="fa fa-magic"></i> Crea ddt da ordine...</i></a>
+				<a  class="btn btn-info" data-href="<?php echo $rootdir; ?>/modules/fatture/crea_documento.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&documento=fattura" data-toggle="modal" data-title="Crea fattura" data-target="#bs-popup" ><i class="fa fa-magic"></i> Crea fattura da ordine...</i></a>
 			<?php
                     }
             ?>
 
-            {( "name": "button", "type": "print", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
+            
 		</div>
 		<div class="clearfix"></div>
 		<br>

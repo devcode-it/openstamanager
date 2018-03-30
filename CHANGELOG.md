@@ -4,6 +4,11 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4 (2018-03-30)](#24-2018-03-30)
+    - [Aggiunto (Added)](#aggiunto-added)
+    - [Modificato (Changed)](#modificato-changed)
+    - [Rimosso (Removed)](#rimosso-removed)
+    - [Fixed](#fixed)
 - [2.3.1 (2018-02-19)](#231-2018-02-19)
     - [Aggiunto (Added)](#aggiunto-added)
     - [Modificato (Changed)](#modificato-changed)
@@ -23,6 +28,40 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
     - [Aggiunto (Added)](#aggiunto-added)
     - [Modificato (Changed)](#modificato-changed)
     - [Fixed](#fixed)
+
+
+## 2.4 (2018-03-30)
+
+### Aggiunto (Added)
+ - Modelli di stampa su database, con possibilità di creare più stampe per singolo modulo e raggrupparle in unica voce di menu
+ - Possibilità di inviare le email dai vari moduli e gestione degli account SMTP
+ - Introduzione dei segmenti: filtri aggiuntivi definibili per ogni modulo
+ - Aggiunti sezionali per fatture acquisto / vendita
+ - Nuovo modulo archivio banche per definire poi in ogni anagrafica (cliente o fornitore) la banca predefinita
+ - Nuova una pagina dedicata all'utente dove è possibile:
+   - Cambiare la propria password
+   - Visualizzare il proprio token di accesso all'API
+   - Visualizzare il link e le informazioni per importare il calendario eventi all'esterno del gestionale
+ - Introduzione della possibilità di poter impostare dei campi personalizzati per ogni modulo
+ - Aggiunta possibilità di caricare gli allegati per il modulo Impianti
+ - Aggiunta possibilità di inserire un articolo in contratti e preventivi
+ - Aggiunta di una variabile $baseurl per il progetto
+ - Aggiunta per le Fatture di vendita la possibilità di inserire una riga descrittiva
+ - Introduzione pulsati generalizzati
+ - Modulo per import CSV (anagrafiche)
+
+
+### Modificato (Changed)
+  - Migliorato interventi da pianificare
+  - Migliorato il calcolo della numerazione per i documenti
+  - Modificato il numero per le fatture di acquisto utilizzabile per numeri di protocollo
+  - Migliorato gestione dei select dinamici
+
+
+
+### Fixed
+ - Corretto calcolo IVA con sconto globale unitario
+ - Corretto calcolo numerazione dei ddt
 
 
 ## 2.3.1 (2018-02-19)

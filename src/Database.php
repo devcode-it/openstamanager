@@ -116,12 +116,15 @@ class Database extends Util\Singleton
      *
      * @return Database
      */
-    public static function getConnection($new = false)
+    public static function getConnection($new = false, $data = [])
     {
         $class = get_called_class();
 
         if (empty(parent::$instance[$class]) || !parent::$instance[$class]->isConnected() || $new) {
             $config = App::getConfig();
+
+            // Sostituzione degli eventuali valori aggiuntivi
+            $config = array_merge($config, $data);
 
             parent::$instance[$class] = new self($config['db_host'], $config['db_username'], $config['db_password'], $config['db_name']);
         }

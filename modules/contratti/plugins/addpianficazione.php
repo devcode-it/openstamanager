@@ -119,12 +119,18 @@ echo '
 
 					if ($(this).is(":checked")){
 						$("#idtecnico").removeAttr("disabled");
+						$("#idtecnico").prop("required", true);
 						$("#orario_inizio").removeAttr("disabled");
 						$("#orario_fine").removeAttr("disabled");
+						$("#orario_inizio").prop("required", true);
+						$("#orario_fine").prop("required", true);
 					}else{
 						$("#idtecnico").prop("disabled", true);
+						$("#idtecnico").removeAttr("required");
 						$("#orario_inizio").prop("disabled", true);
 						$("#orario_fine").prop("disabled", true);
+						$("#orario_inizio").removeAttr("required");
+						$("#orario_fine").removeAttr("required");
 					}
 
 			});

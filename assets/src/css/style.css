@@ -583,7 +583,9 @@ input.small-width {
 .callout a{
 		text-decoration: none;
 }
-
+.box{
+        border-top:0px;
+}
 /*fix per tabs editor */
 .nav-tabs-custom > .nav-tabs > li{
 		border-top: 3px solid #ddd;

@@ -217,6 +217,10 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 } elseif (filter('op') == 'send-email') {
     $template = Mail::getTemplate($post['template']);
 
+    // Utilizzo di una cartella particolare per il salvataggio temporaneo degli allegati
+    $upload_dir = DOCROOT.'/files/attachments';
+
+    // Elenco degli allegati
     $attachments = [];
 
     // Stampe
@@ -314,7 +318,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     $mail->Subject = $post['subject'];
 
     // Allegati
-    foreach ($final_attachments as $attachment) {
+    foreach ($attachments as $attachment) {
         $mail->AddAttachment($attachment['path'], $attachment['name']);
     }
 

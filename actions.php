@@ -217,9 +217,6 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 } elseif (filter('op') == 'send-email') {
     $template = Mail::getTemplate($post['template']);
 
-    // Utilizzo di una cartella particolare per il salvataggio temporaneo degli allegati
-    $upload_dir = DOCROOT.'/files/attachments';
-
     // Elenco degli allegati
     $attachments = [];
 
@@ -227,7 +224,8 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     foreach ($post['prints'] as $print) {
         $print = Prints::get($print);
 
-        $filename = $upload_dir.'/'.$print['title'].' - '.$id_record.'.pdf';
+        // Utilizzo di una cartella particolare per il salvataggio temporaneo degli allegati
+        $filename = DOCROOT.'/files/attachments/'.$print['title'].' - '.$id_record.'.pdf';
 
         Prints::render($print['id'], $id_record, $filename);
 

@@ -22,19 +22,28 @@ echo '
         <td class="text-center" style="width:20%">'.tr('Contratto num.').': <b>'.$records[0]['numero_contratto'].'</b></td>
     </tr>';
 
-// Dati cliente
-echo '
-    <tr>
-        <td colspan=3>
-            '.tr('Cliente').': <b>'.$c_ragionesociale.'</b>
-        </td>';
+    // Dati cliente
+    echo '
+        <tr>
+            <td colspan=2>
+                '.tr('Cliente').': <b>'.$c_ragionesociale.'</b>
+            </td>';
 
-// Codice fiscale
-echo '
-        <td>
-            '.tr('P.Iva').': <b>'.strtoupper($c_piva).'</b>
-        </td>
-    </tr>';
+    // Codice fiscale o P.Iva
+
+    if ($c_piva != 0) {
+        echo '
+    			<td colspan=2>
+    				'.tr('P.Iva').': <b>'.strtoupper($c_piva).'</b>
+    			</td>
+    		</tr>';
+    } else {
+        echo '
+    			<td colspan=2>
+    				'.tr('C.F.').': <b>'.strtoupper($c_codicefiscale).'</b>
+    			</td>
+    		</tr>';
+    }
 
 // riga 2
 echo '
@@ -61,7 +70,7 @@ echo '
 // Elenco impianti su cui è stato fatto l'intervento
 $rs2 = $dbo->fetchArray('SELECT *, (SELECT nome FROM my_impianti WHERE id=my_impianti_interventi.idimpianto) AS nome, (SELECT matricola FROM my_impianti WHERE id=my_impianti_interventi.idimpianto) AS matricola FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
 $impianti = [];
-for ($j = 0; $j < sizeof($rs2); ++$j) {
+for ($j = 0; $j < count($rs2); ++$j) {
     $impianti[] = '<b>'.$rs2[$j]['nome']."</b> <small style='color:#777;'>(".$rs2[$j]['matricola'].')</small>';
 }
 echo '

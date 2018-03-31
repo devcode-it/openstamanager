@@ -31,7 +31,7 @@ echo '
 
     // Codice fiscale o P.Iva
 
-    if ($c_piva != 0) {
+    if (!empty($c_piva)) {
         echo '
     			<td colspan=2>
     				'.tr('P.Iva').': <b>'.strtoupper($c_piva).'</b>

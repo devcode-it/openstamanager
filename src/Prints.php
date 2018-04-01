@@ -260,7 +260,7 @@ class Prints
         }
 
         // Individuazione delle variabili per la sostituzione
-        include_once DOCROOT.'/templates/info.php';
+        include DOCROOT.'/templates/info.php';
 
         // Generazione dei contenuti della stampa
         ob_start();

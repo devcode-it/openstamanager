@@ -238,7 +238,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     // Allegati del record
     $selected = [];
     if (!empty($post['attachments'])) {
-        $selected = $dbo->fetchArray('SELECT * FROM zz_files WHERE id IN ('.implode($post['attachments']).') AND id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record));
+        $selected = $dbo->fetchArray('SELECT * FROM zz_files WHERE id IN ('.implode( "," , $post['attachments']).') AND id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record));
     }
 
     foreach ($selected as $attachment) {

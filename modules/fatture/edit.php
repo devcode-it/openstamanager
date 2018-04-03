@@ -62,6 +62,10 @@ $_SESSION['superselect']['ddt'] = $dir;
                     $label = tr('Numero fattura');
                 }
                 ?>
+				
+				<!-- id_segment -->
+				{[ "type": "hidden", "label": "Segmento", "name": "id_segment", "class": "text-center", "value": "$id_segment$" ]}
+				
 				<div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "alphanumeric-mask text-center", "value": "$numero_esterno$" ]}
 				</div>

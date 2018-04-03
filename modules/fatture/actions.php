@@ -952,8 +952,8 @@ switch (post('op')) {
                 $descrizione = post('descrizione')[$i];
                 $qta = $post['qta_da_evadere'][$i];
                 $um = $post['um'][$i];
-                $subtot = $post['subtot'][$i] * $qta;
-                $sconto = $post['sconto'][$i];
+                $subtot = Translator::numberToLocale($post['subtot'][$i]) * $qta;
+                $sconto = Translator::numberToLocale($post['sconto'][$i]);
                 $sconto = $sconto * $qta;
                 $idiva = post('idiva')[$i];
 
@@ -1034,10 +1034,10 @@ switch (post('op')) {
                 $descrizione = post('descrizione')[$i];
                 $qta = post('qta_da_evadere')[$i];
                 $um = post('um')[$i];
-                $subtot = save($post['subtot'][$i] * $qta);
+                $subtot = save(Translator::numberToLocale($post['subtot'][$i]) * $qta);
                 $idiva = post('idiva')[$i];
-                $iva = save($post['iva'][$i] * $qta);
-                $sconto = post('sconto')[$i];
+                $iva = save(Translator::numberToLocale($post['iva'][$i]) * $qta);
+                $sconto = Translator::numberToLocale(post('sconto')[$i]);
                 $sconto = $sconto * $qta;
 
                 $qprc = 'SELECT tipo_sconto, sconto_unitario FROM or_righe_ordini WHERE id='.prepare($idrigaordine);

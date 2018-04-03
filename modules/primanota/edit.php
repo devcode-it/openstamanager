@@ -10,23 +10,24 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="iddocumento" value="<?php echo $records[0]['iddocumento']; ?>">
 
 
+    <div class="row">
 	<?php
     if (!empty($records[0]['iddocumento'])) {
         $rs = $dbo->fetchArray('SELECT dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($records[0]['iddocumento']));
         $modulo = ($rs[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto'; ?>
-		<div class="pull-left">
+		<div class=" col-md-2">
+            <br>
 			<a href="<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get($modulo)['id']; ?>&id_record=<?php echo $records[0]['iddocumento']; ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Torna alla fattura'); ?></a>
 		</div>
 	<?php
     }
     ?>
 
-	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-3">
 			{[ "type": "date", "label": "<?php echo tr('Data movimento'); ?>", "name": "data", "required": 1, "value": "$data$" ]}
 		</div>
 
-		<div class="col-md-8">
+		<div class="col-md-7">
 			{[ "type": "text", "label": "<?php echo tr('Causale'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
 		</div>
 	</div>
@@ -210,12 +211,15 @@ include_once __DIR__.'/../../core.php';
 
 				if( bilancio == 0 ){
 					$("#testo_aggiuntivo").removeClass('text-danger').html("");
-					$("button[type=submit]").removeClass('hide');
+					//$("button[type=submit]").removeClass('hide');
+                    $("#save").removeClass('hide');
+                    
 				}
 				else{
 					$("#testo_aggiuntivo").addClass('text-danger').html("sbilancio di " + bilancio.toLocale() + " &euro;" );
 
-					$("button[type=submit]").addClass('hide');
+					//$("button[type=submit]").addClass('hide');
+                    $("#save").addClass('hide');
 				}
 			}
 

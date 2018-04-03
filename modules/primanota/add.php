@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-?><form action="" method="post" id="add-form">
+?><form action="<?php echo ROOTDIR ?>/editor.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="iddocumento" value="<?php echo get('iddocumento'); ?>">

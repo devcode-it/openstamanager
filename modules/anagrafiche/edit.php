@@ -423,6 +423,10 @@ if (!str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'
 </a>';
+}else{
+
+	echo '
+<div class=\'alert alert-warning\' >'.tr('Questa è l\'anagrafica "Azienda" e non è possibile eliminarla').'.</div>';
 }
 ?>
 

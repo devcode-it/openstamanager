@@ -349,4 +349,5 @@ INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable
 -- Fix doppio conto iva 'Esente art. 10' & 'Esente art.10'
 DELETE FROM `co_iva` WHERE `co_iva`.`descrizione` = 'Esente art. 10' AND `co_iva`.`id` NOT IN (SELECT `idiva` FROM co_righe_documenti UNION SELECT `idiva` FROM co_righe_preventivi UNION SELECT `idiva` FROM dt_righe_ddt UNION SELECT `idiva` FROM or_righe_ordini );
 
-
+-- Allineamento query widget 'Contratti in scadenza'
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato, DATEDIFF( data_conclusione, NOW() ) AS giorni_rimanenti FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND NOT EXISTS (SELECT id FROM co_righe_documenti WHERE co_righe_documenti.idcontratto = co_contratti.id) AND rinnovabile=1 AND NOW() > DATE_ADD( data_conclusione, INTERVAL - ABS(giorni_preavviso_rinnovo) DAY) AND YEAR(data_conclusione) > 1970 ORDER BY giorni_rimanenti ASC' WHERE `zz_widgets`.`name` = 'Contratti in scadenza';

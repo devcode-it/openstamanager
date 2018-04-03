@@ -24,18 +24,16 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 				</div>
 
 				<div class="col-md-4">
-
 					{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "class":"alphanumeric-mask", "required": 1, "value": "$codice$" ]}
 					<br>
-					{[ "type": "checkbox", "label": "<?php echo tr("Seleziona per rendere visibile l'articolo"); ?>", "name": "attivo", "value": "$attivo$", "help": "", "placeholder": "<?php echo tr('ATTIVO'); ?>" ]}
-
+                    {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 1, "value": "$id_categoria$", "ajax-source": "categorie" ]}
 				</div>
 
 				<div class="col-md-5">
-					{[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 1, "value": "$id_categoria$", "ajax-source": "categorie" ]}
-					<br>
-					{[ "type": "select", "label": "<?php echo tr('Subcategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie" ]}
-				</div>
+                    {[ "type": "checkbox", "label": "<?php echo tr("Seleziona per rendere attivo l'articolo"); ?>", "name": "attivo", "value": "$attivo$", "help": "", "placeholder": "<?php echo tr('Articolo attivo'); ?>" ]}
+				    <br>
+                    {[ "type": "select", "label": "<?php echo tr('Subcategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie" ]}
+                </div>
 			</div>
 			<div class="row">
 				<div class="col-md-12">
@@ -48,7 +46,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 					{[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta", "min-value": "undefined" ]}
 				</div>
 				<div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr('Modifica manualmente quantità'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Modifica quantità manualmente'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>" ]}
 
 					<script type="text/javascript">
 
@@ -60,7 +58,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 
                 </div>
 
-				<div class="col-md-3">
+				<div class="col-md-2">
 					{[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo Modules::get('Unità di misura')['id']; ?>" ]}
 				</div>
 
@@ -74,34 +72,12 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
                 }
                 ?>
 
-				  <div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "", "placeholder": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "extra": "<?php echo ($records[0]['serial']>0) ? 'readonly' : ''; ?>" ]}
+				  <div class="col-md-4">
+					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "placeholder": "<?php echo tr('Serial number'); ?>", "extra": "<?php echo ($records[0]['serial']>0) ? 'readonly' : ''; ?>" ]}
                 </div>
 
 
 			</div>
-
-
-
-			<div class="row">
-				<div class="col-md-3">
-					{[ "type": "number", "label": "<?php echo tr('Garanzia'); ?>", "name": "gg_garanzia", "decimals": 0, "value": "$gg_garanzia$", "icon-after": "GG" ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr('Questo articolo è un servizio'); ?>", "name": "servizio", "value": "$servizio$", "help": "", "placeholder": "<?php echo tr('SERVIZIO'); ?>" ]}
-				</div>
-		
-
-				<div class="col-md-3">
-					{[ "type": "number", "label": "<?php echo tr('Peso lordo'); ?>", "name": "peso_lordo", "value": "$peso_lordo$", "icon-after": "KG" ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "number", "label": "<?php echo tr('Volume'); ?>", "name": "volume", "value": "$volume$", "icon-after": "M<sup>3</sup>" ]}
-				</div>
-			</div>
-
 
 			<div class="row">
 				<div class="col-md-12">
@@ -129,7 +105,6 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
                             {[ "type": "number", "label": "<?php echo tr('Soglia minima quantità'); ?>", "name": "threshold_qta", "value": "$threshold_qta$", "decimals": "qta", "min-value": "undefined" ]}
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -151,6 +126,25 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
                         </div>
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-6">
+                            {[ "type": "number", "label": "<?php echo tr('Garanzia'); ?>", "name": "gg_garanzia", "decimals": 0, "value": "$gg_garanzia$", "icon-after": "GG" ]}
+                        </div>
+
+                        <div class="col-md-6">
+                            {[ "type": "checkbox", "label": "<?php echo tr('Questo articolo è un servizio'); ?>", "name": "servizio", "value": "$servizio$", "help": "", "placeholder": "<?php echo tr('Servizio'); ?>" ]}
+                        </div>
+                    </div>
+            
+                    <div class="row">
+                        <div class="col-md-6">
+                            {[ "type": "number", "label": "<?php echo tr('Peso lordo'); ?>", "name": "peso_lordo", "value": "$peso_lordo$", "icon-after": "KG" ]}
+                        </div>
+
+                        <div class="col-md-6">
+                            {[ "type": "number", "label": "<?php echo tr('Volume'); ?>", "name": "volume", "value": "$volume$", "icon-after": "M<sup>3</sup>" ]}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -241,15 +241,21 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
             $("#test").on("click", function(){
                 if($(this).closest("form").parsley().validate()){
+					prev_html = $("#test").html();
+					$("#test").html("<i class=\'fa fa-spinner fa-pulse  fa-fw\'></i> '.tr("Attendere").'...");
+					$("#test").prop(\'disabled\', true);
                     $(this).closest("form").ajaxSubmit({
                         url: "'.$rootdir.'/index.php",
                         data: {
                             test: 1,
                         },
-                        type: "post",
+                        type: "post",	 
                         success: function(data){
                             data = parseFloat(data.trim());
-
+							
+							$("#test").html(prev_html);
+							$("#test").prop(\'disabled\', false);
+						
                             if(data == 0){
                                 swal("'.tr('Errore della configurazione').'", "'.tr('La configurazione non è corretta').'.", "error");
                             } else if(data == 1){

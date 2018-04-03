@@ -345,3 +345,8 @@ ALTER TABLE `co_documenti` ADD `idbanca` INT(11) NOT NULL AFTER `idpagamento`;
 -- Campo calcolo_ritenutaacconto per selezione tipo di calcolo ritenuta acconto
 ALTER TABLE `co_righe_documenti` ADD `calcolo_ritenutaacconto` VARCHAR(255) NOT NULL AFTER `rivalsainps`;
 INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'Metodologia calcolo ritenuta d''acconto predefinito', 'Imponibile', 'list[Imponibile,Imponibile + rivalsa inps]', 1, 'Fatturazione');
+
+-- Fix doppio conto iva 'Esente art. 10' & 'Esente art.10'
+DELETE FROM `co_iva` WHERE `co_iva`.`descrizione` = 'Esente art. 10' AND `co_iva`.`id` NOT IN (SELECT `idiva` FROM co_righe_documenti UNION SELECT `idiva` FROM co_righe_preventivi UNION SELECT `idiva` FROM dt_righe_ddt UNION SELECT `idiva` FROM or_righe_ordini );
+
+

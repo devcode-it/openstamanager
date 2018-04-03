@@ -233,6 +233,19 @@ echo '
     </tbody>
 </table>';
 
+
+// Aggiungo diciture particolari per l'anagrafica cliente
+$dicitura = $dbo->fetchArray('SELECT diciturafissafattura FROM an_anagrafiche WHERE idanagrafica = '.prepare($id_cliente));
+
+if (!empty($dicitura[0]['diciturafissafattura'])) {
+	$testo = $dicitura[0]['diciturafissafattura'];
+
+	echo "
+<p class='text-center'>
+<b>".nl2br($testo).'</b>
+</p>';
+}
+
 // Aggiungo diciture per condizioni iva particolari
 foreach ($v_iva as $key => $value) {
     $dicitura = $dbo->fetchArray('SELECT dicitura FROM co_iva WHERE descrizione = '.prepare($key));

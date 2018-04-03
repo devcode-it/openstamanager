@@ -194,7 +194,7 @@ switch (post('op')) {
 
             for ($i = 0; $i < count($rs_tipiintervento); ++$i) {
                 if ($dbo->query('INSERT INTO in_tariffe( idtecnico, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico ) VALUES( '.prepare($new_id).', '.prepare($rs_tipiintervento[$i]['idtipointervento']).', (SELECT costo_orario FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_km FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_diritto_chiamata FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'),   (SELECT costo_orario_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_km_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_diritto_chiamata_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).') )')) {
-                    $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
+                    //$_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
                 } else {
                     $_SESSION['errors'][] = tr("Errore durante l'importazione tariffe!");
                 }

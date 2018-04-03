@@ -44,7 +44,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 			</div>
 
 			<div class="row">
-				<div class="col-md-2">
+				<div class="col-md-3">
 					{[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta", "min-value": "undefined" ]}
 				</div>
 				<div class="col-md-3">
@@ -60,13 +60,11 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 
                 </div>
 
-				<div class="col-md-2">
+				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo Modules::get('Unità di misura')['id']; ?>" ]}
 				</div>
 
-				<div class="col-md-2">
-					{[ "type": "number", "label": "<?php echo tr('Soglia minima quantità'); ?>", "name": "threshold_qta", "value": "$threshold_qta$", "decimals": "qta", "min-value": "undefined" ]}
-				</div>
+				
 
 				<?php
                 ($records[0]['serial']>0) ? $records[0]['abilita_serial'] = 1 : $records[0]['abilita_serial'] = $records[0]['abilita_serial'];
@@ -86,36 +84,20 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 
 
 			<div class="row">
-				<div class="col-md-2">
-					{[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "value": "$prezzo_acquisto$", "icon-after": "&euro;" ]}
-				</div>
-
-				<div class="col-md-2">
-					{[ "type": "number", "label": "<?php echo tr('Prezzo di vendita base'); ?>", "name": "prezzo_vendita", "value": "$prezzo_vendita$", "icon-after": "&euro;" ]}
-				</div>
-
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Iva di vendita'); ?>", "name": "idiva_vendita", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC", "value": "$idiva_vendita$", "valore_predefinito": "Iva predefinita" ]}
-                </div>
-
-				<div class="col-md-2">
 					{[ "type": "number", "label": "<?php echo tr('Garanzia'); ?>", "name": "gg_garanzia", "decimals": 0, "value": "$gg_garanzia$", "icon-after": "GG" ]}
 				</div>
 
 				<div class="col-md-3">
 					{[ "type": "checkbox", "label": "<?php echo tr('Questo articolo è un servizio'); ?>", "name": "servizio", "value": "$servizio$", "help": "", "placeholder": "<?php echo tr('SERVIZIO'); ?>" ]}
 				</div>
-			</div>
+		
 
-
-
-            <div class="row">
-
-				<div class="col-md-2">
+				<div class="col-md-3">
 					{[ "type": "number", "label": "<?php echo tr('Peso lordo'); ?>", "name": "peso_lordo", "value": "$peso_lordo$", "icon-after": "KG" ]}
 				</div>
 
-				<div class="col-md-2">
+				<div class="col-md-3">
 					{[ "type": "number", "label": "<?php echo tr('Volume'); ?>", "name": "volume", "value": "$volume$", "icon-after": "M<sup>3</sup>" ]}
 				</div>
 			</div>
@@ -128,6 +110,52 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 			</div>
 		</div>
 	</div>
+
+    <!-- informazioni Acquisto/Vendita -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><?php echo tr('Acquisto'); ?></h3>
+                </div>
+
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            {[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "value": "$prezzo_acquisto$", "icon-after": "&euro;" ]}
+                        </div>
+
+                        <div class="col-md-6">
+                            {[ "type": "number", "label": "<?php echo tr('Soglia minima quantità'); ?>", "name": "threshold_qta", "value": "$threshold_qta$", "decimals": "qta", "min-value": "undefined" ]}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><?php echo tr('Vendita'); ?></h3>
+                </div>
+
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                          {[ "type": "number", "label": "<?php echo tr('Prezzo di vendita'); ?>", "name": "prezzo_vendita", "value": "$prezzo_vendita$", "icon-after": "&euro;" ]}
+                        </div>
+
+                        <div class="col-md-6">
+                            {[ "type": "select", "label": "<?php echo tr('Iva di vendita'); ?>", "name": "idiva_vendita", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC", "value": "$idiva_vendita$", "valore_predefinito": "Iva predefinita" ]}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
 
 	<div class="panel panel-primary">
 		<div class="panel-heading">

@@ -21,6 +21,25 @@ foreach ($variables as $key => $value) {
 $body = str_replace(array_keys($replaces), array_values($replaces), $body);
 $subject = str_replace(array_keys($replaces), array_values($replaces), $subject);
 
+//Campi mancanti
+$rs2 = $dbo->fetchArray('SELECT from_address, server, port FROM zz_smtp WHERE id='.prepare($template['id_smtp']));
+$campi_mancanti = [];
+
+if ($rs2[0]['from_address'] == '') {
+	array_push($campi_mancanti, 'Mittente');
+}
+if ($rs2[0]['server'] == '') {
+	array_push($campi_mancanti, 'Server SMTP');
+}
+if ($rs2[0]['port'] == '') {
+	array_push($campi_mancanti, 'Porta');
+}
+					
+if (sizeof($campi_mancanti) > 0) {
+	echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere all'invio completa: <b>".implode(', ', $campi_mancanti).'</b><br/>
+	'.Modules::link('Gestione email', $template['id_smtp'], tr('Vai alla scheda account email'), null).'</div>';
+}
+
 // Form
 echo '
 <form action="" method="post" id="email-form">

@@ -35,7 +35,11 @@ switch (filter('op')) {
         if (isset($nome)) {
             $dbo->query('INSERT INTO `co_banche` (`nome`) VALUES ('.prepare($nome).')');
             $id_record = $dbo->lastInsertedID();
-
+			
+			if (isAjaxRequest()) {
+				echo json_encode(['id' => $id_record, 'text' => $nome]);
+			}
+		
             $_SESSION['infos'][] = tr('Aggiunta nuova  _TYPE_', [
                 '_TYPE_' => 'banca',
             ]);
@@ -43,10 +47,6 @@ switch (filter('op')) {
             $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
         }
 
-
-        if (isAjaxRequest()) {
-            echo json_encode(['id' => $id_record, 'text' => $nome]);
-        }
 
         break;
 

@@ -22,7 +22,7 @@ class Prints
         if (empty(self::$prints)) {
             $database = Database::getConnection();
 
-            $results = $database->fetchArray('SELECT * FROM zz_prints');
+            $results = $database->fetchArray('SELECT * FROM zz_prints WHERE enabled = 1');
 
             $prints = [];
 

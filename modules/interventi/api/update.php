@@ -1,22 +1,17 @@
 <?php
 
 switch ($resource) {
-    case 'update_anagrafica':
+    case 'sync':
         $idtecnico = $user['idanagrafica'];
 
-        $response = file_get_contents('php:// input');
+        $response = API::getRequest(true);
 
-        // file_put_contents('calendario.txt', $response);
-
-        // $events = iCalDecoder( $response );
         $ical = new iCalEasyReader();
         $events = $ical->load($response);
 
-        // file_put_contents('calendario.txt', print_r($events, 1));
-
         for ($j = 0; $j < sizeof($events['VEVENT']); ++$j) {
             $description = $events['VEVENT'][$j]['DESCRIPTION'];
-            // file_put_contents('cal.txt', $description, FILE_APPEND);
+
             // idriga di in_interventi_tecnici
             if (strstr($events['VEVENT'][$j]['UID'], '-')) {
                 $idriga = 'NEW';
@@ -144,5 +139,5 @@ switch ($resource) {
 }
 
 return [
-    'syncs',
+    'sync',
 ];

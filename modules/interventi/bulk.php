@@ -94,7 +94,7 @@ switch (post('op')) {
         for ($i = 0; $i < sizeof($id_records); ++$i) {
             $idintervento = $id_records[$i];
 
-            $q = 'SELECT id, in_interventi.descrizione,
+            $q = 'SELECT id, in_interventi.descrizione, in_interventi.codice,
                 IFNULL( (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta) AS data,
                 (SELECT costo_orario FROM in_tipiintervento WHERE idtipointervento=in_interventi.idtipointervento) AS costo_ore_unitario,
                 (SELECT costo_km FROM in_tipiintervento WHERE idtipointervento=in_interventi.idtipointervento) AS costo_km_unitario,
@@ -128,7 +128,7 @@ switch (post('op')) {
                     $sconto += $subtot / 100 * abs($prc_sconto);
                 }
 
-                $descrizione = 'Intervento numero '.$rs[0]['id'].' del '.date('d/m/Y', strtotime($rs[0]['data']))."\n".html_entity_decode($rs[0]['descrizione']);
+                $descrizione = 'Intervento numero '.$rs[0]['codice'].' del '.date('d/m/Y', strtotime($rs[0]['data']))."\n".html_entity_decode($rs[0]['descrizione']);
 
                 //Aggiunta impianti
                 $rsi = $dbo->fetchArray('SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti.id=my_impianti_interventi.idimpianto WHERE idintervento="'.$rs[0]['id'].'"');

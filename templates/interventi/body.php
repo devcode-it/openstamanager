@@ -363,7 +363,7 @@ foreach ($rst as $i => $r) {
 }
 
 // Ore lavorate
-$ore = get_ore_intervento($idintervento);
+$ore = get_ore_intervento($id_record);
 
 echo '
     <tr>

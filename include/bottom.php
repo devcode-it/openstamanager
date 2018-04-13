@@ -45,17 +45,19 @@ if (Auth::check()) {
     if (!empty($debugbarRenderer)) {
         echo $debugbarRenderer->render();
     }
+
+    // Rimozione del messaggio automatico riguardante la modifica di valori nella pagina
+    echo '
+        <script>
+            window.onbeforeunload = null;
+        </script>';
 }
 
 echo '
-        <script>
-            // Rimozione del messaggio automatico riguardante la modifica di valori nella pagina
-            window.onbeforeunload = null;
-        </script>
 	</body>
 </html>';
 
-if ($id_record OR basename($_SERVER["PHP_SELF"])=='controller.php' OR basename($_SERVER["PHP_SELF"])=='index.php'){
+if (!empty($id_record) || basename($_SERVER['PHP_SELF']) == 'controller.php' || basename($_SERVER['PHP_SELF']) == 'index.php') {
     unset($_SESSION['infos']);
     unset($_SESSION['errors']);
     unset($_SESSION['warnings']);

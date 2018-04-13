@@ -38,8 +38,8 @@ class Modules
 
             $user = Auth::user();
 
-            $results = $database->fetchArray('SELECT * FROM `zz_modules` LEFT JOIN (SELECT `idmodule`, `permessi` FROM `zz_permissions` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).')) AS `zz_permissions` ON `zz_modules`.`id`=`zz_permissions`.`idmodule` LEFT JOIN (SELECT NULL AS `id_segment`, `idmodule`, `clause`, `position` FROM `zz_group_module` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).') AND `enabled` = 1 UNION SELECT `id` AS `id_segment`, `id_module` AS `idmodule`, `clause`, `position` FROM `zz_segments` ) AS `zz_group_module` ON `zz_modules`.`id`=`zz_group_module`.`idmodule`');
-            
+            $results = $database->fetchArray('SELECT * FROM `zz_modules` LEFT JOIN (SELECT `idmodule`, `permessi` FROM `zz_permissions` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).')) AS `zz_permissions` ON `zz_modules`.`id`=`zz_permissions`.`idmodule` LEFT JOIN (SELECT NULL AS `id_segment`, `idmodule`, `clause`, `position` FROM `zz_group_module` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).') AND `enabled` = 1 UNION SELECT `id` AS `id_segment`, `id_module` AS `idmodule`, `clause`, `position` FROM `zz_segments`) AS `zz_group_module` ON `zz_modules`.`id`=`zz_group_module`.`idmodule`');
+
             $modules = [];
             $additionals = [];
 
@@ -53,14 +53,14 @@ class Modules
                 $result['options2'] = App::replacePlaceholder($result['options2']);
 
                 $result['option'] = empty($result['options2']) ? $result['options'] : $result['options2'];
-                
+
                 if (!empty($result['clause'])) {
-                    if($result['id_segment']!=''){
-                        if($result['id_segment']==$_SESSION['m'.$result['id']]['id_segment']){
+                    if (!empty($result['id_segment'])) {
+                        if ($result['id_segment'] == $_SESSION['m'.$result['id']]['id_segment']) {
                             $result['clause'] = App::replacePlaceholder($result['clause']);
                             $additionals[$result['id']][$result['position']][] = $result['clause'];
                         }
-                    }else{
+                    } else {
                         $result['clause'] = App::replacePlaceholder($result['clause']);
                         $additionals[$result['id']][$result['position']][] = $result['clause'];
                     }

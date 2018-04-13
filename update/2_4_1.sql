@@ -1,0 +1,1 @@
+ALTER TABLE `co_contratti` ADD `idsede` INT NOT NULL AFTER `idanagrafica`;

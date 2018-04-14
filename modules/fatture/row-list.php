@@ -133,7 +133,7 @@ if (!empty($rs)) {
         }
         // Intervento
         elseif (!empty($r['idintervento'])) {
-            $data = $dbo->fetchArray('SELECT codice AS numero, data_richiesta AS data FROM in_interventi WHERE id='.prepare($r['idintervento']));
+            $data = $dbo->fetchArray('SELECT codice AS numero, IFNULL( (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta) AS data FROM in_interventi WHERE id='.prepare($r['idintervento']));
 
             $ref_modulo = 'Interventi';
             $ref_id = $r['idintervento'];

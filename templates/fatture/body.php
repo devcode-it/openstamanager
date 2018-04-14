@@ -31,6 +31,16 @@ echo "
             <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>
         </tr>
     </thead>
+    
+    <tfoot>
+        <tr>
+            <td style="border-top:none; border-bottom:1px solid #aaa;"></td>
+            <td style="border-top:none; border-bottom:1px solid #aaa;"></td>
+            <td style="border-top:none; border-bottom:1px solid #aaa;"></td>
+            <td style="border-top:none; border-bottom:1px solid #aaa;"></td>
+            <td style="border-top:none; border-bottom:1px solid #aaa;"></td>
+        </tr>
+    </tfoot>
 
     <tbody>';
 

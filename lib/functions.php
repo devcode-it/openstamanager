@@ -407,9 +407,7 @@ function create_thumbnails($tmp, $filename, $dir)
 function get_client_ip()
 {
     $ipaddress = '';
-    if (getHostByName(getHostName())){
-        $ipaddress = getHostByName(getHostName());
-    }else if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+	if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
         $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
     } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
         $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -419,8 +417,10 @@ function get_client_ip()
         $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
     } elseif (!empty($_SERVER['HTTP_FORWARDED'])) {
         $ipaddress = $_SERVER['HTTP_FORWARDED'];
-    } elseif (!empty($_SERVER['REMOTE_ADDR'])) {
+    } elseif (!empty($_SERVER['REMOTE_ADDR']) AND $_SERVER['REMOTE_ADDR']!='127.0.0.1' ) {
         $ipaddress = $_SERVER['REMOTE_ADDR'];
+    }  elseif (!empty(getHostByName(getHostName()))){
+        $ipaddress = getHostByName(getHostName());
     } else {
         $ipaddress = 'UNKNOWN';
     }
@@ -493,7 +493,7 @@ function str_replace_once($str_pattern, $str_replacement, $string)
 }
 
 /**
- * Restituisce il percorso del filesystem in modo indipendete dal sistema operativo.
+ * Restituisce il percorso del filesystem in modo indipendente dal sistema operativo.
  *
  * @param string $string Percorso da correggere
  *
@@ -577,11 +577,11 @@ function get_var($nome, $sezione = null, $descrizione = false, $again = false)
 }
 
 /**
- * Restitusice il contentuo sanitarizzato dell'input dell'utente.
+ * Restituisce il contenuto sanitarizzato dell'input dell'utente.
  *
- * @param string $param  Nome del paramentro
+ * @param string $param  Nome del parametro
  * @param string $rule   Regola di filtraggio
- * @param string $method Posizione del paramentro (post o get)
+ * @param string $method Posizione del parametro (post o get)
  *
  * @since 2.3
  *
@@ -593,9 +593,9 @@ function filter($param, $method = null)
 }
 
 /**
- * Restitusice il contentuo sanitarizzato dell'input dell'utente.
+ * Restituisce il contenuto sanitarizzato dell'input dell'utente.
  *
- * @param string $param Nome del paramentro
+ * @param string $param Nome del parametro
  * @param string $rule  Regola di filtraggio
  *
  * @since 2.3
@@ -608,9 +608,9 @@ function post($param, $rule = 'text')
 }
 
 /**
- * Restitusice il contentuo sanitarizzato dell'input dell'utente.
+ * Restituisce il contenuto sanitarizzato dell'input dell'utente.
  *
- * @param string $param Nome del paramentro
+ * @param string $param Nome del parametro
  * @param string $rule  Regola di filtraggio
  *
  * @since 2.3

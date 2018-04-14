@@ -31,6 +31,10 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
 					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "id": "idanagrafica_c", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
 				</div>
+				
+				<div class="col-md-3">
+					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "values": "query=SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica='$idanagrafica$'", "value": "$idsede$", "ajax-source": "sedi", "extra": "<?php echo $readonly; ?>" ]}
+				</div>
 
 				<div class="col-md-3">
                     <?php
@@ -40,21 +44,23 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
                     ?>
 					{[ "type": "select", "label": "<?php echo tr('Agente'); ?>", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Agente' AND deleted=0 ORDER BY ragione_sociale", "value": "$idagente$" ]}
 				</div>
-
-				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti" ]}
-				</div>
 			</div>
 
 			<div class="row">
+				<div class="col-md-3">
+					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti" ]}
+				</div>
+				
 				<div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
 				</div>
 
-				<div class="col-md-2">
+				<div class="col-md-3">
 					{[ "type": "number", "label": "<?php echo tr('Validità'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "giorni" ]}
 				</div>
+			</div>
 
+			<div class="row">
 				<div class="col-md-2">
 					{[ "type": "checkbox", "label": "<?php echo tr('Rinnovabile'); ?>", "name": "rinnovabile", "help": "<?php echo tr('Il contratto è rinnovabile?'); ?>", "value": "$rinnovabile$" ]}
 				</div>
@@ -62,22 +68,20 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 				<div class="col-md-2">
 					{[ "type": "number", "label": "<?php echo tr('Preavviso per rinnovo'); ?>", "name": "giorni_preavviso_rinnovo", "decimals": "0", "value": "$giorni_preavviso_rinnovo$", "icon-after": "giorni" ]}
 				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-3">
+				
+				<div class="col-md-2">
 					{[ "type": "date", "label": "<?php echo tr('Data bozza'); ?>", "maxlength": 10, "name": "data_bozza", "value": "$data_bozza$" ]}
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-2">
 					{[ "type": "date", "label": "<?php echo tr('Data accettazione'); ?>", "maxlength": 10, "name": "data_accettazione", "value": "$data_accettazione$" ]}
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-2">
 					{[ "type": "date", "label": "<?php echo tr('Data conclusione'); ?>", "maxlength": 10, "name": "data_conclusione", "value": "$data_conclusione$" ]}
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-2">
 					{[ "type": "date", "label": "<?php echo tr('Data rifiuto'); ?>", "maxlength": 10, "name": "data_rifiuto", "value": "$data_rifiuto$" ]}
 				</div>
 			</div>
@@ -370,6 +374,12 @@ if (!empty($records[0]['idcontratto_prev'])) {
 	function fattura_da_contratto(){
 		$('#form_creafattura').submit();
 	}
+	
+	$('#idanagrafica_c').change( function(){
+        session_set('superselect,idanagrafica', $(this).val(), 0);
+
+		$("#idsede").selectReset();
+	});
 </script>
 
 

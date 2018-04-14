@@ -357,16 +357,20 @@ class API extends \Util\Singleton
     /**
      * Restituisce i parametri specificati dalla richiesta.
      */
-    public static function getRequest()
+    public static function getRequest($raw = false)
     {
         $request = [];
 
         if (self::isAPIRequest()) {
-            $request = (array) json_decode(file_get_contents('php://input'), true);
+            $request = file_get_contents('php://input');
 
-            // Fallback nel caso la richiesta sia effettuata da browser
-            if ($_SERVER['REQUEST_METHOD'] == 'GET' && empty($request)) {
-                $request = Filter::getGET();
+            if (empty($raw)) {
+                $request = (array) json_decode($request, true);
+
+                // Fallback nel caso la richiesta sia effettuata da browser
+                if ($_SERVER['REQUEST_METHOD'] == 'GET' && empty($request)) {
+                    $request = Filter::getGET();
+                }
             }
         }
 

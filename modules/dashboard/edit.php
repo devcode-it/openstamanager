@@ -14,7 +14,7 @@ if (!isset($_SESSION['dashboard']['idtecnici'])) {
 }
 
 if (!isset($_SESSION['dashboard']['idstatiintervento'])) {
-    $rs = $dbo->fetchArray('SELECT idstatointervento AS id, descrizione FROM in_statiintervento');
+    $rs = $dbo->fetchArray('SELECT idstatointervento AS id, descrizione FROM in_statiintervento WHERE deleted = 0');
 
     $_SESSION['dashboard']['idstatiintervento'] = ["'-1'"];
 
@@ -51,7 +51,7 @@ $checks = '';
 $count = 0;
 $total = 0;
 
-$rs = $dbo->fetchArray('SELECT idstatointervento AS id, descrizione, colore FROM in_statiintervento ORDER BY descrizione ASC');
+$rs = $dbo->fetchArray('SELECT idstatointervento AS id, descrizione, colore FROM in_statiintervento WHERE deleted = 0 ORDER BY descrizione ASC');
 $total = count($rs);
 
 $allchecksstati = '';

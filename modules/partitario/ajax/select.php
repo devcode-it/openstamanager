@@ -4,7 +4,14 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'conti':
-        $query = 'SELECT * FROM co_pianodeiconti2';
+        $query = 'SELECT co_pianodeiconti2.* FROM co_pianodeiconti2 LEFT JOIN co_pianodeiconti3 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id |where| GROUP BY co_pianodeiconti2.id';
+
+        if($search!=''){
+            $wh = "WHERE co_pianodeiconti3.descrizione LIKE ".prepare('%'.$search.'%');
+        }else{
+            $wh = "";
+        }
+        $query = str_replace('|where|', $wh, $query);
 
         $rs = $dbo->fetchArray($query);
         foreach ($rs as $r) {

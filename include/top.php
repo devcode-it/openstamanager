@@ -116,7 +116,7 @@ if (Auth::check()) {
                 search: search,
                 translations: translations,
                 locale: \''.$lang.'\',
-				scayt_sLang: \''.$lang.'_'.strtoupper($lang).'\',
+				full_locale: \''.$lang.'_'.strtoupper($lang).'\',
 
                 start_date: \''.Translator::dateToLocale($_SESSION['period_start']).'\',
                 end_date: \''.Translator::dateToLocale($_SESSION['period_end']).'\',

@@ -21,23 +21,22 @@ foreach ($variables as $key => $value) {
 $body = str_replace(array_keys($replaces), array_values($replaces), $body);
 $subject = str_replace(array_keys($replaces), array_values($replaces), $subject);
 
-//Campi mancanti
-$rs2 = $dbo->fetchArray('SELECT from_address, server, port FROM zz_smtp WHERE id='.prepare($template['id_smtp']));
+// Campi mancanti
 $campi_mancanti = [];
 
-if ($rs2[0]['from_address'] == '') {
-	array_push($campi_mancanti, 'Mittente');
+if (empty($smtp['from_address'])) {
+    $campi_mancanti[] = tr('Mittente');
 }
-if ($rs2[0]['server'] == '') {
-	array_push($campi_mancanti, 'Server SMTP');
+if (empty($smtp['server'])) {
+    $campi_mancanti[] = tr('Server SMTP');
 }
-if ($rs2[0]['port'] == '') {
-	array_push($campi_mancanti, 'Porta');
+if (empty($smtp['port'])) {
+    $campi_mancanti[] = tr('Porta');
 }
-					
+
 if (sizeof($campi_mancanti) > 0) {
-	echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere all'invio completa: <b>".implode(', ', $campi_mancanti).'</b><br/>
-	'.Modules::link('Gestione email', $template['id_smtp'], tr('Vai alla scheda account email'), null).'</div>';
+    echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere all'invio completa: <b>".implode(', ', $campi_mancanti).'</b><br/>
+	'.Modules::link('Account email', $smtp['id'], tr('Vai alla scheda account email'), null).'</div>';
 }
 
 // Form
@@ -151,8 +150,7 @@ echo '
             toolbar: globals.ckeditorToolbar,
             language: globals.locale,
             scayt_autoStartup: true,
-            scayt_sLang: globals.scayt_sLang
-           
+            scayt_sLang: globals.full_locale
         });
     });
 

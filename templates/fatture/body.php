@@ -314,7 +314,7 @@ echo '
 
 // Info per il footer
 $imponibile = sum($imponibile);
-$iva = sum($iva, null, 4) + $records[0]['iva_rivalsainps'];
+$iva = sum($iva, null, 2) + $records[0]['iva_rivalsainps'];
 $sconto = sum($sconto);
 
 $totale = $imponibile + $iva - $sconto + $records[0]['rivalsainps'];

@@ -512,6 +512,25 @@ if ($vista == 'mese') {
 
         // Creazione del calendario
 		create_calendar();
+        
+        //Data di default
+        $('.fc-prev-button, .fc-next-button, .fc-today-button').click(function(){
+            var date_start = $('#calendar').fullCalendar('getView').start.format('YYYY-MM-DD');
+            date_start = moment(date_start);
+            
+            if('<?php echo $def; ?>'=='month'){
+                if(date_start.date()>1){
+                    date_start = moment(date_start).add(1, 'M').startOf('month');
+                }
+            }
+            
+            date_start = date_start.format('YYYY-MM-DD');
+            setCookie('calendar_date_start', date_start, 365);
+        });
+        
+        calendar_date_start = getCookie('calendar_date_start');
+        $('#calendar').fullCalendar( 'gotoDate', calendar_date_start );
+        
 	});
 
 	function create_calendar(){

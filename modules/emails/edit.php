@@ -133,7 +133,7 @@ if (sizeof($variables) > 0) {
             toolbar: globals.ckeditorToolbar,
             language: globals.locale,
             scayt_autoStartup: true,
-            scayt_sLang: globals.scayt_sLang
+            scayt_sLang: globals.full_locale
         });
 
     });

@@ -284,9 +284,9 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     $iva_indetraibile_fattura = $rs[0]['iva_indetraibile'];
 
     // Lettura iva delle righe in fattura
-    $query = 'SELECT SUM(iva) AS iva FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
+    $query = 'SELECT iva FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
-    $iva_fattura = $rs[0]['iva'] + $iva_rivalsainps - $iva_indetraibile_fattura;
+    $iva_fattura = sum( array_column($rs, 'iva'), null, 2 ) + $iva_rivalsainps - $iva_indetraibile_fattura;
 
     // Imposto i segni + e - in base se la fattura è di acquisto o vendita
     if ($dir == 'uscita') {

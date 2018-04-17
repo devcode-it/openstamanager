@@ -70,11 +70,14 @@ include_once __DIR__.'/../../core.php';
         </tr>';
 
     for ($i = 0; $i < 10; ++$i) {
+		
+		($i<=1) ? $required = 1 : $required = 0;
+			
         // Conto
         echo '
 			<tr>
 				<td>
-					{[ "type": "select", "name": "idconto['.$i.']", "value": "'.$rs[$i]['idconto'].'", "ajax-source": "conti" ]}
+					{[ "type": "select", "name": "idconto['.$i.']", "value": "'.$rs[$i]['idconto'].'", "ajax-source": "conti", "required": "'.$required.'" ]}
 				</td>';
 
         // Importo dare e avere

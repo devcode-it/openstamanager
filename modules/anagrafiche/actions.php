@@ -175,6 +175,16 @@ switch (post('op')) {
         $dbo->insert('an_anagrafiche', [
             'ragione_sociale' => $ragione_sociale,
             'codice' => $codice,
+            'piva' => post('piva'),
+            'codice_fiscale' => post('codice_fiscale'),
+            'indirizzo' => post('indirizzo'),
+            'citta' => post('citta'),
+            'cap' => post('cap'),
+            'provincia' => post('provincia'),
+            'telefono' => post('telefono'),
+            'cellulare' => post('cellulare'),
+            'email' => post('email'),
+            'idrelazione' => post('idrelazione'),
             'idagente' => $idagente,
         ]);
 

@@ -33,6 +33,7 @@ switch (post('op')) {
             'cellulare' => $post['cellulare'],
             'fax' => $post['fax'],
             'email' => $post['email'],
+            'pec' => $post['pec'],
             'idsede_fatturazione' => $post['idsede_fatturazione'],
             'note' => $post['note'],
             'codiceri' => $post['codiceri'],

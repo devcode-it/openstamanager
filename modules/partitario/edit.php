@@ -264,7 +264,7 @@ for ($x = 0; $x < $n1; ++$x) {
         echo '</table>';
     } else {
         echo "<p align='right'><big><b>RICAVI:</b> ".Translator::numberToLocale(sum($totale_ricavi))." &euro;</big></p>\n";
-        echo "<p align='right'><big><b>COSTI:</b> ".Translator::numberToLocale(sum(abs($totale_costi)))." &euro;</big></p>\n";
+        echo "<p align='right'><big><b>COSTI:</b> ".Translator::numberToLocale(abs(sum($totale_costi)))." &euro;</big></p>\n";
         echo "<p align='right'><big><b>UTILE/PERDITA:</b> ".Translator::numberToLocale(sum($totale_ricavi) - sum(abs($totale_costi)))." &euro;</big></p>\n";
     }
 }

@@ -687,6 +687,7 @@ if (get_var('Utilizzare i tooltip sul calendario') == '1') {
 <?php
 }
 ?>
+                $('#calendar').fullCalendar('option', 'contentHeight', 'auto');
 			},
             events: {
 				url: globals.rootdir + "/modules/dashboard/ajaxreq.php?op=get_current_month",

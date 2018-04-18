@@ -17,7 +17,7 @@ switch (post('op')) {
         $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
 
         // Verifico se c'è già un agente o un metodo di pagamento collegato all'anagrafica cliente, così lo imposto già
-        $q = 'SELECT idagente, '.$campo.' AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica);
+        $q = 'SELECT idagente, '.$campo.' AS idpagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica);
         $rs = $dbo->fetchArray($q);
         $idagente = $rs[0]['idagente'];
         $idpagamento = $rs[0]['idpagamento'];

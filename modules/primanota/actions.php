@@ -61,7 +61,7 @@ switch (post('op')) {
             $rs = $dbo->fetchArray($query);
 
             // Aggiorno lo stato della fattura
-            if ($rs[0]['tot_pagato'] == $rs[0]['tot_da_pagare']) {
+            if (abs($rs[0]['tot_pagato']) == abs($rs[0]['tot_da_pagare'])) {
                 $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Pagato') WHERE id=".prepare($iddocumento));
             } else {
                 $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Parzialmente pagato') WHERE id=".prepare($iddocumento));

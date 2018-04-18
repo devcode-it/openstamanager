@@ -196,26 +196,6 @@ switch (post('op')) {
         break;
 
     case 'add':
-        /*
-        $codice = post('codice');
-
-        // Controlli sul codice
-        $count = -1;
-        do {
-            $new_codice = ($count < 0) ? $codice : Util\Generator::generate(get_var('Formato codice intervento'), $codice);
-            $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice='.prepare($new_codice));
-            ++$count;
-        } while (!empty($rs) || empty($new_codice));
-
-        if ($count > 0) {
-            $_SESSION['warnings'][] = tr('Numero intervento _NUM_ saltato perchè già esistente!', [
-                '_NUM_' => "'".$codice."'"
-            ]);
-            $_SESSION['warnings'][] = tr('Nuovo numero intervento calcolato _NUM_', [
-                '_NUM_' => "'".$new_codice."'"
-            ]);
-        }
-        */
         $formato = get_var('Formato codice intervento');
         $template = str_replace('#', '%', $formato);
 
@@ -278,10 +258,6 @@ switch (post('op')) {
             // Se è specificato che l'intervento fa parte di una pianificazione aggiorno il codice dell'intervento sulla riga della pianificazione
             if (!empty($idcontratto_riga)) {
                 $dbo->update('co_righe_contratti', $array, ['idcontratto' => $idcontratto, 'id' => $idcontratto_riga]);
-            }
-            // Altrimenti inserisco una nuova pianificazione e collego l'intervento
-            else {
-                $dbo->insert('co_righe_contratti', array_merge(['idcontratto' => $idcontratto], $array));
             }
         }
 

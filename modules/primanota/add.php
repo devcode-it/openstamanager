@@ -33,7 +33,7 @@ include_once __DIR__.'/../../core.php';
         $field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
         $idconto_aziendale = $dbo->fetchArray('SELECT '.$field.' FROM co_pagamenti WHERE id = (SELECT idpagamento FROM co_documenti WHERE id='.prepare($iddocumento).') GROUP BY descrizione')[0][$field];
 
-        // Lettura conto cassa di default
+        // Lettura conto di default
         $idconto_aziendale = !empty($idconto_aziendale) ? $idconto_aziendale : get_var('Conto aziendale predefinito');
 
         // Generazione causale (incasso fattura)
@@ -139,7 +139,9 @@ include_once __DIR__.'/../../core.php';
         </tr>';
 
     for ($i = 0; $i < 10; ++$i) {
-        // Conto
+        
+		($i<=1) ? $required = 1 : $required = 0;
+		// Conto
         echo '
 			<tr>
 				<td>
@@ -149,7 +151,7 @@ include_once __DIR__.'/../../core.php';
         } elseif ($i == 1) {
             echo $idconto_aziendale;
         }
-        echo '", "ajax-source": "conti" ]}
+        echo '", "ajax-source": "conti", "required": "'.$required.'" ]}
 				</td>';
 
         // Importo dare e avere

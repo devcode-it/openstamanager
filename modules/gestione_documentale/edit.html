@@ -1,0 +1,65 @@
+<?php
+//$q='SELECT filename FROM zz_files WHERE id='.$id_record;
+//$rs=$dbo->fetchArray($q);
+//$filename=$rs[0]['filename'];
+?>
+
+<form action="" method="post" id="add-form">
+
+	<input type="hidden" name="op" value="update">
+	<input type="hidden" name="backto" value="record-edit">
+	<input type="hidden" name="id_record" value="<?php echo $id_record ?>">
+
+	
+	
+	<!-- SCHEDA FILE -->
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title"> Scheda file</h3>
+		</div>
+
+		<div class="panel-body">
+			<div class="pull-right">
+				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Salva modifiche</button>
+			</div>
+			<div class="clearfix"></div>
+			
+			
+			<div class="row">
+		
+				<div class="col-md-6">
+					{[ "type": "text", "label": "Nome", "name": "nome", "required": 1, "class": "", "value": "$nome$", "extra": "" ]}
+				</div>
+						
+						
+						
+				<div class="col-md-3">
+					{[ "type": "select", "label": "Categoria", "name": "idcategoria", "required": 1, "class": "", "values": "query=SELECT id, descrizione FROM zz_documenti_categorie WHERE deleted = 0", "value": "$idcategoria$", "extra": "" ]}
+				</div>
+				
+				
+				<div class="col-md-3">
+					{[ "type": "text", "label": "Data", "name": "data", "required": 1, "class": "datepicker text-center", "value": "<?php echo date('d/m/Y', strtotime($records[0]['data'])) ?>", "extra": "" ]}
+				</div>
+			
+			</div>
+		</div>
+	</div>
+
+</form>
+
+
+{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
+
+
+<form action="" method="post" role="form" id="form-delete">
+	<input type="hidden" name="backto" value="record-list">
+	<input type="hidden" name="op" value="delete">
+	<button type="button" class="btn-link" onclick="if( confirm('Eliminare scheda e relativi allegati?') ){ $('#form-delete').submit(); }"><span class="text-danger"><i class="fa fa-trash-o"></i> Elimina scheda file e allegati</span></button>
+</form>
+
+<script>
+	$(document).ready( function(){
+
+	});
+</script>

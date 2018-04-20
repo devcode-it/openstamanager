@@ -266,7 +266,7 @@ class App
             'search' => $search,
             'slow' => $slow,
             'format' => $format,
-            'summable' => [],
+            'summable' => $summable,
         ];
     }
 

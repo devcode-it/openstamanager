@@ -141,6 +141,8 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
 
         <tfoot>
             <tr>';
+    echo '
+                <td></td>';
     foreach ($total['fields'] as $key => $field) {
         echo '
                 <td></td>';

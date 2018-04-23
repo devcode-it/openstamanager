@@ -19,15 +19,23 @@ echo '
 // Data
 echo '
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "class": "text-center", "value": "-now-", "extra": "" ]}
         </div>';
 
 // Tipo di documento
 echo '
-        <div class="col-md-6">
+        <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Tipo di fattura').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT * FROM co_tipidocumento WHERE dir=\'entrata\'", "extra": "" ]}
+        </div>';
+		
+	
+// Sezionale
+echo '
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.Modules::get('Fatture di vendita')['id'].' ORDER BY name",  "value":"'.$_SESSION['m'.Modules::get('Fatture di vendita')['id']]['id_segment'].'", "extra": "" ]}
         </div>
+		
     </div>';
 
 // Note

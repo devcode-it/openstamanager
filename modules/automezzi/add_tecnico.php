@@ -22,13 +22,13 @@ echo '
 // Data di partenza
 echo '
         <div class="col-md-3">
-            {[ "type": "date", "label": "'.tr('Data dal').'", "name": "data_inizio", "required": 1, "class": "text-center", "value": "-now-" ]}
+            {[ "type": "date", "label": "'.tr('Data dal').'", "name": "data_inizio", "required": 1, "maxlength": 10, "value": "-now-" ]}
         </div>';
 
 // Data di fine
 echo '
         <div class="col-md-3">
-            {[ "type": "date", "label": "'.tr('Data al').'", "name": "data_fine", "value": "", "min-date": "-now-" ]}
+            {[ "type": "date", "label": "'.tr('Data al').'", "name": "data_fine", "value": "", "maxlength": 10, "min-date": "-now-" ]}
         </div>';
 
 echo '

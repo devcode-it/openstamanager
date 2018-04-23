@@ -127,7 +127,11 @@ $dbo = Database::getConnection();
 // Controllo sulla presenza dei permessi di accesso basilari
 $continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (Auth::check() || API::isAPIRequest());
 
-if (!$continue && getURLPath() != slashes(ROOTDIR.'/index.php')) {
+if (!empty($skip_permissions)) {
+    Permissions::skip();
+}
+
+if (!$continue && getURLPath() != slashes(ROOTDIR.'/index.php') && !Permissions::getSkip()) {
     if (Auth::check()) {
         Auth::logout();
     }

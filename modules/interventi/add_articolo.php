@@ -13,6 +13,8 @@ $can_edit_prezzi = (in_array('Amministratori', $gruppi)) || (get_var('Mostra i p
 $idriga = get('idriga');
 $idautomezzo = (get('idautomezzo') == 'undefined') ? '' : get('idautomezzo');
 
+$_SESSION['superselect']['idintervento'] = get('id_record');
+
 // Lettura idanagrafica cliente e percentuale di sconto/rincaro in base al listino
 $rs = $dbo->fetchArray('SELECT idanagrafica FROM in_interventi WHERE id='.prepare($id_record));
 

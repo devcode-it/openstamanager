@@ -231,7 +231,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 
         $attachments[] = [
             'path' => $filename,
-            'name' => $print['title'],
+            'name' => $print['title'].'.pdf',
         ];
     }
 

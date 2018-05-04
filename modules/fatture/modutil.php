@@ -450,11 +450,11 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 /**
  * Funzione per generare un nuovo codice per il mastrino.
  */
-function get_new_idmastrino()
+function get_new_idmastrino( $table = 'co_movimenti' )
 {
     global $dbo;
 
-    $query = 'SELECT MAX(idmastrino) AS maxidmastrino FROM co_movimenti';
+    $query = 'SELECT MAX(idmastrino) AS maxidmastrino FROM '.$table;
     $rs = $dbo->fetchArray($query);
 
     return intval($rs[0]['maxidmastrino']) + 1;

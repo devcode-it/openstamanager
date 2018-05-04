@@ -216,7 +216,7 @@ if (!empty($rs2)) {
             <td style="border-right:1px solid #aaa;">';
         if ($user['idanagrafica'] == 0 || $show_costi) {
             echo '
-                {[ "type": "number", "name": "sconto['.$id.']", "value": "'.$sconto_unitario.'", "icon-after": "choice|untprc|'.$tipo_sconto.'", "class": "small-width", "extra": "'.$readonly.'" ]}';
+                {[ "type": "number", "name": "sconto['.$id.']", "value": "'.$sconto_unitario.'", "icon-after": "choice|untprc|'.$tipo_sconto.'|'.$readonly.'", "class": "small-width", "extra": "'.$readonly.'" ]}';
         } else {
             echo '
                 <input type="hidden" name="sconto['.$id.']" value="'.Translator::numberToLocale($sconto_unitario).'" />
@@ -231,7 +231,7 @@ if (!empty($rs2)) {
             <td style="border-right:1px solid #aaa;">';
         if ($user['idanagrafica'] == 0 || $show_costi) {
             echo '
-                {[ "type": "number", "name": "scontokm['.$id.']", "value": "'.$scontokm_unitario.'", "icon-after": "choice|untprc|'.$tipo_scontokm.'", "class": "small-width", "extra": "'.$readonly.'" ]}';
+                {[ "type": "number", "name": "scontokm['.$id.']", "value": "'.$scontokm_unitario.'", "icon-after": "choice|untprc|'.$tipo_scontokm.'|'.$readonly.'", "class": "small-width", "extra": "'.$readonly.'" ]}';
         } else {
             echo '
                 <input type="hidden" name="scontokm['.$id.']" value="'.Translator::numberToLocale($scontokm_unitario).'" />

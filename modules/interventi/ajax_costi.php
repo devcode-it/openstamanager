@@ -106,7 +106,7 @@ echo '
 <!-- SCONTO -->
 <div class="row">
     <div class="col-md-4 pull-right">
-        {[ "type": "number", "label": "'.tr('Sconto incondizionato').'", "name": "sconto_globale", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'", "extra": "'.$readonly.'" ]}
+        {[ "type": "number", "label": "'.tr('Sconto incondizionato').'", "name": "sconto_globale", "value": "'.$sconto.'", "icon-after": "choice|untprc|'.$tipo_sconto.'|'.$readonly.'", "extra": "'.$readonly.'" ]}
     </div>
 </div>';
 

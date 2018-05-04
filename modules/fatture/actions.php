@@ -1235,6 +1235,10 @@ switch (post('op')) {
         if (!empty($id_record) && isset($post['idarticolo'])) {
             $idriga = post('idriga');
             $idarticolo = post('idarticolo');
+            
+            // Leggo se la riga è collegata a un ddt, per aggiornargli lo stato
+            $rs = $dbo->fetchArray('SELECT qta, descrizione, idarticolo, idddt, idiva FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga));
+            $idddt = $rs[0]['idddt'];
 
             if (!rimuovi_articolo_dafattura($idarticolo, $id_record, $idriga)) {
                 $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
@@ -1243,6 +1247,15 @@ switch (post('op')) {
             }
 
             if ($dbo->query('DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga))) {
+                if( !empty($idddt) ){
+                    // Se nella fattura non c'é più il ddt rimosso, aggiorno lo stato del ddt in "Bozza"
+                    $rs = $dbo->fetchArray('SELECT id FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idddt='.prepare($idddt));
+                
+                    if( sizeof($rs) == 0 ){
+                        $dbo->query('UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="Bozza") WHERE id = '.prepare($idddt));
+                    }
+                }
+                
                 // Ricalcolo inps, ritenuta e bollo
                 if ($dir == 'entrata') {
                     ricalcola_costiagg_fattura($id_record);
@@ -1363,6 +1376,7 @@ switch (post('op')) {
             // Se la riga è stata creata da un ordine, devo riportare la quantità evasa nella tabella degli ordini
             // al valore di prima, riaggiungendo la quantità che sto togliendo
             $rs = $dbo->fetchArray('SELECT qta, descrizione, idarticolo, idordine, idiva FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga));
+            $idordine = $rs[0]['idordine'];
 
             // Rimpiazzo la quantità negli ordini
             $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$rs[0]['qta'].' WHERE descrizione='.prepare($rs[0]['descrizione']).' AND idarticolo='.prepare($rs[0]['idarticolo']).' AND idordine='.prepare($rs[0]['idordine']).' AND idiva='.prepare($rs[0]['idiva']));
@@ -1370,6 +1384,7 @@ switch (post('op')) {
             // Se la riga è stata creata da un ddt, devo riportare la quantità evasa nella tabella dei ddt
             // al valore di prima, riaggiungendo la quantità che sto togliendo
             $rs = $dbo->fetchArray('SELECT qta, descrizione, idarticolo, idddt, idiva FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga));
+            $idddt = $rs[0]['idddt'];
 
             // Rimpiazzo la quantità nei ddt
             $dbo->query('UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$rs[0]['qta'].' WHERE descrizione='.prepare($rs[0]['descrizione']).' AND idarticolo='.prepare($rs[0]['idarticolo']).' AND idddt='.prepare($rs[0]['idddt']).' AND idiva='.prepare($rs[0]['idiva']));
@@ -1377,6 +1392,15 @@ switch (post('op')) {
             $query = 'DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
 
             if ($dbo->query($query)) {
+                if( !empty($idddt) ){
+                    // Se nella fattura non c'é più il ddt rimosso, aggiorno lo stato del ddt in "Bozza"
+                    $rs = $dbo->fetchArray('SELECT id FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idddt='.prepare($idddt));
+                
+                    if( sizeof($rs) == 0 ){
+                        $dbo->query('UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="Bozza") WHERE id = '.prepare($idddt));
+                    }
+                }
+                
                 // Ricalcolo inps, ritenuta e bollo
                 if ($dir == 'entrata') {
                     ricalcola_costiagg_fattura($id_record);

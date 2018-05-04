@@ -121,6 +121,8 @@ class API extends \Util\Singleton
                     $order[] = $column[0]['COLUMN_NAME'];
                 }
             }
+        } else {
+            return self::error('notFound');
         }
 
         // Generazione automatica delle query

@@ -12,12 +12,20 @@ $records = $dbo->fetchArray('SELECT *,
     (SELECT descrizione FROM dt_porto WHERE id=idporto) AS porto,
     (SELECT descrizione FROM dt_aspettobeni WHERE id=idaspettobeni) AS aspettobeni,
     (SELECT descrizione FROM dt_spedizione WHERE id=idspedizione) AS spedizione,
-    (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idvettore) AS vettore
+    (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idvettore) AS vettore,
+    (SELECT id FROM co_banche WHERE id=idbanca) AS id_banca,
+    (SELECT nome FROM co_banche WHERE id=idbanca) AS nome_banca,
+    (SELECT iban FROM co_banche WHERE id=idbanca) AS iban_banca,
+    (SELECT bic FROM co_banche WHERE id=idbanca) AS bic_banca
 FROM co_documenti WHERE id='.prepare($id_record));
 
 $records[0]['rivalsainps'] = floatval($records[0]['rivalsainps']);
 $records[0]['ritenutaacconto'] = floatval($records[0]['ritenutaacconto']);
 $records[0]['bollo'] = floatval($records[0]['bollo']);
+
+$nome_banca = $records[0]['nome_banca'];
+$iban_banca = $records[0]['iban_banca'];
+$bic_banca = $records[0]['bic_banca'];
 
 $module_name = ($records[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
 
@@ -69,6 +77,9 @@ $custom = [
     'n_colli' => !empty($records[0]['n_colli']) ? $records[0]['n_colli'] : '',
     'spedizione' => $records[0]['spedizione'],
     'vettore' => $records[0]['vettore'],
+    'appoggiobancario' => $nome_banca,
+    'codiceiban' => $iban_banca,
+    'bic' => $bic_banca,
 ];
 
 // Accesso solo a:

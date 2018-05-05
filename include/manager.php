@@ -19,7 +19,8 @@ if (!empty($id_plugin)) {
 
     echo '
         <h4>
-            '.$element['name'];
+			<span  class="'.(!empty($element['help']) ? ' tip' : '').'"'.(!empty($element['help']) ? ' title="'.prepareToField($element['help']).'" data-position="bottom"' : '').' >
+            '.$element['title'].(!empty($element['help']) ? ' <i class="fa fa-question-circle-o"></i>' : '').'</span>';
 
     if (file_exists($docroot.'/plugins/'.$element['directory'].'/add.php')) {
         echo '
@@ -141,6 +142,8 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
 
         <tfoot>
             <tr>';
+    echo '
+                <td></td>';
     foreach ($total['fields'] as $key => $field) {
         echo '
                 <td></td>';

@@ -55,8 +55,28 @@ class DateHandler implements HandlerInterface
 
         // Generazione del codice HTML di default
         if (empty($result)) {
-            $result = '
+            if (empty($values['label'])) {
+                $result = '
+<div class="form-group">';
+            }
+
+            if (empty($values['icon-before']) || empty($values['icon-after'])) {
+                $result .= '
+    <div class="input-group">';
+            }
+
+            $result .= '
     <input |attr|>';
+
+            if (empty($values['icon-before']) || empty($values['icon-after'])) {
+                $result .= '
+    </div>';
+            }
+
+            if (empty($values['label'])) {
+                $result .= '
+</div>';
+            }
         }
 
         return $result;

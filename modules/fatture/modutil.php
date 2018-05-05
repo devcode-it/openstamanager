@@ -11,7 +11,7 @@ function get_new_numerofattura($data)
 
     if ($dir == 'uscita') {
         // recupero maschera per questo segmento
-        $rs_maschera = $dbo->fetchArray("SELECT pattern FROM zz_segments WHERE id = '".$id_segment."'");
+        $rs_maschera = $dbo->fetchArray('SELECT pattern FROM zz_segments WHERE id = '.prepare($id_segment));
         // esempio: ####/YY
         $maschera = $rs_maschera[0]['pattern'];
 
@@ -19,13 +19,14 @@ function get_new_numerofattura($data)
         preg_match('/[#]+/', $maschera, $m1);
         preg_match('/[Y]+/', $maschera, $m2);
 
-        $query = "SELECT numero FROM co_documenti WHERE DATE_FORMAT(data,'%Y') = ".prepare(date('Y', strtotime($data)))." AND id_segment = '".$id_segment."'";
+        $query = "SELECT numero FROM co_documenti WHERE DATE_FORMAT(data,'%Y') = ".prepare(date('Y', strtotime($data))).' AND id_segment = '.prepare($id_segment);
 
         $pos1 = strpos($maschera, $m1[0]);
-        if ($pos1 == 0):
-            $query .= ' ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1'; else:
+        if ($pos1 == 0) {
+            $query .= ' ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1';
+        } else {
             $query .= ' ORDER BY numero DESC LIMIT 0,1';
-        endif;
+        }
 
         $rs_ultima_fattura = $dbo->fetchArray($query);
 
@@ -51,7 +52,7 @@ function get_new_numerosecondariofattura($data)
     global $id_segment;
 
     // recupero maschera per questo segmento
-    $rs_maschera = $dbo->fetchArray("SELECT pattern FROM zz_segments WHERE id = '".$id_segment."'");
+    $rs_maschera = $dbo->fetchArray('SELECT pattern FROM zz_segments WHERE id = '.prepare($id_segment));
     // esempio: ####/YY
     $maschera = $rs_maschera[0]['pattern'];
 
@@ -59,16 +60,17 @@ function get_new_numerosecondariofattura($data)
     preg_match('/[#]+/', $maschera, $m1);
     preg_match('/[Y]+/', $maschera, $m2);
 
-    $query = "SELECT numero_esterno FROM co_documenti WHERE DATE_FORMAT(data,'%Y') = ".prepare(date('Y', strtotime($data)))." AND id_segment='".$id_segment."'";
+    $query = "SELECT numero_esterno FROM co_documenti WHERE DATE_FORMAT(data,'%Y') = ".prepare(date('Y', strtotime($data))).' AND id_segment='.prepare($id_segment);
     // Marzo 2017
     // nel caso ci fossero lettere prima della maschera ### per il numero (es. FT-0001-2017)
     // è necessario l'ordinamento alfabetico "ORDER BY numero_esterno" altrimenti
     // nel caso di maschere del tipo 001-2017 è necessario l'ordinamento numerico "ORDER BY CAST(numero_esterno AS UNSIGNED)"
     $pos1 = strpos($maschera, $m1[0]);
-    if ($pos1 == 0):
-        $query .= ' ORDER BY CAST(numero_esterno AS UNSIGNED) DESC LIMIT 0,1'; else:
+    if ($pos1 == 0) {
+        $query .= ' ORDER BY CAST(numero_esterno AS UNSIGNED) DESC LIMIT 0,1';
+    } else {
         $query .= ' ORDER BY numero_esterno DESC LIMIT 0,1';
-    endif;
+    }
 
     $rs_ultima_fattura = $dbo->fetchArray($query);
 
@@ -286,7 +288,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     // Lettura iva delle righe in fattura
     $query = 'SELECT iva FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
-    $iva_fattura = sum( array_column($rs, 'iva'), null, 2 ) + $iva_rivalsainps - $iva_indetraibile_fattura;
+    $iva_fattura = sum(array_column($rs, 'iva'), null, 2) + $iva_rivalsainps - $iva_indetraibile_fattura;
 
     // Imposto i segni + e - in base se la fattura è di acquisto o vendita
     if ($dir == 'uscita') {
@@ -450,11 +452,11 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 /**
  * Funzione per generare un nuovo codice per il mastrino.
  */
-function get_new_idmastrino()
+function get_new_idmastrino($table = 'co_movimenti')
 {
     global $dbo;
 
-    $query = 'SELECT MAX(idmastrino) AS maxidmastrino FROM co_movimenti';
+    $query = 'SELECT MAX(idmastrino) AS maxidmastrino FROM '.$table;
     $rs = $dbo->fetchArray($query);
 
     return intval($rs[0]['maxidmastrino']) + 1;
@@ -756,10 +758,6 @@ function rimuovi_articolo_dafattura($idarticolo, $iddocumento, $idrigadocumento)
     return true;
 }
 
-function rimuovi_riga($iddocumento, $idriga)
-{
-}
-
 function aggiorna_sconto($tables, $fields, $id_record, $options = [])
 {
     $dbo = Database::getConnection();
@@ -778,17 +776,17 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
 
     if (!empty($sconto[0]['sconto_globale'])) {
         if ($sconto[0]['tipo_sconto_globale'] == 'PRC') {
-			$rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS imponibile, SUM(iva) AS iva FROM (SELECT '.$tables['row'].'.subtotale, '.$tables['row'].'.sconto, '.$tables['row'].'.iva FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record).') AS t');
+            $rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS imponibile, SUM(iva) AS iva FROM (SELECT '.$tables['row'].'.subtotale, '.$tables['row'].'.sconto, '.$tables['row'].'.iva FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record).') AS t');
             $subtotale = $rs[0]['imponibile'];
             $iva += $rs[0]['iva'] / 100 * $sconto[0]['sconto_globale'];
             $subtotale = -$subtotale / 100 * $sconto[0]['sconto_globale'];
 
-            $descrizione = $descrizione.' '.Translator::numberToLocale($sconto[0]['sconto_globale']).'%';	
+            $descrizione = $descrizione.' '.Translator::numberToLocale($sconto[0]['sconto_globale']).'%';
         } else {
-			$rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS imponibile, SUM(iva) AS iva FROM (SELECT '.$tables['row'].'.subtotale, '.$tables['row'].'.sconto, '.$tables['row'].'.iva FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record).') AS t');
+            $rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS imponibile, SUM(iva) AS iva FROM (SELECT '.$tables['row'].'.subtotale, '.$tables['row'].'.sconto, '.$tables['row'].'.iva FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record).') AS t');
             $subtotale = $rs[0]['imponibile'];
-			$iva += $sconto[0]['sconto_globale'] * $rs[0]['iva'] / $subtotale;
-			
+            $iva += $sconto[0]['sconto_globale'] * $rs[0]['iva'] / $subtotale;
+
             $subtotale = -$sconto[0]['sconto_globale'];
         }
 
@@ -848,4 +846,29 @@ function seriali_non_rimuovibili($field, $id_riga, $dir)
     }
 
     return $results;
+}
+
+function calcola_sconto($data)
+{
+    if ($data['tipo'] == 'PRC') {
+        $result = 0;
+
+        $price = floatval($data['prezzo']);
+
+        $percentages = explode('+', $data['sconto']);
+        foreach ($percentages as $percentage) {
+            $discount = $price / 100 * floatval($percentage);
+
+            $result += $discount;
+            $price -= $discount;
+        }
+    } else {
+        $result = floatval($data['sconto']);
+    }
+
+    if (!empty($data['qta'])) {
+        $result = $result * $data['qta'];
+    }
+
+    return $result;
 }

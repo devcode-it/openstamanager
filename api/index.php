@@ -46,7 +46,7 @@ try {
         // Richiesta GET (ottenimento elementi)
         case 'GET':
             // Risorsa specificata
-            if (!empty($request)) {
+            if (count($request) > 1) {
                 $result = $api->retrieve($request);
             }
 

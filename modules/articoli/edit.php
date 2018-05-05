@@ -46,13 +46,22 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 					{[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta", "min-value": "undefined" ]}
 				</div>
 				<div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr('Modifica quantità manualmente'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Modifica quantità manualmente'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>", "extra": "<?php echo ($records[0]['servizio']) ? 'disabled': ''; ?>" ]}
 
 					<script type="text/javascript">
 
-				        $('#qta_manuale').click(function(){
-							$("#qta").attr("readonly", !$('#qta_manuale').is(":checked"));
-				        });
+                        $( document ).ready(function() {
+
+                            $('#servizio').click(function(){
+                                $("#qta_manuale").attr("disabled", $('#servizio').is(":checked"));
+                            });
+
+
+    				        $('#qta_manuale').click(function(){
+    							$("#qta").attr("readonly", !$('#qta_manuale').is(":checked"));
+    				        });
+
+                         });
 
 					</script>
 
@@ -132,7 +141,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "checkbox", "label": "<?php echo tr('Questo articolo è un servizio'); ?>", "name": "servizio", "value": "$servizio$", "help": "", "placeholder": "<?php echo tr('Servizio'); ?>" ]}
+                            {[ "type": "checkbox", "label": "<?php echo tr('Questo articolo è un servizio'); ?>", "name": "servizio", "value": "$servizio$", "help": "<?php echo tr('Le quantità non saranno considerate'); ?>", "placeholder": "<?php echo tr('Servizio'); ?>" ]}
                         </div>
                     </div>
             

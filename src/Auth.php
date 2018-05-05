@@ -55,7 +55,9 @@ class Auth extends \Util\Singleton
             if (API::isAPIRequest()) {
                 $token = API::getRequest()['token'];
 
-                $id = $database->fetchArray('SELECT `id_utente` FROM `zz_tokens` WHERE `token` = '.prepare($token))[0]['id_utente'];
+                $user = $database->fetchArray('SELECT `id_utente` FROM `zz_tokens` WHERE `enabled` = 1 AND `token` = '.prepare($token));
+
+                $id = !empty($user) ? $user[0]['id_utente'] : null;
             }
             // Controllo sulla sessione attiva
             elseif (!empty($_SESSION['id_utente'])) {

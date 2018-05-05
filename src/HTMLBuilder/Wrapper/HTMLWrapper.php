@@ -124,6 +124,7 @@ class HTMLWrapper implements WrapperInterface
 
         $pieces = explode('|', $string);
         $type = $pieces[1];
+		$extra = $pieces[3];
 
         if ($type == 'untprc') {
             $choices = [
@@ -155,7 +156,7 @@ class HTMLWrapper implements WrapperInterface
 
         $value = (empty($pieces[2]) || !in_array($pieces[2], array_column($choices, 'id'))) ? $choices[0]['id'] : $pieces[2];
 
-        $result = '{[ "type": "select", "name": "tipo_'.prepareToField($values['name']).'", "value": "'.prepareToField($value).'", "values": '.json_encode($choices).', "class": "no-search" ]}';
+        $result = '{[ "type": "select", "name": "tipo_'.prepareToField($values['name']).'", "value": "'.prepareToField($value).'", "values": '.json_encode($choices).', "class": "no-search", "extra": "'.$extra.'" ]}';
 
         $result = \HTMLBuilder\HTMLBuilder::replace($result);
 

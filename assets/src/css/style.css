@@ -583,6 +583,9 @@ input.small-width {
 .callout a{
 		text-decoration: none;
 }
+.dropdown-menu{
+    min-width: 130px;
+}
 /*fix per tabs editor */
 .nav-tabs-custom > .nav-tabs > li{
 		border-top: 3px solid #ddd;

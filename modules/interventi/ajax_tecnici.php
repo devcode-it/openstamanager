@@ -44,14 +44,14 @@ $rss = $dbo->fetchArray('SELECT idtipointervento, idstatointervento FROM in_inte
 $idtipointervento = $rss[0]['idtipointervento'];
 $idstatointervento = $rss[0]['idstatointervento'];
 
-$rss = $dbo->fetchArray('SELECT completato FROM in_statiintervento WHERE idstatointervento='.prepare($idstatointervento));
-$flg_completato = $rss[0]['completato'];
+$rss = $dbo->fetchArray('SELECT completato AS flag_completato FROM in_statiintervento WHERE idstatointervento='.prepare($idstatointervento));
+$flag_completato = $rss[0]['flag_completato'];
 
 $query = 'SELECT * FROM an_anagrafiche JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE deleted=0 AND idintervento='.prepare($id_record)." AND idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica = (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = 'Tecnico')) ORDER BY ragione_sociale ASC, in_interventi_tecnici.orario_inizio ASC, in_interventi_tecnici.id ASC";
 $rs2 = $dbo->fetchArray($query);
 $prev_tecnico = '';
 
-if ($flg_completato) {
+if ($flag_completato) {
     $readonly = 'readonly';
 } else {
     $readonly = '';
@@ -249,7 +249,7 @@ if (!empty($rs2)) {
         echo '
             <td>';
 
-        if (!$flg_completato) {
+        if (!$flag_completato) {
             echo '
                 <a class="btn btn-danger" id="delbtn_'.$id.'" onclick="elimina_sessione(\''.$id.'\', \''.$id_record.'\', \''.$idzona.'\');" title="Elimina riga" class="only_rw"><i class="fa fa-trash"></i></a>';
         }
@@ -270,7 +270,7 @@ if (!empty($rs2)) {
 '<div class=\'alert alert-info\' ><i class=\'fa fa-info-circle\'></i> '.tr('Nessun tecnico assegnato').'.</div>';
 }
 
-if (!$flg_completato) {
+if (!$flag_completato) {
     echo '
     <!-- AGGIUNTA TECNICO -->
     <div class="row">

@@ -2,15 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-// Disabilito il tasto di firma per gli interventi completati
-if ($records[0]['flg_completato']) {
-    $disabled = 'disabled';
-    $readonly = 'readonly';
-} else {
-    $disabled = '';
-    $readonly = '';
-}
-
 if (empty($records[0]['firma_file'])) {
     $frase = tr('Anteprima e firma');
     $info_firma = '';
@@ -23,11 +14,12 @@ if (empty($records[0]['firma_file'])) {
     ]).'</span>';
 }
 
+// Disabilito il tasto di firma per gli interventi completati
 echo '
 
 <!-- EVENTUALE FIRMA GIA\' EFFETTUATA -->
 '.$info_firma.'
 
-<button type="button" class="btn btn-primary " onclick="launch_modal( \''.tr('Anteprima e firma').'\', globals.rootdir + \'/modules/interventi/add_firma.php?id_module='.$id_module.'&id_record='.$id_record.'&anteprima=1\', 1 );" '.$disabled.'>
+<button type="button" class="btn btn-primary " onclick="launch_modal( \''.tr('Anteprima e firma').'\', globals.rootdir + \'/modules/interventi/add_firma.php?id_module='.$id_module.'&id_record='.$id_record.'&anteprima=1\', 1 );" '.($records[0]['flag_completato'] ? 'disabled' : '').'>
     <i class="fa fa-desktop"></i> '.$frase.'...
 </button>';

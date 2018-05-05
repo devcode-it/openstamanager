@@ -90,13 +90,7 @@ echo '
 			{[ "type": "time", "label": "'.tr('Orario fine').'", "name": "orario_fine", "required": 0, "value": "'.$orario_fine.'", "extra": "disabled" ]}
 		</div>
 
-
-
-
 	</div>
-
-
-
 
 	<!-- PULSANTI -->
 	<div class="row">
@@ -113,9 +107,9 @@ echo '
 
 echo '
 	<script>
-		$( document ).ready(function() {
+		$(document).ready(function() {
 
-			$( "#pianifica_intervento" ).click(function() {
+			$("#pianifica_intervento").click(function() {
 
 					if ($(this).is(":checked")){
 						$("#idtecnico").removeAttr("disabled");

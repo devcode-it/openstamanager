@@ -2,9 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$disabled_fields = [];
-
-// rimuovo session usate sui select combinati (sedi, preventivi, contratti, impianti)
+// Rimuovo session usate sui select combinati (sedi, preventivi, contratti, impianti)
 unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idsede']);
 

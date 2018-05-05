@@ -17,10 +17,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-3">
-					<?php
-                    $immagine01 = ($records[0]['immagine01'] == '') ? '' : $rootdir.'/files/articoli/'.$records[0]['immagine01'];
-                    ?>
-					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine01", "class": "img-thumbnail", "value": "<?php echo $immagine01; ?>" ]}
+					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine01", "class": "img-thumbnail", "value": "<?php echo  !empty($records[0]['immagine01']) ? $rootdir.'/files/articoli/'.$records[0]['immagine01'] : ''; ?>" ]}
 				</div>
 
 				<div class="col-md-4">
@@ -46,11 +43,11 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 					{[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta", "min-value": "undefined" ]}
 				</div>
 				<div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr('Modifica quantità manualmente'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>", "extra": "<?php echo ($records[0]['servizio']) ? 'disabled': ''; ?>" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Modifica quantità manualmente'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>", "extra": "<?php echo ($records[0]['servizio']) ? 'disabled' : ''; ?>" ]}
 
 					<script type="text/javascript">
 
-                        $( document ).ready(function() {
+                        $(document).ready(function() {
 
                             $('#servizio').click(function(){
                                 $("#qta_manuale").attr("disabled", $('#servizio').is(":checked"));
@@ -71,10 +68,10 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 					{[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo Modules::get('Unità di misura')['id']; ?>" ]}
 				</div>
 
-				
+
 
 				<?php
-                ($records[0]['serial']>0) ? $records[0]['abilita_serial'] = 1 : $records[0]['abilita_serial'] = $records[0]['abilita_serial'];
+                $records[0]['abilita_serial'] = ($records[0]['serial'] > 0) ? 1 : $records[0]['abilita_serial'];
                 if (empty($records[0]['abilita_serial'])) {
                     $plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Serial'");
                     echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
@@ -82,7 +79,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
                 ?>
 
 				  <div class="col-md-4">
-					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "placeholder": "<?php echo tr('Serial number'); ?>", "extra": "<?php echo ($records[0]['serial']>0) ? 'readonly' : ''; ?>" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "placeholder": "<?php echo tr('Serial number'); ?>", "extra": "<?php echo ($records[0]['serial'] > 0) ? 'readonly' : ''; ?>" ]}
                 </div>
 
 
@@ -144,7 +141,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
                             {[ "type": "checkbox", "label": "<?php echo tr('Questo articolo è un servizio'); ?>", "name": "servizio", "value": "$servizio$", "help": "<?php echo tr('Le quantità non saranno considerate'); ?>", "placeholder": "<?php echo tr('Servizio'); ?>" ]}
                         </div>
                     </div>
-            
+
                     <div class="row">
                         <div class="col-md-6">
                             {[ "type": "number", "label": "<?php echo tr('Peso lordo'); ?>", "name": "peso_lordo", "value": "$peso_lordo$", "icon-after": "KG" ]}

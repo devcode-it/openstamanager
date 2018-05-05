@@ -208,16 +208,16 @@ gulp.task('chartjs', function () {
 
 gulp.task('pdfjs', function () {
     gulp.src([
-            config.main.bowerDirectory + '/pdfjs/web/**/*',
-            '!' + config.main.bowerDirectory + '/pdfjs/web/cmaps/*',
-            '!' + config.main.bowerDirectory + '/pdfjs/web/*.map',
-            '!' + config.main.bowerDirectory + '/pdfjs/web/*.pdf',
+            config.main.bowerDirectory + '/pdf/web/**/*',
+            '!' + config.main.bowerDirectory + '/pdf/web/cmaps/*',
+            '!' + config.main.bowerDirectory + '/pdf/web/*.map',
+            '!' + config.main.bowerDirectory + '/pdf/web/*.pdf',
         ])
         .pipe(gulp.dest(config.production + '/pdfjs/web'));
 
     gulp.src([
-            config.main.bowerDirectory + '/pdfjs/build/*',
-            '!' + config.main.bowerDirectory + '/pdfjs/build/*.map',
+            config.main.bowerDirectory + '/pdf/build/*',
+            '!' + config.main.bowerDirectory + '/pdf/build/*.map',
         ])
         .pipe(gulp.dest(config.production + '/pdfjs/build'));
 });

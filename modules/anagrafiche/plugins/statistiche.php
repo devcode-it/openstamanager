@@ -42,19 +42,20 @@ echo '
 		</div>';
 
 // Preventivi
-$rsi = $dbo->fetchArray('SELECT data_accettazione AS data, ragione_sociale, budget FROM co_preventivi INNER JOIN an_anagrafiche ON co_preventivi.idanagrafica=an_anagrafiche.idanagrafica WHERE co_preventivi.idanagrafica='.prepare($id_record));
-
+$rsi = $dbo->fetchArray('SELECT co_preventivi.id AS idpreventivo, data_accettazione AS data, ragione_sociale, budget FROM co_preventivi INNER JOIN an_anagrafiche ON co_preventivi.idanagrafica=an_anagrafiche.idanagrafica WHERE co_preventivi.idanagrafica='.prepare($id_record));
+include_once $docroot.'/modules/preventivi/modutil.php';
 $totale_preventivi = 0;
 $data_start = strtotime('now');
 
 for ($i = 0; $i < count($rsi); ++$i) {
-    $totale_preventivi += $rsi[$i]['budget'];
-
+    //$totale_preventivi += $rsi[$i]['budget'];
+	$totale_preventivi += get_imponibile_preventivo($rsi[$i]['idpreventivo']);
     // Calcolo data più bassa per la ricerca
     if (strtotime($rsi[$i]['data']) < $data_start) {
         $data_start = strtotime($rsi[$i]['data']);
     }
 }
+
 echo '
 		<div class="col-md-6">
 			<div class="box box-info">

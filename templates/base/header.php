@@ -22,5 +22,6 @@ return '
         <p>'.(!empty($f_codicefiscale) ? tr('C.F.').': '.$f_codicefiscale : '').'</p>
         <p>'.(!empty($f_capsoc) ? tr('Cap.Soc.').': '.$f_capsoc : '').'</p>
         <p>'.(!empty($f_telefono) ? tr('Tel').': '.$f_telefono : '').'</p>
+		<p>'.(!empty($f_email) ? tr('Email').': '.$f_email : '').'</p>
     </div>
 </div>';

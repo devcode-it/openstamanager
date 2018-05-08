@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$height = '130';
+$height = '80';
 
 
 if (isset( $_SESSION['period']['month'] )){
@@ -90,7 +90,7 @@ $tecnici = (array) $_SESSION['dashboard']['idtecnici'];
 
 
 //in_interventi_tecnici.idintervento, colore, in_interventi_tecnici.id, idtecnico, orario_inizio, orario_fine,(SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico,  (SELECT colore FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS colore_tecnico,
-$query = 'SELECT DAY(in_interventi_tecnici.orario_inizio) AS giorno, orario_inizio AS data,  GROUP_CONCAT((SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica)  SEPARATOR \'<br>\') AS cliente FROM in_interventi_tecnici INNER JOIN (in_interventi LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento) ON in_interventi_tecnici.idintervento=in_interventi.id WHERE '.$where.' idtecnico IN('.implode(',', $tecnici).') AND in_interventi.idstatointervento IN('.implode(',', $stati).') AND in_interventi_tecnici.idtipointervento IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery('Interventi')." GROUP BY giorno    ORDER BY CAST(giorno AS UNSIGNED) ";
+$query = 'SELECT DAY(in_interventi_tecnici.orario_inizio) AS giorno, orario_inizio AS data,  GROUP_CONCAT((SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica)  SEPARATOR \'<br>\') AS cliente FROM in_interventi_tecnici INNER JOIN (in_interventi LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento) ON in_interventi_tecnici.idintervento=in_interventi.id WHERE '.$where.' idtecnico IN('.implode(',', $tecnici).') AND in_interventi.idstatointervento IN('.implode(',', $stati).') AND in_interventi_tecnici.idtipointervento IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery('Interventi')." GROUP BY giorno ORDER BY CAST(giorno AS UNSIGNED)";
 
 //echo $query;
  
@@ -117,14 +117,8 @@ for ($i=0; $i<33;$i++){
 	
 	
 	
-	
-	
-function showMonth($month, $year){
-	
-	
-	global $rs;
-	global $height;
-
+function showMonth($month, $year, &$rs, &$height){
+		
 	$date = mktime(12, 0, 0, $month, 1, $year);
 	$daysInMonth = date("t", $date);
 	// calculate the position of the first day in the calendar (sunday = 1st column, etc)
@@ -181,8 +175,8 @@ function showMonth($month, $year){
 	$weekdays = array( 'Monday' => 'Lunedi\'',  'Tuesday' => 'Martedi\'',  'Wednesday' => 'Mercoledi\'','Thursday' => 'Giovedi\'','Friday' => 'Venerdi\'','Saturday' => 'Sabato','Sunday' => 'Domenica');
 	$weekday = $weekdays[$weekday];
 	
-	$header[$rows] .= "<th>".tr($weekday.' '.(sprintf("%02d", $day)).'/'.$current_month, [], ['upper' => true])."</th>\n";
-	$row[$rows] .= "<td><b> - </b></td>\n";
+	$header[$rows] .= "<th>".tr($weekday.' '.(sprintf("%02d", $day)).'/'.(sprintf("%02d", $current_month)), [], ['upper' => true])."</th>\n";
+	$row[$rows] .= "<td style=\"background:lightgray;\" ><b> </b></td>\n";
 	
   }
   
@@ -213,8 +207,10 @@ function showMonth($month, $year){
 	
 	$header[$rows] .= "<th>" .	tr($weekday.' '.(sprintf("%02d", $day)).'/'.$month, [], ['upper' => true]) ."</th>\n";
 	if (empty($rs[$day]['cliente'])){
-		$rs[$day]['cliente'] = ' - ';
+		$rs[$day]['cliente'] = ' ';
 	}
+	
+
 	$row[$rows] .=  "<td  style='height:".$height."px' >".  "<b>".$rs[$day]['cliente']."</b></td>\n";
 	
   }
@@ -250,9 +246,9 @@ for($i = 1; ($day + $offset) <= ($rows * 7); $i++){
 	$weekday = $weekdays[$weekday];
 	
 
-	$header[$rows] .= "<th> ".tr($weekday.' '.(sprintf("%02d", $i)).'/'.$current_month, [], ['upper' => true])." </th>\n";
+	$header[$rows] .= "<th> ".tr($weekday.' '.(sprintf("%02d", $i)).'/'.(sprintf("%02d", $current_month)), [], ['upper' => true])." </th>\n";
 	//$row[$rows] .= "<td> ".($offset+$day)."<br>".($rows * 7)." </td>\n";
-	$row[$rows] .= "<td><b> - </b> </td>\n";
+	$row[$rows] .= "<td style=\"background:lightgray;\" ><b> </b> </td>\n";
 	
 	
     $day++;
@@ -302,4 +298,4 @@ echo "
 ], ['upper' => true])."</h3>";
 
 	
-showMonth($month,$year);
+showMonth($month,$year,$rs, $height);

@@ -214,7 +214,7 @@ class Modules
             $query .= ' WHERE `t0`.`parent` IS NULL ORDER BY ';
 
             for ($i = 0; $i < $depth; ++$i) {
-                $query .= '`t'.$i.'`.`order` ASC';
+                $query .= '`t'.$i.'`.`order` ASC, `t'.$i.'`.`id` ASC ';
 
                 if ($i != $depth - 1) {
                     $query .= ', ';

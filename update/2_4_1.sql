@@ -70,3 +70,27 @@ INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `direc
 
 -- Rimosso group by nome banche
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_banche` WHERE 1=1 AND deleted = 0 HAVING 2=2' WHERE `zz_modules`.`name` = 'Banche';
+
+
+-- impianti per pianificazione contratti
+ALTER TABLE `co_righe_contratti` ADD `idimpianti` VARCHAR(255) NOT NULL AFTER `idsede`;
+
+
+-- Struttura della tabella `co_righe_contratti_materiali`
+CREATE TABLE IF NOT EXISTS `co_righe_contratti_materiali` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `descrizione` varchar(255) NOT NULL,
+  `qta` float(12,4) NOT NULL,
+  `um` varchar(25) NOT NULL,
+  `prezzo_vendita` decimal(12,4) NOT NULL,
+  `prezzo_acquisto` decimal(12,4) NOT NULL,
+  `idiva` int(11) NOT NULL,
+  `desc_iva` varchar(255) NOT NULL,
+  `iva` decimal(12,4) NOT NULL,
+  `id_riga_contratto` int(11) DEFAULT NULL,
+  `sconto` decimal(12,4) NOT NULL,
+  `sconto_unitario` decimal(12,4) NOT NULL,
+  `tipo_sconto` enum('UNT','PRC') NOT NULL DEFAULT 'UNT',
+  PRIMARY KEY (`id`),
+  KEY `idintervento` (`id_riga_contratto`)
+);

@@ -255,17 +255,27 @@ if (count($rsp) != 0) {
             </tbody>
         </table>';
 
+	echo '<br><div class="pull-right">';
+	
+	echo '	<button type="button"  title="Aggiungi un nuovo promemoria da pianificare." data-toggle="tooltip" class="btn btn-primary"  onclick="launch_modal(\'Nuovo promemoria\', \''.$rootdir.'/modules/contratti/plugins/addpianficazione.php?id_module='.Modules::get('Contratti')['id'].'&id_plugin='.Plugins::get('Pianificazione interventi')['id'].'&ref=interventi_contratti&id_record='.$id_record.'\')">
+						<i class="fa fa-plus"></i> '.tr('Nuovo promemoria').'
+					</button>';
+	
+	
     if (count($rsp) > 0) {
-        echo '<br><div class="pull-right"><button type="button"  title="Elimina tutti i promemoria per questo contratto che non sono associati ad intervento." class="btn btn-danger ask tip" data-op="delete-promemoria" >
-					<i class="fa fa-trash"></i> '.tr('Elimina promemoria').'
-				</button></div>';
+    echo '	<button type="button"  title="Elimina tutti i promemoria per questo contratto che non sono associati ad intervento." class="btn btn-danger ask tip" data-op="delete-promemoria" >
+						<i class="fa fa-trash"></i> '.tr('Elimina promemoria').'
+					</button>';
     }
+	
+	echo '</div>';
+	
 }
 
 /*
     Nuovo intervento
 */
-echo '
+/*echo '
         <br><h5>'.tr('Pianifica un nuovo promemoria per un intervento').':</h5>
         <form action="" method="post">
             <input type="hidden" name="backto" value="record-edit">
@@ -302,6 +312,8 @@ echo '
                 <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
             </div>
             <div class="clearfix"></div>
-        </form>
+        </form>';*/
+
+echo '
     </div>
 </div>';

@@ -464,7 +464,7 @@ $imponibile = sum($imponibile);
 
 $totale = $imponibile - $sconto;
 
-$rs = $dbo->fetchArray('SELECT SUM(subtotale) as budget FROM `co_righe2_contratti` WHERE idcontratto = '.prepare($id_record));
+$rs = $dbo->fetchArray('SELECT SUM(subtotale-sconto) as budget FROM `co_righe2_contratti` WHERE idcontratto = '.prepare($id_record));
 $budget = $rs[0]['budget'];
 
 $rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe2_contratti` WHERE um='ore' AND idcontratto = ".prepare($id_record));

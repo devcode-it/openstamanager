@@ -270,7 +270,7 @@ if (!empty($rsi)) {
 /*
     Bilancio del preventivo
 */
-$diff = sum($budget, -$totale);
+$diff = sum($budget, -$totale_addebito);
 
 echo '
 <div class="well text-center">

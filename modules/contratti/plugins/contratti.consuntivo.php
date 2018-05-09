@@ -268,13 +268,15 @@ if (!empty($rsi)) {
 /*
     Bilancio del contratto
 */
-$rs = $dbo->fetchArray('SELECT SUM(subtotale) AS budget FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record));
+$rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS budget FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record));
 $budget = $rs[0]['budget'];
 
 $rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe2_contratti` WHERE um='ore' AND idcontratto=".prepare($id_record));
 $contratto_tot_ore = $rs[0]['totale_ore'];
 
-$diff = floatval($budget) - floatval($totale);
+$diff = sum($budget, -$totale_addebito);
+
+
 if ($diff > 0) {
     $bilancio = '<span class="text-success"><big>'.Translator::numberToLocale($diff).' &euro;</big></span>';
 } elseif ($diff < 0) {

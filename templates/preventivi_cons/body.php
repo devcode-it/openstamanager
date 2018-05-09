@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 include_once $docroot.'/modules/interventi/modutil.php';
-
+include_once $docroot.'/modules/preventivi/modutil.php';
 $report_name = 'preventivo_'.$records[0]['numero'].'_cons.pdf';
 
 echo '
@@ -457,10 +457,12 @@ $imponibile = sum($imponibile);
 
 $totale = $imponibile - $sconto;
 
-$rs = $dbo->fetchArray('SELECT SUM(subtotale) as budget FROM `co_righe_preventivi` WHERE idpreventivo = '.prepare($id_record));
-$budget = $rs[0]['budget'];
+//$rs = $dbo->fetchArray('SELECT SUM(subtotale) as budget FROM `co_righe_preventivi` WHERE idpreventivo = '.prepare($id_record));
+//$budget = $rs[0]['budget'];
+$budget = get_imponibile_preventivo($id_record);
 
-$rapporto = $budget - $totale;
+
+$rapporto = floatval($budget) - floatval($totale);
 
 // Totale imponibile
 echo '

@@ -12,7 +12,7 @@ $default_header$
             <b>$tipo_doc$</b>
         </div>
 
-        <table class="table">
+        <table class="table" style="overflow: visible">
             <tr>
                 <td valign="top" class="border-full text-center">
                     <p class="small-bold">'.tr('Nr. documento', [], ['upper' => true]).'</p>

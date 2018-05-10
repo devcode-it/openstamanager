@@ -105,7 +105,7 @@ echo '
 // Unità di misura
 echo '
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
+            {[ "type": "select", "label": "'.tr('Unità di misura').'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
         </div>';
 
 // Impianto
@@ -206,13 +206,12 @@ echo '
     $(document).ready(function() {
         $('#add_form').ajaxForm({
             success: function(){
-                $('#bs-popup').modal('hide');
+                $('#bs-popup2').modal('hide');
 
                 // Ricarico gli articoli
-                $('#articoli').load(globals.rootdir + '/modules/interventi/ajax_articoli.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+                $('#articoli').load(globals.rootdir + '/modules/contratti/plugins/ajax_articoli.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
 
-                // Ricarico la tabella dei costi
-                $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+               
             }
         });
     });

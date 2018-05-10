@@ -4,10 +4,11 @@ include_once __DIR__.'/../../../core.php';
 
 $idriga = filter('idriga');
 
+
 //Lettura idanagrafica cliente e percentuale di sconto/rincaro in base al listino
-$rs = $dbo->fetchArray('SELECT idanagrafica, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica=.in_interventi.idanagrafica)) AS prc_sconto FROM in_interventi WHERE id='.prepare($id_record));
-$idanagrafica = $rs[0]['idanagrafica'];
-$prc_sconto = $rs[0]['prc_sconto'];
+//$rs = $dbo->fetchArray('SELECT idanagrafica, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica=.in_interventi.idanagrafica)) AS prc_sconto FROM in_interventi WHERE id='.prepare($id_record));
+//$idanagrafica = $rs[0]['idanagrafica'];
+//$prc_sconto = $rs[0]['prc_sconto'];
 
 if (empty($idriga)) {
     $op = 'addriga';
@@ -24,12 +25,15 @@ if (empty($idriga)) {
         $sconto_unitario = $rs[0]['prc_guadagno'];
         $tipo_sconto = 'PRC';
     }
+	
+	(empty($idcontratto_riga)) ? $idcontratto_riga = $dbo->fetchArray('SELECT MAX(id) AS max_idcontratto_riga  FROM `co_righe_contratti`')[0]['max_idcontratto_riga'] : '';
+	
 } else {
     $op = 'editriga';
     $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
 
     // carico record da modificare
-    $q = 'SELECT * FROM in_righe_interventi WHERE id='.prepare($idriga);
+    $q = 'SELECT * FROM co_righe_contratti_materiali WHERE id='.prepare($idriga);
     $rsr = $dbo->fetchArray($q);
 
     $descrizione = $rsr[0]['descrizione'];
@@ -38,18 +42,28 @@ if (empty($idriga)) {
     $idiva = $rsr[0]['idiva'];
     $prezzo_vendita = $rsr[0]['prezzo_vendita'];
     $prezzo_acquisto = $rsr[0]['prezzo_acquisto'];
+	$idcontratto_riga = $rsr[0]['id_riga_contratto'];
     
     $sconto_unitario = $rsr[0]['sconto_unitario'];
     $tipo_sconto = $rsr[0]['tipo_sconto'];
 }
 
+
+
+
+
 /*
     Form di inserimento
+	<form id="add-righe" action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&idcontratto_riga='.$idcontratto_riga.'" method="post">
 */
 echo '
-<form id="add-righe" action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
+<form id="add-righe" action="'.$rootdir.'/modules/contratti/plugins/actions.php" method="post">
     <input type="hidden" name="op" value="'.$op.'">
-    <input type="hidden" name="idriga" value="'.$idriga.'">';
+    <input type="hidden" name="idriga" value="'.$idriga.'">
+	
+	
+	<input type="text" name="idcontratto_riga" value="'.$idcontratto_riga.'">';
+	
 
 // Descrizione
 echo '
@@ -70,7 +84,7 @@ echo '
 // Unità di misura
 echo '
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
+            {[ "type": "select", "label": "'.tr('Unità di misura').'",  "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
         </div>';
     
 // Iva
@@ -118,13 +132,12 @@ echo '
     $(document).ready(function() {
         $('#add-righe').ajaxForm({
             success: function(){
-                $('#bs-popup').modal('hide');
+                $('#bs-popup2').modal('hide');
 
                 // Ricarico le righe
-                $('#righe').load(globals.rootdir + '/modules/interventi/ajax_righe.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+                $('#righe').load(globals.rootdir + '/modules/contratti/plugins/ajax_righe.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&idcontratto_riga=<?php echo $idcontratto_riga; ?>');
 
-                // Ricarico la tabella dei costi
-                $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+                
             }
         });
     });

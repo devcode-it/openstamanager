@@ -2,7 +2,9 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$query = 'SELECT * FROM in_righe_interventi WHERE idintervento='.prepare($id_record).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC';
+$idcontratto_riga = $get['idcontratto_riga'];
+
+$query = 'SELECT * FROM co_righe_contratti_materiali WHERE id_riga_contratto='.prepare($idcontratto_riga).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC';
 $rs2 = $dbo->fetchArray($query);
 
 if (count($rs2) > 0) {
@@ -86,7 +88,7 @@ if (count($rs2) > 0) {
         if (!$records[0]['flag_completato']) {
             echo '
         <td>
-            <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica spesa').'\', \''.$rootdir.'/modules/interventi/add_righe.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'\', 1);"><i class="fa fa-edit"></i></button>
+            <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" data-title="'.tr('Modifica spesa').'" data-target="#bs-popup2" data-toggle="modal" data-href="'.$rootdir.'/modules/contratti/plugins/add_righe.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'"><i class="fa fa-edit"></i></button>
             <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="if(confirm(\''.tr('Eliminare questa spesa?').'\')){ elimina_riga( \''.$r['id'].'\' ); }"><i class="fa fa-trash"></i></button>
         </td>';
         }
@@ -102,12 +104,11 @@ if (count($rs2) > 0) {
 
 <script type="text/javascript">
     function elimina_riga( id ){
-        $.post(globals.rootdir + '/modules/interventi/actions.php', { op: 'delriga', idriga: id }, function(data, result){
+        $.post(globals.rootdir + '/modules/contratti/plugins/actions.php', { op: 'delriga', idriga: id }, function(data, result){
             if( result=='success' ){
                 //ricarico l'elenco delle righe
-                $('#righe').load( globals.rootdir + '/modules/interventi/ajax_righe.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+                $('#righe').load( globals.rootdir + '/modules/contratti/plugins/ajax_righe.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&idcontratto_riga=<?php echo $idcontratto_riga; ?>');
 
-                $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
             }
         });
     }

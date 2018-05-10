@@ -123,14 +123,14 @@ if (!empty($rs)) {
             echo '
         <td>';
 
-            if ($r['abilita_serial']) {
+            /*if ($r['abilita_serial']) {
                 echo '
             <button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica articoli').'\', \''.$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idarticolo='.$r['idriga'].'&idriga='.$r['id'].'\', 1);"><i class="fa fa-barcode"></i></button>';
-            }
+            }*/
 
             echo '
 
-            <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica articoli').'\', \''.$rootdir.'/modules/interventi/add_articolo.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['idriga'].'\', 1);"><i class="fa fa-edit"></i></button>
+            <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica articoli').'\', \''.$rootdir.'/modules/contratti/plugins/add_articolo.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['idriga'].'\', 1);"><i class="fa fa-edit"></i></button>
 
             <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" title="Riporta in magazzino" onclick="if(confirm(\''.tr('Riportare questo articolo in magazzino?').'\') ){ ritorna_al_magazzino(\''.$r['id'].'\'); }"><i class="fa fa-angle-double-left"></i> <i class="fa fa-truck"></i></button>
         </td>';
@@ -145,12 +145,12 @@ if (!empty($rs)) {
 ?>
 <script type="text/javascript">
     function ritorna_al_magazzino( id ){
-        $.post(globals.rootdir + '/modules/interventi/actions.php', {op: 'unlink_articolo', idriga: id, id_record: '<?php echo $id_record; ?>', id_module: '<?php echo $id_module; ?>' }, function(data, result){
+        $.post(globals.rootdir + '/modules/contratti/plugins/actions.php', {op: 'unlink_articolo', idriga: id, id_record: '<?php echo $id_record; ?>', id_module: '<?php echo $id_module; ?>' }, function(data, result){
             if( result == 'success' ){
                 // ricarico l'elenco degli articoli
-                $('#articoli').load(globals.rootdir + '/modules/interventi/ajax_articoli.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+                $('#articoli').load(globals.rootdir + '/modules/contratti/plugins/ajax_articoli.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
 
-                $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+               
             }
         });
     }

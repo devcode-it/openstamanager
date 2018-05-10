@@ -34,6 +34,9 @@ if (!empty($get['idcontratto_riga'])){
 	
 }
 
+//se non è impostata idcontratto_riga allora sono in fase di inserimento di nuovo promemoria e mi calcolo il prossimo id per co_righe_contratti
+(empty($idcontratto_riga)) ? $idcontratto_riga = $dbo->fetchArray('SELECT MAX(id) AS max_idcontratto_riga  FROM `co_righe_contratti`')[0]['max_idcontratto_riga'] : '';
+
 //orari inizio fine interventi
 $orario_inizio = '09:00';
 $orario_fine = '17:00';
@@ -97,7 +100,7 @@ echo '
 	    <!-- ARTICOLI -->
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title"><?php echo tr('Materiale utilizzato'); ?></h3>
+            <h3 class="panel-title"><?php echo tr('Materiale da utilizzare'); ?></h3>
         </div>
 
         <div class="panel-body">
@@ -107,7 +110,7 @@ echo '
 
             <?php if (empty($readonly)) {
                         ?>
-                <button type="button" class="btn btn-primary" data-target="#bs-popup2" data-toggle="modal" data-href="<?php echo $rootdir; ?>/modules/contratti/plugins/add_articolo.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&idriga=0" ><i class="fa fa-plus"></i> <?php echo tr('Aggiungi articolo'); ?>...</button>
+                <button type="button" class="btn btn-primary" data-title="<?php echo tr('Aggiungi articolo'); ?>" data-target="#bs-popup2" data-toggle="modal" data-href="<?php echo $rootdir; ?>/modules/contratti/plugins/add_articolo.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&idcontratto_riga=<?php echo $idcontratto_riga; ?>" ><i class="fa fa-plus"></i> <?php echo tr('Aggiungi articolo'); ?>...</button>
             <?php
                     } ?>
         </div>
@@ -119,7 +122,7 @@ echo '
 	    <!-- SPESE AGGIUNTIVE -->
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title"><?php echo tr('Altre spese'); ?></h3>
+            <h3 class="panel-title"><?php echo tr('Altre spese previste'); ?></h3>
         </div>
 
         <div class="panel-body">
@@ -129,7 +132,7 @@ echo '
 
             <?php if (empty($readonly)) {
                         ?>
-                <button type="button" class="btn btn-primary"  data-target="#bs-popup2" data-toggle="modal" data-href="<?php echo $rootdir; ?>/modules/contratti/plugins/add_righe.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi altre spese'); ?>...</button>
+                <button type="button" class="btn btn-primary"  data-title="<?php echo tr('Aggiungi altre spese'); ?>" data-target="#bs-popup2" data-toggle="modal" data-href="<?php echo $rootdir; ?>/modules/contratti/plugins/add_righe.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&idcontratto_riga=<?php echo $idcontratto_riga; ?>"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi altre spese'); ?>...</button>
             <?php
                     } ?>
         </div>
@@ -139,10 +142,6 @@ echo '
 	
 echo '</div>
 </div>
-
-
-
-
 
 
 		<!--div class="col-md-8">

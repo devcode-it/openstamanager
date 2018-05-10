@@ -319,7 +319,7 @@ CREATE TABLE IF NOT EXISTS `co_banche` (
   `note` text NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+);
 
 -- Innesto modulo per gestione banche
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Banche', 'Banche', 'banche', 'SELECT |select| FROM `co_banche` WHERE 1=1 AND deleted = 0 GROUP BY `nome` HAVING 2=2', '', 'fa fa-university', '2.4', '2.4', '1', (SELECT `id` FROM `zz_modules` m WHERE `name` = 'Tabelle'), '1', '1');

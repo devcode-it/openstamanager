@@ -186,18 +186,22 @@ if (count($rsp) != 0) {
         <table class="table table-condensed table-striped table-hover">
             <thead>
                 <tr>
-                    <th>'.tr('Entro il').'</th>
+                    <th>'.tr('Data').'</th>
                     <th>'.tr('Tipo intervento').'</th>
                     <th>'.tr('Descrizione').'</th>
-                    <th>'.tr('Intervento collegato').'</th>
+                    <th>'.tr('Intervento').'</th>
                     <th>'.tr('Sede').'</th>
-                    <th>'.tr('Opzioni').'</th>
+					<th>'.tr('Impianti').'</th>
+					<th>'.tr('Materiali').'</th>
+                    <th class="text-right" >'.tr('Opzioni').'</th>
                 </tr>
             </thead>
             <tbody>';
 
     // Elenco promemoria
     for ($i = 0; $i < sizeof($rsp); ++$i) {
+		
+		
         //  Sede
         if ($rsp[$i]['idsede'] == '-1') {
             echo '- '.('Nessuna').' -';
@@ -223,10 +227,41 @@ if (count($rsp) != 0) {
             $info_intervento = '- '.('Nessuno').' -';
             $disabled = '';
         }
-
+		
+		//data_conclusione contratto
         if (date('Y', strtotime($records[0]['data_conclusione'])) < 1971) {
             $records[0]['data_conclusione'] = '';
         }
+		
+		//info impianti
+		if (!empty($rsp[$i]['idimpianti'])){
+			$rsp3 = $dbo->fetchArray('SELECT id, matricola FROM my_impianti WHERE id IN ('.($rsp[$i]['idimpianti']).')');
+			$info_impianti = '';
+			if (!empty( $rsp3 )){
+				for ($a=0; $a<count($rsp3); $a++){
+					$info_impianti .= Modules::link('MyImpianti', $rsp3[$a]['id'], tr('_NUM_', [
+						'_NUM_' => $rsp3[$a]['matricola'],
+					])).'<br>';
+				}
+			}
+		}
+		
+		
+		$rsp4 = $dbo->fetchArray('SELECT * FROM co_righe_contratti_materiali WHERE id_riga_contratto = '.prepare($rsp[$i]['id']) );
+		$info_materiali = '';
+		if (!empty( $rsp4 )){
+			for ($b=0; $b<count($rsp4); $b++){
+				$info_materiali .= Modules::link('', $rsp4[$b]['id'], tr(' _QTA_ _UM_ x _DESC_', [
+					'_DESC_' => $rsp4[$b]['descrizione'],
+					'_QTA_' => Translator::numberToLocale($rsp4[$b]['qta']),
+					'_UM_' => $rsp4[$b]['um'],
+					'_PREZZO_' => $rsp4[$b]['prezzo_vendita'],
+				])).'<br>';
+			}
+		}
+			
+			
+		
         echo '
                 <tr>
                     <td>'.Translator::dateToLocale($rsp[$i]['data_richiesta']).'<!--br><small>'.Translator::dateToLocale($records[0]['data_conclusione']).'</small--></td>
@@ -234,6 +269,8 @@ if (count($rsp) != 0) {
                     <td>'.nl2br($rsp[$i]['richiesta']).'</td>
                     <td>'.$info_intervento.'</td>
                     <td>'.$info_sede.'</td>
+					 <td>'.$info_impianti.'</td>
+					<td>'.$info_materiali.'</td>	  
                     <td align="right">';
 
         echo '

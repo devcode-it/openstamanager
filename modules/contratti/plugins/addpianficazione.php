@@ -62,7 +62,7 @@ echo '
 	<div class="row">
 
 		<div class="col-md-6">
-			{[ "type": "date",  "label": "'.tr('Entro il').'", "name": "data_richiesta", "required": 1, "value": "'.$data_richiesta.'", "extra":"'.$readonly.'" ]}
+			{[ "type": "date",  "label": "'.tr('Data promemoria').'", "name": "data_richiesta", "required": 1, "value": "'.$data_richiesta.'", "extra":"'.$readonly.'" ]}
 		</div>
 		
 		<div class="col-md-6">
@@ -127,7 +127,7 @@ echo '
 
         <div class="panel-body">
             <div id="righe">
-                <?php include $docroot.'/modules/contratti/plugins/ajax_righe.php'; ?>
+                <?php include $docroot.'/modules/contratti/plugins/ajax_righe.php' ?>
             </div>
 
             <?php if (empty($readonly)) {

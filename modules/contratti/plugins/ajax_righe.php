@@ -7,6 +7,9 @@ $idcontratto_riga = $get['idcontratto_riga'];
 $query = 'SELECT * FROM co_righe_contratti_materiali WHERE id_riga_contratto='.prepare($idcontratto_riga).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC';
 $rs2 = $dbo->fetchArray($query);
 
+
+
+
 if (count($rs2) > 0) {
     echo '
 <table class="table table-striped table-condensed table-hover table-bordered">
@@ -85,10 +88,10 @@ if (count($rs2) > 0) {
 
         // Pulsante per riportare nel magazzino centrale.
         // Visibile solo se l'intervento non è stato nè fatturato nè completato.
-        if (!$records[0]['flag_completato']) {
+         if (empty($readonly)) {
             echo '
         <td>
-            <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" data-title="'.tr('Modifica spesa').'" data-target="#bs-popup2" data-toggle="modal" data-href="'.$rootdir.'/modules/contratti/plugins/add_righe.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'"><i class="fa fa-edit"></i></button>
+            <button type="button" class="btn btn-warning btn-xs" data-title="'.tr('Modifica spesa').'" data-target="#bs-popup2" data-toggle="modal" data-href="'.$rootdir.'/modules/contratti/plugins/add_righe.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'"><i class="fa fa-edit"></i></button>
             <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="if(confirm(\''.tr('Eliminare questa spesa?').'\')){ elimina_riga( \''.$r['id'].'\' ); }"><i class="fa fa-trash"></i></button>
         </td>';
         }

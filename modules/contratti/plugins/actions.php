@@ -11,6 +11,7 @@ switch (post('op')) {
         Gestione righe generiche
     */
     case 'addriga':
+	
 		$descrizione = post('descrizione');
 		$qta = post('qta');
 		$um = post('um');

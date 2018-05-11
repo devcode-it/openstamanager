@@ -471,8 +471,8 @@ function get_imponibile_fattura($iddocumento)
 
     $query = 'SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS imponibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
-
-    return $rs[0]['imponibile'];
+    
+    return number_format($rs[0]['imponibile'], 2);
 }
 
 /**
@@ -483,7 +483,7 @@ function get_totale_fattura($iddocumento)
     global $dbo;
 
     // Sommo l'iva di ogni riga al totale
-    $query = 'SELECT SUM(iva) AS iva FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
+    $query = 'SELECT SUM(ROUND(iva, 2)) AS iva FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
 
     // Aggiungo la rivalsa inps se c'è
@@ -494,8 +494,17 @@ function get_totale_fattura($iddocumento)
     $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare(get_var('Iva predefinita'));
     $rsi = $dbo->fetchArray($qi);
     $iva_rivalsainps = $rs2[0]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
+    
+    $iva = sum($rs[0]['iva'], null, 2);
+    $totale_iva = sum($iva, $iva_rivalsainps);
+    
+    $totale = sum([
+        get_imponibile_fattura($iddocumento),
+        $rs2[0]['rivalsainps'],
+        $totale_iva,
+    ]);
 
-    return get_imponibile_fattura($iddocumento) + $rs[0]['iva'] + $iva_rivalsainps + $rs2[0]['rivalsainps'];
+    return $totale;
 }
 
 /**
@@ -508,7 +517,14 @@ function get_netto_fattura($iddocumento)
     $query = 'SELECT ritenutaacconto, bollo FROM co_documenti WHERE id='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
 
-    return get_totale_fattura($iddocumento) - $rs[0]['ritenutaacconto'] + $rs[0]['bollo'];
+    $netto_a_pagare = sum([
+        get_totale_fattura($iddocumento),
+        $rs[0]['bollo'],
+        -$rs[0]['ritenutaacconto'],
+    ]);
+    
+    return $netto_a_pagare;
+    
 }
 
 /**

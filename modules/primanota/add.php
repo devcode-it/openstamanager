@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-?><form action="<?php echo ROOTDIR ?>/editor.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>" method="post" id="add-form">
+?><form action="<?php echo ROOTDIR; ?>/editor.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="iddocumento" value="<?php echo get('iddocumento'); ?>">
@@ -109,7 +109,7 @@ include_once __DIR__.'/../../core.php';
         }
     }
     ?>
-	
+
 	<div class="row">
 		<div class="col-md-12">
 			{[ "type": "select", "label": "<?php echo tr('Modello primanota'); ?>", "id": "modello_primanota", "required": 0, "values": "query=SELECT idmastrino AS id, descrizione FROM co_movimenti_modelli GROUP BY idmastrino", "value": "" ]}
@@ -146,9 +146,8 @@ include_once __DIR__.'/../../core.php';
         </tr>';
 
     for ($i = 0; $i < 10; ++$i) {
-        
-		($i<=1) ? $required = 1 : $required = 0;
-		// Conto
+        ($i <= 1) ? $required = 1 : $required = 0;
+        // Conto
         echo '
 			<tr>
 				<td>
@@ -318,18 +317,18 @@ include_once __DIR__.'/../../core.php';
 			$("select[id*=idconto]").click( function(){
 				$("input[id*=dare][value!=''], input[id*=avere][value!='']").keyup();
 			});
-			
-			
+
+
 			$('#modello_primanota').change(function(){
 				var idmastrino = $(this).val();
-				
+
 				if(idmastrino!=''){
 					$('#btn_crea_modello').hide();
 					var causale = $(this).find('option:selected').text();
 
 					$('#desc').val(causale);
-					
-					$.get('<?=$rootdir?>/ajax_complete.php?op=get_conti&idmastrino='+idmastrino, function(data){
+
+					$.get('<?php echo $rootdir; ?>/ajax_complete.php?op=get_conti&idmastrino='+idmastrino, function(data){
 						var conti = data.split(',');
 						for(i=0;i<conti.length;i++){
 							var conto = conti[i].split(';');
@@ -342,12 +341,12 @@ include_once __DIR__.'/../../core.php';
 					$('#btn_crea_modello').show();
 				}
 			});
-			
+
 			$('#btn_crea_modello').click(function(){
 				$("#crea_modello").val("1");
 				$("#add-form").submit();
 			});
-			
+
 		});
 	</script>
 </form>

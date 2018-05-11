@@ -95,7 +95,18 @@ if (empty($debug)) {
 }
 
 // Imposta il formato di salvataggio dei log
-$monologFormatter = new Monolog\Formatter\LineFormatter('[%datetime%] %channel%.%level_name%: %message%'.PHP_EOL.'%extra% '.PHP_EOL);
+$pattern = '[%datetime%] %channel%.%level_name%: %message%';
+if (!empty($debug)) {
+    $pattern .= ' %context%';
+}
+$pattern .= PHP_EOL.'%extra% '.PHP_EOL;
+
+$monologFormatter = new Monolog\Formatter\LineFormatter($pattern);
+
+if (!empty($debug)) {
+    $monologFormatter->includeStacktraces(true);
+}
+
 foreach ($handlers as $handler) {
     $handler->setFormatter($monologFormatter);
     $logger->pushHandler(new FilterHandler($handler, [$handler->getLevel()]));
@@ -171,15 +182,6 @@ if (!API::isAPIRequest()) {
     $_SESSION['warnings'] = array_unique((array) $_SESSION['warnings']);
     $_SESSION['errors'] = array_unique((array) $_SESSION['errors']);
 
-    // Imposto il periodo di visualizzazione dei record dal 01-01-yyy al 31-12-yyyy
-    if (!empty($_GET['period_start'])) {
-        $_SESSION['period_start'] = $_GET['period_start'];
-        $_SESSION['period_end'] = $_GET['period_end'];
-    } elseif (!isset($_SESSION['period_start'])) {
-        $_SESSION['period_start'] = date('Y').'-01-01';
-        $_SESSION['period_end'] = date('Y').'-12-31';
-    }
-
     // Impostazione del tema grafico di default
     $theme = !empty($theme) ? $theme : 'default';
 
@@ -196,6 +198,23 @@ if (!API::isAPIRequest()) {
         $id_record = filter('id_record');
         $id_plugin = filter('id_plugin');
         $id_parent = filter('id_parent');
+
+        // Periodo di visualizzazione dei record
+        // Personalizzato
+        if (!empty($_GET['period_start'])) {
+            $_SESSION['period_start'] = $_GET['period_start'];
+            $_SESSION['period_end'] = $_GET['period_end'];
+        }
+        // Dal 01-01-yyy al 31-12-yyyy
+        elseif (!isset($_SESSION['period_start'])) {
+            $_SESSION['period_start'] = date('Y').'-01-01';
+            $_SESSION['period_end'] = date('Y').'-12-31';
+        }
+
+        // Segmenti
+        if (empty($_SESSION['m'.$id_module]['id_segment'])) {
+            $_SESSION['m'.$id_module]['id_segment'] = Modules::getSegments($id_module)[0]['id'];
+        }
 
         $user = Auth::user();
 

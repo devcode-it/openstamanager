@@ -57,6 +57,8 @@ class API extends \Util\Singleton
      */
     public function retrieve($request)
     {
+        global $logger;
+
         $user = Auth::user();
 
         // Controllo sulla compatibilità dell'API
@@ -147,6 +149,9 @@ class API extends \Util\Singleton
                     $results['pages'] = $cont[0]['pages'];
                 }
             } catch (PDOException $e) {
+                // Log dell'errore
+                $logger->addRecord(\Monolog\Logger::ERROR, $e);
+
                 return self::error('internalError');
             }
         }

@@ -16,6 +16,8 @@ class Modules
     protected static $modules = [];
     /** @var array Elenco delle condizioni aggiuntive disponibili */
     protected static $additionals = [];
+    /** @var array Elenco dei segmenti disponibili */
+    protected static $segments = [];
     /** @var array Elenco delle query generiche dei moduli */
     protected static $queries = [];
 
@@ -147,6 +149,30 @@ class Modules
     public static function getAdditionals($module)
     {
         return (array) self::$additionals[self::get($module)['id']];
+    }
+
+    /**
+     * Restituisce i filtri aggiuntivi dell'utente in relazione al modulo specificato.
+     *
+     * @param int $id
+     *
+     * @return string
+     */
+    public static function getSegments($module)
+    {
+        if (Update::isUpdateAvailable()) {
+            return [];
+        }
+
+        $module = self::get($module)['id'];
+
+        if (!isset(self::$segments[$module])) {
+            $database = Database::getConnection();
+
+            self::$segments[$module] = $database->fetchArray('SELECT * FROM zz_segments WHERE id_module = '.prepare($module).' ORDER BY predefined DESC, id ASC');
+        }
+
+        return (array) self::$segments[$module];
     }
 
     /**

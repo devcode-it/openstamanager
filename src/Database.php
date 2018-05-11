@@ -56,10 +56,10 @@ class Database extends Util\Singleton
             $host = $temp[0];
             $port = !empty($temp[1]) ? $temp[1] : null;
         }
-		
-		//possibilità di specificare una porta per il servizio mysql diversa dalla standard 3306
-		$port = (!empty(App::getConfig()['port'])) ? App::getConfig()['port'] : $port;
-		
+
+        // Possibilità di specificare una porta per il servizio MySQL diversa dalla standard 3306
+        $port = !empty(App::getConfig()['port']) ? App::getConfig()['port'] : $port;
+
         $this->host = $host;
         if (!empty($port) && is_int($port * 1)) {
             $this->port = $port;

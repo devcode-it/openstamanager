@@ -61,7 +61,7 @@ switch ($resource) {
         }
 
         $where[] = "co_pianodeiconti1.descrizione='Economico'";
-        $where[] = "co_pianodeiconti3.dir='entrata'";
+        $where[] = "co_pianodeiconti2.dir='entrata'";
 
         if (!empty($search)) {
             $search_fields[] = 'co_pianodeiconti3.descrizione LIKE '.prepare('%'.$search.'%');
@@ -77,7 +77,7 @@ switch ($resource) {
         }
 
         $where[] = "co_pianodeiconti1.descrizione='Economico'";
-        $where[] = "co_pianodeiconti3.dir='uscita'";
+        $where[] = "co_pianodeiconti2.dir='uscita'";
 
         if (!empty($search)) {
             $search_fields[] = 'co_pianodeiconti3.descrizione LIKE '.prepare('%'.$search.'%');

@@ -103,3 +103,6 @@ ALTER TABLE `mg_movimenti` ADD `data` DATE NOT NULL AFTER `movimento`;
 
 -- Campo per indentificare i movimenti manuali
 ALTER TABLE `mg_movimenti` ADD `manuale` TINYINT(1) NOT NULL AFTER `data`;
+
+-- Aggiunta possibilità di selezionare anche i conti in 620 Costi diversi negli acquisti
+UPDATE `co_pianodeiconti2` SET `dir` = 'uscita' WHERE `co_pianodeiconti2`.`descrizione` = 'Costi diversi';

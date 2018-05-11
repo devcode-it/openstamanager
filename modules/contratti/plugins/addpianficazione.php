@@ -18,7 +18,7 @@ $idanagrafica = $dbo->fetchArray('SELECT `idanagrafica` FROM `co_contratti` WHER
 $list = '\"1\":\"'.tr('Pianificare a partire da oggi ').date('d/m/Y').'\"';
 
 if (!empty($get['idcontratto_riga'])){
-	
+
 	$idcontratto_riga = $get['idcontratto_riga'];
 	$qp = 'SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento FROM co_righe_contratti WHERE id = '.$idcontratto_riga;
 	$rsp = $dbo->fetchArray($qp);
@@ -26,12 +26,12 @@ if (!empty($get['idcontratto_riga'])){
 	$data_richiesta = readDate($rsp[0]['data_richiesta']);
 	$matricoleimpianti = trim($rsp[0]['idimpianti']);
 	$idsede = $rsp[0]['idsede'];
-	
+
 	$readonly = 'readonly';
 	$hide = '';
 	$list .= ', \"0\":\"'.tr('Pianificare a partire da questo promemoria ').$data_richiesta.'\"';
-	
-	
+
+
 }
 
 //se non è impostata idcontratto_riga allora sono in fase di inserimento di nuovo promemoria e mi calcolo il prossimo id per co_righe_contratti
@@ -46,8 +46,8 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="pianificazione">';
 
-	
-	
+
+
 	echo '
 	<!-- DATI PROMEMORIA? -->
 	<div class="panel panel-primary">
@@ -56,36 +56,36 @@ echo '
 		</div>
 
 		<div class="panel-body">
-		
-		
-		
+
+
+
 	<div class="row">
 
 		<div class="col-md-6">
 			{[ "type": "date",  "label": "'.tr('Entro il').'", "name": "data_richiesta", "required": 1, "value": "'.$data_richiesta.'", "extra":"'.$readonly.'" ]}
 		</div>
-		
+
 		<div class="col-md-6">
 			 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "required": 1, "id": "idtipointervento_", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$rsp[0]['idtipointervento'].'", "extra": "'.$readonly.'" ]}
 		</div>
 
 	</div>
-	
-	
-	
+
+
+
 	<div class="row">
-	
+
 		<div class="col-md-6">
 				{[ "type": "select", "multiple": "1", "label": "'.tr('Impianti').'", "name": "matricolaimpianto_[]", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_record.' ORDER BY descrizione", "value": "'.$matricoleimpianti.'", "extra":"'.$readonly.'" ]}
 		</div>
-		
+
 		<div class="col-md-6">
 			{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede_c", "values": "query=SELECT 0 AS id, \'Sede legale\' AS descrizione UNION SELECT id, CONCAT( CONCAT_WS( \' (\', CONCAT_WS(\', \', `nomesede`, `citta`), `indirizzo` ), \')\') AS descrizione FROM an_sedi WHERE idanagrafica='.$idanagrafica.'", "value": "'.$idsede.'", "extra":"'.$readonly.'" ]}
 	   </div>
-	   
+
 	</div>
-	
-	
+
+
 	<div class="row">
 
 		<div class="col-md-12">
@@ -93,10 +93,10 @@ echo '
 		</div>
 
 	</div>';
-	
-	
+
+
 ?>
-	
+
 	    <!-- ARTICOLI -->
     <div class="panel panel-primary">
         <div class="panel-heading">
@@ -115,10 +115,10 @@ echo '
                     } ?>
         </div>
     </div>
-	
-	
-	
-	
+
+
+
+
 	    <!-- SPESE AGGIUNTIVE -->
     <div class="panel panel-primary">
         <div class="panel-heading">
@@ -137,9 +137,9 @@ echo '
                     } ?>
         </div>
     </div>
-	
-<?php	
-	
+
+<?php
+
 echo '</div>
 </div>
 
@@ -159,13 +159,13 @@ echo '
 		</div>
 
 		<div class="panel-body">';
-		
-		
+
+
 echo '<div class="row">
 				<div class="col-md-2">
-					{[ "type": "number", "label": "'.tr('Intervallo').'", "name": "intervallo", "class": "", "decimals": 0, "required": 1, "icon-after": "GG",  "min-value": "1"  ]}
+					{[ "type": "number", "label": "'.tr('Intervallo').'", "name": "intervallo", "decimals": 0, "required": 1, "icon-after": "GG",  "min-value": "1"  ]}
 				</div>';
-				
+
 ?>
 
 		<div class="col-md-7">
@@ -183,8 +183,8 @@ echo '
 
 
 	</div>
-	
-	
+
+
 	</div>
 </div>';
 
@@ -198,7 +198,7 @@ echo '
 		</div>
 
 		<div class="panel-body">
-		
+
 
 	<div class="row">
 
@@ -220,7 +220,7 @@ echo '
 		</div>
 
 	</div>
-	
+
 	</div>
 </div>
 

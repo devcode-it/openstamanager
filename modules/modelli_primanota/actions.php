@@ -32,7 +32,7 @@ switch (post('op')) {
             if ($dbo->query($query)) {
                 $id_record = $dbo->lastInsertedID();
             }
-            
+
         }
 
         break;
@@ -40,12 +40,12 @@ switch (post('op')) {
     case 'delete':
         $idmastrino = post('idmastrino');
 
-        if ($idmastrino != '') {
+        if (!empty($idmastrino)) {
             // Eliminazione prima nota
             $dbo->query('DELETE FROM co_movimenti_modelli WHERE idmastrino='.prepare($idmastrino));
 
             $_SESSION['infos'][] = tr('Movimento eliminato!');
         }
-        
+
         break;
 }

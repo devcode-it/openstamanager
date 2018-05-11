@@ -101,10 +101,10 @@ if (!empty($rs)) {
         if ($module_name=='Fatture di vendita' || $module_name == 'Fatture di acquisto'){
             echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "class": "", "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare(Modules::get($module_name)['id']).' ORDER BY name", "value": "'.Modules::get($module_name)['id_segment'].'", "extra": "" ]}
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare(Modules::get($module_name)['id']).' ORDER BY name", "value": "'.Modules::get($module_name)['id_segment'].'" ]}
         </div>';
         }
-        
+
         echo
     '</div>';
     }
@@ -267,7 +267,7 @@ echo '
 
         ricalcola_totale();
     }
-   
+
     function ricalcola_totale(){
         tot_qta = 0;
         r = 0;
@@ -297,7 +297,7 @@ echo '
         });
 
         $('#totale').html( (totale.toLocale()) + " &euro;" );
-        
+
         if( tot_qta>0 )
             $('#submit_btn').show();
         else

@@ -20,29 +20,29 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "class": "text-center", "value": "-now-", "extra": "" ]}
+            {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "class": "text-center", "value": "-now-" ]}
         </div>';
 
 // Tipo di documento
 echo '
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Tipo di fattura').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT * FROM co_tipidocumento WHERE dir=\'entrata\'", "extra": "" ]}
+            {[ "type": "select", "label": "'.tr('Tipo di fattura').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT * FROM co_tipidocumento WHERE dir=\'entrata\'" ]}
         </div>';
-		
-	
+
+
 // Sezionale
 echo '
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.Modules::get('Fatture di vendita')['id'].' ORDER BY name",  "value":"'.$_SESSION['m'.Modules::get('Fatture di vendita')['id']]['id_segment'].'", "extra": "" ]}
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.Modules::get('Fatture di vendita')['id'].' ORDER BY name",  "value":"'.$_SESSION['m'.Modules::get('Fatture di vendita')['id']]['id_segment'].'" ]}
         </div>
-		
+
     </div>';
 
 // Note
 echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "note", "value": "Rata '.$n_rata.' del contratto numero '.$numero.', zona '.$zona.'", "extra": "" ]}
+            {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "note", "value": "Rata '.$n_rata.' del contratto numero '.$numero.', zona '.$zona.'" ]}
         </div>
     </div>';
 

@@ -169,12 +169,12 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
             // Creazione file fisico
             if (move_uploaded_file($src, $upload_dir.'/'.$filename)) {
                 $dbo->insert('zz_files', [
-                        'nome' => $nome,
-                        'filename' => $filename,
-                        'original' => $_FILES['blob']['name'],
-                        'id_module' => $id_module,
-                        'id_record' => $id_record,
-                    ]);
+                    'nome' => $nome,
+                    'filename' => $filename,
+                    'original' => $_FILES['blob']['name'],
+                    'id_module' => $id_module,
+                    'id_record' => $id_record,
+                ]);
 
                 $_SESSION['infos'][] = tr('File caricato correttamente!');
             } else {
@@ -407,10 +407,10 @@ if (Modules::getPermission($permesso) == 'r' || Modules::getPermission($permesso
                     if (starts_with(post('op'), 'add')) {
                         foreach ($values as $key => $value) {
                             $dbo->insert('zz_field_record', [
-                            'id_record' => $id_record,
-                            'id_field' => $key,
-                            'value' => $value,
-                        ]);
+                                'id_record' => $id_record,
+                                'id_field' => $key,
+                                'value' => $value,
+                            ]);
                         }
                     }
 

@@ -52,13 +52,13 @@ foreach ($rs as $key => $value) {
 // Intervento
 echo '
     <div class="row">
-	
+
         <div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Intervento').'", "name": "idintervento", "required": 1, "values": '.json_encode($rs).', "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.descrizione); if($(\'#copia_descrizione\').is(\':checked\')){  $(\'#descrizione\').val($data.descrizione + $data.descrizione_intervento); }; $(\'#prezzo\').val($data.prezzo);\"" ]}
         </div>
-		
+
 		<div class="col-md-6">
-            {[ "type": "checkbox", "label": "'.tr('Copia descrizione').'", "name": "copia_descrizione", "required": 0, "values": "", "extra": "", "help": "", "placeholder": "'.tr('In fase di selezione copia la descrizione dell\'intervento').'." ]}
+            {[ "type": "checkbox", "label": "'.tr('Copia descrizione').'", "name": "copia_descrizione", "required": 0, "values": "", "help": "", "placeholder": "'.tr('In fase di selezione copia la descrizione dell\'intervento').'." ]}
         </div>
 
     </div>';

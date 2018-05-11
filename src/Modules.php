@@ -126,10 +126,6 @@ class Modules
      */
     public static function getAdditionals($module)
     {
-        if (Update::isUpdateAvailable()) {
-            return [];
-        }
-
         $module = self::get($module);
 
         if (!isset(self::$additionals[$module])) {

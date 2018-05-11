@@ -341,6 +341,10 @@ class Prints
             'margin_bottom' => $settings['margins']['bottom'] + $settings['footer-height'],
             'margin_header' => $settings['margins']['top'],
             'margin_footer' => $settings['margins']['bottom'],
+
+            // Abilitazione per lo standard PDF/A
+            //'PDFA' => true,
+            //'PDFAauto' => true,
         ]);
 
         // Impostazione di header e footer

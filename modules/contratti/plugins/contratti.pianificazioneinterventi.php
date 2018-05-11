@@ -260,9 +260,9 @@ if (count($rsp) != 0) {
         }
 		
 		//info impianti
+		$info_impianti = '';
 		if (!empty($rsp[$i]['idimpianti'])){
 			$rsp3 = $dbo->fetchArray('SELECT id, matricola, nome FROM my_impianti WHERE id IN ('.($rsp[$i]['idimpianti']).')');
-			$info_impianti = '';
 			if (!empty( $rsp3 )){
 				for ($a=0; $a<count($rsp3); $a++){
 					$info_impianti .= Modules::link('MyImpianti', $rsp3[$a]['id'], tr('_NOME_ (_MATRICOLA_)', [

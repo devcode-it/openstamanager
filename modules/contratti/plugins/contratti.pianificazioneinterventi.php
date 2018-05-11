@@ -26,6 +26,8 @@ switch (filter('op')) {
         $id = filter('id');
 
         $dbo->query('DELETE FROM `co_righe_contratti` WHERE id='.prepare($id));
+		$dbo->query('DELETE FROM `co_righe_contratti_materiali` WHERE id_riga_contratto='.prepare($id));
+		
         $_SESSION['infos'][] = tr('Pianificazione eliminata!');
 
         redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
@@ -36,6 +38,7 @@ switch (filter('op')) {
     case 'delete-promemoria':
 
         $dbo->query('DELETE FROM `co_righe_contratti` WHERE idcontratto = '.$id_record.' AND idintervento IS NULL');
+		$dbo->query('DELETE FROM `co_righe_contratti_materiali` WHERE id_riga_contratto IN (SELECT id FROM `co_righe_contratti` WHERE idcontratto = '.$id_record.' AND idintervento IS NULL ) ');
         $_SESSION['errors'][] = tr('Tutti i promemoria non associati sono stati eliminati!');
 
         redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
@@ -154,7 +157,7 @@ switch (filter('op')) {
                     }
                     //fine ciclo while
                 } else {
-                    $_SESSION['errors'][] = tr('Nessuna data di conclusione del contratto oppure quest\'ultima è già trascorsa, impossibile pianificare nuovi promemoria.');
+                    $_SESSION['errors'][] = tr('Nessuna data di conclusione del contratto oppure quest\'ultima è già trascorsa, impossibile pianificare nuovi promemoria.'.$qp);
                 }
                 //fine controllo data_conclusione
             } else {
@@ -294,11 +297,6 @@ if (count($rsp) != 0) {
 
 	echo '<br><div class="pull-right">';
 	
-	echo '	<button type="button"  title="Aggiungi un nuovo promemoria da pianificare." data-toggle="tooltip" class="btn btn-primary"  onclick="launch_modal(\'Nuovo promemoria\', \''.$rootdir.'/modules/contratti/plugins/addpianficazione.php?id_module='.Modules::get('Contratti')['id'].'&id_plugin='.Plugins::get('Pianificazione interventi')['id'].'&ref=interventi_contratti&id_record='.$id_record.'\')">
-						<i class="fa fa-plus"></i> '.tr('Nuovo promemoria').'
-					</button>';
-	
-	
     if (count($rsp) > 0) {
     echo '	<button type="button"  title="Elimina tutti i promemoria per questo contratto che non sono associati ad intervento." class="btn btn-danger ask tip" data-op="delete-promemoria" >
 						<i class="fa fa-trash"></i> '.tr('Elimina promemoria').'
@@ -308,6 +306,11 @@ if (count($rsp) != 0) {
 	echo '</div>';
 	
 }
+
+
+	echo '	<button type="button"  title="Aggiungi un nuovo promemoria da pianificare." data-toggle="tooltip" class="btn btn-primary"  onclick="launch_modal(\'Nuovo promemoria\', \''.$rootdir.'/modules/contratti/plugins/addpianficazione.php?id_module='.Modules::get('Contratti')['id'].'&id_plugin='.Plugins::get('Pianificazione interventi')['id'].'&ref=interventi_contratti&id_record='.$id_record.'\')">
+						<i class="fa fa-plus"></i> '.tr('Nuovo promemoria').'
+					</button>';
 
 /*
     Nuovo intervento

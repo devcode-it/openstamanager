@@ -51,7 +51,7 @@ if (count(Modules::getSegments($id_module)) > 1) {
     ?>
     <div class="row">
     	<div class="col-md-4 pull-right">
-    		{[ "type": "select", "label": "", "name": "id_segment_", "required": 0, "class": "", "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module = '<?php echo $id_module; ?>'", "value": "<?php echo $_SESSION['m'.$id_module]['id_segment']; ?>", "extra": "" ]}
+    		{[ "type": "select", "label": "", "name": "id_segment_", "required": 0, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module = '<?php echo $id_module; ?>'", "value": "<?php echo $_SESSION['m'.$id_module]['id_segment']; ?>" ]}
     	</div>
     </div>
     <br>

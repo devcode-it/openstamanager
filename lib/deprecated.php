@@ -336,12 +336,12 @@ function readDate($data)
 /**
  * Genera una porzione di codice html a partire da una stringa nei seguenti formati:
  * campo <input> generico:
- * {[ "type": "text", "required": 1, "value": "$idintervento$", "extra": "" ]}.
+ * {[ "type": "text", "required": 1, "value": "$idintervento$" ]}.
  *
  * campo di testo normale e non modificabile
  * {[ "type": "span", "value": "$testo$" ]}
  *
- * {[ "type": "select", "required": 1, "values": "query='SELECT id, descrizione FROM co_contratti WHERE idanagrafica=$idanagrafica$"', "value": "$idcontratto$", "extra": "" ]}
+ * {[ "type": "select", "required": 1, "values": "query='SELECT id, descrizione FROM co_contratti WHERE idanagrafica=$idanagrafica$"', "value": "$idcontratto$" ]}
  *
  * Il parametro $records contiene il risultato della query di selezione record per fare i vari replace delle variabili racchiuse tra $$ nel template
  *
@@ -622,7 +622,7 @@ function build_html_element($string)
 
             // Generazione <select> da JSON
             // esempio creazione select con opzioni: Maschio, Femmina, Unisex
-            // {[ "type": "select", "label": "Sesso", "name": "sesso", "values": "list=\"\": \"\", \"M\": \"Maschio\", \"F\": \"Femmina\", \"U\": \"Unisex\"", "value": "$sesso$", "extra": "" ]}
+            // {[ "type": "select", "label": "Sesso", "name": "sesso", "values": "list=\"\": \"\", \"M\": \"Maschio\", \"F\": \"Femmina\", \"U\": \"Unisex\"", "value": "$sesso$" ]}
             elseif (preg_match_all('/^list=(.+?)$/', $values, $m)) {
                 $data = json_decode('{'.$m[1][0].'}');
                 foreach ($data as $id => $etichetta) {

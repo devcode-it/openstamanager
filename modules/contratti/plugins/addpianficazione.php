@@ -4,11 +4,11 @@ include_once __DIR__.'/../../../core.php';
 
 //<form action="plugin_editor.php?id_plugin=$id_plugin$&id_module=$id_module$&id_parent=$id_parent$" method="post" role="form">
 
-
+//nuovo promemoria
 $data_richiesta = date('d/m/Y');
 $disabled = '';
 $hide = 'hide';
-$op = 'pianifica';
+$op = 'edit-pianifica';
 
 
 //mi ricavo informazioni del contratto
@@ -17,6 +17,8 @@ $idanagrafica = $dbo->fetchArray('SELECT `idanagrafica` FROM `co_contratti` WHER
 
 $list = '\"1\":\"'.tr('Pianificare a partire da oggi ').date('d/m/Y').'\"';
 
+
+//promemoria esistente
 if (!empty($get['idcontratto_riga'])){
 	
 	$idcontratto_riga = $get['idcontratto_riga'];
@@ -76,7 +78,7 @@ echo '
 			<div class="row">
 			
 				<div class="col-md-6">
-						{[ "type": "select", "multiple": "1", "label": "'.tr('Impianti').'", "name": "matricolaimpianto_[]", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_record.' ORDER BY descrizione", "value": "'.$matricoleimpianti.'", "extra":"'.$readonly.'" ]}
+						{[ "type": "select", "multiple": "1", "label": "'.tr('Impianti').'", "name": "idimpianti[]", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_record.' ORDER BY descrizione", "value": "'.$matricoleimpianti.'", "extra":"'.$readonly.'" ]}
 				</div>
 				
 				<div class="col-md-6">

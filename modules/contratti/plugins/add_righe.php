@@ -62,7 +62,7 @@ echo '
     <input type="hidden" name="idriga" value="'.$idriga.'">
 	
 	
-	<input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">';
+	<input type="text" name="idcontratto_riga" value="'.$idcontratto_riga.'">';
 	
 
 // Descrizione

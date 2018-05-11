@@ -4,25 +4,47 @@ include_once __DIR__.'/../../../core.php';
 
 // Pianificazione intervento
 switch (filter('op')) {
-    case 'pianifica':
-        $data_richiesta = filter('data_richiesta');
+	
+	case 'add-pianifica':
+		
+		$data_richiesta = filter('data_richiesta');
+		$query = 'INSERT INTO `co_righe_contratti` ( `idcontratto`, `data_richiesta` ) VALUES ('.prepare($id_record).', '.prepare($data_richiesta).')';
+		
+		if ($dbo->query($query)) {
+
+		}else{
+			$_SESSION['errors'][] = tr("Errore durante l'aggiunta del promemoria!");
+		}	
+		
+	break;
+	
+	
+    case 'edit-pianifica':
+		
+		
+		$idcontratto_riga =  filter('idcontratto_riga');
+		
+		$data_richiesta = filter('data_richiesta');
+	
         $idtipointervento = filter('idtipointervento');
         $richiesta = filter('richiesta');
         $idsede = filter('idsede_c');
-
-        $query = 'INSERT INTO `co_righe_contratti`(`idcontratto`, `idtipointervento`, `data_richiesta`, `richiesta`, `idsede`) VALUES('.prepare($id_record).', '.prepare($idtipointervento).', '.prepare($data_richiesta).', '.prepare($richiesta).', '.prepare($idsede).')';
+		$idimpianti = implode(",", $post['idimpianti']);
+		
+		$query = 'UPDATE co_righe_contratti SET idtipointervento='.prepare($idtipointervento).', data_richiesta='.prepare($data_richiesta).', richiesta='.prepare($richiesta).',  idsede='.prepare($idsede).', idimpianti='.prepare($idimpianti).'   WHERE id = '.prepare($idcontratto_riga);
 
         if (isset($id_record)) {
             if ($dbo->query($query)) {
-                $_SESSION['infos'][] = tr('Intervento pianificato!');
+                $_SESSION['infos'][] = tr('Promemoria inserito!');
             } else {
-                $_SESSION['errors'][] = tr("Errore durante l'aggiunta dell'intervento!");
+                $_SESSION['errors'][] = tr("Errore durante la modifica del promemoria!");
             }
         }
         break;
 
     // Eliminazione pianificazione
     case 'depianifica':
+	
         $id = filter('id');
 
         $dbo->query('DELETE FROM `co_righe_contratti` WHERE id='.prepare($id));
@@ -39,13 +61,14 @@ switch (filter('op')) {
 
         $dbo->query('DELETE FROM `co_righe_contratti` WHERE idcontratto = '.$id_record.' AND idintervento IS NULL');
 		$dbo->query('DELETE FROM `co_righe_contratti_materiali` WHERE id_riga_contratto IN (SELECT id FROM `co_righe_contratti` WHERE idcontratto = '.$id_record.' AND idintervento IS NULL ) ');
+		
         $_SESSION['errors'][] = tr('Tutti i promemoria non associati sono stati eliminati!');
 
         redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
 
         break;
 
-            //pianificazione
+      //pianificazione ciclica
      case 'pianificazione':
 
             $idcontratto_riga = filter('idcontratto_riga');
@@ -238,12 +261,13 @@ if (count($rsp) != 0) {
 		
 		//info impianti
 		if (!empty($rsp[$i]['idimpianti'])){
-			$rsp3 = $dbo->fetchArray('SELECT id, matricola FROM my_impianti WHERE id IN ('.($rsp[$i]['idimpianti']).')');
+			$rsp3 = $dbo->fetchArray('SELECT id, matricola, nome FROM my_impianti WHERE id IN ('.($rsp[$i]['idimpianti']).')');
 			$info_impianti = '';
 			if (!empty( $rsp3 )){
 				for ($a=0; $a<count($rsp3); $a++){
-					$info_impianti .= Modules::link('MyImpianti', $rsp3[$a]['id'], tr('_NUM_', [
-						'_NUM_' => $rsp3[$a]['matricola'],
+					$info_impianti .= Modules::link('MyImpianti', $rsp3[$a]['id'], tr('_NOME_ (_MATRICOLA_)', [
+						'_NOME_' => $rsp3[$a]['nome'],
+						'_MATRICOLA_' => $rsp3[$a]['matricola'],
 					])).'<br>';
 				}
 			}
@@ -308,7 +332,7 @@ if (count($rsp) != 0) {
 }
 
 
-	echo '	<button type="button"  title="Aggiungi un nuovo promemoria da pianificare." data-toggle="tooltip" class="btn btn-primary"  onclick="launch_modal(\'Nuovo promemoria\', \''.$rootdir.'/modules/contratti/plugins/addpianficazione.php?id_module='.Modules::get('Contratti')['id'].'&id_plugin='.Plugins::get('Pianificazione interventi')['id'].'&ref=interventi_contratti&id_record='.$id_record.'\')">
+	echo '	<button type="button"  title="Aggiungi un nuovo promemoria da pianificare." data-toggle="tooltip" class="btn btn-primary"  id="add_promemoria">
 						<i class="fa fa-plus"></i> '.tr('Nuovo promemoria').'
 					</button>';
 
@@ -357,3 +381,27 @@ if (count($rsp) != 0) {
 echo '
     </div>
 </div>';
+
+
+
+
+?>
+
+<script type="text/javascript">
+
+	$( "#add_promemoria" ).click(function() {
+		
+		$.post( "<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::get('Contratti')['id'] ?>&id_record=<?php echo $id_record ?>", { backto: "record-edit", op: "add-pianifica", data_richiesta: '<?php echo date('Y-m-d'); ?>' })
+		  .done(function( data ) {
+			  
+			 //$('#righe').load(globals.rootdir + '/modules/contratti/plugins/ajax_righe.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&idcontratto_riga=<?php echo $idcontratto_riga; ?>');
+			launch_modal('Nuovo promemoria', '<?php echo $rootdir ?>/modules/contratti/plugins/addpianficazione.php?id_module=<?php echo Modules::get('Contratti')['id'] ?>&id_plugin=<?php echo Plugins::get('Pianificazione interventi')['id'] ?>&ref=interventi_contratti&id_record=<?php echo $id_record?>');
+			
+		  });
+	  
+	});
+		
+	$(document).ready(function() {
+		
+	});
+</script>

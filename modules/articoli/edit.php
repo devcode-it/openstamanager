@@ -41,10 +41,10 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 			<div class="row">
 				<div class="col-md-3">
 					{[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta", "min-value": "undefined" ]}
+					<input type="hidden" id="old_qta" value="<?=$records[0]['qta']?>">
 				</div>
 				<div class="col-md-3">
 					{[ "type": "checkbox", "label": "<?php echo tr('Modifica quantità manualmente'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>", "extra": "<?php echo ($records[0]['servizio']) ? 'disabled' : ''; ?>" ]}
-
 					<script type="text/javascript">
 
                         $(document).ready(function() {
@@ -56,6 +56,17 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 
     				        $('#qta_manuale').click(function(){
     							$("#qta").attr("readonly", !$('#qta_manuale').is(":checked"));
+								if($('#qta_manuale').is(":checked")){
+									$("#div_modifica_manuale").show();
+									$("#div_modifica_manuale").show();
+									$("#descrizione_movimento").attr('required', true);
+									$("#data_movimento").attr('required', true);
+								}else{
+									$("#div_modifica_manuale").hide();
+									$('#qta').val($('#old_qta').val());
+									$("#descrizione_movimento").attr('required', false);
+									$("#data_movimento").attr('required', false);
+								}
     				        });
 
                          });
@@ -67,8 +78,6 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 				<div class="col-md-2">
 					{[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo Modules::get('Unità di misura')['id']; ?>" ]}
 				</div>
-
-
 
 				<?php
                 $records[0]['abilita_serial'] = ($records[0]['serial'] > 0) ? 1 : $records[0]['abilita_serial'];
@@ -83,6 +92,15 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
                 </div>
 
 
+			</div>
+			
+			<div class='row' id="div_modifica_manuale" style="display:none;">
+				<div class='col-md-3'>
+					{[ "type": "text", "label": "<?php echo tr('Descrizione movimento'); ?>", "name": "descrizione_movimento", "value": "" ]}
+				</div>
+				<div class='col-md-3'>
+					{[ "type": "date", "label": "<?php echo tr('Data movimento'); ?>", "name": "data_movimento", "value": "-now-" ]}
+				</div>
 			</div>
 
 			<div class="row">

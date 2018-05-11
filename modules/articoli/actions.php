@@ -56,7 +56,13 @@ switch (post('op')) {
         $movimento = $qta - $old_qta;
 
         if ($movimento != 0) {
-            add_movimento_magazzino($id_record, $movimento);
+            $descrizione_movimento = post('descrizione_movimento');
+            $data_movimento = post('data_movimento');
+            if($descrizione_movimento!='' && $data_movimento!=''){
+                add_movimento_magazzino($id_record, $movimento, [], $descrizione_movimento, $data_movimento);
+            }else{
+                add_movimento_magazzino($id_record, $movimento);
+            }
         }
 
         /*

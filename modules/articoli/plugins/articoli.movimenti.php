@@ -55,13 +55,13 @@ if (!empty($rs2)) {
 
         // Data
         echo '
-                <td>'.Translator::timestampToLocale($r['created_at']).'</td>';
+                <td>'.Translator::dateToLocale($r['data']).'</td>';
 
         // Operazioni
         echo '
                 <td class="text-center">';
 
-        if (Auth::admin()) {
+        if (Auth::admin() && $r['manuale']=='1') {
             echo '
                     <a class="btn btn-danger btn-sm ask" data-backto="record-edit" data-op="delmovimento" data-idmovimento="'.$r['id'].'">
                         <i class="fa fa-trash"></i>

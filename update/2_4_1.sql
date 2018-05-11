@@ -97,3 +97,9 @@ CREATE TABLE IF NOT EXISTS `co_righe_contratti_materiali` (
 
 -- Modifica query wiget per mostrare solo quelli che non sono sati rinnovati
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato, co_contratti.id, DATEDIFF( data_conclusione, NOW() ) AS giorni_rimanenti FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND rinnovabile=1 AND NOW() > DATE_ADD( data_conclusione, INTERVAL - ABS(giorni_preavviso_rinnovo) DAY) AND YEAR(data_conclusione) > 1970 HAVING ISNULL((SELECT id FROM co_contratti contratti WHERE contratti.idcontratto_prev=co_contratti.id )) ORDER BY giorni_rimanenti ASC' WHERE `zz_widgets`.`name` = 'Contratti in scadenza';
+
+-- Aggiunto campo data su movimenti articoli
+ALTER TABLE `mg_movimenti` ADD `data` DATE NOT NULL AFTER `movimento`;
+
+-- Campo per indentificare i movimenti manuali
+ALTER TABLE `mg_movimenti` ADD `manuale` TINYINT(1) NOT NULL AFTER `data`;

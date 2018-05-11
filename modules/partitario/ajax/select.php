@@ -64,7 +64,7 @@ switch ($resource) {
         $where[] = "co_pianodeiconti3.dir='entrata'";
 
         if (!empty($search)) {
-            $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'co_pianodeiconti3.descrizione LIKE '.prepare('%'.$search.'%');
         }
 
         break;
@@ -80,7 +80,7 @@ switch ($resource) {
         $where[] = "co_pianodeiconti3.dir='uscita'";
 
         if (!empty($search)) {
-            $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'co_pianodeiconti3.descrizione LIKE '.prepare('%'.$search.'%');
         }
 
         break;

@@ -275,10 +275,17 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     $totale_fattura = get_totale_fattura($iddocumento);
     $imponibile_fattura = get_imponibile_fattura($iddocumento);
 
-    // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
-    $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare(get_var('Iva predefinita'));
-    $rsi = $dbo->fetchArray($qi);
-    $iva_rivalsainps = $totale_rivalsainps / 100 * $rsi[0]['percentuale'];
+    // Calcolo l'iva della rivalsa inps
+    $iva_rivalsainps = 0;
+    
+    $rsr = $dbo->fetchArray( 'SELECT idiva, rivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento) );
+    
+    for( $r=0; $r<sizeof($rsr); $r++ ){
+        $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare( $rsr[$r]['idiva'] );
+        $rsi = $dbo->fetchArray($qi);
+        $iva_rivalsainps += $rsr[$r]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
+    }
+    
 
     // Lettura iva indetraibile fattura
     $query = 'SELECT SUM(iva_indetraibile) AS iva_indetraibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
@@ -490,10 +497,15 @@ function get_totale_fattura($iddocumento)
     $query2 = 'SELECT rivalsainps FROM co_documenti WHERE id='.prepare($iddocumento);
     $rs2 = $dbo->fetchArray($query2);
 
-    // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
-    $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare(get_var('Iva predefinita'));
-    $rsi = $dbo->fetchArray($qi);
-    $iva_rivalsainps = $rs2[0]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
+    $iva_rivalsainps = 0;
+    
+    $rsr = $dbo->fetchArray( 'SELECT idiva, rivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento) );
+    
+    for( $r=0; $r<sizeof($rsr); $r++ ){
+        $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare( $rsr[$r]['idiva'] );
+        $rsi = $dbo->fetchArray($qi);
+        $iva_rivalsainps += $rsr[$r]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
+    }
     
     $iva = sum($rs[0]['iva'], null, 2);
     $totale_iva = sum($iva, $iva_rivalsainps);
@@ -585,16 +597,14 @@ function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenu
         $rivalsainps = $rs[0]['rivalsainps'];
         $ritenutaacconto = $rs[0]['ritenutaacconto'];
 
-        if ($dir == 'entrata') {
-            // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
-            $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare(get_var('Iva predefinita'));
+        $iva_rivalsainps = 0;
+        
+        $rsr = $dbo->fetchArray( 'SELECT idiva, rivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento) );
+        
+        for( $r=0; $r<sizeof($rsr); $r++ ){
+            $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare( $rsr[$r]['idiva'] );
             $rsi = $dbo->fetchArray($qi);
-            $iva_rivalsainps = $rivalsainps / 100 * $rsi[0]['percentuale'];
-        } else {
-            // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
-            $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare(get_var('Iva predefinita'));
-            $rsi = $dbo->fetchArray($qi);
-            $iva_rivalsainps = $rivalsainps / 100 * $rsi[0]['percentuale'];
+            $iva_rivalsainps += $rsr[$r]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
         }
 
         // Leggo la ritenuta d'acconto se c'è

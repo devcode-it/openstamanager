@@ -40,33 +40,14 @@ class Modules
 
             $user = Auth::user();
 
-            $results = $database->fetchArray('SELECT * FROM `zz_modules` LEFT JOIN (SELECT `idmodule`, `permessi` FROM `zz_permissions` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).')) AS `zz_permissions` ON `zz_modules`.`id`=`zz_permissions`.`idmodule` LEFT JOIN (SELECT NULL AS `id_segment`, `idmodule`, `clause`, `position` FROM `zz_group_module` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).') AND `enabled` = 1 UNION SELECT `id` AS `id_segment`, `id_module` AS `idmodule`, `clause`, `position` FROM `zz_segments`) AS `zz_group_module` ON `zz_modules`.`id`=`zz_group_module`.`idmodule`');
+            $results = $database->fetchArray('SELECT * FROM `zz_modules` LEFT JOIN (SELECT `idmodule`, `permessi` FROM `zz_permissions` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).')) AS `zz_permissions` ON `zz_modules`.`id`=`zz_permissions`.`idmodule`');
 
             $modules = [];
-            $additionals = [];
-
             foreach ($results as $result) {
-                if (empty($additionals[$result['id']])) {
-                    $additionals[$result['id']]['WHR'] = [];
-                    $additionals[$result['id']]['HVN'] = [];
-                }
-
                 $result['options'] = App::replacePlaceholder($result['options']);
                 $result['options2'] = App::replacePlaceholder($result['options2']);
 
                 $result['option'] = empty($result['options2']) ? $result['options'] : $result['options2'];
-
-                if (!empty($result['clause'])) {
-                    if (!empty($result['id_segment'])) {
-                        if ($result['id_segment'] == $_SESSION['m'.$result['id']]['id_segment']) {
-                            $result['clause'] = App::replacePlaceholder($result['clause']);
-                            $additionals[$result['id']][$result['position']][] = $result['clause'];
-                        }
-                    } else {
-                        $result['clause'] = App::replacePlaceholder($result['clause']);
-                        $additionals[$result['id']][$result['position']][] = $result['clause'];
-                    }
-                }
 
                 if (empty($modules[$result['id']])) {
                     if (empty($result['permessi'])) {
@@ -77,8 +58,6 @@ class Modules
                         }
                     }
 
-                    unset($result['clause']);
-                    unset($result['position']);
                     unset($result['idmodule']);
 
                     $modules[$result['id']] = $result;
@@ -87,7 +66,6 @@ class Modules
             }
 
             self::$modules = $modules;
-            self::$additionals = $additionals;
         }
 
         return self::$modules;
@@ -148,7 +126,41 @@ class Modules
      */
     public static function getAdditionals($module)
     {
-        return (array) self::$additionals[self::get($module)['id']];
+        if (Update::isUpdateAvailable()) {
+            return [];
+        }
+
+        $module = self::get($module);
+
+        if (!isset(self::$additionals[$module])) {
+            $database = Database::getConnection();
+
+            $additionals['WHR'] = [];
+            $additionals['HVN'] = [];
+
+            $results = $database->fetchArray('SELECT * FROM `zz_group_module` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).') AND `enabled` = 1 AND `idmodule` = '.prepare($module['id']));
+            foreach ($results as $result) {
+                if (!empty($result['clause'])) {
+                    $result['clause'] = App::replacePlaceholder($result['clause']);
+
+                    $additionals[$result['position']][] = $result['clause'];
+                }
+            }
+
+            // Aggiunta dei segmenti
+            $segments = self::getSegments($module['id']);
+            foreach ($segments as $result) {
+                if (!empty($result['clause']) && $result['id'] == $_SESSION['m'.$module['id']]['id_segment']) {
+                    $result['clause'] = App::replacePlaceholder($result['clause']);
+
+                    $additionals[$result['position']][] = $result['clause'];
+                }
+            }
+
+            self::$additionals[$module['id']] = $additionals;
+        }
+
+        return (array) self::$additionals[$module['id']];
     }
 
     /**
@@ -169,7 +181,7 @@ class Modules
         if (!isset(self::$segments[$module])) {
             $database = Database::getConnection();
 
-            self::$segments[$module] = $database->fetchArray('SELECT * FROM zz_segments WHERE id_module = '.prepare($module).' ORDER BY predefined DESC, id ASC');
+            self::$segments[$module] = $database->fetchArray('SELECT * FROM `zz_segments` WHERE `id_module` = '.prepare($module).' ORDER BY `predefined` DESC, `id` ASC');
         }
 
         return (array) self::$segments[$module];

@@ -164,7 +164,7 @@ echo '
 
 // Info per il footer
 $imponibile = sum($imponibile) - sum($sconto);
-$iva = sum($iva, null, 4);
+$iva = sum($iva, null, 2);
 
 $totale = $imponibile + $iva;
 

@@ -472,7 +472,7 @@ function get_imponibile_fattura($iddocumento)
     $query = 'SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS imponibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
     
-    return number_format($rs[0]['imponibile'], 2);
+    return $rs[0]['imponibile'];
 }
 
 /**

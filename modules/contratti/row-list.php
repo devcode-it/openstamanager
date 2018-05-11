@@ -140,7 +140,7 @@ if (!empty($rs_art)) {
             </td>
         </tr>';
 
-        $iva_art += $r['iva'];
+        $iva_art += number_format($r['iva'], 2);
         $imponibile_art += $r['subtotale'] - $r['sconto'];
         $imponibile_nosconto += $r['subtotale'];
         $sconto_art += $r['sconto'];

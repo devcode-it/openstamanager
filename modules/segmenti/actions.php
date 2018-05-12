@@ -50,7 +50,7 @@ switch (post('op')) {
             'predefined' => $predefined,
         ]);
 
-        $id_record = $dbo->last_inserted_id();
+        $id_record = $dbo->lastInsertedID();
 
         $_SESSION['infos'][] = tr('Nuovo segmento aggiunto');
 

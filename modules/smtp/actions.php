@@ -10,7 +10,7 @@ switch (post('op')) {
             'from_address' => $post['from_address'],
         ]);
 
-        $id_record = $dbo->last_inserted_id();
+        $id_record = $dbo->lastInsertedID();
 
         $_SESSION['infos'][] = tr('Nuovo account email aggiunto!');
 

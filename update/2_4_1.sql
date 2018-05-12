@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `co_movimenti_modelli` (
 ALTER TABLE `co_movimenti_modelli` ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `co_movimenti_modelli` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-  
+
 -- Modulo modelli prima nota
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Modelli prima nota', 'Modelli prima nota', 'modelli_primanota', 'SELECT |select| FROM `co_movimenti_modelli` WHERE 1=1 GROUP BY `idmastrino` HAVING 2=2', '', 'fa fa-angle-right', '2.4.1', '2.4.1', '1', '40', '1', '1');
 
@@ -106,3 +106,9 @@ ALTER TABLE `mg_movimenti` ADD `manuale` TINYINT(1) NOT NULL AFTER `data`;
 
 -- Aggiunta possibilità di selezionare anche i conti in 620 Costi diversi negli acquisti
 UPDATE `co_pianodeiconti2` SET `dir` = 'uscita' WHERE `co_pianodeiconti2`.`descrizione` = 'Costi diversi';
+
+-- Supporto al valore NULL per uid e summary in in_interventi_tecnici
+ALTER TABLE `in_interventi_tecnici` CHANGE `uid` `uid` VARCHAR(255), CHANGE `summary` `summary` VARCHAR(255);
+UPDATE `in_interventi_tecnici` SET `uid` = NULL WHERE `uid` = '';
+UPDATE `in_interventi_tecnici` SET `summary` = NULL WHERE `summary` = '';
+ALTER TABLE `in_interventi_tecnici` CHANGE `uid` `uid` int(11);

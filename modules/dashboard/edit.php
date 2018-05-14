@@ -529,7 +529,8 @@ if ($vista == 'mese') {
         });
 
         calendar_date_start = getCookie('calendar_date_start');
-        $('#calendar').fullCalendar( 'gotoDate', calendar_date_start );
+		if (calendar_date_start!='')
+			$('#calendar').fullCalendar( 'gotoDate', calendar_date_start );
 
 	});
 

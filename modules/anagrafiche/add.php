@@ -24,10 +24,8 @@ echo '
 		</div>
 	</div>';
 
-
-
-echo 
-	'<div class="box box-info collapsed-box">
+echo
+    '<div class="box box-info collapsed-box">
 	    <div class="box-header with-border">
 	        <h3 class="box-title">'.tr('Dati anagrafici').'</h3>
 	        <div class="box-tools pull-right">
@@ -86,11 +84,8 @@ echo
 		</div>
 	</div>';
 
-
-
-	
-echo 
-	'<div class="row">
+echo
+    '<div class="row">
 		<div class="col-md-12 text-right">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
 		</div>

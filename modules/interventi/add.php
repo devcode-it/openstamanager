@@ -137,8 +137,8 @@ if (empty($new_codice)) {
                     {[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $idcontratto; ?>", "placeholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "contratti" ]}
 				</div>
 
-				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto; ?>", "placeholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "impianti" ]}
+				<div class="col-md-4" id='impianti'>
+                    {[ "type": "select", "label": "<?php echo tr('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto; ?>", "placeholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "impianti", "icon-after": "add|<?php echo Modules::get('MyImpianti')['id']; ?>|source=Attività", "data-heavy": 0 ]}
 				</div>
 			</div>
 
@@ -236,6 +236,7 @@ if (empty($new_codice)) {
 		$("#idcontratto").prop("disabled", true);
 		$("#idimpianti").prop("disabled", true);
 		$("#componenti").prop("disabled", true);
+        $("#impianti").find("button").prop("disabled", true);
 
         <?php
         if (!empty($idcontratto) && (!empty($idordineservizio) || !empty($idcontratto_riga))) {
@@ -245,7 +246,8 @@ if (empty($new_codice)) {
         $("#idanagrafica").prop("disabled", true);
         $("#idclientefinale").prop("disabled", true);
         $("#idzona").prop("disabled", true);
-		$("#idtipointervento").prop("disabled", true);';
+		$("#idtipointervento").prop("disabled", true);
+        $("#impianti").find("button").prop("disabled", true);';
         }
 ?>
         $("#orario_inizio").on("dp.change", function (e) {
@@ -276,7 +278,9 @@ if (empty($new_codice)) {
 		$("#idcontratto").selectReset();
 
 		$("#idimpianti").prop("disabled", value);
+        $("#impianti").find("button").prop("disabled", value);
 		$("#idimpianti").selectReset();
+        
 
 		if (($(this).val())) {
 			if (($(this).selectData().idzona)){

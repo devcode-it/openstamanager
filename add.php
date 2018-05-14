@@ -91,7 +91,7 @@ $(document).ready(function(){
         success: function(data){
             data = data.trim();
 
-            if(data && !$("#'.$get['select'].'").val()) {
+            if(data && $("#'.$get['select'].'").val() !== undefined ) {
                 result = JSON.parse(data);
                 $("#'.$get['select'].'").selectSetNew(result.id, result.text);
             }

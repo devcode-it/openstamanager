@@ -208,7 +208,7 @@ function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento)
     // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato.
     // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
     for ($i = 0; $i < sizeof($rs); ++$i) {
-        if ($rimanente_da_pagare > 0) {
+        if ($rimanente_da_pagare != 0) {
             // ...riempio il pagato della rata con il totale della rata stessa se ho ricevuto un pagamento superiore alla rata stessa
             if (abs($rimanente_da_pagare) >= abs($rs[$i]['da_pagare'])) {
                 $pagato = abs($rs[$i]['da_pagare']);

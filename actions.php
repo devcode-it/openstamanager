@@ -40,17 +40,12 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
         // UPLOAD
         if (filter('op') == 'link_file' && !empty($_FILES) && !empty($_FILES['blob']['name'])) {
 			
-
-
             $nome = filter('nome_allegato');
             $nome = !empty($nome) ? $nome : $_FILES['blob']['name'];
-			
 			
             $src = $_FILES['blob']['tmp_name'];
             $f = pathinfo($_FILES['blob']['name']);
 			
-			
-		
             /*
             $allowed = [
                 // Image formats
@@ -173,8 +168,6 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
             } while (file_exists($upload_dir.'/'.$filename));
 			
 			
-			
-
             // Creazione file fisico
             if (move_uploaded_file($src, $upload_dir.'/'.$filename)) {
 				
@@ -186,6 +179,11 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
                     'id_record' => $id_record,
 					'id_plugin' => $id_plugin,
                 ]);
+
+                /*$dbo->query('INSERT INTO zz_files(nome, filename, original, id_module, id_record, id_plugin) VALUES('.prepare($nome).','.prepare($filename).',"'.$_FILES['blob']['name'].'",'.prepare($id_module).','.prepare($id_record).','.prepare($id_plugin).')');
+
+                echo 'INSERT INTO zz_files(nome, filename, original, id_module, id_record, id_plugin) VALUES('.prepare($nome).','.prepare($filename).',"'.$_FILES['blob']['name'].'",'.prepare($id_module).','.prepare($id_record).','.prepare($id_plugin).')';
+                exit;*/
 				
                 $_SESSION['infos'][] = tr('File caricato correttamente!');
             } else {
@@ -219,7 +217,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
             }
         }
 
-        redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
+        redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : ''));
     }
 } elseif (filter('op') == 'download_file') {
     $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare(filter('filename')));

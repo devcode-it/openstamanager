@@ -81,7 +81,7 @@ class FileManager implements ManagerInterface
         </div>
 
         <div class="col-lg-2 text-right">
-            <button type="button" class="btn btn-success" onclick="saveFile_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'();">
+            <button type="button" class="btn btn-success" onclick="saveFile_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').' ( $(this) );">
                 <i class="fa fa-upload"></i> '.tr('Carica').'
             </button>
         </div>
@@ -89,7 +89,7 @@ class FileManager implements ManagerInterface
 
         $result .= '
     <script>
-        function saveFile_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'(){
+        function saveFile_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').' (btn){
             if(!$("#blob_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'").val()){
                 swal("'.addslashes(tr('Attenzione!')).'", "'.addslashes(tr('Devi selezionare un file con il tasto "Sfoglia"')).'...", "warning");
                 return false;
@@ -104,7 +104,9 @@ class FileManager implements ManagerInterface
             form_data.append("id_module", "'.$options['id_module'].'");
 			form_data.append("id_plugin","'.$options['id_plugin'].'");
 
-            $("#main_loading").fadeIn();
+            prev_html = btn.html();
+            btn.html("<i class=\"fa fa-spinner fa-pulse fa-fw\"></i>'.tr("Attendere...").'");
+            btn.prop("disabled", true);
 
             $.ajax({
                 url: "'.ROOTDIR.'/actions.php",
@@ -115,6 +117,10 @@ class FileManager implements ManagerInterface
                 dataType : "html",
                 data: form_data,
                 success: function(data) {
+
+                    btn.html(prev_html);
+                    btn.prop("disabled", false);
+
                     location.href = globals.rootdir + "/editor.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : '').'";
                 },
                 error: function(data) {

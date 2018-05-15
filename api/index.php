@@ -62,7 +62,14 @@ try {
             break;
     }
 } catch (InvalidArgumentException $e) {
-    $result = API::error('unauthorized');
+	
+	 if (Auth::getInstance()->attempt(post('username'), post('password'))) {
+		$token = Auth::getInstance()->getToken();
+		$result = $token;
+	 }else{
+		$result = API::error('unauthorized');
+	 }
+	 
 } catch (Exception $e) {
     $result = API::error('serverError');
 }

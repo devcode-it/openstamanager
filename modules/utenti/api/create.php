@@ -3,7 +3,7 @@
 switch ($resource) {
     case 'login':
         // Controllo sulle credenziali
-        if (Auth::getInstance()->attempt($request['username'], $request['password'])) {
+        if (Auth::getInstance()->attempt(post('username'), post('password'))) {
             $token = Auth::getInstance()->getToken();
 
             // Informazioni da restituire tramite l'API

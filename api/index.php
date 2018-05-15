@@ -64,10 +64,13 @@ try {
 } catch (InvalidArgumentException $e) {
 	
 	 if (Auth::getInstance()->attempt(post('username'), post('password'))) {
-		$token = Auth::getInstance()->getToken();
-		$result = $token;
+		$result = Auth::getInstance()->getToken();
 	 }else{
 		$result = API::error('unauthorized');
+	   // Se è in corso un brute-force, aggiunge il timeout
+		if (Auth::isBrute()) {
+			$result = Auth::getBruteTimeout();
+		}
 	 }
 	 
 } catch (Exception $e) {

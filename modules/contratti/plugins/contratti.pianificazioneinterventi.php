@@ -391,13 +391,25 @@ echo '
 
 	$( "#add_promemoria" ).click(function() {
 		
-		$.post( "<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::get('Contratti')['id'] ?>&id_record=<?php echo $id_record ?>", { backto: "record-edit", op: "add-pianifica", data_richiesta: '<?php echo date('Y-m-d'); ?>' })
-		  .done(function( data ) {
-			  
-			 //$('#righe').load(globals.rootdir + '/modules/contratti/plugins/ajax_righe.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&idcontratto_riga=<?php echo $idcontratto_riga; ?>');
-			launch_modal('Nuovo promemoria', '<?php echo $rootdir ?>/modules/contratti/plugins/addpianficazione.php?id_module=<?php echo Modules::get('Contratti')['id'] ?>&id_plugin=<?php echo Plugins::get('Pianificazione interventi')['id'] ?>&ref=interventi_contratti&id_record=<?php echo $id_record?>');
+		if  (confirm( '<?php echo tr("Aggiungere un nuovo promemoria?") ?>' )){
 			
-		  });
+			prev_html = $("#add_promemoria").html();
+			$("#add_promemoria").html("<i class='fa fa-spinner fa-pulse  fa-fw'></i> <?php echo tr("Attendere...") ?>");
+			$("#add_promemoria").prop('disabled', true);
+						
+			$.post( "<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::get('Contratti')['id'] ?>&id_record=<?php echo $id_record ?>", { backto: "record-edit", op: "add-pianifica", data_richiesta: '<?php echo date('Y-m-d'); ?>' })
+			  .done(function( data ) {
+				  
+				 //$('#righe').load(globals.rootdir + '/modules/contratti/plugins/ajax_righe.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&idcontratto_riga=<?php echo $idcontratto_riga; ?>');
+				launch_modal('Nuovo promemoria', '<?php echo $rootdir ?>/modules/contratti/plugins/addpianficazione.php?id_module=<?php echo Modules::get('Contratti')['id'] ?>&id_plugin=<?php echo Plugins::get('Pianificazione interventi')['id'] ?>&ref=interventi_contratti&id_record=<?php echo $id_record?>', 1, '#bs-popup');
+				
+				$("#add_promemoria").html(prev_html);
+				$("#add_promemoria").prop('disabled', false);
+					
+				
+			  });
+		  
+		}
 	  
 	});
 		

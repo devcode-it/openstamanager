@@ -91,7 +91,11 @@ if (count($rs2) > 0) {
          if (empty($readonly)) {
             echo '
         <td>
-            <button type="button" class="btn btn-warning btn-xs" data-title="'.tr('Modifica spesa').'" data-target="#bs-popup2" data-toggle="modal" data-href="'.$rootdir.'/modules/contratti/plugins/add_righe.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'"><i class="fa fa-edit"></i></button>
+        
+			 <button type="button" class="btn btn-warning btn-xs" data-title="'.tr('Modifica spesa').'" onclick="launch_modal(\'Nuovo promemoria\', \''.$rootdir.'/modules/contratti/plugins/add_righe.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'\', 1, \'#bs-popup2\');" >
+			 <i class="fa fa-edit"></i></button>
+			
+			
             <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="if(confirm(\''.tr('Eliminare questa spesa?').'\')){ elimina_riga( \''.$r['id'].'\' ); }"><i class="fa fa-trash"></i></button>
         </td>';
         }
@@ -106,6 +110,9 @@ if (count($rs2) > 0) {
 ?>
 
 <script type="text/javascript">
+
+
+	
     function elimina_riga( id ){
         $.post(globals.rootdir + '/modules/contratti/plugins/actions.php', { op: 'delriga', idriga: id }, function(data, result){
             if( result=='success' ){

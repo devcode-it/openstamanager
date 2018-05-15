@@ -110,9 +110,6 @@ if (count($rs2) > 0) {
 ?>
 
 <script type="text/javascript">
-
-
-	
     function elimina_riga( id ){
         $.post(globals.rootdir + '/modules/contratti/plugins/actions.php', { op: 'delriga', idriga: id }, function(data, result){
             if( result=='success' ){

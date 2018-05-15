@@ -39,12 +39,18 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     else {
         // UPLOAD
         if (filter('op') == 'link_file' && !empty($_FILES) && !empty($_FILES['blob']['name'])) {
+			
+
+
             $nome = filter('nome_allegato');
             $nome = !empty($nome) ? $nome : $_FILES['blob']['name'];
-
+			
+			
             $src = $_FILES['blob']['tmp_name'];
             $f = pathinfo($_FILES['blob']['name']);
-
+			
+			
+		
             /*
             $allowed = [
                 // Image formats
@@ -165,17 +171,22 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
             do {
                 $filename = random_string().'.'.$f['extension'];
             } while (file_exists($upload_dir.'/'.$filename));
+			
+			
+			
 
             // Creazione file fisico
             if (move_uploaded_file($src, $upload_dir.'/'.$filename)) {
-                $dbo->insert('zz_files', [
+				
+				$dbo->insert('zz_files', [
                     'nome' => $nome,
                     'filename' => $filename,
                     'original' => $_FILES['blob']['name'],
                     'id_module' => $id_module,
                     'id_record' => $id_record,
+					'id_plugin' => $id_plugin,
                 ]);
-
+				
                 $_SESSION['infos'][] = tr('File caricato correttamente!');
             } else {
                 $_SESSION['errors'][] = tr('Errore durante il caricamento del file!');

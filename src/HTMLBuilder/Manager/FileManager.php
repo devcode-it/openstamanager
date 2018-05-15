@@ -27,7 +27,10 @@ class FileManager implements ManagerInterface
         }
 
         // Visualizzo l'elenco di file già caricati
-        $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($options['id_module']).' AND id_record='.prepare($options['id_record']));
+		if (!empty($options['id_plugin']))
+			$rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($options['id_module']).' AND id_record='.prepare($options['id_record']).' AND id_plugin='.prepare($options['id_plugin']));
+		else
+			$rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($options['id_module']).' AND id_record='.prepare($options['id_record']).' AND id_plugin = 0');
 
         if (!empty($rs)) {
             $result .= '
@@ -70,15 +73,15 @@ class FileManager implements ManagerInterface
     <b>'.$options['label'].'</b>
     <div class="row">
         <div class="col-lg-4">
-            {[ "type": "text", "placeholder": "'.tr('Nome').'", "name": "nome_allegato" ]}
+            {[ "type": "text", "placeholder": "'.tr('Nome').'", "name": "nome_allegato", "id": "nome_allegato_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'" ]}
         </div>
 
         <div class="col-lg-6">
-            {[ "type": "file", "placeholder": "'.tr('File').'", "name": "blob", "required": 1 ]}
+            {[ "type": "file", "placeholder": "'.tr('File').'", "name": "blob", "id": "blob_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'", "required": 1 ]}
         </div>
 
         <div class="col-lg-2 text-right">
-            <button type="button" class="btn btn-success" onclick="saveFile();">
+            <button type="button" class="btn btn-success" onclick="saveFile_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'();">
                 <i class="fa fa-upload"></i> '.tr('Carica').'
             </button>
         </div>
@@ -86,19 +89,20 @@ class FileManager implements ManagerInterface
 
         $result .= '
     <script>
-        function saveFile(){
-            if(!$("#blob").val()){
+        function saveFile_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'(){
+            if(!$("#blob_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'").val()){
                 swal("'.addslashes(tr('Attenzione!')).'", "'.addslashes(tr('Devi selezionare un file con il tasto "Sfoglia"')).'...", "warning");
                 return false;
             }
 
-            var file_data = $("#blob").prop("files")[0];
+            var file_data = $("#blob_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'").prop("files")[0];
             var form_data = new FormData();
             form_data.append("blob", file_data);
-            form_data.append("nome_allegato", $("input[name=nome_allegato]").val());
+            form_data.append("nome_allegato", $("input[id=nome_allegato_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').']").val());
             form_data.append("op","link_file");
             form_data.append("id_record","'.$options['id_record'].'");
             form_data.append("id_module", "'.$options['id_module'].'");
+			form_data.append("id_plugin","'.$options['id_plugin'].'");
 
             $("#main_loading").fadeIn();
 
@@ -111,7 +115,7 @@ class FileManager implements ManagerInterface
                 dataType : "html",
                 data: form_data,
                 success: function(data) {
-                    location.href = globals.rootdir + "/editor.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'";
+                    location.href = globals.rootdir + "/editor.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : '').'";
                 },
                 error: function(data) {
                     alert(data);

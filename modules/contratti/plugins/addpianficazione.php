@@ -142,13 +142,16 @@ echo '
 	
 <?php	
 	
-echo '</div>
+echo '
+		
+	{( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "id_plugin": "'.$id_plugin.'" )}
+	
+	</div>
 </div>
 
-
-		<!--div class="col-md-8">
-			{[ "type": "checkbox", "label": "'.tr('Pianifica anche date passate').'", "name": "date_passate", "value": "0", "help": "", "placeholder": "'.tr('Pianificare promemoria anche con date precedenti ad oggi: ').date('d/m/Y').'" ]}
-		</div-->
+	<!--div class="col-md-8">
+		{[ "type": "checkbox", "label": "'.tr('Pianifica anche date passate').'", "name": "date_passate", "value": "0", "help": "", "placeholder": "'.tr('Pianificare promemoria anche con date precedenti ad oggi: ').date('d/m/Y').'" ]}
+	</div-->
 
 ';
 

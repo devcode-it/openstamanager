@@ -62,17 +62,7 @@ try {
             break;
     }
 } catch (InvalidArgumentException $e) {
-	
-	 if (Auth::getInstance()->attempt(post('username'), post('password'))) {
-		$result = Auth::getInstance()->getToken();
-	 }else{
-		$result = API::error('unauthorized');
-	   // Se è in corso un brute-force, aggiunge il timeout
-		if (Auth::isBrute() && post('resource')=='login' ){
-			$result = Auth::getBruteTimeout();
-		}
-	 }
-	 
+    $result = API::error('unauthorized');
 } catch (Exception $e) {
     $result = API::error('serverError');
 }

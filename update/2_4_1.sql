@@ -92,16 +92,44 @@ CREATE TABLE IF NOT EXISTS `co_righe_contratti_materiali` (
   `sconto_unitario` decimal(12,4) NOT NULL,
   `tipo_sconto` enum('UNT','PRC') NOT NULL DEFAULT 'UNT',
   PRIMARY KEY (`id`),
-  KEY `idintervento` (`id_riga_contratto`)
+  KEY `id_riga_contratto` (`id_riga_contratto`)
 );
 
--- Modifica query wiget per mostrare solo quelli che non sono sati rinnovati
+
+-- Struttura della tabella `co_righe_contratti_articoli`
+CREATE TABLE IF NOT EXISTS `co_righe_contratti_articoli` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `idarticolo` int(11) NOT NULL,
+  `id_riga_contratto` int(11) DEFAULT NULL,
+  `descrizione` varchar(255) NOT NULL,
+  `prezzo_acquisto` decimal(12,4) NOT NULL,
+  `prezzo_vendita` decimal(12,4) NOT NULL,
+  `sconto` decimal(12,4) NOT NULL,
+  `sconto_unitario` decimal(12,4) NOT NULL,
+  `tipo_sconto` enum('UNT','PRC') NOT NULL DEFAULT 'UNT',
+  `idiva` int(11) NOT NULL,
+  `desc_iva` varchar(255) NOT NULL,
+  `iva` decimal(12,4) NOT NULL,
+  `idautomezzo` int(11) NOT NULL,
+  `qta` decimal(10,2) NOT NULL,
+  `um` varchar(20) NOT NULL,
+  `abilita_serial` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `idimpianto` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_riga_contratto` (`id_riga_contratto`),
+  KEY `idimpianto` (`idimpianto`)
+);
+
+
+-- Modifica query wiget per mostrare solo quelli che non sono stati rinnovati
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato, co_contratti.id, DATEDIFF( data_conclusione, NOW() ) AS giorni_rimanenti FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND rinnovabile=1 AND NOW() > DATE_ADD( data_conclusione, INTERVAL - ABS(giorni_preavviso_rinnovo) DAY) AND YEAR(data_conclusione) > 1970 HAVING ISNULL((SELECT id FROM co_contratti contratti WHERE contratti.idcontratto_prev=co_contratti.id )) ORDER BY giorni_rimanenti ASC' WHERE `zz_widgets`.`name` = 'Contratti in scadenza';
 
 -- Aggiunto campo data su movimenti articoli
 ALTER TABLE `mg_movimenti` ADD `data` DATE NOT NULL AFTER `movimento`;
 
--- Campo per indentificare i movimenti manuali
+-- Campo per identificare i movimenti manuali
 ALTER TABLE `mg_movimenti` ADD `manuale` TINYINT(1) NOT NULL AFTER `data`;
 
 -- Aggiunta possibilità di selezionare anche i conti in 620 Costi diversi negli acquisti

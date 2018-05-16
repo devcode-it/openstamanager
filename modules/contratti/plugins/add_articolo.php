@@ -8,17 +8,20 @@ for ($i = 0; $i < count($rs); ++$i) {
     $gruppi[$i] = $rs[$i]['nome'];
 }
 
-$can_edit_prezzi = (in_array('Amministratori', $gruppi)) || (get_var('Mostra i prezzi al tecnico') == 1 && (in_array('Tecnici', $gruppi)));
+//$can_edit_prezzi = (in_array('Amministratori', $gruppi)) || (get_var('Mostra i prezzi al tecnico') == 1 && (in_array('Tecnici', $gruppi)));
 
 $idriga = get('idriga');
-$idautomezzo = (get('idautomezzo') == 'undefined') ? '' : get('idautomezzo');
+//$idautomezzo = (get('idautomezzo') == 'undefined') ? '' : get('idautomezzo');
 
-$_SESSION['superselect']['idintervento'] = get('id_record');
+//$_SESSION['superselect']['idintervento'] = get('id_record');
 
 // Lettura idanagrafica cliente e percentuale di sconto/rincaro in base al listino
-$rs = $dbo->fetchArray('SELECT idanagrafica FROM in_interventi WHERE id='.prepare($id_record));
+$rs = $dbo->fetchArray('SELECT idanagrafica FROM co_contratti WHERE id='.prepare($id_record));
 
 $idanagrafica = $rs[0]['idanagrafica'];
+
+
+
 if (empty($idriga)) {
     $op = 'addarticolo';
     $button = '<i class="fa fa-plus"></i> '.tr('Aggiungi');
@@ -39,12 +42,15 @@ if (empty($idriga)) {
         $sconto_unitario = $listino[0]['prc_guadagno'];
         $tipo_sconto = 'PRC';
     }
+	
+	(empty($idcontratto_riga)) ? $idcontratto_riga = $dbo->fetchArray('SELECT MAX(id) AS max_idcontratto_riga  FROM `co_righe_contratti`')[0]['max_idcontratto_riga'] : '';
+	
 } else {
     $op = 'editarticolo';
     $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
 
     // carico record da modificare
-    $q = "SELECT *, (SELECT codice FROM mg_articoli WHERE id=mg_articoli_interventi.idarticolo) AS codice_articolo, (SELECT CONCAT(codice, ' - ', descrizione) FROM mg_articoli WHERE id=mg_articoli_interventi.idarticolo) AS descrizione_articolo FROM mg_articoli_interventi WHERE id=".prepare($idriga);
+    $q = "SELECT *, (SELECT codice FROM mg_articoli WHERE id=co_righe_contratti_articoli.idarticolo) AS codice_articolo, (SELECT CONCAT(codice, ' - ', descrizione) FROM mg_articoli WHERE id=co_righe_contratti_articoli.idarticolo) AS descrizione_articolo FROM co_righe_contratti_articoli WHERE id=".prepare($idriga);
     $rsr = $dbo->fetchArray($q);
 
     $idarticolo = $rsr[0]['idarticolo'];
@@ -62,16 +68,21 @@ if (empty($idriga)) {
     $idautomezzo = $rsr[0]['idautomezzo'];
 
     $idimpianto = $rsr[0]['idimpianto'];
+	$idcontratto_riga = $rsr[0]['id_riga_contratto'];
 }
 
 /*
     Form di inserimento
 */
 echo '
-<form id="add_form" action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
+
+<form id="add-articoli" action="'.$rootdir.'/modules/contratti/plugins/actions.php" method="post">
     <input type="hidden" name="op" value="'.$op.'">
-    <input type="hidden" id="idautomezzo" name="idautomezzo" value="'.$idautomezzo.'">
-    <input type="hidden" name="idriga" value="'.$idriga.'">';
+    <input type="hidden" name="idriga" value="'.$idriga.'">
+	
+	<input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">';
+	
+	
 
 if (!empty($idarticolo)) {
     echo '
@@ -109,11 +120,11 @@ echo '
         </div>';
 
 // Impianto
-echo '
-        <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Impianto su cui installare').'", "name": "idimpianto", "value": "'.$idimpianto.'", "ajax-source": "impianti" ]}
-        </div>
-    </div>';
+echo ' 
+		<div class="col-md-4">
+			{[ "type": "select", "multiple": "0", "label": "'.tr('Impianto').'", "name": "idimpianto", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_record.' ORDER BY descrizione", "value": "'.$matricoleimpianti.'", "extra":"'.$readonly.'" ]}
+		</div>
+	</div>';
     
 // Iva
 echo '
@@ -136,7 +147,7 @@ echo '
     </div>';
 
 // Informazioni aggiuntive
-echo '
+/*echo '
     <div class="row" id="prezzi_articolo">
         <div class="col-md-4 text-center">
             <button type="button" class="btn btn-sm btn-info btn-block disabled" onclick="$(\'#prezzi\').toggleClass(\'hide\'); $(\'#prezzi\').load(\''.$rootdir."/ajax_complete.php?module=Articoli&op=getprezzi&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$idanagrafica.'\');" disabled>
@@ -159,7 +170,7 @@ echo '
             <div id="prezzivendita" class="hide"></div>
         </div>
     </div>
-    <br>';
+    <br>';*/
 
 echo '
     <script>
@@ -192,7 +203,7 @@ echo '
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
+			<button type="submit" class="btn btn-primary pull-right">'.$button.'</button>
 		</div>
     </div>
 </form>';
@@ -204,12 +215,12 @@ echo '
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#add_form').ajaxForm({
+        $('#add-articoli').ajaxForm({
             success: function(){
                 $('#bs-popup2').modal('hide');
 
                 // Ricarico gli articoli
-                $('#articoli').load(globals.rootdir + '/modules/contratti/plugins/ajax_articoli.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
+                $('#articoli').load(globals.rootdir + '/modules/contratti/plugins/ajax_articoli.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&idcontratto_riga=<?php echo $idcontratto_riga; ?>');
 
                
             }

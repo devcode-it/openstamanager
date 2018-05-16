@@ -114,8 +114,6 @@ CREATE TABLE IF NOT EXISTS `co_righe_contratti_articoli` (
   `qta` decimal(10,2) NOT NULL,
   `um` varchar(20) NOT NULL,
   `abilita_serial` tinyint(1) NOT NULL DEFAULT '0',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `idimpianto` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `id_riga_contratto` (`id_riga_contratto`),

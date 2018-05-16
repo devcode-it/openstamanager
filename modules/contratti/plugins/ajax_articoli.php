@@ -134,12 +134,14 @@ if (!empty($rs)) {
             <button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica articoli').'\', \''.$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idarticolo='.$r['idriga'].'&idriga='.$r['id'].'\', 1);"><i class="fa fa-barcode"></i></button>';
             }*/
 
+           if (empty($readonly)) {
             echo '
-			
 			<button type="button" class="btn btn-warning btn-xs" data-title="'.tr('Modifica spesa').'" onclick="launch_modal(\'Modifica spesa\', \''.$rootdir.'/modules/contratti/plugins/add_articolo.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'\', 1, \'#bs-popup2\');" >
 			<i class="fa fa-edit"></i></button>
-
-            <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" title="'.tr('Elimina materiale').'" onclick="if(confirm(\''.tr('Eliminare questo materiale?').'\') ){ ritorna_al_magazzino(\''.$r['id'].'\'); }"><i class="fa fa-angle-double-left"></i> <i class="fa fa-truck"></i></button>
+            <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" title="'.tr('Elimina materiale').'" onclick="if(confirm(\''.tr('Eliminare questo materiale?').'\') ){ ritorna_al_magazzino(\''.$r['id'].'\'); }"><i class="fa fa-angle-double-left"></i> <i class="fa fa-truck"></i></button>';
+		   }
+			
+			echo '
         </td>';
         }
         echo '

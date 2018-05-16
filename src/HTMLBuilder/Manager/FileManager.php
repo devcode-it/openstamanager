@@ -79,7 +79,7 @@ $result .= '
         </div>
 
         <div class="col-lg-6">
-            {[ "type": "file", "placeholder": "'.tr('File').'", "name": "blob", "id": "blob_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'", "required": 1 ]}
+            {[ "type": "file", "placeholder": "'.tr('File').'", "name": "blob", "id": "blob_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'", "required": 0 ]}
         </div>
 
         <div class="col-lg-2 text-right">

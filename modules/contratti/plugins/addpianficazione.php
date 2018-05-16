@@ -33,7 +33,7 @@ if (!empty($get['idcontratto_riga'])){
 	$hide = '';
 	$list .= ', \"0\":\"'.tr('Pianificare a partire da questo promemoria ').$data_richiesta.'\"';
 	
-	$op = 'pianficazione';
+	$op = 'pianificazione';
 	
 	
 }

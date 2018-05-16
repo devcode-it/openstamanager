@@ -1,12 +1,6 @@
 <?php
 
 namespace HTMLBuilder\Manager;
-include_once __DIR__.'/../../../core.php';
-
-if ($_GET['ajax']) {
-	echo 	'{( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "id_plugin": "'.$id_plugin.'", "ajax": "true" )}';
-}
-
 
 /**
  * @since 2.3
@@ -130,7 +124,7 @@ $result .= '
                     btn.prop("disabled", false);';
 					
 					if (($options['ajax'])) {
-						$result .= '$("#attachments_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'").load( globals.rootdir + "/src/HTMLBuilder/Manager/FileManager.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].((!empty($options['id_plugin'])) ? '&id_plugin='.$options['id_plugin'] : '').((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : '').'&ajax=true" );';
+						$result .= '$("#attachments_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'").load( globals.rootdir + "/ajax.php?op=list_attachments&id_module='.$options['id_module'].'&id_record='.$options['id_record'].((!empty($options['id_plugin'])) ? '&id_plugin='.$options['id_plugin'].'#tab_'.$options['id_plugin'] : '').'" );';
 					}else{
 						$result .= 'location.href = globals.rootdir + "/editor.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : '').'";';
 					}

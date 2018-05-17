@@ -12,11 +12,15 @@ echo '
     <div class="box-body">';
 
 // Calcolo la quantità dai movimenti in magazzino
-$rst = $dbo->fetchArray('SELECT SUM(qta) AS qta_totale FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' AND (idintervento IS NULL OR idautomezzo = 0)');
+$rst = $dbo->fetchArray('SELECT SUM(qta) AS qta_totale, ( SELECT SUM(qta) FROM mg_movimenti  WHERE idarticolo='.prepare($id_record).' AND (idintervento IS NULL OR idautomezzo = 0) AND data <= CURDATE() ) AS qta_totale_attuale  FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' AND (idintervento IS NULL OR idautomezzo = 0)');
 $qta_totale = $rst[0]['qta_totale'];
+$qta_totale_attuale = $rst[0]['qta_totale_attuale'];
 
 echo '
 <p>'.tr('Quantità calcolata dai movimenti').': '.Translator::numberToLocale($qta_totale).' '.$rs[0]['unita_misura'].'</p>';
+
+echo '
+<p>'.tr('Quantità attuale a magazzino').': '.Translator::numberToLocale($qta_totale_attuale).' '.$rs[0]['unita_misura'].'</p>';
 
 // Elenco movimenti magazzino
 $query = 'SELECT * FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' ORDER BY created_at DESC';
@@ -55,7 +59,7 @@ if (!empty($rs2)) {
 
         // Data
         echo '
-                <td>'.Translator::dateToLocale($r['data']).'</td>';
+                <td>'.Translator::dateToLocale($r['data']).' <span  class=\'tip\' title=\''.tr('Data del movimento: ').Translator::dateToLocale($r['created_at']).'\' ><i class="fa fa-question-circle-o"></i></span> </td>';
 
         // Operazioni
         echo '

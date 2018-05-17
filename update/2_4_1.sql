@@ -138,3 +138,16 @@ ALTER TABLE `in_interventi_tecnici` CHANGE `uid` `uid` VARCHAR(255), CHANGE `sum
 UPDATE `in_interventi_tecnici` SET `uid` = NULL WHERE `uid` = '';
 UPDATE `in_interventi_tecnici` SET `summary` = NULL WHERE `summary` = '';
 ALTER TABLE `in_interventi_tecnici` CHANGE `uid` `uid` int(11);
+
+
+-- Aggiorno campo 'Data' in 'Data movimento'
+UPDATE `zz_views` SET `name` = 'Data movimento', `order` = '6' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti') AND name = 'Data';
+
+-- Allineo anche il modulo movimenti con il nuovo campo data
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,  `format`, `enabled`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), 'Data', 'mg_movimenti.data', 5, 1, 0, 1, 1, 1);
+INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
+(1, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Movimenti') AND name='Data' )),
+(2, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Movimenti') AND name='Data' )),
+(3, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Movimenti') AND name='Data' )),
+(4, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Movimenti') AND name='Data' ));

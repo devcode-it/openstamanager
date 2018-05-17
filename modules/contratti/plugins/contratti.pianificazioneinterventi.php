@@ -200,8 +200,12 @@ switch (filter('op')) {
 										foreach ($rs_articoli as $rs_articolo) {
 											add_movimento_magazzino($rs_articolo['idarticolo'], -force_decimal($rs_articolo['qta']), ['idautomezzo' => $rs_articolo['idautomezzo'], 'idintervento' => $idintervento]);
 										}
-									
-
+										
+										// Collego gli impianti del promemoria all' intervento appena inserito
+										$rs_idimpianti = explode(',', $idimpianti);
+										foreach ($rs_idimpianti as $idimpianto) {
+												$dbo->query('INSERT INTO my_impianti_interventi (idintervento, idimpianto) VALUES ('.$idintervento.', '.$idimpianto.' )' );
+										}
 									
 										
 

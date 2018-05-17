@@ -60,11 +60,14 @@ function add_movimento_magazzino($idarticolo, $qta, $array = [], $descrizone = '
 
     // Intervento
     elseif (!empty($array['idintervento'])) {
-        $movimento = ($qta > 0) ? tr('Ripristino articolo da intervento _NUM_') : tr('Scarico magazzino per intervento _NUM_');
-        $numero = $array['idintervento'];
-        
-        $rs_data = $dbo->fetchArray("SELECT IFNULL(MAX(orario_fine), data_richiesta) AS data FROM in_interventi LEFT JOIN in_interventi_tecnici ON in_interventi.id=in_interventi_tecnici.idintervento WHERE in_interventi.id='".$array['idintervento']."'");
+		
+		$rs_data = $dbo->fetchArray("SELECT IFNULL(MAX(orario_fine), data_richiesta) AS data, codice FROM in_interventi LEFT JOIN in_interventi_tecnici ON in_interventi.id=in_interventi_tecnici.idintervento WHERE in_interventi.id='".$array['idintervento']."'");
         $data = $rs_data[0]['data'];
+		$codice_intervento = $rs_data[0]['codice'];
+		
+        $movimento = ($qta > 0) ? tr('Ripristino articolo da intervento _NUM_') : tr('Scarico magazzino per intervento _NUM_');
+        $numero = $codice_intervento;
+        
     }
 
     // Manuale

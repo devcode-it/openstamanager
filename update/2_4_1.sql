@@ -148,8 +148,19 @@ UPDATE `zz_views` SET  `query` = 'CONCAT(mg_movimenti.qta,'' '', (SELECT um FROM
 -- Allineo anche il modulo movimenti con il nuovo campo data
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,  `format`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), 'Data', 'mg_movimenti.data', 5, 1, 0, 1, 1, 1);
+
 INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
 (1, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Movimenti') AND name='Data' )),
 (2, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Movimenti') AND name='Data' )),
 (3, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Movimenti') AND name='Data' )),
 (4, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Movimenti') AND name='Data' ));
+
+-- Aggiungo colonna impianti per i contratti
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,  `format`, `enabled`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Impianti', '(SELECT IF(nome = '''', GROUP_CONCAT(matricola SEPARATOR ''<br>''), GROUP_CONCAT(matricola, '' - '', nome SEPARATOR ''<br>'')) FROM my_impianti INNER JOIN my_impianti_contratti ON my_impianti.id = my_impianti_contratti.idimpianto WHERE my_impianti_contratti.idcontratto = co_contratti.id)', 4, 1, 0, 0, 0, 1);
+
+INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
+(1, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Contratti') AND name='Impianti' )),
+(2, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Contratti') AND name='Impianti' )),
+(3, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Contratti') AND name='Impianti' )),
+(4, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Contratti') AND name='Impianti' ));

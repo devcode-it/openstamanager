@@ -9,6 +9,7 @@ class FileManager implements ManagerInterface
 {
     public function manage($options)
     {
+		$options['readonly'] = ($options['readonly']=='true') ? true  : false;
         $options['ajax'] = isset($options['ajax']) ? $options['ajax'] : false;
 		$options['showpanel'] = isset($options['showpanel']) ? $options['showpanel'] : true;
         $options['label'] = isset($options['label']) ? $options['label'] : tr('Nuovo allegato').':';
@@ -40,7 +41,7 @@ $result .= '
         <tr>
             <th>'.tr('Nome').'</th>
             <th>'.tr('Data').'</th>
-            <th width="10%" class="text-center">#</th>
+            <th width="15%" class="text-center">#</th>
         </tr>';
 
             foreach ($rs as $r) {
@@ -53,13 +54,18 @@ $result .= '
             </td>
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
             <td class="text-center">
-                <a class="btn btn-primary" href="'.ROOTDIR.'/actions.php?id_module='.$options['id_module'].'&op=download_file&id='.$r['id'].'&filename='.$r['filename'].'" target="_blank">
+                <a class="btn btn-sm btn-primary" href="'.ROOTDIR.'/actions.php?id_module='.$options['id_module'].'&op=download_file&id='.$r['id'].'&filename='.$r['filename'].'" target="_blank">
                     <i class="fa fa-download"></i>
-                </a>
-
-                <a class="btn btn-danger ask" data-backto="record-edit" data-msg="'.tr('Vuoi eliminare questo file?').'" data-op="unlink_file" data-id="'.$r['id'].'" data-filename="'.$r['filename'].'">
+                </a>';
+				
+			if (!$options['readonly']){
+				 $result .= '
+                <a class="btn btn-sm btn-danger ask" data-backto="record-edit" data-msg="'.tr('Vuoi eliminare questo file?').'" data-op="unlink_file" data-id="'.$r['id'].'" data-filename="'.$r['filename'].'">
                     <i class="fa fa-trash"></i>
-                </a>
+                </a>';
+			}
+			
+			 $result .= '
             </td>
         </tr>';
             }
@@ -68,26 +74,43 @@ $result .= '
     </table>
     <div class="clearfix"></div>
     <br>';
-        }
+        }else{
+			//in caso di readonly, se non è stato caricato nessun allegato mostro almeno box informativo
+			if ($options['readonly']){
+				$result .= '
+			<div class="alert alert-info" style="margin-bottom:0px;" >
+				<i class="fa fa-info-circle"></i>
+				'.tr('Nessun allegato è stato caricato', []).'.
+			</div>';
+			}
+		}
 
+		
+	if (!$options['readonly']){
+		
         // Form per l'upload di un nuovo file
         $result .= '
     <b>'.$options['label'].'</b>
     <div class="row">
+	
         <div class="col-lg-4">
             {[ "type": "text", "placeholder": "'.tr('Nome').'", "name": "nome_allegato", "id": "nome_allegato_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'" ]}
         </div>
 
         <div class="col-lg-6">
             {[ "type": "file", "placeholder": "'.tr('File').'", "name": "blob", "id": "blob_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'", "required": 0 ]}
-        </div>
-
-        <div class="col-lg-2 text-right">
-            <button type="button" class="btn btn-success" onclick="saveFile_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').' ( $(this) );">
-                <i class="fa fa-upload"></i> '.tr('Carica').'
-            </button>
-        </div>
+        </div>';
+		
+		$result .= '
+		<div class="col-lg-2 text-right">
+			<button type="button" class="btn btn-success" onclick="saveFile_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').' ( $(this) );">
+				<i class="fa fa-upload"></i> '.tr('Carica').'
+			</button>
+		</div>';
+		
+		$result .= '
     </div>';
+	}
 
         $result .= '
     <script>

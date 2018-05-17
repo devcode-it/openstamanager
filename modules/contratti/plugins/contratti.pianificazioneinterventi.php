@@ -262,6 +262,7 @@ if (count($rsp) != 0) {
                     <th>'.tr('Sede').'</th>
 					<th>'.tr('Impianti').'</th>
 					<th>'.tr('Materiali').'</th>
+					<th>'.tr('Allegati').'</th>
                     <th class="text-right" >'.tr('Opzioni').'</th>
                 </tr>
             </thead>
@@ -341,6 +342,7 @@ if (count($rsp) != 0) {
                     <td>'.$info_sede.'</td>
 					 <td>'.$info_impianti.'</td>
 					<td>'.$info_materiali.'</td>	  
+					<td>'.$info_allegati.'</td>	  
                     <td align="right">';
 
         echo '

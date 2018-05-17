@@ -144,7 +144,7 @@ echo '
 	
 echo '
 		
-	{( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "id_plugin": "'.$id_plugin.'" )}
+	{( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "id_plugin": "'.$id_plugin.'", "ajax":"true", '.((!empty($readonly)) ? '"readonly":"true"' : '"readonly":"false"' ). ' )}
 	
 	</div>
 </div>

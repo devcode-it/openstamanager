@@ -65,10 +65,16 @@ elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
     $data = (null !== filter('data')) ? filter('data') : $rs[0]['data_richiesta'];
     $richiesta = $rs[0]['richiesta'];
     $idsede = $rs[0]['idsede'];
-
-    $rs = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE idcontratto='.prepare($idcontratto));
-    $idimpianto = implode(',', array_column($rs, 'idimpianto'));
-
+	$idimpianti = $rs[0]['idimpianti'];
+	
+	//se gli impianti non sono stati definiti nel promemoria, carico tutti gli impianti a contratto
+	if (empty($idimpianti)){
+		$rs = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE idcontratto='.prepare($idcontratto));
+		$idimpianto = implode(',', array_column($rs, 'idimpianto'));
+	}else{
+		$idimpianto = $idimpianti;
+	}
+	
     // Seleziono "In programmazione" come stato
     $rs = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE idstatointervento='WIP'");
     $idstatointervento = $rs[0]['idstatointervento'];

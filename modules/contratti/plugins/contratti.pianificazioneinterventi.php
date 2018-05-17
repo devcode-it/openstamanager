@@ -99,8 +99,6 @@ switch (filter('op')) {
                 //mi serve per la pianificazione interventi
                 $idanagrafica = $rsp[0]['idanagrafica'];
               
- 
-			
                 //se voglio pianificare anche le date precedenti ad oggi (parto da questo promemoria)
                 if ($parti_da_oggi) {
                     //oggi

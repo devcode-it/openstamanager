@@ -143,6 +143,8 @@ ALTER TABLE `in_interventi_tecnici` CHANGE `uid` `uid` int(11);
 -- Aggiorno campo 'Data' in 'Data movimento'
 UPDATE `zz_views` SET `name` = 'Data movimento', `order` = '6' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti') AND name = 'Data';
 
+UPDATE `zz_views` SET  `query` = 'CONCAT(mg_movimenti.qta,'' '', (SELECT um FROM mg_articoli WHERE id = mg_movimenti.idarticolo) )'  WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti') AND name = 'Quantità';
+
 -- Allineo anche il modulo movimenti con il nuovo campo data
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,  `format`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), 'Data', 'mg_movimenti.data', 5, 1, 0, 1, 1, 1);

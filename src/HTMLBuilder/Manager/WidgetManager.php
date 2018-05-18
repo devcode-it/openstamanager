@@ -81,6 +81,8 @@ class WidgetManager implements ManagerInterface
         $value = null;
         if (!empty($query)) {
             $value = $database->fetchArray($query)[0]['dato'];
+            if (!preg_match('/\\d/', $value))
+                $value = '-';
         }
 
         // Generazione del codice HTML

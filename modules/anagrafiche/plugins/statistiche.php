@@ -3,8 +3,16 @@
 include_once __DIR__.'/../../../core.php';
 
 // Interventi
-$rsi = $dbo->fetchArray('SELECT ragione_sociale, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS data, (SELECT SUM(prezzo_ore_consuntivo+prezzo_km_consuntivo+prezzo_dirittochiamata) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS totale FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.idanagrafica='.prepare($id_record));
+if (in_array('Cliente', explode(',', $records[0]['tipianagrafica']))) {
+	//Clienti
+	$rsi = $dbo->fetchArray('SELECT ragione_sociale, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS data, (SELECT SUM(prezzo_ore_consuntivo+prezzo_km_consuntivo+prezzo_dirittochiamata) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS totale FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.idanagrafica='.prepare($id_record));
 
+}else if (in_array('Tecnico', explode(',', $records[0]['tipianagrafica']))) {
+
+	//Tecnici
+	$rsi = $dbo->fetchArray('SELECT ragione_sociale, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS data, (SELECT SUM(prezzo_ore_consuntivo+prezzo_km_consuntivo+prezzo_dirittochiamata) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id AND in_interventi_tecnici.idtecnico = '.prepare($id_record).' ) AS totale FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN in_interventi_tecnici ON in_interventi.id = in_interventi_tecnici.idintervento  WHERE in_interventi_tecnici.idtecnico='.prepare($id_record));
+
+}
 $totale_interventi = 0;
 $data_start = strtotime('now');
 
@@ -65,7 +73,7 @@ echo '
 				<div class="box-body">';
 if (count($rsi) > 0) {
     echo '
-					<p>'.tr('Si è lavorato per <strong>_NUMBER_ preventivi</strong> per un totale di _EUR_ &euro;', [
+					<p>'.tr('Sono stati fatti <strong>_NUMBER_ preventivi</strong> per un totale di _EUR_ &euro;', [
                         '_NUMBER_' => count($rsi),
                         '_EUR_' => Translator::numberToLocale($totale_preventivi),
                     ]).'</p>
@@ -82,7 +90,7 @@ echo '
 	</div>';
 
 // Contratti
-$rsi = $dbo->fetchArray('SELECT data_accettazione AS data, ragione_sociale, SUM(co_righe2_contratti.subtotale - co_righe2_contratti.sconto) AS budget FROM co_righe2_contratti INNER JOIN co_contratti ON co_righe2_contratti.idcontratto = co_contratti.id  INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_contratti.idanagrafica='.prepare($id_record));
+$rsi = $dbo->fetchArray('SELECT data_accettazione AS data, ragione_sociale, (SELECT SUM(co_righe2_contratti.subtotale - co_righe2_contratti.sconto) FROM co_righe2_contratti WHERE co_righe2_contratti.idcontratto = co_contratti.id) AS budget FROM co_contratti INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_contratti.idanagrafica='.prepare($id_record));
 
 $totale_contratti = 0;
 $data_start = strtotime(date('Ymd'));
@@ -105,7 +113,7 @@ echo '
 				<div class="box-body">';
 if (count($rsi) > 0) {
     echo '
-					<p>'.tr('Si è lavorato per <strong>_NUMBER_ contratti</strong> per un totale di _EUR_ &euro;', [
+					<p>'.tr('Sono stati stipulati <strong>_NUMBER_ contratti</strong> per un totale di _EUR_ &euro;', [
                         '_NUMBER_' => count($rsi),
                         '_EUR_' => Translator::numberToLocale($totale_contratti),
                     ]).'</p>

@@ -219,7 +219,7 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 	</div>
 </form>
 
-{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
+{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>", <?php echo ($records[0]['flag_completato']) ? '"readonly":"true"' : '"readonly":"false"'; ?> )}
 
 <!-- EVENTUALE FIRMA GIA' EFFETTUATA -->
 <div class="text-center">

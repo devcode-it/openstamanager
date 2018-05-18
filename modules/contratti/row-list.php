@@ -2,37 +2,29 @@
 
 include_once __DIR__.'/../../core.php';
 
-// Mostro le righe del preventivo
-$totale_preventivo = 0.00;
-$totale_imponibile = 0.00;
-$totale_iva = 0.00;
-$totale_da_evadere = 0.00;
-
 /*
-ARTICOLI
+ARTICOLI + RIGHE GENERICHE
 */
-$rs_art = $dbo->fetchArray('SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo), "") AS codice FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record).' ORDER BY `order`');
-$imponibile_art = 0.0;
-$iva_art = 0.0;
+$rs = $dbo->fetchArray('SELECT *, round(iva,'.Settings::get('Cifre decimali per importi').') AS iva, round(sconto_unitario,'.Settings::get('Cifre decimali per importi').') AS sconto_unitario, round(sconto,'.Settings::get('Cifre decimali per importi').') AS sconto, round(subtotale,'.Settings::get('Cifre decimali per importi').') AS subtotale,  IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo), "") AS codice FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record).' ORDER BY `order`');
 
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
     <thead>
-        <tr>
-            <th>'.tr('Descrizione').'</th>
-            <th width="10%" class="text-center">'.tr('Q.tà').'</th>
-            <th width="10%" class="text-center">'.tr('U.m.').'</th>
-            <th width="12%" class="text-center">'.tr('Costo unitario').'</th>
-            <th width="12%" class="text-center">'.tr('Iva').'</th>
-            <th width="10%" class="text-center">'.tr('Imponibile').'</th>
-            <th width="80"></th>
-        </tr>
-    </thead>
+		<tr>
+			<th>'.tr('Descrizione').'</th>
+			<th width="120">'.tr('Q.tà').'</th>
+			<th width="80">'.tr('U.m.').'</th>
+			<th width="120">'.tr('Costo unitario').'</th>
+			<th width="120">'.tr('Iva').'</th>
+			<th width="120">'.tr('Imponibile').'</th>
+			<th width="60"></th>
+		</tr>
+	</thead>
     <tbody class="sortable">';
 
 // se ho almeno un articolo caricato mostro la riga
-if (!empty($rs_art)) {
-    foreach ($rs_art as $r) {
+if (!empty($rs)) {
+    foreach ($rs as $r) {
         // descrizione
         echo '
         <tr data-id="'.$r['id'].'">
@@ -48,7 +40,7 @@ if (!empty($rs_art)) {
 
         // q.tà
         echo '
-            <td class="text-center">';
+            <td class="text-right">';
         if (empty($r['is_descrizione'])) {
             echo '
                 '.Translator::numberToLocale($r['qta']);
@@ -140,10 +132,20 @@ if (!empty($rs_art)) {
             </td>
         </tr>';
 
-        $iva_art += number_format($r['iva'], 2);
-        $imponibile_art += $r['subtotale'] - $r['sconto'];
-        $imponibile_nosconto += $r['subtotale'];
-        $sconto_art += $r['sconto'];
+      
+		// Calcoli
+		$imponibile = sum(array_column($rs, 'subtotale'));
+		$sconto = sum(array_column($rs, 'sconto'));
+		$iva = sum(array_column($rs, 'iva'));
+
+		$imponibile_scontato = sum($imponibile, -$sconto);
+
+		$totale = sum([
+			$imponibile_scontato,
+			$iva,
+		]);
+
+
     }
 }
 
@@ -151,7 +153,7 @@ echo '
     </tbody>';
 
 // SCONTO
-if (abs($sconto_art) > 0) {
+if (abs($sconto) > 0) {
     // Totale imponibile scontato
     echo '
     <tr>
@@ -159,7 +161,7 @@ if (abs($sconto_art) > 0) {
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
-            <span id="budget">'.Translator::numberToLocale($imponibile_nosconto).' &euro;</span>
+            <span id="budget">'.Translator::numberToLocale($imponibile).' &euro;</span>
         </td>
         <td></td>
     </tr>';
@@ -170,7 +172,7 @@ if (abs($sconto_art) > 0) {
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
-            '.Translator::numberToLocale($sconto_art).' &euro;
+            '.Translator::numberToLocale($sconto).' &euro;
         </td>
         <td></td>
     </tr>';
@@ -182,7 +184,7 @@ if (abs($sconto_art) > 0) {
             <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
-            '.Translator::numberToLocale($imponibile_art).' &euro;
+            '.Translator::numberToLocale($imponibile_scontato).' &euro;
         </td>
         <td></td>
     </tr>';
@@ -194,7 +196,7 @@ if (abs($sconto_art) > 0) {
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
-            <span id="budget">'.Translator::numberToLocale($imponibile_art).' &euro;</span>
+            <span id="budget">'.Translator::numberToLocale($imponibile).' &euro;</span>
         </td>
         <td></td>
     </tr>';
@@ -207,7 +209,7 @@ echo '
             <b>'.tr('Iva', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
-            '.Translator::numberToLocale($iva_art).' &euro;
+            '.Translator::numberToLocale($iva).' &euro;
         </td>
         <td></td>
     </tr>';
@@ -219,7 +221,7 @@ echo '
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td class="text-right">
-            '.Translator::numberToLocale($imponibile_art + $iva_art).' &euro;
+            '.Translator::numberToLocale($totale).' &euro;
         </td>
         <td></td>
     </tr>';

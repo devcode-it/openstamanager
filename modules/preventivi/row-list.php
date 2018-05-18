@@ -5,20 +5,22 @@ include_once __DIR__.'/../../core.php';
 /*
 ARTICOLI + RIGHE GENERICHE
 */
-$q_art = "SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo), '') AS codice FROM co_righe_preventivi WHERE idpreventivo=".prepare($id_record).' ORDER BY `order`';
+$q_art = 'SELECT *,  round(iva,'.Settings::get('Cifre decimali per importi').') AS iva, round(sconto_unitario,'.Settings::get('Cifre decimali per importi').') AS sconto_unitario, round(sconto,'.Settings::get('Cifre decimali per importi').') AS sconto, round(subtotale,'.Settings::get('Cifre decimali per importi').') AS subtotale,  IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo), "") AS codice FROM co_righe_preventivi WHERE idpreventivo='.prepare($id_record).' ORDER BY `order`';
 $rs = $dbo->fetchArray($q_art);
 
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
-    <tr>
-        <th>'.tr('Descrizione').'</th>
-        <th width="120">'.tr('Q.tà').'</th>
-        <th width="80">'.tr('U.m.').'</th>
-        <th width="120">'.tr('Costo unitario').'</th>
-        <th width="120">'.tr('Iva').'</th>
-        <th width="120">'.tr('Imponibile').'</th>
-        <th width="60"></th>
-    </tr>
+    <thead>
+		<tr>
+			<th>'.tr('Descrizione').'</th>
+			<th width="120">'.tr('Q.tà').'</th>
+			<th width="80">'.tr('U.m.').'</th>
+			<th width="120">'.tr('Costo unitario').'</th>
+			<th width="120">'.tr('Iva').'</th>
+			<th width="120">'.tr('Imponibile').'</th>
+			<th width="60"></th>
+		</tr>
+	</thead>
     <tbody class="sortable">';
 
 // se ho almeno un articolo caricato mostro la riga
@@ -38,7 +40,7 @@ if (!empty($rs)) {
 
         // q.tà
         echo '
-            <td class="text-center">';
+            <td class="text-right">';
         if (empty($r['is_descrizione'])) {
             echo '
                 '.Translator::numberToLocale($r['qta'] - $r['qta_evasa']);
@@ -131,7 +133,7 @@ if (!empty($rs)) {
 // Calcoli
 $imponibile = sum(array_column($rs, 'subtotale'));
 $sconto = sum(array_column($rs, 'sconto'));
-$iva = sum(array_column($rs, 'iva'), null, 2);
+$iva = sum(array_column($rs, 'iva'));
 
 $imponibile_scontato = sum($imponibile, -$sconto);
 

@@ -10,7 +10,7 @@ echo '
 	<!-- DATI -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Valori della sezione').'</h3>
+			<h3 class="panel-title">'.tr('Valori della sezione').': '.$records[0]['sezione'].'</h3>
 		</div>
 
 		<div class="panel-body">';

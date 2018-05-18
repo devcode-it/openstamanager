@@ -19,7 +19,7 @@ echo '
 /*
     Articoli e righe generiche
 */
-$q_art = 'SELECT *, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice FROM `dt_righe_ddt` WHERE idddt='.prepare($id_record).' ORDER BY `order`';
+$q_art = 'SELECT *, round(iva,'.Settings::get('Cifre decimali per importi').') AS iva, round(sconto_unitario,'.Settings::get('Cifre decimali per importi').') AS sconto_unitario, round(sconto,'.Settings::get('Cifre decimali per importi').') AS sconto, round(subtotale,'.Settings::get('Cifre decimali per importi').') AS subtotale, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice FROM `dt_righe_ddt` WHERE idddt='.prepare($id_record).' ORDER BY `order`';
 $rs = $dbo->fetchArray($q_art);
 
 if (!empty($rs)) {
@@ -119,7 +119,7 @@ if (!empty($rs)) {
 
             if ($r['sconto_unitario'] > 0) {
                 echo '
-            <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
+            <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
                 '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
                 '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
             ]).'</small>';
@@ -210,7 +210,7 @@ echo '
 // Calcoli
 $imponibile = sum(array_column($rs, 'subtotale'));
 $sconto = sum(array_column($rs, 'sconto'));
-$iva = sum(array_column($rs, 'iva'), null, 2);
+$iva = sum(array_column($rs, 'iva'));
 
 $imponibile_scontato = sum($imponibile, -$sconto);
 

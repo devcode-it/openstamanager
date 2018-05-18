@@ -60,10 +60,18 @@ if (!empty($rs)) {
 
         // costo unitario
         echo '
-            <td class="text-center">';
+            <td class="text-right">';
         if (empty($r['is_descrizione'])) {
             echo '
                 '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
+				
+			if ($r['sconto_unitario'] > 0) {
+                echo '
+                <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
+                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                ]).'</small>';
+            }
         }
         echo'
             </td>';
@@ -84,15 +92,7 @@ if (!empty($rs)) {
             <td class="text-right">';
         if (empty($r['is_descrizione'])) {
             echo '
-                '.Translator::numberToLocale($r['subtotale']).' &euro;';
-
-            if ($r['sconto_unitario'] > 0) {
-                echo '
-                <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
-                ]).'</small>';
-            }
+                '.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
         }
         echo '
             </td>';

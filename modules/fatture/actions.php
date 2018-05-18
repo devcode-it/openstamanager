@@ -615,6 +615,7 @@ switch (post('op')) {
                         'qta' => $riga['qta'],
                         'sconto' => $riga['sconto'],
                         'sconto_unitario' => $riga['sconto_unitario'],
+                        'tipo_sconto' => $riga['tipo_sconto'],
                         '#order' => '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).')',
                         'idritenutaacconto' => get_var("Percentuale ritenuta d'acconto"),
                         'ritenutaacconto' => $ritenutaacconto,

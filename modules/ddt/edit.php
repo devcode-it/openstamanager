@@ -173,21 +173,6 @@ if ($records[0]['stato'] != 'Evaso') {
 }
 ?>
 		</div>
-
-		<div class="pull-right">
-            <!-- Stampe -->
-<?php
-
-if (!in_array($records[0]['stato'], ['Bozza', 'Fatturato'])) {
-    ?>
-				<a class="btn btn-sm btn-info" data-href="<?php echo $rootdir; ?>/modules/fatture/crea_documento.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&documento=fattura" data-toggle="modal" data-title="Crea fattura" data-target="#bs-popup">
-                    <i class="fa fa-magic"></i> <?php echo tr('Crea fattura da ddt'); ?>...</i>
-                </a>
-<?php
-}
-?>
-		</div>
-
 		<div class="clearfix"></div>
 		<br>
 

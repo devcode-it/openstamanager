@@ -103,7 +103,7 @@ if (empty($records)) {
                             {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}
 
                             <a class="btn btn-success" id="save">
-                                <i class="fa fa-check"></i> '.tr('Salva modifiche').'
+                                <i class="fa fa-check"></i> '.tr('Salva').'
                             </a>
                         </div>
                     </div>

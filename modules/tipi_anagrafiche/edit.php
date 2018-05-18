@@ -43,7 +43,7 @@ if (!empty($records[0]['default'])) {
 <?php
 
 // Se il tipo di anagrafica è uno di quelli di default, non lo lascio modificare
-if (!empty($records[0]['default'])) {
+if (empty($records[0]['default'])) {
     echo '
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'

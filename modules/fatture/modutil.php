@@ -91,8 +91,8 @@ function elimina_scadenza($iddocumento)
 }
 
 /**
- * Funzione per ricalcolare lo scadenziario di una determinata fattura
- * $iddocumento	string		E' l'id del documento di cui ricalcolare lo scadenziario
+ * Funzione per ricalcolare lo scadenzario di una determinata fattura
+ * $iddocumento	string		E' l'id del documento di cui ricalcolare lo scadenzario
  * $pagamento		string		Nome del tipo di pagamento. Se è vuoto lo leggo da co_pagamenti_documenti, perché significa che devo solo aggiornare gli importi.
  */
 function aggiungi_scadenza($iddocumento, $pagamento = '')
@@ -147,8 +147,11 @@ function aggiungi_scadenza($iddocumento, $pagamento = '')
             $giorni = -$rs[$i]['giorno'] - 1;
             if ($giorni > 0) {
                 $date->modify('+'.($giorni).' day');
-            }
-
+            }else{
+				$date->modify('last day of this month');
+			}
+			
+			 
             $scadenza = $date->format('Y-m-d');
         }
 

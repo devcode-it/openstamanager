@@ -7,13 +7,19 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="backto" value="record-edit">
 
 	<div class="row">
+	
 		<div class="col-md-4">
 			{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "idtipointervento", "maxlength": 10, "class": "alphanumeric-mask", "required": 1, "value": "" ]}
 		</div>
 
-		<div class="col-md-8">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "" ]}
 		</div>
+		
+		<div class="col-md-2">
+			{[ "type": "number", "label": "<small><?php echo tr('Tempo standard'); ?></small>", "name": "tempo_standard", "help": "<?php echo tr('Valore compreso tra 0-24 ore'); ?>", "maxlength": 4, "min-value": "undefined", "max-value": "24", "class": "text-center", "value": "$tempo_standard$", "icon-after": "ore" ]}
+		</div>
+				
 	</div>
 
 	<!-- PULSANTI -->

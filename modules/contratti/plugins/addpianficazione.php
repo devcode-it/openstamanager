@@ -22,12 +22,13 @@ $list = '\"1\":\"'.tr('Pianificare a partire da oggi ').date('d/m/Y').'\"';
 if (!empty($get['idcontratto_riga'])){
 	
 	$idcontratto_riga = $get['idcontratto_riga'];
-	$qp = 'SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento FROM co_righe_contratti WHERE id = '.$idcontratto_riga;
+	$qp = 'SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_righe_contratti.idtipointervento) AS tempo_standard FROM co_righe_contratti WHERE id = '.$idcontratto_riga;
 	$rsp = $dbo->fetchArray($qp);
 
 	$data_richiesta = readDate($rsp[0]['data_richiesta']);
 	$matricoleimpianti = trim($rsp[0]['idimpianti']);
 	$idsede = $rsp[0]['idsede'];
+	$tempo_standard = $rsp[0]['tempo_standard'];
 	
 	$readonly = 'readonly';
 	$hide = '';
@@ -42,9 +43,10 @@ if (!empty($get['idcontratto_riga'])){
 (empty($idcontratto_riga)) ? $idcontratto_riga = $dbo->fetchArray('SELECT MAX(id) AS max_idcontratto_riga  FROM `co_righe_contratti`')[0]['max_idcontratto_riga'] : '';
 (empty($idcontratto_riga)) ? $idcontratto_riga = 1 : '';
 
-//orari inizio fine interventi
+//orari inizio fine interventi (8h standard)
 $orario_inizio = '09:00';
-$orario_fine = '17:00';
+$orario_fine = (!empty($tempo_standard)) ? date('H:i', strtotime($orario_inizio) + ((60 * 60 ) * $tempo_standard)) : '17:00'; 
+
 
 echo '
 <form id="add_form" action="'.$rootdir.'/editor.php?id_module='.Modules::get('Contratti')['id'].'&id_record='.$id_record.'&idcontratto_riga='.$idcontratto_riga.'" method="post">

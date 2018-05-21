@@ -12,9 +12,14 @@ include_once __DIR__.'/../../core.php';
 			{[ "type": "span", "label": "<?php echo tr('Codice'); ?>", "name": "idtipointervento", "value": "$idtipointervento$" ]}
 		</div>
 
-		<div class="col-md-8">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
 		</div>
+		
+		<div class="col-md-2">
+			{[ "type": "number", "label": "<?php echo tr('Tempo standard'); ?>", "name": "tempo_standard", "help": "<?php echo tr('Valore compreso tra 0-24 ore'); ?>", "maxlength": 4, "min-value": "undefined", "max-value": "24", "class": "text-center", "value": "$tempo_standard$", "icon-after": "ore"  ]}
+		</div>
+				
 	</div>
 
 	<div class="panel panel-primary">

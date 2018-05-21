@@ -164,3 +164,7 @@ INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
 (2, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Contratti') AND name='Impianti' )),
 (3, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Contratti') AND name='Impianti' )),
 (4, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Contratti') AND name='Impianti' ));
+
+
+-- Tempo standard per attività
+ALTER TABLE `in_tipiintervento` ADD `tempo_standard` DECIMAL(12,4)  NULL AFTER `costo_diritto_chiamata_tecnico`;

@@ -168,3 +168,6 @@ INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
 
 -- Tempo standard per attività
 ALTER TABLE `in_tipiintervento` ADD `tempo_standard` DECIMAL(12,4)  NULL AFTER `costo_diritto_chiamata_tecnico`;
+
+-- Rinomino Interventi da pianificare in Promemoria contratti da pianificare
+UPDATE `zz_widgets` SET `text` = 'Promemoria contratti da pianificare' WHERE `zz_widgets`.`name` = 'Interventi da pianificare';

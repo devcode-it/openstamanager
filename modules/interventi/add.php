@@ -186,7 +186,7 @@ if (empty($new_codice)) {
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "date", "label": "<?php echo tr('Data intervento'); ?>", "name": "data", "required": 1, "value": "<?php echo $data; ?>" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data intervento'); ?>", "name": "data", "required": <?php echo ($get['ref']) ? 1 : 0; ?>, "value": "<?php echo $data; ?>" ]}
 				</div>
 
 				<div class="col-md-4">
@@ -197,7 +197,7 @@ if (empty($new_codice)) {
 			<!-- RIGA 4 -->
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Tipo intervento'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento", "value": "<?php echo $idtipointervento; ?>", "ajax-source": "tipiintervento" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo intervento'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "<?php echo $idtipointervento; ?>", "ajax-source": "tipiintervento" ]}
 				</div>
 
 				<div class="col-md-4">
@@ -205,11 +205,11 @@ if (empty($new_codice)) {
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "time", "label": "<?php echo tr('Orario inizio'); ?>", "name": "orario_inizio", "required": 1, "value": "<?php echo $orario_inizio; ?>" ]}
+					{[ "type": "time", "label": "<?php echo tr('Orario inizio'); ?>", "name": "orario_inizio", "required": <?php echo ($get['ref']) ? 1 : 0; ?>, "value": "<?php echo $orario_inizio; ?>" ]}
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "time", "label": "<?php echo tr('Orario fine'); ?>", "name": "orario_fine", "required": 1, "value": "<?php echo $orario_fine; ?>" ]}
+					{[ "type": "time", "label": "<?php echo tr('Orario fine'); ?>", "name": "orario_fine", "required": <?php echo ($get['ref']) ? 1 : 0; ?>, "value": "<?php echo $orario_fine; ?>" ]}
 				</div>
 			</div>
 
@@ -365,6 +365,15 @@ if (empty($new_codice)) {
 		}
 		
 	});
+	
+	$('#idtecnico').change( function(){
+		<?php if (!$get['ref']){ ?>
+	   var value = ($(this).val()>0) ? true : false;
+		$('#orario_inizio').prop("required", value);
+		$('#orario_fine').prop("required", value);
+		$('#data').prop("required", value);
+		<?php } ?>
+	});	
 	
 	var ref = "<?php echo $get['ref']; ?>";
 

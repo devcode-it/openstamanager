@@ -301,7 +301,7 @@ if (!empty($rsp)) {
     </div>
 
     <div id="external-events" class="hidden-xs hidden-sm col-md-2">
-        <h4>'.tr('Interventi da pianificare').'</h4>';
+        <h4>'.tr('Promemoria contratti da pianificare').'</h4>';
 
     // Controllo per pinanificazioni per mesi precedenti
     $qp_old = "SELECT co_righe_contratti.id, idcontratto, richiesta, DATE_FORMAT( data_richiesta, '%m-%Y') AS mese, data_richiesta, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento FROM (co_righe_contratti INNER JOIN co_contratti ON co_righe_contratti.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL AND  DATE_FORMAT( data_richiesta, '%d%m%Y')<DATE_FORMAT( NOW(), '%d%m%Y')
@@ -309,7 +309,7 @@ if (!empty($rsp)) {
     $rsp_old = $dbo->fetchArray($qp_old);
 
     if (sizeof($rsp_old) > 0) {
-        echo '<small class="text-danger"><i class="fa fa-exclamation-triangle"></i> Ci sono alcuni interventi da pianificare scaduti.</small><br>';
+        echo '<small class="text-danger"><i class="fa fa-exclamation-triangle"></i>'.tr('Ci sono alcuni interventi da pianificare scaduti.').'</small><br>';
     }
 
     $mesi = [1 => 'Gennaio', 2 => 'Febbraio', 3 => 'Marzo', 4 => 'Aprile', 5 => 'Maggio', 6 => 'Giugno', 7 => 'Luglio', 8 => 'Agosto', 9 => 'Settembre', 10 => 'Ottobre', 11 => 'Novembre', 12 => 'Dicembre'];

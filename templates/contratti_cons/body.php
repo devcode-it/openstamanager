@@ -472,11 +472,16 @@ $totale_ore = $rs[0]['totale_ore'];
 
 $rapporto = $budget - $totale;
 
+//pulisco da informazioni irrilevanti (imponibile,iva)
+$show = false;
+
 // Totale imponibile
 echo '
-<table class="table table-bordered">
-    <tr>
-        <td colspan="3" class="text-right border-top">
+<table class="table table-bordered" style="display:none;">';
+
+if ($show) {
+   echo ' <tr>
+        <td colspan="3" class="text-right border-top"  >
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -484,6 +489,7 @@ echo '
             <b>'.Translator::numberToLocale($imponibile).' &euro;</b>
         </th>
     </tr>';
+
 
 // Eventuale sconto incondizionato
 if (!empty($sconto)) {
@@ -516,6 +522,7 @@ $rs = $dbo->fetchArray('SELECT * FROM co_iva WHERE co_iva.id = '.prepare(get_var
 $percentuale_iva = $rs[0]['percentuale'];
 $iva = $totale / 100 * $percentuale_iva;
 
+
 echo '
     <tr>
         <td colspan="3" class="text-right border-top">
@@ -528,19 +535,24 @@ echo '
             <b>'.Translator::numberToLocale($iva).' &euro;</b>
         </th>
     </tr>';
+	
+	//$totale = sum($totale, $iva);
+	
+}
 
-$totale = sum($totale, $iva);
+
 
 // TOTALE
 echo '
     <tr>
     	<td colspan="3" class="text-right border-top">
-            <b>'.tr('Totale consuntivo', [], ['upper' => true]).':</b>
+            <b>'.tr('Totale consuntivo (no IVA)', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-center">
     		<b>'.Translator::numberToLocale($totale).' &euro;</b>
     	</th>
     </tr>';
+
 
 // BUDGET
 echo '

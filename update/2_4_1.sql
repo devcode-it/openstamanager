@@ -165,9 +165,17 @@ INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
 (3, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Contratti') AND name='Impianti' )),
 (4, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Contratti') AND name='Impianti' ));
 
-
 -- Tempo standard per attività
 ALTER TABLE `in_tipiintervento` ADD `tempo_standard` DECIMAL(12,4)  NULL AFTER `costo_diritto_chiamata_tecnico`;
 
 -- Rinomino Interventi da pianificare in Promemoria contratti da pianificare
 UPDATE `zz_widgets` SET `text` = 'Promemoria contratti da pianificare' WHERE `zz_widgets`.`name` = 'Interventi da pianificare';
+
+-- Fix arrotondamenti per fatture di vendita
+UPDATE `zz_views` SET `query` = '(SELECT SUM(round(subtotale,2) - round(sconto,2) + round(iva,2) + round(rivalsainps,2) - round(ritenutaacconto,2)) FROM co_righe_documenti WHERE co_righe_documenti.iddocumento=co_documenti.id GROUP BY iddocumento) + round(bollo,2) + round(iva_rivalsainps,2)'  WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND name = 'Totale';
+
+-- Fix arrotondamenti per fatture di acquisto
+UPDATE `zz_views` SET `query` = '(SELECT SUM(round(subtotale,2) - round(sconto,2) + round(iva,2) + round(rivalsainps,2) - round(ritenutaacconto,2)) FROM co_righe_documenti WHERE co_righe_documenti.iddocumento=co_documenti.id GROUP BY iddocumento ) + round(bollo,2) + round(iva_rivalsainps,2)' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND name = 'Totale';
+
+
+

@@ -461,13 +461,17 @@ $totale = $imponibile - $sconto;
 //$budget = $rs[0]['budget'];
 $budget = get_imponibile_preventivo($id_record);
 
+//pulisco da informazioni irrilevanti (imponibile,iva)
+$show = false;
 
 $rapporto = floatval($budget) - floatval($totale);
 
 // Totale imponibile
 echo '
-<table class="table table-bordered">
-    <tr>
+<table class="table table-bordered">';
+
+if ($show){
+   echo '<tr>
         <td colspan="3" class="text-right border-top">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
@@ -476,6 +480,8 @@ echo '
             <b>'.Translator::numberToLocale($imponibile).' &euro;</b>
         </th>
     </tr>';
+
+
 
 // Eventuale sconto incondizionato
 if (!empty($sconto)) {
@@ -521,13 +527,15 @@ echo '
         </th>
     </tr>';
 
-$totale = sum($totale, $iva);
+//$totale = sum($totale, $iva);
+
+}
 
 // TOTALE
 echo '
     <tr>
     	<td colspan="3" class="text-right border-top">
-            <b>'.tr('Totale consuntivo', [], ['upper' => true]).':</b>
+            <b>'.tr('Totale consuntivo (no iva)', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-center">
     		<b>'.Translator::numberToLocale($totale).' &euro;</b>

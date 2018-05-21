@@ -61,7 +61,7 @@ elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
     $idanagrafica = $rs[0]['idanagrafica'];
     $idzona = $rs[0]['idzona'];
 	
-	//aumento orario inizio del tempo standard definito dalla tipologia dell'intervento (PRESO DA CONTRATTO)
+	//aumento orario inizio del tempo standard definito dalla tipologia dell'intervento (PRESO DAL CONTRATTO)
 	if (!empty($rs[0]['tempo_standard']))
 		    $orario_fine = date('H:i', strtotime($orario_inizio) + ((60 * 60 ) * $rs[0]['tempo_standard']));
 
@@ -74,7 +74,7 @@ elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
     $idsede = $rs[0]['idsede'];
 	$idimpianti = $rs[0]['idimpianti'];
 	
-	//aumento orario inizio del tempo standard definito dalla tipologia dell'intervento (PRESO DA PROMEMORIA)
+	//aumento orario inizio del tempo standard definito dalla tipologia dell'intervento (PRESO DAL PROMEMORIA)
 	if (!empty($rs[0]['tempo_standard']))
 		    $orario_fine = date('H:i', strtotime($orario_inizio) + ((60 * 60 ) * $rs[0]['tempo_standard']));
 		
@@ -352,7 +352,20 @@ if (empty($new_codice)) {
         $("#componenti").prop("disabled", !$(this).val() ? true : false);
         $("#componenti").selectReset();
 	});
-
+	
+	
+	$('#idtipointervento').change( function(){
+		
+		if ( (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine') ?>' == '')){
+			//data = moment('<?php echo $data.' '.$orario_inizio ?>').format('YYYY-MM-DD HH:mm
+			data = moment( moment().format('YYYY-MM-DD') + '<?php echo ' '.$orario_inizio ?>').format('YYYY-MM-DD HH:mm');
+			tempo_standard = $(this).selectData().tempo_standard;
+			orario_fine = moment(data).add(tempo_standard, 'hours').format("HH:mm");
+			$('input[name=orario_fine]').val(orario_fine);
+		}
+		
+	});
+	
 	var ref = "<?php echo $get['ref']; ?>";
 
 	function add_intervento(){

@@ -42,10 +42,13 @@ $result .= '
         }
 
         // Visualizzo l'elenco di file già caricati
-		if (!empty($options['id_plugin']))
-			$rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($options['id_module']).' AND id_record='.prepare($options['id_record']).' AND id_plugin='.prepare($options['id_plugin']));
-		else
-			$rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($options['id_module']).' AND id_record='.prepare($options['id_record']).' AND id_plugin = 0');
+        $query = 'SELECT * FROM zz_files WHERE id_module='.prepare($options['id_module']).' AND id_record = '.prepare($options['id_record']).' AND id_plugin ';
+        if (!empty($options['id_plugin'])) {
+            $query .= ' = '.prepare($options['id_plugin']);
+        } else {
+            $query .= 'IS NULL';
+        }
+        $rs = $dbo->fetchArray($query);
 
         if (!empty($rs)) {
             $result .= '
@@ -74,7 +77,7 @@ $result .= '
 				
 				//Anteprime supportate dal browser
 				//    
-				$extension = end((explode('.', $r['filename'])));
+				$extension = end((explode('.', $r['original'])));
 				$supported_extensions = ['pdf','jpg','png','gif','jpeg','bmp'];
 				if ( in_array($extension, $supported_extensions)){
 					$result .= "

@@ -238,12 +238,26 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
                 return result;
             });
+            
+            $("#install").on("click", function(){
+
+                if($(this).closest("form").parsley().validate()){
+                    prev_html = $("#install").html();
+                    $("#install").html("<i class=\'fa fa-spinner fa-pulse  fa-fw\'></i> '.tr("Attendere").'...");
+                    $("#install").prop(\'disabled\', true);
+                    $("#test").prop(\'disabled\', true);
+                    
+                    $("#config_form").submit();
+                }
+
+            });
 
             $("#test").on("click", function(){
                 if($(this).closest("form").parsley().validate()){
 					prev_html = $("#test").html();
 					$("#test").html("<i class=\'fa fa-spinner fa-pulse  fa-fw\'></i> '.tr("Attendere").'...");
-					$("#test").prop(\'disabled\', true);
+                    $("#test").prop(\'disabled\', true);
+                    $("#install").prop(\'disabled\', true);
                     $(this).closest("form").ajaxSubmit({
                         url: "'.$rootdir.'/index.php",
                         data: {
@@ -254,7 +268,8 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                             data = parseFloat(data.trim());
 							
 							$("#test").html(prev_html);
-							$("#test").prop(\'disabled\', false);
+                            $("#test").prop(\'disabled\', false);
+                            $("#install").prop(\'disabled\', false);
 						
                             if(data == 0){
                                 swal("'.tr('Errore della configurazione').'", "'.tr('La configurazione non è corretta').'.", "error");
@@ -498,7 +513,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     // db_host
     echo '
                                 <div class="col-md-12">
-                                    {[ "type": "text", "label": "'.tr('Host del database').'", "name": "db_host", "placeholder": "'.tr("Indirizzo dell'host del database").'", "value": "'.$host.'", "help": "'.tr('Esempio').': localhost", "show-help": 1, "required": 1 ]}
+                                    {[ "type": "text", "label": "'.tr('Host del database').'", "name": "db_host", "placeholder": "'.tr("Indirizzo dell'host del database").'", "value": "'.$host.'", "help": "'.tr('Esempio').': localhost", "show-help": 0, "required": 1 ]}
                                 </div>
                             </div>
 
@@ -507,19 +522,19 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     // db_username
     echo '
                                 <div class="col-md-4">
-                                    {[ "type": "text", "label": "'.tr("Username dell'utente MySQL").'", "name": "db_username", "placeholder": "'.tr("Username dell'utente MySQL").'", "value": "'.$username.'", "help": "'.tr('Esempio').': root", "show-help": 1, "required": 1 ]}
+                                    {[ "type": "text", "label": "'.tr("Username dell'utente MySQL").'", "name": "db_username", "placeholder": "'.tr("Username dell'utente MySQL").'", "value": "'.$username.'", "help": "'.tr('Esempio').': root", "show-help": 0, "required": 1 ]}
                                 </div>';
 
     // db_password
     echo '
                                 <div class="col-md-4">
-                                    {[ "type": "password", "label": "'.tr("Password dell'utente MySQL").'", "name": "db_password", "placeholder": "'.tr("Password dell'utente MySQL").'", "value": "'.$password.'", "help": "'.tr('Esempio').': mysql", "show-help": 1 ]}
+                                    {[ "type": "password", "label": "'.tr("Password dell'utente MySQL").'", "name": "db_password", "placeholder": "'.tr("Password dell'utente MySQL").'", "value": "'.$password.'", "help": "'.tr('Esempio').': mysql", "show-help": 0 ]}
                                 </div>';
 
     // db_name
     echo '
                                 <div class="col-md-4">
-                                    {[ "type": "text", "label": "'.tr('Nome del database').'", "name": "db_name", "placeholder": "'.tr('Nome del database').'", "value": "'.$name.'", "help": "'.tr('Esempio').': openstamanager", "show-help": 1, "required": 1 ]}
+                                    {[ "type": "text", "label": "'.tr('Nome del database').'", "name": "db_name", "placeholder": "'.tr('Nome del database').'", "value": "'.$name.'", "help": "'.tr('Esempio').': openstamanager", "show-help": 0, "required": 1 ]}
                                 </div>
                             </div>
 
@@ -553,7 +568,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                                     </button>
                                 </div>
                                 <div class="col-md-4 text-right">
-                                    <button type="submit" class="btn btn-success btn-block">
+                                    <button type="button" id="install" class="btn btn-success btn-block">
                                         <i class="fa fa-check"></i> '.tr('Installa').'
                                     </button>
                                 </div>

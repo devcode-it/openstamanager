@@ -99,7 +99,9 @@ echo '
 echo '
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Permessi').'</h3>
+            <h3 class="panel-title">'.tr('Permessi _GROUP_', [
+                '_GROUP_' => $records[0]['nome'],
+            ]).'</h3>
 		</div>
 
 		<div class="panel-body">';

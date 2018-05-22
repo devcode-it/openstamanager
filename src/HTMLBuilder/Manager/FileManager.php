@@ -73,16 +73,13 @@ $result .= '
 				
 				
 				//Anteprime supportate dal browser
-				//    <iframe src=\"".ROOTDIR.'/files/'.\Modules::get($options['id_module'])['directory'].'/'.$r['filename']."\" allowfullscreen=\"\" webkitallowfullscreen=\"\" frameborder=\"0\"  width=\"100%\" height=\"550\"></iframe>
-				$extension = end((explode('.', $r['nome'])));
+				//    
+				$extension = end((explode('.', $r['filename'])));
 				$supported_extensions = ['pdf','jpg','png','gif','jpeg','bmp'];
 				if ( in_array($extension, $supported_extensions)){
 					$result .= "
-					<div class='hide' id='view-".$r['id']."' >
-						 <object data=\"".ROOTDIR.'/files/'.\Modules::get($options['id_module'])['directory'].'/'.$r['filename']."#view=fitH&scrollbar=0&toolbar=0&navpanes=0\" type=\"application/".$extension."\" allowfullscreen=\"\" webkitallowfullscreen=\"\" width=\"100%\" height=\"550\">
-							 alt : <a href=\"".ROOTDIR.'/files/'.\Modules::get($options['id_module'])['directory'].'/'.$r['filename']."\">".$r['filename']."</a>
-							 <span>plugin ".$extension." mancante.</span>
-						 </object>	
+					<div class='hide thumbnail' id='view-".$r['id']."'  >
+						 <iframe src=\"".ROOTDIR.'/files/'.\Modules::get($options['id_module'])['directory'].'/'.$r['filename']."\"  frameborder=\"0\" scrolling=\"no\"  width=\"100%\" height=\"550\"></iframe>
 					 </div>
 					 <button class=\"btn btn-sm btn-info\" data-target=\"#bs-popup\"  type=\"button\" data-title=\"".htmlentities($r['nome'], ENT_QUOTES, "UTF-8")." <small><em>(".$r['filename'].")</em></small>\" data-href=\"#view-".$r['id']."\" ><i class='fa fa-eye'></i></button>";
 				}else{

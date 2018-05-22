@@ -9,26 +9,24 @@ namespace HTMLBuilder\Manager;
  */
 class FileManager implements ManagerInterface
 {
-	
-	/**
-     * Gestione "filelist_and_upload".  
+    /**
+     * Gestione "filelist_and_upload".
      * Esempio: {( "name": "filelist_and_upload", "id_module": "2", "id_record": "1", "readonly": "false", "ajax": "true" )}.
      *
      * @param array $options
      *
      * @return string
      */
-	 
     public function manage($options)
     {
-		$options['readonly'] = ($options['readonly']=='true') ? true  : false;
+        $options['readonly'] = ($options['readonly'] == 'true') ? true : false;
         $options['ajax'] = isset($options['ajax']) ? $options['ajax'] : false;
-		$options['showpanel'] = isset($options['showpanel']) ? $options['showpanel'] : true;
+        $options['showpanel'] = isset($options['showpanel']) ? $options['showpanel'] : true;
         $options['label'] = isset($options['label']) ? $options['label'] : tr('Nuovo allegato').':';
 
         $dbo = \Database::getConnection();
 
-$result .= '
+        $result .= '
 <div id="attachments_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'" >
 		<a name="attachments_'.rand().'"></a>';
 
@@ -42,10 +40,13 @@ $result .= '
         }
 
         // Visualizzo l'elenco di file già caricati
-		if (!empty($options['id_plugin']))
-			$rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($options['id_module']).' AND id_record='.prepare($options['id_record']).' AND id_plugin='.prepare($options['id_plugin']));
-		else
-			$rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($options['id_module']).' AND id_record='.prepare($options['id_record']).' AND id_plugin = 0');
+        $query = 'SELECT * FROM zz_files WHERE id_module='.prepare($options['id_module']).' AND id_record = '.prepare($options['id_record']).' AND id_plugin ';
+        if (!empty($options['id_plugin'])) {
+            $query .= ' = '.prepare($options['id_plugin']);
+        } else {
+            $query .= 'IS NULL';
+        }
+        $rs = $dbo->fetchArray($query);
 
         if (!empty($rs)) {
             $result .= '
@@ -66,37 +67,41 @@ $result .= '
             </td>
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
             <td class="text-center">
-			
+
                 <a class="btn btn-sm btn-primary" href="'.ROOTDIR.'/actions.php?id_module='.$options['id_module'].'&op=download_file&id='.$r['id'].'&filename='.$r['filename'].'" target="_blank">
                     <i class="fa fa-download"></i>
                 </a>';
-				
-				
-				//Anteprime supportate dal browser
-				//    <iframe src=\"".ROOTDIR.'/files/'.\Modules::get($options['id_module'])['directory'].'/'.$r['filename']."\" allowfullscreen=\"\" webkitallowfullscreen=\"\" frameborder=\"0\"  width=\"100%\" height=\"550\"></iframe>
-				$extension = end((explode('.', $r['nome'])));
-				$supported_extensions = ['pdf','jpg','png','gif','jpeg','bmp'];
-				if ( in_array($extension, $supported_extensions)){
-					$result .= "
-					<div class='hide' id='view-".$r['id']."' >
-						 <object data=\"".ROOTDIR.'/files/'.\Modules::get($options['id_module'])['directory'].'/'.$r['filename']."#view=fitH&scrollbar=0&toolbar=0&navpanes=0\" type=\"application/".$extension."\" allowfullscreen=\"\" webkitallowfullscreen=\"\" width=\"100%\" height=\"550\">
-							 alt : <a href=\"".ROOTDIR.'/files/'.\Modules::get($options['id_module'])['directory'].'/'.$r['filename']."\">".$r['filename']."</a>
-							 <span>plugin ".$extension." mancante.</span>
-						 </object>	
-					 </div>
-					 <button class=\"btn btn-sm btn-info\" data-target=\"#bs-popup\"  type=\"button\" data-title=\"".htmlentities($r['nome'], ENT_QUOTES, "UTF-8")." <small><em>(".$r['filename'].")</em></small>\" data-href=\"#view-".$r['id']."\" ><i class='fa fa-eye'></i></button>";
-				}else{
-					$result .= "<button class=\"btn btn-sm btn-default\" title=\"".tr('Anteprima file non disponibile').".\" onclick=\"alert('".tr('Anteprima file di tipo "'.$extension.'" non supportata.')."');\" ><i class='fa fa-eye'></i></button>\n";
-				}
-				
-			if (!$options['readonly']){
-				 $result .= '
+
+                // Anteprime supportate dal browser
+                $extension = end((explode('.', $r['original'])));
+                $supported_extensions = ['pdf', 'jpg', 'png', 'gif', 'jpeg', 'bmp'];
+                if (in_array($extension, $supported_extensions)) {
+                    $result .= '
+					<div class="hide" id="view-'.$r['id'].'">
+						 <object data="'.ROOTDIR.'/files/'.\Modules::get($options['id_module'])['directory'].'/'.$r['filename'].'#view=fitH&scrollbar=0&toolbar=0&navpanes=0" type="application/'.$extension.'" allowfullscreen="" webkitallowfullscreen="" width="100%" height="550">
+							 alt : <a href="'.ROOTDIR.'/files/'.\Modules::get($options['id_module'])['directory'].'/'.$r['filename'].'">'.$r['filename'].'</a>
+							 <span>plugin '.$extension.' mancante.</span>
+						 </object>
+                     </div>
+
+                     <button class="btn btn-sm btn-info" data-target="#bs-popup"  type="button" data-title="'.htmlentities($r['nome'], ENT_QUOTES, 'UTF-8').' <small><em>('.$r['filename'].')</em></small>" data-href="#view-'.$r['id'].'" >
+                        <i class="fa fa-eye"></i>
+                     </button>';
+                } else {
+                    $result .= '
+                    <button class="btn btn-sm btn-default" title="'.tr('Anteprima file non disponibile').'." onclick="alert(\''.tr('Anteprima file di tipo "'.$extension.'" non supportata.').'\');" >
+                        <i class="fa fa-eye"></i>
+                    </button>';
+                }
+
+                if (!$options['readonly']) {
+                    $result .= '
                 <a class="btn btn-sm btn-danger ask" data-backto="record-edit" data-msg="'.tr('Vuoi eliminare questo file?').'" data-op="unlink_file" data-id="'.$r['id'].'" data-filename="'.$r['filename'].'">
                     <i class="fa fa-trash"></i>
                 </a>';
-			}
-			
-			 $result .= '
+                }
+
+                $result .= '
             </td>
         </tr>';
             }
@@ -105,25 +110,23 @@ $result .= '
     </table>
     <div class="clearfix"></div>
     <br>';
-        }else{
-			//in caso di readonly, se non è stato caricato nessun allegato mostro almeno box informativo
-			if ($options['readonly']){
-				$result .= '
+        } else {
+            // In caso di readonly, se non è stato caricato nessun allegato mostro almeno box informativo
+            if ($options['readonly']) {
+                $result .= '
 			<div class="alert alert-info" style="margin-bottom:0px;" >
 				<i class="fa fa-info-circle"></i>
 				'.tr('Nessun allegato è stato caricato', []).'.
 			</div>';
-			}
-		}
+            }
+        }
 
-		
-	if (!$options['readonly']){
-		
-        // Form per l'upload di un nuovo file
-        $result .= '
+        if (!$options['readonly']) {
+            // Form per l'upload di un nuovo file
+            $result .= '
     <b>'.$options['label'].'</b>
     <div class="row">
-	
+
         <div class="col-lg-4">
             {[ "type": "text", "placeholder": "'.tr('Nome').'", "name": "nome_allegato", "id": "nome_allegato_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'" ]}
         </div>
@@ -131,17 +134,17 @@ $result .= '
         <div class="col-lg-6">
             {[ "type": "file", "placeholder": "'.tr('File').'", "name": "blob", "id": "blob_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'", "required": 0 ]}
         </div>';
-		
-		$result .= '
+
+            $result .= '
 		<div class="col-lg-2 text-right">
 			<button type="button" class="btn btn-success" onclick="saveFile_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').' ( $(this) );">
 				<i class="fa fa-upload"></i> '.tr('Carica').'
 			</button>
 		</div>';
-		
-		$result .= '
+
+            $result .= '
     </div>';
-	}
+        }
 
         $result .= '
     <script>
@@ -161,7 +164,7 @@ $result .= '
 			form_data.append("id_plugin","'.$options['id_plugin'].'");
 
             prev_html = btn.html();
-            btn.html("<i class=\"fa fa-spinner fa-pulse fa-fw\"></i>'.tr("Attendere...").'");
+            btn.html("<i class=\"fa fa-spinner fa-pulse fa-fw\"></i>'.tr('Attendere...').'");
             btn.prop("disabled", true);
 
             $.ajax({
@@ -173,17 +176,17 @@ $result .= '
                 dataType : "html",
                 data: form_data,
                 success: function(data) {
-				
+
                     btn.html(prev_html);
                     btn.prop("disabled", false);';
-					
-					if (($options['ajax'])) {
-						$result .= '$("#attachments_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'").load( globals.rootdir + "/ajax.php?op=list_attachments&id_module='.$options['id_module'].'&id_record='.$options['id_record'].((!empty($options['id_plugin'])) ? '&id_plugin='.$options['id_plugin'].'#tab_'.$options['id_plugin'] : '').'" );';
-					}else{
-						$result .= 'location.href = globals.rootdir + "/editor.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : '').'";';
-					}
-					
-                 $result .= '},
+
+        if (($options['ajax'])) {
+            $result .= '$("#attachments_'.$options['id_record'].((!empty($options['id_plugin'])) ? '_'.$options['id_plugin'] : '').'").load( globals.rootdir + "/ajax.php?op=list_attachments&id_module='.$options['id_module'].'&id_record='.$options['id_record'].((!empty($options['id_plugin'])) ? '&id_plugin='.$options['id_plugin'].'#tab_'.$options['id_plugin'] : '').'" );';
+        } else {
+            $result .= 'location.href = globals.rootdir + "/editor.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : '').'";';
+        }
+
+        $result .= '},
                 error: function(data) {
                     alert(data);
                 }

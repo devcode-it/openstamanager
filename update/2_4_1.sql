@@ -212,3 +212,6 @@ UPDATE `or_statiordine` SET `completato` = '1' WHERE `or_statiordine`.`id` IN( 2
 -- Campi per note aggiuntive in ddt e ordini
 ALTER TABLE `or_ordini` ADD `note_aggiuntive` TEXT NOT NULL AFTER `note`;
 ALTER TABLE `dt_ddt` ADD `note_aggiuntive` TEXT NOT NULL AFTER `note`;
+
+-- Fix id_plugin (zz_files)
+UPDATE `zz_files` SET `id_plugin` = NULL WHERE `id_plugin` = 0;

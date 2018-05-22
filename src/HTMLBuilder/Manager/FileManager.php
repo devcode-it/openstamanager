@@ -80,13 +80,23 @@ $result .= '
 				$extension = end((explode('.', $r['original'])));
 				$supported_extensions = ['pdf','jpg','png','gif','jpeg','bmp'];
 				if ( in_array($extension, $supported_extensions)){
-					$result .= "
-					<div class='hide thumbnail' id='view-".$r['id']."'  >
-						 <iframe src=\"".ROOTDIR.'/files/'.\Modules::get($options['id_module'])['directory'].'/'.$r['filename']."\"  frameborder=\"0\" scrolling=\"no\"  width=\"100%\" height=\"550\"></iframe>
-					 </div>
-					 <button class=\"btn btn-sm btn-info\" data-target=\"#bs-popup\"  type=\"button\" data-title=\"".htmlentities($r['nome'], ENT_QUOTES, "UTF-8")." <small><em>(".$r['filename'].")</em></small>\" data-href=\"#view-".$r['id']."\" ><i class='fa fa-eye'></i></button>";
+					
+					$result .= "<div class='hide' id='view-".$r['id']."'  >";
+					
+					if ($extension=='pdf'){
+						$result .= "
+							 <iframe src=\"".ROOTDIR.'/files/'.\Modules::get($options['id_module'])['directory'].'/'.$r['filename']."\"  frameborder=\"0\" scrolling=\"no\"  width=\"100%\" height=\"550\"></iframe>";
+					}else{
+						$result .= "
+							<img src=\"".ROOTDIR.'/files/'.\Modules::get($options['id_module'])['directory'].'/'.$r['filename']."\" width=\"100%\" ></img>";
+					}
+					
+					 $result .= "</div>";
+					
+					$result .= " <button class=\"btn btn-sm btn-info\" data-target=\"#bs-popup\"  type=\"button\" data-title=\"".htmlentities($r['nome'], ENT_QUOTES, "UTF-8")." <small><em>(".$r['filename'].")</em></small>\" data-href=\"#view-".$r['id']."\" ><i class='fa fa-eye'></i></button>";
+				
 				}else{
-					$result .= "<button class=\"btn btn-sm btn-default\" title=\"".tr('Anteprima file non disponibile').".\" onclick=\"alert('".tr('Anteprima file di tipo "'.$extension.'" non supportata.')."');\" ><i class='fa fa-eye'></i></button>\n";
+					$result .= " <button class=\"btn btn-sm btn-default\" title=\"".tr('Anteprima file non disponibile').".\" onclick=\"alert('".tr('Anteprima file di tipo "'.$extension.'" non supportata.')."');\" ><i class='fa fa-eye'></i></button>\n";
 				}
 				
 			if (!$options['readonly']){

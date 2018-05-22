@@ -102,6 +102,7 @@ if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom
 
     // Query effettiva
     $query = str_replace_once('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $result_query);
+    
     $rs = $dbo->fetchArray($query);
 
     // Conteggio dei record filtrati
@@ -222,4 +223,5 @@ if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom
     }
 }
 
-echo json_encode($results);
+$rows = json_encode($results);
+echo $rows;

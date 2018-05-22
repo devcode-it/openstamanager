@@ -275,16 +275,48 @@ function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaac
 function get_stato_ordine($idordine)
 {
     global $dbo;
-
-    $rs = $dbo->fetchArray('SELECT SUM(qta) AS qta, SUM(qta_evasa) AS qta_evasa FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine));
-
-    if ($rs[0]['qta_evasa'] > 0) {
-        if ($rs[0]['qta'] > $rs[0]['qta_evasa']) {
-            return 'Parzialmente evaso';
-        } elseif ($rs[0]['qta'] == $rs[0]['qta_evasa']) {
-            return 'Evaso';
-        }
-    } else {
-        return 'Non evaso';
+    
+    $rs_ordine = $dbo->fetchArray("SELECT IFNULL(SUM(qta), 0) AS qta FROM or_righe_ordini WHERE idordine='".$idordine."'");
+    $qta_ordine = $rs_ordine[0]['qta']; 
+    
+    //Righe dell'ordine in ddt
+    $rs_ddt = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM dt_righe_ddt WHERE idordine='.prepare($idordine));
+    $qta_ddt = $rs_ddt[0]['qta'];
+    
+    //Righe dell'ordine in fattura
+    $rs_fattura = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM co_righe_documenti WHERE idordine='.prepare($idordine));
+    $qta_fattura = $rs_fattura[0]['qta'];
+    
+    //Righe dell'ordine in fattura passando da ddt
+    $rs_ddt_fattura = $dbo->fetchArray("SELECT IFNULL(SUM(qta), 0) AS qta FROM co_righe_documenti WHERE idddt IN(SELECT DISTINCT idddt FROM dt_righe_ddt WHERE idordine='".$idordine."')");
+    $qta_ddt_fattura = $rs_ddt_fattura[0]['qta'];
+    
+    
+    if($qta_ddt==0){
+        $stato = 'Bozza';
     }
+    if($qta_fattura==0){
+        $stato = 'Bozza';
+    }
+    if($qta_ddt>0 && $qta_ddt<$qta_ordine && $qta_ordine > 0 ){
+        $stato = 'Parzialmente evaso';
+    }
+    if($qta_ddt==$qta_ordine && $qta_ordine > 0 ){
+        $stato = 'Evaso';
+    }
+    if( $qta_fattura>0 && $qta_fattura<$qta_ordine && $qta_ordine > 0 ){
+        $stato = 'Parzialmente fatturato';
+    }
+    if( $qta_fattura == $qta_ordine && $qta_ordine > 0 ){
+        $stato = 'Fatturato';
+    }
+    if($qta_ddt_fattura>0 && $qta_ddt_fattura<$qta_ordine && $qta_ordine > 0){
+        $stato = 'Parzialmente fatturato';
+    }
+    if($qta_ddt_fattura==$qta_ordine && $qta_ordine > 0){
+        $stato = 'Fatturato';
+    }
+    
+    return $stato;
+
 }

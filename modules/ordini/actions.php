@@ -43,7 +43,7 @@ switch (post('op')) {
                 $idpagamento = get_var('Tipo di pagamento predefinito');
             }
 
-            $query = 'INSERT INTO or_ordini( numero, numero_esterno, idanagrafica, idtipoordine, idpagamento, data, idstatoordine ) VALUES ( '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipoordine).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `or_statiordine` WHERE `descrizione`='Non evaso') )";
+            $query = 'INSERT INTO or_ordini( numero, numero_esterno, idanagrafica, idtipoordine, idpagamento, data, idstatoordine ) VALUES ( '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipoordine).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `or_statiordine` WHERE `descrizione`='Bozza') )";
             $dbo->query($query);
 
             $id_record = $dbo->lastInsertedID();
@@ -61,6 +61,7 @@ switch (post('op')) {
         $data = $post['data'];
         $idanagrafica = post('idanagrafica');
         $note = post('note');
+        $note_aggiuntive = post('note_aggiuntive');
         $idstatoordine = post('idstatoordine');
         $idpagamento = post('idpagamento');
         $idsede = post('idsede');
@@ -97,6 +98,7 @@ switch (post('op')) {
             ' idsede='.prepare($idsede).','.
             ' numero_esterno='.prepare($numero_esterno).','.
             ' note='.prepare($note).','.
+            ' note_aggiuntive='.prepare($note_aggiuntive).','.
             ' idconto='.prepare($idconto).','.
             ' idrivalsainps='.prepare($idrivalsainps).','.
             ' idritenutaacconto='.prepare($idritenutaacconto).','.

@@ -145,7 +145,7 @@ if (!empty($rs)) {
         echo '
         <td class="text-center">';
 
-        if ($records[0]['stato'] != 'Evaso' && empty($r['sconto_globale'])) {
+        if ( $records[0]['flag_completato'] == 0 && empty($r['sconto_globale']) ) {
             echo "
             <form action='".$rootdir.'/editor.php?id_module='.Modules::get($name)['id'].'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>

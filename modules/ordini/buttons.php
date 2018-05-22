@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (!in_array($records[0]['stato'], ['Evaso'])) {
+if (!in_array($records[0]['stato'], ['Evaso', 'Fatturato', 'Parzialmente fatturato'])) {
 
 echo '
 	<div class="dropdown">

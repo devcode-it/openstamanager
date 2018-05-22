@@ -177,5 +177,39 @@ UPDATE `zz_views` SET `query` = '(SELECT SUM(round(subtotale,2) - round(sconto,2
 -- Fix arrotondamenti per fatture di acquisto
 UPDATE `zz_views` SET `query` = '(SELECT SUM(round(subtotale,2) - round(sconto,2) + round(iva,2) + round(rivalsainps,2) - round(ritenutaacconto,2)) FROM co_righe_documenti WHERE co_righe_documenti.iddocumento=co_documenti.id GROUP BY iddocumento ) + round(bollo,2) + round(iva_rivalsainps,2)' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND name = 'Totale';
 
+-- Aggiunta impostiazioni per cambio sato automatici
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'Cambia automaticamente stato ddt fatturati', '1', 'boolean', '1', 'Ddt');
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'Cambia automaticamente stato ordini fatturati', '1', 'boolean', '1', 'Ordini');
 
 
+-- Aggiungo stato parzialmente evaso
+INSERT INTO `dt_statiddt` (`id`, `descrizione`, `icona`, `completato`) VALUES (NULL, 'Parzialmente evaso', 'fa fa-clock-o text-info', '0');
+
+-- Flag completato per disabilitare la modifica dei campi nei ddt
+ALTER TABLE `dt_statiddt` ADD `completato` TINYINT(1) NOT NULL AFTER `icona`;
+UPDATE `dt_statiddt` SET `completato` = '1' WHERE `dt_statiddt`.`descrizione` IN( 'Fatturato', 'Parzialmente fatturato', 'Evaso', 'Parzialmente evaso' );
+
+-- Modifico le icone degli stati ddt
+UPDATE `dt_statiddt` SET `icona` = 'fa fa-truck text-success' WHERE `dt_statiddt`.`descrizione` = 'Evaso';
+UPDATE `dt_statiddt` SET `icona` = 'fa fa-truck text-warning' WHERE `dt_statiddt`.`descrizione` = 'Parzialmente evaso';
+UPDATE `dt_statiddt` SET `icona` = 'fa fa-file-text-o text-success' WHERE `dt_statiddt`.`descrizione` = 'Fatturato';
+UPDATE `dt_statiddt` SET `icona` = 'fa fa-file-text-o text-warning' WHERE `dt_statiddt`.`descrizione` = 'Parzialmente fatturato';
+
+-- Modifico gli stati dell'ordine
+UPDATE `or_statiordine` SET `descrizione` = 'Bozza' WHERE `or_statiordine`.`descizione` = 'Non evaso';
+
+-- Modifico le icone degli stati ordini
+UPDATE `or_statiordine` SET `icona` = 'fa fa-truck text-success' WHERE `or_statiordine`.`descrizione` = 'Evaso';
+
+-- Inserisco due nuovi stati ordine
+INSERT INTO `or_statiordine` (`id`, `descrizione`, `annullato`, `icona`) VALUES
+(NULL, 'Parzialmente fatturato', 0, 'fa fa-file-text-o text-warning'),
+(NULL, 'Fatturato', 0, 'fa fa-file-text-o text-success');
+
+-- Flag completato per disabilitare la modifica dei campi negli ordini
+ALTER TABLE `or_statiordine` ADD `completato` TINYINT(1) NOT NULL AFTER `icona`;
+UPDATE `or_statiordine` SET `completato` = '1' WHERE `or_statiordine`.`id` IN( 2, 3, 4, 5 );
+
+-- Campi per note aggiuntive in ddt e ordini
+ALTER TABLE `or_ordini` ADD `note_aggiuntive` TEXT NOT NULL AFTER `note`;
+ALTER TABLE `dt_ddt` ADD `note_aggiuntive` TEXT NOT NULL AFTER `note`;

@@ -101,7 +101,7 @@ if (!empty($rs)) {
         if ($module_name=='Fatture di vendita' || $module_name == 'Fatture di acquisto'){
             echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare(Modules::get($module_name)['id']).' ORDER BY name", "value": "'.Modules::get($module_name)['id_segment'].'" ]}
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare(Modules::get($module_name)['id']).' ORDER BY name", "value": "'.$_SESSION['m'.Modules::get($module_name)['id']]['id_segment'].'" ]}
         </div>';
         }
 

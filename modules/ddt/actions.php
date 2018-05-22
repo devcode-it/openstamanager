@@ -56,6 +56,7 @@ switch (post('op')) {
             $data = post('data');
             $idanagrafica = post('idanagrafica');
             $note = post('note');
+            $note_aggiuntive = post('note_aggiuntive');
             $idstatoddt = post('idstatoddt');
             $idstatoddt = post('idstatoddt');
             $idcausalet = post('idcausalet');
@@ -95,6 +96,7 @@ switch (post('op')) {
                 ' idpagamento='.prepare($idpagamento).','.
                 ' numero_esterno='.prepare($numero_esterno).','.
                 ' note='.prepare($note).','.
+                ' note_aggiuntive='.prepare($note_aggiuntive).','.
                 ' idconto='.prepare($idconto).','.
                 ' idanagrafica='.prepare($idanagrafica).','.
                 ' idsede='.prepare($idsede).','.
@@ -490,7 +492,7 @@ switch (post('op')) {
 }
 
 // Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase
-if (!empty($id_record)) {
+if (!empty($id_record) && get_var('Cambia automaticamente stato ordini fatturati')) {
     $rs = $dbo->fetchArray('SELECT idordine FROM dt_righe_ddt WHERE idddt='.prepare($id_record));
 
     for ($i = 0; $i < sizeof($rs); ++$i) {

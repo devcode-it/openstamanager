@@ -1446,7 +1446,7 @@ switch (post('op')) {
 }
 
 // Aggiornamento stato dei ddt presenti in questa fattura in base alle quantità totali evase
-if (!empty($id_record)) {
+if (!empty($id_record) && get_var('Cambia automaticamente stato ddt fatturati')) {
     $rs = $dbo->fetchArray('SELECT idddt FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
 
     for ($i = 0; $i < sizeof($rs); ++$i) {
@@ -1455,7 +1455,7 @@ if (!empty($id_record)) {
 }
 
 // Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase
-if (!empty($id_record)) {
+if (!empty($id_record) && get_var('Cambia automaticamente stato ordini fatturati')) {
     $rs = $dbo->fetchArray('SELECT idordine FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
 
     for ($i = 0; $i < sizeof($rs); ++$i) {

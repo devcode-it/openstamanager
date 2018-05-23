@@ -271,6 +271,15 @@ switch (post('op')) {
 					add_movimento_magazzino($rs_articolo['idarticolo'], -force_decimal($rs_articolo['qta']), ['idautomezzo' => $rs_articolo['idautomezzo'], 'idintervento' => $id_record]);
 				}
 				
+            }else{
+                $dbo->insert('co_righe_contratti', [
+                    'idcontratto' => $idcontratto,
+                    'idintervento' => $id_record,
+                    'idtipointervento' => $idtipointervento,
+                    'data_richiesta' => $data_richiesta,
+                    'richiesta' => $richiesta,
+                    'idsede' => $idsede ?: 0,
+                ]);
             }
         }
 

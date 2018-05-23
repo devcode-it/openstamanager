@@ -8,6 +8,8 @@ if (!empty($id_plugin)) {
 
     $directory = '/plugins/'.$info['directory'];
     $permesso = $info['idmodule_to'];
+	$id_module = $info['idmodule_to'];
+	
 } else {
     $info = Modules::get($id_module);
 
@@ -172,11 +174,12 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
                     'nome' => $nome,
                     'filename' => $filename,
                     'original' => $_FILES['blob']['name'],
-                    'id_module' => $id_module,
+                    'id_module' => !empty($id_module) ? $id_module : null,
                     'id_record' => $id_record,
                     'id_plugin' => !empty($id_plugin) ? $id_plugin : null,
                 ]);
-
+				
+			
                 $_SESSION['infos'][] = tr('File caricato correttamente!');
             } else {
                 $_SESSION['errors'][] = tr('Errore durante il caricamento del file!');

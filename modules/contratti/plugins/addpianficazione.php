@@ -43,6 +43,8 @@ if (!empty($get['idcontratto_riga'])){
 (empty($idcontratto_riga)) ? $idcontratto_riga = $dbo->fetchArray('SELECT MAX(id) AS max_idcontratto_riga  FROM `co_righe_contratti`')[0]['max_idcontratto_riga'] : '';
 (empty($idcontratto_riga)) ? $idcontratto_riga = 1 : '';
 
+
+
 //orari inizio fine interventi (8h standard)
 $orario_inizio = '09:00';
 $orario_fine = (!empty($tempo_standard)) ? date('H:i', strtotime($orario_inizio) + ((60 * 60 ) * $tempo_standard)) : '17:00'; 
@@ -98,7 +100,7 @@ echo '
 
 			</div>';
 	
-	
+
 ?>
 	
 				<!-- ARTICOLI -->
@@ -146,7 +148,7 @@ echo '
 	
 echo '
 		
-	{( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "id_plugin": "'.$id_plugin.'", "ajax":"true", '.((!empty($readonly)) ? '"readonly":"true"' : '"readonly":"false"' ). ' )}
+	{( "name": "filelist_and_upload", "id_record": "'.$idcontratto_riga.'", "id_plugin": "'.$id_plugin.'", "ajax":"true", '.((!empty($readonly)) ? '"readonly":"true"' : '"readonly":"false"' ). ' )}
 	
 	</div>
 </div>

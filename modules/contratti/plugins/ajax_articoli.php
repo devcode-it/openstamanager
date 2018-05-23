@@ -7,7 +7,8 @@ include_once $docroot.'/modules/articoli/modutil.php';
 //$query = 'SELECT *, (SELECT codice FROM mg_articoli WHERE id=mg_articoli_interventi.idarticolo) AS codice, mg_articoli_interventi.id AS idriga, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM in_interventi WHERE id=mg_articoli_interventi.idintervento) ) ) AS prc_guadagno FROM mg_articoli_interventi WHERE idintervento='.prepare($id_record).' '.Modules::getAdditionalsQuery('Magazzino');
 //$rs = $dbo->fetchArray($query);
 
-$idcontratto_riga = $get['idcontratto_riga'];
+if (!empty($get['idcontratto_riga']))
+	$idcontratto_riga = $get['idcontratto_riga'];
 
 $query = 'SELECT * FROM co_righe_contratti_articoli WHERE id_riga_contratto='.prepare($idcontratto_riga).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC';
 $rs = $dbo->fetchArray($query);

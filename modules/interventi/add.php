@@ -133,7 +133,7 @@ if (empty($new_codice)) {
 			<!-- RIGA 1 -->
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $idanagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Cliente", "data-heavy": 0 ]}
+					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $idanagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Cliente||<?php echo (empty($idanagrafica)) ? '' : 'disabled'; ?>", "data-heavy": 0 ]}
 				</div>
 
 				<div class="col-md-4">
@@ -156,7 +156,7 @@ if (empty($new_codice)) {
 				</div>
 
 				<div class="col-md-4" id='impianti'>
-                    {[ "type": "select", "label": "<?php echo tr('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto; ?>", "placeholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "impianti", "icon-after": "add|<?php echo Modules::get('MyImpianti')['id']; ?>|source=Attività", "data-heavy": 0 ]}
+                    {[ "type": "select", "label": "<?php echo tr('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto; ?>", "placeholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "impianti", "icon-after": "add|<?php echo Modules::get('MyImpianti')['id']; ?>|source=Attività|<?php echo (empty($idimpianto)) ? '' : 'disabled'; ?>", "data-heavy": 0 ]}
 				</div>
 			</div>
 
@@ -254,7 +254,6 @@ if (empty($new_codice)) {
 		$("#idcontratto").prop("disabled", true);
 		$("#idimpianti").prop("disabled", true);
 		$("#componenti").prop("disabled", true);
-        $("#impianti").find("button").prop("disabled", true);
 
         <?php
         if (!empty($idcontratto) && (!empty($idordineservizio) || !empty($idcontratto_riga))) {

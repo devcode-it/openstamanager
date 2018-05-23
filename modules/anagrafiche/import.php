@@ -12,7 +12,9 @@ switch (post('op')) {
 			array('Codice','Ragione sociale','Partita IVA','Nazione','Indirizzo','CAP','Città','Provincia','Telefono','Fax','Cellulare','Email','IBAN','Note','Tipologia'),
 			array('00001','Cliente','12345678910','ITALIA','Via Giuseppe Mazzini, 123','12345','Este','PD','786 543 21','123 456 78','321 123 456 78','email@cliente.it','IT60 X054 2811 1010 0000 0123 456','Anagrafica di esempio','Cliente'),
 		);
-			
+		
+		directory('../../files/'.$module);
+		
 		$fp = fopen('../../files/'.$module.'/'.$module.'.csv', 'w');
 
 		foreach ($list as $fields) {

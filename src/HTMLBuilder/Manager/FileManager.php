@@ -72,7 +72,7 @@ $result .= '
 				
 				
 				//Anteprime supportate dal browser
-				$extension = end((explode('.', $r['original'])));
+				$extension = strtolower(end((explode('.', $r['original']))));
 				$supported_extensions = ['pdf','jpg','png','gif','jpeg','bmp'];
 				if ( in_array($extension, $supported_extensions)){
 					

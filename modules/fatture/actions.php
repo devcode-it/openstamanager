@@ -598,7 +598,7 @@ switch (post('op')) {
 
             if (!empty($post['import'])) {
                 // Replicazione delle righe del preventivo sul documento
-                $righe = $dbo->fetchArray('SELECT idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto FROM co_righe_preventivi WHERE idpreventivo='.prepare($idpreventivo));
+                $righe = $dbo->fetchArray('SELECT idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, IFNULL( (SELECT mg_articoli.abilita_serial FROM mg_articoli WHERE mg_articoli.id=co_righe_preventivi.idarticolo), 0 ) AS abilita_serial FROM co_righe_preventivi WHERE idpreventivo='.prepare($idpreventivo));
                 foreach ($righe as $key => $riga) {
                     $dbo->insert('co_righe_documenti', [
                         'iddocumento' => $id_record,
@@ -621,6 +621,7 @@ switch (post('op')) {
                         'ritenutaacconto' => $ritenutaacconto,
                         'idrivalsainps' => get_var('Percentuale rivalsa INPS'),
                         'rivalsainps' => $rivalsainps,
+                        'abilita_serial' => $riga['abilita_serial'],
                         'calcolo_ritenutaacconto' => get_var("Metodologia calcolo ritenuta d'acconto predefinito"),
                     ]);
 

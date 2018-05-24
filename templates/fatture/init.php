@@ -64,6 +64,8 @@ if (!empty($rsd[0]['provincia'])) {
     $destinazione .= ' ('.$rsd[0]['provincia'].')';
 }
 
+$id_sede = 0;
+
 // Sostituzioni specifiche
 $custom = [
     'tipo_doc' => Stringy\Stringy::create($tipo_doc)->toUpperCase(),

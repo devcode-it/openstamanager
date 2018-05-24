@@ -63,8 +63,9 @@ if (!empty($rsd[0]['citta'])) {
 if (!empty($rsd[0]['provincia'])) {
     $destinazione .= ' ('.$rsd[0]['provincia'].')';
 }
+
 $id_sede = 0;
-$rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale FROM an_sedi WHERE idanagrafica='.prepare($id_cliente).(!empty($records[0]['idsede']) ? ' AND id='.prepare($records[0]['idsede']) : ''));
+
 // Sostituzioni specifiche
 $custom = [
     'tipo_doc' => Stringy\Stringy::create($tipo_doc)->toUpperCase(),

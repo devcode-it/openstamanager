@@ -9,6 +9,13 @@ $tipodoc = $rs[0]['descrizione'];
 $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 $_SESSION['superselect']['ddt'] = $dir;
 
+
+if ($dir == 'entrata') {
+	$conto = 'vendite';
+} else {
+	$conto = 'acquisti';
+}
+
 ?>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
@@ -131,19 +138,6 @@ $_SESSION['superselect']['ddt'] = $dir;
 			<div class="row">
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Tipo fattura'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, descrizione FROM co_tipidocumento WHERE dir='<?php echo $dir; ?>'", "value": "$idtipodocumento$" ]}
-				</div>
-
-				<div class="col-md-3">
-					<?php
-                    if ($dir == 'entrata') {
-                        $ajaxsource = 'conti-vendite';
-						$conto = 'vendite';
-                    } else {
-                        $ajaxsource = 'conti-acquisti';
-						$conto = 'acquisti';
-                    }
-                    ?>
-					{[ "type": "select", "label": "<?php echo tr('Conto'); ?>", "name": "idconto", "required": 1, "value": "$idconto$", "ajax-source": "<?php echo $ajaxsource; ?>" ]}
 				</div>
 
 				<div class="col-md-3">

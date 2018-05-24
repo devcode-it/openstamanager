@@ -45,9 +45,12 @@ $fattura_accompagnatoria = ($records[0]['tipo_doc'] == 'Fattura accompagnatoria 
 $tipo_doc = ($fattura_accompagnatoria) ? 'Fattura accompagnatoria di vendita' : $tipo_doc;
 
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
-$rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale FROM an_sedi WHERE idanagrafica='.prepare($id_cliente).(!empty($records[0]['idsede']) ? ' AND id='.prepare($records[0]['idsede']) : ''));
+$rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale FROM an_sedi WHERE idanagrafica='.prepare($id_cliente).(!empty($records[0]['idsede']) ? ' AND id='.prepare($records[0]['idsede']) : ''));
 
 $destinazione = '';
+if (!empty($rsd[0]['nomesede'])) {
+    $destinazione .= $rsd[0]['nomesede'].'<br/>';
+}
 if (!empty($rsd[0]['indirizzo'])) {
     $destinazione .= $rsd[0]['indirizzo'].'<br/>';
 }

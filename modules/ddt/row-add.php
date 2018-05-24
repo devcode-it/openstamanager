@@ -6,10 +6,24 @@ include_once __DIR__.'/../../core.php';
 $rs = $dbo->fetchArray('SELECT * FROM dt_ddt WHERE id='.prepare($id_record));
 $idanagrafica = $rs[0]['idanagrafica'];
 
+// Leggo il conto dall'ultima riga inserita
+$rs = $dbo->fetchArray('SELECT idconto FROM dt_righe_ddt WHERE idddt='.prepare($id_record).' ORDER BY id DESC LIMIT 0,1');
+$idconto = $rs[0]['idconto'];
+
 if ($module['name'] == 'Ddt di vendita') {
     $dir = 'entrata';
+    
+    // Se non ho letto un conto dall'ultima riga inserita, lo leggo dalle impostazioni
+    if (empty($idconto )) {
+        $idconto = get_var('Conto predefinito fatture di vendita');
+    }
 } else {
     $dir = 'uscita';
+    
+    // Se non ho letto un conto dall'ultima riga inserita, lo leggo dalle impostazioni
+    if (empty($idconto )) {
+        $idconto = get_var('Conto predefinito fatture di acquisto');
+    }
 }
 
 $_SESSION['superselect']['dir'] = $dir;

@@ -219,3 +219,7 @@ UPDATE `zz_files` SET `id_plugin` = NULL WHERE `id_plugin` = 0;
 -- Fix id_module (zz_files)
 ALTER TABLE `zz_files` CHANGE `id_module` `id_module` INT(11) NULL;
 UPDATE `zz_files` SET `id_module` = NULL WHERE `id_module` = 0;
+
+-- Totali fatture, sommabile
+UPDATE `zz_views` SET `summable` = '1' WHERE  `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND name = 'Totale';
+UPDATE `zz_views` SET `summable` = '1' WHERE  `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND name = 'Totale';

@@ -79,8 +79,12 @@ switch (post('op')) {
                 $orario_fine = post('orario_fine')[$idriga];
 
                 $km = post('km')[$idriga];
-                $ore = post('ore')[$idriga];
-
+                //$ore = post('ore')[$idriga];
+				//per sicurezza ricalcolo ore lavorate da php
+				$diff = date_diff(date_create($orario_inizio), date_create($orario_fine));
+				$ore = ($diff->h + ($diff->i / 60));
+				
+				
                 // Lettura tariffe in base al tipo di intervento ed al tecnico
                 $idtipointervento_tecnico = $post['idtipointerventot'][$idriga];
                 $rs = $dbo->fetchArray('SELECT * FROM in_interventi_tecnici WHERE idtecnico='.prepare($post['idtecnico'][$idriga]).' AND idintervento='.prepare($id_record));

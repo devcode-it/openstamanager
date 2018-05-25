@@ -223,3 +223,18 @@ UPDATE `zz_files` SET `id_module` = NULL WHERE `id_module` = 0;
 -- Totali fatture, sommabile
 UPDATE `zz_views` SET `summable` = '1' WHERE  `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND name = 'Totale';
 UPDATE `zz_views` SET `summable` = '1' WHERE  `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND name = 'Totale';
+
+-- Fix serial, lotti, altro a 0 o null
+DELETE FROM `mg_prodotti` WHERE (`serial` IS NULL OR `serial`='0') AND (`lotto` IS NULL OR `lotto`='0') AND (`altro` IS NULL OR `altro`='0');
+
+UPDATE `mg_articoli` SET `abilita_serial` = 1 WHERE `id` IN (SELECT `id_articolo` FROM `mg_prodotti`);
+UPDATE `co_righe_documenti` SET `abilita_serial` = 1 WHERE `idarticolo` IN (SELECT `id_articolo` FROM `mg_prodotti`);
+UPDATE `dt_righe_ddt` SET `abilita_serial` = 1 WHERE `idarticolo` IN (SELECT `id_articolo` FROM `mg_prodotti`);
+UPDATE `mg_articoli_interventi` SET `abilita_serial` = 1 WHERE `idarticolo` IN (SELECT `id_articolo` FROM `mg_prodotti`);
+UPDATE `or_righe_ordini` SET `abilita_serial` = 1 WHERE `idarticolo` IN (SELECT `id_articolo` FROM `mg_prodotti`);
+
+UPDATE `mg_articoli` SET `abilita_serial` = 0 WHERE `id` NOT IN (SELECT `id_articolo` FROM `mg_prodotti`);
+UPDATE `co_righe_documenti` SET `abilita_serial` = 0 WHERE `idarticolo` NOT IN (SELECT `id_articolo` FROM `mg_prodotti`);
+UPDATE `dt_righe_ddt` SET `abilita_serial` = 0 WHERE `idarticolo` NOT IN (SELECT `id_articolo` FROM `mg_prodotti`);
+UPDATE `mg_articoli_interventi` SET `abilita_serial` = 0 WHERE `idarticolo` NOT IN (SELECT `id_articolo` FROM `mg_prodotti`);
+UPDATE `or_righe_ordini` SET `abilita_serial` = 0 WHERE `idarticolo` NOT IN (SELECT `id_articolo` FROM `mg_prodotti`);

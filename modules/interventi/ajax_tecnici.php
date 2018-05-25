@@ -292,6 +292,19 @@ if (!$flag_completato) {
 
 <script type="text/javascript">
     $(document).ready(function(){
+
+        <?php 
+        if (count($rs2)==0) {
+            echo '$(".btn-details").attr("disabled", true);';
+            echo '$(".btn-details").addClass("disabled");';
+            echo '$("#showall_dettagli").removeClass("hide");';
+            echo '$("#dontshowall_dettagli").addClass("hide");';
+        }else{
+            echo '$(".btn-details").attr("disabled", false);';
+            echo '$(".btn-details").removeClass("disabled");';      
+        }
+        ?>
+        
         $('.orari').on("dp.change", function(){
             idriga = $(this).attr('id').split('_')[1];
 

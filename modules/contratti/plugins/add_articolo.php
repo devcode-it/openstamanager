@@ -13,7 +13,6 @@ for ($i = 0; $i < count($rs); ++$i) {
 $idriga = get('idriga');
 //$idautomezzo = (get('idautomezzo') == 'undefined') ? '' : get('idautomezzo');
 
-//$_SESSION['superselect']['idintervento'] = get('id_record');
 
 // Lettura idanagrafica cliente e percentuale di sconto/rincaro in base al listino
 $rs = $dbo->fetchArray('SELECT idanagrafica FROM co_contratti WHERE id='.prepare($id_record));

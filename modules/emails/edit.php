@@ -71,7 +71,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($records[0]['id_module']).'" ]}
+                    {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($records[0]['id_module']).' AND enabled=1" ]}
                 </div>
             </div>';
 

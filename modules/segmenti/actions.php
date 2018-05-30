@@ -15,13 +15,13 @@ switch (post('op')) {
             $dbo->query('UPDATE zz_segments SET predefined = 0 WHERE id_module = '.prepare($id_module));
         }
 
-        $dbo->update('an_anagrafiche', [
+        $dbo->update('zz_segments', [
             'id_module' => post('module'),
             'name' => post('name'),
             'clause' => post('clause'),
             'pattern' => $pattern,
             'note' => post('note'),
-            'position' => post('pisition'),
+            'position' => post('position'),
             'predefined' => $predefined,
         ], ['id' => $id_record]);
 

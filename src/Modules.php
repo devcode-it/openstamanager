@@ -127,6 +127,7 @@ class Modules
     public static function getAdditionals($module)
     {
         $module = self::get($module);
+        $user = Auth::user();
 
         if (!isset(self::$additionals[$module])) {
             $database = Database::getConnection();

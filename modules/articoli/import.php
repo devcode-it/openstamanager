@@ -35,27 +35,47 @@ switch (post('op')) {
 				$qta =  force_decimal($data[$key]['qta']);
 				unset($data[$key]['qta']);
 				
+				$data[$key]['attivo'] = 1;
 				$data[$key]['prezzo_acquisto'] =  force_decimal($data[$key]['prezzo_acquisto']);
 				$data[$key]['prezzo_vendita'] =  force_decimal($data[$key]['prezzo_vendita']);
 				$data[$key]['peso_lordo'] =  force_decimal($data[$key]['peso_lordo']);
 				$data[$key]['volume'] =  force_decimal($data[$key]['volume']);
-				
+
 				
 				// Categorie
-				$rs = $dbo->select('mg_categorie', 'id', [
-					'nome' => $data[$key]['id_categoria'],
-				]);
-				
-			   if (empty($rs[0]['id'])) {
-					$dbo->insert('mg_categorie', [
+			   if (!empty($data[$key]['id_categoria'])){
+				   
+					$rs_cat = $dbo->select('mg_categorie', 'id', [
 						'nome' => $data[$key]['id_categoria'],
 					]);
-					$data[$key]['id_categoria'] = $dbo->lastInsertedID();
-				}else{
-					$data[$key]['id_categoria'] = $rs[0]['id'];
-				}
 					
+				   if (empty($rs_cat[0]['id'])) {
 				   
+						$dbo->insert('mg_categorie', [
+							'nome' => $data[$key]['id_categoria'],
+						]);
+						$data[$key]['id_categoria'] = $dbo->lastInsertedID();
+				  
+					}else{
+						$data[$key]['id_categoria'] = $rs_cat[0]['id'];
+					}
+				}
+			
+				// Um
+				if (!empty($data[$key]['um'])){
+					
+					$rs_um = $dbo->select('mg_unitamisura', 'id', [
+						'valore' => $data[$key]['um'],
+					]);
+					
+				   if (empty($rs_um[0]['id'])) {
+						$dbo->insert('mg_unitamisura', [
+							'valore' => $data[$key]['um'],
+						]);
+				   }
+				}
+				
+								
                 // Insert o update
                 $insert = true;
                 if (!empty($primary_key)) {
@@ -65,26 +85,23 @@ switch (post('op')) {
 
                     $insert = !in_array($data[$key][$primary_key], $rs[0]);
                 }
+			
 
                 // Insert
                 if ($insert) {
 					
-					
-					
+					$data[$key]['id_categoria'] = (empty ($data[$key]['id_categoria'])) ?  0 : $data[$key]['id_categoria'];
                     $dbo->insert('mg_articoli', $data[$key]);
-					
 					add_movimento_magazzino($dbo->lastInsertedID(), $qta, [], 'Movimento da import', date());
+					
                 }
-
                 // Update
                 else {
                     $dbo->update('mg_articoli', $data[$key], [$primary_key => $data[$key][$primary_key]]);
-					
 				   $rs = $dbo->select('mg_articoli', 'id', [
 						$primary_key => $data[$key][$primary_key],
 					]);
 					add_movimento_magazzino($rs[0]['id'], $qta, [], 'Movimento da import', date());
-						
                 }
 
                 unset($data[$key]);
@@ -110,22 +127,31 @@ return [
     ],
    [
         'field' => 'um',
-        'label' => 'Unità di misura',
+        'label' => 'Unit&agrave; di misura',
         'names' => [
             'Unità di misura',
             'Unità misura',
             'unità misura',
             'unità di misura',
+			'Unit` di misura',
+			'um',
         ],
-        'query' => 'SELECT valore as result FROM mg_unitamisura WHERE LOWER(valore) = LOWER(|value|)',
     ],
     [
         'field' => 'prezzo_acquisto',
         'label' => 'Prezzo acquisto',
+		'names' => [
+            'Prezzo Acquisto',
+            'prezzo acquisto',
+        ],
     ],
     [
         'field' => 'prezzo_vendita',
         'label' => 'Prezzo vendita',
+		'names' => [
+            'Prezzo Vendita',
+            'prezzo vendita',
+        ],
     ],
     [
         'field' => 'peso_lordo',

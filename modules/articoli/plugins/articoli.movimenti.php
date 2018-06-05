@@ -18,10 +18,10 @@ $qta_totale_attuale = $rst[0]['qta_totale_attuale'];
 
 if ( $rst[0]['row']>0){
 	echo '
-	<p>'.tr('Quantità calcolata dai movimenti').': <b>'.Translator::numberToLocale($qta_totale).' '.$records[0]['um'].'</b> <span  class=\'tip\' title=\''.tr('Quantità calcolata di tutti i movimenti registrati').'.\' ><i class="fa fa-question-circle-o"></i></span></p>';
+	<p>'.tr('Quantità calcolata dai movimenti').': <b>'.Translator::numberToLocale($qta_totale).' '.$records[0]['um'].'</b> <span  class=\'tip\' title=\''.tr('Quantità calcolata da tutti i movimenti registrati').'.\' ><i class="fa fa-question-circle-o"></i></span></p>';
 
 	echo '
-	<p>'.tr('Quantità calcolata attuale').': <b>'.Translator::numberToLocale($qta_totale_attuale).' '.$records[0]['um'].'</b> <span  class=\'tip\' title=\''.tr('Quantità calcolata dei movimenti registrati che hanno come data oggi o date trascorse').'.\' ><i class="fa fa-question-circle-o"></i></span></p>';
+	<p>'.tr('Quantità calcolata attuale').': <b>'.Translator::numberToLocale($qta_totale_attuale).' '.$records[0]['um'].'</b> <span  class=\'tip\' title=\''.tr('Quantità calcolata secondo i movimenti registrati con data oggi o date trascorse').'.\' ><i class="fa fa-question-circle-o"></i></span></p>';
 
 }
 

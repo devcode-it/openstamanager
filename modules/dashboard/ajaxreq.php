@@ -151,7 +151,7 @@ switch (get('op')) {
             foreach ($rsp as $r) {
                 if($r['mese']==$mese){
                     
-                    if(date('dmY', strtotime($r['data_richiesta']))<date('dmY')){
+                    if(date('Ymd', strtotime($r['data_richiesta']))<date('Ymd')){
                         $class = 'fc-event-danger';
                     }else{
                         $class = 'fc-event-primary';
@@ -165,7 +165,7 @@ switch (get('op')) {
             
         }
         else if($da_pianificare==0){
-            echo '<br><small class="help-block">Non ci sono interventi da pianificare per questo mese</small>';
+            echo '<br><small class="help-block">'.tr('Non ci sono interventi da pianificare per questo mese').'</small>';
         }
         
         break;

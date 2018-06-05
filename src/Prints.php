@@ -166,7 +166,7 @@ class Prints
         return !self::isOldStandard($print);
     }
 
-    protected static function oldLoader($id_print, $id_record, $filename = null)
+    protected static function oldLoader($id_print, $id_record, $filename = null, $format = 'A4')
     {
         $infos = self::get($id_print);
         $options = self::readOptions($infos['options']);
@@ -215,7 +215,7 @@ class Prints
         $filename = !empty($filename) ? $filename : sanitizeFilename($report_name);
         $title = basename($filename);
 
-        $html2pdf = new Spipu\Html2Pdf\Html2Pdf($orientation, 'A4', 'it', true, 'UTF-8');
+        $html2pdf = new Spipu\Html2Pdf\Html2Pdf($orientation, $format, 'it', true, 'UTF-8');
 
         $html2pdf->writeHTML($report);
         $html2pdf->pdf->setTitle($title);

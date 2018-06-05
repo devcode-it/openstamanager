@@ -47,7 +47,7 @@ $idstatointervento = $rss[0]['idstatointervento'];
 $rss = $dbo->fetchArray('SELECT completato AS flag_completato FROM in_statiintervento WHERE idstatointervento='.prepare($idstatointervento));
 $flag_completato = $rss[0]['flag_completato'];
 
-$query = 'SELECT * FROM an_anagrafiche JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE deleted=0 AND idintervento='.prepare($id_record)." AND idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica = (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = 'Tecnico')) ORDER BY ragione_sociale ASC, in_interventi_tecnici.orario_inizio ASC, in_interventi_tecnici.id ASC";
+$query = 'SELECT * FROM an_anagrafiche JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE idintervento='.prepare($id_record)." AND idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica = (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = 'Tecnico')) ORDER BY ragione_sociale ASC, in_interventi_tecnici.orario_inizio ASC, in_interventi_tecnici.id ASC";
 $rs2 = $dbo->fetchArray($query);
 $prev_tecnico = '';
 
@@ -69,7 +69,7 @@ if (!empty($rs2)) {
 <div class="table-responsive">
     <table class="table table-striped table-hover table-condensed">
         <tr>
-            <th><i class="fa fa-user"></i> '.$r['ragione_sociale'].'</th>
+            <th><i class="fa fa-user"></i> '.$r['ragione_sociale'].' '.(($r['deleted']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '').'</th>
             <th>'.tr('Orario inizio').'</th>
             <th>'.tr('Orario fine').'</th>
             <th>'.tr('Ore').'</th>

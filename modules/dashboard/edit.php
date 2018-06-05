@@ -181,8 +181,8 @@ for ($i = 0; $i < count($rs); ++$i) {
     $allchecktecnici .= "session_set_array( 'dashboard,idtecnici', '".$rs[$i]['id']."', 0 ); ";
 }
 
-// TECNICI ELIMINATI
-$rs = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE deleted=1 AND descrizione='Tecnico' ORDER BY ragione_sociale ASC");
+// TECNICI ELIMINATI CON ALMENO 1 INTERVENTO
+$rs = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE deleted=1 AND descrizione='Tecnico' ORDER BY ragione_sociale ASC");
 $total = count($rs);
 
 $totale_tecnici += $total;
@@ -303,13 +303,13 @@ if (!empty($rsp)) {
     <div id="external-events" class="hidden-xs hidden-sm col-md-2">
         <h4>'.tr('Promemoria contratti da pianificare').'</h4>';
 
-    // Controllo per pinanificazioni per mesi precedenti
-    $qp_old = "SELECT co_righe_contratti.id, idcontratto, richiesta, DATE_FORMAT( data_richiesta, '%m-%Y') AS mese, data_richiesta, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento FROM (co_righe_contratti INNER JOIN co_contratti ON co_righe_contratti.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL AND  DATE_FORMAT( data_richiesta, '%d%m%Y')<DATE_FORMAT( NOW(), '%d%m%Y')
-    UNION SELECT co_ordiniservizio.id, idcontratto, '', data_scadenza, DATE_FORMAT( data_scadenza, '%m-%Y') AS mese, an_anagrafiche.ragione_sociale, 'ordine' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento='ODS') AS tipointervento FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL AND  DATE_FORMAT( data_scadenza, '%d%m%Y')<DATE_FORMAT( NOW(), '%d%m%Y') ORDER BY data_richiesta ASC";
-    $rsp_old = $dbo->fetchArray($qp_old);
+    // Controllo pianificazioni mesi precedenti
+    $qp_old = "SELECT co_righe_contratti.id FROM co_righe_contratti INNER JOIN co_contratti ON co_righe_contratti.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) AND idintervento IS NULL AND UNIX_TIMESTAMP(co_righe_contratti.data_richiesta)+86400<UNIX_TIMESTAMP(NOW())
+    UNION SELECT co_ordiniservizio.id FROM co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) AND idintervento IS NULL AND UNIX_TIMESTAMP(co_ordiniservizio.data_scadenza)+86400<UNIX_TIMESTAMP(NOW())";
+    $rsp_old = $dbo->fetchNum($qp_old);
 
-    if (sizeof($rsp_old) > 0) {
-        echo '<small class="text-danger"><i class="fa fa-exclamation-triangle"></i>'.tr('Ci sono alcuni interventi da pianificare scaduti.').'</small><br>';
+    if ($rsp_old > 0) {
+        echo '<div class="alert alert-warning alert-dismissible" role="alert"><i class="fa fa-exclamation-triangle"></i><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> '.tr('Ci sono '.$rsp_old.' interventi da pianificare scaduti.').'</div>';
     }
 
     $mesi = [1 => 'Gennaio', 2 => 'Febbraio', 3 => 'Marzo', 4 => 'Aprile', 5 => 'Maggio', 6 => 'Giugno', 7 => 'Luglio', 8 => 'Agosto', 9 => 'Settembre', 10 => 'Ottobre', 11 => 'Novembre', 12 => 'Dicembre'];
@@ -331,7 +331,6 @@ if (!empty($rsp)) {
     // Ordino l'array per mese
     ksort($mesi_interventi);
 
-    echo '<br>';
     echo '<select class="superselect" id="select-intreventi-pianificare">';
 
     foreach ($mesi_interventi as $key => $mese_intervento) {
@@ -377,8 +376,10 @@ if ($vista == 'mese') {
         // Seleziono il mese corrente per gli interventi da pianificare
         var date = new Date();
         var mese;
-        date.setDate(date.getDate() + 20);
-        mese = ('0' + (date.getMonth())).slice(-2) + date.getFullYear();
+        date.setDate(date.getDate());
+
+        //Note: January is 0, February is 1, and so on.
+        mese = ('0' + (date.getMonth()+1)).slice(-2) + date.getFullYear();
 
         $('#select-intreventi-pianificare option[value='+mese+']').attr('selected','selected').trigger('change');
 

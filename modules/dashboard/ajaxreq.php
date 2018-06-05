@@ -164,8 +164,7 @@ switch (get('op')) {
             }
             
         }
-        
-        if($da_pianificare==0){
+        else if($da_pianificare==0){
             echo '<br><small class="help-block">Non ci sono interventi da pianificare per questo mese</small>';
         }
         

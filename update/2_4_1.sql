@@ -238,3 +238,13 @@ UPDATE `co_righe_documenti` SET `abilita_serial` = 0 WHERE `idarticolo` NOT IN (
 UPDATE `dt_righe_ddt` SET `abilita_serial` = 0 WHERE `idarticolo` NOT IN (SELECT `id_articolo` FROM `mg_prodotti`);
 UPDATE `mg_articoli_interventi` SET `abilita_serial` = 0 WHERE `idarticolo` NOT IN (SELECT `id_articolo` FROM `mg_prodotti`);
 UPDATE `or_righe_ordini` SET `abilita_serial` = 0 WHERE `idarticolo` NOT IN (SELECT `id_articolo` FROM `mg_prodotti`);
+
+-- Aggiungo colonna idanagrafica per i preventivi (colonna necessaria per i permessi)
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,  `format`, `enabled`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'idanagrafica', 'co_preventivi.idanagrafica', 0, 0, 0, 0, 0, 1);
+
+INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
+(1, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Preventivi') AND name='idanagrafica' )),
+(2, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Preventivi') AND name='idanagrafica' )),
+(3, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Preventivi') AND name='idanagrafica' )),
+(4, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Preventivi') AND name='idanagrafica' ));

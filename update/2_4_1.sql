@@ -268,3 +268,6 @@ DELETE FROM `zz_settings` WHERE `nome` = 'Stampa i prezzi sui preventivi';
 
 -- Lo stato 'In programmazione' non può essere eliminato/modificato
 UPDATE `in_statiintervento` SET `can_delete` = '0' WHERE `in_statiintervento`.`idstatointervento` = 'WIP';
+
+-- Importo per scadenzario, summable
+UPDATE `zz_views` SET `summable` = '1' WHERE  `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND name = 'Importo';

@@ -65,7 +65,7 @@ for ($i = 0; $i < count($rs); ++$i) {
         }
     }
 
-    $checks .= "<li><input type='checkbox' id='idstato_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"$.when ( session_set_array( 'dashboard,idstatiintervento', '".$rs[$i]['id']."' ) ).promise().then(function( ){ $('#calendar').fullCalendar('refetchEvents'); });  update_counter( 'idstati_count', $('#idstati_ul').find('input:checked').length ); \"> <label for='idstato_".$rs[$i]['id']."'> <span class='badge' style=\"color:#333; background:".$rs[$i]['colore'].';">'.$rs[$i]['descrizione']."</span></label></li>\n";
+    $checks .= "<li><input type='checkbox' id='idstato_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"$.when ( session_set_array( 'dashboard,idstatiintervento', '".$rs[$i]['id']."' ) ).promise().then(function( ){ $('#calendar').fullCalendar('refetchEvents'); });  update_counter( 'idstati_count', $('#idstati_ul').find('input:checked').length ); \"> <label for='idstato_".$rs[$i]['id']."'> <span class='badge' style=\"color:".color_inverse($rs[$i]['colore'])."; background:".$rs[$i]['colore'].";\">".$rs[$i]['descrizione']."</span></label></li>\n";
 
     $allchecksstati .= "session_set_array( 'dashboard,idstatiintervento', '".$rs[$i]['id']."', 0 ); ";
 }
@@ -158,7 +158,7 @@ $count = 0;
 $total = 0;
 $totale_tecnici = 0; // conteggia tecnici eliminati e non
 
-$rs = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica
+$rs = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale, colore FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica
 LEFT OUTER JOIN in_interventi_tecnici ON  in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica  INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id
 WHERE an_anagrafiche.deleted=0 AND an_tipianagrafiche.descrizione='Tecnico' ".Modules::getAdditionalsQuery('Interventi').' GROUP BY an_anagrafiche.idanagrafica ORDER BY ragione_sociale ASC');
 $total = count($rs);
@@ -176,7 +176,7 @@ for ($i = 0; $i < count($rs); ++$i) {
         }
     }
 
-    $checks .= "<li><input type='checkbox' id='tech_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"$.when ( session_set_array( 'dashboard,idtecnici', '".$rs[$i]['id']."' ) ).promise().then(function( ){ $('#calendar').fullCalendar('refetchEvents'); }); update_counter( 'idtecnici_count', $('#idtecnici_ul').find('input:checked').length );  \"> <label for='tech_".$rs[$i]['id']."'> ".$rs[$i]['ragione_sociale']."</label></li>\n";
+    $checks .= "<li><input type='checkbox' id='tech_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"$.when ( session_set_array( 'dashboard,idtecnici', '".$rs[$i]['id']."' ) ).promise().then(function( ){ $('#calendar').fullCalendar('refetchEvents'); }); update_counter( 'idtecnici_count', $('#idtecnici_ul').find('input:checked').length );  \"> <label for='tech_".$rs[$i]['id']."'><span class='badge' style=\"color:#000; background:transparent; border: 1px solid ".$rs[$i]['colore'].";\">".$rs[$i]['ragione_sociale']."</span></label></li>\n";
 
     $allchecktecnici .= "session_set_array( 'dashboard,idtecnici', '".$rs[$i]['id']."', 0 ); ";
 }

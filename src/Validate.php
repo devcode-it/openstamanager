@@ -68,19 +68,37 @@ class Validate
         ];*/
 
         if ((!empty($email)) && (!empty($access_key))) {
-            $ch = curl_init();
+
+            if(!function_exists("curl_init")) die("cURL extension is not installed");
 
             $qs = '&email='.urlencode($email);
             $qs .= "&smtp=$smtp";
             $qs .= "&format=$format";
+            $qs .= "&resource=check_email";
 
-            $url = "http://apilayer.net/api/check?access_key=$access_key".$qs;
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_HEADER, 0);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            $url = "https://services.osmcloud.it/api/?token=$access_key".$qs;
+            
+            $curl_options = array(
+                    CURLOPT_URL => $url,
+                    CURLOPT_HEADER => 0,
+                    CURLOPT_RETURNTRANSFER => TRUE,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_SSL_VERIFYPEER => 0,
+                    CURLOPT_FOLLOWLOCATION => TRUE,
+                    CURLOPT_ENCODING => 'gzip,deflate',
+            );
 
-            $data = json_decode(curl_exec($ch));
+            $ch = curl_init();
+            curl_setopt_array( $ch, $curl_options );
+            $output = curl_exec( $ch );
             curl_close($ch);
+
+            $data = json_decode($output,false);
+
+            //var_dump ($data);
+            //echo "format_valid: ".$data->format_valid;
+            //echo $url;
+            //exit;
 
             /*se la riposta è null verficando il formato, il record mx o il server smtp imposto la relativa proprietà dell'oggetto a 0*/
             if (($data->format_valid == null) && ($format)) {
@@ -103,10 +121,12 @@ class Validate
                 $data->mx_found = 0;
             */
             /* --- */
-
+            $data->smtp = $smtp;
+            
             $data->json_last_error = json_last_error();
             $data->json_last_error_msg = json_last_error_msg();
         }
+
 
         return $data;
     }

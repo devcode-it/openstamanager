@@ -6,12 +6,10 @@ switch (post('op')) {
     case 'update':
         $descrizione = post('descrizione');
         $colore = post('colore');
+		$completato = post('completato');
 
-        $query = 'UPDATE in_statiintervento SET colore='.prepare($colore).' WHERE idstatointervento='.prepare($id_record);
-        $dbo->query($query);
-
-        // Aggiorna descrizione
-        $query = 'UPDATE in_statiintervento SET descrizione='.prepare($descrizione).' WHERE idstatointervento='.prepare($id_record);
+        // Aggiorna
+        $query = 'UPDATE in_statiintervento SET descrizione='.prepare($descrizione).',  colore='.prepare($colore).', completato='.prepare($completato).' WHERE idstatointervento='.prepare($id_record);
         $dbo->query($query);
 
         $_SESSION['infos'][] = tr('Informazioni salvate correttamente.');

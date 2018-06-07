@@ -1,7 +1,13 @@
 <?php
 include_once __DIR__.'/../../core.php';
-?>
 
+if ($records[0]['can_delete']) {
+	$attr = '';
+}else{
+	$attr = "readonly";
+    echo '<div class="alert alert-warning">'.tr('Alcune impostazioni non possono essere modificate per questo stato intervento.').'</div>';
+}
+?>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">
@@ -13,7 +19,11 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$", "extra": "<?php echo $attr; ?>" ]}
+			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$", "extra": "" ]}
+		</div>
+		
+		  <div class="col-md-2">
+				{[ "type": "checkbox", "label": "<?php echo tr('Questo è uno stato completato'); ?>", "name": "completato", "value": "$completato$", "help": "<?php echo tr('Gli interventi che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "<?php echo $attr; ?>" ]}
 		</div>
 
 		<div class="col-md-2">
@@ -37,7 +47,6 @@ if ($records[0]['can_delete']) {
 		$('.colorpicker').colorpicker().on('changeColor', function(){
 			$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
 		});
-
 		$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
 	});
 </script>

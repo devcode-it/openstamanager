@@ -266,3 +266,5 @@ DELETE FROM `zz_settings` WHERE `nome` = 'Stampa i prezzi sui ddt';
 DELETE FROM `zz_settings` WHERE `nome` = 'Visualizza i costi sulle stampe degli interventi';
 DELETE FROM `zz_settings` WHERE `nome` = 'Stampa i prezzi sui preventivi';
 
+-- Lo stato 'In programmazione' non può essere eliminato/modificato
+UPDATE `in_statiintervento` SET `can_delete` = '0' WHERE `in_statiintervento`.`idstatointervento` = 'WIP';

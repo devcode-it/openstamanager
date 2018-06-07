@@ -4,11 +4,6 @@ include_once __DIR__.'/../../core.php';
 
 $module_name = 'Interventi';
 
-// ############mostro o nascondo i costi dell'intervento..#################
-// true o false
-$visualizza_costi = get_var('Visualizza i costi sulle stampe degli interventi');
-// #######################################################################
-
 // carica info ordine servizio
 $idintervento = save($_GET['idintervento']);
 $query = "SELECT *, (SELECT CONCAT_WS('-', codice, ragione_sociale ) FROM an_anagrafiche WHERE idanagrafica=(SELECT idtecnico FROM in_interventi_tecnici WHERE idintervento=co_ordiniservizio.idintervento LIMIT 0,1)) AS tecnico, (SELECT data FROM in_interventi WHERE id=co_ordiniservizio.idintervento) AS data_intervento FROM co_ordiniservizio WHERE idintervento=\"$idintervento\" ".Modules::getAdditionalsQuery('Interventi');

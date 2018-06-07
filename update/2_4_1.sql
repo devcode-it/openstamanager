@@ -249,14 +249,20 @@ INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
 (3, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Preventivi') AND name='idanagrafica' )),
 (4, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Preventivi') AND name='idanagrafica' ));
 
--- Stampa ordine con costi costi + default per invio email
+-- Fix name, title e order stampa ordine fornitore senza costi
 UPDATE `zz_prints` SET `name` = 'Ordine fornitore (senza costi)',  `title` = 'Ordine fornitore (senza costi)',  `order` = 1 WHERE `zz_prints`.`name` = 'Ordine fornitore' AND  options = '{"pricing":false}' AND `zz_prints`.`id_module` =  (SELECT id FROM zz_modules WHERE name='Ordini fornitore') ;
+-- Stampa ordine fornitore con costi costi
 INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `main`, `default`, `enabled`) VALUES (NULL, (SELECT id FROM zz_modules WHERE name='Ordini fornitore'), '1', 'Ordine fornitore', 'Ordine fornitore', 'ordini', 'idordine', '{"pricing":true}', 'fa fa-print', '', '', '0', '1', '1', '1');
--- default invio ordini al fornitore con i prezzi
+-- Default invio ordini al fornitore con i prezzi
 UPDATE `zz_email_print` SET `id_print` = (SELECT id FROM zz_prints WHERE name = 'Ordine fornitore') WHERE `zz_email_print`.`id_email` = (SELECT id FROM zz_emails WHERE id_module =  (SELECT id FROM zz_modules WHERE name='Ordini fornitore'));
 
 -- Ordino stampa ordine cliente senza costi
 UPDATE `zz_prints` SET `order` = 1 WHERE `zz_prints`.`name` = 'Ordine cliente (senza costi)' AND  options = '{"pricing":false}' AND `zz_prints`.`id_module` =  (SELECT id FROM zz_modules WHERE name='Ordini cliente');
 
-
+-- Rimuovo impostazioni non più utilizzate
+DELETE FROM `zz_settings` WHERE `nome` = 'Stampa i prezzi sugli ordini';
+DELETE FROM `zz_settings` WHERE `nome` = 'Stampa i prezzi sui contratti';
+DELETE FROM `zz_settings` WHERE `nome` = 'Stampa i prezzi sui ddt';
+DELETE FROM `zz_settings` WHERE `nome` = 'Visualizza i costi sulle stampe degli interventi';
+DELETE FROM `zz_settings` WHERE `nome` = 'Stampa i prezzi sui preventivi';
 

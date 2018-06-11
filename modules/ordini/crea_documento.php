@@ -5,58 +5,32 @@ include_once __DIR__.'/../../core.php';
 $module = Modules::get($id_module);
 
 $data = [
-    'ddt' => [
-        'table' => 'dt_ddt',
-        'rows' => 'dt_righe_ddt',
-        'id' => 'idddt',
-        'condition' => '(id_riga_documento IS NOT NULL)',
-    ],
-    'ord' => [
-        'table' => 'or_ordini',
-        'rows' => 'or_righe_ordini',
-        'id' => 'idordine',
-        'condition' => '(id_riga_ddt IS NOT NULL OR id_riga_documento IS NOT NULL)',
-    ],
+    'preventivo' => [
+        'table' => 'co_preventivi',
+        'rows' => 'co_righe_preventivi',
+        'id' => 'idpreventivo',
+        'condition' => '',
+    ]
 ];
 
 $documento = get('documento');
 
-if ($module['name'] == 'Ordini cliente' || $module['name'] == 'Ordini fornitore') {
-    $pos = 'ord';
-    $op = ($documento == 'ddt') ? 'ddt_da_ordine' : 'fattura_da_ordine';
+$pos = 'preventivo';
+$op = 'ordine_da_preventivo';
 
-    $head = tr('Ordine numero _NUM_');
-} else {
-    $pos = 'ddt';
-    $op = 'fattura_da_ddt';
+$head = tr('Preventivo numero _NUM_');
 
-    $head = tr('Ddt numero _NUM_');
-}
 
 $table = $data[$pos]['table'];
 $rows = $data[$pos]['rows'];
 $id = $data[$pos]['id'];
 $row = str_replace('id', 'id_riga_', $id);
 
-if ($module['name'] == 'Ordini cliente' || $module['name'] == 'Ddt di vendita') {
-    $dir = 'entrata';
-} else {
-    $dir = 'uscita';
-}
-
-if ($module['name'] == 'Ordini cliente') {
-    $module_name = ($documento == 'ddt') ? 'Ddt di vendita' : 'Fatture di vendita';
-} elseif ($module['name'] == 'Ordini fornitore') {
-    $module_name = ($documento == 'ddt') ? 'Ddt di acquisto' : 'Fatture di acquisto';
-} elseif ($module['name'] == 'Ddt di acquisto') {
-    $module_name = 'Fatture di acquisto';
-} elseif ($module['name'] == 'Ddt di vendita') {
-    $module_name = 'Fatture di vendita';
-}
+$module_name = "Ordini cliente";
 
 $op = !empty($get['op']) ? $get['op'] : $op;
 
-$button = ($documento == 'ddt') ? tr('Crea ddt') : tr('Crea fattura');
+$button = tr('Crea ordine');
 $button = !empty($get['op']) ? tr('Aggiungi') : $button;
 
 // Info documento
@@ -72,12 +46,13 @@ $idconto = $rs[0]['idconto'];
 echo '
 <p>'.str_replace('_NUM_', $numero, $head).'.</p>';
 
-// Selezione articoli dell'ordine da portare nel ddt
-$rs = $dbo->fetchArray('SELECT *, (qta - qta_evasa) AS qta_rimanente FROM '.$table.' INNER JOIN '.$rows.' ON '.$table.'.id='.$rows.'.'.$id.' WHERE '.$table.'.id='.prepare($id_record).' HAVING qta_rimanente > 0 ORDER BY `order`');
+
+// Selezione articoli del preventivo da copiare nell'ordine, usando l'ordinamento scelto dall'utente
+$rs = $dbo->fetchArray('SELECT * FROM '.$table.' INNER JOIN '.$rows.' ON '.$table.'.id='.$rows.'.'.$id.' WHERE '.$table.'.id='.prepare($id_record).' ORDER BY `order`');
 
 if (!empty($rs)) {
     echo '
-<p>'.tr('Seleziona le righe e le relative quantità da inserire nel documento').'.</p>
+<p>'.tr('Seleziona le righe e le relative quantità da inserire nell\'ordine.').'.</p>
 
 <form action="'.$rootdir.'/editor.php?id_module='.Modules::get($module_name)['id'].(!empty($get['iddocumento']) ? '&id_record='.$get['iddocumento'] : '').'" method="post">
     <input type="hidden" name="'.$id.'" value="'.$id_record.'">
@@ -88,28 +63,14 @@ if (!empty($rs)) {
 
     <input type="hidden" name="op" value="'.$op.'">
     <input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="dir" value="'.$dir.'">';
-
-    if (empty($get['op'])) {
-        echo '
+    <input type="hidden" name="dir" value="'.$dir.'">
     <div class="row">
 
         <div class="col-md-6">
             {[ "type": "date", "label": "'.tr('Data del documento').'", "name": "data", "required": 1, "value": "-now-" ]}
-        </div>';
+        </div>
+    </div>
 
-        if ($module_name=='Fatture di vendita' || $module_name == 'Fatture di acquisto'){
-            echo '
-        <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare(Modules::get($module_name)['id']).' ORDER BY name", "value": "'.$_SESSION['m'.Modules::get($module_name)['id']]['id_segment'].'" ]}
-        </div>';
-        }
-
-        echo
-    '</div>';
-    }
-
-    echo '
     <div class="clearfix"></div>
     <br>
 
@@ -128,7 +89,7 @@ if (!empty($rs)) {
         // Descrizione
         echo '
         <tr>
-            <td>
+            <td '.($r['is_descrizione'] ? 'colspan="5"' : '').' >
 
                 <input type="hidden" name="abilita_serial['.$r['id'].']" value="'.$r['abilita_serial'].'" />
                 <input type="hidden" id="idarticolo_'.$i.'" name="idarticolo['.$r['id'].']" value="'.$r['idarticolo'].'" />
@@ -142,25 +103,27 @@ if (!empty($rs)) {
 
         echo '
             </td>';
+            
+        if ($r['is_descrizione']) continue;
 
         // Q.tà rimanente
         echo '
         <td>
-            <input type="hidden" id="qtamax_'.$i.'" value="'.($r['qta'] - $r['qta_evasa']).'" />
+            <input type="hidden" id="qtamax_'.$i.'" value="'.($r['qta']).'" />
             <input type="hidden" id="um_'.$i.'" name="um['.$r['id'].']" value="'.$r['um'].'" />
-            <p class="text-center">'.Translator::numberToLocale($r['qta_rimanente']).'</p>
+            <p class="text-center">'.Translator::numberToLocale($r['qta']).'</p>
         </td>';
 
         // Q.tà da evadere
         echo '
         <td>
-            {[ "type": "number", "name": "qta_da_evadere['.$r['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$r['qta_rimanente'].'", "extra" : "onkeyup=\"ricalcola_subtotale_riga('.$i.');\"", "decimals": "qta", "min-value": "0" ]}
+            {[ "type": "number", "name": "qta_da_evadere['.$r['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$r['qta'].'", "extra" : "onkeyup=\"ricalcola_subtotale_riga('.$i.');\"", "decimals": "qta", "min-value": "0" ]}
         </td>';
 
         // Subtotale
-        $subtotale = $r['subtotale'] / $r['qta'] * ($r['qta'] - $r['qta_evasa']);
-        $sconto = $r['sconto'] / $r['qta'] * ($r['qta'] - $r['qta_evasa']);
-        $iva = $r['iva'] / $r['qta'] * ($r['qta'] - $r['qta_evasa']);
+        $subtotale = $r['subtotale'] / $r['qta'] * ($r['qta']);
+        $sconto = $r['sconto'] / $r['qta'] * ($r['qta']);
+        $iva = $r['iva'] / $r['qta'] * ($r['qta']);
 
         echo '
         <td>

@@ -352,6 +352,97 @@ switch (post('op')) {
         }
 
         break;
+        
+    case 'ordine_da_preventivo':
+		
+		$idanagrafica = post('idanagrafica');
+
+        $data = $post['data'];
+
+        // Leggo se l'ordine è cliente o fornitore
+        $rs = $dbo->fetchArray('SELECT id FROM or_tipiordine WHERE dir='.prepare($dir));
+        $idtipoordine = $rs[0]['id'];
+
+        if (isset($post['idanagrafica'])) {
+            $numero = get_new_numeroordine($data);
+            if ($dir == 'entrata') {
+                $numero_esterno = get_new_numerosecondarioordine($data);
+            } else {
+                $numero_esterno = '';
+            }
+
+            $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
+
+            // Tipo di pagamento predefinito dall'anagrafica
+            $query = 'SELECT id FROM co_pagamenti WHERE id=(SELECT '.$campo.' AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')';
+            $rs = $dbo->fetchArray($query);
+            $idpagamento = $rs[0]['id'];
+
+            // Se l'ordine è un ordine cliente e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
+            if ($dir == 'entrata' && $idpagamento == '') {
+                $idpagamento = get_var('Tipo di pagamento predefinito');
+            }
+
+            $query = 'INSERT INTO or_ordini( numero, numero_esterno, idanagrafica, idtipoordine, idpagamento, data, idstatoordine ) VALUES ( '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipoordine).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `or_statiordine` WHERE `descrizione`='Bozza') )";
+            $dbo->query($query);
+
+            $id_record = $dbo->lastInsertedID();
+
+            $_SESSION['infos'][] = tr('Aggiunto ordine numero _NUM_!', [
+                '_NUM_' => $numero,
+            ]);
+            
+            
+             // Lettura di tutte le righe della tabella in arrivo
+             // Inserisco anche le righe descrittive
+        foreach ($post['evadere'] as $i => $value) {
+            // Processo solo le righe da evadere
+            if ($post['evadere'][$i] == 'on') {
+
+				$descrizione = post('descrizione')[$i];
+				$prezzo = post('subtot')[$i];
+				$qta = post('qta_da_evadere')[$i];
+				$idiva = post('idiva')[$i];
+				$um = post('um')[$i];
+				$subtot = $prezzo * $qta;
+				$idarticolo = post('idarticolo')[$i];
+				$sconto = post('sconto')[$i];
+
+				// Ottengo le informazioni sullo sconto
+				$qprc = 'SELECT tipo_sconto, sconto_unitario FROM co_righe_preventivi WHERE id='.prepare($i);
+                $rsprc = $dbo->fetchArray($qprc);
+
+                $sconto_unitario = $rsprc[0]['sconto_unitario'];
+                $tipo_sconto = $rsprc[0]['tipo_sconto'];
+				
+				$sconto = $sconto * $qta;
+
+				// Calcolo iva
+				$query = 'SELECT descrizione, percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva);
+				$rs = $dbo->fetchArray($query);
+				$iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
+				$iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
+
+				$query = 'INSERT INTO or_righe_ordini(idordine, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, is_descrizione, `order`) VALUES('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($rs[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', '.prepare(empty($qta)).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM or_righe_ordini AS t WHERE idordine='.prepare($id_record).'))';
+				$dbo->query($query);
+
+				
+            }
+            
+            
+        }
+        
+        // Ricalcolo inps, ritenuta e bollo
+        if ($dir == 'entrata') {
+			ricalcola_costiagg_ordine($id_record);
+		} else {
+			ricalcola_costiagg_ordine($id_record);
+		}    
+        
+            
+		}
+    
+		break;
 }
 
 if (post('op') !== null && post('op') != 'update') {

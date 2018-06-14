@@ -645,7 +645,7 @@ function isAjaxRequest()
  *
  * @return float
  */
-function sum($first, $second = null, $decimals = null)
+function sum($first, $second = null, $decimals = 4)
 {
     $first = (array) $first;
     $second = (array) $second;
@@ -654,9 +654,7 @@ function sum($first, $second = null, $decimals = null)
 
     $result = 0;
 
-    if (!is_numeric($decimals)) {
-        $decimals = is_numeric($decimals) ? $decimals : Translator::getFormatter()->getPrecision();
-    }
+    $decimals = is_numeric($decimals) ? $decimals : Translator::getFormatter()->getPrecision();
 
     $bcadd = function_exists('bcadd');
 

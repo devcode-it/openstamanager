@@ -19,7 +19,7 @@ echo '
 
     <tbody class="sortable">';
 
-$q = 'SELECT *, round(iva,'.Settings::get('Cifre decimali per importi').') AS iva, round(sconto_unitario,'.Settings::get('Cifre decimali per importi').') AS sconto_unitario, round(sconto,'.Settings::get('Cifre decimali per importi').') AS sconto, round(subtotale,'.Settings::get('Cifre decimali per importi').') AS subtotale, (SELECT codice FROM mg_articoli WHERE mg_articoli.id=`or_righe_ordini`.`idarticolo`) AS codice FROM `or_righe_ordini` WHERE idordine='.prepare($id_record).' ORDER BY `order`';
+$q = 'SELECT *, round(sconto_unitario,'.Settings::get('Cifre decimali per importi').') AS sconto_unitario, round(sconto,'.Settings::get('Cifre decimali per importi').') AS sconto, round(subtotale,'.Settings::get('Cifre decimali per importi').') AS subtotale, (SELECT codice FROM mg_articoli WHERE mg_articoli.id=`or_righe_ordini`.`idarticolo`) AS codice FROM `or_righe_ordini` WHERE idordine='.prepare($id_record).' ORDER BY `order`';
 $rs = $dbo->fetchArray($q);
 
 if (!empty($rs)) {

@@ -298,7 +298,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     // Lettura iva delle righe in fattura
     $query = 'SELECT iva FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
-    $iva_fattura = sum(array_column($rs, 'iva'), null, 2) + $iva_rivalsainps - $iva_indetraibile_fattura;
+    $iva_fattura = sum(array_column($rs, 'iva'), null) + $iva_rivalsainps - $iva_indetraibile_fattura;
 
     // Imposto i segni + e - in base se la fattura è di acquisto o vendita
     if ($dir == 'uscita') {
@@ -493,7 +493,7 @@ function get_totale_fattura($iddocumento)
     global $dbo;
 
     // Sommo l'iva di ogni riga al totale
-    $query = 'SELECT SUM(ROUND(iva, 2)) AS iva FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
+    $query = 'SELECT SUM(iva) AS iva FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
 
     // Aggiungo la rivalsa inps se c'è
@@ -510,7 +510,7 @@ function get_totale_fattura($iddocumento)
         $iva_rivalsainps += $rsr[$r]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
     }
     
-    $iva = sum($rs[0]['iva'], null, 2);
+    $iva = $rs[0]['iva'];
     $totale_iva = sum($iva, $iva_rivalsainps);
     
     $totale = sum([

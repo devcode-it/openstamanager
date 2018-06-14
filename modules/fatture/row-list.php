@@ -72,9 +72,7 @@ if (!empty($rs)) {
         }
 
         echo '
-    <tr data-id="'.$r['id'].'" '.$extra.'>';
-
-        echo '
+    <tr data-id="'.$r['id'].'" '.$extra.'>
         <td>
             '.Modules::link($ref_modulo, $ref_id, $r['descrizione']).'
             <small class="pull-right text-muted">'.$r['descrizione_conto'].'</small>';

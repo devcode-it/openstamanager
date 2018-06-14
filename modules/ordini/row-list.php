@@ -24,6 +24,12 @@ $rs = $dbo->fetchArray($q);
 
 if (!empty($rs)) {
     foreach ($rs as $r) {
+		
+		$extra = '';
+	
+		$ref_modulo = null;
+        $ref_id = null;
+		
         $delete = !empty($r['idarticolo']) ? 'unlink_articolo' : 'unlink_riga';
 
         $extra = '';
@@ -43,7 +49,8 @@ if (!empty($rs)) {
 
         echo '
     <tr data-id="'.$r['id'].'" '.$extra.'>
-        <td>';
+        <td>
+            '.Modules::link($ref_modulo, $ref_id, $r['descrizione']);
 
         if (!empty($r['idarticolo'])) {
             echo '
@@ -71,8 +78,39 @@ if (!empty($rs)) {
                     echo '<br>'.$r['altro'];
                 }
             }
-        } else {
-            echo nl2br($r['descrizione']);
+        }
+		
+	
+			// Aggiunta dei riferimenti ai documenti
+		// Preventivo
+        if (!empty($r['idpreventivo'])) {
+            $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_preventivi WHERE id='.prepare($r['idpreventivo']));
+
+            $ref_modulo = 'Preventivi';
+            $ref_id = $r['idpreventivo'];
+
+            $documento = tr('Preventivo');
+        }
+		
+		
+		  if (!empty($ref_modulo) && !empty($ref_id)) {
+            $documento = Stringy\Stringy::create($documento)->toLowerCase();
+
+            if (!empty($data)) {
+                $descrizione = tr('Rif. _DOC_ num. _NUM_ del _DATE_', [
+                    '_DOC_' => $documento,
+                    '_NUM_' => $data[0]['numero'],
+                    '_DATE_' => Translator::dateToLocale($data[0]['data']),
+                ]);
+            } else {
+                $descrizione = tr('_DOC_ di riferimento _ID_ eliminato', [
+                    '_DOC_' => $documento->upperCaseFirst(),
+                    '_ID_' => $ref_id,
+                ]);
+            }
+
+            echo '
+            <br>'.Modules::link($ref_modulo, $ref_id, $descrizione, $descrizione);
         }
 
         echo '

@@ -20,6 +20,12 @@ include_once __DIR__.'/../../core.php';
         $dir = $rs[0]['dir'];
         $numero_doc = !empty($rs[0]['numero_esterno']) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
         $tipo_doc = $rs[0]['tdescrizione'];
+		
+		$nota_accredito = false;
+		
+		if( $tipo_doc == 'Nota di accredito' ){
+			$nota_accredito = true;
+		}
 
         $descrizione = tr('_DOC_ numero _NUM_ del _DATE_ (_NAME_)', [
             '_DOC_' => $tipo_doc,
@@ -181,6 +187,13 @@ include_once __DIR__.'/../../core.php';
             $value_dare = '';
             $value_avere = '';
         }
+		
+		// Se è una nota di accredito, inverto i valori
+		if( $nota_accredito ){
+			$tmp		= $value_dare;
+			$value_dare	= $value_avere;
+			$value_avere= $tmp;
+		}
 
         // Dare
         echo '

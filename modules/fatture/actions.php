@@ -587,19 +587,37 @@ switch (post('op')) {
             $rs = $dbo->fetchArray($query);
             $rivalsainps = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
 
-            // Calcolo ritenuta d'acconto
-            $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(get_var("Percentuale ritenuta d'acconto"));
+            // Calcolo ritenuta d'acconto TOTALE
+            $query = 'SELECT * FROM co_ritenutaacconto WHERE id = '.prepare(get_var("Percentuale ritenuta d'acconto"));
             $rs = $dbo->fetchArray($query);
             if(get_var("Metodologia calcolo ritenuta d'acconto predefinito")=='Imponibile'){
-                $ritenutaacconto = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
+                $ritenutaacconto = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
             }else{
-                $ritenutaacconto = ($subtot - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
+                $ritenutaacconto = ($prezzo - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
             }
 
             if (!empty($post['import'])) {
                 // Replicazione delle righe del preventivo sul documento
                 $righe = $dbo->fetchArray('SELECT idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, IFNULL( (SELECT mg_articoli.abilita_serial FROM mg_articoli WHERE mg_articoli.id=co_righe_preventivi.idarticolo), 0 ) AS abilita_serial FROM co_righe_preventivi WHERE idpreventivo='.prepare($idpreventivo));
+				
+				
+			
+			
+			
                 foreach ($righe as $key => $riga) {
+					
+						$subtot = $riga['subtotale'];
+						
+						$sconto = $riga['sconto'];
+				
+						//Ricalcolo ritenuta per ogni singola riga
+					   if(get_var("Metodologia calcolo ritenuta d'acconto predefinito")=='Imponibile'){
+							$ritenutaacconto = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
+						}else{
+							$ritenutaacconto = ($subtot - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
+						}
+				
+				
                     $dbo->insert('co_righe_documenti', [
                         'iddocumento' => $id_record,
                         'idpreventivo' => $idpreventivo,

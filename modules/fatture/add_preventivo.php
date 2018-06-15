@@ -38,7 +38,7 @@ echo '
         </div>
 
         <div class="col-md-6">
-            {[ "type": "checkbox", "label": "'.tr('Importa righe').'", "name": "import", "value": "1", "placeholder": "'.tr('Importa tutte le righe del preventivo').'" ]}
+            {[ "type": "checkbox", "label": "'.tr('Importa righe').'", "name": "import", "value": "1", "placeholder": "'.tr('Replica righe del preventivo in fattura').'" ]}
         </div>
     </div>';
 

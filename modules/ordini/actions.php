@@ -356,6 +356,7 @@ switch (post('op')) {
     case 'ordine_da_preventivo':
 		
 		$idanagrafica = post('idanagrafica');
+		$idpreventivo = post('idpreventivo');
 
         $data = $post['data'];
 
@@ -423,7 +424,7 @@ switch (post('op')) {
 				$iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
 				$iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
 
-				$query = 'INSERT INTO or_righe_ordini(idordine, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, is_descrizione, `order`) VALUES('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($rs[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', '.prepare(empty($qta)).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM or_righe_ordini AS t WHERE idordine='.prepare($id_record).'))';
+				$query = 'INSERT INTO or_righe_ordini(idordine, idarticolo, idpreventivo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, is_descrizione, `order`) VALUES('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idpreventivo).', '.prepare($idiva).', '.prepare($rs[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', '.prepare(empty($qta)).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM or_righe_ordini AS t WHERE idordine='.prepare($id_record).'))';
 				$dbo->query($query);
 
 				

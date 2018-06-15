@@ -271,3 +271,6 @@ UPDATE `in_statiintervento` SET `can_delete` = '0' WHERE `in_statiintervento`.`i
 
 -- Importo per scadenzario, summable
 UPDATE `zz_views` SET `summable` = '1' WHERE  `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND name = 'Importo';
+
+-- Collego il preventivo alla riga dell'ordine
+ALTER TABLE `or_righe_ordini` ADD `idpreventivo` INT(11) NOT NULL AFTER `idarticolo`;

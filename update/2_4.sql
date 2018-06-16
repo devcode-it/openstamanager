@@ -28,9 +28,8 @@ CREATE TABLE IF NOT EXISTS `zz_prints` (
   `main` tinyint(1) NOT NULL,
   `default` tinyint(1) NOT NULL,
   `enabled` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE
-);
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 
 -- Inserimento delle stampe di base
 INSERT INTO `zz_prints` (`id_module`, `name`, `directory`, `options`, `previous`, `enabled`, `default`) VALUES
@@ -99,7 +98,7 @@ CREATE TABLE IF NOT EXISTS `zz_smtp` (
   `main` tinyint(1) NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-);
+) ENGINE=InnoDB;
 
 --
 -- Struttura della tabella `zz_emails`
@@ -119,10 +118,8 @@ CREATE TABLE IF NOT EXISTS `zz_emails` (
   `read_notify` tinyint(1) NOT NULL,
   `main` tinyint(1) NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_smtp`) REFERENCES `zz_smtp`(`id`) ON DELETE CASCADE
-);
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 
 --
 -- Struttura della tabella `zz_emails`
@@ -132,10 +129,8 @@ CREATE TABLE IF NOT EXISTS `zz_email_print` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_email` int(11) NOT NULL,
   `id_print` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_email`) REFERENCES `zz_emails`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_print`) REFERENCES `zz_prints`(`id`) ON DELETE CASCADE
-);
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 
 -- Aggiunta dei moduli dedicati alla gestione delle email
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Account email', 'Account email', 'smtp', 'SELECT |select| FROM zz_smtp WHERE 1=1 AND deleted = 0 HAVING 2=2 ORDER BY `name`', 'fa fa-user-o', '2.3', '2.3', '10', NULL, 1, 1);
@@ -185,7 +180,7 @@ CREATE TABLE IF NOT EXISTS `zz_segments` (
   `note` text NOT NULL,
   `predefined` BOOLEAN NOT NULL,
   PRIMARY KEY (`id`)
-);
+) ENGINE=InnoDB;
 
 -- Popolo con i segmenti di default
 INSERT INTO `zz_segments` (`id`, `id_module`, `name`,  `clause`, `position`, `pattern`,`note`, `predefined`) VALUES
@@ -234,10 +229,8 @@ CREATE TABLE IF NOT EXISTS `zz_fields` (
   `order` int(11) NOT NULL,
   `on_add` boolean NOT NULL,
   `top` boolean NOT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE
-);
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 
 --
 -- Struttura della tabella `zz_fields`
@@ -248,9 +241,8 @@ CREATE TABLE IF NOT EXISTS `zz_field_record` (
   `id_field` int(11) NOT NULL,
   `id_record` int(11) NOT NULL,
   `value` text NOT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_field`) REFERENCES `zz_fields`(`id`) ON DELETE CASCADE
-);
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 
 -- Aggiunta modulo di importazione
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES
@@ -319,7 +311,7 @@ CREATE TABLE IF NOT EXISTS `co_banche` (
   `note` text NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-);
+) ENGINE=InnoDB;
 
 -- Innesto modulo per gestione banche
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Banche', 'Banche', 'banche', 'SELECT |select| FROM `co_banche` WHERE 1=1 AND deleted = 0 GROUP BY `nome` HAVING 2=2', '', 'fa fa-university', '2.4', '2.4', '1', (SELECT `id` FROM `zz_modules` m WHERE `name` = 'Tabelle'), '1', '1');

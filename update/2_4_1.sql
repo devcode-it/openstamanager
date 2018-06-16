@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `co_movimenti_modelli` (
   `idmastrino` int(11) NOT NULL,
   `descrizione` text NOT NULL,
   `idconto` int(11) NOT NULL
-);
+) ENGINE=InnoDB;
 
 ALTER TABLE `co_movimenti_modelli` ADD PRIMARY KEY (`id`);
 
@@ -92,8 +92,9 @@ CREATE TABLE IF NOT EXISTS `co_righe_contratti_materiali` (
   `sconto_unitario` decimal(12,4) NOT NULL,
   `tipo_sconto` enum('UNT','PRC') NOT NULL DEFAULT 'UNT',
   PRIMARY KEY (`id`),
-  KEY `id_riga_contratto` (`id_riga_contratto`)
-);
+  FOREIGN KEY `id_riga_contratto` (`id_riga_contratto`)
+) ENGINE=InnoDB;
+
 
 
 -- Struttura della tabella `co_righe_contratti_articoli`
@@ -116,9 +117,10 @@ CREATE TABLE IF NOT EXISTS `co_righe_contratti_articoli` (
   `abilita_serial` tinyint(1) NOT NULL DEFAULT '0',
   `idimpianto` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `id_riga_contratto` (`id_riga_contratto`),
-  KEY `idimpianto` (`idimpianto`)
-);
+  FOREIGN KEY `id_riga_contratto` (`id_riga_contratto`),
+  FOREIGN KEY `idimpianto` (`idimpianto`)
+) ENGINE=InnoDB;
+
 
 
 -- Modifica query wiget per mostrare solo quelli che non sono stati rinnovati
@@ -274,3 +276,22 @@ UPDATE `zz_views` SET `summable` = '1' WHERE  `zz_views`.`id_module` = (SELECT `
 
 -- Collego il preventivo alla riga dell'ordine
 ALTER TABLE `or_righe_ordini` ADD `idpreventivo` INT(11) NOT NULL AFTER `idarticolo`;
+
+-- Fix foreign keys (2.4)
+ALTER TABLE `zz_emails`
+  ADD FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
+  ADD FOREIGN KEY (`id_smtp`) REFERENCES `zz_smtp`(`id`) ON DELETE CASCADE;
+
+ALTER TABLE `zz_email_print`
+  ADD FOREIGN KEY (`id_email`) REFERENCES `zz_emails`(`id`) ON DELETE CASCADE,
+  ADD FOREIGN KEY (`id_print`) REFERENCES `zz_prints`(`id`) ON DELETE CASCADE;
+
+ALTER TABLE `zz_fields`
+  ADD FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
+  ADD FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE;
+
+ALTER TABLE `zz_field_record`
+  ADD FOREIGN KEY (`id_field`) REFERENCES `zz_fields`(`id`) ON DELETE CASCADE;
+
+ALTER TABLE `zz_prints`
+  ADD FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;

@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS `co_righe_contratti_materiali` (
   `sconto_unitario` decimal(12,4) NOT NULL,
   `tipo_sconto` enum('UNT','PRC') NOT NULL DEFAULT 'UNT',
   PRIMARY KEY (`id`),
-  FOREIGN KEY `id_riga_contratto` (`id_riga_contratto`)
+  KEY `id_riga_contratto` (`id_riga_contratto`)
 ) ENGINE=InnoDB;
 
 
@@ -117,8 +117,8 @@ CREATE TABLE IF NOT EXISTS `co_righe_contratti_articoli` (
   `abilita_serial` tinyint(1) NOT NULL DEFAULT '0',
   `idimpianto` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY `id_riga_contratto` (`id_riga_contratto`),
-  FOREIGN KEY `idimpianto` (`idimpianto`)
+  KEY `id_riga_contratto` (`id_riga_contratto`),
+  KEY `idimpianto` (`idimpianto`)
 ) ENGINE=InnoDB;
 
 

@@ -3,7 +3,7 @@
 switch ($resource) {
     case 'add_anagrafica':
         $rs = $dbo->fetchArray('SELECT codice FROM an_anagrafiche ORDER BY CAST(codice AS SIGNED) DESC LIMIT 0, 1');
-        $codice = get_next_code($rs[0]['codice'], 1, get_var('Formato codice anagrafica'));
+        $codice = Util\Generator::generate(get_var('Formato codice anagrafica'), $rs[0]['codice']);
 
         // Inserisco l'anagrafica
         $dbo->insert('an_anagrafiche', [

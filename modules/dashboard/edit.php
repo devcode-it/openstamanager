@@ -14,7 +14,7 @@ if (!isset($_SESSION['dashboard']['idtecnici'])) {
 }
 
 if (!isset($_SESSION['dashboard']['idstatiintervento'])) {
-    $rs = $dbo->fetchArray('SELECT idstatointervento AS id, descrizione FROM in_statiintervento');
+    $rs = $dbo->fetchArray('SELECT idstatointervento AS id, descrizione FROM in_statiintervento WHERE deleted = 0');
 
     $_SESSION['dashboard']['idstatiintervento'] = ["'-1'"];
 
@@ -37,8 +37,8 @@ if (!isset($_SESSION['dashboard']['idzone'])) {
     $rs = $dbo->fetchArray('SELECT id, descrizione FROM an_zone');
 
     $_SESSION['dashboard']['idzone'] = ["'-1'"];
-    
-    //"Nessuna zona" di default
+
+    // "Nessuna zona" di default
     $_SESSION['dashboard']['idzone'][] = "'0'";
 
     for ($i = 0; $i < count($rs); ++$i) {
@@ -51,7 +51,7 @@ $checks = '';
 $count = 0;
 $total = 0;
 
-$rs = $dbo->fetchArray('SELECT idstatointervento AS id, descrizione, colore FROM in_statiintervento ORDER BY descrizione ASC');
+$rs = $dbo->fetchArray('SELECT idstatointervento AS id, descrizione, colore FROM in_statiintervento WHERE deleted = 0 ORDER BY descrizione ASC');
 $total = count($rs);
 
 $allchecksstati = '';
@@ -64,8 +64,8 @@ for ($i = 0; $i < count($rs); ++$i) {
             ++$count;
         }
     }
-	
-    $checks .= "<li><input type='checkbox' id='idstato_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"$.when ( session_set_array( 'dashboard,idstatiintervento', '".$rs[$i]['id']."' ) ).promise().then(function( ){ $('#calendar').fullCalendar('refetchEvents'); });  update_counter( 'idstati_count', $('#idstati_ul').find('input:checked').length ); \"> <label for='idstato_".$rs[$i]['id']."'> <span class='badge' style=\"color:#333; background:".$rs[$i]['colore'].';">'.$rs[$i]['descrizione']."</span></label></li>\n";
+
+    $checks .= "<li><input type='checkbox' id='idstato_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"$.when ( session_set_array( 'dashboard,idstatiintervento', '".$rs[$i]['id']."' ) ).promise().then(function( ){ $('#calendar').fullCalendar('refetchEvents'); });  update_counter( 'idstati_count', $('#idstati_ul').find('input:checked').length ); \"> <label for='idstato_".$rs[$i]['id']."'> <span class='badge' style=\"color:".color_inverse($rs[$i]['colore'])."; background:".$rs[$i]['colore'].";\">".$rs[$i]['descrizione']."</span></label></li>\n";
 
     $allchecksstati .= "session_set_array( 'dashboard,idstatiintervento', '".$rs[$i]['id']."', 0 ); ";
 }
@@ -87,10 +87,10 @@ if ($total == 0) {
 <div class="row">
 	<!-- STATI INTERVENTO -->
 	<div class="dropdown col-md-3">
-		<a class="btn <?php echo $class ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idstati_count"><i class="fa fa-filter"></i> <?php echo tr('Stati intervento'); ?> (<?php echo $count.'/'.$total ?>) <i class="caret"></i></a>
+		<a class="btn <?php echo $class; ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idstati_count"><i class="fa fa-filter"></i> <?php echo tr('Stati intervento'); ?> (<?php echo $count.'/'.$total; ?>) <i class="caret"></i></a>
 
 		<ul class="dropdown-menu" role="menu" id="idstati_ul">
-			<?php echo $checks ?>
+			<?php echo $checks; ?>
 			<div class="btn-group pull-right">
 				<button  id="selectallstati" onclick="<?php echo $allchecksstati; ?>" class="btn btn-primary btn-xs" type="button"><?php echo tr('Tutti'); ?></button>
 				<button id="deselectallstati" class="btn btn-danger btn-xs" type="button"><i class="fa fa-times"></i></button>
@@ -118,8 +118,7 @@ for ($i = 0; $i < count($rs); ++$i) {
             ++$count;
         }
     }
-	
-	
+
     $checks .= "<li><input type='checkbox' id='idtipo_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"$.when ( session_set_array( 'dashboard,idtipiintervento', '".$rs[$i]['id']."' ) ).promise().then(function( ){ $('#calendar').fullCalendar('refetchEvents');  }); update_counter( 'idtipi_count', $('#idtipi_ul').find('input:checked').length ); \"> <label for='idtipo_".$rs[$i]['id']."'> ".$rs[$i]['descrizione']."</label></li>\n";
 
     $allcheckstipi .= "session_set_array( 'dashboard,idtipiintervento', '".$rs[$i]['id']."', 0 ); ";
@@ -139,10 +138,10 @@ if ($total == 0) {
 ?>
 	<!-- TIPI DI INTERVENTO -->
 	<div class="dropdown col-md-3">
-		<a class="btn <?php echo $class ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idtipi_count"><i class="fa fa-filter"></i> <?php echo tr('Tipi intervento'); ?> (<?php echo $count.'/'.$total ?>) <i class="caret"></i></a>
+		<a class="btn <?php echo $class; ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idtipi_count"><i class="fa fa-filter"></i> <?php echo tr('Tipi intervento'); ?> (<?php echo $count.'/'.$total; ?>) <i class="caret"></i></a>
 
 		<ul class="dropdown-menu" role="menu" id="idtipi_ul">
-			<?php echo $checks ?>
+			<?php echo $checks; ?>
 			<div class="btn-group pull-right">
 				<button  id="selectalltipi" onclick="<?php echo $allcheckstipi; ?>" class="btn btn-primary btn-xs" type="button"><?php echo tr('Tutti'); ?></button>
 				<button id="deselectalltipi" class="btn btn-danger btn-xs" type="button"><i class="fa fa-times"></i></button>
@@ -159,9 +158,9 @@ $count = 0;
 $total = 0;
 $totale_tecnici = 0; // conteggia tecnici eliminati e non
 
-$rs = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica 
-LEFT OUTER JOIN in_interventi_tecnici ON  in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica  INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id 
-WHERE an_anagrafiche.deleted=0 AND an_tipianagrafiche.descrizione='Tecnico' ".Modules::getAdditionalsQuery('Interventi')." GROUP BY an_anagrafiche.idanagrafica ORDER BY ragione_sociale ASC");
+$rs = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale, colore FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica
+LEFT OUTER JOIN in_interventi_tecnici ON  in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica  INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id
+WHERE an_anagrafiche.deleted=0 AND an_tipianagrafiche.descrizione='Tecnico' ".Modules::getAdditionalsQuery('Interventi').' GROUP BY an_anagrafiche.idanagrafica ORDER BY ragione_sociale ASC');
 $total = count($rs);
 
 $totale_tecnici += $total;
@@ -177,15 +176,13 @@ for ($i = 0; $i < count($rs); ++$i) {
         }
     }
 
-	
-	
-    $checks .= "<li><input type='checkbox' id='tech_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"$.when ( session_set_array( 'dashboard,idtecnici', '".$rs[$i]['id']."' ) ).promise().then(function( ){ $('#calendar').fullCalendar('refetchEvents'); }); update_counter( 'idtecnici_count', $('#idtecnici_ul').find('input:checked').length );  \"> <label for='tech_".$rs[$i]['id']."'> ".$rs[$i]['ragione_sociale']."</label></li>\n";
+    $checks .= "<li><input type='checkbox' id='tech_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"$.when ( session_set_array( 'dashboard,idtecnici', '".$rs[$i]['id']."' ) ).promise().then(function( ){ $('#calendar').fullCalendar('refetchEvents'); }); update_counter( 'idtecnici_count', $('#idtecnici_ul').find('input:checked').length );  \"> <label for='tech_".$rs[$i]['id']."'><span class='badge' style=\"color:#000; background:transparent; border: 1px solid ".$rs[$i]['colore'].";\">".$rs[$i]['ragione_sociale']."</span></label></li>\n";
 
     $allchecktecnici .= "session_set_array( 'dashboard,idtecnici', '".$rs[$i]['id']."', 0 ); ";
 }
 
-// TECNICI ELIMINATI
-$rs = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE deleted=1 AND descrizione='Tecnico' ORDER BY ragione_sociale ASC");
+// TECNICI ELIMINATI CON ALMENO 1 INTERVENTO
+$rs = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE deleted=1 AND descrizione='Tecnico' ORDER BY ragione_sociale ASC");
 $total = count($rs);
 
 $totale_tecnici += $total;
@@ -201,7 +198,7 @@ if ($total > 0) {
                 ++$count;
             }
         }
-		
+
         $checks .= "<li><input type='checkbox' id='tech_".$rs[$i]['id']."' value=\"".$rs[$i]['id'].'" '.$attr." onclick=\"$.when ( session_set_array( 'dashboard,idtecnici', '".$rs[$i]['id']."' ) ).promise().then(function( ){ $('#calendar').fullCalendar('refetchEvents');  }); update_counter( 'idtecnici_count', $('#idtecnici_ul').find('input:checked').length ); \"> <label for='tech_".$rs[$i]['id']."'> ".$rs[$i]['ragione_sociale']."</label></li>\n";
 
         $allchecktecnici .= "session_set_array( 'dashboard,idtecnici', '".$rs[$i]['id']."', 0 ); ";
@@ -223,10 +220,10 @@ if ($totale_tecnici == 0) {
 ?>
 	<!-- TECNICI -->
 	<div class="dropdown col-md-3">
-		<a class="btn <?php echo $class ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idtecnici_count"><i class="fa fa-filter"></i> <?php echo tr('Tecnici'); ?> (<?php echo $count.'/'.$totale_tecnici ?>) <i class="caret"></i></a>
+		<a class="btn <?php echo $class; ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idtecnici_count"><i class="fa fa-filter"></i> <?php echo tr('Tecnici'); ?> (<?php echo $count.'/'.$totale_tecnici; ?>) <i class="caret"></i></a>
 
 		<ul class="dropdown-menu" role="menu" id="idtecnici_ul">
-			<?php echo $checks ?>
+			<?php echo $checks; ?>
 			<div class="btn-group pull-right">
 				<button id="selectalltecnici" onclick="<?php echo $allchecktecnici; ?>" class="btn btn-primary btn-xs" type="button"><?php echo tr('Tutti'); ?></button>
 				<button id="deselectalltecnici" class="btn btn-danger btn-xs" type="button"><i class="fa fa-times"></i></button>
@@ -273,10 +270,10 @@ if ($total == 0) {
 ?>
 	<!-- ZONE -->
 	<div class="dropdown col-md-3">
-		<a class="btn <?php echo $class ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idzone_count"><i class="fa fa-filter"></i> <?php echo tr('Zone'); ?> (<?php echo $count.'/'.$total ?>) <i class="caret"></i></a>
+		<a class="btn <?php echo $class; ?> btn-block" data-toggle="dropdown" href="javascript:;" id="idzone_count"><i class="fa fa-filter"></i> <?php echo tr('Zone'); ?> (<?php echo $count.'/'.$total; ?>) <i class="caret"></i></a>
 
 		<ul class="dropdown-menu" role="menu" id="idzone_ul">
-			<?php echo $checks ?>
+			<?php echo $checks; ?>
 			<div class="btn-group pull-right">
 				<button id="selectallzone" onclick="<?php echo $allcheckzone; ?>" class="btn btn-primary btn-xs" type="button"><?php echo tr('Tutti'); ?></button>
 				<button id="deselectallzone" class="btn btn-danger btn-xs" type="button"><i class="fa fa-times"></i></button>
@@ -286,14 +283,14 @@ if ($total == 0) {
 </div>
 <br>
 <?php
-$qp = "SELECT id, idcontratto, richiesta, data_richiesta, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento FROM co_righe_contratti WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL
-UNION SELECT id, idcontratto, '', data_scadenza, 'ordine', (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento='ODS') AS tipointervento FROM co_ordiniservizio WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL ORDER BY data_richiesta ASC";
+$qp = "SELECT co_righe_contratti.id, idcontratto, richiesta, DATE_FORMAT( data_richiesta, '%m-%Y') AS mese, data_richiesta, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento FROM (co_righe_contratti INNER JOIN co_contratti ON co_righe_contratti.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL
+UNION SELECT co_ordiniservizio.id, idcontratto, '', data_scadenza, DATE_FORMAT( data_scadenza, '%m-%Y') AS mese, an_anagrafiche.ragione_sociale, 'ordine' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento='ODS') AS tipointervento FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL ORDER BY data_richiesta ASC";
 $rsp = $dbo->fetchArray($qp);
 
 if (!empty($rsp)) {
     echo '
 <div class="row">
-    <div class="col-xs-12 col-md-10">';
+    <div class="col-md-10">';
 }
 
 echo '
@@ -304,12 +301,45 @@ if (!empty($rsp)) {
     </div>
 
     <div id="external-events" class="hidden-xs hidden-sm col-md-2">
-        <h4>'.tr('Interventi da pianificare').'</h4>';
+        <h4>'.tr('Promemoria contratti da pianificare').'</h4>';
 
-    foreach ($rsp as $r) {
-        echo '
-        <div class="fc-event " data-id="'.$r['id'].'" data-idcontratto="'.$r['idcontratto'].'">'.Translator::dateToLocale($r['data_richiesta']).' ('.$r['tipointervento'].')'.(!empty($r['richiesta']) ? ' - '.$r['richiesta'] : '').'</div>';
+    // Controllo pianificazioni mesi precedenti
+    $qp_old = "SELECT co_righe_contratti.id FROM co_righe_contratti INNER JOIN co_contratti ON co_righe_contratti.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) AND idintervento IS NULL AND UNIX_TIMESTAMP(co_righe_contratti.data_richiesta)+86400<UNIX_TIMESTAMP(NOW())
+    UNION SELECT co_ordiniservizio.id FROM co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) AND idintervento IS NULL AND UNIX_TIMESTAMP(co_ordiniservizio.data_scadenza)+86400<UNIX_TIMESTAMP(NOW())";
+    $rsp_old = $dbo->fetchNum($qp_old);
+
+    if ($rsp_old > 0) {
+        echo '<div class="alert alert-warning alert-dismissible" role="alert"><i class="fa fa-exclamation-triangle"></i><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> '.tr('Ci sono '.$rsp_old.' interventi scaduti da pianificare.').'</div>';
     }
+
+    $mesi = [1 => 'Gennaio', 2 => 'Febbraio', 3 => 'Marzo', 4 => 'Aprile', 5 => 'Maggio', 6 => 'Giugno', 7 => 'Luglio', 8 => 'Agosto', 9 => 'Settembre', 10 => 'Ottobre', 11 => 'Novembre', 12 => 'Dicembre'];
+
+    // Creo un array con tutti i mesi che contengono interventi
+    $mesi_interventi = [];
+    for ($i = 0; $i < sizeof($rsp); ++$i) {
+        $mese_n = date('m', strtotime($rsp[$i]['data_richiesta'])).date('Y', strtotime($rsp[$i]['data_richiesta']));
+        $mese_t = $mesi[intval(date('m', strtotime($rsp[$i]['data_richiesta'])))].' '.date('Y', strtotime($rsp[$i]['data_richiesta']));
+        $mesi_interventi[$mese_n] = $mese_t;
+    }
+
+    // Aggiungo anche il mese corrente
+    $mesi_interventi[date('m').date('Y')] = $mesi[intval(date('m'))].' '.date('Y');
+
+    // Rimuovo i mesi doppi
+    array_unique($mesi_interventi);
+
+    // Ordino l'array per mese
+    ksort($mesi_interventi);
+
+    echo '<select class="superselect" id="select-intreventi-pianificare">';
+
+    foreach ($mesi_interventi as $key => $mese_intervento) {
+        echo '<option value="'.$key.'">'.$mese_intervento.'</option>';
+    }
+
+    echo '</select>';
+
+    echo '<div id="interventi-pianificare"></div>';
 
     echo '
     </div>
@@ -327,16 +357,53 @@ if ($vista == 'mese') {
 ?>
 
 <script type="text/javascript">
+
+    $('#select-intreventi-pianificare').change(function(){
+        var mese = $(this).val();
+        $.get( '<?php echo $rootdir; ?>/modules/dashboard/ajaxreq.php', { op: 'load_intreventi', mese: mese }, function(data){
+            $('#interventi-pianificare').html(data);
+            $('#external-events .fc-event').each(function() {
+                $(this).draggable({
+                    zIndex: 999,
+                    revert: true,
+                    revertDuration: 0
+                });
+            });
+        });
+    });
+
 	$(document).ready(function() {
+        // Seleziono il mese corrente per gli interventi da pianificare
+        var date = new Date();
+        var mese;
+        date.setDate(date.getDate());
+
+        //Note: January is 0, February is 1, and so on.
+        mese = ('0' + (date.getMonth()+1)).slice(-2) + date.getFullYear();
+
+        $('#select-intreventi-pianificare option[value='+mese+']').attr('selected','selected').trigger('change');
+
+        $.get( '<?php echo $rootdir; ?>/modules/dashboard/ajaxreq.php', { op: 'load_intreventi', mese: mese }, function(data){
+            $('#interventi-pianificare').html(data);
+            $('#external-events .fc-event').each(function() {
+                $(this).draggable({
+                    zIndex: 999,
+                    revert: true,
+                    revertDuration: 0
+                });
+            });
+        });
+
+
         // Comandi seleziona tutti
         $('#selectallstati').click(function(event) {
-			
-            $(this).parent().parent().find('li input[type=checkbox]').each(function(i) { //loop through each checkbox
+
+            $(this).parent().parent().find('li input[type=checkbox]').each(function(i) { // loop through each checkbox
              	this.checked = true;
 				$.when (session_set_array( 'dashboard,idstatiintervento', this.value, 0 )).promise().then(function() {
 					$('#calendar').fullCalendar('refetchEvents');
 				});
-				
+
 				i++;
 				update_counter( 'idstati_count',i);
 
@@ -345,8 +412,8 @@ if ($vista == 'mese') {
         });
 
         $('#selectalltipi').click(function(event) {
-			
-            $(this).parent().parent().find('li input[type=checkbox]').each(function(i) { //loop through each checkbox
+
+            $(this).parent().parent().find('li input[type=checkbox]').each(function(i) { // loop through each checkbox
 				this.checked = true;
 				$.when (session_set_array( 'dashboard,idtipiintervento', this.value, 0 )).promise().then(function() {
 					$('#calendar').fullCalendar('refetchEvents');
@@ -354,76 +421,76 @@ if ($vista == 'mese') {
 				i++;
 				update_counter( 'idtipi_count', i);
 
-            });			
-			
+            });
+
         });
 
         $('#selectalltecnici').click(function(event) {
-			
-            $(this).parent().parent().find('li input[type=checkbox]').each(function(i) { //loop through each checkbox
+
+            $(this).parent().parent().find('li input[type=checkbox]').each(function(i) { // loop through each checkbox
 				this.checked = true;
-				$.when (session_set_array( 'dashboard,idtecnici', this.value, 0 )).promise().then(function() {			
+				$.when (session_set_array( 'dashboard,idtecnici', this.value, 0 )).promise().then(function() {
 					$('#calendar').fullCalendar('refetchEvents');
 				});
 				i++;
 				update_counter( 'idtecnici_count', i);
             });
-			
+
         });
 
         $('#selectallzone').click(function(event) {
-			
-            $(this).parent().parent().find('li input[type=checkbox]').each(function(i) { //loop through each checkbox
+
+            $(this).parent().parent().find('li input[type=checkbox]').each(function(i) { // loop through each checkbox
 				this.checked = true;
-				 $.when (session_set_array( 'dashboard,idzone', this.value, 0 )).promise().then(function() {		
+				 $.when (session_set_array( 'dashboard,idzone', this.value, 0 )).promise().then(function() {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
-				
+
 				i++
 				update_counter( 'idzone_count', i);
 
             });
-				
+
         });
 
         // Comandi deseleziona tutti
         $('#deselectallstati').click(function(event) {
 
-			$(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
+			$(this).parent().parent().find('li input[type=checkbox]').each(function() { // loop through each checkbox
 				this.checked = false;
 				 $.when (session_set_array( 'dashboard,idstatiintervento', this.value, 1 )).promise().then(function() {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
-				
+
 				update_counter( 'idstati_count', 0);
 
             });
-			
+
         });
 
         $('#deselectalltipi').click(function(event) {
-			
-			$(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
+
+			$(this).parent().parent().find('li input[type=checkbox]').each(function() { // loop through each checkbox
 				this.checked = false;
 				 $.when (session_set_array( 'dashboard,idtipiintervento', this.value, 1 )).promise().then(function() {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
-				
-			
+
+
 				update_counter( 'idtipi_count', 0);
 
             });
-			
+
         });
 
         $('#deselectalltecnici').click(function(event) {
-          
-			$(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
+
+			$(this).parent().parent().find('li input[type=checkbox]').each(function() { // loop through each checkbox
 				this.checked = false;
 				 $.when (session_set_array( 'dashboard,idtecnici', this.value, 1 )).promise().then(function() {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
-				
+
 				update_counter( 'idtecnici_count', 0);
 
             });
@@ -431,10 +498,10 @@ if ($vista == 'mese') {
         });
 
         $('#deselectallzone').click(function(event) {
-           
-			$(this).parent().parent().find('li input[type=checkbox]').each(function() { //loop through each checkbox
+
+			$(this).parent().parent().find('li input[type=checkbox]').each(function() { // loop through each checkbox
 				this.checked = false;
-				$.when (session_set_array( 'dashboard,idzone', this.value, 1 )).promise().then(function() {			
+				$.when (session_set_array( 'dashboard,idzone', this.value, 1 )).promise().then(function() {
 						$('#calendar').fullCalendar('refetchEvents');
 				});
 
@@ -446,6 +513,26 @@ if ($vista == 'mese') {
 
         // Creazione del calendario
 		create_calendar();
+
+        // Data di default
+        $('.fc-prev-button, .fc-next-button, .fc-today-button').click(function(){
+            var date_start = $('#calendar').fullCalendar('getView').start.format('YYYY-MM-DD');
+            date_start = moment(date_start);
+
+            if('<?php echo $def; ?>'=='month'){
+                if(date_start.date()>1){
+                    date_start = moment(date_start).add(1, 'M').startOf('month');
+                }
+            }
+
+            date_start = date_start.format('YYYY-MM-DD');
+            setCookie('calendar_date_start', date_start, 365);
+        });
+
+        calendar_date_start = getCookie('calendar_date_start');
+		if (calendar_date_start!='')
+			$('#calendar').fullCalendar( 'gotoDate', calendar_date_start );
+
 	});
 
 	function create_calendar(){
@@ -514,7 +601,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
 
                 var name = ($(this).data('ref') == 'ordine') ? 'idordineservizio' : 'idcontratto_riga';
 
-                launch_modal('<?php echo tr('Pianifica intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id'] ?>&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al+'&ref=dashboard&idcontratto=' + $(this).data('idcontratto') + '&' + name + '=' + $(this).data('id'), 1);
+                launch_modal('<?php echo tr('Pianifica intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al+'&ref=dashboard&idcontratto=' + $(this).data('idcontratto') + '&' + name + '=' + $(this).data('id'), 1);
 
                 $(this).remove();
 
@@ -529,7 +616,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
 				ora_dal = moment(start).format("HH:mm");
 				ora_al = moment(end).format("HH:mm");
 
-                launch_modal('<?php echo tr('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id'] ?>&ref=dashboard&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al, 1 );
+                launch_modal('<?php echo tr('Aggiungi intervento'); ?>', globals.rootdir + '/add.php?id_module=<?php echo Modules::get('Interventi')['id']; ?>&ref=dashboard&data='+data+'&orario_inizio='+ora_dal+'&orario_fine='+ora_al, 1 );
 
 				$('#calendar').fullCalendar('unselect');
 			},
@@ -597,6 +684,8 @@ if (get_var('Utilizzare i tooltip sul calendario') == '1') {
 						else{
 							return false;
 						}
+
+                        $('#calendar').fullCalendar('option', 'contentHeight', 'auto');
 					}
                 });
 <?php

@@ -17,81 +17,81 @@ echo '
 	<input type="hidden" name="op" value="updatesede">
 
 	<div class="row">
-		<div class="col-xs-12 col-md-12">
+		<div class="col-md-12">
 			{[ "type": "text", "label": "'.tr('Nome sede').'", "name": "nomesede", "required": 1, "value": "$nomesede$" ]}
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "indirizzo", "id": "indirizzo_",  "required": 1, "value": "$indirizzo$" ]}
 		</div>
 
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Secondo indirizzo').'", "name": "indirizzo2", "value": "$indirizzo2$" ]}
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('P.Iva').'", "name": "piva", "value": "$piva$" ]}
 		</div>
 
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Codice Fiscale').'", "name": "codice_fiscale", "value": "$codice_fiscale$" ]}
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-xs-12 col-md-3">
+		<div class="col-md-3">
 			{[ "type": "text", "label": "'.tr('Città').'", "name": "citta", "id": "citta_", "value": "$citta$" ]}
 		</div>
 
-		<div class="col-xs-12 col-md-3">
+		<div class="col-md-3">
 			{[ "type": "text", "label": "'.tr('C.A.P.').'", "name": "cap", "value": "$cap$" ]}
 		</div>
 
-		<div class="col-xs-12 col-md-3">
+		<div class="col-md-3">
 			{[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia", "value": "$provincia$" ]}
 		</div>
 
-		<div class="col-xs-12 col-md-3">
+		<div class="col-md-3">
 			{[ "type": "number", "label": "'.tr('Km').'", "name": "km", "value": "$km$" ]}
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "values": "query=SELECT `id`, `nome` AS `descrizione` FROM `an_nazioni` ORDER BY `descrizione` ASC", "value": "$id_nazione$" ]}
 		</div>
 
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Telefono').'", "name": "telefono", "value": "$telefono$" ]}
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Fax').'", "name": "fax", "value": "$fax$" ]}
 		</div>
 
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Cellulare').'", "name": "cellulare", "value": "$cellulare$" ]}
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Indirizzo email').'", "name": "email", "value": "$email$" ]}
 		</div>
 
-		<div class="col-xs-12 col-md-6">
+		<div class="col-md-6">
 			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT `id`, CONCAT(`nome`, \' - \', `descrizione`) AS `descrizione` FROM `an_zone` ORDER BY `descrizione` ASC", "value": "$idzona$" ]}
 		</div>
     </div>';
 
 if (!empty($google)) {
-	echo '
+    echo '
 	<div class="row">
 		<div class="col-md-6" id="geocomplete">
 			{[ "type": "text", "label": "'.tr('Indirizzo Google').'", "name": "gaddress", "value": "$gaddress$", "extra": "data-geo=\'formatted_address\'" ]}
@@ -106,15 +106,14 @@ if (!empty($google)) {
 		</div>';
 
     // Vedi su google maps
-    if (!empty($records[0]['indirizzo']) || (empty($records[0]['citta'])) ) {
-		
+    if (!empty($records[0]['indirizzo']) || (empty($records[0]['citta']))) {
         echo '
 			<div  class="btn-group col-md-2"  >
 				<label>&nbsp;</label><br>
 				<a class="btn btn-info" title="'.tr('Mostra la sede su Google Maps').'"  onclick="window.open(\'https://maps.google.com/maps/search/\'+encodeURI( $(\'#indirizzo_\').val() )+\', \'+encodeURI( $(\'#citta_\').val() ) );">&nbsp;<i class="fa fa-map-marker">&nbsp;</i></a>
 			';
-			
-		 echo '
+
+        echo '
 				<a title="'.tr('Calcola percoso da sede legale a questa sede').'" class="btn btn-primary btn-secondary" onclick="window.open(\'https://maps.google.com/maps/dir/\'+encodeURI( $(\'#indirizzo_\').val() )+\', \'+encodeURI( $(\'#citta_\').val() )+\'/\'+encodeURI( $(\'#indirizzo\').val() )+\',\'+encodeURI( $(\'#citta\').val() )+\',8z\');"><i class="fa fa-car"></i></a>
 			</div>';
     }
@@ -123,7 +122,7 @@ if (!empty($google)) {
     </div>';
 
     if (!empty($records[0]['gaddress']) || (!empty($records[0]['lat']) && !empty($records[0]['lng']))) {
-	echo '
+        echo '
     <div id="map" style="height:400px; width:100%"></div><br>';
     }
 } else {

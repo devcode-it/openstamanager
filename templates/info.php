@@ -9,12 +9,12 @@ $id_cliente = $id_cliente ?: $idcliente;
 if (empty($id_sede) || $id_sede == '-1') {
     $queryc = 'SELECT * FROM an_anagrafiche WHERE idanagrafica='.prepare($id_cliente);
 } else {
-    $queryc = 'SELECT an_anagrafiche.*, an_sedi.* FROM an_sedi JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=an_sedi.idanagrafica WHERE an_sedi.idanagrafica='.prepare($id_cliente).' AND an_sedi.id='.prepare($id_sede);
+    $queryc = 'SELECT an_anagrafiche.*, an_sedi.*, if(an_sedi.codice_fiscale != "", an_sedi.codice_fiscale, an_anagrafiche.codice_fiscale) AS codice_fiscale, if(an_sedi.piva != "", an_sedi.piva, an_anagrafiche.piva) AS piva FROM an_sedi JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=an_sedi.idanagrafica WHERE an_sedi.idanagrafica='.prepare($id_cliente).' AND an_sedi.id='.prepare($id_sede);
 }
 $rsc = $dbo->fetchArray($queryc);
 
 // Lettura dati aziendali
-$rsf = $dbo->fetchArray("SELECT * FROM an_anagrafiche WHERE idanagrafica = (SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')");
+$rsf = $dbo->fetchArray("SELECT *, (SELECT iban FROM co_banche WHERE id IN (SELECT idbanca FROM co_documenti WHERE id = ".prepare($id_record)." ) ) AS codiceiban, (SELECT nome FROM co_banche WHERE id IN (SELECT idbanca FROM co_documenti WHERE id = ".prepare($id_record)." ) ) AS appoggiobancario, (SELECT bic FROM co_banche WHERE id IN (SELECT idbanca FROM co_documenti WHERE id = ".prepare($id_record)." ) ) AS bic FROM an_anagrafiche WHERE idanagrafica = (SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')");
 
 // Prefissi e contenuti del replace
 $replace = [
@@ -78,12 +78,68 @@ foreach ($replace as $prefix => $values) {
     }
 }
 
+// Header di default
+$header_file = DOCROOT.'/templates/base|custom|/header.php';
+
+$original_file = str_replace('|custom|', '', $header_file);
+$custom_file = str_replace('|custom|', '/custom', $header_file);
+
+if (file_exists($custom_file)) {
+    $header_file = $custom_file;
+} elseif (file_exists($original_file)) {
+    $header_file = $original_file;
+}
+
+$default_header = include $header_file;
+
+// Footer di default
+$footer_file = DOCROOT.'/templates/base|custom|/footer.php';
+
+$original_file = str_replace('|custom|', '', $footer_file);
+$custom_file = str_replace('|custom|', '/custom', $footer_file);
+
+if (file_exists($custom_file)) {
+    $footer_file = $custom_file;
+} elseif (file_exists($original_file)) {
+    $footer_file = $original_file;
+}
+
+$default_footer = include $footer_file;
+
+// Logo di default
+$logo_file = DOCROOT.'/templates/base|custom|/logo_azienda.jpg';
+
+$original_file = str_replace('|custom|', '', $logo_file);
+$custom_file = str_replace('|custom|', '/custom', $logo_file);
+
+$default_logo = $original_file;
+if (file_exists($custom_file)) {
+    $default_logo = $custom_file;
+}
+
+// Logo specifico della stampa
+$logo_file = DOCROOT.'/templates/'.Prints::get($id_print)['directory'].'|custom|/logo_azienda.jpg';
+
+$original_file = str_replace('|custom|', '', $logo_file);
+$custom_file = str_replace('|custom|', '/custom', $logo_file);
+
+if (file_exists($custom_file)) {
+    $logo = $custom_file;
+} elseif (file_exists($original_file)) {
+    $logo = $original_file;
+} else {
+    $logo = $default_logo;
+}
+
 // Valori aggiuntivi per la sostituzione
 $replaces = array_merge($replaces, [
-    'default_header' => include DOCROOT.'/templates/base/header.php',
-    'default_footer' => include DOCROOT.'/templates/base/footer.php',
+    'default_header' => $default_header,
+    'default_footer' => $default_footer,
+    'default_logo' => $default_logo,
+    'logo' => $logo,
     'docroot' => DOCROOT,
     'rootdir' => ROOTDIR,
+    'directory' => Prints::get($id_print)['full_directory'],
     'footer' => !empty($footer) ? $footer : '',
     'dicitura_fissa_fattura' => get_var('Dicitura fissa fattura'),
 ]);

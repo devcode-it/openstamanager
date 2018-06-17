@@ -7,13 +7,13 @@ currentMenu: struttura
 <!-- TOC depthFrom:2 depthTo:6 orderedList:false updateOnSave:true withLinks:true -->
 
 - [Caratteristiche](#caratteristiche)
-    - [Open source](#open-source)
+    - [open-source](#open-source)
     - [Modulare e personalizzabile](#modulare-e-personalizzabile)
     - [Multipiattaforma e user friendly](#multipiattaforma-e-user-friendly)
 - [Struttura](#struttura)
 - [Root](#root)
     - [add.php](#addphp)
-    - [ajax_autocomplete.php](#ajax_autocompletephp)
+    - [ajax_complete.php](#ajax_completephp)
     - [ajax_dataload.php](#ajax_dataloadphp)
     - [ajax_select.php](#ajax_selectphp)
     - [bug.php](#bugphp)
@@ -51,13 +51,13 @@ currentMenu: struttura
 
 ## Caratteristiche
 
-### Open source
+### open-source
 
-La natura open source (termine inglese che significa _sorgente aperta_) del progetto evidenzia lo spirito di collaborazione e condivisione che pervade l'attività di sviluppo del gestionale, di cui gli autori rendono pubblico il codice sorgente e ne favoriscono il libero studio, permettendo a programmatori indipendenti di apportarvi modifiche ed estensioni.
+La natura open-source (termine inglese che significa _sorgente aperta_) del progetto evidenzia lo spirito di collaborazione e condivisione che pervade l'attività di sviluppo del gestionale, di cui gli autori rendono pubblico il codice sorgente e ne favoriscono il libero studio, permettendo a programmatori indipendenti di apportarvi modifiche ed estensioni.
 
 Particolarmente espressiva in questo senso risulta essere la documentazione ufficiale del progetto:
 
-> Il progetto è un software open source perché permette agli utilizzatori di studiarne il funzionamento ed adattarlo alle proprie esigenze; inoltre, in ambito commerciale, non obbliga l'utilizzatore ad essere legato allo stesso fornitore di assistenza.
+> Il progetto è un software open-source perché permette agli utilizzatori di studiarne il funzionamento ed adattarlo alle proprie esigenze; inoltre, in ambito commerciale, non obbliga l'utilizzatore ad essere legato allo stesso fornitore di assistenza.
 
 La licenza in utilizzo è la GNU General Public License 3.0 (GPL 3.0).
 
@@ -107,7 +107,7 @@ Il file `add.php` è dedicato alla gestione dei form di creazione nuovi elementi
 
 In particolare si occupa parallelamente della funzionalità di aggiunta al volo, visibile in azione nei modulo **Interventi**, **Articoli** e in alcuni altri punti del software.
 
-### ajax_autocomplete.php
+### ajax_complete.php
 
 Il file `ajax_dataload.php` gestisce il caricamento dinamico dei dati in varie sezioni del sito, relativamente alle operazioni di auto-completamento dei form e della ricerca globale.
 

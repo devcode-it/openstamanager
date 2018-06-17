@@ -56,6 +56,7 @@ switch (post('op')) {
             $data = post('data');
             $idanagrafica = post('idanagrafica');
             $note = post('note');
+            $note_aggiuntive = post('note_aggiuntive');
             $idstatoddt = post('idstatoddt');
             $idstatoddt = post('idstatoddt');
             $idcausalet = post('idcausalet');
@@ -95,6 +96,7 @@ switch (post('op')) {
                 ' idpagamento='.prepare($idpagamento).','.
                 ' numero_esterno='.prepare($numero_esterno).','.
                 ' note='.prepare($note).','.
+                ' note_aggiuntive='.prepare($note_aggiuntive).','.
                 ' idconto='.prepare($idconto).','.
                 ' idanagrafica='.prepare($idanagrafica).','.
                 ' idsede='.prepare($idsede).','.
@@ -186,29 +188,25 @@ switch (post('op')) {
         $iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
         $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
 
-        $query = 'INSERT INTO dt_righe_ddt(idddt, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, `order`) VALUES('.prepare($id_record).', '.prepare($idiva).', '.prepare($rs[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($id_record).'))';
+        $query = 'INSERT INTO dt_righe_ddt(idddt, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, is_descrizione, `order`) VALUES('.prepare($id_record).', '.prepare($idiva).', '.prepare($rs[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', '.prepare(empty($qta)).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM dt_righe_ddt AS t WHERE idddt='.prepare($id_record).'))';
+        $dbo->query($query);
 
-        if ($dbo->query($query)) {
+        // Messaggi informativi
+        if (!empty($idarticolo)) {
+            $_SESSION['infos'][] = tr('Articolo aggiunto!');
+        } elseif (!empty($qta)) {
             $_SESSION['infos'][] = tr('Riga aggiunta!');
-
-            // Ricalcolo inps, ritenuta e bollo
-            if ($dir == 'entrata') {
-                ricalcola_costiagg_ddt($id_record);
-            } else {
-                ricalcola_costiagg_ddt($id_record);
-            }
+        } else {
+            $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
         }
-        break;
 
-    case 'adddescrizione':
-        if (!empty($id_record)) {
-            $descrizione = post('descrizione');
-            $query = 'INSERT INTO dt_righe_ddt(idddt, descrizione, is_descrizione) VALUES('.prepare($id_record).', '.prepare($descrizione).', 1)';
-
-            if ($dbo->query($query)) {
-                $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
-            }
+        // Ricalcolo inps, ritenuta e bollo
+        if ($dir == 'entrata') {
+            ricalcola_costiagg_ddt($id_record);
+        } else {
+            ricalcola_costiagg_ddt($id_record);
         }
+
         break;
 
     // Creazione ddt da ordine
@@ -242,12 +240,12 @@ switch (post('op')) {
                 $um = post('um')[$idriga];
                 $abilita_serial = post('abilita_serial')[$idriga];
 
-                $subtot = $post['subtot'][$idriga] * $qta;
-                $sconto = $post['sconto'][$idriga];
+                $subtot = Translator::numberToLocale($post['subtot'][$idriga]) * $qta;
+                $sconto = Translator::numberToLocale($post['sconto'][$idriga]);
                 $sconto = $sconto * $qta;
 
                 $idiva = post('idiva')[$idriga];
-                $iva = $post['iva'][$idriga] * $qta;
+                $iva = Translator::numberToLocale($post['iva'][$idriga]) * $qta;
 
                 $qprc = 'SELECT tipo_sconto, sconto_unitario FROM or_righe_ordini WHERE id='.prepare($idriga);
                 $rsprc = $dbo->fetchArray($qprc);
@@ -274,8 +272,8 @@ switch (post('op')) {
                 $dbo->query('UPDATE or_righe_ordini SET qta_evasa = qta_evasa+'.$qta.' WHERE id='.prepare($idriga));
 
                 // Movimento il magazzino
-                // vendita
                 if (!empty($idarticolo)) {
+                    // vendita
                     if ($dir == 'entrata') {
                         add_movimento_magazzino($idarticolo, -$qta, ['idddt' => $id_record]);
                     }
@@ -367,7 +365,6 @@ switch (post('op')) {
             $idarticolo = $rs[0]['idarticolo'];
             $idordine = $rs[0]['idordine'];
             $old_qta = $rs[0]['qta'];
-            $idddt = $rs[0]['idddt'];
             $is_descrizione = $rs[0]['is_descrizione'];
 
             // Controllo per gestire i serial
@@ -380,7 +377,7 @@ switch (post('op')) {
             }
 
             // Se c'è un collegamento ad un ordine, aggiorno la quantità evasa
-            if (!empty($idddt)) {
+            if (!empty($idordine)) {
                 $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$old_qta.' + '.$qta.' WHERE descrizione='.prepare($rs[0]['descrizione']).' AND idarticolo='.prepare($rs[0]['idarticolo']).' AND idordine='.prepare($idordine).' AND idiva='.prepare($rs[0]['idiva']));
             }
 
@@ -495,7 +492,7 @@ switch (post('op')) {
 }
 
 // Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase
-if (!empty($id_record)) {
+if (!empty($id_record) && get_var('Cambia automaticamente stato ordini fatturati')) {
     $rs = $dbo->fetchArray('SELECT idordine FROM dt_righe_ddt WHERE idddt='.prepare($id_record));
 
     for ($i = 0; $i < sizeof($rs); ++$i) {

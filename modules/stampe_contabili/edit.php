@@ -5,11 +5,11 @@ include_once __DIR__.'/../../core.php';
 echo '
 
 <div class="alert alert-warning">
-    <i class="fa fa-warning"></i> <b>'.tr('ATTENZIONE', ['upper']).':</b> '.tr('le suddette stampe contabili non sono da considerarsi valide ai fini fiscali').'.
+    <i class="fa fa-warning"></i> <b>'.tr('Attenzione', [], ['upper']).':</b> '.tr('le suddette stampe contabili non sono da considerarsi valide ai fini fiscali').'.
 </div>
 
 <div class="row">
-    <div class="col-xs-12 col-md-6">
+    <div class="col-md-4">
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">'.tr('Registri iva dal _START_ al _END_', [
@@ -19,22 +19,14 @@ echo '
             </div>
 
             <div class="panel-body">
-                <a class="btn btn-primary" href="'.$rootdir.'/pdfgen.php?ptype=registro_iva&dir=entrata" target="_blank">
-                    <i class="fa fa-print fa-2x"></i><br>
-                    '.tr('Stampa registro').'<br>
-                    '.tr('IVA vendite').'
-                </a>
+                '.Prints::getLink('Registro IVA', $id_record, 'btn-primary', '<br>'.tr('Stampa registro').'<br>'.tr('IVA vendite'), '|default| fa-2x', 'dir=entrata').'
 
-                <a class="btn btn-primary" href="'.$rootdir.'/pdfgen.php?ptype=registro_iva&dir=uscita" target="_blank">
-                    <i class="fa fa-print fa-2x"></i><br>
-                    '.tr('Stampa registro').'<br>
-                    '.tr('IVA acquisti').'
-                </a>
+                '.Prints::getLink('Registro IVA', $id_record, 'btn-primary', '<br>'.tr('Stampa registro').'<br>'.tr('IVA acquisti'), '|default| fa-2x', 'dir=uscita').'
             </div>
         </div>
     </div>
 
-    <div class="col-xs-12 col-md-6">
+    <div class="col-md-4">
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">'.tr('Comunicazione dati fatture (ex-spesometro) dal _START_ al _END_', [
@@ -44,15 +36,24 @@ echo '
             </div>
 
             <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <a class="btn btn-primary" href="'.$rootdir.'/pdfgen.php?ptype=spesometro" target="_blank">
-                            <i class="fa fa-print fa-2x"></i><br>
-                            '.tr('Stampa').'<br>
-                            '.tr('dati fatture').'
-                        </a>
-                    </div>
-                </div>
+                '.Prints::getLink('Spesometro', $id_record, 'btn-primary', '<br>'.tr('Stampa').'<br>'.tr('dati fatture'), '|default| fa-2x', 'dir=uscita').'
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">'.tr('Fatturato dal _START_ al _END_', [
+                    '_START_' => Translator::dateToLocale($_SESSION['period_start']),
+                    '_END_' => Translator::dateToLocale($_SESSION['period_end']),
+                ]).'</h3>
+            </div>
+
+            <div class="panel-body">
+                '.Prints::getLink('Fatturato', $id_record, 'btn-primary', '<br>'.tr('Stampa fatturato').'<br>'.tr('in entrata'), '|default| fa-2x', 'dir=entrata').'
+
+                '.Prints::getLink('Fatturato', $id_record, 'btn-primary', '<br>'.tr('Stampa fatturato').'<br>'.tr('in uscita'), '|default| fa-2x', 'dir=uscita').'
             </div>
         </div>
     </div>

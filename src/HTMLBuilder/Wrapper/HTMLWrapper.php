@@ -99,14 +99,18 @@ class HTMLWrapper implements WrapperInterface
         $pieces = explode('|', $string);
 
         $id_module = $pieces[1];
+
         $extra = empty($pieces[2]) ? '' : '&'.$pieces[2];
 
         $classes = empty($pieces[3]) ? '' : ' '.$pieces[3];
 
+        $extras = empty($pieces[4]) ? '' : ' '.$pieces[4];
+
         $module = \Modules::get($id_module);
+
         if (in_array($module['permessi'], ['r', 'rw'])) {
             $result = '
-<button data-href="'.ROOTDIR.'/add.php?id_module='.$id_module.$extra.'&select='.$values['id'].'&ajax=yes" data-target="#bs-popup2" data-toggle="modal" data-title="'.tr('Aggiungi').'" type="button" class="btn'.$classes.'">
+<button '.$extras.' data-href="'.ROOTDIR.'/add.php?id_module='.$id_module.$extra.'&select='.$values['id'].'&ajax=yes" data-target="#bs-popup2" data-toggle="modal" data-title="'.tr('Aggiungi').'" type="button" class="btn'.$classes.'">
     <i class="fa fa-plus"></i>
 </button>';
         }
@@ -118,27 +122,43 @@ class HTMLWrapper implements WrapperInterface
     {
         $result = null;
 
-        $choices = [
-            [
-                'id' => 'UNT',
-                'descrizione' => tr('&euro;'),
-            ],
-            [
-                'id' => 'PRC',
-                'descrizione' => '%',
-            ],
-        ];
-
         $pieces = explode('|', $string);
-
         $type = $pieces[1];
-        $value = (empty($pieces[2]) || !in_array($pieces[2], array_column($choices, 'id'))) ? 'UNT' : $pieces[2];
+		$extra = $pieces[3];
 
         if ($type == 'untprc') {
-            $result = '{[ "type": "select", "name": "tipo_'.prepareToField($values['name']).'", "value": "'.prepareToField($value).'", "values": '.json_encode($choices).', "class": "no-search" ]}';
-
-            $result = \HTMLBuilder\HTMLBuilder::replace($result);
+            $choices = [
+                [
+                    'id' => 'UNT',
+                    'descrizione' => tr('&euro;'),
+                ],
+                [
+                    'id' => 'PRC',
+                    'descrizione' => '%',
+                ],
+            ];
+        } elseif ($type == 'email') {
+            $choices = [
+                [
+                    'id' => 'a',
+                    'descrizione' => tr('A').'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+                ],
+                [
+                    'id' => 'cc',
+                    'descrizione' => tr('CC').'&nbsp;&nbsp;',
+                ],
+                [
+                    'id' => 'bcc',
+                    'descrizione' => tr('CCN'),
+                ],
+            ];
         }
+
+        $value = (empty($pieces[2]) || !in_array($pieces[2], array_column($choices, 'id'))) ? $choices[0]['id'] : $pieces[2];
+
+        $result = '{[ "type": "select", "name": "tipo_'.prepareToField($values['name']).'", "value": "'.prepareToField($value).'", "values": '.json_encode($choices).', "class": "no-search", "extra": "'.$extra.'" ]}';
+
+        $result = \HTMLBuilder\HTMLBuilder::replace($result);
 
         return $result;
     }

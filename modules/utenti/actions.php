@@ -61,6 +61,11 @@ switch (filter('op')) {
                 $_SESSION['errors'][] = tr('Utente già esistente!');
             }
         }
+
+        if (empty($id_record)) {
+            redirect(ROOTDIR.'/modules/utenti/info.php');
+        }
+
         break;
 
     // Aggiunta di un nuovo utente

@@ -56,7 +56,7 @@ class Permissions
      *
      * @return bool
      */
-    public static function check($permissions = [])
+    public static function check($permissions = [], $die = true)
     {
         if (empty($permissions)) {
             $permissions = ['r', 'rw'];
@@ -80,7 +80,7 @@ class Permissions
                     }
                 }
 
-                if (!$result) {
+                if (!$result && $die) {
                     die(tr('Accesso negato'));
                 }
             }

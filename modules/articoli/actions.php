@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-$upload_dir = $docroot.'/files/'.Modules::get('Articoli')['directory'];
-
 switch (post('op')) {
     case 'update':
         $codice = post('codice');
@@ -58,7 +56,13 @@ switch (post('op')) {
         $movimento = $qta - $old_qta;
 
         if ($movimento != 0) {
-            add_movimento_magazzino($id_record, $movimento);
+            $descrizione_movimento = post('descrizione_movimento');
+            $data_movimento = post('data_movimento');
+            if($descrizione_movimento!='' && $data_movimento!=''){
+                add_movimento_magazzino($id_record, $movimento, [], $descrizione_movimento, $data_movimento);
+            }else{
+                add_movimento_magazzino($id_record, $movimento);
+            }
         }
 
         /*

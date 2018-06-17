@@ -9,13 +9,15 @@ $tipodoc = $rs[0]['descrizione'];
 $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 $_SESSION['superselect']['ddt'] = $dir;
 
-?>
-<form action="" class="text-right" method="post" id="form-copy">
-    <input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="op" value="copy">
-</form>
 
-<form action="" method="post" role="form">
+if ($dir == 'entrata') {
+	$conto = 'vendite';
+} else {
+	$conto = 'acquisti';
+}
+
+?>
+<form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
@@ -27,61 +29,52 @@ $_SESSION['superselect']['ddt'] = $dir;
 		</div>
 
 		<div class="panel-body">
-		
+
 			<?php
-				if ($dir == 'entrata') {
-					$rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche WHERE idanagrafica='.prepare($records[0]['idanagrafica']));
-					$campi_mancanti = [];
-					
-					
-					if ($rs2[0]['piva'] == '') {
-						if ($rs2[0]['codice_fiscale'] == '') {
-							array_push($campi_mancanti, 'codice fiscale');
-						}
-					}
-					if ($rs2[0]['citta'] == '') {
-						array_push($campi_mancanti, 'citta');
-					}
-					if ($rs2[0]['indirizzo'] == '') {
-						array_push($campi_mancanti, 'indirizzo');
-					}
-					if ($rs2[0]['cap'] == '') {
-						array_push($campi_mancanti, 'C.A.P.');
-					}
-					
+                if ($dir == 'entrata') {
+                    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche WHERE idanagrafica='.prepare($records[0]['idanagrafica']));
+                    $campi_mancanti = [];
 
-					if (sizeof($campi_mancanti) > 0) {
-						echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere alla stampa completa i seguenti campi dell'anagrafica:<br/><b>".implode(', ', $campi_mancanti).'</b><br/>
+                    if ($rs2[0]['piva'] == '') {
+                        if ($rs2[0]['codice_fiscale'] == '') {
+                            array_push($campi_mancanti, 'codice fiscale');
+                        }
+                    }
+                    if ($rs2[0]['citta'] == '') {
+                        array_push($campi_mancanti, 'citta');
+                    }
+                    if ($rs2[0]['indirizzo'] == '') {
+                        array_push($campi_mancanti, 'indirizzo');
+                    }
+                    if ($rs2[0]['cap'] == '') {
+                        array_push($campi_mancanti, 'C.A.P.');
+                    }
+
+                    if (sizeof($campi_mancanti) > 0) {
+                        echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere alla stampa completa i seguenti campi dell'anagrafica:<br/><b>".implode(', ', $campi_mancanti).'</b><br/>
 						'.Modules::link('Anagrafiche', $records[0]['idanagrafica'], tr('Vai alla scheda anagrafica'), null).'</div>';
-					}
-				}
-			?>
-			
-				
-            <div class="pull-right">
-			
-                <button type="button" class="btn btn-primary" onclick="if( confirm('Duplicare questa fattura?') ){ $('#form-copy').submit(); }"><i class="fa fa-copy"></i> <?php echo tr('Duplica fattura'); ?></button>
-
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-				
-			</div>
-			
-			<div class="clearfix"></div>
+                    }
+                }
+            ?>
 
 			<div class="row">
                 <?php
                 if ($dir == 'uscita') {
                     echo '
                 				<div class="col-md-3">
-                					{[ "type": "span", "label": "'.tr('Numero fattura').'", "name": "numero","class": "text-center", "value": "$numero$" ]}
+                					{[ "type": "text", "label": "'.tr('Numero fattura/protocollo').'", "required": 1, "name": "numero","class": "text-center alphanumeric-mask", "value": "$numero$" ]}
                                 </div>';
-                    $label = tr('Numero secondario');
+                    $label = tr('Numero fornitore');
                 } else {
                     $label = tr('Numero fattura');
                 }
                 ?>
+				
+				<!-- id_segment -->
+				{[ "type": "hidden", "label": "Segmento", "name": "id_segment", "class": "text-center", "value": "$id_segment$" ]}
+				
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$" ]}
+					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "alphanumeric-mask text-center", "value": "$numero_esterno$" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -148,18 +141,11 @@ $_SESSION['superselect']['ddt'] = $dir;
 				</div>
 
 				<div class="col-md-3">
-					<?php
-                    if ($dir == 'entrata') {
-                        $ajaxsource = 'conti-vendite';
-                    } else {
-                        $ajaxsource = 'conti-acquisti';
-                    }
-                    ?>
-					{[ "type": "select", "label": "<?php echo tr('Conto'); ?>", "name": "idconto", "required": 1, "value": "$idconto$", "ajax-source": "<?php echo $ajaxsource; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "values": "query=SELECT id, descrizione, (SELECT id FROM co_banche WHERE id_pianodeiconti3 = co_pagamenti.idconto_<?php echo $conto; ?> ) AS idbanca FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$", "extra": "onchange=\"$('#idbanca').val( $(this).find('option:selected').data('idbanca') ).change(); \" " ]}
 				</div>
-
+				
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Banca'); ?>", "name": "idbanca", "required": 0, "values": "query=SELECT id, CONCAT (nome, ' - ' , iban) AS descrizione FROM co_banche WHERE deleted = 0 ORDER BY nome ASC", "value": "$idbanca$" ]}
 				</div>
 
 			</div>
@@ -219,7 +205,7 @@ if ($dir == 'uscita') {
 $query2 = 'SELECT id FROM co_movimenti WHERE iddocumento='.$id_record.' AND primanota=1';
 $n2 = $dbo->fetchNum($query2);
 
-$query3 = 'SELECT SUM(da_pagare-pagato) AS differenza, SUM(da_pagare) FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.$id_record.'';
+$query3 = 'SELECT SUM(da_pagare-pagato) AS differenza, SUM(da_pagare) FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.$id_record;
 $rs3 = $dbo->fetchArray($query3);
 $differenza = $rs3[0]['differenza'];
 $da_pagare = $rs3[0]['da_pagare'];
@@ -260,11 +246,6 @@ if ($records[0]['stato'] == 'Emessa') {
 					{[ "type": "textarea", "label": "<?php echo tr('Note aggiuntive'); ?>", "name": "note_aggiuntive", "help": "<?php echo tr('Note interne.'); ?>", "value": "$note_aggiuntive$" ]}
 				</div>
 			</div>
-
-
-			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-			</div>
 		</div>
 	</div>
 </form>
@@ -285,18 +266,18 @@ if ($records[0]['stato'] == 'Emessa') {
 if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
     if ($dir == 'entrata') {
         // Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti
-        $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi WHERE idanagrafica='.prepare($records[0]['idanagrafica'])." AND NOT idstatointervento='DENY' AND id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND id NOT IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND id NOT IN (SELECT idintervento FROM co_righe_contratti WHERE idintervento IS NOT NULL)";
+        $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND in_statiintervento.completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_contratti WHERE idintervento IS NOT NULL)';
         $interventi = $dbo->fetchArray($int_query)[0]['tot'];
 
         // Se non trovo niente provo a vedere se ce ne sono per clienti terzi
         if (empty($interventi)) {
             // Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti (clienti terzi)
-            $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi WHERE idclientefinale='.prepare($records[0]['idanagrafica'])." AND NOT idstatointervento='DENY' AND id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND id NOT IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND id NOT IN (SELECT idintervento FROM co_righe_contratti WHERE idintervento IS NOT NULL)";
+            $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE idclientefinale='.prepare($records[0]['idanagrafica']).' AND in_statiintervento.completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_contratti WHERE idintervento IS NOT NULL)';
             $interventi = $dbo->fetchArray($int_query)[0]['tot'];
         }
 
         echo '
-                        <a class="btn btn-sm btn-primary'.(!empty($interventi) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_intervento.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi intervento" data-target="#bs-popup">
+                        <a class="btn btn-sm btn-primary tip"  '.(!empty($interventi) ? '' : ' disabled').' data-toggle="tooltip" title="'.tr('Interventi non collegati a preventivi o contratti.').'" data-href="'.$rootdir.'/modules/fatture/add_intervento.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi intervento" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Intervento
                         </a>';
 
@@ -304,7 +285,7 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
         $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($records[0]['idanagrafica'])." AND id NOT IN (SELECT idpreventivo FROM co_righe_documenti WHERE NOT idpreventivo=NULL) AND idstato IN( SELECT id FROM co_statipreventivi WHERE descrizione='Accettato' OR descrizione='In lavorazione' OR descrizione='In attesa di conferma')";
         $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
         echo '
-                        <a class="btn btn-sm btn-primary'.(!empty($preventivi) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_preventivo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi preventivo" data-target="#bs-popup">
+                        <a class="btn btn-sm btn-primary tip" '.(!empty($preventivi) ? '' : ' disabled').'  title="'.tr('Preventivi accettati, in attesa di conferma o in lavorazione.').'" data-href="'.$rootdir.'/modules/fatture/add_preventivo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="Aggiungi preventivo" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Preventivo
                         </a>';
 
@@ -313,15 +294,15 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
         $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
         echo '
 
-                        <a class="btn btn-sm btn-primary'.(!empty($contratti) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_contratto.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi contratto" data-target="#bs-popup">
+                        <a class="btn btn-sm btn-primary tip" '.(!empty($contratti) ? '' : ' disabled').' title="'.tr('Contratti accettati, in attesa di conferma o in lavorazione.').'"  data-href="'.$rootdir.'/modules/fatture/add_contratto.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="Aggiungi contratto" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Contratto
                         </a>';
 
         // Lettura ddt
-        $ddt_query = 'SELECT COUNT(*) AS tot FROM dt_ddt WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione IN(\'Bozza\', \'Parzialmente fatturato\')) AND idtipoddt=(SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir).') AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
+        $ddt_query = 'SELECT COUNT(*) AS tot FROM dt_ddt WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoddt=(SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir).') AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
         $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
         echo '
-                        <a class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi ddt" data-target="#bs-popup">
+                        <a class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="Aggiungi ddt" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Ddt
                         </a>';
     }
@@ -334,18 +315,18 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
 
     $articoli = $dbo->fetchArray($art_query)[0]['tot'];
     echo '
-                        <a class="btn btn-sm btn-primary'.(!empty($articoli) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_articolo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup">
-                            <i class="fa fa-plus"></i> Articolo
+                        <a class="btn btn-sm btn-primary'.(!empty($articoli) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/row-add.php?id_module='.$id_module.'&id_record='.$id_record.'&is_articolo" data-toggle="tooltip" data-title="Aggiungi articolo" data-target="#bs-popup">
+                            <i class="fa fa-plus"></i> '.tr('Articolo').'
                         </a>';
 
     echo '
-                        <a class="btn btn-sm btn-primary" data-href="'.$rootdir.'/modules/fatture/add_riga.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup">
-                            <i class="fa fa-plus"></i> Riga generica
+                        <a class="btn btn-sm btn-primary" data-href="'.$rootdir.'/modules/fatture/row-add.php?id_module='.$id_module.'&id_record='.$id_record.'&is_riga" data-toggle="tooltip" data-title="Aggiungi riga" data-target="#bs-popup">
+                            <i class="fa fa-plus"></i> '.tr('Riga').'
                         </a>';
 
     echo '
-                        <a class="btn btn-sm btn-primary" data-href="'.$rootdir.'/modules/fatture/add_descrizione.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup">
-                            <i class="fa fa-plus"></i> Descrizione
+                        <a class="btn btn-sm btn-primary" data-href="'.$rootdir.'/modules/fatture/row-add.php?id_module='.$id_module.'&id_record='.$id_record.'&is_descrizione" data-toggle="tooltip" data-title="Aggiungi descrizione" data-target="#bs-popup">
+                            <i class="fa fa-plus"></i> '.tr('Descrizione').'
                         </a>';
 }
 ?>
@@ -356,21 +337,11 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
 <?php
 //stampa solo per fatture di vendita
 if ($dir == 'entrata') {
-	if (sizeof($campi_mancanti) > 0) {
-		/*echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere alla stampa completa i seguenti campi dell'anagrafica:<br/><b>".implode(', ', $campi_mancanti).'</b><br/>
-		'.Modules::link('Anagrafiche', $records[0]['idanagrafica'], tr('Vai alla scheda anagrafica'), null).'</div>';*/
-		echo '<a class="btn btn-info btn-sm pull-right disabled" class="disabled" ><i class="fa fa-print"></i> Stampa fattura</a>';
-	} else {
-		if ($records[0]['descrizione_tipodoc'] == 'Fattura accompagnatoria di vendita') {
-			?>
-				<a class="btn btn-info btn-sm pull-right" href="<?php echo $rootdir; ?>/pdfgen.php?ptype=fatture_accompagnatorie&iddocumento=<?php echo $id_record; ?>" target="_blank"><i class="fa fa-print"></i> Stampa fattura</a>
-		<?php
-		} else {
-			?>
-				<a class="btn btn-info btn-sm pull-right" href="<?php echo $rootdir; ?>/pdfgen.php?ptype=fatture&iddocumento=<?php echo $id_record; ?>" target="_blank"><i class="fa fa-print"></i> Stampa fattura</a>
-		<?php
-		}
-	}
+    if (sizeof($campi_mancanti) > 0) {
+        //echo '{( "name": "button", "type": "print", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "class": "btn-info disabled" )}';
+    } else {
+        //echo '{( "name": "button", "type": "print", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}';
+    }
 }
 ?>
 				</div>

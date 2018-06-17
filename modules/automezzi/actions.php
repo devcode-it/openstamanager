@@ -108,7 +108,7 @@ switch (post('op')) {
         $idarticolo = post('idarticolo');
         $qta = post('qta');
 
-        $rs = $dbo->fetchArray("SELECT id, qta FROM mg_articoli_automezzi WHERE idarticolo=".prepare($idarticolo)." AND idautomezzo=".prepare($id_record));
+        $rs = $dbo->fetchArray('SELECT id, qta FROM mg_articoli_automezzi WHERE idarticolo='.prepare($idarticolo).' AND idautomezzo='.prepare($id_record));
 
         // Se nell'automezzo non c'è già questo articolo inserisco la scorta nell'automezzo da zero
         if (empty($rs)) {

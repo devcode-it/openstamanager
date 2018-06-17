@@ -9,7 +9,7 @@ $autofill = [
     'words' => 70,
     'rows' => 16,
     'additional' => 15,
-    'columns' => $mostra_prezzi ? 5 : 2,
+    'columns' => $options['pricing'] ? 5 : 2,
 ];
 
 $imponibile = [];
@@ -24,7 +24,7 @@ echo "
             <th class='text-center'>".tr('Descrizione', [], ['upper' => true])."</th>
             <th class='text-center' style='width:10%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
-if ($mostra_prezzi) {
+if ($options['pricing']) {
     echo "
             <th class='text-center' style='width:15%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
             <th class='text-center' style='width:15%'>".tr('Importo', [], ['upper' => true])."</th>
@@ -44,7 +44,7 @@ $rs_gen = $dbo->fetchArray("SELECT *,
     (SELECT `percentuale` FROM `co_iva` WHERE `id` = `dt_righe_ddt`.`idiva`) AS perc_iva,
     IFNULL((SELECT peso_lordo FROM mg_articoli WHERE id=idarticolo),0) * qta AS peso_lordo,
     IFNULL((SELECT volume FROM mg_articoli WHERE id=idarticolo),0) * qta AS volume
-FROM `dt_righe_ddt` WHERE idddt=".prepare($idddt));
+FROM `dt_righe_ddt` WHERE idddt=".prepare($id_record));
 foreach ($rs_gen as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
@@ -98,19 +98,20 @@ foreach ($rs_gen as $r) {
 
     echo '
         <td class="text-center">';
-    if ($r['is_descrizione'] == 0) {
-        echo
-            Translator::numberToLocale($r['qta']).' '.$r['um'];
+    if (empty($r['is_descrizione'])) {
+        echo '
+            '.Translator::numberToLocale($r['qta']).' '.$r['um'];
     }
     echo '
         </td>';
 
-    if ($mostra_prezzi) {
-        echo '
-        <td class="text-right">';
-        if ($r['is_descrizione'] == 0) {
-            echo
-            Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
+    if ($options['pricing']) {
+        // Prezzo unitario
+        echo "
+        <td class='text-right'>";
+        if (empty($r['is_descrizione'])) {
+            echo '
+            '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
         }
         echo '
         </td>';
@@ -118,19 +119,19 @@ foreach ($rs_gen as $r) {
         // Imponibile
         echo "
         <td class='text-right'>";
-        if ($r['is_descrizione'] == 0) {
-            echo
-            Translator::numberToLocale($r['subtotale']).' &euro;';
+        if (empty($r['is_descrizione'])) {
+            echo '
+            '.Translator::numberToLocale($r['subtotale']).' &euro;';
 
             if ($r['sconto'] > 0) {
                 if ($count <= 1) {
                     $count += 0.4;
                 }
                 echo '
-                <br><small class="help-block">- '.tr('sconto _TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
-                ]).'</small>';
+            <br><small class="help-block">- '.tr('sconto _TOT_ _TYPE_', [
+                '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+            ]).'</small>';
             }
         }
         echo '
@@ -139,9 +140,9 @@ foreach ($rs_gen as $r) {
         // Iva
         echo "
         <td class='text-center'>";
-        if ($r['is_descrizione'] == 0) {
-            echo
-            Translator::numberToLocale($r['perc_iva']);
+        if (empty($r['is_descrizione'])) {
+            echo '
+            '.Translator::numberToLocale($r['perc_iva']);
         }
         echo '
         </td>';
@@ -163,7 +164,7 @@ echo '
 
 // Info per il footer
 $imponibile = sum($imponibile) - sum($sconto);
-$iva = sum($iva, null, 4);
+$iva = sum($iva, null, 2);
 
 $totale = $imponibile + $iva;
 

@@ -12,7 +12,7 @@ if (!empty($rs)) {
         <th width="20%">'.tr('Q.tà').'</th>
     </tr>';
 
-    foreach($rs as $r){
+    foreach ($rs as $r) {
         echo '
     <tr>
         <td>

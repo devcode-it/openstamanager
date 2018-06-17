@@ -55,7 +55,9 @@ class Auth extends \Util\Singleton
             if (API::isAPIRequest()) {
                 $token = API::getRequest()['token'];
 
-                $id = $database->fetchArray('SELECT `id_utente` FROM `zz_tokens` WHERE `token` = '.prepare($token))[0]['id_utente'];
+                $user = $database->fetchArray('SELECT `id_utente` FROM `zz_tokens` WHERE `enabled` = 1 AND `token` = '.prepare($token));
+
+                $id = !empty($user) ? $user[0]['id_utente'] : null;
             }
             // Controllo sulla sessione attiva
             elseif (!empty($_SESSION['id_utente'])) {
@@ -207,6 +209,7 @@ class Auth extends \Util\Singleton
             $results = $database->fetchArray('SELECT id AS id_utente, idanagrafica, username, (SELECT nome FROM zz_groups WHERE zz_groups.id=zz_users.idgruppo) AS gruppo FROM zz_users WHERE id = '.prepare($user_id).' AND enabled = 1 LIMIT 1', false, ['session' => false]);
 
             if (!empty($results)) {
+                $results[0]['id'] = $results[0]['id_utente'];
                 $results[0]['is_admin'] = ($results[0]['gruppo'] == 'Amministratori');
 
                 $this->infos = $results[0];
@@ -244,6 +247,37 @@ class Auth extends \Util\Singleton
     public function getUser()
     {
         return $this->infos;
+    }
+
+    /**
+     * Restituisce il token di accesso all'API per l'utente autenticato.
+     *
+     * @return string
+     */
+    public function getToken()
+    {
+        $token = null;
+
+        if ($this->isAuthenticated()) {
+            $user = self::user();
+
+            $database = Database::getConnection();
+            $tokens = $database->fetchArray('SELECT `token` FROM `zz_tokens` WHERE `enabled` = 1 AND `id_utente` = '.prepare($user['id_utente']));
+
+            // Generazione del token per l'utente
+            if (empty($tokens)) {
+                $token = secure_random_string();
+
+                $database->insert('zz_tokens', [
+                    'id_utente' => $user['id_utente'],
+                    'token' => $token,
+                ]);
+            } else {
+                $token = $tokens[0]['token'];
+            }
+        }
+
+        return $token;
     }
 
     /**

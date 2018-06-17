@@ -73,7 +73,7 @@ echo '
 <p>'.str_replace('_NUM_', $numero, $head).'.</p>';
 
 // Selezione articoli dell'ordine da portare nel ddt
-$rs = $dbo->fetchArray('SELECT *, (qta - qta_evasa) AS qta_rimanente FROM '.$table.' INNER JOIN '.$rows.' ON '.$table.'.id='.$rows.'.'.$id.' WHERE '.$table.'.id='.prepare($id_record).' HAVING qta_rimanente > 0');
+$rs = $dbo->fetchArray('SELECT *, (qta - qta_evasa) AS qta_rimanente FROM '.$table.' INNER JOIN '.$rows.' ON '.$table.'.id='.$rows.'.'.$id.' WHERE '.$table.'.id='.prepare($id_record).' HAVING qta_rimanente > 0 ORDER BY `order`');
 
 if (!empty($rs)) {
     echo '
@@ -93,10 +93,20 @@ if (!empty($rs)) {
     if (empty($get['op'])) {
         echo '
     <div class="row">
-        <div class="col-md-12">
+
+        <div class="col-md-6">
             {[ "type": "date", "label": "'.tr('Data del documento').'", "name": "data", "required": 1, "value": "-now-" ]}
-        </div>
-    </div>';
+        </div>';
+
+        if ($module_name=='Fatture di vendita' || $module_name == 'Fatture di acquisto'){
+            echo '
+        <div class="col-md-6">
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare(Modules::get($module_name)['id']).' ORDER BY name", "value": "'.$_SESSION['m'.Modules::get($module_name)['id']]['id_segment'].'" ]}
+        </div>';
+        }
+
+        echo
+    '</div>';
     }
 
     echo '
@@ -259,6 +269,7 @@ echo '
     }
 
     function ricalcola_totale(){
+        tot_qta = 0;
         r = 0;
         totale = 0.00;
         $('input[id*=qta_]').each( function(){
@@ -281,13 +292,15 @@ echo '
             totale += subtot*qta+iva*qta;
 
             r++;
+
+            tot_qta +=qta;
         });
 
         $('#totale').html( (totale.toLocale()) + " &euro;" );
 
-        if( totale==0 )
-            $('#submit_btn').hide();
-        else
+        if( tot_qta>0 )
             $('#submit_btn').show();
+        else
+            $('#submit_btn').hide();
     }
 </script>

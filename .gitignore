@@ -75,6 +75,7 @@ vendor/
 assets/dist/
 backup/*
 !backup/.htaccess
+custom/
 files/*
 !files/.htaccess
 !files/my_impianti/

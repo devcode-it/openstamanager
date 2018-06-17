@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 /*
     TECNICI ASSEGNATI ALL'AUTOMEZZO
 */
-$q_art = "SELECT *, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=dt_automezzi_tecnici.idtecnico) AS nometecnico FROM dt_automezzi_tecnici WHERE idautomezzo='".$id_record."'";
+$q_art = "SELECT *, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=dt_automezzi_tecnici.idtecnico) AS nometecnico FROM dt_automezzi_tecnici WHERE idautomezzo=".prepare($id_record);
 $rs_art = $dbo->fetchArray($q_art);
 
 if (!empty($rs_art)) {
@@ -30,13 +30,13 @@ if (!empty($rs_art)) {
         // Data di inizio
         echo '
         <td>
-            {[ "type": "date", "name": "data_inizio['.$r['id'].']", "required": 1, "class": "text-center", "value": "'.$r['data_inizio'].'", "extra": "" ]}
+            {[ "type": "date", "name": "data_inizio['.$r['id'].']", "required": 1, "maxlength": 10, "value": "'.$r['data_inizio'].'" ]}
         </td>';
 
         // Data di fine
         echo '
         <td>
-            {[ "type": "date", "name": "data_fine['.$r['id'].']", "class": "text-center", "value": "'.$r['data_fine'].'", "min-date": "'.$r['data_inizio'].'", "extra": "" ]}
+            {[ "type": "date", "name": "data_fine['.$r['id'].']", "maxlength": 10, "value": "'.$r['data_fine'].'", "min-date": "'.$r['data_inizio'].'" ]}
         </td>';
 
         // Pulsanti per aggiornamento date tecnici
@@ -48,7 +48,7 @@ if (!empty($rs_art)) {
         </td>
     </tr>';
 
-    echo '
+        echo '
     <script type="text/javascript">
         $(function () {
             $("#data_inizio'.$r['id'].'").on("dp.change", function (e) {

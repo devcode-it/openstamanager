@@ -169,6 +169,7 @@ function get_stato_preventivo($idpreventivo)
 
 /**
  * Aggiorna il budget del preventivo leggendo tutte le righe inserite.
+ *
  * @deprecated 2.3
  */
 function update_budget_preventivo($idpreventivo)

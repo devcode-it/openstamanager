@@ -5,22 +5,21 @@ include_once __DIR__.'/../../core.php';
 ?><form action="" method="post">
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">
-	<input type="hidden" name="id_record" value="<?php echo $id_record ?>">
-
-	<!-- DATI CLIENTE -->
-	<div class="pull-right">
-		<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-	</div>
-	<div class="clearfix"></div>
+	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
 	<div class="row">
 		<div class="col-md-4">
 			{[ "type": "span", "label": "<?php echo tr('Codice'); ?>", "name": "idtipointervento", "value": "$idtipointervento$" ]}
 		</div>
 
-		<div class="col-md-8">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
 		</div>
+		
+		<div class="col-md-2">
+			{[ "type": "number", "label": "<?php echo tr('Tempo standard'); ?>", "name": "tempo_standard", "help": "<?php echo tr('Valore compreso tra 0,25 - 24 ore. <br><small>Esempi: <em><ul><li>60 minuti = 1 ora</li><li>30 minuti = 0,5 ore</li><li>15 minuti = 0,25 ore</li></ul></em></small>'); ?>", "maxlength": 5, "min-value": "0", "max-value": "24", "class": "text-center", "value": "$tempo_standard$", "icon-after": "ore"  ]}
+		</div>
+				
 	</div>
 
 	<div class="panel panel-primary">

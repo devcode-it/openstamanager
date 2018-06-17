@@ -159,7 +159,7 @@ if (!empty($rs2)) {
             <div class="panel panel-'.($same ? 'default' : 'primary').'">
                 <div class="panel-heading'.($same ? ' mini' : '').'">
                     <h4 class="panel-title'.($same ? ' mini' : '').'">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse_'.$j.'">'.($same ? '<small>' : '').''.$nome_componente.' ('.$statocomponente.')'.($same ? '</small>' : '').'</a>
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse_'.$j.'">'.($same ? '<small>' : '').$nome_componente.' ('.$statocomponente.')'.($same ? '</small>' : '').'</a>
                     </h4>
                 </div>';
 
@@ -202,7 +202,7 @@ if (!empty($rs2)) {
                             </div>';
         }
 
-        $interventi = $dbo->fetchArray('SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=in_interventi.idtipointervento) AS tipo, (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=in_interventi.idstatointervento) AS stato, (SELECT colore FROM in_statiintervento WHERE idstatointervento=in_interventi.idstatointervento) AS colore FROM in_interventi INNER JOIN my_componenti_interventi ON my_componenti_interventi.id_intervento=in_interventi.id WHERE id_componente='.prepare($rs2[$j]['id']).' ORDER BY id_intervento');
+        $interventi = $dbo->fetchArray('SELECT *, DATE_FORMAT(data_richiesta,"%d/%m/%Y") AS data_richiesta, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=in_interventi.idtipointervento) AS tipo, (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=in_interventi.idstatointervento) AS stato, (SELECT colore FROM in_statiintervento WHERE idstatointervento=in_interventi.idstatointervento) AS colore FROM in_interventi INNER JOIN my_componenti_interventi ON my_componenti_interventi.id_intervento=in_interventi.id WHERE id_componente='.prepare($rs2[$j]['id']).' ORDER BY id_intervento');
         if ($interventi != null) {
             // Collegamento a intervento se c'è
             echo '
@@ -220,7 +220,7 @@ if (!empty($rs2)) {
             foreach ($interventi as $intervento) {
                 echo '
                                     <tr bgcolor="'.$intervento['colore'].'">
-                                        <td>'.$intervento['id_intervento'].'</td>
+                                        <td>'.$intervento['codice'].'</td>
                                         <td>'.$intervento['tipo'].'</td>
                                         <td>'.$intervento['stato'].'</td>
                                         <td>'.$intervento['data_richiesta'].'</td>

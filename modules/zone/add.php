@@ -2,13 +2,13 @@
 
 include_once __DIR__.'/../../core.php';
 
-?><form action="editor.php?id_module=$id_module$" method="post">
+?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 
 	<div class="row">
 		<div class="col-md-4">
-			{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "nome", "required": 1, "value": "" ]}
+			{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "nome", "required": 1, "maxlength": 25, "class": "alphanumeric-mask", "value": "" ]}
 		</div>
 
 		<div class="col-md-8">

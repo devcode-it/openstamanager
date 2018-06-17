@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$idconto = get('idconto');
+$idconto = $_GET['idconto'];
 $module_name = 'Piano dei conti';
 
 // carica report html
@@ -33,20 +33,15 @@ if (get('lev') == '3') {
 
     ($rs[0]['descrizione'] == '01 Patrimoniale') ? $descrizione = 'Stato patrimoniale' : $descrizione = 'Conto economico';
     $percorso = $descrizione.'<br>&nbsp;&nbsp;'.$percorso;
-} elseif (get('lev') == '1') {
-    $rs = $dbo->fetchArray("SELECT CONCAT_WS(' ', numero, descrizione ) AS descrizione FROM co_pianodeiconti1 WHERE id=".prepare($idconto));
-
-    ($rs[0]['descrizione'] == '01 Patrimoniale') ? $descrizione = 'Stato patrimoniale' : $descrizione = 'Conto economico';
     $percorso = $descrizione.'<br>&nbsp;<br>&nbsp;';
 }
-
 $body = str_replace('|percorso|', $percorso, $body);
 $body = str_replace('|info_fornitore|', $f_ragionesociale.'<br>'.$f_indirizzo.'<br>'.$f_citta, $body);
 $body = str_replace('|period_start|', Translator::dateToLocale($_SESSION['period_start']), $body);
 $body = str_replace('|period_end|', Translator::dateToLocale($_SESSION['period_end']), $body);
 
 // Stampa da livello 3
-if (get('lev') == '3') {
+if ($_GET['lev'] == '3') {
     $body .= "<table style='table-layout:fixed; border-bottom:1px solid #777; border-right:1px solid #777; border-left:1px solid #777;' cellpadding='0' cellspacing='0'>
                     <col width='80'><col width='452'><col width='80'><col width='80'>
                     <tbody>\n";
@@ -101,7 +96,7 @@ if (get('lev') == '3') {
 }
 
 // Stampa da livello 2
-elseif (get('lev') == '2') {
+elseif ($_GET['lev'] == '2') {
     $body .= "<table style='table-layout:fixed; border-bottom:1px solid #777; border-right:1px solid #777; border-left:1px solid #777;' cellpadding='0' cellspacing='0'>
                     <col width='80'><col width='452'><col width='80'><col width='80'>
                     <tbody>\n";

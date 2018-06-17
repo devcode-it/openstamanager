@@ -75,6 +75,7 @@ a.disabled {
 }
 
 .ui-autocomplete {
+    z-index: 10000;
     min-width: 160px;
     padding: 10px;
     margin: 2px;
@@ -274,6 +275,14 @@ span.form-control {
     margin-top: 0;
 }
 
+#pulsanti.affix {
+    top: 0;
+    padding: 10px 0;
+    width: 100%;
+    z-index: 800;
+    background: #fff;
+    border-bottom: 3px solid #ddd;
+}
 
 /* Aggiustamenti per i widget */
 
@@ -300,7 +309,6 @@ span.form-control {
     z-index: 1;
     opacity: 0.1;
 }
-
 
 /* Tooltip dark */
 
@@ -448,12 +456,11 @@ span.form-control {
     margin: 5px;
 }
 
-
 /* Personalizzazione del plugin Select2 */
 
 .select2-search,
 .select2-search__field {
-    width: 100%
+    width: 100% !important
 }
 
 .select2-results__option[aria-selected=true] {
@@ -476,13 +483,22 @@ span.form-control {
     border-radius: 0px;
 }
 
-
 /* Interventi da pianificare in Dashboard */
 
 #external-events .fc-event {
     margin-top: 10px;
     padding: 10px;
     cursor: pointer;
+}
+
+.fc-event-primary {
+    background-color: #3a87ad;
+    border: 1px solid #3a87ad;
+}
+
+.fc-event-danger {
+    background-color: #dd4b46;
+    border: 1px solid #dd4b46;
 }
 
 div.DTS tbody td,
@@ -519,11 +535,9 @@ input.small-width {
         width: 90%;
         margin-top: 20px
     }
-
     .main-header .logo {
         display: none;
     }
-
     /*
     .content-wrapper,
     .right-side,
@@ -554,7 +568,6 @@ input.small-width {
     .push {
         position: static;
     }
-
     .signature-pad {
         top: 0;
         left: 0;
@@ -566,4 +579,26 @@ input.small-width {
         min-height: 140px;
         margin: 5%;
     }
+}
+.callout a{
+		text-decoration: none;
+}
+.dropdown-menu{
+    min-width: 130px;
+}
+/*fix per tabs editor */
+.nav-tabs-custom > .nav-tabs > li{
+		border-top: 3px solid #ddd;
+}
+.nav-tabs-custom > .nav-tabs.pull-right > li:first-of-type.active > a{
+		border-right-color: #f4f4f4;
+		border-right-width : 1px;
+		border-left-width : 0px;
+}
+.nav-tabs-custom > .nav-tabs > li.header{
+		padding:0px;
+}
+.nav-tabs-custom > .nav-tabs > li{
+		margin-bottom:-1px;
+		margin-right: 0px;
 }

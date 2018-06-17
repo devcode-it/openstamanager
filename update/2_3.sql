@@ -73,13 +73,13 @@ UPDATE `zz_group_module` SET `clause` = ' AND in_interventi.id IN (SELECT idinte
 UPDATE `zz_group_module` SET `clause` = ' AND an_anagrafiche.idanagrafica IN (SELECT idanagrafica FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.idanagrafica=an_anagrafiche.idanagrafica AND idtecnico=|idtecnico|)' WHERE `id` = 2;
 
 -- Eliminazione tabelle inutilizzate
-DROP TABLE `mk_allegati`;
-DROP TABLE `mk_attivita`;
-DROP TABLE `mk_email`;
-DROP TABLE `mk_statoattivita`;
-DROP TABLE `mk_tipoattivita`;
-DROP TABLE `dt_automezzi_tagliandi`;
-DROP TABLE `co_contratti_interventi`;
+DROP TABLE IF EXISTS `mk_allegati`;
+DROP TABLE IF EXISTS `mk_attivita`;
+DROP TABLE IF EXISTS `mk_email`;
+DROP TABLE IF EXISTS `mk_statoattivita`;
+DROP TABLE IF EXISTS `mk_tipoattivita`;
+DROP TABLE IF EXISTS `dt_automezzi_tagliandi`;
+DROP TABLE IF EXISTS `co_contratti_interventi`;
 
 -- RELEASE 2.2.1 [NON UFFICIALE] --
 -- Aggiunta del campo desc_iva anche per Preventivi, Ddt e Ordini
@@ -699,6 +699,12 @@ ALTER TABLE `my_impianto_componenti` CHANGE `idsostituto` `idsostituto` int(11);
 UPDATE `my_impianto_componenti` SET `idsostituto` = NULL WHERE `idsostituto` = 0;
 ALTER TABLE `my_impianto_componenti` ADD FOREIGN KEY (`idsostituto`) REFERENCES `my_impianto_componenti`(`id`) ON DELETE CASCADE;
 
+-- Adeguamento degli id di zz_files per interventi
+UPDATE `zz_files` SET `externalid` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `externalid`) WHERE module = 'interventi' ;
+
+-- Adeguamento degli id di zz_files per impianti
+UPDATE `zz_files` SET `externalid` = (SELECT `id` FROM `my_impianti` WHERE `my_impianti`.`matricola` = `externalid`) WHERE module = 'myimpianti' ;
+
 -- Adeguamento dei contenuti di zz_files
 ALTER TABLE `zz_files` CHANGE `externalid` `id_record` int(11) NOT NULL, ADD `id_module` int(11) NOT NULL AFTER `filename`, ADD `original` varchar(255) NOT NULL AFTER `filename`;
 
@@ -706,8 +712,16 @@ ALTER TABLE `zz_files` CHANGE `externalid` `id_record` int(11) NOT NULL, ADD `id
 UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di vendita') WHERE `module`= 'fatture' AND `id_record` IN (SELECT `id` FROM `co_documenti` WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `dir` = 'entrata'));
 UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Fatture di acquisto') WHERE `module`= 'fatture' AND `id_record` IN (SELECT `id` FROM `co_documenti` WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `dir` = 'uscita'));
 
--- Adeguamento generico di zz_files
-UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`directory` = `zz_files`.`module`) WHERE `id_module` IS NULL;
+-- Adeguamento dei ddt (zz_files)
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Ddt di vendita') WHERE `module`= 'ddt' AND `id_record` IN (SELECT `id` FROM `dt_ddt` WHERE `idtipoddt` IN (SELECT `id` FROM `dt_tipiddt` WHERE `dir` = 'entrata'));
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Ddt di acquisto') WHERE `module`= 'ddt' AND `id_record` IN (SELECT `id` FROM `dt_ddt` WHERE `idtipoddt` IN (SELECT `id` FROM `dt_tipiddt` WHERE `dir` = 'uscita'));
+
+-- Adeguamento degli ordini (zz_files)
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Ordini cliente') WHERE `module`= 'ordini' AND `id_record` IN (SELECT `id` FROM `or_ordini` WHERE `idtipoordine` IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = 'entrata'));
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`name` = 'Ordini fornitore') WHERE `module`= 'ordini' AND `id_record` IN (SELECT `id` FROM `or_ordini` WHERE `idtipoordine` IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = 'uscita'));
+
+-- Adeguamento resto dei moduli (zz_files)
+UPDATE `zz_files` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `zz_modules`.`directory` = `zz_files`.`module`) WHERE `id_module` = 0;
 ALTER TABLE `zz_files` DROP `module`;
 
 -- Fix del widget 'Tutte le anagrafiche'
@@ -899,7 +913,7 @@ UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM(prezzo_acquisto*qta),2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM mg_articoli WHERE qta>0' WHERE `name` = 'Valore magazzino';
 
 -- Fix per le sessioni di lavoro dei tecnici precedenti
-UPDATE `in_interventi_tecnici` SET `idtipointervento` = (SELECT `idtipointervento` FROM `in_interventi` WHERE `idintervento` = `in_interventi`.`id`) WHERE `idtipointervento` = '';
+UPDATE `in_interventi_tecnici` SET `idtipointervento` = (SELECT `idtipointervento` FROM `in_interventi` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) WHERE `idtipointervento` = '';
 
 -- Fix per i serial number
 ALTER TABLE `mg_prodotti` ADD `id_riga_documento` int(11), ADD FOREIGN KEY (`id_riga_documento`) REFERENCES `co_righe_documenti`(`id`) ON DELETE CASCADE, ADD `id_riga_ordine` int(11), ADD FOREIGN KEY (`id_riga_ordine`) REFERENCES `or_righe_ordini`(`id`) ON DELETE CASCADE, ADD `id_riga_ddt` int(11), ADD FOREIGN KEY (`id_riga_ddt`) REFERENCES `dt_righe_ddt`(`id`) ON DELETE CASCADE, ADD `id_riga_intervento` int(11), ADD FOREIGN KEY (`id_riga_intervento`) REFERENCES `mg_articoli_interventi`(`id`) ON DELETE CASCADE, ADD `dir` enum('entrata', 'uscita') DEFAULT 'uscita', CHANGE `idarticolo` `id_articolo` int(11), ADD FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`) ON DELETE SET NULL, CHANGE `serial` `serial` varchar(50), CHANGE `lotto` `lotto` varchar(50), CHANGE `altro` `altro` varchar(50);

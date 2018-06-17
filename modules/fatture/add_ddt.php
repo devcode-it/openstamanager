@@ -19,7 +19,7 @@ $idanagrafica = $record[0]['idanagrafica'];
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Ddt').'", "name": "id_ddt", "required": 1, "values": "query=SELECT dt_ddt.id, CONCAT(\'nr. \', IF(numero_esterno != \'\', numero_esterno, numero), \' del \', DATE_FORMAT(data, \'%d-%m-%Y\')) AS descrizione FROM dt_ddt WHERE idanagrafica='.prepare($idanagrafica).' AND idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione IN(\'Bozza\', \'Parzialmente fatturato\')) AND idtipoddt=(SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir).') AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0) ORDER BY data DESC, numero DESC" ]}
+            {[ "type": "select", "label": "'.tr('Ddt').'", "name": "id_ddt", "required": 1, "values": "query=SELECT dt_ddt.id, CONCAT(\'nr. \', IF(numero_esterno != \'\', numero_esterno, numero), \' del \', DATE_FORMAT(data, \'%d-%m-%Y\')) AS descrizione FROM dt_ddt WHERE idanagrafica='.prepare($idanagrafica).' AND idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoddt=(SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir).') AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0) ORDER BY data DESC, numero DESC" ]}
         </div>
     </div>';
 
@@ -37,6 +37,6 @@ echo '
 	$('#id_ddt').change( function(){
         $('#righeddt').html('<i>Caricamento in corso...</i>');
 
-        $('#righeddt').load(globals.rootdir + '/modules/fatture/crea_documento.php?id_module=' + <?php echo Modules::get('Ddt di vendita')['id'] ?> + '&id_record=' + $(this).find('option:selected').val() + '&documento=fattura&op=add_ddt&iddocumento=' + globals.id_record);
+        $('#righeddt').load(globals.rootdir + '/modules/fatture/crea_documento.php?id_module=' + <?php echo Modules::get('Ddt di vendita')['id']; ?> + '&id_record=' + $(this).find('option:selected').val() + '&documento=fattura&op=add_ddt&iddocumento=' + globals.id_record);
     });
 </script>

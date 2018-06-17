@@ -38,7 +38,7 @@ echo '
             {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "required": 1 ]}
         </div>
     </div>';
-    
+
 echo '
 
     <!-- PULSANTI -->

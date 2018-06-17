@@ -117,7 +117,7 @@ $totale = $dbo->fetchArray("SELECT SUM(co_righe_documenti.subtotale - co_righe_d
 
 echo '
 <div class="row">
-    <div class="col-xs-12 col-md-6">
+    <div class="col-md-6">
         <div class="box box-warning">
             <div class="box-header with-border">
                 <h3 class="box-title">'.tr('Clienti TOP').'</h3>
@@ -163,7 +163,7 @@ echo '
 $articoli = $dbo->fetchArray("SELECT SUM(co_righe_documenti.qta) AS qta, mg_articoli.id, mg_articoli.codice, mg_articoli.descrizione, mg_articoli.um FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN mg_articoli ON mg_articoli.id=co_righe_documenti.idarticolo WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY co_righe_documenti.idarticolo ORDER BY SUM(co_righe_documenti.qta) DESC LIMIT 15');
 
 echo '
-    <div class="col-xs-12 col-md-6">
+    <div class="col-md-6">
         <div class="box box-danger">
             <div class="box-header with-border">
                 <h3 class="box-title">'.tr('Articoli più venduti').'</h3>
@@ -225,7 +225,7 @@ foreach ($tipi as $tipo) {
     }
 
     //Random color
-    $background = '#' . dechex(rand(256,16777215));
+    $background = '#'.dechex(rand(256, 16777215));
 
     $dataset .= '{
         label: "'.$tipo['descrizione'].'",

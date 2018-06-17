@@ -16,7 +16,7 @@ switch (post('op')) {
 
         // Codice contratto: calcolo il successivo in base al formato specificato
         $rs = $dbo->fetchArray('SELECT numero FROM co_contratti ORDER BY id DESC LIMIT 0,1');
-        $numero = get_next_code($rs[0]['numero'], 1, get_var('Formato codice contratti'));
+        $numero = Util\Generator::generate(get_var('Formato codice contratti'), $rs[0]['numero']);
 
         // Uso il tipo di pagamento specificato in anagrafica se c'è, altrimenti quello di default
         $rsa = $dbo->fetchArray('SELECT idpagamento_vendite AS idpagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
@@ -45,6 +45,7 @@ switch (post('op')) {
         if (isset($post['id_record'])) {
             $idstato = post('idstato');
             $idanagrafica = post('idanagrafica');
+            $idsede = post('idsede');
             $nome = post('nome');
             $idagente = post('idagente');
             $idpagamento = post('idpagamento');
@@ -77,7 +78,7 @@ switch (post('op')) {
             $costo_km = post('costo_km');
             $costo_diritto_chiamata = post('costo_diritto_chiamata');
 
-            $query = 'UPDATE co_contratti SET idanagrafica='.prepare($idanagrafica).', idstato='.prepare($idstato).', nome='.prepare($nome).', idagente='.prepare($idagente).', idpagamento='.prepare($idpagamento).', numero='.prepare($numero).', budget='.prepare($budget).', idreferente='.prepare($idreferente).', validita='.prepare($validita).', data_bozza='.prepare($data_bozza).', data_accettazione='.prepare($data_accettazione).', data_rifiuto='.prepare($data_rifiuto).', data_conclusione='.prepare($data_conclusione).', rinnovabile='.prepare($rinnovabile).', giorni_preavviso_rinnovo='.prepare($giorni_preavviso_rinnovo).', esclusioni='.prepare($esclusioni).', descrizione='.prepare($descrizione).', idtipointervento='.prepare($idtipointervento).'WHERE id='.prepare($id_record);
+            $query = 'UPDATE co_contratti SET idanagrafica='.prepare($idanagrafica).', idsede='.prepare($idsede).', idstato='.prepare($idstato).', nome='.prepare($nome).', idagente='.prepare($idagente).', idpagamento='.prepare($idpagamento).', numero='.prepare($numero).', budget='.prepare($budget).', idreferente='.prepare($idreferente).', validita='.prepare($validita).', data_bozza='.prepare($data_bozza).', data_accettazione='.prepare($data_accettazione).', data_rifiuto='.prepare($data_rifiuto).', data_conclusione='.prepare($data_conclusione).', rinnovabile='.prepare($rinnovabile).', giorni_preavviso_rinnovo='.prepare($giorni_preavviso_rinnovo).', esclusioni='.prepare($esclusioni).', descrizione='.prepare($descrizione).', idtipointervento='.prepare($idtipointervento).'WHERE id='.prepare($id_record);
             // costo_diritto_chiamata='.prepare($costo_diritto_chiamata).', ore_lavoro='.prepare($ore_lavoro).', costo_orario='.prepare($costo_orario).', costo_km='.prepare($costo_km).'
 
             $dbo->query($query);
@@ -156,33 +157,29 @@ switch (post('op')) {
 
         // Lettura iva dell'articolo
         $rs2 = $dbo->fetchArray('SELECT percentuale, descrizione, indetraibile FROM co_iva WHERE id='.prepare($idiva));
-        $iva = ($prezzo*$qta - $sconto) / 100 * $rs2[0]['percentuale'];
+        $iva = ($prezzo * $qta - $sconto) / 100 * $rs2[0]['percentuale'];
         $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
         $desc_iva = $rs2[0]['descrizione'];
 
-        $dbo->query('INSERT INTO co_righe2_contratti(idcontratto, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, `order`) VALUES ('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe2_contratti AS t WHERE idcontratto='.prepare($id_record).'))');
+        $dbo->query('INSERT INTO co_righe2_contratti(idcontratto, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, is_descrizione, `order`) VALUES ('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare(empty($qta)).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe2_contratti AS t WHERE idcontratto='.prepare($id_record).'))');
 
-        $_SESSION['infos'][] = tr('Articolo aggiunto!');
-
-        break;
-        
-    case 'adddescrizione':
-        if (!empty($id_record)) {
-            $descrizione = post('descrizione');
-            $query = 'INSERT INTO co_righe2_contratti(idcontratto, descrizione, is_descrizione) VALUES('.prepare($id_record).', '.prepare($descrizione).', 1)';
-        
-            if ($dbo->query($query)) {
-                $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
-            }
+        // Messaggi informativi
+        if (!empty($idarticolo)) {
+            $_SESSION['infos'][] = tr('Articolo aggiunto!');
+        } elseif (!empty($qta)) {
+            $_SESSION['infos'][] = tr('Riga aggiunta!');
+        } else {
+            $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
         }
+
         break;
 
     case 'editriga':
         $idriga = post('idriga');
-        
+
         $rs = $dbo->fetchArray("SELECT * FROM co_righe2_contratti WHERE id='".$idriga."'");
         $is_descrizione = $rs[0]['is_descrizione'];
-        
+
         $idarticolo = post('idarticolo');
         $descrizione = post('descrizione');
 
@@ -207,9 +204,9 @@ switch (post('op')) {
         $desc_iva = $rs[0]['descrizione'];
 
         // Modifica riga generica sul documento
-        if($is_descrizione==0){
+        if ($is_descrizione == 0) {
             $query = 'UPDATE co_righe2_contratti SET idarticolo='.prepare($idarticolo).', idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
-        }else{
+        } else {
             $query = 'UPDATE co_righe2_contratti SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga);
         }
         $dbo->query($query);

@@ -61,7 +61,7 @@ switch (post('op')) {
             $rs = $dbo->fetchArray($query);
 
             // Aggiorno lo stato della fattura
-            if ($rs[0]['tot_pagato'] == $rs[0]['tot_da_pagare']) {
+            if (abs($rs[0]['tot_pagato']) == abs($rs[0]['tot_da_pagare'])) {
                 $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Pagato') WHERE id=".prepare($iddocumento));
             } else {
                 $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Parzialmente pagato') WHERE id=".prepare($iddocumento));
@@ -90,6 +90,19 @@ switch (post('op')) {
                 $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id IN (SELECT idintervento FROM co_preventivi_interventi WHERE idpreventivo=".prepare($rs2[$j]['idpreventivo']).')');
             }
         }
+        
+        //Creo il modello di prima nota
+        
+        if(post('crea_modello')=='1'){
+            $idmastrino = get_new_idmastrino('co_movimenti_modelli');
+
+            for ($i = 0; $i < sizeof($post['idconto']); ++$i) {
+                $idconto = post('idconto')[$i];
+                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($descrizione).', '.prepare($idconto).')';
+                $dbo->query($query);
+            }
+        }
+        
         break;
 
     case 'editriga':
@@ -193,13 +206,13 @@ switch (post('op')) {
             $rs = $dbo->fetchArray($query);
 
             // Aggiorno lo stato della fattura
-            if( $rs[0]['tot_pagato'] == $rs[0]['tot_da_pagare'] ){
+            if ($rs[0]['tot_pagato'] == $rs[0]['tot_da_pagare']) {
                 $stato = 'Pagato';
             } else {
                 $stato = 'Parzialmente pagato';
             }
-            
-            $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione=".prepare($stato).") WHERE id=".prepare($iddocumento));
+
+            $dbo->query('UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='.prepare($stato).') WHERE id='.prepare($iddocumento));
 
             // Aggiorno lo stato dei preventivi collegati alla fattura se ce ne sono
             $query2 = 'SELECT idpreventivo FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' AND NOT idpreventivo=0 AND idpreventivo IS NOT NULL';
@@ -248,29 +261,29 @@ switch (post('op')) {
 
             for ($i = 0; $i < sizeof($rs); ++$i) {
                 if (abs($rimanente) > 0) {
-                        if (abs($rs[$i]['pagato']) >= abs($rimanente)) {
-                            $query2 = 'SELECT pagato FROM co_scadenziario WHERE id='.prepare($rs[$i]['id']);
-                            $rs2 = $dbo->fetchArray($query2);
-                            $pagato = $rs2[0]['pagato'];
-                            
-                            ($pagato < 0) ? $sign = -1 : $sign = 1;
-                            $new_value = ((abs($pagato) - abs($rimanente)) * $sign);
+                    if (abs($rs[$i]['pagato']) >= abs($rimanente)) {
+                        $query2 = 'SELECT pagato FROM co_scadenziario WHERE id='.prepare($rs[$i]['id']);
+                        $rs2 = $dbo->fetchArray($query2);
+                        $pagato = $rs2[0]['pagato'];
 
-                            // Se resta ancora un po' di pagato cambio solo l'importo...
-                            if ($new_value > 0) {
-                                $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($new_value).' WHERE id='.prepare($rs[$i]['id']));
-                            }
+                        ($pagato < 0) ? $sign = -1 : $sign = 1;
+                        $new_value = ((abs($pagato) - abs($rimanente)) * $sign);
 
-                            // ...se l'importo è a zero, azzero anche la data di pagamento
-                            else {
-                                $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($new_value).", data_pagamento='0000-00-00' WHERE id=".prepare($rs[$i]['id']));
-                            }
-
-                            $rimanente = 0;
-                        } else {
-                            $dbo->query("UPDATE co_scadenziario SET pagato='0', data_pagamento='0000-00-00' WHERE id=".prepare($rs[$i]['id']));
-                            $rimanente -= abs($rs[$i]['pagato']);
+                        // Se resta ancora un po' di pagato cambio solo l'importo...
+                        if ($new_value > 0) {
+                            $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($new_value).' WHERE id='.prepare($rs[$i]['id']));
                         }
+
+                        // ...se l'importo è a zero, azzero anche la data di pagamento
+                        else {
+                            $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($new_value).", data_pagamento='0000-00-00' WHERE id=".prepare($rs[$i]['id']));
+                        }
+
+                        $rimanente = 0;
+                    } else {
+                        $dbo->query("UPDATE co_scadenziario SET pagato='0', data_pagamento='0000-00-00' WHERE id=".prepare($rs[$i]['id']));
+                        $rimanente -= abs($rs[$i]['pagato']);
+                    }
                 }
             }
 
@@ -279,9 +292,9 @@ switch (post('op')) {
 
             // Aggiorno lo stato della fattura a "Emessa" o "Parzialmente pagato"
             $rs_pagamenti = $dbo->fetchArray("SELECT SUM(pagato) AS pagato FROM co_scadenziario WHERE iddocumento='".$iddocumento."'");
-            if($rs_pagamenti[0]['pagato']>0){
+            if ($rs_pagamenti[0]['pagato'] > 0) {
                 $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Parzialmente pagato') WHERE id=".prepare($iddocumento));
-            }else{
+            } else {
                 $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Emessa') WHERE id=".prepare($iddocumento));
             }
 

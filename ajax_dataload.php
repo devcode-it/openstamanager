@@ -13,18 +13,14 @@ array_shift($columns);
 
 // Lettura parametri iniziali
 if (!empty($id_plugin)) {
-    $total = Plugins::getQuery($id_plugin);
-
-    $total['query'] = Modules::replacePlaceholder($total['query'], $id_parent);
+    $element = Plugins::get($id_plugin);
 } else {
-    $total = Modules::getQuery($id_module);
+    $element = Modules::get($id_module);
 }
+$total = App::readQuery($element);
 
 // Lettura parametri modulo
-$module_query = $total['query'];
-$module_query = str_replace('|period_start|', $_SESSION['period_start'], $module_query);
-$module_query = str_replace('|period_end|', $_SESSION['period_end'], $module_query);
-$module_query = str_replace('|select|', $total['select'], $module_query);
+$result_query = $total['query'];
 
 // Predisposizione dela risposta
 $results = [];
@@ -33,12 +29,12 @@ $results['recordsTotal'] = 0;
 $results['recordsFiltered'] = 0;
 $results['summable'] = [];
 
-if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom') {
+if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom') {
     // Conteggio totale
-    $query = 'SELECT COUNT(*) as `tot` FROM ('.$module_query.') AS `count`';
-    $cont = $dbo->fetchArray($query);
-    if (!empty($cont)) {
-        $results['recordsTotal'] = $cont[0]['tot'];
+    $count_query = 'SELECT COUNT(*) as `tot` FROM ('.$result_query.') AS `count`';
+    $count = $dbo->fetchArray($count_query);
+    if (!empty($count)) {
+        $results['recordsTotal'] = $count[0]['tot'];
     }
 
     // Filtri di ricerica
@@ -62,31 +58,32 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
         }
     }
 
+    // Ricerca
     if (!empty($search_filters)) {
-        $module_query = str_replace('2=2', '2=2 AND ('.implode(' AND ', $search_filters).') ', $module_query);
+        $result_query = str_replace('2=2', '2=2 AND ('.implode(' AND ', $search_filters).') ', $result_query);
     }
 
     // Filtri derivanti dai permessi (eventuali)
     if (empty($id_plugin)) {
-        $module_query = Modules::replaceAdditionals($id_module, $module_query);
+        $result_query = Modules::replaceAdditionals($id_module, $result_query);
     }
 
     // Ordinamento dei risultati
     if (isset($order['dir']) && isset($order['column'])) {
-        $pieces = explode('ORDER', $module_query);
+        $pieces = explode('ORDER', $result_query);
 
-        $cont = count($pieces);
-        if ($cont > 1) {
-            unset($pieces[$cont - 1]);
+        $count = count($pieces);
+        if ($count > 1) {
+            unset($pieces[$count - 1]);
         }
 
-        $module_query = implode('ORDER', $pieces).' ORDER BY '.$total['order_by'][$order['column']].' '.$order['dir'];
+        $result_query = implode('ORDER', $pieces).' ORDER BY '.$total['order_by'][$order['column']].' '.$order['dir'];
     }
 
     // Calcolo di eventuali somme
     if (!empty($total['summable'])) {
-        $query = str_replace_once('SELECT', 'SELECT '.implode(', ', $total['summable']).' FROM(SELECT ', $module_query).') AS `z`';
-        $sums = $dbo->fetchArray($query)[0];
+        $sum_query = str_replace_once('SELECT', 'SELECT '.implode(', ', $total['summable']).' FROM(SELECT ', $result_query).') AS `z`';
+        $sums = $dbo->fetchArray($sum_query)[0];
         if (!empty($sums)) {
             $r = [];
             foreach ($sums as $key => $sum) {
@@ -100,17 +97,18 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
 
     // Paginazione
     if ($length > 0) {
-        $module_query .= ' LIMIT '.$start.', '.$length;
+        $result_query .= ' LIMIT '.$start.', '.$length;
     }
 
     // Query effettiva
-    $query = str_replace_once('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $module_query);
+    $query = str_replace_once('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $result_query);
+    
     $rs = $dbo->fetchArray($query);
 
     // Conteggio dei record filtrati
-    $cont = $dbo->fetchArray('SELECT FOUND_ROWS()');
-    if (!empty($cont)) {
-        $results['recordsFiltered'] = $cont[0]['FOUND_ROWS()'];
+    $count = $dbo->fetchArray('SELECT FOUND_ROWS()');
+    if (!empty($count)) {
+        $results['recordsFiltered'] = $count[0]['FOUND_ROWS()'];
     }
 
     // Creazione della tabella
@@ -215,9 +213,9 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
                 $val = is_array($val) ? implode(' ', $val) : $val;
                 $attributes[] = $key.'="'.$val.'"';
             }
-            
-            //Replace rootdir per le query
-            $value = str_replace( 'ROOTDIR', ROOTDIR, $value );
+
+            // Replace rootdir per le query
+            $value = str_replace('ROOTDIR', ROOTDIR, $value);
             $result[] = str_replace('|attr|', implode(' ', $attributes), '<div |attr|>'.$value.'</div>');
         }
 
@@ -225,4 +223,5 @@ if (!empty($module_query) && $module_query != 'menu' && $module_query != 'custom
     }
 }
 
-echo json_encode($results);
+$rows = json_encode($results);
+echo $rows;

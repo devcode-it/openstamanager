@@ -24,7 +24,7 @@ function redirect($url, $type = 'php')
 /**
  * Verifica e corregge il nome di un file.
  *
- * @param unknown $filename
+ * @param string $filename
  *
  * @return mixed
  */
@@ -162,7 +162,7 @@ function create_zip($source, $destination, $ignores = [])
 /**
  * Controllo dei file zip e gestione errori.
  *
- * @param unknown $zip_file
+ * @param string $zip_file
  *
  * @return string|bool
  */
@@ -207,107 +207,6 @@ function checkZip($zip_file)
     } else {
         return true;
     }
-}
-
-/**
- * Esegue il backup dell'intero progetto.
- *
- * @return bool
- */
-function do_backup($path = null)
-{
-    global $backup_dir;
-
-    set_time_limit(0);
-
-    $path = !empty($path) ? $path : DOCROOT;
-
-    $backup_name = 'OSM backup '.date('Y-m-d').' '.date('H_i_s');
-    if (
-        (extension_loaded('zip') && directory($backup_dir.'tmp')) ||
-        (!extension_loaded('zip') && directory($backup_dir.$backup_name))
-    ) {
-        // Backup del database
-        $database_file = $backup_dir.(extension_loaded('zip') ? 'tmp' : $backup_name).'/database.sql';
-        backup_tables($database_file);
-
-        // Percorsi da ignorare di default
-        $ignores = [
-            'files' => [
-                'config.inc.php',
-            ],
-            'dirs' => [
-                basename($backup_dir),
-                '.couscous',
-                'node_modules',
-                'tests',
-            ],
-        ];
-
-        // Creazione dello zip
-        if (extension_loaded('zip')) {
-            $result = create_zip([$path, dirname($database_file)], $backup_dir.$backup_name.'.zip', $ignores);
-
-            // Rimozione cartella temporanea
-            delete($database_file);
-        }
-        // Copia dei file di OSM
-        else {
-            $result = copyr($path, $backup_dir.$backup_name, $ignores);
-        }
-
-        // Eliminazione vecchi backup se ce ne sono
-        $max_backups = intval(get_var('Numero di backup da mantenere'));
-        // Lettura file di backup
-        if ($handle = opendir($backup_dir)) {
-            $backups = [];
-            while (false !== ($file = readdir($handle))) {
-                // I nomi dei file di backup hanno questa forma:
-                // OSM backup yyyy-mm-dd HH_ii_ss.zip (oppure solo cartella senza zip)
-                if (preg_match('/^OSM backup ([0-9\-]{10}) ([0-9_]{8})/', $file, $m)) {
-                    $backups[] = $file;
-                }
-            }
-            closedir($handle);
-
-            if (count($backups) > $max_backups) {
-                // Fondo e ordino i backup dal più recente al più vecchio
-                arsort($backups);
-                $cont = 1;
-                foreach ($backups as $backup) {
-                    if ($cont > $max_backups) {
-                        delete($backup_dir.'/'.$backup);
-                    }
-                    ++$cont;
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    return false;
-}
-
-/**
- * Funzione per fare il dump del database.
- *
- * @see http://davidwalsh.name/backup-mysql-database-php
- *
- * @param string $tables
- *
- * @return string
- */
-function backup_tables($file)
-{
-    global $backup_dir;
-    global $db_host;
-    global $db_name;
-    global $db_username;
-    global $db_password;
-
-    $dump = new Ifsnop\Mysqldump\Mysqldump('mysql:host='.$db_host.';dbname='.$db_name, $db_username, $db_password, ['add-drop-table' => true]);
-    $dump->start($file);
 }
 
 /**
@@ -428,6 +327,7 @@ function getOS()
         'OS/2' => 'OS/2',
         'AIX' => 'AIX',
     ];
+
     foreach ($os as $key => $value) {
         if (strpos($_SERVER['HTTP_USER_AGENT'], $key)) {
             return $value;
@@ -438,60 +338,10 @@ function getOS()
 }
 
 /**
- * Legge una stringa presumibilmente codificata (tipo "8D001") e, se possibile, restituisce il codice successivo ("8D002").
- *
- * @param $str string
- *        	Codice di partenza da incrementare
- * @param $qty int
- *        	Unità da aggiungere alla parte numerica del codice (di default incrementa di 1)
- * @param $mask string
- *        	Specifica i caratteri da sostituire con numeri nel caso di generazione di codici complessi (esempio: se un codice attuale fosse 56/D e volessi calcolare il successivo (57/D), dovrei usare una maschera. La maschera in questo caso potrebbe essere ##/D. In questo modo so che i caratteri ## vanno sostituiti da numeri e il totale di caratteri sarà 2. Quindi il primo codice non sarebbe 1/D, ma 01/D)
- */
-function get_next_code($str, $qty = 1, $mask = '')
-{
-    // Se è il primo codice che sto inserendo sostituisco gli zeri al carattere jolly #
-    if ($str == '') {
-        $str = str_replace('#', '0', $mask);
-    }
-    // Se non uso una maschera, estraggo l'ultima parte numerica a destra della stringa e la incremento
-    if ($mask == '') {
-        preg_match("/(.*?)([\d]*$)/", $str, $m);
-        $first_part = $m[1];
-        $numeric_part = $m[2];
-        // Se non c'è una parte numerica ritorno stringa vuota
-        if ($numeric_part == '') {
-            return '';
-        } else {
-            $pad_length = strlen($numeric_part);
-            $second_part = str_pad(intval($numeric_part) + $qty, $pad_length, '0', STR_PAD_LEFT);
-
-            return $first_part.$second_part;
-        }
-    }
-    // Utilizzo della maschera
-    else {
-        // Calcolo prima parte (se c'è)
-        $pos1 = strpos($mask, '#');
-        $first_part = substr($str, 0, $pos1);
-        // Calcolo terza parte (se c'è)
-        $pos2 = strlen($str) - strpos(strrev($mask), '#');
-        $third_part = substr($str, $pos2, strlen($mask));
-        // Calcolo parte numerica
-        $numeric_part = substr($str, $pos1, $pos2);
-        $pad_length = intval(strlen($numeric_part));
-        $first_part_length = intval(strlen($first_part));
-        $third_part_length = intval(strlen($third_part));
-        $numeric_part = str_pad(intval($numeric_part) + intval($qty), $pad_length, '0', STR_PAD_LEFT);
-        // $numeric_part = str_pad( intval($numeric_part)+intval($qty), ( $pad_length - $third_part_length ), "0", STR_PAD_LEFT );
-        return $first_part.$numeric_part.$third_part;
-    }
-}
-
-/**
  * Verifica che il nome del file non sia già usato nella cartella inserita, nel qual caso aggiungo un suffisso.
  *
- * @param unknown $filename
- * @param unknown $dir
+ * @param string $filename
+ * @param string $dir
  *
  * @return string
  */
@@ -510,9 +360,9 @@ function unique_filename($filename, $dir)
 /**
  * Crea le thumbnails di $filename da dentro $dir e le salva in $dir.
  *
- * @param unknown $tmp
- * @param unknown $filename
- * @param unknown $dir
+ * @param string $tmp
+ * @param string $filename
+ * @param string $dir
  *
  * @return bool
  */
@@ -552,12 +402,12 @@ function create_thumbnails($tmp, $filename, $dir)
 /**
  * Ottiene l'indirizzo IP del client.
  *
- * @return string|unknown
+ * @return string
  */
 function get_client_ip()
 {
     $ipaddress = '';
-    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+	if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
         $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
     } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
         $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -567,8 +417,10 @@ function get_client_ip()
         $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
     } elseif (!empty($_SERVER['HTTP_FORWARDED'])) {
         $ipaddress = $_SERVER['HTTP_FORWARDED'];
-    } elseif (!empty($_SERVER['REMOTE_ADDR'])) {
+    } elseif (!empty($_SERVER['REMOTE_ADDR']) AND $_SERVER['REMOTE_ADDR']!='127.0.0.1' ) {
         $ipaddress = $_SERVER['REMOTE_ADDR'];
+    }  elseif (!empty(getHostByName(getHostName()))){
+        $ipaddress = getHostByName(getHostName());
     } else {
         $ipaddress = 'UNKNOWN';
     }
@@ -641,7 +493,7 @@ function str_replace_once($str_pattern, $str_replacement, $string)
 }
 
 /**
- * Restituisce il percorso del filesystem in modo indipendete dal sistema operativo.
+ * Restituisce il percorso del filesystem in modo indipendente dal sistema operativo.
  *
  * @param string $string Percorso da correggere
  *
@@ -725,11 +577,11 @@ function get_var($nome, $sezione = null, $descrizione = false, $again = false)
 }
 
 /**
- * Restitusice il contentuo sanitarizzato dell'input dell'utente.
+ * Restituisce il contenuto sanitarizzato dell'input dell'utente.
  *
- * @param string $param  Nome del paramentro
+ * @param string $param  Nome del parametro
  * @param string $rule   Regola di filtraggio
- * @param string $method Posizione del paramentro (post o get)
+ * @param string $method Posizione del parametro (post o get)
  *
  * @since 2.3
  *
@@ -741,9 +593,9 @@ function filter($param, $method = null)
 }
 
 /**
- * Restitusice il contentuo sanitarizzato dell'input dell'utente.
+ * Restituisce il contenuto sanitarizzato dell'input dell'utente.
  *
- * @param string $param Nome del paramentro
+ * @param string $param Nome del parametro
  * @param string $rule  Regola di filtraggio
  *
  * @since 2.3
@@ -756,9 +608,9 @@ function post($param, $rule = 'text')
 }
 
 /**
- * Restitusice il contentuo sanitarizzato dell'input dell'utente.
+ * Restituisce il contenuto sanitarizzato dell'input dell'utente.
  *
- * @param string $param Nome del paramentro
+ * @param string $param Nome del parametro
  * @param string $rule  Regola di filtraggio
  *
  * @since 2.3
@@ -793,7 +645,7 @@ function isAjaxRequest()
  *
  * @return float
  */
-function sum($first, $second = null, $decimals = null)
+function sum($first, $second = null, $decimals = 4)
 {
     $first = (array) $first;
     $second = (array) $second;
@@ -802,9 +654,7 @@ function sum($first, $second = null, $decimals = null)
 
     $result = 0;
 
-    if (!is_numeric($decimals)) {
-        $decimals = is_numeric($decimals) ? $decimals : Translator::getFormatter()->getPrecision();
-    }
+    $decimals = is_numeric($decimals) ? $decimals : Translator::getFormatter()->getPrecision();
 
     $bcadd = function_exists('bcadd');
 
@@ -858,18 +708,6 @@ function redirectOperation($id_module, $id_record)
 function prepareToField($string)
 {
     return str_replace('"', '&quot;', $string);
-}
-
-/**
- * Restituisce la configurazione dell'installazione.
- *
- * @return array
- */
-function getConfig()
-{
-    include DOCROOT.'/config.inc.php';
-
-    return get_defined_vars();
 }
 
 /**

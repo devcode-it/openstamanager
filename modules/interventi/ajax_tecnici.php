@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (file_exists($docroot.'/modules/interventi/custom/modutil.php')){
+if (file_exists($docroot.'/modules/interventi/custom/modutil.php')) {
     include_once $docroot.'/modules/interventi/custom/modutil.php';
 } else {
     include_once $docroot.'/modules/interventi/modutil.php';
@@ -44,14 +44,14 @@ $rss = $dbo->fetchArray('SELECT idtipointervento, idstatointervento FROM in_inte
 $idtipointervento = $rss[0]['idtipointervento'];
 $idstatointervento = $rss[0]['idstatointervento'];
 
-$rss = $dbo->fetchArray('SELECT completato FROM in_statiintervento WHERE idstatointervento='.prepare($idstatointervento));
-$flg_completato = $rss[0]['completato'];
+$rss = $dbo->fetchArray('SELECT completato AS flag_completato FROM in_statiintervento WHERE idstatointervento='.prepare($idstatointervento));
+$flag_completato = $rss[0]['flag_completato'];
 
-$query = 'SELECT * FROM an_anagrafiche JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE deleted=0 AND idintervento='.prepare($id_record)." AND idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica = (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = 'Tecnico')) ORDER BY ragione_sociale ASC, in_interventi_tecnici.orario_inizio ASC, in_interventi_tecnici.id ASC";
+$query = 'SELECT * FROM an_anagrafiche JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE idintervento='.prepare($id_record)." AND idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica = (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = 'Tecnico')) ORDER BY ragione_sociale ASC, in_interventi_tecnici.orario_inizio ASC, in_interventi_tecnici.id ASC";
 $rs2 = $dbo->fetchArray($query);
 $prev_tecnico = '';
 
-if( $flg_completato ){
+if ($flag_completato) {
     $readonly = 'readonly';
 } else {
     $readonly = '';
@@ -69,7 +69,7 @@ if (!empty($rs2)) {
 <div class="table-responsive">
     <table class="table table-striped table-hover table-condensed">
         <tr>
-            <th><i class="fa fa-user"></i> '.$r['ragione_sociale'].'</th>
+            <th><i class="fa fa-user"></i> '.$r['ragione_sociale'].' '.(($r['deleted']) ? '<small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '').'</th>
             <th>'.tr('Orario inizio').'</th>
             <th>'.tr('Orario fine').'</th>
             <th>'.tr('Ore').'</th>
@@ -130,7 +130,7 @@ if (!empty($rs2)) {
         if ($rs[0]['stato'] != 'Fatturato') {
             // Elenco tipologie di interventi
             echo '
-                {[ "type": "select", "name": "idtipointerventot['.$id.']", "value": "'.$r['idtipointervento'].'", "values": "query=SELECT idtipointervento AS id, descrizione, IFNULL((SELECT costo_ore FROM in_tariffe WHERE idtipointervento=in_tipiintervento.idtipointervento AND idtecnico='.prepare($r['idtecnico']).'), 0) AS costo_orario FROM in_tipiintervento ORDER BY descrizione", "class": "", "extra": "'.$readonly.'" ]}';
+                {[ "type": "select", "name": "idtipointerventot['.$id.']", "value": "'.$r['idtipointervento'].'", "values": "query=SELECT idtipointervento AS id, descrizione, IFNULL((SELECT costo_ore FROM in_tariffe WHERE idtipointervento=in_tipiintervento.idtipointervento AND idtecnico='.prepare($r['idtecnico']).'), 0) AS costo_orario FROM in_tipiintervento ORDER BY descrizione", "extra": "'.$readonly.'" ]}';
         }
 
         echo '
@@ -216,7 +216,7 @@ if (!empty($rs2)) {
             <td style="border-right:1px solid #aaa;">';
         if ($user['idanagrafica'] == 0 || $show_costi) {
             echo '
-                {[ "type": "number", "name": "sconto['.$id.']", "value": "'.$sconto_unitario.'", "icon-after": "choice|untprc|'.$tipo_sconto.'", "class": "small-width", "extra": "'.$readonly.'" ]}';
+                {[ "type": "number", "name": "sconto['.$id.']", "value": "'.$sconto_unitario.'", "icon-after": "choice|untprc|'.$tipo_sconto.'|'.$readonly.'", "class": "small-width", "extra": "'.$readonly.'" ]}';
         } else {
             echo '
                 <input type="hidden" name="sconto['.$id.']" value="'.Translator::numberToLocale($sconto_unitario).'" />
@@ -231,7 +231,7 @@ if (!empty($rs2)) {
             <td style="border-right:1px solid #aaa;">';
         if ($user['idanagrafica'] == 0 || $show_costi) {
             echo '
-                {[ "type": "number", "name": "scontokm['.$id.']", "value": "'.$scontokm_unitario.'", "icon-after": "choice|untprc|'.$tipo_scontokm.'", "class": "small-width", "extra": "'.$readonly.'" ]}';
+                {[ "type": "number", "name": "scontokm['.$id.']", "value": "'.$scontokm_unitario.'", "icon-after": "choice|untprc|'.$tipo_scontokm.'|'.$readonly.'", "class": "small-width", "extra": "'.$readonly.'" ]}';
         } else {
             echo '
                 <input type="hidden" name="scontokm['.$id.']" value="'.Translator::numberToLocale($scontokm_unitario).'" />
@@ -248,12 +248,12 @@ if (!empty($rs2)) {
         // Pulsante eliminazione sessione
         echo '
             <td>';
-            
-        if( !$flg_completato ){
+
+        if (!$flag_completato) {
             echo '
                 <a class="btn btn-danger" id="delbtn_'.$id.'" onclick="elimina_sessione(\''.$id.'\', \''.$id_record.'\', \''.$idzona.'\');" title="Elimina riga" class="only_rw"><i class="fa fa-trash"></i></a>';
         }
-        
+
         echo '
             </td>
         </tr>';
@@ -270,7 +270,7 @@ if (!empty($rs2)) {
 '<div class=\'alert alert-info\' ><i class=\'fa fa-info-circle\'></i> '.tr('Nessun tecnico assegnato').'.</div>';
 }
 
-if ( !$flg_completato ) {
+if (!$flag_completato) {
     echo '
     <!-- AGGIUNTA TECNICO -->
     <div class="row">
@@ -288,10 +288,23 @@ if ( !$flg_completato ) {
 }
 ?>
 
-<script src="<?php echo $rootdir ?>/lib/init.js"></script>
+<script src="<?php echo $rootdir; ?>/lib/init.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function(){
+
+        <?php 
+        if (count($rs2)==0) {
+            echo '$(".btn-details").attr("disabled", true);';
+            echo '$(".btn-details").addClass("disabled");';
+            echo '$("#showall_dettagli").removeClass("hide");';
+            echo '$("#dontshowall_dettagli").addClass("hide");';
+        }else{
+            echo '$(".btn-details").attr("disabled", false);';
+            echo '$(".btn-details").removeClass("disabled");';      
+        }
+        ?>
+        
         $('.orari').on("dp.change", function(){
             idriga = $(this).attr('id').split('_')[1];
 

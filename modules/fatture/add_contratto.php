@@ -34,7 +34,7 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "required": 1, "values": "query=SELECT id, CONCAT(\'Contratto numero \', numero, \' - \', nome) AS descrizione, budget, (SELECT SUM(subtotale) FROM co_righe2_contratti WHERE idcontratto=co_contratti.id) AS subtot, (SELECT SUM(sconto) FROM co_righe2_contratti WHERE idcontratto=co_contratti.id) AS sconto FROM co_contratti WHERE idanagrafica='.prepare($idanagrafica).' AND id NOT IN (SELECT idcontratto FROM co_righe_documenti WHERE NOT idcontratto=NULL) AND idstato IN( SELECT id FROM co_staticontratti WHERE  fatturabile = 1 AND descrizione != \'Pagato\')", "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.text); $(\'#prezzo\').val($data.subtot); $(\'#sconto\').val($data.sconto);\"" ]}
+            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "required": 1, "values": "query=SELECT id, CONCAT(\'Contratto numero \', numero, \' - \', nome) AS descrizione, budget, (SELECT SUM(subtotale) FROM co_righe2_contratti WHERE idcontratto=co_contratti.id) AS subtot, (SELECT SUM(sconto) FROM co_righe2_contratti WHERE idcontratto=co_contratti.id) AS sconto FROM co_contratti WHERE idanagrafica='.prepare($idanagrafica).' AND id NOT IN (SELECT idcontratto FROM co_righe_documenti WHERE NOT idcontratto=NULL) AND idstato IN( SELECT id FROM co_staticontratti WHERE  fatturabile = 1)", "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.text); $(\'#prezzo\').val($data.subtot); $(\'#sconto\').val($data.sconto);\"" ]}
         </div>
     </div>';
 

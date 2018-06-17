@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-?><form action="" method="post" role="form">
+?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
 
@@ -13,11 +13,6 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="panel-body">
-			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-			</div>
-			<div class="clearfix"></div>
-
 			<div class="row">
 				<div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}

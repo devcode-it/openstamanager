@@ -13,6 +13,8 @@ $can_edit_prezzi = (in_array('Amministratori', $gruppi)) || (get_var('Mostra i p
 $idriga = get('idriga');
 $idautomezzo = (get('idautomezzo') == 'undefined') ? '' : get('idautomezzo');
 
+$_SESSION['superselect']['idintervento'] = get('id_record');
+
 // Lettura idanagrafica cliente e percentuale di sconto/rincaro in base al listino
 $rs = $dbo->fetchArray('SELECT idanagrafica FROM in_interventi WHERE id='.prepare($id_record));
 
@@ -50,7 +52,8 @@ if (empty($idriga)) {
     $descrizione = $rsr[0]['descrizione'];
     $qta = $rsr[0]['qta'];
     $um = $rsr[0]['um'];
-
+    $idiva = $rsr[0]['idiva'];
+    
     $prezzo_vendita = $rsr[0]['prezzo_vendita'];
 
     $sconto_unitario = $rsr[0]['sconto_unitario'];
@@ -108,20 +111,26 @@ echo '
 // Impianto
 echo '
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Impianto su cui installare').'", "name": "idimpianto", "value": "'.$idimpianto.'", "ajax-source": "impianti" ]}
+            {[ "type": "select", "label": "'.tr('Impianto su cui installare').'", "name": "idimpianto", "value": "'.$idimpianto.'", "ajax-source": "impianti-intervento" ]}
         </div>
     </div>';
+    
+// Iva
+echo '
+    <div class="row">
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
+        </div>';
 
 // Prezzo di vendita
 echo '
-    <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo_vendita", "required": 1, "value": "'.$prezzo_vendita.'", "icon-after": "&euro;" ]}
         </div>';
 
 // Sconto
 echo '
-        <div class="col-md-6">
+        <div class="col-md-4">
             {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "icon-after": "choice|untprc|'.$tipo_sconto.'", "value": "'.$sconto_unitario.'" ]}
         </div>
     </div>';
@@ -130,21 +139,21 @@ echo '
 echo '
     <div class="row" id="prezzi_articolo">
         <div class="col-md-4 text-center">
-            <button type="button" class="btn btn-sm btn-info btn-block disabled" onclick="$(\'#prezzi\').toggleClass(\'hide\'); $(\'#prezzi\').load(\''.$rootdir."/ajax_autocomplete.php?module=Articoli&op=getprezzi&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$idanagrafica.'\');" disabled>
+            <button type="button" class="btn btn-sm btn-info btn-block disabled" onclick="$(\'#prezzi\').toggleClass(\'hide\'); $(\'#prezzi\').load(\''.$rootdir."/ajax_complete.php?module=Articoli&op=getprezzi&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$idanagrafica.'\');" disabled>
                 <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (cliente)').'
             </button>
             <div id="prezzi" class="hide"></div>
         </div>
 
         <div class="col-md-4 text-center">
-            <button type="button" class="btn btn-sm btn-info btn-block disabled" onclick="$(\'#prezziacquisto\').toggleClass(\'hide\'); $(\'#prezziacquisto\').load(\''.$rootdir."/ajax_autocomplete.php?module=Articoli&op=getprezziacquisto&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$idanagrafica.'\');" disabled>
+            <button type="button" class="btn btn-sm btn-info btn-block disabled" onclick="$(\'#prezziacquisto\').toggleClass(\'hide\'); $(\'#prezziacquisto\').load(\''.$rootdir."/ajax_complete.php?module=Articoli&op=getprezziacquisto&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$idanagrafica.'\');" disabled>
                 <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (acquisto)').'
             </button>
             <div id="prezziacquisto" class="hide"></div>
         </div>
 
         <div class="col-md-4 text-center">
-            <button type="button" class="btn btn-sm btn-info btn-block disabled" onclick="$(\'#prezzivendita\').toggleClass(\'hide\'); $(\'#prezzivendita\').load(\''.$rootdir."/ajax_autocomplete.php?module=Articoli&op=getprezzivendita&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$idanagrafica.'\');" disabled>
+            <button type="button" class="btn btn-sm btn-info btn-block disabled" onclick="$(\'#prezzivendita\').toggleClass(\'hide\'); $(\'#prezzivendita\').load(\''.$rootdir."/ajax_complete.php?module=Articoli&op=getprezzivendita&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$idanagrafica.'\');" disabled>
                 <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (vendita)').'
             </button>
             <div id="prezzivendita" class="hide"></div>
@@ -165,6 +174,7 @@ echo '
 
                 $("#prezzo_vendita").val($data.prezzo_vendita);
                 $("#descrizione_articolo").val($data.descrizione);
+                $("#idiva").selectSet($data.idiva_vendita, $data.iva_vendita);
                 $("#um").selectSetNew($data.um, $data.um);
             }else{
                 $("#prezzi_articolo button").addClass("disabled");
@@ -182,7 +192,7 @@ echo '
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
+			<button type="submit" class="btn btn-primary pull-right">'.$button.'</button>
 		</div>
     </div>
 </form>';
@@ -199,10 +209,10 @@ echo '
                 $('#bs-popup').modal('hide');
 
                 // Ricarico gli articoli
-                $('#articoli').load(globals.rootdir + '/modules/interventi/ajax_articoli.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>');
+                $('#articoli').load(globals.rootdir + '/modules/interventi/ajax_articoli.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
 
                 // Ricarico la tabella dei costi
-                $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>');
+                $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
             }
         });
     });

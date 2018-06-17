@@ -47,6 +47,7 @@ class ChoicesHandler implements HandlerInterface
         $values['placeholder'] = isset($values['placeholder']) ? $values['placeholder'] : $values['label'];
 
         // Generazione del codice HTML
+        // "+ this.checked" rende il valore booleano un numero
         $result .= '
     <div class="input-group">
         <span class="input-group-addon">

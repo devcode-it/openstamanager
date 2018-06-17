@@ -17,7 +17,7 @@ if (empty($id_record)) {
         echo '
             <tr class="clickable" onclick="openLink(event, \''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$c.'\')">
                 <td>'.$c.'</td>
-                <td>'.$cmp[$c-1][0].'</td>
+                <td>'.$cmp[$c - 1][0].'</td>
 			</tr>';
     }
     echo '
@@ -25,7 +25,7 @@ if (empty($id_record)) {
 	</table>';
 } else {
     ?>
-    <form action="" method="post" role="form" enctype="multipart/form-data">
+    <form action="" method="post" id="edit-form" enctype="multipart/form-data">
         <input type="hidden" name="backto" value="record-edit">
         <input type="hidden" name="op" value="update">
 
@@ -36,11 +36,6 @@ if (empty($id_record)) {
             </div>
 
             <div class="panel-body">
-
-                <div class="pull-right">
-                    <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-                </div>
-                <div class="clearfix"></div>
 
                 <div class="row">
                     <div class="col-md-6">
@@ -64,5 +59,4 @@ if (empty($id_record)) {
     </a>
 
 <?php
-
 }

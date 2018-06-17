@@ -5,6 +5,7 @@ $db_host = '|host|';
 $db_username = '|username|';
 $db_password = '|password|';
 $db_name = '|database|';
+//$port = '|port|';
 
 // Percorso della cartella di backup
 $backup_dir = __DIR__.'/backup/';
@@ -35,4 +36,10 @@ $formatter = [
         'decimals' => ',',
         'thousands' => '.',
     ],
+];
+
+// Ulteriori file CSS e JS da includere
+$assets = [
+    'css' => [],
+    'js' => [],
 ];

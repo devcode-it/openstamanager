@@ -22,7 +22,7 @@ echo "
                             </tr>';
 
 // Elenco scadenze
-$rs2 = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento='.prepare($iddocumento).' ORDER BY `data_emissione` ASC');
+$rs2 = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento='.prepare($id_record).' ORDER BY `data_emissione` ASC');
 if (!empty($rs2)) {
     for ($i = 0; $i < sizeof($rs2); ++$i) {
         echo "
@@ -219,8 +219,8 @@ if (!empty($records[0]['rivalsainps'])) {
 }
 
 // Ritenuta d'acconto
-if (!empty($records[0]['ritenutaacconto'])) {
-    $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenutaacconto WHERE id=(SELECT idritenutaacconto FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' AND idritenutaacconto!=0 LIMIT 0,1)');
+if ($records[0]['ritenutaacconto'] != 0) {
+    $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenutaacconto WHERE id=(SELECT idritenutaacconto FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idritenutaacconto!=0 LIMIT 0,1)');
 
     $first_colspan = 3;
     $second_colspan = 2;
@@ -306,6 +306,72 @@ if (empty($records[0]['ritenutaacconto']) && empty($records[0]['rivalsainps']) &
 
 echo '
 </table>';
+
+if ($fattura_accompagnatoria) {
+    // Informazioni aggiuntive
+    echo '
+<table class="table-bordered">
+    <tr>
+        <th class="small" class style="width:25%">
+            '.tr('Aspetto beni', [], ['upper' => true]).'
+        </th>
+
+        <th class="small" class style="width:20%">
+            '.tr('Num. colli', [], ['upper' => true]).'
+        </th>
+
+        <th class="small" style="width:30%">
+            '.tr('Causale trasporto', [], ['upper' => true]).'
+        </th>
+
+        <th class="small" style="width:25%">
+            '.tr('Porto', [], ['upper' => true]).'
+        </th>
+    </tr>
+
+    <tr>
+        <td class="cell-padded">
+            $aspettobeni$ &nbsp;
+        </td>
+
+        <td class="cell-padded">
+            $n_colli$ &nbsp;
+        </td>
+
+        <td class="cell-padded">
+            $causalet$ &nbsp;
+        </td>
+
+        <td class="cell-padded">
+            $porto$ &nbsp;
+        </td>
+    </tr>
+</table>';
+
+    // Firme
+    echo '
+<table class="table-bordered">
+    <tr>
+        <th class="small" style="width:33%">
+            '.tr('Tipo di spedizione', [], ['upper' => true]).'
+        </th>
+
+        <th class="small" style="width:33%">
+            '.tr('Firma conducente', [], ['upper' => true]).'
+        </th>
+
+        <th class="small" style="width:33%">
+            '.tr('Firma destinatario', [], ['upper' => true]).'
+        </th>
+    </tr>
+
+    <tr>
+        <td style="height: 10mm">$spedizione$ $vettore$</td>
+        <td style="height: 10mm"></td>
+        <td style="height: 10mm"></td>
+    </tr>
+</table>';
+}
 
 echo '
 <table style="font-size:7pt; color:#999;">

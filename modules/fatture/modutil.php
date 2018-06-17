@@ -7,11 +7,36 @@ function get_new_numerofattura($data)
 {
     global $dbo;
     global $dir;
+    global $id_segment;
 
-    $query = "SELECT IFNULL(MAX(numero),'0') AS max_numerofattura FROM co_documenti WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data))).' AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='.prepare($dir).') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0, 1';
-    $rs = $dbo->fetchArray($query);
+    if ($dir == 'uscita') {
+        // recupero maschera per questo segmento
+        $rs_maschera = $dbo->fetchArray('SELECT pattern FROM zz_segments WHERE id = '.prepare($id_segment));
+        // esempio: ####/YY
+        $maschera = $rs_maschera[0]['pattern'];
 
-    $numero = $rs[0]['max_numerofattura'] + 1;
+        // estraggo blocchi di caratteri standard da sostituire
+        preg_match('/[#]+/', $maschera, $m1);
+        preg_match('/[Y]+/', $maschera, $m2);
+
+        $query = "SELECT numero FROM co_documenti WHERE DATE_FORMAT(data,'%Y') = ".prepare(date('Y', strtotime($data))).' AND id_segment = '.prepare($id_segment);
+
+        $pos1 = strpos($maschera, $m1[0]);
+        if ($pos1 == 0) {
+            $query .= ' ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1';
+        } else {
+            $query .= ' ORDER BY numero DESC LIMIT 0,1';
+        }
+
+        $rs_ultima_fattura = $dbo->fetchArray($query);
+
+        $numero = Util\Generator::generate($maschera, $rs_ultima_fattura[0]['numero']);
+    } else {
+        $query = "SELECT IFNULL(MAX(numero),'0') AS max_numerofattura FROM co_documenti WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data))).' AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir = '.prepare($dir).') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0, 1';
+        $rs = $dbo->fetchArray($query);
+
+        $numero = $rs[0]['max_numerofattura'] + 1;
+    }
 
     return $numero;
 }
@@ -24,24 +49,32 @@ function get_new_numerosecondariofattura($data)
     global $dbo;
     global $dir;
     global $idtipodocumento;
+    global $id_segment;
 
-    // DATE_FORMAT( data, '%Y' ) = '".date("Y", strtotime($data))."'
-    $query = "SELECT numero_esterno FROM co_documenti WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data))).' AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='.prepare($dir).') ORDER BY CAST(numero_esterno AS UNSIGNED) DESC LIMIT 0,1';
-    $rs = $dbo->fetchArray($query);
-    $numero_secondario = $rs[0]['numero_esterno'];
+    // recupero maschera per questo segmento
+    $rs_maschera = $dbo->fetchArray('SELECT pattern FROM zz_segments WHERE id = '.prepare($id_segment));
+    // esempio: ####/YY
+    $maschera = $rs_maschera[0]['pattern'];
 
-    // Calcolo il numero secondario se stabilito dalle impostazioni e se documento di vendita
-    $formato_numero_secondario = get_var('Formato numero secondario fattura');
+    // estraggo blocchi di caratteri standard da sostituire
+    preg_match('/[#]+/', $maschera, $m1);
+    preg_match('/[Y]+/', $maschera, $m2);
 
-    if ($numero_secondario == '') {
-        $numero_secondario = $formato_numero_secondario;
-    }
-
-    if ($formato_numero_secondario != '' && $dir == 'entrata') {
-        $numero_esterno = get_next_code($numero_secondario, 1, $formato_numero_secondario);
+    $query = "SELECT numero_esterno FROM co_documenti WHERE DATE_FORMAT(data,'%Y') = ".prepare(date('Y', strtotime($data))).' AND id_segment='.prepare($id_segment);
+    // Marzo 2017
+    // nel caso ci fossero lettere prima della maschera ### per il numero (es. FT-0001-2017)
+    // è necessario l'ordinamento alfabetico "ORDER BY numero_esterno" altrimenti
+    // nel caso di maschere del tipo 001-2017 è necessario l'ordinamento numerico "ORDER BY CAST(numero_esterno AS UNSIGNED)"
+    $pos1 = strpos($maschera, $m1[0]);
+    if ($pos1 == 0) {
+        $query .= ' ORDER BY CAST(numero_esterno AS UNSIGNED) DESC LIMIT 0,1';
     } else {
-        $numero_esterno = '';
+        $query .= ' ORDER BY numero_esterno DESC LIMIT 0,1';
     }
+
+    $rs_ultima_fattura = $dbo->fetchArray($query);
+
+    $numero_esterno = Util\Generator::generate($maschera, $rs_ultima_fattura[0]['numero_esterno']);
 
     return $numero_esterno;
 }
@@ -58,8 +91,8 @@ function elimina_scadenza($iddocumento)
 }
 
 /**
- * Funzione per ricalcolare lo scadenziario di una determinata fattura
- * $iddocumento	string		E' l'id del documento di cui ricalcolare lo scadenziario
+ * Funzione per ricalcolare lo scadenzario di una determinata fattura
+ * $iddocumento	string		E' l'id del documento di cui ricalcolare lo scadenzario
  * $pagamento		string		Nome del tipo di pagamento. Se è vuoto lo leggo da co_pagamenti_documenti, perché significa che devo solo aggiornare gli importi.
  */
 function aggiungi_scadenza($iddocumento, $pagamento = '')
@@ -114,8 +147,11 @@ function aggiungi_scadenza($iddocumento, $pagamento = '')
             $giorni = -$rs[$i]['giorno'] - 1;
             if ($giorni > 0) {
                 $date->modify('+'.($giorni).' day');
-            }
-
+            }else{
+				$date->modify('last day of this month');
+			}
+			
+			 
             $scadenza = $date->format('Y-m-d');
         }
 
@@ -175,7 +211,7 @@ function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento)
     // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato.
     // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
     for ($i = 0; $i < sizeof($rs); ++$i) {
-        if ($rimanente_da_pagare > 0) {
+        if ($rimanente_da_pagare != 0) {
             // ...riempio il pagato della rata con il totale della rata stessa se ho ricevuto un pagamento superiore alla rata stessa
             if (abs($rimanente_da_pagare) >= abs($rs[$i]['da_pagare'])) {
                 $pagato = abs($rs[$i]['da_pagare']);
@@ -242,10 +278,17 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     $totale_fattura = get_totale_fattura($iddocumento);
     $imponibile_fattura = get_imponibile_fattura($iddocumento);
 
-    // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
-    $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare(get_var('Iva predefinita'));
-    $rsi = $dbo->fetchArray($qi);
-    $iva_rivalsainps = $totale_rivalsainps / 100 * $rsi[0]['percentuale'];
+    // Calcolo l'iva della rivalsa inps
+    $iva_rivalsainps = 0;
+    
+    $rsr = $dbo->fetchArray( 'SELECT idiva, rivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento) );
+    
+    for( $r=0; $r<sizeof($rsr); $r++ ){
+        $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare( $rsr[$r]['idiva'] );
+        $rsi = $dbo->fetchArray($qi);
+        $iva_rivalsainps += $rsr[$r]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
+    }
+    
 
     // Lettura iva indetraibile fattura
     $query = 'SELECT SUM(iva_indetraibile) AS iva_indetraibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
@@ -253,9 +296,9 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     $iva_indetraibile_fattura = $rs[0]['iva_indetraibile'];
 
     // Lettura iva delle righe in fattura
-    $query = 'SELECT SUM(iva) AS iva FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
+    $query = 'SELECT iva FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
-    $iva_fattura = $rs[0]['iva'] + $iva_rivalsainps - $iva_indetraibile_fattura;
+    $iva_fattura = sum(array_column($rs, 'iva'), null) + $iva_rivalsainps - $iva_indetraibile_fattura;
 
     // Imposto i segni + e - in base se la fattura è di acquisto o vendita
     if ($dir == 'uscita') {
@@ -419,11 +462,11 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 /**
  * Funzione per generare un nuovo codice per il mastrino.
  */
-function get_new_idmastrino()
+function get_new_idmastrino($table = 'co_movimenti')
 {
     global $dbo;
 
-    $query = 'SELECT MAX(idmastrino) AS maxidmastrino FROM co_movimenti';
+    $query = 'SELECT MAX(idmastrino) AS maxidmastrino FROM '.$table;
     $rs = $dbo->fetchArray($query);
 
     return intval($rs[0]['maxidmastrino']) + 1;
@@ -438,7 +481,7 @@ function get_imponibile_fattura($iddocumento)
 
     $query = 'SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS imponibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
-
+    
     return $rs[0]['imponibile'];
 }
 
@@ -457,12 +500,26 @@ function get_totale_fattura($iddocumento)
     $query2 = 'SELECT rivalsainps FROM co_documenti WHERE id='.prepare($iddocumento);
     $rs2 = $dbo->fetchArray($query2);
 
-    // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
-    $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare(get_var('Iva predefinita'));
-    $rsi = $dbo->fetchArray($qi);
-    $iva_rivalsainps = $rs2[0]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
+    $iva_rivalsainps = 0;
+    
+    $rsr = $dbo->fetchArray( 'SELECT idiva, rivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento) );
+    
+    for( $r=0; $r<sizeof($rsr); $r++ ){
+        $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare( $rsr[$r]['idiva'] );
+        $rsi = $dbo->fetchArray($qi);
+        $iva_rivalsainps += $rsr[$r]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
+    }
+    
+    $iva = $rs[0]['iva'];
+    $totale_iva = sum($iva, $iva_rivalsainps);
+    
+    $totale = sum([
+        get_imponibile_fattura($iddocumento),
+        $rs2[0]['rivalsainps'],
+        $totale_iva,
+    ]);
 
-    return get_imponibile_fattura($iddocumento) + $rs[0]['iva'] + $iva_rivalsainps + $rs2[0]['rivalsainps'];
+    return $totale;
 }
 
 /**
@@ -475,7 +532,14 @@ function get_netto_fattura($iddocumento)
     $query = 'SELECT ritenutaacconto, bollo FROM co_documenti WHERE id='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
 
-    return get_totale_fattura($iddocumento) - $rs[0]['ritenutaacconto'] + $rs[0]['bollo'];
+    $netto_a_pagare = sum([
+        get_totale_fattura($iddocumento),
+        $rs[0]['bollo'],
+        -$rs[0]['ritenutaacconto'],
+    ]);
+    
+    return $netto_a_pagare;
+    
 }
 
 /**
@@ -536,16 +600,14 @@ function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenu
         $rivalsainps = $rs[0]['rivalsainps'];
         $ritenutaacconto = $rs[0]['ritenutaacconto'];
 
-        if ($dir == 'entrata') {
-            // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
-            $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare(get_var('Iva predefinita'));
+        $iva_rivalsainps = 0;
+        
+        $rsr = $dbo->fetchArray( 'SELECT idiva, rivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento) );
+        
+        for( $r=0; $r<sizeof($rsr); $r++ ){
+            $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare( $rsr[$r]['idiva'] );
             $rsi = $dbo->fetchArray($qi);
-            $iva_rivalsainps = $rivalsainps / 100 * $rsi[0]['percentuale'];
-        } else {
-            // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
-            $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare(get_var('Iva predefinita'));
-            $rsi = $dbo->fetchArray($qi);
-            $iva_rivalsainps = $rivalsainps / 100 * $rsi[0]['percentuale'];
+            $iva_rivalsainps += $rsr[$r]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
         }
 
         // Leggo la ritenuta d'acconto se c'è
@@ -750,6 +812,10 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
 
             $descrizione = $descrizione.' '.Translator::numberToLocale($sconto[0]['sconto_globale']).'%';
         } else {
+            $rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS imponibile, SUM(iva) AS iva FROM (SELECT '.$tables['row'].'.subtotale, '.$tables['row'].'.sconto, '.$tables['row'].'.iva FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record).') AS t');
+            $subtotale = $rs[0]['imponibile'];
+            $iva += $sconto[0]['sconto_globale'] * $rs[0]['iva'] / $subtotale;
+
             $subtotale = -$sconto[0]['sconto_globale'];
         }
 
@@ -811,4 +877,29 @@ function seriali_non_rimuovibili($field, $id_riga, $dir)
     }
 
     return $results;
+}
+
+function calcola_sconto($data)
+{
+    if ($data['tipo'] == 'PRC') {
+        $result = 0;
+
+        $price = floatval($data['prezzo']);
+
+        $percentages = explode('+', $data['sconto']);
+        foreach ($percentages as $percentage) {
+            $discount = $price / 100 * floatval($percentage);
+
+            $result += $discount;
+            $price -= $discount;
+        }
+    } else {
+        $result = floatval($data['sconto']);
+    }
+
+    if (!empty($data['qta'])) {
+        $result = $result * $data['qta'];
+    }
+
+    return $result;
 }

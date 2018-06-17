@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$report_name = 'contratto_'.$idcontratto.'.pdf';
+$report_name = 'contratto_'.$records[0]['numero'].'.pdf';
 
 $autofill = [
     'count' => 0, // Conteggio delle righe
@@ -55,9 +55,9 @@ echo '
 </div>';
 
 // Descrizione
-if (!empty($records[0]['descrizione'])) {
+if (!empty($records[0]['desc_contratto'])) {
     echo '
-<p>'.nl2br($records[0]['descrizione']).'</p>
+<p>'.nl2br($records[0]['desc_contratto']).'</p>
 <br>';
 }
 
@@ -80,7 +80,7 @@ echo "
     <tbody>';
 
 // RIGHE PREVENTIVO CON ORDINAMENTO UNICO
-$righe = $dbo->fetchArray('SELECT * FROM co_righe2_contratti WHERE idcontratto='.prepare($idcontratto).' ORDER BY `order`');
+$righe = $dbo->fetchArray('SELECT * FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record).' ORDER BY `order`');
 foreach ($righe as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
@@ -107,20 +107,20 @@ foreach ($righe as $r) {
 
     echo "
             <td class='text-center'>";
-    if($r['is_descrizione']==0){
-        echo
-                (empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'])).' '.$r['um'];
+    if (empty($r['is_descrizione'])) {
+        echo '
+                '.(empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'])).' '.$r['um'];
     }
     echo '
             </td>';
 
-    if ($mostra_prezzi) {
+    if ($options['pricing']) {
         // Prezzo unitario
         echo "
             <td class='text-right'>";
-        if($r['is_descrizione']==0){
-            echo
-                (empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
+        if (empty($r['is_descrizione'])) {
+            echo '
+                '.(empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
         }
         echo '
             </td>';
@@ -128,9 +128,9 @@ foreach ($righe as $r) {
         // Imponibile
         echo "
             <td class='text-right'>";
-        if($r['is_descrizione']==0){
-            echo
-                (empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'])).' &euro;';
+        if (empty($r['is_descrizione'])) {
+            echo '
+                '.(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'])).' &euro;';
 
             if ($r['sconto'] > 0) {
                 echo '
@@ -171,7 +171,7 @@ echo '
     </tbody>';
 
 // TOTALE COSTI FINALI
-if ($mostra_prezzi) {
+if ($options['pricing']) {
     // Eventuale sconto incondizionato
     if (!empty($sconto)) {
         // Totale imponibile
@@ -292,7 +292,6 @@ echo '
 echo '
 <p class="text-center"><b>'.tr('Il tutto S.E. & O.').'</b></p>
 <p class="text-center">'.tr("In attesa di un Vostro Cortese riscontro, colgo l'occasione per porgere Cordiali Saluti").'</p>';
-
 
 //Firma
 echo '<div style=\'position:absolute; bottom:'.($settings['margins']['bottom'] + $settings['footer-height']).'px\' > <table >

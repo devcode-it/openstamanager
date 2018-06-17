@@ -2,31 +2,13 @@
 
 include_once __DIR__.'/../../core.php';
 
-$module_name = 'Interventi';
+$module = Modules::get('Interventi');
+$id_module = $module['id'];
 
-$id_module = get('id_module');
+$total = App::readQuery($module);
 
-$fields = [];
-$select = '*';
-$datas = $dbo->fetchArray('SELECT * FROM zz_views WHERE id_module='.$id_module.' AND id IN (SELECT id_vista FROM zz_group_view WHERE id_gruppo=(SELECT idgruppo FROM zz_users WHERE id='.$_SESSION['id_utente'].')) ORDER BY `order` ASC');
-if ($datas != null) {
-    $select = '';
-    foreach ($datas as $data) {
-        $select .= $data['query']." AS '".$data['name']."',";
-        if ($data['enabled']) {
-            array_push($fields, trim($data['name']));
-        }
-    }
-    $select = substr($select, 0, strlen($select) - 1);
-}
-
-$module = Modules::get($id_module);
-$module_query = ($module['options2'] != '') ? $module['options2'] : $module['options'];
-
-$module_query = str_replace('|select|', $select, $module_query);
-$module_query = str_replace('|period_start|', $_SESSION['period_start'], $module_query);
-$module_query = str_replace('|period_end|', $_SESSION['period_end'], $module_query);
-$module_dir = $module['directory'];
+// Lettura parametri modulo
+$module_query = $total['query'];
 
 $search_filters = [];
 
@@ -35,19 +17,18 @@ if (is_array($_SESSION['module_'.$id_module])) {
         if ($field_value != '') {
             $field_name = str_replace('search_', '', $field_name);
             $field_name = str_replace('__', ' ', $field_name);
+            $field_name = str_replace('-', ' ', $field_name);
             array_push($search_filters, '`'.$field_name.'` LIKE "%'.$field_value.'%"');
         }
     }
 }
 
-if (sizeof($search_filters) > 0) {
-    $module_query = str_replace('1=1', '1=1 AND ('.implode(' AND ', $search_filters).') ', $module_query);
+if (!empty($search_filters)) {
+    $module_query = str_replace('2=2', '2=2 AND ('.implode(' AND ', $search_filters).') ', $module_query);
 }
 
-// Aggiungo eventuali filtri dei permessi
-if ($additional_where[$rs[0]['name']] != '') {
-    $module_query = str_replace('1=1', '1=1 '.$additional_where[$rs[0]['name']], $module_query);
-}
+// Filtri derivanti dai permessi (eventuali)
+$module_query = Modules::replaceAdditionals($id_module, $module_query);
 
 $rsi = $dbo->fetchArray($module_query);
 

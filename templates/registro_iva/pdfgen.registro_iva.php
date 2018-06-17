@@ -44,12 +44,7 @@ switch ($periodo[0]) {
         break;
 }*/
 
-if ('entrata' == $dir) {
-    $query = "SELECT *, SUM(subtotale-co_righe_documenti.sconto) AS subtotale, SUM(iva) AS iva, (SELECT ragione_sociale FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica=co_documenti.idanagrafica) AS ragione_sociale FROM co_documenti INNER JOIN co_righe_documenti ON co_documenti.id=co_righe_documenti.iddocumento INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir='entrata' AND co_documenti.data>='".$date_start."' AND co_documenti.data<='".$date_end."' GROUP BY co_documenti.id, co_righe_documenti.idiva";
-} elseif ('uscita' == $dir) {
-    $query = "SELECT *, SUM(subtotale-co_righe_documenti.sconto) AS subtotale, SUM(iva) AS iva, (SELECT ragione_sociale FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica=co_documenti.idanagrafica) AS ragione_sociale FROM co_documenti INNER JOIN co_righe_documenti ON co_documenti.id=co_righe_documenti.iddocumento INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir='uscita' AND co_documenti.data>='".$date_start."' AND co_documenti.data<='".$date_end."' GROUP BY co_documenti.id, co_righe_documenti.idiva";
-}
-
+$query = 'SELECT *, SUM(subtotale-co_righe_documenti.sconto) AS subtotale, SUM(iva) AS iva, (SELECT ragione_sociale FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica=co_documenti.idanagrafica) AS ragione_sociale FROM co_documenti INNER JOIN co_righe_documenti ON co_documenti.id=co_righe_documenti.iddocumento INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir = '.prepare($dir).' AND is_descrizione = 0 AND co_documenti.data >= '.prepare($date_start).' AND co_documenti.data <= '.prepare($date_end).' GROUP BY co_documenti.id, co_righe_documenti.idiva ORDER BY co_documenti.data';
 $rs = $dbo->fetchArray($query);
 
 if ('entrata' == $dir) {

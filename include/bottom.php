@@ -9,11 +9,11 @@ if (Auth::check()) {
             </aside><!-- /.content-wrapper -->
 
 			<footer class="main-footer">
+                <a class="hidden-xs" href="https://www.openstamanager.com" title="'.tr('Il gestionale open source per l\'assistenza tecnica e la fatturazione').'." target="_blank"><strong>'.tr('OpenSTAManager').'</strong></a>
 				<span class="pull-right hidden-xs">
-                    <strong>'.tr('Versione').' '.$version.'</strong>
+                    <strong>'.tr('Versione').'</strong> '.$version.'
                     <small class="text-muted">('.(!empty($revision) ? $revision : tr('In sviluppo')).')</small>
                 </span>
-				'.tr('OpenSTAManager').'
 			</footer>
 
 			<div class="modal fade" id="bs-popup" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="true"></div>
@@ -45,16 +45,20 @@ if (Auth::check()) {
     if (!empty($debugbarRenderer)) {
         echo $debugbarRenderer->render();
     }
+
+    // Rimozione del messaggio automatico riguardante la modifica di valori nella pagina
+    echo '
+        <script>
+            window.onbeforeunload = null;
+        </script>';
 }
 
 echo '
-        <script>
-            // Rimozione del messaggio automatico riguardante la modifica di valori nella pagina
-            window.onbeforeunload = null;
-        </script>
 	</body>
 </html>';
 
-unset($_SESSION['infos']);
-unset($_SESSION['errors']);
-unset($_SESSION['warnings']);
+if (!empty($id_record) || basename($_SERVER['PHP_SELF']) == 'controller.php' || basename($_SERVER['PHP_SELF']) == 'index.php') {
+    unset($_SESSION['infos']);
+    unset($_SESSION['errors']);
+    unset($_SESSION['warnings']);
+}

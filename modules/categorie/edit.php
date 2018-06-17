@@ -2,35 +2,30 @@
 
 include_once __DIR__.'/../../core.php';
 
-?><form action="" method="post" role="form">
+?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
-
-	<div class="pull-right">
-		<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-	</div>
-	<div class="clearfix"></div><br>
 
 	<!-- DATI -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Dati') ?></h3>
+			<h3 class="panel-title"><?php echo tr('Dati'); ?></h3>
 		</div>
 
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-xs-12 col-md-8">
-					{[ "type": "text", "label": "<?php echo tr('Nome') ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
+				<div class="col-md-8">
+					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
 				</div>
 
-				<div class="col-xs-12 col-md-4">
+				<div class="col-md-4">
 					{[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength='7'", "icon-after": "<div class='img-circle square'></div>" ]}
 				</div>
 			</div>
 
 			<div class="row">
-				<div class="col-xs-12 col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Nota') ?>", "name": "nota", "value": "$nota$" ]}
+				<div class="col-md-12">
+					{[ "type": "textarea", "label": "<?php echo tr('Nota'); ?>", "name": "nota", "value": "$nota$" ]}
 				</div>
 			</div>
 		</div>
@@ -45,7 +40,7 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="panel-body">
 		<div class="pull-left">
-			<a class="btn btn-primary" data-href="<?php echo $rootdir?>/add.php?id_module=<?php echo $id_module; ?>&id_original=<?php echo $id_record ?>" data-toggle="modal" data-title="<?php echo tr('Aggiungi riga'); ?>" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Sottocategoria'); ?></a><br>
+			<a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/add.php?id_module=<?php echo $id_module; ?>&id_original=<?php echo $id_record; ?>" data-toggle="modal" data-title="<?php echo tr('Aggiungi riga'); ?>" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Sottocategoria'); ?></a><br>
 		</div>
 		<div class="clearfix"></div>
 		<hr>
@@ -57,7 +52,7 @@ include_once __DIR__.'/../../core.php';
 					<th><?php echo tr('Nome'); ?></th>
 					<th><?php echo tr('Colore'); ?></th>
 					<th><?php echo tr('Nota'); ?></th>
-					<th><?php echo tr('Opzioni'); ?></th>
+					<th width="20%"><?php echo tr('Opzioni'); ?></th>
 				</tr>
 
 				<?php include $docroot.'/modules/'.Modules::get($id_module)['directory'].'/row-list.php'; ?>
@@ -79,7 +74,7 @@ include_once __DIR__.'/../../core.php';
 
 <?php
 
-$res = $dbo->fetchNum('SELECT * FROM `mg_articoli` WHERE `id_categoria`='.prepare($id).' OR `id_sottocategoria`='.prepare($id).' OR `id_sottocategoria` IN (SELECT id FROM `mg_categorie` WHERE `parent`='.prepare($id).')');
+$res = $dbo->fetchNum('SELECT * FROM `mg_articoli` WHERE `id_categoria`='.prepare($id_record).' OR `id_sottocategoria`='.prepare($id_record).'  OR `id_sottocategoria` IN (SELECT id FROM `mg_categorie` WHERE `parent`='.prepare($id_record).')');
 
 if ($res) {
     echo '

@@ -19,11 +19,14 @@ echo '
 /*
     Articoli e righe generiche
 */
-$q_art = 'SELECT *, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice FROM `dt_righe_ddt` WHERE idddt='.prepare($id_record).' ORDER BY `order`';
+$q_art = 'SELECT *, round(sconto_unitario,'.Settings::get('Cifre decimali per importi').') AS sconto_unitario, round(sconto,'.Settings::get('Cifre decimali per importi').') AS sconto, round(subtotale,'.Settings::get('Cifre decimali per importi').') AS subtotale, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice FROM `dt_righe_ddt` WHERE idddt='.prepare($id_record).' ORDER BY `order`';
 $rs = $dbo->fetchArray($q_art);
 
 if (!empty($rs)) {
     foreach ($rs as $r) {
+        $extra = '';
+        $mancanti = 0;
+
         // Individuazione dei seriali
         if (!empty($r['idarticolo']) && !empty($r['abilita_serial'])) {
             $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_ddt='.prepare($r['id'])), 'serial');
@@ -85,7 +88,7 @@ if (!empty($rs)) {
 
         echo '
         <td class="text-center">';
-        if($r['is_descrizione']==0){
+        if (empty($r['is_descrizione'])) {
             if (empty($r['sconto_globale'])) {
                 echo '
                 <big>'.Translator::numberToLocale($r['qta'] - $r['qta_evasa']).'</big>
@@ -100,9 +103,9 @@ if (!empty($rs)) {
         // Unità di misura
         echo '
         <td class="text-center">';
-        if($r['is_descrizione']==0){
-            echo
-            $r['um'];
+        if (empty($r['is_descrizione'])) {
+            echo '
+            '.$r['um'];
         }
         echo '
         </td>';
@@ -110,16 +113,16 @@ if (!empty($rs)) {
         // Costo unitario
         echo '
         <td class="text-right">';
-        if($r['is_descrizione']==0){
-            echo
-            Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
+        if (empty($r['is_descrizione'])) {
+            echo '
+            '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
 
             if ($r['sconto_unitario'] > 0) {
                 echo '
-                <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
-                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
-                ]).'</small>';
+            <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
+                '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+            ]).'</small>';
             }
         }
         echo '
@@ -128,9 +131,9 @@ if (!empty($rs)) {
         // Iva
         echo '
         <td class="text-right">';
-        if($r['is_descrizione']==0){
-            echo
-            Translator::numberToLocale($r['iva']).' &euro;
+        if (empty($r['is_descrizione'])) {
+            echo '
+            '.Translator::numberToLocale($r['iva']).' &euro;
             <br><small class="help-block">'.$r['desc_iva'].'</small>';
         }
         echo '
@@ -139,9 +142,9 @@ if (!empty($rs)) {
         // Imponibile
         echo '
         <td class="text-right">';
-        if($r['is_descrizione']==0){
-            echo
-            Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
+        if (empty($r['is_descrizione'])) {
+            echo '
+            '.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
         }
         echo '
         </td>';
@@ -149,7 +152,7 @@ if (!empty($rs)) {
         // Possibilità di rimuovere una riga solo se il ddt non è evaso
         echo '
         <td class="text-center">';
-        if ($records[0]['stato'] != 'Evaso' && empty($r['sconto_globale'])) {
+        if ($records[0]['flag_completato']==0 && empty($r['sconto_globale'])) {
             echo "
             <form action='".$rootdir.'/editor.php?id_module='.Modules::get($name)['id'].'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>
@@ -177,7 +180,7 @@ if (!empty($rs)) {
             }
 
             echo "
-                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal( 'Modifica riga', '".$rootdir.'/modules/ddt/add_riga.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&dir='.$dir."', 1 );\">
+                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal( 'Modifica riga', '".$rootdir.'/modules/ddt/row-edit.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id']."', 1 );\">
                         <i class='fa fa-edit'></i>
                     </a>
 
@@ -207,7 +210,7 @@ echo '
 // Calcoli
 $imponibile = sum(array_column($rs, 'subtotale'));
 $sconto = sum(array_column($rs, 'sconto'));
-$iva = sum(array_column($rs, 'iva'), null, 4);
+$iva = sum(array_column($rs, 'iva'));
 
 $imponibile_scontato = sum($imponibile, -$sconto);
 

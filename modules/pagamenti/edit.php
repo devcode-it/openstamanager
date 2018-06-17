@@ -2,28 +2,28 @@
 
 include_once __DIR__.'/../../core.php';
 
-?><form action="" method="post" role="form" id="check">
+?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
 
 	<!-- DATI -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Dati') ?></h3>
+			<h3 class="panel-title"><?php echo tr('Dati'); ?></h3>
 		</div>
 
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-xs-12 col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('Descrizione') ?>", "name": "descrizione",  "value": "$descrizione$" ]}
+				<div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione",  "value": "$descrizione$" ]}
                 </div>
 
-                <div class="col-xs-12 col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Conto predefinito per le vendite') ?>", "name": "idconto_vendite",  "value": "$idconto_vendite$", "ajax-source": "conti"  ]}
+                <div class="col-md-4">
+					{[ "type": "select", "label": "<?php echo tr('Conto predefinito per le vendite'); ?>", "name": "idconto_vendite",  "value": "$idconto_vendite$", "ajax-source": "conti"  ]}
                 </div>
 
-                <div class="col-xs-12 col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Conto predefinito per gli acquisti') ?>", "name": "idconto_acquisti",  "value": "$idconto_acquisti$", "ajax-source": "conti" ]}
+                <div class="col-md-4">
+					{[ "type": "select", "label": "<?php echo tr('Conto predefinito per gli acquisti'); ?>", "name": "idconto_acquisti",  "value": "$idconto_acquisti$", "ajax-source": "conti" ]}
 				</div>
 			</div>
 		</div>
@@ -31,7 +31,7 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Rate') ?></h3>
+			<h3 class="panel-title"><?php echo tr('Rate'); ?></h3>
 		</div>
 
 		<div class="panel-body">
@@ -54,7 +54,7 @@ foreach ($results as $result) {
 						<h3 class="box-title">'.tr('Rata _NUMBER_', [
                             '_NUMBER_' => $cont,
                         ]).'</h3>
-						<a class=" btn btn-danger pull-right" onclick="';
+						<a class="btn btn-danger pull-right" onclick="';
     echo "if(confirm('".tr('Eliminare questo elemento?')."')){ location.href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete_rata&id='.$result['id']."'; }";
     echo '"><i class="fa fa-trash"></i> '.tr('Elimina').'</a>
 					</div>
@@ -62,11 +62,11 @@ foreach ($results as $result) {
 						<input type="hidden" value="'.$result['id'].'" name="id[]">
 
 						<div class="row">
-							<div class="col-xs-12 col-md-6">
+							<div class="col-md-6">
 								{[ "type": "number", "label": "'.tr('Percentuale').'", "name": "percentuale[]", "value": "'.$result['prc'].'", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
 							</div>
 
-							<div class="col-xs-12 col-md-6">
+							<div class="col-md-6">
 								{[ "type": "select", "label": "'.tr('Scadenza').'", "name": "scadenza[]", "values": "list=\"1\":\"'.tr('Data fatturazione').'\",\"2\":\"'.tr('Data fatturazione fine mese').'\",\"3\":\"'.tr('Data fatturazione giorno fisso').'\",\"4\":\"'.tr('Data fatturazione fine mese (giorno fisso)').'\"", "value": "';
 
     if ($result['giorno'] == 0) {
@@ -84,7 +84,7 @@ foreach ($results as $result) {
                         </div>
 
                         <div class="row">
-							<div class="col-xs-12 col-md-6">
+							<div class="col-md-6">
 								{[ "type": "select", "label": "'.tr('Giorno').'", "name": "giorno[]", "values": "list='.$values.'", "value": "';
     if ($result['giorno'] != 0 && $result['giorno'] != -1) {
         echo ($result['giorno'] < -1) ? -$result['giorno'] - 1 : $result['giorno'];
@@ -96,7 +96,7 @@ foreach ($results as $result) {
     echo '" ]}
 							</div>
 
-							<div class="col-xs-12 col-md-6">
+							<div class="col-md-6">
 								{[ "type": "number", "label": "'.tr('Distanza in giorni').'", "name": "distanza[]", "decimals": "0", "value": "'.$result['num_giorni'].'" ]}
 							</div>
 						</div>
@@ -138,21 +138,21 @@ echo '
             <input type="hidden" value="" name="id[]">
 
             <div class="row">
-                <div class="col-xs-12 col-md-6">
+                <div class="col-md-6">
                     {[ "type": "number", "label": "'.tr('Percentuale').'", "name": "percentuale[]", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
                 </div>
 
-                <div class="col-xs-12 col-md-6">
+                <div class="col-md-6">
                     {[ "type": "select", "label": "'.tr('Scadenza').'", "name": "scadenza[]", "values": "list=\"1\":\"'.tr('Data fatturazione').'\",\"2\":\"'.tr('Data fatturazione fine mese').'\",\"3\":\"'.tr('Data fatturazione giorno fisso').'\",\"4\":\"'.tr('Data fatturazione fine mese (giorno fisso)').'\"", "value": 1 ]}
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-xs-12 col-md-6">
+                <div class="col-md-6">
                     {[ "type": "select", "label": "'.tr('Giorno').'", "name": "giorno[]", "values": "list='.$values.'" ]}
                 </div>
 
-                <div class="col-xs-12 col-md-6">
+                <div class="col-md-6">
                     {[ "type": "number", "label": "'.tr('Distanza in giorni').'", "name": "distanza[]", "decimals": "0" ]}
                 </div>
             </div>
@@ -180,7 +180,7 @@ $(document).ready(function(){
         }
     });
 
-	$('#check').submit(function(event) {
+	$('#edit-form').submit(function(event) {
 		var tot = 0;
 
 		$(this).find('[id*=percentuale]').each(function(){

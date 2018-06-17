@@ -5,73 +5,40 @@ include_once __DIR__.'/../../core.php';
 unset($_SESSION['superselect']['idanagrafica']);
 $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
-//Disabilito il tasto di firma per gli interventi completati
-if( $records[0]['flg_completato'] ){
-    $disabled = 'disabled';
-    $readonly = 'readonly';
-} else {
-    $disabled = '';
-    $readonly = '';
-}
-
-
-if (empty($records[0]['firma_file'])) {
-    $frase = tr('Anteprima e firma');
-    $info_firma = '';
-} else {
-    $frase = tr('Nuova anteprima e firma');
-    $info_firma = '<span class="label label-success"><i class="fa fa-edit"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
-        '_DATE_' => Translator::dateToLocale($records[0]['firma_data']),
-        '_TIME_' => Translator::timeToLocale($records[0]['firma_data']),
-        '_PERSON_' => '<b>'.$records[0]['firma_nome'].'</b>',
-    ]).'</span>';
-}
-
-?><form action="" method="post">
+?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">
-	<input type="hidden" name="id_record" value="<?php echo $id_record ?>">
+	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
 	<!-- DATI CLIENTE -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Dati cliente') ?></h3>
+			<h3 class="panel-title"><?php echo tr('Dati cliente'); ?></h3>
 		</div>
 
 		<div class="panel-body">
-            <!-- EVENTUALE FIRMA GIA' EFFETTUATA -->
-            <?php echo $info_firma ?>
-			<div class="pull-right">
-				<button type="button" class="btn btn-primary " onclick="launch_modal( '<?php echo tr('Anteprima e firma') ?>', '<?php echo $rootdir ?>/modules/interventi/add_firma.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>&anteprima=1', 1 );" <?= $disabled ?>><i class="fa fa-desktop"></i> <?php echo $frase ?>...</button>
-
-				<a class="btn btn-info" target="_blank" href="<?php echo $rootdir ?>/pdfgen.php?ptype=interventi&idintervento=<?php echo $id_record ?>"><i class="fa fa-print"></i> <?php echo tr('Stampa intervento') ?></a>
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-				<div class="clearfix" >&nbsp;</div>
-			</div>
-			<div class="clearfix"></div>
-
 			<!-- RIGA 1 -->
 			<div class="row">
 				<div class="col-md-3">
                     <?php
                         echo Modules::link('Anagrafiche', $records[0]['idanagrafica'], null, null, 'class="pull-right"');
                     ?>
-					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted=0 ORDER BY ragione_sociale", "value": "$idanagrafica$", "ajax-source": "clienti", "extra": "<?= $readonly ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted=0 ORDER BY ragione_sociale", "value": "$idanagrafica$", "ajax-source": "clienti", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "values": "query=SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica='$idanagrafica$'", "value": "$idsede$", "ajax-source": "sedi", "extra": "<?= $readonly ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "values": "query=SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica='$idanagrafica$'", "value": "$idsede$", "ajax-source": "sedi", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
 					<?php
                         echo Modules::link('Anagrafiche', $records[0]['idclientefinale'], null, null, 'class="pull-right"');
                     ?>
-					{[ "type": "select", "label": "<?php echo tr('Per conto di'); ?>", "name": "idclientefinale", "value": "$idclientefinale$", "ajax-source": "clienti", "extra": "<?= $readonly ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Per conto di'); ?>", "name": "idclientefinale", "value": "$idclientefinale$", "ajax-source": "clienti", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "extra": "<?= $readonly ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
 				</div>
 			</div>
 
@@ -87,7 +54,7 @@ if (empty($records[0]['firma_file'])) {
                     }
                     ?>
 
-					{[ "type": "select", "label": "<?php echo tr('Preventivo'); ?>", "name": "idpreventivo", "value": "$idpreventivo$", "ajax-source": "preventivi", "extra": "<?= $readonly ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Preventivo'); ?>", "name": "idpreventivo", "value": "$idpreventivo$", "ajax-source": "preventivi", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -107,8 +74,8 @@ if (empty($records[0]['firma_file'])) {
                         }
                     ?>
 
-					{[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $idcontratto; ?>", "ajax-source": "contratti", "extra": "<?= $readonly ?>" ]}
-					<input type='hidden' name='idcontratto_riga' value='<?php echo $idcontratto_riga ?>'>
+					{[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $idcontratto; ?>", "ajax-source": "contratti", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
+					<input type='hidden' name='idcontratto_riga' value='<?php echo $idcontratto_riga; ?>'>
 				</div>
 			</div>
 		</div>
@@ -119,39 +86,33 @@ if (empty($records[0]['firma_file'])) {
 	<!-- DATI INTERVENTO -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Dati intervento') ?></h3>
+			<h3 class="panel-title"><?php echo tr('Dati intervento'); ?></h3>
 		</div>
 
 		<div class="panel-body">
-			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-			</div>
-			<div class="clearfix"></div>
-
-
 			<!-- RIGA 3 -->
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "span", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$", "extra": "<?= $readonly ?>" ]}
+					{[ "type": "span", "label": "<?php echo tr('Numero'); ?>", "name": "codice", "value": "$codice$", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "$data_richiesta$", "extra": "<?= $readonly ?>" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "$data_richiesta$", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
 				</div>
-				
+
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "$idzona$" ,"extra": "readonly" ]}
+					{[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "$idzona$" , "placeholder": "<?php echo tr('Nessuna zona'); ?>", "extra": "readonly" ]}
 				</div>
-				
-				
-				
+
+
+
 			</div>
 
 
 			<!-- RIGA 4 -->
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento", "value": "$idtipointervento$", "extra": "<?= $readonly ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento", "value": "$idtipointervento$", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-4">
@@ -159,7 +120,7 @@ if (empty($records[0]['firma_file'])) {
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Automezzo'); ?>", "name": "idautomezzo", "values": "query=SELECT id, CONCAT_WS( ')', CONCAT_WS( ' (', CONCAT_WS( ', ', nome, descrizione), targa ), '' ) AS descrizione FROM dt_automezzi", "help": "<?php echo tr('Se selezionato i materiali verranno presi prima dall&rsquo;automezzo e poi dal magazzino centrale.'); ?>", "value": "$idautomezzo$", "extra": "<?= $readonly ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Automezzo'); ?>", "name": "idautomezzo", "values": "query=SELECT id, CONCAT_WS( ')', CONCAT_WS( ' (', CONCAT_WS( ', ', nome, descrizione), targa ), '' ) AS descrizione FROM dt_automezzi", "help": "<?php echo tr('Se selezionato i materiali verranno presi prima dall&rsquo;automezzo e poi dal magazzino centrale.'); ?>", "value": "$idautomezzo$", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
 				</div>
 			</div>
 
@@ -167,11 +128,11 @@ if (empty($records[0]['firma_file'])) {
 			<!-- RIGA 5 -->
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Richiesta'); ?>", "name": "richiesta", "required": 1, "class": "autosize", "value": "$richiesta$", "extra": "rows='5' <?= $readonly ?>" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Richiesta'); ?>", "name": "richiesta", "required": 1, "class": "autosize", "value": "$richiesta$", "extra": "rows='5'", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "class": "autosize", "value": "$descrizione$", "extra": "rows='10' <?= $readonly ?>" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "class": "autosize", "value": "$descrizione$", "extra": "rows='10'", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-12">
@@ -184,21 +145,20 @@ if (empty($records[0]['firma_file'])) {
 	<!-- ORE LAVORO -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Ore di lavoro') ?></h3>
+			<h3 class="panel-title"><?php echo tr('Ore di lavoro'); ?></h3>
 		</div>
 
 		<div class="panel-body">
 			<div class="pull-right">
-				<a class='btn btn-default' onclick="$('.extra').removeClass('hide'); $(this).addClass('hide'); $('#dontshowall_dettagli').removeClass('hide');" id='showall_dettagli'><i class='fa fa-square-o'></i> <?php echo tr('Mostra dettagli costi') ?></a>
-				<a class='btn btn-info hide' onclick="$('.extra').addClass('hide'); $(this).addClass('hide'); $('#showall_dettagli').removeClass('hide');" id='dontshowall_dettagli'><i class='fa fa-check-square-o'></i> <?php echo tr('Mostra dettagli costi') ?></a>
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
+				<a class='btn btn-default btn-details' onclick="$('.extra').removeClass('hide'); $(this).addClass('hide'); $('#dontshowall_dettagli').removeClass('hide');" id='showall_dettagli'><i class='fa fa-square-o'></i> <?php echo tr('Visualizza dettaglio costi'); ?></a>
+				<a class='btn btn-info btn-details hide' onclick="$('.extra').addClass('hide'); $(this).addClass('hide'); $('#showall_dettagli').removeClass('hide');" id='dontshowall_dettagli'><i class='fa fa-check-square-o'></i> <?php echo tr('Visualizza dettaglio costi'); ?></a>
 			</div>
 			<div class="clearfix"></div>
 			<br>
 
 			<div class="row">
 				<div class="col-md-12" id="tecnici">
-					<script>$('#tecnici').load('<?php echo $rootdir ?>/modules/interventi/ajax_tecnici.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>');</script>
+					<script>$('#tecnici').load('<?php echo $rootdir; ?>/modules/interventi/ajax_tecnici.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
 				</div>
 			</div>
 		</div>
@@ -208,7 +168,7 @@ if (empty($records[0]['firma_file'])) {
     <!-- ARTICOLI -->
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title"><?php echo tr('Materiale utilizzato') ?></h3>
+            <h3 class="panel-title"><?php echo tr('Materiale utilizzato'); ?></h3>
         </div>
 
         <div class="panel-body">
@@ -216,9 +176,9 @@ if (empty($records[0]['firma_file'])) {
                 <?php include $docroot.'/modules/interventi/ajax_articoli.php'; ?>
             </div>
 
-            <?php if ( !$records[0]['flg_completato'] ) {
+            <?php if (!$records[0]['flag_completato']) {
                         ?>
-                <button type="button" class="btn btn-primary" onclick="launch_modal( '<?php echo tr('Aggiungi articolo') ?>', '<?php echo $rootdir ?>/modules/interventi/add_articolo.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>&idriga=0&idautomezzo='+$('#idautomezzo').find(':selected').val(), 1);"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi articolo') ?>...</button>
+                <button type="button" class="btn btn-primary" onclick="launch_modal( '<?php echo tr('Aggiungi articolo'); ?>', '<?php echo $rootdir; ?>/modules/interventi/add_articolo.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&idriga=0&idautomezzo='+$('#idautomezzo').find(':selected').val(), 1);"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi articolo'); ?>...</button>
             <?php
                     } ?>
         </div>
@@ -227,7 +187,7 @@ if (empty($records[0]['firma_file'])) {
     <!-- SPESE AGGIUNTIVE -->
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title"><?php echo tr('Altre spese') ?></h3>
+            <h3 class="panel-title"><?php echo tr('Altre spese'); ?></h3>
         </div>
 
         <div class="panel-body">
@@ -235,9 +195,9 @@ if (empty($records[0]['firma_file'])) {
                 <?php include $docroot.'/modules/interventi/ajax_righe.php'; ?>
             </div>
 
-            <?php if ( !$records[0]['flg_completato'] ) {
+            <?php if (!$records[0]['flag_completato']) {
                         ?>
-                <button type="button" class="btn btn-primary" onclick="launch_modal( '<?php echo tr('Aggiungi altre spese') ?>', '<?php echo $rootdir ?>/modules/interventi/add_righe.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>', 1 );"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi altre spese') ?>...</button>
+                <button type="button" class="btn btn-primary" onclick="launch_modal( '<?php echo tr('Aggiungi altre spese'); ?>', '<?php echo $rootdir; ?>/modules/interventi/add_righe.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>', 1 );"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi altre spese'); ?>...</button>
             <?php
                     } ?>
         </div>
@@ -246,26 +206,20 @@ if (empty($records[0]['firma_file'])) {
     <!-- COSTI TOTALI -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Costi totali') ?></h3>
+			<h3 class="panel-title"><?php echo tr('Costi totali'); ?></h3>
 		</div>
 
 		<div class="panel-body">
-			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-			</div>
-			<div class="clearfix"></div>
-			<br>
-
 			<div class="row">
 				<div class="col-md-12" id="costi">
-					<script>$('#costi').load('<?php echo $rootdir ?>/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>');</script>
+					<script>$('#costi').load('<?php echo $rootdir; ?>/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
 				</div>
 			</div>
 		</div>
 	</div>
 </form>
 
-{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module ?>", "id_record": "<?php echo $id_record ?>" )}
+{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>", <?php echo ($records[0]['flag_completato']) ? '"readonly":"true"' : '"readonly":"false"'; ?> )}
 
 <!-- EVENTUALE FIRMA GIA' EFFETTUATA -->
 <div class="text-center">
@@ -292,17 +246,17 @@ if (empty($records[0]['firma_file'])) {
 		$("#idsede").selectReset();
 		$("#idpreventivo").selectReset();
 		$("#idcontratto").selectReset();
-		
+
 		if (($(this).val())) {
 			if (($(this).selectData().idzona)){
 				$('#idzona').val($(this).selectData().idzona).change();
-	
+
 			}else{
 				$('#idzona').val('').change();
 			}
 			//session_set('superselect,idzona', $(this).selectData().idzona, 0);
 		}
-		
+
 	});
 
 	$('#idpreventivo').change( function(){
@@ -321,7 +275,7 @@ if (empty($records[0]['firma_file'])) {
 	$('#matricola').change( function(){
 		session_set('superselect,marticola', $(this).val(), 0);
 	});
-	
+
 	$('#idsede').change( function(){
 		if (($(this).val())) {
 			if (($(this).selectData().idzona)){
@@ -332,12 +286,12 @@ if (empty($records[0]['firma_file'])) {
 			//session_set('superselect,idzona', $(this).selectData().idzona, 0);
 		}
 	});
-	
-	
+
+
 </script>
 
 
-<script src="<?php echo $rootdir ?>/modules/interventi/js/interventi_helperjs.js"></script>
+<script src="<?php echo $rootdir; ?>/modules/interventi/js/interventi_helperjs.js"></script>
 
 <?php
 
@@ -349,7 +303,7 @@ if (!empty($fatture)) {
     <div class="alert alert-warning">
         <p>'.tr('_NUM_ altr_I_ document_I_ collegat_I_', [
             '_NUM_' => count($fatture),
-			'_I_' => (count($fatture)>1) ? tr('i') : tr('o')
+            '_I_' => (count($fatture) > 1) ? tr('i') : tr('o'),
         ]).':</p>
     <ul>';
 
@@ -376,5 +330,5 @@ if (!empty($fatture)) {
 ?>
 
 <a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo tr('Elimina') ?>
+    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>

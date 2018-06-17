@@ -53,7 +53,7 @@ class Formatter
      *
      * @return array
      */
-    public function getStandardFormats()
+    public static function getStandardFormats()
     {
         return static::$standards;
     }
@@ -123,9 +123,9 @@ class Formatter
         if (is_object($this->numberFormatter)) {
             $result = $this->numberFormatter->format($value);
         } else {
-            $number = number_format($value, $this->getPrecision(), $this->getStandardFormats()['number']['decimals'], $this->getStandardFormats()['number']['thousands']);
+            $number = number_format($value, $this->getPrecision(), self::getStandardFormats()['number']['decimals'], self::getStandardFormats()['number']['thousands']);
 
-            $result = $this->customNumber($number, $this->getStandardFormats()['number'], $this->getNumberSeparators());
+            $result = $this->customNumber($number, self::getStandardFormats()['number'], $this->getNumberSeparators());
         }
 
         if (isset($decimals)) {
@@ -164,7 +164,7 @@ class Formatter
         if (is_object($this->numberFormatter)) {
             $result = $this->numberFormatter->parse($value);
         } else {
-            $result = $this->customNumber($value, $this->getNumberSeparators(), $this->getStandardFormats()['number']);
+            $result = $this->customNumber($value, $this->getNumberSeparators(), self::getStandardFormats()['number']);
         }
 
         $result = is_numeric($result) ? floatval($result) : false;

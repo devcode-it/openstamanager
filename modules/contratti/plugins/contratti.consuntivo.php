@@ -105,7 +105,7 @@ if (!empty($rsi)) {
                 $sconto_km = ($r['scontokm'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['scontokm']).' &euro;</span>' : '';
 
                 // Aggiungo lo sconto globale nel totale ore
-                if( $int['sconto_globale'] > 0 ){
+                if ($int['sconto_globale'] > 0) {
                     $sconto_ore .= ' <span class="label label-danger">'.Translator::numberToLocale(-$int['sconto_globale']).' &euro;</span>';
                 }
 
@@ -268,13 +268,15 @@ if (!empty($rsi)) {
 /*
     Bilancio del contratto
 */
-$rs = $dbo->fetchArray('SELECT SUM(subtotale) AS budget FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record));
+$rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS budget FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record));
 $budget = $rs[0]['budget'];
 
 $rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe2_contratti` WHERE um='ore' AND idcontratto=".prepare($id_record));
 $contratto_tot_ore = $rs[0]['totale_ore'];
 
-$diff = floatval($budget) - floatval($totale);
+$diff = sum($budget, -$totale_addebito);
+
+
 if ($diff > 0) {
     $bilancio = '<span class="text-success"><big>'.Translator::numberToLocale($diff).' &euro;</big></span>';
 } elseif ($diff < 0) {
@@ -328,7 +330,5 @@ if (!empty($contratto_tot_ore)) {
 */
 echo '
 <div class="text-center">
-    <a class="btn btn-primary" href="'.$rootdir.'/pdfgen.php?ptype=contratti_cons&amp;idcontratto='.$id_record.'" target="_blank">
-        <i class="fa fa-print"></i><br>'.tr('Stampa consuntivo').'
-    </a>
+    '.Prints::getLink('Consuntivo contratto', $id_record, 'btn-primary', tr('Stampa consuntivo')).'
 </div>';

@@ -6,10 +6,16 @@ include_once __DIR__.'/../../core.php';
 $report = file_get_contents($docroot.'/templates/magazzino_inventario/magazzino_inventario.html');
 $body = file_get_contents($docroot.'/templates/magazzino_inventario/magazzino_inventario_body.html');
 
-$search_codice = get('search_codice');
-$search_descrizione = get('search_descrizione');
-$search_categoria = get('search_categoria').' '.get('search_subcategoria');
-$search_tipo = get('search_tipo');
+$search_codice = $_GET['search_codice'];
+$search_descrizione = $_GET['search_descrizione'];
+
+if ($_GET['search_subcategoria']=='undefined')
+	$_GET['search_subcategoria'] = '';
+
+if (!empty( $_GET['search_categoria'] ) or !empty( $_GET['search_subcategoria'] ) )
+	$search_categoria = $_GET['search_categoria'].' '.$_GET['search_subcategoria'];
+
+$search_tipo = $_GET['search_tipo'];
 
 if ($search_tipo == '') {
     $search_tipo = 'solo prodotti attivi';
@@ -23,14 +29,30 @@ if ($search_tipo == 'solo prodotti attivi') {
     $add_where = '';
 }
 
+
+if ($search_codice!='')
+	$add_where .= " AND ( replace(codice,'.','') LIKE \"%$search_codice%\" OR codice LIKE \"%$search_codice%\" )";
+
+if ($search_descrizione!='')
+		$add_where .= "  AND replace(descrizione,'.','') LIKE \"%$search_descrizione%\"";
+
+$add_having = '';
+if (!empty($search_categoria))
+		$add_having .= "  AND CONCAT_WS( ' ', categoria, subcategoria ) LIKE '%".$search_categoria."%' ";
+
+
+
 include_once $docroot.'/templates/pdfgen_variables.php';
 
 // Ciclo tra gli articoli selezionati
 // LEFT OUTER JOIN mg_unitamisura ON mg_unitamisura.id=mg_articoli.idum
 // mg_unitamisura.valore AS um
 // LEFT OUTER JOIN mg_categorie ON (mg_categorie.id=mg_articoli.id_categoria AND mg_categorie.parent = 0) OR (mg_categorie.id=mg_articoli.id_sottocategoria AND  mg_categorie.parent = 1)
-$rs = $dbo->fetchArray("SELECT *, mg_articoli.id AS id_articolo, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 0 AND mg_categorie.id = mg_articoli.id_categoria) AS categoria, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 1 AND mg_categorie.id = mg_articoli.id_sottocategoria) AS subcategoria  FROM mg_articoli WHERE ( replace(codice,'.','') LIKE ".prepare('%'.$search_codice.'%').' OR codice LIKE '.prepare('%'.$search_codice.'%')." ) AND replace(descrizione,'.','') LIKE ".prepare('%'.$search_descrizione.'%').'  '.$add_where." AND qta > 0 HAVING CONCAT_WS( ' ', categoria, subcategoria ) LIKE ".prepare('%'.$search_categoria.'%').' ORDER BY codice ASC');
+$query = "SELECT *, mg_articoli.id AS id_articolo, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 0 AND mg_categorie.id = mg_articoli.id_categoria) AS categoria, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 1 AND mg_categorie.id = mg_articoli.id_sottocategoria) AS subcategoria  FROM mg_articoli WHERE 1=1   ".$add_where." AND qta > 0 HAVING  2=2 ".$add_having." ORDER BY codice ASC";
+$rs = $dbo->fetchArray($query);
 $totrows = sizeof($rs);
+
+
 
 $body .= '<h3>INVENTARIO AL '.date('d/m/Y')."</h3>\n";
 

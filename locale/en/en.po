@@ -64,23 +64,23 @@ msgstr ""
 msgid "Errore"
 msgstr ""
 
-#: ajax_autocomplete.php:357
+#: ajax_complete.php:357
 msgid "Nessuna vendita di questo articolo al cliente selezionato"
 msgstr ""
 
-#: ajax_autocomplete.php:388
+#: ajax_complete.php:388
 msgid "Questo articolo non è mai stato venduto"
 msgstr ""
 
-#: ajax_autocomplete.php:419
+#: ajax_complete.php:419
 msgid "Questo articolo non è mai stato acquistato"
 msgstr ""
 
-#: ajax_autocomplete.php:488
+#: ajax_complete.php:488
 msgid "Nessuna fattura trovata"
 msgstr ""
 
-#: ajax_autocomplete.php:524
+#: ajax_complete.php:524
 msgid "Nessun ddt trovato"
 msgstr ""
 

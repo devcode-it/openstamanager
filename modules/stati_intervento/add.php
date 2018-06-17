@@ -2,13 +2,13 @@
 
 include_once __DIR__.'/../../core.php';
 
-?><form action="editor.php?id_module=$id_module$" method="post">
+?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 
 	<div class="row">
 		<div class="col-md-2">
-			{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "idstatointervento", "class": "alphanumeric-mask",  "required": 1, "value": "" ]}
+			{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "idstatointervento", "maxlength": 10, "class": "alphanumeric-mask",  "required": 1, "value": "" ]}
 		</div>
 
 		<div class="col-md-6">
@@ -16,7 +16,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="col-md-2">
-			{[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "required": 1, "class": "colorpicker text-center", "value": "#ffffff", "extra": "maxlength='7'", "icon-after": "<div class='img-circle square'></div>" ]}
+			{[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "id": "colore_", "required": 1, "class": "colorpicker text-center", "value": "#ffffff", "extra": "maxlength='7'", "icon-after": "<div class='img-circle square'></div>" ]}
 		</div>
 	</div>
 
@@ -31,9 +31,9 @@ include_once __DIR__.'/../../core.php';
 <script>
 	$(document).ready( function(){
 		$('.colorpicker').colorpicker().on('changeColor', function(){
-			$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
+			$('#colore_').parent().find('.square').css( 'background', $('#colore_').val() );
 		});
 
-		$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
+		$('#colore_').parent().find('.square').css( 'background', $('#colore_').val() );
 	});
 </script>

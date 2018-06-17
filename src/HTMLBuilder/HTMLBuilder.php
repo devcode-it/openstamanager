@@ -74,10 +74,16 @@ class HTMLBuilder
     protected static $managers = [
         'list' => [
             'filelist_and_upload' => 'HTMLBuilder\Manager\FileManager',
+            'button' => 'HTMLBuilder\Manager\ButtonManager',
             'csrf' => 'HTMLBuilder\Manager\CSRFManager',
+            'custom_fields' => 'HTMLBuilder\Manager\FieldManager',
+            'widgets' => 'HTMLBuilder\Manager\WidgetManager',
         ],
         'instances' => [],
     ];
+
+    /** @var int Limite di ricorsione interna */
+    protected static $max_recursion = 10;
 
     /**
      * Esegue la sostituzione dei tag personalizzati con il relativo codice HTML.
@@ -86,7 +92,7 @@ class HTMLBuilder
      *
      * @return string
      */
-    public static function replace($html)
+    public static function replace($html, $depth = 0)
     {
         // Gestione dei manager generici
         preg_match_all('/'.preg_quote(self::$open['manager']).'(.+?)'.preg_quote(self::$close['manager']).'/is', $html, $managers);
@@ -97,6 +103,11 @@ class HTMLBuilder
 
             $result = !empty($class) ? $class->manage($json) : '';
 
+            // Ricorsione
+            if ($depth < self::$max_recursion) {
+                $result = self::replace($result, $depth + 1);
+            }
+
             $html = str_replace($value, !empty($result) ? $result : $value, $html);
         }
 
@@ -106,6 +117,11 @@ class HTMLBuilder
         foreach ($handlers[0] as $value) {
             $json = self::decode($value, 'handler');
             $result = self::generate($json);
+
+            // Ricorsione
+            if ($depth < self::$max_recursion) {
+                $result = self::replace($result, $depth + 1);
+            }
 
             $html = str_replace($value, !empty($result) ? $result : $value, $html);
         }
@@ -123,7 +139,9 @@ class HTMLBuilder
     protected static function generate($json)
     {
         // Elaborazione del formato
-        list($values, $extras) = self::elaborate($json);
+        $elaboration = self::elaborate($json);
+        $values = $elaboration[0];
+        $extras = $elaboration[1];
 
         $result = null;
         if (!empty($values)) {

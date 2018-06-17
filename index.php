@@ -10,35 +10,24 @@ switch ($op) {
     case 'login':
         $username = post('username');
         $password = post('password');
+
         if ($dbo->isConnected() && $dbo->isInstalled() && Auth::getInstance()->attempt($username, $password)) {
             $_SESSION['keep_alive'] = (filter('keep_alive') != null);
 
             // Auto backup del database giornaliero
             if (get_var('Backup automatico')) {
-                $folders = glob($backup_dir.'*');
-                $regexp = '/'.date('Y\-m\-d').'/';
+                $result = Backup::daily();
 
-                // Controllo se esiste già un backup zip o folder creato per oggi
-                if (!empty($folders)) {
-                    $found = false;
-                    foreach ($folders as $folder) {
-                        if (preg_match($regexp, $folder, $matches)) {
-                            $found = true;
-                        }
-                    }
-                }
-
-                if ($found) {
+                if (!isset($result)) {
                     $_SESSION['infos'][] = tr('Backup saltato perché già esistente!');
-                } elseif (empty($backup_dir)) {
-                    $_SESSION['errors'][] = tr('Non è possibile eseguire i backup poichè la cartella di backup non è stata impostata!!!');
-                } elseif (directory($backup_dir) && do_backup()) {
+                } elseif (!empty($result)) {
                     $_SESSION['infos'][] = tr('Backup automatico eseguito correttamente!');
                 } else {
                     $_SESSION['errors'][] = tr('Errore durante la generazione del backup automatico!');
                 }
             }
         }
+
         break;
 
     case 'logout':
@@ -62,8 +51,10 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
     exit();
 }
 
+// Procedura di installazione
 include_once $docroot.'/include/configuration.php';
 
+// Procedura di aggiornamento
 include_once $docroot.'/include/update.php';
 
 $pageTitle = tr('Login');
@@ -77,7 +68,8 @@ if (file_exists($docroot.'/include/custom/top.php')) {
 // Controllo se è una beta e in caso mostro un warning
 if (str_contains($version, 'beta')) {
     echo '
-			<div class="alert alert-warning alert-dismissable pull-right fade in">
+			<div class="clearfix">&nbsp;</div>
+			<div class="alert alert-warning alert-dismissable col-md-6 col-md-push-3 text-center fade in">
 				<i class="fa fa-warning"></i> <b>'.tr('Attenzione!').'</b> '.tr('Stai utilizzando una versione <b>non stabile</b> di OSM.').'
 
                 <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
@@ -129,10 +121,10 @@ if (!empty($_SESSION['errors'])) {
 echo '
 			<form action="?op=login" method="post" class="login-box box">
 				<div class="box-header with-border text-center">
-					<img src="'.$img.'/logo.png" alt="'.tr('OSM Logo').'">
+					<img src="'.App::getPaths()['img'].'/logo.png" alt="'.tr('OSM Logo').'">
 					<h3 class="box-title">'.tr('OpenSTAManager').'</h3>
 				</div>
-				<!-- /.box-header -->
+
 				<div class="login-box-body box-body">
 					<div class="form-group input-group">
 						<span class="input-group-addon"><i class="fa fa-user"></i> </span>

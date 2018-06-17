@@ -2,14 +2,28 @@
 
 include_once __DIR__.'/../core.php';
 
-if (!empty($debugbar)) {
+$paths = App::getPaths();
+$user = Auth::user();
+
+// Istanziamento della barra di debug
+if (!empty($debug)) {
+    $debugbar = new DebugBar\DebugBar();
+
+    $debugbar->addCollector(new DebugBar\DataCollector\MemoryCollector());
+    $debugbar->addCollector(new DebugBar\DataCollector\PhpInfoCollector());
+
+    $debugbar->addCollector(new DebugBar\DataCollector\RequestDataCollector());
+    $debugbar->addCollector(new DebugBar\DataCollector\TimeDataCollector());
+
+    $debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
+    $debugbar->addCollector(new Extension\MedooCollector($dbo));
+
     $debugbarRenderer = $debugbar->getJavascriptRenderer();
     $debugbarRenderer->setIncludeVendors(false);
-    $debugbarRenderer->setBaseUrl($assets.'/php-debugbar');
+    $debugbarRenderer->setBaseUrl($paths['assets'].'/php-debugbar');
 }
 
-echo '
-<!DOCTYPE html>
+echo '<!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
@@ -17,7 +31,7 @@ echo '
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
-		<link href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABOW5ykAAAAAFYfm/xZ/5a4AAAAAGHDkWgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABGe55cTluf8AAAAABWH5v8Wf+W2AAAAABhw5P8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD67o/wAAAAAOda0KE5bn/xSP5v8Vh+b/Fn/l/xd35f8YcOT/Aw0dARRHqxIcWOPWAAAAAAAAAAAAAAAAAAAAAA+u6LwQpuj/Ep7n/xOW5/8Uj+b/FYfm/xZ/5f8Xd+X/GHDk/xpo5P8bX+P/FUKqKQAAAAAAAAAAAAAAAAVEVwILga4cEKbo/xKe5/8Tluf/FI/m/xWH5v4Wf+X+F3fl/xhw5P8aaOT/G1/j/wAAAAASMo41AAAAAA2+6aoOtuj/D6/o/xCm6P8Snuf/E5bn9w9rrQEAAAAAAAAAABRnyAMYcOT7Gmjk/xtf4/8cWOP/HVDj/xMujWwUMVr/FDFa/xQxWv8UU5j/FFOY/xQ0YP8UPnP/FFOY/xRTmP8UMl3/FEqG/xQxWv8UMFn/E0mF/xQxWv8UMVr/FDFa/xQxWv8TU5b/FDFa/xQxWv8TXKf/FDFa/xQxWv8UMVr/E3fY/xJ53P8ShO3/Ennd/xJ74P8UMVr/FDFa/xQxWv8UMVr/E1OW/xQxWv8UMVr/E1yn/xNvyv8UMVr/FDFa/xQxWv8SeNv/FDJb/xQxWv8ShvP/FDFa/xQxWv8UMVrzFDFa8xQ3Yf8UN2L/FDdi/xQxWvMUMVrzFDJc8xQyXPMUMVrzFDJb8xQ0Yf8UM2H/FTVj/xQxWvMUMVrzDb3pRw626P0Pr+j/EKbo/xKe5/8Tluf9AAAAAAAAAAAAAAAAAAAAABhv5P8aaOT/G1/j/xxY4/8dUOP/Ey6NYwAAAAAOtuicD63oehCm6P8Snuf/E5bn/xSP5v8Vh+b9Fn/l/Rd35f8YcOT/Gmjk/xtf4/8VQqoYFjyqSxMvjQIAAAAAAAAAAAIWHQ8Qpuj/Ep7n/xOW5/8Uj+b/FYfm/xZ/5f8Xd+X/GHDk/xpo5P8bX+P/BAscCwAAAAAAAAAAAAAAAAAAAAAPr+j3DH2uSxKe55wTluf/FI/m/xWH5v8Wf+X/F3fl/xhw5P8UTqskG1/kWBxY4/YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASnOcQE5bn/xJ8yRQVh+b/Fn/l8xRnyBMYcOT/EUKPIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC2KQAxOW59cAAAAAFYfm/xZ/5a4AAAAAGHDkvwAAAAAAAAAAAAAAAAAAAAAAAAAA/n8AAPJfAADYGwAAwAcAAOAHAAADwQAAAAAAAAAAAAAAAAAAAAAAAIPBAACgBwAA4AcAANAbAAD6XwAA+l8AAA==" rel="icon" type="image/x-icon" />';
+		<link href="'.$paths['img'].'/favicon.png" rel="icon" type="image/x-icon" />';
 
 foreach ($css_modules as $style) {
     $style = (is_array($style)) ? $style : ['href' => $style, 'media' => 'all'];
@@ -84,17 +98,32 @@ if (Auth::check()) {
     echo '
             };
 			globals = {
-                rootdir: \''.$rootdir.'\', js: \''.$js.'\', css: \''.$css.'\', img: \''.$img.'\',
+                rootdir: \''.$rootdir.'\',
+                js: \''.$paths['js'].'\',
+                css: \''.$paths['css'].'\',
+                img: \''.$paths['img'].'\',
+
                 id_module: \''.$id_module.'\',
                 id_record: \''.$id_record.'\',
+
                 aggiornamenti_id: \''.($dbo->isInstalled() ? Modules::get('Aggiornamenti')['id'] : '').'\',
+
                 cifre_decimali: '.get_var('Cifre decimali per importi').',
-                decimals: "'.Translator::getFormatter()->getNumberSeparators()['decimals'].'", thousands: "'.Translator::getFormatter()->getNumberSeparators()['thousands'].'",
+
+                decimals: "'.Translator::getFormatter()->getNumberSeparators()['decimals'].'",
+                thousands: "'.Translator::getFormatter()->getNumberSeparators()['thousands'].'",
+
                 search: search,
                 translations: translations,
+                locale: \''.$lang.'\',
+				full_locale: \''.$lang.'_'.strtoupper($lang).'\',
+
                 start_date: \''.Translator::dateToLocale($_SESSION['period_start']).'\',
                 end_date: \''.Translator::dateToLocale($_SESSION['period_end']).'\',
-                locale: \''.$lang.'\',
+
+                ckeditorToolbar: [
+					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
+				],
             };
 		</script>';
 }
@@ -147,7 +176,7 @@ if (Auth::check()) {
 			<div id="tiny-loader" style="display:none;"></div>
 
 			<header class="main-header">
-				<a href="http://www.openstamanager.com" class="logo" target="_blank">
+				<a href="https://www.openstamanager.com" class="logo" title="'.tr('Il gestionale open source per l\'assistenza tecnica e la fatturazione').'" target="_blank">
 					<!-- mini logo for sidebar mini 50x50 pixels -->
 					<span class="logo-mini">'.tr('OSM').'</span>
 					<!-- logo for regular state and mobile devices -->
@@ -156,7 +185,7 @@ if (Auth::check()) {
 				<!-- Header Navbar: style can be found in header.less -->
 				<nav class="navbar navbar-static-top" role="navigation">
 					<!-- Sidebar toggle button-->
-					<a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+					<a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
 						<span class="sr-only">'.tr('Mostra/nascondi menu').'</span>
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
@@ -197,12 +226,15 @@ if (Auth::check()) {
                     <!-- Sidebar user panel -->
                     <div class="user-panel text-center info">
                         <div class="info">
-                            <p>'.$_SESSION['username'].'</p>
+                            <p><a href="'.$rootdir.'/modules/utenti/info.php">
+                                <i class="fa fa-user"></i>
+                                '.$user['username'].'
+                            </a></p>
                             <p id="datetime"></p>
                         </div>
 
                         <div class="image">
-                            <img src="'.$img.'/logo.png" class="img-circle img-responsive" alt="'.tr('OpenSTAManager').'" />
+                            <img src="'.$paths['img'].'/logo.png" class="img-circle img-responsive" alt="'.tr('OpenSTAManager').'" />
                         </div>
                     </div>
 

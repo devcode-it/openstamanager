@@ -16,10 +16,10 @@ if ($module['name'] == 'Ordini cliente') {
     $ajax = 'fornitori';
 }
 
-?><form action="editor.php?id_module=$id_module$" method="post">
+?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
-	<input type="hidden" name="dir" value="<?php echo $dir ?>">
+	<input type="hidden" name="dir" value="<?php echo $dir; ?>">
 
 	<div class="row">
 		<div class="col-md-6">
@@ -27,7 +27,7 @@ if ($module['name'] == 'Ordini cliente') {
 		</div>
 
 		<div class="col-md-6">
-            {[ "type": "select", "label": "<?php echo $tipo_anagrafica ?>", "name": "idanagrafica", "required": 1, "value": "", "value": "<?php echo $idanagrafica ?>", "ajax-source": "<?php echo $ajax ?>" ]}
+            {[ "type": "select", "label": "<?php echo $tipo_anagrafica; ?>", "name": "idanagrafica", "required": 1, "value": "", "value": "<?php echo $idanagrafica; ?>", "ajax-source": "<?php echo $ajax; ?>" ]}
 		</div>
 	</div>
 

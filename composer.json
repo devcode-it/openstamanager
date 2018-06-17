@@ -1,15 +1,13 @@
 {
     "name": "devcode/openstamanager",
-    "description": "Gestionale open source per assistenza tecnica e fatturazione",
-    "version": "2.3.0",
+    "description": "Gestionale open-source per assistenza tecnica e fatturazione",
     "license": "GPL-3.0",
     "keywords": [
-        "open source",
         "gestionale",
         "assistenza tecnica",
         "fatturazione"
     ],
-    "homepage": "http://openstamanager.com/",
+    "homepage": "https://www.openstamanager.com/",
     "authors": [{
         "name": "Fabio Lovato",
         "email": "info@openstamanager.com"
@@ -33,6 +31,7 @@
         "ifsnop/mysqldump-php": "^2.3",
         "intervention/image": "^2.3",
         "ircmaxell/password-compat": "^1.0",
+        "league/csv": "^8.2",
         "maximebf/debugbar": "^1.15",
         "monolog/monolog": "^1.22",
         "mpdf/mpdf": "^7.0",

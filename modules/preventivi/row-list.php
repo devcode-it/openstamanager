@@ -5,20 +5,22 @@ include_once __DIR__.'/../../core.php';
 /*
 ARTICOLI + RIGHE GENERICHE
 */
-$q_art = "SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo), '') AS codice FROM co_righe_preventivi WHERE idpreventivo=".prepare($id_record).' ORDER BY `order`';
+$q_art = 'SELECT *, round(sconto_unitario,'.Settings::get('Cifre decimali per importi').') AS sconto_unitario, round(sconto,'.Settings::get('Cifre decimali per importi').') AS sconto, round(subtotale,'.Settings::get('Cifre decimali per importi').') AS subtotale,  IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo), "") AS codice FROM co_righe_preventivi WHERE idpreventivo='.prepare($id_record).' ORDER BY `order`';
 $rs = $dbo->fetchArray($q_art);
 
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
-    <tr>
-        <th>'.tr('Descrizione').'</th>
-        <th width="120">'.tr('Q.tà').'</th>
-        <th width="80">'.tr('U.m.').'</th>
-        <th width="120">'.tr('Costo unitario').'</th>
-        <th width="120">'.tr('Iva').'</th>
-        <th width="120">'.tr('Imponibile').'</th>
-        <th width="60"></th>
-    </tr>
+    <thead>
+		<tr>
+			<th>'.tr('Descrizione').'</th>
+			<th width="120">'.tr('Q.tà').'</th>
+			<th width="80">'.tr('U.m.').'</th>
+			<th width="120">'.tr('Costo unitario').'</th>
+			<th width="120">'.tr('Iva').'</th>
+			<th width="120">'.tr('Imponibile').'</th>
+			<th width="60"></th>
+		</tr>
+	</thead>
     <tbody class="sortable">';
 
 // se ho almeno un articolo caricato mostro la riga
@@ -38,10 +40,10 @@ if (!empty($rs)) {
 
         // q.tà
         echo '
-            <td class="text-center">';
-        if($r['is_descrizione']==0){
-            echo
-                Translator::numberToLocale($r['qta'] - $r['qta_evasa']);
+            <td class="text-right">';
+        if (empty($r['is_descrizione'])) {
+            echo '
+                '.Translator::numberToLocale($r['qta'] - $r['qta_evasa']);
         }
         echo '
             </td>';
@@ -49,9 +51,9 @@ if (!empty($rs)) {
         // um
         echo '
             <td class="text-center">';
-        if($r['is_descrizione']==0){
-            echo
-                $r['um'];
+        if (empty($r['is_descrizione'])) {
+            echo '
+                '.$r['um'];
         }
         echo '
             </td>';
@@ -59,13 +61,13 @@ if (!empty($rs)) {
         // costo unitario
         echo '
             <td class="text-right">';
-        if($r['is_descrizione']==0){
-            echo
-                Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
+        if (empty($r['is_descrizione'])) {
+            echo '
+                '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
 
             if ($r['sconto_unitario'] > 0) {
                 echo '
-                <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
+                <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
                     '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
                 ]).'</small>';
@@ -78,9 +80,9 @@ if (!empty($rs)) {
         // iva
         echo '
             <td class="text-right">';
-        if($r['is_descrizione']==0){
-            echo
-                Translator::numberToLocale($r['iva']).' &euro;
+        if (empty($r['is_descrizione'])) {
+            echo '
+                '.Translator::numberToLocale($r['iva']).' &euro;
                 <br><small class="help-block">'.$r['desc_iva'].'</small>';
         }
         echo'
@@ -89,9 +91,9 @@ if (!empty($rs)) {
         // Imponibile
         echo '
             <td class="text-right">';
-        if($r['is_descrizione']==0){
-            echo
-                Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
+        if (empty($r['is_descrizione'])) {
+            echo '
+                '.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
         }
         echo'
             </td>';
@@ -109,7 +111,7 @@ if (!empty($rs)) {
                     <input type='hidden' name='idarticolo' value='".$r['idarticolo']."'>
 
                     <div class='btn-group'>
-                        <a class='btn btn-xs btn-warning' title='Modifica riga' onclick=\"launch_modal( 'Modifica riga', '".$rootdir.'/modules/preventivi/edit_riga.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id']."', 1 );\"><i class='fa fa-edit'></i></a>
+                        <a class='btn btn-xs btn-warning' title='Modifica riga' onclick=\"launch_modal( 'Modifica riga', '".$rootdir.'/modules/preventivi/row-edit.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id']."', 1 );\"><i class='fa fa-edit'></i></a>
 
                         <a href='javascript:;' class='btn btn-xs btn-danger' title='Rimuovi questa riga' onclick=\"if( confirm('Rimuovere questa riga dal preventivo?') ){ $('#delete-form-".$r['id']."').submit(); }\"><i class='fa fa-trash'></i></a>
                     </div>
@@ -131,7 +133,7 @@ if (!empty($rs)) {
 // Calcoli
 $imponibile = sum(array_column($rs, 'subtotale'));
 $sconto = sum(array_column($rs, 'sconto'));
-$iva = sum(array_column($rs, 'iva'), null, 4);
+$iva = sum(array_column($rs, 'iva'));
 
 $imponibile_scontato = sum($imponibile, -$sconto);
 

@@ -22,10 +22,11 @@ if (!empty($rs)) {
     if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
         echo '
         <th width="15%">'.tr('Prezzo di vendita').'</th>
-        <th width="15%">'.tr('Subtotale').'</th>';
+        <th width="10%">'.tr('Iva').'</th>
+        <th width="15%">'.tr('Imponibile').'</th>';
     }
 
-    if ( !$records[0]['flg_completato'] ) {
+    if (!$records[0]['flag_completato']) {
         echo '
         <th width="80"></th>';
     }
@@ -33,6 +34,9 @@ if (!empty($rs)) {
     </tr>';
 
     foreach ($rs as $r) {
+        $extra = '';
+        $mancanti = 0;
+
         // Individuazione dei seriali
         if (!empty($r['idarticolo']) && !empty($r['abilita_serial'])) {
             $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_intervento='.prepare($r['id'])), 'serial');
@@ -100,6 +104,12 @@ if (!empty($rs)) {
             echo '
         </td>';
 
+            echo '
+        <td class="text-right">
+            <span>'.Translator::numberToLocale($r['iva']).'</span> &euro;';
+            echo '
+        </td>';
+
             // Prezzo di vendita
             echo '
         <td class="text-right">
@@ -109,7 +119,7 @@ if (!empty($rs)) {
 
         // Pulsante per riportare nel magazzino centrale.
         // Visibile solo se l'intervento non è stato nè fatturato nè completato.
-        if ( !$records[0]['flg_completato'] ) {
+        if (!$records[0]['flag_completato']) {
             echo '
         <td>';
 
@@ -135,12 +145,12 @@ if (!empty($rs)) {
 ?>
 <script type="text/javascript">
     function ritorna_al_magazzino( id ){
-        $.post(globals.rootdir + '/modules/interventi/actions.php', {op: 'unlink_articolo', idriga: id, id_record: '<?php echo $id_record ?>', id_module: '<?php echo $id_module ?>' }, function(data, result){
+        $.post(globals.rootdir + '/modules/interventi/actions.php', {op: 'unlink_articolo', idriga: id, id_record: '<?php echo $id_record; ?>', id_module: '<?php echo $id_module; ?>' }, function(data, result){
             if( result == 'success' ){
                 // ricarico l'elenco degli articoli
-                $('#articoli').load(globals.rootdir + '/modules/interventi/ajax_articoli.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>');
+                $('#articoli').load(globals.rootdir + '/modules/interventi/ajax_articoli.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
 
-                $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>');
+                $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
             }
         });
     }

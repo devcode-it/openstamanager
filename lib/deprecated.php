@@ -336,12 +336,12 @@ function readDate($data)
 /**
  * Genera una porzione di codice html a partire da una stringa nei seguenti formati:
  * campo <input> generico:
- * {[ "type": "text", "required": 1, "value": "$idintervento$", "extra": "" ]}.
+ * {[ "type": "text", "required": 1, "value": "$idintervento$" ]}.
  *
  * campo di testo normale e non modificabile
  * {[ "type": "span", "value": "$testo$" ]}
  *
- * {[ "type": "select", "required": 1, "values": "query='SELECT id, descrizione FROM co_contratti WHERE idanagrafica=$idanagrafica$"', "value": "$idcontratto$", "extra": "" ]}
+ * {[ "type": "select", "required": 1, "values": "query='SELECT id, descrizione FROM co_contratti WHERE idanagrafica=$idanagrafica$"', "value": "$idcontratto$" ]}
  *
  * Il parametro $records contiene il risultato della query di selezione record per fare i vari replace delle variabili racchiuse tra $$ nel template
  *
@@ -622,7 +622,7 @@ function build_html_element($string)
 
             // Generazione <select> da JSON
             // esempio creazione select con opzioni: Maschio, Femmina, Unisex
-            // {[ "type": "select", "label": "Sesso", "name": "sesso", "values": "list=\"\": \"\", \"M\": \"Maschio\", \"F\": \"Femmina\", \"U\": \"Unisex\"", "value": "$sesso$", "extra": "" ]}
+            // {[ "type": "select", "label": "Sesso", "name": "sesso", "values": "list=\"\": \"\", \"M\": \"Maschio\", \"F\": \"Femmina\", \"U\": \"Unisex\"", "value": "$sesso$" ]}
             elseif (preg_match_all('/^list=(.+?)$/', $values, $m)) {
                 $data = json_decode('{'.$m[1][0].'}');
                 foreach ($data as $id => $etichetta) {
@@ -1029,6 +1029,7 @@ function filelist_and_upload($id_module, $id_record, $label = 'Nuovo allegato:',
  *
  * @param unknown $path
  *
+ * @deprecated 2.3
  * @return bool
  */
 function deltree($path)
@@ -1058,6 +1059,7 @@ function deltree($path)
 /**
  * Carica gli script JavaScript inclusi nell'array indicato.
  *
+ *  @deprecated 2.3
  * @param array $jscript_modules_array
  */
 function loadJscriptModules($array)
@@ -1077,6 +1079,7 @@ function loadJscriptModules($array)
 /**
  * Carica i file di stile CSS inclusi nell'array indicato.
  *
+ * @deprecated 2.3
  * @param array $css_modules_array
  */
 function loadCSSModules($array)
@@ -1096,4 +1099,20 @@ function loadCSSModules($array)
     }
 
     echo $result;
+}
+
+/**
+ * Individua il codice successivo.
+ *
+ * @deprecated 2.4
+ *
+ * @param string $str
+ * @param int $qty
+ * @param string $mask
+ */
+function get_next_code($str, $qty = 1, $mask = '')
+{
+    trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
+
+    return Util\Generator::generate($mask, $str, $qty);
 }

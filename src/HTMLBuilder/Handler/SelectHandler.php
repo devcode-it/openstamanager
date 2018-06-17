@@ -40,30 +40,26 @@ class SelectHandler implements HandlerInterface
             if (!empty($values['value']) || is_numeric($values['value'])) {
                 $result .= $this->select2($values['ajax-source'], $values['value']);
             }
-        }
+        } else {
+            if (!in_array('multiple', $extras)) {
+                $result .= '
+            <option></option>';
+            }
 
-        // Gestione del select da query specifica (se il campo "values" è impostato a "query=SQL")
-        elseif (preg_match_all('/^query=(.+?)$/', $values['values'], $matches)) {
-            $result .= '
-        <option></option>';
+            // Gestione del select da query specifica (se il campo "values" è impostato a "query=SQL")
+            if (preg_match_all('/^query=(.+?)$/', $values['values'], $matches)) {
+                $result .= $this->selectQuery($matches[1][0], $values['value']);
+            }
 
-            $result .= $this->selectQuery($matches[1][0], $values['value']);
-        }
+            // Gestione del select dal formato JSON parziale (valori singoli)
+            elseif (preg_match_all('/^list=(.+?)$/', $values['values'], $matches)) {
+                $result .= $this->selectList(json_decode('{'.$matches[1][0].'}', true), $values);
+            }
 
-        // Gestione del select dal formato JSON parziale (valori singoli)
-        elseif (preg_match_all('/^list=(.+?)$/', $values['values'], $matches)) {
-            $result .= '
-        <option></option>';
-
-            $result .= $this->selectList(json_decode('{'.$matches[1][0].'}', true), $values);
-        }
-
-        // Gestione del select dal formato JSON completo, convertito in array
-        elseif (is_array($values['values'])) {
-            $result .= '
-        <option></option>';
-
-            $result .= $this->selectArray($values['values'], $values['value']);
+            // Gestione del select dal formato JSON completo, convertito in array
+            elseif (is_array($values['values'])) {
+                $result .= $this->selectArray($values['values'], $values['value']);
+            }
         }
 
         // Impostazione del placeholder

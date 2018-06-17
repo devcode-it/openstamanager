@@ -42,7 +42,7 @@ if (get_var('Attiva aggiornamenti')) {
         <div class="row">';
     // Aggiornamento
     echo '
-            <div class="col-xs-12 col-md-6">
+            <div class="col-md-6">
                 <div class="box box-success">
                     <div class="box-header with-border">
                         <h3 class="box-title">'.tr('Carica un aggiornamento').'</h3>
@@ -64,7 +64,7 @@ if (get_var('Attiva aggiornamenti')) {
 
     // Nuovo modulo
     echo '
-            <div class="col-xs-12 col-md-6">
+            <div class="col-md-6">
                 <div class="box box-info">
                     <div class="box-header with-border">
                         <h3 class="box-title">'.tr('Carica un nuovo modulo').'</h3>
@@ -134,7 +134,7 @@ foreach ($modules as $module) {
 
     if ($comp) {
         $compatible = '<i class="fa fa-check-circle text-success" data-toggle="tooltip" title="'.tr('Compatibile').'"></i>';
-        $class = 'success';
+		($module['enabled']) ? $class = 'success': $class = 'warning';
     } else {
         $compatible = '<i class="fa fa-warning text-danger" data-toggle="tooltip" title="'.tr('Non compatibile!').tr('Questo modulo è compatibile solo con le versioni').': '.$module['compatibility'].'"></i>';
         $class = 'danger';
@@ -169,65 +169,65 @@ foreach ($modules as $module) {
     $submodules = $dbo->fetchArray('SELECT * FROM zz_modules WHERE parent='.prepare($module['id']).' ORDER BY `order` ASC');
     foreach ($submodules as $sub) {
         // STATO
-    if (!empty($sub['enabled'])) {
-        $text = tr('Abilitato');
-        $text .= ($sub['id'] != $id_module) ? '. '.tr('Clicca per disabilitarlo').'...' : '';
-        $stato = '<i class="fa fa-cog fa-spin text-success" data-toggle="tooltip" title="'.$text.'"></i>';
-    } else {
-        $stato = '<i class="fa fa-cog text-warning" data-toggle="tooltip" title="'.tr('Non abilitato').'"></i>';
-        $class = 'warning';
-    }
-
-    // Possibilità di disabilitare o abilitare i moduli tranne quello degli aggiornamenti
-    if ($sub['id'] != $id_module) {
-        if ($sub['enabled']) {
-            $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Disabilitare questo modulo?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'disable', id: '".$sub['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\">".$stato."</a>\n";
+        if (!empty($sub['enabled'])) {
+            $text = tr('Abilitato');
+            $text .= ($sub['id'] != $id_module) ? '. '.tr('Clicca per disabilitarlo').'...' : '';
+            $stato = '<i class="fa fa-cog fa-spin text-success" data-toggle="tooltip" title="'.$text.'"></i>';
         } else {
-            $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Abilitare questo modulo?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'enable', id: '".$sub['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\"\">".$stato."</a>\n";
+            $stato = '<i class="fa fa-cog text-warning" data-toggle="tooltip" title="'.tr('Non abilitato').'"></i>';
+            $class = 'warning';
         }
-    }
 
-    // COMPATIBILITA'
-    $compatibilities = explode(',', $sub['compatibility']);
-    // Controllo per ogni versione se la regexp combacia per dire che è compatibile o meno
-    $comp = false;
+        // Possibilità di disabilitare o abilitare i moduli tranne quello degli aggiornamenti
+        if ($sub['id'] != $id_module) {
+            if ($sub['enabled']) {
+                $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Disabilitare questo modulo?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'disable', id: '".$sub['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\">".$stato."</a>\n";
+            } else {
+                $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Abilitare questo modulo?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'enable', id: '".$sub['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\"\">".$stato."</a>\n";
+            }
+        }
 
-    foreach ($compatibilities as $compatibility) {
-        $comp = (preg_match('/'.$compatibility.'/', $osm_version)) ? true : $comp;
-    }
+        // COMPATIBILITA'
+        $compatibilities = explode(',', $sub['compatibility']);
+        // Controllo per ogni versione se la regexp combacia per dire che è compatibile o meno
+        $comp = false;
 
-    if ($comp) {
-        $compatible = '<i class="fa fa-check-circle text-success" data-toggle="tooltip" title="'.tr('Compatibile').'"></i>';
-        $class = 'success';
-    } else {
-        $compatible = '<i class="fa fa-warning text-danger" data-toggle="tooltip" title="'.tr('Non compatibile!').tr('Questo modulo è compatibile solo con le versioni').': '.$sub['compatibility'].'"></i>';
-        $class = 'danger';
-    }
+        foreach ($compatibilities as $compatibility) {
+            $comp = (preg_match('/'.$compatibility.'/', $osm_version)) ? true : $comp;
+        }
 
-    echo '
+        if ($comp) {
+            $compatible = '<i class="fa fa-check-circle text-success" data-toggle="tooltip" title="'.tr('Compatibile').'"></i>';
+            ($sub['enabled']) ? $class = 'success': $class = 'warning';
+        } else {
+            $compatible = '<i class="fa fa-warning text-danger" data-toggle="tooltip" title="'.tr('Non compatibile!').tr('Questo modulo è compatibile solo con le versioni').': '.$sub['compatibility'].'"></i>';
+            $class = 'danger';
+        }
+
+        echo '
             <tr class="'.$class.'">
                 <td><small>&nbsp;&nbsp;- '.$sub['name'].'</small></td>
                 <td align="right">'.$sub['version'].'</td>
                 <td align="center">'.$stato.'</td>
                 <td align="center">'.$compatible.'</td>';
 
-    echo '
+        echo '
                 <td>';
 
-    // Possibilità di disinstallare solo se il modulo non è tra quelli predefiniti
-    if (empty($sub['default'])) {
-        echo "
+        // Possibilità di disinstallare solo se il modulo non è tra quelli predefiniti
+        if (empty($sub['default'])) {
+            echo "
                     <a href=\"javascript:;\" data-toggle='tooltip' title=\"".tr('Disinstalla')."...\" onclick=\"if( confirm('".tr('Vuoi disinstallare questo modulo?').' '.tr('Tutti i dati salvati andranno persi!')."') ){ if( confirm('".tr('Sei veramente sicuro?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'uninstall', id: '".$sub['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); } }\">
                         <i class='fa fa-trash'></i>
                     </a>";
-    } else {
-        echo "
+        } else {
+            echo "
                     <a class='disabled text-muted'>
                         <i class='fa fa-trash'></i>
                     </a>";
-    }
+        }
 
-    echo '
+        echo '
                 </td>
             </tr>';
     }

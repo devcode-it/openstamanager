@@ -4,6 +4,11 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4 (2018-03-30)](#24-2018-03-30)
+    - [Aggiunto (Added)](#aggiunto-added)
+    - [Modificato (Changed)](#modificato-changed)
+    - [Rimosso (Removed)](#rimosso-removed)
+    - [Fixed](#fixed)
 - [2.3.1 (2018-02-19)](#231-2018-02-19)
     - [Aggiunto (Added)](#aggiunto-added)
     - [Modificato (Changed)](#modificato-changed)
@@ -23,6 +28,46 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
     - [Aggiunto (Added)](#aggiunto-added)
     - [Modificato (Changed)](#modificato-changed)
     - [Fixed](#fixed)
+
+
+## 2.4 (2018-03-30)
+
+### Aggiunto (Added)
+ - Modelli di stampa su database, con possibilità di creare più stampe per singolo modulo e raggrupparle in unica voce di menu
+ - Possibilità di inviare le email dai vari moduli e gestione degli account SMTP
+ - Introduzione dei segmenti: filtri aggiuntivi definibili per ogni modulo
+ - Aggiunti sezionali per fatture acquisto / vendita
+ - Nuovo modulo archivio banche per definire poi in ogni anagrafica (cliente o fornitore) la banca predefinita
+ - Nuova pagina dedicata all'utente dove è possibile:
+   - Cambiare la propria password
+   - Visualizzare il proprio token di accesso all'API
+   - Visualizzare il link e le informazioni per importare il calendario eventi all'esterno del gestionale
+ - Introduzione della possibilità di poter impostare dei campi personalizzati per ogni modulo
+ - Aggiunta possibilità di inserire un articolo in contratti e preventivi
+ - Aggiunta di una variabile $baseurl globale
+ - Aggiunta nei documenti la possibilità di inserire una riga descrittiva senza importi
+ - Aggiunta creazione fattura da contratto
+ - Aggiunta scelta iva su attività per spese aggiuntive e materiale
+ - Aggiunta gestione allegati anche per contratti, anagrafiche, preventivi, articoli, impianti
+ - Modulo per import CSV (anagrafiche)
+
+
+### Modificato (Changed)
+  - Modificati pulsanti principali dei moduli e fissati in alto durante lo scorrimento
+  - Resi i pulsanti principali dei moduli dinamici e personalizzabili
+  - Migliorati interventi da pianificare
+  - Migliorato il calcolo della numerazione per i documenti
+  - Modificato il numero per le fatture di acquisto utilizzabile per numeri di protocollo
+  - Migliorata gestione dei menu a tendina dinamici
+  - Modificata aggiunta interventi in fatturazione, con raggruppamento per costi orari e diritti di chiamata
+  - Modificato calcolo ritenuta d'acconto, con scelta se calcolare su imponibile o imponibile + rivalsa inps
+
+
+### Fixed
+ - Corretto calcolo IVA con sconto globale unitario
+ - Corretto calcolo numerazione dei ddt
+ - Correzione visualizzazione di attività a calendario a cavallo di periodi diversi
+ - Correzioni minori
 
 
 ## 2.3.1 (2018-02-19)

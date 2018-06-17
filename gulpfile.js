@@ -178,17 +178,16 @@ gulp.task('srcFonts', function () {
         .pipe(gulp.dest(config.production + '/' + config.paths.fonts));
 });
 
-
 gulp.task('ckeditor', function () {
     gulp.src([
-            config.main.bowerDirectory + '/ckeditor/{adapters,lang,skins}/**/*',
+            config.main.bowerDirectory + '/ckeditor/{adapters,lang,skins,plugins}/**/*.{js,json,css,png}',
         ])
-        .pipe(gulp.dest(config.production + '/' + config.paths.js));
+        .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor'));
 
     gulp.src([
-            config.main.bowerDirectory + '/ckeditor/{ckeditor,styles}.js',
+            config.main.bowerDirectory + '/ckeditor/*.{js,css}',
         ])
-        .pipe(gulp.dest(config.production + '/' + config.paths.js));
+        .pipe(gulp.dest(config.production + '/' + config.paths.js + '/ckeditor'));
 });
 
 gulp.task('colorpicker', function () {
@@ -207,12 +206,20 @@ gulp.task('chartjs', function () {
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/chartjs'));
 });
 
-gulp.task('viewerjs', function () {
+gulp.task('pdfjs', function () {
     gulp.src([
-            config.main.bowerDirectory + '/ViewerJS_release/ViewerJS/**/*',
-            '!' + config.main.bowerDirectory + '/ViewerJS_release/ViewerJS/example.local.css',
+            config.main.bowerDirectory + '/pdf/web/**/*',
+            '!' + config.main.bowerDirectory + '/pdf/web/cmaps/*',
+            '!' + config.main.bowerDirectory + '/pdf/web/*.map',
+            '!' + config.main.bowerDirectory + '/pdf/web/*.pdf',
         ])
-        .pipe(gulp.dest(config.production + '/viewerjs'));
+        .pipe(gulp.dest(config.production + '/pdfjs/web'));
+
+    gulp.src([
+            config.main.bowerDirectory + '/pdf/build/*',
+            '!' + config.main.bowerDirectory + '/pdf/build/*.map',
+        ])
+        .pipe(gulp.dest(config.production + '/pdfjs/build'));
 });
 
 // Elaborazione e minificazione delle informazioni sull'internazionalizzazione
@@ -352,7 +359,7 @@ gulp.task('other', ['clean'], function () {
     gulp.start('colorpicker');
     gulp.start('i18n');
 
-    gulp.start('viewerjs');
+    gulp.start('pdfjs');
     gulp.start('chartjs');
 
     gulp.start('php-debugbar');

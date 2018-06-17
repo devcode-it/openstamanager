@@ -14,28 +14,23 @@ switch (post('op')) {
         $costo_orario = $rs[0]['costo_orario'];
         $costo_diritto_chiamata = $rs[0]['costo_diritto_chiamata'];
 
-        $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
-
         // Verifico se c'è già un agente o un metodo di pagamento collegato all'anagrafica cliente, così lo imposto già
-        $q = 'SELECT idagente, '.$campo.' AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica);
+        $q = 'SELECT idagente, idpagamento_vendite AS idpagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica);
         $rs = $dbo->fetchArray($q);
         $idagente = $rs[0]['idagente'];
         $idpagamento = $rs[0]['idpagamento'];
 
         // Codice preventivo: calcolo il successivo in base al formato specificato
-        // $rs = $dbo->fetchArray("SELECT numero FROM co_preventivi ORDER BY id DESC LIMIT 0,1");
-        // $numero = get_next_code( $rs[0]['numero'], 1, get_var("Formato codice preventivi") );
-
         $numeropreventivo_template = get_var('Formato codice preventivi');
         $numeropreventivo_template = str_replace('#', '%', $numeropreventivo_template);
 
         // Codice preventivo: calcolo il successivo in base al formato specificato
         $rs = $dbo->fetchArray('SELECT numero FROM co_preventivi WHERE numero=(SELECT MAX(CAST(numero AS SIGNED)) FROM co_preventivi) AND numero LIKE('.prepare($numeropreventivo_template).') ORDER BY numero DESC LIMIT 0,1');
-        $numero = get_next_code($rs[0]['numero'], 1, get_var('Formato codice preventivi'));
+        $numero = Util\Generator::generate(get_var('Formato codice preventivi'), $rs[0]['numero']);
 
         if (!is_numeric($numero)) {
             $rs = $dbo->fetchArray('SELECT numero FROM co_preventivi WHERE numero LIKE('.prepare($numeropreventivo_template).') ORDER BY numero DESC LIMIT 0,1');
-            $numero = get_next_code($rs[0]['numero'], 1, get_var('Formato codice preventivi'));
+            $numero = Util\Generator::generate(get_var('Formato codice preventivi'), $rs[0]['numero']);
         }
 
         $idiva = get_var('Iva predefinita');
@@ -228,27 +223,23 @@ switch (post('op')) {
         $iva = ($subtot - $sconto) / 100 * $rs2[0]['percentuale'];
         $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
 
-        $dbo->query('INSERT INTO co_righe_preventivi(idpreventivo, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, `order`) VALUES ('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($rs2[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_preventivi AS t WHERE idpreventivo='.prepare($id_record).'))');
+        $dbo->query('INSERT INTO co_righe_preventivi(idpreventivo, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, is_descrizione, `order`) VALUES ('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($rs2[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare(empty($qta)).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_preventivi AS t WHERE idpreventivo='.prepare($id_record).'))');
 
-        $_SESSION['infos'][] = tr('Articolo aggiunto!');
-
-        break;
-        
-    case 'adddescrizione':
-        if (!empty($id_record)) {
-            $descrizione = post('descrizione');
-            $query = 'INSERT INTO co_righe_preventivi(idpreventivo, descrizione, is_descrizione) VALUES('.prepare($id_record).', '.prepare($descrizione).', 1)';
-        
-            if ($dbo->query($query)) {
-                $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
-            }
+        // Messaggi informativi
+        if (!empty($idarticolo)) {
+            $_SESSION['infos'][] = tr('Articolo aggiunto!');
+        } elseif (!empty($qta)) {
+            $_SESSION['infos'][] = tr('Riga aggiunta!');
+        } else {
+            $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
         }
+
         break;
 
     case 'editriga':
         $idriga = post('idriga');
         $descrizione = post('descrizione');
-        
+
         //Info riga Preventivo
         $rs = $dbo->fetchArray('SELECT * FROM co_righe_preventivi WHERE id='.prepare($idriga));
         $is_descrizione = $rs[0]['is_descrizione'];
@@ -272,10 +263,10 @@ switch (post('op')) {
         $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
         $desc_iva = $rs2[0]['descrizione'];
 
-        if($is_descrizione==0){
+        if ($is_descrizione == 0) {
             // Modifica riga generica sul documento
             $query = 'UPDATE co_righe_preventivi SET idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
-        }else{
+        } else {
             $query = 'UPDATE co_righe_preventivi SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga);
         }
         $dbo->query($query);

@@ -34,6 +34,34 @@ if (file_exists($docroot.$directory.'/custom/add.php')) {
 echo '
 </div>';
 
+// Campi personalizzati
+echo '
+
+<div class="hide" id="custom_fields_top-add">
+    {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "position": "top", "place": "add" )}
+</div>
+
+<div class="hide" id="custom_fields_bottom-add">
+    {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "position": "bottom", "place": "add" )}
+</div>
+
+<script>
+$(document).ready(function(){
+    var form = $("#custom_fields_top-add").parent().find("form").first();
+
+    // Campi a inizio form
+    form.prepend($("#custom_fields_top-add").html());
+
+    // Campi a fine form
+    var last = form.find(".panel").last();
+    if (!last.length) {
+        last = form.find(".row").eq(-2);
+    }
+
+    last.after($("#custom_fields_bottom-add").html());
+});
+</script>';
+
 if (isAjaxRequest()) {
     echo '
 <script>
@@ -44,17 +72,26 @@ $(document).ready(function(){
         echo '
     data.'.$key.' = "'.$value.'";';
     }
+    
+    if (file_exists($docroot.$directory.'/custom/actions.php')) {
+        $url = $rootdir.$directory.'/custom/actions.php';
+    } elseif (file_exists($docroot.$directory.'/actions.php')) {
+        $url = $rootdir.$directory.'/actions.php';
+    }
 
     echo '
 
     $("#form_'.$id_module.'-'.$id_plugin.'").find("form").ajaxForm({
-        url: "'.$rootdir.$directory.'/actions.php",
+        url: "'.$url.'",
+        beforeSubmit: function(arr, $form, options) {
+            return $form.parsley().validate();
+        },
         data: data,
         type: "post",
         success: function(data){
             data = data.trim();
 
-            if(data && !$("#'.$get['select'].'").val()) {
+            if(data && $("#'.$get['select'].'").val() !== undefined ) {
                 result = JSON.parse(data);
                 $("#'.$get['select'].'").selectSetNew(result.id, result.text);
             }

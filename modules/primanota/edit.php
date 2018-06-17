@@ -5,36 +5,29 @@ include_once __DIR__.'/../../core.php';
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="editriga">
 	<input type="hidden" name="backto" value="record-edit">
-	<input type="hidden" name="id_record" value="<?php echo $id_record ?>">
-	<input type="hidden" name="idmastrino" value="<?php echo $records[0]['idmastrino'] ?>">
-	<input type="hidden" name="iddocumento" value="<?php echo $records[0]['iddocumento'] ?>">
+	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
+	<input type="hidden" name="idmastrino" value="<?php echo $records[0]['idmastrino']; ?>">
+	<input type="hidden" name="iddocumento" value="<?php echo $records[0]['iddocumento']; ?>">
 
 
+    <div class="row">
 	<?php
     if (!empty($records[0]['iddocumento'])) {
         $rs = $dbo->fetchArray('SELECT dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($records[0]['iddocumento']));
         $modulo = ($rs[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto'; ?>
-		<div class="pull-left">
-			<a href="<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::get($modulo)['id'] ?>&id_record=<?php echo $records[0]['iddocumento'] ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Torna alla fattura') ?></a>
+		<div class=" col-md-2">
+            <br>
+			<a href="<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get($modulo)['id']; ?>&id_record=<?php echo $records[0]['iddocumento']; ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Torna alla fattura'); ?></a>
 		</div>
 	<?php
-
     }
     ?>
 
-	<div class="pull-right">
-		<button type="submit" id="btn-save" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-	</div>
-	<div class="clearfix"></div>
-	<br>
-
-
-	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-3">
 			{[ "type": "date", "label": "<?php echo tr('Data movimento'); ?>", "name": "data", "required": 1, "value": "$data$" ]}
 		</div>
 
-		<div class="col-md-8">
+		<div class="col-md-7">
 			{[ "type": "text", "label": "<?php echo tr('Causale'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
 		</div>
 	</div>
@@ -77,11 +70,14 @@ include_once __DIR__.'/../../core.php';
         </tr>';
 
     for ($i = 0; $i < 10; ++$i) {
+		
+		($i<=1) ? $required = 1 : $required = 0;
+			
         // Conto
         echo '
 			<tr>
 				<td>
-					{[ "type": "select", "name": "idconto['.$i.']", "value": "'.$rs[$i]['idconto'].'", "ajax-source": "conti" ]}
+					{[ "type": "select", "name": "idconto['.$i.']", "value": "'.$rs[$i]['idconto'].'", "ajax-source": "conti", "required": "'.$required.'" ]}
 				</td>';
 
         // Importo dare e avere
@@ -151,7 +147,7 @@ include_once __DIR__.'/../../core.php';
 	<script type="text/javascript">
 		$(document).ready( function(){
 			$('input[id*=dare], input[id*=avere]').each(function(){
-				if($(this).val() != "<?php echo Translator::numberToLocale(0) ?>") $(this).prop("disabled", false);
+				if($(this).val() != "<?php echo Translator::numberToLocale(0); ?>") $(this).prop("disabled", false);
 			});
 
 			$('select').on('change', function(){
@@ -202,28 +198,31 @@ include_once __DIR__.'/../../core.php';
 				$('input[id*=dare]').each( function(){
 					if( $(this).val() == '' ) valore = 0;
 					else valore = $(this).val().toEnglish();
-					totale_dare += valore;
+					totale_dare += Math.round(valore*100)/100;
 				});
 
 				$('input[id*=avere]').each( function(){
 					if( $(this).val() == '' ) valore = 0;
 					else valore = $(this).val().toEnglish();
-					totale_avere += valore;
+					totale_avere += Math.round(valore*100)/100;
 				});
 
 				$('#totale_dare').text(totale_dare.toLocale());
 				$('#totale_avere').text(totale_avere.toLocale());
 
-				bilancio = totale_dare-totale_avere;
+				bilancio = Math.round(totale_dare*100)/100 - Math.round(totale_avere*100)/100;
 
 				if( bilancio == 0 ){
 					$("#testo_aggiuntivo").removeClass('text-danger').html("");
-					$("button[type=submit]").removeClass('hide');
+					//$("button[type=submit]").removeClass('hide');
+                    $("#save").removeClass('hide');
+                    
 				}
 				else{
 					$("#testo_aggiuntivo").addClass('text-danger').html("sbilancio di " + bilancio.toLocale() + " &euro;" );
 
-					$("button[type=submit]").addClass('hide');
+					//$("button[type=submit]").addClass('hide');
+                    $("#save").addClass('hide');
 				}
 			}
 
@@ -237,6 +236,6 @@ include_once __DIR__.'/../../core.php';
 	</script>
 </form>
 
-<a class="btn btn-danger ask" data-backto="record-list" data-idmastrino="<?php echo $records[0]['idmastrino'] ?>">
+<a class="btn btn-danger ask" data-backto="record-list" data-idmastrino="<?php echo $records[0]['idmastrino']; ?>">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>

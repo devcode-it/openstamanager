@@ -107,7 +107,7 @@ if (!empty($rsi)) {
                 $sconto_km = ($r['scontokm'] != 0) ? '<br><span class="label label-danger">'.Translator::numberToLocale(-$r['scontokm']).' &euro;</span>' : '';
 
                 // Aggiungo lo sconto globale nel totale ore
-                if( $int['sconto_globale'] > 0 ){
+                if ($int['sconto_globale'] > 0) {
                     $sconto_ore .= ' <span class="label label-danger">'.Translator::numberToLocale(-$int['sconto_globale']).' &euro;</span>';
                 }
 
@@ -270,7 +270,7 @@ if (!empty($rsi)) {
 /*
     Bilancio del preventivo
 */
-$diff = sum($budget, -$totale);
+$diff = sum($budget, -$totale_addebito);
 
 echo '
 <div class="well text-center">
@@ -296,10 +296,7 @@ if ($budget > $totale) {
 */
 echo '
 <div class="text-center">
-    <a class="btn btn-primary" href="'.$rootdir.'/pdfgen.php?ptype=preventivi_cons&idpreventivo='.$id_record.'" target="_blank">
-        <i class="fa fa-print"></i><br>
-        '.tr('Stampa consuntivo').'
-    </a>
+    '.Prints::getLink('Consuntivo preventivo', $id_record, 'btn-primary', tr('Stampa consuntivo')).'
 </div>';
 
 /*

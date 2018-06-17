@@ -1,43 +1,14 @@
 {
-    "name": "openstamanager",
-    "description": "Gestionale open source per assistenza tecnica e fatturazione",
-    "version": "2.3.1",
-    "license": "GPL-3.0",
-    "keywords": [
-        "open source",
-        "gestionale",
-        "assistenza tecnica",
-        "fatturazione"
-    ],
-    "homepage": "https://www.openstamanager.com/",
-    "author": {
-        "name": "Fabio Lovato",
-        "email": "info@openstamanager.com"
-    },
-    "contributors": [
-        {
-            "name": "Fabio Piovan",
-            "email": "info@openstamanager.com"
-        },
-        {
-            "name": "Luca Salvà",
-            "email": "info@openstamanager.com"
-        }
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/devcode-it/openstamanager.git"
-    },
+    "private": true,
     "main": "gulpfile.js",
     "dependencies": {
-        "ViewerJS_release": "git://github.com/kogmbh/ViewerJS_release.git",
-        "admin-lte": "~2.3.11",
+        "admin-lte": "^2.4.0",
         "autosize": "^3.0.21",
         "bootstrap": "^3.3.7",
         "bootstrap-colorpicker": "^2.5.1",
         "bootstrap-daterangepicker": "^2.1.25",
         "chart.js": "^2.7.0",
-        "ckeditor": "^4.6.2",
+        "ckeditor": "git://github.com/ckeditor/ckeditor-releases.git#full/latest",
         "components-jqueryui": "^1.12.1",
         "core-js": "^2.5.1",
         "datatables.net-bs": "^1.10.15",
@@ -55,6 +26,8 @@
         "moment": "^2.18.1",
         "numeral": "^2.0.6",
         "parsleyjs": "^2.7.2",
+        "pdf": "git://github.com/mozilla/pdf.js#gh-pages",
+        "pdf.js": "git://github.com/mozilla/pdf.js#gh-pages",
         "select2": "4.0.3",
         "select2-bootstrap-theme": "^0.1.0-beta.10",
         "signature_pad": "^2.1.1",
@@ -108,7 +81,7 @@
         "admin-lte": {
             "main": [
                 "dist/css/AdminLTE.css",
-                "dist/js/app.js"
+                "dist/js/adminlte.js"
             ],
             "dependencies": {
                 "jquery": ">=1.9.1"

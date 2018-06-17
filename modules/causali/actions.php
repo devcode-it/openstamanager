@@ -11,12 +11,12 @@ switch (filter('op')) {
                 $dbo->query('UPDATE `dt_causalet` SET `descrizione`='.prepare($descrizione).' WHERE `id`='.prepare($id_record));
                 $_SESSION['infos'][] = tr('Salvataggio completato!');
             } else {
-                $_SESSION['errors'][] = tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione!", [
+                $_SESSION['errors'][] = tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione.", [
                     '_TYPE_' => 'causale',
                 ]);
             }
         } else {
-            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
+            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio.');
         }
 
         break;
@@ -34,22 +34,31 @@ switch (filter('op')) {
                     '_TYPE_' => 'causale',
                 ]);
             } else {
-                $_SESSION['errors'][] = tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione!", [
+                $_SESSION['errors'][] = tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione.", [
                     '_TYPE_' => 'causale',
                 ]);
             }
         } else {
-            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
+            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio.');
         }
 
         break;
 
     case 'delete':
-        if (isset($id_record)) {
+
+        $documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE idcausalet='.prepare($id_record).'
+                     UNION SELECT id FROM co_documenti WHERE idcausalet='.prepare($id_record));
+
+        if (isset($id_record) && empty($documenti)) {
+
             $dbo->query('DELETE FROM `dt_causalet` WHERE `id`='.prepare($id_record));
-            $_SESSION['infos'][] = tr('Tipologia di _TYPE_ eliminata con successo!', [
+            $_SESSION['infos'][] = tr('Tipologia di _TYPE_ eliminata con successo.', [
                 '_TYPE_' => 'causale',
             ]);
+
+        }else{
+
+            $_SESSION['errors'][] = tr('Sono presenti dei documenti collegati a questa causale.');
         }
 
         break;

@@ -65,3 +65,7 @@ li.header > a {
 #totali_colonne td big {
     font-size: 22px;
 }
+.li-widget, .nav-tabs, .dataTables_info, tfoot, #th_selector, td.select-checkbox,th.search.sorting{
+    display: none !important;
+}
+a[href]:after { content: none !important; }

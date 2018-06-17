@@ -5,35 +5,20 @@ include_once __DIR__.'/../../core.php';
 unset($_SESSION['superselect']['idanagrafica']);
 $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
-?><script src="<?php echo $rootdir ?>/modules/contratti/js/contratti_helper.js"></script>
+?><script src="<?php echo $rootdir; ?>/modules/contratti/js/contratti_helper.js"></script>
 
-<form action="" method="post" role="form">
+<form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
-	<input type="hidden" name="id_record" value="<?php echo $id_record ?>">
+	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
 	<!-- DATI INTESTAZIONE -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Intestazione') ?></h3>
+			<h3 class="panel-title"><?php echo tr('Intestazione'); ?></h3>
 		</div>
 
 		<div class="panel-body">
-			<div class="pull-right">
-				<?php
-                if ($records[0]['rinnovabile']) {
-                    echo "
-                <button type=\"button\" class=\"btn btn-warning\" onclick=\"if( confirm('Rinnovare questo contratto?') ){ location.href='".$rootdir.'/editor.php?op=renew&id_module='.$id_module.'&id_record='.$id_record."'; }\">
-                    <i class=\"fa fa-refresh\"></i> ".tr('Rinnova').'...
-                </button>';
-                }
-                ?>
-				<a class="btn btn-info" href="<?php echo $rootdir ?>/pdfgen.php?ptype=contratti&idcontratto=<?php echo $id_record ?>" target="_blank"><i class="fa fa-print"></i> <?php echo tr('Stampa contratto') ?></a>
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> <?php echo tr('Salva modifiche'); ?></button>
-				<br><br>
-			</div>
-			<div class="clearfix"></div><br>
-
 			<div class="row">
 				<div class="col-md-2">
 					{[ "type": "text", "label": "<?php echo tr('Numero'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "$numero$" ]}
@@ -48,50 +33,55 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 				</div>
 
 				<div class="col-md-3">
-                    <?php
-                        if($records[0]['idagente']!=0)
-                            echo Modules::link('Anagrafiche', $records[0]['idagente'], null, null, 'class="pull-right"');
-                    ?>
-					{[ "type": "select", "label": "<?php echo tr('Agente'); ?>", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Agente' AND deleted=0 ORDER BY ragione_sociale", "value": "$idagente$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "values": "query=SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica='$idanagrafica$'", "value": "$idsede$", "ajax-source": "sedi", "extra": "<?php echo $readonly; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti" ]}
+                    <?php
+                        if ($records[0]['idagente'] != 0) {
+                            echo Modules::link('Anagrafiche', $records[0]['idagente'], null, null, 'class="pull-right"');
+                        }
+                    ?>
+					{[ "type": "select", "label": "<?php echo tr('Agente'); ?>", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Agente' AND deleted=0 ORDER BY ragione_sociale", "value": "$idagente$" ]}
 				</div>
 			</div>
 
 			<div class="row">
+				<div class="col-md-3">
+					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti" ]}
+				</div>
+
 				<div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
 				</div>
 
-				<div class="col-md-2">
+				<div class="col-md-3">
 					{[ "type": "number", "label": "<?php echo tr('Validità'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "giorni" ]}
 				</div>
+			</div>
 
+			<div class="row">
 				<div class="col-md-2">
-					{[ "type": "checkbox", "label": "<?php echo tr('Rinnovabile'); ?>", "name": "rinnovabile", "value": "$rinnovabile$" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Rinnovabile'); ?>", "name": "rinnovabile", "help": "<?php echo tr('Il contratto è rinnovabile?'); ?>", "value": "$rinnovabile$" ]}
 				</div>
 
 				<div class="col-md-2">
 					{[ "type": "number", "label": "<?php echo tr('Preavviso per rinnovo'); ?>", "name": "giorni_preavviso_rinnovo", "decimals": "0", "value": "$giorni_preavviso_rinnovo$", "icon-after": "giorni" ]}
 				</div>
-			</div>
 
-			<div class="row">
-				<div class="col-md-3">
+				<div class="col-md-2">
 					{[ "type": "date", "label": "<?php echo tr('Data bozza'); ?>", "maxlength": 10, "name": "data_bozza", "value": "$data_bozza$" ]}
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-2">
 					{[ "type": "date", "label": "<?php echo tr('Data accettazione'); ?>", "maxlength": 10, "name": "data_accettazione", "value": "$data_accettazione$" ]}
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-2">
 					{[ "type": "date", "label": "<?php echo tr('Data conclusione'); ?>", "maxlength": 10, "name": "data_conclusione", "value": "$data_conclusione$" ]}
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-2">
 					{[ "type": "date", "label": "<?php echo tr('Data rifiuto'); ?>", "maxlength": 10, "name": "data_rifiuto", "value": "$data_rifiuto$" ]}
 				</div>
 			</div>
@@ -106,17 +96,17 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "values": "query=SELECT idanagrafica, id AS id, nome AS descrizione FROM my_impianti WHERE idanagrafica='$idanagrafica$' ORDER BY descrizione", "value": "$matricoleimpianti$" ]}
+					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "values": "query=SELECT idanagrafica, id AS id, IF(nome = '', matricola, CONCAT(matricola, ' - ', nome)) AS descrizione FROM my_impianti WHERE idanagrafica='$idanagrafica$' ORDER BY descrizione", "value": "$matricoleimpianti$" ]}
 				</div>
 
 			</div>
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato') ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr('Sconto complessivo del contratto'); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
+                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato'); ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr('Sconto complessivo del contratto'); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
 if ($records[0]['stato'] == 'Emessa') {
-                    echo ', "disabled" : 1';
-                }
+                        echo ', "disabled" : 1';
+                    }
 ?> ]}
                 </div>
             </div>
@@ -277,10 +267,12 @@ if (sizeof($rs) > 0) {
 <?php
 if ($records[0]['stato'] != 'Pagato') {
     ?>
-        <a class="btn btn-primary" data-href="<?php echo $rootdir ?>/modules/contratti/add_riga.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Riga'); ?></a>
-		<a class="btn btn-primary" data-href="<?php echo $rootdir ?>/modules/contratti/add_descrizione.php?id_module=<?php echo $id_module ?>&id_record=<?php echo $id_record ?>" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Descrizione'); ?></a>
-    <?php
+        <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/contratti/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_articolo" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Articolo'); ?></a>
 
+        <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/contratti/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_riga" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Riga'); ?></a>
+
+        <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/contratti/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_descrizione" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Descrizione'); ?></a>
+    <?php
 }
 ?>
         <div class="clearfix"></div>
@@ -350,6 +342,12 @@ if (!empty($records[0]['idcontratto_prev'])) {
 }
 ?>
 
+<form action='<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get('Fatture di vendita')['id']; ?>' method='post' id='form_creafattura'>
+	<input type="hidden" name="backto" value="record-edit">
+	<input type='hidden' name='op' value='fattura_da_contratto'>
+	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
+</form>
+
 <script type="text/javascript">
     $(document).ready(function(){
         $('#data_accettazione').on("dp.change", function(){
@@ -372,6 +370,16 @@ if (!empty($records[0]['idcontratto_prev'])) {
         $("#data_accettazione").trigger("dp.change");
         $("#data_rifiuto").trigger("dp.change");
     });
+
+	function fattura_da_contratto(){
+		$('#form_creafattura').submit();
+	}
+
+	$('#idanagrafica_c').change( function(){
+        session_set('superselect,idanagrafica', $(this).val(), 0);
+
+		$("#idsede").selectReset();
+	});
 </script>
 
 
@@ -384,7 +392,7 @@ if (!empty($fatture)) {
     <div class="alert alert-warning">
         <p>'.tr('_NUM_ altr_I_ document_I_ collegat_I_', [
             '_NUM_' => count($fatture),
-			'_I_' => (count($fatture)>1) ? tr('i') : tr('o')
+            '_I_' => (count($fatture) > 1) ? tr('i') : tr('o'),
         ]).':</p>
     <ul>';
 
@@ -410,6 +418,7 @@ if (!empty($fatture)) {
 
 ?>
 
+{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>", "ajax":"true" )}
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>

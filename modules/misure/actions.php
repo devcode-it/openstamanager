@@ -9,14 +9,14 @@ switch (filter('op')) {
         if (isset($valore)) {
             if ($dbo->fetchNum('SELECT * FROM `mg_unitamisura` WHERE `valore`='.prepare($valore).' AND `id`!='.prepare($id_record)) == 0) {
                 $dbo->query('UPDATE `mg_unitamisura` SET `valore`='.prepare($valore).' WHERE `id`='.prepare($id_record));
-                $_SESSION['infos'][] = tr('Salvataggio completato!');
+                $_SESSION['infos'][] = tr('Salvataggio completato.');
             } else {
-                $_SESSION['errors'][] = tr("E' già presente una tipologia di _TYPE_ con lo stesso valore!", [
+                $_SESSION['errors'][] = tr("E' già presente una tipologia di _TYPE_ con lo stesso valore.", [
     '_TYPE_' => 'unità di misura',
 ]);
             }
         } else {
-            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
+            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio.');
         }
 
         break;
@@ -38,22 +38,35 @@ switch (filter('op')) {
                     '_TYPE_' => 'unità di misura',
                 ]);
             } else {
-                $_SESSION['errors'][] = tr("E' già presente una tipologia di _TYPE_ con lo stesso valore!", [
+                $_SESSION['errors'][] = tr("E' già presente una tipologia di _TYPE_ con lo stesso valore.", [
                     '_TYPE_' => 'unità di misura',
                 ]);
             }
         } else {
-            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
+            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio.');
         }
 
         break;
 
     case 'delete':
-        if (isset($id_record)) {
+
+
+        $righe = $dbo->fetchNum('SELECT id FROM co_righe_documenti WHERE um='.prepare($records[0]['valore']).'
+             UNION SELECT id FROM dt_righe_ddt WHERE um='.prepare($records[0]['valore']).'
+             UNION SELECT id FROM or_righe_ordini WHERE um='.prepare($records[0]['valore']).'
+             UNION SELECT id FROM co_righe2_contratti WHERE um='.prepare($records[0]['valore']).'
+             UNION SELECT id FROM mg_articoli WHERE um='.prepare($records[0]['valore']).'
+             UNION SELECT id FROM co_righe_preventivi WHERE um='.prepare($records[0]['valore']));
+
+
+        if (isset($id_record) && empty($righe)) {
             $dbo->query('DELETE FROM `mg_unitamisura` WHERE `id`='.prepare($id_record));
             $_SESSION['infos'][] = tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'unità di misura',
             ]);
+        }else{
+
+            $_SESSION['errors'][] = tr('Sono presenti righe collegate a questa unità di misura.');
         }
 
         break;

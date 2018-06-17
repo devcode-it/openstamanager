@@ -27,7 +27,12 @@ if (post('db_host') !== null) {
     $valid_config = isset($db_host) && isset($db_name) && isset($db_username) && isset($db_password);
 
     // Generazione di una nuova connessione al database
-    $dbo = Database::getConnection(true);
+    $dbo = Database::getConnection(true, [
+        'db_host' => $db_host,
+        'db_name' => $db_name,
+        'db_username' => $db_username,
+        'db_password' => $db_password,
+    ]);
 
     // Test della configurazione
     if (post('test') !== null) {
@@ -183,6 +188,8 @@ if ((file_exists('config.inc.php') || $valid_config) && !$dbo->isConnected()) {
     </div>';
 }
 
+$img = App::getPaths()['img'];
+
 // Visualizzazione dell'interfaccia di impostazione iniziale, nel caso il file di configurazione sia mancante oppure i paramentri non siano sufficienti
 if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     if (file_exists('config.inc.php')) {
@@ -231,22 +238,43 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
                 return result;
             });
+            
+            $("#install").on("click", function(){
+
+                if($(this).closest("form").parsley().validate()){
+                    prev_html = $("#install").html();
+                    $("#install").html("<i class=\'fa fa-spinner fa-pulse  fa-fw\'></i> '.tr("Attendere").'...");
+                    $("#install").prop(\'disabled\', true);
+                    $("#test").prop(\'disabled\', true);
+                    
+                    $("#config_form").submit();
+                }
+
+            });
 
             $("#test").on("click", function(){
                 if($(this).closest("form").parsley().validate()){
+					prev_html = $("#test").html();
+					$("#test").html("<i class=\'fa fa-spinner fa-pulse  fa-fw\'></i> '.tr("Attendere").'...");
+                    $("#test").prop(\'disabled\', true);
+                    $("#install").prop(\'disabled\', true);
                     $(this).closest("form").ajaxSubmit({
                         url: "'.$rootdir.'/index.php",
                         data: {
                             test: 1,
                         },
-                        type: "post",
+                        type: "post",	 
                         success: function(data){
                             data = parseFloat(data.trim());
-
+							
+							$("#test").html(prev_html);
+                            $("#test").prop(\'disabled\', false);
+                            $("#install").prop(\'disabled\', false);
+						
                             if(data == 0){
                                 swal("'.tr('Errore della configurazione').'", "'.tr('La configurazione non è corretta').'.", "error");
                             } else if(data == 1){
-                                swal("'.tr('Permessi insufficienti').'", "'.tr("L'utente non possiede permessi sufficienti per il corretto funzionamento del software").'.", "error");
+                                swal("'.tr('Permessi insufficienti').'", "'.tr("L'utente non possiede permessi sufficienti per il testing della connessione. Potresti rilevare problemi in fase di installazione.").'.", "error");
                             } else {
                                 swal("'.tr('Configurazione corretta').'", "'.tr('Ti sei connesso con successo al database').'. '.tr("Clicca su 'Installa' per proseguire").'.", "success");
                             }
@@ -298,7 +326,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     echo '
 
                         <div class="row">
-                            <div class="col-xs-12 col-md-6">
+                            <div class="col-md-6">
                                 <p>'.tr('Le seguenti estensioni PHP devono essere abilitate dal file di configurazione _FILE_', [
                                     '_FILE_' => '<b>php.ini</b>',
                                 ]).':</p>
@@ -340,7 +368,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     // Impostazione di valore per PHP
     echo '
 
-                            <div class="col-xs-12 col-md-6">
+                            <div class="col-md-6">
                                 <p>'.tr('Le seguenti impostazioni PHP devono essere modificate nel file di configurazione _FILE_', [
                                     '_FILE_' => '<b>php.ini</b>',
                                 ]).':</p>
@@ -399,7 +427,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     echo '
 
                         <div class="row">
-                            <div class="col-xs-12">
+                            <div class="col-md-12">
                                 <p>'.tr('Le seguenti cartelle devono risultare scrivibili da parte del gestionale').':</p>
                                 <div class="list-group">';
     $dirs = [
@@ -445,11 +473,11 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                         ]).'</p>
 
                         <div class="row">
-                            <div class="col-xs-12 col-md-8">
+                            <div class="col-md-8">
                                 <span class="pull-left" title='.tr('Visiona e accetta la licenza per proseguire').' >'.tr('Accetti la licenza GPLv3 di OpenSTAManager?').'*</span>
                             </div>
 
-                            <form class="col-xs-12 col-md-4">
+                            <form class="col-md-4">
                                 <input type="checkbox" id="agree" name="agree" data-parsley-required="true">
                                 <label for="agree">'.tr('Ho visionato e accetto').'.</label>
                             </form>
@@ -470,7 +498,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     // PARAMETRI
     echo '
                     <div id="step-3">
-                        <a href="http://www.openstamanager.com/contattaci/?subject=Assistenza%20installazione%20OSM" target="_blank" ><img class="pull-right" width="32" src="'.$img.'/help.png" alt="'.tr('Aiuto').'" title="'.tr('Contatta il nostro help-desk').'"/></a>
+                        <a href="https://www.openstamanager.com/contattaci/?subject=Assistenza%20installazione%20OSM" target="_blank" ><img class="pull-right" width="32" src="'.$img.'/help.png" alt="'.tr('Aiuto').'" title="'.tr('Contatta il nostro help-desk').'"/></a>
 
                         <p>'.tr('Non hai ancora configurato OpenSTAManager').'.</p>
                         <p><small class="help-block">'.tr('Configura correttamente il software con i seguenti parametri (modificabili successivamente dal file _FILE_)', [
@@ -484,8 +512,8 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
     // db_host
     echo '
-                                <div class="col-xs-12">
-                                    {[ "type": "text", "label": "'.tr('Host del database').'", "name": "db_host", "placeholder": "'.tr("Indirizzo dell'host del database").'", "value": "'.$host.'", "help": "'.tr('Esempio').': localhost", "show-help": 1, "required": 1 ]}
+                                <div class="col-md-12">
+                                    {[ "type": "text", "label": "'.tr('Host del database').'", "name": "db_host", "placeholder": "'.tr("Indirizzo dell'host del database").'", "value": "'.$host.'", "help": "'.tr('Esempio').': localhost", "show-help": 0, "required": 1 ]}
                                 </div>
                             </div>
 
@@ -493,20 +521,20 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
     // db_username
     echo '
-                                <div class="col-xs-12 col-md-4">
-                                    {[ "type": "text", "label": "'.tr("Username dell'utente MySQL").'", "name": "db_username", "placeholder": "'.tr("Username dell'utente MySQL").'", "value": "'.$username.'", "help": "'.tr('Esempio').': root", "show-help": 1, "required": 1 ]}
+                                <div class="col-md-4">
+                                    {[ "type": "text", "label": "'.tr("Username dell'utente MySQL").'", "name": "db_username", "placeholder": "'.tr("Username dell'utente MySQL").'", "value": "'.$username.'", "help": "'.tr('Esempio').': root", "show-help": 0, "required": 1 ]}
                                 </div>';
 
     // db_password
     echo '
-                                <div class="col-xs-12 col-md-4">
-                                    {[ "type": "password", "label": "'.tr("Password dell'utente MySQL").'", "name": "db_password", "placeholder": "'.tr("Password dell'utente MySQL").'", "value": "'.$password.'", "help": "'.tr('Esempio').': mysql", "show-help": 1 ]}
+                                <div class="col-md-4">
+                                    {[ "type": "password", "label": "'.tr("Password dell'utente MySQL").'", "name": "db_password", "placeholder": "'.tr("Password dell'utente MySQL").'", "value": "'.$password.'", "help": "'.tr('Esempio').': mysql", "show-help": 0 ]}
                                 </div>';
 
     // db_name
     echo '
-                                <div class="col-xs-12 col-md-4">
-                                    {[ "type": "text", "label": "'.tr('Nome del database').'", "name": "db_name", "placeholder": "'.tr('Nome del database').'", "value": "'.$name.'", "help": "'.tr('Esempio').': openstamanager", "show-help": 1, "required": 1 ]}
+                                <div class="col-md-4">
+                                    {[ "type": "text", "label": "'.tr('Nome del database').'", "name": "db_name", "placeholder": "'.tr('Nome del database').'", "value": "'.$name.'", "help": "'.tr('Esempio').': openstamanager", "show-help": 0, "required": 1 ]}
                                 </div>
                             </div>
 
@@ -514,13 +542,13 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
     // Password utente admin
     echo '
-                                <div class="col-xs-12 col-md-6">
+                                <div class="col-md-6">
                                     {[ "type": "password", "label": "'.tr("Password dell'amministratore").'", "name": "osm_password", "placeholder": "'.tr('Scegli la password di amministratore').'", "value": "'.$osm_password.'", "help": "'.tr('Valore di default').': admin", "show-help": 1 ]}
                                 </div>';
 
     // Email utente admin
     echo '
-                                <div class="col-xs-12 col-md-6">
+                                <div class="col-md-6">
                                     {[ "type": "email", "label": "'.tr("Email dell'amministratore").'", "name": "osm_email", "placeholder": "'.tr("Digita l'indirizzo email dell'amministratore").'", "value": "'.$osm_email.'" ]}
                                 </div>
                             </div>';
@@ -540,7 +568,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                                     </button>
                                 </div>
                                 <div class="col-md-4 text-right">
-                                    <button type="submit" class="btn btn-success btn-block">
+                                    <button type="button" id="install" class="btn btn-success btn-block">
                                         <i class="fa fa-check"></i> '.tr('Installa').'
                                     </button>
                                 </div>

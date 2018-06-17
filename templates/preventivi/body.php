@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$report_name = 'preventivo_'.$idpreventivo.'.pdf';
+$report_name = 'preventivo_'.$records[0]['numero'].'.pdf';
 
 $autofill = [
     'count' => 0, // Conteggio delle righe
@@ -81,7 +81,7 @@ echo "
     <tbody>';
 
 // RIGHE PREVENTIVO CON ORDINAMENTO UNICO
-$righe = $dbo->fetchArray("SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva FROM `co_righe_preventivi` WHERE idpreventivo=".prepare($idpreventivo).' ORDER BY `order`');
+$righe = $dbo->fetchArray("SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva FROM `co_righe_preventivi` WHERE idpreventivo=".prepare($id_record).' ORDER BY `order`');
 foreach ($righe as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
@@ -108,27 +108,27 @@ foreach ($righe as $r) {
 
     echo "
             <td class='text-center'>";
-    if($r['is_descrizione']==0){
-        echo
-                (empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'])).' '.$r['um'];
+    if (empty($r['is_descrizione'])) {
+        echo '
+                '.(empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'])).' '.$r['um'];
     }
     echo '
             </td>';
 
-    if ($mostra_prezzi) {
+    if ($options['pricing']) {
         // Prezzo unitario
         echo "
             <td class='text-right'>";
-        if($r['is_descrizione']==0){
-            echo
-                (empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
+        if (empty($r['is_descrizione'])) {
+            echo '
+                '.(empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
 
             if ($r['sconto'] > 0) {
                 echo "
-                        <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
-                            '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                            '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
-                        ]).'</small>';
+                <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
+                    '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                    '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+                ]).'</small>';
 
                 if ($count <= 1) {
                     $count += 0.4;
@@ -141,16 +141,16 @@ foreach ($righe as $r) {
         // Imponibile
         echo "
             <td class='text-right'>";
-        if($r['is_descrizione']==0){
-            echo
-                (empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'])).' &euro;';
+        if (empty($r['is_descrizione'])) {
+            echo '
+                '.(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'])).' &euro;';
 
             if ($r['sconto'] > 0) {
                 echo "
-                    <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
-                        '_TOT_' => Translator::numberToLocale($r['sconto']),
-                        '_TYPE_' => '&euro;',
-                    ]).'</small>';
+                <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
+                    '_TOT_' => Translator::numberToLocale($r['sconto']),
+                    '_TYPE_' => '&euro;',
+                ]).'</small>';
 
                 if ($count <= 1) {
                     $count += 0.4;
@@ -168,9 +168,9 @@ foreach ($righe as $r) {
     // Iva
     echo '
             <td class="text-center">';
-    if($r['is_descrizione']==0){
-        echo
-                Translator::numberToLocale($r['perc_iva']);
+    if (empty($r['is_descrizione'])) {
+        echo '
+                '.Translator::numberToLocale($r['perc_iva']);
     }
     echo '
             </td>
@@ -185,7 +185,7 @@ foreach ($righe as $r) {
 
 $sconto = sum($sconto);
 $imponibile = sum($imponibile);
-$iva = sum($iva, null, 4);
+$iva = sum($iva, null, 2);
 
 $totale = $imponibile - $sconto;
 
@@ -194,7 +194,7 @@ echo '
     </tbody>';
 
 // TOTALE COSTI FINALI
-if ($mostra_prezzi) {
+if ($options['pricing']) {
     // Totale imponibile
     echo '
     <tr>
@@ -344,7 +344,6 @@ echo '
 // Conclusione
 echo '
 <p class="text-center">'.tr("In attesa di un Vostro Cortese riscontro, colgo l'occasione per porgere Cordiali Saluti").'</p>';
-
 
 //Firma
 echo '<div style=\'position:absolute; bottom:'.($settings['margins']['bottom'] + $settings['footer-height']).'px\' > <table >

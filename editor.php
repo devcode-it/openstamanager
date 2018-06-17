@@ -26,6 +26,9 @@ $module_dir = $module['directory'];
 // Inclusione elementi fondamentali del modulo
 include $docroot.'/actions.php';
 
+// Widget in alto
+echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top", "place": "editor" )}';
+
 $advanced_sessions = get_var('Attiva notifica di presenza utenti sul record');
 if ($advanced_sessions) {
     $dbo->query('DELETE FROM zz_semaphores WHERE id_utente='.prepare($_SESSION['id_utente']).' AND posizione='.prepare($id_module.', '.$id_record));
@@ -70,7 +73,6 @@ if (empty($records)) {
     }
     echo '
 					</a>
-					<a class="back-btn" href="controller.php?id_module='.$id_module.'"><i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'</a>
 				</li>';
 
     $plugins = $dbo->fetchArray('SELECT id, title FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1 ORDER BY zz_plugins.order DESC");
@@ -86,7 +88,85 @@ if (empty($records)) {
 			</ul>
 
 			<div class="tab-content">
-				<div id="tab_0" class="tab-pane active">';
+                <div id="tab_0" class="tab-pane active">';
+
+    // Pulsanti di default
+    echo '
+                    <div id="pulsanti">
+                        <a class="btn btn-warning" href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
+                            <i class="fa fa-chevron-left"></i> '.tr("Torna all'elenco").'
+                        </a>
+
+                        <div class="pull-right">
+                            {( "name": "button", "type": "print", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}
+
+                            {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}
+
+                            <a class="btn btn-success" id="save">
+                                <i class="fa fa-check"></i> '.tr('Salva').'
+                            </a>
+                        </div>
+                    </div>
+
+                    <script>
+                    $(document).ready(function(){
+                        var form = $("#module-edit").find("form").first();
+
+                        // Aggiunta del submit
+                        form.prepend(\'<button type="submit" id="submit" class="hide"></button>\');
+
+                        $("#save").click(function(){
+                            $("#submit").trigger("click");
+                        });';
+
+    // Pulsanti dinamici
+    if (!isMobile()) {
+        echo '
+                        $("#pulsanti").affix({
+                            offset: {
+                                top: 200
+                            }
+                        });
+
+                        $("#pulsanti").on("affix.bs.affix", function(){
+                            $("#pulsanti").css("width", $("#tab_0").css("width"));
+                        });
+
+                        $("#pulsanti").on("affix-top.bs.affix", function(){
+                            $("#pulsanti").css("width", "100%");
+                        });';
+    }
+
+    echo '
+                    });
+                    </script>
+
+                    <div class="clearfix"></div>
+                    <br>';
+
+    // Pulsanti personalizzati
+    ob_start();
+    if (file_exists($docroot.'/modules/'.$module_dir.'/custom/buttons.php')) {
+        include $docroot.'/modules/'.$module_dir.'/custom/buttons.php';
+    } elseif (file_exists($docroot.'/modules/'.$module_dir.'/buttons.php')) {
+        include $docroot.'/modules/'.$module_dir.'/buttons.php';
+    }
+    $buttons = ob_get_clean();
+
+    if (!empty($buttons)) {
+        echo '
+                    <div class="pull-right" id="pulsanti-modulo">
+                        '.$buttons.'
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <br>';
+    }
+
+    // Contenuti del modulo
+    echo '
+
+                    <div id="module-edit">';
 
     // Lettura template modulo (verifico se ci sono template personalizzati, altrimenti uso quello base)
     if (file_exists($docroot.'/modules/'.$module_dir.'/custom/edit.php')) {
@@ -100,7 +180,36 @@ if (empty($records)) {
     }
 
     echo '
-            </div>';
+                    </div>
+                </div>';
+
+    // Campi personalizzati
+    echo '
+
+                <div class="hide" id="custom_fields_top-edit">
+                    {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top" )}
+                </div>
+
+                <div class="hide" id="custom_fields_bottom-edit">
+                    {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}
+                </div>
+
+                <script>
+                $(document).ready(function(){
+                    var form = $("#custom_fields_top-edit").parent().find("form").first();
+
+                    // Campi a inizio form
+                    form.prepend($("#custom_fields_top-edit").html());
+
+                    // Campi a fine form
+                    var last = form.find(".panel").last();
+                    if (!last.length) {
+                        last = form.find(".row").eq(-2);
+                    }
+
+                    last.after($("#custom_fields_bottom-edit").html());
+                });
+                </script>';
 
     foreach ($plugins as $plugin) {
         echo '
@@ -121,23 +230,17 @@ if (empty($records)) {
 
 redirectOperation($id_module, $id_record);
 
+// Widget in basso
+echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "right", "place": "editor" )}';
+
 echo '
 		<hr>
-		<a href="controller.php?id_module='.$id_module.'"><i class="fa fa-chevron-left"></i> '.tr('Indietro').'</a>';
+        <a href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
+            <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
+        </a>';
 
-/*
-* Widget laterali
-*/
 echo '
-	</div>
-	<div class="col-xs-12 col-md-12">';
-echo Widgets::addModuleWidgets($id_module, 'editor_right');
-echo '
-	</div>';
-
-?>
-<script>
-<?php
+<script>';
 
 // Se l'utente ha i permessi in sola lettura per il modulo, converto tutti i campi di testo in span
 if ($module['permessi'] == 'r') {

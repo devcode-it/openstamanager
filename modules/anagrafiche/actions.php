@@ -9,6 +9,9 @@ $id_tecnico = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche 
 
 switch (post('op')) {
     case 'update':
+        $post['piva'] = trim(strtoupper($post['piva']));
+        $post['codice_fiscale'] = trim(strtoupper($post['codice_fiscale']));
+
         // Leggo tutti i valori passati dal POST e li salvo in un array
         $dbo->update('an_anagrafiche', [
             'ragione_sociale' => $post['ragione_sociale'],
@@ -30,6 +33,7 @@ switch (post('op')) {
             'cellulare' => $post['cellulare'],
             'fax' => $post['fax'],
             'email' => $post['email'],
+            'pec' => $post['pec'],
             'idsede_fatturazione' => $post['idsede_fatturazione'],
             'note' => $post['note'],
             'codiceri' => $post['codiceri'],
@@ -45,6 +49,8 @@ switch (post('op')) {
             'idlistino_vendite' => $post['idlistino_vendite'],
             'idiva_acquisti' => $post['idiva_acquisti'],
             'idiva_vendite' => $post['idiva_vendite'],
+		   'idbanca_acquisti' => $post['idbanca_acquisti'],
+            'idbanca_vendite' => $post['idbanca_vendite'],
             'settore' => $post['settore'],
             'marche' => $post['marche'],
             'dipendenti' => $post['dipendenti'],
@@ -67,6 +73,19 @@ switch (post('op')) {
         ], ['idanagrafica' => $id_record]);
 
         $_SESSION['infos'][] = str_replace('_NAME_', '"'.$post['ragione_sociale'].'"', "Informazioni per l'anagrafica _NAME_ salvate correttamente!");
+
+        // Validazione della Partita IVA
+        $check_vat_number = Validate::isValidVatNumber(strtoupper($post['piva']));
+        // Se $check_vat_number non è null e la riposta è negativa --> mostro il messaggio di avviso.
+        if ((!is_null($check_vat_number)) && (!$check_vat_number->valid)) {
+            if (!empty($check_vat_number->error->info)) {
+                $_SESSION['errors'][] = $check_vat_number->error->info;
+            } else {
+                $_SESSION['errors'][] = tr('Attenzione: la partita IVA _IVA_ sembra non essere valida', [
+                    '_IVA_' => $post['piva'],
+                ]);
+            }
+        }
 
         // Aggiorno il codice anagrafica se non è già presente, altrimenti lo ignoro
         $esiste = $dbo->fetchNum('SELECT idanagrafica FROM an_anagrafiche WHERE codice='.prepare($post['codice']).' AND NOT idanagrafica='.prepare($id_record));
@@ -135,7 +154,7 @@ switch (post('op')) {
         // Inserimento anagrafica base
         // Leggo l'ultimo codice anagrafica per calcolare il successivo
         $rs = $dbo->fetchArray('SELECT codice FROM an_anagrafiche ORDER BY CAST(codice AS SIGNED) DESC LIMIT 0, 1');
-        $codice = get_next_code($rs[0]['codice'], 1, get_var('Formato codice anagrafica'));
+        $codice = Util\Generator::generate(get_var('Formato codice anagrafica'), $rs[0]['codice']);
 
         // Se ad aggiungere un cliente è un agente, lo imposto come agente di quel cliente
         // Lettura tipologia dell'utente loggato
@@ -156,6 +175,16 @@ switch (post('op')) {
         $dbo->insert('an_anagrafiche', [
             'ragione_sociale' => $ragione_sociale,
             'codice' => $codice,
+            'piva' => post('piva'),
+            'codice_fiscale' => post('codice_fiscale'),
+            'indirizzo' => post('indirizzo'),
+            'citta' => post('citta'),
+            'cap' => post('cap'),
+            'provincia' => post('provincia'),
+            'telefono' => post('telefono'),
+            'cellulare' => post('cellulare'),
+            'email' => post('email'),
+            'idrelazione' => post('idrelazione'),
             'idagente' => $idagente,
         ]);
 
@@ -168,29 +197,20 @@ switch (post('op')) {
             $dbo->query('UPDATE zz_settings SET valore='.prepare($new_id)." WHERE nome='Azienda predefinita'");
             $_SESSION['infos'][] = tr('Anagrafica Azienda impostata come predefinita. Per ulteriori informazionioni, visitare "Strumenti -> Impostazioni -> Generali".');
         }
-		
-		
-		//se sto inserendo un tecnico, mi copio già le tariffe per le varie attività
-		if (in_array($id_tecnico, $post['idtipoanagrafica'])) {
-			
-			//per ogni tipo di attività
-			$rs_tipiintervento = $dbo->fetchArray('SELECT * FROM in_tipiintervento');
-		
-			for ($i = 0; $i < count($rs_tipiintervento); $i++) {
-				
-				 if ($dbo->query('INSERT INTO in_tariffe( idtecnico, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico ) VALUES( '.prepare($new_id).', '.prepare($rs_tipiintervento[$i]['idtipointervento']).', (SELECT costo_orario FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_km FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_diritto_chiamata FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'),   (SELECT costo_orario_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_km_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_diritto_chiamata_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).') )')) {
-					 
-					$_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
-					
-				} else {
-					
-					$_SESSION['errors'][] = tr("Errore durante l'importazione tariffe!");
-					
-				}
-			
-			}
-			
-		}
+
+        //se sto inserendo un tecnico, mi copio già le tariffe per le varie attività
+        if (in_array($id_tecnico, $post['idtipoanagrafica'])) {
+            //per ogni tipo di attività
+            $rs_tipiintervento = $dbo->fetchArray('SELECT * FROM in_tipiintervento');
+
+            for ($i = 0; $i < count($rs_tipiintervento); ++$i) {
+                if ($dbo->query('INSERT INTO in_tariffe( idtecnico, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico ) VALUES( '.prepare($new_id).', '.prepare($rs_tipiintervento[$i]['idtipointervento']).', (SELECT costo_orario FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_km FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_diritto_chiamata FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'),   (SELECT costo_orario_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_km_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_diritto_chiamata_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).') )')) {
+                    //$_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
+                } else {
+                    $_SESSION['errors'][] = tr("Errore durante l'importazione tariffe!");
+                }
+            }
+        }
 
         // Creo il relativo conto nel partitario (cliente)
         if (in_array($id_cliente, $post['idtipoanagrafica'])) {

@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 include_once $docroot.'/modules/interventi/modutil.php';
 
-$report_name = 'contratto_'.$idcontratto.'_cons.pdf';
+$report_name = 'contratto_'.$records[0]['numero'].'_cons.pdf';
 
 echo '
 <div class="row">
@@ -61,7 +61,7 @@ $totale_ore_impiegate = 0;
 $sconto = [];
 $imponibile = [];
 
-$interventi = $dbo->fetchArray('SELECT *, in_interventi.id, in_interventi.codice, (SELECT GROUP_CONCAT(DISTINCT ragione_sociale) FROM in_interventi_tecnici JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = in_interventi_tecnici.idtecnico WHERE idintervento=in_interventi.id) AS tecnici, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT SUM(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM co_righe_contratti JOIN in_interventi ON co_righe_contratti.idintervento=in_interventi.id WHERE co_righe_contratti.idcontratto='.prepare($idcontratto).' ORDER BY inizio DESC');
+$interventi = $dbo->fetchArray('SELECT *, in_interventi.id, in_interventi.codice, (SELECT GROUP_CONCAT(DISTINCT ragione_sociale) FROM in_interventi_tecnici JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = in_interventi_tecnici.idtecnico WHERE idintervento=in_interventi.id) AS tecnici, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT SUM(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM co_righe_contratti JOIN in_interventi ON co_righe_contratti.idintervento=in_interventi.id WHERE co_righe_contratti.idcontratto='.prepare($id_record).' ORDER BY inizio DESC');
 
 if (!empty($interventi)) {
     // Interventi
@@ -234,7 +234,7 @@ if (!empty($interventi)) {
 
                 echo '
                 <br><small class="text-muted">'.tr('Intervento num. _NUM_ del _DATE_', [
-                    '_NUM_' => $int['id'],
+                    '_NUM_' => $int['codice'],
                     '_DATE_' => Translator::dateToLocale($int['inizio']),
                 ]).'.</small>';
 
@@ -371,7 +371,7 @@ if (!empty($interventi)) {
 
                 echo '
                 <br><small class="text-muted">'.tr('Intervento num. _NUM_ del _DATE_', [
-                    '_NUM_' => $int['id'],
+                    '_NUM_' => $int['codice'],
                     '_DATE_' => Translator::dateToLocale($int['inizio']),
                 ]).'.</small>';
 
@@ -464,19 +464,24 @@ $imponibile = sum($imponibile);
 
 $totale = $imponibile - $sconto;
 
-$rs = $dbo->fetchArray("SELECT SUM(subtotale) as budget FROM `co_righe2_contratti` WHERE idcontratto = ".prepare($idcontratto));
+$rs = $dbo->fetchArray('SELECT SUM(subtotale-sconto) as budget FROM `co_righe2_contratti` WHERE idcontratto = '.prepare($id_record));
 $budget = $rs[0]['budget'];
 
-$rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe2_contratti` WHERE um='ore' AND idcontratto = ".prepare($idcontratto));
+$rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe2_contratti` WHERE um='ore' AND idcontratto = ".prepare($id_record));
 $totale_ore = $rs[0]['totale_ore'];
 
 $rapporto = $budget - $totale;
 
+//pulisco da informazioni irrilevanti (imponibile,iva)
+$show = false;
+
 // Totale imponibile
 echo '
-<table class="table table-bordered">
-    <tr>
-        <td colspan="3" class="text-right border-top">
+<table class="table table-bordered" style="display:none;">';
+
+if ($show) {
+   echo ' <tr>
+        <td colspan="3" class="text-right border-top"  >
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -484,6 +489,7 @@ echo '
             <b>'.Translator::numberToLocale($imponibile).' &euro;</b>
         </th>
     </tr>';
+
 
 // Eventuale sconto incondizionato
 if (!empty($sconto)) {
@@ -516,6 +522,7 @@ $rs = $dbo->fetchArray('SELECT * FROM co_iva WHERE co_iva.id = '.prepare(get_var
 $percentuale_iva = $rs[0]['percentuale'];
 $iva = $totale / 100 * $percentuale_iva;
 
+
 echo '
     <tr>
         <td colspan="3" class="text-right border-top">
@@ -528,19 +535,24 @@ echo '
             <b>'.Translator::numberToLocale($iva).' &euro;</b>
         </th>
     </tr>';
+	
+	//$totale = sum($totale, $iva);
+	
+}
 
-$totale = sum($totale, $iva);
+
 
 // TOTALE
 echo '
     <tr>
     	<td colspan="3" class="text-right border-top">
-            <b>'.tr('Totale consuntivo', [], ['upper' => true]).':</b>
+            <b>'.tr('Totale consuntivo (no IVA)', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-center">
     		<b>'.Translator::numberToLocale($totale).' &euro;</b>
     	</th>
     </tr>';
+
 
 // BUDGET
 echo '

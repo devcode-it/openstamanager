@@ -1,6 +1,10 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
+if (file_exists( __DIR__.'/../../../core.php')) {
+		include_once __DIR__.'/../../../core.php';
+}else {
+		include_once __DIR__.'/../../core.php';
+}
 
 $query = 'SELECT * FROM in_righe_interventi WHERE idintervento='.prepare($id_record).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC';
 $rs2 = $dbo->fetchArray($query);

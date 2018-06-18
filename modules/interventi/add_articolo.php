@@ -1,6 +1,10 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
+if (file_exists( __DIR__.'/../../../core.php')) {
+		include_once __DIR__.'/../../../core.php';
+}else {
+		include_once __DIR__.'/../../core.php';
+}
 
 // Prezzo modificabile solo se l'utente loggato è un tecnico (+ può vedere i prezzi) o se è amministratore
 $rs = $dbo->fetchArray('SELECT nome FROM zz_groups WHERE id IN(SELECT idgruppo FROM zz_users WHERE id='.prepare($_SESSION['id_utente']).')');

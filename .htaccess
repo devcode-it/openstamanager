@@ -58,6 +58,10 @@
     RewriteRule ^node_modules/ - [F,L]
     RewriteRule ^vendor/ - [F,L]
 
+    # Disable HTTP TRACE
+    RewriteCond %{REQUEST_METHOD} ^TRACE
+    RewriteRule .* - [F]
+
     # Prevent hacks
 	# proc/self/environ? no way!
 	RewriteCond %{QUERY_STRING} proc/self/environ [OR]

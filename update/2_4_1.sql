@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `co_movimenti_modelli` (
   `idmastrino` int(11) NOT NULL,
   `descrizione` text NOT NULL,
   `idconto` int(11) NOT NULL
-) ENGINE=InnoDB;
+);
 
 ALTER TABLE `co_movimenti_modelli` ADD PRIMARY KEY (`id`);
 
@@ -93,8 +93,7 @@ CREATE TABLE IF NOT EXISTS `co_righe_contratti_materiali` (
   `tipo_sconto` enum('UNT','PRC') NOT NULL DEFAULT 'UNT',
   PRIMARY KEY (`id`),
   KEY `id_riga_contratto` (`id_riga_contratto`)
-) ENGINE=InnoDB;
-
+);
 
 
 -- Struttura della tabella `co_righe_contratti_articoli`
@@ -119,8 +118,7 @@ CREATE TABLE IF NOT EXISTS `co_righe_contratti_articoli` (
   PRIMARY KEY (`id`),
   KEY `id_riga_contratto` (`id_riga_contratto`),
   KEY `idimpianto` (`idimpianto`)
-) ENGINE=InnoDB;
-
+);
 
 
 -- Modifica query wiget per mostrare solo quelli che non sono stati rinnovati
@@ -277,6 +275,7 @@ UPDATE `zz_views` SET `summable` = '1' WHERE  `zz_views`.`id_module` = (SELECT `
 -- Collego il preventivo alla riga dell'ordine
 ALTER TABLE `or_righe_ordini` ADD `idpreventivo` INT(11) NOT NULL AFTER `idarticolo`;
 
+<<<<<<< HEAD
 --- Fix foreign keys (2.4)
 ALTER TABLE `zz_emails`
 ADD FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
@@ -296,6 +295,8 @@ ADD FOREIGN KEY (`id_field`) REFERENCES `zz_fields`(`id`) ON DELETE CASCADE;
 ALTER TABLE `zz_prints`
 ADD FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
 
+=======
+>>>>>>> 737f40a55ec1727d4dc2fb83c6f0c06ec55af08f
 -- Aggiunta stampa ordini con costi
 UPDATE `zz_prints` SET `options` = '{"pricing":true}', `main` = '1' WHERE `zz_prints`.`name` = 'Ordine fornitore';
 INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `main`, `default`, `enabled`) VALUES (NULL, '25', '1', 'Ordine fornitore (senza costi)', 'Ordine fornitore (senza costi)', 'ordini', 'idordine', '{"pricing":false}', 'fa fa-print', '', '', '0', '0', '1', '1');

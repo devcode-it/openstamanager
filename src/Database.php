@@ -531,6 +531,26 @@ class Database extends Util\Singleton
     }
 
     /**
+     * Costruisce la query per il SELECT definito dagli argomenti (LIMIT 1).
+     *
+     * @since 2.4.1
+     *
+     * @param string $table
+     * @param array  $array
+     * @param array  $conditions
+     * @param array  $order
+     * @param bool   $return
+     *
+     * @return string|array
+     */
+    public function selectOne($table, $array = [], $conditions = [], $order = [], $return = false)
+    {
+        $limit = 1;
+
+        return $this->select($table, $array, $conditions, $order, $limit, $return);
+    }
+
+    /**
      * Sincronizza i valori indicati associati alle condizioni, rimuovendo le combinazioni aggiuntive e inserendo quelle non ancora presenti.
      *
      * @since 2.3

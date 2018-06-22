@@ -5,9 +5,10 @@
  */
 function get_new_numerofattura($data)
 {
-    global $dbo;
     global $dir;
     global $id_segment;
+
+    $dbo = Database::getConnection();
 
     if ($dir == 'uscita') {
         // recupero maschera per questo segmento
@@ -46,10 +47,11 @@ function get_new_numerofattura($data)
  */
 function get_new_numerosecondariofattura($data)
 {
-    global $dbo;
     global $dir;
     global $idtipodocumento;
     global $id_segment;
+
+    $dbo = Database::getConnection();
 
     // recupero maschera per questo segmento
     $rs_maschera = $dbo->fetchArray('SELECT pattern FROM zz_segments WHERE id = '.prepare($id_segment));
@@ -84,7 +86,7 @@ function get_new_numerosecondariofattura($data)
  */
 function elimina_scadenza($iddocumento)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     $query2 = 'DELETE FROM co_scadenziario WHERE iddocumento='.prepare($iddocumento);
     $dbo->query($query2);
@@ -97,7 +99,7 @@ function elimina_scadenza($iddocumento)
  */
 function aggiungi_scadenza($iddocumento, $pagamento = '')
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     $totale_da_pagare = 0.00;
     $totale_fattura = get_totale_fattura($iddocumento);
@@ -147,11 +149,10 @@ function aggiungi_scadenza($iddocumento, $pagamento = '')
             $giorni = -$rs[$i]['giorno'] - 1;
             if ($giorni > 0) {
                 $date->modify('+'.($giorni).' day');
-            }else{
-				$date->modify('last day of this month');
-			}
-			
-			 
+            } else {
+                $date->modify('last day of this month');
+            }
+
             $scadenza = $date->format('Y-m-d');
         }
 
@@ -194,7 +195,7 @@ function aggiungi_scadenza($iddocumento, $pagamento = '')
  */
 function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     // Lettura righe scadenziario
     $query = "SELECT * FROM co_scadenziario WHERE iddocumento='$iddocumento' AND ABS(pagato) < ABS(da_pagare) ORDER BY scadenza ASC";
@@ -250,7 +251,7 @@ function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento)
  */
 function elimina_movimento($iddocumento, $anche_prima_nota = 0)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     $query2 = 'DELETE FROM co_movimenti WHERE iddocumento='.prepare($iddocumento).' AND primanota='.prepare($anche_prima_nota);
     $dbo->query($query2);
@@ -264,7 +265,7 @@ function elimina_movimento($iddocumento, $anche_prima_nota = 0)
  */
 function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     // Totale marca da bollo, inps, ritenuta, idagente
     $query = 'SELECT data, bollo, ritenutaacconto, rivalsainps FROM co_documenti WHERE id='.prepare($iddocumento);
@@ -280,15 +281,14 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 
     // Calcolo l'iva della rivalsa inps
     $iva_rivalsainps = 0;
-    
-    $rsr = $dbo->fetchArray( 'SELECT idiva, rivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento) );
-    
-    for( $r=0; $r<sizeof($rsr); $r++ ){
-        $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare( $rsr[$r]['idiva'] );
+
+    $rsr = $dbo->fetchArray('SELECT idiva, rivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento));
+
+    for ($r = 0; $r < sizeof($rsr); ++$r) {
+        $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare($rsr[$r]['idiva']);
         $rsi = $dbo->fetchArray($qi);
         $iva_rivalsainps += $rsr[$r]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
     }
-    
 
     // Lettura iva indetraibile fattura
     $query = 'SELECT SUM(iva_indetraibile) AS iva_indetraibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
@@ -464,7 +464,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
  */
 function get_new_idmastrino($table = 'co_movimenti')
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     $query = 'SELECT MAX(idmastrino) AS maxidmastrino FROM '.$table;
     $rs = $dbo->fetchArray($query);
@@ -477,11 +477,11 @@ function get_new_idmastrino($table = 'co_movimenti')
  */
 function get_imponibile_fattura($iddocumento)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     $query = 'SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS imponibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
-    
+
     return $rs[0]['imponibile'];
 }
 
@@ -490,7 +490,7 @@ function get_imponibile_fattura($iddocumento)
  */
 function get_totale_fattura($iddocumento)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     // Sommo l'iva di ogni riga al totale
     $query = 'SELECT SUM(iva) AS iva FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
@@ -501,18 +501,18 @@ function get_totale_fattura($iddocumento)
     $rs2 = $dbo->fetchArray($query2);
 
     $iva_rivalsainps = 0;
-    
-    $rsr = $dbo->fetchArray( 'SELECT idiva, rivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento) );
-    
-    for( $r=0; $r<sizeof($rsr); $r++ ){
-        $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare( $rsr[$r]['idiva'] );
+
+    $rsr = $dbo->fetchArray('SELECT idiva, rivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento));
+
+    for ($r = 0; $r < sizeof($rsr); ++$r) {
+        $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare($rsr[$r]['idiva']);
         $rsi = $dbo->fetchArray($qi);
         $iva_rivalsainps += $rsr[$r]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
     }
-    
+
     $iva = $rs[0]['iva'];
     $totale_iva = sum($iva, $iva_rivalsainps);
-    
+
     $totale = sum([
         get_imponibile_fattura($iddocumento),
         $rs2[0]['rivalsainps'],
@@ -527,7 +527,7 @@ function get_totale_fattura($iddocumento)
  */
 function get_netto_fattura($iddocumento)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     $query = 'SELECT ritenutaacconto, bollo FROM co_documenti WHERE id='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
@@ -537,9 +537,8 @@ function get_netto_fattura($iddocumento)
         $rs[0]['bollo'],
         -$rs[0]['ritenutaacconto'],
     ]);
-    
+
     return $netto_a_pagare;
-    
 }
 
 /**
@@ -547,7 +546,7 @@ function get_netto_fattura($iddocumento)
  */
 function get_ivadetraibile_fattura($iddocumento)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     $query = 'SELECT SUM(iva)-SUM(iva_indetraibile) AS iva_detraibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
@@ -560,7 +559,7 @@ function get_ivadetraibile_fattura($iddocumento)
  */
 function get_ivaindetraibile_fattura($iddocumento)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     $query = 'SELECT SUM(iva_indetraibile) AS iva_indetraibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
@@ -578,8 +577,9 @@ function get_ivaindetraibile_fattura($iddocumento)
  */
 function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenutaacconto = '', $bolli = '')
 {
-    global $dbo;
     global $dir;
+
+    $dbo = Database::getConnection();
 
     // Se ci sono righe in fattura faccio i conteggi, altrimenti azzero gli sconti e le spese aggiuntive (inps, ritenuta, marche da bollo)
     $query = 'SELECT COUNT(id) AS righe FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento);
@@ -601,11 +601,11 @@ function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenu
         $ritenutaacconto = $rs[0]['ritenutaacconto'];
 
         $iva_rivalsainps = 0;
-        
-        $rsr = $dbo->fetchArray( 'SELECT idiva, rivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento) );
-        
-        for( $r=0; $r<sizeof($rsr); $r++ ){
-            $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare( $rsr[$r]['idiva'] );
+
+        $rsr = $dbo->fetchArray('SELECT idiva, rivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento));
+
+        for ($r = 0; $r < sizeof($rsr); ++$r) {
+            $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare($rsr[$r]['idiva']);
             $rsi = $dbo->fetchArray($qi);
             $iva_rivalsainps += $rsr[$r]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
         }
@@ -661,11 +661,12 @@ function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenu
  */
 function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT', $idintervento = 0, $idconto = 0, $idum = 0)
 {
-    global $dbo;
     global $dir;
-
     global $idddt;
-    if ($idddt == '') {
+
+    $dbo = Database::getConnection();
+
+    if (empty($idddt)) {
         $idddt = 0;
     }
 
@@ -723,8 +724,9 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
  */
 function rimuovi_articolo_dafattura($idarticolo, $iddocumento, $idrigadocumento)
 {
-    global $dbo;
     global $dir;
+
+    $dbo = Database::getConnection();
 
     // Leggo la quantità di questo articolo in fattura
     $query = 'SELECT qta, idintervento, idpreventivo, idordine, idddt, subtotale, descrizione FROM co_righe_documenti WHERE id='.prepare($idrigadocumento);

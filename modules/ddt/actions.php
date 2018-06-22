@@ -156,7 +156,7 @@ switch (post('op')) {
             $sconto = ($tipo_sconto == 'PRC') ? ($prezzo * $sconto_unitario) / 100 : $sconto_unitario;
             $sconto = $sconto * $qta;
 
-            add_articolo_inddt($id_record, $idarticolo, $descrizione, $idiva, $qta, $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto);
+            add_articolo_inddt($id_record, $idarticolo, $descrizione, $idiva, $qta, $post['um'], $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto);
 
             // Ricalcolo inps, ritenuta e bollo
             ricalcola_costiagg_ddt($id_record);

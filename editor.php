@@ -128,6 +128,10 @@ if (empty($records)) {
                             }
                         });
 
+                        if ($("#pulsanti").hasClass("affix")) {
+                            $("#pulsanti").css("width", $("#tab_0").css("width"));
+                        }
+
                         $("#pulsanti").on("affix.bs.affix", function(){
                             $("#pulsanti").css("width", $("#tab_0").css("width"));
                         });

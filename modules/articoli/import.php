@@ -4,78 +4,70 @@ include_once __DIR__.'/../../core.php';
 include_once $docroot.'/modules/articoli/modutil.php';
 
 switch (post('op')) {
-	
-	case 'example':
-		
-		$module = filter('module');
-		
-		$list = array (
-			array('Codice','Descrizione','Quantità','Unità di misura','Prezzo acquisto','Prezzo vendita','Peso lordo (KG)','Volume (M3)','Categoria','Note'),
-			array('00004','Articolo','10','Kg','5,25','12,72','10,2','500','Categoria4','Articolo di prova'),
-		);
-		
-		directory('../../files/'.$module);
-		
-		$fp = fopen('../../files/'.$module.'/'.$module.'.csv', 'w');
+    case 'example':
 
-		foreach ($list as $fields) {
-			fputcsv($fp, $fields, ';');
-		}
+        $module = filter('module');
 
-		fclose($fp);
-		exit;
-    
-	break;
-	
-	case 'import':
+        $list = [
+            ['Codice', 'Descrizione', 'Quantità', 'Unità di misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso lordo (KG)', 'Volume (M3)', 'Categoria', 'Note'],
+            ['00004', 'Articolo', '10', 'Kg', '5,25', '12,72', '10,2', '500', 'Categoria4', 'Articolo di prova'],
+        ];
+
+        directory('../../files/'.$module);
+
+        $fp = fopen('../../files/'.$module.'/'.$module.'.csv', 'w');
+
+        foreach ($list as $fields) {
+            fputcsv($fp, $fields, ';');
+        }
+
+        fclose($fp);
+        exit;
+
+    break;
+
+    case 'import':
 
         foreach ($data as $key => $value) {
             if (!empty($value)) {
-				
-				$qta =  force_decimal($data[$key]['qta']);
-				unset($data[$key]['qta']);
-				
-				$data[$key]['attivo'] = 1;
-				$data[$key]['prezzo_acquisto'] =  force_decimal($data[$key]['prezzo_acquisto']);
-				$data[$key]['prezzo_vendita'] =  force_decimal($data[$key]['prezzo_vendita']);
-				$data[$key]['peso_lordo'] =  force_decimal($data[$key]['peso_lordo']);
-				$data[$key]['volume'] =  force_decimal($data[$key]['volume']);
+                $qta = force_decimal($data[$key]['qta']);
+                unset($data[$key]['qta']);
 
-				
-				// Categorie
-			   if (!empty($data[$key]['id_categoria'])){
-				   
-					$rs_cat = $dbo->select('mg_categorie', 'id', [
-						'nome' => $data[$key]['id_categoria'],
-					]);
-					
-				   if (empty($rs_cat[0]['id'])) {
-				   
-						$dbo->insert('mg_categorie', [
-							'nome' => $data[$key]['id_categoria'],
-						]);
-						$data[$key]['id_categoria'] = $dbo->lastInsertedID();
-				  
-					}else{
-						$data[$key]['id_categoria'] = $rs_cat[0]['id'];
-					}
-				}
-			
-				// Um
-				if (!empty($data[$key]['um'])){
-					
-					$rs_um = $dbo->select('mg_unitamisura', 'id', [
-						'valore' => $data[$key]['um'],
-					]);
-					
-				   if (empty($rs_um[0]['id'])) {
-						$dbo->insert('mg_unitamisura', [
-							'valore' => $data[$key]['um'],
-						]);
-				   }
-				}
-				
-								
+                $data[$key]['attivo'] = 1;
+                $data[$key]['prezzo_acquisto'] = force_decimal($data[$key]['prezzo_acquisto']);
+                $data[$key]['prezzo_vendita'] = force_decimal($data[$key]['prezzo_vendita']);
+                $data[$key]['peso_lordo'] = force_decimal($data[$key]['peso_lordo']);
+                $data[$key]['volume'] = force_decimal($data[$key]['volume']);
+
+                // Categorie
+                if (!empty($data[$key]['id_categoria'])) {
+                    $rs_cat = $dbo->select('mg_categorie', 'id', [
+                        'nome' => $data[$key]['id_categoria'],
+                    ]);
+
+                    if (empty($rs_cat[0]['id'])) {
+                        $dbo->insert('mg_categorie', [
+                            'nome' => $data[$key]['id_categoria'],
+                        ]);
+                        $data[$key]['id_categoria'] = $dbo->lastInsertedID();
+                    } else {
+                        $data[$key]['id_categoria'] = $rs_cat[0]['id'];
+                    }
+                }
+
+                // Um
+                if (!empty($data[$key]['um'])) {
+                    $rs_um = $dbo->select('mg_unitamisura', 'id', [
+                        'valore' => $data[$key]['um'],
+                    ]);
+
+                    if (empty($rs_um[0]['id'])) {
+                        $dbo->insert('mg_unitamisura', [
+                            'valore' => $data[$key]['um'],
+                        ]);
+                    }
+                }
+
                 // Insert o update
                 $insert = true;
                 if (!empty($primary_key)) {
@@ -85,23 +77,22 @@ switch (post('op')) {
 
                     $insert = !in_array($data[$key][$primary_key], $rs[0]);
                 }
-			
 
                 // Insert
                 if ($insert) {
-					
-					$data[$key]['id_categoria'] = (empty ($data[$key]['id_categoria'])) ?  0 : $data[$key]['id_categoria'];
+                    $data[$key]['id_categoria'] = (empty($data[$key]['id_categoria'])) ? 0 : $data[$key]['id_categoria'];
                     $dbo->insert('mg_articoli', $data[$key]);
-					add_movimento_magazzino($dbo->lastInsertedID(), $qta, [], 'Movimento da import', date());
-					
+                    add_movimento_magazzino($dbo->lastInsertedID(), $qta, [], 'Movimento da import', date());
                 }
                 // Update
                 else {
                     $dbo->update('mg_articoli', $data[$key], [$primary_key => $data[$key][$primary_key]]);
-				   $rs = $dbo->select('mg_articoli', 'id', [
-						$primary_key => $data[$key][$primary_key],
-					]);
-					add_movimento_magazzino($rs[0]['id'], $qta, [], 'Movimento da import', date());
+
+                    $rs = $dbo->select('mg_articoli', 'id', [
+                        $primary_key => $data[$key][$primary_key],
+                    ]);
+
+                    add_movimento_magazzino($rs[0]['id'], $qta, [], 'Movimento da import', date());
                 }
 
                 unset($data[$key]);
@@ -133,14 +124,14 @@ return [
             'Unità misura',
             'unità misura',
             'unità di misura',
-			'Unit` di misura',
-			'um',
+            'Unit` di misura',
+            'um',
         ],
     ],
     [
         'field' => 'prezzo_acquisto',
         'label' => 'Prezzo acquisto',
-		'names' => [
+        'names' => [
             'Prezzo Acquisto',
             'prezzo acquisto',
         ],
@@ -148,7 +139,7 @@ return [
     [
         'field' => 'prezzo_vendita',
         'label' => 'Prezzo vendita',
-		'names' => [
+        'names' => [
             'Prezzo Vendita',
             'prezzo vendita',
         ],
@@ -156,7 +147,7 @@ return [
     [
         'field' => 'peso_lordo',
         'label' => 'Peso lordo (KG)',
-		'names' => [
+        'names' => [
             'Peso lordo (KG)',
             'Peso',
         ],
@@ -164,7 +155,7 @@ return [
     [
         'field' => 'volume',
         'label' => 'Volume (M3)',
-		'names' => [
+        'names' => [
             'Volume (M3)',
             'volume',
         ],
@@ -179,8 +170,8 @@ return [
             'categoria',
         ],
     ],
-	[
+    [
         'field' => 'note',
         'label' => 'Note',
-    ]
+    ],
 ];

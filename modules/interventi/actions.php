@@ -1,9 +1,9 @@
 <?php
 
-if (file_exists( __DIR__.'/../../../core.php')) {
-		include_once __DIR__.'/../../../core.php';
-}else {
-		include_once __DIR__.'/../../core.php';
+if (file_exists(__DIR__.'/../../../core.php')) {
+    include_once __DIR__.'/../../../core.php';
+} else {
+    include_once __DIR__.'/../../core.php';
 }
 if (file_exists($docroot.'/modules/interventi/custom/modutil.php')) {
     include_once $docroot.'/modules/interventi/custom/modutil.php';
@@ -95,11 +95,10 @@ switch (post('op')) {
 
                 $km = post('km')[$idriga];
                 //$ore = post('ore')[$idriga];
-				//per sicurezza ricalcolo ore lavorate da php
-				$diff = date_diff(date_create($orario_inizio), date_create($orario_fine));
-				$ore = ($diff->h + ($diff->i / 60));
-				
-				
+                //per sicurezza ricalcolo ore lavorate da php
+                $diff = date_diff(date_create($orario_inizio), date_create($orario_fine));
+                $ore = ($diff->h + ($diff->i / 60));
+
                 // Lettura tariffe in base al tipo di intervento ed al tecnico
                 $idtipointervento_tecnico = $post['idtipointerventot'][$idriga];
                 $rs = $dbo->fetchArray('SELECT * FROM in_interventi_tecnici WHERE idtecnico='.prepare($post['idtecnico'][$idriga]).' AND idintervento='.prepare($id_record));
@@ -277,20 +276,19 @@ switch (post('op')) {
             // Se è specificato che l'intervento fa parte di una pianificazione aggiorno il codice dell'intervento sulla riga della pianificazione
             if (!empty($idcontratto_riga)) {
                 $dbo->update('co_righe_contratti', $array, ['idcontratto' => $idcontratto, 'id' => $idcontratto_riga]);
-				
-				//copio le righe dal promemoria all'intervento
-				$dbo->query('INSERT INTO in_righe_interventi (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,idintervento,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$id_record.',sconto,sconto_unitario,tipo_sconto FROM co_righe_contratti_materiali WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
-				
-				//copio  gli articoli dal promemoria all'intervento
-				$dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$id_record.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
-				
-				 // Decremento la quantità per ogni articolo copiato
-				$rs_articoli = $dbo->fetchArray('SELECT * FROM mg_articoli_interventi WHERE idintervento = '.$id_record.' ');
-				foreach ($rs_articoli as $rs_articolo) {
-					add_movimento_magazzino($rs_articolo['idarticolo'], -force_decimal($rs_articolo['qta']), ['idautomezzo' => $rs_articolo['idautomezzo'], 'idintervento' => $id_record]);
-				}
-				
-            }else{
+
+                //copio le righe dal promemoria all'intervento
+                $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,idintervento,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$id_record.',sconto,sconto_unitario,tipo_sconto FROM co_righe_contratti_materiali WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
+
+                //copio  gli articoli dal promemoria all'intervento
+                $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$id_record.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
+
+                // Decremento la quantità per ogni articolo copiato
+                $rs_articoli = $dbo->fetchArray('SELECT * FROM mg_articoli_interventi WHERE idintervento = '.$id_record.' ');
+                foreach ($rs_articoli as $rs_articolo) {
+                    add_movimento_magazzino($rs_articolo['idarticolo'], -force_decimal($rs_articolo['qta']), ['idautomezzo' => $rs_articolo['idautomezzo'], 'idintervento' => $id_record]);
+                }
+            } else {
                 $dbo->insert('co_righe_contratti', [
                     'idcontratto' => $idcontratto,
                     'idintervento' => $id_record,

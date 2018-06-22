@@ -866,6 +866,15 @@ function controlla_seriali($field, $id_riga, $old_qta, $new_qta, $dir)
     return true;
 }
 
+/**
+ * Individua i seriali non rimuovibili poichè utilizzati in documenti rilasciati.
+ *
+ * @param string $field
+ * @param int    $id_riga
+ * @param string $dir
+ *
+ * @return array
+ */
 function seriali_non_rimuovibili($field, $id_riga, $dir)
 {
     $dbo = Database::getConnection();
@@ -879,6 +888,13 @@ function seriali_non_rimuovibili($field, $id_riga, $dir)
     return $results;
 }
 
+/**
+ * Calcola gli sconti in modo automatico.
+ *
+ * @param array $data
+ *
+ * @return float
+ */
 function calcola_sconto($data)
 {
     if ($data['tipo'] == 'PRC') {
@@ -902,4 +918,103 @@ function calcola_sconto($data)
     }
 
     return $result;
+}
+
+/**
+ * Restistuisce le informazioni sull'eventuale riferimento ai documenti.
+ *
+ * @param array  $data
+ * @param string $dir
+ *
+ * @return array
+ */
+function doc_references($info, $dir, $ignore = [])
+{
+    $dbo = Database::getConnection();
+
+    // Rimozione valori da non controllare
+    foreach ($ignore as $field) {
+        if (isset($info[$field])) {
+            unset($info[$field]);
+        }
+    }
+
+    $module = null;
+    $id = null;
+
+    // Ordine
+    if (!empty($info['idordine'])) {
+        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM or_ordini WHERE id=".prepare($info['idordine']));
+
+        $module = ($dir == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
+        $id = $info['idordine'];
+
+        $document = tr('Ordine');
+    }
+
+    // DDT
+    elseif (!empty($info['idddt'])) {
+        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM dt_ddt WHERE id=".prepare($info['idddt']));
+
+        $module = ($dir == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
+        $id = $info['idddt'];
+
+        $document = tr('Ddt');
+    }
+
+    // Preventivo
+    elseif (!empty($info['idpreventivo'])) {
+        $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_preventivi WHERE id='.prepare($info['idpreventivo']));
+
+        $module = 'Preventivi';
+        $id = $info['idpreventivo'];
+
+        $document = tr('Preventivo');
+    }
+
+    // Contratto
+    elseif (!empty($info['idcontratto'])) {
+        $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_contratti WHERE id='.prepare($info['idcontratto']));
+
+        $module = 'Contratti';
+        $id = $info['idcontratto'];
+
+        $document = tr('Contratto');
+    }
+
+    // Intervento
+    elseif (!empty($info['idintervento'])) {
+        $data = $dbo->fetchArray('SELECT codice AS numero, IFNULL( (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta) AS data FROM in_interventi WHERE id='.prepare($info['idintervento']));
+
+        $module = 'Interventi';
+        $id = $info['idintervento'];
+
+        $document = tr('Intervento');
+    }
+
+    // Testo relativo
+    if (!empty($module) && !empty($id)) {
+        $document = Stringy\Stringy::create($document)->toLowerCase();
+
+        if (!empty($data)) {
+            $description = tr('Rif. _DOC_ num. _NUM_ del _DATE_', [
+                '_DOC_' => $document,
+                '_NUM_' => $data[0]['numero'],
+                '_DATE_' => Translator::dateToLocale($data[0]['data']),
+            ]);
+        } else {
+            $description = tr('_DOC_ di riferimento _ID_ eliminato', [
+                '_DOC_' => $document->upperCaseFirst(),
+                '_ID_' => $id,
+            ]);
+        }
+
+        return [
+            'module' => $module,
+            'id' => $id,
+            'description' => $description,
+        ];
+    }
+
+    return [];
 }

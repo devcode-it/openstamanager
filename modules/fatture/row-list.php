@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+include_once DOCROOT.'/modules/fatture/modutil.php';
+
 /*
     Righe fattura
 */
@@ -90,74 +92,12 @@ if (!empty($rs)) {
             }
         }
 
-        $ref_modulo = null;
-        $ref_id = null;
-
         // Aggiunta dei riferimenti ai documenti
-        // Ordine
-        if (!empty($r['idordine'])) {
-            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM or_ordini WHERE id=".prepare($r['idordine']));
+        $ref = doc_references($r, $dir, ['iddocumento']);
 
-            $ref_modulo = ($dir == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
-            $ref_id = $r['idordine'];
-
-            $documento = tr('Ordine');
-        }
-        // DDT
-        elseif (!empty($r['idddt'])) {
-            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM dt_ddt WHERE id=".prepare($r['idddt']));
-
-            $ref_modulo = ($dir == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
-            $ref_id = $r['idddt'];
-
-            $documento = tr('Ddt');
-        }
-        // Preventivo
-        elseif (!empty($r['idpreventivo'])) {
-            $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_preventivi WHERE id='.prepare($r['idpreventivo']));
-
-            $ref_modulo = 'Preventivi';
-            $ref_id = $r['idpreventivo'];
-
-            $documento = tr('Preventivo');
-        }
-        // Contratto
-        elseif (!empty($r['idcontratto'])) {
-            $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_contratti WHERE id='.prepare($r['idcontratto']));
-
-            $ref_modulo = 'Contratti';
-            $ref_id = $r['idcontratto'];
-
-            $documento = tr('Contratto');
-        }
-        // Intervento
-        elseif (!empty($r['idintervento'])) {
-            $data = $dbo->fetchArray('SELECT codice AS numero, IFNULL( (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta) AS data FROM in_interventi WHERE id='.prepare($r['idintervento']));
-
-            $ref_modulo = 'Interventi';
-            $ref_id = $r['idintervento'];
-
-            $documento = tr('Intervento');
-        }
-
-        if (!empty($ref_modulo) && !empty($ref_id)) {
-            $documento = Stringy\Stringy::create($documento)->toLowerCase();
-
-            if (!empty($data)) {
-                $descrizione = tr('Rif. _DOC_ num. _NUM_ del _DATE_', [
-                    '_DOC_' => $documento,
-                    '_NUM_' => $data[0]['numero'],
-                    '_DATE_' => Translator::dateToLocale($data[0]['data']),
-                ]);
-            } else {
-                $descrizione = tr('_DOC_ di riferimento _ID_ eliminato', [
-                    '_DOC_' => $documento->upperCaseFirst(),
-                    '_ID_' => $ref_id,
-                ]);
-            }
-
+        if (!empty($ref)) {
             echo '
-            <br>'.Modules::link($ref_modulo, $ref_id, $descrizione, $descrizione);
+            <br>'.Modules::link($ref['module'], $ref['id'], $ref['description'], $ref['description']);
         }
 
         echo '

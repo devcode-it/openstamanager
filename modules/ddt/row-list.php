@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+include_once DOCROOT.'/modules/fatture/modutil.php';
+
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
     <tr>
@@ -64,23 +66,12 @@ if (!empty($rs)) {
             echo nl2br($r['descrizione']);
         }
 
-        // Aggiunta riferimento a ordine
-        if (!empty($r['idordine'])) {
-            $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data, dir FROM or_ordini JOIN or_tipiordine ON or_tipiordine.id = or_ordini.idtipoordine WHERE or_ordini.id='.prepare($r['idordine']));
-            $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
+        // Aggiunta dei riferimenti ai documenti
+        $ref = doc_references($r, $dir, ['idddt']);
 
-            $ref = $rso[0]['dir'] == 'entrata' ? 'Ordini cliente' : 'Ordini fornitore';
-            $ref_id = $r['idordine'];
-
-            $descrizione = tr('Rif. ordine num. _NUM_ del _DATE_', [
-                '_NUM_' => $numero,
-                '_DATE_' => Translator::dateToLocale($rso[0]['data']),
-            ]);
-        }
-
-        if (!empty($descrizione)) {
+        if (!empty($ref)) {
             echo '
-            <br>'.Modules::link($ref, $ref_id, $descrizione.' <i class="fa fa-external-link"></i>', $descrizione);
+            <br>'.Modules::link($ref['module'], $ref['id'], $ref['description'], $ref['description']);
         }
 
         echo '
@@ -152,7 +143,7 @@ if (!empty($rs)) {
         // Possibilità di rimuovere una riga solo se il ddt non è evaso
         echo '
         <td class="text-center">';
-        if ($records[0]['flag_completato']==0 && empty($r['sconto_globale'])) {
+        if ($records[0]['flag_completato'] == 0 && empty($r['sconto_globale'])) {
             echo "
             <form action='".$rootdir.'/editor.php?id_module='.Modules::get($name)['id'].'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>

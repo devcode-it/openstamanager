@@ -29,6 +29,7 @@ if (!empty($rs)) {
         echo '
         <tr data-id="'.$r['id'].'">
             <td>';
+
         if (!empty($r['idarticolo'])) {
             echo Modules::link('Articoli', $r['idarticolo'], $r['codice'].' - '.$r['descrizione']);
         } else {

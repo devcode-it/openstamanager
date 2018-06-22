@@ -64,7 +64,7 @@ if (!empty($rs)) {
         if (empty($r['is_descrizione'])) {
             echo '
                 '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
-				
+
 			if ($r['sconto_unitario'] > 0) {
                 echo '
                 <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
@@ -132,7 +132,7 @@ if (!empty($rs)) {
             </td>
         </tr>';
 
-      
+
 		// Calcoli
 		$imponibile = sum(array_column($rs, 'subtotale'));
 		$sconto = sum(array_column($rs, 'sconto'));

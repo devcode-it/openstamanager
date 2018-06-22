@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+include_once DOCROOT.'/modules/fatture/modutil.php';
+
 // Mostro le righe dell'ordine
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
@@ -24,12 +26,6 @@ $rs = $dbo->fetchArray($q);
 
 if (!empty($rs)) {
     foreach ($rs as $r) {
-		
-		$extra = '';
-	
-		$ref_modulo = null;
-        $ref_id = null;
-		
         $delete = !empty($r['idarticolo']) ? 'unlink_articolo' : 'unlink_riga';
 
         $extra = '';
@@ -49,8 +45,7 @@ if (!empty($rs)) {
 
         echo '
     <tr data-id="'.$r['id'].'" '.$extra.'>
-        <td>
-            '.Modules::link($ref_modulo, $ref_id, $r['descrizione']);
+        <td align="left">';
 
         if (!empty($r['idarticolo'])) {
             echo '
@@ -63,54 +58,22 @@ if (!empty($rs)) {
                 '_NUM_' => $mancanti,
             ]).'</small></b>';
                 }
+
                 if (!empty($serials)) {
                     echo '
             <br>'.tr('SN').': '.implode(', ', $serials);
                 }
-            } else {
-                if ($r['lotto'] != '') {
-                    echo '<br>Lotto: '.$r['lotto'];
-                }
-                if ($r['serial'] != '') {
-                    echo '<br>SN: '.$r['serial'];
-                }
-                if ($r['altro'] != '') {
-                    echo '<br>'.$r['altro'];
-                }
             }
+        } else {
+            echo nl2br($r['descrizione']);
         }
-		
-	
-			// Aggiunta dei riferimenti ai documenti
-		// Preventivo
-        if (!empty($r['idpreventivo'])) {
-            $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_preventivi WHERE id='.prepare($r['idpreventivo']));
 
-            $ref_modulo = 'Preventivi';
-            $ref_id = $r['idpreventivo'];
+        // Aggiunta dei riferimenti ai documenti
+        $ref = doc_references($r, $dir, ['idordine']);
 
-            $documento = tr('Preventivo');
-        }
-		
-		
-		  if (!empty($ref_modulo) && !empty($ref_id)) {
-            $documento = Stringy\Stringy::create($documento)->toLowerCase();
-
-            if (!empty($data)) {
-                $descrizione = tr('Rif. _DOC_ num. _NUM_ del _DATE_', [
-                    '_DOC_' => $documento,
-                    '_NUM_' => $data[0]['numero'],
-                    '_DATE_' => Translator::dateToLocale($data[0]['data']),
-                ]);
-            } else {
-                $descrizione = tr('_DOC_ di riferimento _ID_ eliminato', [
-                    '_DOC_' => $documento->upperCaseFirst(),
-                    '_ID_' => $ref_id,
-                ]);
-            }
-
+        if (!empty($ref)) {
             echo '
-            <br>'.Modules::link($ref_modulo, $ref_id, $descrizione, $descrizione);
+            <br>'.Modules::link($ref['module'], $ref['id'], $ref['description'], $ref['description']);
         }
 
         echo '
@@ -183,7 +146,7 @@ if (!empty($rs)) {
         echo '
         <td class="text-center">';
 
-        if ( $records[0]['flag_completato'] == 0 && empty($r['sconto_globale']) ) {
+        if ($records[0]['flag_completato'] == 0 && empty($r['sconto_globale'])) {
             echo "
             <form action='".$rootdir.'/editor.php?id_module='.Modules::get($name)['id'].'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>
@@ -236,8 +199,6 @@ $sconto = sum(array_column($rs, 'sconto'));
 $iva = sum(array_column($rs, 'iva'));
 
 $imponibile_scontato = sum($imponibile, -$sconto);
-
-
 
 $totale_iva = sum($iva, $records[0]['iva_rivalsainps']);
 

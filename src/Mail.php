@@ -80,6 +80,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
             $results = $database->fetchArray('SELECT * FROM zz_emails WHERE deleted = 0');
 
             $templates = [];
+            $references = [];
 
             // Inizializzazione dei riferimenti
             foreach (Modules::getModules() as $module) {
@@ -109,11 +110,13 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
      */
     public static function getTemplate($template)
     {
+        $templates = self::getTemplates();
+
         if (!is_numeric($template) && !empty(self::$references[$template])) {
             $template = self::$references[$template];
         }
 
-        return self::getTemplates()[$template];
+        return $templates[$template];
     }
 
     /**

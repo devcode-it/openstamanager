@@ -43,8 +43,10 @@ class App
      */
     public static function getCurrentModule()
     {
-        if (empty(self::$current_module)) {
-            self::$current_module = Modules::get(filter('id_module'));
+        $id = filter('id_module');
+
+        if (empty(self::$current_module) && !empty($id)) {
+            self::$current_module = Modules::get($id);
         }
 
         return self::$current_module;

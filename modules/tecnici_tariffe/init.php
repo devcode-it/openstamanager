@@ -4,8 +4,8 @@ include_once __DIR__.'/../../core.php';
 
 $records = $dbo->fetchArray('SELECT in_tariffe.id AS idtariffa, in_tipiintervento.idtipointervento, idtecnico, ragione_sociale, descrizione, in_tariffe.costo_ore, in_tariffe.costo_km, in_tariffe.costo_dirittochiamata, in_tariffe.costo_ore_tecnico, in_tariffe.costo_km_tecnico, in_tariffe.costo_dirittochiamata_tecnico FROM ((in_tariffe INNER JOIN an_anagrafiche ON in_tariffe.idtecnico=an_anagrafiche.idanagrafica) LEFT OUTER JOIN in_tipiintervento ON in_tariffe.idtipointervento=in_tipiintervento.idtipointervento) WHERE in_tariffe.id='.prepare($id_record));
 
-//Se non ci sono record nelle tariffe leggo i dati del tecnico singolarmente e creo l'associazione tecnico-tariffe nel primo submit
-if ($records[0]['idtariffa'] != $id_record) {
+// Se non ci sono record nelle tariffe leggo i dati del tecnico singolarmente e creo l'associazione tecnico-tariffe nel primo submit
+if (isset($records[0]) && $records[0]['idtariffa'] != $id_record) {
     $v = explode('|', $id_record);
 
     $idanagrafica = $v[0];

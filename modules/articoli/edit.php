@@ -41,7 +41,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 			<div class="row">
 				<div class="col-md-3">
 					{[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta", "min-value": "undefined" ]}
-					<input type="hidden" id="old_qta" value="<?=$records[0]['qta']?>">
+					<input type="hidden" id="old_qta" value="<?php echo $records[0]['qta']; ?>">
 				</div>
 				<div class="col-md-3">
 					{[ "type": "checkbox", "label": "<?php echo tr('Modifica quantità manualmente'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>", "extra": "<?php echo ($records[0]['servizio']) ? 'disabled' : ''; ?>" ]}
@@ -93,7 +93,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 
 
 			</div>
-			
+
 			<div class='row' id="div_modifica_manuale" style="display:none;">
 				<div class='col-md-3'>
 					{[ "type": "text", "label": "<?php echo tr('Descrizione movimento'); ?>", "name": "descrizione_movimento", "value": "" ]}

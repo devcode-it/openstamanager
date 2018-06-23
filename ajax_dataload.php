@@ -161,7 +161,7 @@ if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom
 
             // Icona
             if (preg_match('/^color_(.+?)$/', $field, $m)) {
-                $value = $r['color_title_'.$m[1]] ?: '';
+                $value = isset($r['color_title_'.$m[1]]) ? $r['color_title_'.$m[1]] : '';
 
                 $column['class'] = 'text-center small';
                 $column['data-background'] = $r[$field];

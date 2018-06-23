@@ -299,10 +299,8 @@ echo '
     '.Prints::getLink('Consuntivo preventivo', $id_record, 'btn-primary', tr('Stampa consuntivo')).'
 </div>';
 
-/*
-    Aggiunta interventi se il preventivo é aperto o in attesa o pagato (non si possono inserire interventi collegati ad altri preventivi)
-*/
-if ($stato == 'Accettato' || $stato == 'In lavorazione' || $stato = 'Pagato') {
+// Aggiunta interventi se il preventivo é aperto o in attesa o pagato (non si possono inserire interventi collegati ad altri preventivi)
+if (in_array($records[0]['stato'], ['Accettato', 'In lavorazione', 'Pagato'])) {
     echo '
 <form action="" method="post">
     <input type="hidden" name="op" value="addintervento">

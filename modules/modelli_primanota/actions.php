@@ -32,7 +32,6 @@ switch (post('op')) {
             if ($dbo->query($query)) {
                 $id_record = $dbo->lastInsertedID();
             }
-
         }
 
         break;

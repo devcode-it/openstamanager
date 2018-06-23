@@ -21,7 +21,7 @@ $mesi = [
 ];
 
 // Pianificazione fatture
-if ($get['op'] == 'add_fatturazione') {
+if (get('op') == 'add_fatturazione') {
     $prev_data = '';
 
     // Azzero la pianificazione zone se era già stata fatta, per poter sostituire la pianificazione,
@@ -50,7 +50,7 @@ if ($get['op'] == 'add_fatturazione') {
 }
 
 // Eliminazione pianificazione specifica
-elseif ($get['op'] == 'del_pianificazione') {
+elseif (get('op') == 'del_pianificazione') {
     $idpianificazione = $get['idpianificazione'];
 
     $n = $dbo->fetchNum('SELECT id FROM co_ordiniservizio_pianificazionefatture WHERE id='.prepare($idpianificazione));
@@ -64,7 +64,7 @@ elseif ($get['op'] == 'del_pianificazione') {
 }
 
 // Creazione fattura pianificata
-elseif ($get['op'] == 'addfattura') {
+elseif (get('op') == 'addfattura') {
     include_once $docroot.'/modules/fatture/modutil.php';
 
     $idpianificazione = $get['idpianificazione'];
@@ -82,7 +82,7 @@ elseif ($get['op'] == 'addfattura') {
     $numero = get_new_numerofattura($data);
 	$id_segment = post('id_segment');
     $numero_esterno = get_new_numerosecondariofattura($data);
-	
+
 	// Tipo di pagamento + banca predefinite dall'anagrafica
 	$query = 'SELECT id, (SELECT idbanca_vendite FROM an_anagrafiche WHERE idanagrafica = '.prepare($idanagrafica).') AS idbanca FROM co_pagamenti WHERE id = (SELECT idpagamento_vendite AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')';
 	$rs = $dbo->fetchArray($query);
@@ -101,7 +101,7 @@ elseif ($get['op'] == 'addfattura') {
 		$rs = $dbo->fetchArray($query);
 		$idbanca = $rs[0]['id'];
 	}
-		
+
     $query = 'INSERT INTO co_documenti(numero, numero_esterno, idanagrafica, idtipodocumento, idpagamento, data, idstatodocumento, note, idsede, id_segment, idconto, idbanca) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipodocumento).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza'), ".prepare($note).', (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).'), '.prepare($id_segment).', '.prepare($idconto).', '.prepare($idbanca).' )';
     $dbo->query($query);
     $iddocumento = $dbo->lastInsertedID();

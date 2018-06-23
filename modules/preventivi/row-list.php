@@ -24,87 +24,86 @@ echo '
     <tbody class="sortable">';
 
 // se ho almeno un articolo caricato mostro la riga
-if (!empty($rs)) {
-    foreach ($rs as $r) {
-        echo '
+foreach ($rs as $r) {
+    echo '
         <tr data-id="'.$r['id'].'">
             <td>';
 
-        if (!empty($r['idarticolo'])) {
-            echo Modules::link('Articoli', $r['idarticolo'], $r['codice'].' - '.$r['descrizione']);
-        } else {
-            echo nl2br($r['descrizione']);
-        }
+    if (!empty($r['idarticolo'])) {
+        echo Modules::link('Articoli', $r['idarticolo'], $r['codice'].' - '.$r['descrizione']);
+    } else {
+        echo nl2br($r['descrizione']);
+    }
 
-        echo '
+    echo '
             </td>';
 
-        // q.tà
-        echo '
+    // q.tà
+    echo '
             <td class="text-right">';
-        if (empty($r['is_descrizione'])) {
-            echo '
-                '.Translator::numberToLocale($r['qta'] - $r['qta_evasa']);
-        }
+    if (empty($r['is_descrizione'])) {
         echo '
+                '.Translator::numberToLocale($r['qta']);
+    }
+    echo '
             </td>';
 
-        // um
-        echo '
+    // um
+    echo '
             <td class="text-center">';
-        if (empty($r['is_descrizione'])) {
-            echo '
-                '.$r['um'];
-        }
+    if (empty($r['is_descrizione'])) {
         echo '
+                '.$r['um'];
+    }
+    echo '
             </td>';
 
-        // costo unitario
-        echo '
+    // costo unitario
+    echo '
             <td class="text-right">';
-        if (empty($r['is_descrizione'])) {
-            echo '
+    if (empty($r['is_descrizione'])) {
+        echo '
                 '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
 
-            if ($r['sconto_unitario'] > 0) {
-                echo '
+        if ($r['sconto_unitario'] > 0) {
+            echo '
                 <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
                     '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
                 ]).'</small>';
-            }
         }
+    }
 
-        echo '
+    echo '
             </td>';
 
-        // iva
-        echo '
+    // iva
+    echo '
             <td class="text-right">';
-        if (empty($r['is_descrizione'])) {
-            echo '
+    if (empty($r['is_descrizione'])) {
+        echo '
                 '.Translator::numberToLocale($r['iva']).' &euro;
                 <br><small class="help-block">'.$r['desc_iva'].'</small>';
-        }
-        echo'
+    }
+    echo'
             </td>';
 
-        // Imponibile
-        echo '
+    // Imponibile
+    echo '
             <td class="text-right">';
-        if (empty($r['is_descrizione'])) {
-            echo '
+    if (empty($r['is_descrizione'])) {
+        echo '
                 '.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
-        }
-        echo'
+    }
+    echo'
             </td>';
 
-        // Possibilità di rimuovere una riga solo se il preventivo non è stato pagato
-        echo '
+    // Possibilità di rimuovere una riga solo se il preventivo non è stato pagato
+    echo '
             <td class="text-center">';
 
-        if ($records[0]['stato'] != 'Pagato' && empty($r['sconto_globale'])) {
-            echo "
+    if ($records[0]['stato'] != 'Pagato' && empty($r['sconto_globale'])) {
+        echo "
                 <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
                     <input type='hidden' name='backto' value='record-edit'>
                     <input type='hidden' name='op' value='unlink_articolo'>
@@ -117,18 +116,17 @@ if (!empty($rs)) {
                         <a href='javascript:;' class='btn btn-xs btn-danger' title='Rimuovi questa riga' onclick=\"if( confirm('Rimuovere questa riga dal preventivo?') ){ $('#delete-form-".$r['id']."').submit(); }\"><i class='fa fa-trash'></i></a>
                     </div>
                 </form>";
-        }
+    }
 
-        if (empty($r['sconto_globale'])) {
-            echo '
+    if (empty($r['sconto_globale'])) {
+        echo '
                 <div class="handle clickable" style="padding:10px">
                     <i class="fa fa-sort"></i>
                 </div>';
-        }
-        echo '
+    }
+    echo '
             </td>
         </tr>';
-    }
 }
 
 // Calcoli

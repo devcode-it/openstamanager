@@ -1,5 +1,7 @@
 <?php
 
+$result['id'] = isset($result['id']) ? $result['id'] : null;
+
 /*
     Form di inserimento riga documento
 */

@@ -74,8 +74,8 @@ class FileManager implements ManagerInterface
                     <i class="fa fa-download"></i>
                 </a>';
 
-                //Anteprime supportate dal browser
-                $extension = strtolower(end((explode('.', $r['original']))));
+                // Anteprime supportate dal browser
+                $extension = pathinfo($r['original'])['extension'];
                 $supported_extensions = ['pdf', 'jpg', 'png', 'gif', 'jpeg', 'bmp'];
                 if (in_array($extension, $supported_extensions)) {
                     $result .= "<div class='hide' id='view-".$r['id']."'  >";

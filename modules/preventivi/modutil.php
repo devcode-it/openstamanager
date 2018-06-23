@@ -104,7 +104,7 @@ function get_imponibile_preventivo($idpreventivo)
     $query = 'SELECT SUM(co_righe_preventivi.subtotale - co_righe_preventivi.sconto) AS imponibile FROM co_righe_preventivi GROUP BY idpreventivo HAVING idpreventivo='.prepare($idpreventivo);
     $rs = $dbo->fetchArray($query);
 
-    return $rs[0]['imponibile'];
+    return isset($rs[0]['imponibile']) ? $rs[0]['imponibile'] : 0;
 }
 
 /**

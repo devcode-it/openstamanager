@@ -44,26 +44,26 @@ class Modules
             $results = $database->fetchArray('SELECT * FROM `zz_modules` LEFT JOIN (SELECT `idmodule`, `permessi` FROM `zz_permissions` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).')) AS `zz_permissions` ON `zz_modules`.`id`=`zz_permissions`.`idmodule`');
 
             $modules = [];
+            $references = [];
+
             foreach ($results as $result) {
                 $result['options'] = App::replacePlaceholder($result['options']);
                 $result['options2'] = App::replacePlaceholder($result['options2']);
 
                 $result['option'] = empty($result['options2']) ? $result['options'] : $result['options2'];
 
-                if (empty($modules[$result['id']])) {
-                    if (empty($result['permessi'])) {
-                        if (Auth::admin()) {
-                            $result['permessi'] = 'rw';
-                        } else {
-                            $result['permessi'] = '-';
-                        }
+                if (empty($result['permessi'])) {
+                    if (Auth::admin()) {
+                        $result['permessi'] = 'rw';
+                    } else {
+                        $result['permessi'] = '-';
                     }
-
-                    unset($result['idmodule']);
-
-                    $modules[$result['id']] = $result;
-                    $references[$result['name']] = $result['id'];
                 }
+
+                unset($result['idmodule']);
+
+                $modules[$result['id']] = $result;
+                $references[$result['name']] = $result['id'];
             }
 
             self::$modules = $modules;
@@ -101,11 +101,13 @@ class Modules
      */
     public static function get($module)
     {
+        $modules = self::getModules();
+
         if (!is_numeric($module) && !empty(self::$references[$module])) {
             $module = self::$references[$module];
         }
 
-        return self::getModules()[$module];
+        return $modules[$module];
     }
 
     /**

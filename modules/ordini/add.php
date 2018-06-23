@@ -27,7 +27,7 @@ if ($module['name'] == 'Ordini cliente') {
 		</div>
 
 		<div class="col-md-6">
-            {[ "type": "select", "label": "<?php echo $tipo_anagrafica; ?>", "name": "idanagrafica", "required": 1, "value": "", "value": "<?php echo $idanagrafica; ?>", "ajax-source": "<?php echo $ajax; ?>" ]}
+            {[ "type": "select", "label": "<?php echo $tipo_anagrafica; ?>", "name": "idanagrafica", "required": 1, "value": "", "value": "<?php echo $user['idanagrafica']; ?>", "ajax-source": "<?php echo $ajax; ?>" ]}
 		</div>
 	</div>
 

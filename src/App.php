@@ -18,10 +18,11 @@ class App
             'app.min.css',
             'style.min.css',
             'themes.min.css',
-            [
-                'href' => 'print.min.css',
-                'media' => 'print',
-            ],
+        ],
+
+        // Print CSS
+        'print' => [
+            'print.min.css',
         ],
 
         // JS
@@ -155,49 +156,39 @@ class App
         // Assets aggiuntivi
         $config = self::getConfig();
 
-        $css = array_unique(array_merge(self::$assets['css'], $config['assets']['css']));
-        $js = array_unique(array_merge(self::$assets['js'], $config['assets']['js']));
-
         // Impostazione dei percorsi
         $paths = self::getPaths();
         $lang = Translator::getInstance()->getCurrentLocale();
 
-        foreach ($css as $key => $value) {
-            if (is_array($value)) {
-                $path = $value['href'];
-            } else {
-                $path = $value;
+        // Sezioni: nome - percorso
+        $sections = [
+            'css' => 'css',
+            'print' => 'css',
+            'js' => 'js',
+        ];
+
+        $assets = [];
+
+        foreach ($sections as $section => $dir) {
+            $result = array_unique(array_merge(self::$assets[$section], $config['assets'][$section]));
+
+            foreach ($result as $key => $element) {
+                $element = $paths[$dir].'/'.$element;
+                $element = str_replace('|lang|', $lang, $element);
+
+                $result[$key] = $element;
             }
 
-            $path = $paths['css'].'/'.$path;
-            $path = str_replace('|lang|', $lang, $path);
-
-            if (is_array($value)) {
-                $value['href'] = $path;
-            } else {
-                $value = $path;
-            }
-
-            $css[$key] = $value;
-        }
-
-        foreach ($js as $key => $value) {
-            $value = $paths['js'].'/'.$value;
-            $value = str_replace('|lang|', $lang, $value);
-
-            $js[$key] = $value;
+            $assets[$section] = $result;
         }
 
         // JS aggiuntivi per gli utenti connessi
         if (Auth::check()) {
-            $js[] = ROOTDIR.'/lib/functions.js';
-            $js[] = ROOTDIR.'/lib/init.js';
+            $assets['js'][] = ROOTDIR.'/lib/functions.js';
+            $assets['js'][] = ROOTDIR.'/lib/init.js';
         }
 
-        return [
-            'css' => $css,
-            'js' => $js,
-        ];
+        return $assets;
     }
 
     /**

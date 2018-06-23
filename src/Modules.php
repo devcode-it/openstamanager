@@ -14,6 +14,7 @@ class Modules
 
     /** @var array Elenco dei moduli disponibili */
     protected static $modules = [];
+    protected static $references = [];
     /** @var array Elenco delle condizioni aggiuntive disponibili */
     protected static $additionals = [];
     /** @var array Elenco dei segmenti disponibili */
@@ -61,11 +62,12 @@ class Modules
                     unset($result['idmodule']);
 
                     $modules[$result['id']] = $result;
-                    $modules[$result['name']] = $result['id'];
+                    $references[$result['name']] = $result['id'];
                 }
             }
 
             self::$modules = $modules;
+            self::$references = $references;
         }
 
         return self::$modules;
@@ -80,6 +82,7 @@ class Modules
     {
         // Individuazione dei moduli con permesso di accesso
         $modules = self::getModules();
+
         foreach ($modules as $key => $module) {
             if ($module['permessi'] == '-') {
                 unset($modules[$key]);
@@ -98,8 +101,8 @@ class Modules
      */
     public static function get($module)
     {
-        if (!is_numeric($module) && !empty(self::getModules()[$module])) {
-            $module = self::getModules()[$module];
+        if (!is_numeric($module) && !empty(self::$references[$module])) {
+            $module = self::$references[$module];
         }
 
         return self::getModules()[$module];
@@ -129,7 +132,7 @@ class Modules
         $module = self::get($module);
         $user = Auth::user();
 
-        if (!isset(self::$additionals[$module])) {
+        if (!isset(self::$additionals[$module['id']])) {
             $database = Database::getConnection();
 
             $additionals['WHR'] = [];
@@ -337,7 +340,7 @@ class Modules
         $options = ($element['options2'] != '') ? $element['options2'] : $element['options'];
         $link = ($options != '' && $options != 'menu') ? ROOTDIR.'/controller.php?id_module='.$element['id'] : 'javascript:;';
         $title = $element['title'];
-        $target = ($element['new'] == 1) ? '_blank' : '_self';
+        $target = '_self'; // $target = ($element['new'] == 1) ? '_blank' : '_self';
         $active = ($actual == $element['name']);
         $show = (self::getPermission($element['id']) != '-' && !empty($element['enabled'])) ? true : false;
 

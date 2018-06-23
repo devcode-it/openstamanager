@@ -11,9 +11,9 @@ echo '
     </div>
     <div class="panel-body">';
 
-$search_lotto = $get['search_lotto'];
-$search_serial = $get['search_serial'];
-$search_altro = $get['search_altro'];
+$search_lotto = get('search_lotto');
+$search_serial = get('search_serial');
+$search_altro = get('search_altro');
 
 // Calcolo prossimo lotto e serial number
 $rs = $dbo->fetchArray('SELECT MAX(lotto) AS max_lotto, MAX(serial) AS max_serial, MAX(altro) AS max_altro FROM mg_prodotti WHERE id_articolo='.prepare($id_record));

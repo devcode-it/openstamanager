@@ -54,9 +54,7 @@ class Import
      */
     public static function get($module)
     {
-        if (!is_numeric($module) && !empty(self::getModules()[$module])) {
-            $module = self::getModules()[$module];
-        }
+        $module = Modules::get($module)['id'];
 
         return self::getImports()[$module];
     }

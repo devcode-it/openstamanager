@@ -158,11 +158,11 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
 			<div class="row">
 				<div class="col-md-12" id="tecnici">
-					<?php 
+					<?php
 						if (file_exists($docroot.'/modules/interventi/custom/ajax_tecnici.php')) {
 					?>
 						<script>$('#tecnici').load('<?php echo $rootdir; ?>/modules/interventi/custom/ajax_tecnici.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
-					<?php	
+					<?php
 						}else{
 					?>
 						<script>$('#tecnici').load('<?php echo $rootdir; ?>/modules/interventi/ajax_tecnici.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
@@ -183,7 +183,7 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
         <div class="panel-body">
             <div id="articoli">
-				<?php 
+				<?php
 					if (file_exists($docroot.'/modules/interventi/custom/ajax_articoli.php')) {
 						include $docroot.'/modules/interventi/custom/ajax_articoli.php';
 					}else{
@@ -234,11 +234,11 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-12" id="costi">
-					<?php 
+					<?php
 						if (file_exists($docroot.'/modules/interventi/custom/ajax_costi.php')) {
 					?>
 						<script>$('#costi').load('<?php echo $rootdir; ?>/modules/interventi/custom/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
-					<?php	
+					<?php
 						}else{
 					?>
 						<script>$('#costi').load('<?php echo $rootdir; ?>/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
@@ -251,7 +251,7 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 	</div>
 </form>
 
-{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>", <?php echo ($records[0]['flag_completato']) ? '"readonly":"true"' : '"readonly":"false"'; ?> )}
+{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>", <?php echo ($records[0]['flag_completato']) ? '"readonly": "true"' : '"readonly":"false"'; ?> )}
 
 <!-- EVENTUALE FIRMA GIA' EFFETTUATA -->
 <div class="text-center">

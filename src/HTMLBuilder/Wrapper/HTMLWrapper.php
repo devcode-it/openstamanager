@@ -12,8 +12,8 @@ class HTMLWrapper implements WrapperInterface
         $result = '';
 
         // Valori particolari
-        $values['icon-before'] = $this->parser($values, $values['icon-before']);
-        $values['icon-after'] = $this->parser($values, $values['icon-after']);
+        $values['icon-before'] = isset($values['icon-before']) ? $this->parser($values, $values['icon-before']) : null;
+        $values['icon-after'] = isset($values['icon-after']) ? $this->parser($values, $values['icon-after']) : null;
 
         // Generazione dell'etichetta
         if (!empty($values['label'])) {
@@ -100,17 +100,15 @@ class HTMLWrapper implements WrapperInterface
 
         $id_module = $pieces[1];
 
-        $extra = empty($pieces[2]) ? '' : '&'.$pieces[2];
-
-        $classes = empty($pieces[3]) ? '' : ' '.$pieces[3];
-
-        $extras = empty($pieces[4]) ? '' : ' '.$pieces[4];
+        $get = !empty($pieces[2]) ? '&'.$pieces[2] : null;
+        $classes = !empty($pieces[3]) ? ' '.$pieces[3] : null;
+        $extras = !empty($pieces[4]) ? ' '.$pieces[4] : null;
 
         $module = \Modules::get($id_module);
 
         if (in_array($module['permessi'], ['r', 'rw'])) {
             $result = '
-<button '.$extras.' data-href="'.ROOTDIR.'/add.php?id_module='.$id_module.$extra.'&select='.$values['id'].'&ajax=yes" data-target="#bs-popup2" data-toggle="modal" data-title="'.tr('Aggiungi').'" type="button" class="btn'.$classes.'">
+<button '.$extras.' data-href="'.ROOTDIR.'/add.php?id_module='.$id_module.$get.'&select='.$values['id'].'&ajax=yes" data-target="#bs-popup2" data-toggle="modal" data-title="'.tr('Aggiungi').'" type="button" class="btn'.$classes.'">
     <i class="fa fa-plus"></i>
 </button>';
         }
@@ -124,7 +122,7 @@ class HTMLWrapper implements WrapperInterface
 
         $pieces = explode('|', $string);
         $type = $pieces[1];
-		$extra = $pieces[3];
+        $extra = !empty($pieces[3]) ? $pieces[3] : null;
 
         if ($type == 'untprc') {
             $choices = [

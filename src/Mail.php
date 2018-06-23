@@ -12,6 +12,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
 
     /** @var array Elenco dei template email disponibili */
     protected static $templates = [];
+    protected static $references = [];
     /** @var array Elenco dei template email per modulo */
     protected static $modules = [];
 
@@ -80,18 +81,20 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
 
             $templates = [];
 
+            // Inizializzazione dei riferimenti
+            foreach (Modules::getModules() as $module) {
+                self::$modules[$module['id']] = [];
+            }
+
             foreach ($results as $result) {
                 $templates[$result['id']] = $result;
-                $templates[$result['name']] = $result['id'];
-
-                if (!isset(self::$modules[$result['id_module']])) {
-                    self::$modules[$result['id_module']] = [];
-                }
+                $references[$result['name']] = $result['id'];
 
                 self::$modules[$result['id_module']][] = $result['id'];
             }
 
             self::$templates = $templates;
+            self::$references = $references;
         }
 
         return self::$templates;
@@ -106,8 +109,8 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
      */
     public static function getTemplate($template)
     {
-        if (!is_numeric($template) && !empty(self::getTemplates()[$template])) {
-            $template = self::getTemplates()[$template];
+        if (!is_numeric($template) && !empty(self::$references[$template])) {
+            $template = self::$references[$template];
         }
 
         return self::getTemplates()[$template];

@@ -33,11 +33,16 @@ echo '<!DOCTYPE html>
 
 		<link href="'.$paths['img'].'/favicon.png" rel="icon" type="image/x-icon" />';
 
-foreach ($css_modules as $style) {
-    $style = (is_array($style)) ? $style : ['href' => $style, 'media' => 'all'];
-
+// CSS
+foreach (App::getAssets()['css'] as $style) {
     echo '
-<link rel="stylesheet" type="text/css" media="'.$style['media'].'" href="'.$style['href'].'"/>';
+        <link rel="stylesheet" type="text/css" media="all" href="'.$style.'"/>';
+}
+
+// Print CSS
+foreach (App::getAssets()['print'] as $style) {
+    echo '
+        <link rel="stylesheet" type="text/css" media="print" href="'.$style.'"/>';
 }
 
 if (Auth::check()) {
@@ -128,7 +133,8 @@ if (Auth::check()) {
 		</script>';
 }
 
-foreach ($jscript_modules as $js) {
+// JS
+foreach (App::getAssets()['js'] as $js) {
     echo '
         <script type="text/javascript" charset="utf-8" src="'.$js.'"></script>';
 }

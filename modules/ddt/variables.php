@@ -1,11 +1,8 @@
 <?php
 
-$rs = $dbo->fetchArray('SELECT *,
+$r = $dbo->fetchOne('SELECT *,
     (SELECT email FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica=dt_ddt.idanagrafica) AS email
 FROM dt_ddt WHERE id='.prepare($id_record));
-
-// Risultato effettivo
-$r = $rs[0];
 
 // Variabili da sostituire
 return [

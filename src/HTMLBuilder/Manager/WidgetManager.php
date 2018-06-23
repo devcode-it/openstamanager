@@ -81,12 +81,13 @@ class WidgetManager implements ManagerInterface
         $value = null;
         if (!empty($query)) {
             $value = $database->fetchArray($query)[0]['dato'];
-            if (!preg_match('/\\d/', $value))
+            if (!preg_match('/\\d/', $value)) {
                 $value = '-';
+            }
         }
 
         // Generazione del codice HTML
-        $result .= '
+        $result = '
 <button type="button" class="close" onclick="if(confirm(\'Disabilitare questo widget?\')) { $.post( \''.ROOTDIR.'/modules/aggiornamenti/actions.php?id_module='.$widget['id_module'].'\', { op: \'disable_widget\', id: \''.$widget['id'].'\' }, function(response){ location.reload(); }); };" >
     <span aria-hidden="true">&times;</span><span class="sr-only">'.tr('Chiudi').'</span>
 </button>';

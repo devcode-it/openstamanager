@@ -72,7 +72,6 @@ if (filter('op') == 'send') {
 }
 
 $pageTitle = tr('Bug');
-$jscript_modules[] = App::getPaths()['js'].'/ckeditor/ckeditor.js';
 
 if (file_exists($docroot.'/include/custom/top.php')) {
     include $docroot.'/include/custom/top.php';
@@ -191,7 +190,9 @@ echo '
             }
         });
     });
-</script>';
+</script>
+
+<script type="text/javascript" charset="utf-8" src="'.App::getPaths()['js'].'/ckeditor/ckeditor.js'.'"></script>';
 
 if (file_exists($docroot.'/include/custom/bottom.php')) {
     include $docroot.'/include/custom/bottom.php';

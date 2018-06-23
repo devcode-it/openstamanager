@@ -1,10 +1,11 @@
 <?php
 
-if (file_exists( __DIR__.'/../../../core.php')) {
-		include_once __DIR__.'/../../../core.php';
-}else {
-		include_once __DIR__.'/../../core.php';
+if (file_exists(__DIR__.'/../../../core.php')) {
+    include_once __DIR__.'/../../../core.php';
+} else {
+    include_once __DIR__.'/../../core.php';
 }
+
 if (file_exists($docroot.'/modules/interventi/custom/modutil.php')) {
     include_once $docroot.'/modules/interventi/custom/modutil.php';
 } else {
@@ -124,47 +125,26 @@ if (!empty($rs2)) {
 
         <input type="hidden" name="prezzo_ore_unitario_tecnico['.$id.']" value="'.$costo_ore_unitario_tecnico.'" />
         <input type="hidden" name="prezzo_km_unitario_tecnico['.$id.']" value="'.$costo_km_unitario_tecnico.'" />
-        <input type="hidden" name="prezzo_dirittochiamata_tecnico['.$id.']" value="'.$costo_dirittochiamata_tecnico.'" />';
+        <input type="hidden" name="prezzo_dirittochiamata_tecnico['.$id.']" value="'.$costo_dirittochiamata_tecnico.'" />
 
+        <tr>';
+
+        // Elenco tipologie di interventi
         echo '
-        <tr>
-            <td class="tecn_'.$r['idtecnico'].'" style="min-width:200px;" >';
-
-        if ($rs[0]['stato'] != 'Fatturato') {
-            // Elenco tipologie di interventi
-            echo '
-                {[ "type": "select", "name": "idtipointerventot['.$id.']", "value": "'.$r['idtipointervento'].'", "values": "query=SELECT idtipointervento AS id, descrizione, IFNULL((SELECT costo_ore FROM in_tariffe WHERE idtipointervento=in_tipiintervento.idtipointervento AND idtecnico='.prepare($r['idtecnico']).'), 0) AS costo_orario FROM in_tipiintervento ORDER BY descrizione", "extra": "'.$readonly.'" ]}';
-        }
-
-        echo '
+            <td class="tecn_'.$r['idtecnico'].'" style="min-width:200px;">
+                {[ "type": "select", "name": "idtipointerventot['.$id.']", "value": "'.$r['idtipointervento'].'", "values": "query=SELECT idtipointervento AS id, descrizione, IFNULL((SELECT costo_ore FROM in_tariffe WHERE idtipointervento=in_tipiintervento.idtipointervento AND idtecnico='.prepare($r['idtecnico']).'), 0) AS costo_orario FROM in_tipiintervento ORDER BY descrizione", "extra": "'.$readonly.'" ]}
             </td>';
 
         // Orario di inizio
         echo '
-            <td>';
-        if ($rs[0]['stato'] == 'Fatturato') {
-            echo '
-                <span>'.$orario_inizio.'</span>
-                <input type="hidden" name="orario_inizio['.$id.']" value="'.$orario_inizio.'">';
-        } else {
-            echo '
-            {[ "type": "timestamp", "name": "orario_inizio['.$id.']", "id": "inizio_'.$id.'", "value": "'.$orario_inizio.'", "class": "orari min-width", "extra": "'.$readonly.'" ]}';
-        }
-        echo '
+            <td>
+                {[ "type": "timestamp", "name": "orario_inizio['.$id.']", "id": "inizio_'.$id.'", "value": "'.$orario_inizio.'", "class": "orari min-width", "extra": "'.$readonly.'" ]}
             </td>';
 
         // Orario di fine
         echo '
-        <td>';
-        if ($rs[0]['stato'] == 'Fatturato') {
-            echo '
-            <span>'.$orario_fine.'</span>
-            <input type="hidden" name="orario_fine['.$id.']" value="'.$orario_fine.'">';
-        } else {
-            echo '
-        {[ "type": "timestamp", "name": "orario_fine['.$id.']", "id": "fine_'.$id.'", "value": "'.$orario_fine.'", "class": "orari min-width", "min-date": "'.$orario_inizio.'", "extra": "'.$readonly.'" ]}';
-        }
-        echo '
+        <td>
+            {[ "type": "timestamp", "name": "orario_fine['.$id.']", "id": "fine_'.$id.'", "value": "'.$orario_fine.'", "class": "orari min-width", "min-date": "'.$orario_inizio.'", "extra": "'.$readonly.'" ]}
         </td>';
 
         // ORE
@@ -296,18 +276,18 @@ if (!$flag_completato) {
 <script type="text/javascript">
     $(document).ready(function(){
 
-        <?php 
-        if (count($rs2)==0) {
+        <?php
+        if (count($rs2) == 0) {
             echo '$(".btn-details").attr("disabled", true);';
             echo '$(".btn-details").addClass("disabled");';
             echo '$("#showall_dettagli").removeClass("hide");';
             echo '$("#dontshowall_dettagli").addClass("hide");';
-        }else{
+        } else {
             echo '$(".btn-details").attr("disabled", false);';
-            echo '$(".btn-details").removeClass("disabled");';      
+            echo '$(".btn-details").removeClass("disabled");';
         }
         ?>
-        
+
         $('.orari').on("dp.change", function(){
             idriga = $(this).attr('id').split('_')[1];
 

@@ -52,7 +52,7 @@ foreach ($records as $record) {
     else {
         $numerico = in_array($record['tipo'], ['integer', 'decimal']);
 
-        $tipo = (preg_match('/password/i', $record['nome'], $m)) ? 'password' : $tipo;
+        $tipo = preg_match('/password/i', $record['nome'], $m) ? 'password' : $record['tipo'];
         $tipo = $numerico ? 'number' : 'text';
 
         echo '

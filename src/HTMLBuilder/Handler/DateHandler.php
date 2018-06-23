@@ -18,7 +18,7 @@ class DateHandler implements HandlerInterface
             'min-date',
         ];
         foreach ($detect as $attr) {
-            if ($values[$attr] == '-now-') {
+            if (isset($values[$attr]) && $values[$attr] == '-now-') {
                 $values[$attr] = date(\Intl\Formatter::getStandardFormats()['timestamp']);
             }
         }

@@ -26,15 +26,16 @@ class Prints
 
             $prints = [];
 
+            // Inizializzazione dei riferimenti
+            foreach (Modules::getModules() as $module) {
+                self::$modules[$module['id']] = [];
+            }
+
             foreach ($results as $result) {
                 $result['full_directory'] = DOCROOT.'/templates/'.$result['directory'];
 
                 $prints[$result['id']] = $result;
                 $prints[$result['name']] = $result['id'];
-
-                if (!isset(self::$modules[$result['id_module']])) {
-                    self::$modules[$result['id_module']] = [];
-                }
 
                 self::$modules[$result['id_module']][] = $result['id'];
             }

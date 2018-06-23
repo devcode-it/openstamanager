@@ -131,7 +131,7 @@ class AJAX
             $results = self::completeResults($query, $where, $filter, $search_fields, $custom);
         }
 
-        return $results;
+        return isset($results) ? $results : null;
     }
 
     protected static function getSelectInfo()

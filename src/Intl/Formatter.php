@@ -144,6 +144,7 @@ class Formatter
      */
     public function parseNumber($value)
     {
+        $sign = null;
         if ($value[0] == '+' || $value[0] == '-') {
             $sign = $value[0];
             $value = substr($value, 1);

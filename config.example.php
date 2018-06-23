@@ -41,5 +41,6 @@ $formatter = [
 // Ulteriori file CSS e JS da includere
 $assets = [
     'css' => [],
+    'print' => [],
     'js' => [],
 ];

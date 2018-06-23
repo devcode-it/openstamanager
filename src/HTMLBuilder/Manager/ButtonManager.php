@@ -9,6 +9,8 @@ class ButtonManager implements ManagerInterface
 {
     public function manage($options)
     {
+        $options['parameters'] = isset($options['parameters']) ? $options['parameters'] : null;
+
         $result = '';
 
         if (isset($options['id'])) {
@@ -111,6 +113,7 @@ class ButtonManager implements ManagerInterface
                     'id_module' => $options['id_module'],
                     'id_record' => $options['id_record'],
                     'class' => $options['class'],
+                    'parameters' => $options['parameters'],
                 ]);
 
                 unset($list[$main]);
@@ -131,6 +134,7 @@ class ButtonManager implements ManagerInterface
             'id_module' => $options['id_module'],
             'id_record' => $options['id_record'],
             'class' => false,
+            'parameters' => $options['parameters'],
         ]).'</li>';
             }
 
@@ -144,6 +148,7 @@ class ButtonManager implements ManagerInterface
                 'id_module' => $options['id_module'],
                 'id_record' => $options['id_record'],
                 'class' => $options['class'],
+                'parameters' => $options['parameters'],
             ]);
         } else {
             $result = ' ';

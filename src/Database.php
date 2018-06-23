@@ -286,8 +286,28 @@ class Database extends Util\Singleton
      */
     public function fetchRow($query)
     {
+        return $this->fetchOne($query);
+    }
+
+    /**
+     * Restituisce il primo elemento della selezione, strutturato in base ai nomi degli attributi.
+     * Attenzione: aggiunge il LIMIT relativo a fine della query.
+     *
+     * @since 2.4
+     *
+     * @param string $query Query da eseguire
+     *
+     * @return array
+     */
+    public function fetchOne($query)
+    {
+        if (!str_contains($query, 'LIMIT')) {
+            $query .= ' LIMIT 1';
+        }
+
         $result = $this->fetchArray($query);
-        if (is_array($result)) {
+
+        if (isset($result[0])) {
             return $result[0];
         }
 
@@ -390,7 +410,7 @@ class Database extends Util\Singleton
             throw new UnexpectedValueException();
         }
 
-        if (!is_array($array[0])) {
+        if (!isset($array[0]) || !is_array($array[0])) {
             $array = [$array];
         }
 

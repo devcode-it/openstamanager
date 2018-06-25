@@ -293,7 +293,3 @@ ADD FOREIGN KEY (`id_field`) REFERENCES `zz_fields`(`id`) ON DELETE CASCADE;
 
 ALTER TABLE `zz_prints`
 ADD FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
-
--- Aggiunta stampa ordini con costi
-UPDATE `zz_prints` SET `options` = '{"pricing":true}', `main` = '1' WHERE `zz_prints`.`name` = 'Ordine fornitore';
-INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `main`, `default`, `enabled`) VALUES (NULL, '25', '1', 'Ordine fornitore (senza costi)', 'Ordine fornitore (senza costi)', 'ordini', 'idordine', '{"pricing":false}', 'fa fa-print', '', '', '0', '0', '1', '1');

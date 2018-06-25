@@ -16,6 +16,10 @@ if ($self_edit) {
 } else {
     $idgruppo = intval(filter('idgruppo'));
     $id_utente = filter('id_utente');
+	
+	$nome_gruppo = $dbo->fetchArray('SELECT nome FROM zz_groups WHERE id='.prepare($idgruppo))[0]['nome'];
+	$nome_gruppo = substr($nome_gruppo, 0, -1).'o';
+
 }
 
 if (!empty($id_utente)) {
@@ -78,7 +82,7 @@ if (!$self_edit) {
 
 	<div class="row">
 		<div class="col-md-12">
-		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "ajax-source": "anagrafiche_utenti", "value": "'.$id_anagrafica.'" ]}
+		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "required": 1, "ajax-source": "anagrafiche_utenti", "value": "'.$id_anagrafica.'", "icon-after": "add|'.Modules::get("Anagrafiche")["id"].'|tipoanagrafica='.$nome_gruppo.'" ]}
 		</div>
     </div>';
 } else {
@@ -96,17 +100,29 @@ echo '
 	var min_length_username = '.$min_length_username.';
 	function do_submit(){
 		if( $("#password1").val() == "" || $("#password2").val() == "" )
-			alert("'.tr('Inserire una password valida').'.");
+			swal({
+				title: "'.tr('Inserire una password valida.').'",
+				type: "error",
+			});
 		else if( $("#password1").val() != $("#password2").val() )
-			alert("'.tr('Le password non coincidono').'.");
+			swal({
+				title: "'.tr('Le password non coincidono.').'",
+				type: "error",
+			});
 		else if( $("#password1").val().length < min_length )
-			alert("'.tr('La password deve essere lunga minimo _MIN_ caratteri!', [
-                '_MIN_' => $min_length_password,
-            ]).'");
+			swal({
+				title: "'.tr('La password deve essere lunga minimo _MIN_ caratteri!', [
+					'_MIN_' => $min_length_password,
+				]).'",
+				type: "error",
+			});
 		else if( $("#username").val().length < min_length_username )
-			alert("'.tr("L'username deve essere lungo minimo _MIN_ caratteri!", [
-                '_MIN_' => $min_length_username,
-            ]).'");
+			swal({
+				title: "'.tr('L\'username deve essere lungo minimo _MIN_ caratteri.', [
+					'_MIN_' => $min_length_username,
+				]).'",
+				type: "error",
+			});	
 		else
 			$("#link_form").submit();
 	}

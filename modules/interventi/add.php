@@ -14,10 +14,14 @@ $idimpianto = null;
 $idzona = null;
 $idtipointervento = null;
 $idstatointervento = null;
-$idtecnico = null;
 $richiesta = null;
-
 $impianti = [];
+//come tecnico posso aprire attività solo a mio nome
+if ($user['gruppo'] == 'Tecnici' AND  !empty($user['idanagrafica']) ) {
+	$idtecnico = $user['idanagrafica'];
+}else{
+	$idtecnico = null;
+}
 
 if (!empty($idanagrafica)) {
     $rs = $dbo->fetchArray('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));

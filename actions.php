@@ -220,7 +220,8 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     download($upload_dir.'/'.$rs[0]['filename'], $rs[0]['original']);
 } elseif (filter('op') == 'send-email') {
     $template = Mail::getTemplate($post['template']);
-
+    $id_account = $template['id_smtp'];
+    
     // Elenco degli allegati
     $attachments = [];
 
@@ -268,7 +269,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     }
 
     // Preparazione email
-    $mail = new Mail();
+    $mail = new Mail($id_account);
 
     // Conferma di lettura
     if (!empty($post['read_notify'])) {

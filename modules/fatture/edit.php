@@ -306,6 +306,14 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
                             <i class="fa fa-plus"></i> Ddt
                         </a>';
     }
+	
+	// Lettura ordini
+	$ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
+	$ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
+	echo '
+						<a class="btn btn-sm btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi ordine" data-target="#bs-popup">
+							<i class="fa fa-plus"></i> Ordine
+						</a>';
 
     // Lettura articoli
     $art_query = 'SELECT COUNT(*) AS tot FROM mg_articoli WHERE attivo = 1';

@@ -98,6 +98,11 @@ function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
 
     // Elimino la riga dal ddt
     $dbo->query('DELETE FROM `dt_righe_ddt` WHERE id='.prepare($idrigaddt).' AND idddt='.prepare($idddt));
+    
+    //Aggiorno lo stato dell'ordine
+    if(get_var('Cambia automaticamente stato ordini fatturati') && !empty($idordine)){
+        $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($idordine).'") WHERE id = '.prepare($idordine));
+    }
 
     // Elimino i seriali utilizzati dalla riga
     $dbo->query('DELETE FROM `mg_prodotti` WHERE id_articolo = '.prepare($idarticolo).' AND id_riga_ddt = '.prepare($idrigaddt));
@@ -281,6 +286,7 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
 function add_articolo_inddt($idddt, $idarticolo, $descrizione, $idiva, $qta, $idum, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT')
 {
     global $dir;
+    global $idordine;
 
     $dbo = Database::getConnection();
 
@@ -318,6 +324,9 @@ function add_articolo_inddt($idddt, $idarticolo, $descrizione, $idiva, $qta, $id
             // Decremento la quantità dal magazzino centrale
             add_movimento_magazzino($idarticolo, $qta, ['idddt' => $idddt]);
         }
+        
+        // Inserisco il riferimento dell'ordine alla riga
+        $dbo->query('UPDATE dt_righe_ddt SET idordine='.prepare($idordine).' WHERE id='.prepare($idriga));
     }
 
     return $idriga;

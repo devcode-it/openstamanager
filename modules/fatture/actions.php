@@ -217,13 +217,12 @@ switch (post('op')) {
         }
 
         // Se delle righe sono state create da un ordine, devo riportare la quantità evasa nella tabella degli ordini al valore di prima, riaggiungendo la quantità che sto togliendo
-        $rs = $dbo->fetchArray('SELECT qta, descrizione, idarticolo, idordine, idiva FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
+        $rs = $dbo->fetchArray('SELECT qta, descrizione, idarticolo, idordine, idddt, idiva FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
         foreach ($rs as $r) {
             $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$r['qta'].' WHERE descrizione='.prepare($r['descrizione']).' AND idarticolo='.prepare($r['idarticolo']).' AND idordine='.prepare($r['idordine']).' AND idiva='.prepare($r['idiva']));
         }
 
         // Se delle righe sono state create da un ddt, devo riportare la quantità evasa nella tabella dei ddt al valore di prima, riaggiungendo la quantità che sto togliendo
-        $rs = $dbo->fetchArray('SELECT qta, descrizione, idarticolo, idddt, idiva FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
         foreach ($rs as $r) {
             $dbo->query('UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$r['qta'].' WHERE descrizione='.prepare($r['descrizione']).' AND idarticolo='.prepare($r['idarticolo']).' AND idddt='.prepare($r['idddt']).' AND idiva='.prepare($r['idiva']));
         }
@@ -233,6 +232,20 @@ switch (post('op')) {
         $dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id_record));
         $dbo->query('DELETE FROM mg_movimenti WHERE iddocumento='.prepare($id_record));
 		$dbo->query('DELETE FROM co_movimenti WHERE iddocumento='.prepare($id_record));
+        
+        //Aggiorno gli stati dei ddt
+        if(get_var('Cambia automaticamente stato ddt fatturati')){
+            foreach ($rs as $r) {
+                $dbo->query('UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="'.get_stato_ddt($r['idddt']).'") WHERE id = '.prepare($r['idddt']));
+            }
+        }
+        
+        //Aggiorno gli stati degli ordini
+        if(get_var('Cambia automaticamente stato ordini fatturati')){
+            foreach ($rs as $r) {
+                $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($r['idordine']).'") WHERE id = '.prepare($r['idordine']));
+            }
+        }
 
         // Azzeramento collegamento della rata contrattuale alla pianificazione
         $dbo->query('UPDATE co_ordiniservizio_pianificazionefatture SET iddocumento=0 WHERE iddocumento='.prepare($id_record));
@@ -1258,8 +1271,9 @@ switch (post('op')) {
             $idarticolo = post('idarticolo');
             
             // Leggo se la riga è collegata a un ddt, per aggiornargli lo stato
-            $rs = $dbo->fetchArray('SELECT qta, descrizione, idarticolo, idddt, idiva FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga));
+            $rs = $dbo->fetchArray('SELECT qta, descrizione, idarticolo, idddt, idordine, idiva FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga));
             $idddt = $rs[0]['idddt'];
+            $idordine = $rs[0]['idordine'];
 
             if (!rimuovi_articolo_dafattura($idarticolo, $id_record, $idriga)) {
                 $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
@@ -1272,8 +1286,17 @@ switch (post('op')) {
                     // Se nella fattura non c'é più il ddt rimosso, aggiorno lo stato del ddt in "Bozza"
                     $rs = $dbo->fetchArray('SELECT id FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idddt='.prepare($idddt));
                 
-                    if( sizeof($rs) == 0 ){
+                    if( sizeof($rs) == 0 && get_var('Cambia automaticamente stato ddt fatturati') ){
                         $dbo->query('UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="Bozza") WHERE id = '.prepare($idddt));
+                    }
+                }
+                
+                if( !empty($idordine) ){
+                    // Se nella fattura non c'é più l'ordine rimosso, aggiorno lo stato dell'ordine in "Bozza"
+                    $rs = $dbo->fetchArray('SELECT id FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idordine='.prepare($idordine));
+                
+                    if( sizeof($rs) == 0 && get_var('Cambia automaticamente stato ordini fatturati') ){
+                        $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="Bozza") WHERE id = '.prepare($idordine));
                     }
                 }
                 
@@ -1404,8 +1427,9 @@ switch (post('op')) {
 
             // Se la riga è stata creata da un ddt, devo riportare la quantità evasa nella tabella dei ddt
             // al valore di prima, riaggiungendo la quantità che sto togliendo
-            $rs = $dbo->fetchArray('SELECT qta, descrizione, idarticolo, idddt, idiva FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga));
+            $rs = $dbo->fetchArray('SELECT qta, descrizione, idarticolo, idddt, idordine, idiva FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga));
             $idddt = $rs[0]['idddt'];
+            $idordine = $rs[0]['idordine'];
 
             // Rimpiazzo la quantità nei ddt
             $dbo->query('UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$rs[0]['qta'].' WHERE descrizione='.prepare($rs[0]['descrizione']).' AND idarticolo='.prepare($rs[0]['idarticolo']).' AND idddt='.prepare($rs[0]['idddt']).' AND idiva='.prepare($rs[0]['idiva']));
@@ -1417,8 +1441,17 @@ switch (post('op')) {
                     // Se nella fattura non c'é più il ddt rimosso, aggiorno lo stato del ddt in "Bozza"
                     $rs = $dbo->fetchArray('SELECT id FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idddt='.prepare($idddt));
                 
-                    if( sizeof($rs) == 0 ){
+                    if( sizeof($rs) == 0 && get_var('Cambia automaticamente stato ddt fatturati') ){
                         $dbo->query('UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="Bozza") WHERE id = '.prepare($idddt));
+                    }
+                }
+                
+                if( !empty($idordine) ){
+                    // Se nella fattura non c'é più l'ordine rimosso, aggiorno lo stato dell'ordine in "Bozza"
+                    $rs = $dbo->fetchArray('SELECT id FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idordine='.prepare($idordine));
+                
+                    if( sizeof($rs) == 0 && get_var('Cambia automaticamente stato ordini fatturati') ){
+                        $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="Bozza") WHERE id = '.prepare($idordine));
                     }
                 }
                 
@@ -1463,6 +1496,75 @@ switch (post('op')) {
         }
 
         break;
+    
+    // aggiungi righe da ordine
+    case 'add_ordine':
+        $idordine = $post['iddocumento'];
+
+        $rs = $dbo->fetchArray('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
+        $idconto = $rs[0]['idconto'];
+
+        // Lettura di tutte le righe della tabella in arrivo
+        foreach ($post['qta_da_evadere'] as $i => $value) {
+            // Processo solo le righe da evadere
+            if ($post['evadere'][$i] == 'on') {
+                $idrigaordine = $i;
+                $idarticolo = post('idarticolo')[$i];
+                $descrizione = post('descrizione')[$i];
+
+                $qta = $post['qta_da_evadere'][$i];
+                $um = post('um')[$i];
+
+                $subtot = $post['subtot'][$i] * $qta;
+                $sconto = $post['sconto'][$i];
+                $sconto = $sconto * $qta;
+
+                $qprc = 'SELECT tipo_sconto, sconto_unitario FROM or_righe_ordini WHERE id='.prepare($idrigaordine);
+                $rsprc = $dbo->fetchArray($qprc);
+
+                $sconto_unitario = $rsprc[0]['sconto_unitario'];
+                $tipo_sconto = $rsprc[0]['tipo_sconto'];
+
+                $idiva = post('idiva')[$i];
+
+                // Calcolo l'iva indetraibile
+                $q = 'SELECT percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva);
+                $rs = $dbo->fetchArray($q);
+                $iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
+                $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
+
+                // Leggo la descrizione iva
+                $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
+                $rs = $dbo->fetchArray($query);
+                $desc_iva = $rs[0]['descrizione'];
+
+                // Se sto aggiungendo un articolo uso la funzione per inserirlo e incrementare la giacenza
+                if (!empty($idarticolo)) {
+                    $idiva_acquisto = $idiva;
+                    $prezzo_acquisto = $subtot;
+                    $riga = add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva_acquisto, $qta, $prezzo_acquisto, 0, 0, 'UNT', 0, $idconto);
+
+                    // Lettura lotto, serial, altro dalla riga dell'ordine
+                    $dbo->query('INSERT INTO mg_prodotti (id_riga_documento, id_articolo, dir, serial, lotto, altro) SELECT '.prepare($riga).', '.prepare($idarticolo).', '.prepare($dir).', serial, lotto, altro FROM mg_prodotti AS t WHERE id_riga_ordine='.prepare($idrigaordine));
+                }
+
+                // Inserimento riga normale
+                elseif ($qta != 0) {
+                    $query = 'INSERT INTO co_righe_documenti(iddocumento, idarticolo, descrizione, idconto, idordine, idiva, desc_iva, iva, iva_indetraibile, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, `order`) VALUES('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($descrizione).', '.prepare($idconto).', '.prepare($idordine).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
+                    $dbo->query($query);
+                }
+
+                // Scalo la quantità dall ordine
+                $dbo->query('UPDATE or_righe_ordini SET qta_evasa = qta_evasa+'.$qta.' WHERE id='.prepare($idrigaordine));
+            }
+        }
+
+        ricalcola_costiagg_fattura($id_record);
+
+        $_SESSION['infos'][] = tr('Aggiunti nuovi articoli in fattura!');
+
+        break;
+
 }
 
 // Aggiornamento stato dei ddt presenti in questa fattura in base alle quantità totali evase

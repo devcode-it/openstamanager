@@ -13,17 +13,17 @@ $idconto = $rs[0]['idconto'];
 if ($module['name'] == 'Fatture di vendita') {
     $dir = 'entrata';
     $conti = 'conti-vendite';
-    
+
     // Se non ho letto un conto dall'ultima riga inserita, lo leggo dalle impostazioni
-    if (empty($idconto )) {
+    if (empty($idconto)) {
         $idconto = get_var('Conto predefinito fatture di vendita');
     }
 } else {
     $dir = 'uscita';
     $conti = 'conti-acquisti';
-    
+
     // Se non ho letto un conto dall'ultima riga inserita, lo leggo dalle impostazioni
-    if (empty($idconto )) {
+    if (empty($idconto)) {
         $idconto = get_var('Conto predefinito fatture di acquisto');
     }
 }

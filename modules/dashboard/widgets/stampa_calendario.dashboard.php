@@ -31,12 +31,9 @@ echo '
 	</div>
 	
 </form>';
-	
-	
+
 echo '<script src="'.$rootdir.'/lib/init.js"></script>';
 echo '<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/base/jquery-ui.css">';
-
-
 
 ?>
 <style>
@@ -48,7 +45,7 @@ echo '<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/aj
 <script>
 
 function stampa_calendario (){
-	window.open('<?php echo $rootdir ?>/pdfgen.php?id_print=<?php echo $id_print; ?>');
+	window.open('<?php echo $rootdir; ?>/pdfgen.php?id_print=<?php echo $id_print; ?>');
 	//$('button[type=submit]').removeAttr("disabled");
 	//$('button[type=submit]').prop("disabled", false);
 	return false;

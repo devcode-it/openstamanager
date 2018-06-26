@@ -93,7 +93,7 @@ switch (post('op')) {
 
         //Creo il modello di prima nota
 
-        if(post('crea_modello')=='1'){
+        if (post('crea_modello') == '1') {
             $idmastrino = get_new_idmastrino('co_movimenti_modelli');
 
             for ($i = 0; $i < sizeof($post['idconto']); ++$i) {

@@ -372,10 +372,10 @@ if (!empty($options) && $options != 'custom') {
 									<div class="row">
 										<div class="col-md-12">
 											{[ "type": "textarea", "label": "'.tr('Query').'", "name": "query['.$num.']", "value": "'.prepareToField($additional['clause']).'"';
-											if (!$editable) {
-											echo ', "readonly": "1"';
-											}
-											echo ' ]}
+        if (!$editable) {
+            echo ', "readonly": "1"';
+        }
+        echo ' ]}
 										</div>
 									</div>
 								

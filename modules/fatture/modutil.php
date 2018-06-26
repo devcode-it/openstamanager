@@ -670,7 +670,7 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
     if (empty($idddt)) {
         $idddt = 0;
     }
-    
+
     if (empty($idordine)) {
         $idordine = 0;
     }
@@ -716,7 +716,7 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
 
         // Inserisco il riferimento del ddt alla riga
         $dbo->query('UPDATE co_righe_documenti SET idddt='.prepare($idddt).' WHERE id='.prepare($idriga));
-        
+
         // Inserisco il riferimento dell'ordine alla riga
         $dbo->query('UPDATE co_righe_documenti SET idordine='.prepare($idordine).' WHERE id='.prepare($idriga));
     }
@@ -787,14 +787,14 @@ function rimuovi_articolo_dafattura($idarticolo, $iddocumento, $idrigadocumento)
     }
     // Elimino la riga dal documento
     $dbo->query('DELETE FROM `co_righe_documenti` WHERE id='.prepare($idrigadocumento).' AND iddocumento='.prepare($iddocumento));
-    
+
     //Aggiorno lo stato dell'ordine
-    if(get_var('Cambia automaticamente stato ordini fatturati') && !empty($idordine)){
+    if (get_var('Cambia automaticamente stato ordini fatturati') && !empty($idordine)) {
         $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($idordine).'") WHERE id = '.prepare($idordine));
     }
-    
+
     //Aggiorno lo stato del ddt
-    if(get_var('Cambia automaticamente stato ddt fatturati') && !empty($idddt)){
+    if (get_var('Cambia automaticamente stato ddt fatturati') && !empty($idddt)) {
         $dbo->query('UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="'.get_stato_ddt($idddt).'") WHERE id = '.prepare($idddt));
     }
 

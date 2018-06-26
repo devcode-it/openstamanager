@@ -29,7 +29,6 @@ echo '
             {[ "type": "select", "label": "'.tr('Tipo di fattura').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT * FROM co_tipidocumento WHERE dir=\'entrata\'" ]}
         </div>';
 
-
 // Sezionale
 echo '
         <div class="col-md-4">

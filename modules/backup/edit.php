@@ -12,7 +12,6 @@ if (!extension_loaded('zip')) {
 </div>';
 }
 
-
 if (starts_with($backup_dir, $docroot)) {
     echo '
     <div class="alert alert-warning">
@@ -27,7 +26,6 @@ if (!is_writable($backup_dir)) {
         '.tr('Verificare che la cartella abbia i permessi di scrittura abilitati').'.
     </div>';
 }
-
 
 echo '
 <div class="callout callout-success">
@@ -54,7 +52,6 @@ echo '
     <button type="button" class="btn btn-primary pull-right" onclick="continue_backup()"><i class="fa fa-database"></i> '.tr('Crea backup').'...</button>
     </div>
 </div-->';
-
 
 //Lettura file di backup
 if (file_exists($backup_dir)) {

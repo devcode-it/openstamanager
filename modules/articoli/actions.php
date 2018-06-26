@@ -58,9 +58,9 @@ switch (post('op')) {
         if ($movimento != 0) {
             $descrizione_movimento = post('descrizione_movimento');
             $data_movimento = post('data_movimento');
-            if($descrizione_movimento!='' && $data_movimento!=''){
+            if ($descrizione_movimento != '' && $data_movimento != '') {
                 add_movimento_magazzino($id_record, $movimento, [], $descrizione_movimento, $data_movimento);
-            }else{
+            } else {
                 add_movimento_magazzino($id_record, $movimento);
             }
         }

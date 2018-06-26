@@ -132,41 +132,38 @@ switch (get('op')) {
         }
 
     break;
-    
+
     case 'load_intreventi':
-    
+
         $mese = $_GET['mese'];
-        
+
         //Righe inserite
         $qp = "SELECT co_righe_contratti.id, idcontratto, richiesta, DATE_FORMAT( data_richiesta, '%m%Y') AS mese, data_richiesta, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento FROM (co_righe_contratti INNER JOIN co_contratti ON co_righe_contratti.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL
         UNION SELECT co_ordiniservizio.id, idcontratto, '', data_scadenza, DATE_FORMAT( data_scadenza, '%m%Y') AS mese, an_anagrafiche.ragione_sociale, 'ordine' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento='ODS') AS tipointervento FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL ORDER BY data_richiesta ASC";
         $rsp = $dbo->fetchArray($qp);
         $tot_dapianificare = sizeof($rsp);
         $da_pianificare = 0;
-        
-        if( $tot_dapianificare>0 ){
+
+        if ($tot_dapianificare > 0) {
             $prev_mese = '';
 
             //Elenco interventi da pianificare
             foreach ($rsp as $r) {
-                if($r['mese']==$mese){
-                    
-                    if(date('Ymd', strtotime($r['data_richiesta']))<date('Ymd')){
+                if ($r['mese'] == $mese) {
+                    if (date('Ymd', strtotime($r['data_richiesta'])) < date('Ymd')) {
                         $class = 'fc-event-danger';
-                    }else{
+                    } else {
                         $class = 'fc-event-primary';
                     }
-                    
+
                     echo '
                     <div class="fc-event '.$class.'" data-id="'.$r['id'].'" data-idcontratto="'.$r['idcontratto'].'"><b>'.$r['ragione_sociale'].'</b><br>'.Translator::dateToLocale($r['data_richiesta']).' ('.$r['tipointervento'].')'.(!empty($r['richiesta']) ? ' - '.$r['richiesta'] : '').'</div>';
-                    $da_pianificare ++;
+                    ++$da_pianificare;
                 }
             }
-            
-        }
-        else if($da_pianificare==0){
+        } elseif ($da_pianificare == 0) {
             echo '<br><small class="help-block">'.tr('Non ci sono interventi da pianificare per questo mese').'</small>';
         }
-        
+
         break;
 }

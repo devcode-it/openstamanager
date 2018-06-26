@@ -159,16 +159,16 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 			<div class="row">
 				<div class="col-md-12" id="tecnici">
 					<?php
-						if (file_exists($docroot.'/modules/interventi/custom/ajax_tecnici.php')) {
-					?>
+                        if (file_exists($docroot.'/modules/interventi/custom/ajax_tecnici.php')) {
+                            ?>
 						<script>$('#tecnici').load('<?php echo $rootdir; ?>/modules/interventi/custom/ajax_tecnici.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
 					<?php
-						}else{
-					?>
+                        } else {
+                            ?>
 						<script>$('#tecnici').load('<?php echo $rootdir; ?>/modules/interventi/ajax_tecnici.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
 					<?php
-						}
-					?>
+                        }
+                    ?>
 				</div>
 			</div>
 		</div>
@@ -184,19 +184,19 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
         <div class="panel-body">
             <div id="articoli">
 				<?php
-					if (file_exists($docroot.'/modules/interventi/custom/ajax_articoli.php')) {
-						include $docroot.'/modules/interventi/custom/ajax_articoli.php';
-					}else{
-						include $docroot.'/modules/interventi/ajax_articoli.php';
-					}
-				?>
+                    if (file_exists($docroot.'/modules/interventi/custom/ajax_articoli.php')) {
+                        include $docroot.'/modules/interventi/custom/ajax_articoli.php';
+                    } else {
+                        include $docroot.'/modules/interventi/ajax_articoli.php';
+                    }
+                ?>
             </div>
 
             <?php if (!$records[0]['flag_completato']) {
-                        ?>
+                    ?>
                 <button type="button" class="btn btn-primary" onclick="launch_modal( '<?php echo tr('Aggiungi articolo'); ?>', '<?php echo $rootdir; ?>/modules/interventi/add_articolo.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&idriga=0&idautomezzo='+$('#idautomezzo').find(':selected').val(), 1);"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi articolo'); ?>...</button>
             <?php
-                    } ?>
+                } ?>
         </div>
     </div>
 
@@ -209,19 +209,19 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
         <div class="panel-body">
             <div id="righe">
                 <?php
-					if (file_exists($docroot.'/modules/interventi/custom/ajax_righe.php')) {
-						include $docroot.'/modules/interventi/custom/ajax_righe.php';
-					}else{
-						include $docroot.'/modules/interventi/ajax_righe.php';
-					}
-				?>
+                    if (file_exists($docroot.'/modules/interventi/custom/ajax_righe.php')) {
+                        include $docroot.'/modules/interventi/custom/ajax_righe.php';
+                    } else {
+                        include $docroot.'/modules/interventi/ajax_righe.php';
+                    }
+                ?>
             </div>
 
             <?php if (!$records[0]['flag_completato']) {
-                        ?>
+                    ?>
                 <button type="button" class="btn btn-primary" onclick="launch_modal( '<?php echo tr('Aggiungi altre spese'); ?>', '<?php echo $rootdir; ?>/modules/interventi/add_righe.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>', 1 );"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi altre spese'); ?>...</button>
             <?php
-                    } ?>
+                } ?>
         </div>
     </div>
 
@@ -235,16 +235,16 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 			<div class="row">
 				<div class="col-md-12" id="costi">
 					<?php
-						if (file_exists($docroot.'/modules/interventi/custom/ajax_costi.php')) {
-					?>
+                        if (file_exists($docroot.'/modules/interventi/custom/ajax_costi.php')) {
+                            ?>
 						<script>$('#costi').load('<?php echo $rootdir; ?>/modules/interventi/custom/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
 					<?php
-						}else{
-					?>
+                        } else {
+                            ?>
 						<script>$('#costi').load('<?php echo $rootdir; ?>/modules/interventi/ajax_costi.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');</script>
 					<?php
-						}
-					?>
+                        }
+                    ?>
 				</div>
 			</div>
 		</div>

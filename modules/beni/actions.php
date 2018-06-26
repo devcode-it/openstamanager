@@ -40,14 +40,13 @@ switch (post('op')) {
 
         $documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE idaspettobeni='.prepare($id_record).'
                      UNION SELECT id FROM co_documenti WHERE idaspettobeni='.prepare($id_record));
-        
+
         if (isset($id_record) && empty($documenti)) {
             $dbo->query('DELETE FROM `dt_aspettobeni` WHERE `id`='.prepare($id_record));
             $_SESSION['infos'][] = tr('Tipologia di _TYPE_ eliminata con successo.', [
                 '_TYPE_' => 'bene',
             ]);
-        }else{
-
+        } else {
             $_SESSION['errors'][] = tr('Sono presenti dei documenti collegati a questo aspetto beni.');
         }
 

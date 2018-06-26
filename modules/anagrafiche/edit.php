@@ -156,8 +156,8 @@ if (!$cliente) {
 
 	<?php
 
-	if ($cliente || $fornitore) {
-		?>
+    if ($cliente || $fornitore) {
+        ?>
 		
 		
 		<!-- ACQUISTI -->
@@ -239,8 +239,8 @@ if (!$cliente) {
 		<div class="clearfix" ></div>
 
 	<?php
-	}
-	?>
+    }
+    ?>
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -284,9 +284,9 @@ if (!$cliente) {
 				</div>
 				
 				<?php
-				//se non è l'anagrafica azienda, ma  cliente o fornitore
-				 if ((!str_contains($records[0]['idtipianagrafica'], $id_azienda)) or (($cliente or $fornitore)))  {
-				?>	
+                //se non è l'anagrafica azienda, ma  cliente o fornitore
+                 if ((!str_contains($records[0]['idtipianagrafica'], $id_azienda)) or (($cliente or $fornitore))) {
+                     ?>	
 				<div class="row">
 					<div class="col-md-3">
 						{[ "type": "text", "label": "<?php echo tr('Appoggio bancario'); ?>", "name": "appoggiobancario", "value": "$appoggiobancario$" ]}
@@ -305,8 +305,8 @@ if (!$cliente) {
 					</div>
 				</div>
 				<?php
-					}
-				?>
+                 }
+                ?>
 				
 				
 				<div class="row">
@@ -338,25 +338,25 @@ if (!$cliente) {
 					<div class="col-md-12">
 						{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Tipo di anagrafica'); ?>", "name": "idtipoanagrafica[]", "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica WHERE t.descrizione = 'Azienda'  AND deleted = 0) ORDER BY descrizione", "value": "$idtipianagrafica$" ]}
 						<?php
-						if (str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
-							echo '
+                        if (str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
+                            echo '
 						<p class=\'badge badge-info\' >'.tr('Questa anagrafica appartiene alla tipologia "Azienda"').'.</p>';
-						}
-						?>
+                        }
+                        ?>
 					</div>
 				</div>
 				<div class="row">
 					<?php
-					if (in_array('Tecnico', explode(',', $records[0]['tipianagrafica']))) {
-						?>
+                    if (in_array('Tecnico', explode(',', $records[0]['tipianagrafica']))) {
+                        ?>
 					<div class="col-md-3">
 						{[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength='7'", "icon-after": "<div class='img-circle square'></div>" ]}
 					</div>
 					<?php
-					} ?>
+                    } ?>
 					<?php
-					if (in_array('Cliente', explode(',', $records[0]['tipianagrafica']))) {
-						?>
+                    if (in_array('Cliente', explode(',', $records[0]['tipianagrafica']))) {
+                        ?>
 						<div class="col-md-6">
 							{[ "type": "select", "label": "Agenti secondari", "multiple": "1", "name": "idagenti[]", "values": "query=SELECT an_anagrafiche.idanagrafica AS id,  IF(deleted=1, CONCAT(ragione_sociale, ' (Eliminato)'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione='Agente' AND deleted=0 AND an_anagrafiche.idanagrafica NOT IN (SELECT idagente FROM an_anagrafiche WHERE  idanagrafica = <?php echo prepare($records[0]['idanagrafica']); ?> )) OR (an_anagrafiche.idanagrafica IN (SELECT idagente FROM an_anagrafiche_agenti WHERE idanagrafica =  <?php echo prepare($records[0]['idanagrafica']); ?> ) ) ORDER BY ragione_sociale", "value": "$idagenti$" ]}
 						</div>
@@ -365,7 +365,7 @@ if (!$cliente) {
 							{[ "type": "select", "label": "<?php echo tr('Relazione con il cliente'); ?>", "name": "idrelazione", "values": "query=SELECT id, descrizione, colore AS _bgcolor_ FROM an_relazioni ORDER BY descrizione", "value": "$idrelazione$" ]}
 						</div>
 					<?php
-					} ?>
+                    } ?>
 				</div>
 
 
@@ -428,10 +428,9 @@ if (!empty($google)) {
 
 <?php
 
-if (!$records[0]['deleted']){
-	
-	//fatture, ddt, preventivi, contratti, ordini, interventi, utenti collegati a questa anagrafica
-	$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idanagrafica` = '.prepare($id_record).')
+if (!$records[0]['deleted']) {
+    //fatture, ddt, preventivi, contratti, ordini, interventi, utenti collegati a questa anagrafica
+    $elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idanagrafica` = '.prepare($id_record).')
 
 		UNION
 	SELECT `zz_users`.`id`, `zz_users`.`created_at` AS data, `zz_users`.`username` AS numero, 0 AS `numero_esterno`, "Utente" AS tipo_documento, 0 AS `dir` FROM `zz_users` WHERE `zz_users`.`idanagrafica` = '.prepare($id_record).'
@@ -451,76 +450,64 @@ if (!$records[0]['deleted']){
 	UNION
 	SELECT `co_preventivi`.`id`, `co_preventivi`.`data_bozza`, `co_preventivi`.`numero`,  0 AS numero_esterno , "Preventivo" AS tipo_documento, 0 AS dir FROM `co_preventivi` WHERE `co_preventivi`.`id` IN (SELECT `idpreventivo` FROM `co_righe_preventivi` WHERE `idanagrafica` = '.prepare($id_record).')  ORDER BY `data`');
 
-	if (!empty($elementi)) {
-		echo '
+    if (!empty($elementi)) {
+        echo '
 		<div class="alert alert-warning">
 			<p>'.tr('_NUM_ altr_I_ document_I_ collegat_I_', [
-				'_NUM_' => count($elementi),
-				'_I_' => (count($elementi) > 1) ? tr('i') : tr('o'),
-			]).':</p>
+                '_NUM_' => count($elementi),
+                '_I_' => (count($elementi) > 1) ? tr('i') : tr('o'),
+            ]).':</p>
 		<ul>';
 
-		foreach ($elementi as $elemento) {
-			$descrizione = tr('_DOC_  _NUM_ del _DATE_', [
-				'_DOC_' => $elemento['tipo_documento'],
-				'_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
-				'_DATE_' => Translator::dateToLocale($elemento['data']),
-			]);
+        foreach ($elementi as $elemento) {
+            $descrizione = tr('_DOC_  _NUM_ del _DATE_', [
+                '_DOC_' => $elemento['tipo_documento'],
+                '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
+                '_DATE_' => Translator::dateToLocale($elemento['data']),
+            ]);
 
-			//se non è un preventivo è un ddt o una fattura
-			//se non è un ddt è una fattura.
-			if (in_array($elemento['tipo_documento'], ['Utente'])) {
-				$modulo = 'Utenti e permessi';
-			}
-			elseif (in_array($elemento['tipo_documento'], ['Intervento'])) {
-				$modulo = 'Interventi';
-			} 
-			elseif (in_array($elemento['tipo_documento'], ['Preventivo'])) {
-				$modulo = 'Preventivi';
-			}
-			elseif (in_array($elemento['tipo_documento'], ['Contratto'])) {
-				$modulo = 'Contratti';
-			}
-			elseif (in_array($elemento['tipo_documento'], ['Ordine cliente', 'Ordine fornitore'])) {
-				$modulo = ($elemento['dir'] == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
-			}
-			elseif (in_array($elemento['tipo_documento'], ['Ddt di vendita', 'Ddt di acquisto'])) {
-				$modulo = ($elemento['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
-			}
-			else {
-				$modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
-			}
+            //se non è un preventivo è un ddt o una fattura
+            //se non è un ddt è una fattura.
+            if (in_array($elemento['tipo_documento'], ['Utente'])) {
+                $modulo = 'Utenti e permessi';
+            } elseif (in_array($elemento['tipo_documento'], ['Intervento'])) {
+                $modulo = 'Interventi';
+            } elseif (in_array($elemento['tipo_documento'], ['Preventivo'])) {
+                $modulo = 'Preventivi';
+            } elseif (in_array($elemento['tipo_documento'], ['Contratto'])) {
+                $modulo = 'Contratti';
+            } elseif (in_array($elemento['tipo_documento'], ['Ordine cliente', 'Ordine fornitore'])) {
+                $modulo = ($elemento['dir'] == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
+            } elseif (in_array($elemento['tipo_documento'], ['Ddt di vendita', 'Ddt di acquisto'])) {
+                $modulo = ($elemento['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
+            } else {
+                $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
+            }
 
-			$id = $elemento['id'];
+            $id = $elemento['id'];
 
-			echo '
+            echo '
 			<li>'.Modules::link($modulo, $id, $descrizione).'</li>';
-		}
+        }
 
-		echo '
+        echo '
 			</ul>
 			<p>'.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale.').'</p>
 		</div>';
-	}
+    }
 
-
-
-	if (!str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
-		echo '
+    if (!str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
+        echo '
 	<a class="btn btn-danger ask" data-backto="record-list">
 		<i class="fa fa-trash"></i> '.tr('Elimina').'
 	</a>';
-	}else{
-
-		echo '
+    } else {
+        echo '
 	<div class=\'alert alert-warning\' >'.tr('Questa è l\'anagrafica "Azienda" e non è possibile eliminarla').'.</div>';
-	}
-	
-}else{
-	
-			echo '
+    }
+} else {
+    echo '
 	<div class=\'alert alert-danger\' >'.tr('Questa anagrafica è stata eliminata').'.</div>';
-	
 }
 
 ?>

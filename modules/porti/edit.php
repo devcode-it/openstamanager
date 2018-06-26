@@ -27,8 +27,8 @@ $documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE idporto='.prepare($id_r
 			 UNION SELECT id FROM co_documenti WHERE idporto='.prepare($id_record).'
 			 UNION SELECT id FROM co_preventivi WHERE idporto='.prepare($id_record));
 
-if (!empty($documenti)){
-echo '
+if (!empty($documenti)) {
+    echo '
 <div class="alert alert-danger">
     '.tr('Ci sono _NUM_ documenti collegati', [
         '_NUM_' => count($documenti),

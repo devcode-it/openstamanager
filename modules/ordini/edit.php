@@ -36,18 +36,18 @@ if ($module['name'] == 'Ordini cliente') {
 
 				<div class="col-md-3">
                     <?php
-                    if(get_var("Cambia automaticamente stato ordini fatturati")){
-                        if($records[0]['stato']=='Evaso' || $records[0]['stato']=='Parzialmente evaso' || $records[0]['stato']=='Fatturato' || $records[0]['stato']=='Parzialmente fatturato'){
-                    ?>
+                    if (get_var('Cambia automaticamente stato ordini fatturati')) {
+                        if ($records[0]['stato'] == 'Evaso' || $records[0]['stato'] == 'Parzialmente evaso' || $records[0]['stato'] == 'Fatturato' || $records[0]['stato'] == 'Parzialmente fatturato') {
+                            ?>
                             {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine", "value": "$idstatoordine$", "extra": "readonly" ]}
-                    <?php    
-                        }else{
-                    ?>
+                    <?php
+                        } else {
+                            ?>
                             {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine WHERE descrizione IN('Bozza')", "value": "$idstatoordine$" ]}
                     <?php
                         }
-                    }else{
-                    ?>
+                    } else {
+                        ?>
                     {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine", "value": "$idstatoordine$" ]}
                     <?php
                     }
@@ -112,18 +112,16 @@ if ($module['name'] == 'Ordini cliente') {
 		<div class="pull-left">
 			<?php 
 
-				if ( $records[0]['flag_completato'] == 0 ) {
-             
-            ?>
+                if ($records[0]['flag_completato'] == 0) {
+                    ?>
             <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ordini/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_articolo" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Articolo'); ?></a>
 
             <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ordini/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_riga" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Riga'); ?></a>
 
             <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ordini/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_descrizione" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Descrizione'); ?></a>
 			<?php
+                }
 
-                } 
-                
             ?>
 		</div>
 		<div class="clearfix"></div>
@@ -186,8 +184,8 @@ if (!empty($elementi)) {
 
 <script>
 <?php
-if ( $records[0]['flag_completato'] ) {
-?>
+if ($records[0]['flag_completato']) {
+    ?>
     $('#tipo_sconto_generico').prop('disabled', true);
 <?php
 }

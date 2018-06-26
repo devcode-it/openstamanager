@@ -3,8 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 if (!in_array($records[0]['stato'], ['Evaso', 'Fatturato', 'Parzialmente fatturato'])) {
-
-echo '
+    echo '
 	<div class="dropdown">
 	<button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 		<i class="fa fa-magic"></i>&nbsp;'.tr('Crea').'...
@@ -24,5 +23,4 @@ echo '
 
 		</ul>
 	</div>';
-
 }

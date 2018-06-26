@@ -407,7 +407,7 @@ function create_thumbnails($tmp, $filename, $dir)
 function get_client_ip()
 {
     $ipaddress = '';
-	if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
         $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
     } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
         $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -417,10 +417,10 @@ function get_client_ip()
         $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
     } elseif (!empty($_SERVER['HTTP_FORWARDED'])) {
         $ipaddress = $_SERVER['HTTP_FORWARDED'];
-    } elseif (!empty($_SERVER['REMOTE_ADDR']) AND $_SERVER['REMOTE_ADDR']!='127.0.0.1' ) {
+    } elseif (!empty($_SERVER['REMOTE_ADDR']) and $_SERVER['REMOTE_ADDR'] != '127.0.0.1') {
         $ipaddress = $_SERVER['REMOTE_ADDR'];
-    }  elseif (!empty(getHostByName(getHostName()))){
-        $ipaddress = getHostByName(getHostName());
+    } elseif (!empty(gethostbyname(gethostname()))) {
+        $ipaddress = gethostbyname(gethostname());
     } else {
         $ipaddress = 'UNKNOWN';
     }

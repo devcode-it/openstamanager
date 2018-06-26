@@ -50,14 +50,11 @@ switch (filter('op')) {
                      UNION SELECT id FROM co_documenti WHERE idcausalet='.prepare($id_record));
 
         if (isset($id_record) && empty($documenti)) {
-
             $dbo->query('DELETE FROM `dt_causalet` WHERE `id`='.prepare($id_record));
             $_SESSION['infos'][] = tr('Tipologia di _TYPE_ eliminata con successo.', [
                 '_TYPE_' => 'causale',
             ]);
-
-        }else{
-
+        } else {
             $_SESSION['errors'][] = tr('Sono presenti dei documenti collegati a questa causale.');
         }
 

@@ -70,9 +70,8 @@ include_once __DIR__.'/../../core.php';
         </tr>';
 
     for ($i = 0; $i < 10; ++$i) {
-		
-		($i<=1) ? $required = 1 : $required = 0;
-			
+        ($i <= 1) ? $required = 1 : $required = 0;
+
         // Conto
         echo '
 			<tr>

@@ -37,15 +37,13 @@ switch (post('op')) {
             $dbo->query($query);
 
             $id_record = $dbo->lastInsertedID();
-			
-			 if (isAjaxRequest()) {
-				echo json_encode(['id' => $id_record, 'text' => $nome.' - '.$descrizione]);
-			}
-		
+
+            if (isAjaxRequest()) {
+                echo json_encode(['id' => $id_record, 'text' => $nome.' - '.$descrizione]);
+            }
+
             $_SESSION['infos'][] = tr('Aggiunta una nuova zona!');
         }
-
-       
 
         break;
 

@@ -12,8 +12,8 @@ switch ($resource) {
         if (!empty($search)) {
             $search_fields[] = 'descrizione LIKE '.prepare('%'.$search.'%');
         }
-		
-		$custom['tempo_standard'] = 'tempo_standard';
+
+        $custom['tempo_standard'] = 'tempo_standard';
 
         break;
 }

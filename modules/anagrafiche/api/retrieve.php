@@ -13,9 +13,9 @@ switch ($resource) {
         }
 
         break;
-    
-    case 'clienti':    
-        $q = "SELECT AN.idanagrafica, 
+
+    case 'clienti':
+        $q = 'SELECT AN.idanagrafica, 
                     AN.ragione_sociale,
                     AN.piva, 
                     AN.codice_fiscale, 
@@ -41,14 +41,14 @@ switch ($resource) {
                 HAVING  1=1 AND 
                         AN.deleted=0 AND 
                         AN.idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica=1)
-                ORDER BY AN.ragione_sociale";        
+                ORDER BY AN.ragione_sociale';
 
-            $results = $dbo->fetchArray( $q );
+            $results = $dbo->fetchArray($q);
 
         break;
 }
 
 return [
-    'an_anagrafiche', 
-    'clienti', 
+    'an_anagrafiche',
+    'clienti',
 ];

@@ -85,8 +85,8 @@ switch ($op) {
 
             $id_record = $dbo->lastInsertedID();
 
-            if (isAjaxRequest() && post('source')!='') {
-                echo json_encode(['id' => $id_record, 'text' => $matricola." - ".$nome]);
+            if (isAjaxRequest() && post('source') != '') {
+                echo json_encode(['id' => $id_record, 'text' => $matricola.' - '.$nome]);
             }
 
             $_SESSION['infos'][] = tr('Aggiunto nuovo impianto!');

@@ -44,7 +44,7 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        
+
         $documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE idporto='.prepare($id_record).'
                      UNION SELECT id FROM co_documenti WHERE idporto='.prepare($id_record).'
                      UNION SELECT id FROM co_preventivi WHERE idporto='.prepare($id_record));
@@ -55,9 +55,7 @@ switch (filter('op')) {
                 '_TYPE_' => 'porto',
             ]);
         } else {
-
             $_SESSION['errors'][] = tr('Sono presenti dei documenti collegati a questo porto.');
-        
         }
 
         break;

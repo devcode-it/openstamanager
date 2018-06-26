@@ -35,15 +35,15 @@ switch ($resource) {
         break;
 
     case 'impianti-intervento':
-        if( isset($superselect['idintervento']) ){
+        if (isset($superselect['idintervento'])) {
             $query = 'SELECT id, CONCAT(matricola, " - ", nome) AS descrizione FROM my_impianti INNER JOIN my_impianti_interventi ON my_impianti.id=my_impianti_interventi.idimpianto |where| ORDER BY idsede';
 
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);
             }
-            
+
             $where[] = 'my_impianti_interventi.idintervento='.prepare($superselect['idintervento']);
-            
+
             if (!empty($search)) {
                 $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');
                 $search_fields[] = 'matricola LIKE '.prepare('%'.$search.'%');

@@ -2,9 +2,9 @@
 include_once __DIR__.'/../../core.php';
 
 if ($records[0]['can_delete']) {
-	$attr = '';
-}else{
-	$attr = "readonly";
+    $attr = '';
+} else {
+    $attr = 'readonly';
     echo '<div class="alert alert-warning">'.tr('Alcune impostazioni non possono essere modificate per questo stato intervento.').'</div>';
 }
 ?>

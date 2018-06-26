@@ -98,7 +98,7 @@ if (!empty($rs)) {
             {[ "type": "date", "label": "'.tr('Data del documento').'", "name": "data", "required": 1, "value": "-now-" ]}
         </div>';
 
-        if ($module_name=='Fatture di vendita' || $module_name == 'Fatture di acquisto'){
+        if ($module_name == 'Fatture di vendita' || $module_name == 'Fatture di acquisto') {
             echo '
         <div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare(Modules::get($module_name)['id']).' ORDER BY name", "value": "'.$_SESSION['m'.Modules::get($module_name)['id']]['id_segment'].'" ]}

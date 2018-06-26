@@ -13,13 +13,10 @@ for ($i = 0; $i < count($rs); ++$i) {
 $idriga = get('idriga');
 //$idautomezzo = (get('idautomezzo') == 'undefined') ? '' : get('idautomezzo');
 
-
 // Lettura idanagrafica cliente e percentuale di sconto/rincaro in base al listino
 $rs = $dbo->fetchArray('SELECT idanagrafica FROM co_contratti WHERE id='.prepare($id_record));
 
 $idanagrafica = $rs[0]['idanagrafica'];
-
-
 
 if (empty($idriga)) {
     $op = 'addarticolo';
@@ -41,9 +38,8 @@ if (empty($idriga)) {
         $sconto_unitario = $listino[0]['prc_guadagno'];
         $tipo_sconto = 'PRC';
     }
-	
-	(empty($idcontratto_riga)) ? $idcontratto_riga = $dbo->fetchArray('SELECT MAX(id) AS max_idcontratto_riga  FROM `co_righe_contratti`')[0]['max_idcontratto_riga'] : '';
-	
+
+    (empty($idcontratto_riga)) ? $idcontratto_riga = $dbo->fetchArray('SELECT MAX(id) AS max_idcontratto_riga  FROM `co_righe_contratti`')[0]['max_idcontratto_riga'] : '';
 } else {
     $op = 'editarticolo';
     $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
@@ -58,7 +54,7 @@ if (empty($idriga)) {
     $qta = $rsr[0]['qta'];
     $um = $rsr[0]['um'];
     $idiva = $rsr[0]['idiva'];
-    
+
     $prezzo_vendita = $rsr[0]['prezzo_vendita'];
 
     $sconto_unitario = $rsr[0]['sconto_unitario'];
@@ -67,7 +63,7 @@ if (empty($idriga)) {
     $idautomezzo = $rsr[0]['idautomezzo'];
 
     $idimpianto = $rsr[0]['idimpianto'];
-	$idcontratto_riga = $rsr[0]['id_riga_contratto'];
+    $idcontratto_riga = $rsr[0]['id_riga_contratto'];
 }
 
 /*
@@ -80,8 +76,6 @@ echo '
     <input type="hidden" name="idriga" value="'.$idriga.'">
 	
 	<input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">';
-	
-	
 
 if (!empty($idarticolo)) {
     echo '
@@ -124,7 +118,7 @@ echo '
 			{[ "type": "select", "multiple": "0", "label": "'.tr('Impianto').'", "name": "idimpianto", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_record.' ORDER BY descrizione", "value": "'.$matricoleimpianti.'", "extra":"'.$readonly.'" ]}
 		</div>
 	</div>';
-    
+
 // Iva
 echo '
     <div class="row">

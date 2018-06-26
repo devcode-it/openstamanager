@@ -6,7 +6,7 @@ switch (post('op')) {
     case 'update':
         $descrizione = post('descrizione');
         $colore = post('colore');
-		$completato = post('completato');
+        $completato = post('completato');
 
         // Aggiorna
         $query = 'UPDATE in_statiintervento SET descrizione='.prepare($descrizione).',  colore='.prepare($colore).', completato='.prepare($completato).' WHERE idstatointervento='.prepare($id_record);

@@ -10,7 +10,7 @@ $data = [
         'rows' => 'co_righe_preventivi',
         'id' => 'idpreventivo',
         'condition' => '',
-    ]
+    ],
 ];
 
 $documento = get('documento');
@@ -20,13 +20,12 @@ $op = 'ordine_da_preventivo';
 
 $head = tr('Preventivo numero _NUM_');
 
-
 $table = $data[$pos]['table'];
 $rows = $data[$pos]['rows'];
 $id = $data[$pos]['id'];
 $row = str_replace('id', 'id_riga_', $id);
 
-$module_name = "Ordini cliente";
+$module_name = 'Ordini cliente';
 
 $op = !empty($get['op']) ? $get['op'] : $op;
 
@@ -45,7 +44,6 @@ $idconto = $rs[0]['idconto'];
 */
 echo '
 <p>'.str_replace('_NUM_', $numero, $head).'.</p>';
-
 
 // Selezione articoli del preventivo da copiare nell'ordine, usando l'ordinamento scelto dall'utente
 $rs = $dbo->fetchArray('SELECT * FROM '.$table.' INNER JOIN '.$rows.' ON '.$table.'.id='.$rows.'.'.$id.' WHERE '.$table.'.id='.prepare($id_record).' ORDER BY `order`');
@@ -103,8 +101,10 @@ if (!empty($rs)) {
 
         echo '
             </td>';
-            
-        if ($r['is_descrizione']) continue;
+
+        if ($r['is_descrizione']) {
+            continue;
+        }
 
         // Q.tà rimanente
         echo '

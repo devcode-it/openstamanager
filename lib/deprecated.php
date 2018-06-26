@@ -1030,6 +1030,7 @@ function filelist_and_upload($id_module, $id_record, $label = 'Nuovo allegato:',
  * @param unknown $path
  *
  * @deprecated 2.3
+ *
  * @return bool
  */
 function deltree($path)
@@ -1060,6 +1061,7 @@ function deltree($path)
  * Carica gli script JavaScript inclusi nell'array indicato.
  *
  *  @deprecated 2.3
+ *
  * @param array $jscript_modules_array
  */
 function loadJscriptModules($array)
@@ -1080,6 +1082,7 @@ function loadJscriptModules($array)
  * Carica i file di stile CSS inclusi nell'array indicato.
  *
  * @deprecated 2.3
+ *
  * @param array $css_modules_array
  */
 function loadCSSModules($array)
@@ -1107,7 +1110,7 @@ function loadCSSModules($array)
  * @deprecated 2.4
  *
  * @param string $str
- * @param int $qty
+ * @param int    $qty
  * @param string $mask
  */
 function get_next_code($str, $qty = 1, $mask = '')

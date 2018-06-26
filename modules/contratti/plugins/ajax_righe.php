@@ -2,14 +2,12 @@
 
 include_once __DIR__.'/../../../core.php';
 
-if (!empty($get['idcontratto_riga']))
-	$idcontratto_riga = $get['idcontratto_riga'];
+if (!empty($get['idcontratto_riga'])) {
+    $idcontratto_riga = $get['idcontratto_riga'];
+}
 
 $query = 'SELECT * FROM co_righe_contratti_materiali WHERE id_riga_contratto='.prepare($idcontratto_riga).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC';
 $rs2 = $dbo->fetchArray($query);
-
-
-
 
 if (count($rs2) > 0) {
     echo '
@@ -89,7 +87,7 @@ if (count($rs2) > 0) {
 
         // Pulsante per riportare nel magazzino centrale.
         // Visibile solo se l'intervento non è stato nè fatturato nè completato.
-         if (empty($readonly)) {
+        if (empty($readonly)) {
             echo '
         <td>
         

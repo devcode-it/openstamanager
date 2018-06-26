@@ -16,16 +16,15 @@ if ($self_edit) {
 } else {
     $idgruppo = intval(filter('idgruppo'));
     $id_utente = filter('id_utente');
-	
-	//gruppo della selezione
-	$nome_gruppo = $dbo->fetchArray('SELECT nome FROM zz_groups WHERE id='.prepare($idgruppo))[0]['nome'];
-	$gruppi = [
-		'Clienti' => 'Cliente',
-		'Tecnici' => 'Tecnico',
-		'Agenti' => 'Agente',
-	];
-	$nome_gruppo = $gruppi[$nome_gruppo];
 
+    //gruppo della selezione
+    $nome_gruppo = $dbo->fetchArray('SELECT nome FROM zz_groups WHERE id='.prepare($idgruppo))[0]['nome'];
+    $gruppi = [
+        'Clienti' => 'Cliente',
+        'Tecnici' => 'Tecnico',
+        'Agenti' => 'Agente',
+    ];
+    $nome_gruppo = $gruppi[$nome_gruppo];
 }
 
 if (!empty($id_utente)) {
@@ -88,7 +87,7 @@ if (!$self_edit) {
 
 	<div class="row">
 		<div class="col-md-12">
-		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "required": 1, "ajax-source": "anagrafiche_utenti", "value": "'.$id_anagrafica.'", "icon-after": "add|'.Modules::get("Anagrafiche")["id"].'|tipoanagrafica='.$nome_gruppo.'" ]}
+		{[ "type": "select", "label": "'.tr('Collega ad una anagrafica').'", "name": "idanag", "required": 1, "ajax-source": "anagrafiche_utenti", "value": "'.$id_anagrafica.'", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica='.$nome_gruppo.'" ]}
 		</div>
     </div>';
 } else {
@@ -118,15 +117,15 @@ echo '
 		else if( $("#password1").val().length < min_length )
 			swal({
 				title: "'.tr('La password deve essere lunga minimo _MIN_ caratteri!', [
-					'_MIN_' => $min_length_password,
-				]).'",
+                    '_MIN_' => $min_length_password,
+                ]).'",
 				type: "error",
 			});
 		else if( $("#username").val().length < min_length_username )
 			swal({
 				title: "'.tr('L\'username deve essere lungo minimo _MIN_ caratteri.', [
-					'_MIN_' => $min_length_username,
-				]).'",
+                    '_MIN_' => $min_length_username,
+                ]).'",
 				type: "error",
 			});	
 		else

@@ -49,7 +49,6 @@ if (!empty($results)) {
     echo '      </td>';
     echo '  </tr>';
 
-
     echo '
         </table>';
 } else {

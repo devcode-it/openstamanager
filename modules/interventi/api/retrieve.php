@@ -46,14 +46,14 @@ switch ($resource) {
 
     // per APP ufficiale OpenSTAManager
     case 'interventi':
-        
+
         // periodo per selezionare interventi
         // in questo modo recupero sempre tutti gli interventi che non vengono chiusi
         // vedi anche lista degli stati intervento presenti nella query
         // se un intervento è stato pre-chiuso dal tecnico oppure chiuso dall'ufficio non viene scaricato da APP
-        $today = date("Y-m-d");
-        $period_start   = "2000-01-01" ; 
-        $period_end     = date('Y-m-d', strtotime($today . " +7 days"));
+        $today = date('Y-m-d');
+        $period_start = '2000-01-01';
+        $period_end = date('Y-m-d', strtotime($today.' +7 days'));
 
         $q = "SELECT    `in_interventi`.id, 
                         `in_interventi`.codice, 
@@ -95,19 +95,18 @@ switch ($resource) {
 
         // TODO: rimosse seguenti clausole:
 
-        // WHERE `in_interventi`.idstatointervento IN(SELECT idstatointervento FROM in_statiintervento WHERE app_download=1) 
+        // WHERE `in_interventi`.idstatointervento IN(SELECT idstatointervento FROM in_statiintervento WHERE app_download=1)
         // nel database ufficiale manca in_statiintervento.app_download
 
         // AND `in_interventi_tecnici`.`idtecnico`='".$tecnico[0]['idanagrafica']."'
         // nell'inner join con in_interventi_tecnici -> ad oggi 16-05-2018 non gestisco ancora idtecnico
 
-        $results = $dbo->fetchArray( $q );
-        
+        $results = $dbo->fetchArray($q);
+
         break;
-        
 }
 
 return [
     'sync',
-    'interventi', 
+    'interventi',
 ];

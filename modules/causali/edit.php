@@ -26,8 +26,8 @@ include_once __DIR__.'/../../core.php';
 $documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE idcausalet='.prepare($id_record).'
 			 UNION SELECT id FROM co_documenti WHERE idcausalet='.prepare($id_record));
 
-if (!empty($documenti)){
-echo '
+if (!empty($documenti)) {
+    echo '
 <div class="alert alert-danger">
     '.tr('Ci sono _NUM_ documenti collegati', [
         '_NUM_' => count($documenti),

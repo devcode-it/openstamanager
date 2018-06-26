@@ -239,7 +239,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
                 if($(this).closest("form").parsley().validate()){
                     prev_html = $("#install").html();
-                    $("#install").html("<i class=\'fa fa-spinner fa-pulse  fa-fw\'></i> '.tr("Attendere").'...");
+                    $("#install").html("<i class=\'fa fa-spinner fa-pulse  fa-fw\'></i> '.tr('Attendere').'...");
                     $("#install").prop(\'disabled\', true);
                     $("#test").prop(\'disabled\', true);
 
@@ -251,7 +251,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
             $("#test").on("click", function(){
                 if($(this).closest("form").parsley().validate()){
 					prev_html = $("#test").html();
-					$("#test").html("<i class=\'fa fa-spinner fa-pulse  fa-fw\'></i> '.tr("Attendere").'...");
+					$("#test").html("<i class=\'fa fa-spinner fa-pulse  fa-fw\'></i> '.tr('Attendere').'...");
                     $("#test").prop(\'disabled\', true);
                     $("#install").prop(\'disabled\', true);
                     $(this).closest("form").ajaxSubmit({

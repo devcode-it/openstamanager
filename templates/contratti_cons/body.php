@@ -480,7 +480,7 @@ echo '
 <table class="table table-bordered" style="display:none;">';
 
 if ($show) {
-   echo ' <tr>
+    echo ' <tr>
         <td colspan="3" class="text-right border-top"  >
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
@@ -490,10 +490,9 @@ if ($show) {
         </th>
     </tr>';
 
-
-// Eventuale sconto incondizionato
-if (!empty($sconto)) {
-    echo '
+    // Eventuale sconto incondizionato
+    if (!empty($sconto)) {
+        echo '
     <tr>
         <td colspan="3" class="text-right border-top">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
@@ -504,8 +503,8 @@ if (!empty($sconto)) {
         </th>
     </tr>';
 
-    // Imponibile scontato
-    echo '
+        // Imponibile scontato
+        echo '
     <tr>
         <td colspan="3" class="text-right border-top">
             <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
@@ -515,15 +514,14 @@ if (!empty($sconto)) {
             <b>'.Translator::numberToLocale($totale).' &euro;</b>
         </th>
     </tr>';
-}
+    }
 
-// IVA
-$rs = $dbo->fetchArray('SELECT * FROM co_iva WHERE co_iva.id = '.prepare(get_var('Iva predefinita')));
-$percentuale_iva = $rs[0]['percentuale'];
-$iva = $totale / 100 * $percentuale_iva;
+    // IVA
+    $rs = $dbo->fetchArray('SELECT * FROM co_iva WHERE co_iva.id = '.prepare(get_var('Iva predefinita')));
+    $percentuale_iva = $rs[0]['percentuale'];
+    $iva = $totale / 100 * $percentuale_iva;
 
-
-echo '
+    echo '
     <tr>
         <td colspan="3" class="text-right border-top">
             <b>'.tr('Iva (_PRC_%)', [
@@ -535,12 +533,9 @@ echo '
             <b>'.Translator::numberToLocale($iva).' &euro;</b>
         </th>
     </tr>';
-	
-	//$totale = sum($totale, $iva);
-	
+
+    //$totale = sum($totale, $iva);
 }
-
-
 
 // TOTALE
 echo '
@@ -552,7 +547,6 @@ echo '
     		<b>'.Translator::numberToLocale($totale).' &euro;</b>
     	</th>
     </tr>';
-
 
 // BUDGET
 echo '

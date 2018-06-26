@@ -108,6 +108,13 @@ class Prints
         return false;
     }
 
+    /**
+     * Genera la stampa in PDF richiesta.
+     *
+     * @param string|int $print
+     * @param int        $id_record
+     * @param string     $filename
+     */
     public static function render($print, $id_record, $filename = null)
     {
         ob_end_clean();
@@ -145,6 +152,13 @@ class Prints
         }
     }
 
+    /**
+     * Restituisce un array associativo dalla codifica JSON delle opzioni di stampa.
+     *
+     * @param string $string
+     *
+     * @return array
+     */
     protected static function readOptions($string)
     {
         // Fix per contenuti con newline integrate
@@ -155,6 +169,13 @@ class Prints
         return $result;
     }
 
+    /**
+     * Controlla se la stampa segue lo standard HTML2PDF.
+     *
+     * @param string|int $print
+     *
+     * @return bool
+     */
     protected static function isOldStandard($print)
     {
         $infos = self::get($print);
@@ -162,11 +183,26 @@ class Prints
         return file_exists($infos['full_directory'].'/pdfgen.'.$infos['directory'].'.php') || file_exists($infos['full_directory'].'/custom/pdfgen.'.$infos['directory'].'.php');
     }
 
+    /**
+     * Controlla se la stampa segue lo standard MPDF.
+     *
+     * @param string|int $print
+     *
+     * @return bool
+     */
     protected static function isNewStandard($print)
     {
         return !self::isOldStandard($print);
     }
 
+    /**
+     * Crea la stampa secondo il formato deprecato HTML2PDF.
+     *
+     * @param string|int $id_print
+     * @param int        $id_record
+     * @param string     $filename
+     * @param string     $format
+     */
     protected static function oldLoader($id_print, $id_record, $filename = null, $format = 'A4')
     {
         $infos = self::get($id_print);
@@ -224,6 +260,13 @@ class Prints
         $html2pdf->output($filename, $mode);
     }
 
+    /**
+     * Crea la stampa secondo il formato modulare MPDF.
+     *
+     * @param string|int $id_print
+     * @param int        $id_record
+     * @param string     $filename
+     */
     protected static function loader($id_print, $id_record, $filename = null)
     {
         $infos = self::get($id_print);
@@ -237,40 +280,23 @@ class Prints
         $user = Auth::user();
 
         // Impostazioni di default
-        if (file_exists(DOCROOT.'/templates/base/custom/settings.php')) {
-            $default = include DOCROOT.'/templates/base/custom/settings.php';
-        } else {
-            $default = include DOCROOT.'/templates/base/settings.php';
-        }
+        $default = include App::filepath(DOCROOT.'/templates/base|custom|', 'settings.php');
 
         // Impostazioni personalizzate della stampa
-        $custom = [];
-        if (file_exists($infos['full_directory'].'/custom/settings.php')) {
-            $custom = include $infos['full_directory'].'/custom/settings.php';
-        } elseif (file_exists($infos['full_directory'].'/settings.php')) {
-            $custom = include $infos['full_directory'].'/settings.php';
-        }
+        $custom = include self::filepath($id_print, 'settings.php');
 
         // Individuazione delle impostazioni finali
         $settings = array_merge($default, (array) $custom);
 
         // Individuazione delle variabili fondamentali per la sostituzione dei contenuti
-        if (file_exists($infos['full_directory'].'/custom/init.php')) {
-            include $infos['full_directory'].'/custom/init.php';
-        } elseif (file_exists($infos['full_directory'].'/init.php')) {
-            include $infos['full_directory'].'/init.php';
-        }
+        include self::filepath($id_print, 'init.php');
 
         // Individuazione delle variabili per la sostituzione
         include DOCROOT.'/templates/info.php';
 
         // Generazione dei contenuti della stampa
         ob_start();
-        if (file_exists($infos['full_directory'].'/custom/body.php')) {
-            include $infos['full_directory'].'/custom/body.php';
-        } else {
-            include $infos['full_directory'].'/body.php';
-        }
+        include self::filepath($id_print, 'body.php');
         $report = ob_get_clean();
 
         if (!empty($autofill)) {
@@ -293,20 +319,12 @@ class Prints
 
         // Generazione dei contenuti dell'header
         ob_start();
-        if (file_exists($infos['full_directory'].'/custom/header.php')) {
-            include $infos['full_directory'].'/custom/header.php';
-        } elseif (file_exists($infos['full_directory'].'/header.php')) {
-            include $infos['full_directory'].'/header.php';
-        }
+        include self::filepath($id_print, 'header.php');
         $head = ob_get_clean();
 
         // Generazione dei contenuti del footer
         ob_start();
-        if (file_exists($infos['full_directory'].'/custom/footer.php')) {
-            include $infos['full_directory'].'/custom/footer.php';
-        } elseif (file_exists($infos['full_directory'].'/footer.php')) {
-            include $infos['full_directory'].'/footer.php';
-        }
+        include self::filepath($id_print, 'footer.php');
         $foot = ob_get_clean();
 
         // Header di default
@@ -328,14 +346,11 @@ class Prints
             'templates/base/style.css',
         ];
 
-        $settings['orientation'] = strtoupper($settings['orientation']) == 'L' ? 'L' : 'P';
-        $settings['format'] = is_string($settings['format']) ? $settings['format'].($settings['orientation'] == 'L' ? '-L' : '') : $settings['format'];
-
         // Instanziamento dell'oggetto mPDF
         $mpdf = new \Mpdf\Mpdf([
             'mode' => 'utf-8',
             'format' => $settings['format'],
-            'orientation' => $settings['orientation'],
+            'orientation' => strtoupper($settings['orientation']) == 'L' ? 'L' : 'P',
             'font-size' => $settings['font-size'],
             'margin_left' => $settings['margins']['left'],
             'margin_right' => $settings['margins']['right'],
@@ -371,6 +386,15 @@ class Prints
         $mpdf->Output($filename, $mode);
     }
 
+    /**
+     * Individua il link per la stampa.
+     *
+     * @param string|int $print
+     * @param int        $id_record
+     * @param string     $get
+     *
+     * @return string
+     */
     public static function getHref($print, $id_record, $get = '')
     {
         $infos = self::get($print);
@@ -396,15 +420,54 @@ class Prints
         return $link;
     }
 
+    /**
+     * Restituisce il codice semplificato per il link alla stampa.
+     *
+     * @deprecated 2.4.1
+     *
+     * @param string|int $print
+     * @param int        $id_record
+     * @param string     $btn
+     * @param string     $title
+     * @param string     $icon
+     * @param string     $get
+     *
+     * @return string
+     */
     public static function getLink($print, $id_record, $btn = null, $title = null, $icon = null, $get = '')
     {
         return '{( "name": "button", "type": "print", "id": "'.$print.'", "id_record": "'.$id_record.'", "label": "'.$title.'", "icon": "'.$icon.'", "parameters": "'.$get.'", "class": "'.$btn.'" )}';
     }
 
+    /**
+     * Restituisce il link per la visualizzazione del PDF.
+     *
+     * @param string|int $print
+     * @param int        $id_record
+     * @param string     $filename
+     *
+     * @return string
+     */
     public static function getPreviewLink($print, $id_record, $filename)
     {
         self::render($print, $id_record, $filename);
 
         return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file=../../../../'.ltrim(str_replace(DOCROOT, '', $filename), '/');
+    }
+
+    /**
+     * Individua il percorso per il file.
+     *
+     * @param string|int $template
+     * @param string     $file
+     *
+     * @return string|null
+     */
+    public static function filepath($template, $file)
+    {
+        $template = self::get($template);
+        $directory = 'templates/'.$template['directory'].'|custom|';
+
+        return App::filepath($directory, $file);
     }
 }

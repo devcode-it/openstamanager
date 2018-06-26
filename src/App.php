@@ -399,6 +399,6 @@ class App
             $result = $original_file;
         }
 
-        return realpath($result);
+        return slashes($result);
     }
 }

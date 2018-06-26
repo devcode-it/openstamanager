@@ -6,13 +6,9 @@ include_once __DIR__.'/../core.php';
 if (!empty($id_plugin)) {
     $element = Plugins::get($id_plugin);
 
+    // Inclusione di eventuale plugin personalizzato
     if (!empty($element['script'])) {
-        // Inclusione di eventuale plugin personalizzato
-        if (file_exists($docroot.'/modules/'.$element['module_dir'].'/plugins/custom/'.$element['script'])) {
-            include $docroot.'/modules/'.$element['module_dir'].'/plugins/custom/'.$element['script'];
-        } elseif (file_exists($docroot.'/modules/'.$element['module_dir'].'/plugins/'.$element['script'])) {
-            include $docroot.'/modules/'.$element['module_dir'].'/plugins/'.$element['script'];
-        }
+        include App::filepath('modules/'.$element['module_dir'].'/plugins|custom|', $element['script']);
 
         return;
     }
@@ -41,11 +37,7 @@ $total = App::readQuery($element);
 $module_options = (!empty($element['options2'])) ? $element['options2'] : $element['options'];
 
 // Caricamento file aggiuntivo su elenco record
-if (file_exists($docroot.$directory.'/custom/controller_before.php')) {
-    include $docroot.$directory.'/custom/controller_before.php';
-} elseif (file_exists($docroot.$directory.'/controller_before.php')) {
-    include $docroot.$directory.'/controller_before.php';
-}
+include App::filepath($directory.'|custom|', 'controller_before.php');
 
 if (count(Modules::getSegments($id_module)) > 1) {
     ?>
@@ -204,8 +196,4 @@ elseif ($module_options == 'custom') {
 }
 
 // Caricamento file aggiuntivo su elenco record
-if (file_exists($docroot.$directory.'/custom/controller_after.php')) {
-    include $docroot.$directory.'/custom/controller_after.php';
-} elseif (file_exists($docroot.$directory.'/controller_after.php')) {
-    include $docroot.$directory.'/controller_after.php';
-}
+include App::filepath($directory.'|custom|', 'controller_after.php');

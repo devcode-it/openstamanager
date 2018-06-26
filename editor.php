@@ -146,11 +146,7 @@ if (empty($records)) {
 
     // Pulsanti personalizzati
     ob_start();
-    if (file_exists($docroot.'/modules/'.$module_dir.'/custom/buttons.php')) {
-        include $docroot.'/modules/'.$module_dir.'/custom/buttons.php';
-    } elseif (file_exists($docroot.'/modules/'.$module_dir.'/buttons.php')) {
-        include $docroot.'/modules/'.$module_dir.'/buttons.php';
-    }
+    include Modules::filepath($id_module, 'buttons.php');
     $buttons = ob_get_clean();
 
     if (!empty($buttons)) {

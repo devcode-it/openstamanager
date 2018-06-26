@@ -8,8 +8,7 @@ if (!empty($id_plugin)) {
 
     $directory = '/plugins/'.$info['directory'];
     $permesso = $info['idmodule_to'];
-	$id_module = $info['idmodule_to'];
-	
+    $id_module = $info['idmodule_to'];
 } else {
     $info = Modules::get($id_module);
 
@@ -178,8 +177,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
                     'id_record' => $id_record,
                     'id_plugin' => !empty($id_plugin) ? $id_plugin : null,
                 ]);
-				
-			
+
                 $_SESSION['infos'][] = tr('File caricato correttamente!');
             } else {
                 $_SESSION['errors'][] = tr('Errore durante il caricamento del file!');
@@ -221,7 +219,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 } elseif (filter('op') == 'send-email') {
     $template = Mail::getTemplate($post['template']);
     $id_account = $template['id_smtp'];
-    
+
     // Elenco degli allegati
     $attachments = [];
 
@@ -340,30 +338,18 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 }
 
 if (Modules::getPermission($permesso) == 'r' || Modules::getPermission($permesso) == 'rw') {
+    // Inclusione di eventuale plugin personalizzato
     if (!empty($info['script'])) {
-        // Inclusione di eventuale plugin personalizzato
-        if (file_exists(DOCROOT.'/modules/'.$info['module_dir'].'/plugins/custom/'.$info['script'])) {
-            include DOCROOT.'/modules/'.$info['module_dir'].'/plugins/custom/'.$info['script'];
-        } elseif (file_exists(DOCROOT.'/modules/'.$info['module_dir'].'/plugins/'.$info['script'])) {
-            include DOCROOT.'/modules/'.$info['module_dir'].'/plugins/'.$info['script'];
-        }
+        include App::filepath('modules/'.$info['module_dir'].'/plugins|custom|', $info['script']);
 
         return;
     }
 
     // Caricamento helper modulo (verifico se ci sono helper personalizzati)
-    if (file_exists(DOCROOT.$directory.'/custom/modutil.php')) {
-        include_once DOCROOT.$directory.'/custom/modutil.php';
-    } elseif (file_exists(DOCROOT.$directory.'/modutil.php')) {
-        include_once DOCROOT.$directory.'/modutil.php';
-    }
+    include_once App::filepath($directory.'|custom|', 'modutil.php');
 
     // Lettura risultato query del modulo
-    if (file_exists(DOCROOT.$directory.'/custom/init.php')) {
-        include DOCROOT.$directory.'/custom/init.php';
-    } elseif (file_exists(DOCROOT.$directory.'/init.php')) {
-        include DOCROOT.$directory.'/init.php';
-    }
+    include App::filepath($directory.'|custom|', 'init.php');
 
     if (Modules::getPermission($permesso) == 'rw') {
         // Esecuzione delle operazioni di gruppo
@@ -372,23 +358,14 @@ if (Modules::getPermission($permesso) == 'r' || Modules::getPermission($permesso
         $id_records = array_filter($id_records, function ($var) {return !empty($var); });
         $id_records = array_unique($id_records);
 
-        $bulk = null;
-        if (file_exists(DOCROOT.$directory.'/custom/bulk.php')) {
-            $bulk = include DOCROOT.$directory.'/custom/bulk.php';
-        } elseif (file_exists(DOCROOT.$directory.'/bulk.php')) {
-            $bulk = include DOCROOT.$directory.'/bulk.php';
-        }
-        $bulk = (array) $bulk;
+        $bulk = include App::filepath($directory.'|custom|', 'bulk.php');
+        $bulk = empty($bulk) ? [] : $bulk;
 
         if (in_array(post('op'), array_keys($bulk))) {
             redirect(ROOTDIR.'/controller.php?id_module='.$id_module, 'js');
         } else {
             // Esecuzione delle operazioni del modulo
-            if (file_exists(DOCROOT.$directory.'/custom/actions.php')) {
-                include DOCROOT.$directory.'/custom/actions.php';
-            } elseif (file_exists(DOCROOT.$directory.'/actions.php')) {
-                include DOCROOT.$directory.'/actions.php';
-            }
+            include App::filepath($directory.'|custom|', 'actions.php');
 
             // Operazioni generiche per i campi personalizzati
             if (post('op') != null) {

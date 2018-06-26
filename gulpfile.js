@@ -265,6 +265,7 @@ gulp.task('release', function () {
         '!./vendor/mpdf/mpdf/ttfonts/DejaVuinfo.txt',
         '!./vendor/mpdf/mpdf/ttfonts/DejaVu*Condensed*',
         './vendor/maximebf/debugbar/src/DebugBar/Resources/vendor/*',
+        './vendor/respect/validation/tests/*',
     ]);
 
     // Impostazione dello zip

@@ -129,22 +129,12 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     public static function getTemplateVariables($template, $id_record)
     {
         $template = self::getTemplate($template);
-        $module = Modules::get($template['id_module']);
-
-        $file = DOCROOT.'/modules/'.$module['directory'].'|custom|/variables.php';
-
-        $original_file = str_replace('|custom|', '', $file);
-        $custom_file = str_replace('|custom|', '/custom', $file);
 
         $database = Database::getConnection();
         $dbo = $database;
 
         // Lettura delle variabili nei singoli moduli
-        if (file_exists($custom_file)) {
-            $variables = require $custom_file;
-        } elseif (file_exists($original_file)) {
-            $variables = require $original_file;
-        }
+        $variables = include Modules::filepath($template['id_module'], 'variables.php');
 
         return (array) $variables;
     }

@@ -72,17 +72,11 @@ $(document).ready(function(){
         echo '
     data.'.$key.' = "'.$value.'";';
     }
-    
-    if (file_exists($docroot.$directory.'/custom/actions.php')) {
-        $url = $rootdir.$directory.'/custom/actions.php';
-    } elseif (file_exists($docroot.$directory.'/actions.php')) {
-        $url = $rootdir.$directory.'/actions.php';
-    }
 
     echo '
 
     $("#form_'.$id_module.'-'.$id_plugin.'").find("form").ajaxForm({
-        url: "'.$url.'",
+        url: globals.rootdir + "/actions.php",
         beforeSubmit: function(arr, $form, options) {
             return $form.parsley().validate();
         },

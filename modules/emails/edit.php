@@ -86,14 +86,7 @@ echo '
 <?php
 
 // Variabili utilizzabili
-$module_dir = DOCROOT.'/modules/'.Modules::get($records[0]['id_module'])['directory'];
-$variables = [];
-
-if (file_exists($module_dir.'/custom/variables.php')) {
-    $variables = include $module_dir.'/custom/variables.php';
-} elseif (file_exists($module_dir.'/variables.php')) {
-    $variables = include $module_dir.'/variables.php';
-}
+$variables = include Modules::filepath($records[0]['id_module'], 'variables.php');
 
 if (sizeof($variables) > 0) {
     echo '

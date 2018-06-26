@@ -15,10 +15,14 @@ class Validate
      *
      * @param string $vat_number
      *
-     * @return bool|null
+     * @return bool
      */
     public static function isValidVatNumber($vat_number)
     {
+        if (empty($vat_number)) {
+            return true;
+        }
+
         $vat_number = starts_with($vat_number, 'IT') ? $vat_number : 'IT'.$vat_number;
 
         try {

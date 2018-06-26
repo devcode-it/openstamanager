@@ -17,6 +17,14 @@ class AJAX
         return \Whoops\Util\Misc::isAjaxRequest() && filter('ajax') !== null;
     }
 
+    /**
+     * Individua i file per cui l'utente possiede i permessi di accesso.
+     *
+     * @param string $file
+     * @param bool   $permissions
+     *
+     * @return array
+     */
     protected static function find($file, $permissions = true)
     {
         $dirname = substr($file, 0, strrpos($file, '/') + 1);
@@ -56,6 +64,15 @@ class AJAX
         return $list;
     }
 
+    /**
+     * Individua le opzioni di selezione a partire dalla risorsa richiesta.
+     *
+     * @param string $resource
+     * @param array  $elements
+     * @param mixed  $search
+     *
+     * @return array
+     */
     public static function select($resource, $elements = [], $search = null)
     {
         if (!isset($elements)) {
@@ -78,6 +95,17 @@ class AJAX
         return $results;
     }
 
+    /**
+     * Completa la query SQL a partire da parametri definiti e ne restituisce i risultati.
+     *
+     * @param string $query
+     * @param array  $where
+     * @param array  $filter
+     * @param array  $search
+     * @param array  $custom
+     *
+     * @return array
+     */
     public static function completeResults($query, $where, $filter = [], $search = [], $custom = [])
     {
         if (str_contains($query, '|filter|')) {
@@ -108,6 +136,16 @@ class AJAX
         return $results;
     }
 
+    /**
+     * Ottiene i risultati del select all'interno di un file specifico (modulo).
+     *
+     * @param string $file
+     * @param string $resource
+     * @param array  $elements
+     * @param mixed  $search
+     *
+     * @return array|null
+     */
     protected static function getSelectResults($file, $resource, $elements = [], $search = null)
     {
         $superselect = self::getSelectInfo();
@@ -134,11 +172,21 @@ class AJAX
         return isset($results) ? $results : null;
     }
 
+    /**
+     * Restituisce le informazioni aggiuntive per i select.
+     */
     protected static function getSelectInfo()
     {
         return !empty($_SESSION['superselect']) ? $_SESSION['superselect'] : [];
     }
 
+    /**
+     * Effettua la ricerca di un termine all'intero delle risorse disponibili.
+     *
+     * @param string $term
+     *
+     * @return array
+     */
     public static function search($term)
     {
         if (strlen($term) < 2) {
@@ -160,6 +208,14 @@ class AJAX
         return $results;
     }
 
+    /**
+     * Ottiene i risultati della ricerca all'interno di un file specifico (modulo).
+     *
+     * @param string $file
+     * @param string $term
+     *
+     * @return array
+     */
     protected static function getSearchResults($file, $term)
     {
         // Database
@@ -189,6 +245,13 @@ class AJAX
         return $results;
     }
 
+    /**
+     * Completa il codice HTML per la risorsa richiesta.
+     *
+     * @param string $resource
+     *
+     * @return string
+     */
     public static function complete($resource)
     {
         $files = self::find('ajax/complete.php');
@@ -206,6 +269,14 @@ class AJAX
         return $result;
     }
 
+    /**
+     * Ottiene i risultati della richiesta di completamento all'interno di un file specifico (modulo).
+     *
+     * @param string $file
+     * @param string $resource
+     *
+     * @return string
+     */
     protected static function getCompleteResults($file, $resource)
     {
         // Database

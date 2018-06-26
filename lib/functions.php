@@ -514,7 +514,7 @@ function slashes($string)
  *
  * @since 2.3
  *
- * @return string
+ * @return mixed
  */
 function prepare($parameter)
 {
@@ -529,7 +529,7 @@ function prepare($parameter)
  *
  * @since 2.3
  *
- * @return string
+ * @return mixed
  */
 function p($parameter)
 {

@@ -7,11 +7,12 @@
  */
 class App
 {
-    /** @var int Identificativo del modulo corrente */
+    /** @var array Identificativo del modulo corrente */
     protected static $current_module;
     /** @var int Identificativo dell'elemento corrente */
     protected static $current_element;
 
+    /** @var array Elenco degli assets del progetto */
     protected static $assets = [
         // CSS
         'css' => [
@@ -39,7 +40,7 @@ class App
     /**
      * Restituisce l'identificativo del modulo attualmente in utilizzo.
      *
-     * @return int
+     * @return array
      */
     public static function getCurrentModule()
     {
@@ -60,7 +61,7 @@ class App
     public static function getCurrentElement()
     {
         if (empty(self::$current_element)) {
-            self::$current_element = filter('id_record');
+            self::$current_element = intval(filter('id_record'));
         }
 
         return self::$current_element;
@@ -196,7 +197,7 @@ class App
     /**
      * Restituisce un'insieme di array comprendenti le informazioni per la costruzione della query del modulo indicato.
      *
-     * @param int $id
+     * @param array $element
      *
      * @return array
      */
@@ -217,6 +218,7 @@ class App
         $summable = [];
         $search_inside = [];
         $search = [];
+        $format = [];
         $slow = [];
         $order_by = [];
 
@@ -392,7 +394,7 @@ class App
         $original_file = str_replace('|custom|', '', $path);
         $custom_file = str_replace('|custom|', '/custom', $path);
 
-        $result = null;
+        $result = '';
         if (file_exists($custom_file)) {
             $result = $custom_file;
         } elseif (file_exists($original_file)) {

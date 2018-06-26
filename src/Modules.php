@@ -7,11 +7,6 @@
  */
 class Modules
 {
-    /** @var int Identificativo del modulo corrente */
-    protected static $current_module;
-    /** @var int Identificativo dell'elemento corrente */
-    protected static $current_element;
-
     /** @var array Elenco dei moduli disponibili */
     protected static $modules = [];
     protected static $references = [];

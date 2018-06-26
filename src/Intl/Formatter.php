@@ -109,7 +109,7 @@ class Formatter
      *
      * @param string $value
      *
-     * @return string
+     * @return string|bool
      */
     public function formatNumber($value, $decimals = null)
     {
@@ -140,7 +140,7 @@ class Formatter
      *
      * @param string $value
      *
-     * @return string
+     * @return float|bool
      */
     public function parseNumber($value)
     {
@@ -243,7 +243,7 @@ class Formatter
      *
      * @param string $value
      *
-     * @return array
+     * @return string|bool
      */
     public function customNumber($value, $current, $format)
     {
@@ -313,7 +313,7 @@ class Formatter
      *
      * @param string $value
      *
-     * @return string
+     * @return string|bool
      */
     public function formatTimestamp($value)
     {
@@ -328,7 +328,7 @@ class Formatter
      *
      * @param string $value
      *
-     * @return string
+     * @return string|bool
      */
     public function parseTimestamp($value)
     {
@@ -393,7 +393,7 @@ class Formatter
      *
      * @param string $value
      *
-     * @return string
+     * @return string|bool
      */
     public function formatDate($value)
     {
@@ -412,7 +412,7 @@ class Formatter
      *
      * @param string $value
      *
-     * @return string
+     * @return string|bool
      */
     public function parseDate($value)
     {
@@ -477,7 +477,7 @@ class Formatter
      *
      * @param string $value
      *
-     * @return string
+     * @return string|bool
      */
     public function formatTime($value)
     {
@@ -496,7 +496,7 @@ class Formatter
      *
      * @param string $value
      *
-     * @return string
+     * @return string|bool
      */
     public function parseTime($value)
     {

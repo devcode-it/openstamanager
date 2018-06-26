@@ -53,7 +53,7 @@ class Ini
      */
     public static function read($string)
     {
-        return parse_ini_string($string, true);
+        return (array) parse_ini_string($string, true);
     }
 
     /**
@@ -67,7 +67,9 @@ class Ini
     {
         $filename = (file_exists($filename)) ? $filename : DOCROOT.'/files/my_impianti/'.$filename;
 
-        return self::read(file_get_contents($filename));
+        $contents = file_get_contents($filename);
+
+        return !empty($contents) ? self::read($contents) : [];
     }
 
     /**
@@ -81,11 +83,11 @@ class Ini
         $results = [];
 
         // Lettura dei files nella cartella indicata
-        $exclude = (!empty($exclude)) ? $exclude : [];
-        $exclude = (is_string($exclude)) ? explode(',', $list) : $exclude;
+        $exclude = !empty($exclude) ? $exclude : [];
+        $exclude = is_array($exclude) ? $exclude : explode(',', $exclude);
 
         // Aggiungo tutti i componenti di possibile installazione
-        $files = (array) glob(realpath($dir).'/*.ini');
+        $files = glob(realpath($dir).'/*.ini');
         foreach ($files as $file) {
             if (!in_array(basename($file), $exclude)) {
                 $results[] = [basename($file), self::getValue(self::readFile($file), 'Nome')];
@@ -98,7 +100,7 @@ class Ini
     /**
      * Ottiene il valore di un campo contenuto all'interno della struttura INI.
      *
-     * @param string $content
+     * @param array  $content
      * @param string $value
      *
      * @return mixed

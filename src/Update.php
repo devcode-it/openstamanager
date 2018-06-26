@@ -76,7 +76,7 @@ class Update
         $results = [];
 
         // Aggiornamenti del gestionale
-        $core = (array) glob(DOCROOT.'/update/*.{php,sql}', GLOB_BRACE);
+        $core = glob(DOCROOT.'/update/*.{php,sql}', GLOB_BRACE);
         foreach ($core as $value) {
             $infos = pathinfo($value);
             $value = str_replace('_', '.', $infos['filename']);
@@ -102,7 +102,7 @@ class Update
         $results = [];
 
         // Aggiornamenti dei moduli
-        $modules = (array) glob(DOCROOT.'/modules/*/update/*.{php,sql}', GLOB_BRACE);
+        $modules = glob(DOCROOT.'/modules/*/update/*.{php,sql}', GLOB_BRACE);
         foreach ($modules as $value) {
             $infos = pathinfo($value);
 
@@ -172,7 +172,7 @@ class Update
      */
     public static function isVersion($string)
     {
-        return preg_match('/^\d+(?:\.\d+)+$/', $string);
+        return preg_match('/^\d+(?:\.\d+)+$/', $string) === 1;
     }
 
     /**
@@ -382,7 +382,7 @@ class Update
      * Normalizza l'infrastruttura del database indicato, generalizzando charset e collation all'interno del database e delle tabelle ed effettuando una conversione delle tabelle all'engine InnoDB.
      * <b>Attenzione</b>: se l'engine InnoDB non è supportato, il server ignorerà la conversione dell'engine e le foreign key del gestionale non funzioneranno adeguatamente.
      *
-     * @param [type] $database_name
+     * @param string $database_name
      */
     protected static function normalizeDatabase($database_name)
     {

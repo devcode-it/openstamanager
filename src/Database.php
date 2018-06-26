@@ -185,7 +185,7 @@ class Database extends Util\Singleton
      *
      * @since 2.3
      *
-     * @return int
+     * @return string
      */
     public function getMySQLVersion()
     {
@@ -370,7 +370,7 @@ class Database extends Util\Singleton
      *
      * @since 2.3
      *
-     * @return string
+     * @return mixed
      */
     public function prepare($parameter)
     {

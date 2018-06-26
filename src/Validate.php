@@ -32,7 +32,6 @@ class Validate
                 return false;
             }
         } catch (VATCheckUnavailableException $e) {
-            return;
         }
 
         $access_key = Settings::get('apilayer API key for VAT number');

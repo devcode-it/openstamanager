@@ -14,12 +14,12 @@ if (empty($id_sede) || $id_sede == '-1') {
 $rsc = $dbo->fetchArray($queryc);
 
 // Lettura dati aziendali
-$rsf = $dbo->fetchArray("SELECT *, (SELECT iban FROM co_banche WHERE id IN (SELECT idbanca FROM co_documenti WHERE id = ".prepare($id_record)." ) ) AS codiceiban, (SELECT nome FROM co_banche WHERE id IN (SELECT idbanca FROM co_documenti WHERE id = ".prepare($id_record)." ) ) AS appoggiobancario, (SELECT bic FROM co_banche WHERE id IN (SELECT idbanca FROM co_documenti WHERE id = ".prepare($id_record)." ) ) AS bic FROM an_anagrafiche WHERE idanagrafica = (SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')");
+$rsf = $dbo->fetchArray('SELECT *, (SELECT iban FROM co_banche WHERE id IN (SELECT idbanca FROM co_documenti WHERE id = '.prepare($id_record).' ) ) AS codiceiban, (SELECT nome FROM co_banche WHERE id IN (SELECT idbanca FROM co_documenti WHERE id = '.prepare($id_record).' ) ) AS appoggiobancario, (SELECT bic FROM co_banche WHERE id IN (SELECT idbanca FROM co_documenti WHERE id = '.prepare($id_record)." ) ) AS bic FROM an_anagrafiche WHERE idanagrafica = (SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')");
 
 // Prefissi e contenuti del replace
 $replace = [
-    'c_' => $rsc[0],
-    'f_' => $rsf[0],
+    'c_' => isset($rsc[0]) ? $rsc[0] : [],
+    'f_' => isset($rsf[0]) ? $rsf[0] : [],
 ];
 
 // Rinominazione di particolari campi all'interno delle informazioni su anagrafica e azienda
@@ -37,7 +37,13 @@ foreach ($replace as $prefix => $values) {
 
     // Rinominazione dei campi
     foreach ($rename as $key => $value) {
-        $values[$value] = $values[$key];
+        $val = null;
+
+        if (isset($values[$key])) {
+            $val = $values[$key];
+        }
+
+        $values[$value] = $val;
         unset($values[$key]);
     }
 

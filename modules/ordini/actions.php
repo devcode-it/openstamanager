@@ -34,12 +34,11 @@ switch (post('op')) {
             $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
 
             // Tipo di pagamento predefinito dall'anagrafica
-            $query = 'SELECT id FROM co_pagamenti WHERE id=(SELECT '.$campo.' AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')';
-            $rs = $dbo->fetchArray($query);
-            $idpagamento = $rs[0]['id'];
+            $rs = $dbo->fetchArray('SELECT id FROM co_pagamenti WHERE id=(SELECT '.$campo.' AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')');
+            $idpagamento = isset($rs[0]) ? $rs[0]['id'] : null;
 
             // Se l'ordine è un ordine cliente e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
-            if ($dir == 'entrata' && $idpagamento == '') {
+            if ($dir == 'entrata' && empty($idpagamento)) {
                 $idpagamento = get_var('Tipo di pagamento predefinito');
             }
 
@@ -377,10 +376,10 @@ switch (post('op')) {
             // Tipo di pagamento predefinito dall'anagrafica
             $query = 'SELECT id FROM co_pagamenti WHERE id=(SELECT '.$campo.' AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')';
             $rs = $dbo->fetchArray($query);
-            $idpagamento = $rs[0]['id'];
+            $idpagamento = isset($rs[0]) ? $rs[0]['id'] : null;
 
             // Se l'ordine è un ordine cliente e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
-            if ($dir == 'entrata' && $idpagamento == '') {
+            if ($dir == 'entrata' && empty($idpagamento)) {
                 $idpagamento = get_var('Tipo di pagamento predefinito');
             }
 

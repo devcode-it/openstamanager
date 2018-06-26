@@ -103,6 +103,7 @@ class DefaultHandler implements HandlerInterface
         $values['type'] = $original['type'];
         $values['value'] = $original['value'];
         $values['name'] = $original['name'];
+        $values['id'] = $original['id'];
         $values['class'] = [];
 
         // Delega al metodo "text", per la generazione del codice HTML

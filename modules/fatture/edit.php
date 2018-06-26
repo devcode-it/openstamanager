@@ -9,11 +9,10 @@ $tipodoc = $rs[0]['descrizione'];
 $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 $_SESSION['superselect']['ddt'] = $dir;
 
-
 if ($dir == 'entrata') {
-	$conto = 'vendite';
+    $conto = 'vendite';
 } else {
-	$conto = 'acquisti';
+    $conto = 'acquisti';
 }
 
 ?>
@@ -69,10 +68,10 @@ if ($dir == 'entrata') {
                     $label = tr('Numero fattura');
                 }
                 ?>
-				
+
 				<!-- id_segment -->
 				{[ "type": "hidden", "label": "Segmento", "name": "id_segment", "class": "text-center", "value": "$id_segment$" ]}
-				
+
 				<div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo $label; ?>", "name": "numero_esterno", "class": "alphanumeric-mask text-center", "value": "$numero_esterno$" ]}
 				</div>
@@ -143,7 +142,7 @@ if ($dir == 'entrata') {
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "values": "query=SELECT id, descrizione, (SELECT id FROM co_banche WHERE id_pianodeiconti3 = co_pagamenti.idconto_<?php echo $conto; ?> ) AS idbanca FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$", "extra": "onchange=\"$('#idbanca').val( $(this).find('option:selected').data('idbanca') ).change(); \" " ]}
 				</div>
-				
+
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Banca'); ?>", "name": "idbanca", "required": 0, "values": "query=SELECT id, CONCAT (nome, ' - ' , iban) AS descrizione FROM co_banche WHERE deleted = 0 ORDER BY nome ASC", "value": "$idbanca$" ]}
 				</div>
@@ -153,7 +152,7 @@ if ($dir == 'entrata') {
 
 <?php
 if ($tipodoc == 'Fattura accompagnatoria di vendita') {
-                        ?>
+                    ?>
 				<div class="row">
 					<div class="col-md-3">
 						{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "idaspettobeni", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_aspettobeni ORDER BY descrizione ASC", "value": "$idaspettobeni$" ]}
@@ -183,7 +182,7 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
 				</div>
 
 <?php
-                    }
+                }
 
 if ($dir == 'uscita') {
     ?>
@@ -202,13 +201,11 @@ if ($dir == 'uscita') {
 			<div class="pull-right">
 <?php
 // Aggiunta prima nota solo se non c'è già, se non si è in bozza o se il pagamento non è completo
-$query2 = 'SELECT id FROM co_movimenti WHERE iddocumento='.$id_record.' AND primanota=1';
-$n2 = $dbo->fetchNum($query2);
+$n2 = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE iddocumento='.prepare($id_record).' AND primanota=1');
 
-$query3 = 'SELECT SUM(da_pagare-pagato) AS differenza, SUM(da_pagare) FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.$id_record;
-$rs3 = $dbo->fetchArray($query3);
-$differenza = $rs3[0]['differenza'];
-$da_pagare = $rs3[0]['da_pagare'];
+$rs3 = $dbo->fetchArray('SELECT SUM(da_pagare-pagato) AS differenza, SUM(da_pagare) FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.prepare($id_record));
+$differenza = isset($rs3[0]) ? $rs3[0]['differenza'] : null;
+$da_pagare = isset($rs3[0]) ? $rs3[0]['da_pagare'] : null;
 
 if (($n2 <= 0 && $records[0]['stato'] == 'Emessa') || $differenza != 0) {
     ?>
@@ -306,11 +303,11 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
                             <i class="fa fa-plus"></i> Ddt
                         </a>';
     }
-	
-	// Lettura ordini
-	$ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
-	$ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
-	echo '
+
+    // Lettura ordini
+    $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
+    $ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
+    echo '
 						<a class="btn btn-sm btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi ordine" data-target="#bs-popup">
 							<i class="fa fa-plus"></i> Ordine
 						</a>';

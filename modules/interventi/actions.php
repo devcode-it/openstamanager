@@ -219,6 +219,7 @@ switch (post('op')) {
         $idsede = post('idsede');
         $data_richiesta = post('data_richiesta');
         $richiesta = post('richiesta');
+        $idautomezzo = null;
 
         if (!empty($codice) && !empty($post['idanagrafica']) && !empty($post['idtipointervento'])) {
             // Salvataggio modifiche intervento

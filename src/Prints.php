@@ -244,6 +244,7 @@ class Prints
         }
 
         // Impostazioni personalizzate della stampa
+        $custom = [];
         if (file_exists($infos['full_directory'].'/custom/settings.php')) {
             $custom = include $infos['full_directory'].'/custom/settings.php';
         } elseif (file_exists($infos['full_directory'].'/settings.php')) {

@@ -210,7 +210,7 @@ $totale = sum([
 
 $netto_a_pagare = sum([
     $totale,
-    $marca_da_bollo,
+    //$marca_da_bollo, // Variabile non inizializzata!
     -$records[0]['ritenutaacconto'],
 ]);
 

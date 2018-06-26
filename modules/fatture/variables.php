@@ -8,6 +8,6 @@ FROM co_documenti WHERE id='.prepare($id_record));
 return [
     'email' => $r['email'],
     'numero' => empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'],
-    'descrizione' => $r['descrizione'],
+    'note' => $r['note'],
     'data' => Translator::dateToLocale($r['data']),
 ];

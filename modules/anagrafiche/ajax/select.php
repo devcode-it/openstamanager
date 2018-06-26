@@ -75,7 +75,7 @@ switch ($resource) {
                 $idagente_default = 0;
             }
 
-            $ids = array_column($results, $id);
+            $ids = array_column($results, 'idanagrafica');
             $pos = array_search($idagente_default, $ids);
             if ($pos !== false) {
                 $results[$pos]['_bgcolor_'] = '#ff0';
@@ -84,7 +84,7 @@ switch ($resource) {
 
     case 'tecnici':
             $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
-			
+
             foreach ($elements as $element) {
                 $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
             }
@@ -92,13 +92,13 @@ switch ($resource) {
             if (empty($filter)) {
                 $where[] = "descrizione='Tecnico'";
                 $where[] = 'deleted=0';
-				
+
 				//come tecnico posso aprire attività solo a mio nome
 				$user = Auth::user();
 				if ($user['gruppo'] == 'Tecnici' AND  !empty($user['idanagrafica']) ) {
 					$where[] = 'an_anagrafiche.idanagrafica='.$user['idanagrafica'];
 				}
-				
+
             }
 
             if (!empty($search)) {

@@ -240,12 +240,12 @@ switch (post('op')) {
                 $um = post('um')[$idriga];
                 $abilita_serial = post('abilita_serial')[$idriga];
 
-                $subtot = Translator::numberToLocale($post['subtot'][$idriga]) * $qta;
-                $sconto = Translator::numberToLocale($post['sconto'][$idriga]);
+                $subtot = $post['subtot'][$idriga] * $qta;
+                $sconto = $post['sconto'][$idriga];
                 $sconto = $sconto * $qta;
 
                 $idiva = post('idiva')[$idriga];
-                $iva = Translator::numberToLocale($post['iva'][$idriga]) * $qta;
+                $iva = $post['iva'][$idriga] * $qta;
 
                 $qprc = 'SELECT tipo_sconto, sconto_unitario FROM or_righe_ordini WHERE id='.prepare($idriga);
                 $rsprc = $dbo->fetchArray($qprc);

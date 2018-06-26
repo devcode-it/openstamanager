@@ -264,9 +264,15 @@ switch (post('op')) {
         // Se l'anagrafica non è l'azienda principale, la disattivo
         if (!str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
             $dbo->query('UPDATE an_anagrafiche SET deleted = 1 WHERE idanagrafica = '.prepare($id_record).Modules::getAdditionalsQuery($id_module));
-
+			
+			// Se l'anagrafica è collegata ad un utente lo disabilito
+			$dbo->query('UPDATE zz_users SET enabled = 0 WHERE idanagrafica = '.prepare($id_record).Modules::getAdditionalsQuery($id_module));
+			
+			
             $_SESSION['infos'][] = tr('Anagrafica eliminata!');
         }
+		
+		
 
         break;
 }

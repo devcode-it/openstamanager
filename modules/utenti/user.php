@@ -17,8 +17,14 @@ if ($self_edit) {
     $idgruppo = intval(filter('idgruppo'));
     $id_utente = filter('id_utente');
 	
+	//gruppo della selezione
 	$nome_gruppo = $dbo->fetchArray('SELECT nome FROM zz_groups WHERE id='.prepare($idgruppo))[0]['nome'];
-	$nome_gruppo = substr($nome_gruppo, 0, -1).'o';
+	$gruppi = [
+		'Clienti' => 'Cliente',
+		'Tecnici' => 'Tecnico',
+		'Agenti' => 'Agente',
+	];
+	$nome_gruppo = $gruppi[$nome_gruppo];
 
 }
 

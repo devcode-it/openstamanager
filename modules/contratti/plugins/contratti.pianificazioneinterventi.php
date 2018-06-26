@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../../core.php';
 
+include_once Modules::filepath('Articoli', 'modutil.php');
+
 // Pianificazione intervento
 switch (filter('op')) {
     case 'add-pianifica':
@@ -181,7 +183,6 @@ switch (filter('op')) {
                                         $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idintervento.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
 
                                         // Decremento la quantità per ogni articolo copiato
-                                        include_once $docroot.'/modules/articoli/modutil.php';
                                         $rs_articoli = $dbo->fetchArray('SELECT * FROM mg_articoli_interventi WHERE idintervento = '.$idintervento.' ');
                                         foreach ($rs_articoli as $rs_articolo) {
                                             add_movimento_magazzino($rs_articolo['idarticolo'], -force_decimal($rs_articolo['qta']), ['idautomezzo' => $rs_articolo['idautomezzo'], 'idintervento' => $idintervento]);

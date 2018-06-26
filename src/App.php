@@ -347,13 +347,8 @@ class App
 
         ob_start();
 
-        $original_file = str_replace('|custom|', '', $directory).'form.php';
-        $custom_file = str_replace('|custom|', '/custom', $directory).'form.php';
-        if (file_exists($custom_file)) {
-            require $custom_file;
-        } elseif (file_exists($original_file)) {
-            require $original_file;
-        }
+        $require = self::filepath($directory, 'form.php');
+        require $require;
 
         $form = ob_get_clean();
 
@@ -371,20 +366,39 @@ class App
         $id_record = filter('id_record');
 
         $directory = empty($directory) ? 'include|custom|/common/' : $directory;
-        $directory = str_contains($directory, DOCROOT) ? $directory : DOCROOT.'/'.$directory;
 
         ob_start();
 
-        $original_file = str_replace('|custom|', '', $directory).$file;
-        $custom_file = str_replace('|custom|', '/custom', $directory).$file;
-        if (file_exists($custom_file)) {
-            require $custom_file;
-        } elseif (file_exists($original_file)) {
-            require $original_file;
-        }
+        $require = self::filepath($directory, $file);
+        require $require;
 
         $response = ob_get_clean();
 
         return $response;
+    }
+
+    /**
+     * Individua il percorso per il file da includere considerando gli eventuali custom.
+     *
+     * @param string $path
+     *
+     * @return string|null
+     */
+    public static function filepath($path, $file = null)
+    {
+        $path = str_contains($path, DOCROOT) ? $path : DOCROOT.'/'.ltrim($path, '/');
+        $path = empty($file) ? $path : rtrim($path, '/').'/'.$file;
+
+        $original_file = str_replace('|custom|', '', $path);
+        $custom_file = str_replace('|custom|', '/custom', $path);
+
+        $result = null;
+        if (file_exists($custom_file)) {
+            $result = $custom_file;
+        } elseif (file_exists($original_file)) {
+            $result = $original_file;
+        }
+
+        return realpath($result);
     }
 }

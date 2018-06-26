@@ -119,11 +119,7 @@ if (filter('action') == 'do_update') {
     if (Update::isUpdateLocked() && filter('force') === null) {
         $pageTitle = tr('Aggiornamento in corso!');
 
-        if (file_exists($docroot.'/include/custom/top.php')) {
-            include_once $docroot.'/include/custom/top.php';
-        } else {
-            include_once $docroot.'/include/top.php';
-        }
+        include_once App::filepath('include|custom|', 'top.php');
 
         echo '
         <div class="box box-center box-danger box-solid text-center">
@@ -137,11 +133,7 @@ if (filter('action') == 'do_update') {
             </div>
         </div>';
 
-        if (file_exists($docroot.'/include/custom/bottom.php')) {
-            include_once $docroot.'/include/custom/bottom.php';
-        } else {
-            include_once $docroot.'/include/bottom.php';
-        }
+        include_once App::filepath('include|custom|', 'bottom.php');
 
         exit();
     }
@@ -151,11 +143,7 @@ if (filter('action') == 'do_update') {
     $button = !$dbo->isInstalled() ? tr('Installa!') : tr('Aggiorna!');
     $pageTitle = !$dbo->isInstalled() ? tr('Installazione') : tr('Aggiornamento');
 
-    if (file_exists($docroot.'/include/custom/top.php')) {
-        include_once $docroot.'/include/custom/top.php';
-    } else {
-        include_once $docroot.'/include/top.php';
-    }
+    include_once App::filepath('include|custom|', 'top.php');
 
     echo '
         <div class="box box-center-large box-warning text-center">

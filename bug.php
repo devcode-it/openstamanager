@@ -73,11 +73,7 @@ if (filter('op') == 'send') {
 
 $pageTitle = tr('Bug');
 
-if (file_exists($docroot.'/include/custom/top.php')) {
-    include $docroot.'/include/custom/top.php';
-} else {
-    include $docroot.'/include/top.php';
-}
+include_once App::filepath('include|custom|', 'top.php');
 
 if (empty($mail['from_address']) || empty($mail['server'])) {
     echo '
@@ -194,8 +190,4 @@ echo '
 
 <script type="text/javascript" charset="utf-8" src="'.App::getPaths()['js'].'/ckeditor/ckeditor.js'.'"></script>';
 
-if (file_exists($docroot.'/include/custom/bottom.php')) {
-    include $docroot.'/include/custom/bottom.php';
-} else {
-    include $docroot.'/include/bottom.php';
-}
+include_once App::filepath('include|custom|', 'bottom.php');

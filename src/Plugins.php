@@ -57,4 +57,20 @@ class Plugins
 
         return self::getPlugins()[$plugin];
     }
+
+    /**
+     * Individua il percorso per il file.
+     *
+     * @param string|int $plugin
+     * @param string     $file
+     *
+     * @return string|null
+     */
+    public static function filepath($plugin, $file)
+    {
+        $plugin = self::get($plugin);
+        $directory = 'plugins/'.$plugin['directory'].'|custom|';
+
+        return App::filepath($directory, $file);
+    }
 }

@@ -2,6 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
+// Necesario per funzione \Util\Ini::getList
+include_once Modules::filepath('MyImpianti', 'modutil.php');
+
 $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 
 ?><form action="" method="post" id="edit-form" enctype="multipart/form-data">
@@ -182,9 +185,6 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 
 		<div class="panel-body">
 <?php
-
-    /* necesario per funzione \Util\Ini::getList */
-    include $docroot.'/modules/my_impianti/modutil.php';
 
     echo '
             <div class="row">

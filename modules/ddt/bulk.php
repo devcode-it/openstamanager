@@ -1,7 +1,8 @@
 <?php
 
 include_once __DIR__.'/../../core.php';
-include_once DOCROOT.'/modules/fatture/modutil.php';
+
+include_once Modules::filepath('Fatture di vendita', 'modutil.php');
 
 switch (post('op')) {
     case 'creafatturavendita':
@@ -145,20 +146,18 @@ switch (post('op')) {
     break;
 
     case 'delete-bulk':
-	
-		if ($debug){
-			
-			foreach ($id_records as $id) {
-				$dbo->query('DELETE  FROM dt_ddt  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
-				$dbo->query('DELETE FROM dt_righe_ddt WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
-				$dbo->query('DELETE FROM mg_movimenti WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
-			}
 
-			$_SESSION['infos'][] = tr('Ddt eliminati!');
-			
-		}else{
-				$_SESSION['warnings'][] = tr('Procedura in fase di sviluppo. Nessuna modifica apportata.');
-		}
+        if ($debug) {
+            foreach ($id_records as $id) {
+                $dbo->query('DELETE  FROM dt_ddt  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
+                $dbo->query('DELETE FROM dt_righe_ddt WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
+                $dbo->query('DELETE FROM mg_movimenti WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
+            }
+
+            $_SESSION['infos'][] = tr('Ddt eliminati!');
+        } else {
+            $_SESSION['warnings'][] = tr('Procedura in fase di sviluppo. Nessuna modifica apportata.');
+        }
 
     break;
 }

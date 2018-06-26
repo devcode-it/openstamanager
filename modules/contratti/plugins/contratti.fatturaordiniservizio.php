@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../../core.php';
 
+include_once Modules::filepath('Fatture di vendita', 'modutil.php');
+
 /*
     GESTIONE ORDINI DI SERVIZIO
 */
@@ -65,8 +67,6 @@ elseif (get('op') == 'del_pianificazione') {
 
 // Creazione fattura pianificata
 elseif (get('op') == 'addfattura') {
-    include_once $docroot.'/modules/fatture/modutil.php';
-
     $idpianificazione = $get['idpianificazione'];
     $descrizione = post('note');
     $data = $post['data'];
@@ -78,29 +78,29 @@ elseif (get('op') == 'addfattura') {
     $idanagrafica = $rs[0]['idanagrafica'];
 
     $dir = 'entrata';
-	$idconto = get_var('Conto predefinito fatture di vendita');
+    $idconto = get_var('Conto predefinito fatture di vendita');
     $numero = get_new_numerofattura($data);
-	$id_segment = post('id_segment');
+    $id_segment = post('id_segment');
     $numero_esterno = get_new_numerosecondariofattura($data);
 
-	// Tipo di pagamento + banca predefinite dall'anagrafica
-	$query = 'SELECT id, (SELECT idbanca_vendite FROM an_anagrafiche WHERE idanagrafica = '.prepare($idanagrafica).') AS idbanca FROM co_pagamenti WHERE id = (SELECT idpagamento_vendite AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')';
-	$rs = $dbo->fetchArray($query);
-	$idpagamento = $rs[0]['id'];
-	$idbanca = $rs[0]['idbanca'];
+    // Tipo di pagamento + banca predefinite dall'anagrafica
+    $query = 'SELECT id, (SELECT idbanca_vendite FROM an_anagrafiche WHERE idanagrafica = '.prepare($idanagrafica).') AS idbanca FROM co_pagamenti WHERE id = (SELECT idpagamento_vendite AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')';
+    $rs = $dbo->fetchArray($query);
+    $idpagamento = $rs[0]['id'];
+    $idbanca = $rs[0]['idbanca'];
 
-	// Se la fattura è di vendita e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
-	if ($dir == 'entrata' && $idpagamento == '') {
-		$idpagamento = get_var('Tipo di pagamento predefinito');
-	}
+    // Se la fattura è di vendita e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
+    if ($dir == 'entrata' && $idpagamento == '') {
+        $idpagamento = get_var('Tipo di pagamento predefinito');
+    }
 
-	// Se non è impostata la banca dell'anagrafica, uso quella del pagamento.
-	if (empty($idbanca)) {
-		// Banca predefinita del pagamento
-		$query = 'SELECT id FROM co_banche WHERE id_pianodeiconti3 = (SELECT idconto_vendite FROM co_pagamenti WHERE id = '.prepare($idpagamento).')';
-		$rs = $dbo->fetchArray($query);
-		$idbanca = $rs[0]['id'];
-	}
+    // Se non è impostata la banca dell'anagrafica, uso quella del pagamento.
+    if (empty($idbanca)) {
+        // Banca predefinita del pagamento
+        $query = 'SELECT id FROM co_banche WHERE id_pianodeiconti3 = (SELECT idconto_vendite FROM co_pagamenti WHERE id = '.prepare($idpagamento).')';
+        $rs = $dbo->fetchArray($query);
+        $idbanca = $rs[0]['id'];
+    }
 
     $query = 'INSERT INTO co_documenti(numero, numero_esterno, idanagrafica, idtipodocumento, idpagamento, data, idstatodocumento, note, idsede, id_segment, idconto, idbanca) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipodocumento).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza'), ".prepare($note).', (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).'), '.prepare($id_segment).', '.prepare($idconto).', '.prepare($idbanca).' )';
     $dbo->query($query);

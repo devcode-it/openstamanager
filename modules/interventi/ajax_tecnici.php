@@ -6,11 +6,7 @@ if (file_exists(__DIR__.'/../../../core.php')) {
     include_once __DIR__.'/../../core.php';
 }
 
-if (file_exists($docroot.'/modules/interventi/custom/modutil.php')) {
-    include_once $docroot.'/modules/interventi/custom/modutil.php';
-} else {
-    include_once $docroot.'/modules/interventi/modutil.php';
-}
+include_once Modules::filepath('Interventi', 'modutil.php');
 
 switch (get('op')) {
     // OPERAZIONI PER AGGIUNTA NUOVA SESSIONE DI LAVORO

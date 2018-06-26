@@ -11,11 +11,7 @@ if (file_exists('config.inc.php') && $valid_config && $dbo->isConnected()) {
 
 $pageTitle = tr('Configurazione');
 
-if (file_exists($docroot.'/include/custom/top.php')) {
-    include_once $docroot.'/include/custom/top.php';
-} else {
-    include_once $docroot.'/include/top.php';
-}
+include_once App::filepath('include|custom|', 'top.php');
 
 // Controllo sull'esistenza di nuovi parametri di configurazione
 if (post('db_host') !== null) {
@@ -238,7 +234,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
                 return result;
             });
-            
+
             $("#install").on("click", function(){
 
                 if($(this).closest("form").parsley().validate()){
@@ -246,7 +242,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                     $("#install").html("<i class=\'fa fa-spinner fa-pulse  fa-fw\'></i> '.tr("Attendere").'...");
                     $("#install").prop(\'disabled\', true);
                     $("#test").prop(\'disabled\', true);
-                    
+
                     $("#config_form").submit();
                 }
 
@@ -263,14 +259,14 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                         data: {
                             test: 1,
                         },
-                        type: "post",	 
+                        type: "post",
                         success: function(data){
                             data = parseFloat(data.trim());
-							
+
 							$("#test").html(prev_html);
                             $("#test").prop(\'disabled\', false);
                             $("#install").prop(\'disabled\', false);
-						
+
                             if(data == 0){
                                 swal("'.tr('Errore della configurazione').'", "'.tr('La configurazione non è corretta').'.", "error");
                             } else if(data == 1){
@@ -583,10 +579,6 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
         </div>';
 }
 
-if (file_exists($docroot.'/include/custom/bottom.php')) {
-    include_once $docroot.'/include/custom/bottom.php';
-} else {
-    include_once $docroot.'/include/bottom.php';
-}
+include_once App::filepath('include|custom|', 'bottom.php');
 
 exit();

@@ -5,12 +5,8 @@ if (file_exists( __DIR__.'/../../../core.php')) {
 }else {
 		include_once __DIR__.'/../../core.php';
 }
-if (file_exists($docroot.'/modules/fatture/custom/modutil.php')) {
-    include_once $docroot.'/modules/fatture/custom/modutil.php';
-} else {
-    include_once $docroot.'/modules/fatture/modutil.php';
-}
 
+include_once Modules::filepath('Fatture di vendita', 'modutil.php');
 
 switch (post('op')) {
     case 'export-bulk':

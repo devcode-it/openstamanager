@@ -391,7 +391,7 @@ class Modules
     }
 
     /**
-     * Undocumented function.
+     * Costruisce un link HTML per il modulo e il record indicati.
      *
      * @param string|int $modulo
      * @param int        $id_record
@@ -422,5 +422,21 @@ class Modules
         } else {
             return $alternativo;
         }
+    }
+
+    /**
+     * Individua il percorso per il file.
+     *
+     * @param string|int $module
+     * @param string     $file
+     *
+     * @return string|null
+     */
+    public static function filepath($module, $file)
+    {
+        $module = self::get($module);
+        $directory = 'modules/'.$module['directory'].'|custom|';
+
+        return App::filepath($directory, $file);
     }
 }

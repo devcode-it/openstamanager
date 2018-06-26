@@ -2,23 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (file_exists($docroot.'/modules/interventi/custom/modutil.php')) {
-    include_once $docroot.'/modules/interventi/custom/modutil.php';
-} else {
-    include_once $docroot.'/modules/interventi/modutil.php';
-}
-
-if (file_exists($docroot.'/modules/articoli/custom/modutil.php')) {
-    include_once $docroot.'/modules/articoli/custom/modutil.php';
-} else {
-    include_once $docroot.'/modules/articoli/modutil.php';
-}
-
-if (file_exists($docroot.'/modules/my_impianti/custom/modutil.php')) {
-    include_once $docroot.'/modules/my_impianti/custom/modutil.php';
-} else {
-    include_once $docroot.'/modules/my_impianti/modutil.php';
-}
+include_once Modules::filepath('Interventi', 'modutil.php');
+include_once Modules::filepath('Articoli', 'modutil.php');
+include_once Modules::filepath('MyImpianti', 'modutil.php');
 
 switch (post('op')) {
     case 'update':

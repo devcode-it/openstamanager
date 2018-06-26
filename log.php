@@ -4,11 +4,7 @@ include_once __DIR__.'/core.php';
 
 $pageTitle = tr('Log');
 
-if (file_exists($docroot.'/include/custom/top.php')) {
-    include $docroot.'/include/custom/top.php';
-} else {
-    include $docroot.'/include/top.php';
-}
+include_once App::filepath('include|custom|', 'top.php');
 
 echo '
     <div class="box">
@@ -81,8 +77,4 @@ echo '
     </div>
     <!-- /.box -->';
 
-if (file_exists($docroot.'/include/custom/bottom.php')) {
-    include $docroot.'/include/custom/bottom.php';
-} else {
-    include $docroot.'/include/bottom.php';
-}
+include_once App::filepath('include|custom|', 'bottom.php');

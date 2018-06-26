@@ -1,7 +1,8 @@
 <?php
 
 include_once __DIR__.'/../../../core.php';
-include_once $docroot.'/modules/interventi/modutil.php';
+
+include_once Modules::filepath('Interventi', 'modutil.php');
 
 /*
 CONSUNTIVO
@@ -275,7 +276,6 @@ $rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe2_contratti`
 $contratto_tot_ore = $rs[0]['totale_ore'];
 
 $diff = sum($budget, -$totale_addebito);
-
 
 if ($diff > 0) {
     $bilancio = '<span class="text-success"><big>'.Translator::numberToLocale($diff).' &euro;</big></span>';

@@ -2,8 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-include $docroot.'/modules/articoli/modutil.php';
-include_once $docroot.'/modules/fatture/modutil.php';
+include_once Modules::filepath('Articoli', 'modutil.php');
+include_once Modules::filepath('Fatture di vendita', 'modutil.php');
 
 $module = Modules::get($id_module);
 

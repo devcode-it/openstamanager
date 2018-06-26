@@ -2,17 +2,17 @@
 
 include_once __DIR__.'/../../../core.php';
 
-include_once $docroot.'/modules/articoli/modutil.php';
+include_once Modules::filepath('Articoli', 'modutil.php');
 
 //$query = 'SELECT *, (SELECT codice FROM mg_articoli WHERE id=mg_articoli_interventi.idarticolo) AS codice, mg_articoli_interventi.id AS idriga, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM in_interventi WHERE id=mg_articoli_interventi.idintervento) ) ) AS prc_guadagno FROM mg_articoli_interventi WHERE idintervento='.prepare($id_record).' '.Modules::getAdditionalsQuery('Magazzino');
 //$rs = $dbo->fetchArray($query);
 
-if (!empty($get['idcontratto_riga']))
-	$idcontratto_riga = $get['idcontratto_riga'];
+if (!empty($get['idcontratto_riga'])) {
+    $idcontratto_riga = $get['idcontratto_riga'];
+}
 
 $query = 'SELECT * FROM co_righe_contratti_articoli WHERE id_riga_contratto='.prepare($idcontratto_riga).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC';
 $rs = $dbo->fetchArray($query);
-
 
 if (!empty($rs)) {
     echo '
@@ -135,14 +135,14 @@ if (!empty($rs)) {
             <button type="button" class="btn btn-info btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica articoli').'\', \''.$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idarticolo='.$r['idriga'].'&idriga='.$r['id'].'\', 1);"><i class="fa fa-barcode"></i></button>';
             }*/
 
-           if (empty($readonly)) {
-            echo '
+            if (empty($readonly)) {
+                echo '
 			<button type="button" class="btn btn-warning btn-xs" data-title="'.tr('Modifica spesa').'" onclick="launch_modal(\'Modifica spesa\', \''.$rootdir.'/modules/contratti/plugins/add_articolo.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'\', 1, \'#bs-popup2\');" >
 			<i class="fa fa-edit"></i></button>
             <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" title="'.tr('Elimina materiale').'" onclick="if(confirm(\''.tr('Eliminare questo materiale?').'\') ){ ritorna_al_magazzino(\''.$r['id'].'\'); }"><i class="fa fa-angle-double-left"></i> <i class="fa fa-truck"></i></button>';
-		   }
-			
-			echo '
+            }
+
+            echo '
         </td>';
         }
         echo '

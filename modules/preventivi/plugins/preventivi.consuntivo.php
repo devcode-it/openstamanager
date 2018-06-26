@@ -1,7 +1,8 @@
 <?php
 
 include_once __DIR__.'/../../../core.php';
-include_once $docroot.'/modules/interventi/modutil.php';
+
+include_once Modules::filepath('Interventi', 'modutil.php');
 
 /*
 CONSUNTIVO

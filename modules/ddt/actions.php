@@ -3,9 +3,9 @@
 include_once __DIR__.'/../../core.php';
 
 // Necessaria per la funzione add_movimento_magazzino
-include_once $docroot.'/modules/articoli/modutil.php';
-include_once $docroot.'/modules/fatture/modutil.php';
-include_once $docroot.'/modules/ordini/modutil.php';
+include_once Modules::filepath('Articoli', 'modutil.php');
+include_once Modules::filepath('Fatture di vendita', 'modutil.php');
+include_once Modules::filepath('Ordini cliente', 'modutil.php');
 
 $module = Modules::get($id_module);
 
@@ -327,12 +327,11 @@ switch (post('op')) {
             $query = 'DELETE FROM dt_righe_ddt WHERE idddt='.prepare($id_record).' AND id='.prepare($idriga);
 
             if ($dbo->query($query)) {
-            
                 //Aggiorno lo stato dell'ordine
-                if(get_var('Cambia automaticamente stato ordini fatturati') && !empty($rs[0]['idordine'])){
+                if (get_var('Cambia automaticamente stato ordini fatturati') && !empty($rs[0]['idordine'])) {
                     $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[0]['idordine']).'") WHERE id = '.prepare($rs[0]['idordine']));
                 }
-            
+
                 // Ricalcolo inps, ritenuta e bollo
                 if ($dir == 'entrata') {
                     ricalcola_costiagg_ddt($id_record);
@@ -452,7 +451,7 @@ switch (post('op')) {
         // Se delle righe sono state create da un ordine, devo riportare la quantità evasa nella tabella degli ordini
         // al valore di prima, riaggiungendo la quantità che sto togliendo
         $rs = $dbo->fetchArray('SELECT qta, descrizione, idarticolo, idordine, idiva FROM dt_righe_ddt WHERE idddt='.prepare($id_record));
-        
+
         // Rimpiazzo la quantità negli ordini
         for ($i = 0; $i < sizeof($rs); ++$i) {
             $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$rs[$i]['qta'].' WHERE descrizione='.prepare($rs[$i]['descrizione']).' AND idarticolo='.prepare($rs[$i]['idarticolo']).' AND idordine='.prepare($rs[$i]['idordine']).' AND idiva='.prepare($rs[$i]['idiva']));
@@ -461,9 +460,9 @@ switch (post('op')) {
         $dbo->query('DELETE FROM dt_ddt WHERE id='.prepare($id_record));
         $dbo->query('DELETE FROM dt_righe_ddt WHERE idddt='.prepare($id_record));
         $dbo->query('DELETE FROM mg_movimenti WHERE idddt='.prepare($id_record));
-        
+
         //Aggiorno gli stati degli ordini
-        if(get_var('Cambia automaticamente stato ordini fatturati')){
+        if (get_var('Cambia automaticamente stato ordini fatturati')) {
             for ($i = 0; $i < sizeof($rs); ++$i) {
                 $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[$i]['idordine']).'") WHERE id = '.prepare($rs[$i]['idordine']));
             }
@@ -502,7 +501,7 @@ switch (post('op')) {
         }
 
         break;
-        
+
     // aggiungi righe da ordine
     case 'add_ordine':
         $idordine = $post['iddocumento'];

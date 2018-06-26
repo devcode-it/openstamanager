@@ -59,11 +59,7 @@ include_once $docroot.'/include/update.php';
 
 $pageTitle = tr('Login');
 
-if (file_exists($docroot.'/include/custom/top.php')) {
-    include_once $docroot.'/include/custom/top.php';
-} else {
-    include_once $docroot.'/include/top.php';
-}
+include_once App::filepath('include|custom|', 'top.php');
 
 // Controllo se è una beta e in caso mostro un warning
 if (str_contains($version, 'beta')) {
@@ -175,8 +171,4 @@ echo '/> '.tr('Mantieni attiva la sessione').'
             });
             </script>';
 
-if (file_exists($docroot.'/include/custom/bottom.php')) {
-    include_once $docroot.'/include/custom/bottom.php';
-} else {
-    include_once $docroot.'/include/bottom.php';
-}
+include_once App::filepath('include|custom|', 'bottom.php');

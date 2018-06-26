@@ -84,7 +84,7 @@ switch ($op) {
             $dbo->query('INSERT INTO my_impianti(matricola, idanagrafica, nome, data, idtecnico) VALUES ('.prepare($matricola).', '.prepare($idanagrafica).', '.prepare($nome).', NOW(), '.prepare($idtecnico).')');
 
             $id_record = $dbo->lastInsertedID();
-            
+
             if (isAjaxRequest() && post('source')!='') {
                 echo json_encode(['id' => $id_record, 'text' => $matricola." - ".$nome]);
             }
@@ -96,7 +96,7 @@ switch ($op) {
 
     // Carica i campi da compilare del componente
     case 'load_componente':
-        include_once $docroot.'/modules/my_impianti/modutil.php';
+        include_once Modules::filepath('MyImpianti', 'modutil.php');
 
         $filename = post('filename');
         $idarticolo = post('idarticolo');

@@ -25,6 +25,10 @@ $settings = [
         'type' => 'ext',
         'description' => tr('Permette di leggere e scrivere gli archivi compressi ZIP e i file al loro interno'),
     ],
+    'mbstring' => [
+        'type' => 'ext',
+        'description' => tr('Permette di gestire i caratteri dello standard UTF-8'),
+    ],
     'pdo_mysql' => [
         'type' => 'ext',
         'description' => tr('Permette di effettuare la connessione al database MySQL'),

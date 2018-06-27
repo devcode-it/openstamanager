@@ -418,7 +418,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                                     </button>
                                 </div>
                                 <div class="col-md-4 text-right">
-                                    <button type="button" id="install" class="btn btn-success btn-block">
+                                    <button type="submit" id="install" class="btn btn-success btn-block">
                                         <i class="fa fa-check"></i> '.tr('Installa').'
                                     </button>
                                 </div>

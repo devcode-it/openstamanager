@@ -25,18 +25,22 @@ class Validate
 
         $vat_number = starts_with($vat_number, 'IT') ? $vat_number : 'IT'.$vat_number;
 
-        try {
-            $validator = new VatCalculator();
+        // Controllo con API europea ufficiale
+        if (extension_loaded('soap')) {
+            try {
+                $validator = new VatCalculator();
 
-            if (!$validator->isValidVATNumber($vat_number)) {
-                return false;
+                if (!$validator->isValidVATNumber($vat_number)) {
+                    return false;
+                }
+            } catch (VATCheckUnavailableException $e) {
             }
-        } catch (VATCheckUnavailableException $e) {
         }
 
+        // Controllo attraverso apilayer
         $access_key = Settings::get('apilayer API key for VAT number');
         if (!empty($access_key)) {
-            if (!function_exists('curl_init')) {
+            if (!extension_loaded('curl')) {
                 $_SESSION['warnings'][] = tr('Estensione cURL non installata');
 
                 return true;
@@ -79,9 +83,10 @@ class Validate
             return false;
         }
 
+        // Controllo attraverso apilayer
         $access_key = Settings::get('apilayer API key for Email');
         if (!empty($access_key)) {
-            if (!function_exists('curl_init')) {
+            if (!extension_loaded('curl')) {
                 $_SESSION['warnings'][] = tr('Estensione cURL non installata');
 
                 return true;

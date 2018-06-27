@@ -312,7 +312,9 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                 <div id="steps">
 
                     <div id="step-1">
-                        <p>'.tr('Benvenuto in <strong>OpenSTAManager</strong>!').'</p>
+                        <p>'.tr('Benvenuto in _NAME_!', [
+                            '_NAME_' => '<strong>OpenSTAManager</strong>',
+                        ]).'</p>
                         <p>'.tr("Prima di procedere alla configurazione e all'installazione del software, sono necessari alcuni accorgimenti per garantire il corretto funzionamento del gestionale").'. '.tr('Stai utilizzando la versione PHP _PHP_', [
                             '_PHP_' => phpversion(),
                         ]).'.</p>
@@ -332,6 +334,8 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
         'pdo_mysql' => tr('Necessario per la connessione al database'),
         'openssl' => tr('Utile per la generazione di chiavi complesse (facoltativo)'),
         'intl' => tr('Utile per la gestione automatizzata della conversione numerica (facoltativo)'),
+        'soap' => tr('Utile per i controlli sulla validità della Partita IVA (facoltativo)'),
+        'curl' => tr('Utile per i controlli sulla validità di diversi attributi (facoltativo)'),
     ];
     foreach ($extensions as $key => $value) {
         $check = extension_loaded($key);

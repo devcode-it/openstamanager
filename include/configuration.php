@@ -293,7 +293,6 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
             <div class="box-body" id="smartwizard">';
 
-    // REQUISITI PER IL CORRETTO FUNZIONAMENTO
     echo '
                 <ul>
                     <li><a href="#step-1">
@@ -311,158 +310,12 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
                 <div id="steps">
 
-                    <div id="step-1">
-                        <p>'.tr('Benvenuto in _NAME_!', [
-                            '_NAME_' => '<strong>OpenSTAManager</strong>',
-                        ]).'</p>
-                        <p>'.tr("Prima di procedere alla configurazione e all'installazione del software, sono necessari alcuni accorgimenti per garantire il corretto funzionamento del gestionale").'. '.tr('Stai utilizzando la versione PHP _PHP_', [
-                            '_PHP_' => phpversion(),
-                        ]).'.</p>
-                        <hr>';
+                    <div id="step-1">';
 
-    // Estensioni di PHP
+    // REQUISITI PER IL CORRETTO FUNZIONAMENTO
+    include __DIR__.'/requirements.php';
+
     echo '
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p>'.tr('Le seguenti estensioni PHP devono essere abilitate dal file di configurazione _FILE_', [
-                                    '_FILE_' => '<b>php.ini</b>',
-                                ]).':</p>
-                                <div class="list-group">';
-    $extensions = [
-        'zip' => tr("Necessario per l'utilizzo delle funzioni di aggiornamento automatico e backup, oltre che per eventuali moduli aggiuntivi"),
-        'pdo_mysql' => tr('Necessario per la connessione al database'),
-        'openssl' => tr('Utile per la generazione di chiavi complesse (facoltativo)'),
-        'intl' => tr('Utile per la gestione automatizzata della conversione numerica (facoltativo)'),
-        'soap' => tr('Utile per i controlli sulla validità della Partita IVA (facoltativo)'),
-        'curl' => tr('Utile per i controlli sulla validità di diversi attributi (facoltativo)'),
-    ];
-    foreach ($extensions as $key => $value) {
-        $check = extension_loaded($key);
-        echo '
-                                    <div class="list-group-item">
-                                        <h4 class="list-group-item-heading">
-                                            '.$key;
-        if ($check) {
-            echo '
-                                            <span class="label label-success pull-right">
-                                                <i class="fa fa-check"></i>
-                                            </span>';
-        } else {
-            echo '
-                                            <span class="label label-danger pull-right">
-                                                <i class="fa fa-times"></i>
-                                            </span>';
-        }
-        echo '
-                                        </h4>
-                                        <p class="list-group-item-text">'.$value.'</p>
-                                </div>';
-    }
-    echo '
-                                </div>
-
-                                <hr>
-                            </div>';
-
-    // Impostazione di valore per PHP
-    echo '
-
-                            <div class="col-md-6">
-                                <p>'.tr('Le seguenti impostazioni PHP devono essere modificate nel file di configurazione _FILE_', [
-                                    '_FILE_' => '<b>php.ini</b>',
-                                ]).':</p>
-                                <div class="list-group">';
-    $values = [
-        'display_errors' => true,
-        'upload_max_filesize' => '>16M',
-        'post_max_size' => '>16M',
-    ];
-    foreach ($values as $key => $value) {
-        $ini = str_replace(['k', 'M'], ['000', '000000'], ini_get($key));
-        $real = str_replace(['k', 'M'], ['000', '000000'], $value);
-
-        if (starts_with($real, '>')) {
-            $check = $ini >= substr($real, 1);
-        } elseif (starts_with($real, '<')) {
-            $check = $ini <= substr($real, 1);
-        } else {
-            $check = ($real == $ini);
-        }
-
-        if (is_bool($value)) {
-            $value = !empty($value) ? 'On' : 'Off';
-        } else {
-            $value = str_replace(['>', '<'], '', $value);
-        }
-
-        echo '
-                                    <div class="list-group-item">
-                                        <h4 class="list-group-item-heading">
-                                            '.$key;
-        if ($check) {
-            echo '
-                                            <span class="label label-success pull-right">
-                                                <i class="fa fa-check"></i>
-                                            </span>';
-        } else {
-            echo '
-                                            <span class="label label-danger pull-right">
-                                                <i class="fa fa-times"></i>
-                                            </span>';
-        }
-        echo '
-                                        </h4>
-                                        <p class="list-group-item-text">'.tr('Valore consigliato').': '.$value.'</p>
-                                    </div>';
-    }
-    echo '
-                                </div>
-
-                                <hr>
-                            </div>
-                        </div>';
-
-    // Percorsi necessari
-    echo '
-
-                        <div class="row">
-                            <div class="col-md-12">
-                                <p>'.tr('Le seguenti cartelle devono risultare scrivibili da parte del gestionale').':</p>
-                                <div class="list-group">';
-    $dirs = [
-        'backup' => tr('Necessario per il salvataggio dei backup'),
-        'files' => tr('Necessario per il salvataggio di file inseriti dagli utenti'),
-        'logs' => tr('Necessario per la gestione dei file di log'),
-    ];
-    foreach ($dirs as $key => $value) {
-        $check = is_writable($docroot.DIRECTORY_SEPARATOR.$key);
-        echo '
-                                    <div class="list-group-item">
-                                        <h4 class="list-group-item-heading">
-                                            '.$key;
-        if ($check) {
-            echo '
-                                            <span class="label label-success pull-right">
-                                                <i class="fa fa-check"></i>
-                                            </span>';
-        } else {
-            echo '
-                                            <span class="label label-danger pull-right">
-                                                <i class="fa fa-times"></i>
-                                            </span>';
-        }
-        echo '
-                                        </h4>
-                                        <p class="list-group-item-text">'.$value.'</p>
-                                    </div>';
-    }
-    echo '
-                                </div>
-
-                                <hr>
-                            </div>
-                        </div>
                     </div>';
 
     // LICENZA
@@ -554,9 +407,6 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                             </div>';
 
     echo '
-                            ';
-
-    echo '
                             <!-- PULSANTI -->
                             <div class="row">
                                 <div class="col-md-4">
@@ -573,7 +423,6 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                                     </button>
                                 </div>
                             </div>
-
 
                         </form>
                     </div>

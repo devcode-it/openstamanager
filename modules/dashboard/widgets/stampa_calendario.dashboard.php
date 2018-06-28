@@ -33,7 +33,7 @@ echo '
 </form>';
 
 echo '<script src="'.$rootdir.'/lib/init.js"></script>';
-echo '<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/base/jquery-ui.css">';
+echo '<link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/base/jquery-ui.css">';
 
 ?>
 <style>

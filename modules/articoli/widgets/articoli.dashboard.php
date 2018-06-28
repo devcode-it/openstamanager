@@ -19,7 +19,7 @@ if (!empty($rs)) {
             '.Modules::link('Articoli', $r['id'], $r['descrizione']).'
         </td>
         <td>
-            '.$r['qta'].' '.$r['unitamisura'].'
+            '.Translator::numberToLocale($r['qta']).' '.$r['unitamisura'].'
         </td>
     </tr>';
     }

@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 /**
  * Recupera il totale delle ore spese per un intervento.
  *
- * @param [type] $idintervento
+ * @param int $idintervento
  */
 function get_ore_intervento($idintervento)
 {
@@ -24,10 +24,10 @@ function get_ore_intervento($idintervento)
 /**
  * Funzione per collegare gli articoli, usati in un intervento, ai rispettivi impianti.
  *
- * @param [type] $idintervento
- * @param [type] $idimpianto
- * @param [type] $idarticolo
- * @param [type] $qta
+ * @param int $idintervento
+ * @param int $idimpianto
+ * @param int $idarticolo
+ * @param int $qta
  */
 function link_componente_to_articolo($idintervento, $idimpianto, $idarticolo, $qta)
 {

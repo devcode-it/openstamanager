@@ -38,7 +38,7 @@ class App
     ];
 
     /**
-     * Restituisce l'identificativo del modulo attualmente in utilizzo.
+     * Restituisce il modulo attualmente in utilizzo.
      *
      * @return array
      */
@@ -68,7 +68,7 @@ class App
     }
 
     /**
-     * Restituisce la configurazione di default del gestionale.
+     * Restituisce la configurazione di default del progetto.
      *
      * @return array
      */
@@ -82,7 +82,7 @@ class App
     }
 
     /**
-     * Restituisce la configurazione dell'installazione.
+     * Restituisce la configurazione dell'installazione in utilizzo del progetto.
      *
      * @return array
      */
@@ -107,33 +107,36 @@ class App
     }
 
     /**
-     * Individuazione dei percorsi di base.
+     * Individua i percorsi di base necessari per il funzionamento del gestionale.
+     * <b>Attenzione<b>: questo metodo deve essere eseguito all'interno di un file nella cartella principale del progetto per permettere il corretto funzionamento degli URL.
      *
      * @return array
      */
     public static function definePaths($docroot)
     {
-        // Individuazione di $rootdir
-        $rootdir = substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/')).'/';
-        if (strrpos($rootdir, '/'.basename($docroot).'/') !== false) {
-            $rootdir = substr($rootdir, 0, strrpos($rootdir, '/'.basename($docroot).'/')).'/'.basename($docroot);
-        } else {
-            $rootdir = '/';
+        if (!defined('DOCROOT')) {
+            // Individuazione di $rootdir
+            $rootdir = substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/')).'/';
+            if (strrpos($rootdir, '/'.basename($docroot).'/') !== false) {
+                $rootdir = substr($rootdir, 0, strrpos($rootdir, '/'.basename($docroot).'/')).'/'.basename($docroot);
+            } else {
+                $rootdir = '/';
+            }
+            $rootdir = rtrim($rootdir, '/');
+            $rootdir = str_replace('%2F', '/', rawurlencode($rootdir));
+
+            // Individuazione di $baseurl
+            $baseurl = (isHTTPS(true) ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].$rootdir;
+
+            // Impostazione delle variabili globali
+            define('DOCROOT', $docroot);
+            define('ROOTDIR', $rootdir);
+            define('BASEURL', $baseurl);
         }
-        $rootdir = rtrim($rootdir, '/');
-        $rootdir = str_replace('%2F', '/', rawurlencode($rootdir));
-
-        // Individuazione di $baseurl
-        $baseurl = (isHTTPS(true) ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].$rootdir;
-
-        // Impostazione delle variabili globali
-        define('DOCROOT', $docroot);
-        define('ROOTDIR', $rootdir);
-        define('BASEURL', $baseurl);
     }
 
     /**
-     * Restituisce la configurazione dell'installazione.
+     * Individua i percorsi principali del progetto.
      *
      * @return array
      */
@@ -150,7 +153,7 @@ class App
     }
 
     /**
-     * Restituisce la configurazione dell'installazione.
+     * Restituisce l'elenco degli assets del progetto.
      *
      * @return array
      */
@@ -212,6 +215,13 @@ class App
         return $result;
     }
 
+    /**
+     * Interpreta lo standard modulare per l'individuazione delle query di un modulo/plugin del progetto.
+     *
+     * @param array $element
+     *
+     * @return array
+     */
     protected static function readNewQuery($element)
     {
         $fields = [];
@@ -265,6 +275,13 @@ class App
         ];
     }
 
+    /**
+     * Interpreta lo standard JSON per l'individuazione delle query di un modulo/plugin del progetto.
+     *
+     * @param array $element
+     *
+     * @return array
+     */
     protected static function readOldQuery($element)
     {
         $options = str_replace(["\r", "\n", "\t"], ' ', $element['option']);
@@ -303,6 +320,13 @@ class App
         ];
     }
 
+    /**
+     * Restituisce le singole componenti delle query per un determinato modulo/plugin.
+     *
+     * @param array $element
+     *
+     * @return array
+     */
     protected static function getViews($element)
     {
         $database = Database::getConnection();
@@ -319,6 +343,14 @@ class App
         return $views;
     }
 
+    /**
+     * Sostituisce i valori previsti all'interno delle query di moduli/plugin.
+     *
+     * @param string $query
+     * @param int    $custom
+     *
+     * @return string
+     */
     public static function replacePlaceholder($query, $custom = null)
     {
         $id_module = filter('id_module');
@@ -337,29 +369,36 @@ class App
         return $query;
     }
 
-    public static function load($file, $result, $options, $directory = null)
+    /**
+     * Restituisce il codice HTML per il form contenente il file indicato.
+     *
+     * @param string $path
+     * @param array  $result
+     * @param array  $options
+     *
+     * @return string
+     */
+    public static function load($file, $result, $options)
     {
-        $module = self::getCurrentModule();
+        $form = self::internalLoad('form.php', $result, $options);
 
-        $id_module = filter('id_module');
-        $id_record = filter('id_record');
+        $response = self::internalLoad($file, $result, $options);
 
-        $directory = empty($directory) ? 'include|custom|/common/' : $directory;
-        $directory = str_contains($directory, DOCROOT) ? $directory : DOCROOT.'/'.$directory;
-
-        ob_start();
-
-        $require = self::filepath($directory, 'form.php');
-        require $require;
-
-        $form = ob_get_clean();
-
-        $response = self::internalLoad($file, $result, $options, $directory);
         $form = str_replace('|response|', $response, $form);
 
         return $form;
     }
 
+    /**
+     * Restituisce il codice HTML generato del file indicato.
+     *
+     * @param string $path
+     * @param array  $result
+     * @param array  $options
+     * @param string $directory
+     *
+     * @return string
+     */
     protected static function internalLoad($file, $result, $options, $directory = null)
     {
         $module = self::getCurrentModule();
@@ -370,10 +409,7 @@ class App
         $directory = empty($directory) ? 'include|custom|/common/' : $directory;
 
         ob_start();
-
-        $require = self::filepath($directory, $file);
-        require $require;
-
+        include self::filepath($directory, $file);
         $response = ob_get_clean();
 
         return $response;
@@ -383,6 +419,7 @@ class App
      * Individua il percorso per il file da includere considerando gli eventuali custom.
      *
      * @param string $path
+     * @param string $file
      *
      * @return string|null
      */

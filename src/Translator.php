@@ -33,7 +33,7 @@ class Translator extends Util\Singleton
     /**
      * Ricerca e aggiunge le traduzioni presenti nei percorsi predefiniti (cartella locale sia nella root che nei diversi moduli).
      *
-     * @param [type] $string
+     * @param string $string
      */
     public function addLocalePath($string)
     {

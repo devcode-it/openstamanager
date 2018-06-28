@@ -1,9 +1,5 @@
 <?php
 
-// Impostazioni per la corretta interpretazione di UTF-8
-header('Content-Type: text/html; charset=UTF-8');
-ob_start();
-
 // Impostazioni di configurazione PHP
 date_default_timezone_set('Europe/Rome');
 
@@ -153,6 +149,9 @@ if (!$continue && getURLPath() != slashes(ROOTDIR.'/index.php') && !Permissions:
 
 // Operazione aggiuntive (richieste non API)
 if (!API::isAPIRequest()) {
+    // Impostazioni di Content-Type e Charset Header
+    header('Content-Type: text/html; charset=UTF-8');
+
     /*
     // Controllo CSRF
     if(!CSRF::getInstance()->validate()){
@@ -176,6 +175,7 @@ if (!API::isAPIRequest()) {
 
     // Registrazione globale del template per gli input HTML
     register_shutdown_function('translateTemplate');
+    ob_start();
 
     // Impostazione della sessione di base
     $_SESSION['infos'] = isset($_SESSION['infos']) ? array_unique($_SESSION['infos']) : [];

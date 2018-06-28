@@ -9,6 +9,9 @@ function serverError()
     }
 }
 
+// Impostazioni del Content-Type
+header('Content-Type: application/json; charset=UTF-8');
+
 // Gestione degli errori
 set_error_handler('serverError');
 register_shutdown_function('serverError');

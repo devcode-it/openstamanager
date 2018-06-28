@@ -9,7 +9,7 @@ function serverError()
     }
 }
 
-// Impostazioni del Content-Type
+// Impostazioni di Content-Type e Charset Header
 header('Content-Type: application/json; charset=UTF-8');
 
 // Gestione degli errori

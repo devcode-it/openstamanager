@@ -1,5 +1,8 @@
 <?php
 
+// Rimozione header X-Powered-By
+header_remove('X-Powered-By');
+
 // Impostazioni di configurazione PHP
 date_default_timezone_set('Europe/Rome');
 

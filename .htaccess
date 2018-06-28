@@ -32,10 +32,9 @@
 </Files>
 
 # Disable indexing of php, html, htm, pdf files
+ServerSignature Off
 <IfModule mod_headers.c>
-	<FilesMatch "\.(php|html|htm|pdf|log)$">
-		Header set X-Robots-Tag: "noindex"
-	</FilesMatch>
+    Header set X-Robots-Tag: "noindex,nofollow"
 </IfModule>
 
 <IfModule mod_rewrite.c>

@@ -271,8 +271,9 @@ DELETE FROM `zz_settings` WHERE `nome` = 'Stampa i prezzi sui preventivi';
 -- Lo stato 'In programmazione' non può essere eliminato/modificato
 UPDATE `in_statiintervento` SET `can_delete` = '0' WHERE `in_statiintervento`.`idstatointervento` = 'WIP';
 
--- Importo per scadenzario, summable
+-- Campi Importo e Pagato dello Scadenzario sommabili
 UPDATE `zz_views` SET `summable` = '1' WHERE  `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND name = 'Importo';
+UPDATE `zz_views` SET `summable` = '1' WHERE  `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND name = 'Pagato';
 
 -- Collego il preventivo alla riga dell'ordine
 ALTER TABLE `or_righe_ordini` ADD `idpreventivo` INT(11) NOT NULL AFTER `idarticolo`;

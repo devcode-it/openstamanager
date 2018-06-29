@@ -301,3 +301,27 @@ INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`
 
 -- Impostazione "Tempo di attesa ricerche"
 INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'Tempo di attesa ricerche in secondi', '2', 'integer', '0', 'Generali');
+
+-- Rimozione IVA duplicata
+DELETE FROM `co_iva` WHERE `id` = 31;
+UPDATE `an_anagrafiche` SET `idiva_acquisti` = 75 WHERE `idiva_acquisti` = 31;
+UPDATE `an_anagrafiche` SET `idiva_vendite` = 75 WHERE `idiva_vendite` = 31;
+UPDATE `co_preventivi` SET `idiva` = 75 WHERE `idiva` = 31;
+UPDATE `co_righe2_contratti` SET `idiva` = 75 WHERE `idiva` = 31;
+UPDATE `co_righe_contratti_articoli` SET `idiva` = 75 WHERE `idiva` = 31;
+UPDATE `co_righe_contratti_materiali` SET `idiva` = 75 WHERE `idiva` = 31;
+UPDATE `co_righe_documenti` SET `idiva` = 75 WHERE `idiva` = 31;
+UPDATE `co_righe_documenti` SET `idiva` = 75 WHERE `idiva` = 31;
+UPDATE `dt_ddt` SET `idiva` = 75 WHERE `idiva` = 31;
+UPDATE `dt_righe_ddt` SET `idiva` = 75 WHERE `idiva` = 31;
+UPDATE `in_righe_interventi` SET `idiva` = 75 WHERE `idiva` = 31;
+UPDATE `mg_articoli` SET `idiva_vendita` = 75 WHERE `idiva_vendita` = 31;
+UPDATE `mg_articoli_interventi` SET `idiva` = 75 WHERE `idiva` = 31;
+UPDATE `or_righe_ordini` SET `idiva` = 75 WHERE `idiva` = 31;
+
+-- Rimozione idtipointervento da co_contratti
+ALTER TABLE `co_contratti` DROP `idtipointervento`;
+
+-- Rinominazione tabelle
+-- ALTER TABLE `co_righe_contratti` RENAME `co_contratti_promemoria`;
+-- ALTER TABLE `co_righe2_contratti` RENAME `co_righe_contratti`;

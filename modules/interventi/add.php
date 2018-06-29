@@ -66,14 +66,9 @@ if (!empty($idcontratto) && !empty($idordineservizio)) {
 
 // Se sto pianificando un contratto, leggo tutti i dati del contratto per predisporre l'aggiunta intervento
 elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
-    $rs = $dbo->fetchArray('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS idzona, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_contratti.idtipointervento) AS tempo_standard  FROM co_contratti WHERE id='.prepare($idcontratto));
+    $rs = $dbo->fetchArray('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS idzona FROM co_contratti WHERE id='.prepare($idcontratto));
     $idanagrafica = $rs[0]['idanagrafica'];
     $idzona = $rs[0]['idzona'];
-
-    // aumento orario inizio del tempo standard definito dalla tipologia dell'intervento (PRESO DAL CONTRATTO)
-    if (!empty($rs[0]['tempo_standard'])) {
-        $orario_fine = date('H:i', strtotime($orario_inizio) + ((60 * 60) * $rs[0]['tempo_standard']));
-    }
 
     // Info riga pianificata
     $rs = $dbo->fetchArray('SELECT *, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_righe_contratti.idtipointervento) AS tempo_standard  FROM co_righe_contratti WHERE idcontratto='.prepare($idcontratto).' AND id='.prepare($idcontratto_riga));

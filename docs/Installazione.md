@@ -21,7 +21,7 @@ currentMenu: installazione
 L'installazione del gestionale richiede la presenza di un server web con abilitato il [DBMS MySQL](https://www.mysql.com)  e il linguaggio di programmazione [PHP](http://php.net).
 
 - PHP >= 5.6
-- MySQL >= 5.0
+- MySQL >= 5.6.5
 
 Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Installazione](https://devcode-it.github.io/openstamanager/installazione.html) della documentazione.
 

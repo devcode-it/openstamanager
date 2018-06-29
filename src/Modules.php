@@ -285,14 +285,14 @@ class Modules
             $pos = array_search($module['t'.$actual.'.id'], array_column($data, 'id'));
             if ($pos === false && !empty($module['t'.$actual.'.id'])) {
                 $array = self::get($module['t'.$actual.'.id']);
-                $array['childrens'] = [];
+                $array['children'] = [];
 
                 $data[] = $array;
                 $pos = count($data) - 1;
             }
 
             if (!empty($module['t'.($actual + 1).'.id'])) {
-                $data[$pos]['childrens'] = self::buildArray($module, $data[$pos]['childrens'], $actual + 1);
+                $data[$pos]['children'] = self::buildArray($module, $data[$pos]['children'], $actual + 1);
             }
         }
 
@@ -341,7 +341,7 @@ class Modules
         $active = ($actual == $element['name']);
         $show = (self::getPermission($element['id']) != '-' && !empty($element['enabled'])) ? true : false;
 
-        $submenus = $element['childrens'];
+        $submenus = $element['children'];
         if (!empty($submenus)) {
             $temp = '';
             foreach ($submenus as $submenu) {

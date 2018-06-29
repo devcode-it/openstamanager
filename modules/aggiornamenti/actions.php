@@ -38,31 +38,25 @@ switch (post('op')) {
         break;
 
     case 'disable':
-        $dbo->query('UPDATE zz_modules SET enabled=0 WHERE id='.prepare($id));
-
-        $rs = $dbo->fetchArray('SELECT id, name FROM zz_modules WHERE id='.prepare($id));
-        $modulo = $rs[0]['name'];
+        $dbo->query('UPDATE `zz_modules` SET `enabled` = 0 WHERE `id` = '.prepare($id).' OR `parent` = '.prepare($id));
 
         $_SESSION['infos'][] = tr('Modulo _MODULE_ disabilitato!', [
-            '_MODULE_' => '"'.$modulo.'"',
+            '_MODULE_' => '"'.Modules::get($id)['name'].'"',
         ]);
 
         break;
 
     case 'enable':
-        $dbo->query('UPDATE zz_modules SET enabled=1 WHERE id='.prepare($id));
-
-        $rs = $dbo->fetchArray('SELECT id, name FROM zz_modules WHERE id='.prepare($id));
-        $modulo = $rs[0]['name'];
+        $dbo->query('UPDATE `zz_modules` SET `enabled` = 1 WHERE `id` = '.prepare($id).' OR `parent` = '.prepare($id));
 
         $_SESSION['infos'][] = tr('Modulo _MODULE_ abilitato!', [
-            '_MODULE_' => '"'.$modulo.'"',
+            '_MODULE_' => '"'.Modules::get($id)['name'].'"',
         ]);
 
         break;
 
     case 'disable_widget':
-        $dbo->query('UPDATE zz_widgets SET enabled=0 WHERE id='.prepare($id));
+        $dbo->query('UPDATE zz_widgets SET enabled = 0 WHERE id = '.prepare($id));
 
         $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
         $widget = $rs[0]['name'];

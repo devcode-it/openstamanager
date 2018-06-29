@@ -131,6 +131,8 @@ if (Auth::check()) {
                 ckeditorToolbar: [
 					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
 				],
+                
+                tempo_attesa_ricerche: '.get_var('Tempo di attesa ricerche in secondi').',
             };
 		</script>';
 }

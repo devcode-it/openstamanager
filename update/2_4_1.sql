@@ -298,3 +298,6 @@ ADD FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
 
 -- Widget per attività senza nessun tecnico assegnato
 INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`, `help`) VALUES (NULL, 'Attività da pianificare', 'stats', (SELECT id FROM zz_modules WHERE name = 'Dashboard'), 'controller_top', 'col-md-3', 'SELECT COUNT(id) AS dato FROM in_interventi WHERE id NOT IN (SELECT idintervento FROM in_interventi_tecnici) AND idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE completato = 0) ', '#6dab3c', 'fa fa-cogs', '', './modules/interventi/widgets/interventi.pianificazionedashboard.interventi.php', 'popup', '', 'Promemoria attività da pianificare', 1, '0', NULL);
+
+-- Impostazione "Tempo di attesa ricerche"
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'Tempo di attesa ricerche in secondi', '2', 'integer', '0', 'Generali');

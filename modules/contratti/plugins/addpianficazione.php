@@ -19,7 +19,7 @@ $list = '\"1\":\"'.tr('Pianificare a partire da oggi ').date('d/m/Y').'\"';
 //promemoria esistente
 if (!empty($get['idcontratto_riga'])) {
     $idcontratto_riga = $get['idcontratto_riga'];
-    $qp = 'SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_righe_contratti.idtipointervento) AS tempo_standard FROM co_righe_contratti WHERE id = '.$idcontratto_riga;
+    $qp = 'SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_contratti_promemoria.idtipointervento) AS tipointervento, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_contratti_promemoria.idtipointervento) AS tempo_standard FROM co_contratti_promemoria WHERE id = '.$idcontratto_riga;
     $rsp = $dbo->fetchArray($qp);
 
     $data_richiesta = readDate($rsp[0]['data_richiesta']);
@@ -34,8 +34,8 @@ if (!empty($get['idcontratto_riga'])) {
     $op = 'pianificazione';
 }
 
-//se non è impostata idcontratto_riga allora sono in fase di inserimento di nuovo promemoria e mi calcolo il prossimo id per co_righe_contratti
-(empty($idcontratto_riga)) ? $idcontratto_riga = $dbo->fetchArray('SELECT MAX(id) AS max_idcontratto_riga  FROM `co_righe_contratti`')[0]['max_idcontratto_riga'] : '';
+//se non è impostata idcontratto_riga allora sono in fase di inserimento di nuovo promemoria e mi calcolo il prossimo id per co_contratti_promemoria
+(empty($idcontratto_riga)) ? $idcontratto_riga = $dbo->fetchArray('SELECT MAX(id) AS max_idcontratto_riga  FROM `co_contratti_promemoria`')[0]['max_idcontratto_riga'] : '';
 (empty($idcontratto_riga)) ? $idcontratto_riga = 1 : '';
 
 //orari inizio fine interventi (8h standard)

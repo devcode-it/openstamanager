@@ -324,5 +324,5 @@ UPDATE `or_righe_ordini` SET `idiva` = 75 WHERE `idiva` = 31;
 ALTER TABLE `co_contratti` DROP `idtipointervento`;
 
 -- Rinominazione tabelle
--- ALTER TABLE `co_righe_contratti` RENAME `co_contratti_promemoria`;
--- ALTER TABLE `co_righe2_contratti` RENAME `co_righe_contratti`;
+ALTER TABLE `co_righe_contratti` RENAME `co_contratti_promemoria`;
+ALTER TABLE `co_righe2_contratti` RENAME `co_righe_contratti`;

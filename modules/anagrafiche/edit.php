@@ -149,7 +149,7 @@ if (!$cliente) {
 						{[ "type": "text", "label": "<?php echo tr('Sito web'); ?>", "name": "sitoweb", "placeholder":"www.dominio.ext", "value": "$sitoweb$", "icon-before": "<i class='fa fa-globe'></i>" ]}
 					</div>
 
-					
+
 				</div>
 			</div>
 		</div>
@@ -158,8 +158,8 @@ if (!$cliente) {
 
     if ($cliente || $fornitore) {
         ?>
-		
-		
+
+
 		<!-- ACQUISTI -->
 		<div class = "row">
 		<div class="col-md-6">
@@ -186,13 +186,13 @@ if (!$cliente) {
 					<div class="col-md-6">
 						{[ "type": "select", "label": "<?php echo tr('Listino articoli'); ?>", "name": "idlistino_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_acquisti$", "extra": "<?php echo ($fornitore) ? '' : 'readonly'; ?>" ]}
 					</div>
-					
+
 				</div>
 
 			</div>
 		</div>
 		</div>
-		
+
 		<div class="col-md-6">
 		<!-- VENDITE -->
 		<div  class="panel panel-primary">
@@ -218,11 +218,11 @@ if (!$cliente) {
 					<div class="col-md-6">
 						{[ "type": "select", "label": "<?php echo tr('Listino articoli'); ?>", "name": "idlistino_vendite", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
 					</div>
-			 
+
 					<div class="col-md-6">
 						{[ "type": "select", "label": "<?php echo tr('Indirizzo di fatturazione'); ?>", "name": "idsede_fatturazione", "values": "query=SELECT id, IF(citta = '', nomesede, CONCAT_WS(', ', nomesede, citta)) AS descrizione FROM an_sedi WHERE idanagrafica='<?php echo $id_record; ?>' UNION SELECT '0' AS id, 'Sede legale' AS descrizione ORDER BY descrizione", "value": "$idsede_fatturazione$" , "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
 					</div>
-					
+
 					<div class="col-md-6">
 						{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento_default", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "$idtipointervento_default$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
 					</div>
@@ -282,11 +282,11 @@ if (!$cliente) {
 						{[ "type": "text", "label": "<?php echo tr('Capitale sociale'); ?>", "name": "capitale_sociale", "value": "$capitale_sociale$" ]}
 					</div>
 				</div>
-				
+
 				<?php
                 //se non è l'anagrafica azienda, ma  cliente o fornitore
                  if ((!str_contains($records[0]['idtipianagrafica'], $id_azienda)) or (($cliente or $fornitore))) {
-                     ?>	
+                     ?>
 				<div class="row">
 					<div class="col-md-3">
 						{[ "type": "text", "label": "<?php echo tr('Appoggio bancario'); ?>", "name": "appoggiobancario", "value": "$appoggiobancario$" ]}
@@ -307,8 +307,8 @@ if (!$cliente) {
 				<?php
                  }
                 ?>
-				
-				
+
+
 				<div class="row">
 					<div class="col-md-12">
 						{[ "type": "text", "label": "<?php echo tr('Dicitura fissa in fattura'); ?>", "name": "diciturafissafattura", "value": "$diciturafissafattura$" ]}
@@ -445,7 +445,7 @@ if (!$records[0]['deleted']) {
 	SELECT `in_interventi`.`id`, `in_interventi`.`data_richiesta`, `in_interventi`.`codice` AS numero, 0 AS numero_esterno, "Intervento" AS tipo_documento, 0 AS dir FROM `in_interventi` JOIN `in_interventi_tecnici` ON `in_interventi`.`id` = `in_interventi_tecnici`.`idintervento` WHERE `in_interventi`.`id` IN (SELECT `idintervento` FROM `in_interventi_tecnici` WHERE `idtecnico` = '.prepare($id_record).' OR `in_interventi`.`idanagrafica` = '.prepare($id_record).' )
 
 	UNION
-	SELECT `co_contratti`.`id`, `co_contratti`.`data_bozza`, `co_contratti`.`numero`,  0 AS numero_esterno , "Contratto" AS tipo_documento, 0 AS dir FROM `co_contratti` WHERE `co_contratti`.`id` IN (SELECT `idcontratto` FROM `co_righe_contratti` WHERE `idanagrafica` = '.prepare($id_record).')
+	SELECT `co_contratti`.`id`, `co_contratti`.`data_bozza`, `co_contratti`.`numero`,  0 AS numero_esterno , "Contratto" AS tipo_documento, 0 AS dir FROM `co_contratti` WHERE `co_contratti`.`id` IN (SELECT `idcontratto` FROM `co_contratti_promemoria` WHERE `idanagrafica` = '.prepare($id_record).')
 
 	UNION
 	SELECT `co_preventivi`.`id`, `co_preventivi`.`data_bozza`, `co_preventivi`.`numero`,  0 AS numero_esterno , "Preventivo" AS tipo_documento, 0 AS dir FROM `co_preventivi` WHERE `co_preventivi`.`id` IN (SELECT `idpreventivo` FROM `co_righe_preventivi` WHERE `idanagrafica` = '.prepare($id_record).')  ORDER BY `data`');

@@ -59,7 +59,7 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
 				<div class="col-md-3">
 					<?php
-                        $rs = $dbo->fetchArray('SELECT id, idcontratto FROM co_righe_contratti WHERE idintervento='.prepare($id_record));
+                        $rs = $dbo->fetchArray('SELECT id, idcontratto FROM co_contratti_promemoria WHERE idintervento='.prepare($id_record));
                         if (count($rs) == 1) {
                             $idcontratto = $rs[0]['idcontratto'];
                             $idcontratto_riga = $rs[0]['id'];

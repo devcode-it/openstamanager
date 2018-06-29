@@ -55,7 +55,7 @@ switch (post('op')) {
             if ($budget != '') {
                 $budget = post('budget');
             } else {
-                $q = "SELECT (SELECT SUM(subtotale) FROM co_righe2_contratti GROUP BY idcontratto HAVING idcontratto=co_contratti.id) AS 'budget' FROM co_contratti WHERE id=".prepare($id_record);
+                $q = "SELECT (SELECT SUM(subtotale) FROM co_righe_contratti GROUP BY idcontratto HAVING idcontratto=co_contratti.id) AS 'budget' FROM co_contratti WHERE id=".prepare($id_record);
                 $rs = $dbo->fetchArray($q);
                 $budget = $rs[0]['budget'];
             }
@@ -93,7 +93,7 @@ switch (post('op')) {
 
             aggiorna_sconto([
                 'parent' => 'co_contratti',
-                'row' => 'co_righe2_contratti',
+                'row' => 'co_righe_contratti',
             ], [
                 'parent' => 'id',
                 'row' => 'idcontratto',
@@ -160,7 +160,7 @@ switch (post('op')) {
         $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
         $desc_iva = $rs2[0]['descrizione'];
 
-        $dbo->query('INSERT INTO co_righe2_contratti(idcontratto, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, is_descrizione, `order`) VALUES ('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare(empty($qta)).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe2_contratti AS t WHERE idcontratto='.prepare($id_record).'))');
+        $dbo->query('INSERT INTO co_righe_contratti(idcontratto, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, is_descrizione, `order`) VALUES ('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare(empty($qta)).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_contratti AS t WHERE idcontratto='.prepare($id_record).'))');
 
         // Messaggi informativi
         if (!empty($idarticolo)) {
@@ -176,7 +176,7 @@ switch (post('op')) {
     case 'editriga':
         $idriga = post('idriga');
 
-        $rs = $dbo->fetchArray("SELECT * FROM co_righe2_contratti WHERE id='".$idriga."'");
+        $rs = $dbo->fetchArray("SELECT * FROM co_righe_contratti WHERE id='".$idriga."'");
         $is_descrizione = $rs[0]['is_descrizione'];
 
         $idarticolo = post('idarticolo');
@@ -204,9 +204,9 @@ switch (post('op')) {
 
         // Modifica riga generica sul documento
         if ($is_descrizione == 0) {
-            $query = 'UPDATE co_righe2_contratti SET idarticolo='.prepare($idarticolo).', idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
+            $query = 'UPDATE co_righe_contratti SET idarticolo='.prepare($idarticolo).', idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
         } else {
-            $query = 'UPDATE co_righe2_contratti SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga);
+            $query = 'UPDATE co_righe_contratti SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga);
         }
         $dbo->query($query);
 
@@ -219,7 +219,7 @@ switch (post('op')) {
         if (isset($post['idriga'])) {
             $idriga = post('idriga');
 
-            $query = 'DELETE FROM `co_righe2_contratti` WHERE idcontratto='.prepare($id_record).' AND id='.prepare($idriga);
+            $query = 'DELETE FROM `co_righe_contratti` WHERE idcontratto='.prepare($id_record).' AND id='.prepare($idriga);
 
             if ($dbo->query($query)) {
                 $_SESSION['infos'][] = tr('Riga eliminata!');
@@ -227,7 +227,7 @@ switch (post('op')) {
         }
 
         // Ricalcolo il budget
-        $dbo->query('UPDATE co_contratti SET budget=( SELECT SUM(subtotale) FROM co_righe2_contratti GROUP BY idcontratto HAVING idcontratto=co_contratti.id ) WHERE id='.prepare($id_record));
+        $dbo->query('UPDATE co_contratti SET budget=( SELECT SUM(subtotale) FROM co_righe_contratti GROUP BY idcontratto HAVING idcontratto=co_contratti.id ) WHERE id='.prepare($id_record));
 
         break;
 
@@ -237,7 +237,7 @@ switch (post('op')) {
             $idcontratto = $get['idcontratto'];
             $idintervento = $get['idintervento'];
 
-            $query = 'DELETE FROM `co_righe_contratti` WHERE idcontratto='.prepare($idcontratto).' AND idintervento='.prepare($idintervento);
+            $query = 'DELETE FROM `co_contratti_promemoria` WHERE idcontratto='.prepare($idcontratto).' AND idintervento='.prepare($idintervento);
             $dbo->query($query);
 
             $_SESSION['infos'][] = tr('Intervento _NUM_ rimosso!', [
@@ -252,11 +252,11 @@ switch (post('op')) {
         $id = filter('id');
 
         if ($start > $end) {
-            $dbo->query('UPDATE `co_righe2_contratti` SET `order`=`order` + 1 WHERE `order`>='.prepare($end).' AND `order`<'.prepare($start).' AND `idcontratto`='.prepare($id_record));
-            $dbo->query('UPDATE `co_righe2_contratti` SET `order`='.prepare($end).' WHERE id='.prepare($id));
+            $dbo->query('UPDATE `co_righe_contratti` SET `order`=`order` + 1 WHERE `order`>='.prepare($end).' AND `order`<'.prepare($start).' AND `idcontratto`='.prepare($id_record));
+            $dbo->query('UPDATE `co_righe_contratti` SET `order`='.prepare($end).' WHERE id='.prepare($id));
         } elseif ($end != $start) {
-            $dbo->query('UPDATE `co_righe2_contratti` SET `order`=`order` - 1 WHERE `order`>'.prepare($start).' AND `order`<='.prepare($end).' AND `idcontratto`='.prepare($id_record));
-            $dbo->query('UPDATE `co_righe2_contratti` SET `order`='.prepare($end).' WHERE id='.prepare($id));
+            $dbo->query('UPDATE `co_righe_contratti` SET `order`=`order` - 1 WHERE `order`>'.prepare($start).' AND `order`<='.prepare($end).' AND `idcontratto`='.prepare($id_record));
+            $dbo->query('UPDATE `co_righe_contratti` SET `order`='.prepare($end).' WHERE id='.prepare($id));
         }
 
         break;
@@ -264,8 +264,8 @@ switch (post('op')) {
     // eliminazione contratto
     case 'delete':
         $dbo->query('DELETE FROM co_contratti WHERE id='.prepare($id_record));
+        $dbo->query('DELETE FROM co_contratti_promemoria WHERE idcontratto='.prepare($id_record));
         $dbo->query('DELETE FROM co_righe_contratti WHERE idcontratto='.prepare($id_record));
-        $dbo->query('DELETE FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record));
 
         $_SESSION['infos'][] = tr('Contratto eliminato!');
 
@@ -295,10 +295,10 @@ switch (get('op')) {
                 $dbo->query('INSERT INTO co_contratti_tipiintervento(idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) SELECT '.prepare($new_idcontratto).', idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico FROM co_contratti_tipiintervento AS z WHERE idcontratto='.prepare($id_record));
 
                 // Replico le righe del contratto
-                $rs = $dbo->fetchArray('SELECT * FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record));
+                $rs = $dbo->fetchArray('SELECT * FROM co_righe_contratti WHERE idcontratto='.prepare($id_record));
 
                 for ($i = 0; $i < sizeof($rs); ++$i) {
-                    $dbo->query('INSERT INTO co_righe2_contratti(idcontratto, descrizione, subtotale, um, qta) VALUES('.prepare($new_idcontratto).', '.prepare($rs[$i]['descrizione']).', '.prepare($rs[$i]['subtotale']).', '.prepare($rs[$i]['um']).', '.prepare($rs[$i]['qta']).')');
+                    $dbo->query('INSERT INTO co_righe_contratti(idcontratto, descrizione, subtotale, um, qta) VALUES('.prepare($new_idcontratto).', '.prepare($rs[$i]['descrizione']).', '.prepare($rs[$i]['subtotale']).', '.prepare($rs[$i]['um']).', '.prepare($rs[$i]['qta']).')');
                 }
 
                 // Replicazione degli impianti
@@ -319,7 +319,7 @@ switch (get('op')) {
 if (post('op') !== null && post('op') != 'update') {
     aggiorna_sconto([
         'parent' => 'co_contratti',
-        'row' => 'co_righe2_contratti',
+        'row' => 'co_righe_contratti',
     ], [
         'parent' => 'id',
         'row' => 'idcontratto',

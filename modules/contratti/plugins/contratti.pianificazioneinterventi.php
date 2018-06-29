@@ -9,7 +9,7 @@ switch (filter('op')) {
     case 'add-pianifica':
 
         $data_richiesta = filter('data_richiesta');
-        $query = 'INSERT INTO `co_righe_contratti` ( `idcontratto`, `data_richiesta` ) VALUES ('.prepare($id_record).', '.prepare($data_richiesta).')';
+        $query = 'INSERT INTO `co_contratti_promemoria` ( `idcontratto`, `data_richiesta` ) VALUES ('.prepare($id_record).', '.prepare($data_richiesta).')';
 
         if ($dbo->query($query)) {
         } else {
@@ -29,7 +29,7 @@ switch (filter('op')) {
         $idsede = filter('idsede_c');
         $idimpianti = implode(',', $post['idimpianti']);
 
-        $query = 'UPDATE co_righe_contratti SET idtipointervento='.prepare($idtipointervento).', data_richiesta='.prepare($data_richiesta).', richiesta='.prepare($richiesta).',  idsede='.prepare($idsede).', idimpianti='.prepare($idimpianti).'   WHERE id = '.prepare($idcontratto_riga);
+        $query = 'UPDATE co_contratti_promemoria SET idtipointervento='.prepare($idtipointervento).', data_richiesta='.prepare($data_richiesta).', richiesta='.prepare($richiesta).',  idsede='.prepare($idsede).', idimpianti='.prepare($idimpianti).'   WHERE id = '.prepare($idcontratto_riga);
 
         if (isset($id_record)) {
             if ($dbo->query($query)) {
@@ -45,9 +45,9 @@ switch (filter('op')) {
 
         $id = filter('id');
 
-        $dbo->query('DELETE FROM `co_righe_contratti` WHERE id='.prepare($id));
-        $dbo->query('DELETE FROM `co_righe_contratti_materiali` WHERE id_riga_contratto='.prepare($id));
-        $dbo->query('DELETE FROM `co_righe_contratti_articoli` WHERE id_riga_contratto='.prepare($id));
+        $dbo->query('DELETE FROM `co_contratti_promemoria` WHERE id='.prepare($id));
+        $dbo->query('DELETE FROM `co_contratti_promemoria_materiali` WHERE id_riga_contratto='.prepare($id));
+        $dbo->query('DELETE FROM `co_contratti_promemoria_articoli` WHERE id_riga_contratto='.prepare($id));
 
         $_SESSION['infos'][] = tr('Pianificazione eliminata!');
 
@@ -58,9 +58,9 @@ switch (filter('op')) {
     //Eliminazione tutti i promemoria di questo contratto con non hanno l'intervento associato
     case 'delete-promemoria':
 
-        $dbo->query('DELETE FROM `co_righe_contratti` WHERE idcontratto = '.$id_record.' AND idintervento IS NULL');
-        $dbo->query('DELETE FROM `co_righe_contratti_materiali` WHERE id_riga_contratto IN (SELECT id FROM `co_righe_contratti` WHERE idcontratto = '.$id_record.' AND idintervento IS NULL ) ');
-        $dbo->query('DELETE FROM `co_righe_contratti_articoli` WHERE id_riga_contratto IN (SELECT id FROM `co_righe_contratti` WHERE idcontratto = '.$id_record.' AND idintervento IS NULL ) ');
+        $dbo->query('DELETE FROM `co_contratti_promemoria` WHERE idcontratto = '.$id_record.' AND idintervento IS NULL');
+        $dbo->query('DELETE FROM `co_contratti_promemoria_materiali` WHERE id_riga_contratto IN (SELECT id FROM `co_contratti_promemoria` WHERE idcontratto = '.$id_record.' AND idintervento IS NULL ) ');
+        $dbo->query('DELETE FROM `co_contratti_promemoria_articoli` WHERE id_riga_contratto IN (SELECT id FROM `co_contratti_promemoria` WHERE idcontratto = '.$id_record.' AND idintervento IS NULL ) ');
 
         $_SESSION['errors'][] = tr('Tutti i promemoria non associati sono stati eliminati!');
 
@@ -77,8 +77,8 @@ switch (filter('op')) {
 
             if (!empty($idcontratto_riga) && !empty($intervallo)) {
                 $qp = 'SELECT *, (SELECT idanagrafica FROM co_contratti WHERE id = '.$id_record.' ) AS idanagrafica, (SELECT data_conclusione FROM co_contratti WHERE id = '.$id_record.' ) AS data_conclusione, '.
-                '(SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento FROM co_righe_contratti '.
-                'WHERE co_righe_contratti.id = '.$idcontratto_riga;
+                '(SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_contratti_promemoria.idtipointervento) AS tipointervento FROM co_contratti_promemoria '.
+                'WHERE co_contratti_promemoria.id = '.$idcontratto_riga;
                 $rsp = $dbo->fetchArray($qp);
 
                 $idtipointervento = $rsp[0]['idtipointervento'];
@@ -112,18 +112,18 @@ switch (filter('op')) {
                         //controllo nuova data richiesta --> solo  date maggiori o uguali di [oggi o data richiesta iniziale] ma che non superano la data di fine del contratto
                         if ((date('Y-m-d', strtotime($data_richiesta)) >= $min_date) && (date('Y-m-d', strtotime($data_richiesta)) <= date('Y-m-d', strtotime($data_conclusione)))) {
                             //Controllo che non esista già un promemoria idcontratto, idtipointervento e data_richiesta.
-                            if (count($dbo->fetchArray("SELECT id FROM co_righe_contratti WHERE data_richiesta = '".$data_richiesta."' AND idtipointervento = '".$idtipointervento."' AND idcontratto = '".$id_record."' ")) == 0) {
+                            if (count($dbo->fetchArray("SELECT id FROM co_contratti_promemoria WHERE data_richiesta = '".$data_richiesta."' AND idtipointervento = '".$idtipointervento."' AND idcontratto = '".$id_record."' ")) == 0) {
                                 //inserisco il nuovo promemoria
-                                $query = 'INSERT INTO `co_righe_contratti`(`idcontratto`, `idtipointervento`, `data_richiesta`, `richiesta`, `idsede`, `idimpianti` ) VALUES('.prepare($id_record).', '.prepare($idtipointervento).', '.prepare($data_richiesta).', '.prepare($richiesta).', '.prepare($idsede).', '.prepare($idimpianti).')';
+                                $query = 'INSERT INTO `co_contratti_promemoria`(`idcontratto`, `idtipointervento`, `data_richiesta`, `richiesta`, `idsede`, `idimpianti` ) VALUES('.prepare($id_record).', '.prepare($idtipointervento).', '.prepare($data_richiesta).', '.prepare($richiesta).', '.prepare($idsede).', '.prepare($idimpianti).')';
 
                                 if ($dbo->query($query)) {
                                     $idriga = $dbo->lastInsertedID();
 
                                     //copio anche righe materiali nel nuovo promemoria
-                                    $dbo->query('INSERT INTO co_righe_contratti_materiali (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,	desc_iva,iva,id_riga_contratto,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,	desc_iva,iva,'.$idriga.',sconto,sconto_unitario,tipo_sconto FROM co_righe_contratti_materiali WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
+                                    $dbo->query('INSERT INTO co_contratti_promemoria_materiali (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,	desc_iva,iva,id_riga_contratto,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,	desc_iva,iva,'.$idriga.',sconto,sconto_unitario,tipo_sconto FROM co_contratti_promemoria_materiali WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
 
                                     //copio righe articoli nel nuovo promemoria
-                                    $dbo->query('INSERT INTO co_righe_contratti_articoli (idarticolo, id_riga_contratto,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idriga.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
+                                    $dbo->query('INSERT INTO co_contratti_promemoria_articoli (idarticolo, id_riga_contratto,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idriga.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_contratti_promemoria_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
 
                                     $_SESSION['infos'][] = tr('Promemoria intervento pianificato!');
 
@@ -174,13 +174,13 @@ switch (filter('op')) {
                                         }
 
                                         //collego l'intervento ai promemoria
-                                        $dbo->query('UPDATE co_righe_contratti SET idintervento='.prepare($idintervento).' WHERE id='.prepare($idriga));
+                                        $dbo->query('UPDATE co_contratti_promemoria SET idintervento='.prepare($idintervento).' WHERE id='.prepare($idriga));
 
                                         //copio le righe dal promemoria all'intervento
-                                        $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,idintervento,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$idintervento.',sconto,sconto_unitario,tipo_sconto FROM co_righe_contratti_materiali WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
+                                        $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,idintervento,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$idintervento.',sconto,sconto_unitario,tipo_sconto FROM co_contratti_promemoria_materiali WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
 
                                         //copio  gli articoli dal promemoria all'intervento
-                                        $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idintervento.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
+                                        $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idintervento.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_contratti_promemoria_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
 
                                         // Decremento la quantità per ogni articolo copiato
                                         $rs_articoli = $dbo->fetchArray('SELECT * FROM mg_articoli_interventi WHERE idintervento = '.$idintervento.' ');
@@ -222,7 +222,7 @@ switch (filter('op')) {
 }
 
 // Righe già inserite
-$qp = 'SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento FROM co_righe_contratti WHERE idcontratto='.prepare($id_record).' ORDER BY data_richiesta ASC';
+$qp = 'SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_contratti_promemoria.idtipointervento) AS tipointervento FROM co_contratti_promemoria WHERE idcontratto='.prepare($id_record).' ORDER BY data_richiesta ASC';
 $rsp = $dbo->fetchArray($qp);
 
 $pianificabile = $dbo->fetchNum('SELECT id FROM co_staticontratti WHERE pianificabile = 1 AND descrizione = '.prepare($records[0]['stato']));
@@ -302,8 +302,8 @@ if (count($rsp) != 0) {
             }
         }
 
-        $rsp4 = $dbo->fetchArray('SELECT id, descrizione,qta,um,prezzo_vendita, \'\' AS idarticolo FROM co_righe_contratti_materiali WHERE id_riga_contratto = '.prepare($rsp[$i]['id']).'
-		UNION SELECT id, descrizione,qta,um,prezzo_vendita, idarticolo FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.prepare($rsp[$i]['id']));
+        $rsp4 = $dbo->fetchArray('SELECT id, descrizione,qta,um,prezzo_vendita, \'\' AS idarticolo FROM co_contratti_promemoria_materiali WHERE id_riga_contratto = '.prepare($rsp[$i]['id']).'
+		UNION SELECT id, descrizione,qta,um,prezzo_vendita, idarticolo FROM co_contratti_promemoria_articoli WHERE id_riga_contratto = '.prepare($rsp[$i]['id']));
 
         $info_materiali = '';
         if (!empty($rsp4)) {

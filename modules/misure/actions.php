@@ -53,7 +53,7 @@ switch (filter('op')) {
         $righe = $dbo->fetchNum('SELECT id FROM co_righe_documenti WHERE um='.prepare($records[0]['valore']).'
              UNION SELECT id FROM dt_righe_ddt WHERE um='.prepare($records[0]['valore']).'
              UNION SELECT id FROM or_righe_ordini WHERE um='.prepare($records[0]['valore']).'
-             UNION SELECT id FROM co_righe2_contratti WHERE um='.prepare($records[0]['valore']).'
+             UNION SELECT id FROM co_righe_contratti WHERE um='.prepare($records[0]['valore']).'
              UNION SELECT id FROM mg_articoli WHERE um='.prepare($records[0]['valore']).'
              UNION SELECT id FROM co_righe_preventivi WHERE um='.prepare($records[0]['valore']));
 

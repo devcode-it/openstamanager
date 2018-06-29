@@ -25,7 +25,7 @@ $totale = 0;
 $totale_stato = [];
 
 // Tabella con riepilogo interventi
-$rsi = $dbo->fetchArray('SELECT *, in_interventi.id, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM co_righe_contratti INNER JOIN in_interventi ON co_righe_contratti.idintervento=in_interventi.id WHERE co_righe_contratti.idcontratto='.prepare($id_record).' ORDER BY co_righe_contratti.idintervento DESC');
+$rsi = $dbo->fetchArray('SELECT *, in_interventi.id, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM co_contratti_promemoria INNER JOIN in_interventi ON co_contratti_promemoria.idintervento=in_interventi.id WHERE co_contratti_promemoria.idcontratto='.prepare($id_record).' ORDER BY co_contratti_promemoria.idintervento DESC');
 if (!empty($rsi)) {
     echo '
 <table class="table table-bordered table-condensed">
@@ -269,10 +269,10 @@ if (!empty($rsi)) {
 /*
     Bilancio del contratto
 */
-$rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS budget FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record));
+$rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS budget FROM co_righe_contratti WHERE idcontratto='.prepare($id_record));
 $budget = $rs[0]['budget'];
 
-$rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe2_contratti` WHERE um='ore' AND idcontratto=".prepare($id_record));
+$rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe_contratti` WHERE um='ore' AND idcontratto=".prepare($id_record));
 $contratto_tot_ore = $rs[0]['totale_ore'];
 
 $diff = sum($budget, -$totale_addebito);

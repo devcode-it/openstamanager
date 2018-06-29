@@ -39,13 +39,13 @@ if (empty($idriga)) {
         $tipo_sconto = 'PRC';
     }
 
-    (empty($idcontratto_riga)) ? $idcontratto_riga = $dbo->fetchArray('SELECT MAX(id) AS max_idcontratto_riga  FROM `co_righe_contratti`')[0]['max_idcontratto_riga'] : '';
+    (empty($idcontratto_riga)) ? $idcontratto_riga = $dbo->fetchArray('SELECT MAX(id) AS max_idcontratto_riga  FROM `co_contratti_promemoria`')[0]['max_idcontratto_riga'] : '';
 } else {
     $op = 'editarticolo';
     $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
 
     // carico record da modificare
-    $q = "SELECT *, (SELECT codice FROM mg_articoli WHERE id=co_righe_contratti_articoli.idarticolo) AS codice_articolo, (SELECT CONCAT(codice, ' - ', descrizione) FROM mg_articoli WHERE id=co_righe_contratti_articoli.idarticolo) AS descrizione_articolo FROM co_righe_contratti_articoli WHERE id=".prepare($idriga);
+    $q = "SELECT *, (SELECT codice FROM mg_articoli WHERE id=co_contratti_promemoria_articoli.idarticolo) AS codice_articolo, (SELECT CONCAT(codice, ' - ', descrizione) FROM mg_articoli WHERE id=co_contratti_promemoria_articoli.idarticolo) AS descrizione_articolo FROM co_contratti_promemoria_articoli WHERE id=".prepare($idriga);
     $rsr = $dbo->fetchArray($q);
 
     $idarticolo = $rsr[0]['idarticolo'];
@@ -74,7 +74,7 @@ echo '
 <form id="add-articoli" action="'.$rootdir.'/modules/contratti/plugins/actions.php" method="post">
     <input type="hidden" name="op" value="'.$op.'">
     <input type="hidden" name="idriga" value="'.$idriga.'">
-	
+
 	<input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">';
 
 if (!empty($idarticolo)) {
@@ -113,7 +113,7 @@ echo '
         </div>';
 
 // Impianto
-echo ' 
+echo '
 		<div class="col-md-4">
 			{[ "type": "select", "multiple": "0", "label": "'.tr('Impianto').'", "name": "idimpianto", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_record.' ORDER BY descrizione", "value": "'.$matricoleimpianti.'", "extra":"'.$readonly.'" ]}
 		</div>
@@ -215,7 +215,7 @@ echo '
                 // Ricarico gli articoli
                 $('#articoli').load(globals.rootdir + '/modules/contratti/plugins/ajax_articoli.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&idcontratto_riga=<?php echo $idcontratto_riga; ?>');
 
-               
+
             }
         });
     });

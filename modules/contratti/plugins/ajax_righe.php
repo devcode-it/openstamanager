@@ -6,7 +6,7 @@ if (!empty($get['idcontratto_riga'])) {
     $idcontratto_riga = $get['idcontratto_riga'];
 }
 
-$query = 'SELECT * FROM co_righe_contratti_materiali WHERE id_riga_contratto='.prepare($idcontratto_riga).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC';
+$query = 'SELECT * FROM co_contratti_promemoria_materiali WHERE id_riga_contratto='.prepare($idcontratto_riga).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC';
 $rs2 = $dbo->fetchArray($query);
 
 if (count($rs2) > 0) {

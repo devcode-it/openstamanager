@@ -113,7 +113,7 @@ elseif (get('op') == 'addfattura') {
     $rs = $dbo->fetchArray('SELECT id FROM co_ordiniservizio_pianificazionefatture WHERE idcontratto='.prepare($id_record));
 
     // L'importo deve essere diviso per il numero di mesi
-    $rs2 = $dbo->fetchArray('SELECT SUM(subtotale) AS totale FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record));
+    $rs2 = $dbo->fetchArray('SELECT SUM(subtotale) AS totale FROM co_righe_contratti WHERE idcontratto='.prepare($id_record));
     $importo = $rs2[0]['totale'] / sizeof($rs);
 
     // Lettura iva del cliente o predefinita
@@ -151,7 +151,7 @@ echo '
 /*
     Fatture pianificate
 */
-$rs = $dbo->fetchArray('SELECT *, (SELECT SUM(subtotale) FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record).') AS budget_contratto, (SELECT descrizione FROM an_zone WHERE id=idzona) AS zona FROM co_ordiniservizio_pianificazionefatture WHERE idcontratto='.prepare($id_record).' ORDER BY data_scadenza ASC');
+$rs = $dbo->fetchArray('SELECT *, (SELECT SUM(subtotale) FROM co_righe_contratti WHERE idcontratto='.prepare($id_record).') AS budget_contratto, (SELECT descrizione FROM an_zone WHERE id=idzona) AS zona FROM co_ordiniservizio_pianificazionefatture WHERE idcontratto='.prepare($id_record).' ORDER BY data_scadenza ASC');
 
 if (empty($rs)) {
     echo '

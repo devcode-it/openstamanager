@@ -89,7 +89,7 @@ echo '
 	</div>';
 
 // Contratti
-$rsi = $dbo->fetchArray('SELECT data_accettazione AS data, ragione_sociale, (SELECT SUM(co_righe2_contratti.subtotale - co_righe2_contratti.sconto) FROM co_righe2_contratti WHERE co_righe2_contratti.idcontratto = co_contratti.id) AS budget FROM co_contratti INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_contratti.idanagrafica='.prepare($id_record));
+$rsi = $dbo->fetchArray('SELECT data_accettazione AS data, ragione_sociale, (SELECT SUM(co_righe_contratti.subtotale - co_righe_contratti.sconto) FROM co_righe_contratti WHERE co_righe_contratti.idcontratto = co_contratti.id) AS budget FROM co_contratti INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_contratti.idanagrafica='.prepare($id_record));
 
 $totale_contratti = 0;
 $data_start = strtotime(date('Ymd'));

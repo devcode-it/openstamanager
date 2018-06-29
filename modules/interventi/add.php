@@ -71,7 +71,7 @@ elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
     $idzona = $rs[0]['idzona'];
 
     // Info riga pianificata
-    $rs = $dbo->fetchArray('SELECT *, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_righe_contratti.idtipointervento) AS tempo_standard  FROM co_righe_contratti WHERE idcontratto='.prepare($idcontratto).' AND id='.prepare($idcontratto_riga));
+    $rs = $dbo->fetchArray('SELECT *, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_contratti_promemoria.idtipointervento) AS tempo_standard  FROM co_contratti_promemoria WHERE idcontratto='.prepare($idcontratto).' AND id='.prepare($idcontratto_riga));
     $idtipointervento = $rs[0]['idtipointervento'];
     $data = (null !== filter('data')) ? filter('data') : $rs[0]['data_richiesta'];
     $richiesta = $rs[0]['richiesta'];

@@ -25,13 +25,13 @@ if (empty($idriga)) {
         $tipo_sconto = 'PRC';
     }
 
-    (empty($idcontratto_riga)) ? $idcontratto_riga = $dbo->fetchArray('SELECT MAX(id) AS max_idcontratto_riga  FROM `co_righe_contratti`')[0]['max_idcontratto_riga'] : '';
+    (empty($idcontratto_riga)) ? $idcontratto_riga = $dbo->fetchArray('SELECT MAX(id) AS max_idcontratto_riga  FROM `co_contratti_promemoria`')[0]['max_idcontratto_riga'] : '';
 } else {
     $op = 'editriga';
     $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
 
     // carico record da modificare
-    $q = 'SELECT * FROM co_righe_contratti_materiali WHERE id='.prepare($idriga);
+    $q = 'SELECT * FROM co_contratti_promemoria_materiali WHERE id='.prepare($idriga);
     $rsr = $dbo->fetchArray($q);
 
     $descrizione = $rsr[0]['descrizione'];

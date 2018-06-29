@@ -38,7 +38,7 @@ switch (post('op')) {
         break;
 
     case 'disable':
-        $dbo->query('UPDATE `zz_modules` SET `enabled` = 0 WHERE `id` = '.prepare($id).' OR `parent` = '.prepare($id));
+        $dbo->query('UPDATE `zz_modules` SET `enabled` = 0 WHERE (`id` = '.prepare($id).' OR `parent` = '.prepare($id).') AND `id` != '.prepare(Modules::get('Aggiornamenti')['id']));
 
         $_SESSION['infos'][] = tr('Modulo _MODULE_ disabilitato!', [
             '_MODULE_' => '"'.Modules::get($id)['name'].'"',

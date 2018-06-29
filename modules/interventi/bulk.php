@@ -32,12 +32,9 @@ switch (post('op')) {
                 $rapportino_nome = sanitizeFilename($numero.' '.date('Y_m_d', strtotime($r['data_richiesta'])).' '.$r['ragione_sociale'].'.pdf');
                 $filename = slashes($dir.'tmp/'.$rapportino_nome);
 
-                $ptype = 'interventi';
+                $print = Prints::getModuleMainPrint($id_module);
 
-                $print = $dbo->fetchArray('SELECT id, previous FROM zz_prints WHERE directory = '.prepare($ptype).' ORDER BY main DESC LIMIT 1');
-                $id_print = $print[0]['id'];
-
-                Prints::render($id_print, $r['id'], $filename);
+                Prints::render($print['id'], $r['id'], $filename);
             }
 
             $dir = slashes($dir);

@@ -165,16 +165,6 @@ switch (post('op')) {
 return [
     'delete-bulk' => tr('Elimina selezionati'),
 
-    'export-bulk' => [
-        'text' => tr('Esporta stampe'),
-        'data' => [
-            'msg' => tr('Vuoi davvero esportare tutte le stampe in un archivio?'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-            'blank' => true,
-        ],
-    ],
-
     'creafatturavendita' => [
         'text' => tr('Crea fattura'),
         'data' => [

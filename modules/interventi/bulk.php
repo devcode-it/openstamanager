@@ -25,22 +25,19 @@ switch (post('op')) {
 
         if (!empty($records)) {
             foreach ($records as $r) {
-                //$numero = !empty($r['numero_esterno']) ? $r['numero_esterno'] : $r['numero'];
                 $numero = $r['codice'];
-
                 $numero = str_replace(['/', '\\'], '-', $numero);
 
                 // Gestione della stampa
                 $rapportino_nome = sanitizeFilename($numero.' '.date('Y_m_d', strtotime($r['data_richiesta'])).' '.$r['ragione_sociale'].'.pdf');
                 $filename = slashes($dir.'tmp/'.$rapportino_nome);
 
-                $_GET['idintervento'] = $r['id']; // Fix temporaneo per la stampa
-                $idintervento = $r['id']; // Fix temporaneo per la stampa
-                //$ptype = ($r['descrizione'] == 'Fattura accompagnatoria di vendita') ? 'fatture_accompagnatorie' : 'fatture';
-
                 $ptype = 'interventi';
 
-                require DOCROOT.'/pdfgen.php';
+                $print = $dbo->fetchArray('SELECT id, previous FROM zz_prints WHERE directory = '.prepare($ptype).' ORDER BY main DESC LIMIT 1');
+                $id_print = $print[0]['id'];
+
+                Prints::render($id_print, $r['id'], $filename);
             }
 
             $dir = slashes($dir);

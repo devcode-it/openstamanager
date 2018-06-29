@@ -617,45 +617,4 @@ switch (post('op')) {
         }
 
         break;
-
-    case 'sendemail':
-        $from_address = post('from_address');
-        $from_name = post('from_name');
-
-        $destinatario = post('destinatario');
-        $cc = get_var('Destinatario fisso in copia (campo CC)');
-
-        $oggetto = html_entity_decode(post('oggetto'));
-        $testo_email = post('body');
-        $allegato = post('allegato');
-
-        $mail = new Mail();
-
-        $mail->AddReplyTo($from_address, $from_name);
-        $mail->SetFrom($from_address, $from_name);
-
-        $mail->AddAddress($destinatario, '');
-
-        // se ho impostato la conferma di lettura
-        if (post('confermalettura') == 'on') {
-            $mail->ConfirmReadingTo = $from_address;
-        }
-
-        $mail->Subject = $oggetto;
-        $mail->AddCC($cc);
-
-        $mail->MsgHTML($testo_email);
-
-        if (!empty($allegato)) {
-            $mail->AddAttachment($allegato);
-        }
-
-        if (!$mail->send()) {
-            $_SESSION['errors'][] = tr("Errore durante l'invio dell'email").': '.$mail->ErrorInfo;
-        } else {
-            $dbo->query('UPDATE in_interventi SET data_invio=NOW() WHERE id='.prepare($id_record));
-            $_SESSION['infos'][] = tr('Email inviata!');
-        }
-
-        break;
 }

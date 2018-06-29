@@ -237,7 +237,7 @@ if (!empty($interventi)) {
                 // Quantità
                 echo '
             <td class="text-center">
-                '.Translator::numberToLocale($r['qta']).' '.$r['um'].'
+                '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
             </td>';
 
                 // Prezzo unitario
@@ -374,7 +374,7 @@ if (!empty($interventi)) {
                 // Quantità
                 echo '
             <td class="text-center">
-                '.Translator::numberToLocale($r['qta']).' '.$r['um'].'
+                '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
             </td>';
 
                 // Prezzo unitario

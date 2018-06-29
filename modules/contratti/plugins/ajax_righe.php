@@ -42,7 +42,7 @@ if (count($rs2) > 0) {
         // Quantità
         echo '
         <td class="text-right">
-            '.Translator::numberToLocale($r['qta']).' '.$r['um'].'
+            '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
         </td>';
 
         //Costo unitario
@@ -90,11 +90,11 @@ if (count($rs2) > 0) {
         if (empty($readonly)) {
             echo '
         <td>
-        
+
 			 <button type="button" class="btn btn-warning btn-xs" data-title="'.tr('Modifica spesa').'" onclick="launch_modal(\'Modifica spesa\', \''.$rootdir.'/modules/contratti/plugins/add_righe.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'\', 1, \'#bs-popup2\');" >
 			 <i class="fa fa-edit"></i></button>
-			
-			
+
+
             <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="if(confirm(\''.tr('Eliminare questa spesa?').'\')){ elimina_riga( \''.$r['id'].'\' ); }"><i class="fa fa-trash"></i></button>
         </td>';
         }

@@ -163,7 +163,7 @@ if (!empty($rs2)) {
         // Quantità
         echo '
             <td class="text-center">
-                '.Translator::numberToLocale($r['qta']).' '.$r['um'].'
+                '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
             </td>';
 
         // Netto
@@ -242,7 +242,7 @@ if (!empty($rs2)) {
         // Quantità
         echo '
         <td class="text-center">
-            '.Translator::numberToLocale($r['qta']).'
+            '.Translator::numberToLocale($r['qta'], 'qta').'
         </td>';
 
         // Prezzo unitario
@@ -434,7 +434,7 @@ if ($options['pricing']) {
             <b>'.Translator::numberToLocale($costi_intervento['totale_addebito']).' &euro;</b>
         </th>
     </tr>';
-	
+
     //$sconto_addebito = $costi_intervento['totale_addebito'] - $costi_intervento['totale_scontato'];
 	$totale_sconto = $costi_intervento['totale_addebito'] - $costi_intervento['totale_scontato'];
     //$totale_sconto = $costi_intervento['sconto_globale'] + $sconto_addebito;

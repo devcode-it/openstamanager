@@ -84,8 +84,8 @@ if (!empty($rs)) {
         if (empty($r['is_descrizione'])) {
             if (empty($r['sconto_globale'])) {
                 echo '
-                <big>'.Translator::numberToLocale($r['qta'] - $r['qta_evasa']).'</big>
-                <br><small>('.tr('Q.tà iniziale').': '.Translator::numberToLocale($r['qta']).')</small>';
+                <big>'.Translator::numberToLocale($r['qta'] - $r['qta_evasa'], 'qta').'</big>
+                <br><small>('.tr('Q.tà iniziale').': '.Translator::numberToLocale($r['qta'], 'qta').')</small>';
             } else {
                 echo '1';
             }

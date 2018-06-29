@@ -41,7 +41,7 @@ foreach ($rs as $r) {
             <td class="text-right">';
     if (empty($r['is_descrizione'])) {
         echo '
-                '.Translator::numberToLocale($r['qta']);
+                '.Translator::numberToLocale($r['qta'], 'qta');
     }
     echo '
             </td>';

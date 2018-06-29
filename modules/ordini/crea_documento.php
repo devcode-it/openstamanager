@@ -111,7 +111,7 @@ if (!empty($rs)) {
         <td>
             <input type="hidden" id="qtamax_'.$i.'" value="'.($r['qta']).'" />
             <input type="hidden" id="um_'.$i.'" name="um['.$r['id'].']" value="'.$r['um'].'" />
-            <p class="text-center">'.Translator::numberToLocale($r['qta']).'</p>
+            <p class="text-center">'.Translator::numberToLocale($r['qta'], 'qta').'</p>
         </td>';
 
         // Q.tà da evadere

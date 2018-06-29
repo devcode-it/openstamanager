@@ -108,7 +108,7 @@ if (!empty($rs)) {
 
         if (empty($r['is_descrizione'])) {
             echo '
-            '.Translator::numberToLocale($r['qta']);
+            '.Translator::numberToLocale($r['qta'], 'qta');
         }
 
         echo '

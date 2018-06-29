@@ -42,7 +42,7 @@ if (count($rs2) > 0) {
         // Quantità
         echo '
         <td class="text-right">
-            '.Translator::numberToLocale($r['qta']).' '.$r['um'].'
+            '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
         </td>';
 
         //Costo unitario

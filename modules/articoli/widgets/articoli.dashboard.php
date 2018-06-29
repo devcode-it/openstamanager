@@ -19,7 +19,7 @@ if (!empty($rs)) {
             '.Modules::link('Articoli', $r['id'], $r['descrizione']).'
         </td>
         <td>
-            '.Translator::numberToLocale($r['qta'], get_var('Cifre decimali per quantità') ).' '.$r['unitamisura'].'
+            '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['unitamisura'].'
         </td>
     </tr>';
     }

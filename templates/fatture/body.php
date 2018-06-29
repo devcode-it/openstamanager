@@ -102,7 +102,7 @@ foreach ($righe as $r) {
             <td class="text-center">';
     if (empty($r['is_descrizione'])) {
         echo '
-                '.Translator::numberToLocale($r['qta']).' '.$r['um'];
+                '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'];
     }
     echo '
             </td>';

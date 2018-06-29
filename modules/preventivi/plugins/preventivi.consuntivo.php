@@ -154,7 +154,7 @@ if (!empty($rsi)) {
                     <td>
                         '.Modules::link('Articoli', $r['idarticolo'], $r['descrizione']).(!empty($extra) ? '<small class="help-block">'.implode(', ', $extra).'</small>' : '').'
                     </td>
-                    <td class="text-right">'.Translator::numberToLocale($r['qta']).'</td>
+                    <td class="text-right">'.Translator::numberToLocale($r['qta'], 'qta').'</td>
                     <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_acquisto'] * $r['qta']).'</td>
                     <td class="text-right success">'.Translator::numberToLocale($r['prezzo_vendita'] * $r['qta']).$sconto.'</td>
                 </tr>';
@@ -187,7 +187,7 @@ if (!empty($rsi)) {
                     <td>
                         '.$r['descrizione'].'
                     </td>
-                    <td class="text-right">'.Translator::numberToLocale($r['qta']).'</td>
+                    <td class="text-right">'.Translator::numberToLocale($r['qta'], 'qta').'</td>
                     <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_acquisto'] * $r['qta']).'</td>
                     <td class="text-right success">'.Translator::numberToLocale($r['prezzo_vendita'] * $r['qta']).$sconto.'</td>
                 </tr>';

@@ -108,6 +108,7 @@ class Formatter
      * Converte un numero da una formattazione all'altra.
      *
      * @param string $value
+     * @param int    $decimals
      *
      * @return string|bool
      */

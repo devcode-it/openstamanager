@@ -19,7 +19,7 @@ if (!empty($rs)) {
             '.Modules::link('Articoli', $r['id'], $r['descrizione']).'
         </td>
         <td>
-            '.Translator::numberToLocale($r['qta']).' '.$r['unitamisura'].'
+            '.Translator::numberToLocale($r['qta'], get_var('Cifre decimali per quantità') ).' '.$r['unitamisura'].'
         </td>
     </tr>';
     }
@@ -27,5 +27,5 @@ if (!empty($rs)) {
     echo '
 </table>';
 } else {
-    echo '<p>'.tr('Non ci sono articoli in esaurimento').".</p>\n";
+    echo '<div class=\'alert alert-info\' >'.tr('Non ci sono articoli in esaurimento.')."</div>\n";
 }

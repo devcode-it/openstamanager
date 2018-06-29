@@ -222,4 +222,15 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
 
         return $result;
     }
+
+    public function testSMTP()
+    {
+        if ($this->IsSMTP() && $this->smtpConnect()) {
+            $this->smtpClose();
+
+            return true;
+        }
+
+        return false;
+    }
 }

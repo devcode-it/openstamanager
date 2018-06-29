@@ -65,6 +65,13 @@ switch (post('op')) {
             }
         }
 
+        $mail = new Mail($id_record);
+        if ($mail->testSMTP()) {
+            $_SESSION['infos'][] = tr('Connessione SMTP riuscita');
+        } else {
+            $_SESSION['errors'][] = tr('Connessione SMTP non riuscita');
+        }
+
         break;
 
     case 'delete':

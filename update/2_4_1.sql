@@ -326,3 +326,5 @@ ALTER TABLE `co_contratti` DROP `idtipointervento`;
 -- Rinominazione tabelle
 ALTER TABLE `co_righe_contratti` RENAME `co_contratti_promemoria`;
 ALTER TABLE `co_righe2_contratti` RENAME `co_righe_contratti`;
+UPDATE `zz_widgets` SET `query` = REPLACE(`query`, 'co_righe_contratti', 'co_contratti_promemoria');
+UPDATE `zz_widgets` SET `query` = REPLACE(`query`, 'co_righe2_contratti', 'co_righe_contratti');

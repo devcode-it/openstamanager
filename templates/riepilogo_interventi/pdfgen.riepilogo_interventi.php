@@ -106,7 +106,7 @@ if ($totrows > 0) {
 
         $riga_tecnici .= "</table>\n";
 
-        $line = '<span>Intervento <b>'.$rsi[$i]['id'].'</b> del <b>'.$rsi[$i]['Data inizio'].":</b><br/><small style='color:#444;'>".nl2br($rsi[$i]['richiesta'])."</small></span><br/>\n";
+        $line = '<span>Intervento <b>'.$rsi[$i]['Numero'].'</b> del <b>'.Translator::timestampToLocale($rsi[$i]['Data inizio'])."</b><br/><small style='color:#444;'>".nl2br($rsi[$i]['richiesta'])."</small></span><br/>\n";
 
         // Se l'elenco non è di un singolo cliente stampo anche la sua ragione sociale
         if (!$singolo_cliente) {

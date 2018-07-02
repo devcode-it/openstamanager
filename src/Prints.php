@@ -440,7 +440,7 @@ class Prints
     }
 
     /**
-     * Restituisce il link per la visualizzazione del PDF.
+     * Restituisce il link per la visualizzazione della stampa.
      *
      * @param string|int $print
      * @param int        $id_record
@@ -452,6 +452,20 @@ class Prints
     {
         self::render($print, $id_record, $filename);
 
+        return self::getPDFLink($filename);
+    }
+
+    /**
+     * Restituisce il link per la visualizzazione del PDF.
+     *
+     * @param string|int $print
+     * @param int        $id_record
+     * @param string     $filename
+     *
+     * @return string
+     */
+    public static function getPDFLink($filename)
+    {
         return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file=../../../../'.ltrim(str_replace(DOCROOT, '', $filename), '/');
     }
 

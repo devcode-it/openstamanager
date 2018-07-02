@@ -85,56 +85,24 @@ foreach ($replace as $prefix => $values) {
 }
 
 // Header di default
-$header_file = DOCROOT.'/templates/base|custom|/header.php';
-
-$original_file = str_replace('|custom|', '', $header_file);
-$custom_file = str_replace('|custom|', '/custom', $header_file);
-
-if (file_exists($custom_file)) {
-    $header_file = $custom_file;
-} elseif (file_exists($original_file)) {
-    $header_file = $original_file;
-}
-
+$header_file = App::filepath('templates/base|custom|/header.php');
 $default_header = include $header_file;
 
 // Footer di default
-$footer_file = DOCROOT.'/templates/base|custom|/footer.php';
-
-$original_file = str_replace('|custom|', '', $footer_file);
-$custom_file = str_replace('|custom|', '/custom', $footer_file);
-
-if (file_exists($custom_file)) {
-    $footer_file = $custom_file;
-} elseif (file_exists($original_file)) {
-    $footer_file = $original_file;
-}
-
+$footer_file = App::filepath('templates/base|custom|/footer.php');
 $default_footer = include $footer_file;
 
 // Logo di default
-$logo_file = DOCROOT.'/templates/base|custom|/logo_azienda.jpg';
+$default_logo = App::filepath('templates/base|custom|/logo_azienda.jpg');
 
-$original_file = str_replace('|custom|', '', $logo_file);
-$custom_file = str_replace('|custom|', '/custom', $logo_file);
-
-$default_logo = $original_file;
-if (file_exists($custom_file)) {
-    $default_logo = $custom_file;
-}
+// Logo generico
+$custom_logo = App::filepath('files/anagrafiche/'.Settings::get('Logo stampe'));
 
 // Logo specifico della stampa
-$logo_file = DOCROOT.'/templates/'.Prints::get($id_print)['directory'].'|custom|/logo_azienda.jpg';
+$logo = Prints::filepath($id_print, 'logo_azienda.jpg');
 
-$original_file = str_replace('|custom|', '', $logo_file);
-$custom_file = str_replace('|custom|', '/custom', $logo_file);
-
-if (file_exists($custom_file)) {
-    $logo = $custom_file;
-} elseif (file_exists($original_file)) {
-    $logo = $original_file;
-} else {
-    $logo = $default_logo;
+if (empty($logo)) {
+    $logo = empty($custom_logo) ? $default_logo : $custom_logo;
 }
 
 // Valori aggiuntivi per la sostituzione

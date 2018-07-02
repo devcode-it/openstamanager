@@ -587,9 +587,9 @@ function get_var($nome, $sezione = null, $descrizione = false, $again = false)
  *
  * @return string
  */
-function filter($param, $method = null)
+function filter($param, $method = null, $raw = false)
 {
-    return Filter::getValue($param, $method = null);
+    return Filter::getValue($param, $method, $raw);
 }
 
 /**
@@ -602,9 +602,9 @@ function filter($param, $method = null)
  *
  * @return string
  */
-function post($param, $rule = 'text')
+function post($param, $raw = false)
 {
-    return Filter::getValue($param, 'post');
+    return Filter::getValue($param, 'post', $raw);
 }
 
 /**
@@ -617,9 +617,9 @@ function post($param, $rule = 'text')
  *
  * @return string
  */
-function get($param, $rule = 'text')
+function get($param, $raw = false)
 {
-    return Filter::getValue($param, 'get');
+    return Filter::getValue($param, 'get', $raw);
 }
 
 /**

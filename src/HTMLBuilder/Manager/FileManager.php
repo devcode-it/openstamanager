@@ -11,7 +11,7 @@ class FileManager implements ManagerInterface
 {
     /**
      * Gestione "filelist_and_upload".
-     * Esempio: {( "name": "filelist_and_upload", "id_module": "2", "id_record": "1", "readonly": "false", "ajax": "true" )}.
+     * Esempio: {( "name": "filelist_and_upload", "id_module": "2", "id_record": "1", "readonly": "false" )}.
      *
      * @param array $options
      *
@@ -20,21 +20,25 @@ class FileManager implements ManagerInterface
     public function manage($options)
     {
         $options['readonly'] = !empty($options['readonly']) ? true : false;
-        $options['ajax'] = isset($options['ajax']) ? $options['ajax'] : false;
         $options['showpanel'] = isset($options['showpanel']) ? $options['showpanel'] : true;
         $options['label'] = isset($options['label']) ? $options['label'] : tr('Nuovo allegato').':';
 
-        // Riferimento ad un plugin
-        $plugin = null;
+        // ID del form
+        $attachment_id = 'attachments_'.$options['id_module'].'-'.$options['id_plugin'];
+
+        // Cartella delle anteprime
         if (!empty($options['id_plugin'])) {
-            $plugin = '_'.$options['id_plugin'];
+            $directory = '/plugins/'.\Plugins::get($options['id_plugin'])['directory'];
+        } else {
+            $directory = \Modules::get($options['id_module'])['directory'];
         }
+        $directory = basename($directory);
 
         $dbo = \Database::getConnection();
 
+        // Codice HTML
         $result = '
-<div id="attachments_'.$options['id_record'].$plugin.'" >
-		<a name="attachments_'.rand().'"></a>';
+<div id="'.$attachment_id.'" >';
 
         if (!empty($options['showpanel'])) {
             $result .= '
@@ -45,19 +49,34 @@ class FileManager implements ManagerInterface
         <div class="panel-body">';
         }
 
-        // Visualizzo l'elenco di file già caricati
-        $query = 'SELECT * FROM zz_files WHERE id_record = '.prepare($options['id_record']).' AND id_module'.((!empty($options['id_module'])) ? ' = '.prepare($options['id_module']) : ' IS NULL').' AND id_plugin'.((!empty($options['id_plugin'])) ? ' = '.prepare($options['id_plugin']) : ' IS NULL').'';
+        $count = 0;
 
-        $rs = $dbo->fetchArray($query);
+        $where = '`id_record` = '.prepare($options['id_record']).' AND `id_module` '.(!empty($options['id_module']) ? '= '.prepare($options['id_module']) : 'IS NULL').' AND `id_plugin` '.(!empty($options['id_plugin']) ? '= '.prepare($options['id_plugin']) : 'IS NULL').'';
 
-        if (!empty($rs)) {
+        // Categorie
+        $categories = $dbo->fetchArray('SELECT DISTINCT `category` FROM `zz_files` WHERE '.$where.' ORDER BY `category`');
+        foreach ($categories as $category) {
+            $category = $category['category'];
+
             $result .= '
-    <table class="table table-condensed table-hover table-bordered">
+<div class="box box-success">
+    <div class="box-header with-border">
+        <h3 class="box-title">'.(!empty($category) ? $category : tr('Generale')).'</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body no-padding">
+    <table class="table">
         <tr>
             <th>'.tr('Nome').'</th>
             <th>'.tr('Data').'</th>
-            <th width="15%" class="text-center">#</th>
+            <th width="15%" class="text-center">'.tr('Opzioni').'</th>
         </tr>';
+
+            $rs = $dbo->fetchArray('SELECT * FROM `zz_files` WHERE `category`'.(!empty($category) ? '= '.prepare($category) : 'IS NULL').' AND '.$where);
 
             foreach ($rs as $r) {
                 $result .= '
@@ -69,7 +88,6 @@ class FileManager implements ManagerInterface
             </td>
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
             <td class="text-center">
-
                 <a class="btn btn-sm btn-primary" href="'.ROOTDIR.'/actions.php?id_module='.$options['id_module'].'&op=download_file&id='.$r['id'].'&filename='.$r['filename'].'" target="_blank">
                     <i class="fa fa-download"></i>
                 </a>';
@@ -78,21 +96,29 @@ class FileManager implements ManagerInterface
                 $extension = pathinfo($r['original'])['extension'];
                 $supported_extensions = ['pdf', 'jpg', 'png', 'gif', 'jpeg', 'bmp'];
                 if (in_array($extension, $supported_extensions)) {
-                    $result .= "<div class='hide' id='view-".$r['id']."'  >";
+                    $result .= "
+                <div class='hide' id='view-".$r['id']."'>";
 
                     if ($extension == 'pdf') {
                         $result .= '
-							 <iframe src="'.ROOTDIR.'/files/'.\Modules::get($options['id_module'])['directory'].'/'.$r['filename'].'"  frameborder="0" scrolling="no"  width="100%" height="550"></iframe>';
+                    <iframe src="'.\Prints::getPDFLink('files/'.$directory.'/'.$r['filename']).'" frameborder="0" width="100%" height="550"></iframe>';
                     } else {
                         $result .= '
-							<img src="'.ROOTDIR.'/files/'.\Modules::get($options['id_module'])['directory'].'/'.$r['filename'].'" width="100%" ></img>';
+                    <img src="'.ROOTDIR.'/files/'.$directory.'/'.$r['filename'].'" width="100%"></img>';
                     }
 
-                    $result .= '</div>';
+                    $result .= '
+                </div>';
 
-                    $result .= ' <button class="btn btn-sm btn-info" data-target="#bs-popup"  type="button" data-title="'.htmlentities($r['nome'], ENT_QUOTES, 'UTF-8').' <small><em>('.$r['filename'].')</em></small>" data-href="#view-'.$r['id']."\" ><i class='fa fa-eye'></i></button>";
+                    $result .= '
+                <button class="btn btn-sm btn-info" data-target="#bs-popup2"  type="button" data-title="'.prepareToField($r['nome']).' <small><em>('.$r['filename'].')</em></small>" data-href="#view-'.$r['id'].'">
+                    <i class="fa fa-eye"></i>
+                </button>';
                 } else {
-                    $result .= ' <button class="btn btn-sm btn-default" title="'.tr('Anteprima file non disponibile').".\" onclick=\"alert('".tr('Anteprima file di tipo "'.$extension.'" non supportata.')."');\" ><i class='fa fa-eye'></i></button>\n";
+                    $result .= '
+                <button class="btn btn-sm btn-default" title="'.tr('Anteprima file non disponibile').'." onclick="alert(\''.tr('Anteprima file di tipo "'.$extension.'" non supportata.').'\');">
+                    <i class="fa fa-eye"></i>
+                </button>';
                 }
 
                 if (!$options['readonly']) {
@@ -105,103 +131,51 @@ class FileManager implements ManagerInterface
                 $result .= '
             </td>
         </tr>';
+
+                ++$count;
             }
 
             $result .= '
     </table>
-    <div class="clearfix"></div>
-    <br>';
-        } else {
-            //in caso di readonly, se non è stato caricato nessun allegato mostro almeno box informativo
-            if ($options['readonly']) {
-                $result .= '
-			<div class="alert alert-info" style="margin-bottom:0px;" >
-				<i class="fa fa-info-circle"></i>
-				'.tr('Nessun allegato è stato caricato', []).'.
-			</div>';
-            }
+    </div>
+</div>
+
+        <div class="clearfix"></div>
+        <br>';
         }
 
+        // Form per l'upload di un nuovo file
         if (!$options['readonly']) {
-            // Form per l'upload di un nuovo file
             $result .= '
     <b>'.$options['label'].'</b>
-    <div class="row">
-
-        <div class="col-lg-4">
-            {[ "type": "text", "placeholder": "'.tr('Nome').'", "name": "nome_allegato", "id": "nome_allegato_'.$options['id_record'].$plugin.'" ]}
+    <div id="upload-form" class="row">
+        <div class="col-md-4">
+            {[ "type": "text", "placeholder": "'.tr('Nome').'", "name": "nome_allegato" ]}
         </div>
 
-        <div class="col-lg-6">
-            {[ "type": "file", "placeholder": "'.tr('File').'", "name": "blob", "id": "blob_'.$options['id_record'].$plugin.'", "required": 0 ]}
-        </div>';
+        <div class="col-md-3">
+            {[ "type": "text", "placeholder": "'.tr('Categoria').'", "name": "categoria" ]}
+        </div>
 
-            $result .= '
-		<div class="col-lg-2 text-right">
-			<button type="button" class="btn btn-success" onclick="saveFile_'.$options['id_record'].$plugin.' ( $(this) );">
+        <div class="col-md-3">
+            {[ "type": "file", "placeholder": "'.tr('File').'", "name": "blob" ]}
+        </div>
+
+		<div class="col-md-2 text-right">
+			<button type="button" class="btn btn-success" id="upload">
 				<i class="fa fa-upload"></i> '.tr('Carica').'
 			</button>
-		</div>';
-
-            $result .= '
+		</div>
     </div>';
         }
-
-        $result .= '
-    <script>
-        function saveFile_'.$options['id_record'].$plugin.' (btn){
-            if(!$("#blob_'.$options['id_record'].$plugin.'").val()){
-                swal("'.addslashes(tr('Attenzione!')).'", "'.addslashes(tr('Devi selezionare un file con il tasto "Sfoglia"')).'...", "warning");
-                return false;
-            }
-
-            var file_data = $("#blob_'.$options['id_record'].$plugin.'").prop("files")[0];
-
-            var form_data = new FormData();
-
-            form_data.append("blob", file_data);
-            form_data.append("nome_allegato", $("input[id=nome_allegato_'.$options['id_record'].$plugin.']").val());
-            form_data.append("op","link_file");
-            form_data.append("id_record","'.$options['id_record'].'");
-            form_data.append("id_module", "'.$options['id_module'].'");';
-
-        if (!empty($options['id_plugin'])) {
+        // In caso di readonly, se non è stato caricato nessun allegato mostro almeno box informativo
+        elseif ($count == 0) {
             $result .= '
-            form_data.append("id_plugin","'.$options['id_plugin'].'");';
+        <div class="alert alert-info" style="margin-bottom:0px;" >
+            <i class="fa fa-info-circle"></i>
+            '.tr('Nessun allegato è stato caricato').'.
+        </div>';
         }
-
-        $result .= '
-
-            prev_html = btn.html();
-            btn.html("<i class=\"fa fa-spinner fa-pulse fa-fw\"></i>'.tr('Attendere...').'");
-            btn.prop("disabled", true);
-
-            $.ajax({
-                url: "'.ROOTDIR.'/actions.php",
-                cache: false,
-                type: "post",
-                processData: false,
-                contentType: false,
-                dataType : "html",
-                data: form_data,
-                success: function(data) {
-
-                    btn.html(prev_html);
-                    btn.prop("disabled", false);';
-
-        if ($options['ajax']) {
-            $result .= '$("#attachments_'.$options['id_record'].$plugin.'").load( globals.rootdir + "/ajax.php?op=list_attachments&id_module='.$options['id_module'].'&id_record='.$options['id_record'].((!empty($options['id_plugin'])) ? '&id_plugin='.$options['id_plugin'].'#tab_'.$options['id_plugin'] : '').'" );';
-        } else {
-            $result .= 'location.href = globals.rootdir + "/editor.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].((!empty($options['id_plugin'])) ? '#tab_'.$options['id_plugin'] : '').'";';
-        }
-
-        $result .= '},
-                error: function(data) {
-                    alert(data);
-                }
-            })
-        }
-    </script>';
 
         if (!empty($options['showpanel'])) {
             $result .= '
@@ -209,6 +183,40 @@ class FileManager implements ManagerInterface
 </div>
 </div>';
         }
+
+        $result .= '
+<script src="'.ROOTDIR.'/lib/init.js"></script>
+
+<script>
+$(document).ready(function(){
+    data = {
+        op: "link_file",
+        id_module: "'.$options['id_module'].'",
+        id_plugin: "'.$options['id_plugin'].'",
+        id_record: "'.$options['id_record'].'",
+    };
+
+    $("#'.$attachment_id.' #upload").click(function(){
+        $("#'.$attachment_id.' #upload-form").ajaxSubmit({
+            url: globals.rootdir + "/actions.php",
+            beforeSubmit: function(arr, $form, options) {
+                return $form.find("input[name=nome_allegato]").val() && $form.find("input[name=blob]").val();
+            },
+            data: data,
+            type: "post",
+            uploadProgress: function(event, position, total, percentComplete) {
+                $("#'.$attachment_id.' #upload-info").html(percentComplete + "%");
+            },
+            success: function(data){
+                $("#'.$attachment_id.'").load(globals.rootdir + "/ajax.php?op=list_attachments&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'");
+            },
+            error: function(data) {
+                alert("'.tr('Errore').': " + data);
+            }
+        });
+    });
+});
+</script>';
 
         return $result;
     }

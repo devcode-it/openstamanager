@@ -45,7 +45,7 @@ if (empty($idriga)) {
     $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
 
     // carico record da modificare
-    $q = "SELECT *, (SELECT codice FROM mg_articoli WHERE id=co_contratti_promemoria_articoli.idarticolo) AS codice_articolo, (SELECT CONCAT(codice, ' - ', descrizione) FROM mg_articoli WHERE id=co_contratti_promemoria_articoli.idarticolo) AS descrizione_articolo FROM co_contratti_promemoria_articoli WHERE id=".prepare($idriga);
+    $q = "SELECT *, (SELECT codice FROM mg_articoli WHERE id=co_righe_contratti_articoli.idarticolo) AS codice_articolo, (SELECT CONCAT(codice, ' - ', descrizione) FROM mg_articoli WHERE id=co_righe_contratti_articoli.idarticolo) AS descrizione_articolo FROM co_righe_contratti_articoli WHERE id=".prepare($idriga);
     $rsr = $dbo->fetchArray($q);
 
     $idarticolo = $rsr[0]['idarticolo'];

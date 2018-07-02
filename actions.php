@@ -169,10 +169,13 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 
             // Creazione file fisico
             if (move_uploaded_file($src, $upload_dir.'/'.$filename)) {
+                $categoria = filter('categoria');
+
                 $dbo->insert('zz_files', [
                     'nome' => $nome,
                     'filename' => $filename,
                     'original' => $_FILES['blob']['name'],
+                    'category' => !empty($categoria) ? $categoria : null,
                     'id_module' => !empty($id_module) ? $id_module : null,
                     'id_record' => $id_record,
                     'id_plugin' => !empty($id_plugin) ? $id_plugin : null,
@@ -341,6 +344,8 @@ if (Modules::getPermission($permesso) == 'r' || Modules::getPermission($permesso
     // Inclusione di eventuale plugin personalizzato
     if (!empty($info['script'])) {
         include App::filepath('modules/'.$info['module_dir'].'/plugins|custom|', $info['script']);
+
+        $dbo->query('COMMIT');
 
         return;
     }

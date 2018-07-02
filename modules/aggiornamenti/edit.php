@@ -142,7 +142,7 @@ foreach ($modules as $module) {
 
     echo '
             <tr class="'.$class.'">
-                <td>'.$module['name'].'</td>
+                <td>'.$module['title'].'</td>
                 <td align="right">'.$module['version'].'</td>
                 <td align="center">'.$stato.'</td>
                 <td align="center">'.$compatible.'</td>';

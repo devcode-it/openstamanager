@@ -500,7 +500,7 @@ class Database extends Util\Singleton
         if (
             !is_string($table) ||
             (!empty($order) && !is_string($order) && !is_array($order)) ||
-            (!empty($limit) && !is_string($limit) && !is_array($limit))
+            (!empty($limit) && !is_string($limit) && !is_integer($limit) && !is_array($limit))
         ) {
             throw new UnexpectedValueException();
         }
@@ -567,7 +567,13 @@ class Database extends Util\Singleton
     {
         $limit = 1;
 
-        return $this->select($table, $array, $conditions, $order, $limit, $return);
+        $result = $this->select($table, $array, $conditions, $order, $limit, $return);
+
+        if (isset($result[0])) {
+            return $result[0];
+        }
+
+        return $result;
     }
 
     /**

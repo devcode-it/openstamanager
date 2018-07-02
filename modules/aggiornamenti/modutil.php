@@ -45,7 +45,7 @@ function submodules($list, $depth = 1)
 
         $result .= '
         <tr class="'.$class.'">
-            <td><small>'.str_repeat('&nbsp;', $depth * 4).'- '.$sub['name'].'</small></td>
+            <td><small>'.str_repeat('&nbsp;', $depth * 4).'- '.$sub['title'].'</small></td>
             <td align="right">'.$sub['version'].'</td>
             <td align="center">'.$stato.'</td>
             <td align="center">'.$compatible.'</td>';

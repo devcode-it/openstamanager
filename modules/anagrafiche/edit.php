@@ -428,6 +428,11 @@ if (!empty($google)) {
 
 <?php
 
+if (Settings::get('Azienda predefinita') == $id_record) {
+    echo '
+<div class="alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un file con nome "Logo stampe"').'.</div>';
+}
+
 if (!$records[0]['deleted']) {
     //fatture, ddt, preventivi, contratti, ordini, interventi, utenti collegati a questa anagrafica
     $elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idanagrafica` = '.prepare($id_record).')
@@ -507,13 +512,10 @@ if (!$records[0]['deleted']) {
     }
 } else {
     echo '
-	<div class=\'alert alert-danger\' >'.tr('Questa anagrafica è stata eliminata').'.</div>';
+	<div class=\'alert alert-danger\'>'.tr('Questa anagrafica è stata eliminata').'.</div>';
 }
 
 ?>
-
-
-
 
 <script>
 	$(document).ready( function(){

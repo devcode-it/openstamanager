@@ -236,7 +236,7 @@ echo '
         </a>';
 
 echo '
-<script>';
+        <script>';
 
 // Se l'utente ha i permessi in sola lettura per il modulo, converto tutti i campi di testo in span
 if ($module['permessi'] == 'r') {
@@ -250,54 +250,54 @@ if ($module['permessi'] == 'r') {
 <?php
 } ?>
 
-		var content_was_modified = false;
+            var content_was_modified = false;
 
-		//controllo se digito qualche valore o cambio qualche select
-		$("input, textarea, select").bind("change paste keyup", function(event) {
-			if( event.keyCode >= 32 ){
-				content_was_modified = true;
-			}
-		});
+            //controllo se digito qualche valore o cambio qualche select
+            $("input, textarea, select").bind("change paste keyup", function(event) {
+                if( event.keyCode >= 32 ){
+                    content_was_modified = true;
+                }
+            });
 
-		//tolgo il controllo se sto salvando
-		$(".btn-success, button[type=submit]").bind("click", function() {
-			content_was_modified = false;
-		});
+            //tolgo il controllo se sto salvando
+            $(".btn-success, button[type=submit]").bind("click", function() {
+                content_was_modified = false;
+            });
 
-		// questo controllo blocca il modulo vendita al banco, dopo la lettura con barcode, appare il messaggio di conferma
-		window.onbeforeunload = function(){
-			if(content_was_modified) {
-				return  'Uscire senza salvare?';
-			}
-		};
+            // questo controllo blocca il modulo vendita al banco, dopo la lettura con barcode, appare il messaggio di conferma
+            window.onbeforeunload = function(){
+                if(content_was_modified) {
+                    return  'Uscire senza salvare?';
+                }
+            };
 <?php
 if ($advanced_sessions) {
         ?>
 
-		function getActiveUsers(){
-			$.getJSON('<?php echo ROOTDIR; ?>/call.php', {
-				id_module: <?php echo $id_module; ?>,
-				id_record: <?php echo $id_record; ?>
-			},
-			function(data) {
-				if (data.length != 0) {
-					$(".info-active").removeClass("hide");
-					$(".info-active .list").html("");
-					$.each( data, function( key, val ) {
-						$(".info-active .list").append("<li>"+val.username+"</li>");
-					});
-				}
-				else $(".info-active").addClass("hide");
-			});
-		}
+            function getActiveUsers(){
+                $.getJSON('<?php echo ROOTDIR; ?>/call.php', {
+                    id_module: <?php echo $id_module; ?>,
+                    id_record: <?php echo $id_record; ?>
+                },
+                function(data) {
+                    if (data.length != 0) {
+                        $(".info-active").removeClass("hide");
+                        $(".info-active .list").html("");
+                        $.each( data, function( key, val ) {
+                            $(".info-active .list").append("<li>"+val.username+"</li>");
+                        });
+                    }
+                    else $(".info-active").addClass("hide");
+                });
+            }
 
-		getActiveUsers();
+            getActiveUsers();
 
-		setInterval(getActiveUsers, <?php echo get_var('Timeout notifica di presenza (minuti)') * 1000; ?>);
+            setInterval(getActiveUsers, <?php echo get_var('Timeout notifica di presenza (minuti)') * 1000; ?>);
 <?php
     }
 ?>
-	</script>
+	    </script>
 <?php
 
 include_once App::filepath('include|custom|', 'bottom.php');

@@ -330,7 +330,7 @@ UPDATE `zz_widgets` SET `query` = REPLACE(`query`, 'co_righe_contratti', 'co_con
 UPDATE `zz_widgets` SET `query` = REPLACE(`query`, 'co_righe2_contratti', 'co_righe_contratti');
 
 -- Ordine per le Impostazioni
-ALTER TABLE `zz_settings` ADD `order` int(11) NOT NULL;
+ALTER TABLE `zz_settings` ADD `order` int(11);
 UPDATE `zz_settings` SET `order` = 1 WHERE `nome` = 'Azienda predefinita';
 UPDATE `zz_settings` SET `order` = 2 WHERE `nome` = 'Nascondere la barra sinistra di default';
 UPDATE `zz_settings` SET `order` = 3 WHERE `nome` = 'Backup automatico';
@@ -349,9 +349,14 @@ UPDATE `zz_settings` SET `order` = 15 WHERE `nome` = 'apilayer API key for Email
 UPDATE `zz_settings` SET `order` = 16 WHERE `nome` = 'apilayer API key for VAT number';
 UPDATE `zz_settings` SET `order` = 17 WHERE `nome` = 'CSS Personalizzato';
 
-
 -- Fix tipo del campo order
 ALTER TABLE `co_righe_preventivi` CHANGE `order` `order` int(11) NOT NULL;
 ALTER TABLE `dt_righe_ddt` CHANGE `order` `order` int(11) NOT NULL;
 ALTER TABLE `or_righe_ordini` CHANGE `order` `order` int(11) NOT NULL;
 ALTER TABLE `co_righe_contratti` CHANGE `order` `order` int(11) NOT NULL;
+
+-- Impostazione "Logo stampe"
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'Logo stampe', '', 'string', '0', 'Generali');
+
+-- Categorie zz_files
+ALTER TABLE `zz_files` ADD `category` varchar(100) AFTER `original`;

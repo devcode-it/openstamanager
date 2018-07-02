@@ -268,3 +268,22 @@ switch (post('op')) {
 
         break;
 }
+
+// Operazioni aggiuntive per il logo
+if (filter('op') == 'link_file'){
+    $nome = 'Logo stampe';
+
+    if (Settings::get('Azienda predefinita') == $id_record && filter('nome_allegato') == $nome) {
+        $file = $dbo->selectOne('zz_files', ['filename'], [
+            'nome' => $nome,
+            'id_module' => $id_module,
+            'id_record' => $id_record,
+        ]);
+
+        $dbo->update('zz_settings', [
+            'valore' => $file['filename'],
+        ], [
+            'nome' => $nome,
+        ]);
+    }
+}

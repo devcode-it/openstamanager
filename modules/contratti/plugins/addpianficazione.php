@@ -139,7 +139,7 @@ echo '
 
 echo '
 
-	{( "name": "filelist_and_upload", "id_record": "'.$idcontratto_riga.'", "id_plugin": "'.$id_plugin.'", "ajax": "true", '.((!empty($readonly)) ? '"readonly": "true"' : '"readonly":"false"').' )}
+	{( "name": "filelist_and_upload", "id_record": "'.$idcontratto_riga.'", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", '.((!empty($readonly)) ? '"readonly": 1' : '"readonly": 0').' )}
 
 	</div>
 </div>

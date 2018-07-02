@@ -32,7 +32,7 @@ if (get('anteprima') !== null) {
 
     <div class="clearfix"></div>
 
-    <iframe src="'.Prints::getPreviewLink($id_print, $id_record, $filename).'" allowfullscreen="" webkitallowfullscreen="" width="100%" height="550"></iframe>
+    <iframe src="'.Prints::getPreviewLink($id_print, $id_record, $filename).'" frameborder="0" width="100%" height="550"></iframe>
 </div>';
 }
 

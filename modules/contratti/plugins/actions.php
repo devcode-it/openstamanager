@@ -19,7 +19,7 @@ switch (post('op')) {
         //$idarticolo_originale = post('idarticolo_originale');
 
         // Leggo la quantità attuale nell'intervento
-        $q = 'SELECT qta, idautomezzo, idimpianto FROM co_contratti_promemoria_articoli WHERE id='.prepare($idriga);
+        $q = 'SELECT qta, idautomezzo, idimpianto FROM co_righe_contratti_articoli WHERE id='.prepare($idriga);
         $rs = $dbo->fetchArray($q);
         $old_qta = $rs[0]['qta'];
         $idimpianto = $rs[0]['idimpianto'];
@@ -30,7 +30,7 @@ switch (post('op')) {
         //add_movimento_magazzino($idarticolo_originale, $old_qta, ['idautomezzo' => $idautomezzo, 'idintervento' => $id_record]);
 
         // Elimino questo articolo dall'intervento
-        $dbo->query('DELETE FROM co_contratti_promemoria_articoli WHERE id='.prepare($idriga));
+        $dbo->query('DELETE FROM co_righe_contratti_articoli WHERE id='.prepare($idriga));
 
         // Elimino il collegamento al componente
         //$dbo->query('DELETE FROM my_impianto_componenti WHERE idimpianto='.prepare($idimpianto).' AND idintervento='.prepare($id_record));
@@ -74,7 +74,7 @@ switch (post('op')) {
         $iva = (($prezzo_vendita * $qta) - $sconto) * $rs_iva[0]['percentuale'] / 100;
 
         // Aggiunto il collegamento fra l'articolo e l'intervento
-        $idriga = $dbo->query('INSERT INTO co_contratti_promemoria_articoli(idarticolo, id_riga_contratto, idimpianto, idautomezzo, descrizione, prezzo_vendita, prezzo_acquisto, sconto, sconto_unitario, tipo_sconto, idiva, desc_iva, iva, qta, um, abilita_serial) VALUES ('.prepare($idarticolo).', '.prepare($idcontratto_riga).', '.(empty($idimpianto) ? 'NULL' : prepare($idimpianto)).', '.prepare($idautomezzo).', '.prepare($descrizione).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($qta).', '.prepare($um).', '.prepare($rsart[0]['abilita_serial']).')');
+        $idriga = $dbo->query('INSERT INTO co_righe_contratti_articoli(idarticolo, id_riga_contratto, idimpianto, idautomezzo, descrizione, prezzo_vendita, prezzo_acquisto, sconto, sconto_unitario, tipo_sconto, idiva, desc_iva, iva, qta, um, abilita_serial) VALUES ('.prepare($idarticolo).', '.prepare($idcontratto_riga).', '.(empty($idimpianto) ? 'NULL' : prepare($idimpianto)).', '.prepare($idautomezzo).', '.prepare($descrizione).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($qta).', '.prepare($um).', '.prepare($rsart[0]['abilita_serial']).')');
 
         /*if (!empty($serials)) {
             if ($old_qta > $qta) {
@@ -93,12 +93,12 @@ switch (post('op')) {
         $idriga = post('idriga');
         //$idarticolo = post('idarticolo');
 
-        $dbo->query('DELETE FROM co_contratti_promemoria_articoli WHERE id='.prepare($idriga).' '.Modules::getAdditionalsQuery($id_module));
+        $dbo->query('DELETE FROM co_righe_contratti_articoli WHERE id='.prepare($idriga).' '.Modules::getAdditionalsQuery($id_module));
 
         // Riporto la merce nel magazzino
         if (!empty($idriga) && !empty($id_record)) {
             // Leggo la quantità attuale nell'intervento
-            //$q = 'SELECT qta, idautomezzo, idarticolo, idimpianto FROM co_contratti_promemoria_articoli WHERE id='.prepare($idriga);
+            //$q = 'SELECT qta, idautomezzo, idarticolo, idimpianto FROM co_righe_contratti_articoli WHERE id='.prepare($idriga);
             //$rs = $dbo->fetchArray($q);
             //$qta = $rs[0]['qta'];
             //$idarticolo = $rs[0]['idarticolo'];
@@ -144,7 +144,7 @@ switch (post('op')) {
 
         $idcontratto_riga = $post['idcontratto_riga'];
 
-        $dbo->query('INSERT INTO co_contratti_promemoria_materiali(descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto, id_riga_contratto) VALUES ('.prepare($descrizione).', '.prepare($qta).', '.prepare($um).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($idcontratto_riga).')');
+        $dbo->query('INSERT INTO co_righe_contratti_materiali(descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto, id_riga_contratto) VALUES ('.prepare($descrizione).', '.prepare($qta).', '.prepare($um).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($idcontratto_riga).')');
 
     break;
 
@@ -169,7 +169,7 @@ switch (post('op')) {
 
     $iva = (($prezzo_vendita * $qta) - $sconto) * $rs_iva[0]['percentuale'] / 100;
 
-    $dbo->query('UPDATE  co_contratti_promemoria_materiali SET '.
+    $dbo->query('UPDATE  co_righe_contratti_materiali SET '.
         ' descrizione='.prepare($descrizione).','.
         ' qta='.prepare($qta).','.
         ' um='.prepare($um).','.
@@ -188,7 +188,7 @@ switch (post('op')) {
     case 'delriga':
 
         $idriga = post('idriga');
-        $dbo->query('DELETE FROM co_contratti_promemoria_materiali WHERE id='.prepare($idriga).' '.Modules::getAdditionalsQuery($id_module));
+        $dbo->query('DELETE FROM co_righe_contratti_materiali WHERE id='.prepare($idriga).' '.Modules::getAdditionalsQuery($id_module));
 
     break;
 }

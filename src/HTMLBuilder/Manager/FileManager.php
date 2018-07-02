@@ -205,7 +205,7 @@ $(document).ready(function(){
             data: data,
             type: "post",
             uploadProgress: function(event, position, total, percentComplete) {
-                $("#'.$attachment_id.' #upload-info").html(percentComplete + "%");
+                $("#'.$attachment_id.' #upload").prop("disabled", true).html(percentComplete + "%").removeClass("btn-success").addClass("btn-info");
             },
             success: function(data){
                 $("#'.$attachment_id.'").load(globals.rootdir + "/ajax.php?op=list_attachments&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'");

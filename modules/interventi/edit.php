@@ -46,7 +46,7 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
 			<!-- RIGA 2 -->
 			<div class="row">
-				<div class="col-md-3">
+				<div class="col-md-6">
 					<?php
                     if (($records[0]['idpreventivo'] != '')) {
                         echo '
@@ -57,7 +57,7 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 					{[ "type": "select", "label": "<?php echo tr('Preventivo'); ?>", "name": "idpreventivo", "value": "$idpreventivo$", "ajax-source": "preventivi", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
 				</div>
 
-				<div class="col-md-3">
+				<div class="col-md-6">
 					<?php
                         $rs = $dbo->fetchArray('SELECT id, idcontratto FROM co_contratti_promemoria WHERE idintervento='.prepare($id_record));
                         if (count($rs) == 1) {

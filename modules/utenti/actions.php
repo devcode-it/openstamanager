@@ -120,8 +120,17 @@ switch (filter('op')) {
         break;
 
     // Elimina utente
-   case 'delete':
+    case 'delete':
         if ($dbo->query('DELETE FROM zz_users WHERE id='.prepare($id_utente))) {
+            $_SESSION['infos'][] = tr('Utente eliminato!');
+        }
+        break;
+
+    // Disabilita API utente
+    case 'token':
+        $token = $dbo->fetchOne('SELECT `enabled` FROM `zz_tokens` WHERE `id_utente` = '.prepare($id_record));
+
+        if ($dbo->query('UPDATE zz_tokens SET enabled = '.(empty($token['enabled']) ? 1 : 0).' WHERE id_utente = '.prepare($id_utente))) {
             $_SESSION['infos'][] = tr('Utente eliminato!');
         }
         break;

@@ -156,7 +156,7 @@ $body .= "<table cellspacing=\"0\" border=\"0\" cellpadding=\"10\" style=\"width
 
 // Copia centrale
 if ($copia_centrale == '1') {
-    $copia_centrale = 'S&Igrave;';
+    $copia_centrale = 'Sì';
 } else {
     $copia_centrale = 'NO';
 }
@@ -166,7 +166,7 @@ $body .= "</td>\n";
 
 // Copia cliente
 if ($copia_cliente == '1') {
-    $copia_cliente = 'S&Igrave;';
+    $copia_cliente = 'Sì';
 } else {
     $copia_cliente = 'NO';
 }
@@ -176,7 +176,7 @@ $body .= "</td>\n";
 
 // Copia amministratore
 if ($copia_amministratore == '1') {
-    $copia_amministratore = 'S&Igrave;';
+    $copia_amministratore = 'Sì';
 } else {
     $copia_amministratore = 'NO';
 }
@@ -186,7 +186,7 @@ $body .= "</td></tr>\n";
 
 // Funzionamento in sicurezza
 if ($funzionamento_in_sicurezza == '1') {
-    $funzionamento_in_sicurezza = 'S&Igrave;';
+    $funzionamento_in_sicurezza = 'Sì';
 } else {
     $funzionamento_in_sicurezza = 'NO';
 }

@@ -4,8 +4,6 @@ include_once __DIR__.'/../../core.php';
 
 $record = $records[0];
 
-$moduli = $dbo->fetchArray('SELECT * FROM zz_modules WHERE parent IS NULL ORDER BY `order` ASC');
-
 $utenti = $dbo->fetchArray('SELECT *, (SELECT ragione_sociale FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE an_anagrafiche.idanagrafica=zz_users.idanagrafica AND an_tipianagrafiche_anagrafiche.idtipoanagrafica=zz_users.idtipoanagrafica) AS ragione_sociale, (SELECT descrizione FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica=an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica=zz_users.idanagrafica AND an_tipianagrafiche.idtipoanagrafica=zz_users.idtipoanagrafica) AS tipo FROM zz_users WHERE idgruppo='.prepare($record['id']));
 
 echo '
@@ -53,10 +51,10 @@ if (!empty($utenti)) {
         if ($utente['id'] != '1') {
             if ($utente['enabled'] == 1) {
                 echo '
-				<a href="javascript:;" onclick="swal({ title: \''.tr('Disabilitare questo utente?').'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('S&igrave;').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=disable&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Disabilita utente" class="text-danger tip"><i class="fa fa-2x fa-eye-slash"></i></a>';
+				<a href="javascript:;" onclick="swal({ title: \''.tr('Disabilitare questo utente?').'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=disable&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Disabilita utente" class="text-danger tip"><i class="fa fa-2x fa-eye-slash"></i></a>';
             } else {
                 echo '
-				<a href="javascript:;" onclick="swal({ title: \''.tr('Abilitare questo utente?').'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('S&igrave;').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=enable&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Abilita utente" class="text-success tip"><i class="fa fa-2x fa-eye"></i></a>';
+				<a href="javascript:;" onclick="swal({ title: \''.tr('Abilitare questo utente?').'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=enable&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Abilita utente" class="text-success tip"><i class="fa fa-2x fa-eye"></i></a>';
             }
         } else {
             echo '
@@ -65,15 +63,31 @@ if (!empty($utenti)) {
 
         // Cambio password e nome utente
         echo '
-				<a href="" data-href="'.$rootdir.'/modules/'.Modules::get($id_module)['directory'].'/user.php?id_utente='.$utente['id'].'&idgruppo='.$record['id'].'" class="text-warning tip" data-toggle="modal" data-target="#bs-popup" title="Aggiorna dati utente"  data-title="Aggiorna dati utente"><i class="fa fa-2x fa-unlock-alt"></i></a>';
+                <a href="" data-href="'.$rootdir.'/modules/'.Modules::get($id_module)['directory'].'/user.php?id_utente='.$utente['id'].'&idgruppo='.$record['id'].'" class="text-warning tip" data-toggle="modal" data-target="#bs-popup" title="Aggiorna dati utente"  data-title="Aggiorna dati utente"><i class="fa fa-2x fa-unlock-alt"></i></a>';
+
+        // Disabilitazione token API, se diverso da id_utente #1 (admin)
+        if ($utente['id'] != '1') {
+            $token = $dbo->fetchOne('SELECT `enabled` FROM `zz_tokens` WHERE `id_utente` = '.prepare($utente['id']));
+
+            if (!empty($token['enabled'])) {
+                echo '
+                    <a href="javascript:;" onclick="swal({ title: \''.tr("Disabilitare l\'accesso API per questo utente?").'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=token&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Disabilita API" class="text-danger tip"><i class="fa fa-2x fa-key"></i></a>';
+            } else {
+                echo '
+                    <a href="javascript:;" onclick="swal({ title: \''.tr("Abilitare l\'accesso API per questo utente?").'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=token&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Abilitare API" class="text-success tip"><i class="fa fa-2x fa-key"></i></a>';
+            }
+        } else {
+            echo '
+                    <span onclick="alert(\"'.tr("Non è possibile gestire l'accesso API per l'utente admin").'\")" class="text-muted tip"><i class="fa fa-2x fa-key "></i></span>';
+        }
 
         // Eliminazione utente, se diverso da id_utente #1 (admin)
         if ($utente['id'] != '1') {
             echo '
-			<a href="javascript:;" onclick="swal({ title: \''.tr('Eliminare questo utente?').'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('S&igrave;').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Elimina utente" class="text-danger tip"><i class="fa fa-2x fa-trash"></i></a>';
+			        <a href="javascript:;" onclick="swal({ title: \''.tr('Eliminare questo utente?').'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Elimina utente" class="text-danger tip"><i class="fa fa-2x fa-trash"></i></a>';
         } else {
             echo '
-			<span onclick="alert(\"'.tr("Non è possibile eliminare l'utente admin").'\")" class="text-muted tip"><i class="fa fa-2x fa-trash"></i></span>';
+			        <span onclick="alert(\"'.tr("Non è possibile eliminare l'utente admin").'\")" class="text-muted tip"><i class="fa fa-2x fa-trash"></i></span>';
         }
 
         echo '
@@ -111,12 +125,18 @@ if ($record['nome'] != 'Amministratori') {
 				<tr>
 					<th>'.tr('Modulo').'</th>
 					<th>'.tr('Permessi').'</th>
-				</tr>';
-    for ($m = 0; $m < count($moduli); ++$m) {
-        $perms_values = ['-', 'r', 'rw'];
-        $perms_names = [tr('Nessun permesso'), tr('Sola lettura'), tr('Lettura e scrittura')];
+                </tr>';
 
-        echo menuSelection($moduli[$m], $id_record, -1, $perms_values, $perms_names);
+    $moduli = Modules::getHierarchy();
+
+    $permissions = [
+        '-' => tr('Nessun permesso'),
+        'r' => tr('Sola lettura'),
+        'rw' => tr('Lettura e scrittura'),
+    ];
+
+    for ($m = 0; $m < count($moduli); ++$m) {
+        echo menuSelection($moduli[$m], $id_record, -1, array_keys($permissions), array_values($permissions));
     }
 
     echo '

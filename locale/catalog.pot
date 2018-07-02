@@ -5692,7 +5692,7 @@ msgstr ""
 
 #: modules/utenti/edit.php:56 modules/utenti/edit.php:59
 #: modules/utenti/edit.php:74
-msgid "S&igrave;"
+msgid "Sì"
 msgstr ""
 
 #: modules/utenti/edit.php:59

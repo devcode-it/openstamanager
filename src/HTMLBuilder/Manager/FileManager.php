@@ -189,6 +189,21 @@ class FileManager implements ManagerInterface
 
 <script>
 $(document).ready(function(){
+    $("#'.$attachment_id.' #categoria").autocomplete({
+        source: [';
+
+        foreach ($categories as $category) {
+            $result .= '
+            "'.$category['category'].'",';
+        }
+
+        $result .= '
+        ],
+        minLength: 0
+    }).focus(function() {
+        $(this).autocomplete("search", $(this).val())
+    });;
+
     data = {
         op: "link_file",
         id_module: "'.$options['id_module'].'",

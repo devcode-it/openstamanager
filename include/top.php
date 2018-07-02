@@ -131,7 +131,7 @@ if (Auth::check()) {
                 ckeditorToolbar: [
 					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
 				],
-                
+
                 tempo_attesa_ricerche: '.get_var('Tempo di attesa ricerche in secondi').',
             };
 		</script>';
@@ -154,8 +154,17 @@ echo '
             });
         </script>';
 
-if (!empty($debugbarRenderer) && Auth::check()) {
-    echo $debugbarRenderer->renderHead();
+if (Auth::check()) {
+    if (!empty($debugbarRenderer)) {
+        echo $debugbarRenderer->renderHead();
+    }
+
+    if (Settings::get('Abilita esportazione Excel e PDF')) {
+        echo '
+        <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>';
+    }
 }
 
 $hide_sidebar = get_var('Nascondere la barra sinistra di default');

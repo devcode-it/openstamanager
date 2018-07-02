@@ -360,3 +360,6 @@ INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable
 
 -- Categorie zz_files
 ALTER TABLE `zz_files` ADD `category` varchar(100) AFTER `original`;
+
+-- Impostazione "Abilita esportazione Excel e PDF"
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Abilita esportazione Excel e PDF', '0', 'boolean', '1', 'Generali', 18);

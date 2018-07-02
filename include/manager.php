@@ -170,10 +170,34 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
         </div>
 
         <div class="col-md-5 text-right">
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-primary btn-csv disabled" disabled>'.tr('Esporta').'</button>
-                <button type="button" class="btn btn-default btn-copy disabled" disabled>'.tr('Copia').'</button>
-                <button type="button" class="btn btn-default btn-print disabled" disabled>'.tr('Stampa').'</button>
+            <div class="btn-group" role="group">';
+
+    if (Settings::get('Abilita esportazione Excel e PDF')) {
+        echo '
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary table-btn btn-csv disabled" disabled>'.tr('Esporta').'</button>
+
+                    <button type="button" class="btn btn-primary  table-btn disabled dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+
+                    <ul class="dropdown-menu">
+                        <li><a class="table-btn btn-pdf disabled" disabled>'.tr('PDF').'</a></li>
+
+                        <li><a class="table-btn btn-excel disabled" disabled>'.tr('Excel').'</a></li>
+                    </ul>
+                </div>';
+    } else {
+        echo '
+            <button type="button" class="btn btn-primary table-btn btn-csv disabled" disabled>'.tr('Esporta').'</button>';
+    }
+
+    echo '
+
+                <button type="button" class="btn btn-default table-btn btn-copy disabled" disabled>'.tr('Copia').'</button>
+
+                <button type="button" class="btn btn-default table-btn btn-print disabled" disabled>'.tr('Stampa').'</button>
             </div>
         </div>
     </div>';

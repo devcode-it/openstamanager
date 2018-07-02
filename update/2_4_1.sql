@@ -328,3 +328,30 @@ ALTER TABLE `co_righe_contratti` RENAME `co_contratti_promemoria`;
 ALTER TABLE `co_righe2_contratti` RENAME `co_righe_contratti`;
 UPDATE `zz_widgets` SET `query` = REPLACE(`query`, 'co_righe_contratti', 'co_contratti_promemoria');
 UPDATE `zz_widgets` SET `query` = REPLACE(`query`, 'co_righe2_contratti', 'co_righe_contratti');
+
+-- Ordine per le Impostazioni
+ALTER TABLE `zz_settings` ADD `order` int(11) NOT NULL;
+UPDATE `zz_settings` SET `order` = 1 WHERE `nome` = 'Azienda predefinita';
+UPDATE `zz_settings` SET `order` = 2 WHERE `nome` = 'Nascondere la barra sinistra di default';
+UPDATE `zz_settings` SET `order` = 3 WHERE `nome` = 'Backup automatico';
+UPDATE `zz_settings` SET `order` = 4 WHERE `nome` = 'Numero di backup da mantenere';
+UPDATE `zz_settings` SET `order` = 5 WHERE `nome` = 'Vista dashboard';
+UPDATE `zz_settings` SET `order` = 6 WHERE `nome` = 'Utilizzare i tooltip sul calendario';
+UPDATE `zz_settings` SET `order` = 7 WHERE `nome` = 'Visualizzare la domenica sul calendario';
+UPDATE `zz_settings` SET `order` = 8 WHERE `nome` = 'Abilitare orario lavorativo';
+UPDATE `zz_settings` SET `order` = 9 WHERE `nome` = 'Cifre decimali per importi';
+UPDATE `zz_settings` SET `order` = 10 WHERE `nome` = 'Cifre decimali per quantità';
+UPDATE `zz_settings` SET `order` = 11 WHERE `nome` = 'Prima pagina';
+UPDATE `zz_settings` SET `order` = 12 WHERE `nome` = 'Google Maps API key';
+UPDATE `zz_settings` SET `order` = 13 WHERE `nome` = 'Attiva notifica di presenza utenti sul record';
+UPDATE `zz_settings` SET `order` = 14 WHERE `nome` = 'Timeout notifica di presenza (minuti)';
+UPDATE `zz_settings` SET `order` = 15 WHERE `nome` = 'apilayer API key for Email';
+UPDATE `zz_settings` SET `order` = 16 WHERE `nome` = 'apilayer API key for VAT number';
+UPDATE `zz_settings` SET `order` = 17 WHERE `nome` = 'CSS Personalizzato';
+
+
+-- Fix tipo del campo order
+ALTER TABLE `co_righe_preventivi` CHANGE `order` `order` int(11) NOT NULL;
+ALTER TABLE `dt_righe_ddt` CHANGE `order` `order` int(11) NOT NULL;
+ALTER TABLE `or_righe_ordini` CHANGE `order` `order` int(11) NOT NULL;
+ALTER TABLE `co_righe_contratti` CHANGE `order` `order` int(11) NOT NULL;

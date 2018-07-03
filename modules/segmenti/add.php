@@ -12,7 +12,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="col-md-6">
-            {[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "required": 0, "class": "alphanumeric-mask", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YY" ]}
+            {[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "required": 0, "class": "alphanumeric-mask", "value": "$pattern$", "maxlength": 25, "placeholder":"####/yy" ]}
 		</div>
 	</div>
 

@@ -40,16 +40,16 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     else {
         // UPLOAD
         if (filter('op') == 'link_file' && !empty($_FILES) && !empty($_FILES['blob']['name'])) {
-            $upload = Uploads::upload($_FILES['blob']['tmp_name'], $_FILES['blob']['name'], $upload_dir, [
+            $upload = Uploads::upload($_FILES['blob'], [
                 'name' => filter('nome_allegato'),
                 'category' => filter('categoria'),
                 'id_module' => $id_module,
-                'id_record' => $id_record,
                 'id_plugin' => $id_plugin,
+                'id_record' => $id_record,
             ]);
 
             // Creazione file fisico
-            if ($upload) {
+            if (!empty($upload)) {
                 $_SESSION['infos'][] = tr('File caricato correttamente!');
             } else {
                 $_SESSION['errors'][] = tr('Errore durante il caricamento del file!');
@@ -58,22 +58,18 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 
         // DELETE
         elseif (filter('op') == 'unlink_file' && filter('filename') !== null) {
-            $filename = filter('filename');
+            $name = Uploads::delete(filter('filename'), [
+                'id_module' => $id_module,
+                'id_plugin' => $id_plugin,
+                'id_record' => $id_record,
+            ]);
 
-            $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare($filename));
-
-            if (delete($upload_dir.'/'.$filename)) {
-                $query = 'DELETE FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare($filename);
-                if ($dbo->query($query)) {
-                    $_SESSION['infos'][] = tr('File _FILE_ eliminato!', [
-                        '_FILE_' => '"'.$rs[0]['nome'].'"',
-                    ]);
-                }
-            } else {
-                $_SESSION['errors'][] = tr("Errore durante l'eliminazione del file _FILE_ in _DIR_!", [
-                    '_FILE_' => '"'.$rs[0]['nome'].'"',
-                    '_DIR_' => '"files/'.$module_dir.'/"',
+            if (!empty($name)) {
+                $_SESSION['infos'][] = tr('File _FILE_ eliminato!', [
+                    '_FILE_' => '"'.$name.'"',
                 ]);
+            } else {
+                $_SESSION['errors'][] = tr("Errore durante l'eliminazione del file!");
             }
         }
 

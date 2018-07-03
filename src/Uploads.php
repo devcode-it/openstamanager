@@ -120,29 +120,50 @@ class Uploads
         'wpd' => 'application/wordperfect',
     ];
 
+    public static function getUploadDirectory($id_module, $id_plugin = null)
+    {
+        if (empty($id_plugin)) {
+            $directory = Modules::get($id_module)['directory'];
+        } else {
+            $info = Plugins::get($id_plugin);
+
+            if (!empty($info['script'])) {
+                $directory = self::fileInfo($info['script'])['name'];
+            } else {
+                $directory = $info['directory'];
+            }
+        }
+
+        return 'files/'.$directory;
+    }
+
     /**
      * Effettua l'upload di un file nella cartella indicata.
      *
-     * @param string $src
-     * @param string $original
-     * @param string $upload_dir
+     * @param array  $source
+     * @param string $directory
      * @param array  $data
+     * @param array  $options
      *
-     * @return int|bool
+     * @return string
      */
-    public static function upload($src, $original, $upload_dir, $data = [])
+    public static function upload($source, $data, $options = [])
     {
-        $extension = pathinfo($original)['extension'];
+        $src = $source['tmp_name'];
+        $original = $source['name'];
 
+        $extension = strtolower(pathinfo($original)['extension']);
         $ok = self::isSupportedType($extension);
+
+        $directory = DOCROOT.'/'.self::getUploadDirectory($data['id_module'], $data['id_plugin']);
 
         do {
             $filename = random_string().'.'.$extension;
-        } while (file_exists($upload_dir.'/'.$filename));
+        } while (file_exists($directory.'/'.$filename));
 
         // Creazione file fisico
-        if (!directory($upload_dir) || !move_uploaded_file($src, $upload_dir.'/'.$filename)) {
-            return false;
+        if (!directory($directory) || !move_uploaded_file($src, $directory.'/'.$filename)) {
+            return null;
         }
 
         $database = Database::getConnection();
@@ -154,11 +175,15 @@ class Uploads
             'original' => $original,
             'category' => !empty($data['category']) ? $data['category'] : null,
             'id_module' => !empty($data['id_module']) ? $data['id_module'] : null,
-            'id_record' => !empty($data['id_record']) ? $data['id_record'] : null,
             'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
+            'id_record' => $data['id_record'],
         ]);
 
-        return $database->lastInsertedID();
+        if (!empty($options['thumbnails'])) {
+            self::thumbnails($directory.'/'.$filename, $directory);
+        }
+
+        return $filename;
     }
 
     /**
@@ -171,5 +196,74 @@ class Uploads
     protected static function isSupportedType($extension)
     {
         return in_array($extension, array_keys(self::$allowed_types));
+    }
+
+    protected static function thumbnails($filepath, $directory = null)
+    {
+        $fileinfo = self::fileInfo($filepath);
+        $directory = empty($directory) ? dirname($filepath) : $directory;
+
+        $driver = extension_loaded('gd') ? 'gd' : 'imagick';
+        Intervention\Image\ImageManagerStatic::configure(['driver' => $driver]);
+
+        $img = Intervention\Image\ImageManagerStatic::make($filepath);
+
+        $img->resize(600, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $img->save(slashes($directory.'/'.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension']));
+
+        $img->resize(250, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $img->save(slashes($directory.'/'.$fileinfo['filename'].'_thumb250.'.$fileinfo['extension']));
+
+        $img->resize(100, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $img->save(slashes($directory.'/'.$fileinfo['filename'].'_thumb100.'.$fileinfo['extension']));
+    }
+
+    public static function delete($filename, $data)
+    {
+        $database = Database::getConnection();
+
+        $name = $database->selectOne('zz_files', ['nome'], [
+            'filename' => $filename,
+            'id_module' => !empty($data['id_module']) ? $data['id_module'] : null,
+            'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
+            'id_record' => $data['id_record'],
+        ])['nome'];
+
+        $fileinfo = self::fileInfo($filename);
+        $directory = DOCROOT.'/'.self::getUploadDirectory($data['id_module'], $data['id_plugin']);
+
+        $files = [
+            $directory.'/'.$fileinfo['basename'],
+            $directory.'/'.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'],
+            $directory.'/'.$fileinfo['filename'].'_thumb100.'.$fileinfo['extension'],
+            $directory.'/'.$fileinfo['filename'].'_thumb250.'.$fileinfo['extension'],
+        ];
+
+        if (delete($files)) {
+            $database->delete('zz_files', [
+                'filename' => $fileinfo['basename'],
+                'id_module' => !empty($data['id_module']) ? $data['id_module'] : null,
+                'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
+                'id_record' => $data['id_record'],
+            ]);
+
+            return $name;
+        }
+
+        return null;
+    }
+
+    public static function fileInfo($filepath)
+    {
+        $infos = pathinfo($filepath);
+        $infos['extension'] = strtolower($infos['extension']);
+
+        return $infos;
     }
 }

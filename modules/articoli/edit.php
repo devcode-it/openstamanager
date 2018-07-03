@@ -7,6 +7,10 @@ include_once Modules::filepath('MyImpianti', 'modutil.php');
 
 $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 
+$fileinfo = Uploads::fileInfo($records[0]['immagine01']);
+$img = !empty($records[0]['immagine01']) ? ROOTDIR.'/'.Uploads::getUploadDirectory($id_module).'/'.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'] : '';
+
+
 ?><form action="" method="post" id="edit-form" enctype="multipart/form-data">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -20,7 +24,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine01", "class": "img-thumbnail", "value": "<?php echo  !empty($records[0]['immagine01']) ? $rootdir.'/files/articoli/'.$records[0]['immagine01'] : ''; ?>" ]}
+					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine01", "class": "img-thumbnail", "value": "<?php echo  $img; ?>" ]}
 				</div>
 
 				<div class="col-md-4">

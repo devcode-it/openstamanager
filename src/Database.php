@@ -477,14 +477,8 @@ class Database extends Util\Singleton
             $update[] = $this->quote($key).' = '.$this->prepareValue($key, $value);
         }
 
-        // Condizioni di aggiornamento
-        $where = [];
-        foreach ($conditions as $key => $value) {
-            $where[] = $this->quote($key).' = '.$this->prepareValue($key, $value);
-        }
-
         // Costruzione della query
-        $query = 'UPDATE '.$this->quote($table).' SET '.implode($update, ', ').' WHERE '.implode($where, ' AND ');
+        $query = 'UPDATE '.$this->quote($table).' SET '.implode($update, ', ').' WHERE '.$this->whereStatement($conditions);
 
         if (!empty($return)) {
             return $query;
@@ -581,11 +575,38 @@ class Database extends Util\Singleton
 
         $result = $this->select($table, $array, $conditions, $order, $limit, $return);
 
-        if (isset($result[0])) {
+        if (!is_string($result) && isset($result[0])) {
             return $result[0];
         }
 
         return $result;
+    }
+
+    /**
+     * Costruisce la query per l'DELETE definito dagli argomenti.
+     *
+     * @since 2.4.1
+     *
+     * @param string $table
+     * @param array  $conditions
+     * @param bool   $return
+     *
+     * @return string|array
+     */
+    public function delete($table, $conditions, $return = false)
+    {
+        if (!is_string($table) || !is_array($conditions)) {
+            throw new UnexpectedValueException();
+        }
+
+        // Costruzione della query
+        $query = 'DELETE FROM '.$this->quote($table).' WHERE '.$this->whereStatement($conditions);
+
+        if (!empty($return)) {
+            return $query;
+        } else {
+            return $this->query($query);
+        }
     }
 
     /**
@@ -677,7 +698,7 @@ class Database extends Util\Singleton
         if (!empty($field) && !empty($sync)) {
             $conditions[$field] = $sync;
 
-            $this->query('DELETE FROM '.$this->quote($table).' WHERE '.$this->whereStatement($conditions));
+            $this->delete($table, $conditions);
         }
     }
 
@@ -749,7 +770,13 @@ class Database extends Util\Singleton
                 }
                 // Condizione di uguaglianza
                 else {
-                    $result[] = $this->quote($key).' = '.$this->prepareValue($key, $value);
+                    $prepared = $this->prepareValue($key, $value);
+
+                    if ($prepared == 'NULL') {
+                        $result[] = $this->quote($key).' IS '.$prepared;
+                    } else {
+                        $result[] = $this->quote($key).' = '.$prepared;
+                    }
                 }
             }
         }

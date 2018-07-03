@@ -30,17 +30,13 @@ if (post('action') == 'init') {
 
         // Logo stampe
         if (!empty($_FILES) && !empty($_FILES['blob']['name'])) {
-            $file_id = Uploads::upload($_FILES['blob']['tmp_name'], $_FILES['blob']['name'], DOCROOT.'/files/anagrafiche', [
+            $file = Uploads::upload($_FILES['blob'], [
                 'name' => 'Logo stampe',
                 'id_module' => $id_module,
                 'id_record' => $id_record,
             ]);
 
-            $file = $dbo->selectOne('zz_files', ['filename'], [
-                'id' => $file_id,
-            ]);
-
-            Settings::set('Logo stampe', $file['filename']);
+            Settings::set('Logo stampe', $file);
         }
     }
 

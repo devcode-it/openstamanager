@@ -2,10 +2,17 @@
 
 include_once __DIR__.'/../../core.php';
 
-$has_azienda = $dbo->fetchNum('SELECT * FROM `an_anagrafiche` LIMIT 1') != 0;
-$has_user = $dbo->fetchNum('SELECT * FROM `zz_users` LIMIT 1') != 0;
+if (Update::isUpdateAvailable() || !$dbo->isInstalled()) {
+    return;
+}
 
-if (Update::isUpdateAvailable() || ($has_azienda && $has_user)) {
+$has_azienda = $dbo->fetchNum("SELECT `an_anagrafiche`.`idanagrafica` FROM `an_anagrafiche`
+    LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
+    LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
+WHERE `an_tipianagrafiche`.`descrizione` = 'Azienda' AND `an_anagrafiche`.`deleted` = 0") != 0;
+$has_user = $dbo->fetchNum('SELECT `id` FROM `zz_users`') != 0;
+
+if ($has_azienda && $has_user) {
     return;
 }
 

@@ -12,6 +12,9 @@ class App
     /** @var int Identificativo dell'elemento corrente */
     protected static $current_element;
 
+    /** @var bool Stato di debug */
+    protected static $config = [];
+
     /** @var array Elenco degli assets del progetto */
     protected static $assets = [
         // CSS
@@ -78,6 +81,12 @@ class App
             include DOCROOT.'/config.example.php';
         }
 
+        $db_host = '';
+        $db_username = '';
+        $db_password = '';
+        $db_name = '';
+        $port = '';
+
         return get_defined_vars();
     }
 
@@ -88,22 +97,42 @@ class App
      */
     public static function getConfig()
     {
-        if (file_exists(DOCROOT.'/config.inc.php')) {
-            include DOCROOT.'/config.inc.php';
+        if (empty(self::$config['db_host'])) {
+            if (file_exists(DOCROOT.'/config.inc.php')) {
+                include DOCROOT.'/config.inc.php';
 
-            $config = get_defined_vars();
-        } else {
-            $config = [];
+                $config = get_defined_vars();
+            } else {
+                $config = [];
+            }
+
+            $defaultConfig = self::getDefaultConfig();
+
+            $result = array_merge($defaultConfig, $config);
+
+            // Operazioni di normalizzazione sulla configurazione
+            $result['debug'] = isset(self::$config['debug']) ? self::$config['debug'] : !empty($result['debug']);
+
+            self::$config = $result;
         }
 
-        $defaultConfig = self::getDefaultConfig();
+        return self::$config;
+    }
 
-        $result = array_merge($defaultConfig, $config);
+    /**
+     * Imposta e restituisce lo stato di debug del progetto.
+     *
+     * @param bool $value
+     *
+     * @return bool
+     */
+    public static function debug($value = null)
+    {
+        if (is_bool($value)) {
+            self::$config['debug'] = $value;
+        }
 
-        // Operazioni di normalizzazione sulla configurazione
-        $result['debug'] = !empty($result['debug']);
-
-        return $result;
+        return self::$config['debug'];
     }
 
     /**

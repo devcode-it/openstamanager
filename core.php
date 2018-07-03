@@ -38,8 +38,8 @@ if (!empty($redirectHTTPS) && !isHTTPS(true)) {
     exit();
 }
 
-// Forzamento del debug
-// $debug = true;
+// Forza l'abilitazione del debug
+// $debug = App::debug(true);
 
 // Logger per la segnalazione degli errori
 $logger = new Monolog\Logger('Logs');

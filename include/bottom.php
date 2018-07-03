@@ -28,22 +28,20 @@ if (Auth::check()) {
 		<script> setInterval("session_keep_alive()", 5*60*1000); </script>';
     }
 
-    if (!empty($debug)) {
+    if (App::debug()) {
         echo '
         <!-- Fix per le icone di debug -->
         <style>div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-database:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-duration:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-memory:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-row-count:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-stmt-id:before {
             font-family: FontAwesome;
         }</style>';
+
+        echo $debugbarRenderer->render();
     }
 
     $custom_css = get_var('CSS Personalizzato');
     if (!empty($custom_css)) {
         echo '
 		<style>'.$custom_css.'</style>';
-    }
-
-    if (!empty($debugbarRenderer)) {
-        echo $debugbarRenderer->render();
     }
 
     // Rimozione del messaggio automatico riguardante la modifica di valori nella pagina

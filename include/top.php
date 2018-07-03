@@ -5,24 +5,6 @@ include_once __DIR__.'/../core.php';
 $paths = App::getPaths();
 $user = Auth::user();
 
-// Istanziamento della barra di debug
-if (!empty($debug)) {
-    $debugbar = new DebugBar\DebugBar();
-
-    $debugbar->addCollector(new DebugBar\DataCollector\MemoryCollector());
-    $debugbar->addCollector(new DebugBar\DataCollector\PhpInfoCollector());
-
-    $debugbar->addCollector(new DebugBar\DataCollector\RequestDataCollector());
-    $debugbar->addCollector(new DebugBar\DataCollector\TimeDataCollector());
-
-    $debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
-    $debugbar->addCollector(new DebugBar\DataCollector\PDO\PDOCollector($dbo->getPDO()));
-
-    $debugbarRenderer = $debugbar->getJavascriptRenderer();
-    $debugbarRenderer->setIncludeVendors(false);
-    $debugbarRenderer->setBaseUrl($paths['assets'].'/php-debugbar');
-}
-
 echo '<!DOCTYPE html>
 <html>
     <head>
@@ -163,7 +145,23 @@ echo '
         </script>';
 
 if (Auth::check()) {
-    if (!empty($debugbarRenderer)) {
+    // Barra di debug
+    if (App::debug()) {
+        $debugbar = new DebugBar\DebugBar();
+
+        $debugbar->addCollector(new DebugBar\DataCollector\MemoryCollector());
+        $debugbar->addCollector(new DebugBar\DataCollector\PhpInfoCollector());
+
+        $debugbar->addCollector(new DebugBar\DataCollector\RequestDataCollector());
+        $debugbar->addCollector(new DebugBar\DataCollector\TimeDataCollector());
+
+        $debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
+        $debugbar->addCollector(new DebugBar\DataCollector\PDO\PDOCollector($dbo->getPDO()));
+
+        $debugbarRenderer = $debugbar->getJavascriptRenderer();
+        $debugbarRenderer->setIncludeVendors(false);
+        $debugbarRenderer->setBaseUrl($paths['assets'].'/php-debugbar');
+
         echo $debugbarRenderer->renderHead();
     }
 

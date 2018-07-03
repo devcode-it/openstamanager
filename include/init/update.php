@@ -73,7 +73,7 @@ if (filter('action') == 'do_update') {
         Update::updateCleanup();
 
         echo '
-        <p><strong>'.tr('Aggiornamento completato!!!').'</strong> <i class="fa fa-smile-o"></i></p>';
+        <p><strong>'.tr('Aggiornamento completato').'</strong> <i class="fa fa-smile-o"></i></p>';
 
         // Istruzioni per la prima installazione
         if ($_GET['firstuse'] == 'true') {

@@ -19,9 +19,9 @@ if ($records[0]['can_delete']) {
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$", "extra": "" ]}
+			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
 		</div>
-		
+
 		  <div class="col-md-2">
 				{[ "type": "checkbox", "label": "<?php echo tr('Questo è uno stato completato'); ?>", "name": "completato", "value": "$completato$", "help": "<?php echo tr('Gli interventi che si trovano in questo stato verranno considerati come completati'); ?>", "placeholder": "<?php echo tr('Completato'); ?>", "extra": "<?php echo $attr; ?>" ]}
 		</div>

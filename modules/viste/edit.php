@@ -433,7 +433,7 @@ if (!empty($options) && $options != 'custom') {
 				</div>
 
                 <div class="col-md-3">
-					{[ "type": "select", "label": "'.tr('Posizione').'", "name": "position[-id-]", "values": "list=\"0\":\"'.tr('WHERE').'\",\"1\": \"'.tr('HAVING').'\"", "value": "" ]}
+					{[ "type": "select", "label": "'.tr('Posizione').'", "name": "position[-id-]", "values": "list=\"0\":\"'.tr('WHERE').'\",\"1\": \"'.tr('HAVING').'\"" ]}
 				</div>
 		</div>
 	</div>

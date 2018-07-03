@@ -28,7 +28,7 @@ echo '
 // Data di fine
 echo '
         <div class="col-md-3">
-            {[ "type": "date", "label": "'.tr('Data al').'", "name": "data_fine", "value": "", "maxlength": 10, "min-date": "-now-" ]}
+            {[ "type": "date", "label": "'.tr('Data al').'", "name": "data_fine", "maxlength": 10, "min-date": "-now-" ]}
         </div>';
 
 echo '

@@ -145,7 +145,7 @@ echo '
 </div>
 
 	<!--div class="col-md-8">
-		{[ "type": "checkbox", "label": "'.tr('Pianifica anche date passate').'", "name": "date_passate", "value": "0", "help": "", "placeholder": "'.tr('Pianificare promemoria anche con date precedenti ad oggi: ').date('d/m/Y').'" ]}
+		{[ "type": "checkbox", "label": "'.tr('Pianifica anche date passate').'", "name": "date_passate", "value": "0", "placeholder": "'.tr('Pianificare promemoria anche con date precedenti ad oggi: ').date('d/m/Y').'" ]}
 	</div-->
 
 ';
@@ -161,13 +161,13 @@ echo '
 
 echo '<div class="row">
 				<div class="col-md-2">
-					{[ "type": "number", "label": "'.tr('Intervallo').'", "name": "intervallo", "class": "", "decimals": 0, "required": 1, "icon-after": "GG",  "min-value": "1"  ]}
+					{[ "type": "number", "label": "'.tr('Intervallo').'", "name": "intervallo", "decimals": 0, "required": 1, "icon-after": "GG",  "min-value": "1"  ]}
 				</div>';
 
 ?>
 
 		<div class="col-md-7">
-			{[ "type": "select", "label": "<?php echo tr('Inizio pianificazione'); ?>", "name": "parti_da_oggi", "values": "list=<?php echo $list; ?>", "value": "" ]}
+			{[ "type": "select", "label": "<?php echo tr('Inizio pianificazione'); ?>", "name": "parti_da_oggi", "values": "list=<?php echo $list; ?>" ]}
 		</div>
 
 <?php
@@ -199,11 +199,11 @@ echo '
 	<div class="row">
 
 		<div class="col-md-4">
-			{[ "type": "checkbox", "label": "'.tr('Pianifica anche l\'intervento').'", "name": "pianifica_intervento", "value": "0", "help": "", "placeholder": "'.tr('Pianificare già l\'intervento ').'" ]}
+			{[ "type": "checkbox", "label": "'.tr('Pianifica anche l\'intervento').'", "name": "pianifica_intervento", "value": "0", "placeholder": "'.tr('Pianificare già l\'intervento ').'" ]}
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1",  "name": "idtecnico[]", "required": 0, "ajax-source": "tecnici", "value": "", "extra": "disabled" ]}
+			{[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1",  "name": "idtecnico[]", "required": 0, "ajax-source": "tecnici", "extra": "disabled" ]}
 		</div>
 
 

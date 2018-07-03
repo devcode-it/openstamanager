@@ -333,7 +333,7 @@ else {
     echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Zone per le quali pianificare la fatturazione').'", "name": "idzona[]", "value": "", "values": "query=SELECT id, descrizione FROM an_zone WHERE (id IN (SELECT idzona FROM an_sedi WHERE id IN (SELECT idsede FROM my_impianti WHERE id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).')))) OR ( id=(SELECT idzona FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id='.prepare($id_record).') AND idzona=an_zone.id) ) UNION SELECT 0, \'Altro\'", "multiple": 1, "extra": "onchange=\"$(this).find(\'option\').each( function(){ if( $(this).is(\':selected\') ){ $(\'#zona_\'+$(this).val()).removeClass(\'hide\'); }else{ $(\'#zona_\'+$(this).val()).addClass(\'hide\'); } });\"" ]}
+            {[ "type": "select", "label": "'.tr('Zone per le quali pianificare la fatturazione').'", "name": "idzona[]", "values": "query=SELECT id, descrizione FROM an_zone WHERE (id IN (SELECT idzona FROM an_sedi WHERE id IN (SELECT idsede FROM my_impianti WHERE id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).')))) OR ( id=(SELECT idzona FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id='.prepare($id_record).') AND idzona=an_zone.id) ) UNION SELECT 0, \'Altro\'", "multiple": 1, "extra": "onchange=\"$(this).find(\'option\').each( function(){ if( $(this).is(\':selected\') ){ $(\'#zona_\'+$(this).val()).removeClass(\'hide\'); }else{ $(\'#zona_\'+$(this).val()).addClass(\'hide\'); } });\"" ]}
         </div>
     </div>';
 

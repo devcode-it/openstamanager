@@ -30,7 +30,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 				</div>
 
 				<div class="col-md-5">
-                    {[ "type": "checkbox", "label": "<?php echo tr("Seleziona per rendere attivo l'articolo"); ?>", "name": "attivo", "value": "$attivo$", "help": "", "placeholder": "<?php echo tr('Articolo attivo'); ?>" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr("Seleziona per rendere attivo l'articolo"); ?>", "name": "attivo", "value": "$attivo$", "placeholder": "<?php echo tr('Articolo attivo'); ?>" ]}
 				    <br>
                     {[ "type": "select", "label": "<?php echo tr('Subcategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie" ]}
                 </div>
@@ -99,7 +99,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 
 			<div class='row' id="div_modifica_manuale" style="display:none;">
 				<div class='col-md-3'>
-					{[ "type": "text", "label": "<?php echo tr('Descrizione movimento'); ?>", "name": "descrizione_movimento", "value": "" ]}
+					{[ "type": "text", "label": "<?php echo tr('Descrizione movimento'); ?>", "name": "descrizione_movimento" ]}
 				</div>
 				<div class='col-md-3'>
 					{[ "type": "date", "label": "<?php echo tr('Data movimento'); ?>", "name": "data_movimento", "value": "-now-" ]}

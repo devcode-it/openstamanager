@@ -10,7 +10,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idan
 
 	<div class="row">
 		<div class="col-md-6">
-			 {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "" ]}
+			 {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1 ]}
 		</div>
 
 		<div class="col-md-6">

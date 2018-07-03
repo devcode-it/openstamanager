@@ -35,46 +35,46 @@ echo '
 	    <div class="box-body collapse">
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('Partita IVA').'", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask", "value": "" ]}
+					{[ "type": "text", "label": "'.tr('Partita IVA').'", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('Codice fiscale').'", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask", "value": "" ]}
+					{[ "type": "text", "label": "'.tr('Codice fiscale').'", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "'.tr('Relazione').'", "name": "idrelazione", "values": "query=SELECT id, descrizione, colore AS _bgcolor_ FROM an_relazioni ORDER BY descrizione", "value": "" ]}
+					{[ "type": "select", "label": "'.tr('Relazione').'", "name": "idrelazione", "values": "query=SELECT id, descrizione, colore AS _bgcolor_ FROM an_relazioni ORDER BY descrizione" ]}
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "indirizzo", "value": "" ]}
+					{[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "indirizzo" ]}
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "text", "label": "'.tr('C.A.P.').'", "name": "cap", "maxlength": 5, "class": "text-center", "value": "" ]}
+					{[ "type": "text", "label": "'.tr('C.A.P.').'", "name": "cap", "maxlength": 5, "class": "text-center" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('Città').'", "name": "citta", "class": "text-center", "value": "" ]}
+					{[ "type": "text", "label": "'.tr('Città').'", "name": "citta", "class": "text-center" ]}
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia", "maxlength": 2, "class": "text-center", "value": "" ]}
+					{[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia", "maxlength": 2, "class": "text-center" ]}
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('Telefono').'", "name": "telefono", "class": "text-center", "value": "", "icon-before": "<i class=\"fa fa-phone\"></i>" ]}
+					{[ "type": "text", "label": "'.tr('Telefono').'", "name": "telefono", "class": "text-center", "icon-before": "<i class=\"fa fa-phone\"></i>" ]}
 				</div>
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('Cellulare').'", "name": "cellulare", "class": "text-center", "value": "", "icon-before": "<i class=\"fa fa-mobile\"></i>" ]}
+					{[ "type": "text", "label": "'.tr('Cellulare').'", "name": "cellulare", "class": "text-center", "icon-before": "<i class=\"fa fa-mobile\"></i>" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('Email').'", "name": "email", "class": "email-mask", "placeholder":"casella@dominio.ext", "value": "", "icon-before": "<i class=\"fa fa-envelope\"></i>" ]}
+					{[ "type": "text", "label": "'.tr('Email').'", "name": "email", "class": "email-mask", "placeholder":"casella@dominio.ext", "icon-before": "<i class=\"fa fa-envelope\"></i>" ]}
 				</div>
 			</div>
 

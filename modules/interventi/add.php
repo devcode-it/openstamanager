@@ -145,7 +145,7 @@ if (empty($new_codice)) {
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Per conto di'); ?>", "name": "idclientefinale", "value": "", "ajax-source": "clienti" ]}
+					{[ "type": "select", "label": "<?php echo tr('Per conto di'); ?>", "name": "idclientefinale", "ajax-source": "clienti" ]}
 				</div>
 			</div>
 

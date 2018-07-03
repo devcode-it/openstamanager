@@ -31,7 +31,7 @@ include_once __DIR__.'/../../core.php';
 	<div class="row">
 
 		<div class="col-md-12">
-            {[ "type": "textarea", "label": "Note", "name": "note", "required": 0, "value": "" ]}
+            {[ "type": "textarea", "label": "Note", "name": "note", "required": 0 ]}
 		</div>
 
 	</div>

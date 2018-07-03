@@ -71,14 +71,14 @@ echo '
 
 	<div class="row">
 		<div class="col-md-12">
-		{[ "type": "password", "label": "'.tr('Password').'", "name": "password1", "required": 1, "value": "" ]}
+		{[ "type": "password", "label": "'.tr('Password').'", "name": "password1", "required": 1 ]}
 		</div>
     </div>';
 
 echo '
 	<div class="row">
 		<div class="col-md-12">
-		{[ "type": "password", "label": "'.tr('Ripeti la password').'", "name": "password2", "value": "" ]}
+		{[ "type": "password", "label": "'.tr('Ripeti la password').'", "name": "password2" ]}
 		</div>
 	</div>';
 

@@ -386,7 +386,7 @@ if (count($rsp) != 0) {
                 <tbody>
                     <tr>
                         <td>
-                            {[ "type": "date", "placeholder": "'.tr('Entro il').'", "name": "data_richiesta", "required": 1, "value": "" ]}
+                            {[ "type": "date", "placeholder": "'.tr('Entro il').'", "name": "data_richiesta", "required": 1 ]}
                         </td>
                         <td>
                             {[ "type": "select", "placeholder": "'.tr('Tipo intervento').'", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$rsp[0]['idtipointervento'].'" ]}

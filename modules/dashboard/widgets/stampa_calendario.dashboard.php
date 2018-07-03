@@ -7,29 +7,29 @@ $id_print = Prints::getModuleMainPrint(1)['id'];
 
 echo '
 <form action="" method="post" onsubmit="if($(this).parsley().validate()) { return stampa_calendario(); }" >
-	
+
 	<div class="row">
-		
+
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Anno Mese').'", "name": "anno-mese", "required": "1", "value": "", "extra":"readonly", "value": "'.$_SESSION['period']['month'].'" ]}
+			{[ "type": "text", "label": "'.tr('Anno Mese').'", "name": "anno-mese", "required": "1", "extra":"readonly", "value": "'.$_SESSION['period']['month'].'" ]}
 		</div>
-		
+
 		<div class="col-md-2">
 			{[ "type": "select", "label": "'.tr('Formato').'", "name": "format", "required": "1", "values": "list=\"A4\": \"'.tr('A4').'\", \"A3\": \"'.tr('A3').'\"", "value": "'.$_SESSION['settings']['format'].'" ]}
 		</div>
-		
+
 		<div class="col-md-2">
 			{[ "type": "select", "label": "'.tr('Orientamento').'", "name": "orientation", "required": "1", "values": "list=\"L\": \"'.tr('Orizzontale').'\", \"P\": \"'.tr('Verticale').'\"", "value": "'.$_SESSION['settings']['orientation'].'" ]}
 		</div>
-		
-		
+
+
 		<div class="col-md-2">
 			<p style="line-height:14px;">&nbsp;</p>
 			<button type="submit" class="btn btn-primary"><i class="fa fa-print"></i> '.tr('Stampa').'</button>
 		</div>
-		
+
 	</div>
-	
+
 </form>';
 
 echo '<script src="'.$rootdir.'/lib/init.js"></script>';
@@ -61,24 +61,24 @@ $( '#orientation' ).change(function() {
 
 
 $(function() {
-	
+
 	$('#anno-mese').datepicker( {
-		
+
         changeMonth: true,
         changeYear: true,
         showButtonPanel: true,
         dateFormat: 'MM yy',
 		todayBtn: false,
-		
+
         onClose: function(dateText, inst) {
             $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
 			session_set('period,month', $('#anno-mese').val(), 0, 0);
         },
-		
+
 		beforeShow : function(input, inst) {
 			session_set('period,month', '', 1, 0);
 		}
-		
+
     });
 });
 

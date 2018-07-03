@@ -16,6 +16,8 @@ if ($module['name'] == 'Ordini cliente') {
     $ajax = 'fornitori';
 }
 
+$id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idanagrafica'];
+
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
@@ -27,7 +29,7 @@ if ($module['name'] == 'Ordini cliente') {
 		</div>
 
 		<div class="col-md-6">
-            {[ "type": "select", "label": "<?php echo $tipo_anagrafica; ?>", "name": "idanagrafica", "required": 1, "value": "", "value": "<?php echo $user['idanagrafica']; ?>", "ajax-source": "<?php echo $ajax; ?>" ]}
+            {[ "type": "select", "label": "<?php echo $tipo_anagrafica; ?>", "name": "idanagrafica", "required": 1, "value": "", "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "<?php echo $ajax; ?>" ]}
 		</div>
 	</div>
 

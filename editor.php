@@ -239,7 +239,7 @@ echo '
         <script>';
 
 // Se l'utente ha i permessi in sola lettura per il modulo, converto tutti i campi di testo in span
-if ($module['permessi'] == 'r') {
+if (Modules::getPermission($id_module) == 'r') {
     ?>
 			$(document).ready( function(){
 				$('input, textarea, select', 'section.content').attr('readonly', 'true');

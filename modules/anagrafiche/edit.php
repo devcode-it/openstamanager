@@ -2,8 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-$fornitore = in_array('Fornitore', explode(',', $records[0]['tipianagrafica']));
-$cliente = in_array('Cliente', explode(',', $records[0]['tipianagrafica']));
+$fornitore = in_array($id_fornitore, $tipi_anagrafica);
+$cliente = in_array($id_cliente, $tipi_anagrafica);
 
 $google = Settings::get('Google Maps API key');
 
@@ -285,7 +285,7 @@ if (!$cliente) {
 
 				<?php
                 //se non è l'anagrafica azienda, ma  cliente o fornitore
-                 if ((!str_contains($records[0]['idtipianagrafica'], $id_azienda)) or (($cliente or $fornitore))) {
+                 if (!in_array($id_azienda, $tipi_anagrafica) || (($cliente or $fornitore))) {
                      ?>
 				<div class="row">
 					<div class="col-md-3">
@@ -338,7 +338,7 @@ if (!$cliente) {
 					<div class="col-md-12">
 						{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Tipo di anagrafica'); ?>", "name": "idtipoanagrafica[]", "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica WHERE t.descrizione = 'Azienda'  AND deleted = 0) ORDER BY descrizione", "value": "$idtipianagrafica$" ]}
 						<?php
-                        if (str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
+                        if (in_array($id_azienda, $tipi_anagrafica)) {
                             echo '
 						<p class=\'badge badge-info\' >'.tr('Questa anagrafica appartiene alla tipologia "Azienda"').'.</p>';
                         }
@@ -501,7 +501,7 @@ if (!$records[0]['deleted']) {
 		</div>';
     }
 
-    if (!str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
+    if (!in_array($id_azienda, $tipi_anagrafica)) {
         echo '
 	<a class="btn btn-danger ask" data-backto="record-list">
 		<i class="fa fa-trash"></i> '.tr('Elimina').'

@@ -2,11 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-$id_azienda = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Azienda'")[0]['idtipoanagrafica'];
-$id_cliente = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Cliente'")[0]['idtipoanagrafica'];
-$id_fornitore = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Fornitore'")[0]['idtipoanagrafica'];
-$id_tecnico = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Tecnico'")[0]['idtipoanagrafica'];
-
 switch (post('op')) {
     case 'update':
         $post['piva'] = trim(strtoupper($post['piva']));
@@ -102,7 +97,7 @@ switch (post('op')) {
 
         // Aggiorno le tipologie di anagrafica
         $post['idtipoanagrafica'] = (array) $post['idtipoanagrafica'];
-        if (str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
+        if (in_array($id_azienda, $tipi_anagrafica)) {
             $post['idtipoanagrafica'][] = $id_azienda;
         }
 
@@ -257,7 +252,7 @@ switch (post('op')) {
 
     case 'delete':
         // Se l'anagrafica non è l'azienda principale, la disattivo
-        if (!str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
+        if (!in_array($id_azienda, $tipi_anagrafica)) {
             $dbo->query('UPDATE an_anagrafiche SET deleted = 1 WHERE idanagrafica = '.prepare($id_record).Modules::getAdditionalsQuery($id_module));
 
             // Se l'anagrafica è collegata ad un utente lo disabilito

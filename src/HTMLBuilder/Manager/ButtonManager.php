@@ -124,7 +124,7 @@ class ButtonManager implements ManagerInterface
         '.($main === false ? $this->defaultText($options).' ' : '').'<span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
     </button>
-    <ul class="dropdown-menu">';
+    <ul class="dropdown-menu dropdown-menu-right">';
 
             foreach ($list as $element) {
                 $result .= '

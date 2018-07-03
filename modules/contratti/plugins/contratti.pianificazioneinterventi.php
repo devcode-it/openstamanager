@@ -303,7 +303,8 @@ if (count($rsp) != 0) {
                 }
             }
         }
-
+		
+		//info materiali/articoli
         $rsp4 = $dbo->fetchArray('SELECT id, descrizione,qta,um,prezzo_vendita, \'\' AS idarticolo FROM co_righe_contratti_materiali WHERE id_riga_contratto = '.prepare($rsp[$i]['id']).'
 		UNION SELECT id, descrizione,qta,um,prezzo_vendita, idarticolo FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.prepare($rsp[$i]['id']));
 
@@ -318,7 +319,21 @@ if (count($rsp) != 0) {
                 ]).'<br>';
             }
         }
+		
+		//info allegati
+		$rsp5 = $dbo->fetchArray('SELECT nome, original  FROM zz_files WHERE id_record = '.prepare($rsp[$i]['id']).' AND id_plugin = '.$id_plugin);
 
+        $info_allegati = '';
+        if (!empty($rsp5)) {
+            for ($b = 0; $b < count($rsp5); ++$b) {
+                $info_allegati .= tr(' _NOME_ (_ORIGINAL_)', [
+                    '_ORIGINAL_' =>  $rsp5[$b]['original'],
+                    '_NOME_' =>  $rsp5[$b]['nome'],
+                ]).'<br>';
+            }
+        }
+		
+		
         echo '
                 <tr>
                     <td>'.Translator::dateToLocale($rsp[$i]['data_richiesta']).'<!--br><small>'.Translator::dateToLocale($records[0]['data_conclusione']).'</small--></td>

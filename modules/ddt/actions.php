@@ -52,24 +52,10 @@ switch (post('op')) {
 
     case 'update':
         if (!empty($id_record)) {
-            $numero_esterno = post('numero_esterno');
-            $data = post('data');
-            $idanagrafica = post('idanagrafica');
-            $note = post('note');
-            $note_aggiuntive = post('note_aggiuntive');
             $idstatoddt = post('idstatoddt');
-            $idstatoddt = post('idstatoddt');
-            $idcausalet = post('idcausalet');
-            $idspedizione = post('idspedizione');
-            $idporto = post('idporto');
-            $idvettore = post('idvettore');
-            $idaspettobeni = post('idaspettobeni');
             $idpagamento = post('idpagamento');
-            $idconto = post('idconto');
-            $idanagrafica = post('idanagrafica');
-            $idsede = post('idsede');
+
             $totale_imponibile = get_imponibile_ddt($id_record);
-            $n_colli = post('n_colli');
             $totale_ddt = get_totale_ddt($id_record);
 
             if ($dir == 'uscita') {
@@ -91,51 +77,60 @@ switch (post('op')) {
             $pagamento = $rs[0]['descrizione'];
 
             // Query di aggiornamento
-            $query = 'UPDATE dt_ddt SET idstatoddt='.prepare($idstatoddt).','.
-                ' data='.prepare($data).','.
-                ' idpagamento='.prepare($idpagamento).','.
-                ' numero_esterno='.prepare($numero_esterno).','.
-                ' note='.prepare($note).','.
-                ' note_aggiuntive='.prepare($note_aggiuntive).','.
-                ' idconto='.prepare($idconto).','.
-                ' idanagrafica='.prepare($idanagrafica).','.
-                ' idsede='.prepare($idsede).','.
-                ' idcausalet='.prepare($idcausalet).','.
-                ' idspedizione='.prepare($idspedizione).','.
-                ' idporto='.prepare($idporto).','.
-                ' idvettore='.prepare($idvettore).','.
-                ' idaspettobeni='.prepare($idaspettobeni).','.
-                ' idrivalsainps='.prepare($idrivalsainps).','.
-                ' idritenutaacconto='.prepare($idritenutaacconto).','.
-                ' tipo_sconto_globale='.prepare($tipo_sconto).','.
-                ' sconto_globale='.prepare($sconto).','.
-                ' bollo=0, rivalsainps=0, ritenutaacconto=0, n_colli='.prepare($n_colli).' WHERE id='.prepare($id_record);
+            $dbo->update('dt_ddt', [
+                'data' => post('data'),
+                'numero_esterno' => post('numero_esterno'),
+                'note' => post('note'),
+                'note_aggiuntive' => post('note_aggiuntive'),
 
-            if ($dbo->query($query)) {
-                aggiorna_sconto([
-                    'parent' => 'dt_ddt',
-                    'row' => 'dt_righe_ddt',
-                ], [
-                    'parent' => 'id',
-                    'row' => 'idddt',
-                ], $id_record);
+                'idstatoddt' => $idstatoddt,
+                'idpagamento' => $idpagamento,
+                'idconto' => post('idconto'),
+                'idanagrafica' => post('idanagrafica'),
+                'idspedizione' => post('idspedizione'),
+                'idcausalet' => post('idcausalet'),
+                'idsede' => post('idsede'),
+                'idvettore' => post('idvettore'),
+                'idporto' => post('idporto'),
+                'idaspettobeni' => post('idaspettobeni'),
+                'idrivalsainps' => $idrivalsainps,
+                'idritenutaacconto' => $idritenutaacconto,
 
-                $query = 'SELECT descrizione FROM dt_statiddt WHERE id='.prepare($idstatoddt);
-                $rs = $dbo->fetchArray($query);
+                'n_colli' => post('n_colli'),
+                'bollo' => 0,
+                'rivalsainps' => 0,
+                'ritenutaacconto' => 0,
+            ], ['id' => $id_record]);
 
-                // Ricalcolo inps, ritenuta e bollo (se l'ddt non è stato evaso)
-                if ($dir == 'entrata') {
-                    if ($rs[0]['descrizione'] != 'Pagato') {
-                        ricalcola_costiagg_ddt($id_record);
-                    }
-                } else {
-                    if ($rs[0]['descrizione'] != 'Pagato') {
-                        ricalcola_costiagg_ddt($id_record, $idrivalsainps, $idritenutaacconto, $bollo);
-                    }
+            // Aggiornamento sconto
+            $dbo->update('co_documenti', [
+                'tipo_sconto_globale' => post('tipo_sconto_generico'),
+                'sconto_globale' => post('sconto_generico'),
+            ], ['id' => $id_record]);
+
+            aggiorna_sconto([
+                'parent' => 'dt_ddt',
+                'row' => 'dt_righe_ddt',
+            ], [
+                'parent' => 'id',
+                'row' => 'idddt',
+            ], $id_record);
+
+            $query = 'SELECT descrizione FROM dt_statiddt WHERE id='.prepare($idstatoddt);
+            $rs = $dbo->fetchArray($query);
+
+            // Ricalcolo inps, ritenuta e bollo (se l'ddt non è stato evaso)
+            if ($dir == 'entrata') {
+                if ($rs[0]['descrizione'] != 'Pagato') {
+                    ricalcola_costiagg_ddt($id_record);
                 }
-
-                $_SESSION['infos'][] = tr('Ddt modificato correttamente!');
+            } else {
+                if ($rs[0]['descrizione'] != 'Pagato') {
+                    ricalcola_costiagg_ddt($id_record, $idrivalsainps, $idritenutaacconto, $bollo);
+                }
             }
+
+            $_SESSION['infos'][] = tr('Ddt modificato correttamente!');
         }
         break;
 
@@ -544,7 +539,7 @@ switch (post('op')) {
                 if (!empty($idarticolo)) {
                     $idiva_acquisto = $idiva;
                     $prezzo_acquisto = $subtot;
-					$riga =  add_articolo_inddt($id_record, $idarticolo, $descrizione, $idiva, $qta, $um, $prezzo_acquisto, $sconto, $sconto_unitario, $tipo_sconto);
+                    $riga = add_articolo_inddt($id_record, $idarticolo, $descrizione, $idiva, $qta, $um, $prezzo_acquisto, $sconto, $sconto_unitario, $tipo_sconto);
 
                     // Lettura lotto, serial, altro dalla riga dell'ordine
                     $dbo->query('INSERT INTO mg_prodotti (id_riga_documento, id_articolo, dir, serial, lotto, altro) SELECT '.prepare($riga).', '.prepare($idarticolo).', '.prepare($dir).', serial, lotto, altro FROM mg_prodotti AS t WHERE id_riga_ordine='.prepare($idrigaordine));

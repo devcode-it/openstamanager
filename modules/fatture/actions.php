@@ -69,24 +69,9 @@ switch (post('op')) {
 
     case 'update':
         if (isset($post['id_record'])) {
-            $numero_esterno = post('numero_esterno');
-            $data = $post['data'];
-            $idanagrafica = post('idanagrafica');
-            $idagente = post('idagente');
-            $note = post('note');
-            $note_aggiuntive = post('note_aggiuntive');
-            $idtipodocumento = post('idtipodocumento');
             $idstatodocumento = post('idstatodocumento');
             $idpagamento = post('idpagamento');
-            $idbanca = post('idbanca');
-            $idcausalet = post('idcausalet');
-            $idspedizione = post('idspedizione');
-            $idporto = post('idporto');
-            $idaspettobeni = post('idaspettobeni');
-            $idvettore = post('idvettore');
-            $n_colli = post('n_colli');
-            $idsede = post('idsede');
-            $idconto = post('idconto');
+
             $totale_imponibile = get_imponibile_fattura($id_record);
             $totale_fattura = get_totale_fattura($id_record);
 
@@ -97,7 +82,7 @@ switch (post('op')) {
             } else {
                 $idrivalsainps = 0;
                 $idritenutaacconto = 0;
-                $numero = '(SELECT t.numero FROM (SELECT * FROM co_documenti) t WHERE t.id = '.prepare($post['id_record']).')';
+                $numero = '(SELECT t.numero FROM (SELECT * FROM co_documenti) t WHERE t.id = '.prepare($id_record).')';
             }
 
             // Leggo la descrizione del pagamento
@@ -106,42 +91,44 @@ switch (post('op')) {
             $pagamento = $rs[0]['descrizione'];
 
             // Query di aggiornamento
-            $query = 'UPDATE co_documenti SET '.
-                ' data='.prepare($data).','.
-                ' numero='.$numero.','.
-                ' idstatodocumento='.prepare($idstatodocumento).','.
-                ' idtipodocumento='.prepare($idtipodocumento).','.
-                ' idanagrafica='.prepare($idanagrafica).','.
-                ' idagente='.prepare($idagente).','.
-                ' idpagamento='.prepare($idpagamento).','.
-                ' idbanca='.prepare($idbanca).','.
-                ' idcausalet='.prepare($idcausalet).','.
-                ' idspedizione='.prepare($idspedizione).','.
-                ' idporto='.prepare($idporto).','.
-                ' idaspettobeni='.prepare($idaspettobeni).','.
-                ' idvettore='.prepare($idvettore).','.
-                ' n_colli='.prepare($n_colli).','.
-                ' idsede='.prepare($idsede).','.
-                ' numero_esterno='.prepare($numero_esterno).','.
-                ' note='.prepare($note).','.
-                ' note_aggiuntive='.prepare($note_aggiuntive).','.
-                ' idconto='.prepare($idconto).','.
-                ' idrivalsainps='.prepare($idrivalsainps).','.
-                ' idritenutaacconto='.prepare($idritenutaacconto).','.
-                ' bollo=0, rivalsainps=0, ritenutaacconto=0, iva_rivalsainps=0 '.
-                ' WHERE id='.prepare($id_record);
+            $dbo->update('co_documenti', [
+                'data' => post('data'),
+                'numero' => $numero,
+                'numero_esterno' => post('numero_esterno'),
+                'note' => post('note'),
+                'note_aggiuntive' => post('note_aggiuntive'),
 
-            $dbo->query($query);
+                'idstatodocumento' => $idstatodocumento,
+                'idtipodocumento' => post('idtipodocumento'),
+                'idanagrafica' => post('idanagrafica'),
+                'idagente' => post('idagente'),
+                'idpagamento' => $idpagamento,
+                'idbanca' => post('idbanca'),
+                'idcausalet' => post('idcausalet'),
+                'idspedizione' => post('idspedizione'),
+                'idporto' => post('idporto'),
+                'idaspettobeni' => post('idaspettobeni'),
+                'idvettore' => post('idvettore'),
+                'idsede' => post('idsede'),
+                'idconto' =>  post('idconto'),
+                'idrivalsainps' => $idrivalsainps,
+                'idritenutaacconto' => $idritenutaacconto,
+
+                'n_colli' => post('n_colli'),
+                'bollo' => 0,
+                'rivalsainps' => 0,
+                'ritenutaacconto' => 0,
+                'iva_rivalsainps' => 0,
+            ], ['id' => $id_record]);
+
             $query = 'SELECT descrizione FROM co_statidocumento WHERE id='.prepare($idstatodocumento);
             $rs = $dbo->fetchArray($query);
 
+            // Aggiornamento sconto
             if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
-                $tipo_sconto = $post['tipo_sconto_generico'];
-                $sconto = $post['sconto_generico'];
-
                 $dbo->update('co_documenti', [
-                    'tipo_sconto_globale' => $tipo_sconto,
-                    'sconto_globale' => $sconto,
+                    'tipo_sconto_globale' => post('tipo_sconto_generico'),
+                    'sconto_globale' => post('sconto_generico'),
                 ], ['id' => $id_record]);
 
                 aggiorna_sconto([
@@ -157,7 +144,7 @@ switch (post('op')) {
             if ($dir == 'entrata') {
                 ricalcola_costiagg_fattura($id_record);
             } else {
-                ricalcola_costiagg_fattura($id_record, $idrivalsainps, $idritenutaacconto, $bollo);
+                ricalcola_costiagg_fattura($id_record, $idrivalsainps, $idritenutaacconto, $bollo); // TODO: bollo non settato
             }
 
             // Elimino la scadenza e tutti i movimenti, poi se la fattura è emessa le ricalcolo
@@ -394,48 +381,27 @@ switch (post('op')) {
                 $rs = $dbo->fetchArray($query);
                 $ritenutaacconto = $rst[$i]['tot_prezzo_dirittochiamata'] / 100 * $rs[0]['percentuale'];
 
-                $query = 'INSERT INTO co_righe_documenti(
-                            iddocumento,
-                            idintervento,
-                            idconto,
-                            idiva,
-                            desc_iva,
-                            iva,
-                            iva_indetraibile,
-                            descrizione,
-                            subtotale,
-                            sconto,
-                            sconto_unitario,
-                            tipo_sconto,
-                            um,
-                            qta,
-                            idrivalsainps,
-                            rivalsainps,
-                            idritenutaacconto,
-                            ritenutaacconto,
-                            `order`)
-                        VALUES(
-                            '.prepare($id_record).',
-                            '.prepare($idintervento).',
-                            '.prepare($idconto).',
-                            '.prepare($idiva).',
-                            '.prepare($desc_iva).',
-                            '.prepare($iva).',
-                            '.prepare($iva_indetraibile).',
-                            "Diritto di chiamata",
-                            '.prepare($rst[$i]['tot_prezzo_dirittochiamata']).',
-                            0,
-                            0,
-                            "UNT",
-                            "-",
-							'.$rst[$i]['qta'].',
-                            '.prepare(get_var('Percentuale rivalsa INPS')).',
-                            '.prepare($rivalsainps).',
-                            '.prepare(get_var("Percentuale ritenuta d'acconto")).',
-                            '.prepare($ritenutaacconto).',
-                            (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).')
-                        )';
-                $dbo->query($query);
+                $dbo->insert('co_righe_documenti', [
+                    'iddocumento' => $id_record,
+                    'idintervento' => $idintervento,
+                    'idconto' => $idconto,
+                    'idiva' => $idiva,
+                    'desc_iva' => $desc_iva,
+                    'iva' => $iva,
+                    'iva_indetraibile' => $iva_indetraibile,
+                    'descrizione' => 'Diritto di chiamata',
+                    'subtotale' => $rst[$i]['tot_prezzo_dirittochiamata'],
+                    'sconto' => 0,
+                    'sconto_unitario' => 0,
+                    'tipo_sconto' => 'UNT',
+                    'um' => '-',
+                    'qta' => $rst[$i]['qta'],
+                    'idrivalsainps' => get_var('Percentuale rivalsa INPS'),
+                    'rivalsainps' => $rivalsainps,
+                    'idritenutaacconto' => get_var("Percentuale ritenuta d'acconto"),
+                    'ritenutaacconto' => $ritenutaacconto,
+                    '#order' => '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).')',
+                ]);
             }
 
             // Collego in fattura eventuali articoli collegati all'intervento

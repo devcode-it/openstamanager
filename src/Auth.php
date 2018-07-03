@@ -411,7 +411,7 @@ class Auth extends \Util\Singleton
     {
         $database = Database::getConnection();
 
-        if (!$database->isInstalled() || !$database->fetchNum("SHOW TABLES LIKE 'zz_logs'") || Update::isUpdateAvailable()) {
+        if (!$database->isInstalled() || !$database->tableExists('zz_logs') || Update::isUpdateAvailable()) {
             return false;
         }
 

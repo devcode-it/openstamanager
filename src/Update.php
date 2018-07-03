@@ -17,7 +17,7 @@ class Update
     {
         $database = Database::getConnection();
 
-        $database_ready = $database->isConnected() && $database->fetchNum("SHOW TABLES LIKE 'updates'");
+        $database_ready = $database->isConnected() && $database->tableExists('updates');
 
         // Individuazione di tutti gli aggiornamenti fisicamente presenti
         // Aggiornamenti del gestionale

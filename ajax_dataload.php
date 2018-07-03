@@ -31,11 +31,7 @@ $results['summable'] = [];
 
 if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom') {
     // Conteggio totale
-    $count_query = 'SELECT COUNT(*) as `tot` FROM ('.$result_query.') AS `count`';
-    $count = $dbo->fetchArray($count_query);
-    if (!empty($count)) {
-        $results['recordsTotal'] = $count[0]['tot'];
-    }
+    $results['recordsTotal'] = $dbo->fetchNum($result_query);
 
     // Filtri di ricerica
     $search_filters = [];

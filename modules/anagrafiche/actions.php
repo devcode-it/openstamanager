@@ -2,6 +2,11 @@
 
 include_once __DIR__.'/../../core.php';
 
+$id_azienda = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Azienda'")[0]['idtipoanagrafica'];
+$id_cliente = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Cliente'")[0]['idtipoanagrafica'];
+$id_fornitore = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Fornitore'")[0]['idtipoanagrafica'];
+$id_tecnico = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Tecnico'")[0]['idtipoanagrafica'];
+
 switch (post('op')) {
     case 'update':
         $post['piva'] = trim(strtoupper($post['piva']));
@@ -183,8 +188,9 @@ switch (post('op')) {
         // Inserisco il rapporto dell'anagrafica (cliente, tecnico, ecc)
         $dbo->sync('an_tipianagrafiche_anagrafiche', ['idanagrafica' => $new_id], ['idtipoanagrafica' => (array) $idtipoanagrafica]);
 
-        if (in_array($id_azienda, $post['idtipoanagrafica'])) {
-            $dbo->query('UPDATE zz_settings SET valore='.prepare($new_id)." WHERE nome='Azienda predefinita'");
+        if (in_array($id_azienda, $idtipoanagrafica)) {
+            Settings::set('Azienda predefinita', $new_id);
+
             $_SESSION['infos'][] = tr('Anagrafica Azienda impostata come predefinita. Per ulteriori informazionioni, visitare "Strumenti -> Impostazioni -> Generali".');
         }
 
@@ -266,19 +272,13 @@ switch (post('op')) {
 
 // Operazioni aggiuntive per il logo
 if (filter('op') == 'link_file') {
-    $nome = 'Logo stampe';
-
-    if (Settings::get('Azienda predefinita') == $id_record && filter('nome_allegato') == $nome) {
+    if (Settings::get('Azienda predefinita') == $id_record && filter('nome_allegato') == 'Logo stampe') {
         $file = $dbo->selectOne('zz_files', ['filename'], [
             'nome' => $nome,
             'id_module' => $id_module,
             'id_record' => $id_record,
         ]);
 
-        $dbo->update('zz_settings', [
-            'valore' => $file['filename'],
-        ], [
-            'nome' => $nome,
-        ]);
+        Settings::set('Logo stampe', $nome);
     }
 }

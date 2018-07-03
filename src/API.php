@@ -111,7 +111,7 @@ class API extends \Util\Singleton
             include $filename;
         } elseif (
             !in_array($resource, explode(',', Settings::get('Tabelle escluse per la sincronizzazione API automatica')))
-            && $database->fetchNum('SHOW TABLES WHERE `Tables_in_'.$database->getDatabaseName().'` = '.prepare($resource))
+            && $database->tableExists($resource)
         ) {
             $table = $resource;
 

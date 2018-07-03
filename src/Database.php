@@ -174,7 +174,7 @@ class Database extends Util\Singleton
     public function isInstalled()
     {
         if (empty($this->is_installed)) {
-            $this->is_installed = $this->isConnected() && $this->fetchNum("SHOW TABLES LIKE 'zz_modules'");
+            $this->is_installed = $this->tableExists('zz_modules');
         }
 
         return $this->is_installed;
@@ -321,16 +321,28 @@ class Database extends Util\Singleton
      *
      * @param string $query Query da eseguire
      *
-     * @return array
+     * @return int
      */
     public function fetchNum($query)
     {
-        $result = $this->fetchArray($query);
-        if (is_array($result)) {
-            return count($result);
+        $result = $this->fetchArray('SELECT COUNT(*) as `tot` FROM ('.$query.') AS `count`');
+
+        if (!empty($result)) {
+            return $result[0]['tot'];
         }
 
-        return $result;
+        return 0;
+    }
+
+    public function tableExists($table)
+    {
+        $results = null;
+
+        if ($this->isConnected()) {
+            $results = $this->fetchArray("SHOW TABLES LIKE '".$table."'");
+        }
+
+        return !empty($results);
     }
 
     /**

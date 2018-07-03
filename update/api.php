@@ -91,7 +91,7 @@ $tables = [
 ];
 
 foreach ($tables as $table) {
-    if ($database->fetchNum('SHOW TABLES WHERE `Tables_in_'.$database->getDatabaseName().'` = '.prepare($table))) {
+    if ($database->tableExists($table)) {
         $query = 'SHOW COLUMNS FROM `'.$table.'` IN `'.$database->getDatabaseName()."` WHERE Field='|field|'";
 
         $created_at = $database->fetchArray(str_replace('|field|', 'created_at', $query));

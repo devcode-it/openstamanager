@@ -30,6 +30,7 @@ if ($dir == 'entrata') {
 		<div class="panel-body">
 
 			<?php
+
                 if ($dir == 'entrata') {
                     $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche WHERE idanagrafica='.prepare($records[0]['idanagrafica']));
                     $campi_mancanti = [];
@@ -261,56 +262,58 @@ if ($records[0]['stato'] == 'Emessa') {
 				<div class="pull-left">
 <?php
 if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
-    if ($dir == 'entrata') {
-        // Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti
-        $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND in_statiintervento.completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_contratti_promemoria WHERE idintervento IS NOT NULL)';
-        $interventi = $dbo->fetchArray($int_query)[0]['tot'];
-
-        // Se non trovo niente provo a vedere se ce ne sono per clienti terzi
-        if (empty($interventi)) {
-            // Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti (clienti terzi)
-            $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE idclientefinale='.prepare($records[0]['idanagrafica']).' AND in_statiintervento.completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_contratti_promemoria WHERE idintervento IS NOT NULL)';
+    if (empty($records[0]['ref_documento'])) {
+        if ($dir == 'entrata') {
+            // Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti
+            $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND in_statiintervento.completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_contratti_promemoria WHERE idintervento IS NOT NULL)';
             $interventi = $dbo->fetchArray($int_query)[0]['tot'];
-        }
 
-        echo '
+            // Se non trovo niente provo a vedere se ce ne sono per clienti terzi
+            if (empty($interventi)) {
+                // Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti (clienti terzi)
+                $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE idclientefinale='.prepare($records[0]['idanagrafica']).' AND in_statiintervento.completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_contratti_promemoria WHERE idintervento IS NOT NULL)';
+                $interventi = $dbo->fetchArray($int_query)[0]['tot'];
+            }
+
+            echo '
                         <a class="btn btn-sm btn-primary tip"  '.(!empty($interventi) ? '' : ' disabled').' data-toggle="tooltip" title="'.tr('Interventi non collegati a preventivi o contratti.').'" data-href="'.$rootdir.'/modules/fatture/add_intervento.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi intervento" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Intervento
                         </a>';
 
-        // Lettura preventivi accettati, in attesa di conferma o in lavorazione
-        $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($records[0]['idanagrafica'])." AND id NOT IN (SELECT idpreventivo FROM co_righe_documenti WHERE NOT idpreventivo=NULL) AND idstato IN( SELECT id FROM co_statipreventivi WHERE descrizione='Accettato' OR descrizione='In lavorazione' OR descrizione='In attesa di conferma')";
-        $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
-        echo '
+            // Lettura preventivi accettati, in attesa di conferma o in lavorazione
+            $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($records[0]['idanagrafica'])." AND id NOT IN (SELECT idpreventivo FROM co_righe_documenti WHERE NOT idpreventivo=NULL) AND idstato IN( SELECT id FROM co_statipreventivi WHERE descrizione='Accettato' OR descrizione='In lavorazione' OR descrizione='In attesa di conferma')";
+            $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
+            echo '
                         <a class="btn btn-sm btn-primary tip" '.(!empty($preventivi) ? '' : ' disabled').'  title="'.tr('Preventivi accettati, in attesa di conferma o in lavorazione.').'" data-href="'.$rootdir.'/modules/fatture/add_preventivo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="Aggiungi preventivo" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Preventivo
                         </a>';
 
-        // Lettura contratti accettati, in attesa di conferma o in lavorazione
-        $contr_query = 'SELECT COUNT(*) AS tot FROM co_contratti WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND id NOT IN (SELECT idcontratto FROM co_righe_documenti WHERE NOT idcontratto=NULL) AND idstato IN( SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND NOT EXISTS (SELECT id FROM co_righe_documenti WHERE co_righe_documenti.idcontratto = co_contratti.id)';
-        $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
-        echo '
+            // Lettura contratti accettati, in attesa di conferma o in lavorazione
+            $contr_query = 'SELECT COUNT(*) AS tot FROM co_contratti WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND id NOT IN (SELECT idcontratto FROM co_righe_documenti WHERE NOT idcontratto=NULL) AND idstato IN( SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND NOT EXISTS (SELECT id FROM co_righe_documenti WHERE co_righe_documenti.idcontratto = co_contratti.id)';
+            $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
+            echo '
 
                         <a class="btn btn-sm btn-primary tip" '.(!empty($contratti) ? '' : ' disabled').' title="'.tr('Contratti accettati, in attesa di conferma o in lavorazione.').'"  data-href="'.$rootdir.'/modules/fatture/add_contratto.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="Aggiungi contratto" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Contratto
                         </a>';
 
-        // Lettura ddt
-        $ddt_query = 'SELECT COUNT(*) AS tot FROM dt_ddt WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoddt IN (SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir).') AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
-        $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
-        echo '
+            // Lettura ddt
+            $ddt_query = 'SELECT COUNT(*) AS tot FROM dt_ddt WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoddt IN (SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir).') AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
+            $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
+            echo '
                         <a class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="Aggiungi ddt" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Ddt
                         </a>';
-    }
+        }
 
-    // Lettura ordini
-    $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
-    $ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
-    echo '
+        // Lettura ordini
+        $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
+        $ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
+        echo '
 						<a class="btn btn-sm btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi ordine" data-target="#bs-popup">
 							<i class="fa fa-plus"></i> Ordine
-						</a>';
+                        </a>';
+    }
 
     // Lettura articoli
     $art_query = 'SELECT COUNT(*) AS tot FROM mg_articoli WHERE attivo = 1';

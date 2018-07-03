@@ -48,7 +48,6 @@ function get_new_numerofattura($data)
 function get_new_numerosecondariofattura($data)
 {
     global $dir;
-    global $idtipodocumento;
     global $id_segment;
 
     $dbo = Database::getConnection();
@@ -689,7 +688,7 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
     $iva = ($prezzo - $sconto) / 100 * $rs2[0]['percentuale'];
     $desc_iva = $rs2[0]['descrizione'];
 
-    if ($qta > 0) {
+    if ($qta != 0) {
         $rsart = $dbo->fetchArray('SELECT abilita_serial FROM mg_articoli WHERE id='.prepare($idarticolo));
 
         $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idarticolo, idintervento, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, qta, abilita_serial, idconto, um, `order`) VALUES ('.prepare($iddocumento).', '.prepare($idarticolo).', '.(!empty($idintervento) ? prepare($idintervento) : 'NULL').', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($qta).', '.prepare($rsart[0]['abilita_serial']).', '.prepare($idconto).', '.prepare($um).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($iddocumento).'))');

@@ -367,5 +367,10 @@ INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable
 -- Rimozione idtipoanagrafica da zz_users
 ALTER TABLE `zz_users` DROP `idtipoanagrafica`;
 
+-- Introduzione controllo duplicazione della numerazione Fatture di vendita
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), '_bg_', 'IF((SELECT COUNT(t.numero_esterno) FROM co_documenti AS t WHERE t.numero_esterno = co_documenti.numero_esterno AND t.id_segment = co_documenti.id_segment  AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = ''entrata'') AND t.data >= ''|period_start|'' AND t.data <= ''|period_end|'') > 1, ''red'', '''')', 0, 0, 0, 0, 1);
+
+-- Aggiunto supporto a Note di accredito e addebito
+ALTER TABLE `co_documenti` ADD `ref_documento` int(11) AFTER `idagente`, ADD FOREIGN KEY (`ref_documento`) REFERENCES `co_documenti`(`id`) ON DELETE CASCADE;
+ALTER TABLE `co_righe_documenti` ADD `qta_evasa` int(11) NOT NULL AFTER `qta`;

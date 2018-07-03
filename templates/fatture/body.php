@@ -57,6 +57,13 @@ foreach ($righe as $r) {
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
     $count += substr_count($r['descrizione'], PHP_EOL);
 
+    // Valori assoluti
+    $r['qta'] = abs($r['qta']);
+    $r['subtotale'] = abs($r['subtotale']);
+    $r['sconto_unitario'] = abs($r['sconto_unitario']);
+    $r['sconto'] = abs($r['sconto']);
+    $r['iva'] = abs($r['iva']);
+
     echo '
         <tr>
             <td>

@@ -1057,7 +1057,7 @@ switch (post('op')) {
         foreach ($post['qta_da_evadere'] as $i => $value) {
             // Processo solo le righe da evadere
             if ($post['evadere'][$i] == 'on') {
-                $idrigaordine = $i;
+                $idriga = $i;
                 $idarticolo = post('idarticolo')[$i];
                 $descrizione = post('descrizione')[$i];
                 $qta = post('qta_da_evadere')[$i];
@@ -1068,7 +1068,7 @@ switch (post('op')) {
                 $sconto = Translator::numberToLocale(post('sconto')[$i]);
                 $sconto = $sconto * $qta;
 
-                $qprc = 'SELECT tipo_sconto, sconto_unitario FROM or_righe_ordini WHERE id='.prepare($idrigaordine);
+                $qprc = 'SELECT tipo_sconto, sconto_unitario FROM or_righe_ordini WHERE id='.prepare($idriga);
                 $rsprc = $dbo->fetchArray($qprc);
 
                 $sconto_unitario = $rsprc[0]['sconto_unitario'];
@@ -1088,13 +1088,13 @@ switch (post('op')) {
                 if (!empty($idarticolo)) {
                     $idiva_acquisto = $idiva;
                     $prezzo_acquisto = $subtot;
-                    $idriga = add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva_acquisto, $qta, $prezzo_acquisto, $sconto, $sconto_unitario, $tipo_sconto);
+                    $riga = add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva_acquisto, $qta, $prezzo_acquisto, $sconto, $sconto_unitario, $tipo_sconto);
 
                     // Aggiornamento seriali dalla riga dell'ordine
                     $serials = is_array($post['serial'][$i]) ? $post['serial'][$i] : [];
                     $serials = array_filter($serials, function ($value) { return !empty($value); });
 
-                    $dbo->sync('mg_prodotti', ['id_riga_documento' => $idriga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => $serials]);
+                    $dbo->sync('mg_prodotti', ['id_riga_documento' => $riga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => $serials]);
 
                     // Imposto la provenienza dell'ordine
                     $dbo->query('UPDATE co_righe_documenti SET idordine='.prepare($idordine).' WHERE id='.prepare($idriga));
@@ -1107,7 +1107,7 @@ switch (post('op')) {
                 }
 
                 // Scalo la quantità dall'ordine
-                $dbo->query('UPDATE or_righe_ordini SET qta_evasa = qta_evasa+'.$qta.' WHERE id='.prepare($idrigaordine));
+                $dbo->query('UPDATE or_righe_ordini SET qta_evasa = qta_evasa+'.$qta.' WHERE id='.prepare($idriga));
             }
         }
 
@@ -1501,7 +1501,7 @@ switch (post('op')) {
         foreach ($post['qta_da_evadere'] as $i => $value) {
             // Processo solo le righe da evadere
             if ($post['evadere'][$i] == 'on') {
-                $idrigaordine = $i;
+                $idriga = $i;
                 $idarticolo = post('idarticolo')[$i];
                 $descrizione = post('descrizione')[$i];
 
@@ -1512,7 +1512,7 @@ switch (post('op')) {
                 $sconto = $post['sconto'][$i];
                 $sconto = $sconto * $qta;
 
-                $qprc = 'SELECT tipo_sconto, sconto_unitario FROM or_righe_ordini WHERE id='.prepare($idrigaordine);
+                $qprc = 'SELECT tipo_sconto, sconto_unitario FROM or_righe_ordini WHERE id='.prepare($idriga);
                 $rsprc = $dbo->fetchArray($qprc);
 
                 $sconto_unitario = $rsprc[0]['sconto_unitario'];
@@ -1538,7 +1538,7 @@ switch (post('op')) {
                     $riga = add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva_acquisto, $qta, $prezzo_acquisto, 0, 0, 'UNT', 0, $idconto);
 
                     // Lettura lotto, serial, altro dalla riga dell'ordine
-                    $dbo->query('INSERT INTO mg_prodotti (id_riga_documento, id_articolo, dir, serial, lotto, altro) SELECT '.prepare($riga).', '.prepare($idarticolo).', '.prepare($dir).', serial, lotto, altro FROM mg_prodotti AS t WHERE id_riga_ordine='.prepare($idrigaordine));
+                    $dbo->query('INSERT INTO mg_prodotti (id_riga_documento, id_articolo, dir, serial, lotto, altro) SELECT '.prepare($riga).', '.prepare($idarticolo).', '.prepare($dir).', serial, lotto, altro FROM mg_prodotti AS t WHERE id_riga_ordine='.prepare($idriga));
                 }
 
                 // Inserimento riga normale
@@ -1548,7 +1548,7 @@ switch (post('op')) {
                 }
 
                 // Scalo la quantità dall ordine
-                $dbo->query('UPDATE or_righe_ordini SET qta_evasa = qta_evasa+'.$qta.' WHERE id='.prepare($idrigaordine));
+                $dbo->query('UPDATE or_righe_ordini SET qta_evasa = qta_evasa+'.$qta.' WHERE id='.prepare($idriga));
             }
         }
 
@@ -1557,6 +1557,87 @@ switch (post('op')) {
         $_SESSION['infos'][] = tr('Aggiunti nuovi articoli in fattura!');
 
         break;
+
+    // Nota di accredito
+    case 'nota_accredito':
+        $id_segment = post('id_segment');
+
+        $numero = get_new_numerofattura($records[0]['data']);
+        $numero_esterno = get_new_numerosecondariofattura($records[0]['data']);
+
+        $dbo->query('INSERT INTO co_documenti (numero, numero_esterno, ref_documento, idanagrafica, idconto, idtipodocumento, idpagamento, idbanca, data, idstatodocumento, idsede, id_segment) SELECT '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($id_record).', idanagrafica, idconto, (SELECT `id` FROM `co_tipidocumento` WHERE `descrizione`=\'Nota di accredito\' AND dir = \'entrata\'), idpagamento, idbanca, data, (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`=\'Bozza\'), idsede, '.prepare($id_segment).' FROM co_documenti AS t WHERE id = '.prepare($id_record));
+        $id_record = $dbo->lastInsertedID();
+
+        // Lettura di tutte le righe della tabella in arrivo
+        foreach ($post['qta_da_evadere'] as $i => $value) {
+            // Processo solo le righe da evadere
+            if ($post['evadere'][$i] == 'on') {
+                $idriga = $i;
+                $idarticolo = post('idarticolo')[$i];
+                $descrizione = post('descrizione')[$i];
+
+                $qta = -$post['qta_da_evadere'][$i];
+                $um = post('um')[$i];
+
+                $subtot = $post['subtot'][$i] * $qta;
+                $sconto = $post['sconto'][$i];
+                $sconto = $sconto * $qta;
+
+                $qprc = 'SELECT tipo_sconto, sconto_unitario FROM co_righe_documenti WHERE id='.prepare($idriga);
+                $rsprc = $dbo->fetchArray($qprc);
+
+                $sconto_unitario = $rsprc[0]['sconto_unitario'];
+                $tipo_sconto = $rsprc[0]['tipo_sconto'];
+
+                $idiva = post('idiva')[$i];
+
+                // Calcolo l'iva indetraibile
+                $q = 'SELECT percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva);
+                $rs = $dbo->fetchArray($q);
+                $iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
+                $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
+
+                // Leggo la descrizione iva
+                $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
+                $rs = $dbo->fetchArray($query);
+                $desc_iva = $rs[0]['descrizione'];
+
+                // Se sto aggiungendo un articolo uso la funzione per inserirlo e incrementare la giacenza
+                if (!empty($idarticolo)) {
+                    $idiva_acquisto = $idiva;
+                    $prezzo_acquisto = $subtot;
+                    $riga = add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva_acquisto, $qta, $prezzo_acquisto, $sconto, $sconto_unitario, $tipo_sconto);
+
+                    // Aggiornamento seriali dalla riga dell'ordine
+                    $serials = is_array($post['serial'][$i]) ? $post['serial'][$i] : [];
+                    $serials = array_filter($serials, function ($value) { return !empty($value); });
+
+                    $dbo->sync('mg_prodotti', ['id_riga_documento' => $riga, 'dir' => 'uscita', 'id_articolo' => $idarticolo], ['serial' => $serials]);
+                }
+
+                // Inserimento riga normale
+                elseif ($qta != 0) {
+                    $query = 'INSERT INTO co_righe_documenti(iddocumento, idarticolo, descrizione, idconto, idordine, idiva, desc_iva, iva, iva_indetraibile, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, `order`) VALUES('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($descrizione).', '.prepare($idconto).', '.prepare($idordine).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
+                    $dbo->query($query);
+                }
+
+                // Scalo la quantità dall ordine
+                $dbo->query('UPDATE co_righe_documenti SET qta_evasa = qta_evasa+'.(-$qta).' WHERE id='.prepare($idriga));
+            }
+        }
+
+        break;
+}
+
+// Nota di addebito
+if (get('op') == 'nota_addebito') {
+    $id_segment = $records[0]['id_segment'];
+
+    $numero = get_new_numerofattura($records[0]['data']);
+    $numero_esterno = get_new_numerosecondariofattura($records[0]['data']);
+
+    $dbo->query('INSERT INTO co_documenti (numero, numero_esterno, ref_documento, idanagrafica, idconto, idtipodocumento, idpagamento, idbanca, data, idstatodocumento, idsede, id_segment) SELECT '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($id_record).', idanagrafica, idconto, (SELECT `id` FROM `co_tipidocumento` WHERE `descrizione`=\'Nota di addebito\' AND dir = \'entrata\'), idpagamento, idbanca, data, (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`=\'Bozza\'), idsede, id_segment FROM co_documenti AS t WHERE id = '.prepare($id_record));
+    $id_record = $dbo->lastInsertedID();
 }
 
 // Aggiornamento stato dei ddt presenti in questa fattura in base alle quantità totali evase

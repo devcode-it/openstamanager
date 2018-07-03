@@ -58,6 +58,10 @@ if (!empty($rs2)) {
         // Causale
         $dir = ($r['qta'] < 0) ? 'vendita' : 'acquisto';
 
+        if (!empty($r['iddocumento'])) {
+            $dir = $dbo->fetchArray('SELECT dir FROM co_tipidocumento WHERE id = (SELECT idtipodocumento FROM co_documenti WHERE id = '.prepare($r['iddocumento']).')')[0]['dir'] == 'entrata' ? 'vendita' : 'acquisto';
+        }
+
         echo '
                 <td>'.$r['movimento'].'
 				'.((!empty($r['idintervento'])) ? Modules::link('Interventi', $r['idintervento']) : '').'

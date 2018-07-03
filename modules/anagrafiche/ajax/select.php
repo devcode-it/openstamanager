@@ -10,8 +10,8 @@ switch ($resource) {
                 $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
             }
 
+            $where[] = "descrizione='Cliente'";
             if (empty($filter)) {
-                $where[] = "descrizione='Cliente'";
                 $where[] = 'deleted=0';
             }
 
@@ -32,8 +32,8 @@ switch ($resource) {
                 $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
             }
 
+            $where[] = "descrizione='Fornitore'";
             if (empty($filter)) {
-                $where[] = "descrizione='Fornitore'";
                 $where[] = 'deleted=0';
             }
 
@@ -54,8 +54,8 @@ switch ($resource) {
                 $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
             }
 
+            $where[] = "descrizione='Agente'";
             if (empty($filter)) {
-                $where[] = "descrizione='Agente'";
                 $where[] = 'deleted=0';
             }
 
@@ -89,8 +89,8 @@ switch ($resource) {
                 $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
             }
 
+            $where[] = "descrizione='Tecnico'";
             if (empty($filter)) {
-                $where[] = "descrizione='Tecnico'";
                 $where[] = 'deleted=0';
 
                 //come tecnico posso aprire attività solo a mio nome

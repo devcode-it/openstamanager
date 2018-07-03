@@ -38,6 +38,9 @@ echo '
 echo '
 
 <div class="hide" id="custom_fields_top-add">
+    <input type="hidden" name="id_module" value="'.$id_module.'">
+    <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
+
     {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "position": "top", "place": "add" )}
 </div>
 

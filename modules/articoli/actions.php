@@ -249,6 +249,14 @@ switch (post('op')) {
 
     case 'delmovimento':
         $idmovimento = post('idmovimento');
+        
+        // Lettura qtà movimento
+        $rs = $dbo->fetchArray( 'SELECT idarticolo, qta FROM mg_movimenti WHERE id='.prepare($idmovimento) );
+        $qta = $rs[0]['qta'];
+        $idarticolo = $rs[0]['idarticolo'];
+        
+        // Aggiorno la quantità dell'articolo
+        $dbo->query( 'UPDATE mg_articoli SET qta=qta-'.$qta.' WHERE id='.prepare($idarticolo) );
 
         $query = 'DELETE FROM mg_movimenti WHERE id='.prepare($idmovimento);
         if ($dbo->query($query)) {

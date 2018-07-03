@@ -1,6 +1,6 @@
 <?php
 
-include_once __DIR__.'/../core.php';
+include_once __DIR__.'/../../core.php';
 
 $valid_config = isset($db_host) && isset($db_name) && isset($db_username) && isset($db_password);
 
@@ -243,7 +243,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                     $("#install").prop(\'disabled\', true);
                     $("#test").prop(\'disabled\', true);
 
-                    $("#config_form").submit();
+                    $("#config-form").submit();
                 }
 
             });
@@ -345,8 +345,6 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     $username = !empty($db_username) ? $db_username : '';
     $password = !empty($db_password) ? $db_password : '';
     $name = !empty($db_name) ? $db_name : '';
-    $osm_password = !empty($_SESSION['osm_password']) ? $_SESSION['osm_password'] : '';
-    $osm_email = !empty($_SESSION['osm_email']) ? $_SESSION['osm_email'] : '';
 
     // PARAMETRI
     echo '
@@ -360,7 +358,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
     // Form dei parametri
     echo '
-                        <form action="?action=updateconfig&firstuse=true" method="post" id="config_form">
+                        <form action="?action=updateconfig&firstuse=true" method="post" id="config-form">
                             <div class="row">';
 
     // db_host
@@ -388,21 +386,6 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     echo '
                                 <div class="col-md-4">
                                     {[ "type": "text", "label": "'.tr('Nome del database').'", "name": "db_name", "placeholder": "'.tr('Nome del database').'", "value": "'.$name.'", "help": "'.tr('Esempio').': openstamanager", "show-help": 0, "required": 1 ]}
-                                </div>
-                            </div>
-
-                            <div class="row">';
-
-    // Password utente admin
-    echo '
-                                <div class="col-md-6">
-                                    {[ "type": "password", "label": "'.tr("Password dell'amministratore").'", "name": "osm_password", "placeholder": "'.tr('Scegli la password di amministratore').'", "value": "'.$osm_password.'", "help": "'.tr('Valore di default').': admin", "show-help": 1 ]}
-                                </div>';
-
-    // Email utente admin
-    echo '
-                                <div class="col-md-6">
-                                    {[ "type": "email", "label": "'.tr("Email dell'amministratore").'", "name": "osm_email", "placeholder": "'.tr("Digita l'indirizzo email dell'amministratore").'", "value": "'.$osm_email.'" ]}
                                 </div>
                             </div>';
 

@@ -270,7 +270,7 @@ switch (post('op')) {
 }
 
 // Operazioni aggiuntive per il logo
-if (filter('op') == 'link_file'){
+if (filter('op') == 'link_file') {
     $nome = 'Logo stampe';
 
     if (Settings::get('Azienda predefinita') == $id_record && filter('nome_allegato') == $nome) {

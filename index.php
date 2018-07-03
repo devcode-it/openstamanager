@@ -52,10 +52,13 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
 }
 
 // Procedura di installazione
-include_once $docroot.'/include/configuration.php';
+include_once $docroot.'/include/init/configuration.php';
 
 // Procedura di aggiornamento
-include_once $docroot.'/include/update.php';
+include_once $docroot.'/include/init/update.php';
+
+// Procedura di inizializzazione
+include_once $docroot.'/include/init/init.php';
 
 $pageTitle = tr('Login');
 

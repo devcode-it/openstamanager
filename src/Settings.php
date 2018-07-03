@@ -58,4 +58,17 @@ class Settings
 
         return self::$values[$sezione.'.'.$nome];
     }
+
+    public static function set($name, $value)
+    {
+        $database = Database::getConnection();
+
+        $database->update('zz_settings', [
+            'valore' => $value,
+        ], [
+            'nome' => $name,
+        ]);
+
+        self::get($nome, null, null, true);
+    }
 }

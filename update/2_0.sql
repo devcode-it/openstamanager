@@ -2339,13 +2339,6 @@ CREATE TABLE IF NOT EXISTS `zz_utenti` (
   PRIMARY KEY (`idutente`)
 ) ENGINE=InnoDB;
 
---
--- Dump dei dati per la tabella `zz_utenti`
---
-
-INSERT INTO `zz_utenti` (`idutente`, `username`, `password`, `email`, `idanagrafica`, `idtipoanagrafica`, `idgruppo`, `enabled`) VALUES
-(1, 'admin', '21232f297a57a5a743894a0e4a801fc3', '', 0, 0, 1, 1);
-
 -- --------------------------------------------------------
 
 --

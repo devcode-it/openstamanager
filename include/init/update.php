@@ -1,6 +1,6 @@
 <?php
 
-include_once __DIR__.'/../core.php';
+include_once __DIR__.'/../../core.php';
 
 $updateRate = 20;
 $scriptValue = $updateRate * 5;
@@ -75,41 +75,16 @@ if (filter('action') == 'do_update') {
         echo '
         <p><strong>'.tr('Aggiornamento completato!!!').'</strong> <i class="fa fa-smile-o"></i></p>';
 
-        // Rimostro la finestra di login
-        echo '
-        <script>
-            $(".login-box").fadeIn();
-        </script>';
-
         // Istruzioni per la prima installazione
         if ($_GET['firstuse'] == 'true') {
-            if (!empty($_SESSION['osm_password'])) {
-                $password = $_SESSION['osm_password'];
-            } else {
-                $password = 'admin';
-            }
-
             echo '
-        <p>'.tr('Puoi procedere al login con i seguenti dati').':</p>
-        <p>'.tr('Username').': <i>admin</i></p>
-        <p>'.tr('Password').': <i> '.$password.'</i></p>
         <p class="text-danger">'.tr("E' fortemente consigliato rimuovere i permessi di scrittura dal file _FILE_", [
             '_FILE_' => '<b>config.inc.php</b>',
-        ]).'.</p>';
+        ]).'.</p>
 
-            // Imposto la password di admin che l'utente ha selezionato all'inizio
-            if (isset($_SESSION['osm_password'])) {
-                $dbo->query('UPDATE `zz_users` SET `password`='.prepare(Auth::hashPassword($password))." WHERE `username`='admin'");
-
-                unset($_SESSION['osm_password']);
-            }
-
-            if (isset($_SESSION['osm_email'])) {
-                if (!empty($_SESSION['osm_email'])) {
-                    $dbo->query('UPDATE `zz_users` SET `email`='.prepare($_SESSION['osm_email'])." WHERE `username`='admin' ");
-                }
-                unset($_SESSION['osm_email']);
-            }
+        <a class="btn btn-success btn-block" href="'.ROOTDIR.'">
+            <i class="fa fa-check"></i> '.tr('Continua').'
+        </a>';
         }
     }
 

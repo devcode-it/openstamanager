@@ -31,9 +31,9 @@ if (!empty($id_utente)) {
     $op = 'change_pwd';
     $message = tr('Modifica');
 
-    $rs = $dbo->fetchArray('SELECT idanagrafica, idtipoanagrafica, username FROM zz_users WHERE id='.prepare($id_utente));
+    $rs = $dbo->fetchArray('SELECT idanagrafica, username FROM zz_users WHERE id='.prepare($id_utente));
     $username = $rs[0]['username'];
-    $id_anagrafica = $rs[0]['idtipoanagrafica'].'-'.$rs[0]['idanagrafica'];
+    $id_anagrafica = $rs[0]['idanagrafica'];
 } else {
     $op = 'adduser';
     $message = tr('Aggiungi');
@@ -127,7 +127,7 @@ echo '
                     '_MIN_' => $min_length_username,
                 ]).'",
 				type: "error",
-			});	
+			});
 		else
 			$("#link_form").submit();
 	}

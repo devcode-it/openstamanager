@@ -36,11 +36,9 @@ switch (filter('op')) {
         } elseif ($password != $password_rep) {
             $_SESSION['errors'][] = tr('Le password non coincidono');
         } else {
-            $idanag = explode('-', filter('idanag'));
-            $idtipoanagrafica = $idanag[0];
-            $idanagrafica = $idanag[1];
+            $idanagrafica = filter('idanag');
 
-            $dbo->query('UPDATE zz_users SET password='.prepare(Auth::hashPassword($password)).', idanagrafica='.prepare($idanagrafica).', idtipoanagrafica='.prepare($idtipoanagrafica).' WHERE id='.prepare($id_utente));
+            $dbo->query('UPDATE zz_users SET password='.prepare(Auth::hashPassword($password)).', idanagrafica='.prepare($idanagrafica).' WHERE id='.prepare($id_utente));
 
             $_SESSION['infos'][] = tr('Password aggiornata!');
         }
@@ -78,9 +76,7 @@ switch (filter('op')) {
         $password = filter('password1');
         $password_rep = filter('password2');
 
-        $idanag = explode('-', filter('idanag'));
-        $idtipoanagrafica = $idanag[0];
-        $idanagrafica = $idanag[1];
+        $idanagrafica = filter('idanag');
 
         // Verifico che questo username non sia già stato usato
         $n = $dbo->fetchNum('SELECT * FROM zz_users WHERE username='.prepare($username));
@@ -94,7 +90,7 @@ switch (filter('op')) {
             } elseif ($password != $password_rep) {
                 $_SESSION['errors'][] = tr('Le password non coincidono');
             } else {
-                if ($dbo->query('INSERT INTO zz_users(idgruppo, username, password, idanagrafica, idtipoanagrafica, enabled, email) VALUES('.prepare($id_record).', '.prepare($username).', '.prepare(Auth::hashPassword($password)).', '.prepare($idanagrafica).', '.prepare($idtipoanagrafica).", 1, '')")) {
+                if ($dbo->query('INSERT INTO zz_users(idgruppo, username, password, idanagrafica, enabled, email) VALUES('.prepare($id_record).', '.prepare($username).', '.prepare(Auth::hashPassword($password)).', '.prepare($idanagrafica).", 1, '')")) {
                     $dbo->query('INSERT INTO `zz_tokens` (`id_utente`, `token`) VALUES ('.prepare($dbo->lastInsertedID()).', '.prepare(secure_random_string()).')');
 
                     $_SESSION['infos'][] = tr('Utente aggiunto!');

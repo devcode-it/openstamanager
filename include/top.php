@@ -135,6 +135,14 @@ if (Auth::check()) {
                 tempo_attesa_ricerche: '.get_var('Tempo di attesa ricerche in secondi').',
             };
 		</script>';
+} else {
+    echo '
+<script>
+    globals = {
+        locale: \''.$lang.'\',
+        full_locale: \''.$lang.'_'.strtoupper($lang).'\',
+    };
+</script>';
 }
 
 // JS

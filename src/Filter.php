@@ -160,4 +160,20 @@ class Filter
 
         return self::$purifier;
     }
+
+    /**
+     * Imposta una proprietà specifica a un valore personalizzato.
+     *
+     * @param string $method
+     * @param string $property
+     * @param mixed  $value
+     */
+    public static function set($method, $property, $value)
+    {
+        if (strtolower($method) == 'post') {
+            self::$post['data'][$property] = $value;
+        } elseif (strtolower($method) == 'get') {
+            self::$get['data'][$property] = $value;
+        }
+    }
 }

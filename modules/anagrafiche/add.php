@@ -5,8 +5,6 @@ include_once __DIR__.'/../../core.php';
 if (get('tipoanagrafica') != '') {
     $rs = $dbo->fetchArray('SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='.prepare(get('tipoanagrafica')));
     $idtipoanagrafica = $rs[0]['idtipoanagrafica'];
-} else {
-    $idtipoanagrafica = '';
 }
 
 echo '
@@ -20,12 +18,12 @@ echo '
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "'.tr('Tipo di anagrafica').'", "name": "idtipoanagrafica[]", "multiple": "1", "required": 1, "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica  WHERE t.descrizione = \'Azienda\'  AND deleted = 0) ORDER BY descrizione", "value": "'.$idtipoanagrafica.'" ]}
+			{[ "type": "select", "label": "'.tr('Tipo di anagrafica').'", "name": "idtipoanagrafica[]", "multiple": "1", "required": 1, "values": "query=SELECT idtipoanagrafica AS id, descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica NOT IN (SELECT DISTINCT(x.idtipoanagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.idtipoanagrafica = t.idtipoanagrafica INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica  WHERE t.descrizione = \'Azienda\'  AND deleted = 0) ORDER BY descrizione", "value": "'.(isset($idtipoanagrafica) ? $idtipoanagrafica : null).'", "readonly": '.(!empty($readonly_tipo) ? 1 : 0).' ]}
 		</div>
 	</div>';
 
-echo
-    '<div class="box box-info collapsed-box">
+echo '
+    <div class="box box-info collapsed-box">
 	    <div class="box-header with-border">
 	        <h3 class="box-title">'.tr('Dati anagrafici').'</h3>
 	        <div class="box-tools pull-right">

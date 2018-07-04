@@ -20,6 +20,7 @@ $type = $_POST['type'];
 // Lettura dell'archivio
 $zip = new ZipArchive();
 if (!$zip->open($file['tmp_name'])) {
+    $_SESSION['errors'][] = tr('File di installazione non valido!');
     $_SESSION['errors'][] = checkZip($file['tmp_name']);
 
     return;
@@ -42,70 +43,69 @@ if (file_exists($extraction_dir.'/VERSION')) {
 
     // Ripristina il file di configurazione dell'installazione
     file_put_contents($docroot.'/config.inc.php', $config);
-}
+} else {
+    $finder = Symfony\Component\Finder\Finder::create()
+        ->files()
+        ->ignoreDotFiles(true)
+        ->ignoreVCS(true)
+        ->in($extraction_dir);
 
-// Installazione/aggiornamento di un modulo
-elseif (file_exists($extraction_dir.'/MODULE')) {
-    // Leggo le info dal file di configurazione del modulo
-    $info = Util\Ini::readFile($extraction_dir.'/MODULE');
+    $files = $finder->name('MODULE')->name('PLUGIN');
 
-    // Copio i file nella cartella "modules/<directory>/"
-    copyr($extraction_dir, $docroot.'/modules/'.$info['directory']);
+    foreach ($files as $file) {
+        // Informazioni dal file di configurazione
+        $info = Util\Ini::readFile($file->getRealPath());
 
-    // Verifico se il modulo non esista già
-    $installed = Modules::get($info['name']);
-    if (empty($installed)) {
-        $info['parent'] = Modules::get($info['parent']) ? $info['parent'] : null;
+        // Informazioni aggiuntive per il database
+        $insert = [];
 
-        $dbo->insert('zz_modules', [
-            'name' => $info['name'],
-            'title' => !empty($info['title']) ? $info['title'] : $info['name'],
-            'directory' => $info['directory'],
-            'options' => $info['options'],
-            'version' => $info['version'],
-            'compatibility' => $info['compatibility'],
-            'order' => 100,
-            'parent' => $info['parent'],
-            'default' => 0,
-            'enabled' => 1,
-        ]);
+        // Modulo
+        if (basename($file->getRealPath()) == 'MODULE') {
+            $directory = 'modules';
+            $table = 'zz_modules';
+
+            $installed = Modules::get($info['name']);
+            $insert['parent'] = Modules::get($info['parent']);
+        }
+
+        // Plugin
+        elseif (basename($file->getRealPath()) == 'PLUGIN') {
+            $directory = 'plugins';
+            $table = 'zz_plugins';
+
+            $installed = Plugins::get($info['name']);
+            $insert['idmodule_from'] = Modules::get($info['module_from'])['id'];
+            $insert['idmodule_to'] = Modules::get($info['module_to'])['id'];
+            $insert['position'] = $info['position'];
+        }
+
+        // Copia dei file nella cartella relativa
+        copyr(dirname($file->getRealPath()), $docroot.'/'.$directory.'/'.$info['directory']);
+
+        // Eventuale registrazione nel database
+        if (empty($installed)) {
+            $dbo->insert($table, array_merge($insert, [
+                'name' => $info['name'],
+                'title' => !empty($info['title']) ? $info['title'] : $info['name'],
+                'directory' => $info['directory'],
+                'options' => $info['options'],
+                'version' => $info['version'],
+                'compatibility' => $info['compatibility'],
+                'order' => 100,
+                'default' => 0,
+                'enabled' => 1,
+            ]));
+
+            $_SESSION['errors'][] = tr('Installazione completata!');
+        } else {
+            $_SESSION['errors'][] = tr('Aggiornamento completato!');
+        }
     }
 }
 
-// Installazione/aggiornamento di un plugin
-elseif (file_exists($extraction_dir.'/PLUGIN')) {
-    // Leggo le info dal file di configurazione del modulo
-    $info = Util\Ini::readFile($extraction_dir.'/PLUGIN');
-
-    // Copio i file nella cartella "modules/<directory>/"
-    copyr($extraction_dir, $docroot.'/plugins/'.$info['directory']);
-
-    // Verifico se il modulo non esista già
-    $installed = Plugins::get($info['name']);
-    if (empty($installed)) {
-        $info['parent'] = Plugins::get($info['parent']) ? $info['parent'] : null;
-
-        $dbo->insert('zz_plugins', [
-            'name' => $info['name'],
-            'title' => !empty($info['title']) ? $info['title'] : $info['name'],
-            'directory' => $info['directory'],
-            'options' => $info['options'],
-            'version' => $info['version'],
-            'compatibility' => $info['compatibility'],
-            'order' => 100,
-            'parent' => $info['parent'],
-            'default' => 0,
-            'enabled' => 1,
-        ]);
-    }
-}
-
-// File di installazione non valido
-else {
-    $_SESSION['errors'][] = tr('File di installazione non valido!');
-}
-
+// Rimozione delle risorse inutilizzate
 delete($extraction_dir);
-redirect($rootdir);
-
 $zip->close();
+
+// Redirect
+redirect(ROOTDIR.'/editor.php?id_module='.$id_module);

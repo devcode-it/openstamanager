@@ -39,51 +39,22 @@ if (get_var('Attiva aggiornamenti')) {
     }
 
     echo '
-        <div class="row">';
-    // Aggiornamento
-    echo '
-            <div class="col-md-6">
-                <div class="box box-success">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">'.tr('Carica un aggiornamento').'</h3>
-                    </div>
-                    <div class="box-body">
-                        <form action="'.ROOTDIR.'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" class="form-inline" id="update">
-                            <input type="hidden" name="op" value="upload">
-                            <input type="hidden" name="type" value="update">
+<div class="box box-success">
+    <div class="box-header with-border">
+        <h3 class="box-title">'.tr('Carica un aggiornamento').' <span class="tip" title="'.tr('Form di caricamento per aggiornamenti del gestionale e innesti di moduli e plugin').'"><i class="fa fa-question-circle-o"></i></span></h3>
+    </div>
+    <div class="box-body">
+        <form action="'.ROOTDIR.'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" class="form-inline" id="update">
+            <input type="hidden" name="op" value="upload">
 
-                            <label><input type="file" name="blob"></label>
+            <label><input type="file" name="blob"></label>
 
-                            <button type="button" class="btn btn-primary" onclick="if( confirm(\''.tr('Avviare la procedura?').'\') ){ $(\'#update\').submit(); }">
-                                <i class="fa fa-upload"></i> '.tr('Carica').'...
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>';
-
-    // Nuovo modulo
-    echo '
-            <div class="col-md-6">
-                <div class="box box-info">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">'.tr('Carica un nuovo modulo').'</h3>
-                    </div>
-                    <div class="box-body">
-                        <form action="'.ROOTDIR.'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" class="form-inline" id="module">
-                            <input type="hidden" name="op" value="upload">
-                            <input type="hidden" name="type" value="new">
-
-                            <label><input type="file" name="blob"></label>
-                            <button type="button" class="btn btn-primary" onclick="if( confirm(\''.tr('Avviare la procedura?').'\') ){ $(\'#module\').submit(); }">
-                                <i class="fa fa-upload"></i> '.tr('Carica').'...
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>';
-    echo '
-        </div>';
+            <button type="button" class="btn btn-primary pull-right" onclick="if( confirm(\''.tr('Avviare la procedura?').'\') ){ $(\'#update\').submit(); }">
+                <i class="fa fa-upload"></i> '.tr('Carica').'...
+            </button>
+        </form>
+    </div>
+</div>';
 }
 
 // Elenco moduli installati

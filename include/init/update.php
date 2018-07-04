@@ -85,6 +85,12 @@ if (filter('action') == 'do_update') {
         <a class="btn btn-success btn-block" href="'.ROOTDIR.'">
             <i class="fa fa-check"></i> '.tr('Continua').'
         </a>';
+        } else {
+            // Rimostro la finestra di login
+            echo '
+        <script>
+            $(".login-box").fadeIn();
+        </script>';
         }
     }
 

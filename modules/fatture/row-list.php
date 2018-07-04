@@ -99,8 +99,19 @@ if (!empty($rs)) {
         }
 
         // Aggiunta dei riferimenti ai documenti
-        $ref = doc_references($r, $dir, ['iddocumento']);
+        if (!empty($records[0]['ref_documento'])) {
+            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE id = ".prepare($records[0]['ref_documento']));
 
+            $text = tr('Rif. fattura _NUM_ del _DATE_', [
+                '_NUM_' => $data[0]['numero'],
+                '_DATE_' => Translator::dateToLocale($data[0]['data']),
+            ]);
+
+            echo '
+            <br>'.Modules::link('Fatture di vendita', $records[0]['ref_documento'], $text, $text);
+        }
+
+        $ref = doc_references($r, $dir, ['iddocumento']);
         if (!empty($ref)) {
             echo '
             <br>'.Modules::link($ref['module'], $ref['id'], $ref['description'], $ref['description']);
@@ -195,7 +206,7 @@ if (!empty($rs)) {
             echo "
                 <div class='input-group-btn'>";
 
-            if (!empty($r['idarticolo']) && $r['abilita_serial'] && (empty($r['idddt']) || empty($r['idintervento']))) {
+            if (empty($records[0]['is_reversed']) && !empty($r['idarticolo']) && $r['abilita_serial'] && (empty($r['idddt']) || empty($r['idintervento']))) {
                 echo "
                     <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&idarticolo='.$r['idarticolo']."', 1 );\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
             }

@@ -617,30 +617,16 @@ function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenu
         $netto_a_pagare = $totale_fattura - $ritenutaacconto;
 
         // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
-        $bolli = str_replace(',', '.', $bolli);
-        $bolli = floatval($bolli);
-        if ($dir == 'uscita') {
-            if ($bolli != 0.00) {
-                $bolli = str_replace(',', '.', $bolli);
-                if (abs($bolli) > 0 && abs($netto_a_pagare > get_var("Soglia minima per l'applicazione della marca da bollo"))) {
-                    $marca_da_bollo = str_replace(',', '.', $bolli);
-                } else {
-                    $marca_da_bollo = 0.00;
-                }
-            }
-        } else {
-            $bolli = str_replace(',', '.', get_var('Importo marca da bollo'));
-            if (abs($bolli) > 0 && abs($netto_a_pagare) > abs(get_var("Soglia minima per l'applicazione della marca da bollo"))) {
-                $marca_da_bollo = str_replace(',', '.', $bolli);
-            } else {
-                $marca_da_bollo = 0.00;
-            }
+        $bolli = ($dir == 'uscita') ? $bolli : get_var('Importo marca da bollo');
+        $bolli = Translator::getFormatter()->parse($bolli);
 
-            // Se l'importo è negativo può essere una nota di accredito, quindi cambio segno alla marca da bollo
-            if ($netto_a_pagare < 0) {
-                $marca_da_bollo *= -1;
-            }
+        $marca_da_bollo = 0;
+        if (abs($bolli) > 0 && abs($netto_a_pagare > get_var("Soglia minima per l'applicazione della marca da bollo"))) {
+            $marca_da_bollo = $bolli;
         }
+
+        // Se l'importo è negativo può essere una nota di accredito, quindi cambio segno alla marca da bollo
+        $marca_da_bollo = abs($marca_da_bollo);
 
         $dbo->query('UPDATE co_documenti SET ritenutaacconto='.prepare($ritenutaacconto).', rivalsainps='.prepare($rivalsainps).', iva_rivalsainps='.prepare($iva_rivalsainps).', bollo='.prepare($marca_da_bollo).' WHERE id='.prepare($iddocumento));
     } else {
@@ -784,15 +770,16 @@ function rimuovi_articolo_dafattura($idarticolo, $iddocumento, $idrigadocumento)
             $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$qta.' WHERE qta='.prepare($qta).' AND idarticolo='.prepare($idarticolo).' AND idordine='.prepare($idordine));
         }
     }
+
     // Elimino la riga dal documento
     $dbo->query('DELETE FROM `co_righe_documenti` WHERE id='.prepare($idrigadocumento).' AND iddocumento='.prepare($iddocumento));
 
-    //Aggiorno lo stato dell'ordine
+    // Aggiorno lo stato dell'ordine
     if (get_var('Cambia automaticamente stato ordini fatturati') && !empty($idordine)) {
         $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($idordine).'") WHERE id = '.prepare($idordine));
     }
 
-    //Aggiorno lo stato del ddt
+    // Aggiorno lo stato del ddt
     if (get_var('Cambia automaticamente stato ddt fatturati') && !empty($idddt)) {
         $dbo->query('UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="'.get_stato_ddt($idddt).'") WHERE id = '.prepare($idddt));
     }
@@ -861,6 +848,9 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
 function controlla_seriali($field, $id_riga, $old_qta, $new_qta, $dir)
 {
     $dbo = Database::getConnection();
+
+    $new_qta = abs($new_qta);
+    $old_qta = abs($old_qta);
 
     if ($old_qta >= $new_qta) {
         // Controllo sulla possibilità di rimuovere i seriali (se non utilizzati da documenti di vendita)
@@ -1034,4 +1024,74 @@ function doc_references($info, $dir, $ignore = [])
     }
 
     return [];
+}
+
+function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
+{
+    $dbo = Database::getConnection();
+
+    // Leggo la quantità di questo articolo in fattura
+    $riga = $dbo->fetchOne('SELECT * FROM co_righe_documenti WHERE id='.prepare($id_riga));
+
+    $non_rimovibili = seriali_non_rimuovibili('id_riga_documento', $id_riga, $dir);
+    if (!empty($non_rimovibili)) {
+        return false;
+    }
+
+    $serials = $dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_documento='.prepare($id_riga));
+
+    // Elimino la riga dal documento
+    $dbo->query('DELETE FROM `co_righe_documenti` WHERE id='.prepare($id_riga).' AND iddocumento='.prepare($id_documento));
+
+    if (empty($riga['qta'])) {
+        return true;
+    }
+
+    // Operazioni per la rimozione degli articoli
+    if (!empty($riga['idarticolo'])) {
+        // Movimentazione articoli se da interventi o ddt
+        if (empty($riga['idintervento']) && empty($riga['idddt'])) {
+            add_movimento_magazzino($riga['idarticolo'], ($dir == 'entrata') ? $riga['qta'] : -$riga['qta'], ['iddocumento' => $id_documento]);
+        }
+
+        // TODO: possibile ambiguità tra righe molto simili tra loro
+        // Se l'articolo è stato inserito in fattura tramite un ddt devo sanare la qta_evasa
+        if (!empty($riga['idddt'])) {
+            $dbo->query('UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idddt='.prepare($riga['idddt']));
+        }
+
+        // TODO: possibile ambiguità tra righe molto simili tra loro
+        // Se l'articolo è stato inserito in fattura tramite un ordine devo sanare la qta_evasa
+        if (!empty($riga['idordine'])) {
+            $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idordine='.prepare($riga['idordine']));
+        }
+
+        // Nota di accredito
+        if (!empty($riga['ref_riga_documento'])) {
+            $dbo->query('UPDATE co_righe_documenti SET qta_evasa = qta_evasa+'.$riga['qta'].' WHERE id='.prepare($riga['ref_riga_documento']));
+
+            $serials = array_column($serials, 'serial');
+            $serials = array_filter($serials, function ($value) { return !empty($value); });
+
+            $dbo->attach('mg_prodotti', ['id_riga_documento' => $riga['ref_riga_documento'], 'dir' => $dir, 'id_articolo' => $riga['idarticolo']], ['serial' => $serials]);
+        }
+    }
+
+    // Aggiorno lo stato dell'ordine
+    if (!empty($riga['idordine']) && get_var('Cambia automaticamente stato ordini fatturati')) {
+        $dbo->query('UPDATE or_ordini SET idstatoordine = (SELECT id FROM or_statiordine WHERE descrizione = '.prepare(get_stato_ordine($riga['idordine'])).') WHERE id = '.prepare($riga['idordine']));
+    }
+
+    // Aggiorno lo stato del ddt
+    if (!empty($riga['idddt']) && get_var('Cambia automaticamente stato ddt fatturati')) {
+        $dbo->query('UPDATE dt_ddt SET idstatoddt = (SELECT id FROM dt_statiddt WHERE descrizione = '.prepare(get_stato_ddt($riga['idddt'])).') WHERE id = '.prepare($riga['idddt']));
+    }
+
+    // Elimino i movimenti avvenuti nel magazzino per questo articolo lotto, serial, altro
+    $dbo->query('DELETE FROM `mg_movimenti` WHERE idarticolo = '.prepare($riga['idarticolo']).' AND iddocumento = '.prepare($id_documento).' AND id = '.prepare($id_riga));
+
+    // Elimino i seriali utilizzati dalla riga
+    $dbo->query('DELETE FROM `mg_prodotti` WHERE id_articolo = '.prepare($riga['idarticolo']).' AND id_riga_documento = '.prepare($id_riga));
+
+    return true;
 }

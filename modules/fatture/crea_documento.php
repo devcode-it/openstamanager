@@ -190,7 +190,7 @@ if (!empty($rs)) {
         echo '
         <td>';
         if (!empty($r['abilita_serial'])) {
-            $query = 'SELECT DISTINCT serial AS id, serial AS descrizione FROM mg_prodotti WHERE dir=\''.$dir.'\' AND '.$row.' = \''.$r['id'].'\' AND serial IS NOT NULL AND serial NOT IN (SELECT serial FROM mg_prodotti AS t WHERE serial IS NOT NULL AND dir=\''.$dir.'\' AND '.$data[$pos]['condition'].')';
+            $query = 'SELECT DISTINCT serial AS id, serial AS descrizione FROM mg_prodotti WHERE dir='.prepare($dir).' AND '.$row.' = '.prepare($r['id']).' AND serial IS NOT NULL AND serial NOT IN (SELECT serial FROM mg_prodotti AS t WHERE serial IS NOT NULL AND dir='.prepare($dir).' AND '.$data[$pos]['condition'].')';
 
             $values = $dbo->fetchArray($query);
             if (!empty($values)) {

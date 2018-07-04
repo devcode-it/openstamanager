@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+$block_edit = !empty($note_accredito);
+
 $rs = $dbo->fetchArray('SELECT co_tipidocumento.descrizione, dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($id_record));
 $dir = $rs[0]['dir'];
 $tipodoc = $rs[0]['descrizione'];
@@ -378,6 +380,25 @@ include $docroot.'/modules/fatture/row-list.php';
 	});
 </script>
 
+<?php
+
+if(!empty($note_accredito)){
+    echo '
+<div class="alert alert-info text-center">'.tr('Note di accredito collegate').':';
+    foreach($note_accredito as $nota){
+        $text = tr('Rif. fattura _NUM_ del _DATE_', [
+            '_NUM_' => $nota['numero'],
+            '_DATE_' => Translator::dateToLocale($nota['data']),
+        ]);
+
+        echo '
+    <br>'.Modules::link('Fatture di vendita', $nota['id'], $text, $text);
+    }
+    echo '
+</div>';
+}
+
+?>
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>

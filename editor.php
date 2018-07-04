@@ -239,16 +239,19 @@ echo '
         <script>';
 
 // Se l'utente ha i permessi in sola lettura per il modulo, converto tutti i campi di testo in span
-if (Modules::getPermission($id_module) == 'r') {
-    ?>
-			$(document).ready( function(){
-				$('input, textarea, select', 'section.content').attr('readonly', 'true');
-				$('select, input[type="checkbox"]').prop('disabled', true);
-				$('a.btn, button, input[type=button], input[type=submit]', 'section.content').hide();
-				$('a.btn-info, button.btn-info, input[type=button].btn-info', 'section.content').show();
-			});
-<?php
-} ?>
+if (Modules::getPermission($id_module) == 'r' || !empty($block_edit)) {
+    $not = (Modules::getPermission($id_module) == 'r') ? '' : '.not(".unblockable")';
+
+    echo '
+			$(document).ready(function(){
+				$("input, textarea, select", "section.content")'.$not.'.attr("readonly", "true");
+				$("select, input[type=checkbox]")'.$not.'.prop("disabled", true);
+				$("a.btn, button, input[type=button], input[type=submit]", "section.content")'.$not.'.hide();
+				$("a.btn-info, a.btn-warning, button.btn-info, button.btn-warning, input[type=button].btn-info", "section.content")'.$not.'.show();
+			});';
+
+}
+?>
 
             var content_was_modified = false;
 

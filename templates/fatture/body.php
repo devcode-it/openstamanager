@@ -92,11 +92,28 @@ foreach ($righe as $r) {
     }
 
     // Aggiunta dei riferimenti ai documenti
+    if (!empty($records[0]['ref_documento'])) {
+        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE id = ".prepare($records[0]['ref_documento']));
+
+        $text = tr('Rif. fattura _NUM_ del _DATE_', [
+            '_NUM_' => $data[0]['numero'],
+            '_DATE_' => Translator::dateToLocale($data[0]['data']),
+        ]);
+
+        echo '
+        <br><small>'.$text.'</small>';
+
+        if ($count <= 1) {
+            $count += 0.4;
+        }
+    }
+
     $ref = doc_references($r, $records[0]['dir'], ['iddocumento']);
 
     if (!empty($ref)) {
         echo '
                 <br><small>'.$ref['description'].'</small>';
+
         if ($count <= 1) {
             $count += 0.4;
         }

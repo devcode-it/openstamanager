@@ -373,7 +373,10 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 -- Aggiunto supporto a Note di accredito e addebito
 ALTER TABLE `co_documenti` ADD `ref_documento` int(11) AFTER `idagente`, ADD FOREIGN KEY (`ref_documento`) REFERENCES `co_documenti`(`id`) ON DELETE CASCADE;
-ALTER TABLE `co_righe_documenti` ADD `qta_evasa` int(11) NOT NULL AFTER `qta`;
+ALTER TABLE `co_righe_documenti` ADD `qta_evasa` int(11) NOT NULL AFTER `qta`, ADD `ref_riga_documento` int(11) AFTER `idcontratto`, ADD FOREIGN KEY (`ref_riga_documento`) REFERENCES `co_righe_documenti`(`id`) ON DELETE CASCADE;
+
+ALTER TABLE `co_tipidocumento` ADD `reversed` BOOLEAN NOT NULL DEFAULT FALSE AFTER `dir`;
+UPDATE `co_tipidocumento` SET `reversed` = 1 WHERE `descrizione` = 'Nota di accredito';
 
 -- Fix id_sottocategoria in mg_articoli
 ALTER TABLE `mg_articoli` CHANGE `id_sottocategoria` `id_sottocategoria` int(11);

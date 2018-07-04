@@ -51,7 +51,7 @@ class FileManager implements ManagerInterface
 
         $count = 0;
 
-        $where = '`id_record` = '.prepare($options['id_record']).' AND `id_module` '.(!empty($options['id_module']) ? '= '.prepare($options['id_module']) : 'IS NULL').' AND `id_plugin` '.(!empty($options['id_plugin']) ? '= '.prepare($options['id_plugin']) : 'IS NULL').'';
+        $where = '`id_module` '.(!empty($options['id_module']) ? '= '.prepare($options['id_module']) : 'IS NULL').' AND `id_plugin` '.(!empty($options['id_plugin']) ? '= '.prepare($options['id_plugin']) : 'IS NULL').'';
 
         // Categorie
         $categories = $dbo->fetchArray('SELECT DISTINCT `category` FROM `zz_files` WHERE '.$where.' ORDER BY `category`');
@@ -76,7 +76,7 @@ class FileManager implements ManagerInterface
             <th width="15%" class="text-center">'.tr('Opzioni').'</th>
         </tr>';
 
-            $rs = $dbo->fetchArray('SELECT * FROM `zz_files` WHERE `category`'.(!empty($category) ? '= '.prepare($category) : 'IS NULL').' AND '.$where);
+            $rs = $dbo->fetchArray('SELECT * FROM `zz_files` WHERE `category`'.(!empty($category) ? '= '.prepare($category) : 'IS NULL').' AND `id_record` = '.prepare($options['id_record']).' AND '.$where);
 
             foreach ($rs as $r) {
                 $result .= '

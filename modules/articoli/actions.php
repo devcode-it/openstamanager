@@ -252,6 +252,16 @@ switch (post('op')) {
 }
 
 // Operazioni aggiuntive per l'immagine
-if (filter('op') == 'unlink_file' && $name == 'Immagine') {
-    $dbo->query("UPDATE mg_articoli SET immagine01 = '' WHERE id=".prepare($id_record));
+if (filter('op') == 'unlink_file' && filter('filename') == $records[0]['immagine01']) {
+    $dbo->update('mg_articoli', [
+        'immagine01' => '',
+    ], [
+        'id' => $id_record,
+    ]);
+} elseif (filter('op') == 'link_file' && filter('nome_allegato') == 'Immagine') {
+    $dbo->update('mg_articoli', [
+        'immagine01' => $upload,
+    ], [
+        'id' => $id_record,
+    ]);
 }

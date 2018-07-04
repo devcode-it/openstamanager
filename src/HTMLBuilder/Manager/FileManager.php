@@ -58,7 +58,10 @@ class FileManager implements ManagerInterface
         foreach ($categories as $category) {
             $category = $category['category'];
 
-            $result .= '
+            $rs = $dbo->fetchArray('SELECT * FROM `zz_files` WHERE `category`'.(!empty($category) ? '= '.prepare($category) : 'IS NULL').' AND `id_record` = '.prepare($options['id_record']).' AND '.$where);
+
+            if (!empty($rs)) {
+                $result .= '
 <div class="box box-success">
     <div class="box-header with-border">
         <h3 class="box-title">'.(!empty($category) ? $category : tr('Generale')).'</h3>
@@ -76,10 +79,8 @@ class FileManager implements ManagerInterface
             <th width="15%" class="text-center">'.tr('Opzioni').'</th>
         </tr>';
 
-            $rs = $dbo->fetchArray('SELECT * FROM `zz_files` WHERE `category`'.(!empty($category) ? '= '.prepare($category) : 'IS NULL').' AND `id_record` = '.prepare($options['id_record']).' AND '.$where);
-
-            foreach ($rs as $r) {
-                $result .= '
+                foreach ($rs as $r) {
+                    $result .= '
         <tr>
             <td align="left">
                 <a href="'.ROOTDIR.'/files/'.\Modules::get($options['id_module'])['directory'].'/'.$r['filename'].'" target="_blank">
@@ -92,56 +93,57 @@ class FileManager implements ManagerInterface
                     <i class="fa fa-download"></i>
                 </a>';
 
-                // Anteprime supportate dal browser
-                $extension = pathinfo($r['original'])['extension'];
-                $supported_extensions = ['pdf', 'jpg', 'png', 'gif', 'jpeg', 'bmp'];
-                if (in_array($extension, $supported_extensions)) {
-                    $result .= "
+                    // Anteprime supportate dal browser
+                    $extension = pathinfo($r['original'])['extension'];
+                    $supported_extensions = ['pdf', 'jpg', 'png', 'gif', 'jpeg', 'bmp'];
+                    if (in_array($extension, $supported_extensions)) {
+                        $result .= "
                 <div class='hide' id='view-".$r['id']."'>";
 
-                    if ($extension == 'pdf') {
-                        $result .= '
+                        if ($extension == 'pdf') {
+                            $result .= '
                     <iframe src="'.\Prints::getPDFLink('files/'.$directory.'/'.$r['filename']).'" frameborder="0" width="100%" height="550"></iframe>';
-                    } else {
-                        $result .= '
+                        } else {
+                            $result .= '
                     <img src="'.ROOTDIR.'/files/'.$directory.'/'.$r['filename'].'" width="100%"></img>';
-                    }
+                        }
 
-                    $result .= '
+                        $result .= '
                 </div>';
 
-                    $result .= '
+                        $result .= '
                 <button class="btn btn-sm btn-info" data-target="#bs-popup2"  type="button" data-title="'.prepareToField($r['nome']).' <small><em>('.$r['filename'].')</em></small>" data-href="#view-'.$r['id'].'">
                     <i class="fa fa-eye"></i>
                 </button>';
-                } else {
-                    $result .= '
+                    } else {
+                        $result .= '
                 <button class="btn btn-sm btn-default" title="'.tr('Anteprima file non disponibile').'." onclick="alert(\''.tr('Anteprima file di tipo "'.$extension.'" non supportata.').'\');">
                     <i class="fa fa-eye"></i>
                 </button>';
-                }
+                    }
 
-                if (!$options['readonly']) {
-                    $result .= '
+                    if (!$options['readonly']) {
+                        $result .= '
                 <a class="btn btn-sm btn-danger ask" data-backto="record-edit" data-msg="'.tr('Vuoi eliminare questo file?').'" data-op="unlink_file" data-id="'.$r['id'].'" data-filename="'.$r['filename'].'">
                     <i class="fa fa-trash"></i>
                 </a>';
-                }
+                    }
 
-                $result .= '
+                    $result .= '
             </td>
         </tr>';
 
-                ++$count;
-            }
+                    ++$count;
+                }
 
-            $result .= '
+                $result .= '
     </table>
     </div>
 </div>
 
         <div class="clearfix"></div>
         <br>';
+            }
         }
 
         // Form per l'upload di un nuovo file

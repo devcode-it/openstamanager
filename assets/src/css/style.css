@@ -364,6 +364,7 @@ span.form-control {
 .info-box-text {
     white-space: normal;
     overflow: auto;
+	font-size: 12px;
 }
 
 .colorpicker,
@@ -529,15 +530,17 @@ input.small-width {
     }
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 767px) {
     .box-center,
     .box-center-large {
         width: 90%;
         margin-top: 20px
     }
-    .main-header .logo {
+    
+	.main-header .logo {
         display: none;
     }
+
     /*
     .content-wrapper,
     .right-side,

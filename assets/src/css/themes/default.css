@@ -198,19 +198,3 @@
 .skin-default .panel-primary .panel-heading {
     border-bottom: 2px solid #57a;
 }
-
-.skin-default .ui-autocomplete {
-    background: #f6f6f6;
-    border-color: #ccc;
-    border-color: rgba(0, 0, 0, 0.2);
-    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    -webkit-background-clip: padding-box;
-    -moz-background-clip: padding;
-    background-clip: padding-box;
-}
-
-.skin-default .parsley-errors-list{
-    color: red;
-}

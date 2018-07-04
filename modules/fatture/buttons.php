@@ -16,7 +16,7 @@ echo '
 if ($dir == 'entrata' && empty($records[0]['ref_documento']) && $records[0]['stato'] == 'Emessa') {
     echo '
 <div class="btn-group">
-    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button type="button" class="btn btn-primary unblockable dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fa fa-magic"></i> '.tr('Crea').' <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
     </button>

@@ -139,7 +139,7 @@ if ($dir == 'entrata') {
 
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Tipo fattura'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, descrizione FROM co_tipidocumento WHERE dir='<?php echo $dir; ?>'", "value": "$idtipodocumento$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo fattura'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, descrizione FROM co_tipidocumento WHERE dir='<?php echo $dir; ?>' AND (reversed = 0 OR id = <?php echo $records[0]['idtipodocumento']; ?>)", "value": "$idtipodocumento$", "readonly": <?php echo intval($records[0]['stato'] != 'Bozza' && $records[0]['stato'] != 'Annullata'); ?> ]}
 				</div>
 
 				<div class="col-md-3">
@@ -382,10 +382,10 @@ include $docroot.'/modules/fatture/row-list.php';
 
 <?php
 
-if(!empty($note_accredito)){
+if (!empty($note_accredito)) {
     echo '
 <div class="alert alert-info text-center">'.tr('Note di accredito collegate').':';
-    foreach($note_accredito as $nota){
+    foreach ($note_accredito as $nota) {
         $text = tr('Rif. fattura _NUM_ del _DATE_', [
             '_NUM_' => $nota['numero'],
             '_DATE_' => Translator::dateToLocale($nota['data']),

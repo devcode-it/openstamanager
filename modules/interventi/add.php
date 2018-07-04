@@ -253,24 +253,27 @@ if (empty($new_codice)) {
 
 <script type="text/javascript">
 	$(document).ready(function(){
-		$("#idsede").prop("disabled", true);
-		$("#idpreventivo").prop("disabled", true);
-		$("#idcontratto").prop("disabled", true);
-		$("#idimpianti").prop("disabled", true);
-		$("#componenti").prop("disabled", true);
+        if(!$("#idanagrafica").val()){
+            $("#idsede").prop("disabled", true);
+            $("#idpreventivo").prop("disabled", true);
+            $("#idcontratto").prop("disabled", true);
+            $("#idimpianti").prop("disabled", true);
+            $("#componenti").prop("disabled", true);
 
         <?php
         if (!empty($idcontratto) && (!empty($idordineservizio) || !empty($idcontratto_riga))) {
             // Disabilito i campi che non devono essere modificati per poter collegare l'intervento all'ordine di servizio
 
             echo '
-        $("#idanagrafica").prop("disabled", true);
-        $("#idclientefinale").prop("disabled", true);
-        $("#idzona").prop("disabled", true);
-		$("#idtipointervento").prop("disabled", true);
-        $("#impianti").find("button").prop("disabled", true);';
+            $("#idanagrafica").prop("disabled", true);
+            $("#idclientefinale").prop("disabled", true);
+            $("#idzona").prop("disabled", true);
+            $("#idtipointervento").prop("disabled", true);
+            $("#impianti").find("button").prop("disabled", true);';
         }
 ?>
+        }
+
         $("#orario_inizio").on("dp.change", function (e) {
             $("#orario_fine").data("DateTimePicker").minDate(e.date);
         });

@@ -385,3 +385,9 @@ INSERT INTO `zz_files` (`id_module`, `id_record`, `nome`, `filename`, `original`
 -- Fix widgets fatturato
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(\" \", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), \",\", \"#\"), \".\", \",\"), \"#\", \".\"), \"&euro;\") AS dato FROM co_documenti WHERE idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir=\"entrata\") AND idstatodocumento NOT IN (SELECT id FROM co_statidocumento WHERE descrizione=\"Bozza\" OR descrizione=\"Annullata\") |segment| AND data >= \"|period_start|\" AND data <= \"|period_end|\" AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(\" \", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare))), 2), \",\", \"#\"), \".\", \",\"), \"#\", \".\"), \"&euro;\") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir=\'uscita\' AND idstatodocumento NOT IN (SELECT id FROM co_statidocumento WHERE descrizione=\"Bozza\" OR descrizione=\"Annullata\") |segment| AND data_emissione >= \"|period_start|\" AND data_emissione <= \"|period_end|\"' WHERE `zz_widgets`.`name` = 'Acquisti';
+
+-- Introduzione del tipo documento nelle tabelle Fatture
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Tipo', 'co_tipidocumento.descrizione', 4, 1, 0, 1, 1);
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Tipo', 'co_tipidocumento.descrizione', 4, 1, 0, 1, 1);

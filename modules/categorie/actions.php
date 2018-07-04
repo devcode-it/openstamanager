@@ -19,9 +19,11 @@ switch (filter('op')) {
 
     case 'add':
         $nome = filter('nome');
+		$nota = filter('nota');
+        $colore = filter('colore');
 
         if (isset($nome)) {
-            $dbo->query('INSERT INTO `mg_categorie` (`nome`) VALUES ('.prepare($nome).')');
+            $dbo->query('INSERT INTO `mg_categorie` (`nome`, `colore`, `nota`) VALUES ('.prepare($nome).', '.prepare($colore).', '.prepare($nota).')');
 
             $id_record = $dbo->lastInsertedID();
 

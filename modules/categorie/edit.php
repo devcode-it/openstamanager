@@ -79,7 +79,7 @@ $res = $dbo->fetchNum('SELECT * FROM `mg_articoli` WHERE `id_categoria`='.prepar
 if ($res) {
     echo '
     <div class="alert alert-danger">
-        <p>'.tr('Esistono ancora alcuni articoli sotto questa categoria!').'</p>
+        <p>'.tr('Ci sono '.count($res).' articoli collegati questa categoria. Non è possibile eliminarla.').'</p>
     </div>';
 } else {
     echo '

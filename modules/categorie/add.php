@@ -19,17 +19,14 @@ if (isset($id_record)) {
 if (!isset($id_original)) {
     ?>
 	<input type="hidden" name="op" value="add">
-
-	<div class="row">
-		<div class="col-md-12">
-			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1 ]}
-		</div>
-	</div>
 <?php
 } else {
         ?>
 	<input type="hidden" name="op" value="row">
 	<input type="hidden" name="id_original" value="<?php echo $id_original; ?>">
+<?php
+    }
+?>
 
 	<div class="row">
         <div class="col-md-8">
@@ -46,19 +43,6 @@ if (!isset($id_original)) {
             {[ "type": "textarea", "label": "<?php echo  tr('Nota'); ?>", "name": "nota", "value": "$nota$" ]}
         </div>
     </div>
-
-	<script>
-		$(document).ready( function(){
-			$('.colorpicker').colorpicker().on('changeColor', function(){
-				$('#colore_').parent().find('.square').css('background', $('#colore_').val());
-			});
-
-			$('#colore_').parent().find('.square').css('background', $('#colore_').val());
-		});
-	</script>
-<?php
-    }
-?>
 
 	<!-- PULSANTI -->
 	<div class="row">
@@ -77,3 +61,13 @@ if (isset($id_record)) {
 		</div>
 	</div>
 </form>
+
+<script>
+		$(document).ready( function(){
+			$('.colorpicker').colorpicker().on('changeColor', function(){
+				$('#colore_').parent().find('.square').css('background', $('#colore_').val());
+			});
+
+			$('#colore_').parent().find('.square').css('background', $('#colore_').val());
+		});
+</script>

@@ -152,15 +152,15 @@ if (empty($new_codice)) {
 			<!-- RIGA 2 -->
 			<div class="row">
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Preventivo'); ?>", "name": "idpreventivo", "placeholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "preventivi" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Preventivo'); ?>", "name": "idpreventivo"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "preventivi" ]}
 				</div>
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $idcontratto; ?>", "placeholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "contratti" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $idcontratto; ?>"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "contratti" ]}
 				</div>
 
 				<div class="col-md-4" id='impianti'>
-                    {[ "type": "select", "label": "<?php echo tr('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto; ?>", "placeholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "impianti-cliente", "icon-after": "add|<?php echo Modules::get('MyImpianti')['id']; ?>|source=Attività|<?php echo (empty($idimpianto)) ? '' : 'disabled'; ?>", "data-heavy": 0 ]}
+                    {[ "type": "select", "label": "<?php echo tr('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto; ?>"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "impianti-cliente", "icon-after": "add|<?php echo Modules::get('MyImpianti')['id']; ?>|source=Attività|<?php echo (empty($idimpianto)) ? '' : 'disabled'; ?>", "data-heavy": 0 ]}
 				</div>
 			</div>
 

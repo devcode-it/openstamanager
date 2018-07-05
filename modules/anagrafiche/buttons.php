@@ -21,12 +21,12 @@ if (in_array($id_cliente, $tipi_anagrafica)) {
             '.tr('Nuovo contratto').'
         </a></li>
 
-        <li><a data-toggle="modal" data-title="'.tr('Aggiungi ddt').'" data-target="#bs-popup" data-href="add.php?id_module='.Modules::get('Ddt di vendita')['id'].'&idanagrafica='.$records[0]['idanagrafica'].'">
-            '.tr('Nuovo ddt').'
-        </a></li>
-
         <li><a data-toggle="modal" data-title="'.tr('Aggiungi ordine').'" data-target="#bs-popup" data-href="add.php?id_module='.Modules::get('Ordini cliente')['id'].'&idanagrafica='.$records[0]['idanagrafica'].'">
             '.tr('Nuovo ordine').'
+        </a></li>
+		
+		  <li><a data-toggle="modal" data-title="'.tr('Aggiungi ddt').'" data-target="#bs-popup" data-href="add.php?id_module='.Modules::get('Ddt di vendita')['id'].'&idanagrafica='.$records[0]['idanagrafica'].'">
+            '.tr('Nuovo ddt').'
         </a></li>
 
         <li><a data-toggle="modal" data-title="'.tr('Aggiungi fattura').'" data-target="#bs-popup" data-href="add.php?id_module='.Modules::get('Fatture di vendita')['id'].'&idanagrafica='.$records[0]['idanagrafica'].'">

@@ -5,6 +5,7 @@ include_once __DIR__.'/../../core.php';
 // Rimuovo session usate sui select combinati (sedi, preventivi, contratti, impianti)
 unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idsede']);
+unset($_SESSION['superselect']['non_fatturato']);
 
 // Se ho passato l'idanagrafica, carico il tipo di intervento di default
 $idanagrafica = filter('idanagrafica');

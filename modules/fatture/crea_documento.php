@@ -44,7 +44,7 @@ if ($module['name'] == 'Ordini cliente' || $module['name'] == 'Ordini fornitore'
     $dir = ($module['name'] == 'Ddt di vendita') ? 'entrata' : 'uscita';
 } else {
     $pos = 'fat';
-    $op = 'nota_accredito';
+    $op = 'nota_credito';
 
     $head = tr('Fattura numero _NUM_');
 

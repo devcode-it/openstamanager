@@ -1,6 +1,8 @@
 <?php
 
-// Aggiornamento nazioni con codice ISO 3166-1 alpha-2 e nome in inglese
+/*
+* Aggiornamento nazioni con codice ISO 3166-1 alpha-2 e nome in inglese
+*/
 
 $it = [
   'AF' => 'Afghanistan',
@@ -42,7 +44,7 @@ $it = [
   'CA' => 'Canada',
   'CV' => 'Capo Verde',
   'BQ' => 'Caraibi olandesi',
-  'CZ' => 'Cèchia',
+  'CZ' => 'Repubblica ceca',
   'EA' => 'Ceuta e Melilla',
   'TD' => 'Ciad',
   'CL' => 'Cile',
@@ -144,7 +146,7 @@ $it = [
   'LU' => 'Lussemburgo',
   'MG' => 'Madagascar',
   'MW' => 'Malawi',
-  'MY' => 'Malaysia',
+  'MY' => 'Malesia',
   'MV' => 'Maldive',
   'ML' => 'Mali',
   'MT' => 'Malta',
@@ -258,6 +260,7 @@ $it = [
   'YE' => 'Yemen',
   'ZM' => 'Zambia',
   'ZW' => 'Zimbabwe',
+  'AN' => 'Antille olandesi',
 ];
 
 $en = [
@@ -314,8 +317,8 @@ $en = [
     'CC' => 'Cocos (Keeling) Islands',
     'CO' => 'Colombia',
     'KM' => 'Comoros',
-    'CG' => 'Congo - Brazzaville',
-    'CD' => 'Congo - Kinshasa',
+    'CG' => 'Repubblica del Congo',
+    'CD' => 'Repubblica Democratica del Congo',
     'CK' => 'Cook Islands',
     'CR' => 'Costa Rica',
     'CI' => 'Côte d’Ivoire',
@@ -516,11 +519,104 @@ $en = [
     'YE' => 'Yemen',
     'ZM' => 'Zambia',
     'ZW' => 'Zimbabwe',
+    'AN' => 'Netherlands Antilles',
 ];
 
+// Fix dei valori preimpostati
+$database->update('an_nazioni', [
+    'nome' => 'Antigua e Barbuda',
+], ['nome' => 'ANTIGUA AND BARBUDA']);
+
+$database->update('an_nazioni', [
+    'nome' => 'Azerbaijan',
+], ['nome' => 'AZERBAIJAN REPUBLIC']);
+
+$database->update('an_nazioni', [
+    'nome' => 'Bosnia & Herzegovina',
+], ['nome' => 'BOSNIA AND HERZEGOVINA']);
+
+$database->update('an_nazioni', [
+    'nome' => 'China',
+], ['nome' => 'CHINA WORLDWIDE']);
+
+$database->update('an_nazioni', [
+    'nome' => 'Repubblica Democratica del Congo',
+], ['nome' => 'DEMOCRATIC REPUBLIC OF THE CONGO']);
+
+$database->update('an_nazioni', [
+    'nome' => 'Micronesia',
+], ['nome' => 'FEDERATED STATES OF MICRONESIA']);
+
+$database->update('an_nazioni', [
+    'nome' => 'Gabon',
+], ['nome' => 'GABON REPUBLIC']);
+
+$database->update('an_nazioni', [
+    'nome' => 'Guinea-Bissau',
+], ['nome' => 'GUINEA BISSAU']);
+
+$database->update('an_nazioni', [
+    'nome' => 'RAS di Hong Kong',
+], ['nome' => 'HONG KONG']);
+
+$database->update('an_nazioni', [
+    'nome' => 'Paesi Bassi',
+], ['nome' => 'OLANDA']);
+
+$database->update('an_nazioni', [
+    'nome' => 'Norway',
+], ['nome' => 'NORWEGIA']);
+
+$database->update('an_nazioni', [
+    'nome' => 'Saint Vincent e Grenadines',
+], ['nome' => 'SAINT VINCENT AND THE GRENADINES']);
+
+$database->update('an_nazioni', [
+    'nome' => 'South Africa',
+], ['nome' => 'SUD AFRICA']);
+
+$database->update('an_nazioni', [
+    'nome' => 'Corea del Sud',
+], ['nome' => 'SUD KOREA']);
+
+$database->update('an_nazioni', [
+    'nome' => 'Saint Kitts e Nevis',
+], ['nome' => 'ST. KITTS AND NEVIS']);
+
+$database->update('an_nazioni', [
+    'nome' => 'St. Pierre & Miquelon',
+], ['nome' => 'ST. PIERRE AND MIQUELON']);
+
+$database->update('an_nazioni', [
+    'nome' => 'Svalbard e Jan Mayen',
+], ['nome' => 'SVALBARD AND JAN MAYEN ISLANDS']);
+
+$database->update('an_nazioni', [
+    'nome' => 'Isole Turks e Caicos',
+], ['nome' => 'TURKS AND CAICOS ISLANDS']);
+
+$database->update('an_nazioni', [
+    'nome' => 'Wallis & Futuna',
+], ['nome' => 'WALLIS AND FUTUNA ISLANDS']);
+
+// Aggiornamenti e inserimenti
 foreach ($it as $key => $value) {
-    $database->update('an_nazioni', [
-        'iso2' => $key,
-        'name' => $en[$key],
-    ], ['nome' => $value]);
+    $italian = $value;
+    $english = $en[$key];
+
+    if ($database->fetchNum('SELECT id FROM an_nazioni WHERE nome IN('.prepare($italian).', '.prepare($english).')') != 0) {
+        $database->update('an_nazioni', [
+            'iso2' => $key,
+            'nome' => $italian,
+            'name' => $english,
+        ], [
+            'nome' => [$italian, $english],
+        ]);
+    } else {
+        $database->insert('an_nazioni', [
+            'iso2' => $key,
+            'nome' => $italian,
+            'name' => $english,
+        ]);
+    }
 }

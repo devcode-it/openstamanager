@@ -263,7 +263,7 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
                 $marca_da_bollo = 0.00;
             }
 
-            // Se l'importo è negativo può essere una nota di accredito, quindi cambio segno alla marca da bollo
+            // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo
             if ($netto_a_pagare < 0) {
                 $marca_da_bollo *= -1;
             }

@@ -63,7 +63,6 @@ INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
 (4, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Modelli prima nota') AND name='id' )),
 (4, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Modelli prima nota') AND name='Causale predefinita' ));
 
-
 -- Widget per stampa calendario
 INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`, `help` ) VALUES (NULL, 'Stampa calendario', 'print', '1', 'controller_top', 'col-md-12', NULL, '#4ccc4c', 'fa fa-print', '', './modules/dashboard/widgets/stampa_calendario.dashboard.php', 'popup', '', 'Stampa calendario', '1', '7', NULL);
 
@@ -73,10 +72,8 @@ INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `direc
 -- Rimosso group by nome banche
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_banche` WHERE 1=1 AND deleted = 0 HAVING 2=2' WHERE `zz_modules`.`name` = 'Banche';
 
-
 -- impianti per pianificazione contratti
 ALTER TABLE `co_righe_contratti` ADD `idimpianti` VARCHAR(255) NOT NULL AFTER `idsede`;
-
 
 -- Struttura della tabella `co_righe_contratti_materiali`
 CREATE TABLE IF NOT EXISTS `co_righe_contratti_materiali` (
@@ -96,7 +93,6 @@ CREATE TABLE IF NOT EXISTS `co_righe_contratti_materiali` (
   PRIMARY KEY (`id`),
   KEY `id_riga_contratto` (`id_riga_contratto`)
 );
-
 
 -- Struttura della tabella `co_righe_contratti_articoli`
 CREATE TABLE IF NOT EXISTS `co_righe_contratti_articoli` (
@@ -122,7 +118,6 @@ CREATE TABLE IF NOT EXISTS `co_righe_contratti_articoli` (
   KEY `idimpianto` (`idimpianto`)
 );
 
-
 -- Modifica query wiget per mostrare solo quelli che non sono stati rinnovati
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato, co_contratti.id, DATEDIFF( data_conclusione, NOW() ) AS giorni_rimanenti FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND rinnovabile=1 AND NOW() > DATE_ADD( data_conclusione, INTERVAL - ABS(giorni_preavviso_rinnovo) DAY) AND YEAR(data_conclusione) > 1970 HAVING ISNULL((SELECT id FROM co_contratti contratti WHERE contratti.idcontratto_prev=co_contratti.id )) ORDER BY giorni_rimanenti ASC' WHERE `zz_widgets`.`name` = 'Contratti in scadenza';
 
@@ -140,7 +135,6 @@ ALTER TABLE `in_interventi_tecnici` CHANGE `uid` `uid` VARCHAR(255), CHANGE `sum
 UPDATE `in_interventi_tecnici` SET `uid` = NULL WHERE `uid` = '';
 UPDATE `in_interventi_tecnici` SET `summary` = NULL WHERE `summary` = '';
 ALTER TABLE `in_interventi_tecnici` CHANGE `uid` `uid` int(11);
-
 
 -- Aggiorno campo 'Data' in 'Data movimento'
 UPDATE `zz_views` SET `name` = 'Data movimento', `order` = '6' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti') AND name = 'Data';

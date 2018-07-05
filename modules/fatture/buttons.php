@@ -23,11 +23,11 @@ if ($dir == 'entrata' && empty($records[0]['ref_documento']) && $records[0]['sta
 
     <ul class="dropdown-menu dropdown-menu-right">
         <li><a href="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=nota_addebito&backto=record-edit">
-            '.tr('Nota di addebito').'
+            '.tr('Nota di debito').'
         </a></li>
 
-        <li><a data-href="'.$rootdir.'/modules/fatture/crea_documento.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi nota di accredito" data-target="#bs-popup">
-            '.tr('Nota di accredito').'
+        <li><a data-href="'.$rootdir.'/modules/fatture/crea_documento.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi nota di credito" data-target="#bs-popup">
+            '.tr('Nota di credito').'
         </a></li>
     </ul>
 </div>';

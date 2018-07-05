@@ -625,7 +625,7 @@ function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenu
             $marca_da_bollo = $bolli;
         }
 
-        // Se l'importo è negativo può essere una nota di accredito, quindi cambio segno alla marca da bollo
+        // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo
         $marca_da_bollo = abs($marca_da_bollo);
 
         $dbo->query('UPDATE co_documenti SET ritenutaacconto='.prepare($ritenutaacconto).', rivalsainps='.prepare($rivalsainps).', iva_rivalsainps='.prepare($iva_rivalsainps).', bollo='.prepare($marca_da_bollo).' WHERE id='.prepare($iddocumento));
@@ -1066,7 +1066,7 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
             $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idordine='.prepare($riga['idordine']));
         }
 
-        // Nota di accredito
+        // Nota di credito
         if (!empty($riga['ref_riga_documento'])) {
             $dbo->query('UPDATE co_righe_documenti SET qta_evasa = qta_evasa+'.$riga['qta'].' WHERE id='.prepare($riga['ref_riga_documento']));
 

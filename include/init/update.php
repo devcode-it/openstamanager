@@ -80,18 +80,13 @@ if (filter('action') == 'do_update') {
             echo '
         <p class="text-danger">'.tr("E' fortemente consigliato rimuovere i permessi di scrittura dal file _FILE_", [
             '_FILE_' => '<b>config.inc.php</b>',
-        ]).'.</p>
+        ]).'.</p>';
+        }
 
+        echo '
         <a class="btn btn-success btn-block" href="'.ROOTDIR.'">
             <i class="fa fa-check"></i> '.tr('Continua').'
         </a>';
-        } else {
-            // Rimostro la finestra di login
-            echo '
-        <script>
-            $(".login-box").fadeIn();
-        </script>';
-        }
     }
 
     exit();

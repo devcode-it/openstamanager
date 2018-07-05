@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once $docroot.'/modules/fatture/modutil.php';
+include_once Modules::filepath('Fatture di vendita', 'modutil.php');
 
 switch (post('op')) {
     case 'add':
@@ -90,6 +90,19 @@ switch (post('op')) {
                 $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id IN (SELECT idintervento FROM co_preventivi_interventi WHERE idpreventivo=".prepare($rs2[$j]['idpreventivo']).')');
             }
         }
+
+        //Creo il modello di prima nota
+
+        if (post('crea_modello') == '1') {
+            $idmastrino = get_new_idmastrino('co_movimenti_modelli');
+
+            for ($i = 0; $i < sizeof($post['idconto']); ++$i) {
+                $idconto = post('idconto')[$i];
+                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($descrizione).', '.prepare($idconto).')';
+                $dbo->query($query);
+            }
+        }
+
         break;
 
     case 'editriga':

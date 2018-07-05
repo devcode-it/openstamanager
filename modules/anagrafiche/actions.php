@@ -49,7 +49,7 @@ switch (post('op')) {
             'idlistino_vendite' => $post['idlistino_vendite'],
             'idiva_acquisti' => $post['idiva_acquisti'],
             'idiva_vendite' => $post['idiva_vendite'],
-		   'idbanca_acquisti' => $post['idbanca_acquisti'],
+           'idbanca_acquisti' => $post['idbanca_acquisti'],
             'idbanca_vendite' => $post['idbanca_vendite'],
             'settore' => $post['settore'],
             'marche' => $post['marche'],
@@ -76,15 +76,10 @@ switch (post('op')) {
 
         // Validazione della Partita IVA
         $check_vat_number = Validate::isValidVatNumber(strtoupper($post['piva']));
-        // Se $check_vat_number non è null e la riposta è negativa --> mostro il messaggio di avviso.
-        if ((!is_null($check_vat_number)) && (!$check_vat_number->valid)) {
-            if (!empty($check_vat_number->error->info)) {
-                $_SESSION['errors'][] = $check_vat_number->error->info;
-            } else {
-                $_SESSION['errors'][] = tr('Attenzione: la partita IVA _IVA_ sembra non essere valida', [
-                    '_IVA_' => $post['piva'],
-                ]);
-            }
+        if (empty($check_vat_number)) {
+            $_SESSION['errors'][] = tr('Attenzione: la partita IVA _IVA_ sembra non essere valida', [
+                '_IVA_' => $post['piva'],
+            ]);
         }
 
         // Aggiorno il codice anagrafica se non è già presente, altrimenti lo ignoro
@@ -107,7 +102,7 @@ switch (post('op')) {
 
         // Aggiorno le tipologie di anagrafica
         $post['idtipoanagrafica'] = (array) $post['idtipoanagrafica'];
-        if (str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
+        if (in_array($id_azienda, $tipi_anagrafica)) {
             $post['idtipoanagrafica'][] = $id_azienda;
         }
 
@@ -193,8 +188,9 @@ switch (post('op')) {
         // Inserisco il rapporto dell'anagrafica (cliente, tecnico, ecc)
         $dbo->sync('an_tipianagrafiche_anagrafiche', ['idanagrafica' => $new_id], ['idtipoanagrafica' => (array) $idtipoanagrafica]);
 
-        if (in_array($id_azienda, $post['idtipoanagrafica'])) {
-            $dbo->query('UPDATE zz_settings SET valore='.prepare($new_id)." WHERE nome='Azienda predefinita'");
+        if (in_array($id_azienda, $idtipoanagrafica)) {
+            Settings::set('Azienda predefinita', $new_id);
+
             $_SESSION['infos'][] = tr('Anagrafica Azienda impostata come predefinita. Per ulteriori informazionioni, visitare "Strumenti -> Impostazioni -> Generali".');
         }
 
@@ -262,11 +258,23 @@ switch (post('op')) {
 
     case 'delete':
         // Se l'anagrafica non è l'azienda principale, la disattivo
-        if (!str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
+        if (!in_array($id_azienda, $tipi_anagrafica)) {
             $dbo->query('UPDATE an_anagrafiche SET deleted = 1 WHERE idanagrafica = '.prepare($id_record).Modules::getAdditionalsQuery($id_module));
+
+            // Se l'anagrafica è collegata ad un utente lo disabilito
+            $dbo->query('UPDATE zz_users SET enabled = 0 WHERE idanagrafica = '.prepare($id_record).Modules::getAdditionalsQuery($id_module));
 
             $_SESSION['infos'][] = tr('Anagrafica eliminata!');
         }
 
         break;
+}
+
+// Operazioni aggiuntive per il logo
+if (filter('op') == 'link_file') {
+    $nome = 'Logo stampe';
+
+    if (Settings::get('Azienda predefinita') == $id_record && filter('nome_allegato') == $nome) {
+        Settings::set($nome, $upload);
+    }
 }

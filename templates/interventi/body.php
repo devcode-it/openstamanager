@@ -112,7 +112,10 @@ echo '
 $totale = [];
 
 // MATERIALE UTILIZZATO
-$rs2 = $dbo->fetchArray('SELECT *, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice_art FROM `mg_articoli_interventi` WHERE idintervento='.prepare($id_record)." AND NOT idarticolo='0' ORDER BY idarticolo ASC");
+$rs2 = $dbo->fetchArray("SELECT *,
+    (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice_art,
+    (SELECT GROUP_CONCAT(`serial` SEPARATOR ', ') FROM `mg_prodotti` WHERE `id_riga_intervento` = `mg_articoli_interventi`.`idintervento`) AS seriali
+FROM `mg_articoli_interventi` WHERE idintervento=".prepare($id_record)." AND NOT idarticolo='0' ORDER BY idarticolo ASC");
 if (!empty($rs2)) {
     echo '
 <table class="table table-bordered">
@@ -157,13 +160,21 @@ if (!empty($rs2)) {
         // Descrizione
         echo '
             <td>
-                '.$r['descrizione'].'
+                '.$r['descrizione'];
+
+        // Seriali
+        if (!empty($r['seriali'])) {
+            echo '
+                <br><small>'.tr('SN').': '.$r['seriali'].'</small>';
+        }
+
+        echo '
             </td>';
 
         // Quantità
         echo '
             <td class="text-center">
-                '.Translator::numberToLocale($r['qta']).' '.$r['um'].'
+                '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
             </td>';
 
         // Netto
@@ -242,7 +253,7 @@ if (!empty($rs2)) {
         // Quantità
         echo '
         <td class="text-center">
-            '.Translator::numberToLocale($r['qta']).'
+            '.Translator::numberToLocale($r['qta'], 'qta').'
         </td>';
 
         // Prezzo unitario
@@ -435,9 +446,9 @@ if ($options['pricing']) {
         </th>
     </tr>';
 
-    $sconto_addebito = $costi_intervento['totale_addebito'] - $costi_intervento['totale_scontato'];
-
-    $totale_sconto = $costi_intervento['sconto_globale'] + $sconto_addebito;
+    //$sconto_addebito = $costi_intervento['totale_addebito'] - $costi_intervento['totale_scontato'];
+    $totale_sconto = $costi_intervento['totale_addebito'] - $costi_intervento['totale_scontato'];
+    //$totale_sconto = $costi_intervento['sconto_globale'] + $sconto_addebito;
 
     // Eventuale sconto totale
     if (!empty($totale_sconto)) {
@@ -460,7 +471,7 @@ if ($options['pricing']) {
             </td>
 
             <th class="text-center">
-                <b>'.Translator::numberToLocale($costi_intervento['totale']).' &euro;</b>
+                <b>'.Translator::numberToLocale($costi_intervento['totale_scontato']).' &euro;</b>
             </th>
         </tr>';
     }
@@ -469,7 +480,7 @@ if ($options['pricing']) {
     $rs1 = $dbo->fetchArray('SELECT percentuale FROM co_iva WHERE id='.prepare(get_var('Iva predefinita')));
     $percentuale_iva = $rs1[0]['percentuale'];
 
-    $iva = ($costi_intervento['totale'] / 100 * $percentuale_iva);
+    $iva = ($costi_intervento['totale_scontato'] / 100 * $percentuale_iva);
 
     // IVA
     // Totale intervento
@@ -486,7 +497,7 @@ if ($options['pricing']) {
         </th>
     </tr>';
 
-    $totale = sum($costi_intervento['totale'], $iva);
+    $totale = sum($costi_intervento['totale_scontato'], $iva);
 
     // TOTALE INTERVENTO
     echo '

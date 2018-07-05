@@ -11,19 +11,15 @@ echo '
     </div>
     <div class="panel-body">';
 
-$search_lotto = $get['search_lotto'];
-$search_serial = $get['search_serial'];
-$search_altro = $get['search_altro'];
+$search_lotto = get('search_lotto');
+$search_serial = get('search_serial');
+$search_altro = get('search_altro');
 
 // Calcolo prossimo lotto e serial number
-$rs = $dbo->fetchArray('SELECT MAX(lotto) AS max_lotto, MAX(serial) AS max_serial, MAX(altro) AS max_altro FROM mg_prodotti WHERE id_articolo='.prepare($id_record));
-//$max_lotto = $rs[0]['max_lotto'];
-$max_serial = $rs[0]['max_serial'];
-//$max_altro = $rs[0]['max_altro'];
+$rs = $dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE id_articolo='.prepare($id_record).' ORDER BY id DESC LIMIT 0,1');
+$max_serial = $rs[0]['serial'];
 
-//$next_lotto = get_next_code($max_lotto);
 $next_serial = get_next_code($max_serial);
-//$next_altro = get_next_code($max_altro);
 
 echo '
         <form action="" method="post" role="form">
@@ -38,90 +34,53 @@ echo '
                 </div>
             </div>';
 
-/*
-// Lotto
-echo '
-            <div class="row form-group">
-                <label class="col-md-2 control-label" for="lotto_start">'.tr('Lotto da').':</label>
-                <div class="col-md-2">
-                    <input type="text" class="form-control input-md" name="lotto_start" onkeyup="$(\'input[name=lotto_end]\').val( $(\'input[name=lotto_start]\').val() ); $(\'#warn_lotto\').hide(); ricalcola_totale_prodotti();" value="'.$next_lotto.'">
-                </div>
-
-                <label class="col-md-1 control-label text-center" for="lotto_end"> <i class="fa fa-arrow-circle-right fa-2x"></i> </label>
-                <div class="col-md-2">
-                    <input type="text" class="form-control input-md" name="lotto_end" onkeyup="check_progressivo( $(\'input[name=lotto_start]\'), $(\'input[name=lotto_end]\'), $(\'#warn_lotto\'), $(\'#inserisci\') );" value="'.$next_lotto.'">
-                </div>';
-if (!empty($max_lotto)) {
-    echo '
-                <div class="col-md-3">
-                    <p id="warn_lotto" class="text-danger"><b>'.tr('Ultimo lotto inserito').': </b> '.$max_lotto.'</p>
-                </div>';
-}
-echo '
-            </div>';
-*/
 // Serial
 echo '
             <div class="row form-group">
                 <label class="col-md-2 control-label" for="serial_start">'.tr('Serial number da').':</label>
+
                 <div class="col-md-2">
                     <input type="text" class="form-control input-md" name="serial_start" onkeyup="$(\'input[name=serial_end]\').val( $(\'input[name=serial_start]\').val() ); $(\'#warn_serial\').hide(); ricalcola_totale_prodotti();" value="'.$next_serial.'" />
                 </div>
 
-                <label class="col-md-1 control-label text-center" for="serial_end"> <i class="fa fa-arrow-circle-right fa-2x"></i> </label>
+                <label class="col-md-1 control-label text-center" for="serial_end">
+                    <i class="fa fa-arrow-circle-right fa-2x"></i>
+                </label>
+
                 <div class="col-md-2">
                     <input type="text" class="form-control input-md" name="serial_end" onkeyup="check_progressivo( $(\'input[name=serial_start]\'), $(\'input[name=serial_end]\'), $(\'#warn_serial\'), $(\'#inserisci\') );" value="'.$next_serial.'" />
                 </div>';
 
 if (!empty($max_serial)) {
     echo '
-                <div class="col-md-3">
+                <div class="col-md-5">
                     <p id="warn_serial" class="text-danger"><b>'.tr('Ultimo serial number inserito').': </b> '.$max_serial.'</p>
                 </div>';
 }
 echo '
             </div>';
 
-/*
-// Altro
-echo '
-            <div class="row form-group">
-                <label class="col-md-2 control-label" for="altro_start">'.tr('Altro codice da').':</label>
-                <div class="col-md-2">
-                    <input type="text" class="form-control input-md" name="altro_start" onkeyup="$(\'input[name=altro_end]\').val( $(\'input[name=altro_start]\').val() ); $(\'#warn_altro\').hide(); ricalcola_totale_prodotti();" value="'.$next_altro.'" />
-                </div>
-
-                <label class="col-md-1 control-label text-center" for="altro_end"> <i class="fa fa-arrow-circle-right fa-2x"></i> </label>
-                <div class="col-md-2">
-                    <input type="text" class="form-control input-md" name="altro_end" onkeyup="check_progressivo( $(\'input[name=altro_start]\'), $(\'input[name=altro_end]\'), $(\'#warn_altro\'), $(\'#inserisci\') );" value="'.$next_altro.'" />
-                </div>';
-if (!empty($max_altro)) {
-    echo '
-                <div class="col-md-3">
-                    <p id="warn_altro" class="text-danger"><b>'.tr('Ultimo codice aggiuntivo inserito').': </b> '.$max_altro.'</p>
-                </div>';
-}
-echo '
-            </div>';
-*/
-
 // Totale prodotti da inserire
 echo '
             <div class="row">
                 <div class="col-md-12">
-                    <p class="text-danger text-center">'.tr('Totale prodotti da inserire').': <span id="totale_prodotti">0</span></p>
-                    <button type="submit" id="inserisci" class="btn btn-success" onclick="if( confirm(\'Confermi l\\\'inserimento di \' + globalsp.n_prodotti + \' prodotti?\') ){ $(\'#insert_form\').submit(); }"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>';
+                    <p class="text-danger">'.tr('Totale prodotti da inserire').': <span id="totale_prodotti">0</span></p>
+
+                    <button type="submit" id="inserisci" class="btn btn-success pull-right" onclick="if( confirm(\'Confermi l\\\'inserimento di \' + globalsp.n_prodotti + \' prodotti?\') ){ $(\'#insert_form\').submit(); }"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>
+                    <div class="clearfix"></div>
+                    <div class="alert alert-info">';
 
 // Visualizzo, in base alle impostazioni scelte, se il magazzino verrà movimentato
-if (get_var("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number") == true) {
+if (get_var("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
     echo '
-                    <small>'.tr("L'inserimento incrementerà la quantità dell'articolo!").'</small>';
+                        <small>'.tr("L'inserimento incrementerà la quantità dell'articolo!").'</small>';
 } else {
     echo '
-                    <small>'.tr("L'inserimento non movimenterà la quantità dell'articolo!").'</small>';
+                        <small>'.tr("L'inserimento non movimenterà la quantità dell'articolo!").'</small>';
 }
 
 echo '
+                    </div>
                 </div>
             </div>
         </form>

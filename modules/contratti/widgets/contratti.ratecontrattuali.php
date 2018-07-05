@@ -22,7 +22,8 @@ echo '
 <hr>';
 
 // Righe inserite
-$qp = "SELECT *, (SELECT SUM(subtotale) FROM co_righe2_contratti WHERE idcontratto=co_ordiniservizio_pianificazionefatture.idcontratto) AS budget_contratto, DATE_FORMAT( data_scadenza, '%m-%Y') AS mese, (SELECT idanagrafica FROM co_contratti WHERE id=idcontratto) AS idcliente, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id=idcontratto)) AS ragione_sociale, (SELECT descrizione FROM an_zone WHERE id=co_ordiniservizio_pianificazionefatture.idzona) AS zona FROM co_ordiniservizio_pianificazionefatture WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND co_ordiniservizio_pianificazionefatture.iddocumento=0 ORDER BY DATE_FORMAT( data_scadenza, '%m-%Y') ASC, idcliente ASC";
+//idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND
+$qp = "SELECT *, (SELECT SUM(subtotale) FROM co_righe_contratti WHERE idcontratto=co_ordiniservizio_pianificazionefatture.idcontratto) AS budget_contratto, DATE_FORMAT( data_scadenza, '%m-%Y') AS mese, (SELECT idanagrafica FROM co_contratti WHERE id=idcontratto) AS idcliente, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id=idcontratto)) AS ragione_sociale, (SELECT descrizione FROM an_zone WHERE id=co_ordiniservizio_pianificazionefatture.idzona) AS zona FROM co_ordiniservizio_pianificazionefatture WHERE  co_ordiniservizio_pianificazionefatture.iddocumento=0 ORDER BY DATE_FORMAT( data_scadenza, '%m-%Y') ASC, idcliente ASC";
 $rsp = $dbo->fetchArray($qp);
 
 if (!empty($rsp)) {
@@ -123,10 +124,9 @@ if (!empty($rsp)) {
             echo '
                 <td>';
             if (empty($r['idintervento'])) {
-                echo "
-                    <a class='btn btn-primary' title=\"Crea fattura\" onclick=\"launch_modal( 'Crea fattura', '".$rootdir.'/add.php?id_module='.Modules::get('Fatture di vendita')['id'].'&id_record='.$r['idcontratto'].'&idpianificazione='.$r['id'].'&importo='.$importo.'&n_rata='.$n_rata[$r['idzona']][$r['idcontratto']]."', '1' );\">
-                        <i class='fa fa-euro'></i>
-                    </a>";
+                echo '<button type="button" class="btn btn-primary btn-sm" onclick="launch_modal( \'Crea fattura\', \''.$rootdir.'/modules/contratti/plugins/addfattura.php?idcontratto='.$r['idcontratto'].'&idpianificazione='.$r['id'].'&importo='.$importo.'&n_rata='.$n_rata[$r['idzona']][$r['idcontratto']].'\', 1 );">
+					<i class="fa fa-euro"></i> Crea fattura
+				</button>';
             }
             echo '
                 </td>

@@ -5,4 +5,4 @@ CREATE TABLE `updates` (
   `script` boolean NOT NULL,
   `done` int(11),
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
+) ENGINE=InnoDB;

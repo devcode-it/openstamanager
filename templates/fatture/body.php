@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+include_once DOCROOT.'/modules/fatture/modutil.php';
+
 $report_name = 'fattura_'.$numero.'.pdf';
 
 $autofill = [
@@ -31,7 +33,7 @@ echo "
             <th class='text-center' style='width:10%'>".tr('IVA', [], ['upper' => true]).' (%)</th>
         </tr>
     </thead>
-    
+
     <tfoot>
         <tr>
             <td style="border-top:none; border-bottom:1px solid #aaa;"></td>
@@ -54,6 +56,13 @@ foreach ($righe as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
     $count += substr_count($r['descrizione'], PHP_EOL);
+
+    // Valori assoluti
+    $r['qta'] = abs($r['qta']);
+    $r['subtotale'] = abs($r['subtotale']);
+    $r['sconto_unitario'] = abs($r['sconto_unitario']);
+    $r['sconto'] = abs($r['sconto']);
+    $r['iva'] = abs($r['iva']);
 
     echo '
         <tr>
@@ -83,76 +92,28 @@ foreach ($righe as $r) {
     }
 
     // Aggiunta dei riferimenti ai documenti
-    $ref_modulo = null;
-    $ref_id = null;
+    if (!empty($records[0]['ref_documento'])) {
+        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE id = ".prepare($records[0]['ref_documento']));
 
-    // Ordine
-    if (!empty($r['idordine'])) {
-        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM or_ordini WHERE id=".prepare($r['idordine']));
+        $text = tr('Rif. fattura _NUM_ del _DATE_', [
+            '_NUM_' => $data[0]['numero'],
+            '_DATE_' => Translator::dateToLocale($data[0]['data']),
+        ]);
 
-        $ref_modulo = ($records[0]['dir'] == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
-        $ref_id = $r['idordine'];
+        echo '
+        <br><small>'.$text.'</small>';
 
-        $documento = tr('Ordine');
-    }
-    // DDT
-    elseif (!empty($r['idddt'])) {
-        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM dt_ddt WHERE id=".prepare($r['idddt']));
-
-        $ref_modulo = ($records[0]['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
-        $ref_id = $r['idddt'];
-
-        $documento = tr('Ddt');
-    }
-    // Preventivo
-    elseif (!empty($r['idpreventivo'])) {
-        $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_preventivi WHERE id='.prepare($r['idpreventivo']));
-
-        $ref_modulo = 'Preventivi';
-        $ref_id = $r['idpreventivo'];
-
-        $documento = tr('Preventivo');
-    }
-    // Contratto
-    elseif (!empty($r['idcontratto'])) {
-        $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_contratti WHERE id='.prepare($r['idcontratto']));
-
-        $ref_modulo = 'Contratti';
-        $ref_id = $r['idcontratto'];
-
-        $documento = tr('Contratto');
-    }
-    // Intervento
-    elseif (!empty($r['idintervento'])) {
-        $data = $dbo->fetchArray('SELECT codice AS numero, data_richiesta AS data FROM in_interventi WHERE id='.prepare($r['idintervento']));
-
-        $ref_modulo = 'Interventi';
-        $ref_id = $r['idintervento'];
-
-        $documento = tr('Intervento');
-    }
-
-    if (!empty($ref_modulo) && !empty($ref_id)) {
-        $documento = Stringy\Stringy::create($documento)->toLowerCase();
-
-        if (!empty($data)) {
-            $descrizione = tr('Rif. _DOC_ num. _NUM_ del _DATE_', [
-                '_DOC_' => $documento,
-                '_NUM_' => $data[0]['numero'],
-                '_DATE_' => Translator::dateToLocale($data[0]['data']),
-            ]);
-        } else {
-            $descrizione = tr('_DOC_ di riferimento _ID_ eliminato', [
-                '_DOC_' => $documento->upperCaseFirst(),
-                '_ID_' => $ref_id,
-            ]);
+        if ($count <= 1) {
+            $count += 0.4;
         }
     }
 
-    // Stampa dei riferimenti
-    if (!empty($descrizione)) {
+    $ref = doc_references($r, $records[0]['dir'], ['iddocumento']);
+
+    if (!empty($ref)) {
         echo '
-                <br><small>'.$descrizione.'</small>';
+                <br><small>'.$ref['description'].'</small>';
+
         if ($count <= 1) {
             $count += 0.4;
         }
@@ -165,7 +126,7 @@ foreach ($righe as $r) {
             <td class="text-center">';
     if (empty($r['is_descrizione'])) {
         echo '
-                '.Translator::numberToLocale($r['qta']).' '.$r['um'];
+                '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'];
     }
     echo '
             </td>';
@@ -243,14 +204,13 @@ echo '
     </tbody>
 </table>';
 
-
 // Aggiungo diciture particolari per l'anagrafica cliente
 $dicitura = $dbo->fetchArray('SELECT diciturafissafattura FROM an_anagrafiche WHERE idanagrafica = '.prepare($id_cliente));
 
 if (!empty($dicitura[0]['diciturafissafattura'])) {
-	$testo = $dicitura[0]['diciturafissafattura'];
+    $testo = $dicitura[0]['diciturafissafattura'];
 
-	echo "
+    echo "
 <p class='text-center'>
 <b>".nl2br($testo).'</b>
 </p>';
@@ -273,10 +233,10 @@ echo '
 <table class="table">';
 echo '
     <tr>';
-if(abs($records[0]['bollo']) > 0){
+if (abs($records[0]['bollo']) > 0) {
     echo '
         <td width="85%">';
-}else{
+} else {
     echo '
         <td width="100%">';
 }
@@ -287,7 +247,7 @@ if(abs($records[0]['bollo']) > 0){
     }
     echo '
         </td>';
-if(abs($records[0]['bollo']) > 0){
+if (abs($records[0]['bollo']) > 0) {
     echo '
         <td width="15%" align="right">';
 }
@@ -302,7 +262,7 @@ if (abs($records[0]['bollo']) > 0) {
                 </tr>
             </table>';
 }
-if(abs($records[0]['bollo']) > 0){
+if (abs($records[0]['bollo']) > 0) {
     echo '
         </td>';
 }
@@ -314,7 +274,7 @@ echo '
 
 // Info per il footer
 $imponibile = sum($imponibile);
-$iva = sum($iva, null, 2) + $records[0]['iva_rivalsainps'];
+$iva = sum($iva, 0) + $records[0]['iva_rivalsainps'];
 $sconto = sum($sconto);
 
 $totale = $imponibile + $iva - $sconto + $records[0]['rivalsainps'];

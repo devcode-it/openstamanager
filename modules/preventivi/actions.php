@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once $docroot.'/modules/fatture/modutil.php';
+include_once Modules::filepath('Fatture di vendita', 'modutil.php');
 
 switch (post('op')) {
     case 'add':
@@ -14,10 +14,8 @@ switch (post('op')) {
         $costo_orario = $rs[0]['costo_orario'];
         $costo_diritto_chiamata = $rs[0]['costo_diritto_chiamata'];
 
-        $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
-
         // Verifico se c'è già un agente o un metodo di pagamento collegato all'anagrafica cliente, così lo imposto già
-        $q = 'SELECT idagente, '.$campo.' AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica);
+        $q = 'SELECT idagente, idpagamento_vendite AS idpagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica);
         $rs = $dbo->fetchArray($q);
         $idagente = $rs[0]['idagente'];
         $idpagamento = $rs[0]['idpagamento'];

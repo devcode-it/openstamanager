@@ -204,7 +204,7 @@ class HTMLBuilder
                     unset($json[$key]);
                 }
                 // Sostituzione delle variabili $nome$ col relativo valore da database
-                elseif (preg_match_all('/\$([a-z0-9\_]+)\$/i', $json[$key], $m)) {
+                elseif (is_string($json[$key]) && preg_match_all('/\$([a-z0-9\_]+)\$/i', $json[$key], $m)) {
                     for ($i = 0; $i < count($m[0]); ++$i) {
                         $record = isset($records[0][$m[1][$i]]) ? $records[0][$m[1][$i]] : '';
                         $json[$key] = str_replace($m[0][$i], prepareToField($record), $json[$key]);

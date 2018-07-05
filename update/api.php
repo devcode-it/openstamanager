@@ -29,8 +29,8 @@ $tables = [
     'co_pianodeiconti3',
     'co_preventivi',
     'co_preventivi_interventi',
-    'co_righe2_contratti',
     'co_righe_contratti',
+    'co_contratti_promemoria',
     'co_righe_documenti',
     'co_righe_preventivi',
     'co_ritenutaacconto',
@@ -91,7 +91,7 @@ $tables = [
 ];
 
 foreach ($tables as $table) {
-    if ($database->fetchNum('SHOW TABLES WHERE `Tables_in_'.$database->getDatabaseName().'` = '.prepare($table))) {
+    if ($database->tableExists($table)) {
         $query = 'SHOW COLUMNS FROM `'.$table.'` IN `'.$database->getDatabaseName()."` WHERE Field='|field|'";
 
         $created_at = $database->fetchArray(str_replace('|field|', 'created_at', $query));

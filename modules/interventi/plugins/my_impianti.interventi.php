@@ -1,7 +1,8 @@
 <?php
 
 include_once __DIR__.'/../../../core.php';
-include_once $docroot.'/modules/interventi/modutil.php';
+
+include_once Modules::filepath('Interventi', 'modutil.php');
 
 // INTERVENTI ESEGUITI SU QUESTO IMPIANTO
 echo '
@@ -38,7 +39,7 @@ if (!empty($results)) {
                 <td class="text-right">'.Translator::numberToLocale($costi_intervento['totale']).' &euro;</td>
             </tr>';
     }
-    
+
     echo '  <tr>';
     echo '      <td colspan="2" class="text-right">';
     echo '          <b>Totale:</b>';
@@ -47,7 +48,6 @@ if (!empty($results)) {
     echo            '<b>'.Translator::numberToLocale($totale_interventi).' &euro;</b>';
     echo '      </td>';
     echo '  </tr>';
-    
 
     echo '
         </table>';

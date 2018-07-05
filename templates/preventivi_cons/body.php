@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 include_once $docroot.'/modules/interventi/modutil.php';
-
+include_once $docroot.'/modules/preventivi/modutil.php';
 $report_name = 'preventivo_'.$records[0]['numero'].'_cons.pdf';
 
 echo '
@@ -237,7 +237,7 @@ if (!empty($interventi)) {
                 // Quantità
                 echo '
             <td class="text-center">
-                '.Translator::numberToLocale($r['qta']).' '.$r['um'].'
+                '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
             </td>';
 
                 // Prezzo unitario
@@ -374,7 +374,7 @@ if (!empty($interventi)) {
                 // Quantità
                 echo '
             <td class="text-center">
-                '.Translator::numberToLocale($r['qta']).' '.$r['um'].'
+                '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
             </td>';
 
                 // Prezzo unitario
@@ -457,15 +457,21 @@ $imponibile = sum($imponibile);
 
 $totale = $imponibile - $sconto;
 
-$rs = $dbo->fetchArray('SELECT SUM(subtotale) as budget FROM `co_righe_preventivi` WHERE idpreventivo = '.prepare($id_record));
-$budget = $rs[0]['budget'];
+//$rs = $dbo->fetchArray('SELECT SUM(subtotale) as budget FROM `co_righe_preventivi` WHERE idpreventivo = '.prepare($id_record));
+//$budget = $rs[0]['budget'];
+$budget = get_imponibile_preventivo($id_record);
 
-$rapporto = $budget - $totale;
+//pulisco da informazioni irrilevanti (imponibile,iva)
+$show = false;
+
+$rapporto = floatval($budget) - floatval($totale);
 
 // Totale imponibile
 echo '
-<table class="table table-bordered">
-    <tr>
+<table class="table table-bordered">';
+
+if ($show) {
+    echo '<tr>
         <td colspan="3" class="text-right border-top">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
@@ -475,9 +481,9 @@ echo '
         </th>
     </tr>';
 
-// Eventuale sconto incondizionato
-if (!empty($sconto)) {
-    echo '
+    // Eventuale sconto incondizionato
+    if (!empty($sconto)) {
+        echo '
     <tr>
         <td colspan="3" class="text-right border-top">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
@@ -488,8 +494,8 @@ if (!empty($sconto)) {
         </th>
     </tr>';
 
-    // Imponibile scontato
-    echo '
+        // Imponibile scontato
+        echo '
     <tr>
         <td colspan="3" class="text-right border-top">
             <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
@@ -499,14 +505,14 @@ if (!empty($sconto)) {
             <b>'.Translator::numberToLocale($totale).' &euro;</b>
         </th>
     </tr>';
-}
+    }
 
-// IVA
-$rs = $dbo->fetchArray('SELECT * FROM co_iva WHERE co_iva.id = '.prepare(get_var('Iva predefinita')));
-$percentuale_iva = $rs[0]['percentuale'];
-$iva = $totale / 100 * $percentuale_iva;
+    // IVA
+    $rs = $dbo->fetchArray('SELECT * FROM co_iva WHERE co_iva.id = '.prepare(get_var('Iva predefinita')));
+    $percentuale_iva = $rs[0]['percentuale'];
+    $iva = $totale / 100 * $percentuale_iva;
 
-echo '
+    echo '
     <tr>
         <td colspan="3" class="text-right border-top">
             <b>'.tr('Iva (_PRC_%)', [
@@ -519,13 +525,14 @@ echo '
         </th>
     </tr>';
 
-$totale = sum($totale, $iva);
+    //$totale = sum($totale, $iva);
+}
 
 // TOTALE
 echo '
     <tr>
     	<td colspan="3" class="text-right border-top">
-            <b>'.tr('Totale consuntivo', [], ['upper' => true]).':</b>
+            <b>'.tr('Totale consuntivo (no iva)', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-center">
     		<b>'.Translator::numberToLocale($totale).' &euro;</b>

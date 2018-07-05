@@ -1,7 +1,8 @@
 <?php
 
 include_once __DIR__.'/../../../core.php';
-include_once $docroot.'/modules/interventi/modutil.php';
+
+include_once Modules::filepath('Interventi', 'modutil.php');
 
 /*
 CONSUNTIVO
@@ -153,7 +154,7 @@ if (!empty($rsi)) {
                     <td>
                         '.Modules::link('Articoli', $r['idarticolo'], $r['descrizione']).(!empty($extra) ? '<small class="help-block">'.implode(', ', $extra).'</small>' : '').'
                     </td>
-                    <td class="text-right">'.Translator::numberToLocale($r['qta']).'</td>
+                    <td class="text-right">'.Translator::numberToLocale($r['qta'], 'qta').'</td>
                     <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_acquisto'] * $r['qta']).'</td>
                     <td class="text-right success">'.Translator::numberToLocale($r['prezzo_vendita'] * $r['qta']).$sconto.'</td>
                 </tr>';
@@ -186,7 +187,7 @@ if (!empty($rsi)) {
                     <td>
                         '.$r['descrizione'].'
                     </td>
-                    <td class="text-right">'.Translator::numberToLocale($r['qta']).'</td>
+                    <td class="text-right">'.Translator::numberToLocale($r['qta'], 'qta').'</td>
                     <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_acquisto'] * $r['qta']).'</td>
                     <td class="text-right success">'.Translator::numberToLocale($r['prezzo_vendita'] * $r['qta']).$sconto.'</td>
                 </tr>';
@@ -270,7 +271,7 @@ if (!empty($rsi)) {
 /*
     Bilancio del preventivo
 */
-$diff = sum($budget, -$totale);
+$diff = sum($budget, -$totale_addebito);
 
 echo '
 <div class="well text-center">
@@ -299,10 +300,8 @@ echo '
     '.Prints::getLink('Consuntivo preventivo', $id_record, 'btn-primary', tr('Stampa consuntivo')).'
 </div>';
 
-/*
-    Aggiunta interventi se il preventivo é aperto o in attesa o pagato (non si possono inserire interventi collegati ad altri preventivi)
-*/
-if ($stato == 'Accettato' || $stato == 'In lavorazione' || $stato = 'Pagato') {
+// Aggiunta interventi se il preventivo é aperto o in attesa o pagato (non si possono inserire interventi collegati ad altri preventivi)
+if (in_array($records[0]['stato'], ['Accettato', 'In lavorazione', 'Pagato'])) {
     echo '
 <form action="" method="post">
     <input type="hidden" name="op" value="addintervento">
@@ -310,7 +309,7 @@ if ($stato == 'Accettato' || $stato == 'In lavorazione' || $stato = 'Pagato') {
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Aggiungi un altro intervento a questo preventivo').'", "name": "idintervento", "values": "query=SELECT id, CONCAT(\'Intervento \', codice, \' del \',  DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione FROM in_interventi WHERE id NOT IN( SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_righe_contratti WHERE idintervento IS NOT NULL) AND idanagrafica='.prepare($records[0]['idanagrafica']).'" ]}
+            {[ "type": "select", "label": "'.tr('Aggiungi un altro intervento a questo preventivo').'", "name": "idintervento", "values": "query=SELECT id, CONCAT(\'Intervento \', codice, \' del \',  DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione FROM in_interventi WHERE id NOT IN( SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_contratti_promemoria WHERE idintervento IS NOT NULL) AND idanagrafica='.prepare($records[0]['idanagrafica']).'" ]}
         </div>
     </div>
 

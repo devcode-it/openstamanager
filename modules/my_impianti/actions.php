@@ -85,6 +85,10 @@ switch ($op) {
 
             $id_record = $dbo->lastInsertedID();
 
+            if (isAjaxRequest() && post('source') != '') {
+                echo json_encode(['id' => $id_record, 'text' => $matricola.' - '.$nome]);
+            }
+
             $_SESSION['infos'][] = tr('Aggiunto nuovo impianto!');
         }
 
@@ -92,7 +96,7 @@ switch ($op) {
 
     // Carica i campi da compilare del componente
     case 'load_componente':
-        include_once $docroot.'/modules/my_impianti/modutil.php';
+        include_once Modules::filepath('MyImpianti', 'modutil.php');
 
         $filename = post('filename');
         $idarticolo = post('idarticolo');

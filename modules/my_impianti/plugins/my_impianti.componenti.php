@@ -79,7 +79,7 @@ switch (filter('op')) {
 }
 
 // Componenti non ancora collegati
-if ($id_list == '') {
+if (empty($id_list)) {
     $id_list = '0';
 }
 

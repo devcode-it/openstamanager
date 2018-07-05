@@ -7,21 +7,26 @@
  */
 class App
 {
-    /** @var int Identificativo del modulo corrente */
+    /** @var array Identificativo del modulo corrente */
     protected static $current_module;
     /** @var int Identificativo dell'elemento corrente */
     protected static $current_element;
 
+    /** @var bool Stato di debug */
+    protected static $config = [];
+
+    /** @var array Elenco degli assets del progetto */
     protected static $assets = [
         // CSS
         'css' => [
             'app.min.css',
             'style.min.css',
             'themes.min.css',
-            [
-                'href' => 'print.min.css',
-                'media' => 'print',
-            ],
+        ],
+
+        // Print CSS
+        'print' => [
+            'print.min.css',
         ],
 
         // JS
@@ -36,14 +41,16 @@ class App
     ];
 
     /**
-     * Restituisce l'identificativo del modulo attualmente in utilizzo.
+     * Restituisce il modulo attualmente in utilizzo.
      *
-     * @return int
+     * @return array
      */
     public static function getCurrentModule()
     {
-        if (empty(self::$current_module)) {
-            self::$current_module = Modules::get(filter('id_module'));
+        $id = filter('id_module');
+
+        if (empty(self::$current_module) && !empty($id)) {
+            self::$current_module = Modules::get($id);
         }
 
         return self::$current_module;
@@ -57,14 +64,14 @@ class App
     public static function getCurrentElement()
     {
         if (empty(self::$current_element)) {
-            self::$current_element = filter('id_record');
+            self::$current_element = intval(filter('id_record'));
         }
 
         return self::$current_element;
     }
 
     /**
-     * Restituisce la configurazione di default del gestionale.
+     * Restituisce la configurazione di default del progetto.
      *
      * @return array
      */
@@ -74,62 +81,91 @@ class App
             include DOCROOT.'/config.example.php';
         }
 
+        $db_host = '';
+        $db_username = '';
+        $db_password = '';
+        $db_name = '';
+        $port = '';
+
         return get_defined_vars();
     }
 
     /**
-     * Restituisce la configurazione dell'installazione.
+     * Restituisce la configurazione dell'installazione in utilizzo del progetto.
      *
      * @return array
      */
     public static function getConfig()
     {
-        if (file_exists(DOCROOT.'/config.inc.php')) {
-            include DOCROOT.'/config.inc.php';
+        if (empty(self::$config['db_host'])) {
+            if (file_exists(DOCROOT.'/config.inc.php')) {
+                include DOCROOT.'/config.inc.php';
 
-            $config = get_defined_vars();
-        } else {
-            $config = [];
+                $config = get_defined_vars();
+            } else {
+                $config = [];
+            }
+
+            $defaultConfig = self::getDefaultConfig();
+
+            $result = array_merge($defaultConfig, $config);
+
+            // Operazioni di normalizzazione sulla configurazione
+            $result['debug'] = isset(self::$config['debug']) ? self::$config['debug'] : !empty($result['debug']);
+
+            self::$config = $result;
         }
 
-        $defaultConfig = self::getDefaultConfig();
-
-        $result = array_merge($defaultConfig, $config);
-
-        // Operazioni di normalizzazione sulla configurazione
-        $result['debug'] = !empty($result['debug']);
-
-        return $result;
+        return self::$config;
     }
 
     /**
-     * Individuazione dei percorsi di base.
+     * Imposta e restituisce lo stato di debug del progetto.
+     *
+     * @param bool $value
+     *
+     * @return bool
+     */
+    public static function debug($value = null)
+    {
+        if (is_bool($value)) {
+            self::$config['debug'] = $value;
+        }
+
+        return self::$config['debug'];
+    }
+
+    /**
+     * Individua i percorsi di base necessari per il funzionamento del gestionale.
+     * <b>Attenzione<b>: questo metodo deve essere eseguito all'interno di un file nella cartella principale del progetto per permettere il corretto funzionamento degli URL.
      *
      * @return array
      */
     public static function definePaths($docroot)
     {
-        // Individuazione di $rootdir
-        $rootdir = substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/')).'/';
-        if (strrpos($rootdir, '/'.basename($docroot).'/') !== false) {
-            $rootdir = substr($rootdir, 0, strrpos($rootdir, '/'.basename($docroot).'/')).'/'.basename($docroot);
-        } else {
-            $rootdir = '/';
+        if (!defined('DOCROOT')) {
+            // Individuazione di $rootdir
+            $rootdir = substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/')).'/';
+            if (strrpos($rootdir, '/'.basename($docroot).'/') !== false) {
+                $rootdir = substr($rootdir, 0, strrpos($rootdir, '/'.basename($docroot).'/')).'/'.basename($docroot);
+            } else {
+                $rootdir = '/';
+            }
+            $rootdir = rtrim($rootdir, '/');
+            $rootdir = str_replace('%2F', '/', rawurlencode($rootdir));
+
+            // Individuazione di $baseurl
+            $baseurl = (isHTTPS(true) ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].$rootdir;
+
+            // Impostazione delle variabili globali
+            define('DOCROOT', $docroot);
+            define('ROOTDIR', $rootdir);
+            define('BASEURL', $baseurl);
         }
-        $rootdir = rtrim($rootdir, '/');
-        $rootdir = str_replace('%2F', '/', rawurlencode($rootdir));
-
-        // Individuazione di $baseurl
-        $baseurl = (isHTTPS(true) ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].$rootdir;
-
-        // Impostazione delle variabili globali
-        define('DOCROOT', $docroot);
-        define('ROOTDIR', $rootdir);
-        define('BASEURL', $baseurl);
     }
 
     /**
-     * Restituisce la configurazione dell'installazione.
+     * Individua i percorsi principali del progetto.
      *
      * @return array
      */
@@ -146,7 +182,7 @@ class App
     }
 
     /**
-     * Restituisce la configurazione dell'installazione.
+     * Restituisce l'elenco degli assets del progetto.
      *
      * @return array
      */
@@ -155,55 +191,45 @@ class App
         // Assets aggiuntivi
         $config = self::getConfig();
 
-        $css = array_unique(array_merge(self::$assets['css'], $config['assets']['css']));
-        $js = array_unique(array_merge(self::$assets['js'], $config['assets']['js']));
-
         // Impostazione dei percorsi
         $paths = self::getPaths();
         $lang = Translator::getInstance()->getCurrentLocale();
 
-        foreach ($css as $key => $value) {
-            if (is_array($value)) {
-                $path = $value['href'];
-            } else {
-                $path = $value;
+        // Sezioni: nome - percorso
+        $sections = [
+            'css' => 'css',
+            'print' => 'css',
+            'js' => 'js',
+        ];
+
+        $assets = [];
+
+        foreach ($sections as $section => $dir) {
+            $result = array_unique(array_merge(self::$assets[$section], $config['assets'][$section]));
+
+            foreach ($result as $key => $element) {
+                $element = $paths[$dir].'/'.$element;
+                $element = str_replace('|lang|', $lang, $element);
+
+                $result[$key] = $element;
             }
 
-            $path = $paths['css'].'/'.$path;
-            $path = str_replace('|lang|', $lang, $path);
-
-            if (is_array($value)) {
-                $value['href'] = $path;
-            } else {
-                $value = $path;
-            }
-
-            $css[$key] = $value;
-        }
-
-        foreach ($js as $key => $value) {
-            $value = $paths['js'].'/'.$value;
-            $value = str_replace('|lang|', $lang, $value);
-
-            $js[$key] = $value;
+            $assets[$section] = $result;
         }
 
         // JS aggiuntivi per gli utenti connessi
         if (Auth::check()) {
-            $js[] = ROOTDIR.'/lib/functions.js';
-            $js[] = ROOTDIR.'/lib/init.js';
+            $assets['js'][] = ROOTDIR.'/lib/functions.js';
+            $assets['js'][] = ROOTDIR.'/lib/init.js';
         }
 
-        return [
-            'css' => $css,
-            'js' => $js,
-        ];
+        return $assets;
     }
 
     /**
      * Restituisce un'insieme di array comprendenti le informazioni per la costruzione della query del modulo indicato.
      *
-     * @param int $id
+     * @param array $element
      *
      * @return array
      */
@@ -218,12 +244,20 @@ class App
         return $result;
     }
 
+    /**
+     * Interpreta lo standard modulare per l'individuazione delle query di un modulo/plugin del progetto.
+     *
+     * @param array $element
+     *
+     * @return array
+     */
     protected static function readNewQuery($element)
     {
         $fields = [];
         $summable = [];
         $search_inside = [];
         $search = [];
+        $format = [];
         $slow = [];
         $order_by = [];
 
@@ -266,10 +300,17 @@ class App
             'search' => $search,
             'slow' => $slow,
             'format' => $format,
-            'summable' => [],
+            'summable' => $summable,
         ];
     }
 
+    /**
+     * Interpreta lo standard JSON per l'individuazione delle query di un modulo/plugin del progetto.
+     *
+     * @param array $element
+     *
+     * @return array
+     */
     protected static function readOldQuery($element)
     {
         $options = str_replace(["\r", "\n", "\t"], ' ', $element['option']);
@@ -308,6 +349,13 @@ class App
         ];
     }
 
+    /**
+     * Restituisce le singole componenti delle query per un determinato modulo/plugin.
+     *
+     * @param array $element
+     *
+     * @return array
+     */
     protected static function getViews($element)
     {
         $database = Database::getConnection();
@@ -324,6 +372,14 @@ class App
         return $views;
     }
 
+    /**
+     * Sostituisce i valori previsti all'interno delle query di moduli/plugin.
+     *
+     * @param string $query
+     * @param int    $custom
+     *
+     * @return string
+     */
     public static function replacePlaceholder($query, $custom = null)
     {
         $id_module = filter('id_module');
@@ -342,34 +398,36 @@ class App
         return $query;
     }
 
-    public static function load($file, $result, $options, $directory = null)
+    /**
+     * Restituisce il codice HTML per il form contenente il file indicato.
+     *
+     * @param string $path
+     * @param array  $result
+     * @param array  $options
+     *
+     * @return string
+     */
+    public static function load($file, $result, $options)
     {
-        $module = self::getCurrentModule();
+        $form = self::internalLoad('form.php', $result, $options);
 
-        $id_module = filter('id_module');
-        $id_record = filter('id_record');
+        $response = self::internalLoad($file, $result, $options);
 
-        $directory = empty($directory) ? 'include|custom|/common/' : $directory;
-        $directory = str_contains($directory, DOCROOT) ? $directory : DOCROOT.'/'.$directory;
-
-        ob_start();
-
-        $original_file = str_replace('|custom|', '', $directory).'form.php';
-        $custom_file = str_replace('|custom|', '/custom', $directory).'form.php';
-        if (file_exists($custom_file)) {
-            require $custom_file;
-        } elseif (file_exists($original_file)) {
-            require $original_file;
-        }
-
-        $form = ob_get_clean();
-
-        $response = self::internalLoad($file, $result, $options, $directory);
         $form = str_replace('|response|', $response, $form);
 
         return $form;
     }
 
+    /**
+     * Restituisce il codice HTML generato del file indicato.
+     *
+     * @param string $path
+     * @param array  $result
+     * @param array  $options
+     * @param string $directory
+     *
+     * @return string
+     */
     protected static function internalLoad($file, $result, $options, $directory = null)
     {
         $module = self::getCurrentModule();
@@ -378,20 +436,37 @@ class App
         $id_record = filter('id_record');
 
         $directory = empty($directory) ? 'include|custom|/common/' : $directory;
-        $directory = str_contains($directory, DOCROOT) ? $directory : DOCROOT.'/'.$directory;
 
         ob_start();
-
-        $original_file = str_replace('|custom|', '', $directory).$file;
-        $custom_file = str_replace('|custom|', '/custom', $directory).$file;
-        if (file_exists($custom_file)) {
-            require $custom_file;
-        } elseif (file_exists($original_file)) {
-            require $original_file;
-        }
-
+        include self::filepath($directory, $file);
         $response = ob_get_clean();
 
         return $response;
+    }
+
+    /**
+     * Individua il percorso per il file da includere considerando gli eventuali custom.
+     *
+     * @param string $path
+     * @param string $file
+     *
+     * @return string|null
+     */
+    public static function filepath($path, $file = null)
+    {
+        $path = str_contains($path, DOCROOT) ? $path : DOCROOT.'/'.ltrim($path, '/');
+        $path = empty($file) ? $path : rtrim($path, '/').'/'.$file;
+
+        $original_file = str_replace('|custom|', '', $path);
+        $custom_file = str_replace('|custom|', '/custom', $path);
+
+        $result = '';
+        if (file_exists($custom_file)) {
+            $result = $custom_file;
+        } elseif (file_exists($original_file)) {
+            $result = $original_file;
+        }
+
+        return slashes($result);
     }
 }

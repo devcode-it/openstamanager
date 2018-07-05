@@ -88,7 +88,7 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($id_module).'" ]}
+            {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($id_module).' AND enabled=1" ]}
         </div>';
 
 // Allegati
@@ -131,8 +131,11 @@ echo '
 <script>
     var emails = [];
 
-    $(document).ready(function(){
+    $(document).ready(function(){';
+
         // Autocompletamento destinatario
+        if (!empty($variables['id_anagrafica'])) {
+            echo '
 		$(document).load(globals.rootdir + "/ajax_complete.php?module=Anagrafiche&op=get_email&id_anagrafica='.$variables['id_anagrafica'].'", function(response) {
             emails = JSON.parse(response);
 
@@ -144,7 +147,10 @@ echo '
                     $(this).autocomplete("search", $(this).val())
                 });;
             });
-        });
+        });';
+        }
+
+        echo '
 
         CKEDITOR.replace("body", {
             toolbar: globals.ckeditorToolbar,

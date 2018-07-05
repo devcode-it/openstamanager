@@ -38,6 +38,9 @@ echo '
 echo '
 
 <div class="hide" id="custom_fields_top-add">
+    <input type="hidden" name="id_module" value="'.$id_module.'">
+    <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
+
     {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "position": "top", "place": "add" )}
 </div>
 
@@ -72,17 +75,11 @@ $(document).ready(function(){
         echo '
     data.'.$key.' = "'.$value.'";';
     }
-    
-    if (file_exists($docroot.$directory.'/custom/actions.php')) {
-        $url = $rootdir.$directory.'/custom/actions.php';
-    } elseif (file_exists($docroot.$directory.'/actions.php')) {
-        $url = $rootdir.$directory.'/actions.php';
-    }
 
     echo '
 
     $("#form_'.$id_module.'-'.$id_plugin.'").find("form").ajaxForm({
-        url: "'.$url.'",
+        url: globals.rootdir + "/actions.php",
         beforeSubmit: function(arr, $form, options) {
             return $form.parsley().validate();
         },
@@ -91,7 +88,7 @@ $(document).ready(function(){
         success: function(data){
             data = data.trim();
 
-            if(data && !$("#'.$get['select'].'").val()) {
+            if(data && $("#'.$get['select'].'").val() !== undefined ) {
                 result = JSON.parse(data);
                 $("#'.$get['select'].'").selectSetNew(result.id, result.text);
             }

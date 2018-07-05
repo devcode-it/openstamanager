@@ -80,7 +80,7 @@ echo "
     <tbody>';
 
 // RIGHE PREVENTIVO CON ORDINAMENTO UNICO
-$righe = $dbo->fetchArray('SELECT * FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record).' ORDER BY `order`');
+$righe = $dbo->fetchArray('SELECT * FROM co_righe_contratti WHERE idcontratto='.prepare($id_record).' ORDER BY `order`');
 foreach ($righe as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
@@ -109,7 +109,7 @@ foreach ($righe as $r) {
             <td class='text-center'>";
     if (empty($r['is_descrizione'])) {
         echo '
-                '.(empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'])).' '.$r['um'];
+                '.(empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'], 'qta')).' '.$r['um'];
     }
     echo '
             </td>';

@@ -5,24 +5,6 @@ include_once __DIR__.'/../core.php';
 $paths = App::getPaths();
 $user = Auth::user();
 
-// Istanziamento della barra di debug
-if (!empty($debug)) {
-    $debugbar = new DebugBar\DebugBar();
-
-    $debugbar->addCollector(new DebugBar\DataCollector\MemoryCollector());
-    $debugbar->addCollector(new DebugBar\DataCollector\PhpInfoCollector());
-
-    $debugbar->addCollector(new DebugBar\DataCollector\RequestDataCollector());
-    $debugbar->addCollector(new DebugBar\DataCollector\TimeDataCollector());
-
-    $debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
-    $debugbar->addCollector(new DebugBar\DataCollector\PDO\PDOCollector($dbo->getPDO()));
-
-    $debugbarRenderer = $debugbar->getJavascriptRenderer();
-    $debugbarRenderer->setIncludeVendors(false);
-    $debugbarRenderer->setBaseUrl($paths['assets'].'/php-debugbar');
-}
-
 echo '<!DOCTYPE html>
 <html>
     <head>
@@ -31,13 +13,20 @@ echo '<!DOCTYPE html>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
+        <meta name="robots" content="noindex,nofollow">
+
 		<link href="'.$paths['img'].'/favicon.png" rel="icon" type="image/x-icon" />';
 
-foreach ($css_modules as $style) {
-    $style = (is_array($style)) ? $style : ['href' => $style, 'media' => 'all'];
-
+// CSS
+foreach (App::getAssets()['css'] as $style) {
     echo '
-<link rel="stylesheet" type="text/css" media="'.$style['media'].'" href="'.$style['href'].'"/>';
+        <link rel="stylesheet" type="text/css" media="all" href="'.$style.'"/>';
+}
+
+// Print CSS
+foreach (App::getAssets()['print'] as $style) {
+    echo '
+        <link rel="stylesheet" type="text/css" media="print" href="'.$style.'"/>';
 }
 
 if (Auth::check()) {
@@ -124,11 +113,22 @@ if (Auth::check()) {
                 ckeditorToolbar: [
 					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
 				],
+
+                tempo_attesa_ricerche: '.get_var('Tempo di attesa ricerche in secondi').',
             };
 		</script>';
+} else {
+    echo '
+<script>
+    globals = {
+        locale: \''.$lang.'\',
+        full_locale: \''.$lang.'_'.strtoupper($lang).'\',
+    };
+</script>';
 }
 
-foreach ($jscript_modules as $js) {
+// JS
+foreach (App::getAssets()['js'] as $js) {
     echo '
         <script type="text/javascript" charset="utf-8" src="'.$js.'"></script>';
 }
@@ -144,8 +144,33 @@ echo '
             });
         </script>';
 
-if (!empty($debugbarRenderer) && Auth::check()) {
-    echo $debugbarRenderer->renderHead();
+if (Auth::check()) {
+    // Barra di debug
+    if (App::debug()) {
+        $debugbar = new DebugBar\DebugBar();
+
+        $debugbar->addCollector(new DebugBar\DataCollector\MemoryCollector());
+        $debugbar->addCollector(new DebugBar\DataCollector\PhpInfoCollector());
+
+        $debugbar->addCollector(new DebugBar\DataCollector\RequestDataCollector());
+        $debugbar->addCollector(new DebugBar\DataCollector\TimeDataCollector());
+
+        $debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
+        $debugbar->addCollector(new DebugBar\DataCollector\PDO\PDOCollector($dbo->getPDO()));
+
+        $debugbarRenderer = $debugbar->getJavascriptRenderer();
+        $debugbarRenderer->setIncludeVendors(false);
+        $debugbarRenderer->setBaseUrl($paths['assets'].'/php-debugbar');
+
+        echo $debugbarRenderer->renderHead();
+    }
+
+    if (Settings::get('Abilita esportazione Excel e PDF')) {
+        echo '
+        <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>';
+    }
 }
 
 $hide_sidebar = get_var('Nascondere la barra sinistra di default');
@@ -154,7 +179,7 @@ echo '
     </head>
 
 	<body class="skin-'.$theme.(!empty($hide_sidebar) ? ' sidebar-collapse' : '').(!Auth::check() ? ' hold-transition login-page' : '').'">
-		<div class="wrapper">';
+		<div class="'.(!Auth::check() ? '' : 'wrapper').'">';
 
 if (Auth::check()) {
     $calendar = ($_SESSION['period_start'] != date('Y').'-01-01' || $_SESSION['period_end'] != date('Y').'-12-31') ? 'red' : 'white';
@@ -176,7 +201,7 @@ if (Auth::check()) {
 			<div id="tiny-loader" style="display:none;"></div>
 
 			<header class="main-header">
-				<a href="https://www.openstamanager.com" class="logo" target="_blank">
+				<a href="https://www.openstamanager.com" class="logo" title="'.tr('Il gestionale open source per l\'assistenza tecnica e la fatturazione').'" target="_blank">
 					<!-- mini logo for sidebar mini 50x50 pixels -->
 					<span class="logo-mini">'.tr('OSM').'</span>
 					<!-- logo for regular state and mobile devices -->
@@ -185,7 +210,7 @@ if (Auth::check()) {
 				<!-- Header Navbar: style can be found in header.less -->
 				<nav class="navbar navbar-static-top" role="navigation">
 					<!-- Sidebar toggle button-->
-					<a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+					<a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
 						<span class="sr-only">'.tr('Mostra/nascondi menu').'</span>
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
@@ -193,8 +218,8 @@ if (Auth::check()) {
 					</a>
 
 					<div class="input-group btn-calendar pull-left">
-                        <button id="daterange" class="btn"><i class="fa fa-calendar" style="color:'.$calendar.'"></i> <i class="fa fa-caret-down"></i></button>
-                        <span class="hidden-xs" style="vertical-align:middle">
+                        <button id="daterange" class="btn"><i class="fa fa-calendar" style="color:'.$calendar.'"></i> <i class="fa fa-caret-down" style="color:'.$calendar.';" ></i></button>
+                        <span class="hidden-xs" style="vertical-align:middle; color:'.$calendar.';">
                             '.Translator::dateToLocale($_SESSION['period_start']).' - '.Translator::dateToLocale($_SESSION['period_end']).'
                         </span>
                     </div>

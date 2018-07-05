@@ -198,6 +198,8 @@ L'archivio scaricato deve contenere direttamente al proprio interno i contenuti 
     ├── ... - File contententi il codice del modulo
     └── MODULE
 
+Alcuni esempi sulla struttura dei moduli personalizzati sono disponibili nella repository https://github.com/devcode-it/example (download effettuabile da [qui](http://openstamanager.com/download/plugin_di_esempio.zip)).
+
 #### update/VERSIONE.sql
 
 Il file `VERSIONE.sql` (dove VERSIONE sta per la versione del modulo con `_`[underscore] al posto di `.`[punto]) contiene le operazioni di installazione del modulo a livello del database, comprendenti la creazione delle tabelle di base del modulo e l'inserimento di ulteriori dati nelle altre tabelle.
@@ -221,13 +223,13 @@ $dbo->query("DROP TABLE `tabella`");
 Il file `MODULE` è infine il diretto responsabile dell'installazione del modulo poiché definisce tutti i valori caratteristici dello stesso; in caso di sua assenza la cartella compressa viene considerata non corretta.
 
 ```ini
-module_name = "Nome del modulo"
-module_version = "Versione del modulo"
-module_directory = "Cartella di installazione del modulo"
-module_options = "Operazione da eseguire all'apertura del modulo"
-module_icon = "Icona del modulo (Font-Awesome)"
-module_compatibility = "Compatibilità del modulo"
-module_parent = "Genitore del modulo"
+name = "Nome del modulo"
+version = "Versione del modulo"
+directory = "Cartella di installazione del modulo"
+options = "Operazione da eseguire all'apertura del modulo"
+icon = "Icona del modulo (Font-Awesome)"
+compatibility = "Compatibilità del modulo"
+parent = "Genitore del modulo"
 ```
 
 ## Moduli di base

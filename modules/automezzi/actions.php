@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 // Necessaria per la funzione add_movimento_magazzino
-include_once $docroot.'/modules/articoli/modutil.php';
+include_once Modules::filepath('Articoli', 'modutil.php');
 
 switch (post('op')) {
     case 'update':

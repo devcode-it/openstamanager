@@ -12,7 +12,7 @@ $default_header$
             <b>$tipo_doc$</b>
         </div>
 
-        <table class="table">
+        <table class="table" style="overflow: visible">
             <tr>
                 <td valign="top" class="border-full text-center">
                     <p class="small-bold">'.tr('Nr. documento', [], ['upper' => true]).'</p>
@@ -42,17 +42,17 @@ $default_header$
                 </td>
                 <td colspan="2" style="height:10mm;padding-top:2mm;">
                     <p class="small-bold">'.tr('Banca di appoggio', [], ['upper' => true]).'</p>
-                    <p>$f_appoggiobancario$</p>
+                    <p>$appoggiobancario$</p>
                 </td>
             </tr>
             <tr>
                 <td colspan="2" style="height:10mm;padding-top:2mm;">
                     <p class="small-bold">'.tr('IBAN').'</p>
-                    <p>$f_codiceiban$</p>
+                    <p>$codiceiban$</p>
                 </td>
                 <td colspan="2" style="height:10mm;padding-top:2mm;">
                     <p class="small-bold">'.tr('BIC').'</p>
-                    <p>$f_bic$</p>
+                    <p>$bic$</p>
                 </td>
             </tr>
 

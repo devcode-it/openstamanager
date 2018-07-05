@@ -17,15 +17,35 @@ function calcola_ore(idriga, start, end) {
 	Aggiunge una nuova riga per la sessione di lavoro in base al tecnico selezionato
 */
 function add_tecnici(idintervento, idtecnico) {
-    $('#tecnici').load(globals.rootdir + '/modules/interventi/ajax_tecnici.php?id_module=' + globals.id_module +'&id_record=' + idintervento + '&op=add_sessione&idtecnico=' + idtecnico);
-
-    $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=' + globals.id_module +'&id_record=' + idintervento);
+	
+	if (UrlExists(globals.rootdir + '/modules/interventi/custom/ajax_tecnici.php')){
+		$('#tecnici').load(globals.rootdir + '/modules/interventi/custom/ajax_tecnici.php?id_module=' + globals.id_module +'&id_record=' + idintervento + '&op=add_sessione&idtecnico=' + idtecnico);
+	}else{
+		$('#tecnici').load(globals.rootdir + '/modules/interventi/ajax_tecnici.php?id_module=' + globals.id_module +'&id_record=' + idintervento + '&op=add_sessione&idtecnico=' + idtecnico);
+	}
+	
+	if (UrlExists(globals.rootdir + '/modules/interventi/custom/ajax_costi.php')){
+		$('#costi').load(globals.rootdir + '/modules/interventi/custom/ajax_costi.php?id_module=' + globals.id_module +'&id_record=' + idintervento);
+	}else{	
+		$('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=' + globals.id_module +'&id_record=' + idintervento);
+	}
+	
 }
 
 function elimina_sessione(idriga, idintervento, idzona) {
     if (confirm('Eliminare sessione di lavoro?')) {
-        $('#tecnici').load(globals.rootdir + '/modules/interventi/ajax_tecnici.php?id_module=' + globals.id_module +'&id_record=' + idintervento + '&op=del_sessione&id=' + idriga);
-
-        $('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=' + globals.id_module +'&id_record=' + idintervento);
-    }
+		
+		if (UrlExists(globals.rootdir + '/modules/interventi/custom/ajax_tecnici.php')){
+			$('#tecnici').load(globals.rootdir + '/modules/interventi/custom/ajax_tecnici.php?id_module=' + globals.id_module +'&id_record=' + idintervento + '&op=del_sessione&id=' + idriga);
+		}else{
+			$('#tecnici').load(globals.rootdir + '/modules/interventi/ajax_tecnici.php?id_module=' + globals.id_module +'&id_record=' + idintervento + '&op=del_sessione&id=' + idriga);
+		}
+	
+		if (UrlExists(globals.rootdir + '/modules/interventi/custom/ajax_costi.php')){
+			$('#costi').load(globals.rootdir + '/modules/interventi/custom/ajax_costi.php?id_module=' + globals.id_module +'&id_record=' + idintervento);
+		}else{
+			$('#costi').load(globals.rootdir + '/modules/interventi/ajax_costi.php?id_module=' + globals.id_module +'&id_record=' + idintervento);
+		}
+    
+	}
 }

@@ -42,9 +42,10 @@ switch ($resource) {
         $rs = $dbo->fetchArray($query);
         foreach ($rs as $r) {
             if ($prev != $r['id_sottocategoria']) {
-                $categoria = $dbo->fetchArray('SELECT `nome` FROM `mg_categorie` WHERE `id`='.prepare($r['id_categoria']))[0]['nome'];
+                $categoria = $dbo->fetchOne('SELECT `nome` FROM `mg_categorie` WHERE `id`='.prepare($r['id_categoria']))['nome'];
 
-                $sottocategoria = $dbo->fetchArray('SELECT `nome` FROM `mg_categorie` WHERE `id`='.prepare($r['id_sottocategoria']))[0]['nome'];
+                $sottocategoria = $dbo->fetchOne('SELECT `nome` FROM `mg_categorie` WHERE `id`='.prepare($r['id_sottocategoria']));
+                $sottocategoria = isset($sottocategoria['nome']) ? $sottocategoria['nome'] : null;
 
                 $prev = $r['id_sottocategoria'];
                 $results[] = ['text' => $categoria.' ('.(!empty($r['id_sottocategoria']) ? $sottocategoria : '-').')', 'children' => []];

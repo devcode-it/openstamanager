@@ -46,4 +46,13 @@ switch (get('op')) {
         }
 
         break;
+
+    case 'list_attachments':
+        $id_module = get('id_module');
+        $id_record = get('id_record');
+        $id_plugin = get('id_plugin');
+
+        echo '{( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "id_plugin": "'.$id_plugin.'" )}';
+
+        break;
 }

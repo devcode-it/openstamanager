@@ -9,31 +9,22 @@ if (empty($info) || empty($info['enabled'])) {
     die(tr('Accesso negato'));
 }
 
+// Inclusione di eventuale plugin personalizzato
 if (!empty($info['script'])) {
-    // Inclusione di eventuale plugin personalizzato
-    if (file_exists($docroot.'/modules/'.$info['module_dir'].'/plugins/custom/'.$info['script'])) {
-        include $docroot.'/modules/'.$info['module_dir'].'/plugins/custom/'.$info['script'];
-    } elseif (file_exists($docroot.'/modules/'.$info['module_dir'].'/plugins/'.$info['script'])) {
-        include $docroot.'/modules/'.$info['module_dir'].'/plugins/'.$info['script'];
-    }
+    include App::filepath('modules/'.$info['module_dir'].'/plugins|custom|', $info['script']);
 
     return;
-} else {
+}
+
+// Plugin standard
+else {
     // Caricamento helper  plugin (verifico se ci sono helper personalizzati)
-    if (file_exists($docroot.'/plugins/'.$info['directory'].'/custom/modutil.php')) {
-        include_once $docroot.'/plugins/'.$info['directory'].'/custom/modutil.php';
-    } elseif (file_exists($docroot.'/plugins/'.$info['directory'].'/modutil.php')) {
-        include_once $docroot.'/plugins/'.$info['directory'].'/modutil.php';
-    }
+    include_once Plugins::filepath($info['id'], 'modutil.php');
 
-    // Lettura risultato query del  plugin
-    if (file_exists($docroot.'/plugins/'.$info['directory'].'/custom/init.php')) {
-        include $docroot.'/plugins/'.$info['directory'].'/custom/init.php';
-    } elseif (file_exists($docroot.'/plugins/'.$info['directory'].'/init.php')) {
-        include $docroot.'/plugins/'.$info['directory'].'/init.php';
-    }
+    // Lettura risultato query del plugin
+    include_once Plugins::filepath($info['id'], 'init.php');
 
-    // Esecuzione delle operazioni del  plugin
+    // Esecuzione delle operazioni del plugin
     include $docroot.'/actions.php';
 
     if (empty($records)) {

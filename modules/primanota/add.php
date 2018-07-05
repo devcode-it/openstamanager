@@ -2,10 +2,11 @@
 
 include_once __DIR__.'/../../core.php';
 
-?><form action="<?php echo ROOTDIR ?>/editor.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>" method="post" id="add-form">
+?><form action="<?php echo ROOTDIR; ?>/editor.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="iddocumento" value="<?php echo get('iddocumento'); ?>">
+	<input type="hidden" name="crea_modello" id="crea_modello" value="0">
 
 	<?php
     $idconto = get('idconto');
@@ -19,6 +20,12 @@ include_once __DIR__.'/../../core.php';
         $dir = $rs[0]['dir'];
         $numero_doc = !empty($rs[0]['numero_esterno']) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
         $tipo_doc = $rs[0]['tdescrizione'];
+
+        $nota_accredito = false;
+
+        if ($tipo_doc == 'Nota di accredito') {
+            $nota_accredito = true;
+        }
 
         $descrizione = tr('_DOC_ numero _NUM_ del _DATE_ (_NAME_)', [
             '_DOC_' => $tipo_doc,
@@ -110,12 +117,18 @@ include_once __DIR__.'/../../core.php';
     ?>
 
 	<div class="row">
+		<div class="col-md-12">
+			{[ "type": "select", "label": "<?php echo tr('Modello primanota'); ?>", "id": "modello_primanota", "required": 0, "values": "query=SELECT idmastrino AS id, descrizione FROM co_movimenti_modelli GROUP BY idmastrino" ]}
+		</div>
+	</div>
+
+	<div class="row">
 		<div class="col-md-4">
 			{[ "type": "date", "label": "<?php echo tr('Data movimento'); ?>", "name": "data", "required": 1, "value": "-now-" ]}
 		</div>
 
 		<div class="col-md-8">
-			{[ "type": "text", "label": "<?php echo tr('Causale'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo $descrizione; ?>" ]}
+			{[ "type": "text", "label": "<?php echo tr('Causale'); ?>", "name": "descrizione", "id": "desc", "required": 1, "value": "<?php echo $descrizione; ?>" ]}
 		</div>
 	</div>
 
@@ -139,13 +152,12 @@ include_once __DIR__.'/../../core.php';
         </tr>';
 
     for ($i = 0; $i < 10; ++$i) {
-        
-		($i<=1) ? $required = 1 : $required = 0;
-		// Conto
+        ($i <= 1) ? $required = 1 : $required = 0;
+        // Conto
         echo '
 			<tr>
 				<td>
-					{[ "type": "select", "name": "idconto['.$i.']", "value": "';
+					{[ "type": "select", "name": "idconto['.$i.']", "id": "conto'.$i.'", "value": "';
         if ($i == 0) {
             echo $idconto_controparte;
         } elseif ($i == 1) {
@@ -174,6 +186,13 @@ include_once __DIR__.'/../../core.php';
         } else {
             $value_dare = '';
             $value_avere = '';
+        }
+
+        // Se è una nota di accredito, inverto i valori
+        if ($nota_accredito) {
+            $tmp = $value_dare;
+            $value_dare = $value_avere;
+            $value_avere = $tmp;
         }
 
         // Dare
@@ -222,7 +241,8 @@ include_once __DIR__.'/../../core.php';
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
+			<button type='button' class="btn btn-primary" id='btn_crea_modello'><i class="fa fa-plus"></i> <?php echo tr('Aggiungi e crea modello'); ?></button>
+			<button type="submit" class="btn btn-primary" id='btn_submit'><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 		</div>
 	</div>
 
@@ -239,7 +259,7 @@ include_once __DIR__.'/../../core.php';
                     }
                     else{
                         $(this).parent().parent().find('input').prop("disabled", true);
-                        $(this).parent().parent().find('input').val("");
+                        $(this).parent().parent().find('input').val("0.00");
                     }
                 }
 			});
@@ -296,11 +316,11 @@ include_once __DIR__.'/../../core.php';
 
 				if(bilancio == 0){
 					$("#testo_aggiuntivo").removeClass('text-danger').html("");
-					$("button[type=submit]").removeClass('hide');
+					$("#btn_submit").removeClass('hide');
 				}
 				else{
 					$("#testo_aggiuntivo").addClass('text-danger').html("sbilancio di " + bilancio.toLocale() + " &euro;" );
-					$("button[type=submit]").addClass('hide');
+					$("#btn_submit").addClass('hide');
 				}
 			}
 
@@ -310,6 +330,36 @@ include_once __DIR__.'/../../core.php';
 			$("select[id*=idconto]").click( function(){
 				$("input[id*=dare][value!=''], input[id*=avere][value!='']").keyup();
 			});
+
+
+			$('#modello_primanota').change(function(){
+				var idmastrino = $(this).val();
+
+				if(idmastrino!=''){
+					$('#btn_crea_modello').hide();
+					var causale = $(this).find('option:selected').text();
+
+					$('#desc').val(causale);
+
+					$.get('<?php echo $rootdir; ?>/ajax_complete.php?op=get_conti&idmastrino='+idmastrino, function(data){
+						var conti = data.split(',');
+						for(i=0;i<conti.length;i++){
+							var conto = conti[i].split(';');
+							var option = $("<option selected></option>").val(conto[0]).text(conto[1]);
+							$('#conto'+i).selectReset();
+							$('#conto'+i).append(option).trigger('change');
+						}
+					});
+				}else{
+					$('#btn_crea_modello').show();
+				}
+			});
+
+			$('#btn_crea_modello').click(function(){
+				$("#crea_modello").val("1");
+				$("#add-form").submit();
+			});
+
 		});
 	</script>
 </form>

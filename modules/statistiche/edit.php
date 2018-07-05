@@ -45,13 +45,13 @@ $month = intval($d1->format('m')) - 1;
 for ($i = 0; $i < $count; ++$i) {
     $month = $month % 12;
 
-    if (intval($fatturato[$i]['month']) != $month + 1) {
+    if (!isset($fatturato[$i]) || intval($fatturato[$i]['month']) != $month + 1) {
         array_splice($fatturato, $i, 0, [[
             'totale' => 0,
         ]]);
     }
 
-    if (intval($acquisti[$i]['month']) != $month + 1) {
+    if (!isset($acquisti[$i]) || intval($acquisti[$i]['month']) != $month + 1) {
         array_splice($acquisti, $i, 0, [[
             'totale' => 0,
         ]]);
@@ -215,7 +215,7 @@ foreach ($tipi as $tipo) {
     for ($i = 0; $i < $count; ++$i) {
         $month = $month % 12;
 
-        if (intval($interventi[$i]['month']) != $month + 1) {
+        if (!isset($interventi[$i]) || intval($interventi[$i]['month']) != $month + 1) {
             array_splice($interventi, $i, 0, [[
                 'totale' => 0,
             ]]);

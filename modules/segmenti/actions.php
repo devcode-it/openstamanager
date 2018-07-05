@@ -3,67 +3,68 @@
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
-        case 'update':
+    case 'update':
+        $pattern = str_contains(post('pattern'), '#') ? post('pattern') : '####';
+        $predefined = post('predefined');
 
-            $name = post('name');
-            $category = post('category');
-            (strpos(post('pattern'), '#') !== false) ? $pattern = post('pattern') : $maschera = '####';
-            $id_module_ = post('id_module_');
-            $note = post('note');
-            $clause = post('clause');
-            $predefined = $post['predefined'];
-            $position = post('position');
+        if (empty(Modules::getSegments($id_module))) {
+            $predefined = 1;
+        }
 
-            if (count($dbo->fetchArray("SELECT id FROM zz_segments WHERE id_module = \"$id_module_\"")) == 0) {
-                $predefined = 1;
-            }
+        if ($predefined) {
+            $dbo->query('UPDATE zz_segments SET predefined = 0 WHERE id_module = '.prepare($id_module));
+        }
 
-            if ($predefined) {
-                $dbo->query("UPDATE zz_segments SET predefined = 0 WHERE id_module = \"$id_module_\"");
-            }
+        $dbo->update('zz_segments', [
+            'id_module' => post('module'),
+            'name' => post('name'),
+            'clause' => post('clause'),
+            'pattern' => $pattern,
+            'note' => post('note'),
+            'position' => post('position'),
+            'predefined' => $predefined,
+        ], ['id' => $id_record]);
 
-            $query = "UPDATE zz_segments SET name=\"$name\", clause=\"$clause\",  position=\"$position\", pattern=\"$pattern\", id_module=\"$id_module_\", note=\"$note\", predefined=\"$predefined\" WHERE id=\"$id_record\"";
+        $_SESSION['infos'][] = tr('Modifiche salvate correttamente');
 
-            $rs = $dbo->query($query);
+        break;
 
-            $_SESSION['infos'][] = tr('Modifiche salvate correttamente.');
+    case 'add':
+        $pattern = str_contains(post('pattern'), '#') ? post('pattern') : '####';
+        $predefined = post('predefined');
 
-            break;
+        $module = post('module');
 
-        case 'add':
+        if (empty(Modules::getSegments($module))) {
+            $predefined = 1;
+        }
 
-            $name = post('name');
-            $category = post('category');
-            (strpos(post('pattern'), '#') !== false) ? $pattern = post('pattern') : $pattern = '####';
-            $id_module_ = post('id_module_');
-            $note = post('note');
-            $predefined = $post['predefined'];
-            $clause = '1=1';
+        if ($predefined) {
+            $dbo->query('UPDATE zz_segments SET predefined = 0 WHERE id_module = '.prepare($id_module));
+        }
 
-            if (count($dbo->fetchArray("SELECT id FROM zz_segments WHERE id_module = \"$id_module_\"")) == 0) {
-                $predefined = 1;
-            }
+        $dbo->insert('zz_segments', [
+            'id_module' => post('module'),
+            'name' => post('name'),
+            'clause' => '1=1',
+            'pattern' => $pattern,
+            'note' => post('note'),
+            'predefined' => $predefined,
+        ]);
 
-            if ($predefined) {
-                $dbo->query("UPDATE zz_segments SET predefined = 0 WHERE id_module = \"$id_module_\"");
-            }
+        $id_record = $dbo->lastInsertedID();
 
-            $dbo->query("INSERT INTO zz_segments( name, clause,  pattern, id_module, note, predefined ) VALUES ( \"$name\", \"$clause\", \"$pattern\", \"$id_module_\", \"$note\", \"$predefined\" )");
-            $id_record = $dbo->last_inserted_id();
+        $_SESSION['infos'][] = tr('Nuovo segmento aggiunto');
 
-            $_SESSION['infos'][] = tr('Nuovo segmento aggiunto.');
+        break;
 
-            break;
+    case 'delete':
+        $dbo->query('DELETE FROM zz_segments WHERE id='.prepare($id_record));
 
-        case 'delete':
+        // TODO
+        // eliminare riferimento sulle fatture eventuali collegate a questo segmento?
 
-            $query = "DELETE FROM zz_segments WHERE id=\"$id_record\"";
-            $rs = $dbo->query($query);
+        $_SESSION['infos'][] = tr('Segmento eliminato');
 
-            // TODO
-            // eliminare riferimento sulle fatture eventuali collegate a questo segmento?
-
-            $_SESSION['infos'][] = tr('Segmento eliminato.');
-
-            break;
-    }
+        break;
+}

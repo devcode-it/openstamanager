@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 /**
  * Recupera il totale delle ore spese per un intervento.
  *
- * @param [type] $idintervento
+ * @param int $idintervento
  */
 function get_ore_intervento($idintervento)
 {
@@ -24,10 +24,10 @@ function get_ore_intervento($idintervento)
 /**
  * Funzione per collegare gli articoli, usati in un intervento, ai rispettivi impianti.
  *
- * @param [type] $idintervento
- * @param [type] $idimpianto
- * @param [type] $idarticolo
- * @param [type] $qta
+ * @param int $idintervento
+ * @param int $idimpianto
+ * @param int $idarticolo
+ * @param int $qta
  */
 function link_componente_to_articolo($idintervento, $idimpianto, $idarticolo, $qta)
 {
@@ -54,9 +54,10 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto)
 {
     $dbo = Database::getConnection();
 
-    $rs = $dbo->fetchArray('SELECT idsede, idtipointervento FROM in_interventi WHERE id='.prepare($idintervento));
-    $idtipointervento = $rs[0]['idtipointervento'];
+    $rs = $dbo->fetchArray('SELECT idanagrafica, idsede, idtipointervento FROM in_interventi WHERE id='.prepare($idintervento));
+    $idanagrafica = $rs[0]['idanagrafica'];
     $idsede = $rs[0]['idsede'];
+    $idtipointervento = $rs[0]['idtipointervento'];
 
     // Calcolo km in base a quelli impostati nell'anagrafica
     // Nessuna sede
@@ -160,7 +161,7 @@ function get_costi_intervento($id_intervento)
     $dbo = Database::getConnection();
 
     $decimals = Settings::get('Cifre decimali per importi');
-    
+
     $idiva = get_var('Iva predefinita');
     $rs_iva = $dbo->fetchArray('SELECT descrizione, percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva));
 
@@ -254,63 +255,63 @@ function get_costi_intervento($id_intervento)
         $result['ricambi_scontato'],
         $result['altro_scontato'],
     ]);
-    
+
     $result['iva_costo'] = sum([
-        $result['manodopera_costo']*$rs_iva[0]['percentuale']/100,
-        $result['dirittochiamata_costo']*$rs_iva[0]['percentuale']/100,
-        $result['viaggio_costo']*$rs_iva[0]['percentuale']/100,
-        $result['ricambi_costo']*$result['ricambi_iva']/100,
-        $result['altro_costo']*$result['altro_iva']/100,
+        $result['manodopera_costo'] * $rs_iva[0]['percentuale'] / 100,
+        $result['dirittochiamata_costo'] * $rs_iva[0]['percentuale'] / 100,
+        $result['viaggio_costo'] * $rs_iva[0]['percentuale'] / 100,
+        $result['ricambi_costo'] * $result['ricambi_iva'] / 100,
+        $result['altro_costo'] * $result['altro_iva'] / 100,
     ]);
 
     $result['iva_addebito'] = sum([
-        $result['manodopera_addebito']*$rs_iva[0]['percentuale']/100,
-        $result['dirittochiamata_addebito']*$rs_iva[0]['percentuale']/100,
-        $result['viaggio_addebito']*$rs_iva[0]['percentuale']/100,
-        $result['ricambi_addebito']*$result['ricambi_iva']/100,
-        $result['altro_addebito']*$result['altro_iva']/100,
+        $result['manodopera_addebito'] * $rs_iva[0]['percentuale'] / 100,
+        $result['dirittochiamata_addebito'] * $rs_iva[0]['percentuale'] / 100,
+        $result['viaggio_addebito'] * $rs_iva[0]['percentuale'] / 100,
+        $result['ricambi_addebito'] * $result['ricambi_iva'] / 100,
+        $result['altro_addebito'] * $result['altro_iva'] / 100,
     ]);
 
     $result['iva_totale'] = sum([
-        $result['manodopera_scontato']*$rs_iva[0]['percentuale']/100,
-        $result['dirittochiamata_scontato']*$rs_iva[0]['percentuale']/100,
-        $result['viaggio_scontato']*$rs_iva[0]['percentuale']/100,
-        $result['ricambi_scontato']*$result['ricambi_iva']/100,
-        $result['altro_scontato']*$result['altro_iva']/100,
+        $result['manodopera_scontato'] * $rs_iva[0]['percentuale'] / 100,
+        $result['dirittochiamata_scontato'] * $rs_iva[0]['percentuale'] / 100,
+        $result['viaggio_scontato'] * $rs_iva[0]['percentuale'] / 100,
+        $result['ricambi_scontato'] * $result['ricambi_iva'] / 100,
+        $result['altro_scontato'] * $result['altro_iva'] / 100,
     ]);
-    
+
     $result['totaleivato_costo'] = sum([
-        $result['manodopera_costo']+($result['manodopera_costo']*$rs_iva[0]['percentuale']/100),
-        $result['dirittochiamata_costo']+($result['dirittochiamata_costo']*$rs_iva[0]['percentuale']/100),
-        $result['viaggio_costo']+($result['viaggio_costo']*$rs_iva[0]['percentuale']/100),
-        $result['ricambi_costo']+($result['ricambi_costo']*$result['ricambi_iva']/100),
-        $result['altro_costo']+($result['altro_costo']*$result['altro_iva']/100),
+        $result['manodopera_costo'] + ($result['manodopera_costo'] * $rs_iva[0]['percentuale'] / 100),
+        $result['dirittochiamata_costo'] + ($result['dirittochiamata_costo'] * $rs_iva[0]['percentuale'] / 100),
+        $result['viaggio_costo'] + ($result['viaggio_costo'] * $rs_iva[0]['percentuale'] / 100),
+        $result['ricambi_costo'] + ($result['ricambi_costo'] * $result['ricambi_iva'] / 100),
+        $result['altro_costo'] + ($result['altro_costo'] * $result['altro_iva'] / 100),
     ]);
 
     $result['totaleivato_addebito'] = sum([
-        $result['manodopera_addebito']+($result['manodopera_addebito']*$rs_iva[0]['percentuale']/100),
-        $result['dirittochiamata_addebito']+($result['dirittochiamata_addebito']*$rs_iva[0]['percentuale']/100),
-        $result['viaggio_addebito']+($result['viaggio_addebito']*$rs_iva[0]['percentuale']/100),
-        $result['ricambi_addebito']+($result['ricambi_addebito']*$result['ricambi_iva']/100),
-        $result['altro_addebito']+($result['altro_addebito']*$result['altro_iva']/100),
+        $result['manodopera_addebito'] + ($result['manodopera_addebito'] * $rs_iva[0]['percentuale'] / 100),
+        $result['dirittochiamata_addebito'] + ($result['dirittochiamata_addebito'] * $rs_iva[0]['percentuale'] / 100),
+        $result['viaggio_addebito'] + ($result['viaggio_addebito'] * $rs_iva[0]['percentuale'] / 100),
+        $result['ricambi_addebito'] + ($result['ricambi_addebito'] * $result['ricambi_iva'] / 100),
+        $result['altro_addebito'] + ($result['altro_addebito'] * $result['altro_iva'] / 100),
     ]);
 
     $result['totale'] = sum([
-        $result['manodopera_scontato']+($result['manodopera_scontato']*$rs_iva[0]['percentuale']/100),
-        $result['dirittochiamata_scontato']+($result['dirittochiamata_scontato']*$rs_iva[0]['percentuale']/100),
-        $result['viaggio_scontato']+($result['viaggio_scontato']*$rs_iva[0]['percentuale']/100),
-        $result['ricambi_scontato']+($result['ricambi_scontato']*$result['ricambi_iva']/100),
-        $result['altro_scontato']+($result['altro_scontato']*$result['altro_iva']/100),
+        $result['manodopera_scontato'] + ($result['manodopera_scontato'] * $rs_iva[0]['percentuale'] / 100),
+        $result['dirittochiamata_scontato'] + ($result['dirittochiamata_scontato'] * $rs_iva[0]['percentuale'] / 100),
+        $result['viaggio_scontato'] + ($result['viaggio_scontato'] * $rs_iva[0]['percentuale'] / 100),
+        $result['ricambi_scontato'] + ($result['ricambi_scontato'] * $result['ricambi_iva'] / 100),
+        $result['altro_scontato'] + ($result['altro_scontato'] * $result['altro_iva'] / 100),
     ]);
 
     // Calcolo dello sconto incondizionato
     $sconto = $dbo->fetchArray('SELECT sconto_globale, tipo_sconto_globale FROM in_interventi WHERE id='.prepare($id_intervento))[0];
     $result['sconto_globale'] = ($sconto['tipo_sconto_globale'] == 'PRC') ? $result['totale'] * $sconto['sconto_globale'] / 100 : $sconto['sconto_globale'];
     $result['sconto_globale'] = round($result['sconto_globale'], $decimals);
-    
+
     $result['totale_scontato'] = sum($result['totale_scontato'], -$result['sconto_globale']);
-    $result['iva_totale'] = sum($result['iva_totale'], -($result['sconto_globale']*$rs_iva[0]['percentuale']/100));
-    $result['totale'] = sum($result['totale'], -($result['sconto_globale']+($result['sconto_globale']*$rs_iva[0]['percentuale']/100)));
+    $result['iva_totale'] = sum($result['iva_totale'], -($result['sconto_globale'] * $rs_iva[0]['percentuale'] / 100));
+    $result['totale'] = sum($result['totale'], -($result['sconto_globale'] + ($result['sconto_globale'] * $rs_iva[0]['percentuale'] / 100)));
 
     return $result;
 }

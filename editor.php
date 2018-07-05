@@ -8,11 +8,7 @@ if (empty($id_record) && !empty($id_module)) {
     redirect(ROOTDIR.'/index.php');
 }
 
-if (file_exists($docroot.'/include/custom/top.php')) {
-    include $docroot.'/include/custom/top.php';
-} else {
-    include $docroot.'/include/top.php';
-}
+include_once App::filepath('include|custom|', 'top.php');
 
 // Lettura parametri iniziali del modulo
 $module = Modules::get($id_module);
@@ -103,7 +99,7 @@ if (empty($records)) {
                             {( "name": "button", "type": "email", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'" )}
 
                             <a class="btn btn-success" id="save">
-                                <i class="fa fa-check"></i> '.tr('Salva modifiche').'
+                                <i class="fa fa-check"></i> '.tr('Salva').'
                             </a>
                         </div>
                     </div>
@@ -128,6 +124,10 @@ if (empty($records)) {
                             }
                         });
 
+                        if ($("#pulsanti").hasClass("affix")) {
+                            $("#pulsanti").css("width", $("#tab_0").css("width"));
+                        }
+
                         $("#pulsanti").on("affix.bs.affix", function(){
                             $("#pulsanti").css("width", $("#tab_0").css("width"));
                         });
@@ -146,11 +146,7 @@ if (empty($records)) {
 
     // Pulsanti personalizzati
     ob_start();
-    if (file_exists($docroot.'/modules/'.$module_dir.'/custom/buttons.php')) {
-        include $docroot.'/modules/'.$module_dir.'/custom/buttons.php';
-    } elseif (file_exists($docroot.'/modules/'.$module_dir.'/buttons.php')) {
-        include $docroot.'/modules/'.$module_dir.'/buttons.php';
-    }
+    include Modules::filepath($id_module, 'buttons.php');
     $buttons = ob_get_clean();
 
     if (!empty($buttons)) {
@@ -240,72 +236,71 @@ echo '
         </a>';
 
 echo '
-<script>';
+        <script>';
 
 // Se l'utente ha i permessi in sola lettura per il modulo, converto tutti i campi di testo in span
-if ($module['permessi'] == 'r') {
-    ?>
-			$(document).ready( function(){
-				$('input, textarea, select', 'section.content').attr('readonly', 'true');
-				$('select, input[type="checkbox"]').prop('disabled', true);
-				$('a.btn, button, input[type=button], input[type=submit]', 'section.content').hide();
-				$('a.btn-info, button.btn-info, input[type=button].btn-info', 'section.content').show();
-			});
-<?php
-} ?>
+if (Modules::getPermission($id_module) == 'r' || !empty($block_edit)) {
+    $not = (Modules::getPermission($id_module) == 'r') ? '' : '.not(".unblockable")';
 
-		var content_was_modified = false;
+    echo '
+			$(document).ready(function(){
+				$("input, textarea, select", "section.content")'.$not.'.attr("readonly", "true");
+				$("select, input[type=checkbox]")'.$not.'.prop("disabled", true);
+				$("a.btn, button, input[type=button], input[type=submit]", "section.content")'.$not.'.hide();
+				$("a.btn-info, a.btn-warning, button.btn-info, button.btn-warning, input[type=button].btn-info", "section.content")'.$not.'.show();
+			});';
 
-		//controllo se digito qualche valore o cambio qualche select
-		$("input, textarea, select").bind("change paste keyup", function(event) {
-			if( event.keyCode >= 32 ){
-				content_was_modified = true;
-			}
-		});
+}
+?>
 
-		//tolgo il controllo se sto salvando
-		$(".btn-success, button[type=submit]").bind("click", function() {
-			content_was_modified = false;
-		});
+            var content_was_modified = false;
 
-		// questo controllo blocca il modulo vendita al banco, dopo la lettura con barcode, appare il messaggio di conferma
-		window.onbeforeunload = function(){
-			if(content_was_modified) {
-				return  'Uscire senza salvare?';
-			}
-		};
+            //controllo se digito qualche valore o cambio qualche select
+            $("input, textarea, select").bind("change paste keyup", function(event) {
+                if( event.keyCode >= 32 ){
+                    content_was_modified = true;
+                }
+            });
+
+            //tolgo il controllo se sto salvando
+            $(".btn-success, button[type=submit]").bind("click", function() {
+                content_was_modified = false;
+            });
+
+            // questo controllo blocca il modulo vendita al banco, dopo la lettura con barcode, appare il messaggio di conferma
+            window.onbeforeunload = function(){
+                if(content_was_modified) {
+                    return  'Uscire senza salvare?';
+                }
+            };
 <?php
 if ($advanced_sessions) {
         ?>
 
-		function getActiveUsers(){
-			$.getJSON('<?php echo ROOTDIR; ?>/call.php', {
-				id_module: <?php echo $id_module; ?>,
-				id_record: <?php echo $id_record; ?>
-			},
-			function(data) {
-				if (data.length != 0) {
-					$(".info-active").removeClass("hide");
-					$(".info-active .list").html("");
-					$.each( data, function( key, val ) {
-						$(".info-active .list").append("<li>"+val.username+"</li>");
-					});
-				}
-				else $(".info-active").addClass("hide");
-			});
-		}
+            function getActiveUsers(){
+                $.getJSON('<?php echo ROOTDIR; ?>/call.php', {
+                    id_module: <?php echo $id_module; ?>,
+                    id_record: <?php echo $id_record; ?>
+                },
+                function(data) {
+                    if (data.length != 0) {
+                        $(".info-active").removeClass("hide");
+                        $(".info-active .list").html("");
+                        $.each( data, function( key, val ) {
+                            $(".info-active .list").append("<li>"+val.username+"</li>");
+                        });
+                    }
+                    else $(".info-active").addClass("hide");
+                });
+            }
 
-		getActiveUsers();
+            getActiveUsers();
 
-		setInterval(getActiveUsers, <?php echo get_var('Timeout notifica di presenza (minuti)') * 1000; ?>);
+            setInterval(getActiveUsers, <?php echo get_var('Timeout notifica di presenza (minuti)') * 1000; ?>);
 <?php
     }
 ?>
-	</script>
+	    </script>
 <?php
 
-if (file_exists($docroot.'/include/custom/bottom.php')) {
-    include $docroot.'/include/custom/bottom.php';
-} else {
-    include $docroot.'/include/bottom.php';
-}
+include_once App::filepath('include|custom|', 'bottom.php');

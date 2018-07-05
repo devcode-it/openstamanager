@@ -7,8 +7,9 @@ include_once __DIR__.'/../../core.php';
  */
 function get_new_numeroordine($data)
 {
-    global $dbo;
     global $dir;
+
+    $dbo = Database::getConnection();
 
     $query = "SELECT numero AS max_numeroordine FROM or_ordini WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data))).' AND idtipoordine IN(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1';
     $rs = $dbo->fetchArray($query);
@@ -22,8 +23,9 @@ function get_new_numeroordine($data)
  */
 function get_new_numerosecondarioordine($data)
 {
-    global $dbo;
     global $dir;
+
+    $dbo = Database::getConnection();
 
     $query = "SELECT numero_esterno FROM or_ordini WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data))).' AND idtipoordine IN(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') ORDER BY CAST(numero_esterno AS UNSIGNED) DESC LIMIT 0,1';
     $rs = $dbo->fetchArray($query);
@@ -50,7 +52,7 @@ function get_new_numerosecondarioordine($data)
  */
 function get_imponibile_ordine($idordine)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     $query = 'SELECT SUM(subtotale-sconto) AS imponibile FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine);
     $rs = $dbo->fetchArray($query);
@@ -63,7 +65,7 @@ function get_imponibile_ordine($idordine)
  */
 function get_totale_ordine($idordine)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     // Sommo l'iva di ogni riga al totale
     $query = 'SELECT SUM(iva) AS iva FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine);
@@ -81,7 +83,7 @@ function get_totale_ordine($idordine)
  */
 function get_netto_ordine($idordine)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     $query = 'SELECT ritenutaacconto,bollo FROM or_ordini WHERE id='.prepare($idordine);
     $rs = $dbo->fetchArray($query);
@@ -94,7 +96,7 @@ function get_netto_ordine($idordine)
  */
 function get_ivadetraibile_ordine($idordine)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     $query = 'SELECT SUM(iva)-SUM(iva_indetraibile) AS iva_detraibile FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine);
     $rs = $dbo->fetchArray($query);
@@ -107,7 +109,7 @@ function get_ivadetraibile_ordine($idordine)
  */
 function get_ivaindetraibile_ordine($idordine)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     $query = 'SELECT SUM(iva_indetraibile) AS iva_indetraibile FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine);
     $rs = $dbo->fetchArray($query);
@@ -124,19 +126,19 @@ function get_ivaindetraibile_ordine($idordine)
  * $qta			float		quantità dell'articolo nell'ordine
  * $prezzo			float		prezzo totale degli articoli (prezzounitario*qtà).
  */
-function add_articolo_inordine($idordine, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT')
+function add_articolo_inordine($idordine, $idarticolo, $descrizione, $idiva, $qta, $idum, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT')
 {
-    global $dbo;
     global $dir;
 
-    // Lettura unità di misura dell'articolo
-    // $query = "SELECT valore FROM mg_unitamisura WHERE id=(SELECT idum FROM mg_articoli WHERE id='".$idarticolo."')";
-    // $rs = $dbo->fetchArray($query);
-    // $um = $rs[0]['valore'];
+    $dbo = Database::getConnection();
 
-    $query = 'SELECT um FROM mg_articoli WHERE id='.prepare($idarticolo);
-    $rs = $dbo->fetchArray($query);
-    $um = $rs[0]['um'];
+    // Lettura unità di misura dell'articolo
+    if (empty($idum)) {
+        $rs = $dbo->fetchArray('SELECT um FROM mg_articoli WHERE id='.prepare($idarticolo));
+        $um = $rs[0]['valore'];
+    } else {
+        $um = $idum;
+    }
 
     // Lettura iva dell'articolo
     $rs2 = $dbo->fetchArray('SELECT descrizione, percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva));
@@ -157,8 +159,9 @@ function add_articolo_inordine($idordine, $idarticolo, $descrizione, $idiva, $qt
  */
 function rimuovi_articolo_daordine($idarticolo, $idordine, $idrigaordine)
 {
-    global $dbo;
     global $dir;
+
+    $dbo = Database::getConnection();
 
     $non_rimovibili = seriali_non_rimuovibili('id_riga_ordine', $idrigaordine, $dir);
     if (!empty($non_rimovibili)) {
@@ -184,8 +187,9 @@ function rimuovi_articolo_daordine($idarticolo, $idordine, $idrigaordine)
  */
 function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaacconto = '', $bolli = '')
 {
-    global $dbo;
     global $dir;
+
+    $dbo = Database::getConnection();
 
     // Se ci sono righe nel ordine faccio i conteggi, altrimenti azzero gli sconti e le spese aggiuntive (inps, ritenuta, marche da bollo)
     $query = 'SELECT COUNT(id) AS righe FROM or_righe_ordini WHERE idordine='.prepare($idordine);
@@ -274,17 +278,47 @@ function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaac
  */
 function get_stato_ordine($idordine)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
-    $rs = $dbo->fetchArray('SELECT SUM(qta) AS qta, SUM(qta_evasa) AS qta_evasa FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine));
+    $rs_ordine = $dbo->fetchArray("SELECT IFNULL(SUM(qta), 0) AS qta FROM or_righe_ordini WHERE idordine='".$idordine."'");
+    $qta_ordine = $rs_ordine[0]['qta'];
 
-    if ($rs[0]['qta_evasa'] > 0) {
-        if ($rs[0]['qta'] > $rs[0]['qta_evasa']) {
-            return 'Parzialmente evaso';
-        } elseif ($rs[0]['qta'] == $rs[0]['qta_evasa']) {
-            return 'Evaso';
-        }
-    } else {
-        return 'Non evaso';
+    //Righe dell'ordine in ddt
+    $rs_ddt = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM dt_righe_ddt WHERE idordine='.prepare($idordine));
+    $qta_ddt = $rs_ddt[0]['qta'];
+
+    //Righe dell'ordine in fattura
+    $rs_fattura = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM co_righe_documenti WHERE idordine='.prepare($idordine));
+    $qta_fattura = $rs_fattura[0]['qta'];
+
+    //Righe dell'ordine in fattura passando da ddt
+    $rs_ddt_fattura = $dbo->fetchArray("SELECT IFNULL(SUM(qta), 0) AS qta FROM co_righe_documenti WHERE idddt IN(SELECT DISTINCT idddt FROM dt_righe_ddt WHERE idordine='".$idordine."')");
+    $qta_ddt_fattura = $rs_ddt_fattura[0]['qta'];
+
+    if ($qta_ddt == 0) {
+        $stato = 'Bozza';
     }
+    if ($qta_fattura == 0) {
+        $stato = 'Bozza';
+    }
+    if ($qta_ddt > 0 && $qta_ddt < $qta_ordine && $qta_ordine > 0) {
+        $stato = 'Parzialmente evaso';
+    }
+    if ($qta_ddt == $qta_ordine && $qta_ordine > 0) {
+        $stato = 'Evaso';
+    }
+    if ($qta_fattura > 0 && $qta_fattura < $qta_ordine && $qta_ordine > 0) {
+        $stato = 'Parzialmente fatturato';
+    }
+    if ($qta_fattura == $qta_ordine && $qta_ordine > 0) {
+        $stato = 'Fatturato';
+    }
+    if ($qta_ddt_fattura > 0 && $qta_ddt_fattura < $qta_ordine && $qta_ordine > 0) {
+        $stato = 'Parzialmente fatturato';
+    }
+    if ($qta_ddt_fattura == $qta_ordine && $qta_ordine > 0) {
+        $stato = 'Fatturato';
+    }
+
+    return $stato;
 }

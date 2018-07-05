@@ -32,10 +32,9 @@
 </Files>
 
 # Disable indexing of php, html, htm, pdf files
+ServerSignature Off
 <IfModule mod_headers.c>
-	<FilesMatch "\.(php|html|htm|pdf|log)$">
-		Header set X-Robots-Tag: "noindex"
-	</FilesMatch>
+    Header set X-Robots-Tag: "noindex,nofollow"
 </IfModule>
 
 <IfModule mod_rewrite.c>
@@ -57,6 +56,10 @@
     RewriteRule ^.svn/ - [F,L]
     RewriteRule ^node_modules/ - [F,L]
     RewriteRule ^vendor/ - [F,L]
+
+    # Disable HTTP TRACE
+    RewriteCond %{REQUEST_METHOD} ^TRACE
+    RewriteRule .* - [F]
 
     # Prevent hacks
 	# proc/self/environ? no way!

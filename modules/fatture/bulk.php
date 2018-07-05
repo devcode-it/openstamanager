@@ -25,11 +25,9 @@ switch (post('op')) {
                 $rapportino_nome = sanitizeFilename($numero.' '.$r['data'].' '.$r['ragione_sociale'].'.pdf');
                 $filename = slashes($dir.'tmp/'.$rapportino_nome);
 
-                $_GET['iddocumento'] = $r['id']; // Fix temporaneo per la stampa
-                $iddocumento = $r['id']; // Fix temporaneo per la stampa
-                $ptype = 'fatture';
+                $print = Prints::getModuleMainPrint($id_module);
 
-                require DOCROOT.'/pdfgen.php';
+                Prints::render($print['id'], $r['id'], $filename);
             }
 
             $dir = slashes($dir);
@@ -50,26 +48,25 @@ switch (post('op')) {
         break;
 
         case 'delete-bulk':
-			
-			if ($debug){
-				foreach ($id_records as $id) {
-					$dbo->query('DELETE  FROM co_documenti  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
-					$dbo->query('DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-					$dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-					$dbo->query('DELETE FROM mg_movimenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-				}
 
-				$_SESSION['infos'][] = tr('Fatture eliminate!');
-			}else{
-				$_SESSION['warnings'][] = tr('Procedura in fase di sviluppo. Nessuna modifica apportata.');
-			}
-			
+            if ($debug) {
+                foreach ($id_records as $id) {
+                    $dbo->query('DELETE  FROM co_documenti  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
+                    $dbo->query('DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
+                    $dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
+                    $dbo->query('DELETE FROM mg_movimenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
+                }
+
+                $_SESSION['infos'][] = tr('Fatture eliminate!');
+            } else {
+                $_SESSION['warnings'][] = tr('Procedura in fase di sviluppo. Nessuna modifica apportata.');
+            }
+
         break;
 }
 
 return [
-	
-	'delete-bulk' => tr('Elimina selezionati'),
+    'delete-bulk' => tr('Elimina selezionati'),
 
     'export-bulk' => [
         'text' => tr('Esporta stampe'),

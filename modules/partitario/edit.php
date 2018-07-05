@@ -186,7 +186,7 @@ for ($x = 0; $x < $n1; ++$x) {
         echo "	</table>\n";
 
         // Possibilità di inserire un nuovo conto
-        echo "	<button type='button' class='btn btn-xs btn-primary' data-toggle='tooltip' title='Aggiungi un nuovo conto...' onclick=\"launch_modal( 'Nuovo conto', '".$rootdir.'/modules/partitario/add_conto.php?id='.$rs2[$y]['id']."', 1 );\"><i class='fa fa-plus-circle'></i></button><br><br>\n";
+        echo "	<button type='button' class='btn btn-xs btn-primary' data-toggle='tooltip'  title='".tr('Aggiungi un nuovo conto...')."' onclick=\"launch_modal( '".tr('Nuovo conto')."', '".$rootdir.'/modules/partitario/add_conto.php?id='.$rs2[$y]['id']."', 1 );\"><i class='fa fa-plus-circle'></i></button><br><br>\n";
         echo "</div>\n";
     } // Fine livello 2
 

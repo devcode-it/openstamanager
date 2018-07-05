@@ -18,8 +18,8 @@ class DateHandler implements HandlerInterface
             'min-date',
         ];
         foreach ($detect as $attr) {
-            if ($values[$attr] == '-now-') {
-                $values[$attr] = date(\Translator::getFormatter()->getStandardFormats()['timestamp']);
+            if (isset($values[$attr]) && $values[$attr] == '-now-') {
+                $values[$attr] = date(\Intl\Formatter::getStandardFormats()['timestamp']);
             }
         }
 
@@ -55,8 +55,28 @@ class DateHandler implements HandlerInterface
 
         // Generazione del codice HTML di default
         if (empty($result)) {
-            $result = '
+            if (empty($values['label'])) {
+                $result = '
+<div class="form-group">';
+
+                if (empty($values['icon-before']) || empty($values['icon-after'])) {
+                    $result .= '
+    <div class="input-group">';
+                }
+            }
+
+            $result .= '
     <input |attr|>';
+
+            if (empty($values['label'])) {
+                if (empty($values['icon-before']) || empty($values['icon-after'])) {
+                    $result .= '
+    </div>';
+                }
+
+                $result .= '
+</div>';
+            }
         }
 
         return $result;

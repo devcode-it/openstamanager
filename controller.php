@@ -8,11 +8,7 @@ if (!empty($id_record) && !empty($id_module)) {
     redirect(ROOTDIR.'/index.php');
 }
 
-if (file_exists($docroot.'/include/custom/top.php')) {
-    include $docroot.'/include/custom/top.php';
-} else {
-    include $docroot.'/include/top.php';
-}
+include_once App::filepath('include|custom|', 'top.php');
 
 // Lettura parametri iniziali del modulo
 $module = Modules::get($id_module);
@@ -89,8 +85,4 @@ redirectOperation($id_module, $id_record);
 // Widget in basso
 echo '{( "name": "widgets", "id_module": "'.$id_module.'", "position": "right", "place": "controller" )}';
 
-if (file_exists($docroot.'/include/custom/bottom.php')) {
-    include $docroot.'/include/custom/bottom.php';
-} else {
-    include $docroot.'/include/bottom.php';
-}
+include_once App::filepath('include|custom|', 'bottom.php');

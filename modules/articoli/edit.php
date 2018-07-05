@@ -2,7 +2,19 @@
 
 include_once __DIR__.'/../../core.php';
 
+// Necesario per funzione \Util\Ini::getList
+include_once Modules::filepath('MyImpianti', 'modutil.php');
+
 $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
+
+$img = null;
+if (!empty($records[0]['immagine01'])) {
+    $fileinfo = Uploads::fileInfo($records[0]['immagine01']);
+
+    $default_img = '/'.Uploads::getUploadDirectory($id_module).'/'.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
+
+    $img = file_exists(DOCROOT.$default_img) ? ROOTDIR.$default_img : ROOTDIR.'/'.Uploads::getUploadDirectory($id_module).'/'.$records[0]['immagine01'];
+}
 
 ?><form action="" method="post" id="edit-form" enctype="multipart/form-data">
 	<input type="hidden" name="backto" value="record-edit">
@@ -17,10 +29,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-3">
-					<?php
-                    $immagine01 = ($records[0]['immagine01'] == '') ? '' : $rootdir.'/files/articoli/'.$records[0]['immagine01'];
-                    ?>
-					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine01", "class": "img-thumbnail", "value": "<?php echo $immagine01; ?>" ]}
+					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine01", "class": "img-thumbnail", "value": "<?php echo $img; ?>" ]}
 				</div>
 
 				<div class="col-md-4">
@@ -30,7 +39,7 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 				</div>
 
 				<div class="col-md-5">
-                    {[ "type": "checkbox", "label": "<?php echo tr("Seleziona per rendere attivo l'articolo"); ?>", "name": "attivo", "value": "$attivo$", "help": "", "placeholder": "<?php echo tr('Articolo attivo'); ?>" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr("Seleziona per rendere attivo l'articolo"); ?>", "name": "attivo", "value": "$attivo$", "placeholder": "<?php echo tr('Articolo attivo'); ?>" ]}
 				    <br>
                     {[ "type": "select", "label": "<?php echo tr('Subcategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie" ]}
                 </div>
@@ -44,15 +53,35 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 			<div class="row">
 				<div class="col-md-3">
 					{[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta", "min-value": "undefined" ]}
+					<input type="hidden" id="old_qta" value="<?php echo $records[0]['qta']; ?>">
 				</div>
 				<div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr('Modifica quantità manualmente'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>" ]}
-
+					{[ "type": "checkbox", "label": "<?php echo tr('Modifica quantità manualmente'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>", "extra": "<?php echo ($records[0]['servizio']) ? 'disabled' : ''; ?>" ]}
 					<script type="text/javascript">
 
-				        $('#qta_manuale').click(function(){
-							$("#qta").attr("readonly", !$('#qta_manuale').is(":checked"));
-				        });
+                        $(document).ready(function() {
+
+                            $('#servizio').click(function(){
+                                $("#qta_manuale").attr("disabled", $('#servizio').is(":checked"));
+                            });
+
+
+    				        $('#qta_manuale').click(function(){
+    							$("#qta").attr("readonly", !$('#qta_manuale').is(":checked"));
+								if($('#qta_manuale').is(":checked")){
+									$("#div_modifica_manuale").show();
+									$("#div_modifica_manuale").show();
+									$("#descrizione_movimento").attr('required', true);
+									$("#data_movimento").attr('required', true);
+								}else{
+									$("#div_modifica_manuale").hide();
+									$('#qta').val($('#old_qta').val());
+									$("#descrizione_movimento").attr('required', false);
+									$("#data_movimento").attr('required', false);
+								}
+    				        });
+
+                         });
 
 					</script>
 
@@ -62,10 +91,8 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 					{[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "$um$", "ajax-source": "misure", "icon-after": "add|<?php echo Modules::get('Unità di misura')['id']; ?>" ]}
 				</div>
 
-				
-
 				<?php
-                ($records[0]['serial']>0) ? $records[0]['abilita_serial'] = 1 : $records[0]['abilita_serial'] = $records[0]['abilita_serial'];
+                $records[0]['abilita_serial'] = ($records[0]['serial'] > 0) ? 1 : $records[0]['abilita_serial'];
                 if (empty($records[0]['abilita_serial'])) {
                     $plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Serial'");
                     echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
@@ -73,10 +100,19 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
                 ?>
 
 				  <div class="col-md-4">
-					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "placeholder": "<?php echo tr('Serial number'); ?>", "extra": "<?php echo ($records[0]['serial']>0) ? 'readonly' : ''; ?>" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "placeholder": "<?php echo tr('Serial number'); ?>", "extra": "<?php echo ($records[0]['serial'] > 0) ? 'readonly' : ''; ?>" ]}
                 </div>
 
 
+			</div>
+
+			<div class='row' id="div_modifica_manuale" style="display:none;">
+				<div class='col-md-3'>
+					{[ "type": "text", "label": "<?php echo tr('Descrizione movimento'); ?>", "name": "descrizione_movimento" ]}
+				</div>
+				<div class='col-md-3'>
+					{[ "type": "date", "label": "<?php echo tr('Data movimento'); ?>", "name": "data_movimento", "value": "-now-" ]}
+				</div>
 			</div>
 
 			<div class="row">
@@ -132,10 +168,10 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "checkbox", "label": "<?php echo tr('Questo articolo è un servizio'); ?>", "name": "servizio", "value": "$servizio$", "help": "", "placeholder": "<?php echo tr('Servizio'); ?>" ]}
+                            {[ "type": "checkbox", "label": "<?php echo tr('Questo articolo è un servizio'); ?>", "name": "servizio", "value": "$servizio$", "help": "<?php echo tr('Le quantità non saranno considerate'); ?>", "placeholder": "<?php echo tr('Servizio'); ?>" ]}
                         </div>
                     </div>
-            
+
                     <div class="row">
                         <div class="col-md-6">
                             {[ "type": "number", "label": "<?php echo tr('Peso lordo'); ?>", "name": "peso_lordo", "value": "$peso_lordo$", "icon-after": "KG" ]}
@@ -158,9 +194,6 @@ $_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
 
 		<div class="panel-body">
 <?php
-
-    /* necesario per funzione \Util\Ini::getList */
-    include $docroot.'/modules/my_impianti/modutil.php';
 
     echo '
             <div class="row">
@@ -295,6 +328,8 @@ echo '
 	</div>
 </form>
 
+{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
+
 <script>
 $("#categoria").change( function(){
 	session_set("superselect,id_categoria", $(this).val(), 0);
@@ -349,8 +384,6 @@ if (!empty($elementi)) {
 }
 
 ?>
-
-{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>

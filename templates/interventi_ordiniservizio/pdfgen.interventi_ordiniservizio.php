@@ -4,11 +4,6 @@ include_once __DIR__.'/../../core.php';
 
 $module_name = 'Interventi';
 
-// ############mostro o nascondo i costi dell'intervento..#################
-// true o false
-$visualizza_costi = get_var('Visualizza i costi sulle stampe degli interventi');
-// #######################################################################
-
 // carica info ordine servizio
 $idintervento = save($_GET['idintervento']);
 $query = "SELECT *, (SELECT CONCAT_WS('-', codice, ragione_sociale ) FROM an_anagrafiche WHERE idanagrafica=(SELECT idtecnico FROM in_interventi_tecnici WHERE idintervento=co_ordiniservizio.idintervento LIMIT 0,1)) AS tecnico, (SELECT data FROM in_interventi WHERE id=co_ordiniservizio.idintervento) AS data_intervento FROM co_ordiniservizio WHERE idintervento=\"$idintervento\" ".Modules::getAdditionalsQuery('Interventi');
@@ -161,7 +156,7 @@ $body .= "<table cellspacing=\"0\" border=\"0\" cellpadding=\"10\" style=\"width
 
 // Copia centrale
 if ($copia_centrale == '1') {
-    $copia_centrale = 'S&Igrave;';
+    $copia_centrale = 'Sì';
 } else {
     $copia_centrale = 'NO';
 }
@@ -171,7 +166,7 @@ $body .= "</td>\n";
 
 // Copia cliente
 if ($copia_cliente == '1') {
-    $copia_cliente = 'S&Igrave;';
+    $copia_cliente = 'Sì';
 } else {
     $copia_cliente = 'NO';
 }
@@ -181,7 +176,7 @@ $body .= "</td>\n";
 
 // Copia amministratore
 if ($copia_amministratore == '1') {
-    $copia_amministratore = 'S&Igrave;';
+    $copia_amministratore = 'Sì';
 } else {
     $copia_amministratore = 'NO';
 }
@@ -191,7 +186,7 @@ $body .= "</td></tr>\n";
 
 // Funzionamento in sicurezza
 if ($funzionamento_in_sicurezza == '1') {
-    $funzionamento_in_sicurezza = 'S&Igrave;';
+    $funzionamento_in_sicurezza = 'Sì';
 } else {
     $funzionamento_in_sicurezza = 'NO';
 }

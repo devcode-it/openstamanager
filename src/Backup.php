@@ -30,7 +30,7 @@ class Backup
             throw new UnexpectedValueException();
         }
 
-        return realpath($result);
+        return slashes($result);
     }
 
     /**
@@ -46,7 +46,7 @@ class Backup
             throw new UnexpectedValueException();
         }
 
-        return realpath($result);
+        return slashes($result);
     }
 
     /**
@@ -169,13 +169,13 @@ class Backup
         // Lista dei file da inserire nel backup
         $files = Symfony\Component\Finder\Finder::create()
             ->files()
-            ->exclude((array) $ignores['dirs'])
+            ->exclude($ignores['dirs'])
             ->ignoreDotFiles(true)
             ->ignoreVCS(true)
             ->in(DOCROOT)
             ->in(self::getDatabaseDirectory());
 
-        foreach ((array) $ignores['files'] as $value) {
+        foreach ($ignores['files'] as $value) {
             $files->notName($value);
         }
 
@@ -200,8 +200,8 @@ class Backup
     /**
      * Effettua il backup in formato ZIP.
      *
-     * @param array  $files       Elenco dei file da includere
-     * @param string $destination Nome del file ZIP
+     * @param Iterator|array $files       File da includere
+     * @param string         $destination Nome del file ZIP
      *
      * @return bool
      */
@@ -213,7 +213,7 @@ class Backup
 
         $zip = new ZipArchive();
 
-        $result = $zip->open($destination, ZIPARCHIVE::CREATE);
+        $result = $zip->open($destination, ZipArchive::CREATE);
         if ($result === true) {
             foreach ($files as $file) {
                 $zip->addFile($file, $file->getRelativePathname());

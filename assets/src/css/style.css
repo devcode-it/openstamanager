@@ -364,6 +364,7 @@ span.form-control {
 .info-box-text {
     white-space: normal;
     overflow: auto;
+	font-size: 12px;
 }
 
 .colorpicker,
@@ -529,15 +530,17 @@ input.small-width {
     }
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 767px) {
     .box-center,
     .box-center-large {
         width: 90%;
         margin-top: 20px
     }
-    .main-header .logo {
+    
+	.main-header .logo {
         display: none;
     }
+
     /*
     .content-wrapper,
     .right-side,
@@ -583,6 +586,9 @@ input.small-width {
 .callout a{
 		text-decoration: none;
 }
+.dropdown-menu{
+    min-width: 130px;
+}
 /*fix per tabs editor */
 .nav-tabs-custom > .nav-tabs > li{
 		border-top: 3px solid #ddd;
@@ -598,4 +604,20 @@ input.small-width {
 .nav-tabs-custom > .nav-tabs > li{
 		margin-bottom:-1px;
 		margin-right: 0px;
+}
+
+.ui-autocomplete {
+    background: #f6f6f6;
+    border-color: #ccc;
+    border-color: rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+}
+
+.parsley-errors-list{
+    color: red;
 }

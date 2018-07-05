@@ -6,16 +6,23 @@ $module = Modules::get($id_module);
 
 $data = [
     'ddt' => [
-        'table' => 'dt_ddt',
-        'rows' => 'dt_righe_ddt',
-        'id' => 'idddt',
-        'condition' => '(id_riga_documento IS NOT NULL)',
+        'table' => 'dt_ddt', // Tabella del documento
+        'rows' => 'dt_righe_ddt', // Tabella delle righe
+        'id' => 'idddt', // ID nella tabella delle righe
+        'condition' => '(id_riga_documento IS NOT NULL)', // Condizione per i seriali
     ],
     'ord' => [
         'table' => 'or_ordini',
         'rows' => 'or_righe_ordini',
         'id' => 'idordine',
         'condition' => '(id_riga_ddt IS NOT NULL OR id_riga_documento IS NOT NULL)',
+    ],
+    'fat' => [
+        'table' => 'co_documenti',
+        'rows' => 'co_righe_documenti',
+        'id' => 'iddocumento',
+        'condition' => '(1 = 2)',
+        'allow-empty' => true,
     ],
 ];
 
@@ -26,11 +33,22 @@ if ($module['name'] == 'Ordini cliente' || $module['name'] == 'Ordini fornitore'
     $op = ($documento == 'ddt') ? 'ddt_da_ordine' : 'fattura_da_ordine';
 
     $head = tr('Ordine numero _NUM_');
-} else {
+
+    $dir = ($module['name'] == 'Ordini cliente') ? 'entrata' : 'uscita';
+} elseif ($module['name'] == 'Ddt di vendita' || $module['name'] == 'Ddt di acquisto') {
     $pos = 'ddt';
     $op = 'fattura_da_ddt';
 
     $head = tr('Ddt numero _NUM_');
+
+    $dir = ($module['name'] == 'Ddt di vendita') ? 'entrata' : 'uscita';
+} else {
+    $pos = 'fat';
+    $op = 'nota_accredito';
+
+    $head = tr('Fattura numero _NUM_');
+
+    $dir = 'entrata';
 }
 
 $table = $data[$pos]['table'];
@@ -38,19 +56,13 @@ $rows = $data[$pos]['rows'];
 $id = $data[$pos]['id'];
 $row = str_replace('id', 'id_riga_', $id);
 
-if ($module['name'] == 'Ordini cliente' || $module['name'] == 'Ddt di vendita') {
-    $dir = 'entrata';
-} else {
-    $dir = 'uscita';
-}
-
 if ($module['name'] == 'Ordini cliente') {
     $module_name = ($documento == 'ddt') ? 'Ddt di vendita' : 'Fatture di vendita';
 } elseif ($module['name'] == 'Ordini fornitore') {
     $module_name = ($documento == 'ddt') ? 'Ddt di acquisto' : 'Fatture di acquisto';
 } elseif ($module['name'] == 'Ddt di acquisto') {
     $module_name = 'Fatture di acquisto';
-} elseif ($module['name'] == 'Ddt di vendita') {
+} else {
     $module_name = 'Fatture di vendita';
 }
 
@@ -73,7 +85,7 @@ echo '
 <p>'.str_replace('_NUM_', $numero, $head).'.</p>';
 
 // Selezione articoli dell'ordine da portare nel ddt
-$rs = $dbo->fetchArray('SELECT *, (qta - qta_evasa) AS qta_rimanente FROM '.$table.' INNER JOIN '.$rows.' ON '.$table.'.id='.$rows.'.'.$id.' WHERE '.$table.'.id='.prepare($id_record).' HAVING qta_rimanente > 0');
+$rs = $dbo->fetchArray('SELECT *, (qta - qta_evasa) AS qta_rimanente FROM '.$table.' INNER JOIN '.$rows.' ON '.$table.'.id='.$rows.'.'.$id.' WHERE '.$table.'.id='.prepare($id_record).' HAVING qta_rimanente > 0 ORDER BY `order`');
 
 if (!empty($rs)) {
     echo '
@@ -98,13 +110,13 @@ if (!empty($rs)) {
             {[ "type": "date", "label": "'.tr('Data del documento').'", "name": "data", "required": 1, "value": "-now-" ]}
         </div>';
 
-        if ($module_name=='Fatture di vendita' || $module_name == 'Fatture di acquisto'){
+        if ($module_name == 'Fatture di vendita' || $module_name == 'Fatture di acquisto') {
             echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "class": "", "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare(Modules::get($module_name)['id']).' ORDER BY name", "value": "'.Modules::get($module_name)['id_segment'].'", "extra": "" ]}
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare(Modules::get($module_name)['id']).' ORDER BY name", "value": "'.$_SESSION['m'.Modules::get($module_name)['id']]['id_segment'].'" ]}
         </div>';
         }
-        
+
         echo
     '</div>';
     }
@@ -178,11 +190,15 @@ if (!empty($rs)) {
         echo '
         <td>';
         if (!empty($r['abilita_serial'])) {
-            $values = $dbo->fetchArray('SELECT DISTINCT serial FROM mg_prodotti WHERE dir=\''.$dir.'\' AND '.$row.' = \''.$r['id'].'\' AND serial IS NOT NULL AND serial NOT IN (SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND dir=\''.$dir.'\' AND '.$data[$pos]['condition'].')');
+            $query = 'SELECT DISTINCT serial AS id, serial AS descrizione FROM mg_prodotti WHERE dir='.prepare($dir).' AND '.$row.' = '.prepare($r['id']).' AND serial IS NOT NULL AND serial NOT IN (SELECT serial FROM mg_prodotti AS t WHERE serial IS NOT NULL AND dir='.prepare($dir).' AND '.$data[$pos]['condition'].')';
 
-            echo '
-            {[ "type": "select", "name": "serial['.$i.']['.$r['id'].']", "id": "serial_'.$i.'", "multiple": 1, "values": "query=SELECT DISTINCT serial AS id, serial AS descrizione FROM mg_prodotti WHERE dir=\''.$dir.'\' AND '.$row.' = \''.$r['id'].'\' AND serial IS NOT NULL AND serial NOT IN (SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND dir=\''.$dir.'\' AND '.$data[$pos]['condition'].')", "value": "'.implode(',', array_column($values, 'serial')).'", "extra": "data-maximum=\"'.intval($r['qta_rimanente']).'\"" ]}
-                ';
+            $values = $dbo->fetchArray($query);
+            if (!empty($values)) {
+                echo '
+            {[ "type": "select", "name": "serial['.$r['id'].'][]", "id": "serial_'.$i.'", "multiple": 1, "values": "query='.$query.'", "value": "'.implode(',', array_column($values, 'id')).'", "extra": "data-maximum=\"'.intval($r['qta_rimanente']).'\"" ]}';
+            } else {
+                echo '-';
+            }
         } else {
             echo '-';
         }
@@ -227,12 +243,12 @@ echo '
 ?>
 
 <script type="text/javascript">
-    function ricalcola_subtotale_riga( r ){
-        subtot = $("#subtot_"+r).val();
-        sconto = $("#sconto_"+r).val();
-        iva = $("#iva_"+r).val();
+    function ricalcola_subtotale_riga(r) {
+        subtot = $("#subtot_" + r).val();
+        sconto = $("#sconto_" + r).val();
+        iva = $("#iva_" + r).val();
 
-        qtamax = $("#qtamax_"+r).val() ? $("#qtamax_"+r).val() : 0;
+        qtamax = $("#qtamax_" + r).val() ? $("#qtamax_" + r).val() : 0;
 
         subtot = parseFloat(subtot);
         sconto = parseFloat(sconto);
@@ -241,66 +257,73 @@ echo '
 
         subtot = subtot - sconto;
 
-        qta = $("#qta_"+r).val().toEnglish();
+        qta = $("#qta_" + r).val().toEnglish();
 
         // Se inserisco una quantità da evadere maggiore di quella rimanente, la imposto al massimo possibile
-        if(qta > qtamax){
+        if (qta > qtamax) {
             qta = qtamax;
 
-            $('#qta_'+r).val(qta);
+            $('#qta_' + r).val(qta);
         }
 
         // Se tolgo la spunta della casella dell'evasione devo azzerare i conteggi
-        if(isNaN(qta) || !$('#checked_'+r).is(':checked')){
+        if (isNaN(qta) || !$('#checked_' + r).is(':checked')) {
             qta = 0;
         }
 
-        $("#serial_"+r).selectClear();
-        $("#serial_"+r).select2("destroy");
-        $("#serial_"+r).data('maximum', qta);
+        $("#serial_" + r).selectClear();
+        $("#serial_" + r).select2("destroy");
+        $("#serial_" + r).data('maximum', qta);
         start_superselect();
 
         subtotale = (subtot * qta + iva * qta).toLocale();
 
-        $("#subtotale_"+r).html(subtotale+" &euro;");
-        $("#subtotaledettagli_"+r).html((subtot * qta).toLocale() + " + " + (iva * qta).toLocale());
+        $("#subtotale_" + r).html(subtotale + " &euro;");
+        $("#subtotaledettagli_" + r).html((subtot * qta).toLocale() + " + " + (iva * qta).toLocale());
 
         ricalcola_totale();
     }
-   
-    function ricalcola_totale(){
+
+    function ricalcola_totale() {
         tot_qta = 0;
         r = 0;
         totale = 0.00;
-        $('input[id*=qta_]').each( function(){
+        $('input[id*=qta_]').each(function() {
             qta = $(this).val().toEnglish();
 
-            if( !$('#checked_'+r).is(':checked') || isNaN(qta) ){
+            if (!$('#checked_' + r).is(':checked') || isNaN(qta)) {
                 qta = 0;
             }
 
-            subtot = $("#subtot_"+r).val();
-            sconto = $("#sconto_"+r).val();
-            iva = $("#iva_"+r).val();
+            subtot = $("#subtot_" + r).val();
+            sconto = $("#sconto_" + r).val();
+            iva = $("#iva_" + r).val();
 
             subtot = parseFloat(subtot);
             sconto = parseFloat(sconto);
             iva = parseFloat(iva);
 
-            subtot = subtot-sconto;
+            subtot = subtot - sconto;
 
-            totale += subtot*qta+iva*qta;
+            totale += subtot * qta + iva * qta;
 
             r++;
 
-            tot_qta +=qta;
+            tot_qta += qta;
         });
 
-        $('#totale').html( (totale.toLocale()) + " &euro;" );
-        
-        if( tot_qta>0 )
-            $('#submit_btn').show();
+        $('#totale').html((totale.toLocale()) + " &euro;");
+
+<?php
+
+if (empty($data[$pos]['allow-empty'])) {
+    echo '
+        if (tot_qta > 0)
+            $("#submit_btn").show();
         else
-            $('#submit_btn').hide();
+            $("#submit_btn").hide();';
+}
+
+?>
     }
 </script>

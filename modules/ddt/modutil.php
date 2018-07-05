@@ -7,8 +7,9 @@ include_once __DIR__.'/../../core.php';
  */
 function get_new_numeroddt($data)
 {
-    global $dbo;
     global $dir;
+
+    $dbo = Database::getConnection();
 
     $query = "SELECT IFNULL(MAX(numero),'0') AS max_numeroddt FROM dt_ddt WHERE DATE_FORMAT( data, '%Y' ) = '".date('Y', strtotime($data))."' AND idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir='".$dir."') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1";
     $rs = $dbo->fetchArray($query);
@@ -21,8 +22,9 @@ function get_new_numeroddt($data)
  */
 function get_new_numerosecondarioddt($data)
 {
-    global $dbo;
     global $dir;
+
+    $dbo = Database::getConnection();
 
     // Calcolo il numero secondario se stabilito dalle impostazioni e se documento di vendita
     $formato_numero_secondario = get_var('Formato numero secondario ddt');
@@ -52,8 +54,9 @@ function get_new_numerosecondarioddt($data)
  */
 function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
 {
-    global $dbo;
     global $dir;
+
+    $dbo = Database::getConnection();
 
     // Leggo la quantità di questo articolo in ddt
     $query = 'SELECT qta, subtotale FROM dt_righe_ddt WHERE id='.prepare($idrigaddt);
@@ -96,6 +99,11 @@ function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
     // Elimino la riga dal ddt
     $dbo->query('DELETE FROM `dt_righe_ddt` WHERE id='.prepare($idrigaddt).' AND idddt='.prepare($idddt));
 
+    //Aggiorno lo stato dell'ordine
+    if (get_var('Cambia automaticamente stato ordini fatturati') && !empty($idordine)) {
+        $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($idordine).'") WHERE id = '.prepare($idordine));
+    }
+
     // Elimino i seriali utilizzati dalla riga
     $dbo->query('DELETE FROM `mg_prodotti` WHERE id_articolo = '.prepare($idarticolo).' AND id_riga_ddt = '.prepare($idrigaddt));
 
@@ -107,7 +115,7 @@ function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
  */
 function get_imponibile_ddt($idddt)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     $query = 'SELECT SUM(subtotale-sconto) AS imponibile FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt);
     $rs = $dbo->fetchArray($query);
@@ -120,14 +128,14 @@ function get_imponibile_ddt($idddt)
  */
 function get_totale_ddt($idddt)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     // Sommo l'iva di ogni riga al totale
-    $query = "SELECT SUM(iva) AS iva FROM dt_righe_ddt GROUP BY idddt HAVING idddt='".$idddt."'";
+    $query = 'SELECT SUM(iva) AS iva FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt);
     $rs = $dbo->fetchArray($query);
 
     // Aggiungo la rivalsa inps se c'è
-    $query2 = "SELECT rivalsainps FROM dt_ddt WHERE id='".$idddt."'";
+    $query2 = 'SELECT rivalsainps FROM dt_ddt WHERE id='.prepare($idddt);
     $rs2 = $dbo->fetchArray($query2);
 
     return get_imponibile_ddt($idddt) + $rs[0]['iva'] + $rs2[0]['rivalsainps'];
@@ -138,9 +146,9 @@ function get_totale_ddt($idddt)
  */
 function get_netto_ddt($idddt)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
-    $query = "SELECT ritenutaacconto,bollo FROM dt_ddt WHERE id='".$idddt."'";
+    $query = 'SELECT ritenutaacconto,bollo FROM dt_ddt WHERE id='.prepare($idddt);
     $rs = $dbo->fetchArray($query);
 
     return get_totale_ddt($idddt) - $rs[0]['ritenutaacconto'] + $rs[0]['bollo'];
@@ -151,9 +159,9 @@ function get_netto_ddt($idddt)
  */
 function get_ivadetraibile_ddt($idddt)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
-    $query = "SELECT SUM(iva)-SUM(iva_indetraibile) AS iva_detraibile FROM dt_righe_ddt GROUP BY idddt HAVING idddt='".$idddt."'";
+    $query = 'SELECT SUM(iva)-SUM(iva_indetraibile) AS iva_detraibile FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt);
     $rs = $dbo->fetchArray($query);
 
     return $rs[0]['iva_detraibile'];
@@ -164,9 +172,9 @@ function get_ivadetraibile_ddt($idddt)
  */
 function get_ivaindetraibile_ddt($idddt)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
-    $query = "SELECT SUM(iva_indetraibile) AS iva_indetraibile FROM dt_righe_ddt GROUP BY idddt HAVING idddt='".$idddt."'";
+    $query = 'SELECT SUM(iva_indetraibile) AS iva_indetraibile FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt);
     $rs = $dbo->fetchArray($query);
 
     return $rs[0]['iva_indetraibile'];
@@ -182,8 +190,9 @@ function get_ivaindetraibile_ddt($idddt)
  */
 function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto = '', $bolli = '')
 {
-    global $dbo;
     global $dir;
+
+    $dbo = Database::getConnection();
 
     // Se ci sono righe nel ddt faccio i conteggi, altrimenti azzero gli sconti e le spese aggiuntive (inps, ritenuta, marche da bollo)
     $query = "SELECT COUNT(id) AS righe FROM dt_righe_ddt WHERE idddt='$idddt'";
@@ -274,20 +283,16 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
  * $qta			float		quantità dell'articolo nell'ordine
  * $prezzo			float		prezzo totale degli articoli (prezzounitario*qtà).
  */
-function add_articolo_inddt($idddt, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT')
+function add_articolo_inddt($idddt, $idarticolo, $descrizione, $idiva, $qta, $idum, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT')
 {
-    global $dbo;
     global $dir;
+    global $idordine;
 
-    // Lettura unità di misura dell'articolo
-    // $query = "SELECT valore FROM mg_unitamisura WHERE id=(SELECT idum FROM mg_articoli WHERE id='".$idarticolo."')";
-    // $rs = $dbo->fetchArray($query);
-    // $um = $rs[0]['valore'];
+    $dbo = Database::getConnection();
 
     // Lettura unità di misura dell'articolo
     if (empty($idum)) {
-        $query = 'SELECT um FROM mg_articoli WHERE id='.prepare($idarticolo);
-        $rs = $dbo->fetchArray($query);
+        $rs = $dbo->fetchArray('SELECT um FROM mg_articoli WHERE id='.prepare($idarticolo));
         $um = $rs[0]['valore'];
     } else {
         $um = $idum;
@@ -319,6 +324,9 @@ function add_articolo_inddt($idddt, $idarticolo, $descrizione, $idiva, $qta, $pr
             // Decremento la quantità dal magazzino centrale
             add_movimento_magazzino($idarticolo, $qta, ['idddt' => $idddt]);
         }
+
+        // Inserisco il riferimento dell'ordine alla riga
+        $dbo->query('UPDATE dt_righe_ddt SET idordine='.prepare($idordine).' WHERE id='.prepare($idriga));
     }
 
     return $idriga;
@@ -329,7 +337,7 @@ function add_articolo_inddt($idddt, $idarticolo, $descrizione, $idiva, $qta, $pr
  */
 function get_stato_ddt($idddt)
 {
-    global $dbo;
+    $dbo = Database::getConnection();
 
     $rs = $dbo->fetchArray('SELECT SUM(qta) AS qta, SUM(qta_evasa) AS qta_evasa FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt));
 

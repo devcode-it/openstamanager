@@ -1,8 +1,7 @@
 <?php
 
-// Impostazioni per la corretta interpretazione di UTF-8
-header('Content-Type: text/html; charset=UTF-8');
-ob_start();
+// Rimozione header X-Powered-By
+header_remove('X-Powered-By');
 
 // Impostazioni di configurazione PHP
 date_default_timezone_set('Europe/Rome');
@@ -39,8 +38,8 @@ if (!empty($redirectHTTPS) && !isHTTPS(true)) {
     exit();
 }
 
-// Forzamento del debug
-// $debug = true;
+// Forza l'abilitazione del debug
+// $debug = App::debug(true);
 
 // Logger per la segnalazione degli errori
 $logger = new Monolog\Logger('Logs');
@@ -65,7 +64,7 @@ if (!API::isAPIRequest()) {
 
     // Impostazioni di debug
     if (!empty($debug)) {
-        // Ignoramento degli avvertimenti e delle informazioni relative alla deprecazione di componenti
+        // Ignora gli avvertimenti e le informazioni relative alla deprecazione di componenti
         error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE & ~E_USER_DEPRECATED);
 
         // File di log ordinato in base alla data
@@ -95,7 +94,18 @@ if (empty($debug)) {
 }
 
 // Imposta il formato di salvataggio dei log
-$monologFormatter = new Monolog\Formatter\LineFormatter('[%datetime%] %channel%.%level_name%: %message%'.PHP_EOL.'%extra% '.PHP_EOL);
+$pattern = '[%datetime%] %channel%.%level_name%: %message%';
+if (!empty($debug)) {
+    $pattern .= ' %context%';
+}
+$pattern .= PHP_EOL.'%extra% '.PHP_EOL;
+
+$monologFormatter = new Monolog\Formatter\LineFormatter($pattern);
+
+if (!empty($debug)) {
+    $monologFormatter->includeStacktraces(true);
+}
+
 foreach ($handlers as $handler) {
     $handler->setFormatter($monologFormatter);
     $logger->pushHandler(new FilterHandler($handler, [$handler->getLevel()]));
@@ -127,7 +137,11 @@ $dbo = Database::getConnection();
 // Controllo sulla presenza dei permessi di accesso basilari
 $continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (Auth::check() || API::isAPIRequest());
 
-if (!$continue && getURLPath() != slashes(ROOTDIR.'/index.php')) {
+if (!empty($skip_permissions)) {
+    Permissions::skip();
+}
+
+if (!$continue && getURLPath() != slashes(ROOTDIR.'/index.php') && !Permissions::getSkip()) {
     if (Auth::check()) {
         Auth::logout();
     }
@@ -138,6 +152,9 @@ if (!$continue && getURLPath() != slashes(ROOTDIR.'/index.php')) {
 
 // Operazione aggiuntive (richieste non API)
 if (!API::isAPIRequest()) {
+    // Impostazioni di Content-Type e Charset Header
+    header('Content-Type: text/html; charset=UTF-8');
+
     /*
     // Controllo CSRF
     if(!CSRF::getInstance()->validate()){
@@ -161,31 +178,15 @@ if (!API::isAPIRequest()) {
 
     // Registrazione globale del template per gli input HTML
     register_shutdown_function('translateTemplate');
+    ob_start();
 
     // Impostazione della sessione di base
-    $_SESSION['infos'] = array_unique((array) $_SESSION['infos']);
-    $_SESSION['warnings'] = array_unique((array) $_SESSION['warnings']);
-    $_SESSION['errors'] = array_unique((array) $_SESSION['errors']);
-
-    // Imposto il periodo di visualizzazione dei record dal 01-01-yyy al 31-12-yyyy
-    if (!empty($_GET['period_start'])) {
-        $_SESSION['period_start'] = $_GET['period_start'];
-        $_SESSION['period_end'] = $_GET['period_end'];
-    } elseif (!isset($_SESSION['period_start'])) {
-        $_SESSION['period_start'] = date('Y').'-01-01';
-        $_SESSION['period_end'] = date('Y').'-12-31';
-    }
+    $_SESSION['infos'] = isset($_SESSION['infos']) ? array_unique($_SESSION['infos']) : [];
+    $_SESSION['warnings'] = isset($_SESSION['warnings']) ? array_unique($_SESSION['warnings']) : [];
+    $_SESSION['errors'] = isset($_SESSION['errors']) ? array_unique($_SESSION['errors']) : [];
 
     // Impostazione del tema grafico di default
     $theme = !empty($theme) ? $theme : 'default';
-
-    $assets = App::getAssets();
-
-    // CSS di base del progetto
-    $css_modules = $assets['css'];
-
-    // JS di base del progetto
-    $jscript_modules = $assets['js'];
 
     if ($continue) {
         $id_module = filter('id_module');
@@ -193,12 +194,30 @@ if (!API::isAPIRequest()) {
         $id_plugin = filter('id_plugin');
         $id_parent = filter('id_parent');
 
+        // Periodo di visualizzazione dei record
+        // Personalizzato
+        if (!empty($_GET['period_start'])) {
+            $_SESSION['period_start'] = $_GET['period_start'];
+            $_SESSION['period_end'] = $_GET['period_end'];
+        }
+        // Dal 01-01-yyy al 31-12-yyyy
+        elseif (!isset($_SESSION['period_start'])) {
+            $_SESSION['period_start'] = date('Y').'-01-01';
+            $_SESSION['period_end'] = date('Y').'-12-31';
+        }
+
         $user = Auth::user();
 
         if (!empty($id_module)) {
             $module = Modules::get($id_module);
 
             $pageTitle = $module['title'];
+
+            // Segmenti
+            if (!isset($_SESSION['m'.$id_module]['id_segment'])) {
+                $segments = Modules::getSegments($id_module);
+                $_SESSION['m'.$id_module]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
+            }
 
             Permissions::addModule($id_module);
         }

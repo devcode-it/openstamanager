@@ -2,16 +2,30 @@
 
 include_once __DIR__.'/../../core.php';
 
-// Info contratto
-$rs = $dbo->fetchArray('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
+// Info documento
+$rs = $dbo->fetchArray('SELECT idanagrafica FROM co_documenti WHERE id='.prepare($id_record));
 $idanagrafica = $rs[0]['idanagrafica'];
+
+// Leggo il conto dall'ultima riga inserita
+$rs = $dbo->fetchArray('SELECT idconto FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' ORDER BY id DESC LIMIT 0,1');
+$idconto = $rs[0]['idconto'];
 
 if ($module['name'] == 'Fatture di vendita') {
     $dir = 'entrata';
     $conti = 'conti-vendite';
+
+    // Se non ho letto un conto dall'ultima riga inserita, lo leggo dalle impostazioni
+    if (empty($idconto)) {
+        $idconto = get_var('Conto predefinito fatture di vendita');
+    }
 } else {
     $dir = 'uscita';
     $conti = 'conti-acquisti';
+
+    // Se non ho letto un conto dall'ultima riga inserita, lo leggo dalle impostazioni
+    if (empty($idconto)) {
+        $idconto = get_var('Conto predefinito fatture di acquisto');
+    }
 }
 
 // Impostazioni per la gestione
@@ -34,6 +48,7 @@ $result = [
     'sconto_unitario' => 0,
     'tipo_sconto' => '',
     'idiva' => '',
+    'idconto' => $idconto,
 ];
 
 // Leggo l'iva predefinita per l'anagrafica e se non c'è leggo quella predefinita generica

@@ -21,7 +21,7 @@ $mesi = [
 ];
 
 // Generazione ordini di servizio
-if ($get['op'] == 'add_ordineservizio') {
+if (get('op') == 'add_ordineservizio') {
     $prev_data = '';
 
     // Ciclo fra le voci in arrivo dal form
@@ -49,7 +49,7 @@ if ($get['op'] == 'add_ordineservizio') {
 }
 
 // Eliminazione pianificazione specifica
-elseif ($get['op'] == 'del_ordineservizio') {
+elseif (get('op') == 'del_ordineservizio') {
     $idordineservizio = $get['idordineservizio'];
 
     $n = $dbo->fetchNum('SELECT id FROM co_ordiniservizio WHERE id='.prepare($idordineservizio)." AND stato='aperto'");

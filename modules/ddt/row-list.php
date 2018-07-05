@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+include_once Modules::filepath('Fatture di vendita', 'modutil.php');
+
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
     <tr>
@@ -19,7 +21,7 @@ echo '
 /*
     Articoli e righe generiche
 */
-$q_art = 'SELECT *, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice FROM `dt_righe_ddt` WHERE idddt='.prepare($id_record).' ORDER BY `order`';
+$q_art = 'SELECT *, round(sconto_unitario,'.Settings::get('Cifre decimali per importi').') AS sconto_unitario, round(sconto,'.Settings::get('Cifre decimali per importi').') AS sconto, round(subtotale,'.Settings::get('Cifre decimali per importi').') AS subtotale, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice FROM `dt_righe_ddt` WHERE idddt='.prepare($id_record).' ORDER BY `order`';
 $rs = $dbo->fetchArray($q_art);
 
 if (!empty($rs)) {
@@ -64,23 +66,12 @@ if (!empty($rs)) {
             echo nl2br($r['descrizione']);
         }
 
-        // Aggiunta riferimento a ordine
-        if (!empty($r['idordine'])) {
-            $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data, dir FROM or_ordini JOIN or_tipiordine ON or_tipiordine.id = or_ordini.idtipoordine WHERE or_ordini.id='.prepare($r['idordine']));
-            $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
+        // Aggiunta dei riferimenti ai documenti
+        $ref = doc_references($r, $dir, ['idddt']);
 
-            $ref = $rso[0]['dir'] == 'entrata' ? 'Ordini cliente' : 'Ordini fornitore';
-            $ref_id = $r['idordine'];
-
-            $descrizione = tr('Rif. ordine num. _NUM_ del _DATE_', [
-                '_NUM_' => $numero,
-                '_DATE_' => Translator::dateToLocale($rso[0]['data']),
-            ]);
-        }
-
-        if (!empty($descrizione)) {
+        if (!empty($ref)) {
             echo '
-            <br>'.Modules::link($ref, $ref_id, $descrizione.' <i class="fa fa-external-link"></i>', $descrizione);
+            <br>'.Modules::link($ref['module'], $ref['id'], $ref['description'], $ref['description']);
         }
 
         echo '
@@ -91,8 +82,8 @@ if (!empty($rs)) {
         if (empty($r['is_descrizione'])) {
             if (empty($r['sconto_globale'])) {
                 echo '
-                <big>'.Translator::numberToLocale($r['qta'] - $r['qta_evasa']).'</big>
-                <br><small>('.tr('Q.tà iniziale').': '.Translator::numberToLocale($r['qta']).')</small>';
+                <big>'.Translator::numberToLocale($r['qta'] - $r['qta_evasa'], 'qta').'</big>
+                <br><small>('.tr('Q.tà iniziale').': '.Translator::numberToLocale($r['qta'], 'qta').')</small>';
             } else {
                 echo '1';
             }
@@ -119,7 +110,7 @@ if (!empty($rs)) {
 
             if ($r['sconto_unitario'] > 0) {
                 echo '
-            <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
+            <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
                 '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
                 '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
             ]).'</small>';
@@ -152,7 +143,7 @@ if (!empty($rs)) {
         // Possibilità di rimuovere una riga solo se il ddt non è evaso
         echo '
         <td class="text-center">';
-        if ($records[0]['stato'] != 'Evaso' && empty($r['sconto_globale'])) {
+        if ($records[0]['flag_completato'] == 0 && empty($r['sconto_globale'])) {
             echo "
             <form action='".$rootdir.'/editor.php?id_module='.Modules::get($name)['id'].'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>
@@ -210,7 +201,7 @@ echo '
 // Calcoli
 $imponibile = sum(array_column($rs, 'subtotale'));
 $sconto = sum(array_column($rs, 'sconto'));
-$iva = sum(array_column($rs, 'iva'), null, 4);
+$iva = sum(array_column($rs, 'iva'));
 
 $imponibile_scontato = sum($imponibile, -$sconto);
 
@@ -224,7 +215,7 @@ $totale = sum([
 
 $netto_a_pagare = sum([
     $totale,
-    $marca_da_bollo,
+    //$marca_da_bollo, // Variabile non inizializzata!
     -$records[0]['ritenutaacconto'],
 ]);
 

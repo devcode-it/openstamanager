@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../../core.php';
 
+include_once Modules::filepath('Fatture di vendita', 'modutil.php');
+
 /*
     GESTIONE ORDINI DI SERVIZIO
 */
@@ -21,7 +23,7 @@ $mesi = [
 ];
 
 // Pianificazione fatture
-if ($get['op'] == 'add_fatturazione') {
+if (get('op') == 'add_fatturazione') {
     $prev_data = '';
 
     // Azzero la pianificazione zone se era già stata fatta, per poter sostituire la pianificazione,
@@ -50,7 +52,7 @@ if ($get['op'] == 'add_fatturazione') {
 }
 
 // Eliminazione pianificazione specifica
-elseif ($get['op'] == 'del_pianificazione') {
+elseif (get('op') == 'del_pianificazione') {
     $idpianificazione = $get['idpianificazione'];
 
     $n = $dbo->fetchNum('SELECT id FROM co_ordiniservizio_pianificazionefatture WHERE id='.prepare($idpianificazione));
@@ -64,9 +66,7 @@ elseif ($get['op'] == 'del_pianificazione') {
 }
 
 // Creazione fattura pianificata
-elseif ($get['op'] == 'addfattura') {
-    include $docroot.'/modules/fatture/modutil.php';
-
+elseif (get('op') == 'addfattura') {
     $idpianificazione = $get['idpianificazione'];
     $descrizione = post('note');
     $data = $post['data'];
@@ -78,20 +78,31 @@ elseif ($get['op'] == 'addfattura') {
     $idanagrafica = $rs[0]['idanagrafica'];
 
     $dir = 'entrata';
+    $idconto = get_var('Conto predefinito fatture di vendita');
     $numero = get_new_numerofattura($data);
+    $id_segment = post('id_segment');
     $numero_esterno = get_new_numerosecondariofattura($data);
 
-    // Tipo di pagamento predefinito dall'anagrafica
-    $query = 'SELECT id FROM co_pagamenti WHERE id=(SELECT idpagamento_vendite FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')';
+    // Tipo di pagamento + banca predefinite dall'anagrafica
+    $query = 'SELECT id, (SELECT idbanca_vendite FROM an_anagrafiche WHERE idanagrafica = '.prepare($idanagrafica).') AS idbanca FROM co_pagamenti WHERE id = (SELECT idpagamento_vendite AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')';
     $rs = $dbo->fetchArray($query);
     $idpagamento = $rs[0]['id'];
+    $idbanca = $rs[0]['idbanca'];
 
-    // Se non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
-    if ($idpagamento == '') {
+    // Se la fattura è di vendita e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
+    if ($dir == 'entrata' && $idpagamento == '') {
         $idpagamento = get_var('Tipo di pagamento predefinito');
     }
 
-    $query = 'INSERT INTO co_documenti(numero, numero_esterno, idanagrafica, idtipodocumento, idpagamento, data, idstatodocumento, note, idsede) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipodocumento).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza'), ".prepare($note).', (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica='.prpeare($idanagrafica).') )';
+    // Se non è impostata la banca dell'anagrafica, uso quella del pagamento.
+    if (empty($idbanca)) {
+        // Banca predefinita del pagamento
+        $query = 'SELECT id FROM co_banche WHERE id_pianodeiconti3 = (SELECT idconto_vendite FROM co_pagamenti WHERE id = '.prepare($idpagamento).')';
+        $rs = $dbo->fetchArray($query);
+        $idbanca = $rs[0]['id'];
+    }
+
+    $query = 'INSERT INTO co_documenti(numero, numero_esterno, idanagrafica, idtipodocumento, idpagamento, data, idstatodocumento, note, idsede, id_segment, idconto, idbanca) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipodocumento).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza'), ".prepare($note).', (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).'), '.prepare($id_segment).', '.prepare($idconto).', '.prepare($idbanca).' )';
     $dbo->query($query);
     $iddocumento = $dbo->lastInsertedID();
 
@@ -102,7 +113,7 @@ elseif ($get['op'] == 'addfattura') {
     $rs = $dbo->fetchArray('SELECT id FROM co_ordiniservizio_pianificazionefatture WHERE idcontratto='.prepare($id_record));
 
     // L'importo deve essere diviso per il numero di mesi
-    $rs2 = $dbo->fetchArray('SELECT SUM(subtotale) AS totale FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record));
+    $rs2 = $dbo->fetchArray('SELECT SUM(subtotale) AS totale FROM co_righe_contratti WHERE idcontratto='.prepare($id_record));
     $importo = $rs2[0]['totale'] / sizeof($rs);
 
     // Lettura iva del cliente o predefinita
@@ -140,7 +151,7 @@ echo '
 /*
     Fatture pianificate
 */
-$rs = $dbo->fetchArray('SELECT *, (SELECT SUM(subtotale) FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record).') AS budget_contratto, (SELECT descrizione FROM an_zone WHERE id=idzona) AS zona FROM co_ordiniservizio_pianificazionefatture WHERE idcontratto='.prepare($id_record).' ORDER BY data_scadenza ASC');
+$rs = $dbo->fetchArray('SELECT *, (SELECT SUM(subtotale) FROM co_righe_contratti WHERE idcontratto='.prepare($id_record).') AS budget_contratto, (SELECT descrizione FROM an_zone WHERE id=idzona) AS zona FROM co_ordiniservizio_pianificazionefatture WHERE idcontratto='.prepare($id_record).' ORDER BY data_scadenza ASC');
 
 if (empty($rs)) {
     echo '
@@ -322,7 +333,7 @@ else {
     echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Zone di cui pianificare la fatturazione').'", "name": "idzona[]", "value": "", "values": "query=SELECT id, descrizione FROM an_zone WHERE (id IN (SELECT idzona FROM an_sedi WHERE id IN (SELECT idsede FROM my_impianti WHERE id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).')))) OR ( id=(SELECT idzona FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id='.prepare($id_record).') AND idzona=an_zone.id) ) UNION SELECT 0, \'Altro\'", "multiple": 1, "extra": "onchange=\"$(this).find(\'option\').each( function(){ if( $(this).is(\':selected\') ){ $(\'#zona_\'+$(this).val()).removeClass(\'hide\'); }else{ $(\'#zona_\'+$(this).val()).addClass(\'hide\'); } });\"" ]}
+            {[ "type": "select", "label": "'.tr('Zone per le quali pianificare la fatturazione').'", "name": "idzona[]", "values": "query=SELECT id, descrizione FROM an_zone WHERE (id IN (SELECT idzona FROM an_sedi WHERE id IN (SELECT idsede FROM my_impianti WHERE id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).')))) OR ( id=(SELECT idzona FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id='.prepare($id_record).') AND idzona=an_zone.id) ) UNION SELECT 0, \'Altro\'", "multiple": 1, "extra": "onchange=\"$(this).find(\'option\').each( function(){ if( $(this).is(\':selected\') ){ $(\'#zona_\'+$(this).val()).removeClass(\'hide\'); }else{ $(\'#zona_\'+$(this).val()).addClass(\'hide\'); } });\"" ]}
         </div>
     </div>';
 

@@ -2,13 +2,13 @@
 
 include_once __DIR__.'/../../core.php';
 
-$rs_documento = $dbo->fetchArray("SELECT * FROM co_righe_documenti WHERE idcontratto=".prepare($id_record));
-if(sizeof($rs_documento)>0){
-    echo "
-    <button type=\"button\" class=\"btn btn-info\" disabled>
-    <i class=\"fa fa-magic\"></i> ".tr('Crea fattura').'...
+$rs_documento = $dbo->fetchArray('SELECT * FROM co_righe_documenti WHERE idcontratto='.prepare($id_record));
+if (sizeof($rs_documento) > 0) {
+    echo '
+    <button type="button" class="btn btn-info" disabled>
+    <i class="fa fa-magic"></i> '.tr('Crea fattura').'...
     </button>';
-}else{
+} else {
     echo "
     <button type=\"button\" class=\"btn btn-info\" onclick=\"if( confirm('Creare una fattura per questo contratto?') ){fattura_da_contratto();}\">
     <i class=\"fa fa-magic\"></i> ".tr('Crea fattura').'...

@@ -2,9 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once $docroot.'/modules/interventi/modutil.php';
-include_once $docroot.'/modules/articoli/modutil.php';
-include_once $docroot.'/modules/my_impianti/modutil.php';
+include_once Modules::filepath('Interventi', 'modutil.php');
+include_once Modules::filepath('Articoli', 'modutil.php');
+include_once Modules::filepath('MyImpianti', 'modutil.php');
 
 switch (post('op')) {
     case 'update':
@@ -44,25 +44,25 @@ switch (post('op')) {
         // Creazione nuova pianificazione se non era impostata
         if (!empty($idcontratto) && empty($idcontratto_riga)) {
             // Se questo intervento era collegato ad un altro contratto aggiorno le informazioni...
-            $rs = $dbo->fetchArray('SELECT id FROM co_righe_contratti WHERE idintervento='.prepare($id_record));
+            $rs = $dbo->fetchArray('SELECT id FROM co_contratti_promemoria WHERE idintervento='.prepare($id_record));
             if (empty($rs)) {
-                $dbo->insert('co_righe_contratti', array_merge(['idcontratto' => $idcontratto], $array));
+                $dbo->insert('co_contratti_promemoria', array_merge(['idcontratto' => $idcontratto], $array));
             }
 
             // ...altrimenti se sto cambiando contratto aggiorno solo l'id del nuovo contratto
             else {
-                $dbo->update('co_righe_contratti', ['idcontratto' => $idcontratto], ['idintervento' => $id_record]);
+                $dbo->update('co_contratti_promemoria', ['idcontratto' => $idcontratto], ['idintervento' => $id_record]);
             }
         }
 
         // Pianificazione già impostata, aggiorno solo il codice intervento
         elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
-            $dbo->update('co_righe_contratti', $array, ['idcontratto' => $idriga, 'id' => $idcontratto_riga]);
+            $dbo->update('co_contratti_promemoria', $array, ['idcontratto' => $idriga, 'id' => $idcontratto_riga]);
         }
 
         // Se non è impostato nessun contratto o riga, tolgo il collegamento dell'intervento al contratto
         elseif (empty($idcontratto)) {
-            $dbo->update('co_righe_contratti', ['idintervento' => null], ['idintervento' => $id_record]);
+            $dbo->update('co_contratti_promemoria', ['idintervento' => null], ['idintervento' => $id_record]);
         }
 
         // Aggiorna tutte le sessioni di lavoro
@@ -79,7 +79,10 @@ switch (post('op')) {
                 $orario_fine = post('orario_fine')[$idriga];
 
                 $km = post('km')[$idriga];
-                $ore = post('ore')[$idriga];
+                //$ore = post('ore')[$idriga];
+                //per sicurezza ricalcolo ore lavorate da php
+                $diff = date_diff(date_create($orario_inizio), date_create($orario_fine));
+                $ore = ($diff->h + ($diff->i / 60));
 
                 // Lettura tariffe in base al tipo di intervento ed al tecnico
                 $idtipointervento_tecnico = $post['idtipointerventot'][$idriga];
@@ -216,6 +219,7 @@ switch (post('op')) {
         $idsede = post('idsede');
         $data_richiesta = post('data_richiesta');
         $richiesta = post('richiesta');
+        $idautomezzo = null;
 
         if (!empty($codice) && !empty($post['idanagrafica']) && !empty($post['idtipointervento'])) {
             // Salvataggio modifiche intervento
@@ -257,7 +261,28 @@ switch (post('op')) {
 
             // Se è specificato che l'intervento fa parte di una pianificazione aggiorno il codice dell'intervento sulla riga della pianificazione
             if (!empty($idcontratto_riga)) {
-                $dbo->update('co_righe_contratti', $array, ['idcontratto' => $idcontratto, 'id' => $idcontratto_riga]);
+                $dbo->update('co_contratti_promemoria', $array, ['idcontratto' => $idcontratto, 'id' => $idcontratto_riga]);
+
+                //copio le righe dal promemoria all'intervento
+                $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,idintervento,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$id_record.',sconto,sconto_unitario,tipo_sconto FROM co_righe_contratti_materiali WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
+
+                //copio  gli articoli dal promemoria all'intervento
+                $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$id_record.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
+
+                // Decremento la quantità per ogni articolo copiato
+                $rs_articoli = $dbo->fetchArray('SELECT * FROM mg_articoli_interventi WHERE idintervento = '.$id_record.' ');
+                foreach ($rs_articoli as $rs_articolo) {
+                    add_movimento_magazzino($rs_articolo['idarticolo'], -force_decimal($rs_articolo['qta']), ['idautomezzo' => $rs_articolo['idautomezzo'], 'idintervento' => $id_record]);
+                }
+            } else {
+                $dbo->insert('co_contratti_promemoria', [
+                    'idcontratto' => $idcontratto,
+                    'idintervento' => $id_record,
+                    'idtipointervento' => $idtipointervento,
+                    'data_richiesta' => $data_richiesta,
+                    'richiesta' => $richiesta,
+                    'idsede' => $idsede ?: 0,
+                ]);
             }
         }
 
@@ -329,7 +354,7 @@ switch (post('op')) {
         }
 
         // Eliminazione associazioni tra interventi e contratti
-        $query = 'UPDATE co_righe_contratti SET idintervento = NULL WHERE idintervento='.prepare($id_record);
+        $query = 'UPDATE co_contratti_promemoria SET idintervento = NULL WHERE idintervento='.prepare($id_record);
         $dbo->query($query);
 
         // Eliminazione dell'intervento
@@ -589,47 +614,6 @@ switch (post('op')) {
             $_SESSION['errors'][] = tr("Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della firma!", [
                 '_DIRECTORY_' => '<b>/files/interventi</b>',
             ]);
-        }
-
-        break;
-
-    case 'sendemail':
-        $from_address = post('from_address');
-        $from_name = post('from_name');
-
-        $destinatario = post('destinatario');
-        $cc = get_var('Destinatario fisso in copia (campo CC)');
-
-        $oggetto = html_entity_decode(post('oggetto'));
-        $testo_email = post('body');
-        $allegato = post('allegato');
-
-        $mail = new Mail();
-
-        $mail->AddReplyTo($from_address, $from_name);
-        $mail->SetFrom($from_address, $from_name);
-
-        $mail->AddAddress($destinatario, '');
-
-        // se ho impostato la conferma di lettura
-        if (post('confermalettura') == 'on') {
-            $mail->ConfirmReadingTo = $from_address;
-        }
-
-        $mail->Subject = $oggetto;
-        $mail->AddCC($cc);
-
-        $mail->MsgHTML($testo_email);
-
-        if (!empty($allegato)) {
-            $mail->AddAttachment($allegato);
-        }
-
-        if (!$mail->send()) {
-            $_SESSION['errors'][] = tr("Errore durante l'invio dell'email").': '.$mail->ErrorInfo;
-        } else {
-            $dbo->query('UPDATE in_interventi SET data_invio=NOW() WHERE id='.prepare($id_record));
-            $_SESSION['infos'][] = tr('Email inviata!');
         }
 
         break;

@@ -1,6 +1,10 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
+if (file_exists(__DIR__.'/../../../core.php')) {
+    include_once __DIR__.'/../../../core.php';
+} else {
+    include_once __DIR__.'/../../core.php';
+}
 
 $query = 'SELECT * FROM in_righe_interventi WHERE idintervento='.prepare($id_record).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC';
 $rs2 = $dbo->fetchArray($query);
@@ -20,7 +24,7 @@ if (count($rs2) > 0) {
         <th width="15%">'.tr('Subtotale').'</th>';
     }
 
-    if (!$records[0]['flg_completato']) {
+    if (!$records[0]['flag_completato']) {
         echo '
         <th width="80"></th>';
     }
@@ -38,7 +42,7 @@ if (count($rs2) > 0) {
         // Quantità
         echo '
         <td class="text-right">
-            '.Translator::numberToLocale($r['qta']).' '.$r['um'].'
+            '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
         </td>';
 
         //Costo unitario
@@ -67,7 +71,7 @@ if (count($rs2) > 0) {
 
             echo '
         </td>';
-        
+
             echo '
         <td class="text-right">
             <span>'.Translator::numberToLocale($r['iva']).'</span> &euro;';
@@ -83,7 +87,7 @@ if (count($rs2) > 0) {
 
         // Pulsante per riportare nel magazzino centrale.
         // Visibile solo se l'intervento non è stato nè fatturato nè completato.
-        if (!$records[0]['flg_completato']) {
+        if (!$records[0]['flag_completato']) {
             echo '
         <td>
             <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica spesa').'\', \''.$rootdir.'/modules/interventi/add_righe.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'\', 1);"><i class="fa fa-edit"></i></button>

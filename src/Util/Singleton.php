@@ -9,7 +9,7 @@ namespace Util;
  */
 abstract class Singleton
 {
-    /** @var Util\Singleton Oggetti istanziati */
+    /** @var Singleton Oggetti istanziati */
     protected static $instance = [];
 
     /**

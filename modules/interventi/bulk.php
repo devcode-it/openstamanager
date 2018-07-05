@@ -1,7 +1,12 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-include_once DOCROOT.'/modules/fatture/modutil.php';
+if (file_exists(__DIR__.'/../../../core.php')) {
+    include_once __DIR__.'/../../../core.php';
+} else {
+    include_once __DIR__.'/../../core.php';
+}
+
+include_once Modules::filepath('Fatture di vendita', 'modutil.php');
 
 switch (post('op')) {
     case 'export-bulk':
@@ -20,22 +25,16 @@ switch (post('op')) {
 
         if (!empty($records)) {
             foreach ($records as $r) {
-                //$numero = !empty($r['numero_esterno']) ? $r['numero_esterno'] : $r['numero'];
                 $numero = $r['codice'];
-
                 $numero = str_replace(['/', '\\'], '-', $numero);
 
                 // Gestione della stampa
                 $rapportino_nome = sanitizeFilename($numero.' '.date('Y_m_d', strtotime($r['data_richiesta'])).' '.$r['ragione_sociale'].'.pdf');
                 $filename = slashes($dir.'tmp/'.$rapportino_nome);
 
-                $_GET['idintervento'] = $r['id']; // Fix temporaneo per la stampa
-                $idintervento = $r['id']; // Fix temporaneo per la stampa
-                //$ptype = ($r['descrizione'] == 'Fattura accompagnatoria di vendita') ? 'fatture_accompagnatorie' : 'fatture';
+                $print = Prints::getModuleMainPrint($id_module);
 
-                $ptype = 'interventi';
-
-                require DOCROOT.'/pdfgen.php';
+                Prints::render($print['id'], $r['id'], $filename);
             }
 
             $dir = slashes($dir);

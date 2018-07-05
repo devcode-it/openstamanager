@@ -11,7 +11,7 @@ switch (post('op')) {
             'subject' => $post['subject'],
         ]);
 
-        $id_record = $dbo->last_inserted_id();
+        $id_record = $dbo->lastInsertedID();
 
         $_SESSION['infos'][] = tr('Aggiunto nuovo template per le email!');
 

@@ -13,6 +13,8 @@ switch (post('op')) {
         $costo_km_tecnico = post('costo_km_tecnico');
         $costo_diritto_chiamata_tecnico = post('costo_diritto_chiamata_tecnico');
 
+        $tempo_standard = (empty(post('tempo_standard'))) ? 'NULL' : prepare(round((force_decimal($_POST['tempo_standard']) / 2.5), 1) * 2.5);
+
         $query = 'UPDATE in_tipiintervento SET'.
             ' descrizione='.prepare($descrizione).','.
             ' costo_orario='.prepare($costo_orario).','.
@@ -20,7 +22,8 @@ switch (post('op')) {
             ' costo_diritto_chiamata='.prepare($costo_diritto_chiamata).','.
             ' costo_orario_tecnico='.prepare($costo_orario_tecnico).','.
             ' costo_km_tecnico='.prepare($costo_km_tecnico).','.
-            ' costo_diritto_chiamata_tecnico='.prepare($costo_diritto_chiamata_tecnico).
+            ' costo_diritto_chiamata_tecnico='.prepare($costo_diritto_chiamata_tecnico).','.
+            ' tempo_standard='.$tempo_standard.
             ' WHERE idtipointervento='.prepare($id_record);
 
         $dbo->query($query);
@@ -32,7 +35,9 @@ switch (post('op')) {
         $idtipointervento = post('idtipointervento');
         $descrizione = post('descrizione');
 
-        $query = 'INSERT INTO in_tipiintervento(idtipointervento, descrizione, costo_orario, costo_km) VALUES ('.prepare($idtipointervento).', '.prepare($descrizione).', 0.00, 0.00)';
+        $tempo_standard = (empty(post('tempo_standard'))) ? 'NULL' : prepare(round((force_decimal($_POST['tempo_standard']) / 2.5), 1) * 2.5);
+
+        $query = 'INSERT INTO in_tipiintervento(idtipointervento, descrizione, costo_orario, costo_km, tempo_standard) VALUES ('.prepare($idtipointervento).', '.prepare($descrizione).', 0.00, 0.00, '.$tempo_standard.')';
         $dbo->query($query);
 
         $id_record = $idtipointervento;

@@ -70,9 +70,8 @@ include_once __DIR__.'/../../core.php';
         </tr>';
 
     for ($i = 0; $i < 10; ++$i) {
-		
-		($i<=1) ? $required = 1 : $required = 0;
-			
+        ($i <= 1) ? $required = 1 : $required = 0;
+
         // Conto
         echo '
 			<tr>
@@ -198,19 +197,19 @@ include_once __DIR__.'/../../core.php';
 				$('input[id*=dare]').each( function(){
 					if( $(this).val() == '' ) valore = 0;
 					else valore = $(this).val().toEnglish();
-					totale_dare += valore;
+					totale_dare += Math.round(valore*100)/100;
 				});
 
 				$('input[id*=avere]').each( function(){
 					if( $(this).val() == '' ) valore = 0;
 					else valore = $(this).val().toEnglish();
-					totale_avere += valore;
+					totale_avere += Math.round(valore*100)/100;
 				});
 
 				$('#totale_dare').text(totale_dare.toLocale());
 				$('#totale_avere').text(totale_avere.toLocale());
 
-				bilancio = totale_dare-totale_avere;
+				bilancio = Math.round(totale_dare*100)/100 - Math.round(totale_avere*100)/100;
 
 				if( bilancio == 0 ){
 					$("#testo_aggiuntivo").removeClass('text-danger').html("");

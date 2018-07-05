@@ -10,7 +10,9 @@ echo '
 	<!-- DATI -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Valori della sezione').'</h3>
+            <h3 class="panel-title">'.tr('Impostazioni _SEZIONE_', [
+                '_SEZIONE_' => $records[0]['sezione'],
+            ]).'</h3>
 		</div>
 
 		<div class="panel-body">';
@@ -50,7 +52,7 @@ foreach ($records as $record) {
     else {
         $numerico = in_array($record['tipo'], ['integer', 'decimal']);
 
-        $tipo = (preg_match('/password/i', $record['nome'], $m)) ? 'password' : $tipo;
+        $tipo = preg_match('/password/i', $record['nome'], $m) ? 'password' : $record['tipo'];
         $tipo = $numerico ? 'number' : 'text';
 
         echo '

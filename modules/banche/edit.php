@@ -2,9 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-?>
-
-<form action="" method="post" id="edit-form">
+?><form action="" method="post" id="edit-form">
 
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -18,28 +16,28 @@ include_once __DIR__.'/../../core.php';
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome",  "value": "$nome$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": "1",  "value": "$nome$" ]}
                 </div>
 				<div class="col-md-4">
 					{[ "type": "text", "label": "<?php echo tr('Filiale'); ?>", "name": "filiale",  "value": "$filiale$" ]}
                 </div>
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Conto predefinito'); ?>", "name": "id_pianodeiconti3",  "value": "$id_pianodeiconti3$", "values": "query=SELECT id, descrizione  FROM co_pianodeiconti3 WHERE idpianodeiconti2 = 1"  ]}						
+					{[ "type": "select", "label": "<?php echo tr('Conto predefinito'); ?>", "name": "id_pianodeiconti3",  "value": "$id_pianodeiconti3$", "values": "query=SELECT id, descrizione  FROM co_pianodeiconti3 WHERE idpianodeiconti2 = 1 AND  ( id NOT IN (SELECT id_pianodeiconti3 FROM co_banche) OR id = '<?php echo  $records[0]['id_pianodeiconti3'] ?>' )"  ]}
                 </div>
 			</div>
-			
+
 			<div class="row">
 				<div class="col-md-8">
-					{[ "type": "text", "label": "<?php echo tr('IBAN'); ?>", "name": "iban", "class": "alphanumeric-mask", "maxlength": 32, "value": "$iban$" ]}
+					{[ "type": "text", "label": "<?php echo tr('IBAN'); ?>", "name": "iban", "required": "1", "class": "alphanumeric-mask", "maxlength": 32, "value": "$iban$" ]}
                 </div>
 				<div class="col-md-4">
 					{[ "type": "text", "label": "<?php echo tr('BIC'); ?>", "name": "bic",  "class": "alphanumeric-mask", "maxlength": 11, "value": "$bic$" ]}
                 </div>
 			</div>
-			
+
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "required": 0, "class": "", "value": "$note$", "extra": "" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "required": 0, "value": "$note$" ]}
 				</div>
 			</div>
 		</div>
@@ -51,8 +49,8 @@ include_once __DIR__.'/../../core.php';
 $documenti = $dbo->fetchNum('SELECT idanagrafica FROM an_anagrafiche WHERE idbanca_vendite='.prepare($id_record).'
 							UNION SELECT idanagrafica FROM an_anagrafiche WHERE idbanca_acquisti='.prepare($id_record));
 
-if (!empty($documenti)){
-echo '
+if (!empty($documenti)) {
+    echo '
 <div class="alert alert-danger">
     '.tr('Ci sono _NUM_ documenti collegati', [
         '_NUM_' => count($documenti),

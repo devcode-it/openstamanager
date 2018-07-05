@@ -71,7 +71,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($records[0]['id_module']).'" ]}
+                    {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($records[0]['id_module']).' AND enabled=1" ]}
                 </div>
             </div>';
 
@@ -86,14 +86,7 @@ echo '
 <?php
 
 // Variabili utilizzabili
-$module_dir = DOCROOT.'/modules/'.Modules::get($records[0]['id_module'])['directory'];
-$variables = [];
-
-if (file_exists($module_dir.'/custom/variables.php')) {
-    $variables = include $module_dir.'/custom/variables.php';
-} elseif (file_exists($module_dir.'/variables.php')) {
-    $variables = include $module_dir.'/variables.php';
-}
+$variables = include Modules::filepath($records[0]['id_module'], 'variables.php');
 
 if (sizeof($variables) > 0) {
     echo '

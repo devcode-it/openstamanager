@@ -53,7 +53,7 @@ class Formatter
      *
      * @return array
      */
-    public function getStandardFormats()
+    public static function getStandardFormats()
     {
         return static::$standards;
     }
@@ -108,8 +108,9 @@ class Formatter
      * Converte un numero da una formattazione all'altra.
      *
      * @param string $value
+     * @param int    $decimals
      *
-     * @return string
+     * @return string|bool
      */
     public function formatNumber($value, $decimals = null)
     {
@@ -123,9 +124,9 @@ class Formatter
         if (is_object($this->numberFormatter)) {
             $result = $this->numberFormatter->format($value);
         } else {
-            $number = number_format($value, $this->getPrecision(), $this->getStandardFormats()['number']['decimals'], $this->getStandardFormats()['number']['thousands']);
+            $number = number_format($value, $this->getPrecision(), self::getStandardFormats()['number']['decimals'], self::getStandardFormats()['number']['thousands']);
 
-            $result = $this->customNumber($number, $this->getStandardFormats()['number'], $this->getNumberSeparators());
+            $result = $this->customNumber($number, self::getStandardFormats()['number'], $this->getNumberSeparators());
         }
 
         if (isset($decimals)) {
@@ -140,10 +141,11 @@ class Formatter
      *
      * @param string $value
      *
-     * @return string
+     * @return float|bool
      */
     public function parseNumber($value)
     {
+        $sign = null;
         if ($value[0] == '+' || $value[0] == '-') {
             $sign = $value[0];
             $value = substr($value, 1);
@@ -164,7 +166,7 @@ class Formatter
         if (is_object($this->numberFormatter)) {
             $result = $this->numberFormatter->parse($value);
         } else {
-            $result = $this->customNumber($value, $this->getNumberSeparators(), $this->getStandardFormats()['number']);
+            $result = $this->customNumber($value, $this->getNumberSeparators(), self::getStandardFormats()['number']);
         }
 
         $result = is_numeric($result) ? floatval($result) : false;
@@ -242,7 +244,7 @@ class Formatter
      *
      * @param string $value
      *
-     * @return array
+     * @return string|bool
      */
     public function customNumber($value, $current, $format)
     {
@@ -312,7 +314,7 @@ class Formatter
      *
      * @param string $value
      *
-     * @return string
+     * @return string|bool
      */
     public function formatTimestamp($value)
     {
@@ -327,7 +329,7 @@ class Formatter
      *
      * @param string $value
      *
-     * @return string
+     * @return string|bool
      */
     public function parseTimestamp($value)
     {
@@ -392,7 +394,7 @@ class Formatter
      *
      * @param string $value
      *
-     * @return string
+     * @return string|bool
      */
     public function formatDate($value)
     {
@@ -411,7 +413,7 @@ class Formatter
      *
      * @param string $value
      *
-     * @return string
+     * @return string|bool
      */
     public function parseDate($value)
     {
@@ -476,7 +478,7 @@ class Formatter
      *
      * @param string $value
      *
-     * @return string
+     * @return string|bool
      */
     public function formatTime($value)
     {
@@ -495,7 +497,7 @@ class Formatter
      *
      * @param string $value
      *
-     * @return string
+     * @return string|bool
      */
     public function parseTime($value)
     {

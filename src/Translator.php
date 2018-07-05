@@ -33,7 +33,7 @@ class Translator extends Util\Singleton
     /**
      * Ricerca e aggiunge le traduzioni presenti nei percorsi predefiniti (cartella locale sia nella root che nei diversi moduli).
      *
-     * @param [type] $string
+     * @param string $string
      */
     public function addLocalePath($string)
     {
@@ -204,14 +204,18 @@ class Translator extends Util\Singleton
     /**
      * Converte il numero dalla formattazione inglese a quella locale.
      *
-     * @param string $string
-     * @param mixed  $decimals
+     * @param string     $string
+     * @param string|int $decimals
      *
      * @return string
      */
     public static function numberToLocale($string, $decimals = null)
     {
         $string = !isset($string) ? 0 : $string;
+
+        if (!empty($decimals) && is_string($decimals)) {
+            $decimals = ($decimals == 'qta') ? \Settings::get('Cifre decimali per quantità') : null;
+        }
 
         return self::getFormatter()->formatNumber($string, $decimals);
     }

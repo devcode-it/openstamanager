@@ -93,6 +93,7 @@ switch (filter('op')) {
 
             if (check_query($post['query'][$c])) {
                 $array = [
+                    'name' => $post['name'][$c],
                     'idgruppo' => $post['gruppo'][$c],
                     'idmodule' => $id_record,
                     'clause' => $post['query'][$c],

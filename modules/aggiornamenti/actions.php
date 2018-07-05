@@ -14,7 +14,7 @@ switch (post('op')) {
         if (!empty($id)) {
             // Leggo l'id del modulo
             $rs = $dbo->fetchArray('SELECT id, name, directory FROM zz_modules WHERE id='.prepare($id).' AND `default`=0');
-            $modulo = $rs[0]['name'];
+            $modulo = $rs[0]['title'];
             $module_dir = $rs[0]['directory'];
 
             if (count($rs) == 1) {
@@ -38,31 +38,25 @@ switch (post('op')) {
         break;
 
     case 'disable':
-        $dbo->query('UPDATE zz_modules SET enabled=0 WHERE id='.prepare($id));
-
-        $rs = $dbo->fetchArray('SELECT id, name FROM zz_modules WHERE id='.prepare($id));
-        $modulo = $rs[0]['name'];
+        $dbo->query('UPDATE `zz_modules` SET `enabled` = 0 WHERE (`id` = '.prepare($id).' OR `parent` = '.prepare($id).') AND `id` != '.prepare(Modules::get('Aggiornamenti')['id']));
 
         $_SESSION['infos'][] = tr('Modulo _MODULE_ disabilitato!', [
-            '_MODULE_' => '"'.$modulo.'"',
+            '_MODULE_' => '"'.Modules::get($id)['title'].'"',
         ]);
 
         break;
 
     case 'enable':
-        $dbo->query('UPDATE zz_modules SET enabled=1 WHERE id='.prepare($id));
-
-        $rs = $dbo->fetchArray('SELECT id, name FROM zz_modules WHERE id='.prepare($id));
-        $modulo = $rs[0]['name'];
+        $dbo->query('UPDATE `zz_modules` SET `enabled` = 1 WHERE `id` = '.prepare($id).' OR `parent` = '.prepare($id));
 
         $_SESSION['infos'][] = tr('Modulo _MODULE_ abilitato!', [
-            '_MODULE_' => '"'.$modulo.'"',
+            '_MODULE_' => '"'.Modules::get($id)['title'].'"',
         ]);
 
         break;
 
     case 'disable_widget':
-        $dbo->query('UPDATE zz_widgets SET enabled=0 WHERE id='.prepare($id));
+        $dbo->query('UPDATE zz_widgets SET enabled = 0 WHERE id = '.prepare($id));
 
         $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
         $widget = $rs[0]['name'];

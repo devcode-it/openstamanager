@@ -48,7 +48,7 @@ class ChoicesHandler implements HandlerInterface
 
         // Generazione del codice HTML
         // "+ this.checked" rende il valore booleano un numero
-        $result .= '
+        $result = '
     <div class="input-group">
         <span class="input-group-addon">
             <input |attr| onchange="$(this).parent().find(\'[type=hidden]\').val( + this.checked)">

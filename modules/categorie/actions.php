@@ -19,9 +19,11 @@ switch (filter('op')) {
 
     case 'add':
         $nome = filter('nome');
+		$nota = filter('nota');
+        $colore = filter('colore');
 
         if (isset($nome)) {
-            $dbo->query('INSERT INTO `mg_categorie` (`nome`) VALUES ('.prepare($nome).')');
+            $dbo->query('INSERT INTO `mg_categorie` (`nome`, `colore`, `nota`) VALUES ('.prepare($nome).', '.prepare($colore).', '.prepare($nota).')');
 
             $id_record = $dbo->lastInsertedID();
 
@@ -44,7 +46,7 @@ switch (filter('op')) {
             $id = $id_record;
         }
 
-        if ( $dbo->fetchNum('SELECT * FROM `mg_articoli` WHERE `id_categoria`='.prepare($id).' OR `id_sottocategoria`='.prepare($id).'  OR `id_sottocategoria` IN (SELECT id FROM `mg_categorie` WHERE `parent`='.prepare($id).')') == 0 ) {
+        if ($dbo->fetchNum('SELECT * FROM `mg_articoli` WHERE `id_categoria`='.prepare($id).' OR `id_sottocategoria`='.prepare($id).'  OR `id_sottocategoria` IN (SELECT id FROM `mg_categorie` WHERE `parent`='.prepare($id).')') == 0) {
             $dbo->query('DELETE FROM `mg_categorie` WHERE `id`='.prepare($id));
             $_SESSION['infos'][] = tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'categoria',

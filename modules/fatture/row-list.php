@@ -2,10 +2,12 @@
 
 include_once __DIR__.'/../../core.php';
 
+include_once Modules::filepath('Fatture di vendita', 'modutil.php');
+
 /*
     Righe fattura
 */
-$rs = $dbo->fetchArray("SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice, (SELECT descrizione FROM co_pianodeiconti3 WHERE co_pianodeiconti3.id=IF(co_righe_documenti.idconto = 0, (SELECT idconto FROM co_documenti WHERE iddocumento=".prepare($id_record).' LIMIT 1), co_righe_documenti.idconto)) AS descrizione_conto FROM `co_righe_documenti` WHERE iddocumento='.prepare($id_record).' ORDER BY `order`');
+$rs = $dbo->fetchArray('SELECT *, round(sconto_unitario,'.Settings::get('Cifre decimali per importi').') AS sconto_unitario, round(sconto,'.Settings::get('Cifre decimali per importi').') AS sconto, round(subtotale,'.Settings::get('Cifre decimali per importi').') AS subtotale, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),"") AS codice, (SELECT descrizione FROM co_pianodeiconti3 WHERE co_pianodeiconti3.id=IF(co_righe_documenti.idconto = 0, (SELECT idconto FROM co_documenti WHERE iddocumento='.prepare($id_record).' LIMIT 1), co_righe_documenti.idconto)) AS descrizione_conto FROM `co_righe_documenti` WHERE iddocumento='.prepare($id_record).' ORDER BY `order`');
 
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
@@ -24,6 +26,13 @@ echo '
 
 if (!empty($rs)) {
     foreach ($rs as $r) {
+        // Valori assoluti
+        $r['qta'] = abs($r['qta']);
+        $r['subtotale'] = abs($r['subtotale']);
+        $r['sconto_unitario'] = abs($r['sconto_unitario']);
+        $r['sconto'] = abs($r['sconto']);
+        $r['iva'] = abs($r['iva']);
+
         $extra = '';
 
         $ref_modulo = null;
@@ -71,9 +80,7 @@ if (!empty($rs)) {
         }
 
         echo '
-    <tr data-id="'.$r['id'].'" '.$extra.'>';
-
-        echo '
+    <tr data-id="'.$r['id'].'" '.$extra.'>
         <td>
             '.Modules::link($ref_modulo, $ref_id, $r['descrizione']).'
             <small class="pull-right text-muted">'.$r['descrizione_conto'].'</small>';
@@ -91,74 +98,23 @@ if (!empty($rs)) {
             }
         }
 
-        $ref_modulo = null;
-        $ref_id = null;
-
         // Aggiunta dei riferimenti ai documenti
-        // Ordine
-        if (!empty($r['idordine'])) {
-            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM or_ordini WHERE id=".prepare($r['idordine']));
+        if (!empty($records[0]['ref_documento'])) {
+            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE id = ".prepare($records[0]['ref_documento']));
 
-            $ref_modulo = ($dir == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
-            $ref_id = $r['idordine'];
-
-            $documento = tr('Ordine');
-        }
-        // DDT
-        elseif (!empty($r['idddt'])) {
-            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM dt_ddt WHERE id=".prepare($r['idddt']));
-
-            $ref_modulo = ($dir == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
-            $ref_id = $r['idddt'];
-
-            $documento = tr('Ddt');
-        }
-        // Preventivo
-        elseif (!empty($r['idpreventivo'])) {
-            $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_preventivi WHERE id='.prepare($r['idpreventivo']));
-
-            $ref_modulo = 'Preventivi';
-            $ref_id = $r['idpreventivo'];
-
-            $documento = tr('Preventivo');
-        }
-        // Contratto
-        elseif (!empty($r['idcontratto'])) {
-            $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_contratti WHERE id='.prepare($r['idcontratto']));
-
-            $ref_modulo = 'Contratti';
-            $ref_id = $r['idcontratto'];
-
-            $documento = tr('Contratto');
-        }
-        // Intervento
-        elseif (!empty($r['idintervento'])) {
-            $data = $dbo->fetchArray('SELECT codice AS numero, IFNULL( (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta) AS data FROM in_interventi WHERE id='.prepare($r['idintervento']));
-
-            $ref_modulo = 'Interventi';
-            $ref_id = $r['idintervento'];
-
-            $documento = tr('Intervento');
-        }
-
-        if (!empty($ref_modulo) && !empty($ref_id)) {
-            $documento = Stringy\Stringy::create($documento)->toLowerCase();
-
-            if (!empty($data)) {
-                $descrizione = tr('Rif. _DOC_ num. _NUM_ del _DATE_', [
-                    '_DOC_' => $documento,
-                    '_NUM_' => $data[0]['numero'],
-                    '_DATE_' => Translator::dateToLocale($data[0]['data']),
-                ]);
-            } else {
-                $descrizione = tr('_DOC_ di riferimento _ID_ eliminato', [
-                    '_DOC_' => $documento->upperCaseFirst(),
-                    '_ID_' => $ref_id,
-                ]);
-            }
+            $text = tr('Rif. fattura _NUM_ del _DATE_', [
+                '_NUM_' => $data[0]['numero'],
+                '_DATE_' => Translator::dateToLocale($data[0]['data']),
+            ]);
 
             echo '
-            <br>'.Modules::link($ref_modulo, $ref_id, $descrizione, $descrizione);
+            <br>'.Modules::link('Fatture di vendita', $records[0]['ref_documento'], $text, $text);
+        }
+
+        $ref = doc_references($r, $dir, ['iddocumento']);
+        if (!empty($ref)) {
+            echo '
+            <br>'.Modules::link($ref['module'], $ref['id'], $ref['description'], $ref['description']);
         }
 
         echo '
@@ -169,7 +125,7 @@ if (!empty($rs)) {
 
         if (empty($r['is_descrizione'])) {
             echo '
-            '.Translator::numberToLocale($r['qta']);
+            '.Translator::numberToLocale($r['qta'], 'qta');
         }
 
         echo '
@@ -197,7 +153,7 @@ if (!empty($rs)) {
 
             if ($r['sconto_unitario'] > 0) {
                 echo '
-            <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
+            <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
                 '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
                 '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
             ]).'</small>';
@@ -214,7 +170,8 @@ if (!empty($rs)) {
         if (empty($r['is_descrizione'])) {
             echo '
             '.Translator::numberToLocale($r['iva']).' &euro;
-            <br><small class="help-block">'.$r['desc_iva'].'</small>';
+            <br><small class="help-block">'.$r['desc_iva'].'</small>
+            <small>'.$r['iva'].'</small>';
         }
 
         echo '
@@ -249,7 +206,7 @@ if (!empty($rs)) {
             echo "
                 <div class='input-group-btn'>";
 
-            if (!empty($r['idarticolo']) && $r['abilita_serial'] && (empty($r['idddt']) || empty($r['idintervento']))) {
+            if (empty($records[0]['is_reversed']) && !empty($r['idarticolo']) && $r['abilita_serial'] && (empty($r['idddt']) || empty($r['idintervento']))) {
                 echo "
                     <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&idarticolo='.$r['idarticolo']."', 1 );\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
             }
@@ -282,7 +239,7 @@ echo '
 // Calcoli
 $imponibile = sum(array_column($rs, 'subtotale'));
 $sconto = sum(array_column($rs, 'sconto'));
-$iva = sum(array_column($rs, 'iva'), null, 2);
+$iva = sum(array_column($rs, 'iva'));
 
 $imponibile_scontato = sum($imponibile, -$sconto);
 
@@ -299,6 +256,14 @@ $netto_a_pagare = sum([
     $records[0]['bollo'],
     -$records[0]['ritenutaacconto'],
 ]);
+
+$imponibile = abs($imponibile);
+$sconto = abs($sconto);
+$iva = abs($iva);
+$imponibile_scontato = abs($imponibile_scontato);
+$totale_iva = abs($totale_iva);
+$totale = abs($totale);
+$netto_a_pagare = abs($netto_a_pagare);
 
 // IMPONIBILE
 echo '

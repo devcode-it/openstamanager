@@ -8,11 +8,11 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-4">
-			{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "nome", "required": 1, "maxlength": 25, "class": "alphanumeric-mask", "value": "" ]}
+			{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "nome", "required": 1, "maxlength": 25, "class": "alphanumeric-mask" ]}
 		</div>
 
 		<div class="col-md-8">
-			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "" ]}
+			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1 ]}
 		</div>
 	</div>
 

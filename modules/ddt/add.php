@@ -7,18 +7,18 @@ $module = Modules::get($id_module);
 if ($module['name'] == 'Ddt di vendita') {
     $dir = 'entrata';
 
-    $rs = $dbo->fetchArray("SELECT id FROM dt_tipiddt WHERE descrizione='Ddt di vendita' LIMIT 0,1");
-    $id_tipoddt = $rs[0]['id'];
+    $id_tipoddt = $dbo->fetchOne("SELECT id FROM dt_tipiddt WHERE descrizione='Ddt di vendita'")['id'];
 
     $tipo_anagrafica = tr('Cliente');
 } else {
     $dir = 'uscita';
 
-    $rs = $dbo->fetchArray("SELECT id FROM dt_tipiddt WHERE descrizione='Ddt di acquisto' LIMIT 0,1");
-    $id_tipoddt = $rs[0]['id'];
+    $id_tipoddt = $dbo->fetchOne("SELECT id FROM dt_tipiddt WHERE descrizione='Ddt di acquisto'")['id'];
 
     $tipo_anagrafica = tr('Fornitore');
 }
+
+$id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idanagrafica'];
 
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
@@ -31,7 +31,7 @@ if ($module['name'] == 'Ddt di vendita') {
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "<?php echo $tipo_anagrafica; ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='<?php echo $tipo_anagrafica; ?>' AND deleted=0 ORDER BY ragione_sociale", "value": "<?php echo $idanagrafica; ?>", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
+			{[ "type": "select", "label": "<?php echo $tipo_anagrafica; ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='<?php echo $tipo_anagrafica; ?>' AND deleted=0 ORDER BY ragione_sociale", "value": "<?php echo $id_anagrafica; ?>", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
 		</div>
 
 		<div class="col-md-4">

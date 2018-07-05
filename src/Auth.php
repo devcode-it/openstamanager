@@ -33,7 +33,7 @@ class Auth extends \Util\Singleton
         'options' => [],
     ];
 
-    /** @var int Opzioni per la protezione contro attacchi brute-force */
+    /** @var array Opzioni per la protezione contro attacchi brute-force */
     protected static $brute = [
         'attemps' => 3,
         'timeout' => 180,
@@ -42,8 +42,8 @@ class Auth extends \Util\Singleton
     protected static $is_brute;
 
     /** @var array Informazioni riguardanti l'utente autenticato */
-    protected $infos;
-    /** @var string Nome del primo modulo su cui l'utente ha permessi di navigazione */
+    protected $infos = [];
+    /** @var string|null Nome del primo modulo su cui l'utente ha permessi di navigazione */
     protected $first_module;
 
     protected function __construct()
@@ -55,7 +55,9 @@ class Auth extends \Util\Singleton
             if (API::isAPIRequest()) {
                 $token = API::getRequest()['token'];
 
-                $id = $database->fetchArray('SELECT `id_utente` FROM `zz_tokens` WHERE `token` = '.prepare($token))[0]['id_utente'];
+                $user = $database->fetchArray('SELECT `id_utente` FROM `zz_tokens` WHERE `enabled` = 1 AND `token` = '.prepare($token));
+
+                $id = !empty($user) ? $user[0]['id_utente'] : null;
             }
             // Controllo sulla sessione attiva
             elseif (!empty($_SESSION['id_utente'])) {
@@ -90,7 +92,7 @@ class Auth extends \Util\Singleton
         $database = Database::getConnection();
 
         $log = [];
-        $log['username'] = (string) $username;
+        $log['username'] = $username;
         $log['ip'] = get_client_ip();
         $log['stato'] = self::$status['failed']['code'];
 
@@ -152,6 +154,7 @@ class Auth extends \Util\Singleton
     protected function password_check($password, $hash, $user_id = null)
     {
         $result = false;
+        $rehash = false;
 
         // Retrocompatibilità
         if ($hash == md5($password)) {
@@ -284,7 +287,7 @@ class Auth extends \Util\Singleton
     public function destory()
     {
         if ($this->isAuthenticated() || !empty($_SESSION['id_utente'])) {
-            $this->infos = null;
+            $this->infos = [];
             $this->first_module = null;
 
             session_unset();
@@ -299,7 +302,7 @@ class Auth extends \Util\Singleton
     /**
      * Restituisce il nome del primo modulo navigabile dall'utente autenticato.
      *
-     * @return string
+     * @return string|null
      */
     public function getFirstModule()
     {
@@ -334,7 +337,7 @@ class Auth extends \Util\Singleton
      *
      * @param string $password
      *
-     * @return string
+     * @return string|bool
      */
     public static function hashPassword($password)
     {
@@ -408,7 +411,7 @@ class Auth extends \Util\Singleton
     {
         $database = Database::getConnection();
 
-        if (!$database->isInstalled() || !$database->fetchNum("SHOW TABLES LIKE 'zz_logs'") || Update::isUpdateAvailable()) {
+        if (!$database->isInstalled() || !$database->tableExists('zz_logs') || Update::isUpdateAvailable()) {
             return false;
         }
 

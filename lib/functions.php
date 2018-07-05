@@ -407,7 +407,7 @@ function create_thumbnails($tmp, $filename, $dir)
 function get_client_ip()
 {
     $ipaddress = '';
-	if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
         $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
     } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
         $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -417,10 +417,10 @@ function get_client_ip()
         $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
     } elseif (!empty($_SERVER['HTTP_FORWARDED'])) {
         $ipaddress = $_SERVER['HTTP_FORWARDED'];
-    } elseif (!empty($_SERVER['REMOTE_ADDR']) AND $_SERVER['REMOTE_ADDR']!='127.0.0.1' ) {
+    } elseif (!empty($_SERVER['REMOTE_ADDR']) and $_SERVER['REMOTE_ADDR'] != '127.0.0.1') {
         $ipaddress = $_SERVER['REMOTE_ADDR'];
-    }  elseif (!empty(getHostByName(getHostName()))){
-        $ipaddress = getHostByName(getHostName());
+    } elseif (!empty(gethostbyname(gethostname()))) {
+        $ipaddress = gethostbyname(gethostname());
     } else {
         $ipaddress = 'UNKNOWN';
     }
@@ -514,7 +514,7 @@ function slashes($string)
  *
  * @since 2.3
  *
- * @return string
+ * @return mixed
  */
 function prepare($parameter)
 {
@@ -529,7 +529,7 @@ function prepare($parameter)
  *
  * @since 2.3
  *
- * @return string
+ * @return mixed
  */
 function p($parameter)
 {
@@ -587,9 +587,9 @@ function get_var($nome, $sezione = null, $descrizione = false, $again = false)
  *
  * @return string
  */
-function filter($param, $method = null)
+function filter($param, $method = null, $raw = false)
 {
-    return Filter::getValue($param, $method = null);
+    return Filter::getValue($param, $method, $raw);
 }
 
 /**
@@ -602,9 +602,9 @@ function filter($param, $method = null)
  *
  * @return string
  */
-function post($param, $rule = 'text')
+function post($param, $raw = false)
 {
-    return Filter::getValue($param, 'post');
+    return Filter::getValue($param, 'post', $raw);
 }
 
 /**
@@ -617,9 +617,9 @@ function post($param, $rule = 'text')
  *
  * @return string
  */
-function get($param, $rule = 'text')
+function get($param, $raw = false)
 {
-    return Filter::getValue($param, 'get');
+    return Filter::getValue($param, 'get', $raw);
 }
 
 /**
@@ -645,7 +645,7 @@ function isAjaxRequest()
  *
  * @return float
  */
-function sum($first, $second = null, $decimals = null)
+function sum($first, $second = null, $decimals = 4)
 {
     $first = (array) $first;
     $second = (array) $second;
@@ -654,9 +654,7 @@ function sum($first, $second = null, $decimals = null)
 
     $result = 0;
 
-    if (!is_numeric($decimals)) {
-        $decimals = is_numeric($decimals) ? $decimals : Translator::getFormatter()->getPrecision();
-    }
+    $decimals = is_numeric($decimals) ? $decimals : Translator::getFormatter()->getPrecision();
 
     $bcadd = function_exists('bcadd');
 

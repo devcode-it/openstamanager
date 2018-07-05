@@ -31,9 +31,9 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
 					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "id": "idanagrafica_c", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
 				</div>
-				
+
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "values": "query=SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica='$idanagrafica$'", "value": "$idsede$", "ajax-source": "sedi", "extra": "<?php echo $readonly; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "values": "query=SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica='$idanagrafica$'", "value": "$idsede$", "ajax-source": "sedi" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -50,7 +50,7 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti" ]}
 				</div>
-				
+
 				<div class="col-md-6">
 					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
 				</div>
@@ -68,7 +68,7 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 				<div class="col-md-2">
 					{[ "type": "number", "label": "<?php echo tr('Preavviso per rinnovo'); ?>", "name": "giorni_preavviso_rinnovo", "decimals": "0", "value": "$giorni_preavviso_rinnovo$", "icon-after": "giorni" ]}
 				</div>
-				
+
 				<div class="col-md-2">
 					{[ "type": "date", "label": "<?php echo tr('Data bozza'); ?>", "maxlength": 10, "name": "data_bozza", "value": "$data_bozza$" ]}
 				</div>
@@ -96,7 +96,7 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "values": "query=SELECT idanagrafica, id AS id, nome AS descrizione FROM my_impianti WHERE idanagrafica='$idanagrafica$' ORDER BY descrizione", "value": "$matricoleimpianti$" ]}
+					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "values": "query=SELECT idanagrafica, id AS id, IF(nome = '', matricola, CONCAT(matricola, ' - ', nome)) AS descrizione FROM my_impianti WHERE idanagrafica='$idanagrafica$' ORDER BY descrizione", "value": "$matricoleimpianti$" ]}
 				</div>
 
 			</div>
@@ -342,7 +342,7 @@ if (!empty($records[0]['idcontratto_prev'])) {
 }
 ?>
 
-<form action='<?=$rootdir?>/editor.php?id_module=<?=Modules::get('Fatture di vendita')['id']?>' method='post' id='form_creafattura'>
+<form action='<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get('Fatture di vendita')['id']; ?>' method='post' id='form_creafattura'>
 	<input type="hidden" name="backto" value="record-edit">
 	<input type='hidden' name='op' value='fattura_da_contratto'>
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
@@ -370,11 +370,11 @@ if (!empty($records[0]['idcontratto_prev'])) {
         $("#data_accettazione").trigger("dp.change");
         $("#data_rifiuto").trigger("dp.change");
     });
-	
+
 	function fattura_da_contratto(){
 		$('#form_creafattura').submit();
 	}
-	
+
 	$('#idanagrafica_c').change( function(){
         session_set('superselect,idanagrafica', $(this).val(), 0);
 
@@ -418,7 +418,7 @@ if (!empty($fatture)) {
 
 ?>
 
-{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
+{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>", "ajax": "true" )}
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>

@@ -28,7 +28,36 @@ foreach ($imports as $key => $value) {
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
+			<button id="example" type="button" class="btn btn-info hide" ><i class="fa fa-file"></i> <?php echo tr('Scarica esempio CSV'); ?></button>
 			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 		</div>
 	</div>
 </form>
+
+<script>
+$('#id_record').change( function(){
+	 if ($(this).val()>0){
+		 $( "#example" ).removeClass('hide');
+	 }else{
+		$( "#example" ).addClass('hide');
+	 }
+});
+
+$( "#example" ).click(function(event) {
+	
+		var module =  $('#id_record').find(':selected').data('text').toLowerCase();
+		var dir = "<?php echo ROOTDIR; ?>/modules/"+module+"/import.php";
+		var file = "<?php echo ROOTDIR; ?>/files/"+module+"/"+module+".csv";
+		
+		$.ajax({
+			url: dir,
+			type: 'post',
+			data: {op: 'example', module: module},
+			success: function(data){
+				window.location = file;
+				$('#main_loading').hide();
+				return false;
+			}
+	});
+});
+</script>

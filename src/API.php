@@ -57,6 +57,8 @@ class API extends \Util\Singleton
      */
     public function retrieve($request)
     {
+        global $logger;
+
         $user = Auth::user();
 
         // Controllo sulla compatibilità dell'API
@@ -75,7 +77,8 @@ class API extends \Util\Singleton
         $select = !empty($request['display']) ? explode(',', substr($request['display'], 1, -1)) : $select;
 
         // Ricerca personalizzata
-        foreach ((array) $request['filter'] as $key => $value) {
+        $values = isset($request['filter']) ? (array) $request['filter'] : [];
+        foreach ($values as $key => $value) {
             // Rimozione delle parentesi
             $value = substr($value, 1, -1);
 
@@ -84,13 +87,14 @@ class API extends \Util\Singleton
         }
 
         // Ordinamento personalizzato
-        foreach ((array) $request['order'] as $value) {
+        $values = isset($request['order']) ? (array) $request['order'] : [];
+        foreach ($values as $value) {
             $pieces = explode('|', $value);
             $order[] = empty($pieces[1]) ? $pieces[0] : [$pieces[0] => $pieces[1]];
         }
 
         // Paginazione automatica dell'API
-        $page = (int) $request['page'] ?: 0;
+        $page = isset($request['page']) ? (int) $request['page'] : 0;
         $length = Settings::get('Lunghezza pagine per API');
 
         $database = Database::getConnection();
@@ -105,13 +109,22 @@ class API extends \Util\Singleton
             // Esecuzione delle operazioni personalizzate
             $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
             include $filename;
-        } elseif (!in_array($resource, explode(',', Settings::get('Tabelle escluse per la sincronizzazione API automatica')))) {
+        } elseif (
+            !in_array($resource, explode(',', Settings::get('Tabelle escluse per la sincronizzazione API automatica')))
+            && $database->tableExists($resource)
+        ) {
             $table = $resource;
 
             // Individuazione della colonna AUTO_INCREMENT per l'ordinamento automatico
             if (empty($order)) {
-                $order[] = $database->fetchArray('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '.prepare($table)." AND EXTRA LIKE '%AUTO_INCREMENT%' AND TABLE_SCHEMA = ".prepare($database->getDatabaseName()))[0]['COLUMN_NAME'];
+                $column = $database->fetchArray('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '.prepare($table)." AND EXTRA LIKE '%AUTO_INCREMENT%' AND TABLE_SCHEMA = ".prepare($database->getDatabaseName()));
+
+                if (!empty($column)) {
+                    $order[] = $column[0]['COLUMN_NAME'];
+                }
             }
+        } else {
+            return self::error('notFound');
         }
 
         // Generazione automatica delle query
@@ -136,6 +149,9 @@ class API extends \Util\Singleton
                     $results['pages'] = $cont[0]['pages'];
                 }
             } catch (PDOException $e) {
+                // Log dell'errore
+                $logger->addRecord(\Monolog\Logger::ERROR, $e);
+
                 return self::error('internalError');
             }
         }
@@ -250,6 +266,9 @@ class API extends \Util\Singleton
         if (!is_array(self::$resources)) {
             $resources = [];
 
+            // Ignore dei warning
+            $resource = '';
+
             // File nativi
             $files = glob(DOCROOT.'/modules/*/api/{retrieve,create,update,delete}.php', GLOB_BRACE);
 
@@ -272,7 +291,7 @@ class API extends \Util\Singleton
                 $module = basename(dirname(dirname($operation)));
                 $kind = basename($operation, '.php');
 
-                $resources[$kind] = (array) $resources[$kind];
+                $resources[$kind] = isset($resources[$kind]) ? (array) $resources[$kind] : [];
 
                 // Individuazione delle operazioni
                 $api = include $operation;
@@ -370,6 +389,10 @@ class API extends \Util\Singleton
                 // Fallback nel caso la richiesta sia effettuata da browser
                 if ($_SERVER['REQUEST_METHOD'] == 'GET' && empty($request)) {
                     $request = Filter::getGET();
+                }
+
+                if (empty($request['token'])) {
+                    $request['token'] = '';
                 }
             }
         }

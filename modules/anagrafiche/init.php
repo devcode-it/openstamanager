@@ -10,4 +10,7 @@ if (isset($id_record)) {
         $records[0]['lat'] = floatval($records[0]['lat']);
         $records[0]['lng'] = floatval($records[0]['lng']);
     }
+
+    $tipi_anagrafica = $dbo->fetchArray('SELECT an_tipianagrafiche.idtipoanagrafica FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica=an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica='.prepare($id_record));
+    $tipi_anagrafica = array_column($tipi_anagrafica, 'idtipoanagrafica');
 }

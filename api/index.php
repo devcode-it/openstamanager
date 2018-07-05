@@ -46,7 +46,7 @@ try {
         // Richiesta GET (ottenimento elementi)
         case 'GET':
             // Risorsa specificata
-            if (!empty($request)) {
+            if (count($request) > 1) {
                 $result = $api->retrieve($request);
             }
 
@@ -65,6 +65,15 @@ try {
     $result = API::error('unauthorized');
 } catch (Exception $e) {
     $result = API::error('serverError');
+}
+
+json_decode($result);
+
+// Impostazioni di Content-Type e Charset Header
+if (json_last_error() == JSON_ERROR_NONE) {
+    header('Content-Type: application/json; charset=UTF-8');
+} else {
+    header('Content-Type: text/plain; charset=UTF-8');
 }
 
 // Stampa dei risultati

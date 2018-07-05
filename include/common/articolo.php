@@ -1,5 +1,7 @@
 <?php
 
+$result['idarticolo'] = isset($result['idarticolo']) ? $result['idarticolo'] : null;
+
 // Articolo
 if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
     echo '

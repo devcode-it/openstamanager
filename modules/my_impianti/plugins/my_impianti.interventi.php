@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$matricole = (array) $post['matricole'];
+$matricole = (array) post('matricole');
 
 // Salvo gli impianti selezionati
 if (filter('op') == 'link_myimpianti') {

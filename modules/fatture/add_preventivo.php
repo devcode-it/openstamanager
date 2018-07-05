@@ -31,14 +31,20 @@ echo '
     <input type="hidden" name="dir" value="'.$dir.'">';
 
 // Preventivo
+$_SESSION['superselect']['stati'] = [
+    'Accettato',
+    'In lavorazione',
+    'In attesa di conferma',
+];
+$_SESSION['superselect']['non_fatturato'] = 1;
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "required": 1, "values": "query=SELECT id, nome AS descrizione, (SELECT SUM(subtotale) FROM co_righe_preventivi WHERE idpreventivo=co_preventivi.id GROUP BY idpreventivo) - (SELECT SUM(sconto) FROM co_righe_preventivi WHERE idpreventivo=co_preventivi.id GROUP BY idpreventivo) AS subtot FROM co_preventivi WHERE idanagrafica='.prepare($idanagrafica).' AND id NOT IN (SELECT idpreventivo FROM co_righe_documenti WHERE NOT idpreventivo=NULL) AND idstato IN( SELECT id FROM co_statipreventivi WHERE descrizione=\'Accettato\' OR descrizione=\'In lavorazione\' OR descrizione=\'In attesa di conferma\')", "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.text); $(\'#prezzo\').val($data.subtot);\"" ]}
+            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "required": 1, "ajax-source": "preventivi", "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.text); $(\'#prezzo\').val($data.totale - $data.sconto);console.log($data.totale)\"" ]}
         </div>
 
         <div class="col-md-6">
-            {[ "type": "checkbox", "label": "'.tr('Importa righe').'", "name": "import", "value": "1", "placeholder": "'.tr('Importa tutte le righe del preventivo').'" ]}
+            {[ "type": "checkbox", "label": "'.tr('Importa righe').'", "name": "import", "value": "1", "placeholder": "'.tr('Replica righe del preventivo in fattura').'" ]}
         </div>
     </div>';
 

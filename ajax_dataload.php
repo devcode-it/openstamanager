@@ -31,11 +31,7 @@ $results['summable'] = [];
 
 if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom') {
     // Conteggio totale
-    $count_query = 'SELECT COUNT(*) as `tot` FROM ('.$result_query.') AS `count`';
-    $count = $dbo->fetchArray($count_query);
-    if (!empty($count)) {
-        $results['recordsTotal'] = $count[0]['tot'];
-    }
+    $results['recordsTotal'] = $dbo->fetchNum($result_query);
 
     // Filtri di ricerica
     $search_filters = [];
@@ -102,6 +98,7 @@ if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom
 
     // Query effettiva
     $query = str_replace_once('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $result_query);
+
     $rs = $dbo->fetchArray($query);
 
     // Conteggio dei record filtrati
@@ -160,7 +157,7 @@ if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom
 
             // Icona
             if (preg_match('/^color_(.+?)$/', $field, $m)) {
-                $value = $r['color_title_'.$m[1]] ?: '';
+                $value = isset($r['color_title_'.$m[1]]) ? $r['color_title_'.$m[1]] : '';
 
                 $column['class'] = 'text-center small';
                 $column['data-background'] = $r[$field];
@@ -186,7 +183,7 @@ if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom
 
             // Colore del testo
             if (!empty($column['data-background'])) {
-                $column['data-color'] = $column['data-color'] ?: color_inverse($column['data-background']);
+                $column['data-color'] = isset($column['data-color']) ? $column['data-color'] : color_inverse($column['data-background']);
             }
 
             // Link della colonna
@@ -222,4 +219,5 @@ if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom
     }
 }
 
-echo json_encode($results);
+$rows = json_encode($results);
+echo $rows;

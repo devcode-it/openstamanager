@@ -59,7 +59,13 @@ if ($options != '' && $options != 'menu' && $options != 'custom') {
 
                     <div class="row">
                         <div class="col-md-12 text-right">
-                            <button type="button" class="btn btn-warning pull-righ" onclick="testQuery()"><i class="fa fa-file-text-o "></i> '.tr('Testa la query').'</button>
+                            <button type="button" class="btn btn-warning" onclick="testQuery()">
+                                <i class="fa fa-file-text-o"></i> '.tr('Testa la query').'
+                            </button>
+
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa fa-check"></i> '.tr('Salva').'
+                            </button>
                         </div>
                     </div>
 				</div>
@@ -86,13 +92,6 @@ if (!empty($options) && $options != 'custom') {
 				</div>
 
 				<div class="panel-body">
-                    <!--div class="row">
-                        <div class="text-right">
-                            <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
-                        </div>
-                    </div>
-                    <hr-->
-
 					<div class="data">';
 
     $key = 0;
@@ -161,35 +160,19 @@ if (!empty($options) && $options != 'custom') {
 
 								<div class="row">
 									<div class="col-md-3">
-										{[ "type": "checkbox", "label": "'.tr('Ricercabile').'", "name": "search['.$key.']", "value": "'.$field['search'].'"';
-        if (!$editable) {
-            echo ', "readonly": "1"';
-        }
-        echo ', "help": "'.tr('Indica se il campo è ricercabile').'" ]}
+										{[ "type": "checkbox", "label": "'.tr('Ricercabile').'", "name": "search['.$key.']", "value": "'.$field['search'].'", "help": "'.tr('Indica se il campo è ricercabile').'" ]}
 									</div>
 
 									<div class="col-md-3">
-										{[ "type": "checkbox", "label": "'.tr('Ricerca lenta').'", "name": "slow['.$key.']", "value": "'.$field['slow'].'"';
-        if (!$editable) {
-            echo ', "readonly": "1"';
-        }
-        echo ', "help": "'.tr("Indica se la ricerca per questo campo è lenta (da utilizzare nel caso di evidenti rallentamenti, mostra solo un avviso all'utente").'" ]}
+										{[ "type": "checkbox", "label": "'.tr('Ricerca lenta').'", "name": "slow['.$key.']", "value": "'.$field['slow'].'", "help": "'.tr("Indica se la ricerca per questo campo è lenta (da utilizzare nel caso di evidenti rallentamenti, mostra solo un avviso all'utente").'" ]}
 									</div>
 
 									<div class="col-md-3">
-										{[ "type": "checkbox", "label": "'.tr('Sommabile').'", "name": "sum['.$key.']", "value": "'.$field['summable'].'"';
-        if (!$editable) {
-            echo ', "readonly": "1"';
-        }
-        echo ', "help": "'.tr('Indica se il campo è da sommare').'" ]}
+										{[ "type": "checkbox", "label": "'.tr('Sommabile').'", "name": "sum['.$key.']", "value": "'.$field['summable'].'", "help": "'.tr('Indica se il campo è da sommare').'" ]}
 									</div>
 
                                     <div class="col-md-3">
-										{[ "type": "checkbox", "label": "'.tr('Formattabile').'", "name": "format['.$key.']", "value": "'.$field['format'].'"';
-        if (!$editable) {
-            echo ', "readonly": "1"';
-        }
-        echo ', "help": "'.tr('Indica se il campo è formattabile in modo automatico').'" ]}
+										{[ "type": "checkbox", "label": "'.tr('Formattabile').'", "name": "format['.$key.']", "value": "'.$field['format'].'", "help": "'.tr('Indica se il campo è formattabile in modo automatico').'" ]}
 									</div>
 								</div>
 
@@ -217,9 +200,14 @@ if (!empty($options) && $options != 'custom') {
 				</div>
 
                 <div class="row">
-                    <div class="text-right">
-                        <button type="button" class="btn btn-info" id="add"><i class="fa fa-plus"></i> '.tr('Aggiungi nuovo campo').'</button>
-                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
+                    <div class="col-md-12 text-right">
+                        <button type="button" class="btn btn-info" id="add">
+                            <i class="fa fa-plus"></i> '.tr('Aggiungi nuovo campo').'
+                        </button>
+
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa fa-check"></i> '.tr('Salva').'
+                        </button>
                     </div>
                 </div>
 
@@ -327,13 +315,6 @@ if (!empty($options) && $options != 'custom') {
             </div>
 
             <div class="panel-body">
-                <!--div class="row">
-                    <div class="text-right">
-                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
-                    </div>
-                </div>
-                <hr-->
-
                 <div class="data">';
 
     $num = 0;
@@ -351,8 +332,8 @@ if (!empty($options) && $options != 'custom') {
         echo '">
                             <div class="box-header with-border">
                                 <h3 class="box-title">
-                                    <a data-toggle="collapse" href="#additional-'.$additional['id'].'">'.tr('Filtro _NUM_', [
-                                        '_NUM_' => $num,
+                                    <a data-toggle="collapse" href="#additional-'.$additional['id'].'">'.tr('Filtro: _NAME_', [
+                                        '_NAME_' => $additional['name'],
                                     ]).'</a>
                                 </h3>';
         if ($editable) {
@@ -368,16 +349,25 @@ if (!empty($options) && $options != 'custom') {
         echo '
                             </div>
                             <div id="additional-'.$additional['id'].'" class="box-body collapse">
-                                <div class="row">
-                                    <input type="hidden" value="'.$additional['id'].'" name="id['.$num.']">
 
-                                    <div class="col-md-6">
-                                        {[ "type": "textarea", "label": "'.tr('Query').'", "name": "query['.$num.']", "value": "'.prepareToField($additional['clause']).'"';
+									<div class="row">
+										<div class="col-md-12">
+											{[ "type": "textarea", "label": "'.tr('Query').'", "name": "query['.$num.']", "value": "'.prepareToField($additional['clause']).'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }
         echo ' ]}
-                                    </div>
+										</div>
+									</div>
+
+								<div class="row">
+                                    <input type="hidden" value="'.$additional['id'].'" name="id['.$num.']">
+
+
+									<div class="col-md-6">
+										{[ "type": "text", "label": "'.tr('Name').'", "name": "name['.$num.']", "value": "'.$additional['name'].'"  ]}
+									</div>
+
 
                                     <div class="col-md-3">
                                         {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo['.$num.']",  "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "'.$additional['idgruppo'].'"';
@@ -402,9 +392,14 @@ if (!empty($options) && $options != 'custom') {
                 </div>
 
                 <div class="row">
-                    <div class="text-right">
-                        <button type="button" class="btn btn-info" id="add"><i class="fa fa-plus"></i> '.tr('Aggiungi nuovo filtro').'</button>
-                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
+                    <div class="col-md-12 text-right">
+                        <button type="button" class="btn btn-info" id="add_filter">
+                            <i class="fa fa-plus"></i> '.tr('Aggiungi nuovo filtro').'
+                        </button>
+
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa fa-check"></i> '.tr('Salva').'
+                        </button>
                     </div>
                 </div>
             </div>
@@ -419,11 +414,18 @@ if (!empty($options) && $options != 'custom') {
 			<h3 class="box-title">'.tr('Nuovo filtro').'</h3>
 		</div>
 		<div class="box-body">
+
+			<div class="row">
+				<div class="col-md-12">
+					{[ "type": "textarea", "label": "'.tr('Query').'", "name": "query[-id-]" ]}
+				</div>
+			</div>
+
 			<div class="row">
 				<input type="hidden" value="" name="id[-id-]">
 
 				<div class="col-md-6">
-					{[ "type": "textarea", "label": "'.tr('Query').'", "name": "query[-id-]" ]}
+					{[ "type": "text", "label": "'.tr('Nome').'", "name": "name[-id-]" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -431,7 +433,7 @@ if (!empty($options) && $options != 'custom') {
 				</div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Posizione').'", "name": "position[-id-]",  "list=\"0\":\"'.tr('WHERE').'\",\"1\": \"'.tr('HAVING').'\"" ]}
+					{[ "type": "select", "label": "'.tr('Posizione').'", "name": "position[-id-]", "values": "list=\"0\":\"'.tr('WHERE').'\",\"1\": \"'.tr('HAVING').'\"" ]}
 				</div>
 		</div>
 	</div>
@@ -468,6 +470,8 @@ function replaceAll(str, find, replace) {
 }
 
 $(document).ready(function(){
+    $("#save").addClass("hide");
+
 	var n = '.$key.';
 	$(document).on("click", "#add", function(){
 		$("#template .superselect, #template .superselectajax").select2().select2("destroy");

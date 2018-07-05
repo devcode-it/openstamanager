@@ -12,6 +12,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
 
     /** @var array Elenco dei template email disponibili */
     protected static $templates = [];
+    protected static $references = [];
     /** @var array Elenco dei template email per modulo */
     protected static $modules = [];
 
@@ -79,19 +80,22 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
             $results = $database->fetchArray('SELECT * FROM zz_emails WHERE deleted = 0');
 
             $templates = [];
+            $references = [];
+
+            // Inizializzazione dei riferimenti
+            foreach (Modules::getModules() as $module) {
+                self::$modules[$module['id']] = [];
+            }
 
             foreach ($results as $result) {
                 $templates[$result['id']] = $result;
-                $templates[$result['name']] = $result['id'];
-
-                if (!isset(self::$modules[$result['id_module']])) {
-                    self::$modules[$result['id_module']] = [];
-                }
+                $references[$result['name']] = $result['id'];
 
                 self::$modules[$result['id_module']][] = $result['id'];
             }
 
             self::$templates = $templates;
+            self::$references = $references;
         }
 
         return self::$templates;
@@ -106,11 +110,13 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
      */
     public static function getTemplate($template)
     {
-        if (!is_numeric($template) && !empty(self::getTemplates()[$template])) {
-            $template = self::getTemplates()[$template];
+        $templates = self::getTemplates();
+
+        if (!is_numeric($template) && !empty(self::$references[$template])) {
+            $template = self::$references[$template];
         }
 
-        return self::getTemplates()[$template];
+        return $templates[$template];
     }
 
     /**
@@ -123,22 +129,12 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     public static function getTemplateVariables($template, $id_record)
     {
         $template = self::getTemplate($template);
-        $module = Modules::get($template['id_module']);
-
-        $file = DOCROOT.'/modules/'.$module['directory'].'|custom|/variables.php';
-
-        $original_file = str_replace('|custom|', '', $file);
-        $custom_file = str_replace('|custom|', '/custom', $file);
 
         $database = Database::getConnection();
         $dbo = $database;
 
         // Lettura delle variabili nei singoli moduli
-        if (file_exists($custom_file)) {
-            $variables = require $custom_file;
-        } elseif (file_exists($original_file)) {
-            $variables = require $original_file;
-        }
+        $variables = include Modules::filepath($template['id_module'], 'variables.php');
 
         return (array) $variables;
     }
@@ -179,7 +175,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
             $this->IsSMTP(true);
 
             // Impostazioni di debug
-            $this->SMTPDebug = 3;
+            $this->SMTPDebug = 4;
             $this->Debugoutput = function ($str, $level) {
                 $this->infos[] = $str;
             };
@@ -225,5 +221,16 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
         }
 
         return $result;
+    }
+
+    public function testSMTP()
+    {
+        if ($this->IsSMTP() && $this->smtpConnect()) {
+            $this->smtpClose();
+
+            return true;
+        }
+
+        return false;
     }
 }

@@ -121,7 +121,7 @@ gulp.task('srcCSS', function () {
 
     gulp.src([
             config.development + '/' + config.paths.css + '/themes/*.{css,scss,less,styl}',
-            config.main.bowerDirectory + '/adminlte/dist/css/skins/_all-skins.css',
+            config.main.bowerDirectory + '/admin-lte/dist/css/skins/_all-skins.css',
         ])
         .pipe(gulpIf('*.scss', sass(), gulpIf('*.less', less(), gulpIf('*.styl', stylus()))))
         .pipe(autoprefixer({
@@ -208,16 +208,16 @@ gulp.task('chartjs', function () {
 
 gulp.task('pdfjs', function () {
     gulp.src([
-            config.main.bowerDirectory + '/pdfjs/web/**/*',
-            '!' + config.main.bowerDirectory + '/pdfjs/web/cmaps/*',
-            '!' + config.main.bowerDirectory + '/pdfjs/web/*.map',
-            '!' + config.main.bowerDirectory + '/pdfjs/web/*.pdf',
+            config.main.bowerDirectory + '/pdf/web/**/*',
+            '!' + config.main.bowerDirectory + '/pdf/web/cmaps/*',
+            '!' + config.main.bowerDirectory + '/pdf/web/*.map',
+            '!' + config.main.bowerDirectory + '/pdf/web/*.pdf',
         ])
         .pipe(gulp.dest(config.production + '/pdfjs/web'));
 
     gulp.src([
-            config.main.bowerDirectory + '/pdfjs/build/*',
-            '!' + config.main.bowerDirectory + '/pdfjs/build/*.map',
+            config.main.bowerDirectory + '/pdf/build/*',
+            '!' + config.main.bowerDirectory + '/pdf/build/*.map',
         ])
         .pipe(gulp.dest(config.production + '/pdfjs/build'));
 });
@@ -265,6 +265,7 @@ gulp.task('release', function () {
         '!./vendor/mpdf/mpdf/ttfonts/DejaVuinfo.txt',
         '!./vendor/mpdf/mpdf/ttfonts/DejaVu*Condensed*',
         './vendor/maximebf/debugbar/src/DebugBar/Resources/vendor/*',
+        './vendor/respect/validation/tests/*',
     ]);
 
     // Impostazione dello zip

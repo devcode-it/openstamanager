@@ -178,7 +178,9 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche'), 'Città', 'citta', 4, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche'), 'Telefono', 'telefono', 5, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche'), 'color_Rel.', 'an_relazioni.colore', 6, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche'), 'color_title_Rel.', 'an_relazioni.descrizione', 7, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche'), 'color_title_Rel.', 'an_relazioni.descrizione', 7, 1, 0, 0, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'id', 'in_interventi.id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Numero', 'in_interventi.codice', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Ragione sociale', 'ragione_sociale', 3, 1, 0, 1, 1),
@@ -187,7 +189,9 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), '_bg_', '(SELECT colore FROM in_statiintervento WHERE idstatointervento=in_interventi.idstatointervento)', 6, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Stato', '(SELECT descrizione FROM in_statiintervento WHERE idstatointervento=in_interventi.idstatointervento)', 7, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Tipo', '(SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=in_interventi.idtipointervento)', 8, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), '_print_', '''pdfgen.php?ptype=interventi&idintervento=$id$&mode=single''', 9, 0, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), '_print_', '''pdfgen.php?ptype=interventi&idintervento=$id$&mode=single''', 9, 0, 0, 1, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di anagrafiche'), 'id', 'idtipoanagrafica', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di anagrafiche'), 'Descrizione', 'descrizione', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento'), 'id', 'idtipointervento', 1, 1, 0, 0, 1),
@@ -198,38 +202,50 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento'), 'Diritto di chiamata', 'costo_diritto_chiamata', 6, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento'), 'Costo orario tecnico', 'costo_orario_tecnico', 7, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento'), 'Costo al km tecnico', 'costo_km_tecnico', 8, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento'), 'Diritto di chiamata tecnico', 'costo_diritto_chiamata_tecnico', 9, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento'), 'Diritto di chiamata tecnico', 'costo_diritto_chiamata_tecnico', 9, 1, 0, 1, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati di intervento'), 'id', 'idstatointervento', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati di intervento'), 'Codice', 'idstatointervento', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati di intervento'), 'Descrizione', 'descrizione', 3, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati di intervento'), 'color_Colore', 'colore', 4, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati di intervento'), 'color_Colore', 'colore', 4, 1, 0, 1, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'id', 'id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'Numero', 'numero', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'Nome', 'nome', 3, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'Cliente', '(SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_preventivi.idanagrafica)', 4, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'icon_Stato', '(SELECT icona FROM co_statipreventivi WHERE id=idstato)', 5, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'icon_title_Stato', '(SELECT descrizione FROM co_statipreventivi WHERE id=idstato)', 6, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'icon_title_Stato', '(SELECT descrizione FROM co_statipreventivi WHERE id=idstato)', 6, 1, 0, 0, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'id', 'co_documenti.id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Numero', 'IF(numero_esterno='''', numero, numero_esterno)', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Data', 'data', 3, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Ragione sociale', '(SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_documenti.idanagrafica)', 4, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Totale', '(SELECT SUM(subtotale - sconto + iva + rivalsainps - ritenutaacconto) FROM co_righe_documenti WHERE co_righe_documenti.iddocumento=co_documenti.id GROUP BY iddocumento) + bollo + iva_rivalsainps', 5, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'icon_Stato', '(SELECT icona FROM co_statidocumento WHERE id=idstatodocumento)', 6, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'icon_title_Stato', '(SELECT descrizione FROM co_statidocumento WHERE id=idstatodocumento)', 7, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'icon_title_Stato', '(SELECT descrizione FROM co_statidocumento WHERE id=idstatodocumento)', 7, 1, 0, 0, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'id', 'co_documenti.id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Numero', 'IF(numero_esterno='''', numero, numero_esterno)', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Data', 'data', 3, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Ragione sociale', '(SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_documenti.idanagrafica)', 4, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Totale', '(SELECT SUM(subtotale - sconto + iva + rivalsainps - ritenutaacconto) FROM co_righe_documenti WHERE co_righe_documenti.iddocumento=co_documenti.id GROUP BY iddocumento ) + bollo + iva_rivalsainps', 5, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'icon_Stato', '(SELECT icona FROM co_statidocumento WHERE id=idstatodocumento)', 6, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'icon_title_Stato', '(SELECT descrizione FROM co_statidocumento WHERE id=idstatodocumento)', 7, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'icon_title_Stato', '(SELECT descrizione FROM co_statidocumento WHERE id=idstatodocumento)', 7, 1, 0, 0, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota'), 'id', 'co_movimenti.id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota'), 'Data', 'data', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota'), 'Causale', 'co_movimenti.descrizione', 3, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota'), 'Controparte', '(SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica= (SELECT idanagrafica FROM co_documenti WHERE id=iddocumento))', 4, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota'), 'Conto avere', 'GROUP_CONCAT(CASE WHEN totale>0 THEN co_pianodeiconti3.descrizione ELSE NULL END)', 5, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota'), 'Dare', 'SUM(IF(totale > 0, ABS(totale), 0))', 6, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota'), 'Avere', 'SUM(IF(totale < 0, ABS(totale), 0))', 7, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota'), 'Avere', 'SUM(IF(totale < 0, ABS(totale), 0))', 7, 1, 0, 1, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'id', 'co_scadenziario.id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'Anagrafica', 'ragione_sociale', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'Tipo di pagamento', 'co_pagamenti.descrizione', 3, 1, 0, 1, 1),
@@ -237,56 +253,78 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'Data scadenza', 'scadenza', 5, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'Importo', 'da_pagare', 6, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), 'Pagato', 'pagato', 7, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), '_bg_', 'IF(scadenza<NOW(), ''#ff7777'', '''')', 8, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario'), '_bg_', 'IF(scadenza<NOW(), ''#ff7777'', '''')', 8, 1, 0, 0, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'id', 'id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Codice', 'codice', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Categoria', '(SELECT `nome` FROM `mg_categorie` WHERE `id` = `id_categoria`)', 4, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Sottocategoria', '(SELECT `nome` FROM `mg_categorie` WHERE `id` = `id_sottocategoria`)', 5, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Q.tà', 'CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT(qta, 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), um)', 6, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli'), 'Q.tà', 'CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT(qta, 2), '','', ''#''), ''.'', '',''), ''#'', ''.''), um)', 6, 1, 0, 1, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'id', 'id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'Nome', 'nome', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'Percentuale guadagno o sconto', 'prc_guadagno', 3, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'Note', 'note', 4, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Listini'), 'Note', 'note', 4, 1, 0, 1, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi'), 'id', 'id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi'), 'Targa', 'targa', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi'), 'Nome', 'nome', 3, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi'), 'Descrizione', 'descrizione', 4, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi'), 'Descrizione', 'descrizione', 4, 1, 0, 1, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'id', 'or_ordini.id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'Numero', 'IF(numero_esterno='''', numero, numero_esterno)', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'Ragione sociale', '(SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=or_ordini.idanagrafica)', 3, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'icon_Stato', '(SELECT icona FROM or_statiordine WHERE id=idstatoordine)', 4, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'icon_title_Stato', '(SELECT descrizione FROM or_statiordine WHERE id=idstatoordine)', 5, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'icon_title_Stato', '(SELECT descrizione FROM or_statiordine WHERE id=idstatoordine)', 5, 1, 0, 0, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore'), 'id', 'or_ordini.id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore'), 'Numero', 'IF(numero_esterno='''', numero, numero_esterno)', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore'), 'Ragione sociale', '(SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=or_ordini.idanagrafica)', 3, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore'), 'icon_Stato', '(SELECT icona FROM or_statiordine WHERE id=idstatoordine)', 4, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore'), 'icon_title_Stato', '(SELECT descrizione FROM or_statiordine WHERE id=idstatoordine)', 5, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore'), 'icon_title_Stato', '(SELECT descrizione FROM or_statiordine WHERE id=idstatoordine)', 5, 1, 0, 0, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'id', 'dt_ddt.id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Numero', 'IF(numero_esterno='''', numero, numero_esterno)', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Data', 'data', 3, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Cliente', '(SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=dt_ddt.idanagrafica)', 4, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'icon_Stato', '(SELECT icona FROM dt_statiddt WHERE id=idstatoddt)', 5, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'icon_title_Stato', '(SELECT descrizione FROM dt_statiddt WHERE id=idstatoddt)', 6, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'icon_title_Stato', '(SELECT descrizione FROM dt_statiddt WHERE id=idstatoddt)', 6, 1, 0, 0, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'id', 'dt_ddt.id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'Numero', 'IF(numero_esterno='''', numero, numero_esterno)', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'Data', 'data', 3, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'Cliente', '(SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=dt_ddt.idanagrafica)', 4, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'icon_Stato', '(SELECT icona FROM dt_statiddt WHERE id=idstatoddt)', 5, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'icon_title_Stato', '(SELECT descrizione FROM dt_statiddt WHERE id=idstatoddt)', 6, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di acquisto'), 'icon_title_Stato', '(SELECT descrizione FROM dt_statiddt WHERE id=idstatoddt)', 6, 1, 0, 0, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Zone'), 'id', 'id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Zone'), 'Nome', 'nome', 2, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Zone'), 'Descrizione', 'descrizione', 3, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Zone'), 'Descrizione', 'descrizione', 3, 1, 0, 1, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti'), 'id', 'id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti'), 'Matricola', 'matricola', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti'), 'Data', 'data', 3, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti'), 'Cliente', '(SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=my_impianti.idanagrafica)', 4, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti'), 'Tecnico', '(SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=my_impianti.idtecnico)', 5, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti'), 'Tecnico', '(SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=my_impianti.idtecnico)', 5, 1, 0, 1, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'id', 'id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Numero', 'numero', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Nome', 'nome', 3, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Cliente', '(SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=co_contratti.idanagrafica)', 4, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'icon_Stato', '(SELECT icona FROM co_staticontratti WHERE id=idstato)', 5, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'icon_title_Stato', '(SELECT descrizione FROM co_staticontratti WHERE id=idstato)', 6, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'icon_title_Stato', '(SELECT descrizione FROM co_staticontratti WHERE id=idstato)', 6, 1, 0, 0, 1);
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Voci di servizio'), 'id', 'id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Voci di servizio'), 'Descrizione', 'descrizione', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Voci di servizio'), 'Categoria', 'categoria', 3, 1, 0, 1, 1),

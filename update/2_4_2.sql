@@ -36,7 +36,6 @@ CREATE TABLE IF NOT EXISTS `fe_regime_fiscale` (
   PRIMARY KEY (`codice`)
 ) ENGINE=InnoDB;
 
--- Tabelle per la fatturazione elettronica
 INSERT INTO `fe_regime_fiscale` (`codice`, `descrizione`) VALUES
 ('RF01','Ordinario'),
 ('RF02','Contribuenti minimi (art.1, c.96-117, L. 244/07)'),
@@ -56,6 +55,8 @@ INSERT INTO `fe_regime_fiscale` (`codice`, `descrizione`) VALUES
 ('RF17','IVA per cassa (art. 32-bis, DL 83/2012)'),
 ('RF18','Altro'),
 ('RF19','Regime forfettario (art.1, c.54-89, L. 190/2014)');
+
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Regime Fiscale', 'RF01', 'query=SELECT codice AS id, descrizione FROM fe_regime_fiscale', 1, 'Generali', 19);
 
 CREATE TABLE IF NOT EXISTS `fe_tipo_cassa` (
   `codice` varchar(4) NOT NULL,
@@ -87,6 +88,8 @@ INSERT INTO `fe_tipo_cassa` (`codice`, `descrizione`) VALUES
 ('TC21','Ente nazionale previdenza e assistenza psicologi (ENPAP)'),
 ('TC22','INPS');
 
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Tipo Cassa', 'TC22', 'query=SELECT codice AS id, descrizione FROM fe_tipo_cassa', 1, 'Fatturazione', 0);
+
 CREATE TABLE IF NOT EXISTS `fe_modalita_pagamento` (
   `codice` varchar(4) NOT NULL,
   `descrizione` varchar(255) NOT NULL,
@@ -117,6 +120,15 @@ INSERT INTO `fe_modalita_pagamento` (`codice`, `descrizione`) VALUES
 ('MP21','SEPA Direct Debit B2B'),
 ('MP22','Trattenuta su somme già riscosse');
 
+ALTER TABLE `co_pagamenti` ADD `codice_modalita_pagemento_fe` varchar(4) NOT NULL;
+UPDATE `co_pagamenti` SET `codice_modalita_pagemento_fe` = 'MP01' WHERE `descrizione` IN ('Rimessa diretta', 'Rimessa diretta a 30gg', 'Rimessa diretta 30gg fisso al 15', 'Contanti');
+UPDATE `co_pagamenti` SET `codice_modalita_pagemento_fe` = 'MP02' WHERE `descrizione` IN ('Assegno');
+UPDATE `co_pagamenti` SET `codice_modalita_pagemento_fe` = 'MP05' WHERE `descrizione` IN ('Bonifico 30gg d.f.', 'Bonifico 60gg d.f.', 'Bonifico 90gg d.f.', 'Bonifico 120gg d.f.', 'Bonifico 150gg d.f.', 'Bonifico 180gg d.f.', 'Bonifico 30/60gg d.f.', 'Bonifico 30/60gg d.f.', 'Bonifico 30/60/90gg d.f.', 'Bonifico 30/60/90gg d.f.', 'Bonifico 30/60/90gg d.f.', 'Bonifico 30/60/90/120gg d.f.', 'Bonifico 30/60/90/120gg d.f.', 'Bonifico 30/60/90/120gg d.f.', 'Bonifico 30/60/90/120gg d.f.', 'Bonifico 30/60/90/120/150gg d.f.', 'Bonifico 30/60/90/120/150gg d.f.', 'Bonifico 30/60/90/120/150gg d.f.', 'Bonifico 30/60/90/120/150gg d.f.', 'Bonifico 30/60/90/120/150gg d.f.', 'Bonifico 30/60/90/120/150/180gg d.f.', 'Bonifico 30/60/90/120/150/180gg d.f.', 'Bonifico 30/60/90/120/150/180gg d.f.', 'Bonifico 30/60/90/120/150/180gg d.f.', 'Bonifico 30/60/90/120/150/180gg d.f.', 'Bonifico 30/60/90/120/150/180gg d.f.', 'Bonifico 30gg d.f.f.m.', 'Bonifico 60gg d.f.f.m.', 'Bonifico 90gg d.f.f.m.', 'Bonifico 120gg d.f.f.m.', 'Bonifico 150gg d.f.f.m.', 'Bonifico 180gg d.f.f.m.', 'Bonifico 30/60gg d.f.f.m.', 'Bonifico 30/60gg d.f.f.m.', 'Bonifico 30/60/90gg d.f.f.m.', 'Bonifico 30/60/90gg d.f.f.m.', 'Bonifico 30/60/90gg d.f.f.m.', 'Bonifico 30/60/90/120gg d.f.f.m.', 'Bonifico 30/60/90/120gg d.f.f.m.', 'Bonifico 30/60/90/120gg d.f.f.m.', 'Bonifico 30/60/90/120gg d.f.f.m.', 'Bonifico 30/60/90/120/150gg d.f.f.m.', 'Bonifico 30/60/90/120/150gg d.f.f.m.', 'Bonifico 30/60/90/120/150gg d.f.f.m.', 'Bonifico 30/60/90/120/150gg d.f.f.m.', 'Bonifico 30/60/90/120/150gg d.f.f.m.', 'Bonifico 30/60/90/120/150/180gg d.f.f.m.', 'Bonifico 30/60/90/120/150/180gg d.f.f.m.', 'Bonifico 30/60/90/120/150/180gg d.f.f.m.', 'Bonifico 30/60/90/120/150/180gg d.f.f.m.', 'Bonifico 30/60/90/120/150/180gg d.f.f.m.', 'Bonifico 30/60/90/120/150/180gg d.f.f.m.', 'Bonifico bancario');
+UPDATE `co_pagamenti` SET `codice_modalita_pagemento_fe` = 'MP06' WHERE `descrizione` IN ('Cambiale');
+UPDATE `co_pagamenti` SET `codice_modalita_pagemento_fe` = 'MP08' WHERE `descrizione` IN ('Bancomat', 'Visa');
+UPDATE `co_pagamenti` SET `codice_modalita_pagemento_fe` = 'MP12' WHERE `descrizione` IN ('Ri.Ba. 30gg d.f.', 'Ri.Ba. 60gg d.f.', 'Ri.Ba. 90gg d.f.', 'Ri.Ba. 120gg d.f.', 'Ri.Ba. 150gg d.f.', 'Ri.Ba. 180gg d.f.', 'Ri.Ba. 30/60gg d.f.', 'Ri.Ba. 30/60gg d.f.', 'Ri.Ba. 30/60/90gg d.f.', 'Ri.Ba. 30/60/90gg d.f.', 'Ri.Ba. 30/60/90gg d.f.', 'Ri.Ba. 30/60/90/120gg d.f.', 'Ri.Ba. 30/60/90/120gg d.f.', 'Ri.Ba. 30/60/90/120gg d.f.', 'Ri.Ba. 30/60/90/120gg d.f.', 'Ri.Ba. 30/60/90/120/150gg d.f.', 'Ri.Ba. 30/60/90/120/150gg d.f.', 'Ri.Ba. 30/60/90/120/150gg d.f.', 'Ri.Ba. 30/60/90/120/150gg d.f.', 'Ri.Ba. 30/60/90/120/150gg d.f.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.', 'Ri.Ba. 30gg d.f.f.m.', 'Ri.Ba. 60gg d.f.f.m.', 'Ri.Ba. 90gg d.f.f.m.', 'Ri.Ba. 120gg d.f.f.m.', 'Ri.Ba. 150gg d.f.f.m.', 'Ri.Ba. 180gg d.f.f.m.', 'Ri.Ba. 30/60gg d.f.f.m.', 'Ri.Ba. 30/60gg d.f.f.m.', 'Ri.Ba. 30/60/90gg d.f.f.m.', 'Ri.Ba. 30/60/90gg d.f.f.m.', 'Ri.Ba. 30/60/90gg d.f.f.m.', 'Ri.Ba. 30/60/90/120gg d.f.f.m.', 'Ri.Ba. 30/60/90/120gg d.f.f.m.', 'Ri.Ba. 30/60/90/120gg d.f.f.m.', 'Ri.Ba. 30/60/90/120gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.f.m.');
+ALTER TABLE `co_pagamenti` ADD FOREIGN KEY (`codice_modalita_pagemento_fe`) REFERENCES `fe_modalita_pagamento`(`codice`) ON DELETE CASCADE;
+
 CREATE TABLE IF NOT EXISTS `fe_tipi_documento` (
   `codice` varchar(4) NOT NULL,
   `descrizione` varchar(255) NOT NULL,
@@ -131,11 +143,11 @@ INSERT INTO `fe_tipi_documento` (`codice`, `descrizione`) VALUES
 ('TD05','Nota di debito'),
 ('TD06','Parcella');
 
-ALTER TABLE `co_tipidocumento` ADD `codice_fe` varchar(4) NOT NULL;
-UPDATE `co_tipidocumento` SET `codice_fe` = 'TD01' WHERE `descrizione` IN('Fattura immediata di acquisto', 'Fattura immediata di vendita', 'Fattura differita di acquisto', 'Fattura differita di vendita', 'Fattura accompagnatoria di acquisto', 'Fattura accompagnatoria di vendita');
-UPDATE `co_tipidocumento` SET `codice_fe` = 'TD04', `descrizione` = 'Nota di credito' WHERE `descrizione` = 'Nota di accredito';
-UPDATE `co_tipidocumento` SET `codice_fe` = 'TD05', `descrizione` = 'Nota di debito' WHERE `descrizione` = 'Nota di addebito';
-ALTER TABLE `co_tipidocumento` ADD FOREIGN KEY (`codice_fe`) REFERENCES `fe_tipi_documento`(`codice`) ON DELETE CASCADE;
+ALTER TABLE `co_tipidocumento` ADD `codice_tipo_documento_fe` varchar(4) NOT NULL;
+UPDATE `co_tipidocumento` SET `codice_tipo_documento_fe` = 'TD01' WHERE `descrizione` IN ('Fattura immediata di acquisto', 'Fattura immediata di vendita', 'Fattura differita di acquisto', 'Fattura differita di vendita', 'Fattura accompagnatoria di acquisto', 'Fattura accompagnatoria di vendita');
+UPDATE `co_tipidocumento` SET `codice_tipo_documento_fe` = 'TD04', `descrizione` = 'Nota di credito' WHERE `descrizione` = 'Nota di accredito';
+UPDATE `co_tipidocumento` SET `codice_tipo_documento_fe` = 'TD05', `descrizione` = 'Nota di debito' WHERE `descrizione` = 'Nota di addebito';
+ALTER TABLE `co_tipidocumento` ADD FOREIGN KEY (`codice_tipo_documento_fe`) REFERENCES `fe_tipi_documento`(`codice`) ON DELETE CASCADE;
 
 CREATE TABLE IF NOT EXISTS `fe_natura` (
   `codice` varchar(2) NOT NULL,
@@ -151,6 +163,10 @@ INSERT INTO `fe_natura` (`codice`, `descrizione`) VALUES
 ('N5','Regime del margine / IVA non esposta in fattura'),
 ('N6','Inversione contabile (per le operazioni in reverse charge ovvero nei casi di autofatturazione per acquisti extra UE di servizi ovvero per importazioni di beni nei soli casi previsti)'),
 ('N7','IVA assolta in altro stato UE (vendite a distanza ex art. 40 c. 3 e 4 e art. 41 c. 1 lett. b,  DL 331/93; prestazione di servizi di telecomunicazioni, tele-radiodiffusione ed elettronici ex art. 7-sexies lett. f, g, art. 74-sexies DPR 633/72)');
+
+ALTER TABLE `co_iva` DROP `esente`, ADD `codice_natura_fe` varchar(4) NOT NULL;
+UPDATE `co_iva` SET `codice_natura_fe` = 'TD01' WHERE `descrizione` IN ('Fattura immediata di acquisto', 'Fattura immediata di vendita', 'Fattura differita di acquisto', 'Fattura differita di vendita', 'Fattura accompagnatoria di acquisto', 'Fattura accompagnatoria di vendita');
+ALTER TABLE `co_iva` ADD FOREIGN KEY (`codice_natura_fe`) REFERENCES `fe_natura`(`codice`) ON DELETE CASCADE;
 
 CREATE TABLE IF NOT EXISTS `fe_causali_pagamento_ritenuta` (
   `codice` varchar(4) NOT NULL,
@@ -187,5 +203,4 @@ età svizzere che possiedono i requisiti di cui all''art. 15, c. 2 dell’Accord
 ('Y', 'Canoni corrisposti dal 1.01.2005 al 26.07.2005 da soggetti di cui al punto precedente'),
 ('Z', 'Titolo diverso dai precedenti');
 
--- Impostazione per Regime Fiscale
-INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Regime Fiscale', 'RF01', 'query=SELECT codice AS id, descrizione FROM fe_regime_fiscale', 1, 'Generali', 19);
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Causale ritenuta d''acconto', '', 'query=SELECT codice AS id, descrizione FROM fe_causali_pagamento_ritenuta', 1, 'Fatturazione', 0);

@@ -13,7 +13,7 @@ switch (filter('op')) {
 
         if ($dbo->query($query)) {
         } else {
-            $_SESSION['errors'][] = tr("Errore durante l'aggiunta del promemoria!");
+            App::flash()->error(tr("Errore durante l'aggiunta del promemoria!"));
         }
     break;
 
@@ -32,9 +32,9 @@ switch (filter('op')) {
 
         if (isset($id_record)) {
             if ($dbo->query($query)) {
-                $_SESSION['infos'][] = tr('Promemoria inserito!');
+                App::flash()->info(tr('Promemoria inserito!'));
             } else {
-                $_SESSION['errors'][] = tr('Errore durante la modifica del promemoria!');
+                App::flash()->error(tr('Errore durante la modifica del promemoria!'));
             }
         }
 
@@ -51,7 +51,7 @@ switch (filter('op')) {
         $dbo->query('DELETE FROM `co_righe_contratti_materiali` WHERE id_riga_contratto='.prepare($id));
         $dbo->query('DELETE FROM `co_righe_contratti_articoli` WHERE id_riga_contratto='.prepare($id));
 
-        $_SESSION['infos'][] = tr('Pianificazione eliminata!');
+        App::flash()->info(tr('Pianificazione eliminata!'));
 
         redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
 
@@ -64,7 +64,7 @@ switch (filter('op')) {
         $dbo->query('DELETE FROM `co_righe_contratti_materiali` WHERE id_riga_contratto IN (SELECT id FROM `co_contratti_promemoria` WHERE idcontratto = '.$id_record.' AND idintervento IS NULL ) ');
         $dbo->query('DELETE FROM `co_righe_contratti_articoli` WHERE id_riga_contratto IN (SELECT id FROM `co_contratti_promemoria` WHERE idcontratto = '.$id_record.' AND idintervento IS NULL ) ');
 
-        $_SESSION['errors'][] = tr('Tutti i promemoria non associati sono stati eliminati!');
+        App::flash()->error(tr('Tutti i promemoria non associati sono stati eliminati!'));
 
         redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
 
@@ -127,7 +127,7 @@ switch (filter('op')) {
                                     //copio righe articoli nel nuovo promemoria
                                     $dbo->query('INSERT INTO co_righe_contratti_articoli (idarticolo, id_riga_contratto,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idriga.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
 
-                                    $_SESSION['infos'][] = tr('Promemoria intervento pianificato!');
+                                    App::flash()->info(tr('Promemoria intervento pianificato!'));
 
                                     //pianificare anche l' intervento?
                                     if ($post['pianifica_intervento']) {
@@ -196,27 +196,27 @@ switch (filter('op')) {
                                             $dbo->query('INSERT INTO my_impianti_interventi (idintervento, idimpianto) VALUES ('.$idintervento.', '.$idimpianto.' )');
                                         }
 
-                                        // $_SESSION['infos'][] = tr('Intervento '.$codice.' pianificato correttamente.');
+                                        // App::flash()->info(tr('Intervento '.$codice.' pianificato correttamente.'));
 
-                                        $_SESSION['infos'][] = tr('Interventi pianificati correttamente.');
+                                        App::flash()->info(tr('Interventi pianificati correttamente.'));
                                     }
                                     //fine if pianificazione intervento
                                 } else {
-                                    $_SESSION['errors'][] = tr('Errore durante esecuzione query di pianificazione.  #'.$idcontratto_riga);
+                                    App::flash()->error(tr('Errore durante esecuzione query di pianificazione.  #'.$idcontratto_riga));
                                 }
                             } else {
-                                $_SESSION['warnings'][] = tr('Esiste già un promemoria pianificato per il '.readDate($data_richiesta).'.');
+                                App::flash()->warning(tr('Esiste già un promemoria pianificato per il '.readDate($data_richiesta).'.'));
                             }
                         }
                         //fine controllo nuova data richiesta
                     }
                     //fine ciclo while
                 } else {
-                    $_SESSION['errors'][] = tr('Nessuna data di conclusione del contratto oppure quest\'ultima è già trascorsa, impossibile pianificare nuovi promemoria.'.$qp);
+                    App::flash()->error(tr('Nessuna data di conclusione del contratto oppure quest\'ultima è già trascorsa, impossibile pianificare nuovi promemoria.'.$qp));
                 }
                 //fine controllo data_conclusione
             } else {
-                $_SESSION['errors'][] = tr('Errore durante la pianificazione.  #'.$idcontratto_riga);
+                App::flash()->error(tr('Errore durante la pianificazione.  #'.$idcontratto_riga));
             }
 
             redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
@@ -303,8 +303,8 @@ if (count($rsp) != 0) {
                 }
             }
         }
-		
-		//info materiali/articoli
+
+        //info materiali/articoli
         $rsp4 = $dbo->fetchArray('SELECT id, descrizione,qta,um,prezzo_vendita, \'\' AS idarticolo FROM co_righe_contratti_materiali WHERE id_riga_contratto = '.prepare($rsp[$i]['id']).'
 		UNION SELECT id, descrizione,qta,um,prezzo_vendita, idarticolo FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.prepare($rsp[$i]['id']));
 
@@ -319,21 +319,20 @@ if (count($rsp) != 0) {
                 ]).'<br>';
             }
         }
-		
-		//info allegati
-		$rsp5 = $dbo->fetchArray('SELECT nome, original  FROM zz_files WHERE id_record = '.prepare($rsp[$i]['id']).' AND id_plugin = '.$id_plugin);
+
+        //info allegati
+        $rsp5 = $dbo->fetchArray('SELECT nome, original  FROM zz_files WHERE id_record = '.prepare($rsp[$i]['id']).' AND id_plugin = '.$id_plugin);
 
         $info_allegati = '';
         if (!empty($rsp5)) {
             for ($b = 0; $b < count($rsp5); ++$b) {
                 $info_allegati .= tr(' _NOME_ (_ORIGINAL_)', [
-                    '_ORIGINAL_' =>  $rsp5[$b]['original'],
-                    '_NOME_' =>  $rsp5[$b]['nome'],
+                    '_ORIGINAL_' => $rsp5[$b]['original'],
+                    '_NOME_' => $rsp5[$b]['nome'],
                 ]).'<br>';
             }
         }
-		
-		
+
         echo '
                 <tr>
                     <td>'.Translator::dateToLocale($rsp[$i]['data_richiesta']).'<!--br><small>'.Translator::dateToLocale($records[0]['data_conclusione']).'</small--></td>

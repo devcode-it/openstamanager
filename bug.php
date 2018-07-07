@@ -29,7 +29,7 @@ if (filter('op') == 'send') {
 
         $mail->AddAttachment($backup_file);
 
-        $_SESSION['infos'][] = tr('Backup del database eseguito ed allegato correttamente!');
+        App::flash()->info(tr('Backup del database eseguito ed allegato correttamente!'));
     }
 
     // Aggiunta delle informazioni di base sull'installazione
@@ -57,9 +57,9 @@ if (filter('op') == 'send') {
 
     // Invio mail
     if (!$mail->send()) {
-        $_SESSION['errors'][] = tr("Errore durante l'invio della segnalazione").': '.$mail->ErrorInfo;
+        App::flash()->error(tr("Errore durante l'invio della segnalazione").': '.$mail->ErrorInfo);
     } else {
-        $_SESSION['infos'][] = tr('Email inviata correttamente!');
+        App::flash()->info(tr('Email inviata correttamente!'));
     }
 
     // Rimozione del dump del database

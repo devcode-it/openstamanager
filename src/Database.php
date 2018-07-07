@@ -838,7 +838,7 @@ class Database extends Util\Singleton
 
             $msg .= '<br><small>'.$e->getMessage().'</small>';
 
-            $_SESSION['errors'][] = $msg;
+            App::flash()->error($msg);
         }
 
         $error = $e->getMessage().' - '.$message;

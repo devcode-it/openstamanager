@@ -249,7 +249,6 @@ if (Modules::getPermission($id_module) == 'r' || !empty($block_edit)) {
 				$("a.btn, button, input[type=button], input[type=submit]", "section.content")'.$not.'.hide();
 				$("a.btn-info, a.btn-warning, button.btn-info, button.btn-warning, input[type=button].btn-info", "section.content")'.$not.'.show();
 			});';
-
 }
 ?>
 
@@ -275,7 +274,7 @@ if (Modules::getPermission($id_module) == 'r' || !empty($block_edit)) {
             };
 <?php
 if ($advanced_sessions) {
-        ?>
+    ?>
 
             function getActiveUsers(){
                 $.getJSON('<?php echo ROOTDIR; ?>/call.php', {
@@ -298,7 +297,7 @@ if ($advanced_sessions) {
 
             setInterval(getActiveUsers, <?php echo get_var('Timeout notifica di presenza (minuti)') * 1000; ?>);
 <?php
-    }
+}
 ?>
 	    </script>
 <?php

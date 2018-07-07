@@ -205,15 +205,15 @@ switch (post('op')) {
         }
 
         if ($n_interventi > 0) {
-            $_SESSION['infos'][] = tr('Fattura _NUM_ creata!', [
+            App::flash()->info(tr('Fattura _NUM_ creata!', [
                 '_NUM_' => $numero_esterno,
-            ]);
+            ]));
 
-            $_SESSION['infos'][] = tr('_NUM_ interventi fatturati!', [
+            App::flash()->info(tr('_NUM_ interventi fatturati!', [
                 '_NUM_' => $n_interventi,
-            ]);
+            ]));
         } else {
-            $_SESSION['warnings'][] = tr('Nessuna attività fatturata!');
+            App::flash()->warning(tr('Nessuna attività fatturata!'));
         }
 
     break;

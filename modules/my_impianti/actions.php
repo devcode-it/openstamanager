@@ -45,7 +45,7 @@ switch ($op) {
                 ' WHERE id='.prepare($id_record);
             $dbo->query($query);
 
-            $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
+            App::flash()->info(tr('Informazioni salvate correttamente!'));
 
             // Upload file
             if (!empty($_FILES) && !empty($_FILES['immagine']['name'])) {
@@ -57,9 +57,9 @@ switch ($op) {
                 if (move_uploaded_file($tmp, $upload_dir.'/'.$filename)) {
                     $dbo->query('UPDATE my_impianti SET immagine='.prepare($filename).' WHERE id='.prepare($id_record));
                 } else {
-                    $_SESSION['warnings'][] = tr('Errore durante il caricamento del file in _DIR_!', [
+                    App::flash()->warning(tr('Errore durante il caricamento del file in _DIR_!', [
                         '_DIR_' => $upload_dir,
-                    ]);
+                    ]));
                 }
             }
 
@@ -89,7 +89,7 @@ switch ($op) {
                 echo json_encode(['id' => $id_record, 'text' => $matricola.' - '.$nome]);
             }
 
-            $_SESSION['infos'][] = tr('Aggiunto nuovo impianto!');
+            App::flash()->info(tr('Aggiunto nuovo impianto!'));
         }
 
         break;
@@ -122,6 +122,6 @@ switch ($op) {
     case 'delete':
         $dbo->query('DELETE FROM my_impianti WHERE id='.prepare($id_record));
 
-        $_SESSION['infos'][] = tr('Impianto e relativi componenti eliminati!');
+        App::flash()->info(tr('Impianto e relativi componenti eliminati!'));
         break;
 }

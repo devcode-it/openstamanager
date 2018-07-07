@@ -43,10 +43,10 @@ switch (post('op')) {
 
             $id_record = $dbo->lastInsertedID();
 
-            $_SESSION['infos'][] = tr('Aggiunto ddt in _TYPE_ numero _NUM_!', [
+            App::flash()->info(tr('Aggiunto ddt in _TYPE_ numero _NUM_!', [
                 '_TYPE_' => $dir,
                 '_NUM_' => $numero,
-            ]);
+            ]));
         }
         break;
 
@@ -130,7 +130,7 @@ switch (post('op')) {
                 }
             }
 
-            $_SESSION['infos'][] = tr('Ddt modificato correttamente!');
+            App::flash()->info(tr('Ddt modificato correttamente!'));
         }
         break;
 
@@ -156,7 +156,7 @@ switch (post('op')) {
             // Ricalcolo inps, ritenuta e bollo
             ricalcola_costiagg_ddt($id_record);
 
-            $_SESSION['infos'][] = tr('Articolo aggiunto!');
+            App::flash()->info(tr('Articolo aggiunto!'));
         }
         break;
 
@@ -188,11 +188,11 @@ switch (post('op')) {
 
         // Messaggi informativi
         if (!empty($idarticolo)) {
-            $_SESSION['infos'][] = tr('Articolo aggiunto!');
+            App::flash()->info(tr('Articolo aggiunto!'));
         } elseif (!empty($qta)) {
-            $_SESSION['infos'][] = tr('Riga aggiunta!');
+            App::flash()->info(tr('Riga aggiunta!'));
         } else {
-            $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
+            App::flash()->info(tr('Riga descrittiva aggiunta!'));
         }
 
         // Ricalcolo inps, ritenuta e bollo
@@ -282,7 +282,7 @@ switch (post('op')) {
         }
 
         ricalcola_costiagg_ddt($id_record);
-            $_SESSION['infos'][] = tr('Creato un nuovo ddt!');
+            App::flash()->info(tr('Creato un nuovo ddt!'));
         break;
 
     // Scollegamento articolo da ddt
@@ -291,7 +291,7 @@ switch (post('op')) {
         $idarticolo = post('idarticolo');
 
         if (!rimuovi_articolo_daddt($idarticolo, $id_record, $idriga)) {
-            $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
+            App::flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
 
             return;
         }
@@ -303,7 +303,7 @@ switch (post('op')) {
             ricalcola_costiagg_ddt($id_record, 0, 0, 0);
         }
 
-        $_SESSION['infos'][] = tr('Articolo rimosso!');
+        App::flash()->info(tr('Articolo rimosso!'));
         break;
 
     // Scollegamento riga generica da ddt
@@ -334,7 +334,7 @@ switch (post('op')) {
                     ricalcola_costiagg_ddt($id_record, 0, 0, 0);
                 }
 
-                $_SESSION['infos'][] = tr('Riga rimossa!');
+                App::flash()->info(tr('Riga rimossa!'));
             }
         }
         break;
@@ -370,7 +370,7 @@ switch (post('op')) {
             // Controllo per gestire i serial
             if (!empty($idarticolo)) {
                 if (!controlla_seriali('id_riga_ddt', $idriga, $old_qta, $qta, $dir)) {
-                    $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
+                    App::flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
 
                     return;
                 }
@@ -413,7 +413,7 @@ switch (post('op')) {
                     add_movimento_magazzino($idarticolo, $new_qta, ['idddt' => $id_record]);
                 }
 
-                $_SESSION['infos'][] = tr('Riga modificata!');
+                App::flash()->info(tr('Riga modificata!'));
 
                 // Ricalcolo inps, ritenuta e bollo
                 if ($dir == 'entrata') {
@@ -433,7 +433,7 @@ switch (post('op')) {
         foreach ($rs as $value) {
             $non_rimovibili = seriali_non_rimuovibili('id_riga_ddt', $value['id'], $dir);
             if (!empty($non_rimovibili)) {
-                $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
+                App::flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
 
                 return;
             }
@@ -463,7 +463,7 @@ switch (post('op')) {
             }
         }
 
-        $_SESSION['infos'][] = tr('Ddt eliminato!');
+        App::flash()->info(tr('Ddt eliminato!'));
 
         break;
 
@@ -558,7 +558,7 @@ switch (post('op')) {
 
         ricalcola_costiagg_ddt($id_record);
 
-        $_SESSION['infos'][] = tr('Aggiunti nuovi articoli in ddt!');
+        App::flash()->info(tr('Aggiunti nuovi articoli in ddt!'));
 
         break;
 }

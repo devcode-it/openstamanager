@@ -8,30 +8,36 @@ switch (filter('op')) {
             $results = $dbo->fetchArray('SELECT * FROM `zz_settings` WHERE `idimpostazione`='.prepare($id).' AND editable = 1');
             $result = $results[0];
 
+            $continue = true;
+
             // integer
             if ($result['tipo'] == 'integer') {
                 if (!preg_match('/^\d*$/', $value)) {
-                    $_SESSION['errors'][] = tr('Il valore inserito del parametro _NAME_ deve essere un numero intero!', [
+                    App::flash()->error(tr('Il valore inserito del parametro _NAME_ deve essere un numero intero!', [
                         '_NAME_' => '"'.$result['nome'].'"',
-                    ]);
+                    ]));
+
+                    $continue = false;
                 }
             }
 
             // list
             // verifico che il valore scelto sia nella lista enumerata nel db
             elseif (preg_match("/list\[(.+?)\]/", $result['tipo'], $m)) {
-                $continue = false;
+                $is_valid = false;
                 $m = explode(',', $m[1]);
                 for ($i = 0; $i < count($m); ++$i) {
                     if ($m[$i] == $value) {
-                        $continue = true;
+                        $is_valid = true;
                     }
                 }
 
-                if (!$continue) {
-                    $_SESSION['errors'][] = tr('Il valore inserito del parametro _NAME_ deve essere un compreso tra i valori previsti!', [
+                if (!$is_valid) {
+                    App::flash()->error(tr('Il valore inserito del parametro _NAME_ deve essere un compreso tra i valori previsti!', [
                         '_NAME_' => '"'.$result['nome'].'"',
-                    ]);
+                    ]));
+
+                    $continue = false;
                 }
             }
 
@@ -40,13 +46,13 @@ switch (filter('op')) {
                 $value = (empty($value) || $value == 'off') ? false : true;
             }
 
-            if (empty($_SESSION['errors'])) {
+            if (!$continue) {
                 $dbo->query('UPDATE `zz_settings` SET `valore`='.prepare($value).' WHERE `idimpostazione`='.prepare($id));
             }
         }
 
-        if (count($_SESSION['errors']) <= 0) {
-            $_SESSION['infos'][] = tr('Impostazioni aggiornate correttamente!');
+        if ($continue) {
+            App::flash()->info(tr('Impostazioni aggiornate correttamente!'));
         }
 
         break;

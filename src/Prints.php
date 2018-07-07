@@ -137,7 +137,7 @@ class Prints
                 '_DIRECTORY_' => $directory,
             ]);
 
-            $_SESSION['errors'][] = $error;
+            App::flash()->error($error);
 
             echo '
                 <p align="center">'.$error.'</p>';

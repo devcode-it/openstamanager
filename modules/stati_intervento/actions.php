@@ -12,7 +12,7 @@ switch (post('op')) {
         $query = 'UPDATE in_statiintervento SET descrizione='.prepare($descrizione).',  colore='.prepare($colore).', completato='.prepare($completato).' WHERE idstatointervento='.prepare($id_record);
         $dbo->query($query);
 
-        $_SESSION['infos'][] = tr('Informazioni salvate correttamente.');
+        App::flash()->info(tr('Informazioni salvate correttamente.'));
 
         break;
 
@@ -23,12 +23,12 @@ switch (post('op')) {
 
         //controllo idstatointervento che non sia duplicato
         if (count($dbo->fetchArray('SELECT idstatointervento FROM in_statiintervento WHERE idstatointervento='.prepare($idstatointervento))) > 0) {
-            $_SESSION['errors'][] = tr('Stato di intervento già esistente.');
+            App::flash()->error(tr('Stato di intervento già esistente.'));
         } else {
             $query = 'INSERT INTO in_statiintervento(idstatointervento, descrizione, colore) VALUES ('.prepare($idstatointervento).', '.prepare($descrizione).', '.prepare($colore).')';
             $dbo->query($query);
             $id_record = $idstatointervento;
-            $_SESSION['infos'][] = tr('Nuovo stato di intervento aggiunto.');
+            App::flash()->info(tr('Nuovo stato di intervento aggiunto.'));
         }
 
         break;
@@ -44,7 +44,7 @@ switch (post('op')) {
 
         $dbo->query($query);
 
-        $_SESSION['infos'][] = tr('Stato di intervento eliminato.');
+        App::flash()->info(tr('Stato di intervento eliminato.'));
 
         break;
 }

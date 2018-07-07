@@ -34,9 +34,9 @@ switch (post('op')) {
                 $dbo->query('INSERT INTO co_contratti_tipiintervento(idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) VALUES('.prepare($id_record).', '.prepare($rsi[$i]['idtipointervento']).', '.prepare($rsi[$i]['costo_orario']).', '.prepare($rsi[$i]['costo_km']).', '.prepare($rsi[$i]['costo_diritto_chiamata']).', '.prepare($rsi[$i]['costo_orario_tecnico']).', '.prepare($rsi[$i]['costo_km_tecnico']).', '.prepare($rsi[$i]['costo_diritto_chiamata_tecnico']).')');
             }
 
-            $_SESSION['infos'][] = tr('Aggiunto contratto numero _NUM_!', [
+            App::flash()->info(tr('Aggiunto contratto numero _NUM_!', [
                 '_NUM_' => $numero,
-            ]);
+            ]));
         }
 
         break;
@@ -130,7 +130,7 @@ switch (post('op')) {
                 }
             }
 
-            $_SESSION['infos'][] = tr('Contratto modificato correttamente!');
+            App::flash()->info(tr('Contratto modificato correttamente!'));
         }
 
         break;
@@ -164,11 +164,11 @@ switch (post('op')) {
 
         // Messaggi informativi
         if (!empty($idarticolo)) {
-            $_SESSION['infos'][] = tr('Articolo aggiunto!');
+            App::flash()->info(tr('Articolo aggiunto!'));
         } elseif (!empty($qta)) {
-            $_SESSION['infos'][] = tr('Riga aggiunta!');
+            App::flash()->info(tr('Riga aggiunta!'));
         } else {
-            $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
+            App::flash()->info(tr('Riga descrittiva aggiunta!'));
         }
 
         break;
@@ -210,7 +210,7 @@ switch (post('op')) {
         }
         $dbo->query($query);
 
-        $_SESSION['infos'][] = tr('Riga modificata!');
+        App::flash()->info(tr('Riga modificata!'));
 
         break;
 
@@ -222,7 +222,7 @@ switch (post('op')) {
             $query = 'DELETE FROM `co_righe_contratti` WHERE idcontratto='.prepare($id_record).' AND id='.prepare($idriga);
 
             if ($dbo->query($query)) {
-                $_SESSION['infos'][] = tr('Riga eliminata!');
+                App::flash()->info(tr('Riga eliminata!'));
             }
         }
 
@@ -240,9 +240,9 @@ switch (post('op')) {
             $query = 'DELETE FROM `co_contratti_promemoria` WHERE idcontratto='.prepare($idcontratto).' AND idintervento='.prepare($idintervento);
             $dbo->query($query);
 
-            $_SESSION['infos'][] = tr('Intervento _NUM_ rimosso!', [
+            App::flash()->info(tr('Intervento _NUM_ rimosso!', [
                 '_NUM_' => $idintervento,
-            ]);
+            ]));
         }
         break;
 
@@ -267,7 +267,7 @@ switch (post('op')) {
         $dbo->query('DELETE FROM co_contratti_promemoria WHERE idcontratto='.prepare($id_record));
         $dbo->query('DELETE FROM co_righe_contratti WHERE idcontratto='.prepare($id_record));
 
-        $_SESSION['infos'][] = tr('Contratto eliminato!');
+        App::flash()->info(tr('Contratto eliminato!'));
 
         break;
 }
@@ -305,11 +305,11 @@ switch (get('op')) {
                 $impianti = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE idcontratto='.prepare($id_record));
                 $dbo->sync('my_impianti_contratti', ['idcontratto' => $new_idcontratto], ['idimpianto' => array_column($impianti, 'idimpianto')]);
 
-                $_SESSION['infos'][] = tr('Contratto rinnovato!');
+                App::flash()->info(tr('Contratto rinnovato!'));
 
                 redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$new_idcontratto);
             } else {
-                $_SESSION['errors'][] = tr('Errore durante il rinnovo del contratto!');
+                App::flash()->error(tr('Errore durante il rinnovo del contratto!'));
             }
         }
 

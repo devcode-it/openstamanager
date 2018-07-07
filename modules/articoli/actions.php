@@ -18,9 +18,9 @@ switch (post('op')) {
             ]);
             $id_record = $dbo->lastInsertedID();
 
-            $_SESSION['infos'][] = tr('Aggiunto un nuovo articolo!');
+            App::flash()->info(tr('Aggiunto un nuovo articolo!'));
         } else {
-            $_SESSION['errors'][] = tr('Esiste già un articolo con questo codice!');
+            App::flash()->error(tr('Esiste già un articolo con questo codice!'));
         }
 
         break;
@@ -81,9 +81,9 @@ switch (post('op')) {
             if (!empty($filename)) {
                 $dbo->query('UPDATE mg_articoli SET immagine01='.prepare($filename).' WHERE id='.prepare($id_record));
             } else {
-                $_SESSION['warnings'][] = tr('Errore durante il caricamento del file in _DIR_!', [
+                App::flash()->warning(tr('Errore durante il caricamento del file in _DIR_!', [
                     '_DIR_' => $upload_dir,
-                ]);
+                ]));
             }
         }
 
@@ -97,7 +97,7 @@ switch (post('op')) {
             $dbo->query("UPDATE mg_articoli SET immagine01 = '' WHERE id=".prepare($id_record));
         }
 
-        $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
+        App::flash()->info(tr('Informazioni salvate correttamente!'));
 
         break;
 
@@ -188,16 +188,16 @@ switch (post('op')) {
                     ]));
                 }
 
-                $_SESSION['infos'][] = tr('Aggiunti _NUM_ prodotti!', [
+                App::flash()->info(tr('Aggiunti _NUM_ prodotti!', [
                     '_NUM_' => $c,
-                ]);
+                ]));
             } else {
-                $_SESSION['errors'][] = tr("Errore durante l'inserimento!");
+                App::flash()->error(tr("Errore durante l'inserimento!"));
             }
         }
 
         if ($c != $n_prodotti) {
-            $_SESSION['warnings'][] = tr('Alcuni seriali erano già presenti').'...';
+            App::flash()->warning(tr('Alcuni seriali erano già presenti').'...');
         }
 
         break;
@@ -217,7 +217,7 @@ switch (post('op')) {
                 ]));
             }
 
-            $_SESSION['infos'][] = tr('Prodotto rimosso!');
+            App::flash()->info(tr('Prodotto rimosso!'));
         }
         break;
 
@@ -234,7 +234,7 @@ switch (post('op')) {
 
         $query = 'DELETE FROM mg_movimenti WHERE id='.prepare($idmovimento);
         if ($dbo->query($query)) {
-            $_SESSION['infos'][] = tr('Movimento rimosso!');
+            App::flash()->info(tr('Movimento rimosso!'));
         }
         break;
 
@@ -247,7 +247,7 @@ switch (post('op')) {
         //$dbo->query('DELETE FROM mg_prodotti WHERE id_articolo='.prepare($id_record));
         $dbo->query('DELETE FROM mg_articoli_automezzi WHERE idarticolo='.prepare($id_record));
 
-        $_SESSION['infos'][] = tr('Articolo eliminato!');
+        App::flash()->info(tr('Articolo eliminato!'));
         break;
 }
 

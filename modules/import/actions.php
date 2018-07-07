@@ -50,7 +50,7 @@ switch (post('op')) {
         // Richiamo delle operazioni specifiche
         include $imports[$id_record]['import'];
 
-        $_SESSION['infos'][] = tr('Importazione completata. '.count($csv).' righe processate.');
+        App::flash()->info(tr('Importazione completata. '.count($csv).' righe processate.'));
 
         break;
 }

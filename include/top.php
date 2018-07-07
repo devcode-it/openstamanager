@@ -5,6 +5,8 @@ include_once __DIR__.'/../core.php';
 $paths = App::getPaths();
 $user = Auth::user();
 
+$messages = App::flash()->getMessages();
+
 echo '<!DOCTYPE html>
 <html>
     <head>
@@ -299,7 +301,7 @@ if (Auth::check()) {
 
     echo '
 						<div class="col-md-12">';
-} elseif (!empty($_SESSION['infos']) || !empty($_SESSION['warnings']) || !empty($_SESSION['errors'])) {
+} elseif (!empty($messages['info']) || !empty($messages['warning']) || !empty($messages['error'])) {
     echo '
             <div class="box box-warning box-center">
                 <div class="box-header with-border text-center">
@@ -309,7 +311,7 @@ if (Auth::check()) {
                 <div class="box-body">';
 }
 // Infomazioni
-foreach ($_SESSION['infos'] as $value) {
+foreach ($messages['info'] as $value) {
     echo '
 							<div class="alert alert-success push">
                                 <i class="fa fa-check"></i> '.$value.'
@@ -317,7 +319,7 @@ foreach ($_SESSION['infos'] as $value) {
 }
 
 // Errori
-foreach ($_SESSION['errors'] as $value) {
+foreach ($messages['error'] as $value) {
     echo '
 							<div class="alert alert-danger push">
                                 <i class="fa fa-times"></i> '.$value.'
@@ -325,7 +327,7 @@ foreach ($_SESSION['errors'] as $value) {
 }
 
 // Avvisi
-foreach ($_SESSION['warnings'] as $value) {
+foreach ($messages['warning'] as $value) {
     echo '
 							<div class="alert alert-warning push">
                                 <i class="fa fa-warning"></i>
@@ -333,7 +335,7 @@ foreach ($_SESSION['warnings'] as $value) {
                             </div>';
 }
 
-if (!Auth::check() && (!empty($_SESSION['infos']) || !empty($_SESSION['warnings']) || !empty($_SESSION['errors']))) {
+if (!Auth::check() && (!empty($messages['info']) || !empty($messages['warning']) || !empty($messages['error']))) {
     echo '
                 </div>
             </div>';

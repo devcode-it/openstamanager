@@ -21,9 +21,9 @@ if (filter('op') == 'save_ordineservizio') {
     }
 
     if ($n_errors == 0) {
-        $_SESSION['infos'][] = tr('Voci di servizio salvate correttamente!');
+        App::flash()->info(tr('Voci di servizio salvate correttamente!'));
     } else {
-        $_SESSION['errors'][] = tr('Errore durante il salvataggio delle voci di servizio!');
+        App::flash()->error(tr('Errore durante il salvataggio delle voci di servizio!'));
     }
 
     // Aggiornamento 4 spunte

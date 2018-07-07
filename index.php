@@ -19,11 +19,11 @@ switch ($op) {
                 $result = Backup::daily();
 
                 if (!isset($result)) {
-                    $_SESSION['infos'][] = tr('Backup saltato perché già esistente!');
+                    App::flash()->info(tr('Backup saltato perché già esistente!'));
                 } elseif (!empty($result)) {
-                    $_SESSION['infos'][] = tr('Backup automatico eseguito correttamente!');
+                    App::flash()->info(tr('Backup automatico eseguito correttamente!'));
                 } else {
-                    $_SESSION['errors'][] = tr('Errore durante la generazione del backup automatico!');
+                    App::flash()->error(tr('Errore durante la generazione del backup automatico!'));
                 }
             }
         }
@@ -108,7 +108,7 @@ if (Auth::isBrute()) {
             </script>';
 }
 
-if (!empty($_SESSION['errors'])) {
+if (!empty(App::flash()->getMessage('error'))) {
     echo '
             <script>
 			$(document).ready(function(){

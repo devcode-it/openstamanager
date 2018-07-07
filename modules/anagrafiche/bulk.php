@@ -18,9 +18,9 @@ switch (post('op')) {
                 }
             }
 
-            $_SESSION['infos'][] = tr('Anagrafiche eliminate!');
+            App::flash()->info(tr('Anagrafiche eliminate!'));
         } else {
-            $_SESSION['warnings'][] = tr('Procedura in fase di sviluppo. Nessuna modifica apportata.');
+            App::flash()->warning(tr('Procedura in fase di sviluppo. Nessuna modifica apportata.'));
         }
 
         break;

@@ -47,9 +47,9 @@ switch (post('op')) {
 
             $id_record = $dbo->lastInsertedID();
 
-            $_SESSION['infos'][] = tr('Aggiunto ordine numero _NUM_!', [
+            App::flash()->info(tr('Aggiunto ordine numero _NUM_!', [
                 '_NUM_' => $numero,
-            ]);
+            ]));
         }
         break;
 
@@ -128,7 +128,7 @@ switch (post('op')) {
                 }
             }
 
-            $_SESSION['infos'][] = tr('Ordine modificato correttamente!');
+            App::flash()->info(tr('Ordine modificato correttamente!'));
         }
 
         break;
@@ -149,7 +149,7 @@ switch (post('op')) {
 
             add_articolo_inordine($id_record, $idarticolo, $descrizione, $idiva, $qta, $post['um'], $prezzo_vendita * $qta, $sconto, $sconto_unitario, $tipo_sconto);
 
-            $_SESSION['infos'][] = tr('Articolo aggiunto!');
+            App::flash()->info(tr('Articolo aggiunto!'));
         }
         ricalcola_costiagg_ordine($id_record);
         break;
@@ -180,11 +180,11 @@ switch (post('op')) {
 
         // Messaggi informativi
         if (!empty($idarticolo)) {
-            $_SESSION['infos'][] = tr('Articolo aggiunto!');
+            App::flash()->info(tr('Articolo aggiunto!'));
         } elseif (!empty($qta)) {
-            $_SESSION['infos'][] = tr('Riga aggiunta!');
+            App::flash()->info(tr('Riga aggiunta!'));
         } else {
-            $_SESSION['infos'][] = tr('Riga descrittiva aggiunta!');
+            App::flash()->info(tr('Riga descrittiva aggiunta!'));
         }
 
         // Ricalcolo inps, ritenuta e bollo
@@ -203,7 +203,7 @@ switch (post('op')) {
 
         if (!empty($idarticolo)) {
             if (!rimuovi_articolo_daordine($idarticolo, $id_record, $idriga)) {
-                $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
+                App::flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
 
                 return;
             }
@@ -216,7 +216,7 @@ switch (post('op')) {
                 ricalcola_costiagg_ordine($id_record, 0, 0, 0);
             }
 
-            $_SESSION['infos'][] = tr('Articolo rimosso!');
+            App::flash()->info(tr('Articolo rimosso!'));
         }
 
         break;
@@ -237,7 +237,7 @@ switch (post('op')) {
                 ricalcola_costiagg_ordine($id_record, 0, 0, 0);
             }
 
-            $_SESSION['infos'][] = tr('Riga rimossa!');
+            App::flash()->info(tr('Riga rimossa!'));
         }
         break;
 
@@ -269,7 +269,7 @@ switch (post('op')) {
             // Controllo per gestire i serial
             if (!empty($idarticolo)) {
                 if (!controlla_seriali('id_riga_ordine', $idriga, $old_qta, $qta, $dir)) {
-                    $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
+                    App::flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
 
                     return;
                 }
@@ -289,7 +289,7 @@ switch (post('op')) {
                 $query = 'UPDATE or_righe_ordini SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga);
             }
             if ($dbo->query($query)) {
-                $_SESSION['infos'][] = tr('Riga modificata!');
+                App::flash()->info(tr('Riga modificata!'));
 
                 // Ricalcolo inps, ritenuta e bollo
                 if ($dir == 'entrata') {
@@ -310,7 +310,7 @@ switch (post('op')) {
         foreach ($rs as $value) {
             $non_rimovibili = seriali_non_rimuovibili('id_riga_documento', $value['id'], $dir);
             if (!empty($non_rimovibili)) {
-                $_SESSION['errors'][] = tr('Alcuni serial number sono già stati utilizzati!');
+                App::flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
 
                 return;
             }
@@ -318,7 +318,7 @@ switch (post('op')) {
 
         $dbo->query('DELETE FROM or_ordini WHERE id='.prepare($id_record));
         $dbo->query('DELETE FROM or_righe_ordini WHERE idordine='.prepare($id_record));
-        $_SESSION['infos'][] = tr('Ordine eliminato!');
+        App::flash()->info(tr('Ordine eliminato!'));
 
         break;
 
@@ -388,9 +388,9 @@ switch (post('op')) {
 
             $id_record = $dbo->lastInsertedID();
 
-            $_SESSION['infos'][] = tr('Aggiunto ordine numero _NUM_!', [
+            App::flash()->info(tr('Aggiunto ordine numero _NUM_!', [
                 '_NUM_' => $numero,
-            ]);
+            ]));
 
             // Lettura di tutte le righe della tabella in arrivo
             // Inserisco anche le righe descrittive

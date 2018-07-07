@@ -21,7 +21,7 @@ switch ($operazione) {
         ]);
         $id_record = $dbo->lastInsertedID();
 
-        $_SESSION['infos'][] = tr('Aggiunta una nuova sede!');
+        App::flash()->info(tr('Aggiunta una nuova sede!'));
 
         break;
 
@@ -49,14 +49,14 @@ switch ($operazione) {
 
         $dbo->update('an_sedi', $array, ['id' => $id_record]);
 
-        $_SESSION['infos'][] = tr('Salvataggio completato!');
+        App::flash()->info(tr('Salvataggio completato!'));
 
         break;
 
     case 'deletesede':
         $dbo->query('DELETE FROM `an_sedi` WHERE `id`='.prepare($id_record));
 
-        $_SESSION['infos'][] = tr('Sede eliminata!');
+        App::flash()->info(tr('Sede eliminata!'));
 
         break;
 }

@@ -129,7 +129,7 @@ function copyr($source, $destination, $ignores = [])
 function create_zip($source, $destination, $ignores = [])
 {
     if (!extension_loaded('zip')) {
-        $_SESSION['errors'][] = tr('Estensione zip non supportata!');
+        App::flash()->error(tr('Estensione zip non supportata!'));
 
         return false;
     }
@@ -153,7 +153,7 @@ function create_zip($source, $destination, $ignores = [])
         }
         $zip->close();
     } else {
-        $_SESSION['errors'][] = tr("Errore durante la creazione dell'archivio!");
+        App::flash()->error(tr("Errore durante la creazione dell'archivio!"));
     }
 
     return $result === true;
@@ -451,20 +451,32 @@ function translateTemplate()
     $template = str_replace('$id_parent$', $id_parent, $template);
 
     // Completamento delle informazioni estese sulle azioni dell'utente
-    if (Auth::check() && !empty($operations_log) && !empty($_SESSION['infos'])) {
+    $infos = App::flash()->getMessage('info');
+    if (Auth::check() && !empty($operations_log) && !empty($infos)) {
         $user = Auth::user();
         $logger = Monolog\Registry::getInstance('logs');
 
-        foreach ($_SESSION['infos'] as $value) {
+        foreach ($infos as $value) {
             $logger->info($value.PHP_EOL.json_encode([
                 'user' => $user['username'],
             ]));
         }
     }
 
+    // Compatibilità con le versioni precedenti
+    foreach ($_SESSION['infos'] as $message) {
+        App::flash()->info($message);
+    }
+    foreach ($_SESSION['warnings'] as $message) {
+        App::flash()->warning($message);
+    }
+    foreach ($_SESSION['errors'] as $message) {
+        App::flash()->error($message);
+    }
+
     // Annullo le notifiche (AJAX)
     if (isAjaxRequest()) {
-        unset($_SESSION['infos']);
+        App::flash()->clearMessage('info');
     }
 
     echo $template;

@@ -23,11 +23,8 @@ $rsp = $dbo->fetchArray($qp);
 $n = $dbo->fetchNum($qp);
 
 if (!empty($n)) {
-	
-	
     // Elenco interventi da pianificare
     foreach ($rsp as $i => $r) {
-		
         // Se cambia il mese ricreo l'intestazione della tabella
         if (!isset($rsp[$i - 1]) || $r['mese'] != $rsp[$i - 1]['mese']) {
             if ($i == 0) {
@@ -86,7 +83,7 @@ if (!empty($n)) {
         echo '
                 </td>';
 
-		echo '
+        echo '
             </tr>';
 
         if (!isset($rsp[$i + 1]) || $r['mese'] != $rsp[$i + 1]['mese']) {

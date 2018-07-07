@@ -1,17 +1,17 @@
 <?php
-//$q='SELECT filename FROM zz_files WHERE id='.$id_record;
-//$rs=$dbo->fetchArray($q);
-//$filename=$rs[0]['filename'];
+
+include_once __DIR__.'/../../core.php';
+
 ?>
 
 <form action="" method="post" id="add-form">
 
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">
-	<input type="hidden" name="id_record" value="<?php echo $id_record ?>">
+	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
-	
-	
+
+
 	<!-- SCHEDA FILE -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
@@ -23,25 +23,25 @@
 				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Salva modifiche</button>
 			</div>
 			<div class="clearfix"></div>
-			
-			
+
+
 			<div class="row">
-		
+
 				<div class="col-md-6">
 					{[ "type": "text", "label": "Nome", "name": "nome", "required": 1, "class": "", "value": "$nome$", "extra": "" ]}
 				</div>
-						
-						
-						
+
+
+
 				<div class="col-md-3">
 					{[ "type": "select", "label": "Categoria", "name": "idcategoria", "required": 1, "class": "", "values": "query=SELECT id, descrizione FROM zz_documenti_categorie WHERE deleted = 0", "value": "$idcategoria$", "extra": "" ]}
 				</div>
-				
-				
+
+
 				<div class="col-md-3">
-					{[ "type": "text", "label": "Data", "name": "data", "required": 1, "class": "datepicker text-center", "value": "<?php echo date('d/m/Y', strtotime($records[0]['data'])) ?>", "extra": "" ]}
+					{[ "type": "text", "label": "Data", "name": "data", "required": 1, "class": "datepicker text-center", "value": "<?php echo date('d/m/Y', strtotime($records[0]['data'])); ?>", "extra": "" ]}
 				</div>
-			
+
 			</div>
 		</div>
 	</div>

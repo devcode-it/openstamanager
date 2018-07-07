@@ -43,7 +43,7 @@ switch (post('op')) {
             // Eliminazione prima nota
             $dbo->query('DELETE FROM co_movimenti_modelli WHERE idmastrino='.prepare($idmastrino));
 
-            $_SESSION['infos'][] = tr('Movimento eliminato!');
+            App::flash()->info(tr('Movimento eliminato!'));
         }
 
         break;

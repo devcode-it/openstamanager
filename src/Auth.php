@@ -35,7 +35,7 @@ class Auth extends \Util\Singleton
 
     /** @var array Opzioni per la protezione contro attacchi brute-force */
     protected static $brute = [
-        'attemps' => 3,
+        'attemps' => 30,
         'timeout' => 180,
     ];
     /** @var bool Informazioni riguardanti la condizione brute-force */
@@ -132,7 +132,7 @@ class Auth extends \Util\Singleton
         if ($log['stato'] != self::$status['success']['code']) {
             foreach (self::$status as $key => $value) {
                 if ($log['stato'] == $value['code']) {
-                    $_SESSION['errors'][] = $value['message'];
+                    App::flash()->error($value['message']);
                     break;
                 }
             }
@@ -293,9 +293,7 @@ class Auth extends \Util\Singleton
             session_unset();
             session_regenerate_id();
 
-            $_SESSION['infos'] = [];
-            $_SESSION['warnings'] = [];
-            $_SESSION['errors'] = [];
+            App::flash()->clearMessages();
         }
     }
 

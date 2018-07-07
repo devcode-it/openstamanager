@@ -24,16 +24,16 @@ $dbo->query('START TRANSACTION');
 if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     // Controllo sui permessi di scrittura per il modulo
     if (Modules::getPermission($id_module) != 'rw') {
-        $_SESSION['errors'][] = tr('Non hai permessi di scrittura per il modulo _MODULE_', [
+        App::flash()->error(tr('Non hai permessi di scrittura per il modulo _MODULE_', [
             '_MODULE_' => '"'.Modules::get($id_module)['name'].'"',
-        ]);
+        ]));
     }
 
     // Controllo sui permessi di scrittura per il file system
     elseif (!directory($upload_dir)) {
-        $_SESSION['errors'][] = tr('Non hai i permessi di scrittura nella cartella _DIR_!', [
+        App::flash()->error(tr('Non hai i permessi di scrittura nella cartella _DIR_!', [
             '_DIR_' => '"files"',
-        ]);
+        ]));
     }
 
     // Gestione delle operazioni
@@ -50,9 +50,9 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 
             // Creazione file fisico
             if (!empty($upload)) {
-                $_SESSION['infos'][] = tr('File caricato correttamente!');
+                App::flash()->info(tr('File caricato correttamente!'));
             } else {
-                $_SESSION['errors'][] = tr('Errore durante il caricamento del file!');
+                App::flash()->error(tr('Errore durante il caricamento del file!'));
             }
         }
 
@@ -65,11 +65,11 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
             ]);
 
             if (!empty($name)) {
-                $_SESSION['infos'][] = tr('File _FILE_ eliminato!', [
+                App::flash()->info(tr('File _FILE_ eliminato!', [
                     '_FILE_' => '"'.$name.'"',
-                ]);
+                ]));
             } else {
-                $_SESSION['errors'][] = tr("Errore durante l'eliminazione del file!");
+                App::flash()->error(tr("Errore durante l'eliminazione del file!"));
             }
         }
 
@@ -191,9 +191,9 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 
     // Invio mail
     if (!$mail->send()) {
-        $_SESSION['errors'][] = tr("Errore durante l'invio dell'email").': '.$mail->ErrorInfo;
+        App::flash()->error(tr("Errore durante l'invio dell'email").': '.$mail->ErrorInfo);
     } else {
-        $_SESSION['infos'][] = tr('Email inviata correttamente!');
+        App::flash()->info(tr('Email inviata correttamente!'));
     }
 
     redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record);

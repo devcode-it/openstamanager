@@ -180,7 +180,7 @@ if (!API::isAPIRequest()) {
     register_shutdown_function('translateTemplate');
     ob_start();
 
-    // Impostazione della sessione di base
+    // Compatibilità con le versioni precedenti
     $_SESSION['infos'] = isset($_SESSION['infos']) ? array_unique($_SESSION['infos']) : [];
     $_SESSION['warnings'] = isset($_SESSION['warnings']) ? array_unique($_SESSION['warnings']) : [];
     $_SESSION['errors'] = isset($_SESSION['errors']) ? array_unique($_SESSION['errors']) : [];

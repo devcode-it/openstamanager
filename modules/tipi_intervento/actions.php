@@ -27,7 +27,7 @@ switch (post('op')) {
             ' WHERE idtipointervento='.prepare($id_record);
 
         $dbo->query($query);
-        $_SESSION['infos'][] = tr('Informazioni tipo intervento salvate correttamente!');
+        App::flash()->info(tr('Informazioni tipo intervento salvate correttamente!'));
 
         break;
 
@@ -42,7 +42,7 @@ switch (post('op')) {
 
         $id_record = $idtipointervento;
 
-        $_SESSION['infos'][] = tr('Nuovo tipo di intervento aggiunto!');
+        App::flash()->info(tr('Nuovo tipo di intervento aggiunto!'));
 
         break;
 
@@ -54,6 +54,6 @@ switch (post('op')) {
         $query = 'DELETE FROM in_tariffe WHERE idtipointervento='.prepare($id_record);
         $dbo->query($query);
 
-        $_SESSION['infos'][] = tr('Tipo di intervento eliminato!');
+        App::flash()->info(tr('Tipo di intervento eliminato!'));
         break;
 }

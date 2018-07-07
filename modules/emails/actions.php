@@ -13,7 +13,7 @@ switch (post('op')) {
 
         $id_record = $dbo->lastInsertedID();
 
-        $_SESSION['infos'][] = tr('Aggiunto nuovo template per le email!');
+        App::flash()->info(tr('Aggiunto nuovo template per le email!'));
 
         break;
 
@@ -32,14 +32,14 @@ switch (post('op')) {
 
         $dbo->sync('zz_email_print', ['id_email' => $id_record], ['id_print' => (array) $post['prints']]);
 
-        $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
+        App::flash()->info(tr('Informazioni salvate correttamente!'));
 
         break;
 
     case 'delete':
         $dbo->query('UPDATE zz_emails SET deleted = 1 WHERE id='.prepare($id_record));
 
-        $_SESSION['infos'][] = tr('Template delle email eliminato!');
+        App::flash()->info(tr('Template delle email eliminato!'));
 
         break;
 }

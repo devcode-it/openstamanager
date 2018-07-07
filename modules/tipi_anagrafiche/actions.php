@@ -12,10 +12,10 @@ switch (post('op')) {
 
         if (!in_array($descrizione, $block)) {
             $dbo->query('UPDATE an_tipianagrafiche SET descrizione='.prepare($descrizione).' WHERE idtipoanagrafica='.prepare($idtipoanagrafica));
-            $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
+            App::flash()->info(tr('Informazioni salvate correttamente!'));
         } else {
             // Nome non consentito
-            $_SESSION['errors'][] = tr('Nome non consentito!');
+            App::flash()->error(tr('Nome non consentito!'));
         }
 
         break;
@@ -28,13 +28,13 @@ switch (post('op')) {
             $rs = $dbo->fetchArray('SELECT descrizione FROM an_tipianagrafiche WHERE descrizione='.prepare($descrizione));
 
             if (count($rs) > 0) {
-                $_SESSION['errors'][] = tr('Nome già esistente!');
+                App::flash()->error(tr('Nome già esistente!'));
             } else {
                 $query = 'INSERT INTO an_tipianagrafiche (descrizione) VALUES ('.prepare($descrizione).')';
                 $dbo->query($query);
 
                 $id_record = $dbo->lastInsertedID();
-                $_SESSION['infos'][] = tr('Nuovo tipo di anagrafica aggiunto!');
+                App::flash()->info(tr('Nuovo tipo di anagrafica aggiunto!'));
             }
         }
         break;
@@ -43,6 +43,6 @@ switch (post('op')) {
         $query = 'DELETE FROM an_tipianagrafiche WHERE idtipoanagrafica='.prepare($id_record);
         $dbo->query($query);
 
-        $_SESSION['infos'][] = tr('Tipo di anagrafica eliminato!');
+        App::flash()->info(tr('Tipo di anagrafica eliminato!'));
         break;
 }

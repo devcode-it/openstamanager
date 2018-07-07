@@ -10,16 +10,16 @@ switch (filter('op')) {
 
         if (isset($nome) && isset($nota) && isset($colore)) {
             $dbo->query('UPDATE `mg_categorie` SET `nome`='.prepare($nome).', `nota`='.prepare($nota).', `colore`='.prepare($colore).' WHERE `id`='.prepare($id_record));
-            $_SESSION['infos'][] = tr('Salvataggio completato!');
+            App::flash()->info(tr('Salvataggio completato!'));
         } else {
-            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
+            App::flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
 
         break;
 
     case 'add':
         $nome = filter('nome');
-		$nota = filter('nota');
+        $nota = filter('nota');
         $colore = filter('colore');
 
         if (isset($nome)) {
@@ -31,11 +31,11 @@ switch (filter('op')) {
                 echo json_encode(['id' => $id_record, 'text' => $nome]);
             }
 
-            $_SESSION['infos'][] = tr('Aggiunta nuova tipologia di _TYPE_', [
+            App::flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                 '_TYPE_' => 'categoria',
-            ]);
+            ]));
         } else {
-            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
+            App::flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
 
         break;
@@ -48,11 +48,12 @@ switch (filter('op')) {
 
         if ($dbo->fetchNum('SELECT * FROM `mg_articoli` WHERE `id_categoria`='.prepare($id).' OR `id_sottocategoria`='.prepare($id).'  OR `id_sottocategoria` IN (SELECT id FROM `mg_categorie` WHERE `parent`='.prepare($id).')') == 0) {
             $dbo->query('DELETE FROM `mg_categorie` WHERE `id`='.prepare($id));
-            $_SESSION['infos'][] = tr('Tipologia di _TYPE_ eliminata con successo!', [
+
+            App::flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'categoria',
-            ]);
+            ]));
         } else {
-            $_SESSION['errors'][] = tr('Esistono ancora alcuni articoli sotto questa categoria!');
+            App::flash()->error(tr('Esistono ancora alcuni articoli sotto questa categoria!'));
         }
 
         break;
@@ -75,10 +76,10 @@ switch (filter('op')) {
                     echo json_encode(['id' => $id_record, 'text' => $nome]);
                 }
             }
-            $_SESSION['infos'][] = tr('Salvataggio completato!');
+            App::flash()->info(tr('Salvataggio completato!'));
             $id_record = $original;
         } else {
-            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
+            App::flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
 
         break;

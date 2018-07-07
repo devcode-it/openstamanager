@@ -21,9 +21,9 @@ switch (filter('op')) {
                 $dbo->update('co_banche', $array, ['id' => $id_record]);
             }
 
-            $_SESSION['infos'][] = tr('Salvataggio completato!');
+            App::flash()->info(tr('Salvataggio completato!'));
         } else {
-            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
+            App::flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
 
         break;
@@ -39,11 +39,11 @@ switch (filter('op')) {
                 echo json_encode(['id' => $id_record, 'text' => $nome]);
             }
 
-            $_SESSION['infos'][] = tr('Aggiunta nuova  _TYPE_', [
+            App::flash()->info(tr('Aggiunta nuova  _TYPE_', [
                 '_TYPE_' => 'banca',
-            ]);
+            ]));
         } else {
-            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio!');
+            App::flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
 
         break;
@@ -55,9 +55,9 @@ switch (filter('op')) {
 
         if (isset($id_record) && empty($documenti)) {
             $dbo->query('DELETE FROM `co_banche` WHERE `id`='.prepare($id_record));
-            $_SESSION['infos'][] = tr('_TYPE_ eliminata con successo!', [
+            App::flash()->info(tr('_TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'Banca',
-            ]);
+            ]));
         } else {
             $array = [
                 'deleted' => 1,
@@ -65,9 +65,9 @@ switch (filter('op')) {
 
             $dbo->update('co_banche', $array, ['id' => $id_record]);
 
-            $_SESSION['infos'][] = tr('_TYPE_ eliminata con successo!', [
+            App::flash()->info(tr('_TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'Banca',
-            ]);
+            ]));
         }
 
         break;

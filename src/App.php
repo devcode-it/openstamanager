@@ -12,6 +12,9 @@ class App
     /** @var int Identificativo dell'elemento corrente */
     protected static $current_element;
 
+    /** @var \Util\Messages Gestione dei messaggi flash */
+    protected static $flash = null;
+
     /** @var bool Stato di debug */
     protected static $config = [];
 
@@ -133,6 +136,20 @@ class App
         }
 
         return self::$config['debug'];
+    }
+
+    /**
+     * Restituisce l'oggetto dedicato alla gestione dei messaggi per l'utente.
+     *
+     * @return \Util\Messages
+     */
+    public static function flash()
+    {
+        if (empty(self::$flash)) {
+            self::$flash = new \Util\Messages();
+        }
+
+        return self::$flash;
     }
 
     /**

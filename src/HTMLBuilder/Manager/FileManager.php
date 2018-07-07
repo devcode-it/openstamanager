@@ -27,12 +27,7 @@ class FileManager implements ManagerInterface
         $attachment_id = 'attachments_'.$options['id_module'].'-'.$options['id_plugin'];
 
         // Cartella delle anteprime
-        if (!empty($options['id_plugin'])) {
-            $directory = '/plugins/'.\Plugins::get($options['id_plugin'])['directory'];
-        } else {
-            $directory = \Modules::get($options['id_module'])['directory'];
-        }
-        $directory = basename($directory);
+        $directory = \Uploads::getUploadDirectory($options['id_module'], $options['id_plugin']);
 
         $dbo = \Database::getConnection();
 
@@ -83,7 +78,7 @@ class FileManager implements ManagerInterface
                     $result .= '
         <tr>
             <td align="left">
-                <a href="'.ROOTDIR.'/files/'.\Modules::get($options['id_module'])['directory'].'/'.$r['filename'].'" target="_blank">
+                <a href="'.ROOTDIR.'/'.$directory.'/'.$r['filename'].'" target="_blank">
                     <i class="fa fa-external-link"></i> '.$r['nome'].'
                 </a>
             </td>
@@ -102,10 +97,10 @@ class FileManager implements ManagerInterface
 
                         if ($extension == 'pdf') {
                             $result .= '
-                    <iframe src="'.\Prints::getPDFLink('files/'.$directory.'/'.$r['filename']).'" frameborder="0" width="100%" height="550"></iframe>';
+                    <iframe src="'.\Prints::getPDFLink($directory.'/'.$r['filename']).'" frameborder="0" width="100%" height="550"></iframe>';
                         } else {
                             $result .= '
-                    <img src="'.ROOTDIR.'/files/'.$directory.'/'.$r['filename'].'" width="100%"></img>';
+                    <img src="'.ROOTDIR.'/'.$directory.'/'.$r['filename'].'" width="100%"></img>';
                         }
 
                         $result .= '

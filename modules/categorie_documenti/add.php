@@ -1,19 +1,23 @@
-<form action="editor.php?id_module=$id_module$" method="post" id="add-form">
+<?php
+
+include_once __DIR__.'/../../core.php';
+
+?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 
 	<div class="row">
-		
+
 		<div class="col-md-12">
-			{[ "type": "text", "label": "Descrizione", "name": "descrizione", "required": 1, "class": "", "value": "", "extra": "" ]}
+			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "class": "", "value": "", "extra": "" ]}
 		</div>
-		
+
 	</div>
-	
-	<!-- PULSANTI -->	
+
+	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> Aggiungi</button>
+			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 		</div>
 	</div>
 </form>

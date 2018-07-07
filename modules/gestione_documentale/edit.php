@@ -2,15 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-?>
-
-<form action="" method="post" id="add-form">
-
+?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">
-	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
-
-
 
 	<!-- SCHEDA FILE -->
 	<div class="panel panel-primary">
@@ -48,18 +42,8 @@ include_once __DIR__.'/../../core.php';
 
 </form>
 
-
 {( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
 
-
-<form action="" method="post" role="form" id="form-delete">
-	<input type="hidden" name="backto" value="record-list">
-	<input type="hidden" name="op" value="delete">
-	<button type="button" class="btn-link" onclick="if( confirm('Eliminare scheda e relativi allegati?') ){ $('#form-delete').submit(); }"><span class="text-danger"><i class="fa fa-trash-o"></i> Elimina scheda file e allegati</span></button>
-</form>
-
-<script>
-	$(document).ready( function(){
-
-	});
-</script>
+<a class="btn btn-danger ask" data-backto="record-list">
+    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
+</a>

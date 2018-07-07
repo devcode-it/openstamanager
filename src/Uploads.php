@@ -259,6 +259,23 @@ class Uploads
         return null;
     }
 
+    public static function deleteLinked($data)
+    {
+        $database = Database::getConnection();
+
+        $uploads = $database->select('zz_files', ['filename'], [
+            'id_module' => !empty($data['id_module']) ? $data['id_module'] : null,
+            'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
+            'id_record' => $data['id_record'],
+        ]);
+
+        foreach ($uploads as $upload) {
+            self::delete($upload['filename'], $data);
+        }
+
+        return null;
+    }
+
     public static function fileInfo($filepath)
     {
         $infos = pathinfo($filepath);

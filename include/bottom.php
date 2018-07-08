@@ -38,7 +38,7 @@ if (Auth::check()) {
         echo $debugbarRenderer->render();
     }
 
-    $custom_css = get_var('CSS Personalizzato');
+    $custom_css = setting('CSS Personalizzato');
     if (!empty($custom_css)) {
         echo '
 		<style>'.$custom_css.'</style>';

@@ -25,7 +25,7 @@ class SelectHandler implements HandlerInterface
 
         // Se il valore presente non è valido, carica l'eventuale valore predefinito
         if (empty($values['value']) && !is_numeric($values['value']) && !empty($values['valore_predefinito'])) {
-            $values['value'] = get_var($values['valore_predefinito']);
+            $values['value'] = setting($values['valore_predefinito']);
         }
 
         $values['value'] = (array) $values['value'];

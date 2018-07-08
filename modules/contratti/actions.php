@@ -16,12 +16,12 @@ switch (post('op')) {
 
         // Codice contratto: calcolo il successivo in base al formato specificato
         $rs = $dbo->fetchArray('SELECT numero FROM co_contratti ORDER BY id DESC LIMIT 0,1');
-        $numero = Util\Generator::generate(get_var('Formato codice contratti'), $rs[0]['numero']);
+        $numero = Util\Generator::generate(setting('Formato codice contratti'), $rs[0]['numero']);
 
         // Uso il tipo di pagamento specificato in anagrafica se c'è, altrimenti quello di default
         $rsa = $dbo->fetchArray('SELECT idpagamento_vendite AS idpagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
 
-         $idpagamento = (!empty($rsa[0]['idpagamento'])) ? $rsa[0]['idpagamento'] : get_var('Tipo di pagamento predefinito');
+         $idpagamento = (!empty($rsa[0]['idpagamento'])) ? $rsa[0]['idpagamento'] : setting('Tipo di pagamento predefinito');
 
         if (isset($post['idanagrafica'])) {
             $dbo->query('INSERT INTO co_contratti(idanagrafica, nome, numero, idagente, idpagamento, idstato, data_bozza) VALUES ('.prepare($idanagrafica).', '.prepare($nome).', '.prepare($numero).', '.prepare($idagente).', '.prepare($idpagamento).", (SELECT `id` FROM `co_staticontratti` WHERE `descrizione`='Bozza'), NOW())");

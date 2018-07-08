@@ -149,7 +149,7 @@ switch (post('op')) {
         // Inserimento anagrafica base
         // Leggo l'ultimo codice anagrafica per calcolare il successivo
         $rs = $dbo->fetchArray('SELECT codice FROM an_anagrafiche ORDER BY CAST(codice AS SIGNED) DESC LIMIT 0, 1');
-        $codice = Util\Generator::generate(get_var('Formato codice anagrafica'), $rs[0]['codice']);
+        $codice = Util\Generator::generate(setting('Formato codice anagrafica'), $rs[0]['codice']);
 
         // Se ad aggiungere un cliente è un agente, lo imposto come agente di quel cliente
         // Lettura tipologia dell'utente loggato

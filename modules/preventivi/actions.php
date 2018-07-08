@@ -21,24 +21,24 @@ switch (post('op')) {
         $idpagamento = $rs[0]['idpagamento'];
 
         // Codice preventivo: calcolo il successivo in base al formato specificato
-        $numeropreventivo_template = get_var('Formato codice preventivi');
+        $numeropreventivo_template = setting('Formato codice preventivi');
         $numeropreventivo_template = str_replace('#', '%', $numeropreventivo_template);
 
         // Codice preventivo: calcolo il successivo in base al formato specificato
         $rs = $dbo->fetchArray('SELECT numero FROM co_preventivi WHERE numero=(SELECT MAX(CAST(numero AS SIGNED)) FROM co_preventivi) AND numero LIKE('.prepare($numeropreventivo_template).') ORDER BY numero DESC LIMIT 0,1');
-        $numero = Util\Generator::generate(get_var('Formato codice preventivi'), $rs[0]['numero']);
+        $numero = Util\Generator::generate(setting('Formato codice preventivi'), $rs[0]['numero']);
 
         if (!is_numeric($numero)) {
             $rs = $dbo->fetchArray('SELECT numero FROM co_preventivi WHERE numero LIKE('.prepare($numeropreventivo_template).') ORDER BY numero DESC LIMIT 0,1');
-            $numero = Util\Generator::generate(get_var('Formato codice preventivi'), $rs[0]['numero']);
+            $numero = Util\Generator::generate(setting('Formato codice preventivi'), $rs[0]['numero']);
         }
 
-        $idiva = get_var('Iva predefinita');
+        $idiva = setting('Iva predefinita');
         $rs_iva = $dbo->fetchArray('SELECT descrizione, percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva));
 
         // Se al preventivo non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
         if ($idpagamento == '') {
-            $idpagamento = get_var('Tipo di pagamento predefinito');
+            $idpagamento = setting('Tipo di pagamento predefinito');
         }
 
         $dbo->query('INSERT INTO co_preventivi(idanagrafica, nome, numero, idagente, idstato, idtipointervento, data_bozza, data_conclusione, idiva, idpagamento) VALUES ('.prepare($idanagrafica).', '.prepare($nome).', '.prepare($numero).', '.prepare($idagente).", (SELECT `id` FROM `co_statipreventivi` WHERE `descrizione`='Bozza'), ".prepare($idtipointervento).', NOW(), DATE_ADD(NOW(), INTERVAL +1 MONTH), '.prepare($idiva).', '.prepare($idpagamento).')');

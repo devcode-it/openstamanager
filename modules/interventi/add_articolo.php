@@ -8,7 +8,7 @@ if (file_exists(__DIR__.'/../../../core.php')) {
 
 // Prezzo modificabile solo se l'utente loggato è un tecnico (+ può vedere i prezzi) o se è amministratore
 $gruppi = Auth::user()['gruppo'];
-$can_edit_prezzi = (in_array('Amministratori', $gruppi)) || (get_var('Mostra i prezzi al tecnico') == 1 && (in_array('Tecnici', $gruppi)));
+$can_edit_prezzi = (in_array('Amministratori', $gruppi)) || (setting('Mostra i prezzi al tecnico') == 1 && (in_array('Tecnici', $gruppi)));
 
 $idriga = get('idriga');
 $idautomezzo = (get('idautomezzo') == 'undefined') ? '' : get('idautomezzo');

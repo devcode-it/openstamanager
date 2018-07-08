@@ -348,7 +348,7 @@ if (!empty($rsp)) {
 </div>';
 }
 
-$vista = get_var('Vista dashboard');
+$vista = setting('Vista dashboard');
 if ($vista == 'mese') {
     $def = 'month';
 } elseif ($vista == 'giorno') {
@@ -558,7 +558,7 @@ if ($vista == 'mese') {
 		var calendar = $('#calendar').fullCalendar({
             locale: globals.locale,
 <?php
-$domenica = get_var('Visualizzare la domenica sul calendario');
+$domenica = setting('Visualizzare la domenica sul calendario');
 if (empty($domenica)) {
     echo '
             hiddenDays: [ 0 ],';
@@ -574,7 +574,7 @@ if (empty($domenica)) {
 			slotDuration: '00:15:00',
             defaultView: '<?php echo $def; ?>',
 <?php
-$orario_lavorativo = get_var('Abilitare orario lavorativo');
+$orario_lavorativo = setting('Abilitare orario lavorativo');
 if (!empty($orario_lavorativo)) {
     echo "
             minTime: '08:00:00',
@@ -661,7 +661,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
 				element.find('.fc-title').html(event.title);
 <?php
 
-if (get_var('Utilizzare i tooltip sul calendario') == '1') {
+if (setting('Utilizzare i tooltip sul calendario') == '1') {
     ?>
 				$.get(globals.rootdir + "/modules/dashboard/ajaxreq.php?op=get_more_info&id="+event.idintervento+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
 					if( response=="success" ){

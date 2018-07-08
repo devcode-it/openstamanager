@@ -99,7 +99,7 @@ if (Auth::check()) {
 
                 aggiornamenti_id: \''.($dbo->isInstalled() ? Modules::get('Aggiornamenti')['id'] : '').'\',
 
-                cifre_decimali: '.get_var('Cifre decimali per importi').',
+                cifre_decimali: '.setting('Cifre decimali per importi').',
 
                 decimals: "'.Translator::getFormatter()->getNumberSeparators()['decimals'].'",
                 thousands: "'.Translator::getFormatter()->getNumberSeparators()['thousands'].'",
@@ -116,7 +116,7 @@ if (Auth::check()) {
 					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
 				],
 
-                tempo_attesa_ricerche: '.get_var('Tempo di attesa ricerche in secondi').',
+                tempo_attesa_ricerche: '.setting('Tempo di attesa ricerche in secondi').',
             };
 		</script>';
 } else {
@@ -175,7 +175,7 @@ if (Auth::check()) {
     }
 }
 
-$hide_sidebar = get_var('Nascondere la barra sinistra di default');
+$hide_sidebar = setting('Nascondere la barra sinistra di default');
 echo '
 
     </head>

@@ -36,7 +36,7 @@ $show_costi = true;
 
 // Limitazione delle azioni dei tecnici
 if ($user['gruppo'] == 'Tecnici') {
-    $show_costi = !empty($user['idanagrafica']) && get_var('Mostra i prezzi al tecnico');
+    $show_costi = !empty($user['idanagrafica']) && setting('Mostra i prezzi al tecnico');
 }
 
 // RECUPERO IL TIPO DI INTERVENTO

@@ -12,7 +12,7 @@ switch (post('op')) {
 
         // Lettura righe selezionate
         for ($r = 0; $r < sizeof($id_records); ++$r) {
-            $idiva = get_var('Iva predefinita');
+            $idiva = setting('Iva predefinita');
             $idddt = $id_records[$r];
 
             $rs_idanagrafica = $dbo->fetchArray("SELECT idanagrafica FROM in_interventi WHERE id='".$id_records[$r]."'");
@@ -50,7 +50,7 @@ switch (post('op')) {
                     $numero = get_new_numerofattura($data);
 
                     $numero_esterno = get_new_numerosecondariofattura($data);
-                    $idconto = get_var('Conto predefinito fatture di vendita');
+                    $idconto = setting('Conto predefinito fatture di vendita');
 
                     $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
 
@@ -61,7 +61,7 @@ switch (post('op')) {
 
                     // Se alla non è stato associato un pagamento predefinito al cliente, leggo il pagamento dalle impostazioni
                     if ($idpagamento == '') {
-                        $idpagamento = get_var('Tipo di pagamento predefinito');
+                        $idpagamento = setting('Tipo di pagamento predefinito');
                     }
 
                     // Creazione nuova fattura

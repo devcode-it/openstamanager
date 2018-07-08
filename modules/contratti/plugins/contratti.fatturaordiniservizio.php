@@ -78,7 +78,7 @@ elseif (get('op') == 'addfattura') {
     $idanagrafica = $rs[0]['idanagrafica'];
 
     $dir = 'entrata';
-    $idconto = get_var('Conto predefinito fatture di vendita');
+    $idconto = setting('Conto predefinito fatture di vendita');
     $numero = get_new_numerofattura($data);
     $id_segment = post('id_segment');
     $numero_esterno = get_new_numerosecondariofattura($data);
@@ -91,7 +91,7 @@ elseif (get('op') == 'addfattura') {
 
     // Se la fattura è di vendita e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
     if ($dir == 'entrata' && $idpagamento == '') {
-        $idpagamento = get_var('Tipo di pagamento predefinito');
+        $idpagamento = setting('Tipo di pagamento predefinito');
     }
 
     // Se non è impostata la banca dell'anagrafica, uso quella del pagamento.
@@ -123,7 +123,7 @@ elseif (get('op') == 'addfattura') {
     if ($idiva != 0) {
         $rs2 = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare($idiva));
     } else {
-        $rs2 = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare(get_var('Iva predefinita')));
+        $rs2 = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare(setting('Iva predefinita')));
     }
 
     $desc_iva = $rs2[0]['descrizione'];

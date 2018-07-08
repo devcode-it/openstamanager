@@ -16,7 +16,7 @@ if ($module['name'] == 'Fatture di vendita') {
 
     // Se non ho letto un conto dall'ultima riga inserita, lo leggo dalle impostazioni
     if (empty($idconto)) {
-        $idconto = get_var('Conto predefinito fatture di vendita');
+        $idconto = setting('Conto predefinito fatture di vendita');
     }
 } else {
     $dir = 'uscita';
@@ -24,7 +24,7 @@ if ($module['name'] == 'Fatture di vendita') {
 
     // Se non ho letto un conto dall'ultima riga inserita, lo leggo dalle impostazioni
     if (empty($idconto)) {
-        $idconto = get_var('Conto predefinito fatture di acquisto');
+        $idconto = setting('Conto predefinito fatture di acquisto');
     }
 }
 
@@ -53,7 +53,7 @@ $result = [
 
 // Leggo l'iva predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
 $iva = $dbo->fetchArray('SELECT idiva_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
-$result['idiva'] = $iva[0]['idiva'] ?: get_var('Iva predefinita');
+$result['idiva'] = $iva[0]['idiva'] ?: setting('Iva predefinita');
 
 // Sconto unitario
 $rss = $dbo->fetchArray('SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')');

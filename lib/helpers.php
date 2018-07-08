@@ -88,17 +88,17 @@ function get($param, $raw = false)
 
 /**
  * Legge il valore di un'impostazione dalla tabella zz_settings.
- * Se descrizione = 1 e il tipo è 'query=' mi restituisce il valore del campo descrizione della query.
+ * Se descrizione è 1 e il tipo dell'impostazione è 'query=' mi restituisce il valore del campo descrizione della query.
  *
  * @param string $name
- * @param string $sezione
- * @param string $descrizione
+ * @param bool   $descrizione
+ * @param bool   $again
  *
- * @return mixed
+ * @return string
  */
-function get_var($nome, $sezione = null, $descrizione = false, $again = false)
+function setting($nome, $descrizione = false, $again = false)
 {
-    return \Settings::get($nome, $sezione, $descrizione, $again);
+    return \Settings::get($nome, $descrizione, $again);
 }
 
 /**

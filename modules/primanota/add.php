@@ -41,7 +41,7 @@ include_once __DIR__.'/../../core.php';
         $idconto_aziendale = $dbo->fetchArray('SELECT '.$field.' FROM co_pagamenti WHERE id = (SELECT idpagamento FROM co_documenti WHERE id='.prepare($iddocumento).') GROUP BY descrizione')[0][$field];
 
         // Lettura conto di default
-        $idconto_aziendale = !empty($idconto_aziendale) ? $idconto_aziendale : get_var('Conto aziendale predefinito');
+        $idconto_aziendale = !empty($idconto_aziendale) ? $idconto_aziendale : setting('Conto aziendale predefinito');
 
         // Generazione causale (incasso fattura)
         $descrizione_conto_aziendale = $descrizione;

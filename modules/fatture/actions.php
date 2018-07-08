@@ -28,11 +28,11 @@ switch (post('op')) {
 
         if ($dir == 'entrata') {
             $numero_esterno = get_new_numerosecondariofattura($data);
-            $idconto = get_var('Conto predefinito fatture di vendita');
+            $idconto = setting('Conto predefinito fatture di vendita');
             $conto = 'vendite';
         } else {
             $numero_esterno = '';
-            $idconto = get_var('Conto predefinito fatture di acquisto');
+            $idconto = setting('Conto predefinito fatture di acquisto');
             $conto = 'acquisti';
         }
 
@@ -46,7 +46,7 @@ switch (post('op')) {
 
         // Se la fattura è di vendita e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
         if ($dir == 'entrata' && $idpagamento == '') {
-            $idpagamento = get_var('Tipo di pagamento predefinito');
+            $idpagamento = setting('Tipo di pagamento predefinito');
         }
 
         // Se non è impostata la banca dell'anagrafica, uso quella del pagamento.
@@ -285,7 +285,7 @@ switch (post('op')) {
             $codice = $rs[0]['codice'];
 
             //Fatturo le ore di lavoro raggruppate per costo orario
-            $rst = $dbo->fetchArray('SELECT SUM( ROUND( TIMESTAMPDIFF( MINUTE, orario_inizio, orario_fine ) / 60, '.get_var('Cifre decimali per quantità').' ) ) AS tot_ore, SUM(prezzo_ore_consuntivo) AS tot_prezzo_ore_consuntivo, SUM(sconto) AS tot_sconto, prezzo_ore_unitario FROM in_interventi_tecnici WHERE idintervento='.prepare($idintervento).' GROUP BY prezzo_ore_unitario');
+            $rst = $dbo->fetchArray('SELECT SUM( ROUND( TIMESTAMPDIFF( MINUTE, orario_inizio, orario_fine ) / 60, '.setting('Cifre decimali per quantità').' ) ) AS tot_ore, SUM(prezzo_ore_consuntivo) AS tot_prezzo_ore_consuntivo, SUM(sconto) AS tot_sconto, prezzo_ore_unitario FROM in_interventi_tecnici WHERE idintervento='.prepare($idintervento).' GROUP BY prezzo_ore_unitario');
 
             //Aggiunta riga intervento sul documento
             if (sizeof($rst) == 0) {
@@ -307,20 +307,20 @@ switch (post('op')) {
                     $desc_iva = $rs[0]['descrizione'];
 
                     // Calcolo rivalsa inps
-                    $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(get_var('Percentuale rivalsa INPS'));
+                    $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(setting('Percentuale rivalsa INPS'));
                     $rs = $dbo->fetchArray($query);
                     $rivalsainps = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
 
                     // Calcolo ritenuta d'acconto
-                    $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(get_var("Percentuale ritenuta d'acconto"));
+                    $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(setting("Percentuale ritenuta d'acconto"));
                     $rs = $dbo->fetchArray($query);
-                    if (get_var("Metodologia calcolo ritenuta d'acconto predefinito") == 'Imponibile') {
+                    if (setting("Metodologia calcolo ritenuta d'acconto predefinito") == 'Imponibile') {
                         $ritenutaacconto = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
                     } else {
                         $ritenutaacconto = ($subtot - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
                     }
 
-                    $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_record).', '.prepare($idintervento).', '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto).", 'UNT', 'ore', ".prepare($ore).', '.prepare(get_var('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(get_var("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(get_var("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
+                    $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_record).', '.prepare($idintervento).', '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto).", 'UNT', 'ore', ".prepare($ore).', '.prepare(setting('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(setting("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(setting("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
                     $dbo->query($query);
                 }
             }
@@ -341,12 +341,12 @@ switch (post('op')) {
                 $desc_iva = $rs[0]['descrizione'];
 
                 // Calcolo rivalsa inps
-                $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(get_var('Percentuale rivalsa INPS'));
+                $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(setting('Percentuale rivalsa INPS'));
                 $rs = $dbo->fetchArray($query);
                 $rivalsainps = $rst[$i]['tot_prezzo_dirittochiamata'] / 100 * $rs[0]['percentuale'];
 
                 // Calcolo ritenuta d'acconto
-                $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(get_var("Percentuale ritenuta d'acconto"));
+                $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(setting("Percentuale ritenuta d'acconto"));
                 $rs = $dbo->fetchArray($query);
                 $ritenutaacconto = $rst[$i]['tot_prezzo_dirittochiamata'] / 100 * $rs[0]['percentuale'];
 
@@ -365,9 +365,9 @@ switch (post('op')) {
                     'tipo_sconto' => 'UNT',
                     'um' => '-',
                     'qta' => $rst[$i]['qta'],
-                    'idrivalsainps' => get_var('Percentuale rivalsa INPS'),
+                    'idrivalsainps' => setting('Percentuale rivalsa INPS'),
                     'rivalsainps' => $rivalsainps,
-                    'idritenutaacconto' => get_var("Percentuale ritenuta d'acconto"),
+                    'idritenutaacconto' => setting("Percentuale ritenuta d'acconto"),
                     'ritenutaacconto' => $ritenutaacconto,
                     '#order' => '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).')',
                 ]);
@@ -398,20 +398,20 @@ switch (post('op')) {
                     $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
 
                     // Calcolo rivalsa inps
-                    $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(get_var('Percentuale rivalsa INPS'));
+                    $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(setting('Percentuale rivalsa INPS'));
                     $rs = $dbo->fetchArray($query);
                     $rivalsainps = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
 
                     // Calcolo ritenuta d'acconto
-                    $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(get_var("Percentuale ritenuta d'acconto"));
+                    $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(setting("Percentuale ritenuta d'acconto"));
                     $rs = $dbo->fetchArray($query);
-                    if (get_var("Metodologia calcolo ritenuta d'acconto predefinito") == 'Imponibile') {
+                    if (setting("Metodologia calcolo ritenuta d'acconto predefinito") == 'Imponibile') {
                         $ritenutaacconto = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
                     } else {
                         $ritenutaacconto = ($subtot - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
                     }
 
-                    $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_record).', '.prepare($idintervento).', '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($rsr[$i]['descrizione']).', '.prepare($subtot).', '.prepare($rsr[$i]['sconto']).', '.prepare($rsr[$i]['sconto_unitario']).', '.prepare($rsr[$i]['tipo_sconto']).', '.prepare($rsr[$i]['um']).', '.prepare($rsr[$i]['qta']).', '.prepare(get_var('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(get_var("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(get_var("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
+                    $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_record).', '.prepare($idintervento).', '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($rsr[$i]['descrizione']).', '.prepare($subtot).', '.prepare($rsr[$i]['sconto']).', '.prepare($rsr[$i]['sconto_unitario']).', '.prepare($rsr[$i]['tipo_sconto']).', '.prepare($rsr[$i]['um']).', '.prepare($rsr[$i]['qta']).', '.prepare(setting('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(setting("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(setting("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
                     $dbo->query($query);
                 }
             }
@@ -429,20 +429,20 @@ switch (post('op')) {
                 $iva_indetraibile = $iva / 100 * $dati[0]['indetraibile'];
 
                 // Calcolo rivalsa inps
-                $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(get_var('Percentuale rivalsa INPS'));
+                $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(setting('Percentuale rivalsa INPS'));
                 $dati = $dbo->fetchArray($query);
                 $rivalsainps = ($subtot - $sconto) / 100 * $dati[0]['percentuale'];
 
                 // Calcolo ritenuta d'acconto
-                $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(get_var("Percentuale ritenuta d'acconto"));
+                $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(setting("Percentuale ritenuta d'acconto"));
                 $dati = $dbo->fetchArray($query);
-                if (get_var("Metodologia calcolo ritenuta d'acconto predefinito") == 'Imponibile') {
+                if (setting("Metodologia calcolo ritenuta d'acconto predefinito") == 'Imponibile') {
                     $ritenutaacconto = ($subtot - $sconto) / 100 * $dati[0]['percentuale'];
                 } else {
                     $ritenutaacconto = ($subtot - $sconto + $rivalsainps) / 100 * $dati[0]['percentuale'];
                 }
 
-                $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_record).', '.prepare($idintervento).', '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare('Trasferta intervento '.$codice.' del '.Translator::dateToLocale($data)).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto).", 'UNT', '', 1, ".prepare(get_var('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(get_var("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(get_var("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
+                $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_record).', '.prepare($idintervento).', '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare('Trasferta intervento '.$codice.' del '.Translator::dateToLocale($data)).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto).", 'UNT', '', 1, ".prepare(setting('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(setting("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(setting("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
                 $dbo->query($query);
             }
 
@@ -459,20 +459,20 @@ switch (post('op')) {
                 $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
 
                 // Calcolo rivalsa inps
-                $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(get_var('Percentuale rivalsa INPS'));
+                $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(setting('Percentuale rivalsa INPS'));
                 $rs = $dbo->fetchArray($query);
                 $rivalsainps = ($subtot) / 100 * $rs[0]['percentuale'];
 
                 // Calcolo ritenuta d'acconto
-                $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(get_var("Percentuale ritenuta d'acconto"));
+                $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(setting("Percentuale ritenuta d'acconto"));
                 $rs = $dbo->fetchArray($query);
-                if (get_var("Metodologia calcolo ritenuta d'acconto predefinito") == 'Imponibile') {
+                if (setting("Metodologia calcolo ritenuta d'acconto predefinito") == 'Imponibile') {
                     $ritenutaacconto = $subtot / 100 * $rs[0]['percentuale'];
                 } else {
                     $ritenutaacconto = ($subtot + $rivalsainps) / 100 * $rs[0]['percentuale'];
                 }
 
-                $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_record).', NULL, '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare('Sconto '.$descrizione).', '.prepare($subtot).', 1, '.prepare(get_var('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(get_var("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(get_var("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
+                $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_record).', NULL, '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare('Sconto '.$descrizione).', '.prepare($subtot).', 1, '.prepare(setting('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(setting("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(setting("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
                 $dbo->query($query);
             }
 
@@ -524,14 +524,14 @@ switch (post('op')) {
             $desc_iva = $rs[0]['descrizione'];
 
             // Calcolo rivalsa inps
-            $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(get_var('Percentuale rivalsa INPS'));
+            $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(setting('Percentuale rivalsa INPS'));
             $rs = $dbo->fetchArray($query);
             $rivalsainps = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
 
             // Calcolo ritenuta d'acconto TOTALE
-            $query = 'SELECT * FROM co_ritenutaacconto WHERE id = '.prepare(get_var("Percentuale ritenuta d'acconto"));
+            $query = 'SELECT * FROM co_ritenutaacconto WHERE id = '.prepare(setting("Percentuale ritenuta d'acconto"));
             $rs = $dbo->fetchArray($query);
-            if (get_var("Metodologia calcolo ritenuta d'acconto predefinito") == 'Imponibile') {
+            if (setting("Metodologia calcolo ritenuta d'acconto predefinito") == 'Imponibile') {
                 $ritenutaacconto = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
             } else {
                 $ritenutaacconto = ($prezzo - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
@@ -547,7 +547,7 @@ switch (post('op')) {
                     $sconto = $riga['sconto'];
 
                     //Ricalcolo ritenuta per ogni singola riga
-                    if (get_var("Metodologia calcolo ritenuta d'acconto predefinito") == 'Imponibile') {
+                    if (setting("Metodologia calcolo ritenuta d'acconto predefinito") == 'Imponibile') {
                         $ritenutaacconto = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
                     } else {
                         $ritenutaacconto = ($subtot - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
@@ -570,12 +570,12 @@ switch (post('op')) {
                         'sconto_unitario' => $riga['sconto_unitario'],
                         'tipo_sconto' => $riga['tipo_sconto'],
                         '#order' => '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).')',
-                        'idritenutaacconto' => get_var("Percentuale ritenuta d'acconto"),
+                        'idritenutaacconto' => setting("Percentuale ritenuta d'acconto"),
                         'ritenutaacconto' => $ritenutaacconto,
-                        'idrivalsainps' => get_var('Percentuale rivalsa INPS'),
+                        'idrivalsainps' => setting('Percentuale rivalsa INPS'),
                         'rivalsainps' => $rivalsainps,
                         'abilita_serial' => $riga['abilita_serial'],
-                        'calcolo_ritenutaacconto' => get_var("Metodologia calcolo ritenuta d'acconto predefinito"),
+                        'calcolo_ritenutaacconto' => setting("Metodologia calcolo ritenuta d'acconto predefinito"),
                     ]);
 
                     if (!empty($riga['idarticolo'])) {
@@ -584,7 +584,7 @@ switch (post('op')) {
                 }
             } else {
                 // Aggiunta riga preventivo sul documento
-                $query = 'INSERT INTO co_righe_documenti(iddocumento, idpreventivo, idconto, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idritenutaacconto, ritenutaacconto, idrivalsainps, rivalsainps, `order`) VALUES('.prepare($id_record).', '.prepare($idpreventivo).', '.prepare($idconto).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).", '-', 1, ".prepare(get_var("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(get_var('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
+                $query = 'INSERT INTO co_righe_documenti(iddocumento, idpreventivo, idconto, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idritenutaacconto, ritenutaacconto, idrivalsainps, rivalsainps, `order`) VALUES('.prepare($id_record).', '.prepare($idpreventivo).', '.prepare($idconto).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).", '-', 1, ".prepare(setting("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(setting('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
                 $dbo->query($query);
             }
 
@@ -648,21 +648,21 @@ switch (post('op')) {
             $desc_iva = $rs[0]['descrizione'];
 
             // Calcolo rivalsa inps
-            $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(get_var('Percentuale rivalsa INPS'));
+            $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(setting('Percentuale rivalsa INPS'));
             $rs = $dbo->fetchArray($query);
             $rivalsainps = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
 
             // Calcolo ritenuta d'acconto
-            $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(get_var("Percentuale ritenuta d'acconto"));
+            $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(setting("Percentuale ritenuta d'acconto"));
             $rs = $dbo->fetchArray($query);
-            if (get_var("Metodologia calcolo ritenuta d'acconto predefinito") == 'Imponibile') {
+            if (setting("Metodologia calcolo ritenuta d'acconto predefinito") == 'Imponibile') {
                 $ritenutaacconto = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
             } else {
                 $ritenutaacconto = ($prezzo - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
             }
 
             // Aggiunta riga contratto sul documento
-            $query = 'INSERT INTO co_righe_documenti(iddocumento, idcontratto, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_record).', '.prepare($idcontratto).', '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).", '-', 1, ".prepare(get_var('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(get_var("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(get_var("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
+            $query = 'INSERT INTO co_righe_documenti(iddocumento, idcontratto, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_record).', '.prepare($idcontratto).', '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).", '-', 1, ".prepare(setting('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(setting("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(setting("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
             if ($dbo->query($query)) {
                 App::flash()->info(tr('Contratto _NUM_ aggiunto!', [
                     '_NUM_' => $numero,
@@ -902,10 +902,10 @@ switch (post('op')) {
 
         if ($dir == 'entrata') {
             $tipo_documento = 'Fattura differita di vendita';
-            $idconto = get_var('Conto predefinito fatture di vendita');
+            $idconto = setting('Conto predefinito fatture di vendita');
         } else {
             $tipo_documento = 'Fattura differita di acquisto';
-            $idconto = get_var('Conto predefinito fatture di acquisto');
+            $idconto = setting('Conto predefinito fatture di acquisto');
         }
 
         // Creazione nuova fattura
@@ -1069,7 +1069,7 @@ switch (post('op')) {
         $rs_contratto = $dbo->fetchArray('SELECT * FROM co_contratti WHERE id='.prepare($idcontratto));
         $idanagrafica = $rs_contratto[0]['idanagrafica'];
         $idpagamento = $rs_contratto[0]['idpagamento'];
-        $idconto = get_var('Conto predefinito fatture di vendita');
+        $idconto = setting('Conto predefinito fatture di vendita');
         $rs_segment = $dbo->fetchArray('SELECT * FROM zz_segments WHERE id_module='.prepare($id_module)." AND predefined='1'");
         $id_segment = $rs_segment[0]['id'];
 
@@ -1528,7 +1528,7 @@ if (get('op') == 'nota_addebito') {
 }
 
 // Aggiornamento stato dei ddt presenti in questa fattura in base alle quantità totali evase
-if (!empty($id_record) && get_var('Cambia automaticamente stato ddt fatturati')) {
+if (!empty($id_record) && setting('Cambia automaticamente stato ddt fatturati')) {
     $rs = $dbo->fetchArray('SELECT idddt FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
 
     for ($i = 0; $i < sizeof($rs); ++$i) {
@@ -1537,7 +1537,7 @@ if (!empty($id_record) && get_var('Cambia automaticamente stato ddt fatturati'))
 }
 
 // Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase
-if (!empty($id_record) && get_var('Cambia automaticamente stato ordini fatturati')) {
+if (!empty($id_record) && setting('Cambia automaticamente stato ordini fatturati')) {
     $rs = $dbo->fetchArray('SELECT idordine FROM co_righe_documenti WHERE iddocumento='.prepare($id_record));
 
     for ($i = 0; $i < sizeof($rs); ++$i) {

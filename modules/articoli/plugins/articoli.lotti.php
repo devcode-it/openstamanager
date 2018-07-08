@@ -71,7 +71,7 @@ echo '
                     <div class="alert alert-info">';
 
 // Visualizzo, in base alle impostazioni scelte, se il magazzino verrà movimentato
-if (get_var("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
+if (setting("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
     echo '
                         <small>'.tr("L'inserimento incrementerà la quantità dell'articolo!").'</small>';
 } else {
@@ -98,7 +98,7 @@ echo '
             <small style="color:#f00;">';
 
 // Visualizzo, in base alle impostazioni scelte, se il magazzino verrà movimentato
-if (get_var("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
+if (setting("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
     echo tr("La cancellazione decrementerà la quantità dell'articolo!");
 } else {
     echo tr("L'inserimento decrementerà la quantità dell'articolo!");

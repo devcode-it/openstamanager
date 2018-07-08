@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (!get_var('Attiva aggiornamenti')) {
+if (!setting('Attiva aggiornamenti')) {
     die(tr('Accesso negato'));
 }
 

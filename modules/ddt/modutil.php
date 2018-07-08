@@ -27,7 +27,7 @@ function get_new_numerosecondarioddt($data)
     $dbo = Database::getConnection();
 
     // Calcolo il numero secondario se stabilito dalle impostazioni e se documento di vendita
-    $formato_numero_secondario = get_var('Formato numero secondario ddt');
+    $formato_numero_secondario = setting('Formato numero secondario ddt');
 
     $query = "SELECT numero_esterno FROM dt_ddt WHERE DATE_FORMAT( data, '%Y' ) = '".date('Y', strtotime($data))."' AND idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir='".$dir."') ORDER BY numero_esterno DESC LIMIT 0,1";
 
@@ -100,7 +100,7 @@ function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
     $dbo->query('DELETE FROM `dt_righe_ddt` WHERE id='.prepare($idrigaddt).' AND idddt='.prepare($idddt));
 
     //Aggiorno lo stato dell'ordine
-    if (get_var('Cambia automaticamente stato ordini fatturati') && !empty($idordine)) {
+    if (setting('Cambia automaticamente stato ordini fatturati') && !empty($idordine)) {
         $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($idordine).'") WHERE id = '.prepare($idordine));
     }
 
@@ -213,7 +213,7 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
         // Leggo la rivalsa inps se c'è (per i ddt di vendita lo leggo dalle impostazioni)
         if ($dir == 'entrata') {
             if (!empty($idrivalsainps)) {
-                $idrivalsainps = get_var('Percentuale rivalsa INPS');
+                $idrivalsainps = setting('Percentuale rivalsa INPS');
             }
         }
 
@@ -222,7 +222,7 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
         $rivalsainps = $totale_imponibile / 100 * $rs[0]['percentuale'];
 
         // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
-        $qi = "SELECT percentuale FROM co_iva WHERE id='".get_var('Iva predefinita')."'";
+        $qi = "SELECT percentuale FROM co_iva WHERE id='".setting('Iva predefinita')."'";
         $rsi = $dbo->fetchArray($qi);
         $iva_rivalsainps = $rivalsainps / 100 * $rsi[0]['percentuale'];
 
@@ -234,7 +234,7 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
         // Leggo la ritenuta d'acconto se c'è (per i ddt di vendita lo leggo dalle impostazioni)
         if (!empty($idritenutaacconto)) {
             if ($dir == 'entrata') {
-                $idritenutaacconto = get_var("Percentuale ritenuta d'acconto");
+                $idritenutaacconto = setting("Percentuale ritenuta d'acconto");
             }
         }
 
@@ -249,15 +249,15 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
         if ($dir == 'uscita') {
             if ($bolli != 0.00) {
                 $bolli = str_replace(',', '.', $bolli);
-                if (abs($bolli) > 0 && abs($netto_a_pagare > get_var("Soglia minima per l'applicazione della marca da bollo"))) {
+                if (abs($bolli) > 0 && abs($netto_a_pagare > setting("Soglia minima per l'applicazione della marca da bollo"))) {
                     $marca_da_bollo = str_replace(',', '.', $bolli);
                 } else {
                     $marca_da_bollo = 0.00;
                 }
             }
         } else {
-            $bolli = str_replace(',', '.', get_var('Importo marca da bollo'));
-            if (abs($bolli) > 0 && abs($netto_a_pagare) > abs(get_var("Soglia minima per l'applicazione della marca da bollo"))) {
+            $bolli = str_replace(',', '.', setting('Importo marca da bollo'));
+            if (abs($bolli) > 0 && abs($netto_a_pagare) > abs(setting("Soglia minima per l'applicazione della marca da bollo"))) {
                 $marca_da_bollo = str_replace(',', '.', $bolli);
             } else {
                 $marca_da_bollo = 0.00;

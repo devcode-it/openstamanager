@@ -15,7 +15,7 @@ switch ($op) {
             $_SESSION['keep_alive'] = (filter('keep_alive') != null);
 
             // Auto backup del database giornaliero
-            if (get_var('Backup automatico')) {
+            if (setting('Backup automatico')) {
                 $result = Backup::daily();
 
                 if (!isset($result)) {
@@ -163,7 +163,7 @@ echo '/> '.tr('Mantieni attiva la sessione').'
             $(document).ready( function(){
                 $("#login").click(function(){
                     $("#login").text("';
-    if ($dbo->isInstalled() && get_var('Backup automatico')) {
+    if ($dbo->isInstalled() && setting('Backup automatico')) {
         echo tr('Backup automatico in corso');
     } else {
         echo tr('Autenticazione');

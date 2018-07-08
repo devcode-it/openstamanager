@@ -47,7 +47,7 @@ function ricalcola_costiagg_preventivo($idpreventivo, $idrivalsainps = '', $idri
         // Leggo la rivalsa inps se c'è (per i ordine di vendita lo leggo dalle impostazioni)
         if ($dir == 'entrata') {
             if (!empty($idrivalsainps)) {
-                $idrivalsainps = get_var('Percentuale rivalsa INPS');
+                $idrivalsainps = setting('Percentuale rivalsa INPS');
             }
         }
 
@@ -64,7 +64,7 @@ function ricalcola_costiagg_preventivo($idpreventivo, $idrivalsainps = '', $idri
         // Leggo la rivalsa inps se c'è (per i ordine di vendita lo leggo dalle impostazioni)
         if (!empty($idritenutaacconto)) {
             if ($dir == 'entrata') {
-                $idritenutaacconto = get_var("Percentuale ritenuta d'acconto");
+                $idritenutaacconto = setting("Percentuale ritenuta d'acconto");
             }
         }
 
@@ -78,8 +78,8 @@ function ricalcola_costiagg_preventivo($idpreventivo, $idrivalsainps = '', $idri
         $bolli = floatval($bolli);
         if ($dir == 'uscita') {
         } else {
-            $bolli = str_replace(',', '.', get_var('Importo marca da bollo'));
-            if (abs($bolli) > 0 && abs($netto_a_pagare) > abs(get_var("Soglia minima per l'applicazione della marca da bollo"))) {
+            $bolli = str_replace(',', '.', setting('Importo marca da bollo'));
+            if (abs($bolli) > 0 && abs($netto_a_pagare) > abs(setting("Soglia minima per l'applicazione della marca da bollo"))) {
                 $marca_da_bollo = str_replace(',', '.', $bolli);
             } else {
                 $marca_da_bollo = 0.00;

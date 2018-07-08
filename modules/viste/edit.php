@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$enable_readonly = !get_var('Modifica Viste di default');
+$enable_readonly = !setting('Modifica Viste di default');
 $record = $records[0];
 
 echo '

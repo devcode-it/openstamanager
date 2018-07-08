@@ -6,7 +6,7 @@ switch ($resource) {
     case 'articoli':
         $query = 'SELECT mg_articoli.*, co_iva.descrizione AS iva_vendita FROM mg_articoli LEFT OUTER JOIN co_iva ON mg_articoli.idiva_vendita=co_iva.id |where| ORDER BY mg_articoli.id_categoria ASC, mg_articoli.id_sottocategoria ASC';
 
-        $idiva_predefinita = get_var('Iva predefinita');
+        $idiva_predefinita = setting('Iva predefinita');
         $rs = $dbo->fetchArray("SELECT descrizione FROM co_iva WHERE id='".$idiva_predefinita."'");
         $iva_predefinita = $rs[0]['descrizione'];
 

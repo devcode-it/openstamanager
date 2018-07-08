@@ -73,7 +73,7 @@ switch (post('op')) {
         $numero = get_new_numerofattura($data);
 
         $numero_esterno = get_new_numerosecondariofattura($data);
-        $idconto = get_var('Conto predefinito fatture di vendita');
+        $idconto = setting('Conto predefinito fatture di vendita');
 
         $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
 
@@ -84,7 +84,7 @@ switch (post('op')) {
 
         // Se la fattura è di vendita e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
         if ($dir == 'entrata' && $idpagamento == '') {
-            $idpagamento = get_var('Tipo di pagamento predefinito');
+            $idpagamento = setting('Tipo di pagamento predefinito');
         }
 
         $n_interventi = 0;
@@ -170,7 +170,7 @@ switch (post('op')) {
                 $data = $rs[0]['data'];
 
                 //Calcolo iva
-                $idiva = get_var('Iva predefinita');
+                $idiva = setting('Iva predefinita');
                 $query = "SELECT * FROM co_iva WHERE id='".$idiva."'";
                 $rs = $dbo->fetchArray($query);
 
@@ -179,17 +179,17 @@ switch (post('op')) {
                 $desc_iva = $rs[0]['descrizione'];
 
                 //Calcolo rivalsa inps
-                $query = "SELECT * FROM co_rivalsainps WHERE id='".get_var('Percentuale rivalsa INPS')."'";
+                $query = "SELECT * FROM co_rivalsainps WHERE id='".setting('Percentuale rivalsa INPS')."'";
                 $rs = $dbo->fetchArray($query);
                 $rivalsainps = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
 
                 //Calcolo ritenuta d'acconto
-                $query = "SELECT * FROM co_ritenutaacconto WHERE id='".get_var("Percentuale ritenuta d'acconto")."'";
+                $query = "SELECT * FROM co_ritenutaacconto WHERE id='".setting("Percentuale ritenuta d'acconto")."'";
                 $rs = $dbo->fetchArray($query);
                 $ritenutaacconto = ($subtot + $rivalsainps) / 100 * $rs[0]['percentuale'];
 
                 //Aggiunta riga intervento sul documento
-                $query1 = "INSERT INTO co_righe_documenti( iddocumento, idintervento, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto ) VALUES( \"$iddocumento\", \"$idintervento\", \"".$idiva."\", \"$desc_iva\", \"$iva\", \"$iva_indetraibile\", \"$descrizione\", \"$subtot\", \"".$sconto.'", "ore", "1", "'.get_var('Percentuale rivalsa INPS').'", "'.$rivalsainps.'", "'.get_var("Percentuale ritenuta d'acconto").'", "'.$ritenutaacconto.'" )';
+                $query1 = "INSERT INTO co_righe_documenti( iddocumento, idintervento, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto ) VALUES( \"$iddocumento\", \"$idintervento\", \"".$idiva."\", \"$desc_iva\", \"$iva\", \"$iva_indetraibile\", \"$descrizione\", \"$subtot\", \"".$sconto.'", "ore", "1", "'.setting('Percentuale rivalsa INPS').'", "'.$rivalsainps.'", "'.setting("Percentuale ritenuta d'acconto").'", "'.$ritenutaacconto.'" )';
                 if ($dbo->query($query1)) {
                     //Ricalcolo inps, ritenuta e bollo
                     if ($dir == 'entrata') {

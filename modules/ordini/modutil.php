@@ -32,7 +32,7 @@ function get_new_numerosecondarioordine($data)
     $numero_secondario = $rs[0]['numero_esterno'];
 
     // Calcolo il numero secondario se stabilito dalle impostazioni e se documento di vendita
-    $formato_numero_secondario = get_var('Formato numero secondario ordine');
+    $formato_numero_secondario = setting('Formato numero secondario ordine');
 
     if ($numero_secondario == '') {
         $numero_secondario = $formato_numero_secondario;
@@ -210,7 +210,7 @@ function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaac
         // Leggo la rivalsa inps se c'è (per i ordine di vendita lo leggo dalle impostazioni)
         if ($dir == 'entrata') {
             if (!empty($idrivalsainps)) {
-                $idrivalsainps = get_var('Percentuale rivalsa INPS');
+                $idrivalsainps = setting('Percentuale rivalsa INPS');
             }
         }
 
@@ -227,7 +227,7 @@ function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaac
         // Leggo la rivalsa inps se c'è (per i ordine di vendita lo leggo dalle impostazioni)
         if (!empty($idritenutaacconto)) {
             if ($dir == 'entrata') {
-                $idritenutaacconto = get_var("Percentuale ritenuta d'acconto");
+                $idritenutaacconto = setting("Percentuale ritenuta d'acconto");
             }
         }
 
@@ -242,15 +242,15 @@ function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaac
         if ($dir == 'uscita') {
             if ($bolli != 0.00) {
                 $bolli = str_replace(',', '.', $bolli);
-                if (abs($bolli) > 0 && abs($netto_a_pagare > get_var("Soglia minima per l'applicazione della marca da bollo"))) {
+                if (abs($bolli) > 0 && abs($netto_a_pagare > setting("Soglia minima per l'applicazione della marca da bollo"))) {
                     $marca_da_bollo = str_replace(',', '.', $bolli);
                 } else {
                     $marca_da_bollo = 0.00;
                 }
             }
         } else {
-            $bolli = str_replace(',', '.', get_var('Importo marca da bollo'));
-            if (abs($bolli) > 0 && abs($netto_a_pagare) > abs(get_var("Soglia minima per l'applicazione della marca da bollo"))) {
+            $bolli = str_replace(',', '.', setting('Importo marca da bollo'));
+            if (abs($bolli) > 0 && abs($netto_a_pagare) > abs(setting("Soglia minima per l'applicazione della marca da bollo"))) {
                 $marca_da_bollo = str_replace(',', '.', $bolli);
             } else {
                 $marca_da_bollo = 0.00;
@@ -263,7 +263,7 @@ function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaac
         }
 
         // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
-        $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare(get_var('Iva predefinita'));
+        $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare(setting('Iva predefinita'));
         $rsi = $dbo->fetchArray($qi);
         $iva_rivalsainps = $rivalsainps / 100 * $rsi[0]['percentuale'];
 

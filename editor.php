@@ -25,7 +25,7 @@ include $docroot.'/actions.php';
 // Widget in alto
 echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top", "place": "editor" )}';
 
-$advanced_sessions = get_var('Attiva notifica di presenza utenti sul record');
+$advanced_sessions = setting('Attiva notifica di presenza utenti sul record');
 if ($advanced_sessions) {
     $dbo->query('DELETE FROM zz_semaphores WHERE id_utente='.prepare(Auth::user()['id_utente']).' AND posizione='.prepare($id_module.', '.$id_record));
     $dbo->query('INSERT INTO zz_semaphores (id_utente, posizione, updated) VALUES ('.prepare(Auth::user()['id_utente']).', '.prepare($id_module.', '.$id_record).', NOW())');
@@ -295,7 +295,7 @@ if ($advanced_sessions) {
 
             getActiveUsers();
 
-            setInterval(getActiveUsers, <?php echo get_var('Timeout notifica di presenza (minuti)') * 1000; ?>);
+            setInterval(getActiveUsers, <?php echo setting('Timeout notifica di presenza (minuti)') * 1000; ?>);
 <?php
 }
 ?>

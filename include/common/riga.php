@@ -18,18 +18,18 @@ if ($module['name'] == 'Fatture di acquisto' || $module['name'] == 'Fatture di v
             $show_idrivalsainps = 1;
             $show_idritenutaacconto = 1;
             $show_calcolo_ritenutaacconto = 1;
-        } elseif (($options['dir'] == 'entrata' && (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d'acconto") != ''))) {
-            if (get_var('Percentuale rivalsa INPS') != '') {
+        } elseif (($options['dir'] == 'entrata' && (setting('Percentuale rivalsa INPS') != '' || setting("Percentuale ritenuta d'acconto") != ''))) {
+            if (setting('Percentuale rivalsa INPS') != '') {
                 $show_idrivalsainps = 1;
             } else {
                 $show_idrivalsainps = 0;
             }
-            if (get_var("Percentuale ritenuta d'acconto") != '') {
+            if (setting("Percentuale ritenuta d'acconto") != '') {
                 $show_idritenutaacconto = 1;
             } else {
                 $show_idritenutaacconto = 0;
             }
-            if (get_var("Percentuale ritenuta d'acconto") != '') {
+            if (setting("Percentuale ritenuta d'acconto") != '') {
                 $show_calcolo_ritenutaacconto = 1;
             } else {
                 $show_calcolo_ritenutaacconto = 0;
@@ -47,49 +47,49 @@ if ($module['name'] == 'Fatture di acquisto' || $module['name'] == 'Fatture di v
 
             $idrivalsainps = '';
             $idritenutaacconto = '';
-            $calcolo_ritenutaacconto = get_var("Metodologia calcolo ritenuta d'acconto predefinito");
-        } elseif ($options['dir'] == 'entrata' && $options['op'] == 'addriga' && (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d'acconto") != '')) {
-            if (get_var('Percentuale rivalsa INPS') != '') {
+            $calcolo_ritenutaacconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
+        } elseif ($options['dir'] == 'entrata' && $options['op'] == 'addriga' && (setting('Percentuale rivalsa INPS') != '' || setting("Percentuale ritenuta d'acconto") != '')) {
+            if (setting('Percentuale rivalsa INPS') != '') {
                 $show_idrivalsainps = 1;
             } else {
                 $show_idrivalsainps = 0;
             }
-            if (get_var("Percentuale ritenuta d'acconto") != '') {
+            if (setting("Percentuale ritenuta d'acconto") != '') {
                 $show_idritenutaacconto = 1;
             } else {
                 $show_idritenutaacconto = 0;
             }
-            if (get_var("Percentuale ritenuta d'acconto") != '') {
+            if (setting("Percentuale ritenuta d'acconto") != '') {
                 $show_calcolo_ritenutaacconto = 1;
             } else {
                 $show_calcolo_ritenutaacconto = 0;
             }
 
-            $idrivalsainps = get_var('Percentuale rivalsa INPS');
-            $idritenutaacconto = get_var("Percentuale ritenuta d'acconto");
-            $calcolo_ritenutaacconto = get_var("Metodologia calcolo ritenuta d'acconto predefinito");
+            $idrivalsainps = setting('Percentuale rivalsa INPS');
+            $idritenutaacconto = setting("Percentuale ritenuta d'acconto");
+            $calcolo_ritenutaacconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         }
         // Caso particolare per aggiunta articolo in fatture di vendita
-        elseif ($options['dir'] == 'entrata' && $options['op'] == 'addarticolo' && (get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d'acconto") != '')) {
-            if (get_var('Percentuale rivalsa INPS') != '') {
+        elseif ($options['dir'] == 'entrata' && $options['op'] == 'addarticolo' && (setting('Percentuale rivalsa INPS') != '' || setting("Percentuale ritenuta d'acconto") != '')) {
+            if (setting('Percentuale rivalsa INPS') != '') {
                 $show_idrivalsainps = 1;
             } else {
                 $show_idrivalsainps = 0;
             }
-            if (get_var("Percentuale ritenuta d'acconto") != '') {
+            if (setting("Percentuale ritenuta d'acconto") != '') {
                 $show_idritenutaacconto = 1;
             } else {
                 $show_idritenutaacconto = 0;
             }
-            if (get_var("Percentuale ritenuta d'acconto") != '') {
+            if (setting("Percentuale ritenuta d'acconto") != '') {
                 $show_calcolo_ritenutaacconto = 1;
             } else {
                 $show_calcolo_ritenutaacconto = 0;
             }
 
             $idrivalsainps = '';
-            $idritenutaacconto = get_var("Percentuale ritenuta d'acconto");
-            $calcolo_ritenutaacconto = get_var("Metodologia calcolo ritenuta d'acconto predefinito");
+            $idritenutaacconto = setting("Percentuale ritenuta d'acconto");
+            $calcolo_ritenutaacconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         }
     }
 

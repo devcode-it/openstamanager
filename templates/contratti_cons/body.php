@@ -517,7 +517,7 @@ if ($show) {
     }
 
     // IVA
-    $rs = $dbo->fetchArray('SELECT * FROM co_iva WHERE co_iva.id = '.prepare(get_var('Iva predefinita')));
+    $rs = $dbo->fetchArray('SELECT * FROM co_iva WHERE co_iva.id = '.prepare(setting('Iva predefinita')));
     $percentuale_iva = $rs[0]['percentuale'];
     $iva = $totale / 100 * $percentuale_iva;
 

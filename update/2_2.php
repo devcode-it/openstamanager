@@ -56,7 +56,7 @@ if (sizeof($rs) == 0) {
 }
 
 // Spostamento ore di lavoro e diritto di chiamata dei preventivi nella tabella
-$idiva = get_var('Iva predefinita');
+$idiva = setting('Iva predefinita');
 
 $rs = $dbo->fetchArray('SELECT percentuale, indetraibile FROM co_iva WHERE id="'.$idiva.'"');
 $percentuale = $rs[0]['percentuale'];

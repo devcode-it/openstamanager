@@ -36,7 +36,7 @@ if ($module['name'] == 'Ordini cliente') {
 
 				<div class="col-md-3">
                     <?php
-                    if (get_var('Cambia automaticamente stato ordini fatturati')) {
+                    if (setting('Cambia automaticamente stato ordini fatturati')) {
                         if ($records[0]['stato'] == 'Evaso' || $records[0]['stato'] == 'Parzialmente evaso' || $records[0]['stato'] == 'Fatturato' || $records[0]['stato'] == 'Parzialmente fatturato') {
                             ?>
                             {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine", "value": "$idstatoordine$", "extra": "readonly" ]}
@@ -90,7 +90,7 @@ if ($module['name'] == 'Ordini cliente') {
 					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
 				</div>
 			</div>
-            
+
             <div class="row">
                 <div class="col-md-12">
 					{[ "type": "textarea", "label": "<?php echo tr('Note aggiuntive'); ?>", "name": "note_aggiuntive", "help": "<?php echo tr('Note interne.'); ?>", "value": "$note_aggiuntive$" ]}
@@ -110,7 +110,7 @@ if ($module['name'] == 'Ordini cliente') {
 
 	<div class="panel-body">
 		<div class="pull-left">
-			<?php 
+			<?php
 
                 if ($records[0]['flag_completato'] == 0) {
                     ?>

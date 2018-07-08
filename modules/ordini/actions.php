@@ -39,7 +39,7 @@ switch (post('op')) {
 
             // Se l'ordine è un ordine cliente e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
             if ($dir == 'entrata' && empty($idpagamento)) {
-                $idpagamento = get_var('Tipo di pagamento predefinito');
+                $idpagamento = setting('Tipo di pagamento predefinito');
             }
 
             $query = 'INSERT INTO or_ordini( numero, numero_esterno, idanagrafica, idtipoordine, idpagamento, data, idstatoordine ) VALUES ( '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipoordine).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `or_statiordine` WHERE `descrizione`='Bozza') )";
@@ -380,7 +380,7 @@ switch (post('op')) {
 
             // Se l'ordine è un ordine cliente e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
             if ($dir == 'entrata' && empty($idpagamento)) {
-                $idpagamento = get_var('Tipo di pagamento predefinito');
+                $idpagamento = setting('Tipo di pagamento predefinito');
             }
 
             $query = 'INSERT INTO or_ordini( numero, numero_esterno, idanagrafica, idtipoordine, idpagamento, data, idstatoordine ) VALUES ( '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipoordine).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `or_statiordine` WHERE `descrizione`='Bozza') )";

@@ -15,30 +15,25 @@ class Settings
      * Se l'impostazione viene cercata più volte, il primo valore individuato viene salvato; per costringere a aggiornare i contenuto, usare l'opzione $again.
      *
      * @param string $nome
-     * @param string $sezione
      * @param string $descrizione
      * @param bool   $again
      *
      * @return string
      */
-    public static function get($nome, $sezione = null, $descrizione = false, $again = false)
+    public static function get($nome, $descrizione = false, $again = false)
     {
         if (Update::isUpdateAvailable()) {
             return null;
         }
 
-        if (empty(self::$values[$sezione.'.'.$nome]) || !empty($again)) {
+        if (!isset(self::$values[$nome]) || !empty($again)) {
             $database = Database::getConnection();
 
             if (!$database->isInstalled()) {
                 return null;
             }
 
-            $query = 'SELECT valore, tipo FROM zz_settings WHERE nome='.prepare($nome);
-            if (!empty($sezione)) {
-                $query .= ' AND sezione='.prepare($sezione);
-            }
-            $results = $database->fetchArray($query);
+            $results = $database->fetchArray('SELECT valore, tipo FROM zz_settings WHERE nome='.prepare($nome));
 
             $value = null;
             if (!empty($results)) {
@@ -53,10 +48,10 @@ class Settings
                 }
             }
 
-            self::$values[$sezione.'.'.$nome] = $value;
+            self::$values[$nome] = $value;
         }
 
-        return self::$values[$sezione.'.'.$nome];
+        return self::$values[$nome];
     }
 
     public static function set($name, $value)

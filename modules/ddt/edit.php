@@ -52,7 +52,7 @@ if ($module['name'] == 'Ddt di vendita') {
                 }
             ?>
 
-            
+
 			<div class="row">
 				<?php
                     if ($dir == 'uscita') {
@@ -73,14 +73,14 @@ if ($module['name'] == 'Ddt di vendita') {
 
 				<div class="col-md-3">
                     <?php
-                    if (get_var('Cambia automaticamente stato ddt fatturati')) {
+                    if (setting('Cambia automaticamente stato ddt fatturati')) {
                         if ($records[0]['stato'] == 'Fatturato' || $records[0]['stato'] == 'Parzialmente fatturato') {
                             ?>
                             {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT * FROM dt_statiddt", "value": "$idstatoddt$", "extra": "readonly" ]}
                     <?php
                         } else {
                             ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT * FROM dt_statiddt WHERE descrizione IN('Bozza', 'Evaso', 'Parzialmente evaso')", "value": "$idstatoddt$" ]}    
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT * FROM dt_statiddt WHERE descrizione IN('Bozza', 'Evaso', 'Parzialmente evaso')", "value": "$idstatoddt$" ]}
                     <?php
                         }
                     } else {
@@ -157,7 +157,7 @@ if ($module['name'] == 'Ddt di vendita') {
 					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
 				</div>
 			</div>
-            
+
             <div class="row">
                 <div class="col-md-12">
                     {[ "type": "textarea", "label": "<?php echo tr('Note aggiuntive'); ?>", "name": "note_aggiuntive", "help": "<?php echo tr('Note interne.'); ?>", "value": "$note_aggiuntive$" ]}

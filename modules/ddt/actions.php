@@ -35,7 +35,7 @@ switch (post('op')) {
 
             // Se il ddt è un ddt cliente e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
             if ($dir == 'entrata' && empty($idpagamento)) {
-                $idpagamento = get_var('Tipo di pagamento predefinito');
+                $idpagamento = setting('Tipo di pagamento predefinito');
             }
 
             $query = 'INSERT INTO dt_ddt(numero, numero_esterno, idanagrafica, idtipoddt, idpagamento, data, idstatoddt) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipoddt).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `dt_statiddt` WHERE `descrizione`='Bozza'))";
@@ -323,7 +323,7 @@ switch (post('op')) {
 
             if ($dbo->query($query)) {
                 //Aggiorno lo stato dell'ordine
-                if (get_var('Cambia automaticamente stato ordini fatturati') && !empty($rs[0]['idordine'])) {
+                if (setting('Cambia automaticamente stato ordini fatturati') && !empty($rs[0]['idordine'])) {
                     $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[0]['idordine']).'") WHERE id = '.prepare($rs[0]['idordine']));
                 }
 
@@ -457,7 +457,7 @@ switch (post('op')) {
         $dbo->query('DELETE FROM mg_movimenti WHERE idddt='.prepare($id_record));
 
         //Aggiorno gli stati degli ordini
-        if (get_var('Cambia automaticamente stato ordini fatturati')) {
+        if (setting('Cambia automaticamente stato ordini fatturati')) {
             for ($i = 0; $i < sizeof($rs); ++$i) {
                 $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[$i]['idordine']).'") WHERE id = '.prepare($rs[$i]['idordine']));
             }
@@ -564,7 +564,7 @@ switch (post('op')) {
 }
 
 // Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase
-if (!empty($id_record) && get_var('Cambia automaticamente stato ordini fatturati')) {
+if (!empty($id_record) && setting('Cambia automaticamente stato ordini fatturati')) {
     $rs = $dbo->fetchArray('SELECT idordine FROM dt_righe_ddt WHERE idddt='.prepare($id_record));
 
     for ($i = 0; $i < sizeof($rs); ++$i) {

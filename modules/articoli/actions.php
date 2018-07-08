@@ -181,7 +181,7 @@ switch (post('op')) {
         if ($c > 0) {
             if ($dbo->query($query)) {
                 // Movimento il magazzino se l'ho specificato nelle impostazioni
-                if (get_var("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
+                if (setting("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
                     add_movimento_magazzino($id_record, $c, [], tr('Carico magazzino con serial da _SERIAL_INIZIO_ a _SERIAL_FINE_', [
                         '_SERIAL_INIZIO_' => $serial__start,
                         '_SERIAL_FINE_' => $serial__end,
@@ -211,7 +211,7 @@ switch (post('op')) {
         $query = 'DELETE FROM mg_prodotti WHERE id='.prepare($idprodotto);
         if ($dbo->query($query)) {
             // Movimento il magazzino se l'ho specificato nelle impostazioni
-            if (get_var("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
+            if (setting("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
                 add_movimento_magazzino($id_record, -1, [], tr('Eliminazione dal magazzino del prodotto con serial _SERIAL_', [
                     '_SERIAL_' => $rs[0]['serial'],
                 ]));

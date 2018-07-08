@@ -115,7 +115,7 @@ $replaces = array_merge($replaces, [
     'rootdir' => ROOTDIR,
     'directory' => Prints::get($id_print)['full_directory'],
     'footer' => !empty($footer) ? $footer : '',
-    'dicitura_fissa_fattura' => get_var('Dicitura fissa fattura'),
+    'dicitura_fissa_fattura' => setting('Dicitura fissa fattura'),
 ]);
 
 unset($replace);

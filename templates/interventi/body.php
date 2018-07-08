@@ -477,7 +477,7 @@ if ($options['pricing']) {
     }
 
     // Leggo iva da applicare
-    $rs1 = $dbo->fetchArray('SELECT percentuale FROM co_iva WHERE id='.prepare(get_var('Iva predefinita')));
+    $rs1 = $dbo->fetchArray('SELECT percentuale FROM co_iva WHERE id='.prepare(setting('Iva predefinita')));
     $percentuale_iva = $rs1[0]['percentuale'];
 
     $iva = ($costi_intervento['totale_scontato'] / 100 * $percentuale_iva);

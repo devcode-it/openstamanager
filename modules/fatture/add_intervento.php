@@ -73,7 +73,7 @@ echo '
     </div>';
 
 // Leggo l'iva predefinita dall'articolo e se non c'è leggo quella predefinita generica
-$idiva = $idiva ?: get_var('Iva predefinita');
+$idiva = $idiva ?: setting('Iva predefinita');
 
 // Iva
 echo '

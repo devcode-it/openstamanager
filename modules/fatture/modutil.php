@@ -617,11 +617,11 @@ function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenu
         $netto_a_pagare = $totale_fattura - $ritenutaacconto;
 
         // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
-        $bolli = ($dir == 'uscita') ? $bolli : get_var('Importo marca da bollo');
+        $bolli = ($dir == 'uscita') ? $bolli : setting('Importo marca da bollo');
         $bolli = Translator::getFormatter()->parse($bolli);
 
         $marca_da_bollo = 0;
-        if (abs($bolli) > 0 && abs($netto_a_pagare > get_var("Soglia minima per l'applicazione della marca da bollo"))) {
+        if (abs($bolli) > 0 && abs($netto_a_pagare > setting("Soglia minima per l'applicazione della marca da bollo"))) {
             $marca_da_bollo = $bolli;
         }
 
@@ -775,12 +775,12 @@ function rimuovi_articolo_dafattura($idarticolo, $iddocumento, $idrigadocumento)
     $dbo->query('DELETE FROM `co_righe_documenti` WHERE id='.prepare($idrigadocumento).' AND iddocumento='.prepare($iddocumento));
 
     // Aggiorno lo stato dell'ordine
-    if (get_var('Cambia automaticamente stato ordini fatturati') && !empty($idordine)) {
+    if (setting('Cambia automaticamente stato ordini fatturati') && !empty($idordine)) {
         $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($idordine).'") WHERE id = '.prepare($idordine));
     }
 
     // Aggiorno lo stato del ddt
-    if (get_var('Cambia automaticamente stato ddt fatturati') && !empty($idddt)) {
+    if (setting('Cambia automaticamente stato ddt fatturati') && !empty($idddt)) {
         $dbo->query('UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="'.get_stato_ddt($idddt).'") WHERE id = '.prepare($idddt));
     }
 
@@ -826,7 +826,7 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
         }
 
         // Calcolo dell'IVA da scontare
-        $idiva = get_var('Iva predefinita');
+        $idiva = setting('Iva predefinita');
         $rsi = $dbo->select('co_iva', ['descrizione', 'percentuale'], ['id' => $idiva]);
 
         $values = [
@@ -1078,12 +1078,12 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
     }
 
     // Aggiorno lo stato dell'ordine
-    if (!empty($riga['idordine']) && get_var('Cambia automaticamente stato ordini fatturati')) {
+    if (!empty($riga['idordine']) && setting('Cambia automaticamente stato ordini fatturati')) {
         $dbo->query('UPDATE or_ordini SET idstatoordine = (SELECT id FROM or_statiordine WHERE descrizione = '.prepare(get_stato_ordine($riga['idordine'])).') WHERE id = '.prepare($riga['idordine']));
     }
 
     // Aggiorno lo stato del ddt
-    if (!empty($riga['idddt']) && get_var('Cambia automaticamente stato ddt fatturati')) {
+    if (!empty($riga['idddt']) && setting('Cambia automaticamente stato ddt fatturati')) {
         $dbo->query('UPDATE dt_ddt SET idstatoddt = (SELECT id FROM dt_statiddt WHERE descrizione = '.prepare(get_stato_ddt($riga['idddt'])).') WHERE id = '.prepare($riga['idddt']));
     }
 

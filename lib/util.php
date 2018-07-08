@@ -197,7 +197,7 @@ if (!function_exists('download')) {
 
             // Required for some browsers
             if (ini_get('zlib.output_compression')) {
-                @ini_set('zlib.output_compression', 'Off');
+                ini_set('zlib.output_compression', 'Off');
             }
 
             header('Pragma: public');

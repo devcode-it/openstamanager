@@ -57,6 +57,7 @@
         },
         "files": [
             "lib/functions.php",
+            "lib/helpers.php",
             "lib/util.php",
             "lib/deprecated.php"
         ]

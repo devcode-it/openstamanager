@@ -198,7 +198,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
         }
 
         $this->From = $config['from_address'];
-        $this->FromName = $_SESSION['from_name'];
+        $this->FromName = $config['from_name'];
 
         $this->WordWrap = 78;
     }

@@ -206,6 +206,14 @@ gulp.task('chartjs', function () {
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/chartjs'));
 });
 
+gulp.task('csrf', function () {
+    gulp.src([
+            './vendor/owasp/csrf-protector-php/js/csrfprotector.js',
+        ])
+        .pipe(flatten())
+        .pipe(gulp.dest(config.production + '/' + config.paths.js + '/csrf'));
+});
+
 gulp.task('pdfjs', function () {
     gulp.src([
             config.main.bowerDirectory + '/pdf/web/**/*',
@@ -364,7 +372,7 @@ gulp.task('other', ['clean'], function () {
     gulp.start('chartjs');
 
     gulp.start('php-debugbar');
-
+    gulp.start('csrf');
 });
 
 gulp.task('default', ['clean', 'bower']);

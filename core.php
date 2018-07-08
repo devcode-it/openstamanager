@@ -132,7 +132,7 @@ if (!API::isAPIRequest()) {
     ini_set('session.use_trans_sid', '0');
     ini_set('session.use_only_cookies', '1');
 
-    session_set_cookie_params(0, $rootdir);
+    session_set_cookie_params(0, $rootdir, null, isHTTPS(true));
     session_start();
 }
 
@@ -159,11 +159,8 @@ if (!API::isAPIRequest()) {
     // Impostazioni di Content-Type e Charset Header
     header('Content-Type: text/html; charset=UTF-8');
 
-    /*
     // Controllo CSRF
-    if(!CSRF::getInstance()->validate()){
-        die(tr('Constrollo CSRF fallito!'));
-    }*/
+    csrfProtector::init();
 
     // Aggiunta del wrapper personalizzato per la generazione degli input
     if (!empty($HTMLWrapper)) {

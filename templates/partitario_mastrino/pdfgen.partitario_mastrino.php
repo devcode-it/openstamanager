@@ -5,6 +5,9 @@ include_once __DIR__.'/../../core.php';
 $idconto = $_GET['idconto'];
 $module_name = 'Piano dei conti';
 
+$date_start = $_SESSION['period_start'];
+$date_end = $_SESSION['period_end'];
+
 // carica report html
 $report = file_get_contents($docroot.'/templates/partitario_mastrino/partitario.html');
 $body = file_get_contents($docroot.'/templates/partitario_mastrino/partitario_body.html');
@@ -42,8 +45,8 @@ if ($_GET['lev'] == '3') {
 
 $body = str_replace('|percorso|', $percorso, $body);
 $body = str_replace('|info_fornitore|', $f_ragionesociale.'<br>'.$f_indirizzo.'<br>'.$f_citta, $body);
-$body = str_replace('|period_start|', Translator::dateToLocale($_SESSION['period_start']), $body);
-$body = str_replace('|period_end|', Translator::dateToLocale($_SESSION['period_end']), $body);
+$body = str_replace('|period_start|', Translator::dateToLocale($date_start), $body);
+$body = str_replace('|period_end|', Translator::dateToLocale($date_end), $body);
 
 // Stampa da livello 3
 if ($_GET['lev'] == '3') {
@@ -55,7 +58,7 @@ if ($_GET['lev'] == '3') {
     $saldo_finale = [];
 
     // Calcolo saldo iniziale
-    $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$idconto.'" AND data < "'.$_SESSION['period_start'].'"');
+    $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$idconto.'" AND data < "'.$date_start.'"');
     $saldo_iniziale = $rs[0]['totale'];
     $saldo_finale = $saldo_iniziale;
 
@@ -69,7 +72,7 @@ if ($_GET['lev'] == '3') {
 
     $body .= "		<tr><td class='br bb padded'></td><td class='br bb padded'><b>SALDO INIZIALE</b></td><td class='br bb padded text-right'><b>".Translator::numberToLocale(abs($dare))."</b></td><td class='bb padded text-right'><b>".Translator::numberToLocale(abs($avere))."</b></td></tr>\n";
 
-    $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$idconto.'" AND data >= "'.$_SESSION['period_start'].'" AND data <= "'.$_SESSION['period_end'].'" ORDER BY data ASC');
+    $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$idconto.'" AND data >= "'.$date_start.'" AND data <= "'.$date_end.'" ORDER BY data ASC');
 
     for ($i = 0; $i < sizeof($rs); ++$i) {
         if ($rs[$i]['totale'] >= 0) {
@@ -117,7 +120,7 @@ elseif ($_GET['lev'] == '2') {
         $saldo_finale = [];
 
         // Calcolo saldo iniziale
-        $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data < "'.$_SESSION['period_start'].'"');
+        $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data < "'.$date_start.'"');
         $saldo_iniziale = $rs[0]['totale'];
         $saldo_finale[] = $saldo_iniziale;
 
@@ -127,7 +130,7 @@ elseif ($_GET['lev'] == '2') {
             $v_dare[] = abs($saldo_iniziale);
         }
 
-        $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= "'.$_SESSION['period_start'].'" AND data <= "'.$_SESSION['period_end'].'" ORDER BY data ASC');
+        $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= "'.$date_start.'" AND data <= "'.$date_end.'" ORDER BY data ASC');
 
         for ($i = 0; $i < sizeof($rs); ++$i) {
             if ($rs[$i]['totale'] >= 0) {
@@ -183,7 +186,7 @@ elseif (get('lev') == '1') {
                 $v_dare = [];
                 $v_avere = [];
 
-                $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= "'.$_SESSION['period_start'].'" AND data <= "'.$_SESSION['period_end'].'" ORDER BY data ASC');
+                $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= "'.$date_start.'" AND data <= "'.$date_end.'" ORDER BY data ASC');
 
                 for ($i = 0; $i < sizeof($rs); ++$i) {
                     if ($rs[$i]['totale'] >= 0) {
@@ -241,11 +244,11 @@ elseif (get('lev') == '1') {
                     $saldo_finale = [];
 
                     // Calcolo saldo iniziale
-                    $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$rs2[$y]['id'].'" AND data < "'.$_SESSION['period_start'].'"');
+                    $rs = $dbo->fetchArray('SELECT SUM(totale) AS totale FROM co_movimenti WHERE idconto="'.$rs2[$y]['id'].'" AND data < "'.$date_start.'"');
                     $dare = [];
                     $avere = [];
 
-                    $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= "'.$_SESSION['period_start'].'" AND data <= "'.$_SESSION['period_end'].'" ORDER BY data ASC');
+                    $rs = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto="'.$rs3[$z]['id'].'" AND data >= "'.$date_start.'" AND data <= "'.$date_end.'" ORDER BY data ASC');
 
                     for ($i = 0; $i < sizeof($rs); ++$i) {
                         if ($rs[$i]['totale'] >= 0) {

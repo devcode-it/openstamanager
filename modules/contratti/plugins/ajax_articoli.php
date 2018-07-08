@@ -21,12 +21,12 @@ if (!empty($rs)) {
         <th>'.tr('Articolo').'</th>
         <th width="8%">'.tr('Q.tà').'</th>';
 
-    if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
+    if (Auth::admin() || Auth::user()['gruppo'] != 'Tecnici') {
         echo '
         <th width="15%">'.tr('Prezzo di acquisto').'</th>';
     }
 
-    if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
+    if (Auth::admin() || Auth::user()['gruppo'] != 'Tecnici') {
         echo '
         <th width="15%">'.tr('Prezzo di vendita').'</th>
         <th width="10%">'.tr('Iva').'</th>
@@ -85,14 +85,14 @@ if (!empty($rs)) {
             '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
         </td>';
 
-        if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
+        if (Auth::admin() || Auth::user()['gruppo'] != 'Tecnici') {
             echo '
         <td class="text-right">
             '.Translator::numberToLocale($r['prezzo_acquisto']).' &euro;
         </td>';
         }
 
-        if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
+        if (Auth::admin() || Auth::user()['gruppo'] != 'Tecnici') {
             // Prezzo unitario
             echo '
         <td class="text-right">

@@ -31,7 +31,7 @@ echo '
 if (Auth::admin()) {
     $q = 'SELECT * FROM `zz_logs` ORDER BY `created_at` DESC LIMIT 0, 100';
 } else {
-    $q = 'SELECT * FROM `zz_logs` WHERE `id_utente`='.prepare($_SESSION['id_utente']).' ORDER BY `created_at` DESC LIMIT 0, 100';
+    $q = 'SELECT * FROM `zz_logs` WHERE `id_utente`='.prepare(Auth::user()['id_utente']).' ORDER BY `created_at` DESC LIMIT 0, 100';
 }
 $rs = $dbo->fetchArray($q);
 $n = sizeof($rs);

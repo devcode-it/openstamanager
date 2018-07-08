@@ -124,7 +124,7 @@ if ($totrows > 0) {
     }
 }
 
-$body .= '<big><big><b>RIEPILOGO INTERVENTI DAL '.Translator::dateToLocale($_SESSION['period_start']).' al '.Translator::dateToLocale($_SESSION['period_end'])."</b></big></big><br/><br/>\n";
+$body .= '<big><big><b>RIEPILOGO INTERVENTI DAL '.Translator::dateToLocale($date_start).' al '.Translator::dateToLocale($date_end)."</b></big></big><br/><br/>\n";
 
 // Sostituisco i valori tra | | con il valore del campo del db
 $body .= preg_replace('/|(.+?)|/', $rsi[0]['${1}'], $body);

@@ -4,11 +4,14 @@ include_once __DIR__.'/../../core.php';
 
 $report_name = 'spesometro.pdf';
 
+$date_start = $_SESSION['period_start'];
+$date_end = $_SESSION['period_end'];
+
 // Intestazione tabella per righe
 echo "
 <h3 class='text-bold'>".tr('Spesometro dal _START_ al _END_', [
-    '_START_' => Translator::dateToLocale($_SESSION['period_start']),
-    '_END_' => Translator::dateToLocale($_SESSION['period_end']),
+    '_START_' => Translator::dateToLocale($date_start),
+    '_END_' => Translator::dateToLocale($date_end),
 ], ['upper' => true])."</h3>
 
 <table class='table table-bordered'>
@@ -29,9 +32,6 @@ echo "
 $imponibile = [];
 $iva = [];
 $totale = [];
-
-$date_start = $_SESSION['period_start'];
-$date_end = $_SESSION['period_end'];
 
 $anagrafiche = $dbo->fetchArray('SELECT idanagrafica, piva, ragione_sociale FROM `an_anagrafiche` WHERE `idanagrafica` IN (SELECT DISTINCT `idanagrafica` FROM `co_documenti` WHERE co_documenti.data>='.prepare($date_start).' AND co_documenti.data<='.prepare($date_end).' AND `co_documenti`.`id` IN (SELECT `iddocumento` FROM co_movimenti WHERE primanota = 1)) ORDER BY `ragione_sociale`');
 

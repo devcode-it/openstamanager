@@ -7,11 +7,7 @@ if (file_exists(__DIR__.'/../../../core.php')) {
 }
 
 // Prezzo modificabile solo se l'utente loggato è un tecnico (+ può vedere i prezzi) o se è amministratore
-$rs = $dbo->fetchArray('SELECT nome FROM zz_groups WHERE id IN(SELECT idgruppo FROM zz_users WHERE id='.prepare($_SESSION['id_utente']).')');
-for ($i = 0; $i < count($rs); ++$i) {
-    $gruppi[$i] = $rs[$i]['nome'];
-}
-
+$gruppi = Auth::user()['gruppo'];
 $can_edit_prezzi = (in_array('Amministratori', $gruppi)) || (get_var('Mostra i prezzi al tecnico') == 1 && (in_array('Tecnici', $gruppi)));
 
 $idriga = get('idriga');

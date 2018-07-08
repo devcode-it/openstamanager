@@ -93,10 +93,6 @@ if (post('db_host') !== null) {
         exit();
     }
 
-    // Salvataggio dei valori da salvare successivamente
-    $_SESSION['osm_password'] = post('osm_password');
-    $_SESSION['osm_email'] = post('osm_email');
-
     // Creazione della configurazione
     if ($dbo->isConnected()) {
         // Impostazioni di configurazione strettamente necessarie al funzionamento del progetto

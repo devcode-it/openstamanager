@@ -49,13 +49,13 @@ $rs = $dbo->fetchArray($query);
 
 if ('entrata' == $dir) {
     $body .= "<span style='font-size:15pt; margin-left:6px;'><b>".tr('Registro iva vendita dal _START_ al _END_', [
-        '_START_' => Translator::dateToLocale($_SESSION['period_start']),
-        '_END_' => Translator::dateToLocale($_SESSION['period_end']),
+        '_START_' => Translator::dateToLocale($date_start),
+        '_END_' => Translator::dateToLocale($date_end),
     ], ['upper' => true]).'</b></span><br><br>';
 } elseif ('uscita' == $dir) {
     $body .= "<span style='font-size:15pt; margin-left:6px;'><b>".tr('Registro iva acquisto dal _START_ al _END_', [
-        '_START_' => Translator::dateToLocale($_SESSION['period_start']),
-        '_END_' => Translator::dateToLocale($_SESSION['period_end']),
+        '_START_' => Translator::dateToLocale($date_start),
+        '_END_' => Translator::dateToLocale($date_end),
     ], ['upper' => true]).'</b></span><br><br>';
 }
 

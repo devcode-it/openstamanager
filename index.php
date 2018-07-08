@@ -26,6 +26,13 @@ switch ($op) {
                     App::flash()->error(tr('Errore durante la generazione del backup automatico!'));
                 }
             }
+        } else {
+            $status = Auth::getInstance()->getCurrentStatus();
+
+            App::flash()->error(Auth::getStatus()[$status]['message']);
+
+            redirect(ROOTDIR.'/index.php');
+            exit();
         }
 
         break;
@@ -34,7 +41,6 @@ switch ($op) {
         Auth::logout();
 
         redirect(ROOTDIR.'/index.php');
-
         exit();
 
         break;

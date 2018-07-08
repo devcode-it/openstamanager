@@ -28,14 +28,14 @@ class Auth extends \Util\Singleton
     ];
 
     /** @var array Opzioni di sicurezza relative all'hashing delle password */
-    protected static $passwordOptions = [
+    protected static $password_options = [
         'algorithm' => PASSWORD_BCRYPT,
         'options' => [],
     ];
 
     /** @var array Opzioni per la protezione contro attacchi brute-force */
-    protected static $brute = [
-        'attemps' => 30,
+    protected static $brute_options = [
+        'attemps' => 3,
         'timeout' => 180,
     ];
     /** @var bool Informazioni riguardanti la condizione brute-force */
@@ -43,6 +43,8 @@ class Auth extends \Util\Singleton
 
     /** @var array Informazioni riguardanti l'utente autenticato */
     protected $infos = [];
+    /** @var string Stato del tentativo di accesso */
+    protected $current_status;
     /** @var string|null Nome del primo modulo su cui l'utente ha permessi di navigazione */
     protected $first_module;
 
@@ -94,7 +96,8 @@ class Auth extends \Util\Singleton
         $log = [];
         $log['username'] = $username;
         $log['ip'] = get_client_ip();
-        $log['stato'] = self::$status['failed']['code'];
+
+        $status = 'failed';
 
         $users = $database->fetchArray('SELECT id AS id_utente, password, enabled FROM zz_users WHERE username = '.prepare($username).' LIMIT 1');
         if (!empty($users)) {
@@ -111,32 +114,26 @@ class Auth extends \Util\Singleton
                 ) {
                     // Accesso completato
                     $log['id_utente'] = $this->infos['id_utente'];
-                    $log['stato'] = self::$status['success']['code'];
+                    $status = 'success';
 
                     // Salvataggio nella sessione
                     $this->saveToSession();
                 } else {
                     if (empty($module)) {
-                        $log['stato'] = self::$status['unauthorized']['code'];
+                        $status = 'unauthorized';
                     }
 
                     // Logout automatico
                     $this->destory();
                 }
             } else {
-                $log['stato'] = self::$status['disabled']['code'];
+                $status = 'disabled';
             }
         }
 
-        // Salvataggio dello stato nella sessione
-        if ($log['stato'] != self::$status['success']['code']) {
-            foreach (self::$status as $key => $value) {
-                if ($log['stato'] == $value['code']) {
-                    App::flash()->error($value['message']);
-                    break;
-                }
-            }
-        }
+        // Salvataggio dello stato corrente
+        $log['stato'] = self::getStatus()[$status]['code'];
+        $this->current_status = $status;
 
         // Salvataggio del tentativo nel database
         $database->insert('zz_logs', $log);
@@ -145,13 +142,13 @@ class Auth extends \Util\Singleton
     }
 
     /**
-     * Controlla la corrispondeza delle password ed eventalmente effettua un rehashing.
+     * Controlla la corrispondenza delle password ed eventualmente effettua un rehashing.
      *
      * @param string $password
      * @param string $hash
      * @param int    $user_id
      */
-    protected function password_check($password, $hash, $user_id = null)
+    protected function password_check($password, $hash, $user_id)
     {
         $result = false;
         $rehash = false;
@@ -165,7 +162,7 @@ class Auth extends \Util\Singleton
 
         // Nuova versione
         if (password_verify($password, $hash)) {
-            $rehash = password_needs_rehash($hash, self::$passwordOptions['algorithm'], self::$passwordOptions['options']);
+            $rehash = password_needs_rehash($hash, self::$password_options['algorithm'], self::$password_options['options']);
 
             $result = true;
         }
@@ -248,6 +245,16 @@ class Auth extends \Util\Singleton
     public function getUser()
     {
         return $this->infos;
+    }
+
+    /**
+     * Restituisce lo stato corrente.
+     *
+     * @return string
+     */
+    public function getCurrentStatus()
+    {
+        return $this->current_status;
     }
 
     /**
@@ -339,7 +346,7 @@ class Auth extends \Util\Singleton
      */
     public static function hashPassword($password)
     {
-        return password_hash($password, self::$passwordOptions['algorithm'], self::$passwordOptions['options']);
+        return password_hash($password, self::$password_options['algorithm'], self::$password_options['options']);
     }
 
     /**
@@ -414,9 +421,9 @@ class Auth extends \Util\Singleton
         }
 
         if (!isset(self::$is_brute)) {
-            $results = $database->fetchArray('SELECT COUNT(*) AS tot FROM zz_logs WHERE ip = '.prepare(get_client_ip()).' AND stato = '.prepare(self::getStatus()['failed']['code']).' AND DATE_ADD(created_at, INTERVAL '.self::$brute['timeout'].' SECOND) >= NOW()');
+            $results = $database->fetchArray('SELECT COUNT(*) AS tot FROM zz_logs WHERE ip = '.prepare(get_client_ip()).' AND stato = '.prepare(self::getStatus()['failed']['code']).' AND DATE_ADD(created_at, INTERVAL '.self::$brute_options['timeout'].' SECOND) >= NOW()');
 
-            self::$is_brute = $results[0]['tot'] > self::$brute['attemps'];
+            self::$is_brute = $results[0]['tot'] > self::$brute_options['attemps'];
         }
 
         return self::$is_brute;
@@ -435,7 +442,7 @@ class Auth extends \Util\Singleton
 
         $database = Database::getConnection();
 
-        $results = $database->fetchArray('SELECT TIME_TO_SEC(TIMEDIFF(DATE_ADD(created_at, INTERVAL '.self::$brute['timeout'].' SECOND), NOW())) AS diff FROM zz_logs WHERE ip = '.prepare(get_client_ip()).' AND stato = '.prepare(self::getStatus()['failed']['code']).' AND DATE_ADD(created_at, INTERVAL '.self::$brute['timeout'].' SECOND) >= NOW() ORDER BY created_at DESC LIMIT 1');
+        $results = $database->fetchArray('SELECT TIME_TO_SEC(TIMEDIFF(DATE_ADD(created_at, INTERVAL '.self::$brute_options['timeout'].' SECOND), NOW())) AS diff FROM zz_logs WHERE ip = '.prepare(get_client_ip()).' AND stato = '.prepare(self::getStatus()['failed']['code']).' AND DATE_ADD(created_at, INTERVAL '.self::$brute_options['timeout'].' SECOND) >= NOW() ORDER BY created_at DESC LIMIT 1');
 
         return intval($results[0]['diff']);
     }

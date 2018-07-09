@@ -113,7 +113,8 @@ $idintervento_template = str_replace('#', '%', $idintervento_template);
 
 // Calcolo codice intervento successivo
 $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare($idintervento_template).' ORDER BY codice DESC LIMIT 0,1');
-$new_codice = Util\Generator::generate(get_var('Formato codice intervento'), $rs[0]['codice']);
+if (!empty($rs[0]['codice']))
+	$new_codice = Util\Generator::generate(get_var('Formato codice intervento'), $rs[0]['codice']);
 
 if (empty($new_codice)) {
     $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice LIKE '.prepare($idintervento_template).' ORDER BY codice DESC LIMIT 0,1');
@@ -405,8 +406,9 @@ if (empty($new_codice)) {
 
                     // Se l'aggiunta intervento proviene dai contratti, faccio il submit via ajax e ricarico la tabella dei contratti
                     else if(ref == "interventi_contratti"){
-                        $('#elenco_interventi > tbody').load(globals.rootdir + '/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto=<?php echo $idcontratto; ?>');
-                        $("#bs-popup").modal('hide');
+						//$('#elenco_interventi > tbody').load(globals.rootdir + '/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto=<?php echo $idcontratto; ?>');
+                       //$("#bs-popup").modal('hide');
+						redirect(<?php echo $rootdir; ?>.'/editor.php?id_module='<?php echo Modules::get('Contratti')['id']; ?>'&id_record='<?php echo $id_record; ?>'#tab_'.<?php echo $id_plugin; ?>);
                     }
                 }
             });

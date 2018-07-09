@@ -126,7 +126,7 @@ switch (filter('op')) {
 
                                     //copio righe articoli nel nuovo promemoria
                                     $dbo->query('INSERT INTO co_righe_contratti_articoli (idarticolo, id_riga_contratto,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idriga.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
-
+									
                                     $_SESSION['infos'][] = tr('Promemoria intervento pianificato!');
 
                                     //pianificare anche l' intervento?
@@ -144,13 +144,16 @@ switch (filter('op')) {
                                         $template = str_replace('#', '%', $formato);
 
                                         $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
-                                        $codice = Util\Generator::generate($formato, $rs[0]['codice']);
-
+                                        if (!empty($rs[0]['codice']))
+											$codice = Util\Generator::generate($formato, $rs[0]['codice']);
+											
                                         if (empty($codice)) {
                                             $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
-
                                             $codice = Util\Generator::generate($formato, $rs[0]['codice']);
                                         }
+										
+										
+										
 
                                         // Creo intervento
                                         $dbo->insert('in_interventi', [
@@ -183,6 +186,9 @@ switch (filter('op')) {
 
                                         //copio  gli articoli dal promemoria all'intervento
                                         $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idintervento.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
+										
+										 //copio  gli allegati dal promemoria all'intervento
+                                        $dbo->query('INSERT INTO zz_files (nome,filename,original,category,id_module,id_record) SELECT t.nome, t.filename, t.original, t.category,  '.Modules::get('Interventi')['id'].', '.$idintervento.' FROM zz_files t WHERE t.id_record = '.$idcontratto_riga.' AND t.id_plugin = '.$id_plugin.'' );
 
                                         // Decremento la quantità per ogni articolo copiato
                                         $rs_articoli = $dbo->fetchArray('SELECT * FROM mg_articoli_interventi WHERE idintervento = '.$idintervento.' ');
@@ -191,10 +197,12 @@ switch (filter('op')) {
                                         }
 
                                         // Collego gli impianti del promemoria all' intervento appena inserito
-                                        $rs_idimpianti = explode(',', $idimpianti);
-                                        foreach ($rs_idimpianti as $idimpianto) {
-                                            $dbo->query('INSERT INTO my_impianti_interventi (idintervento, idimpianto) VALUES ('.$idintervento.', '.$idimpianto.' )');
-                                        }
+										if (!empty($idimpianti)){
+											$rs_idimpianti = explode(',', $idimpianti);
+											foreach ($rs_idimpianti as $idimpianto) {
+												$dbo->query('INSERT INTO my_impianti_interventi (idintervento, idimpianto) VALUES ('.$idintervento.', '.prepare($idimpianto).' )');
+											}
+										}
 
                                         // $_SESSION['infos'][] = tr('Intervento '.$codice.' pianificato correttamente.');
 

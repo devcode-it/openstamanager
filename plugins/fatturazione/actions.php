@@ -10,7 +10,7 @@ switch (filter('op')) {
 
             App::flash()->info(tr('Fattura elettronica generata correttamente!'));
 
-            if ($fattura->isValid()) {
+            if (!$fattura->isValid()) {
                 App::flash()->warning(tr('La fattura elettronica potrebbe avere delle irregolarità!'));
             }
         } catch (UnexpectedValueException $e) {

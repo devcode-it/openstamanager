@@ -45,35 +45,33 @@ include App::filepath($directory.'|custom|', 'init.php');
 // Caricamento file aggiuntivo su elenco record
 include App::filepath($directory.'|custom|', 'controller_before.php');
 
-if (count(Modules::getSegments($id_module)) > 1) {
-    ?>
-    <div class="row">
-    	<div class="col-md-4 pull-right">
-    		{[ "type": "select", "name": "id_segment_", "required": 0, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module = '<?php echo $id_module; ?>'", "value": "<?php echo $_SESSION['m'.$id_module]['id_segment']; ?>" ]}
-    	</div>
-    </div>
-    <br>
-
-    <script>
-    $(document).ready(function () {
-
-    	$("#id_segment_").on("change", function(){
-    		if ($(this).val()<1){
-    			session_set('<?php echo 'm'.$id_module; ?>,id_segment', '', 1, 1);
-    		}else{
-    			session_set('<?php echo 'm'.$id_module; ?>,id_segment', $(this).val(), 0, 1);
-    		}
-      });
-    });
-    </script>
-
-<?php
-}
-
 /*
  * Datatables con record
  */
 if (!empty($module_options) && $module_options != 'menu' && $module_options != 'custom') {
+    if (count(Modules::getSegments($id_module)) > 1) {
+        echo '
+    <div class="row">
+    	<div class="col-md-4 pull-right">
+    		{[ "type": "select", "name": "id_segment_", "required": 0, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module = '.prepare($id_module).'", "value": "'.$_SESSION['m'.$id_module]['id_segment'].'" ]}
+    	</div>
+    </div>
+    <br>';
+
+        echo '
+    <script>
+    $(document).ready(function () {
+    	$("#id_segment_").on("change", function(){
+    		if ($(this).val() < 1){
+    			session_set("m'.$id_module.',id_segment", "", 1, 1);
+    		} else {
+    			session_set("m'.$id_module.',id_segment", $(this).val(), 0, 1);
+    		}
+      });
+    });
+    </script>';
+    }
+
     $table_id = 'main_'.rand(0, 99);
     echo '
     <table data-idmodule="'.$id_module.'" data-idplugin="'.$id_plugin.'" data-idparent="'.$id_record.'" id="'.$table_id.'" width="100%" class="main-records table table-condensed table-bordered">

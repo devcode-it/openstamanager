@@ -78,11 +78,12 @@ switch (post('op')) {
                 $orario_inizio = post('orario_inizio')[$idriga];
                 $orario_fine = post('orario_fine')[$idriga];
 
+                // Ricalcolo le ore lavorate
+                $inizio = new DateTime($orario_inizio);
+                $diff = $inizio->diff(new DateTime($orario_fine));
+                $ore = $diff->h + ($diff->days * 24);
+
                 $km = post('km')[$idriga];
-                //$ore = post('ore')[$idriga];
-                //per sicurezza ricalcolo ore lavorate da php
-                $diff = date_diff(date_create($orario_inizio), date_create($orario_fine));
-                $ore = ($diff->h + ($diff->i / 60));
 
                 // Lettura tariffe in base al tipo di intervento ed al tecnico
                 $idtipointervento_tecnico = $post['idtipointerventot'][$idriga];
@@ -203,8 +204,9 @@ switch (post('op')) {
         $template = str_replace('#', '%', $formato);
 
         $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
-	   if (!empty($rs[0]['codice']))
-			$codice = Util\Generator::generate($formato, $rs[0]['codice']);
+       if (!empty($rs[0]['codice'])) {
+           $codice = Util\Generator::generate($formato, $rs[0]['codice']);
+       }
 
         if (empty($codice)) {
             $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
@@ -268,27 +270,25 @@ switch (post('op')) {
 
                 //copio  gli articoli dal promemoria all'intervento
                 $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$id_record.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
-				
-				 //copio  gli allegati dal promemoria all'intervento
-				$dbo->query('INSERT INTO zz_files (nome,filename,original,category,id_module,id_record) SELECT t.nome, t.filename, t.original, t.category,  '.$id_module.', '.$id_record.' FROM zz_files t WHERE t.id_record = '.$idcontratto_riga.' AND t.id_plugin = '.Plugins::get('Pianificazione interventi')['id'].'' );
-				
-				//sposto fisicamente i file allegati
-				 $rs_allegati = $dbo->fetchArray('SELECT filename FROM zz_files WHERE  id_record = '.$id_record.' AND id_module = '.$id_module);
+
+                //copio  gli allegati dal promemoria all'intervento
+                $dbo->query('INSERT INTO zz_files (nome,filename,original,category,id_module,id_record) SELECT t.nome, t.filename, t.original, t.category,  '.$id_module.', '.$id_record.' FROM zz_files t WHERE t.id_record = '.$idcontratto_riga.' AND t.id_plugin = '.Plugins::get('Pianificazione interventi')['id'].'');
+
+                //sposto fisicamente i file allegati
+                $rs_allegati = $dbo->fetchArray('SELECT filename FROM zz_files WHERE  id_record = '.$id_record.' AND id_module = '.$id_module);
                 foreach ($rs_allegati as $rs_allegato) {
-					
-					$from_dir = '/'.Uploads::getUploadDirectory(Modules::get('Contratti')['id'], Plugins::get('Pianificazione interventi')['id']);
-					$to_dir = '/'.Uploads::getUploadDirectory(Modules::get('Interventi')['id']);
-					
-				   if (move_uploaded_file($from_dir.'/'.$rs_allegato['filename'] , $to_dir.'/'.$rs_allegato['filename'])) {
-						
-					} else {
-						$_SESSION['warnings'][] = tr('Errore durante la copia del file da _FROM_ a _TO_ per il file _FILE_.', [
-							'_FROM_' => $from_dir,
-							'_TO_' => $to_dir,
-							'_FILE_' => $rs_allegato['filename'],
-						]);
-					}
-				}
+                    $from_dir = '/'.Uploads::getUploadDirectory(Modules::get('Contratti')['id'], Plugins::get('Pianificazione interventi')['id']);
+                    $to_dir = '/'.Uploads::getUploadDirectory(Modules::get('Interventi')['id']);
+
+                    if (move_uploaded_file($from_dir.'/'.$rs_allegato['filename'], $to_dir.'/'.$rs_allegato['filename'])) {
+                    } else {
+                        $_SESSION['warnings'][] = tr('Errore durante la copia del file da _FROM_ a _TO_ per il file _FILE_.', [
+                            '_FROM_' => $from_dir,
+                            '_TO_' => $to_dir,
+                            '_FILE_' => $rs_allegato['filename'],
+                        ]);
+                    }
+                }
 
                 // Decremento la quantità per ogni articolo copiato
                 $rs_articoli = $dbo->fetchArray('SELECT * FROM mg_articoli_interventi WHERE idintervento = '.$id_record.' ');

@@ -128,7 +128,7 @@ class Uploads
             $info = Plugins::get($id_plugin);
 
             if (!empty($info['script'])) {
-                $directory = self::fileInfo($info['script'])['name'];
+                $directory = self::fileInfo($info['script'])['filename'];
             } else {
                 $directory = $info['directory'];
             }

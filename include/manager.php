@@ -40,7 +40,7 @@ $module_options = (!empty($element['options2'])) ? $element['options2'] : $eleme
 include_once App::filepath($directory.'|custom|', 'modutil.php');
 
 // Lettura risultato query del modulo
-include App::filepath($directory.'|custom|', 'init.php');
+// include App::filepath($directory.'|custom|', 'init.php');
 
 // Caricamento file aggiuntivo su elenco record
 include App::filepath($directory.'|custom|', 'controller_before.php');

@@ -191,7 +191,7 @@ switch (post('op')) {
         if (in_array($id_azienda, $idtipoanagrafica)) {
             Settings::setValue('Azienda predefinita', $new_id);
 
-            App::flash()->info(tr('Anagrafica Azienda impostata come predefinita. Per ulteriori informazionioni, visitare "Strumenti -> Impostazioni -> Generali".'));
+            App::flash()->info(tr('Anagrafica Azienda impostata come predefinita. Per ulteriori informazionioni, visitare "Strumenti -> Impostazioni -> Generali"'));
         }
 
         //se sto inserendo un tecnico, mi copio già le tariffe per le varie attività

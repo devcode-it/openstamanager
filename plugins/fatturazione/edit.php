@@ -14,12 +14,6 @@ try {
     $download = false;
 }
 
-if ($download) {
-    echo '
-<div class="row">
-    <div class="col-md-6">';
-}
-
 // Campi obbligatori per l'anagrafica Azienda
 $azienda = Plugins\Fatturazione\FatturaElettronica::getAzienda();
 $fields = [
@@ -74,6 +68,12 @@ if (!empty($missing)) {
     ]).'</p>
     <p>'.Modules::link('Anagrafiche', $records[0]['idanagrafica'], tr('Vai alla scheda anagrafica'), null).'</p>
 </div>';
+}
+
+if ($download) {
+    echo '
+<div class="row">
+    <div class="col-md-6">';
 }
 
 echo '

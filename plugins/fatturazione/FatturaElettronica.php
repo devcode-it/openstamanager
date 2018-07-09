@@ -311,19 +311,33 @@ class FatturaElettronica
             $iva = $database->fetchArray('SELECT `percentuale` FROM `co_iva` WHERE `id` = '.prepare($riga['idiva']));
             $percentuale = $iva[0]['percentuale'];
 
+            $dettaglio = [
+                'NumeroLinea' => $numero + 1,
+                'Descrizione' => $riga['descrizione'],
+                'Quantita' => $riga['qta'],
+                'PrezzoUnitario' => $prezzo_unitario,
+            ];
+
+            // Sconto
+            if (!empty($riga['sconto'])) {
+                $sconto = [
+                    'Tipo' => 'SC',
+                ];
+
+                if ($riga['tipo_sconto'] == 'PRC') {
+                    $sconto['Percentuale'] = $riga['sconto'];
+                } else {
+                    $sconto['Importo'] = $riga['sconto'];
+                }
+
+                $dettaglio['ScontoMaggiorazione'] = $sconto;
+            }
+
+            $dettaglio['PrezzoTotale'] = $prezzo_totale;
+            $dettaglio['AliquotaIVA'] = $percentuale;
+
             $result[] = [
-                'DettaglioLinee' => [
-                    'NumeroLinea' => $numero + 1,
-                    'Descrizione' => $riga['descrizione'],
-                    'Quantita' => $riga['qta'],
-                    'PrezzoUnitario' => $prezzo_unitario,
-                    'ScontoMaggiorazione' => [
-                        'Tipo' => 'SC',
-                        'Percentuale' => ($riga['tipo_sconto'] == 'PRC') ? $riga['sconto'] : ($riga['sconto'] * 100) / $riga['subtotale'],
-                    ],
-                    'PrezzoTotale' => $prezzo_totale,
-                    'AliquotaIVA' => $percentuale,
-                ],
+                'DettaglioLinee' => $dettaglio,
             ];
         }
 

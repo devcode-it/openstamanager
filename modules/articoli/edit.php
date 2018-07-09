@@ -141,6 +141,12 @@ if (!empty($records[0]['immagine01'])) {
                             {[ "type": "number", "label": "<?php echo tr('Soglia minima quantità'); ?>", "name": "threshold_qta", "value": "$threshold_qta$", "decimals": "qta", "min-value": "undefined" ]}
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            {[ "type": "select", "label": "<?php echo tr('Conto predefinito di acquisto'); ?>", "name": "idconto_acquisto", "value": "$idconto_acquisto$", "ajax-source": "conti-acquisti" ]}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -179,6 +185,12 @@ if (!empty($records[0]['immagine01'])) {
 
                         <div class="col-md-6">
                             {[ "type": "number", "label": "<?php echo tr('Volume'); ?>", "name": "volume", "value": "$volume$", "icon-after": "M<sup>3</sup>" ]}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            {[ "type": "select", "label": "<?php echo tr('Conto predefinito di vendita'); ?>", "name": "idconto_vendita", "value": "$idconto_vendita$", "ajax-source": "conti-vendite" ]}
                         </div>
                     </div>
                 </div>

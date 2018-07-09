@@ -33,7 +33,7 @@ switch ($resource) {
             $where[] = 'idpianodeiconti2='.prepare($r['id']);
 
             if (!empty($search)) {
-                $search_fields[] = '(co_pianodeiconti3.descrizione LIKE '.prepare('%'.$search.'%')." OR CONCAT( co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero ) LIKE ".prepare('%'.$search.'%').')';
+                $search_fields[] = '(co_pianodeiconti3.descrizione LIKE '.prepare('%'.$search.'%')." OR CONCAT(co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero) LIKE ".prepare('%'.$search.'%').')';
             }
             if (!empty($search_fields)) {
                 $where[] = '('.implode(' OR ', $search_fields).')';

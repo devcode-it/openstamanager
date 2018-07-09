@@ -209,3 +209,6 @@ INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`,
 -- Aggiornamento zz_settings
 ALTER TABLE `zz_settings` CHANGE `idimpostazione` `id` int(11) NOT NULL AUTO_INCREMENT;
 UPDATE `zz_views` SET `query` = REPLACE(`query`, 'idimpostazione', 'id');
+
+-- Aggiunta conti in Articoli
+ALTER TABLE `mg_articoli` ADD `idconto_vendita` int(11), ADD `idconto_acquisto` int(11);

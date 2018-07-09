@@ -6,26 +6,17 @@ include_once __DIR__.'/../../core.php';
 $rs = $dbo->fetchArray('SELECT idanagrafica FROM co_documenti WHERE id='.prepare($id_record));
 $idanagrafica = $rs[0]['idanagrafica'];
 
-// Leggo il conto dall'ultima riga inserita
-$rs = $dbo->fetchArray('SELECT idconto FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' ORDER BY id DESC LIMIT 0,1');
-$idconto = $rs[0]['idconto'];
-
 if ($module['name'] == 'Fatture di vendita') {
     $dir = 'entrata';
     $conti = 'conti-vendite';
-
-    // Se non ho letto un conto dall'ultima riga inserita, lo leggo dalle impostazioni
-    if (empty($idconto)) {
-        $idconto = setting('Conto predefinito fatture di vendita');
-    }
 } else {
     $dir = 'uscita';
     $conti = 'conti-acquisti';
+}
 
-    // Se non ho letto un conto dall'ultima riga inserita, lo leggo dalle impostazioni
-    if (empty($idconto)) {
-        $idconto = setting('Conto predefinito fatture di acquisto');
-    }
+// Conto dalle impostazioni
+if (empty($idconto)) {
+    $idconto = ($dir == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
 }
 
 // Impostazioni per la gestione

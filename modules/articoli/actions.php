@@ -40,6 +40,8 @@ switch (post('op')) {
             'threshold_qta' => post('threshold_qta'),
             'prezzo_vendita' => post('prezzo_vendita'),
             'prezzo_acquisto' => post('prezzo_acquisto'),
+            'idconto_vendita' => post('idconto_vendita'),
+            'idconto_acquisto' => post('idconto_acquisto'),
             'idiva_vendita' => post('idiva_vendita'),
             'gg_garanzia' => post('gg_garanzia'),
             'servizio' => post('servizio'),

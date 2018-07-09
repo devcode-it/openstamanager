@@ -56,7 +56,7 @@ switch (post('op')) {
 
     case 'creafatturavendita':
 
-        $rs_idanagrafica = $dbo->fetchArray("SELECT idanagrafica FROM in_interventi WHERE id='".$id_records[0]."'");
+        $rs_idanagrafica = $dbo->fetchArray('SELECT idanagrafica FROM in_interventi WHERE id='.prepare($id_records[0]));
 
         $idanagrafica = $rs_idanagrafica[0]['idanagrafica'];
         $data = date('Y-m-d');

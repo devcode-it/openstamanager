@@ -4,7 +4,7 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'articoli':
-        $query = 'SELECT mg_articoli.*, co_iva.descrizione AS iva_vendita FROM mg_articoli LEFT OUTER JOIN co_iva ON mg_articoli.idiva_vendita=co_iva.id |where| ORDER BY mg_articoli.id_categoria ASC, mg_articoli.id_sottocategoria ASC';
+        $query = 'SELECT mg_articoli.*, (SELECT CONCAT(numero, " ", descrizione) FROM co_pianodeiconti3 WHERE co_pianodeiconti3.id = idconto_vendita) AS idconto_vendita_title, (SELECT CONCAT(numero, " ", descrizione) FROM co_pianodeiconti3 WHERE co_pianodeiconti3.id = idconto_acquisto) AS idconto_acquisto_title, co_iva.descrizione AS iva_vendita FROM mg_articoli LEFT OUTER JOIN co_iva ON mg_articoli.idiva_vendita=co_iva.id |where| ORDER BY mg_articoli.id_categoria ASC, mg_articoli.id_sottocategoria ASC';
 
         $idiva_predefinita = setting('Iva predefinita');
         $rs = $dbo->fetchArray("SELECT descrizione FROM co_iva WHERE id='".$idiva_predefinita."'");
@@ -66,6 +66,10 @@ switch ($resource) {
                 'um' => $r['um'],
                 'idiva_vendita' => $idiva,
                 'iva_vendita' => $iva,
+                'idconto_vendita' => $r['idconto_vendita'],
+                'idconto_vendita_title' => $r['idconto_vendita_title'],
+                'idconto_acquisto' => $r['idconto_acquisto'],
+                'idconto_acquisto_title' => $r['idconto_acquisto_title'],
                 'prezzo_acquisto' => Translator::numberToLocale($r['prezzo_acquisto']),
                 'prezzo_vendita' => Translator::numberToLocale($r['prezzo_vendita']),
             ];

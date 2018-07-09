@@ -78,6 +78,10 @@ $idanagrafica = $rs[0]['idanagrafica'];
 $idpagamento = $rs[0]['idpagamento'];
 $idconto = $rs[0]['idconto'];
 
+if (empty($idconto)) {
+    $idconto = ($dir == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
+}
+
 /*
     Form di inserimento riga documento
 */

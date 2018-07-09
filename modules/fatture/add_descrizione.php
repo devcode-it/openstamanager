@@ -15,7 +15,6 @@ if ($module['name'] == 'Fatture di vendita') {
 
 $record = $dbo->fetchArray('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
 $numero = ($record[0]['numero_esterno'] != '') ? $record[0]['numero_esterno'] : $record[0]['numero'];
-$idconto = $record[0]['idconto'];
 $idanagrafica = $record[0]['idanagrafica'];
 
 /*

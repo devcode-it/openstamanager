@@ -239,17 +239,23 @@ echo '
         <script>';
 
 // Se l'utente ha i permessi in sola lettura per il modulo, converto tutti i campi di testo in span
-if (Modules::getPermission($id_module) == 'r' || !empty($block_edit)) {
-    $not = (Modules::getPermission($id_module) == 'r') ? '' : '.not(".unblockable")';
+$read_only = Modules::getPermission($id_module) == 'r';
+if ($read_only || !empty($block_edit)) {
+    $not = $read_only ? '' : '.not(".unblockable")';
 
     echo '
 			$(document).ready(function(){
 				$("input, textarea, select", "section.content")'.$not.'.attr("readonly", "true");
-				$("select, input[type=checkbox]")'.$not.'.prop("disabled", true);
-				$("a.btn, button, input[type=button], input[type=submit]", "section.content")'.$not.'.hide();
-				$("a.btn-info, a.btn-warning, button.btn-info, button.btn-warning, input[type=button].btn-info", "section.content")'.$not.'.show();
-			});';
+                $("select, input[type=checkbox]", "section.content")'.$not.'.prop("disabled", true);';
 
+    if ($read_only) {
+        echo '
+				$("a.btn, button, input[type=button], input[type=submit]", "section.content").hide();
+                $("a.btn-info, a.btn-warning, button.btn-info, button.btn-warning, input[type=button].btn-info", "section.content").show();';
+    }
+
+    echo '
+			});';
 }
 ?>
 
@@ -275,7 +281,7 @@ if (Modules::getPermission($id_module) == 'r' || !empty($block_edit)) {
             };
 <?php
 if ($advanced_sessions) {
-        ?>
+    ?>
 
             function getActiveUsers(){
                 $.getJSON('<?php echo ROOTDIR; ?>/call.php', {
@@ -298,7 +304,7 @@ if ($advanced_sessions) {
 
             setInterval(getActiveUsers, <?php echo get_var('Timeout notifica di presenza (minuti)') * 1000; ?>);
 <?php
-    }
+}
 ?>
 	    </script>
 <?php

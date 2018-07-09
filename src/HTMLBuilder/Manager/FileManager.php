@@ -147,15 +147,15 @@ class FileManager implements ManagerInterface
     <b>'.$options['label'].'</b>
     <div id="upload-form" class="row">
         <div class="col-md-4">
-            {[ "type": "text", "placeholder": "'.tr('Nome').'", "name": "nome_allegato" ]}
+            {[ "type": "text", "placeholder": "'.tr('Nome').'", "name": "nome_allegato", "class": "unblockable" ]}
         </div>
 
         <div class="col-md-3">
-            {[ "type": "text", "placeholder": "'.tr('Categoria').'", "name": "categoria" ]}
+            {[ "type": "text", "placeholder": "'.tr('Categoria').'", "name": "categoria", "class": "unblockable" ]}
         </div>
 
         <div class="col-md-3">
-            {[ "type": "file", "placeholder": "'.tr('File').'", "name": "blob" ]}
+            {[ "type": "file", "placeholder": "'.tr('File').'", "name": "blob", "class": "unblockable" ]}
         </div>
 
 		<div class="col-md-2 text-right">

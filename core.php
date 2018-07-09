@@ -114,6 +114,16 @@ foreach ($handlers as $handler) {
 // Imposta Monolog come gestore degli errori
 Monolog\ErrorHandler::register($logger);
 
+// Inizializzazione della sessione
+if (!API::isAPIRequest()) {
+    // Sicurezza della sessioni
+    ini_set('session.use_trans_sid', '0');
+    ini_set('session.use_only_cookies', '1');
+
+    session_set_cookie_params(0, $rootdir, null, isHTTPS(true));
+    session_start();
+}
+
 // Istanziamento del gestore delle traduzioni del progetto
 $lang = !empty($lang) ? $lang : 'it';
 $formatter = !empty($formatter) ? $formatter : [];
@@ -125,16 +135,6 @@ $translator->setLocale($lang, $formatter);
 // Individuazione di versione e revisione del progetto
 $version = Update::getVersion();
 $revision = Update::getRevision();
-
-// Inizializzazione della sessione
-if (!API::isAPIRequest()) {
-    // Sicurezza della sessioni
-    ini_set('session.use_trans_sid', '0');
-    ini_set('session.use_only_cookies', '1');
-
-    session_set_cookie_params(0, $rootdir, null, isHTTPS(true));
-    session_start();
-}
 
 $dbo = Database::getConnection();
 

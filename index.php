@@ -50,7 +50,7 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
     $module = Auth::firstModule();
 
     if (!empty($module)) {
-        redirect(ROOTDIR.'/controller.php?id_module='.$module, 'js');
+        redirect(ROOTDIR.'/controller.php?id_module='.$module);
     } else {
         redirect(ROOTDIR.'/index.php?op=logout');
     }

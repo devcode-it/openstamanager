@@ -276,15 +276,16 @@ switch (post('op')) {
 				 $rs_allegati = $dbo->fetchArray('SELECT filename FROM zz_files WHERE  id_record = '.$id_record.' AND id_module = '.$id_module);
                 foreach ($rs_allegati as $rs_allegato) {
 					
-					$from_dir = $docroot.'/files';
-					$to_dir = $docroot.'/files/'.Modules::get('Interventi')['directory'];
+					$from_dir = '/'.Uploads::getUploadDirectory(Modules::get('Contratti')['id'], Plugins::get('Pianificazione interventi')['id']);
+					$to_dir = '/'.Uploads::getUploadDirectory(Modules::get('Interventi')['id']);
 					
 				   if (move_uploaded_file($from_dir.'/'.$rs_allegato['filename'] , $to_dir.'/'.$rs_allegato['filename'])) {
 						
 					} else {
-						$_SESSION['warnings'][] = tr('Errore durante la copia del file da _FROM_ a _TO_', [
+						$_SESSION['warnings'][] = tr('Errore durante la copia del file da _FROM_ a _TO_ per il file _FILE_.', [
 							'_FROM_' => $from_dir,
 							'_TO_' => $to_dir,
+							'_FILE_' => $rs_allegato['filename'],
 						]);
 					}
 				}

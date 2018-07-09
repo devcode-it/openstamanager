@@ -79,7 +79,7 @@ class FileManager implements ManagerInterface
         <tr>
             <td align="left">
                 <a href="'.ROOTDIR.'/'.$directory.'/'.$r['filename'].'" target="_blank">
-                    <i class="fa fa-external-link"></i> '.$r['nome'].$directory.'
+                    <i class="fa fa-external-link"></i> '.$r['nome'].'
                 </a>
             </td>
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>

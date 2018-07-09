@@ -11,9 +11,9 @@ $img = null;
 if (!empty($records[0]['immagine01'])) {
     $fileinfo = Uploads::fileInfo($records[0]['immagine01']);
 
-    $default_img = '/'.Uploads::getUploadDirectory($id_module).'/'.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
+    $default_img = '/'.Uploads::getDirectory($id_module).'/'.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
 
-    $img = file_exists(DOCROOT.$default_img) ? ROOTDIR.$default_img : ROOTDIR.'/'.Uploads::getUploadDirectory($id_module).'/'.$records[0]['immagine01'];
+    $img = file_exists(DOCROOT.$default_img) ? ROOTDIR.$default_img : ROOTDIR.'/'.Uploads::getDirectory($id_module).'/'.$records[0]['immagine01'];
 }
 
 ?><form action="" method="post" id="edit-form" enctype="multipart/form-data">

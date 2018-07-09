@@ -120,7 +120,7 @@ class Uploads
         'wpd' => 'application/wordperfect',
     ];
 
-    public static function getUploadDirectory($id_module, $id_plugin = null)
+    public static function getDirectory($id_module, $id_plugin = null)
     {
         if (empty($id_plugin)) {
             $directory = Modules::get($id_module)['directory'];
@@ -155,7 +155,7 @@ class Uploads
         $extension = strtolower(pathinfo($original)['extension']);
         $ok = self::isSupportedType($extension);
 
-        $directory = DOCROOT.'/'.self::getUploadDirectory($data['id_module'], $data['id_plugin']);
+        $directory = DOCROOT.'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
 
         do {
             $filename = random_string().'.'.$extension;
@@ -236,7 +236,7 @@ class Uploads
         ])['nome'];
 
         $fileinfo = self::fileInfo($filename);
-        $directory = DOCROOT.'/'.self::getUploadDirectory($data['id_module'], $data['id_plugin']);
+        $directory = DOCROOT.'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
 
         $files = [
             $directory.'/'.$fileinfo['basename'],

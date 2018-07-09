@@ -36,6 +36,12 @@ $total = App::readQuery($element);
 
 $module_options = (!empty($element['options2'])) ? $element['options2'] : $element['options'];
 
+// Caricamento helper modulo (verifico se ci sono helper personalizzati)
+include_once App::filepath($directory.'|custom|', 'modutil.php');
+
+// Lettura risultato query del modulo
+include App::filepath($directory.'|custom|', 'init.php');
+
 // Caricamento file aggiuntivo su elenco record
 include App::filepath($directory.'|custom|', 'controller_before.php');
 

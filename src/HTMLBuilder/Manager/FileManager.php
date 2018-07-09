@@ -27,7 +27,7 @@ class FileManager implements ManagerInterface
         $attachment_id = 'attachments_'.$options['id_module'].'-'.$options['id_plugin'];
 
         // Cartella delle anteprime
-        $directory = \Uploads::getUploadDirectory($options['id_module'], $options['id_plugin']);
+        $directory = \Uploads::getDirectory($options['id_module'], $options['id_plugin']);
 
         $dbo = \Database::getConnection();
 

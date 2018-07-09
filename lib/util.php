@@ -192,6 +192,8 @@ if (!function_exists('download')) {
      */
     function download($file, $filename = null)
     {
+        ob_end_clean();
+
         if (!headers_sent()) {
             $filename = !empty($filename) ? $filename : basename($file);
 

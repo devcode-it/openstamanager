@@ -33,13 +33,12 @@ class FatturaElettronica
         $database = \Database::getConnection();
 
         // Documento
-        $documento = $database->fetchOne('SELECT *, (SELECT `codice_tipo_documento_fe` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`) AS `tipo_documento`, (SELECT `descrizione` FROM `co_statidocumento` WHERE `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`) AS `stato` FROM `co_documenti` WHERE `id` = '.prepare($id_documento));
+        $this->documento = $database->fetchOne('SELECT *, (SELECT `codice_tipo_documento_fe` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`) AS `tipo_documento`, (SELECT `descrizione` FROM `co_statidocumento` WHERE `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`) AS `stato` FROM `co_documenti` WHERE `id` = '.prepare($id_documento));
 
         // Controllo sulla possibilità di creare la fattura elettronica
-        if ($documento['stato'] != 'Emessa') {
-            throw new UnexpectedValueException();
+        if ($this->documento['stato'] != 'Emessa' || $this->getCliente()['tipo'] == 'Privato') {
+            throw new \UnexpectedValueException();
         }
-        $this->documento = $documento;
     }
 
     /**
@@ -497,14 +496,26 @@ class FatturaElettronica
      */
     public function save($directory)
     {
-        $documento = $this->getDocumento();
-        $filename = $documento['codice_xml'];
-
-        $azienda = self::getAzienda();
-        $codice = 'IT'.(empty($azienda['piva']) ? $azienda['codice_fiscale'] : $azienda['piva']);
-
         // Generazione nome XML
-        if (empty($filename) || !starts_with($filename, $codice)) {
+        $filename = $this->getFilename();
+
+        // Salvataggio del file
+        $result = directory($directory) && file_put_contents(rtrim($directory, '/').'/'.$filename, $this->__toString());
+
+        return ($result === false) ? null : $filename;
+    }
+
+    /**
+     * Restituisce il nome del file XML per la fattura elettronica.
+     *
+     * @return string
+     */
+    public function getFilename()
+    {
+        if (empty($this->documento['codice_xml'])) {
+            $azienda = self::getAzienda();
+            $codice = 'IT'.(empty($azienda['piva']) ? $azienda['codice_fiscale'] : $azienda['piva']);
+
             $database = \Database::getConnection();
 
             do {
@@ -512,15 +523,11 @@ class FatturaElettronica
             } while ($database->fetchNum('SELECT `id` FROM `co_documenti` WHERE `codice_xml` = '.prepare($filename)));
 
             // Registrazione
-            $database->update('co_documenti', ['codice_xml' => $filename], ['id' => $documento['id']]);
+            $database->update('co_documenti', ['codice_xml' => $filename], ['id' => $this->getDocumento()['id']]);
             $this->documento['codice_xml'] = $filename;
         }
-        $filename .= '.xml';
 
-        // Salvataggio del file
-        $result = directory($directory) && file_put_contents(rtrim($directory, '/').'/'.$filename, $this->__toString());
-
-        return ($result === false) ? null : $filename;
+        return $this->documento['codice_xml'].'.xml';
     }
 
     /**

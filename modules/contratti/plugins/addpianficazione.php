@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../../core.php';
 
-//<form action="plugin_editor.php?id_plugin=$id_plugin$&id_module=$id_module$&id_parent=$id_parent$" method="post" role="form">
-
 //nuovo promemoria
 $data_richiesta = date('d/m/Y');
 $disabled = '';

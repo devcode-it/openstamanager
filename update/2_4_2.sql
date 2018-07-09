@@ -204,6 +204,8 @@ età svizzere che possiedono i requisiti di cui all''art. 15, c. 2 dell’Accord
 
 INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Causale ritenuta d''acconto', '', 'query=SELECT codice AS id, descrizione FROM fe_causali_pagamento_ritenuta', 1, 'Fatturazione', 0);
 
+INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `directory`, `options`) VALUES (NULL, 'Fatturazione Elettronica', 'Fatturazione Elettronica', (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita'), (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita'), 'tab', 'fatturazione', 'custom');
+
 -- Aggiornamento zz_settings
 ALTER TABLE `zz_settings` CHANGE `idimpostazione` `id` int(11) NOT NULL AUTO_INCREMENT;
 UPDATE `zz_views` SET `query` = REPLACE(`query`, 'idimpostazione', 'id');

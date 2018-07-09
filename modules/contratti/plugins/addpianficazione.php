@@ -26,8 +26,10 @@ if (!empty($get['idcontratto_riga'])) {
     $matricoleimpianti = trim($rsp[0]['idimpianti']);
     $idsede = $rsp[0]['idsede'];
     $tempo_standard = $rsp[0]['tempo_standard'];
-
-    $readonly = 'readonly';
+	
+	//if (!empty($rsp[0]['idtipointervento']))
+		$readonly = 'readonly';
+	
     $hide = '';
     $list .= ', \"0\":\"'.tr('Pianificare a partire da questo promemoria ').$data_richiesta.'\"';
 
@@ -64,7 +66,7 @@ echo '
 				</div>
 
 				<div class="col-md-6">
-					 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "required": 1, "id": "idtipointervento_", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$rsp[0]['idtipointervento'].'", "extra": "'.$readonly.'", "ajax-source": "tipiintervento"  ]}
+					 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "required": 1, "id": "idtipointervento_", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$rsp[0]['idtipointervento'].'", "extra": "'.$readonly.'"  ]}
 				</div>
 
 			</div>
@@ -74,7 +76,7 @@ echo '
 			<div class="row">
 
 				<div class="col-md-6">
-						{[ "type": "select", "multiple": "1", "label": "'.tr('Impianti').'", "name": "idimpianti[]", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_record.' ORDER BY descrizione", "value": "'.$matricoleimpianti.'", "extra":"'.$readonly.'" ]}
+						{[ "type": "select", "multiple": "1", "label": "'.tr('Impianti a contratto').'", "name": "idimpianti[]", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_record.' ORDER BY descrizione", "value": "'.$matricoleimpianti.'", "extra":"'.$readonly.'" ]}
 				</div>
 
 				<div class="col-md-6">
@@ -236,7 +238,21 @@ echo '
 echo '
 	<script>
 		$(document).ready(function() {
-
+			
+			if ($("#idtipointervento_").val()==""){
+				$("#add_form .panel-primary .panel-primary").hide(); 
+				$("#bs-popup .btn-primary").hide();
+			};
+			
+			
+			$("#idtipointervento_").change(function(){
+					if (($(this).val()!="")){
+						$("#add_form .panel-primary .panel-primary").show(); 
+					}else{
+						$("#add_form .panel-primary .panel-primary").hide(); 
+					}
+			});
+			
 			$("#pianifica_intervento").click(function() {
 
 					if ($(this).is(":checked")){

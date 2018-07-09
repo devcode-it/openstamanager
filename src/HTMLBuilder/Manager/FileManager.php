@@ -84,7 +84,7 @@ class FileManager implements ManagerInterface
             </td>
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
             <td class="text-center">
-                <a class="btn btn-sm btn-primary" href="'.ROOTDIR.'/actions.php?id_module='.$options['id_module'].'&op=download_file&id='.$r['id'].'&filename='.$r['filename'].'" target="_blank">
+                <a class="btn btn-xs btn-primary" href="'.ROOTDIR.'/actions.php?id_module='.$options['id_module'].'&op=download_file&id='.$r['id'].'&filename='.$r['filename'].'" target="_blank">
                     <i class="fa fa-download"></i>
                 </a>';
 
@@ -107,19 +107,19 @@ class FileManager implements ManagerInterface
                 </div>';
 
                         $result .= '
-                <button class="btn btn-sm btn-info" data-target="#bs-popup2"  type="button" data-title="'.prepareToField($r['nome']).' <small><em>('.$r['filename'].')</em></small>" data-href="#view-'.$r['id'].'">
+                <button class="btn btn-xs btn-info" data-target="#bs-popup2"  type="button" data-title="'.prepareToField($r['nome']).' <small><em>('.$r['filename'].')</em></small>" data-href="#view-'.$r['id'].'">
                     <i class="fa fa-eye"></i>
                 </button>';
                     } else {
                         $result .= '
-                <button class="btn btn-sm btn-default" title="'.tr('Anteprima file non disponibile').'." onclick="alert(\''.tr('Anteprima file di tipo "'.$extension.'" non supportata.').'\');">
+                <button class="btn btn-xs btn-default" title="'.tr('Anteprima file non disponibile').'." onclick="alert(\''.tr('Anteprima file di tipo "'.$extension.'" non supportata.').'\');">
                     <i class="fa fa-eye"></i>
                 </button>';
                     }
 
                     if (!$options['readonly']) {
                         $result .= '
-                <a class="btn btn-sm btn-danger ask" data-backto="record-edit" data-msg="'.tr('Vuoi eliminare questo file?').'" data-op="unlink_file" data-id="'.$r['id'].'" data-filename="'.$r['filename'].'">
+                <a class="btn btn-xs btn-danger ask" data-backto="record-edit" data-msg="'.tr('Vuoi eliminare questo file?').'" data-op="unlink_file" data-id="'.$r['id'].'" data-filename="'.$r['filename'].'">
                     <i class="fa fa-trash"></i>
                 </a>';
                     }

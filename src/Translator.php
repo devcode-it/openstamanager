@@ -127,7 +127,7 @@ class Translator extends Util\Singleton
                 ] : $formatter['number']
             );
 
-            self::$formatter->setPrecision(Settings::get('Cifre decimali per importi'));
+            self::$formatter->setPrecision(auth()->check() ? setting('Cifre decimali per importi') : 2);
         }
     }
 
@@ -214,7 +214,7 @@ class Translator extends Util\Singleton
         $string = !isset($string) ? 0 : $string;
 
         if (!empty($decimals) && is_string($decimals)) {
-            $decimals = ($decimals == 'qta') ? \Settings::get('Cifre decimali per quantità') : null;
+            $decimals = ($decimals == 'qta') ? setting('Cifre decimali per quantità') : null;
         }
 
         return self::getFormatter()->formatNumber($string, $decimals);

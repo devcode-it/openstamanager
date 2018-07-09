@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 $fornitore = in_array($id_fornitore, $tipi_anagrafica);
 $cliente = in_array($id_cliente, $tipi_anagrafica);
 
-$google = Settings::get('Google Maps API key');
+$google = setting('Google Maps API key');
 
 if (!empty($google)) {
     echo '
@@ -414,7 +414,7 @@ if (!empty($google)) {
 } else {
     echo '
             <div class="alert alert-info">
-                '.Modules::link('Impostazioni', $dbo->fetchArray("SELECT `idimpostazione` FROM `zz_settings` WHERE sezione='Generali'")[0]['idimpostazione'], tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni')).'.
+                '.Modules::link('Impostazioni', $dbo->fetchOne("SELECT `id` FROM `zz_settings` WHERE sezione='Generali'")['id'], tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni')).'.
             </div>';
 }
 
@@ -428,7 +428,7 @@ if (!empty($google)) {
 
 <?php
 
-if (Settings::get('Azienda predefinita') == $id_record) {
+if (setting('Azienda predefinita') == $id_record) {
     echo '
 <div class="alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un file con nome "Logo stampe"').'.</div>';
 }

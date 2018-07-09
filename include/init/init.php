@@ -10,9 +10,25 @@ $has_azienda = $dbo->fetchNum("SELECT `an_anagrafiche`.`idanagrafica` FROM `an_a
     LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
     LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
 WHERE `an_tipianagrafiche`.`descrizione` = 'Azienda' AND `an_anagrafiche`.`deleted` = 0") != 0;
+
 $has_user = $dbo->fetchNum('SELECT `id` FROM `zz_users`') != 0;
 
-if ($has_azienda && $has_user) {
+$settings = [
+    'Regime Fiscale',
+    'Tipo Cassa',
+    'Conto predefinito fatture di vendita',
+    'Conto predefinito fatture di acquisto',
+];
+
+$has_settings = true;
+foreach ($settings as $setting) {
+    if (empty(setting($setting))) {
+        $has_settings = false;
+        break;
+    }
+}
+
+if ($has_azienda && $has_user && $has_settings) {
     return;
 }
 
@@ -36,7 +52,7 @@ if (post('action') == 'init') {
                 'id_record' => $id_record,
             ]);
 
-            Settings::set('Logo stampe', $file);
+            Settings::setValue('Logo stampe', $file);
         }
     }
 
@@ -54,6 +70,14 @@ if (post('action') == 'init') {
             'idanagrafica' => isset($id_record) ? $id_record : 0,
             'enabled' => 1,
         ]);
+    }
+
+    if (!$has_settings) {
+        foreach ($settings as $setting) {
+            $setting = Settings::get($setting);
+
+            Settings::setValue($setting['nome'], post($setting['id']));
+        }
     }
 
     redirect(ROOTDIR, 'js');
@@ -137,6 +161,28 @@ if (!$has_azienda) {
 
                         </div>
                     </div>';
+
+    echo '
+                </div>
+            </div>';
+}
+
+if (!$has_settings) {
+    echo '
+
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">'.tr('Impostazioni di base').'</h3>
+                </div>
+
+                <div class="panel-body">';
+
+    foreach ($settings as $setting) {
+        echo '
+                    <div class="col-md-6">
+                        '.Settings::input($setting).'
+                    </div>';
+    }
 
     echo '
                 </div>

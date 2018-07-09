@@ -172,7 +172,7 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
         <div class="col-md-5 text-right">
             <div class="btn-group" role="group">';
 
-    if (Settings::get('Abilita esportazione Excel e PDF')) {
+    if (setting('Abilita esportazione Excel e PDF')) {
         echo '
                 <div class="btn-group">
                     <button type="button" class="btn btn-primary table-btn btn-csv disabled" disabled>'.tr('Esporta').'</button>

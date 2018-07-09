@@ -160,7 +160,7 @@ function get_costi_intervento($id_intervento)
 {
     $dbo = Database::getConnection();
 
-    $decimals = Settings::get('Cifre decimali per importi');
+    $decimals = setting('Cifre decimali per importi');
 
     $idiva = setting('Iva predefinita');
     $rs_iva = $dbo->fetchArray('SELECT descrizione, percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva));

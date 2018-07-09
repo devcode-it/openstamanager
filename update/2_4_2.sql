@@ -164,8 +164,8 @@ INSERT INTO `fe_natura` (`codice`, `descrizione`) VALUES
 ('N7','IVA assolta in altro stato UE (vendite a distanza ex art. 40 c. 3 e 4 e art. 41 c. 1 lett. b,  DL 331/93; prestazione di servizi di telecomunicazioni, tele-radiodiffusione ed elettronici ex art. 7-sexies lett. f, g, art. 74-sexies DPR 633/72)');
 
 ALTER TABLE `co_iva` DROP `esente`, ADD `codice_natura_fe` varchar(4) NOT NULL;
-UPDATE `co_iva` SET `codice_natura_fe` = 'TD01' WHERE `descrizione` IN ('Fattura immediata di acquisto', 'Fattura immediata di vendita', 'Fattura differita di acquisto', 'Fattura differita di vendita', 'Fattura accompagnatoria di acquisto', 'Fattura accompagnatoria di vendita');
-ALTER TABLE `co_iva` ADD FOREIGN KEY (`codice_natura_fe`) REFERENCES `fe_natura`(`codice`) ON DELETE CASCADE;
+-- UPDATE `co_iva` SET `codice_natura_fe` = 'TD01' WHERE `descrizione` IN ('Fattura immediata di acquisto', 'Fattura immediata di vendita', 'Fattura differita di acquisto', 'Fattura differita di vendita', 'Fattura accompagnatoria di acquisto', 'Fattura accompagnatoria di vendita');
+-- ALTER TABLE `co_iva` ADD FOREIGN KEY (`codice_natura_fe`) REFERENCES `fe_natura`(`codice`) ON DELETE CASCADE;
 
 CREATE TABLE IF NOT EXISTS `fe_causali_pagamento_ritenuta` (
   `codice` varchar(4) NOT NULL,
@@ -203,3 +203,7 @@ età svizzere che possiedono i requisiti di cui all''art. 15, c. 2 dell’Accord
 ('Z', 'Titolo diverso dai precedenti');
 
 INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Causale ritenuta d''acconto', '', 'query=SELECT codice AS id, descrizione FROM fe_causali_pagamento_ritenuta', 1, 'Fatturazione', 0);
+
+-- Aggiornamento zz_settings
+ALTER TABLE `zz_settings` CHANGE `idimpostazione` `id` int(11) NOT NULL AUTO_INCREMENT;
+UPDATE `zz_views` SET `query` = REPLACE(`query`, 'idimpostazione', 'id');

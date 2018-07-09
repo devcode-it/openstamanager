@@ -52,7 +52,7 @@ class FatturaElettronica
         if (empty(self::$azienda)) {
             $database = \Database::getConnection();
 
-            self::$azienda = $database->fetchOne('SELECT *, (SELECT `iso2` FROM `an_nazioni` WHERE `an_nazioni`.`id` = `an_anagrafiche`.`id_nazione`) AS nazione FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare(\Settings::get('Azienda predefinita')));
+            self::$azienda = $database->fetchOne('SELECT *, (SELECT `iso2` FROM `an_nazioni` WHERE `an_nazioni`.`id` = `an_anagrafiche`.`id_nazione`) AS nazione FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare(setting('Azienda predefinita')));
         }
 
         return self::$azienda;
@@ -184,7 +184,7 @@ class FatturaElettronica
         if ($azienda) {
             // AlboProfessionale, ProvinciaAlbo, NumeroIscrizioneAlbo, DataIscrizioneAlbo
 
-            $result['RegimeFiscale'] = \Settings::get('Regime Fiscale');
+            $result['RegimeFiscale'] = setting('Regime Fiscale');
         }
 
         return $result;

@@ -33,5 +33,5 @@ function get_next_code($str, $qty = 1, $mask = '')
  */
 function get_var($nome, $sezione = null, $descrizione = false, $again = false)
 {
-    return \Settings::get($nome, $descrizione, $again);
+    return setting($nome, $again);
 }

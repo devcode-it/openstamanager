@@ -4,7 +4,7 @@ switch ($resource) {
     case 'updates':
         $custom_where = !empty($updated) ? ' WHERE updated_at >= '.prepare($updated) : '';
 
-        $excluded = explode(',', Settings::get('Tabelle escluse per la sincronizzazione API automatica'));
+        $excluded = explode(',', setting('Tabelle escluse per la sincronizzazione API automatica'));
 
         // Attenzione: query specifica per MySQL
         $datas = $dbo->fetchArray("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA=".prepare($db_name));
@@ -19,7 +19,7 @@ switch ($resource) {
 
     // Attualmente vengono considerate solo le tabelle che eseguono l'eliminazione fisica della riga
     case 'deleted':
-        $excluded = explode(',', Settings::get('Tabelle escluse per la sincronizzazione API automatica'));
+        $excluded = explode(',', setting('Tabelle escluse per la sincronizzazione API automatica'));
 
         // Attenzione: query specifica per MySQL
         $datas = $dbo->fetchArray("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA=".prepare($db_name));

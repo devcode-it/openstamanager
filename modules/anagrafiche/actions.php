@@ -189,7 +189,7 @@ switch (post('op')) {
         $dbo->sync('an_tipianagrafiche_anagrafiche', ['idanagrafica' => $new_id], ['idtipoanagrafica' => (array) $idtipoanagrafica]);
 
         if (in_array($id_azienda, $idtipoanagrafica)) {
-            Settings::set('Azienda predefinita', $new_id);
+            Settings::setValue('Azienda predefinita', $new_id);
 
             App::flash()->info(tr('Anagrafica Azienda impostata come predefinita. Per ulteriori informazionioni, visitare "Strumenti -> Impostazioni -> Generali".'));
         }
@@ -274,7 +274,7 @@ switch (post('op')) {
 if (filter('op') == 'link_file') {
     $nome = 'Logo stampe';
 
-    if (Settings::get('Azienda predefinita') == $id_record && filter('nome_allegato') == $nome) {
-        Settings::set($nome, $upload);
+    if (setting('Azienda predefinita') == $id_record && filter('nome_allegato') == $nome) {
+        Settings::setValue($nome, $upload);
     }
 }

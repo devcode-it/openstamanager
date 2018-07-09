@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$google = Settings::get('Google Maps API key');
+$google = setting('Google Maps API key');
 
 /*
 if (!empty($google)) {
@@ -128,7 +128,7 @@ if (!empty($google)) {
 } else {
     echo '
     <div class="alert alert-info">
-        '.Modules::link('Impostazioni', $dbo->fetchArray("SELECT `idimpostazione` FROM `zz_settings` WHERE sezione='Generali'")[0]['idimpostazione'], tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni')).'.
+        '.Modules::link('Impostazioni', $dbo->fetchOne("SELECT `id` FROM `zz_settings` WHERE sezione='Generali'")['id'], tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni')).'.
     </div>';
 }
 

@@ -95,7 +95,7 @@ class API extends \Util\Singleton
 
         // Paginazione automatica dell'API
         $page = isset($request['page']) ? (int) $request['page'] : 0;
-        $length = Settings::get('Lunghezza pagine per API');
+        $length = setting('Lunghezza pagine per API');
 
         $database = Database::getConnection();
 
@@ -110,7 +110,7 @@ class API extends \Util\Singleton
             $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
             include $filename;
         } elseif (
-            !in_array($resource, explode(',', Settings::get('Tabelle escluse per la sincronizzazione API automatica')))
+            !in_array($resource, explode(',', setting('Tabelle escluse per la sincronizzazione API automatica')))
             && $database->tableExists($resource)
         ) {
             $table = $resource;

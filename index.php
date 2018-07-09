@@ -163,7 +163,7 @@ echo '/> '.tr('Mantieni attiva la sessione').'
             $(document).ready( function(){
                 $("#login").click(function(){
                     $("#login").text("';
-    if ($dbo->isInstalled() && setting('Backup automatico')) {
+    if ($dbo->isInstalled() && !Update::isUpdateAvailable() && setting('Backup automatico')) {
         echo tr('Backup automatico in corso');
     } else {
         echo tr('Autenticazione');

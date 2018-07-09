@@ -121,12 +121,12 @@ if (Auth::check()) {
 		</script>';
 } else {
     echo '
-<script>
-    globals = {
-        locale: \''.$lang.'\',
-        full_locale: \''.$lang.'_'.strtoupper($lang).'\',
-    };
-</script>';
+        <script>
+            globals = {
+                locale: \''.$lang.'\',
+                full_locale: \''.$lang.'_'.strtoupper($lang).'\',
+            };
+        </script>';
 }
 
 // JS
@@ -167,7 +167,7 @@ if (Auth::check()) {
         echo $debugbarRenderer->renderHead();
     }
 
-    if (Settings::get('Abilita esportazione Excel e PDF')) {
+    if (setting('Abilita esportazione Excel e PDF')) {
         echo '
         <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
@@ -175,7 +175,7 @@ if (Auth::check()) {
     }
 }
 
-$hide_sidebar = setting('Nascondere la barra sinistra di default');
+$hide_sidebar = Auth::check() && setting('Nascondere la barra sinistra di default');
 echo '
 
     </head>

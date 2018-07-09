@@ -323,7 +323,7 @@ class Auth extends \Util\Singleton
             if (!empty($results)) {
                 $module = null;
 
-                $first = Settings::get('Prima pagina');
+                $first = setting('Prima pagina');
                 if (!in_array($first, array_column($results, 'id'))) {
                     $module = $results[0]['id'];
                 } else {

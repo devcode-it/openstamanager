@@ -280,7 +280,7 @@ class Backup
      */
     public static function cleanup()
     {
-        $max_backups = intval(Settings::get('Numero di backup da mantenere'));
+        $max_backups = intval(setting('Numero di backup da mantenere'));
 
         $backups = self::getList();
         $count = count($backups);

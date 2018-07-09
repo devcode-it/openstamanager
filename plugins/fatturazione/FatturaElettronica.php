@@ -20,8 +20,6 @@ class FatturaElettronica
     protected $cliente = [];
     /** @var array Informazioni sul documento */
     protected $documento = [];
-    /** @var array Informazioni sulle righe del documento */
-    protected $righe_documento = [];
 
     /** @var array Stato di validazione interna dell'XML della fattura */
     protected $is_valid = null;
@@ -81,22 +79,6 @@ class FatturaElettronica
     public function getDocumento()
     {
         return $this->documento;
-    }
-
-    /**
-     * Restituisce le informazioni relative alle righe del documento.
-     *
-     * @return array
-     */
-    public function getRigheDocumento()
-    {
-        if (empty($this->righe_documento)) {
-            $database = \Database::getConnection();
-
-            $this->righe_documento = $database->select('co_righe_documenti', '*', ['iddocumento' => $this->getDocumento()['idanagrafica']]);
-        }
-
-        return $this->righe_documento;
     }
 
     /**
@@ -314,13 +296,14 @@ class FatturaElettronica
      *
      * @return array
      */
-    protected static function getDatiBeniServizi($documento, $righe_documento)
+    protected static function getDatiBeniServizi($documento)
     {
         $database = \Database::getConnection();
 
         $result = [];
 
         // Righe del documento
+        $righe_documento = $database->select('co_righe_documenti', '*', ['iddocumento' => $documento['id']]);
         foreach ($righe_documento as $numero => $riga) {
             $prezzo_unitario = $riga['subtotale'] / $riga['qta'];
             $prezzo_totale = $riga['subtotale'] - $riga['sconto'];
@@ -420,11 +403,10 @@ class FatturaElettronica
     protected static function getBody($fattura)
     {
         $documento = $fattura->getDocumento();
-        $righe_documento = $fattura->getRigheDocumento();
 
         $result = [
             'DatiGenerali' => self::getDatiDocumento($documento),
-            'DatiBeniServizi' => self::getDatiBeniServizi($documento, $righe_documento),
+            'DatiBeniServizi' => self::getDatiBeniServizi($documento),
             'DatiPagamento' => self::getDatiPagamento($documento),
         ];
 

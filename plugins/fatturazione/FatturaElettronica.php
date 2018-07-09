@@ -508,22 +508,22 @@ class FatturaElettronica
      */
     public function getFilename()
     {
-        if (empty($this->documento['codice_xml'])) {
-            $azienda = self::getAzienda();
-            $codice = 'IT'.(empty($azienda['piva']) ? $azienda['codice_fiscale'] : $azienda['piva']);
+        $azienda = self::getAzienda();
+        $codice = 'IT'.(empty($azienda['piva']) ? $azienda['codice_fiscale'] : $azienda['piva']);
 
+        if (empty($this->documento['codice_xml'])) {
             $database = \Database::getConnection();
 
             do {
-                $filename = $codice.'_'.date('y').secure_random_string(3);
-            } while ($database->fetchNum('SELECT `id` FROM `co_documenti` WHERE `codice_xml` = '.prepare($filename)));
+                $code = date('y').secure_random_string(3);
+            } while ($database->fetchNum('SELECT `id` FROM `co_documenti` WHERE `codice_xml` = '.prepare($code)) != 0);
 
             // Registrazione
-            $database->update('co_documenti', ['codice_xml' => $filename], ['id' => $this->getDocumento()['id']]);
-            $this->documento['codice_xml'] = $filename;
+            $database->update('co_documenti', ['codice_xml' => $code], ['id' => $this->getDocumento()['id']]);
+            $this->documento['codice_xml'] = $code;
         }
 
-        return $this->documento['codice_xml'].'.xml';
+        return $codice.'_'.$this->documento['codice_xml'].'.xml';
     }
 
     /**

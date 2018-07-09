@@ -27,6 +27,7 @@
         "danielstjules/stringy": "^3.1",
         "ezyang/htmlpurifier": "^4.8",
         "filp/whoops": "^2.1",
+        "guzzlehttp/guzzle": "^6.3",
         "ifsnop/mysqldump-php": "^2.3",
         "intervention/image": "^2.3",
         "league/csv": "^8.2",

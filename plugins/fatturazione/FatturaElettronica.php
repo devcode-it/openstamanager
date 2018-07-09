@@ -112,7 +112,7 @@ class FatturaElettronica
             ],
             'ProgressivoInvio' => $documento['numero_esterno'],
             'FormatoTrasmissione' => ($cliente['tipo'] == 'Ente pubblico') ? 'FPA12' : 'FPR12',
-            'CodiceDestinatario' => !empty($cliente['codice_pa']) ? $cliente['codice_pa'] : $default_code,
+            'CodiceDestinatario' => !empty($cliente['codice_destinatario']) ? $cliente['codice_destinatario'] : $default_code,
         ];
 
         // Telefono di contatto
@@ -126,7 +126,7 @@ class FatturaElettronica
         }
 
         // Inizializzazione PEC solo se necessario
-        if (empty($cliente['codice_pa'])) {
+        if (empty($cliente['codice_destinatario'])) {
             $result['PECDestinatario'] = $cliente['pec'];
         }
 
@@ -483,6 +483,29 @@ class FatturaElettronica
         }
 
         return $output;
+    }
+
+    public static function PA($codice_fiscale)
+    {
+        $id = setting('Authorization ID Indice PA');
+
+        if (empty($id)) {
+            return null;
+        }
+
+        // Localhost: ['curl' => [CURLOPT_SSL_VERIFYPEER => false]]
+        $client = new \GuzzleHttp\Client();
+
+        $response = $client->request('POST', 'https://www.indicepa.gov.it/public-ws/WS01_SFE_CF.php', [
+            'form_params' => [
+                'AUTH_ID' => $id,
+                'CF' => $codice_fiscale,
+            ],
+        ]);
+
+        $json = json_decode($response->getBody(), true);
+
+        return isset($json['data'][0]['OU'][0]['cod_uni_ou']) ? $json['data'][0]['OU'][0]['cod_uni_ou'] : null;
     }
 
     /**

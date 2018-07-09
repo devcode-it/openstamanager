@@ -102,6 +102,8 @@ class FatturaElettronica
      */
     protected static function getDatiTrasmissione($documento, $azienda, $cliente)
     {
+        $default_code = ($cliente['tipo'] == 'Ente pubblico') ? '999999999' : '0000000';
+
         // Generazione dell'header
         $result = [
             'IdTrasmittente' => [
@@ -110,7 +112,7 @@ class FatturaElettronica
             ],
             'ProgressivoInvio' => $documento['numero_esterno'],
             'FormatoTrasmissione' => ($cliente['tipo'] == 'Ente pubblico') ? 'FPA12' : 'FPR12',
-            'CodiceDestinatario' => !empty($cliente['codice_pa']) ? $cliente['codice_pa'] : '0000000',
+            'CodiceDestinatario' => !empty($cliente['codice_pa']) ? $cliente['codice_pa'] : $default_code,
         ];
 
         // Telefono di contatto
@@ -539,7 +541,7 @@ class FatturaElettronica
             $cliente = $this->getCliente();
 
             // Inizializzazione libreria per la generazione della fattura in XML
-            $fattura = new FluidXml(null);
+            $fattura = new FluidXml(null, ['stylesheet' => 'http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2.1/fatturaPA_v1.2.1.xsl']);
 
             // Generazione dell'elemento root
             $fattura->namespace('p', 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2');

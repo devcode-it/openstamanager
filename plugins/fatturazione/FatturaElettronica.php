@@ -102,7 +102,7 @@ class FatturaElettronica
      */
     protected static function getDatiTrasmissione($documento, $azienda, $cliente)
     {
-        $default_code = ($cliente['tipo'] == 'Ente pubblico') ? '999999999' : '0000000';
+        $default_code = ($cliente['tipo'] == 'Ente pubblico') ? '999999' : '0000000';
 
         // Generazione dell'header
         $result = [

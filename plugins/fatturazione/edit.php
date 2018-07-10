@@ -55,7 +55,7 @@ $fields = [
 
 $missing = [];
 foreach ($fields as $key => $name) {
-    if (empty($azienda[$key])) {
+    if (empty($cliente[$key])) {
         $missing[] = $name;
     }
 }

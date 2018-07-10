@@ -28,7 +28,7 @@ class FatturaElettronica
 
     public function __construct($id_documento)
     {
-        $database = \Database::getConnection();
+        $database = database();
 
         // Documento
         $this->documento = $database->fetchOne('SELECT *, (SELECT `codice_tipo_documento_fe` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`) AS `tipo_documento`, (SELECT `descrizione` FROM `co_statidocumento` WHERE `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`) AS `stato` FROM `co_documenti` WHERE `id` = '.prepare($id_documento));
@@ -46,13 +46,13 @@ class FatturaElettronica
      */
     public static function getAzienda()
     {
-        if (empty(self::$azienda)) {
-            $database = \Database::getConnection();
+        if (empty(static::$azienda)) {
+            $database = database();
 
-            self::$azienda = $database->fetchOne('SELECT *, (SELECT `iso2` FROM `an_nazioni` WHERE `an_nazioni`.`id` = `an_anagrafiche`.`id_nazione`) AS nazione FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare(setting('Azienda predefinita')));
+            static::$azienda = $database->fetchOne('SELECT *, (SELECT `iso2` FROM `an_nazioni` WHERE `an_nazioni`.`id` = `an_anagrafiche`.`id_nazione`) AS nazione FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare(setting('Azienda predefinita')));
         }
 
-        return self::$azienda;
+        return static::$azienda;
     }
 
     /**
@@ -63,7 +63,7 @@ class FatturaElettronica
     public function getCliente()
     {
         if (empty($this->cliente)) {
-            $database = \Database::getConnection();
+            $database = database();
 
             $this->cliente = $database->fetchOne('SELECT *, (SELECT `iso2` FROM `an_nazioni` WHERE `an_nazioni`.`id` = `an_anagrafiche`.`id_nazione`) AS nazione FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare($this->getDocumento()['idanagrafica']));
         }
@@ -204,8 +204,8 @@ class FatturaElettronica
     protected static function getCedentePrestatore($azienda)
     {
         $result = [
-            'DatiAnagrafici' => self::getDatiAnagrafici($azienda, true),
-            'Sede' => self::getSede($azienda),
+            'DatiAnagrafici' => static::getDatiAnagrafici($azienda, true),
+            'Sede' => static::getSede($azienda),
             // TODO: StabileOrganizzazione,
         ];
 
@@ -253,8 +253,8 @@ class FatturaElettronica
     protected static function getCessionarioCommittente($cliente)
     {
         $result = [
-            'DatiAnagrafici' => self::getDatiAnagrafici($cliente),
-            'Sede' => self::getSede($cliente),
+            'DatiAnagrafici' => static::getDatiAnagrafici($cliente),
+            'Sede' => static::getSede($cliente),
             // TODO: StabileOrganizzazione, RappresentanteFiscale
         ];
 
@@ -287,7 +287,7 @@ class FatturaElettronica
     protected static function getDatiDocumento($documento)
     {
         $result = [
-            'DatiGeneraliDocumento' => self::getDatiGeneraliDocumento($documento),
+            'DatiGeneraliDocumento' => static::getDatiGeneraliDocumento($documento),
         ];
 
         return $result;
@@ -300,12 +300,12 @@ class FatturaElettronica
      */
     protected static function getDatiBeniServizi($documento)
     {
-        $database = \Database::getConnection();
+        $database = database();
 
         $result = [];
 
         // Righe del documento
-        $righe_documento = $database->select('co_righe_documenti', '*', ['iddocumento' => $documento['id']]);
+        $righe_documento = $database->fetchArray('SELECT * FROM `co_righe_documenti` WHERE `iddocumento` = '.prepare($documento['id']));
         foreach ($righe_documento as $numero => $riga) {
             $prezzo_unitario = $riga['subtotale'] / $riga['qta'];
             $prezzo_totale = $riga['subtotale'] - $riga['sconto'];
@@ -369,7 +369,7 @@ class FatturaElettronica
      */
     protected static function getDatiPagamento($documento)
     {
-        $database = \Database::getConnection();
+        $database = database();
 
         $pagamento = $database->fetchOne('SELECT * FROM `co_pagamenti` WHERE `id` = '.prepare($documento['idpagamento']));
 
@@ -398,14 +398,14 @@ class FatturaElettronica
      */
     protected static function getHeader($fattura)
     {
-        $azienda = self::getAzienda();
+        $azienda = static::getAzienda();
         $documento = $fattura->getDocumento();
         $cliente = $fattura->getCliente();
 
         $result = [
-            'DatiTrasmissione' => self::getDatiTrasmissione($documento, $azienda, $cliente),
-            'CedentePrestatore' => self::getCedentePrestatore($azienda),
-            'CessionarioCommittente' => self::getCessionarioCommittente($cliente),
+            'DatiTrasmissione' => static::getDatiTrasmissione($documento, $azienda, $cliente),
+            'CedentePrestatore' => static::getCedentePrestatore($azienda),
+            'CessionarioCommittente' => static::getCessionarioCommittente($cliente),
         ];
 
         return $result;
@@ -421,9 +421,9 @@ class FatturaElettronica
         $documento = $fattura->getDocumento();
 
         $result = [
-            'DatiGenerali' => self::getDatiDocumento($documento),
-            'DatiBeniServizi' => self::getDatiBeniServizi($documento),
-            'DatiPagamento' => self::getDatiPagamento($documento),
+            'DatiGenerali' => static::getDatiDocumento($documento),
+            'DatiBeniServizi' => static::getDatiBeniServizi($documento),
+            'DatiPagamento' => static::getDatiPagamento($documento),
         ];
 
         return $result;
@@ -446,7 +446,7 @@ class FatturaElettronica
                 $output[$key] = $this->prepareForXML($value, $key);
             }
         } elseif (!is_null($input)) {
-            $info = self::$validators[$key];
+            $info = static::$validators[$key];
             $size = isset($info['size']) ? $info['size'] : null;
 
             $output = $input;
@@ -521,9 +521,22 @@ class FatturaElettronica
         $filename = $this->getFilename();
 
         // Salvataggio del file
-        $result = directory($directory) && file_put_contents(rtrim($directory, '/').'/'.$filename, $this->__toString());
+        $file = rtrim($directory, '/').'/'.$filename;
+        $result = directory($directory) && file_put_contents($file, $this->__toString());
 
         // Registrazione come allegato
+        $this->register($filename);
+
+        return ($result === false) ? null : $filename;
+    }
+
+    /**
+     * Registra il file XML come allegato.
+     *
+     * @param string $filename
+     */
+    public function register($filename)
+    {
         $data = [
             'original' => $filename,
             'category' => tr('Fattura elettronica'),
@@ -538,8 +551,6 @@ class FatturaElettronica
         if (!$registered) {
             \Uploads::register($data);
         }
-
-        return ($result === false) ? null : $filename;
     }
 
     /**
@@ -549,11 +560,11 @@ class FatturaElettronica
      */
     public function getFilename()
     {
-        $azienda = self::getAzienda();
+        $azienda = static::getAzienda();
         $codice = 'IT'.(empty($azienda['piva']) ? $azienda['codice_fiscale'] : $azienda['piva']);
 
         if (empty($this->documento['codice_xml'])) {
-            $database = \Database::getConnection();
+            $database = database();
 
             do {
                 $code = date('y').secure_random_string(3);
@@ -599,9 +610,9 @@ class FatturaElettronica
             }
 
             // Generazione della fattura elettronica
-            $xml = self::prepareForXML([
-                'FatturaElettronicaHeader' => self::getHeader($this),
-                'FatturaElettronicaBody' => self::getBody($this),
+            $xml = static::prepareForXML([
+                'FatturaElettronicaHeader' => static::getHeader($this),
+                'FatturaElettronicaBody' => static::getBody($this),
             ]);
             $fattura->add($xml);
 

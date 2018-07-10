@@ -35,8 +35,13 @@ if (empty($smtp['port'])) {
 }
 
 if (sizeof($campi_mancanti) > 0) {
-    echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere all'invio completa: <b>".implode(', ', $campi_mancanti).'</b><br/>
-	'.Modules::link('Account email', $smtp['id'], tr('Vai alla scheda account email'), null).'</div>';
+    echo '
+<div class="alert alert-warning">
+    <i class="fa fa-warning"></i> '.tr("Prima di procedere all'invio completa: _VALUES_", [
+            '_VALUES_' => '<b>'.implode(', ', $campi_mancanti).'</b>',
+    ]).'<br/>
+    '.Modules::link('Account email', $smtp['id'], tr('Vai alla scheda account email'), null).'
+</div>';
 }
 
 // Form

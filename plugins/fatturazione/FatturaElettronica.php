@@ -591,7 +591,8 @@ class FatturaElettronica
             $cliente = $this->getCliente();
 
             // Inizializzazione libreria per la generazione della fattura in XML
-            $fattura = new FluidXml(null, ['stylesheet' => 'http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2.1/fatturaPA_v1.2.1.xsl']);
+            //, ['stylesheet' => 'http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2.1/fatturaPA_v1.2.1.xsl']
+            $fattura = new FluidXml(null);
 
             // Generazione dell'elemento root
             $fattura->namespace('p', 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2');

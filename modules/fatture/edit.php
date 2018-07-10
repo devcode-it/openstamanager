@@ -399,6 +399,28 @@ if (!empty($note_accredito)) {
 }
 
 ?>
+
+<?php
+	//Visualizzo il log delle operazioni di invio email
+	$rs_operations =  $dbo->fetchArray('SELECT DATE_FORMAT(created_at,"%d/%m/%Y") AS data , DATE_FORMAT(created_at,"%H:%i") AS ora, (SELECT name FROM zz_emails WHERE id = id_email) AS tipo_email, (SELECT username FROM zz_users WHERE id = id_utente) AS user  FROM zz_operations WHERE id_record = '.prepare($id_record).' AND op = "send-email" ORDER BY created_at DESC');
+	
+	//Se la mail è stata inviata, mostro la data
+	if( count($rs_operations)>0 ){
+		foreach ($rs_operations as $operation){
+			echo "
+                <span class='label label-success pull-right'>".tr('_TIPO_ inviata il _DATA_ alle _ORA_ da _USER_.', [
+                    '_TIPO_' => $operation['tipo_email'],
+                    '_DATA_' => $operation['data'],
+					'_ORA_' => $operation['ora'],
+					'_USER_' => $operation['user'],
+                ]).'</span><br>';
+				
+		}
+	}else{
+		echo "<span class='label label-warning pull-right'>".tr("nessuna email inviata al cliente.")."</span>\n";
+	}
+	
+?>
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>

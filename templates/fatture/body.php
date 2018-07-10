@@ -162,11 +162,11 @@ foreach ($righe as $r) {
                 '.(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] - $r['sconto'])).' &euro;';
 
         if ($r['sconto'] > 0) {
-            echo "
+            /*echo "
                 <br><small class='text-muted'>".tr('sconto _TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($r['sconto']),
                     '_TYPE_' => '&euro;',
-                ]).'</small>';
+                ]).'</small>';*/
 
             if ($count <= 1) {
                 $count += 0.4;

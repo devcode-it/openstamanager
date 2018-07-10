@@ -16,9 +16,9 @@ echo '
             <th>'.tr('Descrizione').'</th>
             <th width="120">'.tr('Q.tà').'</th>
             <th width="80">'.tr('U.m.').'</th>
-            <th width="120">'.tr('Costo unitario').'</th>
+            <th width="120">'.tr('Prezzo unitario').'</th>
             <th width="120">'.tr('Iva').'</th>
-            <th width="120">'.tr('Imponibile').'</th>
+            <th width="120">'.tr('Importo').'</th>
             <th width="60"></th>
         </tr>
     </thead>
@@ -143,7 +143,7 @@ if (!empty($rs)) {
         echo '
         </td>';
 
-        // Costo unitario
+        // Prezzo unitario
         echo '
         <td class="text-right">';
 
@@ -170,14 +170,13 @@ if (!empty($rs)) {
         if (empty($r['is_descrizione'])) {
             echo '
             '.Translator::numberToLocale($r['iva']).' &euro;
-            <br><small class="help-block">'.$r['desc_iva'].'</small>
-            <small>'.$r['iva'].'</small>';
+            <br><small class="help-block">'.$r['desc_iva'].'</small>';
         }
 
         echo '
         </td>';
 
-        // Imponibile
+        // Importo
         echo '
         <td class="text-right">';
         if (empty($r['is_descrizione'])) {

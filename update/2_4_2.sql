@@ -226,7 +226,7 @@ CREATE TABLE IF NOT EXISTS `zz_operations` (
   `id_module` int(11) NOT NULL,
   `id_plugin` int(11),
   `id_email` int(11),
-  `id_record` int(11) NOT NULL,
+  `id_record` int(11),
   `id_utente` int(11) NOT NULL,
   `op` varchar(255) NOT NULL,
   `options` text,

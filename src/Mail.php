@@ -165,6 +165,8 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     {
         parent::__construct($exceptions);
 
+        $this->CharSet = 'UTF-8';
+
         // Configurazione di base
         $config = self::get($account);
 

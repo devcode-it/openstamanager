@@ -14,6 +14,9 @@ switch ($op) {
         if ($dbo->isConnected() && $dbo->isInstalled() && Auth::getInstance()->attempt($username, $password)) {
             $_SESSION['keep_alive'] = (filter('keep_alive') != null);
 
+            // Rimozione log vecchi
+            $dbo->query('DELETE FROM `zz_operations` WHERE DATE_ADD(`created_at`, INTERVAL 30*24*60*60 SECOND) <= NOW()');
+
             // Auto backup del database giornaliero
             if (setting('Backup automatico')) {
                 $result = Backup::daily();

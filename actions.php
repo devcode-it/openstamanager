@@ -16,7 +16,7 @@ if (!empty($id_plugin)) {
     $permesso = $id_module;
 }
 
-$upload_dir = DOCROOT.'/files/'.basename($directory);
+$upload_dir = DOCROOT.'/'.Uploads::getDirectory($id_module, $id_plugin);
 
 $dbo->query('START TRANSACTION');
 
@@ -79,57 +79,13 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare(filter('filename')));
 
     download($upload_dir.'/'.$rs[0]['filename'], $rs[0]['original']);
-} elseif (filter('op') == 'send-email') {
+} elseif (post('op') == 'send-email') {
     $template = Mail::getTemplate($post['template']);
     $id_account = $template['id_smtp'];
 
-    // Elenco degli allegati
-    $attachments = [];
+    // Informazioni di log
+    Filter::set('get', 'id_email', $template['id']);
 
-    // Stampe
-    foreach ($post['prints'] as $print) {
-        $print = Prints::get($print);
-
-        // Utilizzo di una cartella particolare per il salvataggio temporaneo degli allegati
-        $filename = DOCROOT.'/files/attachments/'.$print['title'].' - '.$id_record.'.pdf';
-
-        Prints::render($print['id'], $id_record, $filename);
-
-        $attachments[] = [
-            'path' => $filename,
-            'name' => $print['title'].'.pdf',
-        ];
-    }
-
-    // Allegati del record
-    $selected = [];
-    if (!empty($post['attachments'])) {
-        $selected = $dbo->fetchArray('SELECT * FROM zz_files WHERE id IN ('.implode(',', $post['attachments']).') AND id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record));
-    }
-
-    foreach ($selected as $attachment) {
-        $attachments[] = [
-            'path' => $upload_dir.'/'.$attachment['filename'],
-            'name' => $attachment['nome'],
-        ];
-    }
-
-    // Allegati dell'Azienda predefinita
-    $anagrafiche = Modules::get('Anagrafiche');
-
-    $selected = [];
-    if (!empty($post['attachments'])) {
-        $selected = $dbo->fetchArray('SELECT * FROM zz_files WHERE id IN ('.implode(',', $post['attachments']).') AND id_module != '.prepare($id_module));
-    }
-
-    foreach ($selected as $attachment) {
-        $attachments[] = [
-            'path' => DOCROOT.'/files/'.$anagrafiche['directory'].'/'.$attachment['filename'],
-            'name' => $attachment['nome'],
-        ];
-    }
-
-    // Preparazione email
     $mail = new Mail($id_account);
 
     // Conferma di lettura
@@ -153,38 +109,13 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     }
 
     // Destinatari
-    foreach ($post['destinatari'] as $key => $destinatario) {
-        $type = $post['tipo_destinatari'][$key];
-
-        $pieces = explode('<', $destinatario);
-        $count = count($pieces);
-
-        $name = null;
-        if ($count > 1) {
-            $email = substr(end($pieces), 0, -1);
-            $name = substr($destinatario, 0, strpos($destinatario, '<'.$email));
-        } else {
-            $email = $destinatario;
-        }
-
-        if (!empty($email)) {
-            if ($type == 'a') {
-                $mail->AddAddress($email, $name);
-            } elseif ($type == 'cc') {
-                $mail->AddCC($email, $name);
-            } elseif ($type == 'bcc') {
-                $mail->AddBCC($email, $name);
-            }
-        }
-    }
+    $mail->addReceivers($post['destinatari'], $post['tipo_destinatari']);
 
     // Oggetto
     $mail->Subject = $post['subject'];
 
     // Allegati
-    foreach ($attachments as $attachment) {
-        $mail->AddAttachment($attachment['path'], $attachment['name']);
-    }
+    $mail->attach($post['prints'], $post['attachments']);
 
     // Contenuto
     $mail->Body = $post['body'];
@@ -195,9 +126,6 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     } else {
         App::flash()->info(tr('Email inviata correttamente!'));
     }
-
-    redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
-    exit();
 }
 
 if (Modules::getPermission($permesso) == 'r' || Modules::getPermission($permesso) == 'rw') {

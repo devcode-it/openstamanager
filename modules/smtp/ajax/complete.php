@@ -36,9 +36,13 @@ switch ($resource) {
         }
 
         // Email del cliente
-        $q = "SELECT DISTINCT(email), ragione_sociale, idanagrafica FROM an_anagrafiche WHERE email != '' ".$where.' ORDER BY idanagrafica';
+        $query = "SELECT DISTINCT(pec) AS email, ragione_sociale, idanagrafica FROM an_anagrafiche WHERE email != '' ".$where;
+        if (empty(get('type'))) {
+            $query .= " UNION SELECT DISTINCT(email), ragione_sociale, idanagrafica FROM an_anagrafiche WHERE email != '' ".$where;
+        }
+        $query .= ' ORDER BY idanagrafica';
 
-        $rs = $dbo->fetchArray($q);
+        $rs = $dbo->fetchArray($query);
         foreach ($rs as $r) {
             $results[] = [
                 'value' => $r['email'],

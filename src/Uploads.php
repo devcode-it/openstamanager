@@ -7,6 +7,229 @@
  */
 class Uploads
 {
+    /**
+     * Restisuice l'elenco degli allegati registrati per un determinato modulo/plugin e record.
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public static function get($data)
+    {
+        $database = Database::getConnection();
+
+        $uploads = $database->select('zz_files', '*', [
+            'id_module' => !empty($data['id_module']) ? $data['id_module'] : null,
+            'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
+            'id_record' => $data['id_record'],
+        ]);
+
+        return $uploads;
+    }
+
+    /**
+     * Restituisce il nome della cartella per l'upload degli allegati per un determinato modulo/plugin.
+     *
+     * @param string|int $id_module
+     * @param string|int $id_plugin
+     *
+     * @return string
+     */
+    public static function getDirectory($id_module, $id_plugin = null)
+    {
+        if (empty($id_plugin)) {
+            $directory = Modules::get($id_module)['directory'];
+        } else {
+            $info = Plugins::get($id_plugin);
+
+            if (!empty($info['script'])) {
+                $directory = self::fileInfo($info['script'])['filename'];
+            } else {
+                $directory = $info['directory'];
+            }
+        }
+
+        return 'files/'.$directory;
+    }
+
+    /**
+     * Effettua l'upload di un file nella cartella indicata.
+     *
+     * @param array  $source
+     * @param string $directory
+     * @param array  $data
+     * @param array  $options
+     *
+     * @return string
+     */
+    public static function upload($source, $data, $options = [])
+    {
+        $src = $source['tmp_name'];
+        $original = $source['name'];
+
+        $extension = strtolower(pathinfo($original)['extension']);
+        $ok = self::isSupportedType($extension);
+
+        $directory = DOCROOT.'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
+
+        do {
+            $filename = random_string().'.'.$extension;
+        } while (file_exists($directory.'/'.$filename));
+
+        // Creazione file fisico
+        if (!directory($directory) || !move_uploaded_file($src, $directory.'/'.$filename)) {
+            return null;
+        }
+
+        // Registrazione del file
+        $data['filename'] = $filename;
+        $data['original'] = $original;
+        self::register($data);
+
+        if (!empty($options['thumbnails'])) {
+            self::thumbnails($directory.'/'.$filename, $directory);
+        }
+
+        return $filename;
+    }
+
+    /**
+     * Registra nel database il file caricato con i dati richiesti.
+     *
+     * @param array $data
+     */
+    public static function register($data)
+    {
+        $database = Database::getConnection();
+
+        $database->insert('zz_files', [
+            'nome' => !empty($data['name']) ? $data['name'] : $data['original'],
+            'filename' => !empty($data['filename']) ? $data['filename'] : $data['original'],
+            'original' => $data['original'],
+            'category' => !empty($data['category']) ? $data['category'] : null,
+            'id_module' => !empty($data['id_module']) ? $data['id_module'] : null,
+            'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
+            'id_record' => $data['id_record'],
+        ]);
+    }
+
+    /**
+     * Controlla se l'estensione è supportata dal sistema di upload.
+     *
+     * @param string $extension
+     *
+     * @return bool
+     */
+    protected static function isSupportedType($extension)
+    {
+        return in_array($extension, array_keys(self::$allowed_types));
+    }
+
+    /**
+     * Genera le thumbnails per le immagini.
+     *
+     * @param string $filepath
+     * @param string $directory
+     */
+    protected static function thumbnails($filepath, $directory = null)
+    {
+        $fileinfo = self::fileInfo($filepath);
+        $directory = empty($directory) ? dirname($filepath) : $directory;
+
+        $driver = extension_loaded('gd') ? 'gd' : 'imagick';
+        Intervention\Image\ImageManagerStatic::configure(['driver' => $driver]);
+
+        $img = Intervention\Image\ImageManagerStatic::make($filepath);
+
+        $img->resize(600, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $img->save(slashes($directory.'/'.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension']));
+
+        $img->resize(250, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $img->save(slashes($directory.'/'.$fileinfo['filename'].'_thumb250.'.$fileinfo['extension']));
+
+        $img->resize(100, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $img->save(slashes($directory.'/'.$fileinfo['filename'].'_thumb100.'.$fileinfo['extension']));
+    }
+
+    /**
+     * Elimina l'allegato indicato.
+     *
+     * @param string $filename
+     * @param array  $data
+     *
+     * @return string Nome del file
+     */
+    public static function delete($filename, $data)
+    {
+        $database = Database::getConnection();
+
+        $name = $database->selectOne('zz_files', ['nome'], [
+            'filename' => $filename,
+            'id_module' => !empty($data['id_module']) ? $data['id_module'] : null,
+            'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
+            'id_record' => $data['id_record'],
+        ])['nome'];
+
+        $fileinfo = self::fileInfo($filename);
+        $directory = DOCROOT.'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
+
+        $files = [
+            $directory.'/'.$fileinfo['basename'],
+            $directory.'/'.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'],
+            $directory.'/'.$fileinfo['filename'].'_thumb100.'.$fileinfo['extension'],
+            $directory.'/'.$fileinfo['filename'].'_thumb250.'.$fileinfo['extension'],
+        ];
+
+        if (delete($files)) {
+            $database->delete('zz_files', [
+                'filename' => $fileinfo['basename'],
+                'id_module' => !empty($data['id_module']) ? $data['id_module'] : null,
+                'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
+                'id_record' => $data['id_record'],
+            ]);
+
+            return $name;
+        }
+
+        return null;
+    }
+
+    /**
+     * Rimuove tutti gli allegati di un determinato modulo/plugin e record.
+     *
+     * @param array $data
+     */
+    public static function deleteLinked($data)
+    {
+        $uploads = self::get($data);
+
+        foreach ($uploads as $upload) {
+            self::delete($upload['filename'], $data);
+        }
+    }
+
+    /**
+     * Restituisce le informazioni relative al file indicato.
+     *
+     * @param string $filepath
+     *
+     * @return array
+     */
+    public static function fileInfo($filepath)
+    {
+        $infos = pathinfo($filepath);
+        $infos['extension'] = strtolower($infos['extension']);
+
+        return $infos;
+    }
+
+    /** @var array Elenco delle tipologie di file permesse */
     protected static $allowed_types = [
         // Image formats
         'jpg' => 'image/jpeg',
@@ -119,168 +342,4 @@ class Uploads
         'wp' => 'application/wordperfect',
         'wpd' => 'application/wordperfect',
     ];
-
-    public static function getDirectory($id_module, $id_plugin = null)
-    {
-        if (empty($id_plugin)) {
-            $directory = Modules::get($id_module)['directory'];
-        } else {
-            $info = Plugins::get($id_plugin);
-
-            if (!empty($info['script'])) {
-                $directory = self::fileInfo($info['script'])['filename'];
-            } else {
-                $directory = $info['directory'];
-            }
-        }
-
-        return 'files/'.$directory;
-    }
-
-    /**
-     * Effettua l'upload di un file nella cartella indicata.
-     *
-     * @param array  $source
-     * @param string $directory
-     * @param array  $data
-     * @param array  $options
-     *
-     * @return string
-     */
-    public static function upload($source, $data, $options = [])
-    {
-        $src = $source['tmp_name'];
-        $original = $source['name'];
-
-        $extension = strtolower(pathinfo($original)['extension']);
-        $ok = self::isSupportedType($extension);
-
-        $directory = DOCROOT.'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
-
-        do {
-            $filename = random_string().'.'.$extension;
-        } while (file_exists($directory.'/'.$filename));
-
-        // Creazione file fisico
-        if (!directory($directory) || !move_uploaded_file($src, $directory.'/'.$filename)) {
-            return null;
-        }
-
-        $database = Database::getConnection();
-
-        // Registrazione del file
-        $database->insert('zz_files', [
-            'nome' => !empty($data['name']) ? $data['name'] : $original,
-            'filename' => $filename,
-            'original' => $original,
-            'category' => !empty($data['category']) ? $data['category'] : null,
-            'id_module' => !empty($data['id_module']) ? $data['id_module'] : null,
-            'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
-            'id_record' => $data['id_record'],
-        ]);
-
-        if (!empty($options['thumbnails'])) {
-            self::thumbnails($directory.'/'.$filename, $directory);
-        }
-
-        return $filename;
-    }
-
-    /**
-     * Controlla se l'estensione è supportata dal sistema di upload.
-     *
-     * @param string $extension
-     *
-     * @return bool
-     */
-    protected static function isSupportedType($extension)
-    {
-        return in_array($extension, array_keys(self::$allowed_types));
-    }
-
-    protected static function thumbnails($filepath, $directory = null)
-    {
-        $fileinfo = self::fileInfo($filepath);
-        $directory = empty($directory) ? dirname($filepath) : $directory;
-
-        $driver = extension_loaded('gd') ? 'gd' : 'imagick';
-        Intervention\Image\ImageManagerStatic::configure(['driver' => $driver]);
-
-        $img = Intervention\Image\ImageManagerStatic::make($filepath);
-
-        $img->resize(600, null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
-        $img->save(slashes($directory.'/'.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension']));
-
-        $img->resize(250, null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
-        $img->save(slashes($directory.'/'.$fileinfo['filename'].'_thumb250.'.$fileinfo['extension']));
-
-        $img->resize(100, null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
-        $img->save(slashes($directory.'/'.$fileinfo['filename'].'_thumb100.'.$fileinfo['extension']));
-    }
-
-    public static function delete($filename, $data)
-    {
-        $database = Database::getConnection();
-
-        $name = $database->selectOne('zz_files', ['nome'], [
-            'filename' => $filename,
-            'id_module' => !empty($data['id_module']) ? $data['id_module'] : null,
-            'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
-            'id_record' => $data['id_record'],
-        ])['nome'];
-
-        $fileinfo = self::fileInfo($filename);
-        $directory = DOCROOT.'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
-
-        $files = [
-            $directory.'/'.$fileinfo['basename'],
-            $directory.'/'.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'],
-            $directory.'/'.$fileinfo['filename'].'_thumb100.'.$fileinfo['extension'],
-            $directory.'/'.$fileinfo['filename'].'_thumb250.'.$fileinfo['extension'],
-        ];
-
-        if (delete($files)) {
-            $database->delete('zz_files', [
-                'filename' => $fileinfo['basename'],
-                'id_module' => !empty($data['id_module']) ? $data['id_module'] : null,
-                'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
-                'id_record' => $data['id_record'],
-            ]);
-
-            return $name;
-        }
-
-        return null;
-    }
-
-    public static function deleteLinked($data)
-    {
-        $database = Database::getConnection();
-
-        $uploads = $database->select('zz_files', ['filename'], [
-            'id_module' => !empty($data['id_module']) ? $data['id_module'] : null,
-            'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
-            'id_record' => $data['id_record'],
-        ]);
-
-        foreach ($uploads as $upload) {
-            self::delete($upload['filename'], $data);
-        }
-
-        return null;
-    }
-
-    public static function fileInfo($filepath)
-    {
-        $infos = pathinfo($filepath);
-        $infos['extension'] = strtolower($infos['extension']);
-
-        return $infos;
-    }
 }

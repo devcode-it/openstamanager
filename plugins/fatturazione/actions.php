@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+$upload_dir = DOCROOT.'/'.Uploads::getDirectory($id_module, $id_plugin);
+
 switch (filter('op')) {
     case 'generate':
         try {

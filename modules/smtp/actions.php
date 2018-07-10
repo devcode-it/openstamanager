@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'add':
-        $dbo->insert('zz_smtp', [
+        $dbo->insert('zz_smtps', [
             'name' => $post['name'],
             'from_name' => $post['from_name'],
             'from_address' => $post['from_address'],
@@ -17,7 +17,7 @@ switch (post('op')) {
         break;
 
     case 'update':
-        $dbo->update('zz_smtp', [
+        $dbo->update('zz_smtps', [
             'name' => $post['name'],
             'note' => $post['note'],
             'server' => $post['server'],
@@ -32,7 +32,7 @@ switch (post('op')) {
         ], ['id' => $id_record]);
 
         if (!empty($post['main'])) {
-            $dbo->query('UPDATE zz_smtp SET main = 0 WHERE id != '.prepare($id_record));
+            $dbo->query('UPDATE zz_smtps SET main = 0 WHERE id != '.prepare($id_record));
         }
 
         App::flash()->info(tr('Informazioni salvate correttamente!'));
@@ -75,7 +75,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->query('UPDATE zz_smtp SET deleted = 1 WHERE id='.prepare($id_record));
+        $dbo->query('UPDATE zz_smtps SET deleted = 1 WHERE id='.prepare($id_record));
 
         App::flash()->info(tr('Account email eliminato!'));
 

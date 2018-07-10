@@ -59,9 +59,6 @@ if (!API::isAPIRequest()) {
     $handlers[] = new StreamHandler($docroot.'/logs/error.log', Monolog\Logger::ERROR);
     $handlers[] = new StreamHandler($docroot.'/logs/setup.log', Monolog\Logger::EMERGENCY);
 
-    // Impostazione dei log estesi (per monitorare in modo completo le azioni degli utenti)
-    $handlers[] = new StreamHandler($docroot.'/logs/info.log', Monolog\Logger::INFO);
-
     // Impostazioni di debug
     if (!empty($debug)) {
         // Ignora gli avvertimenti e le informazioni relative alla deprecazione di componenti

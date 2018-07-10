@@ -435,11 +435,12 @@ function get_client_ip()
  */
 function translateTemplate()
 {
-    global $id_module;
-    global $id_record;
-    global $id_plugin;
-    global $id_parent;
-    global $operations_log;
+    $id_module = filter('id_module');
+    $id_plugin = filter('id_plugin');
+    $id_record = filter('id_record');
+
+    $id_email = filter('id_email');
+    $id_parent = filter('id_parent');
 
     $template = ob_get_clean();
 
@@ -448,19 +449,19 @@ function translateTemplate()
     $template = str_replace('$id_module$', $id_module, $template);
     $template = str_replace('$id_plugin$', $id_plugin, $template);
     $template = str_replace('$id_record$', $id_record, $template);
-    $template = str_replace('$id_parent$', $id_parent, $template);
 
-    // Completamento delle informazioni estese sulle azioni dell'utente
-    $infos = App::flash()->getMessage('info');
-    if (Auth::check() && !empty($operations_log) && !empty($infos)) {
-        $user = Auth::user();
-        $logger = Monolog\Registry::getInstance('logs');
+    // Informazioni estese sulle azioni dell'utente
+    if (Auth::check() && !empty(post('op'))) {
+        $database = \Database::getConnection();
 
-        foreach ($infos as $value) {
-            $logger->info($value.PHP_EOL.json_encode([
-                'user' => $user['username'],
-            ]));
-        }
+        $database->insert('zz_operations', [
+            'id_module' => $id_module,
+            'id_record' => $id_record,
+            'id_plugin' => !empty($id_plugin) ? $id_plugin : null,
+            'id_email' => !empty($id_email) ? $id_email : null,
+            'id_utente' => Auth::user()['id'],
+            'op' => post('op'),
+        ]);
     }
 
     // Compatibilità con le versioni precedenti

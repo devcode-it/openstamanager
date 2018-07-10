@@ -19,7 +19,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     protected $infos = [];
 
     /**
-     * Restituisce tutte le informazioni di tutti i plugin installati.
+     * Restituisce tutte le informazioni di tutti gli account email presenti.
      *
      * @return array
      */
@@ -28,7 +28,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
         if (empty(self::$accounts)) {
             $database = Database::getConnection();
 
-            $results = $database->fetchArray('SELECT * FROM zz_smtp WHERE deleted = 0');
+            $results = $database->fetchArray('SELECT * FROM zz_smtps WHERE deleted = 0');
 
             $accounts = [];
 
@@ -48,7 +48,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     }
 
     /**
-     * Restituisce le informazioni relative a un singolo modulo specificato.
+     * Restituisce le informazioni relative a un singolo account email specificato.
      *
      * @param string|int $template
      *
@@ -68,7 +68,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     }
 
     /**
-     * Restituisce tutte le informazioni di tutti i plugin installati.
+     * Restituisce tutte le informazioni di tutti i template presenti.
      *
      * @return array
      */
@@ -120,7 +120,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     }
 
     /**
-     * Restituisce le informazioni relative a un singolo template specificato.
+     * Restituisce le variabili relative a un singolo template specificato.
      *
      * @param string|int $template
      *
@@ -223,6 +223,109 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
         return $result;
     }
 
+    /**
+     * Aggiunge gli allegati all'email.
+     *
+     * @param array $prints
+     * @param array $files
+     */
+    public function attach($prints, $files)
+    {
+        $id_module = App::getCurrentModule()['id'];
+        $id_record = App::getCurrentElement();
+
+        // Elenco degli allegati
+        $attachments = [];
+
+        // Stampe
+        foreach ($prints as $print) {
+            $print = Prints::get($print);
+
+            // Utilizzo di una cartella particolare per il salvataggio temporaneo degli allegati
+            $filename = DOCROOT.'/files/attachments/'.$print['title'].' - '.$id_record.'.pdf';
+
+            Prints::render($print['id'], $id_record, $filename);
+
+            $attachments[] = [
+                'path' => $filename,
+                'name' => $print['title'].'.pdf',
+            ];
+        }
+
+        // Allegati del record
+        $selected = [];
+        if (!empty($files)) {
+            $selected = $dbo->fetchArray('SELECT * FROM zz_files WHERE id IN ('.implode(',', $files).') AND id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record));
+        }
+
+        foreach ($selected as $attachment) {
+            $attachments[] = [
+                'path' => $upload_dir.'/'.$attachment['filename'],
+                'name' => $attachment['nome'],
+            ];
+        }
+
+        // Allegati dell'Azienda predefinita
+        $anagrafiche = Modules::get('Anagrafiche');
+
+        $selected = [];
+        if (!empty($files)) {
+            $selected = $dbo->fetchArray('SELECT * FROM zz_files WHERE id IN ('.implode(',', $files).') AND id_module != '.prepare($id_module));
+        }
+
+        foreach ($selected as $attachment) {
+            $attachments[] = [
+                'path' => DOCROOT.'/files/'.$anagrafiche['directory'].'/'.$attachment['filename'],
+                'name' => $attachment['nome'],
+            ];
+        }
+
+        // Aggiunta allegati
+        foreach ($attachments as $attachment) {
+            $this->AddAttachment($attachment['path'], $attachment['name']);
+        }
+    }
+
+    /**
+     * Aggiunge i detinatari.
+     *
+     * @param array $receivers
+     * @param array $types
+     */
+    public function addReceivers($receivers, $types)
+    {
+        // Destinatari
+        foreach ($receivers as $key => $destinatario) {
+            $type = $types[$key];
+
+            $pieces = explode('<', $destinatario);
+            $count = count($pieces);
+
+            $name = null;
+            if ($count > 1) {
+                $email = substr(end($pieces), 0, -1);
+                $name = substr($destinatario, 0, strpos($destinatario, '<'.$email));
+            } else {
+                $email = $destinatario;
+            }
+
+            if (!empty($email)) {
+                if ($type == 'a') {
+                    $this->AddAddress($email, $name);
+                } elseif ($type == 'cc') {
+                    $this->AddCC($email, $name);
+                } elseif ($type == 'bcc') {
+                    $this->AddBCC($email, $name);
+                }
+            }
+        }
+    }
+
+    /**
+     * Effettua un test di connessione all'email SMTP.
+     *
+     * @return bool
+     */
     public function testSMTP()
     {
         if ($this->IsSMTP() && $this->smtpConnect()) {

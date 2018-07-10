@@ -523,6 +523,22 @@ class FatturaElettronica
         // Salvataggio del file
         $result = directory($directory) && file_put_contents(rtrim($directory, '/').'/'.$filename, $this->__toString());
 
+        // Registrazione come allegato
+        $data = [
+            'original' => $filename,
+            'category' => tr('Fattura elettronica'),
+            'id_module' => \Modules::get('Fatture di vendita')['id'],
+            'id_plugin' => \Plugins::get('Fatturazione Elettronica')['id'],
+            'id_record' => $this->getDocumento()['id'],
+        ];
+        $uploads = \Uploads::get($data);
+
+        $registered = in_array($filename, array_column($uploads, 'original'));
+
+        if (!$registered) {
+            \Uploads::register($data);
+        }
+
         return ($result === false) ? null : $filename;
     }
 

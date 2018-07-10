@@ -210,9 +210,30 @@ INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable
 
 ALTER TABLE `an_anagrafiche` ADD `codice_destinatario` varchar(7);
 
+INSERT INTO `zz_emails` (`id`, `id_module`, `id_smtp`, `name`, `icon`, `subject`, `reply_to`, `cc`, `bcc`, `body`, `read_notify`, `main`, `deleted`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 1, 'Fattura Elettronica', 'fa fa-file', 'Invio fattura numero {numero} del {data}', '', 'sdi01@pec.fatturapa.it', '', '<p>Gentile Cliente,</p>\r\n<p>inviamo in allegato la fattura numero {numero} del {data}.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0', '0', '0');
+INSERT INTO `zz_email_print` (`id`, `id_email`, `id_print`) VALUES (NULL, (SELECT `id` FROM `zz_emails` WHERE `name` = 'Fattura Elettronica' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita')), (SELECT `id` FROM `zz_prints` WHERE `name` = 'Fattura di vendita'));
+UPDATE `zz_emails` SET `main` = 1 WHERE `name` = 'Fattura' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+
 -- Aggiornamento zz_settings
 ALTER TABLE `zz_settings` CHANGE `idimpostazione` `id` int(11) NOT NULL AUTO_INCREMENT;
 UPDATE `zz_views` SET `query` = REPLACE(`query`, 'idimpostazione', 'id');
 
 -- Aggiunta conti in Articoli
 ALTER TABLE `mg_articoli` ADD `idconto_vendita` int(11), ADD `idconto_acquisto` int(11);
+
+-- Aggiunta log per invio email
+CREATE TABLE IF NOT EXISTS `zz_operations` (
+  `id_module` int(11) NOT NULL,
+  `id_plugin` int(11),
+  `id_email` int(11),
+  `id_record` int(11) NOT NULL,
+  `id_utente` int(11) NOT NULL,
+  `op` varchar(255) NOT NULL,
+  `options` text,
+  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_email`) REFERENCES `zz_emails`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+ALTER TABLE `zz_smtp` RENAME `zz_smtps`;

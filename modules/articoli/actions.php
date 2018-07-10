@@ -69,8 +69,8 @@ switch (post('op')) {
         }
 
         // Upload file
-        if (!empty($_FILES) && !empty($_FILES['immagine01']['name'])) {
-            $filename = Uploads::upload($_FILES['immagine01'], [
+        if (!empty($_FILES) && !empty($_FILES['immagine']['name'])) {
+            $filename = Uploads::upload($_FILES['immagine'], [
                 'name' => 'Immagine',
                 'id_module' => $id_module,
                 'id_record' => $id_record,
@@ -79,7 +79,11 @@ switch (post('op')) {
             ]);
 
             if (!empty($filename)) {
-                $dbo->query('UPDATE mg_articoli SET immagine01='.prepare($filename).' WHERE id='.prepare($id_record));
+                $dbo->update('mg_articoli', [
+                    'immagine' => $filename,
+                ], [
+                    'id' => $id_record,
+                ]);
             } else {
                 $_SESSION['warnings'][] = tr('Errore durante il caricamento del file in _DIR_!', [
                     '_DIR_' => $upload_dir,
@@ -88,13 +92,17 @@ switch (post('op')) {
         }
 
         // Eliminazione file
-        if (post('delete_immagine01') !== null) {
-            Uploads::delete($records[0]['immagine01'], [
+        if (post('delete_immagine') !== null) {
+            Uploads::delete($records[0]['immagine'], [
                 'id_module' => $id_module,
                 'id_record' => $id_record,
             ]);
 
-            $dbo->query("UPDATE mg_articoli SET immagine01 = '' WHERE id=".prepare($id_record));
+            $dbo->update('mg_articoli', [
+                'immagine' => null,
+            ], [
+                'id' => $id_record,
+            ]);
         }
 
         $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
@@ -252,15 +260,15 @@ switch (post('op')) {
 }
 
 // Operazioni aggiuntive per l'immagine
-if (filter('op') == 'unlink_file' && filter('filename') == $records[0]['immagine01']) {
+if (filter('op') == 'unlink_file' && filter('filename') == $records[0]['immagine']) {
     $dbo->update('mg_articoli', [
-        'immagine01' => '',
+        'immagine' => null,
     ], [
         'id' => $id_record,
     ]);
 } elseif (filter('op') == 'link_file' && filter('nome_allegato') == 'Immagine') {
     $dbo->update('mg_articoli', [
-        'immagine01' => $upload,
+        'immagine' => $upload,
     ], [
         'id' => $id_record,
     ]);

@@ -237,3 +237,6 @@ CREATE TABLE IF NOT EXISTS `zz_operations` (
 ) ENGINE=InnoDB;
 
 ALTER TABLE `zz_smtp` RENAME `zz_smtps`;
+
+-- Aggiorno tabella zz_smtp in zz_smtps per il modulo Account email
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM zz_smtps WHERE 1=1 AND deleted = 0 HAVING 2=2 ORDER BY `name`' WHERE `zz_modules`.`name` = 'Account email';

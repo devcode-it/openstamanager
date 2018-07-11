@@ -248,8 +248,10 @@ echo '
 			$("#idtipointervento_").change(function(){
 					if (($(this).val()!="")){
 						$("#add_form .panel-primary .panel-primary").show(); 
+						$("#bs-popup .btn-primary").show();
 					}else{
 						$("#add_form .panel-primary .panel-primary").hide(); 
+						$("#bs-popup .btn-primary").hide();
 					}
 			});
 			

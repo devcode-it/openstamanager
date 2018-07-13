@@ -96,7 +96,9 @@ $default_footer = include $footer_file;
 $default_logo = App::filepath('templates/base|custom|/logo_azienda.jpg');
 
 // Logo generico
-$custom_logo = App::filepath('files/anagrafiche/'.setting('Logo stampe'));
+if (!empty(setting('Logo stampe'))) {
+    $custom_logo = App::filepath('files/anagrafiche/'.setting('Logo stampe'));
+}
 
 // Logo specifico della stampa
 $logo = Prints::filepath($id_print, 'logo_azienda.jpg');

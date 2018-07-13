@@ -54,14 +54,14 @@ echo '
 
     <p><b>'.tr('Mittente').'</b>: '.$smtp['from_name'].' &lt;'.$smtp['from_address'].'&gt;</p>';
 
-if (!empty($smtp['cc'])) {
+if (!empty($template['cc'])) {
     echo '
-    <p><b>'.tr('CC').'</b>: '.$smtp['cc'].'</p>';
+    <p><b>'.tr('CC').'</b>: '.$template['cc'].'</p>';
 }
 
-if (!empty($smtp['cc'])) {
+if (!empty($template['bcc'])) {
     echo '
-    <p><b>'.tr('CCN').'</b>: '.$smtp['bcc'].'</p>';
+    <p><b>'.tr('CCN').'</b>: '.$template['bcc'].'</p>';
 }
 
 echo '

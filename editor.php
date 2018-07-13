@@ -71,8 +71,17 @@ if (empty($records)) {
 					</a>
 				</li>';
 
+    // Tab per le informazioni sulle operazioni
+    if (Auth::admin()) {
+        echo '
+				<li>
+					<a data-toggle="tab" href="#tab_info" id="link-tab_info">'.tr('Info').'</a>
+				</li>';
+    }
+
     $plugins = $dbo->fetchArray('SELECT id, title FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab' AND enabled = 1 ORDER BY zz_plugins.order DESC");
 
+    // Tab dei plugin
     foreach ($plugins as $plugin) {
         echo '
 				<li>
@@ -207,6 +216,25 @@ if (empty($records)) {
                 });
                 </script>';
 
+    // Informazioni sulle operazioni
+    if (Auth::admin()) {
+        echo '
+                <div id="tab_info" class="tab-pane">
+                    <ul>';
+
+        $operations = $dbo->fetchArray('SELECT `zz_operations`.*, `zz_users`.`username` FROM `zz_operations` JOIN `zz_users` ON `zz_operations`.`id_utente` = `zz_users`.`id` WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record).' ORDER BY `created_at` DESC LIMIT 200');
+
+        foreach ($operations as $operation) {
+            echo '
+                        <li>'.$operation['username'].': '.$operation['op'].' - '.Translator::timestampToLocale($operation['created_at']).'</li>';
+        }
+
+        echo '
+                    </ul>
+				</div>';
+    }
+
+    // Plugin
     foreach ($plugins as $plugin) {
         echo '
 				<div id="tab_'.$plugin['id'].'" class="tab-pane">';

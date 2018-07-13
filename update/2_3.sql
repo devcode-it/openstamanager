@@ -10,7 +10,7 @@ ALTER TABLE `zz_gruppi_modules` RENAME `zz_group_module`;
 
 ALTER TABLE `zz_settings` CHANGE `valore` `valore` text NOT NULL;
 
--- Rinominazione del'attributo module_dir in directory
+-- Ridenominazione dell'attributo module_dir in directory
 ALTER TABLE `zz_modules` CHANGE `module_dir` `directory` varchar(50) NOT NULL, CHANGE `name2` `title` varchar(255) NOT NULL, DROP `type`, DROP `new`;
 UPDATE `zz_modules` SET `name` = REPLACE(`name`, '&agrave;', 'à'), `title` = REPLACE(`title`, '&agrave;', 'à');
 

@@ -53,8 +53,12 @@ switch (post('op')) {
 
         $sconto_unitario = $post['sconto'];
         $tipo_sconto = $post['tipo_sconto'];
-        $sconto = ($tipo_sconto == 'PRC') ? ($prezzo_vendita * $sconto_unitario) / 100 : $sconto_unitario;
-        $sconto = $sconto * $qta;
+        $sconto = calcola_sconto([
+            'sconto' => $sconto_unitario,
+            'prezzo' => $prezzo_vendita,
+            'tipo' => $tipo_sconto,
+            'qta' => $qta,
+        ]);
 
         $idcontratto_riga = $post['idcontratto_riga'];
 
@@ -133,8 +137,12 @@ switch (post('op')) {
 
         $sconto_unitario = $post['sconto'];
         $tipo_sconto = $post['tipo_sconto'];
-        $sconto = ($tipo_sconto == 'PRC') ? ($prezzo_vendita * $sconto_unitario) / 100 : $sconto_unitario;
-        $sconto = $sconto * $qta;
+        $sconto = calcola_sconto([
+            'sconto' => $sconto_unitario,
+            'prezzo' => $prezzo_vendita,
+            'tipo' => $tipo_sconto,
+            'qta' => $qta,
+        ]);
 
         //Calcolo iva
         $rs_iva = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare($idiva));
@@ -160,8 +168,12 @@ switch (post('op')) {
 
     $sconto_unitario = $post['sconto'];
     $tipo_sconto = $post['tipo_sconto'];
-    $sconto = ($tipo_sconto == 'PRC') ? ($prezzo_vendita * $sconto_unitario) / 100 : $sconto_unitario;
-    $sconto = $sconto * $qta;
+    $sconto = calcola_sconto([
+        'sconto' => $sconto_unitario,
+        'prezzo' => $prezzo_vendita,
+        'tipo' => $tipo_sconto,
+        'qta' => $qta,
+    ]);
 
     //Calcolo iva
     $rs_iva = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare($idiva));

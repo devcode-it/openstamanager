@@ -133,7 +133,11 @@ switch (post('op')) {
                 // Sconti
                 $sconto_unitario = post('sconto')[$idriga];
                 $tipo_sconto = post('tipo_sconto')[$idriga];
-                $sconto = ($tipo_sconto == 'PRC') ? ($prezzo_ore_consuntivo * $sconto_unitario) / 100 : $sconto_unitario;
+                $sconto = calcola_sconto([
+                    'sconto' => $sconto_unitario,
+                    'prezzo' => $prezzo_ore_consuntivo,
+                    'tipo' => $tipo_sconto,
+                ]);
 
                 $scontokm_unitario = post('scontokm')[$idriga];
                 $tipo_scontokm = post('tipo_scontokm')[$idriga];
@@ -432,8 +436,12 @@ switch (post('op')) {
 
         $sconto_unitario = $post['sconto'];
         $tipo_sconto = $post['tipo_sconto'];
-        $sconto = ($tipo_sconto == 'PRC') ? ($prezzo_vendita * $sconto_unitario) / 100 : $sconto_unitario;
-        $sconto = $sconto * $qta;
+        $sconto = calcola_sconto([
+            'sconto' => $sconto_unitario,
+            'prezzo' => $prezzo_vendita,
+            'tipo' => $tipo_sconto,
+            'qta' => $qta,
+        ]);
 
         //Calcolo iva
         $rs_iva = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare($idiva));
@@ -456,8 +464,12 @@ switch (post('op')) {
 
         $sconto_unitario = $post['sconto'];
         $tipo_sconto = $post['tipo_sconto'];
-        $sconto = ($tipo_sconto == 'PRC') ? ($prezzo_vendita * $sconto_unitario) / 100 : $sconto_unitario;
-        $sconto = $sconto * $qta;
+        $sconto = calcola_sconto([
+            'sconto' => $sconto_unitario,
+            'prezzo' => $prezzo_vendita,
+            'tipo' => $tipo_sconto,
+            'qta' => $qta,
+        ]);
 
         //Calcolo iva
         $rs_iva = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare($idiva));
@@ -532,8 +544,12 @@ switch (post('op')) {
 
         $sconto_unitario = $post['sconto'];
         $tipo_sconto = $post['tipo_sconto'];
-        $sconto = ($tipo_sconto == 'PRC') ? ($prezzo_vendita * $sconto_unitario) / 100 : $sconto_unitario;
-        $sconto = $sconto * $qta;
+        $sconto = calcola_sconto([
+            'sconto' => $sconto_unitario,
+            'prezzo' => $prezzo_vendita,
+            'tipo' => $tipo_sconto,
+            'qta' => $qta,
+        ]);
 
         // Decremento la quantità
         add_movimento_magazzino($idarticolo, -$qta, ['idautomezzo' => $idautomezzo, 'idintervento' => $id_record]);

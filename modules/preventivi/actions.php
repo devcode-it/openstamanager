@@ -210,8 +210,12 @@ switch (post('op')) {
         // Calcolo dello sconto
         $sconto_unitario = $post['sconto'];
         $tipo_sconto = $post['tipo_sconto'];
-        $sconto = ($tipo_sconto == 'PRC') ? ($prezzo * $sconto_unitario) / 100 : $sconto_unitario;
-        $sconto = $sconto * $qta;
+        $sconto = calcola_sconto([
+            'sconto' => $sconto_unitario,
+            'prezzo' => $prezzo,
+            'tipo' => $tipo_sconto,
+            'qta' => $qta,
+        ]);
 
         $subtot = $prezzo * $qta;
 
@@ -250,8 +254,12 @@ switch (post('op')) {
         // Calcolo dello sconto
         $sconto_unitario = $post['sconto'];
         $tipo_sconto = $post['tipo_sconto'];
-        $sconto = ($tipo_sconto == 'PRC') ? ($prezzo * $sconto_unitario) / 100 : $sconto_unitario;
-        $sconto = $sconto * $qta;
+        $sconto = calcola_sconto([
+            'sconto' => $sconto_unitario,
+            'prezzo' => $prezzo,
+            'tipo' => $tipo_sconto,
+            'qta' => $qta,
+        ]);
 
         $idiva = post('idiva');
         $um = post('um');

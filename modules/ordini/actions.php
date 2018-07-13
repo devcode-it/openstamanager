@@ -144,8 +144,12 @@ switch (post('op')) {
             // Calcolo dello sconto
             $sconto_unitario = $post['sconto'];
             $tipo_sconto = $post['tipo_sconto'];
-            $sconto = ($tipo_sconto == 'PRC') ? ($prezzo * $sconto_unitario) / 100 : $sconto_unitario;
-            $sconto = $sconto * $qta;
+            $sconto = calcola_sconto([
+                'sconto' => $sconto_unitario,
+                'prezzo' => $prezzo,
+                'tipo' => $tipo_sconto,
+                'qta' => $qta,
+            ]);
 
             add_articolo_inordine($id_record, $idarticolo, $descrizione, $idiva, $qta, $post['um'], $prezzo_vendita * $qta, $sconto, $sconto_unitario, $tipo_sconto);
 
@@ -166,8 +170,12 @@ switch (post('op')) {
         // Calcolo dello sconto
         $sconto_unitario = $post['sconto'];
         $tipo_sconto = $post['tipo_sconto'];
-        $sconto = ($tipo_sconto == 'PRC') ? ($prezzo * $sconto_unitario) / 100 : $sconto_unitario;
-        $sconto = $sconto * $qta;
+        $sconto = calcola_sconto([
+            'sconto' => $sconto_unitario,
+            'prezzo' => $prezzo,
+            'tipo' => $tipo_sconto,
+            'qta' => $qta,
+        ]);
 
         // Calcolo iva
         $query = 'SELECT descrizione, percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva);
@@ -255,8 +263,12 @@ switch (post('op')) {
             // Calcolo dello sconto
             $sconto_unitario = $post['sconto'];
             $tipo_sconto = $post['tipo_sconto'];
-            $sconto = ($tipo_sconto == 'PRC') ? ($prezzo * $sconto_unitario) / 100 : $sconto_unitario;
-            $sconto = $sconto * $qta;
+            $sconto = calcola_sconto([
+                'sconto' => $sconto_unitario,
+                'prezzo' => $prezzo,
+                'tipo' => $tipo_sconto,
+                'qta' => $qta,
+            ]);
 
             // Lettura idarticolo dalla riga documento
             $rs = $dbo->fetchArray('SELECT idordine, idarticolo, qta, abilita_serial, is_descrizione FROM or_righe_ordini WHERE id='.prepare($idriga));

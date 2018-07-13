@@ -507,8 +507,12 @@ switch (post('op')) {
             // Calcolo dello sconto
             $sconto_unitario = $post['sconto'];
             $tipo_sconto = $post['tipo_sconto'];
-            $sconto = ($tipo_sconto == 'PRC') ? ($prezzo * $sconto_unitario) / 100 : $sconto_unitario;
-            $sconto = $sconto * $qta;
+            $sconto = calcola_sconto([
+                'sconto' => $sconto_unitario,
+                'prezzo' => $prezzo,
+                'tipo' => $tipo_sconto,
+                'qta' => $qta,
+            ]);
 
             $subtot = 0;
             $aggiorna_budget = ($post['aggiorna_budget'] == 'on') ? 1 : 0;
@@ -631,8 +635,12 @@ switch (post('op')) {
             // Calcolo dello sconto
             $sconto_unitario = $post['sconto'];
             $tipo_sconto = $post['tipo_sconto'];
-            $sconto = ($tipo_sconto == 'PRC') ? ($prezzo * $sconto_unitario) / 100 : $sconto_unitario;
-            $sconto = $sconto * $qta;
+            $sconto = calcola_sconto([
+                'sconto' => $sconto_unitario,
+                'prezzo' => $prezzo,
+                'tipo' => $tipo_sconto,
+                'qta' => $qta,
+            ]);
 
             $subtot = 0;
             $aggiorna_budget = ($post['aggiorna_budget'] == 'on') ? 1 : 0;
@@ -706,8 +714,12 @@ switch (post('op')) {
             // Calcolo dello sconto
             $sconto_unitario = $post['sconto'];
             $tipo_sconto = $post['tipo_sconto'];
-            $sconto = ($tipo_sconto == 'PRC') ? ($prezzo * $sconto_unitario) / 100 : $sconto_unitario;
-            $sconto = $sconto * $qta;
+            $sconto = calcola_sconto([
+                'sconto' => $sconto_unitario,
+                'prezzo' => $prezzo,
+                'tipo' => $tipo_sconto,
+                'qta' => $qta,
+            ]);
 
             add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva, $qta, $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto, '0', $idconto, $idum);
 
@@ -734,8 +746,12 @@ switch (post('op')) {
             // Calcolo dello sconto
             $sconto_unitario = $post['sconto'];
             $tipo_sconto = $post['tipo_sconto'];
-            $sconto = ($tipo_sconto == 'PRC') ? ($prezzo * $sconto_unitario) / 100 : $sconto_unitario;
-            $sconto = $sconto * $qta;
+            $sconto = calcola_sconto([
+                'sconto' => $sconto_unitario,
+                'prezzo' => $prezzo,
+                'tipo' => $tipo_sconto,
+                'qta' => $qta,
+            ]);
 
             $subtot = $prezzo * $qta;
 
@@ -802,8 +818,12 @@ switch (post('op')) {
             // Calcolo dello sconto
             $sconto_unitario = $post['sconto'];
             $tipo_sconto = $post['tipo_sconto'];
-            $sconto = ($tipo_sconto == 'PRC') ? ($prezzo * $sconto_unitario) / 100 : $sconto_unitario;
-            $sconto = $sconto * $qta;
+            $sconto = calcola_sconto([
+                'sconto' => $sconto_unitario,
+                'prezzo' => $prezzo,
+                'tipo' => $tipo_sconto,
+                'qta' => $qta,
+            ]);
 
             $subtot = $prezzo * $qta;
 
@@ -923,8 +943,8 @@ switch (post('op')) {
                 $descrizione = post('descrizione')[$i];
                 $qta = $post['qta_da_evadere'][$i];
                 $um = $post['um'][$i];
-                $subtot = Translator::numberToLocale($post['subtot'][$i]) * $qta;
-                $sconto = Translator::numberToLocale($post['sconto'][$i]);
+                $subtot = $post['subtot'][$i] * $qta;
+                $sconto = $post['sconto'][$i];
                 $sconto = $sconto * $qta;
                 $idiva = post('idiva')[$i];
 
@@ -1005,10 +1025,10 @@ switch (post('op')) {
                 $descrizione = post('descrizione')[$i];
                 $qta = post('qta_da_evadere')[$i];
                 $um = post('um')[$i];
-                $subtot = save(Translator::numberToLocale($post['subtot'][$i]) * $qta);
+                $subtot = $post['subtot'][$i] * $qta;
                 $idiva = post('idiva')[$i];
-                $iva = save(Translator::numberToLocale($post['iva'][$i]) * $qta);
-                $sconto = Translator::numberToLocale(post('sconto')[$i]);
+                $iva = $post['iva'][$i] * $qta;
+                $sconto = post('sconto')[$i];
                 $sconto = $sconto * $qta;
 
                 $qprc = 'SELECT tipo_sconto, sconto_unitario FROM or_righe_ordini WHERE id='.prepare($idriga);

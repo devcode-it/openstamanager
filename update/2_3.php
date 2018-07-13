@@ -55,6 +55,9 @@ $database->query('ALTER TABLE `zz_logs` DROP `timestamp`');
 $database->query('UPDATE `zz_files` SET `created_at` = `data`');
 $database->query('ALTER TABLE `zz_files` DROP `data`');
 
+// Fix per gli idtipointervento che non si sono copiati in in_interventi_tecnici
+$database->query("UPDATE `in_interventi_tecnici` SET `idtipointervento` = (SELECT `idtipointervento` FROM `in_interventi` WHERE `in_interventi`.`id` = `in_interventi_tecnici`.`idintervento`) WHERE `idtipointervento` = '' ");
+
 /*
 * Rimozione file e cartelle deprecati [in 2.3.1 per risolvere un problema sui percorsi]
 */

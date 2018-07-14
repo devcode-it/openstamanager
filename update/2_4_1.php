@@ -1,26 +1,5 @@
 <?php
 
-/*
-* Inserimento valori di default
-*/
-
-// Permessi di default delle viste
-$gruppi = $database->fetchArray('SELECT `id` FROM `zz_groups`');
-$results = $database->fetchArray('SELECT `id` FROM `zz_views` WHERE `id` NOT IN (SELECT `id_vista` FROM `zz_group_view`)');
-
-$array = [];
-foreach ($results as $result) {
-    foreach ($gruppi as $gruppo) {
-        $array[] = [
-            'id_gruppo' => $gruppo['id'],
-            'id_vista' => $result['id'],
-        ];
-    }
-}
-if (!empty($array)) {
-    $database->insert('zz_group_view', $array);
-}
-
 // Script per aggiornare le date dei movimenti con le date dei documenti
 
 $rs = $dbo->fetchArray('SELECT * FROM mg_movimenti');

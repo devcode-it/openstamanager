@@ -316,17 +316,11 @@ CREATE TABLE IF NOT EXISTS `co_banche` (
 -- Innesto modulo per gestione banche
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Banche', 'Banche', 'banche', 'SELECT |select| FROM `co_banche` WHERE 1=1 AND deleted = 0 GROUP BY `nome` HAVING 2=2', '', 'fa fa-university', '2.4', '2.4', '1', (SELECT `id` FROM `zz_modules` m WHERE `name` = 'Tabelle'), '1', '1');
 
-INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `enabled`, `summable`, `default`) VALUES
-(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'id', 'co_banche.id', 0, 0, 0, 0, '', '', 1, 0, 0),
-(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'Nome', 'co_banche.nome', 0, 0, 0, 0, '', '', 1, 0, 0),
-(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'Filiale', 'co_banche.filiale', 0, 0, 0, 0, '', '', 1, 0, 0),
-(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'IBAN', 'co_banche.iban', 0, 0, 0, 0, '', '', 1, 0, 0);
-
-INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
-((SELECT `id` FROM `zz_groups` WHERE `nome` = 'Amministratori'), (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'id')),
-((SELECT `id` FROM `zz_groups` WHERE `nome` = 'Amministratori'), (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'Nome')),
-((SELECT `id` FROM `zz_groups` WHERE `nome` = 'Amministratori'), (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'Filiale')),
-((SELECT `id` FROM `zz_groups` WHERE `nome` = 'Amministratori'), (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'IBAN'));
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `enabled`, `summable`, `default`) VALUES
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'id', 'co_banche.id', 0, 0, 0, 0, 1, 0, 0),
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'Nome', 'co_banche.nome', 0, 0, 0, 0, 1, 0, 0),
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'Filiale', 'co_banche.filiale', 0, 0, 0, 0, 1, 0, 0),
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'IBAN', 'co_banche.iban', 0, 0, 0, 0, 1, 0, 0);
 
 -- Aggiungo campi in an_anagrafiche con riferimento banche
 ALTER TABLE `an_anagrafiche` ADD `idbanca_vendite` INT(11) NOT NULL AFTER `idconto_cliente`, ADD `idbanca_acquisti` INT(11) NOT NULL AFTER `idbanca_vendite`;

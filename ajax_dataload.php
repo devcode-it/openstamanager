@@ -44,12 +44,17 @@ if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom
                     $search_filters[] = str_replace('|search|', prepare('%'.$piece.'%'), $total['search_inside'][$i]);
                 }
             } else {
-                // Per le icone cerco per il campo icon_title
-                if (preg_match('/^icon_(.+?)$/', $total['search_inside'][$i], $m)) {
-                    $total['search_inside'][$i] = 'icon_title_'.$m[1];
+                // Per le icone cerco nel campo icon_title
+                if (preg_match('/^icon_(.+?)$/', $total['fields'][$i], $m)) {
+                    $total['search_inside'][$i] = '`icon_title_'.$m[1].'`';
                 }
 
-                $search_filters[] = '`'.$total['search_inside'][$i].'` LIKE '.prepare('%'.trim($columns[$i]['search']['value'].'%'));
+                // Per i colori cerco nel campo color_title
+                elseif (preg_match('/^color_(.+?)$/', $total['fields'][$i], $m)) {
+                    $total['search_inside'][$i] = '`color_title_'.$m[1].'`';
+                }
+
+                $search_filters[] = $total['search_inside'][$i].' LIKE '.prepare('%'.trim($columns[$i]['search']['value'].'%'));
             }
         }
     }

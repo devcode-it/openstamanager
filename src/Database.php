@@ -220,10 +220,11 @@ class Database extends Util\Singleton
      *
      * @return int
      */
-    public function query($query, $signal = null, $options = [])
+    public function query($query, $parameters = [], $signal = null, $options = [])
     {
         try {
-            $this->pdo->query($query);
+            $statement = $this->pdo->prepare($query);
+            $statement->execute($parameters);
 
             $id = $this->lastInsertedID();
             if ($id == 0) {
@@ -246,12 +247,15 @@ class Database extends Util\Singleton
      *
      * @return array
      */
-    public function fetchArray($query, $numeric = false, $options = [])
+    public function fetchArray($query, $parameters = [], $numeric = false, $options = [])
     {
         try {
             $mode = empty($numeric) ? PDO::FETCH_ASSOC : PDO::FETCH_NUM;
 
-            $result = $this->pdo->query($query)->fetchAll($mode);
+            $statement = $this->pdo->prepare($query);
+            $statement->execute($parameters);
+
+            $result = $statement->fetchAll($mode);
 
             return $result;
         } catch (PDOException $e) {
@@ -271,7 +275,7 @@ class Database extends Util\Singleton
      */
     public function fetchRows($query)
     {
-        return $this->fetchArray($query, true);
+        return $this->fetchArray($query, [], true);
     }
 
     /**
@@ -299,13 +303,13 @@ class Database extends Util\Singleton
      *
      * @return array
      */
-    public function fetchOne($query)
+    public function fetchOne($query, $parameters = [])
     {
         if (!str_contains($query, 'LIMIT')) {
             $query .= ' LIMIT 1';
         }
 
-        $result = $this->fetchArray($query);
+        $result = $this->fetchArray($query, $parameters);
 
         if (isset($result[0])) {
             return $result[0];
@@ -323,9 +327,9 @@ class Database extends Util\Singleton
      *
      * @return int
      */
-    public function fetchNum($query)
+    public function fetchNum($query, $parameters = [])
     {
-        $result = $this->fetchArray('SELECT COUNT(*) as `tot` FROM ('.$query.') AS `count`');
+        $result = $this->fetchArray('SELECT COUNT(*) as `tot` FROM ('.$query.') AS `count`', $parameters);
 
         if (!empty($result)) {
             return $result[0]['tot'];
@@ -339,7 +343,9 @@ class Database extends Util\Singleton
         $results = null;
 
         if ($this->isConnected()) {
-            $results = $this->fetchArray("SHOW TABLES LIKE '".$table."'");
+            $results = $this->fetchArray('SHOW TABLES LIKE :table', [
+                ':table' => $table,
+            ]);
         }
 
         return !empty($results);

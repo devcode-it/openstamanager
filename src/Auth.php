@@ -57,7 +57,9 @@ class Auth extends \Util\Singleton
             if (API::isAPIRequest()) {
                 $token = API::getRequest()['token'];
 
-                $user = $database->fetchArray('SELECT `id_utente` FROM `zz_tokens` WHERE `enabled` = 1 AND `token` = '.prepare($token));
+                $user = $database->fetchArray('SELECT `id_utente` FROM `zz_tokens` WHERE `enabled` = 1 AND `token` = :token', [
+                    ':token' => $token,
+                ]);
 
                 $id = !empty($user) ? $user[0]['id_utente'] : null;
             }
@@ -99,7 +101,9 @@ class Auth extends \Util\Singleton
 
         $status = 'failed';
 
-        $users = $database->fetchArray('SELECT id AS id_utente, password, enabled FROM zz_users WHERE username = '.prepare($username).' LIMIT 1');
+        $users = $database->fetchArray('SELECT id AS id_utente, password, enabled FROM zz_users WHERE username = :username LIMIT 1', [
+            ':username' => $username,
+        ]);
         if (!empty($users)) {
             $user = $users[0];
 
@@ -204,7 +208,9 @@ class Auth extends \Util\Singleton
         $database = Database::getConnection();
 
         try {
-            $results = $database->fetchArray('SELECT id AS id_utente, idanagrafica, username, (SELECT nome FROM zz_groups WHERE zz_groups.id=zz_users.idgruppo) AS gruppo FROM zz_users WHERE id = '.prepare($user_id).' AND enabled = 1 LIMIT 1', false, ['session' => false]);
+            $results = $database->fetchArray('SELECT id AS id_utente, idanagrafica, username, (SELECT nome FROM zz_groups WHERE zz_groups.id = zz_users.idgruppo) AS gruppo FROM zz_users WHERE id = :user_id AND enabled = 1 LIMIT 1', [
+                ':user_id' => $user_id,
+            ], false, ['session' => false]);
 
             if (!empty($results)) {
                 $results[0]['id'] = $results[0]['id_utente'];
@@ -270,7 +276,9 @@ class Auth extends \Util\Singleton
             $user = self::user();
 
             $database = Database::getConnection();
-            $tokens = $database->fetchArray('SELECT `token` FROM `zz_tokens` WHERE `enabled` = 1 AND `id_utente` = '.prepare($user['id_utente']));
+            $tokens = $database->fetchArray('SELECT `token` FROM `zz_tokens` WHERE `enabled` = 1 AND `id_utente` = :user_id', [
+                ':user_id' => $user['id_utente'],
+            ]);
 
             // Generazione del token per l'utente
             if (empty($tokens)) {
@@ -314,11 +322,13 @@ class Auth extends \Util\Singleton
         if (empty($this->first_module)) {
             $query = 'SELECT id FROM zz_modules WHERE enabled = 1';
             if (!$this->isAdmin()) {
-                $query .= ' AND id IN (SELECT idmodule FROM zz_permissions WHERE idgruppo = (SELECT id FROM zz_groups WHERE nome = '.prepare($this->getUser()['gruppo']).") AND permessi IN ('r', 'rw'))";
+                $query .= " AND id IN (SELECT idmodule FROM zz_permissions WHERE idgruppo = (SELECT id FROM zz_groups WHERE nome = :group) AND permessi IN ('r', 'rw'))";
             }
 
             $database = Database::getConnection();
-            $results = $database->fetchArray($query." AND options != '' AND options != 'menu' AND options IS NOT NULL ORDER BY `order` ASC");
+            $results = $database->fetchArray($query." AND options != '' AND options != 'menu' AND options IS NOT NULL ORDER BY `order` ASC", [
+                ':group' => $this->getUser()['gruppo'],
+            ]);
 
             if (!empty($results)) {
                 $module = null;
@@ -421,7 +431,11 @@ class Auth extends \Util\Singleton
         }
 
         if (!isset(self::$is_brute)) {
-            $results = $database->fetchArray('SELECT COUNT(*) AS tot FROM zz_logs WHERE ip = '.prepare(get_client_ip()).' AND stato = '.prepare(self::getStatus()['failed']['code']).' AND DATE_ADD(created_at, INTERVAL '.self::$brute_options['timeout'].' SECOND) >= NOW()');
+            $results = $database->fetchArray('SELECT COUNT(*) AS tot FROM zz_logs WHERE ip = :ip AND stato = :state AND DATE_ADD(created_at, INTERVAL :timeout SECOND) >= NOW()', [
+                ':ip' => get_client_ip(),
+                ':state' => self::getStatus()['failed']['code'],
+                ':timeout' => self::$brute_options['timeout'],
+            ]);
 
             self::$is_brute = $results[0]['tot'] > self::$brute_options['attemps'];
         }
@@ -442,7 +456,11 @@ class Auth extends \Util\Singleton
 
         $database = Database::getConnection();
 
-        $results = $database->fetchArray('SELECT TIME_TO_SEC(TIMEDIFF(DATE_ADD(created_at, INTERVAL '.self::$brute_options['timeout'].' SECOND), NOW())) AS diff FROM zz_logs WHERE ip = '.prepare(get_client_ip()).' AND stato = '.prepare(self::getStatus()['failed']['code']).' AND DATE_ADD(created_at, INTERVAL '.self::$brute_options['timeout'].' SECOND) >= NOW() ORDER BY created_at DESC LIMIT 1');
+        $results = $database->fetchArray('SELECT TIME_TO_SEC(TIMEDIFF(DATE_ADD(created_at, INTERVAL '.self::$brute_options['timeout'].' SECOND), NOW())) AS diff FROM zz_logs WHERE ip = :ip AND stato = :state AND DATE_ADD(created_at, INTERVAL :timeout SECOND) >= NOW() ORDER BY created_at DESC LIMIT 1', [
+            ':ip' => get_client_ip(),
+            ':state' => self::getStatus()['failed']['code'],
+            ':timeout' => self::$brute_options['timeout'],
+        ]);
 
         return intval($results[0]['diff']);
     }

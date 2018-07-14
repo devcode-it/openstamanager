@@ -74,7 +74,7 @@ if (empty($records)) {
     // Tab per le informazioni sulle operazioni
     if (Auth::admin()) {
         echo '
-				<li>
+				<li class="bg-warning">
 					<a data-toggle="tab" href="#tab_info" id="link-tab_info">'.tr('Info').'</a>
 				</li>';
     }
@@ -220,13 +220,55 @@ if (empty($records)) {
     if (Auth::admin()) {
         echo '
                 <div id="tab_info" class="tab-pane">
-                    <ul>';
+                    <ul class="timeline">';
 
-        $operations = $dbo->fetchArray('SELECT `zz_operations`.*, `zz_users`.`username` FROM `zz_operations` JOIN `zz_users` ON `zz_operations`.`id_utente` = `zz_users`.`id` WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record).' ORDER BY `created_at` DESC LIMIT 200');
+        $operations = $dbo->fetchArray('SELECT `zz_operations`.*, `zz_users`.`username` FROM `zz_operations` JOIN `zz_users` ON `zz_operations`.`id_utente` = `zz_users`.`id` WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record).' ORDER BY `created_at` ASC LIMIT 200');
 
         foreach ($operations as $operation) {
+            $description = $operation['op'];
+            $icon = 'pencil-square-o';
+            $color = null;
+            $timeline = null;
+
+            switch ($operation['op']) {
+                case 'add':
+                    $description = tr('Creazione');
+                    $icon = 'plus';
+                    $color = 'success';
+                    break;
+
+                case 'update':
+                    $description = tr('Modifica');
+                    $icon = 'pencil';
+                    $color = 'info';
+                    break;
+
+                case 'delete':
+                    $description = tr('Eliminazione');
+                    $icon = 'times';
+                    $color = 'danger';
+                    break;
+
+                default:
+                    $timeline = ' class="timeline-inverted"';
+                    break;
+            }
+
             echo '
-                        <li>'.$operation['username'].': '.$operation['op'].' - '.Translator::timestampToLocale($operation['created_at']).'</li>';
+                        <li'.$timeline.'>
+                            <div class="timeline-badge '.$color.'"><i class="fa fa-'.$icon.'"></i></div>
+                            <div class="timeline-panel">
+                                <div class="timeline-heading">
+                                    <h4 class="timeline-title">'.$description.'</h4>
+                                    <p><small class="text-muted"><i class="fa fa-clock-o"></i> '.Translator::timestampToLocale($operation['created_at']).'</small></p>
+                                </div>
+                                <div class="timeline-body">
+                                    <p>'.tr('Utente: _USER_', [
+                                        '_USER_' => $operation['username'],
+                                    ]).'</p>
+                                </div>
+                            </div>
+                        </li>';
         }
 
         echo '

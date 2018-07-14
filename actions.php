@@ -180,6 +180,9 @@ if (Modules::getPermission($permesso) == 'r' || Modules::getPermission($permesso
 
                     // Inserimento iniziale
                     if (starts_with(post('op'), 'add')) {
+                        // Informazioni di log
+                        Filter::set('get', 'id_record', $id_record);
+
                         foreach ($values as $key => $value) {
                             $dbo->insert('zz_field_record', [
                                 'id_record' => $id_record,

@@ -196,7 +196,8 @@ UPDATE `co_documenti` SET `id_segment`='2' WHERE `idtipodocumento` IN (SELECT `i
 
 -- Innesto modulo segmenti sotto "Strumenti"
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES
-(NULL, 'Segmenti', 'Segmenti', 'segmenti', '{	"main_query": [	{	"type": "table", "fields": "id, Nome, Modulo, Maschera, Note, Predefinito", "query": "SELECT `id`,  (IF(predefined=1, ''Sì'', ''No'')) AS `Predefinito`, `name` AS `Nome`, (SELECT name FROM zz_modules WHERE id = zz_segments.id_module) AS Modulo,  `pattern` AS `Maschera`, `note` AS `Note`  FROM `zz_segments` HAVING 2=2 ORDER BY name, id_module"}	]}', '', 'fa fa-database', '2.4', '2.4', 1, (SELECT `id` FROM `zz_modules`  `m` WHERE `name` = 'Strumenti'), 1, 1);
+(NULL, 'Segmenti', 'Segmenti', 'segmenti', '{	"main_query": [	{	"type": "table", "fields": "id, Nome, Modulo, Maschera, Note, Predefinito", "query": "SELECT `id`,  (IF(predefined=1, ''Sì'', ''No'')) AS `Predefinito`, `name` AS `Nome`, (SELECT name FROM zz_modules WHERE id = zz_segments.id_module) AS Modulo,  `pattern` AS `Maschera`, `note` AS `Note`  FROM `zz_segments` HAVING 2=2 ORDER BY name, id_module"}	]}', '', 'fa fa-database', '2.4', '2.4', 1, NULL, 1, 1);
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Segmenti' AND `t2`.`name` = 'Strumenti') SET `t1`.`parent` = `t2`.`id`;
 
 -- Aggiorno widget Fatturato con i sezionali
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM co_documenti WHERE idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir="entrata") |segment| AND data >= "|period_start|" AND data <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';
@@ -314,7 +315,8 @@ CREATE TABLE IF NOT EXISTS `co_banche` (
 ) ENGINE=InnoDB;
 
 -- Innesto modulo per gestione banche
-INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Banche', 'Banche', 'banche', 'SELECT |select| FROM `co_banche` WHERE 1=1 AND deleted = 0 GROUP BY `nome` HAVING 2=2', '', 'fa fa-university', '2.4', '2.4', '1', (SELECT `id` FROM `zz_modules` m WHERE `name` = 'Tabelle'), '1', '1');
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Banche', 'Banche', 'banche', 'SELECT |select| FROM `co_banche` WHERE 1=1 AND deleted = 0 GROUP BY `nome` HAVING 2=2', '', 'fa fa-university', '2.4', '2.4', '1', NULL, '1', '1');
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Banche' AND `t2`.`name` = 'Tabelle') SET `t1`.`parent` = `t2`.`id`;
 
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `enabled`, `summable`, `default`) VALUES
 (NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'id', 'co_banche.id', 0, 0, 0, 0, 1, 0, 0),

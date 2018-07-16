@@ -370,4 +370,11 @@ UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(\" \", REPLACE(REPLACE(REPLA
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Tipo', 'co_tipidocumento.descrizione', 4, 1, 0, 1, 1);
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Tipo', 'co_tipidocumento.descrizione', 4, 1, 0, 1, 1);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Tipo',
+'co_tipidocumento.descrizione', 4, 1, 0, 1, 1);
+
+-- Aggiunta di alcuni filtri di base
+INSERT INTO `zz_group_module` (`id`, `idgruppo`, `idmodule`, `name`, `clause`, `position`, `enabled`, `default`) VALUES
+(NULL, (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Mostra ddt di vendita ai clienti coinvolti', 'dt_ddt.idanagrafica=|idanagrafica|', 'WHR', '0', '1'),
+(NULL, (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'Mostra ordini cliente ai clienti coinvolti', 'or_ordini.idanagrafica=|idanagrafica|', 'WHR', '0', '1'),
+(NULL, (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Mostra fatture di vendita ai clienti coinvolti', 'co_documenti.idanagrafica=|idanagrafica|', 'WHR', '0', '1');

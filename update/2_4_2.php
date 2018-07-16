@@ -1,7 +1,8 @@
 <?php
 
 /*
-* Aggiornamento nazioni con codice ISO 3166-1 alpha-2 e nome in inglese
+* Aggiornamento nazioni con codice ISO 3166-1 alpha-2 e nome in inglese.
+* Origine: umpirsky/country-list
 */
 
 $it = [

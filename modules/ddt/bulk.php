@@ -96,6 +96,12 @@ switch (post('op')) {
                             'abilita_serial' => $riga['abilita_serial'],
                             '#order' => '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_documento).')',
                         ]);
+                        $id_riga_documento = $dbo->lastInsertedID();
+
+                        // Copia dei serial tra le righe
+                        if (!empty($riga['idarticolo'])) {
+                            $dbo->query('INSERT INTO mg_prodotti (id_riga_documento, id_articolo, dir, serial, lotto, altro) SELECT '.prepare($id_riga_documento).', '.prepare($riga['idarticolo']).', '.prepare($dir).', serial, lotto, altro FROM mg_prodotti AS t WHERE id_riga_ddt='.prepare($riga['id']));
+                        }
 
                         // Aggiorno la quantità evasa
                         $dbo->query('UPDATE dt_righe_ddt SET qta_evasa = qta WHERE id='.prepare($riga['id']));

@@ -35,7 +35,7 @@ switch ($resource) {
                     AN.sitoweb,
                     AN.note,
                     AN.idzona,
-                    AN.deleted
+                    AN.deleted_at
                 FROM (an_anagrafiche AS AN
                         LEFT OUTER JOIN an_nazioni NAZIONE ON AN.id_nazione=NAZIONE.id)
                 HAVING  1=1 AND

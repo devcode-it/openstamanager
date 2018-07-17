@@ -7,7 +7,7 @@ switch ($resource) {
         $dbo->query('UPDATE in_interventi_tecnici SET uid = id WHERE uid IS NULL');
 
         // Individuazione degli interventi
-        $query = 'SELECT in_interventi_tecnici.id AS idriga, in_interventi_tecnici.idintervento, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS cliente, richiesta, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico, summary FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE CAST(orario_inizio AS DATE) BETWEEN CURDATE()-INTERVAL 7 DAY AND CURDATE()+INTERVAL 3 MONTH AND deleted=0';
+        $query = 'SELECT in_interventi_tecnici.id AS idriga, in_interventi_tecnici.idintervento, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS cliente, richiesta, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico, summary FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE CAST(orario_inizio AS DATE) BETWEEN CURDATE()-INTERVAL 7 DAY AND CURDATE()+INTERVAL 3 MONTH AND deleted_at IS NULL';
 
         if (!empty($user['idanagrafica'])) {
             $query .= ' AND in_interventi_tecnici.idtecnico = '.prepare($user['idanagrafica']);
@@ -55,42 +55,42 @@ switch ($resource) {
         $period_start = '2000-01-01';
         $period_end = date('Y-m-d', strtotime($today.' +7 days'));
 
-        $q = "SELECT    `in_interventi`.id, 
-                        `in_interventi`.codice, 
-                        DATE_FORMAT( MAX(`in_interventi`.`data_richiesta`), '%Y%m%d' ) AS `data_richiesta`, 
-                        `in_interventi`.richiesta, 
-                        `in_interventi`.descrizione, 
-                        `in_interventi`.idtipointervento, 
-                        `in_interventi`.idanagrafica, 
-                        `an_anagrafiche`.idzona AS zona_anagrafica, 
-                        `in_interventi`.idsede, 
+        $q = "SELECT    `in_interventi`.id,
+                        `in_interventi`.codice,
+                        DATE_FORMAT( MAX(`in_interventi`.`data_richiesta`), '%Y%m%d' ) AS `data_richiesta`,
+                        `in_interventi`.richiesta,
+                        `in_interventi`.descrizione,
+                        `in_interventi`.idtipointervento,
+                        `in_interventi`.idanagrafica,
+                        `an_anagrafiche`.idzona AS zona_anagrafica,
+                        `in_interventi`.idsede,
                         `an_sedi`.idzona AS zona_sede,
-                        `in_interventi`.idstatointervento, 
-                        `in_interventi`.informazioniaggiuntive, 
-                        `in_interventi`.idsede, 
-                        `in_interventi`.idclientefinale, 
-                        `in_interventi`.firma_file, 
-                        IF( MAX(firma_data)='0000-00-00 00:00:00', '', DATE_FORMAT(MAX(firma_data),'%d/%m/%Y %T') ) AS `firma_data`,  
-                        `in_interventi`.firma_nome,  
-                        IFNULL((SELECT GROUP_CONCAT( CONCAT(my_impianti.matricola, ' - ', my_impianti.nome) SEPARATOR ', ') 
-                            FROM (my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto=my_impianti.id) 
-                            WHERE my_impianti_interventi.idintervento=`in_interventi`.`id`),'') AS `impianti`, 
-                        DATE_FORMAT( MAX(`orario_fine`), '%Y%m%d' ) AS `data`, 
-                        (SELECT GROUP_CONCAT(ragione_sociale SEPARATOR ', ') FROM (`in_interventi_tecnici` INNER JOIN `an_anagrafiche` ON `in_interventi_tecnici`.`idtecnico`=`an_anagrafiche`.`idanagrafica`) WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`) AS `tecnici`, 
-                        `in_statiintervento`.`colore` AS `bgcolor`,  
-                        `in_statiintervento`.`descrizione` AS `stato`, 
-                        `in_interventi`.`idtipointervento` AS `tipo`, 
+                        `in_interventi`.idstatointervento,
+                        `in_interventi`.informazioniaggiuntive,
+                        `in_interventi`.idsede,
+                        `in_interventi`.idclientefinale,
+                        `in_interventi`.firma_file,
+                        IF( MAX(firma_data)='0000-00-00 00:00:00', '', DATE_FORMAT(MAX(firma_data),'%d/%m/%Y %T') ) AS `firma_data`,
+                        `in_interventi`.firma_nome,
+                        IFNULL((SELECT GROUP_CONCAT( CONCAT(my_impianti.matricola, ' - ', my_impianti.nome) SEPARATOR ', ')
+                            FROM (my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto=my_impianti.id)
+                            WHERE my_impianti_interventi.idintervento=`in_interventi`.`id`),'') AS `impianti`,
+                        DATE_FORMAT( MAX(`orario_fine`), '%Y%m%d' ) AS `data`,
+                        (SELECT GROUP_CONCAT(ragione_sociale SEPARATOR ', ') FROM (`in_interventi_tecnici` INNER JOIN `an_anagrafiche` ON `in_interventi_tecnici`.`idtecnico`=`an_anagrafiche`.`idanagrafica`) WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`) AS `tecnici`,
+                        `in_statiintervento`.`colore` AS `bgcolor`,
+                        `in_statiintervento`.`descrizione` AS `stato`,
+                        `in_interventi`.`idtipointervento` AS `tipo`,
                         DATE_FORMAT( MAX(`orario_inizio`), '%d/%m/%Y %T' ) AS `orario_inizio_leggibile`,
-                        DATE_FORMAT( MAX(`orario_fine`), '%d/%m/%Y %T' ) AS `orario_fine_leggibile`, 
-                        `orario_inizio`, `orario_fine`  
-                    FROM (`in_interventi` 
-                            INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento`) 
-                            INNER JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`  
+                        DATE_FORMAT( MAX(`orario_fine`), '%d/%m/%Y %T' ) AS `orario_fine_leggibile`,
+                        `orario_inizio`, `orario_fine`
+                    FROM (`in_interventi`
+                            INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento`)
+                            INNER JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
                             INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
-                            LEFT OUTER JOIN `an_sedi` ON `in_interventi`.`idsede`=`an_sedi`.`id` 
-                    GROUP BY `in_interventi`.`id` 
-                    HAVING (DATE_FORMAT( `orario_fine`, '%Y-%m-%d' ) >= '".$period_start."' AND 
-                                    DATE_FORMAT( `orario_fine`, '%Y-%m-%d' ) <= '".$period_end."') 
+                            LEFT OUTER JOIN `an_sedi` ON `in_interventi`.`idsede`=`an_sedi`.`id`
+                    GROUP BY `in_interventi`.`id`
+                    HAVING (DATE_FORMAT( `orario_fine`, '%Y-%m-%d' ) >= '".$period_start."' AND
+                                    DATE_FORMAT( `orario_fine`, '%Y-%m-%d' ) <= '".$period_end."')
                     ORDER BY `orario_fine` DESC";
 
         // TODO: rimosse seguenti clausole:

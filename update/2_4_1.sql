@@ -130,7 +130,6 @@ UPDATE `in_interventi_tecnici` SET `uid` = NULL WHERE `uid` = '';
 UPDATE `in_interventi_tecnici` SET `summary` = NULL WHERE `summary` = '';
 ALTER TABLE `in_interventi_tecnici` CHANGE `uid` `uid` int(11);
 
-
 -- Aggiorno campo 'Data' in 'Data movimento'
 UPDATE `zz_views` SET `name` = 'Data movimento', `order` = '6' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti') AND name = 'Data';
 
@@ -378,3 +377,81 @@ INSERT INTO `zz_group_module` (`id`, `idgruppo`, `idmodule`, `name`, `clause`, `
 (NULL, (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Mostra ddt di vendita ai clienti coinvolti', 'dt_ddt.idanagrafica=|idanagrafica|', 'WHR', '0', '1'),
 (NULL, (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'Mostra ordini cliente ai clienti coinvolti', 'or_ordini.idanagrafica=|idanagrafica|', 'WHR', '0', '1'),
 (NULL, (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Mostra fatture di vendita ai clienti coinvolti', 'co_documenti.idanagrafica=|idanagrafica|', 'WHR', '0', '1');
+
+-- Sostituzione deleted con deleted_at
+ALTER TABLE `co_banche` ADD `deleted_at` timestamp NULL DEFAULT NULL;
+UPDATE `co_banche` SET `deleted_at` = NOW() WHERE `deleted` = 1;
+ALTER TABLE `co_banche` DROP `deleted`;
+
+ALTER TABLE `an_anagrafiche` ADD `deleted_at` timestamp NULL DEFAULT NULL;
+UPDATE `an_anagrafiche` SET `deleted_at` = NOW() WHERE `deleted` = 1;
+ALTER TABLE `an_anagrafiche` DROP `deleted`;
+
+ALTER TABLE `in_statiintervento` ADD `deleted_at` timestamp NULL DEFAULT NULL;
+UPDATE `in_statiintervento` SET `deleted_at` = NOW() WHERE `deleted` = 1;
+ALTER TABLE `in_statiintervento` DROP `deleted`;
+
+ALTER TABLE `zz_emails` ADD `deleted_at` timestamp NULL DEFAULT NULL;
+UPDATE `zz_emails` SET `deleted_at` = NOW() WHERE `deleted` = 1;
+ALTER TABLE `zz_emails` DROP `deleted`;
+
+ALTER TABLE `zz_smtp` ADD `deleted_at` timestamp NULL DEFAULT NULL;
+UPDATE `zz_smtp` SET `deleted_at` = NOW() WHERE `deleted` = 1;
+ALTER TABLE `zz_smtp` DROP `deleted`;
+
+ALTER TABLE `in_interventi` ADD `deleted_at` timestamp NULL DEFAULT NULL;
+UPDATE `in_interventi` SET `deleted_at` = NOW() WHERE `deleted` = 1;
+ALTER TABLE `in_interventi` DROP `deleted`;
+
+UPDATE `zz_widgets` SET `query` = REPLACE(
+    REPLACE(
+        REPLACE(`query`, 'deleted=0', '`deleted_at` IS NULL')
+    , 'deleted = 0', '`deleted_at` IS NULL')
+, '`deleted` = 0', '`deleted_at` IS NULL');
+UPDATE `zz_modules` SET `options` = REPLACE(
+    REPLACE(
+        REPLACE(`options`, 'deleted=0', '`deleted_at` IS NULL')
+    , 'deleted = 0', '`deleted_at` IS NULL')
+, '`deleted` = 0', '`deleted_at` IS NULL'), `options2` = REPLACE(
+    REPLACE(
+        REPLACE(`options2`, 'deleted=0', '`deleted_at` IS NULL')
+    , 'deleted = 0', '`deleted_at` IS NULL')
+, '`deleted` = 0', '`deleted_at` IS NULL');
+UPDATE `zz_group_module` SET `clause` = REPLACE(
+    REPLACE(
+        REPLACE(`clause`, 'deleted=0', '`deleted_at` IS NULL')
+    , 'deleted = 0', '`deleted_at` IS NULL')
+, '`deleted` = 0', '`deleted_at` IS NULL');
+UPDATE `zz_views` SET `query` = REPLACE(
+    REPLACE(
+        REPLACE(`query`, 'deleted=0', '`deleted_at` IS NULL')
+    , 'deleted = 0', '`deleted_at` IS NULL')
+, '`deleted` = 0', '`deleted_at` IS NULL');
+
+UPDATE `zz_widgets` SET `query` = REPLACE(
+    REPLACE(
+        REPLACE(`query`, 'deleted=1', '`deleted_at` IS NOT NULL')
+    , 'deleted = 1', '`deleted_at` IS NOT NULL')
+, '`deleted` = 1', '`deleted_at` IS NOT NULL');
+UPDATE `zz_modules` SET `options` = REPLACE(
+    REPLACE(
+        REPLACE(`options`, 'deleted=1', '`deleted_at` IS NOT NULL')
+    , 'deleted = 1', '`deleted_at` IS NOT NULL')
+, '`deleted` = 1', '`deleted_at` IS NOT NULL'), `options2` = REPLACE(
+    REPLACE(
+        REPLACE(`options2`, 'deleted=1', '`deleted_at` IS NOT NULL')
+    , 'deleted = 1', '`deleted_at` IS NOT NULL')
+, '`deleted` = 1', '`deleted_at` IS NOT NULL');
+UPDATE `zz_group_module` SET `clause` = REPLACE(
+    REPLACE(
+        REPLACE(`clause`, 'deleted=1', '`deleted_at` IS NOT NULL')
+    , 'deleted = 1', '`deleted_at` IS NOT NULL')
+, '`deleted` = 1', '`deleted_at` IS NOT NULL');
+UPDATE `zz_views` SET `query` = REPLACE(
+    REPLACE(
+        REPLACE(`query`, 'deleted=1', '`deleted_at` IS NOT NULL')
+    , 'deleted = 1', '`deleted_at` IS NOT NULL')
+, '`deleted` = 1', '`deleted_at` IS NOT NULL');
+
+-- Fix id delle Banche
+UPDATE `zz_views` SET `enabled` = 0 WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'id';

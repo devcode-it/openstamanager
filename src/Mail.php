@@ -28,7 +28,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
         if (empty(self::$accounts)) {
             $database = Database::getConnection();
 
-            $results = $database->fetchArray('SELECT * FROM zz_smtp WHERE deleted = 0');
+            $results = $database->fetchArray('SELECT * FROM zz_smtp WHERE deleted_at IS NULL');
 
             $accounts = [];
 
@@ -77,7 +77,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
         if (empty(self::$templates)) {
             $database = Database::getConnection();
 
-            $results = $database->fetchArray('SELECT * FROM zz_emails WHERE deleted = 0');
+            $results = $database->fetchArray('SELECT * FROM zz_emails WHERE deleted_at IS NULL');
 
             $templates = [];
             $references = [];

@@ -12,7 +12,7 @@ switch ($resource) {
 
             $where[] = "descrizione='Cliente'";
             if (empty($filter)) {
-                $where[] = 'deleted=0';
+                $where[] = 'deleted_at IS NULL';
             }
 
             if (!empty($search)) {
@@ -34,7 +34,7 @@ switch ($resource) {
 
             $where[] = "descrizione='Fornitore'";
             if (empty($filter)) {
-                $where[] = 'deleted=0';
+                $where[] = 'deleted_at IS NULL';
             }
 
             if (!empty($search)) {
@@ -56,7 +56,7 @@ switch ($resource) {
 
             $where[] = "descrizione='Agente'";
             if (empty($filter)) {
-                $where[] = 'deleted=0';
+                $where[] = 'deleted_at IS NULL';
             }
 
             if (!empty($search)) {
@@ -91,7 +91,7 @@ switch ($resource) {
 
             $where[] = "descrizione='Tecnico'";
             if (empty($filter)) {
-                $where[] = 'deleted=0';
+                $where[] = 'deleted_at IS NULL';
 
                 //come tecnico posso aprire attività solo a mio nome
                 $user = Auth::user();
@@ -118,7 +118,7 @@ switch ($resource) {
             }
 
             if (empty($filter)) {
-                $where[] = 'deleted=0';
+                $where[] = 'deleted_at IS NULL';
             }
 
             if (!empty($search)) {

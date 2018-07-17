@@ -75,7 +75,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->query('UPDATE zz_smtp SET deleted = 1 WHERE id='.prepare($id_record));
+        $dbo->query('UPDATE zz_smtp SET deleted_at = NOW() WHERE id='.prepare($id_record));
 
         $_SESSION['infos'][] = tr('Account email eliminato!');
 

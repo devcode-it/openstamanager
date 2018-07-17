@@ -7,22 +7,21 @@ switch (post('op')) {
     case 'add':
         $codice = post('codice');
 
-        // Inserisco l'articolo solo se non esiste un altro articolo con stesso codice
+        // Inserisco l'articolo e avviso se esiste un altro articolo con stesso codice.
         if ($dbo->fetchNum('SELECT * FROM mg_articoli WHERE codice='.prepare($codice)) == 0) {
-            $dbo->insert('mg_articoli', [
-                'codice' => $codice,
-                'descrizione' => post('descrizione'),
-                'id_categoria' => post('categoria'),
-                'id_sottocategoria' => post('subcategoria'),
-                'attivo' => 1,
-            ]);
-            $id_record = $dbo->lastInsertedID();
+			$_SESSION['warnings'][] = tr('Esiste già un articolo con questo codice.');
+		} 
+		$dbo->insert('mg_articoli', [
+			'codice' => $codice,
+			'descrizione' => post('descrizione'),
+			'id_categoria' => post('categoria'),
+			'id_sottocategoria' => post('subcategoria'),
+			'attivo' => 1,
+		]);
+		$id_record = $dbo->lastInsertedID();
 
-            $_SESSION['infos'][] = tr('Aggiunto un nuovo articolo!');
-        } else {
-            $_SESSION['errors'][] = tr('Esiste già un articolo con questo codice!');
-        }
-
+		$_SESSION['infos'][] = tr('Aggiunto un nuovo articolo.');
+	
         break;
 
     // Modifica articolo
@@ -108,7 +107,21 @@ switch (post('op')) {
         $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
 
         break;
+	
+	//Duplica articolo
+	case 'copy':
+	
+		$dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM mg_articoli WHERE id = '.prepare($id_record));
+		$dbo->query('ALTER TABLE tmp DROP id');
+		$dbo->query('INSERT INTO mg_articoli SELECT NULL,tmp.* FROM tmp');
+		$id_record = $dbo->lastInsertedID();
+		$dbo->query('DROP TEMPORARY TABLE tmp');
+		$dbo->query('UPDATE mg_articoli SET qta=0 WHERE id='.prepare($id_record));
+		$_SESSION['infos'][] = tr('Articolo duplicato correttamente!');
 
+	break;
+	
+	
     // Aggiunta prodotto
     case 'addprodotto':
         // Per i 3 campi (lotto, serial, altro) leggo i numeri di partenza e arrivo e creo le combinazioni scelte

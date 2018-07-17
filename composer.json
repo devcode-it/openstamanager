@@ -59,6 +59,7 @@
         },
         "files": [
             "lib/functions.php",
+            "lib/common.php",
             "lib/helpers.php",
             "lib/util.php",
             "lib/deprecated.php"

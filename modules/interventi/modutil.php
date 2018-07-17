@@ -315,3 +315,20 @@ function get_costi_intervento($id_intervento)
 
     return $result;
 }
+
+/**
+ * Calcola le ore presenti tra due date.
+ *
+ * @param string $orario_inizio
+ * @param string $orario_fine
+ *
+ * @return float
+ */
+function calcola_ore_intervento($orario_inizio, $orario_fine)
+{
+    $inizio = new DateTime($orario_inizio);
+    $diff = $inizio->diff(new DateTime($orario_fine));
+    $ore = $diff->h + ($diff->days * 24);
+
+    return $ore;
+}

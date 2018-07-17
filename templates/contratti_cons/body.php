@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once $docroot.'/modules/interventi/modutil.php';
+include_once Modules::filepath('Interventi', 'modutil.php');
 
 $report_name = 'contratto_'.$records[0]['numero'].'_cons.pdf';
 
@@ -126,7 +126,7 @@ if (!empty($interventi)) {
         // Calcolo il totale delle ore lavorate
         $tecnici = $dbo->fetchArray('SELECT orario_inizio, orario_fine FROM in_interventi_tecnici WHERE idintervento='.prepare($int['id']));
         foreach ($tecnici as $tecnico) {
-            $totale_ore_impiegate += datediff('n', $tecnico['orario_inizio'], $tecnico['orario_fine']) / 60;
+            $totale_ore_impiegate += calcola_ore_intervento($tecnico['orario_inizio'], $tecnico['orario_fine']);
         }
 
         $ore[] = $int['ore'];

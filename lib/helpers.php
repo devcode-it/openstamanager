@@ -1,6 +1,12 @@
 <?php
 
 /**
+ * Funzioni di aiuto per la semplificazione del codice.
+ *
+ * @since 2.4.2
+ */
+
+/**
  * Restituisce l'oggetto dedicato alla gestione della connessione con il database.
  *
  * @return \Database

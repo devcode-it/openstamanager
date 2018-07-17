@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once DOCROOT.'/modules/fatture/modutil.php';
+include_once Modules::filepath('Fatture di vendita', 'modutil.php');
 
 $report_name = 'fattura_'.$numero.'.pdf';
 

@@ -79,9 +79,7 @@ switch (post('op')) {
                 $orario_fine = post('orario_fine')[$idriga];
 
                 // Ricalcolo le ore lavorate
-                $inizio = new DateTime($orario_inizio);
-                $diff = $inizio->diff(new DateTime($orario_fine));
-                $ore = $diff->h + ($diff->days * 24);
+                $ore = calcola_ore_intervento($orario_inizio, $orario_fine);
 
                 $km = post('km')[$idriga];
 

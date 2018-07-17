@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+include_once Modules::filepath('Interventi', 'modutil.php');
+
 if (!isset($user['idanagrafica'])) {
     $user['idanagrafica'] = '';
 }
@@ -44,25 +46,24 @@ switch (get('op')) {
     case 'update_intervento':
         $sessione = get('id');
         $idintervento = get('idintervento');
-        $timeStart = get('timeStart');
-        $timeEnd = get('timeEnd');
+        $orario_inizio = get('timeStart');
+        $orario_fine = get('timeEnd');
 
-        //Aggiornamento prezzo totale
+        // Aggiornamento prezzo totale
         $q = 'SELECT in_interventi_tecnici.prezzo_ore_unitario, idtecnico, in_statiintervento.completato FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento =  in_statiintervento.idstatointervento WHERE in_interventi.id='.prepare($idintervento).' AND in_statiintervento.completato = 0 '.Modules::getAdditionalsQuery('Interventi');
         $rs = $dbo->fetchArray($q);
         $prezzo_ore = 0.00;
 
         for ($i = 0; $i < count($rs); ++$i) {
             $prezzo_ore_unitario = $rs[$i]['prezzo_ore_unitario'];
+            $ore = calcola_ore_intervento($orario_inizio, $orario_fine);
 
-            $t = datediff('n', $timeStart, $timeEnd);
-            $t = floatval(round($t / 60, 1));
-            $prezzo_ore += $t * $prezzo_ore_unitario;
+            $prezzo_ore += $ore * $prezzo_ore_unitario;
         }
 
         if (count($rs) > 0) {
             // Aggiornamento orario tecnico
-            $dbo->query('UPDATE in_interventi_tecnici SET orario_inizio = '.prepare($timeStart).', orario_fine = '.prepare($timeEnd).', ore='.prepare($t).', prezzo_ore_consuntivo='.prepare($t * $prezzo_ore_unitario).' WHERE id='.prepare($sessione));
+            $dbo->query('UPDATE in_interventi_tecnici SET orario_inizio = '.prepare($orario_inizio).', orario_fine = '.prepare($orario_fine).', ore='.prepare($ore).', prezzo_ore_consuntivo='.prepare($t * $prezzo_ore_unitario).' WHERE id='.prepare($sessione));
             echo 'ok';
         } else {
             echo tr('Attività completata, non è possibile modificarla!');

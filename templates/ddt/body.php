@@ -46,7 +46,7 @@ $rs_gen = $dbo->fetchArray("SELECT *,
     (SELECT `percentuale` FROM `co_iva` WHERE `id` = `dt_righe_ddt`.`idiva`) AS perc_iva,
     IFNULL((SELECT peso_lordo FROM mg_articoli WHERE id=idarticolo),0) * qta AS peso_lordo,
     IFNULL((SELECT volume FROM mg_articoli WHERE id=idarticolo),0) * qta AS volume
-FROM `dt_righe_ddt` WHERE idddt=".prepare($id_record));
+FROM `dt_righe_ddt` WHERE idddt=".prepare($id_record).' ORDER BY `order`');
 foreach ($rs_gen as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);

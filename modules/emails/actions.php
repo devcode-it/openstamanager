@@ -37,7 +37,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->query('UPDATE zz_emails SET deleted = 1 WHERE id='.prepare($id_record));
+        $dbo->query('UPDATE zz_emails SET deleted_at = NOW() WHERE id='.prepare($id_record));
 
         App::flash()->info(tr('Template delle email eliminato!'));
 

@@ -53,16 +53,6 @@ UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Modelli
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `enabled`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE name='Modelli prima nota'), 'id', 'co_movimenti_modelli.id', '0', '1', '0', '0', NULL, NULL, '0', '0', '1');
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `enabled`, `summable`, `default`) VALUES (NULL, (SELECT id FROM zz_modules WHERE name='Modelli prima nota'), 'Causale predefinita', 'co_movimenti_modelli.descrizione', '1', '1', '0', '0', NULL, NULL, '1', '0', '1');
 
-INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
-(1, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Modelli prima nota') AND name='id' )),
-(1, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Modelli prima nota') AND name='Causale predefinita' )),
-(2, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Modelli prima nota') AND name='id' )),
-(2, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Modelli prima nota') AND name='Causale predefinita' )),
-(3, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Modelli prima nota') AND name='id' )),
-(3, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Modelli prima nota') AND name='Causale predefinita' )),
-(4, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Modelli prima nota') AND name='id' )),
-(4, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Modelli prima nota') AND name='Causale predefinita' ));
-
 -- Widget per stampa calendario
 INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`, `help` ) VALUES (NULL, 'Stampa calendario', 'print', '1', 'controller_top', 'col-md-12', NULL, '#4ccc4c', 'fa fa-print', '', './modules/dashboard/widgets/stampa_calendario.dashboard.php', 'popup', '', 'Stampa calendario', '1', '7', NULL);
 
@@ -145,21 +135,9 @@ UPDATE `zz_views` SET  `query` = 'CONCAT(mg_movimenti.qta,'' '', (SELECT um FROM
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,  `format`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), 'Data', 'mg_movimenti.data', 5, 1, 0, 1, 1, 1);
 
-INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
-(1, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Movimenti') AND name='Data' )),
-(2, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Movimenti') AND name='Data' )),
-(3, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Movimenti') AND name='Data' )),
-(4, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Movimenti') AND name='Data' ));
-
 -- Aggiungo colonna impianti per i contratti
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,  `format`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Impianti', '(SELECT IF(nome = '''', GROUP_CONCAT(matricola SEPARATOR ''<br>''), GROUP_CONCAT(matricola, '' - '', nome SEPARATOR ''<br>'')) FROM my_impianti INNER JOIN my_impianti_contratti ON my_impianti.id = my_impianti_contratti.idimpianto WHERE my_impianti_contratti.idcontratto = co_contratti.id)', 4, 1, 0, 0, 0, 1);
-
-INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
-(1, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Contratti') AND name='Impianti' )),
-(2, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Contratti') AND name='Impianti' )),
-(3, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Contratti') AND name='Impianti' )),
-(4, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Contratti') AND name='Impianti' ));
 
 -- Tempo standard per attività
 ALTER TABLE `in_tipiintervento` ADD `tempo_standard` DECIMAL(10,2)  NULL AFTER `costo_diritto_chiamata_tecnico`;
@@ -238,12 +216,6 @@ UPDATE `or_righe_ordini` SET `abilita_serial` = 0 WHERE `idarticolo` NOT IN (SEL
 -- Aggiungo colonna idanagrafica per i preventivi (colonna necessaria per i permessi)
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,  `format`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'idanagrafica', 'co_preventivi.idanagrafica', 0, 0, 0, 0, 0, 1);
-
-INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
-(1, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Preventivi') AND name='idanagrafica' )),
-(2, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Preventivi') AND name='idanagrafica' )),
-(3, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Preventivi') AND name='idanagrafica' )),
-(4, (SELECT id FROM `zz_views` WHERE id_module=(SELECT id FROM zz_modules WHERE name='Preventivi') AND name='idanagrafica' ));
 
 -- Fix name, title e order stampa ordine fornitore senza costi
 UPDATE `zz_prints` SET `name` = 'Ordine fornitore (senza costi)',  `title` = 'Ordine fornitore (senza costi)',  `order` = 1 WHERE `zz_prints`.`name` = 'Ordine fornitore' AND  options = '{"pricing":false}' AND `zz_prints`.`id_module` =  (SELECT id FROM zz_modules WHERE name='Ordini fornitore') ;
@@ -393,4 +365,89 @@ UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(\" \", REPLACE(REPLACE(REPLA
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Tipo', 'co_tipidocumento.descrizione', 4, 1, 0, 1, 1);
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Tipo', 'co_tipidocumento.descrizione', 4, 1, 0, 1, 1);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Tipo',
+'co_tipidocumento.descrizione', 4, 1, 0, 1, 1);
+
+-- Aggiunta di alcuni filtri di base
+INSERT INTO `zz_group_module` (`id`, `idgruppo`, `idmodule`, `name`, `clause`, `position`, `enabled`, `default`) VALUES
+(NULL, (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt di vendita'), 'Mostra ddt di vendita ai clienti coinvolti', 'dt_ddt.idanagrafica=|idanagrafica|', 'WHR', '0', '1'),
+(NULL, (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente'), 'Mostra ordini cliente ai clienti coinvolti', 'or_ordini.idanagrafica=|idanagrafica|', 'WHR', '0', '1'),
+(NULL, (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti'), (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Mostra fatture di vendita ai clienti coinvolti', 'co_documenti.idanagrafica=|idanagrafica|', 'WHR', '0', '1');
+
+-- Sostituzione deleted con deleted_at
+ALTER TABLE `co_banche` ADD `deleted_at` timestamp NULL DEFAULT NULL;
+UPDATE `co_banche` SET `deleted_at` = NOW() WHERE `deleted` = 1;
+ALTER TABLE `co_banche` DROP `deleted`;
+
+ALTER TABLE `an_anagrafiche` ADD `deleted_at` timestamp NULL DEFAULT NULL;
+UPDATE `an_anagrafiche` SET `deleted_at` = NOW() WHERE `deleted` = 1;
+ALTER TABLE `an_anagrafiche` DROP `deleted`;
+
+ALTER TABLE `in_statiintervento` ADD `deleted_at` timestamp NULL DEFAULT NULL;
+UPDATE `in_statiintervento` SET `deleted_at` = NOW() WHERE `deleted` = 1;
+ALTER TABLE `in_statiintervento` DROP `deleted`;
+
+ALTER TABLE `zz_emails` ADD `deleted_at` timestamp NULL DEFAULT NULL;
+UPDATE `zz_emails` SET `deleted_at` = NOW() WHERE `deleted` = 1;
+ALTER TABLE `zz_emails` DROP `deleted`;
+
+ALTER TABLE `zz_smtp` ADD `deleted_at` timestamp NULL DEFAULT NULL;
+UPDATE `zz_smtp` SET `deleted_at` = NOW() WHERE `deleted` = 1;
+ALTER TABLE `zz_smtp` DROP `deleted`;
+
+ALTER TABLE `in_interventi` ADD `deleted_at` timestamp NULL DEFAULT NULL;
+UPDATE `in_interventi` SET `deleted_at` = NOW() WHERE `deleted` = 1;
+ALTER TABLE `in_interventi` DROP `deleted`;
+
+UPDATE `zz_widgets` SET `query` = REPLACE(
+    REPLACE(
+        REPLACE(`query`, 'deleted=0', '`deleted_at` IS NULL')
+    , 'deleted = 0', '`deleted_at` IS NULL')
+, '`deleted` = 0', '`deleted_at` IS NULL');
+UPDATE `zz_modules` SET `options` = REPLACE(
+    REPLACE(
+        REPLACE(`options`, 'deleted=0', '`deleted_at` IS NULL')
+    , 'deleted = 0', '`deleted_at` IS NULL')
+, '`deleted` = 0', '`deleted_at` IS NULL'), `options2` = REPLACE(
+    REPLACE(
+        REPLACE(`options2`, 'deleted=0', '`deleted_at` IS NULL')
+    , 'deleted = 0', '`deleted_at` IS NULL')
+, '`deleted` = 0', '`deleted_at` IS NULL');
+UPDATE `zz_group_module` SET `clause` = REPLACE(
+    REPLACE(
+        REPLACE(`clause`, 'deleted=0', '`deleted_at` IS NULL')
+    , 'deleted = 0', '`deleted_at` IS NULL')
+, '`deleted` = 0', '`deleted_at` IS NULL');
+UPDATE `zz_views` SET `query` = REPLACE(
+    REPLACE(
+        REPLACE(`query`, 'deleted=0', '`deleted_at` IS NULL')
+    , 'deleted = 0', '`deleted_at` IS NULL')
+, '`deleted` = 0', '`deleted_at` IS NULL');
+
+UPDATE `zz_widgets` SET `query` = REPLACE(
+    REPLACE(
+        REPLACE(`query`, 'deleted=1', '`deleted_at` IS NOT NULL')
+    , 'deleted = 1', '`deleted_at` IS NOT NULL')
+, '`deleted` = 1', '`deleted_at` IS NOT NULL');
+UPDATE `zz_modules` SET `options` = REPLACE(
+    REPLACE(
+        REPLACE(`options`, 'deleted=1', '`deleted_at` IS NOT NULL')
+    , 'deleted = 1', '`deleted_at` IS NOT NULL')
+, '`deleted` = 1', '`deleted_at` IS NOT NULL'), `options2` = REPLACE(
+    REPLACE(
+        REPLACE(`options2`, 'deleted=1', '`deleted_at` IS NOT NULL')
+    , 'deleted = 1', '`deleted_at` IS NOT NULL')
+, '`deleted` = 1', '`deleted_at` IS NOT NULL');
+UPDATE `zz_group_module` SET `clause` = REPLACE(
+    REPLACE(
+        REPLACE(`clause`, 'deleted=1', '`deleted_at` IS NOT NULL')
+    , 'deleted = 1', '`deleted_at` IS NOT NULL')
+, '`deleted` = 1', '`deleted_at` IS NOT NULL');
+UPDATE `zz_views` SET `query` = REPLACE(
+    REPLACE(
+        REPLACE(`query`, 'deleted=1', '`deleted_at` IS NOT NULL')
+    , 'deleted = 1', '`deleted_at` IS NOT NULL')
+, '`deleted` = 1', '`deleted_at` IS NOT NULL');
+
+-- Fix id delle Banche
+UPDATE `zz_views` SET `enabled` = 0 WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'id';

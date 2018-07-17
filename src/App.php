@@ -293,7 +293,7 @@ class App
 
                 $fields[] = trim($view['name']);
 
-                $search_inside[] = !empty($view['search_inside']) ? $view['search_inside'] : $view['name'];
+                $search_inside[] = !empty($view['search_inside']) ? $view['search_inside'] : '`'.$view['name'].'`';
                 $order_by[] = !empty($view['order_by']) ? $view['order_by'] : '`'.$view['name'].'`';
                 $search[] = $view['search'];
                 $slow[] = $view['slow'];
@@ -352,7 +352,7 @@ class App
             $format[] = 0;
         }
 
-        $search_inside = $fields;
+        $search_inside = $order_by;
 
         return [
             'query' => self::replacePlaceholder($query),

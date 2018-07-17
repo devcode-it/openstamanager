@@ -208,7 +208,7 @@ if (empty($new_codice)) {
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Stato intervento'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted = 0", "value": "<?php echo $idstatointervento; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Stato intervento'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "<?php echo $idstatointervento; ?>" ]}
 				</div>
 
 				<div class="col-md-2">

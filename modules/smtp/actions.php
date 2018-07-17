@@ -75,7 +75,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->query('UPDATE zz_smtps SET deleted = 1 WHERE id='.prepare($id_record));
+        $dbo->query('UPDATE zz_smtps SET deleted_at = NOW() WHERE id='.prepare($id_record));
 
         App::flash()->info(tr('Account email eliminato!'));
 

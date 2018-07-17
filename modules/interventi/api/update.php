@@ -111,7 +111,7 @@ switch ($resource) {
                 $dbo->query("DELETE FROM in_interventi_tecnici WHERE id='".$rs_sessioni[$i]['id']."'");
                 $rs_per_intervento = $dbo->fetchArray("SELECT * FROM in_interventi_tecnici WHERE idintervento='".$idintervento."'");
                 if(sizeof($rs_per_intervento)==0){
-                    $dbo->query("UPDATE in_interventi SET deleted=1 WHERE idintervento='".$idintervento."'");
+                    $dbo->query("UPDATE in_interventi SET deleted_at=NOW() WHERE idintervento='".$idintervento."'");
                 }
             }
         }

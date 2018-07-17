@@ -15,7 +15,7 @@ include_once __DIR__.'/../../core.php';
 
     if (!empty($iddocumento)) {
         // Lettura numero e tipo di documento
-        $query = 'SELECT dir, numero, numero_esterno, data, co_tipidocumento.descrizione AS tdescrizione, idanagrafica AS parent_idanagrafica, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=parent_idanagrafica AND deleted=0) AS ragione_sociale FROM co_documenti LEFT OUTER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
+        $query = 'SELECT dir, numero, numero_esterno, data, co_tipidocumento.descrizione AS tdescrizione, idanagrafica AS parent_idanagrafica, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=parent_idanagrafica AND deleted_at IS NULL) AS ragione_sociale FROM co_documenti LEFT OUTER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
         $rs = $dbo->fetchArray($query);
         $dir = $rs[0]['dir'];
         $numero_doc = !empty($rs[0]['numero_esterno']) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];

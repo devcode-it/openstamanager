@@ -6,7 +6,7 @@ switch ($resource) {
     case 'anagrafiche_utenti':
         $query = 'SELECT `an_anagrafiche`.`idanagrafica` AS id, `an_anagrafiche`.`ragione_sociale` AS "descrizione", `an_tipianagrafiche`.`descrizione` AS optgroup FROM `an_tipianagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC';
 
-        $where[] = 'an_anagrafiche.deleted= 0';
+        $where[] = 'an_anagrafiche.deleted_at IS NULL';
 
         if (!empty($search)) {
             $search_fields[] = 'an_anagrafiche.ragione_sociale LIKE '.prepare('%'.$search.'%');

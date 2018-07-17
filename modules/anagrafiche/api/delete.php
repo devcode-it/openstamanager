@@ -9,7 +9,7 @@ switch ($resource) {
 
         // Se l'anagrafica non è l'azienda principale, la disattivo
         if (!in_array($id_azienda, $tipi)) {
-            $dbo->query('UPDATE an_anagrafiche SET deleted = 1 WHERE idanagrafica = '.prepare($request['id']));
+            $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE idanagrafica = '.prepare($request['id']));
         }
 
         break;

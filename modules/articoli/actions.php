@@ -8,9 +8,10 @@ switch (post('op')) {
         $codice = post('codice');
 
         // Inserisco l'articolo e avviso se esiste un altro articolo con stesso codice.
-        if ($dbo->fetchNum('SELECT * FROM mg_articoli WHERE codice='.prepare($codice)) == 0) {
+        if ($dbo->fetchNum('SELECT * FROM mg_articoli WHERE codice='.prepare($codice)) == 1) {
 			$_SESSION['warnings'][] = tr('Esiste già un articolo con questo codice.');
 		} 
+		
 		$dbo->insert('mg_articoli', [
 			'codice' => $codice,
 			'descrizione' => post('descrizione'),

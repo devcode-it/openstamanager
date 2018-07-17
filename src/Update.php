@@ -338,9 +338,12 @@ class Update
 
                     if ($start < $end) {
                         for ($i = $start; $i < $end; ++$i) {
-                            $database->query($queries[$i], tr('Aggiornamento fallito').': '.$queries[$i]);
+                            $database->query($queries[$i], [], tr('Aggiornamento fallito').': '.$queries[$i]);
 
-                            $database->query('UPDATE `updates` SET `done` = '.prepare($i + 3).' WHERE id = '.prepare($update['id']));
+                            $database->query('UPDATE `updates` SET `done` = :done WHERE id = :id', [
+                                ':done' => $i + 3,
+                                ':id' => $update['id'],
+                            ]);
                         }
 
                         // Restituisce l'indice della prima e dell'ultima query eseguita, con la differenza relativa per l'avanzamento dell'aggiornamento
@@ -353,7 +356,10 @@ class Update
                 }
 
                 // Imposta l'aggiornamento nello stato di esecuzione dello script
-                $database->query('UPDATE `updates` SET `done` = 0 WHERE id = '.prepare($update['id']));
+                $database->query('UPDATE `updates` SET `done` = :done WHERE id = :id', [
+                    ':done' => 0,
+                    ':id' => $update['id'],
+                ]);
 
                 // Permessi di default delle viste
                 if ($database->tableExists('zz_views')) {
@@ -383,7 +389,10 @@ class Update
                 }
 
                 // Imposta l'aggiornamento come completato
-                $database->query('UPDATE `updates` SET `done` = 1 WHERE id = '.prepare($update['id']));
+                $database->query('UPDATE `updates` SET `done` = :done WHERE id = :id', [
+                    ':done' => 1,
+                    ':id' => $update['id'],
+                ]);
 
                 // Normalizzazione di charset e collation
                 self::normalizeDatabase($database->getDatabaseName());

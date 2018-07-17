@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS `zz_documenti_categorie` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `descrizione` varchar(255) NOT NULL,
-  `deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
@@ -14,15 +14,15 @@ CREATE TABLE IF NOT EXISTS `zz_documenti` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
-INSERT INTO `zz_documenti_categorie` (`id`, `descrizione`, `deleted`) VALUES
-(NULL, 'Documenti società', 0),
-(NULL, 'Contratti assunzione personale', 0);
+INSERT INTO `zz_documenti_categorie` (`id`, `descrizione`) VALUES
+(NULL, 'Documenti società'),
+(NULL, 'Contratti assunzione personale');
 
 -- Innesto modulo gestione documentale
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Gestione documentale', 'Gestione documentale', 'gestione_documentale', '{	"main_query": [	{	"type": "table", "fields": "Categoria, Nome, Data", "query": "SELECT id,(SELECT descrizione FROM zz_documenti_categorie WHERE zz_documenti_categorie.id = idcategoria) AS Categoria, zz_documenti.nome AS Nome, DATE_FORMAT( zz_documenti.`data`, ''%d/%m/%Y'' ) AS `Data` FROM zz_documenti  WHERE  `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 1=1"}	]}', '', 'fa fa-file-text-o', '2.4', '2.4', '1', NULL, '1', '1');
 
 -- Innesto modulo categorie documenti
-INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Categorie documenti', 'Categorie documenti', 'categorie_documenti', '{	"main_query": [	{	"type": "table", "fields": "Descrizione", "query": "SELECT zz_documenti_categorie.`descrizione`as Descrizione, zz_documenti_categorie.`id`as id FROM zz_documenti_categorie WHERE deleted = 0 HAVING 1=1"}	]}', '', 'fa fa-file-text-o', '2.4', '2.4', '1', NULL, '1', '1');
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Categorie documenti', 'Categorie documenti', 'categorie_documenti', '{	"main_query": [	{	"type": "table", "fields": "Descrizione", "query": "SELECT zz_documenti_categorie.`descrizione`as Descrizione, zz_documenti_categorie.`id`as id FROM zz_documenti_categorie WHERE deleted_at IS NULL HAVING 1=1"}	]}', '', 'fa fa-file-text-o', '2.4', '2.4', '1', NULL, '1', '1');
 UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Categorie documenti' AND `t2`.`name` = 'Gestione documentale') SET `t1`.`parent` = `t2`.`id`;
 
 -- Fatturazione elettronica
@@ -211,7 +211,7 @@ ALTER TABLE `an_anagrafiche` ADD `codice_destinatario` varchar(7);
 -- Plugin Fatturazione Elettronica
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `directory`, `options`) VALUES (NULL, 'Fatturazione Elettronica', 'Fatturazione Elettronica', (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita'), (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita'), 'tab', 'fatturazione', 'custom');
 
-INSERT INTO `zz_emails` (`id`, `id_module`, `id_smtp`, `name`, `icon`, `subject`, `reply_to`, `cc`, `bcc`, `body`, `read_notify`, `main`, `deleted`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 1, 'Fattura Elettronica', 'fa fa-file', 'Invio fattura numero {numero} del {data}', '', 'sdi01@pec.fatturapa.it', '', '<p>Gentile Cliente,</p>\r\n<p>inviamo in allegato la fattura numero {numero} del {data}.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0', '0', '0');
+INSERT INTO `zz_emails` (`id`, `id_module`, `id_smtp`, `name`, `icon`, `subject`, `reply_to`, `cc`, `bcc`, `body`, `read_notify`, `main`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 1, 'Fattura Elettronica', 'fa fa-file', 'Invio fattura numero {numero} del {data}', '', 'sdi01@pec.fatturapa.it', '', '<p>Gentile Cliente,</p>\r\n<p>inviamo in allegato la fattura numero {numero} del {data}.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0', '0');
 INSERT INTO `zz_email_print` (`id`, `id_email`, `id_print`) VALUES (NULL, (SELECT `id` FROM `zz_emails` WHERE `name` = 'Fattura Elettronica' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita')), (SELECT `id` FROM `zz_prints` WHERE `name` = 'Fattura di vendita'));
 UPDATE `zz_emails` SET `main` = 1 WHERE `name` = 'Fattura' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
 
@@ -240,4 +240,4 @@ CREATE TABLE IF NOT EXISTS `zz_operations` (
 ALTER TABLE `zz_smtp` RENAME `zz_smtps`;
 
 -- Aggiorno tabella zz_smtp in zz_smtps per il modulo Account email
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM zz_smtps WHERE 1=1 AND deleted = 0 HAVING 2=2 ORDER BY `name`' WHERE `zz_modules`.`name` = 'Account email';
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM zz_smtps WHERE 1=1 AND deleted_at IS NULL HAVING 2=2 ORDER BY `name`' WHERE `zz_modules`.`name` = 'Account email';

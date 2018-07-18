@@ -85,6 +85,9 @@ class HTMLBuilder
     /** @var int Limite di ricorsione interna */
     protected static $max_recursion = 10;
 
+    /** @var array Elenco degli elementi abilitati per la sostituzione automatica nei valori ($nome$) */
+    protected static $record = [];
+
     /**
      * Esegue la sostituzione dei tag personalizzati con il relativo codice HTML.
      *
@@ -206,7 +209,7 @@ class HTMLBuilder
                 // Sostituzione delle variabili $nome$ col relativo valore da database
                 elseif (is_string($json[$key]) && preg_match_all('/\$([a-z0-9\_]+)\$/i', $json[$key], $m)) {
                     for ($i = 0; $i < count($m[0]); ++$i) {
-                        $record = isset($records[0][$m[1][$i]]) ? $records[0][$m[1][$i]] : '';
+                        $record = isset(self::$record[$m[1][$i]]) ? self::$record[$m[1][$i]] : '';
                         $json[$key] = str_replace($m[0][$i], prepareToField($record), $json[$key]);
                     }
                 }
@@ -418,5 +421,16 @@ class HTMLBuilder
             self::$managers['list'][$input] = $original;
             self::$managers['instances'][$original] = $class;
         }
+    }
+
+    /**
+     * Imposta l'oggetto responsabile per la costruzione del codice HTML per il tag personalizzato.
+     *
+     * @param string       $input
+     * @param string|mixed $class
+     */
+    public static function setRecord($record)
+    {
+        self::$record = $record;
     }
 }

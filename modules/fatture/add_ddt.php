@@ -10,9 +10,9 @@ if ($module['name'] == 'Fatture di vendita') {
     $dir = 'uscita';
 }
 
-$record = $dbo->fetchArray('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
-$numero = ($record[0]['numero_esterno'] != '') ? $record[0]['numero_esterno'] : $record[0]['numero'];
-$idanagrafica = $record[0]['idanagrafica'];
+$info = $dbo->fetchOne('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
+$numero = ($info['numero_esterno'] != '') ? $info['numero_esterno'] : $info['numero'];
+$idanagrafica = $info['idanagrafica'];
 
 // Preventivo
 echo '

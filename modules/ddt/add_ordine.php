@@ -12,10 +12,10 @@ if ($module['name'] == 'Ddt di vendita') {
     $module_origin = 'Ordini fornitore';
 }
 
-$record = $dbo->fetchArray('SELECT * FROM dt_ddt WHERE id='.prepare($id_record));
-$numero = ($record[0]['numero_esterno'] != '') ? $record[0]['numero_esterno'] : $record[0]['numero'];
-$idconto = $record[0]['idconto'];
-$idanagrafica = $record[0]['idanagrafica'];
+$info = $dbo->fetchOne('SELECT * FROM dt_ddt WHERE id='.prepare($id_record));
+$numero = ($info['numero_esterno'] != '') ? $info['numero_esterno'] : $info['numero'];
+$idconto = $info['idconto'];
+$idanagrafica = $info['idanagrafica'];
 
 // Preventivo
 echo '

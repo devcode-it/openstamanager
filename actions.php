@@ -144,6 +144,14 @@ if (Modules::getPermission($permesso) == 'r' || Modules::getPermission($permesso
     // Lettura risultato query del modulo
     include App::filepath($directory.'|custom|', 'init.php');
 
+    // Retrocompatibilità
+    if (!isset($record) && isset($records[0])) {
+        $record = $records[0];
+    }
+
+    // Registrazione del record
+    HTMLBuilder\HTMLBuilder::setRecord($record);
+
     if (Modules::getPermission($permesso) == 'rw') {
         // Esecuzione delle operazioni di gruppo
         $id_records = post('id_records');

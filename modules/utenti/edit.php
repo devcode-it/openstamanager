@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-$record = $records[0];
-
 $utenti = $dbo->fetchArray('SELECT *, (SELECT ragione_sociale FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica=zz_users.idanagrafica ) AS ragione_sociale, (SELECT GROUP_CONCAT(descrizione SEPARATOR ", ") FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica=an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica=zz_users.idanagrafica GROUP BY idanagrafica) AS tipo FROM zz_users WHERE idgruppo='.prepare($record['id']));
 
 echo '

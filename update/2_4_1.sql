@@ -427,6 +427,11 @@ UPDATE `zz_views` SET `query` = REPLACE(
         REPLACE(`query`, 'deleted=0', '`deleted_at` IS NULL')
     , 'deleted = 0', '`deleted_at` IS NULL')
 , '`deleted` = 0', '`deleted_at` IS NULL');
+UPDATE `zz_settings` SET `tipo` = REPLACE(
+    REPLACE(
+        REPLACE(`tipo`, 'deleted=0', '`deleted_at` IS NULL')
+    , 'deleted = 0', '`deleted_at` IS NULL')
+, '`deleted` = 0', '`deleted_at` IS NULL');
 
 UPDATE `zz_widgets` SET `query` = REPLACE(
     REPLACE(
@@ -450,6 +455,11 @@ UPDATE `zz_group_module` SET `clause` = REPLACE(
 UPDATE `zz_views` SET `query` = REPLACE(
     REPLACE(
         REPLACE(`query`, 'deleted=1', '`deleted_at` IS NOT NULL')
+    , 'deleted = 1', '`deleted_at` IS NOT NULL')
+, '`deleted` = 1', '`deleted_at` IS NOT NULL');
+UPDATE `zz_settings` SET `tipo` = REPLACE(
+    REPLACE(
+        REPLACE(`tipo`, 'deleted=1', '`deleted_at` IS NOT NULL')
     , 'deleted = 1', '`deleted_at` IS NOT NULL')
 , '`deleted` = 1', '`deleted_at` IS NOT NULL');
 

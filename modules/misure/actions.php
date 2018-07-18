@@ -50,12 +50,12 @@ switch (filter('op')) {
 
     case 'delete':
 
-        $righe = $dbo->fetchNum('SELECT id FROM co_righe_documenti WHERE um='.prepare($records[0]['valore']).'
-             UNION SELECT id FROM dt_righe_ddt WHERE um='.prepare($records[0]['valore']).'
-             UNION SELECT id FROM or_righe_ordini WHERE um='.prepare($records[0]['valore']).'
-             UNION SELECT id FROM co_righe_contratti WHERE um='.prepare($records[0]['valore']).'
-             UNION SELECT id FROM mg_articoli WHERE um='.prepare($records[0]['valore']).'
-             UNION SELECT id FROM co_righe_preventivi WHERE um='.prepare($records[0]['valore']));
+        $righe = $dbo->fetchNum('SELECT id FROM co_righe_documenti WHERE um='.prepare($record['valore']).'
+             UNION SELECT id FROM dt_righe_ddt WHERE um='.prepare($record['valore']).'
+             UNION SELECT id FROM or_righe_ordini WHERE um='.prepare($record['valore']).'
+             UNION SELECT id FROM co_righe_contratti WHERE um='.prepare($record['valore']).'
+             UNION SELECT id FROM mg_articoli WHERE um='.prepare($record['valore']).'
+             UNION SELECT id FROM co_righe_preventivi WHERE um='.prepare($record['valore']));
 
         if (isset($id_record) && empty($righe)) {
             $dbo->query('DELETE FROM `mg_unitamisura` WHERE `id`='.prepare($id_record));

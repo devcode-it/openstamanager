@@ -23,7 +23,7 @@ echo '
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "span", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "values": "query=SELECT id, title AS descrizione FROM zz_modules WHERE enabled = 1", "value": "<?php echo Modules::get($records[0]['id_module'])['title']; ?>" ]}
+                    {[ "type": "span", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "values": "query=SELECT id, title AS descrizione FROM zz_modules WHERE enabled = 1", "value": "<?php echo Modules::get($record['id_module'])['title']; ?>" ]}
                 </div>
             </div>
 
@@ -71,7 +71,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($records[0]['id_module']).' AND enabled=1" ]}
+                    {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($record['id_module']).' AND enabled=1" ]}
                 </div>
             </div>';
 
@@ -86,7 +86,7 @@ echo '
 <?php
 
 // Variabili utilizzabili
-$variables = include Modules::filepath($records[0]['id_module'], 'variables.php');
+$variables = include Modules::filepath($record['id_module'], 'variables.php');
 
 if (sizeof($variables) > 0) {
     echo '

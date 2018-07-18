@@ -45,7 +45,7 @@ for ($i = 1; $i <= 31; ++$i) {
     }
 }
 
-$results = $dbo->fetchArray('SELECT * FROM `co_pagamenti` WHERE descrizione='.prepare($records[0]['descrizione']).' ORDER BY `num_giorni` ASC');
+$results = $dbo->fetchArray('SELECT * FROM `co_pagamenti` WHERE descrizione='.prepare($record['descrizione']).' ORDER BY `num_giorni` ASC');
 $cont = 1;
 foreach ($results as $result) {
     echo '

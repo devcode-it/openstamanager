@@ -202,9 +202,14 @@ if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom
                     unset($id_plugin);
                 }
 
-                $column['data-link'] = $rootdir.'/'.(empty($id_plugin) ? '' : 'plugin_').'editor.php?id_module='.$id_module.'&id_record='.$id_record.(empty($id_plugin) ? '' : '&id_plugin='.$id_plugin.'&id_parent='.$id_parent).$hash;
+                // Link per i moduli
+                if (empty($id_plugin)) {
+                    $column['data-link'] = $rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash;
+                }
+                // Link per i plugin
+                else {
+                    $column['data-link'] = $rootdir.'/add.php?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&id_parent='.$id_parent.'&edit=1'.$hash;
 
-                if (!empty($id_plugin)) {
                     $column['data-type'] = 'dialog';
                 }
             }

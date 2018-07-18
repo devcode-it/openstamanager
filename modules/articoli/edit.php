@@ -5,15 +5,15 @@ include_once __DIR__.'/../../core.php';
 // Necesario per funzione \Util\Ini::getList
 include_once Modules::filepath('MyImpianti', 'modutil.php');
 
-$_SESSION['superselect']['id_categoria'] = $records[0]['id_categoria'];
+$_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
 
 $img = null;
-if (!empty($records[0]['immagine'])) {
-    $fileinfo = Uploads::fileInfo($records[0]['immagine']);
+if (!empty($record['immagine'])) {
+    $fileinfo = Uploads::fileInfo($record['immagine']);
 
     $default_img = '/'.Uploads::getDirectory($id_module).'/'.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
 
-    $img = file_exists(DOCROOT.$default_img) ? ROOTDIR.$default_img : ROOTDIR.'/'.Uploads::getDirectory($id_module).'/'.$records[0]['immagine01'];
+    $img = file_exists(DOCROOT.$default_img) ? ROOTDIR.$default_img : ROOTDIR.'/'.Uploads::getDirectory($id_module).'/'.$record['immagine01'];
 }
 
 ?><form action="" method="post" id="edit-form" enctype="multipart/form-data">
@@ -53,10 +53,10 @@ if (!empty($records[0]['immagine'])) {
 			<div class="row">
 				<div class="col-md-3">
 					{[ "type": "number", "label": "<?php echo tr('Quantità'); ?>", "name": "qta", "required": 1, "value": "$qta$", "readonly": 1, "decimals": "qta", "min-value": "undefined" ]}
-					<input type="hidden" id="old_qta" value="<?php echo $records[0]['qta']; ?>">
+					<input type="hidden" id="old_qta" value="<?php echo $record['qta']; ?>">
 				</div>
 				<div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr('Modifica quantità manualmente'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>", "extra": "<?php echo ($records[0]['servizio']) ? 'disabled' : ''; ?>" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Modifica quantità manualmente'); ?>", "name": "qta_manuale", "value": 0, "help": "<?php echo tr('Seleziona per modificare manualmente la quantità'); ?>", "placeholder": "<?php echo tr('Quantità manuale'); ?>", "extra": "<?php echo ($record['servizio']) ? 'disabled' : ''; ?>" ]}
 					<script type="text/javascript">
 
                         $(document).ready(function() {
@@ -92,15 +92,15 @@ if (!empty($records[0]['immagine'])) {
 				</div>
 
 				<?php
-                $records[0]['abilita_serial'] = ($records[0]['serial'] > 0) ? 1 : $records[0]['abilita_serial'];
-                if (empty($records[0]['abilita_serial'])) {
+                $record['abilita_serial'] = ($record['serial'] > 0) ? 1 : $record['abilita_serial'];
+                if (empty($record['abilita_serial'])) {
                     $plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Serial'");
                     echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
                 }
                 ?>
 
 				  <div class="col-md-4">
-					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "placeholder": "<?php echo tr('Serial number'); ?>", "extra": "<?php echo ($records[0]['serial'] > 0) ? 'readonly' : ''; ?>" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial", "value": "$abilita_serial$", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "placeholder": "<?php echo tr('Serial number'); ?>", "extra": "<?php echo ($record['serial'] > 0) ? 'readonly' : ''; ?>" ]}
                 </div>
 
 
@@ -221,7 +221,7 @@ if (!empty($records[0]['immagine'])) {
 
     if (count($cmp) > 0) {
         for ($c = 0; $c < count($cmp); ++$c) {
-            ($records[0]['componente_filename'] == $cmp[$c][0]) ? $attr = 'selected="selected"' : $attr = '';
+            ($record['componente_filename'] == $cmp[$c][0]) ? $attr = 'selected="selected"' : $attr = '';
             echo '
                             <option value="'.$cmp[$c][0]."\" $attr>".$cmp[$c][1]."</option>\n";
         }
@@ -236,7 +236,7 @@ if (!empty($records[0]['immagine'])) {
     echo '
             <div id="info_componente">';
 
-    genera_form_componente($records[0]['contenuto']);
+    genera_form_componente($record['contenuto']);
 
     echo '
             </div>';

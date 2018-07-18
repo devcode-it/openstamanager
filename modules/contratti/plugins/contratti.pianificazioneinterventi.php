@@ -233,7 +233,7 @@ switch (filter('op')) {
 $qp = 'SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_contratti_promemoria.idtipointervento) AS tipointervento FROM co_contratti_promemoria WHERE idcontratto='.prepare($id_record).' ORDER BY data_richiesta ASC';
 $rsp = $dbo->fetchArray($qp);
 
-$pianificabile = $dbo->fetchNum('SELECT id FROM co_staticontratti WHERE pianificabile = 1 AND descrizione = '.prepare($records[0]['stato']));
+$pianificabile = $dbo->fetchNum('SELECT id FROM co_staticontratti WHERE pianificabile = 1 AND descrizione = '.prepare($record['stato']));
 
 echo '
 <div class="box">
@@ -292,8 +292,8 @@ if (count($rsp) != 0) {
         }
 
         //data_conclusione contratto
-        if (date('Y', strtotime($records[0]['data_conclusione'])) < 1971) {
-            $records[0]['data_conclusione'] = '';
+        if (date('Y', strtotime($record['data_conclusione'])) < 1971) {
+            $record['data_conclusione'] = '';
         }
 
         //info impianti
@@ -341,7 +341,7 @@ if (count($rsp) != 0) {
 
         echo '
                 <tr>
-                    <td>'.Translator::dateToLocale($rsp[$i]['data_richiesta']).'<!--br><small>'.Translator::dateToLocale($records[0]['data_conclusione']).'</small--></td>
+                    <td>'.Translator::dateToLocale($rsp[$i]['data_richiesta']).'<!--br><small>'.Translator::dateToLocale($record['data_conclusione']).'</small--></td>
                     <td>'.$rsp[$i]['tipointervento'].'</td>
                     <td>'.nl2br($rsp[$i]['richiesta']).'</td>
                     <td>'.$info_intervento.'</td>
@@ -352,7 +352,7 @@ if (count($rsp) != 0) {
                     <td align="right">';
 
         echo '
-				<button type="button" class="btn btn-warning btn-sm" title="Pianifica..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica\', \''.$rootdir.'/modules/contratti/plugins/addpianficazione.php?id_module='.Modules::get('Contratti')['id'].'&id_plugin='.Plugins::get('Pianificazione interventi')['id'].'&ref=interventi_contratti&id_record='.$id_record.'&idcontratto_riga='.$rsp[$i]['id'].'\');"'.((!empty($pianificabile) && strtotime($records[0]['data_conclusione'])) ? '' : ' disabled').'><i class="fa fa-clock-o"></i></button>';
+				<button type="button" class="btn btn-warning btn-sm" title="Pianifica..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica\', \''.$rootdir.'/modules/contratti/plugins/addpianficazione.php?id_module='.Modules::get('Contratti')['id'].'&id_plugin='.Plugins::get('Pianificazione interventi')['id'].'&ref=interventi_contratti&id_record='.$id_record.'&idcontratto_riga='.$rsp[$i]['id'].'\');"'.((!empty($pianificabile) && strtotime($record['data_conclusione'])) ? '' : ' disabled').'><i class="fa fa-clock-o"></i></button>';
 
         echo '
 					<button type="button"  '.$disabled.'  class="btn btn-primary btn-sm '.$disabled.' " title="Pianifica intervento ora..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.$rootdir.'/add.php?id_module='.Modules::get('Interventi')['id'].'&ref=interventi_contratti&idcontratto='.$id_record.'&idcontratto_riga='.$rsp[$i]['id'].'\');"'.(!empty($pianificabile) ? '' : ' disabled').'><i class="fa fa-calendar"></i></button>';
@@ -415,7 +415,7 @@ if (count($rsp) != 0) {
                             {[ "type": "textarea", "placeholder": "'.tr('Descrizione').'", "name": "richiesta" ]}
                         </td>
                         <td>
-                            {[ "type": "select", "placeholder": "'.tr('Sede').'", "name": "idsede_c", "values": "query=SELECT 0 AS id, \'Sede legale\' AS descrizione UNION SELECT id, CONCAT( CONCAT_WS( \' (\', CONCAT_WS(\', \', `nomesede`, `citta`), `indirizzo` ), \')\') AS descrizione FROM an_sedi WHERE idanagrafica='.$records[0]['idanagrafica'].'", "value": "0" ]}
+                            {[ "type": "select", "placeholder": "'.tr('Sede').'", "name": "idsede_c", "values": "query=SELECT 0 AS id, \'Sede legale\' AS descrizione UNION SELECT id, CONCAT( CONCAT_WS( \' (\', CONCAT_WS(\', \', `nomesede`, `citta`), `indirizzo` ), \')\') AS descrizione FROM an_sedi WHERE idanagrafica='.$record['idanagrafica'].'", "value": "0" ]}
                         </td>
                     </tr>
                 </tbody>

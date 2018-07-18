@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 // Se lo stato intervento è uno di quelli di default, non lo lascio modificare
-if ($records[0]['default']) {
+if ($record['default']) {
     $attr = "readonly='true'";
     $warning_text = '<div class="alert alert-warning">'.tr('Non puoi modificare questo tipo di anagrafica!').'</div>';
 } else {
@@ -12,7 +12,7 @@ if ($records[0]['default']) {
 }
 
 // Se il tipo di anagrafica è uno di quelli di default, non lo lascio modificare
-if (!empty($records[0]['default'])) {
+if (!empty($record['default'])) {
     // Disabilito il pulsante di salvataggio
     echo '
     <script>
@@ -43,7 +43,7 @@ if (!empty($records[0]['default'])) {
 <?php
 
 // Se il tipo di anagrafica è uno di quelli di default, non lo lascio modificare
-if (empty($records[0]['default'])) {
+if (empty($record['default'])) {
     echo '
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'

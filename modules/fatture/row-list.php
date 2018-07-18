@@ -99,8 +99,8 @@ if (!empty($rs)) {
         }
 
         // Aggiunta dei riferimenti ai documenti
-        if (!empty($records[0]['ref_documento'])) {
-            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE id = ".prepare($records[0]['ref_documento']));
+        if (!empty($record['ref_documento'])) {
+            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE id = ".prepare($record['ref_documento']));
 
             $text = tr('Rif. fattura _NUM_ del _DATE_', [
                 '_NUM_' => $data[0]['numero'],
@@ -108,7 +108,7 @@ if (!empty($rs)) {
             ]);
 
             echo '
-            <br>'.Modules::link('Fatture di vendita', $records[0]['ref_documento'], $text, $text);
+            <br>'.Modules::link('Fatture di vendita', $record['ref_documento'], $text, $text);
         }
 
         $ref = doc_references($r, $dir, ['iddocumento']);
@@ -190,7 +190,7 @@ if (!empty($rs)) {
         echo '
         <td class="text-center">';
 
-        if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa' && empty($r['sconto_globale'])) {
+        if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa' && empty($r['sconto_globale'])) {
             echo "
             <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>
@@ -205,7 +205,7 @@ if (!empty($rs)) {
             echo "
                 <div class='input-group-btn'>";
 
-            if (empty($records[0]['is_reversed']) && !empty($r['idarticolo']) && $r['abilita_serial'] && (empty($r['idddt']) || empty($r['idintervento']))) {
+            if (empty($record['is_reversed']) && !empty($r['idarticolo']) && $r['abilita_serial'] && (empty($r['idddt']) || empty($r['idintervento']))) {
                 echo "
                     <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&idarticolo='.$r['idarticolo']."', 1 );\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
             }
@@ -242,18 +242,18 @@ $iva = sum(array_column($rs, 'iva'));
 
 $imponibile_scontato = sum($imponibile, -$sconto);
 
-$totale_iva = sum($iva, $records[0]['iva_rivalsainps']);
+$totale_iva = sum($iva, $record['iva_rivalsainps']);
 
 $totale = sum([
     $imponibile_scontato,
-    $records[0]['rivalsainps'],
+    $record['rivalsainps'],
     $totale_iva,
 ]);
 
 $netto_a_pagare = sum([
     $totale,
-    $records[0]['bollo'],
-    -$records[0]['ritenutaacconto'],
+    $record['bollo'],
+    -$record['ritenutaacconto'],
 ]);
 
 $imponibile = abs($imponibile);
@@ -303,14 +303,14 @@ if (abs($sconto) > 0) {
 }
 
 // RIVALSA INPS
-if (abs($records[0]['rivalsainps']) > 0) {
+if (abs($record['rivalsainps']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
             <b>'.tr('Rivalsa INPS', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($records[0]['rivalsainps']).' &euro;
+            '.Translator::numberToLocale($record['rivalsainps']).' &euro;
         </td>
         <td></td>
     </tr>';
@@ -343,33 +343,33 @@ echo '
     </tr>';
 
 // Mostra marca da bollo se c'è
-if (abs($records[0]['bollo']) > 0) {
+if (abs($record['bollo']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
             <b>'.tr('Marca da bollo', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($records[0]['bollo']).' &euro;
+            '.Translator::numberToLocale($record['bollo']).' &euro;
         </td>
         <td></td>
     </tr>';
 }
 
 // RITENUTA D'ACCONTO
-if (abs($records[0]['ritenutaacconto']) > 0) {
+if (abs($record['ritenutaacconto']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
             <b>'.tr("Ritenuta d'acconto", [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($records[0]['ritenutaacconto']).' &euro;
+            '.Translator::numberToLocale($record['ritenutaacconto']).' &euro;
         </td>
         <td></td>
     </tr>';
 
-    //$netto_a_pagare -= $records[0]['ritenutaacconto'];
+    //$netto_a_pagare -= $record['ritenutaacconto'];
 }
 
 // NETTO A PAGARE

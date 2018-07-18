@@ -63,8 +63,11 @@ include $docroot.'/include/manager.php';
 echo '
 				</div>';
 
-// Inclusione contenuti varie tab dei plugin
+// Plugin
+$module_record = $record;
 foreach ($plugins as $plugin) {
+    $record = $module_record;
+
     echo '
 				<div id="tab_'.$plugin['id'].'" class="tab-pane">';
 
@@ -75,6 +78,8 @@ foreach ($plugins as $plugin) {
     echo '
 				</div>';
 }
+
+$record = $module_record;
 
 echo '
 			</div>

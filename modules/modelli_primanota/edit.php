@@ -6,8 +6,8 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="op" value="editriga">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
-	<input type="hidden" name="idmastrino" value="<?php echo $records[0]['idmastrino']; ?>">
-	<input type="hidden" name="iddocumento" value="<?php echo $records[0]['iddocumento']; ?>">
+	<input type="hidden" name="idmastrino" value="<?php echo $record['idmastrino']; ?>">
+	<input type="hidden" name="iddocumento" value="<?php echo $record['iddocumento']; ?>">
 
 
     <div class="row">
@@ -19,7 +19,7 @@ include_once __DIR__.'/../../core.php';
 <?php
 
 $conti3 = []; // contenitore conti di terzo livello
-$idmastrino = $records[0]['idmastrino'];
+$idmastrino = $record['idmastrino'];
 
 // Salvo l'elenco conti in un array (per non fare il ciclo ad ogni riga)
 $query2 = 'SELECT * FROM co_pianodeiconti2';
@@ -44,7 +44,7 @@ echo '
         </tr>';
 
 // Lettura movimenti del mastrino selezionato
-$rs = $dbo->fetchArray('SELECT * FROM co_movimenti_modelli WHERE idmastrino='.prepare($records[0]['idmastrino']));
+$rs = $dbo->fetchArray('SELECT * FROM co_movimenti_modelli WHERE idmastrino='.prepare($record['idmastrino']));
 for ($i = 0; $i < 10; ++$i) {
     $required = ($i <= 1) ? 1 : 0;
 
@@ -80,6 +80,6 @@ echo '
 
 </form>
 
-<a class="btn btn-danger ask" data-backto="record-list" data-idmastrino="<?php echo $records[0]['idmastrino']; ?>">
+<a class="btn btn-danger ask" data-backto="record-list" data-idmastrino="<?php echo $record['idmastrino']; ?>">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>

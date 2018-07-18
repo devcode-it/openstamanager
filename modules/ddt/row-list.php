@@ -143,7 +143,7 @@ if (!empty($rs)) {
         // Possibilità di rimuovere una riga solo se il ddt non è evaso
         echo '
         <td class="text-center">';
-        if ($records[0]['flag_completato'] == 0 && empty($r['sconto_globale'])) {
+        if ($record['flag_completato'] == 0 && empty($r['sconto_globale'])) {
             echo "
             <form action='".$rootdir.'/editor.php?id_module='.Modules::get($name)['id'].'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>
@@ -205,18 +205,18 @@ $iva = sum(array_column($rs, 'iva'));
 
 $imponibile_scontato = sum($imponibile, -$sconto);
 
-$totale_iva = sum($iva, $records[0]['iva_rivalsainps']);
+$totale_iva = sum($iva, $record['iva_rivalsainps']);
 
 $totale = sum([
     $imponibile_scontato,
-    $records[0]['rivalsainps'],
+    $record['rivalsainps'],
     $totale_iva,
 ]);
 
 $netto_a_pagare = sum([
     $totale,
     //$marca_da_bollo, // Variabile non inizializzata!
-    -$records[0]['ritenutaacconto'],
+    -$record['ritenutaacconto'],
 ]);
 
 // IMPONIBILE
@@ -264,7 +264,7 @@ if (abs($sconto) > 0) {
 }
 
 // RIVALSA INPS
-if (abs($records[0]['rivalsainps']) > 0) {
+if (abs($record['rivalsainps']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
@@ -272,7 +272,7 @@ if (abs($records[0]['rivalsainps']) > 0) {
         </td>
 
         <td align="right">
-            '.Translator::numberToLocale($records[0]['rivalsainps']).' &euro;
+            '.Translator::numberToLocale($record['rivalsainps']).' &euro;
         </td>
 
         <td></td>
@@ -309,7 +309,7 @@ echo '
     </tr>';
 
 // Mostra marca da bollo se c'è
-if (abs($records[0]['bollo']) > 0) {
+if (abs($record['bollo']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
@@ -317,7 +317,7 @@ if (abs($records[0]['bollo']) > 0) {
         </td>
 
         <td align="right">
-            '.Translator::numberToLocale($records[0]['bollo']).' &euro;
+            '.Translator::numberToLocale($record['bollo']).' &euro;
         </td>
 
         <td></td>
@@ -325,7 +325,7 @@ if (abs($records[0]['bollo']) > 0) {
 }
 
 // RITENUTA D'ACCONTO
-if (abs($records[0]['ritenutaacconto']) > 0) {
+if (abs($record['ritenutaacconto']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
@@ -333,7 +333,7 @@ if (abs($records[0]['ritenutaacconto']) > 0) {
         </td>
 
         <td align="right">
-            '.Translator::numberToLocale($records[0]['ritenutaacconto']).' &euro;
+            '.Translator::numberToLocale($record['ritenutaacconto']).' &euro;
         </td>
 
         <td></td>

@@ -18,10 +18,10 @@ $qta_totale_attuale = $rst[0]['qta_totale_attuale'];
 
 if ($rst[0]['row'] > 0) {
     echo '
-	<p>'.tr('Quantità calcolata dai movimenti').': <b>'.Translator::numberToLocale($qta_totale, 'qta').' '.$records[0]['um'].'</b> <span  class=\'tip\' title=\''.tr('Quantità calcolata da tutti i movimenti registrati').'.\' ><i class="fa fa-question-circle-o"></i></span></p>';
+	<p>'.tr('Quantità calcolata dai movimenti').': <b>'.Translator::numberToLocale($qta_totale, 'qta').' '.$record['um'].'</b> <span  class=\'tip\' title=\''.tr('Quantità calcolata da tutti i movimenti registrati').'.\' ><i class="fa fa-question-circle-o"></i></span></p>';
 
     echo '
-	<p>'.tr('Quantità calcolata attuale').': <b>'.Translator::numberToLocale($qta_totale_attuale, 'qta').' '.$records[0]['um'].'</b> <span  class=\'tip\' title=\''.tr('Quantità calcolata secondo i movimenti registrati con data oggi o date trascorse').'.\' ><i class="fa fa-question-circle-o"></i></span></p>';
+	<p>'.tr('Quantità calcolata attuale').': <b>'.Translator::numberToLocale($qta_totale_attuale, 'qta').' '.$record['um'].'</b> <span  class=\'tip\' title=\''.tr('Quantità calcolata secondo i movimenti registrati con data oggi o date trascorse').'.\' ><i class="fa fa-question-circle-o"></i></span></p>';
 }
 
 // Elenco movimenti magazzino
@@ -53,7 +53,7 @@ if (!empty($rs2)) {
         // Quantità
         echo '
             <tr>
-                <td class="text-right">'.Translator::numberToLocale($r['qta'], 'qta').' '.$records[0]['um'].'</td>';
+                <td class="text-right">'.Translator::numberToLocale($r['qta'], 'qta').' '.$record['um'].'</td>';
 
         // Causale
         $dir = ($r['qta'] < 0) ? 'vendita' : 'acquisto';

@@ -82,7 +82,7 @@ switch (filter('op')) {
             App::flash()->info(tr('Elemento eliminato con successo!'));
 
             if ($id_record == $id) {
-                $res = $dbo->fetchArray('SELECT * FROM `co_pagamenti` WHERE `id`!='.prepare($id).' AND `descrizione`='.prepare($records[0]['descrizione']));
+                $res = $dbo->fetchArray('SELECT * FROM `co_pagamenti` WHERE `id`!='.prepare($id).' AND `descrizione`='.prepare($record['descrizione']));
                 if (count($res) != 0) {
                     redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$res[0]['id']);
                 } else {

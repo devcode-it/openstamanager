@@ -3,10 +3,10 @@
 include_once __DIR__.'/../../core.php';
 
 // Presenza di documenti associati
-if ($records[0]['doc_associati'] > 0) {
+if ($record['doc_associati'] > 0) {
     echo '
 <div class="alert alert-warning">'.tr('Non puoi eliminare questo categoria documento!').' '.tr('Ci sono _NUM_ documenti associati!', [
-    '_NUM_' => $records[0]['doc_associati'],
+    '_NUM_' => $record['doc_associati'],
 ]).'</div>';
 }
 
@@ -26,7 +26,7 @@ if ($records[0]['doc_associati'] > 0) {
 <?php
 
 // Presenza di documenti associati
-if ($records[0]['doc_associati'] == 0) {
+if ($record['doc_associati'] == 0) {
     echo '
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'

@@ -20,7 +20,7 @@ echo '
 				<div class="col-md-7">
 					<table class="table table-striped table-hover table-condensed table-bordered">';
 
-$rs = $dbo->fetchArray('SELECT * FROM (co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_documenti.id='.prepare($records[0]['iddocumento']));
+$rs = $dbo->fetchArray('SELECT * FROM (co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_documenti.id='.prepare($record['iddocumento']));
 
 $numero = (!empty($rs[0]['numero_esterno'])) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
 
@@ -62,7 +62,7 @@ echo '
 echo '
                     </table>
 
-                    '.Modules::link($modulo, $records[0]['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"').'
+                    '.Modules::link($modulo, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"').'
 				</div>
 
 				<!-- Elenco scadenze -->
@@ -120,7 +120,7 @@ echo '
 
 					</table>
 
-					<a onclick="launch_modal( 'Aggiungi prima nota', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&iddocumento=<?php echo $records[0]['iddocumento']; ?>&dir=<?php echo $dir; ?>', 1 );" class="btn btn-sm btn-primary pull-right"><i class="fa fa-euro"></i> <?php echo tr('Aggiungi prima nota...'); ?></a>
+					<a onclick="launch_modal( 'Aggiungi prima nota', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&iddocumento=<?php echo $record['iddocumento']; ?>&dir=<?php echo $dir; ?>', 1 );" class="btn btn-sm btn-primary pull-right"><i class="fa fa-euro"></i> <?php echo tr('Aggiungi prima nota...'); ?></a>
 
 					<p class="text-danger hide" id="totale"><?php echo tr('Il totale da pagare deve essere pari a _NUM_', [
                         '_NUM_' => '<b>'.Translator::numberToLocale($totale_da_pagare).'&euro;</b>',

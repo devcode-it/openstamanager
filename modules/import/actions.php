@@ -16,7 +16,7 @@ switch (post('op')) {
 
         $fields = Import::getFields($id_record);
 
-        $csv = Import::getFile($id_record, $records[0]['id'], [
+        $csv = Import::getFile($id_record, $record['id'], [
             'headers' => $first_row,
         ]);
 

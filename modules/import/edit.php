@@ -42,7 +42,7 @@ if (empty($id_record)) {
         </div>
     </div>';
 
-    $rows = Import::getFile($id_record, $records[0]['id'], [
+    $rows = Import::getFile($id_record, $record['id'], [
         'limit' => 10,
     ]);
     $count = count($rows[0]);

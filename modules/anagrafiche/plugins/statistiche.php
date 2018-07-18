@@ -6,10 +6,10 @@ include_once Modules::filepath('Preventivi', 'modutil.php');
 
 // Interventi
 $rsi = [];
-if (in_array('Cliente', explode(',', $records[0]['tipianagrafica']))) {
+if (in_array('Cliente', explode(',', $record['tipianagrafica']))) {
     //Clienti
     $rsi = $dbo->fetchArray('SELECT ragione_sociale, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS data, (SELECT SUM(prezzo_ore_consuntivo+prezzo_km_consuntivo+prezzo_dirittochiamata) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS totale FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.idanagrafica='.prepare($id_record));
-} elseif (in_array('Tecnico', explode(',', $records[0]['tipianagrafica']))) {
+} elseif (in_array('Tecnico', explode(',', $record['tipianagrafica']))) {
     //Tecnici
     $rsi = $dbo->fetchArray('SELECT ragione_sociale, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS data, (SELECT SUM(prezzo_ore_consuntivo+prezzo_km_consuntivo+prezzo_dirittochiamata) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id AND in_interventi_tecnici.idtecnico = '.prepare($id_record).' ) AS totale FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN in_interventi_tecnici ON in_interventi.id = in_interventi_tecnici.idintervento  WHERE in_interventi_tecnici.idtecnico='.prepare($id_record));
 }

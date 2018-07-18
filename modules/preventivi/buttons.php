@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (!in_array($records[0]['stato'], ['Bozza', 'Rifiutato', 'In attesa di conferma'])) {
+if (!in_array($record['stato'], ['Bozza', 'Rifiutato', 'In attesa di conferma'])) {
     echo '
 	<div class="dropdown">
 	<button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

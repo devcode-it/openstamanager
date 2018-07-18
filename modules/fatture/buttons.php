@@ -13,7 +13,7 @@ echo '
     <i class="fa fa-copy"></i> '.tr('Duplica fattura').'
 </button>';
 
-if ($dir == 'entrata' && empty($records[0]['ref_documento']) && $records[0]['stato'] == 'Emessa') {
+if ($dir == 'entrata' && empty($record['ref_documento']) && $record['stato'] == 'Emessa') {
     echo '
 <div class="btn-group">
     <button type="button" class="btn btn-primary unblockable dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

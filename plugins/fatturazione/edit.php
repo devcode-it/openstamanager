@@ -43,7 +43,7 @@ if (!empty($missing)) {
 }
 
 // Campi obbligatori per l'anagrafica Cliente
-$cliente = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica = '.prepare($records[0]['idanagrafica']));
+$cliente = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica = '.prepare($record['idanagrafica']));
 $fields = [
     // 'piva' => 'Partita IVA',
     // 'codice_fiscale' => 'Codice Fiscale',
@@ -66,7 +66,7 @@ if (!empty($missing)) {
     <p><i class="fa fa-warning"></i> '.tr("Prima di procedere alla generazione della fattura elettronica completa i seguenti campi dell'anagrafica Cliente: _FIELDS_", [
         '_FIELDS_' => '<b>'.implode(', ', $missing).'</b>',
     ]).'</p>
-    <p>'.Modules::link('Anagrafiche', $records[0]['idanagrafica'], tr('Vai alla scheda anagrafica'), null).'</p>
+    <p>'.Modules::link('Anagrafiche', $record['idanagrafica'], tr('Vai alla scheda anagrafica'), null).'</p>
 </div>';
 }
 

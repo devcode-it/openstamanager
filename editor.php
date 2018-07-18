@@ -44,7 +44,7 @@ if ($advanced_sessions) {
 		</div>';
 }
 
-if (empty($records)) {
+if (empty($record)) {
     echo '
 		<p>'.tr('Record non trovato').'.</p>';
 } else {
@@ -277,7 +277,10 @@ if (empty($records)) {
     }
 
     // Plugin
+    $module_record = $record;
     foreach ($plugins as $plugin) {
+        $record = $module_record;
+
         echo '
 				<div id="tab_'.$plugin['id'].'" class="tab-pane">';
 
@@ -288,6 +291,8 @@ if (empty($records)) {
         echo '
 				</div>';
     }
+
+    $record = $module_record;
 
     echo '
 			</div>

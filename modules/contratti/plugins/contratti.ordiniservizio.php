@@ -279,7 +279,7 @@ else {
         echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Impianto').'", "name": "matricola", "values": "query=SELECT my_impianti.id, CONCAT(my_impianti.matricola, \" - \", my_impianti.nome) AS descrizione, an_sedi.optgroup FROM my_impianti INNER JOIN (SELECT id, CONCAT(an_sedi.nomesede, \"(\", an_sedi.citta, \")\") AS optgroup FROM an_sedi WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' UNION SELECT 0, \'Sede legale\') AS an_sedi ON my_impianti.idsede = an_sedi.id WHERE my_impianti.idanagrafica='.prepare($records[0]['idanagrafica']).' AND my_impianti.id NOT IN(SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).') ORDER BY idsede ASC, matricola ASC" ]}
+            {[ "type": "select", "label": "'.tr('Impianto').'", "name": "matricola", "values": "query=SELECT my_impianti.id, CONCAT(my_impianti.matricola, \" - \", my_impianti.nome) AS descrizione, an_sedi.optgroup FROM my_impianti INNER JOIN (SELECT id, CONCAT(an_sedi.nomesede, \"(\", an_sedi.citta, \")\") AS optgroup FROM an_sedi WHERE idanagrafica='.prepare($record['idanagrafica']).' UNION SELECT 0, \'Sede legale\') AS an_sedi ON my_impianti.idsede = an_sedi.id WHERE my_impianti.idanagrafica='.prepare($record['idanagrafica']).' AND my_impianti.id NOT IN(SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).') ORDER BY idsede ASC, matricola ASC" ]}
         </div>';
 
         // Indice voci di servizio
@@ -324,7 +324,7 @@ else {
             Copia pianificazione da una già fatta per un impianto ad un'altra
         */
         // Opzione di copia pianificazione solo se ci sono ancora impianti non pianificati
-        $query2 = 'SELECT * FROM my_impianti WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).')';
+        $query2 = 'SELECT * FROM my_impianti WHERE idanagrafica='.prepare($record['idanagrafica']).' AND id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).')';
         $cont = $dbo->fetchNum($query2);
 
         if ($cont > 0) {
@@ -334,7 +334,7 @@ else {
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Copiare la pianificazione da un altro impianto').'", "name": "matricola_src", "values": "query=SELECT my_impianti.id, CONCAT(my_impianti.matricola, \" - \", my_impianti.nome) AS descrizione, an_sedi.optgroup FROM my_impianti INNER JOIN (SELECT id, CONCAT(an_sedi.nomesede, \"(\", an_sedi.citta, \")\") AS optgroup FROM an_sedi WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' UNION SELECT 0, \'Sede legale\') AS an_sedi ON my_impianti.idsede = an_sedi.id WHERE my_impianti.idanagrafica='.prepare($records[0]['idanagrafica']).' AND my_impianti.id IN(SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).') ORDER BY idsede ASC, matricola ASC" ]}
+            {[ "type": "select", "label": "'.tr('Copiare la pianificazione da un altro impianto').'", "name": "matricola_src", "values": "query=SELECT my_impianti.id, CONCAT(my_impianti.matricola, \" - \", my_impianti.nome) AS descrizione, an_sedi.optgroup FROM my_impianti INNER JOIN (SELECT id, CONCAT(an_sedi.nomesede, \"(\", an_sedi.citta, \")\") AS optgroup FROM an_sedi WHERE idanagrafica='.prepare($record['idanagrafica']).' UNION SELECT 0, \'Sede legale\') AS an_sedi ON my_impianti.idsede = an_sedi.id WHERE my_impianti.idanagrafica='.prepare($record['idanagrafica']).' AND my_impianti.id IN(SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).') ORDER BY idsede ASC, matricola ASC" ]}
         </div>
     </div>';
 

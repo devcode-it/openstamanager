@@ -56,7 +56,7 @@ switch ($op) {
 
             // Eliminazione file
             if (post('delete_immagine') !== null) {
-                Uploads::delete($records[0]['immagine'], [
+                Uploads::delete($record['immagine'], [
                     'id_module' => $id_module,
                     'id_record' => $id_record,
                 ]);
@@ -124,7 +124,7 @@ switch ($op) {
 }
 
 // Operazioni aggiuntive per l'immagine
-if (filter('op') == 'unlink_file' && filter('filename') == $records[0]['immagine']) {
+if (filter('op') == 'unlink_file' && filter('filename') == $record['immagine']) {
     $dbo->update('my_impianti', [
         'immagine' => null,
     ], [

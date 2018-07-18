@@ -24,7 +24,7 @@ if (count($rs2) > 0) {
         <th width="15%">'.tr('Subtotale').'</th>';
     }
 
-    if (!$records[0]['flag_completato']) {
+    if (!$record['flag_completato']) {
         echo '
         <th width="80"></th>';
     }

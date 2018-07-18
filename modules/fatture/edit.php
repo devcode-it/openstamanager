@@ -2,13 +2,13 @@
 
 include_once __DIR__.'/../../core.php';
 
-$block_edit = !empty($note_accredito) || $records[0]['stato'] == 'Emessa';
+$block_edit = !empty($note_accredito) || $record['stato'] == 'Emessa';
 
 $rs = $dbo->fetchArray('SELECT co_tipidocumento.descrizione, dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($id_record));
 $dir = $rs[0]['dir'];
 $tipodoc = $rs[0]['descrizione'];
 
-$_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
+$_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 $_SESSION['superselect']['ddt'] = $dir;
 
 if ($dir == 'entrata') {
@@ -34,7 +34,7 @@ if ($dir == 'entrata') {
 			<?php
 
                 if ($dir == 'entrata') {
-                    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche WHERE idanagrafica='.prepare($records[0]['idanagrafica']));
+                    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche WHERE idanagrafica='.prepare($record['idanagrafica']));
                     $campi_mancanti = [];
 
                     if ($rs2[0]['piva'] == '') {
@@ -54,7 +54,7 @@ if ($dir == 'entrata') {
 
                     if (sizeof($campi_mancanti) > 0) {
                         echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere alla stampa completa i seguenti campi dell'anagrafica:<br/><b>".implode(', ', $campi_mancanti).'</b><br/>
-						'.Modules::link('Anagrafiche', $records[0]['idanagrafica'], tr('Vai alla scheda anagrafica'), null).'</div>';
+						'.Modules::link('Anagrafiche', $record['idanagrafica'], tr('Vai alla scheda anagrafica'), null).'</div>';
                     }
                 }
             ?>
@@ -84,7 +84,7 @@ if ($dir == 'entrata') {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatodocumento", "required": 1, "values": "query=SELECT * FROM co_statidocumento", "value": "$idstatodocumento$", "class": "unblockable", "extra": " onchange = \"if ($('#idstatodocumento option:selected').text()=='Pagato'){if( confirm('Sicuri di voler impostare manualmente la fattura come pagata senza aggiungerla in prima nota?') ){ return true; }else{ $('#idstatodocumento').selectSet(<?php echo $records[0]['idstatodocumento']; ?>); }}\" " ]}
+					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatodocumento", "required": 1, "values": "query=SELECT * FROM co_statidocumento", "value": "$idstatodocumento$", "class": "unblockable", "extra": " onchange = \"if ($('#idstatodocumento option:selected').text()=='Pagato'){if( confirm('Sicuri di voler impostare manualmente la fattura come pagata senza aggiungerla in prima nota?') ){ return true; }else{ $('#idstatodocumento').selectSet(<?php echo $record['idstatodocumento']; ?>); }}\" " ]}
 				</div>
 
 			</div>
@@ -93,7 +93,7 @@ if ($dir == 'entrata') {
 				<div class="col-md-3">
 					<?php
 
-                    echo Modules::link('Anagrafiche', $records[0]['idanagrafica'], null, null, 'class="pull-right"');
+                    echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
 
                     if ($dir == 'entrata') {
                         ?>
@@ -120,7 +120,7 @@ if ($dir == 'entrata') {
                     } ?>
 
                 <?php
-                if ($records[0]['stato'] != 'Bozza' && $records[0]['stato'] != 'Annullata') {
+                if ($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata') {
                     $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento = '.prepare($id_record));
                     echo '
                 <div class="col-md-3">
@@ -139,7 +139,7 @@ if ($dir == 'entrata') {
 
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Tipo fattura'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, descrizione FROM co_tipidocumento WHERE dir='<?php echo $dir; ?>' AND (reversed = 0 OR id = <?php echo $records[0]['idtipodocumento']; ?>)", "value": "$idtipodocumento$", "readonly": <?php echo intval($records[0]['stato'] != 'Bozza' && $records[0]['stato'] != 'Annullata'); ?> ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo fattura'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT id, descrizione FROM co_tipidocumento WHERE dir='<?php echo $dir; ?>' AND (reversed = 0 OR id = <?php echo $record['idtipodocumento']; ?>)", "value": "$idtipodocumento$", "readonly": <?php echo intval($record['stato'] != 'Bozza' && $record['stato'] != 'Annullata'); ?> ]}
 				</div>
 
 				<div class="col-md-3">
@@ -210,13 +210,13 @@ $rs3 = $dbo->fetchArray('SELECT SUM(da_pagare-pagato) AS differenza, SUM(da_paga
 $differenza = isset($rs3[0]) ? $rs3[0]['differenza'] : null;
 $da_pagare = isset($rs3[0]) ? $rs3[0]['da_pagare'] : null;
 
-if (($n2 <= 0 && $records[0]['stato'] == 'Emessa') || $differenza != 0) {
+if (($n2 <= 0 && $record['stato'] == 'Emessa') || $differenza != 0) {
     ?>
 					<a class="btn btn-sm btn-primary" href="javascript:;" onclick="launch_modal( 'Aggiungi prima nota', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&iddocumento=<?php echo $id_record; ?>&dir=<?php echo $dir; ?>', 1 );"><i class="fa fa-euro"></i> <?php echo tr('Aggiungi prima nota'); ?>...</a><br><br>
 <?php
 }
 
-if ($records[0]['stato'] == 'Pagato') {
+if ($record['stato'] == 'Pagato') {
     ?>
 					<a class="btn btn-sm btn-primary" href="javascript:;" onclick="if( confirm('Se riapri questa fattura verrà azzerato lo scadenzario e la prima nota. Continuare?') ){ $.post( '<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get($name)['id']; ?>&id_record=<?php echo $id_record; ?>', { id_module: '<?php echo Modules::get($name)['id']; ?>', id_record: '<?php echo $id_record; ?>', op: 'reopen' }, function(){ location.href='<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get($name)['id']; ?>&id_record=<?php echo $id_record; ?>'; } ); }" title="Aggiungi prima nota"><i class="fa fa-folder-open"></i> <?php echo tr('Riapri fattura'); ?>...</a>
 <?php
@@ -228,7 +228,7 @@ if ($records[0]['stato'] == 'Pagato') {
             <div class="row">
                 <div class="col-md-3">
                     {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato'); ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr('Sconto complessivo della fattura.'); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
-if ($records[0]['stato'] == 'Emessa') {
+if ($record['stato'] == 'Emessa') {
     echo ', "disabled" : 1';
 }
 ?> ]}
@@ -263,17 +263,17 @@ if ($records[0]['stato'] == 'Emessa') {
 			<div class="col-md-12">
 				<div class="pull-left">
 <?php
-if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
-    if (empty($records[0]['ref_documento'])) {
+if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
+    if (empty($record['ref_documento'])) {
         if ($dir == 'entrata') {
             // Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti
-            $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND in_statiintervento.completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_contratti_promemoria WHERE idintervento IS NOT NULL)';
+            $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE idanagrafica='.prepare($record['idanagrafica']).' AND in_statiintervento.completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_contratti_promemoria WHERE idintervento IS NOT NULL)';
             $interventi = $dbo->fetchArray($int_query)[0]['tot'];
 
             // Se non trovo niente provo a vedere se ce ne sono per clienti terzi
             if (empty($interventi)) {
                 // Lettura interventi non rifiutati, non fatturati e non collegati a preventivi o contratti (clienti terzi)
-                $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE idclientefinale='.prepare($records[0]['idanagrafica']).' AND in_statiintervento.completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_contratti_promemoria WHERE idintervento IS NOT NULL)';
+                $int_query = 'SELECT COUNT(*) AS tot FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE idclientefinale='.prepare($record['idanagrafica']).' AND in_statiintervento.completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_contratti_promemoria WHERE idintervento IS NOT NULL)';
                 $interventi = $dbo->fetchArray($int_query)[0]['tot'];
             }
 
@@ -283,7 +283,7 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
                         </a>';
 
             // Lettura preventivi accettati, in attesa di conferma o in lavorazione
-            $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($records[0]['idanagrafica'])." AND id NOT IN (SELECT idpreventivo FROM co_righe_documenti WHERE NOT idpreventivo=NULL) AND idstato IN( SELECT id FROM co_statipreventivi WHERE descrizione='Accettato' OR descrizione='In lavorazione' OR descrizione='In attesa di conferma')";
+            $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($record['idanagrafica'])." AND id NOT IN (SELECT idpreventivo FROM co_righe_documenti WHERE NOT idpreventivo=NULL) AND idstato IN( SELECT id FROM co_statipreventivi WHERE descrizione='Accettato' OR descrizione='In lavorazione' OR descrizione='In attesa di conferma')";
             $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
             echo '
                         <a class="btn btn-sm btn-primary tip" '.(!empty($preventivi) ? '' : ' disabled').'  title="'.tr('Preventivi accettati, in attesa di conferma o in lavorazione.').'" data-href="'.$rootdir.'/modules/fatture/add_preventivo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="Aggiungi preventivo" data-target="#bs-popup">
@@ -291,7 +291,7 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
                         </a>';
 
             // Lettura contratti accettati, in attesa di conferma o in lavorazione
-            $contr_query = 'SELECT COUNT(*) AS tot FROM co_contratti WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND id NOT IN (SELECT idcontratto FROM co_righe_documenti WHERE NOT idcontratto=NULL) AND idstato IN( SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND NOT EXISTS (SELECT id FROM co_righe_documenti WHERE co_righe_documenti.idcontratto = co_contratti.id)';
+            $contr_query = 'SELECT COUNT(*) AS tot FROM co_contratti WHERE idanagrafica='.prepare($record['idanagrafica']).' AND id NOT IN (SELECT idcontratto FROM co_righe_documenti WHERE NOT idcontratto=NULL) AND idstato IN( SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND NOT EXISTS (SELECT id FROM co_righe_documenti WHERE co_righe_documenti.idcontratto = co_contratti.id)';
             $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
             echo '
 
@@ -300,7 +300,7 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
                         </a>';
 
             // Lettura ddt
-            $ddt_query = 'SELECT COUNT(*) AS tot FROM dt_ddt WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoddt IN (SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir).') AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
+            $ddt_query = 'SELECT COUNT(*) AS tot FROM dt_ddt WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoddt IN (SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir).') AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
             $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
             echo '
                         <a class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="Aggiungi ddt" data-target="#bs-popup">
@@ -309,7 +309,7 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
         }
 
         // Lettura ordini
-        $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
+        $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
         $ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
         echo '
 						<a class="btn btn-sm btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi ordine" data-target="#bs-popup">

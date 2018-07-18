@@ -21,14 +21,14 @@ include_once __DIR__.'/../../core.php';
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_modules WHERE ( enabled = 1 AND options != 'custom' ) OR id = <?php echo $records[0]['id_module']; ?> ORDER BY name ASC", "value": "$id_module$", "extra": "<?php echo ($records[0]['predefined']) ? 'readonly' : ''; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_modules WHERE ( enabled = 1 AND options != 'custom' ) OR id = <?php echo $record['id_module']; ?> ORDER BY name ASC", "value": "$id_module$", "extra": "<?php echo ($record['predefined']) ? 'readonly' : ''; ?>" ]}
 				</div>
 
 				<div class="col-md-4">
 					<?php
-                        //($records[0]['n_sezionali']<2) ? $records[0]['predefined']=1 : '';
+                        //($record['n_sezionali']<2) ? $record['predefined']=1 : '';
                     ?>
-					{[ "type": "checkbox", "label": "<?php echo tr('Predefinito'); ?>", "name": "predefined", "value": "$predefined$", "help": "<?php echo tr('Seleziona per rendere il segmento predefinito.'); ?>", "placeholder": "<?php echo tr('Segmento predefinito'); ?>", "extra": "<?php echo ($records[0]['predefined']) ? 'readonly' : ''; ?>"  ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Predefinito'); ?>", "name": "predefined", "value": "$predefined$", "help": "<?php echo tr('Seleziona per rendere il segmento predefinito.'); ?>", "placeholder": "<?php echo tr('Segmento predefinito'); ?>", "extra": "<?php echo ($record['predefined']) ? 'readonly' : ''; ?>"  ]}
 				</div>
 
 			</div>
@@ -63,7 +63,7 @@ include_once __DIR__.'/../../core.php';
 		<div class="panel-body">
 			<div class="row">
 <?php
-$array = preg_match('/(?<=FROM)\s([^\s]+)\s/', $records[0]['options'], $table);
+$array = preg_match('/(?<=FROM)\s([^\s]+)\s/', $record['options'], $table);
 if (strpos($table[0], 'co_documenti') !== false) {
     $righe = $dbo->fetchArray('SELECT COUNT(*) AS tot FROM '.$table[0].' WHERE id_segment = '.prepare($id_record));
     $tot = $righe[0]['tot'];
@@ -111,23 +111,23 @@ if ($tot > 0) {
 
                             echo tr("Ci sono _TOT_ righe collegate al segmento per il modulo '_MODULO_'. Il comando elimina è stato disattivato, eliminare le righe per attivare il comando 'Elimina segmento'.", [
         '_TOT_' => $tot,
-        '_MODULO_' => $records[0]['modulo'],
+        '_MODULO_' => $record['modulo'],
     ]);
 
                             echo '</div>';
-                        } elseif ($records[0]['predefined']) {
+                        } elseif ($record['predefined']) {
                             echo "<div class='alert alert-danger' style='margin:0px;'>";
 
                             echo tr("Questo è il segmento predefinito per il modulo '_MODULO_'. Il comando elimina è stato disattivato.", [
-        '_MODULO_' => $records[0]['modulo'],
+        '_MODULO_' => $record['modulo'],
     ]);
 
                             echo '</div>';
-                        } elseif ($records[0]['n_sezionali'] < 2) {
+                        } elseif ($record['n_sezionali'] < 2) {
                             echo "<div class='alert alert-danger' style='margin:0px;'>";
 
                             echo tr("Questo è l'unico segmento per il modulo '_MODULO_'. Il comando elimina è stato disattivato.", [
-        '_MODULO_' => $records[0]['modulo'],
+        '_MODULO_' => $record['modulo'],
     ]);
 
                             echo '</div>';

@@ -26,7 +26,7 @@ if (!$cliente) {
 ?>
 
 <form action="" method="post" id="edit-form" >
-	<fieldset  <?php echo (!$records[0]['deleted']) ? '' : 'disabled'; ?> >
+	<fieldset  <?php echo (!$record['deleted']) ? '' : 'disabled'; ?> >
 		<input type="hidden" name="backto" value="record-edit">
 		<input type="hidden" name="op" value="update">
 
@@ -228,7 +228,7 @@ if (!$cliente) {
 					</div>
 
 					<div class="col-md-6">
-					  {[ "type": "select", "label": "Agente principale", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, IF(deleted_at IS NOT NULL, CONCAT(ragione_sociale, ' (Eliminato)'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione='Agente' AND deleted_at IS NULL)<?php echo isset($records[0]['idagente']) ? 'OR (an_anagrafiche.idanagrafica = '.prepare($records[0]['idagente']).' AND deleted_at IS NOT NULL) ' : ''; ?>ORDER BY ragione_sociale", "value": "$idagente$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
+					  {[ "type": "select", "label": "Agente principale", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, IF(deleted_at IS NOT NULL, CONCAT(ragione_sociale, ' (Eliminato)'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione='Agente' AND deleted_at IS NULL)<?php echo isset($record['idagente']) ? 'OR (an_anagrafiche.idanagrafica = '.prepare($record['idagente']).' AND deleted_at IS NOT NULL) ' : ''; ?>ORDER BY ragione_sociale", "value": "$idagente$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
 					</div>
 
 				</div>
@@ -347,7 +347,7 @@ if (!$cliente) {
 				</div>
 				<div class="row">
 					<?php
-                    if (in_array('Tecnico', explode(',', $records[0]['tipianagrafica']))) {
+                    if (in_array('Tecnico', explode(',', $record['tipianagrafica']))) {
                         ?>
 					<div class="col-md-3">
 						{[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength='7'", "icon-after": "<div class='img-circle square'></div>" ]}
@@ -355,10 +355,10 @@ if (!$cliente) {
 					<?php
                     } ?>
 					<?php
-                    if (in_array('Cliente', explode(',', $records[0]['tipianagrafica']))) {
+                    if (in_array('Cliente', explode(',', $record['tipianagrafica']))) {
                         ?>
 						<div class="col-md-6">
-							{[ "type": "select", "label": "Agenti secondari", "multiple": "1", "name": "idagenti[]", "values": "query=SELECT an_anagrafiche.idanagrafica AS id,  IF(deleted_at IS NOT NULL, CONCAT(ragione_sociale, ' (Eliminato)'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione='Agente' AND deleted_at IS NULL AND an_anagrafiche.idanagrafica NOT IN (SELECT idagente FROM an_anagrafiche WHERE  idanagrafica = <?php echo prepare($records[0]['idanagrafica']); ?> )) OR (an_anagrafiche.idanagrafica IN (SELECT idagente FROM an_anagrafiche_agenti WHERE idanagrafica =  <?php echo prepare($records[0]['idanagrafica']); ?> ) ) ORDER BY ragione_sociale", "value": "$idagenti$" ]}
+							{[ "type": "select", "label": "Agenti secondari", "multiple": "1", "name": "idagenti[]", "values": "query=SELECT an_anagrafiche.idanagrafica AS id,  IF(deleted_at IS NOT NULL, CONCAT(ragione_sociale, ' (Eliminato)'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione='Agente' AND deleted_at IS NULL AND an_anagrafiche.idanagrafica NOT IN (SELECT idagente FROM an_anagrafiche WHERE  idanagrafica = <?php echo prepare($record['idanagrafica']); ?> )) OR (an_anagrafiche.idanagrafica IN (SELECT idagente FROM an_anagrafiche_agenti WHERE idanagrafica =  <?php echo prepare($record['idanagrafica']); ?> ) ) ORDER BY ragione_sociale", "value": "$idagenti$" ]}
 						</div>
 
 						<div class="col-md-3">
@@ -396,7 +396,7 @@ if (!empty($google)) {
                 </div>';
 
     // Calcola percorso
-    if (empty($records[0]['gaddress']) || (empty($records[0]['lat']) && empty($records[0]['lng']))) {
+    if (empty($record['gaddress']) || (empty($record['lat']) && empty($record['lng']))) {
         echo '
                 <div class="col-md-3">
                     <label>&nbsp;</label><br>
@@ -407,7 +407,7 @@ if (!empty($google)) {
     echo '
             </div>';
 
-    if (!empty($records[0]['gaddress']) || (!empty($records[0]['lat']) && !empty($records[0]['lng']))) {
+    if (!empty($record['gaddress']) || (!empty($record['lat']) && !empty($record['lng']))) {
         echo '
             <div id="map" style="height:400px; width:100%"></div>';
     }
@@ -433,7 +433,7 @@ if (setting('Azienda predefinita') == $id_record) {
 <div class="alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un file con nome "Logo stampe"').'.</div>';
 }
 
-if (!$records[0]['deleted']) {
+if (!$record['deleted']) {
     //fatture, ddt, preventivi, contratti, ordini, interventi, utenti collegati a questa anagrafica
     $elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`idanagrafica` = '.prepare($id_record).'
 

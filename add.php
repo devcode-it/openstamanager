@@ -14,21 +14,24 @@ if (!empty($id_plugin)) {
     $directory = '/modules/'.$module['directory'];
 }
 
-$module_dir = $module['directory'];
+// Inclusione elementi fondamentali del modulo
+include $docroot.'/actions.php';
 
 echo '
 <div id="form_'.$id_module.'-'.$id_plugin.'">
 ';
 
-// Caricamento template popup
-if (file_exists($docroot.$directory.'/custom/add.php')) {
-    include $docroot.$directory.'/custom/add.php';
-} elseif (file_exists($docroot.$directory.'/custom/add.html')) {
-    include $docroot.$directory.'/custom/add.html';
-} elseif (file_exists($docroot.$directory.'/add.php')) {
-    include $docroot.$directory.'/add.php';
-} elseif (file_exists($docroot.$directory.'/add.html')) {
-    include $docroot.$directory.'/add.html';
+// Caricamento template
+$file = !empty(get('edit')) ? 'edit' : 'add';
+
+if (file_exists($docroot.$directory.'/custom/'.$file.'.php')) {
+    include $docroot.$directory.'/custom/'.$file.'.php';
+} elseif (file_exists($docroot.$directory.'/custom/'.$file.'.html')) {
+    include $docroot.$directory.'/custom/'.$file.'.html';
+} elseif (file_exists($docroot.$directory.'/'.$file.'.php')) {
+    include $docroot.$directory.'/'.$file.'.php';
+} elseif (file_exists($docroot.$directory.'/'.$file.'.html')) {
+    include $docroot.$directory.'/'.$file.'.html';
 }
 
 echo '

@@ -301,7 +301,7 @@ echo '
 </div>';
 
 // Aggiunta interventi se il preventivo é aperto o in attesa o pagato (non si possono inserire interventi collegati ad altri preventivi)
-if (in_array($records[0]['stato'], ['Accettato', 'In lavorazione', 'Pagato'])) {
+if (in_array($record['stato'], ['Accettato', 'In lavorazione', 'Pagato'])) {
     echo '
 <form action="" method="post">
     <input type="hidden" name="op" value="addintervento">
@@ -309,7 +309,7 @@ if (in_array($records[0]['stato'], ['Accettato', 'In lavorazione', 'Pagato'])) {
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Aggiungi un altro intervento a questo preventivo').'", "name": "idintervento", "values": "query=SELECT id, CONCAT(\'Intervento \', codice, \' del \',  DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione FROM in_interventi WHERE id NOT IN( SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_contratti_promemoria WHERE idintervento IS NOT NULL) AND idanagrafica='.prepare($records[0]['idanagrafica']).'" ]}
+            {[ "type": "select", "label": "'.tr('Aggiungi un altro intervento a questo preventivo').'", "name": "idintervento", "values": "query=SELECT id, CONCAT(\'Intervento \', codice, \' del \',  DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione FROM in_interventi WHERE id NOT IN( SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_contratti_promemoria WHERE idintervento IS NOT NULL) AND idanagrafica='.prepare($record['idanagrafica']).'" ]}
         </div>
     </div>
 

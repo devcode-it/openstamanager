@@ -33,7 +33,7 @@ if (!empty($rs)) {
         <th width="15%">'.tr('Imponibile').'</th>';
     }
 
-    if (!$records[0]['flag_completato']) {
+    if (!$record['flag_completato']) {
         echo '
         <th width="80"></th>';
     }
@@ -126,7 +126,7 @@ if (!empty($rs)) {
 
         // Pulsante per riportare nel magazzino centrale.
         // Visibile solo se l'intervento non è stato nè fatturato nè completato.
-        if (!$records[0]['flag_completato']) {
+        if (!$record['flag_completato']) {
             echo '
         <td>';
 

@@ -11,7 +11,7 @@ echo '
 	<div class="panel panel-primary">
 		<div class="panel-heading">
             <h3 class="panel-title">'.tr('Impostazioni _SEZIONE_', [
-                '_SEZIONE_' => $records[0]['sezione'],
+                '_SEZIONE_' => $record['sezione'],
             ]).'</h3>
 		</div>
 

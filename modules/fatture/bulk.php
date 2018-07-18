@@ -14,10 +14,10 @@ switch (post('op')) {
         }
 
         // Selezione delle fatture da stampare
-        $records = $dbo->fetchArray('SELECT co_documenti.id, numero_esterno, data, ragione_sociale, co_tipidocumento.descrizione FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).')');
+        $fatture = $dbo->fetchArray('SELECT co_documenti.id, numero_esterno, data, ragione_sociale, co_tipidocumento.descrizione FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).')');
 
-        if (!empty($records)) {
-            foreach ($records as $r) {
+        if (!empty($fatture)) {
+            foreach ($fatture as $r) {
                 $numero = !empty($r['numero_esterno']) ? $r['numero_esterno'] : $r['numero'];
                 $numero = str_replace(['/', '\\'], '-', $numero);
 

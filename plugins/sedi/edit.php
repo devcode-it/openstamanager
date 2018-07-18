@@ -109,7 +109,7 @@ if (!empty($google)) {
 		</div>';
 
     // Vedi su google maps
-    if (!empty($records[0]['indirizzo']) || (empty($records[0]['citta']))) {
+    if (!empty($record['indirizzo']) || (empty($record['citta']))) {
         echo '
 			<div  class="btn-group col-md-2"  >
 				<label>&nbsp;</label><br>
@@ -124,7 +124,7 @@ if (!empty($google)) {
     echo '
     </div>';
 
-    if (!empty($records[0]['gaddress']) || (!empty($records[0]['lat']) && !empty($records[0]['lng']))) {
+    if (!empty($record['gaddress']) || (!empty($record['lat']) && !empty($record['lng']))) {
         echo '
     <div id="map" style="height:400px; width:100%"></div><br>';
     }
@@ -139,7 +139,7 @@ echo '
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12">
-            <a class="btn btn-danger ask" data-backto="record-edit" data-op="deletesede" data-id_record="'.$records[0]['id'].'" data-id_plugin="'.$id_plugin.'" data-id_module="'.$id_module.'" data-id_parent="'.$id_parent.'">
+            <a class="btn btn-danger ask" data-backto="record-edit" data-op="deletesede" data-id_record="'.$record['id'].'" data-id_plugin="'.$id_plugin.'" data-id_module="'.$id_module.'" data-id_parent="'.$id_parent.'">
                 <i class="fa fa-trash"></i> '.tr('Elimina').'
             </a>
 

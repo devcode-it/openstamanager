@@ -20,11 +20,11 @@ switch (post('op')) {
             delete($file);
         }
 
-        // Selezione delle fatture da stampare
-        $records = $dbo->fetchArray('SELECT in_interventi.id, in_interventi.codice, data_richiesta, ragione_sociale FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.id IN('.implode(',', $id_records).')');
+        // Selezione degli interventi da stampare
+        $interventi = $dbo->fetchArray('SELECT in_interventi.id, in_interventi.codice, data_richiesta, ragione_sociale FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.id IN('.implode(',', $id_records).')');
 
-        if (!empty($records)) {
-            foreach ($records as $r) {
+        if (!empty($interventi)) {
+            foreach ($interventi as $r) {
                 $numero = $r['codice'];
                 $numero = str_replace(['/', '\\'], '-', $numero);
 

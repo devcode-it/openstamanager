@@ -27,7 +27,7 @@ if ($module['name'] == 'Ddt di vendita') {
 
 			<?php
                 if ($dir == 'entrata') {
-                    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche WHERE idanagrafica='.prepare($records[0]['idanagrafica']));
+                    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche WHERE idanagrafica='.prepare($record['idanagrafica']));
                     $campi_mancanti = [];
 
                     if ($rs2[0]['piva'] == '') {
@@ -47,7 +47,7 @@ if ($module['name'] == 'Ddt di vendita') {
 
                     if (sizeof($campi_mancanti) > 0) {
                         echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere alla stampa completa i seguenti campi dell'anagrafica:<br/><b>".implode(', ', $campi_mancanti).'</b><br/>
-						'.Modules::link('Anagrafiche', $records[0]['idanagrafica'], tr('Vai alla scheda anagrafica'), null).'</div>';
+						'.Modules::link('Anagrafiche', $record['idanagrafica'], tr('Vai alla scheda anagrafica'), null).'</div>';
                     }
                 }
             ?>
@@ -64,17 +64,17 @@ if ($module['name'] == 'Ddt di vendita') {
                 ?>
 
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Numero secondario'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
+					{[ "type": "text", "label": "<?php echo tr('Numero secondario'); ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data'); ?>", "maxlength": 10, "name": "data", "required": 1, "value": "$data$", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data'); ?>", "maxlength": 10, "name": "data", "required": 1, "value": "$data$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
                     <?php
                     if (setting('Cambia automaticamente stato ddt fatturati')) {
-                        if ($records[0]['stato'] == 'Fatturato' || $records[0]['stato'] == 'Parzialmente fatturato') {
+                        if ($record['stato'] == 'Fatturato' || $record['stato'] == 'Parzialmente fatturato') {
                             ?>
                             {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoddt", "required": 1, "values": "query=SELECT * FROM dt_statiddt", "value": "$idstatoddt$", "extra": "readonly" ]}
                     <?php
@@ -97,18 +97,18 @@ if ($module['name'] == 'Ddt di vendita') {
 					<?php
                     if ($dir == 'entrata') {
                         ?>
-						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
+						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 					<?php
                     } else {
                         ?>
-						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "fornitori", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
+						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "fornitori", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 					<?php
                     }
                     ?>
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede", "values": "query=SELECT id, CONCAT_WS(', ', nomesede, citta) AS descrizione FROM an_sedi WHERE (idanagrafica='$idanagrafica$' OR idanagrafica=(SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')) UNION SELECT '0' AS id, 'Sede legale' AS descrizione ORDER BY descrizione", "value": "$idsede$", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede", "values": "query=SELECT id, CONCAT_WS(', ', nomesede, citta) AS descrizione FROM an_sedi WHERE (idanagrafica='$idanagrafica$' OR idanagrafica=(SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')) UNION SELECT '0' AS id, 'Sede legale' AS descrizione ORDER BY descrizione", "value": "$idsede$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 			</div>
 
@@ -116,45 +116,45 @@ if ($module['name'] == 'Ddt di vendita') {
 
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "idaspettobeni", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_aspettobeni ORDER BY descrizione ASC", "value": "$idaspettobeni$", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "idaspettobeni", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_aspettobeni ORDER BY descrizione ASC", "value": "$idaspettobeni$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_causalet ORDER BY descrizione ASC", "value": "$idcausalet$", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_causalet ORDER BY descrizione ASC", "value": "$idcausalet$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Porto'); ?>", "name": "idporto", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_porto ORDER BY descrizione ASC", "value": "$idporto$", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Porto'); ?>", "name": "idporto", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_porto ORDER BY descrizione ASC", "value": "$idporto$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Num. colli'); ?>", "name": "n_colli", "value": "$n_colli$", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
+					{[ "type": "text", "label": "<?php echo tr('Num. colli'); ?>", "name": "n_colli", "value": "$n_colli$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Tipo di spedizione'); ?>", "name": "idspedizione", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_spedizione ORDER BY descrizione ASC", "value": "$idspedizione$", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo di spedizione'); ?>", "name": "idspedizione", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_spedizione ORDER BY descrizione ASC", "value": "$idspedizione$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "values": "query=SELECT DISTINCT an_anagrafiche.idanagrafica AS id, an_anagrafiche.ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE an_tipianagrafiche_anagrafiche.idtipoanagrafica=(SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Vettore') ORDER BY descrizione ASC", "value": "$idvettore$", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "values": "query=SELECT DISTINCT an_anagrafiche.idanagrafica AS id, an_anagrafiche.ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE an_tipianagrafiche_anagrafiche.idtipoanagrafica=(SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Vettore') ORDER BY descrizione ASC", "value": "$idvettore$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 			</div>
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato'); ?>", "name": "sconto_generico", "value": "$sconto_globale$", "icon-after": "choice|untprc|$tipo_sconto_globale$", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
+                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato'); ?>", "name": "sconto_generico", "value": "$sconto_globale$", "icon-after": "choice|untprc|$tipo_sconto_globale$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
             </div>
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 			</div>
 
@@ -178,9 +178,9 @@ if ($module['name'] == 'Ddt di vendita') {
 		<div class="pull-left">
 <?php
 
-if ($records[0]['flag_completato'] == 0) {
+if ($record['flag_completato'] == 0) {
     // Lettura ordini
-    $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
+    $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
     $ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
     echo '
             <a class="btn btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/ddt/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi ordine" data-target="#bs-popup">
@@ -268,7 +268,7 @@ if (!empty($fatture)) {
 
 <script>
 <?php
-if ($records[0]['flag_completato']) {
+if ($record['flag_completato']) {
     ?>
     $('#tipo_sconto_generico').prop('disabled', true);
 <?php

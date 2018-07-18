@@ -1,7 +1,7 @@
 <?php
 include_once __DIR__.'/../../core.php';
 
-if ($records[0]['can_delete']) {
+if ($record['can_delete']) {
     $attr = '';
 } else {
     $attr = 'readonly';
@@ -34,7 +34,7 @@ if ($records[0]['can_delete']) {
 
 <?php
 // Record eliminabile solo se permesso
-if ($records[0]['can_delete']) {
+if ($record['can_delete']) {
     ?>
         <a class="btn btn-danger ask" data-backto="record-list">
             <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>

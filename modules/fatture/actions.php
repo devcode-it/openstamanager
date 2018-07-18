@@ -125,7 +125,7 @@ switch (post('op')) {
             $rs = $dbo->fetchArray($query);
 
             // Aggiornamento sconto
-            if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
+            if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
                 $dbo->update('co_documenti', [
                     'tipo_sconto_globale' => post('tipo_sconto_generico'),
                     'sconto_globale' => post('sconto_generico'),
@@ -705,7 +705,7 @@ switch (post('op')) {
             $idum = post('um');
 
             $qta = $post['qta'];
-            if (!empty($records[0]['is_reversed'])) {
+            if (!empty($record['is_reversed'])) {
                 $qta = -$qta;
             }
 
@@ -737,7 +737,7 @@ switch (post('op')) {
             $calcolo_ritenutaacconto = post('calcolo_ritenutaacconto');
 
             $qta = $post['qta'];
-            if (!empty($records[0]['is_reversed'])) {
+            if (!empty($record['is_reversed'])) {
                 $qta = -$qta;
             }
 
@@ -809,7 +809,7 @@ switch (post('op')) {
             $calcolo_ritenutaacconto = post('calcolo_ritenutaacconto');
 
             $qta = $post['qta'];
-            if (!empty($records[0]['is_reversed'])) {
+            if (!empty($record['is_reversed'])) {
                 $qta = -$qta;
             }
 
@@ -1462,8 +1462,8 @@ switch (post('op')) {
     case 'nota_credito':
         $id_segment = post('id_segment');
 
-        $numero = get_new_numerofattura($records[0]['data']);
-        $numero_esterno = get_new_numerosecondariofattura($records[0]['data']);
+        $numero = get_new_numerofattura($record['data']);
+        $numero_esterno = get_new_numerosecondariofattura($record['data']);
 
         $rs = $dbo->fetchArray('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
         $idconto = $rs[0]['idconto'];
@@ -1540,10 +1540,10 @@ switch (post('op')) {
 
 // Nota di debito
 if (get('op') == 'nota_addebito') {
-    $id_segment = $records[0]['id_segment'];
+    $id_segment = $record['id_segment'];
 
-    $numero = get_new_numerofattura($records[0]['data']);
-    $numero_esterno = get_new_numerosecondariofattura($records[0]['data']);
+    $numero = get_new_numerofattura($record['data']);
+    $numero_esterno = get_new_numerosecondariofattura($record['data']);
 
     $dbo->query('INSERT INTO co_documenti (numero, numero_esterno, ref_documento, idanagrafica, idconto, idtipodocumento, idpagamento, idbanca, data, idstatodocumento, idsede, id_segment) SELECT '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($id_record).', idanagrafica, idconto, (SELECT `id` FROM `co_tipidocumento` WHERE `descrizione`=\'Nota di debito\' AND dir = \'entrata\'), idpagamento, idbanca, data, (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`=\'Bozza\'), idsede, id_segment FROM co_documenti AS t WHERE id = '.prepare($id_record));
     $id_record = $dbo->lastInsertedID();

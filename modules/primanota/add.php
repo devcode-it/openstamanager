@@ -136,7 +136,7 @@ include_once __DIR__.'/../../core.php';
 	<?php
     $totale_dare = 0.00;
     $totale_avere = 0.00;
-    $idmastrino = $records[0]['idmastrino'];
+    $idmastrino = $record['idmastrino'];
 
     // Salvo l'elenco conti in un array (per non fare il ciclo ad ogni riga)
 

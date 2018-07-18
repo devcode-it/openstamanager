@@ -53,7 +53,7 @@ switch (post('op')) {
         ], ['id' => $id_record]);
 
         // Leggo la quantità attuale per capire se l'ho modificata
-        $old_qta = $records[0]['qta'];
+        $old_qta = $record['qta'];
         $movimento = $qta - $old_qta;
 
         if ($movimento != 0) {
@@ -95,7 +95,7 @@ switch (post('op')) {
 
         // Eliminazione file
         if (post('delete_immagine') !== null) {
-            Uploads::delete($records[0]['immagine'], [
+            Uploads::delete($record['immagine'], [
                 'id_module' => $id_module,
                 'id_record' => $id_record,
             ]);
@@ -262,7 +262,7 @@ switch (post('op')) {
 }
 
 // Operazioni aggiuntive per l'immagine
-if (filter('op') == 'unlink_file' && filter('filename') == $records[0]['immagine']) {
+if (filter('op') == 'unlink_file' && filter('filename') == $record['immagine']) {
     $dbo->update('mg_articoli', [
         'immagine' => null,
     ], [

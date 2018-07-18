@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 unset($_SESSION['superselect']['idanagrafica']);
-$_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
+$_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 ?><script src="<?php echo $rootdir; ?>/modules/contratti/js/contratti_helper.js"></script>
 
@@ -26,7 +26,7 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
 				<div class="col-md-4">
                     <?php
-                        echo Modules::link('Anagrafiche', $records[0]['idanagrafica'], null, null, 'class="pull-right"');
+                        echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
                     ?>
 
 					{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "id": "idanagrafica_c", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
@@ -38,8 +38,8 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
 				<div class="col-md-3">
                     <?php
-                        if ($records[0]['idagente'] != 0) {
-                            echo Modules::link('Anagrafiche', $records[0]['idagente'], null, null, 'class="pull-right"');
+                        if ($record['idagente'] != 0) {
+                            echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
                         }
                     ?>
 					{[ "type": "select", "label": "<?php echo tr('Agente'); ?>", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Agente' AND deleted_at IS NULL ORDER BY ragione_sociale", "value": "$idagente$" ]}
@@ -104,7 +104,7 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
             <div class="row">
                 <div class="col-md-3">
                     {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato'); ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr('Sconto complessivo del contratto'); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php
-if ($records[0]['stato'] == 'Emessa') {
+if ($record['stato'] == 'Emessa') {
                         echo ', "disabled" : 1';
                     }
 ?> ]}
@@ -265,7 +265,7 @@ if (sizeof($rs) > 0) {
 
     <div class="panel-body">
 <?php
-if ($records[0]['stato'] != 'Pagato') {
+if ($record['stato'] != 'Pagato') {
     ?>
         <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/contratti/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_articolo" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Articolo'); ?></a>
 
@@ -292,7 +292,7 @@ include $docroot.'/modules/contratti/row-list.php';
 
 
 <?php
-if (!empty($records[0]['idcontratto_prev'])) {
+if (!empty($record['idcontratto_prev'])) {
     echo '
 <!-- RIGHE -->
 <div class="panel panel-primary">
@@ -304,7 +304,7 @@ if (!empty($records[0]['idcontratto_prev'])) {
         <div class="row">
             <div class="col-md-12">';
 
-    $idcontratto_prev = $records[0]['idcontratto_prev'];
+    $idcontratto_prev = $record['idcontratto_prev'];
 
     echo '
                 <table class="table table-hover table-condensed table-bordered table-striped">

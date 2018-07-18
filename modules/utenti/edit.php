@@ -8,7 +8,7 @@ echo '
 	<div class="panel panel-primary">
 		<div class="panel-heading">
 			<h3 class="panel-title">'.tr('Utenti _GROUP_', [
-                '_GROUP_' => $records[0]['nome'],
+                '_GROUP_' => $record['nome'],
             ]).'</h3>
 		</div>
 
@@ -112,7 +112,7 @@ echo '
 	<div class="panel panel-primary">
 		<div class="panel-heading">
             <h3 class="panel-title">'.tr('Permessi _GROUP_', [
-                '_GROUP_' => $records[0]['nome'],
+                '_GROUP_' => $record['nome'],
             ]).'</h3>
 		</div>
 

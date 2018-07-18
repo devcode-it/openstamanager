@@ -39,7 +39,7 @@ echo '
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12">
-            <a class="btn btn-danger ask" data-backto="record-edit" data-op="deletereferente" data-id_record="'.$records[0]['id'].'" data-id_plugin="'.$id_plugin.'" data-id_module="'.$id_module.'" data-id_parent="'.$id_parent.'">
+            <a class="btn btn-danger ask" data-backto="record-edit" data-op="deletereferente" data-id_record="'.$record['id'].'" data-id_plugin="'.$id_plugin.'" data-id_module="'.$id_module.'" data-id_parent="'.$id_parent.'">
                 <i class="fa fa-trash"></i> '.tr('Elimina').'
             </a>
 

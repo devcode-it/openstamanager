@@ -3,12 +3,12 @@
 include_once __DIR__.'/../../core.php';
 
 $img = null;
-if (!empty($records[0]['immagine'])) {
-    $fileinfo = Uploads::fileInfo($records[0]['immagine']);
+if (!empty($record['immagine'])) {
+    $fileinfo = Uploads::fileInfo($record['immagine']);
 
     $default_img = '/'.Uploads::getDirectory($id_module).'/'.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
 
-    $img = file_exists(DOCROOT.$default_img) ? ROOTDIR.$default_img : ROOTDIR.'/'.Uploads::getDirectory($id_module).'/'.$records[0]['immagine'];
+    $img = file_exists(DOCROOT.$default_img) ? ROOTDIR.$default_img : ROOTDIR.'/'.Uploads::getDirectory($id_module).'/'.$record['immagine'];
 }
 
 ?><form action="" method="post" id="edit-form" enctype="multipart/form-data">

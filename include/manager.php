@@ -2,10 +2,22 @@
 
 include_once __DIR__.'/../core.php';
 
-// Lettura parametri iniziali del modulo
+// Lettura parametri iniziali
 if (!empty($id_plugin)) {
     $element = Plugins::get($id_plugin);
 
+    $directory = '/plugins/'.$element['directory'];
+} else {
+    $element = Modules::get($id_module);
+
+    $directory = '/modules/'.$element['directory'];
+}
+
+$php = App::filepath($directory.'|custom|', 'edit.php');
+$html = App::filepath($directory.'|custom|', 'edit.html');
+$element['edit_file'] = !empty($php) ? $php : $html;
+
+if (!empty($id_plugin)) {
     // Inclusione di eventuale plugin personalizzato
     if (!empty($element['script'])) {
         include App::filepath('modules/'.$element['module_dir'].'/plugins|custom|', $element['script']);
@@ -18,23 +30,18 @@ if (!empty($id_plugin)) {
 			<span  class="'.(!empty($element['help']) ? ' tip' : '').'"'.(!empty($element['help']) ? ' title="'.prepareToField($element['help']).'" data-position="bottom"' : '').' >
             '.$element['title'].(!empty($element['help']) ? ' <i class="fa fa-question-circle-o"></i>' : '').'</span>';
 
-    if (file_exists($docroot.'/plugins/'.$element['directory'].'/add.php')) {
+    if (!empty(Plugins::filepath($id_plugin, 'add.php'))) {
         echo '
         <button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_parent='.$id_record.'"><i class="fa fa-plus"></i></button>';
     }
 
     echo '
     </h4>';
-
-    $directory = '/plugins/'.$element['directory'];
-} else {
-    $element = Modules::get($id_module);
-
-    $directory = '/modules/'.$element['directory'];
 }
+
 $total = App::readQuery($element);
 
-$module_options = (!empty($element['options2'])) ? $element['options2'] : $element['options'];
+$type = $element['option'];
 
 // Caricamento helper modulo (verifico se ci sono helper personalizzati)
 include_once App::filepath($directory.'|custom|', 'modutil.php');
@@ -48,8 +55,8 @@ include App::filepath($directory.'|custom|', 'controller_before.php');
 /*
  * Datatables con record
  */
-if (!empty($module_options) && $module_options != 'menu' && $module_options != 'custom') {
-    if (count(Modules::getSegments($id_module)) > 1) {
+if (!empty($type) && $type != 'menu' && $type != 'custom') {
+    if (empty($id_plugin) && count(Modules::getSegments($id_module)) > 1) {
         echo '
     <div class="row">
     	<div class="col-md-4 pull-right">
@@ -210,17 +217,8 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
 /*
  * Inclusione modulo personalizzato
  */
-elseif ($module_options == 'custom') {
-    // Lettura template modulo (verifico se ci sono template personalizzati, altrimenti uso quello base)
-    if (file_exists($docroot.$directory.'/custom/edit.php')) {
-        include $docroot.$directory.'/custom/edit.php';
-    } elseif (file_exists($docroot.$directory.'/custom/edit.html')) {
-        include $docroot.$directory.'/custom/edit.html';
-    } elseif (file_exists($docroot.$directory.'/edit.php')) {
-        include $docroot.$directory.'/edit.php';
-    } elseif (file_exists($docroot.$directory.'/edit.html')) {
-        include $docroot.$directory.'/edit.html';
-    }
+elseif ($type == 'custom') {
+    include $element['edit_file'];
 }
 
 // Caricamento file aggiuntivo su elenco record

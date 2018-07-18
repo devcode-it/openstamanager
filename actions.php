@@ -4,17 +4,27 @@ include_once __DIR__.'/core.php';
 
 // Lettura parametri iniziali
 if (!empty($id_plugin)) {
-    $info = Plugins::get($id_plugin);
+    $element = Plugins::get($id_plugin);
 
-    $directory = '/plugins/'.$info['directory'];
-    $permesso = $info['idmodule_to'];
-    $id_module = $info['idmodule_to'];
+    $directory = '/plugins/'.$element['directory'];
+    $id_module = $element['idmodule_to'];
 } else {
-    $info = Modules::get($id_module);
+    $element = Modules::get($id_module);
 
-    $directory = '/modules/'.$info['directory'];
-    $permesso = $id_module;
+    $directory = '/modules/'.$element['directory'];
 }
+
+if (empty($element) || empty($element['enabled'])) {
+    die(tr('Accesso negato'));
+}
+
+$php = App::filepath($directory.'|custom|', 'add.php');
+$html = App::filepath($directory.'|custom|', 'add.html');
+$element['add_file'] = !empty($php) ? $php : $html;
+
+$php = App::filepath($directory.'|custom|', 'edit.php');
+$html = App::filepath($directory.'|custom|', 'edit.html');
+$element['edit_file'] = !empty($php) ? $php : $html;
 
 $upload_dir = DOCROOT.'/'.Uploads::getDirectory($id_module, $id_plugin);
 
@@ -128,95 +138,93 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     }
 }
 
-if (Modules::getPermission($permesso) == 'r' || Modules::getPermission($permesso) == 'rw') {
-    // Inclusione di eventuale plugin personalizzato
-    if (!empty($info['script'])) {
-        include App::filepath('modules/'.$info['module_dir'].'/plugins|custom|', $info['script']);
+// Inclusione di eventuale plugin personalizzato
+if (!empty($element['script'])) {
+    include App::filepath('modules/'.$element['module_dir'].'/plugins|custom|', $element['script']);
 
-        $dbo->query('COMMIT');
+    $dbo->query('COMMIT');
 
-        return;
-    }
+    return;
+}
 
-    // Caricamento helper modulo (verifico se ci sono helper personalizzati)
-    include_once App::filepath($directory.'|custom|', 'modutil.php');
+// Caricamento helper modulo (verifico se ci sono helper personalizzati)
+include_once App::filepath($directory.'|custom|', 'modutil.php');
 
-    // Lettura risultato query del modulo
-    include App::filepath($directory.'|custom|', 'init.php');
+// Lettura risultato query del modulo
+include App::filepath($directory.'|custom|', 'init.php');
 
-    // Retrocompatibilità
-    if (!isset($record) && isset($records[0])) {
-        $record = $records[0];
-    }
+// Retrocompatibilità
+if (!isset($record) && isset($records[0])) {
+    $record = $records[0];
+}
 
-    // Registrazione del record
-    HTMLBuilder\HTMLBuilder::setRecord($record);
+// Registrazione del record
+HTMLBuilder\HTMLBuilder::setRecord($record);
 
-    if (Modules::getPermission($permesso) == 'rw') {
-        // Esecuzione delle operazioni di gruppo
-        $id_records = post('id_records');
-        $id_records = is_array($id_records) ? $id_records : explode(';', $id_records);
-        $id_records = array_filter($id_records, function ($var) {return !empty($var); });
-        $id_records = array_unique($id_records);
+if (Modules::getPermission($id_module) == 'rw') {
+    // Esecuzione delle operazioni di gruppo
+    $id_records = post('id_records');
+    $id_records = is_array($id_records) ? $id_records : explode(';', $id_records);
+    $id_records = array_filter($id_records, function ($var) {return !empty($var); });
+    $id_records = array_unique($id_records);
 
-        $bulk = include App::filepath($directory.'|custom|', 'bulk.php');
-        $bulk = empty($bulk) ? [] : $bulk;
+    $bulk = include App::filepath($directory.'|custom|', 'bulk.php');
+    $bulk = empty($bulk) ? [] : $bulk;
 
-        if (in_array(post('op'), array_keys($bulk))) {
-            redirect(ROOTDIR.'/controller.php?id_module='.$id_module, 'js');
-        } else {
-            // Esecuzione delle operazioni del modulo
-            include App::filepath($directory.'|custom|', 'actions.php');
+    if (in_array(post('op'), array_keys($bulk))) {
+        redirect(ROOTDIR.'/controller.php?id_module='.$id_module, 'js');
+    } else {
+        // Esecuzione delle operazioni del modulo
+        include App::filepath($directory.'|custom|', 'actions.php');
 
-            // Operazioni generiche per i campi personalizzati
-            if (post('op') != null) {
-                $query = 'SELECT `id`, `name` FROM `zz_fields` WHERE ';
-                if (!empty($id_plugin)) {
-                    $query .= '`id_plugin` = '.prepare($id_plugin);
-                } else {
-                    $query .= '`id_module` = '.prepare($id_module);
+        // Operazioni generiche per i campi personalizzati
+        if (post('op') != null) {
+            $query = 'SELECT `id`, `name` FROM `zz_fields` WHERE ';
+            if (!empty($id_plugin)) {
+                $query .= '`id_plugin` = '.prepare($id_plugin);
+            } else {
+                $query .= '`id_module` = '.prepare($id_module);
+            }
+            $customs = $dbo->fetchArray($query);
+
+            if (!starts_with(post('op'), 'delete')) {
+                $values = [];
+                foreach ($customs as $custom) {
+                    if (isset($post[$custom['name']])) {
+                        $values[$custom['id']] = $post[$custom['name']];
+                    }
                 }
-                $customs = $dbo->fetchArray($query);
 
-                if (!starts_with(post('op'), 'delete')) {
-                    $values = [];
-                    foreach ($customs as $custom) {
-                        if (isset($post[$custom['name']])) {
-                            $values[$custom['id']] = $post[$custom['name']];
-                        }
+                // Inserimento iniziale
+                if (starts_with(post('op'), 'add')) {
+                    // Informazioni di log
+                    Filter::set('get', 'id_record', $id_record);
+
+                    foreach ($values as $key => $value) {
+                        $dbo->insert('zz_field_record', [
+                            'id_record' => $id_record,
+                            'id_field' => $key,
+                            'value' => $value,
+                        ]);
                     }
+                }
 
-                    // Inserimento iniziale
-                    if (starts_with(post('op'), 'add')) {
-                        // Informazioni di log
-                        Filter::set('get', 'id_record', $id_record);
-
-                        foreach ($values as $key => $value) {
-                            $dbo->insert('zz_field_record', [
-                                'id_record' => $id_record,
-                                'id_field' => $key,
-                                'value' => $value,
-                            ]);
-                        }
-                    }
-
-                    // Aggiornamento
-                    elseif (starts_with(post('op'), 'update')) {
-                        foreach ($values as $key => $value) {
-                            $dbo->update('zz_field_record', [
+                // Aggiornamento
+                elseif (starts_with(post('op'), 'update')) {
+                    foreach ($values as $key => $value) {
+                        $dbo->update('zz_field_record', [
                             'value' => $value,
                         ], [
                             'id_record' => $id_record,
                             'id_field' => $key,
                         ]);
-                        }
                     }
                 }
+            }
 
-                // Eliminazione
-                elseif (!empty($customs)) {
-                    $dbo->query('DELETE FROM `zz_field_record` WHERE `id_record` = '.prepare($id_record).' AND `id_field` IN ('.implode(array_column($customs, 'id')).')');
-                }
+            // Eliminazione
+            elseif (!empty($customs)) {
+                $dbo->query('DELETE FROM `zz_field_record` WHERE `id_record` = '.prepare($id_record).' AND `id_field` IN ('.implode(',', array_column($customs, 'id')).')');
             }
         }
     }

@@ -10,17 +10,8 @@ if (empty($id_record) && !empty($id_module)) {
 
 include_once App::filepath('include|custom|', 'top.php');
 
-// Lettura parametri iniziali del modulo
-$module = Modules::get($id_module);
-
-if (empty($module) || empty($module['enabled'])) {
-    die(tr('Accesso negato'));
-}
-
-$module_dir = $module['directory'];
-
-// Inclusione elementi fondamentali del modulo
-include $docroot.'/actions.php';
+// Inclusione gli elementi fondamentali
+include_once $docroot.'/actions.php';
 
 // Widget in alto
 echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top", "place": "editor" )}';
@@ -28,6 +19,7 @@ echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_r
 $advanced_sessions = setting('Attiva notifica di presenza utenti sul record');
 if ($advanced_sessions) {
     $dbo->query('DELETE FROM zz_semaphores WHERE id_utente='.prepare(Auth::user()['id_utente']).' AND posizione='.prepare($id_module.', '.$id_record));
+
     $dbo->query('INSERT INTO zz_semaphores (id_utente, posizione, updated) VALUES ('.prepare(Auth::user()['id_utente']).', '.prepare($id_module.', '.$id_record).', NOW())');
 
     echo '
@@ -54,19 +46,16 @@ if (empty($record)) {
     echo '
 		<div class="nav-tabs-custom">
 			<ul class="nav nav-tabs pull-right" id="tabs" role="tablist">
-				<li class="pull-left active header">';
-
-    // Verifico se ho impostato un nome modulo personalizzato
-    $name = $module['title'];
-
-    echo '
+				<li class="pull-left active header">
 					<a data-toggle="tab" href="#tab_0">
-						<i class="'.$module['icon'].'"></i> '.$name;
+                        <i class="'.$element['icon'].'"></i> '.$element['title'];
+
     // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
-    if (file_exists($docroot.'/modules/'.$module_dir.'/add.php') && $module['permessi'] == 'rw') {
+    if (!empty($element['add_file']) && $element['permessi'] == 'rw') {
         echo '
-						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'"><i class="fa fa-plus"></i></button>';
+						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
     }
+
     echo '
 					</a>
 				</li>';
@@ -173,16 +162,7 @@ if (empty($record)) {
 
                     <div id="module-edit">';
 
-    // Lettura template modulo (verifico se ci sono template personalizzati, altrimenti uso quello base)
-    if (file_exists($docroot.'/modules/'.$module_dir.'/custom/edit.php')) {
-        include $docroot.'/modules/'.$module_dir.'/custom/edit.php';
-    } elseif (file_exists($docroot.'/modules/'.$module_dir.'/custom/edit.html')) {
-        include $docroot.'/modules/'.$module_dir.'/custom/edit.html';
-    } elseif (file_exists($docroot.'/modules/'.$module_dir.'/edit.php')) {
-        include $docroot.'/modules/'.$module_dir.'/edit.php';
-    } elseif (file_exists($docroot.'/modules/'.$module_dir.'/edit.html')) {
-        include $docroot.'/modules/'.$module_dir.'/edit.html';
-    }
+    include $element['edit_file'];
 
     echo '
                     </div>
@@ -314,7 +294,7 @@ echo '
         <script>';
 
 // Se l'utente ha i permessi in sola lettura per il modulo, converto tutti i campi di testo in span
-$read_only = Modules::getPermission($id_module) == 'r';
+$read_only = $element['permessi'] == 'r';
 if ($read_only || !empty($block_edit)) {
     $not = $read_only ? '' : '.not(".unblockable")';
 

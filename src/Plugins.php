@@ -32,6 +32,8 @@ class Plugins
 
                 $result['option'] = empty($result['options2']) ? $result['options'] : $result['options2'];
 
+                $result['permessi'] = Modules::getPermission($result['idmodule_to']);
+
                 $plugins[$result['id']] = $result;
                 $plugins[$result['name']] = $result['id'];
             }

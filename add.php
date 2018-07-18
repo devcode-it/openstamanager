@@ -2,37 +2,21 @@
 
 include_once __DIR__.'/core.php';
 
-if (!empty($id_plugin)) {
-    $info = Plugins::get($id_plugin);
-
-    $directory = '/plugins/'.$info['directory'];
-} else {
-    Permissions::check('rw');
-
-    $module = Modules::get($id_module);
-
-    $directory = '/modules/'.$module['directory'];
-}
-
 // Inclusione elementi fondamentali del modulo
 include $docroot.'/actions.php';
 
+// Controllo dei permessi
+if (empty($id_plugin)) {
+    Permissions::check('rw');
+}
+
+// Caricamento template
 echo '
 <div id="form_'.$id_module.'-'.$id_plugin.'">
 ';
 
-// Caricamento template
 $file = !empty(get('edit')) ? 'edit' : 'add';
-
-if (file_exists($docroot.$directory.'/custom/'.$file.'.php')) {
-    include $docroot.$directory.'/custom/'.$file.'.php';
-} elseif (file_exists($docroot.$directory.'/custom/'.$file.'.html')) {
-    include $docroot.$directory.'/custom/'.$file.'.html';
-} elseif (file_exists($docroot.$directory.'/'.$file.'.php')) {
-    include $docroot.$directory.'/'.$file.'.php';
-} elseif (file_exists($docroot.$directory.'/'.$file.'.html')) {
-    include $docroot.$directory.'/'.$file.'.html';
-}
+include $element[$file.'_file'];
 
 echo '
 </div>';

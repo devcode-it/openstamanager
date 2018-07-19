@@ -10,9 +10,9 @@ switch (post('op')) {
         $contenuto = post('contenuto');
 
         if (!file_put_contents($path.$nomefile, $contenuto)) {
-            App::flash()->error(tr('Impossibile modificare il file!'));
+            flash()->error(tr('Impossibile modificare il file!'));
         } else {
-            App::flash()->info(tr('Informazioni salvate correttamente!'));
+            flash()->info(tr('Informazioni salvate correttamente!'));
         }
 
     break;
@@ -31,13 +31,13 @@ switch (post('op')) {
         }
 
         if ($duplicato) {
-            App::flash()->error(tr('Il file componente _FILE_ esiste già, nessun nuovo componente è stato creato!', [
+            flash()->error(tr('Il file componente _FILE_ esiste già, nessun nuovo componente è stato creato!', [
                 '_FILE_' => "'".$nomefile."'",
             ]));
         } elseif (!file_put_contents($path.$nomefile, $contenuto)) {
-            App::flash()->error(tr('Impossibile creare il file!'));
+            flash()->error(tr('Impossibile creare il file!'));
         } else {
-            App::flash()->info(tr('Componente _FILE_ aggiunto correttamente!', [
+            flash()->info(tr('Componente _FILE_ aggiunto correttamente!', [
                 '_FILE_' => "'".$nomefile."'",
             ]));
         }
@@ -50,7 +50,7 @@ switch (post('op')) {
         if (!empty($nomefile)) {
             delete($path.$nomefile);
 
-            App::flash()->info(tr('File _FILE_ rimosso correttamente!', [
+            flash()->info(tr('File _FILE_ rimosso correttamente!', [
                 '_FILE_' => "'".$nomefile."'",
             ]));
         }

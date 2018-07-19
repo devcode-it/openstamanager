@@ -45,9 +45,9 @@ switch (post('op')) {
         }
 
         if ($n_errors == 0) {
-            App::flash()->info(tr('Informazioni salvate correttamente!'));
+            flash()->info(tr('Informazioni salvate correttamente!'));
         } else {
-            App::flash()->error(tr('Errore durante il salvataggio delle tariffe!'));
+            flash()->error(tr('Errore durante il salvataggio delle tariffe!'));
         }
 
         break;
@@ -66,18 +66,18 @@ switch (post('op')) {
                 .' costo_dirittochiamata_tecnico=(SELECT costo_diritto_chiamata_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare(post('idtipointervento')).') '
                 .' WHERE idtecnico='.prepare(post('idtecnico')).' AND idtipointervento='.prepare(post('idtipointervento')));
             if ($result) {
-                App::flash()->info(tr('Informazioni salvate correttamente!'));
+                flash()->info(tr('Informazioni salvate correttamente!'));
             } else {
-                App::flash()->error(tr("Errore durante l'importazione tariffe!"));
+                flash()->error(tr("Errore durante l'importazione tariffe!"));
             }
         }
 
         // ...altrimenti la creo
         else {
             if ($dbo->query('INSERT INTO in_tariffe( idtecnico, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico ) VALUES( '.prepare(post('idtecnico')).', '.prepare(post('idtipointervento')).', (SELECT costo_orario FROM in_tipiintervento WHERE idtipointervento='.prepare(post('idtipointervento')).'), (SELECT costo_km FROM in_tipiintervento WHERE idtipointervento='.prepare(post('idtipointervento')).'), (SELECT costo_diritto_chiamata FROM in_tipiintervento WHERE idtipointervento='.prepare(post('idtipointervento')).'),   (SELECT costo_orario_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare(post('idtipointervento')).'), (SELECT costo_km_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare(post('idtipointervento')).'), (SELECT costo_diritto_chiamata_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare(post('idtipointervento')).') )')) {
-                App::flash()->info(tr('Informazioni salvate correttamente!'));
+                flash()->info(tr('Informazioni salvate correttamente!'));
             } else {
-                App::flash()->error(tr("Errore durante l'importazione tariffe!"));
+                flash()->error(tr("Errore durante l'importazione tariffe!"));
             }
         }
 

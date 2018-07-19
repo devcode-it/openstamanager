@@ -10,9 +10,9 @@ switch (filter('op')) {
 
         if (isset($nome) && isset($nota) && isset($colore)) {
             $dbo->query('UPDATE `mg_categorie` SET `nome`='.prepare($nome).', `nota`='.prepare($nota).', `colore`='.prepare($colore).' WHERE `id`='.prepare($id_record));
-            App::flash()->info(tr('Salvataggio completato!'));
+            flash()->info(tr('Salvataggio completato!'));
         } else {
-            App::flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
 
         break;
@@ -31,11 +31,11 @@ switch (filter('op')) {
                 echo json_encode(['id' => $id_record, 'text' => $nome]);
             }
 
-            App::flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
+            flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                 '_TYPE_' => 'categoria',
             ]));
         } else {
-            App::flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
 
         break;
@@ -49,11 +49,11 @@ switch (filter('op')) {
         if ($dbo->fetchNum('SELECT * FROM `mg_articoli` WHERE `id_categoria`='.prepare($id).' OR `id_sottocategoria`='.prepare($id).'  OR `id_sottocategoria` IN (SELECT id FROM `mg_categorie` WHERE `parent`='.prepare($id).')') == 0) {
             $dbo->query('DELETE FROM `mg_categorie` WHERE `id`='.prepare($id));
 
-            App::flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
+            flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'categoria',
             ]));
         } else {
-            App::flash()->error(tr('Esistono ancora alcuni articoli sotto questa categoria!'));
+            flash()->error(tr('Esistono ancora alcuni articoli sotto questa categoria!'));
         }
 
         break;
@@ -76,10 +76,10 @@ switch (filter('op')) {
                     echo json_encode(['id' => $id_record, 'text' => $nome]);
                 }
             }
-            App::flash()->info(tr('Salvataggio completato!'));
+            flash()->info(tr('Salvataggio completato!'));
             $id_record = $original;
         } else {
-            App::flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
 
         break;

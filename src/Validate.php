@@ -41,7 +41,7 @@ class Validate
         $access_key = setting('apilayer API key for VAT number');
         if (!empty($access_key)) {
             if (!extension_loaded('curl')) {
-                App::flash()->warning(tr('Estensione cURL non installata'));
+                flash()->warning(tr('Estensione cURL non installata'));
 
                 return true;
             }
@@ -87,7 +87,7 @@ class Validate
         $access_key = setting('apilayer API key for Email');
         if (!empty($access_key)) {
             if (!extension_loaded('curl')) {
-                App::flash()->warning(tr('Estensione cURL non installata'));
+                flash()->warning(tr('Estensione cURL non installata'));
 
                 return true;
             }

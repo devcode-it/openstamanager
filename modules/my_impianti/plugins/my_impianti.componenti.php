@@ -17,7 +17,7 @@ switch (filter('op')) {
         $query = 'UPDATE my_impianto_componenti SET data='.prepare($data).', contenuto='.prepare($contenuto).' WHERE idimpianto='.prepare($id_record).' AND id='.prepare($idcomponente);
         $dbo->query($query);
 
-        App::flash()->info(tr('Informazioni componente aggiornate correttamente!'));
+        flash()->info(tr('Informazioni componente aggiornate correttamente!'));
 
         $_SESSION['idcomponente'] = $idcomponente;
     break;
@@ -35,7 +35,7 @@ switch (filter('op')) {
             $idcomponente = $dbo->lastInsertedID();
             $_SESSION['idcomponente'] = $idcomponente;
 
-            App::flash()->info(tr("Aggiunto un nuovo componente all'impianto!"));
+            flash()->info(tr("Aggiunto un nuovo componente all'impianto!"));
         }
     break;
 
@@ -62,9 +62,9 @@ switch (filter('op')) {
             $query = 'UPDATE my_impianto_componenti SET data_sostituzione = NOW() WHERE idimpianto = '.prepare($id_record).' AND id = '.prepare($id);
             $dbo->query($query);
 
-            App::flash()->info(tr('Aggiunto un nuovo componente in sostituzione al precedente!'));
+            flash()->info(tr('Aggiunto un nuovo componente in sostituzione al precedente!'));
         } else {
-            App::flash()->error(tr('Questo componente è già stato sostituito!').' '.('Nessuna modifica applicata'));
+            flash()->error(tr('Questo componente è già stato sostituito!').' '.('Nessuna modifica applicata'));
         }
     break;
 
@@ -74,7 +74,7 @@ switch (filter('op')) {
         $query = 'DELETE FROM my_impianto_componenti WHERE id='.prepare($idcomponente).' AND idimpianto='.prepare($id_record);
         $dbo->query($query);
 
-        App::flash()->info(tr("Rimosso componente dall'impianto!"));
+        flash()->info(tr("Rimosso componente dall'impianto!"));
     break;
 }
 

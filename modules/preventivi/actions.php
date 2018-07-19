@@ -60,7 +60,7 @@ switch (post('op')) {
         $dbo->query('INSERT INTO co_righe_preventivi(idpreventivo, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, `order`) VALUES ('.prepare($id_record).", '0', ".prepare($idiva).', '.prepare($rs_iva[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).", 'Diritto chiamata', ".prepare($costo).", '', 1, 0, 0, 'UNT', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_preventivi AS t WHERE idpreventivo=".prepare($id_record).'))');
         */
 
-        App::flash()->info(tr('Aggiunto preventivo numero _NUM_!', [
+        flash()->info(tr('Aggiunto preventivo numero _NUM_!', [
             '_NUM_' => $numero,
         ]));
 
@@ -131,7 +131,7 @@ switch (post('op')) {
             ], $id_record);
 
             // update_budget_preventivo( $id_record );
-            App::flash()->info(tr('Preventivo modificato correttamente!'));
+            flash()->info(tr('Preventivo modificato correttamente!'));
         }
         break;
 
@@ -150,7 +150,7 @@ switch (post('op')) {
             // Imposto il preventivo nello stato "In lavorazione" se inizio ad aggiungere interventi
             $dbo->query("UPDATE `co_preventivi` SET idstato=(SELECT `id` FROM `co_statipreventivi` WHERE `descrizione`='In lavorazione') WHERE `id`=".prepare($id_record));
 
-            App::flash()->info(tr('Intervento _NUM_ aggiunto!', [
+            flash()->info(tr('Intervento _NUM_ aggiunto!', [
                 '_NUM_' => $rs[0]['codice'],
             ]));
         }
@@ -171,7 +171,7 @@ switch (post('op')) {
             // Elimino la riga dal preventivo
             $dbo->query('DELETE FROM co_righe_preventivi WHERE id='.prepare($idriga));
 
-            App::flash()->info(tr('Riga rimossa!'));
+            flash()->info(tr('Riga rimossa!'));
         }
         break;
 
@@ -183,7 +183,7 @@ switch (post('op')) {
             $query = 'DELETE FROM `co_preventivi_interventi` WHERE idpreventivo='.prepare($id_record).' AND idintervento='.prepare($idintervento);
             $dbo->query($query);
 
-            App::flash()->info(tr('Intervento _NUM_ rimosso!', [
+            flash()->info(tr('Intervento _NUM_ rimosso!', [
                 '_NUM_' => $idintervento,
             ]));
         }
@@ -194,7 +194,7 @@ switch (post('op')) {
         $dbo->query('DELETE FROM co_preventivi WHERE id='.prepare($id_record));
         $dbo->query('DELETE FROM co_preventivi_interventi WHERE idpreventivo='.prepare($id_record));
 
-        App::flash()->info(tr('Preventivo eliminato!'));
+        flash()->info(tr('Preventivo eliminato!'));
 
         break;
 
@@ -230,11 +230,11 @@ switch (post('op')) {
 
         // Messaggi informativi
         if (!empty($idarticolo)) {
-            App::flash()->info(tr('Articolo aggiunto!'));
+            flash()->info(tr('Articolo aggiunto!'));
         } elseif (!empty($qta)) {
-            App::flash()->info(tr('Riga aggiunta!'));
+            flash()->info(tr('Riga aggiunta!'));
         } else {
-            App::flash()->info(tr('Riga descrittiva aggiunta!'));
+            flash()->info(tr('Riga descrittiva aggiunta!'));
         }
 
         break;
@@ -278,7 +278,7 @@ switch (post('op')) {
         }
         $dbo->query($query);
 
-        App::flash()->info('Riga modificata!');
+        flash()->info('Riga modificata!');
         break;
 
     case 'update_position':

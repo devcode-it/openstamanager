@@ -117,11 +117,11 @@ switch (post('op')) {
         }
 
         if ($totale_n_ddt > 0) {
-            App::flash()->info(tr('_NUM_ ddt fatturati!', [
+            flash()->info(tr('_NUM_ ddt fatturati!', [
                 '_NUM_' => $totale_n_ddt,
             ]));
         } else {
-            App::flash()->warning(tr('Nessun ddt fatturato!'));
+            flash()->warning(tr('Nessun ddt fatturato!'));
         }
 
     break;
@@ -135,9 +135,9 @@ switch (post('op')) {
                 $dbo->query('DELETE FROM mg_movimenti WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
             }
 
-            App::flash()->info(tr('Ddt eliminati!'));
+            flash()->info(tr('Ddt eliminati!'));
         } else {
-            App::flash()->warning(tr('Procedura in fase di sviluppo. Nessuna modifica apportata.'));
+            flash()->warning(tr('Procedura in fase di sviluppo. Nessuna modifica apportata.'));
         }
 
     break;

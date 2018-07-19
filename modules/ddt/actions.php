@@ -43,7 +43,7 @@ switch (post('op')) {
 
             $id_record = $dbo->lastInsertedID();
 
-            App::flash()->info(tr('Aggiunto ddt in _TYPE_ numero _NUM_!', [
+            flash()->info(tr('Aggiunto ddt in _TYPE_ numero _NUM_!', [
                 '_TYPE_' => $dir,
                 '_NUM_' => $numero,
             ]));
@@ -130,7 +130,7 @@ switch (post('op')) {
                 }
             }
 
-            App::flash()->info(tr('Ddt modificato correttamente!'));
+            flash()->info(tr('Ddt modificato correttamente!'));
         }
         break;
 
@@ -160,7 +160,7 @@ switch (post('op')) {
             // Ricalcolo inps, ritenuta e bollo
             ricalcola_costiagg_ddt($id_record);
 
-            App::flash()->info(tr('Articolo aggiunto!'));
+            flash()->info(tr('Articolo aggiunto!'));
         }
         break;
 
@@ -196,11 +196,11 @@ switch (post('op')) {
 
         // Messaggi informativi
         if (!empty($idarticolo)) {
-            App::flash()->info(tr('Articolo aggiunto!'));
+            flash()->info(tr('Articolo aggiunto!'));
         } elseif (!empty($qta)) {
-            App::flash()->info(tr('Riga aggiunta!'));
+            flash()->info(tr('Riga aggiunta!'));
         } else {
-            App::flash()->info(tr('Riga descrittiva aggiunta!'));
+            flash()->info(tr('Riga descrittiva aggiunta!'));
         }
 
         // Ricalcolo inps, ritenuta e bollo
@@ -290,7 +290,7 @@ switch (post('op')) {
         }
 
         ricalcola_costiagg_ddt($id_record);
-            App::flash()->info(tr('Creato un nuovo ddt!'));
+            flash()->info(tr('Creato un nuovo ddt!'));
         break;
 
     // Scollegamento articolo da ddt
@@ -299,7 +299,7 @@ switch (post('op')) {
         $idarticolo = post('idarticolo');
 
         if (!rimuovi_articolo_daddt($idarticolo, $id_record, $idriga)) {
-            App::flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+            flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
 
             return;
         }
@@ -311,7 +311,7 @@ switch (post('op')) {
             ricalcola_costiagg_ddt($id_record, 0, 0, 0);
         }
 
-        App::flash()->info(tr('Articolo rimosso!'));
+        flash()->info(tr('Articolo rimosso!'));
         break;
 
     // Scollegamento riga generica da ddt
@@ -342,7 +342,7 @@ switch (post('op')) {
                     ricalcola_costiagg_ddt($id_record, 0, 0, 0);
                 }
 
-                App::flash()->info(tr('Riga rimossa!'));
+                flash()->info(tr('Riga rimossa!'));
             }
         }
         break;
@@ -382,7 +382,7 @@ switch (post('op')) {
             // Controllo per gestire i serial
             if (!empty($idarticolo)) {
                 if (!controlla_seriali('id_riga_ddt', $idriga, $old_qta, $qta, $dir)) {
-                    App::flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+                    flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
 
                     return;
                 }
@@ -425,7 +425,7 @@ switch (post('op')) {
                     add_movimento_magazzino($idarticolo, $new_qta, ['idddt' => $id_record]);
                 }
 
-                App::flash()->info(tr('Riga modificata!'));
+                flash()->info(tr('Riga modificata!'));
 
                 // Ricalcolo inps, ritenuta e bollo
                 if ($dir == 'entrata') {
@@ -445,7 +445,7 @@ switch (post('op')) {
         foreach ($rs as $value) {
             $non_rimovibili = seriali_non_rimuovibili('id_riga_ddt', $value['id'], $dir);
             if (!empty($non_rimovibili)) {
-                App::flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+                flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
 
                 return;
             }
@@ -475,7 +475,7 @@ switch (post('op')) {
             }
         }
 
-        App::flash()->info(tr('Ddt eliminato!'));
+        flash()->info(tr('Ddt eliminato!'));
 
         break;
 
@@ -570,7 +570,7 @@ switch (post('op')) {
 
         ricalcola_costiagg_ddt($id_record);
 
-        App::flash()->info(tr('Aggiunti nuovi articoli in ddt!'));
+        flash()->info(tr('Aggiunti nuovi articoli in ddt!'));
 
         break;
 }

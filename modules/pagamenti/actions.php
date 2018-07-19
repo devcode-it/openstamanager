@@ -41,9 +41,9 @@ switch (filter('op')) {
                     $dbo->INSERT('co_pagamenti', $array);
                 }
             }
-            App::flash()->info(tr('Salvataggio completato!'));
+            flash()->info(tr('Salvataggio completato!'));
         } else {
-            App::flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
 
         break;
@@ -55,11 +55,11 @@ switch (filter('op')) {
             $dbo->query('INSERT INTO `co_pagamenti` (`descrizione`) VALUES ('.prepare($descrizione).')');
             $id_record = $dbo->lastInsertedID();
 
-            App::flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
+            flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                 '_TYPE_' => 'pagamento',
             ]));
         } else {
-            App::flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
 
         break;
@@ -68,7 +68,7 @@ switch (filter('op')) {
         if (!empty($id_record)) {
             $dbo->query('DELETE FROM `co_pagamenti` WHERE `id`='.prepare($id_record));
 
-            App::flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
+            flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'pagamento',
             ]));
         }
@@ -79,7 +79,7 @@ switch (filter('op')) {
         $id = filter('id');
         if (isset($id)) {
             $dbo->query('DELETE FROM `co_pagamenti` WHERE `id`='.prepare($id));
-            App::flash()->info(tr('Elemento eliminato con successo!'));
+            flash()->info(tr('Elemento eliminato con successo!'));
 
             if ($id_record == $id) {
                 $res = $dbo->fetchArray('SELECT * FROM `co_pagamenti` WHERE `id`!='.prepare($id).' AND `descrizione`='.prepare($record['descrizione']));

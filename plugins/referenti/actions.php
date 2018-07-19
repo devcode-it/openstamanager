@@ -16,7 +16,7 @@ switch ($operazione) {
         ]);
         $id_record = $dbo->lastInsertedID();
 
-        App::flash()->info(tr('Aggiunto nuovo referente!'));
+        flash()->info(tr('Aggiunto nuovo referente!'));
 
         break;
 
@@ -30,14 +30,14 @@ switch ($operazione) {
             'idsede' => post('idsede'),
         ], ['id' => $id_record]);
 
-        App::flash()->info(tr('Salvataggio completato!'));
+        flash()->info(tr('Salvataggio completato!'));
 
         break;
 
     case 'deletereferente':
         $dbo->query('DELETE FROM `an_referenti` WHERE `id`='.prepare($id_record));
 
-        App::flash()->info(tr('Referente eliminato!'));
+        flash()->info(tr('Referente eliminato!'));
 
         break;
 }

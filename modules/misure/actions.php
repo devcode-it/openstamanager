@@ -9,14 +9,14 @@ switch (filter('op')) {
         if (isset($valore)) {
             if ($dbo->fetchNum('SELECT * FROM `mg_unitamisura` WHERE `valore`='.prepare($valore).' AND `id`!='.prepare($id_record)) == 0) {
                 $dbo->query('UPDATE `mg_unitamisura` SET `valore`='.prepare($valore).' WHERE `id`='.prepare($id_record));
-                App::flash()->info(tr('Salvataggio completato.'));
+                flash()->info(tr('Salvataggio completato.'));
             } else {
-                App::flash()->error(tr("E' già presente una tipologia di _TYPE_ con lo stesso valore.", [
+                flash()->error(tr("E' già presente una tipologia di _TYPE_ con lo stesso valore.", [
                     '_TYPE_' => 'unità di misura',
                 ]));
             }
         } else {
-            App::flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio.'));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio.'));
         }
 
         break;
@@ -34,16 +34,16 @@ switch (filter('op')) {
                     echo json_encode(['id' => $valore, 'text' => $valore]);
                 }
 
-                App::flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
+                flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                     '_TYPE_' => 'unità di misura',
                 ]));
             } else {
-                App::flash()->error(tr("E' già presente una tipologia di _TYPE_ con lo stesso valore.", [
+                flash()->error(tr("E' già presente una tipologia di _TYPE_ con lo stesso valore.", [
                     '_TYPE_' => 'unità di misura',
                 ]));
             }
         } else {
-            App::flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio.'));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio.'));
         }
 
         break;
@@ -59,11 +59,11 @@ switch (filter('op')) {
 
         if (isset($id_record) && empty($righe)) {
             $dbo->query('DELETE FROM `mg_unitamisura` WHERE `id`='.prepare($id_record));
-            App::flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
+            flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'unità di misura',
             ]));
         } else {
-            App::flash()->error(tr('Sono presenti righe collegate a questa unità di misura.'));
+            flash()->error(tr('Sono presenti righe collegate a questa unità di misura.'));
         }
 
         break;

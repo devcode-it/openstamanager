@@ -9,7 +9,7 @@ switch (post('op')) {
         // Verifico che il nome non sia duplicato
         $count = $dbo->fetchNum('SELECT descrizione FROM zz_documenti_categorie WHERE descrizione='.prepare($descrizione).' AND deleted = 0');
         if ($count != 0) {
-            App::flash()->error(tr('Categoria _NAME_ già esistente!', [
+            flash()->error(tr('Categoria _NAME_ già esistente!', [
                 '_NAME_' => $descrizione,
             ]));
         } else {
@@ -17,7 +17,7 @@ switch (post('op')) {
                 'descrizione' => $descrizione,
             ], ['id' => $id_record]);
 
-            App::flash()->info(tr('Informazioni salvate correttamente!'));
+            flash()->info(tr('Informazioni salvate correttamente!'));
         }
 
         break;
@@ -29,7 +29,7 @@ switch (post('op')) {
             // Verifico che il nome non sia duplicato
             $count = $dbo->fetchNum('SELECT descrizione FROM zz_documenti_categorie WHERE descrizione='.prepare($descrizione).' AND deleted = 0');
             if ($count != 0) {
-                App::flash()->error(tr('Categoria _NAME_ già esistente!', [
+                flash()->error(tr('Categoria _NAME_ già esistente!', [
                     '_NAME_' => $descrizione,
                 ]));
             } else {
@@ -38,7 +38,7 @@ switch (post('op')) {
                 ]);
                 $id_record = $dbo->last_inserted_id();
 
-                App::flash()->info(tr('Nuova categoria documenti aggiunta!'));
+                flash()->info(tr('Nuova categoria documenti aggiunta!'));
             }
         }
 
@@ -47,7 +47,7 @@ switch (post('op')) {
     case 'delete':
         $dbo->query('UPDATE zz_documenti_categorie SET deleted=1 WHERE id = '.prepare($id_record));
 
-        App::flash()->info(tr('Categoria docimenti eliminata!'));
+        flash()->info(tr('Categoria docimenti eliminata!'));
 
         break;
 }

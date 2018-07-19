@@ -29,7 +29,7 @@ switch ($op) {
                 'occupante' => post('occupante'),
             ], ['id' => $id_record]);
 
-            App::flash()->info(tr('Informazioni salvate correttamente!'));
+            flash()->info(tr('Informazioni salvate correttamente!'));
 
             // Upload file
             if (!empty($_FILES) && !empty($_FILES['immagine']['name'])) {
@@ -48,7 +48,7 @@ switch ($op) {
                         'id' => $id_record,
                     ]);
                 } else {
-                    App::flash()->warning(tr('Errore durante il caricamento del file in _DIR_!', [
+                    flash()->warning(tr('Errore durante il caricamento del file in _DIR_!', [
                         '_DIR_' => $upload_dir,
                     ]));
                 }
@@ -86,7 +86,7 @@ switch ($op) {
                 echo json_encode(['id' => $id_record, 'text' => $matricola.' - '.$nome]);
             }
 
-            App::flash()->info(tr('Aggiunto nuovo impianto!'));
+            flash()->info(tr('Aggiunto nuovo impianto!'));
         }
 
         break;
@@ -119,7 +119,7 @@ switch ($op) {
     case 'delete':
         $dbo->query('DELETE FROM my_impianti WHERE id='.prepare($id_record));
 
-        App::flash()->info(tr('Impianto e relativi componenti eliminati!'));
+        flash()->info(tr('Impianto e relativi componenti eliminati!'));
         break;
 }
 

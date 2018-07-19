@@ -57,9 +57,9 @@ switch (post('op')) {
                     $dbo->query('DELETE FROM mg_movimenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
                 }
 
-                App::flash()->info(tr('Fatture eliminate!'));
+                flash()->info(tr('Fatture eliminate!'));
             } else {
-                App::flash()->warning(tr('Procedura in fase di sviluppo. Nessuna modifica apportata.'));
+                flash()->warning(tr('Procedura in fase di sviluppo. Nessuna modifica apportata.'));
             }
 
         break;

@@ -137,7 +137,7 @@ class Prints
                 '_DIRECTORY_' => $directory,
             ]);
 
-            App::flash()->error($error);
+            flash()->error($error);
 
             echo '
                 <p align="center">'.$error.'</p>';

@@ -23,9 +23,9 @@ switch (post('op')) {
                 $dbo->query('UPDATE co_scadenziario SET da_pagare='.prepare($da_pagare).', pagato='.prepare(post('pagato')[$idscadenza]).', scadenza='.prepare(post('data')[$idscadenza]).' WHERE id='.prepare($idscadenza));
             }
 
-            App::flash()->info(tr('Scadenze aggiornate!'));
+            flash()->info(tr('Scadenze aggiornate!'));
         } else {
-            App::flash()->error(tr('Il totale degli importi inseriti non corrisponde al totale da pagare!'));
+            flash()->error(tr('Il totale degli importi inseriti non corrisponde al totale da pagare!'));
         }
 
         break;

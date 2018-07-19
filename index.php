@@ -22,17 +22,17 @@ switch ($op) {
                 $result = Backup::daily();
 
                 if (!isset($result)) {
-                    App::flash()->info(tr('Backup saltato perché già esistente!'));
+                    flash()->info(tr('Backup saltato perché già esistente!'));
                 } elseif (!empty($result)) {
-                    App::flash()->info(tr('Backup automatico eseguito correttamente!'));
+                    flash()->info(tr('Backup automatico eseguito correttamente!'));
                 } else {
-                    App::flash()->error(tr('Errore durante la generazione del backup automatico!'));
+                    flash()->error(tr('Errore durante la generazione del backup automatico!'));
                 }
             }
         } else {
             $status = Auth::getInstance()->getCurrentStatus();
 
-            App::flash()->error(Auth::getStatus()[$status]['message']);
+            flash()->error(Auth::getStatus()[$status]['message']);
 
             redirect(ROOTDIR.'/index.php');
             exit();
@@ -117,7 +117,7 @@ if (Auth::isBrute()) {
             </script>';
 }
 
-if (!empty(App::flash()->getMessage('error'))) {
+if (!empty(flash()->getMessage('error'))) {
     echo '
             <script>
 			$(document).ready(function(){

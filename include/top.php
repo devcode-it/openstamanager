@@ -5,7 +5,7 @@ include_once __DIR__.'/../core.php';
 $paths = App::getPaths();
 $user = Auth::user();
 
-$messages = App::flash()->getMessages();
+$messages = flash()->getMessages();
 
 echo '<!DOCTYPE html>
 <html>

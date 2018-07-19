@@ -48,7 +48,7 @@ if (get('op') == 'add_fatturazione') {
         }
     }
 
-    App::flash()->info(tr('Pianificazione generata correttamente!'));
+    flash()->info(tr('Pianificazione generata correttamente!'));
 }
 
 // Eliminazione pianificazione specifica
@@ -60,7 +60,7 @@ elseif (get('op') == 'del_pianificazione') {
     if ($n == 1) {
         // Eliminazione ordine di servizio
         if ($dbo->query('DELETE FROM co_ordiniservizio_pianificazionefatture WHERE id='.prepare($idpianificazione))) {
-            App::flash()->info(tr('Pianificazione eliminata correttamente!'));
+            flash()->info(tr('Pianificazione eliminata correttamente!'));
         }
     }
 }

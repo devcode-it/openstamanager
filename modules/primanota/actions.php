@@ -51,10 +51,10 @@ switch (post('op')) {
 
         // Se non va a buon fine qualcosa elimino il mastrino per non lasciare incongruenze nel db
         if (!$all_ok) {
-            App::flash()->error(tr("Errore durante l'aggiunta del movimento!"));
+            flash()->error(tr("Errore durante l'aggiunta del movimento!"));
             $dbo->query('DELETE FROM co_movimenti WHERE idmastrino='.prepare($idmastrino));
         } else {
-            App::flash()->info(tr('Movimento aggiunto in prima nota!'));
+            flash()->info(tr('Movimento aggiunto in prima nota!'));
 
             // Verifico se la fattura è stata pagata tutta, così imposto lo stato a "Pagato"
             $query = 'SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
@@ -196,10 +196,10 @@ switch (post('op')) {
 
         // Se non va a buon fine qualcosa elimino il mastrino per non lasciare incongruenze nel db
         if (!$all_ok) {
-            App::flash()->error(tr("Errore durante l'aggiunta del movimento!"));
+            flash()->error(tr("Errore durante l'aggiunta del movimento!"));
             $dbo->query('DELETE FROM co_movimenti WHERE idmastrino='.prepare($idmastrino));
         } else {
-            App::flash()->info(tr('Movimento modificato in prima nota!'));
+            flash()->info(tr('Movimento modificato in prima nota!'));
 
             // Verifico se la fattura è stata pagata, così imposto lo stato a "Pagato"
             $query = 'SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
@@ -317,7 +317,7 @@ switch (post('op')) {
                 $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id=".prepare($rs[$i]['idintervento']));
             }
 
-            App::flash()->info(tr('Movimento eliminato!'));
+            flash()->info(tr('Movimento eliminato!'));
         }
         break;
 }

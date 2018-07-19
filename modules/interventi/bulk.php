@@ -205,15 +205,15 @@ switch (post('op')) {
         }
 
         if ($n_interventi > 0) {
-            App::flash()->info(tr('Fattura _NUM_ creata!', [
+            flash()->info(tr('Fattura _NUM_ creata!', [
                 '_NUM_' => $numero_esterno,
             ]));
 
-            App::flash()->info(tr('_NUM_ interventi fatturati!', [
+            flash()->info(tr('_NUM_ interventi fatturati!', [
                 '_NUM_' => $n_interventi,
             ]));
         } else {
-            App::flash()->warning(tr('Nessuna attività fatturata!'));
+            flash()->warning(tr('Nessuna attività fatturata!'));
         }
 
     break;

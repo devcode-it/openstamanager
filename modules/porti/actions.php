@@ -9,14 +9,14 @@ switch (filter('op')) {
         if (isset($descrizione)) {
             if ($dbo->fetchNum('SELECT * FROM `dt_porto` WHERE `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
                 $dbo->query('UPDATE `dt_porto` SET `descrizione`='.prepare($descrizione).' WHERE `id`='.prepare($id_record));
-                App::flash()->info(tr('Salvataggio completato!'));
+                flash()->info(tr('Salvataggio completato!'));
             } else {
-                App::flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione.", [
+                flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione.", [
                     '_TYPE_' => 'porto',
                 ]));
             }
         } else {
-            App::flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio.'));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio.'));
         }
 
         break;
@@ -29,16 +29,16 @@ switch (filter('op')) {
                 $dbo->query('INSERT INTO `dt_porto` (`descrizione`) VALUES ('.prepare($descrizione).')');
                 $id_record = $dbo->lastInsertedID();
 
-                App::flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
+                flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                     '_TYPE_' => 'porto',
                 ]));
             } else {
-                $App::flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione.", [
+                $flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione.", [
                     '_TYPE_' => 'porto',
                 ]));
             }
         } else {
-            App::flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
 
         break;
@@ -52,11 +52,11 @@ switch (filter('op')) {
         if (isset($id_record) && empty($documenti)) {
             $dbo->query('DELETE FROM `dt_porto` WHERE `id`='.prepare($id_record));
 
-            App::flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
+            flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'porto',
             ]));
         } else {
-            App::flash()->error(tr('Sono presenti dei documenti collegati a questo porto.'));
+            flash()->error(tr('Sono presenti dei documenti collegati a questo porto.'));
         }
 
         break;

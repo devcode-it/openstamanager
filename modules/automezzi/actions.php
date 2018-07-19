@@ -14,10 +14,10 @@ switch (post('op')) {
         if ($dbo->fetchNum('SELECT targa FROM dt_automezzi WHERE targa='.prepare($targa).' AND NOT id='.prepare($id_record)) == 0) {
             $query = 'UPDATE dt_automezzi SET targa='.prepare($targa).', descrizione='.prepare($descrizione).', nome='.prepare($nome).' WHERE id='.prepare($id_record);
             if ($dbo->query($query)) {
-                App::flash()->info(tr('Informazioni salvate correttamente!'));
+                flash()->info(tr('Informazioni salvate correttamente!'));
             }
         } else {
-            App::flash()->error(tr('Esiste già un automezzo con questa targa!'));
+            flash()->error(tr('Esiste già un automezzo con questa targa!'));
         }
 
         break;
@@ -34,9 +34,9 @@ switch (post('op')) {
 
             $id_record = $dbo->lastInsertedID();
 
-            App::flash()->info(tr('Aggiunto un nuovo automezzo!'));
+            flash()->info(tr('Aggiunto un nuovo automezzo!'));
         } else {
-            App::flash()->error(tr('Esiste già un automezzo con questa targa!'));
+            flash()->error(tr('Esiste già un automezzo con questa targa!'));
         }
         break;
 
@@ -58,7 +58,7 @@ switch (post('op')) {
         $query = 'INSERT INTO dt_automezzi_tecnici(idtecnico, idautomezzo, data_inizio, data_fine) VALUES ('.prepare($idtecnico).', '.prepare($id_record).', '.prepare($data_inizio).', '.prepare($data_fine).')';
         $dbo->query($query);
 
-        App::flash()->info(tr('Collegato un nuovo tecnico!'));
+        flash()->info(tr('Collegato un nuovo tecnico!'));
         break;
 
     // Salvataggio tecnici collegati
@@ -86,9 +86,9 @@ switch (post('op')) {
         }
 
         if ($errors == 0) {
-            App::flash()->info(tr('Informazioni salvate correttamente!'));
+            flash()->info(tr('Informazioni salvate correttamente!'));
         } else {
-            App::flash()->error(tr('Errore durante il salvataggio del tecnico!'));
+            flash()->error(tr('Errore durante il salvataggio del tecnico!'));
         }
         break;
 
@@ -99,7 +99,7 @@ switch (post('op')) {
         $query = 'DELETE FROM dt_automezzi_tecnici WHERE id='.prepare($idautomezzotecnico);
 
         if ($dbo->query($query)) {
-            App::flash()->info(tr('Tecnico rimosso!'));
+            flash()->info(tr('Tecnico rimosso!'));
         }
         break;
 
@@ -118,7 +118,7 @@ switch (post('op')) {
         // Decremento la quantità dal magazzino centrale
         add_movimento_magazzino($idarticolo, -$qta, ['idautomezzo' => $id_record]);
 
-        App::flash()->info(tr("Caricato il magazzino dell'automezzo!"));
+        flash()->info(tr("Caricato il magazzino dell'automezzo!"));
         break;
 
     // Spostamento scorta da automezzo a magazzino generale
@@ -135,7 +135,7 @@ switch (post('op')) {
             // Aggiungo la quantità al magazzino
             add_movimento_magazzino($rs[0]['idarticolo'], $rs[0]['qta'], ['idautomezzo' => $id_record]);
 
-            App::flash()->info(tr('Articoli riportati nel magazzino centrale!'));
+            flash()->info(tr('Articoli riportati nel magazzino centrale!'));
         }
         break;
 
@@ -153,7 +153,7 @@ switch (post('op')) {
         // Elimino definitivamente l'automezzo
         $dbo->query('DELETE FROM dt_automezzi WHERE id='.prepare($id_record));
 
-        App::flash()->info(tr('Automezzo eliminato e articoli riportati in magazzino!'));
+        flash()->info(tr('Automezzo eliminato e articoli riportati in magazzino!'));
 
         break;
 }

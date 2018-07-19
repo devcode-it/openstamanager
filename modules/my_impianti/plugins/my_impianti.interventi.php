@@ -29,7 +29,7 @@ if (filter('op') == 'link_myimpianti') {
         }
     }
 
-    App::flash()->info(tr('Informazioni impianti salvate!'));
+    flash()->info(tr('Informazioni impianti salvate!'));
 } elseif (filter('op') == 'link_componenti') {
     $components = (array) post('componenti');
 
@@ -46,7 +46,7 @@ if (filter('op') == 'link_myimpianti') {
         }
     }
 
-    App::flash()->info(tr('Informazioni componenti salvate!'));
+    flash()->info(tr('Informazioni componenti salvate!'));
 }
 
 //Blocco della modifica impianti se l'intervento è completato

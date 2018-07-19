@@ -13,7 +13,7 @@ switch (filter('op')) {
 
         if ($dbo->query($query)) {
         } else {
-            App::flash()->error(tr("Errore durante l'aggiunta del promemoria!"));
+            flash()->error(tr("Errore durante l'aggiunta del promemoria!"));
         }
     break;
 
@@ -32,9 +32,9 @@ switch (filter('op')) {
 
         if (isset($id_record)) {
             if ($dbo->query($query)) {
-                App::flash()->info(tr('Promemoria inserito!'));
+                flash()->info(tr('Promemoria inserito!'));
             } else {
-                App::flash()->error(tr('Errore durante la modifica del promemoria!'));
+                flash()->error(tr('Errore durante la modifica del promemoria!'));
             }
         }
 
@@ -51,7 +51,7 @@ switch (filter('op')) {
         $dbo->query('DELETE FROM `co_righe_contratti_materiali` WHERE id_riga_contratto='.prepare($id));
         $dbo->query('DELETE FROM `co_righe_contratti_articoli` WHERE id_riga_contratto='.prepare($id));
 
-        App::flash()->info(tr('Pianificazione eliminata!'));
+        flash()->info(tr('Pianificazione eliminata!'));
 
         redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
 
@@ -64,7 +64,7 @@ switch (filter('op')) {
         $dbo->query('DELETE FROM `co_righe_contratti_materiali` WHERE id_riga_contratto IN (SELECT id FROM `co_contratti_promemoria` WHERE idcontratto = '.$id_record.' AND idintervento IS NULL ) ');
         $dbo->query('DELETE FROM `co_righe_contratti_articoli` WHERE id_riga_contratto IN (SELECT id FROM `co_contratti_promemoria` WHERE idcontratto = '.$id_record.' AND idintervento IS NULL ) ');
 
-        App::flash()->error(tr('Tutti i promemoria non associati sono stati eliminati!'));
+        flash()->error(tr('Tutti i promemoria non associati sono stati eliminati!'));
 
         redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
 
@@ -127,7 +127,7 @@ switch (filter('op')) {
                                     //copio righe articoli nel nuovo promemoria
                                     $dbo->query('INSERT INTO co_righe_contratti_articoli (idarticolo, id_riga_contratto,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idriga.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
 
-                                    App::flash()->info(tr('Promemoria intervento pianificato!'));
+                                    flash()->info(tr('Promemoria intervento pianificato!'));
 
                                     //pianificare anche l' intervento?
                                     if (post('pianifica_intervento')) {
@@ -202,27 +202,27 @@ switch (filter('op')) {
                                             }
                                         }
 
-                                        // App::flash()->info(tr('Intervento '.$codice.' pianificato correttamente.'));
+                                        // flash()->info(tr('Intervento '.$codice.' pianificato correttamente.'));
 
-                                        App::flash()->info(tr('Interventi pianificati correttamente.'));
+                                        flash()->info(tr('Interventi pianificati correttamente.'));
                                     }
                                     //fine if pianificazione intervento
                                 } else {
-                                    App::flash()->error(tr('Errore durante esecuzione query di pianificazione.  #'.$idcontratto_riga));
+                                    flash()->error(tr('Errore durante esecuzione query di pianificazione.  #'.$idcontratto_riga));
                                 }
                             } else {
-                                App::flash()->warning(tr('Esiste già un promemoria pianificato per il '.Translator::dateToLocale($data_richiesta).'.'));
+                                flash()->warning(tr('Esiste già un promemoria pianificato per il '.Translator::dateToLocale($data_richiesta).'.'));
                             }
                         }
                         //fine controllo nuova data richiesta
                     }
                     //fine ciclo while
                 } else {
-                    App::flash()->error(tr('Nessuna data di conclusione del contratto oppure quest\'ultima è già trascorsa, impossibile pianificare nuovi promemoria.'.$qp));
+                    flash()->error(tr('Nessuna data di conclusione del contratto oppure quest\'ultima è già trascorsa, impossibile pianificare nuovi promemoria.'.$qp));
                 }
                 //fine controllo data_conclusione
             } else {
-                App::flash()->error(tr('Errore durante la pianificazione.  #'.$idcontratto_riga));
+                flash()->error(tr('Errore durante la pianificazione.  #'.$idcontratto_riga));
             }
 
             redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);

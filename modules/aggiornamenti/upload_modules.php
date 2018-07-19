@@ -7,7 +7,7 @@ if (!setting('Attiva aggiornamenti')) {
 }
 
 if (!extension_loaded('zip')) {
-    App::flash()->error(tr('Estensione zip non supportata!').'<br>'.tr('Verifica e attivala sul tuo file _FILE_', [
+    flash()->error(tr('Estensione zip non supportata!').'<br>'.tr('Verifica e attivala sul tuo file _FILE_', [
         '_FILE_' => '<b>php.ini</b>',
     ]));
 
@@ -20,8 +20,8 @@ $type = $_POST['type'];
 // Lettura dell'archivio
 $zip = new ZipArchive();
 if (!$zip->open($file['tmp_name'])) {
-    App::flash()->error(tr('File di installazione non valido!'));
-    App::flash()->error(checkZip($file['tmp_name']));
+    flash()->error(tr('File di installazione non valido!'));
+    flash()->error(checkZip($file['tmp_name']));
 
     return;
 }
@@ -96,9 +96,9 @@ if (file_exists($extraction_dir.'/VERSION')) {
                 'enabled' => 1,
             ]));
 
-            App::flash()->error(tr('Installazione completata!'));
+            flash()->error(tr('Installazione completata!'));
         } else {
-            App::flash()->error(tr('Aggiornamento completato!'));
+            flash()->error(tr('Aggiornamento completato!'));
         }
     }
 }

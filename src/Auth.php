@@ -308,7 +308,7 @@ class Auth extends \Util\Singleton
             session_unset();
             session_regenerate_id();
 
-            App::flash()->clearMessages();
+            flash()->clearMessages();
         }
     }
 

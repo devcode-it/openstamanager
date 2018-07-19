@@ -25,7 +25,7 @@ switch (post('op')) {
             'predefined' => $predefined,
         ], ['id' => $id_record]);
 
-        App::flash()->info(tr('Modifiche salvate correttamente'));
+        flash()->info(tr('Modifiche salvate correttamente'));
 
         break;
 
@@ -54,7 +54,7 @@ switch (post('op')) {
 
         $id_record = $dbo->lastInsertedID();
 
-        App::flash()->info(tr('Nuovo segmento aggiunto'));
+        flash()->info(tr('Nuovo segmento aggiunto'));
 
         break;
 
@@ -64,7 +64,7 @@ switch (post('op')) {
         // TODO
         // eliminare riferimento sulle fatture eventuali collegate a questo segmento?
 
-        App::flash()->info(tr('Segmento eliminato'));
+        flash()->info(tr('Segmento eliminato'));
 
         break;
 }

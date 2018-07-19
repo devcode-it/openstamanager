@@ -18,9 +18,9 @@ switch (post('op')) {
                 }
             }
 
-            App::flash()->info(tr('Anagrafiche eliminate!'));
+            flash()->info(tr('Anagrafiche eliminate!'));
         } else {
-            App::flash()->warning(tr('Procedura in fase di sviluppo. Nessuna modifica apportata.'));
+            flash()->warning(tr('Procedura in fase di sviluppo. Nessuna modifica apportata.'));
         }
 
         break;

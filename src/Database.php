@@ -842,7 +842,7 @@ class Database extends Util\Singleton
 
             $msg .= '<br><small>'.$e->getMessage().'</small>';
 
-            App::flash()->error($msg);
+            flash()->error($msg);
         }
 
         $error = $e->getMessage().' - '.$message;

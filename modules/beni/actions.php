@@ -8,9 +8,9 @@ switch (post('op')) {
 
         if ($dbo->fetchNum('SELECT * FROM `dt_aspettobeni` WHERE `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
             $dbo->query('UPDATE `dt_aspettobeni` SET `descrizione`='.prepare($descrizione).' WHERE `id`='.prepare($id_record));
-            App::flash()->info(tr('Salvataggio completato.'));
+            flash()->info(tr('Salvataggio completato.'));
         } else {
-            App::flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione.", [
+            flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione.", [
                 '_TYPE_' => 'bene',
             ]));
         }
@@ -25,11 +25,11 @@ switch (post('op')) {
 
             $id_record = $dbo->lastInsertedID();
 
-            App::flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
+            flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                 '_TYPE_' => 'bene',
             ]));
         } else {
-            App::flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione.", [
+            flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione.", [
                 '_TYPE_' => 'bene',
             ]));
         }
@@ -43,11 +43,11 @@ switch (post('op')) {
 
         if (isset($id_record) && empty($documenti)) {
             $dbo->query('DELETE FROM `dt_aspettobeni` WHERE `id`='.prepare($id_record));
-            App::flash()->info(tr('Tipologia di _TYPE_ eliminata con successo.', [
+            flash()->info(tr('Tipologia di _TYPE_ eliminata con successo.', [
                 '_TYPE_' => 'bene',
             ]));
         } else {
-            App::flash()->error(tr('Sono presenti dei documenti collegati a questo aspetto beni.'));
+            flash()->error(tr('Sono presenti dei documenti collegati a questo aspetto beni.'));
         }
 
         break;

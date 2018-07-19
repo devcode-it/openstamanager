@@ -9,7 +9,7 @@ switch (post('op')) {
 
         $dbo->query('UPDATE in_vociservizio SET descrizione='.prepare($descrizione).', categoria='.prepare($categoria).' WHERE id='.prepare($id_record));
 
-        App::flash()->info(tr('Informazioni salvate correttamente!'));
+        flash()->info(tr('Informazioni salvate correttamente!'));
 
         break;
 
@@ -20,7 +20,7 @@ switch (post('op')) {
         $dbo->query('INSERT INTO in_vociservizio(descrizione, categoria) VALUES ('.prepare($descrizione).', '.prepare($categoria).')');
         $id_record = $dbo->lastInsertedID();
 
-        App::flash()->info(tr('Nuova voce di servizio aggiunta!'));
+        flash()->info(tr('Nuova voce di servizio aggiunta!'));
 
         break;
 

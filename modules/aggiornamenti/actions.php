@@ -29,7 +29,7 @@ switch (post('op')) {
 
                 delete($docroot.'/modules/'.$module_dir.'/');
 
-                App::flash()->info(tr('Modulo _MODULE_ disinstallato!', [
+                flash()->info(tr('Modulo _MODULE_ disinstallato!', [
                     '_MODULE_' => '"'.$modulo.'"',
                 ]));
             }
@@ -40,7 +40,7 @@ switch (post('op')) {
     case 'disable':
         $dbo->query('UPDATE `zz_modules` SET `enabled` = 0 WHERE (`id` = '.prepare($id).' OR `parent` = '.prepare($id).') AND `id` != '.prepare(Modules::get('Aggiornamenti')['id']));
 
-        App::flash()->info(tr('Modulo _MODULE_ disabilitato!', [
+        flash()->info(tr('Modulo _MODULE_ disabilitato!', [
             '_MODULE_' => '"'.Modules::get($id)['title'].'"',
         ]));
 
@@ -49,7 +49,7 @@ switch (post('op')) {
     case 'enable':
         $dbo->query('UPDATE `zz_modules` SET `enabled` = 1 WHERE `id` = '.prepare($id).' OR `parent` = '.prepare($id));
 
-        App::flash()->info(tr('Modulo _MODULE_ abilitato!', [
+        flash()->info(tr('Modulo _MODULE_ abilitato!', [
             '_MODULE_' => '"'.Modules::get($id)['title'].'"',
         ]));
 
@@ -61,7 +61,7 @@ switch (post('op')) {
         $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
         $widget = $rs[0]['name'];
 
-        App::flash()->info(tr('Widget _WIDGET_ disabilitato!', [
+        flash()->info(tr('Widget _WIDGET_ disabilitato!', [
             '_WIDGET_' => '"'.$widget.'"',
         ]));
 
@@ -73,7 +73,7 @@ switch (post('op')) {
         $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
         $widget = $rs[0]['name'];
 
-        App::flash()->info(tr('Widget _WIDGET_ abilitato!', [
+        flash()->info(tr('Widget _WIDGET_ abilitato!', [
             '_WIDGET_' => '"'.$widget.'"',
         ]));
 
@@ -85,7 +85,7 @@ switch (post('op')) {
         $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
         $widget = $rs[0]['name'];
 
-        App::flash()->info(tr('Posizione del widget _WIDGET_ aggiornata!', [
+        flash()->info(tr('Posizione del widget _WIDGET_ aggiornata!', [
             '_WIDGET_' => '"'.$widget.'"',
         ]));
 
@@ -97,7 +97,7 @@ switch (post('op')) {
         $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
         $widget = $rs[0]['name'];
 
-        App::flash()->info(tr('Posizione del widget _WIDGET_ aggiornata!', [
+        flash()->info(tr('Posizione del widget _WIDGET_ aggiornata!', [
             '_WIDGET_' => '"'.$widget.'"',
         ]));
 
@@ -114,7 +114,7 @@ switch (post('op')) {
                 $dbo->query('UPDATE zz_modules SET `order`='.prepare($i).' WHERE id='.prepare($ids[$i]));
             }
 
-            App::flash()->info(tr('Posizione voci di  menù aggiornate!'));
+            flash()->info(tr('Posizione voci di  menù aggiornate!'));
         }
 
         break;
@@ -136,7 +136,7 @@ switch (post('op')) {
                 $dbo->query('UPDATE zz_widgets SET `order`='.prepare($i).' WHERE id='.prepare($id[1]));
             }
 
-            App::flash()->info(tr('Posizioni widgets aggiornate!'));
+            flash()->info(tr('Posizioni widgets aggiornate!'));
         }
         break;
 

@@ -18,9 +18,9 @@ switch (post('op')) {
             ]);
             $id_record = $dbo->lastInsertedID();
 
-            App::flash()->info(tr('Aggiunto un nuovo articolo!'));
+            flash()->info(tr('Aggiunto un nuovo articolo!'));
         } else {
-            App::flash()->error(tr('Esiste già un articolo con questo codice!'));
+            flash()->error(tr('Esiste già un articolo con questo codice!'));
         }
 
         break;
@@ -87,7 +87,7 @@ switch (post('op')) {
                     'id' => $id_record,
                 ]);
             } else {
-                App::flash()->warning(tr('Errore durante il caricamento del file in _DIR_!', [
+                flash()->warning(tr('Errore durante il caricamento del file in _DIR_!', [
                     '_DIR_' => $upload_dir,
                 ]));
             }
@@ -107,7 +107,7 @@ switch (post('op')) {
             ]);
         }
 
-        App::flash()->info(tr('Informazioni salvate correttamente!'));
+        flash()->info(tr('Informazioni salvate correttamente!'));
 
         break;
 
@@ -198,16 +198,16 @@ switch (post('op')) {
                     ]));
                 }
 
-                App::flash()->info(tr('Aggiunti _NUM_ prodotti!', [
+                flash()->info(tr('Aggiunti _NUM_ prodotti!', [
                     '_NUM_' => $c,
                 ]));
             } else {
-                App::flash()->error(tr("Errore durante l'inserimento!"));
+                flash()->error(tr("Errore durante l'inserimento!"));
             }
         }
 
         if ($c != $n_prodotti) {
-            App::flash()->warning(tr('Alcuni seriali erano già presenti').'...');
+            flash()->warning(tr('Alcuni seriali erano già presenti').'...');
         }
 
         break;
@@ -227,7 +227,7 @@ switch (post('op')) {
                 ]));
             }
 
-            App::flash()->info(tr('Prodotto rimosso!'));
+            flash()->info(tr('Prodotto rimosso!'));
         }
         break;
 
@@ -244,7 +244,7 @@ switch (post('op')) {
 
         $query = 'DELETE FROM mg_movimenti WHERE id='.prepare($idmovimento);
         if ($dbo->query($query)) {
-            App::flash()->info(tr('Movimento rimosso!'));
+            flash()->info(tr('Movimento rimosso!'));
         }
         break;
 
@@ -257,7 +257,7 @@ switch (post('op')) {
         //$dbo->query('DELETE FROM mg_prodotti WHERE id_articolo='.prepare($id_record));
         $dbo->query('DELETE FROM mg_articoli_automezzi WHERE idarticolo='.prepare($id_record));
 
-        App::flash()->info(tr('Articolo eliminato!'));
+        flash()->info(tr('Articolo eliminato!'));
         break;
 }
 

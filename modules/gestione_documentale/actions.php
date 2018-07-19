@@ -11,7 +11,7 @@ switch (post('op')) {
         ]);
         $id_record = $dbo->last_inserted_id();
 
-        App::flash()->info(tr('Nuova documento aggiunto!'));
+        flash()->info(tr('Nuova documento aggiunto!'));
 
         break;
 
@@ -22,7 +22,7 @@ switch (post('op')) {
             'data' => post('data'),
         ], ['id' => $id_record]);
 
-        App::flash()->info(tr('Informazioni salvate correttamente!'));
+        flash()->info(tr('Informazioni salvate correttamente!'));
     break;
 
     case 'delete':
@@ -33,7 +33,7 @@ switch (post('op')) {
             'id_record' => $id_record,
         ]);
 
-        App::flash()->info(tr('Scheda e relativi files eliminati!'));
+        flash()->info(tr('Scheda e relativi files eliminati!'));
 
         break;
 }

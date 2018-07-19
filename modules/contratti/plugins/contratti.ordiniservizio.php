@@ -45,7 +45,7 @@ if (get('op') == 'add_ordineservizio') {
         }
     }
 
-    App::flash()->info(tr('Ordini di servizio generati correttamente!'));
+    flash()->info(tr('Ordini di servizio generati correttamente!'));
 }
 
 // Eliminazione pianificazione specifica
@@ -60,13 +60,13 @@ elseif (get('op') == 'del_ordineservizio') {
             // Eliminazione voci di servizio collegate
             $dbo->query('DELETE FROM co_ordiniservizio_vociservizio WHERE idordineservizio='.prepare($idordineservizio));
 
-            App::flash()->info(tr('Ordine di servizio eliminato correttamente!'));
+            flash()->info(tr('Ordine di servizio eliminato correttamente!'));
         }
     }
 
     // Non si può eliminare l'ordine di servizio perché è chiuso
     else {
-        App::flash()->info(tr('Ordine di servizio già chiuso, impossibile eliminarlo!'));
+        flash()->info(tr('Ordine di servizio già chiuso, impossibile eliminarlo!'));
     }
 }
 

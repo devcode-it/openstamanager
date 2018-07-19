@@ -47,7 +47,7 @@ switch (post('op')) {
 
             $id_record = $dbo->lastInsertedID();
 
-            App::flash()->info(tr('Aggiunto ordine numero _NUM_!', [
+            flash()->info(tr('Aggiunto ordine numero _NUM_!', [
                 '_NUM_' => $numero,
             ]));
         }
@@ -128,7 +128,7 @@ switch (post('op')) {
                 }
             }
 
-            App::flash()->info(tr('Ordine modificato correttamente!'));
+            flash()->info(tr('Ordine modificato correttamente!'));
         }
 
         break;
@@ -153,7 +153,7 @@ switch (post('op')) {
 
             add_articolo_inordine($id_record, $idarticolo, $descrizione, $idiva, $qta, post('um'), $prezzo_vendita * $qta, $sconto, $sconto_unitario, $tipo_sconto);
 
-            App::flash()->info(tr('Articolo aggiunto!'));
+            flash()->info(tr('Articolo aggiunto!'));
         }
         ricalcola_costiagg_ordine($id_record);
         break;
@@ -188,11 +188,11 @@ switch (post('op')) {
 
         // Messaggi informativi
         if (!empty($idarticolo)) {
-            App::flash()->info(tr('Articolo aggiunto!'));
+            flash()->info(tr('Articolo aggiunto!'));
         } elseif (!empty($qta)) {
-            App::flash()->info(tr('Riga aggiunta!'));
+            flash()->info(tr('Riga aggiunta!'));
         } else {
-            App::flash()->info(tr('Riga descrittiva aggiunta!'));
+            flash()->info(tr('Riga descrittiva aggiunta!'));
         }
 
         // Ricalcolo inps, ritenuta e bollo
@@ -211,7 +211,7 @@ switch (post('op')) {
 
         if (!empty($idarticolo)) {
             if (!rimuovi_articolo_daordine($idarticolo, $id_record, $idriga)) {
-                App::flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+                flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
 
                 return;
             }
@@ -224,7 +224,7 @@ switch (post('op')) {
                 ricalcola_costiagg_ordine($id_record, 0, 0, 0);
             }
 
-            App::flash()->info(tr('Articolo rimosso!'));
+            flash()->info(tr('Articolo rimosso!'));
         }
 
         break;
@@ -245,7 +245,7 @@ switch (post('op')) {
                 ricalcola_costiagg_ordine($id_record, 0, 0, 0);
             }
 
-            App::flash()->info(tr('Riga rimossa!'));
+            flash()->info(tr('Riga rimossa!'));
         }
         break;
 
@@ -281,7 +281,7 @@ switch (post('op')) {
             // Controllo per gestire i serial
             if (!empty($idarticolo)) {
                 if (!controlla_seriali('id_riga_ordine', $idriga, $old_qta, $qta, $dir)) {
-                    App::flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+                    flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
 
                     return;
                 }
@@ -301,7 +301,7 @@ switch (post('op')) {
                 $query = 'UPDATE or_righe_ordini SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga);
             }
             if ($dbo->query($query)) {
-                App::flash()->info(tr('Riga modificata!'));
+                flash()->info(tr('Riga modificata!'));
 
                 // Ricalcolo inps, ritenuta e bollo
                 if ($dir == 'entrata') {
@@ -322,7 +322,7 @@ switch (post('op')) {
         foreach ($rs as $value) {
             $non_rimovibili = seriali_non_rimuovibili('id_riga_documento', $value['id'], $dir);
             if (!empty($non_rimovibili)) {
-                App::flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+                flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
 
                 return;
             }
@@ -330,7 +330,7 @@ switch (post('op')) {
 
         $dbo->query('DELETE FROM or_ordini WHERE id='.prepare($id_record));
         $dbo->query('DELETE FROM or_righe_ordini WHERE idordine='.prepare($id_record));
-        App::flash()->info(tr('Ordine eliminato!'));
+        flash()->info(tr('Ordine eliminato!'));
 
         break;
 
@@ -400,7 +400,7 @@ switch (post('op')) {
 
             $id_record = $dbo->lastInsertedID();
 
-            App::flash()->info(tr('Aggiunto ordine numero _NUM_!', [
+            flash()->info(tr('Aggiunto ordine numero _NUM_!', [
                 '_NUM_' => $numero,
             ]));
 

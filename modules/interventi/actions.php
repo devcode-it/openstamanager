@@ -197,7 +197,7 @@ switch (post('op')) {
             'tipo_sconto_globale' => $tipo_sconto,
         ], ['id' => $id_record]);
 
-        App::flash()->info(tr('Informazioni salvate correttamente!'));
+        flash()->info(tr('Informazioni salvate correttamente!'));
 
         break;
 
@@ -242,7 +242,7 @@ switch (post('op')) {
 
             $id_record = $dbo->lastInsertedID();
 
-            App::flash()->info(tr('Aggiunto nuovo intervento!'));
+            flash()->info(tr('Aggiunto nuovo intervento!'));
         }
 
         // Collego l'intervento al preventivo
@@ -344,8 +344,8 @@ switch (post('op')) {
         }
 
         if (post('ref') == 'dashboard') {
-            App::flash()->clearMessage('info');
-            App::flash()->clearMessage('warning');
+            flash()->clearMessage('info');
+            flash()->clearMessage('warning');
         }
 
         break;
@@ -415,7 +415,7 @@ switch (post('op')) {
         // Eliminazione movimenti riguardanti l'intervento cancellato
         $dbo->query('DELETE FROM mg_movimenti WHERE idintervento='.prepare($id_record));
 
-        App::flash()->info(tr('Intervento _NUM_ eliminato!', [
+        flash()->info(tr('Intervento _NUM_ eliminato!', [
             '_NUM_' => "'".$codice."'",
         ]));
 
@@ -637,18 +637,18 @@ switch (post('op')) {
                 });
 
                 if (!$img->save($docroot.'/files/interventi/'.$firma_file)) {
-                    App::flash()->error(tr('Impossibile creare il file!'));
+                    flash()->error(tr('Impossibile creare il file!'));
                 } elseif ($dbo->query('UPDATE in_interventi SET firma_file='.prepare($firma_file).', firma_data=NOW(), firma_nome = '.prepare($firma_nome).', idstatointervento = "OK" WHERE id='.prepare($id_record))) {
-                    App::flash()->info(tr('Firma salvata correttamente!'));
-                    App::flash()->info(tr('Attività completata!'));
+                    flash()->info(tr('Firma salvata correttamente!'));
+                    flash()->info(tr('Attività completata!'));
                 } else {
-                    App::flash()->error(tr('Errore durante il salvataggio della firma nel database!'));
+                    flash()->error(tr('Errore durante il salvataggio della firma nel database!'));
                 }
             } else {
-                App::flash()->error(tr('Errore durante il salvataggio della firma!').tr('La firma risulta vuota').'...');
+                flash()->error(tr('Errore durante il salvataggio della firma!').tr('La firma risulta vuota').'...');
             }
         } else {
-            App::flash()->error(tr("Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della firma!", [
+            flash()->error(tr("Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della firma!", [
                 '_DIRECTORY_' => '<b>/files/interventi</b>',
             ]));
         }

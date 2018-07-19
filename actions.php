@@ -34,14 +34,14 @@ $dbo->query('START TRANSACTION');
 if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     // Controllo sui permessi di scrittura per il modulo
     if (Modules::getPermission($id_module) != 'rw') {
-        App::flash()->error(tr('Non hai permessi di scrittura per il modulo _MODULE_', [
+        flash()->error(tr('Non hai permessi di scrittura per il modulo _MODULE_', [
             '_MODULE_' => '"'.Modules::get($id_module)['name'].'"',
         ]));
     }
 
     // Controllo sui permessi di scrittura per il file system
     elseif (!directory($upload_dir)) {
-        App::flash()->error(tr('Non hai i permessi di scrittura nella cartella _DIR_!', [
+        flash()->error(tr('Non hai i permessi di scrittura nella cartella _DIR_!', [
             '_DIR_' => '"files"',
         ]));
     }
@@ -60,9 +60,9 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 
             // Creazione file fisico
             if (!empty($upload)) {
-                App::flash()->info(tr('File caricato correttamente!'));
+                flash()->info(tr('File caricato correttamente!'));
             } else {
-                App::flash()->error(tr('Errore durante il caricamento del file!'));
+                flash()->error(tr('Errore durante il caricamento del file!'));
             }
         }
 
@@ -75,11 +75,11 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
             ]);
 
             if (!empty($name)) {
-                App::flash()->info(tr('File _FILE_ eliminato!', [
+                flash()->info(tr('File _FILE_ eliminato!', [
                     '_FILE_' => '"'.$name.'"',
                 ]));
             } else {
-                App::flash()->error(tr("Errore durante l'eliminazione del file!"));
+                flash()->error(tr("Errore durante l'eliminazione del file!"));
             }
         }
 
@@ -132,9 +132,9 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 
     // Invio mail
     if (!$mail->send()) {
-        App::flash()->error(tr("Errore durante l'invio dell'email").': '.$mail->ErrorInfo);
+        flash()->error(tr("Errore durante l'invio dell'email").': '.$mail->ErrorInfo);
     } else {
-        App::flash()->info(tr('Email inviata correttamente!'));
+        flash()->info(tr('Email inviata correttamente!'));
     }
 }
 

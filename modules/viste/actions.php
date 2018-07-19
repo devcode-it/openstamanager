@@ -29,9 +29,9 @@ switch (filter('op')) {
         }
 
         if ($rs) {
-            App::flash()->info(tr('Salvataggio completato!'));
+            flash()->info(tr('Salvataggio completato!'));
         } else {
-            App::flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
 
         break;
@@ -77,9 +77,9 @@ switch (filter('op')) {
         }
 
         if ($rs) {
-            App::flash()->info(tr('Salvataggio completato!'));
+            flash()->info(tr('Salvataggio completato!'));
         } else {
-            App::flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
 
         break;
@@ -115,9 +115,9 @@ switch (filter('op')) {
         }
 
         if ($rs) {
-            App::flash()->info(tr('Salvataggio completato!'));
+            flash()->info(tr('Salvataggio completato!'));
         } else {
-            App::flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
 
         break;
@@ -131,7 +131,7 @@ switch (filter('op')) {
 
         $dbo->update('zz_group_module', $array, ['id' => $id]);
 
-        App::flash()->info(tr('Salvataggio completato!'));
+        flash()->info(tr('Salvataggio completato!'));
 
         break;
 
@@ -149,7 +149,7 @@ switch (filter('op')) {
         $dbo->query('DELETE FROM `zz_views` WHERE `id`='.prepare($id));
         $dbo->query('DELETE FROM `zz_group_view` WHERE `id_vista`='.prepare($id));
 
-        App::flash()->info(tr('Eliminazione completata!'));
+        flash()->info(tr('Eliminazione completata!'));
 
         break;
 
@@ -158,7 +158,7 @@ switch (filter('op')) {
 
         $dbo->query('DELETE FROM `zz_group_module` WHERE `id`='.prepare($id));
 
-        App::flash()->info(tr('Eliminazione completata!'));
+        flash()->info(tr('Eliminazione completata!'));
 
         break;
 

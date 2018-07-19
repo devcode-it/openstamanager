@@ -72,12 +72,12 @@ switch (post('op')) {
             'lng' => post('lng'),
         ], ['idanagrafica' => $id_record]);
 
-        App::flash()->info(str_replace('_NAME_', '"'.post('ragione_sociale').'"', "Informazioni per l'anagrafica _NAME_ salvate correttamente!"));
+        flash()->info(str_replace('_NAME_', '"'.post('ragione_sociale').'"', "Informazioni per l'anagrafica _NAME_ salvate correttamente!"));
 
         // Validazione della Partita IVA
         $check_vat_number = Validate::isValidVatNumber(strtoupper($partita_iva));
         if (empty($check_vat_number)) {
-            App::flash()->error(tr('Attenzione: la partita IVA _IVA_ sembra non essere valida', [
+            flash()->error(tr('Attenzione: la partita IVA _IVA_ sembra non essere valida', [
                 '_IVA_' => $partita_iva,
             ]));
         }
@@ -87,7 +87,7 @@ switch (post('op')) {
 
         // Verifica dell'esistenza codice anagrafica
         if ($esiste) {
-            App::flash()->error(tr("Il codice anagrafica inserito esiste già! Inserirne un'altro..."));
+            flash()->error(tr("Il codice anagrafica inserito esiste già! Inserirne un'altro..."));
         } else {
             $dbo->query('UPDATE an_anagrafiche SET codice='.prepare(post('codice')).' WHERE idanagrafica='.prepare($id_record));
         }
@@ -194,7 +194,7 @@ switch (post('op')) {
         if (in_array($id_azienda, $idtipoanagrafica)) {
             Settings::setValue('Azienda predefinita', $new_id);
 
-            App::flash()->info(tr('Anagrafica Azienda impostata come predefinita. Per ulteriori informazionioni, visitare "Strumenti -> Impostazioni -> Generali"'));
+            flash()->info(tr('Anagrafica Azienda impostata come predefinita. Per ulteriori informazionioni, visitare "Strumenti -> Impostazioni -> Generali"'));
         }
 
         //se sto inserendo un tecnico, mi copio già le tariffe per le varie attività
@@ -204,9 +204,9 @@ switch (post('op')) {
 
             for ($i = 0; $i < count($rs_tipiintervento); ++$i) {
                 if ($dbo->query('INSERT INTO in_tariffe( idtecnico, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico ) VALUES( '.prepare($new_id).', '.prepare($rs_tipiintervento[$i]['idtipointervento']).', (SELECT costo_orario FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_km FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_diritto_chiamata FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'),   (SELECT costo_orario_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_km_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_diritto_chiamata_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).') )')) {
-                    //App::flash()->info(tr('Informazioni salvate correttamente!'));
+                    //flash()->info(tr('Informazioni salvate correttamente!'));
                 } else {
-                    App::flash()->error(tr("Errore durante l'importazione tariffe!"));
+                    flash()->error(tr("Errore durante l'importazione tariffe!"));
                 }
             }
         }
@@ -253,7 +253,7 @@ switch (post('op')) {
             echo json_encode(['id' => $id_record, 'text' => $ragione_sociale]);
         }
 
-        App::flash()->info(tr('Aggiunta nuova anagrafica di tipo _TYPE_', [
+        flash()->info(tr('Aggiunta nuova anagrafica di tipo _TYPE_', [
             '_TYPE_' => '"'.$tipoanagrafica_dst.'"',
         ]));
 
@@ -267,7 +267,7 @@ switch (post('op')) {
             // Se l'anagrafica è collegata ad un utente lo disabilito
             $dbo->query('UPDATE zz_users SET enabled = 0 WHERE idanagrafica = '.prepare($id_record).Modules::getAdditionalsQuery($id_module));
 
-            App::flash()->info(tr('Anagrafica eliminata!'));
+            flash()->info(tr('Anagrafica eliminata!'));
         }
 
         break;

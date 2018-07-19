@@ -12,7 +12,7 @@ switch (post('op')) {
 
         $id_record = $dbo->lastInsertedID();
 
-        App::flash()->info(tr('Nuovo account email aggiunto!'));
+        flash()->info(tr('Nuovo account email aggiunto!'));
 
         break;
 
@@ -35,41 +35,41 @@ switch (post('op')) {
             $dbo->query('UPDATE zz_smtps SET main = 0 WHERE id != '.prepare($id_record));
         }
 
-        App::flash()->info(tr('Informazioni salvate correttamente!'));
+        flash()->info(tr('Informazioni salvate correttamente!'));
 
         // Validazione indirizzo email mittente
         $check_email = Validate::isValidEmail(post('from_address'));
 
         // Se $check_email non è null e la riposta è negativa --> mostro il messaggio di avviso.
         if (!empty($check_email)) {
-            App::flash()->info(tr('Sintassi email verificata'));
+            flash()->info(tr('Sintassi email verificata'));
 
             if (is_object($check_email) && $check_email->smtp) {
                 if ($check_email->smtp_check) {
-                    App::flash()->info(tr('SMTP email verificato'));
+                    flash()->info(tr('SMTP email verificato'));
                 } elseif (!$check_email->smtp_check) {
-                    App::flash()->warning(tr('SMTP email non verificato'));
+                    flash()->warning(tr('SMTP email non verificato'));
                 } else {
-                    App::flash()->error(tr("Attenzione: l'SMTP email _EMAIL_ sembra non essere valido", [
+                    flash()->error(tr("Attenzione: l'SMTP email _EMAIL_ sembra non essere valido", [
                         '_EMAIL_' => $check_email->email,
                     ]));
                 }
             }
         } else {
-            App::flash()->error(tr("Attenzione: l'indirizzo email _EMAIL_ sembra non essere valido", [
+            flash()->error(tr("Attenzione: l'indirizzo email _EMAIL_ sembra non essere valido", [
                 '_EMAIL_' => $check_email->email,
             ]));
 
             if (is_object($check_email) && !empty($check_email->error->info)) {
-                App::flash()->error($check_email->error->info);
+                flash()->error($check_email->error->info);
             }
         }
 
         $mail = new Mail($id_record);
         if ($mail->testSMTP()) {
-            App::flash()->info(tr('Connessione SMTP riuscita'));
+            flash()->info(tr('Connessione SMTP riuscita'));
         } else {
-            App::flash()->error(tr('Connessione SMTP non riuscita'));
+            flash()->error(tr('Connessione SMTP non riuscita'));
         }
 
         break;
@@ -77,7 +77,7 @@ switch (post('op')) {
     case 'delete':
         $dbo->query('UPDATE zz_smtps SET deleted_at = NOW() WHERE id='.prepare($id_record));
 
-        App::flash()->info(tr('Account email eliminato!'));
+        flash()->info(tr('Account email eliminato!'));
 
         break;
 }

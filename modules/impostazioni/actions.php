@@ -14,7 +14,7 @@ switch (filter('op')) {
 
                 // integer
                 if ($result['tipo'] == 'integer') {
-                    App::flash()->error(tr('Il valore inserito del parametro _NAME_ deve essere un numero intero!', [
+                    flash()->error(tr('Il valore inserito del parametro _NAME_ deve essere un numero intero!', [
                         '_NAME_' => '"'.$result['nome'].'"',
                     ]));
                 }
@@ -22,7 +22,7 @@ switch (filter('op')) {
                 // list
                 // verifico che il valore scelto sia nella lista enumerata nel db
                 elseif (preg_match("/list\[(.+?)\]/", $result['tipo'], $m)) {
-                    App::flash()->error(tr('Il valore inserito del parametro _NAME_ deve essere un compreso tra i valori previsti!', [
+                    flash()->error(tr('Il valore inserito del parametro _NAME_ deve essere un compreso tra i valori previsti!', [
                         '_NAME_' => '"'.$result['nome'].'"',
                     ]));
                 }
@@ -32,7 +32,7 @@ switch (filter('op')) {
         }
 
         if ($is_all_valid) {
-            App::flash()->info(tr('Impostazioni aggiornate correttamente!'));
+            flash()->info(tr('Impostazioni aggiornate correttamente!'));
         }
 
         break;

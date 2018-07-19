@@ -10,13 +10,13 @@ switch (filter('op')) {
             $fattura = new Plugins\Fatturazione\FatturaElettronica($id_record);
             $file = $fattura->save($upload_dir);
 
-            App::flash()->info(tr('Fattura elettronica generata correttamente!'));
+            flash()->info(tr('Fattura elettronica generata correttamente!'));
 
             if (!$fattura->isValid()) {
-                App::flash()->warning(tr('La fattura elettronica potrebbe avere delle irregolarità!'));
+                flash()->warning(tr('La fattura elettronica potrebbe avere delle irregolarità!'));
             }
         } catch (UnexpectedValueException $e) {
-            App::flash()->error(tr('Impossibile generare la fattura elettronica'));
+            flash()->error(tr('Impossibile generare la fattura elettronica'));
         }
 
         break;

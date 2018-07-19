@@ -16,11 +16,11 @@ switch (filter('op')) {
         delete($backup_dir.$file);
 
         if (!file_exists($backup_dir.$file)) {
-            App::flash()->info(tr('Backup _FILE_ eliminato!', [
+            flash()->info(tr('Backup _FILE_ eliminato!', [
                 '_FILE_' => '"'.$file.'"',
             ]));
         } else {
-            App::flash()->error(tr("Errore durante l'eliminazione del backup _FILE_!", [
+            flash()->error(tr("Errore durante l'eliminazione del backup _FILE_!", [
                 '_FILE_' => '"'.$file.'"',
             ]));
         }
@@ -29,9 +29,9 @@ switch (filter('op')) {
 
     case 'backup':
         if (Backup::create()) {
-            App::flash()->info(tr('Nuovo backup creato correttamente!'));
+            flash()->info(tr('Nuovo backup creato correttamente!'));
         } else {
-            App::flash()->error(tr('Errore durante la creazione del backup!').' '.tr_replace('_DIR_', '"'.$backup_dir.'"', tr('Verifica che la cartella _DIR_ abbia i permessi di scrittura!')));
+            flash()->error(tr('Errore durante la creazione del backup!').' '.tr_replace('_DIR_', '"'.$backup_dir.'"', tr('Verifica che la cartella _DIR_ abbia i permessi di scrittura!')));
         }
 
         break;

@@ -61,7 +61,7 @@ switch (post('op')) {
         $dbo->query($query);
         $id_record = $dbo->lastInsertedID();
 
-        App::flash()->info(tr('Aggiunta fattura numero _NUM_!', [
+        flash()->info(tr('Aggiunta fattura numero _NUM_!', [
             '_NUM_' => $numero,
         ]));
 
@@ -163,7 +163,7 @@ switch (post('op')) {
                 aggiungi_movimento($id_record, $dir);
             }
 
-            App::flash()->info(tr('Fattura modificata correttamente!'));
+            flash()->info(tr('Fattura modificata correttamente!'));
         }
 
         break;
@@ -176,7 +176,7 @@ switch (post('op')) {
         foreach ($rs as $r) {
             $non_rimovibili = seriali_non_rimuovibili('id_riga_documento', $r['id'], $dir);
             if (!empty($non_rimovibili)) {
-                App::flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+                flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
 
                 return;
             }
@@ -209,7 +209,7 @@ switch (post('op')) {
         elimina_scadenza($id_record);
         elimina_movimento($id_record);
 
-        App::flash()->info(tr('Fattura eliminata!'));
+        flash()->info(tr('Fattura eliminata!'));
 
         break;
 
@@ -254,7 +254,7 @@ switch (post('op')) {
                 ricalcola_costiagg_fattura($id_record, $rs[0]['idrivalsainps'], $rs[0]['idritenutaacconto'], $rs[0]['bollo']);
             }
 
-            App::flash()->info(tr('Fattura duplicata correttamente!'));
+            flash()->info(tr('Fattura duplicata correttamente!'));
         }
 
         break;
@@ -265,7 +265,7 @@ switch (post('op')) {
                 elimina_scadenza($id_record);
                 elimina_movimento($id_record, 1);
                 ricalcola_costiagg_fattura($id_record);
-                App::flash()->info(tr('Fattura riaperta!'));
+                flash()->info(tr('Fattura riaperta!'));
             }
         }
 
@@ -289,7 +289,7 @@ switch (post('op')) {
 
             //Aggiunta riga intervento sul documento
             if (sizeof($rst) == 0) {
-                App::flash()->warning(tr("L'intervento _NUM_ non ha sessioni di lavoro!", [
+                flash()->warning(tr("L'intervento _NUM_ non ha sessioni di lavoro!", [
                     '_NUM_' => $idintervento,
                 ]));
             } else {
@@ -488,7 +488,7 @@ switch (post('op')) {
             // Metto l'intervento in stato "Fatturato"
             $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id=".prepare($idintervento));
 
-            App::flash()->info(tr('Intervento _NUM_ aggiunto!', [
+            flash()->info(tr('Intervento _NUM_ aggiunto!', [
                 '_NUM_' => $idintervento,
             ]));
         }
@@ -602,7 +602,7 @@ switch (post('op')) {
                 $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id IN (SELECT idintervento FROM co_preventivi_interventi WHERE idpreventivo=".prepare($rs2[$j]['idpreventivo']).')');
             }
 
-            App::flash()->info(tr('Preventivo _NUM_ aggiunto!', [
+            flash()->info(tr('Preventivo _NUM_ aggiunto!', [
                 '_NUM_' => $numero,
             ]));
 
@@ -674,7 +674,7 @@ switch (post('op')) {
             // Aggiunta riga contratto sul documento
             $query = 'INSERT INTO co_righe_documenti(iddocumento, idcontratto, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_record).', '.prepare($idcontratto).', '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).", '-', 1, ".prepare(setting('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(setting("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(setting("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
             if ($dbo->query($query)) {
-                App::flash()->info(tr('Contratto _NUM_ aggiunto!', [
+                flash()->info(tr('Contratto _NUM_ aggiunto!', [
                     '_NUM_' => $numero,
                 ]));
 
@@ -723,7 +723,7 @@ switch (post('op')) {
 
             add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva, $qta, $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto, '0', $idconto, $idum);
 
-            App::flash()->info(tr('Articolo aggiunto!'));
+            flash()->info(tr('Articolo aggiunto!'));
         }
         break;
 
@@ -782,11 +782,11 @@ switch (post('op')) {
 
             // Messaggi informativi
             if (!empty($idarticolo)) {
-                App::flash()->info(tr('Articolo aggiunto!'));
+                flash()->info(tr('Articolo aggiunto!'));
             } elseif (!empty($qta)) {
-                App::flash()->info(tr('Riga aggiunta!'));
+                flash()->info(tr('Riga aggiunta!'));
             } else {
-                App::flash()->info(tr('Riga descrittiva aggiunta!'));
+                flash()->info(tr('Riga descrittiva aggiunta!'));
             }
 
             // Ricalcolo inps, ritenuta e bollo
@@ -840,7 +840,7 @@ switch (post('op')) {
             // Controllo per gestire i serial
             if (!empty($idarticolo)) {
                 if (!controlla_seriali('id_riga_documento', $idriga, $old_qta, $qta, $dir)) {
-                    App::flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+                    flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
 
                     return;
                 }
@@ -892,7 +892,7 @@ switch (post('op')) {
                     add_movimento_magazzino($idarticolo, $new_qta, ['iddocumento' => $id_record]);
                 }
 
-                App::flash()->info(tr('Riga modificata!'));
+                flash()->info(tr('Riga modificata!'));
 
                 // Ricalcolo inps, ritenuta e bollo
                 if ($dir == 'entrata') {
@@ -993,7 +993,7 @@ switch (post('op')) {
 
         ricalcola_costiagg_fattura($id_record);
 
-        App::flash()->info(tr('Creata una nuova fattura!'));
+        flash()->info(tr('Creata una nuova fattura!'));
 
         break;
 
@@ -1075,7 +1075,7 @@ switch (post('op')) {
         }
 
         ricalcola_costiagg_fattura($id_record);
-        App::flash()->info(tr('Creata una nuova fattura!'));
+        flash()->info(tr('Creata una nuova fattura!'));
 
         break;
 
@@ -1106,7 +1106,7 @@ switch (post('op')) {
             $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idcontratto, is_descrizione, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, sconto_globale, idiva, desc_iva, iva, iva_indetraibile, um, qta, `order`) values('.prepare($id_record).', '.prepare($idcontratto).', '.prepare($rs_righe[$i]['is_descrizione']).', '.prepare($rs_righe[$i]['descrizione']).', '.prepare($rs_righe[$i]['subtotale']).', '.prepare($rs_righe[$i]['sconto']).', '.prepare($rs_righe[$i]['sconto_unitario']).', '.prepare($rs_righe[$i]['tipo_sconto']).', '.prepare($rs_righe[$i]['sconto_globale']).', '.prepare($rs_righe[$i]['idiva']).', '.prepare($rs_righe[$i]['desc_iva']).', '.prepare($rs_righe[$i]['iva']).', '.prepare($rs_righe[$i]['iva_indetraibile']).', '.prepare($rs_righe[$i]['um']).', '.prepare($rs_righe[$i]['qta']).', '.prepare($rs_righe[$i]['order']).')');
         }
 
-        App::flash()->info(tr('Creata una nuova fattura!'));
+        flash()->info(tr('Creata una nuova fattura!'));
         break;
 
     // aggiungi righe da ddt
@@ -1173,7 +1173,7 @@ switch (post('op')) {
 
         ricalcola_costiagg_fattura($id_record);
 
-        App::flash()->info(tr('Aggiunti nuovi articoli in fattura!'));
+        flash()->info(tr('Aggiunti nuovi articoli in fattura!'));
 
         break;
 
@@ -1214,7 +1214,7 @@ switch (post('op')) {
             $query = 'DELETE FROM `co_righe_documenti` WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
             $dbo->query($query);
 
-            App::flash()->info(tr('Intervento _NUM_ rimosso!', [
+            flash()->info(tr('Intervento _NUM_ rimosso!', [
                 '_NUM_' => $idintervento,
             ]));
         }
@@ -1226,7 +1226,7 @@ switch (post('op')) {
             $idriga = post('idriga');
 
             if (!rimuovi_riga_fattura($id_record, $idriga, $dir)) {
-                App::flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+                flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
 
                 return;
             }
@@ -1238,7 +1238,7 @@ switch (post('op')) {
                 ricalcola_costiagg_fattura($id_record);
             }
 
-            App::flash()->info(tr('Articolo rimosso!'));
+            flash()->info(tr('Articolo rimosso!'));
         }
         break;
 
@@ -1287,7 +1287,7 @@ switch (post('op')) {
                     ricalcola_costiagg_fattura($id_record);
                 }
 
-                App::flash()->info(tr('Preventivo rimosso!'));
+                flash()->info(tr('Preventivo rimosso!'));
             }
         }
         break;
@@ -1337,7 +1337,7 @@ switch (post('op')) {
                     ricalcola_costiagg_fattura($id_record);
                 }
 
-                App::flash()->info(tr('Contratto rimosso!'));
+                flash()->info(tr('Contratto rimosso!'));
             }
         }
         break;
@@ -1356,7 +1356,7 @@ switch (post('op')) {
                 ricalcola_costiagg_fattura($id_record);
             }
 
-            App::flash()->info(tr('Riga rimossa!'));
+            flash()->info(tr('Riga rimossa!'));
         }
         break;
 
@@ -1454,7 +1454,7 @@ switch (post('op')) {
 
         ricalcola_costiagg_fattura($id_record);
 
-        App::flash()->info(tr('Aggiunti nuovi articoli in fattura!'));
+        flash()->info(tr('Aggiunti nuovi articoli in fattura!'));
 
         break;
 

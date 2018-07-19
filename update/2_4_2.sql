@@ -224,7 +224,7 @@ ALTER TABLE `mg_articoli` ADD `idconto_vendita` int(11), ADD `idconto_acquisto` 
 
 -- Aggiunta log per invio email
 CREATE TABLE IF NOT EXISTS `zz_operations` (
-  `id_module` int(11) NOT NULL,
+  `id_module` int(11),
   `id_plugin` int(11),
   `id_email` int(11),
   `id_record` int(11),

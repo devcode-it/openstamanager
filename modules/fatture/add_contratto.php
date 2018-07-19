@@ -12,7 +12,7 @@ if ($module['name'] == 'Fatture di vendita') {
     $conti = 'conti-acquisti';
 }
 
-$info= $dbo->fetchOne('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
+$info = $dbo->fetchOne('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
 $numero = ($info['numero_esterno'] != '') ? $info['numero_esterno'] : $info['numero'];
 $idconto = $info['idconto'];
 $idanagrafica = $info['idanagrafica'];

@@ -101,7 +101,7 @@ function setting($nome, $again = false)
  */
 function flash()
 {
-    return \flash();
+    return App::flash();
 }
 
 /**

@@ -41,7 +41,7 @@ if (!empty($record['immagine'])) {
 				<div class="col-md-5">
                     {[ "type": "checkbox", "label": "<?php echo tr("Seleziona per rendere attivo l'articolo"); ?>", "name": "attivo", "value": "$attivo$", "placeholder": "<?php echo tr('Articolo attivo'); ?>" ]}
 				    <br>
-                    {[ "type": "select", "label": "<?php echo tr('Subcategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie" ]}
                 </div>
 			</div>
 			<div class="row">

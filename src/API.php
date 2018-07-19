@@ -57,8 +57,6 @@ class API extends \Util\Singleton
      */
     public function retrieve($request)
     {
-        global $logger;
-
         $user = Auth::user();
 
         // Controllo sulla compatibilità dell'API
@@ -150,6 +148,7 @@ class API extends \Util\Singleton
                 }
             } catch (PDOException $e) {
                 // Log dell'errore
+                $logger = logger();
                 $logger->addRecord(\Monolog\Logger::ERROR, $e);
 
                 return self::error('internalError');

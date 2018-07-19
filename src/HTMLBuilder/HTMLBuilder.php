@@ -195,13 +195,11 @@ class HTMLBuilder
      */
     protected static function elaborate($json)
     {
-        global $records;
-
         $values = [];
         $extras = [];
 
         if (!empty($json)) {
-            // Conversione delle variabili con i campi di database ($records)
+            // Conversione delle variabili con i campi di database ($record)
             foreach ($json as $key => $value) {
                 if (empty($value) && !is_numeric($value)) {
                     unset($json[$key]);

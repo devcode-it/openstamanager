@@ -827,8 +827,6 @@ class Database extends Util\Singleton
      */
     protected function signal($e, $message, $options = [])
     {
-        global $logger;
-
         $options = array_merge([
             'session' => true,
             'level' => \Monolog\Logger::ERROR,
@@ -852,6 +850,8 @@ class Database extends Util\Singleton
         if (!empty($options['throw'])) {
             throw new PDOException($error);
         } else {
+            $logger = logger();
+
             $logger->addRecord($options['level'], $error);
         }
     }

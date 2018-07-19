@@ -315,8 +315,6 @@ class Update
      */
     public static function doUpdate($rate = 20)
     {
-        global $logger;
-
         set_time_limit(0);
         ignore_user_abort(true);
 
@@ -399,6 +397,7 @@ class Update
 
                 return true;
             } catch (\Exception $e) {
+                $logger = logger();
                 $logger->addRecord(\Monolog\Logger::EMERGENCY, $e->getMessage());
             }
 

@@ -207,8 +207,6 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
 
     public function send()
     {
-        global $logger;
-
         if (empty($this->AltBody)) {
             $this->AltBody = strip_tags($this->Body);
         }
@@ -218,6 +216,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
         $this->SmtpClose();
 
         // Segnalazione degli errori
+        $logger = logger();
         foreach ($this->infos as $info) {
             $logger->addRecord(\Monolog\Logger::ERROR, $info);
         }

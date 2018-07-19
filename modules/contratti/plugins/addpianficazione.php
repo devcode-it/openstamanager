@@ -20,23 +20,23 @@ if (!empty($get['idcontratto_riga'])) {
     $qp = 'SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_contratti_promemoria.idtipointervento) AS tipointervento, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_contratti_promemoria.idtipointervento) AS tempo_standard FROM co_contratti_promemoria WHERE id = '.$idcontratto_riga;
     $rsp = $dbo->fetchArray($qp);
 
-    $data_richiesta = readDate($rsp[0]['data_richiesta']);
+    $data_richiesta = $rsp[0]['data_richiesta'];
     $matricoleimpianti = trim($rsp[0]['idimpianti']);
     $idsede = $rsp[0]['idsede'];
     $tempo_standard = $rsp[0]['tempo_standard'];
-	
-	//if (!empty($rsp[0]['idtipointervento']))
-		$readonly = 'readonly';
-	
+
+    //if (!empty($rsp[0]['idtipointervento']))
+    $readonly = 'readonly';
+
     $hide = '';
     $list .= ', \"0\":\"'.tr('Pianificare a partire da questo promemoria ').$data_richiesta.'\"';
 
     $op = 'pianificazione';
 }
 
-//se non è impostata idcontratto_riga allora sono in fase di inserimento di nuovo promemoria e mi calcolo il prossimo id per co_contratti_promemoria
-(empty($idcontratto_riga)) ? $idcontratto_riga = $dbo->fetchArray('SELECT MAX(id) AS max_idcontratto_riga  FROM `co_contratti_promemoria`')[0]['max_idcontratto_riga'] : '';
-(empty($idcontratto_riga)) ? $idcontratto_riga = 1 : '';
+// se non è impostata idcontratto_riga allora sono in fase di inserimento di nuovo promemoria e mi calcolo il prossimo id per co_contratti_promemoria
+$idcontratto_riga = empty($idcontratto_riga) ? $dbo->fetchArray('SELECT MAX(id) AS max_idcontratto_riga FROM `co_contratti_promemoria`')[0]['max_idcontratto_riga'] : '';
+$idcontratto_riga = empty($idcontratto_riga) ? 1 : '';
 
 //orari inizio fine interventi (8h standard)
 $orario_inizio = '09:00';
@@ -49,7 +49,7 @@ echo '
 	<input type="hidden" name="op" value="'.$op.'">';
 
     echo '
-	<!-- DATI PROMEMORIA? -->
+	<!-- DATI PROMEMORIA -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
 			<h3 class="panel-title">'.tr('Dati').'</h3>
@@ -236,23 +236,23 @@ echo '
 echo '
 	<script>
 		$(document).ready(function() {
-			
+
 			if ($("#idtipointervento_").val()==""){
-				$("#add_form .panel-primary .panel-primary").hide(); 
+				$("#add_form .panel-primary .panel-primary").hide();
 				$("#bs-popup .btn-primary").hide();
 			};
-			
-			
+
+
 			$("#idtipointervento_").change(function(){
 					if (($(this).val()!="")){
-						$("#add_form .panel-primary .panel-primary").show(); 
+						$("#add_form .panel-primary .panel-primary").show();
 						$("#bs-popup .btn-primary").show();
 					}else{
-						$("#add_form .panel-primary .panel-primary").hide(); 
+						$("#add_form .panel-primary .panel-primary").hide();
 						$("#bs-popup .btn-primary").hide();
 					}
 			});
-			
+
 			$("#pianifica_intervento").click(function() {
 
 					if ($(this).is(":checked")){

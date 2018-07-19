@@ -229,6 +229,31 @@ class Uploads
         return $infos;
     }
 
+    /**
+     * Genera un ID fittizio per l'aggiunta di allegati a livello temporaneo.
+     *
+     * @return int
+     */
+    public static function getFakeID()
+    {
+        return -rand(1, 9999);
+    }
+
+    /**
+     * Sposta gli allegati fittizi a un record reale.
+     *
+     * @param int $fake_id
+     * @param int $id_record
+     */
+    public static function updateFake($fake_id, $id_record)
+    {
+        $database->update('zz_files', [
+            'id_record' => $id_record,
+        ], [
+            'id_record' => $fake_id,
+        ]);
+    }
+
     /** @var array Elenco delle tipologie di file permesse */
     protected static $allowed_types = [
         // Image formats

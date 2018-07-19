@@ -8,11 +8,11 @@ switch ($operazione) {
     case 'addreferente':
         $dbo->insert('an_referenti', [
             'idanagrafica' => $id_parent,
-            'nome' => $post['nome'],
-            'mansione' => $post['mansione'],
-            'telefono' => $post['telefono'],
-            'email' => $post['email'],
-            'idsede' => $post['idsede'],
+            'nome' => post('nome'),
+            'mansione' => post('mansione'),
+            'telefono' => post('telefono'),
+            'email' => post('email'),
+            'idsede' => post('idsede'),
         ]);
         $id_record = $dbo->lastInsertedID();
 
@@ -23,11 +23,11 @@ switch ($operazione) {
     case 'updatereferente':
         $dbo->update('an_referenti', [
             'idanagrafica' => $id_parent,
-            'nome' => $post['nome'],
-            'mansione' => $post['mansione'],
-            'telefono' => $post['telefono'],
-            'email' => $post['email'],
-            'idsede' => $post['idsede'],
+            'nome' => post('nome'),
+            'mansione' => post('mansione'),
+            'telefono' => post('telefono'),
+            'email' => post('email'),
+            'idsede' => post('idsede'),
         ], ['id' => $id_record]);
 
         App::flash()->info(tr('Salvataggio completato!'));

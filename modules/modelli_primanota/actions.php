@@ -9,7 +9,7 @@ switch (post('op')) {
         $idmastrino = get_new_idmastrino('co_movimenti_modelli');
         $descrizione = post('descrizione');
 
-        for ($i = 0; $i < sizeof($post['idconto']); ++$i) {
+        for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
             $idconto = post('idconto')[$i];
             $query = 'INSERT INTO co_movimenti_modelli(idmastrino, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($descrizione).', '.prepare($idconto).')';
             if ($dbo->query($query)) {
@@ -26,7 +26,7 @@ switch (post('op')) {
         // Eliminazione prima nota
         $dbo->query('DELETE FROM co_movimenti_modelli WHERE idmastrino='.prepare($idmastrino));
 
-        for ($i = 0; $i < sizeof($post['idconto']); ++$i) {
+        for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
             $idconto = post('idconto')[$i];
             $query = 'INSERT INTO co_movimenti_modelli(idmastrino, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($descrizione).', '.prepare($idconto).')';
             if ($dbo->query($query)) {

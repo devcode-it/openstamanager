@@ -28,18 +28,18 @@ if (get('op') == 'add_fatturazione') {
 
     // Azzero la pianificazione zone se era già stata fatta, per poter sostituire la pianificazione,
     // mantenendo però le pianificazioni già fatturate
-    foreach ($post['zona'] as $data_scadenza => $zone) {
+    foreach (post('zona') as $data_scadenza => $zone) {
         foreach ($zone as $n => $idzona) {
             $dbo->query('DELETE FROM co_ordiniservizio_pianificazionefatture WHERE idzona='.prepare($idzona).' AND iddocumento=0 AND idcontratto='.prepare($id_record));
         }
     }
 
     // Ciclo fra le voci in arrivo dal form
-    foreach ($post['zona'] as $data_scadenza => $zone) {
+    foreach (post('zona') as $data_scadenza => $zone) {
         // Ogni data può avere più zone da pianificare
         foreach ($zone as $n => $idzona) {
             // Aggiunta pianificazione solo se la zona è spuntata
-            if (in_array($idzona, $post['idzona'])) {
+            if (in_array($idzona, post('idzona'))) {
                 // Creazione pianificazione
                 $dbo->query('INSERT INTO co_ordiniservizio_pianificazionefatture(idcontratto, data_scadenza, idzona, iddocumento) VALUES('.prepare($id_record).', '.prepare($data_scadenza).', '.prepare($idzona).', 0)');
             }
@@ -53,7 +53,7 @@ if (get('op') == 'add_fatturazione') {
 
 // Eliminazione pianificazione specifica
 elseif (get('op') == 'del_pianificazione') {
-    $idpianificazione = $get['idpianificazione'];
+    $idpianificazione = get('idpianificazione');
 
     $n = $dbo->fetchNum('SELECT id FROM co_ordiniservizio_pianificazionefatture WHERE id='.prepare($idpianificazione));
 
@@ -67,11 +67,11 @@ elseif (get('op') == 'del_pianificazione') {
 
 // Creazione fattura pianificata
 elseif (get('op') == 'addfattura') {
-    $idpianificazione = $get['idpianificazione'];
+    $idpianificazione = get('idpianificazione');
     $descrizione = post('note');
-    $data = $post['data'];
-    $idtipodocumento = $post['idtipodocumento'];
-    $note = $post['note'];
+    $data = post('data');
+    $idtipodocumento = post('idtipodocumento');
+    $note = post('note');
 
     // Lettura idanagrafica
     $rs = $dbo->fetchArray('SELECT idanagrafica FROM co_contratti WHERE id='.prepare($id_record));

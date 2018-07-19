@@ -11,7 +11,7 @@ switch (post('op')) {
         $totale_utente = 0;
 
         // Verifico se il totale sommato è uguale al totale da pagare
-        foreach ($post['scadenza'] as $idscadenza => $da_pagare) {
+        foreach (post('scadenza') as $idscadenza => $da_pagare) {
             $totale_utente += floatval($da_pagare);
         }
 
@@ -19,7 +19,7 @@ switch (post('op')) {
         $totale_utente = (string) $totale_utente;
 
         if ($totale_utente == $totale_da_pagare) {
-            foreach ($post['scadenza'] as $idscadenza => $da_pagare) {
+            foreach (post('scadenza') as $idscadenza => $da_pagare) {
                 $dbo->query('UPDATE co_scadenziario SET da_pagare='.prepare($da_pagare).', pagato='.prepare(post('pagato')[$idscadenza]).', scadenza='.prepare(post('data')[$idscadenza]).' WHERE id='.prepare($idscadenza));
             }
 

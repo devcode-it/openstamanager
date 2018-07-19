@@ -8,7 +8,7 @@ switch (post('op')) {
     case 'add':
         $all_ok = true;
         $iddocumento = post('iddocumento');
-        $data = $post['data'];
+        $data = post('data');
         $idmastrino = get_new_idmastrino();
         $descrizione = post('descrizione');
 
@@ -20,10 +20,10 @@ switch (post('op')) {
         $totale = 0;
         $totale_pagato = 0;
 
-        for ($i = 0; $i < sizeof($post['idconto']); ++$i) {
+        for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
             $idconto = post('idconto')[$i];
-            $dare = $post['dare'][$i];
-            $avere = $post['avere'][$i];
+            $dare = post('dare')[$i];
+            $avere = post('avere')[$i];
 
             if (!empty($dare) || !empty($avere)) {
                 if (!empty($avere)) {
@@ -96,7 +96,7 @@ switch (post('op')) {
         if (post('crea_modello') == '1') {
             $idmastrino = get_new_idmastrino('co_movimenti_modelli');
 
-            for ($i = 0; $i < sizeof($post['idconto']); ++$i) {
+            for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
                 $idconto = post('idconto')[$i];
                 $query = 'INSERT INTO co_movimenti_modelli(idmastrino, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($descrizione).', '.prepare($idconto).')';
                 $dbo->query($query);
@@ -108,7 +108,7 @@ switch (post('op')) {
     case 'editriga':
         $all_ok = true;
         $iddocumento = post('iddocumento');
-        $data = $post['data'];
+        $data = post('data');
         $idmastrino = post('idmastrino');
         $descrizione = post('descrizione');
 
@@ -130,10 +130,10 @@ switch (post('op')) {
         $ragione_sociale = $rs[0]['ragione_sociale'];
         $dir = $rs[0]['dir'];
 
-        for ($i = 0; $i < sizeof($post['idconto']); ++$i) {
+        for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
             $idconto = post('idconto')[$i];
-            $dare = $post['dare'][$i];
-            $avere = $post['avere'][$i];
+            $dare = post('dare')[$i];
+            $avere = post('avere')[$i];
 
             if ($dare != '' && $dare != 0) {
                 $totale = $dare;

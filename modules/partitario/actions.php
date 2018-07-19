@@ -9,7 +9,7 @@ switch (post('op')) {
         $numero = post('numero');
         $descrizione = post('descrizione');
 
-        if (isset($post['idpianodeiconti2'])) {
+        if (post('idpianodeiconti2') !== null) {
             // Controllo che non sia stato usato un numero non valido del conto
             $query = 'SELECT idpianodeiconti2, numero FROM co_pianodeiconti3 WHERE numero='.prepare($numero).' AND idpianodeiconti2='.prepare($idpianodeiconti2);
             $rs = $dbo->fetchArray($query);

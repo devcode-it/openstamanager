@@ -18,12 +18,12 @@ if (filter('op') == 'send') {
     $mail->Subject = 'Segnalazione bug OSM '.$version;
 
     // Aggiunta dei file di log (facoltativo)
-    if (!empty($post['log']) && file_exists($docroot.'/logs/error.log')) {
+    if (!empty(post('log')) && file_exists($docroot.'/logs/error.log')) {
         $mail->AddAttachment($docroot.'/logs/error.log');
     }
 
     // Aggiunta della copia del database (facoltativo)
-    if (!empty($post['sql'])) {
+    if (!empty(post('sql'))) {
         $backup_file = $docroot.'/Backup OSM '.date('Y-m-d').' '.date('H_i_s').'.sql';
         Backup::database($backup_file);
 
@@ -41,12 +41,12 @@ if (filter('op') == 'send') {
     ];
 
     // Aggiunta delle informazioni sul sistema (facoltativo)
-    if (!empty($post['info'])) {
+    if (!empty(post('info'))) {
         $infos['Sistema'] = $_SERVER['HTTP_USER_AGENT'].' - '.getOS();
     }
 
     // Completamento del body
-    $body = $post['body'].'<hr>';
+    $body = post('body').'<hr>';
     foreach ($infos as $key => $value) {
         $body .= '<p>'.$key.': '.$value.'</p>';
     }
@@ -63,7 +63,7 @@ if (filter('op') == 'send') {
     }
 
     // Rimozione del dump del database
-    if (!empty($post['sql'])) {
+    if (!empty(post('sql'))) {
         delete($backup_file);
     }
 

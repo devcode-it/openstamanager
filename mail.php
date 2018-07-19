@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/core.php';
 
-$template = Mail::getTemplate($get['id']);
+$template = Mail::getTemplate(get('id'));
 $module = Modules::get($id_module);
 $smtp = Mail::get($template['id_smtp']);
 

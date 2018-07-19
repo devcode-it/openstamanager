@@ -15,8 +15,8 @@ $idanagrafica = $dbo->fetchArray('SELECT `idanagrafica` FROM `co_contratti` WHER
 $list = '\"1\":\"'.tr('Pianificare a partire da oggi ').date('d/m/Y').'\"';
 
 //promemoria esistente
-if (!empty($get['idcontratto_riga'])) {
-    $idcontratto_riga = $get['idcontratto_riga'];
+if (!empty(get('idcontratto_riga'))) {
+    $idcontratto_riga = get('idcontratto_riga');
     $qp = 'SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_contratti_promemoria.idtipointervento) AS tipointervento, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_contratti_promemoria.idtipointervento) AS tempo_standard FROM co_contratti_promemoria WHERE id = '.$idcontratto_riga;
     $rsp = $dbo->fetchArray($qp);
 

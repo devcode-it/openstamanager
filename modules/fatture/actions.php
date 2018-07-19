@@ -19,8 +19,8 @@ if ($module['name'] == 'Fatture di vendita') {
 switch (post('op')) {
     case 'add':
         $idanagrafica = post('idanagrafica');
-        $data = $post['data'];
-        $dir = $post['dir'];
+        $data = post('data');
+        $dir = post('dir');
         $idtipodocumento = post('idtipodocumento');
 
         $id_segment = post('id_segment');
@@ -68,7 +68,7 @@ switch (post('op')) {
         break;
 
     case 'update':
-        if (isset($post['id_record'])) {
+        if (post('id_record') !== null) {
             $idstatodocumento = post('idstatodocumento');
             $idpagamento = post('idpagamento');
 
@@ -272,7 +272,7 @@ switch (post('op')) {
         break;
 
     case 'addintervento':
-        if (!empty($id_record) && isset($post['idintervento'])) {
+        if (!empty($id_record) && post('idintervento') !== null) {
             $idintervento = post('idintervento');
             $descrizione = post('descrizione');
             $idiva = post('idiva');
@@ -495,18 +495,18 @@ switch (post('op')) {
         break;
 
     case 'addpreventivo':
-        if (!empty($id_record) && isset($post['idpreventivo'])) {
+        if (!empty($id_record) && post('idpreventivo') !== null) {
             $idpreventivo = post('idpreventivo');
             $descrizione = post('descrizione');
             $idiva = post('idiva');
             $idconto = post('idconto');
 
-            $prezzo = $post['prezzo'];
+            $prezzo = post('prezzo');
             $qta = 1;
 
             // Calcolo dello sconto
-            $sconto_unitario = $post['sconto'];
-            $tipo_sconto = $post['tipo_sconto'];
+            $sconto_unitario = post('sconto');
+            $tipo_sconto = post('tipo_sconto');
             $sconto = calcola_sconto([
                 'sconto' => $sconto_unitario,
                 'prezzo' => $prezzo,
@@ -515,7 +515,7 @@ switch (post('op')) {
             ]);
 
             $subtot = 0;
-            $aggiorna_budget = ($post['aggiorna_budget'] == 'on') ? 1 : 0;
+            $aggiorna_budget = (post('aggiorna_budget') == 'on') ? 1 : 0;
 
             // Leggo l'anagrafica del cliente
             $rs = $dbo->fetchArray('SELECT idanagrafica, numero FROM `co_preventivi` WHERE id='.prepare($idpreventivo));
@@ -543,7 +543,7 @@ switch (post('op')) {
                 $ritenutaacconto = ($prezzo - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
             }
 
-            if (!empty($post['import'])) {
+            if (!empty(post('import'))) {
                 // Replicazione delle righe del preventivo sul documento
                 $righe = $dbo->fetchArray('SELECT idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, IFNULL( (SELECT mg_articoli.abilita_serial FROM mg_articoli WHERE mg_articoli.id=co_righe_preventivi.idarticolo), 0 ) AS abilita_serial FROM co_righe_preventivi WHERE idpreventivo='.prepare($idpreventivo));
 
@@ -623,18 +623,18 @@ switch (post('op')) {
         break;
 
     case 'addcontratto':
-        if (!empty($id_record) && isset($post['idcontratto'])) {
+        if (!empty($id_record) && post('idcontratto') !== null) {
             $idcontratto = post('idcontratto');
             $descrizione = post('descrizione');
             $idiva = post('idiva');
             $idconto = post('idconto');
 
-            $prezzo = $post['prezzo'];
+            $prezzo = post('prezzo');
             $qta = 1;
 
             // Calcolo dello sconto
-            $sconto_unitario = $post['sconto'];
-            $tipo_sconto = $post['tipo_sconto'];
+            $sconto_unitario = post('sconto');
+            $tipo_sconto = post('tipo_sconto');
             $sconto = calcola_sconto([
                 'sconto' => $sconto_unitario,
                 'prezzo' => $prezzo,
@@ -643,7 +643,7 @@ switch (post('op')) {
             ]);
 
             $subtot = 0;
-            $aggiorna_budget = ($post['aggiorna_budget'] == 'on') ? 1 : 0;
+            $aggiorna_budget = (post('aggiorna_budget') == 'on') ? 1 : 0;
 
             // Leggo l'anagrafica del cliente
             $rs = $dbo->fetchArray('SELECT idanagrafica, numero FROM `co_contratti` WHERE id='.prepare($idcontratto));
@@ -696,7 +696,7 @@ switch (post('op')) {
         break;
 
     case 'addarticolo':
-        if (!empty($id_record) && isset($post['idarticolo'])) {
+        if (!empty($id_record) && post('idarticolo') !== null) {
             $idarticolo = post('idarticolo');
             $descrizione = post('descrizione');
 
@@ -704,16 +704,16 @@ switch (post('op')) {
             $idconto = post('idconto');
             $idum = post('um');
 
-            $qta = $post['qta'];
+            $qta = post('qta');
             if (!empty($record['is_reversed'])) {
                 $qta = -$qta;
             }
 
-            $prezzo = $post['prezzo'];
+            $prezzo = post('prezzo');
 
             // Calcolo dello sconto
-            $sconto_unitario = $post['sconto'];
-            $tipo_sconto = $post['tipo_sconto'];
+            $sconto_unitario = post('sconto');
+            $tipo_sconto = post('tipo_sconto');
             $sconto = calcola_sconto([
                 'sconto' => $sconto_unitario,
                 'prezzo' => $prezzo,
@@ -736,16 +736,16 @@ switch (post('op')) {
             $um = post('um');
             $calcolo_ritenutaacconto = post('calcolo_ritenutaacconto');
 
-            $qta = $post['qta'];
+            $qta = post('qta');
             if (!empty($record['is_reversed'])) {
                 $qta = -$qta;
             }
 
-            $prezzo = $post['prezzo'];
+            $prezzo = post('prezzo');
 
             // Calcolo dello sconto
-            $sconto_unitario = $post['sconto'];
-            $tipo_sconto = $post['tipo_sconto'];
+            $sconto_unitario = post('sconto');
+            $tipo_sconto = post('tipo_sconto');
             $sconto = calcola_sconto([
                 'sconto' => $sconto_unitario,
                 'prezzo' => $prezzo,
@@ -799,7 +799,7 @@ switch (post('op')) {
         break;
 
     case 'editriga':
-        if (isset($post['idriga'])) {
+        if (post('idriga') !== null) {
             // Selezione costi da intervento
             $idriga = post('idriga');
             $descrizione = post('descrizione');
@@ -808,16 +808,16 @@ switch (post('op')) {
             $um = post('um');
             $calcolo_ritenutaacconto = post('calcolo_ritenutaacconto');
 
-            $qta = $post['qta'];
+            $qta = post('qta');
             if (!empty($record['is_reversed'])) {
                 $qta = -$qta;
             }
 
-            $prezzo = $post['prezzo'];
+            $prezzo = post('prezzo');
 
             // Calcolo dello sconto
-            $sconto_unitario = $post['sconto'];
-            $tipo_sconto = $post['tipo_sconto'];
+            $sconto_unitario = post('sconto');
+            $tipo_sconto = post('tipo_sconto');
             $sconto = calcola_sconto([
                 'sconto' => $sconto_unitario,
                 'prezzo' => $prezzo,
@@ -907,11 +907,11 @@ switch (post('op')) {
     // Creazione fattura da ddt
     case 'fattura_da_ddt':
         $totale_fattura = 0.00;
-        $data = $post['data'];
-        $idanagrafica = $post['idanagrafica'];
-        $idarticolo = $post['idarticolo'];
-        $idpagamento = $post['idpagamento'];
-        $idddt = $post['idddt'];
+        $data = post('data');
+        $idanagrafica = post('idanagrafica');
+        $idarticolo = post('idarticolo');
+        $idpagamento = post('idpagamento');
+        $idddt = post('idddt');
 
         $id_segment = post('id_segment');
         $numero = get_new_numerofattura($data);
@@ -935,16 +935,16 @@ switch (post('op')) {
         $id_record = $dbo->lastInsertedID();
 
         // Lettura di tutte le righe della tabella in arrivo
-        foreach ($post['qta_da_evadere'] as $i => $value) {
+        foreach (post('qta_da_evadere') as $i => $value) {
             // Processo solo le righe da evadere
-            if ($post['evadere'][$i] == 'on') {
+            if (post('evadere')[$i] == 'on') {
                 $idrigaddt = $i;
                 $idarticolo = post('idarticolo')[$i];
                 $descrizione = post('descrizione')[$i];
-                $qta = $post['qta_da_evadere'][$i];
-                $um = $post['um'][$i];
-                $subtot = $post['subtot'][$i] * $qta;
-                $sconto = $post['sconto'][$i];
+                $qta = post('qta_da_evadere')[$i];
+                $um = post('um')[$i];
+                $subtot = post('subtot')[$i] * $qta;
+                $sconto = post('sconto')[$i];
                 $sconto = $sconto * $qta;
                 $idiva = post('idiva')[$i];
 
@@ -973,7 +973,7 @@ switch (post('op')) {
                     $idriga = add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva_acquisto, $qta, $prezzo_acquisto, $sconto, $sconto_unitario, $tipo_sconto);
 
                     // Aggiornamento seriali dalla riga dell'ordine
-                    $serials = is_array($post['serial'][$i]) ? $post['serial'][$i] : [];
+                    $serials = is_array(post('serial')[$i]) ? post('serial')[$i] : [];
                     $serials = array_filter($serials, function ($value) { return !empty($value); });
 
                     $dbo->sync('mg_prodotti', ['id_riga_documento' => $idriga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => $serials]);
@@ -1000,12 +1000,12 @@ switch (post('op')) {
     // Creazione fattura da ordine
     case 'fattura_da_ordine':
         $totale_fattura = 0.00;
-        $data = $post['data'];
-        $idanagrafica = $post['idanagrafica'];
-        $idarticolo = $post['idarticolo'];
-        $idpagamento = $post['idpagamento'];
-        $idconto = $post['idconto'];
-        $idordine = $post['idordine'];
+        $data = post('data');
+        $idanagrafica = post('idanagrafica');
+        $idarticolo = post('idarticolo');
+        $idpagamento = post('idpagamento');
+        $idconto = post('idconto');
+        $idordine = post('idordine');
         $id_segment = post('id_segment');
         $numero = get_new_numerofattura($data);
         $numero_esterno = get_new_numerosecondariofattura($data);
@@ -1017,17 +1017,17 @@ switch (post('op')) {
         $id_record = $dbo->lastInsertedID();
 
         // Lettura di tutte le righe della tabella in arrivo
-        foreach ($post['qta_da_evadere'] as $i => $value) {
+        foreach (post('qta_da_evadere') as $i => $value) {
             // Processo solo le righe da evadere
-            if ($post['evadere'][$i] == 'on') {
+            if (post('evadere')[$i] == 'on') {
                 $idriga = $i;
                 $idarticolo = post('idarticolo')[$i];
                 $descrizione = post('descrizione')[$i];
                 $qta = post('qta_da_evadere')[$i];
                 $um = post('um')[$i];
-                $subtot = $post['subtot'][$i] * $qta;
+                $subtot = post('subtot')[$i] * $qta;
                 $idiva = post('idiva')[$i];
-                $iva = $post['iva'][$i] * $qta;
+                $iva = post('iva')[$i] * $qta;
                 $sconto = post('sconto')[$i];
                 $sconto = $sconto * $qta;
 
@@ -1054,7 +1054,7 @@ switch (post('op')) {
                     $riga = add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva_acquisto, $qta, $prezzo_acquisto, $sconto, $sconto_unitario, $tipo_sconto);
 
                     // Aggiornamento seriali dalla riga dell'ordine
-                    $serials = is_array($post['serial'][$i]) ? $post['serial'][$i] : [];
+                    $serials = is_array(post('serial')[$i]) ? post('serial')[$i] : [];
                     $serials = array_filter($serials, function ($value) { return !empty($value); });
 
                     $dbo->sync('mg_prodotti', ['id_riga_documento' => $riga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => $serials]);
@@ -1111,24 +1111,24 @@ switch (post('op')) {
 
     // aggiungi righe da ddt
     case 'add_ddt':
-        $idddt = $post['iddocumento'];
+        $idddt = post('iddocumento');
 
         $rs = $dbo->fetchArray('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
         $idconto = $rs[0]['idconto'];
 
         // Lettura di tutte le righe della tabella in arrivo
-        foreach ($post['qta_da_evadere'] as $i => $value) {
+        foreach (post('qta_da_evadere') as $i => $value) {
             // Processo solo le righe da evadere
-            if ($post['evadere'][$i] == 'on') {
+            if (post('evadere')[$i] == 'on') {
                 $idrigaddt = $i;
                 $idarticolo = post('idarticolo')[$i];
                 $descrizione = post('descrizione')[$i];
 
-                $qta = $post['qta_da_evadere'][$i];
+                $qta = post('qta_da_evadere')[$i];
                 $um = post('um')[$i];
 
-                $subtot = $post['subtot'][$i] * $qta;
-                $sconto = $post['sconto'][$i];
+                $subtot = post('subtot')[$i] * $qta;
+                $sconto = post('sconto')[$i];
                 $sconto = $sconto * $qta;
 
                 $qprc = 'SELECT tipo_sconto, sconto_unitario FROM dt_righe_ddt WHERE id='.prepare($idrigaddt);
@@ -1179,7 +1179,7 @@ switch (post('op')) {
 
     // Scollegamento intervento da documento
     case 'unlink_intervento':
-        if (!empty($id_record) && isset($post['idriga'])) {
+        if (!empty($id_record) && post('idriga') !== null) {
             $idriga = post('idriga');
 
             // Lettura preventivi collegati
@@ -1244,7 +1244,7 @@ switch (post('op')) {
 
     // Scollegamento preventivo da documento
     case 'unlink_preventivo':
-        if (isset($post['idriga'])) {
+        if (post('idriga') !== null) {
             $idriga = post('idriga');
 
             // Lettura preventivi collegati
@@ -1294,7 +1294,7 @@ switch (post('op')) {
 
     // Scollegamento contratto da documento
     case 'unlink_contratto':
-        if (isset($post['idriga'])) {
+        if (post('idriga') !== null) {
             $idriga = post('idriga');
 
             // Lettura contratti collegati
@@ -1344,7 +1344,7 @@ switch (post('op')) {
 
     // Scollegamento riga generica da documento
     case 'unlink_riga':
-        if (isset($post['idriga'])) {
+        if (post('idriga') !== null) {
             $idriga = post('idriga');
 
             rimuovi_riga_fattura($id_record, $idriga, $dir);
@@ -1361,10 +1361,10 @@ switch (post('op')) {
         break;
 
     case 'add_serial':
-        $idriga = $post['idriga'];
-        $idarticolo = $post['idarticolo'];
+        $idriga = post('idriga');
+        $idarticolo = post('idarticolo');
 
-        $serials = (array) $post['serial'];
+        $serials = (array) post('serial');
         foreach ($serials as $key => $value) {
             if (empty($value)) {
                 unset($serials[$key]);
@@ -1392,21 +1392,21 @@ switch (post('op')) {
 
     // aggiungi righe da ordine
     case 'add_ordine':
-        $idordine = $post['iddocumento'];
+        $idordine = post('iddocumento');
 
         // Lettura di tutte le righe della tabella in arrivo
-        foreach ($post['qta_da_evadere'] as $i => $value) {
+        foreach (post('qta_da_evadere') as $i => $value) {
             // Processo solo le righe da evadere
-            if ($post['evadere'][$i] == 'on') {
+            if (post('evadere')[$i] == 'on') {
                 $idriga = $i;
                 $idarticolo = post('idarticolo')[$i];
                 $descrizione = post('descrizione')[$i];
 
-                $qta = $post['qta_da_evadere'][$i];
+                $qta = post('qta_da_evadere')[$i];
                 $um = post('um')[$i];
 
-                $subtot = $post['subtot'][$i] * $qta;
-                $sconto = $post['sconto'][$i];
+                $subtot = post('subtot')[$i] * $qta;
+                $sconto = post('sconto')[$i];
                 $sconto = $sconto * $qta;
 
                 $qprc = 'SELECT tipo_sconto, sconto_unitario FROM or_righe_ordini WHERE id='.prepare($idriga);
@@ -1473,18 +1473,18 @@ switch (post('op')) {
         $id_record = $dbo->lastInsertedID();
 
         // Lettura di tutte le righe della tabella in arrivo
-        foreach ($post['qta_da_evadere'] as $i => $value) {
+        foreach (post('qta_da_evadere') as $i => $value) {
             // Processo solo le righe da evadere
-            if ($post['evadere'][$i] == 'on') {
+            if (post('evadere')[$i] == 'on') {
                 $idriga = $i;
                 $idarticolo = post('idarticolo')[$i];
                 $descrizione = post('descrizione')[$i];
 
-                $qta = -$post['qta_da_evadere'][$i];
+                $qta = -post('qta_da_evadere')[$i];
                 $um = post('um')[$i];
 
-                $subtot = $post['subtot'][$i] * $qta;
-                $sconto = $post['sconto'][$i];
+                $subtot = post('subtot')[$i] * $qta;
+                $sconto = post('sconto')[$i];
                 $sconto = $sconto * $qta;
 
                 $qprc = 'SELECT tipo_sconto, sconto_unitario FROM co_righe_documenti WHERE id='.prepare($idriga);
@@ -1513,7 +1513,7 @@ switch (post('op')) {
                     $riga = add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva_acquisto, $qta, $prezzo_acquisto, $sconto, $sconto_unitario, $tipo_sconto);
 
                     // Aggiornamento seriali dalla riga dell'ordine
-                    $serials = is_array($post['serial'][$i]) ? $post['serial'][$i] : [];
+                    $serials = is_array(post('serial')[$i]) ? post('serial')[$i] : [];
                     $serials = array_filter($serials, function ($value) { return !empty($value); });
 
                     $dbo->sync('mg_prodotti', ['id_riga_documento' => $riga, 'dir' => 'uscita', 'id_articolo' => $idarticolo], ['serial' => $serials]);

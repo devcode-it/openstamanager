@@ -90,7 +90,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 
     download($upload_dir.'/'.$rs[0]['filename'], $rs[0]['original']);
 } elseif (post('op') == 'send-email') {
-    $template = Mail::getTemplate($post['template']);
+    $template = Mail::getTemplate(post('template'));
     $id_account = $template['id_smtp'];
 
     // Informazioni di log
@@ -99,7 +99,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     $mail = new Mail($id_account);
 
     // Conferma di lettura
-    if (!empty($post['read_notify'])) {
+    if (!empty(post('read_notify'))) {
         $mail->ConfirmReadingTo = $mail->From;
     }
 
@@ -119,16 +119,16 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     }
 
     // Destinatari
-    $mail->addReceivers($post['destinatari'], $post['tipo_destinatari']);
+    $mail->addReceivers(post('destinatari'), post('tipo_destinatari'));
 
     // Oggetto
-    $mail->Subject = $post['subject'];
+    $mail->Subject = post('subject');
 
     // Allegati
-    $mail->attach($post['prints'], $post['attachments']);
+    $mail->attach(post('prints'), post('attachments'));
 
     // Contenuto
-    $mail->Body = $post['body'];
+    $mail->Body = post('body');
 
     // Invio mail
     if (!$mail->send()) {
@@ -202,8 +202,8 @@ if (Modules::getPermission($id_module) == 'rw') {
             if (!starts_with(post('op'), 'delete')) {
                 $values = [];
                 foreach ($customs as $custom) {
-                    if (isset($post[$custom['name']])) {
-                        $values[$custom['id']] = $post[$custom['name']];
+                    if (post($custom['name']) !== null) {
+                        $values[$custom['id']] = post($custom['name']);
                     }
                 }
 

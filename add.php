@@ -75,9 +75,9 @@ $(document).ready(function(){
         success: function(data){
             data = data.trim();
 
-            if(data && $("#'.$get['select'].'").val() !== undefined ) {
+            if(data && $("#'.get('select').'").val() !== undefined ) {
                 result = JSON.parse(data);
-                $("#'.$get['select'].'").selectSetNew(result.id, result.text);
+                $("#'.get('select').'").selectSetNew(result.id, result.text);
             }
 
             $("#bs-popup2").modal("hide");

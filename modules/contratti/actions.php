@@ -23,7 +23,7 @@ switch (post('op')) {
 
          $idpagamento = (!empty($rsa[0]['idpagamento'])) ? $rsa[0]['idpagamento'] : setting('Tipo di pagamento predefinito');
 
-        if (isset($post['idanagrafica'])) {
+        if (post('idanagrafica') !== null) {
             $dbo->query('INSERT INTO co_contratti(idanagrafica, nome, numero, idagente, idpagamento, idstato, data_bozza) VALUES ('.prepare($idanagrafica).', '.prepare($nome).', '.prepare($numero).', '.prepare($idagente).', '.prepare($idpagamento).", (SELECT `id` FROM `co_staticontratti` WHERE `descrizione`='Bozza'), NOW())");
             $id_record = $dbo->lastInsertedID();
 
@@ -42,7 +42,7 @@ switch (post('op')) {
         break;
 
     case 'update':
-        if (isset($post['id_record'])) {
+        if (post('id_record') !== null) {
             $idstato = post('idstato');
             $idanagrafica = post('idanagrafica');
             $idsede = post('idsede');
@@ -60,11 +60,11 @@ switch (post('op')) {
                 $budget = $rs[0]['budget'];
             }
 
-            $data_bozza = $post['data_bozza'];
-            $data_accettazione = $post['data_accettazione'];
-            $data_rifiuto = $post['data_rifiuto'];
-            $data_conclusione = $post['data_conclusione'];
-            $rinnovabile = $post['rinnovabile'];
+            $data_bozza = post('data_bozza');
+            $data_accettazione = post('data_accettazione');
+            $data_rifiuto = post('data_rifiuto');
+            $data_conclusione = post('data_conclusione');
+            $rinnovabile = post('rinnovabile');
 
             $giorni_preavviso_rinnovo = post('giorni_preavviso_rinnovo');
             $validita = post('validita');
@@ -83,8 +83,8 @@ switch (post('op')) {
             $dbo->query($query);
 
             // Aggiornamento sconto
-            $tipo_sconto = $post['tipo_sconto_generico'];
-            $sconto = $post['sconto_generico'];
+            $tipo_sconto = post('tipo_sconto_generico');
+            $sconto = post('sconto_generico');
 
             $dbo->update('co_contratti', [
                 'tipo_sconto_globale' => $tipo_sconto,
@@ -100,27 +100,27 @@ switch (post('op')) {
             ], $id_record);
 
             $dbo->query('DELETE FROM my_impianti_contratti WHERE idcontratto='.prepare($id_record));
-            foreach ((array) $post['matricolaimpianto'] as $matricolaimpianto) {
+            foreach ((array) post('matricolaimpianto') as $matricolaimpianto) {
                 $dbo->query('INSERT INTO my_impianti_contratti(idcontratto,idimpianto) VALUES('.prepare($id_record).', '.prepare($matricolaimpianto).')');
             }
 
             // Salvataggio costi attività unitari del contratto
-            foreach ($post['costo_ore'] as $idtipointervento => $valore) {
+            foreach (post('costo_ore') as $idtipointervento => $valore) {
                 $rs = $dbo->fetchArray('SELECT * FROM co_contratti_tipiintervento WHERE idcontratto='.prepare($id_record).' AND idtipointervento='.prepare($idtipointervento));
 
                 // Se non esiste il record lo inserisco...
                 if (sizeof($rs) == 0) {
                     // Se almeno un valore è diverso da 0 inserisco l'importo...
-                    if ($post['costo_ore'][$idtipointervento] != 0 || $post['costo_km'][$idtipointervento] != 0 || $post['costo_dirittochiamata'][$idtipointervento] != 0) {
-                        $dbo->query('INSERT INTO co_contratti_tipiintervento(idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) VALUES('.prepare($id_record).', '.prepare($idtipointervento).', '.prepare($post['costo_ore'][$idtipointervento]).', '.prepare($post['costo_km'][$idtipointervento]).', '.prepare($post['costo_dirittochiamata'][$idtipointervento]).', '.prepare($post['costo_ore_tecnico'][$idtipointervento]).', '.prepare($post['costo_km_tecnico'][$idtipointervento]).', '.prepare($post['costo_dirittochiamata_tecnico'][$idtipointervento]).')');
+                    if (post('costo_ore')[$idtipointervento] != 0 || post('costo_km')[$idtipointervento] != 0 || post('costo_dirittochiamata')[$idtipointervento] != 0) {
+                        $dbo->query('INSERT INTO co_contratti_tipiintervento(idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) VALUES('.prepare($id_record).', '.prepare($idtipointervento).', '.prepare(post('costo_ore')[$idtipointervento]).', '.prepare(post('costo_km')[$idtipointervento]).', '.prepare(post('costo_dirittochiamata')[$idtipointervento]).', '.prepare(post('costo_ore_tecnico')[$idtipointervento]).', '.prepare(post('costo_km_tecnico')[$idtipointervento]).', '.prepare(post('costo_dirittochiamata_tecnico')[$idtipointervento]).')');
                     }
                 }
 
                 // ...altrimenti...
                 else {
                     // Aggiorno il nuovo valore se è diverso da 0...
-                    if ($post['costo_ore'][$idtipointervento] != 0 || $post['costo_km'][$idtipointervento] != 0 || $post['costo_dirittochiamata'][$idtipointervento] != 0) {
-                        $dbo->query('UPDATE co_contratti_tipiintervento SET costo_ore='.prepare($post['costo_ore'][$idtipointervento]).', costo_km='.prepare($post['costo_km'][$idtipointervento]).', costo_dirittochiamata='.prepare($post['costo_dirittochiamata'][$idtipointervento]).', costo_ore_tecnico='.prepare($post['costo_ore_tecnico'][$idtipointervento]).', costo_km_tecnico='.prepare($post['costo_km_tecnico'][$idtipointervento]).', costo_dirittochiamata_tecnico='.prepare($post['costo_dirittochiamata_tecnico'][$idtipointervento]).' WHERE idcontratto='.prepare($id_record).' AND idtipointervento='.prepare($idtipointervento));
+                    if (post('costo_ore')[$idtipointervento] != 0 || post('costo_km')[$idtipointervento] != 0 || post('costo_dirittochiamata')[$idtipointervento] != 0) {
+                        $dbo->query('UPDATE co_contratti_tipiintervento SET costo_ore='.prepare(post('costo_ore')[$idtipointervento]).', costo_km='.prepare(post('costo_km')[$idtipointervento]).', costo_dirittochiamata='.prepare(post('costo_dirittochiamata')[$idtipointervento]).', costo_ore_tecnico='.prepare(post('costo_ore_tecnico')[$idtipointervento]).', costo_km_tecnico='.prepare(post('costo_km_tecnico')[$idtipointervento]).', costo_dirittochiamata_tecnico='.prepare(post('costo_dirittochiamata_tecnico')[$idtipointervento]).' WHERE idcontratto='.prepare($id_record).' AND idtipointervento='.prepare($idtipointervento));
                     }
 
                     // ...altrimenti cancello l'eventuale riga
@@ -141,12 +141,12 @@ switch (post('op')) {
         $idarticolo = post('idarticolo');
         $descrizione = post('descrizione');
 
-        $qta = $post['qta'];
-        $prezzo = $post['prezzo'];
+        $qta = post('qta');
+        $prezzo = post('prezzo');
 
         // Calcolo dello sconto
-        $sconto_unitario = $post['sconto'];
-        $tipo_sconto = $post['tipo_sconto'];
+        $sconto_unitario = post('sconto');
+        $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,
             'prezzo' => $prezzo,
@@ -186,13 +186,13 @@ switch (post('op')) {
         $idarticolo = post('idarticolo');
         $descrizione = post('descrizione');
 
-        $qta = $post['qta'];
-        $prezzo = $post['prezzo'];
+        $qta = post('qta');
+        $prezzo = post('prezzo');
         $subtot = $prezzo * $qta;
 
         // Calcolo dello sconto
-        $sconto_unitario = $post['sconto'];
-        $tipo_sconto = $post['tipo_sconto'];
+        $sconto_unitario = post('sconto');
+        $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,
             'prezzo' => $prezzo,
@@ -224,7 +224,7 @@ switch (post('op')) {
 
     // Eliminazione riga
     case 'delriga':
-        if (isset($post['idriga'])) {
+        if (post('idriga') !== null) {
             $idriga = post('idriga');
 
             $query = 'DELETE FROM `co_righe_contratti` WHERE idcontratto='.prepare($id_record).' AND id='.prepare($idriga);
@@ -241,9 +241,9 @@ switch (post('op')) {
 
     // Scollegamento intervento da contratto
     case 'unlink':
-        if (isset($get['idcontratto']) && isset($get['idintervento'])) {
-            $idcontratto = $get['idcontratto'];
-            $idintervento = $get['idintervento'];
+        if (get('idcontratto') !== null && get('idintervento') !== null) {
+            $idcontratto = get('idcontratto');
+            $idintervento = get('idintervento');
 
             $query = 'DELETE FROM `co_contratti_promemoria` WHERE idcontratto='.prepare($idcontratto).' AND idintervento='.prepare($idintervento);
             $dbo->query($query);

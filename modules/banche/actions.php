@@ -10,11 +10,11 @@ switch (filter('op')) {
         if (isset($nome)) {
             $array = [
                 'nome' => $nome,
-                'filiale' => $post['filiale'],
-                'iban' => $post['iban'],
-                'bic' => $post['bic'],
-                'id_pianodeiconti3' => $post['id_pianodeiconti3'],
-                'note' => $post['note'],
+                'filiale' => post('filiale'),
+                'iban' => post('iban'),
+                'bic' => post('bic'),
+                'id_pianodeiconti3' => post('id_pianodeiconti3'),
+                'note' => post('note'),
             ];
 
             if (!empty($id_record)) {

@@ -51,8 +51,8 @@ switch (post('op')) {
         $prezzo_vendita = post('prezzo_vendita');
         $idiva = post('idiva');
 
-        $sconto_unitario = $post['sconto'];
-        $tipo_sconto = $post['tipo_sconto'];
+        $sconto_unitario = post('sconto');
+        $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,
             'prezzo' => $prezzo_vendita,
@@ -60,7 +60,7 @@ switch (post('op')) {
             'qta' => $qta,
         ]);
 
-        $idcontratto_riga = $post['idcontratto_riga'];
+        $idcontratto_riga = post('idcontratto_riga');
 
         // Decremento la quantità
         //add_movimento_magazzino($idarticolo, -$qta, ['idautomezzo' => $idautomezzo, 'idintervento' => $id_record]);
@@ -135,8 +135,8 @@ switch (post('op')) {
         $prezzo_vendita = post('prezzo_vendita');
         $prezzo_acquisto = post('prezzo_acquisto');
 
-        $sconto_unitario = $post['sconto'];
-        $tipo_sconto = $post['tipo_sconto'];
+        $sconto_unitario = post('sconto');
+        $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,
             'prezzo' => $prezzo_vendita,
@@ -150,7 +150,7 @@ switch (post('op')) {
 
         $iva = (($prezzo_vendita * $qta) - $sconto) * $rs_iva[0]['percentuale'] / 100;
 
-        $idcontratto_riga = $post['idcontratto_riga'];
+        $idcontratto_riga = post('idcontratto_riga');
 
         $dbo->query('INSERT INTO co_righe_contratti_materiali(descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto, id_riga_contratto) VALUES ('.prepare($descrizione).', '.prepare($qta).', '.prepare($um).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($idcontratto_riga).')');
 
@@ -166,8 +166,8 @@ switch (post('op')) {
     $prezzo_vendita = post('prezzo_vendita');
     $prezzo_acquisto = post('prezzo_acquisto');
 
-    $sconto_unitario = $post['sconto'];
-    $tipo_sconto = $post['tipo_sconto'];
+    $sconto_unitario = post('sconto');
+    $tipo_sconto = post('tipo_sconto');
     $sconto = calcola_sconto([
         'sconto' => $sconto_unitario,
         'prezzo' => $prezzo_vendita,

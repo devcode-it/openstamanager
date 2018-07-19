@@ -227,7 +227,7 @@ if (!API::isAPIRequest()) {
         Permissions::check();
     }
 
-    // Variabili GET e POST
+    // Retrocompatibilità
     $post = Filter::getPOST();
     $get = Filter::getGET();
 }

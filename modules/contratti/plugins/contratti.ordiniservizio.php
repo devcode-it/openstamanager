@@ -25,16 +25,16 @@ if (get('op') == 'add_ordineservizio') {
     $prev_data = '';
 
     // Ciclo fra le voci in arrivo dal form
-    foreach ($post['voce'] as $data_scadenza => $ordiniservizio) {
+    foreach (post('voce') as $data_scadenza => $ordiniservizio) {
         $data_scadenza = date_create_from_format('Ym', $data_scadenza)->format(Intl\Formatter::getStandardFormats()['date']);
 
         // Ogni data può avere più voci di servizio da salvare
         foreach ($ordiniservizio as $n => $idvoce) {
             // Aggiunta ordine di servizio solo se la voce è spuntata
-            if (in_array($idvoce, $post['idvoce'])) {
+            if (in_array($idvoce, post('idvoce'))) {
                 // Creazione ordine di servizio per data di scadenza
                 if ($prev_data != $data_scadenza) {
-                    $dbo->query('INSERT INTO co_ordiniservizio(idcontratto, data_scadenza, idimpianto, stato) VALUES('.prepare($id_record).', '.prepare($data_scadenza).', '.prepare($post['matricola']).", 'aperto')");
+                    $dbo->query('INSERT INTO co_ordiniservizio(idcontratto, data_scadenza, idimpianto, stato) VALUES('.prepare($id_record).', '.prepare($data_scadenza).', '.prepare(post('matricola')).", 'aperto')");
                     $idordineservizio = $dbo->lastInsertedID();
                 }
 
@@ -50,7 +50,7 @@ if (get('op') == 'add_ordineservizio') {
 
 // Eliminazione pianificazione specifica
 elseif (get('op') == 'del_ordineservizio') {
-    $idordineservizio = $get['idordineservizio'];
+    $idordineservizio = get('idordineservizio');
 
     $n = $dbo->fetchNum('SELECT id FROM co_ordiniservizio WHERE id='.prepare($idordineservizio)." AND stato='aperto'");
 

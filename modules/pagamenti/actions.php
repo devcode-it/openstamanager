@@ -7,32 +7,32 @@ switch (filter('op')) {
         $descrizione = filter('descrizione');
 
         if (isset($descrizione)) {
-            foreach ($post['id'] as $key => $id) {
+            foreach (post('id') as $key => $id) {
                 // Data fatturazione
                 $giorno = 0;
 
                 // Data fatturazione fine mese
-                if ($post['scadenza'][$key] == 2) {
+                if (post('scadenza')[$key] == 2) {
                     $giorno = -1;
                 }
 
                 // Data fatturazione giorno fisso
-                if ($post['scadenza'][$key] == 3) {
-                    $giorno = $post['giorno'][$key];
+                if (post('scadenza')[$key] == 3) {
+                    $giorno = post('giorno')[$key];
                 }
 
                 // Data fatturazione fine mese (giorno fisso)
-                elseif ($post['scadenza'][$key] == 4) {
-                    $giorno = -$post['giorno'][$key] - 1;
+                elseif (post('scadenza')[$key] == 4) {
+                    $giorno = -post('giorno')[$key] - 1;
                 }
 
                 $array = [
-                    'num_giorni' => $post['distanza'][$key],
+                    'num_giorni' => post('distanza')[$key],
                     'giorno' => $giorno,
-                    'prc' => $post['percentuale'][$key],
+                    'prc' => post('percentuale')[$key],
                     'descrizione' => $descrizione,
-                    'idconto_vendite' => $post['idconto_vendite'],
-                    'idconto_acquisti' => $post['idconto_acquisti'],
+                    'idconto_vendite' => post('idconto_vendite'),
+                    'idconto_acquisti' => post('idconto_acquisti'),
                 ];
 
                 if (!empty($id)) {

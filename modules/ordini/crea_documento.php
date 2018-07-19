@@ -27,10 +27,10 @@ $row = str_replace('id', 'id_riga_', $id);
 
 $module_name = 'Ordini cliente';
 
-$op = !empty($get['op']) ? $get['op'] : $op;
+$op = !empty(get('op')) ? get('op') : $op;
 
 $button = tr('Crea ordine');
-$button = !empty($get['op']) ? tr('Aggiungi') : $button;
+$button = !empty(get('op')) ? tr('Aggiungi') : $button;
 
 // Info documento
 $rs = $dbo->fetchArray('SELECT * FROM '.$table.' WHERE id='.prepare($id_record));
@@ -52,7 +52,7 @@ if (!empty($rs)) {
     echo '
 <p>'.tr('Seleziona le righe e le relative quantità da inserire nell\'ordine.').'.</p>
 
-<form action="'.$rootdir.'/editor.php?id_module='.Modules::get($module_name)['id'].(!empty($get['iddocumento']) ? '&id_record='.$get['iddocumento'] : '').'" method="post">
+<form action="'.$rootdir.'/editor.php?id_module='.Modules::get($module_name)['id'].(!empty(get('iddocumento')) ? '&id_record='.get('iddocumento') : '').'" method="post">
     <input type="hidden" name="'.$id.'" value="'.$id_record.'">
     <input type="hidden" name="idanagrafica" value="'.$idanagrafica.'">
     <input type="hidden" name="idconto" value="'.$idconto.'">

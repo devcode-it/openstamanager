@@ -66,10 +66,10 @@ if ($module['name'] == 'Ordini cliente') {
     $module_name = 'Fatture di vendita';
 }
 
-$op = !empty($get['op']) ? $get['op'] : $op;
+$op = !empty(get('op')) ? get('op') : $op;
 
 $button = ($documento == 'ddt') ? tr('Crea ddt') : tr('Crea fattura');
-$button = !empty($get['op']) ? tr('Aggiungi') : $button;
+$button = !empty(get('op')) ? tr('Aggiungi') : $button;
 
 // Info documento
 $rs = $dbo->fetchArray('SELECT * FROM '.$table.' WHERE id='.prepare($id_record));
@@ -95,7 +95,7 @@ if (!empty($rs)) {
     echo '
 <p>'.tr('Seleziona le righe e le relative quantità da inserire nel documento').'.</p>
 
-<form action="'.$rootdir.'/editor.php?id_module='.Modules::get($module_name)['id'].(!empty($get['iddocumento']) ? '&id_record='.$get['iddocumento'] : '').'" method="post">
+<form action="'.$rootdir.'/editor.php?id_module='.Modules::get($module_name)['id'].(!empty(get('iddocumento')) ? '&id_record='.get('iddocumento') : '').'" method="post">
     <input type="hidden" name="'.$id.'" value="'.$id_record.'">
     <input type="hidden" name="idanagrafica" value="'.$idanagrafica.'">
     <input type="hidden" name="idconto" value="'.$idconto.'">
@@ -106,7 +106,7 @@ if (!empty($rs)) {
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="dir" value="'.$dir.'">';
 
-    if (empty($get['op'])) {
+    if (empty(get('op'))) {
         echo '
     <div class="row">
 

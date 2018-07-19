@@ -2,8 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-$id_movimento = $get['id_movimento'];
-$id_conto = $get['id_conto'];
+$id_movimento = get('id_movimento');
+$id_conto = get('id_conto');
 
 $query = 'SELECT *, (subtotale-sconto) AS imponibile, (co_movimenti.descrizione) AS desc_fatt, (co_righe_documenti.descrizione) AS desc_riga FROM co_movimenti INNER JOIN co_righe_documenti ON co_movimenti.iddocumento =  co_righe_documenti.iddocumento WHERE co_movimenti.id = '.prepare($id_movimento).' AND co_movimenti.idconto = '.prepare($id_conto);
 $rs = $dbo->fetchArray($query);

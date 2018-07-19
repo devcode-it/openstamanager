@@ -84,11 +84,11 @@ switch (post('op')) {
                 $km = post('km')[$idriga];
 
                 // Lettura tariffe in base al tipo di intervento ed al tecnico
-                $idtipointervento_tecnico = $post['idtipointerventot'][$idriga];
-                $rs = $dbo->fetchArray('SELECT * FROM in_interventi_tecnici WHERE idtecnico='.prepare($post['idtecnico'][$idriga]).' AND idintervento='.prepare($id_record));
+                $idtipointervento_tecnico = post('idtipointerventot')[$idriga];
+                $rs = $dbo->fetchArray('SELECT * FROM in_interventi_tecnici WHERE idtecnico='.prepare(post('idtecnico')[$idriga]).' AND idintervento='.prepare($id_record));
 
                 if ($idtipointervento_tecnico != $rs[0]['idtipointervento']) {
-                    $rsc = $dbo->fetchArray('SELECT * FROM in_tariffe WHERE idtecnico='.prepare($post['idtecnico'][$idriga]).' AND idtipointervento='.prepare($idtipointervento_tecnico));
+                    $rsc = $dbo->fetchArray('SELECT * FROM in_tariffe WHERE idtecnico='.prepare(post('idtecnico')[$idriga]).' AND idtipointervento='.prepare($idtipointervento_tecnico));
 
                     if ($rsc[0]['costo_ore'] != 0 || $rsc[0]['costo_km'] != 0 || $rsc[0]['costo_dirittochiamata'] != 0 || $rsc[0]['costo_ore_tecnico'] != 0 || $rsc[0]['costo_km_tecnico'] != 0 || $rsc[0]['costo_dirittochiamata_tecnico'] != 0) {
                         $prezzo_ore_unitario = $rsc[0]['costo_ore'];
@@ -174,8 +174,8 @@ switch (post('op')) {
             }
         }
 
-        $tipo_sconto = $post['tipo_sconto_globale'];
-        $sconto = $post['sconto_globale'];
+        $tipo_sconto = post('tipo_sconto_globale');
+        $sconto = post('sconto_globale');
 
         // Salvataggio modifiche intervento
         $dbo->update('in_interventi', [
@@ -225,7 +225,7 @@ switch (post('op')) {
         $richiesta = post('richiesta');
         $idautomezzo = null;
 
-        if (!empty($codice) && !empty($post['idanagrafica']) && !empty($post['idtipointervento'])) {
+        if (!empty($codice) && !empty(post('idanagrafica')) && !empty(post('idtipointervento'))) {
             // Salvataggio modifiche intervento
             $dbo->insert('in_interventi', [
                 'idanagrafica' => post('idanagrafica'),
@@ -311,8 +311,8 @@ switch (post('op')) {
             }
         }
 
-        if (!empty($post['idordineservizio'])) {
-            $dbo->query('UPDATE co_ordiniservizio SET idintervento='.prepare($id_record).' WHERE id='.prepare($post['idordineservizio']));
+        if (!empty(post('idordineservizio'))) {
+            $dbo->query('UPDATE co_ordiniservizio SET idintervento='.prepare($id_record).' WHERE id='.prepare(post('idordineservizio')));
         }
 
         // Collegamenti tecnici/interventi
@@ -432,8 +432,8 @@ switch (post('op')) {
         $prezzo_vendita = post('prezzo_vendita');
         $prezzo_acquisto = post('prezzo_acquisto');
 
-        $sconto_unitario = $post['sconto'];
-        $tipo_sconto = $post['tipo_sconto'];
+        $sconto_unitario = post('sconto');
+        $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,
             'prezzo' => $prezzo_vendita,
@@ -460,8 +460,8 @@ switch (post('op')) {
         $prezzo_vendita = post('prezzo_vendita');
         $prezzo_acquisto = post('prezzo_acquisto');
 
-        $sconto_unitario = $post['sconto'];
-        $tipo_sconto = $post['tipo_sconto'];
+        $sconto_unitario = post('sconto');
+        $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,
             'prezzo' => $prezzo_vendita,
@@ -540,8 +540,8 @@ switch (post('op')) {
         $prezzo_vendita = post('prezzo_vendita');
         $idiva = post('idiva');
 
-        $sconto_unitario = $post['sconto'];
-        $tipo_sconto = $post['tipo_sconto'];
+        $sconto_unitario = post('sconto');
+        $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,
             'prezzo' => $prezzo_vendita,
@@ -608,10 +608,10 @@ switch (post('op')) {
         break;
 
     case 'add_serial':
-        $idriga = $post['idriga'];
-        $idarticolo = $post['idarticolo'];
+        $idriga = post('idriga');
+        $idarticolo = post('idarticolo');
 
-        $serials = (array) $post['serial'];
+        $serials = (array) post('serial');
         foreach ($serials as $key => $value) {
             if (empty($value)) {
                 unset($serials[$key]);

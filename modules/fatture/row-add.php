@@ -55,9 +55,9 @@ if (!empty($rss)) {
 
 // Importazione della gestione dedicata
 $file = 'riga';
-if (isset($get['is_descrizione'])) {
+if (get('is_descrizione') !== null) {
     $file = 'descrizione';
-} elseif (isset($get['is_articolo'])) {
+} elseif (get('is_articolo') !== null) {
     $file = 'articolo';
 
     $options['op'] = 'addarticolo';

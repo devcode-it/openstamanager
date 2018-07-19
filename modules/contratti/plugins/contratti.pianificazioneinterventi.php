@@ -26,7 +26,7 @@ switch (filter('op')) {
         $idtipointervento = filter('idtipointervento');
         $richiesta = filter('richiesta');
         $idsede = filter('idsede_c');
-        $idimpianti = implode(',', $post['idimpianti']);
+        $idimpianti = implode(',', post('idimpianti'));
 
         $query = 'UPDATE co_contratti_promemoria SET idtipointervento='.prepare($idtipointervento).', data_richiesta='.prepare($data_richiesta).', richiesta='.prepare($richiesta).',  idsede='.prepare($idsede).', idimpianti='.prepare($idimpianti).'   WHERE id = '.prepare($idcontratto_riga);
 
@@ -130,7 +130,7 @@ switch (filter('op')) {
                                     App::flash()->info(tr('Promemoria intervento pianificato!'));
 
                                     //pianificare anche l' intervento?
-                                    if ($post['pianifica_intervento']) {
+                                    if (post('pianifica_intervento')) {
                                         /*$orario_inizio = post('orario_inizio');
                                         $orario_fine = post('orario_fine');*/
 

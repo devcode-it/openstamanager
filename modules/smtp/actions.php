@@ -5,9 +5,9 @@ include_once __DIR__.'/../../core.php';
 switch (post('op')) {
     case 'add':
         $dbo->insert('zz_smtps', [
-            'name' => $post['name'],
-            'from_name' => $post['from_name'],
-            'from_address' => $post['from_address'],
+            'name' => post('name'),
+            'from_name' => post('from_name'),
+            'from_address' => post('from_address'),
         ]);
 
         $id_record = $dbo->lastInsertedID();
@@ -18,27 +18,27 @@ switch (post('op')) {
 
     case 'update':
         $dbo->update('zz_smtps', [
-            'name' => $post['name'],
-            'note' => $post['note'],
-            'server' => $post['server'],
-            'port' => $post['port'],
-            'username' => $post['username'],
-            'password' => $post['password'],
-            'from_name' => $post['from_name'],
-            'from_address' => $post['from_address'],
-            'encryption' => $post['encryption'],
-            'pec' => $post['pec'],
-            'main' => $post['main'],
+            'name' => post('name'),
+            'note' => post('note'),
+            'server' => post('server'),
+            'port' => post('port'),
+            'username' => post('username'),
+            'password' => post('password'),
+            'from_name' => post('from_name'),
+            'from_address' => post('from_address'),
+            'encryption' => post('encryption'),
+            'pec' => post('pec'),
+            'main' => post('main'),
         ], ['id' => $id_record]);
 
-        if (!empty($post['main'])) {
+        if (!empty(post('main'))) {
             $dbo->query('UPDATE zz_smtps SET main = 0 WHERE id != '.prepare($id_record));
         }
 
         App::flash()->info(tr('Informazioni salvate correttamente!'));
 
         // Validazione indirizzo email mittente
-        $check_email = Validate::isValidEmail($post['from_address']);
+        $check_email = Validate::isValidEmail(post('from_address'));
 
         // Se $check_email non è null e la riposta è negativa --> mostro il messaggio di avviso.
         if (!empty($check_email)) {

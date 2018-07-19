@@ -2,8 +2,8 @@
 
 include_once __DIR__.'/../../../core.php';
 
-if (!empty($get['idcontratto_riga'])) {
-    $idcontratto_riga = $get['idcontratto_riga'];
+if (!empty(get('idcontratto_riga'))) {
+    $idcontratto_riga = get('idcontratto_riga');
 }
 
 $query = 'SELECT * FROM co_righe_contratti_materiali WHERE id_riga_contratto='.prepare($idcontratto_riga).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC';

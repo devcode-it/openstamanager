@@ -2,10 +2,10 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$idcontratto = $get['idcontratto'];
-$idpianificazione = $get['idpianificazione'];
-$importo = $get['importo'];
-$n_rata = $get['n_rata'];
+$idcontratto = get('idcontratto');
+$idpianificazione = get('idpianificazione');
+$importo = get('importo');
+$n_rata = get('n_rata');
 
 // Lettura numero contratto e nome zona
 $rs = $dbo->fetchArray('SELECT numero, (SELECT descrizione FROM an_zone WHERE id=(SELECT idzona FROM co_ordiniservizio_pianificazionefatture WHERE id='.prepare($idpianificazione).')) AS zona FROM co_contratti WHERE id='.prepare($idcontratto));

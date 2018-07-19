@@ -18,10 +18,10 @@ function check_query($query)
 
 switch (filter('op')) {
     case 'update':
-        $post['options2'] = htmlspecialchars_decode($post['options2'], ENT_QUOTES);
+        $options2 = htmlspecialchars_decode(post('options2'), ENT_QUOTES);
 
-        if (check_query($post['options2'])) {
-            $dbo->query('UPDATE `zz_modules` SET `title`='.prepare($post['title']).', `options2`='.prepare($post['options2']).' WHERE `id`='.prepare($id_record));
+        if (check_query($options2)) {
+            $dbo->query('UPDATE `zz_modules` SET `title`='.prepare(post('title')).', `options2`='.prepare($options2).' WHERE `id`='.prepare($id_record));
 
             $rs = true;
         } else {
@@ -39,29 +39,29 @@ switch (filter('op')) {
     case 'fields':
         $rs = true;
 
-        foreach ((array) $post['query'] as $c => $k) {
+        foreach ((array) post('query') as $c => $k) {
             // Fix per la protezone contro XSS, che interpreta la sequenza "<testo" come un tag HTML
-            $post['query'][$c] = $_POST['query'][$c];
+            post('query')[$c] = $_POST['query'][$c];
 
-            if (check_query($post['query'][$c])) {
+            if (check_query(post('query')[$c])) {
                 $array = [
-                    'name' => $post['name'][$c],
-                    'query' => $post['query'][$c],
-                    'visible' => $post['visible'][$c],
-                    'search' => $post['search'][$c],
-                    'slow' => $post['slow'][$c],
-                    'format' => $post['format'][$c],
-                    'summable' => $post['sum'][$c],
-                    'search_inside' => $post['search_inside'][$c],
-                    'order_by' => $post['order_by'][$c],
+                    'name' => post('name')[$c],
+                    'query' => post('query')[$c],
+                    'visible' => post('visible')[$c],
+                    'search' => post('search')[$c],
+                    'slow' => post('slow')[$c],
+                    'format' => post('format')[$c],
+                    'summable' => post('sum')[$c],
+                    'search_inside' => post('search_inside')[$c],
+                    'order_by' => post('order_by')[$c],
                     'id_module' => $id_record,
                 ];
 
-                if (!empty($post['id'][$c]) && !empty($post['query'][$c])) {
-                    $id = $post['id'][$c];
+                if (!empty(post('id')[$c]) && !empty(post('query')[$c])) {
+                    $id = post('id')[$c];
 
                     $dbo->update('zz_views', $array, ['id' => $id]);
-                } elseif (!empty($post['query'][$c])) {
+                } elseif (!empty(post('query')[$c])) {
                     $array['#order'] = '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM zz_views AS t WHERE id_module='.prepare($id_record).')';
 
                     $dbo->insert('zz_views', $array);
@@ -70,7 +70,7 @@ switch (filter('op')) {
                 }
 
                 // Aggiornamento dei permessi relativi
-                $dbo->sync('zz_group_view', ['id_vista' => $id], ['id_gruppo' => (array) $post['gruppi'][$c]]);
+                $dbo->sync('zz_group_view', ['id_vista' => $id], ['id_gruppo' => (array) post('gruppi')[$c]]);
             } else {
                 $rs = false;
             }
@@ -87,24 +87,24 @@ switch (filter('op')) {
     case 'filters':
         $rs = true;
 
-        foreach ((array) $post['query'] as $c => $k) {
+        foreach ((array) post('query') as $c => $k) {
             // Fix per la protezone contro XSS, che interpreta la sequenza "<testo" come un tag HTML
-            $post['query'][$c] = $_POST['query'][$c];
+            post('query')[$c] = $_POST['query'][$c];
 
-            if (check_query($post['query'][$c])) {
+            if (check_query(post('query')[$c])) {
                 $array = [
-                    'name' => $post['name'][$c],
-                    'idgruppo' => $post['gruppo'][$c],
+                    'name' => post('name')[$c],
+                    'idgruppo' => post('gruppo')[$c],
                     'idmodule' => $id_record,
-                    'clause' => $post['query'][$c],
-                    'position' => !empty($post['position'][$c]) ? 'HVN' : 'WHR',
+                    'clause' => post('query')[$c],
+                    'position' => !empty(post('position')[$c]) ? 'HVN' : 'WHR',
                 ];
 
-                if (!empty($post['id'][$c]) && !empty($post['query'][$c])) {
-                    $id = $post['id'][$c];
+                if (!empty(post('id')[$c]) && !empty(post('query')[$c])) {
+                    $id = post('id')[$c];
 
                     $dbo->update('zz_group_module', $array, ['id' => $id]);
-                } elseif (!empty($post['query'][$c])) {
+                } elseif (!empty(post('query')[$c])) {
                     $dbo->insert('zz_group_module', $array);
 
                     $id = $dbo->lastInsertedID();

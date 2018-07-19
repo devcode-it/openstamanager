@@ -78,16 +78,16 @@ switch (post('op')) {
             $tempi_consegna = post('tempi_consegna');
             $numero = post('numero');
 
-            $tipo_sconto = $post['tipo_sconto_generico'];
-            $sconto = $post['sconto_generico'];
+            $tipo_sconto = post('tipo_sconto_generico');
+            $sconto = post('sconto_generico');
 
             // $budget = post('budget');
             // $budget = str_replace( ",", ".", $budget );
 
-            $data_bozza = $post['data_bozza'];
-            $data_accettazione = $post['data_accettazione'];
-            $data_rifiuto = $post['data_rifiuto'];
-            $data_conclusione = $post['data_conclusione'];
+            $data_bozza = post('data_bozza');
+            $data_accettazione = post('data_accettazione');
+            $data_rifiuto = post('data_rifiuto');
+            $data_conclusione = post('data_conclusione');
             $esclusioni = post('esclusioni');
             $descrizione = post('descrizione');
             $validita = post('validita');
@@ -136,7 +136,7 @@ switch (post('op')) {
         break;
 
     case 'addintervento':
-        if (isset($post['idintervento'])) {
+        if (post('idintervento') !== null) {
             // Selezione costi da intervento
             $idintervento = post('idintervento');
             $rs = $dbo->fetchArray('SELECT * FROM in_interventi WHERE id='.prepare($idintervento));
@@ -158,7 +158,7 @@ switch (post('op')) {
 
     // Scollegamento articolo da ordine
     case 'unlink_articolo':
-        if (isset($post['idriga'])) {
+        if (post('idriga') !== null) {
             $idriga = post('idriga');
             $idarticolo = post('idarticolo');
 
@@ -178,7 +178,7 @@ switch (post('op')) {
     // Scollegamento intervento da preventivo
     case 'unlink':
         if (isset($_GET['idpreventivo']) && isset($_GET['idintervento'])) {
-            $idintervento = $get['idintervento'];
+            $idintervento = get('idintervento');
 
             $query = 'DELETE FROM `co_preventivi_interventi` WHERE idpreventivo='.prepare($id_record).' AND idintervento='.prepare($idintervento);
             $dbo->query($query);
@@ -204,12 +204,12 @@ switch (post('op')) {
         $idiva = post('idiva');
         $descrizione = post('descrizione');
 
-        $qta = $post['qta'];
-        $prezzo = $post['prezzo'];
+        $qta = post('qta');
+        $prezzo = post('prezzo');
 
         // Calcolo dello sconto
-        $sconto_unitario = $post['sconto'];
-        $tipo_sconto = $post['tipo_sconto'];
+        $sconto_unitario = post('sconto');
+        $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,
             'prezzo' => $prezzo,
@@ -247,13 +247,13 @@ switch (post('op')) {
         $rs = $dbo->fetchArray('SELECT * FROM co_righe_preventivi WHERE id='.prepare($idriga));
         $is_descrizione = $rs[0]['is_descrizione'];
 
-        $qta = $post['qta'];
-        $prezzo = $post['prezzo'];
+        $qta = post('qta');
+        $prezzo = post('prezzo');
         $subtot = $prezzo * $qta;
 
         // Calcolo dello sconto
-        $sconto_unitario = $post['sconto'];
-        $tipo_sconto = $post['tipo_sconto'];
+        $sconto_unitario = post('sconto');
+        $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,
             'prezzo' => $prezzo,

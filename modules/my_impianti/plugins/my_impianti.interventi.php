@@ -31,9 +31,9 @@ if (filter('op') == 'link_myimpianti') {
 
     App::flash()->info(tr('Informazioni impianti salvate!'));
 } elseif (filter('op') == 'link_componenti') {
-    $components = (array) $post['componenti'];
+    $components = (array) post('componenti');
 
-    $list = (!empty($post['list'])) ? explode(',', $post['list']) : [];
+    $list = (!empty(post('list'))) ? explode(',', post('list')) : [];
     foreach ($list as $delete) {
         if (!in_array($delete, $components)) {
             $dbo->query('DELETE FROM my_componenti_interventi WHERE id_componente = '.prepare($delete).' AND id_intervento = '.prepare($id_record));

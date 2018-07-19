@@ -63,12 +63,12 @@ switch (post('op')) {
         $dir = 'entrata';
         $idtipodocumento = '2';
 
-        if (empty($_SESSION['m'.Modules::get('Fatture di vendita')['id']]['id_segment'])) {
+        if (empty($_SESSION['module_'.Modules::get('Fatture di vendita')['id']]['id_segment'])) {
             $rs = $dbo->fetchArray('SELECT id  FROM zz_segments WHERE predefined = 1 AND id_module = '.prepare(Modules::get('Fatture di vendita')['id']).'LIMIT 0,1');
-            $_SESSION['m'.Modules::get('Fatture di vendita')['id']]['id_segment'] = $rs[0]['id'];
+            $_SESSION['module_'.Modules::get('Fatture di vendita')['id']]['id_segment'] = $rs[0]['id'];
         }
 
-        $id_segment = $_SESSION['m'.Modules::get('Fatture di vendita')['id']]['id_segment'];
+        $id_segment = $_SESSION['module_'.Modules::get('Fatture di vendita')['id']]['id_segment'];
 
         $numero = get_new_numerofattura($data);
 

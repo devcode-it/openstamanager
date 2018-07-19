@@ -212,9 +212,9 @@ if (!API::isAPIRequest()) {
             $pageTitle = $module['title'];
 
             // Segmenti
-            if (!isset($_SESSION['m'.$id_module]['id_segment'])) {
+            if (!isset($_SESSION['module_'.$id_module]['id_segment'])) {
                 $segments = Modules::getSegments($id_module);
-                $_SESSION['m'.$id_module]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
+                $_SESSION['module_'.$id_module]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
             }
 
             Permissions::addModule($id_module);

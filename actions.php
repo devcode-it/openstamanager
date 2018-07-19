@@ -156,6 +156,8 @@ include App::filepath($directory.'|custom|', 'init.php');
 // Retrocompatibilità
 if (!isset($record) && isset($records[0])) {
     $record = $records[0];
+} elseif (!isset($records[0]) && isset($record)) {
+    $records = [$record];
 }
 
 // Registrazione del record

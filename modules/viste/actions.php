@@ -47,7 +47,7 @@ switch (filter('op')) {
                 $array = [
                     'name' => $post['name'][$c],
                     'query' => $post['query'][$c],
-                    'enabled' => $post['enabled'][$c],
+                    'visible' => $post['visible'][$c],
                     'search' => $post['search'][$c],
                     'slow' => $post['slow'][$c],
                     'format' => $post['format'][$c],

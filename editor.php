@@ -40,9 +40,6 @@ if (empty($record)) {
     echo '
 		<p>'.tr('Record non trovato').'.</p>';
 } else {
-    /*
-        * Lettura eventuali plugins modulo da inserire come tab
-        */
     echo '
 		<div class="nav-tabs-custom">
 			<ul class="nav nav-tabs pull-right" id="tabs" role="tablist">

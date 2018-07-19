@@ -40,7 +40,7 @@ if (Auth::check()) {
     foreach ($_SESSION as $idx1 => $arr2) {
         if ($idx1 == 'module_'.$id_module) {
             foreach ($arr2 as $field => $value) {
-                if ($value != '') {
+                if (!empty($value) && starts_with($field, 'search_')) {
                     $field_name = str_replace('search_', '', $field);
                     echo '
             search.push("search_'.$field_name.'");

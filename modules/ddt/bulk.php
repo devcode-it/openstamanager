@@ -17,9 +17,9 @@ switch (post('op')) {
 
         // Segmenti
         $id_fatture = Modules::get('Fatture di vendita')['id'];
-        if (!isset($_SESSION['m'.$id_fatture]['id_segment'])) {
+        if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
             $segments = Modules::getSegments($id_fatture);
-            $_SESSION['m'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
+            $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
         }
         $id_segment = $_SESSION['m'.$id_fatture]['id_segment'];
 

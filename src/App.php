@@ -146,7 +146,8 @@ class App
     public static function flash()
     {
         if (empty(self::$flash)) {
-            self::$flash = new \Util\Messages();
+            $storage = null;
+            self::$flash = new \Util\Messages($storage, 'messages');
         }
 
         return self::$flash;
@@ -286,7 +287,7 @@ class App
         foreach ($views as $view) {
             $select[] = $view['query'].(!empty($view['name']) ? " AS '".$view['name']."'" : '');
 
-            if ($view['enabled']) {
+            if (!empty($view['visible'])) {
                 $view['name'] = trim($view['name']);
                 $view['search_inside'] = trim($view['search_inside']);
                 $view['order_by'] = trim($view['order_by']);
@@ -410,7 +411,17 @@ class App
         $query = str_replace(['|period_start|', '|period_end|'], [$_SESSION['period_start'], $_SESSION['period_end']], $query);
 
         // Sostituzione dei segmenti
-        $query = str_replace('|segment|', !empty($_SESSION['m'.$id_module]['id_segment']) ? ' AND id_segment = '.prepare($_SESSION['m'.$id_module]['id_segment']) : '', $query);
+        $query = str_replace('|segment|', !empty($_SESSION['module_'.$id_module]['id_segment']) ? ' AND id_segment = '.prepare($_SESSION['module_'.$id_module]['id_segment']) : '', $query);
+
+        // Sostituzione dei formati
+        $patterns = formatter()->getSQLPatterns();
+
+        $replace = [];
+        foreach ($patterns as $key => $value) {
+            $replace['|'.$key.'_format|'] = "'".$value."'";
+        }
+
+        $query = replace($query, $replace);
 
         return $query;
     }

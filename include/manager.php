@@ -39,8 +39,6 @@ if (!empty($id_plugin)) {
     </h4>';
 }
 
-$total = App::readQuery($element);
-
 $type = $element['option'];
 
 // Caricamento helper modulo (verifico se ci sono helper personalizzati)
@@ -56,11 +54,13 @@ include App::filepath($directory.'|custom|', 'controller_before.php');
  * Datatables con record
  */
 if (!empty($type) && $type != 'menu' && $type != 'custom') {
+    $total = App::readQuery($element);
+
     if (empty($id_plugin) && count(Modules::getSegments($id_module)) > 1) {
         echo '
     <div class="row">
     	<div class="col-md-4 pull-right">
-    		{[ "type": "select", "name": "id_segment_", "required": 0, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module = '.prepare($id_module).'", "value": "'.$_SESSION['m'.$id_module]['id_segment'].'" ]}
+    		{[ "type": "select", "name": "id_segment_", "required": 0, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module = '.prepare($id_module).'", "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
     	</div>
     </div>
     <br>';

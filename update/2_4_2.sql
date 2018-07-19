@@ -241,3 +241,6 @@ ALTER TABLE `zz_smtp` RENAME `zz_smtps`;
 
 -- Aggiorno tabella zz_smtp in zz_smtps per il modulo Account email
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM zz_smtps WHERE 1=1 AND deleted_at IS NULL HAVING 2=2 ORDER BY `name`' WHERE `zz_modules`.`name` = 'Account email';
+
+-- Ridenominazione enabled in visible su zz_views
+ALTER TABLE `zz_views` CHANGE `enabled` `visible` BOOLEAN NOT NULL DEFAULT 1;

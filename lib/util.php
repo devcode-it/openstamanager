@@ -437,3 +437,18 @@ if (!function_exists('readSQLFile')) {
         return $queryLine;
     }
 }
+
+if (!function_exists('replace')) {
+    /**
+     * Sostituisce gli elementi dell'array all'interno della stringa.
+     *
+     * @param string $string
+     * @param array  $array
+     *
+     * @return string
+     */
+    function replace($string, $array)
+    {
+        return str_replace(array_keys($array), array_values($array), $string);
+    }
+}

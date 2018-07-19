@@ -33,6 +33,9 @@ class Formatter
     /** @var string Pattern per gli orari */
     protected $timePattern;
 
+    /** @var array Pattern per SQL */
+    protected $sql = [];
+
     public function __construct($locale, $timestamp = null, $date = null, $time = null, $number = [])
     {
         if (class_exists('NumberFormatter')) {
@@ -553,5 +556,32 @@ class Formatter
     public function setTimePattern($pattern)
     {
         return $this->timePattern = $pattern;
+    }
+
+    public function getSQLPatterns()
+    {
+        if (empty($this->sql)) {
+            $formats = [
+                'd' => '%d',
+                'm' => '%m',
+                'Y' => '%Y',
+                'H' => '%H',
+                'i' => '%i',
+            ];
+
+            $result = [
+                'timestamp' => $this->getTimestampPattern(),
+                'date' => $this->getDatePattern(),
+                'time' => $this->getTimePattern(),
+            ];
+
+            foreach ($result as $key => $value) {
+                $result[$key] = replace($value, $formats);
+            }
+
+            $this->sql = $result;
+        }
+
+        return $this->sql;
     }
 }

@@ -147,16 +147,25 @@ if (!empty($element['script'])) {
     return;
 }
 
-// Caricamento helper modulo (verifico se ci sono helper personalizzati)
-include_once App::filepath($directory.'|custom|', 'modutil.php');
+// Caricamento funzioni del modulo
+$modutil = App::filepath($directory.'|custom|', 'modutil.php');
+if (!empty($modutil)) {
+    include_once $modutil;
+}
 
 // Lettura risultato query del modulo
-include App::filepath($directory.'|custom|', 'init.php');
+$init = App::filepath($directory.'|custom|', 'init.php');
+if (!empty($init)) {
+    include_once $init;
+}
 
 // Retrocompatibilità
 if (!isset($record) && isset($records[0])) {
     $record = $records[0];
 } elseif (!isset($records[0]) && isset($record)) {
+    $records = [$record];
+} elseif (!isset($record)) {
+    $record = [];
     $records = [$record];
 }
 
@@ -170,7 +179,8 @@ if (Modules::getPermission($id_module) == 'rw') {
     $id_records = array_filter($id_records, function ($var) {return !empty($var); });
     $id_records = array_unique($id_records);
 
-    $bulk = include App::filepath($directory.'|custom|', 'bulk.php');
+    $bulk = App::filepath($directory.'|custom|', 'bulk.php');
+    $bulk = empty($bulk) ? [] : include $bulk;
     $bulk = empty($bulk) ? [] : $bulk;
 
     if (in_array(post('op'), array_keys($bulk))) {

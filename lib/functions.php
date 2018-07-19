@@ -321,15 +321,21 @@ function translateTemplate()
         ]);
     }
 
-    // Compatibilità con le versioni precedenti
-    foreach ($_SESSION['infos'] as $message) {
-        App::flash()->info($message);
+    // Retrocompatibilità
+    if (!empty($_SESSION['infos'])) {
+        foreach ($_SESSION['infos'] as $message) {
+            App::flash()->info($message);
+        }
     }
-    foreach ($_SESSION['warnings'] as $message) {
-        App::flash()->warning($message);
+    if (!empty($_SESSION['warnings'])) {
+        foreach ($_SESSION['warnings'] as $message) {
+            App::flash()->warning($message);
+        }
     }
-    foreach ($_SESSION['errors'] as $message) {
-        App::flash()->error($message);
+    if (!empty($_SESSION['errors'])) {
+        foreach ($_SESSION['errors'] as $message) {
+            App::flash()->error($message);
+        }
     }
 
     // Annullo le notifiche (AJAX)

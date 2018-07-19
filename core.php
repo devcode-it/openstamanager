@@ -178,7 +178,7 @@ if (!API::isAPIRequest()) {
     register_shutdown_function('translateTemplate');
     ob_start();
 
-    // Compatibilità con le versioni precedenti
+    // Retrocompatibilità
     $_SESSION['infos'] = isset($_SESSION['infos']) ? array_unique($_SESSION['infos']) : [];
     $_SESSION['warnings'] = isset($_SESSION['warnings']) ? array_unique($_SESSION['warnings']) : [];
     $_SESSION['errors'] = isset($_SESSION['errors']) ? array_unique($_SESSION['errors']) : [];

@@ -6,6 +6,8 @@ function submodules($list, $depth = 1)
 
     $id_module = App::getCurrentModule()['id'];
 
+    $result = '';
+
     foreach ($list as $sub) {
         // STATO
         if (!empty($sub['enabled'])) {

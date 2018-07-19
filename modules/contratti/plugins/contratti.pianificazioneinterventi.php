@@ -211,7 +211,7 @@ switch (filter('op')) {
                                     App::flash()->error(tr('Errore durante esecuzione query di pianificazione.  #'.$idcontratto_riga));
                                 }
                             } else {
-                                App::flash()->warning(tr('Esiste già un promemoria pianificato per il '.readDate($data_richiesta).'.'));
+                                App::flash()->warning(tr('Esiste già un promemoria pianificato per il '.Translator::dateToLocale($data_richiesta).'.'));
                             }
                         }
                         //fine controllo nuova data richiesta

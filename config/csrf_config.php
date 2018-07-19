@@ -16,4 +16,6 @@ return [
         'secure' => isHTTPS(true),
     ],
     'verifyGetFor' => [],
+    'CSRFP_TOKEN' => '',
+    'disabledJavascriptMessage' => '',
 ];

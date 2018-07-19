@@ -23,6 +23,8 @@ class FileManager implements ManagerInterface
         $options['showpanel'] = isset($options['showpanel']) ? $options['showpanel'] : true;
         $options['label'] = isset($options['label']) ? $options['label'] : tr('Nuovo allegato').':';
 
+        $options['id_plugin'] = !empty($options['id_plugin']) ? $options['id_plugin'] : null;
+
         // ID del form
         $attachment_id = 'attachments_'.$options['id_module'].'-'.$options['id_plugin'];
 

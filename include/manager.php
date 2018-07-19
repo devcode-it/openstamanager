@@ -41,14 +41,20 @@ if (!empty($id_plugin)) {
 
 $type = $element['option'];
 
-// Caricamento helper modulo (verifico se ci sono helper personalizzati)
-include_once App::filepath($directory.'|custom|', 'modutil.php');
+// Caricamento funzioni del modulo
+$modutil = App::filepath($directory.'|custom|', 'modutil.php');
+if (!empty($modutil)) {
+    include_once $modutil;
+}
 
 // Lettura risultato query del modulo
 // include App::filepath($directory.'|custom|', 'init.php');
 
 // Caricamento file aggiuntivo su elenco record
-include App::filepath($directory.'|custom|', 'controller_before.php');
+$controller_before = App::filepath($directory.'|custom|', 'controller_before.php');
+if (!empty($controller_before)) {
+    include $controller_before;
+}
 
 /*
  * Datatables con record
@@ -222,4 +228,7 @@ elseif ($type == 'custom') {
 }
 
 // Caricamento file aggiuntivo su elenco record
-include App::filepath($directory.'|custom|', 'controller_after.php');
+$controller_after = App::filepath($directory.'|custom|', 'controller_after.php');
+if (!empty($controller_after)) {
+    include $controller_after;
+}

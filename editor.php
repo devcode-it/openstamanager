@@ -140,11 +140,12 @@ if (empty($record)) {
                     <br>';
 
     // Pulsanti personalizzati
-    ob_start();
-    include Modules::filepath($id_module, 'buttons.php');
-    $buttons = ob_get_clean();
-
+    $buttons = Modules::filepath($id_module, 'buttons.php');
     if (!empty($buttons)) {
+        ob_start();
+        include $buttons;
+        $buttons = ob_get_clean();
+
         echo '
                     <div class="pull-right" id="pulsanti-modulo">
                         '.$buttons.'

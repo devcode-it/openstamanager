@@ -362,7 +362,7 @@ if ($vista == 'mese') {
 
     $('#select-intreventi-pianificare').change(function(){
         var mese = $(this).val();
-        $.get( '<?php echo $rootdir; ?>/modules/dashboard/ajaxreq.php', { op: 'load_intreventi', mese: mese }, function(data){
+        $.get( '<?php echo $rootdir; ?>/modules/dashboard/actions.php', { op: 'load_intreventi', mese: mese }, function(data){
             $('#interventi-pianificare').html(data);
             $('#external-events .fc-event').each(function() {
                 $(this).draggable({
@@ -385,7 +385,7 @@ if ($vista == 'mese') {
 
         $('#select-intreventi-pianificare option[value='+mese+']').attr('selected','selected').trigger('change');
 
-        $.get( '<?php echo $rootdir; ?>/modules/dashboard/ajaxreq.php', { op: 'load_intreventi', mese: mese }, function(data){
+        $.get( '<?php echo $rootdir; ?>/modules/dashboard/actions.php', { op: 'load_intreventi', mese: mese }, function(data){
             $('#interventi-pianificare').html(data);
             $('#external-events .fc-event').each(function() {
                 $(this).draggable({
@@ -625,7 +625,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
 
             editable: true,
             eventDrop: function(event,dayDelta,minuteDelta,revertFunc) {
-				$.get(globals.rootdir + "/modules/dashboard/ajaxreq.php?op=update_intervento&id="+event.id+"&idintervento="+event.idintervento+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
+				$.get(globals.rootdir + "/modules/dashboard/actions.php?op=update_intervento&id="+event.id+"&idintervento="+event.idintervento+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
 					if( response=="success" ){
 						data = $.trim(data);
 						if( data!="ok" ){
@@ -640,7 +640,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
 				});
 			},
             eventResize: function(event,dayDelta,minuteDelta,revertFunc) {
-				$.get(globals.rootdir + "/modules/dashboard/ajaxreq.php?op=update_intervento&id="+event.id+"&idintervento="+event.idintervento+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
+				$.get(globals.rootdir + "/modules/dashboard/actions.php?op=update_intervento&id="+event.id+"&idintervento="+event.idintervento+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
 					if( response=="success" ){
 						data = $.trim(data);
 						if(data != "ok"){
@@ -663,7 +663,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
 
 if (setting('Utilizzare i tooltip sul calendario') == '1') {
     ?>
-				$.get(globals.rootdir + "/modules/dashboard/ajaxreq.php?op=get_more_info&id="+event.idintervento+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
+				$.get(globals.rootdir + "/modules/dashboard/actions.php?op=get_more_info&id="+event.idintervento+"&timeStart="+moment(event.start).format("YYYY-MM-DD HH:mm")+"&timeEnd="+moment(event.end).format("YYYY-MM-DD HH:mm"), function(data,response){
 					if( response=="success" ){
 						data = $.trim(data);
 						if( data!="ok" ){
@@ -695,7 +695,7 @@ if (setting('Utilizzare i tooltip sul calendario') == '1') {
 ?>
 			},
             events: {
-				url: globals.rootdir + "/modules/dashboard/ajaxreq.php?op=get_current_month",
+				url: globals.rootdir + "/modules/dashboard/actions.php?op=get_current_month",
                 type: 'GET',
 				error: function() {
 					alert('<?php echo tr('Errore durante la creazione degli eventi'); ?>');

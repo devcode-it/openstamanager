@@ -26,7 +26,7 @@ if (!$cliente) {
 ?>
 
 <form action="" method="post" id="edit-form" >
-	<fieldset  <?php echo (!$record['deleted']) ? '' : 'disabled'; ?> >
+	<fieldset  <?php echo (empty($record['deleted_at'])) ? '' : 'disabled'; ?> >
 		<input type="hidden" name="backto" value="record-edit">
 		<input type="hidden" name="op" value="update">
 
@@ -433,7 +433,7 @@ if (setting('Azienda predefinita') == $id_record) {
 <div class="alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un file con nome "Logo stampe"').'.</div>';
 }
 
-if (!$record['deleted']) {
+if (empty($record['deleted_at'])) {
     //fatture, ddt, preventivi, contratti, ordini, interventi, utenti collegati a questa anagrafica
     $elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`idanagrafica` = '.prepare($id_record).'
 

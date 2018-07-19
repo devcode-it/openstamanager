@@ -310,29 +310,36 @@ if (Auth::check()) {
 
                 <div class="box-body">';
 }
+
 // Infomazioni
-foreach ($messages['info'] as $value) {
-    echo '
+if (!empty($messages['info'])) {
+    foreach ($messages['info'] as $value) {
+        echo '
 							<div class="alert alert-success push">
                                 <i class="fa fa-check"></i> '.$value.'
                             </div>';
+    }
 }
 
 // Errori
-foreach ($messages['error'] as $value) {
-    echo '
+if (!empty($messages['error'])) {
+    foreach ($messages['error'] as $value) {
+        echo '
 							<div class="alert alert-danger push">
                                 <i class="fa fa-times"></i> '.$value.'
                             </div>';
+    }
 }
 
 // Avvisi
-foreach ($messages['warning'] as $value) {
-    echo '
+if (!empty($messages['warning'])) {
+    foreach ($messages['warning'] as $value) {
+        echo '
 							<div class="alert alert-warning push">
                                 <i class="fa fa-warning"></i>
                                 '.$value.'
                             </div>';
+    }
 }
 
 if (!Auth::check() && (!empty($messages['info']) || !empty($messages['warning']) || !empty($messages['error']))) {

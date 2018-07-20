@@ -275,9 +275,9 @@ if (empty($new_codice)) {
         }
 ?>
         }
-
+		//Quando modifico orario inizio, allineo anche l'orario fine
         $("#orario_inizio").on("dp.change", function (e) {
-            $("#orario_fine").data("DateTimePicker").minDate(e.date);
+			$("#orario_fine").data("DateTimePicker").minDate(e.date).format('HH:mm');
         });
 
         // Refresh modulo dopo la chiusura di una pianificazione attività derivante dalle attività
@@ -360,18 +360,15 @@ if (empty($new_codice)) {
         $("#componenti").prop("disabled", !$(this).val() ? true : false);
         $("#componenti").selectReset();
 	});
-
-
+	
+	// tempo standard
 	$('#idtipointervento').change( function(){
-
 		if ( (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
-			// data = moment('<?php echo $data.' '.$orario_inizio; ?>').format('YYYY-MM-DD HH:mm
-			data = moment( moment().format('YYYY-MM-DD') + '<?php echo ' '.$orario_inizio; ?>').format('YYYY-MM-DD HH:mm');
+			data = '' + moment().format('YYYY-MM-DD') +' '+ $('#orario_inizio').val();
 			tempo_standard = $(this).selectData().tempo_standard;
 			orario_fine = moment(data).add(tempo_standard, 'hours').format("HH:mm");
-			$('input[name=orario_fine]').val(orario_fine);
+			$('#orario_fine').val(orario_fine);
 		}
-
 	});
 
 	$('#idtecnico').change( function(){
@@ -407,8 +404,9 @@ if (empty($new_codice)) {
                     // Se l'aggiunta intervento proviene dai contratti, faccio il submit via ajax e ricarico la tabella dei contratti
                     else if(ref == "interventi_contratti"){
                         //$('#elenco_interventi > tbody').load(globals.rootdir + '/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto=<?php echo $idcontratto; ?>');
-                        //$("#bs-popup").modal('hide');
-                        location.href = '<?= $rootdir ?>/editor.php?id_module=<?= Modules::get('Contratti')['id'] ?>&id_record=<?= $id_record ?>#tab_<?= $id_plugin ?>';
+                        $("#bs-popup").modal('hide');
+						parent.window.location.reload();
+                        //location.href = '<?= $rootdir ?>/editor.php?id_module=<?= Modules::get('Contratti')['id'] ?>&id_record=<?= $id_record ?>#tab_<?= $id_plugin ?>';
                     }
                 }
             });

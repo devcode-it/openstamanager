@@ -406,9 +406,9 @@ if (empty($new_codice)) {
 
                     // Se l'aggiunta intervento proviene dai contratti, faccio il submit via ajax e ricarico la tabella dei contratti
                     else if(ref == "interventi_contratti"){
-						//$('#elenco_interventi > tbody').load(globals.rootdir + '/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto=<?php echo $idcontratto; ?>');
-                       //$("#bs-popup").modal('hide');
-						redirect(<?php echo $rootdir; ?>.'/editor.php?id_module='<?php echo Modules::get('Contratti')['id']; ?>'&id_record='<?php echo $id_record; ?>'#tab_'.<?php echo $id_plugin; ?>);
+                        //$('#elenco_interventi > tbody').load(globals.rootdir + '/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto=<?php echo $idcontratto; ?>');
+                        //$("#bs-popup").modal('hide');
+                        location.href = '<?= $rootdir ?>/editor.php?id_module=<?= Modules::get('Contratti')['id'] ?>&id_record=<?= $id_record ?>#tab_<?= $id_plugin ?>';
                     }
                 }
             });

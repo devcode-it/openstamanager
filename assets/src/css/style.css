@@ -621,3 +621,8 @@ input.small-width {
 .parsley-errors-list{
     color: red;
 }
+
+.img-circle{
+	box-shadow: 0px 0px 1px 1px lightgray;
+	opacity:0.3;
+}

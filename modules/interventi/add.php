@@ -360,7 +360,7 @@ if (empty($new_codice)) {
         $("#componenti").prop("disabled", !$(this).val() ? true : false);
         $("#componenti").selectReset();
 	});
-	
+
 	// tempo standard
 	$('#idtipointervento').change( function(){
 		if ( (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
@@ -406,7 +406,7 @@ if (empty($new_codice)) {
                         //$('#elenco_interventi > tbody').load(globals.rootdir + '/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto=<?php echo $idcontratto; ?>');
                         $("#bs-popup").modal('hide');
 						parent.window.location.reload();
-                        //location.href = '<?= $rootdir ?>/editor.php?id_module=<?= Modules::get('Contratti')['id'] ?>&id_record=<?= $id_record ?>#tab_<?= $id_plugin ?>';
+                        //location.href = '<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::get('Contratti')['id'] ?>&id_record=<?php echo $id_record ?>#tab_<?php echo $id_plugin ?>';
                     }
                 }
             });

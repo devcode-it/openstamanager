@@ -622,7 +622,6 @@ input.small-width {
     color: red;
 }
 
-.img-circle{
+.img-circle.square{
 	box-shadow: 0px 0px 1px 1px lightgray;
-	opacity:0.3;
 }

@@ -18,13 +18,15 @@ $mesi = [
 ];
 
 // Righe inserite
-$qp = "SELECT *, DATE_FORMAT( data_richiesta, '%m-%Y') AS mese, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_contratti_promemoria.idtipointervento) AS tipointervento, (SELECT idanagrafica FROM co_contratti WHERE id=idcontratto) AS idcliente, (SELECT ragione_sociale FROM co_contratti INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_contratti.id=idcontratto) AS ragione_sociale FROM co_contratti_promemoria WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL ORDER BY DATE_FORMAT( data_richiesta, '%m-%Y') ASC, ragione_sociale ASC";
+$qp = "SELECT *, DATE_FORMAT( data_richiesta, '%m-%Y') AS mese, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_contratti_promemoria.idtipointervento) AS tipointervento, (SELECT idanagrafica FROM co_contratti WHERE id=idcontratto) AS idcliente, (SELECT ragione_sociale FROM co_contratti INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_contratti.id=idcontratto) AS ragione_sociale FROM co_contratti_promemoria WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL ORDER BY DATE_FORMAT( data_richiesta, '%Y-%m') ASC, ragione_sociale ASC";
 $rsp = $dbo->fetchArray($qp);
 
 if (!empty($rsp)) {
+	
     // Elenco interventi da pianificare
     foreach ($rsp as $i => $r) {
-        // Se cambia il mese ricreo l'intestazione della tabella
+        
+		// Se cambia il mese ricreo l'intestazione della tabella
         if (!isset($rsp[$i - 1]) || $r['mese'] != $rsp[$i - 1]['mese']) {
             if ($i == 0) {
                 $attr = '';

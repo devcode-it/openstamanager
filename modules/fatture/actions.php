@@ -1232,17 +1232,26 @@ switch (post('op')) {
             $idriga = post('idriga');
 
             // Lettura preventivi collegati
-            $query = 'SELECT iddocumento, idpreventivo FROM co_righe_documenti WHERE id='.prepare($idriga);
+            $query = 'SELECT iddocumento, idpreventivo, idarticolo FROM co_righe_documenti WHERE id='.prepare($idriga);
             $rsp = $dbo->fetchArray($query);
             $id_record = $rsp[0]['iddocumento'];
             $idpreventivo = $rsp[0]['idpreventivo'];
+			$idarticolo = $rsp[0]['idarticolo'];
 			
-			
-			//rimetto a magazzino gli articoli collegati al preventivo, ma che non sono collegati ad un intervento
-			$rs5 = $dbo->fetchArray('SELECT idarticolo, id FROM co_righe_documenti WHERE iddocumento = '.prepare($id_record).' AND idarticolo != 0 AND idintervento IS NULL AND idpreventivo='.prepare($idpreventivo));
-			for ($x = 0; $x < sizeof($rs5); ++$x) {
-				rimuovi_articolo_dafattura($rs5[$x]['idarticolo'], $id_record, $rs5[$x]['id']);
+			//preventivo su unica riga, perdo il riferimento dell'articolo quindi lo vado a leggere da co_righe_preventivi
+			if (empty($idarticolo)){
+				//rimetto a magazzino gli articoli collegati al preventivo
+				$rsa = $dbo->fetchArray('SELECT idarticolo, qta FROM co_righe_preventivi WHERE idpreventivo = '.prepare($idpreventivo));
+				for ($i = 0; $i < sizeof($rsa); ++$i) {
+					if (!empty($rsa[$i]['idarticolo']))
+						add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'],  ['iddocumento' => $id_record]);
+						//rimuovi_articolo_dafattura($rsa[$i]['idarticolo'], $id_record, $idriga);				
+				}
+			}else{
+				$rs5 = $dbo->fetchArray('SELECT idarticolo, id, qta FROM co_righe_documenti WHERE  id = '.prepare($idriga).'  AND idintervento IS NULL');
+				rimuovi_articolo_dafattura($rs5[0]['idarticolo'], $id_record, $idriga);
 			}
+			
 					
             $query = 'DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
 
@@ -1256,7 +1265,7 @@ switch (post('op')) {
                 }
 
                 /*
-                    Rimuovo tutti gli articoli dalla fattura collegati agli interventi che sono collegati a questo preventivo
+                    Rimuovo tutti gli articoli dalla fattura collegati agli interventi di questo preventivo
                 */
                 $rs2 = $dbo->fetchArray('SELECT idintervento FROM co_preventivi_interventi WHERE  idpreventivo != 0 AND idpreventivo='.prepare($idpreventivo));
                 for ($i = 0; $i < sizeof($rs2); ++$i) {

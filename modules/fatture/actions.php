@@ -1236,7 +1236,14 @@ switch (post('op')) {
             $rsp = $dbo->fetchArray($query);
             $id_record = $rsp[0]['iddocumento'];
             $idpreventivo = $rsp[0]['idpreventivo'];
-
+			
+			
+			//rimetto a magazzino gli articoli collegati al preventivo, ma che non sono collegati ad un intervento
+			$rs5 = $dbo->fetchArray('SELECT idarticolo, id FROM co_righe_documenti WHERE iddocumento = '.prepare($id_record).' AND idarticolo != 0 AND idintervento IS NULL AND idpreventivo='.prepare($idpreventivo));
+			for ($x = 0; $x < sizeof($rs5); ++$x) {
+				rimuovi_articolo_dafattura($rs5[$x]['idarticolo'], $id_record, $rs5[$x]['id']);
+			}
+					
             $query = 'DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
 
             if ($dbo->query($query)) {
@@ -1251,7 +1258,7 @@ switch (post('op')) {
                 /*
                     Rimuovo tutti gli articoli dalla fattura collegati agli interventi che sono collegati a questo preventivo
                 */
-                $rs2 = $dbo->fetchArray('SELECT idintervento FROM co_preventivi_interventi WHERE idpreventivo='.prepare($idpreventivo)." AND NOT idpreventivo=''");
+                $rs2 = $dbo->fetchArray('SELECT idintervento FROM co_preventivi_interventi WHERE  idpreventivo != 0 AND idpreventivo='.prepare($idpreventivo));
                 for ($i = 0; $i < sizeof($rs2); ++$i) {
                     // Leggo gli articoli usati in questo intervento
                     $rs3 = $dbo->fetchArray('SELECT idarticolo FROM mg_articoli_interventi WHERE idintervento='.prepare($rs2[$i]['idintervento']));

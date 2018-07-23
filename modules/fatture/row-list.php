@@ -38,9 +38,22 @@ if (!empty($rs)) {
         $ref_modulo = null;
         $ref_id = null;
 
+        // Preventivi
+        if (!empty($r['idpreventivo'])) {
+            $delete = 'unlink_preventivo';
+        }
+		 // Contratti
+        elseif (!empty($r['idcontratto'])) {
+            $delete = 'unlink_contratto';
+        }
+		// Intervento
+        elseif (!empty($r['idintervento'])) {
+            $delete = 'unlink_intervento';
+        }
         // Articoli
-        if (!empty($r['idarticolo'])) {
-            $ref_modulo = Modules::get('Articoli')['id'];
+        elseif (!empty($r['idarticolo'])) {
+			
+			$ref_modulo = Modules::get('Articoli')['id'];
             $ref_id = $r['idarticolo'];
 
             $r['descrizione'] = (!empty($r['codice']) ? $r['codice'].' - ' : '').$r['descrizione'];
@@ -61,18 +74,6 @@ if (!empty($rs)) {
                     $mancanti = 0;
                 }
             }
-        }
-        // Preventivi
-        elseif (!empty($r['idpreventivo'])) {
-            $delete = 'unlink_preventivo';
-        }
-        // Contratti
-        elseif (!empty($r['idcontratto'])) {
-            $delete = 'unlink_contratto';
-        }
-        // Intervento
-        elseif (!empty($r['idintervento'])) {
-            $delete = 'unlink_intervento';
         }
         // Righe generiche
         else {
@@ -170,8 +171,7 @@ if (!empty($rs)) {
         if (empty($r['is_descrizione'])) {
             echo '
             '.Translator::numberToLocale($r['iva']).' &euro;
-            <br><small class="help-block">'.$r['desc_iva'].'</small>
-            <small>'.$r['iva'].'</small>';
+            <br><small class="help-block">'.$r['desc_iva'].'</small>';
         }
 
         echo '

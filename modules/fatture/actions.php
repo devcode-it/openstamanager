@@ -525,7 +525,7 @@ switch (post('op')) {
             // Calcolo iva
             $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
             $rs = $dbo->fetchArray($query);
-            $iva = $prezzo / 100 * $rs[0]['percentuale'];
+            $iva = ($prezzo-$sconto) / 100 * $rs[0]['percentuale'];
             $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
             $desc_iva = $rs[0]['descrizione'];
 
@@ -649,7 +649,7 @@ switch (post('op')) {
             // Calcolo iva
             $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
             $rs = $dbo->fetchArray($query);
-            $iva = $prezzo / 100 * $rs[0]['percentuale'];
+            $iva = ($prezzo-$sconto) / 100 * $rs[0]['percentuale'];
             $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
             $desc_iva = $rs[0]['descrizione'];
 

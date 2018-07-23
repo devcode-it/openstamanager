@@ -155,7 +155,7 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
             $data = is_array($value) ? $value['data'] : [];
             $extra = [];
             foreach ($data as $k => $v) {
-                $extra[] = 'data-'.$k.'="'.prepareToField($v).'"';
+                $extra[] = 'data-'.$k.'="'.prepareToField(\HTMLBuilder\HTMLBuilder::replace($v)).'"';
             }
 
             echo '

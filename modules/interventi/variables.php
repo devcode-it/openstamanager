@@ -14,4 +14,5 @@ return [
     'data' => Translator::dateToLocale($r['data_richiesta']),
     'data richiesta' => Translator::dateToLocale($r['data_richiesta']),
     'data fine intervento' => empty($r['data_fine']) ? Translator::dateToLocale($r['data_richiesta']) : Translator::dateToLocale($r['data_fine']),
+	'id_anagrafica' => $r['idanagrafica'],
 ];

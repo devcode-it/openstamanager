@@ -699,6 +699,9 @@ switch (post('op')) {
             $idiva = post('idiva');
             $idconto = post('idconto');
             $idum = post('um');
+			$idrivalsainps = post('idrivalsainps');
+			$idritenutaacconto = post('idritenutaacconto');
+			$calcolo_ritenutaacconto = post('calcolo_ritenutaacconto');
 
             $qta = $post['qta'];
             if (!empty($records[0]['is_reversed'])) {
@@ -712,8 +715,10 @@ switch (post('op')) {
             $tipo_sconto = $post['tipo_sconto'];
             $sconto = ($tipo_sconto == 'PRC') ? ($prezzo * $sconto_unitario) / 100 : $sconto_unitario;
             $sconto = $sconto * $qta;
-
-            add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva, $qta, $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto, '0', $idconto, $idum);
+				 
+            add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva, $qta, $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto, '0', $idconto, $idum, $idrivalsainps, $idritenutaacconto, $calcolo_ritenutaacconto);
+			
+			ricalcola_costiagg_fattura($id_record);
 
             $_SESSION['infos'][] = tr('Articolo aggiunto!');
         }

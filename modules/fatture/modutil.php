@@ -644,7 +644,7 @@ function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenu
  * $prezzo			float		prezzo totale dell'articolo (prezzounitario*qtà)
  * $idintervento	integer		id dell'intervento da cui arriva l'articolo (per non creare casini quando si rimuoverà un articolo dalla fattura).
  */
-function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT', $idintervento = 0, $idconto = 0, $idum = 0)
+function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT', $idintervento = 0, $idconto = 0, $idum = 0, $idrivalsainps = '', $idritenutaacconto = '', $calcolo_ritenutaacconto = '')
 {
     global $dir;
     global $idddt;
@@ -673,11 +673,28 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
     $rs2 = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare($idiva));
     $iva = ($prezzo - $sconto) / 100 * $rs2[0]['percentuale'];
     $desc_iva = $rs2[0]['descrizione'];
+	
+	if (!empty($idrivalsainps)){
+		// Calcolo rivalsa inps
+		$rs = $dbo->fetchArray('SELECT * FROM co_rivalsainps WHERE id='.prepare($idrivalsainps));
+		$rivalsainps = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
+	}
+	
+	if (!empty($idritenutaacconto)){
+		// Calcolo ritenuta d'acconto
+		$query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare($idritenutaacconto);
+		$rs = $dbo->fetchArray($query);
+		if ($calcolo_ritenutaacconto == 'Imponibile') {
+			$ritenutaacconto = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
+		} else if ( $calcolo_ritenutaacconto == 'Imponibile + rivalsa inps') {
+			$ritenutaacconto = ($prezzo - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
+		}
+	}
 
     if ($qta != 0) {
         $rsart = $dbo->fetchArray('SELECT abilita_serial FROM mg_articoli WHERE id='.prepare($idarticolo));
 
-        $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idarticolo, idintervento, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, qta, abilita_serial, idconto, um, `order`) VALUES ('.prepare($iddocumento).', '.prepare($idarticolo).', '.(!empty($idintervento) ? prepare($idintervento) : 'NULL').', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($qta).', '.prepare($rsart[0]['abilita_serial']).', '.prepare($idconto).', '.prepare($um).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($iddocumento).'))');
+        $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idarticolo, idintervento, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, qta, abilita_serial, idconto, um, `order`, idritenutaacconto, ritenutaacconto, idrivalsainps, rivalsainps,	calcolo_ritenutaacconto) VALUES ('.prepare($iddocumento).', '.prepare($idarticolo).', '.(!empty($idintervento) ? prepare($idintervento) : 'NULL').', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($qta).', '.prepare($rsart[0]['abilita_serial']).', '.prepare($idconto).', '.prepare($um).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($iddocumento).'), '.prepare($idritenutaacconto).', '.prepare($ritenutaacconto).', '.prepare($idrivalsainps).', '.prepare($rivalsainps).', '.prepare($calcolo_ritenutaacconto).')');
         $idriga = $dbo->lastInsertedID();
 
         /*

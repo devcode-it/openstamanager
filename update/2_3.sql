@@ -851,7 +851,7 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_righe_contra
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_ordiniservizio WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1)) AND idintervento IS NULL' WHERE `zz_widgets`.`name` = 'Ordini di servizio da impostare';
 
 -- Creazione del campo format per la tabella zz_views
-ALTER TABLE `zz_views` ADD `format` boolean NOT NULL AFTER `slow`;
+ALTER TABLE `zz_views` ADD `format` boolean NOT NULL DEFAULT 0 AFTER `slow`;
 UPDATE `zz_views` SET `format` = 1 WHERE
 (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = 'Importo')
 OR (`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = 'Pagato')

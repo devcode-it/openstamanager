@@ -39,7 +39,7 @@ switch (filter('op')) {
                 ]);
             }
         } else {
-            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio.');
+            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio');
         }
 
         break;
@@ -55,7 +55,7 @@ switch (filter('op')) {
                 '_TYPE_' => 'causale',
             ]);
         } else {
-            $_SESSION['errors'][] = tr('Sono presenti dei documenti collegati a questa causale.');
+            $_SESSION['errors'][] = tr('Sono presenti dei documenti collegati a questa causale');
         }
 
         break;

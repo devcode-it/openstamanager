@@ -33,7 +33,12 @@ if (Auth::check()) {
         <!-- Fix per le icone di debug -->
         <style>div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-database:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-duration:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-memory:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-row-count:before, div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-stmt-id:before {
             font-family: FontAwesome;
-        }</style>';
+        }</style>
+
+        <!-- Rimozione del messaggio automatico riguardante la modifica di valori nella pagina -->
+        <script>
+            window.onbeforeunload = null;
+        </script>';
 
         echo $debugbarRenderer->render();
     }
@@ -43,12 +48,6 @@ if (Auth::check()) {
         echo '
 		<style>'.$custom_css.'</style>';
     }
-
-    // Rimozione del messaggio automatico riguardante la modifica di valori nella pagina
-    echo '
-        <script>
-            window.onbeforeunload = null;
-        </script>';
 }
 
 echo '

@@ -525,7 +525,7 @@ switch (post('op')) {
             // Calcolo iva
             $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
             $rs = $dbo->fetchArray($query);
-            $iva = $prezzo / 100 * $rs[0]['percentuale'];
+            $iva = ($prezzo-$sconto) / 100 * $rs[0]['percentuale'];
             $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
             $desc_iva = $rs[0]['descrizione'];
 
@@ -653,7 +653,7 @@ switch (post('op')) {
             // Calcolo iva
             $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
             $rs = $dbo->fetchArray($query);
-            $iva = $prezzo / 100 * $rs[0]['percentuale'];
+            $iva = ($prezzo-$sconto) / 100 * $rs[0]['percentuale'];
             $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
             $desc_iva = $rs[0]['descrizione'];
 
@@ -703,6 +703,9 @@ switch (post('op')) {
             $idiva = post('idiva');
             $idconto = post('idconto');
             $idum = post('um');
+			$idrivalsainps = post('idrivalsainps');
+			$idritenutaacconto = post('idritenutaacconto');
+			$calcolo_ritenutaacconto = post('calcolo_ritenutaacconto');
 
             $qta = post('qta');
             if (!empty($record['is_reversed'])) {
@@ -721,7 +724,9 @@ switch (post('op')) {
                 'qta' => $qta,
             ]);
 
-            add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva, $qta, $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto, '0', $idconto, $idum);
+            add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva, $qta, $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto, '0', $idconto, $idum, $idrivalsainps, $idritenutaacconto, $calcolo_ritenutaacconto);
+
+			ricalcola_costiagg_fattura($id_record);
 
             flash()->info(tr('Articolo aggiunto!'));
         }
@@ -1248,10 +1253,26 @@ switch (post('op')) {
             $idriga = post('idriga');
 
             // Lettura preventivi collegati
-            $query = 'SELECT iddocumento, idpreventivo FROM co_righe_documenti WHERE id='.prepare($idriga);
+            $query = 'SELECT iddocumento, idpreventivo, idarticolo FROM co_righe_documenti WHERE id='.prepare($idriga);
             $rsp = $dbo->fetchArray($query);
             $id_record = $rsp[0]['iddocumento'];
             $idpreventivo = $rsp[0]['idpreventivo'];
+			$idarticolo = $rsp[0]['idarticolo'];
+
+			//preventivo su unica riga, perdo il riferimento dell'articolo quindi lo vado a leggere da co_righe_preventivi
+			if (empty($idarticolo)){
+				//rimetto a magazzino gli articoli collegati al preventivo
+				$rsa = $dbo->fetchArray('SELECT idarticolo, qta FROM co_righe_preventivi WHERE idpreventivo = '.prepare($idpreventivo));
+				for ($i = 0; $i < sizeof($rsa); ++$i) {
+					if (!empty($rsa[$i]['idarticolo']))
+						add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'],  ['iddocumento' => $id_record]);
+						//rimuovi_articolo_dafattura($rsa[$i]['idarticolo'], $id_record, $idriga);
+				}
+			}else{
+				$rs5 = $dbo->fetchArray('SELECT idarticolo, id, qta FROM co_righe_documenti WHERE  id = '.prepare($idriga).'  AND idintervento IS NULL');
+				rimuovi_articolo_dafattura($rs5[0]['idarticolo'], $id_record, $idriga);
+			}
+
 
             $query = 'DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
 
@@ -1265,9 +1286,9 @@ switch (post('op')) {
                 }
 
                 /*
-                    Rimuovo tutti gli articoli dalla fattura collegati agli interventi che sono collegati a questo preventivo
+                    Rimuovo tutti gli articoli dalla fattura collegati agli interventi di questo preventivo
                 */
-                $rs2 = $dbo->fetchArray('SELECT idintervento FROM co_preventivi_interventi WHERE idpreventivo='.prepare($idpreventivo)." AND NOT idpreventivo=''");
+                $rs2 = $dbo->fetchArray('SELECT idintervento FROM co_preventivi_interventi WHERE  idpreventivo != 0 AND idpreventivo='.prepare($idpreventivo));
                 for ($i = 0; $i < sizeof($rs2); ++$i) {
                     // Leggo gli articoli usati in questo intervento
                     $rs3 = $dbo->fetchArray('SELECT idarticolo FROM mg_articoli_interventi WHERE idintervento='.prepare($rs2[$i]['idintervento']));

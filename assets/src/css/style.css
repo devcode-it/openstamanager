@@ -789,3 +789,7 @@ input.small-width {
 .timeline-body>p+p {
     margin-top: 5px;
 }
+
+.img-circle.square{
+	box-shadow: 0px 0px 1px 1px lightgray;
+}

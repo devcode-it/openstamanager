@@ -39,7 +39,7 @@ switch (filter('op')) {
                 ]));
             }
         } else {
-            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio.'));
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
         }
 
         break;
@@ -55,7 +55,7 @@ switch (filter('op')) {
                 '_TYPE_' => 'causale',
             ]));
         } else {
-            flash()->error(tr('Sono presenti dei documenti collegati a questa causale.'));
+            flash()->error(tr('Sono presenti dei documenti collegati a questa causale'));
         }
 
         break;

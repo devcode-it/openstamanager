@@ -179,8 +179,12 @@ $(document).ready(function(){
             $(this).parentsUntil('.box').find('[id*=giorno]').prop('disabled', false);
         }
     });
+	
+	$(document).on('change', '[id*=percentuale]', function(){
+		$('button[type=submit]').prop( 'disabled', false ).removeClass('disabled');
+	});
 
-	$('#edit-form').submit(function(event) {
+	$('#edit-form').submit( function(event) {
 		var tot = 0;
 
 		$(this).find('[id*=percentuale]').each(function(){
@@ -190,9 +194,12 @@ $(document).ready(function(){
 			tot += prc;
 		});
 
-		if(tot != 100) {
+		if( tot != 100) {
 			$('#wait').removeClass("hide");
 			event.preventDefault();
+		} else {
+			$('#wait').addClass("hide");
+			$(this).unbind('submit').submit();
 		}
 	});
 });

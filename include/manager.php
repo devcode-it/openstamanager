@@ -172,11 +172,11 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
             $data = is_array($value) ? $value['data'] : [];
             $extra = [];
             foreach ($data as $k => $v) {
-                $extra[] = 'data-'.$k.'="'.$v.'"';
+                $extra[] = 'data-'.$k.'="'.prepareToField(\HTMLBuilder\HTMLBuilder::replace($v)).'"';
             }
 
             echo '
-                <li role="presentation"><a class="bulk-action clickable" data-op="'.$key.'" data-backto="record-list" '.implode(' ', $extra).'>'.$text.'</a></li>';
+                <li role="presentation"><a class="bulk-action clickable" data-op="'.prepareToField($key).'" data-backto="record-list" '.implode(' ', $extra).'>'.$text.'</a></li>';
         }
 
         echo '

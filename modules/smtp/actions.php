@@ -66,10 +66,14 @@ switch (post('op')) {
         }
 
         $mail = new Mail($id_record);
-        if ($mail->testSMTP()) {
-            flash()->info(tr('Connessione SMTP riuscita'));
+        if (!empty($mail)) {
+            if ($mail->testSMTP()) {
+                flash()->info(tr('Connessione SMTP riuscita'));
+            } else {
+                flash()->error(tr('Connessione SMTP non riuscita'));
+            }
         } else {
-            flash()->error(tr('Connessione SMTP non riuscita'));
+            flash()->error(tr('Errore'));
         }
 
         break;

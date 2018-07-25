@@ -62,6 +62,7 @@ switch (post('op')) {
         $data = date('Y-m-d');
         $dir = 'entrata';
         $idtipodocumento = '2';
+        $accodare = post('accodare');
 
         if (empty($_SESSION['module_'.Modules::get('Fatture di vendita')['id']]['id_segment'])) {
             $rs = $dbo->fetchArray('SELECT id  FROM zz_segments WHERE predefined = 1 AND id_module = '.prepare(Modules::get('Fatture di vendita')['id']).'LIMIT 0,1');
@@ -73,7 +74,12 @@ switch (post('op')) {
         $numero = get_new_numerofattura($data);
 
         $numero_esterno = get_new_numerosecondariofattura($data);
+<<<<<<< HEAD
         $idconto = setting('Conto predefinito fatture di vendita');
+=======
+
+        $idconto = get_var('Conto predefinito fatture di vendita');
+>>>>>>> master
 
         $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
 
@@ -109,9 +115,16 @@ switch (post('op')) {
             if (count($rs) > 0) {
                 //al primo ciclo preparo la fattura
                 if ($n_interventi == 0) {
+                    //verifico se ho già fatture nello stato bozza per questo cliente
+                    $iddocumento = $dbo->fetchArray('SELECT co_documenti.id AS iddocumento FROM co_documenti INNER JOIN co_statidocumento ON co_documenti.idstatodocumento = co_statidocumento.id WHERE co_statidocumento.descrizione = \'Bozza\' AND  idanagrafica = '.prepare($idanagrafica))[0]['iddocumento'];
+
                     //preparo fattura
-                    $dbo->query('INSERT INTO co_documenti (numero, numero_esterno, idanagrafica, idconto, idtipodocumento, idpagamento, data, idstatodocumento, idsede, id_segment) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idconto).', '.prepare($idtipodocumento).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza'), (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica=".prepare($idanagrafica).'), '.prepare($id_segment).')');
-                    $iddocumento = $dbo->lastInsertedID();
+                    if (empty($iddocumento) or empty($accodare)) {
+                        $dbo->query('INSERT INTO co_documenti (numero, numero_esterno, idanagrafica, idconto, idtipodocumento, idpagamento, data, idstatodocumento, idsede, id_segment) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idconto).', '.prepare($idtipodocumento).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza'), (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica=".prepare($idanagrafica).'), '.prepare($id_segment).')');
+                        $iddocumento = $dbo->lastInsertedID();
+                    } else {
+                        $numero_esterno = $dbo->fetchArray('SELECT numero_esterno FROM co_documenti WHERE id = '.prepare($iddocumento))[0]['numero_esterno'];
+                    }
                 }
 
                 ++$n_interventi;
@@ -223,8 +236,9 @@ return [
     'export-bulk' => [
         'text' => tr('Esporta stampe'),
         'data' => [
-            'msg' => tr('Vuoi davvero esportare queste stampe in un archivio?'),
-            'button' => tr('Procedi'),
+            'title' => tr('Vuoi davvero esportare queste stampe in un archivio?'),
+            'msg' => '',
+            'button' => tr('Crea archivio'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => true,
         ],
@@ -233,8 +247,9 @@ return [
     'creafatturavendita' => [
         'text' => tr('Crea fattura'),
         'data' => [
-            'msg' => tr('Vuoi davvero generare le fatture per questi interventi?'),
-            'button' => tr('Procedi'),
+            'title' => tr('Vuoi davvero generare le fatture per questi interventi?'),
+            'msg' => '<br>{[ "type": "checkbox", "placeholder": "'.tr('Aggiungere alle fatture esistenti non ancora emesse?').'", "name": "accodare" ]}',
+            'button' => tr('Crea fatture'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,
         ],

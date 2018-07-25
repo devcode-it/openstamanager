@@ -18,7 +18,7 @@ $mesi = [
 ];
 
 // Righe inserite
-$qp = "SELECT *, DATE_FORMAT( data_richiesta, '%m-%Y') AS mese, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento = in_interventi.idtipointervento ) AS tipointervento, idanagrafica AS idcliente, (SELECT ragione_sociale  FROM an_anagrafiche WHERE idanagrafica = in_interventi.idanagrafica) AS ragione_sociale FROM in_interventi WHERE id NOT IN (SELECT idintervento FROM in_interventi_tecnici) AND idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE completato = 0) ORDER BY DATE_FORMAT( data_richiesta, '%m-%Y') ASC, ragione_sociale ASC";
+$qp = "SELECT *, DATE_FORMAT( data_richiesta, '%m-%Y') AS mese, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento = in_interventi.idtipointervento ) AS tipointervento, idanagrafica AS idcliente, (SELECT ragione_sociale  FROM an_anagrafiche WHERE idanagrafica = in_interventi.idanagrafica) AS ragione_sociale FROM in_interventi WHERE id NOT IN (SELECT idintervento FROM in_interventi_tecnici) AND idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE completato = 0) ORDER BY DATE_FORMAT( data_richiesta, '%Y-%m') ASC, ragione_sociale ASC";
 $rsp = $dbo->fetchArray($qp);
 $n = $dbo->fetchNum($qp);
 

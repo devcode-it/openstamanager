@@ -10,4 +10,5 @@ return [
     'numero' => empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'],
     'note' => $r['note'],
     'data' => Translator::dateToLocale($r['data']),
+	'id_anagrafica' => $r['idanagrafica'],
 ];

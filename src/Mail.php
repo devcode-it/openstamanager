@@ -323,13 +323,13 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     }
 
     /**
-     * Effettua un test di connessione all'email SMTP.
+     * Testa la connessione al server SMTP.
      *
      * @return bool
      */
     public function testSMTP()
     {
-        if ($this->IsSMTP() && $this->smtpConnect()) {
+        if ($this->smtpConnect()) {
             $this->smtpClose();
 
             return true;

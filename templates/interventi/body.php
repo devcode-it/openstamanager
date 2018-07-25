@@ -16,10 +16,10 @@ echo '
     </tr>
 
     <tr>
-        <td class="text-center" style="width:40%">'.tr('Intervento numero').': <b>'.$records[0]['codice'].'</b></td>
+        <td class="text-center" style="width:30%">'.tr('Intervento num.').': <b>'.$records[0]['codice'].'</b></td>
         <td class="text-center" style="width:20%">'.tr('Data').': <b>'.Translator::dateToLocale($records[0]['data_richiesta']).'</b></td>
-        <td class="text-center" style="width:20%">'.tr('Preventivo num.').': <b>'.$records[0]['numero_preventivo'].'</b></td>
-        <td class="text-center" style="width:20%">'.tr('Contratto num.').': <b>'.$records[0]['numero_contratto'].'</b></td>
+        <td class="text-center" style="width:25%">'.tr('Preventivo num.').': <b>'.$records[0]['numero_preventivo'].'</b></td>
+        <td class="text-center" style="width:25%">'.tr('Contratto num.').': <b>'.$records[0]['numero_contratto'].'</b></td>
     </tr>';
 
     // Dati cliente
@@ -49,9 +49,10 @@ echo '
 echo '
     <tr>
         <td colspan="4">
-            '.tr('Via').': <b>'.$c_indirizzo.'</b> -
-            '.tr('CAP').': <b>'.$c_cap.'</b> -
-            '.tr('Comune').': <b>'.$c_citta.' ('.strtoupper($c_provincia).')</b>
+            '.((!empty($c_indirizzo)) ? tr('Via').': <b>'.$c_indirizzo.'</b>' : '').'
+			'.((!empty($c_cap)) ? tr('CAP').': <b>'.$c_cap.'</b>' : '').'
+			'.((!empty($c_citta)) ? tr('Città').': <b>'.$c_citta.'</b>' : '').'
+			'.((!empty($c_provincia)) ? tr('Provincia').': <b>'.strtoupper($c_provincia).'</b>' : '').'
         </td>
     </tr>';
 

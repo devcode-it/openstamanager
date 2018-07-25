@@ -224,15 +224,19 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
 
         return $result;
     }
-
+	
+	/**
+     * Testa la connessione al server SMTP
+     *
+     * @return boolean
+     */
     public function testSMTP()
     {
-        if ($this->IsSMTP() && $this->smtpConnect()) {
+        if ($this->smtpConnect()) {
             $this->smtpClose();
-
             return true;
         }
-
+		
         return false;
     }
 }

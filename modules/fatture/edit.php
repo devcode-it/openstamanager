@@ -405,3 +405,31 @@ if (!empty($note_accredito)) {
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
+
+
+<?php
+	echo '
+<script>
+$( ".btn-sm[data-toggle=\"tooltip\"]" ).each(function() {
+   $(this).on("click", function(){
+		 content_was_modified = false;
+		$.ajax({
+			url: "'.ROOTDIR.'/modules/fatture/actions.php?id_module=" + globals.id_module ,
+			cache: false,
+			type: "POST",
+			processData: false,
+			dataType : "html",
+			data:  $("#edit-form").serialize(),
+			success: function(data) {
+				$("#main_loading").fadeOut();
+			},
+			error: function(data) {
+				$("#main_loading").fadeOut();
+				swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio').'", "error");
+				session_set ("errors,0", 0, 1);
+			}
+		})
+	});
+});
+</script>';
+?>

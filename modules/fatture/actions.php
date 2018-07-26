@@ -69,9 +69,12 @@ switch (post('op')) {
 
     case 'update':
         if (isset($post['id_record'])) {
+			
+			include_once Modules::filepath($module['name'], 'modutil.php');
+			
             $idstatodocumento = post('idstatodocumento');
             $idpagamento = post('idpagamento');
-
+			
             $totale_imponibile = get_imponibile_fattura($id_record);
             $totale_fattura = get_totale_fattura($id_record);
 

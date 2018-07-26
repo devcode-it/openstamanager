@@ -283,6 +283,12 @@ if ($read_only || !empty($block_edit)) {
                 }
             };
 			
+			 window.addEventListener("unload", function(e) {
+				 console.log(e);
+				$("#main_loading").show();
+			});
+			
+			
 			
 
 

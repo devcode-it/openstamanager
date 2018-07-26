@@ -17,7 +17,7 @@ $numero = ($record[0]['numero_esterno'] != '') ? $record[0]['numero_esterno'] : 
 $idconto = $record[0]['idconto'];
 $idanagrafica = $record[0]['idanagrafica'];
 
-// Preventivo
+// Ordine
 echo '
     <div class="row">
         <div class="col-md-6">

@@ -44,54 +44,39 @@ switch ($resource) {
 
         break;
 
-    // per APP ufficiale OpenSTAManager
+    // Elenco interventi per l'applicazione (recupero sempre tutti gli interventi che non vengono chiusi)
     case 'interventi':
-
-        // periodo per selezionare interventi
-        // in questo modo recupero sempre tutti gli interventi che non vengono chiusi
-        // vedi anche lista degli stati intervento presenti nella query
-        // se un intervento è stato pre-chiuso dal tecnico oppure chiuso dall'ufficio non viene scaricato da APP
+        // Periodo per selezionare interventi
         $today = date('Y-m-d');
-        $period_start = '2000-01-01';
         $period_end = date('Y-m-d', strtotime($today.' +7 days'));
 
-        $q = "SELECT    `in_interventi`.id,
-                        `in_interventi`.codice,
-                        DATE_FORMAT( MAX(`in_interventi`.`data_richiesta`), '%Y%m%d' ) AS `data_richiesta`,
-                        `in_interventi`.richiesta,
-                        `in_interventi`.descrizione,
-                        `in_interventi`.idtipointervento,
-                        `in_interventi`.idanagrafica,
-                        `an_anagrafiche`.idzona AS zona_anagrafica,
-                        `in_interventi`.idsede,
-                        `an_sedi`.idzona AS zona_sede,
-                        `in_interventi`.idstatointervento,
-                        `in_interventi`.informazioniaggiuntive,
-                        `in_interventi`.idsede,
-                        `in_interventi`.idclientefinale,
-                        `in_interventi`.firma_file,
-                        IF( MAX(firma_data)='0000-00-00 00:00:00', '', DATE_FORMAT(MAX(firma_data),'%d/%m/%Y %T') ) AS `firma_data`,
-                        `in_interventi`.firma_nome,
-                        IFNULL((SELECT GROUP_CONCAT( CONCAT(my_impianti.matricola, ' - ', my_impianti.nome) SEPARATOR ', ')
-                            FROM (my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto=my_impianti.id)
-                            WHERE my_impianti_interventi.idintervento=`in_interventi`.`id`),'') AS `impianti`,
-                        DATE_FORMAT( MAX(`orario_fine`), '%Y%m%d' ) AS `data`,
-                        (SELECT GROUP_CONCAT(ragione_sociale SEPARATOR ', ') FROM (`in_interventi_tecnici` INNER JOIN `an_anagrafiche` ON `in_interventi_tecnici`.`idtecnico`=`an_anagrafiche`.`idanagrafica`) WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`) AS `tecnici`,
-                        `in_statiintervento`.`colore` AS `bgcolor`,
-                        `in_statiintervento`.`descrizione` AS `stato`,
-                        `in_interventi`.`idtipointervento` AS `tipo`,
-                        DATE_FORMAT( MAX(`orario_inizio`), '%d/%m/%Y %T' ) AS `orario_inizio_leggibile`,
-                        DATE_FORMAT( MAX(`orario_fine`), '%d/%m/%Y %T' ) AS `orario_fine_leggibile`,
-                        `orario_inizio`, `orario_fine`
-                    FROM (`in_interventi`
-                            INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento`)
-                            INNER JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
-                            INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
-                            LEFT OUTER JOIN `an_sedi` ON `in_interventi`.`idsede`=`an_sedi`.`id`
-                    GROUP BY `in_interventi`.`id`
-                    HAVING (DATE_FORMAT( `orario_fine`, '%Y-%m-%d' ) >= '".$period_start."' AND
-                                    DATE_FORMAT( `orario_fine`, '%Y-%m-%d' ) <= '".$period_end."')
-                    ORDER BY `orario_fine` DESC";
+        $query = "SELECT `in_interventi`.`id`,
+            `in_interventi`.`codice`,
+            DATE_FORMAT(`in_interventi`.`data_richiesta`, '%Y%m%d') AS `data_richiesta`,
+            `in_interventi`.`richiesta`,
+            `in_interventi`.`descrizione`,
+            `in_interventi`.`idtipointervento`,
+            `in_interventi`.`idanagrafica`,
+            `an_anagrafiche`.`idzona` AS zona_anagrafica,
+            `in_interventi`.`idsede`,
+            `an_sedi`.`idzona` AS zona_sede,
+            `in_interventi`.`idstatointervento`,
+            `in_interventi`.`informazioniaggiuntive`,
+            `in_interventi`.`idclientefinale`,
+            `in_interventi`.`firma_file`,
+            IF(firma_data = '0000-00-00 00:00:00', '', DATE_FORMAT(firma_data,'%d/%m/%Y %T') ) AS `firma_data`,
+            `in_interventi`.firma_nome,
+            (SELECT GROUP_CONCAT( CONCAT(my_impianti.matricola, ' - ', my_impianti.nome) SEPARATOR ', ') FROM (my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto=my_impianti.id) WHERE my_impianti_interventi.idintervento=`in_interventi`.`id`) AS `impianti`,
+            (SELECT DATE_FORMAT(MAX(`orario_fine`), '%Y%m%d') FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`) AS `data`,
+            (SELECT GROUP_CONCAT(ragione_sociale SEPARATOR ', ') FROM `in_interventi_tecnici` INNER JOIN `an_anagrafiche` ON `in_interventi_tecnici`.`idtecnico`=`an_anagrafiche`.`idanagrafica` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`) AS `tecnici`,
+            `in_statiintervento`.`colore` AS `bgcolor`,
+            `in_statiintervento`.`descrizione` AS `stato`,
+            `in_interventi`.`idtipointervento` AS `tipo`
+        FROM `in_interventi`
+            INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento`
+            INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
+            INNER JOIN `an_sedi` ON `in_interventi`.`idsede`=`an_sedi`.`id`
+        WHERE (SELECT MAX(`orario_fine`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`) <= :period_end";
 
         // TODO: rimosse seguenti clausole:
 
@@ -101,7 +86,14 @@ switch ($resource) {
         // AND `in_interventi_tecnici`.`idtecnico`='".$tecnico[0]['idanagrafica']."'
         // nell'inner join con in_interventi_tecnici -> ad oggi 16-05-2018 non gestisco ancora idtecnico
 
-        $results = $dbo->fetchArray($q);
+        $parameters = [
+            ':period_end' => $period_end,
+        ];
+
+        $results = $dbo->fetchArray($query, $parameters);
+
+        $results['records'] = $database->fetchNum($query, $parameters);
+        $results['pages'] = $results['records'] / $length;
 
         break;
 }

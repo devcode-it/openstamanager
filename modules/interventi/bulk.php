@@ -74,12 +74,7 @@ switch (post('op')) {
         $numero = get_new_numerofattura($data);
 
         $numero_esterno = get_new_numerosecondariofattura($data);
-<<<<<<< HEAD
         $idconto = setting('Conto predefinito fatture di vendita');
-=======
-
-        $idconto = get_var('Conto predefinito fatture di vendita');
->>>>>>> master
 
         $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
 

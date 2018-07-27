@@ -101,33 +101,33 @@ class API extends \Util\Singleton
         $resources = self::getResources()[$kind];
         $resource = $request['resource'];
 
-        if (in_array($resource, array_keys($resources))) {
-            $dbo = $database;
+        try {
+            if (in_array($resource, array_keys($resources))) {
+                $dbo = $database;
 
-            // Esecuzione delle operazioni personalizzate
-            $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
-            include $filename;
-        } elseif (
-            !in_array($resource, explode(',', setting('Tabelle escluse per la sincronizzazione API automatica')))
-            && $database->tableExists($resource)
-        ) {
-            $table = $resource;
+                // Esecuzione delle operazioni personalizzate
+                $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
+                include $filename;
+            } elseif (
+                !in_array($resource, explode(',', setting('Tabelle escluse per la sincronizzazione API automatica')))
+                && $database->tableExists($resource)
+            ) {
+                $table = $resource;
 
-            // Individuazione della colonna AUTO_INCREMENT per l'ordinamento automatico
-            if (empty($order)) {
-                $column = $database->fetchArray('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '.prepare($table)." AND EXTRA LIKE '%AUTO_INCREMENT%' AND TABLE_SCHEMA = ".prepare($database->getDatabaseName()));
+                // Individuazione della colonna AUTO_INCREMENT per l'ordinamento automatico
+                if (empty($order)) {
+                    $column = $database->fetchArray('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '.prepare($table)." AND EXTRA LIKE '%AUTO_INCREMENT%' AND TABLE_SCHEMA = ".prepare($database->getDatabaseName()));
 
-                if (!empty($column)) {
-                    $order[] = $column[0]['COLUMN_NAME'];
+                    if (!empty($column)) {
+                        $order[] = $column[0]['COLUMN_NAME'];
+                    }
                 }
+            } else {
+                return self::error('notFound');
             }
-        } else {
-            return self::error('notFound');
-        }
 
-        // Generazione automatica delle query
-        if (empty($results) && !empty($table)) {
-            try {
+            // Generazione automatica delle query
+            if (empty($results) && !empty($table)) {
                 // Date di interesse
                 if (!empty($request['upd'])) {
                     $where['#updated_at'] = 'updated_at >= '.prepare($request['upd']);
@@ -146,13 +146,13 @@ class API extends \Util\Singleton
                     $results['records'] = $cont[0]['records'];
                     $results['pages'] = $cont[0]['pages'];
                 }
-            } catch (PDOException $e) {
-                // Log dell'errore
-                $logger = logger();
-                $logger->addRecord(\Monolog\Logger::ERROR, $e);
-
-                return self::error('internalError');
             }
+        } catch (PDOException $e) {
+            // Log dell'errore
+            $logger = logger();
+            $logger->addRecord(\Monolog\Logger::ERROR, $e);
+
+            return self::error('internalError');
         }
 
         return self::response($results);

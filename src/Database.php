@@ -520,7 +520,7 @@ class Database extends Util\Singleton
         // Valori da ottenere
         $select = [];
         foreach ((array) $array as $key => $value) {
-            $select[] = $value.(is_numeric($key) ? '' : 'AS '.$this->quote($key));
+            $select[] = $value.(is_numeric($key) ? '' : ' AS '.$this->quote($key));
         }
         $select = !empty($select) ? $select : ['*'];
 
@@ -833,7 +833,7 @@ class Database extends Util\Singleton
             'throw' => true,
         ], $options);
 
-        if (!empty($options['session'])) {
+        if (!empty($options['session']) && !API::isAPIRequest()) {
             $msg = tr("Si è verificato un'errore").'.';
 
             if (Auth::check()) {

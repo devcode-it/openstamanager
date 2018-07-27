@@ -465,3 +465,6 @@ UPDATE `zz_settings` SET `tipo` = REPLACE(
 
 -- Fix id delle Banche
 UPDATE `zz_views` SET `enabled` = 0 WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'id';
+
+-- Aggiunta campi per specificare se la riga importata è un import unico di pù righe
+ALTER TABLE `co_righe_documenti` ADD `is_preventivo` TINYINT(1) NOT NULL AFTER `is_descrizione`, ADD `is_contratto` TINYINT(1) NOT NULL AFTER `is_preventivo`;

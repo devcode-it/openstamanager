@@ -75,7 +75,7 @@ switch ($resource) {
         FROM `in_interventi`
             INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento`
             INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
-            INNER JOIN `an_sedi` ON `in_interventi`.`idsede`=`an_sedi`.`id`
+            LEFT JOIN `an_sedi` ON `in_interventi`.`idsede`=`an_sedi`.`id`
         WHERE (SELECT MAX(`orario_fine`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`) <= :period_end";
 
         // TODO: rimosse seguenti clausole:
@@ -90,7 +90,7 @@ switch ($resource) {
             ':period_end' => $period_end,
         ];
 
-        $results = $dbo->fetchArray($query, $parameters);
+        $results = $dbo->fetchArray($query, $parameters.' LIMIT '.($page * $length).', '.$length);
 
         $results['records'] = $database->fetchNum($query, $parameters);
         $results['pages'] = $results['records'] / $length;

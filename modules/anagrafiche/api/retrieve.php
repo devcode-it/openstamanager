@@ -44,7 +44,7 @@ switch ($resource) {
             an_anagrafiche.idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica = (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = 'Cliente'))
         ORDER BY an_anagrafiche.ragione_sociale";
 
-            $results = $dbo->fetchArray($query);
+            $results = $dbo->fetchArray($query.' LIMIT '.($page * $length).', '.$length);
 
             $results['records'] = $database->fetchNum($query);
             $results['pages'] = $results['records'] / $length;

@@ -278,26 +278,31 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
             }
 
             echo '
-                        <a class="btn btn-sm btn-primary tip"  '.(!empty($interventi) ? '' : ' disabled').' data-toggle="tooltip" title="'.tr('Interventi non collegati a preventivi o contratti.').'" data-href="'.$rootdir.'/modules/fatture/add_intervento.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi intervento" data-target="#bs-popup">
+                    <div class="tip" data-toggle="tooltip" title="'.tr('Interventi non collegati a preventivi o contratti.').'" style="display:inline;">
+                        <a class="btn btn-sm btn-primary '.(!empty($interventi) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_intervento.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi intervento" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Intervento
-                        </a>';
+                        </a>
+                    </div>';
 
             // Lettura preventivi accettati, in attesa di conferma o in lavorazione
             $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($records[0]['idanagrafica'])." AND id NOT IN (SELECT idpreventivo FROM co_righe_documenti WHERE NOT idpreventivo=NULL) AND idstato IN( SELECT id FROM co_statipreventivi WHERE descrizione='Accettato' OR descrizione='In lavorazione' OR descrizione='In attesa di conferma')";
             $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
             echo '
-                        <a class="btn btn-sm btn-primary tip" '.(!empty($preventivi) ? '' : ' disabled').'  title="'.tr('Preventivi accettati, in attesa di conferma o in lavorazione.').'" data-href="'.$rootdir.'/modules/fatture/add_preventivo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="Aggiungi preventivo" data-target="#bs-popup">
+                    <div class="tip" data-toggle="tooltip" title="'.tr('Preventivi accettati, in attesa di conferma o in lavorazione.').'" style="display:inline;">
+                        <a class="btn btn-sm btn-primary '.(!empty($preventivi) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_preventivo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi preventivo" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Preventivo
-                        </a>';
+                        </a>
+                    </div>';
 
             // Lettura contratti accettati, in attesa di conferma o in lavorazione
             $contr_query = 'SELECT COUNT(*) AS tot FROM co_contratti WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND id NOT IN (SELECT idcontratto FROM co_righe_documenti WHERE NOT idcontratto=NULL) AND idstato IN( SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND NOT EXISTS (SELECT id FROM co_righe_documenti WHERE co_righe_documenti.idcontratto = co_contratti.id)';
             $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
             echo '
-
-                        <a class="btn btn-sm btn-primary tip" '.(!empty($contratti) ? '' : ' disabled').' title="'.tr('Contratti accettati, in attesa di conferma o in lavorazione.').'"  data-href="'.$rootdir.'/modules/fatture/add_contratto.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="Aggiungi contratto" data-target="#bs-popup">
+                    <div class="tip" data-toggle="tooltip" title="'.tr('Contratti accettati, in attesa di conferma o in lavorazione.').'" style="display:inline;">
+                        <a class="btn btn-sm btn-primary '.(!empty($contratti) ? '' : ' disabled').'"  data-href="'.$rootdir.'/modules/fatture/add_contratto.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi contratto" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Contratto
-                        </a>';
+                        </a>
+                    </div>';
 
           
         }

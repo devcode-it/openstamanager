@@ -384,6 +384,7 @@ class API extends \Util\Singleton
 
             if (empty($raw)) {
                 $request = (array) json_decode($request, true);
+                $request = Filter::sanitize($request);
 
                 // Fallback nel caso la richiesta sia effettuata da browser
                 if ($_SERVER['REQUEST_METHOD'] == 'GET' && empty($request)) {

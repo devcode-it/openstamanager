@@ -98,24 +98,7 @@ switch ($resource) {
                 $query = 'UPDATE in_interventi SET richiesta='.prepare($richiesta).', oggetto='.prepare($summary).' WHERE idintervento = (SELECT idintervento FROM in_interventi_tecnici WHERE id = '.prepare($idriga).' AND idtecnico = '.prepare($idtecnico).' LIMIT 0,1)';
                 $dbo->query($query);
             }
-
-            array_push($allsession, $idriga);
         }
-
-        // Eliminazione attività
-        /*
-        $rs_sessioni = $dbo->fetchArray("SELECT * FROM in_interventi_tecnici");
-        for($i=0;$i<sizeof($rs_sessioni);$i++){
-            if(!in_array($rs_sessioni[$i]['id'], $allsession)){
-                $idintervento = $rs_sessioni[$i]['idintervento'];
-                $dbo->query("DELETE FROM in_interventi_tecnici WHERE id='".$rs_sessioni[$i]['id']."'");
-                $rs_per_intervento = $dbo->fetchArray("SELECT * FROM in_interventi_tecnici WHERE idintervento='".$idintervento."'");
-                if(sizeof($rs_per_intervento)==0){
-                    $dbo->query("UPDATE in_interventi SET deleted_at=NOW() WHERE idintervento='".$idintervento."'");
-                }
-            }
-        }
-        */
 
         break;
 }

@@ -105,13 +105,13 @@ class Filter
     }
 
     /**
-     * Sanitarizza il testo inserito.
+     * Sanitarizza i contenuti dell'input.
      *
-     * @param mixed $input Testo da sanitarizzare
+     * @param mixed $input Contenuti
      *
      * @return mixed
      */
-    protected static function sanitize($input)
+    public static function sanitize($input)
     {
         $output = null;
         if (is_array($input)) {
@@ -126,7 +126,11 @@ class Filter
     }
 
     /**
-     * Undocumented function.
+     * Interpreta e formatta correttamente i contenuti dell'input.
+     *
+     * @param mixed $input Contenuti
+     *
+     * @return mixed
      */
     public static function parse($input)
     {

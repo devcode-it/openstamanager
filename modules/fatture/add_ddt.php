@@ -6,15 +6,17 @@ $module = Modules::get($id_module);
 
 if ($module['name'] == 'Fatture di vendita') {
     $dir = 'entrata';
+    $module_origin = 'Ddt di vendita';
 } else {
     $dir = 'uscita';
+    $module_origin = 'Ddt di acquisto';
 }
 
 $info = $dbo->fetchOne('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
 $numero = ($info['numero_esterno'] != '') ? $info['numero_esterno'] : $info['numero'];
 $idanagrafica = $info['idanagrafica'];
 
-// Preventivo
+// Ddt
 echo '
     <div class="row">
         <div class="col-md-6">
@@ -36,6 +38,6 @@ echo '
 	$('#id_ddt').change( function(){
         $('#righeddt').html('<i>Caricamento in corso...</i>');
 
-        $('#righeddt').load(globals.rootdir + '/modules/fatture/crea_documento.php?id_module=' + <?php echo Modules::get('Ddt di vendita')['id']; ?> + '&id_record=' + $(this).find('option:selected').val() + '&documento=fattura&op=add_ddt&iddocumento=' + globals.id_record);
+        $('#righeddt').load(globals.rootdir + '/modules/fatture/crea_documento.php?id_module=' +  <?php echo Modules::get($module_origin)['id']; ?> + '&id_record=' + $(this).find('option:selected').val() + '&documento=fattura&op=add_ddt&iddocumento=' + globals.id_record);
     });
 </script>

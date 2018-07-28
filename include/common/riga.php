@@ -15,6 +15,7 @@ if ($module['name'] == 'Fatture di acquisto' || $module['name'] == 'Fatture di v
     // Percentuale rivalsa INPS e Percentuale ritenuta d'acconto
     if ($options['action'] == 'edit') {
         if ($options['dir'] == 'uscita') {
+            //Luca S. questi campi non dovrebbero essere impostati a 1 di default, ma solo se il fornitore ha effettivamente rivalsa inps o ritenuta
             $show_idrivalsainps = 1;
             $show_idritenutaacconto = 1;
             $show_calcolo_ritenutaacconto = 1;
@@ -45,8 +46,10 @@ if ($module['name'] == 'Fatture di acquisto' || $module['name'] == 'Fatture di v
             $show_idritenutaacconto = 1;
             $show_calcolo_ritenutaacconto = 1;
 
+            // Luca S. questi campi non dovrebbero essere definiti all'interno della scheda fornitore?
             $idrivalsainps = '';
             $idritenutaacconto = '';
+            // questo campo non andrebbe letto da impostazioni
             $calcolo_ritenutaacconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         } elseif ($options['dir'] == 'entrata' && $options['op'] == 'addriga' && (setting('Percentuale rivalsa INPS') != '' || setting("Percentuale ritenuta d'acconto") != '')) {
             if (setting('Percentuale rivalsa INPS') != '') {
@@ -117,7 +120,7 @@ if ($module['name'] == 'Fatture di acquisto' || $module['name'] == 'Fatture di v
         if ($show_calcolo_ritenutaacconto == 1) {
             echo '
     <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr("Calcola ritenuta d'acconto su").'", "name": "calcolo_ritenutaacconto", "value": "'.$calcolo_ritenutaacconto.'", "values": "list=\"Imponibile\":\"Imponibile\", \"Imponibile + rivalsa inps\":\"Imponibile + rivalsa inps\"", "required": "1" ]}
+        {[ "type": "select", "label": "'.tr("Calcola ritenuta d'acconto su").'", "name": "calcolo_ritenutaacconto", "value": "'.((empty($calcolo_ritenutaacconto)) ? 'Imponibile' : $calcolo_ritenutaacconto).'", "values": "list=\"Imponibile\":\"Imponibile\", \"Imponibile + rivalsa inps\":\"Imponibile + rivalsa inps\"", "required": "1" ]}
     </div>';
         }
 

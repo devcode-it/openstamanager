@@ -55,7 +55,7 @@ $( "#example" ).click(function(event) {
 			data: {op: 'example', module: module},
 			success: function(data){
 				window.location = file;
-				$('#main_loading').hide();
+				$('#main_loading').fadeOut();
 				return false;
 			}
 	});

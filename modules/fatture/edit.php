@@ -278,35 +278,40 @@ if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
             }
 
             echo '
-                        <a class="btn btn-sm btn-primary tip"  '.(!empty($interventi) ? '' : ' disabled').' data-toggle="tooltip" title="'.tr('Interventi non collegati a preventivi o contratti.').'" data-href="'.$rootdir.'/modules/fatture/add_intervento.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi intervento" data-target="#bs-popup">
+                    <div class="tip" data-toggle="tooltip" title="'.tr('Interventi non collegati a preventivi o contratti.').'" style="display:inline;">
+                        <a class="btn btn-sm btn-primary '.(!empty($interventi) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_intervento.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi intervento" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Intervento
-                        </a>';
+                        </a>
+                    </div>';
 
             // Lettura preventivi accettati, in attesa di conferma o in lavorazione
             $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($record['idanagrafica'])." AND id NOT IN (SELECT idpreventivo FROM co_righe_documenti WHERE NOT idpreventivo=NULL) AND idstato IN( SELECT id FROM co_statipreventivi WHERE descrizione='Accettato' OR descrizione='In lavorazione' OR descrizione='In attesa di conferma')";
             $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
             echo '
-                        <a class="btn btn-sm btn-primary tip" '.(!empty($preventivi) ? '' : ' disabled').'  title="'.tr('Preventivi accettati, in attesa di conferma o in lavorazione.').'" data-href="'.$rootdir.'/modules/fatture/add_preventivo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="Aggiungi preventivo" data-target="#bs-popup">
+                    <div class="tip" data-toggle="tooltip" title="'.tr('Preventivi accettati, in attesa di conferma o in lavorazione.').'" style="display:inline;">
+                        <a class="btn btn-sm btn-primary '.(!empty($preventivi) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_preventivo.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi preventivo" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Preventivo
-                        </a>';
+                        </a>
+                    </div>';
 
             // Lettura contratti accettati, in attesa di conferma o in lavorazione
             $contr_query = 'SELECT COUNT(*) AS tot FROM co_contratti WHERE idanagrafica='.prepare($record['idanagrafica']).' AND id NOT IN (SELECT idcontratto FROM co_righe_documenti WHERE NOT idcontratto=NULL) AND idstato IN( SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND NOT EXISTS (SELECT id FROM co_righe_documenti WHERE co_righe_documenti.idcontratto = co_contratti.id)';
             $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
             echo '
-
-                        <a class="btn btn-sm btn-primary tip" '.(!empty($contratti) ? '' : ' disabled').' title="'.tr('Contratti accettati, in attesa di conferma o in lavorazione.').'"  data-href="'.$rootdir.'/modules/fatture/add_contratto.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="Aggiungi contratto" data-target="#bs-popup">
+                    <div class="tip" data-toggle="tooltip" title="'.tr('Contratti accettati, in attesa di conferma o in lavorazione.').'" style="display:inline;">
+                        <a class="btn btn-sm btn-primary '.(!empty($contratti) ? '' : ' disabled').'"  data-href="'.$rootdir.'/modules/fatture/add_contratto.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi contratto" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Contratto
-                        </a>';
-
-            // Lettura ddt
-            $ddt_query = 'SELECT COUNT(*) AS tot FROM dt_ddt WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoddt IN (SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir).') AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
-            $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
-            echo '
-                        <a class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="Aggiungi ddt" data-target="#bs-popup">
-                            <i class="fa fa-plus"></i> Ddt
-                        </a>';
+                        </a>
+                    </div>';
         }
+
+        // Lettura ddt
+        $ddt_query = 'SELECT COUNT(*) AS tot FROM dt_ddt WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND idstatoddt IN (SELECT id FROM dt_statiddt WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoddt IN (SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir).') AND dt_ddt.id IN (SELECT idddt FROM dt_righe_ddt WHERE dt_righe_ddt.idddt = dt_ddt.id AND (qta - qta_evasa) > 0)';
+        $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
+        echo '
+					<a class="btn btn-sm btn-primary'.(!empty($ddt) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_ddt.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="tooltip" data-title="Aggiungi ddt" data-target="#bs-popup">
+						<i class="fa fa-plus"></i> Ddt
+					</a>';
 
         // Lettura ordini
         $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
@@ -429,3 +434,86 @@ if (!empty($operations)) {
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
+
+
+<?php
+    echo '
+<script>
+
+
+
+$( ".btn-sm[data-toggle=\"tooltip\"]" ).each(function() {
+
+   $(this).on("click", function(){
+
+	   form = $("#edit-form");
+	   btn = $(this);
+
+		prev_html = btn.html();
+		prev_class = btn.attr("class");
+
+	   	btn.html("<i class=\"fa fa-spinner fa-pulse  fa-fw\"></i> Attendere...");
+		btn.addClass("btn-warning");
+		btn.prop("disabled", true);
+
+		function restore_btn(btn, prev_html, prev_class){
+				btn.attr("class", "");
+				btn.addClass(prev_class);
+				btn.html(prev_html);
+				btn.prop("disabled", false);
+		}
+
+		//Procedo al salvataggio solo se tutti i campi obbligatori sono compilati, altimenti mostro avviso
+	   if (form.parsley().isValid()){
+
+		 content_was_modified = false;
+
+		 form.find("input:disabled, select:disabled").removeAttr("disabled");
+
+		$.ajax({
+			url: "'.ROOTDIR.'/modules/fatture/actions.php?id_module=" + globals.id_module ,
+			cache: false,
+			type: "POST",
+			processData: false,
+			dataType : "html",
+			data:  form.serialize(),
+			success: function(data) {
+				$("#main_loading").fadeOut();
+
+				restore_btn(btn, prev_html, prev_class);
+			},
+			error: function(data) {
+				$("#main_loading").fadeOut();
+
+				swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio').'", "error");
+				session_set ("errors,0", 0, 1);
+
+				restore_btn(btn, prev_html, prev_class);
+			}
+		});
+
+	   }else{
+
+			swal({
+					type: "error",
+					text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente.').'",
+					title: "'.tr('Errore').'",
+				   onClose: hide_popup
+			   }).then(function () {
+
+			   });
+
+		   function hide_popup(){
+				$("#bs-popup").modal("hide");
+
+				session_set ("errors,0", 0, 1);
+				form.parsley().validate();
+		   }
+
+			restore_btn(btn, prev_html, prev_class);
+		}
+
+	});
+});
+</script>';
+?>

@@ -326,12 +326,25 @@ if ($read_only || !empty($block_edit)) {
                 content_was_modified = false;
             });
 
-            // questo controllo blocca il modulo vendita al banco, dopo la lettura con barcode, appare il messaggio di conferma
-            window.onbeforeunload = function(){
+			// questo controllo blocca il modulo vendita al banco, dopo la lettura con barcode, appare il messaggio di conferma
+            window.onbeforeunload = function(e){
                 if(content_was_modified) {
-                    return  'Uscire senza salvare?';
+					var dialogText = "Uscire senza salvare?";
+					e.returnValue = dialogText;
+					$("#main_loading").fadeOut();
+					return dialogText;
                 }
             };
+			
+			 window.addEventListener("unload", function(e) {
+				 //console.log(e);
+				$("#main_loading").show();
+			});
+			
+			
+			
+
+
 <?php
 if ($advanced_sessions) {
     ?>

@@ -16,7 +16,7 @@ $info = $dbo->fetchOne('SELECT * FROM co_documenti WHERE id='.prepare($id_record
 $numero = ($info['numero_esterno'] != '') ? $info['numero_esterno'] : $info['numero'];
 $idanagrafica = $info['idanagrafica'];
 
-// Preventivo
+// Ordine
 echo '
     <div class="row">
         <div class="col-md-6">

@@ -23,5 +23,6 @@ return '
         <p>'.(!empty($f_capsoc) ? tr('Cap.Soc.').': '.$f_capsoc : '').'</p>
         <p>'.(!empty($f_telefono) ? tr('Tel').': '.$f_telefono : '').'</p>
 		<p>'.(!empty($f_email) ? tr('Email').': '.$f_email : '').'</p>
+		<p>'.(!empty($f_sitoweb) ? tr('Web').': '.$f_sitoweb : '').'</p>
     </div>
 </div>';

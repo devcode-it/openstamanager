@@ -866,6 +866,26 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
             $dbo->attach('mg_prodotti', ['id_riga_documento' => $riga['ref_riga_documento'], 'dir' => $dir, 'id_articolo' => $riga['idarticolo']], ['serial' => $serials]);
         }
     }
+    
+    // Rimozione articoli collegati ad un preventivo importato con riga unica
+    if(empty($riga['idarticolo']) && $riga['is_preventivo']){
+        //rimetto a magazzino gli articoli collegati al preventivo
+        $rsa = $dbo->fetchArray('SELECT idarticolo, qta FROM co_righe_preventivi WHERE idpreventivo = '.prepare($riga['idpreventivo']));
+        for ($i = 0; $i < sizeof($rsa); ++$i) {
+            if (!empty($rsa[$i]['idarticolo']))
+                add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'],  ['iddocumento' => $id_documento]);		
+        }
+    }
+    
+    // Rimozione articoli collegati ad un contratto importato con riga unica
+    if(empty($riga['idarticolo']) && $riga['is_contratto']){
+        //rimetto a magazzino gli articoli collegati al contratto
+        $rsa = $dbo->fetchArray('SELECT idarticolo, qta FROM co_righe_contratti WHERE idcontratto = '.prepare($riga['idcontratto']));
+        for ($i = 0; $i < sizeof($rsa); ++$i) {
+            if (!empty($rsa[$i]['idarticolo']))
+                add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'],  ['iddocumento' => $id_documento]);		
+        }
+    }
 
     // Aggiorno lo stato dell'ordine
     if (!empty($riga['idordine']) && setting('Cambia automaticamente stato ordini fatturati')) {

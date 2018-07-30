@@ -183,19 +183,25 @@ foreach ($righe as $r) {
         echo '
                 '.Translator::numberToLocale($r['perc_iva']);
     }
+	
+	
     echo '
             </td>
         </tr>';
 
     $autofill['count'] += $count;
 
-    $imponibile[] = $r['subtotale'];
-    $iva[] = $r['iva'];
-    $sconto[] = $r['sconto'];
+	
+	$imponibile = sum(array_column($righe, 'subtotale'));
+	$sconto = sum(array_column($righe, 'sconto'));
+	$iva = sum(array_column($righe, 'iva'));
+	
+	echo "ciao".$sconto;
 
-    $v_iva[$r['desc_iva']] = sum($v_iva[$r['desc_iva']], $r['iva']);
+
+    $v_iva[$r['desc_iva']] = sum($v_iva[$r['desc_iva']], $iva);
     $v_totale[$r['desc_iva']] = sum($v_totale[$r['desc_iva']], [
-        $r['subtotale'], -$r['sconto'],
+       $imponibile, -$sconto
     ]);
 }
 
@@ -272,9 +278,32 @@ echo '
 echo '
 </table>';
 
-// Info per il footer
-$imponibile = sum($imponibile);
-$iva = sum($iva, 0) + $records[0]['iva_rivalsainps'];
-$sconto = sum($sconto);
 
-$totale = $imponibile + $iva - $sconto + $records[0]['rivalsainps'];
+// Calcoli
+//$imponibile = sum(array_column($righe, 'subtotale'));
+//$sconto = sum(array_column($righe, 'sconto'));
+//$iva = sum(array_column($righe, 'iva'));
+
+$imponibile_scontato = sum($imponibile, -$sconto);
+
+$totale_iva = sum($iva, $records[0]['iva_rivalsainps']);
+
+$totale = sum([
+    $imponibile_scontato,
+    $records[0]['rivalsainps'],
+    $totale_iva,
+]);
+
+$netto_a_pagare = sum([
+    $totale,
+    $records[0]['bollo'],
+    -$records[0]['ritenutaacconto'],
+]);
+
+$imponibile = abs($imponibile);
+$sconto = abs($sconto);
+$iva = abs($iva);
+$imponibile_scontato = abs($imponibile_scontato);
+$totale_iva = abs($totale_iva);
+$totale = abs($totale);
+$netto_a_pagare = abs($netto_a_pagare);

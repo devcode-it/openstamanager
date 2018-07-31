@@ -105,6 +105,9 @@ class API extends \Util\Singleton
             if (in_array($resource, array_keys($resources))) {
                 $dbo = $database;
 
+                // Inclusione funzioni del modulo
+                include_once App::filepath(DOCROOT.'/modules/'.$resources[$resource].'|custom|', 'modutil.php');
+
                 // Esecuzione delle operazioni personalizzate
                 $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
                 include $filename;
@@ -204,7 +207,8 @@ class API extends \Util\Singleton
     protected function fileRequest($request, $kind)
     {
         $user = Auth::user();
-
+        $results = [];
+        
         // Controllo sulla compatibilità dell'API
         if (!self::isCompatible()) {
             return self::response([

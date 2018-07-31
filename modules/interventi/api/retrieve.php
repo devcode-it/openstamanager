@@ -99,22 +99,20 @@ switch ($resource) {
 
     // Elenco sessioni dell'intervento per l'applicazione
     case 'sessioni_intervento':
-        // Periodo per selezionare interventi
-        $today = date('Y-m-d');
-        $period_end = date('Y-m-d', strtotime($today.' +7 days'));
+        $query = 'SELECT id, idintervento, orario_inizio, orario_fine FROM in_interventi_tecnici WHERE `idintervento` = :id_intervento';
 
-        $query = 'SELECT id, idintervento, orario_inizio, orario_fine FROM in_interventi_tecnici WHERE `orario_fine` <= :period_end';
+        if ($user['gruppo'] == 'Tecnici') {
+            $query .= ' AND `idtecnico` = :id_tecnico';
+        }
 
         // TODO: rimosse seguenti clausole:
 
         // WHERE `in_interventi`.idstatointervento IN(SELECT idstatointervento FROM in_statiintervento WHERE app_download=1)
         // nel database ufficiale manca in_statiintervento.app_download
 
-        // AND `in_interventi_tecnici`.`idtecnico`='".$tecnico[0]['idanagrafica']."'
-        // nell'inner join con in_interventi_tecnici -> ad oggi 16-05-2018 non gestisco ancora idtecnico
-
         $parameters = [
-            ':period_end' => $period_end,
+            ':id_intervento' => $request['id_intervento'],
+            ':id_tecnico' => $user['idanagrafica'],
         ];
 
         $results = $dbo->fetchArray($query, $parameters.' LIMIT '.($page * $length).', '.$length);

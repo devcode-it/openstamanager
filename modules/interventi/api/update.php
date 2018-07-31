@@ -101,8 +101,34 @@ switch ($resource) {
         }
 
         break;
+
+    case 'intervento':
+        $data = $request['data'];
+
+        $dbo->update('in_interventi', [
+            'idstatointervento' => $data['idstatointervento'],
+            'descrizione' => $data['descrizione'],
+            'informazioniaggiuntive' => $data['informazioniaggiuntive'],
+        ], ['id' => $data['id']]);
+
+        // $dbo->query( 'DELETE FROM in_interventi_tecnici WHERE idintervento='.prepare($record['id']).' AND idtecnico='.prepare($idtecnico) );
+
+        break;
+
+    case 'firma_intervento':
+        $data = $request['data'];
+
+        $dbo->update('in_interventi', [
+            'firma_file' => $data['firma_file'],
+            'firma_data' => $data['firma_data'],
+            'firma_nome' => $data['firma_nome'],
+        ], ['id' => $data['id']]);
+
+        break;
 }
 
 return [
     'sync',
+    'intervento',
+    'firma_intervento',
 ];

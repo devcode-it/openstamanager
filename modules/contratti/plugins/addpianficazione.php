@@ -246,7 +246,7 @@ echo '
 	<script>
 		$(document).ready(function() {
 			
-			if ($("#idtipointervento_").val()==""){
+			if ($("#idtipointervento_").val()==null){
 				$("#add_form .panel-primary .panel-primary").hide(); 
 				$("#bs-popup .btn-primary").hide();
 			};

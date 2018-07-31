@@ -187,7 +187,7 @@ if (empty($new_codice)) {
 			<!-- RIGA 3 -->
 			<div class="row">
 				<!--div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Codice intervento'); ?>", "name": "codice", "required": 1, "class": "text-center", "value": "<?php echo $new_codice; ?>" ]}
+					{[ "type": "text", "label": "<?php echo tr('Codice attività'); ?>", "name": "codice", "required": 1, "class": "text-center", "value": "<?php echo $new_codice; ?>" ]}
 				</div-->
 
 				<div class="col-md-4">
@@ -195,7 +195,7 @@ if (empty($new_codice)) {
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "date", "label": "<?php echo tr('Data intervento'); ?>", "name": "data", "required": <?php echo get('ref') ? 1 : 0; ?>, "value": "<?php echo $data; ?>" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data attività'); ?>", "name": "data", "required": <?php echo get('ref') ? 1 : 0; ?>, "value": "<?php echo $data; ?>" ]}
 				</div>
 
 				<div class="col-md-4">
@@ -206,11 +206,11 @@ if (empty($new_codice)) {
 			<!-- RIGA 4 -->
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Tipo intervento'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "<?php echo $idtipointervento; ?>", "ajax-source": "tipiintervento" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "<?php echo $idtipointervento; ?>", "ajax-source": "tipiintervento" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Stato intervento'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "<?php echo $idstatointervento; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "<?php echo $idstatointervento; ?>" ]}
 				</div>
 
 				<div class="col-md-2">

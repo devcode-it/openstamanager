@@ -288,9 +288,11 @@ if (count($rsp) != 0) {
             ]));
 
             $disabled = 'disabled';
+			$title =  'Per eliminare il promemoria, eliminare prima l\'intervento associato.';
         } else {
             $info_intervento = '- '.('Nessuno').' -';
             $disabled = '';
+			$title =  'Elimina promemoria...';
         }
 
         //data_conclusione contratto
@@ -361,7 +363,7 @@ if (count($rsp) != 0) {
 					<button type="button"  '.$disabled.'  class="btn btn-primary btn-sm '.$disabled.' " title="Pianifica intervento ora..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.$rootdir.'/add.php?id_module='.Modules::get('Interventi')['id'].'&ref=interventi_contratti&idcontratto='.$id_record.'&idcontratto_riga='.$rsp[$i]['id'].'\');"'.(!empty($pianificabile) ? '' : ' disabled').'><i class="fa fa-calendar"></i></button>';
 
         echo '
-					<button type="button"  '.$disabled.' title="Elimina promemoria..." class="btn btn-danger btn-sm ask '.$disabled.' " data-op="depianifica" data-id="'.$rsp[$i]['id'].'">
+					<button type="button"  '.$disabled.' title="'.$title.'" class="btn btn-danger btn-sm ask '.$disabled.' " data-op="depianifica" data-id="'.$rsp[$i]['id'].'">
 						<i class="fa fa-trash"></i>
 					</button>';
 
@@ -376,7 +378,7 @@ if (count($rsp) != 0) {
     echo '<br><div class="pull-right">';
 
     if (count($rsp) > 0) {
-        echo '	<button type="button"  title="Elimina tutti i promemoria per questo contratto che non sono associati ad intervento." class="btn btn-danger ask tip" data-op="delete-promemoria" >
+        echo '	<button type="button"  title="Elimina tutti i promemoria non associati ad intervento." class="btn btn-danger ask tip" data-op="delete-promemoria" >
 						<i class="fa fa-trash"></i> '.tr('Elimina promemoria').'
 					</button>';
     }

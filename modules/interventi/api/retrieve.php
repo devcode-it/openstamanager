@@ -90,7 +90,7 @@ switch ($resource) {
             ':period_end' => $period_end,
         ];
 
-        $results = $dbo->fetchArray($query, $parameters.' LIMIT '.($page * $length).', '.$length);
+        $results = $dbo->fetchArray($query.' LIMIT '.($page * $length).', '.$length, $parameters);
 
         $results['records'] = $database->fetchNum($query, $parameters);
         $results['pages'] = $results['records'] / $length;
@@ -99,11 +99,7 @@ switch ($resource) {
 
     // Elenco sessioni dell'intervento per l'applicazione
     case 'sessioni_intervento':
-        $query = 'SELECT id, idintervento, orario_inizio, orario_fine FROM in_interventi_tecnici WHERE `idintervento` = :id_intervento';
-
-        if ($user['gruppo'] == 'Tecnici') {
-            $query .= ' AND `idtecnico` = :id_tecnico';
-        }
+        $query = 'SELECT id, idintervento AS id_intervento, orario_inizio, orario_fine FROM in_interventi_tecnici WHERE `idintervento` = :id_intervento';
 
         // TODO: rimosse seguenti clausole:
 
@@ -112,10 +108,14 @@ switch ($resource) {
 
         $parameters = [
             ':id_intervento' => $request['id_intervento'],
-            ':id_tecnico' => $user['idanagrafica'],
         ];
 
-        $results = $dbo->fetchArray($query, $parameters.' LIMIT '.($page * $length).', '.$length);
+        if ($user['gruppo'] == 'Tecnici') {
+            $query .= ' AND `idtecnico` = :id_tecnico';
+            $parameters[':id_tecnico'] = $user['idanagrafica'];
+        }
+
+        $results = $dbo->fetchArray($query.' LIMIT '.($page * $length).', '.$length, $parameters);
 
         $results['records'] = $database->fetchNum($query, $parameters);
         $results['pages'] = $results['records'] / $length;
@@ -126,4 +126,5 @@ switch ($resource) {
 return [
     'sync',
     'interventi',
+    'sessioni_intervento',
 ];

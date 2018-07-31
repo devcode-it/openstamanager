@@ -36,12 +36,13 @@ switch ($resource) {
                 'informazioniaggiuntive' => $data['informazioni_aggiuntive'],
             ]);
 
-            $results['id_record'] = $dbo->lastInsertedID();
+            $results['id'] = $dbo->lastInsertedID();
+            $results['codice'] = $codice;
         }
 
         break;
 
-    case 'sessione':
+    case 'sessioni_intervento':
         $data = $request['data'];
 
         add_tecnico($data['id_intervento'], $data['id_tecnico'], $data['orario_inizio'], $data['orario_fine']);

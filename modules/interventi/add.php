@@ -90,6 +90,9 @@ elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
         $idimpianto = implode(',', array_column($rs, 'idimpianto'));
     } else {
         $idimpianto = $idimpianti;
+		// Spunto il tecnico di default assegnato all'impianto
+		$rs = $dbo->fetchArray('SELECT idtecnico FROM my_impianti WHERE id='.prepare($idimpianto));
+		$idtecnico = $rs[0]['idtecnico'] ?: '';
     }
 
     // Seleziono "In programmazione" come stato

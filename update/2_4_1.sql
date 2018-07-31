@@ -468,3 +468,13 @@ UPDATE `zz_views` SET `enabled` = 0 WHERE `id_module` = (SELECT `id` FROM `zz_mo
 
 -- Aggiunta campi per specificare se la riga importata è un import unico di pù righe
 ALTER TABLE `co_righe_documenti` ADD `is_preventivo` TINYINT(1) NOT NULL AFTER `is_descrizione`, ADD `is_contratto` TINYINT(1) NOT NULL AFTER `is_preventivo`;
+
+-- Aggiunta colonna 'Sede' per MyImpianti
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `enabled`, `summable`, `default` ) VALUES
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti'), 'Sede', 'IF(my_impianti.idsede = 0, \'Sede legale\', (SELECT CONCAT_WS( '' - '', nomesede, citta ) AS descrizione FROM an_sedi WHERE id = my_impianti.idsede))', 4, 1, 0, 0, '', '', 0, 0, 0);
+
+-- Aggiunta colonna 'Tempo standard' per Tipi di intervento
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `enabled`, `summable`, `default` ) VALUES
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento'), 'Tempo standard', 'in_tipiintervento.tempo_standard', 10, 1, 0, 1, '', '', 0, 0, 0);
+
+

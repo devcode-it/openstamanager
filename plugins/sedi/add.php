@@ -13,7 +13,7 @@ echo '
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "indirizzo", "required": 1 ]}
+			{[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "indirizzo", "required": 0 ]}
 		</div>
 
 		<div class="col-md-4">
@@ -23,7 +23,7 @@ echo '
 
 	<div class="row">
 		<div class="col-md-3">
-			{[ "type": "text", "label": "'.tr('Città').'", "name": "citta" ]}
+			{[ "type": "text", "label": "'.tr('Città').'", "name": "citta", "required": 1  ]}
 		</div>
 
 		<div class="col-md-3">

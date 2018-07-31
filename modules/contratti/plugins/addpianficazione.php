@@ -14,6 +14,16 @@ $op = 'edit-pianifica';
 $data_conclusione = $dbo->fetchArray('SELECT `data_conclusione` FROM `co_contratti` WHERE `id` = '.prepare($id_record))[0]['data_conclusione'];
 $idanagrafica = $dbo->fetchArray('SELECT `idanagrafica` FROM `co_contratti` WHERE `id` = '.prepare($id_record))[0]['idanagrafica'];
 
+$idimpianti = $dbo->fetchArray('SELECT GROUP_CONCAT(`idimpianto`) AS idimpianti FROM `my_impianti_contratti` WHERE `idcontratto` = '.prepare($id_record))[0]['idimpianti'];
+
+
+$idimpianto = explode(",", $idimpianti);
+//solo se ho selezionato un solo impianto nel contratto, altrimenti non so quale sede e tecnico prendere
+if (count($idimpianto)<2){
+	$idsede = $dbo->fetchArray('SELECT idsede FROM my_impianti WHERE id = '.prepare($idimpianto[0]))[0]['idsede'];
+	$idtecnico = $dbo->fetchArray('SELECT idtecnico FROM my_impianti WHERE id = '.prepare($idimpianto[0]))[0]['idtecnico'];
+}
+
 $list = '\"1\":\"'.tr('Pianificare a partire da oggi ').date('d/m/Y').'\"';
 
 //promemoria esistente
@@ -23,7 +33,7 @@ if (!empty($get['idcontratto_riga'])) {
     $rsp = $dbo->fetchArray($qp);
 
     $data_richiesta = readDate($rsp[0]['data_richiesta']);
-    $matricoleimpianti = trim($rsp[0]['idimpianti']);
+    $idimpianti = trim($rsp[0]['idimpianti']);
     $idsede = $rsp[0]['idsede'];
     $tempo_standard = $rsp[0]['tempo_standard'];
 	
@@ -66,7 +76,7 @@ echo '
 				</div>
 
 				<div class="col-md-6">
-					 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "required": 1, "id": "idtipointervento_", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$rsp[0]['idtipointervento'].'", "extra": "'.$readonly.'"  ]}
+					 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "required": 1, "id": "idtipointervento_", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$rsp[0]['idtipointervento'].'", "extra": "'.$readonly.'",  "ajax-source": "tipiintervento"  ]}
 				</div>
 
 			</div>
@@ -76,7 +86,7 @@ echo '
 			<div class="row">
 
 				<div class="col-md-6">
-						{[ "type": "select", "multiple": "1", "label": "'.tr('Impianti a contratto').'", "name": "idimpianti[]", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_record.' ORDER BY descrizione", "value": "'.$matricoleimpianti.'", "extra":"'.$readonly.'" ]}
+						{[ "type": "select", "multiple": "1", "label": "'.tr('Impianti a contratto').'", "name": "idimpianti[]", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_record.' ORDER BY descrizione", "value": "'.$idimpianti.'", "extra":"'.$readonly.'" ]}
 				</div>
 
 				<div class="col-md-6">
@@ -114,9 +124,6 @@ echo '
 } ?>
 				</div>
 			</div>
-
-
-
 
 			<!-- SPESE AGGIUNTIVE -->
 			<div class="panel panel-primary">

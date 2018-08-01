@@ -14,6 +14,7 @@ $op = 'edit-pianifica';
 $data_conclusione = $dbo->fetchArray('SELECT `data_conclusione` FROM `co_contratti` WHERE `id` = '.prepare($id_record))[0]['data_conclusione'];
 $idanagrafica = $dbo->fetchArray('SELECT `idanagrafica` FROM `co_contratti` WHERE `id` = '.prepare($id_record))[0]['idanagrafica'];
 
+//tutti gli impianti a contratto
 $idimpianti = $dbo->fetchArray('SELECT GROUP_CONCAT(`idimpianto`) AS idimpianti FROM `my_impianti_contratti` WHERE `idcontratto` = '.prepare($id_record))[0]['idimpianti'];
 
 $idimpianto = explode(",", $idimpianti);
@@ -32,12 +33,21 @@ if (!empty($get['idcontratto_riga'])) {
     $rsp = $dbo->fetchArray($qp);
 
     $data_richiesta = readDate($rsp[0]['data_richiesta']);
-    $idimpianti = trim($rsp[0]['idimpianti']);
-    $idsede = $rsp[0]['idsede'];
-    $tempo_standard = $rsp[0]['tempo_standard'];
+    
+
+	//sede nel promemoria
+	$idsede = $rsp[0]['idsede'];
+    
+	$tempo_standard = $rsp[0]['tempo_standard'];
 	
-	//if (!empty($rsp[0]['idtipointervento']))
+	$idtipointervento = $rsp[0]['idtipointervento'];
+	
+	if (!empty($idsede)){
+		
+		//if (!empty($rsp[0]['idimpianti']))
+		$idimpianti = trim($rsp[0]['idimpianti']);
 		$readonly = 'readonly';
+	}
 	
     $hide = '';
     $list .= ', \"0\":\"'.tr('Pianificare a partire da questo promemoria ').$data_richiesta.'\"';
@@ -75,7 +85,7 @@ echo '
 				</div>
 
 				<div class="col-md-6">
-					 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "required": 1, "id": "idtipointervento_", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$rsp[0]['idtipointervento'].'", "extra": "'.$readonly.'",  "ajax-source": "tipiintervento"  ]}
+					 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "required": 1, "id": "idtipointervento_", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$rsp[0]['idtipointervento'].'", "extra": "'.$readonly.'",  "ajax-source": "tipiintervento", "value": "'.$idtipointervento.'"  ]}
 				</div>
 
 			</div>
@@ -83,14 +93,14 @@ echo '
 
 
 			<div class="row">
-
+				
 				<div class="col-md-6">
-						{[ "type": "select", "multiple": "1", "label": "'.tr('Impianti a contratto').'", "name": "idimpianti[]", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_record.' ORDER BY descrizione", "value": "'.$idimpianti.'", "extra":"'.$readonly.'" ]}
-				</div>
-
-				<div class="col-md-6">
-					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede_c", "values": "query=SELECT 0 AS id, \'Sede legale\' AS descrizione UNION SELECT id, CONCAT( CONCAT_WS( \' (\', CONCAT_WS(\', \', `nomesede`, `citta`), `indirizzo` ), \')\') AS descrizione FROM an_sedi WHERE idanagrafica='.$idanagrafica.'", "value": "'.$idsede.'", "extra":"'.$readonly.'" ]}
+					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede_c", "values": "query=SELECT 0 AS id, \'Sede legale\' AS descrizione UNION SELECT id, CONCAT( CONCAT_WS( \' (\', CONCAT_WS(\', \', `nomesede`, `citta`), `indirizzo` ), \')\') AS descrizione FROM an_sedi WHERE idanagrafica='.$idanagrafica.'", "value": "'.$idsede.'", "extra":"'.$readonly.'", "required" : "1" ]}
 			   </div>
+			   
+				<div class="col-md-6">
+						{[ "type": "select", "multiple": "1", "label": "'.tr('Impianti a contratto').'", "name": "idimpianti[]", "help": "'.tr('Impianti sede selezionata').'", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_record.' ORDER BY descrizione", "value": "'.$idimpianti.'", "extra":"'.$readonly.'" ]}
+				</div>
 
 			</div>
 

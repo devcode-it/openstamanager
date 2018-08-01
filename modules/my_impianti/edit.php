@@ -2,6 +2,10 @@
 
 include_once __DIR__.'/../../core.php';
 
+//unset($_SESSION['superselect']['idanagrafica']);
+//unset($_SESSION['superselect']['idsede']);
+
+
 $img = null;
 if (!empty($records[0]['immagine'])) {
     $fileinfo = Uploads::fileInfo($records[0]['immagine']);
@@ -40,7 +44,7 @@ if (!empty($records[0]['immagine'])) {
 						<div class="clearfix"></div>
 
 						<div class="col-md-12">
-							{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted_at IS NULL ORDER BY ragione_sociale", "value": "$idanagrafica$", "extra": "onchange=\"load_preventivi( this.value ); load_contratti( this.value ); $('#idsede').load( '<?php echo $rootdir; ?>/ajax_complete.php?module=Anagrafiche&op=get_sedi_select&idanagrafica='+$('#idanagrafica option:selected').val() ); load_impianti( $('#idanagrafica option:selected').val(), $('#idsede option:selected').val() );\"", "ajax-source": "clienti" ]}
+							{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted_at IS NULL ORDER BY ragione_sociale", "value": "$idanagrafica$", "extra": "", "ajax-source": "clienti" ]}
 						</div>
 					</div>
 				</div>
@@ -56,7 +60,7 @@ if (!empty($records[0]['immagine'])) {
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "values": "query=SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica='$idanagrafica$'", "value": "$idsede$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "values": "query=SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica='$idanagrafica$'", "value": "$idsede$", "required": "1",  "ajax-source": "sedi" ]}
 				</div>
 			</div>
 
@@ -110,3 +114,25 @@ if (!empty($records[0]['immagine'])) {
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+	$('#idanagrafica').change( function(){
+		
+		session_set('superselect,idanagrafica', $(this).val(), 0);
+
+        var value = !$(this).val() ? true : false;
+
+		$("#idsede").prop("disabled", value);
+		$("#idsede").selectReset();
+		
+	});
+	
+	$('#idsede').change( function(){
+		//session_set('superselect,idsede', $(this).val(), 0);
+	});
+		
+});
+</script>

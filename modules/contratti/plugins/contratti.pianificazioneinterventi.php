@@ -9,12 +9,23 @@ switch (filter('op')) {
     case 'add-pianifica':
 
         $data_richiesta = filter('data_richiesta');
-        $query = 'INSERT INTO `co_contratti_promemoria` ( `idcontratto`, `data_richiesta` ) VALUES ('.prepare($id_record).', '.prepare($data_richiesta).')';
+		$idtipointervento = filter('idtipointervento');
+        $query = 'INSERT INTO `co_contratti_promemoria` ( `idcontratto`, `data_richiesta`, idtipointervento ) VALUES ('.prepare($id_record).', '.prepare($data_richiesta).',  '.prepare($idtipointervento).' )';
 
-        if ($dbo->query($query)) {
-        } else {
-            $_SESSION['errors'][] = tr("Errore durante l'aggiunta del promemoria!");
-        }
+		//$are_duplicated = $dbo->fetchNum('SELECT id FROM co_contratti_promemoria WHERE data_richiesta = '.prepare($data_richiesta).' AND idtipointervento = '.prepare($idtipointervento).' AND idcontratto = '.prepare($id_record) );
+		
+		//if (empty($are_duplicated)){
+			if ($dbo->query($query)) {
+				ob_clean();
+				echo $dbo->lastInsertedID();
+				ob_end();
+			
+			} else {
+				$_SESSION['errors'][] = tr("Errore durante l'aggiunta del promemoria!");
+			}
+		//}else{
+				//$_SESSION['warnings'][] = tr('Promemoria non inserito perché  esiste già per questa data e  per questo tipo intervento.');
+		//}
     break;
 
     case 'edit-pianifica':
@@ -29,13 +40,13 @@ switch (filter('op')) {
         $idimpianti = implode(',', $post['idimpianti']);
 
         $query = 'UPDATE co_contratti_promemoria SET idtipointervento='.prepare($idtipointervento).', data_richiesta='.prepare($data_richiesta).', richiesta='.prepare($richiesta).',  idsede='.prepare($idsede).', idimpianti='.prepare($idimpianti).'   WHERE id = '.prepare($idcontratto_riga);
-
+		
         if (isset($id_record)) {
-            if ($dbo->query($query)) {
-                $_SESSION['infos'][] = tr('Promemoria inserito!');
-            } else {
-                $_SESSION['errors'][] = tr('Errore durante la modifica del promemoria!');
-            }
+			if ($dbo->query($query)) {
+				$_SESSION['infos'][] = tr('Promemoria inserito!');
+			} else {
+				$_SESSION['errors'][] = tr('Errore durante la modifica del promemoria!');
+			}
         }
 
         redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
@@ -475,36 +486,68 @@ echo '
     </div>
 </div>';
 
+$inputOptions = $dbo->fetchArray('SELECT GROUP_CONCAT(CONCAT(\'"\', idtipointervento, \'"\',\':\', \'"\', descrizione, \'"\')) AS inputOptions FROM `in_tipiintervento`')[0]['inputOptions'];
+
 ?>
 
 <script type="text/javascript">
+	
+	function askTipoIntervento () {
+		
+		 swal({
+				
+				title: '<?php echo tr('Aggiungere un nuovo promemoria?'); ?>',
+				type: "info",
+				showCancelButton: true,
+				confirmButtonText: '<?php echo tr('Aggiungi'); ?>',
+				confirmButtonClass: 'btn btn-lg btn-success',
+				input: 'select',
+				inputOptions: {<?php echo $inputOptions; ?>},
+				inputPlaceholder: '<?php echo tr('Tipo intervento'); ?>',
+				inputValidator: (value) => {
+					return new Promise((resolve) => {
+						if (value === '') {
+							
+							alert ('Seleziona un tipo intervento');
+							$('.swal2-select').attr('disabled', false);
+							$('.swal2-confirm').attr('disabled', false);
+							$('.swal2-cancel').attr('disabled', false);
 
+						} else {
+							resolve()
+						}
+					})
+				}
+			
+			
+
+			}).then(
+				function (result) {
+					prev_html = $("#add_promemoria").html();
+					$("#add_promemoria").html("<i class='fa fa-spinner fa-pulse  fa-fw'></i> <?php echo tr('Attendere...'); ?>");
+					$("#add_promemoria").prop('disabled', true);
+
+					$.post( "<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get('Contratti')['id']; ?>&id_record=<?php echo $id_record; ?>", { backto: "record-edit", op: "add-pianifica", data_richiesta: '<?php echo date('Y-m-d'); ?>', idtipointervento: $('.swal2-select').val() })
+					  .done(function( data ) {
+					
+						launch_modal('Nuovo promemoria', '<?php echo $rootdir; ?>/modules/contratti/plugins/addpianficazione.php?id_module=<?php echo Modules::get('Contratti')['id']; ?>&id_plugin=<?php echo Plugins::get('Pianificazione interventi')['id']; ?>&ref=interventi_contratti&id_record=<?php echo $id_record; ?>&idcontratto_riga='+data+'', 1, '#bs-popup');
+
+						$("#add_promemoria").html(prev_html);
+						$("#add_promemoria").prop('disabled', false);
+
+					  });
+				},
+				function (dismiss) {}
+			);
+		
+	
+		
+		}
+		
+		
 	$( "#add_promemoria" ).click(function() {
 
-		swal({
-			title: '<?php echo tr('Aggiungere un nuovo promemoria?'); ?>',
-			type: "info",
-			showCancelButton: true,
-			confirmButtonText: '<?php echo tr('Aggiungi'); ?>',
-		   confirmButtonClass: 'btn btn-lg btn-success',
-		}).then(
-			function (result) {
-				prev_html = $("#add_promemoria").html();
-				$("#add_promemoria").html("<i class='fa fa-spinner fa-pulse  fa-fw'></i> <?php echo tr('Attendere...'); ?>");
-				$("#add_promemoria").prop('disabled', true);
-
-				$.post( "<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get('Contratti')['id']; ?>&id_record=<?php echo $id_record; ?>", { backto: "record-edit", op: "add-pianifica", data_richiesta: '<?php echo date('Y-m-d'); ?>' })
-				  .done(function( data ) {
-					launch_modal('Nuovo promemoria', '<?php echo $rootdir; ?>/modules/contratti/plugins/addpianficazione.php?id_module=<?php echo Modules::get('Contratti')['id']; ?>&id_plugin=<?php echo Plugins::get('Pianificazione interventi')['id']; ?>&ref=interventi_contratti&id_record=<?php echo $id_record; ?>', 1, '#bs-popup');
-
-					$("#add_promemoria").html(prev_html);
-					$("#add_promemoria").prop('disabled', false);
-
-				  });
-			},
-			function (dismiss) {}
-		);
-
+		askTipoIntervento();
 
 	});
 </script>

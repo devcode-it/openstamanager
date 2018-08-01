@@ -20,6 +20,7 @@ session_write_close();
 
 // Permesso di accesso all'API da ogni dispositivo
 header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS');
 
 // Attenzione: al momento l'API permette la lettura di tutte le tabelle presenti nel database (non limitate a quelle del progetto)
 
@@ -69,6 +70,11 @@ try {
     $logger->addRecord(\Monolog\Logger::ERROR, $e);
 
     $result = API::error('serverError');
+}
+
+// Richiesta OPTIONS (controllo da parte del dispositivo)
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    $result = API::error('ok');
 }
 
 json_decode($result);

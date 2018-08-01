@@ -16,7 +16,6 @@ $idanagrafica = $dbo->fetchArray('SELECT `idanagrafica` FROM `co_contratti` WHER
 
 $idimpianti = $dbo->fetchArray('SELECT GROUP_CONCAT(`idimpianto`) AS idimpianti FROM `my_impianti_contratti` WHERE `idcontratto` = '.prepare($id_record))[0]['idimpianti'];
 
-
 $idimpianto = explode(",", $idimpianti);
 //solo se ho selezionato un solo impianto nel contratto, altrimenti non so quale sede e tecnico prendere
 if (count($idimpianto)<2){
@@ -212,7 +211,7 @@ echo '
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1",  "name": "idtecnico[]", "required": 0, "ajax-source": "tecnici", "extra": "disabled" ]}
+			{[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1",  "name": "idtecnico[]", "required": 0, "ajax-source": "tecnici", "extra": "disabled", "value": "'.$idtecnico.'" ]}
 		</div>
 
 

@@ -12,7 +12,7 @@ switch (post('op')) {
         // Informazioni della fattura
         $tipo_documento = $dbo->selectOne('co_tipidocumento', 'id', ['descrizione' => 'Fattura immediata di vendita'])['id'];
         $dir = 'entrata';
-        $idiva = get_var('Iva predefinita');
+        $idiva = setting('Iva predefinita');
         $data = date('Y-m-d');
 
         // Segmenti

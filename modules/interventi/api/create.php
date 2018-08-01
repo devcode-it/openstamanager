@@ -7,7 +7,7 @@ switch ($resource) {
         $data = $request['data'];
 
         // Se l'idintervento non esiste, creo un nuovo intervento
-        $formato = get_var('Formato codice intervento');
+        $formato = setting('Formato codice intervento');
         $template = str_replace('#', '%', $formato);
 
         $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');

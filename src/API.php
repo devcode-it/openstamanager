@@ -208,7 +208,7 @@ class API extends \Util\Singleton
     {
         $user = Auth::user();
         $results = [];
-        
+
         // Controllo sulla compatibilità dell'API
         if (!self::isCompatible()) {
             return self::response([

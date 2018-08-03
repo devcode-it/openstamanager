@@ -4,17 +4,21 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.2](#242)
+    - [Aggiunto (Added)](#aggiunto-added)
+    - [Modificato (Changed)](#modificato-changed)
+    - [Deprecato (Deprecated)](#deprecato-deprecated)
+    - [Rimosso (Removed)](#rimosso-removed)
+    - [Sicurezza (Security)](#sicurezza-security)
 - [2.4 (2018-03-30)](#24-2018-03-30)
     - [Aggiunto (Added)](#aggiunto-added)
     - [Modificato (Changed)](#modificato-changed)
-    - [Rimosso (Removed)](#rimosso-removed)
     - [Fixed](#fixed)
 - [2.3.1 (2018-02-19)](#231-2018-02-19)
     - [Aggiunto (Added)](#aggiunto-added)
     - [Modificato (Changed)](#modificato-changed)
-    - [Rimosso (Removed)](#rimosso-removed)
     - [Fixed](#fixed)
-- [2.3 (2018-01-27)](#23-in-sviluppo)
+- [2.3 (2018-02-16)](#23-2018-02-16)
     - [Aggiunto (Added)](#aggiunto-added)
     - [Modificato (Changed)](#modificato-changed)
     - [Deprecato (Deprecated)](#deprecato-deprecated)
@@ -30,13 +34,49 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
     - [Fixed](#fixed)
 
 
+## 2.4.2
+
+### Aggiunto (Added)
+
+ - Plugin per la Fatturazione Elettronica
+ - Libreria autonoma per i messaggi da mostrare all'utente
+ - Logging completo delle azioni degli utente (accessibile agli Amministratori)
+ - Supporto a [Prepared Statements PDO](http://php.net/manual/it/pdo.prepared-statements.php)
+ - Impostazioni da definire durante l'installazione e l'aggiornamento del software
+ - Helper per semplificare lo sviluppo di codice indipendente (file `lib/helpers.php`)
+ - Funzioni generiche per moduli e plugin (file `lib/common.php`)
+ - API per la gestione dell'applicazione
+
+### Modificato (Changed)
+
+- Normalizzazione delle nazioni registrate dal gestionale (https://github.com/umpirsky/country-list)
+- Miglioramenti nella gestione dei record (variabile `$record` al posto di `$records[0]`)
+- Ottimizzazione delle query di conteggio (metodo `fetchNum`)
+- Aggiungere un tecnico in un Intervento salva le modifiche apportate in precedenza
+
+### Deprecato (Deprecated)
+
+- Variabili globali $post e $get, da sostituire con le funzioni `post()` e `get()`
+- Funzione `get_var()`, da sostituire con la funzione `setting()`
+- Funzioni PHP inutilizzate: `datediff()`, `unique_filename()`, `create_thumbnails()`
+
+### Rimosso (Removed)
+
+- Funzioni PHP deprecate nella versione 2.3.*
+
+### Sicurezza (Security)
+
+- Abilitata protezione contro attacchi CSRF
+
+
 ## 2.4 (2018-03-30)
 
 ### Aggiunto (Added)
+
  - Modelli di stampa su database, con possibilità di creare più stampe per singolo modulo e raggrupparle in unica voce di menu
  - Possibilità di inviare le email dai vari moduli e gestione degli account SMTP
  - Introduzione dei segmenti: filtri aggiuntivi definibili per ogni modulo
- - Aggiunti sezionali per fatture acquisto / vendita
+ - Aggiunti sezionali per fatture acquisto/vendita
  - Nuovo modulo archivio banche per definire poi in ogni anagrafica (cliente o fornitore) la banca predefinita
  - Nuova pagina dedicata all'utente dove è possibile:
    - Cambiare la propria password
@@ -51,8 +91,8 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunta gestione allegati anche per contratti, anagrafiche, preventivi, articoli, impianti
  - Modulo per import CSV (anagrafiche)
 
-
 ### Modificato (Changed)
+
   - Modificati pulsanti principali dei moduli e fissati in alto durante lo scorrimento
   - Resi i pulsanti principali dei moduli dinamici e personalizzabili
   - Migliorati interventi da pianificare
@@ -62,17 +102,17 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
   - Modificata aggiunta interventi in fatturazione, con raggruppamento per costi orari e diritti di chiamata
   - Modificato calcolo ritenuta d'acconto, con scelta se calcolare su imponibile o imponibile + rivalsa inps
 
-
 ### Fixed
+
  - Corretto calcolo IVA con sconto globale unitario
  - Corretto calcolo numerazione dei ddt
  - Correzione visualizzazione di attività a calendario a cavallo di periodi diversi
  - Correzioni minori
 
-
 ## 2.3.1 (2018-02-19)
 
 ### Aggiunto (Added)
+
  - Aggiunti i seriali in stampa
  - Aggiunta la zona nelle attività (in sola lettura dall'anagrafica)
  - Aggiunta tramite flag la possibilità di inserire la descrizione dell'intervento in fattura
@@ -80,14 +120,15 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Aggiunte informazioni del cliente e fornitore nelle relative stampe ordini
 
 ### Modificato (Changed)
+
  - Migliorati i widget di "Crediti da clienti" e "Debiti verso fornitori", con calcolo parziale del rimanente
  - Disabilitato di default il modulo "Viste"
- - Migliorata la gestione della pianificazione attività sui contratti, con la possibilità di eliminare tutte le pianificazioni
-   o di creare direttamente un intervento collegato
+ - Migliorata la gestione della pianificazione attività sui contratti, con la possibilità di eliminare tutte le pianificazioni o di creare direttamente un intervento collegato
  - Modificato l'inserimento di interventi in fattura raggruppando per costo orario nel caso ci siano più costi orari
  - Spostato il conto "Perdite e profitti" nello stato patrimoniale
 
 ### Fixed
+
  - Corretti diversi problemi in fase di installazione
  - Modifica e miglioramento dell'arrotondamento iva in fattura, sia a video che in stampa
  - Corretto il caricamento di menu a tendina per gli utenti con permessi limitati

@@ -25,7 +25,8 @@ switch ($resource) {
             }
 
             $where[] = 'idanagrafica='.prepare($superselect['idanagrafica']);
-            $where[] = 'idsede='.prepare($superselect['idsede']);
+			if (!empty($superselect['idsede']))
+				$where[] = 'idsede='.prepare($superselect['idsede']);
 
             if (!empty($search)) {
                 $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');

@@ -48,7 +48,7 @@ echo "
 
 // RIGHE FATTURA CON ORDINAMENTO UNICO
 $righe = $dbo->fetchArray("SELECT *,
-    IFNULL((SELECT `codice` FROM `mg_articoli` WHERE `id` = `co_righe_documenti`.`idarticolo`), '') AS codice_articolo,
+	IFNULL((SELECT `codice` FROM `mg_articoli` WHERE `id` = `co_righe_documenti`.`idarticolo`), '') AS codice_articolo,
     (SELECT GROUP_CONCAT(`serial` SEPARATOR ', ') FROM `mg_prodotti` WHERE `id_riga_documento` = `co_righe_documenti`.`id`) AS seriali,
     (SELECT `percentuale` FROM `co_iva` WHERE `id` = `co_righe_documenti`.`idiva`) AS perc_iva
 FROM `co_righe_documenti` WHERE `iddocumento` = ".prepare($id_record).' ORDER BY `order`');
@@ -59,10 +59,16 @@ foreach ($righe as $r) {
 
     // Valori assoluti
     $r['qta'] = abs($r['qta']);
-    $r['subtotale'] = abs($r['subtotale']);
+    if (empty($r['sconto_globale']))
+		$r['subtotale'] = abs($r['subtotale']);
+	else
+		$r['subtotale'] = ($r['subtotale']);
     $r['sconto_unitario'] = abs($r['sconto_unitario']);
     $r['sconto'] = abs($r['sconto']);
-    $r['iva'] = abs($r['iva']);
+   if (empty($r['sconto_globale']))
+		$r['iva'] = abs($r['iva']);
+	else
+		$r['iva'] = ($r['iva']);
 
     echo '
         <tr>
@@ -135,8 +141,8 @@ foreach ($righe as $r) {
     echo "
             <td class='text-right'>";
     if (empty($r['is_descrizione'])) {
-        echo '
-                '.(empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
+		echo '
+				'.(empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
 
         if ($r['sconto'] > 0) {
             echo "
@@ -158,8 +164,8 @@ foreach ($righe as $r) {
     echo "
             <td class='text-right'>";
     if (empty($r['is_descrizione'])) {
-        echo '
-                '.(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] - $r['sconto'])).' &euro;';
+		echo '
+				'.(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] - $r['sconto'])).' &euro;';
 
         if ($r['sconto'] > 0) {
             /*echo "
@@ -188,11 +194,6 @@ foreach ($righe as $r) {
         </tr>';
 
     $autofill['count'] += $count;
-
-    $imponibile[] = $r['subtotale'];
-    $iva[] = $r['iva'];
-    $sconto[] = $r['sconto'];
-
     $v_iva[$r['desc_iva']] = sum($v_iva[$r['desc_iva']], $r['iva']);
     $v_totale[$r['desc_iva']] = sum($v_totale[$r['desc_iva']], [
         $r['subtotale'], -$r['sconto'],
@@ -272,9 +273,32 @@ echo '
 echo '
 </table>';
 
-// Info per il footer
-$imponibile = sum($imponibile);
-$iva = sum($iva, 0) + $records[0]['iva_rivalsainps'];
-$sconto = sum($sconto);
 
-$totale = $imponibile + $iva - $sconto + $records[0]['rivalsainps'];
+// Calcoli
+$imponibile = sum(array_column($righe, 'subtotale'));
+$sconto = sum(array_column($righe, 'sconto'));
+$iva = sum(array_column($righe, 'iva'));
+
+$imponibile_scontato = sum($imponibile, -$sconto);
+
+$totale_iva = sum($iva, $records[0]['iva_rivalsainps']);
+
+$totale = sum([
+    $imponibile_scontato,
+    $records[0]['rivalsainps'],
+    $totale_iva,
+]);
+
+$netto_a_pagare = sum([
+    $totale,
+    $records[0]['bollo'],
+    -$records[0]['ritenutaacconto'],
+]);
+
+$imponibile = abs($imponibile);
+$sconto = abs($sconto);
+$iva = abs($iva);
+$imponibile_scontato = abs($imponibile_scontato);
+$totale_iva = abs($totale_iva);
+$totale = abs($totale);
+$netto_a_pagare = abs($netto_a_pagare);

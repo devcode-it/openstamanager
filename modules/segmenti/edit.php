@@ -47,7 +47,7 @@ include_once __DIR__.'/../../core.php';
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "required": 0, "value": "$note$" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
 				</div>
 			</div>
 		</div>
@@ -71,7 +71,7 @@ if (strpos($table[0], 'co_documenti') !== false) {
 ?>
 
 				<div class="col-md-3">
-                    {[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "required": 0, "class": "alphanumeric-mask", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YY", "extra": "<?php echo ($tot > 0) ? 'readonly' : ''; ?>" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "class": "alphanumeric-mask", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YY", "extra": "<?php echo ($tot > 0) ? 'readonly' : ''; ?>" ]}
 				</div>
 			</div>
 

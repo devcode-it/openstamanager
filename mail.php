@@ -158,6 +158,8 @@ echo '
                     $(this).autocomplete("search", $(this).val())
                 });;
             });
+            
+            aggiungi_destinatario();
         });';
         }
 

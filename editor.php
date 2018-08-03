@@ -325,6 +325,10 @@ if ($read_only || !empty($block_edit)) {
             $(".btn-success, button[type=submit]").bind("click", function() {
                 content_was_modified = false;
             });
+			
+			$( "form" ).bind( "submit", function() {
+				content_was_modified = false;
+			})
 
 			// questo controllo blocca il modulo vendita al banco, dopo la lettura con barcode, appare il messaggio di conferma
             window.onbeforeunload = function(e){

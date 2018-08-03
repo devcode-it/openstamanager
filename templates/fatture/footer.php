@@ -149,7 +149,7 @@ if (!empty($sconto)) {
 
 echo "
         <td class='cell-padded text-center'>
-            ".Translator::numberToLocale($iva)." &euro;
+            ".Translator::numberToLocale($totale_iva)." &euro;
         </td>
 
         <td class='cell-padded text-center'>

@@ -60,7 +60,7 @@ echo '
         </div>
 
 		<div class="col-md-6">
-            {[ "type": "checkbox", "label": "'.tr('Copia descrizione').'", "name": "copia_descrizione", "required": 0, "placeholder": "'.tr('In fase di selezione copia la descrizione dell\'intervento').'." ]}
+            {[ "type": "checkbox", "label": "'.tr('Copia descrizione').'", "name": "copia_descrizione", "placeholder": "'.tr('In fase di selezione copia la descrizione dell\'intervento').'." ]}
         </div>
 
     </div>';

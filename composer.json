@@ -49,6 +49,7 @@
         "symfony/var-dumper": "^3.3"
     },
     "require-dev": {
+        "codeception/codeception": "^2.4",
         "friendsofphp/php-cs-fixer": "^2.10"
     },
     "autoload": {

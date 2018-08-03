@@ -84,3 +84,8 @@ files/my_impianti/*
 config.inc.php
 REVISION
 .php_cs.cache
+
+/tests/_log/*
+/tests/_temp/*
+codeception.yml
+!.gitkeep

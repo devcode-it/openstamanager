@@ -38,6 +38,7 @@
     "devDependencies": {
         "archiver": "^2.0.0",
         "cwd": "^0.10.0",
+        "concurrently": "^3.6.1",
         "del": "^2.2.0",
         "gulp": "^3.9.1",
         "gulp-autoprefixer": "^3.1.1",
@@ -66,6 +67,8 @@
         "build-OSM": "gulp",
         "dump-OSM": "php composer.phar dump-autoload",
         "doc-OSM": "php couscous.phar deploy",
+        "tests-server" : "concurrently \"java -jar selenium-server-standalone.jar\" \"chromedriver --url-base=/wd/hub\"",
+        "tests-OSM" : "php codecept.phar run",
         "windows-fix": "yarn global add windows-build-tools"
     },
     "overrides": {

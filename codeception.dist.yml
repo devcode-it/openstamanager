@@ -1,0 +1,17 @@
+paths:
+    tests: tests
+    output: tests/_output
+    data: tests/_data
+    support: tests/_support
+    envs: tests/_envs
+actor_suffix: Tester
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed
+modules:
+    config:
+        WebDriver:
+            url: http://localhost/openstamanager
+            window_size: false # disabled in ChromeDriver
+            port: 9515
+            browser: chrome

@@ -134,6 +134,17 @@ Per poter contribuire, si consiglia di seguire le indicazioni descritte all'inte
 Le impostazione di base per il codice sono disponibili attraverso [editor config](https://github.com/devcode-it/openstamanager/blob/master/.editorconfig) per l'utilizzo semplificato negli editor più comuni.
 Maggiori informazioni sulla configurazione e sul plugin sono disponibili nel sito <http://editorconfig.org>.
 
+Per eseguire i test del progetto è necessario seguire le seguenti istruzioni (https://codeception.com/docs/modules/WebDriver):
+- Scaricare (Selenium Server)[https://docs.seleniumhq.org/download/]
+- Scaricare (ChromeDriver)[https://sites.google.com/a/chromium.org/chromedriver/getting-started]
+    - Su Windows, aggiungere l'eseguibile al PATH
+- Configurare localmente Codeception nel file `codeception.yml`
+- Eseguire da riga di comando:
+```bash
+npm run tests-server
+npm run tests-OSM
+```
+
 ## Sviluppatori
 
 - **Fabio Lovato**, il fondatore ([loviuz](https://github.com/loviuz))

@@ -7,6 +7,12 @@ namespace Helper;
 
 class Acceptance extends \Codeception\Module
 {
+    /**
+     * Effettua il login dalla pagina principale.
+     *
+     * @param string $username
+     * @param string $password
+     */
     public function login($username, $password)
     {
         $t = $this->getAcceptanceModule();
@@ -19,6 +25,12 @@ class Acceptance extends \Codeception\Module
         $this->clickAndWait('Accedi');
     }
 
+    /**
+     * Clicca sul pulsante e attende la conclusione del caricamento.
+     *
+     * @param $link
+     * @param $context
+     */
     public function clickAndWait($link, $context = null)
     {
         $t = $this->getAcceptanceModule();
@@ -28,6 +40,12 @@ class Acceptance extends \Codeception\Module
         $t->waitForElementNotVisible('#main_loading');
     }
 
+    /**
+     * Clicca sul pulsante e attende la conclusione del caricamento del modal.
+     *
+     * @param $link
+     * @param $context
+     */
     public function clickAndWaitModal($link, $context = null)
     {
         $t = $this->getAcceptanceModule();
@@ -37,6 +55,13 @@ class Acceptance extends \Codeception\Module
         $t->waitForElementVisible('.modal');
     }
 
+    /**
+     * Imposta il valore di un select gestito dal framework Select2.
+     *
+     * @param $selector
+     * @param $option
+     * @param int $timeout seconds. Default to 1
+     */
     public function select2($selector, $option, $timeout = 5)
     {
         $select2 = $this->getModule('\Helper\Select2');

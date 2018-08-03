@@ -9,3 +9,4 @@ modules:
     enabled:
         - WebDriver
         - \Helper\Acceptance
+        - \Helper\Select2

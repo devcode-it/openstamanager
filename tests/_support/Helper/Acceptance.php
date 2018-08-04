@@ -17,12 +17,20 @@ class Acceptance extends \Codeception\Module
     {
         $t = $this->getAcceptanceModule();
 
+        if ($t->loadSessionSnapshot('login')) {
+            return;
+        }
+
         $t->amOnPage('/');
 
         $t->fillField('username', $username);
         $t->fillField('password', $password);
 
         $this->clickAndWait('Accedi');
+
+        $t->see($username, '.user-panel');
+
+        $t->saveSessionSnapshot('login');
     }
 
     /**
@@ -53,6 +61,45 @@ class Acceptance extends \Codeception\Module
         $this->clickAndWait($link, $context);
 
         $t->waitForElementVisible('.modal');
+    }
+
+    /**
+     * Clicca sul pulsante dentro il modal.
+     *
+     * @param $link
+     */
+    public function clickModalButton($link)
+    {
+        $t = $this->getAcceptanceModule();
+
+        $this->clickAndWait($link, '.modal-content');
+    }
+
+    /**
+     * Clicca sul pulsante e attende la conclusione del caricamento del modal SWAL.
+     *
+     * @param $link
+     * @param $context
+     */
+    public function clickAndWaitSwal($link, $context = null)
+    {
+        $t = $this->getAcceptanceModule();
+
+        $this->clickAndWait($link, $context);
+
+        $t->waitForElementVisible('.swal2-modal');
+    }
+
+    /**
+     * Clicca sul pulsante dentro il modal SWAL.
+     *
+     * @param $link
+     */
+    public function clickSwalButton($link)
+    {
+        $t = $this->getAcceptanceModule();
+
+        $this->clickAndWait($link, '.swal2-buttonswrapper');
     }
 
     /**

@@ -3,11 +3,11 @@
 class AnagraficheCest
 {
     /**
-     * Crea una nuova anagrafica di tipo Cliente.
+     * Crea una nuova anagrafica.
      *
      * @param AcceptanceTester $t
      */
-    public function addWorks(AcceptanceTester $t, $name = 'TEST', $tipo = 1)
+    public function addAnag(AcceptanceTester $t, $name = 'ANAGRAFICA DI PROVA', $tipo = 1, $piva = '')
     {
         // Effettua l'accesso con le credenziali fornite
         $t->login('admin', 'admin');
@@ -21,29 +21,37 @@ class AnagraficheCest
         // Completa i campi per il nuovo elemento
         $t->fillField('Ragione sociale', $name);
         $t->select2('#idtipoanagrafica', $tipo);
+		 $t->click('.btn-box-tool');
+		 $t->waitForElementVisible('#piva', 3);
+		 $t->fillField('Partita IVA', $piva);
 
         // Effettua il submit
         $t->clickAndWait('Aggiungi', '#add-form');
+		
+		// Controlla il salvataggio finale
+		$t->see('Aggiunta nuova anagrafica%', '.alert-success');
+
 
         // Controlla il salvataggio finale
-        $t->see('Dati anagrafici');
+        //$t->see('Dati anagrafici');
     }
 
     /**
-     * Crea una nuova anagrafica di tipo Cliente.
+     * Crea una nuova anagrafica di tipo cliente e la elimina.
      *
      * @param AcceptanceTester $t
      */
-    public function addAndDeleteWorks(AcceptanceTester $t)
+    public function addAndDeleteAnag(AcceptanceTester $t)
     {
-        $this->addWorks($t, 'TEST DELETE');
+        $this->addAnag($t, 'ANAGRAFICA CLIENTE DI PROVA', 1, '05024030289');
 
         // Seleziona l'azione di eliminazione
         $t->clickAndWaitSwal('Elimina', '#tab_0');
 
         // Conferma l'eliminazione
         $t->clickSwalButton('Elimina');
-
-        $t->see('Anagrafica eliminata!');
+		
+		// Controlla eliminazione
+        $t->see('Anagrafica eliminata!', '.alert-success');
     }
 }

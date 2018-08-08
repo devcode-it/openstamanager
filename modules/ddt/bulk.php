@@ -10,13 +10,21 @@ switch (post('op')) {
         $totale_n_ddt = 0;
 
         // Informazioni della fattura
-        $tipo_documento = $dbo->selectOne('co_tipidocumento', 'id', ['descrizione' => 'Fattura immediata di vendita'])['id'];
-        $dir = 'entrata';
+        if( $dir == 'entrata' ){
+            $tipo_documento = $dbo->selectOne('co_tipidocumento', 'id', ['descrizione' => 'Fattura immediata di vendita'])['id'];
+            $module_name = 'Fatture di vendita';
+            $idconto = get_var('Conto predefinito fatture di vendita');
+        } else {
+            $tipo_documento = $dbo->selectOne('co_tipidocumento', 'id', ['descrizione' => 'Fattura immediata di acquisto'])['id'];
+            $module_name = 'Fatture di acquisto';
+            $idconto = get_var('Conto predefinito fatture di acquisto');
+        }
+        
         $idiva = get_var('Iva predefinita');
         $data = date('Y-m-d');
 
         // Segmenti
-        $id_fatture = Modules::get('Fatture di vendita')['id'];
+        $id_fatture = Modules::get($module_name)['id'];
         if (!isset($_SESSION['m'.$id_fatture]['id_segment'])) {
             $segments = Modules::getSegments($id_fatture);
             $_SESSION['m'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
@@ -37,8 +45,6 @@ switch (post('op')) {
                 if (empty($id_documento)) {
                     $numero = get_new_numerofattura($data);
                     $numero_esterno = get_new_numerosecondariofattura($data);
-
-                    $idconto = get_var('Conto predefinito fatture di vendita');
 
                     $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
 
@@ -68,12 +74,11 @@ switch (post('op')) {
 
                     $id_documento = $dbo->lastInsertedID();
                     $id_documento_cliente[$id_anagrafica] = $id_documento;
+                    ++$totale_n_ddt;
                 }
 
                 // Inserimento righe
                 foreach ($righe as $riga) {
-                    ++$totale_n_ddt;
-
                     $qta = $riga['qta'] - $riga['qta_evasa'];
 
                     if ($qta > 0) {
@@ -147,16 +152,14 @@ $operations = [
     'delete-bulk' => tr('Elimina selezionati'),
 ];
 
-if (Modules::get('Ddt di vendita')['id'] == $id_module) {
-    $operations['crea_fattura'] = [
-        'text' => tr('Crea fattura'),
-        'data' => [
-            'msg' => tr('Vuoi davvero creare una fattura per questi interventi?'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-            'blank' => false,
-        ],
-    ];
-}
+$operations['crea_fattura'] = [
+    'text' => tr('Crea fattura'),
+    'data' => [
+        'msg' => tr('Vuoi davvero creare una fattura per questi interventi?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
 
 return $operations;

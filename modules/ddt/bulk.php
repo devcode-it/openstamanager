@@ -150,16 +150,15 @@ switch (post('op')) {
 
 $operations = [
     'delete-bulk' => tr('Elimina selezionati'),
-];
-
-$operations['crea_fattura'] = [
-    'text' => tr('Crea fattura'),
-    'data' => [
-        'msg' => tr('Vuoi davvero creare una fattura per questi interventi?'),
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-        'blank' => false,
-    ],
+    'crea_fattura' => [
+        'text' => tr('Crea fattura'),
+        'data' => [
+            'msg' => tr('Vuoi davvero creare una fattura per questi interventi?'),
+            'button' => tr('Procedi'),
+            'class' => 'btn btn-lg btn-warning',
+            'blank' => false,
+        ],
+    ]
 ];
 
 return $operations;

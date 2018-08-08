@@ -478,3 +478,5 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento'), 'Tempo standard', 'in_tipiintervento.tempo_standard', 10, 1, 0, 1, '', '', 0, 0, 0);
 
 
+-- Disabilito temporaneamente le stampe degli ordini di servizio, plugins disabilitati
+UPDATE `zz_prints` SET `enabled` = 0 WHERE `name` IN( 'Ordine di servizio', 'Ordine di servizio (senza costi)' );

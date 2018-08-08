@@ -156,6 +156,20 @@ if (!API::isAPIRequest()) {
     // Impostazioni di Content-Type e Charset Header
     header('Content-Type: text/html; charset=UTF-8');
 
+    // Barra di debug
+    if (App::debug()) {
+        $debugbar = new DebugBar\DebugBar();
+
+        $debugbar->addCollector(new DebugBar\DataCollector\MemoryCollector());
+        $debugbar->addCollector(new DebugBar\DataCollector\PhpInfoCollector());
+
+        $debugbar->addCollector(new DebugBar\DataCollector\RequestDataCollector());
+        $debugbar->addCollector(new DebugBar\DataCollector\TimeDataCollector());
+
+        $debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
+        $debugbar->addCollector(new Extension\EloquentCollector($dbo->getCapsule()));
+    }
+
     // Controllo CSRF
     csrfProtector::init();
 
@@ -231,3 +245,12 @@ if (!API::isAPIRequest()) {
     $post = Filter::getPOST();
     $get = Filter::getGET();
 }
+
+$f = Modules\Fatture\Fattura::find(7);
+
+$result = Modules\Fatture\Fattura::create([
+    'idanagrafica' => 1,
+    'data' => '2018-11-11 12:13:21',
+    'id_segment' => 1,
+    'idtipodocumento' => 1,
+]);

@@ -29,6 +29,7 @@
         "filp/whoops": "^2.1",
         "guzzlehttp/guzzle": "^6.3",
         "ifsnop/mysqldump-php": "^2.3",
+        "illuminate/database": "~5.4.0",
         "intervention/image": "^2.3",
         "league/csv": "^8.2",
         "maximebf/debugbar": "^1.15",

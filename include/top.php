@@ -149,17 +149,6 @@ echo '
 if (Auth::check()) {
     // Barra di debug
     if (App::debug()) {
-        $debugbar = new DebugBar\DebugBar();
-
-        $debugbar->addCollector(new DebugBar\DataCollector\MemoryCollector());
-        $debugbar->addCollector(new DebugBar\DataCollector\PhpInfoCollector());
-
-        $debugbar->addCollector(new DebugBar\DataCollector\RequestDataCollector());
-        $debugbar->addCollector(new DebugBar\DataCollector\TimeDataCollector());
-
-        $debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
-        $debugbar->addCollector(new DebugBar\DataCollector\PDO\PDOCollector($dbo->getPDO()));
-
         $debugbarRenderer = $debugbar->getJavascriptRenderer();
         $debugbarRenderer->setIncludeVendors(false);
         $debugbarRenderer->setBaseUrl($paths['assets'].'/php-debugbar');

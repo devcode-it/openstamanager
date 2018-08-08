@@ -322,15 +322,17 @@ class Auth extends \Util\Singleton
     public function getFirstModule()
     {
         if (empty($this->first_module)) {
+            $parameters = [];
+
             $query = 'SELECT id FROM zz_modules WHERE enabled = 1';
             if (!$this->isAdmin()) {
                 $query .= " AND id IN (SELECT idmodule FROM zz_permissions WHERE idgruppo = (SELECT id FROM zz_groups WHERE nome = :group) AND permessi IN ('r', 'rw'))";
+
+                $parameters[':group'] = $this->getUser()['gruppo'];
             }
 
             $database = Database::getConnection();
-            $results = $database->fetchArray($query." AND options != '' AND options != 'menu' AND options IS NOT NULL ORDER BY `order` ASC", [
-                ':group' => $this->getUser()['gruppo'],
-            ]);
+            $results = $database->fetchArray($query." AND options != '' AND options != 'menu' AND options IS NOT NULL ORDER BY `order` ASC", $parameters);
 
             if (!empty($results)) {
                 $module = null;

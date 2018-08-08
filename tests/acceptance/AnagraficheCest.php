@@ -7,7 +7,7 @@ class AnagraficheCest
      *
      * @param AcceptanceTester $t
      */
-    public function addAnag(AcceptanceTester $t, $name = 'ANAGRAFICA DI PROVA', $tipo = 1, $piva = '')
+    public function addAnag(AcceptanceTester $t, $name = 'ANAGRAFICA DI PROVA', $tipo = 1, $partita_iva = '')
     {
         // Effettua l'accesso con le credenziali fornite
         $t->login('admin', 'admin');
@@ -21,19 +21,16 @@ class AnagraficheCest
         // Completa i campi per il nuovo elemento
         $t->fillField('Ragione sociale', $name);
         $t->select2('#idtipoanagrafica', $tipo);
-		 $t->click('.btn-box-tool');
-		 $t->waitForElementVisible('#piva', 3);
-		 $t->fillField('Partita IVA', $piva);
+        $t->click('.btn-box-tool');
+        $t->waitForElementVisible('#piva', 3);
+        $t->fillField('Partita IVA', $partita_iva);
 
         // Effettua il submit
+        $t->executeJS('window.scrollTo(0,document.body.scrollHeight);');
         $t->clickAndWait('Aggiungi', '#add-form');
-		
-		// Controlla il salvataggio finale
-		$t->see('Aggiunta nuova anagrafica%', '.alert-success');
-
 
         // Controlla il salvataggio finale
-        //$t->see('Dati anagrafici');
+        $t->see('Aggiunta nuova anagrafica');
     }
 
     /**
@@ -50,8 +47,8 @@ class AnagraficheCest
 
         // Conferma l'eliminazione
         $t->clickSwalButton('Elimina');
-		
-		// Controlla eliminazione
+
+        // Controlla eliminazione
         $t->see('Anagrafica eliminata!', '.alert-success');
     }
 }

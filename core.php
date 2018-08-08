@@ -245,12 +245,3 @@ if (!API::isAPIRequest()) {
     $post = Filter::getPOST();
     $get = Filter::getGET();
 }
-
-$f = Modules\Fatture\Fattura::find(7);
-
-$result = Modules\Fatture\Fattura::create([
-    'idanagrafica' => 1,
-    'data' => '2018-11-11 12:13:21',
-    'id_segment' => 1,
-    'idtipodocumento' => 1,
-]);

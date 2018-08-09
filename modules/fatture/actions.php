@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Fatture\Fattura;
+
 // Necessaria per la funzione add_movimento_magazzino
 include_once Modules::filepath('Articoli', 'modutil.php');
 include_once Modules::filepath('Interventi', 'modutil.php');
@@ -20,49 +22,19 @@ switch (post('op')) {
     case 'add':
         $idanagrafica = post('idanagrafica');
         $data = post('data');
-        $dir = post('dir');
         $idtipodocumento = post('idtipodocumento');
-
         $id_segment = post('id_segment');
-        $numero = get_new_numerofattura($data);
 
-        if ($dir == 'entrata') {
-            $numero_esterno = get_new_numerosecondariofattura($data);
-            $idconto = setting('Conto predefinito fatture di vendita');
-            $conto = 'vendite';
-        } else {
-            $numero_esterno = '';
-            $idconto = setting('Conto predefinito fatture di acquisto');
-            $conto = 'acquisti';
-        }
-
-        $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
-
-        // Tipo di pagamento + banca predefinite dall'anagrafica
-        $query = 'SELECT id, (SELECT idbanca_'.$conto.' FROM an_anagrafiche WHERE idanagrafica = '.prepare($idanagrafica).') AS idbanca FROM co_pagamenti WHERE id = (SELECT '.$campo.' AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')';
-        $rs = $dbo->fetchArray($query);
-        $idpagamento = $rs[0]['id'];
-        $idbanca = $rs[0]['idbanca'];
-
-        // Se la fattura è di vendita e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
-        if ($dir == 'entrata' && $idpagamento == '') {
-            $idpagamento = setting('Tipo di pagamento predefinito');
-        }
-
-        // Se non è impostata la banca dell'anagrafica, uso quella del pagamento.
-        if (empty($idbanca)) {
-            // Banca predefinita del pagamento
-            $query = 'SELECT id FROM co_banche WHERE id_pianodeiconti3 = (SELECT idconto_'.$conto.' FROM co_pagamenti WHERE id = '.prepare($idpagamento).')';
-            $rs = $dbo->fetchArray($query);
-            $idbanca = $rs[0]['id'];
-        }
-
-        $query = 'INSERT INTO co_documenti (numero, numero_esterno, idanagrafica, idconto, idtipodocumento, idpagamento, idbanca, data, idstatodocumento, idsede, id_segment) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idconto).', '.prepare($idtipodocumento).', '.prepare($idpagamento).', '.prepare($idbanca).', '.prepare($data).', (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`=\'Bozza\'), (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).'), '.prepare($id_segment).')';
-        $dbo->query($query);
-        $id_record = $dbo->lastInsertedID();
+        $fattura = Modules\Fatture\Fattura::create([
+            'idanagrafica' => $idanagrafica,
+            'data' => $data,
+            'id_segment' => $id_segment,
+            'idtipodocumento' => $idtipodocumento,
+        ]);
+        $id_record = $fattura->id;
 
         flash()->info(tr('Aggiunta fattura numero _NUM_!', [
-            '_NUM_' => $numero,
+            '_NUM_' => $fattura->numero,
         ]));
 
         break;

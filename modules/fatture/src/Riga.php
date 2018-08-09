@@ -12,4 +12,9 @@ class Riga extends Model
     {
         return $this->belongsTo(Fattura::class, 'iddocumento');
     }
+
+    public function getImponibile()
+    {
+        return $this->subtotale - $this->sconto;
+    }
 }

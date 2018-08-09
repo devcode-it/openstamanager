@@ -440,14 +440,11 @@ if (!empty($operations)) {
     echo '
 <script>
 
-
-
 $( ".btn-sm[data-toggle=\"tooltip\"]" ).each(function() {
 
    $(this).on("click", function(){
-
-	   form = $("#edit-form");
-	   btn = $(this);
+        form = $("#edit-form");
+        btn = $(this);
 
 		prev_html = btn.html();
 		prev_class = btn.attr("class");
@@ -457,14 +454,14 @@ $( ".btn-sm[data-toggle=\"tooltip\"]" ).each(function() {
 		btn.prop("disabled", true);
 
 		function restore_btn(btn, prev_html, prev_class){
-				btn.attr("class", "");
-				btn.addClass(prev_class);
-				btn.html(prev_html);
-				btn.prop("disabled", false);
+            btn.attr("class", "");
+            btn.addClass(prev_class);
+            btn.html(prev_html);
+            btn.prop("disabled", false);
 		}
 
-		//Procedo al salvataggio solo se tutti i campi obbligatori sono compilati, altimenti mostro avviso
-	   if (form.parsley().isValid()){
+		// Procedo al salvataggio solo se tutti i campi obbligatori sono compilati, altimenti mostro avviso
+	    if (form.parsley().isValid()){
 
 		 content_was_modified = false;
 
@@ -492,23 +489,20 @@ $( ".btn-sm[data-toggle=\"tooltip\"]" ).each(function() {
 			}
 		});
 
-	   }else{
-
+	   } else {
 			swal({
-					type: "error",
-					text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente.').'",
-					title: "'.tr('Errore').'",
-				   onClose: hide_popup
-			   }).then(function () {
+                type: "error",
+                text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente.').'",
+                title: "'.tr('Errore').'",
+                onClose: hide_popup
+            });
 
-			   });
-
-		   function hide_popup(){
+		    function hide_popup(){
 				$("#bs-popup").modal("hide");
 
 				session_set ("errors,0", 0, 1);
 				form.parsley().validate();
-		   }
+		    }
 
 			restore_btn(btn, prev_html, prev_class);
 		}

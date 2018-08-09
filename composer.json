@@ -56,8 +56,9 @@
     "autoload": {
         "psr-4": {
             "": "src/",
-            "Modules\\": "modules/",
-            "Plugins\\": "plugins/"
+            "Modules\\Fatture\\": "modules/fatture/src",
+            "Modules\\Anagrafiche\\": "modules/anagrafiche/src",
+            "Plugins\\Fatturazione\\": "plugins/fatturazione/src"
         },
         "files": [
             "lib/functions.php",

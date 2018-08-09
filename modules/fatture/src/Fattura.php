@@ -4,6 +4,7 @@ namespace Modules\Fatture;
 
 use Illuminate\Database\Eloquent\Model;
 use Util\Generator;
+use  Modules\Anagrafiche\Anagrafica;
 
 class Fattura extends Model
 {
@@ -207,13 +208,15 @@ class Fattura extends Model
      */
     public function getImponibile()
     {
-        if (isset($this->conti['imponibile'])) {
-            return $this->conti['imponibile'];
+        if (!isset($this->conti['imponibile'])) {
+            $result = database()->fetchOne('SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS imponibile FROM co_righe_documenti WHERE iddocumento = :id', [
+                ':id' => $this->id,
+            ]);
+
+            $this->conti['imponibile'] = $result['imponibile'];
         }
 
-        $result = database()->fetchOne('SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS imponibile FROM co_righe_documenti WHERE iddocumento = :id', [
-            ':id' => $this->id,
-        ]);
+        return $this->conti['imponibile'];
 
         return $result['imponibile'];
     }
@@ -225,29 +228,25 @@ class Fattura extends Model
      */
     public function getTotale()
     {
-        if (isset($this->conti['totale'])) {
-            return $this->conti['totale'];
+        if (!isset($this->conti['totale'])) {
+            // Sommo l'iva di ogni riga al totale
+            $iva = $this->righe()->sum('iva');
+
+            $iva_rivalsainps = database()->fetchArray('SELECT SUM(rivalsainps / 100 * percentuale) AS iva_rivalsainps FROM co_righe_documenti INNER JOIN co_iva ON co_iva.id = co_righe_documenti.idiva WHERE iddocumento = :id', [
+                ':id' => $this->id,
+            ])['iva_rivalsainps'];
+
+            $totale = sum([
+                $this->getImponibile(),
+                $this->rivalsainps,
+                $iva,
+                $iva_rivalsainps,
+            ]);
+
+            $this->conti['totale'] = $totale;
         }
 
-        $dbo = database();
-
-        // Sommo l'iva di ogni riga al totale
-        $iva = $dbo->fetchArray('SELECT SUM(iva) AS iva FROM co_righe_documenti WHERE iddocumento = :id', [
-            ':id' => $this->id,
-        ])['iva'];
-
-        $iva_rivalsainps = $dbo->fetchArray('SELECT SUM(rivalsainps / 100 * percentuale) AS iva_rivalsainps FROM co_righe_documenti INNER JOIN co_iva ON co_iva.id = co_righe_documenti.idiva WHERE iddocumento = :id', [
-            ':id' => $this->id,
-        ])['iva_rivalsainps'];
-
-        $totale = sum([
-            $this->getImponibile(),
-            $this->rivalsainps,
-            $iva,
-            $iva_rivalsainps,
-        ]);
-
-        return $totale;
+        return $this->conti['totale'];
     }
 
     /**
@@ -257,17 +256,17 @@ class Fattura extends Model
      */
     public function getNetto($iddocumento)
     {
-        if (isset($this->conti['netto'])) {
-            return $this->conti['netto'];
+        if (!isset($this->conti['netto'])) {
+            $netto = sum([
+                $this->getTotale(),
+                $this->bollo,
+                -$this->ritenutaacconto,
+            ]);
+
+            $this->conti['netto'] = $netto;
         }
 
-        $netto = sum([
-            $this->getTotale(),
-            $this->bollo,
-            -$this->ritenutaacconto,
-        ]);
-
-        return $netto;
+        return $this->conti['netto'];
     }
 
     /**
@@ -277,15 +276,11 @@ class Fattura extends Model
      */
     public function getIvaDetraibile()
     {
-        if (isset($this->conti['iva_detraibile'])) {
-            return $this->conti['iva_detraibile'];
+        if (!isset($this->conti['iva_detraibile'])) {
+            $this->conti['iva_detraibile'] = $this->righe()->sum('iva') - $this->getIvaIndetraibile();
         }
 
-        $result = database()->fetchOne('SELECT SUM(iva) - SUM(iva_indetraibile) AS iva_detraibile FROM co_righe_documenti WHERE iddocumento = :id', [
-            ':id' => $this->id,
-        ]);
-
-        return $result['iva_detraibile'];
+        return $this->conti['iva_detraibile'];
     }
 
     /**
@@ -295,15 +290,11 @@ class Fattura extends Model
      */
     public function getIvaIndetraibile()
     {
-        if (isset($this->conti['iva_indetraibile'])) {
-            return $this->conti['iva_indetraibile'];
+        if (!isset($this->conti['iva_indetraibile'])) {
+            $this->conti['iva_indetraibile'] = $this->righe()->sum('iva_indetraibile');
         }
 
-        $result = database()->fetchOne('SELECT SUM(iva_indetraibile) AS iva_indetraibile FROM co_righe_documenti WHERE = :id', [
-            ':id' => $this->id,
-        ]);
-
-        return $result['iva_indetraibile'];
+        return $this->conti['iva_indetraibile'];
     }
 
     /**
@@ -313,7 +304,7 @@ class Fattura extends Model
      */
     public function getNoteDiAccredito()
     {
-        return database()->fetchArray("SELECT co_documenti.id, IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE reversed = 1)  AND ref_documento = :id", [
+        return database()->fetchArray("SELECT co_documenti.id, IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE reversed = 1) AND ref_documento = :id", [
             ':id' => $this->id,
         ]);
     }
@@ -326,6 +317,11 @@ class Fattura extends Model
     public function isNotaDiAccredito()
     {
         return $this->getTipo()['reversed'] == 1;
+    }
+
+    public function anagrafica()
+    {
+        return $this->belongsTo(Anagrafica::class, 'idanagrafica');
     }
 
     public function tipo()

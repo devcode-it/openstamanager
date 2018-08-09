@@ -170,15 +170,11 @@ if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom
 
             // Icona di stampa
             elseif ($field == '_print_') {
-                $print_url = $r['_print_'];
+                $print = $r['_print_'];
 
-                preg_match_all('/\$(.+?)\$/', $print_url, $matches);
+                $print_url = Prints::getHref($print, $r['id']);
 
-                for ($m = 0; $m < sizeof($matches[0]); ++$m) {
-                    $print_url = str_replace($matches[0][$m], $r[$matches[1][$m]], $print_url);
-                }
-
-                $value = '<a href="'.$rootdir.'/'.$print_url.'" target="_blank"><i class="fa fa-2x fa-print"></i></a>';
+                $value = '<a href="'.$print_url.'" target="_blank"><i class="fa fa-2x fa-print"></i></a>';
             }
 
             // Icona

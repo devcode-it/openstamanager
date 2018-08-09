@@ -36,48 +36,50 @@ try {
     switch ($method) {
         // Richiesta PUT (modifica elementi)
         case 'PUT':
-            $result = $api->update($request);
+            $response = $api->update($request);
             break;
 
         // Richiesta POST (creazione elementi)
         case 'POST':
-            $result = $api->create($request);
+            $response = $api->create($request);
             break;
 
         // Richiesta GET (ottenimento elementi)
         case 'GET':
             // Risorsa specificata
             if (count($request) > 1) {
-                $result = $api->retrieve($request);
+                $response = $api->retrieve($request);
             }
 
             // Risorsa non specificata (lista delle risorse disponibili)
             else {
-                $result = API::response(API::getResources()['retrieve']);
+                $response = API::response([
+                    'resources' => array_keys(API::getResources()['retrieve']),
+                ]);
             }
             break;
 
         // Richiesta DELETE (eliminazione elementi)
         case 'DELETE':
-            $result = $api->delete($request);
+            $response = $api->delete($request);
             break;
     }
 } catch (InvalidArgumentException $e) {
-    $result = API::error('unauthorized');
+    $response = API::error('unauthorized');
 } catch (Exception $e) {
     // Log dell'errore
     $logger = logger();
     $logger->addRecord(\Monolog\Logger::ERROR, $e);
 
-    $result = API::error('serverError');
+    $response = API::error('serverError');
 }
 
 // Richiesta OPTIONS (controllo da parte del dispositivo)
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    $result = API::error('ok');
+    $response = API::error('ok');
 }
 
-json_decode($result);
+json_decode($response);
 
 // Impostazioni di Content-Type e Charset Header
 if (json_last_error() == JSON_ERROR_NONE) {
@@ -87,4 +89,4 @@ if (json_last_error() == JSON_ERROR_NONE) {
 }
 
 // Stampa dei risultati
-echo $result;
+echo $response;

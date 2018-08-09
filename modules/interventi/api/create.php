@@ -36,8 +36,8 @@ switch ($resource) {
                 'informazioniaggiuntive' => $data['informazioni_aggiuntive'],
             ]);
 
-            $results['id'] = $dbo->lastInsertedID();
-            $results['codice'] = $codice;
+            $response['id'] = $dbo->lastInsertedID();
+            $response['codice'] = $codice;
         }
 
         break;

@@ -750,6 +750,16 @@ class Database extends Util\Singleton
         return implode(' '.$cond.' ', $result);
     }
 
+    public function beginTransaction()
+    {
+        Capsule::beginTransaction();
+    }
+
+    public function commitTransaction()
+    {
+        Capsule::commit();
+    }
+
     /**
      * Esegue le query interne ad un file .sql.
      *

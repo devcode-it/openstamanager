@@ -59,7 +59,7 @@ E' possibile effettuare la migrazione da una qualsiasi versione 1.x alla nuova 2
     - Copiare il file `config.inc.php`
     - Copiare la cartella `files/`
     - Copiare i contenuti della cartella `/modules/magazzino/articoli/images/` in `/files/articoli/`
-    - Copiare la cartella `templates/` (mantenendo però i file `pdfgen.php` e `pdfgen_variables.php` di della versione 2.0)
+    - Copiare la cartella `templates/` (mantenendo però i file `pdfgen.php` e `pdfgen_variables.php` della versione 2.0)
 
 Dopo l'esecuzione di queste azioni, il gestionale renderà disponibile l'interfaccia di aggiornamento.
 

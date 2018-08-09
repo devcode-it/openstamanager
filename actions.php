@@ -28,7 +28,7 @@ $element['edit_file'] = !empty($php) ? $php : $html;
 
 $upload_dir = DOCROOT.'/'.Uploads::getDirectory($id_module, $id_plugin);
 
-//$dbo->query('START TRANSACTION');
+$database->beginTransaction();
 
 // GESTIONE UPLOAD
 if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
@@ -242,4 +242,4 @@ if (Modules::getPermission($id_module) == 'rw') {
     }
 }
 
-//$dbo->query('COMMIT');
+$database->commitTransaction();

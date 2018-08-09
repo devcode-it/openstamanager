@@ -7,7 +7,7 @@ currentMenu: contribuire
 Sei interessato a contribuire allo sviluppo di OpenSTAManger? Ottimo, sei il benvenuto!
 
 Siamo entusiasti di ogni nuova contribuzione che otteniamo dalla nostra community.
-Ci sono molti modi per contribuire: segnalare bug, richiedere miglioramenti, scrivere tutorial, migliorare la documentazione...
+Ci sono molti modi per contribuire: segnalare bug, richiedere miglioramenti, scrivere tutorial, migliorare la documentazione, ...
 
 Non serve essere degli esperti programmatori per aiutarci! :smile_cat:
 
@@ -69,3 +69,17 @@ Se sei in grado di risolvere uno dei bug segnalati oppure vuoi completare una nu
 Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), e il nostro forum ufficiale è disponibile all'indirizzo <http://www.openstamanager.com/forum/>.
 
 Cerchiamo di essere disponibili quanto possibile, ma non sempre riusciamo a rispondere tempestivamente.
+
+## Testing
+
+Il progetto presenta, a partire dalla versione 2.4.2, un insieme di test per facilitare il controllo sul corretto funzionamento del gestionale.
+
+Per eseguire i test è necessario seguire le seguenti istruzioni (https://codeception.com/docs/modules/WebDriver):
+- Scaricare (Selenium Server)[https://docs.seleniumhq.org/download/] e salvarlo come `selenium-server-standalone.jar` nella cartella principale
+- Scaricare (ChromeDriver)[https://sites.google.com/a/chromium.org/chromedriver/getting-started], rendendolo eseguibile da riga di comando (su Windows, aggiungerlo al PATH)
+- Configurare localmente Codeception nel file `codeception.yml` con l'URL del web server locale
+- Eseguire su shell differenti i seguenti comandi:
+```bash
+npm run tests-server    # Avvia i server per i test di funzionamento grafico
+npm run tests-OSM       # Avvia i test
+```

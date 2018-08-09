@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Classe per la gestione delle API del progetto.
  *
@@ -66,6 +67,8 @@ class API extends \Util\Singleton
             ]);
         }
 
+        $response = [];
+
         $table = '';
         $select = '*';
         $where = [];
@@ -130,7 +133,7 @@ class API extends \Util\Singleton
             }
 
             // Generazione automatica delle query
-            if (empty($results) && !empty($table)) {
+            if (!empty($table)) {
                 // Date di interesse
                 if (!empty($request['upd'])) {
                     $where['#updated_at'] = 'updated_at >= '.prepare($request['upd']);
@@ -140,16 +143,14 @@ class API extends \Util\Singleton
                 }
 
                 // Query per ottenere le informazioni
-                $results = $database->select($table, $select, $where, $order, [$page * $length, $length]);
-
-                // Informazioni aggiuntive
                 $query = $database->select($table, $select, $where, $order, [], true);
-                $cont = $database->fetchArray('SELECT COUNT(*) as `records`, CEIL(COUNT(*) / '.$length.') as `pages` FROM ('.$query.') AS `count`');
-                if (!empty($cont)) {
-                    $results['records'] = $cont[0]['records'];
-                    $results['pages'] = $cont[0]['pages'];
-                }
             }
+
+            $response['records'] = $database->fetchArray($query.' LIMIT '.($page * $length).', '.$length, $parameters);
+            $count = $database->fetchNum($query, $parameters);
+
+            $response['total-count'] = $count;
+            $response['pages'] = ceil($count / $length);
         } catch (PDOException $e) {
             // Log dell'errore
             $logger = logger();
@@ -158,7 +159,7 @@ class API extends \Util\Singleton
             return self::error('internalError');
         }
 
-        return self::response($results);
+        return self::response($response);
     }
 
     /**
@@ -207,7 +208,7 @@ class API extends \Util\Singleton
     protected function fileRequest($request, $kind)
     {
         $user = Auth::user();
-        $results = [];
+        $response = [];
 
         // Controllo sulla compatibilità dell'API
         if (!self::isCompatible()) {
@@ -227,15 +228,15 @@ class API extends \Util\Singleton
         $database = Database::getConnection();
         $dbo = $database;
 
-        $database->query('START TRANSACTION');
+        $database->beginTransaction();
 
         // Esecuzione delle operazioni
         $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
         include $filename;
 
-        $database->query('COMMIT');
+        $database->commitTransaction();
 
-        return self::response($results);
+        return self::response($response);
     }
 
     /**

@@ -11,7 +11,7 @@ switch ($resource) {
         if (!empty($datas)) {
             foreach ($datas as $data) {
                 if (!in_array($data['TABLE_NAME'], $excluded)) {
-                    $results[$data['TABLE_NAME']] = $dbo->fetchArray('SELECT * FROM '.$data['TABLE_NAME'].$custom_where);
+                    $response[$data['TABLE_NAME']] = $dbo->fetchArray('SELECT * FROM '.$data['TABLE_NAME'].$custom_where);
                 }
             }
         }
@@ -48,7 +48,7 @@ switch ($resource) {
                         }
                     }
 
-                    $results[$table_name] = $total;
+                    $response[$table_name] = $total;
                 }
             }
         }

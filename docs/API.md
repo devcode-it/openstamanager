@@ -44,7 +44,7 @@ Nel caso, a seguito dell'installazione di OpenSTAManager, venisse aggiornato il 
 
 ## Standard di comunicazione
 
-Il funzionamento dell'API si basa fondamentalmente sull'utilizzo di una chiave di accesso, ospitata all'interno della tabella `zz_tokens` del database del progetto, univoca per ogni istanza dell'utente.
+Il funzionamento dell'API si basa fondamentalmente sull'utilizzo di una chiave di accesso univoca per ogni dispositivo, ospitata all'interno della tabella `zz_tokens` del database del progetto.
 
 Ogni richiesta all'API deve contenere la chiave di accesso (campo `token`) e l'operazione richiesta (campo `resource`), inserendo questi elementi tra gli ulteriori contenuti che si intendono inviare.
 I contenuti della richiesta devono quindi essere convertiti in formato JSON ed inviati all'API secondo uno specifico schema:
@@ -87,13 +87,16 @@ In particolare, sono presenti i seguenti _status_:
 
 ### Lettura
 
-Le richieste di lettura sono solitamente completate con l'invio di un numero predefinito di informazioni.
-Per poter interpretare correttamente i dati, si devono ignorare gli indici numerici di primo livello (non rilevanti all'interno del formato) e sfruttare in particolare i seguenti campi generici:
+Le richieste di lettura sono solitamente completate con un numero predefinito di informazioni.
+Per poter interpretare correttamente i dati, si devono sfruttare in particolare i seguenti campi generici:
 
-- `records`, rappresentante il numero totale dei record richiesti;
-- `pages`, indicante il numero totale della pagine disponibili.
+- `records`: elenco dei record presenti nella pagina richiesta (parametro `page`);
+- `total-count`: numero totale dei record;
+- `pages`: numero della pagine disponibili.
 
 Si ricorda che l'API prevede la restituzione di un insieme di dati limitato rispetto alla richiesta effettuatua: per ottenere l'intero insieme di informazioni è necessario eseguire molteplici richieste consecutive basate sul campo `page`.
+
+La lunghezza delle pagine dell'API viene definita dall'impostazione *Lunghezza pagine per API*, modificabile esclusivamente all'interno della tabella `zz_settings`.
 
 ## Personalizzazione
 

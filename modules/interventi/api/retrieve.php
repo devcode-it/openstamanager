@@ -15,12 +15,11 @@ switch ($resource) {
 
         $rs = $dbo->fetchArray($query);
 
-        $results = [];
-        $results['custom'] = '';
+        $response['custom'] = '';
 
-        $results['custom'] .= "BEGIN:VCALENDAR\n";
-        $results['custom'] .= 'VERSION:'.Update::getVersion()."\n";
-        $results['custom'] .= "PRODID:-// OpenSTAManager\n";
+        $response['custom'] .= "BEGIN:VCALENDAR\n";
+        $response['custom'] .= 'VERSION:'.Update::getVersion()."\n";
+        $response['custom'] .= "PRODID:-// OpenSTAManager\n";
 
         foreach ($rs as $r) {
             $richiesta = str_replace("\r\n", "\n", $r['richiesta']);
@@ -29,18 +28,18 @@ switch ($resource) {
 
             $r['summary'] = str_replace("\r\n", "\n", $r['summary']);
 
-            $results['custom'] .= "BEGIN:VEVENT\n";
-            $results['custom'] .= 'UID:'.$r['idriga']."\n";
-            $results['custom'] .= 'DTSTAMP:'.date('Ymd').'T'.date('His')."\n";
-            //$results['custom'] .= 'ORGANIZER;CN='.$azienda.':MAILTO:'.$email."\n";
-            $results['custom'] .= 'DTSTART:'.date('Ymd', strtotime($r['orario_inizio'])).'T'.date('His', strtotime($r['orario_inizio']))."\n";
-            $results['custom'] .= 'DTEND:'.date('Ymd', strtotime($r['orario_fine'])).'T'.date('His', strtotime($r['orario_fine']))."\n";
-            $results['custom'] .= 'SUMMARY:'.html_entity_decode($r['summary'])."\n";
-            $results['custom'] .= 'DESCRIPTION:'.html_entity_decode($richiesta, ENT_QUOTES, 'UTF-8')."\n";
-            $results['custom'] .= "END:VEVENT\n";
+            $response['custom'] .= "BEGIN:VEVENT\n";
+            $response['custom'] .= 'UID:'.$r['idriga']."\n";
+            $response['custom'] .= 'DTSTAMP:'.date('Ymd').'T'.date('His')."\n";
+            //$response['custom'] .= 'ORGANIZER;CN='.$azienda.':MAILTO:'.$email."\n";
+            $response['custom'] .= 'DTSTART:'.date('Ymd', strtotime($r['orario_inizio'])).'T'.date('His', strtotime($r['orario_inizio']))."\n";
+            $response['custom'] .= 'DTEND:'.date('Ymd', strtotime($r['orario_fine'])).'T'.date('His', strtotime($r['orario_fine']))."\n";
+            $response['custom'] .= 'SUMMARY:'.html_entity_decode($r['summary'])."\n";
+            $response['custom'] .= 'DESCRIPTION:'.html_entity_decode($richiesta, ENT_QUOTES, 'UTF-8')."\n";
+            $response['custom'] .= "END:VEVENT\n";
         }
 
-        $results['custom'] .= "END:VCALENDAR\n";
+        $response['custom'] .= "END:VCALENDAR\n";
 
         break;
 
@@ -90,11 +89,6 @@ switch ($resource) {
             ':period_end' => $period_end,
         ];
 
-        $results = $dbo->fetchArray($query.' LIMIT '.($page * $length).', '.$length, $parameters);
-
-        $results['records'] = $database->fetchNum($query, $parameters);
-        $results['pages'] = $results['records'] / $length;
-
         break;
 
     // Elenco sessioni dell'intervento per l'applicazione
@@ -114,11 +108,6 @@ switch ($resource) {
             $query .= ' AND `idtecnico` = :id_tecnico';
             $parameters[':id_tecnico'] = $user['idanagrafica'];
         }
-
-        $results = $dbo->fetchArray($query.' LIMIT '.($page * $length).', '.$length, $parameters);
-
-        $results['records'] = $database->fetchNum($query, $parameters);
-        $results['pages'] = $results['records'] / $length;
 
         break;
 }

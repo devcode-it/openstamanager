@@ -208,10 +208,7 @@ class Prints
         $infos = self::get($id_print);
         $options = self::readOptions($infos['options']);
 
-        $database = Database::getConnection();
-        $dbo = $database;
-
-        $docroot = DOCROOT;
+        $dbo = $database = Database::getConnection();
 
         $user = Auth::user();
 
@@ -272,10 +269,7 @@ class Prints
         $infos = self::get($id_print);
         $options = self::readOptions($infos['options']);
 
-        $database = Database::getConnection();
-        $dbo = $database;
-
-        $docroot = DOCROOT;
+        $dbo = $database = Database::getConnection();
 
         $user = Auth::user();
 

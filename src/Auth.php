@@ -1,5 +1,7 @@
 <?php
 
+use Models\User;
+
 /**
  * Classe per la gestione delle utenze.
  *
@@ -42,7 +44,7 @@ class Auth extends \Util\Singleton
     protected static $is_brute;
 
     /** @var array Informazioni riguardanti l'utente autenticato */
-    protected $infos = [];
+    protected $user;
     /** @var string Stato del tentativo di accesso */
     protected $current_status;
     /** @var string|null Nome del primo modulo su cui l'utente ha permessi di navigazione */
@@ -101,23 +103,23 @@ class Auth extends \Util\Singleton
 
         $status = 'failed';
 
-        $users = $database->fetchArray('SELECT id AS id_utente, password, enabled FROM zz_users WHERE username = :username LIMIT 1', [
+        $users = $database->fetchArray('SELECT id, password, enabled FROM zz_users WHERE username = :username LIMIT 1', [
             ':username' => $username,
         ]);
         if (!empty($users)) {
             $user = $users[0];
 
             if (!empty($user['enabled'])) {
-                $this->identifyUser($user['id_utente']);
+                $this->identifyUser($user['id']);
                 $module = $this->getFirstModule();
 
                 if (
                     $this->isAuthenticated() &&
-                    $this->password_check($password, $user['password'], $user['id_utente']) &&
+                    $this->password_check($password, $user['password'], $user['id']) &&
                     !empty($module)
                 ) {
                     // Accesso completato
-                    $log['id_utente'] = $this->infos['id_utente'];
+                    $log['id_utente'] = $this->user->id;
                     $status = 'success';
 
                     // Salvataggio nella sessione
@@ -186,9 +188,11 @@ class Auth extends \Util\Singleton
     protected function saveToSession()
     {
         if (session_status() == PHP_SESSION_ACTIVE && $this->isAuthenticated()) {
-            foreach ($this->infos as $key => $value) {
+            // Retrocompatibilità
+            foreach ($this->user as $key => $value) {
                 $_SESSION[$key] = $value;
             }
+            $_SESSION['id_utente'] = $this->user->id;
 
             $identifier = md5($_SESSION['id_utente'].$_SERVER['HTTP_USER_AGENT']);
             if ((empty($_SESSION['last_active']) || time() < $_SESSION['last_active'] + (60 * 60)) && (empty($_SESSION['identifier']) || $_SESSION['identifier'] == $identifier)) {
@@ -208,15 +212,12 @@ class Auth extends \Util\Singleton
         $database = Database::getConnection();
 
         try {
-            $results = $database->fetchArray('SELECT id AS id_utente, idanagrafica, username, (SELECT nome FROM zz_groups WHERE zz_groups.id = zz_users.idgruppo) AS gruppo FROM zz_users WHERE id = :user_id AND enabled = 1 LIMIT 1', [
+            $results = $database->fetchArray('SELECT id, idanagrafica, username, (SELECT nome FROM zz_groups WHERE zz_groups.id = zz_users.idgruppo) AS gruppo FROM zz_users WHERE id = :user_id AND enabled = 1 LIMIT 1', [
                 ':user_id' => $user_id,
             ], false, ['session' => false]);
 
             if (!empty($results)) {
-                $results[0]['id'] = $results[0]['id_utente'];
-                $results[0]['is_admin'] = ($results[0]['gruppo'] == 'Amministratori');
-
-                $this->infos = $results[0];
+                $this->user = User::with('group')->find($user_id);
             }
         } catch (PDOException $e) {
             $this->destory();
@@ -230,7 +231,7 @@ class Auth extends \Util\Singleton
      */
     public function isAuthenticated()
     {
-        return !empty($this->infos);
+        return !empty($this->user);
     }
 
     /**
@@ -240,17 +241,17 @@ class Auth extends \Util\Singleton
      */
     public function isAdmin()
     {
-        return $this->isAuthenticated() && !empty($this->infos['is_admin']);
+        return $this->isAuthenticated() && !empty($this->user->is_admin);
     }
 
     /**
      * Restituisce le informazioni riguardanti l'utente autenticato.
      *
-     * @return array
+     * @return User
      */
     public function getUser()
     {
-        return $this->infos;
+        return $this->user;
     }
 
     /**
@@ -277,7 +278,7 @@ class Auth extends \Util\Singleton
 
             $database = Database::getConnection();
             $tokens = $database->fetchArray('SELECT `token` FROM `zz_tokens` WHERE `enabled` = 1 AND `id_utente` = :user_id', [
-                ':user_id' => $user['id_utente'],
+                ':user_id' => $user->id,
             ]);
 
             // Generazione del token per l'utente
@@ -285,7 +286,7 @@ class Auth extends \Util\Singleton
                 $token = secure_random_string();
 
                 $database->insert('zz_tokens', [
-                    'id_utente' => $user['id_utente'],
+                    'id_utente' => $user->id,
                     'token' => $token,
                 ]);
             } else {
@@ -302,7 +303,7 @@ class Auth extends \Util\Singleton
     public function destory()
     {
         if ($this->isAuthenticated() || !empty($_SESSION['id_utente'])) {
-            $this->infos = [];
+            $this->user = [];
             $this->first_module = null;
 
             session_unset();
@@ -396,7 +397,7 @@ class Auth extends \Util\Singleton
     /**
      * Restituisce le informazioni riguardanti l'utente autenticato.
      *
-     * @return array
+     * @return User
      */
     public static function user()
     {

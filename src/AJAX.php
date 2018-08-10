@@ -160,8 +160,7 @@ class AJAX
         ];
 
         // Database
-        $database = Database::getConnection();
-        $dbo = $database;
+        $dbo = $database = Database::getConnection();
 
         require $file;
 
@@ -219,8 +218,7 @@ class AJAX
     protected static function getSearchResults($file, $term)
     {
         // Database
-        $database = Database::getConnection();
-        $dbo = $database;
+        $dbo = $database = Database::getConnection();
 
         // Ricerca anagrafiche per ragione sociale per potere mostrare gli interventi, fatture,
         // ordini, ecc della persona ricercata
@@ -280,8 +278,7 @@ class AJAX
     protected static function getCompleteResults($file, $resource)
     {
         // Database
-        $database = Database::getConnection();
-        $dbo = $database;
+        $dbo = $database = Database::getConnection();
 
         ob_start();
         require $file;

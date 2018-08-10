@@ -135,6 +135,10 @@ class App
             self::$config['debug'] = $value;
         }
 
+        if (!isset(self::$config['debug'])) {
+            App::getConfig();
+        }
+
         return self::$config['debug'];
     }
 

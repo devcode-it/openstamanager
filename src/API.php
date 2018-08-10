@@ -98,7 +98,7 @@ class API extends \Util\Singleton
         $page = isset($request['page']) ? (int) $request['page'] : 0;
         $length = setting('Lunghezza pagine per API');
 
-        $database = Database::getConnection();
+        $dbo = $database = Database::getConnection();
 
         $kind = 'retrieve';
         $resources = self::getResources()[$kind];
@@ -106,8 +106,6 @@ class API extends \Util\Singleton
 
         try {
             if (in_array($resource, array_keys($resources))) {
-                $dbo = $database;
-
                 // Inclusione funzioni del modulo
                 include_once App::filepath(DOCROOT.'/modules/'.$resources[$resource].'|custom|', 'modutil.php');
 
@@ -225,8 +223,7 @@ class API extends \Util\Singleton
         }
 
         // Database
-        $database = Database::getConnection();
-        $dbo = $database;
+        $dbo = $database = Database::getConnection();
 
         $database->beginTransaction();
 

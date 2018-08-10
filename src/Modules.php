@@ -1,5 +1,7 @@
 <?php
 
+use Models\Module;
+
 /**
  * Classe per la gestione delle informazioni relative ai moduli installati.
  *
@@ -10,19 +12,14 @@ class Modules
     /** @var array Elenco dei moduli disponibili */
     protected static $modules = [];
     protected static $references = [];
+
     /** @var array Elenco delle condizioni aggiuntive disponibili */
     protected static $additionals = [];
     /** @var array Elenco dei segmenti disponibili */
     protected static $segments = [];
-    /** @var array Elenco delle query generiche dei moduli */
-    protected static $queries = [];
 
     /** @var array Elenco gerarchico dei moduli */
-    protected static $hierarchy = [];
-    /** @var array Profondità dell'elenco gerarchico */
-    protected static $depth;
-    /** @var array Struttura HTML dedicata al menu principale */
-    protected static $menu;
+    protected static $hierarchy;
 
     /**
      * Restituisce tutte le informazioni di tutti i moduli installati.
@@ -32,31 +29,11 @@ class Modules
     public static function getModules()
     {
         if (empty(self::$modules)) {
-            $database = Database::getConnection();
-
-            $user = Auth::user();
-
-            $results = $database->fetchArray('SELECT * FROM `zz_modules` LEFT JOIN (SELECT `idmodule`, `permessi` FROM `zz_permissions` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).')) AS `zz_permissions` ON `zz_modules`.`id`=`zz_permissions`.`idmodule`');
-
             $modules = [];
             $references = [];
 
+            $results = Auth::user()->modules();
             foreach ($results as $result) {
-                $result['options'] = App::replacePlaceholder($result['options']);
-                $result['options2'] = App::replacePlaceholder($result['options2']);
-
-                $result['option'] = empty($result['options2']) ? $result['options'] : $result['options2'];
-
-                if (empty($result['permessi'])) {
-                    if (Auth::admin()) {
-                        $result['permessi'] = 'rw';
-                    } else {
-                        $result['permessi'] = '-';
-                    }
-                }
-
-                unset($result['idmodule']);
-
                 $modules[$result['id']] = $result;
                 $references[$result['name']] = $result['id'];
             }
@@ -79,7 +56,7 @@ class Modules
         $modules = self::getModules();
 
         foreach ($modules as $key => $module) {
-            if ($module['permessi'] == '-') {
+            if ($module->permission == '-') {
                 unset($modules[$key]);
             }
         }
@@ -92,7 +69,7 @@ class Modules
      *
      * @param string|int $module
      *
-     * @return array
+     * @return Module
      */
     public static function get($module)
     {
@@ -114,7 +91,7 @@ class Modules
      */
     public static function getPermission($module)
     {
-        return self::get($module)['permessi'];
+        return self::get($module)->permission ?? '-';
     }
 
     /**
@@ -228,75 +205,13 @@ class Modules
      *
      * @return array
      */
-    public static function getHierarchy($depth = 3)
+    public static function getHierarchy()
     {
-        if (empty(self::$hierarchy) || self::$depth != $depth) {
-            $database = Database::getConnection();
-
-            $depth = ($depth < 2) ? 2 : $depth;
-
-            $fields = [];
-            for ($i = 0; $i < $depth; ++$i) {
-                $fields[] = '`t'.$i."`.`id` AS 't".$i.".id'";
-            }
-
-            $query = 'SELECT '.implode(', ', $fields).' FROM `zz_modules` AS `t0`';
-
-            for ($i = 1; $i < $depth; ++$i) {
-                $query .= ' LEFT JOIN `zz_modules` AS `t'.$i.'` ON `t'.$i.'`.`parent` = `t'.($i - 1).'`.`id`';
-            }
-
-            $query .= ' WHERE `t0`.`parent` IS NULL ORDER BY ';
-
-            for ($i = 0; $i < $depth; ++$i) {
-                $query .= '`t'.$i.'`.`order` ASC, `t'.$i.'`.`id` ASC ';
-
-                if ($i != $depth - 1) {
-                    $query .= ', ';
-                }
-            }
-
-            $modules = $database->fetchArray($query);
-
-            $hierarchy = [];
-            foreach ($modules as $module) {
-                $hierarchy = self::buildArray($module, $hierarchy);
-            }
-
-            self::$depth = $depth;
-            self::$hierarchy = $hierarchy;
+        if (!isset(self::$hierarchy)) {
+            self::$hierarchy = Module::getCompleteHierarchy()->toArray();
         }
 
         return self::$hierarchy;
-    }
-
-    /**
-     * Restituisce l'elaborazione dell'array secondo una struttura ad albero (molteplici root).
-     *
-     * @param int   $id
-     * @param array $data
-     * @param int   $actual
-     *
-     * @return array
-     */
-    protected static function buildArray($module, $data = [], $actual = 0)
-    {
-        if (!empty($module['t'.$actual.'.id'])) {
-            $pos = array_search($module['t'.$actual.'.id'], array_column($data, 'id'));
-            if ($pos === false && !empty($module['t'.$actual.'.id'])) {
-                $array = self::get($module['t'.$actual.'.id']);
-                $array['children'] = [];
-
-                $data[] = $array;
-                $pos = count($data) - 1;
-            }
-
-            if (!empty($module['t'.($actual + 1).'.id'])) {
-                $data[$pos]['children'] = self::buildArray($module, $data[$pos]['children'], $actual + 1);
-            }
-        }
-
-        return $data;
     }
 
     /**
@@ -308,20 +223,17 @@ class Modules
      */
     public static function getMainMenu($depth = 3)
     {
-        if (empty(self::$menu) || self::$depth != $depth) {
-            $menus = self::getHierarchy($depth);
+        $menus = self::getHierarchy();
 
-            $module_name = App::getCurrentModule()['name'];
+        $module = App::getCurrentModule();
+        $module_name = isset($module) ? $module->name : '';
 
-            $result = '';
-            foreach ($menus as $menu) {
-                $result .= self::sidebarMenu($menu, isset($module_name) ? $module_name : '')[0];
-            }
-
-            self::$menu = $result;
+        $result = '';
+        foreach ($menus as $menu) {
+            $result .= self::sidebarMenu($menu, $module_name, $depth)[0];
         }
 
-        return self::$menu;
+        return $result;
     }
 
     /**
@@ -329,23 +241,28 @@ class Modules
      *
      * @param array $element
      * @param int   $actual
+     * @param int   $max_depth
+     * @param int   $actual_depth
      *
      * @return string
      */
-    protected static function sidebarMenu($element, $actual = null)
+    protected static function sidebarMenu($element, $actual = null, $max_depth = 3, $actual_depth = 0)
     {
-        $options = ($element['options2'] != '') ? $element['options2'] : $element['options'];
-        $link = ($options != '' && $options != 'menu') ? ROOTDIR.'/controller.php?id_module='.$element['id'] : 'javascript:;';
+        if ($actual_depth >= $max_depth) {
+            return '';
+        }
+
+        $link = (!empty($element['option']) && $element['option'] != 'menu') ? ROOTDIR.'/controller.php?id_module='.$element['id'] : 'javascript:;';
         $title = $element['title'];
         $target = '_self'; // $target = ($element['new'] == 1) ? '_blank' : '_self';
         $active = ($actual == $element['name']);
         $show = (self::getPermission($element['id']) != '-' && !empty($element['enabled'])) ? true : false;
 
-        $submenus = $element['children'];
+        $submenus = $element['all_children'];
         if (!empty($submenus)) {
             $temp = '';
             foreach ($submenus as $submenu) {
-                $r = self::sidebarMenu($submenu, $actual);
+                $r = self::sidebarMenu($submenu, $actual, $actual_depth + 1);
                 $active = $active || $r[1];
                 if (!$show && $r[2]) {
                     $link = 'javascript:;';
@@ -410,7 +327,7 @@ class Modules
 
         $extra .= !empty($blank) ? ' target="_blank"' : '';
 
-        if (!empty($module) && in_array($module['permessi'], ['r', 'rw'])) {
+        if (!empty($module) && in_array($module->permission, ['r', 'rw'])) {
             $link = !empty($id_record) ? 'editor.php?id_module='.$module['id'].'&id_record='.$id_record : 'controller.php?id_module='.$module['id'];
 
             return '<a href="'.ROOTDIR.'/'.$link.'" '.$extra.'>'.$testo.'</a>';

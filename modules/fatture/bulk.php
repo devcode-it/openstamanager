@@ -49,7 +49,7 @@ switch (post('op')) {
 
         case 'delete-bulk':
 
-            if ($debug) {
+            if (App::debug()) {
                 foreach ($id_records as $id) {
                     $dbo->query('DELETE  FROM co_documenti  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
                     $dbo->query('DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));

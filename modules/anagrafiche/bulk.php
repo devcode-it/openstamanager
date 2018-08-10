@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 switch (post('op')) {
     case 'delete-bulk':
 
-        if ($debug) {
+        if (App::debug()) {
             $id_azienda = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Azienda'")[0]['idtipoanagrafica'];
 
             foreach ($id_records as $id) {

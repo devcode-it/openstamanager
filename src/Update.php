@@ -463,8 +463,7 @@ class Update
      */
     protected static function executeScript($script)
     {
-        $database = Database::getConnection();
-        $dbo = $database;
+        $dbo = $database = Database::getConnection();
 
         // Informazioni relative a MySQL
         $mysql_ver = $database->getMySQLVersion();

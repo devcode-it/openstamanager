@@ -18,9 +18,9 @@ echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_r
 
 $advanced_sessions = setting('Attiva notifica di presenza utenti sul record');
 if ($advanced_sessions) {
-    $dbo->query('DELETE FROM zz_semaphores WHERE id_utente='.prepare(Auth::user()['id_utente']).' AND posizione='.prepare($id_module.', '.$id_record));
+    $dbo->query('DELETE FROM zz_semaphores WHERE id_utente='.prepare(Auth::user()['id']).' AND posizione='.prepare($id_module.', '.$id_record));
 
-    $dbo->query('INSERT INTO zz_semaphores (id_utente, posizione, updated) VALUES ('.prepare(Auth::user()['id_utente']).', '.prepare($id_module.', '.$id_record).', NOW())');
+    $dbo->query('INSERT INTO zz_semaphores (id_utente, posizione, updated) VALUES ('.prepare(Auth::user()['id']).', '.prepare($id_module.', '.$id_record).', NOW())');
 
     echo '
 		<div class="box box-warning box-solid text-center info-active hide">
@@ -325,7 +325,7 @@ if ($read_only || !empty($block_edit)) {
             $(".btn-success, button[type=submit]").bind("click", function() {
                 content_was_modified = false;
             });
-			
+
 			$( "form" ).bind( "submit", function() {
 				content_was_modified = false;
 			})
@@ -339,14 +339,14 @@ if ($read_only || !empty($block_edit)) {
 					return dialogText;
                 }
             };
-			
+
 			 window.addEventListener("unload", function(e) {
 				 //console.log(e);
 				$("#main_loading").show();
 			});
-			
-			
-			
+
+
+
 
 
 <?php

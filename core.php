@@ -60,7 +60,7 @@ if (!API::isAPIRequest()) {
     $handlers[] = new StreamHandler($docroot.'/logs/setup.log', Monolog\Logger::EMERGENCY);
 
     // Impostazioni di debug
-    if (!empty($debug)) {
+    if (App::debug()) {
         // Ignora gli avvertimenti e le informazioni relative alla deprecazione di componenti
         error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE & ~E_USER_DEPRECATED);
 
@@ -86,20 +86,20 @@ if (!API::isAPIRequest()) {
 }
 
 // Disabilita la segnalazione degli errori (se il debug è disabilitato)
-if (empty($debug)) {
+if (!App::debug()) {
     error_reporting(0);
 }
 
 // Imposta il formato di salvataggio dei log
 $pattern = '[%datetime%] %channel%.%level_name%: %message%';
-if (!empty($debug)) {
+if (App::debug()) {
     $pattern .= ' %context%';
 }
 $pattern .= PHP_EOL.'%extra% '.PHP_EOL;
 
 $monologFormatter = new Monolog\Formatter\LineFormatter($pattern);
 
-if (!empty($debug)) {
+if (App::debug()) {
     $monologFormatter->includeStacktraces(true);
 }
 
@@ -111,6 +111,9 @@ foreach ($handlers as $handler) {
 // Imposta Monolog come gestore degli errori
 Monolog\ErrorHandler::register($logger);
 
+// Database
+$dbo = $database = Database::getConnection();
+
 // Inizializzazione della sessione
 if (!API::isAPIRequest()) {
     // Sicurezza della sessioni
@@ -119,6 +122,20 @@ if (!API::isAPIRequest()) {
 
     session_set_cookie_params(0, $rootdir, null, isHTTPS(true));
     session_start();
+
+    // Barra di debug (necessario per loggare tutte le query)
+    if (App::debug()) {
+        $debugbar = new DebugBar\DebugBar();
+
+        $debugbar->addCollector(new DebugBar\DataCollector\MemoryCollector());
+        $debugbar->addCollector(new DebugBar\DataCollector\PhpInfoCollector());
+
+        $debugbar->addCollector(new DebugBar\DataCollector\RequestDataCollector());
+        $debugbar->addCollector(new DebugBar\DataCollector\TimeDataCollector());
+
+        $debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
+        $debugbar->addCollector(new Extension\EloquentCollector($dbo->getCapsule()));
+    }
 }
 
 // Istanziamento del gestore delle traduzioni del progetto
@@ -132,8 +149,6 @@ $translator->setLocale($lang, $formatter);
 // Individuazione di versione e revisione del progetto
 $version = Update::getVersion();
 $revision = Update::getRevision();
-
-$dbo = Database::getConnection();
 
 // Controllo sulla presenza dei permessi di accesso basilari
 $continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (Auth::check() || API::isAPIRequest());
@@ -155,20 +170,6 @@ if (!$continue && getURLPath() != slashes(ROOTDIR.'/index.php') && !Permissions:
 if (!API::isAPIRequest()) {
     // Impostazioni di Content-Type e Charset Header
     header('Content-Type: text/html; charset=UTF-8');
-
-    // Barra di debug
-    if (App::debug()) {
-        $debugbar = new DebugBar\DebugBar();
-
-        $debugbar->addCollector(new DebugBar\DataCollector\MemoryCollector());
-        $debugbar->addCollector(new DebugBar\DataCollector\PhpInfoCollector());
-
-        $debugbar->addCollector(new DebugBar\DataCollector\RequestDataCollector());
-        $debugbar->addCollector(new DebugBar\DataCollector\TimeDataCollector());
-
-        $debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
-        $debugbar->addCollector(new Extension\EloquentCollector($dbo->getCapsule()));
-    }
 
     // Controllo CSRF
     csrfProtector::init();

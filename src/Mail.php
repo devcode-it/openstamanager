@@ -130,8 +130,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     {
         $template = self::getTemplate($template);
 
-        $database = Database::getConnection();
-        $dbo = $database;
+        $dbo = $database = Database::getConnection();
 
         // Lettura delle variabili nei singoli moduli
         $variables = include Modules::filepath($template['id_module'], 'variables.php');

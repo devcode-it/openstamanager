@@ -137,7 +137,7 @@ foreach ($modules as $module) {
             </tr>';
 
     // Prima di cambiare modulo verifico se ci sono sottomoduli
-    echo submodules($module['children']);
+    echo submodules($module['all_children']);
 }
 
 echo '

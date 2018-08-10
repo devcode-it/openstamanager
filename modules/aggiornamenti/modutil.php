@@ -72,7 +72,7 @@ function submodules($list, $depth = 1)
             </td>
         </tr>';
 
-        $result .= submodules($sub['children'], $depth + 1);
+        $result .= submodules($sub['all_children'], $depth + 1);
     }
 
     return $result;

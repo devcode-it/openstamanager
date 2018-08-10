@@ -244,3 +244,6 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM zz_smtps WHERE 1=1 AND
 
 -- Ridenominazione enabled in visible su zz_views
 ALTER TABLE `zz_views` CHANGE `enabled` `visible` BOOLEAN NOT NULL DEFAULT 1;
+
+-- Rimozione permessi negati (comportamento di default)
+DELETE FROM `zz_permissions` WHERE `permessi` = '-';

@@ -77,11 +77,11 @@ echo '
 			<div class="row">
 
 				<div class="col-md-6">
-					{[ "type": "date",  "label": "'.tr('Data promemoria').'", "name": "data_richiesta", "required": 1, "value": "'.$data_richiesta.'", "extra":"'.$readonly.'" ]}
+					{[ "type": "date", "label": "'.tr('Data promemoria').'", "name": "data_richiesta", "required": 1, "value": "'.$data_richiesta.'", "extra":"'.$readonly.'" ]}
 				</div>
 
 				<div class="col-md-6">
-					 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "required": 1, "id": "idtipointervento_", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$rsp[0]['idtipointervento'].'", "extra": "'.$readonly.'",  "ajax-source": "tipiintervento", "value": "'.$idtipointervento.'"  ]}
+					 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "required": 1, "id": "idtipointervento_", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "'.$rsp[0]['idtipointervento'].'", "extra": "'.$readonly.'", "ajax-source": "tipiintervento", "value": "'.$idtipointervento.'"  ]}
 				</div>
 
 			</div>
@@ -104,7 +104,7 @@ echo '
 			<div class="row">
 
 				<div class="col-md-12">
-					 {[ "type": "textarea", "label": "'.tr('Descrizione').'",  "name": "richiesta", "id": "richiesta_", "extra": "'.$readonly.'", "value": "'.$rsp[0]['richiesta'].'"  ]}
+					 {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "richiesta", "id": "richiesta_", "extra": "'.$readonly.'", "value": "'.$rsp[0]['richiesta'].'"  ]}
 				</div>
 
 			</div>';
@@ -175,7 +175,7 @@ echo '
 
 echo '<div class="row">
 				<div class="col-md-2">
-					{[ "type": "number", "label": "'.tr('Intervallo').'", "name": "intervallo", "decimals": 0, "required": 1, "icon-after": "GG",  "min-value": "1"  ]}
+					{[ "type": "number", "label": "'.tr('Intervallo').'", "name": "intervallo", "decimals": 0, "required": 1, "icon-after": "GG", "min-value": "1"  ]}
 				</div>';
 
 ?>
@@ -217,7 +217,7 @@ echo '
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1",  "name": "idtecnico[]", "ajax-source": "tecnici", "extra": "disabled", "value": "'.$idtecnico.'" ]}
+			{[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1", "name": "idtecnico[]", "ajax-source": "tecnici", "extra": "disabled", "value": "'.$idtecnico.'" ]}
 		</div>
 
 

@@ -22,11 +22,9 @@ $qp = "SELECT *, DATE_FORMAT( data_richiesta, '%m-%Y') AS mese, (SELECT descrizi
 $rsp = $dbo->fetchArray($qp);
 
 if (!empty($rsp)) {
-	
     // Elenco interventi da pianificare
     foreach ($rsp as $i => $r) {
-        
-		// Se cambia il mese ricreo l'intestazione della tabella
+        // Se cambia il mese ricreo l'intestazione della tabella
         if (!isset($rsp[$i - 1]) || $r['mese'] != $rsp[$i - 1]['mese']) {
             if ($i == 0) {
                 $attr = '';
@@ -68,7 +66,7 @@ if (!empty($rsp)) {
                 <td>'.Translator::dateToLocale($r['data_richiesta']).'</td>
                 <td>'.$r['tipointervento'].'</td>
                 <td>'.nl2br($r['richiesta']).'</td>';
-				
+
         echo '
                 <td>';
         // Sede
@@ -114,7 +112,7 @@ if (!empty($rsp)) {
 <script>
 $(document).ready(function() {
 	 $('.datatables').DataTable({
-		 	"oLanguage": { "sUrl": "<?php echo $rootdir ?>/assets/dist/js/i18n/datatables/<?php echo $lang ?>.min.json" },
+		 	"oLanguage": { "sUrl": "<?php echo $rootdir; ?>/assets/dist/js/i18n/datatables/<?php echo $lang; ?>.min.json" },
 		 	 "paging": false,
 			 "info":     false
 	 });

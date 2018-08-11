@@ -8,7 +8,7 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-2">
-			{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "idstatointervento", "maxlength": 10, "class": "alphanumeric-mask",  "required": 1 ]}
+			{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "idstatointervento", "maxlength": 10, "class": "alphanumeric-mask", "required": 1 ]}
 		</div>
 
 		<div class="col-md-6">

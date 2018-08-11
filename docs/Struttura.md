@@ -63,7 +63,7 @@ La licenza in utilizzo è la GNU General Public License 3.0 (GPL 3.0).
 
 ### Modulare e personalizzabile
 
-OpenSTAManager possiede una struttura fortemente modulare, che ne permette la rapida espandibilità e, nello specifico,  la realizzazione di funzionalità _ad hoc_, personalizzate nel modo più completo secondo le richieste del cliente.
+OpenSTAManager possiede una struttura fortemente modulare, che ne permette la rapida espandibilità e, nello specifico, la realizzazione di funzionalità _ad hoc_, personalizzate nel modo più completo secondo le richieste del cliente.
 
 ### Multipiattaforma e user friendly
 

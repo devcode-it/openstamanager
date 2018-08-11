@@ -67,7 +67,7 @@ $body .= "
 				 <th bgcolor='#dddddd' class='full_cell1 cell-padded'>N<sup>o</sup> prot.</th>
                 <th bgcolor='#dddddd' class='full_cell1 cell-padded'>N<sup>o</sup> doc.</th>
                 <th bgcolor='#dddddd' class='full_cell cell-padded'>Data</th>
-                <th bgcolor='#dddddd' class='full_cell cell-padded'>".(($dir=='entrata') ? 'Cliente': 'Fornitore')."</th>
+                <th bgcolor='#dddddd' class='full_cell cell-padded'>".(($dir == 'entrata') ? 'Cliente' : 'Fornitore')."</th>
 				<th bgcolor='#dddddd' class='full_cell cell-padded'>Causale</th>
                 <th bgcolor='#dddddd' class='full_cell cell-padded'>Aliquota</th>
                 <th bgcolor='#dddddd' class='full_cell cell-padded'>Imponibile</th>
@@ -78,21 +78,20 @@ $body .= "
 
 for ($i = 0; $i < sizeof($rs); ++$i) {
     $body .= '<tr>';
-	
+
     if ($rs[$i]['numero'] == $rs[$i - 1]['numero']) {
         $body .= "	<td class='first_cell cell-padded text-center'></td>";
         $body .= "	<td class='table_cell cell-padded text-center'></td>";
-		$body .= "	<td class='table_cell cell-padded text-center'></td>";
-		
+        $body .= "	<td class='table_cell cell-padded text-center'></td>";
     } else {
-		$body .= "	<td class='first_cell cell-padded text-center'>".$rs[$i]['numero'].'</td>';
+        $body .= "	<td class='first_cell cell-padded text-center'>".$rs[$i]['numero'].'</td>';
         $body .= "	<td class='table_cell cell-padded text-center'>".$rs[$i]['numero_esterno'].'</td>';
         $body .= "	<td class='table_cell cell-padded text-center'>".date('d/m/Y', strtotime($rs[$i]['data'])).'</td>';
     }
 
-	$body .= "<td class='table_cell cell-padded'>".$rs[$i]['ragione_sociale']."</td>";
+    $body .= "<td class='table_cell cell-padded'>".$rs[$i]['ragione_sociale'].'</td>';
 
-	$body .= "	<td class='table_cell cell-padded'>".(($dir=='entrata') ? 'Fattura di vendita': 'Fattura di acquisto').'</td>';
+    $body .= "	<td class='table_cell cell-padded'>".(($dir == 'entrata') ? 'Fattura di vendita' : 'Fattura di acquisto').'</td>';
     $body .= "	<td class='table_cell cell-padded'>".$rs[$i]['desc_iva'].'</td>';
     $body .= "	<td class='table_cell cell-padded text-right'>".Translator::numberToLocale($rs[$i]['subtotale']).' &euro;</td>';
     $body .= "	<td class='table_cell cell-padded text-right'>".Translator::numberToLocale($rs[$i]['iva']).' &euro;</td>';

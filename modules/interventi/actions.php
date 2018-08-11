@@ -274,7 +274,7 @@ switch (post('op')) {
                 $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$id_record.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
 
                 //copio  gli allegati dal promemoria all'intervento
-                $dbo->query('INSERT INTO zz_files (nome,filename,original,category,id_module,id_record) SELECT t.nome, t.filename, t.original, t.category,  '.$id_module.', '.$id_record.' FROM zz_files t WHERE t.id_record = '.$idcontratto_riga.' AND t.id_plugin = '.Plugins::get('Pianificazione interventi')['id'].'');
+                $dbo->query('INSERT INTO zz_files (nome,filename,original,category,id_module,id_record) SELECT t.nome, t.filename, t.original, t.category, '.$id_module.', '.$id_record.' FROM zz_files t WHERE t.id_record = '.$idcontratto_riga.' AND t.id_plugin = '.Plugins::get('Pianificazione interventi')['id'].'');
 
                 //sposto fisicamente i file allegati
                 $rs_allegati = $dbo->fetchArray('SELECT filename FROM zz_files WHERE  id_record = '.$id_record.' AND id_module = '.$id_module);

@@ -9,7 +9,7 @@ switch (post('op')) {
         $completato = post('completato');
 
         // Aggiorna
-        $query = 'UPDATE in_statiintervento SET descrizione='.prepare($descrizione).',  colore='.prepare($colore).', completato='.prepare($completato).' WHERE idstatointervento='.prepare($id_record);
+        $query = 'UPDATE in_statiintervento SET descrizione='.prepare($descrizione).', colore='.prepare($colore).', completato='.prepare($completato).' WHERE idstatointervento='.prepare($id_record);
         $dbo->query($query);
 
         flash()->info(tr('Informazioni salvate correttamente.'));

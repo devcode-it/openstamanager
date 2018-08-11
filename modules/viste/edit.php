@@ -144,7 +144,7 @@ if (!empty($options) && $options != 'custom') {
 
 								<div class="row">
 									<div class="col-md-6">
-										{[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi['.$key.'][]", "multiple": "1",  "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "';
+										{[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi['.$key.'][]", "multiple": "1", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "';
         $results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT id_gruppo SEPARATOR \',\') AS gruppi FROM zz_group_view WHERE id_vista='.prepare($field['id']));
 
         echo $results[0]['gruppi'].'"';
@@ -264,7 +264,7 @@ if (!empty($options) && $options != 'custom') {
 
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[-id-][]", "multiple": "1",  "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC" ]}
+					{[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[-id-][]", "multiple": "1", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC" ]}
 				</div>
 
 				<div class="col-md-6">
@@ -369,7 +369,7 @@ if (!empty($options) && $options != 'custom') {
                                 </div>
 
                                 <div class="col-md-3">
-                                    {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo['.$num.']",  "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "'.$additional['idgruppo'].'"';
+                                    {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo['.$num.']", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "'.$additional['idgruppo'].'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }

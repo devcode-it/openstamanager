@@ -995,7 +995,7 @@ UPDATE `co_iva` SET `dicitura` = 'Senza addebito iva ex art. 74 comma 8-9 del DP
 UPDATE `co_iva` SET `dicitura` = 'Operazione soggetta a reverse charge ex art. 17, comma 6, DPR 633/72' WHERE `descrizione` = 'Art. 17 comma 6 DPR 633/72' OR `descrizione` = 'Art. 17 comma 6 DPR 633/72 4%' OR `descrizione` = 'Art. 17 comma 6 DPR 633/72 10%' OR `descrizione` = 'Art. 17 comma 6 DPR 633/72 20%' OR `descrizione` = 'Art. 17 comma 6 DPR 633/72 22%';
 
 -- Aggiunta campi in co_pagamenti per la selezione del conto di default
-ALTER TABLE `co_pagamenti` ADD `idconto_vendite` int(11),  ADD `idconto_acquisti` int(11);
+ALTER TABLE `co_pagamenti` ADD `idconto_vendite` int(11), ADD `idconto_acquisti` int(11);
 
 -- Aggiunta del modulo Stampe contabili
 INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Stampe contabili', 'stampe_contabili', 'custom', '', 'fa fa-angle-right', '2.3', '2.3', '1', NULL, '1', '1');
@@ -1011,8 +1011,8 @@ ALTER TABLE `zz_widgets` ADD `help` varchar(255);
 -- Aggiunta delle mappe Google
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES ('Google Maps API key', '', 'string', '1', 'Generali');
 
-ALTER TABLE `an_anagrafiche` ADD `gaddress` varchar(255),  ADD `lat` float(10, 6),  ADD `lng` float(10, 6);
-ALTER TABLE `an_sedi` ADD `gaddress` varchar(255),  ADD `lat` float(10, 6),  ADD `lng` float(10, 6);
+ALTER TABLE `an_anagrafiche` ADD `gaddress` varchar(255), ADD `lat` float(10, 6), ADD `lng` float(10, 6);
+ALTER TABLE `an_sedi` ADD `gaddress` varchar(255), ADD `lat` float(10, 6), ADD `lng` float(10, 6);
 
 -- Aggiunta del modulo Statistiche
 INSERT INTO `zz_modules` (`id`, `name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Statistiche', 'statistiche', 'custom', '', 'fa fa-bar-chart', '2.3', '2.3', '1', NULL, '1', '1');

@@ -27,7 +27,7 @@ echo '
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "indirizzo", "id": "indirizzo_",  "required": 1, "value": "$indirizzo$" ]}
+			{[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "indirizzo", "id": "indirizzo_", "required": 1, "value": "$indirizzo$" ]}
 		</div>
 
 		<div class="col-md-6">
@@ -105,7 +105,7 @@ if (!empty($google)) {
 		</div>
 
 		<div class="col-md-2">
-			{[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "id": "lng_",  "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right" ]}
+			{[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "id": "lng_", "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right" ]}
 		</div>';
 
     // Vedi su google maps

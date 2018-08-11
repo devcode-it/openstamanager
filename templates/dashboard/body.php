@@ -9,7 +9,7 @@ if (isset($_SESSION['period']['month'])) {
     $month = $period[0];
     $year = $period[1];
 
-    $months = ['Gennaio' => '01',  'Febbraio' => '02',  'Marzo' => '03', 'Aprile' => '04', 'Maggio' => '05', 'Giugno' => '06', 'Luglio' => '07', 'Agosto' => '08', 'Settembre' => '09', 'Ottobre' => '10', 'Novembre' => '11', 'Dicembre' => '12'];
+    $months = ['Gennaio' => '01', 'Febbraio' => '02', 'Marzo' => '03', 'Aprile' => '04', 'Maggio' => '05', 'Giugno' => '06', 'Luglio' => '07', 'Agosto' => '08', 'Settembre' => '09', 'Ottobre' => '10', 'Novembre' => '11', 'Dicembre' => '12'];
     $month = $months[$month];
 
     $title = $_SESSION['period']['month'];
@@ -44,7 +44,7 @@ if (isset($_SESSION['period']['week'])) {
         $year = $period[5];
     }
 
-    $months = ['gen' => '01',  'feb' => '02',  'mar' => '03', 'apr' => '04', 'mag' => '05', 'giu' => '06', 'lug' => '07', 'ago' => '08', 'set' => '09', 'ott' => '10', 'nov' => '11', 'dic' => '12'];
+    $months = ['gen' => '01', 'feb' => '02', 'mar' => '03', 'apr' => '04', 'mag' => '05', 'giu' => '06', 'lug' => '07', 'ago' => '08', 'set' => '09', 'ott' => '10', 'nov' => '11', 'dic' => '12'];
     $month = $months[$month];
     $maxmonth = $months[$maxmonth];
 
@@ -70,8 +70,8 @@ $stati = (array) $_SESSION['dashboard']['idstatiintervento'];
 $tipi = (array) $_SESSION['dashboard']['idtipiintervento'];
 $tecnici = (array) $_SESSION['dashboard']['idtecnici'];
 
-//in_interventi_tecnici.idintervento, colore, in_interventi_tecnici.id, idtecnico, orario_inizio, orario_fine,(SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico,  (SELECT colore FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS colore_tecnico,
-$query = 'SELECT DAY(in_interventi_tecnici.orario_inizio) AS giorno, orario_inizio AS data,  GROUP_CONCAT((SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica)  SEPARATOR \'<br>\') AS cliente FROM in_interventi_tecnici INNER JOIN (in_interventi LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento) ON in_interventi_tecnici.idintervento=in_interventi.id WHERE '.$where.' idtecnico IN('.implode(',', $tecnici).') AND in_interventi.idstatointervento IN('.implode(',', $stati).') AND in_interventi_tecnici.idtipointervento IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery('Interventi').' GROUP BY giorno ORDER BY CAST(giorno AS UNSIGNED)';
+//in_interventi_tecnici.idintervento, colore, in_interventi_tecnici.id, idtecnico, orario_inizio, orario_fine,(SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico, (SELECT colore FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS colore_tecnico,
+$query = 'SELECT DAY(in_interventi_tecnici.orario_inizio) AS giorno, orario_inizio AS data, GROUP_CONCAT((SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica)  SEPARATOR \'<br>\') AS cliente FROM in_interventi_tecnici INNER JOIN (in_interventi LEFT OUTER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento) ON in_interventi_tecnici.idintervento=in_interventi.id WHERE '.$where.' idtecnico IN('.implode(',', $tecnici).') AND in_interventi.idstatointervento IN('.implode(',', $stati).') AND in_interventi_tecnici.idtipointervento IN('.implode(',', $tipi).') '.Modules::getAdditionalsQuery('Interventi').' GROUP BY giorno ORDER BY CAST(giorno AS UNSIGNED)';
 
 //echo $query;
 
@@ -129,7 +129,7 @@ function showMonth($month, $year, &$rs, &$height)
 
         $day = (($lastdateofmonth - $offset) + ($i));
         $weekday = date('l', strtotime($current_year.'-'.$current_month.'-'.(sprintf('%02d', $day))));
-        $weekdays = ['Monday' => 'Lunedi\'',  'Tuesday' => 'Martedi\'',  'Wednesday' => 'Mercoledi\'', 'Thursday' => 'Giovedi\'', 'Friday' => 'Venerdi\'', 'Saturday' => 'Sabato', 'Sunday' => 'Domenica'];
+        $weekdays = ['Monday' => 'Lunedi\'', 'Tuesday' => 'Martedi\'', 'Wednesday' => 'Mercoledi\'', 'Thursday' => 'Giovedi\'', 'Friday' => 'Venerdi\'', 'Saturday' => 'Sabato', 'Sunday' => 'Domenica'];
         $weekday = $weekdays[$weekday];
 
         $header[$rows] .= '<th>'.tr($weekday.' '.(sprintf('%02d', $day)).'/'.(sprintf('%02d', $current_month)), [], ['upper' => true])."</th>\n";
@@ -148,7 +148,7 @@ function showMonth($month, $year, &$rs, &$height)
         }
 
         $weekday = date('l', strtotime($year.'-'.$month.'-'.(sprintf('%02d', $day))));
-        $weekdays = ['Monday' => 'Lunedi\'',  'Tuesday' => 'Martedi\'',  'Wednesday' => 'Mercoledi\'', 'Thursday' => 'Giovedi\'', 'Friday' => 'Venerdi\'', 'Saturday' => 'Sabato', 'Sunday' => 'Domenica'];
+        $weekdays = ['Monday' => 'Lunedi\'', 'Tuesday' => 'Martedi\'', 'Wednesday' => 'Mercoledi\'', 'Thursday' => 'Giovedi\'', 'Friday' => 'Venerdi\'', 'Saturday' => 'Sabato', 'Sunday' => 'Domenica'];
         $weekday = $weekdays[$weekday];
 
         $header[$rows] .= '<th>'.tr($weekday.' '.(sprintf('%02d', $day)).'/'.$month, [], ['upper' => true])."</th>\n";
@@ -178,7 +178,7 @@ function showMonth($month, $year, &$rs, &$height)
         //$lastdate = $lastdateofmonth."/".$current_month."/".$current_year;
 
         $weekday = date('l', strtotime($current_year.'-'.$current_month.'-'.(sprintf('%02d', $i))));
-        $weekdays = ['Monday' => 'Lunedi\'',  'Tuesday' => 'Martedi\'',  'Wednesday' => 'Mercoledi\'', 'Thursday' => 'Giovedi\'', 'Friday' => 'Venerdi\'', 'Saturday' => 'Sabato', 'Sunday' => 'Domenica'];
+        $weekdays = ['Monday' => 'Lunedi\'', 'Tuesday' => 'Martedi\'', 'Wednesday' => 'Mercoledi\'', 'Thursday' => 'Giovedi\'', 'Friday' => 'Venerdi\'', 'Saturday' => 'Sabato', 'Sunday' => 'Domenica'];
         $weekday = $weekdays[$weekday];
 
         $header[$rows] .= '<th> '.tr($weekday.' '.(sprintf('%02d', $i)).'/'.(sprintf('%02d', $current_month)), [], ['upper' => true])." </th>\n";

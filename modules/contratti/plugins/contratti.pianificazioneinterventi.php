@@ -10,7 +10,7 @@ switch (filter('op')) {
 
         $data_richiesta = filter('data_richiesta');
         $idtipointervento = filter('idtipointervento');
-        $query = 'INSERT INTO `co_contratti_promemoria` ( `idcontratto`, `data_richiesta`, idtipointervento ) VALUES ('.prepare($id_record).', '.prepare($data_richiesta).',  '.prepare($idtipointervento).' )';
+        $query = 'INSERT INTO `co_contratti_promemoria` ( `idcontratto`, `data_richiesta`, idtipointervento ) VALUES ('.prepare($id_record).', '.prepare($data_richiesta).', '.prepare($idtipointervento).' )';
 
         //$are_duplicated = $dbo->fetchNum('SELECT id FROM co_contratti_promemoria WHERE data_richiesta = '.prepare($data_richiesta).' AND idtipointervento = '.prepare($idtipointervento).' AND idcontratto = '.prepare($id_record) );
 
@@ -35,7 +35,7 @@ switch (filter('op')) {
         $idsede = filter('idsede_c');
         $idimpianti = implode(',', post('idimpianti'));
 
-        $query = 'UPDATE co_contratti_promemoria SET idtipointervento='.prepare($idtipointervento).', data_richiesta='.prepare($data_richiesta).', richiesta='.prepare($richiesta).',  idsede='.prepare($idsede).', idimpianti='.prepare($idimpianti).'   WHERE id = '.prepare($idcontratto_riga);
+        $query = 'UPDATE co_contratti_promemoria SET idtipointervento='.prepare($idtipointervento).', data_richiesta='.prepare($data_richiesta).', richiesta='.prepare($richiesta).', idsede='.prepare($idsede).', idimpianti='.prepare($idimpianti).'   WHERE id = '.prepare($idcontratto_riga);
 
         if (isset($id_record)) {
             if ($dbo->query($query)) {
@@ -211,7 +211,7 @@ switch (filter('op')) {
                                 $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idintervento.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
 
                                 //copio  gli allegati dal promemoria all'intervento
-                                $dbo->query('INSERT INTO zz_files (nome,filename,original,category,id_module,id_record) SELECT t.nome, t.filename, t.original, t.category,  '.Modules::get('Interventi')['id'].', '.$idintervento.' FROM zz_files t WHERE t.id_record = '.$idcontratto_riga.' AND t.id_plugin = '.$id_plugin.'');
+                                $dbo->query('INSERT INTO zz_files (nome,filename,original,category,id_module,id_record) SELECT t.nome, t.filename, t.original, t.category, '.Modules::get('Interventi')['id'].', '.$idintervento.' FROM zz_files t WHERE t.id_record = '.$idcontratto_riga.' AND t.id_plugin = '.$id_plugin.'');
 
                                 // Decremento la quantità per ogni articolo copiato
                                 $rs_articoli = $dbo->fetchArray('SELECT * FROM mg_articoli_interventi WHERE idintervento = '.$idintervento.' ');

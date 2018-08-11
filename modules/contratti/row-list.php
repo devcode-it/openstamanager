@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 /*
 ARTICOLI + RIGHE GENERICHE
 */
-$rs = $dbo->fetchArray('SELECT *, round(sconto_unitario,'.setting('Cifre decimali per importi').') AS sconto_unitario, round(sconto,'.setting('Cifre decimali per importi').') AS sconto, round(subtotale,'.setting('Cifre decimali per importi').') AS subtotale,  IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo), "") AS codice FROM co_righe_contratti WHERE idcontratto='.prepare($id_record).' ORDER BY `order`');
+$rs = $dbo->fetchArray('SELECT *, round(sconto_unitario,'.setting('Cifre decimali per importi').') AS sconto_unitario, round(sconto,'.setting('Cifre decimali per importi').') AS sconto, round(subtotale,'.setting('Cifre decimali per importi').') AS subtotale, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo), "") AS codice FROM co_righe_contratti WHERE idcontratto='.prepare($id_record).' ORDER BY `order`');
 
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">

@@ -132,11 +132,11 @@ UPDATE `zz_views` SET `name` = 'Data movimento', `order` = '6' WHERE `zz_views`.
 UPDATE `zz_views` SET  `query` = 'CONCAT(mg_movimenti.qta,'' '', (SELECT um FROM mg_articoli WHERE id = mg_movimenti.idarticolo) )'  WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti') AND name = 'Quantità';
 
 -- Allineo anche il modulo movimenti con il nuovo campo data
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,  `format`, `enabled`, `default`) VALUES
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti'), 'Data', 'mg_movimenti.data', 5, 1, 0, 1, 1, 1);
 
 -- Aggiungo colonna impianti per i contratti
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,  `format`, `enabled`, `default`) VALUES
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Impianti', '(SELECT IF(nome = '''', GROUP_CONCAT(matricola SEPARATOR ''<br>''), GROUP_CONCAT(matricola, '' - '', nome SEPARATOR ''<br>'')) FROM my_impianti INNER JOIN my_impianti_contratti ON my_impianti.id = my_impianti_contratti.idimpianto WHERE my_impianti_contratti.idcontratto = co_contratti.id)', 4, 1, 0, 0, 0, 1);
 
 -- Tempo standard per attività
@@ -214,11 +214,11 @@ UPDATE `mg_articoli_interventi` SET `abilita_serial` = 0 WHERE `idarticolo` NOT 
 UPDATE `or_righe_ordini` SET `abilita_serial` = 0 WHERE `idarticolo` NOT IN (SELECT `id_articolo` FROM `mg_prodotti`);
 
 -- Aggiungo colonna idanagrafica per i preventivi (colonna necessaria per i permessi)
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,  `format`, `enabled`, `default`) VALUES
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `enabled`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi'), 'idanagrafica', 'co_preventivi.idanagrafica', 0, 0, 0, 0, 0, 1);
 
 -- Fix name, title e order stampa ordine fornitore senza costi
-UPDATE `zz_prints` SET `name` = 'Ordine fornitore (senza costi)',  `title` = 'Ordine fornitore (senza costi)',  `order` = 1 WHERE `zz_prints`.`name` = 'Ordine fornitore' AND  options = '{"pricing":false}' AND `zz_prints`.`id_module` =  (SELECT id FROM zz_modules WHERE name='Ordini fornitore') ;
+UPDATE `zz_prints` SET `name` = 'Ordine fornitore (senza costi)', `title` = 'Ordine fornitore (senza costi)', `order` = 1 WHERE `zz_prints`.`name` = 'Ordine fornitore' AND  options = '{"pricing":false}' AND `zz_prints`.`id_module` =  (SELECT id FROM zz_modules WHERE name='Ordini fornitore') ;
 -- Stampa ordine fornitore con costi costi
 INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `main`, `default`, `enabled`) VALUES (NULL, (SELECT id FROM zz_modules WHERE name='Ordini fornitore'), '1', 'Ordine fornitore', 'Ordine fornitore', 'ordini', 'idordine', '{"pricing":true}', 'fa fa-print', '', '', '0', '1', '1', '1');
 -- Default invio ordini al fornitore con i prezzi

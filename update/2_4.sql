@@ -183,7 +183,7 @@ CREATE TABLE IF NOT EXISTS `zz_segments` (
 ) ENGINE=InnoDB;
 
 -- Popolo con i segmenti di default
-INSERT INTO `zz_segments` (`id`, `id_module`, `name`,  `clause`, `position`, `pattern`,`note`, `predefined`) VALUES
+INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`,`note`, `predefined`) VALUES
 (1, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Standard vendite', '1=1', 'WHR', IF((SELECT COUNT(id) FROM co_documenti) > 0, (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Formato numero secondario fattura'), '####/YYYY'), '', 1),
 (2, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Standard acquisti', '1=1', 'WHR', '#', '', 1);
 
@@ -196,7 +196,7 @@ UPDATE `co_documenti` SET `id_segment`='2' WHERE `idtipodocumento` IN (SELECT `i
 
 -- Innesto modulo segmenti sotto "Strumenti"
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES
-(NULL, 'Segmenti', 'Segmenti', 'segmenti', '{	"main_query": [	{	"type": "table", "fields": "id, Nome, Modulo, Maschera, Note, Predefinito", "query": "SELECT `id`,  (IF(predefined=1, ''Sì'', ''No'')) AS `Predefinito`, `name` AS `Nome`, (SELECT name FROM zz_modules WHERE id = zz_segments.id_module) AS Modulo,  `pattern` AS `Maschera`, `note` AS `Note`  FROM `zz_segments` HAVING 2=2 ORDER BY name, id_module"}	]}', '', 'fa fa-database', '2.4', '2.4', 1, NULL, 1, 1);
+(NULL, 'Segmenti', 'Segmenti', 'segmenti', '{	"main_query": [	{	"type": "table", "fields": "id, Nome, Modulo, Maschera, Note, Predefinito", "query": "SELECT `id`, (IF(predefined=1, ''Sì'', ''No'')) AS `Predefinito`, `name` AS `Nome`, (SELECT name FROM zz_modules WHERE id = zz_segments.id_module) AS Modulo, `pattern` AS `Maschera`, `note` AS `Note`  FROM `zz_segments` HAVING 2=2 ORDER BY name, id_module"}	]}', '', 'fa fa-database', '2.4', '2.4', 1, NULL, 1, 1);
 UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Segmenti' AND `t2`.`name` = 'Strumenti') SET `t1`.`parent` = `t2`.`id`;
 
 -- Aggiorno widget Fatturato con i sezionali
@@ -319,10 +319,10 @@ INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `option
 UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Banche' AND `t2`.`name` = 'Tabelle') SET `t1`.`parent` = `t2`.`id`;
 
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `enabled`, `summable`, `default`) VALUES
-(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'id', 'co_banche.id', 0, 0, 0, 0, 1, 0, 0),
-(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'Nome', 'co_banche.nome', 0, 0, 0, 0, 1, 0, 0),
-(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'Filiale', 'co_banche.filiale', 0, 0, 0, 0, 1, 0, 0),
-(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'IBAN', 'co_banche.iban', 0, 0, 0, 0, 1, 0, 0);
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'id', 'co_banche.id', 0, 0, 0, 0, 1, 0, 0),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'Nome', 'co_banche.nome', 0, 0, 0, 0, 1, 0, 0),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'Filiale', 'co_banche.filiale', 0, 0, 0, 0, 1, 0, 0),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'IBAN', 'co_banche.iban', 0, 0, 0, 0, 1, 0, 0);
 
 -- Aggiungo campi in an_anagrafiche con riferimento banche
 ALTER TABLE `an_anagrafiche` ADD `idbanca_vendite` INT(11) NOT NULL AFTER `idconto_cliente`, ADD `idbanca_acquisti` INT(11) NOT NULL AFTER `idbanca_vendite`;

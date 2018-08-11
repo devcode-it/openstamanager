@@ -11,16 +11,16 @@ if (!in_array($record['stato'], ['Evaso', 'Fatturato'])) {
 	</button>
 	<ul class="dropdown-menu dropdown-menu-right">';
 
-	if (in_array($record['stato'], ['Bozza', 'Parzialmente evaso'])){
-	echo '
+    if (in_array($record['stato'], ['Bozza', 'Parzialmente evaso'])) {
+        echo '
 			<li>
 				<a data-href="'.$rootdir.'/modules/fatture/crea_documento.php?id_module='.$id_module.'&id_record='.$id_record.'&documento=ddt" data-toggle="modal" data-title="'.tr('Crea ddt').'" data-target="#bs-popup"><i class="fa fa-file-o"></i>&nbsp;'.tr('ddt').'
 				</a>
 			</li>';
-	}
+    }
 
-	if (in_array($record['stato'], ['Bozza', 'Parzialmente fatturato'])){
-	echo '
+    if (in_array($record['stato'], ['Bozza', 'Parzialmente fatturato'])) {
+        echo '
 			<li>
 				<a data-href="'.$rootdir.'/modules/fatture/crea_documento.php?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-toggle="modal" data-title="'.tr('Crea fattura').'" data-target="#bs-popup"><i class="fa fa-file"></i>&nbsp;'.tr('fattura').'
 				</a>

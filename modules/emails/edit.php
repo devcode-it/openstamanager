@@ -29,11 +29,11 @@ echo '
 
             <div class="row">
                 <div class="col-md-8">
-                    {[ "type": "select", "label": "<?php echo tr('Indirizzo email'); ?>", "name": "smtp",  "value": "$id_smtp$", "ajax-source": "smtp" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Indirizzo email'); ?>", "name": "smtp", "value": "$id_smtp$", "ajax-source": "smtp" ]}
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Notifica di lettura'); ?>", "name": "read_notify",  "value": "$read_notify$", "placeholder": "<?php echo tr('Abilita la notifica di lettura'); ?>" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Notifica di lettura'); ?>", "name": "read_notify", "value": "$read_notify$", "placeholder": "<?php echo tr('Abilita la notifica di lettura'); ?>" ]}
                 </div>
             </div>
 

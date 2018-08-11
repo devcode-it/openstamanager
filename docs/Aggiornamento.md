@@ -49,7 +49,7 @@ Dopo l'esecuzione di queste azioni, il gestionale effettuerà automaticamente il
 
 ## Migrazione dalla versione 1.x
 
-E' possibile effettuare la migrazione da una qualsiasi versione 1.x alla nuova 2.0,  seguendo una procedura un po’ diversa dalle precedenti:
+E' possibile effettuare la migrazione da una qualsiasi versione 1.x alla nuova 2.0, seguendo una procedura un po’ diversa dalle precedenti:
 
 1. Scaricare la versione 2.0 per la migrazione da SourceForge ([openstamanager-2.0-migrazione.zip](https://sourceforge.net/projects/openstamanager/files/openstamanager/openstamanager-2.x/))
 2. Creare un backup completo della versione in uso

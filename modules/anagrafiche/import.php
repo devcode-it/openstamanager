@@ -15,8 +15,8 @@ switch (post('op')) {
         directory('../../files/'.$module);
 
         $fp = fopen('../../files/'.$module.'/'.$module.'.csv', 'w');
-		fprintf($fp, chr(0xEF).chr(0xBB).chr(0xBF));
-		
+        fprintf($fp, chr(0xEF).chr(0xBB).chr(0xBF));
+
         foreach ($list as $fields) {
             fputcsv($fp, $fields, ';');
         }

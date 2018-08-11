@@ -375,7 +375,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
             6) eventuale marca da bollo
         */
         // 1) Aggiungo la riga del conto cliente
-        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica,  descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '',  ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($totale_fattura + $totale_bolli) * $segno_mov1_cliente).', '.prepare($primanota).' )';
+        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($totale_fattura + $totale_bolli) * $segno_mov1_cliente).', '.prepare($primanota).' )';
         $dbo->query($query2);
 
         // 2) Aggiungo il totale sul conto dei ricavi/spese scelto
@@ -386,7 +386,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
             // Retrocompatibilità
             $idconto_riga = !empty($riga['idconto']) ? $riga['idconto'] : $idconto;
 
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica,  descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '',  ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_riga).', '.prepare($riga['imponibile'] * $segno_mov2_ricavivendite).', '.prepare($primanota).')';
+            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_riga).', '.prepare($riga['imponibile'] * $segno_mov2_ricavivendite).', '.prepare($primanota).')';
             $dbo->query($query2);
         }
 
@@ -399,7 +399,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
             $idconto_iva = $rs[0]['id'];
             $descrizione_conto_iva = $rs[0]['descrizione'];
 
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica,  descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '',  ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_iva).', '.prepare($iva_fattura * $segno_mov3_iva).', '.prepare($primanota).')';
+            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_iva).', '.prepare($iva_fattura * $segno_mov3_iva).', '.prepare($primanota).')';
             $dbo->query($query2);
         }
 
@@ -411,7 +411,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
             $idconto_iva2 = $rs[0]['id'];
             $descrizione_conto_iva2 = $rs[0]['descrizione'];
 
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica,  descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '',  ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_iva2).', '.prepare($iva_indetraibile_fattura * $segno_mov3_iva).', '.prepare($primanota).')';
+            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_iva2).', '.prepare($iva_indetraibile_fattura * $segno_mov3_iva).', '.prepare($primanota).')';
             $dbo->query($query2);
         }
 
@@ -423,7 +423,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
             $idconto_inps = $rs[0]['id'];
             $descrizione_conto_inps = $rs[0]['descrizione'];
 
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica,  descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '',  ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_inps).', '.prepare($totale_rivalsainps * $segno_mov4_inps).', '.prepare($primanota).')';
+            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_inps).', '.prepare($totale_rivalsainps * $segno_mov4_inps).', '.prepare($primanota).')';
             $dbo->query($query2);
         }
 
@@ -436,11 +436,11 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
             $descrizione_conto_ritenutaacconto = $rs[0]['descrizione'];
 
             // DARE nel conto ritenuta
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica,  descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '',  ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_ritenutaacconto).', '.prepare($totale_ritenutaacconto * $segno_mov5_ritenutaacconto).', '.prepare($primanota).')';
+            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_ritenutaacconto).', '.prepare($totale_ritenutaacconto * $segno_mov5_ritenutaacconto).', '.prepare($primanota).')';
             $dbo->query($query2);
 
             // AVERE nel riepilogativo clienti
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica,  descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '',  ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($totale_ritenutaacconto * $segno_mov5_ritenutaacconto) * -1).', '.prepare($primanota).')';
+            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($totale_ritenutaacconto * $segno_mov5_ritenutaacconto) * -1).', '.prepare($primanota).')';
             $dbo->query($query2);
         }
 
@@ -452,7 +452,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
             $idconto_bolli = $rs[0]['id'];
             $descrizione_conto_bolli = $rs[0]['descrizione'];
 
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica,  descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '',  ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_bolli).', '.prepare($totale_bolli * $segno_mov6_bollo).', '.prepare($primanota).')';
+            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_bolli).', '.prepare($totale_bolli * $segno_mov6_bollo).', '.prepare($primanota).')';
             $dbo->query($query2);
         }
     }
@@ -673,23 +673,23 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
     $rs2 = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare($idiva));
     $iva = ($prezzo - $sconto) / 100 * $rs2[0]['percentuale'];
     $desc_iva = $rs2[0]['descrizione'];
-	
-	if (!empty($idrivalsainps)){
-		// Calcolo rivalsa inps
-		$rs = $dbo->fetchArray('SELECT * FROM co_rivalsainps WHERE id='.prepare($idrivalsainps));
-		$rivalsainps = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
-	}
-	
-	if (!empty($idritenutaacconto)){
-		// Calcolo ritenuta d'acconto
-		$query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare($idritenutaacconto);
-		$rs = $dbo->fetchArray($query);
-		if ($calcolo_ritenutaacconto == 'Imponibile') {
-			$ritenutaacconto = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
-		} else if ( $calcolo_ritenutaacconto == 'Imponibile + rivalsa inps') {
-			$ritenutaacconto = ($prezzo - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
-		}
-	}
+
+    if (!empty($idrivalsainps)) {
+        // Calcolo rivalsa inps
+        $rs = $dbo->fetchArray('SELECT * FROM co_rivalsainps WHERE id='.prepare($idrivalsainps));
+        $rivalsainps = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
+    }
+
+    if (!empty($idritenutaacconto)) {
+        // Calcolo ritenuta d'acconto
+        $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare($idritenutaacconto);
+        $rs = $dbo->fetchArray($query);
+        if ($calcolo_ritenutaacconto == 'Imponibile') {
+            $ritenutaacconto = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
+        } elseif ($calcolo_ritenutaacconto == 'Imponibile + rivalsa inps') {
+            $ritenutaacconto = ($prezzo - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
+        }
+    }
 
     if ($qta != 0) {
         $rsart = $dbo->fetchArray('SELECT abilita_serial, idconto_vendita, idconto_acquisto FROM mg_articoli WHERE id='.prepare($idarticolo));
@@ -866,24 +866,26 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
             $dbo->attach('mg_prodotti', ['id_riga_documento' => $riga['ref_riga_documento'], 'dir' => $dir, 'id_articolo' => $riga['idarticolo']], ['serial' => $serials]);
         }
     }
-    
+
     // Rimozione articoli collegati ad un preventivo importato con riga unica
-    if(empty($riga['idarticolo']) && $riga['is_preventivo']){
+    if (empty($riga['idarticolo']) && $riga['is_preventivo']) {
         //rimetto a magazzino gli articoli collegati al preventivo
         $rsa = $dbo->fetchArray('SELECT idarticolo, qta FROM co_righe_preventivi WHERE idpreventivo = '.prepare($riga['idpreventivo']));
         for ($i = 0; $i < sizeof($rsa); ++$i) {
-            if (!empty($rsa[$i]['idarticolo']))
-                add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'],  ['iddocumento' => $id_documento]);		
+            if (!empty($rsa[$i]['idarticolo'])) {
+                add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_documento]);
+            }
         }
     }
-    
+
     // Rimozione articoli collegati ad un contratto importato con riga unica
-    if(empty($riga['idarticolo']) && $riga['is_contratto']){
+    if (empty($riga['idarticolo']) && $riga['is_contratto']) {
         //rimetto a magazzino gli articoli collegati al contratto
         $rsa = $dbo->fetchArray('SELECT idarticolo, qta FROM co_righe_contratti WHERE idcontratto = '.prepare($riga['idcontratto']));
         for ($i = 0; $i < sizeof($rsa); ++$i) {
-            if (!empty($rsa[$i]['idarticolo']))
-                add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'],  ['iddocumento' => $id_documento]);		
+            if (!empty($rsa[$i]['idarticolo'])) {
+                add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_documento]);
+            }
         }
     }
 

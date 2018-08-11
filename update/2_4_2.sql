@@ -161,7 +161,7 @@ INSERT INTO `fe_natura` (`codice`, `descrizione`) VALUES
 ('N4','Esenti'),
 ('N5','Regime del margine / IVA non esposta in fattura'),
 ('N6','Inversione contabile (per le operazioni in reverse charge ovvero nei casi di autofatturazione per acquisti extra UE di servizi ovvero per importazioni di beni nei soli casi previsti)'),
-('N7','IVA assolta in altro stato UE (vendite a distanza ex art. 40 c. 3 e 4 e art. 41 c. 1 lett. b,  DL 331/93; prestazione di servizi di telecomunicazioni, tele-radiodiffusione ed elettronici ex art. 7-sexies lett. f, g, art. 74-sexies DPR 633/72)');
+('N7','IVA assolta in altro stato UE (vendite a distanza ex art. 40 c. 3 e 4 e art. 41 c. 1 lett. b, DL 331/93; prestazione di servizi di telecomunicazioni, tele-radiodiffusione ed elettronici ex art. 7-sexies lett. f, g, art. 74-sexies DPR 633/72)');
 
 ALTER TABLE `co_iva` DROP `esente`, ADD `codice_natura_fe` varchar(4) NOT NULL;
 -- UPDATE `co_iva` SET `codice_natura_fe` = 'TD01' WHERE `descrizione` IN ('Fattura immediata di acquisto', 'Fattura immediata di vendita', 'Fattura differita di acquisto', 'Fattura differita di vendita', 'Fattura accompagnatoria di acquisto', 'Fattura accompagnatoria di vendita');

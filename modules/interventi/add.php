@@ -148,7 +148,7 @@ if (empty($new_codice)) {
 				</div>
 
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede",  "value": "<?php echo $idsede; ?>", "placheholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "sedi" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "<?php echo $idsede; ?>", "placheholder": "<?php echo tr('Seleziona prima un cliente'); ?>...", "ajax-source": "sedi" ]}
 				</div>
 
 				<div class="col-md-4">
@@ -312,7 +312,6 @@ if (empty($new_codice)) {
         $("#impianti").find("button").prop("disabled", value);
 		$("#idimpianti").selectReset();
 
-
 		if (($(this).val())) {
 			if (($(this).selectData().idzona)){
 				$('#idzona').val($(this).selectData().idzona).change();
@@ -322,14 +321,11 @@ if (empty($new_codice)) {
 			}
 			// session_set('superselect,idzona', $(this).selectData().idzona, 0);
 		}
-
-
 	});
 
 	$('#idsede').change( function(){
 		session_set('superselect,idsede', $(this).val(), 0);
 		$("#idimpianti").selectReset();
-
 
 		if (($(this).val())) {
 			if (($(this).selectData().idzona)){

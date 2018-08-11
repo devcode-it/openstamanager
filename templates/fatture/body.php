@@ -59,16 +59,18 @@ foreach ($righe as $r) {
 
     // Valori assoluti
     $r['qta'] = abs($r['qta']);
-    if (empty($r['sconto_globale']))
-		$r['subtotale'] = abs($r['subtotale']);
-	else
-		$r['subtotale'] = ($r['subtotale']);
+    if (empty($r['sconto_globale'])) {
+        $r['subtotale'] = abs($r['subtotale']);
+    } else {
+        $r['subtotale'] = ($r['subtotale']);
+    }
     $r['sconto_unitario'] = abs($r['sconto_unitario']);
     $r['sconto'] = abs($r['sconto']);
-   if (empty($r['sconto_globale']))
-		$r['iva'] = abs($r['iva']);
-	else
-		$r['iva'] = ($r['iva']);
+    if (empty($r['sconto_globale'])) {
+        $r['iva'] = abs($r['iva']);
+    } else {
+        $r['iva'] = ($r['iva']);
+    }
 
     echo '
         <tr>
@@ -141,7 +143,7 @@ foreach ($righe as $r) {
     echo "
             <td class='text-right'>";
     if (empty($r['is_descrizione'])) {
-		echo '
+        echo '
 				'.(empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
 
         if ($r['sconto'] > 0) {
@@ -164,7 +166,7 @@ foreach ($righe as $r) {
     echo "
             <td class='text-right'>";
     if (empty($r['is_descrizione'])) {
-		echo '
+        echo '
 				'.(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] - $r['sconto'])).' &euro;';
 
         if ($r['sconto'] > 0) {
@@ -272,7 +274,6 @@ echo '
     </tr>';
 echo '
 </table>';
-
 
 // Calcoli
 $imponibile = sum(array_column($righe, 'subtotale'));

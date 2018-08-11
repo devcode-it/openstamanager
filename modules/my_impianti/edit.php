@@ -5,7 +5,6 @@ include_once __DIR__.'/../../core.php';
 //unset($_SESSION['superselect']['idanagrafica']);
 //unset($_SESSION['superselect']['idsede']);
 
-
 $img = null;
 if (!empty($record['immagine'])) {
     $fileinfo = Uploads::fileInfo($record['immagine']);
@@ -60,7 +59,7 @@ if (!empty($record['immagine'])) {
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "values": "query=SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica='$idanagrafica$'", "value": "$idsede$", "required": "1",  "ajax-source": "sedi" ]}
+					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "$idsede$", "required": "1", "ajax-source": "sedi", "placeholder": "Sede legale" ]}
 				</div>
 			</div>
 
@@ -120,19 +119,19 @@ if (!empty($record['immagine'])) {
 $(document).ready(function(){
 
 	$('#idanagrafica').change( function(){
-		
+
 		session_set('superselect,idanagrafica', $(this).val(), 0);
 
         var value = !$(this).val() ? true : false;
 
 		$("#idsede").prop("disabled", value);
 		$("#idsede").selectReset();
-		
+
 	});
-	
+
 	$('#idsede').change( function(){
 		//session_set('superselect,idsede', $(this).val(), 0);
 	});
-		
+
 });
 </script>

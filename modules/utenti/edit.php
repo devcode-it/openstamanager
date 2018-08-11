@@ -49,10 +49,10 @@ if (!empty($utenti)) {
         if ($utente['id'] != '1') {
             if ($utente['enabled'] == 1) {
                 echo '
-				<a href="javascript:;" onclick="swal({ title: \''.tr('Disabilitare questo utente?').'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=disable&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Disabilita utente" class="text-danger tip"><i class="fa fa-2x fa-eye-slash"></i></a>';
+				<a href="javascript:;" onclick="swal({ title: \''.tr('Disabilitare questo utente?').'\', type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=disable&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Disabilita utente" class="text-danger tip"><i class="fa fa-2x fa-eye-slash"></i></a>';
             } else {
                 echo '
-				<a href="javascript:;" onclick="swal({ title: \''.tr('Abilitare questo utente?').'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=enable&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Abilita utente" class="text-success tip"><i class="fa fa-2x fa-eye"></i></a>';
+				<a href="javascript:;" onclick="swal({ title: \''.tr('Abilitare questo utente?').'\', type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=enable&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Abilita utente" class="text-success tip"><i class="fa fa-2x fa-eye"></i></a>';
             }
         } else {
             echo '
@@ -69,10 +69,10 @@ if (!empty($utenti)) {
 
             if (!empty($token['enabled'])) {
                 echo '
-                    <a href="javascript:;" onclick="swal({ title: \''.tr("Disabilitare l\'accesso API per questo utente?").'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=token&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Disabilita API" class="text-danger tip"><i class="fa fa-2x fa-key"></i></a>';
+                    <a href="javascript:;" onclick="swal({ title: \''.tr("Disabilitare l\'accesso API per questo utente?").'\', type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=token&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Disabilita API" class="text-danger tip"><i class="fa fa-2x fa-key"></i></a>';
             } else {
                 echo '
-                    <a href="javascript:;" onclick="swal({ title: \''.tr("Abilitare l\'accesso API per questo utente?").'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=token&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Abilitare API" class="text-success tip"><i class="fa fa-2x fa-key"></i></a>';
+                    <a href="javascript:;" onclick="swal({ title: \''.tr("Abilitare l\'accesso API per questo utente?").'\', type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=token&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Abilitare API" class="text-success tip"><i class="fa fa-2x fa-key"></i></a>';
             }
         } else {
             echo '
@@ -82,7 +82,7 @@ if (!empty($utenti)) {
         // Eliminazione utente, se diverso da id_utente #1 (admin)
         if ($utente['id'] != '1') {
             echo '
-			        <a href="javascript:;" onclick="swal({ title: \''.tr('Eliminare questo utente?').'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Elimina utente" class="text-danger tip"><i class="fa fa-2x fa-trash"></i></a>';
+			        <a href="javascript:;" onclick="swal({ title: \''.tr('Eliminare questo utente?').'\', type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Elimina utente" class="text-danger tip"><i class="fa fa-2x fa-trash"></i></a>';
         } else {
             echo '
 			        <span onclick="alert(\"'.tr("Non è possibile eliminare l'utente admin").'\")" class="text-muted tip"><i class="fa fa-2x fa-trash"></i></span>';

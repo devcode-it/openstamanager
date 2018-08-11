@@ -10,5 +10,5 @@ return [
     'numero' => $r['numero'],
     'descrizione' => $r['descrizione'],
     'data' => Translator::dateToLocale($r['data_bozza']),
-	'id_anagrafica' => $r['idanagrafica'],
+    'id_anagrafica' => $r['idanagrafica'],
 ];

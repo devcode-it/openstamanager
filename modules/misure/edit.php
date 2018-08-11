@@ -15,7 +15,7 @@ include_once __DIR__.'/../../core.php';
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "text", "label": "<?php echo tr('Valore'); ?>", "name": "valore", "required": 1,  "value": "$valore$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Valore'); ?>", "name": "valore", "required": 1, "value": "$valore$" ]}
 				</div>
 			</div>
 		</div>

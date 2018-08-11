@@ -20,11 +20,11 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Indirizzo PEC'); ?>", "name": "pec",  "value": "$pec$" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Indirizzo PEC'); ?>", "name": "pec", "value": "$pec$" ]}
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Indirizzo predefinito'); ?>", "name": "main",  "value": "$main$", "help": "<?php echo tr('Account da utilizzare per l\'invio di tutte le email dal gestionale.'); ?>" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Indirizzo predefinito'); ?>", "name": "main", "value": "$main$", "help": "<?php echo tr('Account da utilizzare per l\'invio di tutte le email dal gestionale.'); ?>" ]}
                 </div>
             </div>
 

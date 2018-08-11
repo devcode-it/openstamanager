@@ -95,7 +95,7 @@ switch ($resource) {
 
                 //come tecnico posso aprire attività solo a mio nome
                 $user = Auth::user();
-                if ($user['gruppo'] == 'Tecnici' and !empty($user['idanagrafica'])) {
+                if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
                     $where[] = 'an_anagrafiche.idanagrafica='.$user['idanagrafica'];
                 }
             }

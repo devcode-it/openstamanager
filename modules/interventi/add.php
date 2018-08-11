@@ -18,7 +18,7 @@ $idstatointervento = null;
 $richiesta = null;
 $impianti = [];
 //come tecnico posso aprire attività solo a mio nome
-if ($user['gruppo'] == 'Tecnici' and !empty($user['idanagrafica'])) {
+if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
     $idtecnico = $user['idanagrafica'];
 } else {
     $idtecnico = null;
@@ -90,9 +90,9 @@ elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
         $idimpianto = implode(',', array_column($rs, 'idimpianto'));
     } else {
         $idimpianto = $idimpianti;
-		// Spunto il tecnico di default assegnato all'impianto
-		$rs = $dbo->fetchArray('SELECT idtecnico FROM my_impianti WHERE id='.prepare($idimpianto));
-		$idtecnico = $rs[0]['idtecnico'] ?: '';
+        // Spunto il tecnico di default assegnato all'impianto
+        $rs = $dbo->fetchArray('SELECT idtecnico FROM my_impianti WHERE id='.prepare($idimpianto));
+        $idtecnico = $rs[0]['idtecnico'] ?: '';
     }
 
     // Seleziono "In programmazione" come stato
@@ -410,7 +410,7 @@ if (empty($new_codice)) {
                         //$('#elenco_interventi > tbody').load(globals.rootdir + '/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto=<?php echo $idcontratto; ?>');
                         $("#bs-popup").modal('hide');
 						parent.window.location.reload();
-                        //location.href = '<?php echo $rootdir ?>/editor.php?id_module=<?php echo Modules::get('Contratti')['id'] ?>&id_record=<?php echo $id_record ?>#tab_<?php echo $id_plugin ?>';
+                        //location.href = '<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get('Contratti')['id']; ?>&id_record=<?php echo $id_record; ?>#tab_<?php echo $id_plugin; ?>';
                     }
                 }
             });

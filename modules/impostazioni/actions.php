@@ -6,7 +6,7 @@ switch (filter('op')) {
     case 'update':
         $is_all_valid = true;
 
-        foreach ($post as $id => $value) {
+        foreach (post('setting') as $id => $value) {
             $is_valid = Settings::setValue($id, $value);
 
             if (!$is_valid) {

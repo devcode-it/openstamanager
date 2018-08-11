@@ -418,6 +418,8 @@ class Update
 
         $database = Database::getConnection();
 
+        $database->getPDO()->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+
         $mysql_ver = $database->getMySQLVersion();
 
         if (version_compare($mysql_ver, '5.5.3') >= 0) {
@@ -454,6 +456,8 @@ class Update
         foreach ($engines as $engine) {
             $database->query('ALTER TABLE `'.$engine['TABLE_NAME'].'` ENGINE=InnoDB');
         }
+
+        $database->getPDO()->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
     }
 
     /**

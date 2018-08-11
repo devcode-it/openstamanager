@@ -48,7 +48,7 @@ if (empty($record)) {
                         <i class="'.$element['icon'].'"></i> '.$element['title'];
 
     // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
-    if (!empty($element['add_file']) && $element['permessi'] == 'rw') {
+    if ($element->hasAddFile() && $element->permission == 'rw') {
         echo '
 						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
     }
@@ -160,7 +160,7 @@ if (empty($record)) {
 
                     <div id="module-edit">';
 
-    include $element['edit_file'];
+    include $element->getEditFile();
 
     echo '
                     </div>
@@ -292,7 +292,7 @@ echo '
         <script>';
 
 // Se l'utente ha i permessi in sola lettura per il modulo, converto tutti i campi di testo in span
-$read_only = $element['permessi'] == 'r';
+$read_only = $element->permission == 'r';
 if ($read_only || !empty($block_edit)) {
     $not = $read_only ? '' : '.not(".unblockable")';
 

@@ -106,7 +106,7 @@ class HTMLWrapper implements WrapperInterface
 
         $module = \Modules::get($id_module);
 
-        if (in_array($module['permessi'], ['r', 'rw'])) {
+        if (in_array($module->permission, ['r', 'rw'])) {
             $result = '
 <button '.$extras.' data-href="'.ROOTDIR.'/add.php?id_module='.$id_module.$get.'&select='.$values['id'].'&ajax=yes" data-target="#bs-popup2" data-toggle="modal" data-title="'.tr('Aggiungi').'" type="button" class="btn'.$classes.'">
     <i class="fa fa-plus"></i>

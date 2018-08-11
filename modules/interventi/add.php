@@ -17,7 +17,8 @@ $idtipointervento = null;
 $idstatointervento = null;
 $richiesta = null;
 $impianti = [];
-//come tecnico posso aprire attività solo a mio nome
+
+// Come tecnico posso aprire attività solo a mio nome
 if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
     $idtecnico = $user['idanagrafica'];
 } else {

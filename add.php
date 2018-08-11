@@ -15,8 +15,7 @@ echo '
 <div id="form_'.$id_module.'-'.$id_plugin.'">
 ';
 
-$file = !empty(get('edit')) ? 'edit' : 'add';
-include $element[$file.'_file'];
+include !empty(get('edit')) ? $element->getEditFile() : $element->getAddFile();
 
 echo '
 </div>';
@@ -58,7 +57,7 @@ if (isAjaxRequest()) {
 $(document).ready(function(){
     data = {};';
 
-    foreach ($get as $key => $value) {
+    foreach (Filter::getGET() as $key => $value) {
         echo '
     data.'.$key.' = "'.$value.'";';
     }

@@ -75,7 +75,7 @@ if (post('action') == 'init') {
         foreach ($settings as $setting) {
             $setting = Settings::get($setting);
 
-            Settings::setValue($setting['nome'], post($setting['id']));
+            Settings::setValue($setting['nome'], post('setting')[$setting['id']]);
         }
     }
 

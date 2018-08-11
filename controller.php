@@ -25,7 +25,7 @@ echo '
                         <i class="'.$element['icon'].'"></i> '.$element['title'];
 
 // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
-if (!empty($element['add_file']) && $element['permessi'] == 'rw') {
+if ($element->hasAddFile() && $element->permission == 'rw') {
     echo '
 						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
 }

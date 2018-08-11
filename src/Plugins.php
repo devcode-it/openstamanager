@@ -9,8 +9,7 @@ class Plugins
 {
     /** @var array Elenco dei plugin disponibili */
     protected static $plugins = [];
-    /** @var array Elenco delle query generiche dei plugin */
-    protected static $queries = [];
+    protected static $references = [];
 
     /**
      * Restituisce tutte le informazioni di tutti i plugin installati.
@@ -20,25 +19,19 @@ class Plugins
     public static function getPlugins()
     {
         if (empty(self::$plugins)) {
-            $database = Database::getConnection();
-
-            $results = $database->fetchArray('SELECT *, (SELECT directory FROM zz_modules WHERE id=idmodule_from) AS module_dir FROM zz_plugins');
-
             $plugins = [];
+            $references = [];
 
-            foreach ($results as $result) {
-                $result['options'] = App::replacePlaceholder($result['options'], filter('id_parent'));
-                $result['options2'] = App::replacePlaceholder($result['options2'], filter('id_parent'));
-
-                $result['option'] = empty($result['options2']) ? $result['options'] : $result['options2'];
-
-                $result['permessi'] = Modules::getPermission($result['idmodule_to']);
-
-                $plugins[$result['id']] = $result;
-                $plugins[$result['name']] = $result['id'];
+            $modules = Modules::getModules();
+            foreach ($modules as $module) {
+                foreach ($module->plugins as $result) {
+                    $plugins[$result['id']] = $result;
+                    $references[$result['name']] = $result['id'];
+                }
             }
 
             self::$plugins = $plugins;
+            self::$references = $references;
         }
 
         return self::$plugins;
@@ -53,11 +46,13 @@ class Plugins
      */
     public static function get($plugin)
     {
-        if (!is_numeric($plugin) && !empty(self::getPlugins()[$plugin])) {
-            $plugin = self::getPlugins()[$plugin];
+        $plugins = self::getPlugins();
+
+        if (!is_numeric($plugin) && !empty(self::$references[$plugin])) {
+            $plugin = self::$references[$module];
         }
 
-        return self::getPlugins()[$plugin];
+        return $plugins[$plugin];
     }
 
     /**

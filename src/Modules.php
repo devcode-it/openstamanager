@@ -32,7 +32,9 @@ class Modules
             $modules = [];
             $references = [];
 
-            $results = Auth::user()->modules();
+            $results = Auth::check() ? Auth::user()->modules() : Module::all();
+            $results->load('plugins');
+
             foreach ($results as $result) {
                 $modules[$result['id']] = $result;
                 $references[$result['name']] = $result['id'];
@@ -91,7 +93,7 @@ class Modules
      */
     public static function getPermission($module)
     {
-        return self::get($module)->permission ?? '-';
+        return self::get($module)->permission;
     }
 
     /**

@@ -13,14 +13,10 @@ if (!empty($id_plugin)) {
     $directory = '/modules/'.$element['directory'];
 }
 
-$php = App::filepath($directory.'|custom|', 'edit.php');
-$html = App::filepath($directory.'|custom|', 'edit.html');
-$element['edit_file'] = !empty($php) ? $php : $html;
-
 if (!empty($id_plugin)) {
     // Inclusione di eventuale plugin personalizzato
     if (!empty($element['script'])) {
-        include App::filepath('modules/'.$element['module_dir'].'/plugins|custom|', $element['script']);
+        include $element->getEditFile();
 
         return;
     }
@@ -30,7 +26,7 @@ if (!empty($id_plugin)) {
 			<span  class="'.(!empty($element['help']) ? ' tip' : '').'"'.(!empty($element['help']) ? ' title="'.prepareToField($element['help']).'" data-position="bottom"' : '').' >
             '.$element['title'].(!empty($element['help']) ? ' <i class="fa fa-question-circle-o"></i>' : '').'</span>';
 
-    if (!empty(Plugins::filepath($id_plugin, 'add.php'))) {
+    if ($element->hasAddFile()) {
         echo '
         <button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_parent='.$id_record.'"><i class="fa fa-plus"></i></button>';
     }
@@ -224,7 +220,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
  * Inclusione modulo personalizzato
  */
 elseif ($type == 'custom') {
-    include $element['edit_file'];
+    include $element->getEditFile();
 }
 
 // Caricamento file aggiuntivo su elenco record

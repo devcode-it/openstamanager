@@ -1,6 +1,7 @@
 <?php
 
 use Respect\Validation\Validator as v;
+use Models\Setting;
 
 /**
  * Classe per la gestione dell impostazioni del progetto.
@@ -22,21 +23,20 @@ class Settings
     public static function getSettings()
     {
         if (empty(self::$settings)) {
-            $database = Database::getConnection();
-
             $settings = [];
             $references = [];
             $sections = [];
 
-            $results = $database->select('zz_settings', '*');
+            $results = Setting::all();
+
             foreach ($results as $result) {
-                $settings[$result['id']] = $result;
-                $references[$result['nome']] = $result['id'];
+                $settings[$result->id] = $result;
+                $references[$result->nome] = $result->id;
 
                 if (!isset($sections[$result['sezione']])) {
                     $sections[$result['sezione']] = [];
                 }
-                $sections[$result['sezione']][] = $result['id'];
+                $sections[$result['sezione']][] = $result->id;
             }
 
             self::$settings = $settings;
@@ -74,45 +74,47 @@ class Settings
      */
     public static function getValue($setting)
     {
-        return self::get($setting)['valore'];
+        return self::get($setting)->valore;
     }
 
+    /**
+     * Imposta il valore dell'impostazione indicata.
+     *
+     * @param string|int $setting
+     * @param mixed      $value
+     *
+     * @return bool
+     */
     public static function setValue($setting, $value)
     {
         $setting = self::get($setting);
 
         // Trasformazioni
         // Boolean (checkbox)
-        if ($setting['tipo'] == 'boolean') {
+        if ($setting->tipo == 'boolean') {
             $value = (empty($value) || $value == 'off') ? false : true;
         }
 
         // Validazioni
         // integer
-        if ($setting['tipo'] == 'integer') {
+        if ($setting->tipo == 'integer') {
             $validator = v::intVal()->validate($value);
         }
 
         // list
         // verifico che il valore scelto sia nella lista enumerata nel db
-        elseif (preg_match("/list\[(.+?)\]/", $setting['tipo'], $m)) {
+        elseif (preg_match("/list\[(.+?)\]/", $setting->tipo, $m)) {
             $validator = v::in(explode(',', $m[1]));
         }
 
         // Boolean (checkbox)
-        elseif ($setting['tipo'] == 'boolean') {
+        elseif ($setting->tipo == 'boolean') {
             $validator = v::boolType();
         }
 
         if (empty($validator) || $validator->validate($value)) {
-            $database = Database::getConnection();
-
-            $database->update('zz_settings', [
-                'valore' => $value,
-            ], [
-                'id' => $setting['id'],
-            ]);
-            self::$settings[$setting['id']]['valore'] = $value;
+            $setting->valore = $value;
+            $setting->save();
 
             return true;
         }
@@ -124,7 +126,8 @@ class Settings
     {
         $setting = self::get($setting);
 
-        if (preg_match("/list\[(.+?)\]/", $setting['tipo'], $m)) {
+        // Lista predefinita
+        if (preg_match("/list\[(.+?)\]/", $setting->tipo, $m)) {
             $m = explode(',', $m[1]);
             $list = '';
             for ($j = 0; $j < count($m); ++$j) {
@@ -134,32 +137,36 @@ class Settings
                 $list .= '\\"'.$m[$j].'\\": \\"'.$m[$j].'\\"';
             }
             $result = '
-    {[ "type": "select", "label": "'.$setting['nome'].'", "name": "'.$setting['id'].'", "values": "list='.$list.'", "value": "'.$setting['valore'].'" ]}';
+    {[ "type": "select", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "values": "list='.$list.'", "value": "'.$setting->valore.'" ]}';
         }
 
-        // query
-        elseif (preg_match('/^query=(.+?)$/', $setting['tipo'], $m)) {
+        // Lista da query
+        elseif (preg_match('/^query=(.+?)$/', $setting->tipo, $m)) {
             $result = '
-    {[ "type": "select", "label": "'.$setting['nome'].'", "name": "'.$setting['id'].'", "values": "'.$setting['tipo'].'", "value": "'.$setting['valore'].'" ]}';
+    {[ "type": "select", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "values": "'.$setting->tipo.'", "value": "'.$setting->valore.'" ]}';
         }
 
         // Boolean (checkbox)
-        elseif ($setting['tipo'] == 'boolean') {
+        elseif ($setting->tipo == 'boolean') {
             $result = '
-    {[ "type": "checkbox", "label": "'.$setting['nome'].'", "name": "'.$setting['id'].'", "placeholder": "'.tr('Attivo').'", "value": "'.$setting['valore'].'" ]}';
-        } elseif ($setting['tipo'] == 'textarea') {
-            $result = '
-    {[ "type": "textarea", "label": "'.$setting['nome'].'", "name": "'.$setting['id'].'", "value": '.json_encode($setting['valore']).' ]}';
+    {[ "type": "checkbox", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "placeholder": "'.tr('Attivo').'", "value": "'.$setting->valore.'" ]}';
         }
-        // Campo di testo normale
-        else {
-            $numerico = in_array($setting['tipo'], ['integer', 'decimal']);
 
-            $tipo = preg_match('/password/i', $setting['nome'], $m) ? 'password' : $setting['tipo'];
+        // Textarea
+        elseif ($setting->tipo == 'textarea') {
+            $result = '
+    {[ "type": "textarea", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "value": '.json_encode($setting->valore).' ]}';
+        }
+
+        // Campo di testo
+        else {
+            $numerico = in_array($setting->tipo, ['integer', 'decimal']);
+
+            $tipo = preg_match('/password/i', $setting->nome, $m) ? 'password' : $setting->tipo;
             $tipo = $numerico ? 'number' : 'text';
 
             $result = '
-    {[ "type": "'.$tipo.'", "label": "'.$setting['nome'].'", "name": "'.$setting['id'].'", "value": "'.$setting['valore'].'"'.($numerico && $setting['tipo'] == 'integer' ? ', "decimals": 0' : '').' ]}';
+    {[ "type": "'.$tipo.'", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "value": "'.$setting->valore.'"'.($numerico && $setting->tipo == 'integer' ? ', "decimals": 0' : '').' ]}';
         }
 
         return $result;

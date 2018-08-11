@@ -4,12 +4,16 @@ namespace Models;
 
 use App;
 use Auth;
+use Traits\Record;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
 class Module extends Model
 {
+    use Record;
+
     protected $table = 'zz_modules';
+    protected $main_folder = 'modules';
 
     protected $appends = [
         'permission',
@@ -83,7 +87,7 @@ class Module extends Model
 
     public function plugins()
     {
-        return $this->hasMany(Plugin::class, 'idmodule_to')->active();
+        return $this->hasMany(Plugin::class, 'idmodule_to');
     }
 
     public function prints()

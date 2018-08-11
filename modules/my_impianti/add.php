@@ -5,7 +5,6 @@ include_once __DIR__.'/../../core.php';
 //unset($_SESSION['superselect']['idanagrafica']);
 //unset($_SESSION['superselect']['idsede']);
 
-
 $source = get('source');
 $idanagrafica = null;
 
@@ -30,9 +29,9 @@ if ($source == 'Attività') {
 		<div class="col-md-4">
 			{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted_at IS NULL ORDER BY ragione_sociale", "value": "<?php echo $idanagrafica; ?>", "ajax-source": "clienti" ]}
 		</div>
-		
+
 		<div class="col-md-4">
-			{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "values": "query=SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica='$idanagrafica$'", "value": "$idsede$", "required": "1", "ajax-source": "sedi"  ]}
+			{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "values": "query=SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica='$idanagrafica$'", "value": "$idsede$", "ajax-source": "sedi", "placeholder": "Sede legale"  ]}
 		</div>
 
 		<div class="col-md-4">
@@ -53,19 +52,19 @@ if ($source == 'Attività') {
 $(document).ready(function(){
 
 	$('#idanagrafica').change( function(){
-		
+
 		session_set('superselect,idanagrafica', $(this).val(), 0);
 
         var value = !$(this).val() ? true : false;
 
 		$("#idsede").prop("disabled", value);
 		$("#idsede").selectReset();
-		
+
 	});
-	
+
 	$('#idsede').change( function(){
 		//session_set('superselect,idsede', $(this).val(), 0);
 	});
-		
+
 });
 </script>

@@ -18,14 +18,6 @@ if (empty($element) || empty($element['enabled'])) {
     die(tr('Accesso negato'));
 }
 
-$php = App::filepath($directory.'|custom|', 'add.php');
-$html = App::filepath($directory.'|custom|', 'add.html');
-$element['add_file'] = !empty($php) ? $php : $html;
-
-$php = App::filepath($directory.'|custom|', 'edit.php');
-$html = App::filepath($directory.'|custom|', 'edit.html');
-$element['edit_file'] = !empty($php) ? $php : $html;
-
 $upload_dir = DOCROOT.'/'.Uploads::getDirectory($id_module, $id_plugin);
 
 $database->beginTransaction();
@@ -140,9 +132,9 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 
 // Inclusione di eventuale plugin personalizzato
 if (!empty($element['script'])) {
-    include App::filepath('modules/'.$element['module_dir'].'/plugins|custom|', $element['script']);
+    include $element->getEditFile();
 
-    $dbo->query('COMMIT');
+    $database->commitTransaction();
 
     return;
 }

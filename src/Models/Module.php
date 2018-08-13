@@ -4,13 +4,14 @@ namespace Models;
 
 use App;
 use Auth;
-use Traits\Record;
+use Traits\RecordTrait;
+use Traits\UploadTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
 class Module extends Model
 {
-    use Record;
+    use RecordTrait, UploadTrait;
 
     protected $table = 'zz_modules';
     protected $main_folder = 'modules';

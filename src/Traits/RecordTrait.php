@@ -2,10 +2,15 @@
 
 namespace Traits;
 
-use App;
-
-trait Record
+trait RecordTrait
 {
+    use PathTrait;
+
+    /**
+     * Restituisce il percorso per il file di crezione dei record.
+     *
+     * @return string
+     */
     public function getAddFile()
     {
         if (method_exists($this, 'getCustomAddFile')) {
@@ -22,11 +27,21 @@ trait Record
         return !empty($php) ? $php : $html;
     }
 
+    /**
+     * Controlla l'esistenza del file di crezione dei record.
+     *
+     * @return bool
+     */
     public function hasAddFile()
     {
         return !empty($this->getAddFile());
     }
 
+    /**
+     * Restituisce il percorso per il file di modifica dei record.
+     *
+     * @return string
+     */
     public function getEditFile()
     {
         if (method_exists($this, 'getCustomEditFile')) {
@@ -41,15 +56,5 @@ trait Record
         $html = $this->filepath('edit.html');
 
         return !empty($php) ? $php : $html;
-    }
-
-    public function getPath()
-    {
-        return $this->main_folder.'/'.$this->directory;
-    }
-
-    public function filepath($file)
-    {
-        return App::filepath($this->getPath().'|custom|', $file);
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
-define('DOCROOT', __DIR__.'/../..');
+// Individuazione dei percorsi di base
+App::definePaths(__DIR__.'/../..');
 
-$dbo = Database::getConnection();
+Database::getConnection();

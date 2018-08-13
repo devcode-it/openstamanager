@@ -26,7 +26,6 @@ class AnagraficheCest
         $t->fillField('Partita IVA', $partita_iva);
 
         // Effettua il submit
-        $t->executeJS('window.scrollTo(0,document.body.scrollHeight);');
         $t->clickAndWait('Aggiungi', '#add-form');
 
         // Controlla il salvataggio finale

@@ -3,13 +3,14 @@
 namespace Models;
 
 use App;
-use Traits\Record;
+use Traits\RecordTrait;
+use Traits\UploadTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
 class Plugin extends Model
 {
-    use Record;
+    use RecordTrait, UploadTrait;
 
     protected $table = 'zz_plugins';
     protected $main_folder = 'plugins';
@@ -60,6 +61,11 @@ class Plugin extends Model
 
     /* Metodi personalizzati */
 
+    /**
+     * Restituisce l'eventuale percorso personalizzato per il file di creazione dei record.
+     *
+     * @return string
+     */
     public function getCustomAddFile()
     {
         if (empty($this->script)) {
@@ -71,6 +77,11 @@ class Plugin extends Model
         return App::filepath($directory, $this->script);
     }
 
+    /**
+     * Restituisce l'eventuale percorso personalizzato per il file di modifica dei record.
+     *
+     * @return string
+     */
     public function getCustomEditFile()
     {
         return $this->getAddFile();

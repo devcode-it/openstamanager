@@ -21,6 +21,7 @@ class Acceptance extends \Codeception\Module
             return;
         }
 
+        // Operazioni di login
         $t->amOnPage('/');
 
         $t->fillField('username', $username);
@@ -28,9 +29,13 @@ class Acceptance extends \Codeception\Module
 
         $this->clickAndWait('Accedi');
 
+        // Controlla il completamento del login
         $t->see($username, '.user-panel');
 
         $t->saveSessionSnapshot('login');
+
+        // Rimozione barra di debug
+        $t->executeJS('$(".phpdebugbar-close-btn").click()');
     }
 
     /**

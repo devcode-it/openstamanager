@@ -7,10 +7,10 @@ switch ($resource) {
         $upload = Uploads::upload($_FILES['upload'], [
             'name' => $request['name'],
             'id_module' => $module['id'],
-            'id_record' => $id_record,
+            'id_record' => $request['id'],
         ]);
 
-        $results['filename'] = $upload;
+        $response['filename'] = $upload;
 
         break;
 }

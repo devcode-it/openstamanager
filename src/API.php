@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Classe per la gestione delle API del progetto.
  *
@@ -376,6 +375,10 @@ class API extends \Util\Singleton
 
     /**
      * Restituisce i parametri specificati dalla richiesta.
+     *
+     * @param bool $raw
+     *
+     * @return array
      */
     public static function getRequest($raw = false)
     {
@@ -388,8 +391,8 @@ class API extends \Util\Singleton
                 $request = (array) json_decode($request, true);
                 $request = Filter::sanitize($request);
 
-                // Fallback nel caso la richiesta sia effettuata da browser
-                if ($_SERVER['REQUEST_METHOD'] == 'GET' && empty($request)) {
+                // Fallback per input standard vuoto (richiesta da browser o upload file)
+                if (empty($request)) { // $_SERVER['REQUEST_METHOD'] == 'GET'
                     $request = Filter::getGET();
                 }
 

@@ -59,22 +59,22 @@ $_SESSION['superselect']['idanagrafica'] = $records[0]['idanagrafica'];
 
 				<div class="col-md-6">
 					<?php
-                        $rs = $dbo->fetchArray('SELECT id, idcontratto FROM co_contratti_promemoria WHERE idintervento='.prepare($id_record));
+                        /*$rs = $dbo->fetchArray('SELECT id, idcontratto FROM co_contratti_promemoria WHERE idintervento='.prepare($id_record));
                         if (count($rs) == 1) {
                             $idcontratto = $rs[0]['idcontratto'];
                             $idcontratto_riga = $rs[0]['id'];
                         } else {
                             $idcontratto = '';
                             $idcontratto_riga = '';
-                        }
-
+                        }*/
+						
                         if (($idcontratto != '')) {
                             echo '
                             '.Modules::link('Contratti', $idcontratto, null, null, 'class="pull-right"');
                         }
                     ?>
 
-					{[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $idcontratto; ?>", "ajax-source": "contratti", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $records[0]['idcontratto']; ?>", "ajax-source": "contratti", "readonly": "<?php echo $records[0]['flag_completato']; ?>" ]}
 					<input type='hidden' name='idcontratto_riga' value='<?php echo $idcontratto_riga; ?>'>
 				</div>
 			</div>

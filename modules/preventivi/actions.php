@@ -25,11 +25,11 @@ switch (post('op')) {
         $numeropreventivo_template = str_replace('#', '%', $numeropreventivo_template);
 
         // Codice preventivo: calcolo il successivo in base al formato specificato
-        $rs = $dbo->fetchArray('SELECT numero FROM co_preventivi WHERE numero=(SELECT MAX(CAST(numero AS SIGNED)) FROM co_preventivi) AND numero LIKE('.prepare($numeropreventivo_template).') ORDER BY numero DESC LIMIT 0,1');
+        $rs = $dbo->fetchArray('SELECT numero FROM co_preventivi WHERE numero=(SELECT MAX(CAST(numero AS SIGNED)) FROM co_preventivi) AND numero LIKE('.prepare(Util\Generator::complete($numeropreventivo_template)).') ORDER BY numero DESC LIMIT 0,1');
         $numero = Util\Generator::generate(get_var('Formato codice preventivi'), $rs[0]['numero']);
 
         if (!is_numeric($numero)) {
-            $rs = $dbo->fetchArray('SELECT numero FROM co_preventivi WHERE numero LIKE('.prepare($numeropreventivo_template).') ORDER BY numero DESC LIMIT 0,1');
+            $rs = $dbo->fetchArray('SELECT numero FROM co_preventivi WHERE numero LIKE('.prepare(Util\Generator::complete($numeropreventivo_template)).') ORDER BY numero DESC LIMIT 0,1');
             $numero = Util\Generator::generate(get_var('Formato codice preventivi'), $rs[0]['numero']);
         }
 

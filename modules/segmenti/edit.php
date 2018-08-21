@@ -26,9 +26,20 @@ include_once __DIR__.'/../../core.php';
 
 				<div class="col-md-4">
 					<?php
-                        //($records[0]['n_sezionali']<2) ? $records[0]['predefined']=1 : '';
+                    //($records[0]['n_sezionali']<2) ? $records[0]['predefined']=1 : '';
                     ?>
 					{[ "type": "checkbox", "label": "<?php echo tr('Predefinito'); ?>", "name": "predefined", "value": "$predefined$", "help": "<?php echo tr('Seleziona per rendere il segmento predefinito.'); ?>", "placeholder": "<?php echo tr('Segmento predefinito'); ?>", "extra": "<?php echo ($records[0]['predefined']) ? 'readonly' : ''; ?>"  ]}
+				</div>
+				
+			</div>
+			
+			<div class='row'>
+
+				<div class="col-md-4">
+					{[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di accredito'); ?>", "name": "predefined_accredito", "value": "$predefined_accredito$", "help": "<?php echo tr('Seleziona per rendere il segmento predefinito per le note di accredito.'); ?>", "placeholder": "<?php echo tr('Segmento predefinito per le note di accredito'); ?>"  ]}
+				</div>
+				<div class="col-md-4">
+					{[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di addebito'); ?>", "name": "predefined_addebito", "value": "$predefined_addebito$", "help": "<?php echo tr('Seleziona per rendere il segmento predefinito per le note di addebito.'); ?>", "placeholder": "<?php echo tr('Segmento predefinito per le note di addebito'); ?>"  ]}
 				</div>
 
 			</div>

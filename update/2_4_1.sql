@@ -482,3 +482,6 @@ UPDATE `zz_prints` SET `enabled` = 0 WHERE `name` IN( 'Ordine di servizio', 'Ord
 
 -- Fix colonna delle stampe
 UPDATE `zz_views` SET `query` = '\'Intervento\'' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi') AND `name` = '_print_';
+
+-- Flag per definire i segmenti di note di accredito e di addebito
+ALTER TABLE `zz_segments` ADD `predefined_accredito` TINYINT(1) NOT NULL AFTER `predefined`, ADD `predefined_addebito` TINYINT(1) NOT NULL AFTER `predefined_accredito`; 

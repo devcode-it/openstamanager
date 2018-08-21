@@ -14,6 +14,16 @@ switch (post('op')) {
         if ($predefined) {
             $dbo->query('UPDATE zz_segments SET predefined = 0 WHERE id_module = '.prepare($id_module));
         }
+        
+        $predefined_accredito = post('predefined_accredito');
+        if ($predefined_accredito) {
+            $dbo->query('UPDATE zz_segments SET predefined_accredito = 0 WHERE id_module = '.prepare($id_module));
+        }
+        
+        $predefined_addebito = post('predefined_addebito');
+        if ($predefined_addebito) {
+            $dbo->query('UPDATE zz_segments SET predefined_addebito = 0 WHERE id_module = '.prepare($id_module));
+        }
 
         $dbo->update('zz_segments', [
             'id_module' => post('module'),
@@ -23,6 +33,8 @@ switch (post('op')) {
             'note' => post('note'),
             'position' => post('position'),
             'predefined' => $predefined,
+            'predefined_accredito' => $predefined_accredito,
+            'predefined_addebito' => $predefined_addebito,
         ], ['id' => $id_record]);
 
         $_SESSION['infos'][] = tr('Modifiche salvate correttamente');

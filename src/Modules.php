@@ -9,10 +9,6 @@ use Models\Module;
  */
 class Modules
 {
-    /** @var array Elenco dei moduli disponibili */
-    protected static $modules = [];
-    protected static $references = [];
-
     /** @var array Elenco delle condizioni aggiuntive disponibili */
     protected static $additionals = [];
     /** @var array Elenco dei segmenti disponibili */
@@ -28,23 +24,14 @@ class Modules
      */
     public static function getModules()
     {
-        if (empty(self::$modules)) {
-            $modules = [];
-            $references = [];
+        $results = Module::getAll();
 
-            $results = Auth::check() ? Auth::user()->modules() : Module::all();
+        // Caricamento dei plugin
+        if (!$results->first()->relationLoaded('plugins')) {
             $results->load('plugins');
-
-            foreach ($results as $result) {
-                $modules[$result['id']] = $result;
-                $references[$result['name']] = $result['id'];
-            }
-
-            self::$modules = $modules;
-            self::$references = $references;
         }
 
-        return self::$modules;
+        return $results;
     }
 
     /**
@@ -75,13 +62,9 @@ class Modules
      */
     public static function get($module)
     {
-        $modules = self::getModules();
+        self::getModules();
 
-        if (!is_numeric($module) && !empty(self::$references[$module])) {
-            $module = self::$references[$module];
-        }
-
-        return $modules[$module];
+        return Module::get($module);
     }
 
     /**

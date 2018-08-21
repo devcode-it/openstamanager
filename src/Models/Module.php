@@ -6,12 +6,13 @@ use App;
 use Auth;
 use Traits\RecordTrait;
 use Traits\UploadTrait;
+use Traits\StoreTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
 class Module extends Model
 {
-    use RecordTrait, UploadTrait;
+    use RecordTrait, UploadTrait, StoreTrait;
 
     protected $table = 'zz_modules';
     protected $main_folder = 'modules';
@@ -33,6 +34,10 @@ class Module extends Model
         static::addGlobalScope('enabled', function (Builder $builder) {
             $builder->where('enabled', true);
         });
+
+        static::addGlobalScope('permission', function (Builder $builder) {
+            $builder->with('groups');
+        });
     }
 
     /**
@@ -42,9 +47,17 @@ class Module extends Model
      */
     public function getPermissionAttribute()
     {
-        $result = Auth::user()->is_admin ? 'rw' : $this->pivot->permessi;
+        if (Auth::user()->is_admin) {
+            return 'rw';
+        }
 
-        return !empty($result) ? $result : '-';
+        $group = Auth::user()->group->id;
+
+        $pivot = $this->pivot ?? $this->groups->first(function ($item) use ($group) {
+            return $item->id == $group;
+        })->pivot;
+
+        return $pivot->permessi ?? '-';
     }
 
     /**
@@ -103,7 +116,7 @@ class Module extends Model
 
     public function groups()
     {
-        return $this->belongsToMany(Group::class, 'zz_permissions', 'idmodule', 'idgruppo');
+        return $this->belongsToMany(Group::class, 'zz_permissions', 'idmodule', 'idgruppo')->withPivot('permessi');
     }
 
     public function clauses()

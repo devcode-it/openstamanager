@@ -17,11 +17,7 @@ class Group extends Model
 
     public function modules()
     {
-        if ($this->nome == 'Amministratori') {
-            return Module::all();
-        } else {
-            return $this->belongsToMany(Module::class, 'zz_permissions', 'idgruppo', 'idmodule')->withPivot('permessi')->get();
-        }
+        return $this->belongsToMany(Module::class, 'zz_permissions', 'idgruppo', 'idmodule')->withPivot('permessi');
     }
 
     public function views()

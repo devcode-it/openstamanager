@@ -5,12 +5,13 @@ namespace Models;
 use App;
 use Traits\RecordTrait;
 use Traits\UploadTrait;
+use Traits\StoreTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
 class Plugin extends Model
 {
-    use RecordTrait, UploadTrait;
+    use RecordTrait, UploadTrait, StoreTrait;
 
     protected $table = 'zz_plugins';
     protected $main_folder = 'plugins';

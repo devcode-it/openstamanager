@@ -2,10 +2,13 @@
 
 namespace Models;
 
+use Traits\StoreTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
 {
+    use StoreTrait;
+
     protected $table = 'zz_settings';
 
     protected $appends = [

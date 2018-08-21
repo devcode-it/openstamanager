@@ -1082,14 +1082,15 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
         if (!empty($riga['idordine'])) {
             $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idordine='.prepare($riga['idordine']));
         }
-
-        // Nota di accredito
-        if (!empty($riga['ref_riga_documento'])) {
-            $dbo->query('UPDATE co_righe_documenti SET qta_evasa = qta_evasa+'.$riga['qta'].' WHERE id='.prepare($riga['ref_riga_documento']));
-
+    }
+    
+    // Nota di accredito
+    if (!empty($riga['ref_riga_documento'])) {
+        $dbo->query('UPDATE co_righe_documenti SET qta_evasa = qta_evasa+'.$riga['qta'].' WHERE id='.prepare($riga['ref_riga_documento']));
+        if (!empty($riga['idarticolo'])) {
             $serials = array_column($serials, 'serial');
             $serials = array_filter($serials, function ($value) { return !empty($value); });
-
+            
             $dbo->attach('mg_prodotti', ['id_riga_documento' => $riga['ref_riga_documento'], 'dir' => $dir, 'id_articolo' => $riga['idarticolo']], ['serial' => $serials]);
         }
     }

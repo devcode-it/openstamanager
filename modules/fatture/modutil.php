@@ -481,7 +481,7 @@ function get_imponibile_fattura($iddocumento)
     $query = 'SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS imponibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
 
-    return $rs[0]['imponibile'];
+    return sum($rs[0]['imponibile'], null, 2);
 }
 
 /**
@@ -516,7 +516,7 @@ function get_totale_fattura($iddocumento)
         get_imponibile_fattura($iddocumento),
         $rs2[0]['rivalsainps'],
         $totale_iva,
-    ]);
+    ], null, 2);
 
     return $totale;
 }
@@ -535,7 +535,7 @@ function get_netto_fattura($iddocumento)
         get_totale_fattura($iddocumento),
         $rs[0]['bollo'],
         -$rs[0]['ritenutaacconto'],
-    ]);
+    ], null, 2);
 
     return $netto_a_pagare;
 }

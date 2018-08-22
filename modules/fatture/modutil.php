@@ -10,33 +10,33 @@ function get_new_numerofattura($data)
 
     $dbo = Database::getConnection();
 
-    if ($dir == 'uscita') {
-        // recupero maschera per questo segmento
-        $rs_maschera = $dbo->fetchArray('SELECT pattern FROM zz_segments WHERE id = '.prepare($id_segment));
-        // esempio: ####/YY
-        $maschera = $rs_maschera[0]['pattern'];
+    // recupero maschera per questo segmento
+    $rs_maschera = $dbo->fetchArray('SELECT pattern FROM zz_segments WHERE id = '.prepare($id_segment));
+    // esempio: ####/YY
+    $maschera = $rs_maschera[0]['pattern'];
 
-        // estraggo blocchi di caratteri standard da sostituire
-        preg_match('/[#]+/', $maschera, $m1);
-        preg_match('/[Y]+/', $maschera, $m2);
+    // estraggo blocchi di caratteri standard da sostituire
+    preg_match('/[#]+/', $maschera, $m1);
+    preg_match('/[Y]+/', $maschera, $m2);
 
-        $query = "SELECT numero FROM co_documenti WHERE DATE_FORMAT(data,'%Y') = ".prepare(date('Y', strtotime($data))).' AND id_segment = '.prepare($id_segment);
+    $query = "SELECT numero FROM co_documenti WHERE DATE_FORMAT(data,'%Y') = ".prepare(date('Y', strtotime($data))).' AND id_segment = '.prepare($id_segment);
 
-        $pos1 = strpos($maschera, $m1[0]);
-        if ($pos1 == 0) {
-            $query .= ' ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1';
-        } else {
-            $query .= ' ORDER BY numero DESC LIMIT 0,1';
-        }
+    $pos1 = strpos($maschera, $m1[0]);
+    if ($pos1 == 0) {
+        $query .= ' ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1';
+    } else {
+        $query .= ' ORDER BY numero DESC LIMIT 0,1';
+    }
 
-        $rs_ultima_fattura = $dbo->fetchArray($query);
+    $rs_ultima_fattura = $dbo->fetchArray($query);
 
+	if ($dir == 'uscita') {
         $numero = Util\Generator::generate($maschera, $rs_ultima_fattura[0]['numero']);
     } else {
-        $query = "SELECT IFNULL(MAX(numero),'0') AS max_numerofattura FROM co_documenti WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data))).' AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir = '.prepare($dir).') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0, 1';
-        $rs = $dbo->fetchArray($query);
-
-        $numero = $rs[0]['max_numerofattura'] + 1;
+		// NB: Fatture di vendita ($dir = entrata)
+		// il campo numero per questa tipologia di documento è nascosto nel modulo, ma poi viene utilizzato
+		// come numero di protocollo nelle stampe fiscali, calcolo quindi un progressivo semplice (es. 1, 2, 3, etc)
+		$numero = Util\Generator::generate('#', $rs_ultima_fattura[0]['numero']);
     }
 
     return $numero;

@@ -66,4 +66,4 @@ $body .= "</tr>\n";
 
 $body .= "</table>\n";
 
-$report_name = 'inventario.pdf';
+$report_name = 'fatturato.pdf';

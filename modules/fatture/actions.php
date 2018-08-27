@@ -161,9 +161,10 @@ switch (post('op')) {
                 elimina_movimento($id_record, 0);
             } elseif ( ($rs[0]['descrizione'] == 'Pagato' or $rs[0]['descrizione'] == 'Parzialmente pagato') and  ($dbo->fetchNum("SELECT id  FROM co_scadenziario WHERE iddocumento = ".prepare($id_record)) == 0)) {	
 				
-				aggiungi_scadenza($id_record, $pagamento);
+				//aggiungo la scadenza come già pagata
+				aggiungi_scadenza($id_record, $pagamento, 1);
                 aggiungi_movimento($id_record, $dir);
-			
+				
 			}
 
             // Se la fattura è in stato "Emessa" posso inserirla in scadenzario e aprire il mastrino cliente

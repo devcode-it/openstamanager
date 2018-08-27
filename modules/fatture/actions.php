@@ -151,16 +151,22 @@ switch (post('op')) {
             }
 
             // Elimino la scadenza e tutti i movimenti, poi se la fattura è emessa le ricalcolo
-            if ($rs[0]['descrizione'] == 'Bozza') {
+            if ($rs[0]['descrizione'] == 'Bozza' or $rs[0]['descrizione'] == 'Annullata' ) {
                 elimina_scadenza($id_record);
                 elimina_movimento($id_record, 0);
+				//elimino movimento anche prima nota (se pagata o parzialmente pagata)
                 elimina_movimento($id_record, 1);
             } elseif ($rs[0]['descrizione'] == 'Emessa') {
                 elimina_scadenza($id_record);
                 elimina_movimento($id_record, 0);
-            }
+            } elseif ( ($rs[0]['descrizione'] == 'Pagato' or $rs[0]['descrizione'] == 'Parzialmente pagato') and  ($dbo->fetchNum("SELECT id  FROM co_scadenziario WHERE iddocumento = ".prepare($id_record)) == 0)) {	
+				
+				aggiungi_scadenza($id_record, $pagamento);
+                aggiungi_movimento($id_record, $dir);
+			
+			}
 
-            // Se la fattura è in stato "Emessa" posso inserirla in scadenziario e aprire il mastrino cliente
+            // Se la fattura è in stato "Emessa" posso inserirla in scadenzario e aprire il mastrino cliente
             if ($rs[0]['descrizione'] == 'Emessa') {
                 aggiungi_scadenza($id_record, $pagamento);
                 aggiungi_movimento($id_record, $dir);

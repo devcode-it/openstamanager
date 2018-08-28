@@ -52,12 +52,12 @@ class Plugin extends Model
 
     public function getOptionsAttribute($value)
     {
-        return App::replacePlaceholder($value, filter('parent_id'));
+        return App::replacePlaceholder($value, filter('id_parent'));
     }
 
     public function getOptions2Attribute($value)
     {
-        return App::replacePlaceholder($value, filter('parent_id'));
+        return App::replacePlaceholder($value, filter('id_parent'));
     }
 
     /* Metodi personalizzati */

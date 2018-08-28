@@ -160,23 +160,23 @@ switch (filter('op')) {
 		//Gruppo Tecnici
 		if ($dbo->fetchArray('SELECT `nome` FROM `zz_groups` WHERE `id` = '.prepare($id_record))[0]['nome']=='Tecnici'){
 		
-			$data =  array ();
-			$data['Dashboard'] = 'rw';
-			$data['Anagrafiche'] = 'rw';
-			$data['Interventi'] = 'rw';
-			$data['Magazzino'] = 'rw';
-			$data['Articoli'] = 'rw';
+			$permessi =  array ();
+			$permessi['Dashboard'] = 'rw';
+			$permessi['Anagrafiche'] = 'rw';
+			$permessi['Interventi'] = 'rw';
+			$permessi['Magazzino'] = 'rw';
+			$permessi['Articoli'] = 'rw';
 			
 			$dbo->query('DELETE FROM zz_permissions WHERE idgruppo='.prepare($id_record));
 			
-			foreach ($data as $module => $permessi) {
+			foreach ($permessi as $module_name => $permesso) {
 			
-				$idmodule = $dbo->fetchArray('SELECT `id` FROM `zz_modules` WHERE `name` = "'.$module.'"')[0]['id'];
+				$module_id = $dbo->fetchArray('SELECT `id` FROM `zz_modules` WHERE `name` = "'.$module_name.'"')[0]['id'];
 					  
 				$dbo->insert('zz_permissions', [
 					'idgruppo' => $id_record,
-					'idmodule' => $idmodule,
-					'permessi' => $permessi,
+					'idmodule' => $module_id,
+					'permessi' => $permesso,
 				]);
 			}
 		

@@ -17,7 +17,7 @@ include_once $docroot.'/actions.php';
 echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top", "place": "editor" )}';
 
 $advanced_sessions = setting('Attiva notifica di presenza utenti sul record');
-if ($advanced_sessions) {
+if (!empty($advanced_sessions)) {
     $dbo->query('DELETE FROM zz_semaphores WHERE id_utente='.prepare(Auth::user()['id']).' AND posizione='.prepare($id_module.', '.$id_record));
 
     $dbo->query('INSERT INTO zz_semaphores (id_utente, posizione, updated) VALUES ('.prepare(Auth::user()['id']).', '.prepare($id_module.', '.$id_record).', NOW())');
@@ -350,11 +350,11 @@ if ($read_only || !empty($block_edit)) {
 
 
 <?php
-if ($advanced_sessions) {
+if (!empty($advanced_sessions)) {
     ?>
 
             function getActiveUsers(){
-                $.getJSON('<?php echo ROOTDIR; ?>/call.php', {
+                $.getJSON('<?php echo ROOTDIR; ?>/ajax.php?op=active_users', {
                     id_module: <?php echo $id_module; ?>,
                     id_record: <?php echo $id_record; ?>
                 },
@@ -372,7 +372,7 @@ if ($advanced_sessions) {
 
             getActiveUsers();
 
-            setInterval(getActiveUsers, <?php echo setting('Timeout notifica di presenza (minuti)') * 1000; ?>);
+            setInterval(getActiveUsers, <?php echo setting('Timeout notifica di presenza (minuti)') * 60 * 1000; ?>);
 <?php
 }
 ?>

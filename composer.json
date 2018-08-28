@@ -60,7 +60,7 @@
             "Modules\\Fatture\\Custom\\": "modules/fatture/custom/src",
             "Modules\\Anagrafiche\\": "modules/anagrafiche/src",
             "Modules\\Anagrafiche\\Custom\\": "modules/anagrafiche/custom/src",
-            "Plugins\\Fatturazione\\": "plugins/fatturazione/src"
+            "Plugins\\Fatturazione\\": "plugins/fatturazione/src",
             "Plugins\\Fatturazione\\Custom\\": "plugins/fatturazione/custom/src"
         },
         "files": [

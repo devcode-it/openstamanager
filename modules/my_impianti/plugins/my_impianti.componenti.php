@@ -235,7 +235,7 @@ if (!empty($rs2)) {
             echo '
                             <div class="clearfix"></div>
                             <div class="col-md-12">
-                                <div class="alert alert-info">'.tr('Nessun intervento collegato a questo componente!').'</div>
+                                <div class="alert alert-info"><i class=\'fa fa-info-circle\'></i> '.tr('Nessun intervento collegato a questo componente!').'</div>
                             </div>';
         }
 
@@ -254,27 +254,30 @@ if (!empty($rs2)) {
         // Pulsante Salva/Elimina
         echo '
                             <div class="col-md-12">
-                                <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>
+                                
+								<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>';
 
-                                <a class="btn btn-danger ask" data-backto="record-edit" data-op="unlinkcomponente" data-id="'.$rs2[$j]['id'].'">
+                            
+								
+							   // Sostituisci componente con un altro dello stesso tipo, posso sostituire solo i componenti installati
+								if (empty($rs2[$j]['data_sostituzione'])) {
+									echo "
+														<button  class=\"btn btn-warning\" onclick=\"if( confirm('".tr('Vuoi sostituire questo componente con un altro dello stesso tipo?')."') ){ location.href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituiscicomponente&backto=record-edit&filename='.$filename.'&id='.$rs2[$j]['id']."'; }\"><i class='fa fa-refresh'></i> ".tr('Sostituisci questo componente').'</button>';
+								} else {
+									echo '
+														<button class="btn btn-warning disabled" disabled>'.tr('Componente già sostituito').'</button>';
+								}
+								
+								
+		echo '					
+								    <a class="btn btn-danger ask" data-backto="record-edit" data-op="unlinkcomponente" data-id="'.$rs2[$j]['id'].'">
                                     <i class="fa fa-trash"></i> '.tr('Elimina').'
-                                </a>
-                            </div>';
+                                </a>';
 
-        // Sostituisci componente con un altro dello stesso tipo, posso sostituire solo i componenti installati
-        echo '
-                            <div class="col-md-12">';
-        if (empty($rs2[$j]['data_sostituzione'])) {
-            echo "
-                                <a href=\"javascript:;\" class=\"text-warning\" onclick=\"if( confirm('".tr('Vuoi sostituire questo componente con un altro dello stesso tipo?')."') ){ location.href='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituiscicomponente&backto=record-edit&filename='.$filename.'&id='.$rs2[$j]['id']."'; }\"><i class='fa fa-refresh'></i> ".tr('Sostituisci questo componente').'</a><br><br>';
-        } else {
-            echo '
-                                <p class="text-danger">'.tr('Componente già sostituito').'</p>';
-        }
-
-        echo '
+					
+								
+		echo '
                             </div>
-
                         </form>
                     </div>
                 </div>
@@ -285,7 +288,7 @@ if (!empty($rs2)) {
         </div>';
 } else {
     echo '
-        <p>'.tr('Nessun componente inserito').'.</p>';
+        <div class=\'alert alert-info\' ><i class=\'fa fa-info-circle\'></i> '.tr('Nessun componente inserito').'.</div>';
 }
 
 echo '

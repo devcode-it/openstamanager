@@ -13,6 +13,7 @@ switch ($operazione) {
             'indirizzo2' => $post['indirizzo2'],
             'citta' => $post['citta'],
             'cap' => $post['cap'],
+		    'provincia' => $post['provincia'],
             'km' => $post['km'],
             'cellulare' => $post['cellulare'],
             'telefono' => $post['telefono'],

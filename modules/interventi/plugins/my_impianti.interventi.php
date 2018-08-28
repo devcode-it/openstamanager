@@ -53,7 +53,7 @@ if (!empty($results)) {
         </table>';
 } else {
     echo '
-<p>'.tr('Nessun intervento su questo impianto').'...</p>';
+<div class=\'alert alert-info\' ><i class=\'fa fa-info-circle\'></i> '.tr('Nessun intervento su questo impianto').'.</div>';
 }
 
 echo '

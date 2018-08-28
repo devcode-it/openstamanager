@@ -122,12 +122,17 @@ switch (filter('op')) {
         }
         break;
 
-    // Disabilita API utente
-    case 'token':
-        $token = $dbo->fetchOne('SELECT `enabled` FROM `zz_tokens` WHERE `id_utente` = '.prepare($id_record));
-
-        if ($dbo->query('UPDATE zz_tokens SET enabled = '.(empty($token['enabled']) ? 1 : 0).' WHERE id_utente = '.prepare($id_utente))) {
-            $_SESSION['infos'][] = tr('Utente eliminato!');
+    // Abilita API utente
+	case 'token_enable':
+         if ($dbo->query('UPDATE zz_tokens SET enabled = 1 WHERE id_utente = '.prepare($id_utente))) {
+            $_SESSION['infos'][] = tr('Token abilitato!');
+        }
+        break;
+		
+	// Disabilita API utente
+	case 'token_disable':
+        if ($dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id_utente = '.prepare($id_utente))) {
+            $_SESSION['infos'][] = tr('Token disabilitato!');
         }
         break;
 
@@ -148,6 +153,39 @@ switch (filter('op')) {
         }
 
         break;
+	
+	// Impostazione/reimpostazione dei permessi di accesso di default
+	case 'restore_permission':
+		
+		//Gruppo Tecnici
+		if ($dbo->fetchArray('SELECT `nome` FROM `zz_groups` WHERE `id` = '.prepare($id_record))[0]['nome']=='Tecnici'){
+		
+			$data =  array ();
+			$data['Dashboard'] = 'rw';
+			$data['Anagrafiche'] = 'rw';
+			$data['Interventi'] = 'rw';
+			$data['Magazzino'] = 'rw';
+			$data['Articoli'] = 'rw';
+			
+			$dbo->query('DELETE FROM zz_permissions WHERE idgruppo='.prepare($id_record));
+			
+			foreach ($data as $module => $permessi) {
+			
+				$idmodule = $dbo->fetchArray('SELECT `id` FROM `zz_modules` WHERE `name` = "'.$module.'"')[0]['id'];
+					  
+				$dbo->insert('zz_permissions', [
+					'idgruppo' => $id_record,
+					'idmodule' => $idmodule,
+					'permessi' => $permessi,
+				]);
+			}
+		
+			$_SESSION['infos'][] = tr('Permessi reimpostati.');
+		
+			
+		}
+	
+	break;
 
     // Aggiornamento dei permessi di accesso
     case 'update_permission':

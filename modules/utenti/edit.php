@@ -68,13 +68,12 @@ if (!empty($utenti)) {
         // Disabilitazione token API, se diverso da id_utente #1 (admin)
         if ($utente['id'] != '1') {
             $token = $dbo->fetchOne('SELECT `enabled` FROM `zz_tokens` WHERE `id_utente` = '.prepare($utente['id']));
-
             if (!empty($token['enabled'])) {
                 echo '
-                    <a href="javascript:;" onclick="swal({ title: \''.tr("Disabilitare l\'accesso API per questo utente?").'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=token&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Disabilita API" class="text-danger tip"><i class="fa fa-2x fa-key"></i></a>';
+                    <a href="javascript:;" onclick="swal({ title: \''.tr("Disabilitare l\'accesso API per questo utente?").'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=token_disable&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Disabilita API" class="text-danger tip"><i class="fa fa-2x fa-key"></i></a>';
             } else {
                 echo '
-                    <a href="javascript:;" onclick="swal({ title: \''.tr("Abilitare l\'accesso API per questo utente?").'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=token&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Abilitare API" class="text-success tip"><i class="fa fa-2x fa-key"></i></a>';
+                    <a href="javascript:;" onclick="swal({ title: \''.tr("Abilitare l\'accesso API per questo utente?").'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=token_enable&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Abilitare API" class="text-success tip"><i class="fa fa-2x fa-key"></i></a>';
             }
         } else {
             echo '
@@ -99,7 +98,7 @@ if (!empty($utenti)) {
 			</table>';
 } else {
     echo '
-			<p>'.tr('Non ci sono utenti in questo gruppo').'...</p>';
+			<div class=\'alert alert-info\' ><i class=\'fa fa-info-circle\'></i> '.tr('Non ci sono utenti in questo gruppo').'.</div>';
 }
 echo '
 			<a data-toggle="modal" data-target="#bs-popup" data-href="'.$rootdir.'/modules/utenti/user.php?idgruppo='.$record['id'].'" data-title="'.tr('Aggiungi utente').'" class="pull-right btn btn-primary"><i class="fa fa-plus"></i> '.tr('Aggiungi utente').'</a>
@@ -115,7 +114,8 @@ echo '
 		<div class="panel-heading">
             <h3 class="panel-title">'.tr('Permessi _GROUP_', [
                 '_GROUP_' => $records[0]['nome'],
-            ]).'</h3>
+            ]).((empty($records[0]['editable'])) ? '<button class=\'btn btn-xs btn-info pull-right ask\'  data-msg="'.tr('Verranno reimpostati i permessi di default per il gruppo \''.$records[0]['nome'].'\' ').'." data-class="btn btn-lg btn-warning" data-button="'.tr('Reimposta permessi').'" data-op="restore_permission"  >'.tr('Reimposta permessi').'</button>' : '').'</h3>
+			
 		</div>
 
 		<div class="panel-body">';
@@ -143,7 +143,7 @@ if ($record['nome'] != 'Amministratori') {
 			</table>';
 } else {
     echo '
-			<p>'.tr('Gli amministratori hanno accesso a qualsiasi modulo').'.</p>';
+			<div class=\'alert alert-info\' ><i class=\'fa fa-info-circle\'></i> '.tr('Gli amministratori hanno accesso a qualsiasi modulo').'.</div>';
 }
 echo '
 		</div>

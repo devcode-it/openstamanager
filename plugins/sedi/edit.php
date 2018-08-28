@@ -28,7 +28,7 @@ echo '
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Secondo indirizzo').'", "name": "indirizzo2", "value": "$indirizzo2$" ]}
+			{[ "type": "text", "label": "'.tr('Indirizzo2').'", "name": "indirizzo2", "value": "$indirizzo2$" ]}
 		</div>
 	</div>
 
@@ -43,19 +43,19 @@ echo '
 	</div>
 
 	<div class="row">
-		<div class="col-md-3">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Città').'", "name": "citta", "id": "citta_", "value": "$citta$" ]}
 		</div>
 
-		<div class="col-md-3">
+		<div class="col-md-2">
 			{[ "type": "text", "label": "'.tr('C.A.P.').'", "name": "cap", "value": "$cap$" ]}
 		</div>
 
-		<div class="col-md-3">
-			{[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia", "value": "$provincia$" ]}
+		<div class="col-md-2">
+			{[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia", "value": "$provincia$", "maxlength": 2, "class": "text-center"  ]}
 		</div>
 
-		<div class="col-md-3">
+		<div class="col-md-2">
 			{[ "type": "number", "label": "'.tr('Km').'", "name": "km", "value": "$km$" ]}
 		</div>
 	</div>

@@ -25,7 +25,7 @@ switch (post('op')) {
         $idtipodocumento = post('idtipodocumento');
         $id_segment = post('id_segment');
 
-        $fattura = Modules\Fatture\Fattura::create([
+        $fattura = Fattura::create([
             'idanagrafica' => $idanagrafica,
             'data' => $data,
             'id_segment' => $id_segment,

@@ -42,10 +42,10 @@ switch ($resource) {
 
         break;
 
-    case 'sessioni_intervento':
+    case 'sessione':
         $data = $request['data'];
 
-        add_tecnico($data['id_intervento'], $data['id_tecnico'], $data['orario_inizio'], $data['orario_fine']);
+        add_tecnico($data['id_intervento'], $user['idanagrafica'], $data['orario_inizio'], $data['orario_fine']);
 
         break;
 

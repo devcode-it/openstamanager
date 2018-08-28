@@ -50,7 +50,7 @@ function link_componente_to_articolo($idintervento, $idimpianto, $idarticolo, $q
     }
 }
 
-function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto)
+function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = null)
 {
     $dbo = Database::getConnection();
 

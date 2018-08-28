@@ -221,6 +221,9 @@ class API extends \Util\Singleton
             return self::error('notFound');
         }
 
+        // Inclusione funzioni del modulo
+        include_once App::filepath(DOCROOT.'/modules/'.$resources[$resource].'|custom|', 'modutil.php');
+
         // Database
         $dbo = $database = Database::getConnection();
 

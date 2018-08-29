@@ -87,13 +87,10 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Tipo di attività'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione", "value": "$idtipointervento$" ]}
 				</div>
-				<!--div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Iva'); ?>", "name": "idiva", "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "$idiva$" ]}
-				</div-->
 
-				<div class="col-md-3">
+				<!--div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Resa materiale'); ?>", "name": "idporto", "values": "query=SELECT id, descrizione FROM dt_porto ORDER BY descrizione", "value": "$idporto$" ]}
-				</div>
+				</div-->
 			</div>
 
             <div class="row">

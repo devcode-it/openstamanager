@@ -10,13 +10,21 @@ switch (post('op')) {
         $totale_n_ddt = 0;
 
         // Informazioni della fattura
-        $tipo_documento = $dbo->selectOne('co_tipidocumento', 'id', ['descrizione' => 'Fattura immediata di vendita'])['id'];
-        $dir = 'entrata';
+        if( $dir == 'entrata' ){
+            $tipo_documento = $dbo->selectOne('co_tipidocumento', 'id', ['descrizione' => 'Fattura immediata di vendita'])['id'];
+            $module_name = 'Fatture di vendita';
+            $idconto = setting('Conto predefinito fatture di vendita');
+        } else {
+            $tipo_documento = $dbo->selectOne('co_tipidocumento', 'id', ['descrizione' => 'Fattura immediata di acquisto'])['id'];
+            $module_name = 'Fatture di acquisto';
+            $idconto = setting('Conto predefinito fatture di acquisto');
+        }
+
         $idiva = setting('Iva predefinita');
         $data = date('Y-m-d');
 
         // Segmenti
-        $id_fatture = Modules::get('Fatture di vendita')['id'];
+        $id_fatture = Modules::get($module_name)['id'];
         if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
             $segments = Modules::getSegments($id_fatture);
             $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
@@ -68,12 +76,11 @@ switch (post('op')) {
 
                     $id_documento = $dbo->lastInsertedID();
                     $id_documento_cliente[$id_anagrafica] = $id_documento;
+                    ++$totale_n_ddt;
                 }
 
                 // Inserimento righe
                 foreach ($righe as $riga) {
-                    ++$totale_n_ddt;
-
                     $qta = $riga['qta'] - $riga['qta_evasa'];
 
                     if ($qta > 0) {
@@ -145,10 +152,7 @@ switch (post('op')) {
 
 $operations = [
     'delete-bulk' => tr('Elimina selezionati'),
-];
-
-if (Modules::get('Ddt di vendita')['id'] == $id_module) {
-    $operations['crea_fattura'] = [
+    'crea_fattura' => [
         'text' => tr('Crea fattura'),
         'data' => [
             'msg' => tr('Vuoi davvero creare una fattura per questi interventi?'),
@@ -156,7 +160,7 @@ if (Modules::get('Ddt di vendita')['id'] == $id_module) {
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,
         ],
-    ];
-}
+    ]
+];
 
 return $operations;

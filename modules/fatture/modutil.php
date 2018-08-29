@@ -10,33 +10,33 @@ function get_new_numerofattura($data)
 
     $dbo = Database::getConnection();
 
-    if ($dir == 'uscita') {
-        // recupero maschera per questo segmento
-        $rs_maschera = $dbo->fetchArray('SELECT pattern FROM zz_segments WHERE id = '.prepare($id_segment));
-        // esempio: ####/YY
-        $maschera = $rs_maschera[0]['pattern'];
+    // recupero maschera per questo segmento
+    $rs_maschera = $dbo->fetchArray('SELECT pattern FROM zz_segments WHERE id = '.prepare($id_segment));
+    // esempio: ####/YY
+    $maschera = $rs_maschera[0]['pattern'];
 
-        // estraggo blocchi di caratteri standard da sostituire
-        preg_match('/[#]+/', $maschera, $m1);
-        preg_match('/[Y]+/', $maschera, $m2);
+    // estraggo blocchi di caratteri standard da sostituire
+    preg_match('/[#]+/', $maschera, $m1);
+    preg_match('/[Y]+/', $maschera, $m2);
 
-        $query = "SELECT numero FROM co_documenti WHERE DATE_FORMAT(data,'%Y') = ".prepare(date('Y', strtotime($data))).' AND id_segment = '.prepare($id_segment);
+    $query = "SELECT numero FROM co_documenti WHERE DATE_FORMAT(data,'%Y') = ".prepare(date('Y', strtotime($data))).' AND id_segment = '.prepare($id_segment);
 
-        $pos1 = strpos($maschera, $m1[0]);
-        if ($pos1 == 0) {
-            $query .= ' ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1';
-        } else {
-            $query .= ' ORDER BY numero DESC LIMIT 0,1';
-        }
+    $pos1 = strpos($maschera, $m1[0]);
+    if ($pos1 == 0) {
+        $query .= ' ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1';
+    } else {
+        $query .= ' ORDER BY numero DESC LIMIT 0,1';
+    }
 
-        $rs_ultima_fattura = $dbo->fetchArray($query);
+    $rs_ultima_fattura = $dbo->fetchArray($query);
 
+	if ($dir == 'uscita') {
         $numero = Util\Generator::generate($maschera, $rs_ultima_fattura[0]['numero']);
     } else {
-        $query = "SELECT IFNULL(MAX(numero),'0') AS max_numerofattura FROM co_documenti WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data))).' AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir = '.prepare($dir).') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0, 1';
-        $rs = $dbo->fetchArray($query);
-
-        $numero = $rs[0]['max_numerofattura'] + 1;
+		// NB: Fatture di vendita ($dir = entrata)
+		// il campo numero per questa tipologia di documento è nascosto nel modulo, ma poi viene utilizzato
+		// come numero di protocollo nelle stampe fiscali, calcolo quindi un progressivo semplice (es. 1, 2, 3, etc)
+		$numero = Util\Generator::generate('#', $rs_ultima_fattura[0]['numero']);
     }
 
     return $numero;
@@ -95,8 +95,9 @@ function elimina_scadenza($iddocumento)
  * Funzione per ricalcolare lo scadenzario di una determinata fattura
  * $iddocumento	string		E' l'id del documento di cui ricalcolare lo scadenzario
  * $pagamento		string		Nome del tipo di pagamento. Se è vuoto lo leggo da co_pagamenti_documenti, perché significa che devo solo aggiornare gli importi.
+ * $pagato boolean Indica se devo segnare l'importo come pagato
  */
-function aggiungi_scadenza($iddocumento, $pagamento = '')
+function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = 0)
 {
     $dbo = Database::getConnection();
 
@@ -176,11 +177,29 @@ function aggiungi_scadenza($iddocumento, $pagamento = '')
         }
 
         $dbo->query('INSERT INTO co_scadenziario(iddocumento, data_emissione, scadenza, da_pagare, pagato, tipo) VALUES('.prepare($iddocumento).', '.prepare($data).', '.prepare($scadenza).', '.prepare($da_pagare).", 0, 'fattura')");
+
+		if ($pagato){
+		   $id_scadenza = $dbo->lastInsertedID();
+		    $dbo->update('co_scadenziario', [
+                'pagato' => $da_pagare,
+				'data_pagamento' => $data,
+            ], ['id' => $id_scadenza]);
+		}
+
     }
 
     // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario
     if ($dir == 'uscita' && $ritenutaacconto > 0) {
         $dbo->query('INSERT INTO co_scadenziario(iddocumento, data_emissione, scadenza, da_pagare, pagato, tipo) VALUES('.prepare($iddocumento).', '.prepare($data).', '.prepare(date('Y-m', strtotime($data.' +1 month')).'-15').', '.prepare(-$ritenutaacconto).", 0, 'ritenutaacconto')");
+
+		if ($pagato){
+		   $id_scadenza = $dbo->lastInsertedID();
+		    $dbo->update('co_scadenziario', [
+                'pagato' => -$ritenutaacconto,
+				'data_pagamento' => $data,
+            ], ['id' => $id_scadenza]);
+		}
+
     }
 
     return true;
@@ -481,7 +500,7 @@ function get_imponibile_fattura($iddocumento)
     $query = 'SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS imponibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
 
-    return $rs[0]['imponibile'];
+    return sum($rs[0]['imponibile'], null, 2);
 }
 
 /**
@@ -516,7 +535,7 @@ function get_totale_fattura($iddocumento)
         get_imponibile_fattura($iddocumento),
         $rs2[0]['rivalsainps'],
         $totale_iva,
-    ]);
+    ], null, 2);
 
     return $totale;
 }
@@ -535,7 +554,7 @@ function get_netto_fattura($iddocumento)
         get_totale_fattura($iddocumento),
         $rs[0]['bollo'],
         -$rs[0]['ritenutaacconto'],
-    ]);
+    ], null, 2);
 
     return $netto_a_pagare;
 }
@@ -855,11 +874,13 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
         if (!empty($riga['idordine'])) {
             $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND idarticolo='.prepare($riga['idarticolo']).' AND idordine='.prepare($riga['idordine']));
         }
+    }
 
-        // Nota di credito
-        if (!empty($riga['ref_riga_documento'])) {
-            $dbo->query('UPDATE co_righe_documenti SET qta_evasa = qta_evasa+'.$riga['qta'].' WHERE id='.prepare($riga['ref_riga_documento']));
+    // Nota di accredito
+    if (!empty($riga['ref_riga_documento'])) {
+        $dbo->query('UPDATE co_righe_documenti SET qta_evasa = qta_evasa+'.$riga['qta'].' WHERE id='.prepare($riga['ref_riga_documento']));
 
+        if (!empty($riga['idarticolo'])) {
             $serials = array_column($serials, 'serial');
             $serials = array_filter($serials, function ($value) { return !empty($value); });
 

@@ -122,16 +122,21 @@ switch (post('op')) {
             }
 
             // Elimino la scadenza e tutti i movimenti, poi se la fattura è emessa le ricalcolo
-            if ($rs[0]['descrizione'] == 'Bozza') {
+            if ($rs[0]['descrizione'] == 'Bozza' or $rs[0]['descrizione'] == 'Annullata') {
                 elimina_scadenza($id_record);
                 elimina_movimento($id_record, 0);
+                //elimino movimento anche prima nota (se pagata o parzialmente pagata)
                 elimina_movimento($id_record, 1);
             } elseif ($rs[0]['descrizione'] == 'Emessa') {
                 elimina_scadenza($id_record);
                 elimina_movimento($id_record, 0);
+            } elseif (($rs[0]['descrizione'] == 'Pagato' or $rs[0]['descrizione'] == 'Parzialmente pagato') and ($dbo->fetchNum('SELECT id  FROM co_scadenziario WHERE iddocumento = '.prepare($id_record)) == 0)) {
+                //aggiungo la scadenza come già pagata
+                aggiungi_scadenza($id_record, $pagamento, 1);
+                aggiungi_movimento($id_record, $dir);
             }
 
-            // Se la fattura è in stato "Emessa" posso inserirla in scadenziario e aprire il mastrino cliente
+            // Se la fattura è in stato "Emessa" posso inserirla in scadenzario e aprire il mastrino cliente
             if ($rs[0]['descrizione'] == 'Emessa') {
                 aggiungi_scadenza($id_record, $pagamento);
                 aggiungi_movimento($id_record, $dir);
@@ -1482,6 +1487,7 @@ switch (post('op')) {
     // Nota di credito
     case 'nota_credito':
         $id_segment = post('id_segment');
+        $data = post('data');
 
         $numero = get_new_numerofattura($record['data']);
         $numero_esterno = get_new_numerosecondariofattura($record['data']);
@@ -1490,7 +1496,7 @@ switch (post('op')) {
         $idconto = $rs[0]['idconto'];
 
         $ref_documento = $id_record;
-        $dbo->query('INSERT INTO co_documenti (numero, numero_esterno, ref_documento, idanagrafica, idconto, idtipodocumento, idpagamento, idbanca, data, idstatodocumento, idsede, id_segment) SELECT '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($ref_documento).', idanagrafica, idconto, (SELECT `id` FROM `co_tipidocumento` WHERE `descrizione`=\'Nota di credito\' AND dir = \'entrata\'), idpagamento, idbanca, data, (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`=\'Bozza\'), idsede, '.prepare($id_segment).' FROM co_documenti AS t WHERE id = '.prepare($id_record));
+        $dbo->query('INSERT INTO co_documenti (numero, numero_esterno, ref_documento, idanagrafica, idconto, idtipodocumento, idpagamento, idbanca, data, idstatodocumento, idsede, id_segment) SELECT '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($ref_documento).', idanagrafica, idconto, (SELECT `id` FROM `co_tipidocumento` WHERE `descrizione`=\'Nota di accredito\' AND dir = \'entrata\'), idpagamento, idbanca, '.prepare($data).', (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`=\'Bozza\'), idsede, '.prepare($id_segment).' FROM co_documenti AS t WHERE id = '.prepare($id_record));
         $id_record = $dbo->lastInsertedID();
 
         // Lettura di tutte le righe della tabella in arrivo
@@ -1561,12 +1567,17 @@ switch (post('op')) {
 
 // Nota di debito
 if (get('op') == 'nota_addebito') {
-    $id_segment = $record['id_segment'];
+    $rs_segment = $dbo->fetchArray("SELECT * FROM zz_segments WHERE predefined_addebito='1'");
+    if (sizeof($rs_segment) > 0) {
+        $id_segment = $rs_segment[0]['id'];
+    } else {
+        $id_segment = $record['id_segment'];
+    }
 
     $numero = get_new_numerofattura($record['data']);
     $numero_esterno = get_new_numerosecondariofattura($record['data']);
 
-    $dbo->query('INSERT INTO co_documenti (numero, numero_esterno, ref_documento, idanagrafica, idconto, idtipodocumento, idpagamento, idbanca, data, idstatodocumento, idsede, id_segment) SELECT '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($id_record).', idanagrafica, idconto, (SELECT `id` FROM `co_tipidocumento` WHERE `descrizione`=\'Nota di debito\' AND dir = \'entrata\'), idpagamento, idbanca, data, (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`=\'Bozza\'), idsede, id_segment FROM co_documenti AS t WHERE id = '.prepare($id_record));
+    $dbo->query('INSERT INTO co_documenti (numero, numero_esterno, ref_documento, idanagrafica, idconto, idtipodocumento, idpagamento, idbanca, data, idstatodocumento, idsede, id_segment) SELECT '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($id_record).', idanagrafica, idconto, (SELECT `id` FROM `co_tipidocumento` WHERE `descrizione`=\'Nota di addebito\' AND dir = \'entrata\'), idpagamento, idbanca, data, (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`=\'Bozza\'), idsede, '.prepare($id_segment).' FROM co_documenti AS t WHERE id = '.prepare($id_record));
     $id_record = $dbo->lastInsertedID();
 }
 

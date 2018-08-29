@@ -317,10 +317,12 @@ include_once __DIR__.'/../../core.php';
 				if(bilancio == 0){
 					$("#testo_aggiuntivo").removeClass('text-danger').html("");
 					$("#btn_submit").removeClass('hide');
+					$('#btn_crea_modello').removeClass('hide');
 				}
 				else{
 					$("#testo_aggiuntivo").addClass('text-danger').html("sbilancio di " + bilancio.toLocale() + " &euro;" );
 					$("#btn_submit").addClass('hide');
+					$('#btn_crea_modello').addClass('hide');
 				}
 			}
 
@@ -336,7 +338,7 @@ include_once __DIR__.'/../../core.php';
 				var idmastrino = $(this).val();
 
 				if(idmastrino!=''){
-					$('#btn_crea_modello').hide();
+					$('#btn_crea_modello').addClass('hide');
 					var causale = $(this).find('option:selected').text();
 
 					$('#desc').val(causale);
@@ -351,7 +353,7 @@ include_once __DIR__.'/../../core.php';
 						}
 					});
 				}else{
-					$('#btn_crea_modello').show();
+					$('#btn_crea_modello').removeClass('hide');
 				}
 			});
 

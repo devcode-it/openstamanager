@@ -73,7 +73,7 @@ if (!empty($rsi)) {
         </td>
 
         <td class="text-right">
-            '.Translator::numberToLocale($int['totale']).'
+            '.Translator::numberToLocale($int['totale_scontato']).'
         </td>
     </tr>';
 
@@ -205,7 +205,7 @@ if (!empty($rsi)) {
         $totale_km += $int['km'];
         $totale_costo += $int['totale_costo'];
         $totale_addebito += $int['totale_addebito'];
-        $totale += $int['totale'];
+        $totale += $int['totale_scontato'];
     }
 
     // Totali

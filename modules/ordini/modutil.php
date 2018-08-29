@@ -27,19 +27,20 @@ function get_new_numerosecondarioordine($data)
 
     $dbo = Database::getConnection();
 
-    $query = "SELECT numero_esterno FROM or_ordini WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data))).' AND idtipoordine IN(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') ORDER BY CAST(numero_esterno AS UNSIGNED) DESC LIMIT 0,1';
+    // Calcolo il numero secondario se stabilito dalle impostazioni e se documento di vendita
+    $formato_numero_secondario = setting('Formato numero secondario ordine');
+    $formato_numero_secondario = str_replace('#', '%', $formato_numero_secondario);
+
+    $query = 'SELECT numero_esterno FROM or_ordini WHERE DATE_FORMAT( data, "%Y" ) = '.prepare(date('Y', strtotime($data))).' AND idtipoordine IN(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND numero_esterno LIKE('.prepare(Util\Generator::complete($formato_numero_secondario)).') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1';
     $rs = $dbo->fetchArray($query);
     $numero_secondario = $rs[0]['numero_esterno'];
 
-    // Calcolo il numero secondario se stabilito dalle impostazioni e se documento di vendita
-    $formato_numero_secondario = setting('Formato numero secondario ordine');
-
     if ($numero_secondario == '') {
-        $numero_secondario = $formato_numero_secondario;
+        $numero_secondario = setting('Formato numero secondario ordine');
     }
 
     if ($formato_numero_secondario != '' && $dir == 'entrata') {
-        $numero_esterno = Util\Generator::generate($formato_numero_secondario, $numero_secondario);
+        $numero_esterno = Util\Generator::generate(setting('Formato numero secondario ordine'), $numero_secondario);
     } else {
         $numero_esterno = '';
     }

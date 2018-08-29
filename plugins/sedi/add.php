@@ -18,24 +18,24 @@ echo '
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "text", "label": "'.tr('Secondo indirizzo').'", "name": "indirizzo2" ]}
+			{[ "type": "text", "label": "'.tr('Indirizzo2').'", "name": "indirizzo2" ]}
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-md-3">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Città').'", "name": "citta", "required": 1  ]}
 		</div>
 
-		<div class="col-md-3">
+		<div class="col-md-2">
 			{[ "type": "text", "label": "'.tr('C.A.P.').'", "name": "cap" ]}
 		</div>
 
-		<div class="col-md-3">
-			{[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia" ]}
+		<div class="col-md-2">
+			{[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia", "maxlength": 2, "class": "text-center" ]}
 		</div>
 
-		<div class="col-md-3">
+		<div class="col-md-2">
 			{[ "type": "text", "label": "'.tr('Km').'", "name": "km" ]}
 		</div>
 	</div>

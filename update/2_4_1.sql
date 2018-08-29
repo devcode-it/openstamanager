@@ -339,7 +339,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 -- Aggiunto supporto a Note di accredito e addebito
 ALTER TABLE `co_documenti` ADD `ref_documento` int(11) AFTER `idagente`, ADD FOREIGN KEY (`ref_documento`) REFERENCES `co_documenti`(`id`) ON DELETE CASCADE;
-ALTER TABLE `co_righe_documenti` ADD `qta_evasa` int(11) NOT NULL AFTER `qta`, ADD `ref_riga_documento` int(11) AFTER `idcontratto`, ADD FOREIGN KEY (`ref_riga_documento`) REFERENCES `co_righe_documenti`(`id`) ON DELETE CASCADE;
+ALTER TABLE `co_righe_documenti` ADD `qta_evasa` decimal(12,4) NOT NULL AFTER `qta`, ADD `ref_riga_documento` int(11) AFTER `idcontratto`, ADD FOREIGN KEY (`ref_riga_documento`) REFERENCES `co_righe_documenti`(`id`) ON DELETE CASCADE;
 
 ALTER TABLE `co_tipidocumento` ADD `reversed` BOOLEAN NOT NULL DEFAULT FALSE AFTER `dir`;
 UPDATE `co_tipidocumento` SET `reversed` = 1 WHERE `descrizione` = 'Nota di accredito';
@@ -357,9 +357,15 @@ ALTER TABLE `my_impianti` CHANGE `immagine` `immagine` varchar(255);
 UPDATE `my_impianti` SET `immagine` = NULL WHERE `immagine` = '';
 INSERT INTO `zz_files` (`id_module`, `id_record`, `nome`, `filename`, `original`) SELECT (SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti'), `id`, 'Immagine', `immagine`, `immagine` FROM `my_impianti` WHERE `immagine` IS NOT NULL;
 
--- Fix widgets fatturato
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(\" \", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), \",\", \"#\"), \".\", \",\"), \"#\", \".\"), \"&euro;\") AS dato FROM co_documenti WHERE idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir=\"entrata\") AND idstatodocumento NOT IN (SELECT id FROM co_statidocumento WHERE descrizione=\"Bozza\" OR descrizione=\"Annullata\") |segment| AND data >= \"|period_start|\" AND data <= \"|period_end|\" AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(\" \", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare))), 2), \",\", \"#\"), \".\", \",\"), \"#\", \".\"), \"&euro;\") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir=\'uscita\' AND idstatodocumento NOT IN (SELECT id FROM co_statidocumento WHERE descrizione=\"Bozza\" OR descrizione=\"Annullata\") |segment| AND data_emissione >= \"|period_start|\" AND data_emissione <= \"|period_end|\"' WHERE `zz_widgets`.`name` = 'Acquisti';
+-- Fix widgets fatturato, prendo importi dallo scadenzario
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''entrata'' |segment|  AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';
+
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''uscita'' |segment| AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|" AND 1=1', `help` = 'Fatturato IVA inclusa.'  WHERE `zz_widgets`.`name` = 'Acquisti';
+
+-- Per i crediti / debiti considero o no il periodo temporale?
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare-pagato))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''entrata'' |segment|  AND 1=1', `help` = 'Crediti IVA inclusa.' WHERE `zz_widgets`.`name` = 'Crediti da clienti';
+
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare-pagato))), 2), '','', ''#''), ''.'', '',''),''#'', ''.''), ''&euro;'') AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''uscita'' |segment| AND 1=1', `help` = 'Debiti IVA inclusa.' WHERE `zz_widgets`.`name` = 'Debiti verso fornitori';
 
 -- Introduzione del tipo documento nelle tabelle Fatture
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `enabled`, `default`) VALUES
@@ -473,4 +479,11 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `enabled`, `summable`, `default` ) VALUES
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento'), 'Tempo standard', 'in_tipiintervento.tempo_standard', 10, 1, 0, 1, '', '', 0, 0, 0);
 
+-- Disabilito temporaneamente le stampe degli ordini di servizio, plugins disabilitati
+UPDATE `zz_prints` SET `enabled` = 0 WHERE `name` IN( 'Ordine di servizio', 'Ordine di servizio (senza costi)' );
 
+-- Fix colonna delle stampe
+UPDATE `zz_views` SET `query` = '\'Intervento\'' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi') AND `name` = '_print_';
+
+-- Flag per definire i segmenti di note di accredito e di addebito
+ALTER TABLE `zz_segments` ADD `predefined_accredito` TINYINT(1) NOT NULL AFTER `predefined`, ADD `predefined_addebito` TINYINT(1) NOT NULL AFTER `predefined_accredito`; 

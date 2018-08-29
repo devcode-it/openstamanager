@@ -70,7 +70,7 @@ class Generator
      *
      * @return string
      */
-    protected static function complete($pattern)
+    public static function complete($pattern)
     {
         // Costruzione del pattern
         $replaces = self::getReplaces();

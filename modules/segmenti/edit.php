@@ -33,6 +33,17 @@ include_once __DIR__.'/../../core.php';
 
 			</div>
 
+			<div class='row'>
+
+				<div class="col-md-4">
+					{[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di accredito'); ?>", "name": "predefined_accredito", "value": "$predefined_accredito$", "help": "<?php echo tr('Seleziona per rendere il segmento predefinito per le note di accredito.'); ?>", "placeholder": "<?php echo tr('Segmento predefinito per le note di accredito'); ?>"  ]}
+				</div>
+				<div class="col-md-4">
+					{[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di addebito'); ?>", "name": "predefined_addebito", "value": "$predefined_addebito$", "help": "<?php echo tr('Seleziona per rendere il segmento predefinito per le note di addebito.'); ?>", "placeholder": "<?php echo tr('Segmento predefinito per le note di addebito'); ?>"  ]}
+				</div>
+
+			</div>
+
 			<div class="row">
 
 				<div class="col-md-8">

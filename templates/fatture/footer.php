@@ -380,6 +380,26 @@ echo '
             $dicitura_fissa_fattura$
         </td>
     </tr>
-</table>
+</table>';
 
-$default_footer$';
+
+
+
+if ($options['hide_footer']) {
+	
+	echo '
+	<table style="color:#aaa; font-size:10px;">
+	<tr>
+		<td align="left" style="width:97mm; height:5mm;">
+			&nbsp;
+		</td>
+		<td align="right" style="width:97mm;">
+			&nbsp;
+		</td>
+	</tr>
+	</table>';
+
+}
+else{
+	echo '$default_footer$';
+}

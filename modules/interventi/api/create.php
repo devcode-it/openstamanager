@@ -52,33 +52,13 @@ switch ($resource) {
     case 'articolo_intervento':
         $data = $request['data'];
 
-        // Inserisco movimento generico per questo articolo
-        add_movimento_magazzino($data['id_articolo'], $data['qta'], [
-            'idintervento' => $data['id_intervento'],
-            'idautomezzo' => $data['id_automezzo'],
-        ], 'Movimento da APP - Intervento '.$data['idintervento'], $data['data']);
-
-        // collego articolo all'intervento in questione
-        $q = "INSERT INTO mg_articoli_interventi(
-            idarticolo,
-            idintervento,
-            descrizione,
-            prezzo_vendita,
-            idiva_vendita,
-            idautomezzo,
-            qta
-        ) VALUES(
-            '".$data['id_articolo']."',
-            '".$data['id_intervento']."',
-            (SELECT descrizione FROM mg_articoli WHERE mg_articoli.id=\"".$data['id_articolo'].'"),
-            (SELECT prezzo_vendita FROM mg_articoli WHERE mg_articoli.id="'.$data['id_articolo']."\"),
-            (SELECT valore FROM `zz_impostazioni` WHERE nome=\"Iva predefinita\"),
-            '".$data['id_automezzo']."',
-            '".$data['qta']."'
-        )";
-        $dbo->query($q);
-
-        $dbo->query('UPDATE mg_articoli SET qta=(qta - '.$data['qta'].") WHERE id='".$data['id_articolo']."'");
+        $articolo = Articolo::create([
+            'idarticolo' => $data['idarticolo'],
+            'idintervento' => $id_record,
+            'idautomezzo' => $data['idautomezzo'],
+            'qta' => $data['qta'],
+            'um' => $data['um'],
+        ]);
 
         break;
 }

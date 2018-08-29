@@ -56,26 +56,25 @@ switch ($resource) {
             `in_interventi`.`descrizione`,
             `in_interventi`.`idtipointervento`,
             `in_interventi`.`idanagrafica`,
-            `an_anagrafiche`.`idzona` AS zona_anagrafica,
+            `in_interventi`.`idautomezzo`,
             `in_interventi`.`idsede`,
-            `an_sedi`.`idzona` AS zona_sede,
             `in_interventi`.`idstatointervento`,
             `in_interventi`.`informazioniaggiuntive`,
             `in_interventi`.`idclientefinale`,
             `in_interventi`.`firma_file`,
             IF(firma_data = '0000-00-00 00:00:00', '', firma_data) AS `firma_data`,
             `in_interventi`.firma_nome,
-            (SELECT GROUP_CONCAT( CONCAT(my_impianti.matricola, ' - ', my_impianti.nome) SEPARATOR ', ') FROM (my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto=my_impianti.id) WHERE my_impianti_interventi.idintervento=`in_interventi`.`id`) AS `impianti`,
-            (SELECT MAX(`orario_fine`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`) AS `data`,
-            (SELECT GROUP_CONCAT(ragione_sociale SEPARATOR ', ') FROM `in_interventi_tecnici` INNER JOIN `an_anagrafiche` ON `in_interventi_tecnici`.`idtecnico`=`an_anagrafiche`.`idanagrafica` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`) AS `tecnici`,
+            (SELECT GROUP_CONCAT( CONCAT(my_impianti.matricola, ' - ', my_impianti.nome) SEPARATOR ', ') FROM (my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto=my_impianti.id) WHERE my_impianti_interventi.idintervento = `in_interventi`.`id`) AS `impianti`,
+            (SELECT MAX(`orario_fine`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) AS `data`,
+            (SELECT GROUP_CONCAT(ragione_sociale SEPARATOR ', ') FROM `in_interventi_tecnici` INNER JOIN `an_anagrafiche` ON `in_interventi_tecnici`.`idtecnico` = `an_anagrafiche`.`idanagrafica` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) AS `tecnici`,
             `in_statiintervento`.`colore` AS `bgcolor`,
             `in_statiintervento`.`descrizione` AS `stato`,
             `in_interventi`.`idtipointervento` AS `tipo`
         FROM `in_interventi`
-            INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`idstatointervento`
-            INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
-            LEFT JOIN `an_sedi` ON `in_interventi`.`idsede`=`an_sedi`.`id`
-        WHERE (SELECT MAX(`orario_fine`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`) <= :period_end";
+            INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`idstatointervento`
+            INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+            LEFT JOIN `an_sedi` ON `in_interventi`.`idsede` = `an_sedi`.`id`
+        WHERE (SELECT MAX(`orario_fine`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) <= :period_end";
 
         // TODO: rimosse seguenti clausole:
 

@@ -4,7 +4,7 @@ namespace Modules\Fatture;
 
 use Illuminate\Database\Eloquent\Model;
 use Util\Generator;
-use  Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Anagrafica;
 
 class Fattura extends Model
 {

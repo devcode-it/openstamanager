@@ -36,6 +36,8 @@ class AJAX
             $modules = Modules::getModules();
         }
 
+        $modules = $modules->toArray();
+
         $dirs = array_unique(array_column($modules, 'directory'));
         $pieces = array_chunk($dirs, 5);
 

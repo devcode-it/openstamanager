@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Interventi\Articolo;
+
 include_once Modules::filepath('Interventi', 'modutil.php');
 include_once Modules::filepath('Articoli', 'modutil.php');
 include_once Modules::filepath('MyImpianti', 'modutil.php');
@@ -531,48 +533,28 @@ switch (post('op')) {
 
         // no break
     case 'addarticolo':
-        $idarticolo = post('idarticolo');
-        $idautomezzo = post('idautomezzo');
-        $descrizione = post('descrizione');
-        $idimpianto = post('idimpianto');
-        $qta = post('qta');
-        $um = post('um');
-        $prezzo_vendita = post('prezzo_vendita');
-        $idiva = post('idiva');
-
-        $sconto_unitario = post('sconto');
-        $tipo_sconto = post('tipo_sconto');
-        $sconto = calcola_sconto([
-            'sconto' => $sconto_unitario,
-            'prezzo' => $prezzo_vendita,
-            'tipo' => $tipo_sconto,
-            'qta' => $qta,
+        $articolo = Articolo::create([
+            'idarticolo' => post('idarticolo'),
+            'idintervento' => $id_record,
+            'idautomezzo' => post('idautomezzo'),
+            'qta' => post('qta'),
+            'descrizione' => post('descrizione'),
+            'prezzo' => post('prezzo_vendita'),
+            'um' => post('um'),
         ]);
 
-        // Decremento la quantità
-        add_movimento_magazzino($idarticolo, -$qta, ['idautomezzo' => $idautomezzo, 'idintervento' => $id_record]);
+        $articolo->setSconto(post('sconto'), post('tipo_sconto'));
+        $articolo->setIVA(post('idiva'));
 
         // Aggiorno l'automezzo dell'intervento
-        $dbo->query('UPDATE in_interventi SET idautomezzo='.prepare($idautomezzo).' WHERE id='.prepare($id_record).' '.Modules::getAdditionalsQuery($id_module));
-
-        $rsart = $dbo->fetchArray('SELECT abilita_serial, prezzo_acquisto FROM mg_articoli WHERE id='.prepare($idarticolo));
-        $prezzo_acquisto = $rsart[0]['prezzo_acquisto'];
-
-        //Calcolo iva
-        $rs_iva = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare($idiva));
-        $desc_iva = $rs_iva[0]['descrizione'];
-
-        $iva = (($prezzo_vendita * $qta) - $sconto) * $rs_iva[0]['percentuale'] / 100;
-
-        // Aggiunto il collegamento fra l'articolo e l'intervento
-        $idriga = $dbo->query('INSERT INTO mg_articoli_interventi(idarticolo, idintervento, idimpianto, idautomezzo, descrizione, prezzo_vendita, prezzo_acquisto, sconto, sconto_unitario, tipo_sconto, idiva, desc_iva, iva, qta, um, abilita_serial) VALUES ('.prepare($idarticolo).', '.prepare($id_record).', '.(empty($idimpianto) ? 'NULL' : prepare($idimpianto)).', '.prepare($idautomezzo).', '.prepare($descrizione).', '.prepare($prezzo_vendita).', '.prepare($prezzo_acquisto).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($qta).', '.prepare($um).', '.prepare($rsart[0]['abilita_serial']).')');
+        $dbo->query('UPDATE in_interventi SET idautomezzo='.prepare(post('idautomezzo')).' WHERE id='.prepare($id_record).' '.Modules::getAdditionalsQuery($id_module));
 
         if (!empty($serials)) {
             if ($old_qta > $qta) {
                 $serials = array_slice($serials, 0, $qta);
             }
 
-            $dbo->sync('mg_prodotti', ['id_riga_intervento' => $idriga, 'dir' => 'entrata', 'id_articolo' => $idarticolo], ['serial' => $serials]);
+            $articolo->setSerials($serials);
         }
 
         link_componente_to_articolo($id_record, $idimpianto, $idarticolo, $qta);

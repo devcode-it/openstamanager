@@ -63,7 +63,7 @@ switch ($resource) {
 
                     $dbo->insert('in_interventi', [
                         'idintervento' => $idintervento,
-                        '#idanagrafica' => "(SELECT valore FROM zz_impostazioni WHERE nome='Azienda predefinita')",
+                        '#idanagrafica' => "(SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')",
                         '#data_richiesta' => 'NOW()',
                         'richiesta' => $richiesta,
                         'idtipointervento' => 0,
@@ -110,8 +110,6 @@ switch ($resource) {
             'descrizione' => $data['descrizione'],
             'informazioniaggiuntive' => $data['informazioniaggiuntive'],
         ], ['id' => $data['id']]);
-
-        // $dbo->query( 'DELETE FROM in_interventi_tecnici WHERE idintervento='.prepare($record['id']).' AND idtecnico='.prepare($idtecnico) );
 
         break;
 

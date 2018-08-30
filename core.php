@@ -222,10 +222,6 @@ if (!API::isAPIRequest()) {
             Permissions::addModule($id_module);
         }
 
-        if (!empty($skip_permissions)) {
-            Permissions::skip();
-        }
-
         Permissions::check();
     }
 

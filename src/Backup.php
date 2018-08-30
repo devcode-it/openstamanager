@@ -170,7 +170,7 @@ class Backup
         $files = Symfony\Component\Finder\Finder::create()
             ->files()
             ->exclude($ignores['dirs'])
-            ->ignoreDotFiles(true)
+            ->ignoreDotFiles(false)
             ->ignoreVCS(true)
             ->in(DOCROOT)
             ->in(self::getDatabaseDirectory());

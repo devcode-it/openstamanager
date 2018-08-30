@@ -279,7 +279,7 @@ if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa') {
             }
 
             echo '
-                    <div class="tip" data-toggle="tooltip" title="'.tr('Interventi non collegati a preventivi o contratti.').'" style="display:inline;">
+                    <div class="tip" data-toggle="tooltip" title="'.tr('Interventi completati non collegati a preventivi o contratti e che non siano già stati fatturati.').'" style="display:inline;">
                         <a class="btn btn-sm btn-primary '.(!empty($interventi) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/fatture/add_intervento.php?id_module='.$id_module.'&id_record='.$id_record.'" data-title="Aggiungi intervento" data-target="#bs-popup">
                             <i class="fa fa-plus"></i> Intervento
                         </a>

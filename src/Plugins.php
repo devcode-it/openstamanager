@@ -49,7 +49,7 @@ class Plugins
         $plugins = self::getPlugins();
 
         if (!is_numeric($plugin) && !empty(self::$references[$plugin])) {
-            $plugin = self::$references[$module];
+            $plugin = self::$references[$plugin];
         }
 
         return $plugins[$plugin];

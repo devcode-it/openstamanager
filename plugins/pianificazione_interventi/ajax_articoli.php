@@ -1,15 +1,11 @@
 <?php
 
-include_once __DIR__.'/../../../core.php';
+include_once __DIR__.'/../../core.php';
 
-include_once Modules::filepath('Articoli', 'modutil.php');
+$plugin = Plugins::get($id_plugin);
+$is_add = filter('add') !== null ? true : false;
 
-if (!empty(get('idcontratto_riga'))) {
-    $id_record = get('idcontratto_riga');
-}
-
-$query = 'SELECT * FROM co_righe_contratti_articoli WHERE id_riga_contratto='.prepare($id_record).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC';
-$rs = $dbo->fetchArray($query);
+$rs = $dbo->fetchArray('SELECT * FROM co_righe_contratti_articoli WHERE id_riga_contratto='.prepare($id_record).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC');
 
 if (!empty($rs)) {
     echo '
@@ -121,22 +117,19 @@ if (!empty($rs)) {
         </td>';
         }
 
-        // Pulsante per riportare nel magazzino centrale.
-        // Visibile solo se l'intervento non è stato nè fatturato nè completato.
-        if (!$record['flag_completato']) {
+        if (!empty($is_add)) {
             echo '
-        <td>';
+        <td>
+            <button type="button" class="btn btn-warning btn-xs" data-title="'.tr('Modifica spesa').'" onclick="launch_modal(\'Modifica spesa\', \''.$plugin->fileurl('add_articolo.php').'?id_plugin='.$id_plugin.'&id_record='.$id_record.'&idriga='.$r['id'].'\', 1, \'#bs-popup2\');">
+                <i class="fa fa-edit"></i>
+            </button>
 
-            if (empty($readonly)) {
-                echo '
-			<button type="button" class="btn btn-warning btn-xs" data-title="'.tr('Modifica spesa').'" onclick="launch_modal(\'Modifica spesa\', \''.$rootdir.'/modules/contratti/plugins/add_articolo.php?id_module='.$id_module.'&id_record='.$id_parent.'&idriga='.$r['id'].'\', 1, \'#bs-popup2\');" >
-			<i class="fa fa-edit"></i></button>
-            <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" title="'.tr('Elimina materiale').'" onclick="if(confirm(\''.tr('Eliminare questo materiale?').'\') ){ ritorna_al_magazzino(\''.$r['id'].'\'); }"><i class="fa fa-angle-double-left"></i> <i class="fa fa-truck"></i></button>';
-            }
-
-            echo '
+            <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" title="'.tr('Elimina materiale').'" onclick="if(confirm(\''.tr('Eliminare questo materiale?').'\') ){ ritorna_al_magazzino(\''.$r['id'].'\'); }">
+                <i class="fa fa-angle-double-left"></i><i class="fa fa-truck"></i>
+            </button>
         </td>';
         }
+
         echo '
     </tr>';
     }
@@ -144,14 +137,14 @@ if (!empty($rs)) {
     echo '
 </table>';
 }
-?>
+
+echo '
 <script type="text/javascript">
-    function ritorna_al_magazzino( id ){
-        $.post(globals.rootdir + '/modules/contratti/plugins/actions.php', {op: 'unlink_articolo', idriga: id, id_record: '<?php echo $id_parent; ?>', id_module: '<?php echo $id_module; ?>' }, function(data, result){
-            if( result == 'success' ){
-                // ricarico l'elenco degli articoli
-                $('#articoli').load(globals.rootdir + '/modules/contratti/plugins/ajax_articoli.php?id_module=<?php echo $id_module; ?>&id_parent=<?php echo $id_parent; ?>&id_record=<?php echo $id_record; ?>');
+    function ritorna_al_magazzino(id){
+        $.post(globals.rootdir + "/actions.php", {op: "unlink_articolo", idriga: id, id_plugin: '.$id_plugin.' }, function(data, result){
+            if(result == "success"){
+                refreshArticoli('.$id_record.');
             }
         });
     }
-</script>
+</script>';

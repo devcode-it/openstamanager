@@ -247,3 +247,9 @@ ALTER TABLE `zz_views` CHANGE `enabled` `visible` BOOLEAN NOT NULL DEFAULT 1;
 
 -- Rimozione permessi negati (comportamento di default)
 DELETE FROM `zz_permissions` WHERE `permessi` = '-';
+
+-- Ridenominazione plugin "Pianificazione interventi"
+UPDATE `zz_plugins` SET `title` = 'Pianificazione attività' WHERE `name` = 'Pianificazione interventi';
+
+-- Fix plugin "Pianificazione interventi"
+UPDATE `zz_plugins` SET `options` = 'custom', `script` = '', `directory` = 'pianificazione_interventi' WHERE `name` = 'Pianificazione interventi';

@@ -1,15 +1,13 @@
 <?php
 
-include_once __DIR__.'/../../../core.php';
+include_once __DIR__.'/../../core.php';
 
-if (!empty(get('idcontratto_riga'))) {
-    $id_record = get('idcontratto_riga');
-}
+$plugin = Plugins::get($id_plugin);
+$is_add = filter('add') !== null ? true : false;
 
-$query = 'SELECT * FROM co_righe_contratti_materiali WHERE id_riga_contratto='.prepare($id_record).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC';
-$rs2 = $dbo->fetchArray($query);
+$rs2 = $dbo->fetchArray('SELECT * FROM co_righe_contratti_materiali WHERE id_riga_contratto='.prepare($id_record).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC');
 
-if (count($rs2) > 0) {
+if (!empty($rs2)) {
     echo '
 <table class="table table-striped table-condensed table-hover table-bordered">
     <tr>
@@ -85,19 +83,20 @@ if (count($rs2) > 0) {
         </td>';
         }
 
-        // Pulsante per riportare nel magazzino centrale.
-        // Visibile solo se l'intervento non è stato nè fatturato nè completato.
-        if (empty($readonly)) {
+        if (!empty($is_add)) {
             echo '
         <td>
 
-			 <button type="button" class="btn btn-warning btn-xs" data-title="'.tr('Modifica spesa').'" onclick="launch_modal(\'Modifica spesa\', \''.$rootdir.'/modules/contratti/plugins/add_righe.php?id_module='.$id_module.'&id_record='.$id_parent.'&idriga='.$r['id'].'\', 1, \'#bs-popup2\');" >
-			 <i class="fa fa-edit"></i></button>
+             <button type="button" class="btn btn-warning btn-xs" data-title="'.tr('Modifica spesa').'" onclick="launch_modal(\'Modifica spesa\', \''.$plugin->fileurl('add_righe.php').'?id_plugin='.$id_plugin.'&id_record='.$id_record.'&idriga='.$r['id'].'\', 1, \'#bs-popup2\');">
+                <i class="fa fa-edit"></i>
+             </button>
 
-
-            <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="if(confirm(\''.tr('Eliminare questa spesa?').'\')){ elimina_riga( \''.$r['id'].'\' ); }"><i class="fa fa-trash"></i></button>
+            <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="if(confirm(\''.tr('Eliminare questa spesa?').'\')){ elimina_riga( \''.$r['id'].'\' ); }">
+                <i class="fa fa-trash"></i>
+            </button>
         </td>';
         }
+
         echo '
     </tr>';
     }
@@ -106,16 +105,14 @@ if (count($rs2) > 0) {
 </table>';
 }
 
-?>
+echo '
 
 <script type="text/javascript">
-    function elimina_riga( id ){
-        $.post(globals.rootdir + '/modules/contratti/plugins/actions.php', { op: 'delriga', idriga: id }, function(data, result){
-            if( result=='success' ){
-                //ricarico l'elenco delle righe
-                $('#righe').load( globals.rootdir + '/modules/contratti/plugins/ajax_righe.php?id_module=<?php echo $id_module; ?>&id_parent=<?php echo $id_parent; ?>&id_record=<?php echo $id_record; ?>');
-
+    function elimina_riga(id){
+        $.post(globals.rootdir + "/actions.php", { op: "delriga", idriga: id, id_plugin: '.$id_plugin.'}, function(data, result){
+            if(result == "success"){
+                refreshRighe('.$id_record.');
             }
         });
     }
-</script>
+</script>';

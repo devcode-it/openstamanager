@@ -164,7 +164,7 @@ if (!isset($record) && isset($records[0])) {
 // Registrazione del record
 HTMLBuilder\HTMLBuilder::setRecord($record);
 
-if (Modules::getPermission($id_module) == 'rw') {
+if ($element->permission == 'rw') {
     // Esecuzione delle operazioni di gruppo
     $id_records = post('id_records');
     $id_records = is_array($id_records) ? $id_records : explode(';', $id_records);

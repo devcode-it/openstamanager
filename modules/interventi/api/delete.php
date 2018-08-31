@@ -2,9 +2,15 @@
 
 switch ($resource) {
     case 'sessioni_intervento':
-        $dbo->query('DELETE FROM in_interventi_tecnici WHERE idintervento = :id_intervento', [
-            ':id_intervento' => $request['id_intervento'],
-        ]);
+        if ($user['gruppo'] == 'Tecnici') {
+            $query = 'DELETE FROM in_interventi_tecnici WHERE idintervento = :id_intervento AND `idtecnico` = :id_tecnico';
+            $parameters = [
+                ':id_intervento' => $request['id_intervento'],
+                ':id_tecnico' => $user['idanagrafica'],
+            ];
+
+            $dbo->query($query, $parameters);
+        }
 
         break;
 
@@ -14,6 +20,7 @@ switch ($resource) {
         ]);
 
         // TODO: prevedere la modifica di quantità!
+        // TODO: prevedere causali
 
         break;
 }

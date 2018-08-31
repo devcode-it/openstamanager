@@ -54,6 +54,12 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
 {
     $dbo = Database::getConnection();
 
+    // Controllo sull'identità del tecnico
+    $tecnico = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.idtipoanagrafica=an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE an_anagrafiche.idanagrafica = ".prepare($idtecnico)." AND an_tipianagrafiche.descrizione = 'Tecnico'");
+    if (empty($tecnico)) {
+        return false;
+    }
+
     $rs = $dbo->fetchArray('SELECT idanagrafica, idsede, idtipointervento FROM in_interventi WHERE id='.prepare($idintervento));
     $idanagrafica = $rs[0]['idanagrafica'];
     $idsede = $rs[0]['idsede'];
@@ -154,6 +160,8 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
         'prezzo_km_consuntivo_tecnico' => 0,
         'prezzo_dirittochiamata_tecnico' => $costo_dirittochiamata_tecnico,
     ]);
+
+    return true;
 }
 
 function get_costi_intervento($id_intervento)

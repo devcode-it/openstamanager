@@ -26,7 +26,7 @@ class FileManager implements ManagerInterface
         $options['id_plugin'] = !empty($options['id_plugin']) ? $options['id_plugin'] : null;
 
         // ID del form
-        $attachment_id = 'attachments_'.$options['id_module'].'-'.$options['id_plugin'];
+        $attachment_id = 'attachments_'.$options['id_module'].'_'.$options['id_plugin'];
 
         // Cartella delle anteprime
         $directory = \Uploads::getDirectory($options['id_module'], $options['id_plugin']);
@@ -121,7 +121,7 @@ class FileManager implements ManagerInterface
 
                     if (!$options['readonly']) {
                         $result .= '
-                <a class="btn btn-xs btn-danger ask" data-backto="record-edit" data-msg="'.tr('Vuoi eliminare questo file?').'" data-op="unlink_file" data-id="'.$r['id'].'" data-filename="'.$r['filename'].'">
+                <a class="btn btn-xs btn-danger ask" data-backto="record-edit" data-msg="'.tr('Vuoi eliminare questo file?').'" data-op="unlink_file" data-id="'.$r['id'].'" data-filename="'.$r['filename'].'" data-callback="reload_'.$attachment_id.'">
                     <i class="fa fa-trash"></i>
                 </a>';
                     }
@@ -222,7 +222,7 @@ $(document).ready(function(){
                 $("#'.$attachment_id.' #upload").prop("disabled", true).html(percentComplete + "%").removeClass("btn-success").addClass("btn-info");
             },
             success: function(data){
-                $("#'.$attachment_id.'").load(globals.rootdir + "/ajax.php?op=list_attachments&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'");
+                reload_'.$attachment_id.'();
             },
             error: function(data) {
                 alert("'.tr('Errore').': " + data);
@@ -230,6 +230,10 @@ $(document).ready(function(){
         });
     });
 });
+
+function reload_'.$attachment_id.'() {
+    $("#'.$attachment_id.'").load(globals.rootdir + "/ajax.php?op=list_attachments&id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id_plugin='.$options['id_plugin'].'");
+}
 </script>';
 
         return $result;

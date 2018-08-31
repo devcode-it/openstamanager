@@ -108,7 +108,7 @@ switch ($resource) {
         $dbo->update('in_interventi', [
             'idstatointervento' => $data['id_stato_intervento'],
             'descrizione' => $data['descrizione'],
-            'informazioni_aggiuntive' => $data['informazioniaggiuntive'],
+            'informazioniaggiuntive' => $data['informazioni_aggiuntive'],
         ], ['id' => $data['id']]);
 
         break;

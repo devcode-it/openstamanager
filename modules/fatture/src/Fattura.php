@@ -102,27 +102,18 @@ class Fattura extends Model
      *
      * @return string
      */
-    protected static function getNumero($data, $direzione, $id_segment)
+    public static function getNumero($data, $direzione, $id_segment)
     {
         $dbo = database();
 
-        if ($direzione == 'uscita') {
-            $maschera = static::getMaschera($id_segment);
+        $maschera = $direzione == 'uscita' ? static::getMaschera($id_segment) : '#';
 
-            $ultima_fattura = $dbo->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera), [
-                ':year' => date('Y', strtotime($data)),
-                ':id_segment' => $id_segment,
-            ]);
+        $ultima_fattura = $dbo->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera), [
+            ':year' => date('Y', strtotime($data)),
+            ':id_segment' => $id_segment,
+        ]);
 
-            $numero = Generator::generate($maschera, $ultima_fattura['numero']);
-        } else {
-            $rs = $dbo->fetchOne("SELECT IFNULL(MAX(numero), '0') AS max_numerofattura FROM co_documenti WHERE YEAR(data) = :year AND idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir = :direzione) ORDER BY CAST(numero AS UNSIGNED) DESC", [
-                ':year' => date('Y', strtotime($data)),
-                ':direzione' => $direzione,
-            ]);
-
-            $numero = $rs['max_numerofattura'] + 1;
-        }
+        $numero = Generator::generate($maschera, $ultima_fattura['numero']);
 
         return $numero;
     }
@@ -136,7 +127,7 @@ class Fattura extends Model
      *
      * @return string
      */
-    protected static function getNumeroSecondario($data, $direzione, $id_segment)
+    public static function getNumeroSecondario($data, $direzione, $id_segment)
     {
         if ($direzione == 'uscita') {
             return '';

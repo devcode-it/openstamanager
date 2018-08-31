@@ -46,25 +46,25 @@ switch (post('op')) {
         // Creazione nuova pianificazione se non era impostata
         if (!empty($idcontratto) && empty($idcontratto_riga)) {
             // Se questo intervento era collegato ad un altro contratto aggiorno le informazioni...
-            $rs = $dbo->fetchArray('SELECT id FROM co_contratti_promemoria WHERE idintervento='.prepare($id_record));
+            $rs = $dbo->fetchArray('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record));
             if (empty($rs)) {
-                $dbo->insert('co_contratti_promemoria', array_merge(['idcontratto' => $idcontratto], $array));
+                $dbo->insert('co_promemoria', array_merge(['idcontratto' => $idcontratto], $array));
             }
 
             // ...altrimenti se sto cambiando contratto aggiorno solo l'id del nuovo contratto
             else {
-                $dbo->update('co_contratti_promemoria', ['idcontratto' => $idcontratto], ['idintervento' => $id_record]);
+                $dbo->update('co_promemoria', ['idcontratto' => $idcontratto], ['idintervento' => $id_record]);
             }
         }
 
         // Pianificazione già impostata, aggiorno solo il codice intervento
         elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
-            $dbo->update('co_contratti_promemoria', $array, ['idcontratto' => $idriga, 'id' => $idcontratto_riga]);
+            $dbo->update('co_promemoria', $array, ['idcontratto' => $idriga, 'id' => $idcontratto_riga]);
         }
 
         // Se non è impostato nessun contratto o riga, tolgo il collegamento dell'intervento al contratto
         elseif (empty($idcontratto)) {
-            $dbo->update('co_contratti_promemoria', ['idintervento' => null], ['idintervento' => $id_record]);
+            $dbo->update('co_promemoria', ['idintervento' => null], ['idintervento' => $id_record]);
         }
 
         // Aggiorna tutte le sessioni di lavoro
@@ -267,33 +267,26 @@ switch (post('op')) {
 
             // Se è specificato che l'intervento fa parte di una pianificazione aggiorno il codice dell'intervento sulla riga della pianificazione
             if (!empty($idcontratto_riga)) {
-                $dbo->update('co_contratti_promemoria', $array, ['idcontratto' => $idcontratto, 'id' => $idcontratto_riga]);
+                $dbo->update('co_promemoria', $array, ['idcontratto' => $idcontratto, 'id' => $idcontratto_riga]);
 
                 //copio le righe dal promemoria all'intervento
-                $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,idintervento,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$id_record.',sconto,sconto_unitario,tipo_sconto FROM co_righe_contratti_materiali WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
+                $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,idintervento,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$id_record.',sconto,sconto_unitario,tipo_sconto FROM co_promemoria_righe WHERE id_promemoria = '.$idcontratto_riga.'  ');
 
                 //copio  gli articoli dal promemoria all'intervento
-                $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$id_record.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
+                $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$id_record.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_promemoria_articoli WHERE id_promemoria = '.$idcontratto_riga.'  ');
 
-                //copio  gli allegati dal promemoria all'intervento
-                $dbo->query('INSERT INTO zz_files (nome,filename,original,category,id_module,id_record) SELECT t.nome, t.filename, t.original, t.category, '.$id_module.', '.$id_record.' FROM zz_files t WHERE t.id_record = '.$idcontratto_riga.' AND t.id_plugin = '.Plugins::get('Pianificazione interventi')['id'].'');
+                // Copia degli allegati
+                $alleagti = Uploads::copy([
+                    'id_plugin' => Plugins::get('Pianificazione interventi')['id'],
+                    'id_record' => $idcontratto_riga,
+                ], [
+                    'id_module' => $id_module,
+                    'id_record' => $id_record,
+                ]);
 
-                //sposto fisicamente i file allegati
-                $rs_allegati = $dbo->fetchArray('SELECT filename FROM zz_files WHERE  id_record = '.$id_record.' AND id_module = '.$id_module);
-                foreach ($rs_allegati as $rs_allegato) {
-                    $from_dir = DOCROOT.'/'.Uploads::getDirectory(Modules::get('Contratti')['id'], Plugins::get('Pianificazione interventi')['id']);
-                    $to_dir = DOCROOT.'/'.Uploads::getDirectory(Modules::get('Interventi')['id']);
-
-                    if (!copy($from_dir.'/'.$rs_allegato['filename'], $to_dir.'/'.$rs_allegato['filename'])) {
-                        $errors = error_get_last();
-                        Auth::flash()->warning(tr('Errore durante la copia del file da _FROM_ a _TO_ per il file _FILE_ (_ERROR_: _MESSAGE_)', [
-                            '_FROM_' => $from_dir,
-                            '_TO_' => $to_dir,
-                            '_FILE_' => $rs_allegato['filename'],
-                            '_ERROR_' => $errors['type'],
-                            '_MESSAGE_' => $errors['message'],
-                        ]));
-                    }
+                if (!$alleagti) {
+                    $errors = error_get_last();
+                    flash()->warning(tr('Errore durante la copia degli allegati'));
                 }
 
                 // Decremento la quantità per ogni articolo copiato
@@ -302,7 +295,7 @@ switch (post('op')) {
                     add_movimento_magazzino($rs_articolo['idarticolo'], -force_decimal($rs_articolo['qta']), ['idautomezzo' => $rs_articolo['idautomezzo'], 'idintervento' => $id_record]);
                 }
             } else {
-                $dbo->insert('co_contratti_promemoria', [
+                $dbo->insert('co_promemoria', [
                     'idcontratto' => $idcontratto,
                     'idintervento' => $id_record,
                     'idtipointervento' => $idtipointervento,
@@ -355,13 +348,10 @@ switch (post('op')) {
     // Eliminazione intervento
     case 'delete':
         // Elimino anche eventuali file caricati
-        $rs = $dbo->fetchArray('SELECT filename FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare($id_record));
-
-        for ($i = 0; $i < count($rs); ++$i) {
-            delete($docroot.'/files/interventi/'.$rs[$i]['filename']);
-        }
-
-        $dbo->query('DELETE FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare($id_record));
+        Uploads::deleteLinked([
+            'id_module' => $id_module,
+            'id_record' => $id_record,
+        ]);
 
         $codice = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE id='.prepare($id_record))[0]['codice'];
 
@@ -381,7 +371,7 @@ switch (post('op')) {
         }
 
         // Eliminazione associazioni tra interventi e contratti
-        $query = 'UPDATE co_contratti_promemoria SET idintervento = NULL WHERE idintervento='.prepare($id_record);
+        $query = 'UPDATE co_promemoria SET idintervento = NULL WHERE idintervento='.prepare($id_record);
         $dbo->query($query);
 
         // Eliminazione dell'intervento

@@ -106,7 +106,7 @@ if ($template['name'] == 'Fattura Elettronica') {
 echo '
 
         <div class="col-md-6">
-            {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "attachments[]", "value": "'.implode(',', $attachments).'", "values": "query=SELECT id, nome AS text FROM zz_files WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record)." UNION SELECT id, CONCAT(nome, ' (Azienda)') AS text FROM zz_files WHERE id_module = ".prepare(Modules::get('Anagrafiche')['id'])." AND id_record = (SELECT valore FROM zz_settings WHERE nome = 'Azienda predefinita')\" ]}
+            {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "attachments[]", "value": "'.implode(',', $attachments).'", "values": "query=SELECT id, name AS text FROM zz_files WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record)." UNION SELECT id, CONCAT(name, ' (Azienda)') AS text FROM zz_files WHERE id_module = ".prepare(Modules::get('Anagrafiche')['id'])." AND id_record = (SELECT valore FROM zz_settings WHERE nome = 'Azienda predefinita')\" ]}
         </div>
     </div>";
 
@@ -158,7 +158,7 @@ echo '
                     $(this).autocomplete("search", $(this).val())
                 });;
             });
-            
+
             aggiungi_destinatario();
         });';
         }

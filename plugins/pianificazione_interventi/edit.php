@@ -9,7 +9,7 @@ $contratto = $dbo->fetchOne('SELECT * FROM co_contratti WHERE id = :id', [
     ':id' => $id_record,
 ]);
 
-$records = $dbo->fetchArray('SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_contratti_promemoria.idtipointervento) AS tipointervento FROM co_contratti_promemoria WHERE idcontratto='.prepare($id_record).' ORDER BY data_richiesta ASC');
+$records = $dbo->fetchArray('SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento FROM co_promemoria WHERE idcontratto='.prepare($id_record).' ORDER BY data_richiesta ASC');
 
 // Intervento/promemoria pianificabile
 $pianificabile = $dbo->fetchOne('SELECT pianificabile FROM co_staticontratti WHERE id = :id', [
@@ -96,8 +96,8 @@ if (!empty($records)) {
         }
 
         // Info materiali/articoli
-        $materiali = $dbo->fetchArray('SELECT id, descrizione,qta,um,prezzo_vendita, \'\' AS idarticolo FROM co_righe_contratti_materiali WHERE id_riga_contratto = '.prepare($record['id']).'
-		UNION SELECT id, descrizione,qta,um,prezzo_vendita, idarticolo FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.prepare($record['id']));
+        $materiali = $dbo->fetchArray('SELECT id, descrizione,qta,um,prezzo_vendita, \'\' AS idarticolo FROM co_promemoria_righe WHERE id_promemoria = '.prepare($record['id']).'
+		UNION SELECT id, descrizione,qta,um,prezzo_vendita, idarticolo FROM co_promemoria_articoli WHERE id_promemoria = '.prepare($record['id']));
 
         $info_materiali = '';
         foreach ($materiali as $materiale) {
@@ -110,13 +110,16 @@ if (!empty($records)) {
         }
 
         // Info allegati
-        $allegati = $dbo->fetchArray('SELECT nome, original  FROM zz_files WHERE id_record = '.prepare($record['id']).' AND id_plugin = '.$id_plugin);
+        $allegati = Uploads::get([
+            'id_plugin' => $id_plugin,
+            'id_record' => $record['id'],
+        ]);
 
         $info_allegati = '';
         foreach ($allegati as $allegato) {
             $info_allegati .= tr(' _NOME_ (_ORIGINAL_)', [
                 '_ORIGINAL_' => $allegato['original'],
-                '_NOME_' => $allegato['nome'],
+                '_NOME_' => $allegato['name'],
             ]).'<br>';
         }
 

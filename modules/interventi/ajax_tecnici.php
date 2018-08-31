@@ -14,7 +14,7 @@ switch (get('op')) {
         $idtecnico = get('idtecnico');
 
         // Verifico se l'intervento è collegato ad un contratto
-        $rs = $dbo->fetchArray('SELECT idcontratto FROM co_contratti_promemoria WHERE idintervento='.prepare($id_record));
+        $rs = $dbo->fetchArray('SELECT idcontratto FROM co_promemoria WHERE idintervento='.prepare($id_record));
         $idcontratto = $rs[0]['idcontratto'];
 
         $ore = 1;

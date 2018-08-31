@@ -26,7 +26,7 @@ if (empty($idriga)) {
     $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
 
     // carico record da modificare
-    $q = 'SELECT * FROM co_righe_contratti_materiali WHERE id='.prepare($idriga);
+    $q = 'SELECT * FROM co_promemoria_righe WHERE id='.prepare($idriga);
     $rsr = $dbo->fetchArray($q);
 
     $descrizione = $rsr[0]['descrizione'];

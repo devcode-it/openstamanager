@@ -30,7 +30,10 @@ class Import
                 $custom_file = str_replace('|custom|', '/custom', $file);
 
                 if (file_exists($custom_file) || file_exists($original_file)) {
-                    $files = $database->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare(Modules::get('Import')['id']).' AND id_record='.prepare($module['id']).' ORDER BY id DESC');
+                    $files = Uploads::get([
+                        'id_module' => Modules::get('Import')['id'],
+                        'id_record' => $module['id'],
+                    ]);
 
                     $results[$module['id']] = array_merge($module, [
                         'import' => file_exists($custom_file) ? $custom_file : $original_file,

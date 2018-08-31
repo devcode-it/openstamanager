@@ -19,7 +19,7 @@ class Uploads
         $database = Database::getConnection();
 
         $uploads = $database->select('zz_files', '*', [
-            'id_module' => !empty($data['id_module']) ? $data['id_module'] : null,
+            'id_module' => !empty($data['id_module']) && empty($data['id_plugin']) ? $data['id_module'] : null,
             'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
             'id_record' => $data['id_record'],
         ]);
@@ -53,6 +53,27 @@ class Uploads
     }
 
     /**
+     * Individua il nome fisico per il file indicato.
+     *
+     * @param string $source
+     * @param array $data
+     * @return string
+     */
+    protected static function getName($source, $data)
+    {
+        $extension = strtolower(pathinfo($source)['extension']);
+        $ok = self::isSupportedType($extension);
+
+        $directory = DOCROOT.'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
+
+        do {
+            $filename = random_string().'.'.$extension;
+        } while (file_exists($directory.'/'.$filename));
+
+        return $filename;
+    }
+
+    /**
      * Effettua l'upload di un file nella cartella indicata.
      *
      * @param array  $source
@@ -67,14 +88,9 @@ class Uploads
         $src = $source['tmp_name'];
         $original = $source['name'];
 
-        $extension = strtolower(pathinfo($original)['extension']);
-        $ok = self::isSupportedType($extension);
+        $filename = self::getName($original, $data);
 
         $directory = DOCROOT.'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
-
-        do {
-            $filename = random_string().'.'.$extension;
-        } while (file_exists($directory.'/'.$filename));
 
         // Creazione file fisico
         if (!directory($directory) || !move_uploaded_file($src, $directory.'/'.$filename)) {
@@ -86,11 +102,19 @@ class Uploads
         $data['original'] = $original;
         self::register($data);
 
-        if (!empty($options['thumbnails'])) {
-            self::thumbnails($directory.'/'.$filename, $directory);
-        }
+        // Operazioni finali
+        self::processOptions($data, $options);
 
         return $filename;
+    }
+
+    protected static function processOptions($data, $options)
+    {
+        $directory = DOCROOT.'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
+
+        if (!empty($options['thumbnails'])) {
+            self::thumbnails($directory.'/'.$data['filename'], $directory);
+        }
     }
 
     /**
@@ -103,11 +127,11 @@ class Uploads
         $database = Database::getConnection();
 
         $database->insert('zz_files', [
-            'nome' => !empty($data['name']) ? $data['name'] : $data['original'],
+            'name' => !empty($data['name']) ? $data['name'] : $data['original'],
             'filename' => !empty($data['filename']) ? $data['filename'] : $data['original'],
             'original' => $data['original'],
             'category' => !empty($data['category']) ? $data['category'] : null,
-            'id_module' => !empty($data['id_module']) ? $data['id_module'] : null,
+            'id_module' => !empty($data['id_module']) && empty($data['id_plugin']) ? $data['id_module'] : null,
             'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
             'id_record' => $data['id_record'],
         ]);
@@ -252,6 +276,41 @@ class Uploads
         ], [
             'id_record' => $fake_id,
         ]);
+    }
+
+    /**
+     * Copia gli allegati di un record in un altro record.
+     *
+     * @param array $from
+     * @param array $to
+     * @return bool
+     */
+    public static function copy($from, $to)
+    {
+        $attachments = self::get($from);
+
+        $directory = DOCROOT.'/'.self::getDirectory($to['id_module'], $to['id_plugin']);
+        $directory_from = DOCROOT.'/'.self::getDirectory($from['id_module'], $from['id_plugin']);
+
+        foreach ($attachments as $attachment) {
+            $data = array_merge($attachment, $to);
+
+            // Individuazione del nuovo nome fisico
+            $data['filename'] = self::getName($directory_from.'/'.$attachment['filename'], $data);
+
+            // Copia fisica
+            if (!copy($directory_from.'/'.$attachment['filename'], $directory.'/'.$data['filename'])) {
+                return false;
+            }
+
+            // Registrazione del file
+            self::register($data);
+
+            // Operazioni finali
+            self::processOptions($data, $options);
+        }
+
+        return true;
     }
 
     /** @var array Elenco delle tipologie di file permesse */

@@ -285,7 +285,7 @@ if ($total == 0) {
 </div>
 <br>
 <?php
-$qp = "SELECT co_contratti_promemoria.id, idcontratto, richiesta, DATE_FORMAT( data_richiesta, '%m-%Y') AS mese, data_richiesta, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_contratti_promemoria.idtipointervento) AS tipointervento FROM (co_contratti_promemoria INNER JOIN co_contratti ON co_contratti_promemoria.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL
+$qp = "SELECT co_promemoria.id, idcontratto, richiesta, DATE_FORMAT( data_richiesta, '%m-%Y') AS mese, data_richiesta, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento FROM (co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL
 UNION SELECT co_ordiniservizio.id, idcontratto, '', data_scadenza, DATE_FORMAT( data_scadenza, '%m-%Y') AS mese, an_anagrafiche.ragione_sociale, 'ordine' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento='ODS') AS tipointervento FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL ORDER BY data_richiesta ASC";
 $rsp = $dbo->fetchArray($qp);
 
@@ -306,7 +306,7 @@ if (!empty($rsp)) {
         <h4>'.tr('Promemoria contratti da pianificare').'</h4>';
 
     // Controllo pianificazioni mesi precedenti
-    $qp_old = 'SELECT co_contratti_promemoria.id FROM co_contratti_promemoria INNER JOIN co_contratti ON co_contratti_promemoria.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) AND idintervento IS NULL AND UNIX_TIMESTAMP(co_contratti_promemoria.data_richiesta)+86400<UNIX_TIMESTAMP(NOW())
+    $qp_old = 'SELECT co_promemoria.id FROM co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) AND idintervento IS NULL AND UNIX_TIMESTAMP(co_promemoria.data_richiesta)+86400<UNIX_TIMESTAMP(NOW())
     UNION SELECT co_ordiniservizio.id FROM co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) AND idintervento IS NULL AND UNIX_TIMESTAMP(co_ordiniservizio.data_scadenza)+86400<UNIX_TIMESTAMP(NOW())';
     $rsp_old = $dbo->fetchNum($qp_old);
 

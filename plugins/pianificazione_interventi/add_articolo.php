@@ -41,13 +41,13 @@ if (empty($idriga)) {
         $tipo_sconto = 'PRC';
     }
 
-    (empty($idcontratto_riga)) ? $idcontratto_riga = $dbo->fetchArray('SELECT MAX(id) AS max_idcontratto_riga  FROM `co_contratti_promemoria`')[0]['max_idcontratto_riga'] : '';
+    (empty($idcontratto_riga)) ? $idcontratto_riga = $dbo->fetchArray('SELECT MAX(id) AS max_idcontratto_riga  FROM `co_promemoria`')[0]['max_idcontratto_riga'] : '';
 } else {
     $op = 'editarticolo';
     $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
 
     // carico record da modificare
-    $q = "SELECT *, (SELECT codice FROM mg_articoli WHERE id=co_righe_contratti_articoli.idarticolo) AS codice_articolo, (SELECT CONCAT(codice, ' - ', descrizione) FROM mg_articoli WHERE id=co_righe_contratti_articoli.idarticolo) AS descrizione_articolo FROM co_righe_contratti_articoli WHERE id=".prepare($idriga);
+    $q = "SELECT *, (SELECT codice FROM mg_articoli WHERE id=co_promemoria_articoli.idarticolo) AS codice_articolo, (SELECT CONCAT(codice, ' - ', descrizione) FROM mg_articoli WHERE id=co_promemoria_articoli.idarticolo) AS descrizione_articolo FROM co_promemoria_articoli WHERE id=".prepare($idriga);
     $rsr = $dbo->fetchArray($q);
 
     $idarticolo = $rsr[0]['idarticolo'];
@@ -65,7 +65,7 @@ if (empty($idriga)) {
     $idautomezzo = $rsr[0]['idautomezzo'];
 
     $idimpianto = $rsr[0]['idimpianto'];
-    $idcontratto_riga = $rsr[0]['id_riga_contratto'];
+    $idcontratto_riga = $rsr[0]['id_promemoria'];
 }
 
 /*

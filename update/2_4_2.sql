@@ -253,3 +253,14 @@ UPDATE `zz_plugins` SET `title` = 'Pianificazione attività' WHERE `name` = 'Pia
 
 -- Fix plugin "Pianificazione interventi"
 UPDATE `zz_plugins` SET `options` = 'custom', `script` = '', `directory` = 'pianificazione_interventi' WHERE `name` = 'Pianificazione interventi';
+
+-- Ridenominazione tabelle per i promemoria
+ALTER TABLE `co_contratti_promemoria` RENAME `co_promemoria`;
+ALTER TABLE `co_righe_contratti_materiali` RENAME `co_promemoria_righe`;
+ALTER TABLE `co_righe_contratti_articoli` RENAME `co_promemoria_articoli`;
+ALTER TABLE `co_promemoria_righe` CHANGE `id_riga_contratto` `id_promemoria` int(11) NOT NULL;
+ALTER TABLE `co_promemoria_articoli` CHANGE `id_riga_contratto` `id_promemoria` int(11) NOT NULL;
+
+-- Fix nome in zz_files
+ALTER TABLE `zz_files` CHANGE `nome` `name` varchar(255) NOT NULL;
+UPDATE `zz_files` SET `id_module` = NULL WHERE `id_plugin` IS NOT NULL;

@@ -27,7 +27,7 @@ if (count($id_impianti) == 1) {
 }
 
 // Informazioni del promemoria
-$record = $dbo->fetchOne('SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_contratti_promemoria.idtipointervento) AS tipointervento, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_contratti_promemoria.idtipointervento) AS tempo_standard FROM co_contratti_promemoria WHERE id = :id', [
+$record = $dbo->fetchOne('SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_promemoria.idtipointervento) AS tempo_standard FROM co_promemoria WHERE id = :id', [
     ':id' => $id_record,
 ]);
 $data_richiesta = $record['data_richiesta'] ?? date('Y-m-d');

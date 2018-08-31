@@ -46,7 +46,7 @@ $rs = $dbo->fetchArray('SELECT
         AND in_statiintervento.completato=1
         AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL)
         AND NOT in_interventi.id IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL)
-        AND NOT in_interventi.id IN (SELECT idintervento FROM co_contratti_promemoria WHERE idintervento IS NOT NULL)');
+        AND NOT in_interventi.id IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL)');
 foreach ($rs as $key => $value) {
     $rs[$key]['prezzo'] = get_costi_intervento($value['id'])['totale'];
 }

@@ -261,7 +261,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
         foreach ($selected as $attachment) {
             $attachments[] = [
                 'path' => $upload_dir.'/'.$attachment['filename'],
-                'name' => $attachment['nome'],
+                'name' => $attachment['name'],
             ];
         }
 
@@ -276,7 +276,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
         foreach ($selected as $attachment) {
             $attachments[] = [
                 'path' => DOCROOT.'/files/'.$anagrafiche['directory'].'/'.$attachment['filename'],
-                'name' => $attachment['nome'],
+                'name' => $attachment['name'],
             ];
         }
 

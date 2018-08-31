@@ -245,7 +245,7 @@ switch (post('op')) {
             $idcontratto = get('idcontratto');
             $idintervento = get('idintervento');
 
-            $query = 'DELETE FROM `co_contratti_promemoria` WHERE idcontratto='.prepare($idcontratto).' AND idintervento='.prepare($idintervento);
+            $query = 'DELETE FROM `co_promemoria` WHERE idcontratto='.prepare($idcontratto).' AND idintervento='.prepare($idintervento);
             $dbo->query($query);
 
             flash()->info(tr('Intervento _NUM_ rimosso!', [
@@ -272,16 +272,14 @@ switch (post('op')) {
     // eliminazione contratto
     case 'delete':
         $dbo->query('DELETE FROM co_contratti WHERE id='.prepare($id_record));
-        $dbo->query('DELETE FROM co_contratti_promemoria WHERE idcontratto='.prepare($id_record));
+        $dbo->query('DELETE FROM co_promemoria WHERE idcontratto='.prepare($id_record));
         $dbo->query('DELETE FROM co_righe_contratti WHERE idcontratto='.prepare($id_record));
 
         flash()->info(tr('Contratto eliminato!'));
 
         break;
-}
 
-// Rinnovo contratto
-switch (get('op')) {
+    // Rinnovo contratto
     case 'renew':
         $rs = $dbo->fetchArray('SELECT *, DATEDIFF(data_conclusione, data_accettazione) AS giorni FROM co_contratti WHERE id='.prepare($id_record));
 
@@ -313,9 +311,45 @@ switch (get('op')) {
                 $impianti = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE idcontratto='.prepare($id_record));
                 $dbo->sync('my_impianti_contratti', ['idcontratto' => $new_idcontratto], ['idimpianto' => array_column($impianti, 'idimpianto')]);
 
+                // Replicazione dei promemoria
+                $promemoria = $dbo->fetchArray('SELECT * FROM co_promemoria WHERE idcontratto='.prepare($id_record));
+                foreach ($promemoria as $p) {
+                    $dbo->insert('co_promemoria', [
+                        'idcontratto' => $new_idcontratto,
+                        'data_richiesta' => date('Y-m-d', strtotime($p['data_richiesta'].' +'.$giorni_add.' day')),
+                        'idtipointervento' => $p['idtipointervento'],
+                        'richiesta' => $p['richiesta'],
+                        'idimpianti' => $p['idimpianti'],
+                    ]);
+                    $id_promemoria = $dbo->lastInsertedID();
+
+                    // Copia degli articoli
+                    $dbo->query('INSERT INTO co_promemoria_articoli(idarticolo, id_promemoria, idimpianto, idautomezzo, descrizione, prezzo_vendita, prezzo_acquisto, sconto, sconto_unitario, tipo_sconto, idiva, desc_iva, iva, qta, um, abilita_serial) SELECT idarticolo, :id_new, idimpianto, idautomezzo, descrizione, prezzo_vendita, prezzo_acquisto, sconto, sconto_unitario, tipo_sconto, idiva, desc_iva, iva, qta, um, abilita_serial FROM co_promemoria_articoli AS z WHERE id_promemoria = :id_old', [
+                        ':id_new' => $id_promemoria,
+                        ':id_old' => $p['id'],
+                    ]);
+
+                    // Copia delle righe
+                    $dbo->query('INSERT INTO co_promemoria_righe(id_promemoria, descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto) SELECT :id_new, descrizione, qta, um, prezzo_vendita, prezzo_acquisto, idiva, desc_iva, iva, sconto, sconto_unitario, tipo_sconto FROM co_promemoria_righe AS z WHERE id_promemoria = :id_old', [
+                        ':id_new' => $id_promemoria,
+                        ':id_old' => $p['id'],
+                    ]);
+
+                    // Copia degli allegati
+                    Uploads::copy([
+                        'id_module' => $id_module,
+                        'id_plugin' => Plugins::get('Pianificazione interventi')['id'],
+                        'id_record' => $p['id'],
+                    ], [
+                        'id_module' => $id_module,
+                        'id_plugin' => Plugins::get('Pianificazione interventi')['id'],
+                        'id_record' => $id_promemoria,
+                    ]);
+                }
+
                 flash()->info(tr('Contratto rinnovato!'));
 
-                redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$new_idcontratto);
+                $id_record = $new_idcontratto;
             } else {
                 flash()->error(tr('Errore durante il rinnovo del contratto!'));
             }

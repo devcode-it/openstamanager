@@ -16,8 +16,12 @@ if (sizeof($rs_documento) > 0) {
 }
 
 if ($record['rinnovabile']) {
-    echo "
-<button type=\"button\" class=\"btn btn-warning\" onclick=\"if( confirm('Rinnovare questo contratto?') ){ location.href='".$rootdir.'/editor.php?op=renew&id_module='.$id_module.'&id_record='.$id_record."'; }\">
-    <i class=\"fa fa-refresh\"></i> ".tr('Rinnova').'...
-</button>';
+    $rinnova = !empty($record['data_accettazione']) && !empty($record['data_conclusione']) && $record['data_accettazione'] != '0000-00-00'&& $record['data_conclusione'] != '0000-00-00';
+
+    echo '
+<div class="tip" data-toggle="tooltip" title="'.tr('Il contratto è rinnovabile se sono definite le date di accettazione e conclusione').'" style="display:inline;">
+    <button type="button" class="btn btn-warning ask '.($rinnova ? '' : 'disabled').'" data-backto="record-edit" data-op="renew" data-msg="'.tr("Rinnovare questo contratto?").'" data-button="Rinnova" data-class="btn btn-lg btn-warning" '.($rinnova ? '' : 'disabled').'>
+        <i class="fa fa-refresh"></i> '.tr('Rinnova').'...
+    </button>
+</div>';
 }

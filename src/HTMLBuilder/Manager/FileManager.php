@@ -48,7 +48,7 @@ class FileManager implements ManagerInterface
 
         $count = 0;
 
-        $where = '`id_module` '.(!empty($options['id_module']) ? '= '.prepare($options['id_module']) : 'IS NULL').' AND `id_plugin` '.(!empty($options['id_plugin']) ? '= '.prepare($options['id_plugin']) : 'IS NULL').'';
+        $where = '`id_module` '.(!empty($options['id_module']) && empty($options['id_plugin']) ? '= '.prepare($options['id_module']) : 'IS NULL').' AND `id_plugin` '.(!empty($options['id_plugin']) ? '= '.prepare($options['id_plugin']) : 'IS NULL').'';
 
         // Categorie
         $categories = $dbo->fetchArray('SELECT DISTINCT `category` FROM `zz_files` WHERE '.$where.' ORDER BY `category`');
@@ -81,7 +81,7 @@ class FileManager implements ManagerInterface
         <tr>
             <td align="left">
                 <a href="'.ROOTDIR.'/'.$directory.'/'.$r['filename'].'" target="_blank">
-                    <i class="fa fa-external-link"></i> '.$r['nome'].'
+                    <i class="fa fa-external-link"></i> '.$r['name'].'
                 </a>
             </td>
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
@@ -109,7 +109,7 @@ class FileManager implements ManagerInterface
                 </div>';
 
                         $result .= '
-                <button class="btn btn-xs btn-info" data-target="#bs-popup2"  type="button" data-title="'.prepareToField($r['nome']).' <small><em>('.$r['filename'].')</em></small>" data-href="#view-'.$r['id'].'">
+                <button class="btn btn-xs btn-info" data-target="#bs-popup2" type="button" data-title="'.prepareToField($r['name']).' <small><em>('.$r['filename'].')</em></small>" data-href="#view-'.$r['id'].'">
                     <i class="fa fa-eye"></i>
                 </button>';
                     } else {

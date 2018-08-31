@@ -114,7 +114,7 @@ class FileManager implements ManagerInterface
                 </button>';
                     } else {
                         $result .= '
-                <button class="btn btn-xs btn-default" title="'.tr('Anteprima file non disponibile').'." onclick="alert(\''.tr('Anteprima file di tipo "'.$extension.'" non supportata.').'\');">
+                <button class="btn btn-xs btn-default disabled" title="'.tr('Anteprima file non disponibile').'" disabled>
                     <i class="fa fa-eye"></i>
                 </button>';
                     }

@@ -3,7 +3,9 @@
 include_once __DIR__.'/../../core.php';
 
 $plugin = Plugins::get($id_plugin);
-$is_add = filter('add') !== null ? true : false;
+$is_add = filter('add') ? true : false;
+
+$pricing = Auth::admin() || Auth::user()['gruppo'] != 'Tecnici';
 
 $rs = $dbo->fetchArray('SELECT * FROM co_righe_contratti_articoli WHERE id_riga_contratto='.prepare($id_record).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC');
 
@@ -14,12 +16,12 @@ if (!empty($rs)) {
         <th>'.tr('Articolo').'</th>
         <th width="8%">'.tr('Q.tà').'</th>';
 
-    if (Auth::admin() || Auth::user()['gruppo'] != 'Tecnici') {
+    if ($pricing) {
         echo '
         <th width="15%">'.tr('Prezzo di acquisto').'</th>';
     }
 
-    if (Auth::admin() || Auth::user()['gruppo'] != 'Tecnici') {
+    if ($pricing) {
         echo '
         <th width="15%">'.tr('Prezzo di vendita').'</th>
         <th width="10%">'.tr('Iva').'</th>
@@ -78,14 +80,14 @@ if (!empty($rs)) {
             '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
         </td>';
 
-        if (Auth::admin() || Auth::user()['gruppo'] != 'Tecnici') {
+        if ($pricing) {
             echo '
         <td class="text-right">
             '.Translator::numberToLocale($r['prezzo_acquisto']).' &euro;
         </td>';
         }
 
-        if (Auth::admin() || Auth::user()['gruppo'] != 'Tecnici') {
+        if ($pricing) {
             // Prezzo unitario
             echo '
         <td class="text-right">
@@ -136,6 +138,9 @@ if (!empty($rs)) {
 
     echo '
 </table>';
+} else {
+    echo '
+<p>'.tr('Nessun articolo caricato').'.</p>';
 }
 
 echo '

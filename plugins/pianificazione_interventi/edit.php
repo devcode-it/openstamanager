@@ -16,42 +16,42 @@ $pianificabile = $dbo->fetchOne('SELECT pianificabile FROM co_staticontratti WHE
     ':id' => $contratto['idstato'],
 ])['pianificabile'];
 
-$stati_pianificabili = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione`) AS stati_pianificabili FROM `co_staticontratti` WHERE `pianificabile` = 1')['stati_pianificabili'];
+$stati_pianificabili = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione` SEPARATOR ", ") AS stati_pianificabili FROM `co_staticontratti` WHERE `pianificabile` = 1')['stati_pianificabili'];
 
 echo '
-<div class="box">
-    <div class="box-header with-border">
-        <h3 class="box-title"><span class="tip" title="'.tr('I promemoria  verranno visualizzati sulla \'Dashboard\' e serviranno per semplificare la pianificazione del giorno dell\'intervento, ad esempio nel caso di interventi con cadenza mensile.').'"" >'.tr('Pianificazione interventi').' <i class="fa fa-question-circle-o"></i></span> </h3>
-    </div>
-    <div class="box-body">
-        <p>'.tr('Puoi <b>pianificare dei "promemoria" o direttamente gli interventi</b> da effettuare entro determinate scadenze. Per poter pianificare i promemoria il contratto deve essere in uno dei seguenti stati: <b>'.$stati_pianificabili.'</b> e la <b>data di conclusione</b> definita').'.</p>';
+<span class="tip pull-right" title="'.tr("I promemoria  verranno visualizzati sulla 'Dashboard' e serviranno per semplificare la pianificazione del giorno dell'intervento, ad esempio nel caso di interventi con cadenza mensile").'">
+    <i class="fa fa-question-circle-o fa-2x"></i>
+</span>
+
+<p>'.tr('Puoi <b>pianificare dei "promemoria" o direttamente gli interventi</b> da effettuare entro determinate scadenze. Per poter pianificare i promemoria il contratto deve essere in uno dei seguenti stati: <b>'.$stati_pianificabili.'</b> e la <b>data di conclusione</b> definita').'.</p>';
 
 // Nessun intervento pianificato
 if (!empty($records)) {
     echo '
-        <br>
-        <h5>'.tr('Lista promemoria ed eventuali interventi associati').':</h5>
-        <table class="table table-condensed table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>'.tr('Data').'</th>
-                    <th>'.tr('Tipo intervento').'</th>
-                    <th>'.tr('Descrizione').'</th>
-                    <th>'.tr('Intervento').'</th>
-                    <th>'.tr('Sede').'</th>
-					<th>'.tr('Impianti').'</th>
-					<th>'.tr('Materiali').'</th>
-					<th>'.tr('Allegati').'</th>
-                    <th class="text-right" >'.tr('Opzioni').'</th>
-                </tr>
-            </thead>
-            <tbody>';
+<br>
+<h5>'.tr('Lista promemoria ed eventuali interventi associati').':</h5>
+
+<table class="table table-condensed table-striped table-hover">
+    <thead>
+        <tr>
+            <th>'.tr('Data').'</th>
+            <th>'.tr('Tipo intervento').'</th>
+            <th>'.tr('Descrizione').'</th>
+            <th>'.tr('Intervento').'</th>
+            <th>'.tr('Sede').'</th>
+            <th>'.tr('Impianti').'</th>
+            <th>'.tr('Materiali').'</th>
+            <th>'.tr('Allegati').'</th>
+            <th class="text-right" >'.tr('Opzioni').'</th>
+        </tr>
+    </thead>
+    <tbody>';
 
     // Elenco promemoria
     foreach ($records as $record) {
         // Sede
         if ($record['idsede'] == '-1') {
-            echo '- '.('Nessuna').' -';
+            echo '- '.tr('Nessuna').' -';
         } elseif (empty($record['idsede'])) {
             $info_sede = tr('Sede legale');
         } else {
@@ -121,58 +121,50 @@ if (!empty($records)) {
         }
 
         echo '
-                <tr>
-                    <td>'.Translator::dateToLocale($record['data_richiesta']).'<!--br><small>'.Translator::dateToLocale($contratto['data_conclusione']).'</small--></td>
-                    <td>'.$record['tipointervento'].'</td>
-                    <td>'.nl2br($record['richiesta']).'</td>
-                    <td>'.$info_intervento.'</td>
-                    <td>'.$info_sede.'</td>
-                    <td>'.$info_impianti.'</td>
-					<td>'.$info_materiali.'</td>
-					<td>'.$info_allegati.'</td>
-                    <td align="right">';
+            <tr>
+                <td>'.Translator::dateToLocale($record['data_richiesta']).'<!--br><small>'.Translator::dateToLocale($contratto['data_conclusione']).'</small--></td>
+                <td>'.$record['tipointervento'].'</td>
+                <td>'.nl2br($record['richiesta']).'</td>
+                <td>'.$info_intervento.'</td>
+                <td>'.$info_sede.'</td>
+                <td>'.$info_impianti.'</td>
+                <td>'.$info_materiali.'</td>
+                <td>'.$info_allegati.'</td>
+                <td align="right">
 
-        echo '
-                    <button type="button" class="btn btn-warning btn-sm" title="Pianifica..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica\', \''.$plugin->fileurl('pianficazione.php').'?id_module='.$id_module.'&id_plugin='.$plugin['id'].'&id_parent='.$id_record.'&id_record='.$record['id'].'\');"'.((!empty($pianificabile) && !empty($contratto['data_conclusione'])) ? '' : ' disabled').'>
-                        <i class="fa fa-clock-o"></i>
-                    </button>';
+                <button type="button" class="btn btn-warning btn-sm" title="Pianifica..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica\', \''.$plugin->fileurl('pianficazione.php').'?id_module='.$id_module.'&id_plugin='.$plugin['id'].'&id_parent='.$id_record.'&id_record='.$record['id'].'\');"'.((!empty($pianificabile) && !empty($contratto['data_conclusione'])) ? '' : ' disabled').'>
+                    <i class="fa fa-clock-o"></i>
+                </button>
 
-        echo '
-					<button type="button" '.$disabled.' class="btn btn-primary btn-sm '.$disabled.' " title="Pianifica intervento ora..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.$rootdir.'/add.php?id_module='.Modules::get('Interventi')['id'].'&ref=interventi_contratti&idcontratto='.$id_record.'&idcontratto_riga='.$record['id'].'\');"'.(!empty($pianificabile) ? '' : ' disabled').'><i class="fa fa-calendar"></i></button>';
+                <button type="button" '.$disabled.' class="btn btn-primary btn-sm '.$disabled.' " title="Pianifica intervento ora..." data-toggle="tooltip" onclick="launch_modal(\'Pianifica intervento\', \''.$rootdir.'/add.php?id_module='.Modules::get('Interventi')['id'].'&ref=interventi_contratti&idcontratto='.$id_record.'&idcontratto_riga='.$record['id'].'\');"'.(!empty($pianificabile) ? '' : ' disabled').'>
+                    <i class="fa fa-calendar"></i>
+                </button>
 
-        echo '
-					<button type="button" '.$disabled.' title="'.$title.'" class="btn btn-danger btn-sm ask '.$disabled.' " data-op="delete-promemoria" data-id="'.$record['id'].'">
-						<i class="fa fa-trash"></i>
-					</button>';
-
-        echo '
-                    </td>
-                </tr>';
+                <button type="button" '.$disabled.' title="'.$title.'" class="btn btn-danger btn-sm ask '.$disabled.' " data-op="delete-promemoria" data-id="'.$record['id'].'">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </td>
+        </tr>';
     }
     echo '
-            </tbody>
-        </table>';
-
-    echo '<br><div class="pull-right">';
+    </tbody>
+</table>';
 
     if (!empty($records)) {
         echo '
-        <button type="button" title="Elimina tutti i promemoria non associati ad intervento" class="btn btn-danger ask tip" data-op="delete-non-associati" data-id_plugin="'.$id_plugin.'" data-backto="record-edit">
-            <i class="fa fa-trash"></i> '.tr('Elimina promemoria').'
-        </button>';
+<br>
+<div class="pull-right">
+    <button type="button" title="Elimina tutti i promemoria non associati ad intervento" class="btn btn-danger ask tip" data-op="delete-non-associati" data-id_plugin="'.$id_plugin.'" data-backto="record-edit">
+        <i class="fa fa-trash"></i> '.tr('Elimina promemoria').'
+    </button>
+</div>';
     }
-
-    echo '</div>';
 }
 
     echo '
-        <button type="button" title="Aggiungi un nuovo promemoria da pianificare." data-toggle="tooltip" class="btn btn-primary" id="add_promemoria">
-            <i class="fa fa-plus"></i> '.tr('Nuovo promemoria').'
-        </button>';
-
-echo '
-    </div>
-</div>';
+<button type="button" title="Aggiungi un nuovo promemoria da pianificare." data-toggle="tooltip" class="btn btn-primary" id="add_promemoria">
+    <i class="fa fa-plus"></i> '.tr('Nuovo promemoria').'
+</button>';
 
 $options = $dbo->fetchArray('SELECT idtipointervento, descrizione FROM `in_tipiintervento`');
 

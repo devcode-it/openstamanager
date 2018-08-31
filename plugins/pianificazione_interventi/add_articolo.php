@@ -117,7 +117,7 @@ echo '
 // Impianto
 echo '
 		<div class="col-md-4">
-			{[ "type": "select", "multiple": "0", "label": "'.tr('Impianto').'", "name": "idimpianto", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_record.' ORDER BY descrizione", "value": "'.$matricoleimpianti.'", "extra":"'.$readonly.'" ]}
+			{[ "type": "select", "multiple": "0", "label": "'.tr('Impianto').'", "name": "idimpianto", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_record.' ORDER BY descrizione", "value": "'.$idimpianto.'", "extra":"'.$readonly.'" ]}
 		</div>
 	</div>';
 

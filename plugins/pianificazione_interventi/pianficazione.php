@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 $plugin = Plugins::get($id_plugin);
 
 $id_module = Modules::get('Contratti')['id'];
-$is_add = filter('add') !== null ? true : false;
+$is_add = filter('add') ? true : false;
 
 // Informazioni contratto
 $contratto = $dbo->fetchOne('SELECT * FROM `co_contratti` WHERE `id` = :id', [
@@ -40,12 +40,18 @@ if (!empty($id_sede)) {
 }
 
 $pianificazione = [
-    0 => tr('Pianificare a partire da questo promemoria _DATE_', [
-        '_DATE_' => $data_richiesta,
-    ]),
-    1 => tr('Pianificare a partire da oggi _DATE_', [
-        '_DATE_' => date('Y-m-d'),
-    ]),
+    [
+        'id' => 0,
+        'text' => tr('Pianificare a partire da questo promemoria _DATE_', [
+            '_DATE_' => $data_richiesta,
+        ]),
+    ],
+    [
+        'id' => 1,
+        'text' => tr('Pianificare a partire da oggi _DATE_', [
+            '_DATE_' => date('Y-m-d'),
+        ]),
+    ],
 ];
 
 // orari inizio fine interventi (8h standard)
@@ -55,7 +61,7 @@ $orario_fine = !empty($tempo_standard) ? date('H:i', strtotime($orario_inizio) +
 echo '
 <form id="add_form" action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_parent='.$id_parent.'&id_record='.$id_record.'" method="post">
 	<input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="op" value="'.(!empty($is_add) ? 'edit-promemoria' : 'pianifica').'">';
+    <input type="hidden" name="op" value="'.(!empty($is_add) ? 'edit-promemoria' : 'pianificazione').'">';
 
     echo '
 	<!-- DATI PROMEMORIA -->
@@ -163,7 +169,7 @@ echo '
                 </div>
 
                 <div class="col-md-7">
-                    {[ "type": "select", "label": "'.tr('Inizio pianificazione').'", "name": "parti_da_oggi", "values": '.json_encode($pianificazione).' ]}
+                    {[ "type": "select", "label": "'.tr('Inizio pianificazione').'", "name": "inizio", "values": '.json_encode($pianificazione).' ]}
                 </div>
 
                 <div class="col-md-3">

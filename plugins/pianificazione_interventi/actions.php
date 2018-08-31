@@ -59,14 +59,12 @@ switch (filter('op')) {
 
     // pianificazione ciclica
     case 'pianificazione':
-        $intervallo = filter('intervallo');
-        $parti_da_oggi = post('parti_da_oggi');
+        $intervallo = post('intervallo');
+        $parti_da_oggi = post('inizio');
 
-        //if principale
+        // if principale
         if (!empty($id_record) && !empty($intervallo)) {
-            $qp = 'SELECT *, (SELECT idanagrafica FROM co_contratti WHERE id = '.$id_parent.' ) AS idanagrafica, (SELECT data_conclusione FROM co_contratti WHERE id = '.$id_parent.' ) AS data_conclusione, '.
-            '(SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_contratti_promemoria.idtipointervento) AS tipointervento FROM co_contratti_promemoria '.
-            'WHERE co_contratti_promemoria.id = '.$id_record;
+            $qp = 'SELECT *, (SELECT idanagrafica FROM co_contratti WHERE id = '.$id_parent.' ) AS idanagrafica, (SELECT data_conclusione FROM co_contratti WHERE id = '.$id_parent.' ) AS data_conclusione, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_contratti_promemoria.idtipointervento) AS tipointervento FROM co_contratti_promemoria WHERE co_contratti_promemoria.id = '.$id_record;
             $rsp = $dbo->fetchArray($qp);
 
             $idtipointervento = $rsp[0]['idtipointervento'];
@@ -76,73 +74,66 @@ switch (filter('op')) {
             $data_richiesta = $rsp[0]['data_richiesta'];
             $idimpianti = $rsp[0]['idimpianti'];
 
-            //mi serve per la pianificazione dei promemoria
+            // mi serve per la pianificazione dei promemoria
             $data_conclusione = $rsp[0]['data_conclusione'];
 
-            //mi serve per la pianificazione interventi
+            // mi serve per la pianificazione interventi
             $idanagrafica = $rsp[0]['idanagrafica'];
 
-            //se voglio pianificare anche le date precedenti ad oggi (parto da questo promemoria)
+            // se voglio pianificare anche le date precedenti ad oggi (parto da questo promemoria)
             if ($parti_da_oggi) {
-                //oggi
+                // oggi
                 $min_date = date('Y-m-d');
             } else {
                 $min_date = date('Y-m-d', strtotime($data_richiesta));
             }
 
-            //inizio controllo data_conclusione, data valida e maggiore della $min_date
+            // inizio controllo data_conclusione, data valida e maggiore della $min_date
             if ((date('Y', strtotime($data_conclusione)) > 1970) && (date('Y-m-d', strtotime($min_date)) <= date('Y-m-d', strtotime($data_conclusione)))) {
-                //$_SESSION['errors'][] = '1';
-
                 $i = 0;
-                //Ciclo partendo dalla data_richiesta fino all data conclusione del contratto
+                // Ciclo partendo dalla data_richiesta fino all data conclusione del contratto
                 while (date('Y-m-d', strtotime($data_richiesta)) <= date('Y-m-d', strtotime($data_conclusione))) {
-                    //$_SESSION['errors'][] = '2';
-
-                    //calcolo nuova data richiesta, non considero l'intervallo al primo ciclo
+                    // calcolo nuova data richiesta, non considero l'intervallo al primo ciclo
                     $data_richiesta = date('Y-m-d', strtotime($data_richiesta.' + '.(($i == 0) ? 0 : $intervallo).' days'));
                     ++$i;
 
-                    //$_SESSION['errors'][] = 'data_richiesta: '.date('Y-m-d', strtotime($data_richiesta));
-                    //$_SESSION['errors'][] = 'data_conclusione: '.date('Y-m-d', strtotime($data_conclusione));
-                    //$_SESSION['errors'][] = 'min_date: '.$min_date;
-
-                    //controllo nuova data richiesta --> solo  date maggiori o uguali di [oggi o data richiesta iniziale] ma che non superano la data di fine del contratto
+                    // controllo nuova data richiesta --> solo  date maggiori o uguali di [oggi o data richiesta iniziale] ma che non superano la data di fine del contratto
                     if ((date('Y-m-d', strtotime($data_richiesta)) >= $min_date) && (date('Y-m-d', strtotime($data_richiesta)) <= date('Y-m-d', strtotime($data_conclusione)))) {
-                        //$_SESSION['errors'][] = '3';
-                        //Controllo che non esista già un promemoria idcontratto, idtipointervento e data_richiesta.
+                        // Controllo che non esista già un promemoria idcontratto, idtipointervento e data_richiesta.
                         if (count($dbo->fetchArray("SELECT id FROM co_contratti_promemoria WHERE data_richiesta = '".$data_richiesta."' AND idtipointervento = '".$idtipointervento."' AND idcontratto = '".$id_parent."' ")) == 0) {
-                            //inserisco il nuovo promemoria
+                            // inserisco il nuovo promemoria
                             $query = 'INSERT INTO `co_contratti_promemoria`(`idcontratto`, `idtipointervento`, `data_richiesta`, `richiesta`, `idsede`, `idimpianti` ) VALUES('.prepare($id_parent).', '.prepare($idtipointervento).', '.prepare($data_richiesta).', '.prepare($richiesta).', '.prepare($idsede).', '.prepare($idimpianti).')';
 
                             if ($dbo->query($query)) {
                                 $idriga = $dbo->lastInsertedID();
 
-                                //copio anche righe materiali nel nuovo promemoria
+                                // copio anche righe materiali nel nuovo promemoria
                                 $dbo->query('INSERT INTO co_righe_contratti_materiali (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,	desc_iva,iva,id_riga_contratto,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,	desc_iva,iva,'.$idriga.',sconto,sconto_unitario,tipo_sconto FROM co_righe_contratti_materiali WHERE id_riga_contratto = '.$id_record.'  ');
 
-                                //copio righe articoli nel nuovo promemoria
+                                // copio righe articoli nel nuovo promemoria
                                 $dbo->query('INSERT INTO co_righe_contratti_articoli (idarticolo, id_riga_contratto,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idriga.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$id_record.'  ');
 
-                                $_SESSION['infos'][] = tr('Promemoria intervento pianificato!');
+                                flash()->info(tr('Promemoria intervento pianificato!'));
                             }
                         } else {
-                            $_SESSION['warnings'][] = tr('Esiste già un promemoria pianificato per il '.readDate($data_richiesta).'.');
+                            flash()->warning(tr('Esiste già un promemoria pianificato per il _DATE_', [
+                                '_DATE_' => Translator::dateToLocale($data_richiesta),
+                            ]));
                         }
 
-                        //Controllo che non esista già un intervento collegato a questo promemoria e, se ho spuntato di creare l'intervento, creo già anche quello
+                        // Controllo che non esista già un intervento collegato a questo promemoria e, se ho spuntato di creare l'intervento, creo già anche quello
                         if ((empty($dbo->fetchArray("SELECT idintervento FROM co_contratti_promemoria WHERE id = '".((empty($idriga)) ? $id_record : $idriga)."'")[0]['idintervento'])) and ($post['pianifica_intervento'])) {
-                            //pianificare anche l' intervento?
-                            //if ($post['pianifica_intervento']) {
+                            // pianificare anche l' intervento?
+                            // if ($post['pianifica_intervento']) {
                             /*$orario_inizio = post('orario_inizio');
                             $orario_fine = post('orario_fine');*/
 
-                            //$idanagrafica = 2;
+                            // $idanagrafica = 2;
 
-                            //intervento sempre nello stato "In programmazione"
+                            // intervento sempre nello stato "In programmazione"
                             $idstatointervento = 'WIP';
 
-                            //calcolo codice intervento
+                            // calcolo codice intervento
                             $formato = setting('Formato codice intervento');
                             $template = str_replace('#', '%', $formato);
 
@@ -174,21 +165,21 @@ switch (filter('op')) {
 
                             $idtecnici = post('idtecnico');
 
-                            //aggiungo i tecnici
+                            // aggiungo i tecnici
                             foreach ($idtecnici as $idtecnico) {
                                 add_tecnico($idintervento, $idtecnico, $data_richiesta.' '.post('orario_inizio'), $data_richiesta.' '.post('orario_fine'), $id_parent);
                             }
 
-                            //collego l'intervento ai promemoria
+                            // collego l'intervento ai promemoria
                             $dbo->query('UPDATE co_contratti_promemoria SET idintervento='.prepare($idintervento).' WHERE id='.prepare(((empty($idriga)) ? $id_record : $idriga)));
 
-                            //copio le righe dal promemoria all'intervento
+                            // copio le righe dal promemoria all'intervento
                             $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,idintervento,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$idintervento.',sconto,sconto_unitario,tipo_sconto FROM co_righe_contratti_materiali WHERE id_riga_contratto = '.$id_record.'  ');
 
-                            //copio  gli articoli dal promemoria all'intervento
+                            // copio  gli articoli dal promemoria all'intervento
                             $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idintervento.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$id_record.'  ');
 
-                            //copio  gli allegati dal promemoria all'intervento
+                            // copio  gli allegati dal promemoria all'intervento
                             $dbo->query('INSERT INTO zz_files (nome,filename,original,category,id_module,id_record) SELECT t.nome, t.filename, t.original, t.category,  '.Modules::get('Interventi')['id'].', '.$idintervento.' FROM zz_files t WHERE t.id_record = '.$id_record.' AND t.id_plugin = '.$id_plugin.'');
 
                             // Decremento la quantità per ogni articolo copiato
@@ -205,24 +196,21 @@ switch (filter('op')) {
                                 }
                             }
 
-                            // $_SESSION['infos'][] = tr('Intervento '.$codice.' pianificato correttamente.');
-
-                            $_SESSION['infos'][] = tr('Interventi pianificati correttamente.');
-                        //fine if pianificazione intervento
-
-                                //}
+                            flash()->info(tr('Interventi pianificati correttamente'));
                         } elseif ($post['pianifica_intervento']) {
-                            $_SESSION['warnings'][] = tr('Esiste già un intervento pianificato per il '.readDate($data_richiesta).'.');
+                            flash()->warning(tr('Esiste già un intervento pianificato per il _DATE_', [
+                                '_DATE_' => Translator::dateToLocale($data_richiesta),
+                            ]));
                         }
                     }
                 }
-                //fine ciclo while
+                // fine ciclo while
             } else {
-                $_SESSION['errors'][] = tr('Nessuna data di conclusione del contratto oppure quest\'ultima è già trascorsa, impossibile pianificare nuovi promemoria.');
+                flash()->error(tr("Nessuna data di conclusione del contratto oppure quest'ultima è già trascorsa, impossibile pianificare nuovi promemoria"));
             }
-            //fine controllo data_conclusione
+            // fine controllo data_conclusione
         } else {
-            $_SESSION['errors'][] = tr('Errore durante la pianificazione.  #'.$id_record);
+            flash()->error(tr('Errore durante la pianificazione'));
         }
     break;
 
@@ -231,13 +219,9 @@ switch (filter('op')) {
     */
 
     case 'editarticolo':
-
         $idriga = post('idriga');
         $idarticolo = post('idarticolo');
         $idimpianto = post('idimpianto');
-        //$idautomezzo = post('idautomezzo');
-
-        //$idarticolo_originale = post('idarticolo_originale');
 
         // Leggo la quantità attuale nell'intervento
         $q = 'SELECT qta, idautomezzo, idimpianto FROM co_righe_contratti_articoli WHERE id='.prepare($idriga);
@@ -248,11 +232,11 @@ switch (filter('op')) {
         // Elimino questo articolo dall'intervento
         $dbo->query('DELETE FROM co_righe_contratti_articoli WHERE id='.prepare($idriga));
 
-    //no break;
+    // no break;
 
     case 'addarticolo':
         $idarticolo = post('idarticolo');
-        //$idautomezzo = post('idautomezzo');
+        // $idautomezzo = post('idautomezzo');
         $descrizione = post('descrizione');
         $idimpianto = post('idimpianto');
         $qta = post('qta');
@@ -269,7 +253,7 @@ switch (filter('op')) {
             'qta' => $qta,
         ]);
 
-        //Calcolo iva
+        // Calcolo iva
         $rs_iva = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare($idiva));
         $desc_iva = $rs_iva[0]['descrizione'];
 
@@ -308,7 +292,7 @@ switch (filter('op')) {
             'qta' => $qta,
         ]);
 
-        //Calcolo iva
+        // Calcolo iva
         $rs_iva = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare($idiva));
         $desc_iva = $rs_iva[0]['descrizione'];
 
@@ -336,7 +320,7 @@ switch (filter('op')) {
             'qta' => $qta,
         ]);
 
-        //Calcolo iva
+        // Calcolo iva
         $rs_iva = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare($idiva));
         $desc_iva = $rs_iva[0]['descrizione'];
 

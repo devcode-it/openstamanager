@@ -260,6 +260,7 @@ ALTER TABLE `co_righe_contratti_materiali` RENAME `co_promemoria_righe`;
 ALTER TABLE `co_righe_contratti_articoli` RENAME `co_promemoria_articoli`;
 ALTER TABLE `co_promemoria_righe` CHANGE `id_riga_contratto` `id_promemoria` int(11) NOT NULL;
 ALTER TABLE `co_promemoria_articoli` CHANGE `id_riga_contratto` `id_promemoria` int(11) NOT NULL;
+UPDATE `zz_widgets` SET `query` = REPLACE(`query`, 'co_contratti_promemoria', 'co_promemoria');
 
 -- Fix nome in zz_files
 ALTER TABLE `zz_files` CHANGE `nome` `name` varchar(255) NOT NULL;

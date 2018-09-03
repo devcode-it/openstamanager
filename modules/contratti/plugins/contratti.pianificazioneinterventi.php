@@ -9,23 +9,21 @@ switch (filter('op')) {
     case 'add-pianifica':
 
         $data_richiesta = filter('data_richiesta');
-		$idtipointervento = filter('idtipointervento');
+        $idtipointervento = filter('idtipointervento');
         $query = 'INSERT INTO `co_contratti_promemoria` ( `idcontratto`, `data_richiesta`, idtipointervento ) VALUES ('.prepare($id_record).', '.prepare($data_richiesta).',  '.prepare($idtipointervento).' )';
 
-		//$are_duplicated = $dbo->fetchNum('SELECT id FROM co_contratti_promemoria WHERE data_richiesta = '.prepare($data_richiesta).' AND idtipointervento = '.prepare($idtipointervento).' AND idcontratto = '.prepare($id_record) );
-		
-		//if (empty($are_duplicated)){
-			if ($dbo->query($query)) {
-				ob_clean();
-				echo $dbo->lastInsertedID();
-				ob_end();
-			
-			} else {
-				$_SESSION['errors'][] = tr("Errore durante l'aggiunta del promemoria!");
-			}
-		//}else{
-				//$_SESSION['warnings'][] = tr('Promemoria non inserito perché  esiste già per questa data e  per questo tipo intervento.');
-		//}
+        //$are_duplicated = $dbo->fetchNum('SELECT id FROM co_contratti_promemoria WHERE data_richiesta = '.prepare($data_richiesta).' AND idtipointervento = '.prepare($idtipointervento).' AND idcontratto = '.prepare($id_record) );
+
+        //if (empty($are_duplicated)){
+            if ($dbo->query($query)) {
+                echo $dbo->lastInsertedID();
+                return;
+            } else {
+                $_SESSION['errors'][] = tr("Errore durante l'aggiunta del promemoria!");
+            }
+        //}else{
+                //$_SESSION['warnings'][] = tr('Promemoria non inserito perché  esiste già per questa data e  per questo tipo intervento.');
+        //}
     break;
 
     case 'edit-pianifica':
@@ -40,13 +38,13 @@ switch (filter('op')) {
         $idimpianti = implode(',', $post['idimpianti']);
 
         $query = 'UPDATE co_contratti_promemoria SET idtipointervento='.prepare($idtipointervento).', data_richiesta='.prepare($data_richiesta).', richiesta='.prepare($richiesta).',  idsede='.prepare($idsede).', idimpianti='.prepare($idimpianti).'   WHERE id = '.prepare($idcontratto_riga);
-		
+
         if (isset($id_record)) {
-			if ($dbo->query($query)) {
-				$_SESSION['infos'][] = tr('Promemoria inserito!');
-			} else {
-				$_SESSION['errors'][] = tr('Errore durante la modifica del promemoria!');
-			}
+            if ($dbo->query($query)) {
+                $_SESSION['infos'][] = tr('Promemoria inserito!');
+            } else {
+                $_SESSION['errors'][] = tr('Errore durante la modifica del promemoria!');
+            }
         }
 
         redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
@@ -87,10 +85,9 @@ switch (filter('op')) {
             $idcontratto_riga = filter('idcontratto_riga');
             $intervallo = filter('intervallo');
             $parti_da_oggi = post('parti_da_oggi');
-			
-			//if principale
+
+            //if principale
             if (!empty($idcontratto_riga) && !empty($intervallo)) {
-				
                 $qp = 'SELECT *, (SELECT idanagrafica FROM co_contratti WHERE id = '.$id_record.' ) AS idanagrafica, (SELECT data_conclusione FROM co_contratti WHERE id = '.$id_record.' ) AS data_conclusione, '.
                 '(SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_contratti_promemoria.idtipointervento) AS tipointervento FROM co_contratti_promemoria '.
                 'WHERE co_contratti_promemoria.id = '.$idcontratto_riga;
@@ -119,26 +116,26 @@ switch (filter('op')) {
 
                 //inizio controllo data_conclusione, data valida e maggiore della $min_date
                 if ((date('Y', strtotime($data_conclusione)) > 1970) && (date('Y-m-d', strtotime($min_date)) <= date('Y-m-d', strtotime($data_conclusione)))) {
-					 
-					 //$_SESSION['errors'][] = '1';
-					 
-					 $i = 0;
+
+                     //$_SESSION['errors'][] = '1';
+
+                    $i = 0;
                     //Ciclo partendo dalla data_richiesta fino all data conclusione del contratto
                     while (date('Y-m-d', strtotime($data_richiesta)) <= date('Y-m-d', strtotime($data_conclusione))) {
-                         //$_SESSION['errors'][] = '2';
-					
-						//calcolo nuova data richiesta, non considero l'intervallo al primo ciclo
+                        //$_SESSION['errors'][] = '2';
+
+                        //calcolo nuova data richiesta, non considero l'intervallo al primo ciclo
                         $data_richiesta = date('Y-m-d', strtotime($data_richiesta.' + '.(($i==0) ? 0 : $intervallo).' days'));
-						$i++;
-							
-						//$_SESSION['errors'][] = 'data_richiesta: '.date('Y-m-d', strtotime($data_richiesta));
-						//$_SESSION['errors'][] = 'data_conclusione: '.date('Y-m-d', strtotime($data_conclusione));
-						//$_SESSION['errors'][] = 'min_date: '.$min_date;
-						
+                        $i++;
+
+                        //$_SESSION['errors'][] = 'data_richiesta: '.date('Y-m-d', strtotime($data_richiesta));
+                        //$_SESSION['errors'][] = 'data_conclusione: '.date('Y-m-d', strtotime($data_conclusione));
+                        //$_SESSION['errors'][] = 'min_date: '.$min_date;
+
                         //controllo nuova data richiesta --> solo  date maggiori o uguali di [oggi o data richiesta iniziale] ma che non superano la data di fine del contratto
                         if ((date('Y-m-d', strtotime($data_richiesta)) >= $min_date) && (date('Y-m-d', strtotime($data_richiesta)) <= date('Y-m-d', strtotime($data_conclusione)))) {
-							
-							//$_SESSION['errors'][] = '3';
+
+                            //$_SESSION['errors'][] = '3';
                             //Controllo che non esista già un promemoria idcontratto, idtipointervento e data_richiesta.
                             if (count($dbo->fetchArray("SELECT id FROM co_contratti_promemoria WHERE data_richiesta = '".$data_richiesta."' AND idtipointervento = '".$idtipointervento."' AND idcontratto = '".$id_record."' ")) == 0) {
                                 //inserisco il nuovo promemoria
@@ -152,119 +149,108 @@ switch (filter('op')) {
 
                                     //copio righe articoli nel nuovo promemoria
                                     $dbo->query('INSERT INTO co_righe_contratti_articoli (idarticolo, id_riga_contratto,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idriga.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
-									
+
                                     $_SESSION['infos'][] = tr('Promemoria intervento pianificato!');
-								}
-							}else{
-								
-								$_SESSION['warnings'][] = tr('Esiste già un promemoria pianificato per il '.readDate($data_richiesta).'.');
-								
-							}
+                                }
+                            } else {
+                                $_SESSION['warnings'][] = tr('Esiste già un promemoria pianificato per il '.readDate($data_richiesta).'.');
+                            }
 
-						   //Controllo che non esista già un intervento collegato a questo promemoria e, se ho spuntato di creare l'intervento, creo già anche quello
+                            //Controllo che non esista già un intervento collegato a questo promemoria e, se ho spuntato di creare l'intervento, creo già anche quello
                             if ((empty($dbo->fetchArray("SELECT idintervento FROM co_contratti_promemoria WHERE id = '".((empty($idriga)) ? $idcontratto_riga : $idriga)."'")[0]['idintervento'])) and ($post['pianifica_intervento'])) {
-													
-								//pianificare anche l' intervento?
-								//if ($post['pianifica_intervento']) {
-									/*$orario_inizio = post('orario_inizio');
-									$orario_fine = post('orario_fine');*/
 
-									//$idanagrafica = 2;
+                                //pianificare anche l' intervento?
+                                //if ($post['pianifica_intervento']) {
+                                /*$orario_inizio = post('orario_inizio');
+                                $orario_fine = post('orario_fine');*/
 
-									//intervento sempre nello stato "In programmazione"
-									$idstatointervento = 'WIP';
+                                //$idanagrafica = 2;
 
-									//calcolo codice intervento
-									$formato = get_var('Formato codice intervento');
-									$template = str_replace('#', '%', $formato);
+                                //intervento sempre nello stato "In programmazione"
+                                $idstatointervento = 'WIP';
 
-									$rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
-									if (!empty($rs[0]['codice']))
-										$codice = Util\Generator::generate($formato, $rs[0]['codice']);
-										
-									if (empty($codice)) {
-										$rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
-										$codice = Util\Generator::generate($formato, $rs[0]['codice']);
-									}
-									
-									
-									// Creo intervento
-									$dbo->insert('in_interventi', [
-												'idanagrafica' => $idanagrafica,
-												'idclientefinale' => post('idclientefinale') ?: 0,
-												'idstatointervento' => $idstatointervento,
-												'idtipointervento' => $idtipointervento,
-												'idsede' => $idsede ?: 0,
-												'idautomezzo' => $idautomezzo ?: 0,
+                                //calcolo codice intervento
+                                $formato = get_var('Formato codice intervento');
+                                $template = str_replace('#', '%', $formato);
 
-												'codice' => $codice,
-												'data_richiesta' => $data_richiesta,
-												'richiesta' => $richiesta,
-											]);
+                                $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
+                                if (!empty($rs[0]['codice'])) {
+                                    $codice = Util\Generator::generate($formato, $rs[0]['codice']);
+                                }
 
-									$idintervento = $dbo->lastInsertedID();
+                                if (empty($codice)) {
+                                    $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
+                                    $codice = Util\Generator::generate($formato, $rs[0]['codice']);
+                                }
 
-									$idtecnici = post('idtecnico');
 
-									//aggiungo i tecnici
-									foreach ($idtecnici as $idtecnico) {
-										add_tecnico($idintervento, $idtecnico, $data_richiesta.' '.post('orario_inizio'), $data_richiesta.' '.post('orario_fine'), $id_record);
-									}
+                                // Creo intervento
+                                $dbo->insert('in_interventi', [
+                                                'idanagrafica' => $idanagrafica,
+                                                'idclientefinale' => post('idclientefinale') ?: 0,
+                                                'idstatointervento' => $idstatointervento,
+                                                'idtipointervento' => $idtipointervento,
+                                                'idsede' => $idsede ?: 0,
+                                                'idautomezzo' => $idautomezzo ?: 0,
 
-									//collego l'intervento ai promemoria
-									$dbo->query('UPDATE co_contratti_promemoria SET idintervento='.prepare($idintervento).' WHERE id='.prepare(((empty($idriga)) ? $idcontratto_riga : $idriga)));
+                                                'codice' => $codice,
+                                                'data_richiesta' => $data_richiesta,
+                                                'richiesta' => $richiesta,
+                                            ]);
 
-									//copio le righe dal promemoria all'intervento
-									$dbo->query('INSERT INTO in_righe_interventi (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,idintervento,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$idintervento.',sconto,sconto_unitario,tipo_sconto FROM co_righe_contratti_materiali WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
+                                $idintervento = $dbo->lastInsertedID();
 
-									//copio  gli articoli dal promemoria all'intervento
-									$dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idintervento.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
-									
-									 //copio  gli allegati dal promemoria all'intervento
-									$dbo->query('INSERT INTO zz_files (nome,filename,original,category,id_module,id_record) SELECT t.nome, t.filename, t.original, t.category,  '.Modules::get('Interventi')['id'].', '.$idintervento.' FROM zz_files t WHERE t.id_record = '.$idcontratto_riga.' AND t.id_plugin = '.$id_plugin.'' );
+                                $idtecnici = post('idtecnico');
 
-									// Decremento la quantità per ogni articolo copiato
-									$rs_articoli = $dbo->fetchArray('SELECT * FROM mg_articoli_interventi WHERE idintervento = '.$idintervento.' ');
-									foreach ($rs_articoli as $rs_articolo) {
-										add_movimento_magazzino($rs_articolo['idarticolo'], -force_decimal($rs_articolo['qta']), ['idautomezzo' => $rs_articolo['idautomezzo'], 'idintervento' => $idintervento]);
-									}
+                                //aggiungo i tecnici
+                                foreach ($idtecnici as $idtecnico) {
+                                    add_tecnico($idintervento, $idtecnico, $data_richiesta.' '.post('orario_inizio'), $data_richiesta.' '.post('orario_fine'), $id_record);
+                                }
 
-									// Collego gli impianti del promemoria all' intervento appena inserito
-									if (!empty($idimpianti)){
-										$rs_idimpianti = explode(',', $idimpianti);
-										foreach ($rs_idimpianti as $idimpianto) {
-											$dbo->query('INSERT INTO my_impianti_interventi (idintervento, idimpianto) VALUES ('.$idintervento.', '.prepare($idimpianto).' )');
-										}
-									}
+                                //collego l'intervento ai promemoria
+                                $dbo->query('UPDATE co_contratti_promemoria SET idintervento='.prepare($idintervento).' WHERE id='.prepare(((empty($idriga)) ? $idcontratto_riga : $idriga)));
 
-									// $_SESSION['infos'][] = tr('Intervento '.$codice.' pianificato correttamente.');
+                                //copio le righe dal promemoria all'intervento
+                                $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,idintervento,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$idintervento.',sconto,sconto_unitario,tipo_sconto FROM co_righe_contratti_materiali WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
 
-									$_SESSION['infos'][] = tr('Interventi pianificati correttamente.');
-									 //fine if pianificazione intervento
-									
-									//}
-									
-									}else if ($post['pianifica_intervento']) {
-										
-											$_SESSION['warnings'][] = tr('Esiste già un intervento pianificato per il '.readDate($data_richiesta).'.');
-											
-									}
-								
-				
-								
-								} 
-								 //fine controllo nuova data richiesta
-                            
-							
-							/*}else {
+                                //copio  gli articoli dal promemoria all'intervento
+                                $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idintervento.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.$idcontratto_riga.'  ');
+
+                                //copio  gli allegati dal promemoria all'intervento
+                                $dbo->query('INSERT INTO zz_files (nome,filename,original,category,id_module,id_record) SELECT t.nome, t.filename, t.original, t.category,  '.Modules::get('Interventi')['id'].', '.$idintervento.' FROM zz_files t WHERE t.id_record = '.$idcontratto_riga.' AND t.id_plugin = '.$id_plugin.'');
+
+                                // Decremento la quantità per ogni articolo copiato
+                                $rs_articoli = $dbo->fetchArray('SELECT * FROM mg_articoli_interventi WHERE idintervento = '.$idintervento.' ');
+                                foreach ($rs_articoli as $rs_articolo) {
+                                    add_movimento_magazzino($rs_articolo['idarticolo'], -force_decimal($rs_articolo['qta']), ['idautomezzo' => $rs_articolo['idautomezzo'], 'idintervento' => $idintervento]);
+                                }
+
+                                // Collego gli impianti del promemoria all' intervento appena inserito
+                                if (!empty($idimpianti)) {
+                                    $rs_idimpianti = explode(',', $idimpianti);
+                                    foreach ($rs_idimpianti as $idimpianto) {
+                                        $dbo->query('INSERT INTO my_impianti_interventi (idintervento, idimpianto) VALUES ('.$idintervento.', '.prepare($idimpianto).' )');
+                                    }
+                                }
+
+                                // $_SESSION['infos'][] = tr('Intervento '.$codice.' pianificato correttamente.');
+
+                                $_SESSION['infos'][] = tr('Interventi pianificati correttamente.');
+                            //fine if pianificazione intervento
+
+                                    //}
+                            } elseif ($post['pianifica_intervento']) {
+                                $_SESSION['warnings'][] = tr('Esiste già un intervento pianificato per il '.readDate($data_richiesta).'.');
+                            }
+                        }
+                        //fine controllo nuova data richiesta
+
+
+                            /*}else {
                                     $_SESSION['errors'][] = tr('Errore durante esecuzione query di pianificazione.  #'.$idcontratto_riga);
                                 }*/
-								
-						
-                        }
-					   //fine ciclo while
-            
-                
+                    }
+                    //fine ciclo while
                 } else {
                     $_SESSION['errors'][] = tr('Nessuna data di conclusione del contratto oppure quest\'ultima è già trascorsa, impossibile pianificare nuovi promemoria.');
                 }
@@ -272,7 +258,7 @@ switch (filter('op')) {
             } else {
                 $_SESSION['errors'][] = tr('Errore durante la pianificazione.  #'.$idcontratto_riga);
             }
-			//fine if principale
+            //fine if principale
 
             redirect($rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'#tab_'.$id_plugin);
     break;
@@ -338,11 +324,11 @@ if (count($rsp) != 0) {
             ]));
 
             $disabled = 'disabled';
-			$title =  'Per eliminare il promemoria, eliminare prima l\'intervento associato.';
+            $title =  'Per eliminare il promemoria, eliminare prima l\'intervento associato.';
         } else {
             $info_intervento = '- '.('Nessuno').' -';
             $disabled = '';
-			$title =  'Elimina promemoria...';
+            $title =  'Elimina promemoria...';
         }
 
         //data_conclusione contratto
@@ -363,8 +349,8 @@ if (count($rsp) != 0) {
                 }
             }
         }
-		
-		//info materiali/articoli
+
+        //info materiali/articoli
         $rsp4 = $dbo->fetchArray('SELECT id, descrizione,qta,um,prezzo_vendita, \'\' AS idarticolo FROM co_righe_contratti_materiali WHERE id_riga_contratto = '.prepare($rsp[$i]['id']).'
 		UNION SELECT id, descrizione,qta,um,prezzo_vendita, idarticolo FROM co_righe_contratti_articoli WHERE id_riga_contratto = '.prepare($rsp[$i]['id']));
 
@@ -379,9 +365,9 @@ if (count($rsp) != 0) {
                 ]).'<br>';
             }
         }
-		
-		//info allegati
-		$rsp5 = $dbo->fetchArray('SELECT nome, original  FROM zz_files WHERE id_record = '.prepare($rsp[$i]['id']).' AND id_plugin = '.$id_plugin);
+
+        //info allegati
+        $rsp5 = $dbo->fetchArray('SELECT nome, original  FROM zz_files WHERE id_record = '.prepare($rsp[$i]['id']).' AND id_plugin = '.$id_plugin);
 
         $info_allegati = '';
         if (!empty($rsp5)) {
@@ -392,8 +378,8 @@ if (count($rsp) != 0) {
                 ]).'<br>';
             }
         }
-		
-		
+
+
         echo '
                 <tr>
                     <td>'.Translator::dateToLocale($rsp[$i]['data_richiesta']).'<!--br><small>'.Translator::dateToLocale($records[0]['data_conclusione']).'</small--></td>
@@ -491,11 +477,11 @@ $inputOptions = $dbo->fetchArray('SELECT GROUP_CONCAT(CONCAT(\'"\', idtipointerv
 ?>
 
 <script type="text/javascript">
-	
+
 	function askTipoIntervento () {
-		
+
 		 swal({
-				
+
 				title: '<?php echo tr('Aggiungere un nuovo promemoria?'); ?>',
 				type: "info",
 				showCancelButton: true,
@@ -507,7 +493,7 @@ $inputOptions = $dbo->fetchArray('SELECT GROUP_CONCAT(CONCAT(\'"\', idtipointerv
 				inputValidator: (value) => {
 					return new Promise((resolve) => {
 						if (value === '') {
-							
+
 							alert ('Seleziona un tipo intervento');
 							$('.swal2-select').attr('disabled', false);
 							$('.swal2-confirm').attr('disabled', false);
@@ -518,8 +504,8 @@ $inputOptions = $dbo->fetchArray('SELECT GROUP_CONCAT(CONCAT(\'"\', idtipointerv
 						}
 					})
 				}
-			
-			
+
+
 
 			}).then(
 				function (result) {
@@ -527,9 +513,9 @@ $inputOptions = $dbo->fetchArray('SELECT GROUP_CONCAT(CONCAT(\'"\', idtipointerv
 					$("#add_promemoria").html("<i class='fa fa-spinner fa-pulse  fa-fw'></i> <?php echo tr('Attendere...'); ?>");
 					$("#add_promemoria").prop('disabled', true);
 
-					$.post( "<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get('Contratti')['id']; ?>&id_record=<?php echo $id_record; ?>", { backto: "record-edit", op: "add-pianifica", data_richiesta: '<?php echo date('Y-m-d'); ?>', idtipointervento: $('.swal2-select').val() })
+					$.post( "<?php echo $rootdir; ?>/actions.php?id_module=<?php echo Modules::get('Contratti')['id']; ?>&id_plugin=<?php echo $id_plugin; ?>&id_record=<?php echo $id_record; ?>", { backto: "record-edit", op: "add-pianifica", data_richiesta: '<?php echo date('Y-m-d'); ?>', idtipointervento: $('.swal2-select').val() })
 					  .done(function( data ) {
-					
+
 						launch_modal('Nuovo promemoria', '<?php echo $rootdir; ?>/modules/contratti/plugins/addpianficazione.php?id_module=<?php echo Modules::get('Contratti')['id']; ?>&id_plugin=<?php echo Plugins::get('Pianificazione interventi')['id']; ?>&ref=interventi_contratti&id_record=<?php echo $id_record; ?>&idcontratto_riga='+data+'', 1, '#bs-popup');
 
 						$("#add_promemoria").html(prev_html);
@@ -539,12 +525,12 @@ $inputOptions = $dbo->fetchArray('SELECT GROUP_CONCAT(CONCAT(\'"\', idtipointerv
 				},
 				function (dismiss) {}
 			);
-		
-	
-		
+
+
+
 		}
-		
-		
+
+
 	$( "#add_promemoria" ).click(function() {
 
 		askTipoIntervento();

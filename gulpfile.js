@@ -292,11 +292,13 @@ gulp.task('release', function () {
             'files/**',
             'logs/**',
             'config.inc.php',
-            '*.lock',
-            '*.phar',
+            '**/*.lock',
+            '**/*.phar',
             '**/*.log',
             '**/*.zip',
             '**/*.bak',
+            '**/*.jar',
+            '**/*.txt',
             '**/~*',
         ]
     });

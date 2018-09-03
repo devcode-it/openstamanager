@@ -10,6 +10,10 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
     - [Deprecato (Deprecated)](#deprecato-deprecated)
     - [Rimosso (Removed)](#rimosso-removed)
     - [Sicurezza (Security)](#sicurezza-security)
+- [2.4.1 (2018-08-01)](#241-2018-08-01)
+    - [Aggiunto (Added)](#aggiunto-added)
+    - [Modificato (Changed)](#modificato-changed)
+    - [Fixed](#fixed)
 - [2.4 (2018-03-30)](#24-2018-03-30)
     - [Aggiunto (Added)](#aggiunto-added)
     - [Modificato (Changed)](#modificato-changed)
@@ -68,6 +72,55 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
 - Abilitata protezione contro attacchi CSRF
 
+## 2.4.1 (2018-08-01)
+
+### Aggiunto (Added)
+ - Supporto alla generazione PDF/A
+ - Gestione di Note di accredito e di addebito per le Fatture
+ - Salvataggio AJAX delle righe in Fatture
+ - Cambio automatico dello stato dei documenti
+ - Nomi per i filtri di accesso ai moduli
+ - Anteprime degli upload (per immagini e PDF)
+ - Validazione di indirizzi email e codici fiscali
+ - Test della connessione al server email
+ - Widget *Attività da pianificare* per individuare le attività senza tecnici
+ - Esportazione tabelle in PDF ed Excel (impostazione *Abilita esportazione Excel e PDF*)
+ - Stampa dedicata al calendario attività in **Dashboard**
+ - Operazioni rapide su **Anagrafiche** di tipo *Cliente*
+ - Campi aggiuntivi nella creazione di nuove **Anagrafiche**
+ - Possibilità di specificare tempi standard per *Tipologia di intervento*
+ - Seriali nella stampa **Interventi**
+ - Quantità calcolata tramite movimenti in data attuale per **Articoli**
+ - Movimenti manuali con causale degli **Articoli**
+
+### Modificato (Changed)
+ - Miglioramento della gestione di installazione/aggiornamento
+    - Migliorata la procedura per i moduli (esempi: https://github.com/devcode-it/example)
+    - Aggiunto supporto all'installazione dei plugin (esempio: https://github.com/devcode-it/example/tree/master/sedi)
+    - Aggiunto supporto a file ZIP con vari moduli/plugin (installazione in ordine alfabetico)
+ - Miglioramento dei pre-requisiti di installazione
+ - Gestione degli upload tramite AJAX
+ - Gestione del logo per le stampe come un allegato
+ - Gestione delle immagini di **Articoli** e **Impianti** come allegati
+ - Miglioramento del plugin *Pianificazione interventi* in **Contratti**
+ - Miglioramento della ritenuta d'acconto (calcolo impostabile su Imponibile o Rivalsa INPS)
+ - Ripristinati plugin *Pianificazione fatturazione* e widget *Rate contrattuali*
+ - Miglioramento della tabella dei *Costi Totali* in **Interventi**
+ - Collegamento ad un'anagrafica obbligatorio per i nuovi utenti
+ - Ridenominazione delle tabelle `co_righe_contratti` e `co_righe2_contratti` in `co_contratti_promemoria` e `co_righe_contratti`
+ - I movimenti articoli utilizzano la data del documento relativo
+ - I chilometri del cliente vengono riportati nell'intervento
+ - I tecnici possono aggiungere **Interventi** solo a loro nome
+
+### Fixed
+ - Correzione dei link alle stampe sulle tabelle dei moduli
+ - Correzione della scontistica per la stampa **Interventi**
+ - Correzione degli arrotondamenti su IVA e imponibili nei documenti
+ - Correzione del budget dei **Contratti**
+ - Correzione della scadenza "Data fattura fine mese"
+ - Correzione del plugin *Statistiche* in **Anagrafiche**
+ - Correzione del widget *Debiti verso fornitori*
+ - Correzioni minori
 
 ## 2.4 (2018-03-30)
 

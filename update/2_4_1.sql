@@ -487,3 +487,9 @@ UPDATE `zz_views` SET `query` = '\'Intervento\'' WHERE `id_module` = (SELECT `id
 
 -- Flag per definire i segmenti di note di accredito e di addebito
 ALTER TABLE `zz_segments` ADD `predefined_accredito` TINYINT(1) NOT NULL AFTER `predefined`, ADD `predefined_addebito` TINYINT(1) NOT NULL AFTER `predefined_accredito`;
+
+-- Fattura di vendita senza intestazione (per carta intestata)
+INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `main`, `default`, `enabled`) VALUES
+(NULL, (SELECT id FROM zz_modules WHERE name='Fatture di vendita'), 1, 'Fattura di vendita (senza intestazione)', 'Fattura di vendita (senza intestazione)', 'fatture', 'iddocumento', '{"hide_header":true, "hide_footer":true}', 'fa fa-print', '', '', 0, 0, 1, 1);
+UPDATE `zz_prints` SET `main` = '1' WHERE `name` = 'Fattura di vendita';
+

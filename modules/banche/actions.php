@@ -4,7 +4,6 @@ include_once __DIR__.'/../../core.php';
 
 switch (filter('op')) {
     case 'update':
-
         $nome = filter('nome');
 
         if (isset($nome)) {
@@ -51,7 +50,7 @@ switch (filter('op')) {
     case 'delete':
 
        $documenti = $dbo->fetchNum('SELECT idanagrafica FROM an_anagrafiche WHERE idbanca_vendite='.prepare($id_record).'
-									UNION SELECT idanagrafica FROM an_anagrafiche WHERE idbanca_acquisti='.prepare($id_record));
+		UNION SELECT idanagrafica FROM an_anagrafiche WHERE idbanca_acquisti='.prepare($id_record));
 
         if (isset($id_record) && empty($documenti)) {
             $dbo->query('DELETE FROM `co_banche` WHERE `id`='.prepare($id_record));

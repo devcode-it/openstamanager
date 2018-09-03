@@ -10,7 +10,7 @@ switch (post('op')) {
         $totale_n_ddt = 0;
 
         // Informazioni della fattura
-        if( $dir == 'entrata' ){
+        if ($dir == 'entrata') {
             $tipo_documento = $dbo->selectOne('co_tipidocumento', 'id', ['descrizione' => 'Fattura immediata di vendita'])['id'];
             $module_name = 'Fatture di vendita';
             $idconto = setting('Conto predefinito fatture di vendita');
@@ -29,7 +29,7 @@ switch (post('op')) {
             $segments = Modules::getSegments($id_fatture);
             $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
         }
-        $id_segment = $_SESSION['m'.$id_fatture]['id_segment'];
+        $id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
 
         // Lettura righe selezionate
         foreach ($id_records as $id) {

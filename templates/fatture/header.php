@@ -1,10 +1,22 @@
 <?php
 
+if ($options['hide_header']) {
+	echo '
+	<!-- Intestazione vuota fornitore -->
+	<div class="row" style="height:111px;">
+		<div class="col-xs-6">
+		</div>
+		<div class="col-xs-6 text-right">
+		</div>
+	</div>';
+}else{
+	echo '
+	<!-- Intestazione fornitore -->
+	$default_header$';
+}
+	
 echo '
-<!-- Intestazione fornitore -->
-$default_header$
 <br>
-
 <div class="row">
     <!-- Dati Fattura -->
     <div class="col-xs-6">

@@ -402,29 +402,37 @@ class App
      *
      * @return string
      */
-    public static function replacePlaceholder($query, $custom = null)
+    public static function replacePlaceholder($query)
     {
         $id_module = filter('id_module');
+        $id_parent = filter('id_parent');
         $user = Auth::user();
 
-        // Sostituzione degli identificatori
-        $id = empty($custom) ? $user['idanagrafica'] : $custom;
-        $query = str_replace(['|idagente|', '|idtecnico|', '|idanagrafica|'], prepare($id), $query);
+        $segment = !empty($_SESSION['module_'.$id_module]['id_segment']);
 
-        // Sostituzione delle date
-        $query = str_replace(['|period_start|', '|period_end|'], [$_SESSION['period_start'], $_SESSION['period_end']], $query);
+        // Elenco delle sostituzioni
+        $replace = [
+            // Identificatori
+            '|id_anagrafica|' => prepare($user['idanagrafica']),
+            '|id_utente|' => prepare($user['id']),
+            '|id_parent|' => prepare($id_parent),
 
-        // Sostituzione dei segmenti
-        $query = str_replace('|segment|', !empty($_SESSION['module_'.$id_module]['id_segment']) ? ' AND id_segment = '.prepare($_SESSION['module_'.$id_module]['id_segment']) : '', $query);
+            // Date
+            '|period_start|' => $_SESSION['period_start'],
+            '|period_end|' => $_SESSION['period_end'],
+
+            // Segmenti
+            '|segment|' => !empty($segment) ? ' AND id_segment = '.prepare($segment) : '',
+        ];
 
         // Sostituzione dei formati
         $patterns = formatter()->getSQLPatterns();
 
-        $replace = [];
         foreach ($patterns as $key => $value) {
             $replace['|'.$key.'_format|'] = "'".$value."'";
         }
 
+        // Sostituzione effettiva
         $query = replace($query, $replace);
 
         return $query;

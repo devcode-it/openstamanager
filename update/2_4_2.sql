@@ -265,3 +265,23 @@ UPDATE `zz_widgets` SET `query` = REPLACE(`query`, 'co_contratti_promemoria', 'c
 -- Fix nome in zz_files
 ALTER TABLE `zz_files` CHANGE `nome` `name` varchar(255) NOT NULL;
 UPDATE `zz_files` SET `id_module` = NULL WHERE `id_plugin` IS NOT NULL;
+
+-- Adeguamento variabili di filtraggio
+UPDATE `zz_modules` SET `options` = REPLACE(`options`, '|idanagrafica|', '|id_anagrafica|'), `options2` = REPLACE(`options2`, '|idanagrafica|', '|id_anagrafica|');
+UPDATE `zz_plugins` SET `options` = REPLACE(`options`, '|idanagrafica|', '|id_anagrafica|'), `options2` = REPLACE(`options2`, '|idanagrafica|', '|id_anagrafica|');
+UPDATE `zz_widgets` SET `query` = REPLACE(`query`, '|idanagrafica|', '|id_anagrafica|');
+UPDATE `zz_group_module` SET `clause` = REPLACE(`clause`, '|idanagrafica|', '|id_anagrafica|');
+
+UPDATE `zz_modules` SET `options` = REPLACE(`options`, '|idtecnico|', '|id_anagrafica|'), `options2` = REPLACE(`options2`, '|idtecnico|', '|id_anagrafica|');
+UPDATE `zz_plugins` SET `options` = REPLACE(`options`, '|idtecnico|', '|id_anagrafica|'), `options2` = REPLACE(`options2`, '|idtecnico|', '|id_anagrafica|');
+UPDATE `zz_widgets` SET `query` = REPLACE(`query`, '|idtecnico|', '|id_anagrafica|');
+UPDATE `zz_group_module` SET `clause` = REPLACE(`clause`, '|idtecnico|', '|id_anagrafica|');
+
+UPDATE `zz_modules` SET `options` = REPLACE(`options`, '|idagente|', '|id_anagrafica|'), `options2` = REPLACE(`options2`, '|idagente|', '|id_anagrafica|');
+UPDATE `zz_plugins` SET `options` = REPLACE(`options`, '|idagente|', '|id_anagrafica|'), `options2` = REPLACE(`options2`, '|idagente|', '|id_anagrafica|');
+UPDATE `zz_widgets` SET `query` = REPLACE(`query`, '|idagente|', '|id_anagrafica|');
+UPDATE `zz_group_module` SET `clause` = REPLACE(`clause`, '|idagente|', '|id_anagrafica|');
+
+-- Adeguamento variabili di filtraggio per i plugin Sedi e Referenti in Anagrafiche
+UPDATE `zz_plugins` SET `script` = '', `options` = '	{ "main_query": [	{	"type": "table", "fields": "Nome, Indirizzo, Città, CAP, Provincia, Referente", "query": "SELECT an_sedi.id, an_sedi.nomesede AS Nome, an_sedi.indirizzo AS Indirizzo, an_sedi.citta AS Città, an_sedi.cap AS CAP, an_sedi.provincia AS Provincia, an_referenti.nome AS Referente FROM an_sedi LEFT OUTER JOIN an_referenti ON idsede = an_sedi.id WHERE 1=1 AND an_sedi.idanagrafica=|id_parent| HAVING 2=2 ORDER BY an_sedi.id DESC"}	]}', `directory` = 'sedi', `version` = '2.3', `compatibility` = '2.*' WHERE `name` = 'Sedi';
+UPDATE `zz_plugins` SET `script` = '', `options` = '	{ "main_query": [	{	"type": "table", "fields": "Nominativo, Mansione, Telefono, Indirizzo email, Sede",	"query": "SELECT an_referenti.id, an_referenti.nome AS Nominativo, mansione AS Mansione, an_referenti.telefono AS Telefono, an_referenti.email AS ''Indirizzo email'', an_sedi.nomesede AS Sede FROM an_referenti LEFT OUTER JOIN an_sedi ON idsede = an_sedi.id WHERE 1=1 AND an_referenti.idanagrafica=|id_parent| HAVING 2=2 ORDER BY an_referenti.id DESC"}	]}', `directory` = 'referenti', `version` = '2.3', `compatibility` = '2.*' WHERE `name` = 'Referenti';

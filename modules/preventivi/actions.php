@@ -143,9 +143,9 @@ switch (post('op')) {
             $costo_km = $rs[0]['prezzo_km_unitario'];
             $costo_orario = $rs[0]['prezzo_ore_unitario'];
 
-            $query = 'INSERT INTO co_preventivi_interventi(idpreventivo, idintervento) VALUES('.prepare($id_record).', '.prepare($idintervento).')';
-
-            $dbo->query($query);
+            $dbo->update('in_interventi', [
+                'id_preventivo' => $id_record,
+            ], ['id' => $idintervento]);
 
             // Imposto il preventivo nello stato "In lavorazione" se inizio ad aggiungere interventi
             $dbo->query("UPDATE `co_preventivi` SET idstato=(SELECT `id` FROM `co_statipreventivi` WHERE `descrizione`='In lavorazione') WHERE `id`=".prepare($id_record));
@@ -180,8 +180,9 @@ switch (post('op')) {
         if (isset($_GET['idpreventivo']) && isset($_GET['idintervento'])) {
             $idintervento = get('idintervento');
 
-            $query = 'DELETE FROM `co_preventivi_interventi` WHERE idpreventivo='.prepare($id_record).' AND idintervento='.prepare($idintervento);
-            $dbo->query($query);
+            $dbo->update('in_interventi', [
+                'id_preventivo' => null,
+            ], ['id' => $idintervento]);
 
             flash()->info(tr('Intervento _NUM_ rimosso!', [
                 '_NUM_' => $idintervento,
@@ -192,7 +193,10 @@ switch (post('op')) {
     // eliminazione preventivo
     case 'delete':
         $dbo->query('DELETE FROM co_preventivi WHERE id='.prepare($id_record));
-        $dbo->query('DELETE FROM co_preventivi_interventi WHERE idpreventivo='.prepare($id_record));
+
+        $dbo->update('in_interventi', [
+            'id_preventivo' => null,
+        ], ['id_preventivo' => $id_record]);
 
         flash()->info(tr('Preventivo eliminato!'));
 

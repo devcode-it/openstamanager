@@ -586,7 +586,7 @@ switch (post('op')) {
             $rs2 = $dbo->fetchArray($query2);
 
             for ($j = 0; $j < sizeof($rs2); ++$j) {
-                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id IN (SELECT idintervento FROM co_preventivi_interventi WHERE idpreventivo=".prepare($rs2[$j]['idpreventivo']).')');
+                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id_preventivo=".prepare($rs2[$j]['idpreventivo']));
             }
 
             flash()->info(tr('Preventivo _NUM_ aggiunto!', [
@@ -974,7 +974,9 @@ switch (post('op')) {
 
                     // Aggiornamento seriali dalla riga dell'ordine
                     $serials = is_array(post('serial')[$i]) ? post('serial')[$i] : [];
-                    $serials = array_filter($serials, function ($value) { return !empty($value); });
+                    $serials = array_filter($serials, function ($value) {
+                        return !empty($value);
+                    });
 
                     $dbo->sync('mg_prodotti', ['id_riga_documento' => $idriga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => $serials]);
                 }
@@ -1055,7 +1057,9 @@ switch (post('op')) {
 
                     // Aggiornamento seriali dalla riga dell'ordine
                     $serials = is_array(post('serial')[$i]) ? post('serial')[$i] : [];
-                    $serials = array_filter($serials, function ($value) { return !empty($value); });
+                    $serials = array_filter($serials, function ($value) {
+                        return !empty($value);
+                    });
 
                     $dbo->sync('mg_prodotti', ['id_riga_documento' => $riga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => $serials]);
 
@@ -1279,16 +1283,16 @@ switch (post('op')) {
                     $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='In lavorazione') WHERE id=".prepare($rsp[$i]['idpreventivo']));
 
                     // Aggiorno anche lo stato degli interventi collegati ai preventivi
-                    $dbo->query("UPDATE in_interventi SET idstatointervento='OK' WHERE id IN (SELECT idintervento FROM co_preventivi_interventi WHERE idpreventivo=".prepare($rsp[$i]['idpreventivo']).')');
+                    $dbo->query("UPDATE in_interventi SET idstatointervento='OK' WHERE id_preventivo=".prepare($rsp[$i]['idpreventivo']));
                 }
 
                 /*
                     Rimuovo tutti gli articoli dalla fattura collegati agli interventi di questo preventivo
                 */
-                $rs2 = $dbo->fetchArray('SELECT idintervento FROM co_preventivi_interventi WHERE  idpreventivo != 0 AND idpreventivo='.prepare($idpreventivo));
+                $rs2 = $dbo->fetchArray('SELECT id FROM in_interventi WHERE id_preventivo = '.prepare($idpreventivo));
                 for ($i = 0; $i < sizeof($rs2); ++$i) {
                     // Leggo gli articoli usati in questo intervento
-                    $rs3 = $dbo->fetchArray('SELECT idarticolo FROM mg_articoli_interventi WHERE idintervento='.prepare($rs2[$i]['idintervento']));
+                    $rs3 = $dbo->fetchArray('SELECT idarticolo FROM mg_articoli_interventi WHERE idintervento='.prepare($rs2[$i]['id']));
                     for ($j = 0; $j < sizeof($rs3); ++$j) {
                         // Leggo l'id della riga in fattura di questo articolo
                         $rs4 = $dbo->fetchArray('SELECT id FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idarticolo='.prepare($rs3[$j]['idarticolo']));
@@ -1541,7 +1545,9 @@ switch (post('op')) {
 
                     // Aggiornamento seriali dalla riga dell'ordine
                     $serials = is_array(post('serial')[$i]) ? post('serial')[$i] : [];
-                    $serials = array_filter($serials, function ($value) { return !empty($value); });
+                    $serials = array_filter($serials, function ($value) {
+                        return !empty($value);
+                    });
 
                     $dbo->sync('mg_prodotti', ['id_riga_documento' => $riga, 'dir' => 'uscita', 'id_articolo' => $idarticolo], ['serial' => $serials]);
                     $dbo->detach('mg_prodotti', ['id_riga_documento' => $idriga, 'dir' => 'entrata', 'id_articolo' => $idarticolo], ['serial' => $serials]);

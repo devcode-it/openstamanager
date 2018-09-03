@@ -21,18 +21,6 @@ switch (post('op')) {
         $idsede = post('idsede');
 
         /*
-            Collegamento intervento a preventivo (se impostato)
-        */
-        // Elimino il collegamento attuale
-        $dbo->query('DELETE FROM co_preventivi_interventi WHERE idintervento='.prepare($id_record));
-        if (!empty($idpreventivo)) {
-            $dbo->insert('co_preventivi_interventi', [
-                'idintervento' => $id_record,
-                'idpreventivo' => $idpreventivo,
-            ]);
-        }
-
-        /*
         Collegamento intervento a contratto (se impostato).
         Oltre al collegamento al contratto, l'intervento è collegato ad una riga di pianificazione, perciò è importante considerarla se è impostata
         */
@@ -194,6 +182,7 @@ switch (post('op')) {
             'idstatointervento' => post('idstatointervento'),
             'idsede' => $idsede,
             'idautomezzo' => post('idautomezzo'),
+            'id_preventivo' => $idpreventivo,
 
             'sconto_globale' => $sconto,
             'tipo_sconto_globale' => $tipo_sconto,
@@ -236,6 +225,7 @@ switch (post('op')) {
                 'idtipointervento' => $idtipointervento,
                 'idsede' => $idsede ?: 0,
                 'idautomezzo' => $idautomezzo ?: 0,
+                'id_preventivo' => $idpreventivo,
 
                 'codice' => $codice,
                 'data_richiesta' => $data_richiesta,
@@ -245,14 +235,6 @@ switch (post('op')) {
             $id_record = $dbo->lastInsertedID();
 
             flash()->info(tr('Aggiunto nuovo intervento!'));
-        }
-
-        // Collego l'intervento al preventivo
-        if (!empty($idpreventivo)) {
-            $dbo->insert('co_preventivi_interventi', [
-                'idintervento' => $id_record,
-                'idpreventivo' => $idpreventivo,
-            ]);
         }
 
         // Collego l'intervento al contratto
@@ -386,10 +368,6 @@ switch (post('op')) {
 
         // Eliminazione associazione tecnici collegati all'intervento
         $query = 'DELETE FROM in_interventi_tecnici WHERE idintervento='.prepare($id_record);
-        $dbo->query($query);
-
-        // Eliminazione associazioni tra interventi e preventivi
-        $query = 'DELETE FROM co_preventivi_interventi WHERE idintervento='.prepare($id_record);
         $dbo->query($query);
 
         // Eliminazione righe aggiuntive dell'intervento

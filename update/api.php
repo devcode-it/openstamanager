@@ -31,7 +31,6 @@ $tables = [
     'co_pianodeiconti2',
     'co_pianodeiconti3',
     'co_preventivi',
-    'co_preventivi_interventi',
     'co_righe_contratti',
     'co_promemoria_articoli',
     'co_promemoria_righe',

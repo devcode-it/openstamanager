@@ -130,7 +130,7 @@ switch (post('op')) {
             } elseif ($rs[0]['descrizione'] == 'Emessa') {
                 elimina_scadenza($id_record);
                 elimina_movimento($id_record, 0);
-            } elseif (($rs[0]['descrizione'] == 'Pagato' or $rs[0]['descrizione'] == 'Parzialmente pagato') and  ($dbo->fetchNum("SELECT id  FROM co_scadenziario WHERE iddocumento = ".prepare($id_record)) == 0)) {
+            } elseif (($rs[0]['descrizione'] == 'Pagato' or $rs[0]['descrizione'] == 'Parzialmente pagato') and ($dbo->fetchNum('SELECT id  FROM co_scadenziario WHERE iddocumento = '.prepare($id_record)) == 0)) {
                 // aggiungo la scadenza come già pagata
                 aggiungi_scadenza($id_record, $pagamento, 1);
                 aggiungi_movimento($id_record, $dir);
@@ -1145,7 +1145,7 @@ switch (post('op')) {
                 }
 
                 // Riporto a magazzino gli articoli nelle righe del contratto
-                $rsa = $dbo->fetchArray("SELECT idarticolo, qta FROM co_righe_contratti WHERE idcontratto=".prepare($idcontratto));
+                $rsa = $dbo->fetchArray('SELECT idarticolo, qta FROM co_righe_contratti WHERE idcontratto='.prepare($idcontratto));
                 for ($i = 0; $i < sizeof($rsa); ++$i) {
                     if (!empty($rsa[$i]['idarticolo'])) {
                         add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_record]);

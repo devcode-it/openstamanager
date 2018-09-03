@@ -39,7 +39,7 @@ function elimina_scadenza($iddocumento)
  * Funzione per ricalcolare lo scadenzario di una determinata fattura
  * $iddocumento	string		E' l'id del documento di cui ricalcolare lo scadenzario
  * $pagamento		string		Nome del tipo di pagamento. Se è vuoto lo leggo da co_pagamenti_documenti, perché significa che devo solo aggiornare gli importi.
- * $pagato boolean Indica se devo segnare l'importo come pagato
+ * $pagato boolean Indica se devo segnare l'importo come pagato.
  */
 function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = 0)
 {
@@ -122,28 +122,26 @@ function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = 0)
 
         $dbo->query('INSERT INTO co_scadenziario(iddocumento, data_emissione, scadenza, da_pagare, pagato, tipo) VALUES('.prepare($iddocumento).', '.prepare($data).', '.prepare($scadenza).', '.prepare($da_pagare).", 0, 'fattura')");
 
-		if ($pagato){
-		   $id_scadenza = $dbo->lastInsertedID();
-		    $dbo->update('co_scadenziario', [
+        if ($pagato) {
+            $id_scadenza = $dbo->lastInsertedID();
+            $dbo->update('co_scadenziario', [
                 'pagato' => $da_pagare,
-				'data_pagamento' => $data,
+                'data_pagamento' => $data,
             ], ['id' => $id_scadenza]);
-		}
-
+        }
     }
 
     // Se c'è una ritenuta d'acconto, la aggiungo allo scadenzario
     if ($dir == 'uscita' && $ritenutaacconto > 0) {
         $dbo->query('INSERT INTO co_scadenziario(iddocumento, data_emissione, scadenza, da_pagare, pagato, tipo) VALUES('.prepare($iddocumento).', '.prepare($data).', '.prepare(date('Y-m', strtotime($data.' +1 month')).'-15').', '.prepare(-$ritenutaacconto).", 0, 'ritenutaacconto')");
 
-		if ($pagato){
-		   $id_scadenza = $dbo->lastInsertedID();
-		    $dbo->update('co_scadenziario', [
+        if ($pagato) {
+            $id_scadenza = $dbo->lastInsertedID();
+            $dbo->update('co_scadenziario', [
                 'pagato' => -$ritenutaacconto,
-				'data_pagamento' => $data,
+                'data_pagamento' => $data,
             ], ['id' => $id_scadenza]);
-		}
-
+        }
     }
 
     return true;

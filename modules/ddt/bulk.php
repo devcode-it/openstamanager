@@ -160,7 +160,7 @@ $operations = [
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,
         ],
-    ]
+    ],
 ];
 
 return $operations;

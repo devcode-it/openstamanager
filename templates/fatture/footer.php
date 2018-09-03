@@ -382,12 +382,8 @@ echo '
     </tr>
 </table>';
 
-
-
-
 if ($options['hide_footer']) {
-	
-	echo '
+    echo '
 	<table style="color:#aaa; font-size:10px;">
 	<tr>
 		<td align="left" style="width:97mm; height:5mm;">
@@ -398,8 +394,6 @@ if ($options['hide_footer']) {
 		</td>
 	</tr>
 	</table>';
-
-}
-else{
-	echo '$default_footer$';
+} else {
+    echo '$default_footer$';
 }

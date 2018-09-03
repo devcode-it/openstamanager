@@ -113,10 +113,10 @@ if (!empty($rs)) {
         <div class="col-md-6">
             {[ "type": "date", "label": "'.tr('Data del documento').'", "name": "data", "required": 1, "value": "-now-" ]}
         </div>';
-        
+
         if ($module_name == 'Fatture di vendita' || $module_name == 'Fatture di acquisto') {
             $rs_segment = $dbo->fetchArray("SELECT * FROM zz_segments WHERE predefined_accredito='1'");
-            if($op=='nota_accredito' && sizeof($rs_segment)>0){
+            if ($op == 'nota_accredito' && sizeof($rs_segment) > 0) {
                 echo '
         <div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.prepare(Modules::get($module_name)['id']).' ORDER BY name", "value": "'.$rs_segment[0]['id'].'" ]}

@@ -1,7 +1,7 @@
 <?php
 
 if ($options['hide_header']) {
-	echo '
+    echo '
 	<!-- Intestazione vuota fornitore -->
 	<div class="row" style="height:111px;">
 		<div class="col-xs-6">
@@ -9,12 +9,12 @@ if ($options['hide_header']) {
 		<div class="col-xs-6 text-right">
 		</div>
 	</div>';
-}else{
-	echo '
+} else {
+    echo '
 	<!-- Intestazione fornitore -->
 	$default_header$';
 }
-	
+
 echo '
 <br>
 <div class="row">

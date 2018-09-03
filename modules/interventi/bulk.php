@@ -137,7 +137,7 @@ switch (post('op')) {
             ]);
 
             aggiungi_intervento_in_fattura($intervento['id'], $id_documento, $descrizione, $id_iva, $id_conto);
-            $n_interventi++;
+            ++$n_interventi;
         }
 
         if ($n_interventi > 0) {

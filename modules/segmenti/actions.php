@@ -14,12 +14,12 @@ switch (post('op')) {
         if ($predefined) {
             $dbo->query('UPDATE zz_segments SET predefined = 0 WHERE id_module = '.prepare($id_module));
         }
-        
+
         $predefined_accredito = post('predefined_accredito');
         if ($predefined_accredito) {
             $dbo->query('UPDATE zz_segments SET predefined_accredito = 0 WHERE id_module = '.prepare($id_module));
         }
-        
+
         $predefined_addebito = post('predefined_addebito');
         if ($predefined_addebito) {
             $dbo->query('UPDATE zz_segments SET predefined_addebito = 0 WHERE id_module = '.prepare($id_module));

@@ -9,9 +9,9 @@ switch ($resource) {
         foreach ($elements as $element) {
             $filter[] = 'id = '.prepare($element);
         }
-		if (empty($filter)) {
-		 $where[] = 'deleted_at IS NULL';
-		}
+        if (empty($filter)) {
+            $where[] = 'deleted_at IS NULL';
+        }
         if (!empty($search)) {
             $search_fields[] = 'name LIKE '.prepare('%'.$search.'%');
         }

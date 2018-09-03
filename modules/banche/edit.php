@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 					{[ "type": "text", "label": "<?php echo tr('Filiale'); ?>", "name": "filiale", "value": "$filiale$" ]}
                 </div>
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Conto predefinito'); ?>", "name": "id_pianodeiconti3",  "value": "$id_pianodeiconti3$", "values": "query=SELECT id, descrizione  FROM co_pianodeiconti3 WHERE idpianodeiconti2 = 1 AND  ( id NOT IN (SELECT id_pianodeiconti3 FROM co_banche WHERE id != '<?php echo $record['id'] ?>' ) )"  ]}
+					{[ "type": "select", "label": "<?php echo tr('Conto predefinito'); ?>", "name": "id_pianodeiconti3",  "value": "$id_pianodeiconti3$", "values": "query=SELECT id, descrizione  FROM co_pianodeiconti3 WHERE idpianodeiconti2 = 1 AND  ( id NOT IN (SELECT id_pianodeiconti3 FROM co_banche WHERE id != '<?php echo $record['id']; ?>' ) )"  ]}
                 </div>
 			</div>
 

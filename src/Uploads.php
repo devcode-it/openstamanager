@@ -56,7 +56,8 @@ class Uploads
      * Individua il nome fisico per il file indicato.
      *
      * @param string $source
-     * @param array $data
+     * @param array  $data
+     *
      * @return string
      */
     protected static function getName($source, $data)
@@ -283,6 +284,7 @@ class Uploads
      *
      * @param array $from
      * @param array $to
+     *
      * @return bool
      */
     public static function copy($from, $to)

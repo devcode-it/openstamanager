@@ -123,14 +123,14 @@ switch (filter('op')) {
         break;
 
     // Abilita API utente
-	case 'token_enable':
+    case 'token_enable':
          if ($dbo->query('UPDATE zz_tokens SET enabled = 1 WHERE id_utente = '.prepare($id_utente))) {
-            flash()->info(tr('Token abilitato!'));
-        }
+             flash()->info(tr('Token abilitato!'));
+         }
         break;
 
-	// Disabilita API utente
-	case 'token_disable':
+    // Disabilita API utente
+    case 'token_disable':
         if ($dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id_utente = '.prepare($id_utente))) {
             flash()->info(tr('Token disabilitato!'));
         }
@@ -154,38 +154,34 @@ switch (filter('op')) {
 
         break;
 
-	// Impostazione/reimpostazione dei permessi di accesso di default
-	case 'restore_permission':
+    // Impostazione/reimpostazione dei permessi di accesso di default
+    case 'restore_permission':
 
-		//Gruppo Tecnici
-		if ($dbo->fetchArray('SELECT `nome` FROM `zz_groups` WHERE `id` = '.prepare($id_record))[0]['nome']=='Tecnici'){
+        //Gruppo Tecnici
+        if ($dbo->fetchArray('SELECT `nome` FROM `zz_groups` WHERE `id` = '.prepare($id_record))[0]['nome'] == 'Tecnici') {
+            $permessi = [];
+            $permessi['Dashboard'] = 'rw';
+            $permessi['Anagrafiche'] = 'rw';
+            $permessi['Interventi'] = 'rw';
+            $permessi['Magazzino'] = 'rw';
+            $permessi['Articoli'] = 'rw';
 
-			$permessi =  array ();
-			$permessi['Dashboard'] = 'rw';
-			$permessi['Anagrafiche'] = 'rw';
-			$permessi['Interventi'] = 'rw';
-			$permessi['Magazzino'] = 'rw';
-			$permessi['Articoli'] = 'rw';
+            $dbo->query('DELETE FROM zz_permissions WHERE idgruppo='.prepare($id_record));
 
-			$dbo->query('DELETE FROM zz_permissions WHERE idgruppo='.prepare($id_record));
+            foreach ($permessi as $module_name => $permesso) {
+                $module_id = $dbo->fetchArray('SELECT `id` FROM `zz_modules` WHERE `name` = "'.$module_name.'"')[0]['id'];
 
-			foreach ($permessi as $module_name => $permesso) {
+                $dbo->insert('zz_permissions', [
+                    'idgruppo' => $id_record,
+                    'idmodule' => $module_id,
+                    'permessi' => $permesso,
+                ]);
+            }
 
-				$module_id = $dbo->fetchArray('SELECT `id` FROM `zz_modules` WHERE `name` = "'.$module_name.'"')[0]['id'];
+            $_SESSION['infos'][] = tr('Permessi reimpostati.');
+        }
 
-				$dbo->insert('zz_permissions', [
-					'idgruppo' => $id_record,
-					'idmodule' => $module_id,
-					'permessi' => $permesso,
-				]);
-			}
-
-			$_SESSION['infos'][] = tr('Permessi reimpostati.');
-
-
-		}
-
-	break;
+    break;
 
     // Aggiornamento dei permessi di accesso
     case 'update_permission':

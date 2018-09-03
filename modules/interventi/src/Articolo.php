@@ -47,7 +47,7 @@ class Articolo extends Model
                 'idintervento' => $model->idintervento,
             ]);
         } else {
-            $intervento = $model->intervento();
+            $intervento = $model->intervento()->first();
 
             $numero = $intervento->codice;
             $data = database()->fetchOne('SELECT MAX(orario_fine) AS data FROM in_interventi_tecnici WHERE idintervento = :id_intervento', [

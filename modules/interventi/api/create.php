@@ -2,6 +2,8 @@
 
 include_once Modules::filepath('Articoli', 'modutil.php');
 
+use Modules\Interventi\Articolo;
+
 switch ($resource) {
     case 'intervento':
         $data = $request['data'];
@@ -58,9 +60,9 @@ switch ($resource) {
         $data = $request['data'];
 
         $articolo = Articolo::create([
-            'idarticolo' => $data['idarticolo'],
-            'idintervento' => $id_record,
-            'idautomezzo' => $data['idautomezzo'],
+            'idarticolo' => $data['id_articolo'],
+            'idintervento' => $data['id_intervento'],
+            'idautomezzo' => $data['id_automezzo'],
             'qta' => $data['qta'],
             'um' => $data['um'],
         ]);

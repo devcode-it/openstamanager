@@ -12,9 +12,9 @@ class Articolo extends Model
     /**
      * Funzione per inserire i movimenti di magazzino.
      */
-    public function movimenta($qta, $descrizone = null, $data = null, $manuale = false)
+    public function movimenta($qta, $descrizone = null, $data = null, $manuale = false, $array = [])
     {
-        $this->registra($qta, $descrizone, $data, $manuale);
+        $this->registra($qta, $descrizone, $data, $manuale, $array);
 
         if ($this->servizio == 0) {
             $this->qta += $qta;

@@ -109,10 +109,21 @@ switch ($resource) {
         }
 
         break;
+
+    // Elenco articoli dell'intervento per l'applicazione
+    case 'articoli_intervento':
+        $query = 'SELECT id, idarticolo AS id_articolo, idintervento AS id_intervento, IF(idautomezzo != 0, idautomezzo, NULL) AS id_automezzo, qta, created_at as data FROM mg_articoli_interventi WHERE `idintervento` = :id_intervento';
+
+        $parameters = [
+            ':id_intervento' => $request['id_intervento'],
+        ];
+
+        break;
 }
 
 return [
     'sync',
     'interventi',
     'sessioni_intervento',
+    'articoli_intervento',
 ];

@@ -22,5 +22,5 @@ switch ($resource) {
 
 return [
     'sessioni_intervento',
-    'articoli_intervento',
+    //'articoli_intervento',
 ];

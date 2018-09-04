@@ -229,7 +229,7 @@ class Update
     }
 
     /**
-     * Restituisce la versione corrente del software gestita dal file system (file VERSION nella root).
+     * Restituisce la versione corrente del software (file VERSION nella root e versione a database).
      *
      * @return string
      */
@@ -249,6 +249,18 @@ class Update
         }
 
         return $result;
+    }
+
+    /**
+     * Controlla se la versione corrente del software è una beta (versione instabile).
+     *
+     * @return bool
+     */
+    public static function isBeta()
+    {
+        $version = self::getVersion();
+
+        return str_contains($version, 'beta');
     }
 
     /**

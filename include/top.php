@@ -291,15 +291,23 @@ if (Auth::check()) {
     }
 
     echo '
-						<div class="col-md-12">';
-} elseif (!empty($messages['info']) || !empty($messages['warning']) || !empty($messages['error'])) {
-    echo '
+                        <div class="col-md-12">';
+
+    // Eventuale messaggio personalizzato per l'installazione corrente
+    include_once App::filepath('include/custom/extra', 'extra.php');
+} else {
+    // Eventuale messaggio personalizzato per l'installazione corrente
+    include_once App::filepath('include/custom/extra', 'login.php');
+
+    if (!empty($messages['info']) || !empty($messages['warning']) || !empty($messages['error'])) {
+        echo '
             <div class="box box-warning box-center">
                 <div class="box-header with-border text-center">
                     <h3 class="box-title">'.tr('Informazioni').'</h3>
                 </div>
 
                 <div class="box-body">';
+    }
 }
 
 // Infomazioni

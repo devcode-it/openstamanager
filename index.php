@@ -74,7 +74,7 @@ $pageTitle = tr('Login');
 include_once App::filepath('include|custom|', 'top.php');
 
 // Controllo se è una beta e in caso mostro un warning
-if (str_contains($version, 'beta')) {
+if (Update::isBeta()) {
     echo '
 			<div class="clearfix">&nbsp;</div>
 			<div class="alert alert-warning alert-dismissable col-md-6 col-md-push-3 text-center fade in">

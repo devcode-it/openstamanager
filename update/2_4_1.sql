@@ -490,10 +490,19 @@ UPDATE `zz_prints` SET `enabled` = 0 WHERE `name` IN( 'Ordine di servizio', 'Ord
 UPDATE `zz_views` SET `query` = '\'Intervento\'' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi') AND `name` = '_print_';
 
 -- Flag per definire i segmenti di note di accredito e di addebito
-ALTER TABLE `zz_segments` ADD `predefined_accredito` TINYINT(1) NOT NULL AFTER `predefined`, ADD `predefined_addebito` TINYINT(1) NOT NULL AFTER `predefined_accredito`; 
+ALTER TABLE `zz_segments` ADD `predefined_accredito` TINYINT(1) NOT NULL AFTER `predefined`, ADD `predefined_addebito` TINYINT(1) NOT NULL AFTER `predefined_accredito`;
 
 -- Fattura di vendita senza intestazione (per carta intestata)
 INSERT INTO `zz_prints` (`id`, `id_module`, `is_record`, `name`, `title`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `main`, `default`, `enabled`) VALUES
 (NULL, (SELECT id FROM zz_modules WHERE name='Fatture di vendita'), 1, 'Fattura di vendita (senza intestazione)', 'Fattura di vendita (senza intestazione)', 'fatture', 'iddocumento', '{"hide_header":true, "hide_footer":true}', 'fa fa-print', '', '', 0, 0, 1, 1);
 UPDATE `zz_prints` SET `main` = '1' WHERE `name` = 'Fattura di vendita';
 
+-- Innesto modulo per campi personalizzati
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Campi personalizzati', 'Campi personalizzati', 'custom_fields', 'SELECT |select| FROM `zz_fields` WHERE 1=1 HAVING 2=2', '', 'fa fa-list', '2.4.1', '2.4.1', '1', NULL, '1', '0');
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Campi personalizzati' AND `t2`.`name` = 'Strumenti') SET `t1`.`parent` = `t2`.`id`;
+
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `enabled`, `summable`, `default`) VALUES
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Campi personalizzati'), 'id', 'id', 0, 0, 0, 0, 0, 0, 1),
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Campi personalizzati'), 'Modulo', '(SELECT name FROM zz_modules WHERE zz_modules.id = zz_fields.id_module)', 0, 1, 0, 0, 1, 0, 1),
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Campi personalizzati'), 'Plugin', '(SELECT name FROM zz_plugins WHERE zz_plugins.id = zz_fields.id_plugin)', 0, 1, 0, 0, 1, 0, 1),
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Campi personalizzati'), 'Nome', 'name', 0, 1, 0, 0, 1, 0, 1);

@@ -45,7 +45,7 @@ include_once __DIR__.'/../../core.php';
 	</div>
 </form>
 
-<!-- Campi extra -->
+<!-- Istruzioni per il contenuto -->
 <div class="box box-info">
     <div class="box-header">
         <h3 class="box-title"><?php echo tr('Istruzioni per il campo _FIELD_', [
@@ -72,7 +72,7 @@ foreach ($list as $key => $value) {
 
 echo '
             <li>'.tr('_TEXT_ con il valore impostato per il record', [
-                '_TEXT_' => '<code>|value</code>',
+                '_TEXT_' => '<code>|value|</code>',
             ]).'</li>';
 
 ?>

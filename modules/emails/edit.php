@@ -88,26 +88,37 @@ echo '
 // Variabili utilizzabili
 $variables = include Modules::filepath($records[0]['id_module'], 'variables.php');
 
-if (sizeof($variables) > 0) {
+echo '
+<!-- Istruzioni per il contenuto -->
+<div class="box box-info">
+    <div class="box-header">
+        <h3 class="box-title">'.tr('Istruzioni per i campi automatici').'</h3>
+    </div>
+
+    <div class="box-body">';
+
+if (!empty($variables)) {
     echo '
-            <div class="alert alert-info">
-                <p>'.tr("Puoi utilizzare le seguenti variabili nell'oggetto e nel corpo della mail").':</p>
-                <ul>';
+        <p>'.tr("Puoi utilizzare le seguenti sequenze di testo nell'oggetto e nel corpo della mail").':</p>
+        <ul>';
 
     foreach ($variables as $variable => $value) {
         echo '
-                    <li>{'.$variable.'}</li>';
+            <li><code>{'.$variable.'}</code></li>';
     }
 
     echo '
-                </ul>
-            </div>';
+        </ul>';
 } else {
     echo '
-            <div class="alert alert-warning">
-                <i class="fa fa-warning"></i> '.tr('Non sono state definite variabili da utilizzare nel template').'.
-            </div>';
+        <p><i class="fa fa-warning"></i> '.tr('Non sono state definite variabili da utilizzare nel template').'.</p>';
 }
+
+echo '
+    </div>
+</div>
+
+<hr>';
 
 ?>
 

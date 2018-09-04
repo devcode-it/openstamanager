@@ -123,8 +123,6 @@ return [
         'names' => [
             'Unità di misura',
             'Unità misura',
-            'unità misura',
-            'unità di misura',
             'Unit` di misura',
             'um',
         ],
@@ -132,18 +130,10 @@ return [
     [
         'field' => 'prezzo_acquisto',
         'label' => 'Prezzo acquisto',
-        'names' => [
-            'Prezzo Acquisto',
-            'prezzo acquisto',
-        ],
     ],
     [
         'field' => 'prezzo_vendita',
         'label' => 'Prezzo vendita',
-        'names' => [
-            'Prezzo Vendita',
-            'prezzo vendita',
-        ],
     ],
     [
         'field' => 'peso_lordo',
@@ -158,7 +148,7 @@ return [
         'label' => 'Volume (M3)',
         'names' => [
             'Volume (M3)',
-            'volume',
+            'Volume',
         ],
     ],
     [
@@ -168,7 +158,6 @@ return [
             'Categoria',
             'id_categoria',
             'idcategoria',
-            'categoria',
         ],
     ],
     [

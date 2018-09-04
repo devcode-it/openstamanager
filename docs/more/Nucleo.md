@@ -1,21 +1,17 @@
 ---
-currentMenu: struttura
+currentMenu: nucleo
 ---
 
 # Struttura
 
 <!-- TOC depthFrom:2 depthTo:6 orderedList:false updateOnSave:true withLinks:true -->
 
-- [Caratteristiche](#caratteristiche)
-    - [open-source](#open-source)
-    - [Modulare e personalizzabile](#modulare-e-personalizzabile)
-    - [Multipiattaforma e user friendly](#multipiattaforma-e-user-friendly)
 - [Struttura](#struttura)
 - [Root](#root)
     - [add.php](#addphp)
-    - [ajax_complete.php](#ajax_completephp)
-    - [ajax_dataload.php](#ajax_dataloadphp)
-    - [ajax_select.php](#ajax_selectphp)
+    - [ajax_complete.php](#ajaxcompletephp)
+    - [ajax_dataload.php](#ajaxdataloadphp)
+    - [ajax_select.php](#ajaxselectphp)
     - [bug.php](#bugphp)
     - [core.php](#corephp)
     - [config.inc.php](#configincphp)
@@ -42,33 +38,12 @@ currentMenu: struttura
 - [Cartella modules](#cartella-modules)
 - [Cartella templates](#cartella-templates)
 - [Cartella update](#cartella-update)
-    - [create_updates.sql](#create_updatessql)
+    - [create_updates.sql](#createupdatessql)
     - [VERSIONE.sql](#versionesql)
     - [VERSIONE.php](#versionephp)
 - [Cartella vendor](#cartella-vendor)
 
 <!-- /TOC -->
-
-## Caratteristiche
-
-### open-source
-
-La natura open-source (termine inglese che significa _sorgente aperta_) del progetto evidenzia lo spirito di collaborazione e condivisione che pervade l'attività di sviluppo del gestionale, di cui gli autori rendono pubblico il codice sorgente e ne favoriscono il libero studio, permettendo a programmatori indipendenti di apportarvi modifiche ed estensioni.
-
-Particolarmente espressiva in questo senso risulta essere la documentazione ufficiale del progetto:
-
-> Il progetto è un software open-source perché permette agli utilizzatori di studiarne il funzionamento ed adattarlo alle proprie esigenze; inoltre, in ambito commerciale, non obbliga l'utilizzatore ad essere legato allo stesso fornitore di assistenza.
-
-La licenza in utilizzo è la GNU General Public License 3.0 (GPL 3.0).
-
-### Modulare e personalizzabile
-
-OpenSTAManager possiede una struttura fortemente modulare, che ne permette la rapida espandibilità e, nello specifico, la realizzazione di funzionalità _ad hoc_, personalizzate nel modo più completo secondo le richieste del cliente.
-
-### Multipiattaforma e user friendly
-
-Il progetto risulta compatibile con numerose piattaforme, necessitando esclusivamente un browser moderno da parte dei suoi utilizzatori per sfruttare appieno le sue potenzialità.
-L'interfaccia di interazione con l'utente finale risulta inoltre estremamente semplificata e _user friendly_, oltre che _responsive_, presentando caratteristiche completamente compatibili con tutti i dispositivi mobili (in particolare, tablet e smartphone).
 
 ## Struttura
 

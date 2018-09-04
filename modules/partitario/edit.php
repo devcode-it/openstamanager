@@ -115,7 +115,7 @@ for ($x = 0; $x < $n1; ++$x) {
                 for ($i = 0; $i < sizeof($rs); ++$i) {
                     echo "				<tr><td>\n";
 
-                    if ($rs[$i]['iddocumento'] != '') {
+                    if (!empty($rs[$i]['iddocumento'])) {
                         $module = ($rs[$i]['dir'] == 'entrata') ? Modules::get('Fatture di vendita')['id'] : Modules::get('Fatture di acquisto')['id'];
                         echo "<a data-toggle='modal' data-title='Dettagli movimento...' data-target='#bs-popup' class='clickable' data-href='".$rootdir.'/modules/partitario/dettagli_movimento.php?id_movimento='.$rs[$i]['id'].'&id_conto='.$rs[$i]['idconto'].'&id_module='.$module."' >".$rs[$i]['descrizione']."</a>\n";
                     // echo "					<a href='".$rootdir.'/editor.php?id_module='.$module.'&id_record='.$rs[$i]['iddocumento']."'>".$rs[$i]['descrizione']."</a>\n";

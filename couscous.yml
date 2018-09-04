@@ -15,7 +15,7 @@ github:
 title: OpenSTAManager
 subTitle: Il software gestionale open-source per l'assistenza tecnica e la fatturazione
 fontAwesomeIcon: fa fa-cog
-footerText: 'Progettato e sviluppato da <a href="http://devcode.it/">DevCode</a>.'
+footerText: 'Progettato e sviluppato da DevCode.'
 googleAnalyticsCode: UA-42808312-1
 
 scripts:
@@ -37,43 +37,49 @@ menu:
                 aggiornamento:
                     text: Aggiornamento
                     relativeUrl: aggiornamento.html
-                api:
-                    text: API
-                    relativeUrl: api.html
                 contribuire:
                     text: Contribuire
                     relativeUrl: contributing.html
         structure:
-            name: Approfondimenti
+            name: Strutture
             items:
-                struttura:
-                    text: Struttura
-                    relativeUrl: struttura.html
                 moduli:
                     text: Moduli
-                    relativeUrl: moduli.html
-                upload:
-                    text: Gestione degli upload
-                    relativeUrl: upload.html
-                widget:
+                    relativeUrl: structure/moduli.html
+                plugin:
                     text: Plugin
-                    relativeUrl: widget.html
+                    relativeUrl: structure/plugin.html
                 stampe:
                     text: Stampe
-                    relativeUrl: stampe.html
+                    relativeUrl: structure/stampe.html
                 widget:
                     text: Widget
-                    relativeUrl: widget.html
-        custom:
+                    relativeUrl: structure/widget.html
+        more:
+            name: Approfondimenti
+            items:
+                nucleo:
+                    text: Nucleo
+                    relativeUrl: more/nucleo.html
+                upload:
+                    text: Upload
+                    relativeUrl: more/upload.html
+                extra:
+                    text: Extra
+                    relativeUrl: more/extra.html
+                api:
+                    text: API
+                    relativeUrl: more/api.html
+        base:
             name: Personalizzazione
             items:
                 framework:
                     text: Framework
-                    relativeUrl: framework.html
+                    relativeUrl: base/framework.html
                 assets:
                     text: Assets
-                    relativeUrl: assets.html
-        more:
+                    relativeUrl: base/assets.html
+        links:
             name: Link utili
             items:
                 docs:

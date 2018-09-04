@@ -64,7 +64,6 @@ include_once __DIR__.'/../../core.php';
 		</div>
 	</div>
 
-
 	<!-- Campi extra -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
@@ -73,43 +72,44 @@ include_once __DIR__.'/../../core.php';
 
 		<div class="panel-body">
 			<div class="row">
-<?php
-$array = preg_match('/(?<=FROM)\s([^\s]+)\s/', $record['options'], $table);
-if (strpos($table[0], 'co_documenti') !== false) {
-    $righe = $dbo->fetchArray('SELECT COUNT(*) AS tot FROM '.$table[0].' WHERE id_segment = '.prepare($id_record));
-    $tot = $righe[0]['tot'];
-}
-?>
 
 				<div class="col-md-3">
                     {[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "class": "alphanumeric-mask", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YY", "extra": "<?php echo ($tot > 0) ? 'readonly' : ''; ?>" ]}
 				</div>
 			</div>
 
-			<div class="row">
-				<div class="col-md-12">
+			<!-- Istruzioni per il contenuto -->
+            <div class="box box-info">
+                <div class="box-header">
+                    <h3 class="box-title"><?php echo tr('Istruzioni per il campo _FIELD_', [
+                        '_FIELD_' => tr('Maschera'),
+                    ]); ?></h3>
+                </div>
 
-					<div class="alert alert-info" style="margin:0;">
-						<h3 style="margin:0;"><?php echo tr('Istruzioni per il campo _FIELD_', [
-                            '_FIELD_' => tr('Maschera'),
-                        ]); ?></h3>
+                <div class="box-body">
+                    <p><?php echo tr('Le seguenti sequenze di testo vengono sostituite nel seguente modo'); ?>:</p>
+                    <ul>
+<?php
+$list = [
+    '####' => tr('Numero progressivo del documento, con zeri non significativi per raggiungere il numero desiderato di caratteri'),
+    'YYYY' => tr('Anno corrente a 4 cifre'),
+    'yy' => tr('Anno corrente a 2 cifre'),
+];
 
-						<p><font style='font-size:20px;'><b>####</b></font> <?php echo tr('Questi caratteri vengono sostituiti con il numero progressivo della fattura, vengono aggiunti zeri non significativi per raggiungere il numero desiderato di caratteri'); ?>.</p>
+foreach ($list as $key => $value) {
+    echo '
+                        <li>'.tr('_TEXT_: _FIELD_', [
+                            '_TEXT_' => '<code>'.$key.'</code>',
+                            '_FIELD_' => $value,
+                        ]).'</li>';
+}
 
-						<p><font style='font-size:20px;'><b>YYYY</b></font> <?php echo tr("Questi caratteri vengono sosituiti con l'anno corrente a 4 cifre, è possibile specificare l'anno a 2 cifre con _YY_", [
-                            '_YY_' => 'yy',
-                        ]); ?>.</p>
+?>
+                    </ul>
 
-						<p><?php echo tr("E' possibile aggiungere altri caratteri fissi, come lettere, trattini, eccetera, prima e/o dopo e/o tra le maschere _####_ e _YYYY_", [
-                            '_####_' => '####',
-                            '_YYYY_' => 'YYYY',
-                        ]); ?>.</p>
-						</p>
-					</div>
-
-				</div>
-			</div>
-
+                    <p><?php echo tr("E' inoltre possibile aggiungere altri caratteri fissi (come lettere, trattini, eccetera) prima e/o dopo le sequenze di cui sopra"); ?>.</p>
+                </div>
+            </div>
 
 		</div>
 	</div>
@@ -117,35 +117,42 @@ if (strpos($table[0], 'co_documenti') !== false) {
 </form>
 
 <?php
-if ($tot > 0) {
-                            echo "<div class='alert alert-danger' style='margin:0px;'>";
 
-                            echo tr("Ci sono _TOT_ righe collegate al segmento per il modulo '_MODULO_'. Il comando elimina è stato disattivato, eliminare le righe per attivare il comando 'Elimina segmento'.", [
+$array = preg_match('/(?<=FROM)\s([^\s]+)\s/', $record['options'], $table);
+if (strpos($table[0], 'co_documenti') !== false) {
+    $righe = $dbo->fetchArray('SELECT COUNT(*) AS tot FROM '.$table[0].' WHERE id_segment = '.prepare($id_record));
+    $tot = $righe[0]['tot'];
+}
+
+if ($tot > 0) {
+    echo "<div class='alert alert-danger' style='margin:0px;'>";
+
+    echo tr("Ci sono _TOT_ righe collegate al segmento per il modulo '_MODULO_'. Il comando elimina è stato disattivato, eliminare le righe per attivare il comando 'Elimina segmento'.", [
         '_TOT_' => $tot,
         '_MODULO_' => $record['modulo'],
     ]);
 
-                            echo '</div>';
-                        } elseif ($record['predefined']) {
-                            echo "<div class='alert alert-danger' style='margin:0px;'>";
+    echo '</div>';
+} elseif ($records['predefined']) {
+    echo "<div class='alert alert-danger' style='margin:0px;'>";
 
-                            echo tr("Questo è il segmento predefinito per il modulo '_MODULO_'. Il comando elimina è stato disattivato.", [
+    echo tr("Questo è il segmento predefinito per il modulo '_MODULO_'. Il comando elimina è stato disattivato.", [
         '_MODULO_' => $record['modulo'],
     ]);
 
-                            echo '</div>';
-                        } elseif ($record['n_sezionali'] < 2) {
-                            echo "<div class='alert alert-danger' style='margin:0px;'>";
+    echo '</div>';
+} elseif ($record['n_sezionali'] < 2) {
+    echo "<div class='alert alert-danger' style='margin:0px;'>";
 
-                            echo tr("Questo è l'unico segmento per il modulo '_MODULO_'. Il comando elimina è stato disattivato.", [
+    echo tr("Questo è l'unico segmento per il modulo '_MODULO_'. Il comando elimina è stato disattivato.", [
         '_MODULO_' => $record['modulo'],
     ]);
 
-                            echo '</div>';
-                        } else {
-                            echo '
+    echo '</div>';
+} else {
+    echo '
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> '.tr('Elimina').'
 </a>';
-                        }
+}
 ?>

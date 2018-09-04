@@ -85,5 +85,5 @@ Per reimpostare la password di un account amministrativo è possibile procedere 
 - Se esiste un altro account amministrativo, seguire la procedura precedente per gli account comuni;
 - Accedere al database ed eseguire la seguente query:
     ```sql
-    UPDATE `zz_utenti` SET password = MD5('nuova_password') WHERE username = 'admin';
+    UPDATE `zz_users` SET `password` = MD5('nuova_password') WHERE `username` = 'admin';
     ```

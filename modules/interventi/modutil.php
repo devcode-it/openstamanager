@@ -446,7 +446,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
     // Collego in fattura eventuali articoli collegati all'intervento
     $rs2 = $dbo->fetchArray('SELECT mg_articoli_interventi.*, idarticolo FROM mg_articoli_interventi INNER JOIN mg_articoli ON mg_articoli_interventi.idarticolo=mg_articoli.id WHERE idintervento='.prepare($id_intervento).' AND (idintervento NOT IN(SELECT idintervento FROM co_righe_preventivi WHERE idpreventivo IN(SELECT idpreventivo FROM co_righe_documenti WHERE iddocumento='.prepare($id_fattura).')) AND idintervento NOT IN(SELECT idintervento FROM co_promemoria WHERE idcontratto IN(SELECT idcontratto FROM co_righe_documenti WHERE iddocumento='.prepare($id_fattura).')) )');
     for ($i = 0; $i < sizeof($rs2); ++$i) {
-        $riga = add_articolo_infattura($id_fattura, $rs2[$i]['idarticolo'], $rs2[$i]['descrizione'], $rs2[$i]['idiva'], $rs2[$i]['qta'], $rs2[$i]['prezzo_vendita'] * $rs2[$i]['qta'], $rs2[$i]['sconto'], $rs2[$i]['sconto_unitario'], $rs2[$i]['tipo_sconto'], $id_intervento, 0, $rs2[$i]['um'], $id_rivalsa_inps, $id_ritenuta_acconto, 'Imponibile');
+        $riga = add_articolo_infattura($id_fattura, $rs2[$i]['idarticolo'], $rs2[$i]['descrizione'], $rs2[$i]['idiva'], $rs2[$i]['qta'], $rs2[$i]['prezzo_vendita'] * $rs2[$i]['qta'], $rs2[$i]['sconto'], $rs2[$i]['sconto_unitario'], $rs2[$i]['tipo_sconto'], $id_intervento, 0, $rs2[$i]['um']);
 
         // Lettura lotto, serial, altro dalla riga dell'ordine
         $dbo->query('INSERT INTO mg_prodotti (id_riga_documento, id_articolo, dir, serial, lotto, altro) SELECT '.prepare($riga).', '.prepare($rs2[$i]['idarticolo']).', '.prepare($dir).', serial, lotto, altro FROM mg_prodotti AS t WHERE id_riga_intervento='.prepare($rs2[$i]['id']));

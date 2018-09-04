@@ -345,6 +345,9 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
 {
     $dbo = Database::getConnection();
 
+    $id_ritenuta_acconto = setting("Percentuale ritenuta d'acconto");
+    $$id_rivalsa_inps = setting('Percentuale rivalsa INPS');
+
     // Leggo l'anagrafica del cliente
     $rs = $dbo->fetchArray('SELECT idanagrafica, codice, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento='.prepare($id_intervento).') AS data FROM `in_interventi` WHERE id='.prepare($id_intervento));
     $idanagrafica = $rs[0]['idanagrafica'];
@@ -374,12 +377,12 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $desc_iva = $rs[0]['descrizione'];
 
             // Calcolo rivalsa inps
-            $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(setting('Percentuale rivalsa INPS'));
+            $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare($$id_rivalsa_inps);
             $rs = $dbo->fetchArray($query);
             $rivalsainps = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
 
             // Calcolo ritenuta d'acconto
-            $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(setting("Percentuale ritenuta d'acconto"));
+            $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare($id_ritenuta_acconto);
             $rs = $dbo->fetchArray($query);
             if (setting("Metodologia calcolo ritenuta d'acconto predefinito") == 'Imponibile') {
                 $ritenutaacconto = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
@@ -387,7 +390,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
                 $ritenutaacconto = ($subtot - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
             }
 
-            $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_fattura).', '.prepare($id_intervento).', '.prepare($id_conto).', '.prepare($id_iva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto).", 'UNT', 'ore', ".prepare($ore).', '.prepare(setting('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(setting("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(setting("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_fattura).'))';
+            $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_fattura).', '.prepare($id_intervento).', '.prepare($id_conto).', '.prepare($id_iva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto).", 'UNT', 'ore', ".prepare($ore).', '.prepare($$id_rivalsa_inps).', '.prepare($rivalsainps).', '.prepare($id_ritenuta_acconto).', '.prepare($ritenutaacconto).', '.prepare(setting("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_fattura).'))';
             $dbo->query($query);
         }
     }
@@ -408,12 +411,12 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
         $desc_iva = $rs[0]['descrizione'];
 
         // Calcolo rivalsa inps
-        $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(setting('Percentuale rivalsa INPS'));
+        $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare($$id_rivalsa_inps);
         $rs = $dbo->fetchArray($query);
         $rivalsainps = $rst[$i]['tot_prezzo_dirittochiamata'] / 100 * $rs[0]['percentuale'];
 
         // Calcolo ritenuta d'acconto
-        $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(setting("Percentuale ritenuta d'acconto"));
+        $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare($id_ritenuta_acconto);
         $rs = $dbo->fetchArray($query);
         $ritenutaacconto = $rst[$i]['tot_prezzo_dirittochiamata'] / 100 * $rs[0]['percentuale'];
 
@@ -432,25 +435,25 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             'tipo_sconto' => 'UNT',
             'um' => '-',
             'qta' => $rst[$i]['qta'],
-            'idrivalsainps' => setting('Percentuale rivalsa INPS'),
+            'idrivalsainps' => $$id_rivalsa_inps,
             'rivalsainps' => $rivalsainps,
-            'idritenutaacconto' => setting("Percentuale ritenuta d'acconto"),
+            'idritenutaacconto' => $id_ritenuta_acconto,
             'ritenutaacconto' => $ritenutaacconto,
             '#order' => '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_fattura).')',
         ]);
     }
 
     // Collego in fattura eventuali articoli collegati all'intervento
-    $rs2 = $dbo->fetchArray('SELECT mg_articoli_interventi.*, idarticolo FROM mg_articoli_interventi INNER JOIN mg_articoli ON mg_articoli_interventi.idarticolo=mg_articoli.id WHERE idintervento='.prepare($id_intervento).' AND (idintervento NOT IN(SELECT idintervento FROM co_righe_preventivi WHERE idpreventivo IN(SELECT idpreventivo FROM co_righe_documenti WHERE iddocumento='.prepare($id_fattura).')) AND idintervento NOT IN(SELECT idintervento FROM co_contratti_promemoria WHERE idcontratto IN(SELECT idcontratto FROM co_righe_documenti WHERE iddocumento='.prepare($id_fattura).')) )');
+    $rs2 = $dbo->fetchArray('SELECT mg_articoli_interventi.*, idarticolo FROM mg_articoli_interventi INNER JOIN mg_articoli ON mg_articoli_interventi.idarticolo=mg_articoli.id WHERE idintervento='.prepare($id_intervento).' AND (idintervento NOT IN(SELECT idintervento FROM co_righe_preventivi WHERE idpreventivo IN(SELECT idpreventivo FROM co_righe_documenti WHERE iddocumento='.prepare($id_fattura).')) AND idintervento NOT IN(SELECT idintervento FROM co_promemoria WHERE idcontratto IN(SELECT idcontratto FROM co_righe_documenti WHERE iddocumento='.prepare($id_fattura).')) )');
     for ($i = 0; $i < sizeof($rs2); ++$i) {
-        $riga = add_articolo_infattura($id_fattura, $rs2[$i]['idarticolo'], $rs2[$i]['descrizione'], $rs2[$i]['idiva'], $rs2[$i]['qta'], $rs2[$i]['prezzo_vendita'] * $rs2[$i]['qta'], $rs2[$i]['sconto'], $rs2[$i]['sconto_unitario'], $rs2[$i]['tipo_sconto'], $id_intervento, 0, $rs2[$i]['um']);
+        $riga = add_articolo_infattura($id_fattura, $rs2[$i]['idarticolo'], $rs2[$i]['descrizione'], $rs2[$i]['idiva'], $rs2[$i]['qta'], $rs2[$i]['prezzo_vendita'] * $rs2[$i]['qta'], $rs2[$i]['sconto'], $rs2[$i]['sconto_unitario'], $rs2[$i]['tipo_sconto'], $id_intervento, 0, $rs2[$i]['um'], $id_rivalsa_inps, $id_ritenuta_acconto, 'Imponibile');
 
         // Lettura lotto, serial, altro dalla riga dell'ordine
         $dbo->query('INSERT INTO mg_prodotti (id_riga_documento, id_articolo, dir, serial, lotto, altro) SELECT '.prepare($riga).', '.prepare($rs2[$i]['idarticolo']).', '.prepare($dir).', serial, lotto, altro FROM mg_prodotti AS t WHERE id_riga_intervento='.prepare($rs2[$i]['id']));
     }
 
     // Aggiunta spese aggiuntive come righe generiche
-    $query = 'SELECT * FROM in_righe_interventi WHERE idintervento='.prepare($id_intervento).' AND (idintervento NOT IN(SELECT idintervento FROM co_righe_preventivi WHERE idpreventivo IN(SELECT idpreventivo FROM co_righe_documenti WHERE iddocumento='.prepare($id_fattura).')) AND idintervento NOT IN(SELECT idintervento FROM co_contratti_promemoria WHERE idcontratto IN(SELECT idcontratto FROM co_righe_documenti WHERE iddocumento='.prepare($id_fattura).')) )';
+    $query = 'SELECT * FROM in_righe_interventi WHERE idintervento='.prepare($id_intervento).' AND (idintervento NOT IN(SELECT idintervento FROM co_righe_preventivi WHERE idpreventivo IN(SELECT idpreventivo FROM co_righe_documenti WHERE iddocumento='.prepare($id_fattura).')) AND idintervento NOT IN(SELECT idintervento FROM co_promemoria WHERE idcontratto IN(SELECT idcontratto FROM co_righe_documenti WHERE iddocumento='.prepare($id_fattura).')) )';
     $rsr = $dbo->fetchArray($query);
     if (sizeof($rsr) > 0) {
         for ($i = 0; $i < sizeof($rsr); ++$i) {
@@ -465,12 +468,12 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
 
             // Calcolo rivalsa inps
-            $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(setting('Percentuale rivalsa INPS'));
+            $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare($$id_rivalsa_inps);
             $rs = $dbo->fetchArray($query);
             $rivalsainps = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
 
             // Calcolo ritenuta d'acconto
-            $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(setting("Percentuale ritenuta d'acconto"));
+            $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare($id_ritenuta_acconto);
             $rs = $dbo->fetchArray($query);
             if (setting("Metodologia calcolo ritenuta d'acconto predefinito") == 'Imponibile') {
                 $ritenutaacconto = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
@@ -478,7 +481,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
                 $ritenutaacconto = ($subtot - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
             }
 
-            $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_fattura).', '.prepare($id_intervento).', '.prepare($id_conto).', '.prepare($id_iva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($rsr[$i]['descrizione']).', '.prepare($subtot).', '.prepare($rsr[$i]['sconto']).', '.prepare($rsr[$i]['sconto_unitario']).', '.prepare($rsr[$i]['tipo_sconto']).', '.prepare($rsr[$i]['um']).', '.prepare($rsr[$i]['qta']).', '.prepare(setting('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(setting("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(setting("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_fattura).'))';
+            $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_fattura).', '.prepare($id_intervento).', '.prepare($id_conto).', '.prepare($id_iva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($rsr[$i]['descrizione']).', '.prepare($subtot).', '.prepare($rsr[$i]['sconto']).', '.prepare($rsr[$i]['sconto_unitario']).', '.prepare($rsr[$i]['tipo_sconto']).', '.prepare($rsr[$i]['um']).', '.prepare($rsr[$i]['qta']).', '.prepare($$id_rivalsa_inps).', '.prepare($rivalsainps).', '.prepare($id_ritenuta_acconto).', '.prepare($ritenutaacconto).', '.prepare(setting("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_fattura).'))';
             $dbo->query($query);
         }
     }
@@ -496,12 +499,12 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
         $iva_indetraibile = $iva / 100 * $dati[0]['indetraibile'];
 
         // Calcolo rivalsa inps
-        $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(setting('Percentuale rivalsa INPS'));
+        $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare($$id_rivalsa_inps);
         $dati = $dbo->fetchArray($query);
         $rivalsainps = ($subtot - $sconto) / 100 * $dati[0]['percentuale'];
 
         // Calcolo ritenuta d'acconto
-        $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(setting("Percentuale ritenuta d'acconto"));
+        $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare($id_ritenuta_acconto);
         $dati = $dbo->fetchArray($query);
         if (setting("Metodologia calcolo ritenuta d'acconto predefinito") == 'Imponibile') {
             $ritenutaacconto = ($subtot - $sconto) / 100 * $dati[0]['percentuale'];
@@ -509,7 +512,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $ritenutaacconto = ($subtot - $sconto + $rivalsainps) / 100 * $dati[0]['percentuale'];
         }
 
-        $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_fattura).', '.prepare($id_intervento).', '.prepare($id_conto).', '.prepare($id_iva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare('Trasferta intervento '.$codice.' del '.Translator::dateToLocale($data)).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto).", 'UNT', '', 1, ".prepare(setting('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(setting("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(setting("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_fattura).'))';
+        $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_fattura).', '.prepare($id_intervento).', '.prepare($id_conto).', '.prepare($id_iva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare('Trasferta intervento '.$codice.' del '.Translator::dateToLocale($data)).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto).", 'UNT', '', 1, ".prepare($$id_rivalsa_inps).', '.prepare($rivalsainps).', '.prepare($id_ritenuta_acconto).', '.prepare($ritenutaacconto).', '.prepare(setting("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_fattura).'))';
         $dbo->query($query);
     }
 
@@ -526,12 +529,12 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
         $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
 
         // Calcolo rivalsa inps
-        $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(setting('Percentuale rivalsa INPS'));
+        $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare($$id_rivalsa_inps);
         $rs = $dbo->fetchArray($query);
         $rivalsainps = ($subtot) / 100 * $rs[0]['percentuale'];
 
         // Calcolo ritenuta d'acconto
-        $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(setting("Percentuale ritenuta d'acconto"));
+        $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare($id_ritenuta_acconto);
         $rs = $dbo->fetchArray($query);
         if (setting("Metodologia calcolo ritenuta d'acconto predefinito") == 'Imponibile') {
             $ritenutaacconto = $subtot / 100 * $rs[0]['percentuale'];
@@ -539,7 +542,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             $ritenutaacconto = ($subtot + $rivalsainps) / 100 * $rs[0]['percentuale'];
         }
 
-        $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_fattura).', NULL, '.prepare($id_conto).', '.prepare($id_iva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare('Sconto '.$descrizione).', '.prepare($subtot).', 1, '.prepare(setting('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(setting("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(setting("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_fattura).'))';
+        $query = 'INSERT INTO co_righe_documenti(iddocumento, idintervento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_fattura).', NULL, '.prepare($id_conto).', '.prepare($id_iva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare('Sconto '.$descrizione).', '.prepare($subtot).', 1, '.prepare($$id_rivalsa_inps).', '.prepare($rivalsainps).', '.prepare($id_ritenuta_acconto).', '.prepare($ritenutaacconto).', '.prepare(setting("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_fattura).'))';
         $dbo->query($query);
     }
 

@@ -20,6 +20,9 @@ switch (post('op')) {
             'headers' => $first_row,
         ]);
 
+        // Gestione automatica dei valori convertiti
+        $csv = Filter::parse($csv);
+
         // Interpretazione dei dati
         $data = [];
         foreach ($csv as $row) {

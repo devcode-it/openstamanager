@@ -69,6 +69,34 @@ if (!function_exists('str_contains')) {
     }
 }
 
+if (!function_exists('str_to_lower')) {
+    /**
+     * Converts a string in the lower-case version.
+     *
+     * @param string $string
+     *
+     * @return bool
+     */
+    function str_to_lower($string)
+    {
+        return S::create($string)->toLowerCase();
+    }
+}
+
+if (!function_exists('str_to_upper')) {
+    /**
+     * Converts a string in the upper-case version.
+     *
+     * @param string $string
+     *
+     * @return bool
+     */
+    function str_to_upper($string)
+    {
+        return S::create($string)->toUpperCase();
+    }
+}
+
 if (!function_exists('random_string')) {
     /**
      * Generates a string of random characters.

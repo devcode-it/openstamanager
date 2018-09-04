@@ -77,11 +77,20 @@ class Import
         // Impostazione automatica dei nomi "ufficiali" dei campi
         foreach ($fields as $key => $value) {
             if (!isset($value['names'])) {
-                $fields[$key]['names'] = [
+                $names = [
                     $value['field'],
                     $value['label'],
                 ];
+            } else {
+                $names = $value['names'];
             }
+
+            // Impostazione dei nomi in minuscolo
+            foreach ($names as $k => $v) {
+                $names[$k] = str_to_lower($v);
+            }
+
+            $fields[$key]['names'] = $names;
         }
 
         return $fields;

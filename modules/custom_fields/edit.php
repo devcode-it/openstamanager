@@ -8,7 +8,7 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 
-<div class="row">
+    <div class="row">
 		<div class="col-md-6">
 			{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module_id", "values": "query=SELECT id, name as text FROM zz_modules WHERE enabled = 1", "value": "$id_module$" ]}
 		</div>
@@ -44,6 +44,43 @@ include_once __DIR__.'/../../core.php';
 		</div>
 	</div>
 </form>
+
+<!-- Campi extra -->
+<div class="box box-info">
+    <div class="box-header">
+        <h3 class="box-title"><?php echo tr('Istruzioni per il campo _FIELD_', [
+            '_FIELD_' => tr('Contenuto'),
+        ]); ?></h3>
+    </div>
+
+    <div class="box-body">
+        <p><?php echo tr('Le seguenti sequenze di testo vengono sostituite nel seguente modo'); ?>:</p>
+        <ul>
+<?php
+$list = [
+    'name' => tr('Nome'),
+    'html_name' => tr('Nome HTML'),
+];
+
+foreach ($list as $key => $value) {
+    echo '
+            <li>'.tr('_TEXT_ con il valore del campo "_FIELD_"', [
+                '_TEXT_' => '<code>|'.$key.'|</code>',
+                '_FIELD_' => $value,
+            ]).'</li>';
+}
+
+echo '
+            <li>'.tr('_TEXT_ con il valore impostato per il record', [
+                '_TEXT_' => '<code>|value</code>',
+            ]).'</li>';
+
+?>
+        </ul>
+    </div>
+</div>
+
+<hr>
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>

@@ -433,88 +433,101 @@ if (setting('Azienda predefinita') == $id_record) {
 <div class="alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un file con nome "Logo stampe"').'.</div>';
 }
 
-if (empty($record['deleted_at'])) {
-    //fatture, ddt, preventivi, contratti, ordini, interventi, utenti collegati a questa anagrafica
-    $elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`idanagrafica` = '.prepare($id_record).'
+// Collegamenti diretti
+// Fatture, ddt, preventivi, contratti, ordini, interventi, utenti collegati a questa anagrafica
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`idanagrafica` = '.prepare($id_record).'
 
-		UNION
-	SELECT `zz_users`.`id`, `zz_users`.`created_at` AS data, `zz_users`.`username` AS numero, 0 AS `numero_esterno`, "Utente" AS tipo_documento, 0 AS `dir` FROM `zz_users` WHERE `zz_users`.`idanagrafica` = '.prepare($id_record).'
+UNION
+SELECT `zz_users`.`id`, `zz_users`.`created_at` AS data, `zz_users`.`username` AS numero, 0 AS `numero_esterno`, "Utente" AS tipo_documento, 0 AS `dir` FROM `zz_users` WHERE `zz_users`.`idanagrafica` = '.prepare($id_record).'
 
-		UNION
-	SELECT `or_ordini`.`id`, `or_ordini`.`data`, `or_ordini`.`numero`, `or_ordini`.`numero_esterno`, `or_tipiordine`.`descrizione` AS tipo_documento, `or_tipiordine`.`dir` FROM `or_ordini` JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine` WHERE `or_ordini`.`idanagrafica` = '.prepare($id_record).'
+UNION
+SELECT `or_ordini`.`id`, `or_ordini`.`data`, `or_ordini`.`numero`, `or_ordini`.`numero_esterno`, `or_tipiordine`.`descrizione` AS tipo_documento, `or_tipiordine`.`dir` FROM `or_ordini` JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine` WHERE `or_ordini`.`idanagrafica` = '.prepare($id_record).'
 
-		UNION
-	SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt`.`descrizione` AS tipo_documento, `dt_tipiddt`.`dir` FROM `dt_ddt` JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` WHERE `dt_ddt`.`idanagrafica` = '.prepare($id_record).'
+UNION
+SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt`.`descrizione` AS tipo_documento, `dt_tipiddt`.`dir` FROM `dt_ddt` JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` WHERE `dt_ddt`.`idanagrafica` = '.prepare($id_record).'
 
-	UNION
-	SELECT `in_interventi`.`id`, `in_interventi`.`data_richiesta`, `in_interventi`.`codice` AS numero, 0 AS numero_esterno, "Intervento" AS tipo_documento, 0 AS dir FROM `in_interventi` JOIN `in_interventi_tecnici` ON `in_interventi`.`id` = `in_interventi_tecnici`.`idintervento` WHERE `in_interventi`.`id` IN (SELECT `idintervento` FROM `in_interventi_tecnici` WHERE `idtecnico` = '.prepare($id_record).' OR `in_interventi`.`idanagrafica` = '.prepare($id_record).' )
+UNION
+SELECT `in_interventi`.`id`, `in_interventi`.`data_richiesta`, `in_interventi`.`codice` AS numero, 0 AS numero_esterno, "Intervento" AS tipo_documento, 0 AS dir FROM `in_interventi` JOIN `in_interventi_tecnici` ON `in_interventi`.`id` = `in_interventi_tecnici`.`idintervento` WHERE `in_interventi`.`id` IN (SELECT `idintervento` FROM `in_interventi_tecnici` WHERE `idtecnico` = '.prepare($id_record).') OR `in_interventi`.`idanagrafica` = '.prepare($id_record).'
 
-	UNION
-	SELECT `co_contratti`.`id`, `co_contratti`.`data_bozza`, `co_contratti`.`numero`, 0 AS numero_esterno , "Contratto" AS tipo_documento, 0 AS dir FROM `co_contratti` WHERE `co_contratti`.`idanagrafica` = '.prepare($id_record).'
+UNION
+SELECT `co_contratti`.`id`, `co_contratti`.`data_bozza`, `co_contratti`.`numero`, 0 AS numero_esterno , "Contratto" AS tipo_documento, 0 AS dir FROM `co_contratti` WHERE `co_contratti`.`idanagrafica` = '.prepare($id_record).'
 
-	UNION
-    SELECT `co_preventivi`.`id`, `co_preventivi`.`data_bozza`, `co_preventivi`.`numero`, 0 AS numero_esterno , "Preventivo" AS tipo_documento, 0 AS dir FROM `co_preventivi` WHERE `co_preventivi`.`idanagrafica` = '.prepare($id_record).'
+UNION
+SELECT `co_preventivi`.`id`, `co_preventivi`.`data_bozza`, `co_preventivi`.`numero`, 0 AS numero_esterno , "Preventivo" AS tipo_documento, 0 AS dir FROM `co_preventivi` WHERE `co_preventivi`.`idanagrafica` = '.prepare($id_record).'
 
-    ORDER BY `data`');
+ORDER BY `data`');
 
-    if (!empty($elementi)) {
+if (!empty($elementi)) {
+    echo '
+<div class="box box-warning collapsable collapsed-box">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
+            '_NUM_' => count($elementi)
+        ]).'</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <ul>';
+
+    foreach ($elementi as $elemento) {
+        $descrizione = tr('_DOC_  _NUM_ del _DATE_', [
+        '_DOC_' => $elemento['tipo_documento'],
+        '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
+        '_DATE_' => Translator::dateToLocale($elemento['data']),
+    ]);
+
+        //se non è un preventivo è un ddt o una fattura
+        //se non è un ddt è una fattura.
+        if (in_array($elemento['tipo_documento'], ['Utente'])) {
+            $modulo = 'Utenti e permessi';
+        } elseif (in_array($elemento['tipo_documento'], ['Intervento'])) {
+            $modulo = 'Interventi';
+        } elseif (in_array($elemento['tipo_documento'], ['Preventivo'])) {
+            $modulo = 'Preventivi';
+        } elseif (in_array($elemento['tipo_documento'], ['Contratto'])) {
+            $modulo = 'Contratti';
+        } elseif (in_array($elemento['tipo_documento'], ['Ordine cliente', 'Ordine fornitore'])) {
+            $modulo = ($elemento['dir'] == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
+        } elseif (in_array($elemento['tipo_documento'], ['Ddt di vendita', 'Ddt di acquisto'])) {
+            $modulo = ($elemento['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
+        } else {
+            $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
+        }
+
+        $id = $elemento['id'];
+
         echo '
-		<div class="alert alert-warning">
-			<p>'.tr('_NUM_ altr_I_ document_I_ collegat_I_', [
-                '_NUM_' => count($elementi),
-                '_I_' => (count($elementi) > 1) ? tr('i') : tr('o'),
-            ]).':</p>
-		<ul>';
+            <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+    }
 
-        foreach ($elementi as $elemento) {
-            $descrizione = tr('_DOC_  _NUM_ del _DATE_', [
-                '_DOC_' => $elemento['tipo_documento'],
-                '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
-                '_DATE_' => Translator::dateToLocale($elemento['data']),
-            ]);
+    echo '
+        </ul>
+    </div>
+</div>';
+}
 
-            //se non è un preventivo è un ddt o una fattura
-            //se non è un ddt è una fattura.
-            if (in_array($elemento['tipo_documento'], ['Utente'])) {
-                $modulo = 'Utenti e permessi';
-            } elseif (in_array($elemento['tipo_documento'], ['Intervento'])) {
-                $modulo = 'Interventi';
-            } elseif (in_array($elemento['tipo_documento'], ['Preventivo'])) {
-                $modulo = 'Preventivi';
-            } elseif (in_array($elemento['tipo_documento'], ['Contratto'])) {
-                $modulo = 'Contratti';
-            } elseif (in_array($elemento['tipo_documento'], ['Ordine cliente', 'Ordine fornitore'])) {
-                $modulo = ($elemento['dir'] == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
-            } elseif (in_array($elemento['tipo_documento'], ['Ddt di vendita', 'Ddt di acquisto'])) {
-                $modulo = ($elemento['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
-            } else {
-                $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
-            }
-
-            $id = $elemento['id'];
-
+if (empty($records[0]['deleted_at'])) {
+    if (!in_array($id_azienda, $tipi_anagrafica)) {
+        if (!empty($elementi)) {
             echo '
-			<li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+<div class="alert alert-error">
+    '.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale').'.
+</div>';
         }
 
         echo '
-			</ul>
-			<p>'.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale.').'</p>
-		</div>';
-    }
-
-    if (!in_array($id_azienda, $tipi_anagrafica)) {
-        echo '
-	<a class="btn btn-danger ask" data-backto="record-list">
-		<i class="fa fa-trash"></i> '.tr('Elimina').'
-	</a>';
+<a class="btn btn-danger ask" data-backto="record-list">
+    <i class="fa fa-trash"></i> '.tr('Elimina').'
+</a>';
     } else {
         echo '
-	<div class=\'alert alert-warning\' >'.tr('Questa è l\'anagrafica "Azienda" e non è possibile eliminarla').'.</div>';
+<div class="alert alert-warning">'.tr('Questa è l\'anagrafica "Azienda" e non è possibile eliminarla').'.</div>';
     }
 } else {
     echo '
-	<div class=\'alert alert-danger\'>'.tr('Questa anagrafica è stata eliminata').'.</div>';
+<div class="alert alert-danger">'.tr('Questa anagrafica è stata eliminata').'.</div>';
 }
 
 ?>

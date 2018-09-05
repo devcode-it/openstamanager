@@ -73,6 +73,37 @@ include_once __DIR__.'/../../core.php';
 
 </form>
 
+<?php
+// Collegamenti diretti
+// Template email collegati a questo account
+$elementi = $dbo->fetchArray('SELECT `id`, `name` FROM `zz_emails` WHERE `id_smtp` = '.prepare($id_record));
+
+if (!empty($elementi)) {
+    echo '
+<div class="box box-warning collapsable collapsed-box">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Template email collegati: _NUM_', [
+            '_NUM_' => count($elementi)
+        ]).'</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <ul>';
+
+    foreach ($elementi as $elemento) {
+        echo '
+            <li>'.Modules::link('Template email', $elemento['id'], $elemento['name']).'</li>';
+    }
+
+    echo '
+        </ul>
+    </div>
+</div>';
+} else {
+    echo '
 <a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-</a>
+    <i class="fa fa-trash"></i> '.tr('Elimina').'
+</a>';
+}

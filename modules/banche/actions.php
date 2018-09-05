@@ -59,7 +59,7 @@ switch (filter('op')) {
             ]));
         } else {
             $array = [
-                'deleted' => 1,
+                'deleted_at' => date('Y-m-d H:i:s'),
             ];
 
             $dbo->update('co_banche', $array, ['id' => $id_record]);

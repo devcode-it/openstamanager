@@ -42,7 +42,7 @@ class Plugins
      *
      * @param string|int $plugin
      *
-     * @return array
+     * @return Plugin
      */
     public static function get($plugin)
     {
@@ -53,6 +53,29 @@ class Plugins
         }
 
         return $plugins[$plugin];
+    }
+
+    /**
+     * Restituisce il modulo attualmente in utilizzo.
+     *
+     * @return Plugin
+     */
+    public static function getCurrent()
+    {
+        return Plugin::getCurrent($id);
+    }
+
+    /**
+     * Imposta il modulo attualmente in utilizzo.
+     *
+     * @param int $id
+     */
+    public static function setCurrent($id)
+    {
+        Plugin::setCurrent($id);
+
+        // Fix modulo
+        $plugin = self::getCurrent();
     }
 
     /**

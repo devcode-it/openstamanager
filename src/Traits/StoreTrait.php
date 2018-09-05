@@ -9,6 +9,9 @@ trait StoreTrait
     /** @var bool Controllo sul salvataggio globale */
     protected static $all = false;
 
+    /** @var int Identificatore dell'oggetto in utilizzo */
+    protected static $current;
+
     /** @var string Nome della colonna "id" (Primary Key) */
     protected static $id = 'id';
     /** @var string Nome della colonna "name" */
@@ -61,5 +64,25 @@ trait StoreTrait
         self::$collection->push($result);
 
         return $result;
+    }
+
+    /**
+     * Restituisce l'oggetto attualmente impostato.
+     *
+     * @return StoreTrait
+     */
+    public static function getCurrent()
+    {
+        return self::get(self::$current);
+    }
+
+    /**
+     * Imposta il modulo attualmente in utilizzo.
+     *
+     * @param int $id
+     */
+    public static function setCurrent($id)
+    {
+        self::$current = $id;
     }
 }

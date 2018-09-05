@@ -68,6 +68,26 @@ class Modules
     }
 
     /**
+     * Restituisce il modulo attualmente in utilizzo.
+     *
+     * @return Module
+     */
+    public static function getCurrent()
+    {
+        return Module::getCurrent($id);
+    }
+
+    /**
+     * Imposta il modulo attualmente in utilizzo.
+     *
+     * @param int $id
+     */
+    public static function setCurrent($id)
+    {
+        Module::setCurrent($id);
+    }
+
+    /**
      * Restituisce i permessi accordati all'utente in relazione al modulo specificato.
      *
      * @param string|int $module
@@ -210,7 +230,7 @@ class Modules
     {
         $menus = self::getHierarchy();
 
-        $module = App::getCurrentModule();
+        $module = Modules::getCurrent();
         $module_name = isset($module) ? $module->name : '';
 
         $result = '';

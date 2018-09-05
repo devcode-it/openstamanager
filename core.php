@@ -207,6 +207,9 @@ if (!API::isAPIRequest()) {
         $id_plugin = filter('id_plugin');
         $id_parent = filter('id_parent');
 
+        Modules::setCurrent($id_module);
+        Plugins::setCurrent($id_plugin);
+
         // Periodo di visualizzazione dei record
         // Personalizzato
         if (!empty($_GET['period_start'])) {

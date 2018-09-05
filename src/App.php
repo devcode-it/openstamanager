@@ -43,35 +43,6 @@ class App
         ],
     ];
 
-    /**
-     * Restituisce il modulo attualmente in utilizzo.
-     *
-     * @return array
-     */
-    public static function getCurrentModule()
-    {
-        $id = filter('id_module');
-
-        if (empty(self::$current_module) && !empty($id)) {
-            self::$current_module = Modules::get($id);
-        }
-
-        return self::$current_module;
-    }
-
-    /**
-     * Restituisce l'identificativo dell'elemento attualmente in utilizzo.
-     *
-     * @return int
-     */
-    public static function getCurrentElement()
-    {
-        if (empty(self::$current_element)) {
-            self::$current_element = intval(filter('id_record'));
-        }
-
-        return self::$current_element;
-    }
 
     /**
      * Restituisce la configurazione di default del progetto.
@@ -470,9 +441,9 @@ class App
      */
     protected static function internalLoad($file, $result, $options, $directory = null)
     {
-        $module = self::getCurrentModule();
+        $module = Modules::getCurrent();
 
-        $id_module = filter('id_module');
+        $id_module = $module['id'];
         $id_record = filter('id_record');
 
         $directory = empty($directory) ? 'include|custom|/common/' : $directory;

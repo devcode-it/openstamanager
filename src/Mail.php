@@ -231,7 +231,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
      */
     public function attach($prints, $files)
     {
-        $id_module = App::getCurrentModule()['id'];
+        $id_module = Modules::getCurrent()['id'];
         $id_record = App::getCurrentElement();
 
         // Elenco degli allegati

@@ -8,8 +8,8 @@ switch ($resource) {
             $order[] = 'idanagrafica';
         }
 
-        if (empty($where['deleted'])) {
-            $where['deleted'] = 0;
+        if (empty($where['deleted_at'])) {
+            $where['deleted_at'] = null;
         }
 
         break;

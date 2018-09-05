@@ -46,6 +46,7 @@ include_once __DIR__.'/../../core.php';
 </form>
 
 <?php
+// Collegamenti diretti (numerici)
 $documenti = $dbo->fetchNum('SELECT idanagrafica FROM an_anagrafiche WHERE idbanca_vendite='.prepare($id_record).'
 UNION SELECT idanagrafica FROM an_anagrafiche WHERE idbanca_acquisti='.prepare($id_record));
 

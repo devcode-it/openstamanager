@@ -164,17 +164,23 @@ include $docroot.'/modules/preventivi/row-list.php';
 
 <?php
 //fatture collegate a questo preventivo
-$fatture = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idpreventivo` = '.prepare($id_record).') ORDER BY `data`');
-if (!empty($fatture)) {
-    echo '
-    <div class="alert alert-warning">
-        <p>'.tr('_NUM_ altr_I_ document_I_ collegat_I_', [
-            '_NUM_' => count($fatture),
-            '_I_' => (count($fatture) > 1) ? tr('i') : tr('o'),
-        ]).':</p>
-    <ul>';
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idpreventivo` = '.prepare($id_record).') ORDER BY `data`');
 
-    foreach ($fatture as $fattura) {
+if (!empty($elementi)) {
+    echo '
+<div class="box box-warning collapsable collapsed-box">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
+            '_NUM_' => count($elementi)
+        ]).'</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <ul>';
+
+    foreach ($elementi as $fattura) {
         $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
             '_DOC_' => $fattura['tipo_documento'],
             '_NUM_' => !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'],
@@ -185,13 +191,20 @@ if (!empty($fatture)) {
         $id = $fattura['id'];
 
         echo '
-        <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+            <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
     }
 
     echo '
         </ul>
-         <p>'.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale.').'</p>
-    </div>';
+    </div>
+</div>';
+}
+
+if (!empty($elementi)) {
+    echo '
+<div class="alert alert-error">
+    '.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale').'.
+</div>';
 }
 
 ?>

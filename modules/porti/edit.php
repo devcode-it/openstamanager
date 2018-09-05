@@ -23,9 +23,10 @@ include_once __DIR__.'/../../core.php';
 </form>
 
 <?php
+// Collegamenti diretti (numerici)
 $documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE idporto='.prepare($id_record).'
-			 UNION SELECT id FROM co_documenti WHERE idporto='.prepare($id_record).'
-			 UNION SELECT id FROM co_preventivi WHERE idporto='.prepare($id_record));
+UNION SELECT id FROM co_documenti WHERE idporto='.prepare($id_record).'
+UNION SELECT id FROM co_preventivi WHERE idporto='.prepare($id_record));
 
 if (!empty($documenti)) {
     echo '

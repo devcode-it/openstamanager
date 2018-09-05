@@ -1,5 +1,7 @@
 <?php
 
+use Models\Plugin;
+
 /**
  * Classe per la gestione delle informazioni relative ai plugin installati.
  *

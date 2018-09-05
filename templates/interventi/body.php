@@ -447,9 +447,7 @@ if ($options['pricing']) {
         </th>
     </tr>';
 
-    //$sconto_addebito = $costi_intervento['totale_addebito'] - $costi_intervento['totale_scontato'];
     $totale_sconto = $costi_intervento['totale_addebito'] - $costi_intervento['totale_scontato'];
-    //$totale_sconto = $costi_intervento['sconto_globale'] + $sconto_addebito;
 
     // Eventuale sconto totale
     if (!empty($totale_sconto)) {
@@ -477,28 +475,18 @@ if ($options['pricing']) {
         </tr>';
     }
 
-    // Leggo iva da applicare
-    $rs1 = $dbo->fetchArray('SELECT percentuale FROM co_iva WHERE id='.prepare(setting('Iva predefinita')));
-    $percentuale_iva = $rs1[0]['percentuale'];
-
-    $iva = ($costi_intervento['totale_scontato'] / 100 * $percentuale_iva);
-
     // IVA
     // Totale intervento
     echo '
     <tr>
         <td colspan="4" class="text-right">
-            <b>'.tr('Iva (_PRC_%)', [
-                '_PRC_' => Translator::numberToLocale($percentuale_iva, 0),
-            ], ['upper' => true]).':</b>
+            <b>'.tr('Iva', [], ['upper' => true]).':</b>
         </td>
 
         <th class="text-center">
-            <b>'.Translator::numberToLocale($iva).' &euro;</b>
+            <b>'.Translator::numberToLocale($costi_intervento['iva_totale']).' &euro;</b>
         </th>
     </tr>';
-
-    $totale = sum($costi_intervento['totale_scontato'], $iva);
 
     // TOTALE INTERVENTO
     echo '
@@ -507,7 +495,7 @@ if ($options['pricing']) {
             <b>'.tr('Totale intervento', [], ['upper' => true]).':</b>
     	</td>
     	<th class="text-center">
-    		<b>'.Translator::numberToLocale($totale).' &euro;</b>
+    		<b>'.Translator::numberToLocale($costi_intervento['totale']).' &euro;</b>
     	</th>
     </tr>';
 }

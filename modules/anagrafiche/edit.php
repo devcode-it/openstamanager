@@ -447,7 +447,7 @@ UNION
 SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt`.`descrizione` AS tipo_documento, `dt_tipiddt`.`dir` FROM `dt_ddt` JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` WHERE `dt_ddt`.`idanagrafica` = '.prepare($id_record).'
 
 UNION
-SELECT `in_interventi`.`id`, `in_interventi`.`data_richiesta`, `in_interventi`.`codice` AS numero, 0 AS numero_esterno, "Intervento" AS tipo_documento, 0 AS dir FROM `in_interventi` JOIN `in_interventi_tecnici` ON `in_interventi`.`id` = `in_interventi_tecnici`.`idintervento` WHERE `in_interventi`.`id` IN (SELECT `idintervento` FROM `in_interventi_tecnici` WHERE `idtecnico` = '.prepare($id_record).' OR `in_interventi`.`idanagrafica` = '.prepare($id_record).' )
+SELECT `in_interventi`.`id`, `in_interventi`.`data_richiesta`, `in_interventi`.`codice` AS numero, 0 AS numero_esterno, "Intervento" AS tipo_documento, 0 AS dir FROM `in_interventi` JOIN `in_interventi_tecnici` ON `in_interventi`.`id` = `in_interventi_tecnici`.`idintervento` WHERE `in_interventi`.`id` IN (SELECT `idintervento` FROM `in_interventi_tecnici` WHERE `idtecnico` = '.prepare($id_record).') OR `in_interventi`.`idanagrafica` = '.prepare($id_record).'
 
 UNION
 SELECT `co_contratti`.`id`, `co_contratti`.`data_bozza`, `co_contratti`.`numero`,  0 AS numero_esterno , "Contratto" AS tipo_documento, 0 AS dir FROM `co_contratti` WHERE `co_contratti`.`id` IN (SELECT `idcontratto` FROM `co_contratti_promemoria` WHERE `idanagrafica` = '.prepare($id_record).')

@@ -32,7 +32,7 @@ class Module extends Model
         parent::boot();
 
         static::addGlobalScope('enabled', function (Builder $builder) {
-            $builder->where('enabled', true);
+            //$builder->where('enabled', true);
         });
 
         static::addGlobalScope('permission', function (Builder $builder) {

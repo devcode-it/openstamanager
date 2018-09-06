@@ -93,7 +93,7 @@ class FileManager implements ManagerInterface
                     // Anteprime supportate dal browser
                     $extension = pathinfo($r['original'])['extension'];
                     $supported_extensions = ['pdf', 'jpg', 'png', 'gif', 'jpeg', 'bmp'];
-                    if (in_array($extension, $supported_extensions)) {
+                    if (in_array(strtolower($extension), $supported_extensions)) {
                         $result .= "
                 <div class='hide' id='view-".$r['id']."'>";
 

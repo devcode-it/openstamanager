@@ -147,7 +147,7 @@ class Uploads
      */
     protected static function isSupportedType($extension)
     {
-        return in_array($extension, array_keys(self::$allowed_types));
+        return in_array(strtolower($extension), array_keys(self::$allowed_types));
     }
 
     /**

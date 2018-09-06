@@ -22,7 +22,7 @@ $fields = [
     'citta' => 'Città',
     'indirizzo' => 'Indirizzo',
     'cap' => 'C.A.P.',
-    'id_nazione' => 'Nazione',
+    'nazione' => 'Nazione',
 ];
 
 $missing = [];
@@ -43,14 +43,15 @@ if (!empty($missing)) {
 }
 
 // Campi obbligatori per l'anagrafica Cliente
-$cliente = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica = '.prepare($record['idanagrafica']));
+$cliente = $dbo->fetchOne('SELECT *, (SELECT `iso2` FROM `an_nazioni` WHERE `an_nazioni`.`id` = `an_anagrafiche`.`id_nazione`) AS nazione FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare($record['idanagrafica']));
 $fields = [
     // 'piva' => 'Partita IVA',
     // 'codice_fiscale' => 'Codice Fiscale',
     'citta' => 'Città',
     'indirizzo' => 'Indirizzo',
     'cap' => 'C.A.P.',
-    'id_nazione' => 'Nazione',
+    'nazione' => 'Nazione',
+    'pec' => 'PEC',
 ];
 
 $missing = [];

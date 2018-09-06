@@ -5,6 +5,7 @@ namespace Plugins\Fatturazione;
 use FluidXml\FluidXml;
 use Respect\Validation\Validator as v;
 use Stringy\Stringy as S;
+use DateTime;
 
 /**
  * Classe per la gestione della fatturazione elettronica in XML.
@@ -459,7 +460,7 @@ class FatturaElettronica
             }
             // Formattazione date
             elseif ($info['type'] == 'date') {
-                $object = \DateTime::createFromFormat('Y-m-d H:i:s', $output);
+                $object = DateTime::createFromFormat('Y-m-d H:i:s', $output);
                 if (is_object($object)) {
                     $output = $object->format('Y-m-d');
                 }
@@ -471,7 +472,7 @@ class FatturaElettronica
             // Riduzione delle dimensioni
             if ($info['type'] != 'integer' && isset($size[1])) {
                 $output = trim($output);
-                $output = S::create($output)->substr(2, $size[1])->__toString();
+                $output = S::create($output)->substr(0, $size[1])->__toString();
             }
 
             // Validazione

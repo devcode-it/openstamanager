@@ -459,23 +459,19 @@ class FatturaElettronica
             }
             // Formattazione date
             elseif ($info['type'] == 'date') {
-                $object = DateTime::createFromFormat('Y-m-d H:i:s', $value);
+                $object = \DateTime::createFromFormat('Y-m-d H:i:s', $output);
                 if (is_object($object)) {
                     $output = $object->format('Y-m-d');
                 }
             }
             // Formattazione testo
             elseif ($info['type'] == 'string') {
-                $object = DateTime::createFromFormat('Y-m-d H:i:s', $value);
-                if (is_object($object)) {
-                    $output = $object->format('Y-m-d');
-                }
             }
 
             // Riduzione delle dimensioni
             if ($info['type'] != 'integer' && isset($size[1])) {
                 $output = trim($output);
-                $output = S::create($output)->substr(2, $size[1]);
+                $output = S::create($output)->substr(2, $size[1])->__toString();
             }
 
             // Validazione

@@ -3,8 +3,8 @@
 include_once __DIR__.'/../../core.php';
 
 // carica report html
-$report = file_get_contents($docroot.'/templates/magazzino_inventario/magazzino_inventario.html');
-$body = file_get_contents($docroot.'/templates/magazzino_inventario/magazzino_inventario_body.html');
+$report = file_get_contents(__DIR__.'/magazzino_inventario.html');
+$body = file_get_contents(__DIR__.'/magazzino_inventario_body.html');
 
 $search_codice = $_GET['search_codice'];
 $search_descrizione = $_GET['search_descrizione'];
@@ -52,7 +52,7 @@ include_once $docroot.'/templates/pdfgen_variables.php';
 // LEFT OUTER JOIN mg_categorie ON (mg_categorie.id=mg_articoli.id_categoria AND mg_categorie.parent = 0) OR (mg_categorie.id=mg_articoli.id_sottocategoria AND  mg_categorie.parent = 1)
 $period_end = $_SESSION['period_end'];
 
-$query = 'SELECT *, mg_articoli.id AS id_articolo, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 0 AND mg_categorie.id = mg_articoli.id_categoria) AS categoria, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 1 AND mg_categorie.id = mg_articoli.id_sottocategoria) AS subcategoria, (SELECT SUM(qta) FROM mg_movimenti WHERE mg_movimenti.idarticolo=mg_articoli.id AND (mg_movimenti.idintervento IS NULL OR mg_movimenti.idautomezzo = 0) AND data <= '.prepare($period_end).' ) AS qta FROM mg_articoli WHERE 1=1   '.$add_where.' HAVING  2=2 '.$add_having.' ORDER BY codice ASC';
+$query = 'SELECT *, mg_articoli.id AS id_articolo, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 0 AND mg_categorie.id = mg_articoli.id_categoria) AS categoria, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 1 AND mg_categorie.id = mg_articoli.id_sottocategoria) AS subcategoria, (SELECT SUM(qta) FROM mg_movimenti WHERE mg_movimenti.idarticolo=mg_articoli.id AND (mg_movimenti.idintervento IS NULL OR mg_movimenti.idautomezzo = 0) AND data <= '.prepare($period_end).' ) AS qta FROM mg_articoli WHERE 1=1 '.$add_where.' HAVING  2=2 AND qta > 0 '.$add_having.' ORDER BY codice ASC';
 $rs = $dbo->fetchArray($query);
 $totrows = sizeof($rs);
 

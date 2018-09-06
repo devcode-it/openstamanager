@@ -27,7 +27,8 @@ class Prints
             $prints = [];
 
             // Inizializzazione dei riferimenti
-            foreach (Modules::getModules() as $module) {
+            $modules = Modules::getModules();
+            foreach ($modules as $module) {
                 self::$modules[$module['id']] = [];
             }
 
@@ -207,6 +208,7 @@ class Prints
     {
         $infos = self::get($id_print);
         $options = self::readOptions($infos['options']);
+        $docroot = DOCROOT;
 
         $dbo = $database = Database::getConnection();
 

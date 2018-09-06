@@ -213,7 +213,7 @@ class Modules
     public static function getHierarchy()
     {
         if (!isset(self::$hierarchy)) {
-            self::$hierarchy = Module::getCompleteHierarchy()->toArray();
+            self::$hierarchy = Module::getHierarchy()->toArray();
         }
 
         return self::$hierarchy;

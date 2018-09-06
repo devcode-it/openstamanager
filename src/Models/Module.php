@@ -32,7 +32,7 @@ class Module extends Model
         parent::boot();
 
         static::addGlobalScope('enabled', function (Builder $builder) {
-            //$builder->where('enabled', true);
+            $builder->where('enabled', true);
         });
 
         static::addGlobalScope('permission', function (Builder $builder) {
@@ -126,13 +126,13 @@ class Module extends Model
 
     public function children()
     {
-        return $this->hasMany(self::class, 'parent')
+        return $this->hasMany(self::class, 'parent')->withoutGlobalScope('enabled')
             ->orderBy('order');
     }
 
     public function parent()
     {
-        return $this->belongsTo(self::class, 'parent');
+        return $this->belongsTo(self::class, 'parent')->withoutGlobalScope('enabled');
     }
 
     public function allParents()
@@ -150,15 +150,6 @@ class Module extends Model
     public static function getHierarchy()
     {
         return self::with('allChildren')
-            ->whereNull('parent')
-            ->orderBy('order')
-            ->get();
-    }
-
-    public static function getCompleteHierarchy()
-    {
-        return self::withoutGlobalScope('enabled')
-            ->with('allChildren')
             ->whereNull('parent')
             ->orderBy('order')
             ->get();

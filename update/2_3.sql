@@ -22,6 +22,7 @@ ALTER TABLE `in_interventi` CHANGE `id` `id` int(11) NOT NULL AUTO_INCREMENT FIR
 ALTER TABLE `my_impianti_interventi` DROP PRIMARY KEY;
 
 UPDATE `co_ordiniservizio` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `co_ordiniservizio`.`idintervento`);
+DELETE FROM `co_preventivi_interventi` WHERE idpreventivo = 0;
 UPDATE `co_preventivi_interventi` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `co_preventivi_interventi`.`idintervento`);
 UPDATE `co_righe_contratti` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `co_righe_contratti`.`idintervento`);
 UPDATE `co_righe_documenti` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`idintervento` = `co_righe_documenti`.`idintervento`);

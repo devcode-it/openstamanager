@@ -211,9 +211,11 @@ class FatturaElettronica
 
         // IscrizioneREA
         if (!empty($azienda['codicerea'])) {
+            $codice = explode('-', $azienda['codicerea']);
+
             $result['IscrizioneREA'] = [
-                'Ufficio' => strtoupper(substr($azienda['capitale_sociale'], 0, 2)),
-                'NumeroREA' => $azienda['codicerea'],
+                'Ufficio' => strtoupper($codice[0]),
+                'NumeroREA' => $codice[1],
             ];
 
             if (!empty($azienda['capitale_sociale'])) {
@@ -231,7 +233,7 @@ class FatturaElettronica
         }
 
         // Fax
-        if (!empty($azienda['email'])) {
+        if (!empty($azienda['fax'])) {
             $result['Contatti']['Fax'] = $azienda['fax'];
         }
 
@@ -451,11 +453,29 @@ class FatturaElettronica
 
             $output = $input;
             // Operazioni di normalizzazione
+            // Formattazione decimali
             if ($info['type'] == 'decimal') {
                 $output = number_format($output, 2, '.', '');
-            } elseif ($info['type'] != 'integer' && isset($size[1])) {
+            }
+            // Formattazione date
+            elseif ($info['type'] == 'date') {
+                $object = DateTime::createFromFormat('Y-m-d H:i:s', $value);
+                if (is_object($object)) {
+                    $output = $object->format('Y-m-d');
+                }
+            }
+            // Formattazione testo
+            elseif ($info['type'] == 'string') {
+                $object = DateTime::createFromFormat('Y-m-d H:i:s', $value);
+                if (is_object($object)) {
+                    $output = $object->format('Y-m-d');
+                }
+            }
+
+            // Riduzione delle dimensioni
+            if ($info['type'] != 'integer' && isset($size[1])) {
                 $output = trim($output);
-                S::create($output)->substr(2, $size[1]);
+                $output = S::create($output)->substr(2, $size[1]);
             }
 
             // Validazione
@@ -478,7 +498,8 @@ class FatturaElettronica
 
                 $this->is_valid &= $validation;
 
-                //echo $key.': '.intval($validation).'<br>';
+                // Per debug
+                //flash()->warning($key.': '.intval($validation));
             }
         }
 

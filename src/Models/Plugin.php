@@ -85,6 +85,10 @@ class Plugin extends Model
      */
     public function getCustomEditFile()
     {
+        if (empty($this->script)) {
+            return;
+        }
+
         return $this->getAddFile();
     }
 

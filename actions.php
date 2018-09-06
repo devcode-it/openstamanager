@@ -168,7 +168,9 @@ if ($element->permission == 'rw') {
     // Esecuzione delle operazioni di gruppo
     $id_records = post('id_records');
     $id_records = is_array($id_records) ? $id_records : explode(';', $id_records);
-    $id_records = array_filter($id_records, function ($var) {return !empty($var); });
+    $id_records = array_filter($id_records, function ($var) {
+        return !empty($var);
+    });
     $id_records = array_unique($id_records);
 
     $bulk = App::filepath($directory.'|custom|', 'bulk.php');

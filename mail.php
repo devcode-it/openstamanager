@@ -114,7 +114,7 @@ echo '
 
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'.tr('Contenuto').'", "name": "body", "value": '.json_encode($body).' ]}
+            {[ "type": "ckeditor", "label": "'.tr('Contenuto').'", "name": "body", "value": '.json_encode($body).' ]}
         </div>
     </div>';
 
@@ -134,9 +134,6 @@ echo '
         {[ "type": "email", "name": "destinatari[]", "icon-before": "choice|email|cc", "extra": "onkeyup=\'aggiungi_destinatario();\'", "class": "destinatari" ]}
     </div>
 </div>';
-
-echo '
-<script src="'.$rootdir.'/assets/dist/js/ckeditor/ckeditor.js"></script>';
 
 echo '
 <script>
@@ -165,12 +162,6 @@ echo '
 
         echo '
 
-        CKEDITOR.replace("body", {
-            toolbar: globals.ckeditorToolbar,
-            language: globals.locale,
-            scayt_autoStartup: true,
-            scayt_sLang: globals.full_locale
-        });
     });
 
     function send(){

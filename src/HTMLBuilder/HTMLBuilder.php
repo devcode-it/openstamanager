@@ -60,6 +60,7 @@ class HTMLBuilder
             'timestamp' => 'HTMLBuilder\Handler\DateHandler',
             'date' => 'HTMLBuilder\Handler\DateHandler',
             'time' => 'HTMLBuilder\Handler\DateHandler',
+            'ckeditor' => Handler\CKEditorHandler::class,
         ],
         'instances' => [],
     ];

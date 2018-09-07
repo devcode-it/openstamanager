@@ -54,7 +54,7 @@ class Articolo extends Model
                 ':id_intervento' => $intervento->id,
             ])['data'];
 
-            $data = $data ?? $intervento->data_richiesta;
+            $data = $data ?: $intervento->data_richiesta;
 
             $descrizione = ($qta < 0) ? tr('Ripristino articolo da intervento _NUM_', [
                 '_NUM_' => $numero,

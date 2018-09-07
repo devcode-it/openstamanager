@@ -160,9 +160,9 @@ class Settings
         }
 
         // Textarea
-        elseif ($setting->tipo == 'textarea') {
+        elseif ($setting->tipo == 'textarea' || $setting->tipo == 'ckeditor') {
             $result = '
-    {[ "type": "textarea", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "value": '.json_encode($setting->valore).', "required": "'.intval($required).'"  ]}';
+    {[ "type": "'.$setting->tipo.'", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "value": '.json_encode($setting->valore).', "required": "'.intval($required).'"  ]}';
         }
 
         // Campo di testo

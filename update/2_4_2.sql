@@ -290,3 +290,6 @@ UPDATE `zz_plugins` SET `script` = '', `options` = '	{ "main_query": [	{	"type":
 ALTER TABLE `in_interventi` ADD `id_preventivo` int(11), ADD FOREIGN KEY (`id_preventivo`) REFERENCES `co_preventivi`(`id`) ON DELETE CASCADE, ADD `id_contratto` int(11), ADD FOREIGN KEY (`id_contratto`) REFERENCES `co_contratti`(`id`) ON DELETE CASCADE;
 UPDATE `in_interventi` SET `id_preventivo` = (SELECT `idpreventivo` FROM `co_preventivi_interventi` WHERE `co_preventivi_interventi`.`idintervento` = `in_interventi`.`id` LIMIT 1);
 DROP TABLE `co_preventivi_interventi`;
+
+-- Aggiunto input CKEditor automatico
+UPDATE `zz_settings` SET `tipo` = 'ckeditor' WHERE `nome` = 'Dicitura fissa fattura';

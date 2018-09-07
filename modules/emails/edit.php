@@ -2,9 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-echo '
-<script src="'.$rootdir.'/assets/dist/js/ckeditor/ckeditor.js"></script>';
-
 ?>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">
@@ -79,7 +76,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "textarea", "label": "<?php echo tr('Contenuto'); ?>", "name": "body", "value": "$body$" ]}
+                    {[ "type": "ckeditor", "label": "<?php echo tr('Contenuto'); ?>", "name": "body", "value": "$body$" ]}
                 </div>
             </div>
 
@@ -130,15 +127,3 @@ echo '
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
-
-<script>
-    $(document).ready(function(){
-        CKEDITOR.replace("body", {
-            toolbar: globals.ckeditorToolbar,
-            language: globals.locale,
-            scayt_autoStartup: true,
-            scayt_sLang: globals.full_locale
-        });
-
-    });
-</script>

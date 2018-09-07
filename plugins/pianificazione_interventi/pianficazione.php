@@ -30,7 +30,7 @@ if (count($id_impianti) == 1) {
 $record = $dbo->fetchOne('SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_promemoria.idtipointervento) AS tempo_standard FROM co_promemoria WHERE id = :id', [
     ':id' => $id_record,
 ]);
-$data_richiesta = $record['data_richiesta'] ?? date('Y-m-d');
+$data_richiesta = $record['data_richiesta'] ?: date('Y-m-d');
 $id_sede = $record['idsede'];
 $tempo_standard = $record['tempo_standard'];
 $idtipointervento = $record['idtipointervento'];

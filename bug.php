@@ -132,7 +132,7 @@ echo '
             <div class="clearfix"></div>
             <br>
 
-            {[ "type": "textarea", "label": "'.tr('Descrizione del bug').'", "name": "body" ]}
+            {[ "type": "ckeditor", "label": "'.tr('Descrizione del bug').'", "name": "body" ]}
 
             <!-- PULSANTI -->
             <div class="row">
@@ -158,13 +158,6 @@ echo '
         "'.tr('Lo staff di OSM').'</p>";
 
         var firstFocus = 1;
-
-        CKEDITOR.replace("body", {
-            toolbar: globals.ckeditorToolbar,
-            language: globals.locale,
-            scayt_autoStartup: true,
-            scayt_sLang: globals.full_locale
-        });
 
         CKEDITOR.instances.body.on("key", function() {
             setTimeout(function(){

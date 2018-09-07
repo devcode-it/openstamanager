@@ -166,7 +166,7 @@ class FatturaElettronica
 
         // Informazioni specifiche azienda
         if ($azienda) {
-            // AlboProfessionale, ProvinciaAlbo, NumeroIscrizioneAlbo, DataIscrizioneAlbo
+            // TODO: AlboProfessionale, ProvinciaAlbo, NumeroIscrizioneAlbo, DataIscrizioneAlbo
 
             $result['RegimeFiscale'] = setting('Regime Fiscale');
         }

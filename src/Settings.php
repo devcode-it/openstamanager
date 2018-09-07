@@ -122,7 +122,14 @@ class Settings
         return  false;
     }
 
-    public static function input($setting)
+    /**
+     * Genera l'input HTML per la modifica dell'impostazione.
+     *
+     * @param string|int $setting
+     * @param boolean $required
+     * @return string
+     */
+    public static function input($setting, $required = false)
     {
         $setting = self::get($setting);
 
@@ -137,25 +144,25 @@ class Settings
                 $list .= '\\"'.$m[$j].'\\": \\"'.$m[$j].'\\"';
             }
             $result = '
-    {[ "type": "select", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "values": "list='.$list.'", "value": "'.$setting->valore.'" ]}';
+    {[ "type": "select", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "values": "list='.$list.'", "value": "'.$setting->valore.'", "required": "'.intval($required).'" ]}';
         }
 
         // Lista da query
         elseif (preg_match('/^query=(.+?)$/', $setting->tipo, $m)) {
             $result = '
-    {[ "type": "select", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "values": "'.$setting->tipo.'", "value": "'.$setting->valore.'" ]}';
+    {[ "type": "select", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "values": "'.$setting->tipo.'", "value": "'.$setting->valore.'", "required": "'.intval($required).'"  ]}';
         }
 
         // Boolean (checkbox)
         elseif ($setting->tipo == 'boolean') {
             $result = '
-    {[ "type": "checkbox", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "placeholder": "'.tr('Attivo').'", "value": "'.$setting->valore.'" ]}';
+    {[ "type": "checkbox", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "placeholder": "'.tr('Attivo').'", "value": "'.$setting->valore.'", "required": "'.intval($required).'"  ]}';
         }
 
         // Textarea
         elseif ($setting->tipo == 'textarea') {
             $result = '
-    {[ "type": "textarea", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "value": '.json_encode($setting->valore).' ]}';
+    {[ "type": "textarea", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "value": '.json_encode($setting->valore).', "required": "'.intval($required).'"  ]}';
         }
 
         // Campo di testo
@@ -166,7 +173,7 @@ class Settings
             $tipo = $numerico ? 'number' : 'text';
 
             $result = '
-    {[ "type": "'.$tipo.'", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "value": "'.$setting->valore.'"'.($numerico && $setting->tipo == 'integer' ? ', "decimals": 0' : '').' ]}';
+    {[ "type": "'.$tipo.'", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "value": "'.$setting->valore.'"'.($numerico && $setting->tipo == 'integer' ? ', "decimals": 0' : '').', "required": "'.intval($required).'"  ]}';
         }
 
         return $result;

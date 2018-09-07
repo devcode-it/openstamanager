@@ -179,7 +179,7 @@ if (!$has_settings) {
     foreach ($settings as $setting) {
         echo '
                     <div class="col-md-6">
-                        '.Settings::input($setting).'
+                        '.Settings::input($setting, true).'
                     </div>';
     }
 

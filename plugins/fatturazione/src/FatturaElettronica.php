@@ -6,6 +6,7 @@ use FluidXml\FluidXml;
 use Respect\Validation\Validator as v;
 use Stringy\Stringy as S;
 use DateTime;
+use Uploads, Modules, Plugins, Prints;
 
 /**
  * Classe per la gestione della fatturazione elettronica in XML.
@@ -394,6 +395,28 @@ class FatturaElettronica
         return $result;
     }
 
+    protected static function getAllegati($documento) {
+        $id_module = Modules::get('Fatture di vendita')['id'];
+        $dir = Uploads::getDirectory($id_module, Plugins::get('Fatturazione Elettronica')['id']);
+
+        $rapportino_nome = sanitizeFilename($documento['numero'].'.pdf');
+        $filename = slashes(DOCROOT.'/'.$dir.'/'.$rapportino_nome);
+
+        $print = Prints::getModuleMainPrint($id_module);
+
+        Prints::render($print['id'], $documento['id'], $filename);
+
+        $pdf = file_get_contents($filename);
+
+        $result = [
+            'NomeAttachment' => 'Fattura',
+            'FormatoAttachment' => 'PDF',
+            'Attachment' => base64_encode($pdf),
+        ];
+
+        return $result;
+    }
+
     /**
      * Restituisce l'array responsabile per la generazione del tag FatturaElettronicaHeader.
      *
@@ -427,6 +450,7 @@ class FatturaElettronica
             'DatiGenerali' => static::getDatiDocumento($documento),
             'DatiBeniServizi' => static::getDatiBeniServizi($documento),
             'DatiPagamento' => static::getDatiPagamento($documento),
+            'Allegati' => static::getAllegati($documento),
         ];
 
         return $result;
@@ -558,16 +582,16 @@ class FatturaElettronica
         $data = [
             'original' => $filename,
             'category' => tr('Fattura elettronica'),
-            'id_module' => \Modules::get('Fatture di vendita')['id'],
-            'id_plugin' => \Plugins::get('Fatturazione Elettronica')['id'],
+            'id_module' => Modules::get('Fatture di vendita')['id'],
+            'id_plugin' => Plugins::get('Fatturazione Elettronica')['id'],
             'id_record' => $this->getDocumento()['id'],
         ];
-        $uploads = \Uploads::get($data);
+        $uploads = Uploads::get($data);
 
         $registered = in_array($filename, array_column($uploads, 'original'));
 
         if (!$registered) {
-            \Uploads::register($data);
+            Uploads::register($data);
         }
     }
 

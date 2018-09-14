@@ -104,6 +104,8 @@ class Prints
 
         if ($main !== false) {
             return $prints[$main];
+        } elseif (!empty($prints)) {
+            return $prints[0];
         }
 
         return false;

@@ -5,7 +5,11 @@ $modules = [
     'mod_rewrite' => tr('Fornisce un sistema di riscrittura URL basato su regole predefinite'),
 ];
 
-$available_modules = apache_get_modules();
+$available_modules = [];
+try {
+    $available_modules = apache_get_modules();
+} catch(Exception $e) {
+}
 
 $apache = [];
 foreach ($modules as $name => $description) {

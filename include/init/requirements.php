@@ -2,18 +2,21 @@
 
 // Apache
 $modules = [
-    'mod_rewrite' => tr('Fornisce un sistema di riscrittura URL basato su regole predefinite'),
+    'mod_rewrite' => [
+        'server' => 'HTTP_MOD_REWRITE',
+        'description' => tr('Fornisce un sistema di riscrittura URL basato su regole predefinite'),
+    ],
 ];
 
-$available_modules = [];
-try {
+if (function_exists('apache_get_modules')) {
     $available_modules = apache_get_modules();
-} catch(Exception $e) {
 }
 
 $apache = [];
-foreach ($modules as $name => $description) {
-    $status = in_array($name, $available_modules);
+foreach ($modules as $name => $values) {
+    $description = $values['description'];
+
+    $status = isset($available_modules) ? in_array($name, $available_modules) : $_SERVER[$values['server']] == 'On';
 
     $apache[] = [
         'name' => $name,

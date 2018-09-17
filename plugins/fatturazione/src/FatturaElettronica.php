@@ -6,7 +6,10 @@ use FluidXml\FluidXml;
 use Respect\Validation\Validator as v;
 use Stringy\Stringy as S;
 use DateTime;
-use Uploads, Modules, Plugins, Prints;
+use Uploads;
+use Modules;
+use Plugins;
+use Prints;
 
 /**
  * Classe per la gestione della fatturazione elettronica in XML.
@@ -395,7 +398,14 @@ class FatturaElettronica
         return $result;
     }
 
-    protected static function getAllegati($documento) {
+    /**
+     * Restituisce l'array responsabile per la generazione del tag Allegati.
+     * Supporta un singolo allegato in PDF.
+     *
+     * @return array
+     */
+    protected static function getAllegati($documento)
+    {
         $id_module = Modules::get('Fatture di vendita')['id'];
         $dir = Uploads::getDirectory($id_module, Plugins::get('Fatturazione Elettronica')['id']);
 

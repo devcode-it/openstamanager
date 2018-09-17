@@ -60,7 +60,7 @@ if (!empty($records[0]['descrizione'])) {
 $sconto = [];
 $imponibile = [];
 
-$interventi = $dbo->fetchArray('SELECT *, in_interventi.id, in_interventi.codice, (SELECT GROUP_CONCAT(DISTINCT ragione_sociale) FROM in_interventi_tecnici JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = in_interventi_tecnici.idtecnico WHERE idintervento=in_interventi.id) AS tecnici, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT SUM(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM in_interventi WHERE in_interventi.idpreventivo='.prepare($id_record).' ORDER BY inizio DESC');
+$interventi = $dbo->fetchArray('SELECT *, in_interventi.id, in_interventi.codice, (SELECT GROUP_CONCAT(DISTINCT ragione_sociale) FROM in_interventi_tecnici JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = in_interventi_tecnici.idtecnico WHERE idintervento=in_interventi.id) AS tecnici, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT SUM(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM in_interventi WHERE in_interventi.id_preventivo='.prepare($id_record).' ORDER BY inizio DESC');
 
 if (!empty($interventi)) {
     // Interventi

@@ -336,7 +336,8 @@ function calcola_ore_intervento($orario_inizio, $orario_fine)
 {
     $inizio = new DateTime($orario_inizio);
     $diff = $inizio->diff(new DateTime($orario_fine));
-    $ore = $diff->h + ($diff->days * 24);
+
+    $ore = $diff->i / 60 + $diff->h + ($diff->days * 24);
 
     return $ore;
 }

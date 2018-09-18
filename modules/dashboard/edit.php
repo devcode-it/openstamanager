@@ -574,12 +574,12 @@ if (empty($domenica)) {
 			slotDuration: '00:15:00',
             defaultView: '<?php echo $def; ?>',
 <?php
-$orario_lavorativo = setting('Abilitare orario lavorativo');
-if (!empty($orario_lavorativo)) {
-    echo "
-            minTime: '08:00:00',
-            maxTime: '20:00:00',";
-}
+
+echo "
+            minTime: '".setting('Inizio orario lavorativo')."',
+            maxTime: '".setting('Fine orario lavorativo')."',
+";
+
 ?>
             lazyFetching: true,
 			selectHelper: true,

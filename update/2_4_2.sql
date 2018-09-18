@@ -293,3 +293,10 @@ DROP TABLE `co_preventivi_interventi`;
 
 -- Aggiunto input CKEditor automatico
 UPDATE `zz_settings` SET `tipo` = 'ckeditor' WHERE `nome` = 'Dicitura fissa fattura';
+
+-- Miglioramento dell'impostazione "Orario lavorativo"
+UPDATE `zz_settings` SET `sezione` = 'Dashboard' WHERE `nome` IN ('Vista dashboard', 'Visualizzare la domenica sul calendario', 'Utilizzare i tooltip sul calendario');
+DELETE FROM `zz_settings` WHERE `nome` = 'Abilitare orario lavorativo';
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
+(NULL, 'Inizio orario lavorativo', '00:00:00', 'time', 1, 'Dashboard', 1),
+(NULL, 'Fine orario lavorativo', '23:59:00', 'time', 1, 'Dashboard', 2);

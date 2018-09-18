@@ -135,16 +135,18 @@ class Settings
 
         // Lista predefinita
         if (preg_match("/list\[(.+?)\]/", $setting->tipo, $m)) {
-            $m = explode(',', $m[1]);
-            $list = '';
-            for ($j = 0; $j < count($m); ++$j) {
-                if ($j != 0) {
-                    $list .= ',';
-                }
-                $list .= '\\"'.$m[$j].'\\": \\"'.$m[$j].'\\"';
+            $values = explode(',', $m[1]);
+
+            $list = [];
+            foreach ($values as $value) {
+                $list[] = [
+                    'id' => $value,
+                    'text' => $value,
+                ];
             }
+
             $result = '
-    {[ "type": "select", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "values": "list='.$list.'", "value": "'.$setting->valore.'", "required": "'.intval($required).'" ]}';
+    {[ "type": "select", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "values": '.json_encode($list).', "value": "'.$setting->valore.'", "required": "'.intval($required).'" ]}';
         }
 
         // Lista da query
@@ -159,8 +161,8 @@ class Settings
     {[ "type": "checkbox", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "placeholder": "'.tr('Attivo').'", "value": "'.$setting->valore.'", "required": "'.intval($required).'"  ]}';
         }
 
-        // Textarea
-        elseif ($setting->tipo == 'textarea' || $setting->tipo == 'ckeditor') {
+        // Campi di default
+        elseif (in_array($setting->tipo, ['textarea', 'ckeditor', 'timestamp', 'date', 'time'])) {
             $result = '
     {[ "type": "'.$setting->tipo.'", "label": "'.$setting->nome.'", "name": "setting['.$setting->id.']", "value": '.json_encode($setting->valore).', "required": "'.intval($required).'"  ]}';
         }

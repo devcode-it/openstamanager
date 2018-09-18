@@ -374,7 +374,7 @@ class Update
         if (!self::isUpdateCompleted()) {
             $update = self::getCurrentUpdate();
 
-            $file = DOCROOT.$update['directory'].$update['filename'];
+            $file = DOCROOT.'/'.$update['directory'].$update['filename'];
 
             $database = Database::getConnection();
 

@@ -1,17 +1,14 @@
 <?php
 
 include_once __DIR__.'/../../core.php';
+include_once __DIR__.'/init.php';
 
-$upload_dir = DOCROOT.'/'.Uploads::getDirectory($id_module, $id_plugin);
-
-try {
-    $fattura = new Plugins\Fatturazione\FatturaElettronica($id_record);
-
+if (!empty($fattura)) {
     $disabled = false;
-    $download = file_exists($upload_dir.'/'.$fattura->getFilename());
-} catch (UnexpectedValueException $e) {
+    $generated = file_exists($upload_dir.'/'.$fattura->getFilename());
+} else {
     $disabled = true;
-    $download = false;
+    $generated = false;
 }
 
 // Campi obbligatori per l'anagrafica Azienda
@@ -71,7 +68,7 @@ if (!empty($missing)) {
 </div>';
 }
 
-if ($download) {
+if ($generated) {
     echo '
 <div class="row">
     <div class="col-md-6">';
@@ -85,17 +82,27 @@ echo '
     <input type="hidden" name="op" value="generate">
 
     <button type="submit" class="btn btn-primary btn-lg btn-block'.($disabled ? ' disabled' : null).'" '.($disabled ? ' disabled' : null).'>
-        <i class="fa fa-file"></i> '.tr('Genera fattura elettronica').'
+        <i class="fa fa-file"></i> '.tr('Genera').'
     </button>
 </form>';
 
-if ($download) {
+if ($generated) {
     echo '
     </div>
 
     <div class="col-md-6">
         <a href="'.ROOTDIR.'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&op=download" class="btn btn-success btn-lg btn-block" target="_blank">
-            <i class="fa fa-download "></i> '.tr('Scarica fattura elettronica').'
+            <i class="fa fa-download"></i> '.tr('Scarica').'
+        </a>
+    </div>
+</div>';
+
+    echo '
+<hr>
+<div class="row">
+    <div class="col-md-12">
+        <a href="'.ROOTDIR.'/plugins/fatturazione/view.php?id_record='.$id_record.'" class="btn btn-info btn-lg btn-block" target="_blank">
+            <i class="fa fa-eye"></i> '.tr('Visualizza').'
         </a>
     </div>
 </div>';

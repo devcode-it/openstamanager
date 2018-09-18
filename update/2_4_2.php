@@ -647,3 +647,15 @@ foreach ($movimenti as $movimento) {
 }
 
 $dbo->query("UPDATE mg_movimenti SET data = created_at WHERE data = '0000-00-00'");
+
+// File e cartelle deprecate
+$files = [
+    'docs',
+    'couscous.yml'
+];
+
+foreach ($files as $key => $value) {
+    $files[$key] = realpath(DOCROOT.'/'.$value);
+}
+
+delete($files);

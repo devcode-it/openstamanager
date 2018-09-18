@@ -6,6 +6,8 @@ use FluidXml\FluidXml;
 use Respect\Validation\Validator as v;
 use Stringy\Stringy as S;
 use DateTime;
+use DOMDocument;
+use XSLTProcessor;
 use Uploads;
 use Modules;
 use Plugins;
@@ -94,7 +96,7 @@ class FatturaElettronica
     public function isValid()
     {
         if (empty($this->is_valid)) {
-            $this->__toString();
+            $this->toXML();
         }
 
         return $this->is_valid;
@@ -574,7 +576,7 @@ class FatturaElettronica
 
         // Salvataggio del file
         $file = rtrim($directory, '/').'/'.$filename;
-        $result = directory($directory) && file_put_contents($file, $this->__toString());
+        $result = directory($directory) && file_put_contents($file, $this->toXML());
 
         // Registrazione come allegato
         $this->register($filename);
@@ -635,7 +637,7 @@ class FatturaElettronica
      *
      * @return string
      */
-    public function __toString()
+    public function toXML()
     {
         if (empty($this->xml)) {
             $this->is_valid = true;
@@ -673,6 +675,33 @@ class FatturaElettronica
         }
 
         return $this->xml;
+    }
+
+    /**
+     * Restituisce il codice XML formattato della fattura elettronica.
+     *
+     * @return string
+     */
+    public function toHTML()
+    {
+        // XML
+        $xml = new DOMDocument();
+        $xml->loadXML($this->toXML());
+
+        // XSL
+        $xsl = new DOMDocument();
+        $xsl->load(__DIR__.'/stylesheet-1.2.1.xsl');
+
+        // XSLT
+        $xslt = new XSLTProcessor();
+        $xslt->importStylesheet($xsl);
+
+        return $xslt->transformToXML($xml);
+    }
+
+    public function __toString()
+    {
+        return $this->toHTML();
     }
 
     /** @var array Elenco di campi dello standard per la formattazione e la validazione */

@@ -1,13 +1,11 @@
 <?php
 
 include_once __DIR__.'/../../core.php';
-
-$upload_dir = DOCROOT.'/'.Uploads::getDirectory($id_module, $id_plugin);
+include_once __DIR__.'/init.php';
 
 switch (filter('op')) {
     case 'generate':
-        try {
-            $fattura = new Plugins\Fatturazione\FatturaElettronica($id_record);
+        if (!empty($fattura)) {
             $file = $fattura->save($upload_dir);
 
             flash()->info(tr('Fattura elettronica generata correttamente!'));
@@ -15,18 +13,13 @@ switch (filter('op')) {
             if (!$fattura->isValid()) {
                 flash()->warning(tr('La fattura elettronica potrebbe avere delle irregolarità!'));
             }
-        } catch (UnexpectedValueException $e) {
+        } else {
             flash()->error(tr('Impossibile generare la fattura elettronica'));
         }
 
         break;
 
     case 'download':
-        try {
-            $fattura = new Plugins\Fatturazione\FatturaElettronica($id_record);
-
-            download($upload_dir.'/'.$fattura->getFilename());
-        } catch (UnexpectedValueException $e) {
-        }
+        download($upload_dir.'/'.$fattura->getFilename());
         break;
 }

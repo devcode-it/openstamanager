@@ -11,7 +11,7 @@ $scriptValue = $updateRate * 5;
 if (filter('action') == 'do_update') {
     // Aggiornamento in progresso
     if (Update::isUpdateAvailable()) {
-        $update = Update::getUpdate();
+        $update = Update::getCurrentUpdate();
 
         $result = Update::doUpdate($updateRate);
 
@@ -19,7 +19,7 @@ if (filter('action') == 'do_update') {
             // Aggiunta del messaggio generico riguardante l'aggiornamento
             echo '
         <script>
-            addVersion("'.$update['version'].'");
+            addVersion("'.$update['name'].'");
         </script>';
 
             if (is_array($result)) {
@@ -178,7 +178,7 @@ if (filter('action') == 'do_update') {
                 <div id="result"></div>';
 
     $total = 0;
-    $updates = Update::getTodos();
+    $updates = Update::getTodoUpdates();
 
     foreach ($updates as $update) {
         if ($update['sql'] && (!empty($update['done']) || is_null($update['done']))) {

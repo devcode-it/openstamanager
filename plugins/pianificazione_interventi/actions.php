@@ -191,7 +191,7 @@ switch (filter('op')) {
                             // Decremento la quantità per ogni articolo copiato
                             $rs_articoli = $dbo->fetchArray('SELECT * FROM mg_articoli_interventi WHERE idintervento = '.$idintervento.' ');
                             foreach ($rs_articoli as $rs_articolo) {
-                                add_movimento_magazzino($rs_articolo['idarticolo'], -force_decimal($rs_articolo['qta']), ['idautomezzo' => $rs_articolo['idautomezzo'], 'idintervento' => $idintervento]);
+                                add_movimento_magazzino($rs_articolo['idarticolo'], -$rs_articolo['qta'], ['idautomezzo' => $rs_articolo['idautomezzo'], 'idintervento' => $idintervento]);
                             }
 
                             // Collego gli impianti del promemoria all' intervento appena inserito

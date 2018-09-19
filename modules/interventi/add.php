@@ -126,6 +126,9 @@ if (empty($new_codice)) {
     $new_codice = Util\Generator::generate(setting('Formato codice intervento'), $rs[0]['codice']);
 }
 
+$orario_inizio = $data.' '.$orario_inizio;
+$orario_fine = $data.' '.$orario_fine;
+
 ?>
 
 <form action="" method="post" id="add-form" onsubmit="if($(this).parsley().validate()) { return add_intervento(); }">
@@ -188,16 +191,8 @@ if (empty($new_codice)) {
 		<div class="panel-body">
 			<!-- RIGA 3 -->
 			<div class="row">
-				<!--div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Codice attività'); ?>", "name": "codice", "required": 1, "class": "text-center", "value": "<?php echo $new_codice; ?>" ]}
-				</div-->
-
-				<div class="col-md-4">
-					{[ "type": "date", "label": "<?php echo tr('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "-now-" ]}
-				</div>
-
-				<div class="col-md-4">
-					{[ "type": "date", "label": "<?php echo tr('Data attività'); ?>", "name": "data", "required": <?php echo get('ref') ? 1 : 0; ?>, "value": "<?php echo $data; ?>" ]}
+				<div class="col-md-6">
+					{[ "type": "timestamp", "label": "<?php echo tr('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "-now-" ]}
 				</div>
 
 				<div class="col-md-4">
@@ -207,29 +202,17 @@ if (empty($new_codice)) {
 
 			<!-- RIGA 4 -->
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-md-6">
 					{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "<?php echo $idtipointervento; ?>", "ajax-source": "tipiintervento" ]}
 				</div>
 
-				<div class="col-md-4">
+				<div class="col-md-6">
 					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "<?php echo $idstatointervento; ?>" ]}
-				</div>
-
-				<div class="col-md-2">
-					{[ "type": "time", "label": "<?php echo tr('Orario inizio'); ?>", "name": "orario_inizio", "required": <?php echo get('ref') ? 1 : 0; ?>, "value": "<?php echo $orario_inizio; ?>" ]}
-				</div>
-
-				<div class="col-md-2">
-					{[ "type": "time", "label": "<?php echo tr('Orario fine'); ?>", "name": "orario_fine", "required": <?php echo get('ref') ? 1 : 0; ?>, "value": "<?php echo $orario_fine; ?>" ]}
 				</div>
 			</div>
 
 			<!-- RIGA 5 -->
 			<div class="row">
-				<div class="col-md-12">
-					{[ "type": "select", "label": "<?php echo tr('Tecnici'); ?>", "multiple": "1", "name": "idtecnico[]", "required": <?php echo get('ref') ? 1 : 0; ?>, "ajax-source": "tecnici", "value": "<?php echo $idtecnico; ?>" ]}
-				</div>
-
 				<div class="col-md-12">
 					{[ "type": "textarea", "label": "<?php echo tr('Richiesta'); ?>", "name": "richiesta", "required": 1, "value": "<?php echo $richiesta; ?>", "extra": "style='max-height:80px; ' " ]}
 				</div>
@@ -243,6 +226,36 @@ if (empty($new_codice)) {
                     echo '<input type="hidden" name="idordineservizio" value="'.$idordineservizio.'">';
                 }
                 ?>
+			</div>
+		</div>
+	</div>
+
+	<!-- DATI INTERVENTO -->
+    <div class="box box-warning collapsable <?php echo get('ref') ? '' : 'collapsed-box'; ?>">
+        <div class="box-header with-border">
+			<h3 class="box-title"><?php echo tr('Ore di lavoro'); ?></h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-<?php echo get('ref') ? 'minus' : 'plus'; ?>"></i>
+                </button>
+            </div>
+		</div>
+
+		<div class="box-body">
+			<div class="row">
+				<div class="col-md-6">
+					{[ "type": "timestamp", "label": "<?php echo tr('Inizio attività'); ?>", "name": "orario_inizio", "required": <?php echo get('ref') ? 1 : 0; ?>, "value": "<?php echo $orario_inizio; ?>" ]}
+				</div>
+
+                <div class="col-md-6">
+					{[ "type": "timestamp", "label": "<?php echo tr('Fine attività'); ?>", "name": "orario_fine", "required": <?php echo get('ref') ? 1 : 0; ?>, "value": "<?php echo $orario_fine; ?>" ]}
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+					{[ "type": "select", "label": "<?php echo tr('Tecnici'); ?>", "multiple": "1", "name": "idtecnico[]", "required": <?php echo get('ref') ? 1 : 0; ?>, "ajax-source": "tecnici", "value": "<?php echo $idtecnico; ?>" ]}
+				</div>
 			</div>
 		</div>
 	</div>
@@ -365,10 +378,11 @@ if (empty($new_codice)) {
 	// tempo standard
 	$('#idtipointervento').change( function(){
 		if ( (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
-			data = '' + moment().format('YYYY-MM-DD') +' '+ $('#orario_inizio').val();
-			tempo_standard = $(this).selectData().tempo_standard;
-			orario_fine = moment(data).add(tempo_standard, 'hours').format("HH:mm");
-			$('#orario_fine').val(orario_fine);
+            tempo_standard = $(this).selectData().tempo_standard;
+
+            data = moment($('#orario_inizio').val(), globals.timestampFormat);
+			orario_fine = data.add(tempo_standard, 'hours');
+			$('#orario_fine').val(orario_fine.format(globals.timestampFormat));
 		}
 	});
 

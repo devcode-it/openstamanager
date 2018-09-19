@@ -285,7 +285,7 @@ class Update
                 $result = self::getDatabaseVersion();
             } else {
                 $updatelist = self::getCoreUpdates();
-                $result = end($updatelist);
+                $result = end($updatelist)['version'];
             }
         }
 

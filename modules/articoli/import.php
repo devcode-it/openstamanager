@@ -31,14 +31,14 @@ switch (post('op')) {
 
         foreach ($data as $key => $value) {
             if (!empty($value)) {
-                $qta = force_decimal($data[$key]['qta']);
+                $qta = $data[$key]['qta'];
                 unset($data[$key]['qta']);
 
                 $data[$key]['attivo'] = 1;
-                $data[$key]['prezzo_acquisto'] = force_decimal($data[$key]['prezzo_acquisto']);
-                $data[$key]['prezzo_vendita'] = force_decimal($data[$key]['prezzo_vendita']);
-                $data[$key]['peso_lordo'] = force_decimal($data[$key]['peso_lordo']);
-                $data[$key]['volume'] = force_decimal($data[$key]['volume']);
+                $data[$key]['prezzo_acquisto'] = $data[$key]['prezzo_acquisto'];
+                $data[$key]['prezzo_vendita'] = $data[$key]['prezzo_vendita'];
+                $data[$key]['peso_lordo'] = $data[$key]['peso_lordo'];
+                $data[$key]['volume'] = $data[$key]['volume'];
 
                 // Categorie
                 if (!empty($data[$key]['id_categoria'])) {

@@ -12,7 +12,7 @@ class Update
     /** @var array Percorsi da controllare per gli aggiornamenti */
     protected static $directories = [
         'modules',
-        'plugins'
+        'plugins',
     ];
 
     /**

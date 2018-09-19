@@ -206,9 +206,7 @@ echo '
             }
         }).then(
             function (result) {
-                prev_html = $("#add_promemoria").html();
-                $("#add_promemoria").html("<i class=\'fa fa-spinner fa-pulse  fa-fw\'></i> '.tr('Attendere...').'");
-                $("#add_promemoria").prop("disabled", true);
+                var restore = buttonLoading("#add_promemoria");
 
                 $.post(globals.rootdir + "/actions.php?id_plugin='.$plugin['id'].'&id_parent='.$id_record.'", {
                     op: "add-promemoria",
@@ -217,8 +215,7 @@ echo '
                 }).done(function(data) {
                     launch_modal("Nuovo promemoria", globals.rootdir + "/plugins/'.$plugin['directory'].'/pianficazione.php?id_plugin='.$plugin['id'].'&id_parent='.$id_record.'&id_record=" + data + "&add=1");
 
-                    $("#add_promemoria").html(prev_html);
-                    $("#add_promemoria").prop("disabled", false);
+                    buttonRestore("#add_promemoria", restore);
                 });
             },
             function (dismiss) {}

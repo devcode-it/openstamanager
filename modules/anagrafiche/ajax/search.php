@@ -52,7 +52,7 @@ foreach ($rs as $r) {
 
     $result['link'] = ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$r['id'];
     $result['title'] = $r['ragione_sociale'];
-    $result['title'] .= !empty($r['deleted_at']) ? ' <small class="text-danger"><em>('.tr('Eliminato').')</em></small>': '';
+    $result['title'] .= !empty($r['deleted_at']) ? ' <small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '';
     $result['category'] = 'Anagrafiche';
 
     // Campi da evidenziare

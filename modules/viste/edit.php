@@ -463,7 +463,6 @@ function testQuery(){
             $("#main_loading").fadeOut();
 
             swal("'.tr('Errore').'", "'.tr('Errore durante il test della query!').'", "error");
-			session_set ("errors,0", 0, 1);
         }
     })
 }

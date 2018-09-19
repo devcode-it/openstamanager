@@ -441,56 +441,42 @@ if (!empty($operations)) {
     echo '
 <script>
 
-$( ".btn-sm[data-toggle=\"tooltip\"]" ).each(function() {
+$(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
 
    $(this).on("click", function(){
         form = $("#edit-form");
         btn = $(this);
 
-		prev_html = btn.html();
-		prev_class = btn.attr("class");
-
-	   	btn.html("<i class=\"fa fa-spinner fa-pulse  fa-fw\"></i> Attendere...");
-		btn.addClass("btn-warning");
-		btn.prop("disabled", true);
-
-		function restore_btn(btn, prev_html, prev_class){
-            btn.attr("class", "");
-            btn.addClass(prev_class);
-            btn.html(prev_html);
-            btn.prop("disabled", false);
-		}
+        var restore = buttonLoading(btn);
 
 		// Procedo al salvataggio solo se tutti i campi obbligatori sono compilati, altimenti mostro avviso
-	    if (form.parsley().isValid()){
+	    if (form.parsley().isValid()) {
+            content_was_modified = false;
 
-        content_was_modified = false;
+            form.find("input:disabled, select:disabled").removeAttr("disabled");
 
-        form.find("input:disabled, select:disabled").removeAttr("disabled");
+            $.ajax({
+                url: globals.rootdir + "/modules/fatture/actions.php?id_module=" + globals.id_module ,
+                cache: false,
+                type: "POST",
+                processData: false,
+                dataType : "html",
+                data:  form.serialize(),
+                success: function(data) {
+                    $("#main_loading").fadeOut();
 
-		$.ajax({
-			url: "'.ROOTDIR.'/modules/fatture/actions.php?id_module=" + globals.id_module ,
-			cache: false,
-			type: "POST",
-			processData: false,
-			dataType : "html",
-			data:  form.serialize(),
-			success: function(data) {
-				$("#main_loading").fadeOut();
+                    buttonRestore(btn, restore);
+                },
+                error: function(data) {
+                    $("#main_loading").fadeOut();
 
-				restore_btn(btn, prev_html, prev_class);
-			},
-			error: function(data) {
-				$("#main_loading").fadeOut();
+                    swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio').'", "error");
 
-				swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio').'", "error");
-				session_set ("errors,0", 0, 1);
+                    buttonRestore(btn, restore);
+                }
+            });
 
-				restore_btn(btn, prev_html, prev_class);
-			}
-		});
-
-	   } else {
+	    } else {
 			swal({
                 type: "error",
                 text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente.').'",
@@ -501,11 +487,10 @@ $( ".btn-sm[data-toggle=\"tooltip\"]" ).each(function() {
 		    function hide_popup(){
 				$("#bs-popup").modal("hide");
 
-				session_set ("errors,0", 0, 1);
 				form.parsley().validate();
 		    }
 
-			restore_btn(btn, prev_html, prev_class);
+            buttonRestore(btn, restore);
 		}
 
 	});

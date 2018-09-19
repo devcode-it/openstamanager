@@ -255,7 +255,7 @@ if (!$cliente) {
 
 					<div class="col-md-3">
 						{[ "type": "text", "label": "<?php echo tr('Codice R.E.A.').'<small>('.tr('provincia/C.C.I.A.A.').')</small>'; ?>", "name": "codicerea", "value": "$codicerea$", "help": "<?php echo tr('Formato: _PATTERN_', [
-                            '_PATTERN_' => 'RM-123456'
+                            '_PATTERN_' => 'RM-123456',
                         ]); ?>" ]}
 					</div>
 
@@ -464,7 +464,7 @@ if (!empty($elementi)) {
 <div class="box box-warning collapsable collapsed-box">
     <div class="box-header with-border">
         <h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
-            '_NUM_' => count($elementi)
+            '_NUM_' => count($elementi),
         ]).'</h3>
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>

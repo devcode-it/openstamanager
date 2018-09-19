@@ -43,7 +43,6 @@ class App
         ],
     ];
 
-
     /**
      * Restituisce la configurazione di default del progetto.
      *

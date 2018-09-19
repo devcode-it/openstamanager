@@ -25,4 +25,3 @@ class CKEditorHandler implements HandlerInterface
     </script>';
     }
 }
-

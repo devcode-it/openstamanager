@@ -126,7 +126,8 @@ class Settings
      * Genera l'input HTML per la modifica dell'impostazione.
      *
      * @param string|int $setting
-     * @param boolean $required
+     * @param bool       $required
+     *
      * @return string
      */
     public static function input($setting, $required = false)

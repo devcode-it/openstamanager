@@ -295,7 +295,7 @@ $orario_fine = $data.' '.$orario_fine;
         }
 		//Quando modifico orario inizio, allineo anche l'orario fine
         $("#orario_inizio").on("dp.change", function (e) {
-			$("#orario_fine").data("DateTimePicker").minDate(e.date).format('HH:mm');
+			$("#orario_fine").data("DateTimePicker").minDate(e.date).format(globals.timestampFormat);
         });
 
         // Refresh modulo dopo la chiusura di una pianificazione attività derivante dalle attività

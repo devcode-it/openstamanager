@@ -81,7 +81,9 @@ files/*
 !files/my_impianti/
 files/my_impianti/*
 !files/my_impianti/componente.ini
+tmp/
 config.inc.php
+database.sql
 REVISION
 .php_cs.cache
 

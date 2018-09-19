@@ -27,33 +27,48 @@ if (!is_writable($backup_dir)) {
     </div>';
 }
 
-echo '
-<div class="callout callout-success">
-    <p>';
-
 if (!empty($backup_dir)) {
-    echo tr('Il percorso di backup è attualmente in').': <b>'.slashes($backup_dir).'</b>';
+    $message =  tr('Il percorso di backup è attualmente in').': <b>'.slashes($backup_dir).'</b>';
 } else {
-    echo tr('Sembra che tu non abbia ancora specificato un percorso per il backup').'.';
+    $message =  tr('Sembra che tu non abbia ancora specificato un percorso per il backup').'.';
 }
 
 echo '
-    </p>
-    <p><small>'.tr('Puoi modificare il percorso di backup dal tuo file _FILE_', [
-        '_FILE_' => '<b>config.inc.php</b>',
-    ]).'</small></p>';
+<div class="row">
+    <div class="col-md-8">
+        <div class="callout callout-success">
+            <p>'.$message.'</p>
+            <p><small>'.tr('Puoi modificare il percorso di backup dal tuo file _FILE_', [
+                '_FILE_' => '<b>config.inc.php</b>',
+            ]).'</small></p>
+        </div>
+    </div>';
 
+// Ripristino backup
 echo '
-</div>
+    <div class="col-md-4">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <h3 class="box-title">
+                    '.tr('Ripristina backup').'
+                </h3>
+            </div>
+            <div class="box-body">
+                <form action="" method="post" enctype="multipart/form-data" id="restore">
+                    <input type="hidden" name="op" value="restore">
 
-<!-- PULSANTI -->
-<!--div class="row">
-    <div class="col-md-12 text-right">
-    <button type="button" class="btn btn-primary pull-right" onclick="continue_backup()"><i class="fa fa-database"></i> '.tr('Crea backup').'...</button>
+                    <label><input type="file" name="blob"></label>
+
+                    <button type="button" class="btn btn-primary pull-right" onclick="if( confirm(\''.tr('Avviare la procedura?').'\') ){ $(\'#restore\').submit(); }">
+                        <i class="fa fa-upload"></i> '.tr('Ripristina').'...
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
-</div-->';
+</div>';
 
-//Lettura file di backup
+// Lettura file di backup
 if (file_exists($backup_dir)) {
     $backups_zip = [];
     $backups_file = [];
@@ -100,9 +115,15 @@ if (file_exists($backup_dir)) {
 
             <a class="btn btn-primary" href="'.$rootdir.'/modules/backup/actions.php?op=getfile&file='.$name.'" target="_blank"><i class="fa fa-download"></i> '.tr('Scarica').'</a>
 
-            <a class="btn btn-danger ask pull-right" title="'.tr('Elimina backup').'" data-backto="record-list" data-op="del" data-file="'.$name.'">
-                <i class="fa fa-trash"></i>
-            </a>
+            <div class="pull-right">
+                <a class="btn btn-warning ask" data-backto="record-edit" data-method="post" data-op="restore" data-zip="'.$name.'" data-msg="'.tr('Vuoi ripristinare questo backup?').'" data-button="Ripristina" data-class="btn btn-lg btn-warning">
+                    <i class="fa fa-upload"></i>
+                </a>
+
+                <a class="btn btn-danger ask" title="'.tr('Elimina backup').'" data-backto="record-list" data-op="del" data-file="'.$name.'">
+                    <i class="fa fa-trash"></i>
+                </a>
+            </div>
         </div>';
             }
         } else {
@@ -140,9 +161,15 @@ if (file_exists($backup_dir)) {
 
             <a class="btn btn-sm btn-warning disabled" href="javascript:;"><i class="fa fa-times"></i> '.tr('Non scaricabile').'</a>
 
-            <a class="btn btn-danger ask pull-right" title="'.tr('Elimina backup').'" data-backto="record-list" data-op="del" data-file="'.$name.'">
-                <i class="fa fa-trash"></i>
-            </a>
+            <div class="pull-right">
+                <a class="btn btn-warning ask" data-backto="record-edit" data-method="post" data-op="restore" data-folder="'.$name.'" data-msg="'.tr('Vuoi ripristinare questo backup?').'" data-button="Ripristina" data-class="btn btn-lg btn-warning">
+                    <i class="fa fa-upload"></i>
+                </a>
+
+                <a class="btn btn-danger ask" title="'.tr('Elimina backup').'" data-backto="record-list" data-op="del" data-file="'.$name.'">
+                    <i class="fa fa-trash"></i>
+                </a>
+            </div>
         </div>';
             }
         } else {
@@ -162,8 +189,11 @@ if (file_exists($backup_dir)) {
 }
 
 if (!empty($backup_dir)) {
+    // Creazione backup
     echo '
-<button type="button" class="btn btn-primary pull-right" onclick="continue_backup()"><i class="fa fa-database"></i> '.tr('Crea backup').'...</button><div class="clearfix"></div>
+<button type="button" class="btn btn-primary pull-right" onclick="continue_backup()"><i class="fa fa-database"></i> '.tr('Crea backup').'...</button>
+
+<div class="clearfix"></div>
 
 <script>
     function continue_backup(){

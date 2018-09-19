@@ -32,6 +32,7 @@ directory($extraction_dir);
 
 // Estrazione dell'archivio
 $zip->extractTo($extraction_dir);
+$zip->close();
 
 // Aggiornamento del progetto
 if (file_exists($extraction_dir.'/VERSION')) {
@@ -105,7 +106,6 @@ if (file_exists($extraction_dir.'/VERSION')) {
 
 // Rimozione delle risorse inutilizzate
 delete($extraction_dir);
-$zip->close();
 
 // Redirect
 redirect(ROOTDIR.'/editor.php?id_module='.$id_module);

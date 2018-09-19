@@ -50,12 +50,17 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Helper per semplificare lo sviluppo di codice indipendente (file `lib/helpers.php`)
  - Funzioni generiche per moduli e plugin (file `lib/common.php`)
  - API per la gestione dell'applicazione
+ - Classe `Util\Zip` per la gestione dei file ZIP
+ - Controllo automatico degli aggiornamenti da GitHub (modulo **Aggiornamenti**)
+ - Ripristino automatico dei backup (modulo **Backup**)
+ - Impostazioni per impostare un orario lavorativo personalizzato nel modulo **Dashbaord**
 
 ### Modificato (Changed)
 
 - Normalizzazione delle nazioni registrate dal gestionale (https://github.com/umpirsky/country-list)
 - Miglioramenti nella gestione dei record (variabile `$record` al posto di `$records[0]`)
 - Ottimizzazione delle query di conteggio (metodo `fetchNum`)
+- Miglioramento del sistema di aggiornamento e installazione, con supporto completo ai plugin
 - Aggiungere un tecnico in un Intervento salva le modifiche apportate in precedenza
 
 ### Deprecato (Deprecated)

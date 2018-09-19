@@ -39,6 +39,49 @@ if (setting('Attiva aggiornamenti')) {
     }
 
     echo '
+<script>
+function update() {
+    if ($("#blob").val()) {
+        swal({
+            title: "'.tr('Avviare la procedura?').'",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "'.tr('Sì').'"
+        }).then(function (result) {
+            $("#update").submit();
+        })
+    } else {
+        swal({
+            title: "'.tr('Selezionare un file!').'",
+            type: "error",
+        })
+    }
+}
+
+function search(button) {
+    buttonLoading(button);
+
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "post",
+        data: {
+            id_module: globals.id_module,
+            op: "check",
+        },
+        success: function(data){
+            if (data == "none") {
+                $("#update-search").html("'.tr('Nessun aggiornamento presente').'.");
+            } else {
+                $("#update-search").html("'.tr("E' stato individuato un nuovo aggiornamento").': " + data + ".<br>'.tr('Scaricalo ora: _LINK_', [
+                    '_LINK_' => "<a href='https://github.com/devcode-it/openstamanager/releases'>https://github.com/devcode-it/openstamanager/releases</a>",
+                ]).'");
+            }
+        }
+    });
+}
+</script>';
+
+    echo '
 <div class="row">
     <div class="col-md-8">
         <div class="box box-success">
@@ -51,40 +94,15 @@ if (setting('Attiva aggiornamenti')) {
                 <form action="'.ROOTDIR.'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" class="form-inline" id="update">
                     <input type="hidden" name="op" value="upload">
 
-                    <label><input type="file" name="blob"></label>
+                    <label><input type="file" name="blob" id="blob"></label>
 
-                    <button type="button" class="btn btn-primary pull-right" onclick="if( confirm(\''.tr('Avviare la procedura?').'\') ){ $(\'#update\').submit(); }">
+                    <button type="button" class="btn btn-primary pull-right" onclick="update()">
                         <i class="fa fa-upload"></i> '.tr('Carica').'...
                     </button>
                 </form>
             </div>
         </div>
     </div>';
-
-    echo '
-    <script>
-    function search(button) {
-        buttonLoading(button);
-
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "post",
-            data: {
-                id_module: globals.id_module,
-                op: "check",
-            },
-            success: function(data){
-                if (data == "none") {
-                    $("#update-search").html("'.tr('Nessun aggiornamento presente').'.");
-                } else {
-                    $("#update-search").html("'.tr("E' stato individuato un nuovo aggiornamento").': " + data + ".<br>'.tr('Scaricalo ora: _LINK_', [
-                        '_LINK_' => "<a href='https://github.com/devcode-it/openstamanager/releases'>https://github.com/devcode-it/openstamanager/releases</a>",
-                    ]).'");
-                }
-            }
-        });
-    }
-    </script>';
 
     echo '
 

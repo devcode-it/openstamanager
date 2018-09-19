@@ -46,6 +46,27 @@ echo '
 
 // Ripristino backup
 echo '
+<script>
+function restore() {
+    if ($("#blob").val()) {
+        swal({
+            title: "'.tr('Avviare la procedura?').'",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "'.tr('Sì').'"
+        }).then(function (result) {
+            $("#restore").submit();
+        })
+    } else {
+        swal({
+            title: "'.tr('Selezionare un file!').'",
+            type: "error",
+        })
+    }
+}
+</script>';
+
+echo '
     <div class="col-md-4">
         <div class="box box-success">
             <div class="box-header with-border">
@@ -57,9 +78,9 @@ echo '
                 <form action="" method="post" enctype="multipart/form-data" id="restore">
                     <input type="hidden" name="op" value="restore">
 
-                    <label><input type="file" name="blob"></label>
+                    <label><input type="file" name="blob" id="blob"></label>
 
-                    <button type="button" class="btn btn-primary pull-right" onclick="if( confirm(\''.tr('Avviare la procedura?').'\') ){ $(\'#restore\').submit(); }">
+                    <button type="button" class="btn btn-primary pull-right" onclick="restore()">
                         <i class="fa fa-upload"></i> '.tr('Ripristina').'...
                     </button>
                 </form>

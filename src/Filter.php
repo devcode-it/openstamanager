@@ -155,7 +155,9 @@ class Filter
     {
         if (empty(self::$purifier)) {
             $config = \HTMLPurifier_Config::createDefault();
-            $config->set('HTML.Allowed', 'a[href|target|title],img[class|src|border|alt|title|hspace|vspace|width|height|align|name],hr[class|width|size|noshade],font[face|size|color|style],span[class|style],br,p[class]');
+
+            $config->set('HTML.Allowed', 'br,p[style],b[style],strong[style],i[style],em[style],u[style],strike,a[style|href|title|target],ol[style],ul[style],li[style],hr[style],blockquote[style],img[style|alt|title|width|height|src|align],table[style|width|bgcolor|align|cellspacing|cellpadding|border],tr[style],td[style],th[style],tbody,thead,caption,col,colgroup,span[style],sup');
+
             //$config->set('Cache.SerializerPath', realpath(__DIR__.'/cache/HTMLPurifier'));
             $config->set('Cache.DefinitionImpl', null);
 

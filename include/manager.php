@@ -2,31 +2,27 @@
 
 include_once __DIR__.'/../core.php';
 
-// Lettura parametri iniziali
+// Compatibilità per controller ed editor
 if (!empty($id_plugin)) {
-    $element = Plugins::get($id_plugin);
-
-    $directory = '/plugins/'.$element['directory'];
+    $structure = Plugins::get($id_plugin);
 } else {
-    $element = Modules::get($id_module);
-
-    $directory = '/modules/'.$element['directory'];
+    $structure = Modules::get($id_module);
 }
 
 if (!empty($id_plugin)) {
     // Inclusione di eventuale plugin personalizzato
-    if (!empty($element['script'])) {
-        include $element->getEditFile();
+    if (!empty($structure['script'])) {
+        include $structure->getEditFile();
 
         return;
     }
 
     echo '
         <h4>
-			<span  class="'.(!empty($element['help']) ? ' tip' : '').'"'.(!empty($element['help']) ? ' title="'.prepareToField($element['help']).'" data-position="bottom"' : '').' >
-            '.$element['title'].(!empty($element['help']) ? ' <i class="fa fa-question-circle-o"></i>' : '').'</span>';
+			<span  class="'.(!empty($structure['help']) ? ' tip' : '').'"'.(!empty($structure['help']) ? ' title="'.prepareToField($structure['help']).'" data-position="bottom"' : '').' >
+            '.$structure['title'].(!empty($structure['help']) ? ' <i class="fa fa-question-circle-o"></i>' : '').'</span>';
 
-    if ($element->hasAddFile()) {
+    if ($structure->hasAddFile()) {
         echo '
         <button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_parent='.$id_record.'"><i class="fa fa-plus"></i></button>';
     }
@@ -35,19 +31,19 @@ if (!empty($id_plugin)) {
     </h4>';
 }
 
-$type = $element['option'];
+$type = $structure['option'];
 
 // Caricamento funzioni del modulo
-$modutil = App::filepath($directory.'|custom|', 'modutil.php');
+$modutil = $structure->filepath('modutil.php');
 if (!empty($modutil)) {
     include_once $modutil;
 }
 
 // Lettura risultato query del modulo
-// include App::filepath($directory.'|custom|', 'init.php');
+// include $structure->filepath('init.php');
 
 // Caricamento file aggiuntivo su elenco record
-$controller_before = App::filepath($directory.'|custom|', 'controller_before.php');
+$controller_before = $structure->filepath('controller_before.php');
 if (!empty($controller_before)) {
     include $controller_before;
 }
@@ -56,7 +52,7 @@ if (!empty($controller_before)) {
  * Datatables con record
  */
 if (!empty($type) && $type != 'menu' && $type != 'custom') {
-    $total = App::readQuery($element);
+    $total = App::readQuery($structure);
 
     if (empty($id_plugin) && count(Modules::getSegments($id_module)) > 1) {
         echo '
@@ -220,11 +216,11 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
  * Inclusione modulo personalizzato
  */
 elseif ($type == 'custom') {
-    include $element->getEditFile();
+    include $structure->getEditFile();
 }
 
 // Caricamento file aggiuntivo su elenco record
-$controller_after = App::filepath($directory.'|custom|', 'controller_after.php');
+$controller_after = $structure->filepath('controller_after.php');
 if (!empty($controller_after)) {
     include $controller_after;
 }

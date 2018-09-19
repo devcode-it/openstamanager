@@ -2,6 +2,8 @@
 
 namespace HTMLBuilder\Wrapper;
 
+use Modules;
+
 /**
  * @since 2.3
  */
@@ -98,17 +100,16 @@ class HTMLWrapper implements WrapperInterface
 
         $pieces = explode('|', $string);
 
-        $id_module = $pieces[1];
+        $module_id = $pieces[1];
+        $module = Modules::get($module_id);
 
         $get = !empty($pieces[2]) ? '&'.$pieces[2] : null;
         $classes = !empty($pieces[3]) ? ' '.$pieces[3] : null;
         $extras = !empty($pieces[4]) ? ' '.$pieces[4] : null;
 
-        $module = \Modules::get($id_module);
-
         if (in_array($module->permission, ['r', 'rw'])) {
             $result = '
-<button '.$extras.' data-href="'.ROOTDIR.'/add.php?id_module='.$id_module.$get.'&select='.$values['id'].'&ajax=yes" data-target="#bs-popup2" data-toggle="modal" data-title="'.tr('Aggiungi').'" type="button" class="btn'.$classes.'">
+<button '.$extras.' data-href="'.ROOTDIR.'/add.php?id_module='.$module->id.$get.'&select='.$values['id'].'&ajax=yes" data-target="#bs-popup2" data-toggle="modal" data-title="'.tr('Aggiungi').'" type="button" class="btn'.$classes.'">
     <i class="fa fa-plus"></i>
 </button>';
         }

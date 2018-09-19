@@ -292,12 +292,12 @@ function get_client_ip()
  */
 function translateTemplate()
 {
-    $id_module = filter('id_module');
-    $id_plugin = filter('id_plugin');
     $id_record = filter('id_record');
-
-    $id_email = filter('id_email');
     $id_parent = filter('id_parent');
+    $id_email = filter('id_email');
+
+    $id_module = Modules::getCurrent()['id'];
+    $id_plugin = Plugins::getCurrent()['id'];
 
     $template = ob_get_clean();
 

@@ -15,7 +15,7 @@ echo '
 <div id="form_'.$id_module.'-'.$id_plugin.'">
 ';
 
-include !empty(get('edit')) ? $element->getEditFile() : $element->getAddFile();
+include !empty(get('edit')) ? $structure->getEditFile() : $structure->getAddFile();
 
 echo '
 </div>';

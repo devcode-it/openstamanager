@@ -278,7 +278,7 @@ class Prints
         $user = Auth::user();
 
         // Impostazioni di default
-        $default = include App::filepath(DOCROOT.'/templates/base|custom|', 'settings.php');
+        $default = include App::filepath('templates/base|custom|', 'settings.php');
 
         // Impostazioni personalizzate della stampa
         $custom = include self::filepath($id_print, 'settings.php');

@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$id_module = Modules::get('Automezzi')['id'];
+$link_id = Modules::get('Automezzi')['id'];
 
 $fields = [
     'Nome' => 'nome',
@@ -29,7 +29,7 @@ $rs = $dbo->fetchArray($query);
 foreach ($rs as $r) {
     $result = [];
 
-    $result['link'] = ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$r['id'];
+    $result['link'] = ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$r['id'];
     $result['title'] = $r['nome'];
     $result['category'] = 'Automezzi';
 

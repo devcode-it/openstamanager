@@ -2,19 +2,7 @@
 
 include_once __DIR__.'/core.php';
 
-// Lettura parametri iniziali
-if (!empty($id_plugin)) {
-    $element = Plugins::get($id_plugin);
-
-    $directory = '/plugins/'.$element['directory'];
-    $id_module = $element['idmodule_to'];
-} else {
-    $element = Modules::get($id_module);
-
-    $directory = '/modules/'.$element['directory'];
-}
-
-if (empty($element) || empty($element['enabled'])) {
+if (empty($structure) || empty($structure['enabled'])) {
     die(tr('Accesso negato'));
 }
 
@@ -131,8 +119,8 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 }
 
 // Inclusione di eventuale plugin personalizzato
-if (!empty($element['script'])) {
-    include $element->getEditFile();
+if (!empty($structure['script'])) {
+    include $structure->getEditFile();
 
     $database->commitTransaction();
 
@@ -140,13 +128,13 @@ if (!empty($element['script'])) {
 }
 
 // Caricamento funzioni del modulo
-$modutil = App::filepath($directory.'|custom|', 'modutil.php');
+$modutil = $structure->filepath('modutil.php');
 if (!empty($modutil)) {
     include_once $modutil;
 }
 
 // Lettura risultato query del modulo
-$init = App::filepath($directory.'|custom|', 'init.php');
+$init = $structure->filepath('init.php');
 if (!empty($init)) {
     include_once $init;
 }
@@ -164,7 +152,7 @@ if (!isset($record) && isset($records[0])) {
 // Registrazione del record
 HTMLBuilder\HTMLBuilder::setRecord($record);
 
-if ($element->permission == 'rw') {
+if ($structure->permission == 'rw') {
     // Esecuzione delle operazioni di gruppo
     $id_records = post('id_records');
     $id_records = is_array($id_records) ? $id_records : explode(';', $id_records);
@@ -173,7 +161,7 @@ if ($element->permission == 'rw') {
     });
     $id_records = array_unique($id_records);
 
-    $bulk = App::filepath($directory.'|custom|', 'bulk.php');
+    $bulk = $structure->filepath('bulk.php');
     $bulk = empty($bulk) ? [] : include $bulk;
     $bulk = empty($bulk) ? [] : $bulk;
 
@@ -181,7 +169,7 @@ if ($element->permission == 'rw') {
         redirect(ROOTDIR.'/controller.php?id_module='.$id_module, 'js');
     } else {
         // Esecuzione delle operazioni del modulo
-        include App::filepath($directory.'|custom|', 'actions.php');
+        include $structure->filepath('actions.php');
 
         // Operazioni generiche per i campi personalizzati
         if (post('op') != null) {

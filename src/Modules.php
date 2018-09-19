@@ -344,16 +344,13 @@ class Modules
     /**
      * Individua il percorso per il file.
      *
-     * @param string|int $module
+     * @param string|int $element
      * @param string     $file
      *
      * @return string|null
      */
-    public static function filepath($module, $file)
+    public static function filepath($element, $file)
     {
-        $module = self::get($module);
-        $directory = 'modules/'.$module['directory'].'|custom|';
-
-        return App::filepath($directory, $file);
+        return self::get($element)->filepath($file);
     }
 }

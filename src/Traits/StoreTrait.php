@@ -73,6 +73,10 @@ trait StoreTrait
      */
     public static function getCurrent()
     {
+        if(!isset(self::$current)){
+            return null;
+        }
+
         return self::get(self::$current);
     }
 

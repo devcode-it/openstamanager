@@ -134,8 +134,6 @@ switch (post('op')) {
         break;
 
     case 'sortwidget':
-        $id_module = post('id_module');
-        $id_record = post('id_record');
         $location = post('location');
 
         $location = empty($id_record) ? 'controller_'.$location : 'editor_'.$location;
@@ -155,8 +153,6 @@ switch (post('op')) {
         break;
 
     case 'updatewidget':
-        $id_module = post('id_module');
-        $id_record = post('id_record');
         $location = post('location');
         $class = post('class');
         $id = explode('_', post('id'));

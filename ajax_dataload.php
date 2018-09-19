@@ -11,13 +11,7 @@ $order = filter('order')[0];
 $order['column'] = $order['column'] - 1;
 array_shift($columns);
 
-// Lettura parametri iniziali
-if (!empty($id_plugin)) {
-    $element = Plugins::get($id_plugin);
-} else {
-    $element = Modules::get($id_module);
-}
-$total = App::readQuery($element);
+$total = App::readQuery($structure);
 
 // Lettura parametri modulo
 $result_query = $total['query'];

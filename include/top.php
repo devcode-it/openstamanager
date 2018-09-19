@@ -5,6 +5,8 @@ include_once __DIR__.'/../core.php';
 $paths = App::getPaths();
 $user = Auth::user();
 
+$pageTitle = $pageTitle ?: $structure->title;
+
 $messages = flash()->getMessages();
 
 echo '<!DOCTYPE html>

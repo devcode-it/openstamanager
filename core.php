@@ -202,14 +202,6 @@ if (!API::isAPIRequest()) {
     $theme = !empty($theme) ? $theme : 'default';
 
     if ($continue) {
-        $id_module = filter('id_module');
-        $id_record = filter('id_record');
-        $id_plugin = filter('id_plugin');
-        $id_parent = filter('id_parent');
-
-        Modules::setCurrent($id_module);
-        Plugins::setCurrent($id_plugin);
-
         // Periodo di visualizzazione dei record
         // Personalizzato
         if (!empty($_GET['period_start'])) {
@@ -222,13 +214,23 @@ if (!API::isAPIRequest()) {
             $_SESSION['period_end'] = date('Y').'-12-31';
         }
 
+        $id_record = filter('id_record');
+        $id_parent = filter('id_parent');
+
+        Modules::setCurrent(filter('id_module'));
+        Plugins::setCurrent(filter('id_plugin'));
+
+        // Variabili fondamentali
+        $module = Modules::getCurrent();
+        $plugin = Plugins::getCurrent();
+        $structure = isset($plugin) ? $plugin : $module;
+
+        $id_module = $module['id'];
+        $id_plugin = $plugin['id'];
+
         $user = Auth::user();
 
         if (!empty($id_module)) {
-            $module = Modules::get($id_module);
-
-            $pageTitle = $module['title'];
-
             // Segmenti
             if (!isset($_SESSION['module_'.$id_module]['id_segment'])) {
                 $segments = Modules::getSegments($id_module);

@@ -78,21 +78,21 @@ class Plugins
 
         // Fix modulo
         $plugin = self::getCurrent();
+        if (isset($plugin)) {
+            Modules::setCurrent($plugin->module()->id);
+        }
     }
 
     /**
      * Individua il percorso per il file.
      *
-     * @param string|int $plugin
+     * @param string|int $element
      * @param string     $file
      *
      * @return string|null
      */
-    public static function filepath($plugin, $file)
+    public static function filepath($element, $file)
     {
-        $plugin = self::get($plugin);
-        $directory = 'plugins/'.$plugin['directory'].'|custom|';
-
-        return App::filepath($directory, $file);
+        return self::get($element)->filepath($file);
     }
 }

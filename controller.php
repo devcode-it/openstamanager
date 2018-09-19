@@ -22,10 +22,10 @@ echo '
 			<ul class="nav nav-tabs pull-right" id="tabs" role="tablist">
 				<li class="pull-left active header">
 					<a data-toggle="tab" href="#tab_0">
-                        <i class="'.$element['icon'].'"></i> '.$element['title'];
+                        <i class="'.$structure['icon'].'"></i> '.$structure['title'];
 
 // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
-if ($element->hasAddFile() && $element->permission == 'rw') {
+if ($structure->hasAddFile() && $structure->permission == 'rw') {
     echo '
 						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
 }

@@ -45,10 +45,10 @@ if (empty($record)) {
 			<ul class="nav nav-tabs pull-right" id="tabs" role="tablist">
 				<li class="pull-left active header">
 					<a data-toggle="tab" href="#tab_0">
-                        <i class="'.$element['icon'].'"></i> '.$element['title'];
+                        <i class="'.$structure['icon'].'"></i> '.$structure['title'];
 
     // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
-    if ($element->hasAddFile() && $element->permission == 'rw') {
+    if ($structure->hasAddFile() && $structure->permission == 'rw') {
         echo '
 						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
     }
@@ -140,7 +140,7 @@ if (empty($record)) {
                     <br>';
 
     // Pulsanti personalizzati
-    $buttons = Modules::filepath($id_module, 'buttons.php');
+    $buttons = $structure->filepath('buttons.php');
     if (!empty($buttons)) {
         ob_start();
         include $buttons;
@@ -160,7 +160,7 @@ if (empty($record)) {
 
                     <div id="module-edit">';
 
-    include $element->getEditFile();
+    include $structure->getEditFile();
 
     echo '
                     </div>
@@ -292,7 +292,7 @@ echo '
         <script>';
 
 // Se l'utente ha i permessi in sola lettura per il modulo, converto tutti i campi di testo in span
-$read_only = $element->permission == 'r';
+$read_only = $structure->permission == 'r';
 if ($read_only || !empty($block_edit)) {
     $not = $read_only ? '' : '.not(".unblockable")';
 

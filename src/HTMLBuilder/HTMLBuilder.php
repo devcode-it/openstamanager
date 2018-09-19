@@ -51,15 +51,15 @@ class HTMLBuilder
     /** @var array Elenco dei gestori dei campi HTML */
     protected static $handlers = [
         'list' => [
-            'default' => 'HTMLBuilder\Handler\DefaultHandler',
-            'image' => 'HTMLBuilder\Handler\MediaHandler',
-            'select' => 'HTMLBuilder\Handler\SelectHandler',
-            'checkbox' => 'HTMLBuilder\Handler\ChoicesHandler',
-            'radio' => 'HTMLBuilder\Handler\ChoicesHandler',
-            'bootswitch' => 'HTMLBuilder\Handler\ChoicesHandler',
-            'timestamp' => 'HTMLBuilder\Handler\DateHandler',
-            'date' => 'HTMLBuilder\Handler\DateHandler',
-            'time' => 'HTMLBuilder\Handler\DateHandler',
+            'default' => Handler\DefaultHandler::class,
+            'image' => Handler\MediaHandler::class,
+            'select' => Handler\SelectHandler::class,
+            'checkbox' => Handler\ChoicesHandler::class,
+            'radio' => Handler\ChoicesHandler::class,
+            'bootswitch' => Handler\ChoicesHandler::class,
+            'timestamp' => Handler\DateHandler::class,
+            'date' => Handler\DateHandler::class,
+            'time' => Handler\DateHandler::class,
             'ckeditor' => Handler\CKEditorHandler::class,
         ],
         'instances' => [],
@@ -67,18 +67,18 @@ class HTMLBuilder
 
     /** @var array Generatore del contenitore per i campi HTML */
     protected static $wrapper = [
-        'class' => 'HTMLBuilder\Wrapper\HTMLWrapper',
+        'class' => Wrapper\HTMLWrapper::class,
         'istance' => null,
     ];
 
     /** @var array Elenco dei gestori delle strutture HTML */
     protected static $managers = [
         'list' => [
-            'filelist_and_upload' => 'HTMLBuilder\Manager\FileManager',
-            'button' => 'HTMLBuilder\Manager\ButtonManager',
-            'csrf' => 'HTMLBuilder\Manager\CSRFManager',
-            'custom_fields' => 'HTMLBuilder\Manager\FieldManager',
-            'widgets' => 'HTMLBuilder\Manager\WidgetManager',
+            'filelist_and_upload' => Manager\FileManager::class,
+            'button' => Manager\ButtonManager::class,
+            'csrf' => Manager\CSRFManager::class,
+            'custom_fields' => Manager\FieldManager::class,
+            'widgets' => Manager\WidgetManager::class,
         ],
         'instances' => [],
     ];

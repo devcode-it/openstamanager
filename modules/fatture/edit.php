@@ -456,7 +456,7 @@ $(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
             form.find("input:disabled, select:disabled").removeAttr("disabled");
 
             $.ajax({
-                url: globals.rootdir + "/modules/fatture/actions.php?id_module=" + globals.id_module ,
+                url: globals.rootdir + "/actions.php?id_module=" + globals.id_module ,
                 cache: false,
                 type: "POST",
                 processData: false,

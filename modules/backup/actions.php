@@ -47,53 +47,10 @@ if (filter('op') == 'restore') {
     }
 
     if (post('folder') == null) {
-        $file = $_FILES['blob']['tmp_name'] ?: post('zip');
-
-        // Lettura dell'archivio
-        $zip = new ZipArchive();
-        if (!$zip->open($file)) {
-            flash()->error(tr('File di installazione non valido!'));
-            flash()->error(checkZip($file));
-
-            return;
-        }
-
-        // Percorso di estrazione
-        $extraction_dir = $docroot.'/tmp';
-        directory($extraction_dir);
-
-        // Estrazione dell'archivio
-        $zip->extractTo($extraction_dir);
-        $zip->close();
+        $path = $_FILES['blob']['tmp_name'] ?: $backup_dir.'/'.post('zip');
     } else {
-        $extraction_dir = $backup_dir.'/'.post('folder');
+        $path = $backup_dir.'/'.post('folder');
     }
 
-    // Rimozione del database
-    $tables = include $docroot.'/update/tables.php';
-
-    $database->query('SET foreign_key_checks = 0');
-    foreach ($tables as $tables) {
-        $database->query('DROP TABLE `'.$tables.'`');
-    }
-    $database->query('DROP TABLE `updates`');
-
-    // Ripristino del database
-    $database->multiQuery($extraction_dir.'/database.sql');
-    $database->query('SET foreign_key_checks = 1');
-
-    // Salva il file di configurazione
-    $config = file_get_contents($docroot.'/config.inc.php');
-
-    // Copia i file dalla cartella temporanea alla root
-    copyr($extraction_dir, $docroot);
-
-    // Ripristina il file di configurazione dell'installazione
-    file_put_contents($docroot.'/config.inc.php', $config);
-
-    // Pulizia
-    if (post('folder') == null) {
-        delete($extraction_dir);
-    }
-    delete($docroot.'/database.sql');
+    Backup::restore($path, post('folder') == null);
 }

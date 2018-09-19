@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Util\Zip;
+
 if (!setting('Attiva aggiornamenti')) {
     die(tr('Accesso negato'));
 }
@@ -14,25 +16,7 @@ if (!extension_loaded('zip')) {
     return;
 }
 
-$file = $_FILES['blob'];
-$type = $_POST['type'];
-
-// Lettura dell'archivio
-$zip = new ZipArchive();
-if (!$zip->open($file['tmp_name'])) {
-    flash()->error(tr('File di installazione non valido!'));
-    flash()->error(checkZip($file['tmp_name']));
-
-    return;
-}
-
-// Percorso di estrazione
-$extraction_dir = $docroot.'/tmp';
-directory($extraction_dir);
-
-// Estrazione dell'archivio
-$zip->extractTo($extraction_dir);
-$zip->close();
+$extraction_dir = Zip::extract($_FILES['blob']['tmp_name']);
 
 // Aggiornamento del progetto
 if (file_exists($extraction_dir.'/VERSION')) {

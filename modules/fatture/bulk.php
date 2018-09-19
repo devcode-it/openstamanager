@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Util\Zip;
+
 switch (post('op')) {
     case 'export-bulk':
         $dir = DOCROOT.'/files/export_fatture/';
@@ -35,7 +37,7 @@ switch (post('op')) {
 
             // Creazione zip
             if (extension_loaded('zip')) {
-                create_zip($dir.'tmp/', $file);
+                Zip::create($dir.'tmp/', $file);
 
                 // Invio al browser dello zip
                 download($file);

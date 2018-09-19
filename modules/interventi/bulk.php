@@ -6,6 +6,8 @@ if (file_exists(__DIR__.'/../../../core.php')) {
     include_once __DIR__.'/../../core.php';
 }
 
+use Util\Zip;
+
 include_once Modules::filepath('Fatture di vendita', 'modutil.php');
 
 switch (post('op')) {
@@ -42,7 +44,7 @@ switch (post('op')) {
 
             // Creazione zip
             if (extension_loaded('zip')) {
-                create_zip($dir.'tmp/', $file);
+                Zip::create($dir.'tmp/', $file);
 
                 // Invio al browser dello zip
                 download($file);

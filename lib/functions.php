@@ -101,122 +101,37 @@ function directory($path)
  */
 function copyr($source, $destination, $ignores = [])
 {
-    $finder = Symfony\Component\Finder\Finder::create()
+    if (!directory($destination)) {
+        return false;
+    }
+
+    $files = Symfony\Component\Finder\Finder::create()
         ->files()
         ->exclude((array) $ignores['dirs'])
-        ->ignoreDotFiles(true)
+        ->ignoreDotFiles(false)
         ->ignoreVCS(true)
         ->in($source);
 
     foreach ((array) $ignores['files'] as $value) {
-        $finder->notName($value);
+        $files->notName($value);
     }
 
-    foreach ($finder as $file) {
-        $filename = rtrim($destination, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$file->getRelativePathname();
+    $result = true;
 
-        // Filesystem Symfony
-        $fs = new Symfony\Component\Filesystem\Filesystem();
+    // Filesystem Symfony
+    $fs = new Symfony\Component\Filesystem\Filesystem();
+    foreach ($files as $file) {
+        $filename = rtrim($destination, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$file->getRelativePathname();
 
         // Copia
         try {
             $fs->copy($file, $filename);
         } catch (Symfony\Component\Filesystem\Exception\IOException $e) {
+            $result = false;
         }
     }
 
-    return true;
-}
-
-/**
- * Crea un file zip comprimendo ricorsivamente tutte le sottocartelle a partire da una cartella specificata.
- * *.
- *
- * @param string $source
- * @param string $destination
- * @param array  $ignores
- */
-function create_zip($source, $destination, $ignores = [])
-{
-    if (!extension_loaded('zip')) {
-        flash()->error(tr('Estensione zip non supportata!'));
-
-        return false;
-    }
-
-    $zip = new ZipArchive();
-    $result = $zip->open($destination, ZIPARCHIVE::CREATE);
-    if ($result === true && is_writable(dirname($destination))) {
-        $finder = Symfony\Component\Finder\Finder::create()
-            ->files()
-            ->exclude((array) $ignores['dirs'])
-            ->ignoreDotFiles(true)
-            ->ignoreVCS(true)
-            ->in($source);
-
-        foreach ((array) $ignores['files'] as $value) {
-            $finder->notName($value);
-        }
-
-        foreach ($finder as $file) {
-            $zip->addFile($file, $file->getRelativePathname());
-        }
-        $zip->close();
-    } else {
-        flash()->error(tr("Errore durante la creazione dell'archivio!"));
-    }
-
-    return $result === true;
-}
-
-/**
- * Controllo dei file zip e gestione errori.
- *
- * @param string $zip_file
- *
- * @return string|bool
- */
-function checkZip($zip_file)
-{
-    $errno = zip_open($zip_file);
-    zip_close($errno);
-
-    if (!is_resource($errno)) {
-        // using constant name as a string to make this function PHP4 compatible
-        $errors = [
-            ZIPARCHIVE::ER_MULTIDISK => tr('archivi multi-disco non supportati'),
-            ZIPARCHIVE::ER_RENAME => tr('ridenominazione del file temporaneo fallita'),
-            ZIPARCHIVE::ER_CLOSE => tr('impossibile chiudere il file zip'),
-            ZIPARCHIVE::ER_SEEK => tr('errore durante la ricerca dei file'),
-            ZIPARCHIVE::ER_READ => tr('errore di lettura'),
-            ZIPARCHIVE::ER_WRITE => tr('errore di scrittura'),
-            ZIPARCHIVE::ER_CRC => tr('errore CRC'),
-            ZIPARCHIVE::ER_ZIPCLOSED => tr("l'archivio zip è stato chiuso"),
-            ZIPARCHIVE::ER_NOENT => tr('file non trovato'),
-            ZIPARCHIVE::ER_EXISTS => tr('il file esiste già'),
-            ZIPARCHIVE::ER_OPEN => tr('impossibile aprire il file'),
-            ZIPARCHIVE::ER_TMPOPEN => tr('impossibile creare il file temporaneo'),
-            ZIPARCHIVE::ER_ZLIB => tr('errore nella libreria Zlib'),
-            ZIPARCHIVE::ER_MEMORY => tr("fallimento nell'allocare memoria"),
-            ZIPARCHIVE::ER_CHANGED => tr('voce modificata'),
-            ZIPARCHIVE::ER_COMPNOTSUPP => tr('metodo di compressione non supportato'),
-            ZIPARCHIVE::ER_EOF => tr('fine del file non prevista'),
-            ZIPARCHIVE::ER_INVAL => tr('argomento non valido'),
-            ZIPARCHIVE::ER_NOZIP => tr('file zip non valido'),
-            ZIPARCHIVE::ER_INTERNAL => tr('errore interno'),
-            ZIPARCHIVE::ER_INCONS => tr('archivio zip inconsistente'),
-            ZIPARCHIVE::ER_REMOVE => tr('impossibile rimuovere la voce'),
-            ZIPARCHIVE::ER_DELETED => tr('voce eliminata'),
-        ];
-
-        if (isset($errors[$errno])) {
-            return tr('Errore').': '.$errors[$errno];
-        }
-
-        return false;
-    } else {
-        return true;
-    }
+    return $resul;
 }
 
 /**

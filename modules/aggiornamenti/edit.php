@@ -39,20 +39,68 @@ if (setting('Attiva aggiornamenti')) {
     }
 
     echo '
-<div class="box box-success">
-    <div class="box-header with-border">
-        <h3 class="box-title">'.tr('Carica un aggiornamento').' <span class="tip" title="'.tr('Form di caricamento per aggiornamenti del gestionale e innesti di moduli e plugin').'"><i class="fa fa-question-circle-o"></i></span></h3>
-    </div>
-    <div class="box-body">
-        <form action="'.ROOTDIR.'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" class="form-inline" id="update">
-            <input type="hidden" name="op" value="upload">
+<div class="row">
+    <div class="col-md-8">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <h3 class="box-title">
+                    '.tr('Carica un aggiornamento').' <span class="tip" title="'.tr('Form di caricamento per aggiornamenti del gestionale e innesti di moduli e plugin').'"><i class="fa fa-question-circle-o"></i></span>
+                </h3>
+            </div>
+            <div class="box-body">
+                <form action="'.ROOTDIR.'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" class="form-inline" id="update">
+                    <input type="hidden" name="op" value="upload">
 
-            <label><input type="file" name="blob"></label>
+                    <label><input type="file" name="blob"></label>
 
-            <button type="button" class="btn btn-primary pull-right" onclick="if( confirm(\''.tr('Avviare la procedura?').'\') ){ $(\'#update\').submit(); }">
-                <i class="fa fa-upload"></i> '.tr('Carica').'...
-            </button>
-        </form>
+                    <button type="button" class="btn btn-primary pull-right" onclick="if( confirm(\''.tr('Avviare la procedura?').'\') ){ $(\'#update\').submit(); }">
+                        <i class="fa fa-upload"></i> '.tr('Carica').'...
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>';
+
+    echo '
+    <script>
+    function search(button) {
+        buttonLoading(button);
+
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "post",
+            data: {
+                id_module: globals.id_module,
+                op: "check",
+            },
+            success: function(data){
+                if (data == "none") {
+                    $("#update-search").html("'.tr("Nessun aggiornamento presente").'.");
+                } else {
+                    $("#update-search").html("'.tr("E' stato individuato un nuovo aggiornamento").': " + data + ".<br>'.tr('Scaricalo ora: _LINK_', [
+                        '_LINK_' => "<a href='https://github.com/devcode-it/openstamanager/releases'>https://github.com/devcode-it/openstamanager/releases</a>"
+                    ]).'");
+                }
+            }
+        });
+    }
+    </script>';
+
+    echo '
+
+    <div class="col-md-4">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">
+                    '.tr('Ricerca aggiornamenti').' <span class="tip" title="'.tr('Controllo automatica sulla presenza di aggiornamenti del gestionale').'"><i class="fa fa-question-circle-o"></i></span>
+                </h3>
+            </div>
+            <div class="box-body" id="update-search">
+                <button type="button" class="btn btn-info btn-block" onclick="search(this)">
+                    <i class="fa fa-search"></i> '.tr('Ricerca').'
+                </button>
+            </div>
+        </div>
     </div>
 </div>';
 }

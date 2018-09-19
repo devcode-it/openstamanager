@@ -44,20 +44,21 @@ $('#id_record').change( function(){
 });
 
 $( "#example" ).click(function(event) {
-	
-		var module =  $('#id_record').find(':selected').data('text').toLowerCase();
-		var dir = "<?php echo ROOTDIR; ?>/modules/"+module+"/import.php";
-		var file = "<?php echo ROOTDIR; ?>/files/"+module+"/"+module+".csv";
-		
-		$.ajax({
-			url: dir,
-			type: 'post',
-			data: {op: 'example', module: module},
-			success: function(data){
-				window.location = file;
-				$('#main_loading').fadeOut();
-				return false;
-			}
+    var module =  $('#id_record').find(':selected').data('text').toLowerCase();
+    var dir = "<?php echo ROOTDIR; ?>/modules/"+module+"/import.php";
+    var file = "<?php echo ROOTDIR; ?>/files/"+module+"/"+module+".csv";
+
+    $.ajax({
+        url: dir,
+        type: 'post',
+        data: {
+            op: 'example', module: module
+        },
+        success: function(data){
+            window.location = file;
+            $('#main_loading').fadeOut();
+            return false;
+        }
 	});
 });
 </script>

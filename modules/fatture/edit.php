@@ -464,9 +464,9 @@ $( ".btn-sm[data-toggle=\"tooltip\"]" ).each(function() {
 		// Procedo al salvataggio solo se tutti i campi obbligatori sono compilati, altimenti mostro avviso
 	    if (form.parsley().isValid()){
 
-		 content_was_modified = false;
+        content_was_modified = false;
 
-		 form.find("input:disabled, select:disabled").removeAttr("disabled");
+        form.find("input:disabled, select:disabled").removeAttr("disabled");
 
 		$.ajax({
 			url: "'.ROOTDIR.'/modules/fatture/actions.php?id_module=" + globals.id_module ,

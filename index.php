@@ -11,7 +11,7 @@ switch ($op) {
         $username = post('username');
         $password = post('password');
 
-        if ($dbo->isConnected() && $dbo->isInstalled() && Auth::getInstance()->attempt($username, $password)) {
+        if ($dbo->isConnected() && $dbo->isInstalled() && auth()->attempt($username, $password)) {
             $_SESSION['keep_alive'] = (filter('keep_alive') != null);
 
             // Rimozione log vecchi
@@ -30,7 +30,7 @@ switch ($op) {
                 }
             }
         } else {
-            $status = Auth::getInstance()->getCurrentStatus();
+            $status = auth()->getCurrentStatus();
 
             flash()->error(Auth::getStatus()[$status]['message']);
 

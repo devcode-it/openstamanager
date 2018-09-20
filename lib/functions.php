@@ -224,7 +224,7 @@ function translateTemplate()
 
     // Informazioni estese sulle azioni dell'utente
     if (Auth::check() && !empty(post('op'))) {
-        $database = \Database::getConnection();
+        $database = database();
 
         $database->insert('zz_operations', [
             'id_module' => $id_module,

@@ -11,7 +11,7 @@ function rimuovi_articolo_dapreventivo($idarticolo, $idpreventivo, $idriga)
 {
     global $dir;
 
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     // Leggo la quantità di questo articolo nell'ordine
     $query = 'SELECT qta, subtotale FROM co_righe_preventivi WHERE id='.prepare($idriga);
@@ -35,7 +35,7 @@ function ricalcola_costiagg_preventivo($idpreventivo, $idrivalsainps = '', $idri
 {
     global $dir;
 
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     // Se ci sono righe nel ordine faccio i conteggi, altrimenti azzero gli sconti e le spese aggiuntive (inps, ritenuta, marche da bollo)
     $query = 'SELECT COUNT(id) AS righe FROM co_righe_preventivi WHERE idpreventivo='.prepare($idpreventivo);
@@ -99,7 +99,7 @@ function ricalcola_costiagg_preventivo($idpreventivo, $idrivalsainps = '', $idri
 
 function get_imponibile_preventivo($idpreventivo)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $query = 'SELECT SUM(co_righe_preventivi.subtotale - co_righe_preventivi.sconto) AS imponibile FROM co_righe_preventivi GROUP BY idpreventivo HAVING idpreventivo='.prepare($idpreventivo);
     $rs = $dbo->fetchArray($query);
@@ -112,7 +112,7 @@ function get_imponibile_preventivo($idpreventivo)
  */
 function get_stato_preventivo($idpreventivo)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $rs = $dbo->fetchArray('SELECT SUM(qta) AS qta, SUM(qta_evasa) AS qta_evasa FROM co_righe_preventivi GROUP BY idpreventivo HAVING idpreventivo='.prepare($idpreventivo));
 
@@ -134,7 +134,7 @@ function get_stato_preventivo($idpreventivo)
  */
 function update_budget_preventivo($idpreventivo)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     // Totale articoli
     $rs = $dbo->fetchArray('SELECT SUM(subtotale) AS totale FROM co_righe_preventivi GROUP BY idpreventivo HAVING idpreventivo='.prepare($idpreventivo));

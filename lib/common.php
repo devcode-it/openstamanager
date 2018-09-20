@@ -26,7 +26,7 @@ function sum($first, $second = null, $decimals = 4)
 
     $result = 0;
 
-    $decimals = is_numeric($decimals) ? $decimals : Translator::getFormatter()->getPrecision();
+    $decimals = is_numeric($decimals) ? $decimals : formatter()->getPrecision();
 
     $bcadd = function_exists('bcadd');
 
@@ -45,7 +45,7 @@ function sum($first, $second = null, $decimals = 4)
 
 function aggiorna_sconto($tables, $fields, $id_record, $options = [])
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $descrizione = tr('Sconto', [], ['upper' => true]);
 
@@ -97,7 +97,7 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
 
 function controlla_seriali($field, $id_riga, $old_qta, $new_qta, $dir)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $new_qta = abs($new_qta);
     $old_qta = abs($old_qta);
@@ -134,7 +134,7 @@ function controlla_seriali($field, $id_riga, $old_qta, $new_qta, $dir)
  */
 function seriali_non_rimuovibili($field, $id_riga, $dir)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $results = [];
 
@@ -187,7 +187,7 @@ function calcola_sconto($data)
  */
 function doc_references($info, $dir, $ignore = [])
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     // Rimozione valori da non controllare
     foreach ($ignore as $field) {

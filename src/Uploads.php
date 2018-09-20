@@ -16,7 +16,7 @@ class Uploads
      */
     public static function get($data)
     {
-        $database = Database::getConnection();
+        $database = database();
 
         $uploads = $database->select('zz_files', '*', [
             'id_module' => !empty($data['id_module']) && empty($data['id_plugin']) ? $data['id_module'] : null,
@@ -125,7 +125,7 @@ class Uploads
      */
     public static function register($data)
     {
-        $database = Database::getConnection();
+        $database = database();
 
         $database->insert('zz_files', [
             'name' => !empty($data['name']) ? $data['name'] : $data['original'],
@@ -192,7 +192,7 @@ class Uploads
      */
     public static function delete($filename, $data)
     {
-        $database = Database::getConnection();
+        $database = database();
 
         $name = $database->selectOne('zz_files', ['name'], [
             'filename' => $filename,

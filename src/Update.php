@@ -20,7 +20,7 @@ class Update
      */
     protected static function prepareToUpdate()
     {
-        $database = Database::getConnection();
+        $database = database();
 
         $database_ready = $database->isConnected() && $database->tableExists('updates');
 
@@ -173,7 +173,7 @@ class Update
         if (!is_array(self::$updates)) {
             self::prepareToUpdate();
 
-            $database = Database::getConnection();
+            $database = database();
 
             $updates = $database->isConnected() ? $database->fetchArray('SELECT * FROM `updates` WHERE `done` != 1 OR `done` IS NULL ORDER BY `done` DESC, `id` ASC') : [];
 
@@ -262,7 +262,7 @@ class Update
      */
     public static function getDatabaseVersion()
     {
-        $database = Database::getConnection();
+        $database = database();
 
         $results = $database->fetchArray("SELECT version FROM `updates` WHERE version NOT LIKE '%\_%' ORDER BY version DESC LIMIT 1");
 
@@ -279,7 +279,7 @@ class Update
         $result = self::getFile('VERSION');
 
         if (empty($result)) {
-            $database = Database::getConnection();
+            $database = database();
 
             if ($database->isInstalled()) {
                 $result = self::getDatabaseVersion();
@@ -344,7 +344,7 @@ class Update
     public static function updateCleanup()
     {
         if (self::isUpdateCompleted()) {
-            $database = Database::getConnection();
+            $database = database();
 
             // Aggiornamento all'ultima release della versione e compatibilità moduli
             $database->query('UPDATE `zz_modules` SET `compatibility`='.prepare(self::getVersion()).', `version`='.prepare(self::getVersion()).' WHERE `default` = 1');
@@ -376,7 +376,7 @@ class Update
 
             $file = DOCROOT.'/'.$update['directory'].$update['filename'];
 
-            $database = Database::getConnection();
+            $database = database();
 
             try {
                 // Esecuzione delle query
@@ -469,7 +469,7 @@ class Update
         set_time_limit(0);
         ignore_user_abort(true);
 
-        $database = Database::getConnection();
+        $database = database();
 
         $database->getPDO()->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
 
@@ -520,7 +520,7 @@ class Update
      */
     protected static function executeScript($script)
     {
-        $dbo = $database = Database::getConnection();
+        $dbo = $database = database();
 
         // Informazioni relative a MySQL
         $mysql_ver = $database->getMySQLVersion();

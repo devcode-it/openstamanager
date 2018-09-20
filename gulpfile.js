@@ -347,7 +347,7 @@ gulp.task('release', function () {
 
         // Completamento dello zip
         archive.finalize();
-    });;
+    });
 });
 
 // Pulizia

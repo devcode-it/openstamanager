@@ -112,7 +112,7 @@ class Modules
         $user = Auth::user();
 
         if (!isset(self::$additionals[$module['id']])) {
-            $database = Database::getConnection();
+            $database = database();
 
             $additionals['WHR'] = [];
             $additionals['HVN'] = [];
@@ -158,7 +158,7 @@ class Modules
         $module = self::get($module)['id'];
 
         if (!isset(self::$segments[$module])) {
-            $database = Database::getConnection();
+            $database = database();
 
             self::$segments[$module] = $database->fetchArray('SELECT * FROM `zz_segments` WHERE `id_module` = '.prepare($module).' ORDER BY `predefined` DESC, `id` ASC');
         }

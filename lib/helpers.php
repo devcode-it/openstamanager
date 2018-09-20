@@ -28,7 +28,7 @@ function database()
  */
 function prepare($parameter)
 {
-    return \Database::getConnection()->prepare($parameter);
+    return database()->prepare($parameter);
 }
 
 /**

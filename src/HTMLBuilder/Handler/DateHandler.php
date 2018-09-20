@@ -25,25 +25,25 @@ class DateHandler implements HandlerInterface
 
         // Restrizione dei valori permessi
         // Timestamp
-        if ($values['type'] == 'timestamp' && \Translator::getFormatter()->isStandardTimestamp($values['value'])) {
+        if ($values['type'] == 'timestamp' && formatter()->isStandardTimestamp($values['value'])) {
             $values['value'] = \Translator::timestampToLocale($values['value']);
         }
 
         // Data
-        elseif ($values['type'] == 'date' && \Translator::getFormatter()->isStandardDate($values['value'])) {
+        elseif ($values['type'] == 'date' && formatter()->isStandardDate($values['value'])) {
             $values['value'] = \Translator::dateToLocale($values['value']);
         }
 
         // Orario
-        elseif ($values['type'] == 'time' && \Translator::getFormatter()->isStandardTime($values['value'])) {
+        elseif ($values['type'] == 'time' && formatter()->isStandardTime($values['value'])) {
             $values['value'] = \Translator::timeToLocale($values['value']);
         }
 
         // Controllo sulla correttezza sintattica del valore impostato
         if (!(
-            ($values['type'] == 'timestamp' && \Translator::getFormatter()->isFormattedTimestamp($values['value'])) ||
-            ($values['type'] == 'date' && \Translator::getFormatter()->isFormattedDate($values['value'])) ||
-            ($values['type'] == 'time' && \Translator::getFormatter()->isFormattedTime($values['value']))
+            ($values['type'] == 'timestamp' && formatter()->isFormattedTimestamp($values['value'])) ||
+            ($values['type'] == 'date' && formatter()->isFormattedDate($values['value'])) ||
+            ($values['type'] == 'time' && formatter()->isFormattedTime($values['value']))
         )) {
             $values['value'] = '';
         }

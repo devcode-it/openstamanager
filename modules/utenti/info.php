@@ -12,7 +12,7 @@ if (post('op') == 'change_pwd') {
 }
 
 $user = Auth::user();
-$token = Auth::getInstance()->getToken();
+$token = auth()->getToken();
 
 $rs = $dbo->fetchArray('SELECT * FROM an_anagrafiche WHERE idanagrafica = '.prepare($user['idanagrafica']));
 $anagrafica = [];

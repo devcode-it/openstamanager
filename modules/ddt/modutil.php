@@ -9,7 +9,7 @@ function get_new_numeroddt($data)
 {
     global $dir;
 
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $query = "SELECT IFNULL(MAX(numero),'0') AS max_numeroddt FROM dt_ddt WHERE DATE_FORMAT( data, '%Y' ) = '".date('Y', strtotime($data))."' AND idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir='".$dir."') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1";
     $rs = $dbo->fetchArray($query);
@@ -24,7 +24,7 @@ function get_new_numerosecondarioddt($data)
 {
     global $dir;
 
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     // Calcolo il numero secondario se stabilito dalle impostazioni e se documento di vendita
     $formato_numero_secondario = setting('Formato numero secondario ddt');
@@ -56,7 +56,7 @@ function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
 {
     global $dir;
 
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     // Leggo la quantità di questo articolo in ddt
     $query = 'SELECT qta, subtotale FROM dt_righe_ddt WHERE id='.prepare($idrigaddt);
@@ -115,7 +115,7 @@ function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
  */
 function get_imponibile_ddt($idddt)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $query = 'SELECT SUM(subtotale-sconto) AS imponibile FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt);
     $rs = $dbo->fetchArray($query);
@@ -128,7 +128,7 @@ function get_imponibile_ddt($idddt)
  */
 function get_totale_ddt($idddt)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     // Sommo l'iva di ogni riga al totale
     $query = 'SELECT SUM(iva) AS iva FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt);
@@ -146,7 +146,7 @@ function get_totale_ddt($idddt)
  */
 function get_netto_ddt($idddt)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $query = 'SELECT ritenutaacconto,bollo FROM dt_ddt WHERE id='.prepare($idddt);
     $rs = $dbo->fetchArray($query);
@@ -159,7 +159,7 @@ function get_netto_ddt($idddt)
  */
 function get_ivadetraibile_ddt($idddt)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $query = 'SELECT SUM(iva)-SUM(iva_indetraibile) AS iva_detraibile FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt);
     $rs = $dbo->fetchArray($query);
@@ -172,7 +172,7 @@ function get_ivadetraibile_ddt($idddt)
  */
 function get_ivaindetraibile_ddt($idddt)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $query = 'SELECT SUM(iva_indetraibile) AS iva_indetraibile FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt);
     $rs = $dbo->fetchArray($query);
@@ -192,7 +192,7 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
 {
     global $dir;
 
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     // Se ci sono righe nel ddt faccio i conteggi, altrimenti azzero gli sconti e le spese aggiuntive (inps, ritenuta, marche da bollo)
     $query = "SELECT COUNT(id) AS righe FROM dt_righe_ddt WHERE idddt='$idddt'";
@@ -288,7 +288,7 @@ function add_articolo_inddt($idddt, $idarticolo, $descrizione, $idiva, $qta, $id
     global $dir;
     global $idordine;
 
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     // Lettura unità di misura dell'articolo
     if (empty($idum)) {
@@ -337,7 +337,7 @@ function add_articolo_inddt($idddt, $idarticolo, $descrizione, $idiva, $qta, $id
  */
 function get_stato_ddt($idddt)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $rs = $dbo->fetchArray('SELECT SUM(qta) AS qta, SUM(qta_evasa) AS qta_evasa FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt));
 

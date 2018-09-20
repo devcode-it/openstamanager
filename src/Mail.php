@@ -61,7 +61,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     public static function getTemplates()
     {
         if (empty(self::$templates)) {
-            $database = Database::getConnection();
+            $database = database();
 
             $results = $database->fetchArray('SELECT * FROM zz_emails WHERE deleted_at IS NULL');
 
@@ -116,7 +116,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     {
         $template = self::getTemplate($template);
 
-        $dbo = $database = Database::getConnection();
+        $dbo = $database = database();
 
         // Lettura delle variabili nei singoli moduli
         $variables = include Modules::filepath($template['id_module'], 'variables.php');

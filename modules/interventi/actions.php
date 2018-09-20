@@ -190,10 +190,10 @@ switch (post('op')) {
 
         $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => post('idstatointervento')]);
         // Notifica chiusura intervento
-        if (!empty($stato['notifica']) && !empty($stato['destinatari'])) {
+        if (!empty($stato['notifica']) && !empty($stato['destinatari']) && $stato['idstatointervento'] != $record['idstatointervento']) {
             $n = new Notifications\EmailNotification();
 
-            $n->setTemplate('Stato intervento', $id_record);
+            $n->setTemplate($stato['id_email'], $id_record);
             $n->setReceivers($stato['destinatari']);
 
             $n->send();
@@ -614,7 +614,7 @@ switch (post('op')) {
                     if (!empty($stato['notifica']) && !empty($stato['destinatari'])) {
                         $n = new Notifications\EmailNotification();
 
-                        $n->setTemplate('Stato intervento', $id_record);
+                        $n->setTemplate($stato['id_email'], $id_record);
                         $n->setReceivers($stato['destinatari']);
 
                         $n->send();

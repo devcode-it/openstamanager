@@ -105,8 +105,8 @@ if (Auth::check()) {
 
                 cifre_decimali: '.setting('Cifre decimali per importi').',
 
-                decimals: "'.Translator::getFormatter()->getNumberSeparators()['decimals'].'",
-                thousands: "'.Translator::getFormatter()->getNumberSeparators()['thousands'].'",
+                decimals: "'.formatter()->getNumberSeparators()['decimals'].'",
+                thousands: "'.formatter()->getNumberSeparators()['thousands'].'",
 
                 search: search,
                 translations: translations,

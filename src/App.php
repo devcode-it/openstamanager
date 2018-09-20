@@ -185,7 +185,7 @@ class App
 
         // Impostazione dei percorsi
         $paths = self::getPaths();
-        $lang = Translator::getInstance()->getCurrentLocale();
+        $lang = trans()->getCurrentLocale();
 
         // Sezioni: nome - percorso
         $sections = [
@@ -350,7 +350,7 @@ class App
      */
     protected static function getViews($element)
     {
-        $database = Database::getConnection();
+        $database = database();
 
         $user = Auth::user();
 

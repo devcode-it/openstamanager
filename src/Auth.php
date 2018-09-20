@@ -52,7 +52,7 @@ class Auth extends \Util\Singleton
 
     protected function __construct()
     {
-        $database = Database::getConnection();
+        $database = database();
 
         if ($database->isInstalled()) {
             // Controllo dell'accesso da API
@@ -95,7 +95,7 @@ class Auth extends \Util\Singleton
             return false;
         }
 
-        $database = Database::getConnection();
+        $database = database();
 
         $log = [];
         $log['username'] = $username;
@@ -175,7 +175,7 @@ class Auth extends \Util\Singleton
 
         // Controllo in automatico per futuri cambiamenti dell'algoritmo di password
         if ($rehash) {
-            $database = Database::getConnection();
+            $database = database();
             $database->update('zz_users', ['password' => self::hashPassword($password)], ['id' => $user_id]);
         }
 
@@ -209,7 +209,7 @@ class Auth extends \Util\Singleton
      */
     protected function identifyUser($user_id)
     {
-        $database = Database::getConnection();
+        $database = database();
 
         try {
             $results = $database->fetchArray('SELECT id, idanagrafica, username, (SELECT nome FROM zz_groups WHERE zz_groups.id = zz_users.idgruppo) AS gruppo FROM zz_users WHERE id = :user_id AND enabled = 1 LIMIT 1', [
@@ -276,7 +276,7 @@ class Auth extends \Util\Singleton
         if ($this->isAuthenticated()) {
             $user = self::user();
 
-            $database = Database::getConnection();
+            $database = database();
             $tokens = $database->fetchArray('SELECT `token` FROM `zz_tokens` WHERE `enabled` = 1 AND `id_utente` = :user_id', [
                 ':user_id' => $user->id,
             ]);
@@ -332,7 +332,7 @@ class Auth extends \Util\Singleton
                 $parameters[':group'] = $this->getUser()['gruppo'];
             }
 
-            $database = Database::getConnection();
+            $database = database();
             $results = $database->fetchArray($query." AND options != '' AND options != 'menu' AND options IS NOT NULL ORDER BY `order` ASC", $parameters);
 
             if (!empty($results)) {
@@ -429,7 +429,7 @@ class Auth extends \Util\Singleton
      */
     public static function isBrute()
     {
-        $database = Database::getConnection();
+        $database = database();
 
         if (!$database->isInstalled() || !$database->tableExists('zz_logs') || Update::isUpdateAvailable()) {
             return false;
@@ -459,7 +459,7 @@ class Auth extends \Util\Singleton
             return 0;
         }
 
-        $database = Database::getConnection();
+        $database = database();
 
         $results = $database->fetchArray('SELECT TIME_TO_SEC(TIMEDIFF(DATE_ADD(created_at, INTERVAL '.self::$brute_options['timeout'].' SECOND), NOW())) AS diff FROM zz_logs WHERE ip = :ip AND stato = :state AND DATE_ADD(created_at, INTERVAL :timeout SECOND) >= NOW() ORDER BY created_at DESC LIMIT 1', [
             ':ip' => get_client_ip(),

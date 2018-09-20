@@ -140,7 +140,7 @@ class Filter
                 $output[$key] = self::parse($value);
             }
         } elseif (!is_null($input)) {
-            $output = Translator::getFormatter()->parse($input);
+            $output = formatter()->parse($input);
         }
 
         return $output;

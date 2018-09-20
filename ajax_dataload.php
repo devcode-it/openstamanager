@@ -114,12 +114,12 @@ if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom
                 $value = trim($r[$field]);
 
                 // Allineamento a destra se il valore della prima riga risulta numerica
-                if (Translator::getFormatter()->isStandardNumber($value)) {
+                if (formatter()->isStandardNumber($value)) {
                     $align[$field] = 'text-right';
                 }
 
                 // Allineamento al centro se il valore della prima riga risulta relativo a date o icone
-                elseif (Translator::getFormatter()->isStandardDate($value) || preg_match('/^icon_(.+?)$/', $field)) {
+                elseif (formatter()->isStandardDate($value) || preg_match('/^icon_(.+?)$/', $field)) {
                     $align[$field] = 'text-center';
                 }
             }
@@ -143,13 +143,13 @@ if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom
 
             // Formattazione automatica
             if (!empty($total['format'][$pos]) && !empty($value)) {
-                if (Translator::getFormatter()->isStandardDate($value)) {
+                if (formatter()->isStandardDate($value)) {
                     $value = Translator::dateToLocale($value);
-                } elseif (Translator::getFormatter()->isStandardTime($value)) {
+                } elseif (formatter()->isStandardTime($value)) {
                     $value = Translator::timeToLocale($value);
-                } elseif (Translator::getFormatter()->isStandardTimestamp($value)) {
+                } elseif (formatter()->isStandardTimestamp($value)) {
                     $value = Translator::timestampToLocale($value);
-                } elseif (Translator::getFormatter()->isStandardNumber($value)) {
+                } elseif (formatter()->isStandardNumber($value)) {
                     $value = Translator::numberToLocale($value);
                 }
             }

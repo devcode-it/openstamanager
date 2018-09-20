@@ -11,7 +11,7 @@ if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
         </div>
     </div>';
 } else {
-    $database = Database::getConnection();
+    $database = database();
     $articolo = $database->fetchArray('SELECT codice, descrizione FROM mg_articoli WHERE id = '.prepare($result['idarticolo']))[0];
 
     echo '

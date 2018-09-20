@@ -153,7 +153,7 @@ echo '
                     minLength: 0
                 }).focus(function() {
                     $(this).autocomplete("search", $(this).val())
-                });;
+                });
             });
 
             aggiungi_destinatario();

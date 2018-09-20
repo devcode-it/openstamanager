@@ -22,7 +22,7 @@ class WidgetManager implements ManagerInterface
 
     protected function widget($options)
     {
-        $database = \Database::getConnection();
+        $database = database();
 
         // Widget richiesto
         $widget = $database->fetchArray('SELECT * FROM zz_widgets WHERE id = '.prepare($options['id']))[0];
@@ -77,7 +77,7 @@ class WidgetManager implements ManagerInterface
         $query = \App::replacePlaceholder($query);
 
         // Individuazione del risultato della query
-        $database = \Database::getConnection();
+        $database = database();
         $value = null;
         if (!empty($query)) {
             $value = $database->fetchArray($query)[0]['dato'];
@@ -206,7 +206,7 @@ class WidgetManager implements ManagerInterface
         $query = str_replace('|position|', $position, $query);
 
         // Indivduazione dei widget interessati
-        $database = \Database::getConnection();
+        $database = database();
         $widgets = $database->fetchArray($query);
 
         $result = ' ';

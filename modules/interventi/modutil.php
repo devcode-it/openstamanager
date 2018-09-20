@@ -9,7 +9,7 @@ include_once __DIR__.'/../../core.php';
  */
 function get_ore_intervento($idintervento)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
     $totale_ore = 0;
 
     $rs = $dbo->fetchArray('SELECT idintervento, TIMESTAMPDIFF( MINUTE, orario_inizio, orario_fine ) / 60 AS tot_ore FROM in_interventi_tecnici WHERE idintervento = '.prepare($idintervento));
@@ -31,7 +31,7 @@ function get_ore_intervento($idintervento)
  */
 function link_componente_to_articolo($idintervento, $idimpianto, $idarticolo, $qta)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     if (!empty($idimpianto) && !empty($idintervento)) {
         //Leggo la data dell'intervento
@@ -52,7 +52,7 @@ function link_componente_to_articolo($idintervento, $idimpianto, $idarticolo, $q
 
 function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = null)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     // Controllo sull'identità del tecnico
     $tecnico = $dbo->fetchOne('SELECT an_anagrafiche.idanagrafica, an_anagrafiche.email FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.idtipoanagrafica=an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE an_anagrafiche.idanagrafica = '.prepare($idtecnico)." AND an_tipianagrafiche.descrizione = 'Tecnico'");
@@ -176,7 +176,7 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
 
 function get_costi_intervento($id_intervento)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $decimals = setting('Cifre decimali per importi');
 
@@ -354,7 +354,7 @@ function calcola_ore_intervento($orario_inizio, $orario_fine)
 
 function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizione, $id_iva, $id_conto)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $id_ritenuta_acconto = setting("Percentuale ritenuta d'acconto");
     $id_rivalsa_inps = setting('Percentuale rivalsa INPS');

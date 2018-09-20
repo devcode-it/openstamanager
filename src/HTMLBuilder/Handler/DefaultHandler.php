@@ -159,7 +159,7 @@ class DefaultHandler implements HandlerInterface
         }
 
         // Controllo sulla correttezza sintattica del valore impostato
-        $values['value'] = (\Translator::getFormatter()->isStandardNumber($values['value'])) ? \Translator::numberToLocale($values['value'], $decimals) : $values['value'];
+        $values['value'] = (formatter()->isStandardNumber($values['value'])) ? \Translator::numberToLocale($values['value'], $decimals) : $values['value'];
 
         $values['type'] = 'text';
 

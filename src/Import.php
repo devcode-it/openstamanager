@@ -20,7 +20,7 @@ class Import
         if (empty(self::$imports)) {
             $modules = Modules::getModules();
 
-            $database = Database::getConnection();
+            $database = database();
 
             $results = [];
             foreach ($modules as $module) {

@@ -7,7 +7,7 @@ include_once __DIR__.'/../../core.php';
  */
 function add_movimento_magazzino($id_articolo, $qta, $array = [], $descrizone = '', $data = '')
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     if (empty($qta)) {
         return false;

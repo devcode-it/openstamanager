@@ -107,7 +107,7 @@ class SelectHandler implements HandlerInterface
     {
         // Richiamo del file dedicato alle richieste AJAX per ottenere il valore iniziale del select
         ob_start();
-        $dbo = \Database::getConnection();
+        $dbo = database();
         include DOCROOT.'/ajax_select.php';
         $text = ob_get_clean();
 
@@ -208,7 +208,7 @@ class SelectHandler implements HandlerInterface
     {
         $result = '';
 
-        $database = \Database::getConnection();
+        $database = database();
 
         $array = $database->fetchArray($query);
 

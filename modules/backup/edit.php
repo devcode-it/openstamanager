@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+$backup_dir = Backup::getDirectory();
+
 echo '<p>'.tr('Il backup è <b>molto importante</b> perché permette di creare una copia della propria installazione e relativi dati per poterla poi ripristinare in seguito a errori, cancellazioni accidentali o guasti hardware').'.</p>';
 
 if (!extension_loaded('zip')) {

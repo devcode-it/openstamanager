@@ -31,8 +31,10 @@ $docroot = DOCROOT;
 $rootdir = ROOTDIR;
 $baseurl = BASEURL;
 
+$config = App::getConfig();
+
 // Redirect al percorso HTTPS se impostato nella configurazione
-if (!empty($redirectHTTPS) && !isHTTPS(true)) {
+if (!empty($config['redirectHTTPS']) && !isHTTPS(true)) {
     header('HTTP/1.1 301 Moved Permanently');
     header('Location: https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
     exit();
@@ -112,7 +114,7 @@ foreach ($handlers as $handler) {
 Monolog\ErrorHandler::register($logger);
 
 // Database
-$dbo = $database = Database::getConnection();
+$dbo = $database = database();
 
 // Inizializzazione della sessione
 if (!API::isAPIRequest()) {
@@ -139,9 +141,9 @@ if (!API::isAPIRequest()) {
 }
 
 // Istanziamento del gestore delle traduzioni del progetto
-$lang = !empty($lang) ? $lang : 'it';
-$formatter = !empty($formatter) ? $formatter : [];
-$translator = Translator::getInstance();
+$lang = !empty($config['lang']) ? $config['lang'] : 'it';
+$formatter = !empty($config['formatter']) ? $config['formatter'] : [];
+$translator = trans();
 $translator->addLocalePath($docroot.'/locale');
 $translator->addLocalePath($docroot.'/modules/*/locale');
 $translator->setLocale($lang, $formatter);
@@ -175,17 +177,17 @@ if (!API::isAPIRequest()) {
     csrfProtector::init();
 
     // Aggiunta del wrapper personalizzato per la generazione degli input
-    if (!empty($HTMLWrapper)) {
-        HTMLBuilder\HTMLBuilder::setWrapper($HTMLWrapper);
+    if (!empty($config['HTMLWrapper'])) {
+        HTMLBuilder\HTMLBuilder::setWrapper($config['HTMLWrapper']);
     }
 
     // Aggiunta dei gestori personalizzati per la generazione degli input
-    foreach ((array) $HTMLHandlers as $key => $value) {
+    foreach ((array) $config['HTMLHandlers'] as $key => $value) {
         HTMLBuilder\HTMLBuilder::setHandler($key, $value);
     }
 
     // Aggiunta dei gestori per componenti personalizzate
-    foreach ((array) $HTMLManagers as $key => $value) {
+    foreach ((array) $config['HTMLManagers'] as $key => $value) {
         HTMLBuilder\HTMLBuilder::setManager($key, $value);
     }
 
@@ -199,7 +201,7 @@ if (!API::isAPIRequest()) {
     $_SESSION['errors'] = isset($_SESSION['errors']) ? array_unique($_SESSION['errors']) : [];
 
     // Impostazione del tema grafico di default
-    $theme = !empty($theme) ? $theme : 'default';
+    $theme = !empty($config['theme']) ? $config['theme'] : 'default';
 
     if ($continue) {
         // Periodo di visualizzazione dei record

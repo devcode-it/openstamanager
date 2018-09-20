@@ -16,7 +16,7 @@ class FieldManager implements ManagerInterface
 
     public function getInfo($options)
     {
-        $database = \Database::getConnection();
+        $database = database();
 
         $query = 'SELECT `zz_fields`.*'.(isset($options['id_record']) ? ', `zz_field_record`.`value`' : '').' FROM `zz_fields`';
 

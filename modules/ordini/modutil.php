@@ -9,7 +9,7 @@ function get_new_numeroordine($data)
 {
     global $dir;
 
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $query = "SELECT numero AS max_numeroordine FROM or_ordini WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data))).' AND idtipoordine IN(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1';
     $rs = $dbo->fetchArray($query);
@@ -25,7 +25,7 @@ function get_new_numerosecondarioordine($data)
 {
     global $dir;
 
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     // Calcolo il numero secondario se stabilito dalle impostazioni e se documento di vendita
     $formato_numero_secondario = setting('Formato numero secondario ordine');
@@ -53,7 +53,7 @@ function get_new_numerosecondarioordine($data)
  */
 function get_imponibile_ordine($idordine)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $query = 'SELECT SUM(subtotale-sconto) AS imponibile FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine);
     $rs = $dbo->fetchArray($query);
@@ -66,7 +66,7 @@ function get_imponibile_ordine($idordine)
  */
 function get_totale_ordine($idordine)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     // Sommo l'iva di ogni riga al totale
     $query = 'SELECT SUM(iva) AS iva FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine);
@@ -84,7 +84,7 @@ function get_totale_ordine($idordine)
  */
 function get_netto_ordine($idordine)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $query = 'SELECT ritenutaacconto,bollo FROM or_ordini WHERE id='.prepare($idordine);
     $rs = $dbo->fetchArray($query);
@@ -97,7 +97,7 @@ function get_netto_ordine($idordine)
  */
 function get_ivadetraibile_ordine($idordine)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $query = 'SELECT SUM(iva)-SUM(iva_indetraibile) AS iva_detraibile FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine);
     $rs = $dbo->fetchArray($query);
@@ -110,7 +110,7 @@ function get_ivadetraibile_ordine($idordine)
  */
 function get_ivaindetraibile_ordine($idordine)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $query = 'SELECT SUM(iva_indetraibile) AS iva_indetraibile FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine);
     $rs = $dbo->fetchArray($query);
@@ -131,7 +131,7 @@ function add_articolo_inordine($idordine, $idarticolo, $descrizione, $idiva, $qt
 {
     global $dir;
 
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     // Lettura unità di misura dell'articolo
     if (empty($idum)) {
@@ -162,7 +162,7 @@ function rimuovi_articolo_daordine($idarticolo, $idordine, $idrigaordine)
 {
     global $dir;
 
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $non_rimovibili = seriali_non_rimuovibili('id_riga_ordine', $idrigaordine, $dir);
     if (!empty($non_rimovibili)) {
@@ -190,7 +190,7 @@ function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaac
 {
     global $dir;
 
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     // Se ci sono righe nel ordine faccio i conteggi, altrimenti azzero gli sconti e le spese aggiuntive (inps, ritenuta, marche da bollo)
     $query = 'SELECT COUNT(id) AS righe FROM or_righe_ordini WHERE idordine='.prepare($idordine);
@@ -279,7 +279,7 @@ function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaac
  */
 function get_stato_ordine($idordine)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     $rs_ordine = $dbo->fetchArray("SELECT IFNULL(SUM(qta), 0) AS qta FROM or_righe_ordini WHERE idordine='".$idordine."'");
     $qta_ordine = $rs_ordine[0]['qta'];

@@ -20,7 +20,7 @@ class Prints
     public static function getPrints()
     {
         if (empty(self::$prints)) {
-            $database = Database::getConnection();
+            $database = database();
 
             $results = $database->fetchArray('SELECT * FROM zz_prints WHERE enabled = 1 ORDER BY `order`');
 
@@ -131,7 +131,7 @@ class Prints
         }
 
         // Impostazione automatica della precisione a 2 numeri decimali
-        Translator::getFormatter()->setPrecision(2);
+        formatter()->setPrecision(2);
 
         // Individuazione della configurazione
         $directory = dirname($filename);
@@ -212,7 +212,7 @@ class Prints
         $options = self::readOptions($infos['options']);
         $docroot = DOCROOT;
 
-        $dbo = $database = Database::getConnection();
+        $dbo = $database = database();
 
         $user = Auth::user();
 
@@ -273,7 +273,7 @@ class Prints
         $infos = self::get($id_print);
         $options = self::readOptions($infos['options']);
 
-        $dbo = $database = Database::getConnection();
+        $dbo = $database = database();
 
         $user = Auth::user();
 

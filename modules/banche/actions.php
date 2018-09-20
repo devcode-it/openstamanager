@@ -48,26 +48,13 @@ switch (filter('op')) {
         break;
 
     case 'delete':
+        $dbo->update('co_banche', [
+            'deleted_at' => date('Y-m-d H:i:s'),
+        ], ['id' => $id_record]);
 
-       $documenti = $dbo->fetchNum('SELECT idanagrafica FROM an_anagrafiche WHERE idbanca_vendite='.prepare($id_record).'
-		UNION SELECT idanagrafica FROM an_anagrafiche WHERE idbanca_acquisti='.prepare($id_record));
-
-        if (isset($id_record) && empty($documenti)) {
-            $dbo->query('DELETE FROM `co_banche` WHERE `id`='.prepare($id_record));
-            flash()->info(tr('_TYPE_ eliminata con successo!', [
-                '_TYPE_' => 'Banca',
-            ]));
-        } else {
-            $array = [
-                'deleted_at' => date('Y-m-d H:i:s'),
-            ];
-
-            $dbo->update('co_banche', $array, ['id' => $id_record]);
-
-            flash()->info(tr('_TYPE_ eliminata con successo!', [
-                '_TYPE_' => 'Banca',
-            ]));
-        }
+        flash()->info(tr('_TYPE_ eliminata con successo!', [
+            '_TYPE_' => 'Banca',
+        ]));
 
         break;
 }

@@ -6,9 +6,9 @@ include_once __DIR__.'/../../core.php';
 $report = file_get_contents($docroot.'/templates/fatturato/fatturato.html');
 $body = file_get_contents($docroot.'/templates/fatturato/fatturato_body.html');
 
-$mesi = ['', 'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+$mesi = months();
 
-$dir = save($_GET['dir']);
+$dir = get('dir');
 
 $date_start = $_SESSION['period_start'];
 $date_end = $_SESSION['period_end'];

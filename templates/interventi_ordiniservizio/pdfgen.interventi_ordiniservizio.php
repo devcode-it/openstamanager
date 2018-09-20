@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 $module_name = 'Interventi';
 
 // carica info ordine servizio
-$idintervento = save($_GET['idintervento']);
+$idintervento = get('idintervento');
 $query = "SELECT *, (SELECT CONCAT_WS('-', codice, ragione_sociale ) FROM an_anagrafiche WHERE idanagrafica=(SELECT idtecnico FROM in_interventi_tecnici WHERE idintervento=co_ordiniservizio.idintervento LIMIT 0,1)) AS tecnico, (SELECT data FROM in_interventi WHERE id=co_ordiniservizio.idintervento) AS data_intervento FROM co_ordiniservizio WHERE idintervento=\"$idintervento\" ".Modules::getAdditionalsQuery('Interventi');
 $rs = $dbo->fetchArray($query);
 $idcliente = $rs[0]['idanagrafica'];

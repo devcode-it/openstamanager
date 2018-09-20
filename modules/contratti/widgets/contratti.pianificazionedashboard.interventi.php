@@ -2,6 +2,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
+// TODO: aggiornare con la funzione months()
 $mesi = [
     tr('Gennaio'),
     tr('Febbraio'),

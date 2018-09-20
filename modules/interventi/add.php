@@ -122,6 +122,7 @@ elseif (!empty($id_intervento)) {
     $rs = $dbo->fetchArray('SELECT *, (SELECT idcontratto FROM co_promemoria WHERE idintervento=in_interventi.id LIMIT 0,1) AS idcontratto, in_interventi.id_preventivo as idpreventivo, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = in_interventi.idtipointervento) AS tempo_standard  FROM in_interventi WHERE id='.prepare($id_intervento));
     $idtipointervento = $rs[0]['idtipointervento'];
     $data = (null !== filter('data')) ? filter('data') : $rs[0]['data_richiesta'];
+    $data_richiesta = $rs[0]['data_richiesta'];
     $richiesta = $rs[0]['richiesta'];
     $idsede = $rs[0]['idsede'];
     $idanagrafica = $rs[0]['idanagrafica'];
@@ -229,7 +230,7 @@ if (!empty($id_intervento)) {
 			<!-- RIGA 3 -->
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "timestamp", "label": "<?php echo tr('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "-now-" ]}
+					{[ "type": "timestamp", "label": "<?php echo tr('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "<?php echo $data_richiesta ?: '-now-'; ?>" ]}
 				</div>
 
 				<div class="col-md-4">

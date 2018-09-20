@@ -275,3 +275,21 @@ function doc_references($info, $dir, $ignore = [])
 
     return [];
 }
+
+function months()
+{
+    return [
+        1 => tr('Gennaio'),
+        2 => tr('Febbraio'),
+        3 => tr('Marzo'),
+        4 => tr('Aprile'),
+        5 => tr('Maggio'),
+        6 => tr('Giugno'),
+        7 => tr('Luglio'),
+        8 => tr('Agosto'),
+        9 => tr('Settembre'),
+        10 => tr('Ottobre'),
+        11 => tr('Novembre'),
+        12 => tr('Dicembre'),
+    ];
+}

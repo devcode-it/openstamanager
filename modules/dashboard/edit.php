@@ -285,11 +285,11 @@ if ($total == 0) {
 </div>
 <br>
 <?php
-$qp = "SELECT DATE_FORMAT(data_richiesta, '%m-%Y') AS mese FROM (co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL
+$qp = "SELECT MONTH(data_richiesta) AS mese, YEAR(data_richiesta) AS anno FROM (co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL
 
-UNION SELECT DATE_FORMAT(data_scadenza, '%m-%Y') AS mese FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL
+UNION SELECT MONTH(data_scadenza) AS mese, YEAR(data_scadenza) AS anno FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL
 
-UNION SELECT DATE_FORMAT(data_richiesta, '%m-%Y') AS mese FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0";
+UNION SELECT MONTH(data_richiesta) AS mese, YEAR(data_richiesta) AS anno FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0";
 $rsp = $dbo->fetchArray($qp);
 
 if (!empty($rsp)) {
@@ -320,26 +320,13 @@ if (!empty($rsp)) {
         echo '<div class="alert alert-warning alert-dismissible" role="alert"><i class="fa fa-exclamation-triangle"></i><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> '.tr('Ci sono '.$rsp_old.' interventi scaduti da pianificare.').'</div>';
     }
 
-    $mesi = [
-        tr('Gennaio'),
-        tr('Febbraio'),
-        tr('Marzo'),
-        tr('Aprile'),
-        tr('Maggio'),
-        tr('Giugno'),
-        tr('Luglio'),
-        tr('Agosto'),
-        tr('Settembre'),
-        tr('Ottobre'),
-        tr('Novembre'),
-        tr('Dicembre'),
-    ];
+    $mesi = months();
 
     // Creo un array con tutti i mesi che contengono interventi
     $mesi_interventi = [];
     for ($i = 0; $i < sizeof($rsp); ++$i) {
-        $mese_n = date('m', strtotime($rsp[$i]['data_richiesta'])).date('Y', strtotime($rsp[$i]['data_richiesta']));
-        $mese_t = $mesi[intval(date('m', strtotime($rsp[$i]['data_richiesta'])))].' '.date('Y', strtotime($rsp[$i]['data_richiesta']));
+        $mese_n = $rsp[$i]['mese'].$rsp[$i]['anno'];
+        $mese_t = $mesi[intval($rsp[$i]['mese'])].' '.$rsp[$i]['anno'];
         $mesi_interventi[$mese_n] = $mese_t;
     }
 

@@ -7,6 +7,7 @@ include_once Modules::filepath('Fatture di vendita', 'modutil.php');
 /*
     GESTIONE ORDINI DI SERVIZIO
 */
+// TODO: aggiornare con la funzione months()
 $mesi = [
     tr('Gennaio'),
     tr('Febbraio'),

@@ -5,6 +5,7 @@ include_once __DIR__.'/../../../core.php';
 /*
     GESTIONE ORDINI DI SERVIZIO
 */
+// TODO: aggiornare con la funzione months()
 $mesi = [
     tr('Gennaio'),
     tr('Febbraio'),

@@ -70,39 +70,59 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 
     download($upload_dir.'/'.$rs[0]['filename'], $rs[0]['original']);
 } elseif (post('op') == 'send-email') {
-    $template = Mail::getTemplate(post('template'));
-    $id_account = $template['id_smtp'];
+    $id_template = post('template');
 
     // Informazioni di log
-    Filter::set('get', 'id_email', $template['id']);
+    Filter::set('get', 'id_email', $id_template);
 
-    $mail = new Mail($id_account);
-
-    // Conferma di lettura
-    if (!empty(post('read_notify'))) {
-        $mail->ConfirmReadingTo = $mail->From;
-    }
-
-    // Template
-    $mail->setTemplate($template);
+    // Inizializzazione
+    $mail = new Notifications\EmailNotification();
+    $mail->setTemplate($id_template, $id_record);
 
     // Destinatari
-    $mail->addReceivers(post('destinatari'), post('tipo_destinatari'));
+    $receivers = post('destinatari');
+    $types = post('tipo_destinatari');
+    foreach ($receivers as $key => $receiver) {
+        $mail->addReceiver($receiver, $types[$key]);
+    }
 
-    // Oggetto
-    $mail->Subject = post('subject');
+    // Contenuti
+    $mail->setSubject(post('subject'));
+    $mail->setContent(post('body'));
 
-    // Allegati
-    $mail->attach(post('prints'), post('attachments'));
+    // Stampe da allegare
+    $prints = post('prints');
+    foreach ($prints as $print) {
+        $mail->addPrint($print, $id_record);
+    }
 
-    // Contenuto
-    $mail->Body = post('body');
+    // Allegati originali
+    $files = post('attachments');
+    if (!empty($files)) {
+        // Allegati del record
+        $attachments = $dbo->fetchArray('SELECT * FROM zz_files WHERE id IN ('.implode(',', $files).') AND id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record));
+
+        foreach ($attachments as $attachment) {
+            $mail->addAttachment($upload_dir.'/'.$attachment['filename']);
+        }
+
+        // Allegati dell'Azienda predefinita
+        $anagrafiche = Modules::get('Anagrafiche');
+        $attachments = $dbo->fetchArray('SELECT * FROM zz_files WHERE id IN ('.implode(',', $files).') AND id_module != '.prepare($id_module));
+
+        $directory = DOCROOT.'/'.Uploads::getDirectory($anagrafiche['id']);
+        foreach ($attachments as $attachment) {
+            $mail->addAttachment($directory.'/'.$attachment['filename']);
+        }
+    }
 
     // Invio mail
-    if (!$mail->send()) {
-        flash()->error(tr("Errore durante l'invio dell'email").': '.$mail->ErrorInfo);
-    } else {
+    try {
+        $mail->send(true); // Il valore true impone la gestione degli errori tramite eccezioni
+
         flash()->info(tr('Email inviata correttamente!'));
+    } catch (PHPMailer\PHPMailer\Exception $e) {
+        flash()->error(tr("Errore durante l'invio dell'email").': '.$e->errorMessage());
     }
 }
 

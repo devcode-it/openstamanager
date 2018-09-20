@@ -7,10 +7,12 @@ use Prints;
 
 class EmailNotification extends Notification
 {
+    protected $subject = null;
+    protected $readNotify = false;
+
     protected $template = null;
     protected $account = null;
     protected $attachments = null;
-    protected $subject = null;
 
     /**
      * Restituisce l'account email della notifica.
@@ -46,25 +48,31 @@ class EmailNotification extends Notification
      * Imposta il template della notifica.
      *
      * @param string|int $value
+     * @param int $id_record
      */
-    public function setTemplate($value, $id_record)
+    public function setTemplate($value, $id_record = null)
     {
         $this->template = $value;
 
         $template = $this->getTemplate();
-        $variables = Mail::getTemplateVariables($template['id'], $id_record);
 
-        // Sostituzione delle variabili di base
-        $replaces = [];
-        foreach ($variables as $key => $value) {
-            $replaces['{'.$key.'}'] = $value;
-        }
-        $body = replace($template['body'], $replaces);
-        $subject = replace($template['subject'], $replaces);
-
-        $this->setContent($body);
-        $this->setSubject($subject);
+        $this->setReadNotify($template['read_notify']);
         $this->setAccount($template['id_smtp']);
+
+        if (!empty($id_record)) {
+            $variables = Mail::getTemplateVariables($template['id'], $id_record);
+
+            // Sostituzione delle variabili di base
+            $replaces = [];
+            foreach ($variables as $key => $value) {
+                $replaces['{'.$key.'}'] = $value;
+            }
+            $body = replace($template['body'], $replaces);
+            $subject = replace($template['subject'], $replaces);
+
+            $this->setContent($body);
+            $this->setSubject($subject);
+        }
     }
 
     /**
@@ -164,10 +172,44 @@ class EmailNotification extends Notification
         $this->subject = $value;
     }
 
-    public function send()
+    /**
+     * Restituisce il titolo della notifica.
+     *
+     * @return bool
+     */
+    public function getReadNotify()
+    {
+        return $this->readNotify;
+    }
+
+    /**
+     * Imposta il titolo della notifica.
+     *
+     * @param bool $value
+     */
+    public function setReadNotify($value)
+    {
+        $this->readNotify = boolval($value);
+    }
+
+    /**
+     * Aggiunge un destinataro alla notifica.
+     *
+     * @param string $value
+     * @param string $type
+     */
+    public function addReceiver($value, $type = null)
+    {
+        $this->receivers[] = [
+            'email' => $value,
+            'type' => $type,
+        ];
+    }
+
+    public function send($exceptions = false)
     {
         $account = $this->getAccount();
-        $mail = new Mail($account['id']);
+        $mail = new Mail($account['id'], $exceptions);
 
         // Template
         $template = $this->getTemplate();
@@ -176,12 +218,20 @@ class EmailNotification extends Notification
         }
 
         // Destinatari
-        $mail->addReceivers($this->getReceivers());
+        $receivers = $this->getReceivers();
+        foreach ($receivers as $receiver) {
+            $mail->addReceiver($receiver['email'], $receiver['type']);
+        }
 
         // Allegati
         $attachments = $this->getAttachments();
         foreach ($attachments as $attachment) {
-            $this->AddAttachment($attachment['path'], $attachment['name']);
+            $mail->AddAttachment($attachment['path'], $attachment['name']);
+        }
+
+        // Conferma di lettura
+        if (!empty($this->getReadNotify())) {
+            $mail->ConfirmReadingTo = $mail->From;
         }
 
         // Oggetto

@@ -122,9 +122,9 @@ switch (filter('op')) {
                         }
 
                         // Controllo che non esista già un intervento collegato a questo promemoria e, se ho spuntato di creare l'intervento, creo già anche quello
-                        if ((empty($dbo->fetchArray("SELECT idintervento FROM co_promemoria WHERE id = '".((empty($idriga)) ? $id_record : $idriga)."'")[0]['idintervento'])) and ($post['pianifica_intervento'])) {
+                        if ((empty($dbo->fetchArray("SELECT idintervento FROM co_promemoria WHERE id = '".((empty($idriga)) ? $id_record : $idriga)."'")[0]['idintervento'])) && (post('pianifica_intervento'))) {
                             // pianificare anche l' intervento?
-                            // if ($post['pianifica_intervento']) {
+                            // if (post('pianifica_intervento')) {
                             /*$orario_inizio = post('orario_inizio');
                             $orario_fine = post('orario_fine');*/
 
@@ -203,7 +203,7 @@ switch (filter('op')) {
                             }
 
                             flash()->info(tr('Interventi pianificati correttamente'));
-                        } elseif ($post['pianifica_intervento']) {
+                        } elseif (post('pianifica_intervento')) {
                             flash()->warning(tr('Esiste già un intervento pianificato per il _DATE_', [
                                 '_DATE_' => Translator::dateToLocale($data_richiesta),
                             ]));

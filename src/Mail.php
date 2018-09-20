@@ -249,98 +249,31 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     }
 
     /**
-     * Aggiunge gli allegati all'email.
+     * Aggiunge un destinatario.
      *
-     * @param array $prints
-     * @param array $files
+     * @param array $receiver
+     * @param array $type
      */
-    public function attach($prints, $files)
+    public function addReceiver($receiver, $type = null)
     {
-        $id_module = Modules::getCurrent()['id'];
-        $id_record = App::getCurrentElement();
+        $pieces = explode('<', $receiver);
+        $count = count($pieces);
 
-        // Elenco degli allegati
-        $attachments = [];
-
-        // Stampe
-        foreach ($prints as $print) {
-            $print = Prints::get($print);
-
-            // Utilizzo di una cartella particolare per il salvataggio temporaneo degli allegati
-            $filename = DOCROOT.'/files/attachments/'.$print['title'].' - '.$id_record.'.pdf';
-
-            Prints::render($print['id'], $id_record, $filename);
-
-            $attachments[] = [
-                'path' => $filename,
-                'name' => $print['title'].'.pdf',
-            ];
+        $name = null;
+        if ($count > 1) {
+            $email = substr(end($pieces), 0, -1);
+            $name = substr($receiver, 0, strpos($receiver, '<'.$email));
+        } else {
+            $email = $receiver;
         }
 
-        // Allegati del record
-        $selected = [];
-        if (!empty($files)) {
-            $selected = $dbo->fetchArray('SELECT * FROM zz_files WHERE id IN ('.implode(',', $files).') AND id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record));
-        }
-
-        foreach ($selected as $attachment) {
-            $attachments[] = [
-                'path' => $upload_dir.'/'.$attachment['filename'],
-                'name' => $attachment['name'],
-            ];
-        }
-
-        // Allegati dell'Azienda predefinita
-        $anagrafiche = Modules::get('Anagrafiche');
-
-        $selected = [];
-        if (!empty($files)) {
-            $selected = $dbo->fetchArray('SELECT * FROM zz_files WHERE id IN ('.implode(',', $files).') AND id_module != '.prepare($id_module));
-        }
-
-        foreach ($selected as $attachment) {
-            $attachments[] = [
-                'path' => DOCROOT.'/files/'.$anagrafiche['directory'].'/'.$attachment['filename'],
-                'name' => $attachment['name'],
-            ];
-        }
-
-        // Aggiunta allegati
-        foreach ($attachments as $attachment) {
-            $this->AddAttachment($attachment['path'], $attachment['name']);
-        }
-    }
-
-    /**
-     * Aggiunge i destinatari.
-     *
-     * @param array $receivers
-     * @param array $types
-     */
-    public function addReceivers($receivers, $types = [])
-    {
-        foreach ($receivers as $key => $destinatario) {
-            $type = $types[$key] ?: 'a';
-
-            $pieces = explode('<', $destinatario);
-            $count = count($pieces);
-
-            $name = null;
-            if ($count > 1) {
-                $email = substr(end($pieces), 0, -1);
-                $name = substr($destinatario, 0, strpos($destinatario, '<'.$email));
+        if (!empty($email)) {
+            if ($type == 'cc') {
+                $this->AddCC($email, $name);
+            } elseif ($type == 'bcc') {
+                $this->AddBCC($email, $name);
             } else {
-                $email = $destinatario;
-            }
-
-            if (!empty($email)) {
-                if ($type == 'a') {
-                    $this->AddAddress($email, $name);
-                } elseif ($type == 'cc') {
-                    $this->AddCC($email, $name);
-                } elseif ($type == 'bcc') {
-                    $this->AddBCC($email, $name);
-                }
+                $this->AddAddress($email, $name);
             }
         }
     }

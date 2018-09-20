@@ -66,7 +66,6 @@
         "assets-OSM": "yarn upgrade && yarn run build-OSM",
         "build-OSM": "gulp",
         "dump-OSM": "php composer.phar dump-autoload",
-        "doc-OSM": "php couscous.phar deploy",
         "tests-server": "concurrently \"java -jar selenium-server-standalone.jar\" \"chromedriver --url-base=/wd/hub\"",
         "tests-OSM": "php codecept.phar run",
         "windows-fix": "yarn global add windows-build-tools"

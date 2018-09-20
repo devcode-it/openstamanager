@@ -71,7 +71,7 @@ vendor/
 ######################
 *.new
 *.old
-.couscous/
+*.txt
 assets/dist/
 backup/*
 !backup/.htaccess
@@ -84,6 +84,7 @@ files/my_impianti/*
 tmp/
 config.inc.php
 database.sql
+VERSION
 REVISION
 .php_cs.cache
 

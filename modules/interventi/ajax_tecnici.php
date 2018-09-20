@@ -23,12 +23,25 @@ switch (get('op')) {
         $fine = date_modify(date_create(date('Y-m-d H:\0\0')), '+'.$ore.' hours')->format('Y-m-d H:\0\0');
 
         add_tecnico($id_record, $idtecnico, $inizio, $fine, $idcontratto);
-
         break;
 
     // RIMOZIONE SESSIONE DI LAVORO
     case 'del_sessione':
-        $dbo->query('DELETE FROM in_interventi_tecnici WHERE id='.prepare(get('id')));
+        $id = get('id');
+
+        $tecnico = $dbo->fetchOne('SELECT an_anagrafiche.email FROM an_anagrafiche INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE in_interventi_tecnici.id = '.prepare($id));
+
+        $dbo->query('DELETE FROM in_interventi_tecnici WHERE id='.prepare($id));
+
+        // Notifica nuovo intervento al tecnico
+        if (!empty($tecnico['email'])) {
+            $n = new Notifications\EmailNotification();
+
+            $n->setTemplate('Notifica rimozione intervento', $id_record);
+            $n->setReceivers($tecnico['email']);
+
+            $n->send();
+        }
         break;
 }
 

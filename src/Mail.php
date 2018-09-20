@@ -1,5 +1,8 @@
 <?php
 
+use Models\MailAccount;
+use Models\MailTemplate;
+
 /**
  * Classe per gestire le email in base alle impostazioni, basata sul framework open-source PHPMailer.
  *
@@ -25,46 +28,29 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
      */
     public static function getAccounts()
     {
-        if (empty(self::$accounts)) {
-            $database = Database::getConnection();
-
-            $results = $database->fetchArray('SELECT * FROM zz_smtps WHERE deleted_at IS NULL');
-
-            $accounts = [];
-
-            foreach ($results as $result) {
-                $accounts[$result['id']] = $result;
-                $accounts[$result['name']] = $result['id'];
-
-                if (!empty($result['main'])) {
-                    $accounts['default'] = $result['id'];
-                }
-            }
-
-            self::$accounts = $accounts;
-        }
-
-        return self::$accounts;
+        return MailAccount::getAll();
     }
 
     /**
      * Restituisce le informazioni relative a un singolo account email specificato.
      *
-     * @param string|int $template
+     * @param string|int $account
      *
      * @return array
      */
     public static function get($account = null)
     {
-        if (!is_numeric($account) && !empty(self::getAccounts()[$account])) {
-            $account = self::getAccounts()[$account];
+        $accounts = self::getAccounts();
+
+        $result = MailAccount::get($account);
+
+        if (empty($return)) {
+            $result = $accounts->first(function ($item) use ($group) {
+                return !empty($item->main);
+            });
         }
 
-        if (empty($account)) {
-            $account = self::getAccounts()['default'];
-        }
-
-        return self::getAccounts()[$account];
+        return $result;
     }
 
     /**
@@ -204,6 +190,27 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
         $this->WordWrap = 78;
     }
 
+    /**
+     * Testa la connessione al server SMTP.
+     *
+     * @return bool
+     */
+    public function testSMTP()
+    {
+        if ($this->smtpConnect()) {
+            $this->smtpClose();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Invia l'email impostata.
+     *
+     * @return bool
+     */
     public function send()
     {
         if (empty($this->AltBody)) {
@@ -221,6 +228,24 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
         }
 
         return $result;
+    }
+
+    public function setTemplate(array $template)
+    {
+        // Reply To
+        if (!empty($template['reply_to'])) {
+            $this->AddReplyTo($template['reply_to']);
+        }
+
+        // CC
+        if (!empty($template['cc'])) {
+            $this->AddCC($template['cc']);
+        }
+
+        // BCC
+        if (!empty($template['bcc'])) {
+            $this->AddBCC($template['bcc']);
+        }
     }
 
     /**
@@ -287,16 +312,15 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     }
 
     /**
-     * Aggiunge i detinatari.
+     * Aggiunge i destinatari.
      *
      * @param array $receivers
      * @param array $types
      */
-    public function addReceivers($receivers, $types)
+    public function addReceivers($receivers, $types = [])
     {
-        // Destinatari
         foreach ($receivers as $key => $destinatario) {
-            $type = $types[$key];
+            $type = $types[$key] ?: 'a';
 
             $pieces = explode('<', $destinatario);
             $count = count($pieces);
@@ -319,21 +343,5 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
                 }
             }
         }
-    }
-
-    /**
-     * Testa la connessione al server SMTP.
-     *
-     * @return bool
-     */
-    public function testSMTP()
-    {
-        if ($this->smtpConnect()) {
-            $this->smtpClose();
-
-            return true;
-        }
-
-        return false;
     }
 }

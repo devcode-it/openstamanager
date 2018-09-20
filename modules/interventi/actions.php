@@ -123,45 +123,45 @@ switch (post('op')) {
             $sconto_unitario = post('sconto')[$idriga];
             $tipo_sconto = post('tipo_sconto')[$idriga];
             $sconto = calcola_sconto([
-                    'sconto' => $sconto_unitario,
-                    'prezzo' => $prezzo_ore_consuntivo,
-                    'tipo' => $tipo_sconto,
-                ]);
+                'sconto' => $sconto_unitario,
+                'prezzo' => $prezzo_ore_consuntivo,
+                'tipo' => $tipo_sconto,
+            ]);
 
             $scontokm_unitario = post('scontokm')[$idriga];
             $tipo_scontokm = post('tipo_scontokm')[$idriga];
             $scontokm = ($tipo_scontokm == 'PRC') ? ($prezzo_km_consuntivo * $scontokm_unitario) / 100 : $scontokm_unitario;
 
             $dbo->update('in_interventi_tecnici', [
-                    'idintervento' => $id_record,
-                    'idtipointervento' => $idtipointervento_tecnico,
-                    'idtecnico' => post('idtecnico')[$idriga],
+                'idintervento' => $id_record,
+                'idtipointervento' => $idtipointervento_tecnico,
+                'idtecnico' => post('idtecnico')[$idriga],
 
-                    'orario_inizio' => $orario_inizio,
-                    'orario_fine' => $orario_fine,
-                    'ore' => $ore,
-                    'km' => $km,
+                'orario_inizio' => $orario_inizio,
+                'orario_fine' => $orario_fine,
+                'ore' => $ore,
+                'km' => $km,
 
-                    'prezzo_ore_unitario' => $prezzo_ore_unitario,
-                    'prezzo_km_unitario' => $prezzo_km_unitario,
-                    'prezzo_dirittochiamata' => $prezzo_dirittochiamata,
-                    'prezzo_ore_unitario_tecnico' => $prezzo_ore_unitario_tecnico,
-                    'prezzo_km_unitario_tecnico' => $prezzo_km_unitario_tecnico,
-                    'prezzo_dirittochiamata_tecnico' => $prezzo_dirittochiamata_tecnico,
+                'prezzo_ore_unitario' => $prezzo_ore_unitario,
+                'prezzo_km_unitario' => $prezzo_km_unitario,
+                'prezzo_dirittochiamata' => $prezzo_dirittochiamata,
+                'prezzo_ore_unitario_tecnico' => $prezzo_ore_unitario_tecnico,
+                'prezzo_km_unitario_tecnico' => $prezzo_km_unitario_tecnico,
+                'prezzo_dirittochiamata_tecnico' => $prezzo_dirittochiamata_tecnico,
 
-                    'prezzo_ore_consuntivo' => $prezzo_ore_consuntivo,
-                    'prezzo_km_consuntivo' => $prezzo_km_consuntivo,
-                    'prezzo_ore_consuntivo_tecnico' => $prezzo_ore_consuntivo_tecnico,
-                    'prezzo_km_consuntivo_tecnico' => $prezzo_km_consuntivo_tecnico,
+                'prezzo_ore_consuntivo' => $prezzo_ore_consuntivo,
+                'prezzo_km_consuntivo' => $prezzo_km_consuntivo,
+                'prezzo_ore_consuntivo_tecnico' => $prezzo_ore_consuntivo_tecnico,
+                'prezzo_km_consuntivo_tecnico' => $prezzo_km_consuntivo_tecnico,
 
-                    'sconto' => $sconto,
-                    'sconto_unitario' => $sconto_unitario,
-                    'tipo_sconto' => $tipo_sconto,
+                'sconto' => $sconto,
+                'sconto_unitario' => $sconto_unitario,
+                'tipo_sconto' => $tipo_sconto,
 
-                    'scontokm' => $scontokm,
-                    'scontokm_unitario' => $scontokm_unitario,
-                    'tipo_scontokm' => $tipo_scontokm,
-                ], ['id' => $idriga]);
+                'scontokm' => $scontokm,
+                'scontokm_unitario' => $scontokm_unitario,
+                'tipo_scontokm' => $tipo_scontokm,
+            ], ['id' => $idriga]);
         }
 
         $tipo_sconto = post('tipo_sconto_globale');
@@ -187,6 +187,17 @@ switch (post('op')) {
             'sconto_globale' => $sconto,
             'tipo_sconto_globale' => $tipo_sconto,
         ], ['id' => $id_record]);
+
+        $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => post('idstatointervento')]);
+        // Notifica chiusura intervento
+        if (!empty($stato['notifica']) && !empty($stato['destinatari'])) {
+            $n = new Notifications\EmailNotification();
+
+            $n->setTemplate('Stato intervento', $id_record);
+            $n->setReceivers($stato['destinatari']);
+
+            $n->send();
+        }
 
         flash()->info(tr('Informazioni salvate correttamente!'));
 
@@ -322,7 +333,6 @@ switch (post('op')) {
 
         // Collegamenti tecnici/interventi
         $idtecnici = post('idtecnico');
-
         foreach ($idtecnici as $idtecnico) {
             add_tecnico($id_record, $idtecnico, post('orario_inizio'), post('orario_fine'), $idcontratto);
         }
@@ -598,6 +608,17 @@ switch (post('op')) {
                 } elseif ($dbo->query('UPDATE in_interventi SET firma_file='.prepare($firma_file).', firma_data=NOW(), firma_nome = '.prepare($firma_nome).', idstatointervento = "OK" WHERE id='.prepare($id_record))) {
                     flash()->info(tr('Firma salvata correttamente!'));
                     flash()->info(tr('Attività completata!'));
+
+                    $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => 'OK']);
+                    // Notifica chiusura intervento
+                    if (!empty($stato['notifica']) && !empty($stato['destinatari'])) {
+                        $n = new Notifications\EmailNotification();
+
+                        $n->setTemplate('Stato intervento', $id_record);
+                        $n->setReceivers($stato['destinatari']);
+
+                        $n->send();
+                    }
                 } else {
                     flash()->error(tr('Errore durante il salvataggio della firma nel database!'));
                 }

@@ -109,6 +109,11 @@ class Module extends Model
         return $this->hasMany(PrintTemplate::class, 'id_module');
     }
 
+    public function mailTemplates()
+    {
+        return $this->hasMany(MailTemplate::class, 'id_module');
+    }
+
     public function views()
     {
         return $this->hasMany(View::class, 'id_module');
@@ -123,6 +128,8 @@ class Module extends Model
     {
         return $this->hasMany(Clause::class, 'idmodule');
     }
+
+    /* Gerarchia */
 
     public function children()
     {
@@ -144,8 +151,6 @@ class Module extends Model
     {
         return $this->children()->with('allChildren');
     }
-
-    /* Metodi statici */
 
     public static function getHierarchy()
     {

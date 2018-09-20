@@ -300,3 +300,19 @@ DELETE FROM `zz_settings` WHERE `nome` = 'Abilitare orario lavorativo';
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
 (NULL, 'Inizio orario lavorativo', '00:00:00', 'time', 1, 'Dashboard', 1),
 (NULL, 'Fine orario lavorativo', '23:59:00', 'time', 1, 'Dashboard', 2);
+
+-- Notifiche negli stati interventi
+ALTER TABLE `in_statiintervento` ADD `notifica` boolean NOT NULL DEFAULT 0, ADD `id_email` int(11), ADD `destinatari` varchar(255);
+ALTER TABLE `in_statiintervento` ADD FOREIGN KEY (`id_email`) REFERENCES `zz_emails`(`id`) ON DELETE CASCADE;
+
+-- Email di notifica
+INSERT INTO `zz_emails` (`id`, `id_module`, `id_smtp`, `name`, `icon`, `subject`, `reply_to`, `cc`, `bcc`, `body`, `read_notify`, `main`) VALUES
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 1, 'Notifica intervento', 'fa fa-envelope', 'Notifica intervento numero {numero} del {data}', '', '', '', '<p>Gentile Tecnico,</p>\r\n<p>un nuovo intervento {numero} in {data} è stato aggiunto.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0', '0'),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 1, 'Notifica rimozione intervento', 'fa fa-envelope', 'Notifica intervento numero {numero} del {data}', '', '', '', '<p>Gentile Tecnico,</p>\r\n<p>sei stato rimosso dall''intervento {numero} in {data}.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0', '0'),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 1, 'Stato intervento', 'fa fa-envelope', 'Intervento numero {numero} del {data}: {stato}.', '', '', '', '<p>Gentile Utente,</p>\r\n<p>l''intervento {numero} in {data} è stato spostato nello stato {stato}.</p>', '0', '0');
+
+INSERT INTO `zz_email_print` (`id`, `id_email`, `id_print`) VALUES
+(NULL, (SELECT `id` FROM `zz_emails` WHERE `name` = 'Stato intervento' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi')), (SELECT `id` FROM `zz_prints` WHERE `name` = 'Intervento'));
+
+UPDATE `zz_emails` SET `main` = 1 WHERE `name` = 'Rapportino intervento' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
+UPDATE `in_statiintervento` SET `id_email` = (SELECT `id` FROM `zz_emails` WHERE `name` = 'Stato intervento' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'));

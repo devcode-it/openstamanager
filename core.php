@@ -134,7 +134,7 @@ if (!API::isAPIRequest()) {
         $debugbar->addCollector(new DebugBar\DataCollector\TimeDataCollector());
 
         $debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
-        $debugbar->addCollector(new Extension\EloquentCollector($dbo->getCapsule()));
+        $debugbar->addCollector(new Extensions\EloquentCollector($dbo->getCapsule()));
     }
 }
 

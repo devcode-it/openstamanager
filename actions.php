@@ -83,20 +83,8 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
         $mail->ConfirmReadingTo = $mail->From;
     }
 
-    // Reply To
-    if (!empty($template['reply_to'])) {
-        $mail->AddReplyTo($template['reply_to']);
-    }
-
-    // CC
-    if (!empty($template['cc'])) {
-        $mail->AddCC($template['cc']);
-    }
-
-    // BCC
-    if (!empty($template['bcc'])) {
-        $mail->AddBCC($template['bcc']);
-    }
+    // Template
+    $mail->setTemplate($template);
 
     // Destinatari
     $mail->addReceivers(post('destinatari'), post('tipo_destinatari'));

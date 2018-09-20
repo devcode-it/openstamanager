@@ -1,6 +1,6 @@
 <?php
 
-namespace Extension;
+namespace Extensions;
 
 class EloquentCollector extends \DebugBar\DataCollector\PDO\PDOCollector
 {

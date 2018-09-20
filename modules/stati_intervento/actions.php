@@ -4,13 +4,14 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'update':
-        $descrizione = post('descrizione');
-        $colore = post('colore');
-        $completato = post('completato');
-
-        // Aggiorna
-        $query = 'UPDATE in_statiintervento SET descrizione='.prepare($descrizione).', colore='.prepare($colore).', completato='.prepare($completato).' WHERE idstatointervento='.prepare($id_record);
-        $dbo->query($query);
+        $dbo->update('in_statiintervento', [
+            'descrizione' => post('descrizione'),
+            'colore' => post('colore'),
+            'completato' => post('completato'),
+            'notifica' => post('notifica'),
+            'id_email' => post('email'),
+            'destinatari' => post('destinatari'),
+        ], ['idstatointervento' => $id_record]);
 
         flash()->info(tr('Informazioni salvate correttamente.'));
 

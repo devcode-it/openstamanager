@@ -7,6 +7,20 @@ unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idsede']);
 unset($_SESSION['superselect']['non_fatturato']);
 
+// Calcolo del nuovo codice
+$idintervento_template = setting('Formato codice intervento');
+$idintervento_template = str_replace('#', '%', $idintervento_template);
+
+$rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare($idintervento_template).' ORDER BY codice DESC LIMIT 0,1');
+if (!empty($rs[0]['codice'])) {
+    $new_codice = Util\Generator::generate(setting('Formato codice intervento'), $rs[0]['codice']);
+}
+
+if (empty($new_codice)) {
+    $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice LIKE '.prepare($idintervento_template).' ORDER BY codice DESC LIMIT 0,1');
+    $new_codice = Util\Generator::generate(setting('Formato codice intervento'), $rs[0]['codice']);
+}
+
 // Se ho passato l'idanagrafica, carico il tipo di intervento di default
 $idanagrafica = filter('idanagrafica');
 $idsede = filter('idsede');
@@ -46,6 +60,7 @@ if (null !== filter('orario_inizio') && '00:00:00' != filter('orario_inizio')) {
 $idcontratto = filter('idcontratto');
 $idordineservizio = filter('idordineservizio');
 $idcontratto_riga = filter('idcontratto_riga');
+$id_intervento = filter('id_intervento');
 
 if (!empty($idcontratto) && !empty($idordineservizio)) {
     $rs = $dbo->fetchArray('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS idzona FROM co_contratti WHERE id='.prepare($idcontratto));
@@ -82,7 +97,7 @@ elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
 
     // aumento orario inizio del tempo standard definito dalla tipologia dell'intervento (PRESO DAL PROMEMORIA)
     if (!empty($rs[0]['tempo_standard'])) {
-        $orario_fine = date('H:i', strtotime($orario_inizio) + ((60 * 60) * $rs[0]['tempo_standard']));
+        $orario_fine = date('H:i:s', strtotime($orario_inizio) + ((60 * 60) * $rs[0]['tempo_standard']));
     }
 
     // se gli impianti non sono stati definiti nel promemoria, carico tutti gli impianti a contratto
@@ -101,6 +116,30 @@ elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
     $idstatointervento = $rs[0]['idstatointervento'];
 }
 
+// Intervento senza sessioni
+elseif (!empty($id_intervento)) {
+    // Info riga pianificata
+    $rs = $dbo->fetchArray('SELECT *, (SELECT idcontratto FROM co_promemoria WHERE idintervento=in_interventi.id LIMIT 0,1) AS idcontratto, in_interventi.id_preventivo as idpreventivo, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = in_interventi.idtipointervento) AS tempo_standard  FROM in_interventi WHERE id='.prepare($id_intervento));
+    $idtipointervento = $rs[0]['idtipointervento'];
+    $data = (null !== filter('data')) ? filter('data') : $rs[0]['data_richiesta'];
+    $richiesta = $rs[0]['richiesta'];
+    $idsede = $rs[0]['idsede'];
+    $idanagrafica = $rs[0]['idanagrafica'];
+    $idclientefinale = $rs[0]['idclientefinale'];
+    $idstatointervento = $rs[0]['idstatointervento'];
+    $idcontratto = $rs[0]['idcontratto'];
+    $idpreventivo = $rs[0]['idpreventivo'];
+    $idzona = $rs[0]['idzona'];
+
+    // Aumento orario inizio del tempo standard definito dalla tipologia dell'intervento (PRESO DAL PROMEMORIA)
+    if (!empty($rs[0]['tempo_standard'])) {
+        $orario_fine = date('H:i:s', strtotime($orario_inizio) + ((60 * 60) * $rs[0]['tempo_standard']));
+    }
+
+    $rs = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_interventi WHERE idintervento='.prepare($id_intervento));
+    $idimpianto = implode(',', array_column($rs, 'idimpianto'));
+}
+
 if (empty($data)) {
     if (null !== filter('data')) {
         $data = filter('data');
@@ -111,21 +150,6 @@ if (empty($data)) {
 
 $_SESSION['superselect']['idanagrafica'] = $idanagrafica;
 
-// Calcolo del nuovo codice
-$idintervento_template = setting('Formato codice intervento');
-$idintervento_template = str_replace('#', '%', $idintervento_template);
-
-// Calcolo codice intervento successivo
-$rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare($idintervento_template).' ORDER BY codice DESC LIMIT 0,1');
-if (!empty($rs[0]['codice'])) {
-    $new_codice = Util\Generator::generate(setting('Formato codice intervento'), $rs[0]['codice']);
-}
-
-if (empty($new_codice)) {
-    $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice LIKE '.prepare($idintervento_template).' ORDER BY codice DESC LIMIT 0,1');
-    $new_codice = Util\Generator::generate(setting('Formato codice intervento'), $rs[0]['codice']);
-}
-
 $orario_inizio = $data.' '.$orario_inizio;
 $orario_fine = $data.' '.$orario_fine;
 
@@ -135,6 +159,19 @@ $orario_fine = $data.' '.$orario_fine;
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="ref" value="<?php echo get('ref'); ?>">
 	<input type="hidden" name="backto" value="record-edit">
+<?php
+if (!empty($idcontratto_riga)) {
+    echo '<input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">';
+}
+
+if (!empty($idordineservizio)) {
+    echo '<input type="hidden" name="idordineservizio" value="'.$idordineservizio.'">';
+}
+
+if (!empty($id_intervento)) {
+    echo '<input type="hidden" name="id_intervento" value="'.$id_intervento.'">';
+}
+?>
 
 	<!-- DATI CLIENTE -->
 	<div class="panel panel-primary">
@@ -155,14 +192,14 @@ $orario_fine = $data.' '.$orario_fine;
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Per conto di'); ?>", "name": "idclientefinale", "ajax-source": "clienti" ]}
+					{[ "type": "select", "label": "<?php echo tr('Per conto di'); ?>", "name": "idclientefinale", "value": "<?php echo $idclientefinale; ?>", "ajax-source": "clienti" ]}
 				</div>
 			</div>
 
 			<!-- RIGA 2 -->
 			<div class="row">
 				<div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Preventivo'); ?>", "name": "idpreventivo"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "preventivi" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Preventivo'); ?>", "name": "idpreventivo", "value": "<?php echo $idpreventivo; ?>"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "preventivi" ]}
 				</div>
 
 				<div class="col-md-4">
@@ -196,7 +233,7 @@ $orario_fine = $data.' '.$orario_fine;
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "<?php echo $idzona; ?>", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "help":"<?php echo 'La zona viene definita automaticamente in base al cliente selezionato'; ?>.", "extra": "readonly" ]}
+					{[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "<?php echo $idzona; ?>", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "help":"<?php echo 'La zona viene definita automaticamente in base al cliente selezionato'; ?>.", "extra": "readonly", "value": "<?php echo $idzona; ?>" ]}
 				</div>
 			</div>
 
@@ -216,22 +253,12 @@ $orario_fine = $data.' '.$orario_fine;
 				<div class="col-md-12">
 					{[ "type": "textarea", "label": "<?php echo tr('Richiesta'); ?>", "name": "richiesta", "required": 1, "value": "<?php echo $richiesta; ?>", "extra": "style='max-height:80px; ' " ]}
 				</div>
-
-				<?php
-                if (!empty($idcontratto_riga)) {
-                    echo '<input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">';
-                }
-
-                if (!empty($idordineservizio)) {
-                    echo '<input type="hidden" name="idordineservizio" value="'.$idordineservizio.'">';
-                }
-                ?>
 			</div>
 		</div>
 	</div>
 
 	<!-- DATI INTERVENTO -->
-    <div class="box box-warning collapsable <?php echo get('ref') ? '' : 'collapsed-box'; ?>">
+    <div class="box box-primary collapsable <?php echo get('ref') ? '' : 'collapsed-box'; ?>">
         <div class="box-header with-border">
 			<h3 class="box-title"><?php echo tr('Ore di lavoro'); ?></h3>
             <div class="box-tools pull-right">
@@ -293,7 +320,30 @@ $orario_fine = $data.' '.$orario_fine;
         }
 ?>
         }
-		//Quando modifico orario inizio, allineo anche l'orario fine
+
+<?php
+
+if (!empty($id_intervento)) {
+    echo '
+        $("#idsede").prop("disabled", true);
+        $("#idpreventivo").prop("disabled", true);
+        $("#idcontratto").prop("disabled", true);
+        $("#idimpianti").prop("disabled", true);
+        $("#componenti").prop("disabled", true);
+        $("#idanagrafica").prop("disabled", true);
+        $("#idanagrafica").find("button").prop("disabled", true);
+        $("#idclientefinale").prop("disabled", true);
+        $("#idzona").prop("disabled", true);
+        $("#idtipointervento").prop("disabled", true);
+        $("#idstatointervento").prop("disabled", true);
+        $("#richiesta").prop("disabled", true);
+        $("#data_richiesta").prop("disabled", true);
+        $("#impianti").find("button").prop("disabled", true);
+    ';
+}
+?>
+
+		// Quando modifico orario inizio, allineo anche l'orario fine
         $("#orario_inizio").on("dp.change", function (e) {
 			$("#orario_fine").data("DateTimePicker").minDate(e.date).format(globals.timestampFormat);
         });

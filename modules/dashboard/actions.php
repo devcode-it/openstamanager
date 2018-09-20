@@ -138,17 +138,23 @@ switch (get('op')) {
 
         $mese = $_GET['mese'];
 
-        //Righe inserite
-        $qp = "SELECT co_promemoria.id, idcontratto, richiesta, DATE_FORMAT( data_richiesta, '%m%Y') AS mese, data_richiesta, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento FROM (co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL
-        UNION SELECT co_ordiniservizio.id, idcontratto, '', data_scadenza, DATE_FORMAT( data_scadenza, '%m%Y') AS mese, an_anagrafiche.ragione_sociale, 'ordine' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento='ODS') AS tipointervento FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL ORDER BY data_richiesta ASC";
-        $rsp = $dbo->fetchArray($qp);
-        $tot_dapianificare = sizeof($rsp);
-        $da_pianificare = 0;
+        // Righe inserite
+        $qp = "SELECT co_promemoria.id, idcontratto, richiesta, DATE_FORMAT( data_richiesta, '%m%Y') AS mese, data_richiesta, an_anagrafiche.ragione_sociale, 'promemoria' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento FROM (co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL
 
-        if ($tot_dapianificare > 0) {
+        UNION SELECT co_ordiniservizio.id, idcontratto, '', DATE_FORMAT( data_scadenza, '%m%Y') AS mese, data_scadenza, an_anagrafiche.ragione_sociale, 'ordine' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento='ODS') AS tipointervento FROM (co_ordiniservizio INNER JOIN co_contratti ON co_ordiniservizio.idcontratto=co_contratti.id) INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL
+
+        ORDER BY data_richiesta ASC";
+
+        $rsp = $dbo->fetchArray($qp);
+
+        $interventi = $dbo->fetchArray("SELECT id, richiesta, DATE_FORMAT(data_richiesta,'%m%Y') AS mese, data_richiesta, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE in_tipiintervento.idtipointervento=in_interventi.idtipointervento) AS tipointervento FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 ORDER BY data_richiesta ASC");
+
+        $rsp = array_merge($rsp, $interventi);
+
+        if (!empty($rsp)) {
             $prev_mese = '';
 
-            //Elenco interventi da pianificare
+            // Elenco interventi da pianificare
             foreach ($rsp as $r) {
                 if ($r['mese'] == $mese) {
                     if (date('Ymd', strtotime($r['data_richiesta'])) < date('Ymd')) {
@@ -158,11 +164,12 @@ switch (get('op')) {
                     }
 
                     echo '
-                    <div class="fc-event '.$class.'" data-id="'.$r['id'].'" data-idcontratto="'.$r['idcontratto'].'"><b>'.$r['ragione_sociale'].'</b><br>'.Translator::dateToLocale($r['data_richiesta']).' ('.$r['tipointervento'].')'.(!empty($r['richiesta']) ? ' - '.$r['richiesta'] : '').'</div>';
-                    ++$da_pianificare;
+                    <div class="fc-event '.$class.'" data-id="'.$r['id'].'" data-idcontratto="'.$r['idcontratto'].'" data-ref="'.$r['ref'].'">
+                        <b>'.$r['ragione_sociale'].'</b><br>'.Translator::dateToLocale($r['data_richiesta']).' ('.$r['tipointervento'].')'.(!empty($r['richiesta']) ? ' - '.$r['richiesta'] : '').'
+                    </div>';
                 }
             }
-        } elseif ($da_pianificare == 0) {
+        } else {
             echo '<br><small class="help-block">'.tr('Non ci sono interventi da pianificare per questo mese').'</small>';
         }
 

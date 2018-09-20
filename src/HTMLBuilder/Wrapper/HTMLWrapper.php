@@ -14,8 +14,8 @@ class HTMLWrapper implements WrapperInterface
         $result = '';
 
         // Valori particolari
-        $values['icon-before'] = isset($values['icon-before']) ? $this->parser($values, $values['icon-before']) : null;
-        $values['icon-after'] = isset($values['icon-after']) ? $this->parser($values, $values['icon-after']) : null;
+        $values['icon-before'] = isset($values['icon-before']) ? $this->parser($values, $extras, $values['icon-before']) : null;
+        $values['icon-after'] = isset($values['icon-after']) ? $this->parser($values, $extras, $values['icon-after']) : null;
 
         // Generazione dell'etichetta
         if (!empty($values['label'])) {
@@ -79,22 +79,22 @@ class HTMLWrapper implements WrapperInterface
         return $result;
     }
 
-    protected function parser(&$values, $string)
+    protected function parser(&$values, &$extras, $string)
     {
         $result = $string;
 
         if (starts_with($string, 'add|')) {
-            $result = $this->add($values, $string);
+            $result = $this->add($values, $extras, $string);
             $values['icon-custom'] = 'no-padding';
         } elseif (starts_with($string, 'choice|')) {
-            $result = $this->choice($values, $string);
+            $result = $this->choice($values, $extras, $string);
             $values['icon-custom'] = 'no-padding';
         }
 
         return $result;
     }
 
-    protected function add(&$values, $string)
+    protected function add(&$values, &$extras, $string)
     {
         $result = null;
 
@@ -105,11 +105,16 @@ class HTMLWrapper implements WrapperInterface
 
         $get = !empty($pieces[2]) ? '&'.$pieces[2] : null;
         $classes = !empty($pieces[3]) ? ' '.$pieces[3] : null;
-        $extras = !empty($pieces[4]) ? ' '.$pieces[4] : null;
+        $btn_extras = !empty($pieces[4]) ? ' '.$pieces[4] : null;
+
+        if (in_array('disabled', $extras)) {
+            $classes .= ' disabled';
+            $btn_extras .= ' disabled';
+        }
 
         if (in_array($module->permission, ['r', 'rw'])) {
             $result = '
-<button '.$extras.' data-href="'.ROOTDIR.'/add.php?id_module='.$module->id.$get.'&select='.$values['id'].'&ajax=yes" data-target="#bs-popup2" data-toggle="modal" data-title="'.tr('Aggiungi').'" type="button" class="btn'.$classes.'">
+<button '.$btn_extras.' data-href="'.ROOTDIR.'/add.php?id_module='.$module->id.$get.'&select='.$values['id'].'&ajax=yes" data-target="#bs-popup2" data-toggle="modal" data-title="'.tr('Aggiungi').'" type="button" class="btn'.$classes.'">
     <i class="fa fa-plus"></i>
 </button>';
         }
@@ -117,7 +122,7 @@ class HTMLWrapper implements WrapperInterface
         return $result;
     }
 
-    protected function choice(&$values, $string)
+    protected function choice(&$values, &$extras, $string)
     {
         $result = null;
 

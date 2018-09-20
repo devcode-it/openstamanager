@@ -3,7 +3,7 @@
 namespace HTMLBuilder\Handler;
 
 /**
- *  Gestione dell'input di tipo "text", "file", "password", "email", "number", "textarea" e "hidden".
+ * Gestione dell'input di tipo "text", "file", "password", "email", "number", "textarea" e "hidden".
  *
  * @since 2.3
  */

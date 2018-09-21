@@ -283,6 +283,7 @@ class FatturaElettronica
             'Data' => $documento['data'],
             'Numero' => $documento['numero_esterno'],
             //'Causale' => $documento['causale'],
+            // TODO: vari
         ];
 
         return $result;
@@ -293,10 +294,11 @@ class FatturaElettronica
      *
      * @return array
      */
-    protected static function getDatiDocumento($documento)
+    protected static function getDatiGenerali($documento)
     {
         $result = [
             'DatiGeneraliDocumento' => static::getDatiGeneraliDocumento($documento),
+            // TODO: DatiOrdineAcquisto, DatiContratto, DatiConvenzione, DatiRicezione, DatiFattureCollegate, DatiSAL, DatiDDT, DatiTrasporto, FatturaPrincipale
         ];
 
         return $result;
@@ -358,6 +360,7 @@ class FatturaElettronica
 
         // Riepiloghi per IVA
         // TODO: risolvere di conseguenza alla Natura IVA
+        // Domanda: come si interpreta la descrizione ufficiale?
         $riepiloghi = $database->fetchArray('SELECT SUM(`subtotale` - `sconto`) as totale, SUM(`iva`) as iva, `idiva` FROM `co_righe_documenti` WHERE `iddocumento` = '.prepare($documento['id']).' GROUP BY `idiva`');
         foreach ($riepiloghi as $riepilogo) {
             $iva = $database->fetchArray('SELECT `percentuale` FROM `co_iva` WHERE `id` = '.prepare($riepilogo['idiva']));
@@ -464,7 +467,7 @@ class FatturaElettronica
         $documento = $fattura->getDocumento();
 
         $result = [
-            'DatiGenerali' => static::getDatiDocumento($documento),
+            'DatiGenerali' => static::getDatiGenerali($documento),
             'DatiBeniServizi' => static::getDatiBeniServizi($documento),
             'DatiPagamento' => static::getDatiPagamento($documento),
             'Allegati' => static::getAllegati($documento),

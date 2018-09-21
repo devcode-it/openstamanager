@@ -399,7 +399,6 @@ if (!empty($id_intervento)) {
 			}
 			// session_set('superselect,idzona', $(this).selectData().idzona, 0);
 		}
-
 	});
 
 	$('#idpreventivo').change( function(){

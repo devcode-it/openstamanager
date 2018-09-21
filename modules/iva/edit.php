@@ -20,12 +20,26 @@ include_once __DIR__.'/../../core.php';
 			</div>
 
 			<div class="row">
+                <div class="col-md-4">
+					{[ "type": "checkbox", "label": "<?php echo tr('Esente'); ?>", "name": "esente", "id": "esente-edit", "value": "$esente$"]}
+				</div>
+
+				<div class="col-md-4">
+					{[ "type": "number", "label": "<?php echo tr('Percentuale'); ?>", "name": "percentuale", "id": "percentuale-edit", "value": "$percentuale$", "icon-after": "<i class=\"fa fa-percent\"></i>", "disabled": <?php echo intval($record['esente']); ?> ]}
+				</div>
+
+				<div class="col-md-4">
+					{[ "type": "number", "label": "<?php echo tr('Indetraibile'); ?>", "name": "indetraibile", "value": "$indetraibile$", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+				</div>
+			</div>
+
+            <div class="row">
 				<div class="col-md-6">
-					{[ "type": "number", "label": "<?php echo tr('Percentuale'); ?>", "name": "percentuale", "value": "$percentuale$", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+					{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$" ]}
 				</div>
 
 				<div class="col-md-6">
-					{[ "type": "number", "label": "<?php echo tr('Indetraibile'); ?>", "name": "indetraibile", "value": "$indetraibile$", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Codice Natura (Fatturazione Elettronica)'); ?>", "name": "codice_natura_fe", "value": "$codice_natura_fe$", "values": "query=SELECT codice as id, CONCAT(codice, ' - ', descrizione) AS descrizione FROM fe_natura" ]}
 				</div>
 			</div>
 
@@ -42,3 +56,17 @@ include_once __DIR__.'/../../core.php';
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
+
+<script>
+$(document).ready(function(){
+    $('#esente-edit').change(function(){
+        var checkbox = $(this).parent().find('[type=hidden]');
+
+        if (checkbox.val() == 1) {
+            $("#percentuale-edit").prop("disabled", true);
+        } else {
+            $("#percentuale-edit").prop("disabled", false);
+        }
+    });
+});
+</script>

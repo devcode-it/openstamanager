@@ -319,7 +319,7 @@ class FatturaElettronica
             $prezzo_unitario = $riga['subtotale'] / $riga['qta'];
             $prezzo_totale = $riga['subtotale'] - $riga['sconto'];
 
-            $iva = $database->fetchArray('SELECT `percentuale` FROM `co_iva` WHERE `id` = '.prepare($riga['idiva']));
+            $iva = $database->fetchArray('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($riga['idiva']));
             $percentuale = $iva[0]['percentuale'];
 
             $dettaglio = [
@@ -347,12 +347,17 @@ class FatturaElettronica
             $dettaglio['PrezzoTotale'] = $prezzo_totale;
             $dettaglio['AliquotaIVA'] = $percentuale;
 
+            if (empty($percentuale)) {
+                $dettaglio['Natura'] = $iva['codice_natura_fe'];
+            }
+
             $result[] = [
                 'DettaglioLinee' => $dettaglio,
             ];
         }
 
         // Riepiloghi per IVA
+        // TODO: risolvere di conseguenza alla Natura IVA
         $riepiloghi = $database->fetchArray('SELECT SUM(`subtotale` - `sconto`) as totale, SUM(`iva`) as iva, `idiva` FROM `co_righe_documenti` WHERE `iddocumento` = '.prepare($documento['id']).' GROUP BY `idiva`');
         foreach ($riepiloghi as $riepilogo) {
             $iva = $database->fetchArray('SELECT `percentuale` FROM `co_iva` WHERE `id` = '.prepare($riepilogo['idiva']));

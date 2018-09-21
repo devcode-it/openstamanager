@@ -7,7 +7,7 @@ switch ($resource) {
         $query = 'SELECT mg_articoli.*, (SELECT CONCAT(numero, " ", descrizione) FROM co_pianodeiconti3 WHERE co_pianodeiconti3.id = idconto_vendita) AS idconto_vendita_title, (SELECT CONCAT(numero, " ", descrizione) FROM co_pianodeiconti3 WHERE co_pianodeiconti3.id = idconto_acquisto) AS idconto_acquisto_title, co_iva.descrizione AS iva_vendita FROM mg_articoli LEFT OUTER JOIN co_iva ON mg_articoli.idiva_vendita=co_iva.id |where| ORDER BY mg_articoli.id_categoria ASC, mg_articoli.id_sottocategoria ASC';
 
         $idiva_predefinita = setting('Iva predefinita');
-        $rs = $dbo->fetchArray("SELECT descrizione FROM co_iva WHERE id='".$idiva_predefinita."'");
+        $rs = $dbo->fetchArray("SELECT descrizione FROM co_iva WHERE id=".prepare($idiva_predefinita));
         $iva_predefinita = $rs[0]['descrizione'];
 
         foreach ($elements as $element) {

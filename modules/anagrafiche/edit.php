@@ -180,7 +180,7 @@ if (!$cliente) {
 					</div>
 
 					<div class="col-md-6">
-						{[ "type": "select", "label": "<?php echo tr('Iva predefinita'); ?>", "name": "idiva_acquisti", "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "$idiva_acquisti$", "extra": "<?php echo ($fornitore) ? '' : 'readonly'; ?>" ]}
+						{[ "type": "select", "label": "<?php echo tr('Iva predefinita'); ?>", "name": "idiva_acquisti", "ajax-source": "iva", "value": "$idiva_acquisti$", "extra": "<?php echo ($fornitore) ? '' : 'readonly'; ?>" ]}
 					</div>
 
                     <div class="col-md-6">
@@ -216,13 +216,13 @@ if (!$cliente) {
 					</div>
 
 					<div class="col-md-6">
-                        {[ "type": "select", "label": "<?php echo tr('Iva predefinita'); ?>", "name": "idiva_vendite", "values": "query=SELECT id, descrizione FROM co_iva ORDER BY descrizione ASC", "value": "$idiva_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
-                    </div>
+            {[ "type": "select", "label": "<?php echo tr('Iva predefinita'); ?>", "name": "idiva_vendite", "ajax-source": "iva", "value": "$idiva_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
+					</div>
 
-                    <div class="col-md-6">
-                        {[ "type": "select", "label": "<?php echo tr('Ritenuta d\'acconto predefinita'); ?>", "name": "idritenutaacconto_vendite", "values": "query=SELECT id, descrizione FROM co_ritenutaacconto ORDER BY descrizione ASC", "value": "$idritenutaacconto_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
-                    </div>
-
+          <div class="col-md-6">
+            {[ "type": "select", "label": "<?php echo tr('Ritenuta d\'acconto predefinita'); ?>", "name": "idritenutaacconto_vendite", "values": "query=SELECT id, descrizione FROM co_ritenutaacconto ORDER BY descrizione ASC", "value": "$idritenutaacconto_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
+           </div>
+          
 					<div class="col-md-6">
 						{[ "type": "select", "label": "<?php echo tr('Listino articoli'); ?>", "name": "idlistino_vendite", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
 					</div>

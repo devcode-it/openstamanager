@@ -3,9 +3,9 @@
 include_once __DIR__.'/../../core.php';
 include_once __DIR__.'/init.php';
 
-if (!empty($fattura)) {
+if (!empty($fattura_pa)) {
     $disabled = false;
-    $generated = file_exists($upload_dir.'/'.$fattura->getFilename());
+    $generated = file_exists($upload_dir.'/'.$fattura_pa->getFilename());
 } else {
     $disabled = true;
     $generated = false;

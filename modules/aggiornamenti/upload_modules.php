@@ -51,6 +51,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
 
             $installed = Modules::get($info['name']);
             $insert['parent'] = Modules::get($info['parent']);
+            $insert['icon'] = $info['icon'];
         }
 
         // Plugin

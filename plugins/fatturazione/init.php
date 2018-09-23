@@ -1,7 +1,7 @@
 <?php
 
 try {
-    $fattura = new Plugins\Fatturazione\FatturaElettronica($id_record);
+    $fattura_pa = new Plugins\Fatturazione\FatturaElettronica($id_record);
 } catch (UnexpectedValueException $e) {
 }
 

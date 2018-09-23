@@ -13,11 +13,15 @@ include_once __DIR__.'/../../core.php';
 	</div>
 
 	<div class="row">
-		<div class="col-md-6">
-			{[ "type": "number", "label": "<?php echo tr('Percentuale'); ?>", "name": "percentuale", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+        <div class="col-md-4">
+            {[ "type": "checkbox", "label": "<?php echo tr('Esente'); ?>", "name": "esente", "id": "esente-add", "value": "$esente$" ]}
+        </div>
+
+		<div class="col-md-4">
+			{[ "type": "number", "label": "<?php echo tr('Percentuale'); ?>", "name": "percentuale", "id": "percentuale-add", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
 		</div>
 
-		<div class="col-md-6">
+		<div class="col-md-4">
 			{[ "type": "number", "label": "<?php echo tr('Indetraibile'); ?>", "name": "indetraibile", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
 		</div>
 	</div>
@@ -29,3 +33,17 @@ include_once __DIR__.'/../../core.php';
 		</div>
 	</div>
 </form>
+
+<script>
+$(document).ready(function(){
+    $('#esente-add').change(function(){
+        var checkbox = $(this).parent().find('[type=hidden]');
+
+        if (checkbox.val() == 1) {
+            $("#percentuale-add").prop("disabled", true);
+        } else {
+            $("#percentuale-add").prop("disabled", false);
+        }
+    });
+});
+</script>

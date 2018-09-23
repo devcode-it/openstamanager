@@ -174,7 +174,9 @@ if (!API::isAPIRequest()) {
     header('Content-Type: text/html; charset=UTF-8');
 
     // Controllo CSRF
-    csrfProtector::init();
+    if (empty($config['disableCSRF'])) {
+        csrfProtector::init();
+    }
 
     // Aggiunta del wrapper personalizzato per la generazione degli input
     if (!empty($config['HTMLWrapper'])) {

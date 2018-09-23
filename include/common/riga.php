@@ -10,7 +10,7 @@ echo App::internalLoad('conti.php', $result, $options);
 echo '
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$result['idiva'].'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$result['idiva'].'", "ajax-source": "iva" ]}
         </div>';
 
 // Quantità

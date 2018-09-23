@@ -13,8 +13,9 @@ $backup_dir = __DIR__.'/backup/';
 // Tema selezionato per il front-end
 $theme = 'default';
 
-// Redirect automatico delle richieste da HTTP a HTTPS
-$redirectHTTPS = false;
+// Impostazioni di sicurezza
+$redirectHTTPS = false; // Redirect automatico delle richieste da HTTP a HTTPS
+$disableCSRF = false; // Protezione contro CSRF
 
 // Impostazioni di debug
 $debug = false;

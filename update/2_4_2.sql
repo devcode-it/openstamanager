@@ -316,3 +316,7 @@ INSERT INTO `zz_email_print` (`id`, `id_email`, `id_print`) VALUES
 
 UPDATE `zz_emails` SET `main` = 1 WHERE `name` = 'Rapportino intervento' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
 UPDATE `in_statiintervento` SET `id_email` = (SELECT `id` FROM `zz_emails` WHERE `name` = 'Stato intervento' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'));
+
+-- Ritenuta d'acconto predefinita per anagrafica
+ALTER TABLE `an_anagrafiche` ADD `idritenutaacconto_vendite` INT(11) NULL DEFAULT NULL AFTER `idiva_acquisti`;
+ALTER TABLE `an_anagrafiche` ADD `idritenutaacconto_acquisti` INT(11) NULL DEFAULT NULL AFTER `idritenutaacconto_vendite`;

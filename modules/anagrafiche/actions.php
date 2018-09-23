@@ -49,6 +49,8 @@ switch (post('op')) {
             'idlistino_vendite' => post('idlistino_vendite'),
             'idiva_acquisti' => post('idiva_acquisti'),
             'idiva_vendite' => post('idiva_vendite'),
+            'idritenutaacconto_acquisti' => post('idritenutaacconto_acquisti'),
+            'idritenutaacconto_vendite' => post('idritenutaacconto_vendite'),
             'idbanca_acquisti' => post('idbanca_acquisti'),
             'idbanca_vendite' => post('idbanca_vendite'),
             'settore' => post('settore'),

@@ -88,7 +88,7 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
             'desc_iva' => $rsi[0]['descrizione'],
             'iva' => -$iva,
             'sconto_globale' => 1,
-            '#order' => '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM '.$tables['row'].' AS t WHERE '.$fields['row'].'='.prepare($id_record).')',
+            'order' => orderValue($tables['row'], $fields['row'], $id_record),
         ];
 
         $dbo->insert($tables['row'], $values);
@@ -292,4 +292,9 @@ function months()
         11 => tr('Novembre'),
         12 => tr('Dicembre'),
     ];
+}
+
+function orderValue($table, $field, $id)
+{
+    return database()->fetchOne('SELECT IFNULL(MAX(`order`) + 1, 0) AS value FROM '.$table.' WHERE '.$field.' = '.prepare($id))['value'];
 }

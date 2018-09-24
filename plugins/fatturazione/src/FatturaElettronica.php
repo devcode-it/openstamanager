@@ -286,6 +286,21 @@ class FatturaElettronica
             // TODO: vari
         ];
 
+        // Sconto globale
+        if (!empty($documento['sconto_globale'])) {
+            $sconto = [
+                'Tipo' => $documento['sconto_globale'] > 0 ? 'SC' : 'MG',
+            ];
+
+            if ($riga['tipo_sconto_globale'] == 'PRC') {
+                $sconto['Percentuale'] = $riga['sconto_globale'];
+            } else {
+                $sconto['Importo'] = $riga['sconto_globale'];
+            }
+
+            $result['ScontoMaggiorazione'] = $sconto;
+        }
+
         return $result;
     }
 
@@ -334,7 +349,7 @@ class FatturaElettronica
             // Sconto
             if (!empty($riga['sconto'])) {
                 $sconto = [
-                    'Tipo' => 'SC',
+                    'Tipo' => $riga['sconto'] > 0 ? 'SC' : 'MG',
                 ];
 
                 if ($riga['tipo_sconto'] == 'PRC') {

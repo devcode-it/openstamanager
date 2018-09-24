@@ -63,8 +63,8 @@ switch ($resource) {
 
                     $dbo->insert('in_interventi', [
                         'idintervento' => $idintervento,
-                        '#idanagrafica' => "(SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')",
-                        '#data_richiesta' => 'NOW()',
+                        'idanagrafica' => setting('Azienda predefinita'),
+                        'data_richiesta' => \Carbon::now(),
                         'richiesta' => $richiesta,
                         'idtipointervento' => 0,
                         'idstatointervento' => 'CALL',

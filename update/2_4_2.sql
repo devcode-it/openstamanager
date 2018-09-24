@@ -370,7 +370,9 @@ INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable
 ALTER TABLE `an_anagrafiche` ADD `codice_destinatario` varchar(7);
 
 -- Plugin Fatturazione Elettronica
-INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `directory`, `options`) VALUES (NULL, 'Fatturazione Elettronica', 'Fatturazione Elettronica', (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita'), (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita'), 'tab', 'fatturazione', 'custom');
+INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `directory`, `options`) VALUES
+(NULL, 'Fatturazione Elettronica', 'Fatturazione Elettronica', (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita'), (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita'), 'tab', 'exportPA', 'custom'),
+(NULL, 'Fatturazione Elettronica', 'Fatturazione Elettronica', (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita'), (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di acquisto'), 'tab_main', 'importPA', 'custom');
 
 --INSERT INTO `zz_emails` (`id`, `id_module`, `id_smtp`, `name`, `icon`, `subject`, `reply_to`, `cc`, `bcc`, `body`, `read_notify`, `main`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 1, 'Fattura Elettronica', 'fa fa-file', 'Invio fattura numero {numero} del {data}', '', 'sdi01@pec.fatturapa.it', '', '<p>Gentile Cliente,</p>\r\n<p>inviamo in allegato la fattura numero {numero} del {data}.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0', '0');
 --INSERT INTO `zz_email_print` (`id`, `id_email`, `id_print`) VALUES (NULL, (SELECT `id` FROM `zz_emails` WHERE `name` = 'Fattura Elettronica' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita')), (SELECT `id` FROM `zz_prints` WHERE `name` = 'Fattura di vendita'));
@@ -477,3 +479,6 @@ INSERT INTO `zz_email_print` (`id`, `id_email`, `id_print`) VALUES
 
 UPDATE `zz_emails` SET `main` = 1 WHERE `name` = 'Rapportino intervento' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
 UPDATE `in_statiintervento` SET `id_email` = (SELECT `id` FROM `zz_emails` WHERE `name` = 'Stato intervento' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'));
+
+-- Correzione partite ive e codici fiscali
+UPDATE `an_anagrafiche` SET `piva` = REPLACE(`piva`, ' ', ''), `codice_fiscale` = REPLACE(`codice_fiscale`, ' ', '');

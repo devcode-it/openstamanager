@@ -18,7 +18,7 @@ if (!empty($fattura_pa)) {
 }
 
 // Campi obbligatori per l'anagrafica Azienda
-$azienda = Plugins\Fatturazione\FatturaElettronica::getAzienda();
+$azienda = Plugins\ExportPA\FatturaElettronica::getAzienda();
 $fields = [
     'piva' => 'Partita IVA',
     // 'codice_fiscale' => 'Codice Fiscale',

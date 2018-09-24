@@ -64,8 +64,10 @@
             "Modules\\Fatture\\Custom\\": "modules/fatture/custom/src",
             "Modules\\Interventi\\": "modules/interventi/src",
             "Modules\\Interventi\\Custom\\": "modules/interventi/custom/src",
-            "Plugins\\Fatturazione\\": "plugins/fatturazione/src",
-            "Plugins\\Fatturazione\\Custom\\": "plugins/fatturazione/custom/src"
+            "Plugins\\ExportPA\\": "plugins/exportPA/src",
+            "Plugins\\ExportPA\\Custom\\": "plugins/exportPA/custom/src",
+            "Plugins\\ImportPA\\": "plugins/importPA/src",
+            "Plugins\\ImportPA\\Custom\\": "plugins/importPA/custom/src"
         },
         "files": [
             "lib/functions.php",

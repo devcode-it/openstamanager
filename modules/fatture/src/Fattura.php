@@ -31,7 +31,7 @@ class Fattura extends Model
     {
         $model = static::query()->create($attributes);
 
-        $tipo_documento = Tipo::find($attributes['idtipodocumento']);
+        $tipo_documento = Tipo::find($attributes['tipo']);
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
 
         $direzione = $tipo_documento->dir;
@@ -40,7 +40,7 @@ class Fattura extends Model
         $id_anagrafica = $attributes['idanagrafica'];
         $id_segment = $attributes['id_segment'];
 
-        $dbo = database();
+        $database = database();
 
         // Calcolo dei numeri fattura
         $numero = static::getNumero($data, $direzione, $id_segment);
@@ -55,7 +55,7 @@ class Fattura extends Model
         }
 
         // Tipo di pagamento e banca predefinite dall'anagrafica
-        $pagamento = $dbo->fetchOne('SELECT id, (SELECT idbanca_'.$conto.' FROM an_anagrafiche WHERE idanagrafica = ?) AS idbanca FROM co_pagamenti WHERE id = (SELECT idpagamento_'.$conto.' AS pagamento FROM an_anagrafiche WHERE idanagrafica = ?)', [
+        $pagamento = $database->fetchOne('SELECT id, (SELECT idbanca_'.$conto.' FROM an_anagrafiche WHERE idanagrafica = ?) AS idbanca FROM co_pagamenti WHERE id = (SELECT idpagamento_'.$conto.' AS pagamento FROM an_anagrafiche WHERE idanagrafica = ?)', [
             $id_anagrafica,
             $id_anagrafica,
         ]);
@@ -69,12 +69,12 @@ class Fattura extends Model
 
         // Se non è impostata la banca dell'anagrafica, uso quella del pagamento.
         if (empty($id_banca)) {
-            $id_banca = $dbo->fetchOne('SELECT id FROM co_banche WHERE id_pianodeiconti3 = (SELECT idconto_'.$conto.' FROM co_pagamenti WHERE id = :id_pagamento)', [
+            $id_banca = $database->fetchOne('SELECT id FROM co_banche WHERE id_pianodeiconti3 = (SELECT idconto_'.$conto.' FROM co_pagamenti WHERE id = :id_pagamento)', [
                 ':id_pagamento' => $id_pagamento,
             ])['id'];
         }
 
-        $id_sede = $dbo->selectOne('an_anagrafiche', 'idsede_fatturazione', ['idanagrafica' => $id_anagrafica])['idsede_fatturazione'];
+        $id_sede = $database->selectOne('an_anagrafiche', 'idsede_fatturazione', ['idanagrafica' => $id_anagrafica])['idsede_fatturazione'];
 
         // Salvataggio delle informazioni
         $model->numero = $numero;
@@ -104,11 +104,11 @@ class Fattura extends Model
      */
     public static function getNumero($data, $direzione, $id_segment)
     {
-        $dbo = database();
+        $database = database();
 
         $maschera = $direzione == 'uscita' ? static::getMaschera($id_segment) : '#';
 
-        $ultima_fattura = $dbo->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera), [
+        $ultima_fattura = $database->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera), [
             ':year' => date('Y', strtotime($data)),
             ':id_segment' => $id_segment,
         ]);
@@ -133,12 +133,12 @@ class Fattura extends Model
             return '';
         }
 
-        $dbo = database();
+        $database = database();
 
         // Recupero maschera per questo segmento
         $maschera = static::getMaschera($id_segment);
 
-        $ultima_fattura = $dbo->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera), [
+        $ultima_fattura = $database->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera), [
             ':year' => date('Y', strtotime($data)),
             ':id_segment' => $id_segment,
         ]);
@@ -157,9 +157,9 @@ class Fattura extends Model
      */
     protected static function getMaschera($id_segment)
     {
-        $dbo = database();
+        $database = database();
 
-        $maschera = $dbo->fetchOne('SELECT pattern FROM zz_segments WHERE id = :id_segment', [
+        $maschera = $database->fetchOne('SELECT pattern FROM zz_segments WHERE id = :id_segment', [
             ':id_segment' => $id_segment,
         ])['pattern'];
 

@@ -10,7 +10,7 @@ class FatturaTest extends \Codeception\Test\Unit
             'idanagrafica' => 1,
             'data' => $data,
             'id_segment' => 1,
-            'idtipodocumento' => 2,
+            'tipo' => 2,
         ]);
 
         $this->assertEquals($fattura->idanagrafica, 1);

@@ -29,7 +29,7 @@ switch (post('op')) {
             'idanagrafica' => $idanagrafica,
             'data' => $data,
             'id_segment' => $id_segment,
-            'idtipodocumento' => $idtipodocumento,
+            'tipo' => $idtipodocumento,
         ]);
         $id_record = $fattura->id;
 

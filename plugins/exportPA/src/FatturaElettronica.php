@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins\Fatturazione;
+namespace Plugins\ExportPA;
 
 use FluidXml\FluidXml;
 use Respect\Validation\Validator as v;
@@ -362,7 +362,7 @@ class FatturaElettronica
 
         $result = [
             'DatiGeneraliDocumento' => static::getDatiGeneraliDocumento($fattura),
-            // TODO: DatiOrdineAcquisto, DatiContratto, DatiConvenzione, DatiRicezione, DatiFattureCollegate, DatiSAL, DatiDDT, DatiTrasporto, FatturaPrincipale
+            // TODO: DatiOrdineAcquisto, DatiContratto, DatiConvenzione, DatiRicezione, DatiFattureCollegate, DatiSAL, DatiDDT, FatturaPrincipale
         ];
 
         if ($documento['tipo'] == 'Fattura accompagnatoria di vendita') {

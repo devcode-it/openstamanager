@@ -7,6 +7,12 @@ if (!empty($fattura_pa)) {
     $disabled = false;
     $generated = file_exists($upload_dir.'/'.$fattura_pa->getFilename());
 } else {
+    echo '
+<div class="alert alert-warning">
+    <i class="fa fa-warning"></i>
+    <b>'.tr('Attenzione!').'</b> '.tr('Per generare la fattura elettronica è necessario che sia in stato "Emessa"').'.
+</div>';
+
     $disabled = true;
     $generated = false;
 }

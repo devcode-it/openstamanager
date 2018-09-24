@@ -38,7 +38,10 @@ class FatturaElettronica
         $database = database();
 
         // Documento
-        $this->documento = $database->fetchOne('SELECT *, (SELECT `codice_tipo_documento_fe` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`) AS `tipo_documento`, (SELECT `descrizione` FROM `co_statidocumento` WHERE `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`) AS `stato` FROM `co_documenti` WHERE `id` = '.prepare($id_documento));
+        $this->documento = $database->fetchOne('SELECT `co_documenti`.*, `co_tipidocumento`.`descrizione` AS `tipo`, `co_tipidocumento`.`codice_tipo_documento_fe` AS `tipo_documento`, `co_statidocumento`.`descrizione` AS `stato` FROM `co_documenti`
+        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
+        WHERE `co_documenti`.`id` = '.prepare($id_documento));
 
         // Controllo sulla possibilità di creare la fattura elettronica
         if ($this->documento['stato'] != 'Emessa' || $this->getCliente()['tipo'] == 'Privato') {
@@ -54,9 +57,7 @@ class FatturaElettronica
     public static function getAzienda()
     {
         if (empty(static::$azienda)) {
-            $database = database();
-
-            static::$azienda = $database->fetchOne('SELECT *, (SELECT `iso2` FROM `an_nazioni` WHERE `an_nazioni`.`id` = `an_anagrafiche`.`id_nazione`) AS nazione FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare(setting('Azienda predefinita')));
+            static::$azienda = static::getAnagrafica(setting('Azienda predefinita'));
         }
 
         return static::$azienda;
@@ -70,12 +71,22 @@ class FatturaElettronica
     public function getCliente()
     {
         if (empty($this->cliente)) {
-            $database = database();
-
-            $this->cliente = $database->fetchOne('SELECT *, (SELECT `iso2` FROM `an_nazioni` WHERE `an_nazioni`.`id` = `an_anagrafiche`.`id_nazione`) AS nazione FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare($this->getDocumento()['idanagrafica']));
+            $this->cliente = static::getAnagrafica($this->getDocumento()['idanagrafica']);
         }
 
         return $this->cliente;
+    }
+
+    /**
+     * Restituisce le informazioni riguardanti un anagrafica sulla base dell'identificativo fornito.
+     *
+     * @param int $id
+     *
+     * @return array
+     */
+    protected static function getAnagrafica($id)
+    {
+        return database()->fetchOne('SELECT *, (SELECT `iso2` FROM `an_nazioni` WHERE `an_nazioni`.`id` = `an_anagrafiche`.`id_nazione`) AS nazione FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare($id));
     }
 
     /**
@@ -107,8 +118,12 @@ class FatturaElettronica
      *
      * @return array
      */
-    protected static function getDatiTrasmissione($documento, $azienda, $cliente)
+    protected static function getDatiTrasmissione($fattura)
     {
+        $azienda = static::getAzienda();
+        $documento = $fattura->getDocumento();
+        $cliente = $fattura->getCliente();
+
         $default_code = ($cliente['tipo'] == 'Ente pubblico') ? '999999' : '0000000';
 
         // Generazione dell'header
@@ -208,8 +223,10 @@ class FatturaElettronica
      *
      * @return array
      */
-    protected static function getCedentePrestatore($azienda)
+    protected static function getCedentePrestatore($fattura)
     {
+        $azienda = static::getAzienda();
+
         $result = [
             'DatiAnagrafici' => static::getDatiAnagrafici($azienda, true),
             'Sede' => static::getSede($azienda),
@@ -259,8 +276,10 @@ class FatturaElettronica
      *
      * @return array
      */
-    protected static function getCessionarioCommittente($cliente)
+    protected static function getCessionarioCommittente($fattura)
     {
+        $cliente = $fattura->getCliente();
+
         $result = [
             'DatiAnagrafici' => static::getDatiAnagrafici($cliente),
             'Sede' => static::getSede($cliente),
@@ -275,8 +294,10 @@ class FatturaElettronica
      *
      * @return array
      */
-    protected static function getDatiGeneraliDocumento($documento)
+    protected static function getDatiGeneraliDocumento($fattura)
     {
+        $documento = $fattura->getDocumento();
+
         $result = [
             'TipoDocumento' => $documento['tipo_documento'],
             'Divisa' => 'EUR',
@@ -305,16 +326,48 @@ class FatturaElettronica
     }
 
     /**
+     * Restituisce l'array responsabile per la generazione del tag DatiTrasporto.
+     *
+     * @return array
+     */
+    protected static function getDatiTrasporto($fattura)
+    {
+        $documento = $fattura->getDocumento();
+        $database = database();
+
+        $vettore = static::getAnagrafica($documento['idvettore']);
+
+        $causale = $database->fetchOne('SELECT descrizione FROM dt_causalet WHERE id = '.prepare($documento['idcausalet']))['descrizione'];
+        $aspetto = $database->fetchOne('SELECT descrizione FROM dt_aspettobeni WHERE id = '.prepare($documento['idaspettobeni']))['descrizione'];
+
+        $result = [
+            'DatiAnagraficiVettore' => static::getDatiAnagrafici($vettore),
+            'CausaleTrasporto' => $causale,
+            'NumeroColli' => $documento['n_colli'],
+            'Descrizione' => $aspetto,
+        ];
+
+        return $result;
+    }
+
+
+    /**
      * Restituisce l'array responsabile per la generazione del tag DatiDocumento.
      *
      * @return array
      */
-    protected static function getDatiGenerali($documento)
+    protected static function getDatiGenerali($fattura)
     {
+        $documento = $fattura->getDocumento();
+
         $result = [
-            'DatiGeneraliDocumento' => static::getDatiGeneraliDocumento($documento),
+            'DatiGeneraliDocumento' => static::getDatiGeneraliDocumento($fattura),
             // TODO: DatiOrdineAcquisto, DatiContratto, DatiConvenzione, DatiRicezione, DatiFattureCollegate, DatiSAL, DatiDDT, DatiTrasporto, FatturaPrincipale
         ];
+
+        if ($documento['tipo'] == 'Fattura accompagnatoria di vendita') {
+            $result['DatiTrasporto'] = static::getDatiTrasporto($fattura);
+        }
 
         return $result;
     }
@@ -324,8 +377,10 @@ class FatturaElettronica
      *
      * @return array
      */
-    protected static function getDatiBeniServizi($documento)
+    protected static function getDatiBeniServizi($fattura)
     {
+        $documento = $fattura->getDocumento();
+
         $database = database();
 
         $result = [];
@@ -399,8 +454,10 @@ class FatturaElettronica
      *
      * @return array
      */
-    protected static function getDatiPagamento($documento)
+    protected static function getDatiPagamento($fattura)
     {
+        $documento = $fattura->getDocumento();
+
         $database = database();
 
         $pagamento = $database->fetchOne('SELECT * FROM `co_pagamenti` WHERE `id` = '.prepare($documento['idpagamento']));
@@ -429,8 +486,10 @@ class FatturaElettronica
      *
      * @return array
      */
-    protected static function getAllegati($documento)
+    protected static function getAllegati($fattura)
     {
+        $documento = $fattura->getDocumento();
+
         $id_module = Modules::get('Fatture di vendita')['id'];
         $dir = Uploads::getDirectory($id_module, Plugins::get('Fatturazione Elettronica')['id']);
 
@@ -464,9 +523,9 @@ class FatturaElettronica
         $cliente = $fattura->getCliente();
 
         $result = [
-            'DatiTrasmissione' => static::getDatiTrasmissione($documento, $azienda, $cliente),
-            'CedentePrestatore' => static::getCedentePrestatore($azienda),
-            'CessionarioCommittente' => static::getCessionarioCommittente($cliente),
+            'DatiTrasmissione' => static::getDatiTrasmissione($fattura),
+            'CedentePrestatore' => static::getCedentePrestatore($fattura),
+            'CessionarioCommittente' => static::getCessionarioCommittente($fattura),
         ];
 
         return $result;
@@ -479,13 +538,11 @@ class FatturaElettronica
      */
     protected static function getBody($fattura)
     {
-        $documento = $fattura->getDocumento();
-
         $result = [
-            'DatiGenerali' => static::getDatiGenerali($documento),
-            'DatiBeniServizi' => static::getDatiBeniServizi($documento),
-            'DatiPagamento' => static::getDatiPagamento($documento),
-            'Allegati' => static::getAllegati($documento),
+            'DatiGenerali' => static::getDatiGenerali($fattura),
+            'DatiBeniServizi' => static::getDatiBeniServizi($fattura),
+            'DatiPagamento' => static::getDatiPagamento($fattura),
+            'Allegati' => static::getAllegati($fattura),
         ];
 
         return $result;

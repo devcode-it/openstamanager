@@ -153,40 +153,7 @@ if ($dir == 'entrata') {
 
 			</div>
 
-
 <?php
-if ($tipodoc == 'Fattura accompagnatoria di vendita') {
-                    ?>
-				<div class="row">
-					<div class="col-md-3">
-						{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "idaspettobeni", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_aspettobeni ORDER BY descrizione ASC", "value": "$idaspettobeni$" ]}
-					</div>
-
-					<div class="col-md-3">
-						{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_causalet ORDER BY descrizione ASC", "value": "$idcausalet$" ]}
-					</div>
-
-					<div class="col-md-3">
-						{[ "type": "select", "label": "<?php echo tr('Porto'); ?>", "name": "idporto", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_porto ORDER BY descrizione ASC", "value": "$idporto$" ]}
-					</div>
-
-					<div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo tr('Num. colli'); ?>", "name": "n_colli", "value": "$n_colli$" ]}
-					</div>
-				</div>
-
-                <div class="row">
-					<div class="col-md-3">
-						{[ "type": "select", "label": "<?php echo tr('Tipo di spedizione'); ?>", "name": "idspedizione", "values": "query=SELECT id, descrizione FROM dt_spedizione ORDER BY descrizione ASC", "value": "$idspedizione$" ]}
-					</div>
-
-					<div class="col-md-3">
-						{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "values": "query=SELECT DISTINCT an_anagrafiche.idanagrafica AS id, an_anagrafiche.ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE an_tipianagrafiche_anagrafiche.idtipoanagrafica=(SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Vettore') ORDER BY descrizione ASC", "value": "$idvettore$" ]}
-					</div>
-				</div>
-
-<?php
-                }
 
 if ($dir == 'uscita') {
     ?>
@@ -249,6 +216,48 @@ if ($record['stato'] == 'Emessa') {
 			</div>
 		</div>
 	</div>
+
+<?php
+
+if ($tipodoc == 'Fattura accompagnatoria di vendita') {
+    echo '
+    <div class="box box-info">
+        <div class="box-header with-border">
+            <h3 class="box-title"><i class="fa fa-edit"></i> '.tr('Dati Fattura accompagnatoria').'</h3>
+        </div>
+
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Aspetto beni').'", "name": "idaspettobeni", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_aspettobeni ORDER BY descrizione ASC", "value": "$idaspettobeni$" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "idcausalet", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_causalet ORDER BY descrizione ASC", "value": "$idcausalet$" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Porto').'", "name": "idporto", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_porto ORDER BY descrizione ASC", "value": "$idporto$" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "text", "label": "'.tr('Num. colli').'", "name": "n_colli", "value": "$n_colli$" ]}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Tipo di spedizione').'", "name": "idspedizione", "values": "query=SELECT id, descrizione FROM dt_spedizione ORDER BY descrizione ASC", "value": "$idspedizione$" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Vettore').'", "name": "idvettore", "values": "query=SELECT DISTINCT an_anagrafiche.idanagrafica AS id, an_anagrafiche.ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE an_tipianagrafiche_anagrafiche.idtipoanagrafica=(SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione=\'Vettore\') ORDER BY descrizione ASC", "value": "$idvettore$" ]}
+                </div>
+            </div>
+        </div>
+    </div>';
+}
+?>
 </form>
 
 

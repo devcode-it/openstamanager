@@ -2,6 +2,8 @@
 
 namespace Base;
 
+use Illuminate\Database\Eloquent\Builder;
+
 abstract class Description extends Model
 {
     protected static function boot()

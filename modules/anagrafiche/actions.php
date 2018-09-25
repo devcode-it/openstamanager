@@ -55,9 +55,9 @@ switch (post('op')) {
         $anagrafica->colore = post('colore');
         $anagrafica->idtipointervento_default = post('idtipointervento_default');
 
-        $anagrafica->save();
-
         $anagrafica->updateTipologie((array) post('idtipoanagrafica'));
+
+        $anagrafica->save();
 
         // Informazioni sulla sede
         $sede = $anagrafica->sedeLegale();
@@ -78,6 +78,7 @@ switch (post('op')) {
         $sede->fax = post('fax');
         $sede->idzona = post('idzona');
         $sede->email = post('email');
+
         $sede->save();
 
         flash()->info(str_replace('_NAME_', '"'.post('ragione_sociale').'"', "Informazioni per l'anagrafica _NAME_ salvate correttamente!"));

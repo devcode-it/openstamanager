@@ -5,6 +5,6 @@ return [
     'modules/articoli' => 'Modules\\Articoli\\',
     'modules/fatture' => 'Modules\\Fatture\\',
     'modules/interventi' => 'Modules\\Interventi\\',
-    'plugins/exportPA' => 'Modules\\ExportPA\\',
-    'plugins/importPA' => 'Modules\\ImportPA\\',
+    'plugins/exportPA' => 'Plugins\\ExportPA\\',
+    'plugins/importPA' => 'Plugins\\ImportPA\\',
 ];

@@ -2,6 +2,8 @@
 
 namespace Base;
 
+use Illuminate\Database\Eloquent\Builder;
+
 abstract class Row extends Model
 {
     protected static function boot()
@@ -45,7 +47,7 @@ abstract class Row extends Model
         $this->attributes['idrivalsainps'] = $value;
 
         // Calcolo rivalsa inps
-        $rivalsa = database()->fetchOne('SELECT * FROM co_rivalsainps WHERE id='.prepare($value));
+        $rivalsa = database()->fetchOne('SELECT * FROM co_rivalsainps WHERE id = '.prepare($value));
         $this->rivalsainps = ($this->subtotale - $this->sconto) / 100 * $rivalsa['percentuale'];
     }
 
@@ -64,7 +66,7 @@ abstract class Row extends Model
         $this->attributes['idritenutaacconto'] = $value;
 
         // Calcolo ritenuta d'acconto
-        $ritenuta = database()->fetchOne('SELECT * FROM co_ritenutaacconto WHERE id='.prepare($value));
+        $ritenuta = database()->fetchOne('SELECT * FROM co_ritenutaacconto WHERE id = '.prepare($value));
         $conto = ($this->subtotale - $this->sconto);
 
         if ($this->calcolo_ritenutaacconto == 'Imponibile + rivalsa inps') {

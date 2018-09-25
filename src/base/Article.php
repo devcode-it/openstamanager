@@ -3,10 +3,11 @@
 namespace Base;
 
 use Modules\Articoli\Articolo as Original;
+use Illuminate\Database\Eloquent\Builder;
 
 abstract class Article extends Row
 {
-    abstract protected function serialID();
+    protected $serialRowID = 'documento';
 
     abstract public function movimenta($qta);
 
@@ -35,12 +36,23 @@ abstract class Article extends Row
     public function setSerials($serials)
     {
         database()->sync('mg_prodotti', [
-            'id_riga_'.$this->serialID() => $this->id,
+            'id_riga_'.$this->serialRowID => $this->id,
             'dir' => 'entrata',
             'id_articolo' => $this->idarticolo,
         ], [
             'serial' => $serials,
         ]);
+    }
+
+    public function getSerialsAttribute()
+    {
+        if (empty($this->abilita_serial)) {
+            return [];
+        }
+
+        // Individuazione dei seriali
+        $list = database()->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_'.$this->serialRowID.' = '.prepare($this->id));
+        return array_column($list, 'serial');
     }
 
     public function setQtaAttribute($value)

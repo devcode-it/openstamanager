@@ -57,11 +57,6 @@ class Articolo extends Article
         ]);
     }
 
-    protected function serialID()
-    {
-        return 'documento';
-    }
-
     public function fattura()
     {
         return $this->belongsTo(Fattura::class, 'iddocumento');

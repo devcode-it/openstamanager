@@ -8,7 +8,17 @@ use Base\Article;
 class Articolo extends Article
 {
     protected $table = 'mg_articoli_interventi';
+    protected $serialRowID = 'intervento';
 
+    /**
+     * Crea una nuova riga collegata ad un intervento.
+     *
+     * @param Intervento $intervento
+     * @param Original $articolo
+     * @param int $id_automezzo
+     *
+     * @return self
+     */
     public static function new(Intervento $intervento, Original $articolo, $id_automezzo = null)
     {
         $model = parent::new($articolo);
@@ -65,11 +75,6 @@ class Articolo extends Article
                 'idintervento' => $intervento->id,
             ]);
         }
-    }
-
-    protected function serialID()
-    {
-        return 'intervento';
     }
 
     public function getSubtotaleAttribute()

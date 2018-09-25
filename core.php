@@ -26,8 +26,8 @@ $loader = require_once __DIR__.'/vendor/autoload.php';
 
 $namespaces = require_once __DIR__.'/config/namespaces.php';
 foreach ($namespaces as $path => $namespace) {
-    $loader->addPsr4($namespace, $path.'/src');
     $loader->addPsr4($namespace, $path.'/custom/src');
+    $loader->addPsr4($namespace, $path.'/src');
 }
 
 // Individuazione dei percorsi di base

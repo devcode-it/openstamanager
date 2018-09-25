@@ -23,7 +23,15 @@ echo '
                     success: function(data){
                         data = JSON.parse(data);
 
-                        launch_modal("'.tr('Righe fattura').'", globals.rootdir + "/plugins/importPA/rows.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id=" + data.id + "&filename=" + data.filename + "&id_segment" + data.id_segment)
+                        if (!data.already) {
+                            launch_modal("'.tr('Righe fattura').'", globals.rootdir + "/plugins/importPA/rows.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id=" + data.id + "&filename=" + data.filename + "&id_segment=" + data.id_segment)
+                        } else {
+                            swal({
+                                title: "'.tr('Fattura già importata!').'",
+                                type: "info",
+                            })
+                        }
+
                     },
                     error: function(data) {
                         alert("'.tr('Errore').': " + data);

@@ -3,6 +3,9 @@
 namespace Plugins\ImportPA;
 
 use Modules\Fatture\Fattura;
+use Modules\Fatture\Riga;
+use Modules\Fatture\Articolo;
+use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Fatture\Stato as StatoFattura;
 use Modules\Fatture\Tipo as TipoFattura;
 use Modules\Anagrafiche\Anagrafica;
@@ -23,19 +26,31 @@ class FatturaElettronica
 
     /** @var Fattura Fattura collegata */
     protected $fattura = null;
+    protected $id_sezionale = null;
 
-    public function __construct($content)
+    public function __construct($content, $id_sezionale)
     {
         $xml = simplexml_load_string($content, "SimpleXMLElement", LIBXML_NOCDATA);
         $json = json_encode($xml);
         $array = json_decode($json, true);
 
         $this->xml = $array;
-    }
+        $this->id_sezionale = $id_sezionale;
 
-    public function getFattura()
-    {
-        return $this->fattura;
+        // Individuazione fattura pre-esistente
+        $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
+        $data = $dati_generali['Data'];
+        $numero = $dati_generali['Numero'];
+
+        $fattura = Fattura::where([
+            'id_segment' => $id_sezionale,
+            'data' => $data,
+            'numero' => $numero,
+        ])->first();
+
+        if (!empty($fattura)) {
+            throw new \UnexpectedValueException();
+        }
     }
 
     public function getHeader()
@@ -132,28 +147,70 @@ class FatturaElettronica
         return $anagrafica->id;
     }
 
-    public function saveRighe($articoli)
-    {
-        $righe = $this->getRighe();
-    }
-
     public function getRighe()
     {
-        return $this->getBody()['DatiBeniServizi']['DettaglioLinee'];
+        $result = $this->getBody()['DatiBeniServizi']['DettaglioLinee'];
+
+        if (!isset($result[0])) {
+            $result = [$result];
+        }
+
+        return $result;
     }
 
-    public static function existsFattura($id_anagrafica, $data, $numero, $id_tipo)
+    public function saveRighe($articoli, $iva)
     {
-        return database()->fetchOne('SELECT `id` FROM `co_documenti` WHERE idanagrafica = '.prepare($id_anagrafica) .' AND idtipodocumento = '.prepare($id_tipo).' AND data = '.prepare($data).' AND numero = '.prepare($numero));
+        $righe = $this->getRighe();
+
+        foreach ($righe as $key => $riga) {
+            $articolo = ArticoloOriginale::find($articoli[$key]);
+
+            if (!empty($articolo)) {
+                $obj = new Articolo($this->getFattura(), $articolo);
+            } else {
+                $obj = new Riga($this->getFattura());
+            }
+
+            $obj->descrizione = $riga['Descrizione'];
+            $obj->setSubtotale($riga['PrezzoUnitario'], $riga['Quantita']);
+            /*
+            $obj->qta = $riga['Quantita'];
+            $obj->prezzo = $riga['PrezzoUnitario'];
+            */
+            $obj->um = $riga['UnitaMisura'];
+
+            $sconto =$riga['ScontoMaggiorazione'];
+            if (!empty($sconto)) {
+                $tipo = !empty($sconto['Percentuale']) ? 'PRC' : 'EUR';
+                $unitario = $sconto['Percentuale'] ?: $sconto['Importo'];
+
+                $unitario = ($sconto['Tipo'] == 'SC') ? $unitario : -$unitario;
+
+                $obj->sconto_unitario = $unitario;
+                $obj->tipo_sconto = $tipo;
+                $obj->sconto = $obj->sconto;
+            }
+
+            $obj->setIVA($iva[$key]);
+
+            $obj->save();
+        }
+    }
+
+    public function getAllegati()
+    {
+        $result = $this->getBody()['Allegati'];
+
+        if (!isset($result[0])) {
+            $result = [$result];
+        }
+
+        return $result;
     }
 
     public function saveAllegati($directory)
     {
-        $allegati = $this->getBody()['Allegati'];
-
-        if (!isset($allegati[0])) {
-            $allegati = [$allegati];
-        }
+        $allegati = $this->getAllegati();
 
         foreach ($allegati as $allegato) {
             $content = base64_decode($allegato['Attachment']);
@@ -170,13 +227,17 @@ class FatturaElettronica
         }
     }
 
+    public function getFattura()
+    {
+        return $this->fattura;
+    }
+
     /**
      * Registra la fattura elettronica come fattura del gestionale.
      *
-     * @param int $id_segment
      * @return int
      */
-    public function saveFattura($id_segment)
+    public function saveFattura()
     {
         $id_anagrafica = static::createAnagrafica($this->getHeader()['CedentePrestatore']);
 
@@ -184,31 +245,35 @@ class FatturaElettronica
         $data = $dati_generali['Data'];
         $numero = $dati_generali['Numero'];
 
-        $tipo = empty($this->getBody()['DatiGenerali']['DatiTrasporto']) ? TipoFattura::where('descrizione', 'Fattura immediata di acquisto') : TipoFattura::where('descrizione', 'Fattura accompagnatoria di acquisto');
-        $id_tipo = $tipo->first()->id;
-
-        $result = self::existsFattura($id_anagrafica, $data, $numero, $id_tipo);
-        // Fattura già inserita
-        if (!empty($result)) {
-            $this->fattura =  Fattura::find($result['id']);
-
-            return $result['id'];
-        }
+        $tipo = empty($this->getBody()['DatiGenerali']['DatiTrasporto']) ? 'Fattura immediata di acquisto' : 'Fattura accompagnatoria di acquisto';
+        $id_tipo = TipoFattura::where('descrizione', $tipo)->first()->id;
 
         $fattura = Fattura::create([
             'idanagrafica' => $id_anagrafica,
             'data' => $data,
-            'id_segment' => $id_segment,
+            'id_segment' => $this->id_sezionale,
             'tipo' => $id_tipo,
         ]);
+        $this->fattura = $fattura;
 
         $fattura->numero = $numero;
 
         $stato_documento = StatoFattura::where('descrizione', 'Emessa')->first();
         $fattura->stato()->associate($stato_documento);
-        $fattura->save();
 
-        $this->fattura = $fattura;
+        // Sconto globale
+        $sconto = $dati_generali['ScontoMaggiorazione'];
+        if (!empty($sconto)) {
+            $tipo = !empty($sconto['Percentuale']) ? 'PRC' : 'EUR';
+            $unitario = $sconto['Percentuale'] ?: $sconto['Importo'];
+
+            $unitario = ($sconto['Tipo'] == 'SC') ? $unitario : -$unitario;
+
+            $fattura->sconto_globale = $unitario;
+            $fattura->tipo_sconto_globale = $tipo;
+        }
+
+        $fattura->save();
 
         return $fattura->id;
     }

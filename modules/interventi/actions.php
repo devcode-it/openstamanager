@@ -531,6 +531,8 @@ switch (post('op')) {
         $articolo->setSconto(post('sconto'), post('tipo_sconto'));
         $articolo->setIVA(post('idiva'));
 
+        $articolo->save();
+
         // Aggiorno l'automezzo dell'intervento
         $dbo->query('UPDATE in_interventi SET idautomezzo='.prepare(post('idautomezzo')).' WHERE id='.prepare($id_record).' '.Modules::getAdditionalsQuery($id_module));
 

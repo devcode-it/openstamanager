@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+$directory = Uploads::getDirectory($id_module);
+
 switch (filter('op')) {
     case 'save':
         $id = Uploads::getFakeID();
@@ -12,11 +14,20 @@ switch (filter('op')) {
             'id_record' => $id,
         ]);
 
-        echo json_encode([
-            'id' => $id,
-            'filename' => $filename,
-            'id_segment' => post('id_segment'),
-        ]);
+        try {
+            $xml = file_get_contents(DOCROOT.'/'.$directory.'/'.$filename);
+            $fattura_pa = new Plugins\ImportPA\FatturaElettronica($xml, post('id_segment'));
+
+            echo json_encode([
+                'id' => $id,
+                'filename' => $filename,
+                'id_segment' => post('id_segment'),
+            ]);
+        } catch (UnexpectedValueException $e) {
+            echo json_encode([
+                'already' => 1
+            ]);
+        }
 
         break;
 
@@ -24,14 +35,13 @@ switch (filter('op')) {
         $id = post('id');
         $filename = post('filename');
 
-        $directory = Uploads::getDirectory($id_module);
-
         $xml = file_get_contents(DOCROOT.'/'.$directory.'/'.$filename);
-        $fattura_pa = new Plugins\ImportPA\FatturaElettronica($xml);
+        $fattura_pa = new Plugins\ImportPA\FatturaElettronica($xml, post('id_segment'));
 
-        $id_record = $fattura_pa->saveFattura(post('id_segment'), post('articoli'));
+        $id_record = $fattura_pa->saveFattura();
 
-        $fattura_pa->saveRighe(post('articoli'));
+        $fattura_pa->saveRighe(post('articoli'), post('iva'));
+        $fattura_pa->getFattura()->updateSconto();
 
         $fattura_pa->saveAllegati($directory);
 

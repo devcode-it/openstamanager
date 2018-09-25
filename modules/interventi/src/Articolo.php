@@ -118,7 +118,7 @@ class Articolo extends Model
         database()->sync('mg_prodotti', [
             'id_riga_intervento' => $this->id,
             'dir' => 'entrata',
-            'id_articolo' => $this->idintervento,
+            'id_articolo' => $this->idarticolo,
         ], [
             'serial' => $serials,
         ]);

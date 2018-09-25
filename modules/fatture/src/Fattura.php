@@ -329,4 +329,16 @@ class Fattura extends Model
     {
         return $this->hasMany(Riga::class, 'iddocumento');
     }
+
+    public function updateSconto()
+    {
+        // Aggiornamento sconto
+        aggiorna_sconto([
+            'parent' => 'co_documenti',
+            'row' => 'co_righe_documenti',
+        ], [
+            'parent' => 'id',
+            'row' => 'iddocumento',
+        ], $this->id);
+    }
 }

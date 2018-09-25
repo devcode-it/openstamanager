@@ -308,15 +308,16 @@ class FatturaElettronica
         ];
 
         // Sconto globale
+        $documento['sconto_globale'] = floatval($documento['sconto_globale']);
         if (!empty($documento['sconto_globale'])) {
             $sconto = [
                 'Tipo' => $documento['sconto_globale'] > 0 ? 'SC' : 'MG',
             ];
 
-            if ($riga['tipo_sconto_globale'] == 'PRC') {
-                $sconto['Percentuale'] = $riga['sconto_globale'];
+            if ($documento['tipo_sconto_globale'] == 'PRC') {
+                $sconto['Percentuale'] = $documento['sconto_globale'];
             } else {
-                $sconto['Importo'] = $riga['sconto_globale'];
+                $sconto['Importo'] = $documento['sconto_globale'];
             }
 
             $result['ScontoMaggiorazione'] = $sconto;
@@ -386,7 +387,7 @@ class FatturaElettronica
         $result = [];
 
         // Righe del documento
-        $righe_documento = $database->fetchArray('SELECT * FROM `co_righe_documenti` WHERE `iddocumento` = '.prepare($documento['id']));
+        $righe_documento = $database->fetchArray('SELECT * FROM `co_righe_documenti` WHERE `sconto_globale` = 0 AND `iddocumento` = '.prepare($documento['id']));
         foreach ($righe_documento as $numero => $riga) {
             $prezzo_unitario = $riga['subtotale'] / $riga['qta'];
             $prezzo_totale = $riga['subtotale'] - $riga['sconto'];
@@ -402,15 +403,16 @@ class FatturaElettronica
             ];
 
             // Sconto
-            if (!empty($riga['sconto'])) {
+            $riga['sconto_unitario'] = floatval($riga['sconto_unitario']);
+            if (!empty($riga['sconto_unitario'])) {
                 $sconto = [
-                    'Tipo' => $riga['sconto'] > 0 ? 'SC' : 'MG',
+                    'Tipo' => $riga['sconto_unitario'] > 0 ? 'SC' : 'MG',
                 ];
 
                 if ($riga['tipo_sconto'] == 'PRC') {
-                    $sconto['Percentuale'] = $riga['sconto'];
+                    $sconto['Percentuale'] = $riga['sconto_unitario'];
                 } else {
-                    $sconto['Importo'] = $riga['sconto'];
+                    $sconto['Importo'] = $riga['sconto_unitario'];
                 }
 
                 $dettaglio['ScontoMaggiorazione'] = $sconto;

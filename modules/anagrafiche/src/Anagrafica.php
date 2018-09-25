@@ -2,7 +2,7 @@
 
 namespace Modules\Anagrafiche;
 
-use Illuminate\Database\Eloquent\Model;
+use Base\Model;
 use Modules\Fatture\Fattura;
 use Util\Generator;
 use Settings;
@@ -11,11 +11,6 @@ class Anagrafica extends Model
 {
     protected $table = 'an_anagrafiche';
     protected $primaryKey = 'idanagrafica';
-
-    /** @var array Opzioni abilitate per la creazione */
-    protected $fillable = [
-        'ragione_sociale',
-    ];
 
     protected $appends = [
         'id',
@@ -28,18 +23,19 @@ class Anagrafica extends Model
     ];
 
     /**
-     * Crea una nuova fattura.
+     * Crea una nuova anagrafica.
      *
-     * @param int    $id_anagrafica
-     * @param string $data
-     * @param int    $id_segment
+     * @param string $ragione_sociale
+     * @param array  $tipologie
+     *
+     * @return self
      */
-    public static function create(array $attributes = [])
+    public static function new($ragione_sociale, array $tipologie = [])
     {
-        $model = static::query()->create($attributes);
+        $model = parent::new();
 
-        // Completamento informazioni
-        $model->updateTipologie((array)$attributes['tipologie']);
+        $model->ragione_sociale = $ragione_sociale;
+        $model->updateTipologie($tipologie);
 
         $ultimo = database()->fetchOne('SELECT codice FROM an_anagrafiche ORDER BY CAST(codice AS SIGNED) DESC LIMIT 1');
         $codice = Generator::generate(setting('Formato codice anagrafica'), $ultimo['codice']);
@@ -111,7 +107,6 @@ class Anagrafica extends Model
      * Aggiorna la tipologia dell'anagrafica.
      *
      * @param array $tipologie
-     * @return void
      */
     public function updateTipologie(array $tipologie)
     {
@@ -142,7 +137,7 @@ class Anagrafica extends Model
     {
         return $this->tipi()->get()->search(function ($item, $key) {
             return $item->descrizione == 'Azienda';
-        }) !== false ;
+        }) !== false;
     }
 
     /**
@@ -159,7 +154,7 @@ class Anagrafica extends Model
     {
         if (self::where([
             ['codice', $value],
-            [$this->primaryKey, '<>', $this->id]
+            [$this->primaryKey, '<>', $this->id],
         ])->count() == 0) {
             $this->attributes['codice'] = $value;
         }

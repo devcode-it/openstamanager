@@ -2,7 +2,7 @@
 
 namespace Modules\Anagrafiche;
 
-use Illuminate\Database\Eloquent\Model;
+use Base\Model;
 
 class Tipo extends Model
 {

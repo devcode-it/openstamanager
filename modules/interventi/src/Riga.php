@@ -2,7 +2,7 @@
 
 namespace Modules\Interventi;
 
-use Illuminate\Database\Eloquent\Model;
+use Base\Model;
 
 class Riga extends Model
 {

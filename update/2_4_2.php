@@ -653,7 +653,6 @@ foreach ($it as $key => $value) {
     $dbo->query("UPDATE `an_anagrafiche` SET `piva` = SUBSTRING(`piva`, 2) WHERE `piva` LIKE '".$key."%'");
 }
 
-
 // File e cartelle deprecate
 $files = [
     'docs',

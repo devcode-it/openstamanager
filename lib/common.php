@@ -49,7 +49,7 @@ function sum($first, $second = null, $decimals = 4)
  *
  * @param array $tables
  * @param array $fields
- * @param int $id_record
+ * @param int   $id_record
  * @param array $options
  */
 function aggiorna_sconto(array $tables, array $fields, $id_record, array $options = [])

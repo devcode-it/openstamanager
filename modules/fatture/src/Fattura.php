@@ -2,7 +2,7 @@
 
 namespace Modules\Fatture;
 
-use Illuminate\Database\Eloquent\Model;
+use Base\Model;
 use Util\Generator;
 use Modules\Anagrafiche\Anagrafica;
 
@@ -10,35 +10,27 @@ class Fattura extends Model
 {
     protected $table = 'co_documenti';
 
-    /** @var array Opzioni abilitate per la creazione */
-    protected $fillable = [
-        'idanagrafica',
-        'data',
-        'id_segment',
-    ];
-
     /** @var array Conti rilevanti della fattura */
     protected $conti = [];
 
     /**
      * Crea una nuova fattura.
      *
-     * @param int    $id_anagrafica
-     * @param string $data
-     * @param int    $id_segment
+     * @param Anagrafica $anagrafica
+     * @param Tipo       $tipo_documento
+     * @param string     $data
+     * @param int        $id_segment
+     *
+     * @return self
      */
-    public static function create(array $attributes = [])
+    public static function new(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment)
     {
-        $model = static::query()->create($attributes);
+        $model = parent::new();
 
-        $tipo_documento = Tipo::find($attributes['tipo']);
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
 
+        $id_anagrafica = $anagrafica->id;
         $direzione = $tipo_documento->dir;
-
-        $data = $attributes['data'];
-        $id_anagrafica = $attributes['idanagrafica'];
-        $id_segment = $attributes['id_segment'];
 
         $database = database();
 
@@ -79,12 +71,20 @@ class Fattura extends Model
         // Salvataggio delle informazioni
         $model->numero = $numero;
         $model->numero_esterno = $numero_esterno;
+        $model->data = $data;
 
+        $model->id_segment = $id_segment;
         $model->idconto = $id_conto;
-        $model->idpagamento = $id_pagamento;
-        $model->idbanca = $id_banca;
         $model->idsede = $id_sede;
 
+        if (!empty($id_pagamento)) {
+            $model->idpagamento = $id_pagamento;
+        }
+        if (!empty($id_banca)) {
+            $model->idbanca = $id_banca;
+        }
+
+        $model->anagrafica()->associate($anagrafica);
         $model->tipo()->associate($tipo_documento);
         $model->stato()->associate($stato_documento);
 
@@ -323,6 +323,11 @@ class Fattura extends Model
     public function stato()
     {
         return $this->belongsTo(Stato::class, 'idstatodocumento');
+    }
+
+    public function articoli()
+    {
+        return $this->hasMany(Articolo::class, 'iddocumento');
     }
 
     public function righe()

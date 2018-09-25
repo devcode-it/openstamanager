@@ -4,8 +4,6 @@ namespace Traits;
 
 trait UploadTrait
 {
-    protected $upload_directory = 'files';
-
     /**
      * Restituisce il percorso per il salvataggio degli upload.
      *
@@ -13,6 +11,6 @@ trait UploadTrait
      */
     public function getUploadDirectoryAttribute()
     {
-        return $this->upload_directory.'/'.$this->directory;
+        return 'files/'.$this->directory;
     }
 }

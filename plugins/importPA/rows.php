@@ -9,6 +9,13 @@ $fattura_pa = new Plugins\ImportPA\FatturaElettronica($xml, post('id_segment'));
 
 $righe = $fattura_pa->getRighe();
 
+$pagamenti = $fattura_pa->getBody()['DatiPagamento'];
+
+$metodi = $pagamenti['DettaglioPagamento'];
+$metodi = isset($metodi[0]) ? $metodi : [$metodi];
+
+$query = 'SELECT id, descrizione FROM co_pagamenti WHERE prc '.($pagamenti['CondizioniPagamento'] == 'TP01' ? '!' : '').'= 100 AND codice_modalita_pagemento_fe = '.prepare($metodi[0]['ModalitaPagamento']).' GROUP BY descrizione ORDER BY descrizione ASC';
+
 echo '
 <form action="'.$rootdir.'/actions.php" method="post">
     <input type="hidden" name="id_module" value="'.$id_module.'">
@@ -17,7 +24,9 @@ echo '
     <input type="hidden" name="id_segment" value="'.get('id_segment').'">
     <input type="hidden" name="id" value="'.get('id').'">
     <input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="op" value="generate">';
+    <input type="hidden" name="op" value="generate">
+
+    {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "values": "query='.$query.'" ]}';
 
 if (!empty($righe)) {
     echo '
@@ -61,7 +70,6 @@ if (!empty($righe)) {
     echo '
     <p>Non ci sono righe nella fattura.</p>';
 }
-
 
 echo '
     <div class="row">

@@ -30,7 +30,7 @@ class FatturaElettronica
 
     public function __construct($content, $id_sezionale)
     {
-        $xml = simplexml_load_string($content, "SimpleXMLElement", LIBXML_NOCDATA);
+        $xml = simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NOCDATA);
         $json = json_encode($xml);
         $array = json_decode($json, true);
 
@@ -84,15 +84,12 @@ class FatturaElettronica
         INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
         WHERE `an_tipianagrafiche`.`descrizione` = '.prepare($type).' AND ('.implode(' OR ', $where).')')['idanagrafica'];
         if (!empty($id_anagrafica)) {
-            return $id_anagrafica;
+            return Anagrafica::find($id_anagrafica);
         }
 
         $ragione_sociale = $xml['DatiAnagrafici']['Anagrafica']['Denominazione'] ?: $xml['DatiAnagrafici']['Anagrafica']['Nome'].' '.$xml['DatiAnagrafici']['Anagrafica']['Cognome'];
-        $anagrafica = Anagrafica::create([
-            'ragione_sociale' => $ragione_sociale,
-            'tipologie' => [
-                TipoAnagrafica::where('descrizione', 'Fornitore')->first()->id
-            ],
+        $anagrafica = Anagrafica::new($ragione_sociale, [
+            TipoAnagrafica::where('descrizione', 'Fornitore')->first()->id,
         ]);
 
         // Informazioni sull'anagrafica
@@ -151,9 +148,7 @@ class FatturaElettronica
     {
         $result = $this->getBody()['DatiBeniServizi']['DettaglioLinee'];
 
-        if (!isset($result[0])) {
-            $result = [$result];
-        }
+        $result = isset($result[0]) ? $result : [$result];
 
         return $result;
     }
@@ -166,9 +161,9 @@ class FatturaElettronica
             $articolo = ArticoloOriginale::find($articoli[$key]);
 
             if (!empty($articolo)) {
-                $obj = new Articolo($this->getFattura(), $articolo);
+                $obj = Articolo::new($this->getFattura(), $articolo);
             } else {
-                $obj = new Riga($this->getFattura());
+                $obj = Riga::new($this->getFattura());
             }
 
             $obj->descrizione = $riga['Descrizione'];
@@ -177,9 +172,11 @@ class FatturaElettronica
             $obj->qta = $riga['Quantita'];
             $obj->prezzo = $riga['PrezzoUnitario'];
             */
-            $obj->um = $riga['UnitaMisura'];
+            if (!empty($riga['UnitaMisura'])) {
+                $obj->um = $riga['UnitaMisura'];
+            }
 
-            $sconto =$riga['ScontoMaggiorazione'];
+            $sconto = $riga['ScontoMaggiorazione'];
             if (!empty($sconto)) {
                 $tipo = !empty($sconto['Percentuale']) ? 'PRC' : 'EUR';
                 $unitario = $sconto['Percentuale'] ?: $sconto['Importo'];
@@ -188,10 +185,9 @@ class FatturaElettronica
 
                 $obj->sconto_unitario = $unitario;
                 $obj->tipo_sconto = $tipo;
-                $obj->sconto = $obj->sconto;
             }
 
-            $obj->setIVA($iva[$key]);
+            $obj->id_iva = $iva[$key];
 
             $obj->save();
         }
@@ -201,9 +197,7 @@ class FatturaElettronica
     {
         $result = $this->getBody()['Allegati'];
 
-        if (!isset($result[0])) {
-            $result = [$result];
-        }
+        $result = isset($result[0]) ? $result : [$result];
 
         return $result;
     }
@@ -212,16 +206,22 @@ class FatturaElettronica
     {
         $allegati = $this->getAllegati();
 
+        $module = Modules::get('Fatture di acquisto');
+
         foreach ($allegati as $allegato) {
             $content = base64_decode($allegato['Attachment']);
-            $filename = $directory.'/'.$allegato['NomeAttachment'].'.'.strtolower($allegato['FormatoAttachment']);
+            $original = $allegato['NomeAttachment'].'.'.strtolower($allegato['FormatoAttachment']);
+            $filename = Uploads::getName($original, [
+                'id_module' => $module['id'],
+            ]);
 
-            file_put_contents($filename, $content);
+            file_put_contents($directory.'/'.$filename, $content);
 
             Uploads::register([
-                'original' => $allegato['NomeAttachment'],
+                'filename' => $filename,
+                'original' => $original,
                 'category' => tr('Fattura elettronica'),
-                'id_module' => Modules::get('Fatture di acquisto')['id'],
+                'id_module' => $module['id'],
                 'id_record' => $this->fattura->id,
             ]);
         }
@@ -237,26 +237,22 @@ class FatturaElettronica
      *
      * @return int
      */
-    public function saveFattura()
+    public function saveFattura($id_pagamento)
     {
-        $id_anagrafica = static::createAnagrafica($this->getHeader()['CedentePrestatore']);
+        $anagrafica = static::createAnagrafica($this->getHeader()['CedentePrestatore']);
 
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
         $data = $dati_generali['Data'];
         $numero = $dati_generali['Numero'];
 
-        $tipo = empty($this->getBody()['DatiGenerali']['DatiTrasporto']) ? 'Fattura immediata di acquisto' : 'Fattura accompagnatoria di acquisto';
-        $id_tipo = TipoFattura::where('descrizione', $tipo)->first()->id;
+        $descrizione_tipo = empty($this->getBody()['DatiGenerali']['DatiTrasporto']) ? 'Fattura immediata di acquisto' : 'Fattura accompagnatoria di acquisto';
+        $tipo = TipoFattura::where('descrizione', $descrizione_tipo)->first();
 
-        $fattura = Fattura::create([
-            'idanagrafica' => $id_anagrafica,
-            'data' => $data,
-            'id_segment' => $this->id_sezionale,
-            'tipo' => $id_tipo,
-        ]);
+        $fattura = Fattura::new($anagrafica, $tipo, $data, $this->id_sezionale);
         $this->fattura = $fattura;
 
         $fattura->numero = $numero;
+        $fattura->idpagamento = $id_pagamento;
 
         $stato_documento = StatoFattura::where('descrizione', 'Emessa')->first();
         $fattura->stato()->associate($stato_documento);

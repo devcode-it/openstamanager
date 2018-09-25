@@ -2,33 +2,64 @@
 
 namespace Modules\Fatture;
 
-use Illuminate\Database\Eloquent\Model;
 use Modules\Articoli\Articolo as Original;
-use Traits\ArticleTrait;
+use Base\Article;
 
-class Articolo extends Model
+class Articolo extends Article
 {
-    use ArticleTrait;
-
     protected $table = 'co_righe_documenti';
 
-    public function __construct(Fattura $fattura, Original $articolo, array $attributes = array())
+    /**
+     * Crea un nuovo articolo collegato ad una fattura.
+     *
+     * @param Fattura  $fattura
+     * @param Original $articolo
+     *
+     * @return self
+     */
+    public static function new(Fattura $fattura, Original $articolo)
     {
-        parent::__construct($attributes);
+        $model = parent::new($articolo);
 
-        $this->fattura()->associate($fattura);
-        $this->articolo()->associate($articolo);
+        $model->fattura()->associate($fattura);
 
-        // Salvataggio delle informazioni
-        $this->descrizione = isset($attributes['descrizione']) ? $attributes['descrizione'] : $articolo->descrizione;
-        $this->abilita_serial = $articolo->abilita_serial;
+        $model->save();
 
-        $this->save();
+        return $model;
     }
 
-    public function articolo()
+    public function movimenta($qta)
     {
-        return $this->belongsTo(Original::class, 'idarticolo');
+        // Se il documento è generato da un ddt o intervento allora **non** movimento il magazzino
+        if (!empty($this->idddt) || !empty($this->idintervento)) {
+            return;
+        }
+
+        $fattura = $this->fattura()->first();
+        $tipo = $fattura->tipo()->first();
+
+        $numero = $fattura->numero_esterno ?: $fattura->numero;
+        $data = $fattura->data;
+
+        $carico = ($tipo->dir == 'entrata') ? tr('Ripristino articolo da _TYPE_ _NUM_') : tr('Carico magazzino da _TYPE_ numero _NUM_');
+        $scarico = ($tipo->dir == 'uscita') ? tr('Rimozione articolo da _TYPE_ _NUM_') : tr('Scarico magazzino per _TYPE_ numero _NUM_');
+
+        $movimento = ($qta > 0) ? $carico : $scarico;
+        $qta = ($tipo->dir == 'uscita') ? -$qta : $qta;
+
+        $movimento = replace($movimento, [
+            '_TYPE_' => $tipo->descrizione,
+            '_NUM_' => $numero,
+        ]);
+
+        $this->articolo()->first()->movimenta(-$qta, $movimento, $data, false, [
+            'iddocumento' => $fattura->id,
+        ]);
+    }
+
+    protected function serialID()
+    {
+        return 'documento';
     }
 
     public function fattura()

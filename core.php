@@ -22,7 +22,13 @@ if (file_exists(__DIR__.'/config.inc.php')) {
 }
 
 // Caricamento delle dipendenze e delle librerie del progetto
-require_once __DIR__.'/vendor/autoload.php';
+$loader = require_once __DIR__.'/vendor/autoload.php';
+
+$namespaces = require_once __DIR__.'/config/namespaces.php';
+foreach ($namespaces as $path => $namespace) {
+    $loader->addPsr4($namespace, $path.'/src');
+    $loader->addPsr4($namespace, $path.'/custom/src');
+}
 
 // Individuazione dei percorsi di base
 App::definePaths(__DIR__);

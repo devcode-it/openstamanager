@@ -3,6 +3,8 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Interventi\Articolo;
+use Modules\Interventi\Intervento;
+use Modules\Articoli\Articolo as ArticoloOriginale;
 
 include_once Modules::filepath('Interventi', 'modutil.php');
 include_once Modules::filepath('Articoli', 'modutil.php');
@@ -327,7 +329,7 @@ switch (post('op')) {
             $id_record = post('id_intervento');
 
             $idcontratto = $dbo->fetchOne('SELECT idcontratto FROM co_promemoria WHERE idintervento = :id', [
-                ':id' => $id_record
+                ':id' => $id_record,
             ])['idcontratto'];
         }
 
@@ -518,18 +520,19 @@ switch (post('op')) {
 
         // no break
     case 'addarticolo':
-        $articolo = Articolo::create([
-            'idarticolo' => post('idarticolo'),
-            'idintervento' => $id_record,
-            'idautomezzo' => post('idautomezzo'),
-            'qta' => post('qta'),
-            'descrizione' => post('descrizione'),
-            'prezzo' => post('prezzo_vendita'),
-            'um' => post('um'),
-        ]);
+        $originale = ArticoloOriginale::find(post('idarticolo'));
+        $intervento = Intervento::find($id_record);
+        $articolo = Articolo::new($intervento, $originale, post('idautomezzo'));
 
-        $articolo->setSconto(post('sconto'), post('tipo_sconto'));
-        $articolo->setIVA(post('idiva'));
+        $articolo->qta = post('qta');
+        $articolo->descrizione = post('descrizione');
+        $articolo->prezzo_vendita = post('prezzo_vendita');
+        $articolo->um = post('um');
+
+        $articolo->sconto_unitario = post('sconto');
+        $articolo->tipo_sconto = post('tipo_sconto');
+
+        $articolo->id_iva = post('idiva');
 
         $articolo->save();
 

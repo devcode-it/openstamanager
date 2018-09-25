@@ -25,7 +25,7 @@ switch (filter('op')) {
             ]);
         } catch (UnexpectedValueException $e) {
             echo json_encode([
-                'already' => 1
+                'already' => 1,
             ]);
         }
 
@@ -38,7 +38,7 @@ switch (filter('op')) {
         $xml = file_get_contents(DOCROOT.'/'.$directory.'/'.$filename);
         $fattura_pa = new Plugins\ImportPA\FatturaElettronica($xml, post('id_segment'));
 
-        $id_record = $fattura_pa->saveFattura();
+        $id_record = $fattura_pa->saveFattura(post('pagamento'));
 
         $fattura_pa->saveRighe(post('articoli'), post('iva'));
         $fattura_pa->getFattura()->updateSconto();

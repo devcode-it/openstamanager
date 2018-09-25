@@ -2,7 +2,7 @@
 
 namespace Modules\Interventi;
 
-use Illuminate\Database\Eloquent\Model;
+use Base\Model;
 use Modules\Anagrafiche\Anagrafica;
 
 class Intervento extends Model

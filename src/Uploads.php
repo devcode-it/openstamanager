@@ -60,7 +60,7 @@ class Uploads
      *
      * @return string
      */
-    protected static function getName($source, $data)
+    public static function getName($source, $data)
     {
         $extension = strtolower(pathinfo($source)['extension']);
         $ok = self::isSupportedType($extension);

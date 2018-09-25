@@ -351,7 +351,6 @@ class FatturaElettronica
         return $result;
     }
 
-
     /**
      * Restituisce l'array responsabile per la generazione del tag DatiDocumento.
      *

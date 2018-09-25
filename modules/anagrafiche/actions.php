@@ -57,7 +57,7 @@ switch (post('op')) {
 
         $anagrafica->save();
 
-        $anagrafica->updateTipologie((array)post('idtipoanagrafica'));
+        $anagrafica->updateTipologie((array) post('idtipoanagrafica'));
 
         // Informazioni sulla sede
         $sede = $anagrafica->sedeLegale();
@@ -83,7 +83,7 @@ switch (post('op')) {
         flash()->info(str_replace('_NAME_', '"'.post('ragione_sociale').'"', "Informazioni per l'anagrafica _NAME_ salvate correttamente!"));
 
         // Validazione della Partita IVA
-        $partita_iva = $anagrafica->partita_iva ;
+        $partita_iva = $anagrafica->partita_iva;
         $check_vat_number = Validate::isValidVatNumber($partita_iva);
         if (empty($check_vat_number)) {
             flash()->error(tr('Attenzione: la partita IVA _IVA_ sembra non essere valida', [
@@ -92,7 +92,7 @@ switch (post('op')) {
         }
 
         // Aggiorno il codice anagrafica se non è già presente, altrimenti lo ignoro
-        if ($anagrafica->codice!= post('codice')) {
+        if ($anagrafica->codice != post('codice')) {
             flash()->error(tr("Il codice anagrafica inserito esiste già! Inserirne un'altro..."));
         }
 
@@ -110,10 +110,7 @@ switch (post('op')) {
         $idtipoanagrafica = post('idtipoanagrafica');
         $ragione_sociale = post('ragione_sociale');
 
-        $anagrafica = Anagrafica::create([
-            'ragione_sociale' => $ragione_sociale,
-            'tipologie' => $idtipoanagrafica,
-        ]);
+        $anagrafica = Anagrafica::new($ragione_sociale, $idtipoanagrafica);
         $id_record = $anagrafica->id;
 
         // Se ad aggiungere un cliente è un agente, lo imposto come agente di quel cliente

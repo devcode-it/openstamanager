@@ -3,6 +3,10 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Fatture\Fattura;
+use Modules\Fatture\Articolo;
+use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Fatture\Tipo;
+use Modules\Anagrafiche\Anagrafica;
 
 // Necessaria per la funzione add_movimento_magazzino
 include_once Modules::filepath('Articoli', 'modutil.php');
@@ -25,12 +29,10 @@ switch (post('op')) {
         $idtipodocumento = post('idtipodocumento');
         $id_segment = post('id_segment');
 
-        $fattura = Fattura::create([
-            'idanagrafica' => $idanagrafica,
-            'data' => $data,
-            'id_segment' => $id_segment,
-            'tipo' => $idtipodocumento,
-        ]);
+        $anagrafica = Anagrafica::find($idanagrafica);
+        $tipo = Tipo::find($idtipodocumento);
+
+        $fattura = Fattura::new($anagrafica, $tipo, $data, $id_segment);
         $id_record = $fattura->id;
 
         flash()->info(tr('Aggiunta fattura numero _NUM_!', [
@@ -480,34 +482,32 @@ switch (post('op')) {
 
     case 'addarticolo':
         if (!empty($id_record) && post('idarticolo') !== null) {
-            $idarticolo = post('idarticolo');
-            $descrizione = post('descrizione');
-
-            $idiva = post('idiva');
-            $idconto = post('idconto');
-            $idum = post('um');
-            $idrivalsainps = post('idrivalsainps');
-            $idritenutaacconto = post('idritenutaacconto');
-            $calcolo_ritenutaacconto = post('calcolo_ritenutaacconto');
-
             $qta = post('qta');
             if (!empty($record['is_reversed'])) {
                 $qta = -$qta;
             }
 
-            $prezzo = post('prezzo');
+            $originale = ArticoloOriginale::find(post('idarticolo'));
+            $articolo = Articolo::new($fattura, $originale);
 
-            // Calcolo dello sconto
-            $sconto_unitario = post('sconto');
-            $tipo_sconto = post('tipo_sconto');
-            $sconto = calcola_sconto([
-                'sconto' => $sconto_unitario,
-                'prezzo' => $prezzo,
-                'tipo' => $tipo_sconto,
-                'qta' => $qta,
-            ]);
+            $articolo->descrizione = post('descrizione');
+            $articolo->setSubtotale(post('prezzo'), $qta);
+            $articolo->sconto_unitario = post('sconto');
+            $articolo->tipo_sconto = post('tipo_sconto');
 
-            add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva, $qta, $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto, '0', $idconto, $idum, $idrivalsainps, $idritenutaacconto, $calcolo_ritenutaacconto);
+            $um = post('um');
+            if (!empty($um)) {
+                $articolo->um = $um;
+            }
+
+            $articolo->id_iva = post('idiva');
+            $articolo->idconto = post('idconto');
+
+            $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenutaacconto');
+            $articolo->id_ritenuta_acconto = post('idritenutaacconto');
+
+            $articolo->save();
+            //add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva, $qta, $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto, '0', $idconto, $idum, $idrivalsainps, $idritenutaacconto, $calcolo_ritenutaacconto);
 
             ricalcola_costiagg_fattura($id_record);
 

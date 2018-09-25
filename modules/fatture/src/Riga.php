@@ -2,21 +2,26 @@
 
 namespace Modules\Fatture;
 
-use Illuminate\Database\Eloquent\Model;
-use Traits\RowTrait;
+use Base\Row;
 
-class Riga extends Model
+class Riga extends Row
 {
-    use RowTrait;
-
     protected $table = 'co_righe_documenti';
 
-    public function __construct(Fattura $fattura, array $attributes = array())
+    /**
+     * Crea una nuova riga collegata ad una fattura.
+     *
+     * @param Fattura $fattura
+     *
+     * @return self
+     */
+    public static function new(Fattura $fattura)
     {
-        parent::__construct($attributes);
+        $model = parent::new();
 
-        $this->fattura()->associate($fattura);
-        $this->save();
+        $model->fattura()->associate($fattura);
+
+        return $model;
     }
 
     public function fattura()

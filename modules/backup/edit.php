@@ -30,9 +30,9 @@ if (!is_writable($backup_dir)) {
 }
 
 if (!empty($backup_dir)) {
-    $message =  tr('Il percorso di backup è attualmente in').': <b>'.slashes($backup_dir).'</b>';
+    $message = tr('Il percorso di backup è attualmente in').': <b>'.slashes($backup_dir).'</b>';
 } else {
-    $message =  tr('Sembra che tu non abbia ancora specificato un percorso per il backup').'.';
+    $message = tr('Sembra che tu non abbia ancora specificato un percorso per il backup').'.';
 }
 
 echo '

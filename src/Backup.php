@@ -173,7 +173,7 @@ class Backup
         if (extension_loaded('zip')) {
             $result = Zip::create([
                 DOCROOT,
-                self::getDatabaseDirectory()
+                self::getDatabaseDirectory(),
             ], $backup_dir.'/'.$backup_name.'.zip', $ignores);
         }
 
@@ -181,7 +181,7 @@ class Backup
         else {
             $result = copyr([
                 DOCROOT,
-                self::getDatabaseDirectory()
+                self::getDatabaseDirectory(),
             ], $backup_dir.'/'.$backup_name.'.zip', $ignores);
         }
 

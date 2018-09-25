@@ -107,7 +107,7 @@ if ($generated) {
 <hr>
 <div class="row">
     <div class="col-md-12">
-        <a href="'.ROOTDIR.'/plugins/fatturazione/view.php?id_record='.$id_record.'" class="btn btn-info btn-lg btn-block" target="_blank">
+        <a href="'.ROOTDIR.'/plugins/exportPA/view.php?id_record='.$id_record.'" class="btn btn-info btn-lg btn-block" target="_blank">
             <i class="fa fa-eye"></i> '.tr('Visualizza').'
         </a>
     </div>

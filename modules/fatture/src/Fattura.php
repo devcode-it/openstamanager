@@ -2,7 +2,7 @@
 
 namespace Modules\Fatture;
 
-use Illuminate\Database\Eloquent\Model;
+use Base\Model;
 use Util\Generator;
 use Modules\Anagrafiche\Anagrafica;
 
@@ -10,37 +10,29 @@ class Fattura extends Model
 {
     protected $table = 'co_documenti';
 
-    /** @var array Opzioni abilitate per la creazione */
-    protected $fillable = [
-        'idanagrafica',
-        'data',
-        'id_segment',
-    ];
-
     /** @var array Conti rilevanti della fattura */
     protected $conti = [];
 
     /**
      * Crea una nuova fattura.
      *
-     * @param int    $id_anagrafica
-     * @param string $data
-     * @param int    $id_segment
+     * @param Anagrafica $anagrafica
+     * @param Tipo       $tipo_documento
+     * @param string     $data
+     * @param int        $id_segment
+     *
+     * @return self
      */
-    public static function create(array $attributes = [])
+    public static function new(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment)
     {
-        $model = static::query()->create($attributes);
+        $model = parent::new();
 
-        $tipo_documento = Tipo::find($attributes['idtipodocumento']);
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
 
+        $id_anagrafica = $anagrafica->id;
         $direzione = $tipo_documento->dir;
 
-        $data = $attributes['data'];
-        $id_anagrafica = $attributes['idanagrafica'];
-        $id_segment = $attributes['id_segment'];
-
-        $dbo = database();
+        $database = database();
 
         // Calcolo dei numeri fattura
         $numero = static::getNumero($data, $direzione, $id_segment);
@@ -55,7 +47,7 @@ class Fattura extends Model
         }
 
         // Tipo di pagamento e banca predefinite dall'anagrafica
-        $pagamento = $dbo->fetchOne('SELECT id, (SELECT idbanca_'.$conto.' FROM an_anagrafiche WHERE idanagrafica = ?) AS idbanca FROM co_pagamenti WHERE id = (SELECT idpagamento_'.$conto.' AS pagamento FROM an_anagrafiche WHERE idanagrafica = ?)', [
+        $pagamento = $database->fetchOne('SELECT id, (SELECT idbanca_'.$conto.' FROM an_anagrafiche WHERE idanagrafica = ?) AS idbanca FROM co_pagamenti WHERE id = (SELECT idpagamento_'.$conto.' AS pagamento FROM an_anagrafiche WHERE idanagrafica = ?)', [
             $id_anagrafica,
             $id_anagrafica,
         ]);
@@ -69,22 +61,30 @@ class Fattura extends Model
 
         // Se non è impostata la banca dell'anagrafica, uso quella del pagamento.
         if (empty($id_banca)) {
-            $id_banca = $dbo->fetchOne('SELECT id FROM co_banche WHERE id_pianodeiconti3 = (SELECT idconto_'.$conto.' FROM co_pagamenti WHERE id = :id_pagamento)', [
+            $id_banca = $database->fetchOne('SELECT id FROM co_banche WHERE id_pianodeiconti3 = (SELECT idconto_'.$conto.' FROM co_pagamenti WHERE id = :id_pagamento)', [
                 ':id_pagamento' => $id_pagamento,
             ])['id'];
         }
 
-        $id_sede = $dbo->selectOne('an_anagrafiche', 'idsede_fatturazione', ['idanagrafica' => $id_anagrafica])['idsede_fatturazione'];
+        $id_sede = $database->selectOne('an_anagrafiche', 'idsede_fatturazione', ['idanagrafica' => $id_anagrafica])['idsede_fatturazione'];
 
         // Salvataggio delle informazioni
         $model->numero = $numero;
         $model->numero_esterno = $numero_esterno;
+        $model->data = $data;
 
+        $model->id_segment = $id_segment;
         $model->idconto = $id_conto;
-        $model->idpagamento = $id_pagamento;
-        $model->idbanca = $id_banca;
         $model->idsede = $id_sede;
 
+        if (!empty($id_pagamento)) {
+            $model->idpagamento = $id_pagamento;
+        }
+        if (!empty($id_banca)) {
+            $model->idbanca = $id_banca;
+        }
+
+        $model->anagrafica()->associate($anagrafica);
         $model->tipo()->associate($tipo_documento);
         $model->stato()->associate($stato_documento);
 
@@ -104,11 +104,11 @@ class Fattura extends Model
      */
     public static function getNumero($data, $direzione, $id_segment)
     {
-        $dbo = database();
+        $database = database();
 
         $maschera = $direzione == 'uscita' ? static::getMaschera($id_segment) : '#';
 
-        $ultima_fattura = $dbo->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera), [
+        $ultima_fattura = $database->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera), [
             ':year' => date('Y', strtotime($data)),
             ':id_segment' => $id_segment,
         ]);
@@ -133,12 +133,12 @@ class Fattura extends Model
             return '';
         }
 
-        $dbo = database();
+        $database = database();
 
         // Recupero maschera per questo segmento
         $maschera = static::getMaschera($id_segment);
 
-        $ultima_fattura = $dbo->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera), [
+        $ultima_fattura = $database->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera), [
             ':year' => date('Y', strtotime($data)),
             ':id_segment' => $id_segment,
         ]);
@@ -157,9 +157,9 @@ class Fattura extends Model
      */
     protected static function getMaschera($id_segment)
     {
-        $dbo = database();
+        $database = database();
 
-        $maschera = $dbo->fetchOne('SELECT pattern FROM zz_segments WHERE id = :id_segment', [
+        $maschera = $database->fetchOne('SELECT pattern FROM zz_segments WHERE id = :id_segment', [
             ':id_segment' => $id_segment,
         ])['pattern'];
 
@@ -325,8 +325,25 @@ class Fattura extends Model
         return $this->belongsTo(Stato::class, 'idstatodocumento');
     }
 
+    public function articoli()
+    {
+        return $this->hasMany(Articolo::class, 'iddocumento');
+    }
+
     public function righe()
     {
         return $this->hasMany(Riga::class, 'iddocumento');
+    }
+
+    public function updateSconto()
+    {
+        // Aggiornamento sconto
+        aggiorna_sconto([
+            'parent' => 'co_documenti',
+            'row' => 'co_righe_documenti',
+        ], [
+            'parent' => 'id',
+            'row' => 'iddocumento',
+        ], $this->id);
     }
 }

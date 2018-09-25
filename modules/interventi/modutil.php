@@ -450,7 +450,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             'rivalsainps' => $rivalsainps,
             'idritenutaacconto' => $id_ritenuta_acconto,
             'ritenutaacconto' => $ritenutaacconto,
-            '#order' => '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_fattura).')',
+            'order' => orderValue('co_righe_documenti', 'iddocumento', $id_fattura),
         ]);
     }
 

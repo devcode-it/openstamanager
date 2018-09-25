@@ -377,11 +377,9 @@ class App
         $id_parent = filter('id_parent');
 
         $id_module = Modules::getCurrent()['id'];
-        $id_plugin = Plugins::getCurrent()['id'];
+        $segment = $_SESSION['module_'.$id_module]['id_segment'];
 
         $user = Auth::user();
-
-        $segment = !empty($_SESSION['module_'.$id_module]['id_segment']);
 
         // Elenco delle sostituzioni
         $replace = [

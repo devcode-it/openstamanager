@@ -43,7 +43,16 @@ function sum($first, $second = null, $decimals = 4)
     return floatval($result);
 }
 
-function aggiorna_sconto($tables, $fields, $id_record, $options = [])
+/**
+ * Calcola lo sconto globale per i documenti e lo aggiorna di conseguenza.
+ * Attenzione: eseguire la funzione dopo l'inserimento e la modifica di tutte le righe del documento.
+ *
+ * @param array $tables
+ * @param array $fields
+ * @param int   $id_record
+ * @param array $options
+ */
+function aggiorna_sconto(array $tables, array $fields, $id_record, array $options = [])
 {
     $dbo = database();
 
@@ -60,6 +69,8 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
     $iva = 0;
 
     if (!empty($sconto[0]['sconto_globale'])) {
+        // Commit: 2c7f69867accb4f12a0c7cfd320714bb98e31a67
+        // L'aliquota IVA viene calcolata in percentuale sull'imponibile e l'iva effettiva delle righe del documento.
         if ($sconto[0]['tipo_sconto_globale'] == 'PRC') {
             $rs = $dbo->fetchArray('SELECT SUM(subtotale - sconto) AS imponibile, SUM(iva) AS iva FROM (SELECT '.$tables['row'].'.subtotale, '.$tables['row'].'.sconto, '.$tables['row'].'.iva FROM '.$tables['row'].' WHERE '.$fields['row'].'='.prepare($id_record).') AS t');
             $subtotale = $rs[0]['imponibile'];
@@ -85,10 +96,10 @@ function aggiorna_sconto($tables, $fields, $id_record, $options = [])
             'subtotale' => $subtotale,
             'qta' => 1,
             'idiva' => $idiva,
-            'desc_iva' => $rsi[0]['descrizione'],
+            //'desc_iva' => $rsi[0]['descrizione'],
             'iva' => -$iva,
             'sconto_globale' => 1,
-            '#order' => '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM '.$tables['row'].' AS t WHERE '.$fields['row'].'='.prepare($id_record).')',
+            'order' => orderValue($tables['row'], $fields['row'], $id_record),
         ];
 
         $dbo->insert($tables['row'], $values);
@@ -292,4 +303,9 @@ function months()
         11 => tr('Novembre'),
         12 => tr('Dicembre'),
     ];
+}
+
+function orderValue($table, $field, $id)
+{
+    return database()->fetchOne('SELECT IFNULL(MAX(`order`) + 1, 0) AS value FROM '.$table.' WHERE '.$field.' = '.prepare($id))['value'];
 }

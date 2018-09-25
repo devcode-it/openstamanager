@@ -3,6 +3,10 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Fatture\Fattura;
+use Modules\Fatture\Articolo;
+use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Fatture\Tipo;
+use Modules\Anagrafiche\Anagrafica;
 
 // Necessaria per la funzione add_movimento_magazzino
 include_once Modules::filepath('Articoli', 'modutil.php');
@@ -25,12 +29,10 @@ switch (post('op')) {
         $idtipodocumento = post('idtipodocumento');
         $id_segment = post('id_segment');
 
-        $fattura = Fattura::create([
-            'idanagrafica' => $idanagrafica,
-            'data' => $data,
-            'id_segment' => $id_segment,
-            'idtipodocumento' => $idtipodocumento,
-        ]);
+        $anagrafica = Anagrafica::find($idanagrafica);
+        $tipo = Tipo::find($idtipodocumento);
+
+        $fattura = Fattura::new($anagrafica, $tipo, $data, $id_segment);
         $id_record = $fattura->id;
 
         flash()->info(tr('Aggiunta fattura numero _NUM_!', [
@@ -49,14 +51,13 @@ switch (post('op')) {
             $totale_imponibile = get_imponibile_fattura($id_record);
             $totale_fattura = get_totale_fattura($id_record);
 
+            $data = [];
             if ($dir == 'uscita') {
-                $idrivalsainps = post('idrivalsainps');
-                $idritenutaacconto = post('idritenutaacconto');
-                $numero = prepare(post('numero'));
-            } else {
-                $idrivalsainps = 0;
-                $idritenutaacconto = 0;
-                $numero = '(SELECT t.numero FROM (SELECT * FROM co_documenti) t WHERE t.id = '.prepare($id_record).')';
+                $data = [
+                    'numero' => post('numero'),
+                    'idrivalsainps' => post('idrivalsainps'),
+                    'idritenutaacconto' => post('idritenutaacconto'),
+                ];
             }
 
             // Leggo la descrizione del pagamento
@@ -65,9 +66,8 @@ switch (post('op')) {
             $pagamento = $rs[0]['descrizione'];
 
             // Query di aggiornamento
-            $dbo->update('co_documenti', [
+            $dbo->update('co_documenti', array_merge([
                 'data' => post('data'),
-                '#numero' => $numero,
                 'numero_esterno' => post('numero_esterno'),
                 'note' => post('note'),
                 'note_aggiuntive' => post('note_aggiuntive'),
@@ -85,15 +85,13 @@ switch (post('op')) {
                 'idvettore' => post('idvettore'),
                 'idsede' => post('idsede'),
                 'idconto' => post('idconto'),
-                'idrivalsainps' => $idrivalsainps,
-                'idritenutaacconto' => $idritenutaacconto,
 
                 'n_colli' => post('n_colli'),
                 'bollo' => 0,
                 'rivalsainps' => 0,
                 'ritenutaacconto' => 0,
                 'iva_rivalsainps' => 0,
-            ], ['id' => $id_record]);
+            ], $data), ['id' => $id_record]);
 
             $query = 'SELECT descrizione FROM co_statidocumento WHERE id='.prepare($idstatodocumento);
             $rs = $dbo->fetchArray($query);
@@ -346,7 +344,7 @@ switch (post('op')) {
                         'sconto' => $riga['sconto'],
                         'sconto_unitario' => $riga['sconto_unitario'],
                         'tipo_sconto' => $riga['tipo_sconto'],
-                        '#order' => '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).')',
+                        'order' => orderValue('co_righe_documenti', 'iddocumento', $id_record),
                         'idritenutaacconto' => setting("Percentuale ritenuta d'acconto"),
                         'ritenutaacconto' => $ritenutaacconto,
                         'idrivalsainps' => setting('Percentuale rivalsa INPS'),
@@ -484,34 +482,32 @@ switch (post('op')) {
 
     case 'addarticolo':
         if (!empty($id_record) && post('idarticolo') !== null) {
-            $idarticolo = post('idarticolo');
-            $descrizione = post('descrizione');
-
-            $idiva = post('idiva');
-            $idconto = post('idconto');
-            $idum = post('um');
-            $idrivalsainps = post('idrivalsainps');
-            $idritenutaacconto = post('idritenutaacconto');
-            $calcolo_ritenutaacconto = post('calcolo_ritenutaacconto');
-
             $qta = post('qta');
             if (!empty($record['is_reversed'])) {
                 $qta = -$qta;
             }
 
-            $prezzo = post('prezzo');
+            $originale = ArticoloOriginale::find(post('idarticolo'));
+            $articolo = Articolo::new($fattura, $originale);
 
-            // Calcolo dello sconto
-            $sconto_unitario = post('sconto');
-            $tipo_sconto = post('tipo_sconto');
-            $sconto = calcola_sconto([
-                'sconto' => $sconto_unitario,
-                'prezzo' => $prezzo,
-                'tipo' => $tipo_sconto,
-                'qta' => $qta,
-            ]);
+            $articolo->descrizione = post('descrizione');
+            $um = post('um');
+            if (!empty($um)) {
+                $articolo->um = $um;
+            }
 
-            add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva, $qta, $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto, '0', $idconto, $idum, $idrivalsainps, $idritenutaacconto, $calcolo_ritenutaacconto);
+            $articolo->id_iva = post('idiva');
+            $articolo->idconto = post('idconto');
+
+            $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenutaacconto');
+            $articolo->id_ritenuta_acconto = post('idritenutaacconto');
+
+            $articolo->setSubtotale(post('prezzo'), $qta);
+            $articolo->sconto_unitario = post('sconto');
+            $articolo->tipo_sconto = post('tipo_sconto');
+
+            $articolo->save();
+            //add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva, $qta, $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto, '0', $idconto, $idum, $idrivalsainps, $idritenutaacconto, $calcolo_ritenutaacconto);
 
             ricalcola_costiagg_fattura($id_record);
 

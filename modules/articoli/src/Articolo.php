@@ -2,7 +2,7 @@
 
 namespace Modules\Articoli;
 
-use Illuminate\Database\Eloquent\Model;
+use Base\Model;
 use Modules\Articoli\Articolo as ArticoloIntervento;
 
 class Articolo extends Model

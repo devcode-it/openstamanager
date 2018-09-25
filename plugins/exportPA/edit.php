@@ -7,12 +7,18 @@ if (!empty($fattura_pa)) {
     $disabled = false;
     $generated = file_exists($upload_dir.'/'.$fattura_pa->getFilename());
 } else {
+    echo '
+<div class="alert alert-warning">
+    <i class="fa fa-warning"></i>
+    <b>'.tr('Attenzione!').'</b> '.tr('Per generare la fattura elettronica è necessario che sia in stato "Emessa"').'.
+</div>';
+
     $disabled = true;
     $generated = false;
 }
 
 // Campi obbligatori per l'anagrafica Azienda
-$azienda = Plugins\Fatturazione\FatturaElettronica::getAzienda();
+$azienda = Plugins\ExportPA\FatturaElettronica::getAzienda();
 $fields = [
     'piva' => 'Partita IVA',
     // 'codice_fiscale' => 'Codice Fiscale',
@@ -101,7 +107,7 @@ if ($generated) {
 <hr>
 <div class="row">
     <div class="col-md-12">
-        <a href="'.ROOTDIR.'/plugins/fatturazione/view.php?id_record='.$id_record.'" class="btn btn-info btn-lg btn-block" target="_blank">
+        <a href="'.ROOTDIR.'/plugins/exportPA/view.php?id_record='.$id_record.'" class="btn btn-info btn-lg btn-block" target="_blank">
             <i class="fa fa-eye"></i> '.tr('Visualizza').'
         </a>
     </div>

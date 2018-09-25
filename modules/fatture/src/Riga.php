@@ -2,19 +2,30 @@
 
 namespace Modules\Fatture;
 
-use Illuminate\Database\Eloquent\Model;
+use Base\Row;
 
-class Riga extends Model
+class Riga extends Row
 {
     protected $table = 'co_righe_documenti';
+
+    /**
+     * Crea una nuova riga collegata ad una fattura.
+     *
+     * @param Fattura $fattura
+     *
+     * @return self
+     */
+    public static function new(Fattura $fattura)
+    {
+        $model = parent::new();
+
+        $model->fattura()->associate($fattura);
+
+        return $model;
+    }
 
     public function fattura()
     {
         return $this->belongsTo(Fattura::class, 'iddocumento');
-    }
-
-    public function getImponibile()
-    {
-        return $this->subtotale - $this->sconto;
     }
 }

@@ -3,6 +3,8 @@
 include_once Modules::filepath('Articoli', 'modutil.php');
 
 use Modules\Interventi\Articolo;
+use Modules\Interventi\Intervento;
+use Modules\Articoli\Articolo as ArticoloOriginale;
 
 switch ($resource) {
     case 'intervento':
@@ -59,13 +61,14 @@ switch ($resource) {
     case 'articolo_intervento':
         $data = $request['data'];
 
-        $articolo = Articolo::create([
-            'idarticolo' => $data['id_articolo'],
-            'idintervento' => $data['id_intervento'],
-            'idautomezzo' => $data['id_automezzo'],
-            'qta' => $data['qta'],
-            'um' => $data['um'],
-        ]);
+        $originale = ArticoloOriginale::find($data['id_articolo']);
+        $intervento = Intervento::find($data['id_intervento']);
+        $articolo = Articolo::new($intervento, $originale, $data['id_automezzo']);
+
+        $articolo->qta = $data['qta'];
+        $articolo->um = $data['um'];
+
+        $articolo->save();
 
         break;
 }

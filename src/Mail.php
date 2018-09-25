@@ -1,7 +1,6 @@
 <?php
 
 use Models\MailAccount;
-use Models\MailTemplate;
 
 /**
  * Classe per gestire le email in base alle impostazioni, basata sul framework open-source PHPMailer.

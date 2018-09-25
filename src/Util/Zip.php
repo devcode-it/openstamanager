@@ -26,6 +26,7 @@ class Zip
      * Estrae i contenuti di un file ZIP in una cartella temporanea.
      *
      * @param string $path
+     *
      * @return string
      */
     public static function extract($path)

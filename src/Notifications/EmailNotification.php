@@ -48,7 +48,7 @@ class EmailNotification extends Notification
      * Imposta il template della notifica.
      *
      * @param string|int $value
-     * @param int $id_record
+     * @param int        $id_record
      */
     public function setTemplate($value, $id_record = null)
     {
@@ -87,7 +87,7 @@ class EmailNotification extends Notification
         $prints = $dbo->fetchArray('SELECT id_print FROM zz_email_print WHERE id_email = '.prepare($template['id']));
         foreach ($prints as $print) {
             $this->addPrint($print['id_print'], $id_record);
-        };
+        }
     }
 
     /**
@@ -133,8 +133,8 @@ class EmailNotification extends Notification
      * Aggiunge una stampa alla notifica.
      *
      * @param string|int $print
-     * @param int $id_record
-     * @param string $name
+     * @param int        $id_record
+     * @param string     $name
      */
     public function addPrint($print, $id_record, $name = null)
     {

@@ -2,7 +2,7 @@
 
 namespace Modules\Fatture;
 
-use Illuminate\Database\Eloquent\Model;
+use Base\Model;
 
 class Tipo extends Model
 {

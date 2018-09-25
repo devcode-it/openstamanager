@@ -55,17 +55,7 @@
     },
     "autoload": {
         "psr-4": {
-            "": "src/",
-            "Modules\\Anagrafiche\\": "modules/anagrafiche/src",
-            "Modules\\Anagrafiche\\Custom\\": "modules/anagrafiche/custom/src",
-            "Modules\\Articoli\\": "modules/articoli/src",
-            "Modules\\Articoli\\Custom\\": "modules/articoli/custom/src",
-            "Modules\\Fatture\\": "modules/fatture/src",
-            "Modules\\Fatture\\Custom\\": "modules/fatture/custom/src",
-            "Modules\\Interventi\\": "modules/interventi/src",
-            "Modules\\Interventi\\Custom\\": "modules/interventi/custom/src",
-            "Plugins\\Fatturazione\\": "plugins/fatturazione/src",
-            "Plugins\\Fatturazione\\Custom\\": "plugins/fatturazione/custom/src"
+            "": "src/"
         },
         "files": [
             "lib/functions.php",

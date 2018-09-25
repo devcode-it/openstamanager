@@ -186,6 +186,11 @@ if (empty($record)) {
 
                     // Campi a fine form
                     var last = form.find(".panel").last();
+
+                    if (!last.length) {
+                        last = form.find(".box").last();
+                    }
+
                     if (!last.length) {
                         last = form.find(".row").eq(-2);
                     }

@@ -111,7 +111,7 @@ echo '
         </th>
 
         <th class="small">
-        '.tr('Volume', [], ['upper' => true]).'
+            '.tr('Volume', [], ['upper' => true]).'
         </th>
 
         <th class="small">

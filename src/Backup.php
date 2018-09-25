@@ -173,7 +173,7 @@ class Backup
         if (extension_loaded('zip')) {
             $result = Zip::create([
                 DOCROOT,
-                self::getDatabaseDirectory()
+                self::getDatabaseDirectory(),
             ], $backup_dir.'/'.$backup_name.'.zip', $ignores);
         }
 
@@ -181,7 +181,7 @@ class Backup
         else {
             $result = copyr([
                 DOCROOT,
-                self::getDatabaseDirectory()
+                self::getDatabaseDirectory(),
             ], $backup_dir.'/'.$backup_name.'.zip', $ignores);
         }
 
@@ -238,15 +238,19 @@ class Backup
         // Rimozione del database
         $tables = include DOCROOT.'/update/tables.php';
 
-        $database->query('SET foreign_key_checks = 0');
-        foreach ($tables as $tables) {
-            $database->query('DROP TABLE `'.$tables.'`');
-        }
-        $database->query('DROP TABLE `updates`');
-
         // Ripristino del database
-        $database->multiQuery($extraction_dir.'/database.sql');
-        $database->query('SET foreign_key_checks = 1');
+        $database_file = $extraction_dir.'/database.sql';
+        if (file_exists($database_file)) {
+            $database->query('SET foreign_key_checks = 0');
+            foreach ($tables as $tables) {
+                $database->query('DROP TABLE `'.$tables.'`');
+            }
+            $database->query('DROP TABLE `updates`');
+
+            // Ripristino del database
+            $database->multiQuery($database_file);
+            $database->query('SET foreign_key_checks = 1');
+        }
 
         // Salva il file di configurazione
         $config = file_get_contents(DOCROOT.'/config.inc.php');

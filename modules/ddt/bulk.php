@@ -31,6 +31,9 @@ switch (post('op')) {
         }
         $id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
 
+        $stato = $dbo->fetchOne("SELECT `id` FROM `co_statidocumento` WHERE `descrizione` = 'Bozza'")['id'];
+        $sede = $dbo->fetchOne('SELECT IFNULL(idsede_fatturazione, 0) AS id_sede FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica))['id_sede'];
+
         // Lettura righe selezionate
         foreach ($id_records as $id) {
             $id_anagrafica = $dbo->selectOne('dt_ddt', 'idanagrafica', ['id' => $id])['idanagrafica'];
@@ -70,8 +73,8 @@ switch (post('op')) {
                         'idpagamento' => $idpagamento,
                         'data' => $data,
                         'id_segment' => $id_segment,
-                        '#idstatodocumento' => "(SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza')",
-                        '#idsede' => 'IFNULL((SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica).'), 0)',
+                        'idstatodocumento' => $stato,
+                        'idsede' => $sede,
                     ]);
 
                     $id_documento = $dbo->lastInsertedID();
@@ -101,7 +104,7 @@ switch (post('op')) {
                             'um' => $riga['um'],
                             'qta' => $qta,
                             'abilita_serial' => $riga['abilita_serial'],
-                            '#order' => '(SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_documento).')',
+                            'order' => orderValue('co_righe_documenti', 'iddocumento', $id_documento),
                         ]);
                         $id_riga_documento = $dbo->lastInsertedID();
 

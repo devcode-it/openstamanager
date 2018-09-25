@@ -425,30 +425,16 @@ class Database extends Util\Singleton
      * @param string $table
      * @param array  $array
      * @param array  $conditions
-     * @param bool   $return
      *
      * @return string|array
      */
-    public function update($table, $array, $conditions, $return = false)
+    public function update($table, $array, $conditions)
     {
         if (!is_string($table) || !is_array($array) || !is_array($conditions)) {
             throw new UnexpectedValueException();
         }
 
-        // Valori da aggiornare
-        $update = [];
-        foreach ($array as $key => $value) {
-            $update[] = $this->quote($key).' = '.$this->prepareValue($key, $value);
-        }
-
-        // Costruzione della query
-        $query = 'UPDATE '.$this->quote($table).' SET '.implode($update, ', ').' WHERE '.$this->whereStatement($conditions);
-
-        if (!empty($return)) {
-            return $query;
-        } else {
-            return $this->query($query);
-        }
+        return Capsule::table($table)->where($conditions)->update($array);
     }
 
     /**

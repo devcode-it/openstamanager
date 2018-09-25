@@ -187,7 +187,7 @@ foreach ($righe as $r) {
     // Iva
     echo '
             <td class="text-center">';
-    if (empty($r['is_descrizione'])) {
+    if (empty($r['is_descrizione']) && empty($r['sconto_globale'])) {
         echo '
                 '.Translator::numberToLocale($r['perc_iva']);
     }

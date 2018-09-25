@@ -60,7 +60,7 @@ class Uploads
      *
      * @return string
      */
-    protected static function getName($source, $data)
+    public static function getName($source, $data)
     {
         $extension = strtolower(pathinfo($source)['extension']);
         $ok = self::isSupportedType($extension);
@@ -272,7 +272,7 @@ class Uploads
      */
     public static function updateFake($fake_id, $id_record)
     {
-        $database->update('zz_files', [
+        database()->update('zz_files', [
             'id_record' => $id_record,
         ], [
             'id_record' => $fake_id,

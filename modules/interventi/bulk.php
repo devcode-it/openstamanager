@@ -81,6 +81,9 @@ switch (post('op')) {
 
         $interventi = $dbo->fetchArray('SELECT *, IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id), in_interventi.data_richiesta) AS data, in_statiintervento.descrizione AS stato FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE in_statiintervento.completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) AND in_interventi.id IN ('.implode(',', $id_records).')');
 
+        $stato = $dbo->fetchOne("SELECT `id` FROM `co_statidocumento` WHERE `descrizione` = 'Bozza'")['id'];
+        $sede = $dbo->fetchOne('SELECT IFNULL(idsede_fatturazione, 0) AS id_sede FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica))['id_sede'];
+
         // Lettura righe selezionate
         foreach ($interventi as $intervento) {
             $id_anagrafica = $intervento['idanagrafica'];
@@ -122,8 +125,8 @@ switch (post('op')) {
                         'idpagamento' => $idpagamento,
                         'data' => $data,
                         'id_segment' => $id_segment,
-                        '#idstatodocumento' => "(SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza')",
-                        '#idsede' => 'IFNULL((SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica).'), 0)',
+                        'idstatodocumento' => $stato,
+                        'idsede' => $sede,
                     ]);
 
                     $id_documento = $dbo->lastInsertedID();

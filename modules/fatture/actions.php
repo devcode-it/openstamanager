@@ -491,10 +491,6 @@ switch (post('op')) {
             $articolo = Articolo::new($fattura, $originale);
 
             $articolo->descrizione = post('descrizione');
-            $articolo->setSubtotale(post('prezzo'), $qta);
-            $articolo->sconto_unitario = post('sconto');
-            $articolo->tipo_sconto = post('tipo_sconto');
-
             $um = post('um');
             if (!empty($um)) {
                 $articolo->um = $um;
@@ -505,6 +501,10 @@ switch (post('op')) {
 
             $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenutaacconto');
             $articolo->id_ritenuta_acconto = post('idritenutaacconto');
+
+            $articolo->setSubtotale(post('prezzo'), $qta);
+            $articolo->sconto_unitario = post('sconto');
+            $articolo->tipo_sconto = post('tipo_sconto');
 
             $articolo->save();
             //add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva, $qta, $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto, '0', $idconto, $idum, $idrivalsainps, $idritenutaacconto, $calcolo_ritenutaacconto);

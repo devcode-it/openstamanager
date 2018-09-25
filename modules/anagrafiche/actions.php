@@ -11,8 +11,6 @@ $id_tecnico = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche 
 
 switch (post('op')) {
     case 'update':
-        $anagrafica = Anagrafica::find($id_record);
-
         // Informazioni sull'anagrafica
         $anagrafica->codice = post('codice');
         $anagrafica->ragione_sociale = post('ragione_sociale');

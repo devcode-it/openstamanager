@@ -179,7 +179,7 @@ if (!$cliente) {
 					</div>
 
                     <div class="col-md-6">
-                        {[ "type": "select", "label": "<?php echo tr('Ritenuta d\'acconto predefinita'); ?>", "name": "idritenutaacconto_acquisti", "values": "query=SELECT id, descrizione FROM co_ritenutaacconto ORDER BY descrizione ASC", "value": "$idritenutaacconto_acquisti$", "extra": "<?php echo ($fornitore) ? '' : 'readonly'; ?>" ]}
+                        {[ "type": "select", "label": "<?php echo tr('Ritenuta d\'acconto predefinita'); ?>", "name": "id_ritenuta_acconto_acquisti", "values": "query=SELECT id, descrizione FROM co_ritenutaacconto ORDER BY descrizione ASC", "value": "$id_ritenuta_acconto_acquisti$", "extra": "<?php echo ($fornitore) ? '' : 'readonly'; ?>" ]}
                     </div>
 
 					<div class="col-md-6">
@@ -215,7 +215,7 @@ if (!$cliente) {
 					</div>
 
           <div class="col-md-6">
-            {[ "type": "select", "label": "<?php echo tr('Ritenuta d\'acconto predefinita'); ?>", "name": "idritenutaacconto_vendite", "values": "query=SELECT id, descrizione FROM co_ritenutaacconto ORDER BY descrizione ASC", "value": "$idritenutaacconto_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
+            {[ "type": "select", "label": "<?php echo tr('Ritenuta d\'acconto predefinita'); ?>", "name": "id_ritenuta_acconto_vendite", "values": "query=SELECT id, descrizione FROM co_ritenutaacconto ORDER BY descrizione ASC", "value": "$id_ritenuta_acconto_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
            </div>
           
 					<div class="col-md-6">

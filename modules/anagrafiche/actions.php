@@ -52,8 +52,8 @@ switch (post('op')) {
         $anagrafica->foro_competenza = post('foro_competenza');
         $anagrafica->colore = post('colore');
         $anagrafica->idtipointervento_default = post('idtipointervento_default');
-        $anagrafica->idritenutaacconto_acquisti = post('idritenutaacconto_acquisti');
-        $anagrafica->idritenutaacconto_vendite = post('idritenutaacconto_vendite');
+        $anagrafica->id_ritenuta_acconto_acquisti = post('id_ritenuta_acconto_acquisti');
+        $anagrafica->id_ritenuta_acconto_vendite = post('id_ritenuta_acconto_vendite');
 
         $anagrafica->updateTipologie((array) post('idtipoanagrafica'));
 

@@ -66,7 +66,7 @@ if ($module['name'] == 'Fatture di acquisto' || $module['name'] == 'Fatture di v
             }
 
             $idrivalsainps = setting('Percentuale rivalsa INPS');
-            $idritenutaacconto = $result['idritenutaacconto'] ?: setting("Percentuale ritenuta d'acconto");
+            $idritenutaacconto = $result['id_ritenuta_acconto'] ?: setting("Percentuale ritenuta d'acconto");
             $calcolo_ritenutaacconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         }
         // Caso particolare per aggiunta articolo in fatture di vendita

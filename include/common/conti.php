@@ -1,123 +1,71 @@
 <?php
 
-$show_idrivalsainps = 0;
-$show_idritenutaacconto = 0;
-$show_calcolo_ritenutaacconto = 0;
-$idrivalsainps = 0;
-$idritenutaacconto = 0;
-$calcolo_ritenutaacconto = 0;
-
 // Informazioni aggiuntive per Fatture
-if ($module['name'] == 'Fatture di acquisto' || $module['name'] == 'Fatture di vendita') {
-    // Percentuale rivalsa INPS e Percentuale ritenuta d'acconto
-    if ($options['action'] == 'edit') {
-        if ($options['dir'] == 'uscita') {
-            //Luca S. questi campi non dovrebbero essere impostati a 1 di default, ma solo se il fornitore ha effettivamente rivalsa inps o ritenuta
-            $show_idrivalsainps = 1;
-            $show_idritenutaacconto = 1;
-            $show_calcolo_ritenutaacconto = 1;
-        } elseif (($options['dir'] == 'entrata' && (setting('Percentuale rivalsa INPS') != '' || setting("Percentuale ritenuta d'acconto") != ''))) {
-            if (setting('Percentuale rivalsa INPS') != '') {
-                $show_idrivalsainps = 1;
-            } else {
-                $show_idrivalsainps = 0;
-            }
-            if (setting("Percentuale ritenuta d'acconto") != '') {
-                $show_idritenutaacconto = 1;
-            } else {
-                $show_idritenutaacconto = 0;
-            }
-            if (setting("Percentuale ritenuta d'acconto") != '') {
-                $show_calcolo_ritenutaacconto = 1;
-            } else {
-                $show_calcolo_ritenutaacconto = 0;
-            }
-        }
+if ($module['name'] != 'Fatture di acquisto' && $module['name'] != 'Fatture di vendita') {
+    return;
+}
 
-        $idrivalsainps = $result['idrivalsainps'];
-        $idritenutaacconto = $result['idritenutaacconto'];
-        $calcolo_ritenutaacconto = $result['calcolo_ritenutaacconto'];
-    } elseif ($options['action'] == 'add') {
-        if ($options['dir'] == 'uscita') {
-            $show_idrivalsainps = 1;
-            $show_idritenutaacconto = 1;
-            $show_calcolo_ritenutaacconto = 1;
+if ($options['dir'] == 'entrata') {
+    $show_rivalsa_inps = (setting('Percentuale rivalsa INPS') != '');
+    $show_ritenuta_acconto = (setting("Percentuale ritenuta d'acconto") != '');
 
-            // Luca S. questi campi non dovrebbero essere definiti all'interno della scheda fornitore?
-            $idrivalsainps = '';
-            $idritenutaacconto = '';
-            // questo campo non andrebbe letto da impostazioni
-            $calcolo_ritenutaacconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
-        } elseif ($options['dir'] == 'entrata' && $options['op'] == 'addriga' && (setting('Percentuale rivalsa INPS') != '' || setting("Percentuale ritenuta d'acconto") != '')) {
-            if (setting('Percentuale rivalsa INPS') != '') {
-                $show_idrivalsainps = 1;
-            } else {
-                $show_idrivalsainps = 0;
-            }
-            if (setting("Percentuale ritenuta d'acconto") != '') {
-                $show_idritenutaacconto = 1;
-            } else {
-                $show_idritenutaacconto = 0;
-            }
-            if (setting("Percentuale ritenuta d'acconto") != '') {
-                $show_calcolo_ritenutaacconto = 1;
-            } else {
-                $show_calcolo_ritenutaacconto = 0;
-            }
+    $show_ritenuta_acconto |= !empty($result['id_ritenuta_acconto_predefined']);
+} else {
+    $show_rivalsa_inps = 1;
+    $show_ritenuta_acconto = 1;
+}
 
-            $idrivalsainps = setting('Percentuale rivalsa INPS');
-            $idritenutaacconto = $result['id_ritenuta_acconto'] ?: setting("Percentuale ritenuta d'acconto");
-            $calcolo_ritenutaacconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
-        }
-        // Caso particolare per aggiunta articolo in fatture di vendita
-        elseif ($options['dir'] == 'entrata' && $options['op'] == 'addarticolo' && (setting('Percentuale rivalsa INPS') != '' || setting("Percentuale ritenuta d'acconto") != '')) {
-            if (setting('Percentuale rivalsa INPS') != '') {
-                $show_idrivalsainps = 1;
-            } else {
-                $show_idrivalsainps = 0;
-            }
-            if (setting("Percentuale ritenuta d'acconto") != '') {
-                $show_idritenutaacconto = 1;
-            } else {
-                $show_idritenutaacconto = 0;
-            }
-            if (setting("Percentuale ritenuta d'acconto") != '') {
-                $show_calcolo_ritenutaacconto = 1;
-            } else {
-                $show_calcolo_ritenutaacconto = 0;
-            }
+$show_calcolo_ritenuta_acconto = $show_ritenuta_acconto;
 
-            $idrivalsainps = '';
-            $idritenutaacconto = setting("Percentuale ritenuta d'acconto");
-            $calcolo_ritenutaacconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
-        }
+// Percentuale rivalsa INPS e Percentuale ritenuta d'acconto
+if ($options['action'] == 'edit') {
+    $id_rivalsa_inps = $result['idrivalsainps'];
+    $id_ritenuta_acconto = $result['idritenutaacconto'];
+    $calcolo_ritenuta_acconto = $result['calcolo_ritenutaacconto'];
+} elseif ($options['action'] == 'add') {
+    // Fattura di acquisto
+    if ($options['dir'] == 'uscita') {
+        // TODO: Luca S. questi campi non dovrebbero essere definiti all'interno della scheda fornitore?
+        $id_rivalsa_inps = '';
+        $id_ritenuta_acconto = '';
+        // questo campo non andrebbe letto da impostazioni
+        $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
     }
+    // Fattura di vendita
+    elseif ($options['dir'] == 'entrata') {
+        // Caso particolare per aggiunta articolo
+        $id_rivalsa_inps = ($options['op'] == 'addarticolo') ? '':setting('Percentuale rivalsa INPS');
 
-    if ($show_idrivalsainps == 1 || $show_idritenutaacconto == 1) {
+        $id_ritenuta_acconto = $result['id_ritenuta_acconto_predefined'] ?: setting("Percentuale ritenuta d'acconto");
+        $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
+    }
+}
+
+    if ($show_rivalsa_inps == 1 || $show_ritenuta_acconto == 1) {
         echo '
 <div class="row">';
 
         // Rivalsa INPS
-        if ($show_idrivalsainps == 1) {
+        if ($show_rivalsa_inps == 1) {
             echo '
     <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr('Rivalsa INPS').'", "name": "idrivalsainps", "value": "'.$idrivalsainps.'", "values": "query=SELECT * FROM co_rivalsainps" ]}
+        {[ "type": "select", "label": "'.tr('Rivalsa INPS').'", "name": "idrivalsainps", "value": "'.$id_rivalsa_inps.'", "values": "query=SELECT * FROM co_rivalsainps" ]}
     </div>';
         }
 
         // Ritenuta d'acconto
-        if ($show_idritenutaacconto == 1) {
+        if ($show_ritenuta_acconto == 1) {
             echo '
     <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "idritenutaacconto", "value": "'.$idritenutaacconto.'", "values": "query=SELECT * FROM co_ritenutaacconto" ]}
+        {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "idritenutaacconto", "value": "'.$id_ritenuta_acconto.'", "values": "query=SELECT * FROM co_ritenutaacconto" ]}
     </div>';
         }
 
         // Calcola ritenuta d'acconto su
-        if ($show_calcolo_ritenutaacconto == 1) {
+        if ($show_calcolo_ritenuta_acconto == 1) {
             echo '
     <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr("Calcola ritenuta d'acconto su").'", "name": "calcolo_ritenutaacconto", "value": "'.((empty($calcolo_ritenutaacconto)) ? 'Imponibile' : $calcolo_ritenutaacconto).'", "values": "list=\"Imponibile\":\"Imponibile\", \"Imponibile + rivalsa inps\":\"Imponibile + rivalsa inps\"", "required": "1" ]}
+        {[ "type": "select", "label": "'.tr("Calcola ritenuta d'acconto su").'", "name": "calcolo_ritenutaacconto", "value": "'.((empty($calcolo_ritenuta_acconto)) ? 'Imponibile' : $calcolo_ritenuta_acconto).'", "values": "list=\"Imponibile\":\"Imponibile\", \"Imponibile + rivalsa inps\":\"Imponibile + rivalsa inps\"", "required": "1" ]}
     </div>';
         }
 
@@ -132,4 +80,3 @@ if ($module['name'] == 'Fatture di acquisto' || $module['name'] == 'Fatture di v
             {[ "type": "select", "label": "'.tr('Conto').'", "name": "idconto", "required": 1, "value": "'.$result['idconto'].'", "ajax-source": "'.$options['conti'].'" ]}
         </div>
     </div>';
-}

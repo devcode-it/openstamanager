@@ -24,7 +24,7 @@ echo '
                         data = JSON.parse(data);
 
                         if (!data.already) {
-                            launch_modal("'.tr('Righe fattura').'", globals.rootdir + "/plugins/importPA/rows.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id=" + data.id + "&filename=" + data.filename + "&id_segment=" + data.id_segment)
+                            launch_modal("'.tr('Righe fattura').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&op=list&id=" + data.id + "&filename=" + data.filename + "&id_segment=" + data.id_segment);
                         } else {
                             swal({
                                 title: "'.tr('Fattura già importata!').'",

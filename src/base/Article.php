@@ -13,7 +13,7 @@ abstract class Article extends Row
 
     protected static function boot()
     {
-        parent::boot();
+        parent::boot(true);
 
         static::addGlobalScope('articles', function (Builder $builder) {
             $builder->whereNotNull('idarticolo')->where('idarticolo', '<>', 0);

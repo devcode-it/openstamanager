@@ -4,15 +4,17 @@ namespace Base;
 
 use Illuminate\Database\Eloquent\Builder;
 
-abstract class Row extends Model
+abstract class Row extends Description
 {
-    protected static function boot()
+    protected static function boot($bypass)
     {
-        parent::boot();
+        parent::boot($bypass);
 
-        static::addGlobalScope('rows', function (Builder $builder) {
-            $builder->whereNull('idarticolo')->where('idarticolo', '=', 0);
-        });
+        if (!$bypass) {
+            static::addGlobalScope('rows', function (Builder $builder) {
+                $builder->whereNull('idarticolo')->where('idarticolo', '=', 0);
+            });
+        }
     }
 
     /*
@@ -96,12 +98,10 @@ abstract class Row extends Model
         $this->attributes['sconto'] = $this->sconto;
     }
 
-    public function setIdIvaAttribute($value)
+    protected function fixIva()
     {
-        $this->attributes['idiva'] = $value;
-
         $iva = database()->fetchOne('SELECT * FROM co_iva WHERE id = :id_iva', [
-            ':id_iva' => $value,
+            ':id_iva' => $this->idiva,
         ]);
         $descrizione = $iva['descrizione'];
 
@@ -114,6 +114,15 @@ abstract class Row extends Model
         if (!isset($this->prezzo_vendita)) {
             $this->iva_indetraibile = $valore / 100 * $iva['indetraibile'];
         }
+
+        $this->attributes['sconto'] = $this->sconto;
+    }
+
+    public function setIdIvaAttribute($value)
+    {
+        $this->attributes['idiva'] = $value;
+
+        $this->fixIva();
     }
 
     public function getPrezzoAttribute()
@@ -126,5 +135,7 @@ abstract class Row extends Model
         $this->qta = $qta;
 
         $this->subtotale = $prezzo * $qta;
+
+        $this->fixIva();
     }
 }

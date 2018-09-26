@@ -49,4 +49,9 @@ switch (filter('op')) {
 
         redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
         break;
+
+    case 'list':
+        include __DIR__.'/rows.php';
+
+        break;
 }

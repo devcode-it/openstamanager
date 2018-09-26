@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Builder;
 
 abstract class Description extends Model
 {
-    protected static function boot()
+    protected static function boot($bypass)
     {
         parent::boot();
 
-        static::addGlobalScope('descriptions', function (Builder $builder) {
-            $builder->where('is_descrizione', '=', 0);
-        });
+        if (!$bypass) {
+            static::addGlobalScope('descriptions', function (Builder $builder) {
+                $builder->where('is_descrizione', '=', 0);
+            });
+        }
     }
 }

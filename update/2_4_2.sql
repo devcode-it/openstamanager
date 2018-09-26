@@ -488,7 +488,7 @@ ALTER TABLE `an_anagrafiche` ADD `id_ritenuta_acconto_acquisti` INT(11) NULL DEF
 UPDATE `an_anagrafiche` SET `piva` = REPLACE(`piva`, ' ', ''), `codice_fiscale` = REPLACE(`codice_fiscale`, ' ', '');
 
 -- Aggiunta impostazione
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Stampa per anteprima e firma intervento', (SELECT id FROM zz_prints WHERE main = 1 AND id_module = (SELECT id FROM zz_modules WHERE name = 'Interventi')), 'query=SELECT id, title AS descrizione FROM zz_prints WHERE id_module = (SELECT id FROM zz_modules WHERE name = ''Interventi'') AND is_record = 1', 1, 'Interventi', 3);
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Stampa per anteprima e firma', (SELECT id FROM zz_prints WHERE main = 1 AND id_module = (SELECT id FROM zz_modules WHERE name = 'Interventi')), 'query=SELECT id, title AS descrizione FROM zz_prints WHERE id_module = (SELECT id FROM zz_modules WHERE name = ''Interventi'') AND is_record = 1', 1, 'Interventi', 3);
 
 -- Fix nomi campi predefined
 ALTER TABLE `zz_smtps` CHANGE `main` `predefined` boolean NOT NULL DEFAULT 0;

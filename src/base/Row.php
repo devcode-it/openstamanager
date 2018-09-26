@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 abstract class Row extends Description
 {
-    protected static function boot($bypass)
+    protected static function boot($bypass = false)
     {
         parent::boot($bypass);
 

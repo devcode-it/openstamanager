@@ -9,8 +9,6 @@ abstract class Article extends Row
 {
     protected $serialRowID = 'documento';
 
-    abstract public function movimenta($qta);
-
     protected static function boot()
     {
         parent::boot(true);
@@ -32,6 +30,8 @@ abstract class Article extends Row
 
         return $model;
     }
+
+    abstract public function movimenta($qta);
 
     public function setSerials($serials)
     {

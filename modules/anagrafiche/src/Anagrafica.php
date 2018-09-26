@@ -35,12 +35,14 @@ class Anagrafica extends Model
         $model = parent::new();
 
         $model->ragione_sociale = $ragione_sociale;
-        $model->updateTipologie($tipologie);
 
         $ultimo = database()->fetchOne('SELECT codice FROM an_anagrafiche ORDER BY CAST(codice AS SIGNED) DESC LIMIT 1');
         $codice = Generator::generate(setting('Formato codice anagrafica'), $ultimo['codice']);
 
         $model->codice = $codice;
+        $model->save();
+
+        $model->updateTipologie($tipologie);
         $model->save();
 
         return $model;

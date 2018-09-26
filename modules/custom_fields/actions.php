@@ -17,7 +17,7 @@ switch (post('op')) {
             'top' => post('top'),
         ], ['id' => $id_record]);
 
-        $_SESSION['infos'][] = tr('Salvataggio completato!');
+        flash()->info(tr('Salvataggio completato!'));
 
         break;
 
@@ -34,7 +34,7 @@ switch (post('op')) {
         ]);
         $id_record = $dbo->lastInsertedID();
 
-        $_SESSION['infos'][] = tr('Nuovo campo personalizzato creato!');
+        flash()->info(tr('Nuovo campo personalizzato creato!'));
 
         break;
 

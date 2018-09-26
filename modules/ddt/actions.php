@@ -59,8 +59,8 @@ switch (post('op')) {
             $totale_ddt = get_totale_ddt($id_record);
 
             if ($dir == 'uscita') {
-                $idrivalsainps = post('idrivalsainps');
-                $idritenutaacconto = post('idritenutaacconto');
+                $idrivalsainps = post('id_rivalsa_inps');
+                $idritenutaacconto = post('id_ritenuta_acconto');
                 $bollo = post('bollo');
             } else {
                 $idrivalsainps = 0;

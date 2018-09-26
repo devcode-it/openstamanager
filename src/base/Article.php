@@ -20,7 +20,7 @@ abstract class Article extends Row
 
     public static function new(Original $articolo)
     {
-        $model = parent::new();
+        $model = parent::new(true);
 
         $model->articolo()->associate($articolo);
 
@@ -33,6 +33,11 @@ abstract class Article extends Row
 
     abstract public function movimenta($qta);
 
+    /**
+     * Imposta i seriali collegati all'articolo del documento.
+     *
+     * @param array $serials
+     */
     public function setSerials($serials)
     {
         database()->sync('mg_prodotti', [
@@ -44,6 +49,11 @@ abstract class Article extends Row
         ]);
     }
 
+    /**
+     * Restituisce l'elenco dei seriali collegati all'articolo del documento.
+     *
+     * @return array
+     */
     public function getSerialsAttribute()
     {
         if (empty($this->abilita_serial)) {
@@ -56,11 +66,16 @@ abstract class Article extends Row
         return array_column($list, 'serial');
     }
 
+    /**
+     * Modifica la quantità dell'articolo e movimenta automaticamente il magazzino.
+     *
+     * @param double $value
+     */
     public function setQtaAttribute($value)
     {
         $previous = $this->qta;
 
-        $this->attributes['qta'] = $value;
+        parent::setQtaAttribute($value);
 
         $diff = $value - $previous;
         $this->movimenta($diff);

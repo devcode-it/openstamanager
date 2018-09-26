@@ -111,16 +111,16 @@ switch (post('op')) {
 
         break;
 
-    //Duplica articolo
+    // Duplica articolo
     case 'copy':
-
         $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM mg_articoli WHERE id = '.prepare($id_record));
         $dbo->query('ALTER TABLE tmp DROP id');
         $dbo->query('INSERT INTO mg_articoli SELECT NULL,tmp.* FROM tmp');
         $id_record = $dbo->lastInsertedID();
         $dbo->query('DROP TEMPORARY TABLE tmp');
         $dbo->query('UPDATE mg_articoli SET qta=0 WHERE id='.prepare($id_record));
-        $_SESSION['infos'][] = tr('Articolo duplicato correttamente!');
+
+        flash()->info(tr('Articolo duplicato correttamente!'));
 
     break;
 

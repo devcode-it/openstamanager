@@ -16,4 +16,15 @@ abstract class Description extends Model
             });
         }
     }
+
+    public static function new($bypass = false)
+    {
+        $model = parent::new();
+
+        if (!$bypass) {
+            $model->is_descrizione = 1;
+        }
+
+        return $model;
+    }
 }

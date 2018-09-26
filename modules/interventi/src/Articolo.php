@@ -77,6 +77,26 @@ class Articolo extends Article
         }
     }
 
+    public function fixIvaIndetraibile()
+    {
+        $iva = database()->fetchOne('SELECT * FROM co_iva WHERE id = :id_iva', [
+            ':id_iva' => $this->idiva,
+        ]);
+
+        $this->iva_indetraibile = $this->iva / 100 * $iva['indetraibile'];
+    }
+    public function setCostoUnitarioAttribute($value)
+    {
+        $this->prezzo_vendita = $value;
+
+        $this->fixSubtotale();
+    }
+
+    public function getCostoUnitarioAttribute($value)
+    {
+        return $this->prezzo_vendita;
+    }
+
     public function getSubtotaleAttribute()
     {
         return $this->prezzo_vendita * $this->qta;

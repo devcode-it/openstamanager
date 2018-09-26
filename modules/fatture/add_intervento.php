@@ -73,6 +73,18 @@ echo '
         </div>
     </div>';
 
+$options = [
+    'action' => 'add',
+    'hide_conto' => true,
+    'dir' => $dir,
+];
+
+// Leggo la ritenuta d'acconto predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
+$ritenuta_acconto = $dbo->fetchOne('SELECT id_ritenuta_acconto_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS id_ritenuta_acconto FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
+$options['id_ritenuta_acconto_predefined'] = $ritenuta_acconto['id_ritenuta_acconto'];
+
+echo App::internalLoad('conti.php', [], $options);
+
 // Leggo l'iva predefinita dall'articolo e se non c'è leggo quella predefinita generica
 $idiva = $idiva ?: setting('Iva predefinita');
 

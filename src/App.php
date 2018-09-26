@@ -439,7 +439,7 @@ class App
      *
      * @return string
      */
-    protected static function internalLoad($file, $result, $options, $directory = null)
+    public static function internalLoad($file, $result, $options, $directory = null)
     {
         $module = Modules::getCurrent();
 

@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 abstract class Row extends Description
 {
+    protected $costo_unitario;
+
     protected static function boot($bypass = false)
     {
         parent::boot($bypass);
@@ -17,33 +19,36 @@ abstract class Row extends Description
         }
     }
 
-    /*
-    public function getPrezzoAttribute()
+    public static function new($bypass = false)
     {
-        return $this->prezzo;
+        return parent::new(true);
     }
-
-    public function getSubtotaleAttribute()
-    {
-        return $this->prezzo * $this->qta;
-    }
-    */
 
     public function getTotaleAttribute()
     {
         return $this->subtotale + $this->iva;
     }
 
+    /**
+     * Restituisce lo sconto della riga corrente in euro.
+     *
+     * @return float
+     */
     public function getScontoAttribute()
     {
         return calcola_sconto([
             'sconto' => $this->sconto_unitario,
-            'prezzo' => $this->prezzo ?: $this->prezzo_vendita, // Compatibilità con gli interventi
+            'prezzo' => $this->costo_unitario,
             'tipo' => $this->tipo_sconto,
             'qta' => $this->qta,
         ]);
     }
 
+    /**
+     * Imposta l'identificatore della Rivalsa INPS, effettuando di conseguenza i conti.
+     *
+     * @param int $value
+     */
     public function setIdRivalsaINPSAttribute($value)
     {
         $this->attributes['idrivalsainps'] = $value;
@@ -53,32 +58,61 @@ abstract class Row extends Description
         $this->rivalsainps = ($this->subtotale - $this->sconto) / 100 * $rivalsa['percentuale'];
     }
 
+    /**
+     * Restituisce il metodo di calcolo per la Ritenuta d'Acconto.
+     *
+     * @return string
+     */
     public function getCalcoloRitenutaAccontoAttribute()
     {
-        return $this->calcolo_ritenutaacconto ?: 'Imponibile';
+        return $this->calcolo_ritenutaacconto ?: setting("Metodologia calcolo ritenuta d'acconto predefinito");
     }
 
+    /**
+     * Imposta il metodo di calcolo per la Ritenuta d'Acconto.
+     *
+     * @param string $value
+     */
     public function setCalcoloRitenutaAccontoAttribute($value)
     {
         return $this->attributes['calcolo_ritenutaacconto'] = $value;
+
+        $this->fixRitenutaAcconto();
     }
 
+    /**
+     * Imposta l'identificatore della Ritenuta d'Acconto, effettuando di conseguenza i conti in base al valore del campo calcolo_ritenuta_acconto.
+     *
+     * @param int $value
+     */
     public function setIdRitenutaAccontoAttribute($value)
     {
         $this->attributes['idritenutaacconto'] = $value;
 
+        $this->fixRitenutaAcconto();
+    }
+
+    /**
+     * Effettua i conti per la Ritenuta d'Acconto.
+     */
+    protected function fixRitenutaAcconto()
+    {
         // Calcolo ritenuta d'acconto
-        $ritenuta = database()->fetchOne('SELECT * FROM co_ritenutaacconto WHERE id = '.prepare($value));
+        $ritenuta = database()->fetchOne('SELECT * FROM co_ritenutaacconto WHERE id = '.prepare($this->idritenutaacconto));
         $conto = ($this->subtotale - $this->sconto);
 
-        if ($this->calcolo_ritenutaacconto == 'Imponibile + rivalsa inps') {
+        if ($this->calcolo_ritenuta_acconto == 'Imponibile + rivalsa inps') {
             $conto += $this->rivalsainps;
         }
 
-        $this->ritenutaacconto = $conto / 100 * $ritenuta['percentuale'];
+        $this->attributes['ritenutaacconto'] = $conto / 100 * $ritenuta['percentuale'];
     }
 
-    /* Retrocompatibilità */
+    /**
+     * Imposta il valore dello sconto.
+     *
+     * @param float $value
+     */
     public function setScontoUnitarioAttribute($value)
     {
         $this->attributes['sconto_unitario'] = $value;
@@ -86,6 +120,11 @@ abstract class Row extends Description
         $this->fixSconto();
     }
 
+    /**
+     * Imposta il tipo dello sconto.
+     *
+     * @param string $value
+     */
     public function setTipoScontoAttribute($value)
     {
         $this->attributes['tipo_sconto'] = $value;
@@ -93,11 +132,29 @@ abstract class Row extends Description
         $this->fixSconto();
     }
 
+    /**
+     * Effettua i conti per lo sconto totale.
+     */
     protected function fixSconto()
     {
         $this->attributes['sconto'] = $this->sconto;
     }
 
+    /**
+     * Imposta l'identificatore dell'IVA, effettuando di conseguenza i conti.
+     *
+     * @param int $value
+     */
+    public function setIdIvaAttribute($value)
+    {
+        $this->attributes['idiva'] = $value;
+
+        $this->fixIva();
+    }
+
+    /**
+     * Effettua i conti per l'IVA.
+     */
     protected function fixIva()
     {
         $iva = database()->fetchOne('SELECT * FROM co_iva WHERE id = :id_iva', [
@@ -107,34 +164,66 @@ abstract class Row extends Description
 
         $valore = ($this->subtotale - $this->sconto) * $iva['percentuale'] / 100;
 
-        $this->desc_iva = $descrizione;
-        $this->iva = $valore;
+        $this->attributes['desc_iva'] = $descrizione;
+        $this->attributes['iva'] = $valore;
 
-        // Compatibilità con gli interventi
-        if (!isset($this->prezzo_vendita)) {
-            $this->iva_indetraibile = $valore / 100 * $iva['indetraibile'];
+        $this->fixIvaIndetraibile();
+    }
+
+    /**
+     * Effettua i conti per l'IVA indetraibile.
+     */
+    protected function fixIvaIndetraibile()
+    {
+        $iva = database()->fetchOne('SELECT * FROM co_iva WHERE id = :id_iva', [
+            ':id_iva' => $this->idiva,
+        ]);
+
+        $this->attributes['iva_indetraibile'] = $this->iva / 100 * $iva['indetraibile'];
+    }
+
+    /**
+     * Imposta la quantità della riga.
+     *
+     * @param float $value
+     */
+    public function setQtaAttribute($value)
+    {
+        $this->attributes['qta'] = $value;
+
+        $this->fixSubtotale();
+    }
+
+    /**
+     * Imposta il costo unitario della riga.
+     *
+     * @param float $value
+     */
+    public function setCostoUnitarioAttribute($value)
+    {
+        $this->costo_unitario = $value;
+
+        $this->fixSubtotale();
+    }
+
+    /**
+     * Restituisce il costo unitario della riga.
+     */
+    public function getCostoUnitarioAttribute()
+    {
+        if (empty($this->costo_unitario)) {
+            $this->costo_unitario = $this->subtotale / $this->qta;
         }
 
-        $this->attributes['sconto'] = $this->sconto;
+        return $this->costo_unitario;
     }
 
-    public function setIdIvaAttribute($value)
+    /**
+     * Effettua i conti per il subtotale della riga.
+     */
+    protected function fixSubtotale()
     {
-        $this->attributes['idiva'] = $value;
-
-        $this->fixIva();
-    }
-
-    public function getPrezzoAttribute()
-    {
-        return $this->subtotale / $this->qta;
-    }
-
-    public function setSubtotale($prezzo, $qta)
-    {
-        $this->qta = $qta;
-
-        $this->subtotale = $prezzo * $qta;
+        $this->attributes['subtotale'] = $this->costo_unitario * $this->qta;
 
         $this->fixIva();
     }

@@ -103,9 +103,9 @@ class ButtonManager implements ManagerInterface
             $result = '
 <div class="btn-group">';
 
-            $main = array_search(1, array_column($list, 'main'));
-            if ($main !== false) {
-                $element = $list[$main];
+            $predefined = array_search(1, array_column($list, 'predefined'));
+            if ($predefined !== false) {
+                $element = $list[$predefined];
 
                 $result .= $this->link([
                     'type' => $options['type'],
@@ -116,12 +116,12 @@ class ButtonManager implements ManagerInterface
                     'parameters' => $options['parameters'],
                 ]);
 
-                unset($list[$main]);
+                unset($list[$predefined]);
             }
 
             $result .= '
     <button type="button" class="btn '.$options['class'].' dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        '.($main === false ? $this->defaultText($options).' ' : '').'<span class="caret"></span>
+        '.($predefined === false ? $this->defaultText($options).' ' : '').'<span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
     </button>
     <ul class="dropdown-menu dropdown-menu-right">';

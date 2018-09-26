@@ -34,7 +34,7 @@ switch (post('op')) {
                 $rapportino_nome = sanitizeFilename($numero.' '.date('Y_m_d', strtotime($r['data_richiesta'])).' '.$r['ragione_sociale'].'.pdf');
                 $filename = slashes($dir.'tmp/'.$rapportino_nome);
 
-                $print = Prints::getModuleMainPrint($id_module);
+                $print = Prints::getModulePredefinedPrint($id_module);
 
                 Prints::render($print['id'], $r['id'], $filename);
             }

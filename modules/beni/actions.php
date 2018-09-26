@@ -10,7 +10,7 @@ switch (post('op')) {
             $dbo->query('UPDATE `dt_aspettobeni` SET `descrizione`='.prepare($descrizione).' WHERE `id`='.prepare($id_record));
             flash()->info(tr('Salvataggio completato.'));
         } else {
-            flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione.", [
+            flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione", [
                 '_TYPE_' => 'bene',
             ]));
         }
@@ -29,7 +29,7 @@ switch (post('op')) {
                 '_TYPE_' => 'bene',
             ]));
         } else {
-            flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione.", [
+            flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione", [
                 '_TYPE_' => 'bene',
             ]));
         }

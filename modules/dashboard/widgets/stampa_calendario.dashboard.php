@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../../core.php';
 
 //trovo id_print della stampa
-$id_print = Prints::getModuleMainPrint(1)['id'];
+$id_print = Prints::getModulePredefinedPrint(1)['id'];
 
 echo '
 <form action="" method="post" onsubmit="if($(this).parsley().validate()) { return stampa_calendario(); }" >

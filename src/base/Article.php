@@ -52,6 +52,7 @@ abstract class Article extends Row
 
         // Individuazione dei seriali
         $list = database()->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_'.$this->serialRowID.' = '.prepare($this->id));
+
         return array_column($list, 'serial');
     }
 

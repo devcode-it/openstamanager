@@ -14,8 +14,8 @@ class Articolo extends Article
      * Crea una nuova riga collegata ad un intervento.
      *
      * @param Intervento $intervento
-     * @param Original $articolo
-     * @param int $id_automezzo
+     * @param Original   $articolo
+     * @param int        $id_automezzo
      *
      * @return self
      */

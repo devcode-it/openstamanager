@@ -107,9 +107,7 @@ abstract class Row extends Model
 
         $valore = ($this->subtotale - $this->sconto) * $iva['percentuale'] / 100;
 
-        $this->idiva = $iva['id'];
         $this->desc_iva = $descrizione;
-
         $this->iva = $valore;
 
         // Compatibilità con gli interventi

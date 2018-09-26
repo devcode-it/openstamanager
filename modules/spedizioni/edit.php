@@ -18,7 +18,7 @@ include_once __DIR__.'/../../core.php';
 				</div>
 
                 <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Porto predefinito'); ?>", "name": "predefined", "value": "$predefined$" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Spedizione predefinita'); ?>", "name": "predefined", "value": "$predefined$" ]}
                 </div>
 			</div>
 		</div>
@@ -28,9 +28,8 @@ include_once __DIR__.'/../../core.php';
 
 <?php
 // Collegamenti diretti (numerici)
-$documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE idporto='.prepare($id_record).'
-UNION SELECT id FROM co_documenti WHERE idporto='.prepare($id_record).'
-UNION SELECT id FROM co_preventivi WHERE idporto='.prepare($id_record));
+$documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE idspedizione='.prepare($id_record).'
+UNION SELECT id FROM co_documenti WHERE idspedizione='.prepare($id_record));
 
 if (!empty($documenti)) {
     echo '

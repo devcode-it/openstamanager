@@ -96,14 +96,14 @@ class Prints
      *
      * @return array
      */
-    public static function getModuleMainPrint($module)
+    public static function getModulePredefinedPrint($module)
     {
         $prints = self::getModulePrints($module);
 
-        $main = array_search(1, array_column($prints, 'main'));
+        $predefined = array_search(1, array_column($prints, 'predefined'));
 
-        if ($main !== false) {
-            return $prints[$main];
+        if ($predefined !== false) {
+            return $prints[$predefined];
         } elseif (!empty($prints)) {
             return $prints[0];
         }

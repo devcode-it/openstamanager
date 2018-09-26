@@ -497,7 +497,7 @@ class FatturaElettronica
         $rapportino_nome = sanitizeFilename($documento['numero'].'.pdf');
         $filename = slashes(DOCROOT.'/'.$dir.'/'.$rapportino_nome);
 
-        $print = Prints::getModuleMainPrint($id_module);
+        $print = Prints::getModulePredefinedPrint($id_module);
 
         Prints::render($print['id'], $documento['id'], $filename);
 

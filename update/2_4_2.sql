@@ -485,3 +485,20 @@ UPDATE `an_anagrafiche` SET `piva` = REPLACE(`piva`, ' ', ''), `codice_fiscale` 
 
 -- Aggiunta impostazione
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Stampa per anteprima e firma intervento', (SELECT id FROM zz_prints WHERE main = 1 AND id_module = (SELECT id FROM zz_modules WHERE name = 'Interventi')), 'query=SELECT id, title AS descrizione FROM zz_prints WHERE id_module = (SELECT id FROM zz_modules WHERE name = ''Interventi'') AND is_record = 1', 1, 'Interventi', 3);
+
+-- Fix nomi campi predefined
+ALTER TABLE `zz_smtps` CHANGE `main` `predefined` boolean NOT NULL DEFAULT 0;
+ALTER TABLE `zz_prints` CHANGE `main` `predefined` boolean NOT NULL DEFAULT 0;
+ALTER TABLE `zz_emails` CHANGE `main` `predefined` boolean NOT NULL DEFAULT 0;
+ALTER TABLE `dt_porto` ADD `predefined` boolean NOT NULL DEFAULT 0;
+ALTER TABLE `dt_causalet` ADD `predefined` boolean NOT NULL DEFAULT 0;
+ALTER TABLE `dt_spedizione` ADD `predefined` boolean NOT NULL DEFAULT 0;
+
+-- Aggiunta tabelle per la gestione dei tipi spedizione
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Tipi di spedizione', 'Tipi di spedizione', 'spedizioni', 'SELECT |select| FROM `dt_spedizione` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.4.2', '2.4.2', '1', NULL, '1', '1');
+
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Tipi di spedizione' AND `t2`.`name` = 'Tabelle') SET `t1`.`parent` = `t2`.`id`;
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `visible`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di spedizione'), 'Descrizione', 'descrizione', 2, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di spedizione'), 'id', 'id', 1, 1, 0, 0, 1);

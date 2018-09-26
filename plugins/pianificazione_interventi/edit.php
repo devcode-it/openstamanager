@@ -23,7 +23,7 @@ echo '
     <i class="fa fa-question-circle-o fa-2x"></i>
 </span>
 
-<p>'.tr('Puoi <b>pianificare dei "promemoria" o direttamente gli interventi</b> da effettuare entro determinate scadenze. Per poter pianificare i promemoria il contratto deve essere in uno dei seguenti stati: <b>'.$stati_pianificabili.'</b> e la <b>data di conclusione</b> definita').'.</p>';
+<p>'.tr('Puoi <b>pianificare dei "promemoria" o direttamente gli interventi</b> da effettuare entro determinate scadenze. Per poter pianificare i promemoria, il contratto deve avere la <b>data di conclusione</b> definita ed essere in uno dei seguenti stati: <b>'.$stati_pianificabili.'</b>').'.</p>';
 
 // Nessun intervento pianificato
 if (!empty($records)) {
@@ -143,7 +143,7 @@ if (!empty($records)) {
                     <i class="fa fa-calendar"></i>
                 </button>
 
-                <button type="button" '.$disabled.' title="'.$title.'" class="btn btn-danger btn-sm ask '.$disabled.' " data-op="delete-promemoria" data-id="'.$record['id'].'">
+                <button type="button" '.$disabled.' title="'.$title.'" class="btn btn-danger btn-sm ask '.$disabled.'" data-op="delete-promemoria" data-id="'.$record['id'].'" data-id_plugin="'.$id_plugin.'" data-backto="record-edit">
                     <i class="fa fa-trash"></i>
                 </button>
             </td>

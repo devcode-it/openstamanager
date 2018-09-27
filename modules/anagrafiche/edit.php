@@ -49,20 +49,6 @@ if (!$cliente) {
 
 				<div class="row">
 					<div class="col-md-4">
-						{[ "type": "text", "label": "<?php echo tr('Codice anagrafica'); ?>", "name": "codice", "required": 1, "class": "text-center", "value": "$codice$" ]}
-					</div>
-
-                    <div class="col-md-4">
-						{[ "type": "text", "label": "<?php echo tr('PEC'); ?>", "name": "pec", "class": "email-mask", "placeholder":"pec@dominio.ext", "value": "$pec$", "icon-before": "<i class='fa fa-envelope-o'></i>" ]}
-					</div>
-
-					<div class="col-md-4">
-						{[ "type": "text", "label": "<?php echo tr('Sito web'); ?>", "name": "sitoweb", "placeholder":"www.dominio.ext", "value": "$sitoweb$", "icon-before": "<i class='fa fa-globe'></i>" ]}
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="col-md-4">
 						{[ "type": "text", "label": "<?php echo tr('Luogo di nascita'); ?>", "name": "luogo_nascita", "value": "$luogo_nascita$" ]}
 					</div>
 
@@ -72,6 +58,20 @@ if (!$cliente) {
 
 					<div class="col-md-4">
 						{[ "type": "select", "label": "<?php echo tr('Sesso'); ?>", "name": "sesso", "values": "list=\"\": \"Non specificato\", \"M\": \"<?php echo tr('Uomo'); ?>\", \"F\": \"<?php echo tr('Donna'); ?>\"", "value": "$sesso$" ]}
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-4">
+						{[ "type": "text", "label": "<?php echo tr('Codice anagrafica'); ?>", "name": "codice", "required": 1, "class": "text-center", "value": "$codice$" ]}
+					</div>
+
+                    <div class="col-md-4">
+						{[ "type": "text", "label": "<?php echo tr('PEC'); ?>", "name": "pec", "class": "email-mask", "placeholder":"pec@dominio.ext", "value": "$pec$", "icon-before": "<i class='fa fa-envelope-o'></i>" ]}
+					</div>
+
+					<div class="col-md-4">
+						{[ "type": "text", "label": "<?php echo tr('Sito web'); ?>", "name": "sitoweb", "placeholder":"www.dominio.ext", "value": "$sitoweb$", "icon-before": "<i class='fa fa-globe'></i>" ]}
 					</div>
 				</div>
             </div>
@@ -146,6 +146,53 @@ if (!$cliente) {
                     {[ "type": "text", "label": "<?php echo tr('Email'); ?>", "name": "email", "class": "email-mask", "placeholder":"casella@dominio.ext", "value": "$email$", "icon-before": "<i class='fa fa-envelope'></i>" ]}
                 </div>
             </div>
+
+
+<?php
+
+if (!empty($google)) {
+    echo '
+            <div class="row">
+				<div class="col-md-9">
+					<div class="row">
+                        <div class="col-md-4" id="geocomplete">
+                            {[ "type": "text", "label": "'.tr('Indirizzo Google').'", "name": "gaddress", "value": "$gaddress$", "extra": "data-geo=\'formatted_address\'" ]}
+                        </div>
+
+                        <div class="col-md-4">
+                            {[ "type": "text", "label": "'.tr('Latitudine').'", "name": "lat", "value": "$lat$", "extra": "data-geo=\'lat\'", "class": "text-right" ]}
+                        </div>
+
+                        <div class="col-md-4">
+                            {[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right" ]}
+                        </div>
+                    </div>
+                </div>';
+
+    // Calcola percorso
+    if (empty($record['gaddress']) || (empty($record['lat']) && empty($record['lng']))) {
+        echo '
+                <div class="col-md-3">
+                    <label>&nbsp;</label><br>
+                    <a class="btn btn-info" onclick="window.open(\'https://maps.google.com/maps/search/\'+encodeURI( $(\'#indirizzo\').val() )+\', \'+encodeURI( $(\'#citta\').val() ) );"><i class="fa fa-map-marker"></i> Cerca su Google Maps...</a>
+                </div>';
+    }
+
+    echo '
+            </div>';
+
+    if (!empty($record['gaddress']) || (!empty($record['lat']) && !empty($record['lng']))) {
+        echo '
+            <div id="map" style="height:400px; width:100%"></div>';
+    }
+} else {
+    echo '
+            <div class="alert alert-info">
+                '.Modules::link('Impostazioni', $dbo->fetchOne("SELECT `id` FROM `zz_settings` WHERE sezione='Generali'")['id'], tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni')).'.
+            </div>';
+}
+
+?>
         </div>
     </div>
 
@@ -373,57 +420,11 @@ if (!$cliente) {
                     } ?>
 				</div>
 
-
 				<div class="row">
 					<div class="col-md-12">
 						{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
 					</div>
 				</div>
-<?php
-
-if (!empty($google)) {
-    echo '
-            <div class="row">
-				<div class="col-md-9">
-					<div class="row">
-                        <div class="col-md-4" id="geocomplete">
-                            {[ "type": "text", "label": "'.tr('Indirizzo Google').'", "name": "gaddress", "value": "$gaddress$", "extra": "data-geo=\'formatted_address\'" ]}
-                        </div>
-
-                        <div class="col-md-4">
-                            {[ "type": "text", "label": "'.tr('Latitudine').'", "name": "lat", "value": "$lat$", "extra": "data-geo=\'lat\'", "class": "text-right" ]}
-                        </div>
-
-                        <div class="col-md-4">
-                            {[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right" ]}
-                        </div>
-                    </div>
-                </div>';
-
-    // Calcola percorso
-    if (empty($record['gaddress']) || (empty($record['lat']) && empty($record['lng']))) {
-        echo '
-                <div class="col-md-3">
-                    <label>&nbsp;</label><br>
-                    <a class="btn btn-info" onclick="window.open(\'https://maps.google.com/maps/search/\'+encodeURI( $(\'#indirizzo\').val() )+\', \'+encodeURI( $(\'#citta\').val() ) );"><i class="fa fa-map-marker"></i> Cerca su Google Maps...</a>
-                </div>';
-    }
-
-    echo '
-            </div>';
-
-    if (!empty($record['gaddress']) || (!empty($record['lat']) && !empty($record['lng']))) {
-        echo '
-            <div id="map" style="height:400px; width:100%"></div>';
-    }
-} else {
-    echo '
-            <div class="alert alert-info">
-                '.Modules::link('Impostazioni', $dbo->fetchOne("SELECT `id` FROM `zz_settings` WHERE sezione='Generali'")['id'], tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni')).'.
-            </div>';
-}
-
-?>
 			</div>
 		</div>
 	</fieldset>

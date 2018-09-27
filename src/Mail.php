@@ -44,8 +44,8 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
         $result = MailAccount::get($account);
 
         if (empty($return)) {
-            $result = $accounts->first(function ($item) use ($group) {
-                return !empty($item->main);
+            $result = $accounts->first(function ($item) {
+                return !empty($item->predefined);
             });
         }
 

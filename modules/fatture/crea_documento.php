@@ -89,7 +89,7 @@ echo '
 <p>'.str_replace('_NUM_', $numero, $head).'.</p>';
 
 // Selezione articoli dell'ordine da portare nel ddt
-$rs = $dbo->fetchArray('SELECT *, (qta - qta_evasa) AS qta_rimanente FROM '.$table.' INNER JOIN '.$rows.' ON '.$table.'.id='.$rows.'.'.$id.' WHERE '.$table.'.id='.prepare($id_record).' HAVING qta_rimanente > 0 ORDER BY `order`');
+$rs = $dbo->fetchArray('SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),"") AS codice, (qta - qta_evasa) AS qta_rimanente FROM '.$table.' INNER JOIN '.$rows.' ON '.$table.'.id='.$rows.'.'.$id.' WHERE '.$table.'.id='.prepare($id_record).' HAVING qta_rimanente > 0 ORDER BY `order`');
 
 if (!empty($rs)) {
     echo '
@@ -162,7 +162,9 @@ if (!empty($rs)) {
         echo '
                 <input type="checkbox" checked="checked" id="checked_'.$i.'" name="evadere['.$r['id'].']" value="on" onclick="ricalcola_subtotale_riga('.$i.');" />';
 
-        echo nl2br($r['descrizione']);
+        $descrizione = (!empty($r['codice']) ? $r['codice'].' - ' : '').$r['descrizione'];
+
+        echo '&nbsp;'.nl2br($descrizione);
 
         echo '
             </td>';

@@ -26,8 +26,8 @@ $loader = require_once __DIR__.'/vendor/autoload.php';
 
 $namespaces = require_once __DIR__.'/config/namespaces.php';
 foreach ($namespaces as $path => $namespace) {
-    $loader->addPsr4($namespace, $path.'/custom/src');
-    $loader->addPsr4($namespace, $path.'/src');
+    $loader->addPsr4($namespace.'\\', $path.'/custom/src');
+    $loader->addPsr4($namespace.'\\', $path.'/src');
 }
 
 // Individuazione dei percorsi di base
@@ -96,6 +96,7 @@ if (!API::isAPIRequest()) {
 // Disabilita la segnalazione degli errori (se il debug è disabilitato)
 if (!App::debug()) {
     error_reporting(0);
+    ini_set("display_errors", 0);
 }
 
 // Imposta il formato di salvataggio dei log

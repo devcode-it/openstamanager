@@ -195,8 +195,7 @@ UPDATE `co_documenti` SET `id_segment`='1' WHERE `idtipodocumento` IN (SELECT `i
 UPDATE `co_documenti` SET `id_segment`='2' WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir`='uscita');
 
 -- Innesto modulo segmenti sotto "Strumenti"
-INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES
-(NULL, 'Segmenti', 'Segmenti', 'segmenti', '{	"main_query": [	{	"type": "table", "fields": "id, Nome, Modulo, Maschera, Note, Predefinito", "query": "SELECT `id`, (IF(predefined=1, ''Sì'', ''No'')) AS `Predefinito`, `name` AS `Nome`, (SELECT name FROM zz_modules WHERE id = zz_segments.id_module) AS Modulo, `pattern` AS `Maschera`, `note` AS `Note`  FROM `zz_segments` HAVING 2=2 ORDER BY name, id_module"}	]}', '', 'fa fa-database', '2.4', '2.4', 1, NULL, 1, 1);
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Segmenti', 'Segmenti', 'segmenti', '{	"main_query": [	{	"type": "table", "fields": "id, Nome, Modulo, Maschera, Note, Predefinito", "query": "SELECT `id`, (IF(predefined=1, ''Sì'', ''No'')) AS `Predefinito`, `name` AS `Nome`, (SELECT name FROM zz_modules WHERE id = zz_segments.id_module) AS Modulo, `pattern` AS `Maschera`, `note` AS `Note`  FROM `zz_segments` HAVING 2=2 ORDER BY name, id_module"}	]}', '', 'fa fa-database', '2.4', '2.4', 1, NULL, 1, 1);
 UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Segmenti' AND `t2`.`name` = 'Strumenti') SET `t1`.`parent` = `t2`.`id`;
 
 -- Aggiorno widget Fatturato con i sezionali

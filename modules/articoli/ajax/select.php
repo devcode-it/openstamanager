@@ -4,7 +4,7 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'articoli':
-        $query = 'SELECT mg_articoli.*, (SELECT CONCAT(numero, " ", descrizione) FROM co_pianodeiconti3 WHERE co_pianodeiconti3.id = idconto_vendita) AS idconto_vendita_title, (SELECT CONCAT(numero, " ", descrizione) FROM co_pianodeiconti3 WHERE co_pianodeiconti3.id = idconto_acquisto) AS idconto_acquisto_title, co_iva.descrizione AS iva_vendita FROM mg_articoli LEFT OUTER JOIN co_iva ON mg_articoli.idiva_vendita=co_iva.id |where| ORDER BY mg_articoli.id_categoria ASC, mg_articoli.id_sottocategoria ASC';
+        $query = 'SELECT mg_articoli.*, (SELECT CONCAT(co_pianodeiconti2.numero, ".", co_pianodeiconti3.numero, " ", co_pianodeiconti3.descrizione) FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = idconto_vendita) AS idconto_vendita_title, (SELECT CONCAT(co_pianodeiconti2.numero, ".", co_pianodeiconti3.numero, " ", co_pianodeiconti3.descrizione) FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = idconto_acquisto) AS idconto_acquisto_title, co_iva.descrizione AS iva_vendita FROM mg_articoli LEFT OUTER JOIN co_iva ON mg_articoli.idiva_vendita=co_iva.id |where| ORDER BY mg_articoli.id_categoria ASC, mg_articoli.id_sottocategoria ASC';
 
         $idiva_predefinita = setting('Iva predefinita');
         $rs = $dbo->fetchArray('SELECT descrizione FROM co_iva WHERE id='.prepare($idiva_predefinita));

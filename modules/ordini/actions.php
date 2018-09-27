@@ -73,8 +73,8 @@ switch (post('op')) {
         $sconto = post('sconto_generico');
 
         if ($dir == 'uscita') {
-            $idrivalsainps = post('idrivalsainps');
-            $idritenutaacconto = post('idritenutaacconto');
+            $idrivalsainps = post('id_rivalsa_inps');
+            $idritenutaacconto = post('id_ritenuta_acconto');
             $bollo = post('bollo');
         } else {
             $idrivalsainps = 0;

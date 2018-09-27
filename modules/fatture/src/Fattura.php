@@ -310,6 +310,18 @@ class Fattura extends Model
         return $this->getTipo()['reversed'] == 1;
     }
 
+    public function updateSconto()
+    {
+        // Aggiornamento sconto
+        aggiorna_sconto([
+            'parent' => 'co_documenti',
+            'row' => 'co_righe_documenti',
+        ], [
+            'parent' => 'id',
+            'row' => 'iddocumento',
+        ], $this->id);
+    }
+
     public function anagrafica()
     {
         return $this->belongsTo(Anagrafica::class, 'idanagrafica');
@@ -335,15 +347,8 @@ class Fattura extends Model
         return $this->hasMany(Riga::class, 'iddocumento');
     }
 
-    public function updateSconto()
+    public function descrizioni()
     {
-        // Aggiornamento sconto
-        aggiorna_sconto([
-            'parent' => 'co_documenti',
-            'row' => 'co_righe_documenti',
-        ], [
-            'parent' => 'id',
-            'row' => 'iddocumento',
-        ], $this->id);
+        return $this->hasMany(Descrizione::class, 'iddocumento');
     }
 }

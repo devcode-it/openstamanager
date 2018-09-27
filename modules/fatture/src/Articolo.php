@@ -42,10 +42,10 @@ class Articolo extends Article
         $data = $fattura->data;
 
         $carico = ($tipo->dir == 'entrata') ? tr('Ripristino articolo da _TYPE_ _NUM_') : tr('Carico magazzino da _TYPE_ numero _NUM_');
-        $scarico = ($tipo->dir == 'uscita') ? tr('Rimozione articolo da _TYPE_ _NUM_') : tr('Scarico magazzino per _TYPE_ numero _NUM_');
+        $scarico = ($tipo->dir == 'entrata') ? tr('Scarico magazzino per _TYPE_ numero _NUM_') : tr('Rimozione articolo da _TYPE_ _NUM_') ;
 
-        $movimento = ($qta > 0) ? $carico : $scarico;
         $qta = ($tipo->dir == 'uscita') ? -$qta : $qta;
+        $movimento = ($qta < 0) ? $carico : $scarico;
 
         $movimento = replace($movimento, [
             '_TYPE_' => $tipo->descrizione,

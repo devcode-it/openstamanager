@@ -28,7 +28,7 @@ include_once __DIR__.'/../../core.php';
 
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "Categoria", "name": "idcategoria", "required": 1, "class": "", "values": "query=SELECT id, descrizione FROM zz_documenti_categorie WHERE deleted = 0", "value": "$idcategoria$", "extra": "" ]}
+					{[ "type": "select", "label": "Categoria", "name": "idcategoria", "required": 1, "class": "", "values": "query=SELECT id, descrizione FROM zz_documenti_categorie WHERE deleted_at IS NULL", "value": "$idcategoria$", "extra": "" ]}
 				</div>
 
 

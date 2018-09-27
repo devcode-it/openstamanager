@@ -83,11 +83,19 @@ if ($dir == 'entrata') {
 					{[ "type": "date", "label": "<?php echo tr('Data emissione'); ?>", "maxlength": 10, "name": "data", "required": 1, "value": "$data$" ]}
 				</div>
 
+<?php
+
+$query = 'SELECT * FROM co_statidocumento';
+if (empty($record['is_fiscale'])) {
+    $query .= " WHERE descrizione = 'Bozza'";
+}
+
+?>
+
 				<div class="col-md-3">
 					<!-- TODO: Rimuovere possibilità di selezionare lo stato pagato obbligando l'utente ad aggiungere il movimento in prima nota -->
-					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatodocumento", "required": 1, "values": "query=SELECT * FROM co_statidocumento", "value": "$idstatodocumento$", "class": "unblockable", "extra": " onchange = \"if ($('#idstatodocumento option:selected').text()=='Pagato' || $('#idstatodocumento option:selected').text()=='Parzialmente pagato' ){if( confirm('<?php echo tr('Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il movimento in prima nota?'); ?>') ){ return true; }else{ $('#idstatodocumento').selectSet(<?php echo $record['idstatodocumento']; ?>); }}\" " ]}
+					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatodocumento", "required": 1, "values": "query=<?php echo $query; ?>", "value": "$idstatodocumento$", "class": "unblockable", "extra": " onchange = \"if ($('#idstatodocumento option:selected').text()=='Pagato' || $('#idstatodocumento option:selected').text()=='Parzialmente pagato' ){if( confirm('<?php echo tr('Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il movimento in prima nota?'); ?>') ){ return true; }else{ $('#idstatodocumento').selectSet(<?php echo $record['idstatodocumento']; ?>); }}\" " ]}
 				</div>
-
 			</div>
 
 			<div class="row">
@@ -171,23 +179,27 @@ if ($dir == 'uscita') {
 
 			<div class="pull-right">
 <?php
+
+if (!empty($record['is_fiscale'])) {
+
 // Aggiunta prima nota solo se non c'è già, se non si è in bozza o se il pagamento non è completo
-$n2 = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE iddocumento='.prepare($id_record).' AND primanota=1');
+    $n2 = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE iddocumento='.prepare($id_record).' AND primanota=1');
 
-$rs3 = $dbo->fetchArray('SELECT SUM(da_pagare-pagato) AS differenza, SUM(da_pagare) FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.prepare($id_record));
-$differenza = isset($rs3[0]) ? $rs3[0]['differenza'] : null;
-$da_pagare = isset($rs3[0]) ? $rs3[0]['da_pagare'] : null;
+    $rs3 = $dbo->fetchArray('SELECT SUM(da_pagare-pagato) AS differenza, SUM(da_pagare) FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.prepare($id_record));
+    $differenza = isset($rs3[0]) ? $rs3[0]['differenza'] : null;
+    $da_pagare = isset($rs3[0]) ? $rs3[0]['da_pagare'] : null;
 
-if (($n2 <= 0 && $record['stato'] == 'Emessa') || $differenza != 0) {
-    ?>
+    if (($n2 <= 0 && $record['stato'] == 'Emessa') || $differenza != 0) {
+        ?>
 					<a class="btn btn-sm btn-primary" href="javascript:;" onclick="launch_modal( 'Aggiungi prima nota', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&iddocumento=<?php echo $id_record; ?>&dir=<?php echo $dir; ?>', 1 );"><i class="fa fa-euro"></i> <?php echo tr('Aggiungi prima nota'); ?>...</a><br><br>
 <?php
-}
+    }
 
-if ($record['stato'] == 'Pagato') {
-    ?>
+    if ($record['stato'] == 'Pagato') {
+        ?>
 					<a class="btn btn-sm btn-primary" href="javascript:;" onclick="if( confirm('Se riapri questa fattura verrà azzerato lo scadenzario e la prima nota. Continuare?') ){ $.post( '<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get($name)['id']; ?>&id_record=<?php echo $id_record; ?>', { id_module: '<?php echo Modules::get($name)['id']; ?>', id_record: '<?php echo $id_record; ?>', op: 'reopen' }, function(){ location.href='<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get($name)['id']; ?>&id_record=<?php echo $id_record; ?>'; } ); }" title="Aggiungi prima nota"><i class="fa fa-folder-open"></i> <?php echo tr('Riapri fattura'); ?>...</a>
 <?php
+    }
 }
 ?>
 			</div>

@@ -178,7 +178,7 @@ switch (filter('op')) {
                 ]);
             }
 
-            $_SESSION['infos'][] = tr('Permessi reimpostati.');
+            flash()->info(tr('Permessi reimpostati'));
         }
 
     break;

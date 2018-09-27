@@ -167,11 +167,10 @@ class FatturaElettronica
             }
 
             $obj->descrizione = $riga['Descrizione'];
-            $obj->setSubtotale($riga['PrezzoUnitario'], $riga['Quantita']);
-            /*
+            $obj->id_iva = $iva[$key];
+            $obj->costo_unitario = $riga['PrezzoUnitario'];
             $obj->qta = $riga['Quantita'];
-            $obj->prezzo = $riga['PrezzoUnitario'];
-            */
+
             if (!empty($riga['UnitaMisura'])) {
                 $obj->um = $riga['UnitaMisura'];
             }
@@ -186,8 +185,6 @@ class FatturaElettronica
                 $obj->sconto_unitario = $unitario;
                 $obj->tipo_sconto = $tipo;
             }
-
-            $obj->id_iva = $iva[$key];
 
             $obj->save();
         }
@@ -267,6 +264,21 @@ class FatturaElettronica
 
             $fattura->sconto_globale = $unitario;
             $fattura->tipo_sconto_globale = $tipo;
+        }
+
+        // Ritenuta d'Acconto
+        $ritenuta = $dati_generali['DatiRitenuta'];
+        if (!empty($ritenuta)) {
+            $percentuale = $ritenuta['AliquotaRitenuta'];
+            $importo = $ritenuta['ImportoRitenuta'];
+
+            // TODO: salvare in fattura
+        }
+
+        // Bollo
+        $bollo = $dati_generali['DatiBollo'];
+        if (!empty($bollo)) {
+            $fattura->bollo = $bollo['ImportoBollo'];
         }
 
         $fattura->save();

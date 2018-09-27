@@ -9,7 +9,7 @@
     <br>
     <a href="http://openstamanager.com">Sito web</a>
     &middot;
-    <a href="https://devcode-it.github.io/openstamanager">Documentazione tecnica</a>
+    <a href="https://devcode-it.github.io/openstamanager">Documentazione</a>
     &middot;
     <a href="http://openstamanager.com/forum">Forum</a>
   </p>

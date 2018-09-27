@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Anagrafica;
+
 if (isset($id_record)) {
     $anagrafica = Anagrafica::find($id_record);
 

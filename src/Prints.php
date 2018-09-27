@@ -96,14 +96,14 @@ class Prints
      *
      * @return array
      */
-    public static function getModuleMainPrint($module)
+    public static function getModulePredefinedPrint($module)
     {
         $prints = self::getModulePrints($module);
 
-        $main = array_search(1, array_column($prints, 'main'));
+        $predefined = array_search(1, array_column($prints, 'predefined'));
 
-        if ($main !== false) {
-            return $prints[$main];
+        if ($predefined !== false) {
+            return $prints[$predefined];
         } elseif (!empty($prints)) {
             return $prints[0];
         }
@@ -123,6 +123,11 @@ class Prints
         ob_end_clean();
 
         $infos = self::get($print);
+
+        $modutil = Modules::filepath($infos['id_module'], 'modutil.php');
+        if (!empty($modutil)) {
+            include $modutil;
+        }
 
         Permissions::addModule($infos['id_module']);
 

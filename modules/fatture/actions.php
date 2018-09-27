@@ -495,9 +495,13 @@ switch (post('op')) {
         $articolo->id_iva = post('idiva');
         $articolo->idconto = post('idconto');
 
-        $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto');
-        $articolo->id_ritenuta_acconto = post('id_ritenuta_acconto');
-        $articolo->id_rivalsa_inps = post('id_rivalsa_inps');
+        if (post('id_ritenuta_acconto')) {
+            $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto');
+            $articolo->id_ritenuta_acconto = post('id_ritenuta_acconto');
+        }
+        if (post('id_rivalsa_inps')) {
+            $articolo->id_rivalsa_inps = post('id_rivalsa_inps');
+        }
 
         $articolo->costo_unitario = post('prezzo');
         $articolo->qta = $qta;
@@ -529,9 +533,13 @@ switch (post('op')) {
         $riga->id_iva = post('idiva');
         $riga->idconto = post('idconto');
 
-        $riga->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto');
-        $riga->id_ritenuta_acconto = post('id_ritenuta_acconto');
-        $riga->id_rivalsa_inps = post('id_rivalsa_inps');
+        if (post('id_ritenuta_acconto')) {
+            $riga->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto');
+            $riga->id_ritenuta_acconto = post('id_ritenuta_acconto');
+        }
+        if (post('id_rivalsa_inps')) {
+            $riga->id_rivalsa_inps = post('id_rivalsa_inps');
+        }
 
         $riga->costo_unitario = post('prezzo');
         $riga->qta = $qta;

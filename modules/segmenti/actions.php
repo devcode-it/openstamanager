@@ -6,27 +6,28 @@ switch (post('op')) {
     case 'update':
         $pattern = str_contains(post('pattern'), '#') ? post('pattern') : '####';
         $predefined = post('predefined');
+        $module = post('module');
 
-        if (empty(Modules::getSegments($id_module))) {
+        if (empty(Modules::getSegments($module))) {
             $predefined = 1;
         }
 
         if ($predefined) {
-            $dbo->query('UPDATE zz_segments SET predefined = 0 WHERE id_module = '.prepare($id_module));
+            $dbo->query('UPDATE zz_segments SET predefined = 0 WHERE id_module = '.prepare($module));
         }
 
         $predefined_accredito = post('predefined_accredito');
         if ($predefined_accredito) {
-            $dbo->query('UPDATE zz_segments SET predefined_accredito = 0 WHERE id_module = '.prepare($id_module));
+            $dbo->query('UPDATE zz_segments SET predefined_accredito = 0 WHERE id_module = '.prepare($module));
         }
 
         $predefined_addebito = post('predefined_addebito');
         if ($predefined_addebito) {
-            $dbo->query('UPDATE zz_segments SET predefined_addebito = 0 WHERE id_module = '.prepare($id_module));
+            $dbo->query('UPDATE zz_segments SET predefined_addebito = 0 WHERE id_module = '.prepare($module));
         }
 
         $dbo->update('zz_segments', [
-            'id_module' => post('module'),
+            'id_module' => $module,
             'name' => post('name'),
             'clause' => post('clause'),
             'pattern' => $pattern,
@@ -44,7 +45,6 @@ switch (post('op')) {
     case 'add':
         $pattern = str_contains(post('pattern'), '#') ? post('pattern') : '####';
         $predefined = post('predefined');
-
         $module = post('module');
 
         if (empty(Modules::getSegments($module))) {
@@ -52,11 +52,11 @@ switch (post('op')) {
         }
 
         if ($predefined) {
-            $dbo->query('UPDATE zz_segments SET predefined = 0 WHERE id_module = '.prepare($id_module));
+            $dbo->query('UPDATE zz_segments SET predefined = 0 WHERE id_module = '.prepare($module));
         }
 
         $dbo->insert('zz_segments', [
-            'id_module' => post('module'),
+            'id_module' => $module,
             'name' => post('name'),
             'clause' => '1=1',
             'pattern' => $pattern,

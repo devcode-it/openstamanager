@@ -143,11 +143,13 @@ class API extends \Util\Singleton
                 $query = $database->select($table, $select, $where, $order, [], true);
             }
 
-            $response['records'] = $database->fetchArray($query.' LIMIT '.($page * $length).', '.$length, $parameters);
-            $count = $database->fetchNum($query, $parameters);
+            if (!empty($query)) {
+                $response['records'] = $database->fetchArray($query.' LIMIT '.($page * $length).', '.$length, $parameters);
+                $count = $database->fetchNum($query, $parameters);
 
-            $response['total-count'] = $count;
-            $response['pages'] = ceil($count / $length);
+                $response['total-count'] = $count;
+                $response['pages'] = ceil($count / $length);
+            }
         } catch (PDOException $e) {
             // Log dell'errore
             $logger = logger();
@@ -291,7 +293,8 @@ class API extends \Util\Singleton
 
             foreach ($operations as $operation) {
                 // Individua la tipologia e il modulo delle operazioni
-                $module = basename(dirname(dirname($operation)));
+                $path = explode('/api/', $operation)[0];
+                $module = explode('modules/', $path)[1];
                 $kind = basename($operation, '.php');
 
                 $resources[$kind] = isset($resources[$kind]) ? (array) $resources[$kind] : [];

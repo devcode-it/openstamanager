@@ -211,11 +211,20 @@ $(document).ready(function(){
     };
 
     $("#'.$attachment_id.' #upload").click(function(){
-        $("#'.$attachment_id.' #upload-form").ajaxSubmit({
+        $form = $("#'.$attachment_id.' #upload-form");
+
+        if($form.find("input[name=nome_allegato]").val() == "" || $form.find("input[name=blob]").val() == "") {
+            swal({
+                type: "error",
+                title: "'.tr('Errore').'",
+                text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente.').'",
+            });
+
+            return;
+        }
+
+        $form.ajaxSubmit({
             url: globals.rootdir + "/actions.php",
-            beforeSubmit: function(arr, $form, options) {
-                return $form.find("input[name=nome_allegato]").val() && $form.find("input[name=blob]").val();
-            },
             data: data,
             type: "post",
             uploadProgress: function(event, position, total, percentComplete) {

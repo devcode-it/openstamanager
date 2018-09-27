@@ -86,6 +86,8 @@ return [
     'zz_fields',
     'zz_files',
     'zz_groups',
+    'zz_group_module',
+    'zz_group_view',
     'zz_logs',
     'zz_modules',
     'zz_operations',

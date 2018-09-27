@@ -96,6 +96,7 @@ if (!API::isAPIRequest()) {
 // Disabilita la segnalazione degli errori (se il debug è disabilitato)
 if (!App::debug()) {
     error_reporting(0);
+    ini_set("display_errors", 0);
 }
 
 // Imposta il formato di salvataggio dei log

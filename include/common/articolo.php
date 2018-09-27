@@ -60,11 +60,14 @@ if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
                 session_set("superselect,idarticolo", $(this).val(), 0);
                 $data = $(this).selectData();
 
+                var id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';
+
                 $("#prezzo").val($data.prezzo_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').');
                 $("#descrizione_riga").val($data.descrizione);
                 $("#idiva").selectSet($data.idiva_vendita, $data.iva_vendita);
-                $("#idconto").selectSetNew($data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').', $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').'_title);
-                console.log($data);
+                if(id_conto) {
+                    $("#idconto").selectSetNew(id_conto, $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').'_title);
+                }
                 $("#um").selectSetNew($data.um, $data.um);
             }';
 

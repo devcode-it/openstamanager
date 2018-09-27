@@ -13,15 +13,21 @@ WHERE `an_tipianagrafiche`.`descrizione` = 'Azienda' AND `an_anagrafiche`.`delet
 $has_user = $dbo->fetchNum('SELECT `id` FROM `zz_users`') != 0;
 
 $settings = [
-    'Regime Fiscale',
-    'Tipo Cassa',
-    'Conto predefinito fatture di vendita',
-    'Conto predefinito fatture di acquisto',
+    'Regime Fiscale' => true,
+    'Tipo Cassa' => true,
+    'Conto predefinito fatture di vendita' => true,
+    'Conto predefinito fatture di acquisto' => true,
+    "Percentuale ritenuta d'acconto" => false,
+    "Causale ritenuta d'acconto" => false,
 ];
 
+if (!empty(setting('Regime Fiscale'))) {
+    $settings["Causale ritenuta d'acconto"] = true;
+}
+
 $has_settings = true;
-foreach ($settings as $setting) {
-    if (empty(setting($setting))) {
+foreach ($settings as $setting => $required) {
+    if (empty(setting($setting)) && $required) {
         $has_settings = false;
         break;
     }
@@ -72,7 +78,7 @@ if (post('action') == 'init') {
     }
 
     if (!$has_settings) {
-        foreach ($settings as $setting) {
+        foreach ($settings as $setting => $required) {
             $setting = Settings::get($setting);
 
             Settings::setValue($setting['nome'], post('setting')[$setting['id']]);
@@ -176,10 +182,10 @@ if (!$has_settings) {
 
                 <div class="panel-body">';
 
-    foreach ($settings as $setting) {
+    foreach ($settings as $setting => $required) {
         echo '
                     <div class="col-md-6">
-                        '.Settings::input($setting, true).'
+                        '.Settings::input($setting, $required).'
                     </div>';
     }
 

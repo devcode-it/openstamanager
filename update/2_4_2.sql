@@ -55,7 +55,7 @@ INSERT INTO `fe_regime_fiscale` (`codice`, `descrizione`) VALUES
 ('RF18','Altro'),
 ('RF19','Regime forfettario (art.1, c.54-89, L. 190/2014)');
 
-INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Regime Fiscale', 'RF01', 'query=SELECT codice AS id, descrizione FROM fe_regime_fiscale', 1, 'Generali', 19);
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Regime Fiscale', '', 'query=SELECT codice AS id, descrizione FROM fe_regime_fiscale', 1, 'Generali', 19);
 
 CREATE TABLE IF NOT EXISTS `fe_tipo_cassa` (
   `codice` varchar(4) NOT NULL,
@@ -87,7 +87,7 @@ INSERT INTO `fe_tipo_cassa` (`codice`, `descrizione`) VALUES
 ('TC21','Ente nazionale previdenza e assistenza psicologi (ENPAP)'),
 ('TC22','INPS');
 
-INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Tipo Cassa', 'TC22', 'query=SELECT codice AS id, descrizione FROM fe_tipo_cassa', 1, 'Fatturazione', 0);
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Tipo Cassa', '', 'query=SELECT codice AS id, descrizione FROM fe_tipo_cassa', 1, 'Fatturazione', 0);
 
 CREATE TABLE IF NOT EXISTS `fe_modalita_pagamento` (
   `codice` varchar(4) NOT NULL,
@@ -506,3 +506,23 @@ UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Tipi di
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `visible`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di spedizione'), 'Descrizione', 'descrizione', 2, 1, 0, 1, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di spedizione'), 'id', 'id', 1, 1, 0, 0, 1);
+
+-- Aggiunto flag fiscale nei sezionali
+ALTER TABLE `zz_segments` ADD `is_fiscale` boolean NOT NULL DEFAULT 1;
+
+INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`,`note`, `predefined`, `is_fiscale`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Fatture pro-forma', '1=1', 'WHR', 'PRO-###', '', 1, 0);
+
+-- Fix campi di ricerca
+UPDATE `zz_modules` SET `options` = "SELECT |select| FROM `zz_segments` WHERE 1=1 HAVING 2=2 ORDER BY name, id_module" WHERE `name` = 'Segmenti';
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Segmenti'), 'id', 'id', 0, 0, 0, 0, 0, 0, 1),
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Segmenti'), 'Nome', 'name', 1, 1, 0, 0, 1, 0, 1),
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Segmenti'), 'Modulo', '(SELECT name FROM zz_modules WHERE zz_modules.id = zz_segments.id_module)', 2, 1, 0, 0, 1, 0, 1),
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Segmenti'), 'Maschera', 'pattern', 3, 1, 0, 0, 1, 0, 1),
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Segmenti'), 'Note', 'note', 4, 1, 0, 0, 1, 0, 1),
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Segmenti'), 'Predefinito', 'IF(predefined=1, ''Sì'', ''No'')', 5, 1, 0, 0, 1, 0, 1);
+
+UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'Nome' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche');
+UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'Filiale' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche');
+UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'IBAN' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche');

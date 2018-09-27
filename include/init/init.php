@@ -21,7 +21,7 @@ $settings = [
     "Causale ritenuta d'acconto" => false,
 ];
 
-if (!empty(setting('Regime Fiscale'))) {
+if (!empty(setting("Percentuale ritenuta d'acconto"))) {
     $settings["Causale ritenuta d'acconto"] = true;
 }
 
@@ -81,7 +81,10 @@ if (post('action') == 'init') {
         foreach ($settings as $setting => $required) {
             $setting = Settings::get($setting);
 
-            Settings::setValue($setting['nome'], post('setting')[$setting['id']]);
+            $value = post('setting')[$setting['id']];
+            if (!empty($value)) {
+                Settings::setValue($setting['nome'], $value);
+            }
         }
     }
 
@@ -183,10 +186,12 @@ if (!$has_settings) {
                 <div class="panel-body">';
 
     foreach ($settings as $setting => $required) {
-        echo '
+        if (empty(setting($setting))) {
+            echo '
                     <div class="col-md-6">
                         '.Settings::input($setting, $required).'
                     </div>';
+        }
     }
 
     echo '

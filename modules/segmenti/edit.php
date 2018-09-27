@@ -30,17 +30,6 @@ include_once __DIR__.'/../../core.php';
 
 			</div>
 
-			<div class='row'>
-
-				<div class="col-md-4">
-					{[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di accredito'); ?>", "name": "predefined_accredito", "value": "$predefined_accredito$", "help": "<?php echo tr('Seleziona per rendere il segmento predefinito per le note di accredito.'); ?>", "placeholder": "<?php echo tr('Segmento predefinito per le note di accredito'); ?>"  ]}
-				</div>
-				<div class="col-md-4">
-					{[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di addebito'); ?>", "name": "predefined_addebito", "value": "$predefined_addebito$", "help": "<?php echo tr('Seleziona per rendere il segmento predefinito per le note di addebito.'); ?>", "placeholder": "<?php echo tr('Segmento predefinito per le note di addebito'); ?>"  ]}
-				</div>
-
-			</div>
-
 			<div class="row">
 
 				<div class="col-md-8">
@@ -52,7 +41,25 @@ include_once __DIR__.'/../../core.php';
 				</div>
 
 			</div>
+<?php
 
+$previous = $_SESSION['module_'.$record['id_module']]['id_segment'];
+$previous_module = $_SESSION['module_'.$record['id_module']]['id_segment'];
+$_SESSION['module_'.$id_module]['id_segment'] = $id_record;
+$_SESSION['module_'.$record['id_module']]['id_segment'] = $id_record;
+
+$current_module = Modules::get($record['id_module']);
+$total = App::readQuery($current_module);
+$module_query = Modules::replaceAdditionals($record['id_module'], $total['query']);
+
+echo '
+            <p><strong>'.tr('Query risultante').':</strong></p>
+            <p>'.htmlentities($module_query).'</p>';
+
+$_SESSION['module_'.$id_module]['id_segment'] = $previous;
+$_SESSION['module_'.$record['id_module']]['id_segment'] = $previous_module;
+
+?>
 			<div class="row">
 				<div class="col-md-12">
 					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "value": "$note$" ]}
@@ -61,18 +68,35 @@ include_once __DIR__.'/../../core.php';
 		</div>
 	</div>
 
+<?php
+
+if (str_contains($current_module['option'], '|segment|')) {
+    ?>
 	<!-- Campi extra -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title"><?php echo tr('Extra'); ?></h3>
+			<h3 class="panel-title"><?php echo tr('Sezionale'); ?></h3>
 		</div>
 
 		<div class="panel-body">
 			<div class="row">
-
-				<div class="col-md-3">
+				<div class="col-md-6">
                     {[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "class": "alphanumeric-mask", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YY", "extra": "<?php echo ($tot > 0) ? 'readonly' : ''; ?>" ]}
 				</div>
+
+                <div class="col-md-6">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Sezionale fiscale'); ?>", "name": "is_fiscale", "value": "$is_fiscale$"  ]}
+				</div>
+            </div>
+
+			<div class="row">
+                <div class="col-md-6">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di accredito'); ?>", "name": "predefined_accredito", "value": "$predefined_accredito$", "help": "<?php echo tr('Seleziona per rendere il sezionale predefinito per le note di accredito.'); ?>", "placeholder": "<?php echo tr('Sezionale predefinito per le note di accredito'); ?>"  ]}
+                </div>
+
+                <div class="col-md-6">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di addebito'); ?>", "name": "predefined_addebito", "value": "$predefined_addebito$", "help": "<?php echo tr('Seleziona per rendere il sezionale predefinito per le note di addebito.'); ?>", "placeholder": "<?php echo tr('Sezionale predefinito per le note di addebito'); ?>"  ]}
+                </div>
 			</div>
 
 			<!-- Istruzioni per il contenuto -->
@@ -93,15 +117,13 @@ $list = [
     'yy' => tr('Anno corrente a 2 cifre'),
 ];
 
-foreach ($list as $key => $value) {
-    echo '
+    foreach ($list as $key => $value) {
+        echo '
                         <li>'.tr('_TEXT_: _FIELD_', [
                             '_TEXT_' => '<code>'.$key.'</code>',
                             '_FIELD_' => $value,
                         ]).'</li>';
-}
-
-?>
+    } ?>
                     </ul>
 
                     <p><?php echo tr("E' inoltre possibile aggiungere altri caratteri fissi (come lettere, trattini, eccetera) prima e/o dopo le sequenze di cui sopra"); ?>.</p>
@@ -110,7 +132,9 @@ foreach ($list as $key => $value) {
 
 		</div>
 	</div>
-
+<?php
+}
+?>
 </form>
 
 <?php

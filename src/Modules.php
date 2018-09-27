@@ -128,8 +128,9 @@ class Modules
 
             // Aggiunta dei segmenti
             $segments = self::getSegments($module['id']);
+            $id_segment = $_SESSION['module_'.$module['id']]['id_segment'];
             foreach ($segments as $result) {
-                if (!empty($result['clause']) && $result['id'] == $_SESSION['module_'.$module['id']]['id_segment']) {
+                if (!empty($result['clause']) && $result['id'] == $id_segment) {
                     $result['clause'] = App::replacePlaceholder($result['clause']);
 
                     $additionals[$result['position']][] = $result['clause'];

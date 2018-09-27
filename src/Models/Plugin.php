@@ -47,17 +47,7 @@ class Plugin extends Model
 
     public function getOptionAttribute()
     {
-        return !empty($this->options) ? $this->options : $this->options2;
-    }
-
-    public function getOptionsAttribute($value)
-    {
-        return App::replacePlaceholder($value);
-    }
-
-    public function getOptions2Attribute($value)
-    {
-        return App::replacePlaceholder($value);
+        return !empty($this->options2) ? $this->options2 : $this->options;
     }
 
     /* Metodi personalizzati */

@@ -34,6 +34,7 @@ switch (post('op')) {
             'note' => post('note'),
             'position' => post('position'),
             'predefined' => $predefined,
+            'is_fiscale' => post('is_fiscale'),
             'predefined_accredito' => $predefined_accredito,
             'predefined_addebito' => $predefined_addebito,
         ], ['id' => $id_record]);

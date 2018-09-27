@@ -124,6 +124,11 @@ class Prints
 
         $infos = self::get($print);
 
+        $modutil = Modules::filepath($infos['id_module'], 'modutil.php');
+        if (!empty($modutil)) {
+            include $modutil;
+        }
+
         Permissions::addModule($infos['id_module']);
 
         if (empty($infos) || empty($infos['enabled']) || !Permissions::check([], false)) {

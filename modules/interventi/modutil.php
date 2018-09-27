@@ -12,10 +12,10 @@ function get_ore_intervento($idintervento)
     $dbo = database();
     $totale_ore = 0;
 
-    $rs = $dbo->fetchArray('SELECT idintervento, TIMESTAMPDIFF( MINUTE, orario_inizio, orario_fine ) / 60 AS tot_ore FROM in_interventi_tecnici WHERE idintervento = '.prepare($idintervento));
+    $sessioni = $dbo->fetchArray('SELECT idintervento, TIMESTAMPDIFF(MINUTE, orario_inizio, orario_fine) / 60 AS tot_ore FROM in_interventi_tecnici WHERE idintervento = '.prepare($idintervento));
 
-    for ($i = 0; $i < count($rs); ++$i) {
-        $totale_ore = $totale_ore + $rs[$i]['tot_ore'];
+    foreach ($sessioni as $sessione) {
+        $totale_ore = $totale_ore + $sessione['tot_ore'];
     }
 
     return $totale_ore;

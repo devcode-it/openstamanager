@@ -57,7 +57,6 @@ include_once $docroot.'/templates/pdfgen_variables.php';
 
 $totrows = sizeof($rsi);
 $totale_km = 0.00;
-$totale_ore = 0.00;
 $totale = 0.00;
 $totale_calcolato = 0.00;
 $info_intervento = [];
@@ -78,30 +77,25 @@ $idinterventi = ['0'];
 if ($totrows > 0) {
     for ($i = 0; $i < $totrows; ++$i) {
         // Lettura dati dei tecnici dell'intervento corrente
-        $query = 'SELECT *, ( ( TIME_TO_SEC(orario_fine)-TIME_TO_SEC(orario_inizio) )  ) AS t, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico FROM in_interventi_tecnici WHERE idintervento="'.$rsi[$i]['id'].'"';
-        $rs = $dbo->fetchArray($query);
-        $n_tecnici = sizeof($rs);
+        $sessioni = $dbo->fetchArray('SELECT *, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico FROM in_interventi_tecnici WHERE idintervento='.prepare($rsi[$i]['id']));
 
         $riga_tecnici = "<table><tr><td style='border:0px solid transparent;' colspan='2'><div style='width:75mm;'></div></td></tr>\n";
         $t = 0;
 
-        for ($j = 0; $j < $n_tecnici; ++$j) {
-            $riga_tecnici .= "<tr><td valign='top' style='border:0px solid transparent;' align='left' >\n".$rs[$j]['nome_tecnico']."\n</td>\n";
-            $riga_tecnici .= "<td valign='bottom'  style='border:0px solid transparent;' align='right'>\n".Translator::dateToLocale($rs[$j]['orario_inizio']).' - '.Translator::timeToLocale($rs[$j]['orario_inizio']).'-'.Translator::timeToLocale($rs[$j]['orario_fine'])."\n";
+        foreach ($sessioni as $sessione) {
+            $riga_tecnici .= "<tr><td valign='top' style='border:0px solid transparent;' align='left' >\n".$sessione['nome_tecnico']."\n</td>\n";
+            $riga_tecnici .= "<td valign='bottom'  style='border:0px solid transparent;' align='right'>\n".Translator::dateToLocale($sessione['orario_inizio']).' - '.Translator::timeToLocale($sessione['orario_inizio']).'-'.Translator::timeToLocale($sessione['orario_fine'])."\n";
             $riga_tecnici .= "</td></tr>\n";
 
-            // Conteggio ore totali
-            $t += round($rs[$j]['t'] / 60 / 60, 2);
+            array_push($costi_orari, floatval($sessione['prezzo_ore_unitario']));
+            array_push($costi_km, floatval($sessione['prezzo_km_unitario']));
+            array_push($diritto_chiamata, floatval($sessione['prezzo_dirittochiamata']));
 
-            array_push($costi_orari, floatval($rs[$j]['prezzo_ore_unitario']));
-            array_push($costi_km, floatval($rs[$j]['prezzo_km_unitario']));
-            array_push($diritto_chiamata, floatval($rs[$j]['prezzo_dirittochiamata']));
-
-            array_push($costo_ore_cons, floatval($rs[$j]['prezzo_ore_consuntivo']));
-            array_push($costo_km_cons, floatval($rs[$j]['prezzo_km_consuntivo']));
-            array_push($diritto_chiamata_cons, floatval($rs[$j]['prezzo_dirittochiamata_consuntivo']));
-            array_push($km, floatval($rs[$j]['km']));
-            $totale_km += floatval($rs[$j]['km']);
+            array_push($costo_ore_cons, floatval($sessione['prezzo_ore_consuntivo']));
+            array_push($costo_km_cons, floatval($sessione['prezzo_km_consuntivo']));
+            array_push($diritto_chiamata_cons, floatval($sessione['prezzo_dirittochiamata_consuntivo']));
+            array_push($km, floatval($sessione['km']));
+            $totale_km += floatval($sessione['km']);
         }
 
         $riga_tecnici .= "</table>\n";
@@ -117,8 +111,8 @@ if ($totrows > 0) {
 
         array_push($ntecnici, $n_tecnici);
         array_push($tecnici, $riga_tecnici);
-        array_push($ore, $t);
-        $totale_ore += floatval($t);
+        array_push($ore, get_ore_intervento($rsi[$i]['id']));
+
         $totale_dirittochiamata += floatval($rs[$i]['prezzo_dirittochiamata']);
         array_push($idinterventi, "'".$rsi[$i]['id']."'");
     }
@@ -219,7 +213,7 @@ if (sizeof($info_intervento) > 0) {
 
     // Totale costo ore
     $body .= "<td align=\"center\">\n";
-    $body .= '<b>'.Translator::numberToLocale($totale_ore)."</b>\n";
+    $body .= '<b>'.Translator::numberToLocale(sum($ore))."</b>\n";
     $body .= "</td>\n";
     $body .= "<td></td>\n";
 

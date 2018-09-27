@@ -354,3 +354,15 @@ function getURLPath()
 
     return slashes($path);
 }
+
+/**
+ * Sostituisce i caratteri speciali per la ricerca attraverso le tabelle Datatables.
+ *
+ * @param string $field
+ *
+ * @return string
+ */
+function searchFieldName($field)
+{
+    return str_replace([' ', '.'], ['-', ''], $field);
+}

@@ -110,7 +110,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
         }
 
         echo '
-                <th'.$attr_td.' id="th_'.str_replace([' ', '.'], ['-', ''], $name).'"';
+                <th'.$attr_td.' id="th_'.searchFieldName($name).'"';
         if ($total['search'][$key] == 1) {
             echo ' class="search"';
         } else {

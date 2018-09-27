@@ -30,13 +30,13 @@ if (!empty($search_filters)) {
 // Filtri derivanti dai permessi (eventuali)
 $module_query = Modules::replaceAdditionals($id_module, $module_query);
 
-$rsi = $dbo->fetchArray($module_query);
+$interventi = $dbo->fetchArray($module_query);
 
 // Se il cliente è uno solo carico la sua intestazione, altrimenti la lascio in bianco
-$idcliente = $rsi[0]['idanagrafica'];
+$idcliente = $interventi[0]['idanagrafica'];
 $singolo_cliente = true;
-for ($i = 0; $i < sizeof($rsi) && $singolo_cliente; ++$i) {
-    if ($rsi[$i]['idanagrafica'] != $idcliente) {
+for ($i = 0; $i < sizeof($interventi) && $singolo_cliente; ++$i) {
+    if ($interventi[$i]['idanagrafica'] != $idcliente) {
         $singolo_cliente = false;
     }
 }
@@ -55,7 +55,7 @@ if (!$singolo_cliente) {
 
 include_once $docroot.'/templates/pdfgen_variables.php';
 
-$totrows = sizeof($rsi);
+$totrows = sizeof($interventi);
 $totale_km = 0.00;
 $totale = 0.00;
 $totale_calcolato = 0.00;
@@ -74,54 +74,53 @@ $diritto_chiamata_cons = [];
 
 $idinterventi = ['0'];
 
-if ($totrows > 0) {
-    for ($i = 0; $i < $totrows; ++$i) {
-        // Lettura dati dei tecnici dell'intervento corrente
-        $sessioni = $dbo->fetchArray('SELECT *, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico FROM in_interventi_tecnici WHERE idintervento='.prepare($rsi[$i]['id']));
 
-        $riga_tecnici = "<table><tr><td style='border:0px solid transparent;' colspan='2'><div style='width:75mm;'></div></td></tr>\n";
-        $t = 0;
+foreach ($interventi as $intervento) {
+    // Lettura dati dei tecnici dell'intervento corrente
+    $sessioni = $dbo->fetchArray('SELECT *, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico FROM in_interventi_tecnici WHERE idintervento='.prepare($intervento['id']));
 
-        foreach ($sessioni as $sessione) {
-            $riga_tecnici .= "<tr><td valign='top' style='border:0px solid transparent;' align='left' >\n".$sessione['nome_tecnico']."\n</td>\n";
-            $riga_tecnici .= "<td valign='bottom'  style='border:0px solid transparent;' align='right'>\n".Translator::dateToLocale($sessione['orario_inizio']).' - '.Translator::timeToLocale($sessione['orario_inizio']).'-'.Translator::timeToLocale($sessione['orario_fine'])."\n";
-            $riga_tecnici .= "</td></tr>\n";
+    $riga_tecnici = "<table><tr><td style='border:0px solid transparent;' colspan='2'><div style='width:75mm;'></div></td></tr>\n";
 
-            array_push($costi_orari, floatval($sessione['prezzo_ore_unitario']));
-            array_push($costi_km, floatval($sessione['prezzo_km_unitario']));
-            array_push($diritto_chiamata, floatval($sessione['prezzo_dirittochiamata']));
+    foreach ($sessioni as $sessione) {
+        $riga_tecnici .= "<tr><td valign='top' style='border:0px solid transparent;' align='left' >\n".$sessione['nome_tecnico']."\n</td>\n";
+        $riga_tecnici .= "<td valign='bottom'  style='border:0px solid transparent;' align='right'>\n".Translator::dateToLocale($sessione['orario_inizio']).' - '.Translator::timeToLocale($sessione['orario_inizio']).'-'.Translator::timeToLocale($sessione['orario_fine'])."\n";
+        $riga_tecnici .= "</td></tr>\n";
 
-            array_push($costo_ore_cons, floatval($sessione['prezzo_ore_consuntivo']));
-            array_push($costo_km_cons, floatval($sessione['prezzo_km_consuntivo']));
-            array_push($diritto_chiamata_cons, floatval($sessione['prezzo_dirittochiamata_consuntivo']));
-            array_push($km, floatval($sessione['km']));
-            $totale_km += floatval($sessione['km']);
-        }
+        array_push($costi_orari, floatval($sessione['prezzo_ore_unitario']));
+        array_push($costi_km, floatval($sessione['prezzo_km_unitario']));
+        array_push($diritto_chiamata, floatval($sessione['prezzo_dirittochiamata']));
 
-        $riga_tecnici .= "</table>\n";
-
-        $line = '<span>Intervento <b>'.$rsi[$i]['Numero'].'</b> del <b>'.Translator::timestampToLocale($rsi[$i]['Data inizio'])."</b><br/><small style='color:#444;'>".nl2br($rsi[$i]['richiesta'])."</small></span><br/>\n";
-
-        // Se l'elenco non è di un singolo cliente stampo anche la sua ragione sociale
-        if (!$singolo_cliente) {
-            $line .= '<br/><span><small><b>Cliente:</b> '.$rsi[$i]['Ragione sociale']."</small></span>\n";
-        }
-
-        array_push($info_intervento, $line);
-
-        array_push($ntecnici, $n_tecnici);
-        array_push($tecnici, $riga_tecnici);
-        array_push($ore, get_ore_intervento($rsi[$i]['id']));
-
-        $totale_dirittochiamata += floatval($rs[$i]['prezzo_dirittochiamata']);
-        array_push($idinterventi, "'".$rsi[$i]['id']."'");
+        array_push($costo_ore_cons, floatval($sessione['prezzo_ore_consuntivo']));
+        array_push($costo_km_cons, floatval($sessione['prezzo_km_consuntivo']));
+        array_push($diritto_chiamata_cons, floatval($sessione['prezzo_dirittochiamata_consuntivo']));
+        array_push($km, floatval($sessione['km']));
+        $totale_km += floatval($sessione['km']);
     }
+
+    $riga_tecnici .= "</table>\n";
+
+    $line = '<span>Intervento <b>'.$intervento['Numero'].'</b> del <b>'.Translator::timestampToLocale($intervento['Data inizio'])."</b><br/><small style='color:#444;'>".nl2br($intervento['richiesta'])."</small></span><br/>\n";
+
+    // Se l'elenco non è di un singolo cliente stampo anche la sua ragione sociale
+    if (!$singolo_cliente) {
+        $line .= '<br/><span><small><b>Cliente:</b> '.$intervento['Ragione sociale']."</small></span>\n";
+    }
+
+    array_push($info_intervento, $line);
+
+    array_push($ntecnici, $n_tecnici);
+    array_push($tecnici, $riga_tecnici);
+    array_push($ore, get_ore_intervento($intervento['id']));
+
+    $totale_dirittochiamata += floatval($rs[$i]['prezzo_dirittochiamata']);
+    array_push($idinterventi, "'".$intervento['id']."'");
 }
 
-$body .= '<big><big><b>RIEPILOGO INTERVENTI DAL '.Translator::dateToLocale($date_start).' al '.Translator::dateToLocale($date_end)."</b></big></big><br/><br/>\n";
+
+$body .= '<big><big><b>RIEPILOGO INTERVENTI DAL '.Translator::dateToLocale($_SESSION['period_start']).' al '.Translator::dateToLocale($_SESSION['period_end'])."</b></big></big><br/><br/>\n";
 
 // Sostituisco i valori tra | | con il valore del campo del db
-$body .= preg_replace('/|(.+?)|/', $rsi[0]['${1}'], $body);
+$body .= preg_replace('/|(.+?)|/', $interventi[0]['${1}'], $body);
 
 if (sizeof($info_intervento) > 0) {
     // Tabella con riepilogo interventi, km e ore
@@ -391,4 +390,4 @@ $body .= "<p align=\"right\">\n";
 $body .= '<big><b>TOTALE INTERVENTI: '.Translator::numberToLocale($totale_intervento_scontato + $totale_articoli + $totale_spese)." &euro;</b></big>\n";
 $body .= "</p>\n";
 
-$report_name = 'Riepilogo_interventi.pdf';
+$report_name = 'riepilogo_interventi.pdf';

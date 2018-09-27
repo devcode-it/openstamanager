@@ -5,7 +5,7 @@
 echo "
 <table class='table-bordered'>
     <tr>
-        <td colspan=".(!empty($sconto) ? 5 : 3)." class='cell-padded' style='height:".($records[0]['ritenutaacconto'] != 0 ? 20 : 30)."mm'>";
+        <td colspan=".(!empty($sconto) ? 5 : 3)." class='cell-padded' style='height:".($record['ritenutaacconto'] != 0 ? 20 : 30)."mm'>";
 
 // Tabella (scadenze + iva)
 echo "
@@ -158,15 +158,15 @@ echo "
     </tr>';
 
 // Aggiunta della marca da bollo al totale
-$totale = sum($totale, $records[0]['bollo']);
+$totale = sum($totale, $record['bollo']);
 
 // Rivalsa INPS
-if (!empty($records[0]['rivalsainps'])) {
+if (!empty($record['rivalsainps'])) {
     $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_rivalsainps WHERE id=(SELECT idrivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idrivalsainps!=0 LIMIT 0,1)');
 
     $first_colspan = 3;
     $second_colspan = 2;
-    if (abs($records[0]['bollo']) > 0) {
+    if (abs($record['bollo']) > 0) {
         --$first_colspan;
     }
     if (empty($sconto)) {
@@ -182,7 +182,7 @@ if (!empty($records[0]['rivalsainps'])) {
             ], ['upper' => true]).'
         </th>';
 
-    if (abs($records[0]['bollo']) > 0) {
+    if (abs($record['bollo']) > 0) {
         echo '
 
         <th class="text-center small" colspan="1">
@@ -199,14 +199,14 @@ if (!empty($records[0]['rivalsainps'])) {
 
     <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-            '.Translator::numberToLocale($records[0]['rivalsainps']).' &euro;
+            '.Translator::numberToLocale($record['rivalsainps']).' &euro;
         </td>';
 
-    if (abs($records[0]['bollo']) > 0) {
+    if (abs($record['bollo']) > 0) {
         echo '
 
         <td class="cell-padded text-center" colspan="1">
-            '.Translator::numberToLocale($records[0]['bollo']).' &euro;
+            '.Translator::numberToLocale($record['bollo']).' &euro;
         </td>';
     }
 
@@ -219,12 +219,12 @@ if (!empty($records[0]['rivalsainps'])) {
 }
 
 // Ritenuta d'acconto
-if ($records[0]['ritenutaacconto'] != 0) {
+if ($record['ritenutaacconto'] != 0) {
     $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenutaacconto WHERE id=(SELECT idritenutaacconto FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idritenutaacconto!=0 LIMIT 0,1)');
 
     $first_colspan = 3;
     $second_colspan = 2;
-    if (empty($records[0]['rivalsainps']) && abs($records[0]['bollo']) > 0) {
+    if (empty($record['rivalsainps']) && abs($record['bollo']) > 0) {
         --$first_colspan;
     }
     if (empty($sconto)) {
@@ -240,7 +240,7 @@ if ($records[0]['ritenutaacconto'] != 0) {
             ], ['upper' => true]).'
         </th>';
 
-    if (empty($records[0]['rivalsainps']) && abs($records[0]['bollo']) > 0) {
+    if (empty($record['rivalsainps']) && abs($record['bollo']) > 0) {
         echo '
 
         <th class="text-center small" colspan="1">
@@ -256,26 +256,26 @@ if ($records[0]['ritenutaacconto'] != 0) {
 
     <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-            '.Translator::numberToLocale($records[0]['ritenutaacconto']).' &euro;
+            '.Translator::numberToLocale($record['ritenutaacconto']).' &euro;
         </td>';
 
-    if (empty($records[0]['rivalsainps']) && abs($records[0]['bollo']) > 0) {
+    if (empty($record['rivalsainps']) && abs($record['bollo']) > 0) {
         echo '
 
         <td class="cell-padded text-center" colspan="1">
-            '.Translator::numberToLocale($records[0]['bollo']).' &euro;
+            '.Translator::numberToLocale($record['bollo']).' &euro;
         </td>';
     }
 
     echo '
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.Translator::numberToLocale($totale - $records[0]['ritenutaacconto']).' &euro;
+            '.Translator::numberToLocale($totale - $record['ritenutaacconto']).' &euro;
         </td>
     </tr>';
 }
 
-if (empty($records[0]['ritenutaacconto']) && empty($records[0]['rivalsainps']) && abs($records[0]['bollo']) > 0) {
+if (empty($record['ritenutaacconto']) && empty($record['rivalsainps']) && abs($record['bollo']) > 0) {
     $first_colspan = 3;
     $second_colspan = 2;
     if (empty($sconto)) {
@@ -295,11 +295,11 @@ if (empty($records[0]['ritenutaacconto']) && empty($records[0]['rivalsainps']) &
 
     <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
-        '.Translator::numberToLocale($records[0]['bollo']).' &euro;
+        '.Translator::numberToLocale($record['bollo']).' &euro;
         </td>
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.Translator::numberToLocale($totale - $records[0]['ritenutaacconto']).' &euro;
+            '.Translator::numberToLocale($totale - $record['ritenutaacconto']).' &euro;
         </td>
     </tr>';
 }

@@ -100,8 +100,8 @@ foreach ($righe as $r) {
     }
 
     // Aggiunta dei riferimenti ai documenti
-    if (!empty($records[0]['ref_documento'])) {
-        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE id = ".prepare($records[0]['ref_documento']));
+    if (!empty($record['ref_documento'])) {
+        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE id = ".prepare($record['ref_documento']));
 
         $text = tr('Rif. fattura _NUM_ del _DATE_', [
             '_NUM_' => $data[0]['numero'],
@@ -116,7 +116,7 @@ foreach ($righe as $r) {
         }
     }
 
-    $ref = doc_references($r, $records[0]['dir'], ['iddocumento']);
+    $ref = doc_references($r, $record['dir'], ['iddocumento']);
 
     if (!empty($ref)) {
         echo '
@@ -236,25 +236,25 @@ echo '
 <table class="table">';
 echo '
     <tr>';
-if (abs($records[0]['bollo']) > 0) {
+if (abs($record['bollo']) > 0) {
     echo '
         <td width="85%">';
 } else {
     echo '
         <td width="100%">';
 }
-    if (!empty($records[0]['note'])) {
+    if (!empty($record['note'])) {
         echo '
             <p class="small-bold">'.tr('Note', [], ['upper' => true]).':</p>
-            <p>'.nl2br($records[0]['note']).'</p>';
+            <p>'.nl2br($record['note']).'</p>';
     }
     echo '
         </td>';
-if (abs($records[0]['bollo']) > 0) {
+if (abs($record['bollo']) > 0) {
     echo '
         <td width="15%" align="right">';
 }
-if (abs($records[0]['bollo']) > 0) {
+if (abs($record['bollo']) > 0) {
     echo '
             <table style="width: 20mm; font-size: 50%; text-align: center" class="table-bordered">
                 <tr>
@@ -265,7 +265,7 @@ if (abs($records[0]['bollo']) > 0) {
                 </tr>
             </table>';
 }
-if (abs($records[0]['bollo']) > 0) {
+if (abs($record['bollo']) > 0) {
     echo '
         </td>';
 }
@@ -282,18 +282,18 @@ $iva = sum(array_column($righe, 'iva'));
 
 $imponibile_scontato = sum($imponibile, -$sconto);
 
-$totale_iva = sum($iva, $records[0]['iva_rivalsainps']);
+$totale_iva = sum($iva, $record['iva_rivalsainps']);
 
 $totale = sum([
     $imponibile_scontato,
-    $records[0]['rivalsainps'],
+    $record['rivalsainps'],
     $totale_iva,
 ]);
 
 $netto_a_pagare = sum([
     $totale,
-    $records[0]['bollo'],
-    -$records[0]['ritenutaacconto'],
+    $record['bollo'],
+    -$record['ritenutaacconto'],
 ]);
 
 $imponibile = abs($imponibile);

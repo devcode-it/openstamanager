@@ -31,6 +31,8 @@ switch (filter('op')) {
 
     // Eliminazione pianificazione
     case 'delete-promemoria':
+        $id = post('id');
+
         $dbo->query('DELETE FROM `co_promemoria` WHERE id='.prepare($id));
         $dbo->query('DELETE FROM `co_promemoria_righe` WHERE id_promemoria='.prepare($id));
         $dbo->query('DELETE FROM `co_promemoria_articoli` WHERE id_promemoria='.prepare($id));
@@ -113,6 +115,15 @@ switch (filter('op')) {
                                 // copio righe articoli nel nuovo promemoria
                                 $dbo->query('INSERT INTO co_promemoria_articoli (idarticolo, id_promemoria,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idriga.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_promemoria_articoli WHERE id_promemoria = '.$id_record.'  ');
 
+                                // Copia degli allegati
+                                Uploads::copy([
+                                    'id_plugin' => Plugins::get('Pianificazione interventi')['id'],
+                                    'id_record' => $id_record,
+                                ], [
+                                    'id_plugin' => Plugins::get('Pianificazione interventi')['id'],
+                                    'id_record' => $idriga,
+                                ]);
+
                                 flash()->info(tr('Promemoria intervento pianificato!'));
                             }
                         } else {
@@ -176,7 +187,7 @@ switch (filter('op')) {
                             // copio le righe dal promemoria all'intervento
                             $dbo->query('INSERT INTO in_righe_interventi (descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,idintervento,sconto,sconto_unitario,tipo_sconto) SELECT descrizione, qta,um,prezzo_vendita,prezzo_acquisto,idiva,desc_iva,iva,'.$idintervento.',sconto,sconto_unitario,tipo_sconto FROM co_promemoria_righe WHERE id_promemoria = '.$id_record.'  ');
 
-                            // copio  gli articoli dal promemoria all'intervento
+                            // copio gli articoli dal promemoria all'intervento
                             $dbo->query('INSERT INTO mg_articoli_interventi (idarticolo, idintervento,descrizione,prezzo_acquisto,prezzo_vendita,sconto,	sconto_unitario,	tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto) SELECT idarticolo, '.$idintervento.',descrizione,prezzo_acquisto,prezzo_vendita,sconto,sconto_unitario,tipo_sconto,idiva,desc_iva,iva,idautomezzo, qta, um, abilita_serial, idimpianto FROM co_promemoria_articoli WHERE id_promemoria = '.$id_record.'  ');
 
                             // Copia degli allegati

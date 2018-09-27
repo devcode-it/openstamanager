@@ -8,10 +8,19 @@ switch (filter('op')) {
 
         if (isset($descrizione)) {
             if ($dbo->fetchNum('SELECT * FROM `dt_causalet` WHERE `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
-                $dbo->query('UPDATE `dt_causalet` SET `descrizione`='.prepare($descrizione).' WHERE `id`='.prepare($id_record));
+                $predefined = post('predefined');
+                if (!empty($predefined)) {
+                    $dbo->query('UPDATE dt_porto SET predefined = 0');
+                }
+
+                $dbo->update('dt_causalet', [
+                    'descrizione' => $descrizione,
+                    'predefined' => $predefined,
+                ], ['id' => $id_record]);
+
                 flash()->info(tr('Salvataggio completato!'));
             } else {
-                flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione.", [
+                flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione", [
                     '_TYPE_' => 'causale',
                 ]));
             }
@@ -26,15 +35,16 @@ switch (filter('op')) {
 
         if (isset($descrizione)) {
             if ($dbo->fetchNum('SELECT * FROM `dt_causalet` WHERE `descrizione`='.prepare($descrizione)) == 0) {
-                $dbo->query('INSERT INTO `dt_causalet` (`descrizione`) VALUES ('.prepare($descrizione).')');
-
+                $dbo->insert('dt_porto', [
+                    'dt_causalet' => $descrizione,
+                ]);
                 $id_record = $dbo->lastInsertedID();
 
                 flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                     '_TYPE_' => 'causale',
                 ]));
             } else {
-                flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione.", [
+                flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione", [
                     '_TYPE_' => 'causale',
                 ]));
             }

@@ -90,6 +90,16 @@ class FatturaElettronica
     }
 
     /**
+     * Restituisce le righe del documento.
+     *
+     * @return array
+     */
+    public function getRighe()
+    {
+        return database()->fetchArray('SELECT * FROM `co_righe_documenti` WHERE `sconto_globale` = 0 AND `iddocumento` = '.prepare($this->getDocumento()['id']));
+    }
+
+    /**
      * Restituisce le informazioni relative al documento.
      *
      * @return array
@@ -297,6 +307,7 @@ class FatturaElettronica
     protected static function getDatiGeneraliDocumento($fattura)
     {
         $documento = $fattura->getDocumento();
+        $azienda = static::getAzienda();
 
         $result = [
             'TipoDocumento' => $documento['tipo_documento'],
@@ -306,6 +317,36 @@ class FatturaElettronica
             //'Causale' => $documento['causale'],
             // TODO: vari
         ];
+
+        // Ritenuta d'Acconto
+        $righe = $fattura->getRighe();
+        $id_ritenuta = null;
+        $totale = 0;
+        foreach ($righe as $riga) {
+            if (!empty($riga['idritenutaacconto'])) {
+                $id_ritenuta = $riga['idritenutaacconto'];
+                $totale += $riga['ritenutaacconto'];
+            }
+        }
+
+        if (!empty($id_ritenuta)) {
+            $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenutaacconto WHERE id = '.prepare($id_ritenuta));
+
+            $result['DatiRitenuta'] = [
+                'TipoRitenuta' => ($azienda['tipo'] == 'Privato') ? 'RT01' : 'RT02',
+                'ImportoRitenuta' => $totale,
+                'AliquotaRitenuta' => $percentuale,
+                'CausalePagamento' => setting("Causale ritenuta d'acconto"),
+            ];
+        }
+
+        // Bollo
+        if (!empty($documento['bollo'])) {
+            $result['DatiBollo'] = [
+                'BolloVirtuale' => 'SI',
+                'ImportoBollo' => $documento['bollo'],
+            ];
+        }
 
         // Sconto globale
         $documento['sconto_globale'] = floatval($documento['sconto_globale']);
@@ -386,7 +427,7 @@ class FatturaElettronica
         $result = [];
 
         // Righe del documento
-        $righe_documento = $database->fetchArray('SELECT * FROM `co_righe_documenti` WHERE `sconto_globale` = 0 AND `iddocumento` = '.prepare($documento['id']));
+        $righe_documento = $fattura->getRighe();
         foreach ($righe_documento as $numero => $riga) {
             $prezzo_unitario = $riga['subtotale'] / $riga['qta'];
             $prezzo_totale = $riga['subtotale'] - $riga['sconto'];
@@ -419,6 +460,10 @@ class FatturaElettronica
 
             $dettaglio['PrezzoTotale'] = $prezzo_totale;
             $dettaglio['AliquotaIVA'] = $percentuale;
+
+            if (!empty($riga['idritenutaacconto'])) {
+                $dettaglio['Ritenuta'] = 'SI';
+            }
 
             if (empty($percentuale)) {
                 $dettaglio['Natura'] = $iva['codice_natura_fe'];
@@ -497,7 +542,7 @@ class FatturaElettronica
         $rapportino_nome = sanitizeFilename($documento['numero'].'.pdf');
         $filename = slashes(DOCROOT.'/'.$dir.'/'.$rapportino_nome);
 
-        $print = Prints::getModuleMainPrint($id_module);
+        $print = Prints::getModulePredefinedPrint($id_module);
 
         Prints::render($print['id'], $documento['id'], $filename);
 

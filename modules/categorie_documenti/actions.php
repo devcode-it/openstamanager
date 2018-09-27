@@ -7,7 +7,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
 
         // Verifico che il nome non sia duplicato
-        $count = $dbo->fetchNum('SELECT descrizione FROM zz_documenti_categorie WHERE descrizione='.prepare($descrizione).' AND deleted = 0');
+        $count = $dbo->fetchNum('SELECT descrizione FROM zz_documenti_categorie WHERE descrizione='.prepare($descrizione).' AND deleted_at IS NULL');
         if ($count != 0) {
             flash()->error(tr('Categoria _NAME_ già esistente!', [
                 '_NAME_' => $descrizione,
@@ -27,7 +27,7 @@ switch (post('op')) {
 
         if (isset($_POST['descrizione'])) {
             // Verifico che il nome non sia duplicato
-            $count = $dbo->fetchNum('SELECT descrizione FROM zz_documenti_categorie WHERE descrizione='.prepare($descrizione).' AND deleted = 0');
+            $count = $dbo->fetchNum('SELECT descrizione FROM zz_documenti_categorie WHERE descrizione='.prepare($descrizione).' AND deleted_at IS NULL');
             if ($count != 0) {
                 flash()->error(tr('Categoria _NAME_ già esistente!', [
                     '_NAME_' => $descrizione,
@@ -45,7 +45,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->query('UPDATE zz_documenti_categorie SET deleted=1 WHERE id = '.prepare($id_record));
+        $dbo->query('UPDATE zz_documenti_categorie SET deleted_at = NOW() WHERE id = '.prepare($id_record));
 
         flash()->info(tr('Categoria docimenti eliminata!'));
 

@@ -3,7 +3,16 @@
 include_once __DIR__.'/../../core.php';
 
 // Lettura info ddt
-$q = 'SELECT *, (SELECT dir FROM dt_tipiddt WHERE id=idtipoddt) AS dir, (SELECT descrizione FROM dt_tipiddt WHERE id=idtipoddt) AS tipo_doc, (SELECT descrizione FROM dt_causalet WHERE id=idcausalet) AS causalet, (SELECT descrizione FROM dt_porto WHERE id=idporto) AS porto, (SELECT descrizione FROM dt_aspettobeni WHERE id=idaspettobeni) AS aspettobeni, (SELECT descrizione FROM dt_spedizione WHERE id=idspedizione) AS spedizione, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idvettore) AS vettore FROM dt_ddt WHERE id='.prepare($id_record);
+$q = 'SELECT *,
+    (SELECT dir FROM dt_tipiddt WHERE id=idtipoddt) AS dir,
+    (SELECT descrizione FROM dt_tipiddt WHERE id=idtipoddt) AS tipo_doc,
+    (SELECT descrizione FROM dt_causalet WHERE id=idcausalet) AS causalet,
+    (SELECT descrizione FROM co_pagamenti WHERE id=idpagamento) AS tipo_pagamento,
+    (SELECT descrizione FROM dt_porto WHERE id=idporto) AS porto,
+    (SELECT descrizione FROM dt_aspettobeni WHERE id=idaspettobeni) AS aspettobeni,
+    (SELECT descrizione FROM dt_spedizione WHERE id=idspedizione) AS spedizione,
+    (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idvettore) AS vettore
+FROM dt_ddt WHERE id='.prepare($id_record);
 $records = $dbo->fetchArray($q);
 
 $module_name = ($records[0]['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';

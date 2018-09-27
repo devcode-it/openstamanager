@@ -38,16 +38,15 @@ if (Auth::check()) {
 		<script>
             search = []';
 
-    $array = [];
-    foreach ($_SESSION as $idx1 => $arr2) {
-        if ($idx1 == 'module_'.$id_module) {
-            foreach ($arr2 as $field => $value) {
-                if (!empty($value) && starts_with($field, 'search_')) {
-                    $field_name = str_replace('search_', '', $field);
-                    echo '
+    $array = $_SESSION['module_'.$id_module];
+    if (!empty($array)) {
+        foreach ($array as $field => $value) {
+            if (!empty($value) && starts_with($field, 'search_')) {
+                $field_name = str_replace('search_', '', $field);
+
+                echo '
             search.push("search_'.$field_name.'");
             search["search_'.$field_name.'"] = "'.$value.'";';
-                }
             }
         }
     }

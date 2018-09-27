@@ -20,7 +20,7 @@ if (get('anteprima') !== null) {
     // Gestione della stampa
     $rapportino_nome = sanitizeFilename('Rapportino'.$rs[0]['codice'].'.pdf');
     $filename = $docroot.'/files/interventi/'.$rapportino_nome;
-    $id_print = setting('Stampa per anteprima e firma intervento');
+    $id_print = setting('Stampa per anteprima e firma');
 
     // HTML per la visualizzazione
     echo '

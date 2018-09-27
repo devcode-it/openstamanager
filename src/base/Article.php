@@ -9,11 +9,9 @@ abstract class Article extends Row
 {
     protected $serialRowID = 'documento';
 
-    abstract public function movimenta($qta);
-
     protected static function boot()
     {
-        parent::boot();
+        parent::boot(true);
 
         static::addGlobalScope('articles', function (Builder $builder) {
             $builder->whereNotNull('idarticolo')->where('idarticolo', '<>', 0);
@@ -22,7 +20,7 @@ abstract class Article extends Row
 
     public static function new(Original $articolo)
     {
-        $model = parent::new();
+        $model = parent::new(true);
 
         $model->articolo()->associate($articolo);
 
@@ -33,6 +31,13 @@ abstract class Article extends Row
         return $model;
     }
 
+    abstract public function movimenta($qta);
+
+    /**
+     * Imposta i seriali collegati all'articolo del documento.
+     *
+     * @param array $serials
+     */
     public function setSerials($serials)
     {
         database()->sync('mg_prodotti', [
@@ -44,6 +49,11 @@ abstract class Article extends Row
         ]);
     }
 
+    /**
+     * Restituisce l'elenco dei seriali collegati all'articolo del documento.
+     *
+     * @return array
+     */
     public function getSerialsAttribute()
     {
         if (empty($this->abilita_serial)) {
@@ -52,14 +62,20 @@ abstract class Article extends Row
 
         // Individuazione dei seriali
         $list = database()->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_'.$this->serialRowID.' = '.prepare($this->id));
+
         return array_column($list, 'serial');
     }
 
+    /**
+     * Modifica la quantità dell'articolo e movimenta automaticamente il magazzino.
+     *
+     * @param double $value
+     */
     public function setQtaAttribute($value)
     {
         $previous = $this->qta;
 
-        $this->attributes['qta'] = $value;
+        parent::setQtaAttribute($value);
 
         $diff = $value - $previous;
         $this->movimenta($diff);

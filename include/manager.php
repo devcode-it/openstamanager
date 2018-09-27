@@ -68,9 +68,9 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
     $(document).ready(function () {
     	$("#id_segment_").on("change", function(){
     		if ($(this).val() < 1){
-    			session_set("m'.$id_module.',id_segment", "", 1, 1);
+    			session_set("module_'.$id_module.',id_segment", "", 1, 1);
     		} else {
-    			session_set("m'.$id_module.',id_segment", $(this).val(), 0, 1);
+    			session_set("module_'.$id_module.',id_segment", $(this).val(), 0, 1);
     		}
       });
     });
@@ -110,7 +110,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
         }
 
         echo '
-                <th'.$attr_td.' id="th_'.str_replace([' ', '.'], ['-', ''], $name).'"';
+                <th'.$attr_td.' id="th_'.searchFieldName($name).'"';
         if ($total['search'][$key] == 1) {
             echo ' class="search"';
         } else {

@@ -14,8 +14,8 @@ class Articolo extends Article
      * Crea una nuova riga collegata ad un intervento.
      *
      * @param Intervento $intervento
-     * @param Original $articolo
-     * @param int $id_automezzo
+     * @param Original   $articolo
+     * @param int        $id_automezzo
      *
      * @return self
      */
@@ -75,6 +75,26 @@ class Articolo extends Article
                 'idintervento' => $intervento->id,
             ]);
         }
+    }
+
+    public function fixIvaIndetraibile()
+    {
+        $iva = database()->fetchOne('SELECT * FROM co_iva WHERE id = :id_iva', [
+            ':id_iva' => $this->idiva,
+        ]);
+
+        $this->iva_indetraibile = $this->iva / 100 * $iva['indetraibile'];
+    }
+    public function setCostoUnitarioAttribute($value)
+    {
+        $this->prezzo_vendita = $value;
+
+        $this->fixSubtotale();
+    }
+
+    public function getCostoUnitarioAttribute($value)
+    {
+        return $this->prezzo_vendita;
     }
 
     public function getSubtotaleAttribute()

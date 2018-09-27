@@ -7,8 +7,19 @@ if (file_exists(__DIR__.'/../../../core.php')) {
 }
 
 use Util\Zip;
+use Modules\Fatture\Fattura;
+use Modules\Fatture\Tipo;
+use Modules\Anagrafiche\Anagrafica;
 
 include_once Modules::filepath('Fatture di vendita', 'modutil.php');
+
+// Segmenti
+$id_fatture = Modules::get('Fatture di vendita')['id'];
+if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
+    $segments = Modules::getSegments($id_fatture);
+    $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
+}
+$id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
 
 switch (post('op')) {
     case 'export-bulk':
@@ -34,7 +45,7 @@ switch (post('op')) {
                 $rapportino_nome = sanitizeFilename($numero.' '.date('Y_m_d', strtotime($r['data_richiesta'])).' '.$r['ragione_sociale'].'.pdf');
                 $filename = slashes($dir.'tmp/'.$rapportino_nome);
 
-                $print = Prints::getModuleMainPrint($id_module);
+                $print = Prints::getModulePredefinedPrint($id_module);
 
                 Prints::render($print['id'], $r['id'], $filename);
             }
@@ -62,27 +73,15 @@ switch (post('op')) {
 
         $data = date('Y-m-d');
         $dir = 'entrata';
-        $tipo_documento = $dbo->selectOne('co_tipidocumento', 'id', ['descrizione' => 'Fattura immediata di vendita'])['id'];
+        $tipo_documento = Tipo::where('descrizione', 'Fattura immediata di vendita')->first();
 
         $id_iva = setting('Iva predefinita');
         $id_conto = setting('Conto predefinito fatture di vendita');
 
         $accodare = post('accodare');
+        $id_segment = post('id_segment');
 
-        $module_name = 'Fatture di vendita';
-
-        // Segmenti
-        $id_fatture = Modules::get($module_name)['id'];
-        if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
-            $segments = Modules::getSegments($id_fatture);
-            $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
-        }
-        $id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
-
-        $interventi = $dbo->fetchArray('SELECT *, IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id), in_interventi.data_richiesta) AS data, in_statiintervento.descrizione AS stato FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE in_statiintervento.completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND in_interventi.id NOT IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) AND in_interventi.id IN ('.implode(',', $id_records).')');
-
-        $stato = $dbo->fetchOne("SELECT `id` FROM `co_statidocumento` WHERE `descrizione` = 'Bozza'")['id'];
-        $sede = $dbo->fetchOne('SELECT IFNULL(idsede_fatturazione, 0) AS id_sede FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica))['id_sede'];
+        $interventi = $dbo->fetchArray('SELECT *, IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id), in_interventi.data_richiesta) AS data, in_statiintervento.descrizione AS stato FROM in_interventi INNER JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.idstatointervento WHERE in_statiintervento.completato=1 AND in_interventi.id NOT IN (SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND in_interventi.id_preventivo IS NULL AND in_interventi.id NOT IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) AND in_interventi.id IN ('.implode(',', $id_records).')');
 
         // Lettura righe selezionate
         foreach ($interventi as $intervento) {
@@ -100,38 +99,11 @@ switch (post('op')) {
                 }
 
                 if (empty($id_documento)) {
-                    $numero = get_new_numerofattura($data);
-                    $numero_esterno = get_new_numerosecondariofattura($data);
+                    $anagrafica = Anagrafica::find($id_anagrafica);
+                    $fattura = Fattura::new($anagrafica, $tipo_documento, $data, $id_segment);
 
-                    $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
-
-                    // Tipo di pagamento predefinito dall'anagrafica
-                    $query = 'SELECT id FROM co_pagamenti WHERE id=(SELECT '.$campo.' AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica).')';
-                    $rs = $dbo->fetchArray($query);
-                    $idpagamento = $rs[0]['id'];
-
-                    // Se alla non è stato associato un pagamento predefinito al cliente, leggo il pagamento dalle impostazioni
-                    if (empty($idpagamento)) {
-                        $idpagamento = setting('Tipo di pagamento predefinito');
-                    }
-
-                    // Creazione nuova fattura
-                    $dbo->insert('co_documenti', [
-                        'numero' => $numero,
-                        'numero_esterno' => $numero_esterno,
-                        'idanagrafica' => $id_anagrafica,
-                        'idconto' => $id_conto,
-                        'idtipodocumento' => $tipo_documento,
-                        'idpagamento' => $idpagamento,
-                        'data' => $data,
-                        'id_segment' => $id_segment,
-                        'idstatodocumento' => $stato,
-                        'idsede' => $sede,
-                    ]);
-
-                    $id_documento = $dbo->lastInsertedID();
+                    $id_documento = $fattura->id;
                     $id_documento_cliente[$id_anagrafica] = $id_documento;
-                    ++$totale_n_ddt;
                 }
             }
 
@@ -172,7 +144,8 @@ return [
         'text' => tr('Crea fattura'),
         'data' => [
             'title' => tr('Vuoi davvero generare le fatture per questi interventi?'),
-            'msg' => '<br>{[ "type": "checkbox", "placeholder": "'.tr('Aggiungere alle fatture esistenti non ancora emesse?').'", "name": "accodare" ]}',
+            'msg' => '<br>{[ "type": "checkbox", "placeholder": "'.tr('Aggiungere alle fatture esistenti non ancora emesse?').'", "name": "accodare" ]}
+            <br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' AND is_fiscale = 1 ORDER BY name", "value": "'.$id_segment.'" ]}',
             'button' => tr('Crea fatture'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,

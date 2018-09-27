@@ -17,6 +17,11 @@ switch (post('op')) {
         break;
 
     case 'update':
+        $predefined = post('predefined');
+        if (!empty($predefined)) {
+            $dbo->query('UPDATE zz_smtps SET predefined = 0');
+        }
+
         $dbo->update('zz_smtps', [
             'name' => post('name'),
             'note' => post('note'),
@@ -28,12 +33,8 @@ switch (post('op')) {
             'from_address' => post('from_address'),
             'encryption' => post('encryption'),
             'pec' => post('pec'),
-            'main' => post('main'),
+            'predefined' => $predefined,
         ], ['id' => $id_record]);
-
-        if (!empty(post('main'))) {
-            $dbo->query('UPDATE zz_smtps SET main = 0 WHERE id != '.prepare($id_record));
-        }
 
         flash()->info(tr('Informazioni salvate correttamente!'));
 

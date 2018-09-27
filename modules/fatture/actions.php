@@ -3,9 +3,11 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Fatture\Fattura;
-use Modules\Fatture\Articolo;
-use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Fatture\Tipo;
+use Modules\Fatture\Articolo;
+use Modules\Fatture\Riga;
+use Modules\Fatture\Descrizione;
+use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Anagrafiche\Anagrafica;
 
 // Necessaria per la funzione add_movimento_magazzino
@@ -55,8 +57,8 @@ switch (post('op')) {
             if ($dir == 'uscita') {
                 $data = [
                     'numero' => post('numero'),
-                    'idrivalsainps' => post('idrivalsainps'),
-                    'idritenutaacconto' => post('idritenutaacconto'),
+                    'idrivalsainps' => post('id_rivalsa_inps'),
+                    'idritenutaacconto' => post('id_ritenuta_acconto'),
                 ];
             }
 
@@ -250,16 +252,11 @@ switch (post('op')) {
 
     case 'addintervento':
         if (!empty($id_record) && post('idintervento') !== null) {
-            $idintervento = post('idintervento');
-            $descrizione = post('descrizione');
-            $idiva = post('idiva');
-            $idconto = post('idconto');
+            aggiungi_intervento_in_fattura(post('idintervento'), $id_record, post('descrizione'), post('idiva'), post('idconto'), post('id_rivalsa_inps'), post('id_ritenuta_acconto'), post('calcolo_ritenuta_acconto'));
 
-            aggiungi_intervento_in_fattura($idintervento, $id_record, $descrizione, $idiva, $idconto);
-
-            $_SESSION['infos'][] = tr('Intervento _NUM_ aggiunto!', [
+            flash()->info(tr('Intervento _NUM_ aggiunto!', [
                 '_NUM_' => $idintervento,
-            ]);
+            ]));
         }
         break;
 
@@ -480,110 +477,91 @@ switch (post('op')) {
         }
         break;
 
-    case 'addarticolo':
-        if (!empty($id_record) && post('idarticolo') !== null) {
-            $qta = post('qta');
-            if (!empty($record['is_reversed'])) {
-                $qta = -$qta;
-            }
-
-            $originale = ArticoloOriginale::find(post('idarticolo'));
-            $articolo = Articolo::new($fattura, $originale);
-
-            $articolo->descrizione = post('descrizione');
-            $um = post('um');
-            if (!empty($um)) {
-                $articolo->um = $um;
-            }
-
-            $articolo->id_iva = post('idiva');
-            $articolo->idconto = post('idconto');
-
-            $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenutaacconto');
-            $articolo->id_ritenuta_acconto = post('idritenutaacconto');
-
-            $articolo->setSubtotale(post('prezzo'), $qta);
-            $articolo->sconto_unitario = post('sconto');
-            $articolo->tipo_sconto = post('tipo_sconto');
-
-            $articolo->save();
-            //add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva, $qta, $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto, '0', $idconto, $idum, $idrivalsainps, $idritenutaacconto, $calcolo_ritenutaacconto);
-
-            ricalcola_costiagg_fattura($id_record);
-
-            flash()->info(tr('Articolo aggiunto!'));
+    case 'add_articolo':
+        $qta = post('qta');
+        if (!empty($record['is_reversed'])) {
+            $qta = -$qta;
         }
+
+        $originale = ArticoloOriginale::find(post('idarticolo'));
+        $articolo = Articolo::new($fattura, $originale);
+
+        $articolo->descrizione = post('descrizione');
+        $um = post('um');
+        if (!empty($um)) {
+            $articolo->um = $um;
+        }
+
+        $articolo->id_iva = post('idiva');
+        $articolo->idconto = post('idconto');
+
+        if (post('id_ritenuta_acconto')) {
+            $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto');
+            $articolo->id_ritenuta_acconto = post('id_ritenuta_acconto');
+        }
+        if (post('id_rivalsa_inps')) {
+            $articolo->id_rivalsa_inps = post('id_rivalsa_inps');
+        }
+
+        $articolo->costo_unitario = post('prezzo');
+        $articolo->qta = $qta;
+        $articolo->sconto_unitario = post('sconto');
+        $articolo->tipo_sconto = post('tipo_sconto');
+
+        $articolo->save();
+
+        ricalcola_costiagg_fattura($id_record);
+
+        flash()->info(tr('Articolo aggiunto!'));
+
         break;
 
-    case 'addriga':
-        if (!empty($id_record)) {
-            // Selezione costi da intervento
-            $descrizione = post('descrizione');
-            $idiva = post('idiva');
-            $idconto = post('idconto');
-            $um = post('um');
-            $calcolo_ritenutaacconto = post('calcolo_ritenutaacconto');
-
-            $qta = post('qta');
-            if (!empty($record['is_reversed'])) {
-                $qta = -$qta;
-            }
-
-            $prezzo = post('prezzo');
-
-            // Calcolo dello sconto
-            $sconto_unitario = post('sconto');
-            $tipo_sconto = post('tipo_sconto');
-            $sconto = calcola_sconto([
-                'sconto' => $sconto_unitario,
-                'prezzo' => $prezzo,
-                'tipo' => $tipo_sconto,
-                'qta' => $qta,
-            ]);
-
-            $subtot = $prezzo * $qta;
-
-            // Calcolo iva
-            $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
-            $rs = $dbo->fetchArray($query);
-            $iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
-            $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
-            $desc_iva = $rs[0]['descrizione'];
-
-            // Calcolo rivalsa inps
-            $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(post('idrivalsainps'));
-            $rs = $dbo->fetchArray($query);
-            $rivalsainps = ($prezzo * $qta - $sconto) / 100 * $rs[0]['percentuale'];
-
-            // Calcolo ritenuta d'acconto
-            $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(post('idritenutaacconto'));
-            $rs = $dbo->fetchArray($query);
-            if ($calcolo_ritenutaacconto == 'Imponibile') {
-                $ritenutaacconto = (($prezzo * $qta) - $sconto) / 100 * $rs[0]['percentuale'];
-            } else {
-                $ritenutaacconto = (($prezzo * $qta) - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
-            }
-
-            // Aggiunta riga generica sul documento
-            $query = 'INSERT INTO co_righe_documenti(iddocumento, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, is_descrizione, `order`) VALUES('.prepare($id_record).', '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', '.prepare(post('idrivalsainps')).', '.prepare($rivalsainps).', '.prepare(post('idritenutaacconto')).', '.prepare($ritenutaacconto).', '.prepare(post('calcolo_ritenutaacconto')).', '.prepare(empty($qta)).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
-            $dbo->query($query);
-
-            // Messaggi informativi
-            if (!empty($idarticolo)) {
-                flash()->info(tr('Articolo aggiunto!'));
-            } elseif (!empty($qta)) {
-                flash()->info(tr('Riga aggiunta!'));
-            } else {
-                flash()->info(tr('Riga descrittiva aggiunta!'));
-            }
-
-            // Ricalcolo inps, ritenuta e bollo
-            if ($dir == 'entrata') {
-                ricalcola_costiagg_fattura($id_record);
-            } else {
-                ricalcola_costiagg_fattura($id_record);
-            }
+    case 'add_riga':
+        $qta = post('qta');
+        if (!empty($record['is_reversed'])) {
+            $qta = -$qta;
         }
+
+        $riga = Riga::new($fattura);
+
+        $riga->descrizione = post('descrizione');
+        $um = post('um');
+        if (!empty($um)) {
+            $riga->um = $um;
+        }
+
+        $riga->id_iva = post('idiva');
+        $riga->idconto = post('idconto');
+
+        if (post('id_ritenuta_acconto')) {
+            $riga->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto');
+            $riga->id_ritenuta_acconto = post('id_ritenuta_acconto');
+        }
+        if (post('id_rivalsa_inps')) {
+            $riga->id_rivalsa_inps = post('id_rivalsa_inps');
+        }
+
+        $riga->costo_unitario = post('prezzo');
+        $riga->qta = $qta;
+        $riga->sconto_unitario = post('sconto');
+        $riga->tipo_sconto = post('tipo_sconto');
+
+        $riga->save();
+
+        flash()->info(tr('Riga aggiunta!'));
+
+        // Ricalcolo inps, ritenuta e bollo
+        ricalcola_costiagg_fattura($id_record);
+
+        break;
+
+    case 'add_descrizione':
+        $riga = Descrizione::new($fattura);
+        $riga->descrizione = post('descrizione');
+        $riga->save();
+
+        flash()->info(tr('Riga descrittiva aggiunta!'));
+
         break;
 
     case 'editriga':
@@ -594,7 +572,7 @@ switch (post('op')) {
             $idiva = post('idiva');
             $idconto = post('idconto');
             $um = post('um');
-            $calcolo_ritenutaacconto = post('calcolo_ritenutaacconto');
+            $calcolo_ritenutaacconto = post('calcolo_ritenuta_acconto');
 
             $qta = post('qta');
             if (!empty($record['is_reversed'])) {
@@ -652,12 +630,12 @@ switch (post('op')) {
             $desc_iva = $rs[0]['descrizione'];
 
             // Calcolo rivalsa inps
-            $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(post('idrivalsainps'));
+            $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(post('id_rivalsa_inps'));
             $rs = $dbo->fetchArray($query);
             $rivalsainps = ($prezzo * $qta - $sconto) / 100 * $rs[0]['percentuale'];
 
             // Calcolo ritenuta d'acconto
-            $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(post('idritenutaacconto'));
+            $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(post('id_ritenuta_acconto'));
             $rs = $dbo->fetchArray($query);
             if ($calcolo_ritenutaacconto == 'Imponibile') {
                 $ritenutaacconto = (($prezzo * $qta) - $sconto) / 100 * $rs[0]['percentuale'];
@@ -667,7 +645,7 @@ switch (post('op')) {
 
             if ($is_descrizione == 0) {
                 // Modifica riga generica sul documento
-                $query = 'UPDATE co_righe_documenti SET idconto='.prepare($idconto).', idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', idritenutaacconto='.prepare(post('idritenutaacconto')).', ritenutaacconto='.prepare($ritenutaacconto).', idrivalsainps='.prepare(post('idrivalsainps')).', rivalsainps='.prepare($rivalsainps).', calcolo_ritenutaacconto='.prepare(post(calcolo_ritenutaacconto)).', qta='.prepare($qta).' WHERE id='.prepare($idriga).' AND iddocumento='.prepare($iddocumento);
+                $query = 'UPDATE co_righe_documenti SET idconto='.prepare($idconto).', idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', idritenutaacconto='.prepare(post('id_ritenuta_acconto')).', ritenutaacconto='.prepare($ritenutaacconto).', idrivalsainps='.prepare(post('id_rivalsa_inps')).', rivalsainps='.prepare($rivalsainps).', calcolo_ritenutaacconto='.prepare(post(calcolo_ritenutaacconto)).', qta='.prepare($qta).' WHERE id='.prepare($idriga).' AND iddocumento='.prepare($iddocumento);
             } else {
                 // Modifica riga descrizione sul documento
                 $query = 'UPDATE co_righe_documenti SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga).' AND iddocumento='.prepare($iddocumento);

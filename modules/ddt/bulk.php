@@ -4,6 +4,26 @@ include_once __DIR__.'/../../core.php';
 
 include_once Modules::filepath('Fatture di vendita', 'modutil.php');
 
+use Modules\Fatture\Fattura;
+use Modules\Fatture\Tipo;
+use Modules\Anagrafiche\Anagrafica;
+
+if ($module['name'] == 'Ddt di vendita') {
+    $dir = 'entrata';
+    $module_name = 'Fatture di vendita';
+} else {
+    $dir = 'uscita';
+    $module_name = 'Fatture di acquisto';
+}
+
+// Segmenti
+$id_fatture = Modules::get($module_name)['id'];
+if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
+    $segments = Modules::getSegments($id_fatture);
+    $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
+}
+$id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
+
 switch (post('op')) {
     case 'crea_fattura':
         $id_documento_cliente = [];
@@ -11,28 +31,16 @@ switch (post('op')) {
 
         // Informazioni della fattura
         if ($dir == 'entrata') {
-            $tipo_documento = $dbo->selectOne('co_tipidocumento', 'id', ['descrizione' => 'Fattura immediata di vendita'])['id'];
-            $module_name = 'Fatture di vendita';
-            $idconto = setting('Conto predefinito fatture di vendita');
+            $tipo_documento = 'Fattura immediata di vendita';
         } else {
-            $tipo_documento = $dbo->selectOne('co_tipidocumento', 'id', ['descrizione' => 'Fattura immediata di acquisto'])['id'];
-            $module_name = 'Fatture di acquisto';
-            $idconto = setting('Conto predefinito fatture di acquisto');
+            $tipo_documento = 'Fattura immediata di acquisto';
         }
+
+        $tipo_documento = Tipo::where('descrizione', $tipo_documento)->first();
 
         $idiva = setting('Iva predefinita');
         $data = date('Y-m-d');
-
-        // Segmenti
-        $id_fatture = Modules::get($module_name)['id'];
-        if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
-            $segments = Modules::getSegments($id_fatture);
-            $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
-        }
-        $id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
-
-        $stato = $dbo->fetchOne("SELECT `id` FROM `co_statidocumento` WHERE `descrizione` = 'Bozza'")['id'];
-        $sede = $dbo->fetchOne('SELECT IFNULL(idsede_fatturazione, 0) AS id_sede FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica))['id_sede'];
+        $id_segment = post('id_segment');
 
         // Lettura righe selezionate
         foreach ($id_records as $id) {
@@ -43,43 +51,15 @@ switch (post('op')) {
             // Proseguo solo se i ddt scelti sono fatturabili
             if (!empty($righe)) {
                 $id_documento = $id_documento_cliente[$id_anagrafica];
+                ++$totale_n_ddt;
 
                 // Se non c'è già una fattura appena creata per questo cliente, creo una fattura nuova
                 if (empty($id_documento)) {
-                    $numero = get_new_numerofattura($data);
-                    $numero_esterno = get_new_numerosecondariofattura($data);
+                    $anagrafica = Anagrafica::find($id_anagrafica);
+                    $fattura = Fattura::new($anagrafica, $tipo_documento, $data, $id_segment);
 
-                    $idconto = setting('Conto predefinito fatture di vendita');
-
-                    $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
-
-                    // Tipo di pagamento predefinito dall'anagrafica
-                    $query = 'SELECT id FROM co_pagamenti WHERE id=(SELECT '.$campo.' AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica).')';
-                    $rs = $dbo->fetchArray($query);
-                    $idpagamento = $rs[0]['id'];
-
-                    // Se alla non è stato associato un pagamento predefinito al cliente, leggo il pagamento dalle impostazioni
-                    if (empty($idpagamento)) {
-                        $idpagamento = setting('Tipo di pagamento predefinito');
-                    }
-
-                    // Creazione nuova fattura
-                    $dbo->insert('co_documenti', [
-                        'numero' => $numero,
-                        'numero_esterno' => $numero_esterno,
-                        'idanagrafica' => $id_anagrafica,
-                        'idconto' => $idconto,
-                        'idtipodocumento' => $tipo_documento,
-                        'idpagamento' => $idpagamento,
-                        'data' => $data,
-                        'id_segment' => $id_segment,
-                        'idstatodocumento' => $stato,
-                        'idsede' => $sede,
-                    ]);
-
-                    $id_documento = $dbo->lastInsertedID();
+                    $id_documento = $fattura->id;
                     $id_documento_cliente[$id_anagrafica] = $id_documento;
-                    ++$totale_n_ddt;
                 }
 
                 // Inserimento righe
@@ -158,7 +138,8 @@ $operations = [
     'crea_fattura' => [
         'text' => tr('Crea fattura'),
         'data' => [
-            'msg' => tr('Vuoi davvero creare una fattura per questi interventi?'),
+            'title' => tr('Vuoi davvero creare una fattura per questi interventi?'),
+            'msg' => '<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' AND is_fiscale = 1 ORDER BY name", "value": "'.$id_segment.'" ]}',
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,

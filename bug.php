@@ -151,7 +151,7 @@ echo '
         var html = "<p>'.tr('Se hai riscontrato un bug ricordati di specificare').':</p>" +
         "<ul>" +
             "<li>'.tr('Modulo esatto (o pagina relativa) in cui questi si è verificato').';</li>" +
-            "<li>'.tr('Dopo quali specifiche operazioni hai notato il malfunzionameto').'.</li>" +
+            "<li>'.tr('Dopo quali specifiche operazioni hai notato il malfunzionamento').'.</li>" +
         "</ul>" +
         "<p>'.tr('Assicurati inoltre di controllare che il checkbox relativo ai file di log sia contrassegnato, oppure riporta qui l\'errore visualizzato').'.</p>" +
         "<p>'.tr('Ti ringraziamo per il tuo contributo').',<br>" +

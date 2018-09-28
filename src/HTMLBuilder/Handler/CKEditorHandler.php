@@ -20,7 +20,8 @@ class CKEditorHandler implements HandlerInterface
             toolbar: globals.ckeditorToolbar,
             language: globals.locale,
             scayt_autoStartup: true,
-            scayt_sLang: globals.full_locale
+            scayt_sLang: globals.full_locale,
+            disableNativeSpellChecker: false,
         });
     </script>';
     }

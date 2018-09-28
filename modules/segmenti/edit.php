@@ -91,11 +91,11 @@ if (str_contains($current_module['option'], '|segment|')) {
 
 			<div class="row">
                 <div class="col-md-6">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di accredito'); ?>", "name": "predefined_accredito", "value": "$predefined_accredito$", "help": "<?php echo tr('Seleziona per rendere il sezionale predefinito per le note di accredito.'); ?>", "placeholder": "<?php echo tr('Sezionale predefinito per le note di accredito'); ?>"  ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di credito'); ?>", "name": "predefined_accredito", "value": "$predefined_accredito$", "help": "<?php echo tr('Seleziona per rendere il sezionale predefinito per le note di credito'); ?>", "placeholder": "<?php echo tr('Sezionale predefinito per le note di credito'); ?>"  ]}
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di addebito'); ?>", "name": "predefined_addebito", "value": "$predefined_addebito$", "help": "<?php echo tr('Seleziona per rendere il sezionale predefinito per le note di addebito.'); ?>", "placeholder": "<?php echo tr('Sezionale predefinito per le note di addebito'); ?>"  ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinito note di debito'); ?>", "name": "predefined_addebito", "value": "$predefined_addebito$", "help": "<?php echo tr('Seleziona per rendere il sezionale predefinito per le note di debito'); ?>", "placeholder": "<?php echo tr('Sezionale predefinito per le note di debito'); ?>"  ]}
                 </div>
 			</div>
 

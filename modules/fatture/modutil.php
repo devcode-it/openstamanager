@@ -818,7 +818,7 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
         }
     }
 
-    // Nota di accredito
+    // Nota di credito
     if (!empty($riga['ref_riga_documento'])) {
         $dbo->query('UPDATE co_righe_documenti SET qta_evasa = qta_evasa+'.$riga['qta'].' WHERE id='.prepare($riga['ref_riga_documento']));
 

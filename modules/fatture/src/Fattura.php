@@ -307,7 +307,7 @@ class Fattura extends Model
     }
 
     /**
-     * Restituisce l'elenco delle note di accredito collegate.
+     * Restituisce l'elenco delle note di credito collegate.
      *
      * @return array
      */
@@ -319,7 +319,7 @@ class Fattura extends Model
     }
 
     /**
-     * Controlla se la fattura è una nota di accredito.
+     * Controlla se la fattura è una nota di credito.
      *
      * @return bool
      */

@@ -414,7 +414,7 @@ include $docroot.'/modules/fatture/row-list.php';
 
 if (!empty($note_accredito)) {
     echo '
-<div class="alert alert-info text-center">'.tr('Note di accredito collegate').':';
+<div class="alert alert-info text-center">'.tr('Note di credito collegate').':';
     foreach ($note_accredito as $nota) {
         $text = tr('Rif. fattura _NUM_ del _DATE_', [
             '_NUM_' => $nota['numero'],

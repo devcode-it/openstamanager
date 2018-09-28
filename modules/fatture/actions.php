@@ -1254,15 +1254,18 @@ switch (post('op')) {
         $id_segment = post('id_segment');
         $data = post('data');
 
-        $numero = get_new_numerofattura($record['data']);
-        $numero_esterno = get_new_numerosecondariofattura($record['data']);
+        $anagrafica = $fattura->anagrafica()->first();
+        $tipo = Tipo::where('descrizione', 'Nota di credito')->where('dir', 'entrata')->first();
 
-        $rs = $dbo->fetchArray('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
-        $idconto = $rs[0]['idconto'];
+        $nota = Fattura::new($anagrafica, $tipo, $data, $id_segment);
+        $nota->ref_documento = $fattura->id;
+        $nota->idconto = $fattura->idconto;
+        $nota->idpagamento = $fattura->idpagamento;
+        $nota->idbanca = $fattura->idbanca;
+        $nota->idsede = $fattura->idsede;
+        $nota->save();
 
-        $ref_documento = $id_record;
-        $dbo->query('INSERT INTO co_documenti (numero, numero_esterno, ref_documento, idanagrafica, idconto, idtipodocumento, idpagamento, idbanca, data, idstatodocumento, idsede, id_segment) SELECT '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($ref_documento).', idanagrafica, idconto, (SELECT `id` FROM `co_tipidocumento` WHERE `descrizione`=\'Nota di accredito\' AND dir = \'entrata\'), idpagamento, idbanca, '.prepare($data).', (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`=\'Bozza\'), idsede, '.prepare($id_segment).' FROM co_documenti AS t WHERE id = '.prepare($id_record));
-        $id_record = $dbo->lastInsertedID();
+        $id_record = $nota->id;
 
         // Lettura di tutte le righe della tabella in arrivo
         foreach (post('qta_da_evadere') as $i => $value) {
@@ -1339,17 +1342,25 @@ switch (post('op')) {
 // Nota di debito
 if (get('op') == 'nota_addebito') {
     $rs_segment = $dbo->fetchArray("SELECT * FROM zz_segments WHERE predefined_addebito='1'");
-    if (sizeof($rs_segment) > 0) {
+    if (!empty($rs_segment)) {
         $id_segment = $rs_segment[0]['id'];
     } else {
         $id_segment = $record['id_segment'];
     }
 
-    $numero = get_new_numerofattura($record['data']);
-    $numero_esterno = get_new_numerosecondariofattura($record['data']);
+    $anagrafica = $fattura->anagrafica()->first();
+    $tipo = Tipo::where('descrizione', 'Nota di debito')->where('dir', 'entrata')->first();
+    $data = $fattura->data;
 
-    $dbo->query('INSERT INTO co_documenti (numero, numero_esterno, ref_documento, idanagrafica, idconto, idtipodocumento, idpagamento, idbanca, data, idstatodocumento, idsede, id_segment) SELECT '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($id_record).', idanagrafica, idconto, (SELECT `id` FROM `co_tipidocumento` WHERE `descrizione`=\'Nota di addebito\' AND dir = \'entrata\'), idpagamento, idbanca, data, (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`=\'Bozza\'), idsede, '.prepare($id_segment).' FROM co_documenti AS t WHERE id = '.prepare($id_record));
-    $id_record = $dbo->lastInsertedID();
+    $nota = Fattura::new($anagrafica, $tipo, $data, $id_segment);
+    $nota->ref_documento = $fattura->id;
+    $nota->idconto = $fattura->idconto;
+    $nota->idpagamento = $fattura->idpagamento;
+    $nota->idbanca = $fattura->idbanca;
+    $nota->idsede = $fattura->idsede;
+    $nota->save();
+
+    $id_record = $nota->id;
 }
 
 // Aggiornamento stato dei ddt presenti in questa fattura in base alle quantità totali evase

@@ -79,12 +79,17 @@ class Articolo extends Article
 
     public function fixIvaIndetraibile()
     {
+<<<<<<< HEAD
         $iva = database()->fetchOne('SELECT * FROM co_iva WHERE id = :id_iva', [
             ':id_iva' => $this->idiva,
         ]);
 
         $this->iva_indetraibile = $this->iva / 100 * $iva['indetraibile'];
     }
+=======
+    }
+
+>>>>>>> devcode-it-master
     public function setCostoUnitarioAttribute($value)
     {
         $this->prezzo_vendita = $value;
@@ -97,6 +102,17 @@ class Articolo extends Article
         return $this->prezzo_vendita;
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * Effettua i conti per il subtotale della riga.
+     */
+    protected function fixSubtotale()
+    {
+        $this->fixIva();
+    }
+
+>>>>>>> devcode-it-master
     public function getSubtotaleAttribute()
     {
         return $this->prezzo_vendita * $this->qta;

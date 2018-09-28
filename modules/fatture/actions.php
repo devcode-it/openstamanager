@@ -1334,6 +1334,12 @@ switch (post('op')) {
         }
 
         break;
+
+    case 'transform':
+        $fattura->id_segment = post('id_segment');
+        $fattura->save();
+
+        break;
 }
 
 // Nota di debito

@@ -526,3 +526,9 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'Nome' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche');
 UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'Filiale' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche');
 UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'IBAN' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche');
+<<<<<<< HEAD
+=======
+
+-- Fix Date emissione nello Scadenzario
+UPDATE `zz_views` SET `query` = 'data_emissione' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND name = 'Data emissione';
+>>>>>>> devcode-it-master

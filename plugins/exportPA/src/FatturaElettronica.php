@@ -330,7 +330,7 @@ class FatturaElettronica
         }
 
         if (!empty($id_ritenuta)) {
-            $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenutaacconto WHERE id = '.prepare($id_ritenuta));
+            $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenutaacconto WHERE id = '.prepare($id_ritenuta))['percentuale'];
 
             $result['DatiRitenuta'] = [
                 'TipoRitenuta' => ($azienda['tipo'] == 'Privato') ? 'RT01' : 'RT02',
@@ -341,6 +341,7 @@ class FatturaElettronica
         }
 
         // Bollo
+        $documento['bollo'] = floatval($documento['bollo']);
         if (!empty($documento['bollo'])) {
             $result['DatiBollo'] = [
                 'BolloVirtuale' => 'SI',
@@ -432,8 +433,8 @@ class FatturaElettronica
             $prezzo_unitario = $riga['subtotale'] / $riga['qta'];
             $prezzo_totale = $riga['subtotale'] - $riga['sconto'];
 
-            $iva = $database->fetchArray('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($riga['idiva']));
-            $percentuale = $iva[0]['percentuale'];
+            $iva = $database->fetchOne('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($riga['idiva']));
+            $percentuale = floatval($iva['percentuale']);
 
             $dettaglio = [
                 'NumeroLinea' => $numero + 1,

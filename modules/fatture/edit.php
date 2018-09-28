@@ -440,10 +440,10 @@ if (!empty($operations)) {
     foreach ($operations as $operation) {
         echo '
     <span class="label label-success pull-right">
-        '.tr('_EMAIL_ inviata il _DATE_ alle _HOUR_ da _USER_.', [
+        '.tr('Email "_EMAIL_" inviata il _DATE_ alle _HOUR_ da _USER_.', [
             '_EMAIL_' => $operation['email'],
-            '_DATE_' => Translator::dateToLocale($operation['data']),
-            '_HOUR_' => Translator::timeToLocale($operation['ora']),
+            '_DATE_' => Translator::dateToLocale($operation['created_at']),
+            '_HOUR_' => Translator::timeToLocale($operation['created_at']),
             '_USER_' => $operation['user'],
         ]).'
     </span><br>';

@@ -161,9 +161,9 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
             $this->IsSMTP(true);
 
             // Impostazioni di debug
-            $this->SMTPDebug = 4;
+            $this->SMTPDebug = App::debug() ? 2: 0;
             $this->Debugoutput = function ($str, $level) {
-                $this->infos[] = $str;
+                [] = $str;
             };
 
             // Impostazioni dell'host
@@ -216,14 +216,26 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
             $this->AltBody = strip_tags($this->Body);
         }
 
-        $result = parent::send();
+        $exception = null;
+        try {
+            $result = parent::send();
+        } catch (PHPMailer\PHPMailer\Exception $e) {
+            $result = false;
+            $exception = $e;
+        }
 
         $this->SmtpClose();
 
         // Segnalazione degli errori
-        $logger = logger();
-        foreach ($this->infos as $info) {
-            $logger->addRecord(\Monolog\Logger::ERROR, $info);
+        if (!$result) {
+            $logger = logger();
+            foreach ($this->infos as $info) {
+                $logger->addRecord(\Monolog\Logger::ERROR, $info);
+            }
+        }
+
+        if (!empty($exception)) {
+            throw $exception;
         }
 
         return $result;

@@ -163,7 +163,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
             // Impostazioni di debug
             $this->SMTPDebug = App::debug() ? 2: 0;
             $this->Debugoutput = function ($str, $level) {
-                [] = $str;
+                $this->infos[] = $str;
             };
 
             // Impostazioni dell'host

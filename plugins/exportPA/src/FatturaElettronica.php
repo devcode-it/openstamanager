@@ -330,7 +330,7 @@ class FatturaElettronica
         }
 
         if (!empty($id_ritenuta)) {
-            $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenutaacconto WHERE id = '.prepare($id_ritenuta));
+            $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenutaacconto WHERE id = '.prepare($id_ritenuta))['percentuale'];
 
             $result['DatiRitenuta'] = [
                 'TipoRitenuta' => ($azienda['tipo'] == 'Privato') ? 'RT01' : 'RT02',
@@ -341,6 +341,7 @@ class FatturaElettronica
         }
 
         // Bollo
+        $documento['bollo'] = floatval($documento['bollo']);
         if (!empty($documento['bollo'])) {
             $result['DatiBollo'] = [
                 'BolloVirtuale' => 'SI',
@@ -432,8 +433,8 @@ class FatturaElettronica
             $prezzo_unitario = $riga['subtotale'] / $riga['qta'];
             $prezzo_totale = $riga['subtotale'] - $riga['sconto'];
 
-            $iva = $database->fetchArray('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($riga['idiva']));
-            $percentuale = $iva[0]['percentuale'];
+            $iva = $database->fetchOne('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($riga['idiva']));
+            $percentuale = floatval($iva['percentuale']);
 
             $dettaglio = [
                 'NumeroLinea' => $numero + 1,
@@ -476,15 +477,26 @@ class FatturaElettronica
 
         // Riepiloghi per IVA
         // TODO: risolvere di conseguenza alla Natura IVA
-        // Domanda: come si interpreta la descrizione ufficiale?
-        $riepiloghi = $database->fetchArray('SELECT SUM(`subtotale` - `sconto`) as totale, SUM(`iva`) as iva, `idiva` FROM `co_righe_documenti` WHERE `iddocumento` = '.prepare($documento['id']).' GROUP BY `idiva`');
-        foreach ($riepiloghi as $riepilogo) {
-            $iva = $database->fetchArray('SELECT `percentuale` FROM `co_iva` WHERE `id` = '.prepare($riepilogo['idiva']));
-            $percentuale = $iva[0]['percentuale'];
-
+        $riepiloghi_percentuale = $database->fetchArray('SELECT SUM(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) as totale, SUM(`co_righe_documenti`.`iva`) as iva, `co_iva`.`percentuale` FROM `co_righe_documenti` INNER JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`idiva` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND
+        `co_iva`.`codice_natura_fe` IS NULL GROUP BY `co_iva`.`percentuale`');
+        foreach ($riepiloghi_percentuale as $riepilogo) {
             $result[] = [
                 'DatiRiepilogo' => [
-                    'AliquotaIVA' => $percentuale,
+                    'AliquotaIVA' => $riepilogo['percentuale'],
+                    'ImponibileImporto' => $riepilogo['totale'],
+                    'Imposta' => $riepilogo['iva'],
+                    'EsigibilitaIVA' => 'I',
+                ],
+            ];
+        }
+
+        $riepiloghi_natura = $database->fetchArray('SELECT SUM(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) as totale, SUM(`co_righe_documenti`.`iva`) as iva, `co_iva`.`codice_natura_fe` FROM `co_righe_documenti` INNER JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`idiva` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND
+        `co_iva`.`codice_natura_fe` IS NOT NULL GROUP BY `co_iva`.`codice_natura_fe`');
+        foreach ($riepiloghi_natura as $riepilogo) {
+            $result[] = [
+                'DatiRiepilogo' => [
+                    'AliquotaIVA' => 0,
+                    'Natura' => $riepilogo['codice_natura_fe'],
                     'ImponibileImporto' => $riepilogo['totale'],
                     'Imposta' => $riepilogo['iva'],
                     'EsigibilitaIVA' => 'I',

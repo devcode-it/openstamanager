@@ -34,10 +34,6 @@ class Fattura extends Model
 
         $database = database();
 
-        // Calcolo dei numeri fattura
-        $numero = static::getNumero($data, $direzione, $id_segment);
-        $numero_esterno = static::getNumeroSecondario($data, $direzione, $id_segment);
-
         if ($direzione == 'entrata') {
             $id_conto = setting('Conto predefinito fatture di vendita');
             $conto = 'vendite';
@@ -68,12 +64,16 @@ class Fattura extends Model
 
         $id_sede = $database->selectOne('an_anagrafiche', 'idsede_fatturazione', ['idanagrafica' => $id_anagrafica])['idsede_fatturazione'];
 
-        // Salvataggio delle informazioni
-        $model->numero = $numero;
-        $model->numero_esterno = $numero_esterno;
-        $model->data = $data;
+        $model->anagrafica()->associate($anagrafica);
+        $model->tipo()->associate($tipo_documento);
+        $model->stato()->associate($stato_documento);
 
+        $model->save();
+
+        // Salvataggio delle informazioni
+        $model->data = $data;
         $model->id_segment = $id_segment;
+
         $model->idconto = $id_conto;
         $model->idsede = $id_sede;
 
@@ -83,14 +83,32 @@ class Fattura extends Model
         if (!empty($id_banca)) {
             $model->idbanca = $id_banca;
         }
-
-        $model->anagrafica()->associate($anagrafica);
-        $model->tipo()->associate($tipo_documento);
-        $model->stato()->associate($stato_documento);
-
         $model->save();
 
         return $model;
+    }
+
+    /**
+     * Imposta il sezionale relativo alla fattura e calcola il relativo numero.
+     * **Attenzione**: la data deve inserita prima!
+     *
+     * @param [type] $value
+     * @return void
+     */
+    public function setIdSegmentAttribute($value)
+    {
+        $previous = $this->id_segment;
+
+        $this->attributes['id_segment'] = $value;
+
+        // Calcolo dei numeri fattura
+        if ($value != $previous) {
+            $direzione = $this->tipo()->dir;
+            $data = $this->data;
+
+            $this->numero = static::getNumero($data, $direzione, $value);
+            $this->numero_esterno = static::getNumeroSecondario($data, $direzione, $value);
+        }
     }
 
     /**

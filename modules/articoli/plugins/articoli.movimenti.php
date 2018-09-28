@@ -25,7 +25,7 @@ if ($rst[0]['row'] > 0) {
 }
 
 // Elenco movimenti magazzino
-$query = 'SELECT * FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' ORDER BY created_at DESC';
+$query = 'SELECT * FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' ORDER BY created_at DESC, id DESC';
 if (empty($_GET['show_all1'])) {
     $query .= ' LIMIT 0, 20';
 }

@@ -138,6 +138,8 @@ abstract class Row extends Description
     protected function fixSconto()
     {
         $this->attributes['sconto'] = $this->sconto;
+
+        $this->fixIva();
     }
 
     /**
@@ -192,6 +194,7 @@ abstract class Row extends Description
         $this->attributes['qta'] = $value;
 
         $this->fixSubtotale();
+        $this->fixSconto();
     }
 
     /**
@@ -204,6 +207,7 @@ abstract class Row extends Description
         $this->costo_unitario = $value;
 
         $this->fixSubtotale();
+        $this->fixSconto();
     }
 
     /**

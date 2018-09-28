@@ -120,7 +120,7 @@ class Prints
      */
     public static function render($print, $id_record, $filename = null)
     {
-        ob_end_clean();
+        //ob_end_clean(); // Compatibilità con versioni vecchie delle stampe
 
         $infos = self::get($print);
 

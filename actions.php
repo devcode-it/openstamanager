@@ -72,15 +72,15 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 } elseif (post('op') == 'send-email') {
     $id_template = post('template');
 
-    // Informazioni di log
-    Filter::set('get', 'id_email', $id_template);
-
     // Inizializzazione
     $mail = new Notifications\EmailNotification();
     $mail->setTemplate($id_template, $id_record);
 
     // Destinatari
     $receivers = post('destinatari');
+    $receivers = array_filter($receivers, function ($value) {
+        return !empty($value);
+    });
     $types = post('tipo_destinatari');
     foreach ($receivers as $key => $receiver) {
         $mail->addReceiver($receiver, $types[$key]);
@@ -119,6 +119,14 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     // Invio mail
     try {
         $mail->send(true); // Il valore true impone la gestione degli errori tramite eccezioni
+
+        // Informazioni di log
+        Filter::set('get', 'id_email', $id_template);
+        Filter::set('get', 'operations_options', [
+            'receivers' => $receivers,
+            'prints' => post('prints'),
+            'attachments' => post('attachments'),
+        ]);
 
         flash()->info(tr('Email inviata correttamente!'));
     } catch (PHPMailer\PHPMailer\Exception $e) {

@@ -251,7 +251,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 	</div>
 </form>
 
-{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>", <?php echo ($record['flag_completato']) ? '"readonly": 1' : '"readonly": 0'; ?> )}
+{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$", <?php echo ($record['flag_completato']) ? '"readonly": 1' : '"readonly": 0'; ?> )}
 
 <!-- EVENTUALE FIRMA GIA' EFFETTUATA -->
 <div class="text-center">
@@ -319,11 +319,11 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 		}
 	});
 
-
 </script>
 
-
 <script src="<?php echo $rootdir; ?>/modules/interventi/js/interventi_helperjs.js"></script>
+
+{( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <?php
 // Collegamenti diretti

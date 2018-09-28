@@ -74,7 +74,6 @@ $diritto_chiamata_cons = [];
 
 $idinterventi = ['0'];
 
-
 foreach ($interventi as $intervento) {
     // Lettura dati dei tecnici dell'intervento corrente
     $sessioni = $dbo->fetchArray('SELECT *, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico FROM in_interventi_tecnici WHERE idintervento='.prepare($intervento['id']));

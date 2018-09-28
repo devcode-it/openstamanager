@@ -824,7 +824,7 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
 
         if (!empty($riga['idarticolo'])) {
             $serials = array_column($serials, 'serial');
-            $serials = array_filter($serials, function ($value) { return !empty($value); });
+            $serials = array_clean($serials);
 
             $dbo->attach('mg_prodotti', ['id_riga_documento' => $riga['ref_riga_documento'], 'dir' => $dir, 'id_articolo' => $riga['idarticolo']], ['serial' => $serials]);
         }

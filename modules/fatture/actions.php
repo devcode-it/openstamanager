@@ -740,9 +740,7 @@ switch (post('op')) {
 
                     // Aggiornamento seriali dalla riga dell'ordine
                     $serials = is_array(post('serial')[$i]) ? post('serial')[$i] : [];
-                    $serials = array_filter($serials, function ($value) {
-                        return !empty($value);
-                    });
+                    $serials = array_clean($serials);
 
                     $dbo->sync('mg_prodotti', ['id_riga_documento' => $idriga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => $serials]);
                 }
@@ -823,9 +821,7 @@ switch (post('op')) {
 
                     // Aggiornamento seriali dalla riga dell'ordine
                     $serials = is_array(post('serial')[$i]) ? post('serial')[$i] : [];
-                    $serials = array_filter($serials, function ($value) {
-                        return !empty($value);
-                    });
+                    $serials = array_clean($serials);
 
                     $dbo->sync('mg_prodotti', ['id_riga_documento' => $riga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => $serials]);
 
@@ -1310,9 +1306,7 @@ switch (post('op')) {
 
                     // Aggiornamento seriali dalla riga dell'ordine
                     $serials = is_array(post('serial')[$i]) ? post('serial')[$i] : [];
-                    $serials = array_filter($serials, function ($value) {
-                        return !empty($value);
-                    });
+                    $serials = array_clean($serials);
 
                     $dbo->sync('mg_prodotti', ['id_riga_documento' => $riga, 'dir' => 'uscita', 'id_articolo' => $idarticolo], ['serial' => $serials]);
                     $dbo->detach('mg_prodotti', ['id_riga_documento' => $idriga, 'dir' => 'entrata', 'id_articolo' => $idarticolo], ['serial' => $serials]);

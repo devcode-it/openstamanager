@@ -77,10 +77,7 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
     $mail->setTemplate($id_template, $id_record);
 
     // Destinatari
-    $receivers = post('destinatari');
-    $receivers = array_filter($receivers, function ($value) {
-        return !empty($value);
-    });
+    $receivers = array_clean(post('destinatari'));
     $types = post('tipo_destinatari');
     foreach ($receivers as $key => $receiver) {
         $mail->addReceiver($receiver, $types[$key]);
@@ -172,9 +169,7 @@ if ($structure->permission == 'rw') {
     // Esecuzione delle operazioni di gruppo
     $id_records = post('id_records');
     $id_records = is_array($id_records) ? $id_records : explode(';', $id_records);
-    $id_records = array_filter($id_records, function ($var) {
-        return !empty($var);
-    });
+    $id_records = array_clean($id_records);
     $id_records = array_unique($id_records);
 
     $bulk = $structure->filepath('bulk.php');

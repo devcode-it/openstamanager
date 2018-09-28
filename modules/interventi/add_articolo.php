@@ -29,6 +29,7 @@ if (empty($idriga)) {
     $qta = 1;
     $um = '';
 
+    $prezzo_acquisto = '0';
     $prezzo_vendita = '0';
     $sconto_unitario = 0;
 
@@ -55,6 +56,7 @@ if (empty($idriga)) {
     $idiva = $rsr[0]['idiva'];
 
     $prezzo_vendita = $rsr[0]['prezzo_vendita'];
+    $prezzo_acquisto = $rsr[0]['prezzo_acquisto'];
 
     $sconto_unitario = $rsr[0]['sconto_unitario'];
     $tipo_sconto = $rsr[0]['tipo_sconto'];
@@ -92,8 +94,15 @@ echo '
         <div class="col-md-12">
             {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "id": "descrizione_articolo", "required": 1, "value": '.json_encode($descrizione).' ]}
         </div>
+    </div>';
+
+// Impianto
+echo '
+<div class="row">
+    <div class="col-md-12">
+        {[ "type": "select", "label": "'.tr('Impianto su cui installare').'", "name": "idimpianto", "value": "'.$idimpianto.'", "ajax-source": "impianti-intervento" ]}
     </div>
-    <br>';
+</div>';
 
 // Quantità
 echo '
@@ -108,24 +117,24 @@ echo '
             {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
         </div>';
 
-// Impianto
+// Iva
 echo '
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Impianto su cui installare').'", "name": "idimpianto", "value": "'.$idimpianto.'", "ajax-source": "impianti-intervento" ]}
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "ajax-source": "iva" ]}
         </div>
     </div>';
 
-// Iva
+// Prezzo di acquisto
 echo '
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "ajax-source": "iva" ]}
+            {[ "type": "number", "label": "'.tr('Prezzo di acquisto (un.)').'", "name": "prezzo_acquisto", "required": 1, "value": "'.$prezzo_acquisto.'", "icon-after": "&euro;" ]}
         </div>';
 
 // Prezzo di vendita
 echo '
         <div class="col-md-4">
-            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo_vendita", "required": 1, "value": "'.$prezzo_vendita.'", "icon-after": "&euro;" ]}
+            {[ "type": "number", "label": "'.tr('Prezzo di vendita (un.)').'", "name": "prezzo_vendita", "required": 1, "value": "'.$prezzo_vendita.'", "icon-after": "&euro;" ]}
         </div>';
 
 // Sconto
@@ -173,8 +182,9 @@ echo '
                 $data = $(this).selectData();
 
                 $("#prezzo_vendita").val($data.prezzo_vendita);
+                $("#prezzo_acquisto").val($data.prezzo_acquisto);
                 $("#descrizione_articolo").val($data.descrizione);
-                $("#idiva").selectSet($data.idiva_vendita, $data.iva_vendita);
+                $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita);
                 $("#um").selectSetNew($data.um, $data.um);
             }else{
                 $("#prezzi_articolo button").addClass("disabled");

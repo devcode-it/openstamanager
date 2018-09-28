@@ -267,7 +267,7 @@ switch (post('op')) {
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 $serials = is_array(post('serial')[$idriga]) ? post('serial')[$idriga] : [];
-                $serials = array_filter($serials, function ($value) { return !empty($value); });
+                $serials = array_clean($serials);
 
                 $dbo->sync('mg_prodotti', ['id_riga_ddt' => $riga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => $serials]);
 

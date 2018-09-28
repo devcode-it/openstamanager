@@ -527,6 +527,7 @@ switch (post('op')) {
         $articolo->qta = post('qta');
         $articolo->descrizione = post('descrizione');
         $articolo->prezzo_vendita = post('prezzo_vendita');
+        $articolo->prezzo_acquisto = post('prezzo_acquisto');
         $articolo->um = post('um');
 
         $articolo->sconto_unitario = post('sconto');

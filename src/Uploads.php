@@ -196,7 +196,7 @@ class Uploads
 
         $name = $database->selectOne('zz_files', ['name'], [
             'filename' => $filename,
-            'id_module' => !empty($data['id_module']) ? $data['id_module'] : null,
+            'id_module' => !empty($data['id_module']) && empty($data['id_plugin']) ? $data['id_module'] : null,
             'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
             'id_record' => $data['id_record'],
         ])['name'];
@@ -214,7 +214,7 @@ class Uploads
         if (delete($files)) {
             $database->delete('zz_files', [
                 'filename' => $fileinfo['basename'],
-                'id_module' => !empty($data['id_module']) ? $data['id_module'] : null,
+                'id_module' => !empty($data['id_module']) && empty($data['id_plugin']) ? $data['id_module'] : null,
                 'id_plugin' => !empty($data['id_plugin']) ? $data['id_plugin'] : null,
                 'id_record' => $data['id_record'],
             ]);

@@ -458,7 +458,9 @@ if (!empty($operations)) {
         '.tr('Nessuna email inviata al cliente.').'
     </span>';
 }
+=======
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
+>>>>>>> 8795ca508e88875da3d6448eec333a0acea702dd
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>

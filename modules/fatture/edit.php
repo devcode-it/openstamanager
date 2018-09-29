@@ -403,7 +403,7 @@ include $docroot.'/modules/fatture/row-list.php';
 	</div>
 </div>
 
-{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
+{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <script type="text/javascript">
 	$('#idanagrafica').change( function(){
@@ -417,7 +417,7 @@ include $docroot.'/modules/fatture/row-list.php';
 
 if (!empty($note_accredito)) {
     echo '
-<div class="alert alert-info text-center">'.tr('Note di accredito collegate').':';
+<div class="alert alert-info text-center">'.tr('Note di credito collegate').':';
     foreach ($note_accredito as $nota) {
         $text = tr('Rif. fattura _NUM_ del _DATE_', [
             '_NUM_' => $nota['numero'],
@@ -457,12 +457,11 @@ if (!empty($operations)) {
         '.tr('Nessuna email inviata al cliente.').'
     </span>';
 }
+{( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
-?>
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
-
 
 <?php
     echo '

@@ -45,7 +45,7 @@ abstract class Article extends Row
             'dir' => 'entrata',
             'id_articolo' => $this->idarticolo,
         ], [
-            'serial' => $serials,
+            'serial' => array_clean($serials),
         ]);
     }
 

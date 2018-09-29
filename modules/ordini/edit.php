@@ -136,7 +136,9 @@ if ($module['name'] == 'Ordini cliente') {
 	</div>
 </div>
 
-{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
+{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
+
+{( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <?php
 // Collegamenti diretti

@@ -433,6 +433,7 @@ if (!empty($note_accredito)) {
 
 ?>
 
+<<<<<<< HEAD
 <?php
 
 // Visualizzo il log delle operazioni di invio email

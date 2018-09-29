@@ -62,6 +62,7 @@ switch ($resource) {
             $results[count($results) - 1]['children'][] = [
                 'id' => $r['id'],
                 'text' => $r['codice'].' - '.$r['descrizione'],
+                'codice' => $r['codice'],
                 'descrizione' => $r['descrizione'],
                 'um' => $r['um'],
                 'idiva_vendita' => $idiva,

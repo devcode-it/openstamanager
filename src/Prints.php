@@ -126,7 +126,7 @@ class Prints
 
         $modutil = Modules::filepath($infos['id_module'], 'modutil.php');
         if (!empty($modutil)) {
-            include $modutil;
+            include_once $modutil;
         }
 
         Permissions::addModule($infos['id_module']);

@@ -154,7 +154,7 @@ echo '
 
                 $("#prezzo_vendita").val($data.prezzo_vendita);
                 $("#descrizione_articolo").val($data.descrizione);
-                $("#idiva").selectSet($data.idiva_vendita, $data.iva_vendita);
+                $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita);
                 $("#um").selectSetNew($data.um, $data.um);
             }else{
                 $("#prezzi_articolo button").addClass("disabled");

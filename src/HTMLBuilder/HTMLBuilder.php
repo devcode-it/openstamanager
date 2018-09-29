@@ -79,6 +79,7 @@ class HTMLBuilder
             'csrf' => Manager\CSRFManager::class,
             'custom_fields' => Manager\FieldManager::class,
             'widgets' => Manager\WidgetManager::class,
+            'log_email' => Manager\EmailManager::class,
         ],
         'instances' => [],
     ];

@@ -264,7 +264,7 @@ if (!empty($google)) {
           <div class="col-md-6">
             {[ "type": "select", "label": "<?php echo tr('Ritenuta d\'acconto predefinita'); ?>", "name": "id_ritenuta_acconto_vendite", "values": "query=SELECT id, descrizione FROM co_ritenutaacconto ORDER BY descrizione ASC", "value": "$id_ritenuta_acconto_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
            </div>
-          
+
 					<div class="col-md-6">
 						{[ "type": "select", "label": "<?php echo tr('Listino articoli'); ?>", "name": "idlistino_vendite", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
 					</div>
@@ -430,7 +430,7 @@ if (!empty($google)) {
 	</fieldset>
 </form>
 
-{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
+{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <?php
 

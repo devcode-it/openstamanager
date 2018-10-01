@@ -530,11 +530,6 @@ UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'Filiale' AND `id_module` = (S
 UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'IBAN' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche');
 
 -- Fix Date emissione nello Scadenzario
-<<<<<<< HEAD
-UPDATE `zz_views` SET `query` = 'data_emissione' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND name = 'Data emissione';
-<<<<<<< HEAD
->>>>>>> devcode-it-master
-=======
 UPDATE `zz_views` SET `query` = 'data_emissione', `format` = '1' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND name = 'Data emissione';
 
 -- Normalizzazione default e predefined
@@ -545,8 +540,6 @@ ALTER TABLE `an_zone` CHANGE `default` `default` boolean NOT NULL DEFAULT 0;
 ALTER TABLE `zz_modules` CHANGE `default` `default` boolean NOT NULL DEFAULT 0;
 
 ALTER TABLE `zz_segments` CHANGE `predefined` `predefined` boolean NOT NULL DEFAULT 0;
->>>>>>> 6be40cda8df2e956a46ec5f80ada79b11ee00eb8
-=======
 
 -- Prezzo di acquisto su righe fatture/preventivi
 ALTER TABLE `co_righe_documenti` ADD `subtotale_acquisto` DECIMAL(12,4) NOT NULL AFTER `descrizione`;
@@ -555,4 +548,3 @@ ALTER TABLE `co_righe_preventivi` ADD `subtotale_acquisto` DECIMAL(12,4) NOT NUL
 -- Guadagno su righe fatture/preventivi
 ALTER TABLE `co_righe_documenti` ADD `guadagno` DECIMAL(12,4) NOT NULL AFTER `subtotale`;
 ALTER TABLE `co_righe_preventivi` ADD `guadagno` DECIMAL(12,4) NOT NULL AFTER `subtotale`;
->>>>>>> 332f243bbbb7ef6c25d68acc65433f1861dfd345

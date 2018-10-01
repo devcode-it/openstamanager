@@ -528,7 +528,7 @@ class FatturaElettronica
         foreach ($scadenze as $scadenza) {
             $result[] = [
                 'DettaglioPagamento' => [
-                    'ModalitaPagamento' => $pagamento['codice_modalita_pagemento_fe'],
+                    'ModalitaPagamento' => $pagamento['codice_modalita_pagamento_fe'],
                     'DataScadenzaPagamento' => $scadenza['scadenza'],
                     'ImportoPagamento' => $scadenza['da_pagare'],
                 ],

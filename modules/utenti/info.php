@@ -1,14 +1,14 @@
 <?php
 
 $skip_permissions = true;
-include __DIR__.'/../../core.php';
+include_once __DIR__.'/../../core.php';
 
 $pageTitle = tr('Utente');
 
 include_once App::filepath('include|custom|', 'top.php');
 
 if (post('op') == 'change_pwd') {
-    include __DIR__.'/actions.php';
+    include_once __DIR__.'/actions.php';
 }
 
 $user = Auth::user();

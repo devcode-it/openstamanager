@@ -88,12 +88,9 @@ if ($dir == 'entrata') {
 $query = 'SELECT * FROM co_statidocumento';
 if (empty($record['is_fiscale'])) {
     $query .= " WHERE descrizione = 'Bozza'";
-<<<<<<< HEAD
-=======
 
     $plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Fatturazione Elettronica' AND idmodule_to = ".prepare($id_module));
     echo '<script>$("#link-tab_'.$plugin[0]['id'].'").addClass("disabled");</script>';
->>>>>>> devcode-it-master
 }
 
 ?>
@@ -433,34 +430,7 @@ if (!empty($note_accredito)) {
 
 ?>
 
-<<<<<<< HEAD
-<?php
-
-// Visualizzo il log delle operazioni di invio email
-$operations = $dbo->fetchArray('SELECT created_at, (SELECT name FROM zz_emails WHERE id = id_email) AS email, (SELECT username FROM zz_users WHERE id = id_utente) AS user FROM zz_operations WHERE id_record = '.prepare($id_record).' AND op = "send-email" ORDER BY created_at DESC');
-
-// Se la mail è stata inviata, mostro la data
-if (!empty($operations)) {
-    foreach ($operations as $operation) {
-        echo '
-    <span class="label label-success pull-right">
-        '.tr('Email "_EMAIL_" inviata il _DATE_ alle _HOUR_ da _USER_.', [
-            '_EMAIL_' => $operation['email'],
-            '_DATE_' => Translator::dateToLocale($operation['created_at']),
-            '_HOUR_' => Translator::timeToLocale($operation['created_at']),
-            '_USER_' => $operation['user'],
-        ]).'
-    </span><br>';
-    }
-} else {
-    echo '
-    <span class="label label-warning pull-right">
-        '.tr('Nessuna email inviata al cliente.').'
-    </span>';
-}
-=======
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
->>>>>>> 8795ca508e88875da3d6448eec333a0acea702dd
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>

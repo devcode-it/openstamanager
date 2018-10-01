@@ -36,6 +36,7 @@ $result = [
     'qta' => 1,
     'um' => '',
     'prezzo' => 0,
+    'prezzo_acquisto' => 0,
     'sconto_unitario' => 0,
     'tipo_sconto' => '',
     'idiva' => '',
@@ -47,13 +48,8 @@ $iva = $dbo->fetchArray('SELECT idiva_'.($dir == 'uscita' ? 'acquisti' : 'vendit
 $result['idiva'] = $iva[0]['idiva'] ?: setting('Iva predefinita');
 
 // Leggo la ritenuta d'acconto predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
-<<<<<<< HEAD
-$ritenuta_acconto = $dbo->fetchArray('SELECT id_ritenuta_acconto_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS id_ritenuta_acconto FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
-$result['id_ritenuta_acconto'] = $ritenuta_acconto[0]['id_ritenuta_acconto'] ?: setting("Percentuale ritenuta d'acconto");
-=======
 $ritenuta_acconto = $dbo->fetchOne('SELECT id_ritenuta_acconto_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS id_ritenuta_acconto FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
 $options['id_ritenuta_acconto_predefined'] = $ritenuta_acconto['id_ritenuta_acconto'];
->>>>>>> 625c30c123cd0bd6aa8f5711d07bdab8eb7b2890
 
 // Sconto unitario
 $rss = $dbo->fetchArray('SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')');

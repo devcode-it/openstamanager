@@ -7,8 +7,30 @@ include_once Modules::filepath('Fatture di vendita', 'modutil.php');
 /*
     Righe fattura
 */
-$rs = $dbo->fetchArray('SELECT *, round(sconto_unitario,'.setting('Cifre decimali per importi').') AS sconto_unitario, round(sconto,'.setting('Cifre decimali per importi').') AS sconto, round(subtotale,'.setting('Cifre decimali per importi').') AS subtotale, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),"") AS codice, (SELECT descrizione FROM co_pianodeiconti3 WHERE co_pianodeiconti3.id=IF(co_righe_documenti.idconto = 0, (SELECT idconto FROM co_documenti WHERE iddocumento='.prepare($id_record).' LIMIT 1), co_righe_documenti.idconto)) AS descrizione_conto FROM `co_righe_documenti` WHERE iddocumento='.prepare($id_record).' ORDER BY `order`');
+$rs = $dbo->fetchArray('SELECT *, round(sconto_unitario,'.setting('Cifre decimali per importi').') AS sconto_unitario, round(sconto,'.setting('Cifre decimali per importi').') AS sconto, round(subtotale,'.setting('Cifre decimali per importi').') AS subtotale, round(subtotale_acquisto,'.setting('Cifre decimali per importi').') AS subtotale_acquisto, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),"") AS codice, (SELECT descrizione FROM co_pianodeiconti3 WHERE co_pianodeiconti3.id=IF(co_righe_documenti.idconto = 0, (SELECT idconto FROM co_documenti WHERE iddocumento='.prepare($id_record).' LIMIT 1), co_righe_documenti.idconto)) AS descrizione_conto FROM `co_righe_documenti` WHERE iddocumento='.prepare($id_record).' ORDER BY `order`');
 
+if (in_array($module["name"], ["Fatture di vendita", "Preventivi"])) {
+    echo '
+<script>
+// Verifica se il guadagno è negativo quando si esce dalla pagina e lancia un avviso
+    function controlla_guadagno(id_riga) {
+        var guadagno;
+        if (id_riga === "tot") {
+            guadagno = $("#guadagno_totale");
+        } else {
+            guadagno = $("tr[data-id=\'" + id_riga + "\'] > td[id=\'guadagno\']");
+        }
+        if (guadagno.length && parseFloat(guadagno.text().replace(".", "").replace(",", ".")) < 0) {
+            guadagno.css("border", "2px solid red");
+            guadagno.css("background", "#ff00001a");
+            var alert = $("#avviso_guadagno_negativo");
+            if (alert.length === 0 || alert.text() !== " ' . tr('Attenzione! Il guadagno è negativo!') . '")
+            document.write("<div class=\'alert alert-warning push\' style=\'text-align: center\' id=\'avviso_guadagno_negativo\'>" +
+             "<i class=\'fa fa-exclamation-triangle\'></i> ' . tr('Attenzione! Il guadagno è negativo!') . '</div>")
+        }
+    }
+</script>';
+}
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
     <thead>
@@ -16,8 +38,21 @@ echo '
             <th>'.tr('Descrizione').'</th>
             <th width="120">'.tr('Q.tà').'</th>
             <th width="80">'.tr('U.m.').'</th>
+            ';
+if ($module["name"] == "Fatture di vendita") {
+    echo '
+            <th width="120">' . tr('Prezzo di acquisto unitario') . '</th>
+            ';
+}
+echo '
             <th width="120">'.tr('Prezzo unitario').'</th>
-            <th width="120">'.tr('Iva').'</th>
+            <th width="120">'.tr('Iva').'</th>';
+if ($module["name"] == "Fatture di vendita") {
+    echo '
+            <th width="120">' . tr('Guadagno') . '</th>
+            ';
+}
+echo '
             <th width="120">'.tr('Importo').'</th>
             <th width="60"></th>
         </tr>
@@ -143,13 +178,29 @@ if (!empty($rs)) {
         echo '
         </td>';
 
+        if ($module["name"] == "Fatture di vendita") {
+            // Prezzo di acquisto unitario
+            $subtotale_acquisto = $r['subtotale_acquisto'] / $r['qta'];
+            echo '
+        <td class="text-right">';
+
+            if (empty($r['is_descrizione'])) {
+                echo '
+            ' . Translator::numberToLocale($subtotale_acquisto) . ' &euro;';
+            }
+
+            echo '
+        </td>';
+        }
+
         // Prezzo unitario
+        $subtotale = $r['subtotale'] / $r['qta'];
         echo '
         <td class="text-right">';
 
         if (empty($r['is_descrizione'])) {
             echo '
-            '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
+            '.Translator::numberToLocale($subtotale).' &euro;';
 
             if ($r['sconto_unitario'] > 0) {
                 echo '
@@ -175,6 +226,23 @@ if (!empty($rs)) {
 
         echo '
         </td>';
+
+        if ($module["name"] == "Fatture di vendita") {
+            // Guadagno
+            echo '
+        <td class="text-right" id="guadagno">';
+
+            if (empty($r['is_descrizione'])) {
+                echo '
+            ' . Translator::numberToLocale($r["guadagno"]) . ' &euro;';
+            }
+
+            echo '
+        </td>
+        <script>
+            controlla_guadagno(' . $r["id"] . ')
+        </script>';
+        }
 
         // Importo
         echo '
@@ -239,7 +307,9 @@ echo '
 $imponibile = sum(array_column($rs, 'subtotale'));
 $sconto = sum(array_column($rs, 'sconto'));
 $iva = sum(array_column($rs, 'iva'));
-
+if (in_array($module["name"], ["Fatture di vendita", "Preventivi"])) {
+    $guadagno = sum(array_column($rs, 'guadagno'));
+}
 $imponibile_scontato = sum($imponibile, -$sconto);
 
 $totale_iva = sum($iva, $record['iva_rivalsainps']);
@@ -256,6 +326,11 @@ $netto_a_pagare = sum([
     -$record['ritenutaacconto'],
 ]);
 
+$guadagno_totale = sum([
+    $guadagno
+    -$sconto
+]);
+
 $imponibile = abs($imponibile);
 $sconto = abs($sconto);
 $iva = abs($iva);
@@ -264,10 +339,16 @@ $totale_iva = abs($totale_iva);
 $totale = abs($totale);
 $netto_a_pagare = abs($netto_a_pagare);
 
+if ($module["name"] == "Fatture di vendita") {
+    $col_span = 7;
+} else {
+    $col_span = 5;
+}
+
 // IMPONIBILE
 echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="' . $col_span . '" class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -280,7 +361,7 @@ echo '
 if (abs($sconto) > 0) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="' . $col_span . '" class="text-right">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -289,10 +370,10 @@ if (abs($sconto) > 0) {
         <td></td>
     </tr>';
 
-    // IMPONIBILE SCONTATO
+// IMPONIBILE SCONTATO
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="' . $col_span . '" class="text-right">
             <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -306,7 +387,7 @@ if (abs($sconto) > 0) {
 if (abs($record['rivalsainps']) > 0) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="' . $col_span . '" class="text-right">
             <b>'.tr('Rivalsa INPS', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -320,7 +401,7 @@ if (abs($record['rivalsainps']) > 0) {
 if (abs($totale_iva) > 0) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="' . $col_span . '" class="text-right">
             <b>'.tr('Iva', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -333,7 +414,7 @@ if (abs($totale_iva) > 0) {
 // TOTALE
 echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="' . $col_span . '" class="text-right">
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -346,7 +427,7 @@ echo '
 if (abs($record['bollo']) > 0) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="' . $col_span . '" class="text-right">
             <b>'.tr('Marca da bollo', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -360,7 +441,7 @@ if (abs($record['bollo']) > 0) {
 if (abs($record['ritenutaacconto']) > 0) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="' . $col_span . '" class="text-right">
             <b>'.tr("Ritenuta d'acconto", [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -376,7 +457,7 @@ if (abs($record['ritenutaacconto']) > 0) {
 if ($totale != $netto_a_pagare) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="' . $col_span . '" class="text-right">
             <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -386,8 +467,29 @@ if ($totale != $netto_a_pagare) {
     </tr>';
 }
 
-echo '
-</table>';
+if (in_array($module["name"], ["Fatture di vendita", "Preventivi"])) {
+// GUADAGNO TOTALE
+    echo '
+    <tr>
+        <td colspan="' . $col_span . '" class="text-right" id="guadagno_text">
+            <b>' . tr('Guadagno', [], ['upper' => true]) . ':</b>
+        </td>
+        <td align="right" id="guadagno_totale">
+            ' . Translator::numberToLocale($guadagno_totale) . ' &euro;
+        </td>
+        <td></td>
+    </tr>';
+
+    echo '
+</table>
+<script>
+
+controlla_guadagno("tot");
+
+</script>';
+} else {
+    echo '</table>';
+}
 
 echo '
 <script>

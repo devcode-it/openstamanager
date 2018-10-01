@@ -64,7 +64,7 @@ if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
 
                 $("#prezzo").val($data.prezzo_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').');
                 $("#descrizione_riga").val($data.descrizione);
-                $("#idiva").selectSet($data.idiva_vendita, $data.iva_vendita);
+                $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita);
                 if(id_conto) {
                     $("#idconto").selectSetNew(id_conto, $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').'_title);
                 }

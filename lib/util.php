@@ -27,6 +27,25 @@ if (!function_exists('array_column')) {
     }
 }
 
+if (!function_exists('array_clean')) {
+    /**
+     * Pulisce i contenuti vuoti di un array.
+     *
+     * @param  $array
+     *
+     * @since 2.3.2
+     *
+     * @return array
+     */
+    function array_clean($array)
+    {
+        return array_filter($array, function ($value) {
+            return !empty($value);
+        });
+    }
+}
+
+
 if (!function_exists('starts_with')) {
     /**
      * Check if a string starts with the given string.

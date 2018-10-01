@@ -351,9 +351,6 @@ if ($read_only || !empty($block_edit)) {
 			});
 
 
-
-
-
 <?php
 if (!empty($advanced_sessions)) {
     ?>

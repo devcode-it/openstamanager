@@ -210,17 +210,19 @@ function translateTemplate()
     $id_record = filter('id_record');
     $id_parent = filter('id_parent');
     $id_email = filter('id_email');
+    $info = filter('operations_options');
 
     $id_module = Modules::getCurrent()['id'];
     $id_plugin = Plugins::getCurrent()['id'];
 
-    $template = ob_get_clean();
 
-    $template = \HTMLBuilder\HTMLBuilder::replace($template);
+    $template = ob_get_clean();
 
     $template = str_replace('$id_module$', $id_module, $template);
     $template = str_replace('$id_plugin$', $id_plugin, $template);
     $template = str_replace('$id_record$', $id_record, $template);
+
+    $template = \HTMLBuilder\HTMLBuilder::replace($template);
 
     // Informazioni estese sulle azioni dell'utente
     if (Auth::check() && !empty(post('op'))) {
@@ -233,6 +235,7 @@ function translateTemplate()
             'id_email' => !empty($id_email) ? $id_email : null,
             'id_utente' => Auth::user()['id'],
             'op' => post('op'),
+            'options' => !empty($info) ? json_encode($info) : null,
         ]);
     }
 

@@ -96,7 +96,7 @@ class FatturaElettronica
      */
     public function getRighe()
     {
-        return database()->fetchArray('SELECT * FROM `co_righe_documenti` WHERE `sconto_globale` = 0 AND `iddocumento` = '.prepare($this->getDocumento()['id']));
+        return database()->fetchArray('SELECT * FROM `co_righe_documenti` WHERE `sconto_globale` = 0 AND is_descrizione = 0 AND `iddocumento` = '.prepare($this->getDocumento()['id']));
     }
 
     /**

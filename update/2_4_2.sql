@@ -531,3 +531,12 @@ UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'IBAN' AND `id_module` = (SELE
 
 -- Fix Date emissione nello Scadenzario
 UPDATE `zz_views` SET `query` = 'data_emissione', `format` = '1' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND name = 'Data emissione';
+
+-- Normalizzazione default e predefined
+ALTER TABLE `zz_views` CHANGE `default` `default` boolean NOT NULL DEFAULT 0;
+ALTER TABLE `zz_prints` CHANGE `default` `default` boolean NOT NULL DEFAULT 0;
+ALTER TABLE `an_tipianagrafiche` CHANGE `default` `default` boolean NOT NULL DEFAULT 0;
+ALTER TABLE `an_zone` CHANGE `default` `default` boolean NOT NULL DEFAULT 0;
+ALTER TABLE `zz_modules` CHANGE `default` `default` boolean NOT NULL DEFAULT 0;
+
+ALTER TABLE `zz_segments` CHANGE `predefined` `predefined` boolean NOT NULL DEFAULT 0;

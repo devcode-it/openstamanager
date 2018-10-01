@@ -28,6 +28,7 @@ $options = [
 $rsr = $dbo->fetchArray('SELECT * FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare(get('idriga')));
 
 $result = $rsr[0];
+$result["prezzo_acquisto"] = $rsr[0]['subtotale_acquisto'] / $rsr[0]['qta'];
 $result['prezzo'] = $rsr[0]['subtotale'] / $rsr[0]['qta'];
 
 // Importazione della gestione dedicata

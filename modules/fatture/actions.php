@@ -532,7 +532,6 @@ switch (post('op')) {
 
         $riga->id_iva = post('idiva');
         $riga->idconto = post('idconto');
-
         if (post('id_ritenuta_acconto')) {
             $riga->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto');
             $riga->id_ritenuta_acconto = post('id_ritenuta_acconto');
@@ -542,6 +541,10 @@ switch (post('op')) {
         }
 
         $riga->costo_unitario = post('prezzo');
+        if ($module["name"] == "Fatture di vendita") {
+            $riga->costo_acquisto = post('prezzo_acquisto');
+            $riga->guadagno = post('guadagno');
+        }
         $riga->qta = $qta;
         $riga->sconto_unitario = post('sconto');
         $riga->tipo_sconto = post('tipo_sconto');
@@ -580,6 +583,7 @@ switch (post('op')) {
             }
 
             $prezzo = post('prezzo');
+            $prezzo_acquisto = post('prezzo_acquisto');
 
             // Calcolo dello sconto
             $sconto_unitario = post('sconto');
@@ -592,6 +596,7 @@ switch (post('op')) {
             ]);
 
             $subtot = $prezzo * $qta;
+            $subtotale_acquisto = $prezzo_acquisto * $qta;
 
             // Lettura idarticolo dalla riga documento
             $rs = $dbo->fetchArray('SELECT * FROM co_righe_documenti WHERE id='.prepare($idriga));
@@ -645,7 +650,7 @@ switch (post('op')) {
 
             if ($is_descrizione == 0) {
                 // Modifica riga generica sul documento
-                $query = 'UPDATE co_righe_documenti SET idconto='.prepare($idconto).', idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', idritenutaacconto='.prepare(post('id_ritenuta_acconto')).', ritenutaacconto='.prepare($ritenutaacconto).', idrivalsainps='.prepare(post('id_rivalsa_inps')).', rivalsainps='.prepare($rivalsainps).', calcolo_ritenutaacconto='.prepare(post(calcolo_ritenutaacconto)).', qta='.prepare($qta).' WHERE id='.prepare($idriga).' AND iddocumento='.prepare($iddocumento);
+                $query = 'UPDATE co_righe_documenti SET idconto='.prepare($idconto).', idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale_acquisto = '.prepare($subtotale_acquisto).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', idritenutaacconto='.prepare(post('id_ritenuta_acconto')).', ritenutaacconto='.prepare($ritenutaacconto).', idrivalsainps='.prepare(post('id_rivalsa_inps')).', rivalsainps='.prepare($rivalsainps).', calcolo_ritenutaacconto='.prepare(post(calcolo_ritenutaacconto)).', qta='.prepare($qta).' WHERE id='.prepare($idriga).' AND iddocumento='.prepare($iddocumento);
             } else {
                 // Modifica riga descrizione sul documento
                 $query = 'UPDATE co_righe_documenti SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga).' AND iddocumento='.prepare($iddocumento);

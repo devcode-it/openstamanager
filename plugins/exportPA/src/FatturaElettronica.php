@@ -330,11 +330,7 @@ class FatturaElettronica
         }
 
         if (!empty($id_ritenuta)) {
-<<<<<<< HEAD
-            $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenutaacconto WHERE id = '.prepare($id_ritenuta));
-=======
             $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenutaacconto WHERE id = '.prepare($id_ritenuta))['percentuale'];
->>>>>>> devcode-it-master
 
             $result['DatiRitenuta'] = [
                 'TipoRitenuta' => ($azienda['tipo'] == 'Privato') ? 'RT01' : 'RT02',
@@ -345,10 +341,7 @@ class FatturaElettronica
         }
 
         // Bollo
-<<<<<<< HEAD
-=======
         $documento['bollo'] = floatval($documento['bollo']);
->>>>>>> devcode-it-master
         if (!empty($documento['bollo'])) {
             $result['DatiBollo'] = [
                 'BolloVirtuale' => 'SI',

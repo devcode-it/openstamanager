@@ -526,9 +526,14 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'Nome' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche');
 UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'Filiale' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche');
 UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'IBAN' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche');
-<<<<<<< HEAD
-=======
 
 -- Fix Date emissione nello Scadenzario
 UPDATE `zz_views` SET `query` = 'data_emissione' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND name = 'Data emissione';
->>>>>>> devcode-it-master
+
+-- Prezzo di acquisto su righe fatture/preventivi
+ALTER TABLE `co_righe_documenti` ADD `subtotale_acquisto` DECIMAL(12,4) NOT NULL AFTER `descrizione`;
+ALTER TABLE `co_righe_preventivi` ADD `subtotale_acquisto` DECIMAL(12,4) NOT NULL AFTER `descrizione`;
+
+-- Guadagno su righe fatture/preventivi
+ALTER TABLE `co_righe_documenti` ADD `guadagno` DECIMAL(12,4) NOT NULL AFTER `subtotale`;
+ALTER TABLE `co_righe_preventivi` ADD `guadagno` DECIMAL(12,4) NOT NULL AFTER `subtotale`;

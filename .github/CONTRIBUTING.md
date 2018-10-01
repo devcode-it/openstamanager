@@ -18,6 +18,11 @@ Se ti serve un aiuto, crea una issue su GitHub.
 
 Per migliorare il sistema con cui sviluppiamo il codice, abbiamo deciso di adottare alcune linee guida per facilitare la collaborazione tra più persone.
 
+
+### Standard del codice
+
+Per lo standard ufficiale riguardante i nomi e le strutture da utilizzare, visita la sezione [Standard](STANDARD.md).
+
 ### Codice di condotta
 
 Per il momento non abbiamo adottato un vero e proprio codice di condotta, ma ti chiediamo di essere il più civile possibile nel comunicare con gli altri per questo progetto.

@@ -14,7 +14,8 @@ $pagamenti = $fattura_pa->getBody()['DatiPagamento'];
 $metodi = $pagamenti['DettaglioPagamento'];
 $metodi = isset($metodi[0]) ? $metodi : [$metodi];
 
-$query = 'SELECT id, descrizione FROM co_pagamenti WHERE prc '.($pagamenti['CondizioniPagamento'] == 'TP01' ? '!' : '').'= 100 AND codice_modalita_pagemento_fe = '.prepare($metodi[0]['ModalitaPagamento']).' GROUP BY descrizione ORDER BY descrizione ASC';
+// prc '.($pagamenti['CondizioniPagamento'] == 'TP01' ? '!' : '').'= 100 AND
+$query = 'SELECT id, descrizione FROM co_pagamenti WHERE codice_modalita_pagemento_fe = '.prepare($metodi[0]['ModalitaPagamento']).' GROUP BY descrizione ORDER BY descrizione ASC';
 
 echo '
 <form action="'.$rootdir.'/actions.php" method="post">

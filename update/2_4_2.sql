@@ -530,4 +530,4 @@ UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'Filiale' AND `id_module` = (S
 UPDATE `zz_views` SET `search` = 1 WHERE `name` = 'IBAN' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche');
 
 -- Fix Date emissione nello Scadenzario
-UPDATE `zz_views` SET `query` = 'data_emissione' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND name = 'Data emissione';
+UPDATE `zz_views` SET `query` = 'data_emissione', `format` = '1' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND name = 'Data emissione';

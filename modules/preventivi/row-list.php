@@ -22,7 +22,6 @@ echo '
             guadagno.css("border", "2px solid red");
             guadagno.css("background", "#ff00001a");
             var alert = $("#avviso_guadagno_negativo");
-            console.log(alert);
             if (alert.length === 0 || alert.text() !== " ' . tr('Attenzione! Il guadagno è negativo!') . '")
             document.write("<div class=\'alert alert-warning push\' style=\'text-align: center\' id=\'avviso_guadagno_negativo\'>" +
              "<i class=\'fa fa-exclamation-triangle\'></i> ' . tr('Attenzione! Il guadagno è negativo!') . '</div>")

@@ -18,7 +18,7 @@ if (in_array($module["name"], ["Fatture di vendita", "Preventivi"])) {
         if (id_riga === "tot") {
             guadagno = $("#guadagno_totale");
         } else {
-            guadagno = $("tr[data-id=\'" + id_riga + "\'] > td[id=\'guadagno\']");
+            guadagno = $("tr[data-id=\'" + id_riga + "\'] > td[id=\'guadagno_riga\']");
         }
         if (guadagno.length && parseFloat(guadagno.text().replace(".", "").replace(",", ".")) < 0) {
             guadagno.css("border", "2px solid red");
@@ -230,7 +230,7 @@ if (!empty($rs)) {
         if ($module["name"] == "Fatture di vendita") {
             // Guadagno
             echo '
-        <td class="text-right" id="guadagno">';
+        <td class="text-right" id="guadagno_riga">';
 
             if (empty($r['is_descrizione'])) {
                 echo '

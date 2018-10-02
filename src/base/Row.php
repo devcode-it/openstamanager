@@ -19,9 +19,9 @@ abstract class Row extends Description
         }
     }
 
-    public static function new($bypass = false)
+    public static function make($bypass = false)
     {
-        return parent::new(true);
+        return parent::make(true);
     }
 
     public function getTotaleAttribute()

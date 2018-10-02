@@ -19,9 +19,9 @@ class Articolo extends Article
      *
      * @return self
      */
-    public static function new(Intervento $intervento, Original $articolo, $id_automezzo = null)
+    public static function make(Intervento $intervento, Original $articolo, $id_automezzo = null)
     {
-        $model = parent::new($articolo);
+        $model = parent::make($articolo);
 
         $model->intervento()->associate($intervento);
 

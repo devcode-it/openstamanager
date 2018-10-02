@@ -522,7 +522,7 @@ switch (post('op')) {
     case 'addarticolo':
         $originale = ArticoloOriginale::find(post('idarticolo'));
         $intervento = Intervento::find($id_record);
-        $articolo = Articolo::new($intervento, $originale, post('idautomezzo'));
+        $articolo = Articolo::make($intervento, $originale, post('idautomezzo'));
 
         $articolo->qta = post('qta');
         $articolo->descrizione = post('descrizione');

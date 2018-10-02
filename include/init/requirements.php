@@ -48,6 +48,10 @@ $settings = [
         'type' => 'ext',
         'description' => tr("Permette l'automazione della conversione dei numeri (facoltativo)"),
     ],
+    'dom' => [
+        'type' => 'ext',
+        'description' => tr("Permette la gestione dei file standard per la Fatturazione Elettronica"),
+    ],
     'soap' => [
         'type' => 'ext',
         'description' => tr('Permette la comunicazione con servizi esterni, quali il database europeo delle Partite IVA (facoltativo)'),
@@ -57,10 +61,10 @@ $settings = [
         'description' => tr('Permette la comunicazione con servizi esterni, quali APILayer (facoltativo)'),
     ],
 
-    'display_errors' => [
-        'type' => 'value',
-        'description' => true,
-    ],
+    //'display_errors' => [
+    //    'type' => 'value',
+    //    'description' => true,
+    //],
     'upload_max_filesize' => [
         'type' => 'value',
         'description' => '>16M',

@@ -88,7 +88,7 @@ class FatturaElettronica
         }
 
         $ragione_sociale = $xml['DatiAnagrafici']['Anagrafica']['Denominazione'] ?: $xml['DatiAnagrafici']['Anagrafica']['Nome'].' '.$xml['DatiAnagrafici']['Anagrafica']['Cognome'];
-        $anagrafica = Anagrafica::new($ragione_sociale, [
+        $anagrafica = Anagrafica::make($ragione_sociale, [
             TipoAnagrafica::where('descrizione', 'Fornitore')->first()->id,
         ]);
 
@@ -161,9 +161,9 @@ class FatturaElettronica
             $articolo = ArticoloOriginale::find($articoli[$key]);
 
             if (!empty($articolo)) {
-                $obj = Articolo::new($this->getFattura(), $articolo);
+                $obj = Articolo::make($this->getFattura(), $articolo);
             } else {
-                $obj = Riga::new($this->getFattura());
+                $obj = Riga::make($this->getFattura());
             }
 
             $obj->descrizione = $riga['Descrizione'];
@@ -245,7 +245,7 @@ class FatturaElettronica
         $descrizione_tipo = empty($this->getBody()['DatiGenerali']['DatiTrasporto']) ? 'Fattura immediata di acquisto' : 'Fattura accompagnatoria di acquisto';
         $tipo = TipoFattura::where('descrizione', $descrizione_tipo)->first();
 
-        $fattura = Fattura::new($anagrafica, $tipo, $data, $this->id_sezionale);
+        $fattura = Fattura::make($anagrafica, $tipo, $data, $this->id_sezionale);
         $this->fattura = $fattura;
 
         $fattura->numero = $numero;

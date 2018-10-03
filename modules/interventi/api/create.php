@@ -63,7 +63,7 @@ switch ($resource) {
 
         $originale = ArticoloOriginale::find($data['id_articolo']);
         $intervento = Intervento::find($data['id_intervento']);
-        $articolo = Articolo::new($intervento, $originale, $data['id_automezzo']);
+        $articolo = Articolo::make($intervento, $originale, $data['id_automezzo']);
 
         $articolo->qta = $data['qta'];
         $articolo->um = $data['um'];

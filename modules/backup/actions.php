@@ -55,4 +55,6 @@ if (filter('op') == 'restore') {
     }
 
     Backup::restore($path, post('folder') == null);
+
+    flash()->info(tr('Backup ripristinato correttamente!'));
 }

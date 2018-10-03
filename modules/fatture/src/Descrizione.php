@@ -15,9 +15,9 @@ class Descrizione extends Description
      *
      * @return self
      */
-    public static function new(Fattura $fattura)
+    public static function make(Fattura $fattura)
     {
-        $model = parent::new();
+        $model = parent::make();
 
         $model->fattura()->associate($fattura);
 

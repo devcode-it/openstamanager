@@ -15,9 +15,9 @@ class Riga extends Row
      *
      * @return self
      */
-    public static function new(Intervento $intervento)
+    public static function make(Intervento $intervento)
     {
-        $model = parent::new();
+        $model = parent::make();
 
         $model->intervento()->associate($intervento);
 

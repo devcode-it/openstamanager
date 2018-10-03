@@ -34,7 +34,7 @@ switch (post('op')) {
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = Tipo::find($idtipodocumento);
 
-        $fattura = Fattura::new($anagrafica, $tipo, $data, $id_segment);
+        $fattura = Fattura::make($anagrafica, $tipo, $data, $id_segment);
         $id_record = $fattura->id;
 
         flash()->info(tr('Aggiunta fattura numero _NUM_!', [
@@ -484,7 +484,7 @@ switch (post('op')) {
         }
 
         $originale = ArticoloOriginale::find(post('idarticolo'));
-        $articolo = Articolo::new($fattura, $originale);
+        $articolo = Articolo::make($fattura, $originale);
 
         $articolo->descrizione = post('descrizione');
         $um = post('um');
@@ -522,7 +522,7 @@ switch (post('op')) {
             $qta = -$qta;
         }
 
-        $riga = Riga::new($fattura);
+        $riga = Riga::make($fattura);
 
         $riga->descrizione = post('descrizione');
         $um = post('um');
@@ -559,7 +559,7 @@ switch (post('op')) {
         break;
 
     case 'add_descrizione':
-        $riga = Descrizione::new($fattura);
+        $riga = Descrizione::make($fattura);
         $riga->descrizione = post('descrizione');
         $riga->save();
 
@@ -1262,7 +1262,7 @@ switch (post('op')) {
         $anagrafica = $fattura->anagrafica()->first();
         $tipo = Tipo::where('descrizione', 'Nota di credito')->where('dir', 'entrata')->first();
 
-        $nota = Fattura::new($anagrafica, $tipo, $data, $id_segment);
+        $nota = Fattura::make($anagrafica, $tipo, $data, $id_segment);
         $nota->ref_documento = $fattura->id;
         $nota->idconto = $fattura->idconto;
         $nota->idpagamento = $fattura->idpagamento;
@@ -1357,7 +1357,7 @@ if (get('op') == 'nota_addebito') {
     $tipo = Tipo::where('descrizione', 'Nota di debito')->where('dir', 'entrata')->first();
     $data = $fattura->data;
 
-    $nota = Fattura::new($anagrafica, $tipo, $data, $id_segment);
+    $nota = Fattura::make($anagrafica, $tipo, $data, $id_segment);
     $nota->ref_documento = $fattura->id;
     $nota->idconto = $fattura->idconto;
     $nota->idpagamento = $fattura->idpagamento;

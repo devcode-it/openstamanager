@@ -17,9 +17,9 @@ abstract class Description extends Model
         }
     }
 
-    public static function new($bypass = false)
+    public static function make($bypass = false)
     {
-        $model = parent::new();
+        $model = parent::make();
 
         if (!$bypass) {
             $model->is_descrizione = 1;

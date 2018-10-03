@@ -56,7 +56,7 @@ switch (post('op')) {
                 // Se non c'è già una fattura appena creata per questo cliente, creo una fattura nuova
                 if (empty($id_documento)) {
                     $anagrafica = Anagrafica::find($id_anagrafica);
-                    $fattura = Fattura::new($anagrafica, $tipo_documento, $data, $id_segment);
+                    $fattura = Fattura::make($anagrafica, $tipo_documento, $data, $id_segment);
 
                     $id_documento = $fattura->id;
                     $id_documento_cliente[$id_anagrafica] = $id_documento;

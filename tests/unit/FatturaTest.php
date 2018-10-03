@@ -17,7 +17,7 @@ class FatturaTest extends \Codeception\Test\Unit
         $anagrafica = Anagrafica::find($id_anagrafica);
         $tipo = Tipo::find($id_tipo);
 
-        $fattura = Fattura::new($anagrafica, $tipo, $data, $id_segment);
+        $fattura = Fattura::make($anagrafica, $tipo, $data, $id_segment);
 
         $this->assertEquals($fattura->idanagrafica, 1);
         $this->assertEquals($fattura->idtipodocumento, 2);

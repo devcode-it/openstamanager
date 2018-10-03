@@ -17,9 +17,9 @@ class Articolo extends Article
      *
      * @return self
      */
-    public static function new(Fattura $fattura, Original $articolo)
+    public static function make(Fattura $fattura, Original $articolo)
     {
-        $model = parent::new($articolo);
+        $model = parent::make($articolo);
 
         $model->fattura()->associate($fattura);
 

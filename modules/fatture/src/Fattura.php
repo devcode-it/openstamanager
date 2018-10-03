@@ -23,9 +23,9 @@ class Fattura extends Model
      *
      * @return self
      */
-    public static function new(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment)
+    public static function make(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment)
     {
-        $model = parent::new();
+        $model = parent::make();
 
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
 

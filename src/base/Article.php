@@ -18,9 +18,9 @@ abstract class Article extends Row
         });
     }
 
-    public static function new(Original $articolo)
+    public static function make(Original $articolo)
     {
-        $model = parent::new(true);
+        $model = parent::make(true);
 
         $model->articolo()->associate($articolo);
 

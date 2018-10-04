@@ -215,7 +215,6 @@ function translateTemplate()
     $id_module = Modules::getCurrent()['id'];
     $id_plugin = Plugins::getCurrent()['id'];
 
-
     $template = ob_get_clean();
 
     $template = str_replace('$id_module$', $id_module, $template);

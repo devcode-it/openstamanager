@@ -184,8 +184,7 @@ if ($dir == 'uscita') {
 <?php
 
 if (!empty($record['is_fiscale'])) {
-
-// Aggiunta prima nota solo se non c'è già, se non si è in bozza o se il pagamento non è completo
+    // Aggiunta prima nota solo se non c'è già, se non si è in bozza o se il pagamento non è completo
     $n2 = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE iddocumento='.prepare($id_record).' AND primanota=1');
 
     $rs3 = $dbo->fetchArray('SELECT SUM(da_pagare-pagato) AS differenza, SUM(da_pagare) FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.prepare($id_record));

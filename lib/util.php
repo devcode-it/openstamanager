@@ -45,7 +45,6 @@ if (!function_exists('array_clean')) {
     }
 }
 
-
 if (!function_exists('starts_with')) {
     /**
      * Check if a string starts with the given string.

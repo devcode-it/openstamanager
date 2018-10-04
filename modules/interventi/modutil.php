@@ -358,7 +358,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
 
     $id_rivalsa_inps = $id_rivalsa_inps !== false ? $id_rivalsa_inps : setting('Percentuale rivalsa INPS');
     $id_ritenuta_acconto = $id_ritenuta_acconto !== false ? $id_ritenuta_acconto : setting("Percentuale ritenuta d'acconto");
-    $calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto !== false ? $calcolo_ritenuta_acconto :  setting("Metodologia calcolo ritenuta d'acconto predefinito");
+    $calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto !== false ? $calcolo_ritenuta_acconto : setting("Metodologia calcolo ritenuta d'acconto predefinito");
 
     // Leggo l'anagrafica del cliente
     $rs = $dbo->fetchArray('SELECT idanagrafica, codice, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento='.prepare($id_intervento).') AS data FROM `in_interventi` WHERE id='.prepare($id_intervento));

@@ -115,7 +115,6 @@ foreach ($interventi as $intervento) {
     array_push($idinterventi, "'".$intervento['id']."'");
 }
 
-
 $body .= '<big><big><b>RIEPILOGO INTERVENTI DAL '.Translator::dateToLocale($_SESSION['period_start']).' al '.Translator::dateToLocale($_SESSION['period_end'])."</b></big></big><br/><br/>\n";
 
 // Sostituisco i valori tra | | con il valore del campo del db

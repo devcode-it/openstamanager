@@ -513,7 +513,7 @@ switch (post('op')) {
 
         try {
             $articolo->qta = $qta;
-        } catch(UnexpectedValueException $e) {
+        } catch (UnexpectedValueException $e) {
             flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
         }
 

@@ -2,7 +2,6 @@
 
 namespace Models;
 
-use App;
 use Auth;
 use Traits\RecordTrait;
 use Traits\UploadTrait;

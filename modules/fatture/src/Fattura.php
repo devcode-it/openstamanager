@@ -93,7 +93,6 @@ class Fattura extends Model
      * **Attenzione**: la data deve inserita prima!
      *
      * @param [type] $value
-     * @return void
      */
     public function setIdSegmentAttribute($value)
     {

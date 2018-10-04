@@ -161,7 +161,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
             $this->IsSMTP(true);
 
             // Impostazioni di debug
-            $this->SMTPDebug = App::debug() ? 2: 0;
+            $this->SMTPDebug = App::debug() ? 2 : 0;
             $this->Debugoutput = function ($str, $level) {
                 $this->infos[] = $str;
             };

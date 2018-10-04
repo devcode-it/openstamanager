@@ -50,7 +50,7 @@ $settings = [
     ],
     'dom' => [
         'type' => 'ext',
-        'description' => tr("Permette la gestione dei file standard per la Fatturazione Elettronica"),
+        'description' => tr('Permette la gestione dei file standard per la Fatturazione Elettronica'),
     ],
     'soap' => [
         'type' => 'ext',

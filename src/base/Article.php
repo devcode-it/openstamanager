@@ -33,6 +33,7 @@ abstract class Article extends Row
     }
 
     abstract public function movimenta($qta);
+
     abstract public function getDirection();
 
     /**
@@ -83,7 +84,7 @@ abstract class Article extends Row
     {
         // Se la nuova quantità è minore della precedente
         if ($this->qta > $new_qta) {
-            $seriali_usati  = $this->usedSerials();
+            $seriali_usati = $this->usedSerials();
             $count_seriali_usati = count($seriali_usati);
 
             // Controllo sulla possibilità di rimuovere i seriali (se non utilizzati da documenti di vendita)
@@ -110,7 +111,7 @@ abstract class Article extends Row
     /**
      * Modifica la quantità dell'articolo e movimenta automaticamente il magazzino.
      *
-     * @param double $value
+     * @param float $value
      */
     public function setQtaAttribute($value)
     {

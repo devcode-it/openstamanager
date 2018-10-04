@@ -6,7 +6,6 @@ unset($_SESSION['superselect']['dir']);
 unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idarticolo']);
 
-
 // Articolo
 if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
     echo '

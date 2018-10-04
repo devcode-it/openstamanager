@@ -33,6 +33,7 @@ switch (filter('op')) {
                     'descrizione' => $descrizione,
                     'idconto_vendite' => post('idconto_vendite'),
                     'idconto_acquisti' => post('idconto_acquisti'),
+                    'codice_modalita_pagamento_fe' => post('codice_modalita_pagamento_fe'),
                 ];
 
                 if (!empty($id)) {

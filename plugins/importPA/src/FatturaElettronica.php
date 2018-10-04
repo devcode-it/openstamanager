@@ -169,7 +169,7 @@ class FatturaElettronica
             $obj->descrizione = $riga['Descrizione'];
             $obj->id_iva = $iva[$key];
             $obj->costo_unitario = $riga['PrezzoUnitario'];
-            $obj->qta = $riga['Quantita'];
+            $obj->qta = $riga['Quantita'] ?: 1;
 
             if (!empty($riga['UnitaMisura'])) {
                 $obj->um = $riga['UnitaMisura'];

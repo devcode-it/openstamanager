@@ -16,7 +16,7 @@ if ($module['name'] == 'Fatture di vendita') {
 
 // Impostazioni per la gestione
 $options = [
-    'op' => 'editriga',
+    'op' => 'manage_riga',
     'action' => 'edit',
     'dir' => $dir,
     'conti' => $conti,
@@ -34,8 +34,12 @@ $result['prezzo'] = $rsr[0]['subtotale'] / $rsr[0]['qta'];
 $file = 'riga';
 if (!empty($result['is_descrizione'])) {
     $file = 'descrizione';
+
+    $options['op'] = 'manage_articolo';
 } elseif (!empty($result['idarticolo'])) {
     $file = 'articolo';
+
+    $options['op'] = 'manage_articolo';
 }
 
 echo App::load($file.'.php', $result, $options);

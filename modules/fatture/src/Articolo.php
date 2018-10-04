@@ -57,6 +57,11 @@ class Articolo extends Article
         ]);
     }
 
+    public function getDirection()
+    {
+        return $this->fattura()->first()->tipo()->first()->dir;
+    }
+
     public function fattura()
     {
         return $this->belongsTo(Fattura::class, 'iddocumento');

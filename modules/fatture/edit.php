@@ -442,7 +442,11 @@ if (!empty($note_accredito)) {
 
 $(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
 
-   $(this).on("click", function(){
+   $(this).on("click", function() {
+        if(!content_was_modified) {
+            return;
+        }
+
         form = $("#edit-form");
         btn = $(this);
 
@@ -478,16 +482,13 @@ $(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
 	    } else {
 			swal({
                 type: "error",
-                text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente.').'",
                 title: "'.tr('Errore').'",
-                onClose: hide_popup
+                text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente').'.",
             });
 
-		    function hide_popup(){
-				$("#bs-popup").modal("hide");
-
-				form.parsley().validate();
-		    }
+            $("#bs-popup").one("show.bs.modal", function (e) {
+                return e.preventDefault();
+            });
 
             buttonRestore(btn, restore);
 		}

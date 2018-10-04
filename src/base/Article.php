@@ -4,6 +4,7 @@ namespace Base;
 
 use Modules\Articoli\Articolo as Original;
 use Illuminate\Database\Eloquent\Builder;
+use UnexpectedValueException;
 
 abstract class Article extends Row
 {
@@ -32,17 +33,18 @@ abstract class Article extends Row
     }
 
     abstract public function movimenta($qta);
+    abstract public function getDirection();
 
     /**
      * Imposta i seriali collegati all'articolo del documento.
      *
      * @param array $serials
      */
-    public function setSerials($serials)
+    public function setSerialsAttribute($serials)
     {
         database()->sync('mg_prodotti', [
             'id_riga_'.$this->serialRowID => $this->id,
-            'dir' => 'entrata',
+            'dir' => $this->getDirection(),
             'id_articolo' => $this->idarticolo,
         ], [
             'serial' => array_clean($serials),
@@ -61,9 +63,48 @@ abstract class Article extends Row
         }
 
         // Individuazione dei seriali
-        $list = database()->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_'.$this->serialRowID.' = '.prepare($this->id));
+        $results = database()->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_'.$this->serialRowID.' = '.prepare($this->id));
 
-        return array_column($list, 'serial');
+        return array_column($results, 'serial');
+    }
+
+    protected function usedSerials()
+    {
+        if ($this->getDirection() == 'uscita') {
+            $results = database()->fetchArray("SELECT serial FROM mg_prodotti WHERE serial IN (SELECT DISTINCT serial FROM mg_prodotti WHERE dir = 'entrata') AND serial IS NOT NULL AND id_riga_".$this->serialRowID.' = '.prepare($this->id));
+
+            return array_column($results, 'serial');
+        }
+
+        return [];
+    }
+
+    protected function cleanupSerials($new_qta)
+    {
+        // Se la nuova quantità è minore della precedente
+        if ($this->qta > $new_qta) {
+            $seriali_usati  = $this->usedSerials();
+            $count_seriali_usati = count($seriali_usati);
+
+            // Controllo sulla possibilità di rimuovere i seriali (se non utilizzati da documenti di vendita)
+            if ($this->getDirection() == 'uscita' && $new_qta < $count_seriali_usati) {
+                return false;
+            } else {
+                // Controllo sul numero di seriali effettivi da rimuovere
+                $seriali = $this->serials;
+
+                if ($new_qta < count($seriali)) {
+                    $rimovibili = array_diff($seriali, $seriali_usati);
+
+                    // Rimozione dei seriali aggiuntivi
+                    $serials = array_slice($rimovibili, 0, $new_qta - $count_seriali_usati);
+
+                    $this->serials = array_merge($seriali_usati, $serials);
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -73,11 +114,14 @@ abstract class Article extends Row
      */
     public function setQtaAttribute($value)
     {
+        if (!$this->cleanupSerials($value)) {
+            throw new UnexpectedValueException();
+        }
+
         $previous = $this->qta;
+        $diff = $value - $previous;
 
         parent::setQtaAttribute($value);
-
-        $diff = $value - $previous;
         $this->movimenta($diff);
 
         $database = database();

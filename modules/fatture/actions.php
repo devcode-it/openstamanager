@@ -477,14 +477,18 @@ switch (post('op')) {
         }
         break;
 
-    case 'add_articolo':
+    case 'manage_articolo':
+        if (post('idriga') != null) {
+            $articolo = Articolo::find(post('idriga'));
+        } else {
+            $originale = ArticoloOriginale::find(post('idarticolo'));
+            $articolo = Articolo::make($fattura, $originale);
+        }
+
         $qta = post('qta');
         if (!empty($record['is_reversed'])) {
             $qta = -$qta;
         }
-
-        $originale = ArticoloOriginale::find(post('idarticolo'));
-        $articolo = Articolo::make($fattura, $originale);
 
         $articolo->descrizione = post('descrizione');
         $um = post('um');
@@ -504,25 +508,35 @@ switch (post('op')) {
         }
 
         $articolo->costo_unitario = post('prezzo');
-        $articolo->qta = $qta;
         $articolo->sconto_unitario = post('sconto');
         $articolo->tipo_sconto = post('tipo_sconto');
 
-        $articolo->save();
+        try {
+            $articolo->qta = $qta;
+        } catch(UnexpectedValueException $e) {
+            flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
+        }
 
-        ricalcola_costiagg_fattura($id_record);
+        $articolo->save();
 
         flash()->info(tr('Articolo aggiunto!'));
 
+        // Ricalcolo inps, ritenuta e bollo
+        ricalcola_costiagg_fattura($id_record);
+
         break;
 
-    case 'add_riga':
+    case 'manage_riga':
+        if (post('idriga') != null) {
+            $riga = Riga::find(post('idriga'));
+        } else {
+            $riga = Riga::make($fattura);
+        }
+
         $qta = post('qta');
         if (!empty($record['is_reversed'])) {
             $qta = -$qta;
         }
-
-        $riga = Riga::make($fattura);
 
         $riga->descrizione = post('descrizione');
         $um = post('um');
@@ -548,126 +562,24 @@ switch (post('op')) {
 
         $riga->save();
 
-        flash()->info(tr('Riga aggiunta!'));
+        if (post('idriga') != null) {
+            flash()->info(tr('Riga modificata!'));
+        } else {
+            flash()->info(tr('Riga aggiunta!'));
+        }
 
         // Ricalcolo inps, ritenuta e bollo
         ricalcola_costiagg_fattura($id_record);
 
         break;
 
-    case 'add_descrizione':
+    case 'manage_descrizione':
         $riga = Descrizione::make($fattura);
         $riga->descrizione = post('descrizione');
         $riga->save();
 
         flash()->info(tr('Riga descrittiva aggiunta!'));
 
-        break;
-
-    case 'editriga':
-        if (post('idriga') !== null) {
-            // Selezione costi da intervento
-            $idriga = post('idriga');
-            $descrizione = post('descrizione');
-            $idiva = post('idiva');
-            $idconto = post('idconto');
-            $um = post('um');
-            $calcolo_ritenutaacconto = post('calcolo_ritenuta_acconto');
-
-            $qta = post('qta');
-            if (!empty($record['is_reversed'])) {
-                $qta = -$qta;
-            }
-
-            $prezzo = post('prezzo');
-
-            // Calcolo dello sconto
-            $sconto_unitario = post('sconto');
-            $tipo_sconto = post('tipo_sconto');
-            $sconto = calcola_sconto([
-                'sconto' => $sconto_unitario,
-                'prezzo' => $prezzo,
-                'tipo' => $tipo_sconto,
-                'qta' => $qta,
-            ]);
-
-            $subtot = $prezzo * $qta;
-
-            // Lettura idarticolo dalla riga documento
-            $rs = $dbo->fetchArray('SELECT * FROM co_righe_documenti WHERE id='.prepare($idriga));
-            $idarticolo = $rs[0]['idarticolo'];
-            $idddt = $rs[0]['idddt'];
-            $idordine = $rs[0]['idordine'];
-            $old_qta = $rs[0]['qta'];
-            $iddocumento = $rs[0]['iddocumento'];
-            $abilita_serial = $rs[0]['abilita_serial'];
-            $is_descrizione = $rs[0]['is_descrizione'];
-
-            // Controllo per gestire i serial
-            if (!empty($idarticolo)) {
-                if (!controlla_seriali('id_riga_documento', $idriga, $old_qta, $qta, $dir)) {
-                    flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
-
-                    return;
-                }
-            }
-
-            // Se c'è un collegamento ad un ddt, aggiorno la quantità evasa
-            if (!empty($idddt)) {
-                $dbo->query('UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$old_qta.' + '.$qta.' WHERE descrizione='.prepare($rs[0]['descrizione']).' AND idarticolo='.prepare($rs[0]['idarticolo']).' AND idddt='.prepare($idddt).' AND idiva='.prepare($rs[0]['idiva']));
-            }
-
-            // Se c'è un collegamento ad un ordine, aggiorno la quantità evasa
-            if (!empty($idddt)) {
-                $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$old_qta.' + '.$qta.' WHERE descrizione='.prepare($rs[0]['descrizione']).' AND idarticolo='.prepare($rs[0]['idarticolo']).' AND idordine='.prepare($idordine).' AND idiva='.prepare($rs[0]['idiva']));
-            }
-
-            // Calcolo iva
-            $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
-            $rs = $dbo->fetchArray($query);
-            $iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
-            $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
-            $desc_iva = $rs[0]['descrizione'];
-
-            // Calcolo rivalsa inps
-            $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(post('id_rivalsa_inps'));
-            $rs = $dbo->fetchArray($query);
-            $rivalsainps = ($prezzo * $qta - $sconto) / 100 * $rs[0]['percentuale'];
-
-            // Calcolo ritenuta d'acconto
-            $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare(post('id_ritenuta_acconto'));
-            $rs = $dbo->fetchArray($query);
-            if ($calcolo_ritenutaacconto == 'Imponibile') {
-                $ritenutaacconto = (($prezzo * $qta) - $sconto) / 100 * $rs[0]['percentuale'];
-            } else {
-                $ritenutaacconto = (($prezzo * $qta) - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
-            }
-
-            if ($is_descrizione == 0) {
-                // Modifica riga generica sul documento
-                $query = 'UPDATE co_righe_documenti SET idconto='.prepare($idconto).', idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', idritenutaacconto='.prepare(post('id_ritenuta_acconto')).', ritenutaacconto='.prepare($ritenutaacconto).', idrivalsainps='.prepare(post('id_rivalsa_inps')).', rivalsainps='.prepare($rivalsainps).', calcolo_ritenutaacconto='.prepare(post(calcolo_ritenutaacconto)).', qta='.prepare($qta).' WHERE id='.prepare($idriga).' AND iddocumento='.prepare($iddocumento);
-            } else {
-                // Modifica riga descrizione sul documento
-                $query = 'UPDATE co_righe_documenti SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga).' AND iddocumento='.prepare($iddocumento);
-            }
-            if ($dbo->query($query)) {
-                // Modifica per gestire i serial
-                if (!empty($idarticolo)) {
-                    $new_qta = $qta - $old_qta;
-                    $new_qta = ($dir == 'entrata') ? -$new_qta : $new_qta;
-                    add_movimento_magazzino($idarticolo, $new_qta, ['iddocumento' => $id_record]);
-                }
-
-                flash()->info(tr('Riga modificata!'));
-
-                // Ricalcolo inps, ritenuta e bollo
-                if ($dir == 'entrata') {
-                    ricalcola_costiagg_fattura($id_record);
-                } else {
-                    ricalcola_costiagg_fattura($id_record);
-                }
-            }
-        }
         break;
 
     // Creazione fattura da ddt
@@ -1152,17 +1064,12 @@ switch (post('op')) {
         break;
 
     case 'add_serial':
-        $idriga = post('idriga');
-        $idarticolo = post('idarticolo');
+        $articolo = Articolo::find(post('idriga'));
 
         $serials = (array) post('serial');
-        foreach ($serials as $key => $value) {
-            if (empty($value)) {
-                unset($serials[$key]);
-            }
-        }
 
-        $dbo->sync('mg_prodotti', ['id_riga_documento' => $idriga, 'dir' => $dir, 'id_articolo' => $idarticolo], ['serial' => $serials]);
+        $articolo->serials = $serials;
+        $articolo->save();
 
         break;
 

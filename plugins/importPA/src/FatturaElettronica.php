@@ -141,7 +141,7 @@ class FatturaElettronica
         }
         $sede->save();
 
-        return $anagrafica->id;
+        return $anagrafica;
     }
 
     public function getRighe()

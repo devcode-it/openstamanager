@@ -69,6 +69,9 @@
         "sort-packages": true,
         "optimize-autoloader": true,
         "apcu-autoloader": true,
-        "prefer-stable": true
+        "prefer-stable": true,
+        "platform": {
+            "php": "5.6.4"
+        }
     }
 }

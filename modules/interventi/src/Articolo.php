@@ -77,6 +77,11 @@ class Articolo extends Article
         }
     }
 
+    public function getDirection()
+    {
+        return 'entrata';
+    }
+
     public function fixIvaIndetraibile()
     {
     }

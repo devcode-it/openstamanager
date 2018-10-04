@@ -14,7 +14,7 @@ abstract class Row extends Description
 
         if (!$bypass) {
             static::addGlobalScope('rows', function (Builder $builder) {
-                $builder->whereNull('idarticolo')->where('idarticolo', '=', 0);
+                $builder->whereNull('idarticolo')->orWhere('idarticolo', '=', 0);
             });
         }
     }

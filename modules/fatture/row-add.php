@@ -21,7 +21,7 @@ if (empty($idconto)) {
 
 // Impostazioni per la gestione
 $options = [
-    'op' => 'add_riga',
+    'op' => 'manage_riga',
     'action' => 'add',
     'dir' => $dir,
     'conti' => $conti,
@@ -62,11 +62,11 @@ $file = 'riga';
 if (get('is_descrizione') !== null) {
     $file = 'descrizione';
 
-    $options['op'] = 'add_descrizione';
+    $options['op'] = 'manage_descrizione';
 } elseif (get('is_articolo') !== null) {
     $file = 'articolo';
 
-    $options['op'] = 'add_articolo';
+    $options['op'] = 'manage_articolo';
 }
 
 echo App::load($file.'.php', $result, $options);

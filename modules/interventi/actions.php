@@ -545,7 +545,7 @@ switch (post('op')) {
                 $serials = array_slice($serials, 0, $qta);
             }
 
-            $articolo->setSerials($serials);
+            $articolo->serials = $serials;
         }
 
         link_componente_to_articolo($id_record, $idimpianto, $idarticolo, $qta);

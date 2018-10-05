@@ -281,3 +281,15 @@ echo '
         </table>
     </div>
 </div>';
+
+// Requisiti
+echo '
+<hr>
+</div>
+    <h3>'.tr('Requisiti').'</h3>';
+
+include DOCROOT.'/include/init/requirements.php';
+
+echo '
+
+</div>';

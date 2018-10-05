@@ -141,19 +141,6 @@ $requirements = [
     tr('Percorsi di servizio') => $directories,
 ];
 
-// Introduzione
-echo '
-<p>'.tr('Benvenuto in _NAME_!', [
-    '_NAME_' => '<strong>OpenSTAManager</strong>',
-]).'</p>
-<p>'.tr("Prima di procedere alla configurazione e all'installazione del software, sono necessari alcuni accorgimenti per garantire il corretto funzionamento del gestionale").'.</p>
-<br>
-
-<p>'.tr('Le estensioni e impostazioni PHP possono essere personalizzate nel file di configurazione _FILE_', [
-    '_FILE_' => '<b>php.ini</b>',
-]).'.</p>
-<hr>';
-
 // Tabelle di riepilogo
 foreach ($requirements as $key => $values) {
     $statuses = array_column($values, 'status');

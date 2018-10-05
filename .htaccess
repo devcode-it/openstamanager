@@ -5,12 +5,12 @@
 
 # Try to set PHP settings
 <IfModule mod_php5.c>
-    php_value upload_max_filesize 20M
-    php_value post_max_size 20M
+    php_value upload_max_filesize 256M
+    php_value post_max_size 256M
 </IfModule>
 <IfModule mod_php7.c>
-    php_value upload_max_filesize 20M
-    php_value post_max_size 20M
+    php_value upload_max_filesize 256M
+    php_value post_max_size 256M
 </IfModule>
 
 # Deny access to files starting with dot

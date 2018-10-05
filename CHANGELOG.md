@@ -65,6 +65,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Modificato (Changed)
 
  - Normalizzazione delle nazioni registrate dal gestionale (https://github.com/umpirsky/country-list)
+ - Gestione delle strutture principali attraverso modelli (**Eloquent**)[https://laravel.com/docs/5.6/eloquent]
  - Miglioramenti nella gestione dei record (variabile `$record` al posto di `$records[0]`)
  - Ottimizzazione delle query di conteggio (metodo `fetchNum`)
  - Miglioramento del sistema di aggiornamento e installazione, con supporto completo ai plugin

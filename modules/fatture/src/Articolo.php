@@ -3,7 +3,7 @@
 namespace Modules\Fatture;
 
 use Modules\Articoli\Articolo as Original;
-use Base\Article;
+use Common\Article;
 
 class Articolo extends Article
 {

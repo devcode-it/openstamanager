@@ -149,9 +149,6 @@ echo '
 </form>';
 
 echo '
-<script src="'.$rootdir.'/lib/init.js"></script>';
-
-echo '
 <script>
 $(document).ready( function(){
     $("#form_sedi #geocomplete input").geocomplete({

@@ -2,7 +2,7 @@
 
 namespace Modules\Fatture;
 
-use Base\Description;
+use Common\Description;
 
 class Descrizione extends Description
 {

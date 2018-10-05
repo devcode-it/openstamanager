@@ -1,6 +1,6 @@
 <?php
 
-namespace Base;
+namespace Common;
 
 use Illuminate\Database\Eloquent\Builder;
 

@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'include' => 'Common',
     'modules/anagrafiche' => 'Modules\Anagrafiche',
     'modules/articoli' => 'Modules\Articoli',
     'modules/fatture' => 'Modules\Fatture',

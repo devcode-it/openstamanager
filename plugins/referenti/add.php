@@ -40,6 +40,4 @@ echo '
 			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
 		</div>
 	</div>
-</form>
-
-<script src="'.$rootdir.'/lib/init.js"></script>';
+</form>';

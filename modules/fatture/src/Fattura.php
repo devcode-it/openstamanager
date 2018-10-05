@@ -2,7 +2,7 @@
 
 namespace Modules\Fatture;
 
-use Base\Model;
+use Common\Model;
 use Util\Generator;
 use Modules\Anagrafiche\Anagrafica;
 

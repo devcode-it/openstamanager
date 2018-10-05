@@ -2,7 +2,7 @@
 
 namespace Modules\Anagrafiche;
 
-use Base\Model;
+use Common\Model;
 use Modules\Fatture\Fattura;
 use Util\Generator;
 use Settings;
@@ -96,12 +96,10 @@ class Anagrafica extends Model
     public static function fixTecnico(Anagrafica $anagrafica)
     {
         // Copio già le tariffe per le varie attività
-        if (in_array($id_tecnico, $idtipoanagrafica)) {
-            $result = $database->query('INSERT INTO in_tariffe(idtecnico, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) SELECT '.prepare($model->id).', idtipointervento, costo_orario, costo_km, costo_diritto_chiamata, costo_orario_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico FROM in_tipiintervento');
+        $result = $database->query('INSERT INTO in_tariffe(idtecnico, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) SELECT '.prepare($model->id).', idtipointervento, costo_orario, costo_km, costo_diritto_chiamata, costo_orario_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico FROM in_tipiintervento');
 
-            if (!$result) {
-                flash()->error(tr("Errore durante l'importazione tariffe!"));
-            }
+        if (!$result) {
+            flash()->error(tr("Errore durante l'importazione tariffe!"));
         }
     }
 

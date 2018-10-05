@@ -2,7 +2,7 @@
 
 namespace Modules\Interventi;
 
-use Base\Model;
+use Common\Model;
 use Modules\Anagrafiche\Anagrafica;
 
 class Intervento extends Model

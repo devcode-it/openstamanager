@@ -2,7 +2,7 @@
 
 namespace Modules\Fatture;
 
-use Base\Row;
+use Common\Row;
 
 class Riga extends Row
 {

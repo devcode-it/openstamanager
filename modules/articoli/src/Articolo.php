@@ -2,7 +2,7 @@
 
 namespace Modules\Articoli;
 
-use Base\Model;
+use Common\Model;
 use Modules\Interventi\Articolo as ArticoloIntervento;
 
 class Articolo extends Model

@@ -1,6 +1,6 @@
 <?php
 
-namespace Base;
+namespace Common;
 
 use Modules\Articoli\Articolo as Original;
 use Illuminate\Database\Eloquent\Builder;

@@ -574,7 +574,12 @@ switch (post('op')) {
         break;
 
     case 'manage_descrizione':
-        $riga = Descrizione::make($fattura);
+        if (post('idriga') != null) {
+            $riga = Descrizione::find(post('idriga'));
+        } else {
+            $riga = Descrizione::make($fattura);
+        }
+
         $riga->descrizione = post('descrizione');
         $riga->save();
 

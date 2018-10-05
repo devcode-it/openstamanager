@@ -25,10 +25,10 @@ $options = [
 ];
 
 // Dati della riga
-$rsr = $dbo->fetchArray('SELECT * FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare(get('idriga')));
+$riga = $dbo->fetchOne('SELECT * FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare(get('idriga')));
 
-$result = $rsr[0];
-$result['prezzo'] = $rsr[0]['subtotale'] / $rsr[0]['qta'];
+$result = $riga;
+$result['prezzo'] = $riga['subtotale'] / $riga['qta'];
 
 // Importazione della gestione dedicata
 $file = 'riga';

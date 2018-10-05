@@ -3,7 +3,7 @@
 namespace Modules\Articoli;
 
 use Base\Model;
-use Modules\Articoli\Articolo as ArticoloIntervento;
+use Modules\Interventi\Articolo as ArticoloIntervento;
 
 class Articolo extends Model
 {

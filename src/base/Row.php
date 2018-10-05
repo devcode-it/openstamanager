@@ -53,9 +53,16 @@ abstract class Row extends Description
     {
         $this->attributes['idrivalsainps'] = $value;
 
-        // Calcolo rivalsa inps
-        $rivalsa = database()->fetchOne('SELECT * FROM co_rivalsainps WHERE id = '.prepare($value));
-        $this->rivalsainps = ($this->subtotale - $this->sconto) / 100 * $rivalsa['percentuale'];
+        $this->fixRivalsaINPS();
+    }
+
+    /**
+     * Effettua i conti per la Rivalsa INPS.
+     */
+    protected function fixRivalsaINPS()
+    {
+        $rivalsa = database()->fetchOne('SELECT * FROM co_rivalsainps WHERE id = '.prepare($this->idrivalsainps));
+        $this->attributes['rivalsainps'] = ($this->subtotale - $this->sconto) / 100 * $rivalsa['percentuale'];
     }
 
     /**
@@ -230,5 +237,7 @@ abstract class Row extends Description
         $this->attributes['subtotale'] = $this->costo_unitario * $this->qta;
 
         $this->fixIva();
+        $this->fixRitenutaAcconto();
+        $this->fixRivalsaINPS();
     }
 }

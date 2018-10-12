@@ -25,7 +25,7 @@ switch ($resource) {
         }
 
         // Tutti gli agenti
-        $q = "SELECT DISTINCT(email), ragione_sociale, an_anagrafiche.idanagrafica FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE idtipoanagrafica = (SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Agente') AND email != '' ORDER BY idanagrafica";
+        $q = "SELECT DISTINCT(email), ragione_sociale, an_anagrafiche.idanagrafica FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE idtipoanagrafica = (SELECT id FROM an_tipianagrafiche WHERE descrizione='Agente') AND email != '' ORDER BY idanagrafica";
 
         $rs = $dbo->fetchArray($q);
         foreach ($rs as $r) {

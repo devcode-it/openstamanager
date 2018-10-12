@@ -162,6 +162,6 @@ return [
             'tipologia',
             'idtipo',
         ],
-        'query' => 'SELECT idtipoanagrafica as result FROM an_tipianagrafiche WHERE descrizione = |value|',
+        'query' => 'SELECT id as result FROM an_tipianagrafiche WHERE descrizione = |value|',
     ],
 ];

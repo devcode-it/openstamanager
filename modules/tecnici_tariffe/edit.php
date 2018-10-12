@@ -6,7 +6,7 @@ $tipi_interventi = $dbo->fetchArray('SELECT * FROM in_tipiintervento ORDER BY de
 
 $tecnici = $dbo->fetchArray("SELECT idanagrafica, ragione_sociale FROM an_anagrafiche WHERE idanagrafica IN (
     SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica IN (
-        SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione = 'Tecnico'
+        SELECT id FROM an_tipianagrafiche WHERE descrizione = 'Tecnico'
     )
 ) ORDER BY ragione_sociale");
 

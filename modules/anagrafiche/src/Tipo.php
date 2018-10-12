@@ -7,7 +7,6 @@ use Common\Model;
 class Tipo extends Model
 {
     protected $table = 'an_tipianagrafiche';
-    protected $primaryKey = 'idtipoanagrafica';
 
     protected $appends = [
         'id',

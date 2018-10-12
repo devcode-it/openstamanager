@@ -206,7 +206,7 @@ if (!empty($rs2)) {
         // Sconto ore
         echo '
             <td style="border-right:1px solid #aaa;">';
-        if ($user['idanagrafica'] == 0 || $show_costi) {
+        if ($show_costi) {
             echo '
                 {[ "type": "number", "name": "sconto['.$id.']", "value": "'.$sconto_unitario.'", "icon-after": "choice|untprc|'.$tipo_sconto.'|'.$readonly.'", "class": "small-width", "extra": "'.$readonly.'" ]}';
         } else {
@@ -221,7 +221,7 @@ if (!empty($rs2)) {
         // Sconto km
         echo '
             <td style="border-right:1px solid #aaa;">';
-        if ($user['idanagrafica'] == 0 || $show_costi) {
+        if ($show_costi) {
             echo '
                 {[ "type": "number", "name": "scontokm['.$id.']", "value": "'.$scontokm_unitario.'", "icon-after": "choice|untprc|'.$tipo_scontokm.'|'.$readonly.'", "class": "small-width", "extra": "'.$readonly.'" ]}';
         } else {
@@ -243,7 +243,10 @@ if (!empty($rs2)) {
 
         if (!$flag_completato) {
             echo '
-                <a class="btn btn-danger" id="delbtn_'.$id.'" onclick="elimina_sessione(\''.$id.'\', \''.$id_record.'\', \''.$idzona.'\');" title="Elimina riga" class="only_rw"><i class="fa fa-trash"></i></a>';
+                <a class="btn btn-danger" id="delbtn_'.$id.'" onclick="elimina_sessione(\''.$id.'\', \''.$id_record.'\', \''.$idzona.'\');" title="Elimina riga" class="only_rw"><i class="fa fa-trash"></i></a>
+                <a class="btn btn-info" onclick="launch_modal(\''.tr('Modifica sessione').'\', \''.$module->fileurl('manage_sessione.php').'?id_module='.$id_module.'&id_sessione='.$id.'\', 1);" title="'.tr('Modifica sessione').'">
+                    <i class="fa fa-pencil"></i>
+                </a>';
         }
 
         echo '

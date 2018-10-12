@@ -128,7 +128,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="col-md-8">
-			{[ "type": "text", "label": "<?php echo tr('Causale'); ?>", "name": "descrizione", "id": "desc", "required": 1, "value": "<?php echo prepareToField($descrizione); ?>" ]}
+			{[ "type": "text", "label": "<?php echo tr('Causale'); ?>", "name": "descrizione", "id": "desc", "required": 1, "value": <?php echo json_encode($descrizione); ?> ]}
 		</div>
 	</div>
 

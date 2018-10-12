@@ -14,8 +14,8 @@ $stati = [];
 $queryc = 'SELECT * FROM in_statiintervento';
 $rsc = $dbo->fetchArray($queryc);
 for ($i = 0; $i < sizeof($rsc); ++$i) {
-    $colori[$rsc[$i]['idstatointervento']] = $rsc[$i]['colore'];
-    $stati[$rsc[$i]['idstatointervento']] = $rsc[$i]['descrizione'];
+    $colori[$rsc[$i]['id_stato']] = $rsc[$i]['colore'];
+    $stati[$rsc[$i]['id_stato']] = $rsc[$i]['descrizione'];
 }
 
 $budget = get_imponibile_preventivo($id_record);
@@ -43,11 +43,11 @@ if (!empty($rsi)) {
     // Tabella con i dati
     foreach ($rsi as $int) {
         $int = array_merge($int, get_costi_intervento($int['id']));
-        $totale_stato[$int['idstatointervento']] = sum($totale_stato[$int['idstatointervento']], $int['totale']);
+        $totale_stato[$int['id_stato']] = sum($totale_stato[$int['id_stato']], $int['totale']);
 
         // Riga intervento singolo
         echo '
-    <tr style="background:'.$colori[$int['idstatointervento']].';">
+    <tr style="background:'.$colori[$int['id_stato']].';">
         <td>
             <a href="javascript:;" class="btn btn-primary btn-xs" onclick="$(\'#dettagli_'.$int['id'].'\').toggleClass(\'hide\'); $(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');"><i class="fa fa-plus"></i></a>
             '.Modules::link('Interventi', $int['id'], tr('Intervento num. _NUM_ del _DATE_', [

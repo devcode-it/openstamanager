@@ -39,16 +39,16 @@ if ($module['name'] == 'Ordini cliente') {
                     if (setting('Cambia automaticamente stato ordini fatturati')) {
                         if ($record['stato'] == 'Evaso' || $record['stato'] == 'Parzialmente evaso' || $record['stato'] == 'Fatturato' || $record['stato'] == 'Parzialmente fatturato') {
                             ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine", "value": "$idstatoordine$", "extra": "readonly" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "id_statoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine", "value": "$id_statoordine$", "extra": "readonly" ]}
                     <?php
                         } else {
                             ?>
-                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine WHERE descrizione IN('Bozza')", "value": "$idstatoordine$" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "id_statoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine WHERE descrizione IN('Bozza')", "value": "$id_statoordine$" ]}
                     <?php
                         }
                     } else {
                         ?>
-                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine", "value": "$idstatoordine$" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "id_statoordine", "required": 1, "values": "query=SELECT * FROM or_statiordine", "value": "$id_statoordine$" ]}
                     <?php
                     }
                     ?>

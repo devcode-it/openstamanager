@@ -67,7 +67,7 @@ switch ($resource) {
                         'data_richiesta' => \Carbon::now(),
                         'richiesta' => $richiesta,
                         'idtipointervento' => 0,
-                        'idstatointervento' => 'CALL',
+                        'id_stato' => 'CALL',
                         'oggetto' => $summary,
                     ]);
 
@@ -106,7 +106,7 @@ switch ($resource) {
         $data = $request['data'];
 
         $dbo->update('in_interventi', [
-            'idstatointervento' => $data['id_stato_intervento'],
+            'id_stato' => $data['id_stato_intervento'],
             'descrizione' => $data['descrizione'],
             'informazioniaggiuntive' => $data['informazioni_aggiuntive'],
         ], ['id' => $data['id']]);

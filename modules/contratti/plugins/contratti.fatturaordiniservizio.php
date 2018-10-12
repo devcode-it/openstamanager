@@ -103,7 +103,7 @@ elseif (get('op') == 'addfattura') {
         $idbanca = $rs[0]['id'];
     }
 
-    $query = 'INSERT INTO co_documenti(numero, numero_esterno, idanagrafica, idtipodocumento, idpagamento, data, idstatodocumento, note, idsede, id_segment, idconto, idbanca) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipodocumento).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza'), ".prepare($note).', (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).'), '.prepare($id_segment).', '.prepare($idconto).', '.prepare($idbanca).' )';
+    $query = 'INSERT INTO co_documenti(numero, numero_esterno, idanagrafica, idtipodocumento, idpagamento, data, id_stato, note, idsede, id_segment, idconto, idbanca) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipodocumento).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza'), ".prepare($note).', (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).'), '.prepare($id_segment).', '.prepare($idconto).', '.prepare($idbanca).' )';
     $dbo->query($query);
     $iddocumento = $dbo->lastInsertedID();
 
@@ -247,7 +247,7 @@ if (empty($rs)) {
 
         // Documento collegato (fattura)
         if ($rs[$i]['iddocumento'] != 0) {
-            $rsf = $dbo->fetchArray('SELECT numero, numero_esterno, data, (SELECT SUM(subtotale) FROM co_righe_documenti WHERE iddocumento=co_documenti.id) AS imponibile, (SELECT icona FROM co_statidocumento WHERE id=co_documenti.idstatodocumento) AS icona, (SELECT descrizione FROM co_statidocumento WHERE id=co_documenti.idstatodocumento) AS stato FROM co_documenti WHERE id='.prepare($rs[$i]['iddocumento']));
+            $rsf = $dbo->fetchArray('SELECT numero, numero_esterno, data, (SELECT SUM(subtotale) FROM co_righe_documenti WHERE iddocumento=co_documenti.id) AS imponibile, (SELECT icona FROM co_statidocumento WHERE id=co_documenti.id_stato) AS icona, (SELECT descrizione FROM co_statidocumento WHERE id=co_documenti.id_stato) AS stato FROM co_documenti WHERE id='.prepare($rs[$i]['iddocumento']));
 
             if ($rsf[0]['numero_esterno'] != '') {
                 $numero_doc = $rsf[0]['numero_esterno'];

@@ -13,7 +13,7 @@ $records = $dbo->fetchArray('SELECT *, (SELECT descrizione FROM in_tipiintervent
 
 // Intervento/promemoria pianificabile
 $pianificabile = $dbo->fetchOne('SELECT pianificabile FROM co_staticontratti WHERE id = :id', [
-    ':id' => $contratto['idstato'],
+    ':id' => $contratto['id_stato'],
 ])['pianificabile'];
 
 $stati_pianificabili = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione` SEPARATOR ", ") AS stati_pianificabili FROM `co_staticontratti` WHERE `pianificabile` = 1')['stati_pianificabili'];

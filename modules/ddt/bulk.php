@@ -97,7 +97,7 @@ switch (post('op')) {
                         $dbo->query('UPDATE dt_righe_ddt SET qta_evasa = qta WHERE id='.prepare($riga['id']));
 
                         // Aggiorno lo stato ddt
-                        $dbo->query('UPDATE dt_ddt SET idstatoddt = (SELECT id FROM dt_statiddt WHERE descrizione="Fatturato") WHERE id='.prepare($id));
+                        $dbo->query('UPDATE dt_ddt SET id_stato = (SELECT id FROM dt_statiddt WHERE descrizione="Fatturato") WHERE id='.prepare($id));
                     }
 
                     // Ricalcolo inps, ritenuta e bollo

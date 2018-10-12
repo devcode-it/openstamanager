@@ -10,6 +10,6 @@ class Stato extends Model
 
     public function fatture()
     {
-        return $this->hasMany(Fattura::class, 'idstatodocumento');
+        return $this->hasMany(Fattura::class, 'id_stato');
     }
 }

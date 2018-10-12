@@ -302,7 +302,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     }
 
     // Lettura info fattura
-    $query = 'SELECT *, co_documenti.note, co_documenti.idpagamento, co_documenti.id AS iddocumento, co_statidocumento.descrizione AS `stato`, co_tipidocumento.descrizione AS `descrizione_tipodoc` FROM ((co_documenti LEFT OUTER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
+    $query = 'SELECT *, co_documenti.note, co_documenti.idpagamento, co_documenti.id AS iddocumento, co_statidocumento.descrizione AS `stato`, co_tipidocumento.descrizione AS `descrizione_tipodoc` FROM ((co_documenti LEFT OUTER JOIN co_statidocumento ON co_documenti.id_stato=co_statidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
     $n = sizeof($rs);
     $data = $rs[0]['data'];
@@ -760,12 +760,12 @@ function rimuovi_articolo_dafattura($idarticolo, $iddocumento, $idrigadocumento)
 
     // Aggiorno lo stato dell'ordine
     if (setting('Cambia automaticamente stato ordini fatturati') && !empty($idordine)) {
-        $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($idordine).'") WHERE id = '.prepare($idordine));
+        $dbo->query('UPDATE or_ordini SET id_statoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($idordine).'") WHERE id = '.prepare($idordine));
     }
 
     // Aggiorno lo stato del ddt
     if (setting('Cambia automaticamente stato ddt fatturati') && !empty($idddt)) {
-        $dbo->query('UPDATE dt_ddt SET idstatoddt=(SELECT id FROM dt_statiddt WHERE descrizione="'.get_stato_ddt($idddt).'") WHERE id = '.prepare($idddt));
+        $dbo->query('UPDATE dt_ddt SET id_stato=(SELECT id FROM dt_statiddt WHERE descrizione="'.get_stato_ddt($idddt).'") WHERE id = '.prepare($idddt));
     }
 
     // Elimino i movimenti avvenuti nel magazzino per questo articolo lotto, serial, altro
@@ -854,12 +854,12 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
 
     // Aggiorno lo stato dell'ordine
     if (!empty($riga['idordine']) && setting('Cambia automaticamente stato ordini fatturati')) {
-        $dbo->query('UPDATE or_ordini SET idstatoordine = (SELECT id FROM or_statiordine WHERE descrizione = '.prepare(get_stato_ordine($riga['idordine'])).') WHERE id = '.prepare($riga['idordine']));
+        $dbo->query('UPDATE or_ordini SET id_statoordine = (SELECT id FROM or_statiordine WHERE descrizione = '.prepare(get_stato_ordine($riga['idordine'])).') WHERE id = '.prepare($riga['idordine']));
     }
 
     // Aggiorno lo stato del ddt
     if (!empty($riga['idddt']) && setting('Cambia automaticamente stato ddt fatturati')) {
-        $dbo->query('UPDATE dt_ddt SET idstatoddt = (SELECT id FROM dt_statiddt WHERE descrizione = '.prepare(get_stato_ddt($riga['idddt'])).') WHERE id = '.prepare($riga['idddt']));
+        $dbo->query('UPDATE dt_ddt SET id_stato = (SELECT id FROM dt_statiddt WHERE descrizione = '.prepare(get_stato_ddt($riga['idddt'])).') WHERE id = '.prepare($riga['idddt']));
     }
 
     // Elimino i movimenti avvenuti nel magazzino per questo articolo lotto, serial, altro

@@ -202,7 +202,7 @@ if (!empty($rs2)) {
                             </div>';
         }
 
-        $interventi = $dbo->fetchArray('SELECT *, DATE_FORMAT(data_richiesta,"%d/%m/%Y") AS data_richiesta, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=in_interventi.idtipointervento) AS tipo, (SELECT descrizione FROM in_statiintervento WHERE idstatointervento=in_interventi.idstatointervento) AS stato, (SELECT colore FROM in_statiintervento WHERE idstatointervento=in_interventi.idstatointervento) AS colore FROM in_interventi INNER JOIN my_componenti_interventi ON my_componenti_interventi.id_intervento=in_interventi.id WHERE id_componente='.prepare($rs2[$j]['id']).' ORDER BY id_intervento');
+        $interventi = $dbo->fetchArray('SELECT *, DATE_FORMAT(data_richiesta,"%d/%m/%Y") AS data_richiesta, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=in_interventi.idtipointervento) AS tipo, (SELECT descrizione FROM in_statiintervento WHERE id_stato=in_interventi.id_stato) AS stato, (SELECT colore FROM in_statiintervento WHERE id_stato=in_interventi.id_stato) AS colore FROM in_interventi INNER JOIN my_componenti_interventi ON my_componenti_interventi.id_intervento=in_interventi.id WHERE id_componente='.prepare($rs2[$j]['id']).' ORDER BY id_intervento');
         if ($interventi != null) {
             // Collegamento a intervento se c'è
             echo '
@@ -254,7 +254,7 @@ if (!empty($rs2)) {
         // Pulsante Salva/Elimina
         echo '
                             <div class="col-md-12">
-                                
+
 								<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva modifiche').'</button>';
 
         // Sostituisci componente con un altro dello stesso tipo, posso sostituire solo i componenti installati
@@ -266,7 +266,7 @@ if (!empty($rs2)) {
 														<button class="btn btn-warning disabled" disabled>'.tr('Componente già sostituito').'</button>';
         }
 
-        echo '					
+        echo '
 								    <a class="btn btn-danger ask" data-backto="record-edit" data-op="unlinkcomponente" data-id="'.$rs2[$j]['id'].'">
                                     <i class="fa fa-trash"></i> '.tr('Elimina').'
                                 </a>';

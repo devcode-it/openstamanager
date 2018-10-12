@@ -101,7 +101,7 @@ function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
 
     //Aggiorno lo stato dell'ordine
     if (setting('Cambia automaticamente stato ordini fatturati') && !empty($idordine)) {
-        $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($idordine).'") WHERE id = '.prepare($idordine));
+        $dbo->query('UPDATE or_ordini SET id_statoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($idordine).'") WHERE id = '.prepare($idordine));
     }
 
     // Elimino i seriali utilizzati dalla riga

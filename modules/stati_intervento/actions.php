@@ -11,24 +11,24 @@ switch (post('op')) {
             'notifica' => post('notifica'),
             'id_email' => post('email'),
             'destinatari' => post('destinatari'),
-        ], ['idstatointervento' => $id_record]);
+        ], ['id_stato' => $id_record]);
 
         flash()->info(tr('Informazioni salvate correttamente.'));
 
         break;
 
     case 'add':
-        $idstatointervento = post('idstatointervento');
+        $id_stato = post('id_stato');
         $descrizione = post('descrizione');
         $colore = post('colore');
 
-        //controllo idstatointervento che non sia duplicato
-        if (count($dbo->fetchArray('SELECT idstatointervento FROM in_statiintervento WHERE idstatointervento='.prepare($idstatointervento))) > 0) {
+        //controllo id_stato che non sia duplicato
+        if (count($dbo->fetchArray('SELECT id_stato FROM in_statiintervento WHERE id_stato='.prepare($id_stato))) > 0) {
             flash()->error(tr('Stato di intervento già esistente.'));
         } else {
-            $query = 'INSERT INTO in_statiintervento(idstatointervento, descrizione, colore) VALUES ('.prepare($idstatointervento).', '.prepare($descrizione).', '.prepare($colore).')';
+            $query = 'INSERT INTO in_statiintervento(id_stato, descrizione, colore) VALUES ('.prepare($id_stato).', '.prepare($descrizione).', '.prepare($colore).')';
             $dbo->query($query);
-            $id_record = $idstatointervento;
+            $id_record = $id_stato;
             flash()->info(tr('Nuovo stato di intervento aggiunto.'));
         }
 
@@ -37,10 +37,10 @@ switch (post('op')) {
     case 'delete':
 
         //scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato negli interventi
-        if (count($dbo->fetchArray('SELECT id FROM in_interventi WHERE idstatointervento='.prepare($id_record))) > 0) {
-            $query = 'UPDATE in_statiintervento SET deleted_at = NOW() WHERE idstatointervento='.prepare($id_record).' AND `can_delete`=1';
+        if (count($dbo->fetchArray('SELECT id FROM in_interventi WHERE id_stato='.prepare($id_record))) > 0) {
+            $query = 'UPDATE in_statiintervento SET deleted_at = NOW() WHERE id_stato='.prepare($id_record).' AND `can_delete`=1';
         } else {
-            $query = 'DELETE FROM in_statiintervento  WHERE idstatointervento='.prepare($id_record).' AND `can_delete`=1';
+            $query = 'DELETE FROM in_statiintervento  WHERE id_stato='.prepare($id_record).' AND `can_delete`=1';
         }
 
         $dbo->query($query);

@@ -142,7 +142,7 @@ switch (filter('op')) {
                             // $idanagrafica = 2;
 
                             // intervento sempre nello stato "In programmazione"
-                            $idstatointervento = 'WIP';
+                            $id_stato = 'WIP';
 
                             // calcolo codice intervento
                             $formato = setting('Formato codice intervento');
@@ -162,7 +162,7 @@ switch (filter('op')) {
                             $dbo->insert('in_interventi', [
                                 'idanagrafica' => $idanagrafica,
                                 'idclientefinale' => post('idclientefinale') ?: 0,
-                                'idstatointervento' => $idstatointervento,
+                                'id_stato' => $id_stato,
                                 'idtipointervento' => $idtipointervento,
                                 'idsede' => $idsede ?: 0,
                                 'idautomezzo' => $idautomezzo ?: 0,

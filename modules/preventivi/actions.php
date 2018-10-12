@@ -41,7 +41,7 @@ switch (post('op')) {
             $idpagamento = setting('Tipo di pagamento predefinito');
         }
 
-        $dbo->query('INSERT INTO co_preventivi(idanagrafica, nome, numero, idagente, idstato, idtipointervento, data_bozza, data_conclusione, idiva, idpagamento) VALUES ('.prepare($idanagrafica).', '.prepare($nome).', '.prepare($numero).', '.prepare($idagente).", (SELECT `id` FROM `co_statipreventivi` WHERE `descrizione`='Bozza'), ".prepare($idtipointervento).', NOW(), DATE_ADD(NOW(), INTERVAL +1 MONTH), '.prepare($idiva).', '.prepare($idpagamento).')');
+        $dbo->query('INSERT INTO co_preventivi(idanagrafica, nome, numero, idagente, id_stato, idtipointervento, data_bozza, data_conclusione, idiva, idpagamento) VALUES ('.prepare($idanagrafica).', '.prepare($nome).', '.prepare($numero).', '.prepare($idagente).", (SELECT `id` FROM `co_statipreventivi` WHERE `descrizione`='Bozza'), ".prepare($idtipointervento).', NOW(), DATE_ADD(NOW(), INTERVAL +1 MONTH), '.prepare($idiva).', '.prepare($idpagamento).')');
         $id_record = $dbo->lastInsertedID();
 
         /*
@@ -68,7 +68,7 @@ switch (post('op')) {
 
     case 'update':
         if (isset($id_record)) {
-            $idstato = post('idstato');
+            $id_stato = post('id_stato');
             $nome = post('nome');
             $idanagrafica = post('idanagrafica');
             $idagente = post('idagente');
@@ -100,7 +100,7 @@ switch (post('op')) {
 
             $idiva = post('idiva');
 
-            $query = 'UPDATE co_preventivi SET idstato='.prepare($idstato).','.
+            $query = 'UPDATE co_preventivi SET id_stato='.prepare($id_stato).','.
                 ' nome='.prepare($nome).','.
                 ' idanagrafica='.prepare($idanagrafica).','.
                 ' idagente='.prepare($idagente).','.
@@ -148,7 +148,7 @@ switch (post('op')) {
             ], ['id' => $idintervento]);
 
             // Imposto il preventivo nello stato "In lavorazione" se inizio ad aggiungere interventi
-            $dbo->query("UPDATE `co_preventivi` SET idstato=(SELECT `id` FROM `co_statipreventivi` WHERE `descrizione`='In lavorazione') WHERE `id`=".prepare($id_record));
+            $dbo->query("UPDATE `co_preventivi` SET id_stato=(SELECT `id` FROM `co_statipreventivi` WHERE `descrizione`='In lavorazione') WHERE `id`=".prepare($id_record));
 
             flash()->info(tr('Intervento _NUM_ aggiunto!', [
                 '_NUM_' => $rs[0]['codice'],

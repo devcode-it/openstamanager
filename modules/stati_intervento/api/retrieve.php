@@ -7,7 +7,7 @@ switch ($resource) {
 
         $select = [
             '*',
-            'id' => 'idstatointervento',
+            'id' => 'id_stato',
         ];
 
         if (empty($where['deleted_at'])) {

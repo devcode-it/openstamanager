@@ -28,7 +28,7 @@ switch ($resource) {
             $dbo->insert('in_interventi', [
                 'idanagrafica' => $data['id_anagrafica'],
                 'idclientefinale' => 0,
-                'idstatointervento' => $data['id_stato_intervento'],
+                'id_stato' => $data['id_stato_intervento'],
                 'idtipointervento' => $data['id_tipo_intervento'],
                 'idsede' => 0,
                 'idautomezzo' => 0,

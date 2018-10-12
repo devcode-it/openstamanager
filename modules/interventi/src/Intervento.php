@@ -16,7 +16,7 @@ class Intervento extends Model
 
     public function stato()
     {
-        return $this->belongsTo(Stato::class, 'idstatointervento');
+        return $this->belongsTo(Stato::class, 'id_stato');
     }
 
     public function articoli()

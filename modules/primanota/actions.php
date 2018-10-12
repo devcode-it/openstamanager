@@ -13,7 +13,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
 
         // Lettura info fattura
-        $query = 'SELECT *, co_documenti.note, co_documenti.idpagamento, co_documenti.id AS iddocumento, co_statidocumento.descrizione AS `stato`, co_tipidocumento.descrizione AS `descrizione_tipodoc` FROM ((co_documenti LEFT OUTER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
+        $query = 'SELECT *, co_documenti.note, co_documenti.idpagamento, co_documenti.id AS iddocumento, co_statidocumento.descrizione AS `stato`, co_tipidocumento.descrizione AS `descrizione_tipodoc` FROM ((co_documenti LEFT OUTER JOIN co_statidocumento ON co_documenti.id_stato=co_statidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
         $rs = $dbo->fetchArray($query);
         $ragione_sociale = $rs[0]['ragione_sociale'];
         $data_documento = $rs[0]['data'];
@@ -62,9 +62,9 @@ switch (post('op')) {
 
             // Aggiorno lo stato della fattura
             if (abs($rs[0]['tot_pagato']) == abs($rs[0]['tot_da_pagare'])) {
-                $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Pagato') WHERE id=".prepare($iddocumento));
+                $dbo->query("UPDATE co_documenti SET id_stato=(SELECT id FROM co_statidocumento WHERE descrizione='Pagato') WHERE id=".prepare($iddocumento));
             } else {
-                $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Parzialmente pagato') WHERE id=".prepare($iddocumento));
+                $dbo->query("UPDATE co_documenti SET id_stato=(SELECT id FROM co_statidocumento WHERE descrizione='Parzialmente pagato') WHERE id=".prepare($iddocumento));
             }
 
             // Aggiorno lo stato dei preventivi collegati alla fattura se ce ne sono
@@ -72,14 +72,14 @@ switch (post('op')) {
             $rs2 = $dbo->fetchArray($query2);
 
             for ($j = 0; $j < sizeof($rs2); ++$j) {
-                $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='Pagato') WHERE id=".prepare($rs2[$j]['idpreventivo']));
+                $dbo->query("UPDATE co_preventivi SET id_stato=(SELECT id FROM co_statipreventivi WHERE descrizione='Pagato') WHERE id=".prepare($rs2[$j]['idpreventivo']));
             }
 
             // Aggiorno lo stato dei contratti collegati alla fattura se ce ne sono
             $query2 = 'SELECT idcontratto FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' AND NOT idcontratto=0 AND idcontratto IS NOT NULL';
             $rs2 = $dbo->fetchArray($query2);
             for ($j = 0; $j < sizeof($rs2); ++$j) {
-                $dbo->query("UPDATE co_contratti SET idstato=(SELECT id FROM co_staticontratti WHERE descrizione='Pagato') WHERE id=".prepare($rs2[$j]['idcontratto']));
+                $dbo->query("UPDATE co_contratti SET id_stato=(SELECT id FROM co_staticontratti WHERE descrizione='Pagato') WHERE id=".prepare($rs2[$j]['idcontratto']));
             }
 
             // Aggiorno lo stato degli interventi collegati alla fattura se ce ne sono
@@ -87,7 +87,7 @@ switch (post('op')) {
             $rs2 = $dbo->fetchArray($query2);
 
             for ($j = 0; $j < sizeof($rs2); ++$j) {
-                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id_preventivo=".prepare($rs2[$j]['idpreventivo']));
+                $dbo->query("UPDATE in_interventi SET id_stato=(SELECT id_stato FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id_preventivo=".prepare($rs2[$j]['idpreventivo']));
             }
         }
 
@@ -125,7 +125,7 @@ switch (post('op')) {
         $dbo->query('DELETE FROM co_movimenti WHERE idmastrino='.prepare($idmastrino).' AND primanota=1');
 
         // Lettura info fattura
-        $query = 'SELECT *, co_documenti.note, co_documenti.idpagamento, co_documenti.id AS iddocumento, co_statidocumento.descrizione AS `stato`, co_tipidocumento.descrizione AS `descrizione_tipodoc` FROM ((co_documenti LEFT OUTER JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
+        $query = 'SELECT *, co_documenti.note, co_documenti.idpagamento, co_documenti.id AS iddocumento, co_statidocumento.descrizione AS `stato`, co_tipidocumento.descrizione AS `descrizione_tipodoc` FROM ((co_documenti LEFT OUTER JOIN co_statidocumento ON co_documenti.id_stato=co_statidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
         $rs = $dbo->fetchArray($query);
         $ragione_sociale = $rs[0]['ragione_sociale'];
         $dir = $rs[0]['dir'];
@@ -168,17 +168,17 @@ switch (post('op')) {
 
                         // Aggiorno lo stato della fattura a "Emessa"
                         if (abs($rs2[0]['tot_pagato']) < abs($rs2[0]['tot_da_pagare'])) {
-                            $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Emessa') WHERE id=".prepare($iddocumento));
+                            $dbo->query("UPDATE co_documenti SET id_stato=(SELECT id FROM co_statidocumento WHERE descrizione='Emessa') WHERE id=".prepare($iddocumento));
 
                             // Aggiorno lo stato dei preventivi collegati alla fattura se ce ne sono
                             $query3 = 'SELECT idpreventivo FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' AND NOT idpreventivo=0 AND idpreventivo IS NOT NULL';
                             $rs3 = $dbo->fetchArray($query3);
 
                             for ($j = 0; $j < sizeof($rs3); ++$j) {
-                                $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='In attesa di pagamento') WHERE id=".prepare($rs3[$j]['idpreventivo']));
+                                $dbo->query("UPDATE co_preventivi SET id_stato=(SELECT id FROM co_statipreventivi WHERE descrizione='In attesa di pagamento') WHERE id=".prepare($rs3[$j]['idpreventivo']));
 
                                 // Aggiorno anche lo stato degli interventi collegati ai preventivi
-                                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Completato') WHERE id_preventivo=".prepare($rs3[$j]['idpreventivo']));
+                                $dbo->query("UPDATE in_interventi SET id_stato=(SELECT id_stato FROM in_statiintervento WHERE descrizione='Completato') WHERE id_preventivo=".prepare($rs3[$j]['idpreventivo']));
                             }
 
                             // Aggiorno lo stato degli interventi collegati alla fattura se ce ne sono
@@ -186,7 +186,7 @@ switch (post('op')) {
                             $rs3 = $dbo->fetchArray($query3);
 
                             for ($j = 0; $j < sizeof($rs3); ++$j) {
-                                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id=".prepare($rs3[$j]['idintervento']));
+                                $dbo->query("UPDATE in_interventi SET id_stato=(SELECT id_stato FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id=".prepare($rs3[$j]['idintervento']));
                             }
                         }
                     }
@@ -212,17 +212,17 @@ switch (post('op')) {
                 $stato = 'Parzialmente pagato';
             }
 
-            $dbo->query('UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='.prepare($stato).') WHERE id='.prepare($iddocumento));
+            $dbo->query('UPDATE co_documenti SET id_stato=(SELECT id FROM co_statidocumento WHERE descrizione='.prepare($stato).') WHERE id='.prepare($iddocumento));
 
             // Aggiorno lo stato dei preventivi collegati alla fattura se ce ne sono
             $query2 = 'SELECT idpreventivo FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' AND NOT idpreventivo=0 AND idpreventivo IS NOT NULL';
             $rs2 = $dbo->fetchArray($query2);
 
             for ($j = 0; $j < sizeof($rs2); ++$j) {
-                $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='Pagato') WHERE id=".prepare($rs2[$j]['idpreventivo']));
+                $dbo->query("UPDATE co_preventivi SET id_stato=(SELECT id FROM co_statipreventivi WHERE descrizione='Pagato') WHERE id=".prepare($rs2[$j]['idpreventivo']));
 
                 // Aggiorno anche lo stato degli interventi collegati ai preventivi
-                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id_preventivo=".prepare($rs2[$j]['idpreventivo']));
+                $dbo->query("UPDATE in_interventi SET id_stato=(SELECT id_stato FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id_preventivo=".prepare($rs2[$j]['idpreventivo']));
             }
 
             // Aggiorno lo stato degli interventi collegati alla fattura se ce ne sono
@@ -230,7 +230,7 @@ switch (post('op')) {
             $rs2 = $dbo->fetchArray($query2);
 
             for ($j = 0; $j < sizeof($rs2); ++$j) {
-                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id_preventivo=".prepare($rs2[$j]['idpreventivo']));
+                $dbo->query("UPDATE in_interventi SET id_stato=(SELECT id_stato FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id_preventivo=".prepare($rs2[$j]['idpreventivo']));
             }
         }
         break;
@@ -293,9 +293,9 @@ switch (post('op')) {
             // Aggiorno lo stato della fattura a "Emessa" o "Parzialmente pagato"
             $rs_pagamenti = $dbo->fetchArray("SELECT SUM(pagato) AS pagato FROM co_scadenziario WHERE iddocumento='".$iddocumento."'");
             if ($rs_pagamenti[0]['pagato'] > 0) {
-                $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Parzialmente pagato') WHERE id=".prepare($iddocumento));
+                $dbo->query("UPDATE co_documenti SET id_stato=(SELECT id FROM co_statidocumento WHERE descrizione='Parzialmente pagato') WHERE id=".prepare($iddocumento));
             } else {
-                $dbo->query("UPDATE co_documenti SET idstatodocumento=(SELECT id FROM co_statidocumento WHERE descrizione='Emessa') WHERE id=".prepare($iddocumento));
+                $dbo->query("UPDATE co_documenti SET id_stato=(SELECT id FROM co_statidocumento WHERE descrizione='Emessa') WHERE id=".prepare($iddocumento));
             }
 
             // Aggiorno lo stato dei preventivi collegati alla fattura se ce ne sono
@@ -303,10 +303,10 @@ switch (post('op')) {
             $rs = $dbo->fetchArray($query);
 
             for ($i = 0; $i < sizeof($rs); ++$i) {
-                $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='In attesa di pagamento') WHERE id=".prepare($rs[$i]['idpreventivo']));
+                $dbo->query("UPDATE co_preventivi SET id_stato=(SELECT id FROM co_statipreventivi WHERE descrizione='In attesa di pagamento') WHERE id=".prepare($rs[$i]['idpreventivo']));
 
                 // Aggiorno anche lo stato degli interventi collegati ai preventivi
-                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Completato') WHERE idpreventivo=".prepare($rs[$i]['idpreventivo']));
+                $dbo->query("UPDATE in_interventi SET id_stato=(SELECT id_stato FROM in_statiintervento WHERE descrizione='Completato') WHERE idpreventivo=".prepare($rs[$i]['idpreventivo']));
             }
 
             // Aggiorno lo stato degli interventi collegati alla fattura se ce ne sono
@@ -314,7 +314,7 @@ switch (post('op')) {
             $rs = $dbo->fetchArray($query);
 
             for ($i = 0; $i < sizeof($rs); ++$i) {
-                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id=".prepare($rs[$i]['idintervento']));
+                $dbo->query("UPDATE in_interventi SET id_stato=(SELECT id_stato FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id=".prepare($rs[$i]['idintervento']));
             }
 
             flash()->info(tr('Movimento eliminato!'));

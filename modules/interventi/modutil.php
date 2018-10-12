@@ -566,5 +566,5 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
     }
 
     // Metto l'intervento in stato "Fatturato"
-    $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id=".prepare($id_intervento));
+    $dbo->query("UPDATE in_interventi SET id_stato=(SELECT id_stato FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id=".prepare($id_intervento));
 }

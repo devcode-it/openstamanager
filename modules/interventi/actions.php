@@ -181,7 +181,7 @@ switch (post('op')) {
             'idreferente' => post('idreferente'),
             'idtipointervento' => $idtipointervento,
 
-            'idstatointervento' => post('idstatointervento'),
+            'id_stato' => post('id_stato'),
             'idsede' => $idsede,
             'idautomezzo' => post('idautomezzo'),
             'id_preventivo' => $idpreventivo,
@@ -190,9 +190,9 @@ switch (post('op')) {
             'tipo_sconto_globale' => $tipo_sconto,
         ], ['id' => $id_record]);
 
-        $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => post('idstatointervento')]);
+        $stato = $dbo->selectOne('in_statiintervento', '*', ['id_stato' => post('id_stato')]);
         // Notifica chiusura intervento
-        if (!empty($stato['notifica']) && !empty($stato['destinatari']) && $stato['idstatointervento'] != $record['idstatointervento']) {
+        if (!empty($stato['notifica']) && !empty($stato['destinatari']) && $stato['id_stato'] != $record['id_stato']) {
             $n = new Notifications\EmailNotification();
 
             $n->setTemplate($stato['id_email'], $id_record);
@@ -235,7 +235,7 @@ switch (post('op')) {
                 $dbo->insert('in_interventi', [
                     'idanagrafica' => post('idanagrafica'),
                     'idclientefinale' => post('idclientefinale') ?: 0,
-                    'idstatointervento' => post('idstatointervento'),
+                    'id_stato' => post('id_stato'),
                     'idtipointervento' => $idtipointervento,
                     'idsede' => $idsede ?: 0,
                     'idautomezzo' => $idautomezzo ?: 0,
@@ -611,11 +611,11 @@ switch (post('op')) {
 
                 if (!$img->save($docroot.'/files/interventi/'.$firma_file)) {
                     flash()->error(tr('Impossibile creare il file!'));
-                } elseif ($dbo->query('UPDATE in_interventi SET firma_file='.prepare($firma_file).', firma_data=NOW(), firma_nome = '.prepare($firma_nome).', idstatointervento = "OK" WHERE id='.prepare($id_record))) {
+                } elseif ($dbo->query('UPDATE in_interventi SET firma_file='.prepare($firma_file).', firma_data=NOW(), firma_nome = '.prepare($firma_nome).', id_stato = "OK" WHERE id='.prepare($id_record))) {
                     flash()->info(tr('Firma salvata correttamente!'));
                     flash()->info(tr('Attività completata!'));
 
-                    $stato = $dbo->selectOne('in_statiintervento', '*', ['idstatointervento' => 'OK']);
+                    $stato = $dbo->selectOne('in_statiintervento', '*', ['id_stato' => 'OK']);
                     // Notifica chiusura intervento
                     if (!empty($stato['notifica']) && !empty($stato['destinatari'])) {
                         $n = new Notifications\EmailNotification();

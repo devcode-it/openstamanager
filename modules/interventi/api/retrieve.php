@@ -58,7 +58,7 @@ switch ($resource) {
             `in_interventi`.`idanagrafica`,
             `in_interventi`.`idautomezzo`,
             `in_interventi`.`idsede`,
-            `in_interventi`.`idstatointervento`,
+            `in_interventi`.`id_stato`,
             `in_interventi`.`informazioniaggiuntive`,
             `in_interventi`.`idclientefinale`,
             `in_interventi`.`firma_file`,
@@ -71,14 +71,14 @@ switch ($resource) {
             `in_statiintervento`.`descrizione` AS `stato`,
             `in_interventi`.`idtipointervento` AS `tipo`
         FROM `in_interventi`
-            INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`idstatointervento`
+            INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id_stato`
             INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
             LEFT JOIN `an_sedi` ON `in_interventi`.`idsede` = `an_sedi`.`id`
         WHERE (SELECT MAX(`orario_fine`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) <= :period_end";
 
         // TODO: rimosse seguenti clausole:
 
-        // WHERE `in_interventi`.idstatointervento IN(SELECT idstatointervento FROM in_statiintervento WHERE app_download=1)
+        // WHERE `in_interventi`.id_stato IN(SELECT id_stato FROM in_statiintervento WHERE app_download=1)
         // nel database ufficiale manca in_statiintervento.app_download
 
         // AND `in_interventi_tecnici`.`idtecnico`='".$tecnico[0]['idanagrafica']."'
@@ -96,7 +96,7 @@ switch ($resource) {
 
         // TODO: rimosse seguenti clausole:
 
-        // WHERE `in_interventi`.idstatointervento IN(SELECT idstatointervento FROM in_statiintervento WHERE app_download=1)
+        // WHERE `in_interventi`.id_stato IN(SELECT id_stato FROM in_statiintervento WHERE app_download=1)
         // nel database ufficiale manca in_statiintervento.app_download
 
         $parameters = [

@@ -28,7 +28,7 @@ $idsede = filter('idsede');
 $idimpianto = null;
 $idzona = null;
 $idtipointervento = null;
-$idstatointervento = null;
+$id_stato = null;
 $richiesta = null;
 $impianti = [];
 
@@ -43,7 +43,7 @@ if (!empty($idanagrafica)) {
     $rs = $dbo->fetchArray('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
     $idtipointervento = $rs[0]['idtipointervento_default'];
     $idzona = $rs[0]['idzona'];
-    $idstatointervento = 'WIP';
+    $id_stato = 'WIP';
     $richiesta = filter('richiesta');
 }
 
@@ -112,8 +112,8 @@ elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
     }
 
     // Seleziono "In programmazione" come stato
-    $rs = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE idstatointervento='WIP'");
-    $idstatointervento = $rs[0]['idstatointervento'];
+    $rs = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE id_stato='WIP'");
+    $id_stato = $rs[0]['id_stato'];
 }
 
 // Intervento senza sessioni
@@ -127,7 +127,7 @@ elseif (!empty($id_intervento)) {
     $idsede = $rs[0]['idsede'];
     $idanagrafica = $rs[0]['idanagrafica'];
     $idclientefinale = $rs[0]['idclientefinale'];
-    $idstatointervento = $rs[0]['idstatointervento'];
+    $id_stato = $rs[0]['id_stato'];
     $idcontratto = $rs[0]['idcontratto'];
     $idpreventivo = $rs[0]['idpreventivo'];
     $idzona = $rs[0]['idzona'];
@@ -245,7 +245,7 @@ if (!empty($id_intervento)) {
 				</div>
 
 				<div class="col-md-6">
-					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "<?php echo $idstatointervento; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "id_stato", "required": 1, "values": "query=SELECT id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "<?php echo $id_stato; ?>" ]}
 				</div>
 			</div>
 
@@ -336,7 +336,7 @@ if (!empty($id_intervento)) {
         $("#idclientefinale").prop("disabled", true);
         $("#idzona").prop("disabled", true);
         $("#idtipointervento").prop("disabled", true);
-        $("#idstatointervento").prop("disabled", true);
+        $("#id_stato").prop("disabled", true);
         $("#richiesta").prop("disabled", true);
         $("#data_richiesta").prop("disabled", true);
         $("#impianti").find("button").prop("disabled", true);

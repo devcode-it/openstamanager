@@ -351,7 +351,7 @@ class Fattura extends Model
 
     public function stato()
     {
-        return $this->belongsTo(Stato::class, 'idstatodocumento');
+        return $this->belongsTo(Stato::class, 'id_stato');
     }
 
     public function articoli()

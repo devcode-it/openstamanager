@@ -42,7 +42,7 @@ switch (post('op')) {
                 $idpagamento = setting('Tipo di pagamento predefinito');
             }
 
-            $query = 'INSERT INTO or_ordini( numero, numero_esterno, idanagrafica, idtipoordine, idpagamento, data, idstatoordine ) VALUES ( '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipoordine).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `or_statiordine` WHERE `descrizione`='Bozza') )";
+            $query = 'INSERT INTO or_ordini( numero, numero_esterno, idanagrafica, idtipoordine, idpagamento, data, id_statoordine ) VALUES ( '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipoordine).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `or_statiordine` WHERE `descrizione`='Bozza') )";
             $dbo->query($query);
 
             $id_record = $dbo->lastInsertedID();
@@ -61,7 +61,7 @@ switch (post('op')) {
         $idanagrafica = post('idanagrafica');
         $note = post('note');
         $note_aggiuntive = post('note_aggiuntive');
-        $idstatoordine = post('idstatoordine');
+        $id_statoordine = post('id_statoordine');
         $idpagamento = post('idpagamento');
         $idsede = post('idsede');
         $idconto = post('idconto');
@@ -92,7 +92,7 @@ switch (post('op')) {
             ' numero='.prepare($numero).','.
             ' data='.prepare($data).','.
             ' idagente='.prepare($idagente).','.
-            ' idstatoordine='.prepare($idstatoordine).','.
+            ' id_statoordine='.prepare($id_statoordine).','.
             ' idpagamento='.prepare($idpagamento).','.
             ' idsede='.prepare($idsede).','.
             ' numero_esterno='.prepare($numero_esterno).','.
@@ -114,7 +114,7 @@ switch (post('op')) {
                 'row' => 'idordine',
             ], $id_record);
 
-            $query = 'SELECT descrizione FROM or_statiordine WHERE id='.prepare($idstatoordine);
+            $query = 'SELECT descrizione FROM or_statiordine WHERE id='.prepare($id_statoordine);
             $rs = $dbo->fetchArray($query);
 
             // Ricalcolo inps, ritenuta e bollo (se l'ordine non è stato evaso)
@@ -395,7 +395,7 @@ switch (post('op')) {
                 $idpagamento = setting('Tipo di pagamento predefinito');
             }
 
-            $query = 'INSERT INTO or_ordini( numero, numero_esterno, idanagrafica, idtipoordine, idpagamento, data, idstatoordine ) VALUES ( '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipoordine).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `or_statiordine` WHERE `descrizione`='Bozza') )";
+            $query = 'INSERT INTO or_ordini( numero, numero_esterno, idanagrafica, idtipoordine, idpagamento, data, id_statoordine ) VALUES ( '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipoordine).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `or_statiordine` WHERE `descrizione`='Bozza') )";
             $dbo->query($query);
 
             $id_record = $dbo->lastInsertedID();

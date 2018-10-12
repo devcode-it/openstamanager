@@ -67,6 +67,7 @@ UPDATE `zz_views` SET `query` = REPLACE(`query`, 'idstatoddt', 'id_stato');
 UPDATE `zz_views` SET `query` = REPLACE(`query`, 'idstato', 'id_stato');
 
 UPDATE `zz_views` SET `query` = '(SELECT descrizione FROM in_statiintervento WHERE id=in_interventi.id_stato)' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi') AND `name` = 'Stato';
+UPDATE `zz_views` SET `query` = '(SELECT colore FROM in_statiintervento WHERE id=in_interventi.id_stato)' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi') AND `name` = '_bg_';
 
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato, co_contratti.id, DATEDIFF( data_conclusione, NOW() ) AS giorni_rimanenti FROM co_contratti WHERE id_stato IN(SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND rinnovabile=1 AND NOW() > DATE_ADD( data_conclusione, INTERVAL - ABS(giorni_preavviso_rinnovo) DAY) AND YEAR(data_conclusione) > 1970 HAVING ISNULL((SELECT id FROM co_contratti contratti WHERE contratti.idcontratto_prev=co_contratti.id )) ORDER BY giorni_rimanenti ASC' WHERE `zz_widgets`.`name` = 'Contratti in scadenza';
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_promemoria WHERE idcontratto IN( SELECT id FROM co_contratti WHERE id_stato IN (SELECT id FROM co_staticontratti WHERE pianificabile = 1)) AND idintervento IS NULL' WHERE `zz_widgets`.`name` = 'Interventi da pianificare';

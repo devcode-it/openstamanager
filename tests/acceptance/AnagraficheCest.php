@@ -20,7 +20,7 @@ class AnagraficheCest
 
         // Completa i campi per il nuovo elemento
         $t->fillField('Ragione sociale', $name);
-        $t->select2('#idtipoanagrafica', $tipo);
+        $t->select2('#id_tipo_anagrafica', $tipo);
         $t->click('.btn-box-tool');
         $t->waitForElementVisible('#piva', 3);
         $t->fillField('Partita IVA', $partita_iva);

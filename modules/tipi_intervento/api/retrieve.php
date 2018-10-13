@@ -7,7 +7,7 @@ switch ($resource) {
 
         $select = [
             '*',
-            'id' => 'idtipointervento',
+            'id' => 'id_tipo_intervento',
         ];
 
         break;

@@ -4,8 +4,8 @@ include_once __DIR__.'/../../core.php';
 
 // Lettura info ddt
 $q = 'SELECT *,
-    (SELECT dir FROM dt_tipiddt WHERE id=idtipoddt) AS dir,
-    (SELECT descrizione FROM dt_tipiddt WHERE id=idtipoddt) AS tipo_doc,
+    (SELECT dir FROM dt_tipiddt WHERE id=id_tipo_ddt) AS dir,
+    (SELECT descrizione FROM dt_tipiddt WHERE id=id_tipo_ddt) AS tipo_doc,
     (SELECT descrizione FROM dt_causalet WHERE id=idcausalet) AS causalet,
     (SELECT descrizione FROM co_pagamenti WHERE id=idpagamento) AS tipo_pagamento,
     (SELECT descrizione FROM dt_porto WHERE id=idporto) AS porto,

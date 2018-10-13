@@ -39,7 +39,7 @@ class FatturaElettronica
 
         // Documento
         $this->documento = $database->fetchOne('SELECT `co_documenti`.*, `co_tipidocumento`.`descrizione` AS `tipo`, `co_tipidocumento`.`codice_tipo_documento_fe` AS `tipo_documento`, `co_statidocumento`.`descrizione` AS `stato` FROM `co_documenti`
-        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
         WHERE `co_documenti`.`id` = '.prepare($id_documento));
 

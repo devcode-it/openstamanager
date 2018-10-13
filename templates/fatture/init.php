@@ -5,9 +5,9 @@ include_once __DIR__.'/../../core.php';
 // Lettura info fattura
 $record = $dbo->fetchOne('SELECT *,
     (SELECT descrizione FROM co_statidocumento WHERE id=id_stato) AS stato_doc,
-    (SELECT descrizione FROM co_tipidocumento WHERE id=idtipodocumento) AS tipo_doc,
+    (SELECT descrizione FROM co_tipidocumento WHERE id=id_tipo_documento) AS tipo_doc,
     (SELECT descrizione FROM co_pagamenti WHERE id=idpagamento) AS tipo_pagamento,
-    (SELECT dir FROM co_tipidocumento WHERE id=idtipodocumento) AS dir,
+    (SELECT dir FROM co_tipidocumento WHERE id=id_tipo_documento) AS dir,
     (SELECT descrizione FROM dt_causalet WHERE id=idcausalet) AS causalet,
     (SELECT descrizione FROM dt_porto WHERE id=idporto) AS porto,
     (SELECT descrizione FROM dt_aspettobeni WHERE id=idaspettobeni) AS aspettobeni,

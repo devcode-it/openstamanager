@@ -113,7 +113,7 @@ if (!empty($rsi)) {
                 echo '
                 <tr>
                     <td>'.$r['ragione_sociale'].'</td>
-                    <td>'.$r['idtipointervento'].'</td>
+                    <td>'.$r['id_tipo_intervento'].'</td>
                     <td class="text-right">'.Translator::numberToLocale($r['ore']).'</td>
                     <td class="text-right">'.Translator::numberToLocale($r['km']).'</td>
                     <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_ore_consuntivo_tecnico']).'</td>

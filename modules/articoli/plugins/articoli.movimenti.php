@@ -59,7 +59,7 @@ if (!empty($rs2)) {
         $dir = ($r['qta'] < 0) ? 'vendita' : 'acquisto';
 
         if (!empty($r['iddocumento'])) {
-            $dir = $dbo->fetchArray('SELECT dir FROM co_tipidocumento WHERE id = (SELECT idtipodocumento FROM co_documenti WHERE id = '.prepare($r['iddocumento']).')')[0]['dir'] == 'entrata' ? 'vendita' : 'acquisto';
+            $dir = $dbo->fetchArray('SELECT dir FROM co_tipidocumento WHERE id = (SELECT id_tipo_documento FROM co_documenti WHERE id = '.prepare($r['iddocumento']).')')[0]['dir'] == 'entrata' ? 'vendita' : 'acquisto';
         }
 
         echo '

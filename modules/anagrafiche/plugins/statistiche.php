@@ -135,7 +135,7 @@ echo '
 				</div>
 				<div class="box-body">';
 // Fatture di vendita
-$rsi = $dbo->fetchArray("SELECT data, ragione_sociale, (SELECT SUM(subtotale+iva) FROM co_righe_documenti WHERE iddocumento=co_documenti.id) AS totale FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='entrata') AND co_documenti.idanagrafica=".prepare($id_record));
+$rsi = $dbo->fetchArray("SELECT data, ragione_sociale, (SELECT SUM(subtotale+iva) FROM co_righe_documenti WHERE iddocumento=co_documenti.id) AS totale FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE id_tipo_documento IN(SELECT id FROM co_tipidocumento WHERE dir='entrata') AND co_documenti.idanagrafica=".prepare($id_record));
 
 $totale_fatture_vendita = 0;
 $data_start = strtotime('now');
@@ -164,7 +164,7 @@ echo '
                     <hr>';
 
 // Fatture di acquisto
-$rsi = $dbo->fetchArray("SELECT data, ragione_sociale, (SELECT SUM(subtotale+iva) FROM co_righe_documenti WHERE iddocumento=co_documenti.id) AS totale FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='uscita') AND co_documenti.idanagrafica=".prepare($id_record));
+$rsi = $dbo->fetchArray("SELECT data, ragione_sociale, (SELECT SUM(subtotale+iva) FROM co_righe_documenti WHERE iddocumento=co_documenti.id) AS totale FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE id_tipo_documento IN(SELECT id FROM co_tipidocumento WHERE dir='uscita') AND co_documenti.idanagrafica=".prepare($id_record));
 
 $totale_fatture_acquisto = 0;
 $data_start = strtotime('now');

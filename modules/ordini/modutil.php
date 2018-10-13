@@ -11,7 +11,7 @@ function get_new_numeroordine($data)
 
     $dbo = database();
 
-    $query = "SELECT numero AS max_numeroordine FROM or_ordini WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data))).' AND idtipoordine IN(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1';
+    $query = "SELECT numero AS max_numeroordine FROM or_ordini WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data))).' AND id_tipo_ordine IN(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1';
     $rs = $dbo->fetchArray($query);
     $numero = $rs[0]['max_numeroordine'] + 1;
 
@@ -31,7 +31,7 @@ function get_new_numerosecondarioordine($data)
     $formato_numero_secondario = setting('Formato numero secondario ordine');
     $formato_numero_secondario = str_replace('#', '%', $formato_numero_secondario);
 
-    $query = 'SELECT numero_esterno FROM or_ordini WHERE DATE_FORMAT( data, "%Y" ) = '.prepare(date('Y', strtotime($data))).' AND idtipoordine IN(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND numero_esterno LIKE('.prepare(Util\Generator::complete($formato_numero_secondario)).') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1';
+    $query = 'SELECT numero_esterno FROM or_ordini WHERE DATE_FORMAT( data, "%Y" ) = '.prepare(date('Y', strtotime($data))).' AND id_tipo_ordine IN(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND numero_esterno LIKE('.prepare(Util\Generator::complete($formato_numero_secondario)).') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1';
     $rs = $dbo->fetchArray($query);
     $numero_secondario = $rs[0]['numero_esterno'];
 

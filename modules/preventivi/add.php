@@ -21,7 +21,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idan
 	<div class="row">
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Tipo di Attività'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento" ]}
+			{[ "type": "select", "label": "<?php echo tr('Tipo di Attività'); ?>", "name": "id_tipo_intervento", "required": 1, "values": "query=SELECT id, descrizione FROM in_tipiintervento" ]}
 		</div>
 
 	</div>

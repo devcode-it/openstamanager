@@ -71,7 +71,7 @@ elseif (get('op') == 'addfattura') {
     $idpianificazione = get('idpianificazione');
     $descrizione = post('note');
     $data = post('data');
-    $idtipodocumento = post('idtipodocumento');
+    $id_tipo_documento = post('id_tipo_documento');
     $note = post('note');
 
     // Lettura idanagrafica
@@ -103,7 +103,7 @@ elseif (get('op') == 'addfattura') {
         $idbanca = $rs[0]['id'];
     }
 
-    $query = 'INSERT INTO co_documenti(numero, numero_esterno, idanagrafica, idtipodocumento, idpagamento, data, id_stato, note, idsede, id_segment, idconto, idbanca) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipodocumento).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza'), ".prepare($note).', (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).'), '.prepare($id_segment).', '.prepare($idconto).', '.prepare($idbanca).' )';
+    $query = 'INSERT INTO co_documenti(numero, numero_esterno, idanagrafica, id_tipo_documento, idpagamento, data, id_stato, note, idsede, id_segment, idconto, idbanca) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($id_tipo_documento).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza'), ".prepare($note).', (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).'), '.prepare($id_segment).', '.prepare($idconto).', '.prepare($idbanca).' )';
     $dbo->query($query);
     $iddocumento = $dbo->lastInsertedID();
 

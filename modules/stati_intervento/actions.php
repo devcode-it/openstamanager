@@ -23,7 +23,7 @@ switch (post('op')) {
         $colore = post('colore');
 
         //controllo id_stato che non sia duplicato
-        if (count($dbo->fetchArray('SELECT id_stato FROM in_statiintervento WHERE id_stato='.prepare($id_stato))) > 0) {
+        if (count($dbo->fetchArray('SELECT id_stato FROM in_statiintervento WHERE id='.prepare($id_stato))) > 0) {
             flash()->error(tr('Stato di intervento già esistente.'));
         } else {
             $query = 'INSERT INTO in_statiintervento(id_stato, descrizione, colore) VALUES ('.prepare($id_stato).', '.prepare($descrizione).', '.prepare($colore).')';

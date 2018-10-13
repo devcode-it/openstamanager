@@ -26,7 +26,7 @@ echo '
 // Tipo di documento
 echo '
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Tipo di fattura').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT * FROM co_tipidocumento WHERE dir=\'entrata\'" ]}
+            {[ "type": "select", "label": "'.tr('Tipo di fattura').'", "name": "id_tipo_documento", "required": 1, "values": "query=SELECT * FROM co_tipidocumento WHERE dir=\'entrata\'" ]}
         </div>';
 
 // Sezionale

@@ -9,7 +9,7 @@ $contratto = $dbo->fetchOne('SELECT * FROM co_contratti WHERE id = :id', [
     ':id' => $id_record,
 ]);
 
-$records = $dbo->fetchArray('SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento FROM co_promemoria WHERE idcontratto='.prepare($id_record).' ORDER BY data_richiesta ASC');
+$records = $dbo->fetchArray('SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE id_tipo_intervento=co_promemoria.id_tipo_intervento) AS tipointervento FROM co_promemoria WHERE idcontratto='.prepare($id_record).' ORDER BY data_richiesta ASC');
 
 // Intervento/promemoria pianificabile
 $pianificabile = $dbo->fetchOne('SELECT pianificabile FROM co_staticontratti WHERE id = :id', [
@@ -169,7 +169,7 @@ if (!empty($records)) {
     <i class="fa fa-plus"></i> '.tr('Nuovo promemoria').'
 </button>';
 
-$options = $dbo->fetchArray('SELECT idtipointervento, descrizione FROM `in_tipiintervento`');
+$options = $dbo->fetchArray('SELECT id_tipo_intervento, descrizione FROM `in_tipiintervento`');
 
 echo '
 <script type="text/javascript">
@@ -186,7 +186,7 @@ echo '
 
 foreach ($options as $option) {
     echo '
-                "'.$option['idtipointervento'].'": "'.$option['descrizione'].'", ';
+                "'.$option['id_tipo_intervento'].'": "'.$option['descrizione'].'", ';
 }
 
 echo '
@@ -211,7 +211,7 @@ echo '
                 $.post(globals.rootdir + "/actions.php?id_plugin='.$plugin['id'].'&id_parent='.$id_record.'", {
                     op: "add-promemoria",
                     data_richiesta: "'.date('Y-m-d').'",
-                    idtipointervento: $(".swal2-select").val()
+                    id_tipo_intervento: $(".swal2-select").val()
                 }).done(function(data) {
                     launch_modal("Nuovo promemoria", globals.rootdir + "/plugins/'.$plugin['directory'].'/pianficazione.php?id_plugin='.$plugin['id'].'&id_parent='.$id_record.'&id_record=" + data + "&add=1");
 

@@ -30,7 +30,7 @@ switch (post('op')) {
 
         foreach ($data as $key => $value) {
             if (!empty($value)) {
-                $idtipoanagrafica = (array) $data[$key]['tipologia'];
+                $id_tipo_anagrafica = (array) $data[$key]['tipologia'];
                 unset($data[$key]['tipologia']);
 
                 // Insert o update
@@ -48,12 +48,12 @@ switch (post('op')) {
                     $dbo->insert('an_anagrafiche', $data[$key]);
 
                     // Campi extra
-                    if (count($idtipoanagrafica) > 0) {
+                    if (count($id_tipo_anagrafica) > 0) {
                         // Aggiornamento della tipologia di anagrafiche
                         $dbo->sync('an_tipianagrafiche_anagrafiche', [
                             'idanagrafica' => $dbo->lastInsertedID(),
                         ], [
-                            'idtipoanagrafica' => (array) $idtipoanagrafica,
+                            'id_tipo_anagrafica' => (array) $id_tipo_anagrafica,
                         ]);
                     }
                 }

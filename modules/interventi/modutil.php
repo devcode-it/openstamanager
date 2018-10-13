@@ -55,15 +55,15 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
     $dbo = database();
 
     // Controllo sull'identità del tecnico
-    $tecnico = $dbo->fetchOne('SELECT an_anagrafiche.idanagrafica, an_anagrafiche.email FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.id=an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE an_anagrafiche.idanagrafica = '.prepare($idtecnico)." AND an_tipianagrafiche.descrizione = 'Tecnico'");
+    $tecnico = $dbo->fetchOne('SELECT an_anagrafiche.idanagrafica, an_anagrafiche.email FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.id=an_tipianagrafiche_anagrafiche.id_tipo_anagrafica WHERE an_anagrafiche.idanagrafica = '.prepare($idtecnico)." AND an_tipianagrafiche.descrizione = 'Tecnico'");
     if (empty($tecnico)) {
         return false;
     }
 
-    $rs = $dbo->fetchArray('SELECT idanagrafica, idsede, idtipointervento FROM in_interventi WHERE id='.prepare($idintervento));
+    $rs = $dbo->fetchArray('SELECT idanagrafica, idsede, id_tipo_intervento FROM in_interventi WHERE id='.prepare($idintervento));
     $idanagrafica = $rs[0]['idanagrafica'];
     $idsede = $rs[0]['idsede'];
-    $idtipointervento = $rs[0]['idtipointervento'];
+    $id_tipo_intervento = $rs[0]['id_tipo_intervento'];
 
     // Calcolo km in base a quelli impostati nell'anagrafica
     // Nessuna sede
@@ -90,7 +90,7 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
     $ore = ($diff->h + ($diff->i / 60));
 
     // Leggo i costi unitari dalle tariffe se almeno un valore è stato impostato
-    $rsc = $dbo->fetchArray('SELECT * FROM in_tariffe WHERE idtecnico='.prepare($idtecnico).' AND idtipointervento='.prepare($idtipointervento));
+    $rsc = $dbo->fetchArray('SELECT * FROM in_tariffe WHERE idtecnico='.prepare($idtecnico).' AND id_tipo_intervento='.prepare($id_tipo_intervento));
 
     if ($rsc[0]['costo_ore'] != 0 || $rsc[0]['costo_km'] != 0 || $rsc[0]['costo_dirittochiamata'] != 0 || $rsc[0]['costo_ore_tecnico'] != 0 || $rsc[0]['costo_km_tecnico'] != 0 || $rsc[0]['costo_dirittochiamata_tecnico'] != 0) {
         $costo_ore = $rsc[0]['costo_ore'];
@@ -104,7 +104,7 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
 
     // ...altrimenti se non c'è una tariffa per il tecnico leggo i costi globali
     else {
-        $rsc = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE idtipointervento='.prepare($idtipointervento));
+        $rsc = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE id_tipo_intervento='.prepare($id_tipo_intervento));
 
         $costo_ore = $rsc[0]['costo_orario'];
         $costo_km = $rsc[0]['costo_km'];
@@ -117,7 +117,7 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
 
     // Leggo i costi unitari da contratto se l'intervento è legato ad un contratto e c'è almeno un record...
     if (!empty($idcontratto)) {
-        $rsc = $dbo->fetchArray('SELECT * FROM co_contratti_tipiintervento WHERE idcontratto='.prepare($idcontratto).' AND idtipointervento='.prepare($idtipointervento));
+        $rsc = $dbo->fetchArray('SELECT * FROM co_contratti_tipiintervento WHERE idcontratto='.prepare($idcontratto).' AND id_tipo_intervento='.prepare($id_tipo_intervento));
 
         if (count($rsc) == 1) {
             $costo_ore = $rsc[0]['costo_ore'];
@@ -140,7 +140,7 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
     // Inserisco le ore dei tecnici nella tabella "in_interventi_tecnici"
     $dbo->insert('in_interventi_tecnici', [
         'idintervento' => $idintervento,
-        'idtipointervento' => $idtipointervento,
+        'id_tipo_intervento' => $id_tipo_intervento,
         'idtecnico' => $idtecnico,
         'km' => $km,
         'orario_inizio' => $inizio,

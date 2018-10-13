@@ -48,7 +48,7 @@ $rs = $dbo->fetchArray("SELECT co_scadenziario.id AS id, ragione_sociale AS `Ana
     INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id
     INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica
     INNER JOIN co_pagamenti ON co_documenti.idpagamento=co_pagamenti.id
-    INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id
+    INNER JOIN co_tipidocumento ON co_documenti.id_tipo_documento=co_tipidocumento.id
 WHERE ABS(pagato) < ABS(da_pagare) ".$add_where." AND scadenza >= '".$date_start."' AND scadenza <= '".$date_end."' ORDER BY scadenza ASC");
 
 for ($i = 0; $i < sizeof($rs); ++$i) {

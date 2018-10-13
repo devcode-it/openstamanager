@@ -18,7 +18,7 @@ switch ($resource) {
         ], ['idanagrafica' => $request['id']]);
 
         // Inserisco il rapporto dell'anagrafica (cliente, tecnico, ecc)
-        $dbo->sync('an_tipianagrafiche_anagrafiche', ['idanagrafica' => $request['id']], ['idtipoanagrafica' => (array) $request['data']['tipi']]);
+        $dbo->sync('an_tipianagrafiche_anagrafiche', ['idanagrafica' => $request['id']], ['id_tipo_anagrafica' => (array) $request['data']['tipi']]);
 
         break;
 }

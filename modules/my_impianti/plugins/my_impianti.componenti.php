@@ -202,7 +202,7 @@ if (!empty($rs2)) {
                             </div>';
         }
 
-        $interventi = $dbo->fetchArray('SELECT *, DATE_FORMAT(data_richiesta,"%d/%m/%Y") AS data_richiesta, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=in_interventi.idtipointervento) AS tipo, (SELECT descrizione FROM in_statiintervento WHERE id_stato=in_interventi.id_stato) AS stato, (SELECT colore FROM in_statiintervento WHERE id_stato=in_interventi.id_stato) AS colore FROM in_interventi INNER JOIN my_componenti_interventi ON my_componenti_interventi.id_intervento=in_interventi.id WHERE id_componente='.prepare($rs2[$j]['id']).' ORDER BY id_intervento');
+        $interventi = $dbo->fetchArray('SELECT *, DATE_FORMAT(data_richiesta,"%d/%m/%Y") AS data_richiesta, (SELECT descrizione FROM in_tipiintervento WHERE id_tipo_intervento=in_interventi.id_tipo_intervento) AS tipo, (SELECT descrizione FROM in_statiintervento WHERE id=in_interventi.id_stato) AS stato, (SELECT colore FROM in_statiintervento WHERE id=in_interventi.id_stato) AS colore FROM in_interventi INNER JOIN my_componenti_interventi ON my_componenti_interventi.id_intervento=in_interventi.id WHERE id_componente='.prepare($rs2[$j]['id']).' ORDER BY id_intervento');
         if ($interventi != null) {
             // Collegamento a intervento se c'è
             echo '

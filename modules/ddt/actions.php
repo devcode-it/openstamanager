@@ -20,7 +20,7 @@ switch (post('op')) {
         $idanagrafica = post('idanagrafica');
         $data = post('data');
         $dir = post('dir');
-        $idtipoddt = post('idtipoddt');
+        $id_tipo_ddt = post('id_tipo_ddt');
 
         if (post('idanagrafica') !== null) {
             $numero = get_new_numeroddt($data);
@@ -38,7 +38,7 @@ switch (post('op')) {
                 $idpagamento = setting('Tipo di pagamento predefinito');
             }
 
-            $query = 'INSERT INTO dt_ddt(numero, numero_esterno, idanagrafica, idtipoddt, idpagamento, data, id_stato) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipoddt).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `dt_statiddt` WHERE `descrizione`='Bozza'))";
+            $query = 'INSERT INTO dt_ddt(numero, numero_esterno, idanagrafica, id_tipo_ddt, idpagamento, data, id_stato) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($id_tipo_ddt).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `dt_statiddt` WHERE `descrizione`='Bozza'))";
             $dbo->query($query);
 
             $id_record = $dbo->lastInsertedID();
@@ -229,7 +229,7 @@ switch (post('op')) {
         }
 
         // Creazione nuovo ddt
-        $dbo->query('INSERT INTO dt_ddt( numero, numero_esterno, data, idanagrafica, idtipoddt, id_stato, idpagamento, idconto) VALUES('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($data).', '.prepare($idanagrafica).', (SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir)."), (SELECT id FROM dt_statiddt WHERE descrizione='Bozza'), ".prepare($idpagamento).', '.prepare($idconto).')');
+        $dbo->query('INSERT INTO dt_ddt( numero, numero_esterno, data, idanagrafica, id_tipo_ddt, id_stato, idpagamento, idconto) VALUES('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($data).', '.prepare($idanagrafica).', (SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir)."), (SELECT id FROM dt_statiddt WHERE descrizione='Bozza'), ".prepare($idpagamento).', '.prepare($idconto).')');
         $id_record = $dbo->lastInsertedID();
 
         // Lettura di tutte le righe della tabella in arrivo
@@ -332,7 +332,7 @@ switch (post('op')) {
             if ($dbo->query($query)) {
                 //Aggiorno lo stato dell'ordine
                 if (setting('Cambia automaticamente stato ordini fatturati') && !empty($rs[0]['idordine'])) {
-                    $dbo->query('UPDATE or_ordini SET id_statoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[0]['idordine']).'") WHERE id = '.prepare($rs[0]['idordine']));
+                    $dbo->query('UPDATE or_ordini SET id_stato=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[0]['idordine']).'") WHERE id = '.prepare($rs[0]['idordine']));
                 }
 
                 // Ricalcolo inps, ritenuta e bollo
@@ -471,7 +471,7 @@ switch (post('op')) {
         //Aggiorno gli stati degli ordini
         if (setting('Cambia automaticamente stato ordini fatturati')) {
             for ($i = 0; $i < sizeof($rs); ++$i) {
-                $dbo->query('UPDATE or_ordini SET id_statoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[$i]['idordine']).'") WHERE id = '.prepare($rs[$i]['idordine']));
+                $dbo->query('UPDATE or_ordini SET id_stato=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[$i]['idordine']).'") WHERE id = '.prepare($rs[$i]['idordine']));
             }
         }
 
@@ -580,7 +580,7 @@ if (!empty($id_record) && setting('Cambia automaticamente stato ordini fatturati
     $rs = $dbo->fetchArray('SELECT idordine FROM dt_righe_ddt WHERE idddt='.prepare($id_record));
 
     for ($i = 0; $i < sizeof($rs); ++$i) {
-        $dbo->query('UPDATE or_ordini SET id_statoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[$i]['idordine']).'") WHERE id = '.prepare($rs[$i]['idordine']));
+        $dbo->query('UPDATE or_ordini SET id_stato=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($rs[$i]['idordine']).'") WHERE id = '.prepare($rs[$i]['idordine']));
     }
 }
 

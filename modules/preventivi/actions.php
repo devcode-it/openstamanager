@@ -9,8 +9,8 @@ switch (post('op')) {
         $idanagrafica = post('idanagrafica');
         $nome = post('nome');
 
-        $idtipointervento = post('idtipointervento');
-        $rs = $dbo->fetchArray('SELECT costo_orario, costo_diritto_chiamata FROM in_tipiintervento WHERE idtipointervento='.prepare($idtipointervento));
+        $id_tipo_intervento = post('id_tipo_intervento');
+        $rs = $dbo->fetchArray('SELECT costo_orario, costo_diritto_chiamata FROM in_tipiintervento WHERE id_tipo_intervento='.prepare($id_tipo_intervento));
         $costo_orario = $rs[0]['costo_orario'];
         $costo_diritto_chiamata = $rs[0]['costo_diritto_chiamata'];
 
@@ -41,7 +41,7 @@ switch (post('op')) {
             $idpagamento = setting('Tipo di pagamento predefinito');
         }
 
-        $dbo->query('INSERT INTO co_preventivi(idanagrafica, nome, numero, idagente, id_stato, idtipointervento, data_bozza, data_conclusione, idiva, idpagamento) VALUES ('.prepare($idanagrafica).', '.prepare($nome).', '.prepare($numero).', '.prepare($idagente).", (SELECT `id` FROM `co_statipreventivi` WHERE `descrizione`='Bozza'), ".prepare($idtipointervento).', NOW(), DATE_ADD(NOW(), INTERVAL +1 MONTH), '.prepare($idiva).', '.prepare($idpagamento).')');
+        $dbo->query('INSERT INTO co_preventivi(idanagrafica, nome, numero, idagente, id_stato, id_tipo_intervento, data_bozza, data_conclusione, idiva, idpagamento) VALUES ('.prepare($idanagrafica).', '.prepare($nome).', '.prepare($numero).', '.prepare($idagente).", (SELECT `id` FROM `co_statipreventivi` WHERE `descrizione`='Bozza'), ".prepare($id_tipo_intervento).', NOW(), DATE_ADD(NOW(), INTERVAL +1 MONTH), '.prepare($idiva).', '.prepare($idpagamento).')');
         $id_record = $dbo->lastInsertedID();
 
         /*
@@ -91,7 +91,7 @@ switch (post('op')) {
             $esclusioni = post('esclusioni');
             $descrizione = post('descrizione');
             $validita = post('validita');
-            $idtipointervento = post('idtipointervento');
+            $id_tipo_intervento = post('id_tipo_intervento');
 
             // $costo_diritto_chiamata = post('costo_diritto_chiamata');
             // $ore_lavoro = str_replace( ",", ".", post('ore_lavoro') );
@@ -118,7 +118,7 @@ switch (post('op')) {
                 ' tipo_sconto_globale='.prepare($tipo_sconto).','.
                 ' sconto_globale='.prepare($sconto).','.
                 ' validita='.prepare($validita).','.
-                ' idtipointervento='.prepare($idtipointervento).','.
+                ' id_tipo_intervento='.prepare($id_tipo_intervento).','.
                 ' idiva='.prepare($idiva).' WHERE id='.prepare($id_record);
             $dbo->query($query);
 

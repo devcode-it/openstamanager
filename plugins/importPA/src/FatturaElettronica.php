@@ -81,7 +81,7 @@ class FatturaElettronica
 
         $id_anagrafica = $database->fetchOne('SELECT `an_anagrafiche`.`idanagrafica` FROM `an_anagrafiche`
         INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_tipianagrafiche_anagrafiche`.`idanagrafica`
-        INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
+        INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica`
         WHERE `an_tipianagrafiche`.`descrizione` = '.prepare($type).' AND ('.implode(' OR ', $where).')')['idanagrafica'];
         if (!empty($id_anagrafica)) {
             return Anagrafica::find($id_anagrafica);

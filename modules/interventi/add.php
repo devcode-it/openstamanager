@@ -27,7 +27,7 @@ $idsede = filter('idsede');
 
 $idimpianto = null;
 $idzona = null;
-$idtipointervento = null;
+$id_tipo_intervento = null;
 $id_stato = null;
 $richiesta = null;
 $impianti = [];
@@ -40,8 +40,8 @@ if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
 }
 
 if (!empty($idanagrafica)) {
-    $rs = $dbo->fetchArray('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
-    $idtipointervento = $rs[0]['idtipointervento_default'];
+    $rs = $dbo->fetchArray('SELECT id_tipo_intervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
+    $id_tipo_intervento = $rs[0]['id_tipo_intervento_default'];
     $idzona = $rs[0]['idzona'];
     $id_stato = 'WIP';
     $richiesta = filter('richiesta');
@@ -73,8 +73,8 @@ if (!empty($idcontratto) && !empty($idordineservizio)) {
     $idimpianto = $rs[0]['id'];
 
     // Seleziono "Ordine di servizio" come tipo intervento
-    $rs = $dbo->fetchArray("SELECT idtipointervento FROM in_tipiintervento WHERE descrizione='Ordine di servizio'");
-    $idtipointervento = $rs[0]['idtipointervento'];
+    $rs = $dbo->fetchArray("SELECT id_tipo_intervento FROM in_tipiintervento WHERE descrizione='Ordine di servizio'");
+    $id_tipo_intervento = $rs[0]['id_tipo_intervento'];
 
     // Spunto il tecnico di default assegnato all'impianto
     $rs = $dbo->fetchArray('SELECT idtecnico FROM my_impianti WHERE id='.prepare($idimpianto));
@@ -88,8 +88,8 @@ elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
     $idzona = $rs[0]['idzona'];
 
     // Info riga pianificata
-    $rs = $dbo->fetchArray('SELECT *, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_promemoria.idtipointervento) AS tempo_standard  FROM co_promemoria WHERE idcontratto='.prepare($idcontratto).' AND id='.prepare($idcontratto_riga));
-    $idtipointervento = $rs[0]['idtipointervento'];
+    $rs = $dbo->fetchArray('SELECT *, (SELECT tempo_standard FROM in_tipiintervento WHERE id_tipo_intervento = co_promemoria.id_tipo_intervento) AS tempo_standard  FROM co_promemoria WHERE idcontratto='.prepare($idcontratto).' AND id='.prepare($idcontratto_riga));
+    $id_tipo_intervento = $rs[0]['id_tipo_intervento'];
     $data = (null !== filter('data')) ? filter('data') : $rs[0]['data_richiesta'];
     $richiesta = $rs[0]['richiesta'];
     $idsede = $rs[0]['idsede'];
@@ -112,15 +112,15 @@ elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
     }
 
     // Seleziono "In programmazione" come stato
-    $rs = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE id_stato='WIP'");
+    $rs = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE id='WIP'");
     $id_stato = $rs[0]['id_stato'];
 }
 
 // Intervento senza sessioni
 elseif (!empty($id_intervento)) {
     // Info riga pianificata
-    $rs = $dbo->fetchArray('SELECT *, (SELECT idcontratto FROM co_promemoria WHERE idintervento=in_interventi.id LIMIT 0,1) AS idcontratto, in_interventi.id_preventivo as idpreventivo, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = in_interventi.idtipointervento) AS tempo_standard  FROM in_interventi WHERE id='.prepare($id_intervento));
-    $idtipointervento = $rs[0]['idtipointervento'];
+    $rs = $dbo->fetchArray('SELECT *, (SELECT idcontratto FROM co_promemoria WHERE idintervento=in_interventi.id LIMIT 0,1) AS idcontratto, in_interventi.id_preventivo as idpreventivo, (SELECT tempo_standard FROM in_tipiintervento WHERE id_tipo_intervento = in_interventi.id_tipo_intervento) AS tempo_standard  FROM in_interventi WHERE id='.prepare($id_intervento));
+    $id_tipo_intervento = $rs[0]['id_tipo_intervento'];
     $data = (null !== filter('data')) ? filter('data') : $rs[0]['data_richiesta'];
     $data_richiesta = $rs[0]['data_richiesta'];
     $richiesta = $rs[0]['richiesta'];
@@ -241,7 +241,7 @@ if (!empty($id_intervento)) {
 			<!-- RIGA 4 -->
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "<?php echo $idtipointervento; ?>", "ajax-source": "tipiintervento" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "id_tipo_intervento", "required": 1, "values": "query=SELECT id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "<?php echo $id_tipo_intervento; ?>", "ajax-source": "tipiintervento" ]}
 				</div>
 
 				<div class="col-md-6">
@@ -316,7 +316,7 @@ if (!empty($id_intervento)) {
             $("#idanagrafica").prop("disabled", true);
             $("#idclientefinale").prop("disabled", true);
             $("#idzona").prop("disabled", true);
-            $("#idtipointervento").prop("disabled", true);
+            $("#id_tipo_intervento").prop("disabled", true);
             $("#impianti").find("button").prop("disabled", true);';
         }
 ?>
@@ -335,7 +335,7 @@ if (!empty($id_intervento)) {
         $("#idanagrafica").find("button").prop("disabled", true);
         $("#idclientefinale").prop("disabled", true);
         $("#idzona").prop("disabled", true);
-        $("#idtipointervento").prop("disabled", true);
+        $("#id_tipo_intervento").prop("disabled", true);
         $("#id_stato").prop("disabled", true);
         $("#richiesta").prop("disabled", true);
         $("#data_richiesta").prop("disabled", true);
@@ -407,7 +407,7 @@ if (!empty($id_intervento)) {
         }
 
         if($(this).val()){
-            $('#idtipointervento').selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
+            $('#id_tipo_intervento').selectSetNew($(this).selectData().id_tipo_intervento, $(this).selectData().id_tipo_intervento_descrizione);
         }
 	});
 
@@ -426,7 +426,7 @@ if (!empty($id_intervento)) {
 	});
 
 	// tempo standard
-	$('#idtipointervento').change( function(){
+	$('#id_tipo_intervento').change( function(){
 		if ( (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
             tempo_standard = $(this).selectData().tempo_standard;
 

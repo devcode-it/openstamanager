@@ -13,7 +13,7 @@ include_once __DIR__.'/../../core.php';
     <div class="row">
 	<?php
     if (!empty($record['iddocumento'])) {
-        $rs = $dbo->fetchArray('SELECT dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($record['iddocumento']));
+        $rs = $dbo->fetchArray('SELECT dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.id_tipo_documento WHERE co_documenti.id='.prepare($record['iddocumento']));
         $modulo = ($rs[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto'; ?>
 		<div class=" col-md-2">
             <br>

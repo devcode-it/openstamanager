@@ -16,7 +16,7 @@ echo '
 // Tecnico
 echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "idtecnico", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.id) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione=\'Tecnico\') AND deleted_at IS NULL ORDER BY ragione_sociale", "value": "'.$idtecnico.'" ]}
+            {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "idtecnico", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione=\'Tecnico\') AND deleted_at IS NULL ORDER BY ragione_sociale", "value": "'.$idtecnico.'" ]}
         </div>';
 
 // Data di partenza

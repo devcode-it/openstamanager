@@ -42,7 +42,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
                             echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
                         }
                     ?>
-					{[ "type": "select", "label": "<?php echo tr('Agente'); ?>", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.id) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Agente' AND deleted_at IS NULL ORDER BY ragione_sociale", "value": "$idagente$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Agente'); ?>", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Agente' AND deleted_at IS NULL ORDER BY ragione_sociale", "value": "$idagente$" ]}
 				</div>
 			</div>
 
@@ -140,7 +140,7 @@ if ($record['stato'] == 'Emessa') {
 $idtipiintervento = ['-1'];
 
 //Loop fra i tipi di attività e i relativi costi del tipo intervento
-$rs = $dbo->fetchArray('SELECT co_contratti_tipiintervento.*, in_tipiintervento.descrizione FROM in_tipiintervento INNER JOIN co_contratti_tipiintervento ON in_tipiintervento.idtipointervento=co_contratti_tipiintervento.idtipointervento WHERE idcontratto='.prepare($id_record).' AND (co_contratti_tipiintervento.costo_ore!=0 OR co_contratti_tipiintervento.costo_km!=0 OR co_contratti_tipiintervento.costo_dirittochiamata!=0) ORDER BY in_tipiintervento.descrizione');
+$rs = $dbo->fetchArray('SELECT co_contratti_tipiintervento.*, in_tipiintervento.descrizione FROM in_tipiintervento INNER JOIN co_contratti_tipiintervento ON in_tipiintervento.id=co_contratti_tipiintervento.id_tipo_intervento WHERE idcontratto='.prepare($id_record).' AND (co_contratti_tipiintervento.costo_ore!=0 OR co_contratti_tipiintervento.costo_km!=0 OR co_contratti_tipiintervento.costo_dirittochiamata!=0) ORDER BY in_tipiintervento.descrizione');
 
 if (sizeof($rs) > 0) {
     echo '
@@ -163,31 +163,31 @@ if (sizeof($rs) > 0) {
                                 <td>'.$rs[$i]['descrizione'].'</td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_ore['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_ore'].'" ]}
+                                    {[ "type": "number", "name": "costo_ore['.$rs[$i]['id_tipo_intervento'].']", "value": "'.$rs[$i]['costo_ore'].'" ]}
                                 </td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_km['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_km'].'" ]}
+                                    {[ "type": "number", "name": "costo_km['.$rs[$i]['id_tipo_intervento'].']", "value": "'.$rs[$i]['costo_km'].'" ]}
                                 </td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_dirittochiamata['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_dirittochiamata'].'" ]}
+                                    {[ "type": "number", "name": "costo_dirittochiamata['.$rs[$i]['id_tipo_intervento'].']", "value": "'.$rs[$i]['costo_dirittochiamata'].'" ]}
                                 </td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_ore_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_ore_tecnico'].'" ]}
+                                    {[ "type": "number", "name": "costo_ore_tecnico['.$rs[$i]['id_tipo_intervento'].']", "value": "'.$rs[$i]['costo_ore_tecnico'].'" ]}
                                 </td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_km_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_km_tecnico'].'" ]}
+                                    {[ "type": "number", "name": "costo_km_tecnico['.$rs[$i]['id_tipo_intervento'].']", "value": "'.$rs[$i]['costo_km_tecnico'].'" ]}
                                 </td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_dirittochiamata_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_dirittochiamata_tecnico'].'" ]}
+                                    {[ "type": "number", "name": "costo_dirittochiamata_tecnico['.$rs[$i]['id_tipo_intervento'].']", "value": "'.$rs[$i]['costo_dirittochiamata_tecnico'].'" ]}
                                 </td>
                             </tr>';
 
-        $idtipiintervento[] = prepare($rs[$i]['idtipointervento']);
+        $idtipiintervento[] = prepare($rs[$i]['id_tipo_intervento']);
     }
     echo '
                     </table>';
@@ -198,7 +198,7 @@ echo '
 					<div class="hide">';
 
 //Loop fra i tipi di attività e i relativi costi del tipo intervento (quelli a 0)
-$rs = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE idtipointervento NOT IN('.implode(',', $idtipiintervento).') ORDER BY descrizione');
+$rs = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE id_tipo_intervento NOT IN('.implode(',', $idtipiintervento).') ORDER BY descrizione');
 
 if (sizeof($rs) > 0) {
     echo '
@@ -221,27 +221,27 @@ if (sizeof($rs) > 0) {
                                 <td>'.$rs[$i]['descrizione'].'</td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_ore['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_orario'].'" ]}
+                                    {[ "type": "number", "name": "costo_ore['.$rs[$i]['id_tipo_intervento'].']", "value": "'.$rs[$i]['costo_orario'].'" ]}
                                 </td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_km['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_km'].'" ]}
+                                    {[ "type": "number", "name": "costo_km['.$rs[$i]['id_tipo_intervento'].']", "value": "'.$rs[$i]['costo_km'].'" ]}
                                 </td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_dirittochiamata['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_diritto_chiamata'].'" ]}
+                                    {[ "type": "number", "name": "costo_dirittochiamata['.$rs[$i]['id_tipo_intervento'].']", "value": "'.$rs[$i]['costo_diritto_chiamata'].'" ]}
                                 </td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_ore_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_orario_tecnico'].'" ]}
+                                    {[ "type": "number", "name": "costo_ore_tecnico['.$rs[$i]['id_tipo_intervento'].']", "value": "'.$rs[$i]['costo_orario_tecnico'].'" ]}
                                 </td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_km_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_km_tecnico'].'" ]}
+                                    {[ "type": "number", "name": "costo_km_tecnico['.$rs[$i]['id_tipo_intervento'].']", "value": "'.$rs[$i]['costo_km_tecnico'].'" ]}
                                 </td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_dirittochiamata_tecnico['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_diritto_chiamata_tecnico'].'" ]}
+                                    {[ "type": "number", "name": "costo_dirittochiamata_tecnico['.$rs[$i]['id_tipo_intervento'].']", "value": "'.$rs[$i]['costo_diritto_chiamata_tecnico'].'" ]}
                                 </TD>
                             </tr>';
     }
@@ -387,7 +387,7 @@ if (!empty($record['idcontratto_prev'])) {
 <?php
 // Collegamenti diretti
 // Fatture collegate a questo contratto
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idcontratto` = '.prepare($id_record).') ORDER BY `data`');
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idcontratto` = '.prepare($id_record).') ORDER BY `data`');
 
 if (!empty($elementi)) {
     echo '

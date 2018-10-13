@@ -312,7 +312,7 @@ class Fattura extends Model
      */
     public function getNoteDiAccredito()
     {
-        return database()->fetchArray("SELECT co_documenti.id, IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE reversed = 1) AND ref_documento = :id", [
+        return database()->fetchArray("SELECT co_documenti.id, IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE id_tipo_documento IN (SELECT id FROM co_tipidocumento WHERE reversed = 1) AND ref_documento = :id", [
             ':id' => $this->id,
         ]);
     }
@@ -346,7 +346,7 @@ class Fattura extends Model
 
     public function tipo()
     {
-        return $this->belongsTo(Tipo::class, 'idtipodocumento');
+        return $this->belongsTo(Tipo::class, 'id_tipo_documento');
     }
 
     public function stato()

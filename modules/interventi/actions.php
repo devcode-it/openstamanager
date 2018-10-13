@@ -16,7 +16,7 @@ switch (post('op')) {
         $idcontratto = post('idcontratto');
         $idcontratto_riga = post('idcontratto_riga');
 
-        $idtipointervento = post('idtipointervento');
+        $id_tipo_intervento = post('id_tipo_intervento');
 
         $data_richiesta = post('data_richiesta');
         $richiesta = post('richiesta');
@@ -28,7 +28,7 @@ switch (post('op')) {
         */
         $array = [
             'idintervento' => $id_record,
-            'idtipointervento' => $idtipointervento,
+            'id_tipo_intervento' => $id_tipo_intervento,
             'data_richiesta' => $data_richiesta,
             'richiesta' => $richiesta,
             'idsede' => $idsede ?: 0,
@@ -77,11 +77,11 @@ switch (post('op')) {
             $km = post('km')[$idriga];
 
             // Lettura tariffe in base al tipo di intervento ed al tecnico
-            $idtipointervento_tecnico = post('idtipointerventot')[$idriga];
+            $id_tipo_intervento_tecnico = post('id_tipo_interventot')[$idriga];
             $rs = $dbo->fetchArray('SELECT * FROM in_interventi_tecnici WHERE idtecnico='.prepare(post('idtecnico')[$idriga]).' AND idintervento='.prepare($id_record));
 
-            if ($idtipointervento_tecnico != $rs[0]['idtipointervento']) {
-                $rsc = $dbo->fetchArray('SELECT * FROM in_tariffe WHERE idtecnico='.prepare(post('idtecnico')[$idriga]).' AND idtipointervento='.prepare($idtipointervento_tecnico));
+            if ($id_tipo_intervento_tecnico != $rs[0]['id_tipo_intervento']) {
+                $rsc = $dbo->fetchArray('SELECT * FROM in_tariffe WHERE idtecnico='.prepare(post('idtecnico')[$idriga]).' AND id_tipo_intervento='.prepare($id_tipo_intervento_tecnico));
 
                 if ($rsc[0]['costo_ore'] != 0 || $rsc[0]['costo_km'] != 0 || $rsc[0]['costo_dirittochiamata'] != 0 || $rsc[0]['costo_ore_tecnico'] != 0 || $rsc[0]['costo_km_tecnico'] != 0 || $rsc[0]['costo_dirittochiamata_tecnico'] != 0) {
                     $prezzo_ore_unitario = $rsc[0]['costo_ore'];
@@ -95,7 +95,7 @@ switch (post('op')) {
 
                 // ...altrimenti se non c'è una tariffa per il tecnico leggo i costi globali
                 else {
-                    $rsc = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE idtipointervento='.prepare($idtipointervento_tecnico));
+                    $rsc = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE id_tipo_intervento='.prepare($id_tipo_intervento_tecnico));
 
                     $prezzo_ore_unitario = $rsc[0]['costo_orario'];
                     $prezzo_km_unitario = $rsc[0]['costo_km'];
@@ -136,7 +136,7 @@ switch (post('op')) {
 
             $dbo->update('in_interventi_tecnici', [
                 'idintervento' => $id_record,
-                'idtipointervento' => $idtipointervento_tecnico,
+                'id_tipo_intervento' => $id_tipo_intervento_tecnico,
                 'idtecnico' => post('idtecnico')[$idriga],
 
                 'orario_inizio' => $orario_inizio,
@@ -179,7 +179,7 @@ switch (post('op')) {
             'idanagrafica' => post('idanagrafica'),
             'idclientefinale' => post('idclientefinale'),
             'idreferente' => post('idreferente'),
-            'idtipointervento' => $idtipointervento,
+            'id_tipo_intervento' => $id_tipo_intervento,
 
             'id_stato' => post('id_stato'),
             'idsede' => $idsede,
@@ -224,19 +224,19 @@ switch (post('op')) {
             $idpreventivo = post('idpreventivo');
             $idcontratto = post('idcontratto');
             $idcontratto_riga = post('idcontratto_riga');
-            $idtipointervento = post('idtipointervento');
+            $id_tipo_intervento = post('id_tipo_intervento');
             $idsede = post('idsede');
             $data_richiesta = post('data_richiesta');
             $richiesta = post('richiesta');
             $idautomezzo = null;
 
-            if (!empty($codice) && !empty(post('idanagrafica')) && !empty(post('idtipointervento'))) {
+            if (!empty($codice) && !empty(post('idanagrafica')) && !empty(post('id_tipo_intervento'))) {
                 // Salvataggio modifiche intervento
                 $dbo->insert('in_interventi', [
                     'idanagrafica' => post('idanagrafica'),
                     'idclientefinale' => post('idclientefinale') ?: 0,
                     'id_stato' => post('id_stato'),
-                    'idtipointervento' => $idtipointervento,
+                    'id_tipo_intervento' => $id_tipo_intervento,
                     'idsede' => $idsede ?: 0,
                     'idautomezzo' => $idautomezzo ?: 0,
                     'id_preventivo' => $idpreventivo,
@@ -255,7 +255,7 @@ switch (post('op')) {
             if (!empty($idcontratto)) {
                 $array = [
                     'idintervento' => $id_record,
-                    'idtipointervento' => $idtipointervento,
+                    'id_tipo_intervento' => $id_tipo_intervento,
                     'data_richiesta' => $data_richiesta,
                     'richiesta' => $richiesta,
                     'idsede' => $idsede ?: 0,
@@ -294,7 +294,7 @@ switch (post('op')) {
                     $dbo->insert('co_promemoria', [
                         'idcontratto' => $idcontratto,
                         'idintervento' => $id_record,
-                        'idtipointervento' => $idtipointervento,
+                        'id_tipo_intervento' => $id_tipo_intervento,
                         'data_richiesta' => $data_richiesta,
                         'richiesta' => $richiesta,
                         'idsede' => $idsede ?: 0,

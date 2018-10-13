@@ -18,7 +18,7 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id LEFT JOIN (SELECT GROUP_CONCAT(descrizione SEPARATOR " -- ") AS "descrizione", iddocumento FROM co_righe_documenti GROUP BY iddocumento) righe ON righe.iddocumento=co_documenti.id WHERE idanagrafica IN('.implode(',', $idanagrafiche).') ';
+$query .= ' FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.id_tipo_documento=co_tipidocumento.id LEFT JOIN (SELECT GROUP_CONCAT(descrizione SEPARATOR " -- ") AS "descrizione", iddocumento FROM co_righe_documenti GROUP BY iddocumento) righe ON righe.iddocumento=co_documenti.id WHERE idanagrafica IN('.implode(',', $idanagrafiche).') ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE "%'.$term.'%"';

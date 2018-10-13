@@ -13,7 +13,7 @@ class Tipo extends Model
     ];
 
     protected $hidden = [
-        'idtipoanagrafica',
+        'id_tipo_anagrafica',
     ];
 
     /**
@@ -23,11 +23,11 @@ class Tipo extends Model
      */
     public function getIdAttribute()
     {
-        return $this->idtipoanagrafica;
+        return $this->id_tipo_anagrafica;
     }
 
     public function anagrafiche()
     {
-        return $this->hasMany(Anagrafica::class, 'an_tipianagrafiche_anagrafiche', 'idtipoanagrafica', 'idanagrafica');
+        return $this->hasMany(Anagrafica::class, 'an_tipianagrafiche_anagrafiche', 'id_tipo_anagrafica', 'idanagrafica');
     }
 }

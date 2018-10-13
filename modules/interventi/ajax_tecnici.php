@@ -53,14 +53,14 @@ if ($user['gruppo'] == 'Tecnici') {
 }
 
 // RECUPERO IL TIPO DI INTERVENTO
-$rss = $dbo->fetchArray('SELECT idtipointervento, id_stato FROM in_interventi WHERE id='.prepare($id_record));
-$idtipointervento = $rss[0]['idtipointervento'];
+$rss = $dbo->fetchArray('SELECT id_tipo_intervento, id_stato FROM in_interventi WHERE id='.prepare($id_record));
+$id_tipo_intervento = $rss[0]['id_tipo_intervento'];
 $id_stato = $rss[0]['id_stato'];
 
-$rss = $dbo->fetchArray('SELECT completato AS flag_completato FROM in_statiintervento WHERE id_stato='.prepare($id_stato));
+$rss = $dbo->fetchArray('SELECT completato AS flag_completato FROM in_statiintervento WHERE id='.prepare($id_stato));
 $flag_completato = $rss[0]['flag_completato'];
 
-$query = 'SELECT * FROM an_anagrafiche JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE idintervento='.prepare($id_record)." AND idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica = (SELECT id FROM an_tipianagrafiche WHERE descrizione = 'Tecnico')) ORDER BY ragione_sociale ASC, in_interventi_tecnici.orario_inizio ASC, in_interventi_tecnici.id ASC";
+$query = 'SELECT * FROM an_anagrafiche JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE idintervento='.prepare($id_record)." AND idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE id_tipo_anagrafica = (SELECT id FROM an_tipianagrafiche WHERE descrizione = 'Tecnico')) ORDER BY ragione_sociale ASC, in_interventi_tecnici.orario_inizio ASC, in_interventi_tecnici.id ASC";
 $rs2 = $dbo->fetchArray($query);
 $prev_tecnico = '';
 
@@ -141,7 +141,7 @@ if (!empty($rs2)) {
         // Elenco tipologie di interventi
         echo '
             <td class="tecn_'.$r['idtecnico'].'" style="min-width:200px;">
-                {[ "type": "select", "name": "idtipointerventot['.$id.']", "value": "'.$r['idtipointervento'].'", "values": "query=SELECT idtipointervento AS id, descrizione, IFNULL((SELECT costo_ore FROM in_tariffe WHERE idtipointervento=in_tipiintervento.idtipointervento AND idtecnico='.prepare($r['idtecnico']).'), 0) AS costo_orario FROM in_tipiintervento ORDER BY descrizione", "extra": "'.$readonly.'" ]}
+                {[ "type": "select", "name": "id_tipo_interventot['.$id.']", "value": "'.$r['id_tipo_intervento'].'", "values": "query=SELECT id, descrizione, IFNULL((SELECT costo_ore FROM in_tariffe WHERE id_tipo_intervento=in_tipiintervento.id AND idtecnico='.prepare($r['idtecnico']).'), 0) AS costo_orario FROM in_tipiintervento ORDER BY descrizione", "extra": "'.$readonly.'" ]}
             </td>';
 
         // Orario di inizio

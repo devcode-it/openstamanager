@@ -20,7 +20,7 @@ class FatturaTest extends \Codeception\Test\Unit
         $fattura = Fattura::make($anagrafica, $tipo, $data, $id_segment);
 
         $this->assertEquals($fattura->idanagrafica, 1);
-        $this->assertEquals($fattura->idtipodocumento, 2);
+        $this->assertEquals($fattura->id_tipo_documento, 2);
         $this->assertEquals($fattura->id_segment, 1);
         $this->assertEquals($fattura->data, $data);
     }

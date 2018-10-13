@@ -10,7 +10,7 @@ switch (filter('op')) {
         $dbo->insert('co_promemoria', [
             'idcontratto' => $id_parent,
             'data_richiesta' => filter('data_richiesta'),
-            'idtipointervento' => filter('idtipointervento'),
+            'id_tipo_intervento' => filter('id_tipo_intervento'),
         ]);
         $id_record = $dbo->lastInsertedID();
 
@@ -20,7 +20,7 @@ switch (filter('op')) {
     case 'edit-promemoria':
         $dbo->update('co_promemoria', [
             'data_richiesta' => post('data_richiesta'),
-            'idtipointervento' => post('idtipointervento'),
+            'id_tipo_intervento' => post('id_tipo_intervento'),
             'richiesta' => post('richiesta'),
             'idimpianti' => implode(',', post('idimpianti')),
         ], ['id' => $id_record]);
@@ -66,10 +66,10 @@ switch (filter('op')) {
 
         // if principale
         if (!empty($id_record) && !empty($intervallo)) {
-            $qp = 'SELECT *, (SELECT idanagrafica FROM co_contratti WHERE id = '.$id_parent.' ) AS idanagrafica, (SELECT data_conclusione FROM co_contratti WHERE id = '.$id_parent.' ) AS data_conclusione, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento FROM co_promemoria WHERE co_promemoria.id = '.$id_record;
+            $qp = 'SELECT *, (SELECT idanagrafica FROM co_contratti WHERE id = '.$id_parent.' ) AS idanagrafica, (SELECT data_conclusione FROM co_contratti WHERE id = '.$id_parent.' ) AS data_conclusione, (SELECT descrizione FROM in_tipiintervento WHERE id_tipo_intervento=co_promemoria.id_tipo_intervento) AS tipointervento FROM co_promemoria WHERE co_promemoria.id = '.$id_record;
             $rsp = $dbo->fetchArray($qp);
 
-            $idtipointervento = $rsp[0]['idtipointervento'];
+            $id_tipo_intervento = $rsp[0]['id_tipo_intervento'];
             $idsede = $rsp[0]['idsede'];
             $richiesta = $rsp[0]['richiesta'];
 
@@ -101,10 +101,10 @@ switch (filter('op')) {
 
                     // controllo nuova data richiesta --> solo  date maggiori o uguali di [oggi o data richiesta iniziale] ma che non superano la data di fine del contratto
                     if ((date('Y-m-d', strtotime($data_richiesta)) >= $min_date) && (date('Y-m-d', strtotime($data_richiesta)) <= date('Y-m-d', strtotime($data_conclusione)))) {
-                        // Controllo che non esista già un promemoria idcontratto, idtipointervento e data_richiesta.
-                        if (count($dbo->fetchArray("SELECT id FROM co_promemoria WHERE data_richiesta = '".$data_richiesta."' AND idtipointervento = '".$idtipointervento."' AND idcontratto = '".$id_parent."' ")) == 0) {
+                        // Controllo che non esista già un promemoria idcontratto, id_tipo_intervento e data_richiesta.
+                        if (count($dbo->fetchArray("SELECT id FROM co_promemoria WHERE data_richiesta = '".$data_richiesta."' AND id_tipo_intervento = '".$id_tipo_intervento."' AND idcontratto = '".$id_parent."' ")) == 0) {
                             // inserisco il nuovo promemoria
-                            $query = 'INSERT INTO `co_promemoria`(`idcontratto`, `idtipointervento`, `data_richiesta`, `richiesta`, `idsede`, `idimpianti` ) VALUES('.prepare($id_parent).', '.prepare($idtipointervento).', '.prepare($data_richiesta).', '.prepare($richiesta).', '.prepare($idsede).', '.prepare($idimpianti).')';
+                            $query = 'INSERT INTO `co_promemoria`(`idcontratto`, `id_tipo_intervento`, `data_richiesta`, `richiesta`, `idsede`, `idimpianti` ) VALUES('.prepare($id_parent).', '.prepare($id_tipo_intervento).', '.prepare($data_richiesta).', '.prepare($richiesta).', '.prepare($idsede).', '.prepare($idimpianti).')';
 
                             if ($dbo->query($query)) {
                                 $idriga = $dbo->lastInsertedID();
@@ -163,7 +163,7 @@ switch (filter('op')) {
                                 'idanagrafica' => $idanagrafica,
                                 'idclientefinale' => post('idclientefinale') ?: 0,
                                 'id_stato' => $id_stato,
-                                'idtipointervento' => $idtipointervento,
+                                'id_tipo_intervento' => $id_tipo_intervento,
                                 'idsede' => $idsede ?: 0,
                                 'idautomezzo' => $idautomezzo ?: 0,
 

@@ -13,7 +13,7 @@ switch ($resource) {
         echo '<small>';
         if (!empty($idarticolo)) {
             // Ultime 5 vendite al cliente
-            $fatture = $dbo->fetchArray('SELECT iddocumento, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM co_documenti WHERE id=iddocumento) AS n_fattura, (SELECT numero_esterno FROM co_documenti WHERE id=iddocumento) AS n2_fattura, (SELECT data FROM co_documenti WHERE id=iddocumento) AS data_fattura FROM co_righe_documenti WHERE idarticolo="'.$idarticolo."\" AND iddocumento IN(SELECT id FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='entrata') AND idanagrafica=\"".$idanagrafica.'") LIMIT 0,5');
+            $fatture = $dbo->fetchArray('SELECT iddocumento, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM co_documenti WHERE id=iddocumento) AS n_fattura, (SELECT numero_esterno FROM co_documenti WHERE id=iddocumento) AS n2_fattura, (SELECT data FROM co_documenti WHERE id=iddocumento) AS data_fattura FROM co_righe_documenti WHERE idarticolo="'.$idarticolo."\" AND iddocumento IN(SELECT id FROM co_documenti WHERE id_tipo_documento IN(SELECT id FROM co_tipidocumento WHERE dir='entrata') AND idanagrafica=\"".$idanagrafica.'") LIMIT 0,5');
 
             if (sizeof($fatture) > 0) {
                 echo "<br/><table cellspacing='0' class='table-striped' >\n";
@@ -43,7 +43,7 @@ switch ($resource) {
     case 'getprezzivendita':
         echo '<small>';
         // Ultime 5 vendite totali
-        $fatture = $dbo->fetchArray("SELECT DISTINCT iddocumento, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM co_documenti WHERE id=iddocumento) AS n_fattura, (SELECT numero_esterno FROM co_documenti WHERE id=iddocumento) AS n2_fattura, (SELECT data FROM co_documenti WHERE id=iddocumento) AS data_fattura FROM co_righe_documenti WHERE idarticolo='".$idarticolo."' AND iddocumento IN(SELECT id FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='entrata') ) ORDER BY data_fattura DESC, n_fattura DESC LIMIT 0,5");
+        $fatture = $dbo->fetchArray("SELECT DISTINCT iddocumento, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM co_documenti WHERE id=iddocumento) AS n_fattura, (SELECT numero_esterno FROM co_documenti WHERE id=iddocumento) AS n2_fattura, (SELECT data FROM co_documenti WHERE id=iddocumento) AS data_fattura FROM co_righe_documenti WHERE idarticolo='".$idarticolo."' AND iddocumento IN(SELECT id FROM co_documenti WHERE id_tipo_documento IN(SELECT id FROM co_tipidocumento WHERE dir='entrata') ) ORDER BY data_fattura DESC, n_fattura DESC LIMIT 0,5");
 
         if (sizeof($fatture) > 0) {
             echo "<br/><table cellspacing='0' class='table-striped' >\n";
@@ -73,7 +73,7 @@ switch ($resource) {
     case 'getprezziacquisto':
         echo '<small>';
         // Ultime 5 vendite totali
-        $fatture = $dbo->fetchArray("SELECT DISTINCT iddocumento, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM co_documenti WHERE id=iddocumento) AS n_fattura, (SELECT numero_esterno FROM co_documenti WHERE id=iddocumento) AS n2_fattura, (SELECT data FROM co_documenti WHERE id=iddocumento) AS data_fattura FROM co_righe_documenti WHERE idarticolo='".$idarticolo."' AND iddocumento IN(SELECT id FROM co_documenti WHERE idtipodocumento IN(SELECT id FROM co_tipidocumento WHERE dir='uscita') ) ORDER BY data_fattura DESC, n_fattura DESC LIMIT 0,5");
+        $fatture = $dbo->fetchArray("SELECT DISTINCT iddocumento, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM co_documenti WHERE id=iddocumento) AS n_fattura, (SELECT numero_esterno FROM co_documenti WHERE id=iddocumento) AS n2_fattura, (SELECT data FROM co_documenti WHERE id=iddocumento) AS data_fattura FROM co_righe_documenti WHERE idarticolo='".$idarticolo."' AND iddocumento IN(SELECT id FROM co_documenti WHERE id_tipo_documento IN(SELECT id FROM co_tipidocumento WHERE dir='uscita') ) ORDER BY data_fattura DESC, n_fattura DESC LIMIT 0,5");
 
         if (sizeof($fatture) > 0) {
             echo "<br/><table cellspacing='0' class='table-striped' >\n";

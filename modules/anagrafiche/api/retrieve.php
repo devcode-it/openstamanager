@@ -41,7 +41,7 @@ switch ($resource) {
             LEFT OUTER JOIN an_nazioni ON an_anagrafiche.id_nazione=an_nazioni.id
         WHERE
             an_anagrafiche.deleted_at IS NULL AND
-            an_anagrafiche.idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica = (SELECT id FROM an_tipianagrafiche WHERE descrizione = 'Cliente'))
+            an_anagrafiche.idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE id_tipo_anagrafica = (SELECT id FROM an_tipianagrafiche WHERE descrizione = 'Cliente'))
         ORDER BY an_anagrafiche.ragione_sociale";
         break;
 

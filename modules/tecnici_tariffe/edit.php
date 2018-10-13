@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 $tipi_interventi = $dbo->fetchArray('SELECT * FROM in_tipiintervento ORDER BY descrizione');
 
 $tecnici = $dbo->fetchArray("SELECT idanagrafica, ragione_sociale FROM an_anagrafiche WHERE idanagrafica IN (
-    SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE idtipoanagrafica IN (
+    SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE id_tipo_anagrafica IN (
         SELECT id FROM an_tipianagrafiche WHERE descrizione = 'Tecnico'
     )
 ) ORDER BY ragione_sociale");
@@ -36,7 +36,7 @@ if (!empty($tecnici)) {
         // Tipi di interventi
         foreach ($tipi_interventi as $tipo_intervento) {
             // Lettura costi
-            $rsc = $dbo->fetchArray('SELECT * FROM in_tariffe WHERE idtecnico='.prepare($tecnico['idanagrafica']).' AND idtipointervento='.prepare($tipo_intervento['idtipointervento']));
+            $rsc = $dbo->fetchArray('SELECT * FROM in_tariffe WHERE idtecnico='.prepare($tecnico['idanagrafica']).' AND id_tipo_intervento='.prepare($tipo_intervento['id_tipo_intervento']));
 
             echo '
         <tr>
@@ -44,30 +44,30 @@ if (!empty($tecnici)) {
             <td>'.$tipo_intervento['descrizione'].'</td>
 
             <td>
-                <input type="text" class="form-control inputmask-decimal" name="costo_ore['.$tecnico['idanagrafica'].']['.$tipo_intervento['idtipointervento'].']" value="'.Translator::numberToLocale($rsc[0]['costo_ore']).'">
+                <input type="text" class="form-control inputmask-decimal" name="costo_ore['.$tecnico['idanagrafica'].']['.$tipo_intervento['id_tipo_intervento'].']" value="'.Translator::numberToLocale($rsc[0]['costo_ore']).'">
             </td>
 
             <td>
-                <input type="text" class="form-control inputmask-decimal" name="costo_km['.$tecnico['idanagrafica'].']['.$tipo_intervento['idtipointervento'].']" value="'.Translator::numberToLocale($rsc[0]['costo_km']).'">
+                <input type="text" class="form-control inputmask-decimal" name="costo_km['.$tecnico['idanagrafica'].']['.$tipo_intervento['id_tipo_intervento'].']" value="'.Translator::numberToLocale($rsc[0]['costo_km']).'">
             </td>
 
             <td>
-                <input type="text" class="form-control inputmask-decimal" name="costo_dirittochiamata['.$tecnico['idanagrafica'].']['.$tipo_intervento['idtipointervento'].']" value="'.Translator::numberToLocale($rsc[0]['costo_dirittochiamata']).'">
+                <input type="text" class="form-control inputmask-decimal" name="costo_dirittochiamata['.$tecnico['idanagrafica'].']['.$tipo_intervento['id_tipo_intervento'].']" value="'.Translator::numberToLocale($rsc[0]['costo_dirittochiamata']).'">
             </td>
 
             <td>
-                <input type="text" class="form-control inputmask-decimal" name="costo_ore_tecnico['.$tecnico['idanagrafica'].']['.$tipo_intervento['idtipointervento'].']" value="'.Translator::numberToLocale($rsc[0]['costo_ore_tecnico']).'">
+                <input type="text" class="form-control inputmask-decimal" name="costo_ore_tecnico['.$tecnico['idanagrafica'].']['.$tipo_intervento['id_tipo_intervento'].']" value="'.Translator::numberToLocale($rsc[0]['costo_ore_tecnico']).'">
             </td>
 
             <td>
-                <input type="text" class="form-control inputmask-decimal" name="costo_km_tecnico['.$tecnico['idanagrafica'].']['.$tipo_intervento['idtipointervento'].']" value="'.Translator::numberToLocale($rsc[0]['costo_km_tecnico']).'">
+                <input type="text" class="form-control inputmask-decimal" name="costo_km_tecnico['.$tecnico['idanagrafica'].']['.$tipo_intervento['id_tipo_intervento'].']" value="'.Translator::numberToLocale($rsc[0]['costo_km_tecnico']).'">
             </td>
 
             <td>
-                <input type="text" class="form-control inputmask-decimal" name="costo_dirittochiamata_tecnico['.$tecnico['idanagrafica'].']['.$tipo_intervento['idtipointervento'].']" value="'.Translator::numberToLocale($rsc[0]['costo_dirittochiamata_tecnico']).'">
+                <input type="text" class="form-control inputmask-decimal" name="costo_dirittochiamata_tecnico['.$tecnico['idanagrafica'].']['.$tipo_intervento['id_tipo_intervento'].']" value="'.Translator::numberToLocale($rsc[0]['costo_dirittochiamata_tecnico']).'">
             </td>
             <td>
-                <button type="button" class="btn btn-primary" data-toggle="tooltip" title="Importa valori da tariffe standard" onclick="if( confirm(\'Importare i valori dalle tariffe standard?\') ){ $.post( \''.$rootdir.'/modules/tecnici_tariffe/actions.php\', { op: \'import\', idtecnico: \''.$tecnico['idanagrafica'].'\', idtipointervento: \''.$tipo_intervento['idtipointervento'].'\' }, function(data){ location.href=\''.$rootdir.'/controller.php?id_module='.$id_module.'\'; } ); }">
+                <button type="button" class="btn btn-primary" data-toggle="tooltip" title="Importa valori da tariffe standard" onclick="if( confirm(\'Importare i valori dalle tariffe standard?\') ){ $.post( \''.$rootdir.'/modules/tecnici_tariffe/actions.php\', { op: \'import\', idtecnico: \''.$tecnico['idanagrafica'].'\', id_tipo_intervento: \''.$tipo_intervento['id_tipo_intervento'].'\' }, function(data){ location.href=\''.$rootdir.'/controller.php?id_module='.$id_module.'\'; } ); }">
                     <i class="fa fa-download"></i>
                 </button>
             </td>

@@ -10,6 +10,6 @@ class Tipo extends Model
 
     public function fatture()
     {
-        return $this->hasMany(Fattura::class, 'idtipodocumento');
+        return $this->hasMany(Fattura::class, 'id_tipo_documento');
     }
 }

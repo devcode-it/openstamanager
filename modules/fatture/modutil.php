@@ -58,7 +58,7 @@ function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = 0)
     $ritenutaacconto = $rs[0]['ritenutaacconto'];
 
     // Verifico se la fattura è di acquisto o di vendita per scegliere che segno mettere nel totale
-    $query2 = 'SELECT dir FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
+    $query2 = 'SELECT dir FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.id_tipo_documento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
     $rs2 = $dbo->fetchArray($query2);
     $dir = $rs2[0]['dir'];
 
@@ -165,7 +165,7 @@ function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento)
     $rimanente_da_pagare = abs($rs[0]['pagato']) + $totale_pagato;
 
     // Verifico se la fattura è di acquisto o di vendita per scegliere che segno mettere nel totale
-    $query2 = 'SELECT dir FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
+    $query2 = 'SELECT dir FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.id_tipo_documento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
     $rs2 = $dbo->fetchArray($query2);
     $dir = $rs2[0]['dir'];
 
@@ -302,7 +302,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     }
 
     // Lettura info fattura
-    $query = 'SELECT *, co_documenti.note, co_documenti.idpagamento, co_documenti.id AS iddocumento, co_statidocumento.descrizione AS `stato`, co_tipidocumento.descrizione AS `descrizione_tipodoc` FROM ((co_documenti LEFT OUTER JOIN co_statidocumento ON co_documenti.id_stato=co_statidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
+    $query = 'SELECT *, co_documenti.note, co_documenti.idpagamento, co_documenti.id AS iddocumento, co_statidocumento.descrizione AS `stato`, co_tipidocumento.descrizione AS `descrizione_tipodoc` FROM ((co_documenti LEFT OUTER JOIN co_statidocumento ON co_documenti.id_stato=co_statidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_tipidocumento ON co_documenti.id_tipo_documento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
     $n = sizeof($rs);
     $data = $rs[0]['data'];
@@ -760,7 +760,7 @@ function rimuovi_articolo_dafattura($idarticolo, $iddocumento, $idrigadocumento)
 
     // Aggiorno lo stato dell'ordine
     if (setting('Cambia automaticamente stato ordini fatturati') && !empty($idordine)) {
-        $dbo->query('UPDATE or_ordini SET id_statoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($idordine).'") WHERE id = '.prepare($idordine));
+        $dbo->query('UPDATE or_ordini SET id_stato=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($idordine).'") WHERE id = '.prepare($idordine));
     }
 
     // Aggiorno lo stato del ddt
@@ -854,7 +854,7 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
 
     // Aggiorno lo stato dell'ordine
     if (!empty($riga['idordine']) && setting('Cambia automaticamente stato ordini fatturati')) {
-        $dbo->query('UPDATE or_ordini SET id_statoordine = (SELECT id FROM or_statiordine WHERE descrizione = '.prepare(get_stato_ordine($riga['idordine'])).') WHERE id = '.prepare($riga['idordine']));
+        $dbo->query('UPDATE or_ordini SET id_stato = (SELECT id FROM or_statiordine WHERE descrizione = '.prepare(get_stato_ordine($riga['idordine'])).') WHERE id = '.prepare($riga['idordine']));
     }
 
     // Aggiorno lo stato del ddt

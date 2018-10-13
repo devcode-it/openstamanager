@@ -11,7 +11,7 @@ function get_new_numeroddt($data)
 
     $dbo = database();
 
-    $query = "SELECT IFNULL(MAX(numero),'0') AS max_numeroddt FROM dt_ddt WHERE DATE_FORMAT( data, '%Y' ) = '".date('Y', strtotime($data))."' AND idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir='".$dir."') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1";
+    $query = "SELECT IFNULL(MAX(numero),'0') AS max_numeroddt FROM dt_ddt WHERE DATE_FORMAT( data, '%Y' ) = '".date('Y', strtotime($data))."' AND id_tipo_ddt IN(SELECT id FROM dt_tipiddt WHERE dir='".$dir."') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1";
     $rs = $dbo->fetchArray($query);
 
     return intval($rs[0]['max_numeroddt']) + 1;
@@ -29,7 +29,7 @@ function get_new_numerosecondarioddt($data)
     // Calcolo il numero secondario se stabilito dalle impostazioni e se documento di vendita
     $formato_numero_secondario = setting('Formato numero secondario ddt');
 
-    $query = "SELECT numero_esterno FROM dt_ddt WHERE DATE_FORMAT( data, '%Y' ) = '".date('Y', strtotime($data))."' AND idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir='".$dir."') ORDER BY numero_esterno DESC LIMIT 0,1";
+    $query = "SELECT numero_esterno FROM dt_ddt WHERE DATE_FORMAT( data, '%Y' ) = '".date('Y', strtotime($data))."' AND id_tipo_ddt IN(SELECT id FROM dt_tipiddt WHERE dir='".$dir."') ORDER BY numero_esterno DESC LIMIT 0,1";
 
     $rs = $dbo->fetchArray($query);
     $numero_secondario = $rs[0]['numero_esterno'];
@@ -101,7 +101,7 @@ function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
 
     //Aggiorno lo stato dell'ordine
     if (setting('Cambia automaticamente stato ordini fatturati') && !empty($idordine)) {
-        $dbo->query('UPDATE or_ordini SET id_statoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($idordine).'") WHERE id = '.prepare($idordine));
+        $dbo->query('UPDATE or_ordini SET id_stato=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($idordine).'") WHERE id = '.prepare($idordine));
     }
 
     // Elimino i seriali utilizzati dalla riga

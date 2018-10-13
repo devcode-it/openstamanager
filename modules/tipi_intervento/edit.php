@@ -9,7 +9,7 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-4">
-			{[ "type": "span", "label": "<?php echo tr('Codice'); ?>", "name": "idtipointervento", "value": "$idtipointervento$" ]}
+			{[ "type": "span", "label": "<?php echo tr('Codice'); ?>", "name": "id_tipo_intervento", "value": "$id_tipo_intervento$" ]}
 		</div>
 
 		<div class="col-md-6">
@@ -74,7 +74,7 @@ include_once __DIR__.'/../../core.php';
 
 <?php
 
-$interventi = $dbo->fetchArray('SELECT COUNT(*) AS tot_interventi FROM in_interventi WHERE idtipointervento='.prepare($id_record));
+$interventi = $dbo->fetchArray('SELECT COUNT(*) AS tot_interventi FROM in_interventi WHERE id_tipo_intervento='.prepare($id_record));
 
 $tot_interventi = $interventi[0]['tot_interventi'];
 if ($tot_interventi > 0) {

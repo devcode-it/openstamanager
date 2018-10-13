@@ -54,7 +54,7 @@ switch ($resource) {
             `in_interventi`.`data_richiesta`,
             `in_interventi`.`richiesta`,
             `in_interventi`.`descrizione`,
-            `in_interventi`.`idtipointervento`,
+            `in_interventi`.`id_tipo_intervento`,
             `in_interventi`.`idanagrafica`,
             `in_interventi`.`idautomezzo`,
             `in_interventi`.`idsede`,
@@ -69,7 +69,7 @@ switch ($resource) {
             (SELECT GROUP_CONCAT(DISTINCT ragione_sociale SEPARATOR ', ') FROM `in_interventi_tecnici` INNER JOIN `an_anagrafiche` ON `in_interventi_tecnici`.`idtecnico` = `an_anagrafiche`.`idanagrafica` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) AS `tecnici`,
             `in_statiintervento`.`colore` AS `bgcolor`,
             `in_statiintervento`.`descrizione` AS `stato`,
-            `in_interventi`.`idtipointervento` AS `tipo`
+            `in_interventi`.`id_tipo_intervento` AS `tipo`
         FROM `in_interventi`
             INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id_stato`
             INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`

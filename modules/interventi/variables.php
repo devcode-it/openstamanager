@@ -3,7 +3,7 @@
 $r = $dbo->fetchOne('SELECT *,
     (SELECT MAX(orario_fine) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS data_fine,
     (SELECT email FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica=in_interventi.idanagrafica) AS email,
-    (SELECT descrizione FROM in_statiintervento WHERE id_stato=in_interventi.id_stato) AS stato
+    (SELECT descrizione FROM in_statiintervento WHERE id=in_interventi.id_stato) AS stato
 FROM in_interventi WHERE id='.prepare($id_record));
 
 // Variabili da sostituire

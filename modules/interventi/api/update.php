@@ -66,7 +66,7 @@ switch ($resource) {
                         'idanagrafica' => setting('Azienda predefinita'),
                         'data_richiesta' => \Carbon::now(),
                         'richiesta' => $richiesta,
-                        'idtipointervento' => 0,
+                        'id_tipo_intervento' => 0,
                         'id_stato' => 'CALL',
                         'oggetto' => $summary,
                     ]);

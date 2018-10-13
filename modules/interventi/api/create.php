@@ -29,7 +29,7 @@ switch ($resource) {
                 'idanagrafica' => $data['id_anagrafica'],
                 'idclientefinale' => 0,
                 'id_stato' => $data['id_stato_intervento'],
-                'idtipointervento' => $data['id_tipo_intervento'],
+                'id_tipo_intervento' => $data['id_tipo_intervento'],
                 'idsede' => 0,
                 'idautomezzo' => 0,
 

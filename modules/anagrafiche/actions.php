@@ -51,11 +51,11 @@ switch (post('op')) {
         $anagrafica->n_alboartigiani = post('n_alboartigiani');
         $anagrafica->foro_competenza = post('foro_competenza');
         $anagrafica->colore = post('colore');
-        $anagrafica->idtipointervento_default = post('idtipointervento_default');
+        $anagrafica->id_tipo_intervento_default = post('id_tipo_intervento_default') ?: null;
         $anagrafica->id_ritenuta_acconto_acquisti = post('id_ritenuta_acconto_acquisti');
         $anagrafica->id_ritenuta_acconto_vendite = post('id_ritenuta_acconto_vendite');
 
-        $anagrafica->updateTipologie((array) post('idtipoanagrafica'));
+        $anagrafica->updateTipologie((array) post('id_tipo_anagrafica'));
 
         $anagrafica->save();
 
@@ -108,17 +108,17 @@ switch (post('op')) {
         break;
 
     case 'add':
-        $idtipoanagrafica = post('idtipoanagrafica');
+        $id_tipo_anagrafica = post('id_tipo_anagrafica');
         $ragione_sociale = post('ragione_sociale');
 
-        $anagrafica = Anagrafica::make($ragione_sociale, $idtipoanagrafica);
+        $anagrafica = Anagrafica::make($ragione_sociale, $id_tipo_anagrafica);
         $id_record = $anagrafica->id;
 
         // Se ad aggiungere un cliente è un agente, lo imposto come agente di quel cliente
         // Lettura tipologia dell'utente loggato
         $agente_is_logged = false;
 
-        $rs = $dbo->fetchArray('SELECT descrizione FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.id = an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica = '.prepare($user['idanagrafica']));
+        $rs = $dbo->fetchArray('SELECT descrizione FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.id = an_tipianagrafiche_anagrafiche.id_tipo_anagrafica WHERE idanagrafica = '.prepare($user['idanagrafica']));
 
         for ($i = 0; $i < count($rs); ++$i) {
             if ($rs[$i]['descrizione'] == 'Agente') {
@@ -127,7 +127,7 @@ switch (post('op')) {
             }
         }
 
-        $idagente = ($agente_is_logged && in_array($id_cliente, $idtipoanagrafica)) ? $user['idanagrafica'] : 0;
+        $idagente = ($agente_is_logged && in_array($id_cliente, $id_tipo_anagrafica)) ? $user['idanagrafica'] : 0;
 
         $anagrafica->partita_iva = post('piva');
         $anagrafica->codice_fiscale = post('codice_fiscale');

@@ -23,7 +23,7 @@ function add_movimento_magazzino($id_articolo, $qta, $array = [], $descrizone = 
 
     // Ddt
     if (!empty($array['idddt'])) {
-        $rs = $dbo->fetchArray('SELECT numero, numero_esterno, dt_tipiddt.descrizione AS tipo, dt_tipiddt.dir FROM dt_ddt LEFT JOIN dt_tipiddt ON dt_tipiddt.id = dt_ddt.idtipoddt WHERE dt_ddt.id='.prepare($array['idddt']));
+        $rs = $dbo->fetchArray('SELECT numero, numero_esterno, dt_tipiddt.descrizione AS tipo, dt_tipiddt.dir FROM dt_ddt LEFT JOIN dt_tipiddt ON dt_tipiddt.id = dt_ddt.id_tipo_ddt WHERE dt_ddt.id='.prepare($array['idddt']));
         $numero = (!empty($rs[0]['numero_esterno'])) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
         $tipo = strtolower($rs[0]['tipo']);
 
@@ -33,7 +33,7 @@ function add_movimento_magazzino($id_articolo, $qta, $array = [], $descrizone = 
 
     // Fattura
     elseif (!empty($array['iddocumento'])) {
-        $rs = $dbo->fetchArray('SELECT numero, numero_esterno, co_tipidocumento.descrizione AS tipo, co_tipidocumento.dir FROM co_documenti LEFT JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($array['iddocumento']));
+        $rs = $dbo->fetchArray('SELECT numero, numero_esterno, co_tipidocumento.descrizione AS tipo, co_tipidocumento.dir FROM co_documenti LEFT JOIN co_tipidocumento ON co_tipidocumento.id = co_documenti.id_tipo_documento WHERE co_documenti.id='.prepare($array['iddocumento']));
         $numero = (!empty($rs[0]['numero_esterno'])) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
         $tipo = strtolower($rs[0]['tipo']);
 

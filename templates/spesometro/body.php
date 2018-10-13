@@ -36,7 +36,7 @@ $totale = [];
 $anagrafiche = $dbo->fetchArray('SELECT idanagrafica, piva, ragione_sociale FROM `an_anagrafiche` WHERE `idanagrafica` IN (SELECT DISTINCT `idanagrafica` FROM `co_documenti` WHERE co_documenti.data>='.prepare($date_start).' AND co_documenti.data<='.prepare($date_end).' AND `co_documenti`.`id` IN (SELECT `iddocumento` FROM co_movimenti WHERE primanota = 1)) ORDER BY `ragione_sociale`');
 
 foreach ($anagrafiche as $i => $anagrafica) {
-    $fatture = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`idanagrafica` = '.prepare($anagrafica['idanagrafica']).' AND `co_documenti`.`id` IN (SELECT `iddocumento` FROM co_movimenti WHERE primanota = 1) AND co_documenti.data>='.prepare($date_start).' AND co_documenti.data<='.prepare($date_end).' ORDER BY `data`');
+    $fatture = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento` WHERE `co_documenti`.`idanagrafica` = '.prepare($anagrafica['idanagrafica']).' AND `co_documenti`.`id` IN (SELECT `iddocumento` FROM co_movimenti WHERE primanota = 1) AND co_documenti.data>='.prepare($date_start).' AND co_documenti.data<='.prepare($date_end).' ORDER BY `data`');
 
     $num = 0;
     foreach ($fatture as $key => $fattura) {

@@ -17,7 +17,7 @@ $rs_iva = $dbo->fetchArray('SELECT descrizione, percentuale, indetraibile FROM c
 if ($show_prezzi) {
     $costi = get_costi_intervento($id_record);
 
-    $rss = $dbo->fetchArray('SELECT in_statiintervento.completato AS flag_completato FROM in_statiintervento INNER JOIN in_interventi ON in_statiintervento.id_stato=in_interventi.id_stato WHERE in_interventi.id='.prepare($id_record));
+    $rss = $dbo->fetchArray('SELECT in_statiintervento.completato AS flag_completato FROM in_statiintervento INNER JOIN in_interventi ON in_statiintervento.id=in_interventi.id_stato WHERE in_interventi.id='.prepare($id_record));
 
     if ($rss[0]['flag_completato']) {
         $readonly = 'readonly';

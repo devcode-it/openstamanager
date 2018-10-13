@@ -40,7 +40,7 @@ $rs = $dbo->fetchArray('SELECT
         CONCAT(\'\n\', in_interventi.descrizione) AS descrizione_intervento,
         IF(idclientefinale='.prepare($idanagrafica).', \'Interventi conto terzi\', \'Interventi diretti\') AS `optgroup`
     FROM
-        in_interventi INNER JOIN in_statiintervento ON in_interventi.id_stato=in_statiintervento.id_stato
+        in_interventi INNER JOIN in_statiintervento ON in_interventi.id_stato=in_statiintervento.id
     WHERE
         (in_interventi.idanagrafica='.prepare($idanagrafica).' OR in_interventi.idclientefinale='.prepare($idanagrafica).')
         AND in_statiintervento.completato=1

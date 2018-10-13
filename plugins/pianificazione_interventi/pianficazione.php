@@ -27,13 +27,13 @@ if (count($id_impianti) == 1) {
 }
 
 // Informazioni del promemoria
-$record = $dbo->fetchOne('SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento, (SELECT tempo_standard FROM in_tipiintervento WHERE idtipointervento = co_promemoria.idtipointervento) AS tempo_standard FROM co_promemoria WHERE id = :id', [
+$record = $dbo->fetchOne('SELECT *, (SELECT descrizione FROM in_tipiintervento WHERE id_tipo_intervento=co_promemoria.id_tipo_intervento) AS tipointervento, (SELECT tempo_standard FROM in_tipiintervento WHERE id_tipo_intervento = co_promemoria.id_tipo_intervento) AS tempo_standard FROM co_promemoria WHERE id = :id', [
     ':id' => $id_record,
 ]);
 $data_richiesta = $record['data_richiesta'] ?: date('Y-m-d');
 $id_sede = $record['idsede'];
 $tempo_standard = $record['tempo_standard'];
-$idtipointervento = $record['idtipointervento'];
+$id_tipo_intervento = $record['id_tipo_intervento'];
 
 if (!empty($id_sede)) {
     $id_impianti = explode(',', trim($record['idimpianti']));
@@ -78,7 +78,7 @@ echo '
 				</div>
 
 				<div class="col-md-6">
-					 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "required": 1, "id": "idtipointervento_", "value": "'.$record['idtipointervento'].'", "readonly": '.intval(empty($is_add)).', "ajax-source": "tipiintervento", "value": "'.$idtipointervento.'"  ]}
+					 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "id_tipo_intervento", "required": 1, "id": "id_tipo_intervento_", "value": "'.$record['id_tipo_intervento'].'", "readonly": '.intval(empty($is_add)).', "ajax-source": "tipiintervento", "value": "'.$id_tipo_intervento.'"  ]}
 				</div>
 			</div>
 
@@ -228,12 +228,12 @@ echo '
 <script>
     $(document).ready(function() {
 
-        if ($("#idtipointervento_").val()==null){
+        if ($("#id_tipo_intervento_").val()==null){
             $("#add_form .panel-primary .panel-primary").hide();
             $("#bs-popup .btn-primary").hide();
         };
 
-        $("#idtipointervento_").change(function(){
+        $("#id_tipo_intervento_").change(function(){
             if (($(this).val()!="")){
                 $("#add_form .panel-primary .panel-primary").show();
                 $("#bs-popup .btn-primary").show();

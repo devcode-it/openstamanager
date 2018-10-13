@@ -7,13 +7,13 @@ class AnagraficheCest
      *
      * @param AcceptanceTester $t
      */
-    public function addAnag(AcceptanceTester $t, $name = 'ANAGRAFICA DI PROVA', $tipo = 1, $partita_iva = '')
+    protected function addAnag(AcceptanceTester $t, $name = 'ANAGRAFICA DI PROVA', $tipo = 1, $partita_iva = '')
     {
         // Effettua l'accesso con le credenziali fornite
         $t->login('admin', 'admin');
 
         // Seleziona il modulo da aprire
-        $t->clickAndWait('Anagrafiche', '.sidebar');
+        $t->navigateTo('Anagrafiche');
 
         // Apre la schermata di nuovo elemento
         $t->clickAndWaitModal('.btn-primary', '#tabs');
@@ -29,7 +29,7 @@ class AnagraficheCest
         $t->clickAndWait('Aggiungi', '#add-form');
 
         // Controlla il salvataggio finale
-        $t->see('Aggiunta nuova anagrafica');
+        $t->seeInField('Ragione sociale', $name);
     }
 
     /**
@@ -37,9 +37,9 @@ class AnagraficheCest
      *
      * @param AcceptanceTester $t
      */
-    public function addAndDeleteAnag(AcceptanceTester $t)
+    protected function addAndDeleteAnag(AcceptanceTester $t, $name = 'ANAGRAFICA DI PROVA', $tipo = 1, $partita_iva = '')
     {
-        $this->addAnag($t, 'ANAGRAFICA CLIENTE DI PROVA', 1, '05024030289');
+        $this->addAnag($t, $name, $tipo, $partita_iva);
 
         // Seleziona l'azione di eliminazione
         $t->clickAndWaitSwal('Elimina', '#tab_0');
@@ -49,5 +49,35 @@ class AnagraficheCest
 
         // Controlla eliminazione
         $t->see('Anagrafica eliminata!', '.alert-success');
+    }
+
+    /**
+    * Crea una nuova anagrafica di tipo cliente.
+    *
+    * @param AcceptanceTester $t
+    */
+    public function testAnagraficaCliente(AcceptanceTester $t)
+    {
+        $this->addAnag($t, 'Cliente', 1, '05024030289');
+    }
+
+    /**
+    * Crea una nuova anagrafica di tipo cliente.
+    *
+    * @param AcceptanceTester $t
+    */
+    public function testAnagraficaTecnico(AcceptanceTester $t)
+    {
+        $this->addAnag($t, 'Tecnico', 2, '05024030289');
+    }
+
+    /**
+    * Crea una nuova anagrafica di tipo cliente.
+    *
+    * @param AcceptanceTester $t
+    */
+    public function testAnagraficaFornitore(AcceptanceTester $t)
+    {
+        $this->addAnag($t, 'Fornitore', 3, '05024030289');
     }
 }

@@ -13,3 +13,4 @@ modules:
             browser: chrome
         - \Helper\Acceptance
         - \Helper\Select2
+        - \Helper\Select2Ajax

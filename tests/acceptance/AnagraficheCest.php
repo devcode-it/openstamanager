@@ -52,7 +52,7 @@ class AnagraficheCest
     }
 
     /**
-    * Crea una nuova anagrafica di tipo cliente.
+    * Crea una nuova anagrafica di tipo Cliente.
     *
     * @param AcceptanceTester $t
     */
@@ -62,7 +62,7 @@ class AnagraficheCest
     }
 
     /**
-    * Crea una nuova anagrafica di tipo cliente.
+    * Crea una nuova anagrafica di tipo Tecnico.
     *
     * @param AcceptanceTester $t
     */
@@ -72,12 +72,32 @@ class AnagraficheCest
     }
 
     /**
-    * Crea una nuova anagrafica di tipo cliente.
+    * Crea una nuova anagrafica di tipo Fornitore.
     *
     * @param AcceptanceTester $t
     */
     public function testAnagraficaFornitore(AcceptanceTester $t)
     {
-        $this->addAnag($t, 'Fornitore', 3, '05024030289');
+        $this->addAnag($t, 'Fornitore', 4, '05024030289');
+    }
+
+    /**
+    * Crea una nuova anagrafica di tipo Vettore.
+    *
+    * @param AcceptanceTester $t
+    */
+    public function testAnagraficaVettore(AcceptanceTester $t)
+    {
+        $this->addAnag($t, 'Vettore', 5, '05024030289');
+    }
+
+    /**
+    * Crea una nuova anagrafica di tipo Agente.
+    *
+    * @param AcceptanceTester $t
+    */
+    public function testAnagraficaAgente(AcceptanceTester $t)
+    {
+        $this->addAnag($t, 'Agente', 6, '05024030289');
     }
 }

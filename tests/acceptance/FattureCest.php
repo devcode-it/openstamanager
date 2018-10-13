@@ -49,7 +49,7 @@ class FattureCest
         $t->see('Anagrafica eliminata!', '.alert-success');
     }
 
-    protected function addRow(AcceptanceTester $t, $descrizione, $qta, $prezzo, $iva = null)
+    protected function addRow(AcceptanceTester $t, $descrizione, $qta, $prezzo, $sconto = 0, $tipo_sconto = 'UNT', $id_iva = null, $id_rivalsa_inps = null, $id_ritenuta_acconto = null)
     {
         // Apre il modal
         $t->clickAndWaitModal('Riga', '#tab_0');
@@ -59,11 +59,35 @@ class FattureCest
         $t->fillField('Q.tà', $qta);
         $t->fillField('Costo unitario', $prezzo);
 
+        if (!empty($sconto)) {
+            $t->fillField('Sconto unitario', $sconto);
+
+            if (in_array($tipo_sconto, ['PRC', 'UNT'])) {
+                $t->select2ajax('#tipo_sconto', $tipo_sconto);
+            }
+        }
+
+        if ($id_iva) {
+            $t->select2('#idiva', $id_iva);
+        }
+
+        if ($id_rivalsa_inps) {
+            $t->select2('#id_rivalsa_inps', $id_rivalsa_inps);
+        }
+        if ($id_ritenuta_acconto) {
+            $t->select2('#id_ritenuta_acconto', $id_ritenuta_acconto);
+        }
+
         // Effettua il submit
         $t->clickAndWait('Aggiungi', '.modal');
 
         // Controlla il salvataggio finale
         $t->see('Riga aggiunta');
+    }
+
+    protected function getFinalValue($type)
+    {
+        return "//div[@class='panel-heading' and contains(string(), 'Righe')]/parent::*//table//tr[contains(string(), '".strtoupper($type)."')]//td[2]";
     }
 
     protected function checkImporti(AcceptanceTester $t)
@@ -75,7 +99,18 @@ class FattureCest
         $this->addRow($t, 'Riga 5', 1, 104.90);
         $this->addRow($t, 'Riga 6', 1, 2);
 
-        $t->seeInSource('259,05');
+        $t->see("212,34", $this->getFinalValue('Imponibile'));
+        $t->see("46,71", $this->getFinalValue('IVA'));
+        $t->see("259,05", $this->getFinalValue('Totale'));
+
+        $this->addRow($t, 'Riga 7 con sconto in euro', 15, 12, 2);
+        $this->addRow($t, 'Riga 8 con sconto percentuale', 15, 10, 20, 'PRC');
+
+        $t->see("542,34", $this->getFinalValue('Imponibile'));
+        $t->see("60,00", $this->getFinalValue('Sconto'));
+        $t->see("482,34", $this->getFinalValue('Imponibile scontato'));
+        $t->see("106,11", $this->getFinalValue('IVA'));
+        $t->see("588,45", $this->getFinalValue('Totale'));
     }
 
     /**

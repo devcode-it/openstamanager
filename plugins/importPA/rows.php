@@ -7,8 +7,34 @@ $directory = Uploads::getDirectory($id_module);
 $xml = file_get_contents(DOCROOT.'/'.$directory.'/'.get('filename'));
 $fattura_pa = new Plugins\ImportPA\FatturaElettronica($xml, post('id_segment'));
 
-$righe = $fattura_pa->getRighe();
+echo '
+<form action="'.$rootdir.'/actions.php" method="post">
+    <input type="hidden" name="id_module" value="'.$id_module.'">
+    <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
+    <input type="hidden" name="filename" value="'.get('filename').'">
+    <input type="hidden" name="id_segment" value="'.get('id_segment').'">
+    <input type="hidden" name="id" value="'.get('id').'">
+    <input type="hidden" name="backto" value="record-edit">
+    <input type="hidden" name="op" value="generate">';
 
+// Fornitore
+$fornitore = $fattura_pa->getHeader()['CedentePrestatore']['DatiAnagrafici'];
+
+$ragione_sociale = $fornitore['Anagrafica']['Denominazione'] ?: $fornitore['Anagrafica']['Nome'].' '.$fornitore['Anagrafica']['Cognome'];
+$codice_fiscale = $fornitore['CodiceFiscale'];
+$partita_iva = $fornitore['IdFiscaleIVA']['IdCodice'];
+
+echo '
+    <h4>'.tr('Fornitore').'</h4>
+
+    <p>'.tr('Le informazioni principali del fornitore sono le seguenti').':</p>
+    <ul>
+        <li>'.tr('Ragione Sociale').': '.$ragione_sociale.'</li>
+        <li>'.tr('Codice Fiscale').': '.$codice_fiscale.'</li>
+        <li>'.tr('Partita IVA').': '.$partita_iva.'</li>
+    </ul>';
+
+// Pagamenti
 $pagamenti = $fattura_pa->getBody()['DatiPagamento'];
 
 $metodi = $pagamenti['DettaglioPagamento'];
@@ -18,19 +44,32 @@ $metodi = isset($metodi[0]) ? $metodi : [$metodi];
 $query = 'SELECT id, descrizione FROM co_pagamenti WHERE codice_modalita_pagamento_fe = '.prepare($metodi[0]['ModalitaPagamento']).' GROUP BY descrizione ORDER BY descrizione ASC';
 
 echo '
-<form action="'.$rootdir.'/actions.php" method="post">
-    <input type="hidden" name="id_module" value="'.$id_module.'">
-    <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
-    <input type="hidden" name="filename" value="'.get('filename').'">
-    <input type="hidden" name="id_segment" value="'.get('id_segment').'">
-    <input type="hidden" name="id" value="'.get('id').'">
-    <input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="op" value="generate">
+    <h4>'.tr('Pagamento').'</h4>
 
+    <p>'.tr('La fattura importata presenta _NUM_ rate di pagamento con le seguenti scadenze', [
+        '_NUM_' => count($metodi)
+    ]).':</p>
+    <ul>';
+
+// Scadenze di pagamento
+foreach ($metodi as $metodo) {
+    echo '
+        <li>'.Translator::dateToLocale($metodo['DataScadenzaPagamento']).'</li>';
+}
+
+echo '
+    </ul>';
+
+echo '
     {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "values": "query='.$query.'" ]}';
+
+// Righe
+$righe = $fattura_pa->getRighe();
 
 if (!empty($righe)) {
     echo '
+    <h4>'.tr('Righe').'</h4>
+
     <table class="table table-hover table-striped">
         <tr>
             <th width="10%">'.tr('Riga').'</th>

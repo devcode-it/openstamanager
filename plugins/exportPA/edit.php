@@ -74,42 +74,37 @@ if (!empty($missing)) {
 </div>';
 }
 
-if ($generated) {
-    echo '
-<div class="row">
-    <div class="col-md-6">';
-}
+echo '
+<p>'.tr("Per effettuare la generazione dell'XML della fattura elettronica clicca sul pulsante _BTN_", [
+    '_BTN_' => '<b>Genera</b>'
+]).'. '.tr("Successivamente sarà possibile procedere alla visualizzazione e al download della fattura generata attraverso i pulsanti dedicati").'.</p>';
 
 echo '
-<form action="" method="post" role="form">
-    <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
-    <input type="hidden" name="id_record" value="'.$id_record.'">
-	<input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="op" value="generate">
+<div class="text-center">
+    <form action="" method="post" role="form" style="display:inline-block">
+        <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
+        <input type="hidden" name="id_record" value="'.$id_record.'">
+        <input type="hidden" name="backto" value="record-edit">
+        <input type="hidden" name="op" value="generate">
 
-    <button type="submit" class="btn btn-primary btn-lg btn-block'.($disabled ? ' disabled' : null).'" '.($disabled ? ' disabled' : null).'>
-        <i class="fa fa-file"></i> '.tr('Genera').'
-    </button>
-</form>';
+        <button type="submit" class="btn btn-primary btn-lg '.($disabled ? 'disabled' : '').'" '.($disabled ? ' disabled' : null).'>
+            <i class="fa fa-file"></i> '.tr('Genera').'
+        </button>
+    </form>';
 
-if ($generated) {
-    echo '
-    </div>
+echo '
+    <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
-    <div class="col-md-6">
-        <a href="'.ROOTDIR.'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&op=download" class="btn btn-success btn-lg btn-block" target="_blank">
-            <i class="fa fa-download"></i> '.tr('Scarica').'
-        </a>
-    </div>
+    <a href="'.ROOTDIR.'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&op=download" class="btn btn-success btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
+        <i class="fa fa-download"></i> '.tr('Scarica').'
+    </a>
+
+    <i class="fa fa-arrow-right fa-fw text-muted"></i>';
+
+echo '
+
+    <a href="'.ROOTDIR.'/plugins/exportPA/view.php?id_record='.$id_record.'" class="btn btn-info btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
+        <i class="fa fa-eye"></i> '.tr('Visualizza').'
+    </a>
+
 </div>';
-
-    echo '
-<hr>
-<div class="row">
-    <div class="col-md-12">
-        <a href="'.ROOTDIR.'/plugins/exportPA/view.php?id_record='.$id_record.'" class="btn btn-info btn-lg btn-block" target="_blank">
-            <i class="fa fa-eye"></i> '.tr('Visualizza').'
-        </a>
-    </div>
-</div>';
-}

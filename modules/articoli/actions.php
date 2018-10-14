@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 switch (post('op')) {
     // Aggiunta articolo
     case 'add':
-        $codice = post('codice');
+        $codice = post('codice',true);
 
         // Inserisco l'articolo e avviso se esiste un altro articolo con stesso codice.
         if ($dbo->fetchNum('SELECT * FROM mg_articoli WHERE codice='.prepare($codice)) == 1) {
@@ -31,7 +31,7 @@ switch (post('op')) {
         $qta = post('qta');
 
         $dbo->update('mg_articoli', [
-            'codice' => post('codice'),
+            'codice' => post('codice',true),
             'descrizione' => post('descrizione'),
             'um' => post('um'),
             'id_categoria' => post('categoria'),

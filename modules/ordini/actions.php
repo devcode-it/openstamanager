@@ -139,7 +139,7 @@ switch (post('op')) {
             $idiva = post('idiva');
             $descrizione = post('descrizione');
             $qta = post('qta');
-            $prezzo_vendita = post('prezzo');
+            $prezzo = post('prezzo');
 
             // Calcolo dello sconto
             $sconto_unitario = post('sconto');
@@ -151,7 +151,7 @@ switch (post('op')) {
                 'qta' => $qta,
             ]);
 
-            add_articolo_inordine($id_record, $idarticolo, $descrizione, $idiva, $qta, post('um'), $prezzo_vendita * $qta, $sconto, $sconto_unitario, $tipo_sconto);
+            add_articolo_inordine($id_record, $idarticolo, $descrizione, $idiva, $qta, post('um'), $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto);
 
             flash()->info(tr('Articolo aggiunto!'));
         }

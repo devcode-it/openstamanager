@@ -118,7 +118,7 @@ switch (post('op')) {
             if ($dir == 'entrata') {
                 ricalcola_costiagg_fattura($id_record);
             } else {
-                ricalcola_costiagg_fattura($id_record, $idrivalsainps, $idritenutaacconto, $bollo); // TODO: bollo non settato
+                ricalcola_costiagg_fattura($id_record, $idrivalsainps, $idritenutaacconto, post('bollo'));
             }
 
             // Elimino la scadenza e tutti i movimenti, poi se la fattura è emessa le ricalcolo

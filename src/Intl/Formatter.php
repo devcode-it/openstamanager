@@ -167,7 +167,7 @@ class Formatter
         $value = $sign.$value;
 
         if (is_object($this->numberFormatter)) {
-            $result = $this->numberFormatter->parse($value);
+            $result = $this->numberFormatter->parse($value, NumberFormatter::PATTERN_DECIMAL);
         } else {
             $result = $this->customNumber($value, $this->getNumberSeparators(), self::getStandardFormats()['number']);
         }

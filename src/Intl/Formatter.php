@@ -148,26 +148,13 @@ class Formatter
      */
     public function parseNumber($value)
     {
-        $sign = null;
-        if ($value[0] == '+' || $value[0] == '-') {
-            $sign = $value[0];
-            $value = substr($value, 1);
-        }
-
         // Controllo sull'effettiva natura del numero
-        $number = str_replace(array_values($this->getNumberSeparators()), '', $value);
-
-        $pieces = explode($this->getNumberSeparators()['decimals'], $value);
-        $integer = str_replace(array_values($this->getNumberSeparators()), '', $pieces[0]);
-
-        if (!ctype_digit($number) || (strlen($integer) != strlen((int) $integer))) {
+        if (is_numeric($value)) {
             return false;
         }
 
-        $value = $sign.$value;
-
         if (is_object($this->numberFormatter)) {
-            $result = $this->numberFormatter->parse($value, NumberFormatter::PATTERN_DECIMAL);
+            $result = $this->numberFormatter->parse($value);
         } else {
             $result = $this->customNumber($value, $this->getNumberSeparators(), self::getStandardFormats()['number']);
         }

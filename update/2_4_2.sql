@@ -543,3 +543,15 @@ ALTER TABLE `zz_segments` CHANGE `predefined` `predefined` boolean NOT NULL DEFA
 
 -- Fix colore per fatture senza numero esterno
 UPDATE `zz_views` SET `query` = 'IF((SELECT COUNT(t.numero_esterno) FROM co_documenti AS t WHERE t.numero_esterno = co_documenti.numero_esterno AND t.numero_esterno != '''' AND t.id_segment = co_documenti.id_segment AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = ''entrata'') AND t.data >= ''|period_start|'' AND t.data <= ''|period_end|'') > 1, ''red'', '''')' WHERE  `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = '_bg_';
+
+-- Campi per la gestione revisioni
+ALTER TABLE `co_preventivi`  ADD `master_revision` INT NOT NULL  AFTER `tipo_sconto_globale`,  ADD `default_revision` TINYINT(1) NOT NULL  AFTER `master_revision`;
+
+-- Plugin revisioni
+INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Revisioni', 'Revisioni', 13, 13, 'tab', '', 1, 0, 0, '', '', NULL, 'custom', 'revisioni', '');
+
+-- Modifica modilo preventivi per revisioni
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_preventivi` WHERE 1=1 AND default_revision=1 HAVING 2=2 AND ((\'|period_start|\' >= `data_bozza` AND \'|period_start|\' <= `data_conclusione`) OR (\'|period_end|\' >= `data_bozza` AND \'|period_end|\' <= `data_conclusione`) OR (`data_bozza` >= \'|period_start|\' AND `data_bozza` <= \'|period_end|\') OR (`data_conclusione` >= \'|period_start|\' AND `data_conclusione` <= \'|period_end|\') OR (`data_bozza` >= \'|period_start|\' AND `data_conclusione` = \'0000-00-00\')) ORDER BY `id` DESC' WHERE `zz_modules`.`name` = 'Preventivi';
+
+-- Chiave secondaria per le righe del preventivo
+ALTER TABLE `co_righe_preventivi` ADD FOREIGN KEY (`idpreventivo`) REFERENCES `co_preventivi`(`id`) ON DELETE CASCADE;

@@ -43,6 +43,9 @@ switch (post('op')) {
 
         $dbo->query('INSERT INTO co_preventivi(idanagrafica, nome, numero, idagente, idstato, idtipointervento, data_bozza, data_conclusione, idiva, idpagamento) VALUES ('.prepare($idanagrafica).', '.prepare($nome).', '.prepare($numero).', '.prepare($idagente).", (SELECT `id` FROM `co_statipreventivi` WHERE `descrizione`='Bozza'), ".prepare($idtipointervento).', NOW(), DATE_ADD(NOW(), INTERVAL +1 MONTH), '.prepare($idiva).', '.prepare($idpagamento).')');
         $id_record = $dbo->lastInsertedID();
+        
+        //Aggiungo master_revision e default_revision
+        $dbo->query('UPDATE co_preventivi SET master_revision='.prepare($id_record).', default_revision=1 WHERE id='.$id_record);
 
         /*
         // inserisco righe standard preventivo
@@ -192,7 +195,10 @@ switch (post('op')) {
 
     // eliminazione preventivo
     case 'delete':
-        $dbo->query('DELETE FROM co_preventivi WHERE id='.prepare($id_record));
+        $rs_revisioni = $dbo->fetchArray('SELECT master_revision FROM co_preventivi WHERE id='.prepare($id_record));
+        
+        //Cancello preventivo e revisioni
+        $dbo->query('DELETE FROM co_preventivi WHERE master_revision='.prepare($rs_revisioni[0]['master_revision']));
 
         $dbo->update('in_interventi', [
             'id_preventivo' => null,
@@ -298,6 +304,78 @@ switch (post('op')) {
             $dbo->query('UPDATE `co_righe_preventivi` SET `order`='.prepare($end).' WHERE id='.prepare($id));
         }
 
+        break;
+        
+    case 'add_revision':
+                       
+        //Copio il preventivo
+        $rs_preventivo = $dbo->fetchArray("SELECT * FROM co_preventivi WHERE id='".$id_record."'");
+        
+        //Tolgo il flag default_revision da tutte le revisioni e dal record_principale
+        $dbo->query("UPDATE co_preventivi SET default_revision=0 WHERE master_revision=".prepare($rs_preventivo[0]['master_revision']));
+        
+        $preventivo = [
+            'numero' => $rs_preventivo[0]['numero'],
+            'nome' => $rs_preventivo[0]['nome'],
+            'idagente' => $rs_preventivo[0]['idagente'],
+            'data_bozza' => $rs_preventivo[0]['data_bozza'],
+            'data_accettazione' => $rs_preventivo[0]['data_accettazione'],
+            'data_rifiuto' => $rs_preventivo[0]['data_rifiuto'],
+            'data_conclusione' => $rs_preventivo[0]['data_conclusione'],
+            'data_pagamento' => $rs_preventivo[0]['data_pagamento'],
+            'budget' => $rs_preventivo[0]['budget'],
+            'descrizione' => $rs_preventivo[0]['descrizione'],
+            'idstato' => $rs_preventivo[0]['idstato'],
+            'validita' => $rs_preventivo[0]['validita'],
+            'tempi_consegna' => $rs_preventivo[0]['tempi_consegna'],
+            'idanagrafica' => $rs_preventivo[0]['idanagrafica'],
+            'esclusioni' => $rs_preventivo[0]['esclusioni'],
+            'idreferente' => $rs_preventivo[0]['idreferente'],
+            'idpagamento' => $rs_preventivo[0]['idpagamento'],
+            'idporto' => $rs_preventivo[0]['idporto'],
+            'idtipointervento' => $rs_preventivo[0]['idtipointervento'],
+            'idiva' => $rs_preventivo[0]['idiva'],
+            'costo_diritto_chiamata' => $rs_preventivo[0]['costo_diritto_chiamata'],
+            'ore_lavoro' => $rs_preventivo[0]['ore_lavoro'],
+            'costo_orario' => $rs_preventivo[0]['costo_orario'],
+            'costo_km' => $rs_preventivo[0]['costo_km'],
+            'sconto_globale' => $rs_preventivo[0]['sconto_globale'],
+            'tipo_sconto_globale' => $rs_preventivo[0]['tipo_sconto_globale'],
+            'master_revision' => $rs_preventivo[0]['master_revision'],
+            'default_revision' => '1',
+        ];
+        
+        $dbo->insert('co_preventivi', $preventivo);
+        $id_record_new = $dbo->lastInsertedID();
+        
+        $rs_righe_preventivo = $dbo->fetchArray("SELECT * FROM co_righe_preventivi WHERE idpreventivo=".prepare($id_record));
+        
+        for($i=0;$i<sizeof($rs_righe_preventivo);$i++){
+            $righe_preventivo = [
+                'data_evasione' => $rs_righe_preventivo[$i]['data_evasione'],
+                'idpreventivo' => $id_record_new,
+                'idarticolo' => $rs_righe_preventivo[$i]['idarticolo'],
+                'is_descrizione' => $rs_righe_preventivo[$i]['is_descrizione'],
+                'idiva' => $rs_righe_preventivo[$i]['idiva'],
+                'desc_iva' => $rs_righe_preventivo[$i]['desc_iva'],
+                'iva' => $rs_righe_preventivo[$i]['iva'],
+                'iva_indetraibile' => $rs_righe_preventivo[$i]['iva_indetraibile'],
+                'descrizione' => $rs_righe_preventivo[$i]['descrizione'],
+                'subtotale' => $rs_righe_preventivo[$i]['subtotale'],
+                'sconto' => $rs_righe_preventivo[$i]['sconto'],
+                'sconto_unitario' => $rs_righe_preventivo[$i]['sconto_unitario'],
+                'tipo_sconto' => $rs_righe_preventivo[$i]['tipo_sconto'],
+                'sconto_globale' => $rs_righe_preventivo[$i]['sconto_globale'],
+                'um' => $rs_righe_preventivo[$i]['um'],
+                'qta' => $rs_righe_preventivo[$i]['qta'],
+                'order' => $rs_righe_preventivo[$i]['order'],
+            ];
+            $dbo->insert('co_righe_preventivi', $righe_preventivo);
+        }
+        
+        $id_record = $id_record_new;
+    
+        flash()->info(tr('Aggiunta nuova revisione!'));
         break;
 }
 

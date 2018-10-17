@@ -12,6 +12,7 @@ switch ($resource) {
             }
 
             $where[] = 'an_anagrafiche.idanagrafica='.prepare($superselect['idanagrafica']);
+            $where[] = 'co_preventivi.default_revision=1';
 
             $stati = !empty($superselect['stati']) ? $superselect['stati'] : [
                 'In attesa di conferma',

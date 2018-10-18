@@ -16,6 +16,7 @@ switch ($op) {
                 'idanagrafica' => post('idanagrafica'),
                 'nome' => post('nome'),
                 'matricola' => $matricola,
+                'id_categoria' => post('id_categoria'),
                 'descrizione' => post('descrizione'),
                 'idsede' => post('idsede'),
                 'data' => post('data'),

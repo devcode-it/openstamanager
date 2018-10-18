@@ -555,3 +555,25 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_preventivi` WHERE 
 
 -- Chiave secondaria per le righe del preventivo
 ALTER TABLE `co_righe_preventivi` ADD FOREIGN KEY (`idpreventivo`) REFERENCES `co_preventivi`(`id`) ON DELETE CASCADE;
+
+-- Categoria impianto
+ALTER TABLE `my_impianti` ADD `id_categoria` INT NOT NULL AFTER `idanagrafica`;
+
+-- Tabella categorie
+CREATE TABLE IF NOT EXISTS `my_impianti_categorie` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(255) NOT NULL,
+  `colore` varchar(255) NOT NULL,
+  `nota` varchar(1000) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- Rinominato Categorie in Categorie articoli
+UPDATE `zz_modules` SET `name` = 'Categorie articoli', `title` = 'Categorie articoli', `directory` = 'categorie_articoli' WHERE `zz_modules`.`id` = 47;
+
+-- Modulo Categorie impianti
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Categorie impianti', 'Categorie impianti', 'categorie_impianti', 'SELECT |select| FROM `my_impianti_categorie` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.4.2', '2.4.2', '1', '40', '1', '1');
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `visible`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie impianti'), 'id', 'id', 1, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie impianti'), 'Nome', 'nome', 2, 1, 0, 1, 1);

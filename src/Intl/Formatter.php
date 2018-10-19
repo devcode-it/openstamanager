@@ -40,6 +40,8 @@ class Formatter
     {
         if (class_exists('NumberFormatter')) {
             $this->numberFormatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+
+            $this->numberFormatter->setAttribute(NumberFormatter::ROUNDING_MODE, NumberFormatter::ROUND_HALFUP);
         } else {
             $this->numberFormatter = $number;
         }

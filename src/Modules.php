@@ -117,7 +117,7 @@ class Modules
             $additionals['WHR'] = [];
             $additionals['HVN'] = [];
 
-            $results = $database->fetchArray('SELECT * FROM `zz_group_module` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).') AND `enabled` = 1 AND `idmodule` = '.prepare($module['id']));
+            $results = $database->fetchArray('SELECT * FROM `zz_group_module` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id']).') AND `enabled` = 1 AND `idmodule` = '.prepare($module['id']));
             foreach ($results as $result) {
                 if (!empty($result['clause'])) {
                     $result['clause'] = App::replacePlaceholder($result['clause']);

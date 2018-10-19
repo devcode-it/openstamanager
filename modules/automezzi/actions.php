@@ -52,11 +52,15 @@ switch (post('op')) {
                 $data_fine = post('data_fine');
             }
         }
-        $data_fine = isset($data_fine) ? $data_fine : '0000-00-00';
+        $data_fine = $data_fine ?: null;
 
         // Inserisco il tecnico
-        $query = 'INSERT INTO dt_automezzi_tecnici(idtecnico, idautomezzo, data_inizio, data_fine) VALUES ('.prepare($idtecnico).', '.prepare($id_record).', '.prepare($data_inizio).', '.prepare($data_fine).')';
-        $dbo->query($query);
+        $dbo->insert('dt_automezzi_tecnici', [
+            'idtecnico' => $idtecnico,
+            'idautomezzo' => $id_record,
+            'data_inizio' => $data_inizio,
+            'data_fine' => $data_fine,
+        ]);
 
         flash()->info(tr('Collegato un nuovo tecnico!'));
         break;
@@ -76,11 +80,14 @@ switch (post('op')) {
                     $data_fine = post('data_fine')[$idautomezzotecnico];
                 }
             }
-            $data_fine = isset($data_fine) ? $data_fine : '0000-00-00';
+            $data_fine = $data_fine ?: null;
 
-            $query = 'UPDATE dt_automezzi_tecnici SET data_inizio='.prepare($data_inizio).', data_fine='.prepare($data_fine).' WHERE id='.prepare($idautomezzotecnico);
+            $result = $dbo->update('dt_automezzi_tecnici', [
+                'data_inizio' => $data_inizio,
+                'data_fine' => $data_fine,
+            ], ['id' => $idautomezzotecnico]);
 
-            if (!$dbo->query($query)) {
+            if (!$result) {
                 ++$errors;
             }
         }

@@ -16,7 +16,7 @@ if (sizeof($rs_documento) > 0) {
 }
 
 if ($record['rinnovabile']) {
-    $rinnova = !empty($record['data_accettazione']) && !empty($record['data_conclusione']) && $record['data_accettazione'] != '0000-00-00' && $record['data_conclusione'] != '0000-00-00';
+    $rinnova = !empty($record['data_accettazione']) && !empty($record['data_conclusione']);
 
     echo '
 <div class="tip" data-toggle="tooltip" title="'.tr('Il contratto è rinnovabile se sono definite le date di accettazione e conclusione').'" style="display:inline;">

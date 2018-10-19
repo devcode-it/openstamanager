@@ -157,7 +157,7 @@ switch (post('op')) {
                     // Tengo conto dei valori negativi per gli acquisti e dei valori positivi per le vendite
                     if (($dir == 'uscita' && $totale < 0) || ($dir == 'entrata' && $totale > 0)) {
                         // Azzero lo scadenziario e lo ricalcolo
-                        $dbo->query("UPDATE co_scadenziario SET pagato=0, data_pagamento='0000-00-00' WHERE iddocumento=".prepare($iddocumento));
+                        $dbo->query("UPDATE co_scadenziario SET pagato=0, data_pagamento = NULL WHERE iddocumento=".prepare($iddocumento));
 
                         // Ricalcolo lo scadenziario per il solo nuovo importo
                         aggiorna_scadenziario($iddocumento, $totale, $data);
@@ -276,12 +276,12 @@ switch (post('op')) {
 
                         // ...se l'importo è a zero, azzero anche la data di pagamento
                         else {
-                            $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($new_value).", data_pagamento='0000-00-00' WHERE id=".prepare($rs[$i]['id']));
+                            $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($new_value).", data_pagamento = NULL WHERE id=".prepare($rs[$i]['id']));
                         }
 
                         $rimanente = 0;
                     } else {
-                        $dbo->query("UPDATE co_scadenziario SET pagato='0', data_pagamento='0000-00-00' WHERE id=".prepare($rs[$i]['id']));
+                        $dbo->query("UPDATE co_scadenziario SET pagato='0', data_pagamento = NULL WHERE id=".prepare($rs[$i]['id']));
                         $rimanente -= abs($rs[$i]['pagato']);
                     }
                 }

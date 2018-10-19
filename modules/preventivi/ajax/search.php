@@ -32,7 +32,7 @@ foreach ($rs as $r) {
     $result['link'] = ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$r['id'];
     $result['title'] = 'Preventivo '.$r['numero'];
 
-    if ($rs[$r]['data_accettazione'] == '0000-00-00') {
+    if (!empty($rs[$r]['data_accettazione'])) {
         $result['title'] .= ' del '.Translator::dateToLocale($rs[$r]['data_accettazione']);
     }
 

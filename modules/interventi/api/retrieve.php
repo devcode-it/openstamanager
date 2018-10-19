@@ -62,7 +62,7 @@ switch ($resource) {
             `in_interventi`.`informazioniaggiuntive`,
             `in_interventi`.`idclientefinale`,
             `in_interventi`.`firma_file`,
-            IF(firma_data = '0000-00-00 00:00:00', '', firma_data) AS `firma_data`,
+            `in_interventi`.`firma_data`,
             `in_interventi`.firma_nome,
             (SELECT GROUP_CONCAT( CONCAT(my_impianti.matricola, ' - ', my_impianti.nome) SEPARATOR ', ') FROM (my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto=my_impianti.id) WHERE my_impianti_interventi.idintervento = `in_interventi`.`id`) AS `impianti`,
             (SELECT MAX(`orario_fine`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) AS `data`,

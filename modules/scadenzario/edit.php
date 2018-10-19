@@ -80,6 +80,7 @@ $totale_pagato = 0;
 $rs = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento = (SELECT iddocumento FROM co_scadenziario s WHERE id='.prepare($id_record).') ORDER BY scadenza ASC');
 
 for ($i = 0; $i < count($rs); ++$i) {
+	
     if ($rs[$i]['da_pagare'] == $rs[$i]['pagato']) {
         $class = 'success';
     } elseif (abs($rs[$i]['pagato']) == 0) {
@@ -105,9 +106,9 @@ for ($i = 0; $i < count($rs); ++$i) {
                             </td>
                         </tr>';
 
-    $totale_da_pagare += $rs[$i]['da_pagare'];
-    $totale_pagato += $rs[$i]['pagato'];
 }
+$totale_da_pagare = sum(array_column($rs, 'da_pagare'));
+$totale_pagato = sum(array_column($rs, 'pagato'));
 
 echo '
                         <tr>

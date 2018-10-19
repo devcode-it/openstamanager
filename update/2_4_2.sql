@@ -569,7 +569,7 @@ CREATE TABLE IF NOT EXISTS `my_impianti_categorie` (
 ) ENGINE=InnoDB;
 
 -- Rinominato Categorie in Categorie articoli
-UPDATE `zz_modules` SET `name` = 'Categorie articoli', `title` = 'Categorie articoli', `directory` = 'categorie_articoli' WHERE `zz_modules`.`id` = 47;
+UPDATE `zz_modules` SET `name` = 'Categorie articoli', `title` = 'Categorie articoli', `directory` = 'categorie_articoli' WHERE `zz_modules`.`name` = 'Categorie';
 
 -- Modulo Categorie impianti
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Categorie impianti', 'Categorie impianti', 'categorie_impianti', 'SELECT |select| FROM `my_impianti_categorie` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.4.2', '2.4.2', '1', '40', '1', '1');

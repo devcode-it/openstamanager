@@ -89,7 +89,7 @@ if (!empty($rs2)) {
             <th>'.tr('Km').'</th>
             <th>'.tr('Sconto ore').'</th>
             <th>'.tr('Sconto km').'</th>
-            <th></th>
+            <th width="120" class="text-center" >#</th>
         </tr>';
         }
 
@@ -239,14 +239,14 @@ if (!empty($rs2)) {
 
         // Pulsante eliminazione sessione
         echo '
-            <td>';
+            <td class="text-center"  >';
 
         if (!$flag_completato) {
             echo '
-                <a class="btn btn-danger" id="delbtn_'.$id.'" onclick="elimina_sessione(\''.$id.'\', \''.$id_record.'\', \''.$idzona.'\');" title="Elimina riga" class="only_rw"><i class="fa fa-trash"></i></a>
-                <a class="btn btn-info" onclick="launch_modal(\''.tr('Modifica sessione').'\', \''.$module->fileurl('manage_sessione.php').'?id_module='.$id_module.'&id_sessione='.$id.'\', 1);" title="'.tr('Modifica sessione').'">
-                    <i class="fa fa-pencil"></i>
-                </a>';
+                <!-- da ultimare -->
+                <button type="button" class="btn btn-sm btn-warning hide" onclick="launch_modal(\''.tr('Modifica sessione').'\', \''.$module->fileurl('manage_sessione.php').'?id_module='.$id_module.'&id_sessione='.$id.'\', 1);" title="'.tr('Modifica sessione').'"><i class="fa fa-edit"></i></button>
+				
+				<button type="button" class="btn btn-sm btn-danger" id="delbtn_'.$id.'" onclick="elimina_sessione(\''.$id.'\', \''.$id_record.'\', \''.$idzona.'\');" title="Elimina riga" class="only_rw"><i class="fa fa-trash"></i></button>';
         }
 
         echo '

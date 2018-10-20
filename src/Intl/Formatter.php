@@ -151,9 +151,22 @@ class Formatter
     public function parseNumber($value)
     {
         // Controllo sull'effettiva natura del numero
-        if (is_numeric($value)) {
+        $sign = null;
+        if ($value[0] == '+' || $value[0] == '-') {
+            $sign = $value[0];
+            $value = substr($value, 1);
+        }
+
+        $number = str_replace(array_values($this->getNumberSeparators()), '', $value);
+
+        $pieces = explode($this->getNumberSeparators()['decimals'], $value);
+        $integer = str_replace(array_values($this->getNumberSeparators()), '', $pieces[0]);
+
+        if (!ctype_digit($number) || (strlen($integer) != strlen((int) $integer))) {
             return false;
         }
+
+        $value = $sign.$value;
 
         if (is_object($this->numberFormatter)) {
             $result = $this->numberFormatter->parse($value);

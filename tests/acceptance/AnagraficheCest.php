@@ -2,6 +2,12 @@
 
 class AnagraficheCest
 {
+    public function _before(\AcceptanceTester $t)
+    {
+        // Effettua l'accesso con le credenziali fornite
+        $t->login('admin', 'admin');
+    }
+
     /**
      * Crea una nuova anagrafica.
      *
@@ -9,9 +15,6 @@ class AnagraficheCest
      */
     protected function addAnag(AcceptanceTester $t, $name = 'ANAGRAFICA DI PROVA', $tipo = 1, $partita_iva = '')
     {
-        // Effettua l'accesso con le credenziali fornite
-        $t->login('admin', 'admin');
-
         // Seleziona il modulo da aprire
         $t->navigateTo('Anagrafiche');
 

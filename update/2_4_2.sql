@@ -578,3 +578,6 @@ UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Categor
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `visible`, `default`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie impianti'), 'id', 'id', 1, 1, 0, 0, 1),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie impianti'), 'Nome', 'nome', 2, 1, 0, 1, 1);
+
+-- Per i preventivi già in essere imposto master_revision = id e default_revision = 1
+UPDATE `co_preventivi` SET `master_revision` = `id`, `default_revision` = 1;

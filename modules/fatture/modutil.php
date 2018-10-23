@@ -309,113 +309,109 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     $idanagrafica = $rs[0]['idanagrafica'];
     $ragione_sociale = $rs[0]['ragione_sociale'];
     $stato = $rs[0]['stato'];
-    $idconto = $rs[0]['idconto'];
 
-    // Scrivo il movimento solo se è stato selezionato un conto
-    if ($idconto != '') {
-        $idmastrino = get_new_idmastrino();
+    $idmastrino = get_new_idmastrino();
 
-        // Prendo il numero doc. esterno se c'è, altrimenti quello normale
-        if (!empty($rs[0]['numero_esterno'])) {
-            $numero = $rs[0]['numero_esterno'];
-        } else {
-            $numero = $rs[0]['numero'];
-        }
+    // Prendo il numero doc. esterno se c'è, altrimenti quello normale
+    if (!empty($rs[0]['numero_esterno'])) {
+        $numero = $rs[0]['numero_esterno'];
+    } else {
+        $numero = $rs[0]['numero'];
+    }
 
-        $descrizione = $rs[0]['descrizione_tipodoc']." numero $numero";
+    $descrizione = $rs[0]['descrizione_tipodoc']." numero $numero";
 
-        /*
-            Il mastrino si apre con almeno 3 righe di solito (esempio fattura di vendita):
-            1) dare imponibile+iva al conto cliente
-            2) avere imponibile sul conto dei ricavi
-            3) avere iva sul conto dell'iva a credito (ed eventuale iva indetraibile sul rispettivo conto)
+    /*
+        Il mastrino si apre con almeno 3 righe di solito (esempio fattura di vendita):
+        1) dare imponibile+iva al conto cliente
+        2) avere imponibile sul conto dei ricavi
+        3) avere iva sul conto dell'iva a credito (ed eventuale iva indetraibile sul rispettivo conto)
 
-            aggiuntivo:
-            4) eventuale rivalsa inps
-            5) eventuale ritenuta d'acconto
-            6) eventuale marca da bollo
-        */
-        // 1) Aggiungo la riga del conto cliente
-        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($totale_fattura + $totale_bolli) * $segno_mov1_cliente).', '.prepare($primanota).' )';
+        aggiuntivo:
+        4) eventuale rivalsa inps
+        5) eventuale ritenuta d'acconto
+        6) eventuale marca da bollo
+    */
+    // 1) Aggiungo la riga del conto cliente
+    $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($totale_fattura + $totale_bolli) * $segno_mov1_cliente).', '.prepare($primanota).' )';
+    $dbo->query($query2);
+
+    // 2) Aggiungo il totale sul conto dei ricavi/spese scelto
+    // Lettura descrizione conto ricavi/spese per ogni riga del documento
+    $righe = $dbo->fetchArray('SELECT idconto, SUM(subtotale - sconto) AS imponibile FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' GROUP BY idconto');
+
+    foreach ($righe as $riga) {
+        // Retrocompatibilità
+        $idconto_riga = !empty($riga['idconto']) ? $riga['idconto'] : $idconto;
+
+        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_riga).', '.prepare($riga['imponibile'] * $segno_mov2_ricavivendite).', '.prepare($primanota).')';
+        $dbo->query($query2);
+    }
+
+    // 3) Aggiungo il totale sul conto dell'iva
+    // Lettura id conto iva
+    if ($iva_fattura != 0) {
+        $descrizione_conto_iva = ($dir == 'entrata') ? 'Iva su vendite' : 'Iva su acquisti';
+        $query = 'SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione='.prepare($descrizione_conto_iva);
+        $rs = $dbo->fetchArray($query);
+        $idconto_iva = $rs[0]['id'];
+        $descrizione_conto_iva = $rs[0]['descrizione'];
+
+        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_iva).', '.prepare($iva_fattura * $segno_mov3_iva).', '.prepare($primanota).')';
+        $dbo->query($query2);
+    }
+
+    // Lettura id conto iva indetraibile
+    if ($iva_indetraibile_fattura != 0) {
+        $descrizione_conto_iva2 = 'Iva indetraibile';
+        $query = 'SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione='.prepare($descrizione_conto_iva2);
+        $rs = $dbo->fetchArray($query);
+        $idconto_iva2 = $rs[0]['id'];
+        $descrizione_conto_iva2 = $rs[0]['descrizione'];
+
+        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_iva2).', '.prepare($iva_indetraibile_fattura * $segno_mov3_iva).', '.prepare($primanota).')';
+        $dbo->query($query2);
+    }
+
+    // 4) Aggiungo la rivalsa INPS se c'è
+    // Lettura id conto inps
+    if ($totale_rivalsainps != 0) {
+        $query = "SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione='Erario c/INPS'";
+        $rs = $dbo->fetchArray($query);
+        $idconto_inps = $rs[0]['id'];
+        $descrizione_conto_inps = $rs[0]['descrizione'];
+
+        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_inps).', '.prepare($totale_rivalsainps * $segno_mov4_inps).', '.prepare($primanota).')';
+        $dbo->query($query2);
+    }
+
+    // 5) Aggiungo la ritenuta d'acconto se c'è
+    // Lettura id conto ritenuta e la storno subito
+    if ($totale_ritenutaacconto != 0) {
+        $query = "SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione=\"Erario c/ritenute d'acconto\"";
+        $rs = $dbo->fetchArray($query);
+        $idconto_ritenutaacconto = $rs[0]['id'];
+        $descrizione_conto_ritenutaacconto = $rs[0]['descrizione'];
+
+        // DARE nel conto ritenuta
+        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_ritenutaacconto).', '.prepare($totale_ritenutaacconto * $segno_mov5_ritenutaacconto).', '.prepare($primanota).')';
         $dbo->query($query2);
 
-        // 2) Aggiungo il totale sul conto dei ricavi/spese scelto
-        // Lettura descrizione conto ricavi/spese per ogni riga del documento
-        $righe = $dbo->fetchArray('SELECT idconto, SUM(subtotale - sconto) AS imponibile FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' GROUP BY idconto');
+        // AVERE nel riepilogativo clienti
+        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($totale_ritenutaacconto * $segno_mov5_ritenutaacconto) * -1).', '.prepare($primanota).')';
+        $dbo->query($query2);
+    }
 
-        foreach ($righe as $riga) {
-            // Retrocompatibilità
-            $idconto_riga = !empty($riga['idconto']) ? $riga['idconto'] : $idconto;
+    // 6) Aggiungo la marca da bollo se c'è
+    // Lettura id conto marca da bollo
+    if ($totale_bolli != 0) {
+        $query = "SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione='Rimborso spese marche da bollo'";
+        $rs = $dbo->fetchArray($query);
+        $idconto_bolli = $rs[0]['id'];
+        $descrizione_conto_bolli = $rs[0]['descrizione'];
 
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_riga).', '.prepare($riga['imponibile'] * $segno_mov2_ricavivendite).', '.prepare($primanota).')';
-            $dbo->query($query2);
-        }
-
-        // 3) Aggiungo il totale sul conto dell'iva
-        // Lettura id conto iva
-        if ($iva_fattura != 0) {
-            $descrizione_conto_iva = ($dir == 'entrata') ? 'Iva su vendite' : 'Iva su acquisti';
-            $query = 'SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione='.prepare($descrizione_conto_iva);
-            $rs = $dbo->fetchArray($query);
-            $idconto_iva = $rs[0]['id'];
-            $descrizione_conto_iva = $rs[0]['descrizione'];
-
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_iva).', '.prepare($iva_fattura * $segno_mov3_iva).', '.prepare($primanota).')';
-            $dbo->query($query2);
-        }
-
-        // Lettura id conto iva indetraibile
-        if ($iva_indetraibile_fattura != 0) {
-            $descrizione_conto_iva2 = 'Iva indetraibile';
-            $query = 'SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione='.prepare($descrizione_conto_iva2);
-            $rs = $dbo->fetchArray($query);
-            $idconto_iva2 = $rs[0]['id'];
-            $descrizione_conto_iva2 = $rs[0]['descrizione'];
-
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_iva2).', '.prepare($iva_indetraibile_fattura * $segno_mov3_iva).', '.prepare($primanota).')';
-            $dbo->query($query2);
-        }
-
-        // 4) Aggiungo la rivalsa INPS se c'è
-        // Lettura id conto inps
-        if ($totale_rivalsainps != 0) {
-            $query = "SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione='Erario c/INPS'";
-            $rs = $dbo->fetchArray($query);
-            $idconto_inps = $rs[0]['id'];
-            $descrizione_conto_inps = $rs[0]['descrizione'];
-
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_inps).', '.prepare($totale_rivalsainps * $segno_mov4_inps).', '.prepare($primanota).')';
-            $dbo->query($query2);
-        }
-
-        // 5) Aggiungo la ritenuta d'acconto se c'è
-        // Lettura id conto ritenuta e la storno subito
-        if ($totale_ritenutaacconto != 0) {
-            $query = "SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione=\"Erario c/ritenute d'acconto\"";
-            $rs = $dbo->fetchArray($query);
-            $idconto_ritenutaacconto = $rs[0]['id'];
-            $descrizione_conto_ritenutaacconto = $rs[0]['descrizione'];
-
-            // DARE nel conto ritenuta
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_ritenutaacconto).', '.prepare($totale_ritenutaacconto * $segno_mov5_ritenutaacconto).', '.prepare($primanota).')';
-            $dbo->query($query2);
-
-            // AVERE nel riepilogativo clienti
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($totale_ritenutaacconto * $segno_mov5_ritenutaacconto) * -1).', '.prepare($primanota).')';
-            $dbo->query($query2);
-        }
-
-        // 6) Aggiungo la marca da bollo se c'è
-        // Lettura id conto marca da bollo
-        if ($totale_bolli != 0) {
-            $query = "SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione='Rimborso spese marche da bollo'";
-            $rs = $dbo->fetchArray($query);
-            $idconto_bolli = $rs[0]['id'];
-            $descrizione_conto_bolli = $rs[0]['descrizione'];
-
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_bolli).', '.prepare($totale_bolli * $segno_mov6_bollo).', '.prepare($primanota).')';
-            $dbo->query($query2);
-        }
+        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_bolli).', '.prepare($totale_bolli * $segno_mov6_bollo).', '.prepare($primanota).')';
+        $dbo->query($query2);
     }
 }
 

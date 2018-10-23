@@ -164,7 +164,7 @@ switch (get('op')) {
                     }
 
                     echo '
-                    <div class="fc-event '.$class.'" data-id="'.$r['id'].'" data-idcontratto="'.$r['idcontratto'].'" data-ref="'.$r['ref'].'">
+                    <div class="fc-event '.$class.'" data-id="'.$r['id'].'" data-idcontratto="'.$r['idcontratto'].'" data-ref="'.$r['ref'].'">'.(!empty($r['idcontratto']) ? '<i class=\'fa fa-file-text-o pull-right\'></i>':'<i class=\'fa fa-wrench pull-right\'></i>').'
                         <b>'.$r['ragione_sociale'].'</b><br>'.Translator::dateToLocale($r['data_richiesta']).' ('.$r['tipointervento'].')'.(!empty($r['richiesta']) ? ' - '.$r['richiesta'] : '').'
                     </div>';
                 }

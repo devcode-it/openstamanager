@@ -306,7 +306,7 @@ if (!empty($rsp)) {
     </div>
 
     <div id="external-events" class="hidden-xs hidden-sm col-md-2">
-        <h4>'.tr('Promemoria contratti da pianificare').'</h4>';
+        <h4>'.tr('Promemoria da pianificare').'</h4>';
 
     // Controllo pianificazioni mesi precedenti
     $qp_old = 'SELECT co_promemoria.id FROM co_promemoria INNER JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) AND idintervento IS NULL AND DATE_ADD(co_promemoria.data_richiesta, INTERVAL 1 DAY) <= NOW()

@@ -205,7 +205,7 @@ $(document).ready(function(){
 			event.preventDefault();
 		} else {
 			$('#wait').addClass("hide");
-			$(this).unbind('submit').submit()
+			$(this).unbind('submit').submit();
 		}
 	});
 });

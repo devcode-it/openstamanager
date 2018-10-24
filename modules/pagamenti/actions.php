@@ -51,9 +51,10 @@ switch (filter('op')) {
 
     case 'add':
         $descrizione = filter('descrizione');
+		$codice_modalita_pagamento_fe = filter('codice_modalita_pagamento_fe');
 
         if (isset($descrizione)) {
-            $dbo->query('INSERT INTO `co_pagamenti` (`descrizione`) VALUES ('.prepare($descrizione).')');
+            $dbo->query('INSERT INTO `co_pagamenti` (`descrizione`, codice_modalita_pagamento_fe ) VALUES ('.prepare($descrizione).', '.prepare($codice_modalita_pagamento_fe).' )');
             $id_record = $dbo->lastInsertedID();
 
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [

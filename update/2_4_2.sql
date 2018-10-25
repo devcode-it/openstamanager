@@ -581,3 +581,8 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 -- Per i preventivi già in essere imposto master_revision = id e default_revision = 1
 UPDATE `co_preventivi` SET `master_revision` = `id`, `default_revision` = 1;
+
+-- Colonna natura iva e codice iva
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'IVA'), 'Natura', 'codice_natura_fe', 2, 1, 0, 0, 1, 0, 1),
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'IVA'), 'Codice', 'codice', 1, 1, 0, 0, 1, 0, 1);

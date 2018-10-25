@@ -201,6 +201,10 @@ if (!empty($id_intervento)) {
 
 			<!-- RIGA 2 -->
 			<div class="row">
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "<?php echo $idzona; ?>", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "help":"<?php echo 'La zona viene definita automaticamente in base al cliente selezionato'; ?>.", "extra": "readonly", "value": "<?php echo $idzona; ?>" ]}
+                </div>
+
 				<div class="col-md-4">
                     {[ "type": "select", "label": "<?php echo tr('Preventivo'); ?>", "name": "idpreventivo", "value": "<?php echo $idpreventivo; ?>"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "preventivi" ]}
 				</div>
@@ -208,14 +212,14 @@ if (!empty($id_intervento)) {
 				<div class="col-md-4">
                     {[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $idcontratto; ?>"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "contratti" ]}
 				</div>
-
-				<div class="col-md-4" id='impianti'>
-                    {[ "type": "select", "label": "<?php echo tr('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto; ?>"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "impianti-cliente", "icon-after": "add|<?php echo Modules::get('MyImpianti')['id']; ?>|source=Attività|<?php echo (empty($idimpianto)) ? '' : 'disabled'; ?>", "data-heavy": 0 ]}
-				</div>
 			</div>
 
 			<div class="row">
-				<div class="col-md-12">
+                <div class="col-md-6" id='impianti'>
+                    {[ "type": "select", "label": "<?php echo tr('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto; ?>"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "impianti-cliente", "icon-after": "add|<?php echo Modules::get('MyImpianti')['id']; ?>|source=Attività|<?php echo (empty($idimpianto)) ? '' : 'disabled'; ?>", "data-heavy": 0 ]}
+                </div>
+
+                <div class="col-md-6">
                     {[ "type": "select", "label": "<?php echo tr('Componenti'); ?>", "multiple": 1, "name": "componenti[]", "placeholder": "<?php echo tr('Seleziona prima un impianto'); ?>...", "ajax-source": "componenti" ]}
 				</div>
 			</div>
@@ -231,22 +235,15 @@ if (!empty($id_intervento)) {
 		<div class="panel-body">
 			<!-- RIGA 3 -->
 			<div class="row">
-				<div class="col-md-6">
-					{[ "type": "timestamp", "label": "<?php echo tr('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "<?php echo $data_richiesta ?: '-now-'; ?>" ]}
-				</div>
+                <div class="col-md-4">
+                    {[ "type": "timestamp", "label": "<?php echo tr('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "<?php echo $data_richiesta ?: '-now-'; ?>" ]}
+                </div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "<?php echo $idzona; ?>", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "help":"<?php echo 'La zona viene definita automaticamente in base al cliente selezionato'; ?>.", "extra": "readonly", "value": "<?php echo $idzona; ?>" ]}
-				</div>
-			</div>
-
-			<!-- RIGA 4 -->
-			<div class="row">
-				<div class="col-md-6">
 					{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "<?php echo $idtipointervento; ?>", "ajax-source": "tipiintervento" ]}
 				</div>
 
-				<div class="col-md-6">
+				<div class="col-md-4">
 					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatointervento", "required": 1, "values": "query=SELECT idstatointervento AS id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "<?php echo $idstatointervento; ?>" ]}
 				</div>
 			</div>
@@ -364,19 +361,20 @@ if (!empty($id_intervento)) {
 		session_set('superselect,idanagrafica', $(this).val(), 0);
 
         var value = !$(this).val() ? true : false;
+        var placeholder = !$(this).val() ? '<?php echo tr("Seleziona prima un cliente...");?>' : '<?php echo tr("-Seleziona un\'opzione-");?>';
 
 		$("#idsede").prop("disabled", value);
-		$("#idsede").selectReset();
+		$("#idsede").selectReset(placeholder);
 
 		$("#idpreventivo").prop("disabled", value);
-		$("#idpreventivo").selectReset();
+		$("#idpreventivo").selectReset(placeholder);
 
 		$("#idcontratto").prop("disabled", value);
-		$("#idcontratto").selectReset();
+		$("#idcontratto").selectReset(placeholder);
 
 		$("#idimpianti").prop("disabled", value);
         $("#impianti").find("button").prop("disabled", value);
-		$("#idimpianti").selectReset();
+		$("#idimpianti").selectReset(placeholder);
 
 		if (($(this).val())) {
 			if (($(this).selectData().idzona)){

@@ -586,3 +586,7 @@ UPDATE `co_preventivi` SET `master_revision` = `id`, `default_revision` = 1;
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
 (NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'IVA'), 'Natura', 'codice_natura_fe', 2, 1, 0, 0, 1, 0, 1),
 (NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'IVA'), 'Codice', 'codice', 1, 1, 0, 0, 1, 0, 1);
+
+-- Colonna codice modalità pagamento
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Pagamenti'), 'Codice pagamento', 'CONCAT(codice_modalita_pagamento_fe, '' - '', (SELECT descrizione FROM fe_modalita_pagamento WHERE codice = codice_modalita_pagamento_fe) )', 2, 1, 0, 0, 1, 0, 1);

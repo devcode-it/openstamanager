@@ -103,6 +103,7 @@ class Fattura extends Model
         // Calcolo dei numeri fattura
         if ($value != $previous) {
             $direzione = $this->tipo()->dir;
+			$direzione = (empty($direzione)) ? filter('dir'): $direzione;
             $data = $this->data;
 
             $this->numero = static::getNumero($data, $direzione, $value);
@@ -123,9 +124,12 @@ class Fattura extends Model
     {
         $database = database();
 
-        $maschera = $direzione == 'uscita' ? static::getMaschera($id_segment) : '#';
-
-        $ultima_fattura = $database->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera), [
+        //$maschera = $direzione == 'uscita' ? static::getMaschera($id_segment) : '#';
+		// Recupero maschera per questo segmento
+		$maschera = static::getMaschera($id_segment);
+		
+		
+        $ultima_fattura = $database->fetchOne('SELECT numero FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera), [
             ':year' => date('Y', strtotime($data)),
             ':id_segment' => $id_segment,
         ]);
@@ -146,10 +150,10 @@ class Fattura extends Model
      */
     public static function getNumeroSecondario($data, $direzione, $id_segment)
     {
-        if ($direzione == 'uscita') {
+		if ($direzione == 'uscita') {
             return '';
         }
-
+		
         $database = database();
 
         // Recupero maschera per questo segmento
@@ -161,8 +165,8 @@ class Fattura extends Model
         ]);
 
         $numero_esterno = Generator::generate($maschera, $ultima_fattura['numero_esterno']);
-
-        return $numero_esterno;
+		
+		return $numero_esterno;
     }
 
     /**

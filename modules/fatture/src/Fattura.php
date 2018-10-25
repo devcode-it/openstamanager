@@ -129,11 +129,11 @@ class Fattura extends Model
 		$maschera = static::getMaschera($id_segment);
 		
 		
-        $ultima_fattura = $database->fetchOne('SELECT numero FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera), [
+        $ultima_fattura = $database->fetchOne('SELECT numero FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.(($direzione=='uscita') ? 'ORDER BY numero DESC' : static::getMascheraOrder($maschera)), [
             ':year' => date('Y', strtotime($data)),
             ':id_segment' => $id_segment,
         ]);
-
+		
         $numero = Generator::generate($maschera, $ultima_fattura['numero']);
 
         return $numero;

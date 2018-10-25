@@ -14,7 +14,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
         <div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Plugin'); ?>", "name": "plugin_id", "values": "query=SELECT id, name as text FROM zz_plugins WHERE enabled = 1", "value": "$id_plugin$" ]}
+			{[ "type": "select", "label": "<?php echo tr('Plugin'); ?>", "name": "plugin_id", "values": "query=SELECT id, name as text FROM zz_plugins WHERE enabled = 1", "value": "<?php echo $records[0]['id_plugin'] ?>" ]}
 		</div>
     </div>
 

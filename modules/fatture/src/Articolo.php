@@ -35,8 +35,8 @@ class Articolo extends Article
             return;
         }
 
-        $fattura = $this->fattura()->first();
-        $tipo = $fattura->tipo()->first();
+        $fattura = $this->fattura;
+        $tipo = $fattura->tipo;
 
         $numero = $fattura->numero_esterno ?: $fattura->numero;
         $data = $fattura->data;
@@ -52,14 +52,14 @@ class Articolo extends Article
             '_NUM_' => $numero,
         ]);
 
-        $this->articolo()->first()->movimenta(-$qta, $movimento, $data, false, [
+        $this->articolo->movimenta(-$qta, $movimento, $data, false, [
             'iddocumento' => $fattura->id,
         ]);
     }
 
     public function getDirection()
     {
-        return $this->fattura()->first()->tipo()->first()->dir;
+        return $this->fattura->tipo->dir;
     }
 
     public function fattura()

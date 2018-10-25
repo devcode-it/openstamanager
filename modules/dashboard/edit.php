@@ -337,9 +337,9 @@ if (!empty($rsp)) {
     array_unique($mesi_interventi);
 
     // Ordino l'array per anno
-	foreach($mesi_interventi as $key => &$data) {
-	  ksort($data);
-	}
+    foreach ($mesi_interventi as $key => &$data) {
+        ksort($data);
+    }
 
     echo '<select class="superselect" id="select-intreventi-pianificare">';
 

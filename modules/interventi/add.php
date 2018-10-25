@@ -64,7 +64,6 @@ $idcontratto = filter('idcontratto');
 $idcontratto_riga = filter('idcontratto_riga');
 $idordineservizio = filter('idordineservizio');
 
-
 if (!empty($idcontratto) && !empty($idordineservizio)) {
     $rs = $dbo->fetchArray('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS idzona FROM co_contratti WHERE id='.prepare($idcontratto));
     $idanagrafica = $rs[0]['idanagrafica'];

@@ -76,8 +76,8 @@ if (!empty($missing)) {
 
 echo '
 <p>'.tr("Per effettuare la generazione dell'XML della fattura elettronica clicca sul pulsante _BTN_", [
-    '_BTN_' => '<b>Genera</b>'
-]).'. '.tr("Successivamente sarà possibile procedere alla visualizzazione e al download della fattura generata attraverso i pulsanti dedicati").'.</p>';
+    '_BTN_' => '<b>Genera</b>',
+]).'. '.tr('Successivamente sarà possibile procedere alla visualizzazione e al download della fattura generata attraverso i pulsanti dedicati').'.</p>';
 
 echo '
 <div class="text-center">

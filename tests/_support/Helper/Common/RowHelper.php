@@ -10,18 +10,17 @@ class RowHelper extends \Codeception\Module
     protected $finalPattern = "//div[@class='panel-heading' and contains(string(), 'Righe')]/parent::*//table//tr[contains(string(), '|name|')]//td[2]";
 
     /**
-     * Undocumented function
+     * Undocumented function.
      *
      * @param AcceptanceTester $t
-     * @param [type] $descrizione
-     * @param [type] $qta
-     * @param [type] $prezzo
-     * @param integer $sconto
-     * @param string $tipo_sconto
-     * @param [type] $id_iva
-     * @param [type] $id_rivalsa_inps
-     * @param [type] $id_ritenuta_acconto
-     * @return void
+     * @param [type]           $descrizione
+     * @param [type]           $qta
+     * @param [type]           $prezzo
+     * @param int              $sconto
+     * @param string           $tipo_sconto
+     * @param [type]           $id_iva
+     * @param [type]           $id_rivalsa_inps
+     * @param [type]           $id_ritenuta_acconto
      */
     public function addRow(AcceptanceTester $t, $descrizione, $qta, $prezzo, $sconto = 0, $tipo_sconto = 'UNT', $id_iva = null, $id_rivalsa_inps = null, $id_ritenuta_acconto = null)
     {
@@ -60,10 +59,9 @@ class RowHelper extends \Codeception\Module
     }
 
     /**
-     * Undocumented function
+     * Undocumented function.
      *
      * @param string $pattern
-     * @return void
      */
     protected function setFinalPattern($pattern)
     {
@@ -71,10 +69,9 @@ class RowHelper extends \Codeception\Module
     }
 
     /**
-     * Undocumented function
+     * Undocumented function.
      *
      * @param string $type
-     * @return void
      */
     protected function getFinalValue($type)
     {
@@ -82,10 +79,9 @@ class RowHelper extends \Codeception\Module
     }
 
     /**
-     * Undocumented function
+     * Undocumented function.
      *
      * @param AcceptanceTester $t
-     * @return void
      */
     public function testImporti(AcceptanceTester $t)
     {
@@ -96,17 +92,17 @@ class RowHelper extends \Codeception\Module
         $this->addRow($t, 'Riga 5', 1, 104.90);
         $this->addRow($t, 'Riga 6', 1, 2);
 
-        $t->see("212,34", $this->getFinalValue('Imponibile'));
-        $t->see("46,71", $this->getFinalValue('IVA'));
-        $t->see("259,05", $this->getFinalValue('Totale'));
+        $t->see('212,34', $this->getFinalValue('Imponibile'));
+        $t->see('46,71', $this->getFinalValue('IVA'));
+        $t->see('259,05', $this->getFinalValue('Totale'));
 
         $this->addRow($t, 'Riga 7 con sconto in euro', 15, 12, 2);
         $this->addRow($t, 'Riga 8 con sconto percentuale', 15, 10, 20, 'PRC');
 
-        $t->see("542,34", $this->getFinalValue('Imponibile'));
-        $t->see("60,00", $this->getFinalValue('Sconto'));
-        $t->see("482,34", $this->getFinalValue('Imponibile scontato'));
-        $t->see("106,11", $this->getFinalValue('IVA'));
-        $t->see("588,45", $this->getFinalValue('Totale'));
+        $t->see('542,34', $this->getFinalValue('Imponibile'));
+        $t->see('60,00', $this->getFinalValue('Sconto'));
+        $t->see('482,34', $this->getFinalValue('Imponibile scontato'));
+        $t->see('106,11', $this->getFinalValue('IVA'));
+        $t->see('588,45', $this->getFinalValue('Totale'));
     }
 }

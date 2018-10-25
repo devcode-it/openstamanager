@@ -47,7 +47,7 @@ echo '
     <h4>'.tr('Pagamento').'</h4>
 
     <p>'.tr('La fattura importata presenta _NUM_ rate di pagamento con le seguenti scadenze', [
-        '_NUM_' => count($metodi)
+        '_NUM_' => count($metodi),
     ]).':</p>
     <ul>';
 

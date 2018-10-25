@@ -18,7 +18,7 @@ if (!in_array($record['stato'], ['Bozza', 'Rifiutato', 'In attesa di conferma'])
 
 		</ul>
 	</div>';
-}else{
+} else {
     echo '
     <form action="" method="post" id="form_crearevisione">
         <input type="hidden" name="backto" value="record-edit">
@@ -28,4 +28,3 @@ if (!in_array($record['stato'], ['Bozza', 'Rifiutato', 'In attesa di conferma'])
         <button type="button" class="btn btn-warning" onclick="if(confirm(\'Vuoi creare un nuova revisione?\')){$(\'#form_crearevisione\').submit();}"><i class="fa fa-copy"></i> Crea nuova revisione...</button>
     </form>';
 }
-

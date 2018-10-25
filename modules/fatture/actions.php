@@ -1166,7 +1166,7 @@ switch (post('op')) {
         $id_segment = post('id_segment');
         $data = post('data');
 
-        $anagrafica = $fattura->anagrafica()->first();
+        $anagrafica = $fattura->anagrafica;
         $tipo = Tipo::where('descrizione', 'Nota di credito')->where('dir', 'entrata')->first();
 
         $nota = Fattura::make($anagrafica, $tipo, $data, $id_segment);
@@ -1260,7 +1260,7 @@ if (get('op') == 'nota_addebito') {
         $id_segment = $record['id_segment'];
     }
 
-    $anagrafica = $fattura->anagrafica()->first();
+    $anagrafica = $fattura->anagrafica;
     $tipo = Tipo::where('descrizione', 'Nota di debito')->where('dir', 'entrata')->first();
     $data = $fattura->data;
 

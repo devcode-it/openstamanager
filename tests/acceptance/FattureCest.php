@@ -1,6 +1,6 @@
 <?php
 
-use \Helper\Common\RowHelper;
+use Helper\Common\RowHelper;
 
 class FattureCest
 {
@@ -65,10 +65,10 @@ class FattureCest
     }
 
     /**
-    * Crea una nuova fattura di vendita.
-    *
-    * @param AcceptanceTester $t
-    */
+     * Crea una nuova fattura di vendita.
+     *
+     * @param AcceptanceTester $t
+     */
     public function testFatturaDiVendita(AcceptanceTester $t)
     {
         $this->addFattura($t, true, 2, 2);
@@ -77,10 +77,10 @@ class FattureCest
     }
 
     /**
-    * Crea una nuova fattura di acquisto.
-    *
-    * @param AcceptanceTester $t
-    */
+     * Crea una nuova fattura di acquisto.
+     *
+     * @param AcceptanceTester $t
+     */
     public function testFatturaDiAcquisto(AcceptanceTester $t)
     {
         $this->addFattura($t, false, 1, 3);

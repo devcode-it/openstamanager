@@ -43,7 +43,7 @@ switch (post('op')) {
 
         $dbo->query('INSERT INTO co_preventivi(idanagrafica, nome, numero, idagente, idstato, idtipointervento, data_bozza, data_conclusione, idiva, idpagamento) VALUES ('.prepare($idanagrafica).', '.prepare($nome).', '.prepare($numero).', '.prepare($idagente).", (SELECT `id` FROM `co_statipreventivi` WHERE `descrizione`='Bozza'), ".prepare($idtipointervento).', NOW(), DATE_ADD(NOW(), INTERVAL +1 MONTH), '.prepare($idiva).', '.prepare($idpagamento).')');
         $id_record = $dbo->lastInsertedID();
-        
+
         //Aggiungo master_revision e default_revision
         $dbo->query('UPDATE co_preventivi SET master_revision='.prepare($id_record).', default_revision=1 WHERE id='.$id_record);
 
@@ -196,7 +196,7 @@ switch (post('op')) {
     // eliminazione preventivo
     case 'delete':
         $rs_revisioni = $dbo->fetchArray('SELECT master_revision FROM co_preventivi WHERE id='.prepare($id_record));
-        
+
         //Cancello preventivo e revisioni
         $dbo->query('DELETE FROM co_preventivi WHERE master_revision='.prepare($rs_revisioni[0]['master_revision']));
 
@@ -305,15 +305,15 @@ switch (post('op')) {
         }
 
         break;
-        
+
     case 'add_revision':
-                       
+
         //Copio il preventivo
         $rs_preventivo = $dbo->fetchArray("SELECT * FROM co_preventivi WHERE id='".$id_record."'");
-        
+
         //Tolgo il flag default_revision da tutte le revisioni e dal record_principale
-        $dbo->query("UPDATE co_preventivi SET default_revision=0 WHERE master_revision=".prepare($rs_preventivo[0]['master_revision']));
-        
+        $dbo->query('UPDATE co_preventivi SET default_revision=0 WHERE master_revision='.prepare($rs_preventivo[0]['master_revision']));
+
         $preventivo = [
             'numero' => $rs_preventivo[0]['numero'],
             'nome' => $rs_preventivo[0]['nome'],
@@ -344,13 +344,13 @@ switch (post('op')) {
             'master_revision' => $rs_preventivo[0]['master_revision'],
             'default_revision' => '1',
         ];
-        
+
         $dbo->insert('co_preventivi', $preventivo);
         $id_record_new = $dbo->lastInsertedID();
-        
-        $rs_righe_preventivo = $dbo->fetchArray("SELECT * FROM co_righe_preventivi WHERE idpreventivo=".prepare($id_record));
-        
-        for($i=0;$i<sizeof($rs_righe_preventivo);$i++){
+
+        $rs_righe_preventivo = $dbo->fetchArray('SELECT * FROM co_righe_preventivi WHERE idpreventivo='.prepare($id_record));
+
+        for ($i = 0; $i < sizeof($rs_righe_preventivo); ++$i) {
             $righe_preventivo = [
                 'data_evasione' => $rs_righe_preventivo[$i]['data_evasione'],
                 'idpreventivo' => $id_record_new,
@@ -372,9 +372,9 @@ switch (post('op')) {
             ];
             $dbo->insert('co_righe_preventivi', $righe_preventivo);
         }
-        
+
         $id_record = $id_record_new;
-    
+
         flash()->info(tr('Aggiunta nuova revisione!'));
         break;
 }

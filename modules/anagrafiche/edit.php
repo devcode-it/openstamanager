@@ -246,7 +246,7 @@ if (!empty($record['idconto_fornitore'])) {
 
     echo '
                 <p>'.tr('Piano dei conti collegato: _NAME_', [
-                    '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione']
+                    '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
                 ]).Modules::link('Piano dei conti', null, '').'</p>';
 } ?>
 
@@ -312,7 +312,7 @@ if (!empty($record['idconto_cliente'])) {
 
     echo '
                 <p>'.tr('Piano dei conti collegato: _NAME_', [
-                    '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione']
+                    '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
                 ]).Modules::link('Piano dei conti', null, '').'</p>';
 } ?>
 

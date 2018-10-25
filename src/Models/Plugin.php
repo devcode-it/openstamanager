@@ -86,11 +86,11 @@ class Plugin extends Model
 
     public function originalModule()
     {
-        return $this->belongsTo(Module::class, 'idmodule_from')->first();
+        return $this->belongsTo(Module::class, 'idmodule_from');
     }
 
     public function module()
     {
-        return $this->belongsTo(Module::class, 'idmodule_to')->first();
+        return $this->belongsTo(Module::class, 'idmodule_to');
     }
 }

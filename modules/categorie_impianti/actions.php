@@ -57,5 +57,4 @@ switch (filter('op')) {
         }
 
         break;
-
 }

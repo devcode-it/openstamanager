@@ -51,7 +51,7 @@ switch (filter('op')) {
 
     case 'add':
         $descrizione = filter('descrizione');
-		$codice_modalita_pagamento_fe = filter('codice_modalita_pagamento_fe');
+        $codice_modalita_pagamento_fe = filter('codice_modalita_pagamento_fe');
 
         if (isset($descrizione)) {
             $dbo->query('INSERT INTO `co_pagamenti` (`descrizione`, codice_modalita_pagamento_fe ) VALUES ('.prepare($descrizione).', '.prepare($codice_modalita_pagamento_fe).' )');

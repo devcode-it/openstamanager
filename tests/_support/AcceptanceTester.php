@@ -25,7 +25,6 @@ class AcceptanceTester extends \Codeception\Actor
      * Define custom actions here
      */
 
-
     /**
      * Clicca sul pulsante e attende la conclusione del caricamento.
      *

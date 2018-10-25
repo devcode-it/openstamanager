@@ -57,9 +57,11 @@ if (null !== filter('orario_inizio') && '00:00:00' != filter('orario_inizio')) {
 }
 
 // Se sto pianificando un contratto, leggo tutti i dati del contratto per predisporre l'aggiunta intervento
+//ref (intervento,promemoria,ordine)
+
 $id_intervento = filter('id_intervento');
 $idcontratto = filter('idcontratto');
-$idcontratto_riga = (!empty($idcontratto)) ? filter('id_intervento'):filter('idcontratto_riga');
+$idcontratto_riga = filter('idcontratto_riga');
 $idordineservizio = filter('idordineservizio');
 
 

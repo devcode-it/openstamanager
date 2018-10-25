@@ -612,7 +612,7 @@ if (Modules::getPermission('Interventi') == 'rw') {
                 ref = $(this).data('ref');
                 if (ref == 'ordine') {
                     name = 'idordineservizio';
-                } else if (ref == 'ordine') {
+                } else if (ref == 'promemoria') {
                     name = 'idcontratto_riga';
                 } else {
                     name = 'id_intervento';

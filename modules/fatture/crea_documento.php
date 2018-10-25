@@ -89,7 +89,7 @@ echo '
 <p>'.str_replace('_NUM_', $numero, $head).'.</p>';
 
 // Selezione articoli dell'ordine da portare nel ddt
-$rs = $dbo->fetchArray('SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),"") AS codice, (qta - qta_evasa) AS qta_rimanente FROM '.$table.' INNER JOIN '.$rows.' ON '.$table.'.id='.$rows.'.'.$id.' WHERE '.$table.'.id='.prepare($id_record).' HAVING qta_rimanente > 0 ORDER BY `order`');
+$rs = $dbo->fetchArray('SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),"") AS codice, (qta - qta_evasa) AS qta_rimanente FROM '.$table.' INNER JOIN '.$rows.' ON '.$table.'.id='.$rows.'.'.$id.' WHERE '.$table.'.id='.prepare($id_record).' HAVING qta_rimanente > 0 OR is_descrizione = 1 ORDER BY `order`');
 
 if (!empty($rs)) {
     echo '
@@ -180,7 +180,7 @@ if (!empty($rs)) {
         // Q.tà da evadere
         echo '
         <td>
-            {[ "type": "number", "name": "qta_da_evadere['.$r['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$r['qta_rimanente'].'", "extra" : "onkeyup=\"ricalcola_subtotale_riga('.$i.');\"", "decimals": "qta", "min-value": "0" ]}
+            {[ "type": "number", "name": "qta_da_evadere['.$r['id'].']", "id": "qta_'.$i.'", "required": 1, "value": "'.$r['qta_rimanente'].'", "extra" : "onkeyup=\"ricalcola_subtotale_riga('.$i.');\"", "decimals": "qta", "min-value": "0", "extra": "'.(($r['is_descrizione']) ? 'readonly' : '').'" ]}
         </td>';
 
         // Subtotale

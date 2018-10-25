@@ -43,7 +43,7 @@ if (!empty($anagrafica)) {
 
 echo '
 
-            <a class="btn btn-info col-md-4" data-href="'.$rootdir.'/modules/'.Modules::get('Utenti e permessi')['directory'].'/user.php" class="text-warning tip" data-toggle="modal" data-target="#bs-popup" data-title="Cambia password">
+            <a class="btn btn-info col-md-4" data-href="'.$rootdir.'/modules/'.Modules::get('Utenti e permessi')['directory'].'/user.php" class="text-warning tip" data-toggle="modal" data-title="Cambia password">
                 <i class="fa fa-unlock-alt"></i> '.tr('Cambia password').'
             </a>
         </div>';

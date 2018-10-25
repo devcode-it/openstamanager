@@ -79,7 +79,7 @@ class Plugins
         // Fix modulo
         $plugin = self::getCurrent();
         if (isset($plugin)) {
-            Modules::setCurrent($plugin->module()->id);
+            Modules::setCurrent($plugin->module->id);
         }
     }
 

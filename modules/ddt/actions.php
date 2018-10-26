@@ -103,7 +103,7 @@ switch (post('op')) {
             ], ['id' => $id_record]);
 
             // Aggiornamento sconto
-            $dbo->update('co_documenti', [
+            $dbo->update('dt_ddt', [
                 'tipo_sconto_globale' => post('tipo_sconto_generico'),
                 'sconto_globale' => post('sconto_generico'),
             ], ['id' => $id_record]);

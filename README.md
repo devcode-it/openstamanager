@@ -44,7 +44,7 @@ La documentazione ufficiale è disponibile all'indirizzo <https://devcode-it.git
 - [Installazione](#installazione)
     - [Versioni](#versioni)
     - [GitHub](#github)
-- [Perché software open-source](#perch%C3%A9-software-open-source)
+- [Perché software open-source](#perché-software-open-source)
 - [Community](#community)
 - [Contribuire](#contribuire)
 - [Sviluppatori](#sviluppatori)
@@ -129,7 +129,7 @@ Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), e il nost
 
 ## Contribuire
 
-Per poter contribuire, si consiglia di seguire le indicazioni descritte all'interno della [documentazione ufficiale](https://github.com/devcode-it/openstamanager/blob/master/.github/CONTRIBUTING.md).
+Per poter contribuire ed eseguire i test automatici, si consiglia di seguire le indicazioni descritte all'interno della [documentazione ufficiale](https://github.com/devcode-it/openstamanager/blob/master/.github/CONTRIBUTING.md).
 
 ## Sviluppatori
 

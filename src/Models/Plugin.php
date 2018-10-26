@@ -42,7 +42,7 @@ class Plugin extends Model
      */
     public function getPermissionAttribute()
     {
-        return $this->originalModule()->permission;
+        return $this->originalModule->permission;
     }
 
     public function getOptionAttribute()
@@ -63,7 +63,7 @@ class Plugin extends Model
             return;
         }
 
-        $directory = 'modules/'.$this->originalModule()->directory.'|custom|/plugins';
+        $directory = 'modules/'.$this->originalModule->directory.'|custom|/plugins';
 
         return App::filepath($directory, $this->script);
     }

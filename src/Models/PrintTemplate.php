@@ -26,6 +26,6 @@ class PrintTemplate extends Model
 
     public function module()
     {
-        return $this->belongsTo(Module::class, 'id_module')->first();
+        return $this->belongsTo(Module::class, 'id_module');
     }
 }

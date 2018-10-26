@@ -548,7 +548,7 @@ if (!empty($elementi)) {
 </div>';
 }
 
-if (empty($records[0]['deleted_at'])) {
+if (empty($record['deleted_at'])) {
     if (!in_array($id_azienda, $tipi_anagrafica)) {
         if (!empty($elementi)) {
             echo '

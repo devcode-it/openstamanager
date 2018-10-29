@@ -153,7 +153,7 @@ class FatturaElettronica
         return $result;
     }
 
-    public function saveRighe($articoli, $iva)
+    public function saveRighe($articoli, $iva, $conto)
     {
         $righe = $this->getRighe();
 
@@ -168,6 +168,7 @@ class FatturaElettronica
 
             $obj->descrizione = $riga['Descrizione'];
             $obj->id_iva = $iva[$key];
+            $obj->idconto = $conto[$key];
             $obj->costo_unitario = $riga['PrezzoUnitario'];
             $obj->qta = $riga['Quantita'] ?: 1;
 
@@ -240,7 +241,8 @@ class FatturaElettronica
 
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
         $data = $dati_generali['Data'];
-        $numero = $dati_generali['Numero'];
+        $numero = Fattura::getNumero($data, 'uscita', $this->id_sezionale);
+        $numero_esterno = $dati_generali['Numero'];
 
         $descrizione_tipo = empty($this->getBody()['DatiGenerali']['DatiTrasporto']) ? 'Fattura immediata di acquisto' : 'Fattura accompagnatoria di acquisto';
         $tipo = TipoFattura::where('descrizione', $descrizione_tipo)->first();
@@ -249,6 +251,7 @@ class FatturaElettronica
         $this->fattura = $fattura;
 
         $fattura->numero = $numero;
+        $fattura->numero_esterno = $numero_esterno;
         $fattura->idpagamento = $id_pagamento;
 
         $stato_documento = StatoFattura::where('descrizione', 'Emessa')->first();

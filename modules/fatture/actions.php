@@ -57,6 +57,7 @@ switch (post('op')) {
             if ($dir == 'uscita') {
                 $data = [
                     'numero' => post('numero'),
+                    'numero_esterno' => post('numero_esterno'),
                     'idrivalsainps' => post('id_rivalsa_inps'),
                     'idritenutaacconto' => post('id_ritenuta_acconto'),
                 ];

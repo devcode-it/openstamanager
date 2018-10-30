@@ -95,7 +95,7 @@ class FileManager implements ManagerInterface
                     $supported_extensions = ['pdf', 'jpg', 'png', 'gif', 'jpeg', 'bmp'];
                     if (in_array(strtolower($extension), $supported_extensions)) {
                         $result .= "
-                <div class='hide' id='view-".$r['id']."'>";
+                <div class='hide-it-off-screen' id='view-".$r['id']."'>";
 
                         if ($extension == 'pdf') {
                             $result .= '

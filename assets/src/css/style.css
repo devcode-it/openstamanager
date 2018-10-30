@@ -807,3 +807,9 @@ input.small-width {
 	 border-radius:4px 0px 0px 4px;
 	 border-right:none;
 }
+
+.hide-it-off-screen {
+    position: absolute;
+    left: -10000px;
+    top: -10000px;
+}

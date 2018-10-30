@@ -513,7 +513,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ALTER TABLE `zz_segments` ADD `is_fiscale` boolean NOT NULL DEFAULT 1;
 
 INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`,`note`, `predefined`, `is_fiscale`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Fatture pro-forma', '1=1', 'WHR', 'PRO-###', '', 1, 0);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Fatture pro-forma', '1=1', 'WHR', 'PRO-###', '', 0, 0);
 
 -- Fix campi di ricerca
 UPDATE `zz_modules` SET `options` = "SELECT |select| FROM `zz_segments` WHERE 1=1 HAVING 2=2 ORDER BY name, id_module" WHERE `name` = 'Segmenti';

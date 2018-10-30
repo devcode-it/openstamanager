@@ -452,12 +452,14 @@ switch (post('op')) {
         }
 
         for ($i = 0; $i < sizeof($rs); ++$i) {
-            rimuovi_articolo_daddt($rs[$i]['idarticolo'], $id_record, $rs[$i]['id']);
+            if($rs[$i]['idarticolo']){
+                rimuovi_articolo_daddt($rs[$i]['idarticolo'], $id_record, $rs[$i]['id']);
+            }
         }
 
         // Se delle righe sono state create da un ordine, devo riportare la quantità evasa nella tabella degli ordini
         // al valore di prima, riaggiungendo la quantità che sto togliendo
-        $rs = $dbo->fetchArray('SELECT qta, descrizione, idarticolo, idordine, idiva FROM dt_righe_ddt WHERE idddt='.prepare($id_record));
+        $rs = $dbo->fetchArray('SELECT qta, descrizione, idarticolo, idordine, idiva FROM dt_righe_ddt WHERE idddt='.prepare($id_record).' AND idarticolo="0"');
 
         // Rimpiazzo la quantità negli ordini
         for ($i = 0; $i < sizeof($rs); ++$i) {
@@ -494,20 +496,16 @@ switch (post('op')) {
 
         break;
 
-    case 'update_position':
-        $start = filter('start');
-        $end = filter('end');
-        $id = filter('id');
+        case 'update_position':
+            $orders = explode( ",", $_POST['order'] );
+            $order = 0;
 
-        if ($start > $end) {
-            $dbo->query('UPDATE `dt_righe_ddt` SET `order`=`order` + 1 WHERE `order`>='.prepare($end).' AND `order`<'.prepare($start).' AND `idddt`='.prepare($id_record));
-            $dbo->query('UPDATE `dt_righe_ddt` SET `order`='.prepare($end).' WHERE id='.prepare($id));
-        } elseif ($end != $start) {
-            $dbo->query('UPDATE `dt_righe_ddt` SET `order`=`order` - 1 WHERE `order`>'.prepare($start).' AND `order`<='.prepare($end).' AND `idddt`='.prepare($id_record));
-            $dbo->query('UPDATE `dt_righe_ddt` SET `order`='.prepare($end).' WHERE id='.prepare($id));
-        }
+            foreach( $orders as $idriga ){
+                $dbo->query('UPDATE `dt_righe_ddt` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
+                $order++;
+            }
 
-        break;
+            break;
 
     // aggiungi righe da ordine
     case 'add_ordine':

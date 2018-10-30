@@ -190,10 +190,10 @@ if (!empty($rs)) {
 
         echo '
         <td>
-            <input type="hidden" id="subtot_'.$i.'" name="subtot['.$r['id'].']" value="'.($r['subtotale'] / $r['qta']).'" />
-            <input type="hidden" id="sconto_'.$i.'" name="sconto['.$r['id'].']" value="'.($r['sconto'] / $r['qta']).'" />
+            <input type="hidden" id="subtot_'.$i.'" name="subtot['.$r['id'].']" value="'.str_replace('.', ',', ($r['subtotale'] / $r['qta'])).'" />
+            <input type="hidden" id="sconto_'.$i.'" name="sconto['.$r['id'].']" value="'.str_replace('.', ',', ($r['sconto'] / $r['qta'])).'" />
             <input type="hidden" id="idiva_'.$i.'" name="idiva['.$r['id'].']" value="'.$r['idiva'].'" />
-            <input type="hidden" id="iva_'.$i.'" name="iva['.$r['id'].']" value="'.($r['iva'] / $r['qta']).'" />
+            <input type="hidden" id="iva_'.$i.'" name="iva['.$r['id'].']" value="'.str_replace('.', ',', ($r['iva'] / $r['qta'])).'" />
 
             <big id="subtotale_'.$i.'">'.Translator::numberToLocale($subtotale - $sconto + $iva).' &euro;</big><br/>
 

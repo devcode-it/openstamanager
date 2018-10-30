@@ -349,20 +349,16 @@ switch (post('op')) {
 
         break;
 
-    case 'update_position':
-        $start = filter('start');
-        $end = filter('end');
-        $id = filter('id');
+        case 'update_position':
+            $orders = explode( ",", $_POST['order'] );
+            $order = 0;
 
-        if ($start > $end) {
-            $dbo->query('UPDATE `or_righe_ordini` SET `order`=`order` + 1 WHERE `order`>='.prepare($end).' AND `order`<'.prepare($start).' AND `idordine`='.prepare($id_record));
-            $dbo->query('UPDATE `or_righe_ordini` SET `order`='.prepare($end).' WHERE id='.prepare($id));
-        } elseif ($end != $start) {
-            $dbo->query('UPDATE `or_righe_ordini` SET `order`=`order` - 1 WHERE `order`>'.prepare($start).' AND `order`<='.prepare($end).' AND `idordine`='.prepare($id_record));
-            $dbo->query('UPDATE `or_righe_ordini` SET `order`='.prepare($end).' WHERE id='.prepare($id));
-        }
+            foreach( $orders as $idriga ){
+                $dbo->query('UPDATE `or_righe_ordini` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
+                $order++;
+            }
 
-        break;
+            break;
 
     case 'ordine_da_preventivo':
 

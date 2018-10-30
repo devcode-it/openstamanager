@@ -291,20 +291,16 @@ switch (post('op')) {
         flash()->info('Riga modificata!');
         break;
 
-    case 'update_position':
-        $start = filter('start');
-        $end = filter('end');
-        $id = filter('id');
+        case 'update_position':
+            $orders = explode( ",", $_POST['order'] );
+            $order = 0;
 
-        if ($start > $end) {
-            $dbo->query('UPDATE `co_righe_preventivi` SET `order`=`order` + 1 WHERE `order`>='.prepare($end).' AND `order`<'.prepare($start).' AND `idpreventivo`='.prepare($id_record));
-            $dbo->query('UPDATE `co_righe_preventivi` SET `order`='.prepare($end).' WHERE id='.prepare($id));
-        } elseif ($end != $start) {
-            $dbo->query('UPDATE `co_righe_preventivi` SET `order`=`order` - 1 WHERE `order`>'.prepare($start).' AND `order`<='.prepare($end).' AND `idpreventivo`='.prepare($id_record));
-            $dbo->query('UPDATE `co_righe_preventivi` SET `order`='.prepare($end).' WHERE id='.prepare($id));
-        }
+            foreach( $orders as $idriga ){
+                $dbo->query('UPDATE `co_righe_preventivi` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
+                $order++;
+            }
 
-        break;
+            break;
 
     case 'add_revision':
 

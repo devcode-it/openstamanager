@@ -107,14 +107,14 @@ function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = 0)
 
         // All'ultimo ciclo imposto come cifra da pagare il totale della fattura meno gli importi già inseriti in scadenziario per evitare di inserire cifre arrotondate "male"
         if ($i == (sizeof($rs) - 1)) {
-            $da_pagare = sum($netto_fattura, -$totale_da_pagare);
+            $da_pagare = sum($netto_fattura, -$totale_da_pagare, 2);
         }
 
         // Totale da pagare (totale x percentuale di pagamento nei casi pagamenti multipli)
         else {
-            $da_pagare = sum($netto_fattura / 100 * $rs[$i]['prc'], 0);
+            $da_pagare = sum($netto_fattura / 100 * $rs[$i]['prc'], 0, 2);
         }
-        $totale_da_pagare = sum($da_pagare, $totale_da_pagare);
+        $totale_da_pagare = sum($da_pagare, $totale_da_pagare, 2);
 
         if ($dir == 'uscita') {
             $da_pagare = -$da_pagare;
@@ -187,7 +187,7 @@ function aggiorna_scadenziario($iddocumento, $totale_pagato, $data_pagamento)
                 // ...altrimenti aggiungo l'importo pagato
                 else {
                     $pagato = abs($rimanente_da_pagare);
-                    $rimanente_da_pagare -= abs($rs[$i]['da_pagare']) - abs($rs[$i]['pagato']);
+                    $rimanente_da_pagare -= abs($rimanente_da_pagare);
                 }
             }
 
@@ -606,6 +606,7 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
     global $dir;
     global $idddt;
     global $idordine;
+    global $idcontratto;
 
     $dbo = database();
 
@@ -615,6 +616,10 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
 
     if (empty($idordine)) {
         $idordine = 0;
+    }
+    
+    if (empty($idcontratto)) {
+        $idcontratto = 0;
     }
 
     // Lettura unità di misura dell'articolo
@@ -684,6 +689,9 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
 
         // Inserisco il riferimento dell'ordine alla riga
         $dbo->query('UPDATE co_righe_documenti SET idordine='.prepare($idordine).' WHERE id='.prepare($idriga));
+        
+        // Inserisco il riferimento del contratto alla riga
+        $dbo->query('UPDATE co_righe_documenti SET idcontratto='.prepare($idcontratto).' WHERE id='.prepare($idriga));
     }
 
     return $idriga;
@@ -845,6 +853,21 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
             if (!empty($rsa[$i]['idarticolo'])) {
                 add_movimento_magazzino($rsa[$i]['idarticolo'], $rsa[$i]['qta'], ['iddocumento' => $id_documento]);
             }
+        }
+    }
+    
+    //Rimozione righe generiche
+    if (empty($riga['idarticolo'])) {
+        // TODO: possibile ambiguità tra righe molto simili tra loro
+        // Se l'articolo è stato inserito in fattura tramite un ddt devo sanare la qta_evasa
+        if (!empty($riga['idddt'])) {
+            $dbo->query('UPDATE dt_righe_ddt SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND descrizione='.prepare($riga['descrizione']).' AND idddt='.prepare($riga['idddt']));
+        }
+
+        // TODO: possibile ambiguità tra righe molto simili tra loro
+        // Se l'articolo è stato inserito in fattura tramite un ordine devo sanare la qta_evasa
+        if (!empty($riga['idordine'])) {
+            $dbo->query('UPDATE or_righe_ordini SET qta_evasa=qta_evasa-'.$riga['qta'].' WHERE qta='.prepare($riga['qta']).' AND descrizione='.prepare($riga['descrizione']).' AND idordine='.prepare($riga['idordine']));
         }
     }
 

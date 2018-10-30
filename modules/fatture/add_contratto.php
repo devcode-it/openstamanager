@@ -38,6 +38,10 @@ echo '
         <div class="col-md-6">
             {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "required": 1, "ajax-source": "contratti", "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.text); $(\'#prezzo\').val($data.totale); $(\'#sconto\').val($data.sconto);\"" ]}
         </div>
+        
+        <div class="col-md-6">
+            {[ "type": "checkbox", "label": "'.tr('Importa righe').'", "name": "import", "value": "1", "placeholder": "'.tr('Replica righe del contratto in fattura').'" ]}
+        </div>
     </div>';
 
 // Descrizione

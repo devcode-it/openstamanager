@@ -151,7 +151,7 @@ foreach ($righe as $r) {
 
 $sconto = sum($sconto);
 $imponibile = sum($imponibile);
-$iva = sum($iva, null, 2);
+$iva = sum($iva);
 
 $totale = $imponibile - $sconto;
 

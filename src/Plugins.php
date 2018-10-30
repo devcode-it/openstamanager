@@ -93,6 +93,7 @@ class Plugins
      */
     public static function filepath($element, $file)
     {
-        return self::get($element)->filepath($file);
+        $element = self::get($element);
+        return $element ? $element->filepath($file) : null;
     }
 }

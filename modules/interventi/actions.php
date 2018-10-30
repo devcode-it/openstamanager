@@ -638,4 +638,105 @@ switch (post('op')) {
         }
 
         break;
+        
+    case 'edit_sessione':
+        $id_sessione = post('id_sessione');
+        
+        // Lettura delle date di inizio e fine intervento
+        $orario_inizio = post('orario_inizio');
+        $orario_fine = post('orario_fine');
+
+        // Ricalcolo le ore lavorate
+        $ore = calcola_ore_intervento($orario_inizio, $orario_fine);
+
+        $km = post('km');
+
+        // Lettura tariffe in base al tipo di intervento ed al tecnico
+        $idtipointervento_tecnico = post('idtipointerventot');
+        $rs = $dbo->fetchArray('SELECT * FROM in_interventi_tecnici WHERE idtecnico='.prepare(post('idtecnico')).' AND idintervento='.prepare($id_record));
+
+        if ($idtipointervento_tecnico != $rs[0]['idtipointervento']) {
+            $rsc = $dbo->fetchArray('SELECT * FROM in_tariffe WHERE idtecnico='.prepare(post('idtecnico')).' AND idtipointervento='.prepare($idtipointervento_tecnico));
+
+            if ($rsc[0]['costo_ore'] != 0 || $rsc[0]['costo_km'] != 0 || $rsc[0]['costo_dirittochiamata'] != 0 || $rsc[0]['costo_ore_tecnico'] != 0 || $rsc[0]['costo_km_tecnico'] != 0 || $rsc[0]['costo_dirittochiamata_tecnico'] != 0) {
+                $prezzo_ore_unitario = $rsc[0]['costo_ore'];
+                $prezzo_km_unitario = $rsc[0]['costo_km'];
+                $prezzo_dirittochiamata = $rsc[0]['costo_dirittochiamata'];
+
+                $prezzo_ore_unitario_tecnico = $rsc[0]['costo_ore_tecnico'];
+                $prezzo_km_unitario_tecnico = $rsc[0]['costo_km_tecnico'];
+                $prezzo_dirittochiamata_tecnico = $rsc[0]['costo_dirittochiamata_tecnico'];
+            }
+
+            // ...altrimenti se non c'è una tariffa per il tecnico leggo i costi globali
+            else {
+                $rsc = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE idtipointervento='.prepare($idtipointervento_tecnico));
+
+                $prezzo_ore_unitario = $rsc[0]['costo_orario'];
+                $prezzo_km_unitario = $rsc[0]['costo_km'];
+                $prezzo_dirittochiamata = $rsc[0]['costo_diritto_chiamata'];
+
+                $prezzo_ore_unitario_tecnico = $rsc[0]['costo_orario_tecnico'];
+                $prezzo_km_unitario_tecnico = $rsc[0]['costo_km_tecnico'];
+                $prezzo_dirittochiamata_tecnico = $rsc[0]['costo_diritto_chiamata_tecnico'];
+            }
+        } else {
+            $prezzo_ore_unitario = $rs[0]['prezzo_ore_unitario'];
+            $prezzo_km_unitario = $rs[0]['prezzo_km_unitario'];
+            $prezzo_dirittochiamata = $rs[0]['prezzo_dirittochiamata'];
+            $prezzo_ore_unitario_tecnico = $rs[0]['prezzo_ore_unitario_tecnico'];
+            $prezzo_km_unitario_tecnico = $rs[0]['prezzo_km_unitario_tecnico'];
+            $prezzo_dirittochiamata_tecnico = $rs[0]['prezzo_dirittochiamata_tecnico'];
+        }
+
+        // Totali
+        $prezzo_ore_consuntivo = $prezzo_ore_unitario * $ore;
+        $prezzo_km_consuntivo = $prezzo_km_unitario * $km;
+
+        $prezzo_ore_consuntivo_tecnico = $prezzo_ore_unitario_tecnico * $ore;
+        $prezzo_km_consuntivo_tecnico = $prezzo_km_unitario_tecnico * $km;
+
+        // Sconti
+        $sconto_unitario = post('sconto');
+        $tipo_sconto = post('tipo_sconto');
+        $sconto = calcola_sconto([
+            'sconto' => $sconto_unitario,
+            'prezzo' => $prezzo_ore_consuntivo,
+            'tipo' => $tipo_sconto,
+        ]);
+
+        $scontokm_unitario = post('sconto_km');
+        $tipo_scontokm = post('tipo_scontokm');
+        $scontokm = ($tipo_scontokm == 'PRC') ? ($prezzo_km_consuntivo * $scontokm_unitario) / 100 : $scontokm_unitario;
+
+        $dbo->update('in_interventi_tecnici', [
+            'idtipointervento' => $idtipointervento_tecnico,
+
+            'orario_inizio' => $orario_inizio,
+            'orario_fine' => $orario_fine,
+            'ore' => $ore,
+            'km' => $km,
+
+            'prezzo_ore_unitario' => $prezzo_ore_unitario,
+            'prezzo_km_unitario' => $prezzo_km_unitario,
+            'prezzo_dirittochiamata' => $prezzo_dirittochiamata,
+            'prezzo_ore_unitario_tecnico' => $prezzo_ore_unitario_tecnico,
+            'prezzo_km_unitario_tecnico' => $prezzo_km_unitario_tecnico,
+            'prezzo_dirittochiamata_tecnico' => $prezzo_dirittochiamata_tecnico,
+
+            'prezzo_ore_consuntivo' => $prezzo_ore_consuntivo,
+            'prezzo_km_consuntivo' => $prezzo_km_consuntivo,
+            'prezzo_ore_consuntivo_tecnico' => $prezzo_ore_consuntivo_tecnico,
+            'prezzo_km_consuntivo_tecnico' => $prezzo_km_consuntivo_tecnico,
+
+            'sconto' => $sconto,
+            'sconto_unitario' => $sconto_unitario,
+            'tipo_sconto' => $tipo_sconto,
+
+            'scontokm' => $scontokm,
+            'scontokm_unitario' => $scontokm_unitario,
+            'tipo_scontokm' => $tipo_scontokm,
+        ], ['id' => $id_sessione]);
+    
+        break;
 }

@@ -201,62 +201,83 @@ if (empty($record)) {
 
     // Informazioni sulle operazioni
     if (Auth::admin()) {
-        echo '
-                <div id="tab_info" class="tab-pane">
-                    <ul class="timeline">';
+
+        echo '  <div id="tab_info" class="tab-pane">';
 
         $operations = $dbo->fetchArray('SELECT `zz_operations`.*, `zz_users`.`username` FROM `zz_operations` JOIN `zz_users` ON `zz_operations`.`id_utente` = `zz_users`.`id` WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record).' ORDER BY `created_at` ASC LIMIT 200');
+        
+        if (count($operations)>0){
 
-        foreach ($operations as $operation) {
-            $description = $operation['op'];
-            $icon = 'pencil-square-o';
-            $color = null;
-            $timeline = null;
+            echo '  <ul class="timeline">';
 
-            switch ($operation['op']) {
-                case 'add':
-                    $description = tr('Creazione');
-                    $icon = 'plus';
-                    $color = 'success';
-                    break;
+            foreach ($operations as $operation) {
+                $description = $operation['op'];
+                $icon = 'pencil-square-o';
+                $color = null;
+                $timeline = null;
 
-                case 'update':
-                    $description = tr('Modifica');
-                    $icon = 'pencil';
-                    $color = 'info';
-                    break;
+                switch ($operation['op']) {
+                    case 'add':
+                        $description = tr('Creazione');
+                        $icon = 'plus';
+                        $color = 'success';
+                        break;
 
-                case 'delete':
-                    $description = tr('Eliminazione');
-                    $icon = 'times';
-                    $color = 'danger';
-                    break;
+                    case 'update':
+                        $description = tr('Modifica');
+                        $icon = 'pencil';
+                        $color = 'info';
+                        break;
 
-                default:
-                    $timeline = ' class="timeline-inverted"';
-                    break;
-            }
+                    case 'delete':
+                        $description = tr('Eliminazione');
+                        $icon = 'times';
+                        $color = 'danger';
+                        break;
 
-            echo '
+                    default:
+                        $timeline = ' class="timeline-inverted"';
+                        break;
+                }
+
+                echo '
                         <li'.$timeline.'>
                             <div class="timeline-badge '.$color.'"><i class="fa fa-'.$icon.'"></i></div>
                             <div class="timeline-panel">
                                 <div class="timeline-heading">
-                                    <h4 class="timeline-title">'.$description.'</h4>
-                                    <p><small class="text-muted"><i class="fa fa-clock-o"></i> '.Translator::timestampToLocale($operation['created_at']).'</small></p>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h4 class="timeline-title">'.$description.'</h4>
+                                        </div>
+                                        <div class="col-md-4 text-right">
+                                            <p><small class="label label-default tip" title="'.Translator::timestampToLocale($operation['created_at']).'"><i class="fa fa-clock-o"></i> '.time_elapsed_string($operation['created_at']).'</small></p>
+                                            <p><small class="label label-default"><i class="fa fa-user"></i> '.tr('_USER_', [
+                                                '_USER_' => $operation['username'],
+                                            ]).
+                                            '</small></p>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="timeline-body">
-                                    <p>'.tr('Utente: _USER_', [
-                                        '_USER_' => $operation['username'],
-                                    ]).'</p>
+                                    
+                                </div>
+                                <div class="timeline-footer">
+                                    
                                 </div>
                             </div>
                         </li>';
         }
 
-        echo '
-                    </ul>
-				</div>';
+            echo '  </ul>';
+
+        }else{
+            echo '      
+                    <div class="alert alert-info">
+                        <i class="fa fa-info-circle"></i>
+                        <b>'.tr('Informazione:').'</b> '.tr('Nessun log disponibile per questa scheda').'.
+                    </div>';
+        }
+		echo '    </div>';
     }
 
     // Plugin

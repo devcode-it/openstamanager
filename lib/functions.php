@@ -368,3 +368,45 @@ function searchFieldName($field)
 {
     return str_replace([' ', '.'], ['-', ''], $field);
 }
+
+/**
+ * Restituisce il tempo trascorso tra un timestamp e questo momento.
+ *
+ * @param string $datetime
+ * @param bool $full
+ *
+ * @return string
+ */
+function time_elapsed_string($datetime, $full = false) {
+    $now = new DateTime;
+    $ago = new DateTime($datetime);
+    $diff = $now->diff($ago);
+
+    $diff->w = floor($diff->d / 7);
+    $diff->d -= $diff->w * 7;
+
+    $string = array(
+        'y' => 'ann',
+        'm' => 'mes',
+        'w' => 'settiman',
+        'd' => 'giorn',
+        'h' => 'or',
+        'i' => 'minut',
+        's' => 'second',
+    );
+    foreach ($string as $k => &$v) {
+        if ($diff->$k) {
+            if ($v == 'settiman' or $v == 'or')
+                $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 'e' : 'a');
+            else if ($v == 'mes')
+                $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 'i' : 'e');
+            else
+                $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 'i' : 'o');
+        } else {
+            unset($string[$k]);
+        }
+    }
+
+    if (!$full) $string = array_slice($string, 0, 1);
+    return $string ? implode(', ', $string) . ' fa' : 'adesso';
+}

@@ -99,8 +99,9 @@ foreach ($settings as $name => $values) {
             $description = str_replace(['>', '<'], '', $description);
         }
 
-        $description = tr('Valore consigliato: _VALUE_', [
+        $description = tr('Valore consigliato: _VALUE_ (Valore attuale: _INI_)', [
           '_VALUE_' => $description,
+          '_INI_' => ini_get($name),
         ]);
     }
 

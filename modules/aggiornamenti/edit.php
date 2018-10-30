@@ -87,7 +87,7 @@ function search(button) {
         <div class="box box-success">
             <div class="box-header with-border">
                 <h3 class="box-title">
-                    '.tr('Carica un aggiornamento').' <span class="tip" title="'.tr('Form di caricamento per aggiornamenti del gestionale e innesti di moduli e plugin').'"><i class="fa fa-question-circle-o"></i></span>
+                    '.tr('Carica un aggiornamento').' <span class="tip" title="'.tr('Form di caricamento aggiornamenti del gestionale e innesti di moduli e plugin').'"><i class="fa fa-question-circle-o"></i></span>
                 </h3>
             </div>
             <div class="box-body">
@@ -110,7 +110,7 @@ function search(button) {
         <div class="box box-info">
             <div class="box-header with-border">
                 <h3 class="box-title">
-                    '.tr('Ricerca aggiornamenti').' <span class="tip" title="'.tr('Controllo automatica sulla presenza di aggiornamenti del gestionale').'"><i class="fa fa-question-circle-o"></i></span>
+                    '.tr('Ricerca aggiornamenti').' <span class="tip" title="'.tr('Controllo automatico della presenza di aggiornamenti per il gestionale').'"><i class="fa fa-question-circle-o"></i></span>
                 </h3>
             </div>
             <div class="box-body" id="update-search">

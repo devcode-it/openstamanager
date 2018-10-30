@@ -516,7 +516,7 @@ $(document).ready(function(){
 	});
 });
 </script>';
-}
 
 // Fix apertura non corrisposta di un tag div
 echo '</div>';
+}

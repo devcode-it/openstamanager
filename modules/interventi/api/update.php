@@ -1,5 +1,7 @@
 <?php
 
+use Carbon\Carbon;
+
 switch ($resource) {
     case 'sync':
         // Normalizzazione degli interventi a database
@@ -64,7 +66,7 @@ switch ($resource) {
                     $dbo->insert('in_interventi', [
                         'idintervento' => $idintervento,
                         'idanagrafica' => setting('Azienda predefinita'),
-                        'data_richiesta' => \Carbon::now(),
+                        'data_richiesta' => Carbon::now(),
                         'richiesta' => $richiesta,
                         'idtipointervento' => 0,
                         'idstatointervento' => 'CALL',

@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/core.php';
 
+use Carbon\Carbon;
+
 if (empty($id_record) && !empty($id_module)) {
     redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
 } elseif (empty($id_record) && empty($id_module)) {
@@ -201,20 +203,20 @@ if (empty($record)) {
 
     // Informazioni sulle operazioni
     if (Auth::admin()) {
-
-        echo '  <div id="tab_info" class="tab-pane">';
+        echo '
+                <div id="tab_info" class="tab-pane">';
 
         $operations = $dbo->fetchArray('SELECT `zz_operations`.*, `zz_users`.`username` FROM `zz_operations` JOIN `zz_users` ON `zz_operations`.`id_utente` = `zz_users`.`id` WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record).' ORDER BY `created_at` ASC LIMIT 200');
-        
-        if (count($operations)>0){
 
-            echo '  <ul class="timeline">';
+        if (!empty($operations)) {
+            echo '
+                    <ul class="timeline">';
 
             foreach ($operations as $operation) {
                 $description = $operation['op'];
                 $icon = 'pencil-square-o';
                 $color = null;
-                $timeline = null;
+                $timeline_class = null;
 
                 switch ($operation['op']) {
                     case 'add':
@@ -236,12 +238,12 @@ if (empty($record)) {
                         break;
 
                     default:
-                        $timeline = ' class="timeline-inverted"';
+                        $timeline_class = ' class="timeline-inverted"';
                         break;
                 }
 
                 echo '
-                        <li'.$timeline.'>
+                        <li '.$timeline_class.'>
                             <div class="timeline-badge '.$color.'"><i class="fa fa-'.$icon.'"></i></div>
                             <div class="timeline-panel">
                                 <div class="timeline-heading">
@@ -250,7 +252,7 @@ if (empty($record)) {
                                             <h4 class="timeline-title">'.$description.'</h4>
                                         </div>
                                         <div class="col-md-4 text-right">
-                                            <p><small class="label label-default tip" title="'.Translator::timestampToLocale($operation['created_at']).'"><i class="fa fa-clock-o"></i> '.time_elapsed_string($operation['created_at']).'</small></p>
+                                            <p><small class="label label-default tip" title="'.Translator::timestampToLocale($operation['created_at']).'"><i class="fa fa-clock-o"></i> '.Carbon::parse($operation['created_at'])->diffForHumans().'</small></p>
                                             <p><small class="label label-default"><i class="fa fa-user"></i> '.tr('_USER_', [
                                                 '_USER_' => $operation['username'],
                                             ]).
@@ -259,25 +261,25 @@ if (empty($record)) {
                                     </div>
                                 </div>
                                 <div class="timeline-body">
-                                    
+
                                 </div>
                                 <div class="timeline-footer">
-                                    
+
                                 </div>
                             </div>
                         </li>';
-        }
+            }
 
             echo '  </ul>';
-
-        }else{
-            echo '      
+        } else {
+            echo '
                     <div class="alert alert-info">
                         <i class="fa fa-info-circle"></i>
                         <b>'.tr('Informazione:').'</b> '.tr('Nessun log disponibile per questa scheda').'.
                     </div>';
         }
-		echo '    </div>';
+        echo '
+                </div>';
     }
 
     // Plugin

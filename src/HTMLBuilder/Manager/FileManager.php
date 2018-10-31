@@ -183,13 +183,15 @@ class FileManager implements ManagerInterface
 </div>';
         }
 
+        $source = array_clean(array_column($categories, 'category'));
+
         $result .= '
 <script src="'.ROOTDIR.'/lib/init.js"></script>
 
 <script>
 $(document).ready(function(){
     $("#'.$attachment_id.' #categoria").autocomplete({
-        source: '.json_encode(array_column($categories, 'category')).',
+        source: '.json_encode($source).',
         minLength: 0
     }).focus(function() {
         $(this).autocomplete("search", $(this).val())

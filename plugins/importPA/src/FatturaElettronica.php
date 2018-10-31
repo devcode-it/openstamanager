@@ -106,7 +106,7 @@ class FatturaElettronica
 
         // Informazioni sulla sede
         $info = $xml['Sede'];
-        $sede = $anagrafica->sedeLegale();
+        $sede = $anagrafica->sedeLegale;
 
         if (!empty($partita_iva)) {
             $sede->partita_iva = $partita_iva;
@@ -119,7 +119,6 @@ class FatturaElettronica
         $sede->indirizzo = $info['Indirizzo'];
         $sede->cap = $info['CAP'];
         $sede->citta = $info['Comune'];
-        $sede->indirizzo = $info['Indirizzo'];
         $sede->nazione()->associate(Nazione::where('iso2', $info['Nazione'])->first());
         if (!empty($info['Provincia'])) {
             $sede->provincia = $info['Provincia'];

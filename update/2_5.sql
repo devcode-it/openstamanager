@@ -1,5 +1,15 @@
 -- Standardizzazione tabelle
 
+-- Separazione sedi dalle anagrafiche
+ALTER TABLE `an_anagrafiche` ADD `id_sede_legale` int(11), ADD FOREIGN KEY (`id_sede_legale`) REFERENCES `an_sedi`(`id`) ON DELETE SET NULL;
+INSERT INTO `an_sedi` (`nomesede`, `piva`, `codice_fiscale`, `indirizzo`, `indirizzo2`, `citta`, `cap`, `provincia`, `km`, `id_nazione`, `telefono`, `fax`, `cellulare`, `email`, `idanagrafica`, `idzona`, `gaddress`, `lat`, `lng`) SELECT 'Sede legale', `piva`, `codice_fiscale`, `indirizzo`, `indirizzo2`, `citta`, `cap`, `provincia`, `km`, `id_nazione`, `telefono`, `fax`, `cellulare`, `email`, `idanagrafica`, `idzona`, `gaddress`, `lat`, `lng` FROM `an_anagrafiche`;
+
+UPDATE `an_anagrafiche` SET `id_sede_legale` = (SELECT `id` FROM `an_sedi` WHERE `an_sedi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` AND `an_sedi`.`nomesede` = 'Sede legale' LIMIT 1);
+
+ALTER TABLE `an_anagrafiche` DROP FOREIGN KEY `an_anagrafiche_ibfk_1`, DROP `piva`, DROP `codice_fiscale`, DROP `indirizzo`, DROP `indirizzo2`, DROP `citta`, DROP `cap`, DROP `provincia`, DROP `km`, DROP `id_nazione`, DROP `telefono`, DROP `fax`, DROP `cellulare`, DROP `email`, DROP `idzona`, DROP `gaddress`, DROP `lat`, DROP `lng`;
+
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `an_anagrafiche` LEFT JOIN `an_relazioni` ON `an_anagrafiche`.`idrelazione` = `an_relazioni`.`id` LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` INNER JOIN `an_sedi` ON `an_sedi`.`id`=`an_anagrafiche`.`id_sede_legale` LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica` WHERE 1=1 AND `deleted_at` IS NULL GROUP BY `an_anagrafiche`.`idanagrafica` HAVING 2=2 ORDER BY TRIM(`ragione_sociale`)' WHERE `name` = 'Anagrafiche';
+
 --  TODO: definire cluausole ON DELETE
 
 -- TIPI

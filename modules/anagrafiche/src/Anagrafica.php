@@ -14,12 +14,10 @@ class Anagrafica extends Model
 
     protected $appends = [
         'id',
-        'partita_iva',
     ];
 
     protected $hidden = [
         'idanagrafica',
-        'piva',
     ];
 
     /**
@@ -160,21 +158,6 @@ class Anagrafica extends Model
         }
     }
 
-    public function getPartitaIvaAttribute()
-    {
-        return $this->piva;
-    }
-
-    public function setPartitaIvaAttribute($value)
-    {
-        $this->attributes['piva'] = trim(strtoupper($value));
-    }
-
-    public function setCodiceFiscaleAttribute($value)
-    {
-        $this->attributes['codice_fiscale'] = trim(strtoupper($value));
-    }
-
     public function tipi()
     {
         return $this->belongsToMany(Tipo::class, 'an_tipianagrafiche_anagrafiche', 'idanagrafica', 'id_tipo_anagrafica');
@@ -185,9 +168,14 @@ class Anagrafica extends Model
         return $this->hasMany(Fattura::class, 'idanagrafica');
     }
 
+    public function sedi()
+    {
+        return $this->hasMany(Sede::class, 'idanagrafica');
+    }
+
     public function nazione()
     {
-        return $this->belongsTo(Nazione::class, 'id_nazione');
+        return $this->sedeLegale->nazione();
     }
 
     /**
@@ -197,6 +185,6 @@ class Anagrafica extends Model
      */
     public function sedeLegale()
     {
-        return $this;
+        return $this->hasOne(Sede::class, 'idanagrafica')->where('id', $this->id_sede_legale);
     }
 }

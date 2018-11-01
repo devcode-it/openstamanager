@@ -32,21 +32,21 @@ if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
         echo '
     <div class="row" id="prezzi_articolo">
         <div class="col-md-4 text-center">
-            <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezzi\').toggleClass(\'hide\'); $(\'#prezzi\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=getprezzi&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$options['idanagrafica'].'\');">
+            <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezzi\').toggleClass(\'hide\'); $(\'#prezzi\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=get_prezzi&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$options['idanagrafica'].'\');">
                 <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (cliente)').'
             </button>
             <div id="prezzi" class="hide"></div>
         </div>
 
         <div class="col-md-4 text-center">
-            <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezziacquisto\').toggleClass(\'hide\'); $(\'#prezziacquisto\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=getprezziacquisto&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$options['idanagrafica'].'\');">
+            <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezziacquisto\').toggleClass(\'hide\'); $(\'#prezziacquisto\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=get_prezzi_acquisto&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$options['idanagrafica'].'\');">
                 <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (acquisto)').'
             </button>
             <div id="prezziacquisto" class="hide"></div>
         </div>
 
         <div class="col-md-4 text-center">
-            <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezzivendita\').toggleClass(\'hide\'); $(\'#prezzivendita\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=getprezzivendita&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$options['idanagrafica'].'\');">
+            <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezzivendita\').toggleClass(\'hide\'); $(\'#prezzivendita\').load(\''.ROOTDIR."/ajax_complete.php?module=Articoli&op=get_prezzi_vendita&idarticolo=' + $('#idarticolo option:selected').val() + '&idanagrafica=".$options['idanagrafica'].'\');">
                 <i class="fa fa-search"></i> '.tr('Visualizza ultimi prezzi (vendita)').'
             </button>
             <div id="prezzivendita" class="hide"></div>
@@ -61,11 +61,11 @@ if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
         $("#idarticolo").on("change", function(){
             // Autoimpostazione dei valori relativi
             if ($(this).val()) {
-				
+
                 session_set("superselect,idarticolo", $(this).val(), 0);
 				session_set("superselect,idanagrafica", "'.$options['idanagrafica'].'", 0);
 				session_set("superselect,dir", "'.$options['dir'].'", 0);
-                
+
 				$data = $(this).selectData();
 
                 var id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';

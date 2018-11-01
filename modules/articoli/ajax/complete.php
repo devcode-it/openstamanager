@@ -7,6 +7,7 @@ $idarticolo = get('idarticolo');
 switch ($resource) {
     // Legge gli ultimi prezzi di vendita di un determinato cliente e un determinato articolo e li visualizza per suggerire il prezzo di vendita
     case 'getprezzi':
+    case 'get_prezzi':
         $idanagrafica = get('idanagrafica');
         $ids = ['""'];
 
@@ -41,6 +42,7 @@ switch ($resource) {
 
     // Legge gli ultimi prezzi di vendita di un determinato articolo e li visualizza per suggerire il prezzo di vendita
     case 'getprezzivendita':
+    case 'get_prezzi_vendita':
         echo '<small>';
         // Ultime 5 vendite totali
         $fatture = $dbo->fetchArray("SELECT DISTINCT iddocumento, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM co_documenti WHERE id=iddocumento) AS n_fattura, (SELECT numero_esterno FROM co_documenti WHERE id=iddocumento) AS n2_fattura, (SELECT data FROM co_documenti WHERE id=iddocumento) AS data_fattura FROM co_righe_documenti WHERE idarticolo='".$idarticolo."' AND iddocumento IN(SELECT id FROM co_documenti WHERE id_tipo_documento IN(SELECT id FROM co_tipidocumento WHERE dir='entrata') ) ORDER BY data_fattura DESC, n_fattura DESC LIMIT 0,5");
@@ -71,6 +73,7 @@ switch ($resource) {
 
     // Legge gli ultimi prezzi di vendita di un determinato articolo e li visualizza per suggerire il prezzo di vendita
     case 'getprezziacquisto':
+    case 'get_prezzi_acquisto':
         echo '<small>';
         // Ultime 5 vendite totali
         $fatture = $dbo->fetchArray("SELECT DISTINCT iddocumento, (subtotale-sconto)/qta AS costo_unitario, (SELECT numero FROM co_documenti WHERE id=iddocumento) AS n_fattura, (SELECT numero_esterno FROM co_documenti WHERE id=iddocumento) AS n2_fattura, (SELECT data FROM co_documenti WHERE id=iddocumento) AS data_fattura FROM co_righe_documenti WHERE idarticolo='".$idarticolo."' AND iddocumento IN(SELECT id FROM co_documenti WHERE id_tipo_documento IN(SELECT id FROM co_tipidocumento WHERE dir='uscita') ) ORDER BY data_fattura DESC, n_fattura DESC LIMIT 0,5");

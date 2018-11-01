@@ -22,10 +22,8 @@ switch (post('op')) {
         $richiesta = post('richiesta');
         $idsede = post('idsede');
 
-        /*
-        Collegamento intervento a contratto (se impostato).
-        Oltre al collegamento al contratto, l'intervento è collegato ad una riga di pianificazione, perciò è importante considerarla se è impostata
-        */
+        // Collegamento intervento a contratto (se impostato)
+        // Oltre al collegamento al contratto, l'intervento è collegato ad una riga di pianificazione, perciò è importante considerarla se è impostata
         $array = [
             'idintervento' => $id_record,
             'idtipointervento' => $idtipointervento,
@@ -55,115 +53,6 @@ switch (post('op')) {
         // Se non è impostato nessun contratto o riga, tolgo il collegamento dell'intervento al contratto
         elseif (empty($idcontratto)) {
             $dbo->update('co_promemoria', ['idintervento' => null], ['idintervento' => $id_record]);
-        }
-
-        // Aggiorna tutte le sessioni di lavoro
-        $lista = (array) post('id_');
-
-        foreach ($lista as $idriga) {
-            //Lettura del tecnico proprietario della riga
-            $rst = $dbo->fetchArray('SELECT idtecnico FROM in_interventi_tecnici WHERE id='.prepare($idriga));
-
-            // Limitazione delle azioni dei tecnici
-            //($user['gruppo'] == 'Tecnici' && $user['idanagrafica'] == $rst[0]['idtecnico']) || $user['gruppo'] == 'Amministratori'
-
-            // Lettura delle date di inizio e fine intervento
-            $orario_inizio = post('orario_inizio')[$idriga];
-            $orario_fine = post('orario_fine')[$idriga];
-
-            // Ricalcolo le ore lavorate
-            $ore = calcola_ore_intervento($orario_inizio, $orario_fine);
-
-            $km = post('km')[$idriga];
-
-            // Lettura tariffe in base al tipo di intervento ed al tecnico
-            $idtipointervento_tecnico = post('idtipointerventot')[$idriga];
-            $rs = $dbo->fetchArray('SELECT * FROM in_interventi_tecnici WHERE idtecnico='.prepare(post('idtecnico')[$idriga]).' AND idintervento='.prepare($id_record));
-
-            if ($idtipointervento_tecnico != $rs[0]['idtipointervento']) {
-                $rsc = $dbo->fetchArray('SELECT * FROM in_tariffe WHERE idtecnico='.prepare(post('idtecnico')[$idriga]).' AND idtipointervento='.prepare($idtipointervento_tecnico));
-
-                if ($rsc[0]['costo_ore'] != 0 || $rsc[0]['costo_km'] != 0 || $rsc[0]['costo_dirittochiamata'] != 0 || $rsc[0]['costo_ore_tecnico'] != 0 || $rsc[0]['costo_km_tecnico'] != 0 || $rsc[0]['costo_dirittochiamata_tecnico'] != 0) {
-                    $prezzo_ore_unitario = $rsc[0]['costo_ore'];
-                    $prezzo_km_unitario = $rsc[0]['costo_km'];
-                    $prezzo_dirittochiamata = $rsc[0]['costo_dirittochiamata'];
-
-                    $prezzo_ore_unitario_tecnico = $rsc[0]['costo_ore_tecnico'];
-                    $prezzo_km_unitario_tecnico = $rsc[0]['costo_km_tecnico'];
-                    $prezzo_dirittochiamata_tecnico = $rsc[0]['costo_dirittochiamata_tecnico'];
-                }
-
-                // ...altrimenti se non c'è una tariffa per il tecnico leggo i costi globali
-                else {
-                    $rsc = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE idtipointervento='.prepare($idtipointervento_tecnico));
-
-                    $prezzo_ore_unitario = $rsc[0]['costo_orario'];
-                    $prezzo_km_unitario = $rsc[0]['costo_km'];
-                    $prezzo_dirittochiamata = $rsc[0]['costo_diritto_chiamata'];
-
-                    $prezzo_ore_unitario_tecnico = $rsc[0]['costo_orario_tecnico'];
-                    $prezzo_km_unitario_tecnico = $rsc[0]['costo_km_tecnico'];
-                    $prezzo_dirittochiamata_tecnico = $rsc[0]['costo_diritto_chiamata_tecnico'];
-                }
-            } else {
-                $prezzo_ore_unitario = $rs[0]['prezzo_ore_unitario'];
-                $prezzo_km_unitario = $rs[0]['prezzo_km_unitario'];
-                $prezzo_dirittochiamata = $rs[0]['prezzo_dirittochiamata'];
-                $prezzo_ore_unitario_tecnico = $rs[0]['prezzo_ore_unitario_tecnico'];
-                $prezzo_km_unitario_tecnico = $rs[0]['prezzo_km_unitario_tecnico'];
-                $prezzo_dirittochiamata_tecnico = $rs[0]['prezzo_dirittochiamata_tecnico'];
-            }
-
-            // Totali
-            $prezzo_ore_consuntivo = $prezzo_ore_unitario * $ore;
-            $prezzo_km_consuntivo = $prezzo_km_unitario * $km;
-
-            $prezzo_ore_consuntivo_tecnico = $prezzo_ore_unitario_tecnico * $ore;
-            $prezzo_km_consuntivo_tecnico = $prezzo_km_unitario_tecnico * $km;
-
-            // Sconti
-            $sconto_unitario = post('sconto')[$idriga];
-            $tipo_sconto = post('tipo_sconto')[$idriga];
-            $sconto = calcola_sconto([
-                'sconto' => $sconto_unitario,
-                'prezzo' => $prezzo_ore_consuntivo,
-                'tipo' => $tipo_sconto,
-            ]);
-
-            $scontokm_unitario = post('scontokm')[$idriga];
-            $tipo_scontokm = post('tipo_scontokm')[$idriga];
-            $scontokm = ($tipo_scontokm == 'PRC') ? ($prezzo_km_consuntivo * $scontokm_unitario) / 100 : $scontokm_unitario;
-
-            $dbo->update('in_interventi_tecnici', [
-                'idintervento' => $id_record,
-                'idtipointervento' => $idtipointervento_tecnico,
-                'idtecnico' => post('idtecnico')[$idriga],
-
-                'orario_inizio' => $orario_inizio,
-                'orario_fine' => $orario_fine,
-                'ore' => $ore,
-                'km' => $km,
-
-                'prezzo_ore_unitario' => $prezzo_ore_unitario,
-                'prezzo_km_unitario' => $prezzo_km_unitario,
-                'prezzo_dirittochiamata' => $prezzo_dirittochiamata,
-                'prezzo_ore_unitario_tecnico' => $prezzo_ore_unitario_tecnico,
-                'prezzo_km_unitario_tecnico' => $prezzo_km_unitario_tecnico,
-                'prezzo_dirittochiamata_tecnico' => $prezzo_dirittochiamata_tecnico,
-
-                'prezzo_ore_consuntivo' => $prezzo_ore_consuntivo,
-                'prezzo_km_consuntivo' => $prezzo_km_consuntivo,
-                'prezzo_ore_consuntivo_tecnico' => $prezzo_ore_consuntivo_tecnico,
-                'prezzo_km_consuntivo_tecnico' => $prezzo_km_consuntivo_tecnico,
-
-                'sconto' => $sconto,
-                'sconto_unitario' => $sconto_unitario,
-                'tipo_sconto' => $tipo_sconto,
-
-                'scontokm' => $scontokm,
-                'scontokm_unitario' => $scontokm_unitario,
-                'tipo_scontokm' => $tipo_scontokm,
-            ], ['id' => $idriga]);
         }
 
         $tipo_sconto = post('tipo_sconto_globale');
@@ -638,10 +527,46 @@ switch (post('op')) {
         }
 
         break;
-        
+
+    // OPERAZIONI PER AGGIUNTA NUOVA SESSIONE DI LAVORO
+    case 'add_sessione':
+        $id_tecnico = post('id_tecnico');
+
+        // Verifico se l'intervento è collegato ad un contratto
+        $rs = $dbo->fetchArray('SELECT idcontratto FROM co_promemoria WHERE idintervento='.prepare($id_record));
+        $idcontratto = $rs[0]['idcontratto'];
+
+        $ore = 1;
+
+        $inizio = date('Y-m-d H:\0\0');
+        $fine = date_modify(date_create(date('Y-m-d H:\0\0')), '+'.$ore.' hours')->format('Y-m-d H:\0\0');
+
+        add_tecnico($id_record, $id_tecnico, $inizio, $fine, $idcontratto);
+        break;
+
+    // RIMOZIONE SESSIONE DI LAVORO
+    case 'delete_sessione':
+        $id_sessione = post('id_sessione');
+
+        $tecnico = $dbo->fetchOne('SELECT an_anagrafiche.email FROM an_anagrafiche INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE in_interventi_tecnici.id = '.prepare($id_sessione));
+
+        $dbo->query('DELETE FROM in_interventi_tecnici WHERE id='.prepare($id_sessione));
+
+        // Notifica nuovo intervento al tecnico
+        if (!empty($tecnico['email'])) {
+            $n = new Notifications\EmailNotification();
+
+            $n->setTemplate('Notifica rimozione intervento', $id_record);
+            $n->setReceivers($tecnico['email']);
+
+            $n->send();
+        }
+
+        break;
+
     case 'edit_sessione':
         $id_sessione = post('id_sessione');
-        
+
         // Lettura delle date di inizio e fine intervento
         $orario_inizio = post('orario_inizio');
         $orario_fine = post('orario_fine');
@@ -737,6 +662,6 @@ switch (post('op')) {
             'scontokm_unitario' => $scontokm_unitario,
             'tipo_scontokm' => $tipo_scontokm,
         ], ['id' => $id_sessione]);
-    
+
         break;
 }

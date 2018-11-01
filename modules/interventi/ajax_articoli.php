@@ -143,7 +143,11 @@ if (!empty($rs)) {
 
     echo '
 </table>';
+} else {
+    echo '
+<p>'.tr('Nessun articolo presente').'.</p>';
 }
+
 ?>
 <script type="text/javascript">
     function ritorna_al_magazzino( id ){

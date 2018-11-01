@@ -321,8 +321,6 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 </script>
 
-<script src="<?php echo $rootdir; ?>/modules/interventi/js/interventi_helperjs.js"></script>
-
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <?php

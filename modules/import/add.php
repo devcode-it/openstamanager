@@ -36,26 +36,24 @@ foreach ($imports as $key => $value) {
 
 <script>
 $('#id_record').change( function(){
-	 if ($(this).val()>0){
-		 $( "#example" ).removeClass('hide');
-	 }else{
-		$( "#example" ).addClass('hide');
-	 }
+    if ($(this).val()>0){
+        $("#example").removeClass('hide');
+    } else {
+		$("#example").addClass('hide');
+    }
 });
 
 $( "#example" ).click(function(event) {
-    var module =  $('#id_record').find(':selected').data('text').toLowerCase();
-    var dir = "<?php echo ROOTDIR; ?>/modules/"+module+"/import.php";
-    var file = "<?php echo ROOTDIR; ?>/files/"+module+"/"+module+".csv";
-
     $.ajax({
-        url: dir,
+        url: globals.rootdir + "/actions.php",
         type: 'post',
         data: {
-            op: 'example', module: module
+            op: 'example',
+            id_module: globals.id_module,
+            id_record: $('#id_record').val(),
         },
         success: function(data){
-            window.location = file;
+            window.location = data;
             $('#main_loading').fadeOut();
             return false;
         }

@@ -27,21 +27,23 @@ if ($module['name'] == 'Ddt di vendita') {
 
 			<?php
                 if ($dir == 'entrata') {
-                    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche WHERE idanagrafica='.prepare($record['idanagrafica']));
+                    $anagrafica = $dbo->fetchOne('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche
+                        INNER JOIN `an_sedi` ON `an_sedi`.`id`=`an_anagrafiche`.`id_sede_legale`
+                        WHERE `an_anagrafiche`.idanagrafica='.prepare($record['idanagrafica']));
                     $campi_mancanti = [];
 
-                    if ($rs2[0]['piva'] == '') {
-                        if ($rs2[0]['codice_fiscale'] == '') {
+                    if ($anagrafica['piva'] == '') {
+                        if ($anagrafica['codice_fiscale'] == '') {
                             array_push($campi_mancanti, 'codice fiscale');
                         }
                     }
-                    if ($rs2[0]['citta'] == '') {
+                    if ($anagrafica['citta'] == '') {
                         array_push($campi_mancanti, 'citta');
                     }
-                    if ($rs2[0]['indirizzo'] == '') {
+                    if ($anagrafica['indirizzo'] == '') {
                         array_push($campi_mancanti, 'indirizzo');
                     }
-                    if ($rs2[0]['cap'] == '') {
+                    if ($anagrafica['cap'] == '') {
                         array_push($campi_mancanti, 'C.A.P.');
                     }
 

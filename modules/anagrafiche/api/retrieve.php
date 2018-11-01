@@ -18,27 +18,28 @@ switch ($resource) {
     case 'clienti':
         $query = "SELECT an_anagrafiche.idanagrafica AS id,
             an_anagrafiche.ragione_sociale,
-            an_anagrafiche.piva,
-            an_anagrafiche.codice_fiscale,
-            an_anagrafiche.indirizzo,
-            an_anagrafiche.indirizzo2,
-            an_anagrafiche.citta,
-            an_anagrafiche.cap,
-            an_anagrafiche.provincia,
-            an_anagrafiche.km,
-            IFNULL(an_anagrafiche.lat, 0.00) AS latitudine,
-            IFNULL(an_anagrafiche.lng, 0.00) AS longitudine,
+            an_sedi.piva,
+            an_sedi.codice_fiscale,
+            an_sedi.indirizzo,
+            an_sedi.indirizzo2,
+            an_sedi.citta,
+            an_sedi.cap,
+            an_sedi.provincia,
+            an_sedi.km,
+            IFNULL(an_sedi.lat, 0.00) AS latitudine,
+            IFNULL(an_sedi.lng, 0.00) AS longitudine,
+            an_sedi.telefono,
+            an_sedi.fax,
+            an_sedi.cellulare,
+            an_sedi.email,
+            an_sedi.idzona,
             an_nazioni.nome AS nazione,
-            an_anagrafiche.telefono,
-            an_anagrafiche.fax,
-            an_anagrafiche.cellulare,
-            an_anagrafiche.email,
             an_anagrafiche.sitoweb,
             an_anagrafiche.note,
-            an_anagrafiche.idzona,
             an_anagrafiche.deleted_at
         FROM an_anagrafiche
-            LEFT OUTER JOIN an_nazioni ON an_anagrafiche.id_nazione=an_nazioni.id
+            INNER JOIN `an_sedi` ON `an_sedi`.`id` = `an_anagrafiche`.`id_sede_legale`
+            LEFT OUTER JOIN `an_nazioni` ON `an_sedi`.`id_nazione` = `an_nazioni`.`id`
         WHERE
             an_anagrafiche.deleted_at IS NULL AND
             an_anagrafiche.idanagrafica IN (SELECT idanagrafica FROM an_tipianagrafiche_anagrafiche WHERE id_tipo_anagrafica = (SELECT id FROM an_tipianagrafiche WHERE descrizione = 'Cliente'))

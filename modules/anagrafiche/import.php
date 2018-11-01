@@ -1,67 +1,65 @@
 <?php
 
 include_once __DIR__.'/../../core.php';
+use Modules\Anagrafiche\Anagrafica;
 
 switch (post('op')) {
     case 'example':
-
-        $module = filter('module');
-
-        $list = [
+        return [
             ['Codice', 'Ragione sociale', 'Partita IVA', 'Nazione', 'Indirizzo', 'CAP', 'Città', 'Provincia', 'Telefono', 'Fax', 'Cellulare', 'Email', 'IBAN', 'Note', 'Tipologia'],
             ['00001', 'Cliente', '12345678910', 'ITALIA', 'Via Giuseppe Mazzini, 123', '12345', 'Este', 'PD', '786 543 21', '123 456 78', '321 123 456 78', 'email@cliente.it', 'IT60 X054 2811 1010 0000 0123 456', 'Anagrafica di esempio', 'Cliente'],
         ];
-
-        directory('../../files/'.$module);
-
-        $fp = fopen('../../files/'.$module.'/'.$module.'.csv', 'w');
-        fprintf($fp, chr(0xEF).chr(0xBB).chr(0xBF));
-
-        foreach ($list as $fields) {
-            fputcsv($fp, $fields, ';');
-        }
-
-        fclose($fp);
-        exit;
-
     break;
 
     case 'import':
+        $sede_fields = [
+            'piva',
+            'codice_fiscale',
+            'indirizzo',
+            'indirizzo2',
+            'citta',
+            'cap',
+            'provincia',
+            'km',
+            'id_nazione',
+            'telefono',
+            'fax',
+            'cellulare',
+            'email',
+            'idzona',
+            'gaddress',
+            'lat',
+            'lng',
+        ];
 
         foreach ($data as $key => $value) {
             if (!empty($value)) {
                 $id_tipo_anagrafica = (array) $data[$key]['tipologia'];
                 unset($data[$key]['tipologia']);
 
-                // Insert o update
-                $insert = true;
+                $dati_anagrafica = $data[$key];
+                $dati_sede = [];
+                foreach ($sede_fields as $field) {
+                    $dati_sede[$field] = $dati_anagrafica[$field];
+                    unset($dati_anagrafica[$field]);
+                }
+
+                // Ricerca di eventuale anagrafica corrispondente
                 if (!empty($primary_key)) {
-                    $rs = $dbo->select('an_anagrafiche', $primary_key, [
-                        $primary_key => $data[$key][$primary_key],
-                    ]);
-
-                    $insert = !in_array($data[$key][$primary_key], $rs[0]);
+                    $anagrafica = Anagrafica::find($dati_anagrafica[$primary_key]);
                 }
 
-                // Insert
-                if ($insert) {
-                    $dbo->insert('an_anagrafiche', $data[$key]);
-
-                    // Campi extra
-                    if (count($id_tipo_anagrafica) > 0) {
-                        // Aggiornamento della tipologia di anagrafiche
-                        $dbo->sync('an_tipianagrafiche_anagrafiche', [
-                            'idanagrafica' => $dbo->lastInsertedID(),
-                        ], [
-                            'id_tipo_anagrafica' => (array) $id_tipo_anagrafica,
-                        ]);
-                    }
+                if (empty($anagrafica)) {
+                    $anagrafica = Anagrafica::make($dati_anagrafica['ragione_sociale']);
                 }
 
-                // Update
-                else {
-                    $dbo->update('an_anagrafiche', $data[$key], [$primary_key => $data[$key][$primary_key]]);
-                }
+                $anagrafica->fill($dati_anagrafica);
+                $anagrafica->tipologie = (array) $id_tipo_anagrafica;
+                $anagrafica->save();
+
+                $sede = $anagrafica->sedeLegale;
+                $sede->fill($dati_sede);
+                $sede->save();
 
                 unset($data[$key]);
             }

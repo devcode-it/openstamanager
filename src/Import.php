@@ -35,7 +35,7 @@ class Import
                         'id_record' => $module['id'],
                     ]);
 
-                    $results[$module['id']] = array_merge($module, [
+                    $results[$module['id']] = array_merge($module->toArray(), [
                         'import' => file_exists($custom_file) ? $custom_file : $original_file,
                         'files' => $files,
                     ]);
@@ -146,5 +146,24 @@ class Import
         $rows = $rows->fetchAll();
 
         return $rows;
+    }
+
+    public static function createExample($module, array $content)
+    {
+        $module = Modules::get($module);
+        $upload_dir = Uploads::getDirectory($module->id, null);
+
+        $filename = $upload_dir.'/example-'.strtolower($module->title).'.csv';
+
+        $file = fopen(DOCROOT.'/'.$filename, 'w');
+        fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+        foreach ($content as $row) {
+            fputcsv($file, $row, ';');
+        }
+
+        fclose($file);
+
+        return $filename;
     }
 }

@@ -3,6 +3,14 @@
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
+    case 'example':
+        $content = include $imports[$id_record]['import'];
+
+        echo ROOTDIR.'/'.Import::createExample($id_record, $content);
+        exit();
+
+        break;
+
     case 'import':
         $first_row = !post('first_row');
         $selected = post('fields');

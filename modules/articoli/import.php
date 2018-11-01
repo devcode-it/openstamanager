@@ -6,25 +6,10 @@ include_once Modules::filepath('Articoli', 'modutil.php');
 
 switch (post('op')) {
     case 'example':
-
-        $module = filter('module');
-
-        $list = [
+        return [
             ['Codice', 'Descrizione', 'Quantità', 'Unità di misura', 'Prezzo acquisto', 'Prezzo vendita', 'Peso lordo (KG)', 'Volume (M3)', 'Categoria', 'Note'],
             ['00004', 'Articolo', '10', 'Kg', '5,25', '12,72', '10,2', '500', 'Categoria4', 'Articolo di prova'],
         ];
-
-        directory('../../files/'.$module);
-
-        $fp = fopen('../../files/'.$module.'/'.$module.'.csv', 'w');
-
-        foreach ($list as $fields) {
-            fputcsv($fp, $fields, ';');
-        }
-
-        fclose($fp);
-        exit;
-
     break;
 
     case 'import':

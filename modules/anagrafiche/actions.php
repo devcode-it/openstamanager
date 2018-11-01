@@ -55,7 +55,7 @@ switch (post('op')) {
         $anagrafica->id_ritenuta_acconto_acquisti = post('id_ritenuta_acconto_acquisti');
         $anagrafica->id_ritenuta_acconto_vendite = post('id_ritenuta_acconto_vendite');
 
-        $anagrafica->updateTipologie((array) post('id_tipo_anagrafica'));
+        $anagrafica->tipologie = (array) post('id_tipo_anagrafica');
 
         $anagrafica->save();
 
@@ -129,19 +129,24 @@ switch (post('op')) {
 
         $idagente = ($agente_is_logged && in_array($id_cliente, $id_tipo_anagrafica)) ? $user['idanagrafica'] : 0;
 
-        $anagrafica->partita_iva = post('piva');
-        $anagrafica->codice_fiscale = post('codice_fiscale');
-        $anagrafica->indirizzo = post('indirizzo');
-        $anagrafica->citta = post('citta');
-        $anagrafica->cap = post('cap');
-        $anagrafica->provincia = post('provincia');
-        $anagrafica->telefono = post('telefono');
-        $anagrafica->cellulare = post('cellulare');
-        $anagrafica->email = post('email');
+
         $anagrafica->idrelazione = post('idrelazione');
         $anagrafica->idagente = $idagente;
 
         $anagrafica->save();
+
+        $sede = $anagrafica->sedeLegale;
+        $sede->partita_iva = post('piva');
+        $sede->codice_fiscale = post('codice_fiscale');
+        $sede->indirizzo = post('indirizzo');
+        $sede->citta = post('citta');
+        $sede->cap = post('cap');
+        $sede->provincia = post('provincia');
+        $sede->telefono = post('telefono');
+        $sede->cellulare = post('cellulare');
+        $sede->email = post('email');
+
+        $sede->save();
 
         if ($anagrafica->isAzienda()) {
             flash()->info(tr('Anagrafica Azienda impostata come predefinita').'. '.tr('Per ulteriori informazionioni, visitare "Strumenti -> Impostazioni -> Generali"'));

@@ -31,13 +31,13 @@ $fields = [
     'Numero di iscrizione albo artigiani' => 'n_alboartigiani',
 ];
 
-$query = 'SELECT *, idanagrafica AS id';
+$query = 'SELECT *, an_anagrafiche.idanagrafica AS id';
 
 foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM an_anagrafiche WHERE 1=0 ';
+$query .= ' FROM an_anagrafiche INNER JOIN `an_sedi` ON `an_sedi`.`id`=`an_anagrafiche`.`id_sede_legale` WHERE 1=0 ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE "%'.$term.'%"';

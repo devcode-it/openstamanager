@@ -6,12 +6,13 @@ use Auth;
 use Traits\RecordTrait;
 use Traits\UploadTrait;
 use Traits\StoreTrait;
+use Traits\PermissionTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
 class Module extends Model
 {
-    use RecordTrait, UploadTrait, StoreTrait;
+    use RecordTrait, UploadTrait, StoreTrait, PermissionTrait;
 
     protected $table = 'zz_modules';
     protected $main_folder = 'modules';
@@ -37,26 +38,6 @@ class Module extends Model
         static::addGlobalScope('permission', function (Builder $builder) {
             $builder->with('groups');
         });
-    }
-
-    /**
-     * Restituisce i permessi relativi all'account in utilizzo.
-     *
-     * @return string
-     */
-    public function getPermissionAttribute()
-    {
-        if (Auth::user()->is_admin) {
-            return 'rw';
-        }
-
-        $group = Auth::user()->group->id;
-
-        $pivot = $this->pivot ?: $this->groups->first(function ($item) use ($group) {
-            return $item->id == $group;
-        })->pivot;
-
-        return $pivot->permessi ?: '-';
     }
 
     /**
@@ -110,7 +91,7 @@ class Module extends Model
 
     public function groups()
     {
-        return $this->belongsToMany(Group::class, 'zz_permissions', 'idmodule', 'idgruppo')->withPivot('permessi');
+        return $this->morphToMany(Group::class, 'permission', 'zz_permissions', 'external_id', 'group_id')->where('permission_level', '!=', '-')->withPivot('permission_level');
     }
 
     public function clauses()

@@ -325,22 +325,14 @@ class Auth extends \Util\Singleton
         if (empty($this->first_module)) {
             $parameters = [];
 
-            $query = 'SELECT id FROM zz_modules WHERE enabled = 1';
-            if (!$this->isAdmin()) {
-                $query .= " AND id IN (SELECT idmodule FROM zz_permissions WHERE idgruppo = (SELECT id FROM zz_groups WHERE nome = :group) AND permessi IN ('r', 'rw'))";
-
-                $parameters[':group'] = $this->getUser()['gruppo'];
-            }
-
-            $database = database();
-            $results = $database->fetchArray($query." AND options != '' AND options != 'menu' AND options IS NOT NULL ORDER BY `order` ASC", $parameters);
-
-            if (!empty($results)) {
+            $modules = $this->user->group->modules()->whereNotIn('options', ['', 'menu'])->whereNotNull('options')->get();
+            $list = array_column($modules->toArray(), 'id');
+            if (!empty($modules)) {
                 $module = null;
 
                 $first = setting('Prima pagina');
-                if (!in_array($first, array_column($results, 'id'))) {
-                    $module = $results[0]['id'];
+                if (!in_array($first, $list)) {
+                    $module = $modules->first()->id;
                 } else {
                     $module = $first;
                 }

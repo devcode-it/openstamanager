@@ -2,25 +2,27 @@
 
 namespace Models;
 
-use Traits\PathTrait;
+use App;
+use Traits\RecordTrait;
+use Traits\UploadTrait;
 use Traits\StoreTrait;
+use Traits\PermissionTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
-class PrintTemplate extends Model
+class Segment extends Model
 {
-    use PathTrait, StoreTrait;
+    use PermissionTrait;
 
-    protected $table = 'zz_prints';
-    protected $main_folder = 'templates';
+    protected $table = 'zz_segments';
+
+    protected $appends = [
+        'permission',
+    ];
 
     protected static function boot()
     {
         parent::boot();
-
-        static::addGlobalScope('enabled', function (Builder $builder) {
-            $builder->where('enabled', true);
-        });
 
         static::addGlobalScope('permission', function (Builder $builder) {
             $builder->with('groups');
@@ -31,7 +33,7 @@ class PrintTemplate extends Model
 
     public function module()
     {
-        return $this->belongsTo(Module::class, 'id_module')->first();
+        return $this->belongsTo(Module::class, 'id_module');
     }
 
     public function groups()

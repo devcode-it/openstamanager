@@ -6,12 +6,13 @@ use App;
 use Traits\RecordTrait;
 use Traits\UploadTrait;
 use Traits\StoreTrait;
+use Traits\PermissionTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
 class Plugin extends Model
 {
-    use RecordTrait, UploadTrait, StoreTrait;
+    use RecordTrait, UploadTrait, StoreTrait, PermissionTrait;
 
     protected $table = 'zz_plugins';
     protected $main_folder = 'plugins';
@@ -33,16 +34,10 @@ class Plugin extends Model
         static::addGlobalScope('enabled', function (Builder $builder) {
             $builder->where('enabled', true);
         });
-    }
 
-    /**
-     * Restituisce i permessi relativi all'account in utilizzo.
-     *
-     * @return string
-     */
-    public function getPermissionAttribute()
-    {
-        return $this->originalModule()->permission;
+        static::addGlobalScope('permission', function (Builder $builder) {
+            $builder->with('groups');
+        });
     }
 
     public function getOptionAttribute()
@@ -92,5 +87,10 @@ class Plugin extends Model
     public function module()
     {
         return $this->belongsTo(Module::class, 'idmodule_to')->first();
+    }
+
+    public function groups()
+    {
+        return $this->morphToMany(Group::class, 'permission', 'zz_permissions', 'external_id', 'group_id')->where('permission_level', '!=', '-')->withPivot('permission_level');
     }
 }

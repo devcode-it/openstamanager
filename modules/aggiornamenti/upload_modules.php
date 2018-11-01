@@ -37,6 +37,8 @@ if (file_exists($extraction_dir.'/VERSION')) {
 
     $files = $finder->name('MODULE')->name('PLUGIN');
 
+    $admin = Models\Group::where('nome', 'Amministratori')->first();
+
     foreach ($files as $file) {
         // Informazioni dal file di configurazione
         $info = Util\Ini::readFile($file->getRealPath());
@@ -44,8 +46,11 @@ if (file_exists($extraction_dir.'/VERSION')) {
         // Informazioni aggiuntive per il database
         $insert = [];
 
+        $is_module = basename($file->getRealPath()) == 'MODULE';
+        $is_plugin = basename($file->getRealPath()) == 'PLUGIN';
+
         // Modulo
-        if (basename($file->getRealPath()) == 'MODULE') {
+        if ($is_module) {
             $directory = 'modules';
             $table = 'zz_modules';
 
@@ -55,7 +60,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
         }
 
         // Plugin
-        elseif (basename($file->getRealPath()) == 'PLUGIN') {
+        elseif ($is_plugin) {
             $directory = 'plugins';
             $table = 'zz_plugins';
 
@@ -82,10 +87,25 @@ if (file_exists($extraction_dir.'/VERSION')) {
                 'enabled' => 1,
             ]));
 
+            $id = $dbo->lastInsertedID();
+
             flash()->error(tr('Installazione completata!'));
         } else {
             flash()->error(tr('Aggiornamento completato!'));
         }
+
+        // Fix per i permessi di amministratore
+        if ($is_module) {
+            $element = Models\Module::find($id);
+        } elseif ($is_plugin) {
+            $element = Models\Plugin::find($id);
+        }
+
+        $element->groups()->syncWithoutDetaching([
+            $admin->id => [
+                'permission_level' => 'rw'
+            ]
+        ]);
     }
 }
 

@@ -202,3 +202,10 @@ UPDATE `co_contratti` SET `data_rifiuto` = NULL WHERE `data_rifiuto` = '0000-00-
 UPDATE `co_ordiniservizio` SET `data_scadenza` = NULL WHERE `data_scadenza` = '0000-00-00' OR `data_scadenza` = '0000-00-00 00:00:00';
 UPDATE `co_ordiniservizio_pianificazionefatture` SET `data_scadenza` = NULL WHERE `data_scadenza` = '0000-00-00' OR `data_scadenza` = '0000-00-00 00:00:00';
 UPDATE `my_impianto_componenti` SET `data_sostituzione` = NULL WHERE `data_sostituzione` = '0000-00-00' OR `data_sostituzione` = '0000-00-00 00:00:00';
+
+-- Permessi avanzati
+ALTER TABLE `zz_permissions` DROP FOREIGN KEY `zz_permissions_ibfk_1`, DROP FOREIGN KEY`zz_permissions_ibfk_2`;
+ALTER TABLE `zz_permissions` CHANGE `idmodule` `external_id` int(11), CHANGE `idgruppo` `group_id` int(11), CHANGE `permessi` `permission_level` enum('-', 'r', 'rw'), ADD `permission_type` varchar(255);
+ALTER TABLE `zz_permissions` ADD FOREIGN KEY (`group_id`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE;
+UPDATE `zz_permissions` SET `permission_type` = 'Models\Module';
+DELETE FROM `zz_permissions` WHERE `permessi` = '-';

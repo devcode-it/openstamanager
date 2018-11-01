@@ -63,9 +63,4 @@ class User extends Model
     {
         return $this->hasMany(Log::class, 'id_utente');
     }
-
-    public function modules()
-    {
-        return $this->group->modules();
-    }
 }

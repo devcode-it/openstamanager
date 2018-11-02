@@ -127,7 +127,7 @@ class Fattura extends Model
         // Recupero maschera per questo segmento
         $maschera = static::getMaschera($id_segment);
 
-        $ultima_fattura = $database->fetchOne('SELECT numero FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.(($direzione == 'uscita') ? 'ORDER BY CAST(numero AS UNSIGNED) DESC' : static::getMascheraOrder($maschera)), [
+        $ultima_fattura = $database->fetchOne('SELECT numero FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera, 'numero'), [
             ':year' => date('Y', strtotime($data)),
             ':id_segment' => $id_segment,
         ]);
@@ -157,7 +157,7 @@ class Fattura extends Model
         // Recupero maschera per questo segmento
         $maschera = static::getMaschera($id_segment);
 
-        $ultima_fattura = $database->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera), [
+        $ultima_fattura = $database->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera, 'numero_esterno'), [
             ':year' => date('Y', strtotime($data)),
             ':id_segment' => $id_segment,
         ]);
@@ -195,7 +195,7 @@ class Fattura extends Model
      *
      * @return string
      */
-    protected static function getMascheraOrder($maschera)
+    protected static function getMascheraOrder($maschera, $order_by)
     {
         // Estraggo blocchi di caratteri standard
         preg_match('/[#]+/', $maschera, $m1);
@@ -203,9 +203,9 @@ class Fattura extends Model
 
         $pos1 = strpos($maschera, $m1[0]);
         if ($pos1 == 0) {
-            $query = 'ORDER BY CAST(numero_esterno AS UNSIGNED) DESC';
+            $query = 'ORDER BY CAST('.$order_by.' AS UNSIGNED) DESC';
         } else {
-            $query = 'ORDER BY numero_esterno DESC';
+            $query = 'ORDER BY '.$order_by.' DESC';
         }
 
         return $query;

@@ -94,37 +94,41 @@ if (!$cliente) {
             </div>
 
             <div class="row">
-                <div class="col-md-4">
+				
+                <div class="col-md-<?php echo (empty($record['indirizzo2'])) ? '6' : '4'; ?>">
                     {[ "type": "text", "label": "<?php echo tr('Indirizzo'); ?>", "name": "indirizzo", "value": "$indirizzo$" ]}
                 </div>
-
-                <div class="col-md-4">
+				
+                <div class="col-md-2<?php echo (empty($record['indirizzo2'])) ? ' hide' : ''; ?>">
                     {[ "type": "text", "label": "<?php echo tr('Indirizzo2'); ?>", "name": "indirizzo2", "value": "$indirizzo2$" ]}
                 </div>
-
+				
+				<div class="col-md-2">
+                    {[ "type": "text", "label": "<?php echo tr('C.A.P.'); ?>", "name": "cap", "maxlength": 5, "class": "text-center", "value": "$cap$" ]}
+                </div>
+				
                 <div class="col-md-4">
                     {[ "type": "text", "label": "<?php echo tr('Città'); ?>", "name": "citta", "class": "text-center", "value": "$citta$" ]}
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-md-2">
+               
+              
+
+                <div class="col-md-3">
+                    {[ "type": "text", "label": "<?php echo tr('Provincia'); ?>", "name": "provincia", "maxlength": 2, "class": "text-center", "value": "$provincia$" ]}
+                </div>
+				
+				 <div class="col-md-3">
                     {[ "type": "select", "label": "<?php echo tr('Nazione'); ?>", "name": "id_nazione", "values": "query=SELECT id AS id, nome AS descrizione FROM an_nazioni ORDER BY nome ASC", "value": "$id_nazione$" ]}
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     {[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY descrizione ASC", "value": "$idzona$", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "icon-after": "add|<?php echo Modules::get('Zone')['id']; ?>" ]}
                 </div>
 
-                <div class="col-md-2">
-                    {[ "type": "text", "label": "<?php echo tr('C.A.P.'); ?>", "name": "cap", "maxlength": 5, "class": "text-center", "value": "$cap$" ]}
-                </div>
-
-                <div class="col-md-2">
-                    {[ "type": "text", "label": "<?php echo tr('Provincia'); ?>", "name": "provincia", "maxlength": 2, "class": "text-center", "value": "$provincia$" ]}
-                </div>
-
-                <div class="col-md-2">
+                <div class="col-md-3">
                     {[ "type": "number", "label": "<?php echo tr('Distanza'); ?>", "name": "km", "decimals":"1", "class": "text-center", "value": "$km$", "icon-after": "Km" ]}
                 </div>
             </div>

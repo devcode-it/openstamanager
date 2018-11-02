@@ -3,6 +3,7 @@
 namespace Modules\Aggiornamenti;
 
 use Symfony\Component\Finder\Finder;
+use GuzzleHttp\Client;
 use Util\Zip;
 use Util\Ini;
 use Models\Module;
@@ -10,9 +11,12 @@ use Models\Plugin;
 use Models\Group;
 use Modules;
 use Plugins;
+use Update;
 
 class Aggiornamento
 {
+    protected static $client = null;
+
     protected $directory = null;
     protected $components = null;
 
@@ -244,16 +248,47 @@ class Aggiornamento
 
         return new static($extraction_dir);
     }
+
+    /**
+     * Restituisce l'oggetto per la connessione all'API del progetto.
+     *
+     * @return Client
+     */
+    protected static function getClient()
+    {
+        if (!isset(self::$client)) {
+            self::$client = new Client([
+                'base_uri' => 'https://api.github.com/repos/devcode-it/openstamanager/',
+                'verify' => false
+            ]);
+        }
+
+        return self::$client;
+    }
+
+    /**
+     * Restituisce i contenuti JSON dell'API del progetto
+     *
+     * @return array
+     */
+    protected static function getAPI()
+    {
+        $response = self::getClient()->request('GET', 'releases');
+        $body = $response->getBody();
+
+        return json_decode($body, true)[0];
+    }
+
     /**
     * Controlla se è disponibile un aggiornamento nella repository GitHub.
     *
     * @return string
     */
-    public static function isAvaliable()
+    public static function isAvailable()
     {
-        $api = json_decode(get_remote_data('https://api.github.com/repos/devcode-it/openstamanager/releases'), true);
+        $api = self::getAPI();
 
-        $version = ltrim($api[0]['tag_name'], 'v');
+        $version = ltrim($api['tag_name'], 'v');
         $current = Update::getVersion();
 
         if (version_compare($current, $version) < 0) {
@@ -261,5 +296,29 @@ class Aggiornamento
         }
 
         return 'none';
+    }
+
+    /**
+    * Scarica la release più recente (se presente).
+    *
+    * @return boolean
+    */
+    public static function download()
+    {
+        if (self::isAvailable() != 'none') {
+            return false;
+        }
+
+        $directory = Zip::getExtractionDirectory();
+        $file = $directory.'/release.zip';
+        directory($directory);
+
+        $api = self::getAPI();
+        self::getClient()->request('GET', $api['assets'][0]['browser_download_url'], ['sink' => $file]);
+
+        self::make($file);
+        delete($file);
+
+        return true;
     }
 }

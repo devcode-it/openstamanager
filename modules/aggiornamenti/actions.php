@@ -10,7 +10,7 @@ $id = post('id');
 
 switch (post('op')) {
     case 'check':
-        echo Aggiornamento::isAvaliable();
+        echo Aggiornamento::isAvailable();
 
         break;
 

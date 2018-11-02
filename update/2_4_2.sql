@@ -590,3 +590,6 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 -- Colonna codice modalità pagamento
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
 (NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Pagamenti'), 'Codice pagamento', 'CONCAT(codice_modalita_pagamento_fe, '' - '', (SELECT descrizione FROM fe_modalita_pagamento WHERE codice = codice_modalita_pagamento_fe) )', 2, 1, 0, 0, 1, 0, 1);
+
+-- Fix plugin "Impianti del cliente"
+UPDATE `zz_plugins` SET `options` = ' { "main_query": [ { "type": "table", "fields": "Matricola, Nome, Data, Descrizione", "query": "SELECT id, (SELECT `id` FROM `zz_modules` WHERE `name` = \'MyImpianti\') AS _link_module_, id AS _link_record_, matricola AS Matricola, nome AS Nome, DATE_FORMAT(data, \'%d/%m/%Y\') AS Data, descrizione AS Descrizione FROM my_impianti WHERE idanagrafica=|id_parent| HAVING 2=2 ORDER BY id DESC"} ]}' WHERE `zz_plugins`.`name` = 'Impianti del cliente';

@@ -122,23 +122,8 @@ if (Auth::check()) {
     $calendar = ($_SESSION['period_start'] != date('Y').'-01-01' || $_SESSION['period_end'] != date('Y').'-12-31') ? 'red' : 'white';
 
     echo '
-            <!-- Loader principale -->
-			<div id="main_loading">
-				<div>
-					<i class="fa fa-cog fa-spin text-danger"></i>
-				</div>
-			</div>
-
-            <!-- Loader secondario -->
-            <div id="mini-loader" style="display:none;">
-                <div></div>
-            </div>
-
-			<!-- Loader senza overlay -->
-			<div id="tiny-loader" style="display:none;"></div>
-
 			<header class="main-header">
-				<a href="https://www.openstamanager.com" class="logo" title="'.tr('Il gestionale open source per l\'assistenza tecnica e la fatturazione').'" target="_blank">
+				<a href="https://www.openstamanager.com" class="logo" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione").'" target="_blank">
 					<!-- mini logo for sidebar mini 50x50 pixels -->
 					<span class="logo-mini">'.tr('OSM').'</span>
 					<!-- logo for regular state and mobile devices -->

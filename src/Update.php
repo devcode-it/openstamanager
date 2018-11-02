@@ -321,8 +321,9 @@ class Update
      *
      * @return string
      */
-    protected static function getFile($file)
+    public static function getFile($file)
     {
+        $file = slashes($file);
         $file = (str_contains($file, DOCROOT.DIRECTORY_SEPARATOR)) ? $file : DOCROOT.DIRECTORY_SEPARATOR.$file;
 
         $result = '';

@@ -42,10 +42,31 @@ echo '
                 cancelButtonClass: "btn btn-lg",
                 cancelButtonText: "'.tr('Annulla').'",
             });
+
+            globals = {
+                rootdir: \''.$rootdir.'\',
+                locale: \''.$lang.'\',
+                full_locale: \''.$lang.'_'.strtoupper($lang).'\',
+                translations: {}
+            };
         </script>';
 
 echo '
 
     </head>
 
-	<body class="skin-'.$theme.' '.$body_class.'">';
+    <body class="skin-'.$theme.' '.$body_class.'">
+        <!-- Loader principale -->
+        <div id="main_loading">
+            <div>
+                <i class="fa fa-cog fa-spin text-danger"></i>
+            </div>
+        </div>
+
+        <!-- Loader secondario -->
+        <div id="mini-loader" style="display:none;">
+            <div></div>
+        </div>
+
+        <!-- Loader senza overlay -->
+        <div id="tiny-loader" style="display:none;"></div>';

@@ -3,7 +3,6 @@
 include_once __DIR__.'/../../core.php';
 
 use Util\Zip;
-
 use Modules\Aggiornamenti\Aggiornamento;
 
 $id = post('id');
@@ -28,15 +27,31 @@ switch (post('op')) {
         }
 
         $update = Aggiornamento::make($_FILES['blob']['tmp_name']);
-        $update->execute();
 
         // Redirect
         redirect(ROOTDIR.'/editor.php?id_module='.$id_module);
         break;
 
     case 'execute':
-        $update = new Aggiornamento();
-        $update->execute();
+        try{
+            $update = new Aggiornamento();
+
+            $update->execute();
+        }catch(InvalidArgumentException $e){
+        }
+
+        // Redirect
+        redirect(ROOTDIR.'/editor.php?id_module='.$id_module);
+
+        break;
+
+    case 'cancel':
+        try{
+            $update = new Aggiornamento();
+
+            $update->delete();
+        }catch(InvalidArgumentException $e){
+        }
 
         // Redirect
         redirect(ROOTDIR.'/editor.php?id_module='.$id_module);

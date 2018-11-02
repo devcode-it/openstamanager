@@ -2,6 +2,16 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Aggiornamenti\Aggiornamento;
+
+try{
+    $update = new Aggiornamento();
+
+    include $module->filepath('view.php');
+    return;
+}catch(InvalidArgumentException $e){
+}
+
 if (setting('Attiva aggiornamenti')) {
     $alerts = [];
 

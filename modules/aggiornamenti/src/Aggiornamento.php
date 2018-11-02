@@ -4,6 +4,8 @@ namespace Modules\Aggiornamenti;
 
 use Symfony\Component\Finder\Finder;
 use GuzzleHttp\Client;
+use Parsedown;
+use InvalidArgumentException;
 use Util\Zip;
 use Util\Ini;
 use Models\Module;
@@ -22,9 +24,25 @@ class Aggiornamento
 
     protected $groups = null;
 
+    /**
+     * Crea l'istanza dedicata all'aggiornamento presente nella cartella indicata.
+     *
+     * @param string $directory
+     *
+     * @throws InvalidArgumentException
+     */
     public function __construct($directory = null)
     {
         $this->directory = $directory ?: Zip::getExtractionDirectory();
+
+        if (!$this->isCoreUpdate() && empty($this->componentUpdates())) {
+            throw new InvalidArgumentException();
+        }
+    }
+
+    public function getDirectory()
+    {
+        return $this->directory;
     }
 
     protected function groups()
@@ -75,10 +93,13 @@ class Aggiornamento
                 $is_module = basename($file->getRealPath()) == 'MODULE';
                 $is_plugin = basename($file->getRealPath()) == 'PLUGIN';
 
+                $info = Ini::readFile($file->getRealPath());
                 if ($is_module) {
                     $type = 'modules';
+                    $installed = Modules::get($info['name']);
                 } elseif ($is_plugin) {
                     $type = 'plugins';
+                    $installed = Plugins::get($info['name']);
                 }
 
                 if (!isset($results[$type])) {
@@ -87,6 +108,9 @@ class Aggiornamento
                 $results[$type][] = [
                     'path' => dirname($file->getRealPath()),
                     'config' => $file->getRealPath(),
+                    'is_installed' => !empty($installed),
+                    'current_version' => !empty($installed) ? $installed->version : null,
+                    'info' => $info,
                 ];
             }
 
@@ -177,7 +201,7 @@ class Aggiornamento
     public function executeModule($module)
     {
         // Informazioni dal file di configurazione
-        $info = Ini::readFile($module['config']);
+        $info = $module['info'];
 
         // Informazioni aggiuntive per il database
         $insert = [
@@ -185,9 +209,7 @@ class Aggiornamento
             'icon' => $info['icon'],
         ];
 
-        $is_installed = Modules::get($info['name']);
-
-        $id = $this->executeComponent($module['path'], 'modules', 'zz_modules', $insert, $info, $is_installed);
+        $id = $this->executeComponent($module['path'], 'modules', 'zz_modules', $insert, $info, $module['is_installed']);
 
         if (!empty($id)) {
             // Fix per i permessi di amministratore
@@ -205,7 +227,7 @@ class Aggiornamento
     public function executePlugin($plugin)
     {
         // Informazioni dal file di configurazione
-        $info = Ini::readFile($plugin['config']);
+        $info = $plugin['info'];
 
         // Informazioni aggiuntive per il database
         $insert = [
@@ -214,9 +236,7 @@ class Aggiornamento
             'position' => $info['position'],
         ];
 
-        $is_installed = Plugins::get($info['name']);
-
-        $id = $this->executeComponent($plugin['path'], 'plugins', 'zz_plugins', $insert, $info, $is_installed);
+        $id = $this->executeComponent($plugin['path'], 'plugins', 'zz_plugins', $insert, $info, $plugin['is_installed']);
 
         if (!empty($id)) {
             // Fix per i permessi di amministratore
@@ -320,5 +340,32 @@ class Aggiornamento
         delete($file);
 
         return true;
+    }
+
+    /**
+     * Restituisce il changelog presente nel percorso indicato a partire dalla versione specificata.
+     *
+     * @param string $path
+     * @param string $version
+     * @return string
+     */
+    public static function getChangelog($path, $version = null)
+    {
+        $result = file_get_contents($path.'/CHANGELOG.md');
+
+        $start = strpos($result, '## ');
+        $result = substr($result, $start);
+        if (!empty($version)) {
+            $last = strpos($result, '## '.$version.' ');
+
+            if ($last !== false) {
+                $result = substr($result, 0, $last);
+            }
+        }
+
+        $result = Parsedown::instance()->text($result);
+        $result = str_replace(['h4>', 'h3>', 'h2>'], ['p>', 'b>', 'h4>'], $result);
+
+        return $result;
     }
 }

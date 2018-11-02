@@ -74,6 +74,9 @@ if (!empty($sessioni)) {
         $costo_km_consuntivo = $sessione['prezzo_km_consuntivo'];
         $costo_ore_consuntivo = $sessione['prezzo_ore_consuntivo'];
 
+        $ore = $sessione['ore'];
+        $km = $sessione['km'];
+
         // Tipologia
         echo '
         <tr>
@@ -96,7 +99,7 @@ if (!empty($sessioni)) {
         // ORE
         echo '
             <td style="border-right:1px solid #aaa;">
-                '.Translator::numberToLocale($sessione['ore']).'
+                '.Translator::numberToLocale($ore).'
 
                 <div class="extra hide">
                     <table class="table table-condensed table-bordered">
@@ -125,7 +128,7 @@ if (!empty($sessioni)) {
         // KM
         echo '
             <td style="border-right:1px solid #aaa;">
-                '.Translator::numberToLocale($sessione['km']).'
+                '.Translator::numberToLocale($km).'
 
                 <div class="extra hide">
                     <table class="table table-condensed table-bordered">

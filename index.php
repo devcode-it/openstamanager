@@ -71,7 +71,9 @@ include_once $docroot.'/include/init/init.php';
 
 $pageTitle = tr('Login');
 
-include_once App::filepath('include|custom|', 'top.php');
+$body_class = 'hold-transition login-page';
+include_once App::filepath('include/layout|custom|', 'header.php');
+include_once App::filepath('include/layout|custom|', 'messages.php');
 
 // Controllo se è una beta e in caso mostro un warning
 if (Update::isBeta()) {
@@ -166,12 +168,12 @@ echo '/> '.tr('Mantieni attiva la sessione').'
             $(document).ready( function(){
                 $("#login").click(function(){
                     $("#login").text("';
-    if ($dbo->isInstalled() && !Update::isUpdateAvailable() && setting('Backup automatico')) {
-        echo tr('Backup automatico in corso');
-    } else {
-        echo tr('Autenticazione');
-    }
-    echo '...");
+if ($dbo->isInstalled() && !Update::isUpdateAvailable() && setting('Backup automatico')) {
+    echo tr('Backup automatico in corso');
+} else {
+    echo tr('Autenticazione');
+}
+echo '...");
                 });
 
                 if( $("input[name=username]").val() == ""){
@@ -183,4 +185,4 @@ echo '/> '.tr('Mantieni attiva la sessione').'
             });
             </script>';
 
-include_once App::filepath('include|custom|', 'bottom.php');
+include_once App::filepath('include/layout|custom|', 'footer.php');

@@ -238,23 +238,6 @@ function translateTemplate()
         ]);
     }
 
-    // Retrocompatibilità
-    if (!empty($_SESSION['infos'])) {
-        foreach ($_SESSION['infos'] as $message) {
-            flash()->info($message);
-        }
-    }
-    if (!empty($_SESSION['warnings'])) {
-        foreach ($_SESSION['warnings'] as $message) {
-            flash()->warning($message);
-        }
-    }
-    if (!empty($_SESSION['errors'])) {
-        foreach ($_SESSION['errors'] as $message) {
-            flash()->error($message);
-        }
-    }
-
     // Annullo le notifiche (AJAX)
     if (isAjaxRequest()) {
         flash()->clearMessage('info');

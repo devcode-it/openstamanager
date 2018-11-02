@@ -2,36 +2,43 @@
 
 include_once __DIR__.'/../core.php';
 
+include App::filepath('include/layout|custom|', 'header.php');
+
 $paths = App::getPaths();
 $user = Auth::user();
 
-$pageTitle = $pageTitle ?: $structure->title;
-
-$messages = flash()->getMessages();
-
-echo '<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>'.$pageTitle.' - '.tr('OpenSTAManager').'</title>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-
-        <meta name="robots" content="noindex,nofollow">
-
-		<link href="'.$paths['img'].'/favicon.png" rel="icon" type="image/x-icon" />';
-
-// CSS
-foreach (App::getAssets()['css'] as $style) {
-    echo '
-        <link rel="stylesheet" type="text/css" media="all" href="'.$style.'"/>';
-}
-
-// Print CSS
-foreach (App::getAssets()['print'] as $style) {
-    echo '
-        <link rel="stylesheet" type="text/css" media="print" href="'.$style.'"/>';
-}
+$translations = [
+    'day' => tr('Giorno'),
+    'week' => tr('Settimana'),
+    'month' => tr('Mese'),
+    'today' => tr('Oggi'),
+    'firstThreemester' => tr('I trimestre'),
+    'secondThreemester' => tr('II trimestre'),
+    'thirdThreemester' => tr('III trimestre'),
+    'fourthThreemester' => tr('IV trimestre'),
+    'firstSemester' => tr('I semestre'),
+    'secondSemester' => tr('II semestre'),
+    'thisMonth' => tr('Questo mese'),
+    'lastMonth' => tr('Mese scorso'),
+    'thisYear' => tr("Quest'anno"),
+    'lastYear' => tr('Anno scorso'),
+    'apply' => tr('Applica'),
+    'cancel' => tr('Annulla'),
+    'from' => tr('Da'),
+    'to' => tr('A'),
+    'custom' => tr('Personalizzato'),
+    'delete' => tr('Elimina'),
+    'deleteTitle' => tr('Sei sicuro?'),
+    'deleteMessage' => tr('Eliminare questo elemento?'),
+    'errorTitle' => tr('Errore'),
+    'errorMessage' => tr("Si è verificato un errore nell'esecuzione dell'operazione richiesta"),
+    'close' => tr('Chiudi'),
+    'filter' => tr('Filtra'),
+    'long' => tr('La ricerca potrebbe richiedere del tempo'),
+    'details' => tr('Dettagli'),
+    'waiting' => tr('Impossibile procedere'),
+    'waiting_msg' => tr('Prima di proseguire devi selezionare alcuni elementi!'),
+];
 
 if (Auth::check()) {
     echo '
@@ -53,38 +60,6 @@ if (Auth::check()) {
 
     echo '
             translations = {';
-    $translations = [
-        'day' => tr('Giorno'),
-        'week' => tr('Settimana'),
-        'month' => tr('Mese'),
-        'today' => tr('Oggi'),
-        'firstThreemester' => tr('I trimestre'),
-        'secondThreemester' => tr('II trimestre'),
-        'thirdThreemester' => tr('III trimestre'),
-        'fourthThreemester' => tr('IV trimestre'),
-        'firstSemester' => tr('I semestre'),
-        'secondSemester' => tr('II semestre'),
-        'thisMonth' => tr('Questo mese'),
-        'lastMonth' => tr('Mese scorso'),
-        'thisYear' => tr("Quest'anno"),
-        'lastYear' => tr('Anno scorso'),
-        'apply' => tr('Applica'),
-        'cancel' => tr('Annulla'),
-        'from' => tr('Da'),
-        'to' => tr('A'),
-        'custom' => tr('Personalizzato'),
-        'delete' => tr('Elimina'),
-        'deleteTitle' => tr('Sei sicuro?'),
-        'deleteMessage' => tr('Eliminare questo elemento?'),
-        'errorTitle' => tr('Errore'),
-        'errorMessage' => tr("Si è verificato un errore nell'esecuzione dell'operazione richiesta"),
-        'close' => tr('Chiudi'),
-        'filter' => tr('Filtra'),
-        'long' => tr('La ricerca potrebbe richiedere del tempo'),
-        'details' => tr('Dettagli'),
-        'waiting' => tr('Impossibile procedere'),
-        'waiting_msg' => tr('Prima di proseguire devi selezionare alcuni elementi!'),
-    ];
     foreach ($translations as $key => $value) {
         echo '
                 '.$key.': \''.addslashes($value).'\',';
@@ -122,34 +97,7 @@ if (Auth::check()) {
                 tempo_attesa_ricerche: '.setting('Tempo di attesa ricerche in secondi').',
             };
 		</script>';
-} else {
-    echo '
-        <script>
-            globals = {
-                locale: \''.$lang.'\',
-                full_locale: \''.$lang.'_'.strtoupper($lang).'\',
-            };
-        </script>';
-}
 
-// JS
-foreach (App::getAssets()['js'] as $js) {
-    echo '
-        <script type="text/javascript" charset="utf-8" src="'.$js.'"></script>';
-}
-
-// Impostazioni di default per gli alert
-echo '
-        <script>
-            swal.setDefaults({
-                buttonsStyling: false,
-                confirmButtonClass: "btn btn-lg btn-primary",
-                cancelButtonClass: "btn btn-lg",
-                cancelButtonText: "'.tr('Annulla').'",
-            });
-        </script>';
-
-if (Auth::check()) {
     // Barra di debug
     if (App::debug()) {
         $debugbarRenderer = $debugbar->getJavascriptRenderer();
@@ -167,13 +115,8 @@ if (Auth::check()) {
     }
 }
 
-$hide_sidebar = Auth::check() && setting('Nascondere la barra sinistra di default');
 echo '
-
-    </head>
-
-	<body class="skin-'.$theme.(!empty($hide_sidebar) ? ' sidebar-collapse' : '').(!Auth::check() ? ' hold-transition login-page' : '').'">
-		<div class="'.(!Auth::check() ? '' : 'wrapper').'">';
+		<div class="'.(!Auth::check() ? 'hold-transition login-page' : 'wrapper'.(!empty(setting('Nascondere la barra sinistra di default')) ? ' sidebar-collapse' : '')).'">';
 
 if (Auth::check()) {
     $calendar = ($_SESSION['period_start'] != date('Y').'-01-01' || $_SESSION['period_end'] != date('Y').'-12-31') ? 'red' : 'white';
@@ -299,51 +242,6 @@ if (Auth::check()) {
 } else {
     // Eventuale messaggio personalizzato per l'installazione corrente
     include_once App::filepath('include/custom/extra', 'login.php');
-
-    if (!empty($messages['info']) || !empty($messages['warning']) || !empty($messages['error'])) {
-        echo '
-            <div class="box box-warning box-center">
-                <div class="box-header with-border text-center">
-                    <h3 class="box-title">'.tr('Informazioni').'</h3>
-                </div>
-
-                <div class="box-body">';
-    }
 }
 
-// Infomazioni
-if (!empty($messages['info'])) {
-    foreach ($messages['info'] as $value) {
-        echo '
-							<div class="alert alert-success push">
-                                <i class="fa fa-check"></i> '.$value.'
-                            </div>';
-    }
-}
-
-// Errori
-if (!empty($messages['error'])) {
-    foreach ($messages['error'] as $value) {
-        echo '
-							<div class="alert alert-danger push">
-                                <i class="fa fa-times"></i> '.$value.'
-                            </div>';
-    }
-}
-
-// Avvisi
-if (!empty($messages['warning'])) {
-    foreach ($messages['warning'] as $value) {
-        echo '
-							<div class="alert alert-warning push">
-                                <i class="fa fa-warning"></i>
-                                '.$value.'
-                            </div>';
-    }
-}
-
-if (!Auth::check() && (!empty($messages['info']) || !empty($messages['warning']) || !empty($messages['error']))) {
-    echo '
-                </div>
-            </div>';
-}
+include_once App::filepath('include/layout|custom|', 'messages.php');

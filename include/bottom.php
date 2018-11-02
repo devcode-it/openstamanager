@@ -50,13 +50,4 @@ if (Auth::check()) {
     }
 }
 
-echo '
-	</body>
-</html>';
-
-// Retrocompatibilità
-if (!empty($id_record) || basename($_SERVER['PHP_SELF']) == 'controller.php' || basename($_SERVER['PHP_SELF']) == 'index.php') {
-    unset($_SESSION['infos']);
-    unset($_SESSION['errors']);
-    unset($_SESSION['warnings']);
-}
+include App::filepath('include/layout|custom|', 'footer.php');

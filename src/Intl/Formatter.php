@@ -162,7 +162,7 @@ class Formatter
         $pieces = explode($this->getNumberSeparators()['decimals'], $value);
         $integer = str_replace(array_values($this->getNumberSeparators()), '', $pieces[0]);
 
-        if (!ctype_digit($number) || (strlen($integer) != strlen((int) $integer))) {
+        if (!ctype_digit($number) || (strlen($integer) != strlen((int) $integer)) || is_numeric($value)) {
             return false;
         }
 

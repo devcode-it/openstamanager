@@ -22,6 +22,10 @@ class Zip
         return extension_loaded('zip');
     }
 
+    public static function getExtractionDirectory(){
+        return DOCROOT.'/tmp';
+    }
+
     /**
      * Estrae i contenuti di un file ZIP in una cartella temporanea.
      *
@@ -40,7 +44,7 @@ class Zip
         }
 
         // Percorso di estrazione
-        $extraction_dir = DOCROOT.'/tmp';
+        $extraction_dir = self::getExtractionDirectory();
         directory($extraction_dir);
 
         // Estrazione dell'archivio

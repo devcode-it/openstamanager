@@ -2,25 +2,44 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Util\Zip;
+
+use Modules\Aggiornamenti\Aggiornamento;
+
 $id = post('id');
 
 switch (post('op')) {
     case 'check':
-        $api = json_decode(get_remote_data('https://api.github.com/repos/devcode-it/openstamanager/releases'), true);
-
-        $version = ltrim($api[0]['tag_name'], 'v');
-        $current = Update::getVersion();
-
-        if (version_compare($current, $version) < 0) {
-            echo $version;
-        } else {
-            echo 'none';
-        }
+        echo Aggiornamento::isAvaliable();
 
         break;
 
     case 'upload':
-        include $docroot.'/modules/aggiornamenti/upload_modules.php';
+        if (!setting('Attiva aggiornamenti')) {
+            die(tr('Accesso negato'));
+        }
+
+        if (!extension_loaded('zip')) {
+            flash()->error(tr('Estensione zip non supportata!').'<br>'.tr('Verifica e attivala sul tuo file _FILE_', [
+                '_FILE_' => '<b>php.ini</b>',
+            ]));
+
+            return;
+        }
+
+        $update = Aggiornamento::make($_FILES['blob']['tmp_name']);
+        $update->execute();
+
+        // Redirect
+        redirect(ROOTDIR.'/editor.php?id_module='.$id_module);
+        break;
+
+    case 'execute':
+        $update = new Aggiornamento();
+        $update->execute();
+
+        // Redirect
+        redirect(ROOTDIR.'/editor.php?id_module='.$id_module);
 
         break;
 

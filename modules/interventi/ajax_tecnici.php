@@ -96,7 +96,7 @@ if (!empty($sessioni)) {
         // ORE
         echo '
             <td style="border-right:1px solid #aaa;">
-                '.Translator::numberToLocale($sesssione['ore']).'
+                '.Translator::numberToLocale($sessione['ore']).'
 
                 <div class="extra hide">
                     <table class="table table-condensed table-bordered">

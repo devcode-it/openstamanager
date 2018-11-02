@@ -127,7 +127,7 @@ class Fattura extends Model
         // Recupero maschera per questo segmento
         $maschera = static::getMaschera($id_segment);
 
-        $ultima_fattura = $database->fetchOne('SELECT numero FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.(($direzione == 'uscita') ? 'ORDER BY numero DESC' : static::getMascheraOrder($maschera)), [
+        $ultima_fattura = $database->fetchOne('SELECT numero FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.(($direzione == 'uscita') ? 'ORDER BY CAST(numero AS UNSIGNED) DESC' : static::getMascheraOrder($maschera)), [
             ':year' => date('Y', strtotime($data)),
             ':id_segment' => $id_segment,
         ]);

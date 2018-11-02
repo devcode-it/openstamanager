@@ -55,7 +55,11 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
     $dbo = database();
 
     // Controllo sull'identità del tecnico
-    $tecnico = $dbo->fetchOne('SELECT an_anagrafiche.idanagrafica, an_anagrafiche.email FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.id=an_tipianagrafiche_anagrafiche.id_tipo_anagrafica WHERE an_anagrafiche.idanagrafica = '.prepare($idtecnico)." AND an_tipianagrafiche.descrizione = 'Tecnico'");
+    $tecnico = $dbo->fetchOne('SELECT an_anagrafiche.idanagrafica, an_sedi.email, an_sedi.km FROM an_anagrafiche
+    INNER JOIN `an_sedi` ON `an_sedi`.`id`=`an_anagrafiche`.`id_sede_legale`
+    INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica
+    INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.id=an_tipianagrafiche_anagrafiche.id_tipo_anagrafica
+    WHERE an_anagrafiche.idanagrafica = '.prepare($idtecnico)." AND an_tipianagrafiche.descrizione = 'Tecnico'");
     if (empty($tecnico)) {
         return false;
     }
@@ -73,8 +77,7 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
 
     // Sede legale
     elseif (empty($idsede)) {
-        $rs2 = $dbo->fetchArray('SELECT km FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
-        $km = $rs2[0]['km'];
+        $km = $tecnico['km'];
     }
 
     // Sede secondaria
@@ -104,7 +107,7 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
 
     // ...altrimenti se non c'è una tariffa per il tecnico leggo i costi globali
     else {
-        $rsc = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE id_tipo_intervento='.prepare($id_tipo_intervento));
+        $rsc = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE id='.prepare($id_tipo_intervento));
 
         $costo_ore = $rsc[0]['costo_orario'];
         $costo_km = $rsc[0]['costo_km'];

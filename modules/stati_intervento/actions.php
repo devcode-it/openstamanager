@@ -11,7 +11,7 @@ switch (post('op')) {
             'notifica' => post('notifica'),
             'id_email' => post('email'),
             'destinatari' => post('destinatari'),
-        ], ['id_stato' => $id_record]);
+        ], ['id' => $id_record]);
 
         flash()->info(tr('Informazioni salvate correttamente.'));
 

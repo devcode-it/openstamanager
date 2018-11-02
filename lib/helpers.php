@@ -36,45 +36,45 @@ function prepare($parameter)
  *
  * @param string $param  Nome del parametro
  * @param string $method Posizione del parametro (post o get)
- * @param bool   $raw    Restituire il valore non formattato
+ * @param bool   $parse    Restituire il valore formattato
  *
  * @since 2.3
  *
  * @return string
  */
-function filter($param, $method = null, $raw = false)
+function filter($param, $method = null, $parse = false)
 {
-    return \Filter::getValue($param, $method, $raw);
+    return \Filter::getValue($param, $method, $parse);
 }
 
 /**
  * Restituisce il contenuto sanitarizzato dell'input dell'utente.
  *
  * @param string $param Nome del parametro
- * @param bool   $raw   Restituire il valore non formattato
+ * @param bool   $parse   Restituire il valore formattato
  *
  * @since 2.3
  *
  * @return string
  */
-function post($param, $raw = false)
+function post($param, $parse = false)
 {
-    return \Filter::getValue($param, 'post', $raw);
+    return \Filter::getValue($param, 'post', $parse);
 }
 
 /**
  * Restituisce il contenuto sanitarizzato dell'input dell'utente.
  *
  * @param string $param Nome del parametro
- * @param bool   $raw   Restituire il valore non formattato
+ * @param bool   $parse   Restituire il valore formattato
  *
  * @since 2.3
  *
  * @return string
  */
-function get($param, $raw = false)
+function get($param, $parse = false)
 {
-    return \Filter::getValue($param, 'get', $raw);
+    return \Filter::getValue($param, 'get', $parse);
 }
 
 /**

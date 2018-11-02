@@ -18,7 +18,7 @@ switch ($op) {
                 'matricola' => $matricola,
                 'descrizione' => post('descrizione'),
                 'idsede' => post('idsede'),
-                'data' => post('data'),
+                'data' => post('data', true),
                 'proprietario' => post('proprietario'),
                 'palazzo' => post('palazzo'),
                 'ubicazione' => post('ubicazione'),

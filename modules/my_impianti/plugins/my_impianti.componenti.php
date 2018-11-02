@@ -5,7 +5,7 @@ include_once __DIR__.'/../../../core.php';
 switch (filter('op')) {
     case 'updatecomponente':
         $idcomponente = get('id');
-        $data = post('data_componente');
+        $data = post('data_componente', true);
 
         // Ricavo il valore di contenuto leggendolo dal db
         $query = 'SELECT * FROM my_impianto_componenti WHERE idimpianto='.prepare($id_record).' AND id='.prepare($idcomponente);

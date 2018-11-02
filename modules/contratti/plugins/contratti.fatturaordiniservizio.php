@@ -70,7 +70,7 @@ elseif (get('op') == 'del_pianificazione') {
 elseif (get('op') == 'addfattura') {
     $idpianificazione = get('idpianificazione');
     $descrizione = post('note');
-    $data = post('data');
+    $data = post('data', true);
     $id_tipo_documento = post('id_tipo_documento');
     $note = post('note');
 

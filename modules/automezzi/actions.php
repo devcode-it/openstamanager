@@ -43,13 +43,13 @@ switch (post('op')) {
     // Aggiunta tecnico
     case 'addtech':
         $idtecnico = post('idtecnico');
-        $data_inizio = post('data_inizio');
+        $data_inizio = post('data_inizio', true);
         $data_fine = null;
 
         // Controllo sull'effettivo inserimento di una data di fine successiva a quella di inizio
-        if (!empty(post('data_fine'))) {
-            if (new DateTime(post('data_fine')) >= new DateTime($data_inizio)) {
-                $data_fine = post('data_fine');
+        if (!empty(post('data_fine', true))) {
+            if (new DateTime(post('data_fine', true)) >= new DateTime($data_inizio)) {
+                $data_fine = post('data_fine', true);
             }
         }
         $data_fine = $data_fine ?: null;
@@ -69,15 +69,15 @@ switch (post('op')) {
     case 'savetech':
         $errors = 0;
 
-        foreach (post('data_inizio') as $idautomezzotecnico => $data) {
+        foreach (post('data_inizio', true) as $idautomezzotecnico => $data) {
             $idautomezzotecnico = $idautomezzotecnico;
-            $data_inizio = post('data_inizio')[$idautomezzotecnico];
+            $data_inizio = post('data_inizio', true)[$idautomezzotecnico];
             $data_fine = null;
 
             // Controllo sull'effettivo inserimento di una data di fine successiva a quella di inizio
-            if (!empty(post('data_fine')[$idautomezzotecnico])) {
-                if (new DateTime(post('data_fine')[$idautomezzotecnico]) >= new DateTime($data_inizio)) {
-                    $data_fine = post('data_fine')[$idautomezzotecnico];
+            if (!empty(post('data_fine', true)[$idautomezzotecnico])) {
+                if (new DateTime(post('data_fine', true)[$idautomezzotecnico]) >= new DateTime($data_inizio)) {
+                    $data_fine = post('data_fine', true)[$idautomezzotecnico];
                 }
             }
             $data_fine = $data_fine ?: null;
@@ -113,7 +113,7 @@ switch (post('op')) {
     // Aggiunta quantità nell'automezzo
     case 'addrow':
         $idarticolo = post('idarticolo');
-        $qta = post('qta');
+        $qta = post('qta', true);
 
         $rs = $dbo->fetchArray('SELECT id, qta FROM mg_articoli_automezzi WHERE idarticolo='.prepare($idarticolo).' AND idautomezzo='.prepare($id_record));
 

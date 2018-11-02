@@ -8,7 +8,7 @@ switch (post('op')) {
     case 'add':
         $all_ok = true;
         $iddocumento = post('iddocumento');
-        $data = post('data');
+        $data = post('data', true);
         $idmastrino = get_new_idmastrino();
         $descrizione = post('descrizione');
 
@@ -108,7 +108,7 @@ switch (post('op')) {
     case 'editriga':
         $all_ok = true;
         $iddocumento = post('iddocumento');
-        $data = post('data');
+        $data = post('data', true);
         $idmastrino = post('idmastrino');
         $descrizione = post('descrizione');
 

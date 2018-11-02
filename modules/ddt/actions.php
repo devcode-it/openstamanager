@@ -18,7 +18,7 @@ if ($module['name'] == 'Ddt di vendita') {
 switch (post('op')) {
     case 'add':
         $idanagrafica = post('idanagrafica');
-        $data = post('data');
+        $data = post('data', true);
         $dir = post('dir');
         $id_tipo_ddt = post('id_tipo_ddt');
 
@@ -78,7 +78,7 @@ switch (post('op')) {
 
             // Query di aggiornamento
             $dbo->update('dt_ddt', [
-                'data' => post('data'),
+                'data' => post('data', true),
                 'numero_esterno' => post('numero_esterno'),
                 'note' => post('note'),
                 'note_aggiuntive' => post('note_aggiuntive'),
@@ -142,11 +142,11 @@ switch (post('op')) {
             $descrizione = post('descrizione');
             $idiva = post('idiva');
 
-            $qta = post('qta');
-            $prezzo = post('prezzo');
+            $qta = post('qta', true);
+            $prezzo = post('prezzo', true);
 
             // Calcolo dello sconto
-            $sconto_unitario = post('sconto');
+            $sconto_unitario = post('sconto', true);
             $tipo_sconto = post('tipo_sconto');
             $sconto = calcola_sconto([
                 'sconto' => $sconto_unitario,
@@ -170,11 +170,11 @@ switch (post('op')) {
         $idiva = post('idiva');
         $um = post('um');
 
-        $prezzo = post('prezzo');
-        $qta = post('qta');
+        $prezzo = post('prezzo', true);
+        $qta = post('qta', true);
 
         // Calcolo dello sconto
-        $sconto_unitario = post('sconto');
+        $sconto_unitario = post('sconto', true);
         $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,
@@ -215,7 +215,7 @@ switch (post('op')) {
     // Creazione ddt da ordine
     case 'ddt_da_ordine':
         $totale_ordine = 0.00;
-        $data = post('data');
+        $data = post('data', true);
         $idanagrafica = post('idanagrafica');
         $idpagamento = post('idpagamento');
         $idconto = post('idconto');
@@ -244,7 +244,7 @@ switch (post('op')) {
                 $abilita_serial = post('abilita_serial')[$idriga];
 
                 $subtot = post('subtot')[$idriga] * $qta;
-                $sconto = post('sconto')[$idriga];
+                $sconto = post('sconto', true)[$idriga];
                 $sconto = $sconto * $qta;
 
                 $idiva = post('idiva')[$idriga];
@@ -354,11 +354,11 @@ switch (post('op')) {
             $idriga = post('idriga');
             $descrizione = post('descrizione');
 
-            $prezzo = post('prezzo');
-            $qta = post('qta');
+            $prezzo = post('prezzo', true);
+            $qta = post('qta', true);
 
             // Calcolo dello sconto
-            $sconto_unitario = post('sconto');
+            $sconto_unitario = post('sconto', true);
             $tipo_sconto = post('tipo_sconto');
             $sconto = calcola_sconto([
                 'sconto' => $sconto_unitario,
@@ -525,7 +525,7 @@ switch (post('op')) {
                 $um = post('um')[$i];
 
                 $subtot = post('subtot')[$i] * $qta;
-                $sconto = post('sconto')[$i];
+                $sconto = post('sconto', true)[$i];
                 $sconto = $sconto * $qta;
 
                 $qprc = 'SELECT tipo_sconto, sconto_unitario FROM or_righe_ordini WHERE id='.prepare($idrigaordine);

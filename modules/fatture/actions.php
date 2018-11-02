@@ -27,7 +27,7 @@ if ($module['name'] == 'Fatture di vendita') {
 switch (post('op')) {
     case 'add':
         $idanagrafica = post('idanagrafica');
-        $data = post('data');
+        $data = post('data', true);
         $id_tipo_documento = post('id_tipo_documento');
         $id_segment = post('id_segment');
 
@@ -69,7 +69,7 @@ switch (post('op')) {
 
             // Query di aggiornamento
             $dbo->update('co_documenti', array_merge([
-                'data' => post('data'),
+                'data' => post('data', true),
                 'numero_esterno' => post('numero_esterno'),
                 'note' => post('note'),
                 'note_aggiuntive' => post('note_aggiuntive'),
@@ -267,11 +267,11 @@ switch (post('op')) {
             $idiva = post('idiva');
             $idconto = post('idconto');
 
-            $prezzo = post('prezzo');
+            $prezzo = post('prezzo', true);
             $qta = 1;
 
             // Calcolo dello sconto
-            $sconto_unitario = post('sconto');
+            $sconto_unitario = post('sconto', true);
             $tipo_sconto = post('tipo_sconto');
             $sconto = calcola_sconto([
                 'sconto' => $sconto_unitario,
@@ -403,11 +403,11 @@ switch (post('op')) {
             $idiva = post('idiva');
             $idconto = post('idconto');
 
-            $prezzo = post('prezzo');
+            $prezzo = post('prezzo', true);
             $qta = 1;
 
             // Calcolo dello sconto
-            $sconto_unitario = post('sconto');
+            $sconto_unitario = post('sconto', true);
             $tipo_sconto = post('tipo_sconto');
             $sconto = calcola_sconto([
                 'sconto' => $sconto_unitario,
@@ -485,7 +485,7 @@ switch (post('op')) {
             $articolo = Articolo::make($fattura, $originale);
         }
 
-        $qta = post('qta');
+        $qta = post('qta', true);
         if (!empty($record['is_reversed'])) {
             $qta = -$qta;
         }
@@ -507,8 +507,8 @@ switch (post('op')) {
             $articolo->id_rivalsa_inps = post('id_rivalsa_inps');
         }
 
-        $articolo->costo_unitario = post('prezzo');
-        $articolo->sconto_unitario = post('sconto');
+        $articolo->costo_unitario = post('prezzo', true);
+        $articolo->sconto_unitario = post('sconto', true);
         $articolo->tipo_sconto = post('tipo_sconto');
 
         try {
@@ -533,7 +533,7 @@ switch (post('op')) {
             $riga = Riga::make($fattura);
         }
 
-        $qta = post('qta');
+        $qta = post('qta', true);
         if (!empty($record['is_reversed'])) {
             $qta = -$qta;
         }
@@ -555,9 +555,9 @@ switch (post('op')) {
             $riga->id_rivalsa_inps = post('id_rivalsa_inps');
         }
 
-        $riga->costo_unitario = post('prezzo');
+        $riga->costo_unitario = post('prezzo', true);
         $riga->qta = $qta;
-        $riga->sconto_unitario = post('sconto');
+        $riga->sconto_unitario = post('sconto', true);
         $riga->tipo_sconto = post('tipo_sconto');
 
         $riga->save();
@@ -590,7 +590,7 @@ switch (post('op')) {
     // Creazione fattura da ddt
     case 'fattura_da_ddt':
         $totale_fattura = 0.00;
-        $data = post('data');
+        $data = post('data', true);
         $idanagrafica = post('idanagrafica');
         $idarticolo = post('idarticolo');
         $idpagamento = post('idpagamento');
@@ -627,7 +627,7 @@ switch (post('op')) {
                 $qta = post('qta_da_evadere')[$i];
                 $um = post('um')[$i];
                 $subtot = post('subtot')[$i] * $qta;
-                $sconto = post('sconto')[$i];
+                $sconto = post('sconto', true)[$i];
                 $sconto = $sconto * $qta;
                 $idiva = post('idiva')[$i];
 
@@ -683,7 +683,7 @@ switch (post('op')) {
     // Creazione fattura da ordine
     case 'fattura_da_ordine':
         $totale_fattura = 0.00;
-        $data = post('data');
+        $data = post('data', true);
         $idanagrafica = post('idanagrafica');
         $idarticolo = post('idarticolo');
         $idpagamento = post('idpagamento');
@@ -711,7 +711,7 @@ switch (post('op')) {
                 $subtot = post('subtot')[$i] * $qta;
                 $idiva = post('idiva')[$i];
                 $iva = post('iva')[$i] * $qta;
-                $sconto = post('sconto')[$i];
+                $sconto = post('sconto', true)[$i];
                 $sconto = $sconto * $qta;
 
                 $qprc = 'SELECT tipo_sconto, sconto_unitario FROM or_righe_ordini WHERE id='.prepare($idriga);
@@ -810,7 +810,7 @@ switch (post('op')) {
                 $um = post('um')[$i];
 
                 $subtot = post('subtot')[$i] * $qta;
-                $sconto = post('sconto')[$i];
+                $sconto = post('sconto', true)[$i];
                 $sconto = $sconto * $qta;
 
                 $qprc = 'SELECT tipo_sconto, sconto_unitario FROM dt_righe_ddt WHERE id='.prepare($idrigaddt);
@@ -1109,7 +1109,7 @@ switch (post('op')) {
                 $um = post('um')[$i];
 
                 $subtot = post('subtot')[$i] * $qta;
-                $sconto = post('sconto')[$i];
+                $sconto = post('sconto', true)[$i];
                 $sconto = $sconto * $qta;
 
                 $qprc = 'SELECT tipo_sconto, sconto_unitario FROM or_righe_ordini WHERE id='.prepare($idriga);
@@ -1164,7 +1164,7 @@ switch (post('op')) {
     // Nota di credito
     case 'nota_credito':
         $id_segment = post('id_segment');
-        $data = post('data');
+        $data = post('data', true);
 
         $anagrafica = $fattura->anagrafica()->first();
         $tipo = Tipo::where('descrizione', 'Nota di credito')->where('dir', 'entrata')->first();
@@ -1191,7 +1191,7 @@ switch (post('op')) {
                 $um = post('um')[$i];
 
                 $subtot = post('subtot')[$i] * $qta;
-                $sconto = post('sconto')[$i];
+                $sconto = post('sconto', true)[$i];
                 $sconto = $sconto * $qta;
 
                 $qprc = 'SELECT tipo_sconto, sconto_unitario FROM co_righe_documenti WHERE id='.prepare($idriga);

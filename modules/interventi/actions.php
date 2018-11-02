@@ -18,7 +18,7 @@ switch (post('op')) {
 
         $id_tipo_intervento = post('id_tipo_intervento');
 
-        $data_richiesta = post('data_richiesta');
+        $data_richiesta = post('data_richiesta', true);
         $richiesta = post('richiesta');
         $idsede = post('idsede');
 
@@ -68,8 +68,8 @@ switch (post('op')) {
             //($user['gruppo'] == 'Tecnici' && $user['idanagrafica'] == $rst[0]['idtecnico']) || $user['gruppo'] == 'Amministratori'
 
             // Lettura delle date di inizio e fine intervento
-            $orario_inizio = post('orario_inizio')[$idriga];
-            $orario_fine = post('orario_fine')[$idriga];
+            $orario_inizio = post('orario_inizio', true)[$idriga];
+            $orario_fine = post('orario_fine', true)[$idriga];
 
             // Ricalcolo le ore lavorate
             $ore = calcola_ore_intervento($orario_inizio, $orario_fine);
@@ -122,7 +122,7 @@ switch (post('op')) {
             $prezzo_km_consuntivo_tecnico = $prezzo_km_unitario_tecnico * $km;
 
             // Sconti
-            $sconto_unitario = post('sconto')[$idriga];
+            $sconto_unitario = post('sconto', true)[$idriga];
             $tipo_sconto = post('tipo_sconto')[$idriga];
             $sconto = calcola_sconto([
                 'sconto' => $sconto_unitario,
@@ -190,7 +190,7 @@ switch (post('op')) {
             'tipo_sconto_globale' => $tipo_sconto,
         ], ['id' => $id_record]);
 
-        $stato = $dbo->selectOne('in_statiintervento', '*', ['id_stato' => post('id_stato')]);
+        $stato = $dbo->selectOne('in_statiintervento', '*', ['id' => post('id_stato')]);
         // Notifica chiusura intervento
         if (!empty($stato['notifica']) && !empty($stato['destinatari']) && $stato['id_stato'] != $record['id_stato']) {
             $n = new Notifications\EmailNotification();
@@ -226,7 +226,7 @@ switch (post('op')) {
             $idcontratto_riga = post('idcontratto_riga');
             $id_tipo_intervento = post('id_tipo_intervento');
             $idsede = post('idsede');
-            $data_richiesta = post('data_richiesta');
+            $data_richiesta = post('data_richiesta', true);
             $richiesta = post('richiesta');
             $idautomezzo = null;
 
@@ -336,7 +336,7 @@ switch (post('op')) {
         // Collegamenti tecnici/interventi
         $idtecnici = post('idtecnico');
         foreach ($idtecnici as $idtecnico) {
-            add_tecnico($id_record, $idtecnico, post('orario_inizio'), post('orario_fine'), $idcontratto);
+            add_tecnico($id_record, $idtecnico, post('orario_inizio', true), post('orario_fine', true), $idcontratto);
         }
 
         if (post('ref') == 'dashboard') {
@@ -415,13 +415,13 @@ switch (post('op')) {
     */
     case 'addriga':
         $descrizione = post('descrizione');
-        $qta = post('qta');
+        $qta = post('qta', true);
         $um = post('um');
         $idiva = post('idiva');
-        $prezzo_vendita = post('prezzo_vendita');
-        $prezzo_acquisto = post('prezzo_acquisto');
+        $prezzo_vendita = post('prezzo_vendita', true);
+        $prezzo_acquisto = post('prezzo_acquisto', true);
 
-        $sconto_unitario = post('sconto');
+        $sconto_unitario = post('sconto', true);
         $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,
@@ -443,13 +443,13 @@ switch (post('op')) {
     case 'editriga':
         $idriga = post('idriga');
         $descrizione = post('descrizione');
-        $qta = post('qta');
+        $qta = post('qta', true);
         $um = post('um');
         $idiva = post('idiva');
-        $prezzo_vendita = post('prezzo_vendita');
-        $prezzo_acquisto = post('prezzo_acquisto');
+        $prezzo_vendita = post('prezzo_vendita', true);
+        $prezzo_acquisto = post('prezzo_acquisto', true);
 
-        $sconto_unitario = post('sconto');
+        $sconto_unitario = post('sconto', true);
         $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,
@@ -524,13 +524,13 @@ switch (post('op')) {
         $intervento = Intervento::find($id_record);
         $articolo = Articolo::make($intervento, $originale, post('idautomezzo'));
 
-        $articolo->qta = post('qta');
+        $articolo->qta = post('qta', true);
         $articolo->descrizione = post('descrizione');
-        $articolo->prezzo_vendita = post('prezzo_vendita');
-        $articolo->prezzo_acquisto = post('prezzo_acquisto');
+        $articolo->prezzo_vendita = post('prezzo_vendita', true);
+        $articolo->prezzo_acquisto = post('prezzo_acquisto', true);
         $articolo->um = post('um');
 
-        $articolo->sconto_unitario = post('sconto');
+        $articolo->sconto_unitario = post('sconto', true);
         $articolo->tipo_sconto = post('tipo_sconto');
 
         $articolo->id_iva = post('idiva');
@@ -615,7 +615,7 @@ switch (post('op')) {
                     flash()->info(tr('Firma salvata correttamente!'));
                     flash()->info(tr('Attività completata!'));
 
-                    $stato = $dbo->selectOne('in_statiintervento', '*', ['id_stato' => 'OK']);
+                    $stato = $dbo->selectOne('in_statiintervento', '*', ['id' => 'OK']);
                     // Notifica chiusura intervento
                     if (!empty($stato['notifica']) && !empty($stato['destinatari'])) {
                         $n = new Notifications\EmailNotification();

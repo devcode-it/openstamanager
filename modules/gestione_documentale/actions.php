@@ -7,7 +7,7 @@ switch (post('op')) {
         $dbo->insert('zz_documenti', [
             'idcategoria' => post('nome'),
             'nome' => post('idcategoria'),
-            'data' => post('data'),
+            'data' => post('data', true),
         ]);
         $id_record = $dbo->last_inserted_id();
 
@@ -19,7 +19,7 @@ switch (post('op')) {
         $dbo->update('zz_documenti', [
             'idcategoria' => post('nome'),
             'nome' => post('idcategoria'),
-            'data' => post('data'),
+            'data' => post('data', true),
         ], ['id' => $id_record]);
 
         flash()->info(tr('Informazioni salvate correttamente!'));

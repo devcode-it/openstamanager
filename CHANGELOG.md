@@ -50,6 +50,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 
  - Separazione della gestione delle sedi legali dalle **Anagrafiche**
  - Miglioramenti della struttura del database
+ - Inversione del comportamento della classe **Filter** e degli helper *post*, *get* e *filter* (il secondo parametro restituisce il valore formattato)
 
 ## 2.4.2
 

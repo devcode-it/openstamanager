@@ -19,7 +19,7 @@ switch (filter('op')) {
 
     case 'edit-promemoria':
         $dbo->update('co_promemoria', [
-            'data_richiesta' => post('data_richiesta'),
+            'data_richiesta' => post('data_richiesta', true),
             'id_tipo_intervento' => post('id_tipo_intervento'),
             'richiesta' => post('richiesta'),
             'idimpianti' => implode(',', post('idimpianti')),
@@ -136,8 +136,8 @@ switch (filter('op')) {
                         if ((empty($dbo->fetchArray("SELECT idintervento FROM co_promemoria WHERE id = '".((empty($idriga)) ? $id_record : $idriga)."'")[0]['idintervento'])) && (post('pianifica_intervento'))) {
                             // pianificare anche l' intervento?
                             // if (post('pianifica_intervento')) {
-                            /*$orario_inizio = post('orario_inizio');
-                            $orario_fine = post('orario_fine');*/
+                            /*$orario_inizio = post('orario_inizio', true);
+                            $orario_fine = post('orario_fine', true);*/
 
                             // $idanagrafica = 2;
 
@@ -178,7 +178,7 @@ switch (filter('op')) {
 
                             // aggiungo i tecnici
                             foreach ($idtecnici as $idtecnico) {
-                                add_tecnico($idintervento, $idtecnico, $data_richiesta.' '.post('orario_inizio'), $data_richiesta.' '.post('orario_fine'), $id_parent);
+                                add_tecnico($idintervento, $idtecnico, $data_richiesta.' '.post('orario_inizio', true), $data_richiesta.' '.post('orario_fine', true), $id_parent);
                             }
 
                             // collego l'intervento ai promemoria
@@ -256,12 +256,12 @@ switch (filter('op')) {
         // $idautomezzo = post('idautomezzo');
         $descrizione = post('descrizione');
         $idimpianto = post('idimpianto');
-        $qta = post('qta');
+        $qta = post('qta', true);
         $um = post('um');
-        $prezzo_vendita = post('prezzo_vendita');
+        $prezzo_vendita = post('prezzo_vendita', true);
         $idiva = post('idiva');
 
-        $sconto_unitario = post('sconto');
+        $sconto_unitario = post('sconto', true);
         $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,
@@ -294,13 +294,13 @@ switch (filter('op')) {
     case 'addriga':
 
         $descrizione = post('descrizione');
-        $qta = post('qta');
+        $qta = post('qta', true);
         $um = post('um');
         $idiva = post('idiva');
-        $prezzo_vendita = post('prezzo_vendita');
-        $prezzo_acquisto = post('prezzo_acquisto');
+        $prezzo_vendita = post('prezzo_vendita', true);
+        $prezzo_acquisto = post('prezzo_acquisto', true);
 
-        $sconto_unitario = post('sconto');
+        $sconto_unitario = post('sconto', true);
         $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,
@@ -322,13 +322,13 @@ switch (filter('op')) {
     case 'editriga':
         $idriga = post('idriga');
         $descrizione = post('descrizione');
-        $qta = post('qta');
+        $qta = post('qta', true);
         $um = post('um');
         $idiva = post('idiva');
-        $prezzo_vendita = post('prezzo_vendita');
-        $prezzo_acquisto = post('prezzo_acquisto');
+        $prezzo_vendita = post('prezzo_vendita', true);
+        $prezzo_acquisto = post('prezzo_acquisto', true);
 
-        $sconto_unitario = post('sconto');
+        $sconto_unitario = post('sconto', true);
         $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,

@@ -28,7 +28,7 @@ switch (post('op')) {
     // Modifica articolo
     case 'update':
         $componente = post('componente_filename');
-        $qta = post('qta');
+        $qta = post('qta', true);
 
         $dbo->update('mg_articoli', [
             'codice' => post('codice'),
@@ -38,8 +38,8 @@ switch (post('op')) {
             'id_sottocategoria' => post('subcategoria'),
             'abilita_serial' => post('abilita_serial'),
             'threshold_qta' => post('threshold_qta'),
-            'prezzo_vendita' => post('prezzo_vendita'),
-            'prezzo_acquisto' => post('prezzo_acquisto'),
+            'prezzo_vendita' => post('prezzo_vendita', true),
+            'prezzo_acquisto' => post('prezzo_acquisto', true),
             'idconto_vendita' => post('idconto_vendita'),
             'idconto_acquisto' => post('idconto_acquisto'),
             'idiva_vendita' => post('idiva_vendita'),
@@ -58,7 +58,7 @@ switch (post('op')) {
 
         if ($movimento != 0) {
             $descrizione_movimento = post('descrizione_movimento');
-            $data_movimento = post('data_movimento');
+            $data_movimento = post('data_movimento', true);
 
             add_movimento_magazzino($id_record, $movimento, [], $descrizione_movimento, $data_movimento);
         }

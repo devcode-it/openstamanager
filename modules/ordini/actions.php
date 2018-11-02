@@ -17,7 +17,7 @@ switch (post('op')) {
     case 'add':
         $idanagrafica = post('idanagrafica');
 
-        $data = post('data');
+        $data = post('data', true);
 
         // Leggo se l'ordine è cliente o fornitore
         $rs = $dbo->fetchArray('SELECT id FROM or_tipiordine WHERE dir='.prepare($dir));
@@ -57,7 +57,7 @@ switch (post('op')) {
 
         $numero_esterno = post('numero_esterno');
         $numero = post('numero');
-        $data = post('data');
+        $data = post('data', true);
         $idanagrafica = post('idanagrafica');
         $note = post('note');
         $note_aggiuntive = post('note_aggiuntive');
@@ -138,11 +138,11 @@ switch (post('op')) {
             $idarticolo = post('idarticolo');
             $idiva = post('idiva');
             $descrizione = post('descrizione');
-            $qta = post('qta');
-            $prezzo_vendita = post('prezzo');
+            $qta = post('qta', true);
+            $prezzo_vendita = post('prezzo', true);
 
             // Calcolo dello sconto
-            $sconto_unitario = post('sconto');
+            $sconto_unitario = post('sconto', true);
             $tipo_sconto = post('tipo_sconto');
             $sconto = calcola_sconto([
                 'sconto' => $sconto_unitario,
@@ -161,14 +161,14 @@ switch (post('op')) {
     case 'addriga':
         // Selezione costi da intervento
         $descrizione = post('descrizione');
-        $prezzo = post('prezzo');
-        $qta = post('qta');
+        $prezzo = post('prezzo', true);
+        $qta = post('qta', true);
         $idiva = post('idiva');
         $um = post('um');
         $subtot = $prezzo * $qta;
 
         // Calcolo dello sconto
-        $sconto_unitario = post('sconto');
+        $sconto_unitario = post('sconto', true);
         $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,
@@ -254,14 +254,14 @@ switch (post('op')) {
         if (post('idriga') !== null) {
             $idriga = post('idriga');
             $descrizione = post('descrizione');
-            $prezzo = post('prezzo');
-            $qta = post('qta');
+            $prezzo = post('prezzo', true);
+            $qta = post('qta', true);
             $idiva = post('idiva');
             $um = post('um');
             $subtot = $prezzo * $qta;
 
             // Calcolo dello sconto
-            $sconto_unitario = post('sconto');
+            $sconto_unitario = post('sconto', true);
             $tipo_sconto = post('tipo_sconto');
             $sconto = calcola_sconto([
                 'sconto' => $sconto_unitario,
@@ -369,7 +369,7 @@ switch (post('op')) {
         $idanagrafica = post('idanagrafica');
         $idpreventivo = post('idpreventivo');
 
-        $data = post('data');
+        $data = post('data', true);
 
         // Leggo se l'ordine è cliente o fornitore
         $rs = $dbo->fetchArray('SELECT id FROM or_tipiordine WHERE dir='.prepare($dir));
@@ -416,7 +416,7 @@ switch (post('op')) {
                     $um = post('um')[$i];
                     $subtot = $prezzo * $qta;
                     $idarticolo = post('idarticolo')[$i];
-                    $sconto = post('sconto')[$i];
+                    $sconto = post('sconto', true)[$i];
 
                     // Ottengo le informazioni sullo sconto
                     $qprc = 'SELECT tipo_sconto, sconto_unitario FROM co_righe_preventivi WHERE id='.prepare($i);

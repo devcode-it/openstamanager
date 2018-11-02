@@ -84,10 +84,10 @@ switch (post('op')) {
             // $budget = post('budget');
             // $budget = str_replace( ",", ".", $budget );
 
-            $data_bozza = post('data_bozza');
-            $data_accettazione = post('data_accettazione');
-            $data_rifiuto = post('data_rifiuto');
-            $data_conclusione = post('data_conclusione');
+            $data_bozza = post('data_bozza', true);
+            $data_accettazione = post('data_accettazione', true);
+            $data_rifiuto = post('data_rifiuto', true);
+            $data_conclusione = post('data_conclusione', true);
             $esclusioni = post('esclusioni');
             $descrizione = post('descrizione');
             $validita = post('validita');
@@ -208,11 +208,11 @@ switch (post('op')) {
         $idiva = post('idiva');
         $descrizione = post('descrizione');
 
-        $qta = post('qta');
-        $prezzo = post('prezzo');
+        $qta = post('qta', true);
+        $prezzo = post('prezzo', true);
 
         // Calcolo dello sconto
-        $sconto_unitario = post('sconto');
+        $sconto_unitario = post('sconto', true);
         $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,
@@ -251,12 +251,12 @@ switch (post('op')) {
         $rs = $dbo->fetchArray('SELECT * FROM co_righe_preventivi WHERE id='.prepare($idriga));
         $is_descrizione = $rs[0]['is_descrizione'];
 
-        $qta = post('qta');
-        $prezzo = post('prezzo');
+        $qta = post('qta', true);
+        $prezzo = post('prezzo', true);
         $subtot = $prezzo * $qta;
 
         // Calcolo dello sconto
-        $sconto_unitario = post('sconto');
+        $sconto_unitario = post('sconto', true);
         $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,

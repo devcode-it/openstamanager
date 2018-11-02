@@ -23,16 +23,16 @@ class Filter
      *
      * @return string
      */
-    public static function getValue($property, $method = null, $raw = false)
+    public static function getValue($property, $method = null, $parse = false)
     {
         $value = null;
 
         if (empty($method)) {
-            $value = (self::post($property, $raw) !== null) ? self::post($property, $raw) : self::get($property, $raw);
+            $value = (self::post($property, $parse) !== null) ? self::post($property, $parse) : self::get($property, $parse);
         } elseif (strtolower($method) == 'post') {
-            $value = self::post($property, $raw);
+            $value = self::post($property, $parse);
         } elseif (strtolower($method) == 'get') {
-            $value = self::get($property, $raw);
+            $value = self::get($property, $parse);
         }
 
         return $value;
@@ -47,10 +47,10 @@ class Filter
     {
         if (empty(self::$post)) {
             self::$post['raw'] = self::sanitize($_POST);
-            self::$post['data'] = self::parse(self::$post['raw']);
+            self::$post['parsed'] = [];
         }
 
-        return self::$post['data'];
+        return self::$post['parsed'];
     }
 
     /**
@@ -60,11 +60,15 @@ class Filter
      *
      * @return string
      */
-    public static function post($property, $raw = false)
+    public static function post($property, $parse = false)
     {
         self::getPOST();
 
-        $category = empty($raw) ? 'data' : 'raw';
+        if (!empty($parse) && !isset(self::$post['parsed'][$property])) {
+            self::$post['parsed'][$property] = self::parse(post($property));
+        }
+
+        $category = !empty($parse) ? 'parsed' : 'raw';
 
         if (isset(self::$post[$category][$property])) {
             return self::$post[$category][$property];
@@ -80,10 +84,10 @@ class Filter
     {
         if (empty(self::$get)) {
             self::$get['raw'] = self::sanitize($_GET);
-            self::$get['data'] = self::parse(self::$get['raw']);
+            self::$get['parsed'] = [];
         }
 
-        return self::$get['data'];
+        return self::$get['parsed'];
     }
 
     /**
@@ -93,11 +97,15 @@ class Filter
      *
      * @return string
      */
-    public static function get($property, $raw = false)
+    public static function get($property, $parse = false)
     {
         self::getGET();
 
-        $category = empty($raw) ? 'data' : 'raw';
+        if (!empty($parse) && !isset(self::$get['parsed'][$property])) {
+            self::$get['parsed'][$property] = self::parse(get($property));
+        }
+
+        $category = !empty($parse) ? 'parsed' : 'raw';
 
         if (isset(self::$get[$category][$property])) {
             return self::$get[$category][$property];
@@ -177,9 +185,9 @@ class Filter
     public static function set($method, $property, $value)
     {
         if (strtolower($method) == 'post') {
-            self::$post['data'][$property] = $value;
+            self::$post['parsed'][$property] = $value;
         } elseif (strtolower($method) == 'get') {
-            self::$get['data'][$property] = $value;
+            self::$get['parsed'][$property] = $value;
         }
     }
 }

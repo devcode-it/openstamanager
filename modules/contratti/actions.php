@@ -60,10 +60,10 @@ switch (post('op')) {
                 $budget = $rs[0]['budget'];
             }
 
-            $data_bozza = post('data_bozza');
-            $data_accettazione = post('data_accettazione');
-            $data_rifiuto = post('data_rifiuto');
-            $data_conclusione = post('data_conclusione');
+            $data_bozza = post('data_bozza', true);
+            $data_accettazione = post('data_accettazione', true);
+            $data_rifiuto = post('data_rifiuto', true);
+            $data_conclusione = post('data_conclusione', true);
             $rinnovabile = post('rinnovabile');
 
             $giorni_preavviso_rinnovo = post('giorni_preavviso_rinnovo');
@@ -141,11 +141,11 @@ switch (post('op')) {
         $idarticolo = post('idarticolo');
         $descrizione = post('descrizione');
 
-        $qta = post('qta');
-        $prezzo = post('prezzo');
+        $qta = post('qta', true);
+        $prezzo = post('prezzo', true);
 
         // Calcolo dello sconto
-        $sconto_unitario = post('sconto');
+        $sconto_unitario = post('sconto', true);
         $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,
@@ -186,12 +186,12 @@ switch (post('op')) {
         $idarticolo = post('idarticolo');
         $descrizione = post('descrizione');
 
-        $qta = post('qta');
-        $prezzo = post('prezzo');
+        $qta = post('qta', true);
+        $prezzo = post('prezzo', true);
         $subtot = $prezzo * $qta;
 
         // Calcolo dello sconto
-        $sconto_unitario = post('sconto');
+        $sconto_unitario = post('sconto', true);
         $tipo_sconto = post('tipo_sconto');
         $sconto = calcola_sconto([
             'sconto' => $sconto_unitario,

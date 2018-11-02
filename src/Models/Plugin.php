@@ -58,7 +58,7 @@ class Plugin extends Model
             return;
         }
 
-        $directory = 'modules/'.$this->originalModule()->directory.'|custom|/plugins';
+        $directory = 'modules/'.$this->originalModule->directory.'|custom|/plugins';
 
         return App::filepath($directory, $this->script);
     }
@@ -81,12 +81,12 @@ class Plugin extends Model
 
     public function originalModule()
     {
-        return $this->belongsTo(Module::class, 'idmodule_from')->first();
+        return $this->belongsTo(Module::class, 'idmodule_from');
     }
 
     public function module()
     {
-        return $this->belongsTo(Module::class, 'idmodule_to')->first();
+        return $this->belongsTo(Module::class, 'idmodule_to');
     }
 
     public function groups()

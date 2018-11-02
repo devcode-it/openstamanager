@@ -28,7 +28,7 @@ $idsede = filter('idsede');
 $idimpianto = null;
 $idzona = null;
 $id_tipo_intervento = null;
-$id_stato = null;
+$id_stato_intervento = null;
 $richiesta = null;
 $impianti = [];
 
@@ -43,7 +43,7 @@ if (!empty($idanagrafica)) {
     $rs = $dbo->fetchArray('SELECT id_tipo_intervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
     $id_tipo_intervento = $rs[0]['id_tipo_intervento_default'];
     $idzona = $rs[0]['idzona'];
-    $id_stato = 'WIP';
+    $id_stato_intervento = 'WIP';
     $richiesta = filter('richiesta');
 }
 
@@ -57,10 +57,12 @@ if (null !== filter('orario_inizio') && '00:00:00' != filter('orario_inizio')) {
 }
 
 // Se sto pianificando un contratto, leggo tutti i dati del contratto per predisporre l'aggiunta intervento
-$idcontratto = filter('idcontratto');
-$idordineservizio = filter('idordineservizio');
-$idcontratto_riga = filter('idcontratto_riga');
+//ref (intervento,promemoria,ordine)
+
 $id_intervento = filter('id_intervento');
+$idcontratto = filter('idcontratto');
+$idcontratto_riga = filter('idcontratto_riga');
+$idordineservizio = filter('idordineservizio');
 
 if (!empty($idcontratto) && !empty($idordineservizio)) {
     $rs = $dbo->fetchArray('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS idzona FROM co_contratti WHERE id='.prepare($idcontratto));
@@ -113,7 +115,7 @@ elseif (!empty($idcontratto) && !empty($idcontratto_riga)) {
 
     // Seleziono "In programmazione" come stato
     $rs = $dbo->fetchArray("SELECT * FROM in_statiintervento WHERE id='WIP'");
-    $id_stato = $rs[0]['id_stato'];
+    $id_stato_intervento = $rs[0]['id_stato'];
 }
 
 // Intervento senza sessioni
@@ -127,7 +129,7 @@ elseif (!empty($id_intervento)) {
     $idsede = $rs[0]['idsede'];
     $idanagrafica = $rs[0]['idanagrafica'];
     $idclientefinale = $rs[0]['idclientefinale'];
-    $id_stato = $rs[0]['id_stato'];
+    $id_stato_intervento = $rs[0]['id_stato'];
     $idcontratto = $rs[0]['idcontratto'];
     $idpreventivo = $rs[0]['idpreventivo'];
     $idzona = $rs[0]['idzona'];
@@ -199,6 +201,10 @@ if (!empty($id_intervento)) {
 
 			<!-- RIGA 2 -->
 			<div class="row">
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "<?php echo $idzona; ?>", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "help":"<?php echo 'La zona viene definita automaticamente in base al cliente selezionato'; ?>.", "extra": "readonly", "value": "<?php echo $idzona; ?>" ]}
+                </div>
+
 				<div class="col-md-4">
                     {[ "type": "select", "label": "<?php echo tr('Preventivo'); ?>", "name": "idpreventivo", "value": "<?php echo $idpreventivo; ?>"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "preventivi" ]}
 				</div>
@@ -206,14 +212,14 @@ if (!empty($id_intervento)) {
 				<div class="col-md-4">
                     {[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $idcontratto; ?>"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "contratti" ]}
 				</div>
-
-				<div class="col-md-4" id='impianti'>
-                    {[ "type": "select", "label": "<?php echo tr('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto; ?>"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "impianti-cliente", "icon-after": "add|<?php echo Modules::get('MyImpianti')['id']; ?>|source=Attività|<?php echo (empty($idimpianto)) ? '' : 'disabled'; ?>", "data-heavy": 0 ]}
-				</div>
 			</div>
 
 			<div class="row">
-				<div class="col-md-12">
+                <div class="col-md-6" id='impianti'>
+                    {[ "type": "select", "label": "<?php echo tr('Impianto'); ?>", "multiple": 1, "name": "idimpianti[]", "value": "<?php echo $idimpianto; ?>"<?php echo !empty($idanagrafica) ? '' : ', "placeholder": "'.tr('Seleziona prima un cliente').'..."'; ?>, "ajax-source": "impianti-cliente", "icon-after": "add|<?php echo Modules::get('MyImpianti')['id']; ?>|source=Attività|<?php echo (empty($idimpianto)) ? '' : 'disabled'; ?>", "data-heavy": 0 ]}
+                </div>
+
+                <div class="col-md-6">
                     {[ "type": "select", "label": "<?php echo tr('Componenti'); ?>", "multiple": 1, "name": "componenti[]", "placeholder": "<?php echo tr('Seleziona prima un impianto'); ?>...", "ajax-source": "componenti" ]}
 				</div>
 			</div>
@@ -229,23 +235,16 @@ if (!empty($id_intervento)) {
 		<div class="panel-body">
 			<!-- RIGA 3 -->
 			<div class="row">
-				<div class="col-md-6">
-					{[ "type": "timestamp", "label": "<?php echo tr('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "<?php echo $data_richiesta ?: '-now-'; ?>" ]}
-				</div>
+                <div class="col-md-4">
+                    {[ "type": "timestamp", "label": "<?php echo tr('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "<?php echo $data_richiesta ?: '-now-'; ?>" ]}
+                </div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "<?php echo $idzona; ?>", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "help":"<?php echo 'La zona viene definita automaticamente in base al cliente selezionato'; ?>.", "extra": "readonly", "value": "<?php echo $idzona; ?>" ]}
-				</div>
-			</div>
-
-			<!-- RIGA 4 -->
-			<div class="row">
-				<div class="col-md-6">
 					{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "id_tipo_intervento", "required": 1, "values": "query=SELECT id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "<?php echo $id_tipo_intervento; ?>", "ajax-source": "tipiintervento" ]}
 				</div>
 
-				<div class="col-md-6">
-					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "id_stato", "required": 1, "values": "query=SELECT id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "<?php echo $id_stato; ?>" ]}
+				<div class="col-md-4">
+					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "id_stato_intervento", "required": 1, "values": "query=SELECT id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "<?php echo $id_stato_intervento_intervento; ?>" ]}
 				</div>
 			</div>
 
@@ -362,19 +361,20 @@ if (!empty($id_intervento)) {
 		session_set('superselect,idanagrafica', $(this).val(), 0);
 
         var value = !$(this).val() ? true : false;
+        var placeholder = !$(this).val() ? '<?php echo tr("Seleziona prima un cliente...");?>' : '<?php echo tr("-Seleziona un\'opzione-");?>';
 
 		$("#idsede").prop("disabled", value);
-		$("#idsede").selectReset();
+		$("#idsede").selectReset(placeholder);
 
 		$("#idpreventivo").prop("disabled", value);
-		$("#idpreventivo").selectReset();
+		$("#idpreventivo").selectReset(placeholder);
 
 		$("#idcontratto").prop("disabled", value);
-		$("#idcontratto").selectReset();
+		$("#idcontratto").selectReset(placeholder);
 
 		$("#idimpianti").prop("disabled", value);
         $("#impianti").find("button").prop("disabled", value);
-		$("#idimpianti").selectReset();
+		$("#idimpianti").selectReset(placeholder);
 
 		if (($(this).val())) {
 			if (($(this).selectData().idzona)){

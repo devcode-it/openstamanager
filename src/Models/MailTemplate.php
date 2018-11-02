@@ -17,7 +17,7 @@ class MailTemplate extends Model
         $dbo = $database = database();
 
         // Lettura delle variabili del modulo collegato
-        $variables = include $this->module()->filepath('variables.php');
+        $variables = include $this->module->filepath('variables.php');
 
         return (array) $variables;
     }

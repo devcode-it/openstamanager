@@ -11,17 +11,13 @@ if ($user['gruppo'] == 'Tecnici') {
 
 $sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE in_interventi_tecnici.id = '.prepare(get('id_sessione')));
 
-if (empty($sessione)) {
-    $op = 'add_sessione';
-    $button = '<i class="fa fa-plus"></i> '.tr('Aggiungi');
-} else {
-    $op = 'edit_sessione';
-    $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
-}
+$op = 'edit_sessione';
+$button = '<i class="fa fa-edit"></i> '.tr('Modifica');
 
 echo '
-<form id="add_form" action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
+<form id="add_form" action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.get('id_record').'" method="post">
     <input type="hidden" name="op" value="'.$op.'">
+    <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="id_sessione" value="'.$sessione['id'].'">';
 
 // Tecnico
@@ -31,11 +27,15 @@ echo '
 // Orari
 echo '
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "id_tipo_intervento", "value": "'.$sessione['id_tipo_intervento'].'", "required": 1, "values": "query=SELECT id, descrizione, IFNULL((SELECT costo_ore FROM in_tariffe WHERE id_tipo_intervento=in_tipiintervento.id AND idtecnico='.prepare($sessione['idtecnico']).'), 0) AS costo_orario FROM in_tipiintervento ORDER BY descrizione" ]}
+        </div>
+
+        <div class="col-md-4">
             {[ "type": "timestamp", "label": "'.tr('Inizio attività').'", "name": "orario_inizio", "required": 1, "value": "'.$sessione['orario_inizio'].'" ]}
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-4">
             {[ "type": "timestamp", "label": "'.tr('Fine attività').'", "name": "orario_fine", "required": 1, "value": "'.$sessione['orario_fine'].'" ]}
         </div>
     </div>';

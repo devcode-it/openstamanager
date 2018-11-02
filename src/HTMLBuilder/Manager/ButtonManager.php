@@ -63,7 +63,7 @@ class ButtonManager implements ManagerInterface
         // Modal
         if (isset($info['type']) && $info['type'] == 'modal') {
             $result = '
-<a '.$class.' data-href="'.$info['link'].'" data-toggle="modal" data-title="'.$title.'" data-target="#bs-popup">';
+<a '.$class.' data-href="'.$info['link'].'" data-toggle="modal" data-title="'.$title.'">';
         }
 
         // Link normale

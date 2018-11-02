@@ -61,22 +61,22 @@ if (!empty($rs)) {
 
             $extra = '';
             $mancanti = 0;
-
-            // Individuazione dei seriali
-            if (!empty($r['abilita_serial'])) {
-                $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_documento='.prepare($r['id'])), 'serial');
-                $mancanti = $r['qta'] - count($serials);
-
-                if ($mancanti > 0) {
-                    $extra = 'class="warning"';
-                } else {
-                    $mancanti = 0;
-                }
-            }
         }
         // Righe generiche
         else {
             $delete = 'unlink_riga';
+        }
+        
+        // Individuazione dei seriali
+        if (!empty($r['abilita_serial'])) {
+            $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_documento='.prepare($r['id'])), 'serial');
+            $mancanti = $r['qta'] - count($serials);
+            
+            if ($mancanti > 0) {
+                $extra = 'class="warning"';
+            } else {
+                $mancanti = 0;
+            }
         }
 
         echo '
@@ -399,17 +399,19 @@ $(document).ready(function(){
 			cursor: "move",
 			dropOnEmpty: true,
 			scroll: true,
-			start: function(event, ui) {
-				ui.item.data("start", ui.item.index());
-			},
 			update: function(event, ui) {
+                var order = "";
+                $(".table tr[data-id]").each( function(){
+                    order += ","+$(this).data("id");
+                });
+                order = order.replace(/^,/, "");
+                
 				$.post("'.$rootdir.'/actions.php", {
 					id: ui.item.data("id"),
 					id_module: '.$id_module.',
 					id_record: '.$id_record.',
 					op: "update_position",
-					start: ui.item.data("start"),
-					end: ui.item.index()
+                    order: order,
 				});
 			}
 		});

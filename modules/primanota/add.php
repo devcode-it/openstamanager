@@ -50,7 +50,7 @@ include_once __DIR__.'/../../core.php';
             Calcolo totale per chiudere la fattura
         */
         // Lettura importo da scadenzario (seleziono l'importo di questo mese)
-        $query = 'SELECT *, scadenza, ABS(da_pagare-pagato) AS rata FROM co_scadenziario WHERE iddocumento='.prepare($iddocumento)." AND ABS(da_pagare) > ABS(pagato) ORDER BY DATE_FORMAT(scadenza,'%m/%Y') ASC";
+        $query = 'SELECT *, scadenza, ABS(da_pagare-pagato) AS rata FROM co_scadenziario WHERE iddocumento='.prepare($iddocumento)." AND ABS(da_pagare) > ABS(pagato) ORDER BY DATE_FORMAT(scadenza,'%m/%Y') DESC";
         $rs = $dbo->fetchArray($query);
         $importo_conto_aziendale = $rs[0]['rata'];
 

@@ -97,17 +97,16 @@ for ($i = 0; $i < count($rs); ++$i) {
                             </td>
 
                             <td align="right">
-                                {[ "type": "number", "name": "scadenza['.$rs[$i]['id'].']", "value": "'.Translator::numberToLocale($rs[$i]['da_pagare']).'" ]}
+                                {[ "type": "number", "name": "scadenza['.$rs[$i]['id'].']", "value": "'.Translator::numberToLocale($rs[$i]['da_pagare'], 4).'", "decimals":"4" ]}
                             </td>
 
                             <td align="right">
-                                {[ "type": "number", "name": "pagato['.$rs[$i]['id'].']", "value": "'.Translator::numberToLocale($rs[$i]['pagato']).'" ]}
+                                {[ "type": "number", "name": "pagato['.$rs[$i]['id'].']", "value": "'.Translator::numberToLocale($rs[$i]['pagato'], 4).'",  "decimals":"4"  ]}
                             </td>
                         </tr>';
-
-    $totale_da_pagare += $rs[$i]['da_pagare'];
-    $totale_pagato += $rs[$i]['pagato'];
 }
+$totale_da_pagare = sum(array_column($rs, 'da_pagare'));
+$totale_pagato = sum(array_column($rs, 'pagato'));
 
 echo '
                         <tr>
@@ -119,12 +118,15 @@ echo '
 ?>
 
 					</table>
-
+				
 					<a onclick="launch_modal( 'Aggiungi prima nota', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&iddocumento=<?php echo $record['iddocumento']; ?>&dir=<?php echo $dir; ?>', 1 );" class="btn btn-sm btn-primary pull-right"><i class="fa fa-euro"></i> <?php echo tr('Aggiungi prima nota...'); ?></a>
+					
+					<div class="clearfix"></div>
 
-					<p class="text-danger hide" id="totale"><?php echo tr('Il totale da pagare deve essere pari a _NUM_', [
+					<div class="alert alert-error hide" id="totale"><?php echo tr('Il totale da pagare deve essere pari a _NUM_', [
                         '_NUM_' => '<b>'.Translator::numberToLocale($totale_da_pagare).'&euro;</b>',
-                    ]); ?>.<br><?php echo tr('Differenza di'); ?> <span id="diff"></span> &euro;.</p>
+                    ]); ?>.<br><?php echo tr('Differenza di'); ?> <span id="diff"></span> &euro;.
+					</div>
 
 					<input type="hidden" id="totale_da_pagare" value="<?php echo Translator::numberToLocale($totale_da_pagare); ?>">
 				</div>
@@ -147,7 +149,9 @@ echo '
 		totale_utente		= 0;
 
 		$('input[name*=scadenza]').each( function(){
+			
 			totale_utente += $(this).val().toEnglish();
+		
 		});
 
 		if( isNaN(totale_utente) ){

@@ -14,5 +14,3 @@ if (isset($id_record)) {
     in_interventi.id_preventivo as idpreventivo
     FROM in_interventi WHERE id='.prepare($id_record).Modules::getAdditionalsQuery($id_module));
 }
-
-$jscript_modules[] = $rootdir.'/modules/interventi/js/interventi_helperjs.js';

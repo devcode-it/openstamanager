@@ -35,7 +35,7 @@ class Articolo extends Article
 
     public function movimenta($qta)
     {
-        $articolo = $this->articolo()->first();
+        $articolo = $this->articolo;
 
         // Movimento l'articolo
         if (!empty($this->idautomezzo)) {
@@ -56,7 +56,7 @@ class Articolo extends Article
                 'idintervento' => $this->idintervento,
             ]);
         } else {
-            $intervento = $this->intervento()->first();
+            $intervento = $this->intervento;
 
             $numero = $intervento->codice;
             $data = database()->fetchOne('SELECT MAX(orario_fine) AS data FROM in_interventi_tecnici WHERE idintervento = :id_intervento', [

@@ -1,5 +1,7 @@
 <?php
 
+use Carbon\Carbon;
+
 /**
  * Classe per gestire le traduzioni del progetto.
  *
@@ -115,6 +117,9 @@ class Translator extends Util\Singleton
         if (!empty($locale) && $this->isLocaleAvailable($locale)) {
             $this->translator->setLocale($locale);
             $this->locale = $locale;
+
+            setlocale(LC_TIME, $locale);
+            Carbon::setLocale($locale);
 
             self::$formatter = new Intl\Formatter(
                 $this->locale,

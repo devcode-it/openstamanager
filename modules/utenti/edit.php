@@ -61,7 +61,7 @@ if (!empty($utenti)) {
 
         // Cambio password e nome utente
         echo '
-                <a href="" data-href="'.$rootdir.'/modules/'.Modules::get($id_module)['directory'].'/user.php?id_utente='.$utente['id'].'&idgruppo='.$record['id'].'" class="text-warning tip" data-toggle="modal" data-target="#bs-popup" title="Aggiorna dati utente"  data-title="Aggiorna dati utente"><i class="fa fa-2x fa-unlock-alt"></i></a>';
+                <a href="" data-href="'.$rootdir.'/modules/'.Modules::get($id_module)['directory'].'/user.php?id_utente='.$utente['id'].'&idgruppo='.$record['id'].'" class="text-warning tip" data-toggle="modal" title="Aggiorna dati utente"  data-title="Aggiorna dati utente"><i class="fa fa-2x fa-unlock-alt"></i></a>';
 
         // Disabilitazione token API, se diverso da id_utente #1 (admin)
         if ($utente['id'] != '1') {
@@ -99,7 +99,7 @@ if (!empty($utenti)) {
 			<div class=\'alert alert-info\' ><i class=\'fa fa-info-circle\'></i> '.tr('Non ci sono utenti in questo gruppo').'.</div>';
 }
 echo '
-			<a data-toggle="modal" data-target="#bs-popup" data-href="'.$rootdir.'/modules/utenti/user.php?idgruppo='.$record['id'].'" data-title="'.tr('Aggiungi utente').'" class="pull-right btn btn-primary"><i class="fa fa-plus"></i> '.tr('Aggiungi utente').'</a>
+			<a data-toggle="modal" data-href="'.$rootdir.'/modules/utenti/user.php?idgruppo='.$record['id'].'" data-title="'.tr('Aggiungi utente').'" class="pull-right btn btn-primary"><i class="fa fa-plus"></i> '.tr('Aggiungi utente').'</a>
 		</div>
 	</div>';
 

@@ -50,7 +50,7 @@ echo '
 		</div>';
 
 // Preventivi
-$rsi = $dbo->fetchArray('SELECT co_preventivi.id AS idpreventivo, data_accettazione AS data, ragione_sociale, budget FROM co_preventivi INNER JOIN an_anagrafiche ON co_preventivi.idanagrafica=an_anagrafiche.idanagrafica WHERE co_preventivi.idanagrafica='.prepare($id_record));
+$rsi = $dbo->fetchArray('SELECT co_preventivi.id AS idpreventivo, data_accettazione AS data, ragione_sociale, budget FROM co_preventivi INNER JOIN an_anagrafiche ON co_preventivi.idanagrafica=an_anagrafiche.idanagrafica WHERE co_preventivi.idanagrafica='.prepare($id_record).' AND default_revision = 1');
 $totale_preventivi = 0;
 $data_start = strtotime('now');
 

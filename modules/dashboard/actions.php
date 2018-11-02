@@ -147,7 +147,7 @@ switch (get('op')) {
 
         $rsp = $dbo->fetchArray($qp);
 
-        $interventi = $dbo->fetchArray("SELECT id, richiesta, DATE_FORMAT(data_richiesta,'%m%Y') AS mese, data_richiesta, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE in_tipiintervento.id=in_interventi.id_tipo_intervento) AS tipointervento FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 ORDER BY data_richiesta ASC");
+        $interventi = $dbo->fetchArray("SELECT id, richiesta, id_contratto AS idcontratto, DATE_FORMAT(data_richiesta,'%m%Y') AS mese, data_richiesta, an_anagrafiche.ragione_sociale, 'intervento' AS ref, (SELECT descrizione FROM in_tipiintervento WHERE in_tipiintervento.id=in_interventi.id_tipo_intervento) AS tipointervento FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE (SELECT COUNT(*) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento = in_interventi.id) = 0 ORDER BY data_richiesta ASC");
 
         $rsp = array_merge($rsp, $interventi);
 
@@ -164,7 +164,7 @@ switch (get('op')) {
                     }
 
                     echo '
-                    <div class="fc-event '.$class.'" data-id="'.$r['id'].'" data-idcontratto="'.$r['idcontratto'].'" data-ref="'.$r['ref'].'">
+                    <div class="fc-event '.$class.'" data-id="'.$r['id'].'" data-idcontratto="'.$r['idcontratto'].'" data-ref="'.$r['ref'].'">'.(($r['ref'] == 'intervento') ? '<i class=\'fa fa-wrench pull-right\'></i>' : '<i class=\'fa fa-file-text-o pull-right\'></i>').'
                         <b>'.$r['ragione_sociale'].'</b><br>'.Translator::dateToLocale($r['data_richiesta']).' ('.$r['tipointervento'].')'.(!empty($r['richiesta']) ? ' - '.$r['richiesta'] : '').'
                     </div>';
                 }

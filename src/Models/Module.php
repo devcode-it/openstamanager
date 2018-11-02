@@ -125,6 +125,7 @@ class Module extends Model
     public static function getHierarchy()
     {
         return self::with('allChildren')
+            ->withoutGlobalScope('enabled')
             ->whereNull('parent')
             ->orderBy('order')
             ->get();

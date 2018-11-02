@@ -95,7 +95,7 @@ class FileManager implements ManagerInterface
                     $supported_extensions = ['pdf', 'jpg', 'png', 'gif', 'jpeg', 'bmp'];
                     if (in_array(strtolower($extension), $supported_extensions)) {
                         $result .= "
-                <div class='hide' id='view-".$r['id']."'>";
+                <div class='hide-it-off-screen' id='view-".$r['id']."'>";
 
                         if ($extension == 'pdf') {
                             $result .= '
@@ -183,21 +183,15 @@ class FileManager implements ManagerInterface
 </div>';
         }
 
+        $source = array_clean(array_column($categories, 'category'));
+
         $result .= '
 <script src="'.ROOTDIR.'/lib/init.js"></script>
 
 <script>
 $(document).ready(function(){
     $("#'.$attachment_id.' #categoria").autocomplete({
-        source: [';
-
-        foreach ($categories as $category) {
-            $result .= '
-            "'.$category['category'].'",';
-        }
-
-        $result .= '
-        ],
+        source: '.json_encode($source).',
         minLength: 0
     }).focus(function() {
         $(this).autocomplete("search", $(this).val())

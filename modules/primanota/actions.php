@@ -306,7 +306,7 @@ switch (post('op')) {
                 $dbo->query("UPDATE co_preventivi SET id_stato=(SELECT id FROM co_statipreventivi WHERE descrizione='In attesa di pagamento') WHERE id=".prepare($rs[$i]['idpreventivo']));
 
                 // Aggiorno anche lo stato degli interventi collegati ai preventivi
-                $dbo->query("UPDATE in_interventi SET id_stato=(SELECT id_stato FROM in_statiintervento WHERE descrizione='Completato') WHERE idpreventivo=".prepare($rs[$i]['idpreventivo']));
+                $dbo->query("UPDATE in_interventi SET id_stato=(SELECT id_stato FROM in_statiintervento WHERE descrizione='Completato') WHERE id_preventivo=".prepare($rs[$i]['idpreventivo']));
             }
 
             // Aggiorno lo stato degli interventi collegati alla fattura se ce ne sono

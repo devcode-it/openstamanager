@@ -149,19 +149,19 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
         'orario_inizio' => $inizio,
         'orario_fine' => $fine,
         'ore' => $ore,
-        'prezzo_ore_unitario' => $costo_ore,
-        'prezzo_km_unitario' => $costo_km,
+        'prezzo_ore_unitario' => $costo_ore ?: 0,
+        'prezzo_km_unitario' => $costo_km ?: 0,
 
         'prezzo_ore_consuntivo' => $costo_ore * $ore + $costo_dirittochiamata,
         'prezzo_km_consuntivo' => 0,
-        'prezzo_dirittochiamata' => $costo_dirittochiamata,
+        'prezzo_dirittochiamata' => $costo_dirittochiamata ?: 0,
 
-        'prezzo_ore_unitario_tecnico' => $costo_ore_tecnico,
-        'prezzo_km_unitario_tecnico' => $costo_km_tecnico,
+        'prezzo_ore_unitario_tecnico' => $costo_ore_tecnico ?: 0,
+        'prezzo_km_unitario_tecnico' => $costo_km_tecnico ?: 0,
 
         'prezzo_ore_consuntivo_tecnico' => $costo_ore_tecnico * $ore + $costo_dirittochiamata_tecnico,
         'prezzo_km_consuntivo_tecnico' => 0,
-        'prezzo_dirittochiamata_tecnico' => $costo_dirittochiamata_tecnico,
+        'prezzo_dirittochiamata_tecnico' => $costo_dirittochiamata_tecnico ?: 0,
     ]);
 
     // Notifica nuovo intervento al tecnico

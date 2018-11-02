@@ -47,7 +47,7 @@ for ($x = 0; $x < $n1; ++$x) {
         echo "	</div>\n";
 
         // Livello 3
-        $query3 = "SELECT * FROM `co_pianodeiconti3` WHERE idpianodeiconti2='".$rs2[$y]['id']."' ORDER BY numero ASC";
+        $query3 = 'SELECT `co_pianodeiconti3`.*, `clienti`.`idanagrafica` AS id_cliente, `fornitori`.`idanagrafica` AS id_fornitore FROM `co_pianodeiconti3` LEFT OUTER JOIN `an_anagrafiche` `clienti` ON `clienti`.`idconto_cliente` = `co_pianodeiconti3`.`id` LEFT OUTER JOIN `an_anagrafiche` `fornitori` ON `fornitori`.`idconto_fornitore` = `co_pianodeiconti3`.`id` WHERE `idpianodeiconti2` = '.prepare($rs2[$y]['id']).' ORDER BY numero ASC';
         $rs3 = $dbo->fetchArray($query3);
         $n3 = sizeof($rs3);
 
@@ -96,8 +96,10 @@ for ($x = 0; $x < $n1; ++$x) {
                     <a href="javascript:;" class="btn btn-primary btn-xs plus-btn"><i class="fa fa-plus"></i></a>';
             }
 
+            $id_anagrafica = $rs3[$z]['id_cliente'] ?: $rs3[$z]['id_fornitore'];
+
             echo '
-                    '.$tools.'&nbsp;'.$rs2[$y]['numero'].'.'.$rs3[$z]['numero'].' '.$rs3[$z]['descrizione'].'
+                    '.$tools.'&nbsp;'.$rs2[$y]['numero'].'.'.$rs3[$z]['numero'].' '.$rs3[$z]['descrizione'].' '.(isset($id_anagrafica) ? Modules::link('Anagrafiche', $id_anagrafica, 'Anagrafica', null) : '').'
                 </span>';
 
             echo '			<div id="conto_'.$rs3[$z]['id']."\" style=\"display:none;\">\n";

@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model as Original;
 
 abstract class Model extends Original
 {
+    const UPDATED_AT = null;
+
     /**
      * Crea una nuova istanza del modello.
      *

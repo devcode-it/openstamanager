@@ -66,7 +66,7 @@ if (!empty($rsp)) {
 </h4>';
 
             echo '
-<div id="t1_'.$i.'" '.$attr.'>
+<div id="f_'.$i.'" '.$attr.'>
     <table class="table table-hover table-striped">
         <thead>
             <tr>

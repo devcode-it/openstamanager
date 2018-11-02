@@ -33,35 +33,6 @@ include_once __DIR__.'/../../core.php';
 
 </form>
 
-<div class="panel panel-primary">
-	<div class="panel-heading">
-		<h3 class="panel-title"><?php echo tr('Sottocategorie'); ?></h3>
-	</div>
-
-	<div class="panel-body">
-		<div class="pull-left">
-			<a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/add.php?id_module=<?php echo $id_module; ?>&id_original=<?php echo $id_record; ?>" data-toggle="modal" data-title="<?php echo tr('Aggiungi riga'); ?>" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Sottocategoria'); ?></a><br>
-		</div>
-		<div class="clearfix"></div>
-		<hr>
-
-		<div class="row">
-			<div class="col-md-12">
-				<table class="table table-striped table-hover table-condensed">
-				<tr>
-					<th><?php echo tr('Nome'); ?></th>
-					<th><?php echo tr('Colore'); ?></th>
-					<th><?php echo tr('Nota'); ?></th>
-					<th width="20%"><?php echo tr('Opzioni'); ?></th>
-				</tr>
-
-				<?php include $docroot.'/modules/'.Modules::get($id_module)['directory'].'/row-list.php'; ?>
-				</table>
-			</div>
-		</div>
-	</div>
-</div>
-
 <script>
 	$(document).ready( function(){
 		$('.colorpicker').colorpicker().on('changeColor', function(){
@@ -74,12 +45,12 @@ include_once __DIR__.'/../../core.php';
 
 <?php
 
-$res = $dbo->fetchNum('SELECT * FROM `mg_articoli` WHERE `id_categoria`='.prepare($id_record).' OR `id_sottocategoria`='.prepare($id_record).'  OR `id_sottocategoria` IN (SELECT id FROM `mg_categorie` WHERE `parent`='.prepare($id_record).')');
+$res = $dbo->fetchNum('SELECT * FROM `my_impianti` WHERE `id_categoria`='.prepare($id_record));
 
 if ($res) {
     echo '
     <div class="alert alert-danger">
-        <p>'.tr('Ci sono '.count($res).' articoli collegati questa categoria. Non è possibile eliminarla.').'</p>
+        <p>'.tr('Ci sono '.count($res).' impianti collegati a questa categoria. Non è possibile eliminarla.').'</p>
     </div>';
 } else {
     echo '

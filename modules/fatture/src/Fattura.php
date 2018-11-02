@@ -102,7 +102,7 @@ class Fattura extends Model
 
         // Calcolo dei numeri fattura
         if ($value != $previous) {
-            $direzione = $this->tipo()->dir;
+            $direzione = $this->tipo->dir;
             $data = $this->data;
 
             $this->numero = static::getNumero($data, $direzione, $value);
@@ -123,9 +123,11 @@ class Fattura extends Model
     {
         $database = database();
 
-        $maschera = $direzione == 'uscita' ? static::getMaschera($id_segment) : '#';
+        //$maschera = $direzione == 'uscita' ? static::getMaschera($id_segment) : '#';
+        // Recupero maschera per questo segmento
+        $maschera = static::getMaschera($id_segment);
 
-        $ultima_fattura = $database->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera), [
+        $ultima_fattura = $database->fetchOne('SELECT numero FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.(($direzione == 'uscita') ? 'ORDER BY numero DESC' : static::getMascheraOrder($maschera)), [
             ':year' => date('Y', strtotime($data)),
             ':id_segment' => $id_segment,
         ]);
@@ -324,7 +326,7 @@ class Fattura extends Model
      */
     public function isNotaDiAccredito()
     {
-        return $this->getTipo()['reversed'] == 1;
+        return $this->tipo->reversed == 1;
     }
 
     public function updateSconto()

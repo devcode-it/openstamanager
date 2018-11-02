@@ -513,7 +513,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ALTER TABLE `zz_segments` ADD `is_fiscale` boolean NOT NULL DEFAULT 1;
 
 INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`,`note`, `predefined`, `is_fiscale`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Fatture pro-forma', '1=1', 'WHR', 'PRO-###', '', 1, 0);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Fatture pro-forma', '1=1', 'WHR', 'PRO-###', '', 0, 0);
 
 -- Fix campi di ricerca
 UPDATE `zz_modules` SET `options` = "SELECT |select| FROM `zz_segments` WHERE 1=1 HAVING 2=2 ORDER BY name, id_module" WHERE `name` = 'Segmenti';
@@ -540,3 +540,53 @@ ALTER TABLE `an_zone` CHANGE `default` `default` boolean NOT NULL DEFAULT 0;
 ALTER TABLE `zz_modules` CHANGE `default` `default` boolean NOT NULL DEFAULT 0;
 
 ALTER TABLE `zz_segments` CHANGE `predefined` `predefined` boolean NOT NULL DEFAULT 0;
+
+-- Fix colore per fatture senza numero esterno
+UPDATE `zz_views` SET `query` = 'IF((SELECT COUNT(t.numero_esterno) FROM co_documenti AS t WHERE t.numero_esterno = co_documenti.numero_esterno AND t.numero_esterno != '''' AND t.id_segment = co_documenti.id_segment AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = ''entrata'') AND t.data >= ''|period_start|'' AND t.data <= ''|period_end|'') > 1, ''red'', '''')' WHERE  `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = '_bg_';
+
+-- Campi per la gestione revisioni
+ALTER TABLE `co_preventivi`  ADD `master_revision` INT NOT NULL  AFTER `tipo_sconto_globale`,  ADD `default_revision` TINYINT(1) NOT NULL  AFTER `master_revision`;
+
+-- Plugin revisioni
+INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Revisioni', 'Revisioni', 13, 13, 'tab', '', 1, 0, 0, '', '', NULL, 'custom', 'revisioni', '');
+
+-- Modifica modilo preventivi per revisioni
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_preventivi` WHERE 1=1 AND default_revision=1 HAVING 2=2 AND ((\'|period_start|\' >= `data_bozza` AND \'|period_start|\' <= `data_conclusione`) OR (\'|period_end|\' >= `data_bozza` AND \'|period_end|\' <= `data_conclusione`) OR (`data_bozza` >= \'|period_start|\' AND `data_bozza` <= \'|period_end|\') OR (`data_conclusione` >= \'|period_start|\' AND `data_conclusione` <= \'|period_end|\') OR (`data_bozza` >= \'|period_start|\' AND `data_conclusione` = \'0000-00-00\')) ORDER BY `id` DESC' WHERE `zz_modules`.`name` = 'Preventivi';
+
+-- Chiave secondaria per le righe del preventivo
+ALTER TABLE `co_righe_preventivi` ADD FOREIGN KEY (`idpreventivo`) REFERENCES `co_preventivi`(`id`) ON DELETE CASCADE;
+
+-- Tabella categorie
+CREATE TABLE IF NOT EXISTS `my_impianti_categorie` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(255) NOT NULL,
+  `colore` varchar(255) NOT NULL,
+  `nota` varchar(1000) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- Categoria impianto
+ALTER TABLE `my_impianti` ADD `id_categoria` INT(11) AFTER `idanagrafica`, ADD FOREIGN KEY (`id_categoria`) REFERENCES `my_impianti_categorie`(`id`) ON DELETE SET NULL;
+
+-- Rinominato Categorie in Categorie articoli
+UPDATE `zz_modules` SET `name` = 'Categorie articoli', `title` = 'Categorie articoli', `directory` = 'categorie_articoli' WHERE `zz_modules`.`name` = 'Categorie';
+
+-- Modulo Categorie impianti
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Categorie impianti', 'Categorie impianti', 'categorie_impianti', 'SELECT |select| FROM `my_impianti_categorie` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.4.2', '2.4.2', '1', NULL, '1', '1');
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Categorie impianti' AND `t2`.`name` = 'MyImpianti') SET `t1`.`parent` = `t2`.`id`;
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `visible`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie impianti'), 'id', 'id', 1, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie impianti'), 'Nome', 'nome', 2, 1, 0, 1, 1);
+
+-- Per i preventivi già in essere imposto master_revision = id e default_revision = 1
+UPDATE `co_preventivi` SET `master_revision` = `id`, `default_revision` = 1;
+
+-- Colonna natura iva e codice iva
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'IVA'), 'Natura', 'codice_natura_fe', 2, 1, 0, 0, 1, 0, 1),
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'IVA'), 'Codice', 'codice', 1, 1, 0, 0, 1, 0, 1);
+
+-- Colonna codice modalità pagamento
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Pagamenti'), 'Codice pagamento', 'CONCAT(codice_modalita_pagamento_fe, '' - '', (SELECT descrizione FROM fe_modalita_pagamento WHERE codice = codice_modalita_pagamento_fe) )', 2, 1, 0, 0, 1, 0, 1);

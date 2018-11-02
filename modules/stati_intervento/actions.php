@@ -9,7 +9,7 @@ switch (post('op')) {
             'colore' => post('colore'),
             'completato' => post('completato'),
             'notifica' => post('notifica'),
-            'id_email' => post('email'),
+            'id_email' => post('email') ?: null,
             'destinatari' => post('destinatari'),
         ], ['id' => $id_record]);
 

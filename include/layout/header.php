@@ -49,6 +49,17 @@ echo '
                 full_locale: \''.$lang.'_'.strtoupper($lang).'\',
                 translations: {}
             };
+
+
+            // Aggiunta dell\'ingranaggio all\'unload della pagina
+            $(window).on("beforeunload", function () {
+                $("#main_loading").show();
+            });
+
+            // Rimozione dell\'ingranaggio al caricamento completo della pagina
+            $(window).on("load", function () {
+                $("#main_loading").fadeOut();
+            });
         </script>';
 
 echo '

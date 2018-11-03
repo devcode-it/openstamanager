@@ -4,12 +4,12 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Aggiornamenti\Aggiornamento;
 
-try{
+try {
     $update = new Aggiornamento();
 
     include $module->filepath('view.php');
     return;
-}catch(InvalidArgumentException $e){
+} catch (InvalidArgumentException $e) {
 }
 
 if (setting('Attiva aggiornamenti')) {
@@ -79,13 +79,31 @@ function search(button) {
             op: "check",
         },
         success: function(data){
+            $("#update-search").addClass("hide");
+
             if (data == "none") {
-                $("#update-search").html("'.tr('Nessun aggiornamento presente').'.");
+                $("#update-none").removeClass("hide");
             } else {
-                $("#update-search").html("'.tr("E' stato individuato un nuovo aggiornamento").': " + data + ".<br>'.tr('Scaricalo ora: _LINK_', [
-                    '_LINK_' => "<a href='https://github.com/devcode-it/openstamanager/releases'>https://github.com/devcode-it/openstamanager/releases</a>",
-                ]).'");
+                $("#update-version").text(data);
+                $("#update-download").removeClass("hide");
             }
+        }
+    });
+}
+
+function download(button) {
+    buttonLoading(button);
+    $("#main_loading").show();
+
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "post",
+        data: {
+            id_module: globals.id_module,
+            op: "download",
+        },
+        success: function(){
+            window.location.reload();
         }
     });
 }
@@ -103,6 +121,7 @@ function search(button) {
             <div class="box-body">
                 <form action="'.ROOTDIR.'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" class="form-inline" id="update">
                     <input type="hidden" name="op" value="upload">
+                    <input type="hidden" name="backto" value="record-list">
 
                     <label><input type="file" name="blob" id="blob"></label>
 
@@ -123,10 +142,27 @@ function search(button) {
                     '.tr('Ricerca aggiornamenti').' <span class="tip" title="'.tr('Controllo automatico della presenza di aggiornamenti per il gestionale').'"><i class="fa fa-question-circle-o"></i></span>
                 </h3>
             </div>
-            <div class="box-body" id="update-search">
-                <button type="button" class="btn btn-info btn-block" onclick="search(this)">
-                    <i class="fa fa-search"></i> '.tr('Ricerca').'
-                </button>
+            <div class="box-body">
+                <div id="update-search">
+                    <button type="button" class="btn btn-info btn-block" onclick="search(this)">
+                        <i class="fa fa-search"></i> '.tr('Ricerca').'
+                    </button>
+                </div>
+
+                <div id="update-download" class="hide">
+                    <p>'.tr("E' stato individuato un nuovo aggiornamento").': <b id="update-version"></b>.</p>
+                    <p>'.tr('Scaricalo manualmente (_LINK_) oppure in automatico', [
+                        '_LINK_' => "<a href='https://github.com/devcode-it/openstamanager/releases'>https://github.com/devcode-it/openstamanager/releases</a>",
+                    ]).':</p>
+
+                    <button type="button" class="btn btn-success btn-block" onclick="download(this)">
+                        <i class="fa fa-download"></i> '.tr('Scarica').'
+                    </button>
+                </div>
+
+                <div id="update-none" class="hide">
+                    <p>'.tr("Nessun aggiornamento presente").'.</p>
+                </div>
             </div>
         </div>
     </div>

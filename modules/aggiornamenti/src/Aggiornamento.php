@@ -40,28 +40,26 @@ class Aggiornamento
         }
     }
 
+    /**
+     * Pulisce la cartella di estrazione.
+     *
+     * @return void
+     */
+    public function delete()
+    {
+        delete($this->directory);
+    }
+
+    /**
+     * Restituisce il percorso impostato per l'aggiornamento corrente.
+     *
+     * @return string
+     */
     public function getDirectory()
     {
         return $this->directory;
     }
 
-    protected function groups()
-    {
-        if (!isset($this->groups)) {
-            $groups = Group::where('nome', 'Amministratori')->get();
-
-            $result = [];
-            foreach ($groups as $group) {
-                $result[$group->id] = [
-                    'permission_level' => 'rw'
-                ];
-            }
-
-            $this->groups = $result;
-        }
-
-        return $this->groups;
-    }
     /**
      * Controlla se l'aggiornamento è di tipo globale.
      *
@@ -247,25 +245,70 @@ class Aggiornamento
     }
 
     /**
-     * Pulisce la cartella di estrazione.
+     * Resituisce i permessi di default da impostare all'installazione del componente.
      *
-     * @return void
+     * @return array
      */
-    public function delete()
+    protected function groups()
     {
-        delete($this->directory);
+        if (!isset($this->groups)) {
+            $groups = Group::where('nome', 'Amministratori')->get();
+
+            $result = [];
+            foreach ($groups as $group) {
+                $result[$group->id] = [
+                    'permission_level' => 'rw'
+                ];
+            }
+
+            $this->groups = $result;
+        }
+
+        return $this->groups;
     }
 
     /**
      * Instanzia un aggiornamento sulla base di uno zip indicato.
+     * Controlla inoltre che l'aggiornamento sia fattibile.
      *
      * @param string $file
      * @return static
+     *
+     * @throws DowngradeException
+     * @throws InvalidArgumentException
      */
     public static function make($file)
     {
         $extraction_dir = Zip::extract($file);
 
+        $update = new static($extraction_dir);
+
+        if ($update->isCoreUpdate()) {
+            $version = Update::getFile($update->getDirectory().'/VERSION');
+            $current = Update::getVersion();
+
+            if (version_compare($current, $version) >= 0) {
+                $update->delete();
+
+                throw new DowngradeException();
+            }
+        } else {
+            $components = $update->componentUpdates();
+
+            foreach ((array) $components['modules'] as $module) {
+                if (version_compare($module['current_version'], $module['info']['version']) >= 0) {
+                    delete($module['path']);
+                }
+            }
+
+            foreach ((array) $components['plugins'] as $plugin) {
+                if (version_compare($plugin['current_version'], $plugin['info']['version']) >= 0) {
+                    delete($plugin['path']);
+                }
+            }
+        }
+
+        // Instanzia nuovamente l'oggetto
         return new static($extraction_dir);
     }
 
@@ -302,7 +345,7 @@ class Aggiornamento
     /**
     * Controlla se è disponibile un aggiornamento nella repository GitHub.
     *
-    * @return string
+    * @return string|bool
     */
     public static function isAvailable()
     {
@@ -315,18 +358,18 @@ class Aggiornamento
             return $version;
         }
 
-        return 'none';
+        return false;
     }
 
     /**
     * Scarica la release più recente (se presente).
     *
-    * @return boolean
+    * @return static
     */
     public static function download()
     {
-        if (self::isAvailable() != 'none') {
-            return false;
+        if (self::isAvailable() === false) {
+            return null;
         }
 
         $directory = Zip::getExtractionDirectory();
@@ -336,10 +379,10 @@ class Aggiornamento
         $api = self::getAPI();
         self::getClient()->request('GET', $api['assets'][0]['browser_download_url'], ['sink' => $file]);
 
-        self::make($file);
+        $update = self::make($file);
         delete($file);
 
-        return true;
+        return $update;
     }
 
     /**

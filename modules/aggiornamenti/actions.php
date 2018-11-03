@@ -4,12 +4,24 @@ include_once __DIR__.'/../../core.php';
 
 use Util\Zip;
 use Modules\Aggiornamenti\Aggiornamento;
+use Modules\Aggiornamenti\DowngradeException;
 
 $id = post('id');
 
 switch (post('op')) {
     case 'check':
-        echo Aggiornamento::isAvailable();
+        $result = Aggiornamento::isAvailable();
+
+        if ($result === false) {
+            echo 'none';
+        } else {
+            echo $result;
+        }
+
+        break;
+
+    case 'download':
+        $update = Aggiornamento::download();
 
         break;
 
@@ -26,38 +38,37 @@ switch (post('op')) {
             return;
         }
 
-        $update = Aggiornamento::make($_FILES['blob']['tmp_name']);
+        try {
+            $update = Aggiornamento::make($_FILES['blob']['tmp_name']);
+        } catch (DowngradeException $e) {
+            flash()->error(tr("Il pacchetto contiene una versione precedente del gestionale"));
+        } catch (InvalidArgumentException $e) {
+            flash()->error(tr("Il pacchetto contiene solo componenti già installate e aggiornate"));
+        }
 
-        // Redirect
-        redirect(ROOTDIR.'/editor.php?id_module='.$id_module);
         break;
 
     case 'execute':
-        try{
+        try {
             $update = new Aggiornamento();
 
             $update->execute();
-        }catch(InvalidArgumentException $e){
+        } catch (InvalidArgumentException $e) {
         }
-
-        // Redirect
-        redirect(ROOTDIR.'/editor.php?id_module='.$id_module);
 
         break;
 
     case 'cancel':
-        try{
+        try {
             $update = new Aggiornamento();
 
             $update->delete();
-        }catch(InvalidArgumentException $e){
+        } catch (InvalidArgumentException $e) {
         }
-
-        // Redirect
-        redirect(ROOTDIR.'/editor.php?id_module='.$id_module);
 
         break;
 
+    // OPERAZIONI MISTE
     case 'uninstall':
         if (!empty($id)) {
             // Leggo l'id del modulo

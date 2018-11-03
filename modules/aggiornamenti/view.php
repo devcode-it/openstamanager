@@ -45,6 +45,12 @@ echo '
     } else {
         $elements = $update->componentUpdates();
 
+        echo '
+        <div class="alert alert-warning">
+            <i class="fa fa-warning"></i>
+            <b>'.tr('Attenzione!').'</b> '.tr('Verranno aggiornate le sole componenti del pacchetto che non sono già installate e aggiornate').'.
+        </div>';
+
         if (!empty($elements['modules'])) {
             echo '
             <p>'.tr('Il pacchetto selezionato comprende i seguenti moduli').':</p>
@@ -131,6 +137,7 @@ echo '
 
         <form action="'.ROOTDIR.'/controller.php?id_module='.$id_module.'" method="post" style="display:inline-block">
             <input type="hidden" name="op" value="cancel">
+            <input type="hidden" name="backto" value="record-list">
 
             <button type="submit" class="btn btn-warning">
                 <i class="fa fa-arrow-left"></i> '.tr('Annulla').'
@@ -139,6 +146,7 @@ echo '
 
         <form action="'.ROOTDIR.'/controller.php?id_module='.$id_module.'" method="post" class="pull-right" style="display:inline-block">
             <input type="hidden" name="op" value="execute">
+            <input type="hidden" name="backto" value="record-list">
 
             <button type="submit" class="btn btn-success">
                 <i class="fa fa-arrow-right"></i> '.tr('Procedi').'

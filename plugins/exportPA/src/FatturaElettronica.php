@@ -392,6 +392,40 @@ class FatturaElettronica
 
         return $result;
     }
+	
+	
+	 /**
+     * Restituisce l'array responsabile per la generazione del tag DatiContratto.
+     *
+     * @return array
+     */
+    protected static function getDatiContratto($fattura)
+    {
+        $documento = $fattura->getDocumento();
+		$righe_documento = $fattura->getRighe();
+        $database = database();
+		
+		foreach ($righe_documento as $numero => $riga) {
+			if (!empty($riga['idcontratto'])){
+				$numero_contratto = $database->fetchOne('SELECT numero FROM co_contratti WHERE id = '.prepare($riga['idcontratto']))['numero'];
+				$codice_cig = $database->fetchOne('SELECT codice_cig FROM co_contratti WHERE id = '.prepare($riga['idcontratto']))['codice_cig'];
+				$codice_cup = $database->fetchOne('SELECT codice_cup FROM co_contratti WHERE id = '.prepare($riga['idcontratto']))['codice_cup'];
+				
+				$result[] = [
+					'IdDocumento' => $numero_contratto,
+				];
+				
+				if (!empty($codice_cig)) {
+					$result['CodiceCIG'] = $codice_cig;
+				}
+				
+				if (!empty($codice_cup)) {
+					$result['CodiceCUP'] = $codice_cup;
+				}
+			}
+		}
+        return $result;
+    }
 
     /**
      * Restituisce l'array responsabile per la generazione del tag DatiDocumento.
@@ -401,11 +435,27 @@ class FatturaElettronica
     protected static function getDatiGenerali($fattura)
     {
         $documento = $fattura->getDocumento();
+		$cliente = $fattura->getCliente();
 
         $result = [
             'DatiGeneraliDocumento' => static::getDatiGeneraliDocumento($fattura),
             // TODO: DatiOrdineAcquisto, DatiContratto, DatiConvenzione, DatiRicezione, DatiFattureCollegate, DatiSAL, DatiDDT, FatturaPrincipale
         ];
+		
+		//aggiungo nodo codice cig, cup solo per enti pubblici
+		if ($cliente['tipo'] == 'Ente pubblico'){
+			//e se tra le righe ho fatturato almeno un contratto
+			$righe_documento = $fattura->getRighe();
+			$find = false;
+			foreach ($righe_documento as $key => $item) {
+				if (!empty($item['idcontratto'])) {
+					$find = true;
+				}
+			}
+			if ($find){
+				$result['DatiContratto'] = static::getDatiContratto($fattura);
+			}
+		}
 
         if ($documento['tipo'] == 'Fattura accompagnatoria di vendita') {
             $result['DatiTrasporto'] = static::getDatiTrasporto($fattura);

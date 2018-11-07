@@ -16,8 +16,9 @@ switch (post('op')) {
 		if (empty(post('tipo')) or post('tipo') == 'Privato'){
 			$anagrafica->codice_destinatario = '';
 		}else{
-			if (empty(post('codice_destinatario')))
-				$anagrafica->codice_destinatario = ((post('tipo') == 'Ente pubblico' ) ? '000000': '0000000');
+			//controlli anche su FatturaElettronica.php
+			if (empty(post('codice_destinatario')) or post('codice_destinatario') == '999999' or post('codice_destinatario') == '0000000')
+				$anagrafica->codice_destinatario = ((post('tipo') == 'Ente pubblico' ) ? '999999': '0000000');
 			else
 				$anagrafica->codice_destinatario = strtoupper(post('codice_destinatario'));
 		}

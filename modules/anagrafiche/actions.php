@@ -13,8 +13,10 @@ switch (post('op')) {
     case 'update':
         // Informazioni sull'anagrafica
         $anagrafica->codice = post('codice');
-		if (empty(post('tipo')) or post('tipo') == 'Privato'){
+		if (empty(post('tipo'))){
 			$anagrafica->codice_destinatario = '';
+		}else if (post('tipo') == 'Privato'){
+			$anagrafica->codice_destinatario = '0000000';
 		}else{
 			//controlli anche su FatturaElettronica.php
 			if (empty(post('codice_destinatario')) or post('codice_destinatario') == '999999' or post('codice_destinatario') == '0000000')

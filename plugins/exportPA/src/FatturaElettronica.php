@@ -44,7 +44,8 @@ class FatturaElettronica
         WHERE `co_documenti`.`id` = '.prepare($id_documento));
 
         // Controllo sulla possibilità di creare la fattura elettronica
-        if ($this->documento['stato'] != 'Emessa' || $this->getCliente()['tipo'] == 'Privato') {
+		// Posso fatturare ai privati utilizzando il codice fiscale
+        if ($this->documento['stato'] != 'Emessa') {
             throw new \UnexpectedValueException();
         }
     }

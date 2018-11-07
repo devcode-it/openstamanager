@@ -46,7 +46,9 @@ if (!$cliente) {
 						{[ "type": "select", "label": "<?php echo tr('Tipologia'); ?>", "name": "tipo", "values": "list=\"\": \"<?php echo tr('Non specificato'); ?>\", \"Azienda\": \"<?php echo tr('Azienda'); ?>\", \"Privato\": \"<?php echo tr('Privato'); ?>\", \"Ente pubblico\": \"<?php echo tr('Ente pubblico'); ?>\"", "value": "$tipo$" ]}
 					</div>
 				</div>
-
+				
+				<!-- RIGA PER LE ANAGRAFICHE CON TIPOLOGIA 'PRIVATO' -->
+				<?php if ($record['tipo'] == 'Privato') { ?>
 				<div class="row">
 					<div class="col-md-4">
 						{[ "type": "text", "label": "<?php echo tr('Luogo di nascita'); ?>", "name": "luogo_nascita", "value": "$luogo_nascita$" ]}
@@ -60,12 +62,17 @@ if (!$cliente) {
 						{[ "type": "select", "label": "<?php echo tr('Sesso'); ?>", "name": "sesso", "values": "list=\"\": \"Non specificato\", \"M\": \"<?php echo tr('Uomo'); ?>\", \"F\": \"<?php echo tr('Donna'); ?>\"", "value": "$sesso$" ]}
 					</div>
 				</div>
+				<?php } ?>
 
 				<div class="row">
-					<div class="col-md-4">
+					<div class="col-md-2">
 						{[ "type": "text", "label": "<?php echo tr('Codice anagrafica'); ?>", "name": "codice", "required": 1, "class": "text-center", "value": "$codice$" ]}
 					</div>
-
+					
+					<div class="col-md-2">
+						{[ "type": "text", "label": "<?php echo tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": <?php echo ((empty($record['tipo'])) ? '0' : '1'); ?>, "class": "text-center", "value": "$codice_destinatario$", "maxlength": <?php echo (($record['tipo']=='Ente pubblico') ? '6' : '7'); ?>,  "extra": "<?php echo ((empty($record['tipo'])) ? 'disabled' : ''); ?>", "help": "<?php echo tr('Codice destinatario per fatturazione elettronica.'); ?>" ]}
+					</div>
+					
                     <div class="col-md-4">
 						{[ "type": "text", "label": "<?php echo tr('PEC'); ?>", "name": "pec", "class": "email-mask", "placeholder":"pec@dominio.ext", "value": "$pec$", "icon-before": "<i class='fa fa-envelope-o'></i>" ]}
 					</div>

@@ -219,8 +219,8 @@ class FatturaElettronica
         ];
 
         // Provincia se impostata e SOLO SE nazione ITALIA
-        if (!empty($azienda['provincia']) && $azienda['nazione'] == 'IT') {
-            $result['Provincia'] = $azienda['provincia'];
+        if (!empty($anagrafica['provincia']) && $anagrafica['nazione'] == 'IT') {
+            $result['Provincia'] = $anagrafica['provincia'];
         }
 
         $result['Nazione'] = $anagrafica['nazione'];

@@ -13,6 +13,7 @@ switch (post('op')) {
     case 'update':
         // Informazioni sull'anagrafica
         $anagrafica->codice = post('codice');
+		$anagrafica->codice_destinatario = post('codice_destinatario');
         $anagrafica->ragione_sociale = post('ragione_sociale');
         $anagrafica->tipo = post('tipo');
         $anagrafica->data_nascita = post('data_nascita');

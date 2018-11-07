@@ -13,8 +13,15 @@ switch (post('op')) {
     case 'update':
         // Informazioni sull'anagrafica
         $anagrafica->codice = post('codice');
-		$anagrafica->codice_destinatario = post('codice_destinatario');
-        $anagrafica->ragione_sociale = post('ragione_sociale');
+		if (empty(post('tipo')) or post('tipo') == 'Privato'){
+			$anagrafica->codice_destinatario = '';
+		}else{
+			if (empty(post('codice_destinatario')))
+				$anagrafica->codice_destinatario = ((post('tipo') == 'Ente pubblico' ) ? '000000': '0000000');
+			else
+				$anagrafica->codice_destinatario = strtoupper(post('codice_destinatario'));
+		}
+		$anagrafica->ragione_sociale = post('ragione_sociale');
         $anagrafica->tipo = post('tipo');
         $anagrafica->data_nascita = post('data_nascita');
         $anagrafica->luogo_nascita = post('luogo_nascita');

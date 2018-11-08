@@ -36,13 +36,13 @@ include_once __DIR__.'/../../core.php';
 
 <script>
 $(document).ready(function(){
-    $('#esente-add').change(function(){
+    $('#bs-popup #esente-add').change(function(){
         var checkbox = $(this).parent().find('[type=hidden]');
 
         if (checkbox.val() == 1) {
-            $("#percentuale-add").prop("disabled", true);
+            $("#bs-popup #percentuale-add").prop("disabled", true);
         } else {
-            $("#percentuale-add").prop("disabled", false);
+            $("#bs-popup #percentuale-add").prop("disabled", false);
         }
     });
 });

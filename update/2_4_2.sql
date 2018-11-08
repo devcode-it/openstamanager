@@ -608,3 +608,8 @@ ALTER TABLE `co_documenti` ADD `xmlgenerated_at` TIMESTAMP NULL AFTER `codice_xm
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'icon_FE', 'IF(xmlgenerated_at IS NOT NULL, \'fa fa-file-code-o text-success\', \'\')', 10, 1, 0, 0, 1, 0, 0),
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'icon_title_FE', 'IF(xmlgenerated_at IS NOT NULL, \'Generata\', \'\')', 10, 1, 0, 0, 0, 0, 0);
+
+-- Colonna nella vista fatture per indicare se è stata inviata o meno la mail
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'icon_Inviata', 'IF((SELECT GROUP_CONCAT(DISTINCT`name` SEPARATOR \'\\n \') FROM zz_operations INNER JOIN zz_emails ON zz_operations.id_email = zz_emails.id WHERE zz_operations.id_module = (SELECT id FROM zz_modules WHERE `name` = \'Fatture di vendita\') AND op = \'send-email\' AND id_record = co_documenti.id GROUP BY id_email) IS NOT NULL, \'fa fa-envelope text-success\', \'\')', 11, 1, 0, 0, 1, 0, 0),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'icon_title_Inviata', '(SELECT GROUP_CONCAT(DISTINCT`name` SEPARATOR \'\n \') FROM zz_operations INNER JOIN zz_emails ON zz_operations.id_email = zz_emails.id WHERE zz_operations.id_module = (SELECT id FROM zz_modules WHERE `name` = \'Fatture di vendita\') AND op = \'send-email\' AND id_record = co_documenti.id GROUP BY id_email)', 12, 1, 0, 0, 0, 0, 0);

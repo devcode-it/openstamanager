@@ -6,6 +6,13 @@ include_once __DIR__.'/init.php';
 if (!empty($fattura_pa)) {
     $disabled = false;
     $generated = file_exists($upload_dir.'/'.$fattura_pa->getFilename());
+    
+    //Ulteriore controllo sulla data generazione file
+    $rs_generated = $dbo->fetchArray("SELECT xmlgenerated_at FROM co_documenti WHERE id=".prepare($id_record));
+    if(empty($rs_generated[0]['xmlgenerated_at'])){
+        $generated = false;
+    }
+    
 } else {
     echo '
 <div class="alert alert-warning">

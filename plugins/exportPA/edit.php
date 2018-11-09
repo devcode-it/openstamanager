@@ -6,6 +6,13 @@ include_once __DIR__.'/init.php';
 if (!empty($fattura_pa)) {
     $disabled = false;
     $generated = file_exists($upload_dir.'/'.$fattura_pa->getFilename());
+
+    //Ulteriore controllo sulla data generazione file
+    $rs_generated = $dbo->fetchArray("SELECT xml_generated_at FROM co_documenti WHERE id=".prepare($id_record));
+    if(empty($rs_generated[0]['xml_generated_at'])){
+        $generated = false;
+    }
+
 } else {
     echo '
 <div class="alert alert-warning">
@@ -77,17 +84,20 @@ if (!empty($missing)) {
 echo '
 <p>'.tr("Per effettuare la generazione dell'XML della fattura elettronica clicca sul pulsante _BTN_", [
     '_BTN_' => '<b>Genera</b>',
-]).'. '.tr('Successivamente sarà possibile procedere alla visualizzazione e al download della fattura generata attraverso i pulsanti dedicati').'.</p>';
+]).'. '.tr('Successivamente sarà possibile procedere alla visualizzazione e al download della fattura generata attraverso i pulsanti dedicati').'.</p>
+
+<p>'.tr("Tutti gli allegati inseriti all'interno della categoria \"Fattura Elettronica\" saranno inclusi come allegati dell'XML").'.</p>
+<br>';
 
 echo '
 <div class="text-center">
-    <form action="" method="post" role="form" style="display:inline-block">
+    <form action="" method="post" role="form" style="display:inline-block" id="form-xml">
         <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
         <input type="hidden" name="id_record" value="'.$id_record.'">
         <input type="hidden" name="backto" value="record-edit">
         <input type="hidden" name="op" value="generate">
 
-        <button type="submit" class="btn btn-primary btn-lg '.($disabled ? 'disabled' : '').'" '.($disabled ? ' disabled' : null).'>
+        <button id="genera" type="submit" class="btn btn-primary btn-lg '.($disabled ? 'disabled' : '').'" '.($disabled ? ' disabled' : null).'>
             <i class="fa fa-file"></i> '.tr('Genera').'
         </button>
     </form>';
@@ -108,3 +118,25 @@ echo '
     </a>
 
 </div>';
+
+if($generated){
+    echo '
+<script>
+    $("#genera").click(function(event){
+        event.preventDefault();
+        swal({
+          title: "Sei sicuro?",
+          text: "Sarà generata nuovamente la fattura elettronica",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#30d64b",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Genera"
+        }).then((result) => {
+          if (result) {
+            $("#form-xml").submit();
+          }
+      });
+  });
+</script>';
+}

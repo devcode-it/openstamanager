@@ -300,23 +300,23 @@ if (!empty($id_intervento)) {
 
 <script type="text/javascript">
 	$(document).ready(function(){
-        if(!$("#idanagrafica").val()){
-            $("#idsede").prop("disabled", true);
-            $("#idpreventivo").prop("disabled", true);
-            $("#idcontratto").prop("disabled", true);
-            $("#idimpianti").prop("disabled", true);
-            $("#componenti").prop("disabled", true);
+        if(!$("#bs-popup #idanagrafica").val()){
+            $("#bs-popup #idsede").prop("disabled", true);
+            $("#bs-popup #idpreventivo").prop("disabled", true);
+            $("#bs-popup #idcontratto").prop("disabled", true);
+            $("#bs-popup #idimpianti").prop("disabled", true);
+            $("#bs-popup #componenti").prop("disabled", true);
 
         <?php
         if (!empty($idcontratto) && (!empty($idordineservizio) || !empty($idcontratto_riga))) {
             // Disabilito i campi che non devono essere modificati per poter collegare l'intervento all'ordine di servizio
 
             echo '
-            $("#idanagrafica").prop("disabled", true);
-            $("#idclientefinale").prop("disabled", true);
-            $("#idzona").prop("disabled", true);
-            $("#id_tipo_intervento").prop("disabled", true);
-            $("#impianti").find("button").prop("disabled", true);';
+            $("#bs-popup #idanagrafica").prop("disabled", true);
+            $("#bs-popup #idclientefinale").prop("disabled", true);
+            $("#bs-popup #idzona").prop("disabled", true);
+            $("#bs-popup #id_tipo_intervento").prop("disabled", true);
+            $("#bs-popup #impianti").find("button").prop("disabled", true);';
         }
 ?>
         }
@@ -325,27 +325,27 @@ if (!empty($id_intervento)) {
 
 if (!empty($id_intervento)) {
     echo '
-        $("#idsede").prop("disabled", true);
-        $("#idpreventivo").prop("disabled", true);
-        $("#idcontratto").prop("disabled", true);
-        $("#idimpianti").prop("disabled", true);
-        $("#componenti").prop("disabled", true);
-        $("#idanagrafica").prop("disabled", true);
-        $("#idanagrafica").find("button").prop("disabled", true);
-        $("#idclientefinale").prop("disabled", true);
-        $("#idzona").prop("disabled", true);
-        $("#id_tipo_intervento").prop("disabled", true);
-        $("#id_stato").prop("disabled", true);
-        $("#richiesta").prop("disabled", true);
-        $("#data_richiesta").prop("disabled", true);
-        $("#impianti").find("button").prop("disabled", true);
+        $("#bs-popup #idsede").prop("disabled", true);
+        $("#bs-popup #idpreventivo").prop("disabled", true);
+        $("#bs-popup #idcontratto").prop("disabled", true);
+        $("#bs-popup #idimpianti").prop("disabled", true);
+        $("#bs-popup #componenti").prop("disabled", true);
+        $("#bs-popup #idanagrafica").prop("disabled", true);
+        $("#bs-popup #idanagrafica").find("button").prop("disabled", true);
+        $("#bs-popup #idclientefinale").prop("disabled", true);
+        $("#bs-popup #idzona").prop("disabled", true);
+        $("#bs-popup #id_tipo_intervento").prop("disabled", true);
+        $("#bs-popup #idstatointervento").prop("disabled", true);
+        $("#bs-popup #richiesta").prop("disabled", true);
+        $("#bs-popup #data_richiesta").prop("disabled", true);
+        $("#bs-popup #impianti").find("button").prop("disabled", true);
     ';
 }
 ?>
 
 		// Quando modifico orario inizio, allineo anche l'orario fine
-        $("#orario_inizio").on("dp.change", function (e) {
-			$("#orario_fine").data("DateTimePicker").minDate(e.date).format(globals.timestampFormat);
+        $("#bs-popup #orario_inizio").on("dp.change", function (e) {
+			$("#bs-popup #orario_fine").data("DateTimePicker").minDate(e.date).format(globals.timestampFormat);
         });
 
         // Refresh modulo dopo la chiusura di una pianificazione attività derivante dalle attività
@@ -357,92 +357,92 @@ if (!empty($id_intervento)) {
         }
     });
 
-	$('#idanagrafica').change( function(){
+	$('#bs-popup #idanagrafica').change( function(){
 		session_set('superselect,idanagrafica', $(this).val(), 0);
 
         var value = !$(this).val() ? true : false;
         var placeholder = !$(this).val() ? '<?php echo tr("Seleziona prima un cliente...");?>' : '<?php echo tr("-Seleziona un\'opzione-");?>';
 
-		$("#idsede").prop("disabled", value);
-		$("#idsede").selectReset(placeholder);
+		$("#bs-popup #idsede").prop("disabled", value);
+		$("#bs-popup #idsede").selectReset(placeholder);
 
-		$("#idpreventivo").prop("disabled", value);
-		$("#idpreventivo").selectReset(placeholder);
+		$("#bs-popup #idpreventivo").prop("disabled", value);
+		$("#bs-popup #idpreventivo").selectReset(placeholder);
 
-		$("#idcontratto").prop("disabled", value);
-		$("#idcontratto").selectReset(placeholder);
+		$("#bs-popup #idcontratto").prop("disabled", value);
+		$("#bs-popup #idcontratto").selectReset(placeholder);
 
-		$("#idimpianti").prop("disabled", value);
-        $("#impianti").find("button").prop("disabled", value);
-		$("#idimpianti").selectReset(placeholder);
+		$("#bs-popup #idimpianti").prop("disabled", value);
+        $("#bs-popup #impianti").find("button").prop("disabled", value);
+		$("#bs-popup #idimpianti").selectReset(placeholder);
 
 		if (($(this).val())) {
 			if (($(this).selectData().idzona)){
-				$('#idzona').val($(this).selectData().idzona).change();
+				$('#bs-popup #idzona').val($(this).selectData().idzona).change();
 
 			}else{
-				$('#idzona').val('').change();
+				$('#bs-popup #idzona').val('').change();
 			}
 			// session_set('superselect,idzona', $(this).selectData().idzona, 0);
 		}
 	});
 
-	$('#idsede').change( function(){
+	$('#bs-popup #idsede').change( function(){
 		session_set('superselect,idsede', $(this).val(), 0);
-		$("#idimpianti").selectReset();
+		$("#bs-popup #idimpianti").selectReset();
 
 		if (($(this).val())) {
 			if (($(this).selectData().idzona)){
-				$('#idzona').val($(this).selectData().idzona).change();
+				$('#bs-popup #idzona').val($(this).selectData().idzona).change();
 			}else{
-				$('#idzona').val('').change();
+				$('#bs-popup #idzona').val('').change();
 			}
 			// session_set('superselect,idzona', $(this).selectData().idzona, 0);
 		}
 	});
 
-	$('#idpreventivo').change( function(){
-		if($('#idcontratto').val() && $(this).val()){
-            $("#idcontratto").selectReset();
+	$('#bs-popup #idpreventivo').change( function(){
+		if($('#bs-popup #idcontratto').val() && $(this).val()){
+            $("#bs-popup #idcontratto").selectReset();
         }
 
         if($(this).val()){
-            $('#id_tipo_intervento').selectSetNew($(this).selectData().id_tipo_intervento, $(this).selectData().id_tipo_intervento_descrizione);
+            $('#bs-popup #id_tipo_intervento').selectSetNew($(this).selectData().id_tipo_intervento, $(this).selectData().id_tipo_intervento_descrizione);
         }
 	});
 
-	$('#idcontratto').change( function(){
-		if($('#idpreventivo').val() && $(this).val()){
-            $("#idpreventivo").selectReset();
+	$('#bs-popup #idcontratto').change( function(){
+		if($('#bs-popup #idpreventivo').val() && $(this).val()){
+            $("#bs-popup #idpreventivo").selectReset();
 			$('input[name=idcontratto_riga]').val('');
 		}
 	});
 
-	$('#idimpianti').change( function(){
+	$('#bs-popup #idimpianti').change( function(){
 		session_set('superselect,marticola', $(this).val(), 0);
 
-        $("#componenti").prop("disabled", !$(this).val() ? true : false);
-        $("#componenti").selectReset();
+        $("#bs-popup #componenti").prop("disabled", !$(this).val() ? true : false);
+        $("#bs-popup #componenti").selectReset();
 	});
 
 	// tempo standard
-	$('#id_tipo_intervento').change( function(){
+	$('#bs-popup #id_tipo_intervento').change( function(){
 		if ( (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
             tempo_standard = $(this).selectData().tempo_standard;
 
-            data = moment($('#orario_inizio').val(), globals.timestampFormat);
+            data = moment($('#bs-popup #orario_inizio').val(), globals.timestampFormat);
 			orario_fine = data.add(tempo_standard, 'hours');
-			$('#orario_fine').val(orario_fine.format(globals.timestampFormat));
+			$('#bs-popup #orario_fine').val(orario_fine.format(globals.timestampFormat));
 		}
 	});
 
-	$('#idtecnico').change( function(){
+	$('#bs-popup #idtecnico').change( function(){
 		<?php if (!get('ref')) {
     ?>
 	   var value = ($(this).val()>0) ? true : false;
-		$('#orario_inizio').prop("required", value);
-		$('#orario_fine').prop("required", value);
-		$('#data').prop("required", value);
+		$('#bs-popup #orario_inizio').prop("required", value);
+		$('#bs-popup #orario_fine').prop("required", value);
+		$('#bs-popup #data').prop("required", value);
 		<?php
 } ?>
 	});

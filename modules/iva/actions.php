@@ -11,6 +11,9 @@ switch (filter('op')) {
         $percentuale = empty($esente) ? post('percentuale') : 0;
 
         if ($dbo->fetchNum('SELECT * FROM `co_iva` WHERE (`descrizione` = '.prepare($descrizione).' OR `codice` = '.prepare($codice).') AND `id` != '.prepare($id_record)) == 0) {
+            $codice_natura = post('codice_natura_fe');
+            $esigibilita = post('esigibilita');
+
             $dbo->update('co_iva', [
                 'descrizione' => $descrizione,
                 'esente' => $esente,
@@ -18,8 +21,14 @@ switch (filter('op')) {
                 'indetraibile' => post('indetraibile'),
                 'dicitura' => post('dicitura'),
                 'codice' => $codice,
-                'codice_natura_fe' => post('codice_natura_fe'),
+                'codice_natura_fe' => $codice_natura,
+                'esigibilita' => $esigibilita,
             ], ['id' => $id_record]);
+
+            // Messaggio di avvertenza
+            if ($codice_natura == 'N6' && $esigibilita == 'S') {
+                flash()->warning(tr('Combinazione di natura IVA N6 ed esigibilità non compatibile!'));
+            }
 
             flash()->info(tr('Salvataggio completato!'));
         } else {

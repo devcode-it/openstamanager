@@ -5,6 +5,7 @@ namespace Plugins\ExportPA;
 use FluidXml\FluidXml;
 use Respect\Validation\Validator as v;
 use Stringy\Stringy as S;
+use GuzzleHttp\Client;
 use DateTime;
 use DOMDocument;
 use XSLTProcessor;
@@ -28,6 +29,11 @@ class FatturaElettronica
     /** @var array Informazioni sul documento */
     protected $documento = [];
 
+    /** @var array Contratti collegati al documento */
+    protected $contratti = [];
+    /** @var array Righe del documento */
+    protected $righe = [];
+
     /** @var array Stato di validazione interna dell'XML della fattura */
     protected $is_valid = null;
     /** @var array XML della fattura */
@@ -44,7 +50,8 @@ class FatturaElettronica
         WHERE `co_documenti`.`id` = '.prepare($id_documento));
 
         // Controllo sulla possibilità di creare la fattura elettronica
-        if ($this->documento['stato'] != 'Emessa' || $this->getCliente()['tipo'] == 'Privato') {
+        // Posso fatturare ai privati utilizzando il codice fiscale
+        if ($this->documento['stato'] != 'Emessa') {
             throw new \UnexpectedValueException();
         }
     }
@@ -99,7 +106,32 @@ class FatturaElettronica
      */
     public function getRighe()
     {
-        return database()->fetchArray('SELECT * FROM `co_righe_documenti` WHERE `sconto_globale` = 0 AND is_descrizione = 0 AND `iddocumento` = '.prepare($this->getDocumento()['id']));
+        if (empty($this->righe)) {
+            $this->righe = database()->fetchArray('SELECT * FROM `co_righe_documenti` WHERE `sconto_globale` = 0 AND is_descrizione = 0 AND `iddocumento` = '.prepare($this->getDocumento()['id']));
+        }
+
+        return $this->righe;
+    }
+
+    /**
+     * Restituisce i contratti collegati al documento (contratti e interventi).
+     *
+     * @return array
+     */
+    public function getContratti()
+    {
+        if (empty($this->contratti)) {
+            $documento = $this->getDocumento();
+            $database = database();
+
+            $contratti = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `co_contratti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idcontratto` = `co_contratti`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+
+            $interventi = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `in_interventi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idintervento` = `in_interventi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+
+            $this->contratti = array_merge($contratti, $interventi);
+        }
+
+        return $this->contratti;
     }
 
     /**
@@ -138,6 +170,7 @@ class FatturaElettronica
         $cliente = $fattura->getCliente();
 
         $default_code = ($cliente['tipo'] == 'Ente pubblico') ? '999999' : '0000000';
+        $default_code = ($cliente['nazione'] != 'IT') ? 'XXXXXXX' : $default_code;
 
         // Generazione dell'header
         $result = [
@@ -200,8 +233,6 @@ class FatturaElettronica
 
         // Informazioni specifiche azienda
         if ($azienda) {
-            // TODO: AlboProfessionale, ProvinciaAlbo, NumeroIscrizioneAlbo, DataIscrizioneAlbo
-
             $result['RegimeFiscale'] = setting('Regime Fiscale');
         }
 
@@ -222,8 +253,8 @@ class FatturaElettronica
         ];
 
         // Provincia se impostata e SOLO SE nazione ITALIA
-        if (!empty($azienda['provincia']) && $azienda['nazione'] == 'IT') {
-            $result['Provincia'] = $azienda['provincia'];
+        if (!empty($anagrafica['provincia']) && $anagrafica['nazione'] == 'IT') {
+            $result['Provincia'] = $anagrafica['provincia'];
         }
 
         $result['Nazione'] = $anagrafica['nazione'];
@@ -243,7 +274,6 @@ class FatturaElettronica
         $result = [
             'DatiAnagrafici' => static::getDatiAnagrafici($azienda, true),
             'Sede' => static::getSede($azienda),
-            // TODO: StabileOrganizzazione,
         ];
 
         // IscrizioneREA
@@ -279,8 +309,6 @@ class FatturaElettronica
             $result['Contatti']['Email'] = $azienda['email'];
         }
 
-        // TODO: RiferimentoAmministrazione
-
         return $result;
     }
 
@@ -296,7 +324,6 @@ class FatturaElettronica
         $result = [
             'DatiAnagrafici' => static::getDatiAnagrafici($cliente),
             'Sede' => static::getSede($cliente),
-            // TODO: StabileOrganizzazione, RappresentanteFiscale
         ];
 
         return $result;
@@ -317,8 +344,7 @@ class FatturaElettronica
             'Divisa' => 'EUR',
             'Data' => $documento['data'],
             'Numero' => $documento['numero_esterno'],
-            //'Causale' => $documento['causale'],
-            // TODO: vari
+            // TODO: 'Causale' => $documento['causale'],
         ];
 
         // Ritenuta d'Acconto
@@ -396,6 +422,36 @@ class FatturaElettronica
         return $result;
     }
 
+
+    /**
+    * Restituisce l'array responsabile per la generazione del tag DatiContratto.
+    *
+    * @return array
+    */
+    protected static function getDatiContratto($fattura)
+    {
+        $contratti = $fattura->getContratti();
+
+        $result = [];
+        foreach ($contratti as $contratto) {
+            $dati_contratto = [
+                'IdDocumento' => $contratto['id_documento_fe'],
+            ];
+
+            if (!empty($contratto['codice_cig'])) {
+                $dati_contratto['CodiceCIG'] = $contratto['codice_cig'];
+            }
+
+            if (!empty($contratto['codice_cup'])) {
+                $dati_contratto['CodiceCUP'] = $contratto['codice_cup'];
+            }
+
+            $result[] = $dati_contratto;
+        }
+
+        return $result;
+    }
+
     /**
      * Restituisce l'array responsabile per la generazione del tag DatiDocumento.
      *
@@ -404,11 +460,21 @@ class FatturaElettronica
     protected static function getDatiGenerali($fattura)
     {
         $documento = $fattura->getDocumento();
+        $cliente = $fattura->getCliente();
 
         $result = [
             'DatiGeneraliDocumento' => static::getDatiGeneraliDocumento($fattura),
-            // TODO: DatiOrdineAcquisto, DatiContratto, DatiConvenzione, DatiRicezione, DatiFattureCollegate, DatiSAL, DatiDDT, FatturaPrincipale
         ];
+
+        // Controllo le le righe per la fatturazione di contratti
+        $dati_contratti = static::getDatiContratto($fattura);
+        if (!empty($dati_contratti)) {
+            foreach ($dati_contratti as $dato) {
+                $result[] = [
+                    'DatiContratto' => $dato,
+                ];
+            }
+        }
 
         if ($documento['tipo'] == 'Fattura accompagnatoria di vendita') {
             $result['DatiTrasporto'] = static::getDatiTrasporto($fattura);
@@ -442,9 +508,14 @@ class FatturaElettronica
             $dettaglio = [
                 'NumeroLinea' => $numero + 1,
                 'Descrizione' => $riga['descrizione'],
-                'Quantita' => $riga['qta'],
-                'PrezzoUnitario' => $prezzo_unitario,
+                'Quantita' => $riga['qta']
             ];
+
+            if (!empty($riga['um'])) {
+                $dettaglio['UnitaMisura']= $riga['um'];
+            }
+
+            $dettaglio['PrezzoUnitario']= $prezzo_unitario;
 
             // Sconto
             $riga['sconto_unitario'] = floatval($riga['sconto_unitario']);
@@ -478,32 +549,42 @@ class FatturaElettronica
             ];
         }
 
-        // Riepiloghi per IVA
-        // TODO: risolvere di conseguenza alla Natura IVA
-        $riepiloghi_percentuale = $database->fetchArray('SELECT SUM(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) as totale, SUM(`co_righe_documenti`.`iva`) as iva, `co_iva`.`percentuale` FROM `co_righe_documenti` INNER JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`idiva` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND
+        // Riepiloghi per IVA per percentuale
+        $riepiloghi_percentuale = $database->fetchArray('SELECT SUM(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) as totale, SUM(`co_righe_documenti`.`iva`) as iva, `co_iva`.`percentuale`, `co_iva`.`dicitura` FROM `co_righe_documenti` INNER JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`idiva` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND
         `co_iva`.`codice_natura_fe` IS NULL GROUP BY `co_iva`.`percentuale`');
         foreach ($riepiloghi_percentuale as $riepilogo) {
+            $iva = [
+                'AliquotaIVA' => $riepilogo['percentuale'],
+                'ImponibileImporto' => $riepilogo['totale'],
+                'Imposta' => $riepilogo['iva'],
+                'EsigibilitaIVA' => $riepilogo['esigibilita'],
+            ];
+
+            // TODO: la dicitura può essere diversa tra diverse IVA con stessa percentuale/natura
+            // nei riepiloghi viene fatto un accorpamento percentuale/natura
+            if (!empty($riepilogo['dicitura'])) {
+                //$iva['RiferimentoNormativo'] = $riepilogo['dicitura'];
+            }
+
             $result[] = [
-                'DatiRiepilogo' => [
-                    'AliquotaIVA' => $riepilogo['percentuale'],
-                    'ImponibileImporto' => $riepilogo['totale'],
-                    'Imposta' => $riepilogo['iva'],
-                    'EsigibilitaIVA' => 'I',
-                ],
+                'DatiRiepilogo' => $iva
             ];
         }
 
+        // Riepiloghi per IVA per natura
         $riepiloghi_natura = $database->fetchArray('SELECT SUM(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) as totale, SUM(`co_righe_documenti`.`iva`) as iva, `co_iva`.`codice_natura_fe` FROM `co_righe_documenti` INNER JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`idiva` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND
         `co_iva`.`codice_natura_fe` IS NOT NULL GROUP BY `co_iva`.`codice_natura_fe`');
         foreach ($riepiloghi_natura as $riepilogo) {
+            $iva = [
+                'AliquotaIVA' => 0,
+                'Natura' => $riepilogo['codice_natura_fe'],
+                'ImponibileImporto' => $riepilogo['totale'],
+                'Imposta' => $riepilogo['iva'],
+                'EsigibilitaIVA' => $riepilogo['esigibilita'],
+            ];
+
             $result[] = [
-                'DatiRiepilogo' => [
-                    'AliquotaIVA' => 0,
-                    'Natura' => $riepilogo['codice_natura_fe'],
-                    'ImponibileImporto' => $riepilogo['totale'],
-                    'Imposta' => $riepilogo['iva'],
-                    'EsigibilitaIVA' => 'I',
-                ],
+                'DatiRiepilogo' => $iva
             ];
         }
 
@@ -543,33 +624,67 @@ class FatturaElettronica
 
     /**
      * Restituisce l'array responsabile per la generazione del tag Allegati.
-     * Supporta un singolo allegato in PDF.
      *
      * @return array
      */
     protected static function getAllegati($fattura)
     {
         $documento = $fattura->getDocumento();
+        $cliente = $fattura->getCliente();
+        $attachments = [];
 
+        // Informazioni sul modulo
         $id_module = Modules::get('Fatture di vendita')['id'];
+        $directory = Uploads::getDirectory($id_module);
+
+        // Allegati
+        $allegati = Uploads::get([
+            'id_module' => $id_module,
+            'id_record' => $documento['id'],
+        ]);
+
+        // Inclusione
+        foreach ($allegati as $allegato) {
+            if ($allegato['category'] == 'Fattura Elettronica') {
+                $file = DOCROOT.'/'.$directory.'/'.$allegato['filename'];
+
+                $attachments[] = [
+                    'NomeAttachment' => $allegato['name'],
+                    'FormatoAttachment' => Uploads::fileInfo($file)['extension'],
+                    'Attachment' => base64_encode(file_get_contents($file)),
+                ];
+            }
+        }
+
+        // Aggiunta della stampa
+        $print = false;
+        if ($cliente['tipo'] == 'Privato') {
+            $print = setting('Allega stampa per fattura verso Privati');
+        } elseif ($cliente['tipo'] == 'Azienda') {
+            $print = setting('Allega stampa per fattura verso Aziende');
+        } else {
+            $print = setting('Allega stampa per fattura verso PA');
+        }
+
+        if (!$print) {
+            return $attachments;
+        }
+
         $dir = Uploads::getDirectory($id_module, Plugins::get('Fatturazione Elettronica')['id']);
 
         $rapportino_nome = sanitizeFilename($documento['numero'].'.pdf');
         $filename = slashes(DOCROOT.'/'.$dir.'/'.$rapportino_nome);
 
         $print = Prints::getModulePredefinedPrint($id_module);
-
         Prints::render($print['id'], $documento['id'], $filename);
 
-        $pdf = file_get_contents($filename);
-
-        $result = [
+        $attachments[] = [
             'NomeAttachment' => 'Fattura',
             'FormatoAttachment' => 'PDF',
-            'Attachment' => base64_encode($pdf),
+            'Attachment' => base64_encode(file_get_contents($filename)),
         ];
 
-        return $result;
+        return $attachments;
     }
 
     /**
@@ -603,8 +718,17 @@ class FatturaElettronica
             'DatiGenerali' => static::getDatiGenerali($fattura),
             'DatiBeniServizi' => static::getDatiBeniServizi($fattura),
             'DatiPagamento' => static::getDatiPagamento($fattura),
-            'Allegati' => static::getAllegati($fattura),
         ];
+
+        // Allegati
+        $allegati = static::getAllegati($fattura);
+        if (!empty($allegati)) {
+            foreach ($allegati as $allegato) {
+                $result[] = [
+                    'Allegati' => $allegato,
+                ];
+            }
+        }
 
         return $result;
     }
@@ -688,8 +812,8 @@ class FatturaElettronica
             return null;
         }
 
-        // Localhost: ['curl' => [CURLOPT_SSL_VERIFYPEER => false]]
-        $client = new \GuzzleHttp\Client();
+        // Localhost:
+        $client = new Client(['curl' => [CURLOPT_SSL_VERIFYPEER => false]]);
 
         $response = $client->request('POST', 'https://www.indicepa.gov.it/public-ws/WS01_SFE_CF.php', [
             'form_params' => [
@@ -786,8 +910,7 @@ class FatturaElettronica
             $cliente = $this->getCliente();
 
             // Inizializzazione libreria per la generazione della fattura in XML
-            //, ['stylesheet' => 'http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2.1/fatturaPA_v1.2.1.xsl']
-            $fattura = new FluidXml(null);
+            $fattura = new FluidXml(null, ['stylesheet' => 'http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2.1/fatturaPA_v1.2.1.xsl']);
 
             // Generazione dell'elemento root
             $fattura->namespace('p', 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2');

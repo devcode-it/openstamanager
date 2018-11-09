@@ -11,6 +11,12 @@ class Anagrafica extends Model
 {
     protected $table = 'an_anagrafiche';
     protected $primaryKey = 'idanagrafica';
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = [];
 
     /**
      * The attributes that aren't mass assignable.
@@ -173,6 +179,37 @@ class Anagrafica extends Model
         }
     }
 
+    public function getPartitaIvaAttribute()
+    {
+        return $this->sedeLegale->partita_iva;
+    }
+
+    public function setPartitaIvaAttribute($value)
+    {
+        $this->sedeLegale->partita_iva = $value;
+    }
+
+    public function getCodiceFiscaleAttribute($value)
+    {
+        return $this->sedeLegale->codice_fiscale;
+    }
+
+    public function setCodiceFiscaleAttribute($value)
+    {
+        $this->sedeLegale->codice_fiscale = $value;
+    }
+
+    public function setCodiceDestinatarioAttribute($value)
+    {
+        if (empty($this->tipo) || $this->tipo == 'Privato' || in_array($value, ['999999', '0000000']) || $this->sedeLegale->nazione->iso2 != 'IT') {
+            $codice_destinatario = '';
+        } else {
+            $codice_destinatario = $value;
+        }
+
+        $this->attributes['codice_destinatario'] = trim(strtoupper($codice_destinatario));
+    }
+
     public function tipi()
     {
         return $this->belongsToMany(Tipo::class, 'an_tipianagrafiche_anagrafiche', 'idanagrafica', 'id_tipo_anagrafica');
@@ -198,7 +235,7 @@ class Anagrafica extends Model
      *
      * @return self
      */
-    public function sedeLegale()
+    public function getSedeLegaleAttribute()
     {
         return $this->hasOne(Sede::class, 'idanagrafica')->where('id', $this->id_sede_legale);
     }

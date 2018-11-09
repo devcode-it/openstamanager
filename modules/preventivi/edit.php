@@ -63,19 +63,19 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "date", "label": "<?php echo tr('Data bozza'); ?>", "maxlength": 10, "name": "data_bozza", "value": "$data_bozza$" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data bozza'); ?>", "name": "data_bozza", "value": "$data_bozza$" ]}
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "date", "label": "<?php echo tr('Data accettazione'); ?>", "maxlength": 10, "name": "data_accettazione", "value": "$data_accettazione$" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data accettazione'); ?>", "name": "data_accettazione", "value": "$data_accettazione$" ]}
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "date", "label": "<?php echo tr('Data conclusione'); ?>", "maxlength": 10, "name": "data_conclusione", "value": "$data_conclusione$" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data conclusione'); ?>", "name": "data_conclusione", "value": "$data_conclusione$" ]}
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "date", "label": "<?php echo tr('Data rifiuto'); ?>", "maxlength": 10, "name": "data_rifiuto", "value": "$data_rifiuto$" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data rifiuto'); ?>", "name": "data_rifiuto", "value": "$data_rifiuto$" ]}
 				</div>
 			</div>
 
@@ -160,7 +160,28 @@ include $docroot.'/modules/preventivi/row-list.php';
     </div>
 </div>
 
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#data_accettazione').on("dp.change", function(){
+            if($(this).val()){
+                $('#data_rifiuto').attr('disabled', true);
+            }else{
+                $('#data_rifiuto').attr('disabled', false);
+            }
+        });
 
+        $('#data_rifiuto').on("dp.change", function(){
+            if($(this).val()){
+                $('#data_accettazione').attr('disabled', true);
+            }else{
+                $('#data_accettazione').attr('disabled', false);
+            }
+        });
+
+        $("#data_accettazione").trigger("dp.change");
+        $("#data_rifiuto").trigger("dp.change");
+    });
+</script>
 
 <?php
 //fatture collegate a questo preventivo

@@ -32,37 +32,41 @@ echo '
     // Codice fiscale o P.Iva
 
     if (!empty($c_piva)) {
-        echo '
-    			<td colspan=2>
-    				'.tr('P.Iva').': <b>'.strtoupper($c_piva).'</b>
-    			</td>
-    		</tr>';
+		echo '
+				<td colspan=2>
+					'.tr('P.Iva').': <b>'.strtoupper($c_piva).'</b>
+				</td>';
     } else {
         echo '
     			<td colspan=2>
     				'.tr('C.F.').': <b>'.strtoupper($c_codicefiscale).'</b>
-    			</td>
-    		</tr>';
+    			</td>';
     }
+	
+	echo '</tr>';
+	
+	//Indirizzo
+	if (!empty($c_indirizzo) or !empty($c_cap) or !empty($c_citta) or !empty($c_provincia)) {
+		
+		echo '
+			<tr>
+				<td colspan="4">
+					'.((!empty($c_indirizzo)) ? tr('Via').': <b>'.$c_indirizzo.'</b>' : '').'
+					'.((!empty($c_cap)) ? tr('CAP').': <b>'.$c_cap.'</b>' : '').'
+					'.((!empty($c_citta)) ? tr('Città').': <b>'.$c_citta.'</b>' : '').'
+					'.((!empty($c_provincia)) ? tr('Provincia').': <b>'.strtoupper($c_provincia).'</b>' : '').'
+				</td>
+			</tr>';
 
-// riga 2
-echo '
-    <tr>
-        <td colspan="4">
-            '.((!empty($c_indirizzo)) ? tr('Via').': <b>'.$c_indirizzo.'</b>' : '').'
-			'.((!empty($c_cap)) ? tr('CAP').': <b>'.$c_cap.'</b>' : '').'
-			'.((!empty($c_citta)) ? tr('Città').': <b>'.$c_citta.'</b>' : '').'
-			'.((!empty($c_provincia)) ? tr('Provincia').': <b>'.strtoupper($c_provincia).'</b>' : '').'
-        </td>
-    </tr>';
+	}
 
 echo '
     <tr>
         <td colspan="4">
             '.tr('Telefono').': <b>'.$c_telefono.'</b>';
-if (!empty($c_cellulare)) {
-    echo' - '.tr('Cellulare').': <b>'.$c_cellulare.'</b>';
-}
+	if (!empty($c_cellulare)) {
+		echo' - '.tr('Cellulare').': <b>'.$c_cellulare.'</b>';
+	}
 echo '
         </td>
     </tr>';

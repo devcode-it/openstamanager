@@ -2,6 +2,21 @@
 
 include_once __DIR__.'/../../core.php';
 
+$esigibilita = [
+    [
+        'id' => 'I',
+        'text' => tr('IVA ad esigibilità immediata'),
+    ],
+    [
+        'id' => 'D',
+        'text' => tr('IVA ad esigibilità differita'),
+    ],
+    [
+        'id' => 'S',
+        'text' => tr('Scissione dei pagamenti'),
+    ],
+];
+
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -34,12 +49,16 @@ include_once __DIR__.'/../../core.php';
 			</div>
 
             <div class="row">
-				<div class="col-md-6">
+				<div class="col-md-4">
 					{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$" ]}
 				</div>
 
-				<div class="col-md-6">
+				<div class="col-md-4">
 					{[ "type": "select", "label": "<?php echo tr('Codice Natura (Fatturazione Elettronica)'); ?>", "name": "codice_natura_fe", "value": "$codice_natura_fe$", "values": "query=SELECT codice as id, CONCAT(codice, ' - ', descrizione) AS descrizione FROM fe_natura" ]}
+				</div>
+
+                <div class="col-md-4">
+					{[ "type": "select", "label": "<?php echo tr('Esigibilità (Fatturazione Elettronica)'); ?>", "name": "esigibilita", "value": "$esigibilita$", "values": <?php echo json_encode($esigibilita); ?>, "required": 1 ]}
 				</div>
 			</div>
 

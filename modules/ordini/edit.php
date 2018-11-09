@@ -31,7 +31,7 @@ if ($module['name'] == 'Ordini cliente') {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data'); ?>", "maxlength": 10, "name": "data", "required": 1, "value": "$data$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "$data$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">

@@ -11,6 +11,7 @@ $is_add = filter('add') ? true : false;
 $contratto = $dbo->fetchOne('SELECT * FROM `co_contratti` WHERE `id` = :id', [
     ':id' => $id_parent,
 ]);
+$data_accettazione = $contratto['data_accettazione'];
 $data_conclusione = $contratto['data_conclusione'];
 $id_anagrafica = $contratto['idanagrafica'];
 
@@ -169,11 +170,11 @@ echo '
                 </div>
 
                 <div class="col-md-7">
-                    {[ "type": "select", "label": "'.tr('Inizio pianificazione').'", "name": "inizio", "values": '.json_encode($pianificazione).' ]}
+                    {[ "type": "date", "label": "'.tr('Inizio pianificazione').'", "name": "inizio", "help": "'.tr('Data accettazione contratto').'", "name": "data_inizio", "value": "'.$data_accettazione.'" ]}
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "date", "label": "'.tr('Fine pianificazione').'", "help": "'.tr('Data conclusione contratto').'", "name": "data_conclusione", "id": "data_conclusione_", "extra": "readonly", "value": "'.$data_conclusione.'"  ]}
+                    {[ "type": "date", "label": "'.tr('Fine pianificazione').'", "help": "'.tr('Data conclusione contratto').'", "name": "data_conclusione", "extra": "readonly", "value": "'.$data_conclusione.'" ]}
                 </div>
             </div>
 

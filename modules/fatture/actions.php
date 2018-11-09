@@ -1216,7 +1216,7 @@ switch (post('op')) {
                 if (!empty($idarticolo)) {
                     $idiva_acquisto = $idiva;
                     $prezzo_acquisto = $subtot;
-                    $riga = add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva_acquisto, $qta, $prezzo_acquisto, 0, 0, 'UNT', 0, $idconto);
+                    $riga = add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva_acquisto, $qta, $prezzo_acquisto, $sconto, $sconto_unitario, $tipo_sconto, 0, $idconto);
 
                     // Lettura lotto, serial, altro dalla riga dell'ordine
                     $dbo->query('INSERT INTO mg_prodotti (id_riga_documento, id_articolo, dir, serial, lotto, altro) SELECT '.prepare($riga).', '.prepare($idarticolo).', '.prepare($dir).', serial, lotto, altro FROM mg_prodotti AS t WHERE id_riga_ordine='.prepare($idriga));

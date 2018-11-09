@@ -450,9 +450,9 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             'tipo_sconto' => 'UNT',
             'um' => '-',
             'qta' => $rst[$i]['qta'],
-            'idrivalsainps' => $id_rivalsa_inps,
+            'idrivalsainps' => $id_rivalsa_inps ?: 0,
             'rivalsainps' => $rivalsainps,
-            'idritenutaacconto' => $id_ritenuta_acconto,
+            'idritenutaacconto' => $id_ritenuta_acconto ?: 0,
             'ritenutaacconto' => $ritenutaacconto,
             'order' => orderValue('co_righe_documenti', 'iddocumento', $id_fattura),
         ]);

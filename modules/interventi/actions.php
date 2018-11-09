@@ -77,6 +77,10 @@ switch (post('op')) {
 
             'sconto_globale' => $sconto,
             'tipo_sconto_globale' => $tipo_sconto,
+
+            'id_documento_fe' => post('id_documento_fe'),
+            'codice_cup' => post('codice_cup'),
+            'codice_cig' => post('codice_cig'),
         ], ['id' => $id_record]);
 
         $stato = $dbo->selectOne('in_statiintervento', '*', ['id' => post('id_stato')]);

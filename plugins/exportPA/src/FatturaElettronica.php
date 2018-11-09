@@ -488,9 +488,14 @@ class FatturaElettronica
             $dettaglio = [
                 'NumeroLinea' => $numero + 1,
                 'Descrizione' => $riga['descrizione'],
-                'Quantita' => $riga['qta'],
-                'PrezzoUnitario' => $prezzo_unitario,
+                'Quantita' => $riga['qta']
             ];
+
+            if (!empty($riga['um'])) {
+                $dettaglio['UnitaMisura']= $riga['um'];
+            }
+
+            $dettaglio['PrezzoUnitario']= $prezzo_unitario;
 
             // Sconto
             $riga['sconto_unitario'] = floatval($riga['sconto_unitario']);
@@ -524,32 +529,40 @@ class FatturaElettronica
             ];
         }
 
-        // Riepiloghi per IVA
-        // TODO: risolvere di conseguenza alla Natura IVA
-        $riepiloghi_percentuale = $database->fetchArray('SELECT SUM(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) as totale, SUM(`co_righe_documenti`.`iva`) as iva, `co_iva`.`percentuale` FROM `co_righe_documenti` INNER JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`idiva` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND
+        // Riepiloghi per IVA per percentuale
+        $riepiloghi_percentuale = $database->fetchArray('SELECT SUM(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) as totale, SUM(`co_righe_documenti`.`iva`) as iva, `co_iva`.`percentuale`, `co_iva`.`dicitura` FROM `co_righe_documenti` INNER JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`idiva` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND
         `co_iva`.`codice_natura_fe` IS NULL GROUP BY `co_iva`.`percentuale`');
         foreach ($riepiloghi_percentuale as $riepilogo) {
+            $iva = [
+                'AliquotaIVA' => $riepilogo['percentuale'],
+                'ImponibileImporto' => $riepilogo['totale'],
+                'Imposta' => $riepilogo['iva'],
+                'EsigibilitaIVA' => $riepilogo['esigibilita'],
+            ];
+
+            if (!empty($riepilogo['dicitura'])) {
+                $iva['RiferimentoNormativo'] = $riepilogo['dicitura'];
+            }
+
             $result[] = [
-                'DatiRiepilogo' => [
-                    'AliquotaIVA' => $riepilogo['percentuale'],
-                    'ImponibileImporto' => $riepilogo['totale'],
-                    'Imposta' => $riepilogo['iva'],
-                    'EsigibilitaIVA' => 'I',
-                ],
+                'DatiRiepilogo' => $iva
             ];
         }
 
+        // Riepiloghi per IVA per natura
         $riepiloghi_natura = $database->fetchArray('SELECT SUM(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) as totale, SUM(`co_righe_documenti`.`iva`) as iva, `co_iva`.`codice_natura_fe` FROM `co_righe_documenti` INNER JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`idiva` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND
         `co_iva`.`codice_natura_fe` IS NOT NULL GROUP BY `co_iva`.`codice_natura_fe`');
         foreach ($riepiloghi_natura as $riepilogo) {
+            $iva = [
+                'AliquotaIVA' => 0,
+                'Natura' => $riepilogo['codice_natura_fe'],
+                'ImponibileImporto' => $riepilogo['totale'],
+                'Imposta' => $riepilogo['iva'],
+                'EsigibilitaIVA' => $riepilogo['esigibilita'],
+            ];
+
             $result[] = [
-                'DatiRiepilogo' => [
-                    'AliquotaIVA' => 0,
-                    'Natura' => $riepilogo['codice_natura_fe'],
-                    'ImponibileImporto' => $riepilogo['totale'],
-                    'Imposta' => $riepilogo['iva'],
-                    'EsigibilitaIVA' => 'I',
-                ],
+                'DatiRiepilogo' => $iva
             ];
         }
 
@@ -596,6 +609,10 @@ class FatturaElettronica
     protected static function getAllegati($fattura)
     {
         $documento = $fattura->getDocumento();
+
+        if (!setting('Aggiungere stampa nella Fattura Elettronica')) {
+            return [];
+        }
 
         $id_module = Modules::get('Fatture di vendita')['id'];
         $dir = Uploads::getDirectory($id_module, Plugins::get('Fatturazione Elettronica')['id']);
@@ -649,8 +666,12 @@ class FatturaElettronica
             'DatiGenerali' => static::getDatiGenerali($fattura),
             'DatiBeniServizi' => static::getDatiBeniServizi($fattura),
             'DatiPagamento' => static::getDatiPagamento($fattura),
-            'Allegati' => static::getAllegati($fattura),
         ];
+
+        $allegati = static::getAllegati($fattura);
+        if (!empty($allegati)) {
+            $result['Allegati'] = $allegati;
+        }
 
         return $result;
     }
@@ -734,8 +755,8 @@ class FatturaElettronica
             return null;
         }
 
-        // Localhost: ['curl' => [CURLOPT_SSL_VERIFYPEER => false]]
-        $client = new Client();
+        // Localhost:
+        $client = new Client(['curl' => [CURLOPT_SSL_VERIFYPEER => false]]);
 
         $response = $client->request('POST', 'https://www.indicepa.gov.it/public-ws/WS01_SFE_CF.php', [
             'form_params' => [
@@ -832,8 +853,7 @@ class FatturaElettronica
             $cliente = $this->getCliente();
 
             // Inizializzazione libreria per la generazione della fattura in XML
-            //, ['stylesheet' => 'http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2.1/fatturaPA_v1.2.1.xsl']
-            $fattura = new FluidXml(null);
+            $fattura = new FluidXml(null, ['stylesheet' => 'http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2.1/fatturaPA_v1.2.1.xsl']);
 
             // Generazione dell'elemento root
             $fattura->namespace('p', 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2');

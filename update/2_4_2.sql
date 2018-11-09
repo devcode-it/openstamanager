@@ -29,6 +29,8 @@ UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Categor
 ALTER TABLE `an_nazioni` ADD `name` VARCHAR(255);
 ALTER TABLE `co_documenti` ADD `codice_xml` VARCHAR(255);
 
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Aggiungere stampa nella Fattura Elettronica', '0', 'boolean', 1, 'Generali', 20);
+
 CREATE TABLE IF NOT EXISTS `fe_regime_fiscale` (
   `codice` varchar(4) NOT NULL,
   `descrizione` varchar(255) NOT NULL,
@@ -163,7 +165,7 @@ INSERT INTO `fe_natura` (`codice`, `descrizione`) VALUES
 ('N6','Inversione contabile (per le operazioni in reverse charge ovvero nei casi di autofatturazione per acquisti extra UE di servizi ovvero per importazioni di beni nei soli casi previsti)'),
 ('N7','IVA assolta in altro stato UE (vendite a distanza ex art. 40 c. 3 e 4 e art. 41 c. 1 lett. b, DL 331/93; prestazione di servizi di telecomunicazioni, tele-radiodiffusione ed elettronici ex art. 7-sexies lett. f, g, art. 74-sexies DPR 633/72)');
 
-ALTER TABLE `co_iva` ADD `codice_natura_fe` varchar(4), ADD `deleted_at` timestamp NULL DEFAULT NULL, ADD `codice` int(11), ADD `default` boolean NOT NULL DEFAULT 0, ADD FOREIGN KEY (`codice_natura_fe`) REFERENCES `fe_natura`(`codice`) ON DELETE CASCADE;
+ALTER TABLE `co_iva` ADD `codice_natura_fe` varchar(4), ADD `deleted_at` timestamp NULL DEFAULT NULL, ADD `codice` int(11), ADD `esigibilita` enum('I', 'D', 'S') NOT NULL DEFAULT 'I', ADD `default` boolean NOT NULL DEFAULT 0, ADD FOREIGN KEY (`codice_natura_fe`) REFERENCES `fe_natura`(`codice`) ON DELETE CASCADE;
 UPDATE `co_iva` SET `deleted_at` = NOW();
 
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_iva` WHERE 1=1 AND deleted_at IS NULL HAVING 2=2' WHERE `name` = 'IVA';

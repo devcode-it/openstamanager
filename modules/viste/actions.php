@@ -39,14 +39,13 @@ switch (filter('op')) {
     case 'fields':
         $rs = true;
 
-        foreach ((array) post('query') as $c => $k) {
-            // Fix per la protezone contro XSS, che interpreta la sequenza "<testo" come un tag HTML
-            post('query')[$c] = $_POST['query'][$c];
-
-            if (check_query(post('query')[$c])) {
+        // Fix per la protezone contro XSS, che interpreta la sequenza "<testo" come un tag HTML
+        $queries = (array) $_POST['query'];
+        foreach ($queries as $c => $query) {
+            if (check_query($query)) {
                 $array = [
                     'name' => post('name')[$c],
-                    'query' => post('query')[$c],
+                    'query' => $query,
                     'visible' => post('visible')[$c],
                     'search' => post('search')[$c],
                     'slow' => post('slow')[$c],
@@ -57,11 +56,11 @@ switch (filter('op')) {
                     'id_module' => $id_record,
                 ];
 
-                if (!empty(post('id')[$c]) && !empty(post('query')[$c])) {
+                if (!empty(post('id')[$c]) && !empty($query)) {
                     $id = post('id')[$c];
 
                     $dbo->update('zz_views', $array, ['id' => $id]);
-                } elseif (!empty(post('query')[$c])) {
+                } elseif (!empty($query)) {
                     $array['order'] = orderValue('zz_views', 'id_module', $id_record);
 
                     $dbo->insert('zz_views', $array);
@@ -87,24 +86,25 @@ switch (filter('op')) {
     case 'filters':
         $rs = true;
 
-        foreach ((array) post('query') as $c => $k) {
-            // Fix per la protezone contro XSS, che interpreta la sequenza "<testo" come un tag HTML
-            post('query')[$c] = $_POST['query'][$c];
+        // Fix per la protezone contro XSS, che interpreta la sequenza "<testo" come un tag HTML
+        $queries = (array) $_POST['query'];
+        foreach ($queries as $c => $query) {
+            $query = $_POST['query'][$c];
 
-            if (check_query(post('query')[$c])) {
+            if (check_query($query)) {
                 $array = [
                     'name' => post('name')[$c],
                     'idgruppo' => post('gruppo')[$c],
                     'idmodule' => $id_record,
-                    'clause' => post('query')[$c],
+                    'clause' => $query,
                     'position' => !empty(post('position')[$c]) ? 'HVN' : 'WHR',
                 ];
 
-                if (!empty(post('id')[$c]) && !empty(post('query')[$c])) {
+                if (!empty(post('id')[$c]) && !empty($query)) {
                     $id = post('id')[$c];
 
                     $dbo->update('zz_group_module', $array, ['id' => $id]);
-                } elseif (!empty(post('query')[$c])) {
+                } elseif (!empty($query)) {
                     $dbo->insert('zz_group_module', $array);
 
                     $id = $dbo->lastInsertedID();
@@ -127,9 +127,9 @@ switch (filter('op')) {
 
         $rs = $dbo->fetchArray('SELECT enabled FROM zz_group_module WHERE id='.prepare($id));
 
-        $array = ['enabled' => !empty($rs[0]['enabled']) ? 0 : 1];
-
-        $dbo->update('zz_group_module', $array, ['id' => $id]);
+        $dbo->update('zz_group_module', [
+            'enabled' => !empty($rs[0]['enabled']) ? 0 : 1
+        ], ['id' => $id]);
 
         flash()->info(tr('Salvataggio completato!'));
 

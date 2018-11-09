@@ -18,13 +18,6 @@ class Anagrafica extends Model
      */
     protected $guarded = [];
 
-    /**
-     * The attributes that aren't mass assignable.
-     *
-     * @var array
-     */
-    protected $guarded = [];
-
     protected $appends = [
         'id',
     ];

@@ -602,12 +602,12 @@ ALTER TABLE `co_contratti` ADD `codice_cig` VARCHAR(15) NOT NULL AFTER `tipo_sco
 ALTER TABLE `co_contratti` ADD `codice_cup` VARCHAR(15) NOT NULL AFTER `codice_cig`;
 
 -- Agiunta data e ora generazione fattura elettronica
-ALTER TABLE `co_documenti` ADD `xmlgenerated_at` TIMESTAMP NULL AFTER `codice_xml`;
+ALTER TABLE `co_documenti` ADD `xml_generated_at` TIMESTAMP NULL AFTER `codice_xml`;
 
 -- Colonna nella vista fatture per indicare se è stato generato o meno il file xml
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
-(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'icon_FE', 'IF(xmlgenerated_at IS NOT NULL, \'fa fa-file-code-o text-success\', \'\')', 10, 1, 0, 0, 1, 0, 0),
-(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'icon_title_FE', 'IF(xmlgenerated_at IS NOT NULL, \'Generata\', \'\')', 10, 1, 0, 0, 0, 0, 0);
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'icon_FE', 'IF(xml_generated_at IS NOT NULL, \'fa fa-file-code-o text-success\', \'\')', 10, 1, 0, 0, 1, 0, 0),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'icon_title_FE', 'IF(xml_generated_at IS NOT NULL, \'Generata\', \'\')', 10, 1, 0, 0, 0, 0, 0);
 
 -- Colonna nella vista fatture per indicare se è stata inviata o meno la mail
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES

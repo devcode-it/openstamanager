@@ -175,6 +175,17 @@ class Anagrafica extends Model
         $this->attributes['codice_fiscale'] = trim(strtoupper($value));
     }
 
+    public function setCodiceDestinatarioAttribute($value)
+    {
+        if (empty($this->tipo) || $this->tipo == 'Privato' || in_array($value, ['999999', '0000000'])) {
+            $codice_destinatario = '';
+        } else {
+            $codice_destinatario = $value;
+        }
+
+        $this->attributes['codice_destinatario'] = trim(strtoupper($codice_destinatario));
+    }
+
     public function tipi()
     {
         return $this->belongsToMany(Tipo::class, 'an_tipianagrafiche_anagrafiche', 'idanagrafica', 'idtipoanagrafica');

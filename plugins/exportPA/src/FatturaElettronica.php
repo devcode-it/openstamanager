@@ -5,6 +5,7 @@ namespace Plugins\ExportPA;
 use FluidXml\FluidXml;
 use Respect\Validation\Validator as v;
 use Stringy\Stringy as S;
+use GuzzleHttp\Client;
 use DateTime;
 use DOMDocument;
 use XSLTProcessor;
@@ -44,7 +45,7 @@ class FatturaElettronica
         WHERE `co_documenti`.`id` = '.prepare($id_documento));
 
         // Controllo sulla possibilità di creare la fattura elettronica
-		// Posso fatturare ai privati utilizzando il codice fiscale
+        // Posso fatturare ai privati utilizzando il codice fiscale
         if ($this->documento['stato'] != 'Emessa') {
             throw new \UnexpectedValueException();
         }
@@ -393,38 +394,41 @@ class FatturaElettronica
 
         return $result;
     }
-	
-	
-	 /**
-     * Restituisce l'array responsabile per la generazione del tag DatiContratto.
-     *
-     * @return array
-     */
+
+
+    /**
+    * Restituisce l'array responsabile per la generazione del tag DatiContratto.
+    *
+    * @return array
+    */
     protected static function getDatiContratto($fattura)
     {
         $documento = $fattura->getDocumento();
-		$righe_documento = $fattura->getRighe();
+        $righe_documento = $fattura->getRighe();
         $database = database();
-		
-		foreach ($righe_documento as $numero => $riga) {
-			if (!empty($riga['idcontratto'])){
-				$numero_contratto = $database->fetchOne('SELECT numero FROM co_contratti WHERE id = '.prepare($riga['idcontratto']))['numero'];
-				$codice_cig = $database->fetchOne('SELECT codice_cig FROM co_contratti WHERE id = '.prepare($riga['idcontratto']))['codice_cig'];
-				$codice_cup = $database->fetchOne('SELECT codice_cup FROM co_contratti WHERE id = '.prepare($riga['idcontratto']))['codice_cup'];
-				
-				$result[] = [
-					'IdDocumento' => $numero_contratto,
-				];
-				
-				if (!empty($codice_cig)) {
-					$result['CodiceCIG'] = $codice_cig;
-				}
-				
-				if (!empty($codice_cup)) {
-					$result['CodiceCUP'] = $codice_cup;
-				}
-			}
-		}
+
+        $result = [];
+
+        foreach ($righe_documento as $riga) {
+            if (!empty($riga['idcontratto'])) {
+                $numero_contratto = $database->fetchOne('SELECT numero FROM co_contratti WHERE id = '.prepare($riga['idcontratto']))['numero'];
+                $codice_cig = $database->fetchOne('SELECT codice_cig FROM co_contratti WHERE id = '.prepare($riga['idcontratto']))['codice_cig'];
+                $codice_cup = $database->fetchOne('SELECT codice_cup FROM co_contratti WHERE id = '.prepare($riga['idcontratto']))['codice_cup'];
+
+                $result[] = [
+                    'IdDocumento' => $numero_contratto,
+                ];
+
+                if (!empty($codice_cig)) {
+                    $result['CodiceCIG'] = $codice_cig;
+                }
+
+                if (!empty($codice_cup)) {
+                    $result['CodiceCUP'] = $codice_cup;
+                }
+            }
+        }
+
         return $result;
     }
 
@@ -436,27 +440,21 @@ class FatturaElettronica
     protected static function getDatiGenerali($fattura)
     {
         $documento = $fattura->getDocumento();
-		$cliente = $fattura->getCliente();
+        $cliente = $fattura->getCliente();
 
         $result = [
             'DatiGeneraliDocumento' => static::getDatiGeneraliDocumento($fattura),
             // TODO: DatiOrdineAcquisto, DatiContratto, DatiConvenzione, DatiRicezione, DatiFattureCollegate, DatiSAL, DatiDDT, FatturaPrincipale
         ];
-		
-		//aggiungo nodo codice cig, cup solo per enti pubblici
-		if ($cliente['tipo'] == 'Ente pubblico'){
-			//e se tra le righe ho fatturato almeno un contratto
-			$righe_documento = $fattura->getRighe();
-			$find = false;
-			foreach ($righe_documento as $key => $item) {
-				if (!empty($item['idcontratto'])) {
-					$find = true;
-				}
-			}
-			if ($find){
-				$result['DatiContratto'] = static::getDatiContratto($fattura);
-			}
-		}
+
+        // Aggiungo nodo codice cig, cup solo per enti pubblici
+        if ($cliente['tipo'] == 'Ente pubblico') {
+            // Controllo le le righe per la fatturazione di contratti
+            $dati_contratto = static::getDatiContratto($fattura);
+            if (!empty($dati_contratto)) {
+                $result['DatiContratto'] = $dati_contratto;
+            }
+        }
 
         if ($documento['tipo'] == 'Fattura accompagnatoria di vendita') {
             $result['DatiTrasporto'] = static::getDatiTrasporto($fattura);
@@ -737,7 +735,7 @@ class FatturaElettronica
         }
 
         // Localhost: ['curl' => [CURLOPT_SSL_VERIFYPEER => false]]
-        $client = new \GuzzleHttp\Client();
+        $client = new Client();
 
         $response = $client->request('POST', 'https://www.indicepa.gov.it/public-ws/WS01_SFE_CF.php', [
             'form_params' => [

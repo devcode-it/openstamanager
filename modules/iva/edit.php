@@ -58,7 +58,7 @@ $esigibilita = [
 				</div>
 
                 <div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Esigibilità'); ?>", "name": "esigibilita", "value": "$esigibilita$", "values": <?php echo json_encode($esigibilita); ?>, "required": 1 ]}
+					{[ "type": "select", "label": "<?php echo tr('Esigibilità (Fatturazione Elettronica)'); ?>", "name": "esigibilita", "value": "$esigibilita$", "values": <?php echo json_encode($esigibilita); ?>, "required": 1 ]}
 				</div>
 			</div>
 

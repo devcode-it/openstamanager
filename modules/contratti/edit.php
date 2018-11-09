@@ -65,32 +65,20 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 			<div class="row">
 
-				<div class="col-md-2">
+				<div class="col-md-4">
 					{[ "type": "number", "label": "<?php echo tr('Validità'); ?>", "name": "validita", "decimals": "0", "value": "$validita$", "icon-after": "giorni" ]}
 				</div>
 
-				<div class="col-md-2">
+				<div class="col-md-4">
 					{[ "type": "checkbox", "label": "<?php echo tr('Rinnovabile'); ?>", "name": "rinnovabile", "help": "<?php echo tr('Il contratto è rinnovabile?'); ?>", "value": "$rinnovabile$" ]}
 				</div>
 
-				<div class="col-md-2">
+				<div class="col-md-4">
 					{[ "type": "number", "label": "<?php echo tr('Preavviso per rinnovo'); ?>", "name": "giorni_preavviso_rinnovo", "decimals": "0", "value": "$giorni_preavviso_rinnovo$", "icon-after": "giorni", "disabled": <?php echo $record['rinnovabile'] ? 0 : 1; ?> ]}
 				</div>
-
-				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15 ]}
-				</div>
-
-				<div class="col-md-3">
-					{[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15 ]}
-				</div>
-
-
 			</div>
 
 			<div class="row">
-
-
 				<div class="col-md-3">
 					{[ "type": "date", "label": "<?php echo tr('Data bozza'); ?>", "name": "data_bozza", "value": "$data_bozza$" ]}
 				</div>
@@ -144,6 +132,29 @@ if ($record['stato'] == 'Emessa') {
 			</div>
 		</div>
 	</div>
+
+    <!-- Fatturazione Elettronica -->
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title"><?php echo tr('Dati Fatturazione Elettronica'); ?></h3>
+        </div>
+
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "value": "$id_documento_fe$", "maxlength": 20 ]}
+				</div>
+
+                <div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15 ]}
+				</div>
+
+				<div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15 ]}
+				</div>
+            </div>
+        </div>
+    </div>
 
 	<!-- COSTI -->
 	<div class="panel panel-primary">

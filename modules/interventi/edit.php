@@ -81,8 +81,6 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 		</div>
 	</div>
 
-
-
 	<!-- DATI INTERVENTO -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
@@ -141,6 +139,36 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 			</div>
 		</div>
 	</div>
+
+<?php
+
+if (empty($record['idcontratto'])) {
+    ?>
+    <!-- Fatturazione Elettronica -->
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title"><?php echo tr('Dati Fatturazione Elettronica'); ?></h3>
+        </div>
+
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "value": "$id_documento_fe$", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+				</div>
+
+                <div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+				</div>
+
+				<div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+				</div>
+            </div>
+        </div>
+    </div>
+    <?php
+}
+?>
 
 	<!-- ORE LAVORO -->
 	<div class="panel panel-primary">

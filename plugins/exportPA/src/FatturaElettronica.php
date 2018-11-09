@@ -29,6 +29,11 @@ class FatturaElettronica
     /** @var array Informazioni sul documento */
     protected $documento = [];
 
+    /** @var array Contratti collegati al documento */
+    protected $contratti = [];
+    /** @var array Righe del documento */
+    protected $righe = [];
+
     /** @var array Stato di validazione interna dell'XML della fattura */
     protected $is_valid = null;
     /** @var array XML della fattura */
@@ -98,7 +103,32 @@ class FatturaElettronica
      */
     public function getRighe()
     {
-        return database()->fetchArray('SELECT * FROM `co_righe_documenti` WHERE `sconto_globale` = 0 AND is_descrizione = 0 AND `iddocumento` = '.prepare($this->getDocumento()['id']));
+        if (empty($this->righe)) {
+            $this->righe = database()->fetchArray('SELECT * FROM `co_righe_documenti` WHERE `sconto_globale` = 0 AND is_descrizione = 0 AND `iddocumento` = '.prepare($this->getDocumento()['id']));
+        }
+
+        return $this->righe;
+    }
+
+    /**
+     * Restituisce i contratti collegati al documento (contratti e interventi).
+     *
+     * @return array
+     */
+    public function getContratti()
+    {
+        if (empty($this->contratti)) {
+            $documento = $this->getDocumento();
+            $database = database();
+
+            $contratti = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `co_contratti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idcontratto` = `co_contratti`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+
+            $interventi = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `in_interventi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idintervento` = `in_interventi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+
+            $this->contratti = array_merge($contratti, $interventi);
+        }
+
+        return $this->contratti;
     }
 
     /**
@@ -199,8 +229,6 @@ class FatturaElettronica
 
         // Informazioni specifiche azienda
         if ($azienda) {
-            // TODO: AlboProfessionale, ProvinciaAlbo, NumeroIscrizioneAlbo, DataIscrizioneAlbo
-
             $result['RegimeFiscale'] = setting('Regime Fiscale');
         }
 
@@ -242,7 +270,6 @@ class FatturaElettronica
         $result = [
             'DatiAnagrafici' => static::getDatiAnagrafici($azienda, true),
             'Sede' => static::getSede($azienda),
-            // TODO: StabileOrganizzazione,
         ];
 
         // IscrizioneREA
@@ -278,8 +305,6 @@ class FatturaElettronica
             $result['Contatti']['Email'] = $azienda['email'];
         }
 
-        // TODO: RiferimentoAmministrazione
-
         return $result;
     }
 
@@ -295,7 +320,6 @@ class FatturaElettronica
         $result = [
             'DatiAnagrafici' => static::getDatiAnagrafici($cliente),
             'Sede' => static::getSede($cliente),
-            // TODO: StabileOrganizzazione, RappresentanteFiscale
         ];
 
         return $result;
@@ -316,8 +340,7 @@ class FatturaElettronica
             'Divisa' => 'EUR',
             'Data' => $documento['data'],
             'Numero' => $documento['numero_esterno'],
-            //'Causale' => $documento['causale'],
-            // TODO: vari
+            // TODO: 'Causale' => $documento['causale'],
         ];
 
         // Ritenuta d'Acconto
@@ -403,30 +426,23 @@ class FatturaElettronica
     */
     protected static function getDatiContratto($fattura)
     {
-        $documento = $fattura->getDocumento();
-        $righe_documento = $fattura->getRighe();
-        $database = database();
+        $contratti = $fattura->getContratti();
 
         $result = [];
+        foreach ($contratti as $contratto) {
+            $dati_contratto = [
+                'IdDocumento' => $contratto['id_documento_fe'],
+            ];
 
-        foreach ($righe_documento as $riga) {
-            if (!empty($riga['idcontratto'])) {
-                $numero_contratto = $database->fetchOne('SELECT numero FROM co_contratti WHERE id = '.prepare($riga['idcontratto']))['numero'];
-                $codice_cig = $database->fetchOne('SELECT codice_cig FROM co_contratti WHERE id = '.prepare($riga['idcontratto']))['codice_cig'];
-                $codice_cup = $database->fetchOne('SELECT codice_cup FROM co_contratti WHERE id = '.prepare($riga['idcontratto']))['codice_cup'];
-
-                $result[] = [
-                    'IdDocumento' => $numero_contratto,
-                ];
-
-                if (!empty($codice_cig)) {
-                    $result['CodiceCIG'] = $codice_cig;
-                }
-
-                if (!empty($codice_cup)) {
-                    $result['CodiceCUP'] = $codice_cup;
-                }
+            if (!empty($contratto['codice_cig'])) {
+                $dati_contratto['CodiceCIG'] = $contratto['codice_cig'];
             }
+
+            if (!empty($contratto['codice_cup'])) {
+                $dati_contratto['CodiceCUP'] = $contratto['codice_cup'];
+            }
+
+            $result[] = $dati_contratto;
         }
 
         return $result;
@@ -444,15 +460,15 @@ class FatturaElettronica
 
         $result = [
             'DatiGeneraliDocumento' => static::getDatiGeneraliDocumento($fattura),
-            // TODO: DatiOrdineAcquisto, DatiContratto, DatiConvenzione, DatiRicezione, DatiFattureCollegate, DatiSAL, DatiDDT, FatturaPrincipale
         ];
 
-        // Aggiungo nodo codice cig, cup solo per enti pubblici
-        if ($cliente['tipo'] == 'Ente pubblico') {
-            // Controllo le le righe per la fatturazione di contratti
-            $dati_contratto = static::getDatiContratto($fattura);
-            if (!empty($dati_contratto)) {
-                $result['DatiContratto'] = $dati_contratto;
+        // Controllo le le righe per la fatturazione di contratti
+        $dati_contratti = static::getDatiContratto($fattura);
+        if (!empty($dati_contratti)) {
+            foreach($dati_contratti as $dato){
+                $result[] = [
+                    'DatiContratto' => $dato,
+                ];
             }
         }
 
@@ -540,8 +556,10 @@ class FatturaElettronica
                 'EsigibilitaIVA' => $riepilogo['esigibilita'],
             ];
 
+            // TODO: la dicitura può essere diversa tra diverse IVA con stessa percentuale/natura
+            // nei riepiloghi viene fatto un accorpamento percentuale/natura
             if (!empty($riepilogo['dicitura'])) {
-                $iva['RiferimentoNormativo'] = $riepilogo['dicitura'];
+                //$iva['RiferimentoNormativo'] = $riepilogo['dicitura'];
             }
 
             $result[] = [

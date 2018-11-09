@@ -106,7 +106,7 @@ class FatturaElettronica
 
         // Informazioni sulla sede
         $info = $xml['Sede'];
-        $sede = $anagrafica->sedeLegale();
+        $sede = $anagrafica->sedeLegale;
 
         if (!empty($partita_iva)) {
             $sede->partita_iva = $partita_iva;

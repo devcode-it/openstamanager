@@ -30,13 +30,13 @@ if (!empty($rs_art)) {
         // Data di inizio
         echo '
         <td>
-            {[ "type": "date", "name": "data_inizio['.$r['id'].']", "required": 1, "maxlength": 10, "value": "'.$r['data_inizio'].'" ]}
+            {[ "type": "date", "name": "data_inizio['.$r['id'].']", "required": 1, "value": "'.$r['data_inizio'].'" ]}
         </td>';
 
         // Data di fine
         echo '
         <td>
-            {[ "type": "date", "name": "data_fine['.$r['id'].']", "maxlength": 10, "value": "'.$r['data_fine'].'", "min-date": "'.$r['data_inizio'].'" ]}
+            {[ "type": "date", "name": "data_fine['.$r['id'].']", "value": "'.$r['data_fine'].'", "min-date": "'.$r['data_inizio'].'" ]}
         </td>';
 
         // Pulsanti per aggiornamento date tecnici

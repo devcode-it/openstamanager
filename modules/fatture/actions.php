@@ -491,7 +491,7 @@ switch (post('op')) {
                         add_movimento_magazzino($riga['idarticolo'], -$riga['qta'], ['iddocumento' => $id_record]);
                     }
                 }
-            }else{
+            } else {
                 // Aggiunta riga contratto sul documento
                 $query = 'INSERT INTO co_righe_documenti(iddocumento, idcontratto, is_contratto, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_record).', '.prepare($idcontratto).', "1", '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).", '-', 1, ".prepare(setting('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(setting("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(setting("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
                 $dbo->query($query);
@@ -508,7 +508,7 @@ switch (post('op')) {
             flash()->info(tr('Contratto _NUM_ aggiunto!', [
                 '_NUM_' => $numero,
             ]));
-            
+
             // Aggiorno lo stato degli interventi collegati al contratto se ce ne sono
             $query2 = 'SELECT idcontratto FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND NOT idcontratto=0 AND idcontratto IS NOT NULL';
             $rs2 = $dbo->fetchArray($query2);
@@ -516,7 +516,7 @@ switch (post('op')) {
             for ($j = 0; $j < sizeof($rs2); ++$j) {
                 $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id_contratto=".prepare($rs2[$j]['idcontratto']));
             }
-            
+
             // Aggiorno il budget sul contratto con l'importo inserito in fattura e imposto lo stato del contratto "In attesa di pagamento" (se selezionato)
             if ($aggiorna_budget) {
                 $dbo->query('UPDATE co_contratti SET budget='.prepare($prezzo).' WHERE id='.prepare($idcontratto));
@@ -704,7 +704,7 @@ switch (post('op')) {
                 $q = 'SELECT indetraibile FROM co_iva WHERE id='.prepare($idiva);
                 $rs = $dbo->fetchArray($q);
                 $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
-                
+
                 $qdesc = 'SELECT is_descrizione FROM dt_righe_ddt WHERE id='.prepare($idrigaddt);
                 $rsdesc = $dbo->fetchArray($qdesc);
 
@@ -723,7 +723,7 @@ switch (post('op')) {
 
                 // Inserimento riga normale
                 elseif ($qta != 0 || $rsdesc[0]['is_descrizione']==1) {
-                    $query = 'INSERT INTO co_righe_documenti(iddocumento, idarticolo, descrizione, is_descrizione, idddt, idiva, desc_iva, iva, iva_indetraibile, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, `order`) VALUES('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($descrizione).', '.prepare( $rsdesc[0]['is_descrizione'] ).', '.prepare($idddt).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
+                    $query = 'INSERT INTO co_righe_documenti(iddocumento, idarticolo, descrizione, is_descrizione, idddt, idiva, desc_iva, iva, iva_indetraibile, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, `order`) VALUES('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($descrizione).', '.prepare($rsdesc[0]['is_descrizione']).', '.prepare($idddt).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
 
                     $dbo->query($query);
                 }
@@ -788,7 +788,7 @@ switch (post('op')) {
                 $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
                 $rs = $dbo->fetchArray($query);
                 $desc_iva = $rs[0]['descrizione'];
-                
+
                 $qdesc = 'SELECT is_descrizione FROM dt_righe_ddt WHERE id='.prepare($idriga);
                 $rsdesc = $dbo->fetchArray($qdesc);
 
@@ -827,10 +827,10 @@ switch (post('op')) {
     case 'fattura_da_contratto':
         $idcontratto = post('id_record');
         $data = date('Y-m-d');
-        
+
         $rs_segment = $dbo->fetchArray("SELECT * FROM zz_segments WHERE id_module=".prepare($id_module)." AND predefined='1'");
         $id_segment = $rs_segment[0]['id'];
-        
+
         $numero = get_new_numerofattura($data);
         $numero_esterno = get_new_numerosecondariofattura($data);
         $tipo_documento = 'Fattura immediata di vendita';
@@ -850,12 +850,12 @@ switch (post('op')) {
 
         for ($i = 0; $i < sizeof($rs_righe); ++$i) {
             // Se sto aggiungendo un articolo uso la funzione per inserirlo e incrementare la giacenza
-            if($rs_righe[$i]['idarticolo']!=0){
+            if ($rs_righe[$i]['idarticolo']!=0) {
                 add_articolo_infattura($id_record, $rs_righe[$i]['idarticolo'], $rs_righe[$i]['descrizione'], $rs_righe[$i]['idiva'], $rs_righe[$i]['qta'], $rs_righe[$i]['subtotale'], $rs_righe[$i]['sconto'], $rs_righe[$i]['sconto_unitario'], $rs_righe[$i]['tipo_sconto']);
             }
-            
+
             // Inserimento riga normale
-            else{
+            else {
                 $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idcontratto, is_descrizione, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, sconto_globale, idiva, desc_iva, iva, iva_indetraibile, um, qta, `order`) values('.prepare($id_record).', '.prepare($idcontratto).', '.prepare($rs_righe[$i]['is_descrizione']).', '.prepare($rs_righe[$i]['descrizione']).', '.prepare($rs_righe[$i]['subtotale']).', '.prepare($rs_righe[$i]['sconto']).', '.prepare($rs_righe[$i]['sconto_unitario']).', '.prepare($rs_righe[$i]['tipo_sconto']).', '.prepare($rs_righe[$i]['sconto_globale']).', '.prepare($rs_righe[$i]['idiva']).', '.prepare($rs_righe[$i]['desc_iva']).', '.prepare($rs_righe[$i]['iva']).', '.prepare($rs_righe[$i]['iva_indetraibile']).', '.prepare($rs_righe[$i]['um']).', '.prepare($rs_righe[$i]['qta']).', '.prepare($rs_righe[$i]['order']).')');
             }
         }
@@ -1076,7 +1076,7 @@ switch (post('op')) {
             $idcontratto = $rsp[0]['idcontratto'];
             $is_contratto = $rsp[0]['is_contratto'];
             $idarticolo = $rsp[0]['idarticolo'];
-            
+
             // contratto su unica riga, perdo il riferimento dell'articolo quindi lo vado a leggere da co_righe_contratti
             if (empty($idarticolo) && $is_contratto) {
                 // rimetto a magazzino gli articoli collegati al contratto
@@ -1161,10 +1161,10 @@ switch (post('op')) {
         break;
 
     case 'update_position':
-        $orders = explode( ",", $_POST['order'] );
+        $orders = explode(",", $_POST['order']);
         $order = 0;
 
-        foreach( $orders as $idriga ){
+        foreach ($orders as $idriga) {
             $dbo->query('UPDATE `co_righe_documenti` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
             $order++;
         }
@@ -1216,7 +1216,7 @@ switch (post('op')) {
                 if (!empty($idarticolo)) {
                     $idiva_acquisto = $idiva;
                     $prezzo_acquisto = $subtot;
-                    $riga = add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva_acquisto, $qta, $prezzo_acquisto, 0, 0, 'UNT', 0, $idconto);
+                    $riga = add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva_acquisto, $qta, $prezzo_acquisto, $sconto, $sconto_unitario, $tipo_sconto, 0, $idconto);
 
                     // Lettura lotto, serial, altro dalla riga dell'ordine
                     $dbo->query('INSERT INTO mg_prodotti (id_riga_documento, id_articolo, dir, serial, lotto, altro) SELECT '.prepare($riga).', '.prepare($idarticolo).', '.prepare($dir).', serial, lotto, altro FROM mg_prodotti AS t WHERE id_riga_ordine='.prepare($idriga));

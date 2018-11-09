@@ -169,7 +169,7 @@ if (!empty($records)) {
     <i class="fa fa-plus"></i> '.tr('Nuovo promemoria').'
 </button>';
 
-$options = $dbo->fetchArray('SELECT idtipointervento, descrizione FROM `in_tipiintervento`');
+$options = $dbo->fetchArray('SELECT co_contratti_tipiintervento.*, in_tipiintervento.descrizione FROM in_tipiintervento INNER JOIN co_contratti_tipiintervento ON in_tipiintervento.idtipointervento=co_contratti_tipiintervento.idtipointervento WHERE idcontratto='.prepare($id_record).' AND (co_contratti_tipiintervento.costo_ore!=0 OR co_contratti_tipiintervento.costo_km!=0 OR co_contratti_tipiintervento.costo_dirittochiamata!=0) ORDER BY in_tipiintervento.descrizione');
 
 echo '
 <script type="text/javascript">

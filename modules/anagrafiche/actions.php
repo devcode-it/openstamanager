@@ -57,12 +57,12 @@ switch (post('op')) {
         $anagrafica->id_ritenuta_acconto_acquisti = post('id_ritenuta_acconto_acquisti');
         $anagrafica->id_ritenuta_acconto_vendite = post('id_ritenuta_acconto_vendite');
 
-        $anagrafica->updateTipologie((array) post('idtipoanagrafica'));
+        $anagrafica->tipologie = (array) post('idtipoanagrafica');
 
         $anagrafica->save();
 
         // Informazioni sulla sede
-        $sede = $anagrafica->sedeLegale();
+        $sede = $anagrafica->sedeLegale;
         $sede->partita_iva = post('piva');
         $sede->codice_fiscale = post('codice_fiscale');
         $sede->indirizzo = post('indirizzo');

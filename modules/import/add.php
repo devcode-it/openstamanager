@@ -35,16 +35,16 @@ foreach ($imports as $key => $value) {
 </form>
 
 <script>
-$('#bs-popup #id_record').change( function(){
+$('#id_record').change( function(){
 	 if ($(this).val()>0){
-		 $( "#bs-popup #example" ).removeClass('hide');
+		 $( "#example" ).removeClass('hide');
 	 }else{
-		$( "#bs-popup #example" ).addClass('hide');
+		$( "#example" ).addClass('hide');
 	 }
 });
 
-$( "#bs-popup #example" ).click(function(event) {
-    var module =  $('#bs-popup #id_record').find(':selected').data('text').toLowerCase();
+$( "#example" ).click(function(event) {
+    var module =  $('#id_record').find(':selected').data('text').toLowerCase();
     var dir = "<?php echo ROOTDIR; ?>/modules/"+module+"/import.php";
     var file = "<?php echo ROOTDIR; ?>/files/"+module+"/"+module+".csv";
 

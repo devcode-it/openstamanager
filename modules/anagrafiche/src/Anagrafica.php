@@ -11,6 +11,12 @@ class Anagrafica extends Model
 {
     protected $table = 'an_anagrafiche';
     protected $primaryKey = 'idanagrafica';
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = [];
 
     protected $appends = [
         'id',
@@ -42,7 +48,7 @@ class Anagrafica extends Model
         $model->codice = $codice;
         $model->save();
 
-        $model->updateTipologie($tipologie);
+        $model->tipologie = $tipologie;
         $model->save();
 
         return $model;
@@ -108,11 +114,13 @@ class Anagrafica extends Model
      *
      * @param array $tipologie
      */
-    public function updateTipologie(array $tipologie)
+    public function setTipologieAttribute(array $tipologie)
     {
         if ($this->isAzienda()) {
             $tipologie[] = Tipo::where('descrizione', 'Azienda')->first()->id;
         }
+
+        $tipologie = array_clean($tipologie);
 
         $previous = $this->tipi()->get();
         $this->tipi()->sync($tipologie);
@@ -206,7 +214,7 @@ class Anagrafica extends Model
      *
      * @return self
      */
-    public function sedeLegale()
+    public function getSedeLegaleAttribute()
     {
         return $this;
     }

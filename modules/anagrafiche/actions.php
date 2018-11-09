@@ -11,6 +11,28 @@ $id_tecnico = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche 
 
 switch (post('op')) {
     case 'update':
+        // Informazioni sulla sede
+        $sede = $anagrafica->sedeLegale;
+        $sede->partita_iva = post('piva');
+        $sede->codice_fiscale = post('codice_fiscale');
+        $sede->indirizzo = post('indirizzo');
+        $sede->indirizzo2 = post('indirizzo2');
+        $sede->citta = post('citta');
+        $sede->cap = post('cap');
+        $sede->provincia = post('provincia');
+        $sede->km = post('km');
+        $sede->id_nazione = post('id_nazione') ?: null;
+        $sede->gaddress = post('gaddress');
+        $sede->lat = post('lat');
+        $sede->lng = post('lng');
+        $sede->telefono = post('telefono');
+        $sede->cellulare = post('cellulare');
+        $sede->fax = post('fax');
+        $sede->idzona = post('idzona');
+        $sede->email = post('email');
+
+        $sede->save();
+
         // Informazioni sull'anagrafica
         $anagrafica->codice = post('codice');
         $anagrafica->tipo = post('tipo');
@@ -60,28 +82,6 @@ switch (post('op')) {
         $anagrafica->tipologie = (array) post('idtipoanagrafica');
 
         $anagrafica->save();
-
-        // Informazioni sulla sede
-        $sede = $anagrafica->sedeLegale;
-        $sede->partita_iva = post('piva');
-        $sede->codice_fiscale = post('codice_fiscale');
-        $sede->indirizzo = post('indirizzo');
-        $sede->indirizzo2 = post('indirizzo2');
-        $sede->citta = post('citta');
-        $sede->cap = post('cap');
-        $sede->provincia = post('provincia');
-        $sede->km = post('km');
-        $sede->id_nazione = post('id_nazione') ?: null;
-        $sede->gaddress = post('gaddress');
-        $sede->lat = post('lat');
-        $sede->lng = post('lng');
-        $sede->telefono = post('telefono');
-        $sede->cellulare = post('cellulare');
-        $sede->fax = post('fax');
-        $sede->idzona = post('idzona');
-        $sede->email = post('email');
-
-        $sede->save();
 
         flash()->info(str_replace('_NAME_', '"'.post('ragione_sociale').'"', "Informazioni per l'anagrafica _NAME_ salvate correttamente!"));
 

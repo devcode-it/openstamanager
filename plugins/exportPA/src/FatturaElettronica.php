@@ -167,6 +167,7 @@ class FatturaElettronica
         $cliente = $fattura->getCliente();
 
         $default_code = ($cliente['tipo'] == 'Ente pubblico') ? '999999' : '0000000';
+        $default_code = ($cliente['nazione'] != 'IT') ? 'XXXXXXX' : $default_code;
 
         // Generazione dell'header
         $result = [

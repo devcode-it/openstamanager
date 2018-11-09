@@ -70,7 +70,7 @@ if (!$cliente) {
 					</div>
 
 					<div class="col-md-2">
-						{[ "type": "text", "label": "<?php echo tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase", "value": "$codice_destinatario$", "maxlength": <?php echo (($record['tipo']=='Ente pubblico') ? '6' : '7'); ?>,  "extra": "<?php echo ((empty($record['tipo']) or ($record['tipo']=='Privato') ) ? 'disabled' : ''); ?>", "help": "<?php echo tr('<ul><li>B2G - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri</li><li>B2B - Codice Destinatario, 7 caratteri</li><li>B2C - viene utilizzato il Codice Fiscale</li></ul>'); ?>" ]}
+						{[ "type": "text", "label": "<?php echo tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase", "value": "$codice_destinatario$", "maxlength": <?php echo (($record['tipo']=='Ente pubblico') ? '6' : '7'); ?>,  "extra": "<?php echo ((empty($record['tipo']) or ($record['tipo']=='Privato') ) ? 'disabled' : ''); ?>", "help": "<?php echo tr('<ul><li>B2G - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri</li><li>B2B - Codice Destinatario, 7 caratteri</li><li>B2C - viene utilizzato il Codice Fiscale</li></ul>'); ?>", "readonly": "<?php echo intval($anagrafica->sedeLegale->nazione->iso2 != 'IT') ?>" ]}
 					</div>
 
                     <div class="col-md-4">

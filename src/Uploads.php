@@ -62,7 +62,7 @@ class Uploads
      */
     public static function getName($source, $data)
     {
-        $extension = strtolower(pathinfo($source)['extension']);
+        $extension = strtolower(self::fileInfo($source)['extension']);
         $ok = self::isSupportedType($extension);
 
         $directory = DOCROOT.'/'.self::getDirectory($data['id_module'], $data['id_plugin']);

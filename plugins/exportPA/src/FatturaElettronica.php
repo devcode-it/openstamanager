@@ -465,7 +465,7 @@ class FatturaElettronica
         // Controllo le le righe per la fatturazione di contratti
         $dati_contratti = static::getDatiContratto($fattura);
         if (!empty($dati_contratti)) {
-            foreach($dati_contratti as $dato){
+            foreach ($dati_contratti as $dato) {
                 $result[] = [
                     'DatiContratto' => $dato,
                 ];
@@ -620,37 +620,67 @@ class FatturaElettronica
 
     /**
      * Restituisce l'array responsabile per la generazione del tag Allegati.
-     * Supporta un singolo allegato in PDF.
      *
      * @return array
      */
     protected static function getAllegati($fattura)
     {
         $documento = $fattura->getDocumento();
+        $cliente = $fattura->getCliente();
+        $attachments = [];
 
-        if (!setting('Aggiungere stampa nella Fattura Elettronica')) {
-            return [];
+        // Informazioni sul modulo
+        $id_module = Modules::get('Fatture di vendita')['id'];
+        $directory = Uploads::getDirectory($id_module);
+
+        // Allegati
+        $allegati = Uploads::get([
+            'id_module' => $id_module,
+            'id_record' => $documento['id'],
+        ]);
+
+        // Inclusione
+        foreach ($allegati as $allegato) {
+            if ($allegato['category'] == 'Fattura Elettronica') {
+                $file = DOCROOT.'/'.$directory.'/'.$allegato['filename'];
+
+                $attachments[] = [
+                    'NomeAttachment' => $allegato['name'],
+                    'FormatoAttachment' => Uploads::fileInfo($file)['extension'],
+                    'Attachment' => base64_encode(file_get_contents($file)),
+                ];
+            }
         }
 
-        $id_module = Modules::get('Fatture di vendita')['id'];
+        // Aggiunta della stampa
+        $print = false;
+        if ($cliente['tipo'] == 'Privato') {
+            $print = setting('Allega stampa per fattura verso Privati');
+        } elseif ($cliente['tipo'] == 'Azienda') {
+            $print = setting('Allega stampa per fattura verso Aziende');
+        } else {
+            $print = setting('Allega stampa per fattura verso PA');
+        }
+
+        if (!$print) {
+            return $attachments;
+        }
+
         $dir = Uploads::getDirectory($id_module, Plugins::get('Fatturazione Elettronica')['id']);
 
         $rapportino_nome = sanitizeFilename($documento['numero'].'.pdf');
         $filename = slashes(DOCROOT.'/'.$dir.'/'.$rapportino_nome);
 
         $print = Prints::getModulePredefinedPrint($id_module);
-
         Prints::render($print['id'], $documento['id'], $filename);
 
-        $pdf = file_get_contents($filename);
-
-        $result = [
+        $attachments[] = [
             'NomeAttachment' => 'Fattura',
             'FormatoAttachment' => 'PDF',
-            'Attachment' => base64_encode($pdf),
+            'Attachment' => base64_encode(file_get_contents($filename)),
         ];
 
-        return $result;
+        return $attachments;
     }
 
     /**
@@ -686,9 +716,14 @@ class FatturaElettronica
             'DatiPagamento' => static::getDatiPagamento($fattura),
         ];
 
+        // Allegati
         $allegati = static::getAllegati($fattura);
         if (!empty($allegati)) {
-            $result['Allegati'] = $allegati;
+            foreach ($allegati as $allegato) {
+                $result[] = [
+                    'Allegati' => $allegato,
+                ];
+            }
         }
 
         return $result;

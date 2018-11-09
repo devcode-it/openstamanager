@@ -29,7 +29,10 @@ UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Categor
 ALTER TABLE `an_nazioni` ADD `name` VARCHAR(255);
 ALTER TABLE `co_documenti` ADD `codice_xml` VARCHAR(255);
 
-INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Aggiungere stampa nella Fattura Elettronica', '0', 'boolean', 1, 'Generali', 20);
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
+(NULL, 'Allega stampa per fattura verso Privati', '0', 'boolean', 1, 'Fatturazione Elettronica', 8),
+(NULL, 'Allega stampa per fattura verso Aziende', '0', 'boolean', 1, 'Fatturazione Elettronica', 9),
+(NULL, 'Allega stampa per fattura verso PA', '0', 'boolean', 1, 'Fatturazione Elettronica', 10);
 
 CREATE TABLE IF NOT EXISTS `fe_regime_fiscale` (
   `codice` varchar(4) NOT NULL,
@@ -57,7 +60,7 @@ INSERT INTO `fe_regime_fiscale` (`codice`, `descrizione`) VALUES
 ('RF18','Altro'),
 ('RF19','Regime forfettario (art.1, c.54-89, L. 190/2014)');
 
-INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Regime Fiscale', '', 'query=SELECT codice AS id, descrizione FROM fe_regime_fiscale', 1, 'Generali', 19);
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Regime Fiscale', '', 'query=SELECT codice AS id, descrizione FROM fe_regime_fiscale', 1, 'Fatturazione Elettronica', 1);
 
 CREATE TABLE IF NOT EXISTS `fe_tipo_cassa` (
   `codice` varchar(4) NOT NULL,
@@ -89,7 +92,7 @@ INSERT INTO `fe_tipo_cassa` (`codice`, `descrizione`) VALUES
 ('TC21','Ente nazionale previdenza e assistenza psicologi (ENPAP)'),
 ('TC22','INPS');
 
-INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Tipo Cassa', '', 'query=SELECT codice AS id, descrizione FROM fe_tipo_cassa', 1, 'Fatturazione', 0);
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Tipo Cassa', '', 'query=SELECT codice AS id, descrizione FROM fe_tipo_cassa', 1, 'Fatturazione Elettronica', 2);
 
 CREATE TABLE IF NOT EXISTS `fe_modalita_pagamento` (
   `codice` varchar(4) NOT NULL,
@@ -365,9 +368,9 @@ età svizzere che possiedono i requisiti di cui all''art. 15, c. 2 dell’Accord
 ('Y', 'Canoni corrisposti dal 1.01.2005 al 26.07.2005 da soggetti di cui al punto precedente'),
 ('Z', 'Titolo diverso dai precedenti');
 
-INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Causale ritenuta d''acconto', '', 'query=SELECT codice AS id, descrizione FROM fe_causali_pagamento_ritenuta', 1, 'Fatturazione', 0);
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Causale ritenuta d''acconto', '', 'query=SELECT codice AS id, descrizione FROM fe_causali_pagamento_ritenuta', 1, 'Fatturazione Elettronica', 3);
 
-INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Authorization ID Indice PA', '', 'string', 1, 'Generali', 0);
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Authorization ID Indice PA', '', 'string', 1, 'Fatturazione Elettronica', 4);
 
 ALTER TABLE `an_anagrafiche` ADD `codice_destinatario` varchar(7);
 

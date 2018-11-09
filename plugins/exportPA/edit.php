@@ -84,7 +84,10 @@ if (!empty($missing)) {
 echo '
 <p>'.tr("Per effettuare la generazione dell'XML della fattura elettronica clicca sul pulsante _BTN_", [
     '_BTN_' => '<b>Genera</b>',
-]).'. '.tr('Successivamente sarà possibile procedere alla visualizzazione e al download della fattura generata attraverso i pulsanti dedicati').'.</p>';
+]).'. '.tr('Successivamente sarà possibile procedere alla visualizzazione e al download della fattura generata attraverso i pulsanti dedicati').'.</p>
+
+<p>'.tr("Tutti gli allegati inseriti all'interno della categoria \"Fattura Elettronica\" saranno inclusi come allegati dell'XML").'.</p>
+<br>';
 
 echo '
 <div class="text-center">

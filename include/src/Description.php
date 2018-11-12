@@ -12,7 +12,7 @@ abstract class Description extends Model
 
         if (!$bypass) {
             static::addGlobalScope('descriptions', function (Builder $builder) {
-                $builder->where('is_descrizione', '=', 0);
+                $builder->where('is_descrizione', '=', 1);
             });
         }
     }

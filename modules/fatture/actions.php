@@ -638,11 +638,11 @@ switch (post('op')) {
 
         $riga->descrizione = post('descrizione');
 		 
+        $riga->save();
+        
 		if (post('idriga') != null) {
-			$dbo->update('co_righe_documenti', ['descrizione' =>  $riga->descrizione], ['id' => post('idriga')]);
             flash()->info(tr('Riga descrittiva modificata!'));
         } else {
-			$riga->save();
             flash()->info(tr('Riga descrittiva aggiunta!'));
         }
 		

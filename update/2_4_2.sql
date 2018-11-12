@@ -379,8 +379,6 @@ INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`,
 (NULL, 'Fatturazione Elettronica', 'Fatturazione Elettronica', (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita'), (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita'), 'tab', 'exportPA', 'custom'),
 (NULL, 'Fatturazione Elettronica', 'Fatturazione Elettronica', (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita'), (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di acquisto'), 'tab_main', 'importPA', 'custom');
 
---INSERT INTO `zz_emails` (`id`, `id_module`, `id_smtp`, `name`, `icon`, `subject`, `reply_to`, `cc`, `bcc`, `body`, `read_notify`, `main`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 1, 'Fattura Elettronica', 'fa fa-file', 'Invio fattura numero {numero} del {data}', '', 'sdi01@pec.fatturapa.it', '', '<p>Gentile Cliente,</p>\r\n<p>inviamo in allegato la fattura numero {numero} del {data}.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0', '0');
---INSERT INTO `zz_email_print` (`id`, `id_email`, `id_print`) VALUES (NULL, (SELECT `id` FROM `zz_emails` WHERE `name` = 'Fattura Elettronica' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita')), (SELECT `id` FROM `zz_prints` WHERE `name` = 'Fattura di vendita'));
 UPDATE `zz_emails` SET `main` = 1 WHERE `name` = 'Fattura' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
 
 -- Aggiornamento zz_settings
@@ -637,3 +635,13 @@ UPDATE `zz_group_module` SET `name` = 'Mostra ai clienti solo le proprie fatture
 UPDATE `zz_group_module` SET `name` = 'Mostra agli agenti solo la prima nota delle anagrafiche di cui sono agenti' WHERE `zz_group_module`.`idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Agenti') AND  `zz_group_module`.`idmodule` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota');
 
 UPDATE `zz_group_module` SET `name` = 'Mostra ai clienti solo i propri impianti' WHERE `zz_group_module`.`idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti') AND  `zz_group_module`.`idmodule` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti');
+
+
+
+
+-- Importazione dell'account email PEC
+INSERT INTO `zz_smtps` (`id`, `name`, `note`, `server`, `port`, `username`, `password`, `from_name`, `from_address`, `encryption`, `pec`, `predefined`) VALUES (NULL, 'PEC aziendale', '', '', '', '', '', '', '', '', '1', '1');
+
+INSERT INTO `zz_emails` (`id`, `id_module`, `id_smtp`, `name`, `icon`, `subject`, `reply_to`, `cc`, `bcc`, `body`, `read_notify`, `predefined`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), (SELECT `id` FROM `zz_smtps` WHERE `pec` = 1 LIMIT 0,1), 'PEC', 'fa fa-file', 'Invio fattura numero {numero} del {data}', '', 'sdi01@pec.fatturapa.it', '', '<p>Gentile Cliente,</p>\r\n<p>inviamo in allegato la fattura numero {numero} del {data}.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0', '0');
+
+INSERT INTO `zz_email_print` (`id`, `id_email`, `id_print`) VALUES (NULL, (SELECT `id` FROM `zz_emails` WHERE `name` = 'PEC' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita')), (SELECT `id` FROM `zz_prints` WHERE `name` = 'Fattura di vendita'));

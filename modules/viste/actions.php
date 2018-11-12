@@ -163,17 +163,16 @@ switch (filter('op')) {
         break;
 
     case 'update_position':
-        $start = filter('start') + 1;
-        $end = filter('end') + 1;
-        $id = filter('id');
+      
+		$orders = explode(",", $_POST['order']);
+        $order = 0;
 
-        if ($start > $end) {
-            $dbo->query('UPDATE `zz_views` SET `order`=`order` + 1 WHERE `order`>='.prepare($end).' AND `order`<'.prepare($start).' AND id_module='.prepare($id_record));
-            $dbo->query('UPDATE `zz_views` SET `order`='.prepare($end).' WHERE id='.prepare($id));
-        } elseif ($end != $start) {
-            $dbo->query('UPDATE `zz_views` SET `order`=`order` - 1 WHERE `order`>'.prepare($start).' AND `order`<='.prepare($end).' AND id_module='.prepare($id_record));
-            $dbo->query('UPDATE `zz_views` SET `order`='.prepare($end).' WHERE id='.prepare($id));
+        foreach ($orders as $idriga) {
+            $dbo->query('UPDATE `zz_views` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
+            $order++;
         }
-
+		
         break;
+		
+		
 }

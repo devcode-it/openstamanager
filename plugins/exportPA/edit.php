@@ -61,8 +61,11 @@ $fields = [
     'indirizzo' => 'Indirizzo',
     'cap' => 'C.A.P.',
     'nazione' => 'Nazione',
-    'pec' => 'PEC',
 ];
+
+//se non ho impostato ne il codice destinatario ne indirizzo PEC ne chiedo la compilazione
+(empty($cliente['codice_destinatario']) and empty($cliente['pec']) ) ? $fields['codice_destinatario'] = 'Codice destinatario o indirizzo PEC' : '';
+
 
 $missing = [];
 foreach ($fields as $key => $name) {

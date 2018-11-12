@@ -792,10 +792,15 @@ class FatturaElettronica
                 $validation = $validator->validate($output);
 
                 $this->is_valid &= $validation;
-
+				$errors = array();
+				if (!intval($validation)){
+					$_SESSION['warnings'][] = $key;
+				}
                 // Per debug
                 //flash()->warning($key.': '.intval($validation));
             }
+			
+		
         }
 
         return $output;

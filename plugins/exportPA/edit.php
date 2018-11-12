@@ -63,19 +63,16 @@ $fields = [
     'nazione' => 'Nazione',
 ];
 
-
-//se privato o azienda/pa
-if ($cliente['tipo'] == 'Privato'){
-	//se privato chiedo obbligatoriamente codice fiscale
-	(empty($cliente['codice_fiscale'])) ? $fields['codice_fiscale'] = 'Codice Fiscale' : '';
+//se privato/pa o azienda
+if ($cliente['tipo'] == 'Privato' or $cliente['tipo'] == 'Ente pubblico' ){
+	//se privato/pa chiedo obbligatoriamente codice fiscale
+	$fields['codice_fiscale'] = 'Codice Fiscale';
+	//se pa chiedo codice unico ufficio
+	($cliente['tipo'] == 'Ente pubblico' and empty($cliente['codice_destinatario'])) ? $fields['codice_destinatario'] = 'Codice unico ufficio' : '';
 }else{
-	//se estero chiedo obbligatoriamente la PEC
-	if(intval($cliente['nazione'] != 'IT')) {
-		$fields['pec'] = 'PEC';
-	}else{
-		//se azienda italiana e non ho impostato ne il codice destinatario ne indirizzo PEC ne chiedo la compilazione
-		(empty($cliente['codice_destinatario']) and empty($cliente['pec']) ) ? $fields['codice_destinatario'] = 'Codice destinatario o indirizzo PEC' : '';
-	}
+	$fields['piva'] = 'Partita IVA';
+	//se azienda e non ho impostato ne il codice destinatario ne indirizzo PEC ne chiedo la compilazione
+	(empty($cliente['codice_destinatario']) and empty($cliente['pec']) ) ? $fields['codice_destinatario'] = 'Codice destinatario o indirizzo PEC' : '';
 }
 
 $missing = [];

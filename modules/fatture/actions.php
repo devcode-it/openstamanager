@@ -637,10 +637,15 @@ switch (post('op')) {
         }
 
         $riga->descrizione = post('descrizione');
+		
         $riga->save();
-
-        flash()->info(tr('Riga descrittiva aggiunta!'));
-
+		
+		if (post('idriga') != null) {
+            flash()->info(tr('Riga descrittiva modificata!'));
+        } else {
+            flash()->info(tr('Riga descrittiva aggiunta!'));
+        }
+		
         break;
 
     // Creazione fattura da ddt

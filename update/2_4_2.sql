@@ -618,3 +618,22 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'icon_Inviata', 'IF((SELECT GROUP_CONCAT(DISTINCT`name` SEPARATOR \'\\n \') FROM zz_operations INNER JOIN zz_emails ON zz_operations.id_email = zz_emails.id WHERE zz_operations.id_module = (SELECT id FROM zz_modules WHERE `name` = \'Fatture di vendita\') AND op = \'send-email\' AND id_record = co_documenti.id GROUP BY id_email) IS NOT NULL, \'fa fa-envelope text-success\', \'\')', 11, 1, 0, 0, 1, 0, 0),
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'icon_title_Inviata', '(SELECT GROUP_CONCAT(DISTINCT`name` SEPARATOR \'\n \') FROM zz_operations INNER JOIN zz_emails ON zz_operations.id_email = zz_emails.id WHERE zz_operations.id_module = (SELECT id FROM zz_modules WHERE `name` = \'Fatture di vendita\') AND op = \'send-email\' AND id_record = co_documenti.id GROUP BY id_email)', 12, 1, 0, 0, 0, 0, 0);
+
+
+-- Colonna codice destinatario
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default` ) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche'), 'Codice destinatario', 'codice_destinatario', 4, 1, 0, 0, NULL, NULL, 0, 0, 0);
+
+-- Aggiungo descrizione per filtri
+UPDATE `zz_group_module` SET `name` = 'Mostra agli agenti solo le anagrafiche di cui sono agenti' WHERE `zz_group_module`.`idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Agenti') AND  `zz_group_module`.`idmodule` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche');
+
+UPDATE `zz_group_module` SET `name` = 'Mostra ai tecnici solo le anagrafiche in cui sono coinvolti con delle attività' WHERE `zz_group_module`.`idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Tecnici') AND  `zz_group_module`.`idmodule` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche');
+
+UPDATE `zz_group_module` SET `name` = 'Mostra ai clienti solo la propria anagrafica' WHERE `zz_group_module`.`idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti') AND  `zz_group_module`.`idmodule` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche');
+
+UPDATE `zz_group_module` SET `name` = 'Mostra ai clienti solo le proprie fatture' WHERE `zz_group_module`.`idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti') AND  `zz_group_module`.`idmodule` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+
+UPDATE `zz_group_module` SET `name` = 'Mostra ai clienti solo le proprie fatture' WHERE `zz_group_module`.`idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti') AND  `zz_group_module`.`idmodule` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+
+UPDATE `zz_group_module` SET `name` = 'Mostra agli agenti solo la prima nota delle anagrafiche di cui sono agenti' WHERE `zz_group_module`.`idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Agenti') AND  `zz_group_module`.`idmodule` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota');
+
+UPDATE `zz_group_module` SET `name` = 'Mostra ai clienti solo i propri impianti' WHERE `zz_group_module`.`idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti') AND  `zz_group_module`.`idmodule` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti');

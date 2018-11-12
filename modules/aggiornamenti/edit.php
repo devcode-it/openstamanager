@@ -87,7 +87,7 @@ function search(button) {
         <div class="box box-success">
             <div class="box-header with-border">
                 <h3 class="box-title">
-                    '.tr('Carica un aggiornamento').' <span class="tip" title="'.tr('Form di caricamento aggiornamenti del gestionale e innesti di moduli e plugin').'"><i class="fa fa-question-circle-o"></i></span>
+                    '.tr('Carica un aggiornamento').' <span class="tip" title="'.tr('Form di caricamento aggiornamenti del gestionale e innesti di moduli e plugin').'."><i class="fa fa-question-circle-o"></i></span>
                 </h3>
             </div>
             <div class="box-body">
@@ -103,6 +103,7 @@ function search(button) {
             </div>
         </div>
     </div>';
+	
 
     echo '
 
@@ -110,14 +111,22 @@ function search(button) {
         <div class="box box-info">
             <div class="box-header with-border">
                 <h3 class="box-title">
-                    '.tr('Ricerca aggiornamenti').' <span class="tip" title="'.tr('Controllo automatico della presenza di aggiornamenti per il gestionale').'"><i class="fa fa-question-circle-o"></i></span>
+                    '.tr('Ricerca aggiornamenti').' <span class="tip" title="'.tr('Controllo automatico della presenza di aggiornamenti per il gestionale').'."><i class="fa fa-question-circle-o"></i></span>
                 </h3>
             </div>
-            <div class="box-body" id="update-search">
-                <button type="button" class="btn btn-info btn-block" onclick="search(this)">
+            <div class="box-body" id="update-search">';
+			if (extension_loaded('curl')) {	
+	 echo'		<button type="button" class="btn btn-info btn-block" onclick="search(this)">
                     <i class="fa fa-search"></i> '.tr('Ricerca').'
-                </button>
-            </div>
+                </button>';
+			}else{
+	 echo'		<button type="button" class="btn btn-warning btn-block disabled" >
+                    <i class="fa fa-warning"></i> '.tr('Estensione curl non supportata').'.
+                </button>';	
+					
+			}
+				
+    echo'   </div>
         </div>
     </div>
 </div>';

@@ -13,11 +13,6 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="panel-body">
-			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Salva modifiche</button>
-			</div>
-			<div class="clearfix"></div>
-
 
 			<div class="row">
 

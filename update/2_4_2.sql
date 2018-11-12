@@ -640,7 +640,7 @@ UPDATE `zz_group_module` SET `name` = 'Mostra ai clienti solo i propri impianti'
 
 
 -- Importazione dell'account email PEC
-INSERT INTO `zz_smtps` (`id`, `name`, `note`, `server`, `port`, `username`, `password`, `from_name`, `from_address`, `encryption`, `pec`, `predefined`) VALUES (NULL, 'PEC aziendale', '', '', '', '', '', '', '', '', '1', '1');
+INSERT INTO `zz_smtps` (`id`, `name`, `note`, `server`, `port`, `username`, `password`, `from_name`, `from_address`, `encryption`, `pec`, `predefined`) VALUES (NULL, 'PEC aziendale', '', '', '', '', '', '', '', '', '1', '0');
 
 INSERT INTO `zz_emails` (`id`, `id_module`, `id_smtp`, `name`, `icon`, `subject`, `reply_to`, `cc`, `bcc`, `body`, `read_notify`, `predefined`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), (SELECT `id` FROM `zz_smtps` WHERE `pec` = 1 LIMIT 0,1), 'PEC', 'fa fa-file', 'Invio fattura numero {numero} del {data}', '', 'sdi01@pec.fatturapa.it', '', '<p>Gentile Cliente,</p>\r\n<p>inviamo in allegato la fattura numero {numero} del {data}.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0', '0');
 

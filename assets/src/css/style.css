@@ -813,3 +813,7 @@ input.small-width {
     left: -10000px;
     top: -10000px;
 }
+
+.box-info ul > li > :last-child{
+	margin-bottom:5px;
+}

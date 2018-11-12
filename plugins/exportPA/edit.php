@@ -70,9 +70,10 @@ if ($cliente['tipo'] == 'Privato' or $cliente['tipo'] == 'Ente pubblico' ){
 	//se pa chiedo codice unico ufficio
 	($cliente['tipo'] == 'Ente pubblico' and empty($cliente['codice_destinatario'])) ? $fields['codice_destinatario'] = 'Codice unico ufficio' : '';
 }else{
+	//se azienda chiedo partita iva
 	$fields['piva'] = 'Partita IVA';
-	//se azienda e non ho impostato ne il codice destinatario ne indirizzo PEC ne chiedo la compilazione
-	(empty($cliente['codice_destinatario']) and empty($cliente['pec']) ) ? $fields['codice_destinatario'] = 'Codice destinatario o indirizzo PEC' : '';
+	//se italiana e non ho impostato ne il codice destinatario ne indirizzo PEC chiedo la compilazione di almeno uno dei due
+	(empty($cliente['codice_destinatario']) and empty($cliente['pec']) and intval($cliente['nazione'] == 'IT') ) ? $fields['codice_destinatario'] = 'Codice destinatario o indirizzo PEC' : '';
 }
 
 $missing = [];

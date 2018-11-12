@@ -190,8 +190,8 @@ class FatturaElettronica
             $result['ContattiTrasmittente']['Email'] = $azienda['email'];
         }
 
-        // Inizializzazione PEC solo se necessario
-        if (empty($cliente['codice_destinatario'])) {
+        // Inizializzazione PEC solo se anagrafica azienda e codice destinatario non compilato, per privato e PA la PEC non serve
+		if (empty($cliente['codice_destinatario']) and $cliente['tipo'] == 'Azienda' ){
             $result['PECDestinatario'] = $cliente['pec'];
         }
 

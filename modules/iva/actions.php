@@ -11,7 +11,7 @@ switch (filter('op')) {
         $percentuale = empty($esente) ? post('percentuale') : 0;
 
         if ($dbo->fetchNum('SELECT * FROM `co_iva` WHERE (`descrizione` = '.prepare($descrizione).' OR `codice` = '.prepare($codice).') AND `id` != '.prepare($id_record)) == 0) {
-            $codice_natura = post('codice_natura_fe');
+            $codice_natura = post('codice_natura_fe') ? : null;
             $esigibilita = post('esigibilita');
 
             $dbo->update('co_iva', [

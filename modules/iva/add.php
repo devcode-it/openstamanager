@@ -31,7 +31,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Codice Natura (Fatturazione Elettronica)'); ?>", "name": "codice_natura_fe", "values": "query=SELECT codice as id, CONCAT(codice, ' - ', descrizione) AS descrizione FROM fe_natura" ]}
+			{[ "type": "select", "label": "<?php echo tr('Codice Natura (Fatturazione Elettronica)'); ?>", "name": "codice_natura_fe", "values": "query=SELECT codice as id, CONCAT(codice, ' - ', descrizione) AS descrizione FROM fe_natura", "extra": "disabled" ]}
 		</div>
 
 	</div>
@@ -52,10 +52,12 @@ $(document).ready(function(){
         if (checkbox.val() == 1) {
             $("#bs-popup #percentuale-add").prop("disabled", true);
             $("#bs-popup #codice_natura_fe").prop("required", true);
+            $("#bs-popup #codice_natura_fe").prop("disabled", false);
         } else {
             $("#bs-popup #percentuale-add").prop("disabled", false);
             $("#bs-popup #codice_natura_fe").prop("required", false);
             $("#bs-popup #codice_natura_fe").val("").change();
+            $("#bs-popup #codice_natura_fe").prop("disabled", true);
         }
     });
 });

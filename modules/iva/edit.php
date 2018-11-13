@@ -98,10 +98,12 @@ $(document).ready(function(){
         if (checkbox.val() == 1) {
             $("#percentuale-edit").prop("disabled", true);
             $("#codice_natura_fe").prop("required", true);
+            $("#codice_natura_fe").prop("disabled", false);
         } else {
             $("#percentuale-edit").prop("disabled", false);
             $("#codice_natura_fe").prop("required", false);
             $("#codice_natura_fe").val("").change();
+            $("#codice_natura_fe").prop("disabled", true);
         }
     });
 });

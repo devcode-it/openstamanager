@@ -350,6 +350,7 @@ if (!empty($id_intervento)) {
 
         // Refresh modulo dopo la chiusura di una pianificazione attività derivante dalle attività
         // da pianificare, altrimenti il promemoria non si vede più nella lista a destra
+		// TODO: da gestire via ajax
         if( $('input[name=idcontratto_riga]').val() != undefined ){
             $('#bs-popup button.close').on('click', function(){
                 location.reload();
@@ -468,10 +469,12 @@ if (!empty($id_intervento)) {
 
                     // Se l'aggiunta intervento proviene dai contratti, faccio il submit via ajax e ricarico la tabella dei contratti
                     else if(ref == "interventi_contratti"){
-                        //$('#elenco_interventi > tbody').load(globals.rootdir + '/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto=<?php echo $idcontratto; ?>');
-                        $("#bs-popup").modal('hide');
+						
+						$("#bs-popup").modal('hide');
 						parent.window.location.reload();
-                        //location.href = '<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get('Contratti')['id']; ?>&id_record=<?php echo $id_record; ?>#tab_<?php echo $id_plugin; ?>';
+						//TODO: da gestire via ajax
+						//$('#elenco_interventi > tbody').load(globals.rootdir + '/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto=<?php echo $idcontratto; ?>');
+                        
                     }
                 }
             });

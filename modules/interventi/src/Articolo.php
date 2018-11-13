@@ -36,10 +36,14 @@ class Articolo extends Article
     public function movimenta($qta)
     {
         $articolo = $this->articolo;
+        $id_automezzo = $this->intervento->idautomezzo;
+
+        $dbo = database();
+        $automezzo_carico = $dbo->fetchNum('SELECT qta FROM mg_articoli_automezzi WHERE qta > 0 AND idarticolo = '.prepare($articolo->id).' AND idautomezzo = '.prepare($id_automezzo)) != 0;
 
         // Movimento l'articolo
-        if (!empty($this->idautomezzo)) {
-            $rs = $dbo->fetchArray("SELECT CONCAT_WS(' - ', nome, targa) AS nome FROM dt_automezzi WHERE id=".prepare($this->idautomezzo));
+        if (!empty($id_automezzo) && $automezzo_carico) {
+            $rs = $dbo->fetchArray("SELECT CONCAT_WS(' - ', nome, targa) AS nome FROM dt_automezzi WHERE id=".prepare($id_automezzo));
             $nome = $rs[0]['nome'];
 
             $descrizione = ($qta < 0) ? tr("Carico sull'automezzo _NAME_", [
@@ -48,11 +52,11 @@ class Articolo extends Article
                 '_NAME_' => $nome,
             ]);
 
-            $dbo->query('UPDATE mg_articoli_automezzi SET qta = qta + '.$qta.' WHERE idarticolo = '.prepare($articolo->id).' AND idautomezzo = '.prepare($this->idautomezzo));
+            $dbo->query('UPDATE mg_articoli_automezzi SET qta = qta - '.$qta.' WHERE idarticolo = '.prepare($articolo->id).' AND idautomezzo = '.prepare($id_automezzo));
             $data = date('Y-m-d');
 
             $articolo->registra(-$qta, $descrizione, $data, false, [
-                'idautomezzo' => $this->idautomezzo,
+                'idautomezzo' => $id_automezzo,
                 'idintervento' => $this->idintervento,
             ]);
         } else {

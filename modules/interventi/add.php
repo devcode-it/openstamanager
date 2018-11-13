@@ -409,7 +409,7 @@ if (!empty($id_intervento)) {
 
         if($(this).val()){
             //TODO: disattivato perché genera problemi con il change successivo di iditpointervento per il tempo standard*
-			$('#bs-popup #idtipointervento').selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
+			//$('#bs-popup #idtipointervento').selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
         }
 	});
 
@@ -430,13 +430,15 @@ if (!empty($id_intervento)) {
 	// tempo standard*
 	$('#bs-popup #idtipointervento').change( function(){
 		
-		if ( (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
-            tempo_standard = $(this).selectData().tempo_standard;
 
-            data = moment($('#bs-popup #orario_inizio').val(), globals.timestampFormat);
+		if ( (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
+			tempo_standard = $(this).selectData().tempo_standard;
+
+			data = moment($('#bs-popup #orario_inizio').val(), globals.timestampFormat);
 			orario_fine = data.add(tempo_standard, 'hours');
 			$('#bs-popup #orario_fine').val(orario_fine.format(globals.timestampFormat));
 		}
+		
 	});
 
 	$('#bs-popup #idtecnico').change( function(){

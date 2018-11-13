@@ -236,7 +236,7 @@ if (!empty($id_intervento)) {
 			<!-- RIGA 3 -->
 			<div class="row">
                 <div class="col-md-4">
-                    {[ "type": "timestamp", "label": "<?php echo tr('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "<?php echo $data_richiesta ?: '-now-'; ?>" ]}
+                    {[ "type": "timestamp", "label": "<?php echo tr('Data e ora richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "<?php echo $data_richiesta ?: '-now-'; ?>" ]}
                 </div>
 
 				<div class="col-md-4">

@@ -62,10 +62,10 @@ switch (filter('op')) {
     // pianificazione ciclica
     case 'pianificazione':
         $intervallo = post('intervallo');
-        $parti_da_oggi = post('inizio');
+        $min_date = post('data_inizio');
 
         // if principale
-        if (!empty($id_record) && !empty($intervallo)) {
+        if (!empty($id_record) && !empty($intervallo) && post('pianifica_promemoria')) {
             $qp = 'SELECT *, (SELECT idanagrafica FROM co_contratti WHERE id = '.$id_parent.' ) AS idanagrafica, (SELECT data_conclusione FROM co_contratti WHERE id = '.$id_parent.' ) AS data_conclusione, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento FROM co_promemoria WHERE co_promemoria.id = '.$id_record;
             $rsp = $dbo->fetchArray($qp);
 
@@ -83,13 +83,17 @@ switch (filter('op')) {
             $idanagrafica = $rsp[0]['idanagrafica'];
 
             // se voglio pianificare anche le date precedenti ad oggi (parto da questo promemoria)
-            if ($parti_da_oggi) {
+            //if ($data_inizio) {
                 // oggi
-                $min_date = date('Y-m-d');
-            } else {
-                $min_date = date('Y-m-d', strtotime($data_richiesta));
-            }
-
+                //$min_date = date('Y-m-d');
+            //} else {
+				//questo promemoria
+                //$min_date = date('Y-m-d', strtotime($data_richiesta));
+            //}
+			$data_richiesta = $min_date;
+			
+			
+			
             // inizio controllo data_conclusione, data valida e maggiore della $min_date
             if ((date('Y', strtotime($data_conclusione)) > 1970) && (date('Y-m-d', strtotime($min_date)) <= date('Y-m-d', strtotime($data_conclusione)))) {
                 $i = 0;
@@ -99,7 +103,7 @@ switch (filter('op')) {
                     $data_richiesta = date('Y-m-d', strtotime($data_richiesta.' + '.(($i == 0) ? 0 : $intervallo).' days'));
                     ++$i;
 
-                    // controllo nuova data richiesta --> solo  date maggiori o uguali di [oggi o data richiesta iniziale] ma che non superano la data di fine del contratto
+                    // controllo nuova data richiesta --> solo  date maggiori o uguali di data richiesta iniziale ma che non superano la data di fine del contratto
                     if ((date('Y-m-d', strtotime($data_richiesta)) >= $min_date) && (date('Y-m-d', strtotime($data_richiesta)) <= date('Y-m-d', strtotime($data_conclusione)))) {
                         // Controllo che non esista già un promemoria idcontratto, idtipointervento e data_richiesta.
                         if (count($dbo->fetchArray("SELECT id FROM co_promemoria WHERE data_richiesta = '".$data_richiesta."' AND idtipointervento = '".$idtipointervento."' AND idcontratto = '".$id_parent."' ")) == 0) {
@@ -227,7 +231,7 @@ switch (filter('op')) {
             }
             // fine controllo data_conclusione
         } else {
-            flash()->error(tr('Errore durante la pianificazione'));
+            flash()->warning(tr('Nessun promemoria pianificato'));
         }
     break;
 

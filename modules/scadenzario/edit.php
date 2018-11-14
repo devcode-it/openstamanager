@@ -97,11 +97,11 @@ for ($i = 0; $i < count($rs); ++$i) {
                             </td>
 
                             <td align="right">
-                                {[ "type": "number", "name": "scadenza['.$rs[$i]['id'].']", "value": "'.Translator::numberToLocale($rs[$i]['da_pagare'], 4).'", "decimals":"4" ]}
+                                {[ "type": "number", "name": "scadenza['.$rs[$i]['id'].']", "value": "'.Translator::numberToLocale($rs[$i]['da_pagare']).'" ]}
                             </td>
 
                             <td align="right">
-                                {[ "type": "number", "name": "pagato['.$rs[$i]['id'].']", "value": "'.Translator::numberToLocale($rs[$i]['pagato'], 4).'",  "decimals":"4"  ]}
+                                {[ "type": "number", "name": "pagato['.$rs[$i]['id'].']", "value": "'.Translator::numberToLocale($rs[$i]['pagato']).'"  ]}
                             </td>
                         </tr>';
 }

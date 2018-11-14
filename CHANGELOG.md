@@ -61,6 +61,10 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Sistema di notifiche predefinito
     - Notifica di chiusura delle **Attività** (impostabile dal modulo **Stati attività**)
     - Notifica di aggiunta e rimozione del tecnico dalle **Attività**
+ - Gestione revisione preventivi
+ - Categorizzazione impianti
+ - Modulo per gestione documentale
+ - Categorizzazione allegati
 
 ### Modificato (Changed)
 
@@ -71,6 +75,8 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Miglioramento del sistema di aggiornamento e installazione, con supporto completo ai plugin
  - Drag&drop nella **Dashboard** permette di impostare le attività senza sessioni di lavoro
  - Aggiungere un tecnico in una **Attività** salva le modifiche apportate in precedenza
+ - Rinominat moduli ddt in "Ddt in uscita" e "Ddt in ingresso"
+ - Miglioramenti grafici vari
 
 ### Deprecato (Deprecated)
 

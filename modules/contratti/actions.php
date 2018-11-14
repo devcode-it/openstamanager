@@ -344,8 +344,12 @@ switch (post('op')) {
                         'id_plugin' => Plugins::get('Pianificazione interventi')['id'],
                         'id_record' => $id_promemoria,
                     ]);
+					
                 }
-
+				
+				// Cambio stato precedente contratto in concluso (non più pianificabile)
+				$dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT id FROM co_staticontratti WHERE pianificabile = 0 AND fatturabile = 1 AND descrizione = \'Concluso\')  WHERE `id` = '.prepare($id_record));
+					
                 flash()->info(tr('Contratto rinnovato!'));
 
                 $id_record = $new_idcontratto;

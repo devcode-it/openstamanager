@@ -645,3 +645,11 @@ INSERT INTO `zz_smtps` (`id`, `name`, `note`, `server`, `port`, `username`, `pas
 INSERT INTO `zz_emails` (`id`, `id_module`, `id_smtp`, `name`, `icon`, `subject`, `reply_to`, `cc`, `bcc`, `body`, `read_notify`, `predefined`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), (SELECT `id` FROM `zz_smtps` WHERE `pec` = 1 LIMIT 0,1), 'PEC', 'fa fa-file', 'Invio fattura numero {numero} del {data}', '', 'sdi01@pec.fatturapa.it', '', '<p>Gentile Cliente,</p>\r\n<p>inviamo in allegato la fattura numero {numero} del {data}.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0', '0');
 
 INSERT INTO `zz_email_print` (`id`, `id_email`, `id_print`) VALUES (NULL, (SELECT `id` FROM `zz_emails` WHERE `name` = 'PEC' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita')), (SELECT `id` FROM `zz_prints` WHERE `name` = 'Fattura di vendita'));
+
+-- Ridenominazione "Ddt di vendita" in "Ddt in uscita"
+UPDATE `zz_modules` SET `title`='Ddt in uscita' WHERE `name`='Ddt di vendita';
+UPDATE `dt_tipiddt` SET `descrizione`='Ddt in uscita' WHERE `descrizione`='Ddt di vendita';
+
+-- Ridenominazione "Ddt di acquisto" in "Ddt in ingresso"
+UPDATE `zz_modules` SET `title`='Ddt in ingresso' WHERE `name`='Ddt di acquisto';
+UPDATE `dt_tipiddt` SET `descrizione`='Ddt in ingresso' WHERE `descrizione`='Ddt di acquisto';

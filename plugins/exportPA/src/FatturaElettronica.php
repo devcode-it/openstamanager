@@ -468,10 +468,13 @@ class FatturaElettronica
         // Controllo le le righe per la fatturazione di contratti
         $dati_contratti = static::getDatiContratto($fattura);
         if (!empty($dati_contratti)) {
+		
             foreach ($dati_contratti as $dato) {
-                $result[] = [
-                    'DatiContratto' => $dato,
-                ];
+				if (!empty($dato)){
+					$result[] = [
+						'DatiContratto' => $dato,
+					];
+				}
             }
         }
 

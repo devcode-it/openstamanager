@@ -10,11 +10,11 @@
  */
 
 return '
-<div class="row">
+<div class="row" >
     <div class="col-xs-6">
         <img src="$logo$" alt="Logo" border="0"/>
     </div>
-    <div class="col-xs-6 text-right small">
+    <div class="col-xs-6 text-right style="'.((!empty($settings['header-font-size'])) ? "font-size:".($settings['header-font-size'])."px;" : "").'" ">
         <p><b>'.$f_ragionesociale.'</b></p>
         <p>'.$f_indirizzo.'</p>
         <p>'.$f_citta_full.'</p>

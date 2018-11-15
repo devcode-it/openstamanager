@@ -7,13 +7,13 @@ $module = Modules::get($id_module);
 if ($module['name'] == 'Ddt di vendita') {
     $dir = 'entrata';
 
-    $id_tipoddt = $dbo->fetchOne("SELECT id FROM dt_tipiddt WHERE descrizione='Ddt in ingresso'")['id'];
+    $id_tipoddt = $dbo->fetchOne("SELECT id FROM dt_tipiddt WHERE descrizione='Ddt in uscita'")['id'];
 
     $tipo_anagrafica = tr('Cliente');
 } else {
     $dir = 'uscita';
 
-    $id_tipoddt = $dbo->fetchOne("SELECT id FROM dt_tipiddt WHERE descrizione='Ddt in uscita'")['id'];
+    $id_tipoddt = $dbo->fetchOne("SELECT id FROM dt_tipiddt WHERE descrizione='Ddt in entrata'")['id'];
 
     $tipo_anagrafica = tr('Fornitore');
 }

@@ -652,4 +652,4 @@ UPDATE `dt_tipiddt` SET `descrizione`='Ddt in uscita' WHERE `descrizione`='Ddt d
 
 -- Ridenominazione "Ddt di acquisto" in "Ddt in ingresso"
 UPDATE `zz_modules` SET `title`='Ddt in ingresso' WHERE `name`='Ddt di acquisto';
-UPDATE `dt_tipiddt` SET `descrizione`='Ddt in ingresso' WHERE `descrizione`='Ddt di acquisto';
+UPDATE `dt_tipiddt` SET `descrizione`='Ddt in entrata' WHERE `descrizione`='Ddt di acquisto';

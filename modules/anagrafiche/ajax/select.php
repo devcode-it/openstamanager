@@ -132,7 +132,7 @@ switch ($resource) {
 
     case 'sedi':
         if (isset($superselect['idanagrafica'])) {
-            $query = "SELECT * FROM (SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab |filter| ORDER BY id";
+            $query = "SELECT * FROM (SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS(' - ', nomesede, citta) FROM an_sedi |where|) AS tab |filter| ORDER BY descrizione";
 
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);
@@ -149,7 +149,7 @@ switch ($resource) {
 
     case 'referenti':
         if (isset($superselect['idanagrafica'])) {
-            $query = 'SELECT id, nome AS descrizione FROM an_referenti |where| ORDER BY id';
+            $query = 'SELECT id, nome AS descrizione FROM an_referenti |where| ORDER BY nome';
 
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);

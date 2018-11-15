@@ -431,10 +431,12 @@ class FatturaElettronica
 
         $result = [];
         foreach ($contratti as $contratto) {
-            $dati_contratto = [
-                'IdDocumento' => $contratto['id_documento_fe'],
-            ];
-
+			
+            if (!empty($contratto['id_documento_fe'])) {
+				$dati_contratto = [
+					'IdDocumento' => $contratto['id_documento_fe'],
+				];
+			}
             if (!empty($contratto['codice_cig'])) {
                 $dati_contratto['CodiceCIG'] = $contratto['codice_cig'];
             }

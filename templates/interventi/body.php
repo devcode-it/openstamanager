@@ -399,7 +399,7 @@ if ($options['pricing']) {
 }
 
 // Timbro e firma
-$firma = !empty($records[0]['firma_file']) ? '<img src="'.$docroot.'/files/interventi/'.$records[0]['firma_file'].'" style="width:70mm;">' : '';
+$firma = !empty($records[0]['firma_file']) ? '<img src="'.DOCROOT.'/files/interventi/'.$records[0]['firma_file'].'" style="width:70mm;">' : '';
 echo '
         <td rowspan="2" class="text-center" style="font-size:8pt;height:30mm;vertical-align:bottom">
             '.$firma.'<br>

@@ -10,7 +10,7 @@ switch (filter('op')) {
             if ($dbo->fetchNum('SELECT * FROM `dt_causalet` WHERE `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
                 $predefined = post('predefined');
                 if (!empty($predefined)) {
-                    $dbo->query('UPDATE dt_porto SET predefined = 0');
+                    $dbo->query('UPDATE dt_causalet SET predefined = 0');
                 }
 
                 $dbo->update('dt_causalet', [

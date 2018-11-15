@@ -35,8 +35,8 @@ switch (filter('op')) {
 
         if (isset($descrizione)) {
             if ($dbo->fetchNum('SELECT * FROM `dt_causalet` WHERE `descrizione`='.prepare($descrizione)) == 0) {
-                $dbo->insert('dt_porto', [
-                    'dt_causalet' => $descrizione,
+                $dbo->insert('dt_causalet', [
+                    'descrizione' => $descrizione,
                 ]);
                 $id_record = $dbo->lastInsertedID();
 

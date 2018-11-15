@@ -175,7 +175,7 @@ class FatturaElettronica
                 'IdPaese' => $azienda['nazione'],
                 'IdCodice' => $azienda['piva'],
             ],
-            'ProgressivoInvio' => $documento['numero_esterno'],
+            'ProgressivoInvio' => $documento['codice_xml'],
             'FormatoTrasmissione' => ($cliente['tipo'] == 'Ente pubblico') ? 'FPA12' : 'FPR12',
             'CodiceDestinatario' => !empty($cliente['codice_destinatario']) ? $cliente['codice_destinatario'] : $default_code,
         ];

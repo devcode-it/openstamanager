@@ -137,8 +137,8 @@ if($generated){
     $("#genera").click(function(event){
         event.preventDefault();
         swal({
-          title: "Sei sicuro?",
-          text: "Sarà generata nuovamente la fattura elettronica",
+          title: "Sei sicuro di rigereare la fattura?",
+          text: "Sarà generato un nuovo progressivo invio",
           type: "warning",
           showCancelButton: true,
           confirmButtonColor: "#30d64b",

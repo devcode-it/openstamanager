@@ -867,7 +867,7 @@ class FatturaElettronica
             'original' => $filename,
             'category' => tr('Fattura elettronica'),
             'id_module' => Modules::get('Fatture di vendita')['id'],
-            'id_plugin' => Plugins::get('Fatturazione Elettronica')['id'],
+            //'id_plugin' => Plugins::get('Fatturazione Elettronica')['id'],
             'id_record' => $this->getDocumento()['id'],
         ];
         $uploads = Uploads::get($data);

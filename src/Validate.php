@@ -143,6 +143,9 @@ class Validate
 
     public static function isValidTaxCode($codice_fiscale)
     {
+        if (empty($codice_fiscale)) {
+            return true;
+        }
 
         $validator = new CodiceFiscale\Validator($codice_fiscale);
 

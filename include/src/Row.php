@@ -10,7 +10,7 @@ abstract class Row extends Description
 
     protected static function boot($bypass = false)
     {
-        parent::boot($bypass);
+        parent::boot(true);
 
         if (!$bypass) {
             static::addGlobalScope('rows', function (Builder $builder) {

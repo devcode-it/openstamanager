@@ -10,7 +10,7 @@ switch (filter('op')) {
             if ($dbo->fetchNum('SELECT * FROM `dt_causalet` WHERE `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
                 $predefined = post('predefined');
                 if (!empty($predefined)) {
-                    $dbo->query('UPDATE dt_porto SET predefined = 0');
+                    $dbo->query('UPDATE dt_causalet SET predefined = 0');
                 }
 
                 $dbo->update('dt_causalet', [
@@ -35,10 +35,14 @@ switch (filter('op')) {
 
         if (isset($descrizione)) {
             if ($dbo->fetchNum('SELECT * FROM `dt_causalet` WHERE `descrizione`='.prepare($descrizione)) == 0) {
-                $dbo->insert('dt_porto', [
-                    'dt_causalet' => $descrizione,
+                $dbo->insert('dt_causalet', [
+                    'descrizione' => $descrizione,
                 ]);
                 $id_record = $dbo->lastInsertedID();
+				
+				if (isAjaxRequest()) {
+                    echo json_encode(['id' => $id_record, 'text' => $descrizione]);
+                }
 
                 flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                     '_TYPE_' => 'causale',

@@ -61,8 +61,20 @@ $fields = [
     'indirizzo' => 'Indirizzo',
     'cap' => 'C.A.P.',
     'nazione' => 'Nazione',
-    'pec' => 'PEC',
 ];
+
+//se privato/pa o azienda
+if ($cliente['tipo'] == 'Privato' or $cliente['tipo'] == 'Ente pubblico' ){
+	//se privato/pa chiedo obbligatoriamente codice fiscale
+	$fields['codice_fiscale'] = 'Codice Fiscale';
+	//se pa chiedo codice unico ufficio
+	($cliente['tipo'] == 'Ente pubblico' and empty($cliente['codice_destinatario'])) ? $fields['codice_destinatario'] = 'Codice unico ufficio' : '';
+}else{
+	//se azienda chiedo partita iva
+	$fields['piva'] = 'Partita IVA';
+	//se italiana e non ho impostato ne il codice destinatario ne indirizzo PEC chiedo la compilazione di almeno uno dei due
+	(empty($cliente['codice_destinatario']) and empty($cliente['pec']) and intval($cliente['nazione'] == 'IT') ) ? $fields['codice_destinatario'] = 'Codice destinatario o indirizzo PEC' : '';
+}
 
 $missing = [];
 foreach ($fields as $key => $name) {
@@ -125,8 +137,8 @@ if($generated){
     $("#genera").click(function(event){
         event.preventDefault();
         swal({
-          title: "Sei sicuro?",
-          text: "Sarà generata nuovamente la fattura elettronica",
+          title: "Sei sicuro di rigenerare la fattura?",
+          text: "Attenzione: sarà generato un nuovo progressivo invio.",
           type: "warning",
           showCancelButton: true,
           confirmButtonColor: "#30d64b",

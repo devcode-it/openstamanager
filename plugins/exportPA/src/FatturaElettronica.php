@@ -34,10 +34,11 @@ class FatturaElettronica
     /** @var array Righe del documento */
     protected $righe = [];
 
-    /** @var array Stato di validazione interna dell'XML della fattura */
-    protected $is_valid = null;
     /** @var array XML della fattura */
     protected $xml = null;
+
+    /** @var array Irregolarità nella fattura XML */
+    protected $errors = null;
 
     public function __construct($id_documento)
     {
@@ -151,11 +152,21 @@ class FatturaElettronica
      */
     public function isValid()
     {
-        if (empty($this->is_valid)) {
+        return empty($this->getErrors());
+    }
+
+    /**
+     * Restituisce l'elenco delle irregolarità interne all'XML della fattura.
+     *
+     * @return bool
+     */
+    public function getErrors()
+    {
+        if (!isset($this->errors)) {
             $this->toXML();
         }
 
-        return $this->is_valid;
+        return $this->errors;
     }
 
     /**
@@ -178,7 +189,7 @@ class FatturaElettronica
                 'IdPaese' => $azienda['nazione'],
                 'IdCodice' => $azienda['piva'],
             ],
-            'ProgressivoInvio' => $documento['numero_esterno'],
+            'ProgressivoInvio' => $documento['codice_xml'],
             'FormatoTrasmissione' => ($cliente['tipo'] == 'Ente pubblico') ? 'FPA12' : 'FPR12',
             'CodiceDestinatario' => !empty($cliente['codice_destinatario']) ? $cliente['codice_destinatario'] : $default_code,
         ];
@@ -193,8 +204,8 @@ class FatturaElettronica
             $result['ContattiTrasmittente']['Email'] = $azienda['email'];
         }
 
-        // Inizializzazione PEC solo se necessario
-        if (empty($cliente['codice_destinatario'])) {
+        // Inizializzazione PEC solo se anagrafica azienda e codice destinatario non compilato, per privato e PA la PEC non serve
+        if (empty($cliente['codice_destinatario']) && $cliente['tipo'] == 'Azienda') {
             $result['PECDestinatario'] = $cliente['pec'];
         }
 
@@ -434,9 +445,11 @@ class FatturaElettronica
 
         $result = [];
         foreach ($contratti as $contratto) {
-            $dati_contratto = [
-                'IdDocumento' => $contratto['id_documento_fe'],
-            ];
+            if (!empty($contratto['id_documento_fe'])) {
+                $dati_contratto = [
+                    'IdDocumento' => $contratto['id_documento_fe'],
+                ];
+            }
 
             if (!empty($contratto['codice_cig'])) {
                 $dati_contratto['CodiceCIG'] = $contratto['codice_cig'];
@@ -470,9 +483,11 @@ class FatturaElettronica
         $dati_contratti = static::getDatiContratto($fattura);
         if (!empty($dati_contratti)) {
             foreach ($dati_contratti as $dato) {
-                $result[] = [
-                    'DatiContratto' => $dato,
-                ];
+                if (!empty($dato)) {
+                    $result[] = [
+                        'DatiContratto' => $dato,
+                    ];
+                }
             }
         }
 
@@ -550,7 +565,7 @@ class FatturaElettronica
         }
 
         // Riepiloghi per IVA per percentuale
-        $riepiloghi_percentuale = $database->fetchArray('SELECT SUM(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) as totale, SUM(`co_righe_documenti`.`iva`) as iva, `co_iva`.`percentuale`, `co_iva`.`dicitura` FROM `co_righe_documenti` INNER JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`idiva` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND
+        $riepiloghi_percentuale = $database->fetchArray('SELECT SUM(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) as totale, SUM(`co_righe_documenti`.`iva`) as iva, `co_iva`.`esigibilita`, `co_iva`.`percentuale`, `co_iva`.`dicitura` FROM `co_righe_documenti` INNER JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`idiva` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND
         `co_iva`.`codice_natura_fe` IS NULL GROUP BY `co_iva`.`percentuale`');
         foreach ($riepiloghi_percentuale as $riepilogo) {
             $iva = [
@@ -572,7 +587,7 @@ class FatturaElettronica
         }
 
         // Riepiloghi per IVA per natura
-        $riepiloghi_natura = $database->fetchArray('SELECT SUM(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) as totale, SUM(`co_righe_documenti`.`iva`) as iva, `co_iva`.`codice_natura_fe` FROM `co_righe_documenti` INNER JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`idiva` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND
+        $riepiloghi_natura = $database->fetchArray('SELECT SUM(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) as totale, SUM(`co_righe_documenti`.`iva`) as iva, `co_iva`.`esigibilita`, `co_iva`.`codice_natura_fe` FROM `co_righe_documenti` INNER JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`idiva` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND
         `co_iva`.`codice_natura_fe` IS NOT NULL GROUP BY `co_iva`.`codice_natura_fe`');
         foreach ($riepiloghi_natura as $riepilogo) {
             $iva = [
@@ -602,24 +617,36 @@ class FatturaElettronica
 
         $database = database();
 
-        $pagamento = $database->fetchOne('SELECT * FROM `co_pagamenti` WHERE `id` = '.prepare($documento['idpagamento']));
+        $co_pagamenti = $database->fetchOne('SELECT * FROM `co_pagamenti` WHERE `id` = '.prepare($documento['idpagamento']));
 
         $result = [
-            'CondizioniPagamento' => ($pagamento['prc'] == 100) ? 'TP02' : 'TP01',
+            'CondizioniPagamento' => ($co_pagamenti['prc'] == 100) ? 'TP02' : 'TP01',
         ];
 
-        $scadenze = $database->fetchArray('SELECT * FROM `co_scadenziario` WHERE `iddocumento` = '.prepare($documento['id']));
-        foreach ($scadenze as $scadenza) {
-            $result[] = [
-                'DettaglioPagamento' => [
-                    'ModalitaPagamento' => $pagamento['codice_modalita_pagamento_fe'],
-                    'DataScadenzaPagamento' => $scadenza['scadenza'],
-                    'ImportoPagamento' => $scadenza['da_pagare'],
-                ],
-            ];
-        }
+        $co_scadenziario = $database->fetchArray('SELECT * FROM `co_scadenziario` WHERE `iddocumento` = '.prepare($documento['id']));
+        foreach ($co_scadenziario as $scadenza) {
+            $pagamento = [
+				'ModalitaPagamento' => $co_pagamenti['codice_modalita_pagamento_fe'],
+				'DataScadenzaPagamento' => $scadenza['scadenza'],
+				'ImportoPagamento' => $scadenza['da_pagare'],
+			];
 
-        return $result;
+			if (!empty($documento['idbanca'])){
+				$co_banche = $database->fetchOne('SELECT * FROM co_banche WHERE id = '.prepare($documento['idbanca']));
+				if (!empty($co_banche['nome']))
+					$pagamento['IstitutoFinanziario'] = $co_banche['nome'];
+				if (!empty($co_banche['iban']))
+					$pagamento['IBAN'] = $co_banche['iban'];
+				if (!empty($co_banche['bic']))
+					$pagamento['BIC'] = $co_banche['bic'];
+			}
+        }
+		
+		$result[] = [
+			'DettaglioPagamento' => $pagamento
+		];
+		
+		return $result;
     }
 
     /**
@@ -794,10 +821,10 @@ class FatturaElettronica
             if (!empty($validator)) {
                 $validation = $validator->validate($output);
 
-                $this->is_valid &= $validation;
-
-                // Per debug
-                //flash()->warning($key.': '.intval($validation));
+                // Segnalazione dell'irregolarità
+                if (!intval($validation)) {
+                    $this->errors[] = $key;
+                }
             }
         }
 
@@ -837,7 +864,7 @@ class FatturaElettronica
     public function save($directory)
     {
         // Generazione nome XML
-        $filename = $this->getFilename();
+        $filename = $this->getFilename(true);
 
         // Salvataggio del file
         $file = rtrim($directory, '/').'/'.$filename;
@@ -860,7 +887,7 @@ class FatturaElettronica
             'original' => $filename,
             'category' => tr('Fattura elettronica'),
             'id_module' => Modules::get('Fatture di vendita')['id'],
-            'id_plugin' => Plugins::get('Fatturazione Elettronica')['id'],
+            //'id_plugin' => Plugins::get('Fatturazione Elettronica')['id'],
             'id_record' => $this->getDocumento()['id'],
         ];
         $uploads = Uploads::get($data);
@@ -877,12 +904,12 @@ class FatturaElettronica
      *
      * @return string
      */
-    public function getFilename()
+    public function getFilename($new = false)
     {
         $azienda = static::getAzienda();
-        $codice = 'IT'.(empty($azienda['piva']) ? $azienda['codice_fiscale'] : $azienda['piva']);
+        $prefix = 'IT'.(empty($azienda['piva']) ? $azienda['codice_fiscale'] : $azienda['piva']);
 
-        if (empty($this->documento['codice_xml'])) {
+        if (empty($this->documento['codice_xml']) || !empty($new)) {
             $database = database();
 
             do {
@@ -894,7 +921,7 @@ class FatturaElettronica
             $this->documento['codice_xml'] = $code;
         }
 
-        return $codice.'_'.$this->documento['codice_xml'].'.xml';
+        return $prefix.'_'.$this->documento['codice_xml'].'.xml';
     }
 
     /**
@@ -905,7 +932,7 @@ class FatturaElettronica
     public function toXML()
     {
         if (empty($this->xml)) {
-            $this->is_valid = true;
+            $this->errors = [];
 
             $cliente = $this->getCliente();
 

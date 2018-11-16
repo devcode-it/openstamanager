@@ -94,6 +94,15 @@ switch (post('op')) {
             ]));
         }
 
+        // Validazione del Codice Fiscale
+        $codice_fiscale = $anagrafica->codice_fiscale;
+        $check_codice_fiscale = Validate::isValidTaxCode($codice_fiscale);
+        if (empty($check_codice_fiscale)) {
+            flash()->error(tr('Attenzione: il codice fiscale _COD_ sembra non essere valido', [
+                '_COD_' => $codice_fiscale,
+            ]));
+        }
+
         // Aggiorno il codice anagrafica se non è già presente, altrimenti lo ignoro
         if ($anagrafica->codice != post('codice')) {
             flash()->error(tr("Il codice anagrafica inserito esiste già! Inserirne un'altro..."));

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model as Original;
 
 abstract class Model extends Original
 {
+    // Retrocompatibilità MySQL
     const UPDATED_AT = null;
 
     /**

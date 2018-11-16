@@ -17,9 +17,10 @@ if (sizeof($rs_documento) > 0) {
 
 if ($record['rinnovabile']) {
     $rinnova = !empty($record['data_accettazione']) && !empty($record['data_conclusione']);
+    $stati_pianificabili = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione` SEPARATOR ", ") AS stati_pianificabili FROM `co_staticontratti` WHERE `pianificabile` = 1')['stati_pianificabili'];
 
     echo '
-<div class="tip" data-toggle="tooltip" title="'.tr('Il contratto è rinnovabile se sono definite le date di accettazione e conclusione').'" style="display:inline;">
+<div class="tip" data-toggle="tooltip" title="'.tr('Il contratto è rinnovabile se sono definite le date di accettazione e conclusione e si trova in uno stato di questi stati: '.$stati_pianificabili).'" style="display:inline;">
     <button type="button" class="btn btn-warning ask '.($rinnova ? '' : 'disabled').'" data-backto="record-edit" data-op="renew" data-msg="'.tr('Rinnovare questo contratto?').'" data-button="Rinnova" data-class="btn btn-lg btn-warning" '.($rinnova ? '' : 'disabled').'>
         <i class="fa fa-refresh"></i> '.tr('Rinnova').'...
     </button>

@@ -9,7 +9,7 @@ echo '<p>'.tr('Il backup è <b>molto importante</b> perché permette di creare u
 if (!extension_loaded('zip')) {
     echo "
 <div class='alert alert-warning'>
-    <i class='fa fa-times'></i> ".tr('Estensione ZIP non supportata!').'
+    <i class='fa fa-times'></i> ".tr('Estensione zip non supportata').'.
     '.tr('Il backup verrà eseguito, ma non in formato ZIP. Sarà quindi scaricabile solo tramite FTP o con copia-incolla').'.
 </div>';
 }

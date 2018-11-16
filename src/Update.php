@@ -105,7 +105,7 @@ class Update
             $version = str_replace('_', '.', $infos['filename']);
 
             if (array_search($version, $previous) === false && self::isVersion($version)) {
-                $path = ltrim($infos['dirname'].'/'.$infos['filename'], DOCROOT);
+                $path = str_replace(DOCROOT, '', $infos['dirname'].'/'.$infos['filename']);
                 $path = ltrim($path, '/');
 
                 $results[] = [

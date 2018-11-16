@@ -69,7 +69,7 @@ echo '
 				<div class="col-md-5">
 					<table class="table table-hover table-condensed table-bordered">
 					    <tr>
-                            <th width="100">'.tr('Data').'</th>
+                            <th width="150">'.tr('Data').'</th>
                             <th width="150">'.tr('Importo').'</th>
                             <th width="150">'.tr('Pagato').'</th>
                         </tr>';
@@ -97,11 +97,11 @@ for ($i = 0; $i < count($rs); ++$i) {
                             </td>
 
                             <td align="right">
-                                {[ "type": "number", "name": "scadenza['.$rs[$i]['id'].']", "value": "'.Translator::numberToLocale($rs[$i]['da_pagare'], 4).'", "decimals":"4" ]}
+                                {[ "type": "number", "name": "scadenza['.$rs[$i]['id'].']", "value": "'.Translator::numberToLocale($rs[$i]['da_pagare']).'" ]}
                             </td>
 
                             <td align="right">
-                                {[ "type": "number", "name": "pagato['.$rs[$i]['id'].']", "value": "'.Translator::numberToLocale($rs[$i]['pagato'], 4).'",  "decimals":"4"  ]}
+                                {[ "type": "number", "name": "pagato['.$rs[$i]['id'].']", "value": "'.Translator::numberToLocale($rs[$i]['pagato']).'"  ]}
                             </td>
                         </tr>';
 }

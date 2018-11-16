@@ -2,7 +2,7 @@
 
 namespace Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Common\Model;
 use App;
 
 class Clause extends Model

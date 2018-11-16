@@ -4,8 +4,8 @@ namespace Models;
 
 use Traits\PathTrait;
 use Traits\StoreTrait;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Common\Model;
 
 class PrintTemplate extends Model
 {

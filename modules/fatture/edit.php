@@ -452,7 +452,7 @@ $(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
 
         var restore = buttonLoading(btn);
 
-		// Procedo al salvataggio solo se tutti i campi obbligatori sono compilati, altimenti mostro avviso
+		// Procedo al salvataggio solo se tutti i campi obbligatori sono compilati, altrimenti mostro avviso
 	    if (form.parsley().isValid()) {
             content_was_modified = false;
 

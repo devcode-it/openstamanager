@@ -4,6 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 if (isset($id_record)) {
     $record = $dbo->fetchOne('SELECT *,
+    (SELECT tipo FROM an_anagrafiche WHERE idanagrafica = in_interventi.idanagrafica) AS tipo_anagrafica,
     (SELECT completato FROM in_statiintervento WHERE in_statiintervento.id=in_interventi.id_stato) AS flag_completato,
     IF((in_interventi.idsede = 0),
         (SELECT idzona FROM an_anagrafiche INNER JOIN `an_sedi` ON `an_sedi`.`id`=`an_anagrafiche`.`id_sede_legale` WHERE an_anagrafiche.idanagrafica = in_interventi.idanagrafica),

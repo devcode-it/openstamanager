@@ -115,7 +115,7 @@ function download(button) {
         <div class="box box-success">
             <div class="box-header with-border">
                 <h3 class="box-title">
-                    '.tr('Carica un aggiornamento').' <span class="tip" title="'.tr('Form di caricamento aggiornamenti del gestionale e innesti di moduli e plugin').'"><i class="fa fa-question-circle-o"></i></span>
+                    '.tr('Carica un aggiornamento').' <span class="tip" title="'.tr('Form di caricamento aggiornamenti del gestionale e innesti di moduli e plugin').'."><i class="fa fa-question-circle-o"></i></span>
                 </h3>
             </div>
             <div class="box-body">
@@ -133,36 +133,48 @@ function download(button) {
         </div>
     </div>';
 
+
     echo '
 
     <div class="col-md-4">
         <div class="box box-info">
             <div class="box-header with-border">
                 <h3 class="box-title">
-                    '.tr('Ricerca aggiornamenti').' <span class="tip" title="'.tr('Controllo automatico della presenza di aggiornamenti per il gestionale').'"><i class="fa fa-question-circle-o"></i></span>
+                    '.tr('Ricerca aggiornamenti').' <span class="tip" title="'.tr('Controllo automatico della presenza di aggiornamenti per il gestionale').'."><i class="fa fa-question-circle-o"></i></span>
                 </h3>
             </div>
-            <div class="box-body">
-                <div id="update-search">
-                    <button type="button" class="btn btn-info btn-block" onclick="search(this)">
-                        <i class="fa fa-search"></i> '.tr('Ricerca').'
-                    </button>
-                </div>
+            <div class="box-body">';
 
-                <div id="update-download" class="hide">
-                    <p>'.tr("E' stato individuato un nuovo aggiornamento").': <b id="update-version"></b>.</p>
-                    <p>'.tr('Scaricalo manualmente (_LINK_) oppure in automatico', [
-                        '_LINK_' => "<a href='https://github.com/devcode-it/openstamanager/releases'>https://github.com/devcode-it/openstamanager/releases</a>",
-                    ]).':</p>
+    if (extension_loaded('curl')) {
+        echo '
+            <div id="update-search">
+                <button type="button" class="btn btn-info btn-block" onclick="search(this)">
+                    <i class="fa fa-search"></i> '.tr('Ricerca').'
+                </button>
+            </div>
 
-                    <button type="button" class="btn btn-success btn-block" onclick="download(this)">
-                        <i class="fa fa-download"></i> '.tr('Scarica').'
-                    </button>
-                </div>
+            <div id="update-download" class="hide">
+                <p>'.tr("E' stato individuato un nuovo aggiornamento").': <b id="update-version"></b>.</p>
+                <p>'.tr('Scaricalo manualmente (_LINK_) oppure in automatico', [
+                    '_LINK_' => "<a href='https://github.com/devcode-it/openstamanager/releases'>https://github.com/devcode-it/openstamanager/releases</a>",
+                ]).':</p>
 
-                <div id="update-none" class="hide">
-                    <p>'.tr("Nessun aggiornamento presente").'.</p>
-                </div>
+                <button type="button" class="btn btn-success btn-block" onclick="download(this)">
+                    <i class="fa fa-download"></i> '.tr('Scarica').'
+                </button>
+            </div>
+
+            <div id="update-none" class="hide">
+                <p>'.tr("Nessun aggiornamento presente").'.</p>
+            </div>';
+    } else {
+        echo'
+        <button type="button" class="btn btn-warning btn-block disabled" >
+            <i class="fa fa-warning"></i> '.tr('Estensione curl non supportata').'.
+        </button>';
+    }
+
+    echo '
             </div>
         </div>
     </div>

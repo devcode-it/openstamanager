@@ -3,7 +3,7 @@
 namespace Models;
 
 use Traits\StoreTrait;
-use Illuminate\Database\Eloquent\Model;
+use Common\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MailAccount extends Model

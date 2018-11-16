@@ -41,7 +41,7 @@ if (!empty($rsi)) {
     // Tabella con i dati
     foreach ($rsi as $int) {
         $int = array_merge($int, get_costi_intervento($int['id']));
-        $totale_stato[$int['id_stato']] = sum($totale_stato[$int['id_stato']], $int['totale']);
+        $totale_stato[$int['id_stato']] = sum($totale_stato[$int['id_stato']], $int['totale_scontato']);
 
         // Riga intervento singolo
         echo '

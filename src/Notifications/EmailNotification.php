@@ -193,7 +193,7 @@ class EmailNotification extends Notification
     }
 
     /**
-     * Aggiunge un destinataro alla notifica.
+     * Aggiunge un destinatario alla notifica.
      *
      * @param string $value
      * @param string $type

@@ -14,7 +14,11 @@ switch (filter('op')) {
             flash()->info(tr('Fattura elettronica generata correttamente!'));
 
             if (!$fattura_pa->isValid()) {
-                flash()->warning(tr('La fattura elettronica potrebbe avere delle irregolarità!'));
+                $errors = $fattura_pa->getErrors();
+
+                flash()->warning(tr('La fattura elettronica potrebbe avere delle irregolarità!').' '.tr('Controllare i seguenti campi: _LIST_', [
+                    '_LIST_' => implode(', ', $errors),
+                ]).'.');
             }
         } else {
             flash()->error(tr('Impossibile generare la fattura elettronica'));

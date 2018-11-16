@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-// Info contratto
+// Info documento
 $rs = $dbo->fetchArray('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
 $idanagrafica = $rs[0]['idanagrafica'];
 
@@ -34,11 +34,11 @@ $result['prezzo'] = $riga['subtotale'] / $riga['qta'];
 $file = 'riga';
 if (!empty($result['is_descrizione'])) {
     $file = 'descrizione';
-
-    $options['op'] = 'manage_articolo';
+	
+    $options['op'] = 'manage_descrizione';
 } elseif (!empty($result['idarticolo'])) {
     $file = 'articolo';
-
+	
     $options['op'] = 'manage_articolo';
 }
 

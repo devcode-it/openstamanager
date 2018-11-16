@@ -9,7 +9,7 @@ $default_header$
     <!-- Dati Ddt -->
     <div class="col-xs-6">
         <div class="text-center" style="height:5mm;">
-            <b>$tipo_doc$</b>
+            <b>DDT</b>
         </div>
 
         <table class="table">

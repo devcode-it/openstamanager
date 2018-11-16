@@ -95,7 +95,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "timestamp", "label": "<?php echo tr('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "$data_richiesta$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "timestamp", "label": "<?php echo tr('Data e ora richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "$data_richiesta$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -141,13 +141,13 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 	</div>
 
 <?php
-
+// Visualizzo solo se l'attività non è già collegata ad un contratto
 if (empty($record['idcontratto'])) {
     ?>
-    <!-- Fatturazione Elettronica -->
-    <div class="panel panel-primary">
+    <!-- Fatturazione Elettronica PA-->
+    <div class="panel panel-primary <?php echo ((($record['tipo_anagrafica']) == 'Ente pubblico') ? 'show' : 'hide'); ?>" >
         <div class="panel-heading">
-            <h3 class="panel-title"><?php echo tr('Dati Fatturazione Elettronica'); ?></h3>
+            <h3 class="panel-title"><?php echo tr('Dati appalto'); ?></h3>
         </div>
 
         <div class="panel-body">

@@ -24,6 +24,10 @@ switch (post('op')) {
             $dbo->query('INSERT INTO `dt_aspettobeni` (`descrizione`) VALUES ('.prepare($descrizione).')');
 
             $id_record = $dbo->lastInsertedID();
+			
+			if (isAjaxRequest()) {
+				echo json_encode(['id' => $id_record, 'text' => $descrizione]);
+			}
 
             flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                 '_TYPE_' => 'bene',

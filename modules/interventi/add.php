@@ -236,7 +236,7 @@ if (!empty($id_intervento)) {
 			<!-- RIGA 3 -->
 			<div class="row">
                 <div class="col-md-4">
-                    {[ "type": "timestamp", "label": "<?php echo tr('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "<?php echo $data_richiesta ?: '-now-'; ?>" ]}
+                    {[ "type": "timestamp", "label": "<?php echo tr('Data e ora richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "<?php echo $data_richiesta ?: '-now-'; ?>" ]}
                 </div>
 
 				<div class="col-md-4">
@@ -350,6 +350,7 @@ if (!empty($id_intervento)) {
 
         // Refresh modulo dopo la chiusura di una pianificazione attività derivante dalle attività
         // da pianificare, altrimenti il promemoria non si vede più nella lista a destra
+		// TODO: da gestire via ajax
         if( $('input[name=idcontratto_riga]').val() != undefined ){
             $('#bs-popup button.close').on('click', function(){
                 location.reload();
@@ -407,7 +408,8 @@ if (!empty($id_intervento)) {
         }
 
         if($(this).val()){
-            $('#bs-popup #id_tipo_intervento').selectSetNew($(this).selectData().id_tipo_intervento, $(this).selectData().id_tipo_intervento_descrizione);
+            //TODO: disattivato perché genera problemi con il change successivo di iditpointervento per il tempo standard*
+			// $('#bs-popup #id_tipo_intervento').selectSetNew($(this).selectData().id_tipo_intervento, $(this).selectData().id_tipo_intervento_descrizione);
         }
 	});
 
@@ -425,15 +427,17 @@ if (!empty($id_intervento)) {
         $("#bs-popup #componenti").selectReset();
 	});
 
-	// tempo standard
+	// tempo standard*
 	$('#bs-popup #id_tipo_intervento').change( function(){
-		if ( (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
-            tempo_standard = $(this).selectData().tempo_standard;
 
-            data = moment($('#bs-popup #orario_inizio').val(), globals.timestampFormat);
+		if ( (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
+			tempo_standard = $(this).selectData().tempo_standard;
+
+			data = moment($('#bs-popup #orario_inizio').val(), globals.timestampFormat);
 			orario_fine = data.add(tempo_standard, 'hours');
 			$('#bs-popup #orario_fine').val(orario_fine.format(globals.timestampFormat));
 		}
+
 	});
 
 	$('#bs-popup #idtecnico').change( function(){
@@ -468,10 +472,12 @@ if (!empty($id_intervento)) {
 
                     // Se l'aggiunta intervento proviene dai contratti, faccio il submit via ajax e ricarico la tabella dei contratti
                     else if(ref == "interventi_contratti"){
-                        //$('#elenco_interventi > tbody').load(globals.rootdir + '/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto=<?php echo $idcontratto; ?>');
-                        $("#bs-popup").modal('hide');
+
+						$("#bs-popup").modal('hide');
 						parent.window.location.reload();
-                        //location.href = '<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get('Contratti')['id']; ?>&id_record=<?php echo $id_record; ?>#tab_<?php echo $id_plugin; ?>';
+						//TODO: da gestire via ajax
+						//$('#elenco_interventi > tbody').load(globals.rootdir + '/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto=<?php echo $idcontratto; ?>');
+
                     }
                 }
             });

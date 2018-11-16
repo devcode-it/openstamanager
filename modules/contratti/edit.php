@@ -133,10 +133,10 @@ if ($record['stato'] == 'Emessa') {
 		</div>
 	</div>
 
-    <!-- Fatturazione Elettronica -->
-    <div class="panel panel-primary">
+    <!-- Fatturazione Elettronica PA -->
+    <div class="panel panel-primary <?php echo ((($record['tipo_anagrafica']) == 'Ente pubblico') ? 'show' : 'hide'); ?>" >
         <div class="panel-heading">
-            <h3 class="panel-title"><?php echo tr('Dati Fatturazione Elettronica'); ?></h3>
+            <h3 class="panel-title"><?php echo tr('Dati appalto'); ?></h3>
         </div>
 
         <div class="panel-body">
@@ -232,7 +232,8 @@ $rs = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE id_tipo_intervento
 
 if (sizeof($rs) > 0) {
     echo '
-                        <table class="table table-striped table-condensed table-bordered">
+                        <div class="clearfix">&nbsp;</div>
+						<table class="table table-striped table-condensed table-bordered">
 							<tr>
 								<th width="300">'.tr('Tipo attività').'</th>
 
@@ -372,6 +373,11 @@ if (!empty($record['idcontratto_prev'])) {
 }
 ?>
 
+
+{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
+
+{( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
+
 <form action='<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get('Fatture di vendita')['id']; ?>' method='post' id='form_creafattura'>
 	<input type="hidden" name="backto" value="record-edit">
 	<input type='hidden' name='op' value='fattura_da_contratto'>
@@ -458,10 +464,6 @@ if (!empty($elementi)) {
 }
 
 ?>
-
-{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
-
-{( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>

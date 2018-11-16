@@ -34,10 +34,11 @@ class FatturaElettronica
     /** @var array Righe del documento */
     protected $righe = [];
 
-    /** @var array Stato di validazione interna dell'XML della fattura */
-    protected $is_valid = null;
     /** @var array XML della fattura */
     protected $xml = null;
+
+    /** @var array Irregolarità nella fattura XML */
+    protected $errors = null;
 
     public function __construct($id_documento)
     {
@@ -148,11 +149,21 @@ class FatturaElettronica
      */
     public function isValid()
     {
-        if (empty($this->is_valid)) {
+        return empty($this->getErrors());
+    }
+
+    /**
+     * Restituisce l'elenco delle irregolarità interne all'XML della fattura.
+     *
+     * @return bool
+     */
+    public function getErrors()
+    {
+        if (!isset($this->errors)) {
             $this->toXML();
         }
 
-        return $this->is_valid;
+        return $this->errors;
     }
 
     /**
@@ -191,7 +202,7 @@ class FatturaElettronica
         }
 
         // Inizializzazione PEC solo se anagrafica azienda e codice destinatario non compilato, per privato e PA la PEC non serve
-		if (empty($cliente['codice_destinatario']) and $cliente['tipo'] == 'Azienda' ){
+        if (empty($cliente['codice_destinatario']) && $cliente['tipo'] == 'Azienda') {
             $result['PECDestinatario'] = $cliente['pec'];
         }
 
@@ -431,12 +442,12 @@ class FatturaElettronica
 
         $result = [];
         foreach ($contratti as $contratto) {
-			
             if (!empty($contratto['id_documento_fe'])) {
-				$dati_contratto = [
-					'IdDocumento' => $contratto['id_documento_fe'],
-				];
-			}
+                $dati_contratto = [
+                    'IdDocumento' => $contratto['id_documento_fe'],
+                ];
+            }
+
             if (!empty($contratto['codice_cig'])) {
                 $dati_contratto['CodiceCIG'] = $contratto['codice_cig'];
             }
@@ -468,13 +479,12 @@ class FatturaElettronica
         // Controllo le le righe per la fatturazione di contratti
         $dati_contratti = static::getDatiContratto($fattura);
         if (!empty($dati_contratti)) {
-		
             foreach ($dati_contratti as $dato) {
-				if (!empty($dato)){
-					$result[] = [
-						'DatiContratto' => $dato,
-					];
-				}
+                if (!empty($dato)) {
+                    $result[] = [
+                        'DatiContratto' => $dato,
+                    ];
+                }
             }
         }
 
@@ -796,16 +806,11 @@ class FatturaElettronica
             if (!empty($validator)) {
                 $validation = $validator->validate($output);
 
-                $this->is_valid &= $validation;
-				$errors = array();
-				if (!intval($validation)){
-					$_SESSION['warnings'][] = $key;
-				}
-                // Per debug
-                //flash()->warning($key.': '.intval($validation));
+                // Segnalazione dell'irregolarità
+                if (!intval($validation)) {
+                    $this->errors[] = $key;
+                }
             }
-			
-		
         }
 
         return $output;
@@ -844,7 +849,7 @@ class FatturaElettronica
     public function save($directory)
     {
         // Generazione nome XML
-        $filename = $this->getFilename();
+        $filename = $this->getFilename(true);
 
         // Salvataggio del file
         $file = rtrim($directory, '/').'/'.$filename;
@@ -884,12 +889,12 @@ class FatturaElettronica
      *
      * @return string
      */
-    public function getFilename()
+    public function getFilename($new = false)
     {
         $azienda = static::getAzienda();
-        $codice = 'IT'.(empty($azienda['piva']) ? $azienda['codice_fiscale'] : $azienda['piva']);
+        $prefix = 'IT'.(empty($azienda['piva']) ? $azienda['codice_fiscale'] : $azienda['piva']);
 
-        if (empty($this->documento['codice_xml'])) {
+        if (empty($this->documento['codice_xml']) || !empty($new)) {
             $database = database();
 
             do {
@@ -901,7 +906,7 @@ class FatturaElettronica
             $this->documento['codice_xml'] = $code;
         }
 
-        return $codice.'_'.$this->documento['codice_xml'].'.xml';
+        return $prefix.'_'.$this->documento['codice_xml'].'.xml';
     }
 
     /**
@@ -912,7 +917,7 @@ class FatturaElettronica
     public function toXML()
     {
         if (empty($this->xml)) {
-            $this->is_valid = true;
+            $this->errors = [];
 
             $cliente = $this->getCliente();
 

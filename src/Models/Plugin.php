@@ -6,7 +6,7 @@ use App;
 use Traits\RecordTrait;
 use Traits\UploadTrait;
 use Traits\StoreTrait;
-use Illuminate\Database\Eloquent\Model;
+use Common\Model;
 use Illuminate\Database\Eloquent\Builder;
 
 class Plugin extends Model

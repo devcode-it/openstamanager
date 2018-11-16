@@ -2,7 +2,7 @@
 
 namespace Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Common\Model;
 
 class Log extends Model
 {

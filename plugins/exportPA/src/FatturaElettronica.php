@@ -614,24 +614,36 @@ class FatturaElettronica
 
         $database = database();
 
-        $pagamento = $database->fetchOne('SELECT * FROM `co_pagamenti` WHERE `id` = '.prepare($documento['idpagamento']));
+        $co_pagamenti = $database->fetchOne('SELECT * FROM `co_pagamenti` WHERE `id` = '.prepare($documento['idpagamento']));
 
         $result = [
-            'CondizioniPagamento' => ($pagamento['prc'] == 100) ? 'TP02' : 'TP01',
+            'CondizioniPagamento' => ($co_pagamenti['prc'] == 100) ? 'TP02' : 'TP01',
         ];
 
-        $scadenze = $database->fetchArray('SELECT * FROM `co_scadenziario` WHERE `iddocumento` = '.prepare($documento['id']));
-        foreach ($scadenze as $scadenza) {
-            $result[] = [
-                'DettaglioPagamento' => [
-                    'ModalitaPagamento' => $pagamento['codice_modalita_pagamento_fe'],
-                    'DataScadenzaPagamento' => $scadenza['scadenza'],
-                    'ImportoPagamento' => $scadenza['da_pagare'],
-                ],
-            ];
-        }
+        $co_scadenziario = $database->fetchArray('SELECT * FROM `co_scadenziario` WHERE `iddocumento` = '.prepare($documento['id']));
+        foreach ($co_scadenziario as $scadenza) {
+            $pagamento = [
+				'ModalitaPagamento' => $co_pagamenti['codice_modalita_pagamento_fe'],
+				'DataScadenzaPagamento' => $scadenza['scadenza'],
+				'ImportoPagamento' => $scadenza['da_pagare'],
+			];
 
-        return $result;
+			if (!empty($documento['idbanca'])){
+				$co_banche = $database->fetchOne('SELECT * FROM co_banche WHERE id = '.prepare($documento['idbanca']));
+				if (!empty($co_banche['nome']))
+					$pagamento['IstitutoFinanziario'] = $co_banche['nome'];
+				if (!empty($co_banche['iban']))
+					$pagamento['IBAN'] = $co_banche['iban'];
+				if (!empty($co_banche['bic']))
+					$pagamento['BIC'] = $co_banche['bic'];
+			}
+        }
+		
+		$result[] = [
+			'DettaglioPagamento' => $pagamento
+		];
+		
+		return $result;
     }
 
     /**

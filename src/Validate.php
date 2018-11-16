@@ -140,4 +140,12 @@ class Validate
 
         return true;
     }
+
+    public static function isValidTaxCode($codice_fiscale)
+    {
+
+        $validator = new CodiceFiscale\Validator($codice_fiscale);
+
+        return $validator->isFormallyValid();
+    }
 }

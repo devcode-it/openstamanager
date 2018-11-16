@@ -258,13 +258,13 @@ if (!empty($rs2)) {
         // Quantità
         echo '
         <td class="text-center">
-            '.Translator::numberToLocale($r['qta'], 'qta').'
+            '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
         </td>';
 
         // Prezzo unitario
         echo '
         <td class="text-center">
-            '.($options['pricing'] ? Translator::numberToLocale($r['prezzo_vendita']).' &euro;' : '-').'
+            '.($options['pricing'] ? Translator::numberToLocale($r['prezzo_vendita']-$r['sconto_unitario']).' &euro;' : '-').'
         </td>';
 
         // Prezzo totale

@@ -20,7 +20,7 @@ switch (post('op')) {
         $sede->citta = post('citta');
         $sede->cap = post('cap');
         $sede->provincia = post('provincia');
-        $sede->km = post('km');
+        $sede->km = post('km', true);
         $sede->id_nazione = post('id_nazione') ?: null;
         $sede->gaddress = post('gaddress');
         $sede->lat = post('lat');

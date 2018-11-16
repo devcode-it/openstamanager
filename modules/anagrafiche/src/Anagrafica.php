@@ -141,15 +141,25 @@ class Anagrafica extends Model
     }
 
     /**
+     * Controlla se l'anagrafica è del tipo indicato.
+     *
+     * @return bool
+     */
+    public function isTipo($name)
+    {
+        return $this->tipi()->get()->search(function ($item, $key) use ($name) {
+            return $item->descrizione == $name;
+        }) !== false;
+    }
+
+    /**
      * Controlla se l'anagrafica è di tipo 'Azienda'.
      *
      * @return bool
      */
     public function isAzienda()
     {
-        return $this->tipi()->get()->search(function ($item, $key) {
-            return $item->descrizione == 'Azienda';
-        }) !== false;
+        return $this->isTipo('Azienda');
     }
 
     /**
@@ -230,6 +240,6 @@ class Anagrafica extends Model
      */
     public function getSedeLegaleAttribute()
     {
-        return $this->hasOne(Sede::class, 'idanagrafica')->where('id', $this->id_sede_legale);
+        return $this->sedi()->where('id', $this->id_sede_legale)->first();
     }
 }

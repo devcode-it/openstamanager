@@ -55,37 +55,18 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
     $dbo = database();
 
     // Controllo sull'identità del tecnico
-    $tecnico = $dbo->fetchOne('SELECT an_anagrafiche.idanagrafica, an_sedi.email, an_sedi.km FROM an_anagrafiche
-    INNER JOIN `an_sedi` ON `an_sedi`.`id`=`an_anagrafiche`.`id_sede_legale`
-    INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica
-    INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.id=an_tipianagrafiche_anagrafiche.id_tipo_anagrafica
-    WHERE an_anagrafiche.idanagrafica = '.prepare($idtecnico)." AND an_tipianagrafiche.descrizione = 'Tecnico'");
-    if (empty($tecnico)) {
+    $tecnico = Modules\Anagrafiche\Anagrafica::find($idtecnico);
+    if (empty($tecnico) || !$tecnico->isTipo('Tecnico')) {
         return false;
     }
 
-    $rs = $dbo->fetchArray('SELECT idanagrafica, idsede, id_tipo_intervento FROM in_interventi WHERE id='.prepare($idintervento));
-    $idanagrafica = $rs[0]['idanagrafica'];
-    $idsede = $rs[0]['idsede'];
-    $id_tipo_intervento = $rs[0]['id_tipo_intervento'];
+    $info = $dbo->fetchOne('SELECT idanagrafica, idsede, id_tipo_intervento FROM in_interventi WHERE id='.prepare($idintervento));
+    $anagrafica = Modules\Anagrafiche\Anagrafica::find($info['idanagrafica']);
+    $sede = Modules\Anagrafiche\Sede::find($info['idsede']) ?: $anagrafica->sedeLegale;
+    $id_tipo_intervento = $info['id_tipo_intervento'];
 
     // Calcolo km in base a quelli impostati nell'anagrafica
-    // Nessuna sede
-    if ($idsede == '-1') {
-        $km = 0;
-    }
-
-    // Sede legale
-    elseif (empty($idsede)) {
-        $km = $tecnico['km'];
-    }
-
-    // Sede secondaria
-    else {
-        $rs2 = $dbo->fetchArray('SELECT km FROM an_sedi WHERE id='.prepare($idsede));
-        $km = $rs2[0]['km'];
-    }
-
+    $km = $sede->km;
     $km = empty($km) ? 0 : $km;
 
     // Calcolo il totale delle ore lavorate

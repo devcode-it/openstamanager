@@ -66,7 +66,7 @@ if (!$cliente) {
 
 				<div class="row">
 					<div class="col-md-2">
-						{[ "type": "text", "label": "<?php echo tr('Codice anagrafica'); ?>", "name": "codice", "required": 1, "class": "text-center", "value": "$codice$" ]}
+						{[ "type": "text", "label": "<?php echo tr('Codice anagrafica'); ?>", "name": "codice", "required": 1, "class": "text-center alphanumeric-mask", "value": "$codice$", "maxlength": 20 ]}
 					</div>
 
 					<div class="col-md-2">
@@ -92,11 +92,11 @@ if (!$cliente) {
 
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask", "value": "$piva$" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask text-uppercase", "value": "$piva$" ]}
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Codice fiscale'); ?>", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask", "value": "$codice_fiscale$" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Codice fiscale'); ?>", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask text-uppercase", "value": "$codice_fiscale$" ]}
                 </div>
             </div>
 
@@ -124,7 +124,7 @@ if (!$cliente) {
 
 
                 <div class="col-md-3">
-                    {[ "type": "text", "label": "<?php echo tr('Provincia'); ?>", "name": "provincia", "maxlength": 2, "class": "text-center", "value": "$provincia$" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Provincia'); ?>", "name": "provincia", "maxlength": 2, "class": "text-center text-uppercase", "value": "$provincia$" ]}
                 </div>
 
 				 <div class="col-md-3">

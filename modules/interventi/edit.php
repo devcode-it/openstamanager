@@ -282,21 +282,23 @@ if (empty($record['idcontratto'])) {
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$", <?php echo ($record['flag_completato']) ? '"readonly": 1' : '"readonly": 0'; ?> )}
 
 <!-- EVENTUALE FIRMA GIA' EFFETTUATA -->
-<div class="text-center">
-    <?php
-    if ($record['firma_file'] == '') {
-        echo '
-    <p class="alert alert-warning"><i class="fa fa-warning"></i> '.tr('Questo intervento non è ancora stato firmato dal cliente').'.</p>';
-    } else {
-        echo '
-    <img src="'.$rootdir.'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><br>
-    <div class="alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
-        '_DATE_' => Translator::dateToLocale($record['firma_data']),
-        '_TIME_' => Translator::timeToLocale($record['firma_data']),
-        '_PERSON_' => '<b>'.$record['firma_nome'].'</b>',
-    ]).'</div>';
-    }
-    ?>
+<div class="text-center row">
+	<div class="col-md-12" >
+	    <?php
+	    if ($record['firma_file'] == '') {
+	        echo '
+	    <div class="alert alert-warning"><i class="fa fa-warning"></i> '.tr('Questo intervento non è ancora stato firmato dal cliente').'.</div>';
+	    } else {
+	        echo '
+	    <img src="'.$rootdir.'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><div>&nbsp;</div>
+	   	<div class="col-md-6 col-md-offset-3 alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
+	        '_DATE_' => Translator::dateToLocale($record['firma_data']),
+	        '_TIME_' => Translator::timeToLocale($record['firma_data']),
+	        '_PERSON_' => '<b>'.$record['firma_nome'].'</b>',
+	    ]).'</div>';
+	    }
+	    ?>
+	</div>
 </div>
 
 <script>

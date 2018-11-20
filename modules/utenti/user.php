@@ -131,6 +131,11 @@ echo '
 		else
 			$("#link_form").submit();
 	}
+	
+	$(document).ready(function(){
+		$("#bs-popup #idanag").val("'.$id_anagrafica.'").change();
+	});
+			
 </script>
 
 <script src="'.$rootdir.'/lib/init.js"></script>';

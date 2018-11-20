@@ -108,7 +108,8 @@ if (!$self_edit) {
 
 echo '
 
-	<button type="button" onclick="do_submit()" class="btn btn-primary"><i class="fa fa-plus"></i> '.$message.'</button>
+	<button type="button" onclick="do_submit()" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> '.$message.'</button>
+	<div class="clearfix">&nbsp;</div>
 </form>
 
 <script type="text/javascript">

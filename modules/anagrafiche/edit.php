@@ -437,7 +437,7 @@ if (!empty($record['idconto_cliente'])) {
 						<?php
                         if (in_array($id_azienda, $tipi_anagrafica)) {
                             echo '
-						<p class=\'badge badge-info\' >'.tr('Questa anagrafica appartiene alla tipologia "Azienda"').'.</p>';
+						<p class=\'badge badge-info\' >'.tr('Questa anagrafica &egrave; di tipo "Azienda"').'.</p>';
                         }
                         ?>
 					</div>

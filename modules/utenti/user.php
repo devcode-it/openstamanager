@@ -31,14 +31,16 @@ if (!empty($id_utente)) {
     $op = 'change_pwd';
     $message = tr('Modifica');
 
-    $rs = $dbo->fetchArray('SELECT idanagrafica, username FROM zz_users WHERE id='.prepare($id_utente));
+    $rs = $dbo->fetchArray('SELECT idanagrafica, username, email FROM zz_users WHERE id='.prepare($id_utente));
     $username = $rs[0]['username'];
+    $email = $rs[0]['email'];
     $id_anagrafica = $rs[0]['idanagrafica'];
 } else {
     $op = 'adduser';
     $message = tr('Aggiungi');
 
     $username = '';
+    $email = '';
     $id_anagrafica = '';
 }
 
@@ -61,10 +63,19 @@ if (!$self_edit) {
 		<div class="col-md-12">
 		{[ "type": "text", "label": "'.tr('Username').'", "name": "username", "required": 1, "value": "'.$username.'" ]}
 		</div>
+    </div>
+
+
+    <div class="row">
+		<div class="col-md-12">
+		{[ "type": "text", "label": "'.tr('Email').'", "name": "email", "required": 0, "value": "'.$email.'" ]}
+		</div>
     </div>';
+
 } else {
     echo '
-    <input type="hidden" id="username" name="username" value="'.$username.'">';
+    <input type="hidden" id="username" name="username" value="'.$username.'">
+    <input type="hidden" id="email" name="email" value="'.$email.'">';
 }
 
 echo '

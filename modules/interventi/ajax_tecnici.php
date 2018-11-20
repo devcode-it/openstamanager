@@ -209,14 +209,14 @@ if (!$is_completato) {
     echo '
 <!-- AGGIUNTA TECNICO -->
 <div class="row">
-    <div class="col-md-offset-6 col-md-3">
-        {[ "type": "select", "label": "'.tr('Aggiungi tecnico').'", "name": "nuovotecnico", "ajax-source": "tecnici" ]}
+    <div class="col-md-offset-6 col-md-4">
+        {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "nuovotecnico", "placeholder": "'.tr('- Seleziona un tecnico -').'", "ajax-source": "tecnici" ]}
     </div>
 
-    <div class="col-md-3">
-        <br>
-        <button type="button" class="btn btn-primary btn-block" onclick="if($(\'#nuovotecnico\').val()){ add_tecnici($(\'#nuovotecnico\').val()); }else{ alert(\'Seleziona un tecnico!\'); }">
-            <i class="fa fa-plus"></i> '.tr('Aggiungi tecnico').'
+    <div class="col-md-2">
+        <label>&nbsp;</label>
+        <button type="button" class="btn btn-primary btn-block" onclick="if($(\'#nuovotecnico\').val()){ add_tecnici($(\'#nuovotecnico\').val()); }else{ swal(\''.tr('Attenzione').'\', \''.tr('Seleziona il tecnico da aggiungere').'.\', \'warning\'); $(\'#nuovotecnico\').focus(); }">
+            <i class="fa fa-plus"></i> '.tr('Aggiungi').'
         </button>
     </div>
 </div>';

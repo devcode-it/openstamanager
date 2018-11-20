@@ -107,7 +107,7 @@ if (!$cliente) {
                 </div>
 
                 <div class="col-md-2<?php echo (empty($record['indirizzo2'])) ? ' hide' : ''; ?>">
-                    {[ "type": "text", "label": "<?php echo tr('Indirizzo2'); ?>", "name": "indirizzo2", "value": "$indirizzo2$" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Civico'); ?>", "name": "indirizzo2", "value": "$indirizzo2$" ]}
                 </div>
 
 				<div class="col-md-2">

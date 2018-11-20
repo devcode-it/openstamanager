@@ -44,7 +44,7 @@ switch (post('op')) {
 				if (!empty($data[$key]['peso_lordo'])) {
 					$data[$key]['peso_lordo'] = $data[$key]['peso_lordo'];
 				}
-				if (!empty($data[$key]['peso_lordo'])) {
+				if (!empty($data[$key]['volume'])) {
 					$data[$key]['volume'] = $data[$key]['volume'];
 				}
 

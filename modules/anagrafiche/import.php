@@ -111,6 +111,10 @@ return [
         'field' => 'indirizzo',
         'label' => 'Indirizzo',
     ],
+	[
+        'field' => 'indirizzo2',
+        'label' => 'Civico',
+    ],
     [
         'field' => 'cap',
         'label' => 'CAP',
@@ -130,6 +134,18 @@ return [
     [
         'field' => 'codice_fiscale',
         'label' => 'Codice Fiscale',
+    ],
+	[
+        'field' => 'data_nascita',
+        'label' => 'Data di nascita',
+    ],
+	[
+        'field' => 'luogo_nascita',
+        'label' => 'Luogo di nascita',
+    ],
+	[
+        'field' => 'sesso',
+        'label' => 'Sesso',
     ],
     [
         'field' => 'piva',

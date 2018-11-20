@@ -94,14 +94,16 @@ switch (post('op')) {
             ]));
         }
 
-        // Validazione del Codice Fiscale
-        $codice_fiscale = $anagrafica->codice_fiscale;
-        $check_codice_fiscale = Validate::isValidTaxCode($codice_fiscale);
-        if (empty($check_codice_fiscale)) {
-            flash()->error(tr('Attenzione: il codice fiscale _COD_ sembra non essere valido', [
-                '_COD_' => $codice_fiscale,
-            ]));
-        }
+        // Validazione del Codice Fiscale, solo per anagrafiche Private e Aziende, ignoro controllo se codice fiscale e settato uguale alla p.iva
+		$codice_fiscale = $anagrafica->codice_fiscale;
+		if (post('tipo') != 'Ente pubblico' and $codice_fiscale != $partita_iva){
+			$check_codice_fiscale = Validate::isValidTaxCode($codice_fiscale);
+			if (empty($check_codice_fiscale)) {
+				flash()->error(tr('Attenzione: il codice fiscale _COD_ sembra non essere valido', [
+					'_COD_' => $codice_fiscale,
+				]));
+			}
+		}
 
         // Aggiorno il codice anagrafica se non è già presente, altrimenti lo ignoro
         if ($anagrafica->codice != post('codice')) {

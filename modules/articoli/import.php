@@ -35,10 +35,18 @@ switch (post('op')) {
                 unset($data[$key]['qta']);
 
                 $data[$key]['attivo'] = 1;
-                $data[$key]['prezzo_acquisto'] = $data[$key]['prezzo_acquisto'];
-                $data[$key]['prezzo_vendita'] = $data[$key]['prezzo_vendita'];
-                $data[$key]['peso_lordo'] = $data[$key]['peso_lordo'];
-                $data[$key]['volume'] = $data[$key]['volume'];
+                if (!empty($data[$key]['prezzo_acquisto'])) {
+					$data[$key]['prezzo_acquisto'] = $data[$key]['prezzo_acquisto'];
+				}
+				if (!empty($data[$key]['prezzo_vendita'])) {
+					$data[$key]['prezzo_vendita'] = $data[$key]['prezzo_vendita'];
+				}
+				if (!empty($data[$key]['peso_lordo'])) {
+					$data[$key]['peso_lordo'] = $data[$key]['peso_lordo'];
+				}
+				if (!empty($data[$key]['peso_lordo'])) {
+					$data[$key]['volume'] = $data[$key]['volume'];
+				}
 
                 // Categorie
                 if (!empty($data[$key]['id_categoria'])) {

@@ -419,29 +419,14 @@ switch (post('op')) {
 
         $articolo->qta = post('qta');
         $articolo->descrizione = post('descrizione');
-        $articolo->prezzo_vendita = post('prezzo_vendita');
+        $articolo->prezzo_unitario_vendita = post('prezzo_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
         $articolo->um = post('um');
 
         $articolo->sconto_unitario = post('sconto');
         $articolo->tipo_sconto = post('tipo_sconto');
-		
-		$sconto = calcola_sconto([
-            'sconto' => post('sconto'),
-            'prezzo' => post('prezzo_vendita'),
-            'tipo' => post('tipo_sconto'),
-            'qta' => post('qta'),
-        ]);
-		$articolo->sconto = $sconto;
-		
-		$articolo->id_iva = post('idiva');
-		
-		//Calcolo iva
-        $rs_iva = $dbo->fetchArray('SELECT * FROM co_iva WHERE id='.prepare(post('idiva')));
-        $desc_iva = $rs_iva[0]['descrizione'];
-        $iva = ((post('prezzo_vendita') * post('qta')) - $sconto) * $rs_iva[0]['percentuale'] / 100;		
-		$articolo->iva = $iva;
-		
+        $articolo->id_iva = post('idiva');
+
         $articolo->save();
 
         // Aggiorno l'automezzo dell'intervento

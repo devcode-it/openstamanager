@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 abstract class Row extends Description
 {
-    protected $costo_unitario;
+    protected $prezzo_unitario_vendita;
 
     protected static function boot($bypass = false)
     {
@@ -38,7 +38,7 @@ abstract class Row extends Description
     {
         return calcola_sconto([
             'sconto' => $this->sconto_unitario,
-            'prezzo' => $this->costo_unitario,
+            'prezzo' => $this->prezzo_unitario_vendita,
             'tipo' => $this->tipo_sconto,
             'qta' => $this->qta,
         ]);
@@ -209,9 +209,9 @@ abstract class Row extends Description
      *
      * @param float $value
      */
-    public function setCostoUnitarioAttribute($value)
+    public function setPrezzoUnitarioVenditaAttribute($value)
     {
-        $this->costo_unitario = $value;
+        $this->prezzo_unitario_vendita = $value;
 
         $this->fixSubtotale();
         $this->fixSconto();
@@ -220,13 +220,13 @@ abstract class Row extends Description
     /**
      * Restituisce il costo unitario della riga.
      */
-    public function getCostoUnitarioAttribute()
+    public function getPrezzoUnitarioVenditaAttribute()
     {
-        if (empty($this->costo_unitario)) {
-            $this->costo_unitario = $this->subtotale / $this->qta;
+        if (empty($this->prezzo_unitario_vendita)) {
+            $this->prezzo_unitario_vendita = $this->subtotale / $this->qta;
         }
 
-        return $this->costo_unitario;
+        return $this->prezzo_unitario_vendita;
     }
 
     /**
@@ -234,7 +234,7 @@ abstract class Row extends Description
      */
     protected function fixSubtotale()
     {
-        $this->attributes['subtotale'] = $this->costo_unitario * $this->qta;
+        $this->attributes['subtotale'] = $this->prezzo_unitario_vendita * $this->qta;
 
         $this->fixIva();
         $this->fixRitenutaAcconto();

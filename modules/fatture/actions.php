@@ -557,10 +557,10 @@ switch (post('op')) {
 
 		$articolo->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto');
 		$articolo->id_ritenuta_acconto = post('id_ritenuta_acconto');
-		
+
 		$articolo->id_rivalsa_inps = post('id_rivalsa_inps');
-        
-        $articolo->costo_unitario = post('prezzo');
+
+        $articolo->prezzo_unitario_vendita = post('prezzo');
         $articolo->sconto_unitario = post('sconto');
         $articolo->tipo_sconto = post('tipo_sconto');
 
@@ -602,10 +602,10 @@ switch (post('op')) {
 
 		$riga->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto');
 		$riga->id_ritenuta_acconto = post('id_ritenuta_acconto');
-		
+
 		$riga->id_rivalsa_inps = post('id_rivalsa_inps');
- 
-        $riga->costo_unitario = post('prezzo');
+
+        $riga->prezzo_unitario_vendita = post('prezzo');
         $riga->qta = $qta;
         $riga->sconto_unitario = post('sconto');
         $riga->tipo_sconto = post('tipo_sconto');

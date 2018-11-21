@@ -27,6 +27,7 @@ class Articolo extends Article
 
         $model->prezzo_acquisto = $articolo->prezzo_acquisto;
         $model->prezzo_vendita = $articolo->prezzo_vendita;
+        $model->desc_iva = '';
 
         $model->save();
 
@@ -86,20 +87,11 @@ class Articolo extends Article
         return 'entrata';
     }
 
+    /**
+     * Effettua i conti per l'IVA indetraibile.
+     */
     public function fixIvaIndetraibile()
     {
-    }
-
-    public function setCostoUnitarioAttribute($value)
-    {
-        $this->prezzo_vendita = $value;
-
-        $this->fixSubtotale();
-    }
-
-    public function getCostoUnitarioAttribute($value)
-    {
-        return $this->prezzo_vendita;
     }
 
     /**
@@ -107,6 +99,8 @@ class Articolo extends Article
      */
     protected function fixSubtotale()
     {
+        $this->prezzo_vendita = $this->prezzo_unitario_vendita;
+
         $this->fixIva();
     }
 

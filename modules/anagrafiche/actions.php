@@ -89,7 +89,7 @@ switch (post('op')) {
         $partita_iva = $anagrafica->partita_iva;
         $check_vat_number = Validate::isValidVatNumber($partita_iva);
         if (empty($check_vat_number)) {
-            flash()->error(tr('Attenzione: la partita IVA _IVA_ sembra non essere valida', [
+            flash()->warning(tr('Attenzione: la partita IVA _IVA_ sembra non essere valida. Per conferma il servizio <a target="_blank" href="https://telematici.agenziaentrate.gov.it/VerificaPIVA/Scegli.do?parameter=verificaPiva">Verifica partita iva</a> del sito dell\'agenzia delle entrate.', [
                 '_IVA_' => $partita_iva,
             ]));
         }
@@ -99,7 +99,7 @@ switch (post('op')) {
 		if (post('tipo') != 'Ente pubblico' and $codice_fiscale != $partita_iva){
 			$check_codice_fiscale = Validate::isValidTaxCode($codice_fiscale);
 			if (empty($check_codice_fiscale)) {
-				flash()->error(tr('Attenzione: il codice fiscale _COD_ sembra non essere valido', [
+				flash()->warning(tr('Attenzione: il codice fiscale _COD_ sembra non essere valido', [
 					'_COD_' => $codice_fiscale,
 				]));
 			}

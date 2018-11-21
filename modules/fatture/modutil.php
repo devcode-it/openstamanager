@@ -527,8 +527,8 @@ function get_ivaindetraibile_fattura($iddocumento)
  * Ricalcola i costi aggiuntivi in fattura (rivalsa inps, ritenuta d'acconto, marca da bollo)
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
  * $iddocumento		int		ID della fattura
- * $idrivalsainps		int		ID della rivalsa inps da applicare. Se omesso viene utilizzata quella impostata di default
- * $idritenutaacconto	int		ID della ritenuta d'acconto da applicare. Se omesso viene utilizzata quella impostata di default
+ * $idrivalsainps		int		ID della rivalsa inps da applicare. Se omesso non viene calcolata
+ * $idritenutaacconto	int		ID della ritenuta d'acconto da applicare. Se omesso non viene calcolata
  * $bolli				float	Costi aggiuntivi delle marche da bollo. Se omesso verrà usata la cifra predefinita.
  */
 function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenutaacconto = '', $bolli = '')

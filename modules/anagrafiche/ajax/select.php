@@ -110,7 +110,7 @@ switch ($resource) {
         break;
 	
 	 case 'clienti_fornitori':
-        $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT_WS('', ragione_sociale, IF(citta !='' OR provincia != '', CONCAT(' (', citta, IF(provincia!='', CONCAT(' ', provincia), ''), ')'), '')) AS descrizione, `an_tipianagrafiche`.`descrizione` AS optgroup, idtipointervento_default, an_tipianagrafiche.idtipoanagrafica FROM `an_tipianagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC";
+        $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT_WS('', ragione_sociale, IF(citta !='' OR provincia != '', CONCAT(' (', citta, IF(provincia!='', CONCAT(' ', provincia), ''), ')'), '')) AS descrizione, `an_tipianagrafiche`.`descrizione` AS optgroup, idtipointervento_default, an_tipianagrafiche.idtipoanagrafica FROM `an_tipianagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC, ragione_sociale ASC";
 
 		foreach ($elements as $element) {
 			$filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
@@ -127,12 +127,26 @@ switch ($resource) {
 			$search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
 			$search_fields[] = 'provincia LIKE '.prepare('%'.$search.'%');
 		}
+        
+        // Aggiunta filtri di ricerca
+        $where = [];
+        if (!empty($search_fields)) {
+            $where[] = '('.implode(' OR ', $search_fields).')';
+        }
+        
+        if (!empty($filter)) {
+            $where[] = '('.implode(' OR ', $filter).')';
+        }
+        
+        $query = str_replace('|where|', !empty($where) ? 'WHERE '.implode(' AND ', $where) : '', $query);
 			
         $wh = '';
         if (count($where) != 0) {
             $wh = 'WHERE '.implode(' AND ', $where);
         }
-        $query = str_replace('|where|', $wh, $query);
+        
+        $query = str_replace('|where|', '|where| '.$wh, $query);
+        
 
         $rs = $dbo->fetchArray($query);
         foreach ($rs as $r) {

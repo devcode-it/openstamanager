@@ -10,6 +10,8 @@ if ($module['name'] == 'Ddt di vendita') {
     $dir = 'uscita';
 }
 
+$_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
+
 ?>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">

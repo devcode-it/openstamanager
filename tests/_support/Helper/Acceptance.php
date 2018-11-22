@@ -2,6 +2,8 @@
 
 namespace Helper;
 
+use Codeception\Util\Locator;
+
 // here you can define custom actions
 // all public methods declared in helper class will be available in $t
 
@@ -44,5 +46,26 @@ class Acceptance extends \Codeception\Module
         }
 
         return $this->getModule('WebDriver');
+    }
+
+    public function seePageHasElement($element)
+    {
+        try {
+            $this->getAcceptanceModule()->seeElement($element);
+        } catch (\PHPUnit_Framework_AssertionFailedError $f) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function expandSidebarLink($link)
+    {
+        $t = $this->getAcceptanceModule();
+
+        if (!$this->seePageHasElement("descendant-or-self::*[@class and contains(concat(' ', normalize-space(@class), ' '), ' sidebar ')]/descendant-or-self::*/li[contains(., '".$link."') and @class and contains(concat(' ', normalize-space(@class), ' '), ' menu-open ')]")) {
+            $t->click($link, '.sidebar');
+            $t->wait(1);
+        }
     }
 }

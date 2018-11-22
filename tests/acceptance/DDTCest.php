@@ -2,7 +2,7 @@
 
 use Helper\Common\RowHelper;
 
-class FattureCest
+class DDTCest
 {
     /**
      * @var Helper\SignUp
@@ -21,38 +21,38 @@ class FattureCest
     }
 
     /**
-     * Crea una nuova fattura.
+     * Crea un nuovo ddt.
      *
      * @param AcceptanceTester $t
      */
-    protected function addFattura(AcceptanceTester $t, $entrata, $tipo, $anagrafica)
+    protected function addDdt(AcceptanceTester $t, $entrata, $anagrafica, $tipo)
     {
         // Seleziona il modulo da aprire
-        $t->expandSidebarLink($entrata == true ? 'Vendite' : 'Acquisti');
-        $t->navigateTo($entrata == true ? 'Fatture di vendita' : 'Fatture di acquisto');
+        $t->expandSidebarLink('Magazzino');
+        $t->navigateTo($entrata == true ? 'Ddt di vendita' : 'Ddt di acquisto');
 
         // Apre la schermata di nuovo elemento
         $t->clickAndWaitModal('.btn-primary', '#tabs');
 
         // Completa i campi per il nuovo elemento
         $t->select2ajax('#idanagrafica_add', $anagrafica);
-        $t->select2('#idtipodocumento', $tipo);
+        $t->select2('#idtipoddt', $tipo);
 
         // Effettua il submit
         $t->clickAndWait('Aggiungi', '#add-form');
 
         // Controlla il salvataggio finale
-        $t->see('Aggiunta fattura');
+        $t->see('Aggiunto ddt');
     }
 
     /**
-     * Crea una nuova fattura e la elimina.
+     * Crea una nuova anagrafica di tipo cliente e la elimina.
      *
      * @param AcceptanceTester $t
      */
-    protected function addAndDeleteFattura(AcceptanceTester $t, $cliente = 2, $tipo)
+    protected function addAndDeleteDdt(AcceptanceTester $t, $entrata, $anagrafica, $tipo)
     {
-        $this->addAnag($t, $cliente, $tipo);
+        $this->addAnag($t, $entrata, $anagrafica, $tipo);
 
         // Seleziona l'azione di eliminazione
         $t->clickAndWaitSwal('Elimina', '#tab_0');
@@ -61,17 +61,17 @@ class FattureCest
         $t->clickSwalButton('Elimina');
 
         // Controlla eliminazione
-        $t->see('Fattura eliminata!', '.alert-success');
+        $t->see('Ddt eliminato!', '.alert-success');
     }
 
     /**
-     * Crea una nuova fattura di vendita.
+     * Crea un nuovo ddt.
      *
      * @param AcceptanceTester $t
      */
-    public function testFatturaDiVendita(AcceptanceTester $t)
+    public function testDdtDiVendita(AcceptanceTester $t)
     {
-        $this->addFattura($t, true, 2, 2);
+        $this->addDdt($t, true, 2, 2);
 
         $this->rowHelper->testImporti($t);
 
@@ -79,17 +79,13 @@ class FattureCest
     }
 
     /**
-     * Crea una nuova fattura di acquisto.
+     * Crea un nuovo ddt.
      *
      * @param AcceptanceTester $t
      */
-    public function testFatturaDiAcquisto(AcceptanceTester $t)
+    public function testDdtDiAcquisto(AcceptanceTester $t)
     {
-        $this->addFattura($t, false, 1, 4);
-
-        // Fix pagamento vuoto
-        $t->select2('#idpagamento', 109);
-        $t->clickAndWait('Salva');
+        $this->addDdt($t, false, 3, 1);
 
         $this->rowHelper->testImporti($t);
     }

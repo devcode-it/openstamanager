@@ -2,7 +2,7 @@
 
 use Helper\Common\RowHelper;
 
-class FattureCest
+class OrdiniCest
 {
     /**
      * @var Helper\SignUp
@@ -21,38 +21,37 @@ class FattureCest
     }
 
     /**
-     * Crea una nuova fattura.
+     * Crea un nuovo ordine.
      *
      * @param AcceptanceTester $t
      */
-    protected function addFattura(AcceptanceTester $t, $entrata, $tipo, $anagrafica)
+    protected function addOrdine(AcceptanceTester $t, $entrata, $anagrafica)
     {
         // Seleziona il modulo da aprire
         $t->expandSidebarLink($entrata == true ? 'Vendite' : 'Acquisti');
-        $t->navigateTo($entrata == true ? 'Fatture di vendita' : 'Fatture di acquisto');
+        $t->navigateTo($entrata == true ? 'Ordini cliente' : 'Ordini fornitore');
 
         // Apre la schermata di nuovo elemento
         $t->clickAndWaitModal('.btn-primary', '#tabs');
 
         // Completa i campi per il nuovo elemento
-        $t->select2ajax('#idanagrafica_add', $anagrafica);
-        $t->select2('#idtipodocumento', $tipo);
+        $t->select2ajax('#idanagrafica', $anagrafica);
 
         // Effettua il submit
         $t->clickAndWait('Aggiungi', '#add-form');
 
         // Controlla il salvataggio finale
-        $t->see('Aggiunta fattura');
+        $t->see('Aggiunto ordine');
     }
 
     /**
-     * Crea una nuova fattura e la elimina.
+     * Crea una nuova anagrafica di tipo cliente e la elimina.
      *
      * @param AcceptanceTester $t
      */
-    protected function addAndDeleteFattura(AcceptanceTester $t, $cliente = 2, $tipo)
+    protected function addAndDeleteOrdine(AcceptanceTester $t, $entrata, $anagrafica = 2)
     {
-        $this->addAnag($t, $cliente, $tipo);
+        $this->addAnag($t, $entrata, $anagrafica);
 
         // Seleziona l'azione di eliminazione
         $t->clickAndWaitSwal('Elimina', '#tab_0');
@@ -61,17 +60,17 @@ class FattureCest
         $t->clickSwalButton('Elimina');
 
         // Controlla eliminazione
-        $t->see('Fattura eliminata!', '.alert-success');
+        $t->see('Ordine eliminato!', '.alert-success');
     }
 
     /**
-     * Crea una nuova fattura di vendita.
+     * Crea un nuovo ordine.
      *
      * @param AcceptanceTester $t
      */
-    public function testFatturaDiVendita(AcceptanceTester $t)
+    public function testOrdineCliente(AcceptanceTester $t)
     {
-        $this->addFattura($t, true, 2, 2);
+        $this->addOrdine($t, true, 2);
 
         $this->rowHelper->testImporti($t);
 
@@ -79,13 +78,13 @@ class FattureCest
     }
 
     /**
-     * Crea una nuova fattura di acquisto.
+     * Crea un nuovo ordine.
      *
      * @param AcceptanceTester $t
      */
-    public function testFatturaDiAcquisto(AcceptanceTester $t)
+    public function testOrdineFornitore(AcceptanceTester $t)
     {
-        $this->addFattura($t, false, 1, 4);
+        $this->addOrdine($t, false, 4);
 
         // Fix pagamento vuoto
         $t->select2('#idpagamento', 109);

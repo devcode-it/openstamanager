@@ -42,7 +42,7 @@ if (!empty($rsi)) {
     foreach ($rsi as $int) {
         $int = array_merge($int, get_costi_intervento($int['id']));
         $totale_stato[$int['idstatointervento']] = sum($totale_stato[$int['idstatointervento']], $int['totale_scontato']);
-		
+
         // Riga intervento singolo
         echo '
     <tr style="background:'.$colori[$int['idstatointervento']].';">
@@ -275,7 +275,7 @@ $budget = $rs[0]['budget'];
 $rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe_contratti` WHERE um='ore' AND idcontratto=".prepare($id_record));
 $contratto_tot_ore = $rs[0]['totale_ore'];
 
-$diff = sum($budget, -$totale_addebito);
+$diff = sum($budget, -$totale);
 
 if ($diff > 0) {
     $bilancio = '<span class="text-success"><big>'.Translator::numberToLocale($diff).' &euro;</big></span>';

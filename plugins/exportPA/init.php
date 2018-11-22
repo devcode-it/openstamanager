@@ -1,8 +1,10 @@
 <?php
 
+use Plugins\ExportPA\FatturaElettronica;
+
 try {
-    $fattura_pa = new Plugins\ExportPA\FatturaElettronica($id_record);
+    $fattura_pa = new FatturaElettronica($id_record);
 } catch (UnexpectedValueException $e) {
 }
 
-$upload_dir = DOCROOT.'/'.Uploads::getDirectory($id_module, $id_plugin);
+$upload_dir = DOCROOT.'/'.FatturaElettronica::getDirectory();

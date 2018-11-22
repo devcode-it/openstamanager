@@ -24,8 +24,6 @@ class Validate
             return true;
         }
 
-        $vat_number = starts_with($vat_number, 'IT') ? $vat_number : 'IT'.$vat_number;
-
         // Controllo con API europea ufficiale
         if (extension_loaded('soap')) {
             try {

@@ -186,7 +186,7 @@ class FatturaElettronica
                 'IdPaese' => $azienda['nazione'],
                 'IdCodice' => $azienda['piva'],
             ],
-            'ProgressivoInvio' => $documento['codice_xml'],
+            'ProgressivoInvio' => $documento['progressivo_invio'],
             'FormatoTrasmissione' => ($cliente['tipo'] == 'Ente pubblico') ? 'FPA12' : 'FPR12',
             'CodiceDestinatario' => !empty($cliente['codice_destinatario']) ? $cliente['codice_destinatario'] : $default_code,
         ];
@@ -623,27 +623,30 @@ class FatturaElettronica
         $co_scadenziario = $database->fetchArray('SELECT * FROM `co_scadenziario` WHERE `iddocumento` = '.prepare($documento['id']));
         foreach ($co_scadenziario as $scadenza) {
             $pagamento = [
-				'ModalitaPagamento' => $co_pagamenti['codice_modalita_pagamento_fe'],
-				'DataScadenzaPagamento' => $scadenza['scadenza'],
-				'ImportoPagamento' => $scadenza['da_pagare'],
-			];
+                'ModalitaPagamento' => $co_pagamenti['codice_modalita_pagamento_fe'],
+                'DataScadenzaPagamento' => $scadenza['scadenza'],
+                'ImportoPagamento' => $scadenza['da_pagare'],
+            ];
 
-			if (!empty($documento['idbanca'])){
-				$co_banche = $database->fetchOne('SELECT * FROM co_banche WHERE id = '.prepare($documento['idbanca']));
-				if (!empty($co_banche['nome']))
-					$pagamento['IstitutoFinanziario'] = $co_banche['nome'];
-				if (!empty($co_banche['iban']))
-					$pagamento['IBAN'] = $co_banche['iban'];
-				if (!empty($co_banche['bic']))
-					$pagamento['BIC'] = $co_banche['bic'];
-			}
+            if (!empty($documento['idbanca'])) {
+                $co_banche = $database->fetchOne('SELECT * FROM co_banche WHERE id = '.prepare($documento['idbanca']));
+                if (!empty($co_banche['nome'])) {
+                    $pagamento['IstitutoFinanziario'] = $co_banche['nome'];
+                }
+                if (!empty($co_banche['iban'])) {
+                    $pagamento['IBAN'] = $co_banche['iban'];
+                }
+                if (!empty($co_banche['bic'])) {
+                    $pagamento['BIC'] = $co_banche['bic'];
+                }
+            }
         }
-		
-		$result[] = [
-			'DettaglioPagamento' => $pagamento
-		];
-		
-		return $result;
+
+        $result[] = [
+            'DettaglioPagamento' => $pagamento
+        ];
+
+        return $result;
     }
 
     /**
@@ -694,13 +697,20 @@ class FatturaElettronica
             return $attachments;
         }
 
-        $dir = Uploads::getDirectory($id_module, Plugins::get('Fatturazione Elettronica')['id']);
+        $data = $fattura->getUploadData();
+        $dir = static::getDirectory();
 
         $rapportino_nome = sanitizeFilename($documento['numero'].'.pdf');
         $filename = slashes(DOCROOT.'/'.$dir.'/'.$rapportino_nome);
 
         $print = Prints::getModulePredefinedPrint($id_module);
         Prints::render($print['id'], $documento['id'], $filename);
+
+        Uploads::delete($rapportino_nome, $data);
+        Uploads::register(array_merge([
+            'name' => 'Stampa allegata',
+            'original' => $rapportino_nome,
+        ], $data));
 
         $attachments[] = [
             'NomeAttachment' => 'Fattura',
@@ -851,6 +861,20 @@ class FatturaElettronica
         return isset($json['data'][0]['OU'][0]['cod_uni_ou']) ? $json['data'][0]['OU'][0]['cod_uni_ou'] : null;
     }
 
+    public static function getDirectory()
+    {
+        return Uploads::getDirectory(Modules::get('Fatture di vendita')['id']);
+    }
+
+    protected function getUploadData()
+    {
+        return [
+            'category' => tr('Fattura elettronica'),
+            'id_module' => Modules::get('Fatture di vendita')['id'],
+            'id_record' => $this->getDocumento()['id'],
+        ];
+    }
+
     /**
      * Salva il file XML.
      *
@@ -860,6 +884,12 @@ class FatturaElettronica
      */
     public function save($directory)
     {
+        $name = 'Fattura Elettronica (XML)';
+        $previous = $this->getFilename();
+        $data = $this->getUploadData();
+
+        Uploads::delete($previous, $data);
+
         // Generazione nome XML
         $filename = $this->getFilename(true);
 
@@ -868,32 +898,12 @@ class FatturaElettronica
         $result = directory($directory) && file_put_contents($file, $this->toXML());
 
         // Registrazione come allegato
-        $this->register($filename);
+        Uploads::register(array_merge([
+            'name' => $name,
+            'original' => $filename,
+        ], $data));
 
         return ($result === false) ? null : $filename;
-    }
-
-    /**
-     * Registra il file XML come allegato.
-     *
-     * @param string $filename
-     */
-    public function register($filename)
-    {
-        $data = [
-            'original' => $filename,
-            'category' => tr('Fattura elettronica'),
-            'id_module' => Modules::get('Fatture di vendita')['id'],
-            //'id_plugin' => Plugins::get('Fatturazione Elettronica')['id'],
-            'id_record' => $this->getDocumento()['id'],
-        ];
-        $uploads = Uploads::get($data);
-
-        $registered = in_array($filename, array_column($uploads, 'original'));
-
-        if (!$registered) {
-            Uploads::register($data);
-        }
     }
 
     /**
@@ -906,19 +916,19 @@ class FatturaElettronica
         $azienda = static::getAzienda();
         $prefix = 'IT'.(empty($azienda['piva']) ? $azienda['codice_fiscale'] : $azienda['piva']);
 
-        if (empty($this->documento['codice_xml']) || !empty($new)) {
+        if (empty($this->documento['progressivo_invio']) || !empty($new)) {
             $database = database();
 
             do {
                 $code = date('y').secure_random_string(3);
-            } while ($database->fetchNum('SELECT `id` FROM `co_documenti` WHERE `codice_xml` = '.prepare($code)) != 0);
+            } while ($database->fetchNum('SELECT `id` FROM `co_documenti` WHERE `progressivo_invio` = '.prepare($code)) != 0);
 
             // Registrazione
-            $database->update('co_documenti', ['codice_xml' => $code], ['id' => $this->getDocumento()['id']]);
-            $this->documento['codice_xml'] = $code;
+            $database->update('co_documenti', ['progressivo_invio' => $code], ['id' => $this->getDocumento()['id']]);
+            $this->documento['progressivo_invio'] = $code;
         }
 
-        return $prefix.'_'.$this->documento['codice_xml'].'.xml';
+        return $prefix.'_'.$this->documento['progressivo_invio'].'.xml';
     }
 
     /**

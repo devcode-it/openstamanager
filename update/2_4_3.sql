@@ -24,3 +24,6 @@ UPDATE `zz_widgets` SET `more_link` = 'if($(\'#th_Tipo input\').val()!= \'Agente
 UPDATE `zz_widgets` SET `more_link` = 'if($(\'#th_Tipo input\').val()!= \'Vettore\'){ $(\'#th_Tipo input\').val(\'Vettore\').trigger(\'keyup\');} else reset(\'Tipo\');' WHERE `zz_widgets`.`name` = 'Numero di vettori';
 
 UPDATE `zz_widgets` SET `more_link` = 'reset(\'Tipo\');' WHERE `zz_widgets`.`name` = 'Tutte le anagrafiche';
+
+-- Fix del campo codice_xml
+ALTER TABLE `co_documenti` CHANGE `codice_xml` `progressivo_invio` VARCHAR(255);

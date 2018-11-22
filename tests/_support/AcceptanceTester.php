@@ -1,5 +1,6 @@
 <?php
 
+use Codeception\Util\Locator;
 
 /**
  * Inherited Methods.
@@ -94,14 +95,6 @@ class AcceptanceTester extends \Codeception\Actor
         $t = $this;
 
         $t->clickAndWait($link, '.swal2-buttonswrapper');
-    }
-
-    public function expandSidebarLink($link)
-    {
-        $t = $this;
-
-        $t->click($link, '.sidebar');
-        $t->wait(1);
     }
 
     public function navigateTo($link)

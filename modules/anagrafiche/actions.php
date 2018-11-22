@@ -87,6 +87,8 @@ switch (post('op')) {
 
         // Validazione della Partita IVA
         $partita_iva = $anagrafica->partita_iva;
+        $partita_iva = strlen($partita_iva) == 9 ? $anagrafica->nazione->iso2.$partita_iva : $partita_iva;
+
         $check_vat_number = Validate::isValidVatNumber($partita_iva);
         if (empty($check_vat_number)) {
             flash()->warning(tr('Attenzione: la partita IVA _IVA_ sembra non essere valida. Per conferma il servizio <a target="_blank" href="https://telematici.agenziaentrate.gov.it/VerificaPIVA/Scegli.do?parameter=verificaPiva">Verifica partita iva</a> del sito dell\'agenzia delle entrate.', [
@@ -95,15 +97,15 @@ switch (post('op')) {
         }
 
         // Validazione del Codice Fiscale, solo per anagrafiche Private e Aziende, ignoro controllo se codice fiscale e settato uguale alla p.iva
-		$codice_fiscale = $anagrafica->codice_fiscale;
-		if (post('tipo') != 'Ente pubblico' and $codice_fiscale != $partita_iva){
-			$check_codice_fiscale = Validate::isValidTaxCode($codice_fiscale);
-			if (empty($check_codice_fiscale)) {
-				flash()->warning(tr('Attenzione: il codice fiscale _COD_ sembra non essere valido', [
-					'_COD_' => $codice_fiscale,
-				]));
-			}
-		}
+        $codice_fiscale = $anagrafica->codice_fiscale;
+        if ($anagrafica->tipo != 'Ente pubblico' and $codice_fiscale != $partita_iva) {
+            $check_codice_fiscale = Validate::isValidTaxCode($codice_fiscale);
+            if (empty($check_codice_fiscale)) {
+                flash()->warning(tr('Attenzione: il codice fiscale _COD_ sembra non essere valido', [
+                    '_COD_' => $codice_fiscale,
+                ]));
+            }
+        }
 
         // Aggiorno il codice anagrafica se non è già presente, altrimenti lo ignoro
         if ($anagrafica->codice != post('codice')) {

@@ -312,7 +312,7 @@ switch (post('op')) {
 
             if (!empty(post('import'))) {
                 // Replicazione delle righe del preventivo sul documento
-                $righe = $dbo->fetchArray('SELECT idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, IFNULL( (SELECT mg_articoli.abilita_serial FROM mg_articoli WHERE mg_articoli.id=co_righe_preventivi.idarticolo), 0 ) AS abilita_serial FROM co_righe_preventivi WHERE idpreventivo='.prepare($idpreventivo));
+                $righe = $dbo->fetchArray('SELECT idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, is_descrizione, IFNULL( (SELECT mg_articoli.abilita_serial FROM mg_articoli WHERE mg_articoli.id=co_righe_preventivi.idarticolo), 0 ) AS abilita_serial FROM co_righe_preventivi WHERE idpreventivo='.prepare($idpreventivo));
 
                 foreach ($righe as $key => $riga) {
                     $subtot = $riga['subtotale'];
@@ -339,6 +339,7 @@ switch (post('op')) {
                         'subtotale' => $riga['subtotale'],
                         'um' => $riga['um'],
                         'qta' => $riga['qta'],
+                        'is_descrizione' => $riga['is_descrizione'],
                         'sconto' => $riga['sconto'],
                         'sconto_unitario' => $riga['sconto_unitario'],
                         'tipo_sconto' => $riga['tipo_sconto'],

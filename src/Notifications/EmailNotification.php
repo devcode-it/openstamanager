@@ -4,6 +4,7 @@ namespace Notifications;
 
 use Mail;
 use Prints;
+use Uploads;
 
 class EmailNotification extends Notification
 {
@@ -13,6 +14,8 @@ class EmailNotification extends Notification
     protected $template = null;
     protected $account = null;
     protected $attachments = null;
+
+    protected $logs = [];
 
     /**
      * Restituisce l'account email della notifica.
@@ -117,9 +120,23 @@ class EmailNotification extends Notification
     }
 
     /**
+     * Aggiunge un allegato del gestionale alla notifica.
+     *
+     * @param string $file_id
+     */
+    public function addUpload($file_id)
+    {
+        $attachment = database()->fetchOne('SELECT * FROM zz_files WHERE id = '.prepare($file_id));
+        $this->addAttachment(DOCROOT.'/'.Uploads::getDirectory($attachment['id_module'], $attachment['id_plugin']).'/'.$attachment['filename']);
+
+        $this->logs['attachments'][] = $attachment['id'];
+    }
+
+    /**
      * Aggiunge un allegato alla notifica.
      *
-     * @param string $value
+     * @param string $path
+     * @param string $name
      */
     public function addAttachment($path, $name = null)
     {
@@ -150,6 +167,8 @@ class EmailNotification extends Notification
         Prints::render($print['id'], $id_record, $path);
 
         $this->addAttachment($path, $name);
+
+        $this->logs['prints'][] = $print['id'];
     }
 
     /**
@@ -200,16 +219,22 @@ class EmailNotification extends Notification
      */
     public function addReceiver($value, $type = null)
     {
+        if (empty($value)) {
+            return;
+        }
+
         $this->receivers[] = [
             'email' => $value,
             'type' => $type,
         ];
+
+        $this->logs['receivers'][] = $value;
     }
 
     public function send($exceptions = false)
     {
         $account = $this->getAccount();
-        $mail = new Mail($account['id'], $exceptions);
+        $mail = new Mail($account['id'], true);
 
         // Template
         $template = $this->getTemplate();
@@ -240,6 +265,21 @@ class EmailNotification extends Notification
         // Contenuto
         $mail->Body = $this->getContent();
 
-        return $mail->send();
+        // Invio mail
+        try {
+            $mail->send();
+
+            operationLog('send-email', [
+                'id_email' => $template['id'],
+            ], $this->logs);
+
+            return true;
+        } catch (PHPMailer\PHPMailer\Exception $e) {
+            if ($exceptions) {
+                throw $e;
+            }
+
+            return false;
+        }
     }
 }

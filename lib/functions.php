@@ -210,7 +210,6 @@ function translateTemplate()
     $id_record = filter('id_record');
     $id_parent = filter('id_parent');
     $id_email = filter('id_email');
-    $info = filter('operations_options');
 
     $id_module = Modules::getCurrent()['id'];
     $id_plugin = Plugins::getCurrent()['id'];
@@ -224,18 +223,8 @@ function translateTemplate()
     $template = \HTMLBuilder\HTMLBuilder::replace($template);
 
     // Informazioni estese sulle azioni dell'utente
-    if (Auth::check() && !empty(post('op'))) {
-        $database = database();
-
-        $database->insert('zz_operations', [
-            'id_module' => $id_module,
-            'id_record' => $id_record,
-            'id_plugin' => !empty($id_plugin) ? $id_plugin : null,
-            'id_email' => !empty($id_email) ? $id_email : null,
-            'id_utente' => Auth::user()['id'],
-            'op' => post('op'),
-            'options' => !empty($info) ? json_encode($info) : null,
-        ]);
+    if (!empty(post('op'))) {
+        operationLog(post('op'));
     }
 
     // Retrocompatibilità
@@ -321,6 +310,8 @@ function redirectOperation($id_module, $id_record)
  *
  * @param string $string
  *
+ * @since 2.3
+ *
  * @return string
  */
 function prepareToField($string)
@@ -331,6 +322,8 @@ function prepareToField($string)
 /**
  * Restituisce se l'user-agent (browser web) è una versione mobile.
  *
+ * @since 2.3
+ *
  * @return bool
  */
 function isMobile()
@@ -340,6 +333,8 @@ function isMobile()
 
 /**
  * Restituisce il percorso derivante dal file in esecuzione.
+ *
+ * @since 2.4.1
  *
  * @return string
  */
@@ -360,6 +355,8 @@ function getURLPath()
 /**
  * Sostituisce i caratteri speciali per la ricerca attraverso le tabelle Datatables.
  *
+ * @since 2.4.2
+ *
  * @param string $field
  *
  * @return string
@@ -367,4 +364,39 @@ function getURLPath()
 function searchFieldName($field)
 {
     return str_replace([' ', '.'], ['-', ''], $field);
+}
+
+/**
+ * Registra un'azione specifica nei log.
+ *
+ * @since 2.4.3
+ *
+ * @param string $operation
+ * @param int $id_record
+ * @param int $id_module
+ * @param int $id_plugin
+ * @param int $id_parent
+ * @param int $id_email
+ * @param array $options
+ * @return void
+ */
+function operationLog($operation, array $ids = [], array $options = [])
+{
+    if (!Auth::check()) {
+        return false;
+    }
+
+    $ids['id_module'] = $ids['id_module'] ?: Modules::getCurrent()['id'];
+    $ids['id_plugin'] = $ids['id_plugin'] ?: Plugins::getCurrent()['id'];
+    $ids['id_record'] = $ids['id_record'] ?: filter('id_record');
+    //$ids['id_parent'] = $ids['id_parent'] ?: filter('id_parent');
+
+    database()->insert('zz_operations', array_merge($ids, [
+        'op' => $operation,
+        'id_utente' => Auth::user()['id'],
+
+        'options' => !empty($options) ? json_encode($options) : null,
+    ]));
+
+    return true;
 }

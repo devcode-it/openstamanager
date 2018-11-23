@@ -95,35 +95,13 @@ if (filter('op') == 'link_file' || filter('op') == 'unlink_file') {
 
     // Allegati originali
     $files = post('attachments');
-    if (!empty($files)) {
-        // Allegati del record
-        $attachments = $dbo->fetchArray('SELECT * FROM zz_files WHERE id IN ('.implode(',', $files).') AND id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record));
-
-        foreach ($attachments as $attachment) {
-            $mail->addAttachment($upload_dir.'/'.$attachment['filename']);
-        }
-
-        // Allegati dell'Azienda predefinita
-        $anagrafiche = Modules::get('Anagrafiche');
-        $attachments = $dbo->fetchArray('SELECT * FROM zz_files WHERE id IN ('.implode(',', $files).') AND id_module != '.prepare($id_module));
-
-        $directory = DOCROOT.'/'.Uploads::getDirectory($anagrafiche['id']);
-        foreach ($attachments as $attachment) {
-            $mail->addAttachment($directory.'/'.$attachment['filename']);
-        }
+    foreach ($files as $file) {
+        $mail->addUpload($file);
     }
 
     // Invio mail
     try {
         $mail->send(true); // Il valore true impone la gestione degli errori tramite eccezioni
-
-        // Informazioni di log
-        Filter::set('get', 'id_email', $id_template);
-        Filter::set('get', 'operations_options', [
-            'receivers' => $receivers,
-            'prints' => post('prints'),
-            'attachments' => post('attachments'),
-        ]);
 
         flash()->info(tr('Email inviata correttamente!'));
     } catch (PHPMailer\PHPMailer\Exception $e) {

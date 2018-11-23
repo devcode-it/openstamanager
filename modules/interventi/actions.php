@@ -91,7 +91,11 @@ switch (post('op')) {
             $n->setTemplate($stato['id_email'], $id_record);
             $n->setReceivers($stato['destinatari']);
 
-            $n->send();
+            if ($n->send()) {
+                flash()->info(tr('Notifica inviata'));
+            } else {
+                flash()->warning(tr("Errore nell'invio della notifica"));
+            }
         }
 
         flash()->info(tr('Informazioni salvate correttamente!'));
@@ -515,7 +519,11 @@ switch (post('op')) {
                         $n->setTemplate($stato['id_email'], $id_record);
                         $n->setReceivers($stato['destinatari']);
 
-                        $n->send();
+                        if ($n->send()) {
+                            flash()->info(tr('Notifica inviata'));
+                        } else {
+                            flash()->warning(tr("Errore nell'invio della notifica"));
+                        }
                     }
                 } else {
                     flash()->error(tr('Errore durante il salvataggio della firma nel database!'));
@@ -562,7 +570,11 @@ switch (post('op')) {
             $n->setTemplate('Notifica rimozione intervento', $id_record);
             $n->setReceivers($tecnico['email']);
 
-            $n->send();
+            if ($n->send()) {
+                flash()->info(tr('Notifica inviata'));
+            } else {
+                flash()->warning(tr("Errore nell'invio della notifica"));
+            }
         }
 
         break;

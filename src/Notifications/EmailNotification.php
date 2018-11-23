@@ -5,6 +5,7 @@ namespace Notifications;
 use Mail;
 use Prints;
 use Uploads;
+use PHPMailer\PHPMailer\Exception as PHPMailerException;
 
 class EmailNotification extends Notification
 {
@@ -274,7 +275,7 @@ class EmailNotification extends Notification
             ], $this->logs);
 
             return true;
-        } catch (PHPMailer\PHPMailer\Exception $e) {
+        } catch (PHPMailerException $e) {
             if ($exceptions) {
                 throw $e;
             }

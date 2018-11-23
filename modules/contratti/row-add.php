@@ -29,13 +29,6 @@ $result = [
 $iva = $dbo->fetchArray('SELECT idiva_vendite AS idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
 $result['idiva'] = $iva[0]['idiva'] ?: setting('Iva predefinita');
 
-// Sconto unitario
-$rss = $dbo->fetchArray('SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')');
-if (!empty($rss)) {
-    $result['sconto_unitario'] = $rss[0]['prc_guadagno'];
-    $result['tipo_sconto'] = 'PRC';
-}
-
 // Importazione della gestione dedicata
 $file = 'riga';
 if (get('is_descrizione') !== null) {

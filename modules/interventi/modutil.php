@@ -184,7 +184,7 @@ function get_costi_intervento($id_intervento)
     $rs_iva = $dbo->fetchArray('SELECT descrizione, percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva));
 
     $tecnici = $dbo->fetchArray('SELECT
-	
+
 	COALESCE(SUM(
         ROUND(prezzo_ore_unitario_tecnico*ore, '.$decimals.')
     ), 0) AS manodopera_costo,
@@ -194,8 +194,8 @@ function get_costi_intervento($id_intervento)
     COALESCE(SUM(
         ROUND(prezzo_ore_unitario*ore, '.$decimals.') - ROUND(sconto_unitario*ore, '.$decimals.')
     ), 0) AS manodopera_scontato,
-	
-	
+
+
     COALESCE(SUM(
         ROUND(prezzo_dirittochiamata_tecnico, '.$decimals.')
     ), 0) AS dirittochiamata_costo,

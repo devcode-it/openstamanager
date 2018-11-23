@@ -409,7 +409,7 @@ if (!empty($id_intervento)) {
 
         if($(this).val()){
             //TODO: disattivato perché genera problemi con il change successivo di iditpointervento per il tempo standard*
-			//$('#bs-popup #idtipointervento').selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
+			$('#bs-popup #idtipointervento').selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
         }
 	});
 
@@ -427,18 +427,18 @@ if (!empty($id_intervento)) {
         $("#bs-popup #componenti").selectReset();
 	});
 
-	// tempo standard*
+	// tempo standard
+    // TODO: tempo_standard da preventivo e contratto attraverso selectData() relativi
 	$('#bs-popup #idtipointervento').change( function(){
-		
 
-		if ( (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
+		if ($(this).selectData() && (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
 			tempo_standard = $(this).selectData().tempo_standard;
 
 			data = moment($('#bs-popup #orario_inizio').val(), globals.timestampFormat);
 			orario_fine = data.add(tempo_standard, 'hours');
 			$('#bs-popup #orario_fine').val(orario_fine.format(globals.timestampFormat));
 		}
-		
+
 	});
 
 	$('#bs-popup #idtecnico').change( function(){
@@ -473,12 +473,12 @@ if (!empty($id_intervento)) {
 
                     // Se l'aggiunta intervento proviene dai contratti, faccio il submit via ajax e ricarico la tabella dei contratti
                     else if(ref == "interventi_contratti"){
-						
+
 						$("#bs-popup").modal('hide');
 						parent.window.location.reload();
 						//TODO: da gestire via ajax
 						//$('#elenco_interventi > tbody').load(globals.rootdir + '/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto=<?php echo $idcontratto; ?>');
-                        
+
                     }
                 }
             });

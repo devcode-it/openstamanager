@@ -574,6 +574,12 @@ switch (post('op')) {
             flash()->error(tr('Alcuni serial number sono già stati utilizzati!'));
         }
 
+        // Informazioni aggiuntive FE
+        $articolo->data_inizio_periodo = post('data_inizio_periodo') ?: null;
+        $articolo->data_fine_periodo = post('data_fine_periodo') ?: null;
+        $articolo->riferimento_amministrazione = post('riferimento_amministrazione');
+        $articolo->tipo_cessione_prestazione = post('tipo_cessione_prestazione');
+
         $articolo->save();
 
         flash()->info(tr('Articolo aggiunto!'));
@@ -617,6 +623,12 @@ switch (post('op')) {
         $riga->qta = $qta;
         $riga->sconto_unitario = post('sconto');
         $riga->tipo_sconto = post('tipo_sconto');
+
+        // Informazioni aggiuntive FE
+        $riga->data_inizio_periodo = post('data_inizio_periodo') ?: null;
+        $riga->data_fine_periodo = post('data_fine_periodo') ?: null;
+        $riga->riferimento_amministrazione = post('riferimento_amministrazione');
+        $riga->tipo_cessione_prestazione = post('tipo_cessione_prestazione');
 
         $riga->save();
 

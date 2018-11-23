@@ -32,7 +32,7 @@ echo '
 	            </button>
 	        </div>
 	    </div>
-	    <div class="box-body collapse">
+	    <div class="box-body">
 			<div class="row">
 				<div class="col-md-4">
 					{[ "type": "text", "label": "'.tr('Partita IVA').'", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask" ]}

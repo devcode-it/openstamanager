@@ -603,7 +603,7 @@ UPDATE `zz_plugins` SET `options` = ' { "main_query": [ { "type": "table", "fiel
 -- Fix plugin "Ddt del cliente"
 UPDATE `zz_plugins` SET `options` = ' { "main_query": [ { "type": "table", "fields": "Numero, Data, Descrizione, Qtà", "query": "SELECT dt_ddt.id, (SELECT `id` FROM `zz_modules` WHERE `name` = \'Ddt di vendita\') AS _link_module_, dt_ddt.id AS _link_record_, IF(dt_ddt.numero_esterno = \'\', dt_ddt.numero, dt_ddt.numero_esterno) AS Numero, DATE_FORMAT(dt_ddt.data, \'%d/%m/%Y\') AS Data, dt_righe_ddt.descrizione AS `Descrizione`, REPLACE(REPLACE(REPLACE(FORMAT(dt_righe_ddt.qta, 2), \',\', \'#\'), \'.\', \',\'), \'#\', \'.\') AS `Qtà` FROM dt_ddt LEFT JOIN dt_righe_ddt ON dt_ddt.id=dt_righe_ddt.idddt WHERE dt_ddt.idanagrafica=|id_parent| GROUP BY dt_ddt.id HAVING 2=2 ORDER BY dt_ddt.id DESC"} ]}' WHERE `zz_plugins`.`name` = 'Ddt del cliente';
 
--- Aggiunto codice cig e codice cup per contratti
+-- Aggiunto codice cig e codice cup per contratti e interventi
 ALTER TABLE `co_contratti` ADD `codice_cig` VARCHAR(15) AFTER `tipo_sconto_globale`, ADD `codice_cup` VARCHAR(15) AFTER `codice_cig`, ADD `id_documento_fe` VARCHAR(20) AFTER `codice_cup`;
 ALTER TABLE `in_interventi` ADD `codice_cig` VARCHAR(15) AFTER `tipo_sconto_globale`, ADD `codice_cup` VARCHAR(15) AFTER `codice_cig`, ADD `id_documento_fe` VARCHAR(20) AFTER `codice_cup`;
 

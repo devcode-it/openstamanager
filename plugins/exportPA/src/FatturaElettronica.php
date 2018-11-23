@@ -31,6 +31,8 @@ class FatturaElettronica
 
     /** @var array Contratti collegati al documento */
     protected $contratti = [];
+    /** @var array Ordini di acquisto collegati al documento */
+    protected $ordini = [];
     /** @var array Righe del documento */
     protected $righe = [];
 
@@ -130,6 +132,25 @@ class FatturaElettronica
         }
 
         return $this->contratti;
+    }
+
+    /**
+     * Restituisce gli ordini di acquisto collegati al documento.
+     *
+     * @return array
+     */
+    public function getOrdiniAcquisto()
+    {
+        if (empty($this->ordini)) {
+            $documento = $this->getDocumento();
+            $database = database();
+
+            $ordini = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `or_ordini` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idordine` = `or_ordini`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+
+            $this->ordini = $ordini;
+        }
+
+        return $this->ordini;
     }
 
     /**
@@ -430,6 +451,36 @@ class FatturaElettronica
         return $result;
     }
 
+    /**
+    * Restituisce l'array responsabile per la generazione del tag DatiOrdineAcquisto.
+    *
+    * @return array
+    */
+    protected static function getDatiOrdineAcquisto($fattura)
+    {
+        $ordini = $fattura->getOrdiniAcquisto();
+
+        $result = [];
+        foreach ($ordini as $element) {
+            if (!empty($element['id_documento_fe'])) {
+                $dati_contratto = [
+                    'IdDocumento' => $element['id_documento_fe'],
+                ];
+            }
+
+            if (!empty($element['codice_cig'])) {
+                $dati_contratto['CodiceCIG'] = $element['codice_cig'];
+            }
+
+            if (!empty($element['codice_cup'])) {
+                $dati_contratto['CodiceCUP'] = $element['codice_cup'];
+            }
+
+            $result[] = $dati_contratto;
+        }
+
+        return $result;
+    }
 
     /**
     * Restituisce l'array responsabile per la generazione del tag DatiContratto.
@@ -441,19 +492,19 @@ class FatturaElettronica
         $contratti = $fattura->getContratti();
 
         $result = [];
-        foreach ($contratti as $contratto) {
-            if (!empty($contratto['id_documento_fe'])) {
+        foreach ($contratti as $element) {
+            if (!empty($element['id_documento_fe'])) {
                 $dati_contratto = [
-                    'IdDocumento' => $contratto['id_documento_fe'],
+                    'IdDocumento' => $element['id_documento_fe'],
                 ];
             }
 
-            if (!empty($contratto['codice_cig'])) {
-                $dati_contratto['CodiceCIG'] = $contratto['codice_cig'];
+            if (!empty($element['codice_cig'])) {
+                $dati_contratto['CodiceCIG'] = $element['codice_cig'];
             }
 
-            if (!empty($contratto['codice_cup'])) {
-                $dati_contratto['CodiceCUP'] = $contratto['codice_cup'];
+            if (!empty($element['codice_cup'])) {
+                $dati_contratto['CodiceCUP'] = $element['codice_cup'];
             }
 
             $result[] = $dati_contratto;
@@ -475,6 +526,18 @@ class FatturaElettronica
         $result = [
             'DatiGeneraliDocumento' => static::getDatiGeneraliDocumento($fattura),
         ];
+
+        // Controllo le le righe per la fatturazione di ordini
+        $dati_ordini = static::getDatiOrdineAcquisto($fattura);
+        if (!empty($dati_ordini)) {
+            foreach ($dati_ordini as $dato) {
+                if (!empty($dato)) {
+                    $result[] = [
+                        'DatiOrdineAcquisto' => $dato,
+                    ];
+                }
+            }
+        }
 
         // Controllo le le righe per la fatturazione di contratti
         $dati_contratti = static::getDatiContratto($fattura);
@@ -519,12 +582,24 @@ class FatturaElettronica
 
             $dettaglio = [
                 'NumeroLinea' => $numero + 1,
-                'Descrizione' => $riga['descrizione'],
-                'Quantita' => $riga['qta']
             ];
 
+            if (!empty($riga['tipo_cessione_prestazione'])) {
+                $dettaglio['TipoCessionePrestazione'] = $riga['tipo_cessione_prestazione'];
+            }
+
+            $dettaglio['Descrizione'] = $riga['descrizione'];
+            $dettaglio['Quantita'] = $riga['qta'];
+
             if (!empty($riga['um'])) {
-                $dettaglio['UnitaMisura']= $riga['um'];
+                $dettaglio['UnitaMisura'] = $riga['um'];
+            }
+
+            if (!empty($riga['data_inizio_periodo'])) {
+                $dettaglio['DataInizioPeriodo'] = $riga['data_inizio_periodo'];
+            }
+            if (!empty($riga['data_fine_periodo'])) {
+                $dettaglio['DataFinePeriodo'] = $riga['data_fine_periodo'];
             }
 
             $dettaglio['PrezzoUnitario']= $prezzo_unitario;
@@ -554,6 +629,10 @@ class FatturaElettronica
 
             if (empty($percentuale)) {
                 $dettaglio['Natura'] = $iva['codice_natura_fe'];
+            }
+
+            if (!empty($riga['riferimento_amministrazione'])) {
+                $dettaglio['RiferimentoAmministrazione'] = $riga['riferimento_amministrazione'];
             }
 
             $result[] = [
@@ -703,10 +782,11 @@ class FatturaElettronica
         $rapportino_nome = sanitizeFilename($documento['numero'].'.pdf');
         $filename = slashes(DOCROOT.'/'.$dir.'/'.$rapportino_nome);
 
+        Uploads::delete($rapportino_nome, $data);
+
         $print = Prints::getModulePredefinedPrint($id_module);
         Prints::render($print['id'], $documento['id'], $filename);
 
-        Uploads::delete($rapportino_nome, $data);
         Uploads::register(array_merge([
             'name' => 'Stampa allegata',
             'original' => $rapportino_nome,

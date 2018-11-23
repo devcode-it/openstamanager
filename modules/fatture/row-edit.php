@@ -34,11 +34,11 @@ $result['prezzo'] = $riga['subtotale'] / $riga['qta'];
 $file = 'riga';
 if (!empty($result['is_descrizione'])) {
     $file = 'descrizione';
-	
+
     $options['op'] = 'manage_descrizione';
 } elseif (!empty($result['idarticolo'])) {
     $file = 'articolo';
-	
+
     $options['op'] = 'manage_articolo';
 }
 

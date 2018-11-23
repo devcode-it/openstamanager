@@ -31,3 +31,5 @@ ALTER TABLE `co_documenti` CHANGE `codice_xml` `progressivo_invio` VARCHAR(255);
 -- Aggiunto codice cig e codice cup per fatture e ordini
 ALTER TABLE `or_ordini` ADD `codice_cig` VARCHAR(15) AFTER `tipo_sconto_globale`, ADD `codice_cup` VARCHAR(15) AFTER `codice_cig`, ADD `id_documento_fe` VARCHAR(20) AFTER `codice_cup`;
 ALTER TABLE `co_righe_documenti` ADD `data_inizio_periodo` date, ADD `data_fine_periodo` date, ADD `riferimento_amministrazione` VARCHAR(20), ADD `tipo_cessione_prestazione` enum('SC', 'PR', 'AB', 'AC') DEFAULT NULL;
+
+ALTER TABLE `co_documenti` ADD `tipo_resa` VARCHAR(3);

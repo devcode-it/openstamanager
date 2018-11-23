@@ -154,6 +154,25 @@ class FatturaElettronica
     }
 
     /**
+     * Restituisce le fatture collegaten al documento.
+     *
+     * @return array
+     */
+    public function getFattureCollegate()
+    {
+        if (empty($this->fatture_collegate)) {
+            $documento = $this->getDocumento();
+            $database = database();
+
+            $note_accredito = $database->fetchArray("SELECT numero_esterno, data FROM co_documenti WHERE id=".prepare($documento['ref_documento']));
+
+            $this->fatture_collegate = $note_accredito;
+        }
+
+        return $this->fatture_collegate;
+    }
+
+    /**
      * Restituisce le informazioni relative al documento.
      *
      * @return array
@@ -436,17 +455,23 @@ class FatturaElettronica
         $documento = $fattura->getDocumento();
         $database = database();
 
-        $vettore = static::getAnagrafica($documento['idvettore']);
-
         $causale = $database->fetchOne('SELECT descrizione FROM dt_causalet WHERE id = '.prepare($documento['idcausalet']))['descrizione'];
         $aspetto = $database->fetchOne('SELECT descrizione FROM dt_aspettobeni WHERE id = '.prepare($documento['idaspettobeni']))['descrizione'];
 
-        $result = [
-            'DatiAnagraficiVettore' => static::getDatiAnagrafici($vettore),
-            'CausaleTrasporto' => $causale,
-            'NumeroColli' => $documento['n_colli'],
-            'Descrizione' => $aspetto,
-        ];
+        $result = [];
+
+        if ($documento['idvettore']) {
+            $vettore = static::getAnagrafica($documento['idvettore']);
+            $result['DatiAnagraficiVettore'] = static::getDatiAnagrafici($vettore);
+        }
+
+        $result['CausaleTrasporto'] = $causale;
+        $result['NumeroColli'] = $documento['n_colli'];
+        $result['Descrizione'] = $aspetto;
+
+        if ($documento['tipo_resa']) {
+            $result['TipoResa'] = $documento['tipo_resa'];
+        }
 
         return $result;
     }
@@ -463,20 +488,20 @@ class FatturaElettronica
         $result = [];
         foreach ($ordini as $element) {
             if (!empty($element['id_documento_fe'])) {
-                $dati_contratto = [
+                $dati = [
                     'IdDocumento' => $element['id_documento_fe'],
                 ];
             }
 
             if (!empty($element['codice_cig'])) {
-                $dati_contratto['CodiceCIG'] = $element['codice_cig'];
+                $dati['CodiceCIG'] = $element['codice_cig'];
             }
 
             if (!empty($element['codice_cup'])) {
-                $dati_contratto['CodiceCUP'] = $element['codice_cup'];
+                $dati['CodiceCUP'] = $element['codice_cup'];
             }
 
-            $result[] = $dati_contratto;
+            $result[] = $dati;
         }
 
         return $result;
@@ -494,20 +519,40 @@ class FatturaElettronica
         $result = [];
         foreach ($contratti as $element) {
             if (!empty($element['id_documento_fe'])) {
-                $dati_contratto = [
+                $dati = [
                     'IdDocumento' => $element['id_documento_fe'],
                 ];
             }
 
             if (!empty($element['codice_cig'])) {
-                $dati_contratto['CodiceCIG'] = $element['codice_cig'];
+                $dati['CodiceCIG'] = $element['codice_cig'];
             }
 
             if (!empty($element['codice_cup'])) {
-                $dati_contratto['CodiceCUP'] = $element['codice_cup'];
+                $dati['CodiceCUP'] = $element['codice_cup'];
             }
 
-            $result[] = $dati_contratto;
+            $result[] = $dati;
+        }
+
+        return $result;
+    }
+
+    /**
+    * Restituisce l'array responsabile per la generazione del tag DatiFattureCollegate.
+    *
+    * @return array
+    */
+    protected static function getDatiFattureCollegate($fattura)
+    {
+        $fatture = $fattura->getFattureCollegate();
+
+        $result = [];
+        foreach ($fatture as $element) {
+            $result[] = [
+                'IdDocumento' => $element['numero_esterno'],
+                'Data' => $element['data'],
+            ];
         }
 
         return $result;
@@ -546,6 +591,18 @@ class FatturaElettronica
                 if (!empty($dato)) {
                     $result[] = [
                         'DatiContratto' => $dato,
+                    ];
+                }
+            }
+        }
+
+        // Controllo le le righe per la fatturazione di contratti
+        $dati_fatture_collegate = static::getDatiFattureCollegate($fattura);
+        if (!empty($dati_fatture_collegate)) {
+            foreach ($dati_fatture_collegate as $dato) {
+                if (!empty($dato)) {
+                    $result[] = [
+                        'DatiFattureCollegate' => $dato,
                     ];
                 }
             }

@@ -90,6 +90,7 @@ switch (post('op')) {
                 'idconto' => post('idconto'),
 
                 'n_colli' => post('n_colli'),
+                'tipo_resa' => post('tipo_resa'),
                 'bollo' => 0,
                 'rivalsainps' => 0,
                 'ritenutaacconto' => 0,

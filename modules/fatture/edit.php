@@ -265,8 +265,82 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Vettore').'", "name": "idvettore", "values": "query=SELECT DISTINCT an_anagrafiche.idanagrafica AS id, an_anagrafiche.ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE an_tipianagrafiche_anagrafiche.idtipoanagrafica=(SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione=\'Vettore\') ORDER BY descrizione ASC", "value": "$idvettore$", "required": 1 ]}
+                    {[ "type": "select", "label": "'.tr('Vettore').'", "name": "idvettore", "values": "query=SELECT DISTINCT an_anagrafiche.idanagrafica AS id, an_anagrafiche.ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE an_tipianagrafiche_anagrafiche.idtipoanagrafica=(SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione=\'Vettore\') ORDER BY descrizione ASC", "value": "$idvettore$", "required": '.intval($record['idspedizione'] != 3).' ]}
                 </div>
+
+                <script>
+                    $("#idspedizione").change( function(){
+                        if ($(this).val() == 3) {
+                            $("#idvettore").attr("required", false);
+                            $("#idvettore").parent().find("label").text("'.tr('Vettore').'")
+                        }else{
+                            $("#idvettore").attr("required", true);
+                            $("#idvettore").parent().find("label").text("'.tr('Vettore').'*")
+                        }
+                    });
+                </script>';
+
+    $tipo_resa = [
+        [
+            'id' => 'EXW',
+            'text' => 'EXW',
+        ],
+        [
+            'id' => 'FCA',
+            'text' => 'FCA',
+        ],
+        [
+            'id' => 'FAS',
+            'text' => 'FAS',
+        ],
+        [
+            'id' => 'FOB',
+            'text' => 'FOB',
+        ],
+        [
+            'id' => 'CFR',
+            'text' => 'CFR',
+        ],
+        [
+            'id' => 'CIF',
+            'text' => 'CIF',
+        ],
+        [
+            'id' => 'CPT',
+            'text' => 'CPT',
+        ],
+        [
+            'id' => 'CIP',
+            'text' => 'CIP',
+        ],
+        [
+            'id' => 'DAF',
+            'text' => 'DAF',
+        ],
+        [
+            'id' => 'DES',
+            'text' => 'DES',
+        ],
+        [
+            'id' => 'DEQ',
+            'text' => 'DEQ',
+        ],
+        [
+            'id' => 'DDU',
+            'text' => 'DDU',
+        ],
+        [
+            'id' => 'DDP',
+            'text' => 'DDP',
+        ]
+    ];
+
+
+    echo '
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "'.tr('Tipo Resa').'", "name": "tipo_resa", "values": '.json_encode($tipo_resa).', "readonly": '.intval($record['causale_desc'] != 'Reso').' ]}
+                </div>
+
             </div>
         </div>
     </div>';

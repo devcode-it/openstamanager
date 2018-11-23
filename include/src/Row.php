@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 abstract class Row extends Description
 {
-    protected $prezzo_unitario_vendita;
+    protected $prezzo_unitario_vendita_riga;
 
     protected static function boot($bypass = false)
     {
@@ -24,9 +24,58 @@ abstract class Row extends Description
         return parent::make(true);
     }
 
+    public function getSubtotaleAttribute()
+    {
+        return $this->prezzo_unitario_vendita * $this->qta;
+    }
+
+    public function getImponibileAttribute()
+    {
+        return $this->subtotale;
+    }
+
+    public function getImponibileScontatoAttribute()
+    {
+        return $this->imponibile - $this->sconto;
+    }
+
     public function getTotaleAttribute()
     {
-        return $this->subtotale + $this->iva;
+        return $this->imponibile_scontato + $this->iva + $this->rivalsa_inps;
+    }
+
+    public function getNettoAttribute()
+    {
+        return $this->totale - $this->ritenuta_acconto;
+    }
+
+    public function getRivalsaINPSAttribute()
+    {
+        return $this->attributes['rivalsainps'];
+    }
+
+    public function getRitenutaAccontoAttribute()
+    {
+        return $this->attributes['ritenutaacconto'];
+    }
+
+    public function getIvaIndetraibileAttribute()
+    {
+        return $this->attributes['iva_indetraibile'];
+    }
+
+    public function getIvaAttribute()
+    {
+        $percentuale = database()->fetchOne('SELECT percentuale FROM co_iva WHERE id = :id', [
+            ':id' => $this->idiva,
+        ])['percentuale'];
+
+        return ($this->imponibile_scontato + $this->rivalsa_inps) * $percentuale /100;
+    }
+
+    public function getIvaDetraibileAttribute()
+    {
+        return $this->iva - $this->iva_indetraibile;
     }
 
     /**
@@ -211,7 +260,7 @@ abstract class Row extends Description
      */
     public function setPrezzoUnitarioVenditaAttribute($value)
     {
-        $this->prezzo_unitario_vendita = $value;
+        $this->prezzo_unitario_vendita_riga = $value;
 
         $this->fixSubtotale();
         $this->fixSconto();
@@ -222,11 +271,11 @@ abstract class Row extends Description
      */
     public function getPrezzoUnitarioVenditaAttribute()
     {
-        if (empty($this->prezzo_unitario_vendita)) {
-            $this->prezzo_unitario_vendita = $this->subtotale / $this->qta;
+        if (empty($this->prezzo_unitario_vendita_riga)) {
+            $this->prezzo_unitario_vendita_riga = $this->attributes['subtotale'] / $this->qta;
         }
 
-        return $this->prezzo_unitario_vendita;
+        return $this->prezzo_unitario_vendita_riga;
     }
 
     /**

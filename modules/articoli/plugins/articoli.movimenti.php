@@ -66,7 +66,7 @@ if (!empty($rs2)) {
                 <td>'.$r['movimento'].'
 				'.((!empty($r['idintervento'])) ? Modules::link('Interventi', $r['idintervento']) : '').'
 				'.((!empty($r['idautomezzo'])) ? Modules::link('Automezzi', $r['idautomezzo']) : '').'
-				'.((!empty($r['iddt'])) ? Modules::link('DDt di '.$dir.'', $r['iddt']) : '').'
+				'.((!empty($r['idddt'])) ? Modules::link('DDt di '.$dir, $r['idddt']) : '').'
 				'.((!empty($r['iddocumento'])) ? Modules::link('Fatture di '.$dir.'', $r['iddocumento']) : '').'
 				</td>';
 

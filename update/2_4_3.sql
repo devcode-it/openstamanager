@@ -33,3 +33,6 @@ ALTER TABLE `or_ordini` ADD `codice_cig` VARCHAR(15) AFTER `tipo_sconto_globale`
 ALTER TABLE `co_righe_documenti` ADD `data_inizio_periodo` date, ADD `data_fine_periodo` date, ADD `riferimento_amministrazione` VARCHAR(20), ADD `tipo_cessione_prestazione` enum('SC', 'PR', 'AB', 'AC') DEFAULT NULL;
 
 ALTER TABLE `co_documenti` ADD `tipo_resa` VARCHAR(3);
+
+-- Colonna nome impianto
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default` ) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti'), 'Nome', 'nome', 2, 1, 0, 0, NULL, NULL, 0, 0, 0);

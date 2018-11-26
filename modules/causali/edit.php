@@ -18,7 +18,7 @@ include_once __DIR__.'/../../core.php';
 				</div>
 
                 <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Causale predefinita'); ?>", "name": "predefined", "value": "$predefined$" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Causale predefinita'); ?>", "name": "predefined", "value": "$predefined$", "help":"<?php echo tr("Impostare questa causale di trasporto come predefinita per i ddt");?>." ]}
                 </div>
 			</div>
 		</div>

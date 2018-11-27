@@ -738,7 +738,7 @@ ALTER TABLE `an_sedi` DROP COLUMN `nazione`;
 -- Aggiunta di chiavi esterne in my_impianto_componenti
 ALTER TABLE `my_impianto_componenti` CHANGE `idsostituto` `idsostituto` int(11);
 UPDATE `my_impianto_componenti` SET `idsostituto` = NULL WHERE `idsostituto` = 0;
--- PRIMA DI AGGIUNGERE LA CHIAMA ESTERNA: mi assicuro che non ci siano componenti collegati a componenti non più esistenti
+-- PRIMA DI AGGIUNGERE LA CHIAVE ESTERNA: mi assicuro che non ci siano componenti collegati a componenti non più esistenti
 DELETE `t1` FROM `my_impianto_componenti` `t1` INNER JOIN `my_impianto_componenti` `t2` ON `t1`.`id` = `t2`.`id` WHERE `t1`.`idsostituto` NOT IN (`t2`.`id`);
 ALTER TABLE `my_impianto_componenti` ADD FOREIGN KEY (`idsostituto`) REFERENCES `my_impianto_componenti`(`id`) ON DELETE CASCADE;
 

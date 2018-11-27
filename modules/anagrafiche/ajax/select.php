@@ -46,7 +46,29 @@ switch ($resource) {
             $custom['idtipointervento'] = 'idtipointervento_default';
 
         break;
+	
+	case 'vettori':
+            $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 
+            foreach ($elements as $element) {
+                $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
+            }
+
+            $where[] = "descrizione='Vettore'";
+            if (empty($filter)) {
+                $where[] = 'deleted_at IS NULL';
+            }
+
+            if (!empty($search)) {
+                $search_fields[] = 'ragione_sociale LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = 'provincia LIKE '.prepare('%'.$search.'%');
+            }
+
+            $custom['idtipointervento'] = 'idtipointervento_default';
+
+        break;
+		
     case 'agenti':
             $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
 

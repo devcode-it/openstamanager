@@ -265,7 +265,7 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Vettore').'", "name": "idvettore", "values": "query=SELECT DISTINCT an_anagrafiche.idanagrafica AS id, an_anagrafiche.ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE an_tipianagrafiche_anagrafiche.idtipoanagrafica=(SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione=\'Vettore\') ORDER BY descrizione ASC", "value": "$idvettore$", "disabled": '.intval($record['idspedizione'] == 3).', "required": '.intval($record['idspedizione'] != 3).' ]}
+                    {[ "type": "select", "label": "'.tr('Vettore').'", "name": "idvettore",  "ajax-source": "vettori",  "value": "$idvettore$", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Vettore|'.((empty($record['idspedizione'] == 3)) ? '' : 'disabled').'", "disabled": '.intval($record['idspedizione'] == 3).', "required": '.intval($record['idspedizione'] != 3).' ]}
                 </div>
 
                 <script>
@@ -273,11 +273,26 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
                         if ($(this).val() == 3) {
                             $("#idvettore").attr("required", false);
                             $("#idvettore").attr("disabled", true);
-                            $("#idvettore").parent().find("label").text("'.tr('Vettore').'")
+                            $("label[for=idvettore]").text("'.tr('Vettore').'");
+							$("#idvettore").selectReset("- Seleziona un\'opzione -");
+							$("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", true);
+						
+							
                         }else{
                             $("#idvettore").attr("required", true);
                             $("#idvettore").attr("disabled", false);
-                            $("#idvettore").parent().find("label").text("'.tr('Vettore').'*")
+                            $("label[for=idvettore]").text("'.tr('Vettore').'*");
+							$("#idvettore").find("button").prop("disabled", false);
+							$("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", false);
+						
+                        }
+                    });
+					
+					$("#idcausalet").change( function(){
+                        if ($(this).val() == 3) {
+                            $("#tipo_resa").attr("disabled", false);
+                        }else{
+							$("#tipo_resa").attr("disabled", true);
                         }
                     });
                 </script>';

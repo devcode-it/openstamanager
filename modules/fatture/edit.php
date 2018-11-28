@@ -243,11 +243,11 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
         <div class="box-body">
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Aspetto beni').'", "name": "idaspettobeni", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_aspettobeni ORDER BY descrizione ASC", "value": "$idaspettobeni$" ]}
+                    {[ "type": "select", "label": "'.tr('Aspetto beni').'", "name": "idaspettobeni", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_aspettobeni ORDER BY descrizione ASC", "value": "$idaspettobeni$", "icon-after": "add|'.Modules::get('Aspetto beni')['id'].'||'.(($record['stato']!='Bozza') ? 'disabled': '' ).'" ]}
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "idcausalet", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_causalet ORDER BY descrizione ASC", "value": "$idcausalet$" ]}
+                    {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "idcausalet", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_causalet ORDER BY descrizione ASC", "value": "$idcausalet$", "icon-after": "add|'.Modules::get('Causali')['id'].'||'.(($record['stato']!='Bozza') ? 'disabled': '' ).'" ]}
                 </div>
 
                 <div class="col-md-3">
@@ -265,7 +265,7 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Vettore').'", "name": "idvettore",  "ajax-source": "vettori",  "value": "$idvettore$", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Vettore|'.((empty($record['idspedizione'] == 3)) ? '' : 'disabled').'", "disabled": '.intval($record['idspedizione'] == 3).', "required": '.intval($record['idspedizione'] != 3).' ]}
+                    {[ "type": "select", "label": "'.tr('Vettore').'", "name": "idvettore",  "ajax-source": "vettori",  "value": "$idvettore$", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Vettore|'.((($record['idspedizione'] != 3) and ($record['stato']=='Bozza')) ? '' : 'disabled').'", "disabled": '.intval($record['idspedizione'] == 3).', "required": '.intval($record['idspedizione'] != 3).' ]}
                 </div>
 
                 <script>
@@ -276,15 +276,11 @@ if ($tipodoc == 'Fattura accompagnatoria di vendita') {
                             $("label[for=idvettore]").text("'.tr('Vettore').'");
 							$("#idvettore").selectReset("- Seleziona un\'opzione -");
 							$("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", true);
-						
-							
                         }else{
                             $("#idvettore").attr("required", true);
                             $("#idvettore").attr("disabled", false);
                             $("label[for=idvettore]").text("'.tr('Vettore').'*");
-							$("#idvettore").find("button").prop("disabled", false);
 							$("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", false);
-						
                         }
                     });
 					

@@ -134,7 +134,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "readonly": "<?php echo $record['flag_completato']; ?>", "disabled": <?php echo intval($record['idspedizione'] == 3); ?>, "required": <?php echo intval($record['idspedizione'] != 3); ?>, "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Vettore|<?php echo ((empty($record['idspedizione'] == 3)) ? '' : 'disabled'); ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "readonly": "<?php echo $record['flag_completato']; ?>", "disabled": <?php echo intval($record['idspedizione'] == 3); ?>, "required": <?php echo intval($record['idspedizione'] != 3); ?>, "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Vettore|<?php echo ((($record['idspedizione'] != 3 and intval(!$record['flag_completato']))) ? '' : 'disabled'); ?>" ]}
 				</div>
 
 
@@ -146,15 +146,11 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
                             $("label[for=idvettore]").text("<?php echo tr('Vettore') ?>");
                             $("#idvettore").selectReset("- Seleziona un'opzione -");
                             $("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", true);
-                        
-                            
                         }else{
                             $("#idvettore").attr("required", true);
                             $("#idvettore").attr("disabled", false);
                             $("label[for=idvettore]").text("<?php echo tr('Vettore') ?>*");
-                            $("#idvettore").find("button").prop("disabled", false);
                             $("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", false);
-                        
                         }
                     });
                     

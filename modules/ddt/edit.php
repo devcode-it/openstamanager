@@ -134,8 +134,38 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "values": "query=SELECT DISTINCT an_anagrafiche.idanagrafica AS id, an_anagrafiche.ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE an_tipianagrafiche_anagrafiche.idtipoanagrafica=(SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Vettore') ORDER BY descrizione ASC", "value": "$idvettore$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "readonly": "<?php echo $record['flag_completato']; ?>", "disabled": <?php echo intval($record['idspedizione'] == 3); ?>, "required": <?php echo intval($record['idspedizione'] != 3); ?>, "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Vettore|<?php echo ((empty($record['idspedizione'] == 3)) ? '' : 'disabled'); ?>" ]}
 				</div>
+
+
+                 <script>
+                    $("#idspedizione").change( function(){
+                        if ($(this).val() == 3) {
+                            $("#idvettore").attr("required", false);
+                            $("#idvettore").attr("disabled", true);
+                            $("label[for=idvettore]").text("<?php echo tr('Vettore') ?>");
+                            $("#idvettore").selectReset("- Seleziona un'opzione -");
+                            $("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", true);
+                        
+                            
+                        }else{
+                            $("#idvettore").attr("required", true);
+                            $("#idvettore").attr("disabled", false);
+                            $("label[for=idvettore]").text("<?php echo tr('Vettore') ?>*");
+                            $("#idvettore").find("button").prop("disabled", false);
+                            $("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", false);
+                        
+                        }
+                    });
+                    
+                    $("#idcausalet").change( function(){
+                        if ($(this).val() == 3) {
+                            $("#tipo_resa").attr("disabled", false);
+                        }else{
+                            $("#tipo_resa").attr("disabled", true);
+                        }
+                    });
+                </script>
 			</div>
 
             <div class="row">

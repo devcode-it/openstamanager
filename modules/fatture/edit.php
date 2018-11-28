@@ -529,9 +529,9 @@ if (!empty($note_accredito)) {
 $(".btn-sm[data-toggle=\"tooltip\"]").each(function() {
 
    $(this).on("click", function() {
-        if(!content_was_modified) {
+        /*if(!content_was_modified) {
             return;
-        }
+        }*/
 
         form = $("#edit-form");
         btn = $(this);

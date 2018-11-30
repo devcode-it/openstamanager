@@ -15,6 +15,7 @@ class Module extends Model
 
     protected $table = 'zz_modules';
     protected $main_folder = 'modules';
+    protected $upload_identifier = 'id_module';
 
     protected $appends = [
         'permission',

@@ -15,6 +15,7 @@ class Plugin extends Model
 
     protected $table = 'zz_plugins';
     protected $main_folder = 'plugins';
+    protected $upload_identifier = 'id_plugin';
 
     protected $appends = [
         'permission',

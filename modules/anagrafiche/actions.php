@@ -82,7 +82,7 @@ switch (post('op')) {
 
         // Validazione della Partita IVA
         $partita_iva = $anagrafica->partita_iva;
-        $partita_iva = strlen($partita_iva) == 9 ? $anagrafica->nazione->iso2.$partita_iva : $partita_iva;
+        $partita_iva = strlen($partita_iva) == 11 ? $anagrafica->nazione->iso2.$partita_iva : $partita_iva;
 
         $check_vat_number = Validate::isValidVatNumber($partita_iva);
         if (empty($check_vat_number)) {

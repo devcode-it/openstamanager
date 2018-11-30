@@ -13,16 +13,13 @@ switch ($resource) {
 
         //per le vendite leggo iva predefinita da anagrafica, se settata
         if (!empty($superselect['dir']) && $superselect['dir'] == 'entrata' && !empty($superselect['idanagrafica'])) {
-            $idiva_predefinita = $dbo->fetchArray("SELECT idiva_vendite FROM an_anagrafiche WHERE idanagrafica = '".$superselect['idanagrafica']."' ")[0]['idiva_vendite'];
-            $iva_predefinita = $dbo->fetchArray("SELECT descrizione FROM co_iva WHERE id = '".$superselect['idiva_vendita']."' ")[0]['descrizione'];
+            $idiva_predefinita_anagrafica = $dbo->fetchOne("SELECT idiva_vendite FROM an_anagrafiche WHERE idanagrafica = ".prepare($superselect['idanagrafica']))['idiva_vendite'];
+            $iva_predefinita_anagrafica = $dbo->fetchOne("SELECT descrizione FROM co_iva WHERE id = ".prepare($idiva_predefinita_anagrafica))['descrizione'];
         }
 
-        //in alternativa, per tutti gli altri casi, prendo quella da impostazioni
-        if (empty($idiva_predefinita)) {
-            $idiva_predefinita = get_var('Iva predefinita');
-            $rs = $dbo->fetchArray("SELECT descrizione FROM co_iva WHERE id='".$idiva_predefinita."'");
-            $iva_predefinita = $rs[0]['descrizione'];
-        }
+        // IVA da impostazioni
+        $idiva_predefinita = get_var('Iva predefinita');
+        $iva_predefinita = $dbo->fetchOne("SELECT descrizione FROM co_iva WHERE id=".prepare($idiva_predefinita))['descrizione'];
 
         foreach ($elements as $element) {
             $filter[] = 'mg_articoli.id='.prepare($element);
@@ -65,7 +62,11 @@ switch ($resource) {
                 $results[] = ['text' => $categoria.' ('.(!empty($r['id_sottocategoria']) ? $sottocategoria : '-').')', 'children' => []];
             }
 
-            if (empty($r['idiva_vendita'])) {
+            // Iva dell'articolo
+            if (!empty($r['idiva_vendita'])) {
+                $idiva = $idiva_predefinita_anagrafica;
+                $iva = $iva_predefinita_anagrafica;
+            } elseif (empty($r['idiva_vendita'])) {
                 $idiva = $idiva_predefinita;
                 $iva = $iva_predefinita;
             } else {

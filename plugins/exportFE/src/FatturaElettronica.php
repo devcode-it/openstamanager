@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins\ExportPA;
+namespace Plugins\ExportFE;
 
 use FluidXml\FluidXml;
 use Respect\Validation\Validator as v;

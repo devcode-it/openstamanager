@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins\ImportPA;
+namespace Plugins\ImportFE;
 
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Riga;
@@ -13,6 +13,7 @@ use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Anagrafiche\Nazione;
 use Uploads;
 use Modules;
+use UnexpectedValueException;
 
 /**
  * Classe per la gestione della fatturazione elettronica in XML.
@@ -21,35 +22,77 @@ use Modules;
  */
 class FatturaElettronica
 {
+    protected static $directory = null;
+
+    /** @var array Percorso del file XML */
+    protected $file = null;
+
     /** @var array XML della fattura */
     protected $xml = null;
 
     /** @var Fattura Fattura collegata */
     protected $fattura = null;
-    protected $id_sezionale = null;
 
-    public function __construct($content, $id_sezionale)
+    public function __construct($file)
     {
-        $xml = simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NOCDATA);
-        $json = json_encode($xml);
-        $array = json_decode($json, true);
+        $this->file = static::getImportDirectory().'/'.$file;
 
-        $this->xml = $array;
-        $this->id_sezionale = $id_sezionale;
+        $xml = simplexml_load_file($this->file, 'SimpleXMLElement', LIBXML_NOCDATA);
+        $json = json_decode(json_encode($xml), true);
+
+        $this->xml = $json;
 
         // Individuazione fattura pre-esistente
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
         $data = $dati_generali['Data'];
         $numero = $dati_generali['Numero'];
+        $progressivo_invio = $this->getHeader()['DatiTrasmissione']['ProgressivoInvio'];
 
         $fattura = Fattura::where([
-            'id_segment' => $id_sezionale,
+            'progressivo_invio' => $progressivo_invio,
             'data' => $data,
             'numero' => $numero,
         ])->first();
 
         if (!empty($fattura)) {
-            throw new \UnexpectedValueException();
+            $this->delete();
+
+            throw new UnexpectedValueException();
+        }
+    }
+
+    public static function getImportDirectory()
+    {
+        if (!isset(self::$directory)) {
+            $module = Modules::get('Fatture di acquisto');
+
+            $plugin = $module->plugins->first(function ($value, $key) {
+                return $value->name = 'Fatturazione Elettronica';
+            });
+
+            self::$directory = DOCROOT.'/'.$plugin->upload_directory;
+        }
+
+        return self::$directory;
+    }
+
+    public static function store($filename, $content)
+    {
+        $file = static::getImportDirectory().'/'.$filename;
+
+        file_put_contents($file, $content);
+
+        return $filename;
+    }
+
+    public static function isValid($file)
+    {
+        try {
+            new static($file);
+
+            return true;
+        } catch (UnexpectedValueException $e) {
+            return false;
         }
     }
 
@@ -200,11 +243,17 @@ class FatturaElettronica
         return $result;
     }
 
-    public function saveAllegati($directory)
+    public function saveAllegati()
     {
         $allegati = $this->getAllegati();
 
         $module = Modules::get('Fatture di acquisto');
+
+        $info = [
+            'category' => tr('Fattura Elettronica'),
+            'id_module' => $module->id,
+            'id_record' => $this->fattura->id,
+        ];
 
         foreach ($allegati as $allegato) {
             $content = base64_decode($allegato['Attachment']);
@@ -213,16 +262,18 @@ class FatturaElettronica
                 'id_module' => $module['id'],
             ]);
 
-            file_put_contents($directory.'/'.$filename, $content);
+            file_put_contents($module->upload_directory.'/'.$filename, $content);
 
-            Uploads::register([
+            Uploads::register(array_merge($info, [
                 'filename' => $filename,
                 'original' => $original,
-                'category' => tr('Fattura elettronica'),
-                'id_module' => $module['id'],
-                'id_record' => $this->fattura->id,
-            ]);
+            ]));
         }
+
+        // Registrazione XML come allegato
+        $filename = Uploads::upload($this->file, array_merge($info, [
+            'name' => tr('Fattura Elettronica'),
+        ]));
     }
 
     public function getFattura()
@@ -235,22 +286,22 @@ class FatturaElettronica
      *
      * @return int
      */
-    public function saveFattura($id_pagamento)
+    public function saveFattura($id_pagamento, $id_sezionale)
     {
         $anagrafica = static::createAnagrafica($this->getHeader()['CedentePrestatore']);
 
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
         $data = $dati_generali['Data'];
-        $numero = Fattura::getNumero($data, 'uscita', $this->id_sezionale);
         $numero_esterno = $dati_generali['Numero'];
+        $progressivo_invio = $this->getHeader()['DatiTrasmissione']['ProgressivoInvio'];
 
         $descrizione_tipo = empty($this->getBody()['DatiGenerali']['DatiTrasporto']) ? 'Fattura immediata di acquisto' : 'Fattura accompagnatoria di acquisto';
         $tipo = TipoFattura::where('descrizione', $descrizione_tipo)->first();
 
-        $fattura = Fattura::make($anagrafica, $tipo, $data, $this->id_sezionale);
+        $fattura = Fattura::make($anagrafica, $tipo, $data, $id_sezionale);
         $this->fattura = $fattura;
 
-        $fattura->numero = $numero;
+        $fattura->progressivo_invio = $progressivo_invio;
         $fattura->numero_esterno = $numero_esterno;
         $fattura->idpagamento = $id_pagamento;
 
@@ -287,5 +338,10 @@ class FatturaElettronica
         $fattura->save();
 
         return $fattura->id;
+    }
+
+    public function delete()
+    {
+        delete($this->file);
     }
 }

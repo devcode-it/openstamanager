@@ -2,10 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$directory = Uploads::getDirectory($id_module);
-
-$xml = file_get_contents(DOCROOT.'/'.$directory.'/'.get('filename'));
-$fattura_pa = new Plugins\ImportPA\FatturaElettronica($xml, post('id_segment'));
+$fattura_pa = new Plugins\ImportFE\FatturaElettronica(get('filename'));
 
 echo '
 <form action="'.$rootdir.'/actions.php" method="post">
@@ -63,6 +60,10 @@ echo '
 echo '
     {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "values": "query='.$query.'" ]}';
 
+// Sezionale
+echo '
+    {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.$id_module.' ORDER BY name", "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}';
+
 // Righe
 $righe = $fattura_pa->getRighe();
 
@@ -77,7 +78,7 @@ if (!empty($righe)) {
                 <th width="10%">'.tr('Q.tà').'</th>
                 <th width="15%">'.tr('Prezzo unitario').'</th>
                 <th width="15%">'.tr('Iva associata').'*</th>
-                <th width="15%">'.tr('Conto').'</th>
+                <th width="15%">'.tr('Conto').'*</th>
                 <th width="15%">'.tr('Articolo associato').'</th>
             </tr>';
 
@@ -93,13 +94,13 @@ if (!empty($righe)) {
         echo '
         <tr>
             <td>'.$riga['Descrizione'].'</td>
-            <td>'.Translator::numberToLocale( $riga['Quantita'] ).' '.$riga['UnitaMisura'].'</td>
-            <td>'.Translator::numberToLocale( $riga['PrezzoUnitario'] ).'&nbsp;&euro;</td>
+            <td>'.Translator::numberToLocale($riga['Quantita']).' '.$riga['UnitaMisura'].'</td>
+            <td>'.Translator::numberToLocale($riga['PrezzoUnitario']).'&nbsp;&euro;</td>
             <td>
                 {[ "type": "select", "name": "iva['.$key.']", "values": "query='.str_replace('"', '\"', $query).'", "required": 1 ]}
             </td>
             <td>
-                {[ "type": "select", "name": "conto['.$key.']", "ajax-source": "conti-acquisti" ]}
+                {[ "type": "select", "name": "conto['.$key.']", "ajax-source": "conti-acquisti", "required": 1 ]}
             </td>
             <td>
                 {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli" ]}

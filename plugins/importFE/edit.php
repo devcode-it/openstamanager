@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Plugins\ImportFE\Interaction;
+
 echo '
 <script>
     function upload() {
@@ -24,7 +26,7 @@ echo '
                         data = JSON.parse(data);
 
                         if (!data.already) {
-                            launch_modal("'.tr('Righe fattura').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&op=list&id=" + data.id + "&filename=" + data.filename + "&id_segment=" + data.id_segment);
+                            launch_modal("'.tr('Righe fattura').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&op=list&filename=" + data.filename);
                         } else {
                             swal({
                                 title: "'.tr('Fattura già importata!').'",
@@ -54,23 +56,47 @@ echo '
         </h3>
     </div>
     <div class="box-body" id="upload">
-
         <div class="row">
             <div class="col-md-9">
                 <label><input type="file" name="blob" id="blob"></label>
             </div>
 
             <div class="col-md-3">
-                {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.$id_module.' ORDER BY name", "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-12 text-center">
-                <button type="button" class="btn btn-primary btn-lg" onclick="upload()">
+                <button type="button" class="btn btn-primary btn-lg pull-right" onclick="upload()">
                     <i class="fa fa-upload"></i> '.tr('Carica').'...
                 </button>
             </div>
         </div>
     </div>
 </div>';
+
+if (Interaction::isEnabled()) {
+    echo '
+<div class="box box-info">
+    <div class="box-header with-border">
+        <h3 class="box-title">
+            '.tr('Importazione automatica').'</span>
+        </h3>
+        <button type="button" class="btn btn-primary pull-right" onclick="search(this)">
+            <i class="fa fa-refresh"></i> '.tr('Ricerca').'...
+        </button>
+    </div>
+    <div class="box-body" id="list">';
+
+    include $structure->filepath('list.php');
+
+    echo '
+
+    </div>
+</div>
+
+<script>
+function search(button) {
+    var restore = buttonLoading(button);
+
+    $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+        buttonRestore(button, restore);
+    });
+}
+</script>';
+}

@@ -1,6 +1,6 @@
 <?php
 
-use Plugins\ExportPA\FatturaElettronica;
+use Plugins\ExportFE\FatturaElettronica;
 
 try {
     $fattura_pa = new FatturaElettronica($id_record);

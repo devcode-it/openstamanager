@@ -25,7 +25,7 @@ if (!empty($fattura_pa)) {
 }
 
 // Campi obbligatori per l'anagrafica Azienda
-$azienda = Plugins\ExportPA\FatturaElettronica::getAzienda();
+$azienda = Plugins\ExportFE\FatturaElettronica::getAzienda();
 $fields = [
     'piva' => 'Partita IVA',
     // 'codice_fiscale' => 'Codice Fiscale',
@@ -125,7 +125,7 @@ echo '
 
 echo '
 
-    <a href="'.ROOTDIR.'/plugins/exportPA/view.php?id_record='.$id_record.'" class="btn btn-info btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
+    <a href="'.ROOTDIR.'/plugins/exportFE/view.php?id_record='.$id_record.'" class="btn btn-info btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
         <i class="fa fa-eye"></i> '.tr('Visualizza').'
     </a>
 

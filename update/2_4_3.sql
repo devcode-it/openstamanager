@@ -48,3 +48,7 @@ UPDATE `zz_views` SET `visible` = '0' WHERE `zz_views`.`name` = 'id' AND `id_mod
 
 -- Colonna tipi di spedizione predefinita
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default` ) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di spedizione'), 'Predefinita', 'IF(predefined, ''Sì'', ''No'')', 2, 1, 0, 0, NULL, NULL, 0, 0, 0);
+
+-- Fix plugin
+UPDATE `zz_plugins` SET `directory` = 'exportFE' WHERE `idmodule_to` = (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita') AND `name` = 'Fatturazione Elettronica';
+UPDATE `zz_plugins` SET `directory` = 'importFE' WHERE `idmodule_to` = (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di acquisto') AND `name` = 'Fatturazione Elettronica';

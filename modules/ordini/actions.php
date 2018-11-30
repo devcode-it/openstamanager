@@ -353,12 +353,12 @@ switch (post('op')) {
         break;
 
         case 'update_position':
-            $orders = explode(",", $_POST['order']);
+            $orders = explode(',', $_POST['order']);
             $order = 0;
 
             foreach ($orders as $idriga) {
                 $dbo->query('UPDATE `or_righe_ordini` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
-                $order++;
+                ++$order;
             }
 
             break;

@@ -25,7 +25,7 @@ switch ($resource) {
 
         $custom['totale'] = 'totale';
         $custom['sconto'] = 'sconto';
-		$custom['n_righe'] = 'n_righe';
+        $custom['n_righe'] = 'n_righe';
 
         break;
 }

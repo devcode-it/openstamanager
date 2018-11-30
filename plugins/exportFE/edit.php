@@ -3,16 +3,17 @@
 include_once __DIR__.'/../../core.php';
 include_once __DIR__.'/init.php';
 
+use Plugins\ExportFE\FatturaElettronica;
+
 if (!empty($fattura_pa)) {
     $disabled = false;
     $generated = file_exists($upload_dir.'/'.$fattura_pa->getFilename());
 
-    //Ulteriore controllo sulla data generazione file
-    $rs_generated = $dbo->fetchArray("SELECT xml_generated_at FROM co_documenti WHERE id=".prepare($id_record));
-    if(empty($rs_generated[0]['xml_generated_at'])){
+    // Ulteriore controllo sulla data generazione file
+    $rs_generated = $dbo->fetchArray('SELECT xml_generated_at FROM co_documenti WHERE id='.prepare($id_record));
+    if (empty($rs_generated[0]['xml_generated_at'])) {
         $generated = false;
     }
-
 } else {
     echo '
 <div class="alert alert-warning">
@@ -25,7 +26,7 @@ if (!empty($fattura_pa)) {
 }
 
 // Campi obbligatori per l'anagrafica Azienda
-$azienda = Plugins\ExportFE\FatturaElettronica::getAzienda();
+$azienda = FatturaElettronica::getAzienda();
 $fields = [
     'piva' => 'Partita IVA',
     // 'codice_fiscale' => 'Codice Fiscale',
@@ -53,7 +54,7 @@ if (!empty($missing)) {
 }
 
 // Campi obbligatori per l'anagrafica Cliente
-$cliente = $dbo->fetchOne('SELECT *, (SELECT `iso2` FROM `an_nazioni` WHERE `an_nazioni`.`id` = `an_anagrafiche`.`id_nazione`) AS nazione FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare($record['idanagrafica']));
+$cliente = FatturaElettronica::getAnagrafica($record['idanagrafica']);
 $fields = [
     // 'piva' => 'Partita IVA',
     // 'codice_fiscale' => 'Codice Fiscale',
@@ -63,17 +64,17 @@ $fields = [
     'nazione' => 'Nazione',
 ];
 
-//se privato/pa o azienda
-if ($cliente['tipo'] == 'Privato' or $cliente['tipo'] == 'Ente pubblico' ){
-	//se privato/pa chiedo obbligatoriamente codice fiscale
-	$fields['codice_fiscale'] = 'Codice Fiscale';
-	//se pa chiedo codice unico ufficio
-	($cliente['tipo'] == 'Ente pubblico' and empty($cliente['codice_destinatario'])) ? $fields['codice_destinatario'] = 'Codice unico ufficio' : '';
-}else{
-	//se azienda chiedo partita iva
-	$fields['piva'] = 'Partita IVA';
-	//se italiana e non ho impostato ne il codice destinatario ne indirizzo PEC chiedo la compilazione di almeno uno dei due
-	(empty($cliente['codice_destinatario']) and empty($cliente['pec']) and intval($cliente['nazione'] == 'IT') ) ? $fields['codice_destinatario'] = 'Codice destinatario o indirizzo PEC' : '';
+// se privato/pa o azienda
+if ($cliente['tipo'] == 'Privato' or $cliente['tipo'] == 'Ente pubblico') {
+    // se privato/pa chiedo obbligatoriamente codice fiscale
+    $fields['codice_fiscale'] = 'Codice Fiscale';
+    // se pa chiedo codice unico ufficio
+    ($cliente['tipo'] == 'Ente pubblico' && empty($cliente['codice_destinatario'])) ? $fields['codice_destinatario'] = 'Codice unico ufficio' : '';
+} else {
+    // se azienda chiedo partita iva
+    $fields['piva'] = 'Partita IVA';
+    // se italiana e non ho impostato ne il codice destinatario ne indirizzo PEC chiedo la compilazione di almeno uno dei due
+    (empty($cliente['codice_destinatario']) and empty($cliente['pec']) && intval($cliente['nazione'] == 'IT')) ? $fields['codice_destinatario'] = 'Codice destinatario o indirizzo PEC' : '';
 }
 
 $missing = [];
@@ -131,7 +132,7 @@ echo '
 
 </div>';
 
-if($generated){
+if ($generated) {
     echo '
 <script>
     $("#genera").click(function(event){

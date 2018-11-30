@@ -13,13 +13,13 @@ switch ($resource) {
 
         //per le vendite leggo iva predefinita da anagrafica, se settata
         if (!empty($superselect['dir']) && $superselect['dir'] == 'entrata' && !empty($superselect['idanagrafica'])) {
-            $idiva_predefinita_anagrafica = $dbo->fetchOne("SELECT idiva_vendite FROM an_anagrafiche WHERE idanagrafica = ".prepare($superselect['idanagrafica']))['idiva_vendite'];
-            $iva_predefinita_anagrafica = $dbo->fetchOne("SELECT descrizione FROM co_iva WHERE id = ".prepare($idiva_predefinita_anagrafica))['descrizione'];
+            $idiva_predefinita_anagrafica = $dbo->fetchOne('SELECT idiva_vendite FROM an_anagrafiche WHERE idanagrafica = '.prepare($superselect['idanagrafica']))['idiva_vendite'];
+            $iva_predefinita_anagrafica = $dbo->fetchOne('SELECT descrizione FROM co_iva WHERE id = '.prepare($idiva_predefinita_anagrafica))['descrizione'];
         }
 
         // IVA da impostazioni
         $idiva_predefinita = get_var('Iva predefinita');
-        $iva_predefinita = $dbo->fetchOne("SELECT descrizione FROM co_iva WHERE id=".prepare($idiva_predefinita))['descrizione'];
+        $iva_predefinita = $dbo->fetchOne('SELECT descrizione FROM co_iva WHERE id='.prepare($idiva_predefinita))['descrizione'];
 
         foreach ($elements as $element) {
             $filter[] = 'mg_articoli.id='.prepare($element);

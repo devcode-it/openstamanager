@@ -145,7 +145,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 if (empty($record['idcontratto'])) {
     ?>
     <!-- Fatturazione Elettronica PA-->
-    <div class="panel panel-primary <?php echo ((($record['tipo_anagrafica']) == 'Ente pubblico') ? 'show' : 'hide'); ?>" >
+    <div class="panel panel-primary <?php echo (($record['tipo_anagrafica']) == 'Ente pubblico') ? 'show' : 'hide'; ?>" >
         <div class="panel-heading">
             <h3 class="panel-title"><?php echo tr('Dati appalto'); ?></h3>
         </div>
@@ -285,19 +285,19 @@ if (empty($record['idcontratto'])) {
 <div class="text-center row">
 	<div class="col-md-12" >
 	    <?php
-	    if ($record['firma_file'] == '') {
-	        echo '
+        if ($record['firma_file'] == '') {
+            echo '
 	    <div class="alert alert-warning"><i class="fa fa-warning"></i> '.tr('Questo intervento non è ancora stato firmato dal cliente').'.</div>';
-	    } else {
-	        echo '
+        } else {
+            echo '
 	    <img src="'.$rootdir.'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><div>&nbsp;</div>
 	   	<div class="col-md-6 col-md-offset-3 alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
-	        '_DATE_' => Translator::dateToLocale($record['firma_data']),
-	        '_TIME_' => Translator::timeToLocale($record['firma_data']),
-	        '_PERSON_' => '<b>'.$record['firma_nome'].'</b>',
-	    ]).'</div>';
-	    }
-	    ?>
+            '_DATE_' => Translator::dateToLocale($record['firma_data']),
+            '_TIME_' => Translator::timeToLocale($record['firma_data']),
+            '_PERSON_' => '<b>'.$record['firma_nome'].'</b>',
+        ]).'</div>';
+        }
+        ?>
 	</div>
 </div>
 

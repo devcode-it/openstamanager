@@ -84,16 +84,14 @@ switch (filter('op')) {
 
             // se voglio pianificare anche le date precedenti ad oggi (parto da questo promemoria)
             //if ($data_inizio) {
-                // oggi
-                //$min_date = date('Y-m-d');
+            // oggi
+            //$min_date = date('Y-m-d');
             //} else {
-				//questo promemoria
-                //$min_date = date('Y-m-d', strtotime($data_richiesta));
+            //questo promemoria
+            //$min_date = date('Y-m-d', strtotime($data_richiesta));
             //}
-			$data_richiesta = $min_date;
-			
-			
-			
+            $data_richiesta = $min_date;
+
             // inizio controllo data_conclusione, data valida e maggiore della $min_date
             if ((date('Y', strtotime($data_conclusione)) > 1970) && (date('Y-m-d', strtotime($min_date)) <= date('Y-m-d', strtotime($data_conclusione)))) {
                 $i = 0;

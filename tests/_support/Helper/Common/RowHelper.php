@@ -13,15 +13,14 @@ class RowHelper extends \Codeception\Module
      * Completa le informazioni per la creazione di un nuovo elemento.
      *
      * @param AcceptanceTester $t
-     * @param [type] $descrizione
-     * @param [type] $qta
-     * @param [type] $prezzo
-     * @param integer $sconto
-     * @param string $tipo_sconto
-     * @param [type] $id_iva
-     * @param [type] $id_rivalsa_inps
-     * @param [type] $id_ritenuta_acconto
-     * @return void
+     * @param [type]           $descrizione
+     * @param [type]           $qta
+     * @param [type]           $prezzo
+     * @param int              $sconto
+     * @param string           $tipo_sconto
+     * @param [type]           $id_iva
+     * @param [type]           $id_rivalsa_inps
+     * @param [type]           $id_ritenuta_acconto
      */
     protected function fill(AcceptanceTester $t, $descrizione, $qta, $prezzo, $sconto = 0, $tipo_sconto = 'UNT', $id_iva = null, $id_rivalsa_inps = null, $id_ritenuta_acconto = null)
     {

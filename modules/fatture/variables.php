@@ -15,5 +15,3 @@ return [
     'data' => Translator::dateToLocale($r['data']),
     'id_anagrafica' => $r['idanagrafica'],
 ];
-
-

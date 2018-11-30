@@ -617,7 +617,7 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
     if (empty($idordine)) {
         $idordine = 0;
     }
-    
+
     if (empty($idcontratto)) {
         $idcontratto = 0;
     }
@@ -689,7 +689,7 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
 
         // Inserisco il riferimento dell'ordine alla riga
         $dbo->query('UPDATE co_righe_documenti SET idordine='.prepare($idordine).' WHERE id='.prepare($idriga));
-        
+
         // Inserisco il riferimento del contratto alla riga
         $dbo->query('UPDATE co_righe_documenti SET idcontratto='.prepare($idcontratto).' WHERE id='.prepare($idriga));
     }
@@ -855,7 +855,7 @@ function rimuovi_riga_fattura($id_documento, $id_riga, $dir)
             }
         }
     }
-    
+
     //Rimozione righe generiche
     if (empty($riga['idarticolo'])) {
         // TODO: possibile ambiguità tra righe molto simili tra loro

@@ -3,8 +3,6 @@
 namespace Plugins\ImportFE;
 
 use GuzzleHttp\Client;
-use Modules;
-use Uploads;
 
 /**
  * Classe per l'interazione con API esterne.
@@ -25,7 +23,7 @@ class Interaction
         if (!isset(self::$client)) {
             self::$client = new Client([
                 'base_uri' => 'https://services.osmcloud.it/v1/',
-                'verify' => false
+                'verify' => false,
             ]);
         }
 

@@ -91,7 +91,7 @@ switch (filter('op')) {
             } elseif ($password != $password_rep) {
                 flash()->error(tr('Le password non coincidono'));
             } else {
-                if ($dbo->query("INSERT INTO zz_users(idgruppo, username, password, idanagrafica, enabled, email) VALUES(".prepare($id_record).", ".prepare($username).", ".prepare(Auth::hashPassword($password)).", ".prepare($idanagrafica).", 1, ".prepare($email).")")) {
+                if ($dbo->query('INSERT INTO zz_users(idgruppo, username, password, idanagrafica, enabled, email) VALUES('.prepare($id_record).', '.prepare($username).', '.prepare(Auth::hashPassword($password)).', '.prepare($idanagrafica).', 1, '.prepare($email).')')) {
                     $dbo->query('INSERT INTO `zz_tokens` (`id_utente`, `token`) VALUES ('.prepare($dbo->lastInsertedID()).', '.prepare(secure_random_string()).')');
 
                     flash()->info(tr('Utente aggiunto!'));

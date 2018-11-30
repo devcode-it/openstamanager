@@ -10,7 +10,7 @@
  */
 
 return '
-<div class="row" style="'.((!empty($settings['header-font-size'])) ? "font-size:".($settings['header-font-size'])."px;" : "").'"  >
+<div class="row" style="'.((!empty($settings['header-font-size'])) ? 'font-size:'.($settings['header-font-size']).'px;' : '').'"  >
     <div class="col-xs-6">
         <img src="$logo$" alt="Logo" border="0"/>
     </div>

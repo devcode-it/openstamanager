@@ -36,17 +36,17 @@ switch (post('op')) {
 
                 $data[$key]['attivo'] = 1;
                 if (!empty($data[$key]['prezzo_acquisto'])) {
-					$data[$key]['prezzo_acquisto'] = $data[$key]['prezzo_acquisto'];
-				}
-				if (!empty($data[$key]['prezzo_vendita'])) {
-					$data[$key]['prezzo_vendita'] = $data[$key]['prezzo_vendita'];
-				}
-				if (!empty($data[$key]['peso_lordo'])) {
-					$data[$key]['peso_lordo'] = $data[$key]['peso_lordo'];
-				}
-				if (!empty($data[$key]['volume'])) {
-					$data[$key]['volume'] = $data[$key]['volume'];
-				}
+                    $data[$key]['prezzo_acquisto'] = $data[$key]['prezzo_acquisto'];
+                }
+                if (!empty($data[$key]['prezzo_vendita'])) {
+                    $data[$key]['prezzo_vendita'] = $data[$key]['prezzo_vendita'];
+                }
+                if (!empty($data[$key]['peso_lordo'])) {
+                    $data[$key]['peso_lordo'] = $data[$key]['peso_lordo'];
+                }
+                if (!empty($data[$key]['volume'])) {
+                    $data[$key]['volume'] = $data[$key]['volume'];
+                }
 
                 // Categorie
                 if (!empty($data[$key]['id_categoria'])) {

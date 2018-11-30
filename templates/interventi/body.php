@@ -32,7 +32,7 @@ echo '
     // Codice fiscale o P.Iva
 
     if (!empty($c_piva)) {
-		echo '
+        echo '
 				<td colspan=2>
 					'.tr('P.Iva').': <b>'.strtoupper($c_piva).'</b>
 				</td>';
@@ -42,13 +42,12 @@ echo '
     				'.tr('C.F.').': <b>'.strtoupper($c_codicefiscale).'</b>
     			</td>';
     }
-	
-	echo '</tr>';
-	
-	//Indirizzo
-	if (!empty($c_indirizzo) or !empty($c_cap) or !empty($c_citta) or !empty($c_provincia)) {
-		
-		echo '
+
+    echo '</tr>';
+
+    //Indirizzo
+    if (!empty($c_indirizzo) or !empty($c_cap) or !empty($c_citta) or !empty($c_provincia)) {
+        echo '
 			<tr>
 				<td colspan="4">
 					'.((!empty($c_indirizzo)) ? tr('Via').': <b>'.$c_indirizzo.'</b>' : '').'
@@ -57,16 +56,15 @@ echo '
 					'.((!empty($c_provincia)) ? tr('Provincia').': <b>'.strtoupper($c_provincia).'</b>' : '').'
 				</td>
 			</tr>';
-
-	}
+    }
 
 echo '
     <tr>
         <td colspan="4">
             '.tr('Telefono').': <b>'.$c_telefono.'</b>';
-	if (!empty($c_cellulare)) {
-		echo' - '.tr('Cellulare').': <b>'.$c_cellulare.'</b>';
-	}
+    if (!empty($c_cellulare)) {
+        echo' - '.tr('Cellulare').': <b>'.$c_cellulare.'</b>';
+    }
 echo '
         </td>
     </tr>';
@@ -264,7 +262,7 @@ if (!empty($rs2)) {
         // Prezzo unitario
         echo '
         <td class="text-center">
-            '.($options['pricing'] ? Translator::numberToLocale($r['prezzo_vendita']-$r['sconto_unitario']).' &euro;' : '-').'
+            '.($options['pricing'] ? Translator::numberToLocale($r['prezzo_vendita'] - $r['sconto_unitario']).' &euro;' : '-').'
         </td>';
 
         // Prezzo totale

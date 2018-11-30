@@ -103,7 +103,6 @@ function search(button) {
             </div>
         </div>
     </div>';
-	
 
     echo '
 
@@ -115,17 +114,16 @@ function search(button) {
                 </h3>
             </div>
             <div class="box-body" id="update-search">';
-			if (extension_loaded('curl')) {	
-	 echo'		<button type="button" class="btn btn-info btn-block" onclick="search(this)">
+    if (extension_loaded('curl')) {
+        echo'		<button type="button" class="btn btn-info btn-block" onclick="search(this)">
                     <i class="fa fa-search"></i> '.tr('Ricerca').'
                 </button>';
-			}else{
-	 echo'		<button type="button" class="btn btn-warning btn-block disabled" >
+    } else {
+        echo'		<button type="button" class="btn btn-warning btn-block disabled" >
                     <i class="fa fa-warning"></i> '.tr('Estensione curl non supportata').'.
-                </button>';	
-					
-			}
-				
+                </button>';
+    }
+
     echo'   </div>
         </div>
     </div>

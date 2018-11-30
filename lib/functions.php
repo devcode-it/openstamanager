@@ -372,13 +372,12 @@ function searchFieldName($field)
  * @since 2.4.3
  *
  * @param string $operation
- * @param int $id_record
- * @param int $id_module
- * @param int $id_plugin
- * @param int $id_parent
- * @param int $id_email
- * @param array $options
- * @return void
+ * @param int    $id_record
+ * @param int    $id_module
+ * @param int    $id_plugin
+ * @param int    $id_parent
+ * @param int    $id_email
+ * @param array  $options
  */
 function operationLog($operation, array $ids = [], array $options = [])
 {

@@ -70,7 +70,7 @@ abstract class Row extends Description
             ':id' => $this->idiva,
         ])['percentuale'];
 
-        return ($this->imponibile_scontato + $this->rivalsa_inps) * $percentuale /100;
+        return ($this->imponibile_scontato + $this->rivalsa_inps) * $percentuale / 100;
     }
 
     public function getIvaDetraibileAttribute()

@@ -71,7 +71,6 @@ if (!$self_edit) {
 		{[ "type": "text", "label": "'.tr('Email').'", "name": "email", "required": 0, "value": "'.$email.'" ]}
 		</div>
     </div>';
-
 } else {
     echo '
     <input type="hidden" id="username" name="username" value="'.$username.'">

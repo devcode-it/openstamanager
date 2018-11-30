@@ -24,7 +24,7 @@ switch (post('op')) {
         if (isAjaxRequest()) {
             echo json_encode(['id' => $id_record, 'text' => post('descrizione')]);
         }
-        
+
         flash()->info(tr('Aggiunto un nuovo articolo'));
 
         break;

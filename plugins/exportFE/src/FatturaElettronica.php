@@ -94,7 +94,7 @@ class FatturaElettronica
      *
      * @return array
      */
-    protected static function getAnagrafica($id)
+    public static function getAnagrafica($id)
     {
         return database()->fetchOne('SELECT *, (SELECT `iso2` FROM `an_nazioni` WHERE `an_nazioni`.`id` = `an_anagrafiche`.`id_nazione`) AS nazione FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare($id));
     }
@@ -164,7 +164,7 @@ class FatturaElettronica
             $documento = $this->getDocumento();
             $database = database();
 
-            $note_accredito = $database->fetchArray("SELECT numero_esterno, data FROM co_documenti WHERE id=".prepare($documento['ref_documento']));
+            $note_accredito = $database->fetchArray('SELECT numero_esterno, data FROM co_documenti WHERE id='.prepare($documento['ref_documento']));
 
             $this->fatture_collegate = $note_accredito;
         }
@@ -477,10 +477,10 @@ class FatturaElettronica
     }
 
     /**
-    * Restituisce l'array responsabile per la generazione del tag DatiOrdineAcquisto.
-    *
-    * @return array
-    */
+     * Restituisce l'array responsabile per la generazione del tag DatiOrdineAcquisto.
+     *
+     * @return array
+     */
     protected static function getDatiOrdineAcquisto($fattura)
     {
         $ordini = $fattura->getOrdiniAcquisto();
@@ -508,10 +508,10 @@ class FatturaElettronica
     }
 
     /**
-    * Restituisce l'array responsabile per la generazione del tag DatiContratto.
-    *
-    * @return array
-    */
+     * Restituisce l'array responsabile per la generazione del tag DatiContratto.
+     *
+     * @return array
+     */
     protected static function getDatiContratto($fattura)
     {
         $contratti = $fattura->getContratti();
@@ -539,10 +539,10 @@ class FatturaElettronica
     }
 
     /**
-    * Restituisce l'array responsabile per la generazione del tag DatiFattureCollegate.
-    *
-    * @return array
-    */
+     * Restituisce l'array responsabile per la generazione del tag DatiFattureCollegate.
+     *
+     * @return array
+     */
     protected static function getDatiFattureCollegate($fattura)
     {
         $fatture = $fattura->getFattureCollegate();
@@ -659,7 +659,7 @@ class FatturaElettronica
                 $dettaglio['DataFinePeriodo'] = $riga['data_fine_periodo'];
             }
 
-            $dettaglio['PrezzoUnitario']= $prezzo_unitario;
+            $dettaglio['PrezzoUnitario'] = $prezzo_unitario;
 
             // Sconto
             $riga['sconto_unitario'] = floatval($riga['sconto_unitario']);
@@ -715,7 +715,7 @@ class FatturaElettronica
             }
 
             $result[] = [
-                'DatiRiepilogo' => $iva
+                'DatiRiepilogo' => $iva,
             ];
         }
 
@@ -732,7 +732,7 @@ class FatturaElettronica
             ];
 
             $result[] = [
-                'DatiRiepilogo' => $iva
+                'DatiRiepilogo' => $iva,
             ];
         }
 
@@ -779,7 +779,7 @@ class FatturaElettronica
         }
 
         $result[] = [
-            'DettaglioPagamento' => $pagamento
+            'DettaglioPagamento' => $pagamento,
         ];
 
         return $result;

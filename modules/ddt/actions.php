@@ -452,7 +452,7 @@ switch (post('op')) {
         }
 
         for ($i = 0; $i < sizeof($rs); ++$i) {
-            if($rs[$i]['idarticolo']){
+            if ($rs[$i]['idarticolo']) {
                 rimuovi_articolo_daddt($rs[$i]['idarticolo'], $id_record, $rs[$i]['id']);
             }
         }
@@ -497,12 +497,12 @@ switch (post('op')) {
         break;
 
         case 'update_position':
-            $orders = explode( ",", $_POST['order'] );
+            $orders = explode(',', $_POST['order']);
             $order = 0;
 
-            foreach( $orders as $idriga ){
+            foreach ($orders as $idriga) {
                 $dbo->query('UPDATE `dt_righe_ddt` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
-                $order++;
+                ++$order;
             }
 
             break;

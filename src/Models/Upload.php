@@ -2,7 +2,6 @@
 
 namespace Models;
 
-use Traits\StoreTrait;
 use Common\Model;
 
 class Upload extends Model

@@ -48,7 +48,8 @@ if (!$cliente) {
 				</div>
 
 				<!-- RIGA PER LE ANAGRAFICHE CON TIPOLOGIA 'PRIVATO' -->
-				<?php if ($record['tipo'] == 'Privato') { ?>
+				<?php if ($record['tipo'] == 'Privato') {
+    ?>
 				<div class="row">
 					<div class="col-md-4">
 						{[ "type": "text", "label": "<?php echo tr('Luogo di nascita'); ?>", "name": "luogo_nascita", "value": "$luogo_nascita$" ]}
@@ -62,7 +63,8 @@ if (!$cliente) {
 						{[ "type": "select", "label": "<?php echo tr('Sesso'); ?>", "name": "sesso", "values": "list=\"\": \"Non specificato\", \"M\": \"<?php echo tr('Uomo'); ?>\", \"F\": \"<?php echo tr('Donna'); ?>\"", "value": "$sesso$" ]}
 					</div>
 				</div>
-				<?php } ?>
+				<?php
+} ?>
 
 				<div class="row">
 					<div class="col-md-2">
@@ -70,7 +72,7 @@ if (!$cliente) {
 					</div>
 
 					<div class="col-md-2">
-						{[ "type": "text", "label": "<?php echo (($record['tipo']=='Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario')); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo (($record['tipo']=='Ente pubblico') ? '6' : '7'); ?>,  "extra": "<?php echo ((empty($record['tipo']) or ($record['tipo']=='Privato') ) ? 'disabled' : ''); ?>", "help": "<?php echo tr('<b>Attenzione</b>: per impostare il codice specificare prima \'Tipologia\' e \'Nazione\' dell\'anagrafica:<br><ul><li>Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri</li><li>Azienda (B2B) - Codice Destinatario, 7 caratteri</li><li>Privato (B2C) - viene utilizzato il Codice Fiscale</li></ul>'); ?>", "readonly": "<?php echo intval($anagrafica->sedeLegale->nazione->iso2 != 'IT') ?>" ]}
+						{[ "type": "text", "label": "<?php echo ($record['tipo'] == 'Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo ($record['tipo'] == 'Ente pubblico') ? '6' : '7'; ?>,  "extra": "<?php echo (empty($record['tipo']) or ($record['tipo'] == 'Privato')) ? 'disabled' : ''; ?>", "help": "<?php echo tr('<b>Attenzione</b>: per impostare il codice specificare prima \'Tipologia\' e \'Nazione\' dell\'anagrafica:<br><ul><li>Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri</li><li>Azienda (B2B) - Codice Destinatario, 7 caratteri</li><li>Privato (B2C) - viene utilizzato il Codice Fiscale</li></ul>'); ?>", "readonly": "<?php echo intval($anagrafica->sedeLegale->nazione->iso2 != 'IT'); ?>" ]}
 					</div>
 
                     <div class="col-md-4">

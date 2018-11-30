@@ -252,7 +252,7 @@ switch (post('op')) {
     case 'editriga':
         $idriga = post('idriga');
         $descrizione = post('descrizione');
-		$idarticolo = post('idarticolo');
+        $idarticolo = post('idarticolo');
         //Info riga Preventivo
         $rs = $dbo->fetchArray('SELECT * FROM co_righe_preventivi WHERE id='.prepare($idriga));
         $is_descrizione = $rs[0]['is_descrizione'];
@@ -292,12 +292,12 @@ switch (post('op')) {
         break;
 
         case 'update_position':
-            $orders = explode( ",", $_POST['order'] );
+            $orders = explode(',', $_POST['order']);
             $order = 0;
 
-            foreach( $orders as $idriga ){
+            foreach ($orders as $idriga) {
                 $dbo->query('UPDATE `co_righe_preventivi` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
-                $order++;
+                ++$order;
             }
 
             break;

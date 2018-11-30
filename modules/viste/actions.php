@@ -128,7 +128,7 @@ switch (filter('op')) {
         $rs = $dbo->fetchArray('SELECT enabled FROM zz_group_module WHERE id='.prepare($id));
 
         $dbo->update('zz_group_module', [
-            'enabled' => !empty($rs[0]['enabled']) ? 0 : 1
+            'enabled' => !empty($rs[0]['enabled']) ? 0 : 1,
         ], ['id' => $id]);
 
         flash()->info(tr('Salvataggio completato!'));
@@ -163,16 +163,14 @@ switch (filter('op')) {
         break;
 
     case 'update_position':
-      
-		$orders = explode(",", $_POST['order']);
+
+        $orders = explode(',', $_POST['order']);
         $order = 0;
 
         foreach ($orders as $idriga) {
             $dbo->query('UPDATE `zz_views` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
-            $order++;
+            ++$order;
         }
-		
+
         break;
-		
-		
 }

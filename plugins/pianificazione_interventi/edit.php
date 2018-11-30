@@ -15,8 +15,8 @@ $records = $dbo->fetchArray('SELECT *, (SELECT descrizione FROM in_tipiintervent
 $pianificabile = $dbo->fetchOne('SELECT pianificabile FROM co_staticontratti WHERE id = :id', [
     ':id' => $contratto['idstato'],
 ])['pianificabile'];
-if ($pianificabile){
-	$pianificabile = (date( 'Y', strtotime($contratto['data_accettazione'])) > 1970 and date( 'Y', strtotime($contratto['data_conclusione'])) > 1970) ? true : false ; 
+if ($pianificabile) {
+    $pianificabile = (date('Y', strtotime($contratto['data_accettazione'])) > 1970 and date('Y', strtotime($contratto['data_conclusione'])) > 1970) ? true : false;
 }
 
 $stati_pianificabili = $dbo->fetchOne('SELECT GROUP_CONCAT(`descrizione` SEPARATOR ", ") AS stati_pianificabili FROM `co_staticontratti` WHERE `pianificabile` = 1')['stati_pianificabili'];
@@ -169,18 +169,17 @@ if (!empty($records)) {
     }
 }
 
-	 echo '
+     echo '
 <button type="button" '.((!empty($pianificabile)) ? '' : 'disabled').' title="Aggiungi un nuovo promemoria da pianificare." data-toggle="tooltip" class="btn btn-primary tip" id="add_promemoria">
     <i class="fa fa-plus"></i> '.tr('Nuovo promemoria').'
 </button>';
-    
-	//TODO: terminare con gestione swal standard, prevedere salvataggio ajax e possibilità di lanciare pop-up
-	/*$msg = '{[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "required": 1, "values": "query=SELECT co_contratti_tipiintervento.idtipointervento AS id, in_tipiintervento.descrizione AS descrizione FROM in_tipiintervento INNER JOIN co_contratti_tipiintervento ON in_tipiintervento.idtipointervento=co_contratti_tipiintervento.idtipointervento WHERE idcontratto='.prepare($id_record).' AND (co_contratti_tipiintervento.costo_ore!=0 OR co_contratti_tipiintervento.costo_km!=0 OR co_contratti_tipiintervento.costo_dirittochiamata!=0) ORDER BY in_tipiintervento.descrizione" ]}';
+
+    //TODO: terminare con gestione swal standard, prevedere salvataggio ajax e possibilità di lanciare pop-up
+    /*$msg = '{[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "required": 1, "values": "query=SELECT co_contratti_tipiintervento.idtipointervento AS id, in_tipiintervento.descrizione AS descrizione FROM in_tipiintervento INNER JOIN co_contratti_tipiintervento ON in_tipiintervento.idtipointervento=co_contratti_tipiintervento.idtipointervento WHERE idcontratto='.prepare($id_record).' AND (co_contratti_tipiintervento.costo_ore!=0 OR co_contratti_tipiintervento.costo_km!=0 OR co_contratti_tipiintervento.costo_dirittochiamata!=0) ORDER BY in_tipiintervento.descrizione" ]}';
     echo '
     <button type="button" title="Aggiungi un nuovo promemoria da pianificare." class="btn btn-primary ask tip" data-title="'.tr('Vuoi aggiungere un nuovo promemoria?').'" data-msg="'.prepareToField(\HTMLBuilder\HTMLBuilder::replace($msg)).'" data-op="add-promemoria" data-id_plugin="'.$plugin['id'].'" data-id_parent="'.$id_record.'"  data-data_richiesta="'.date('Y-m-d').'" data-button="'.tr('Aggiungi').'" data-class="btn btn-lg btn-primary" data-backto="record-edit">
         <i class="fa fa-plus"></i> '.tr('Nuovo promemoria').'
     </button>';*/
-
 
 $options = $dbo->fetchArray('SELECT co_contratti_tipiintervento.*, in_tipiintervento.descrizione FROM in_tipiintervento INNER JOIN co_contratti_tipiintervento ON in_tipiintervento.idtipointervento=co_contratti_tipiintervento.idtipointervento WHERE idcontratto='.prepare($id_record).' AND (co_contratti_tipiintervento.costo_ore!=0 OR co_contratti_tipiintervento.costo_km!=0 OR co_contratti_tipiintervento.costo_dirittochiamata!=0) ORDER BY in_tipiintervento.descrizione');
 

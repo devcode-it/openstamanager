@@ -108,7 +108,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "idaspettobeni", "value": "$idaspettobeni$",  "ajax-source": "aspetto-beni", "readonly": "<?php echo $record['flag_completato'];?>", "icon-after": "add|<?php echo Modules::get('Aspetto beni')['id']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "idaspettobeni", "value": "$idaspettobeni$",  "ajax-source": "aspetto-beni", "readonly": "<?php echo $record['flag_completato']; ?>", "icon-after": "add|<?php echo Modules::get('Aspetto beni')['id']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -134,7 +134,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "readonly": "<?php echo $record['flag_completato']; ?>", "disabled": <?php echo intval($record['idspedizione'] == 3); ?>, "required": <?php echo intval($record['idspedizione'] != 3); ?>, "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Vettore|<?php echo ((($record['idspedizione'] != 3 and intval(!$record['flag_completato']))) ? '' : 'disabled'); ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "readonly": "<?php echo $record['flag_completato']; ?>", "disabled": <?php echo intval($record['idspedizione'] == 3); ?>, "required": <?php echo intval($record['idspedizione'] != 3); ?>, "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Vettore|<?php echo (($record['idspedizione'] != 3 and intval(!$record['flag_completato']))) ? '' : 'disabled'; ?>" ]}
 				</div>
 
 
@@ -143,13 +143,13 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
                         if ($(this).val() == 3) {
                             $("#idvettore").attr("required", false);
                             $("#idvettore").attr("disabled", true);
-                            $("label[for=idvettore]").text("<?php echo tr('Vettore') ?>");
+                            $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>");
                             $("#idvettore").selectReset("- Seleziona un'opzione -");
                             $("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", true);
                         }else{
                             $("#idvettore").attr("required", true);
                             $("#idvettore").attr("disabled", false);
-                            $("label[for=idvettore]").text("<?php echo tr('Vettore') ?>*");
+                            $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>*");
                             $("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", false);
                         }
                     });

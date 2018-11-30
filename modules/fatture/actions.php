@@ -743,7 +743,7 @@ switch (post('op')) {
                 }
 
                 // Inserimento riga normale
-                elseif ($qta != 0 || $rsdesc[0]['is_descrizione']==1) {
+                elseif ($qta != 0 || $rsdesc[0]['is_descrizione'] == 1) {
                     $query = 'INSERT INTO co_righe_documenti(iddocumento, idarticolo, descrizione, is_descrizione, idddt, idiva, desc_iva, iva, iva_indetraibile, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, `order`) VALUES('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($descrizione).', '.prepare($rsdesc[0]['is_descrizione']).', '.prepare($idddt).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
 
                     $dbo->query($query);
@@ -830,7 +830,7 @@ switch (post('op')) {
                 }
 
                 // Inserimento riga normale
-                elseif ($qta != 0 || $rsdesc[0]['is_descrizione']==1) {
+                elseif ($qta != 0 || $rsdesc[0]['is_descrizione'] == 1) {
                     $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idarticolo, idordine, idiva, desc_iva, iva, iva_indetraibile, descrizione, is_descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, `order`) VALUES('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idordine).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($rdesc[0]['is_descrizione']).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))');
                 }
 
@@ -849,7 +849,7 @@ switch (post('op')) {
         $idcontratto = post('id_record');
         $data = date('Y-m-d');
 
-        $rs_segment = $dbo->fetchArray("SELECT * FROM zz_segments WHERE id_module=".prepare($id_module)." AND predefined='1'");
+        $rs_segment = $dbo->fetchArray('SELECT * FROM zz_segments WHERE id_module='.prepare($id_module)." AND predefined='1'");
         $id_segment = $rs_segment[0]['id'];
 
         $numero = get_new_numerofattura($data);
@@ -871,7 +871,7 @@ switch (post('op')) {
 
         for ($i = 0; $i < sizeof($rs_righe); ++$i) {
             // Se sto aggiungendo un articolo uso la funzione per inserirlo e incrementare la giacenza
-            if ($rs_righe[$i]['idarticolo']!=0) {
+            if ($rs_righe[$i]['idarticolo'] != 0) {
                 add_articolo_infattura($id_record, $rs_righe[$i]['idarticolo'], $rs_righe[$i]['descrizione'], $rs_righe[$i]['idiva'], $rs_righe[$i]['qta'], $rs_righe[$i]['subtotale'], $rs_righe[$i]['sconto'], $rs_righe[$i]['sconto_unitario'], $rs_righe[$i]['tipo_sconto']);
             }
 
@@ -1182,12 +1182,12 @@ switch (post('op')) {
         break;
 
     case 'update_position':
-        $orders = explode(",", $_POST['order']);
+        $orders = explode(',', $_POST['order']);
         $order = 0;
 
         foreach ($orders as $idriga) {
             $dbo->query('UPDATE `co_righe_documenti` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
-            $order++;
+            ++$order;
         }
 
         break;

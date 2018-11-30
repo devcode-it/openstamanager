@@ -9,7 +9,7 @@ switch (filter('op')) {
             $file = $fattura_pa->save($upload_dir);
 
             //Aggiorno la data di creazione della fattura elettronica
-            $dbo->query("UPDATE co_documenti SET xml_generated_at=NOW() WHERE co_documenti.id=".prepare($id_record));
+            $dbo->query('UPDATE co_documenti SET xml_generated_at=NOW() WHERE co_documenti.id='.prepare($id_record));
 
             flash()->info(tr('Fattura elettronica generata correttamente!'));
 

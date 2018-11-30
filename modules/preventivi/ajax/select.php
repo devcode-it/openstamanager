@@ -36,7 +36,7 @@ switch ($resource) {
             }
 
             $custom['idtipointervento'] = 'idtipointervento';
-			$custom['tempo_standard'] = 'tempo_standard';
+            $custom['tempo_standard'] = 'tempo_standard';
             $custom['idtipointervento_descrizione'] = 'idtipointervento_descrizione';
             $custom['totale'] = 'totale';
             $custom['sconto'] = 'sconto';

@@ -11,6 +11,36 @@ use Respect\Validation\Validator as v;
  */
 class Validate
 {
+    public static function VatCheck($partita_iva)
+    {
+        if ($partita_iva === '') {
+            return true;
+        }
+
+        if (strlen($partita_iva) != 11 || preg_match("/^[0-9]+\$/D", $partita_iva) != 1) {
+            return false;
+        }
+
+        $s = 0;
+        for ($i = 0; $i <= 9; $i += 2) {
+            $s += ord($partita_iva[$i]) - ord('0');
+        }
+
+        for ($i = 1; $i <= 9; $i += 2) {
+            $c = 2*(ord($partita_iva[$i]) - ord('0'));
+            if ($c > 9) {
+                $c = $c - 9;
+            }
+            $s += $c;
+        }
+
+        if ((10 - $s%10)%10 != ord($partita_iva[10]) - ord('0')) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Controlla se la partita iva inserita è valida.
      *

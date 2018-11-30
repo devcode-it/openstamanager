@@ -63,7 +63,7 @@ switch ($resource) {
             }
 
             // Iva dell'articolo
-            if (!empty($r['idiva_vendita'])) {
+            if (!empty($idiva_predefinita_anagrafica)) {
                 $idiva = $idiva_predefinita_anagrafica;
                 $iva = $iva_predefinita_anagrafica;
             } elseif (empty($r['idiva_vendita'])) {

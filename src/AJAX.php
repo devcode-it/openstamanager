@@ -75,7 +75,7 @@ class AJAX
      *
      * @return array
      */
-    public static function select($resource, $elements = [], $search = null)
+    public static function select($resource, $elements = [], $search = null, $superselect = [])
     {
         if (!isset($elements)) {
             $elements = [];
@@ -88,7 +88,7 @@ class AJAX
         array_unshift($files, DOCROOT.'/ajax_select.php');
 
         foreach ($files as $file) {
-            $results = self::getSelectResults($file, $resource, $elements, $search);
+            $results = self::getSelectResults($file, $resource, $elements, $search, $superselect);
             if (isset($results)) {
                 break;
             }
@@ -148,10 +148,8 @@ class AJAX
      *
      * @return array|null
      */
-    protected static function getSelectResults($file, $resource, $elements = [], $search = null)
+    protected static function getSelectResults($file, $resource, $elements = [], $search = null, $superselect = [])
     {
-        $superselect = self::getSelectInfo();
-
         $where = [];
         $filter = [];
         $search_fields = [];

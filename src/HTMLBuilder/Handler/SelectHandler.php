@@ -28,6 +28,18 @@ class SelectHandler implements HandlerInterface
             $values['value'] = setting($values['valore_predefinito']);
         }
 
+        // Informazioni aggiuntive per il select
+        if (!empty($values['ajax-info'])) {
+            $infos = explode(',', $values['ajax-info']);
+
+            foreach ($infos as $info) {
+                list($name, $value) = explode('=', $info);
+                $values['data-select-'.$name] = $value;
+            }
+
+            unset($values['ajax-info']);
+        }
+
         $values['value'] = (array) $values['value'];
 
         // Inizializzazione del codice HTML

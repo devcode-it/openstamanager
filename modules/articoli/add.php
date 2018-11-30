@@ -40,7 +40,7 @@ $(document).ready(function () {
     var original = sub.parent().find(".input-group-addon button").data("href");
 
     $('#add-form').find('#categoria').change( function(){
-        session_set('superselect,id_categoria', $(this).val(), 0);
+        sub.selectInfo('id_categoria', $(this).val())
 
         sub.selectReset();
 

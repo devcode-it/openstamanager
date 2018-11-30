@@ -4,11 +4,19 @@ namespace Modules\Fatture;
 
 use Common\Model;
 use Util\Generator;
+use Traits\RecordTrait;
 use Modules\Anagrafiche\Anagrafica;
 
 class Fattura extends Model
 {
+    use RecordTrait;
+
     protected $table = 'co_documenti';
+
+    public function getModuleAttribute()
+    {
+        return $this->tipo->dir == 'entrata' ? 'Fatture di vendita':'Fatture di acquisto';
+    }
 
     /**
      * Crea una nuova fattura.
@@ -89,7 +97,7 @@ class Fattura extends Model
      * Imposta il sezionale relativo alla fattura e calcola il relativo numero.
      * **Attenzione**: la data deve inserita prima!
      *
-     * @param [type] $value
+     * @param int $value
      */
     public function setIdSegmentAttribute($value)
     {

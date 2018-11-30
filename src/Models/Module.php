@@ -3,7 +3,7 @@
 namespace Models;
 
 use Auth;
-use Traits\RecordTrait;
+use Traits\ManagerTrait;
 use Traits\UploadTrait;
 use Traits\StoreTrait;
 use Common\Model;
@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Module extends Model
 {
-    use RecordTrait, UploadTrait, StoreTrait;
+    use ManagerTrait, UploadTrait, StoreTrait;
 
     protected $table = 'zz_modules';
     protected $main_folder = 'modules';

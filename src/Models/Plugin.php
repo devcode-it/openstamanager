@@ -3,7 +3,7 @@
 namespace Models;
 
 use App;
-use Traits\RecordTrait;
+use Traits\ManagerTrait;
 use Traits\UploadTrait;
 use Traits\StoreTrait;
 use Common\Model;
@@ -11,7 +11,10 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Plugin extends Model
 {
-    use RecordTrait, UploadTrait, StoreTrait;
+    use ManagerTrait, StoreTrait;
+    use UploadTrait {
+        getUploadDirectoryAttribute as protected defaultUploadDirectory;
+    }
 
     protected $table = 'zz_plugins';
     protected $main_folder = 'plugins';
@@ -81,6 +84,20 @@ class Plugin extends Model
         }
 
         return $this->getAddFile();
+    }
+
+    /**
+     * Restituisce il percorso per il salvataggio degli upload.
+     *
+     * @return string
+     */
+    public function getUploadDirectoryAttribute()
+    {
+        if (!empty($this->script)) {
+            return $this->uploads_directory.'/'.basename($this->script, ".php");
+        }
+
+        return $this->defaultUploadDirectory();
     }
 
     /* Relazioni Eloquent */

@@ -8,6 +8,13 @@ class Upload extends Model
 {
     protected $table = 'zz_files';
 
+    public function getCategoryAttribute()
+    {
+        return $this->attributes['category'] ?: 'Generale';
+    }
+
+    /* Relazioni Eloquent */
+
     public function module()
     {
         return $this->belongsTo(Module::class, 'id_module');

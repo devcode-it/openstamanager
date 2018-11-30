@@ -4,13 +4,18 @@ namespace Modules\Anagrafiche;
 
 use Common\Model;
 use Modules\Fatture\Fattura;
+use Traits\RecordTrait;
 use Util\Generator;
 use Settings;
 
 class Anagrafica extends Model
 {
+    use RecordTrait;
+
     protected $table = 'an_anagrafiche';
     protected $primaryKey = 'idanagrafica';
+    protected $module = 'Anagrafiche';
+
     /**
      * The attributes that aren't mass assignable.
      *

@@ -111,7 +111,7 @@ abstract class Row extends Description
     protected function fixRivalsaINPS()
     {
         $rivalsa = database()->fetchOne('SELECT * FROM co_rivalsainps WHERE id = '.prepare($this->idrivalsainps));
-        $this->attributes['rivalsainps'] = ($this->subtotale - $this->sconto) / 100 * $rivalsa['percentuale'];
+        $this->attributes['rivalsainps'] = ($this->imponibile_scontato) / 100 * $rivalsa['percentuale'];
     }
 
     /**
@@ -131,7 +131,7 @@ abstract class Row extends Description
      */
     public function setCalcoloRitenutaAccontoAttribute($value)
     {
-        return $this->attributes['calcolo_ritenutaacconto'] = $value;
+        $this->calcolo_ritenutaacconto = $value;
 
         $this->fixRitenutaAcconto();
     }
@@ -155,7 +155,7 @@ abstract class Row extends Description
     {
         // Calcolo ritenuta d'acconto
         $ritenuta = database()->fetchOne('SELECT * FROM co_ritenutaacconto WHERE id = '.prepare($this->idritenutaacconto));
-        $conto = ($this->subtotale - $this->sconto);
+        $conto = $this->imponibile_scontato;
 
         if ($this->calcolo_ritenuta_acconto == 'Imponibile + rivalsa inps') {
             $conto += $this->rivalsainps;
@@ -220,7 +220,7 @@ abstract class Row extends Description
         ]);
         $descrizione = $iva['descrizione'];
 
-        $valore = ($this->subtotale - $this->sconto) * $iva['percentuale'] / 100;
+        $valore = ($this->imponibile_scontato) * $iva['percentuale'] / 100;
 
         $this->attributes['desc_iva'] = $descrizione;
         $this->attributes['iva'] = $valore;

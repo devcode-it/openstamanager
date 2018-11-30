@@ -57,7 +57,7 @@ $esigibilita = [
 
             <div class="row">
 				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$", "class":"alphanumeric-mask", "maxlength": 10, "extra": "<?php echo $attr; ?>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Codice'); ?>", "name": "codice", "value": "$codice$", "decimals":0, "min-value":"0", "max-value":"999", "maxlength": 3, "extra": "<?php echo $attr; ?>" ]}
 				</div>
 
 				<div class="col-md-4">

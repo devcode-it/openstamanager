@@ -39,7 +39,7 @@ if ($has_azienda && $has_user && $has_settings) {
 
 $pageTitle = tr('Inizializzazione');
 
-include_once App::filepath('include|custom|', 'top.php');
+include_once App::filepath('include/layout|custom|', 'header.php');
 
 // Controllo sull'esistenza di nuovi parametri di configurazione
 if (post('action') == 'init') {
@@ -225,6 +225,6 @@ echo '
 <script src="'.$rootdir.'/lib/functions.js"></script>
 <script src="'.$rootdir.'/lib/init.js"></script>';
 
-include_once App::filepath('include|custom|', 'bottom.php');
+include_once App::filepath('include/layout|custom|', 'footer.php');
 
 exit();

@@ -60,6 +60,8 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
     exit();
 }
 
+$body_class = 'hold-transition login-page';
+
 // Procedura di installazione
 include_once $docroot.'/include/init/configuration.php';
 
@@ -71,7 +73,6 @@ include_once $docroot.'/include/init/init.php';
 
 $pageTitle = tr('Login');
 
-$body_class = 'hold-transition login-page';
 include_once App::filepath('include/layout|custom|', 'header.php');
 include_once App::filepath('include/layout|custom|', 'messages.php');
 

@@ -95,7 +95,7 @@ if (filter('action') == 'do_update') {
     if (Update::isUpdateLocked() && filter('force') === null) {
         $pageTitle = tr('Aggiornamento in corso!');
 
-        include_once App::filepath('include|custom|', 'top.php');
+        include_once App::filepath('include/layout|custom|', 'header.php');
 
         echo '
         <div class="box box-center box-danger box-solid text-center">
@@ -109,7 +109,7 @@ if (filter('action') == 'do_update') {
             </div>
         </div>';
 
-        include_once App::filepath('include|custom|', 'bottom.php');
+        include_once App::filepath('include/layout|custom|', 'footer.php');
 
         exit();
     }
@@ -119,7 +119,7 @@ if (filter('action') == 'do_update') {
     $button = !$dbo->isInstalled() ? tr('Installa!') : tr('Aggiorna!');
     $pageTitle = !$dbo->isInstalled() ? tr('Installazione') : tr('Aggiornamento');
 
-    include_once App::filepath('include|custom|', 'top.php');
+    include_once App::filepath('include/layout|custom|', 'header.php');
 
     echo '
         <div class="box box-center-large box-warning text-center">

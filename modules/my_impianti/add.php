@@ -2,9 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-//unset($_SESSION['superselect']['idanagrafica']);
-//unset($_SESSION['superselect']['idsede']);
-
 $source = get('source');
 $idanagrafica = null;
 
@@ -65,7 +62,7 @@ $(document).ready(function(){
 	$('#bs-popup #idsede').change( function(){
 		//session_set('superselect,idsede', $(this).val(), 0);
 	});
-    
+
     $('#bs-popup2 #idanagrafica').change( function(){
 
         session_set('superselect,idanagrafica', $(this).val(), 0);

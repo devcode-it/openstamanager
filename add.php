@@ -76,18 +76,18 @@ $(document).ready(function(){
         },
         data: data,
         type: "post",
-        success: function(data){
-            data = data.trim();
+        success: function(response){
+            response = response.trim();
 
-            if(data && $("#'.get('select').'").val() !== undefined ) {
-                result = JSON.parse(data);
+            if(response && $("#'.get('select').'").val() !== undefined ) {
+                result = JSON.parse(response);
                 $("#'.get('select').'").selectSetNew(result.id, result.text);
             }
 
             $("#bs-popup2").modal("hide");
         },
-        error: function(data) {
-            alert("'.tr('Errore').': " + data);
+        error: function(response) {
+            alert("'.tr('Errore').': " + response);
         }
     });
 });

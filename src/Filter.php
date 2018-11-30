@@ -50,7 +50,7 @@ class Filter
             self::$post['parsed'] = [];
         }
 
-        return self::$post['parsed'];
+        return self::$post['raw'];
     }
 
     /**
@@ -87,7 +87,7 @@ class Filter
             self::$get['parsed'] = [];
         }
 
-        return self::$get['parsed'];
+        return self::$get['raw'];
     }
 
     /**

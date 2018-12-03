@@ -68,9 +68,9 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
                             $idcontratto_riga = '';
                         }*/
 
-                        if (($idcontratto != '')) {
+                        if (($record['idcontratto'] != '')) {
                             echo '
-                            '.Modules::link('Contratti', $idcontratto, null, null, 'class="pull-right"');
+                            '.Modules::link('Contratti', $record['idcontratto'], null, null, 'class="pull-right"');
                         }
                     ?>
 

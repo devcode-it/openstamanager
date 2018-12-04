@@ -31,7 +31,7 @@ class ButtonManager implements ManagerInterface
 
             $result = [
                 'link' => \Prints::getHref($options['id'], $options['id_record'], $options['parameters']),
-                'title' => tr('Stampa').' '.strtolower($print['title']),
+                'title' => tr('Stampa').' '.lcfirst($print['title']),
                 'icon' => $print['icon'],
             ];
         } else {
@@ -39,7 +39,7 @@ class ButtonManager implements ManagerInterface
 
             $result = [
                 'link' => ROOTDIR.'/mail.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'],
-                'title' => tr('Invia').' '.strtolower($template['name']),
+                'title' => tr('Invia').' '.lcfirst($template['name']),
                 'icon' => $template['icon'],
                 'type' => 'modal',
             ];

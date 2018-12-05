@@ -9,7 +9,7 @@ if ($user['gruppo'] == 'Tecnici') {
     $show_costi = !empty($user['idanagrafica']) && setting('Mostra i prezzi al tecnico');
 }
 
-$sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE in_interventi_tecnici.id = '.prepare(get('id_sessione')));
+$sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at, in_interventi_tecnici.tipo_scontokm AS tipo_sconto_km  FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE in_interventi_tecnici.id = '.prepare(get('id_sessione')));
 
 $op = 'edit_sessione';
 $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
@@ -59,7 +59,7 @@ if ($show_costi) {
     // Sconto km
     echo '
         <div class="col-md-4">
-            {[ "type": "number", "label": "'.tr('Sconto km').'", "name": "sconto_km", "value": "'.$sessione['scontokm_unitario'].'", "icon-after": "choice|untprc|'.$sessione['tipo_scontokm'].'"]}
+            {[ "type": "number", "label": "'.tr('Sconto km').'", "name": "sconto_km", "value": "'.$sessione['scontokm_unitario'].'", "icon-after": "choice|untprc|'.$sessione['tipo_sconto_km'].'"]}
         </div>';
 
     echo'

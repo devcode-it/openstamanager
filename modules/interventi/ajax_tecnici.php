@@ -19,7 +19,7 @@ $rss = $dbo->fetchArray('SELECT completato AS flag_completato FROM in_statiinter
 $is_completato = $rss[0]['flag_completato'];
 
 // Sessioni dell'intervento
-$query = 'SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at AS anagrafica_deleted_at, in_tipiintervento.descrizione AS descrizione_tipo FROM in_interventi_tecnici
+$query = 'SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at AS anagrafica_deleted_at, in_tipiintervento.descrizione AS descrizione_tipo, in_interventi_tecnici.tipo_scontokm AS tipo_sconto_km FROM in_interventi_tecnici
 INNER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica
 INNER JOIN in_tipiintervento ON in_interventi_tecnici.idtipointervento = in_tipiintervento.idtipointervento
 WHERE in_interventi_tecnici.idintervento='.prepare($id_record).' ORDER BY ragione_sociale ASC, in_interventi_tecnici.orario_inizio ASC, in_interventi_tecnici.id ASC';
@@ -175,7 +175,7 @@ if (!empty($sessioni)) {
             <td style="border-right:1px solid #aaa;">
                 '.tr('_TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($sessione['scontokm_unitario']),
-                    '_TYPE_' => ($sessione['tipo_scontokm'] == 'PRC' ? '%' : '&euro;'),
+                    '_TYPE_' => ($sessione['tipo_sconto_km'] == 'PRC' ? '%' : '&euro;'),
                 ]).'
             </td>';
         }

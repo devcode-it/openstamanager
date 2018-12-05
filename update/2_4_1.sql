@@ -145,12 +145,6 @@ ALTER TABLE `in_tipiintervento` ADD `tempo_standard` DECIMAL(10,2)  NULL AFTER `
 -- Rinomino Interventi da pianificare in Promemoria contratti da pianificare
 UPDATE `zz_widgets` SET `text` = 'Promemoria contratti da pianificare' WHERE `zz_widgets`.`name` = 'Interventi da pianificare';
 
--- Fix arrotondamenti per fatture di vendita
---UPDATE `zz_views` SET `query` = '(SELECT SUM(round(subtotale,2) - round(sconto,2) + round(iva,2) + round(rivalsainps,2) - round(ritenutaacconto,2)) FROM co_righe_documenti WHERE co_righe_documenti.iddocumento=co_documenti.id GROUP BY iddocumento) + round(bollo,2) + round(iva_rivalsainps,2)'  WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND name = 'Totale';
-
--- Fix arrotondamenti per fatture di acquisto
---UPDATE `zz_views` SET `query` = '(SELECT SUM(round(subtotale,2) - round(sconto,2) + round(iva,2) + round(rivalsainps,2) - round(ritenutaacconto,2)) FROM co_righe_documenti WHERE co_righe_documenti.iddocumento=co_documenti.id GROUP BY iddocumento ) + round(bollo,2) + round(iva_rivalsainps,2)' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND name = 'Totale';
-
 -- Aggiunta impostazioni per cambio stato automatici
 INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'Cambia automaticamente stato ddt fatturati', '1', 'boolean', '1', 'Ddt');
 INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'Cambia automaticamente stato ordini fatturati', '1', 'boolean', '1', 'Ordini');

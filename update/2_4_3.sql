@@ -52,3 +52,12 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 -- Fix plugin
 UPDATE `zz_plugins` SET `directory` = 'exportFE' WHERE `idmodule_to` = (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita') AND `name` = 'Fatturazione Elettronica';
 UPDATE `zz_plugins` SET `directory` = 'importFE' WHERE `idmodule_to` = (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di acquisto') AND `name` = 'Fatturazione Elettronica';
+
+
+-- Check colonna Totale per fatture di vendita
+UPDATE `zz_views` SET `query` = '(SELECT SUM(subtotale - sconto + iva + rivalsainps - ritenutaacconto) FROM co_righe_documenti WHERE co_righe_documenti.iddocumento=co_documenti.id GROUP BY iddocumento) + bollo + iva_rivalsainps' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND name = 'Totale';
+
+-- Check colonna Totale per fatture di acquisto
+UPDATE `zz_views` SET `query` = '(SELECT SUM(subtotale - sconto + iva + rivalsainps - ritenutaacconto) FROM co_righe_documenti WHERE co_righe_documenti.iddocumento=co_documenti.id GROUP BY iddocumento) + bollo + iva_rivalsainps' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND name = 'Totale';
+
+

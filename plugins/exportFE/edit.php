@@ -1,6 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
 include_once __DIR__.'/init.php';
 
 use Plugins\ExportFE\FatturaElettronica;
@@ -23,6 +22,30 @@ if (!empty($fattura_pa)) {
 
     $disabled = true;
     $generated = false;
+}
+
+// Campi obbligatori per il pagamento
+$pagamento = $database->fetchOne('SELECT * FROM `co_pagamenti` WHERE `id` = '.prepare($record['idpagamento']));
+$fields = [
+    'codice_modalita_pagamento_fe' => 'Codice di pagamento FE',
+];
+
+$missing = [];
+foreach ($fields as $key => $name) {
+    if (empty($pagamento[$key])) {
+        $missing[] = $name;
+    }
+}
+
+if (!empty($missing) && !$generated) {
+    echo '
+<div class="alert alert-warning">
+    <p><i class="fa fa-warning"></i> '.tr("Prima di procedere alla generazione della fattura elettronica completa i seguenti campi del tipo di pagamento: _FIELDS_", [
+        '_FIELDS_' => '<b>'.implode(', ', $missing).'</b>',
+    ]).'</p>
+</div>';
+
+    $disabled = true;
 }
 
 // Campi obbligatori per l'anagrafica Azienda
@@ -118,7 +141,7 @@ echo '
 echo '
     <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
-    <a href="'.ROOTDIR.'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&op=download" class="btn btn-success btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
+    <a href="'.ROOTDIR.'/plugins/exportFE/download.php?id_record='.$id_record.'" class="btn btn-success btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
         <i class="fa fa-download"></i> '.tr('Scarica').'
     </a>
 

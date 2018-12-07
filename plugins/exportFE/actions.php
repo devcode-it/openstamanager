@@ -1,6 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
 include_once __DIR__.'/init.php';
 
 switch (filter('op')) {
@@ -24,9 +23,5 @@ switch (filter('op')) {
             flash()->error(tr('Impossibile generare la fattura elettronica'));
         }
 
-        break;
-
-    case 'download':
-        download($upload_dir.'/'.$fattura_pa->getFilename());
         break;
 }

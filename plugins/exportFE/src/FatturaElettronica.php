@@ -68,7 +68,7 @@ class FatturaElettronica
     {
         $documento = $this->getDocumento();
 
-        return !empty($documento['xml_generated_at']) && !empty($documento['progressivo_invio']) && file_exists(DOCROOT.'/'.static::getDirectory().'/'.$this->getFilename());
+        return !empty($documento['progressivo_invio']) && file_exists(DOCROOT.'/'.static::getDirectory().'/'.$this->getFilename());
     }
 
     /**
@@ -882,7 +882,7 @@ class FatturaElettronica
         $data = $fattura->getUploadData();
         $dir = static::getDirectory();
 
-        $rapportino_nome = sanitizeFilename($documento['numero'].'.pdf');
+        $rapportino_nome = sanitizeFilename($documento['numero_esterno'].'.pdf');
         $filename = slashes(DOCROOT.'/'.$dir.'/'.$rapportino_nome);
 
         Uploads::delete($rapportino_nome, $data);
@@ -1089,7 +1089,7 @@ class FatturaElettronica
         // Aggiornamento effettivo
         database()->update('co_documenti', [
             'progressivo_invio' => $this->getDocumento()['progressivo_invio'],
-            'xml_generated_at' => date('Y-m-d H:i:s'),
+            'codice_stato_fe' => 'GEN',
         ], ['id' => $this->getDocumento()['id']]);
 
         return ($result === false) ? null : $filename;

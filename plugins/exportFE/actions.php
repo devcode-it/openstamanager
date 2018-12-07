@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/init.php';
 
+use Plugins\ExportFE\Interaction;
+
 switch (filter('op')) {
     case 'generate':
         if (!empty($fattura_pa)) {
@@ -19,6 +21,15 @@ switch (filter('op')) {
         } else {
             flash()->error(tr('Impossibile generare la fattura elettronica'));
         }
+
+        break;
+
+    case 'send':
+        $result = Interaction::sendXML($id_record);
+
+        echo json_encode([
+            'sent' => $result,
+        ]);
 
         break;
 }

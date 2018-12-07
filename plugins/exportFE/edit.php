@@ -3,6 +3,7 @@
 include_once __DIR__.'/init.php';
 
 use Plugins\ExportFE\FatturaElettronica;
+use Plugins\ExportFE\Interaction;
 
 if (!empty($fattura_pa)) {
     $disabled = false;
@@ -137,15 +138,27 @@ echo '
 
     <a href="'.ROOTDIR.'/plugins/exportFE/download.php?id_record='.$id_record.'" class="btn btn-success btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
         <i class="fa fa-download"></i> '.tr('Scarica').'
-    </a>
-
-    <i class="fa fa-arrow-right fa-fw text-muted"></i>';
+    </a>';
 
 echo '
 
+    <i class="fa fa-arrow-right fa-fw text-muted"></i>
+
     <a href="'.ROOTDIR.'/plugins/exportFE/view.php?id_record='.$id_record.'" class="btn btn-info btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
         <i class="fa fa-eye"></i> '.tr('Visualizza').'
-    </a>
+    </a>';
+
+if (Interaction::isEnabled()) {
+    echo '
+
+    <i class="fa fa-arrow-right fa-fw text-muted"></i>
+
+    <button onclick="send(this)" class="btn btn-success btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
+        <i class="fa fa-paper-plane"></i> '.tr('Invia').'
+    </button>';
+}
+
+echo '
 
 </div>';
 
@@ -154,19 +167,51 @@ if ($generated) {
 <script>
     $("#genera").click(function(event){
         event.preventDefault();
+
         swal({
-          title: "Sei sicuro di rigenerare la fattura?",
-          text: "Attenzione: sarà generato un nuovo progressivo invio.",
-          type: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#30d64b",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Genera"
+            title: "Sei sicuro di rigenerare la fattura?",
+            text: "Attenzione: sarà generato un nuovo progressivo invio.",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#30d64b",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Genera"
         }).then((result) => {
-          if (result) {
-            $("#form-xml").submit();
-          }
-      });
-  });
+            if (result) {
+                $("#form-xml").submit();
+            }
+        });
+    });
+
+    function send(btn) {
+        var restore = buttonLoading(btn);
+
+        $.ajax({
+            url: globals.rootdir + "/actions.php",
+            type: "post",
+            data: {
+                op: "send",
+                id_module: "'.$id_module.'",
+                id_plugin: "'.$id_plugin.'",
+                id_record: "'.$id_record.'",
+            },
+            success: function(data) {
+                data = JSON.parse(data);
+
+                if (data.sent) {
+                    swal("'.tr('Fattura inviata!').'", "'.tr('Fattura inoltrata con successo').'", "success");
+                } else {
+                    swal("'.tr('Invio fallito').'", "'.tr("L'invio della fattura è fallito").'", "error");
+                }
+
+                buttonRestore(btn, restore);
+            },
+            error: function(data) {
+                swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio').'", "error");
+
+                buttonRestore(btn, restore);
+            }
+        });
+    }
 </script>';
 }

@@ -929,14 +929,14 @@ switch (post('op')) {
                 if (!empty($idarticolo)) {
                     $idiva_acquisto = $idiva;
                     $prezzo_acquisto = $subtot;
-                    $riga = add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva_acquisto, $qta, $prezzo_acquisto, 0, 0, 'UNT', 0, $idconto);
+                    $riga = add_articolo_infattura($id_record, $idarticolo, $descrizione, $idiva_acquisto, $qta, $prezzo_acquisto, 0, 0, 'UNT', 0, $idconto, $um);
 
                     // Lettura lotto, serial, altro dalla riga dell'ddt
                     $dbo->query('INSERT INTO mg_prodotti (id_riga_documento, id_articolo, dir, serial, lotto, altro) SELECT '.prepare($riga).', '.prepare($idarticolo).', '.prepare($dir).', serial, lotto, altro FROM mg_prodotti AS t WHERE id_riga_ddt='.prepare($idrigaddt));
                 }
 
                 // Inserimento riga normale
-                elseif ($qta != 0) {
+                else {
                     $query = 'INSERT INTO co_righe_documenti(iddocumento, idarticolo, descrizione, idconto, idddt, idiva, desc_iva, iva, iva_indetraibile, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, `order`) VALUES('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($descrizione).', '.prepare($idconto).', '.prepare($idddt).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
                     $dbo->query($query);
                 }
@@ -1048,7 +1048,7 @@ switch (post('op')) {
 
             $query = 'DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
             $dbo->query($query);
-            
+
             $rs_righe = $dbo->fetchArray("SELECT * FROM co_righe_documenti WHERE idpreventivo=".prepare($idpreventivo));
 
             if (sizeof($rs_righe)==0) {
@@ -1076,7 +1076,7 @@ switch (post('op')) {
                     }
                 }
             }
-            
+
             // Ricalcolo inps, ritenuta e bollo
             if ($dir == 'entrata') {
                 ricalcola_costiagg_fattura($id_record);
@@ -1085,7 +1085,6 @@ switch (post('op')) {
             }
 
             flash()->info(tr('Preventivo rimosso!'));
-            
         }
         break;
 

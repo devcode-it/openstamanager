@@ -6,13 +6,7 @@ use Plugins\ExportFE\FatturaElettronica;
 
 if (!empty($fattura_pa)) {
     $disabled = false;
-    $generated = file_exists($upload_dir.'/'.$fattura_pa->getFilename());
-
-    // Ulteriore controllo sulla data generazione file
-    $rs_generated = $dbo->fetchArray('SELECT xml_generated_at FROM co_documenti WHERE id='.prepare($id_record));
-    if (empty($rs_generated[0]['xml_generated_at'])) {
-        $generated = false;
-    }
+    $generated = $fattura_pa->isGenerated();
 } else {
     echo '
 <div class="alert alert-warning">

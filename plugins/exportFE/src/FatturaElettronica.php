@@ -64,6 +64,18 @@ class FatturaElettronica
      *
      * @return array
      */
+    public function isGenerated()
+    {
+        $documento = $this->getDocumento();
+
+        return !empty($documento['xml_generated_at']) && !empty($documento['progressivo_invio']) && file_exists(DOCROOT.'/'.static::getDirectory().'/'.$this->getFilename());
+    }
+
+    /**
+     * Restituisce le informazioni sull'anagrafica azienda.
+     *
+     * @return array
+     */
     public static function getAzienda()
     {
         if (empty(static::$azienda)) {
@@ -333,15 +345,14 @@ class FatturaElettronica
 
         // IscrizioneREA
         if (!empty($azienda['codicerea'])) {
-			
             $codice = explode('-', $azienda['codicerea']);
-			
-			if ( !empty($codice[0]) and !empty($codice[1]) ){
-				$result['IscrizioneREA'] = [
-					'Ufficio' => strtoupper($codice[0]),
-					'NumeroREA' => $codice[1],
-				];
-			}
+
+            if (!empty($codice[0]) && !empty($codice[1])) {
+                $result['IscrizioneREA'] = [
+                    'Ufficio' => strtoupper($codice[0]),
+                    'NumeroREA' => $codice[1],
+                ];
+            }
 
             if (!empty($azienda['capitale_sociale'])) {
                 $result['IscrizioneREA']['CapitaleSociale'] = $azienda['capitale_sociale'];
@@ -1075,6 +1086,12 @@ class FatturaElettronica
             'original' => $filename,
         ], $data));
 
+        // Aggiornamento effettivo
+        database()->update('co_documenti', [
+            'progressivo_invio' => $this->getDocumento()['progressivo_invio'],
+            'xml_generated_at' => date('Y-m-d H:i:s'),
+        ], ['id' => $this->getDocumento()['id']]);
+
         return ($result === false) ? null : $filename;
     }
 
@@ -1096,7 +1113,6 @@ class FatturaElettronica
             } while ($database->fetchNum('SELECT `id` FROM `co_documenti` WHERE `progressivo_invio` = '.prepare($code)) != 0);
 
             // Registrazione
-            $database->update('co_documenti', ['progressivo_invio' => $code], ['id' => $this->getDocumento()['id']]);
             $this->documento['progressivo_invio'] = $code;
         }
 

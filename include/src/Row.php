@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 abstract class Row extends Description
 {
-    protected $prezzo_unitario_vendita_riga;
+    protected $prezzo_unitario_vendita_riga = null;
 
     protected static function boot($bypass = false)
     {
@@ -271,7 +271,7 @@ abstract class Row extends Description
      */
     public function getPrezzoUnitarioVenditaAttribute()
     {
-        if (empty($this->prezzo_unitario_vendita_riga)) {
+        if (!isset($this->prezzo_unitario_vendita_riga)) {
             $this->prezzo_unitario_vendita_riga = $this->attributes['subtotale'] / $this->qta;
         }
 

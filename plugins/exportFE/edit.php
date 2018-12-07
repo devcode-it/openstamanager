@@ -149,13 +149,49 @@ echo '
     </a>';
 
 if (Interaction::isEnabled()) {
+    $send = $generated && $record['codice_stato_fe'] == 'GEN';
+
     echo '
 
     <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
-    <button onclick="send(this)" class="btn btn-success btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
+    <button onclick="send(this)" class="btn btn-success btn-lg '.($send ? '' : 'disabled').'" target="_blank" '.($send ? '' : 'disabled').'>
         <i class="fa fa-paper-plane"></i> '.tr('Invia').'
-    </button>';
+    </button>
+
+    <script>
+        function send(btn) {
+            var restore = buttonLoading(btn);
+
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "post",
+                data: {
+                    op: "send",
+                    id_module: "'.$id_module.'",
+                    id_plugin: "'.$id_plugin.'",
+                    id_record: "'.$id_record.'",
+                },
+                success: function(data) {
+                    data = JSON.parse(data);
+                    buttonRestore(btn, restore);
+
+                    if (data.sent) {
+                        swal("'.tr('Fattura inviata!').'", "'.tr('Fattura inoltrata con successo').'", "success");
+
+                        $(btn).attr("disabled", true).addClass("disabled");
+                    } else {
+                        swal("'.tr('Invio fallito').'", "'.tr("L'invio della fattura è fallito").'", "error");
+                    }
+                },
+                error: function(data) {
+                    swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio').'", "error");
+
+                    buttonRestore(btn, restore);
+                }
+            });
+        }
+    </script>';
 }
 
 echo '
@@ -182,36 +218,5 @@ if ($generated) {
             }
         });
     });
-
-    function send(btn) {
-        var restore = buttonLoading(btn);
-
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "post",
-            data: {
-                op: "send",
-                id_module: "'.$id_module.'",
-                id_plugin: "'.$id_plugin.'",
-                id_record: "'.$id_record.'",
-            },
-            success: function(data) {
-                data = JSON.parse(data);
-
-                if (data.sent) {
-                    swal("'.tr('Fattura inviata!').'", "'.tr('Fattura inoltrata con successo').'", "success");
-                } else {
-                    swal("'.tr('Invio fallito').'", "'.tr("L'invio della fattura è fallito").'", "error");
-                }
-
-                buttonRestore(btn, restore);
-            },
-            error: function(data) {
-                swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio').'", "error");
-
-                buttonRestore(btn, restore);
-            }
-        });
-    }
 </script>';
 }

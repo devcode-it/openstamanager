@@ -42,6 +42,8 @@ class XML
     /**
      * Removes the PKCS#7 header and the signature info footer from a digitally-signed .xml.p7m file using CAdES format.
      *
+     * TODO: controllare il funzionamento con gli allegati.
+     *
      * @param string $string File content
      * @return string An arguably-valid XML string with the .p7m header and footer stripped away.
      *

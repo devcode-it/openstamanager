@@ -11,7 +11,7 @@ use Respect\Validation\Validator as v;
  */
 class Validate
 {
-    public static function VatCheck($partita_iva)
+    public static function vatCheck($partita_iva)
     {
         if ($partita_iva === '') {
             return true;
@@ -52,6 +52,11 @@ class Validate
     {
         if (empty($vat_number)) {
             return true;
+        }
+
+        // Controllo sulla sintassi
+        if (!static::vatCheck($vat_number)) {
+            return false;
         }
 
         // Controllo con API europea ufficiale

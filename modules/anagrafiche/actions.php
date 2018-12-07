@@ -8,8 +8,6 @@ switch (post('op')) {
     case 'update':
         // Informazioni sulla sede
         $sede = $anagrafica->sedeLegale;
-        $sede->partita_iva = post('piva');
-        $sede->codice_fiscale = post('codice_fiscale');
         $sede->indirizzo = post('indirizzo');
         $sede->indirizzo2 = post('indirizzo2');
         $sede->citta = post('citta');
@@ -33,6 +31,8 @@ switch (post('op')) {
         $anagrafica->tipo = post('tipo');
         $anagrafica->codice_destinatario = post('codice_destinatario');
         $anagrafica->ragione_sociale = post('ragione_sociale');
+        $anagrafica->partita_iva = post('piva');
+        $anagrafica->codice_fiscale = post('codice_fiscale');
         $anagrafica->tipo = post('tipo');
         $anagrafica->data_nascita = post('data_nascita');
         $anagrafica->luogo_nascita = post('luogo_nascita');

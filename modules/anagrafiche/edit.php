@@ -66,6 +66,16 @@ if (!$cliente) {
 				<?php
 } ?>
 
+                <div class="row">
+                    <div class="col-md-6">
+                        {[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask text-uppercase", "value": "$piva$" ]}
+                    </div>
+
+                    <div class="col-md-6">
+                        {[ "type": "text", "label": "<?php echo tr('Codice fiscale'); ?>", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask text-uppercase", "value": "$codice_fiscale$" ]}
+                    </div>
+                </div>
+
 				<div class="row">
 					<div class="col-md-2">
 						{[ "type": "text", "label": "<?php echo tr('Codice anagrafica'); ?>", "name": "codice", "required": 1, "class": "text-center alphanumeric-mask", "value": "$codice$", "maxlength": 20 ]}
@@ -91,17 +101,6 @@ if (!$cliente) {
             <h3 class="panel-title"><i class="fa fa-building"></i> <?php echo tr('Sede legale'); ?></h3>
         </div>
         <div class="panel-body">
-
-            <div class="row">
-                <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask text-uppercase", "value": "$piva$" ]}
-                </div>
-
-                <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Codice fiscale'); ?>", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask text-uppercase", "value": "$codice_fiscale$" ]}
-                </div>
-            </div>
-
             <div class="row">
 
                 <div class="col-md-<?php echo (empty($record['indirizzo2'])) ? '6' : '4'; ?>">

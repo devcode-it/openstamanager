@@ -81,7 +81,14 @@ class FatturaElettronica
     public function getCliente()
     {
         if (empty($this->cliente)) {
-            $this->cliente = static::getAnagrafica($this->getDocumento()['idanagrafica']);
+            $cliente = static::getAnagrafica($this->getDocumento()['idanagrafica']);
+
+            $sede = database()->fetchOne('SELECT `codice_destinatario` FROM `an_sedi` WHERE `id` = '.prepare($this->getDocumento()['idsede']));
+            if (!empty($sede)) {
+                $cliente['codice_destinatario'] = $sede['codice_destinatario'];
+            }
+
+            $this->cliente = $cliente;
         }
 
         return $this->cliente;

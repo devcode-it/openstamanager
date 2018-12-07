@@ -433,6 +433,31 @@ class FatturaElettronica
             ];
         }
 
+        // Cassa Previdenziale
+        /*
+        if (!empty($documento['bollo'])) {
+            $id_iva = setting('Iva predefinita');
+            $iva = $database->fetchOne('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($id_iva));
+
+            $dati_cassa = [
+                'TipoCassa' => setting('Tipo Cassa'),
+                'AlCassa' => '',
+                'ImportoContributoCassa' => '',
+                'ImponibileCassa' => '',
+                'AliquotaIVA' => $iva['percentuale'],
+            ];
+
+            $ritenuta_predefinita = setting("Percentuale ritenuta d'acconto");
+            if (!empty($ritenuta_predefinita)) {
+                $dati_cassa['Ritenuta'] = 'SI';
+            }
+
+            $dati_cassa['Natura'] = $iva['codice_natura_fe'];
+            $dati_cassa['RiferimentoAmministrazione'] = '';
+
+            $result['DatiCassaPrevidenziale'] = $dati_cassa;
+        }*/
+
         // Sconto globale
         $documento['sconto_globale'] = floatval($documento['sconto_globale']);
         if (!empty($documento['sconto_globale'])) {

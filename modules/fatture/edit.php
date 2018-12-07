@@ -66,7 +66,7 @@ if ($dir == 'entrata') {
                 				<div class="col-md-3">
                 					{[ "type": "text", "label": "'.tr('Numero fattura/protocollo').'", "required": 1, "name": "numero","class": "text-center alphanumeric-mask", "value": "$numero$" ]}
                                 </div>';
-                    $label = tr('Numero fornitore');
+                    $label = tr('Numero fattura del fornitore');
                 } else {
                     $label = tr('Numero fattura');
                 }

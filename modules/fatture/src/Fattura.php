@@ -110,8 +110,8 @@ class Fattura extends Model
             $direzione = $this->tipo->dir;
             $data = $this->data;
 
-            $this->numero = static::getNumero($data, $direzione, $value);
-            $this->numero_esterno = static::getNumeroSecondario($data, $direzione, $value);
+            $this->numero = static::getNextNumero($data, $direzione, $value);
+            $this->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $value);
         }
     }
 
@@ -124,20 +124,23 @@ class Fattura extends Model
      *
      * @return string
      */
-    public static function getNumero($data, $direzione, $id_segment)
+    public static function getNextNumero($data, $direzione, $id_segment)
     {
+        if ($direzione == 'entrata') {
+            return '';
+        }
+
         $database = database();
 
-        //$maschera = $direzione == 'uscita' ? static::getMaschera($id_segment) : '#';
         // Recupero maschera per questo segmento
-        $maschera = static::getMaschera($id_segment);
+        $maschera = Generator::getMaschera($id_segment);
 
-        $ultima_fattura = $database->fetchOne('SELECT numero FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera, 'numero'), [
+        $ultima_fattura = $database->fetchOne('SELECT numero FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.Generator::getMascheraOrder($maschera, 'numero'), [
             ':year' => date('Y', strtotime($data)),
             ':id_segment' => $id_segment,
         ]);
 
-        $numero = Generator::generate($maschera, $ultima_fattura['numero']);
+        $numero = Generator::generate($maschera, $ultima_fattura['numero'], 1, Generator::dateToPattern($data));
 
         return $numero;
     }
@@ -151,7 +154,7 @@ class Fattura extends Model
      *
      * @return string
      */
-    public static function getNumeroSecondario($data, $direzione, $id_segment)
+    public static function getNextNumeroSecondario($data, $direzione, $id_segment)
     {
         if ($direzione == 'uscita') {
             return '';
@@ -160,60 +163,16 @@ class Fattura extends Model
         $database = database();
 
         // Recupero maschera per questo segmento
-        $maschera = static::getMaschera($id_segment);
+        $maschera = Generator::getMaschera($id_segment);
 
-        $ultima_fattura = $database->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera, 'numero_esterno'), [
+        $ultima_fattura = $database->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.Generator::getMascheraOrder($maschera, 'numero_esterno'), [
             ':year' => date('Y', strtotime($data)),
             ':id_segment' => $id_segment,
         ]);
 
-        $numero_esterno = Generator::generate($maschera, $ultima_fattura['numero_esterno']);
+        $numero_esterno = Generator::generate($maschera, $ultima_fattura['numero_esterno'], 1, Generator::dateToPattern($data));
 
         return $numero_esterno;
-    }
-
-    /**
-     * Restituisce la maschera specificata per il segmento indicato.
-     *
-     * @param int $id_segment
-     *
-     * @return string
-     */
-    protected static function getMaschera($id_segment)
-    {
-        $database = database();
-
-        $maschera = $database->fetchOne('SELECT pattern FROM zz_segments WHERE id = :id_segment', [
-            ':id_segment' => $id_segment,
-        ])['pattern'];
-
-        return $maschera;
-    }
-
-    /**
-     * Metodo per l'individuazione del tipo di ordine da impostare per la corretta interpretazione della maschera.
-     * Esempi:
-     * - maschere con testo iniziale (FT-####-YYYY) necessitano l'ordinamento alfabetico
-     * - maschere di soli numeri (####-YYYY) è necessario l'ordinamento numerico forzato.
-     *
-     * @param string $maschera
-     *
-     * @return string
-     */
-    protected static function getMascheraOrder($maschera, $order_by)
-    {
-        // Estraggo blocchi di caratteri standard
-        preg_match('/[#]+/', $maschera, $m1);
-        //preg_match('/[Y]+/', $maschera, $m2);
-
-        $pos1 = strpos($maschera, $m1[0]);
-        if ($pos1 == 0) {
-            $query = 'ORDER BY CAST('.$order_by.' AS UNSIGNED) DESC';
-        } else {
-            $query = 'ORDER BY '.$order_by.' DESC';
-        }
-
-        return $query;
     }
 
     /**

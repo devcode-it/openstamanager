@@ -69,7 +69,10 @@ $righe = $fattura_pa->getRighe();
 
 if (!empty($righe)) {
     echo '
-    <h4>'.tr('Righe').'</h4>
+    <h4>
+        '.tr('Righe').'
+        <button type="button" class="btn btn-warning btn small pull-right" onclick="copy()"><i class="fa fa-copy"></i> '.tr('Copia IVA e conto da prima riga').'</button>
+    </h4>
 
     <div class="table-responsive">
         <table class="table table-hover table-striped table-condensed">
@@ -111,9 +114,29 @@ if (!empty($righe)) {
     echo '
         </table>
     </div>';
+
+    echo '
+    <script>
+    function copy(){
+        $iva = $("select[name^=iva").first().selectData();
+        $conto = $("select[name^=conto").first().selectData();
+
+        if($iva) {
+            $("select[name^=iva").each(function(){
+                $(this).selectSet($iva.id);
+            });
+        }
+
+        if($conto) {
+            $("select[name^=conto").each(function(){
+                $(this).selectSetNew($conto.id, $conto.text);
+            });
+        }
+    }
+    </script>';
 } else {
     echo '
-    <p>Non ci sono righe nella fattura.</p>';
+    <p>'.tr('Non ci sono righe nella fattura').'.</p>';
 }
 
 echo '

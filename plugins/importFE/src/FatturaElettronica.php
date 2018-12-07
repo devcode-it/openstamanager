@@ -11,6 +11,7 @@ use Modules\Fatture\Tipo as TipoFattura;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Anagrafiche\Nazione;
+use Util\XML;
 use Uploads;
 use Modules;
 use UnexpectedValueException;
@@ -36,11 +37,7 @@ class FatturaElettronica
     public function __construct($file)
     {
         $this->file = static::getImportDirectory().'/'.$file;
-
-        $xml = simplexml_load_file($this->file, 'SimpleXMLElement', LIBXML_NOCDATA);
-        $json = json_decode(json_encode($xml), true);
-
-        $this->xml = $json;
+        $this->xml = XML::readFile($this->file);
 
         // Individuazione fattura pre-esistente
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
@@ -50,8 +47,8 @@ class FatturaElettronica
 
         $fattura = Fattura::where([
             'progressivo_invio' => $progressivo_invio,
+            'numero_esterno' => $numero,
             'data' => $data,
-            'numero' => $numero,
         ])->first();
 
         if (!empty($fattura)) {
@@ -240,7 +237,7 @@ class FatturaElettronica
 
         $result = isset($result[0]) ? $result : [$result];
 
-        return $result;
+        return array_clean($result);
     }
 
     public function saveAllegati()
@@ -273,6 +270,7 @@ class FatturaElettronica
         // Registrazione XML come allegato
         $filename = Uploads::upload($this->file, array_merge($info, [
             'name' => tr('Fattura Elettronica'),
+            'original' => basename($this->file),
         ]));
     }
 

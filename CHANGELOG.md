@@ -46,6 +46,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 ### Aggiunto (Added)
 
  - Nodi secondari per la Fatturazione Elettronica
+ - Importazione di Fatture Elettroniche in formato P7M
  - Messaggi informativi in vari campi
 
 ### Fixed

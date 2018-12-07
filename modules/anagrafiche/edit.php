@@ -350,7 +350,7 @@ if (!empty($record['idconto_cliente'])) {
 					</div>
 
 					<div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo tr('Codice R.E.A.').'<small>('.tr('provincia/C.C.I.A.A.').')</small>'; ?>", "name": "codicerea", "value": "$codicerea$", "help": "<?php echo tr('Formato: _PATTERN_', [
+						{[ "type": "text", "label": "<?php echo tr('Codice R.E.A.').'<small>('.tr('provincia-C.C.I.A.A.').')</small>'; ?>", "name": "codicerea", "value": "$codicerea$", "help": "<?php echo tr('Formato: _PATTERN_', [
                             '_PATTERN_' => 'RM-123456',
                         ]); ?>" ]}
 					</div>

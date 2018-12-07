@@ -333,12 +333,15 @@ class FatturaElettronica
 
         // IscrizioneREA
         if (!empty($azienda['codicerea'])) {
+			
             $codice = explode('-', $azienda['codicerea']);
-
-            $result['IscrizioneREA'] = [
-                'Ufficio' => strtoupper($codice[0]),
-                'NumeroREA' => $codice[1],
-            ];
+			
+			if ( !empty($codice[0]) and !empty($codice[1]) ){
+				$result['IscrizioneREA'] = [
+					'Ufficio' => strtoupper($codice[0]),
+					'NumeroREA' => $codice[1],
+				];
+			}
 
             if (!empty($azienda['capitale_sociale'])) {
                 $result['IscrizioneREA']['CapitaleSociale'] = $azienda['capitale_sociale'];

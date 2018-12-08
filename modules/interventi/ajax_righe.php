@@ -102,6 +102,9 @@ if (count($rs2) > 0) {
 
     echo '
 </table>';
+} else {
+    echo '
+<p>'.tr('Nessuna spesa presente').'.</p>';
 }
 
 ?>

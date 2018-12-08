@@ -83,6 +83,12 @@ Per eseguire i test è necessario seguire le seguenti istruzioni (https://codece
 - Scaricare (Selenium Server)[https://docs.seleniumhq.org/download/] e salvarlo come `selenium-server-standalone.jar` nella cartella principale
 - Scaricare (ChromeDriver)[https://sites.google.com/a/chromium.org/chromedriver/getting-started], rendendolo eseguibile da riga di comando (su Windows, aggiungerlo al PATH)
 - Configurare localmente Codeception nel file `codeception.yml` con l'URL del web server locale
+```yml
+modules:
+    config:
+        WebDriver:
+            url: http://localhost/openstamanager
+```
 - Eseguire su shell differenti i seguenti comandi:
 ```bash
 npm run tests-server    # Avvia i server per i test di funzionamento grafico

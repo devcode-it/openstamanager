@@ -2,7 +2,7 @@
 
 namespace Modules\Interventi;
 
-use Base\Row;
+use Common\Row;
 
 class Riga extends Row
 {

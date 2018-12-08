@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_modules WHERE ( enabled = 1 AND options != 'custom' ) OR id = <?php echo $record['id_module']; ?> ORDER BY name ASC", "value": "$id_module$", "extra": "<?php echo ($record['predefined']) ? 'readonly' : ''; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_modules WHERE ( enabled = 1 AND options != 'custom' ) OR id = <?php echo $record['id_module']; ?> ORDER BY name ASC", "value": "<?php echo $record['id_module']; ?>", "extra": "<?php echo ($record['predefined']) ? 'readonly' : ''; ?>" ]}
 				</div>
 
 				<div class="col-md-4">
@@ -81,7 +81,7 @@ if (str_contains($current_module['option'], '|segment|')) {
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "class": "alphanumeric-mask", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YY", "extra": "<?php echo ($tot > 0) ? 'readonly' : ''; ?>" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Maschera'); ?>", "name": "pattern", "class": "alphanumeric-mask", "value": "$pattern$", "maxlength": 25, "placeholder":"####/YYYY", "extra": "<?php echo ($tot > 0) ? 'readonly' : ''; ?>" ]}
 				</div>
 
                 <div class="col-md-6">

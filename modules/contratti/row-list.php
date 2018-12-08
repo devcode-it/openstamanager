@@ -233,17 +233,19 @@ $(document).ready(function(){
 			cursor: "move",
 			dropOnEmpty: true,
 			scroll: true,
-			start: function(event, ui) {
-				ui.item.data("start", ui.item.index());
-			},
 			update: function(event, ui) {
+                var order = "";
+                $(".table tr[data-id]").each( function(){
+                    order += ","+$(this).data("id");
+                });
+                order = order.replace(/^,/, "");
+                
 				$.post("'.$rootdir.'/actions.php", {
 					id: ui.item.data("id"),
 					id_module: '.$id_module.',
 					id_record: '.$id_record.',
 					op: "update_position",
-					start: ui.item.data("start"),
-					end: ui.item.index()
+                    order: order,
 				});
 			}
 		});

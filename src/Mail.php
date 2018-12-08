@@ -43,7 +43,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
 
         $result = MailAccount::get($account);
 
-        if (empty($return)) {
+        if (empty($result)) {
             $result = $accounts->first(function ($item) {
                 return !empty($item->predefined);
             });
@@ -161,7 +161,7 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
             $this->IsSMTP(true);
 
             // Impostazioni di debug
-            $this->SMTPDebug = App::debug() ? 2: 0;
+            $this->SMTPDebug = App::debug() ? 2 : 0;
             $this->Debugoutput = function ($str, $level) {
                 $this->infos[] = $str;
             };

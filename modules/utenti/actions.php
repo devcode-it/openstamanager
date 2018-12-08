@@ -27,6 +27,7 @@ switch (filter('op')) {
 
         $password = filter('password1');
         $password_rep = filter('password2');
+        $email = filter('email');
 
         // Verifico che la password sia di almeno x caratteri
         if (strlen($password) < $min_length) {
@@ -38,7 +39,7 @@ switch (filter('op')) {
         } else {
             $idanagrafica = filter('idanag');
 
-            $dbo->query('UPDATE zz_users SET password='.prepare(Auth::hashPassword($password)).', idanagrafica='.prepare($idanagrafica).' WHERE id='.prepare($id_utente));
+            $dbo->query('UPDATE zz_users SET password='.prepare(Auth::hashPassword($password)).', idanagrafica='.prepare($idanagrafica).', email='.prepare($email).' WHERE id='.prepare($id_utente));
 
             flash()->info(tr('Password aggiornata!'));
         }
@@ -69,7 +70,7 @@ switch (filter('op')) {
     // Aggiunta di un nuovo utente
     case 'adduser':
         $username = filter('username');
-
+        $email = filter('email');
         $min_length = filter('min_length');
         $min_length_username = filter('min_length_username');
 
@@ -90,7 +91,7 @@ switch (filter('op')) {
             } elseif ($password != $password_rep) {
                 flash()->error(tr('Le password non coincidono'));
             } else {
-                if ($dbo->query('INSERT INTO zz_users(idgruppo, username, password, idanagrafica, enabled, email) VALUES('.prepare($id_record).', '.prepare($username).', '.prepare(Auth::hashPassword($password)).', '.prepare($idanagrafica).", 1, '')")) {
+                if ($dbo->query('INSERT INTO zz_users(idgruppo, username, password, idanagrafica, enabled, email) VALUES('.prepare($id_record).', '.prepare($username).', '.prepare(Auth::hashPassword($password)).', '.prepare($idanagrafica).', 1, '.prepare($email).')')) {
                     $dbo->query('INSERT INTO `zz_tokens` (`id_utente`, `token`) VALUES ('.prepare($dbo->lastInsertedID()).', '.prepare(secure_random_string()).')');
 
                     flash()->info(tr('Utente aggiunto!'));

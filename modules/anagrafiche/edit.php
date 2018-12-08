@@ -47,23 +47,42 @@ if (!$cliente) {
 					</div>
 				</div>
 
+				<!-- RIGA PER LE ANAGRAFICHE CON TIPOLOGIA 'PRIVATO' -->
+				<?php if ($record['tipo'] == 'Privato') {
+    ?>
 				<div class="row">
 					<div class="col-md-4">
 						{[ "type": "text", "label": "<?php echo tr('Luogo di nascita'); ?>", "name": "luogo_nascita", "value": "$luogo_nascita$" ]}
 					</div>
 
 					<div class="col-md-4">
-						{[ "type": "date", "label": "<?php echo tr('Data di nascita'); ?>", "maxlength": 10, "name": "data_nascita", "value": "$data_nascita$" ]}
+						{[ "type": "date", "label": "<?php echo tr('Data di nascita'); ?>", "name": "data_nascita", "value": "$data_nascita$" ]}
 					</div>
 
 					<div class="col-md-4">
 						{[ "type": "select", "label": "<?php echo tr('Sesso'); ?>", "name": "sesso", "values": "list=\"\": \"Non specificato\", \"M\": \"<?php echo tr('Uomo'); ?>\", \"F\": \"<?php echo tr('Donna'); ?>\"", "value": "$sesso$" ]}
 					</div>
 				</div>
+				<?php
+} ?>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        {[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask text-uppercase", "value": "$piva$" ]}
+                    </div>
+
+                    <div class="col-md-6">
+                        {[ "type": "text", "label": "<?php echo tr('Codice fiscale'); ?>", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask text-uppercase", "value": "$codice_fiscale$" ]}
+                    </div>
+                </div>
 
 				<div class="row">
-					<div class="col-md-4">
-						{[ "type": "text", "label": "<?php echo tr('Codice anagrafica'); ?>", "name": "codice", "required": 1, "class": "text-center", "value": "$codice$" ]}
+					<div class="col-md-2">
+						{[ "type": "text", "label": "<?php echo tr('Codice anagrafica'); ?>", "name": "codice", "required": 1, "class": "text-center alphanumeric-mask", "value": "$codice$", "maxlength": 20 ]}
+					</div>
+
+					<div class="col-md-2">
+						{[ "type": "text", "label": "<?php echo ($record['tipo'] == 'Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo ($record['tipo'] == 'Ente pubblico') ? '6' : '7'; ?>,  "extra": "<?php echo (empty($record['tipo']) or ($record['tipo'] == 'Privato')) ? 'disabled' : ''; ?>", "help": "<?php echo tr('<b>Attenzione</b>: per impostare il codice specificare prima \'Tipologia\' e \'Nazione\' dell\'anagrafica:<br><ul><li>Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri</li><li>Azienda (B2B) - Codice Destinatario, 7 caratteri</li><li>Privato (B2C) - viene utilizzato il Codice Fiscale</li></ul>'); ?>", "readonly": "<?php echo intval($anagrafica->sedeLegale->nazione->iso2 != 'IT'); ?>" ]}
 					</div>
 
                     <div class="col-md-4">
@@ -82,24 +101,18 @@ if (!$cliente) {
             <h3 class="panel-title"><i class="fa fa-building"></i> <?php echo tr('Sede legale'); ?></h3>
         </div>
         <div class="panel-body">
-
             <div class="row">
-                <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask", "value": "$piva$" ]}
-                </div>
 
-                <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Codice fiscale'); ?>", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask", "value": "$codice_fiscale$" ]}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-<?php echo (empty($record['indirizzo2'])) ? '6' : '4'; ?>">
                     {[ "type": "text", "label": "<?php echo tr('Indirizzo'); ?>", "name": "indirizzo", "value": "$indirizzo$" ]}
                 </div>
 
-                <div class="col-md-4">
-                    {[ "type": "text", "label": "<?php echo tr('Indirizzo2'); ?>", "name": "indirizzo2", "value": "$indirizzo2$" ]}
+                <div class="col-md-2<?php echo (empty($record['indirizzo2'])) ? ' hide' : ''; ?>">
+                    {[ "type": "text", "label": "<?php echo tr('Civico'); ?>", "name": "indirizzo2", "value": "$indirizzo2$" ]}
+                </div>
+
+				<div class="col-md-2">
+                    {[ "type": "text", "label": "<?php echo tr('C.A.P.'); ?>", "name": "cap", "maxlength": 5, "class": "text-center", "value": "$cap$" ]}
                 </div>
 
                 <div class="col-md-4">
@@ -108,23 +121,22 @@ if (!$cliente) {
             </div>
 
             <div class="row">
-                <div class="col-md-2">
+
+
+
+                <div class="col-md-3">
+                    {[ "type": "text", "label": "<?php echo tr('Provincia'); ?>", "name": "provincia", "maxlength": 2, "class": "text-center text-uppercase", "value": "$provincia$", "extra": "onkeyup=\"this.value = this.value.toUpperCase();\"" ]}
+                </div>
+
+				 <div class="col-md-3">
                     {[ "type": "select", "label": "<?php echo tr('Nazione'); ?>", "name": "id_nazione", "values": "query=SELECT id AS id, nome AS descrizione FROM an_nazioni ORDER BY nome ASC", "value": "$id_nazione$" ]}
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     {[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY descrizione ASC", "value": "$idzona$", "placeholder": "<?php echo tr('Nessuna zona'); ?>", "icon-after": "add|<?php echo Modules::get('Zone')['id']; ?>" ]}
                 </div>
 
-                <div class="col-md-2">
-                    {[ "type": "text", "label": "<?php echo tr('C.A.P.'); ?>", "name": "cap", "maxlength": 5, "class": "text-center", "value": "$cap$" ]}
-                </div>
-
-                <div class="col-md-2">
-                    {[ "type": "text", "label": "<?php echo tr('Provincia'); ?>", "name": "provincia", "maxlength": 2, "class": "text-center", "value": "$provincia$" ]}
-                </div>
-
-                <div class="col-md-2">
+                <div class="col-md-3">
                     {[ "type": "number", "label": "<?php echo tr('Distanza'); ?>", "name": "km", "decimals":"1", "class": "text-center", "value": "$km$", "icon-after": "Km" ]}
                 </div>
             </div>
@@ -220,7 +232,9 @@ if (!empty($google)) {
 					<div class="col-md-6">
 						{[ "type": "select", "label": "<?php echo tr('Banca predefinita'); ?>", "name": "idbanca_acquisti", "values": "query=SELECT id, nome AS descrizione FROM co_banche ORDER BY nome ASC", "value": "$idbanca_acquisti$", "extra": "<?php echo ($fornitore) ? '' : 'readonly'; ?>", "icon-after": "add|<?php echo Modules::get('Banche')['id']; ?>|||<?php echo ($fornitore) ? '' : 'disabled'; ?>" ]}
 					</div>
+                </div>
 
+				<div class="row">
 					<div class="col-md-6">
 						{[ "type": "select", "label": "<?php echo tr('Iva predefinita'); ?>", "name": "idiva_acquisti", "ajax-source": "iva", "value": "$idiva_acquisti$", "extra": "<?php echo ($fornitore) ? '' : 'readonly'; ?>" ]}
 					</div>
@@ -228,12 +242,26 @@ if (!empty($google)) {
                     <div class="col-md-6">
                         {[ "type": "select", "label": "<?php echo tr('Ritenuta d\'acconto predefinita'); ?>", "name": "id_ritenuta_acconto_acquisti", "values": "query=SELECT id, descrizione FROM co_ritenutaacconto ORDER BY descrizione ASC", "value": "$id_ritenuta_acconto_acquisti$", "extra": "<?php echo ($fornitore) ? '' : 'readonly'; ?>" ]}
                     </div>
+                </div>
 
+				<div class="row">
 					<div class="col-md-6">
 						{[ "type": "select", "label": "<?php echo tr('Listino articoli'); ?>", "name": "idlistino_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_acquisti$", "extra": "<?php echo ($fornitore) ? '' : 'readonly'; ?>" ]}
 					</div>
-
 				</div>
+
+<?php
+
+// Collegamento con il conto
+if (!empty($record['idconto_fornitore'])) {
+    $conto = $dbo->fetchOne('SELECT co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
+
+    echo '
+                <p>'.tr('Piano dei conti collegato: _NAME_', [
+                    '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
+                ]).Modules::link('Piano dei conti', null, '').'</p>';
+} ?>
+
 
 			</div>
 		</div>
@@ -256,15 +284,19 @@ if (!empty($google)) {
 					<div class="col-md-6">
 						{[ "type": "select", "label": "<?php echo tr('Banca predefinita'); ?>", "name": "idbanca_vendite", "values": "query=SELECT id, nome AS descrizione FROM co_banche ORDER BY nome ASC", "value": "$idbanca_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>", "icon-after": "add|<?php echo Modules::get('Banche')['id']; ?>|||<?php echo ($cliente) ? '' : 'disabled'; ?>" ]}
 					</div>
+                </div>
 
+				<div class="row">
 					<div class="col-md-6">
-            {[ "type": "select", "label": "<?php echo tr('Iva predefinita'); ?>", "name": "idiva_vendite", "ajax-source": "iva", "value": "$idiva_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
-					</div>
+                        {[ "type": "select", "label": "<?php echo tr('Iva predefinita'); ?>", "name": "idiva_vendite", "ajax-source": "iva", "value": "$idiva_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
+                    </div>
 
-          <div class="col-md-6">
-            {[ "type": "select", "label": "<?php echo tr('Ritenuta d\'acconto predefinita'); ?>", "name": "id_ritenuta_acconto_vendite", "values": "query=SELECT id, descrizione FROM co_ritenutaacconto ORDER BY descrizione ASC", "value": "$id_ritenuta_acconto_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
-           </div>
+                    <div class="col-md-6">
+                        {[ "type": "select", "label": "<?php echo tr('Ritenuta d\'acconto predefinita'); ?>", "name": "id_ritenuta_acconto_vendite", "values": "query=SELECT id, descrizione FROM co_ritenutaacconto ORDER BY descrizione ASC", "value": "$id_ritenuta_acconto_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
+                    </div>
+                </div>
 
+				<div class="row">
 					<div class="col-md-6">
 						{[ "type": "select", "label": "<?php echo tr('Listino articoli'); ?>", "name": "idlistino_vendite", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
 					</div>
@@ -272,7 +304,9 @@ if (!empty($google)) {
 					<div class="col-md-6">
 						{[ "type": "select", "label": "<?php echo tr('Indirizzo di fatturazione'); ?>", "name": "idsede_fatturazione", "values": "query=SELECT id, IF(citta = '', nomesede, CONCAT_WS(', ', nomesede, citta)) AS descrizione FROM an_sedi WHERE idanagrafica='<?php echo $id_record; ?>' UNION SELECT '0' AS id, 'Sede legale' AS descrizione ORDER BY descrizione", "value": "$idsede_fatturazione$" , "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
 					</div>
+                </div>
 
+				<div class="row">
 					<div class="col-md-6">
 						{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento_default", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "$idtipointervento_default$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
 					</div>
@@ -280,8 +314,20 @@ if (!empty($google)) {
 					<div class="col-md-6">
 					  {[ "type": "select", "label": "Agente principale", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, IF(deleted_at IS NOT NULL, CONCAT(ragione_sociale, ' (Eliminato)'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione='Agente' AND deleted_at IS NULL)<?php echo isset($record['idagente']) ? 'OR (an_anagrafiche.idanagrafica = '.prepare($record['idagente']).' AND deleted_at IS NOT NULL) ' : ''; ?>ORDER BY ragione_sociale", "value": "$idagente$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
 					</div>
+                </div>
 
-				</div>
+<?php
+
+// Collegamento con il conto
+if (!empty($record['idconto_cliente'])) {
+    $conto = $dbo->fetchOne('SELECT co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
+
+    echo '
+                <p>'.tr('Piano dei conti collegato: _NAME_', [
+                    '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
+                ]).Modules::link('Piano dei conti', null, '').'</p>';
+} ?>
+
 			</div>
 		</div>
 		</div>
@@ -304,7 +350,7 @@ if (!empty($google)) {
 					</div>
 
 					<div class="col-md-3">
-						{[ "type": "text", "label": "<?php echo tr('Codice R.E.A.').'<small>('.tr('provincia/C.C.I.A.A.').')</small>'; ?>", "name": "codicerea", "value": "$codicerea$", "help": "<?php echo tr('Formato: _PATTERN_', [
+						{[ "type": "text", "label": "<?php echo tr('Codice R.E.A.').'<small>('.tr('provincia-C.C.I.A.A.').')</small>'; ?>", "name": "codicerea", "value": "$codicerea$", "help": "<?php echo tr('Formato: _PATTERN_', [
                             '_PATTERN_' => 'RM-123456',
                         ]); ?>" ]}
 					</div>
@@ -392,7 +438,7 @@ if (!empty($google)) {
 						<?php
                         if (in_array($id_azienda, $tipi_anagrafica)) {
                             echo '
-						<p class=\'badge badge-info\' >'.tr('Questa anagrafica appartiene alla tipologia "Azienda"').'.</p>';
+						<p class=\'badge badge-info\' >'.tr('Questa anagrafica &egrave; di tipo "Azienda"').'.</p>';
                         }
                         ?>
 					</div>
@@ -453,7 +499,7 @@ UNION
 SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_tipiddt`.`descrizione` AS tipo_documento, `dt_tipiddt`.`dir` FROM `dt_ddt` JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` WHERE `dt_ddt`.`idanagrafica` = '.prepare($id_record).'
 
 UNION
-SELECT `in_interventi`.`id`, `in_interventi`.`data_richiesta`, `in_interventi`.`codice` AS numero, 0 AS numero_esterno, "Intervento" AS tipo_documento, 0 AS dir FROM `in_interventi` JOIN `in_interventi_tecnici` ON `in_interventi`.`id` = `in_interventi_tecnici`.`idintervento` WHERE `in_interventi`.`id` IN (SELECT `idintervento` FROM `in_interventi_tecnici` WHERE `idtecnico` = '.prepare($id_record).') OR `in_interventi`.`idanagrafica` = '.prepare($id_record).'
+SELECT `in_interventi`.`id`, `in_interventi`.`data_richiesta`, `in_interventi`.`codice` AS numero, 0 AS numero_esterno, "Intervento" AS tipo_documento, 0 AS dir FROM `in_interventi` LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` = `in_interventi_tecnici`.`idintervento` WHERE `in_interventi`.`id` IN (SELECT `idintervento` FROM `in_interventi_tecnici` WHERE `idtecnico` = '.prepare($id_record).') OR `in_interventi`.`idanagrafica` = '.prepare($id_record).'
 
 UNION
 SELECT `co_contratti`.`id`, `co_contratti`.`data_bozza`, `co_contratti`.`numero`, 0 AS numero_esterno , "Contratto" AS tipo_documento, 0 AS dir FROM `co_contratti` WHERE `co_contratti`.`idanagrafica` = '.prepare($id_record).'
@@ -514,7 +560,7 @@ if (!empty($elementi)) {
 </div>';
 }
 
-if (empty($records[0]['deleted_at'])) {
+if (empty($record['deleted_at'])) {
     if (!in_array($id_azienda, $tipi_anagrafica)) {
         if (!empty($elementi)) {
             echo '

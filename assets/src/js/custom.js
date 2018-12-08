@@ -49,4 +49,11 @@ $(document).ready(function () {
             scrollTop: 0
         }, 500);
     });
+    
+    $(".sidebar-toggle").click(function(){
+        setTimeout(function(){
+            window.dispatchEvent(new Event('resize'));
+        }, 350);
+    });
+    
 });

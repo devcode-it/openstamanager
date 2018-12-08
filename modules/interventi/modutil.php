@@ -87,7 +87,7 @@ function add_tecnico($idintervento, $idtecnico, $inizio, $fine, $idcontratto = n
 
     // Calcolo il totale delle ore lavorate
     $diff = date_diff(date_create($inizio), date_create($fine));
-    $ore = ($diff->h + ($diff->i / 60));
+    $ore = calcola_ore_intervento($inizio, $fine);
 
     // Leggo i costi unitari dalle tariffe se almeno un valore è stato impostato
     $rsc = $dbo->fetchArray('SELECT * FROM in_tariffe WHERE idtecnico='.prepare($idtecnico).' AND idtipointervento='.prepare($idtipointervento));
@@ -184,15 +184,17 @@ function get_costi_intervento($id_intervento)
     $rs_iva = $dbo->fetchArray('SELECT descrizione, percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva));
 
     $tecnici = $dbo->fetchArray('SELECT
-    COALESCE(SUM(
-        ROUND(prezzo_ore_consuntivo_tecnico, '.$decimals.')
+
+	COALESCE(SUM(
+        ROUND(prezzo_ore_unitario_tecnico*ore, '.$decimals.')
     ), 0) AS manodopera_costo,
     COALESCE(SUM(
-        ROUND(prezzo_ore_consuntivo, '.$decimals.')
+        ROUND(prezzo_ore_unitario*ore, '.$decimals.')
     ), 0) AS manodopera_addebito,
     COALESCE(SUM(
-        ROUND(prezzo_ore_consuntivo, '.$decimals.') - ROUND(sconto, '.$decimals.')
+        ROUND(prezzo_ore_unitario*ore, '.$decimals.') - ROUND(sconto_unitario*ore, '.$decimals.')
     ), 0) AS manodopera_scontato,
+
 
     COALESCE(SUM(
         ROUND(prezzo_dirittochiamata_tecnico, '.$decimals.')
@@ -358,7 +360,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
 
     $id_rivalsa_inps = $id_rivalsa_inps !== false ? $id_rivalsa_inps : setting('Percentuale rivalsa INPS');
     $id_ritenuta_acconto = $id_ritenuta_acconto !== false ? $id_ritenuta_acconto : setting("Percentuale ritenuta d'acconto");
-    $calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto !== false ? $calcolo_ritenuta_acconto :  setting("Metodologia calcolo ritenuta d'acconto predefinito");
+    $calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto !== false ? $calcolo_ritenuta_acconto : setting("Metodologia calcolo ritenuta d'acconto predefinito");
 
     // Leggo l'anagrafica del cliente
     $rs = $dbo->fetchArray('SELECT idanagrafica, codice, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento='.prepare($id_intervento).') AS data FROM `in_interventi` WHERE id='.prepare($id_intervento));
@@ -447,9 +449,9 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
             'tipo_sconto' => 'UNT',
             'um' => '-',
             'qta' => $rst[$i]['qta'],
-            'idrivalsainps' => $id_rivalsa_inps,
+            'idrivalsainps' => $id_rivalsa_inps ?: 0,
             'rivalsainps' => $rivalsainps,
-            'idritenutaacconto' => $id_ritenuta_acconto,
+            'idritenutaacconto' => $id_ritenuta_acconto ?: 0,
             'ritenutaacconto' => $ritenutaacconto,
             'order' => orderValue('co_righe_documenti', 'iddocumento', $id_fattura),
         ]);

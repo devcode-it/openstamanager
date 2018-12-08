@@ -59,7 +59,6 @@ class EmailManager implements ManagerInterface
             $attachments = [];
             foreach ($options['attachments'] as $attachment) {
                 $attachment = $database->selectOne('zz_files', '*', ['id' => $attachment]);
-                ;
 
                 $attachments[] = $attachment['name'];
             }

@@ -38,6 +38,10 @@ switch (post('op')) {
                 ]);
                 $id_record = $dbo->last_inserted_id();
 
+                if (isAjaxRequest()) {
+                    echo json_encode(['id' => $id_record, 'text' => $descrizione]);
+                }
+
                 flash()->info(tr('Nuova categoria documenti aggiunta!'));
             }
         }

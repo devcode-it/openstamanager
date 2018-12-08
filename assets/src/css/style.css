@@ -797,3 +797,23 @@ input.small-width {
 .select2-dropdown{
     z-index: 2000;
 }
+
+.after.input-group-addon .select2-selection{
+	 border-radius:0px 4px 4px 0px;
+	 border-left:none;
+}
+
+.before.input-group-addon .select2-selection, .before.input-group-addon{
+	 border-radius:4px 0px 0px 4px;
+	 border-right:none;
+}
+
+.hide-it-off-screen {
+    position: absolute;
+    left: -10000px;
+    top: -10000px;
+}
+
+.box-info ul > li > :last-child{
+	margin-bottom:5px;
+}

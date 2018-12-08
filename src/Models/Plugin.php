@@ -3,18 +3,22 @@
 namespace Models;
 
 use App;
-use Traits\RecordTrait;
+use Traits\ManagerTrait;
 use Traits\UploadTrait;
 use Traits\StoreTrait;
-use Illuminate\Database\Eloquent\Model;
+use Common\Model;
 use Illuminate\Database\Eloquent\Builder;
 
 class Plugin extends Model
 {
-    use RecordTrait, UploadTrait, StoreTrait;
+    use ManagerTrait, StoreTrait;
+    use UploadTrait {
+        getUploadDirectoryAttribute as protected defaultUploadDirectory;
+    }
 
     protected $table = 'zz_plugins';
     protected $main_folder = 'plugins';
+    protected $upload_identifier = 'id_plugin';
 
     protected $appends = [
         'permission',
@@ -42,7 +46,7 @@ class Plugin extends Model
      */
     public function getPermissionAttribute()
     {
-        return $this->originalModule()->permission;
+        return $this->originalModule->permission;
     }
 
     public function getOptionAttribute()
@@ -63,7 +67,7 @@ class Plugin extends Model
             return;
         }
 
-        $directory = 'modules/'.$this->originalModule()->directory.'|custom|/plugins';
+        $directory = 'modules/'.$this->originalModule->directory.'|custom|/plugins';
 
         return App::filepath($directory, $this->script);
     }
@@ -82,15 +86,29 @@ class Plugin extends Model
         return $this->getAddFile();
     }
 
+    /**
+     * Restituisce il percorso per il salvataggio degli upload.
+     *
+     * @return string
+     */
+    public function getUploadDirectoryAttribute()
+    {
+        if (!empty($this->script)) {
+            return $this->uploads_directory.'/'.basename($this->script, ".php");
+        }
+
+        return $this->defaultUploadDirectory();
+    }
+
     /* Relazioni Eloquent */
 
     public function originalModule()
     {
-        return $this->belongsTo(Module::class, 'idmodule_from')->first();
+        return $this->belongsTo(Module::class, 'idmodule_from');
     }
 
     public function module()
     {
-        return $this->belongsTo(Module::class, 'idmodule_to')->first();
+        return $this->belongsTo(Module::class, 'idmodule_to');
     }
 }

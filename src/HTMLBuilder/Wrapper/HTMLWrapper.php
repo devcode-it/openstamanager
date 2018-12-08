@@ -30,7 +30,7 @@ class HTMLWrapper implements WrapperInterface
 
             if (!empty($values['icon-before'])) {
                 $result .= '
-        <span class="input-group-addon'.(!empty($values['icon-custom']) ? ' '.$values['icon-custom'] : '').'">'.$values['icon-before'].'</span>';
+        <span class="input-group-addon before'.(!empty($values['icon-custom']) ? ' '.$values['icon-custom'] : '').'">'.$values['icon-before'].'</span>';
             }
         }
 
@@ -44,7 +44,7 @@ class HTMLWrapper implements WrapperInterface
         if (!empty($values['icon-before']) || !empty($values['icon-after'])) {
             if (!empty($values['icon-after'])) {
                 $result .= '
-                <span class="input-group-addon'.(!empty($values['icon-custom']) ? ' '.$values['icon-custom'] : '').'">'.$values['icon-after'].'</span>';
+                <span class="input-group-addon after'.(!empty($values['icon-custom']) ? ' '.$values['icon-custom'] : '').'">'.$values['icon-after'].'</span>';
             }
 
             $result .= '

@@ -5,8 +5,8 @@ include_once __DIR__.'/../../core.php';
 switch (post('op')) {
     case 'add':
         $dbo->insert('zz_documenti', [
-            'idcategoria' => post('nome'),
-            'nome' => post('idcategoria'),
+            'idcategoria' => post('idcategoria'),
+            'nome' => post('nome'),
             'data' => post('data'),
         ]);
         $id_record = $dbo->last_inserted_id();
@@ -17,8 +17,8 @@ switch (post('op')) {
 
     case 'update':
         $dbo->update('zz_documenti', [
-            'idcategoria' => post('nome'),
-            'nome' => post('idcategoria'),
+            'idcategoria' => post('idcategoria'),
+            'nome' => post('nome'),
             'data' => post('data'),
         ], ['id' => $id_record]);
 

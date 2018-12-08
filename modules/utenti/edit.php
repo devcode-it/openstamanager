@@ -15,12 +15,13 @@ echo '
 		<div class="panel-body">';
 if (!empty($utenti)) {
     echo '
+        <div class="table-responsive">
 		<table class="table table-hover table-condensed table-striped">
 		<tr>
 			<th>'.tr('Nome utente').'</th>
 			<th>'.tr('Ragione sociale').'</th>
 			<th>'.tr('Tipo di anagrafica').'</th>
-			<th>'.tr('Opzioni').'</th>
+			<th width="120">'.tr('Opzioni').'</th>
 		</tr>';
 
     foreach ($utenti as $utente) {
@@ -61,7 +62,7 @@ if (!empty($utenti)) {
 
         // Cambio password e nome utente
         echo '
-                <a href="" data-href="'.$rootdir.'/modules/'.Modules::get($id_module)['directory'].'/user.php?id_utente='.$utente['id'].'&idgruppo='.$record['id'].'" class="text-warning tip" data-toggle="modal" data-target="#bs-popup" title="Aggiorna dati utente"  data-title="Aggiorna dati utente"><i class="fa fa-2x fa-unlock-alt"></i></a>';
+                <a href="" data-href="'.$rootdir.'/modules/'.Modules::get($id_module)['directory'].'/user.php?id_utente='.$utente['id'].'&idgruppo='.$record['id'].'" class="text-warning tip" data-toggle="modal" title="Aggiorna dati utente"  data-title="Aggiorna dati utente"><i class="fa fa-2x fa-unlock-alt"></i></a>';
 
         // Disabilitazione token API, se diverso da id_utente #1 (admin)
         if ($utente['id'] != '1') {
@@ -93,13 +94,14 @@ if (!empty($utenti)) {
     }
 
     echo '
-			</table>';
+			</table>
+            </div>';
 } else {
     echo '
 			<div class=\'alert alert-info\' ><i class=\'fa fa-info-circle\'></i> '.tr('Non ci sono utenti in questo gruppo').'.</div>';
 }
 echo '
-			<a data-toggle="modal" data-target="#bs-popup" data-href="'.$rootdir.'/modules/utenti/user.php?idgruppo='.$record['id'].'" data-title="'.tr('Aggiungi utente').'" class="pull-right btn btn-primary"><i class="fa fa-plus"></i> '.tr('Aggiungi utente').'</a>
+			<a data-toggle="modal" data-href="'.$rootdir.'/modules/utenti/user.php?idgruppo='.$record['id'].'" data-title="'.tr('Aggiungi utente').'" class="pull-right btn btn-primary"><i class="fa fa-plus"></i> '.tr('Aggiungi utente').'</a>
 		</div>
 	</div>';
 
@@ -112,14 +114,15 @@ echo '
 		<div class="panel-heading">
             <h3 class="panel-title">'.tr('Permessi _GROUP_', [
                 '_GROUP_' => $record['nome'],
-            ]).((empty($record['editable'])) ? '<button class=\'btn btn-xs btn-info pull-right ask\'  data-msg="'.tr('Verranno reimpostati i permessi di default per il gruppo \''.$record['nome'].'\' ').'." data-class="btn btn-lg btn-warning" data-button="'.tr('Reimposta permessi').'" data-op="restore_permission"  >'.tr('Reimposta permessi').'</button>' : '').'</h3>
+            ]).((empty($record['editable'])) ? '<a class=\'clickable btn-xs pull-right ask\'  data-msg="'.tr('Verranno reimpostati i permessi di default per il gruppo \''.$record['nome'].'\' ').'." data-class="btn btn-lg btn-warning" data-button="'.tr('Reimposta permessi').'" data-op="restore_permission"  >'.tr('Reimposta permessi').'</a>' : '').'</h3>
 
 		</div>
 
 		<div class="panel-body">';
 if ($record['nome'] != 'Amministratori') {
     echo '
-			<table class="table table-hover table-condensed table-striped">
+			<div class="table-responsive">
+            <table class="table table-hover table-condensed table-striped">
 				<tr>
 					<th>'.tr('Modulo').'</th>
 					<th>'.tr('Permessi').'</th>
@@ -138,7 +141,8 @@ if ($record['nome'] != 'Amministratori') {
     }
 
     echo '
-			</table>';
+			</table>
+            </div>';
 } else {
     echo '
 			<div class=\'alert alert-info\' ><i class=\'fa fa-info-circle\'></i> '.tr('Gli amministratori hanno accesso a qualsiasi modulo').'.</div>';
@@ -165,7 +169,7 @@ echo '
     $(document).ready(function(){
         $("#save").addClass("hide");
     });
-
+	$("li.active.header button.btn-primary").attr("data-href", $("a.pull-right").attr("data-href") );
     function update_permissions(id, value){
         $.get(
             globals.rootdir + "/actions.php?id_module='.$id_module.'&id_record='.$id_record.'&op=update_permission&idmodulo=" + id + "&permesso=" + value,

@@ -2,7 +2,7 @@
 
 namespace Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Common\Model;
 
 class Log extends Model
 {
@@ -12,6 +12,6 @@ class Log extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'id_utente')->first();
+        return $this->belongsTo(User::class, 'id_utente');
     }
 }

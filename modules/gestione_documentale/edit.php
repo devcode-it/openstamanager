@@ -13,11 +13,6 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="panel-body">
-			<div class="pull-right">
-				<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Salva modifiche</button>
-			</div>
-			<div class="clearfix"></div>
-
 
 			<div class="row">
 
@@ -28,7 +23,7 @@ include_once __DIR__.'/../../core.php';
 
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "Categoria", "name": "idcategoria", "required": 1, "class": "", "values": "query=SELECT id, descrizione FROM zz_documenti_categorie WHERE deleted_at IS NULL", "value": "$idcategoria$", "extra": "" ]}
+					{[ "type": "select", "label": "Categoria", "name": "idcategoria", "required": 1, "class": "", "ajax-source": "categorie_documenti", "value": "$idcategoria$", "extra": "" ]}
 				</div>
 
 

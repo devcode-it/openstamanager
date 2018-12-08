@@ -10,6 +10,8 @@ if ($module['name'] == 'Ddt di vendita') {
     $dir = 'uscita';
 }
 
+$_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
+
 ?>
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
@@ -68,7 +70,7 @@ if ($module['name'] == 'Ddt di vendita') {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data'); ?>", "maxlength": 10, "name": "data", "required": 1, "value": "$data$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "$data$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -94,21 +96,11 @@ if ($module['name'] == 'Ddt di vendita') {
 
 			<div class="row">
 				<div class="col-md-3">
-					<?php
-                    if ($dir == 'entrata') {
-                        ?>
-						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
-					<?php
-                    } else {
-                        ?>
-						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "fornitori", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
-					<?php
-                    }
-                    ?>
+					{[ "type": "select", "label": "<?php echo tr('Destinatario'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede", "values": "query=SELECT id, CONCAT_WS(', ', nomesede, citta) AS descrizione FROM an_sedi WHERE (idanagrafica='$idanagrafica$' OR idanagrafica=(SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')) UNION SELECT '0' AS id, 'Sede legale' AS descrizione ORDER BY descrizione", "value": "$idsede$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Destinazione merce'); ?>", "name": "idsede", "ajax-source": "sedi",  "value": "$idsede$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 			</div>
 
@@ -116,11 +108,11 @@ if ($module['name'] == 'Ddt di vendita') {
 
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "idaspettobeni", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_aspettobeni ORDER BY descrizione ASC", "value": "$idaspettobeni$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "idaspettobeni", "value": "$idaspettobeni$",  "ajax-source": "aspetto-beni", "readonly": "<?php echo $record['flag_completato']; ?>", "icon-after": "add|<?php echo Modules::get('Aspetto beni')['id']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "placeholder": "-", "values": "query=SELECT id, descrizione FROM dt_causalet ORDER BY descrizione ASC", "value": "$idcausalet$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet",  "value": "$idcausalet$", "ajax-source": "causali", "readonly": "<?php echo $record['flag_completato']; ?>", "icon-after": "add|<?php echo Modules::get('Causali')['id']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -142,8 +134,34 @@ if ($module['name'] == 'Ddt di vendita') {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "values": "query=SELECT DISTINCT an_anagrafiche.idanagrafica AS id, an_anagrafiche.ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE an_tipianagrafiche_anagrafiche.idtipoanagrafica=(SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Vettore') ORDER BY descrizione ASC", "value": "$idvettore$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "readonly": "<?php echo $record['flag_completato']; ?>", "disabled": <?php echo intval($record['idspedizione'] == 3); ?>, "required": <?php echo intval($record['idspedizione'] != 3); ?>, "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=Vettore|<?php echo (($record['idspedizione'] != 3 and intval(!$record['flag_completato']))) ? '' : 'disabled'; ?>" ]}
 				</div>
+
+
+                 <script>
+                    $("#idspedizione").change( function(){
+                        if ($(this).val() == 3) {
+                            $("#idvettore").attr("required", false);
+                            $("#idvettore").attr("disabled", true);
+                            $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>");
+                            $("#idvettore").selectReset("- Seleziona un'opzione -");
+                            $("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", true);
+                        }else{
+                            $("#idvettore").attr("required", true);
+                            $("#idvettore").attr("disabled", false);
+                            $("label[for=idvettore]").text("<?php echo tr('Vettore'); ?>*");
+                            $("#idvettore").next().next().find("button.bound:nth-child(1)").prop("disabled", false);
+                        }
+                    });
+                    
+                    $("#idcausalet").change( function(){
+                        if ($(this).val() == 3) {
+                            $("#tipo_resa").attr("disabled", false);
+                        }else{
+                            $("#tipo_resa").attr("disabled", true);
+                        }
+                    });
+                </script>
 			</div>
 
             <div class="row">
@@ -183,18 +201,18 @@ if ($record['flag_completato'] == 0) {
     $ordini_query = 'SELECT COUNT(*) AS tot FROM or_ordini WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstatoordine IN (SELECT id FROM or_statiordine WHERE descrizione IN(\'Bozza\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')) AND idtipoordine=(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') AND or_ordini.id IN (SELECT idordine FROM or_righe_ordini WHERE or_righe_ordini.idordine = or_ordini.id AND (qta - qta_evasa) > 0)';
     $ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
     echo '
-            <a class="btn btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/ddt/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi ordine" data-target="#bs-popup">
+            <a class="btn btn-primary'.(!empty($ordini) ? '' : ' disabled').'" data-href="'.$rootdir.'/modules/ddt/add_ordine.php?id_module='.$id_module.'&id_record='.$id_record.'" data-toggle="modal" data-title="Aggiungi ordine">
                 <i class="fa fa-plus"></i> '.tr('Ordine').'
             </a>'; ?>
-            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ddt/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_articolo" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup">
+            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ddt/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_articolo" data-toggle="modal" data-title="Aggiungi articolo">
                 <i class="fa fa-plus"></i> <?php echo tr('Articolo'); ?>
             </a>
 
-            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ddt/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_riga" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup">
+            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ddt/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_riga" data-toggle="modal" data-title="Aggiungi riga">
                 <i class="fa fa-plus"></i> <?php echo tr('Riga'); ?>
             </a>
 
-            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ddt/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_descrizione" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup">
+            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ddt/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_descrizione" data-toggle="modal" data-title="Aggiungi descrizione">
                 <i class="fa fa-plus"></i> <?php echo tr('Descrizione'); ?>
             </a>
 <?php

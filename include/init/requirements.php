@@ -50,7 +50,7 @@ $settings = [
     ],
     'dom' => [
         'type' => 'ext',
-        'description' => tr("Permette la gestione dei file standard per la Fatturazione Elettronica"),
+        'description' => tr('Permette la gestione dei file standard per la Fatturazione Elettronica'),
     ],
     'soap' => [
         'type' => 'ext',
@@ -99,8 +99,9 @@ foreach ($settings as $name => $values) {
             $description = str_replace(['>', '<'], '', $description);
         }
 
-        $description = tr('Valore consigliato: _VALUE_', [
+        $description = tr('Valore consigliato: _VALUE_ (Valore attuale: _INI_)', [
           '_VALUE_' => $description,
+          '_INI_' => ini_get($name),
         ]);
     }
 
@@ -140,19 +141,6 @@ $requirements = [
     ]) => $php,
     tr('Percorsi di servizio') => $directories,
 ];
-
-// Introduzione
-echo '
-<p>'.tr('Benvenuto in _NAME_!', [
-    '_NAME_' => '<strong>OpenSTAManager</strong>',
-]).'</p>
-<p>'.tr("Prima di procedere alla configurazione e all'installazione del software, sono necessari alcuni accorgimenti per garantire il corretto funzionamento del gestionale").'.</p>
-<br>
-
-<p>'.tr('Le estensioni e impostazioni PHP possono essere personalizzate nel file di configurazione _FILE_', [
-    '_FILE_' => '<b>php.ini</b>',
-]).'.</p>
-<hr>';
 
 // Tabelle di riepilogo
 foreach ($requirements as $key => $values) {

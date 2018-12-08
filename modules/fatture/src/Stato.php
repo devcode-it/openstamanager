@@ -2,7 +2,7 @@
 
 namespace Modules\Fatture;
 
-use Base\Model;
+use Common\Model;
 
 class Stato extends Model
 {

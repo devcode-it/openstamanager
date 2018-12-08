@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Anagrafica;
+
 switch (post('op')) {
     case 'example':
 
@@ -27,41 +29,54 @@ switch (post('op')) {
     break;
 
     case 'import':
+        $sede_fields = [
+            'piva',
+            'codice_fiscale',
+            'indirizzo',
+            'indirizzo2',
+            'citta',
+            'cap',
+            'provincia',
+            'km',
+            'id_nazione',
+            'telefono',
+            'fax',
+            'cellulare',
+            'email',
+            'idzona',
+            'gaddress',
+            'lat',
+            'lng',
+        ];
 
         foreach ($data as $key => $value) {
             if (!empty($value)) {
-                $idtipoanagrafica = (array) $data[$key]['tipologia'];
+                $id_tipo_anagrafica = (array) $data[$key]['tipologia'];
                 unset($data[$key]['tipologia']);
 
-                // Insert o update
-                $insert = true;
+                $dati_anagrafica = $data[$key];
+                $dati_sede = [];
+                foreach ($sede_fields as $field) {
+                    $dati_sede[$field] = $dati_anagrafica[$field];
+                    unset($dati_anagrafica[$field]);
+                }
+
+                // Ricerca di eventuale anagrafica corrispondente
                 if (!empty($primary_key)) {
-                    $rs = $dbo->select('an_anagrafiche', $primary_key, [
-                        $primary_key => $data[$key][$primary_key],
-                    ]);
-
-                    $insert = !in_array($data[$key][$primary_key], $rs[0]);
+                    $anagrafica = Anagrafica::where($primary_key, '=', $dati_anagrafica[$primary_key])->first();
                 }
 
-                // Insert
-                if ($insert) {
-                    $dbo->insert('an_anagrafiche', $data[$key]);
-
-                    // Campi extra
-                    if (count($idtipoanagrafica) > 0) {
-                        // Aggiornamento della tipologia di anagrafiche
-                        $dbo->sync('an_tipianagrafiche_anagrafiche', [
-                            'idanagrafica' => $dbo->lastInsertedID(),
-                        ], [
-                            'idtipoanagrafica' => (array) $idtipoanagrafica,
-                        ]);
-                    }
+                if (empty($anagrafica)) {
+                    $anagrafica = Anagrafica::make($dati_anagrafica['ragione_sociale']);
                 }
 
-                // Update
-                else {
-                    $dbo->update('an_anagrafiche', $data[$key], [$primary_key => $data[$key][$primary_key]]);
-                }
+                $anagrafica->fill($dati_anagrafica);
+                $anagrafica->tipologie = (array) $id_tipo_anagrafica;
+                $anagrafica->save();
+
+                $sede = $anagrafica->sedeLegale;
+                $sede->fill($dati_sede);
+                $sede->save();
 
                 unset($data[$key]);
             }
@@ -97,6 +112,10 @@ return [
         'label' => 'Indirizzo',
     ],
     [
+        'field' => 'indirizzo2',
+        'label' => 'Civico',
+    ],
+    [
         'field' => 'cap',
         'label' => 'CAP',
     ],
@@ -115,6 +134,18 @@ return [
     [
         'field' => 'codice_fiscale',
         'label' => 'Codice Fiscale',
+    ],
+    [
+        'field' => 'data_nascita',
+        'label' => 'Data di nascita',
+    ],
+    [
+        'field' => 'luogo_nascita',
+        'label' => 'Luogo di nascita',
+    ],
+    [
+        'field' => 'sesso',
+        'label' => 'Sesso',
     ],
     [
         'field' => 'piva',

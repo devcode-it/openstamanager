@@ -145,7 +145,7 @@ if (!empty($rs)) {
         <td class="text-center">';
         if ($record['flag_completato'] == 0 && empty($r['sconto_globale'])) {
             echo "
-            <form action='".$rootdir.'/editor.php?id_module='.Modules::get($name)['id'].'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
+            <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>
                 <input type='hidden' name='id_record' value='".$id_record."'>
                 <input type='hidden' name='idriga' value='".$r['id']."'>
@@ -369,17 +369,19 @@ $(document).ready(function(){
 			cursor: "move",
 			dropOnEmpty: true,
 			scroll: true,
-			start: function(event, ui) {
-				ui.item.data("start", ui.item.index());
-			},
 			update: function(event, ui) {
+                var order = "";
+                $(".table tr[data-id]").each( function(){
+                    order += ","+$(this).data("id");
+                });
+                order = order.replace(/^,/, "");
+                
 				$.post("'.$rootdir.'/actions.php", {
 					id: ui.item.data("id"),
 					id_module: '.$id_module.',
 					id_record: '.$id_record.',
 					op: "update_position",
-					start: ui.item.data("start"),
-					end: ui.item.index()
+                    order: order,
 				});
 			}
 		});

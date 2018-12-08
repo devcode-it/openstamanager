@@ -62,7 +62,7 @@ class Uploads
      */
     public static function getName($source, $data)
     {
-        $extension = strtolower(pathinfo($source)['extension']);
+        $extension = strtolower(self::fileInfo($source)['extension']);
         $ok = self::isSupportedType($extension);
 
         $directory = DOCROOT.'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
@@ -86,15 +86,17 @@ class Uploads
      */
     public static function upload($source, $data, $options = [])
     {
-        $src = $source['tmp_name'];
-        $original = $source['name'];
+        $original = isset($source['name']) ? $source['name'] : $source;
 
         $filename = self::getName($original, $data);
-
         $directory = DOCROOT.'/'.self::getDirectory($data['id_module'], $data['id_plugin']);
 
         // Creazione file fisico
-        if (!directory($directory) || !move_uploaded_file($src, $directory.'/'.$filename)) {
+        if (
+            !directory($directory) ||
+            (is_uploaded_file($source['tmp_name']) && !move_uploaded_file($source['tmp_name'], $directory.'/'.$filename)) ||
+            (is_string($source) && !copy($source, $directory.'/'.$filename))
+        ) {
             return null;
         }
 

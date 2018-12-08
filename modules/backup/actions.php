@@ -8,16 +8,16 @@ switch (filter('op')) {
     case 'getfile':
         $file = filter('file');
 
-        download($backup_dir.$file, $file);
+        download($backup_dir.'/'.$file, $file);
 
         break;
 
     case 'del':
         $file = filter('file');
 
-        delete($backup_dir.$file);
+        delete($backup_dir.'/'.$file);
 
-        if (!file_exists($backup_dir.$file)) {
+        if (!file_exists($backup_dir.'/'.$file)) {
             flash()->info(tr('Backup _FILE_ eliminato!', [
                 '_FILE_' => '"'.$file.'"',
             ]));

@@ -54,18 +54,10 @@ switch (post('op')) {
         break;
 
     case 'update':
-
-        $numero_esterno = post('numero_esterno');
-        $numero = post('numero');
-        $data = post('data');
-        $idanagrafica = post('idanagrafica');
-        $note = post('note');
-        $note_aggiuntive = post('note_aggiuntive');
         $idstatoordine = post('idstatoordine');
         $idpagamento = post('idpagamento');
         $idsede = post('idsede');
-        $idconto = post('idconto');
-        $idagente = post('idagente');
+
         $totale_imponibile = get_imponibile_ordine($id_record);
         $totale_ordine = get_totale_ordine($id_record);
 
@@ -88,22 +80,33 @@ switch (post('op')) {
         $pagamento = $rs[0]['descrizione'];
 
         // Query di aggiornamento
-        $query = 'UPDATE or_ordini SET idanagrafica='.prepare($idanagrafica).','.
-            ' numero='.prepare($numero).','.
-            ' data='.prepare($data).','.
-            ' idagente='.prepare($idagente).','.
-            ' idstatoordine='.prepare($idstatoordine).','.
-            ' idpagamento='.prepare($idpagamento).','.
-            ' idsede='.prepare($idsede).','.
-            ' numero_esterno='.prepare($numero_esterno).','.
-            ' note='.prepare($note).','.
-            ' note_aggiuntive='.prepare($note_aggiuntive).','.
-            ' idconto='.prepare($idconto).','.
-            ' idrivalsainps='.prepare($idrivalsainps).','.
-            ' idritenutaacconto='.prepare($idritenutaacconto).','.
-            ' tipo_sconto_globale='.prepare($tipo_sconto).','.
-            ' sconto_globale='.prepare($sconto).','.
-            ' bollo=0, rivalsainps=0, ritenutaacconto=0 WHERE id='.prepare($id_record);
+        $dbo->update('or_ordini', [
+            'idanagrafica' => post('idanagrafica'),
+            'data' => post('data'),
+            'numero' => post('numero'),
+            'numero_esterno' => post('numero_esterno'),
+            'note' => post('note'),
+            'note_aggiuntive' => post('note_aggiuntive'),
+
+            'idagente' => post('idagente'),
+            'idstatoordine' => $idstatoordine,
+            'idpagamento' => $idpagamento,
+            'idsede' => $idsede,
+            'idconto' => post('idconto'),
+            'idrivalsainps' => $idrivalsainps,
+            'idritenutaacconto' => $idritenutaacconto,
+
+            'sconto_globale' => $sconto,
+            'tipo_sconto_globale' => $tipo_sconto,
+
+            'bollo' => 0,
+            'rivalsainps' => 0,
+            'ritenutaacconto' => 0,
+
+            'id_documento_fe' => post('id_documento_fe'),
+            'codice_cup' => post('codice_cup'),
+            'codice_cig' => post('codice_cig'),
+        ], ['id' => $id_record]);
 
         if ($dbo->query($query)) {
             aggiorna_sconto([
@@ -139,7 +142,7 @@ switch (post('op')) {
             $idiva = post('idiva');
             $descrizione = post('descrizione');
             $qta = post('qta');
-            $prezzo_vendita = post('prezzo');
+            $prezzo = post('prezzo');
 
             // Calcolo dello sconto
             $sconto_unitario = post('sconto');
@@ -151,7 +154,7 @@ switch (post('op')) {
                 'qta' => $qta,
             ]);
 
-            add_articolo_inordine($id_record, $idarticolo, $descrizione, $idiva, $qta, post('um'), $prezzo_vendita * $qta, $sconto, $sconto_unitario, $tipo_sconto);
+            add_articolo_inordine($id_record, $idarticolo, $descrizione, $idiva, $qta, post('um'), $prezzo * $qta, $sconto, $sconto_unitario, $tipo_sconto);
 
             flash()->info(tr('Articolo aggiunto!'));
         }
@@ -349,20 +352,16 @@ switch (post('op')) {
 
         break;
 
-    case 'update_position':
-        $start = filter('start');
-        $end = filter('end');
-        $id = filter('id');
+        case 'update_position':
+            $orders = explode(',', $_POST['order']);
+            $order = 0;
 
-        if ($start > $end) {
-            $dbo->query('UPDATE `or_righe_ordini` SET `order`=`order` + 1 WHERE `order`>='.prepare($end).' AND `order`<'.prepare($start).' AND `idordine`='.prepare($id_record));
-            $dbo->query('UPDATE `or_righe_ordini` SET `order`='.prepare($end).' WHERE id='.prepare($id));
-        } elseif ($end != $start) {
-            $dbo->query('UPDATE `or_righe_ordini` SET `order`=`order` - 1 WHERE `order`>'.prepare($start).' AND `order`<='.prepare($end).' AND `idordine`='.prepare($id_record));
-            $dbo->query('UPDATE `or_righe_ordini` SET `order`='.prepare($end).' WHERE id='.prepare($id));
-        }
+            foreach ($orders as $idriga) {
+                $dbo->query('UPDATE `or_righe_ordini` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
+                ++$order;
+            }
 
-        break;
+            break;
 
     case 'ordine_da_preventivo':
 

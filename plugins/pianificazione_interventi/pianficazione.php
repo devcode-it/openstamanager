@@ -11,6 +11,7 @@ $is_add = filter('add') ? true : false;
 $contratto = $dbo->fetchOne('SELECT * FROM `co_contratti` WHERE `id` = :id', [
     ':id' => $id_parent,
 ]);
+$data_accettazione = $contratto['data_accettazione'];
 $data_conclusione = $contratto['data_conclusione'];
 $id_anagrafica = $contratto['idanagrafica'];
 
@@ -74,7 +75,7 @@ echo '
 
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "date",  "label": "'.tr('Data promemoria').'", "name": "data_richiesta", "required": 1, "value": "'.$data_richiesta.'", "readonly": '.intval(empty($is_add)).' ]}
+					{[ "type": "date",  "label": "'.tr('Data promemoria').'", "name": "data_richiesta", "required": 1, "value": "'.$data_accettazione.'", "readonly": '.intval(empty($is_add)).', "min-date": "'.$data_accettazione.'", "max-date": "'.$data_conclusione.'" ]}
 				</div>
 
 				<div class="col-md-6">
@@ -164,16 +165,21 @@ echo '
             </div-->
 
             <div class="row">
-                <div class="col-md-2">
-                    {[ "type": "number", "label": "'.tr('Intervallo').'", "name": "intervallo", "decimals": 0, "required": 1, "icon-after": "GG",  "min-value": "1"  ]}
+			
+				<div class="col-md-4">
+                    {[ "type": "checkbox", "label": "'.tr('Promemoria ciclico').'", "name": "pianifica_promemoria", "value": "0", "placeholder": "'.tr('Pianificare promemoria ciclici').'", "help": "'.tr('Pianificare ciclicamente altri promemoria identici a questo').'" ]}
                 </div>
-
-                <div class="col-md-7">
-                    {[ "type": "select", "label": "'.tr('Inizio pianificazione').'", "name": "inizio", "values": '.json_encode($pianificazione).' ]}
+				
+                <div class="col-md-2">
+                    {[ "type": "number", "label": "'.tr('Intervallo').'", "name": "intervallo", "decimals": 0, "required": 1, "icon-after": "GG",  "min-value": "1", "maxlength": "3", "disabled": "1"  ]}
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "date", "label": "'.tr('Fine pianificazione').'", "help": "'.tr('Data conclusione contratto').'", "name": "data_conclusione", "id": "data_conclusione_", "extra": "readonly", "value": "'.$data_conclusione.'"  ]}
+                    {[ "type": "date", "label": "'.tr('Inizio pianificazione').'", "help": "'.tr('Intervallo compreso dalla data accettazione contratto fino alla data di conclusione').'", "name": "data_inizio", "value": "'.$data_accettazione.'", "disabled": "1", "min-date": "'.$data_accettazione.'", "max-date": "'.$data_conclusione.'" ]}
+                </div>
+				
+                <div class="col-md-3">
+                    {[ "type": "date", "label": "'.tr('Fine pianificazione').'", "help": "'.tr('Data conclusione contratto').'", "name": "data_conclusione", "extra": "readonly", "value": "'.$data_conclusione.'" ]}
                 </div>
             </div>
 
@@ -191,7 +197,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "'.tr("Pianifica anche l'intervento").'", "name": "pianifica_intervento", "value": "0", "placeholder": "'.tr("Pianificare già l'intervento").'" ]}
+                    {[ "type": "checkbox", "label": "'.tr("Pianifica anche l'intervento").'", "name": "pianifica_intervento", "value": "0", "placeholder": "'.tr("Pianificare già l'intervento").'", "disabled": "1" ]}
                 </div>
 
                 <div class="col-md-4">
@@ -216,7 +222,7 @@ echo '
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> '.tr('Pianifica').'</button>
+			<button type="submit" class="btn btn-primary" '.(empty($is_add) ? 'disabled' : '').' ><i class="fa fa-plus"></i> '.tr('Pianifica').'</button>
 		</div>
 	</div>
 </form>';
@@ -242,6 +248,32 @@ echo '
                 $("#bs-popup .btn-primary").hide();
             }
         });
+		
+		
+		$("#pianifica_promemoria").click(function() {
+            if ($(this).is(":checked")){
+                $("#intervallo").removeAttr("disabled");
+                $("#data_inizio").removeAttr("disabled");
+				$("#pianifica_intervento").removeAttr("disabled");
+				
+				$("#bs-popup .btn-primary").removeAttr("disabled");
+            } else {
+                $("#intervallo").prop("disabled", true);
+                $("#data_inizio").prop("disabled", true);
+				$("#pianifica_intervento").prop("checked", false);
+				$("#pianifica_intervento").prop("disabled", true);
+				$("#bs-popup .btn-primary").prop("disabled", true);
+				
+				$("#idtecnico").prop("disabled", true);
+                $("#idtecnico").removeAttr("required");
+                $("#orario_inizio").prop("disabled", true);
+                $("#orario_fine").prop("disabled", true);
+                $("#orario_inizio").removeAttr("required");
+                $("#orario_fine").removeAttr("required");
+				
+            }
+        });
+		
 
         $("#pianifica_intervento").click(function() {
             if ($(this).is(":checked")){

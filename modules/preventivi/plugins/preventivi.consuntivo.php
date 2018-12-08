@@ -43,7 +43,7 @@ if (!empty($rsi)) {
     // Tabella con i dati
     foreach ($rsi as $int) {
         $int = array_merge($int, get_costi_intervento($int['id']));
-        $totale_stato[$int['idstatointervento']] = sum($totale_stato[$int['idstatointervento']], $int['totale']);
+        $totale_stato[$int['idstatointervento']] = sum($totale_stato[$int['idstatointervento']], $int['totale_scontato']);
 
         // Riga intervento singolo
         echo '
@@ -271,13 +271,13 @@ if (!empty($rsi)) {
 /*
     Bilancio del preventivo
 */
-$diff = sum($budget, -$totale_addebito);
+$diff = sum($budget, -$totale);
 
 echo '
 <div class="well text-center">
     <br><span><big>
         <b>'.tr('Rapporto budget/spesa').':<br>';
-if ($budget > $totale) {
+if ($diff > 0) {
     echo '
         <span class="text-success"><big>+'.Translator::numberToLocale($diff).' &euro;</big></span>';
 } elseif ($diff < 0) {

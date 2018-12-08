@@ -9,16 +9,12 @@ echo '
 	<input type="hidden" name="op" value="addsede">
 
 	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Nome sede').'", "name": "nomesede", "required": 1 ]}
 		</div>
 
-		<div class="col-md-4">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "indirizzo", "required": 0 ]}
-		</div>
-
-		<div class="col-md-4">
-			{[ "type": "text", "label": "'.tr('Indirizzo2').'", "name": "indirizzo2" ]}
 		</div>
 	</div>
 
@@ -66,6 +62,4 @@ echo '
 			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
 		</div>
 	</div>
-</form>
-
-<script src="'.$rootdir.'/lib/init.js"></script>';
+</form>';

@@ -4,7 +4,7 @@ namespace Models;
 
 use Traits\PathTrait;
 use Traits\StoreTrait;
-use Illuminate\Database\Eloquent\Model;
+use Common\Model;
 
 class PrintTemplate extends Model
 {
@@ -26,6 +26,6 @@ class PrintTemplate extends Model
 
     public function module()
     {
-        return $this->belongsTo(Module::class, 'id_module')->first();
+        return $this->belongsTo(Module::class, 'id_module');
     }
 }

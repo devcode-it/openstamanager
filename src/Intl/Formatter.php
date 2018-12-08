@@ -40,6 +40,8 @@ class Formatter
     {
         if (class_exists('NumberFormatter')) {
             $this->numberFormatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+
+            $this->numberFormatter->setAttribute(NumberFormatter::ROUNDING_MODE, NumberFormatter::ROUND_HALFUP);
         } else {
             $this->numberFormatter = $number;
         }
@@ -148,19 +150,19 @@ class Formatter
      */
     public function parseNumber($value)
     {
+        // Controllo sull'effettiva natura del numero
         $sign = null;
         if ($value[0] == '+' || $value[0] == '-') {
             $sign = $value[0];
             $value = substr($value, 1);
         }
 
-        // Controllo sull'effettiva natura del numero
         $number = str_replace(array_values($this->getNumberSeparators()), '', $value);
 
         $pieces = explode($this->getNumberSeparators()['decimals'], $value);
         $integer = str_replace(array_values($this->getNumberSeparators()), '', $pieces[0]);
 
-        if (!ctype_digit($number) || (strlen($integer) != strlen((int) $integer))) {
+        if (!ctype_digit($number) || (strlen($integer) != strlen((int) $integer)) || is_numeric($value)) {
             return false;
         }
 

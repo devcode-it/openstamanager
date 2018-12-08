@@ -4,16 +4,35 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
 
-$id_azienda = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Azienda'")[0]['idtipoanagrafica'];
-$id_cliente = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Cliente'")[0]['idtipoanagrafica'];
-$id_fornitore = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Fornitore'")[0]['idtipoanagrafica'];
-$id_tecnico = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Tecnico'")[0]['idtipoanagrafica'];
-
 switch (post('op')) {
     case 'update':
+        // Informazioni sulla sede
+        $sede = $anagrafica->sedeLegale;
+        $sede->indirizzo = post('indirizzo');
+        $sede->indirizzo2 = post('indirizzo2');
+        $sede->citta = post('citta');
+        $sede->cap = post('cap');
+        $sede->provincia = post('provincia');
+        $sede->km = post('km');
+        $sede->id_nazione = post('id_nazione') ?: null;
+        $sede->gaddress = post('gaddress');
+        $sede->lat = post('lat');
+        $sede->lng = post('lng');
+        $sede->telefono = post('telefono');
+        $sede->cellulare = post('cellulare');
+        $sede->fax = post('fax');
+        $sede->idzona = post('idzona');
+        $sede->email = post('email');
+
+        $sede->save();
+
         // Informazioni sull'anagrafica
         $anagrafica->codice = post('codice');
+        $anagrafica->tipo = post('tipo');
+        $anagrafica->codice_destinatario = post('codice_destinatario');
         $anagrafica->ragione_sociale = post('ragione_sociale');
+        $anagrafica->partita_iva = post('piva');
+        $anagrafica->codice_fiscale = post('codice_fiscale');
         $anagrafica->tipo = post('tipo');
         $anagrafica->data_nascita = post('data_nascita');
         $anagrafica->luogo_nascita = post('luogo_nascita');
@@ -55,41 +74,32 @@ switch (post('op')) {
         $anagrafica->id_ritenuta_acconto_acquisti = post('id_ritenuta_acconto_acquisti');
         $anagrafica->id_ritenuta_acconto_vendite = post('id_ritenuta_acconto_vendite');
 
-        $anagrafica->updateTipologie((array) post('idtipoanagrafica'));
+        $anagrafica->tipologie = (array) post('idtipoanagrafica');
 
         $anagrafica->save();
-
-        // Informazioni sulla sede
-        $sede = $anagrafica->sedeLegale();
-        $sede->partita_iva = post('piva');
-        $sede->codice_fiscale = post('codice_fiscale');
-        $sede->indirizzo = post('indirizzo');
-        $sede->indirizzo2 = post('indirizzo2');
-        $sede->citta = post('citta');
-        $sede->cap = post('cap');
-        $sede->provincia = post('provincia');
-        $sede->km = post('km');
-        $sede->id_nazione = post('id_nazione') ?: null;
-        $sede->gaddress = post('gaddress');
-        $sede->lat = post('lat');
-        $sede->lng = post('lng');
-        $sede->telefono = post('telefono');
-        $sede->cellulare = post('cellulare');
-        $sede->fax = post('fax');
-        $sede->idzona = post('idzona');
-        $sede->email = post('email');
-
-        $sede->save();
 
         flash()->info(str_replace('_NAME_', '"'.post('ragione_sociale').'"', "Informazioni per l'anagrafica _NAME_ salvate correttamente!"));
 
         // Validazione della Partita IVA
         $partita_iva = $anagrafica->partita_iva;
+        $partita_iva = strlen($partita_iva) == 11 ? $anagrafica->nazione->iso2.$partita_iva : $partita_iva;
+
         $check_vat_number = Validate::isValidVatNumber($partita_iva);
         if (empty($check_vat_number)) {
-            flash()->error(tr('Attenzione: la partita IVA _IVA_ sembra non essere valida', [
+            flash()->warning(tr('Attenzione: la partita IVA _IVA_ sembra non essere valida. Per conferma il servizio <a target="_blank" href="https://telematici.agenziaentrate.gov.it/VerificaPIVA/Scegli.do?parameter=verificaPiva">Verifica partita iva</a> del sito dell\'agenzia delle entrate.', [
                 '_IVA_' => $partita_iva,
             ]));
+        }
+
+        // Validazione del Codice Fiscale, solo per anagrafiche Private e Aziende, ignoro controllo se codice fiscale e settato uguale alla p.iva
+        $codice_fiscale = $anagrafica->codice_fiscale;
+        if ($anagrafica->tipo != 'Ente pubblico' and $codice_fiscale != $partita_iva) {
+            $check_codice_fiscale = Validate::isValidTaxCode($codice_fiscale);
+            if (empty($check_codice_fiscale)) {
+                flash()->warning(tr('Attenzione: il codice fiscale _COD_ sembra non essere valido', [
+                    '_COD_' => $codice_fiscale,
+                ]));
+            }
         }
 
         // Aggiorno il codice anagrafica se non è già presente, altrimenti lo ignoro

@@ -144,7 +144,7 @@ echo '
         // Autocompletamento destinatario
         if (!empty($variables['id_anagrafica'])) {
             echo '
-		$(document).load(globals.rootdir + "/ajax_complete.php?module=Anagrafiche&op=get_email&id_anagrafica='.$variables['id_anagrafica'].($template['name'] == 'Fattura Elettronica' ? '&type=pec' : '').'", function(response) {
+		$(document).load(globals.rootdir + "/ajax_complete.php?module=Anagrafiche&op=get_email&id_anagrafica='.$variables['id_anagrafica'].(($smtp['pec']) ? '&type=pec' : '').'", function(response) {
             emails = JSON.parse(response);
 
             $(".destinatari").each(function(){

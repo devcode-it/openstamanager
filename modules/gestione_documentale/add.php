@@ -7,15 +7,16 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="backto" value="record-edit">
 
 	<div class='row'>
-		<div class="col-md-6">
+		<div class="col-md-12">
 			{[ "type": "text", "label": "Nome", "name": "nome", "required": 1, "class": "", "value": "", "extra": "" ]}
 		</div>
-
-		<div class="col-md-3">
-			{[ "type": "select", "label": "Categoria", "name": "idcategoria", "required": 1, "class": "", "values": "query=SELECT id, descrizione FROM zz_documenti_categorie WHERE deleted_at IS NULL", "value": "", "extra": "" ]}
+	</div>
+	<div class='row'>
+		<div class="col-md-6">
+			{[ "type": "select", "label": "Categoria", "name": "idcategoria", "required": 1, "class": "", "ajax-source": "categorie_documenti" , "value": "", "extra": "", "icon-after": "add|<?php echo Modules::get('Categorie documenti')['id']; ?>"  ]}
 		</div>
 
-		<div class="col-md-3">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "Data", "name": "data", "required": 1, "class": "datepicker text-center", "value": "", "extra": "" ]}
 		</div>
 	</div>

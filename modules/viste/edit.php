@@ -217,15 +217,15 @@ if (!empty($options) && $options != 'custom') {
 		<div class="col-md-3">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					<h3 class="panel-title">'.tr('Ordine di visualizzazione').'</h3>
+					<h3 class="panel-title">'.tr('Ordine di visualizzazione').' <span class="tip pull-right" title="'.tr('Trascina per ordinare le colonne').'."><i class="fa fa-question-circle-o"></i></span></h3>
 				</div>
 
 				<div class="panel-body sortable">';
 
     foreach ($fields as $field) {
         echo '
-            <p data-id="'.$field['id'].'">
-                <i class="fa fa-sort"></i>
+            <p class="clickable" data-id="'.$field['id'].'">
+                <i class="fa fa-sort" ></i>
                 ';
         if ($field['visible']) {
             echo '<strong class="text-success">'.$field['name'].'</strong>';
@@ -499,24 +499,27 @@ $(document).ready(function(){
 			cursor: "move",
 			dropOnEmpty: true,
 			scroll: true,
-			start: function(event, ui) {
-				ui.item.data("start", ui.item.index());
-			},
 			update: function(event, ui) {
-				$.get("'.$rootdir.'/actions.php", {
+				
+				var order = "";
+                $("div.panel-body.sortable  p[data-id]").each( function(){
+                    order += ","+$(this).data("id");
+                });
+				
+                order = order.replace(/^,/, "");
+				
+				$.post("'.$rootdir.'/actions.php", {
 					id: ui.item.data("id"),
 					id_module: '.$id_module.',
 					id_record: '.$id_record.',
 					op: "update_position",
-					start: ui.item.data("start"),
-					end: ui.item.index()
+					order: order,
 				});
 			}
 		});
 	});
 });
 </script>';
+    // Fix apertura non corrisposta di un tag div
+    echo '</div>';
 }
-
-// Fix apertura non corrisposta di un tag div
-echo '</div>';

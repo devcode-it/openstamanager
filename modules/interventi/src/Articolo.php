@@ -3,7 +3,7 @@
 namespace Modules\Interventi;
 
 use Modules\Articoli\Articolo as Original;
-use Base\Article;
+use Common\Article;
 
 class Articolo extends Article
 {
@@ -27,6 +27,7 @@ class Articolo extends Article
 
         $model->prezzo_acquisto = $articolo->prezzo_acquisto;
         $model->prezzo_vendita = $articolo->prezzo_vendita;
+        $model->desc_iva = '';
 
         $model->save();
 
@@ -35,11 +36,15 @@ class Articolo extends Article
 
     public function movimenta($qta)
     {
-        $articolo = $this->articolo()->first();
+        $articolo = $this->articolo;
+        $id_automezzo = $this->intervento->idautomezzo;
+
+        $dbo = database();
+        $automezzo_carico = $dbo->fetchNum('SELECT qta FROM mg_articoli_automezzi WHERE qta > 0 AND idarticolo = '.prepare($articolo->id).' AND idautomezzo = '.prepare($id_automezzo)) != 0;
 
         // Movimento l'articolo
-        if (!empty($this->idautomezzo)) {
-            $rs = $dbo->fetchArray("SELECT CONCAT_WS(' - ', nome, targa) AS nome FROM dt_automezzi WHERE id=".prepare($this->idautomezzo));
+        if (!empty($id_automezzo) && $automezzo_carico) {
+            $rs = $dbo->fetchArray("SELECT CONCAT_WS(' - ', nome, targa) AS nome FROM dt_automezzi WHERE id=".prepare($id_automezzo));
             $nome = $rs[0]['nome'];
 
             $descrizione = ($qta < 0) ? tr("Carico sull'automezzo _NAME_", [
@@ -48,15 +53,15 @@ class Articolo extends Article
                 '_NAME_' => $nome,
             ]);
 
-            $dbo->query('UPDATE mg_articoli_automezzi SET qta = qta + '.$qta.' WHERE idarticolo = '.prepare($articolo->id).' AND idautomezzo = '.prepare($this->idautomezzo));
+            $dbo->query('UPDATE mg_articoli_automezzi SET qta = qta - '.$qta.' WHERE idarticolo = '.prepare($articolo->id).' AND idautomezzo = '.prepare($id_automezzo));
             $data = date('Y-m-d');
 
             $articolo->registra(-$qta, $descrizione, $data, false, [
-                'idautomezzo' => $this->idautomezzo,
+                'idautomezzo' => $id_automezzo,
                 'idintervento' => $this->idintervento,
             ]);
         } else {
-            $intervento = $this->intervento()->first();
+            $intervento = $this->intervento;
 
             $numero = $intervento->codice;
             $data = database()->fetchOne('SELECT MAX(orario_fine) AS data FROM in_interventi_tecnici WHERE idintervento = :id_intervento', [
@@ -77,22 +82,31 @@ class Articolo extends Article
         }
     }
 
+    public function getDirection()
+    {
+        return 'entrata';
+    }
+
+    /**
+     * Effettua i conti per l'IVA indetraibile.
+     */
     public function fixIvaIndetraibile()
     {
     }
 
-    public function setCostoUnitarioAttribute($value)
+<<<<<<< HEAD
+=======
+    /**
+     * Effettua i conti per il subtotale della riga.
+     */
+    protected function fixSubtotale()
     {
-        $this->prezzo_vendita = $value;
+        $this->prezzo_vendita = $this->prezzo_unitario_vendita;
 
-        $this->fixSubtotale();
+        $this->fixIva();
     }
 
-    public function getCostoUnitarioAttribute($value)
-    {
-        return $this->prezzo_vendita;
-    }
-
+>>>>>>> 2ae57384089d87555550bf51f8419fa60ad26f2b
     public function getSubtotaleAttribute()
     {
         return $this->prezzo_vendita * $this->qta;

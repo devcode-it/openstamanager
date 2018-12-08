@@ -7,13 +7,13 @@ $module = Modules::get($id_module);
 if ($module['name'] == 'Ddt di vendita') {
     $dir = 'entrata';
 
-    $id_tipoddt = $dbo->fetchOne("SELECT id FROM dt_tipiddt WHERE descrizione='Ddt di vendita'")['id'];
+    $id_tipoddt = $dbo->fetchOne("SELECT id FROM dt_tipiddt WHERE descrizione='Ddt in uscita'")['id'];
 
     $tipo_anagrafica = tr('Cliente');
 } else {
     $dir = 'uscita';
 
-    $id_tipoddt = $dbo->fetchOne("SELECT id FROM dt_tipiddt WHERE descrizione='Ddt di acquisto'")['id'];
+    $id_tipoddt = $dbo->fetchOne("SELECT id FROM dt_tipiddt WHERE descrizione='Ddt in entrata'")['id'];
 
     $tipo_anagrafica = tr('Fornitore');
 }
@@ -31,7 +31,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : $user['idan
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "<?php echo $tipo_anagrafica; ?>", "name": "idanagrafica", "id": "idanagrafica_add", "required": 1, "ajax-source": "<?php echo $module['name'] == 'Ddt di vendita' ? 'clienti' : 'fornitori'; ?>", "value": "<?php echo $id_anagrafica; ?>", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
+			{[ "type": "select", "label": "Destinatario", "name": "idanagrafica", "id": "idanagrafica_add", "required": 1, "ajax-source": "clienti_fornitori", "icon-after": "add|<?php echo Modules::get('Anagrafiche')['id']; ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
 		</div>
 
 		<div class="col-md-4">

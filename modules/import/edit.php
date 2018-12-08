@@ -45,6 +45,7 @@ if (empty($id_record)) {
     $rows = Import::getFile($id_record, $record['id'], [
         'limit' => 10,
     ]);
+
     $count = count($rows[0]);
 
     echo '

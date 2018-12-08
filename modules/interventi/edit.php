@@ -68,9 +68,9 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
                             $idcontratto_riga = '';
                         }*/
 
-                        if (($idcontratto != '')) {
+                        if (($record['idcontratto'] != '')) {
                             echo '
-                            '.Modules::link('Contratti', $idcontratto, null, null, 'class="pull-right"');
+                            '.Modules::link('Contratti', $record['idcontratto'], null, null, 'class="pull-right"');
                         }
                     ?>
 
@@ -80,8 +80,6 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 			</div>
 		</div>
 	</div>
-
-
 
 	<!-- DATI INTERVENTO -->
 	<div class="panel panel-primary">
@@ -97,11 +95,11 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "timestamp", "label": "<?php echo tr('Data richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "$data_richiesta$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "timestamp", "label": "<?php echo tr('Data e ora richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "$data_richiesta$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "$idzona$" , "placeholder": "<?php echo tr('Nessuna zona'); ?>", "extra": "readonly" ]}
+					{[ "type": "select", "label": "<?php echo tr('Zona'); ?>", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( ' - ', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "$idzona$" , "placeholder": "<?php echo tr('Nessuna zona'); ?>", "extra": "readonly", "help":"<?php echo 'La zona viene definita automaticamente in base al cliente selezionato'; ?>." ]}
 				</div>
 
 
@@ -141,6 +139,36 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 			</div>
 		</div>
 	</div>
+
+<?php
+// Visualizzo solo se l'attività non è già collegata ad un contratto
+if (empty($record['idcontratto'])) {
+    ?>
+    <!-- Fatturazione Elettronica PA-->
+    <div class="panel panel-primary <?php echo (($record['tipo_anagrafica']) == 'Ente pubblico') ? 'show' : 'hide'; ?>" >
+        <div class="panel-heading">
+            <h3 class="panel-title"><?php echo tr('Dati appalto'); ?></h3>
+        </div>
+
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "value": "$id_documento_fe$", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+				</div>
+
+                <div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+				</div>
+
+				<div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+				</div>
+            </div>
+        </div>
+    </div>
+    <?php
+}
+?>
 
 	<!-- ORE LAVORO -->
 	<div class="panel panel-primary">
@@ -254,21 +282,23 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$", <?php echo ($record['flag_completato']) ? '"readonly": 1' : '"readonly": 0'; ?> )}
 
 <!-- EVENTUALE FIRMA GIA' EFFETTUATA -->
-<div class="text-center">
-    <?php
-    if ($record['firma_file'] == '') {
-        echo '
-    <p class="alert alert-warning"><i class="fa fa-warning"></i> '.tr('Questo intervento non è ancora stato firmato dal cliente').'.</p>';
-    } else {
-        echo '
-    <img src="'.$rootdir.'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><br>
-    <div class="alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
-        '_DATE_' => Translator::dateToLocale($record['firma_data']),
-        '_TIME_' => Translator::timeToLocale($record['firma_data']),
-        '_PERSON_' => '<b>'.$record['firma_nome'].'</b>',
-    ]).'</div>';
-    }
-    ?>
+<div class="text-center row">
+	<div class="col-md-12" >
+	    <?php
+        if ($record['firma_file'] == '') {
+            echo '
+	    <div class="alert alert-warning"><i class="fa fa-warning"></i> '.tr('Questo intervento non è ancora stato firmato dal cliente').'.</div>';
+        } else {
+            echo '
+	    <img src="'.$rootdir.'/files/interventi/'.$record['firma_file'].'" class="img-thumbnail"><div>&nbsp;</div>
+	   	<div class="col-md-6 col-md-offset-3 alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ alle _TIME_ da _PERSON_', [
+            '_DATE_' => Translator::dateToLocale($record['firma_data']),
+            '_TIME_' => Translator::timeToLocale($record['firma_data']),
+            '_PERSON_' => '<b>'.$record['firma_nome'].'</b>',
+        ]).'</div>';
+        }
+        ?>
+	</div>
 </div>
 
 <script>
@@ -320,8 +350,6 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 	});
 
 </script>
-
-<script src="<?php echo $rootdir; ?>/modules/interventi/js/interventi_helperjs.js"></script>
 
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 

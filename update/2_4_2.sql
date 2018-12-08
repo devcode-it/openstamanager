@@ -29,6 +29,11 @@ UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Categor
 ALTER TABLE `an_nazioni` ADD `name` VARCHAR(255);
 ALTER TABLE `co_documenti` ADD `codice_xml` VARCHAR(255);
 
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
+(NULL, 'Allega stampa per fattura verso Privati', '0', 'boolean', 1, 'Fatturazione Elettronica', 8),
+(NULL, 'Allega stampa per fattura verso Aziende', '0', 'boolean', 1, 'Fatturazione Elettronica', 9),
+(NULL, 'Allega stampa per fattura verso PA', '0', 'boolean', 1, 'Fatturazione Elettronica', 10);
+
 CREATE TABLE IF NOT EXISTS `fe_regime_fiscale` (
   `codice` varchar(4) NOT NULL,
   `descrizione` varchar(255) NOT NULL,
@@ -55,7 +60,7 @@ INSERT INTO `fe_regime_fiscale` (`codice`, `descrizione`) VALUES
 ('RF18','Altro'),
 ('RF19','Regime forfettario (art.1, c.54-89, L. 190/2014)');
 
-INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Regime Fiscale', '', 'query=SELECT codice AS id, descrizione FROM fe_regime_fiscale', 1, 'Generali', 19);
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Regime Fiscale', '', 'query=SELECT codice AS id, descrizione FROM fe_regime_fiscale', 1, 'Fatturazione Elettronica', 1);
 
 CREATE TABLE IF NOT EXISTS `fe_tipo_cassa` (
   `codice` varchar(4) NOT NULL,
@@ -87,7 +92,7 @@ INSERT INTO `fe_tipo_cassa` (`codice`, `descrizione`) VALUES
 ('TC21','Ente nazionale previdenza e assistenza psicologi (ENPAP)'),
 ('TC22','INPS');
 
-INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Tipo Cassa', '', 'query=SELECT codice AS id, descrizione FROM fe_tipo_cassa', 1, 'Fatturazione', 0);
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Tipo Cassa', '', 'query=SELECT codice AS id, descrizione FROM fe_tipo_cassa', 1, 'Fatturazione Elettronica', 2);
 
 CREATE TABLE IF NOT EXISTS `fe_modalita_pagamento` (
   `codice` varchar(4) NOT NULL,
@@ -119,7 +124,7 @@ INSERT INTO `fe_modalita_pagamento` (`codice`, `descrizione`) VALUES
 ('MP21','SEPA Direct Debit B2B'),
 ('MP22','Trattenuta su somme già riscosse');
 
-ALTER TABLE `co_pagamenti` ADD `codice_modalita_pagamento_fe` varchar(4) NOT NULL;
+ALTER TABLE `co_pagamenti` ADD `codice_modalita_pagamento_fe` varchar(4);
 UPDATE `co_pagamenti` SET `codice_modalita_pagamento_fe` = 'MP01' WHERE `descrizione` IN ('Rimessa diretta', 'Rimessa diretta a 30gg', 'Rimessa diretta 30gg fisso al 15', 'Contanti');
 UPDATE `co_pagamenti` SET `codice_modalita_pagamento_fe` = 'MP02' WHERE `descrizione` IN ('Assegno');
 UPDATE `co_pagamenti` SET `codice_modalita_pagamento_fe` = 'MP05' WHERE `descrizione` IN ('Bonifico 30gg d.f.', 'Bonifico 60gg d.f.', 'Bonifico 90gg d.f.', 'Bonifico 120gg d.f.', 'Bonifico 150gg d.f.', 'Bonifico 180gg d.f.', 'Bonifico 30/60gg d.f.', 'Bonifico 30/60gg d.f.', 'Bonifico 30/60/90gg d.f.', 'Bonifico 30/60/90gg d.f.', 'Bonifico 30/60/90gg d.f.', 'Bonifico 30/60/90/120gg d.f.', 'Bonifico 30/60/90/120gg d.f.', 'Bonifico 30/60/90/120gg d.f.', 'Bonifico 30/60/90/120gg d.f.', 'Bonifico 30/60/90/120/150gg d.f.', 'Bonifico 30/60/90/120/150gg d.f.', 'Bonifico 30/60/90/120/150gg d.f.', 'Bonifico 30/60/90/120/150gg d.f.', 'Bonifico 30/60/90/120/150gg d.f.', 'Bonifico 30/60/90/120/150/180gg d.f.', 'Bonifico 30/60/90/120/150/180gg d.f.', 'Bonifico 30/60/90/120/150/180gg d.f.', 'Bonifico 30/60/90/120/150/180gg d.f.', 'Bonifico 30/60/90/120/150/180gg d.f.', 'Bonifico 30/60/90/120/150/180gg d.f.', 'Bonifico 30gg d.f.f.m.', 'Bonifico 60gg d.f.f.m.', 'Bonifico 90gg d.f.f.m.', 'Bonifico 120gg d.f.f.m.', 'Bonifico 150gg d.f.f.m.', 'Bonifico 180gg d.f.f.m.', 'Bonifico 30/60gg d.f.f.m.', 'Bonifico 30/60gg d.f.f.m.', 'Bonifico 30/60/90gg d.f.f.m.', 'Bonifico 30/60/90gg d.f.f.m.', 'Bonifico 30/60/90gg d.f.f.m.', 'Bonifico 30/60/90/120gg d.f.f.m.', 'Bonifico 30/60/90/120gg d.f.f.m.', 'Bonifico 30/60/90/120gg d.f.f.m.', 'Bonifico 30/60/90/120gg d.f.f.m.', 'Bonifico 30/60/90/120/150gg d.f.f.m.', 'Bonifico 30/60/90/120/150gg d.f.f.m.', 'Bonifico 30/60/90/120/150gg d.f.f.m.', 'Bonifico 30/60/90/120/150gg d.f.f.m.', 'Bonifico 30/60/90/120/150gg d.f.f.m.', 'Bonifico 30/60/90/120/150/180gg d.f.f.m.', 'Bonifico 30/60/90/120/150/180gg d.f.f.m.', 'Bonifico 30/60/90/120/150/180gg d.f.f.m.', 'Bonifico 30/60/90/120/150/180gg d.f.f.m.', 'Bonifico 30/60/90/120/150/180gg d.f.f.m.', 'Bonifico 30/60/90/120/150/180gg d.f.f.m.', 'Bonifico bancario');
@@ -163,7 +168,7 @@ INSERT INTO `fe_natura` (`codice`, `descrizione`) VALUES
 ('N6','Inversione contabile (per le operazioni in reverse charge ovvero nei casi di autofatturazione per acquisti extra UE di servizi ovvero per importazioni di beni nei soli casi previsti)'),
 ('N7','IVA assolta in altro stato UE (vendite a distanza ex art. 40 c. 3 e 4 e art. 41 c. 1 lett. b, DL 331/93; prestazione di servizi di telecomunicazioni, tele-radiodiffusione ed elettronici ex art. 7-sexies lett. f, g, art. 74-sexies DPR 633/72)');
 
-ALTER TABLE `co_iva` ADD `codice_natura_fe` varchar(4), ADD `deleted_at` timestamp NULL DEFAULT NULL, ADD `codice` int(11), ADD `default` boolean NOT NULL DEFAULT 0, ADD FOREIGN KEY (`codice_natura_fe`) REFERENCES `fe_natura`(`codice`) ON DELETE CASCADE;
+ALTER TABLE `co_iva` ADD `codice_natura_fe` varchar(4), ADD `deleted_at` timestamp NULL DEFAULT NULL, ADD `codice` int(11), ADD `esigibilita` enum('I', 'D', 'S') NOT NULL DEFAULT 'I', ADD `default` boolean NOT NULL DEFAULT 0, ADD FOREIGN KEY (`codice_natura_fe`) REFERENCES `fe_natura`(`codice`) ON DELETE CASCADE;
 UPDATE `co_iva` SET `deleted_at` = NOW();
 
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_iva` WHERE 1=1 AND deleted_at IS NULL HAVING 2=2' WHERE `name` = 'IVA';
@@ -363,9 +368,9 @@ età svizzere che possiedono i requisiti di cui all''art. 15, c. 2 dell’Accord
 ('Y', 'Canoni corrisposti dal 1.01.2005 al 26.07.2005 da soggetti di cui al punto precedente'),
 ('Z', 'Titolo diverso dai precedenti');
 
-INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Causale ritenuta d''acconto', '', 'query=SELECT codice AS id, descrizione FROM fe_causali_pagamento_ritenuta', 1, 'Fatturazione', 0);
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Causale ritenuta d''acconto', '', 'query=SELECT codice AS id, descrizione FROM fe_causali_pagamento_ritenuta', 1, 'Fatturazione Elettronica', 3);
 
-INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Authorization ID Indice PA', '', 'string', 1, 'Generali', 0);
+INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Authorization ID Indice PA', '', 'string', 1, 'Fatturazione Elettronica', 4);
 
 ALTER TABLE `an_anagrafiche` ADD `codice_destinatario` varchar(7);
 
@@ -374,8 +379,6 @@ INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`,
 (NULL, 'Fatturazione Elettronica', 'Fatturazione Elettronica', (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita'), (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita'), 'tab', 'exportPA', 'custom'),
 (NULL, 'Fatturazione Elettronica', 'Fatturazione Elettronica', (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di vendita'), (SELECT `id` FROM `zz_modules` WHERE `name`='Fatture di acquisto'), 'tab_main', 'importPA', 'custom');
 
---INSERT INTO `zz_emails` (`id`, `id_module`, `id_smtp`, `name`, `icon`, `subject`, `reply_to`, `cc`, `bcc`, `body`, `read_notify`, `main`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 1, 'Fattura Elettronica', 'fa fa-file', 'Invio fattura numero {numero} del {data}', '', 'sdi01@pec.fatturapa.it', '', '<p>Gentile Cliente,</p>\r\n<p>inviamo in allegato la fattura numero {numero} del {data}.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0', '0');
---INSERT INTO `zz_email_print` (`id`, `id_email`, `id_print`) VALUES (NULL, (SELECT `id` FROM `zz_emails` WHERE `name` = 'Fattura Elettronica' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita')), (SELECT `id` FROM `zz_prints` WHERE `name` = 'Fattura di vendita'));
 UPDATE `zz_emails` SET `main` = 1 WHERE `name` = 'Fattura' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
 
 -- Aggiornamento zz_settings
@@ -513,7 +516,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ALTER TABLE `zz_segments` ADD `is_fiscale` boolean NOT NULL DEFAULT 1;
 
 INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`,`note`, `predefined`, `is_fiscale`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Fatture pro-forma', '1=1', 'WHR', 'PRO-###', '', 1, 0);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Fatture pro-forma', '1=1', 'WHR', 'PRO-###', '', 0, 0);
 
 -- Fix campi di ricerca
 UPDATE `zz_modules` SET `options` = "SELECT |select| FROM `zz_segments` WHERE 1=1 HAVING 2=2 ORDER BY name, id_module" WHERE `name` = 'Segmenti';
@@ -541,6 +544,7 @@ ALTER TABLE `zz_modules` CHANGE `default` `default` boolean NOT NULL DEFAULT 0;
 
 ALTER TABLE `zz_segments` CHANGE `predefined` `predefined` boolean NOT NULL DEFAULT 0;
 
+<<<<<<< HEAD
 -- Prezzo di acquisto su righe fatture/preventivi
 ALTER TABLE `co_righe_documenti` ADD `subtotale_acquisto` DECIMAL(12,4) NOT NULL AFTER `descrizione`;
 ALTER TABLE `co_righe_preventivi` ADD `subtotale_acquisto` DECIMAL(12,4) NOT NULL AFTER `descrizione`;
@@ -548,3 +552,115 @@ ALTER TABLE `co_righe_preventivi` ADD `subtotale_acquisto` DECIMAL(12,4) NOT NUL
 -- Guadagno su righe fatture/preventivi
 ALTER TABLE `co_righe_documenti` ADD `guadagno` DECIMAL(12,4) NOT NULL AFTER `subtotale`;
 ALTER TABLE `co_righe_preventivi` ADD `guadagno` DECIMAL(12,4) NOT NULL AFTER `subtotale`;
+=======
+-- Fix colore per fatture senza numero esterno
+UPDATE `zz_views` SET `query` = 'IF((SELECT COUNT(t.numero_esterno) FROM co_documenti AS t WHERE t.numero_esterno = co_documenti.numero_esterno AND t.numero_esterno != '''' AND t.id_segment = co_documenti.id_segment AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = ''entrata'') AND t.data >= ''|period_start|'' AND t.data <= ''|period_end|'') > 1, ''red'', '''')' WHERE  `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND `name` = '_bg_';
+
+-- Campi per la gestione revisioni
+ALTER TABLE `co_preventivi`  ADD `master_revision` INT NOT NULL  AFTER `tipo_sconto_globale`,  ADD `default_revision` TINYINT(1) NOT NULL  AFTER `master_revision`;
+
+-- Plugin revisioni
+INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Revisioni', 'Revisioni', 13, 13, 'tab', '', 1, 0, 0, '', '', NULL, 'custom', 'revisioni', '');
+
+-- Modifica modulo preventivi per revisioni
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_preventivi` WHERE 1=1 AND default_revision=1 HAVING 2=2 AND ((\'|period_start|\' >= `data_bozza` AND \'|period_start|\' <= `data_conclusione`) OR (\'|period_end|\' >= `data_bozza` AND \'|period_end|\' <= `data_conclusione`) OR (`data_bozza` >= \'|period_start|\' AND `data_bozza` <= \'|period_end|\') OR (`data_conclusione` >= \'|period_start|\' AND `data_conclusione` <= \'|period_end|\') OR (`data_bozza` >= \'|period_start|\' AND `data_conclusione` = \'0000-00-00\')) ORDER BY `id` DESC' WHERE `zz_modules`.`name` = 'Preventivi';
+
+-- Mi assicuro che non ci siano righe del preventivo collegate a preventivi non più esistenti
+DELETE FROM co_righe_preventivi  WHERE  idpreventivo NOT IN (SELECT id FROM co_preventivi);
+
+-- Chiave secondaria per le righe del preventivo
+ALTER TABLE `co_righe_preventivi` ADD FOREIGN KEY (`idpreventivo`) REFERENCES `co_preventivi`(`id`) ON DELETE CASCADE;
+
+-- Tabella categorie
+CREATE TABLE IF NOT EXISTS `my_impianti_categorie` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(255) NOT NULL,
+  `colore` varchar(255) NOT NULL,
+  `nota` varchar(1000) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- Categoria impianto
+ALTER TABLE `my_impianti` ADD `id_categoria` INT(11) AFTER `idanagrafica`, ADD FOREIGN KEY (`id_categoria`) REFERENCES `my_impianti_categorie`(`id`) ON DELETE SET NULL;
+
+-- Rinominato Categorie in Categorie articoli
+UPDATE `zz_modules` SET `name` = 'Categorie articoli', `title` = 'Categorie articoli', `directory` = 'categorie_articoli' WHERE `zz_modules`.`name` = 'Categorie';
+
+-- Modulo Categorie impianti
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Categorie impianti', 'Categorie impianti', 'categorie_impianti', 'SELECT |select| FROM `my_impianti_categorie` WHERE 1=1 HAVING 2=2', '', 'fa fa-angle-right', '2.4.2', '2.4.2', '1', NULL, '1', '1');
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Categorie impianti' AND `t2`.`name` = 'MyImpianti') SET `t1`.`parent` = `t2`.`id`;
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `visible`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie impianti'), 'id', 'id', 1, 1, 0, 0, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Categorie impianti'), 'Nome', 'nome', 2, 1, 0, 1, 1);
+
+-- Per i preventivi già in essere imposto master_revision = id e default_revision = 1
+UPDATE `co_preventivi` SET `master_revision` = `id`, `default_revision` = 1;
+
+-- Colonna natura iva e codice iva
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'IVA'), 'Natura', 'codice_natura_fe', 2, 1, 0, 0, 1, 0, 1),
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'IVA'), 'Codice', 'codice', 1, 1, 0, 0, 1, 0, 1);
+
+-- Colonna codice modalità pagamento
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
+(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Pagamenti'), 'Codice pagamento', 'CONCAT(codice_modalita_pagamento_fe, '' - '', (SELECT descrizione FROM fe_modalita_pagamento WHERE codice = codice_modalita_pagamento_fe) )', 2, 1, 0, 0, 1, 0, 1);
+
+-- Fix plugin "Impianti del cliente"
+UPDATE `zz_plugins` SET `options` = ' { "main_query": [ { "type": "table", "fields": "Matricola, Nome, Data, Descrizione", "query": "SELECT id, (SELECT `id` FROM `zz_modules` WHERE `name` = \'MyImpianti\') AS _link_module_, id AS _link_record_, matricola AS Matricola, nome AS Nome, DATE_FORMAT(data, \'%d/%m/%Y\') AS Data, descrizione AS Descrizione FROM my_impianti WHERE idanagrafica=|id_parent| HAVING 2=2 ORDER BY id DESC"} ]}' WHERE `zz_plugins`.`name` = 'Impianti del cliente';
+
+-- Fix plugin "Ddt del cliente"
+UPDATE `zz_plugins` SET `options` = ' { "main_query": [ { "type": "table", "fields": "Numero, Data, Descrizione, Qtà", "query": "SELECT dt_ddt.id, (SELECT `id` FROM `zz_modules` WHERE `name` = \'Ddt di vendita\') AS _link_module_, dt_ddt.id AS _link_record_, IF(dt_ddt.numero_esterno = \'\', dt_ddt.numero, dt_ddt.numero_esterno) AS Numero, DATE_FORMAT(dt_ddt.data, \'%d/%m/%Y\') AS Data, dt_righe_ddt.descrizione AS `Descrizione`, REPLACE(REPLACE(REPLACE(FORMAT(dt_righe_ddt.qta, 2), \',\', \'#\'), \'.\', \',\'), \'#\', \'.\') AS `Qtà` FROM dt_ddt LEFT JOIN dt_righe_ddt ON dt_ddt.id=dt_righe_ddt.idddt WHERE dt_ddt.idanagrafica=|id_parent| GROUP BY dt_ddt.id HAVING 2=2 ORDER BY dt_ddt.id DESC"} ]}' WHERE `zz_plugins`.`name` = 'Ddt del cliente';
+
+-- Aggiunto codice cig e codice cup per contratti e interventi
+ALTER TABLE `co_contratti` ADD `codice_cig` VARCHAR(15) AFTER `tipo_sconto_globale`, ADD `codice_cup` VARCHAR(15) AFTER `codice_cig`, ADD `id_documento_fe` VARCHAR(20) AFTER `codice_cup`;
+ALTER TABLE `in_interventi` ADD `codice_cig` VARCHAR(15) AFTER `tipo_sconto_globale`, ADD `codice_cup` VARCHAR(15) AFTER `codice_cig`, ADD `id_documento_fe` VARCHAR(20) AFTER `codice_cup`;
+
+-- Aggiunta data e ora generazione fattura elettronica
+ALTER TABLE `co_documenti` ADD `xml_generated_at` TIMESTAMP NULL AFTER `codice_xml`;
+
+-- Colonna nella vista fatture per indicare se è stato generato o meno il file xml
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'icon_FE', 'IF(xml_generated_at IS NOT NULL, \'fa fa-file-code-o text-success\', \'\')', 10, 1, 0, 0, 1, 0, 0),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'icon_title_FE', 'IF(xml_generated_at IS NOT NULL, \'Generata\', \'\')', 10, 1, 0, 0, 0, 0, 0);
+
+-- Colonna nella vista fatture per indicare se è stata inviata o meno la mail
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'icon_Inviata', 'IF((SELECT GROUP_CONCAT(DISTINCT`name` SEPARATOR \'\\n \') FROM zz_operations INNER JOIN zz_emails ON zz_operations.id_email = zz_emails.id WHERE zz_operations.id_module = (SELECT id FROM zz_modules WHERE `name` = \'Fatture di vendita\') AND op = \'send-email\' AND id_record = co_documenti.id GROUP BY id_email) IS NOT NULL, \'fa fa-envelope text-success\', \'\')', 11, 1, 0, 0, 1, 0, 0),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'icon_title_Inviata', '(SELECT GROUP_CONCAT(DISTINCT`name` SEPARATOR \'\n \') FROM zz_operations INNER JOIN zz_emails ON zz_operations.id_email = zz_emails.id WHERE zz_operations.id_module = (SELECT id FROM zz_modules WHERE `name` = \'Fatture di vendita\') AND op = \'send-email\' AND id_record = co_documenti.id GROUP BY id_email)', 12, 1, 0, 0, 0, 0, 0);
+
+
+-- Colonna codice destinatario
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default` ) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche'), 'Codice destinatario', 'codice_destinatario', 4, 1, 0, 0, NULL, NULL, 0, 0, 0);
+
+-- Aggiungo descrizione per filtri
+UPDATE `zz_group_module` SET `name` = 'Mostra agli agenti solo le anagrafiche di cui sono agenti' WHERE `zz_group_module`.`idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Agenti') AND  `zz_group_module`.`idmodule` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche');
+
+UPDATE `zz_group_module` SET `name` = 'Mostra ai tecnici solo le anagrafiche in cui sono coinvolti con delle attività' WHERE `zz_group_module`.`idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Tecnici') AND  `zz_group_module`.`idmodule` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche');
+
+UPDATE `zz_group_module` SET `name` = 'Mostra ai clienti solo la propria anagrafica' WHERE `zz_group_module`.`idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti') AND  `zz_group_module`.`idmodule` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche');
+
+UPDATE `zz_group_module` SET `name` = 'Mostra ai clienti solo le proprie fatture' WHERE `zz_group_module`.`idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti') AND  `zz_group_module`.`idmodule` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+
+UPDATE `zz_group_module` SET `name` = 'Mostra ai clienti solo le proprie fatture' WHERE `zz_group_module`.`idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti') AND  `zz_group_module`.`idmodule` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+
+UPDATE `zz_group_module` SET `name` = 'Mostra agli agenti solo la prima nota delle anagrafiche di cui sono agenti' WHERE `zz_group_module`.`idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Agenti') AND  `zz_group_module`.`idmodule` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota');
+
+UPDATE `zz_group_module` SET `name` = 'Mostra ai clienti solo i propri impianti' WHERE `zz_group_module`.`idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti') AND  `zz_group_module`.`idmodule` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti');
+
+
+-- Importazione dell'account email PEC
+INSERT INTO `zz_smtps` (`id`, `name`, `note`, `server`, `port`, `username`, `password`, `from_name`, `from_address`, `encryption`, `pec`, `predefined`) VALUES (NULL, 'PEC aziendale', '', '', '', '', '', '', '', '', '1', '0');
+
+INSERT INTO `zz_emails` (`id`, `id_module`, `id_smtp`, `name`, `icon`, `subject`, `reply_to`, `cc`, `bcc`, `body`, `read_notify`, `predefined`) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), (SELECT `id` FROM `zz_smtps` WHERE `pec` = 1 LIMIT 0,1), 'PEC', 'fa fa-file', 'Invio fattura numero {numero} del {data}', '', 'sdi01@pec.fatturapa.it', '', '<p>Gentile Cliente,</p>\r\n<p>inviamo in allegato la fattura numero {numero} del {data}.</p>\r\n<p>&nbsp;</p>\r\n<p>Distinti saluti</p>\r\n', '0', '0');
+
+INSERT INTO `zz_email_print` (`id`, `id_email`, `id_print`) VALUES (NULL, (SELECT `id` FROM `zz_emails` WHERE `name` = 'PEC' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita')), (SELECT `id` FROM `zz_prints` WHERE `name` = 'Fattura di vendita'));
+
+-- Ridenominazione "Ddt di vendita" in "Ddt in uscita"
+UPDATE `zz_modules` SET `title`='Ddt in uscita' WHERE `name`='Ddt di vendita';
+UPDATE `dt_tipiddt` SET `descrizione`='Ddt in uscita' WHERE `descrizione`='Ddt di vendita';
+
+-- Ridenominazione "Ddt di acquisto" in "Ddt in ingresso"
+UPDATE `zz_modules` SET `title`='Ddt in entrata' WHERE `name`='Ddt di acquisto';
+UPDATE `dt_tipiddt` SET `descrizione`='Ddt in entrata' WHERE `descrizione`='Ddt di acquisto';
+>>>>>>> 2ae57384089d87555550bf51f8419fa60ad26f2b

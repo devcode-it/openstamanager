@@ -33,36 +33,38 @@ echo '
 
     if (!empty($c_piva)) {
         echo '
-    			<td colspan=2>
-    				'.tr('P.Iva').': <b>'.strtoupper($c_piva).'</b>
-    			</td>
-    		</tr>';
+				<td colspan=2>
+					'.tr('P.Iva').': <b>'.strtoupper($c_piva).'</b>
+				</td>';
     } else {
         echo '
     			<td colspan=2>
     				'.tr('C.F.').': <b>'.strtoupper($c_codicefiscale).'</b>
-    			</td>
-    		</tr>';
+    			</td>';
     }
 
-// riga 2
-echo '
-    <tr>
-        <td colspan="4">
-            '.((!empty($c_indirizzo)) ? tr('Via').': <b>'.$c_indirizzo.'</b>' : '').'
-			'.((!empty($c_cap)) ? tr('CAP').': <b>'.$c_cap.'</b>' : '').'
-			'.((!empty($c_citta)) ? tr('Città').': <b>'.$c_citta.'</b>' : '').'
-			'.((!empty($c_provincia)) ? tr('Provincia').': <b>'.strtoupper($c_provincia).'</b>' : '').'
-        </td>
-    </tr>';
+    echo '</tr>';
+
+    //Indirizzo
+    if (!empty($c_indirizzo) or !empty($c_cap) or !empty($c_citta) or !empty($c_provincia)) {
+        echo '
+			<tr>
+				<td colspan="4">
+					'.((!empty($c_indirizzo)) ? tr('Via').': <b>'.$c_indirizzo.'</b>' : '').'
+					'.((!empty($c_cap)) ? tr('CAP').': <b>'.$c_cap.'</b>' : '').'
+					'.((!empty($c_citta)) ? tr('Città').': <b>'.$c_citta.'</b>' : '').'
+					'.((!empty($c_provincia)) ? tr('Provincia').': <b>'.strtoupper($c_provincia).'</b>' : '').'
+				</td>
+			</tr>';
+    }
 
 echo '
     <tr>
         <td colspan="4">
             '.tr('Telefono').': <b>'.$c_telefono.'</b>';
-if (!empty($c_cellulare)) {
-    echo' - '.tr('Cellulare').': <b>'.$c_cellulare.'</b>';
-}
+    if (!empty($c_cellulare)) {
+        echo' - '.tr('Cellulare').': <b>'.$c_cellulare.'</b>';
+    }
 echo '
         </td>
     </tr>';
@@ -254,13 +256,13 @@ if (!empty($rs2)) {
         // Quantità
         echo '
         <td class="text-center">
-            '.Translator::numberToLocale($r['qta'], 'qta').'
+            '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
         </td>';
 
         // Prezzo unitario
         echo '
         <td class="text-center">
-            '.($options['pricing'] ? Translator::numberToLocale($r['prezzo_vendita']).' &euro;' : '-').'
+            '.($options['pricing'] ? Translator::numberToLocale($r['prezzo_vendita'] - $r['sconto_unitario']).' &euro;' : '-').'
         </td>';
 
         // Prezzo totale
@@ -395,7 +397,7 @@ if ($options['pricing']) {
 }
 
 // Timbro e firma
-$firma = !empty($records[0]['firma_file']) ? '<img src="'.$docroot.'/files/interventi/'.$records[0]['firma_file'].'" style="width:70mm;">' : '';
+$firma = !empty($records[0]['firma_file']) ? '<img src="'.DOCROOT.'/files/interventi/'.$records[0]['firma_file'].'" style="width:70mm;">' : '';
 echo '
         <td rowspan="2" class="text-center" style="font-size:8pt;height:30mm;vertical-align:bottom">
             '.$firma.'<br>

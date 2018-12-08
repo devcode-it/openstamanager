@@ -3,7 +3,7 @@
 namespace Models;
 
 use Traits\StoreTrait;
-use Illuminate\Database\Eloquent\Model;
+use Common\Model;
 
 class Setting extends Model
 {

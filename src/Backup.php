@@ -166,6 +166,7 @@ class Backup
                 '.couscous',
                 'node_modules',
                 'tests',
+                'tmp',
             ],
         ];
 

@@ -17,7 +17,7 @@ switch (post('op')) {
             'top' => post('top'),
         ], ['id' => $id_record]);
 
-        flash()->info(tr('Salvataggio completato!'));
+        flash()->info(tr('Salvataggio completato'));
 
         break;
 
@@ -34,13 +34,15 @@ switch (post('op')) {
         ]);
         $id_record = $dbo->lastInsertedID();
 
-        flash()->info(tr('Nuovo campo personalizzato creato!'));
+        flash()->info(tr('Nuovo campo personalizzato creato'));
 
         break;
 
     case 'delete':
         $dbo->delete('zz_fields', ['id' => $id_record]);
         $dbo->delete('zz_field_record', ['id_field' => $id_record]);
+
+        flash()->info(tr('Campo personalizzato eliminato'));
 
         break;
 }

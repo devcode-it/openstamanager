@@ -10,7 +10,6 @@ switch ($operazione) {
             'idanagrafica' => $id_parent,
             'nomesede' => post('nomesede'),
             'indirizzo' => post('indirizzo'),
-            'indirizzo2' => post('indirizzo2'),
             'citta' => post('citta'),
             'cap' => post('cap'),
             'provincia' => post('provincia'),
@@ -30,7 +29,7 @@ switch ($operazione) {
         $array = [
             'nomesede' => post('nomesede'),
             'indirizzo' => post('indirizzo'),
-            'indirizzo2' => post('indirizzo2'),
+            'codice_destinatario' => post('codice_destinatario'),
             'piva' => post('piva'),
             'codice_fiscale' => post('codice_fiscale'),
             'citta' => post('citta'),

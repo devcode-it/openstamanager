@@ -21,14 +21,12 @@ if (empty($idconto)) {
 
 // Impostazioni per la gestione
 $options = [
-    'op' => 'add_riga',
+    'op' => 'manage_riga',
     'action' => 'add',
     'dir' => $dir,
     'conti' => $conti,
     'idanagrafica' => $idanagrafica,
 ];
-
-$_SESSION['superselect']['dir'] = $dir;
 
 // Dati di default
 $result = [
@@ -51,23 +49,16 @@ $result['idiva'] = $iva[0]['idiva'] ?: setting('Iva predefinita');
 $ritenuta_acconto = $dbo->fetchOne('SELECT id_ritenuta_acconto_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS id_ritenuta_acconto FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
 $options['id_ritenuta_acconto_predefined'] = $ritenuta_acconto['id_ritenuta_acconto'];
 
-// Sconto unitario
-$rss = $dbo->fetchArray('SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')');
-if (!empty($rss)) {
-    $result['sconto_unitario'] = $rss[0]['prc_guadagno'];
-    $result['tipo_sconto'] = 'PRC';
-}
-
 // Importazione della gestione dedicata
 $file = 'riga';
 if (get('is_descrizione') !== null) {
     $file = 'descrizione';
 
-    $options['op'] = 'add_descrizione';
+    $options['op'] = 'manage_descrizione';
 } elseif (get('is_articolo') !== null) {
     $file = 'articolo';
 
-    $options['op'] = 'add_articolo';
+    $options['op'] = 'manage_articolo';
 }
 
 echo App::load($file.'.php', $result, $options);

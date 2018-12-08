@@ -15,7 +15,7 @@ $theme = 'default';
 
 // Impostazioni di sicurezza
 $redirectHTTPS = false; // Redirect automatico delle richieste da HTTP a HTTPS
-$disableCSRF = false; // Protezione contro CSRF
+$disableCSRF = true; // Protezione contro CSRF
 
 // Impostazioni di debug
 $debug = false;

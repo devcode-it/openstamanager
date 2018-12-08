@@ -38,6 +38,7 @@ $_SESSION['superselect']['stati'] = [
     'In attesa di conferma',
 ];
 $_SESSION['superselect']['non_fatturato'] = 1;
+
 echo '
     <div class="row">
         <div class="col-md-6">

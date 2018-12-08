@@ -29,7 +29,7 @@ function get_new_numerosecondarioddt($data)
     // Calcolo il numero secondario se stabilito dalle impostazioni e se documento di vendita
     $formato_numero_secondario = setting('Formato numero secondario ddt');
 
-    $query = "SELECT numero_esterno FROM dt_ddt WHERE DATE_FORMAT( data, '%Y' ) = '".date('Y', strtotime($data))."' AND idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir='".$dir."') ORDER BY numero_esterno DESC LIMIT 0,1";
+    $query = "SELECT numero_esterno FROM dt_ddt WHERE DATE_FORMAT( data, '%Y' ) = '".date('Y', strtotime($data))."' AND idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir='".$dir."') ORDER BY CAST(numero_esterno AS UNSIGNED) DESC LIMIT 0,1";
 
     $rs = $dbo->fetchArray($query);
     $numero_secondario = $rs[0]['numero_esterno'];

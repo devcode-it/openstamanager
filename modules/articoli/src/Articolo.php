@@ -2,8 +2,8 @@
 
 namespace Modules\Articoli;
 
-use Base\Model;
-use Modules\Articoli\Articolo as ArticoloIntervento;
+use Common\Model;
+use Modules\Interventi\Articolo as ArticoloIntervento;
 
 class Articolo extends Model
 {

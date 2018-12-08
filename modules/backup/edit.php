@@ -9,7 +9,7 @@ echo '<p>'.tr('Il backup è <b>molto importante</b> perché permette di creare u
 if (!extension_loaded('zip')) {
     echo "
 <div class='alert alert-warning'>
-    <i class='fa fa-times'></i> ".tr('Estensione ZIP non supportata!').'
+    <i class='fa fa-times'></i> ".tr('Estensione zip non supportata').'.
     '.tr('Il backup verrà eseguito, ma non in formato ZIP. Sarà quindi scaricabile solo tramite FTP o con copia-incolla').'.
 </div>';
 }
@@ -68,12 +68,13 @@ function restore() {
 }
 </script>';
 
+$upload_max_filesize = ini_get('upload_max_filesize');
 echo '
     <div class="col-md-4">
         <div class="box box-success">
             <div class="box-header with-border">
                 <h3 class="box-title">
-                    '.tr('Ripristina backup').'
+                    '.tr('Ripristina backup').' <small>(upload_max_filesize: '.$upload_max_filesize.')</small>
                 </h3>
             </div>
             <div class="box-body">

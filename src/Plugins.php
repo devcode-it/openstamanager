@@ -79,7 +79,7 @@ class Plugins
         // Fix modulo
         $plugin = self::getCurrent();
         if (isset($plugin)) {
-            Modules::setCurrent($plugin->module()->id);
+            Modules::setCurrent($plugin->module->id);
         }
     }
 
@@ -93,6 +93,8 @@ class Plugins
      */
     public static function filepath($element, $file)
     {
-        return self::get($element)->filepath($file);
+        $element = self::get($element);
+
+        return $element ? $element->filepath($file) : null;
     }
 }

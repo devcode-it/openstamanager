@@ -47,6 +47,3 @@ echo '
 		</div>
 	</div>
 </form>';
-
-echo '
-<script src="'.$rootdir.'/lib/init.js"></script>';

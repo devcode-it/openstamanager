@@ -36,7 +36,11 @@ $_SESSION['superselect']['non_fatturato'] = 1;
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "required": 1, "ajax-source": "contratti", "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.text); $(\'#prezzo\').val($data.totale); $(\'#sconto\').val($data.sconto);\"" ]}
+            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "required": 1, "ajax-source": "contratti", "extra": "onchange=\"$data = $(this).selectData(); $(\'#descrizione\').val($data.text); $(\'#prezzo\').val($data.totale); $(\'#sconto\').val($data.sconto); if ($data.n_righe>0) { $(\'#import\').prop(\'checked\', true);  $(\'input[name=import]\').val(\'1\'); $(\'#import\').removeAttr(\'disabled\'); }else{ $(\'#import\').prop(\'checked\', false); $(\'input[name=import]\').val(\'0\'); $(\'#import\').prop(\'disabled\', true); } \"" ]}
+        </div>
+        
+        <div class="col-md-6">
+            {[ "type": "checkbox", "label": "'.tr('Importa righe').'", "name": "import", "value": "1", "placeholder": "'.tr('Replica righe del contratto in fattura').'" ]}
         </div>
     </div>';
 

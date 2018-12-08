@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/core.php';
 
+use Carbon\Carbon;
+
 if (empty($id_record) && !empty($id_module)) {
     redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
 } elseif (empty($id_record) && empty($id_module)) {
@@ -50,7 +52,7 @@ if (empty($record)) {
     // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
     if ($structure->hasAddFile() && $structure->permission == 'rw') {
         echo '
-						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
+						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
     }
 
     echo '
@@ -202,61 +204,82 @@ if (empty($record)) {
     // Informazioni sulle operazioni
     if (Auth::admin()) {
         echo '
-                <div id="tab_info" class="tab-pane">
-                    <ul class="timeline">';
+                <div id="tab_info" class="tab-pane">';
 
         $operations = $dbo->fetchArray('SELECT `zz_operations`.*, `zz_users`.`username` FROM `zz_operations` JOIN `zz_users` ON `zz_operations`.`id_utente` = `zz_users`.`id` WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record).' ORDER BY `created_at` ASC LIMIT 200');
 
-        foreach ($operations as $operation) {
-            $description = $operation['op'];
-            $icon = 'pencil-square-o';
-            $color = null;
-            $timeline = null;
-
-            switch ($operation['op']) {
-                case 'add':
-                    $description = tr('Creazione');
-                    $icon = 'plus';
-                    $color = 'success';
-                    break;
-
-                case 'update':
-                    $description = tr('Modifica');
-                    $icon = 'pencil';
-                    $color = 'info';
-                    break;
-
-                case 'delete':
-                    $description = tr('Eliminazione');
-                    $icon = 'times';
-                    $color = 'danger';
-                    break;
-
-                default:
-                    $timeline = ' class="timeline-inverted"';
-                    break;
-            }
-
+        if (!empty($operations)) {
             echo '
-                        <li'.$timeline.'>
+                    <ul class="timeline">';
+
+            foreach ($operations as $operation) {
+                $description = $operation['op'];
+                $icon = 'pencil-square-o';
+                $color = null;
+                $timeline_class = null;
+
+                switch ($operation['op']) {
+                    case 'add':
+                        $description = tr('Creazione');
+                        $icon = 'plus';
+                        $color = 'success';
+                        break;
+
+                    case 'update':
+                        $description = tr('Modifica');
+                        $icon = 'pencil';
+                        $color = 'info';
+                        break;
+
+                    case 'delete':
+                        $description = tr('Eliminazione');
+                        $icon = 'times';
+                        $color = 'danger';
+                        break;
+
+                    default:
+                        $timeline_class = ' class="timeline-inverted"';
+                        break;
+                }
+
+                echo '
+                        <li '.$timeline_class.'>
                             <div class="timeline-badge '.$color.'"><i class="fa fa-'.$icon.'"></i></div>
                             <div class="timeline-panel">
                                 <div class="timeline-heading">
-                                    <h4 class="timeline-title">'.$description.'</h4>
-                                    <p><small class="text-muted"><i class="fa fa-clock-o"></i> '.Translator::timestampToLocale($operation['created_at']).'</small></p>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h4 class="timeline-title">'.$description.'</h4>
+                                        </div>
+                                        <div class="col-md-4 text-right">
+                                            <p><small class="label label-default tip" title="'.Translator::timestampToLocale($operation['created_at']).'"><i class="fa fa-clock-o"></i> '.Carbon::parse($operation['created_at'])->diffForHumans().'</small></p>
+                                            <p><small class="label label-default"><i class="fa fa-user"></i> '.tr('_USER_', [
+                                                '_USER_' => $operation['username'],
+                                            ]).
+                                            '</small></p>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="timeline-body">
-                                    <p>'.tr('Utente: _USER_', [
-                                        '_USER_' => $operation['username'],
-                                    ]).'</p>
+
+                                </div>
+                                <div class="timeline-footer">
+
                                 </div>
                             </div>
                         </li>';
-        }
+            }
 
+            echo '  </ul>';
+        } else {
+            echo '
+                    <div class="alert alert-info">
+                        <i class="fa fa-info-circle"></i>
+                        <b>'.tr('Informazione:').'</b> '.tr('Nessun log disponibile per questa scheda').'.
+                    </div>';
+        }
         echo '
-                    </ul>
-				</div>';
+                </div>';
     }
 
     // Plugin

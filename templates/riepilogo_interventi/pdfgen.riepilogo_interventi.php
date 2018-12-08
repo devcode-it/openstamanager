@@ -15,7 +15,7 @@ $search_filters = [];
 if (is_array($_SESSION['module_'.$id_module])) {
     foreach ($_SESSION['module_'.$id_module] as $field => $value) {
         if (!empty($value) && starts_with($field, 'search_')) {
-            $field_name = str_replace('search_', '', $field_name);
+            $field_name = str_replace('search_', '', $field);
             $field_name = str_replace('__', ' ', $field_name);
             $field_name = str_replace('-', ' ', $field_name);
             array_push($search_filters, '`'.$field_name.'` LIKE "%'.$field_value.'%"');
@@ -114,7 +114,6 @@ foreach ($interventi as $intervento) {
     $totale_dirittochiamata += floatval($rs[$i]['prezzo_dirittochiamata']);
     array_push($idinterventi, "'".$intervento['id']."'");
 }
-
 
 $body .= '<big><big><b>RIEPILOGO INTERVENTI DAL '.Translator::dateToLocale($_SESSION['period_start']).' al '.Translator::dateToLocale($_SESSION['period_end'])."</b></big></big><br/><br/>\n";
 

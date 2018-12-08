@@ -2,15 +2,26 @@
 
 namespace Modules\Anagrafiche;
 
-use Base\Model;
+use Common\Model;
 use Modules\Fatture\Fattura;
+use Traits\RecordTrait;
 use Util\Generator;
 use Settings;
 
 class Anagrafica extends Model
 {
+    use RecordTrait;
+
     protected $table = 'an_anagrafiche';
     protected $primaryKey = 'idanagrafica';
+    protected $module = 'Anagrafiche';
+
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = [];
 
     protected $appends = [
         'id',
@@ -42,7 +53,7 @@ class Anagrafica extends Model
         $model->codice = $codice;
         $model->save();
 
-        $model->updateTipologie($tipologie);
+        $model->tipologie = $tipologie;
         $model->save();
 
         return $model;
@@ -96,12 +107,10 @@ class Anagrafica extends Model
     public static function fixTecnico(Anagrafica $anagrafica)
     {
         // Copio già le tariffe per le varie attività
-        if (in_array($id_tecnico, $idtipoanagrafica)) {
-            $result = $database->query('INSERT INTO in_tariffe(idtecnico, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) SELECT '.prepare($model->id).', idtipointervento, costo_orario, costo_km, costo_diritto_chiamata, costo_orario_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico FROM in_tipiintervento');
+        $result = database()->query('INSERT INTO in_tariffe(idtecnico, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) SELECT '.prepare($model->id).', idtipointervento, costo_orario, costo_km, costo_diritto_chiamata, costo_orario_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico FROM in_tipiintervento');
 
-            if (!$result) {
-                flash()->error(tr("Errore durante l'importazione tariffe!"));
-            }
+        if (!$result) {
+            flash()->error(tr("Errore durante l'importazione tariffe!"));
         }
     }
 
@@ -110,11 +119,13 @@ class Anagrafica extends Model
      *
      * @param array $tipologie
      */
-    public function updateTipologie(array $tipologie)
+    public function setTipologieAttribute(array $tipologie)
     {
         if ($this->isAzienda()) {
             $tipologie[] = Tipo::where('descrizione', 'Azienda')->first()->id;
         }
+
+        $tipologie = array_clean($tipologie);
 
         $previous = $this->tipi()->get();
         $this->tipi()->sync($tipologie);
@@ -177,6 +188,17 @@ class Anagrafica extends Model
         $this->attributes['codice_fiscale'] = trim(strtoupper($value));
     }
 
+    public function setCodiceDestinatarioAttribute($value)
+    {
+        if (empty($this->tipo) || $this->tipo == 'Privato' || in_array($value, ['999999', '0000000']) || $this->sedeLegale->nazione->iso2 != 'IT') {
+            $codice_destinatario = '';
+        } else {
+            $codice_destinatario = $value;
+        }
+
+        $this->attributes['codice_destinatario'] = trim(strtoupper($codice_destinatario));
+    }
+
     public function tipi()
     {
         return $this->belongsToMany(Tipo::class, 'an_tipianagrafiche_anagrafiche', 'idanagrafica', 'idtipoanagrafica');
@@ -197,7 +219,7 @@ class Anagrafica extends Model
      *
      * @return self
      */
-    public function sedeLegale()
+    public function getSedeLegaleAttribute()
     {
         return $this;
     }

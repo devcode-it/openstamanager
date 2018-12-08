@@ -2,16 +2,21 @@
 
 namespace Modules\Fatture;
 
-use Base\Model;
+use Common\Model;
 use Util\Generator;
+use Traits\RecordTrait;
 use Modules\Anagrafiche\Anagrafica;
 
 class Fattura extends Model
 {
+    use RecordTrait;
+
     protected $table = 'co_documenti';
 
-    /** @var array Conti rilevanti della fattura */
-    protected $conti = [];
+    public function getModuleAttribute()
+    {
+        return $this->tipo->dir == 'entrata' ? 'Fatture di vendita':'Fatture di acquisto';
+    }
 
     /**
      * Crea una nuova fattura.
@@ -92,8 +97,7 @@ class Fattura extends Model
      * Imposta il sezionale relativo alla fattura e calcola il relativo numero.
      * **Attenzione**: la data deve inserita prima!
      *
-     * @param [type] $value
-     * @return void
+     * @param int $value
      */
     public function setIdSegmentAttribute($value)
     {
@@ -103,11 +107,11 @@ class Fattura extends Model
 
         // Calcolo dei numeri fattura
         if ($value != $previous) {
-            $direzione = $this->tipo()->dir;
+            $direzione = $this->tipo->dir;
             $data = $this->data;
 
-            $this->numero = static::getNumero($data, $direzione, $value);
-            $this->numero_esterno = static::getNumeroSecondario($data, $direzione, $value);
+            $this->numero = static::getNextNumero($data, $direzione, $value);
+            $this->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $value);
         }
     }
 
@@ -120,18 +124,23 @@ class Fattura extends Model
      *
      * @return string
      */
-    public static function getNumero($data, $direzione, $id_segment)
+    public static function getNextNumero($data, $direzione, $id_segment)
     {
+        if ($direzione == 'entrata') {
+            return '';
+        }
+
         $database = database();
 
-        $maschera = $direzione == 'uscita' ? static::getMaschera($id_segment) : '#';
+        // Recupero maschera per questo segmento
+        $maschera = Generator::getMaschera($id_segment);
 
-        $ultima_fattura = $database->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera), [
+        $ultima_fattura = $database->fetchOne('SELECT numero FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.Generator::getMascheraOrder($maschera, 'numero'), [
             ':year' => date('Y', strtotime($data)),
             ':id_segment' => $id_segment,
         ]);
 
-        $numero = Generator::generate($maschera, $ultima_fattura['numero']);
+        $numero = Generator::generate($maschera, $ultima_fattura['numero'], 1, Generator::dateToPattern($data));
 
         return $numero;
     }
@@ -145,7 +154,7 @@ class Fattura extends Model
      *
      * @return string
      */
-    public static function getNumeroSecondario($data, $direzione, $id_segment)
+    public static function getNextNumeroSecondario($data, $direzione, $id_segment)
     {
         if ($direzione == 'uscita') {
             return '';
@@ -154,156 +163,106 @@ class Fattura extends Model
         $database = database();
 
         // Recupero maschera per questo segmento
-        $maschera = static::getMaschera($id_segment);
+        $maschera = Generator::getMaschera($id_segment);
 
-        $ultima_fattura = $database->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.static::getMascheraOrder($maschera), [
+        $ultima_fattura = $database->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.Generator::getMascheraOrder($maschera, 'numero_esterno'), [
             ':year' => date('Y', strtotime($data)),
             ':id_segment' => $id_segment,
         ]);
 
-        $numero_esterno = Generator::generate($maschera, $ultima_fattura['numero_esterno']);
+        $numero_esterno = Generator::generate($maschera, $ultima_fattura['numero_esterno'], 1, Generator::dateToPattern($data));
 
         return $numero_esterno;
     }
 
     /**
-     * Restituisce la maschera specificata per il segmento indicato.
+     * Restituisce la collezione di righe e articoli con valori rilevanti per i conti.
      *
-     * @param int $id_segment
-     *
-     * @return string
+     * @return iterable
      */
-    protected static function getMaschera($id_segment)
+    protected function getRighe()
     {
-        $database = database();
-
-        $maschera = $database->fetchOne('SELECT pattern FROM zz_segments WHERE id = :id_segment', [
-            ':id_segment' => $id_segment,
-        ])['pattern'];
-
-        return $maschera;
+        return $this->righe->merge($this->articoli);
     }
 
     /**
-     * Metodo per l'individuazione del tipo di ordine da impostare per la corretta interpretazione della maschera.
-     * Esempi:
-     * - maschere con testo iniziale (FT-####-YYYY) necessitano l'ordinamento alfabetico
-     * - maschere di soli numeri (####-YYYY) è necessario l'ordinamento numerico forzato.
-     *
-     * @param string $maschera
-     *
-     * @return string
-     */
-    protected static function getMascheraOrder($maschera)
-    {
-        // Estraggo blocchi di caratteri standard
-        preg_match('/[#]+/', $maschera, $m1);
-        //preg_match('/[Y]+/', $maschera, $m2);
-
-        $pos1 = strpos($maschera, $m1[0]);
-        if ($pos1 == 0) {
-            $query = 'ORDER BY CAST(numero_esterno AS UNSIGNED) DESC';
-        } else {
-            $query = 'ORDER BY numero_esterno DESC';
-        }
-
-        return $query;
-    }
-
-    /**
-     * Calcola l'imponibile della fattura (totale delle righe - sconto).
+     * Calcola l'imponibile della fattura.
      *
      * @return float
      */
     public function getImponibile()
     {
-        if (!isset($this->conti['imponibile'])) {
-            $result = database()->fetchOne('SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS imponibile FROM co_righe_documenti WHERE iddocumento = :id', [
-                ':id' => $this->id,
-            ]);
-
-            $this->conti['imponibile'] = $result['imponibile'];
-        }
-
-        return $this->conti['imponibile'];
-
-        return $result['imponibile'];
+        return $this->getRighe()->sum('imponibile');
     }
 
     /**
-     * Calcola il totale della fattura (imponibile + iva).
+     * Calcola lo sconto totale della fattura.
+     *
+     * @return float
+     */
+    public function getSconto()
+    {
+        return $this->getRighe()->sum('sconto');
+    }
+
+    /**
+     * Calcola l'imponibile scontato della fattura.
+     *
+     * @return float
+     */
+    public function getImponibileScontato()
+    {
+        return $this->getRighe()->sum('imponibile_scontato');
+    }
+
+    /**
+     * Calcola l'IVA totale della fattura.
+     *
+     * @return float
+     */
+    public function getIva()
+    {
+        return $this->getRighe()->sum('iva');
+    }
+
+    /**
+     * Calcola la rivalsa INPS totale della fattura.
+     *
+     * @return float
+     */
+    public function getRivalsaINPS()
+    {
+        return $this->getRighe()->sum('rivalsa_inps');
+    }
+
+    /**
+     * Calcola la ritenuta d'acconto totale della fattura.
+     *
+     * @return float
+     */
+    public function getRitenutaAcconto()
+    {
+        return $this->getRighe()->sum('ritenuta_acconto');
+    }
+
+    /**
+     * Calcola il totale della fattura.
      *
      * @return float
      */
     public function getTotale()
     {
-        if (!isset($this->conti['totale'])) {
-            // Sommo l'iva di ogni riga al totale
-            $iva = $this->righe()->sum('iva');
-
-            $iva_rivalsainps = database()->fetchArray('SELECT SUM(rivalsainps / 100 * percentuale) AS iva_rivalsainps FROM co_righe_documenti INNER JOIN co_iva ON co_iva.id = co_righe_documenti.idiva WHERE iddocumento = :id', [
-                ':id' => $this->id,
-            ])['iva_rivalsainps'];
-
-            $totale = sum([
-                $this->getImponibile(),
-                $this->rivalsainps,
-                $iva,
-                $iva_rivalsainps,
-            ]);
-
-            $this->conti['totale'] = $totale;
-        }
-
-        return $this->conti['totale'];
+        return $this->getRighe()->sum('totale');
     }
 
     /**
-     * Calcola il netto a pagare della fattura (totale - ritenute - bolli).
+     * Calcola il netto a pagare della fattura.
      *
      * @return float
      */
-    public function getNetto($iddocumento)
+    public function getNetto()
     {
-        if (!isset($this->conti['netto'])) {
-            $netto = sum([
-                $this->getTotale(),
-                $this->bollo,
-                -$this->ritenutaacconto,
-            ]);
-
-            $this->conti['netto'] = $netto;
-        }
-
-        return $this->conti['netto'];
-    }
-
-    /**
-     * Calcola l'iva detraibile della fattura.
-     *
-     * @return float
-     */
-    public function getIvaDetraibile()
-    {
-        if (!isset($this->conti['iva_detraibile'])) {
-            $this->conti['iva_detraibile'] = $this->righe()->sum('iva') - $this->getIvaIndetraibile();
-        }
-
-        return $this->conti['iva_detraibile'];
-    }
-
-    /**
-     * Calcolo l'iva indetraibile della fattura.
-     *
-     * @return float
-     */
-    public function getIvaIndetraibile()
-    {
-        if (!isset($this->conti['iva_indetraibile'])) {
-            $this->conti['iva_indetraibile'] = $this->righe()->sum('iva_indetraibile');
-        }
-
-        return $this->conti['iva_indetraibile'];
+        return $this->getRighe()->sum('netto') + $this->bollo;
     }
 
     /**
@@ -325,7 +284,7 @@ class Fattura extends Model
      */
     public function isNotaDiAccredito()
     {
-        return $this->getTipo()['reversed'] == 1;
+        return $this->tipo->reversed == 1;
     }
 
     public function updateSconto()

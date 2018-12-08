@@ -98,7 +98,7 @@ class Settings
         // Validazioni
         // integer
         if ($setting->tipo == 'integer') {
-            $validator = v::intVal()->validate($value);
+            $validator = v::intVal();
         }
 
         // list

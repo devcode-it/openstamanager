@@ -103,7 +103,7 @@ class WidgetManager implements ManagerInterface
 
             // Modal
             elseif ($widget['more_link_type'] == 'popup') {
-                $result .= 'data-href="'.$widget['more_link'].'" data-toggle="modal" data-title="'.$widget['text'].'" data-target="#bs-popup"';
+                $result .= 'data-href="'.$widget['more_link'].'" data-toggle="modal" data-title="'.$widget['text'].'"';
             }
 
             // Codice JavaScript

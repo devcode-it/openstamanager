@@ -2,20 +2,20 @@
 
 namespace Models;
 
-use App;
 use Auth;
-use Traits\RecordTrait;
+use Traits\ManagerTrait;
 use Traits\UploadTrait;
 use Traits\StoreTrait;
-use Illuminate\Database\Eloquent\Model;
+use Common\Model;
 use Illuminate\Database\Eloquent\Builder;
 
 class Module extends Model
 {
-    use RecordTrait, UploadTrait, StoreTrait;
+    use ManagerTrait, UploadTrait, StoreTrait;
 
     protected $table = 'zz_modules';
     protected $main_folder = 'modules';
+    protected $upload_identifier = 'id_module';
 
     protected $appends = [
         'permission',
@@ -145,6 +145,7 @@ class Module extends Model
     public static function getHierarchy()
     {
         return self::with('allChildren')
+            ->withoutGlobalScope('enabled')
             ->whereNull('parent')
             ->orderBy('order')
             ->get();

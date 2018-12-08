@@ -2,7 +2,7 @@
 
 namespace Modules\Anagrafiche;
 
-use Base\Model;
+use Common\Model;
 
 class Nazione extends Model
 {

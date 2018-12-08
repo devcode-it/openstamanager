@@ -71,6 +71,7 @@ return [
     'mg_unitamisura',
     'my_componenti_interventi',
     'my_impianti',
+    'my_impianti_categorie',
     'my_impianti_contratti',
     'my_impianti_interventi',
     'my_impianto_componenti',

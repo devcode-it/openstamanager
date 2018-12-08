@@ -31,7 +31,7 @@ if ($module['name'] == 'Ordini cliente') {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "date", "label": "<?php echo tr('Data'); ?>", "maxlength": 10, "name": "data", "required": 1, "value": "$data$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "$data$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -93,14 +93,35 @@ if ($module['name'] == 'Ordini cliente') {
 
             <div class="row">
                 <div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Note aggiuntive'); ?>", "name": "note_aggiuntive", "help": "<?php echo tr('Note interne.'); ?>", "value": "$note_aggiuntive$" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Note aggiuntive'); ?>", "name": "note_aggiuntive", "help": "<?php echo tr('Note interne'); ?>", "value": "$note_aggiuntive$" ]}
 				</div>
 			</div>
 		</div>
 	</div>
+
+    <!-- Fatturazione Elettronica PA-->
+    <div class="panel panel-primary <?php echo ($dir == 'entrata' && $record['tipo_anagrafica'] == 'Ente pubblico') ? 'show' : 'hide'; ?>" >
+        <div class="panel-heading">
+            <h3 class="panel-title"><?php echo tr('Dati appalto'); ?></h3>
+        </div>
+
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4">
+                    {[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "value": "$id_documento_fe$", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                </div>
+
+                <div class="col-md-4">
+                    {[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                </div>
+
+                <div class="col-md-4">
+                    {[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
-
-
 
 <!-- RIGHE -->
 <div class="panel panel-primary">
@@ -114,11 +135,11 @@ if ($module['name'] == 'Ordini cliente') {
 
                 if ($record['flag_completato'] == 0) {
                     ?>
-            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ordini/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_articolo" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Articolo'); ?></a>
+            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ordini/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_articolo" data-toggle="modal" data-title="Aggiungi articolo"><i class="fa fa-plus"></i> <?php echo tr('Articolo'); ?></a>
 
-            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ordini/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_riga" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Riga'); ?></a>
+            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ordini/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_riga" data-toggle="modal" data-title="Aggiungi riga"><i class="fa fa-plus"></i> <?php echo tr('Riga'); ?></a>
 
-            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ordini/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_descrizione" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Descrizione'); ?></a>
+            <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/ordini/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_descrizione" data-toggle="modal" data-title="Aggiungi descrizione"><i class="fa fa-plus"></i> <?php echo tr('Descrizione'); ?></a>
 			<?php
                 }
 
@@ -168,7 +189,7 @@ if (!empty($elementi)) {
             '_DATE_' => Translator::dateToLocale($elemento['data']),
         ]);
 
-        if (!in_array($elemento['tipo_documento'], ['Ddt di vendita', 'Ddt di acquisto'])) {
+        if (!in_array($elemento['tipo_documento'], ['Ddt in uscita', 'Ddt in ingresso'])) {
             $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
         } else {
             $modulo = ($elemento['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';

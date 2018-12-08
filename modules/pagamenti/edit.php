@@ -14,15 +14,21 @@ include_once __DIR__.'/../../core.php';
 
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "value": "$descrizione$" ]}
+				<div class="col-md-6">
+					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "value": "$descrizione$", "required": 1 ]}
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-6">
+					{[ "type": "select", "label": "<?php echo tr('Codice Modalità (Fatturazione Elettronica)'); ?>", "name": "codice_modalita_pagamento_fe", "value": "$codice_modalita_pagamento_fe$", "values": "query=SELECT codice as id, CONCAT(codice, ' - ', descrizione) AS descrizione FROM fe_modalita_pagamento", "required": 1 ]}
+				</div>
+            </div>
+
+			<div class="row">
+                <div class="col-md-6">
 					{[ "type": "select", "label": "<?php echo tr('Conto predefinito per le vendite'); ?>", "name": "idconto_vendite", "value": "$idconto_vendite$", "ajax-source": "conti"  ]}
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-6">
 					{[ "type": "select", "label": "<?php echo tr('Conto predefinito per gli acquisti'); ?>", "name": "idconto_acquisti", "value": "$idconto_acquisti$", "ajax-source": "conti" ]}
 				</div>
 			</div>

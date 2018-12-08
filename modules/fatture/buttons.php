@@ -26,7 +26,7 @@ if ($dir == 'entrata' && empty($record['ref_documento']) && $record['stato'] == 
             '.tr('Nota di debito').'
         </a></li>
 
-        <li><a data-href="'.$rootdir.'/modules/fatture/crea_documento.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi nota di credito" data-target="#bs-popup">
+        <li><a data-href="'.$rootdir.'/modules/fatture/crea_documento.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi nota di credito">
             '.tr('Nota di credito').'
         </a></li>
     </ul>

@@ -31,9 +31,9 @@ include_once __DIR__.'/../../core.php';
 <script>
 	$(document).ready( function(){
 		$('.colorpicker').colorpicker().on('changeColor', function(){
-			$('#colore_').parent().find('.square').css( 'background', $('#colore_').val() );
+			$('#bs-popup #colore_').parent().find('.square').css( 'background', $('#bs-popup #colore_').val() );
 		});
 
-		$('#colore_').parent().find('.square').css( 'background', $('#colore_').val() );
+		$('#bs-popup #colore_').parent().find('.square').css( 'background', $('#bs-popup #colore_').val() );
 	});
 </script>

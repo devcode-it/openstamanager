@@ -50,7 +50,7 @@ include_once __DIR__.'/../../core.php';
             Calcolo totale per chiudere la fattura
         */
         // Lettura importo da scadenzario (seleziono l'importo di questo mese)
-        $query = 'SELECT *, scadenza, ABS(da_pagare-pagato) AS rata FROM co_scadenziario WHERE iddocumento='.prepare($iddocumento)." AND ABS(da_pagare) > ABS(pagato) ORDER BY DATE_FORMAT(scadenza,'%m/%Y') ASC";
+        $query = 'SELECT *, scadenza, ABS(da_pagare-pagato) AS rata FROM co_scadenziario WHERE iddocumento='.prepare($iddocumento)." AND ABS(da_pagare) > ABS(pagato) ORDER BY DATE_FORMAT(scadenza,'%m/%Y') DESC";
         $rs = $dbo->fetchArray($query);
         $importo_conto_aziendale = $rs[0]['rata'];
 
@@ -128,7 +128,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="col-md-8">
-			{[ "type": "text", "label": "<?php echo tr('Causale'); ?>", "name": "descrizione", "id": "desc", "required": 1, "value": "<?php echo $descrizione; ?>" ]}
+			{[ "type": "text", "label": "<?php echo tr('Causale'); ?>", "name": "descrizione", "id": "desc", "required": 1, "value": <?php echo json_encode($descrizione); ?> ]}
 		</div>
 	</div>
 
@@ -248,7 +248,7 @@ include_once __DIR__.'/../../core.php';
 
 	<script type="text/javascript">
 		$(document).ready( function(){
-			$('input[id*=dare], input[id*=avere]').each(function(){
+			$('#bs-popup input[id*=dare], #bs-popup input[id*=avere]').each(function(){
 				if($(this).val() != "<?php echo Translator::numberToLocale(0); ?>") $(this).prop("disabled", false);
 			});
 
@@ -264,26 +264,26 @@ include_once __DIR__.'/../../core.php';
                 }
 			});
 
-			$('input[id*=dare]').on('keyup change', function(){
+			$('#bs-popup input[id*=dare]').on('keyup change', function(){
                 if(!$(this).prop('disabled')){
                     if($(this).val()) {
-                        $(this).parent().parent().find('input[id*=avere]').prop("disabled", true);
+                        $(this).parent().parent().find('#bs-popup input[id*=avere]').prop("disabled", true);
                     }
                     else {
-                        $(this).parent().parent().find('input[id*=avere]').prop("disabled", false);
+                        $(this).parent().parent().find('#bs-popup input[id*=avere]').prop("disabled", false);
                     }
 
                     calcolaBilancio();
                 }
 			});
 
-			$('input[id*=avere]').on('keyup change', function(){
+			$('#bs-popup input[id*=avere]').on('keyup change', function(){
                 if(!$(this).prop('disabled')){
                     if($(this).val()) {
-                        $(this).parent().parent().find('input[id*=dare]').prop("disabled", true);
+                        $(this).parent().parent().find('#bs-popup input[id*=dare]').prop("disabled", true);
                     }
                     else {
-                        $(this).parent().parent().find('input[id*=dare]').prop("disabled", false);
+                        $(this).parent().parent().find('#bs-popup input[id*=dare]').prop("disabled", false);
                     }
 
                     calcolaBilancio();
@@ -297,69 +297,66 @@ include_once __DIR__.'/../../core.php';
 				totale_avere = 0.00;
 
 				// Calcolo il totale dare e totale avere
-				$('input[id*=dare]').each( function(){
+				$('#bs-popup input[id*=dare]').each( function(){
 					if( $(this).val() == '' ) valore = 0;
 					else valore = $(this).val().toEnglish();
 					totale_dare += Math.round(valore*100)/100;
 				});
 
-				$('input[id*=avere]').each( function(){
+				$('#bs-popup input[id*=avere]').each( function(){
 					if( $(this).val() == '' ) valore = 0;
                     else valore = $(this).val().toEnglish();
 					totale_avere += Math.round(valore*100)/100;
 				});
 
-				$('#totale_dare').text(totale_dare.toLocale());
-				$('#totale_avere').text(totale_avere.toLocale());
+				$('#bs-popup #totale_dare').text(totale_dare.toLocale());
+				$('#bs-popup #totale_avere').text(totale_avere.toLocale());
 
 				bilancio = Math.round(totale_dare*100)/100 - Math.round(totale_avere*100)/100;
 
 				if(bilancio == 0){
-					$("#testo_aggiuntivo").removeClass('text-danger').html("");
-					$("#btn_submit").removeClass('hide');
-					$('#btn_crea_modello').removeClass('hide');
+					$('#bs-popup #testo_aggiuntivo').removeClass('text-danger').html("");
+					$('#bs-popup #btn_submit').removeClass('hide');
+					$('#bs-popup #btn_crea_modello').removeClass('hide');
 				}
 				else{
-					$("#testo_aggiuntivo").addClass('text-danger').html("sbilancio di " + bilancio.toLocale() + " &euro;" );
-					$("#btn_submit").addClass('hide');
-					$('#btn_crea_modello').addClass('hide');
+					$('#bs-popup #testo_aggiuntivo').addClass('text-danger').html("sbilancio di " + bilancio.toLocale() + " &euro;" );
+					$('#bs-popup #btn_submit').addClass('hide');
+					$('#bs-popup #btn_crea_modello').addClass('hide');
 				}
 			}
 
 			// Trigger dell'evento keyup() per la prima volta, per eseguire i dovuti controlli nel caso siano predisposte delle righe in prima nota
-			$("input[id*=dare][value!=''], input[id*=avere][value!='']").keyup();
+			$("#bs-popup input[id*=dare][value!=''], #bs-popup input[id*=avere][value!='']").keyup();
 
-			$("select[id*=idconto]").click( function(){
-				$("input[id*=dare][value!=''], input[id*=avere][value!='']").keyup();
+			$("#bs-popup select[id*=idconto]").click( function(){
+				$("#bs-popup input[id*=dare][value!=''], #bs-popup input[id*=avere][value!='']").keyup();
 			});
 
 
-			$('#modello_primanota').change(function(){
+			$('#bs-popup #modello_primanota').change(function(){
 				var idmastrino = $(this).val();
 
 				if(idmastrino!=''){
-					$('#btn_crea_modello').addClass('hide');
 					var causale = $(this).find('option:selected').text();
 
-					$('#desc').val(causale);
+					$('#bs-popup #desc').val(causale);
 
 					$.get('<?php echo $rootdir; ?>/ajax_complete.php?op=get_conti&idmastrino='+idmastrino, function(data){
 						var conti = data.split(',');
 						for(i=0;i<conti.length;i++){
 							var conto = conti[i].split(';');
 							var option = $("<option selected></option>").val(conto[0]).text(conto[1]);
-							$('#conto'+i).selectReset();
-							$('#conto'+i).append(option).trigger('change');
+							$('#bs-popup #conto'+i).selectReset();
+							$('#bs-popup #conto'+i).append(option).trigger('change');
 						}
 					});
-				}else{
-					$('#btn_crea_modello').removeClass('hide');
 				}
 			});
 
-			$('#btn_crea_modello').click(function(){
-				$("#crea_modello").val("1");
-				$("#add-form").submit();
+			$('#bs-popup #btn_crea_modello').click(function(){
+				$('#bs-popup #crea_modello').val("1");
+				$('#bs-popup #add-form').submit();
 			});
 
 		});

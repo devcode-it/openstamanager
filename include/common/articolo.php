@@ -2,17 +2,16 @@
 
 $result['idarticolo'] = isset($result['idarticolo']) ? $result['idarticolo'] : null;
 
-unset($_SESSION['superselect']['dir']);
-unset($_SESSION['superselect']['idanagrafica']);
-unset($_SESSION['superselect']['idarticolo']);
-
+$_SESSION['superselect']['dir'] = $options['dir'];
+$_SESSION['superselect']['idanagrafica'] = $options['idanagrafica'];
+$_SESSION['superselect']['idarticolo'] = $options['idarticolo'];
 
 // Articolo
 if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
     echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli" ]}
+            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "icon-after": "add|'.Modules::get('Articoli')['id'].'||'.(($options['dir'] == 'uscita') ? '' : 'disabled').'" ]}
         </div>
     </div>';
 } else {
@@ -62,11 +61,11 @@ if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
         $("#idarticolo").on("change", function(){
             // Autoimpostazione dei valori relativi
             if ($(this).val()) {
-				
+
                 session_set("superselect,idarticolo", $(this).val(), 0);
 				session_set("superselect,idanagrafica", "'.$options['idanagrafica'].'", 0);
 				session_set("superselect,dir", "'.$options['dir'].'", 0);
-                
+
 				$data = $(this).selectData();
 
                 var id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';

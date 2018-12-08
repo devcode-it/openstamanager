@@ -3,7 +3,7 @@
 namespace Models;
 
 use Traits\StoreTrait;
-use Illuminate\Database\Eloquent\Model;
+use Common\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MailTemplate extends Model
@@ -17,7 +17,7 @@ class MailTemplate extends Model
         $dbo = $database = database();
 
         // Lettura delle variabili del modulo collegato
-        $variables = include $this->module()->filepath('variables.php');
+        $variables = include $this->module->filepath('variables.php');
 
         return (array) $variables;
     }

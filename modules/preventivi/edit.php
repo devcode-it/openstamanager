@@ -63,19 +63,19 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "date", "label": "<?php echo tr('Data bozza'); ?>", "maxlength": 10, "name": "data_bozza", "value": "$data_bozza$" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data bozza'); ?>", "name": "data_bozza", "value": "$data_bozza$" ]}
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "date", "label": "<?php echo tr('Data accettazione'); ?>", "maxlength": 10, "name": "data_accettazione", "value": "$data_accettazione$" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data accettazione'); ?>", "name": "data_accettazione", "value": "$data_accettazione$" ]}
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "date", "label": "<?php echo tr('Data conclusione'); ?>", "maxlength": 10, "name": "data_conclusione", "value": "$data_conclusione$" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data conclusione'); ?>", "name": "data_conclusione", "value": "$data_conclusione$" ]}
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "date", "label": "<?php echo tr('Data rifiuto'); ?>", "maxlength": 10, "name": "data_rifiuto", "value": "$data_rifiuto$" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data rifiuto'); ?>", "name": "data_rifiuto", "value": "$data_rifiuto$" ]}
 				</div>
 			</div>
 
@@ -131,11 +131,11 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
         <?php if ($record['stato'] != 'Pagato') {
                         ?>
 
-        <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/preventivi/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_articolo" data-toggle="modal" data-title="Aggiungi articolo" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Articolo'); ?></a>
+        <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/preventivi/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_articolo" data-toggle="modal" data-title="Aggiungi articolo"><i class="fa fa-plus"></i> <?php echo tr('Articolo'); ?></a>
 
-        <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/preventivi/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_riga" data-toggle="modal" data-title="Aggiungi riga" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Riga'); ?></a>
+        <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/preventivi/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_riga" data-toggle="modal" data-title="Aggiungi riga"><i class="fa fa-plus"></i> <?php echo tr('Riga'); ?></a>
 
-        <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/preventivi/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_descrizione" data-toggle="modal" data-title="Aggiungi descrizione" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Descrizione'); ?></a>
+        <a class="btn btn-primary" data-href="<?php echo $rootdir; ?>/modules/preventivi/row-add.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>&is_descrizione" data-toggle="modal" data-title="Aggiungi descrizione"><i class="fa fa-plus"></i> <?php echo tr('Descrizione'); ?></a>
 
         <?php
                     } ?>
@@ -160,11 +160,43 @@ include $docroot.'/modules/preventivi/row-list.php';
     </div>
 </div>
 
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#data_accettazione').on("dp.change", function(){
+            if($(this).val()){
+                $('#data_rifiuto').attr('disabled', true);
+            }else{
+                $('#data_rifiuto').attr('disabled', false);
+            }
+        });
 
+        $('#data_rifiuto').on("dp.change", function(){
+            if($(this).val()){
+                $('#data_accettazione').attr('disabled', true);
+            }else{
+                $('#data_accettazione').attr('disabled', false);
+            }
+        });
+
+        $("#data_accettazione").trigger("dp.change");
+        $("#data_rifiuto").trigger("dp.change");
+    });
+</script>
+
+
+
+{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
+
+{( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <?php
-//fatture collegate a questo preventivo
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idpreventivo` = '.prepare($id_record).') ORDER BY `data`');
+//fatture, ordini collegate a questo preventivo
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento`.`descrizione` AS tipo_documento, `co_tipidocumento`.`dir` FROM `co_documenti` JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idpreventivo` = '.prepare($id_record).') 
+
+UNION
+SELECT `or_ordini`.`id`, `or_ordini`.`data`, `or_ordini`.`numero`, `or_ordini`.`numero_esterno`, "Ordine cliente" AS tipo_documento, 0 AS dir FROM `or_ordini` JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id` WHERE `or_righe_ordini`.`idpreventivo` = '.prepare($id_record).'
+
+ORDER BY `data`');
 
 if (!empty($elementi)) {
     echo '
@@ -180,15 +212,21 @@ if (!empty($elementi)) {
     <div class="box-body">
         <ul>';
 
-    foreach ($elementi as $fattura) {
+    foreach ($elementi as $elemento) {
+		
         $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
-            '_DOC_' => $fattura['tipo_documento'],
-            '_NUM_' => !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'],
-            '_DATE_' => Translator::dateToLocale($fattura['data']),
+            '_DOC_' => $elemento['tipo_documento'],
+            '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
+            '_DATE_' => Translator::dateToLocale($elemento['data']),
         ]);
-
-        $modulo = ($fattura['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
-        $id = $fattura['id'];
+		
+		if (in_array($elemento['tipo_documento'],['Ordine cliente'])) {
+            $modulo = 'Ordini cliente';
+        }
+        else{
+            $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
+        }
+        $id = $elemento['id'];
 
         echo '
             <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
@@ -208,10 +246,6 @@ if (!empty($elementi)) {
 }
 
 ?>
-
-{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
-
-{( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>

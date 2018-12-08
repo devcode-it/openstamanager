@@ -4,41 +4,58 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.4.2](#242)
+- [2.4.3](#243)
     - [Aggiunto (Added)](#aggiunto-added)
+    - [Fixed](#fixed)
+- [2.4.2 (2018-11-14)](#242-2018-11-14)
+    - [Aggiunto (Added)](#aggiunto-added-1)
     - [Modificato (Changed)](#modificato-changed)
     - [Deprecato (Deprecated)](#deprecato-deprecated)
     - [Rimosso (Removed)](#rimosso-removed)
     - [Sicurezza (Security)](#sicurezza-security)
 - [2.4.1 (2018-08-01)](#241-2018-08-01)
-    - [Aggiunto (Added)](#aggiunto-added)
-    - [Modificato (Changed)](#modificato-changed)
-    - [Fixed](#fixed)
+    - [Aggiunto (Added)](#aggiunto-added-2)
+    - [Modificato (Changed)](#modificato-changed-1)
+    - [Fixed](#fixed-1)
 - [2.4 (2018-03-30)](#24-2018-03-30)
-    - [Aggiunto (Added)](#aggiunto-added)
-    - [Modificato (Changed)](#modificato-changed)
-    - [Fixed](#fixed)
+    - [Aggiunto (Added)](#aggiunto-added-3)
+    - [Modificato (Changed)](#modificato-changed-2)
+    - [Fixed](#fixed-2)
 - [2.3.1 (2018-02-19)](#231-2018-02-19)
-    - [Aggiunto (Added)](#aggiunto-added)
-    - [Modificato (Changed)](#modificato-changed)
-    - [Fixed](#fixed)
+    - [Aggiunto (Added)](#aggiunto-added-4)
+    - [Modificato (Changed)](#modificato-changed-3)
+    - [Fixed](#fixed-3)
 - [2.3 (2018-02-16)](#23-2018-02-16)
-    - [Aggiunto (Added)](#aggiunto-added)
-    - [Modificato (Changed)](#modificato-changed)
-    - [Deprecato (Deprecated)](#deprecato-deprecated)
-    - [Rimosso (Removed)](#rimosso-removed)
-    - [Fixed](#fixed)
-    - [Sicurezza (Security)](#sicurezza-security)
+    - [Aggiunto (Added)](#aggiunto-added-5)
+    - [Modificato (Changed)](#modificato-changed-4)
+    - [Deprecato (Deprecated)](#deprecato-deprecated-1)
+    - [Rimosso (Removed)](#rimosso-removed-1)
+    - [Fixed](#fixed-4)
+    - [Sicurezza (Security)](#sicurezza-security-1)
 - [2.2 (2016-11-10)](#22-2016-11-10)
-    - [Aggiunto (Added)](#aggiunto-added)
-    - [Fixed](#fixed)
+    - [Aggiunto (Added)](#aggiunto-added-6)
+    - [Fixed](#fixed-5)
 - [2.1 (2015-04-02)](#21-2015-04-02)
-    - [Aggiunto (Added)](#aggiunto-added)
-    - [Modificato (Changed)](#modificato-changed)
-    - [Fixed](#fixed)
+    - [Aggiunto (Added)](#aggiunto-added-7)
+    - [Modificato (Changed)](#modificato-changed-5)
+    - [Fixed](#fixed-6)
 
 
-## 2.4.2
+## 2.4.3
+
+### Aggiunto (Added)
+
+ - Nodi secondari per la Fatturazione Elettronica
+ - Importazione di Fatture Elettroniche in formato P7M
+ - Messaggi informativi in vari campi
+
+### Fixed
+
+ - Risolti alcuni problemi di compatibilità
+ - Risolti malfunzionamenti delle righe dei documenti
+ - Fix dei calcoli
+
+## 2.4.2 (2018-11-14)
 
 ### Aggiunto (Added)
 
@@ -61,15 +78,22 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Sistema di notifiche predefinito
     - Notifica di chiusura delle **Attività** (impostabile dal modulo **Stati attività**)
     - Notifica di aggiunta e rimozione del tecnico dalle **Attività**
+ - Gestione revisione preventivi
+ - Categorizzazione impianti
+ - Modulo per gestione documentale
+ - Categorizzazione allegati
 
 ### Modificato (Changed)
 
  - Normalizzazione delle nazioni registrate dal gestionale (https://github.com/umpirsky/country-list)
+ - Gestione delle strutture principali attraverso modelli (**Eloquent**)[https://laravel.com/docs/5.6/eloquent]
  - Miglioramenti nella gestione dei record (variabile `$record` al posto di `$records[0]`)
  - Ottimizzazione delle query di conteggio (metodo `fetchNum`)
  - Miglioramento del sistema di aggiornamento e installazione, con supporto completo ai plugin
  - Drag&drop nella **Dashboard** permette di impostare le attività senza sessioni di lavoro
  - Aggiungere un tecnico in una **Attività** salva le modifiche apportate in precedenza
+ - Rinominat moduli ddt in "Ddt in uscita" e "Ddt in ingresso"
+ - Miglioramenti grafici vari
 
 ### Deprecato (Deprecated)
 

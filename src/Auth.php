@@ -24,7 +24,7 @@ class Auth extends \Util\Singleton
             'message' => 'Utente non abilitato!',
         ],
         'unauthorized' => [
-            'code' => 3,
+            'code' => 5,
             'message' => "L'utente non ha nessun permesso impostato!",
         ],
     ];

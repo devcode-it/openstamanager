@@ -18,11 +18,11 @@ unset($_SESSION['superselect']['id_categoria']);
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Inserisci la categoria:'); ?>", "name": "categoria", "required": 1, "ajax-source": "categorie", "icon-after": "add|<?php echo Modules::get('Categorie')['id']; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Inserisci la categoria:'); ?>", "name": "categoria", "required": 1, "ajax-source": "categorie", "icon-after": "add|<?php echo Modules::get('Categorie articoli')['id']; ?>" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Inserisci la sottocategoria:'); ?>", "name": "subcategoria", "id": "subcategoria_add", "ajax-source": "sottocategorie", "icon-after": "add|<?php echo Modules::get('Categorie')['id']; ?>||hide" ]}
+			{[ "type": "select", "label": "<?php echo tr('Inserisci la sottocategoria:'); ?>", "name": "subcategoria", "id": "subcategoria_add", "ajax-source": "sottocategorie", "icon-after": "add|<?php echo Modules::get('Categorie articoli')['id']; ?>||hide" ]}
 		</div>
 	</div>
 

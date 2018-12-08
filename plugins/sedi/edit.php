@@ -31,18 +31,8 @@ echo '
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Indirizzo2').'", "name": "indirizzo2", "value": "$indirizzo2$" ]}
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('P.Iva').'", "name": "piva", "value": "$piva$" ]}
-		</div>
-
-		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Codice Fiscale').'", "name": "codice_fiscale", "value": "$codice_fiscale$" ]}
-		</div>
+            {[ "type": "text", "label": "'.($record['tipo_anagrafica'] == 'Ente pubblico' ? tr('Codice unico ufficio') : tr('Codice destinatario')).'", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": '.($record['tipo_anagrafica'] == 'Ente pubblico' ? '6' : '7').',  "extra": "'.(empty($record['tipo_anagrafica']) || $record['tipo_anagrafica'] == 'Privato' ? 'disabled' : '').'", "help": "'.tr('<b>Attenzione</b>: per impostare il codice specificare prima \'Tipologia\' e \'Nazione\' dell\'anagrafica:<br><ul><li>Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri</li><li>Azienda (B2B) - Codice Destinatario, 7 caratteri</li><li>Privato (B2C) - viene utilizzato il Codice Fiscale</li></ul>').'", "readonly": "'.intval($record['iso2'] != 'IT').'" ]}
+        </div>
 	</div>
 
 	<div class="row">
@@ -147,9 +137,6 @@ echo '
 		</div>
 	</div>
 </form>';
-
-echo '
-<script src="'.$rootdir.'/lib/init.js"></script>';
 
 echo '
 <script>

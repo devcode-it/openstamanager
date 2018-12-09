@@ -621,6 +621,7 @@ switch (post('op')) {
             $riga->id_rivalsa_inps = post('id_rivalsa_inps');
         }
 
+        $riga->prezzo_unitario_acquisto = post("prezzo_acquisto");
         $riga->prezzo_unitario_vendita = post('prezzo');
         $riga->qta = $qta;
         $riga->sconto_unitario = post('sconto');

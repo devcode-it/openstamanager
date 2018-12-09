@@ -22,3 +22,7 @@ UPDATE `zz_views` SET `query` = '(SELECT `descrizione` FROM `fe_stati_documento`
 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
 (NULL, 'OSMCloud Services API Token', '', 'string', 1, 'Fatturazione Elettronica', 11);
+
+-- Prezzo di acquisto
+
+ALTER TABLE `co_righe_documenti` ADD `prezzo_unitario_acquisto` DECIMAL(12,4) NOT NULL AFTER `descrizione`;

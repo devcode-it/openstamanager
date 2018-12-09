@@ -19,8 +19,8 @@ echo '
             <th width="150">'.tr('Prezzo acq. unitario').'</th>
             <th width="160">'.tr('Prezzo vend. unitario').'</th>
             <th width="120">'.tr('Iva').'</th>
-            <th width="150">'.tr('Guadagno unitario').'</th>
             <th width="120">'.tr('Importo').'</th>
+            <th width="120">'.tr('Guadagno').'</th>
             <th width="60"></th>
         </tr>
     </thead>
@@ -188,8 +188,18 @@ if (!empty($rs)) {
         echo '
         </td>';
 
+        // Importo
+        echo '
+        <td class="text-right">';
+        if (empty($r['is_descrizione'])) {
+            echo '
+            '.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
+        }
+        echo '
+        </td>';
+
         // Guadagno
-        $guadagno = $r['subtotale'] - (($r['prezzo_unitario_acquisto'] - $r["sconto_unitario"]) * $r["qta"]);
+        $guadagno = $r['subtotale'] - ($r['prezzo_unitario_acquisto'] * $r["qta"]) - ($r["sconto_unitario"] * $r["qta"]);
         if ($guadagno < 0) {
             $guadagno_style = "background-color: #FFC6C6; border: 3px solid red";
         } else {
@@ -200,16 +210,6 @@ if (!empty($rs)) {
         if (empty($r['is_descrizione'])) {
             echo '
             '.Translator::numberToLocale($guadagno).' &euro;';
-        }
-        echo '
-        </td>';
-
-        // Importo
-        echo '
-        <td class="text-right">';
-        if (empty($r['is_descrizione'])) {
-            echo '
-            '.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
         }
         echo '
         </td>';

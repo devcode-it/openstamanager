@@ -45,10 +45,10 @@ echo '
             {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$result['sconto_unitario'].'", "icon-after": "choice|untprc|'.$result['tipo_sconto'].'", "onkeyup": "aggiorna_guadagno()"]}
         </div>';
 
-// Guadagno
+// Guadagno unitario
 echo '
         <div class="col-md-3">
-            {[ "type": "number", "label": "'.tr('Guadagno').'", "name": "guadagno", "value": "'.$result['sconto_unitario'].'", "icon-after": "&euro;", "disabled": 1 ]}
+            {[ "type": "number", "label": "'.tr('Guadagno unitario').'", "name": "guadagno", "value": "'.$result['sconto_unitario'].'", "icon-after": "&euro;", "disabled": 1 ]}
         </div>
     </div>';
 

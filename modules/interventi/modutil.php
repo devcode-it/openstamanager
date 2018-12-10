@@ -192,7 +192,7 @@ function get_costi_intervento($id_intervento)
         ROUND(prezzo_ore_unitario*ore, '.$decimals.')
     ), 0) AS manodopera_addebito,
     COALESCE(SUM(
-        ROUND(prezzo_ore_unitario*ore, '.$decimals.') - ROUND(sconto_unitario*ore, '.$decimals.')
+        ROUND(prezzo_ore_unitario*ore, '.$decimals.') - ROUND(sconto, '.$decimals.')
     ), 0) AS manodopera_scontato,
 
 

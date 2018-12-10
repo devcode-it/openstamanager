@@ -22,3 +22,6 @@ UPDATE `zz_views` SET `query` = '(SELECT `descrizione` FROM `fe_stati_documento`
 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
 (NULL, 'OSMCloud Services API Token', '', 'string', 1, 'Fatturazione Elettronica', 11);
+
+-- Allineo valore Iva predefinita secondo nuovi codici tabella co_iva 
+UPDATE `zz_settings` SET `valore` = (SELECT id FROM `co_iva` WHERE `codice` = 22 LIMIT 0,1) WHERE `nome` = 'Iva predefinita' AND `valore` = 91;

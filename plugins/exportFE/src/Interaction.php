@@ -30,7 +30,7 @@ class Interaction
         return self::$client;
     }
 
-    public function isEnabled()
+    public static function isEnabled()
     {
         return false;
     }
@@ -58,7 +58,7 @@ class Interaction
             $fattura = new FatturaElettronica($id_record);
             $file = DOCROOT.'/'.FatturaElettronica::getDirectory().'/'.$fattura->getFilename();
 
-            $response = static::request('POST', 'send_fattura', [
+            $response = static::request('POST', 'send', [
                 'name' => $fattura->getFilename(),
             ], [
                 'multipart' => [

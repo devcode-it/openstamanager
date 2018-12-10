@@ -32,7 +32,7 @@ class Interaction
 
     public function isEnabled()
     {
-        return true;
+        return false;
     }
 
     protected function request($type, $resource, $data = [], $options = [])

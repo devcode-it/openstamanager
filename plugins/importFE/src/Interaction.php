@@ -30,7 +30,7 @@ class Interaction
         return self::$client;
     }
 
-    public function isEnabled()
+    public static function isEnabled()
     {
         return false;
     }

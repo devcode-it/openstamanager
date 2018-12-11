@@ -173,7 +173,7 @@ class FatturaElettronica
     }
 
     /**
-     * Restituisce le fatture collegaten al documento.
+     * Restituisce le fatture collegate al documento.
      *
      * @return array
      */
@@ -235,15 +235,18 @@ class FatturaElettronica
         $azienda = static::getAzienda();
         $documento = $fattura->getDocumento();
         $cliente = $fattura->getCliente();
-
+		
+		//Se sto fatturando ad un ente pubblico il codice destinatario di default è 99999 (sei nove), in alternativa uso 0000000 (sette zeri)
         $default_code = ($cliente['tipo'] == 'Ente pubblico') ? '999999' : '0000000';
+		//Se il mio cliente non ha sede in Italia il codice destinatario di default diventa (XXXXXXX) (sette X)
         $default_code = ($cliente['nazione'] != 'IT') ? 'XXXXXXX' : $default_code;
 
         // Generazione dell'header
+		// Se all'Anagrafe Tributaria il trasmittente è censito con il codice fiscale
         $result = [
             'IdTrasmittente' => [
                 'IdPaese' => $azienda['nazione'],
-                'IdCodice' => $azienda['piva'],
+                'IdCodice' => (!empty($azienda['piva'])) ? $azienda['piva'] : $azienda['codice_fiscale'],
             ],
             'ProgressivoInvio' => $documento['progressivo_invio'],
             'FormatoTrasmissione' => ($cliente['tipo'] == 'Ente pubblico') ? 'FPA12' : 'FPR12',

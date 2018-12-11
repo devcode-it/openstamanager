@@ -73,7 +73,7 @@ function search(button) {
                 $("#update-search").html("'.tr('Nessun aggiornamento presente').'.");
             } else {
                 $("#update-search").html("'.tr("E' stato individuato un nuovo aggiornamento").': " + data + ".<br>'.tr('Scaricalo ora: _LINK_', [
-                    '_LINK_' => "<a href='https://github.com/devcode-it/openstamanager/releases'>https://github.com/devcode-it/openstamanager/releases</a>",
+                    '_LINK_' => "<a target='_blank' href='https://github.com/devcode-it/openstamanager/releases'>https://github.com/devcode-it/openstamanager/releases</a>",
                 ]).'");
             }
         }

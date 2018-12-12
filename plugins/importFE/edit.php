@@ -6,7 +6,7 @@ use Plugins\ImportFE\Interaction;
 
 echo '
 <script>
-    function upload() {
+    function upload(btn) {
         if ($("#blob").val()) {
             swal({
                 title: "'.tr('Avviare la procedura?').'",
@@ -14,6 +14,8 @@ echo '
                 showCancelButton: true,
                 confirmButtonText: "'.tr('Sì').'"
             }).then(function (result) {
+                var restore = buttonLoading(btn);
+
                 $("#upload").ajaxSubmit({
                     url: globals.rootdir + "/actions.php",
                     data: {
@@ -34,9 +36,12 @@ echo '
                             })
                         }
 
+                        buttonRestore(btn, restore);
                     },
                     error: function(data) {
                         alert("'.tr('Errore').': " + data);
+
+                        buttonRestore(btn, restore);
                     }
                 });
             })
@@ -62,7 +67,7 @@ echo '
             </div>
 
             <div class="col-md-3">
-                <button type="button" class="btn btn-primary btn-lg pull-right" onclick="upload()">
+                <button type="button" class="btn btn-primary btn-lg pull-right" onclick="upload(this)">
                     <i class="fa fa-upload"></i> '.tr('Carica').'...
                 </button>
             </div>

@@ -52,6 +52,7 @@ return [
     'fe_modalita_pagamento',
     'fe_natura',
     'fe_regime_fiscale',
+    'fe_stati_documento',
     'fe_tipi_documento',
     'fe_tipo_cassa',
     'in_interventi',

@@ -743,7 +743,7 @@ switch (post('op')) {
                 }
 
                 // Inserimento riga normale
-                elseif ($qta != 0 || $rsdesc[0]['is_descrizione'] == 1) {
+                else {
                     $query = 'INSERT INTO co_righe_documenti(iddocumento, idarticolo, descrizione, is_descrizione, idddt, idiva, desc_iva, iva, iva_indetraibile, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, `order`) VALUES('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($descrizione).', '.prepare($rsdesc[0]['is_descrizione']).', '.prepare($idddt).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
 
                     $dbo->query($query);
@@ -830,7 +830,7 @@ switch (post('op')) {
                 }
 
                 // Inserimento riga normale
-                elseif ($qta != 0 || $rsdesc[0]['is_descrizione'] == 1) {
+                else {
                     $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idarticolo, idordine, idiva, desc_iva, iva, iva_indetraibile, descrizione, is_descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, `order`) VALUES('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idordine).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($rdesc[0]['is_descrizione']).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))');
                 }
 
@@ -1315,6 +1315,9 @@ switch (post('op')) {
                 $rs = $dbo->fetchArray($query);
                 $desc_iva = $rs[0]['descrizione'];
 
+                $qdesc = 'SELECT is_descrizione FROM co_righe_documenti WHERE id='.prepare($i);
+                $rsdesc = $dbo->fetchArray($qdesc);
+
                 // Se sto aggiungendo un articolo uso la funzione per inserirlo e incrementare la giacenza
                 if (!empty($idarticolo)) {
                     $idiva_acquisto = $idiva;
@@ -1331,7 +1334,7 @@ switch (post('op')) {
 
                 // Inserimento riga normale
                 else {
-                    $query = 'INSERT INTO co_righe_documenti(iddocumento, idarticolo, descrizione, idconto, idordine, idiva, desc_iva, iva, iva_indetraibile, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, `order`) VALUES('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($descrizione).', '.prepare($idconto).', '.prepare($idordine).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
+                    $query = 'INSERT INTO co_righe_documenti(iddocumento, idarticolo, descrizione, idconto, idordine, idiva, desc_iva, iva, iva_indetraibile, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, is_descrizione, `order`) VALUES('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($descrizione).', '.prepare($idconto).', '.prepare($idordine).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', '.prepare($rsdesc[0]['is_descrizione']).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
                     $dbo->query($query);
 
                     $riga = $dbo->lastInsertedID();

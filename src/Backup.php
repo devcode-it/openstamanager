@@ -162,13 +162,15 @@ class Backup
                 'config.inc.php',
             ],
             'dirs' => [
-                basename($backup_dir),
-                '.couscous',
                 'node_modules',
                 'tests',
                 'tmp',
             ],
         ];
+
+        if (starts_with($backup_dir, slashes(DOCROOT))) {
+            $ignores['dirs'][] = basename($backup_dir);
+        }
 
         // Creazione backup in formato ZIP
         if (extension_loaded('zip')) {

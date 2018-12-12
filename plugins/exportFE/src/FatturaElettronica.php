@@ -235,14 +235,14 @@ class FatturaElettronica
         $azienda = static::getAzienda();
         $documento = $fattura->getDocumento();
         $cliente = $fattura->getCliente();
-		
-		//Se sto fatturando ad un ente pubblico il codice destinatario di default è 99999 (sei nove), in alternativa uso 0000000 (sette zeri)
+
+        // Se sto fatturando ad un ente pubblico il codice destinatario di default è 99999 (sei nove), in alternativa uso 0000000 (sette zeri)
         $default_code = ($cliente['tipo'] == 'Ente pubblico') ? '999999' : '0000000';
-		//Se il mio cliente non ha sede in Italia il codice destinatario di default diventa (XXXXXXX) (sette X)
+        // Se il mio cliente non ha sede in Italia il codice destinatario di default diventa (XXXXXXX) (sette X)
         $default_code = ($cliente['nazione'] != 'IT') ? 'XXXXXXX' : $default_code;
 
         // Generazione dell'header
-		// Se all'Anagrafe Tributaria il trasmittente è censito con il codice fiscale
+        // Se all'Anagrafe Tributaria il trasmittente è censito con il codice fiscale
         $result = [
             'IdTrasmittente' => [
                 'IdPaese' => $azienda['nazione'],
@@ -680,6 +680,10 @@ class FatturaElettronica
         // Righe del documento
         $righe_documento = $fattura->getRighe();
         foreach ($righe_documento as $numero => $riga) {
+            $riga['subtotale'] = abs($riga['subtotale']);
+            $riga['qta'] = abs($riga['qta']);
+            $riga['sconto'] = abs($riga['sconto']);
+
             $prezzo_unitario = $riga['subtotale'] / $riga['qta'];
             $prezzo_totale = $riga['subtotale'] - $riga['sconto'];
 
@@ -760,7 +764,7 @@ class FatturaElettronica
             // TODO: la dicitura può essere diversa tra diverse IVA con stessa percentuale/natura
             // nei riepiloghi viene fatto un accorpamento percentuale/natura
             if (!empty($riepilogo['dicitura'])) {
-                //$iva['RiferimentoNormativo'] = $riepilogo['dicitura'];
+                // $iva['RiferimentoNormativo'] = $riepilogo['dicitura'];
             }
 
             $result[] = [

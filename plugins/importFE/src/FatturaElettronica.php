@@ -75,8 +75,10 @@ class FatturaElettronica
 
     public static function store($filename, $content)
     {
-        $file = static::getImportDirectory().'/'.$filename;
+        $directory = static::getImportDirectory();
+        $file = $directory.'/'.$filename;
 
+        directory($directory);
         file_put_contents($file, $content);
 
         return $filename;

@@ -16,6 +16,9 @@ class Validate
         if ($partita_iva === '') {
             return true;
         }
+        if (strlen($partita_iva) == 13) {
+            $partita_iva = substr($partita_iva, 2);
+        }
 
         if (strlen($partita_iva) != 11 || preg_match("/^[0-9]+\$/D", $partita_iva) != 1) {
             return false;
@@ -59,6 +62,7 @@ class Validate
             return false;
         }
 
+        /**
         // Controllo con API europea ufficiale
         if (extension_loaded('soap')) {
             try {
@@ -69,7 +73,7 @@ class Validate
                 }
             } catch (VATCheckUnavailableException $e) {
             }
-        }
+        } */
 
         // Controllo attraverso apilayer
         $access_key = setting('apilayer API key for VAT number');

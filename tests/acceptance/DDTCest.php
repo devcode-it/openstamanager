@@ -29,7 +29,7 @@ class DDTCest
     {
         // Seleziona il modulo da aprire
         $t->expandSidebarLink('Magazzino');
-        $t->navigateTo($entrata == true ? 'Ddt di vendita' : 'Ddt di acquisto');
+        $t->navigateTo($entrata == true ? 'Ddt in uscita' : 'Ddt in entrata');
 
         // Apre la schermata di nuovo elemento
         $t->clickAndWaitModal('.btn-primary', '#tabs');

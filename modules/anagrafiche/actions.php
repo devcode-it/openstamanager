@@ -86,7 +86,7 @@ switch (post('op')) {
 
         $check_vat_number = Validate::isValidVatNumber($partita_iva);
         if (empty($check_vat_number)) {
-            flash()->warning(tr('Attenzione: la partita IVA _IVA_ sembra non essere valida. Per conferma il servizio <a target="_blank" href="https://telematici.agenziaentrate.gov.it/VerificaPIVA/Scegli.do?parameter=verificaPiva">Verifica partita iva</a> del sito dell\'agenzia delle entrate.', [
+            flash()->warning(tr('Attenzione: la partita IVA _IVA_ sembra non essere valida', [
                 '_IVA_' => $partita_iva,
             ]));
         }

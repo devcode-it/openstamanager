@@ -57,6 +57,11 @@ foreach ($righe as $r) {
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
     $count += substr_count($r['descrizione'], PHP_EOL);
 
+    $v_iva[$r['desc_iva']] = sum($v_iva[$r['desc_iva']], $r['iva']);
+    $v_totale[$r['desc_iva']] = sum($v_totale[$r['desc_iva']], [
+        $r['subtotale'], -$r['sconto'],
+    ]);
+
     // Valori assoluti
     $r['qta'] = abs($r['qta']);
     if (empty($r['sconto_globale'])) {
@@ -196,10 +201,6 @@ foreach ($righe as $r) {
         </tr>';
 
     $autofill['count'] += $count;
-    $v_iva[$r['desc_iva']] = sum($v_iva[$r['desc_iva']], $r['iva']);
-    $v_totale[$r['desc_iva']] = sum($v_totale[$r['desc_iva']], [
-        $r['subtotale'], -$r['sconto'],
-    ]);
 }
 
 echo '

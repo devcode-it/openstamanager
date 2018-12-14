@@ -798,7 +798,7 @@ input.small-width {
     z-index: 2000;
 }
 
-.after.input-group-addon .select2-selection{
+.after.input-group-addon .select2-selection, .after.input-group-addon{
 	 border-radius:0px 4px 4px 0px;
 	 border-left:none;
 }

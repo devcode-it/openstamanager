@@ -482,7 +482,7 @@ if (!empty($record['idconto_cliente'])) {
 
 if (setting('Azienda predefinita') == $id_record) {
     echo '
-<div class="alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un file con nome "Logo stampe"').'.</div>';
+<div class="alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un file specificando come nome dell\'allegato "Logo stampe" (Risoluzione consigliata 302x111 pixel)').'.</div>';
 }
 
 // Collegamenti diretti

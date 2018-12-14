@@ -95,6 +95,7 @@ switch (post('op')) {
                 'rivalsainps' => 0,
                 'ritenutaacconto' => 0,
                 'iva_rivalsainps' => 0,
+                'codice_stato_fe' => post('codice_stato_fe'),
             ], $data), ['id' => $id_record]);
 
             $query = 'SELECT descrizione FROM co_statidocumento WHERE id='.prepare($idstatodocumento);

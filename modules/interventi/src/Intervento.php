@@ -2,10 +2,10 @@
 
 namespace Modules\Interventi;
 
-use Common\Model;
+use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 
-class Intervento extends Model
+class Intervento extends Document
 {
     protected $table = 'in_interventi';
 

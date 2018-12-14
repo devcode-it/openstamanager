@@ -2,12 +2,12 @@
 
 namespace Modules\Fatture;
 
-use Common\Model;
+use Common\Document;
 use Util\Generator;
 use Traits\RecordTrait;
 use Modules\Anagrafiche\Anagrafica;
 
-class Fattura extends Model
+class Fattura extends Document
 {
     use RecordTrait;
 
@@ -176,93 +176,13 @@ class Fattura extends Model
     }
 
     /**
-     * Restituisce la collezione di righe e articoli con valori rilevanti per i conti.
-     *
-     * @return iterable
-     */
-    protected function getRighe()
-    {
-        return $this->righe->merge($this->articoli);
-    }
-
-    /**
-     * Calcola l'imponibile della fattura.
-     *
-     * @return float
-     */
-    public function getImponibile()
-    {
-        return $this->getRighe()->sum('imponibile');
-    }
-
-    /**
-     * Calcola lo sconto totale della fattura.
-     *
-     * @return float
-     */
-    public function getSconto()
-    {
-        return $this->getRighe()->sum('sconto');
-    }
-
-    /**
-     * Calcola l'imponibile scontato della fattura.
-     *
-     * @return float
-     */
-    public function getImponibileScontato()
-    {
-        return $this->getRighe()->sum('imponibile_scontato');
-    }
-
-    /**
-     * Calcola l'IVA totale della fattura.
-     *
-     * @return float
-     */
-    public function getIva()
-    {
-        return $this->getRighe()->sum('iva');
-    }
-
-    /**
-     * Calcola la rivalsa INPS totale della fattura.
-     *
-     * @return float
-     */
-    public function getRivalsaINPS()
-    {
-        return $this->getRighe()->sum('rivalsa_inps');
-    }
-
-    /**
-     * Calcola la ritenuta d'acconto totale della fattura.
-     *
-     * @return float
-     */
-    public function getRitenutaAcconto()
-    {
-        return $this->getRighe()->sum('ritenuta_acconto');
-    }
-
-    /**
-     * Calcola il totale della fattura.
-     *
-     * @return float
-     */
-    public function getTotale()
-    {
-        return $this->getRighe()->sum('totale');
-    }
-
-    /**
      * Calcola il netto a pagare della fattura.
      *
      * @return float
      */
-    public function getNetto()
+    public function getNettoAttribute()
     {
-        return $this->getRighe()->sum('netto') + $this->bollo;
+        return parent::getNettoAttribute() + $this->bollo;
     }
 
     /**

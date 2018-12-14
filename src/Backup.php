@@ -246,9 +246,9 @@ class Backup
         if (file_exists($database_file)) {
             $database->query('SET foreign_key_checks = 0');
             foreach ($tables as $tables) {
-                $database->query('DROP TABLE `'.$tables.'`');
+                $database->query('DROP TABLE IF EXISTS `'.$tables.'`');
             }
-            $database->query('DROP TABLE `updates`');
+            $database->query('DROP TABLE IF EXISTS `updates`');
 
             // Ripristino del database
             $database->multiQuery($database_file);

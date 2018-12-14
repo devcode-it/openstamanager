@@ -35,7 +35,7 @@ class Connection
         return !empty(setting('OSMCloud Services API Token'));
     }
 
-    protected function request($type, $resource, $data = [], $options = [])
+    public static function request($type, $resource, $data = [], $options = [])
     {
         $client = static::getClient();
 
@@ -62,7 +62,7 @@ class Connection
         return $client->request($type, '', $options);
     }
 
-    protected function responseBody($response)
+    public static function responseBody($response)
     {
         $body = $response->getBody();
 

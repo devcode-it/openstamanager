@@ -283,7 +283,7 @@ echo '
 // Requisiti
 echo '
 <hr>
-</div>
+<div>
     <h3>'.tr('Requisiti').'</h3>';
 
 include DOCROOT.'/include/init/requirements.php';

@@ -79,7 +79,7 @@ function submodules($list, $depth = 0)
 }
 
 /**
- * Controlla se il database presenta alcune sezioni personlizzate.
+ * Controlla se il database presenta alcune sezioni personalizzate.
  *
  * @return array
  */
@@ -99,10 +99,13 @@ function customStructure()
         foreach ($files as $file) {
             $file = str_replace(DOCROOT.'/', '', $file);
             $result = explode('/custom/', $file)[0];
-
-            if (!in_array($result, $results)) {
-                $results[] = $result;
-            }
+			
+			$info = new SplFileInfo($file);
+			if ($info->getExtension()!='jpg'){
+				if (!in_array($result, $results)) {
+					$results[] = $result;
+				}
+			}
         }
     }
 
@@ -110,7 +113,7 @@ function customStructure()
 }
 
 /**
- * Controlla se il database presenta alcune sezioni personlizzate.
+ * Controlla se il database presenta alcune sezioni personalizzate.
  *
  * @return array
  */
@@ -131,7 +134,7 @@ function customTables()
 }
 
  /**
- * Controlla se il database presenta alcune sezioni personlizzate.
+ * Controlla se il database presenta alcune sezioni personalizzate.
  *
  * @return array
  */

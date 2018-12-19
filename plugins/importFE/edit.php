@@ -57,7 +57,12 @@ echo '
 <div class="box box-success">
     <div class="box-header with-border">
         <h3 class="box-title">
-            '.tr('Carica un XML').'</span>
+            '.tr('Carica un XML').'
+
+            <span class="tip" title="'.tr("Formati supportati: XML e P7M").'.">
+                <i class="fa fa-question-circle-o"></i>
+            </span>
+
         </h3>
     </div>
     <div class="box-body" id="upload">
@@ -67,8 +72,8 @@ echo '
             </div>
 
             <div class="col-md-3">
-                <button type="button" class="btn btn-primary btn-lg pull-right" onclick="upload(this)">
-                    <i class="fa fa-upload"></i> '.tr('Carica').'...
+                <button type="button" class="btn btn-primary pull-right" onclick="upload(this)">
+                    <i class="fa fa-upload"></i> '.tr('Carica fattura di acquisto').'
                 </button>
             </div>
         </div>
@@ -83,7 +88,7 @@ if (Interaction::isEnabled()) {
             '.tr('Importazione automatica').'</span>
         </h3>
         <button type="button" class="btn btn-primary pull-right" onclick="search(this)">
-            <i class="fa fa-refresh"></i> '.tr('Ricerca').'...
+            <i class="fa fa-refresh"></i> '.tr('Ricerca fatture di acquisto').'
         </button>
     </div>
     <div class="box-body" id="list">';

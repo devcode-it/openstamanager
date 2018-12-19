@@ -79,11 +79,11 @@ if (!empty($righe)) {
         <table class="table table-hover table-striped table-condensed">
             <tr>
                 <th>'.tr('Descrizione').'</th>
-                <th width="5%">'.tr('Q.tà').'</th>
+                <th width="10%">'.tr('Q.tà').'</th>
                 <th width="10%">'.tr('Prezzo unitario').'</th>
                 <th width="15%">'.tr('Iva associata').'*</th>
                 <th width="15%">'.tr('Conto').'*</th>
-                <th width="20%">'.tr('Articolo associato').'</th>
+                <th width="25%">'.tr('Articolo').'</th>
             </tr>';
 
     foreach ($righe as $key => $riga) {
@@ -107,7 +107,7 @@ if (!empty($righe)) {
                 {[ "type": "select", "name": "conto['.$key.']", "ajax-source": "conti-acquisti", "required": 1 ]}
             </td>
             <td>
-                {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "icon-after": "add|'.Modules::get("Articoli")["id"].'" ]}
+                {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "class": "", "icon-after": "add|'.Modules::get("Articoli")["id"].'" ]}
             </td>
         </tr>';
     }

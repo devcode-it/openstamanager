@@ -37,6 +37,15 @@ echo '
 	</div>
 
 	<div class="row">
+		<div class="col-md-6">
+			{[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "values": "query=SELECT `id`, `nome` AS `descrizione` FROM `an_nazioni` ORDER BY `descrizione` ASC", "value": "" ]}
+		</div>
+        <div class="col-md-6">
+			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT `id`, CONCAT(`nome`, \' - \', `descrizione`) AS `descrizione` FROM `an_zone` ORDER BY `descrizione` ASC" ]}
+		</div>
+	</div>
+
+	<div class="row">
 		<div class="col-md-4">
 			{[ "type": "text", "label": "'.tr('Cellulare').'", "name": "cellulare" ]}
 		</div>
@@ -47,12 +56,6 @@ echo '
 
 		<div class="col-md-4">
 			{[ "type": "text", "label": "'.tr('Indirizzo email').'", "name": "email" ]}
-		</div>
-	</div>
-
-	<div class="row">
-        <div class="col-md-12">
-			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT `id`, CONCAT(`nome`, \' - \', `descrizione`) AS `descrizione` FROM `an_zone` ORDER BY `descrizione` ASC" ]}
 		</div>
 	</div>
 

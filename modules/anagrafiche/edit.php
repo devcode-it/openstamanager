@@ -248,22 +248,36 @@ if (!empty($google)) {
 					<div class="col-md-6">
 						{[ "type": "select", "label": "<?php echo tr('Listino articoli'); ?>", "name": "idlistino_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_acquisti$", "extra": "<?php echo ($fornitore) ? '' : 'readonly'; ?>" ]}
 					</div>
-				</div>
+                    <div class="col-md-6">
+				
 
 <?php
 
 // Collegamento con il conto
-if (!empty($record['idconto_fornitore'])) {
+
     $conto = $dbo->fetchOne('SELECT co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
 
-    echo '
+   /*echo '
                 <p>'.tr('Piano dei conti collegato: _NAME_', [
                     '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
-                ]).Modules::link('Piano dei conti', null, '').'</p>';
-} ?>
+                ]).Modules::link('Piano dei conti', null, '').'</p>';*/
+if (!empty($conto['numero_conto'])){
+$piano_dei_conti_fornitore = tr('_NAME_', [
+                    '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
+                ]);
+}else{
+    $piano_dei_conti_fornitore = tr('Nessuno');
+}
+
+echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"');
+ ?>
+
+            {[ "type": "select", "label": "<?php echo tr('Piano dei conti fornitore'); ?>", "name": "piano_dei_conti_fornitore", "values": "list=\"\": \"<?php echo $piano_dei_conti_fornitore; ?>\"", "readonly": 1, "value": "", "extra": "" ]}
 
 
-			</div>
+                </div>
+            </div>
+		</div>
 		</div>
 		</div>
 
@@ -315,24 +329,41 @@ if (!empty($record['idconto_fornitore'])) {
 					  {[ "type": "select", "label": "Agente principale", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, IF(deleted_at IS NOT NULL, CONCAT(ragione_sociale, ' (Eliminato)'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione='Agente' AND deleted_at IS NULL)<?php echo isset($record['idagente']) ? 'OR (an_anagrafiche.idanagrafica = '.prepare($record['idagente']).' AND deleted_at IS NOT NULL) ' : ''; ?>ORDER BY ragione_sociale", "value": "$idagente$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
 					</div>
                 </div>
-
+                <div class="row">
+                    <div class="col-md-6">
 <?php
 
 // Collegamento con il conto
-if (!empty($record['idconto_cliente'])) {
     $conto = $dbo->fetchOne('SELECT co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione as descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
 
-    echo '
+    /*echo '
                 <p>'.tr('Piano dei conti collegato: _NAME_', [
                     '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
-                ]).Modules::link('Piano dei conti', null, '').'</p>';
-} ?>
+                ]).Modules::link('Piano dei conti', null, '').'</p>';*/
+if (!empty($conto['numero_conto'])){
+$piano_dei_conti_cliente = tr('_NAME_', [
+                    '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
+                ]);
+}else{
+    $piano_dei_conti_cliente = tr('Nessuno');
+}
+
+echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"');
+
+?>                      {[ "type": "select", "label": "<?php echo tr('Piano dei conti cliente'); ?>", "name": "piano_dei_conti_cliente", "values": "list=\"\": \"<?php echo $piano_dei_conti_cliente; ?>\"", "readonly": 1, "value": "", "extra": "" ]}
+
+                    </div>
+                    <div class="col-md-6">
+                        {[ "type": "checkbox", "label": "<?php echo tr('Abilitare lo split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Lo split payment <strong>&egrave; obbligatorio</strong> per:<ul><li>Stato;</li><li>organi statali ancorch&eacute; dotati di personalit&agrave; giuridica;</li><li>enti pubblici territoriali e dei consorzi tra essi costituiti;</li><li>Camere di Commercio;</li><li>Istituti universitari;</li><li>ASL e degli enti ospedalieri;</li><li>enti pubblici di ricovero e cura aventi prevalente carattere scientifico;</li><li>enti pubblici di assistenza e beneficienza;</li><li>enti di previdenza;</li><li>consorzi tra questi costituiti.</li></ul>'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>", "extra" : "<?php echo ($record['tipo'] != 'Ente pubblico') ? 'disabled' : ''; ?>" ]}
+                    </div>
+              </div>
+
 
 			</div>
-		</div>
-		</div>
-		</div>
-		<div class="clearfix" ></div>
+		  </div>
+	    </div>
+        </div>
+	<div class="clearfix" ></div>
 
 	<?php
     }

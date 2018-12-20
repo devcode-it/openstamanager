@@ -18,7 +18,9 @@ echo '
 <form id="add_form" action="'.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.get('id_record').'" method="post">
     <input type="hidden" name="op" value="'.$op.'">
     <input type="hidden" name="backto" value="record-edit">
-    <input type="hidden" name="id_sessione" value="'.$sessione['id'].'">';
+    <input type="hidden" name="id_sessione" value="'.$sessione['id'].'">
+	<input type="hidden" name="idtecnico" value="'.$sessione['idtecnico'].'">';
+	
 
 // Tecnico
 echo '

@@ -151,7 +151,7 @@ function search(button) {
                     <label><input type="file" name="blob" id="blob"></label>
 
                     <button type="button" class="btn btn-primary pull-right" onclick="update()">
-                        <i class="fa fa-upload"></i> '.tr('Carica').'...
+                        <i class="fa fa-upload"></i> '.tr('Carica').'
                     </button>
                 </form>
             </div>

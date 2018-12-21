@@ -69,12 +69,13 @@ function restore() {
 </script>';
 
 $upload_max_filesize = ini_get('upload_max_filesize');
+$max_execution_time = ini_get('max_execution_time');
 echo '
     <div class="col-md-4">
         <div class="box box-success">
             <div class="box-header with-border">
                 <h3 class="box-title">
-                    '.tr('Ripristina backup').' <small>(upload_max_filesize: '.$upload_max_filesize.')</small>
+                    '.tr('Ripristina backup').' <small>(upload_max_filesize: '.$upload_max_filesize.')</small> <small>(max_execution_time: '.$max_execution_time.')</small>
                 </h3>
             </div>
             <div class="box-body">

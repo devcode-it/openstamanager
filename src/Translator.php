@@ -23,13 +23,14 @@ class Translator extends Util\Singleton
     public function __construct($default_locale = 'it', $fallback_locales = ['it'])
     {
         $translator = new Symfony\Component\Translation\Translator($default_locale);
-        $this->locale = $default_locale;
         $translator->setFallbackLocales($fallback_locales);
-
         // Imposta la classe per il caricamento
         $translator->addLoader('default', new Intl\FileLoader());
 
         $this->translator = $translator;
+
+        $this->locale = $default_locale;
+        self::setFormatter($default_locale, []);
     }
 
     /**
@@ -121,18 +122,7 @@ class Translator extends Util\Singleton
             setlocale(LC_TIME, $locale);
             Carbon::setLocale($locale);
 
-            self::$formatter = new Intl\Formatter(
-                $this->locale,
-                empty($formatter['timestamp']) ? 'd/m/Y H:i' : $formatter['timestamp'],
-                empty($formatter['date']) ? 'd/m/Y' : $formatter['date'],
-                empty($formatter['time']) ? 'H:i' : $formatter['time'],
-                empty($formatter['number']) ? [
-                    'decimals' => ',',
-                    'thousands' => '.',
-                ] : $formatter['number']
-            );
-
-            self::$formatter->setPrecision(auth()->check() ? setting('Cifre decimali per importi') : 2);
+            self::setFormatter($locale, $formatter);
         }
     }
 
@@ -185,7 +175,27 @@ class Translator extends Util\Singleton
     }
 
     /**
-     * Restituisce il formato locale della data.
+     * Imposta l'oggetto responsabile della localizzazione di date e numeri.
+     *
+     */
+    protected static function setFormatter($locale, $options)
+    {
+        self::$formatter = new Intl\Formatter(
+            $locale,
+            empty($options['timestamp']) ? 'd/m/Y H:i' : $options['timestamp'],
+            empty($options['date']) ? 'd/m/Y' : $options['date'],
+            empty($options['time']) ? 'H:i' : $options['time'],
+            empty($options['number']) ? [
+                'decimals' => ',',
+                'thousands' => '.',
+            ] : $options['number']
+        );
+
+        self::$formatter->setPrecision(auth()->check() ? setting('Cifre decimali per importi') : 2);
+    }
+
+    /**
+     * Restituisce l'oggetto responsabile della localizzazione di date e numeri.
      *
      * @return Intl\Formatter
      */

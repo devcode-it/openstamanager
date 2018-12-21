@@ -22,7 +22,7 @@ class Setting extends Model
         // Valore corrispettivo
         $query = str_replace('query=', '', $this->tipo);
         if ($query != $this->tipo) {
-            $data = $database->fetchArray($query);
+            $data = database()->fetchArray($query);
             if (!empty($data)) {
                 $value = $data[0]['descrizione'];
             }

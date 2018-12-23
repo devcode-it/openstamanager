@@ -13,6 +13,15 @@ class Fattura extends Document
 
     protected $table = 'co_documenti';
 
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'bollo' => 'float',
+    ];
+
     public function getModuleAttribute()
     {
         return $this->tipo->dir == 'entrata' ? 'Fatture di vendita' : 'Fatture di acquisto';
@@ -247,5 +256,10 @@ class Fattura extends Document
     public function descrizioni()
     {
         return $this->hasMany(Descrizione::class, 'iddocumento');
+    }
+
+    public function scontoGlobale()
+    {
+        return $this->hasOne(Sconto::class, 'iddocumento');
     }
 }

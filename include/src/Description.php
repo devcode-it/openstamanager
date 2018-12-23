@@ -19,6 +19,10 @@ abstract class Description extends Model
                 $builder->where('is_descrizione', '=', 0);
             });
         }
+
+        static::addGlobalScope('not_discount', function (Builder $builder) {
+            $builder->where('sconto_globale', '=', 0);
+        });
     }
 
     public static function make($bypass = false)

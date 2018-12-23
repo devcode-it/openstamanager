@@ -44,6 +44,16 @@ abstract class Row extends Description
         return $this->imponibile_scontato + $this->iva + $this->rivalsa_inps;
     }
 
+    public function getSpesaAttribute()
+    {
+        return $this->prezzo_unitario_acquisto * $this->qta;
+    }
+
+    public function getGuadagnoAttribute()
+    {
+        return $this->imponibile_scontato - $this->spesa;
+    }
+
     public function getNettoAttribute()
     {
         return $this->totale - $this->ritenuta_acconto;

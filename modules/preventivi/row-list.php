@@ -108,14 +108,14 @@ foreach ($rs as $r) {
     }
 
     // Guadagno
-    $guadagno = $r['subtotale'] - ($r['prezzo_unitario_acquisto'] * $r["qta"]) - ($r["sconto_unitario"] * $r["qta"]);
+    $guadagno = $r['subtotale'] - ($r['prezzo_unitario_acquisto'] * $r['qta']) - ($r['sconto_unitario'] * $r['qta']);
     if ($guadagno < 0) {
-        $guadagno_style = "background-color: #FFC6C6; border: 3px solid red";
+        $guadagno_style = 'background-color: #FFC6C6; border: 3px solid red';
     } else {
-        $guadagno_style = "";
+        $guadagno_style = '';
     }
     echo '
-        <td class="text-right" style="' . $guadagno_style . '">';
+        <td class="text-right" style="'.$guadagno_style.'">';
     if (empty($r['is_descrizione'])) {
         echo '
             '.Translator::numberToLocale($guadagno).' &euro;';
@@ -157,7 +157,7 @@ foreach ($rs as $r) {
 // Calcoli
 $totale_acquisto = 0;
 foreach ($rs as $r) {
-    $totale_acquisto += ($r["prezzo_unitario_acquisto"] * $r["qta"]);
+    $totale_acquisto += ($r['prezzo_unitario_acquisto'] * $r['qta']);
 }
 $imponibile = sum(array_column($rs, 'subtotale'));
 $sconto = sum(array_column($rs, 'sconto'));
@@ -171,9 +171,8 @@ $totale = sum([
 ]);
 $totale_guadagno = sum([
     $imponibile_scontato
-    -$totale_acquisto
+    - $totale_acquisto,
 ]);
-
 
 echo '
     </tbody>';
@@ -253,16 +252,16 @@ echo '
 
 // GUADAGNO TOTALE
 if ($totale_guadagno < 0) {
-    $guadagno_style = "background-color: #FFC6C6; border: 3px solid red";
+    $guadagno_style = 'background-color: #FFC6C6; border: 3px solid red';
 } else {
-    $guadagno_style = "";
+    $guadagno_style = '';
 }
 echo '
     <tr>
         <td colspan="7" class="text-right">
             <b>'.tr('Guadagno totale', [], ['upper' => true]).':</b>
         </td>
-        <td align="right" style="' . $guadagno_style . '">
+        <td align="right" style="'.$guadagno_style.'">
             '.Translator::numberToLocale($totale_guadagno).' &euro;
         </td>
         <td></td>

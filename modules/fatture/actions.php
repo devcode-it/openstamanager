@@ -567,6 +567,9 @@ switch (post('op')) {
             $articolo->id_rivalsa_inps = post('id_rivalsa_inps');
         }
 
+        if (post('prezzo_acquisto')) {
+            $riga->prezzo_unitario_acquisto = post('prezzo_acquisto');
+        }
         $articolo->prezzo_unitario_vendita = post('prezzo');
         $articolo->sconto_unitario = post('sconto');
         $articolo->tipo_sconto = post('tipo_sconto');
@@ -622,7 +625,9 @@ switch (post('op')) {
             $riga->id_rivalsa_inps = post('id_rivalsa_inps');
         }
 
-        $riga->prezzo_unitario_acquisto = post("prezzo_acquisto");
+        if (post('prezzo_acquisto')) {
+            $riga->prezzo_unitario_acquisto = post('prezzo_acquisto');
+        }
         $riga->prezzo_unitario_vendita = post('prezzo');
         $riga->qta = $qta;
         $riga->sconto_unitario = post('sconto');

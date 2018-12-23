@@ -236,7 +236,7 @@ switch (post('op')) {
 
         $qta = post('qta');
         $prezzo = post('prezzo');
-        $prezzo_acquisto = post("prezzo_acquisto");
+        $prezzo_acquisto = post('prezzo_acquisto');
 
         // Calcolo dello sconto
         $sconto_unitario = post('sconto');
@@ -280,7 +280,7 @@ switch (post('op')) {
 
         $qta = post('qta');
         $prezzo = post('prezzo');
-        $prezzo_acquisto = post("prezzo_acquisto");
+        $prezzo_acquisto = post('prezzo_acquisto');
         $subtot = $prezzo * $qta;
 
         // Calcolo dello sconto

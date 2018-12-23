@@ -23,11 +23,6 @@ UPDATE `zz_views` SET `query` = '(SELECT `descrizione` FROM `fe_stati_documento`
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES
 (NULL, 'OSMCloud Services API Token', '', 'string', 1, 'Fatturazione Elettronica', 11);
 
--- Prezzo di acquisto nelle fatture di vendita e nei preventivi
-
-ALTER TABLE `co_righe_documenti` ADD `prezzo_unitario_acquisto` DECIMAL(12,4) NOT NULL AFTER `descrizione`;
-ALTER TABLE `co_righe_preventivi` ADD `prezzo_unitario_acquisto` DECIMAL(12,4) NOT NULL AFTER `descrizione`;
-
 -- Allineo valore Iva predefinita secondo nuovi codici tabella co_iva
 UPDATE `zz_settings` SET `valore` = (SELECT id FROM `co_iva` WHERE `codice` = 22 LIMIT 0,1) WHERE `nome` = 'Iva predefinita' AND `valore` = 91;
 

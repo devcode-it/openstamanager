@@ -73,6 +73,7 @@ switch (post('op')) {
         $anagrafica->idtipointervento_default = post('idtipointervento_default');
         $anagrafica->id_ritenuta_acconto_acquisti = post('id_ritenuta_acconto_acquisti');
         $anagrafica->id_ritenuta_acconto_vendite = post('id_ritenuta_acconto_vendite');
+        $anagrafica->split_payment = post('split_payment');
 
         $anagrafica->tipologie = (array) post('idtipoanagrafica');
 
@@ -86,7 +87,7 @@ switch (post('op')) {
 
         $check_vat_number = Validate::isValidVatNumber($partita_iva);
         if (empty($check_vat_number)) {
-            flash()->warning(tr('Attenzione: la partita IVA _IVA_ sembra non essere valida. Per conferma il servizio <a target="_blank" href="https://telematici.agenziaentrate.gov.it/VerificaPIVA/Scegli.do?parameter=verificaPiva">Verifica partita iva</a> del sito dell\'agenzia delle entrate.', [
+            flash()->warning(tr('Attenzione: la partita IVA _IVA_ sembra non essere valida', [
                 '_IVA_' => $partita_iva,
             ]));
         }

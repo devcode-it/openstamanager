@@ -10,7 +10,7 @@ function get_new_numerofattura($data)
     global $dir;
     global $id_segment;
 
-    return Fattura::getNumero($data, $dir, $id_segment);
+    return Fattura::getNextNumero($data, $dir, $id_segment);
 }
 
 /**
@@ -21,7 +21,7 @@ function get_new_numerosecondariofattura($data)
     global $dir;
     global $id_segment;
 
-    return Fattura::getNumeroSecondario($data, $dir, $id_segment);
+    return Fattura::getNextNumeroSecondario($data, $dir, $id_segment);
 }
 
 /**

@@ -23,7 +23,7 @@ if (!empty($list)) {
             <td>'.$element.'</td>
             <td>
                 <button type="button" class="btn btn-warning" onclick="download(this, \''.$element.'\')">
-                    <i class="fa fa-download"></i> '.tr('Importa').'
+                    <i class="fa fa-download"></i> '.tr('Importa fattura di acquisto').'
                 </button>
             </td>
         </tr>';

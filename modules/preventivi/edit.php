@@ -213,17 +213,15 @@ if (!empty($elementi)) {
         <ul>';
 
     foreach ($elementi as $elemento) {
-		
         $descrizione = tr('_DOC_ num. _NUM_ del _DATE_', [
             '_DOC_' => $elemento['tipo_documento'],
             '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
             '_DATE_' => Translator::dateToLocale($elemento['data']),
         ]);
-		
-		if (in_array($elemento['tipo_documento'],['Ordine cliente'])) {
+
+        if (in_array($elemento['tipo_documento'], ['Ordine cliente'])) {
             $modulo = 'Ordini cliente';
-        }
-        else{
+        } else {
             $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
         }
         $id = $elemento['id'];

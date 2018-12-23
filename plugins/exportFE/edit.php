@@ -35,7 +35,7 @@ foreach ($fields as $key => $name) {
 if (!empty($missing) && !$generated) {
     echo '
 <div class="alert alert-warning">
-    <p><i class="fa fa-warning"></i> '.tr("Prima di procedere alla generazione della fattura elettronica completa i seguenti campi del tipo di pagamento: _FIELDS_", [
+    <p><i class="fa fa-warning"></i> '.tr('Prima di procedere alla generazione della fattura elettronica completa i seguenti campi del tipo di pagamento: _FIELDS_', [
         '_FIELDS_' => '<b>'.implode(', ', $missing).'</b>',
     ]).'</p>
 </div>';
@@ -148,8 +148,7 @@ echo '
         <i class="fa fa-eye"></i> '.tr('Visualizza').'
     </a>';
 
-if (Interaction::isEnabled()) {
-    $send = $generated && $record['codice_stato_fe'] == 'GEN';
+    $send = Interaction::isEnabled() && $generated && $record['codice_stato_fe'] == 'GEN';
 
     echo '
 
@@ -192,7 +191,6 @@ if (Interaction::isEnabled()) {
             });
         }
     </script>';
-}
 
 echo '
 

@@ -28,9 +28,11 @@ switch (filter('op')) {
         $result = Interaction::sendXML($id_record);
 
         // Aggiornamento dello stato
-        database()->update('co_documenti', [
-            'codice_stato_fe' => 'WAIT',
-        ], ['id' => $id_record]);
+        if ($result) {
+            database()->update('co_documenti', [
+                'codice_stato_fe' => 'WAIT',
+            ], ['id' => $id_record]);
+        }
 
         echo json_encode([
             'sent' => $result,

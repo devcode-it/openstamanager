@@ -40,25 +40,29 @@ $settings = [
         'type' => 'ext',
         'description' => tr('Permette di effettuare la connessione al database MySQL'),
     ],
-    'openssl' => [
-        'type' => 'ext',
-        'description' => tr("Permette l'utilizzo di funzioni crittografiche simmetriche e asimmetriche (facoltativo)"),
-    ],
-    'intl' => [
-        'type' => 'ext',
-        'description' => tr("Permette l'automazione della conversione dei numeri (facoltativo)"),
-    ],
     'dom' => [
         'type' => 'ext',
         'description' => tr('Permette la gestione dei file standard per la Fatturazione Elettronica'),
     ],
-    'soap' => [
+    'xsl' => [
         'type' => 'ext',
-        'description' => tr('Permette la comunicazione con servizi esterni, quali il database europeo delle Partite IVA (facoltativo)'),
+        'description' => tr('Permette di visualizzazione grafica della Fattura Elettronica'),
+    ],
+    'openssl' => [
+        'type' => 'ext',
+        'description' => tr("Permette l'utilizzo di funzioni crittografiche simmetriche e asimmetriche"),
+    ],
+    'intl' => [
+        'type' => 'ext',
+        'description' => tr("Permette l'automazione della conversione dei numeri"),
     ],
     'curl' => [
         'type' => 'ext',
-        'description' => tr('Permette la comunicazione con servizi esterni, quali APILayer (facoltativo)'),
+        'description' => tr('Permette la comunicazione con servizi esterni'),
+    ],
+    'soap' => [
+        'type' => 'ext',
+        'description' => tr('Permette la comunicazione con servizi esterni, quali il database europeo delle Partite IVA (facoltativo)'),
     ],
 
     //'display_errors' => [

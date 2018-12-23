@@ -16,9 +16,11 @@ echo '
             <th>'.tr('Descrizione').'</th>
             <th width="120">'.tr('Q.tà').'</th>
             <th width="80">'.tr('U.m.').'</th>
-            <th width="120">'.tr('Prezzo unitario').'</th>
+            <th width="150">'.tr('Prezzo acq. unitario').'</th>
+            <th width="160">'.tr('Prezzo vend. unitario').'</th>
             <th width="120">'.tr('Iva').'</th>
             <th width="120">'.tr('Importo').'</th>
+            <th width="120">'.tr('Guadagno').'</th>
             <th width="60"></th>
         </tr>
     </thead>
@@ -28,6 +30,7 @@ if (!empty($rs)) {
     foreach ($rs as $r) {
         // Valori assoluti
         $r['qta'] = abs($r['qta']);
+        $r['prezzo_unitario_acquisto'] = abs($r['prezzo_unitario_acquisto']);
         $r['subtotale'] = abs($r['subtotale']);
         $r['sconto_unitario'] = abs($r['sconto_unitario']);
         $r['sconto'] = abs($r['sconto']);
@@ -143,7 +146,16 @@ if (!empty($rs)) {
         echo '
         </td>';
 
-        // Prezzo unitario
+        // Prezzo di acquisto unitario
+        echo '
+        <td class="text-right">';
+
+        if (empty($r['is_descrizione'])) {
+            echo '
+            '.Translator::numberToLocale($r['prezzo_unitario_acquisto']).' &euro;';
+        }
+
+        // Prezzo di vendita unitario
         echo '
         <td class="text-right">';
 
@@ -182,6 +194,22 @@ if (!empty($rs)) {
         if (empty($r['is_descrizione'])) {
             echo '
             '.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
+        }
+        echo '
+        </td>';
+
+        // Guadagno
+        $guadagno = $r['subtotale'] - ($r['prezzo_unitario_acquisto'] * $r["qta"]) - ($r["sconto_unitario"] * $r["qta"]);
+        if ($guadagno < 0) {
+            $guadagno_style = "background-color: #FFC6C6; border: 3px solid red";
+        } else {
+            $guadagno_style = "";
+        }
+        echo '
+        <td class="text-right" style="' . $guadagno_style . '">';
+        if (empty($r['is_descrizione'])) {
+            echo '
+            '.Translator::numberToLocale($guadagno).' &euro;';
         }
         echo '
         </td>';
@@ -236,6 +264,10 @@ echo '
     </tbody>';
 
 // Calcoli
+$totale_acquisto = 0;
+foreach ($rs as $r) {
+    $totale_acquisto += ($r["prezzo_unitario_acquisto"] * $r["qta"]);
+}
 $imponibile = sum(array_column($rs, 'subtotale'));
 $sconto = sum(array_column($rs, 'sconto'));
 $iva = sum(array_column($rs, 'iva'));
@@ -264,10 +296,15 @@ $totale_iva = abs($totale_iva);
 $totale = abs($totale);
 $netto_a_pagare = abs($netto_a_pagare);
 
+$totale_guadagno = sum([
+    $imponibile_scontato
+    -$totale_acquisto
+]);
+
 // IMPONIBILE
 echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="7" class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -280,7 +317,7 @@ echo '
 if (abs($sconto) > 0) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="7" class="text-right">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -292,7 +329,7 @@ if (abs($sconto) > 0) {
     // IMPONIBILE SCONTATO
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="7" class="text-right">
             <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -306,7 +343,7 @@ if (abs($sconto) > 0) {
 if (abs($record['rivalsainps']) > 0) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="7" class="text-right">
             <b>'.tr('Rivalsa INPS', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -320,7 +357,7 @@ if (abs($record['rivalsainps']) > 0) {
 if (abs($totale_iva) > 0) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="7" class="text-right">
             <b>'.tr('Iva', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -333,7 +370,7 @@ if (abs($totale_iva) > 0) {
 // TOTALE
 echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="7" class="text-right">
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -346,7 +383,7 @@ echo '
 if (abs($record['bollo']) > 0) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="7" class="text-right">
             <b>'.tr('Marca da bollo', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -360,7 +397,7 @@ if (abs($record['bollo']) > 0) {
 if (abs($record['ritenutaacconto']) > 0) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="7" class="text-right">
             <b>'.tr("Ritenuta d'acconto", [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -376,7 +413,7 @@ if (abs($record['ritenutaacconto']) > 0) {
 if ($totale != $netto_a_pagare) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
+        <td colspan="7" class="text-right">
             <b>'.tr('Netto a pagare', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -385,6 +422,23 @@ if ($totale != $netto_a_pagare) {
         <td></td>
     </tr>';
 }
+
+// GUADAGNO TOTALE
+if ($totale_guadagno < 0) {
+    $guadagno_style = "background-color: #FFC6C6; border: 3px solid red";
+} else {
+    $guadagno_style = "";
+}
+echo '
+    <tr>
+        <td colspan="7" class="text-right">
+            <b>'.tr('Guadagno totale', [], ['upper' => true]).':</b>
+        </td>
+        <td align="right" style="' . $guadagno_style . '">
+            '.Translator::numberToLocale($totale_guadagno).' &euro;
+        </td>
+        <td></td>
+    </tr>';
 
 echo '
 </table>';

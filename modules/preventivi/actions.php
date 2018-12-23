@@ -236,6 +236,7 @@ switch (post('op')) {
 
         $qta = post('qta');
         $prezzo = post('prezzo');
+        $prezzo_acquisto = post("prezzo_acquisto");
 
         // Calcolo dello sconto
         $sconto_unitario = post('sconto');
@@ -256,7 +257,7 @@ switch (post('op')) {
         $iva = ($subtot - $sconto) / 100 * $rs2[0]['percentuale'];
         $iva_indetraibile = $iva / 100 * $rs2[0]['indetraibile'];
 
-        $dbo->query('INSERT INTO co_righe_preventivi(idpreventivo, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, is_descrizione, `order`) VALUES ('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($rs2[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($subtot).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare(empty($qta)).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_preventivi AS t WHERE idpreventivo='.prepare($id_record).'))');
+        $dbo->query('INSERT INTO co_righe_preventivi(idpreventivo, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, prezzo_unitario_acquisto, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, is_descrizione, `order`) VALUES ('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($idiva).', '.prepare($rs2[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo_acquisto).', '.prepare($subtot).', '.prepare($um).', '.prepare($qta).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare(empty($qta)).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_preventivi AS t WHERE idpreventivo='.prepare($id_record).'))');
 
         // Messaggi informativi
         if (!empty($idarticolo)) {
@@ -279,6 +280,7 @@ switch (post('op')) {
 
         $qta = post('qta');
         $prezzo = post('prezzo');
+        $prezzo_acquisto = post("prezzo_acquisto");
         $subtot = $prezzo * $qta;
 
         // Calcolo dello sconto
@@ -302,7 +304,7 @@ switch (post('op')) {
 
         if ($is_descrizione == 0) {
             // Modifica riga generica sul documento
-            $query = 'UPDATE co_righe_preventivi SET idarticolo='.prepare($idarticolo).',  idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
+            $query = 'UPDATE co_righe_preventivi SET idarticolo='.prepare($idarticolo).',  idiva='.prepare($idiva).', desc_iva='.prepare($desc_iva).', iva='.prepare($iva).', iva_indetraibile='.prepare($iva_indetraibile).', descrizione='.prepare($descrizione).', prezzo_unitario_acquisto='.prepare($prezzo_acquisto).',subtotale='.prepare($subtot).', sconto='.prepare($sconto).', sconto_unitario='.prepare($sconto_unitario).', tipo_sconto='.prepare($tipo_sconto).', um='.prepare($um).', qta='.prepare($qta).' WHERE id='.prepare($idriga);
         } else {
             $query = 'UPDATE co_righe_preventivi SET descrizione='.prepare($descrizione).' WHERE id='.prepare($idriga);
         }

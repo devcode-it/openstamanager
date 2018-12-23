@@ -176,7 +176,6 @@ class Translator extends Util\Singleton
 
     /**
      * Imposta l'oggetto responsabile della localizzazione di date e numeri.
-     *
      */
     protected static function setFormatter($locale, $options)
     {

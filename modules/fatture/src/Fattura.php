@@ -15,7 +15,7 @@ class Fattura extends Document
 
     public function getModuleAttribute()
     {
-        return $this->tipo->dir == 'entrata' ? 'Fatture di vendita':'Fatture di acquisto';
+        return $this->tipo->dir == 'entrata' ? 'Fatture di vendita' : 'Fatture di acquisto';
     }
 
     /**

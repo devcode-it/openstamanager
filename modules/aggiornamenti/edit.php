@@ -3,11 +3,11 @@
 include_once __DIR__.'/../../core.php';
 
 // Personalizzazioni di codice
-if (function_exists (custom) ){
-	$custom = custom();
-	$tables = customTables();
-	if (!empty($custom) || !empty($tables)) {
-		echo '
+if (function_exists(custom)) {
+    $custom = custom();
+    $tables = customTables();
+    if (!empty($custom) || !empty($tables)) {
+        echo '
 	<div class="box box-warning">
 		<div class="box-header with-border">
 			<h3 class="box-title"><span class="tip" title="'.tr('Elenco delle personalizzazioni rilevabili dal gestionale').'.">
@@ -16,8 +16,8 @@ if (function_exists (custom) ){
 		</div>
 		<div class="box-body">';
 
-		if (!empty($custom)) {
-			echo '
+        if (!empty($custom)) {
+            echo '
 			<table class="table table-hover table-striped">
 				<tr>
 					<th width="10%">'.tr('Percorso').'</th>
@@ -25,36 +25,36 @@ if (function_exists (custom) ){
 					<th width="15%">'.tr('Database personalizzato').'</th>
 				</tr>';
 
-			foreach ($custom as $element) {
-				echo '
+            foreach ($custom as $element) {
+                echo '
 				<tr>
 					<td>'.$element['path'].'</td>
 					<td>'.($element['directory'] ? 'Si' : 'No').'</td>
 					<td>'.($element['database'] ? 'Si' : 'No').'</td>
 				</tr>';
-			}
+            }
 
-			echo '
+            echo '
 			</table>
 
 			<p><strong>'.tr("Si sconsiglia l'aggiornamento senza il supporto dell'assistenza ufficiale").'.</strong></p>';
-		} else {
-			echo '
+        } else {
+            echo '
 			<p>'.tr('Non ci sono strutture personalizzate').'.</p>';
-		}
+        }
 
-		if (!empty($tables)) {
-			echo '
+        if (!empty($tables)) {
+            echo '
 			<div class="alert alert-warning">
 				<i class="fa fa-warning"></i>
 				<b>Attenzione!</b> Ci sono delle tabelle non previste nella versione standard del gestionale: '.implode(', ', $tables).'.
 			</div>';
-		}
+        }
 
-		echo '
+        echo '
 		</div>
 	</div>';
-	}
+    }
 }
 
 // Aggiornamenti

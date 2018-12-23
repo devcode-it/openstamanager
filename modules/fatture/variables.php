@@ -11,7 +11,7 @@ FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anag
 return [
     'email' => $r['is_pec'] ? $r['pec'] : $r['email'],
     'id_anagrafica' => $r['idanagrafica'],
-	'ragione_sociale' => $r['ragione_sociale'],
+    'ragione_sociale' => $r['ragione_sociale'],
     'numero' => empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'],
     'note' => $r['note'],
     'data' => Translator::dateToLocale($r['data']),

@@ -101,7 +101,7 @@ if (empty($record['is_fiscale'])) {
 				</div>
 
                 <div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "required": 0, "values": "query=SELECT codice as id, descrizione as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Plugins\ExportFE\Connection::isEnabled()) ?>, "class": "unblockable" ]}
+					{[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "required": 0, "values": "query=SELECT codice as id, descrizione as text FROM fe_stati_documento", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Plugins\ExportFE\Connection::isEnabled()); ?>, "class": "unblockable" ]}
 				</div>
 			</div>
 
@@ -197,7 +197,7 @@ if (!empty($record['is_fiscale'])) {
 
     if (($n2 <= 0 && $record['stato'] == 'Emessa') || $differenza != 0) {
         ?>
-					<a class="btn btn-sm btn-primary  <?php echo((!empty(Modules::get('Prima nota'))) ? '' : 'disabled'); ?>" href="javascript:;" onclick="launch_modal( 'Aggiungi prima nota', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&iddocumento=<?php echo $id_record; ?>&dir=<?php echo $dir; ?>', 1 );"><i class="fa fa-euro"></i> <?php echo tr('Aggiungi prima nota'); ?>...</a><br><br>
+					<a class="btn btn-sm btn-primary  <?php echo (!empty(Modules::get('Prima nota'))) ? '' : 'disabled'; ?>" href="javascript:;" onclick="launch_modal( 'Aggiungi prima nota', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&iddocumento=<?php echo $id_record; ?>&dir=<?php echo $dir; ?>', 1 );"><i class="fa fa-euro"></i> <?php echo tr('Aggiungi prima nota'); ?>...</a><br><br>
 <?php
     }
 

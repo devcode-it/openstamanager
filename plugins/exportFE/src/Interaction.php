@@ -2,8 +2,6 @@
 
 namespace Plugins\ExportFE;
 
-use GuzzleHttp\Client;
-
 /**
  * Classe per l'interazione con API esterne.
  *
@@ -20,11 +18,11 @@ class Interaction extends Connection
             $response = static::request('POST', 'send_xml', [], [
                 'multipart' => [
                     [
-                        'name'     => 'xml',
+                        'name' => 'xml',
                         'filename' => $fattura->getFilename(),
-                        'contents' => file_get_contents($file)
+                        'contents' => file_get_contents($file),
                     ],
-                ]
+                ],
             ]);
 
             $body = static::responseBody($response);

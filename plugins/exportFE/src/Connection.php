@@ -52,7 +52,7 @@ class Connection
                 ];
             }
         } else {
-            $options['json'] = $json;
+            $options['form_params'] = $json;
         }
 
         $options = array_merge($options, [

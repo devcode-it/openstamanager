@@ -2,8 +2,6 @@
 
 namespace Common;
 
-use Illuminate\Database\Eloquent\Builder;
-
 abstract class Document extends Model
 {
     /**
@@ -17,9 +15,10 @@ abstract class Document extends Model
     }
 
     /**
-     * Funzione per l'arrotondamento degli importi;
+     * Funzione per l'arrotondamento degli importi;.
      *
      * @param float $value
+     *
      * @return float
      */
     protected function round($value)

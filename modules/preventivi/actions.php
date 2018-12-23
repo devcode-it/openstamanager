@@ -137,7 +137,7 @@ switch (post('op')) {
             flash()->info(tr('Preventivo modificato correttamente!'));
         }
         break;
-	
+
     // Duplica preventivo
     case 'copy':
         $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM co_preventivi WHERE id = '.prepare($id_record));
@@ -145,19 +145,19 @@ switch (post('op')) {
         $dbo->query('INSERT INTO co_preventivi SELECT NULL,tmp.* FROM tmp');
         $id_record = $dbo->lastInsertedID();
         $dbo->query('DROP TEMPORARY TABLE tmp');
-		
-		// Codice preventivo: calcolo il successivo in base al formato specificato
+
+        // Codice preventivo: calcolo il successivo in base al formato specificato
         $numeropreventivo_template = setting('Formato codice preventivi');
         $numeropreventivo_template = str_replace('#', '%', $numeropreventivo_template);
-		$rs = $dbo->fetchArray('SELECT numero FROM co_preventivi WHERE numero LIKE('.prepare(Util\Generator::complete($numeropreventivo_template)).') ORDER BY numero DESC LIMIT 0,1');
-		$numero = Util\Generator::generate(setting('Formato codice preventivi'), $rs[0]['numero']);
-			
+        $rs = $dbo->fetchArray('SELECT numero FROM co_preventivi WHERE numero LIKE('.prepare(Util\Generator::complete($numeropreventivo_template)).') ORDER BY numero DESC LIMIT 0,1');
+        $numero = Util\Generator::generate(setting('Formato codice preventivi'), $rs[0]['numero']);
+
         $dbo->query('UPDATE co_preventivi SET idstato=1, numero = '.$numero.', master_revision = id WHERE id='.prepare($id_record));
 
         flash()->info(tr('Preventivo duplicato correttamente!'));
 
     break;
-	
+
     case 'addintervento':
         if (post('idintervento') !== null) {
             // Selezione costi da intervento

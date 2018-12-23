@@ -20,7 +20,6 @@ echo '
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="id_sessione" value="'.$sessione['id'].'">
 	<input type="hidden" name="idtecnico" value="'.$sessione['idtecnico'].'">';
-	
 
 // Tecnico
 echo '

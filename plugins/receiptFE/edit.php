@@ -6,8 +6,7 @@ use Plugins\ReceiptFE\Interaction;
 
 if (!Interaction::isEnabled()) {
     echo '
-<p>'.tr('Il sistema di rilevazione automatico è attualmente disabilitato').'.</p>
-<p>'.tr('Per maggiori informazioni contatta gli sviluppatori ufficiali').'.</p>';
+<p>'.tr('Il sistema di rilevazione automatico è attualmente disabilitato').'. '.tr('Per maggiori informazioni contatta gli sviluppatori ufficiali').'.</p>';
 
     return;
 }
@@ -49,10 +48,10 @@ echo '
 
                 swal({
                     title: "'.tr('Ricevute da importare: _COUNT_', [
-                        '_COUNT_' => '" + count + "'
+                        '_COUNT_' => '" + count + "',
                     ]).'",
                     html: "'.tr('Sono state individuate _COUNT_ ricevute da importare', [
-                        '_COUNT_' => '" + count + "'
+                        '_COUNT_' => '" + count + "',
                     ]).'.",
                     showCancelButton: true,
                     confirmButtonText: "'.tr('Procedi').'",
@@ -83,7 +82,7 @@ echo '
             success: function(data){
                 data = JSON.parse(data);
 
-                var html = "'.tr("Le seguenti ricevute sono state considerate:").'";
+                var html = "'.tr('Le seguenti ricevute sono state considerate:').'";
 
                 console.log(data);
                 data.forEach(function(element) {

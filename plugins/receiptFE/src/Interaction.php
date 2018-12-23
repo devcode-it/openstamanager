@@ -2,7 +2,6 @@
 
 namespace Plugins\ReceiptFE;
 
-use GuzzleHttp\Client;
 use Plugins\ExportFE\Connection;
 
 /**
@@ -27,7 +26,7 @@ class Interaction extends Connection
         ]);
         $body = static::responseBody($response);
 
-        if($body['code'] != '200'){
+        if ($body['code'] != '200') {
             return false;
         }
 

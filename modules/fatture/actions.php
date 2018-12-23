@@ -1050,9 +1050,9 @@ switch (post('op')) {
             $query = 'DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id='.prepare($idriga);
             $dbo->query($query);
 
-            $rs_righe = $dbo->fetchArray("SELECT * FROM co_righe_documenti WHERE idpreventivo=".prepare($idpreventivo));
+            $rs_righe = $dbo->fetchArray('SELECT * FROM co_righe_documenti WHERE idpreventivo='.prepare($idpreventivo));
 
-            if (sizeof($rs_righe)==0) {
+            if (sizeof($rs_righe) == 0) {
                 // Se ci sono dei preventivi collegati li rimetto nello stato "In attesa di pagamento"
                 for ($i = 0; $i < sizeof($rsp); ++$i) {
                     $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='In lavorazione') WHERE id=".prepare($rsp[$i]['idpreventivo']));

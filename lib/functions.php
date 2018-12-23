@@ -223,7 +223,7 @@ function translateTemplate()
     $template = \HTMLBuilder\HTMLBuilder::replace($template);
 
     // Informazioni estese sulle azioni dell'utente
-    if (!empty(post('op'))) {
+    if (!empty(post('op')) && post('op') != 'send-email') {
         operationLog(post('op'));
     }
 

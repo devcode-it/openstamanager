@@ -4,8 +4,6 @@ namespace Plugins\ReceiptFE;
 
 use Modules\Fatture\Fattura;
 use Util\XML;
-use Uploads;
-use Modules;
 use UnexpectedValueException;
 
 /**

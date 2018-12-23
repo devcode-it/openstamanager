@@ -99,13 +99,13 @@ function customStructure()
         foreach ($files as $file) {
             $file = str_replace(DOCROOT.'/', '', $file);
             $result = explode('/custom/', $file)[0];
-			
-			$info = new SplFileInfo($file);
-			if ($info->getExtension()!='jpg'){
-				if (!in_array($result, $results)) {
-					$results[] = $result;
-				}
-			}
+
+            $info = new SplFileInfo($file);
+            if ($info->getExtension() != 'jpg') {
+                if (!in_array($result, $results)) {
+                    $results[] = $result;
+                }
+            }
         }
     }
 
@@ -133,7 +133,7 @@ function customTables()
     return array_column($results, 'TABLE_NAME');
 }
 
- /**
+/**
  * Controlla se il database presenta alcune sezioni personalizzate.
  *
  * @return array

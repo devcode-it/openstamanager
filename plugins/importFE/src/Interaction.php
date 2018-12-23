@@ -2,7 +2,6 @@
 
 namespace Plugins\ImportFE;
 
-use GuzzleHttp\Client;
 use Plugins\ExportFE\Connection;
 
 /**

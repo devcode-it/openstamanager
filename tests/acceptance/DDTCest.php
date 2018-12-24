@@ -87,6 +87,6 @@ class DDTCest
     {
         $this->addDdt($t, false, 3, 1);
 
-        $this->rowHelper->testImporti($t);
+        $this->rowHelper->testImporti($t, 'uscita');
     }
 }

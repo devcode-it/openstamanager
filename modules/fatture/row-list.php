@@ -72,7 +72,7 @@ foreach ($righe as $riga) {
 
     // Individuazione dei seriali
     if (!empty($riga['abilita_serial'])) {
-        $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_documento='.prepare($riga['id'])), 'serial');
+        $serials = $riga->serials;
         $mancanti = $riga['qta'] - count($serials);
 
         if ($mancanti > 0) {
@@ -102,7 +102,7 @@ foreach ($righe as $riga) {
     }
 
     // Aggiunta dei riferimenti ai documenti
-    if (!empty($record['ref_documento'])) {
+    if ($fattura->isNotaDiAccredito()) {
         $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE id = ".prepare($record['ref_documento']));
 
         $text = tr('Rif. fattura _NUM_ del _DATE_', [
@@ -152,10 +152,14 @@ foreach ($righe as $riga) {
 
     if (!$riga instanceof Descrizione) {
         echo '
-            '.Translator::numberToLocale($riga->prezzo_unitario_vendita).' &euro;
+            '.Translator::numberToLocale($riga->prezzo_unitario_vendita).' &euro;';
+
+        if ($dir == 'entrata') {
+            echo '
             <br><small>
                 '.tr('Acquisto').': '.Translator::numberToLocale($riga->prezzo_unitario_acquisto).' &euro;
             </small>';
+        }
 
         if ($riga->sconto_unitario > 0) {
             echo '
@@ -214,7 +218,7 @@ foreach ($righe as $riga) {
         echo "
                 <div class='input-group-btn'>";
 
-        if (empty($record['is_reversed']) && $riga instanceof Articolo && $riga['abilita_serial'] && (empty($riga['idddt']) || empty($riga['idintervento']))) {
+        if (!$fattura->isNotaDiAccredito() && $riga instanceof Articolo && $riga['abilita_serial'] && (empty($riga['idddt']) || empty($riga['idintervento']))) {
             echo "
                     <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id'].'&idarticolo='.$riga['idarticolo']."', 1 );\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
         }
@@ -383,12 +387,10 @@ if ($totale != $netto_a_pagare) {
 }
 
 // GUADAGNO TOTALE
-if ($guadagno < 0) {
-    $guadagno_style = 'background-color: #FFC6C6; border: 3px solid red';
-} else {
-    $guadagno_style = '';
-}
-echo '
+if ($dir == 'entrata') {
+    $guadagno_style = $guadagno < 0 ? 'background-color: #FFC6C6; border: 3px solid red' : '';
+
+    echo '
     <tr>
         <td colspan="5" class="text-right">
             <b>'.tr('Guadagno', [], ['upper' => true]).':</b>
@@ -398,6 +400,7 @@ echo '
         </td>
         <td></td>
     </tr>';
+}
 
 echo '
 </table>';

@@ -90,6 +90,6 @@ class OrdiniCest
         $t->select2('#idpagamento', 109);
         $t->clickAndWait('Salva');
 
-        $this->rowHelper->testImporti($t);
+        $this->rowHelper->testImporti($t, 'uscita');
     }
 }

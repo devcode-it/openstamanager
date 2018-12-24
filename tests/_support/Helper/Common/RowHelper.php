@@ -8,6 +8,7 @@ class RowHelper extends \Codeception\Module
 {
     /** @param string */
     protected $finalPattern = "//div[@class='panel-heading' and contains(string(), 'Righe')]/parent::*//table//tr[contains(string(), '|name|')]//td[2]";
+    protected $dir;
 
     /**
      * Completa le informazioni per la creazione di un nuovo elemento.
@@ -26,7 +27,9 @@ class RowHelper extends \Codeception\Module
     {
         $t->fillField('#descrizione_riga', $descrizione);
         $t->fillField('Q.tà', $qta);
-        $t->fillField('Costo unitario', $prezzo);
+
+        $label = ($this->dir == 'uscita') ? 'Prezzo unitario' : 'Prezzo unitario di vendita';
+        $t->fillField($label, $prezzo);
 
         if (!empty($sconto)) {
             $t->fillField('Sconto unitario', $sconto);
@@ -128,8 +131,10 @@ class RowHelper extends \Codeception\Module
      *
      * @param AcceptanceTester $t
      */
-    public function testImporti(AcceptanceTester $t)
+    public function testImporti(AcceptanceTester $t, $direzione = 'entrata')
     {
+        $this->dir = $direzione;
+
         // Righe di test (issue #98)
         $this->addRow($t, 'Riga 1', 1, 34);
         $this->addRow($t, 'Riga 2', 1, 17.44);

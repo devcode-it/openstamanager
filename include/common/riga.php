@@ -29,13 +29,13 @@ echo '
 echo '
     <div class="row">';
 
-$width = $options['dir'] == 'entrata' ? 4 :6;
+$width = $options['dir'] == 'entrata' ? 4 : 6;
+$label = $options['dir'] == 'entrata' ? tr('Prezzo unitario di vendita') : tr('Prezzo unitario');
 if ($options['dir'] == 'entrata') {
     // Prezzo di acquisto unitario
     echo '
         <div class="col-md-'.$width.'">
-            {[ "type": "number", "label": "'.tr('Prezzo di acquisto unitario').'", "name": "prezzo_acquisto", "value": "'.$result['prezzo_unitario_acquisto'].'", "icon-after": "&euro;", "onkeyup": "aggiorna_guadagno()" ]}
-            <span id="guadagno"></span>
+            {[ "type": "number", "label": "'.tr('Prezzo unitario di acquisto').'", "name": "prezzo_acquisto", "value": "'.$result['prezzo_unitario_acquisto'].'", "icon-after": "&euro;" ]}
         </div>';
 
     // Funzione per l'aggiornamento in tempo reale del guadagno
@@ -46,7 +46,7 @@ if ($options['dir'] == 'entrata') {
             var prezzo = $("#prezzo").val().toEnglish();
             var sconto = $("#sconto").val().toEnglish();
             if ($("#tipo_sconto").val() === "PRC") {
-                sconto = sconto / 100 * prezzo
+                sconto = sconto / 100 * prezzo;
             }
 
             var guadagno = prezzo - sconto - prezzo_acquisto;
@@ -64,20 +64,24 @@ if ($options['dir'] == 'entrata') {
         }
 
         aggiorna_guadagno();
-        $("#tipo_sconto").change(aggiorna_guadagno);
+
+        $("#prezzo").change(aggiorna_guadagno();
+        $("#prezzo_acquisto").change(aggiorna_guadagno();
+        $("#sconto").change(aggiorna_guadagno());
+        $("#tipo_sconto").change(aggiorna_guadagno());
     </script>';
 }
 
 // Prezzo di vendita unitario
 echo '
         <div class="col-md-'.$width.'">
-            {[ "type": "number", "label": "'.tr('Prezzo di vendita unitario').'", "name": "prezzo", "value": "'.$result['prezzo'].'", "required": 1, "icon-after": "&euro;", "onkeyup": "aggiorna_guadagno()" ]}
+            {[ "type": "number", "label": "'.$label.'", "name": "prezzo", "value": "'.$result['prezzo'].'", "required": 1, "icon-after": "&euro;" ]}
         </div>';
 
 // Sconto unitario
 echo '
         <div class="col-md-'.$width.'">
-            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$result['sconto_unitario'].'", "icon-after": "choice|untprc|'.$result['tipo_sconto'].'", "onkeyup": "aggiorna_guadagno()"]}
+            {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$result['sconto_unitario'].'", "icon-after": "choice|untprc|'.$result['tipo_sconto'].'" ]}
         </div>
     </div>';
 

@@ -74,8 +74,6 @@ class FattureCest
         $this->addFattura($t, true, 2, 2);
 
         $this->rowHelper->testImporti($t);
-
-        //$t->click('Stampa');
     }
 
     /**
@@ -91,6 +89,6 @@ class FattureCest
         $t->select2('#idpagamento', 109);
         $t->clickAndWait('Salva');
 
-        $this->rowHelper->testImporti($t);
+        $this->rowHelper->testImporti($t, 'uscita');
     }
 }

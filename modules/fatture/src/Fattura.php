@@ -197,13 +197,21 @@ class Fattura extends Document
     /**
      * Restituisce l'elenco delle note di credito collegate.
      *
-     * @return array
+     * @return iterable
      */
     public function getNoteDiAccredito()
     {
-        return database()->fetchArray("SELECT co_documenti.id, IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE reversed = 1) AND ref_documento = :id", [
-            ':id' => $this->id,
-        ]);
+        return self::where('ref_documento', $this->id)->get();
+    }
+
+    /**
+     * Restituisce l'elenco delle note di credito collegate.
+     *
+     * @return self
+     */
+    public function getFatturaOriginale()
+    {
+        return self::find($this->ref_documento);
     }
 
     /**

@@ -53,5 +53,6 @@ abstract class Description extends Model
     }
 
     abstract public function parent();
+
     abstract public function getParentID();
 }

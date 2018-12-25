@@ -31,13 +31,13 @@ class Intervento extends Document
         return $this->hasMany(Riga::class, 'idintervento');
     }
 
-    public function descrizioni(){
+    public function descrizioni()
+    {
         return null;
     }
 
-    public function scontoGlobale(){
+    public function scontoGlobale()
+    {
         return null;
-
     }
-
 }

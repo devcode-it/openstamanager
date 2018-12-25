@@ -22,7 +22,7 @@ abstract class Article extends Row
 
     public static function make(Document $document, Original $articolo)
     {
-        $model = parent::make($document,true);
+        $model = parent::make($document, true);
 
         $model->articolo()->associate($articolo);
 

@@ -22,7 +22,7 @@ abstract class Row extends Description
 
     public static function make(Document $document, $bypass = false)
     {
-        return parent::make($document,true);
+        return parent::make($document, true);
     }
 
     public function getSubtotaleAttribute()

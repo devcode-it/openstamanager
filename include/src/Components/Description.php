@@ -8,6 +8,8 @@ use Common\Document;
 
 abstract class Description extends Model
 {
+    protected $guarded = [];
+
     protected static function boot($bypass = false)
     {
         parent::boot();
@@ -51,8 +53,32 @@ abstract class Description extends Model
 
         $this->save();
     }
+    public function copiaIn(Document $document)
+    {
+        $class = get_class($document);
+        $namespace = implode('\\', explode('\\', $class, -1));
+
+        $current = get_class($this);
+        $pieces = explode('\\', $current);
+        $type = end($pieces);
+
+        $object = $namespace.'\\Components\\'.$type;
+
+        $attributes = $this->getAttributes();
+        unset($attributes['id']);
+
+        $model = $object::make($document);
+        $model->save();
+
+        $model = $object::find($model->id);
+        $accepted = $model->getAttributes();
+
+        $attributes = array_intersect_key($attributes, $accepted);
+        $model->fill($attributes);
+
+        return $model;
+    }
 
     abstract public function parent();
-
     abstract public function getParentID();
 }

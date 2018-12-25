@@ -1,11 +1,14 @@
 <?php
 
-namespace Modules\Interventi;
+namespace Modules\Interventi\Components;
 
-use Common\Row;
+use Common\Components\Row;
+use Modules\Interventi\Intervento;
 
 class Riga extends Row
 {
+    use RelationTrait;
+
     protected $table = 'in_righe_interventi';
 
     /**
@@ -17,15 +20,8 @@ class Riga extends Row
      */
     public static function make(Intervento $intervento)
     {
-        $model = parent::make();
-
-        $model->intervento()->associate($intervento);
+        $model = parent::make($intervento);
 
         return $model;
-    }
-
-    public function intervento()
-    {
-        return $this->belongsTo(Intervento::class, 'idintervento');
     }
 }

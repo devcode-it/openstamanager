@@ -2,9 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Interventi\Articolo;
 use Modules\Interventi\Intervento;
 use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Interventi\Components\Articolo;
 
 include_once Modules::filepath('Interventi', 'modutil.php');
 include_once Modules::filepath('Articoli', 'modutil.php');

@@ -1,11 +1,14 @@
 <?php
 
-namespace Modules\Fatture;
+namespace Modules\Fatture\Components;
 
-use Common\Description;
+use Common\Components\Description;
+use Modules\Fatture\Fattura;
 
 class Descrizione extends Description
 {
+    use RelationTrait;
+
     protected $table = 'co_righe_documenti';
 
     /**
@@ -17,15 +20,8 @@ class Descrizione extends Description
      */
     public static function make(Fattura $fattura)
     {
-        $model = parent::make();
-
-        $model->fattura()->associate($fattura);
+        $model = parent::make($fattura);
 
         return $model;
-    }
-
-    public function fattura()
-    {
-        return $this->belongsTo(Fattura::class, 'iddocumento');
     }
 }

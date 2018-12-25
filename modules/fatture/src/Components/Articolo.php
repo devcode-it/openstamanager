@@ -1,12 +1,15 @@
 <?php
 
-namespace Modules\Fatture;
+namespace Modules\Fatture\Components;
 
+use Common\Components\Article;
 use Modules\Articoli\Articolo as Original;
-use Common\Article;
+use Modules\Fatture\Fattura;
 
 class Articolo extends Article
 {
+    use RelationTrait;
+
     protected $table = 'co_righe_documenti';
 
     /**
@@ -19,11 +22,7 @@ class Articolo extends Article
      */
     public static function make(Fattura $fattura, Original $articolo)
     {
-        $model = parent::make($articolo);
-
-        $model->fattura()->associate($fattura);
-
-        $model->save();
+        $model = parent::make($fattura, $articolo);
 
         return $model;
     }
@@ -60,10 +59,5 @@ class Articolo extends Article
     public function getDirection()
     {
         return $this->fattura->tipo->dir;
-    }
-
-    public function fattura()
-    {
-        return $this->belongsTo(Fattura::class, 'iddocumento');
     }
 }

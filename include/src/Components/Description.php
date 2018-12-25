@@ -1,8 +1,10 @@
 <?php
 
-namespace Common;
+namespace Common\Components;
 
 use Illuminate\Database\Eloquent\Builder;
+use Common\Model;
+use Common\Document;
 
 abstract class Description extends Model
 {
@@ -25,7 +27,7 @@ abstract class Description extends Model
         });
     }
 
-    public static function make($bypass = false)
+    public static function make(Document $document, $bypass = false)
     {
         $model = parent::make();
 
@@ -33,6 +35,23 @@ abstract class Description extends Model
             $model->is_descrizione = 1;
         }
 
+        $model->setParent($document);
+
         return $model;
     }
+
+    public function setParent(Document $document)
+    {
+        $this->parent()->associate($document);
+
+        // Ordine delle righe
+        if (empty($this->disableOrder)) {
+            $this->order = orderValue($this->table, $this->getParentID(), $document->id);
+        }
+
+        $this->save();
+    }
+
+    abstract public function parent();
+    abstract public function getParentID();
 }

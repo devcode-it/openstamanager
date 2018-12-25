@@ -253,21 +253,21 @@ class Fattura extends Document
 
     public function articoli()
     {
-        return $this->hasMany(Articolo::class, 'iddocumento');
+        return $this->hasMany(Components\Articolo::class, 'iddocumento');
     }
 
     public function righe()
     {
-        return $this->hasMany(Riga::class, 'iddocumento');
+        return $this->hasMany(Components\Riga::class, 'iddocumento');
     }
 
     public function descrizioni()
     {
-        return $this->hasMany(Descrizione::class, 'iddocumento');
+        return $this->hasMany(Components\Descrizione::class, 'iddocumento');
     }
 
     public function scontoGlobale()
     {
-        return $this->hasOne(Sconto::class, 'iddocumento');
+        return $this->hasOne(Components\Sconto::class, 'iddocumento');
     }
 }

@@ -65,10 +65,10 @@ if ($options['dir'] == 'entrata') {
 
         aggiorna_guadagno();
 
-        $("#prezzo").change(aggiorna_guadagno();
-        $("#prezzo_acquisto").change(aggiorna_guadagno();
-        $("#sconto").change(aggiorna_guadagno());
-        $("#tipo_sconto").change(aggiorna_guadagno());
+        $("#prezzo").keyup(aggiorna_guadagno);
+        $("#prezzo_acquisto").keyup(aggiorna_guadagno);
+        $("#sconto").keyup(aggiorna_guadagno);
+        $("#tipo_sconto").change(aggiorna_guadagno);
     </script>';
 }
 

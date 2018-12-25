@@ -1,14 +1,18 @@
 <?php
 
-namespace Modules\Interventi;
+namespace Modules\Interventi\Components;
 
+use Common\Components\Article;
+use Modules\Interventi\Intervento;
 use Modules\Articoli\Articolo as Original;
-use Common\Article;
 
 class Articolo extends Article
 {
+    use RelationTrait;
+
     protected $table = 'mg_articoli_interventi';
     protected $serialRowID = 'intervento';
+    protected $disableOrder = true;
 
     /**
      * Crea una nuova riga collegata ad un intervento.
@@ -21,9 +25,7 @@ class Articolo extends Article
      */
     public static function make(Intervento $intervento, Original $articolo, $id_automezzo = null)
     {
-        $model = parent::make($articolo);
-
-        $model->intervento()->associate($intervento);
+        $model = parent::make($intervento, $articolo);
 
         $model->prezzo_acquisto = $articolo->prezzo_acquisto;
         $model->prezzo_vendita = $articolo->prezzo_vendita;
@@ -107,10 +109,5 @@ class Articolo extends Article
     public function getSubtotaleAttribute()
     {
         return $this->prezzo_vendita * $this->qta;
-    }
-
-    public function intervento()
-    {
-        return $this->belongsTo(Intervento::class, 'idintervento');
     }
 }

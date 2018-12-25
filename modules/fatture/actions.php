@@ -2,13 +2,13 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Tipo;
-use Modules\Fatture\Articolo;
-use Modules\Fatture\Riga;
-use Modules\Fatture\Descrizione;
+use Modules\Fatture\Components\Articolo;
+use Modules\Fatture\Components\Riga;
+use Modules\Fatture\Components\Descrizione;
 use Modules\Articoli\Articolo as ArticoloOriginale;
-use Modules\Anagrafiche\Anagrafica;
 
 // Necessaria per la funzione add_movimento_magazzino
 include_once Modules::filepath('Articoli', 'modutil.php');

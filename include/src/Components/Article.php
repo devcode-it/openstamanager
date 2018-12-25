@@ -1,10 +1,11 @@
 <?php
 
-namespace Common;
+namespace Common\Components;
 
 use Modules\Articoli\Articolo as Original;
 use Illuminate\Database\Eloquent\Builder;
 use UnexpectedValueException;
+use Common\Document;
 
 abstract class Article extends Row
 {
@@ -19,9 +20,9 @@ abstract class Article extends Row
         });
     }
 
-    public static function make(Original $articolo)
+    public static function make(Document $document, Original $articolo)
     {
-        $model = parent::make(true);
+        $model = parent::make($document,true);
 
         $model->articolo()->associate($articolo);
 

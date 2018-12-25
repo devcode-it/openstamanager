@@ -1,8 +1,10 @@
 <?php
 
-namespace Common;
+namespace Common\Components;
 
 use Illuminate\Database\Eloquent\Builder;
+use Common\Model;
+use Common\Document;
 
 abstract class Discount extends Model
 {

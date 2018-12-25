@@ -1,8 +1,9 @@
 <?php
 
-namespace Common;
+namespace Common\Components;
 
 use Illuminate\Database\Eloquent\Builder;
+use Common\Document;
 
 abstract class Row extends Description
 {
@@ -19,9 +20,9 @@ abstract class Row extends Description
         }
     }
 
-    public static function make($bypass = false)
+    public static function make(Document $document, $bypass = false)
     {
-        return parent::make(true);
+        return parent::make($document,true);
     }
 
     public function getSubtotaleAttribute()

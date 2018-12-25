@@ -1,11 +1,14 @@
 <?php
 
-namespace Modules\Fatture;
+namespace Modules\Fatture\Components;
 
-use Common\Discount;
+use Common\Components\Row;
+use Modules\Fatture\Fattura;
 
-class Sconto extends Discount
+class Riga extends Row
 {
+    use RelationTrait;
+
     protected $table = 'co_righe_documenti';
 
     /**
@@ -17,15 +20,8 @@ class Sconto extends Discount
      */
     public static function make(Fattura $fattura)
     {
-        $model = parent::make();
-
-        $model->fattura()->associate($fattura);
+        $model = parent::make($fattura);
 
         return $model;
-    }
-
-    public function fattura()
-    {
-        return $this->belongsTo(Fattura::class, 'iddocumento');
     }
 }

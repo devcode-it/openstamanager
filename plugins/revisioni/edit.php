@@ -54,10 +54,10 @@ echo '      </div>';
 echo '  </div>';
 echo "  <div class='row'>";
 echo "      <div class='col-md-12 text-center'>";
-echo "           <button type='submit' class='btn btn-primary'><i class='fa fa-refresh'></i> Cambia revisione...</button>";
-echo '      </div>';
-echo '  </div>';
-echo '</form>';
+echo "           <button ".((sizeof($rs_revisioni)<2) ? 'disabled' : '')." type='submit' class='btn btn-primary' ><i class='fa fa-refresh'></i> ".tr('Cambia revisione')."</button>";
+echo "      </div>";
+echo "  </div>";
+echo "</form>";
 
 echo "<form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='form_deleterevision'>";
 echo "  <input type='hidden' name='backto' value='record-edit'>";

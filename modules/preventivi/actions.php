@@ -153,7 +153,14 @@ switch (post('op')) {
         $numero = Util\Generator::generate(setting('Formato codice preventivi'), $rs[0]['numero']);
 
         $dbo->query('UPDATE co_preventivi SET idstato=1, numero = '.$numero.', master_revision = id WHERE id='.prepare($id_record));
-
+		
+		//copio anche le righe del preventivo
+		$dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM co_righe_preventivi WHERE idpreventivo = '.filter('id_record'));
+        $dbo->query('ALTER TABLE tmp DROP id');
+		$dbo->query('UPDATE tmp SET idpreventivo = '.prepare($id_record));
+        $dbo->query('INSERT INTO co_righe_preventivi SELECT NULL,tmp.* FROM tmp');
+		$dbo->query('DROP TEMPORARY TABLE tmp');
+		
         flash()->info(tr('Preventivo duplicato correttamente!'));
 
     break;

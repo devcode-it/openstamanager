@@ -37,7 +37,6 @@ a.disabled {
 }
 
 #progress {
-    width: 400px;
     margin: auto;
     position: relative;
     display: none;

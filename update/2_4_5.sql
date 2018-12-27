@@ -19,3 +19,6 @@ INSERT INTO `fe_stati_documento`( `codice`, `descrizione`, `icon` ) VALUES
 ( 'MC', 'Mancata consegna', 'fa fa-exclamation-circle text-danger' ),
 ( 'DT', 'Decorrenza termini', 'fa fa-calendar-times-o text-danger' ),
 ( 'NS', 'Scartata', 'fa fa-times text-danger' );
+
+-- ssl_no_verify
+ALTER TABLE `zz_smtps` ADD `ssl_no_verify` BOOLEAN NOT NULL DEFAULT FALSE AFTER `encryption`;

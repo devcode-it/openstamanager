@@ -38,22 +38,27 @@ if ($dir == 'entrata') {
                     $campi_mancanti = [];
 
                     if ($rs2[0]['piva'] == '') {
-                        if ($rs2[0]['codice_fiscale'] == '') {
-                            array_push($campi_mancanti, 'codice fiscale');
-                        }
+                        array_push($campi_mancanti, 'Partita IVA');
                     }
+					/*if ($rs2[0]['codice_fiscale'] == '') {
+                        array_push($campi_mancanti, 'Codice fiscale');
+                    }
+					*/
                     if ($rs2[0]['citta'] == '') {
-                        array_push($campi_mancanti, 'citta');
+                        array_push($campi_mancanti, 'Città');
                     }
                     if ($rs2[0]['indirizzo'] == '') {
-                        array_push($campi_mancanti, 'indirizzo');
+                        array_push($campi_mancanti, 'Indirizzo');
                     }
                     if ($rs2[0]['cap'] == '') {
                         array_push($campi_mancanti, 'C.A.P.');
                     }
+					if ($rs2[0]['nazione'] == '') {
+                        array_push($campi_mancanti, 'Nazione');
+                    }
 
                     if (sizeof($campi_mancanti) > 0) {
-                        echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere alla stampa completa i seguenti campi dell'anagrafica:<br/><b>".implode(', ', $campi_mancanti).'</b><br/>
+                        echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere alla stampa completa i seguenti campi dell'anagrafica Cliente: <b>".implode(', ', $campi_mancanti).'</b><br/>
 						'.Modules::link('Anagrafiche', $record['idanagrafica'], tr('Vai alla scheda anagrafica'), null).'</div>';
                     }
                 }

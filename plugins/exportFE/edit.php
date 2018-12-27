@@ -12,7 +12,7 @@ if (!empty($fattura_pa)) {
     echo '
 <div class="alert alert-warning">
     <i class="fa fa-warning"></i>
-    <b>'.tr('Attenzione!').'</b> '.tr('Per generare la fattura elettronica è necessario che sia in stato "Emessa"').'.
+    <b>'.tr('Attenzione').':</b> '.tr('Per generare la fattura elettronica è necessario che sia in stato "Emessa"').'.
 </div>';
 
     $disabled = true;

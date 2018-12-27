@@ -11,4 +11,11 @@ ALTER TABLE `an_anagrafiche` ADD `split_payment` BOOLEAN NOT NULL DEFAULT FALSE 
 ALTER TABLE `co_righe_documenti` ADD `prezzo_unitario_acquisto` DECIMAL(12,4) NOT NULL AFTER `descrizione`;
 ALTER TABLE `co_righe_preventivi` ADD `prezzo_unitario_acquisto` DECIMAL(12,4) NOT NULL AFTER `descrizione`;
 
-UPDATE `fe_stati_documento` SET `descrizione`='Rifiutata' WHERE `codice`='REF';
+-- Uniformati codici con standard SDI e aggiunta 2 stati mancanti
+UPDATE `fe_stati_documento` SET `codice`='EC01' WHERE `codice`='ACK';
+UPDATE `fe_stati_documento` SET `codice`='EC02', `descrizione`='Rifiutata' WHERE `codice`='REF';
+UPDATE `fe_stati_documento` SET `codice`='RC', `descrizione`='Consegnata' WHERE `codice`='SENT';
+INSERT INTO `fe_stati_documento`( `codice`, `descrizione`, `icon` ) VALUES
+( 'MC', 'Mancata consegna', 'fa fa-exclamation-circle text-danger' ),
+( 'DT', 'Decorrenza termini', 'fa fa-calendar-times-o text-danger' ),
+( 'NS', 'Scartata', 'fa fa-times text-danger' );

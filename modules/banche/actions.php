@@ -20,7 +20,7 @@ switch (filter('op')) {
                 $dbo->update('co_banche', $array, ['id' => $id_record]);
             }
 
-            flash()->info(tr('Salvataggio completato!'));
+            flash()->info(tr('Salvataggio completato.'));
         } else {
             flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
         }
@@ -29,9 +29,11 @@ switch (filter('op')) {
 
     case 'add':
         $nome = filter('nome');
+		$bic = filter('bic');
+		$iban = filter('iban');
 
         if (isset($nome)) {
-            $dbo->query('INSERT INTO `co_banche` (`nome`) VALUES ('.prepare($nome).')');
+            $dbo->query('INSERT INTO `co_banche` (`nome`, `bic`, `iban`) VALUES ('.prepare($nome).', '.prepare($bic).', '.prepare($iban).')');
             $id_record = $dbo->lastInsertedID();
 
             if (isAjaxRequest()) {

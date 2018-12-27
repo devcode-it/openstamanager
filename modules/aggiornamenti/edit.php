@@ -126,7 +126,7 @@ function search(button) {
         },
         success: function(data){
             if (data == "none") {
-                $("#update-search").html("'.tr('Nessun aggiornamento presente').'.");
+                $("#update-search").html("'.tr('Nessun aggiornamento disponibile').'.");
             } else {
                 $("#update-search").html("'.tr("E' stato individuato un nuovo aggiornamento").': " + data + ".<br>'.tr('Scaricalo ora: _LINK_', [
                     '_LINK_' => "<a target='_blank' href='https://github.com/devcode-it/openstamanager/releases'>https://github.com/devcode-it/openstamanager/releases</a>",

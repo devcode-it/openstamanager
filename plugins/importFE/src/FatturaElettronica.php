@@ -3,8 +3,8 @@
 namespace Plugins\ImportFE;
 
 use Modules\Fatture\Fattura;
-use Modules\Fatture\Riga;
-use Modules\Fatture\Articolo;
+use Modules\Fatture\Components\Riga;
+use Modules\Fatture\Components\Articolo;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Fatture\Stato as StatoFattura;
 use Modules\Fatture\Tipo as TipoFattura;

@@ -191,10 +191,12 @@ foreach ($righe as $riga) {
         <td class="text-right">';
     if (!$riga instanceof Descrizione) {
         echo '
-            '.Translator::numberToLocale($riga->imponibile_scontato).' &euro;
+            '.Translator::numberToLocale($riga->imponibile_scontato).' &euro;';
+            /*
             <br><small class="text-'.($riga->guadagno > 0 ? 'success' : 'danger').'">
                 '.tr('Guadagno').': '.Translator::numberToLocale($riga->guadagno).' &euro;
             </small>';
+            */
     }
     echo '
         </td>';
@@ -390,6 +392,7 @@ if ($totale != $netto_a_pagare) {
 if ($dir == 'entrata') {
     $guadagno_style = $guadagno < 0 ? 'background-color: #FFC6C6; border: 3px solid red' : '';
 
+    /*
     echo '
     <tr>
         <td colspan="5" class="text-right">
@@ -400,6 +403,7 @@ if ($dir == 'entrata') {
         </td>
         <td></td>
     </tr>';
+    */
 }
 
 echo '

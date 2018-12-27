@@ -33,9 +33,15 @@ include_once __DIR__.'/../../core.php';
                     {[ "type": "text", "label": "<?php echo tr('Nome visualizzato'); ?>", "name": "from_name", "value": "$from_name$" ]}
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-3">
                     {[ "type": "email", "label": "<?php echo tr('Email mittente'); ?>", "name": "from_address", "value": "$from_address$", "required": 1 ]}
                 </div>
+			
+				<div class="col-md-3">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Non verificare il certificato SSL'); ?>", "name": "ssl_no_verify", "value": "$ssl_no_verify$" ]}
+                </div>
+				
+				
             </div>
 
             <div class="row">

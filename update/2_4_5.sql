@@ -22,3 +22,7 @@ INSERT INTO `fe_stati_documento`( `codice`, `descrizione`, `icon` ) VALUES
 
 -- ssl_no_verify
 ALTER TABLE `zz_smtps` ADD `ssl_no_verify` BOOLEAN NOT NULL DEFAULT FALSE AFTER `encryption`;
+
+
+-- Introduzione del flag split payment per documenti
+ALTER TABLE `co_documenti` ADD `split_payment` BOOLEAN NOT NULL DEFAULT FALSE AFTER `bollo`;

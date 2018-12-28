@@ -322,8 +322,13 @@ if (!empty($fattura->rivalsa_inps)) {
 if (!empty($iva)) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
-            <b>'.tr('Iva', [], ['upper' => true]).':</b>
+        <td colspan="5" class="text-right">';
+		
+		if ($records[0]['split_payment'])
+			echo '<b>'.tr('Iva a carico del destinatario', [], ['upper' => true]).':</b>';
+		else
+			echo '<b>'.tr('Iva', [], ['upper' => true]).':</b>';
+	echo '
         </td>
         <td align="right">
             '.Translator::numberToLocale($iva).' &euro;

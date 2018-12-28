@@ -228,13 +228,14 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     $dbo = database();
 
     // Totale marca da bollo, inps, ritenuta, idagente
-    $query = 'SELECT data, bollo, ritenutaacconto, rivalsainps FROM co_documenti WHERE id='.prepare($iddocumento);
+    $query = 'SELECT data, bollo, ritenutaacconto, rivalsainps, split_payment FROM co_documenti WHERE id='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
     $totale_bolli = $rs[0]['bollo'];
     $totale_ritenutaacconto = $rs[0]['ritenutaacconto'];
     $totale_rivalsainps = $rs[0]['rivalsainps'];
     $data_documento = $rs[0]['data'];
-
+	$split_payment = $rs[0]['split_payment'];
+	
     $netto_fattura = get_netto_fattura($iddocumento);
     $totale_fattura = get_totale_fattura($iddocumento);
     $imponibile_fattura = get_imponibile_fattura($iddocumento);
@@ -333,7 +334,13 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
         6) eventuale marca da bollo
     */
     // 1) Aggiungo la riga del conto cliente
-    $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($totale_fattura + $totale_bolli) * $segno_mov1_cliente).', '.prepare($primanota).' )';
+	$importo_cliente = $totale_fattura;
+	
+	if( $split_payment ){
+		$importo_cliente = sum ($importo_cliente, -$iva_fattura, 2);
+	}
+	
+    $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($importo_cliente + $totale_bolli) * $segno_mov1_cliente).', '.prepare($primanota).' )';
     $dbo->query($query2);
 
     // 2) Aggiungo il totale sul conto dei ricavi/spese scelto
@@ -350,7 +357,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
 
     // 3) Aggiungo il totale sul conto dell'iva
     // Lettura id conto iva
-    if ($iva_fattura != 0) {
+    if ($iva_fattura != 0 && !$split_payment) {
         $descrizione_conto_iva = ($dir == 'entrata') ? 'Iva su vendite' : 'Iva su acquisti';
         $query = 'SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione='.prepare($descrizione_conto_iva);
         $rs = $dbo->fetchArray($query);
@@ -362,7 +369,7 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     }
 
     // Lettura id conto iva indetraibile
-    if ($iva_indetraibile_fattura != 0) {
+    if ($iva_indetraibile_fattura != 0 && !$split_payment) {
         $descrizione_conto_iva2 = 'Iva indetraibile';
         $query = 'SELECT id, descrizione FROM co_pianodeiconti3 WHERE descrizione='.prepare($descrizione_conto_iva2);
         $rs = $dbo->fetchArray($query);
@@ -485,7 +492,7 @@ function get_netto_fattura($iddocumento)
 {
     $dbo = database();
 
-    $query = 'SELECT ritenutaacconto, bollo FROM co_documenti WHERE id='.prepare($iddocumento);
+    $query = 'SELECT ritenutaacconto, bollo, split_payment FROM co_documenti WHERE id='.prepare($iddocumento);
     $rs = $dbo->fetchArray($query);
 
     $netto_a_pagare = sum([
@@ -493,6 +500,10 @@ function get_netto_fattura($iddocumento)
         $rs[0]['bollo'],
         -$rs[0]['ritenutaacconto'],
     ], null, 2);
+	
+	if ($rs[0]['split_payment']){
+		$netto_a_pagare = sum($netto_a_pagare, - (get_ivadetraibile_fattura($iddocumento) + get_ivaindetraibile_fattura($iddocumento)), 2 );
+	}
 
     return $netto_a_pagare;
 }

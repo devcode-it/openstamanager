@@ -80,6 +80,7 @@ switch (post('op')) {
                 'idvettore' => post('idvettore'),
                 'idsede' => post('idsede'),
                 'idconto' => post('idconto'),
+				'split_payment' => post('split_payment'),
 
                 'n_colli' => post('n_colli'),
                 'tipo_resa' => post('tipo_resa'),

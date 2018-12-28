@@ -143,7 +143,7 @@ abstract class Document extends Model
     }
 
     /**
-     * Calcola il netto a pagare della fattura.
+     * Calcola il guadagno della fattura.
      *
      * @return float
      */

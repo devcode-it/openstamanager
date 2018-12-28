@@ -56,8 +56,12 @@ abstract class Row extends Description
     }
 
     public function getNettoAttribute()
-    {
-        return $this->totale - $this->ritenuta_acconto;
+    {	
+		
+		if ($this->split_payment)
+			return $this->totale - $this->ritenuta_acconto - $this->iva;
+		else
+			return $this->totale - $this->ritenuta_acconto;
     }
 
     public function getRivalsaINPSAttribute()
@@ -82,6 +86,14 @@ abstract class Row extends Description
         ])['percentuale'];
 
         return ($this->imponibile_scontato + $this->rivalsa_inps) * $percentuale / 100;
+    }
+	
+	public function getSplitPaymentAttribute()
+    {	
+		return database()->fetchOne('SELECT split_payment FROM co_documenti WHERE id = :id', [
+			':id' => $this->iddocumento,
+		])['split_payment'];
+
     }
 
     public function getIvaDetraibileAttribute()

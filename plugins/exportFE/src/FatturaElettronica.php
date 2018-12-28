@@ -760,6 +760,10 @@ class FatturaElettronica
                 'Imposta' => $riepilogo['iva'],
                 'EsigibilitaIVA' => $riepilogo['esigibilita'],
             ];
+			
+			//Con split payment EsigibilitaIVA sempre a S
+			if ($documento['split_payment'])
+				$iva['EsigibilitaIVA'] = 'S';
 
             // TODO: la dicitura può essere diversa tra diverse IVA con stessa percentuale/natura
             // nei riepiloghi viene fatto un accorpamento percentuale/natura
@@ -783,6 +787,10 @@ class FatturaElettronica
                 'Imposta' => $riepilogo['iva'],
                 'EsigibilitaIVA' => $riepilogo['esigibilita'],
             ];
+			
+			//Con split payment EsigibilitaIVA sempre a S
+			if ($documento['split_payment'])
+				$iva['EsigibilitaIVA'] = 'S';
 
             $result[] = [
                 'DatiRiepilogo' => $iva,

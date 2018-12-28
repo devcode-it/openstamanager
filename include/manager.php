@@ -33,12 +33,6 @@ if (!empty($id_plugin)) {
 
 $type = $structure['option'];
 
-// Caricamento funzioni del modulo
-$modutil = $structure->filepath('modutil.php');
-if (!empty($modutil)) {
-    include_once $modutil;
-}
-
 // Lettura risultato query del modulo
 // include $structure->filepath('init.php');
 

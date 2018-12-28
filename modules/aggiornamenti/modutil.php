@@ -95,16 +95,13 @@ function customStructure()
 
     // Controlli di personalizzazione fisica
     foreach ($dirs as $dir) {
-        $files = glob(DOCROOT.'/'.$dir.'/*/custom/*');
+        $files = glob(DOCROOT.'/'.$dir.'/*/custom/*.{php,html}', GLOB_BRACE);
         foreach ($files as $file) {
             $file = str_replace(DOCROOT.'/', '', $file);
             $result = explode('/custom/', $file)[0];
 
-            $info = new SplFileInfo($file);
-            if ($info->getExtension() != 'jpg') {
-                if (!in_array($result, $results)) {
-                    $results[] = $result;
-                }
+            if (!in_array($result, $results)) {
+                $results[] = $result;
             }
         }
     }

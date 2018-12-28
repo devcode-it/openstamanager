@@ -39,7 +39,7 @@ abstract class Document extends Model
     }
 
     /**
-     * Funzione per l'arrotondamento degli importi;.
+     * Funzione per l'arrotondamento degli importi.
      *
      * @param float $value
      *

@@ -29,8 +29,8 @@ switch (filter('op')) {
 
     case 'add':
         $nome = filter('nome');
-		$bic = filter('bic');
-		$iban = filter('iban');
+        $bic = filter('bic');
+        $iban = filter('iban');
 
         if (isset($nome)) {
             $dbo->query('INSERT INTO `co_banche` (`nome`, `bic`, `iban`) VALUES ('.prepare($nome).', '.prepare($bic).', '.prepare($iban).')');

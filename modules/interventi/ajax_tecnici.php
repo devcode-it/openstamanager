@@ -6,8 +6,6 @@ if (file_exists(__DIR__.'/../../../core.php')) {
     include_once __DIR__.'/../../core.php';
 }
 
-include_once Modules::filepath('Interventi', 'modutil.php');
-
 $show_costi = true;
 // Limitazione delle azioni dei tecnici
 if ($user['gruppo'] == 'Tecnici') {

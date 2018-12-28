@@ -181,18 +181,16 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
             if (in_array(strtolower($config['encryption']), ['ssl', 'tls'])) {
                 $this->SMTPSecure = strtolower($config['encryption']);
             }
-			
-			if (!empty($config['ssl_no_verify'])){
-				$this->SMTPOptions = array (
-					'ssl' => array(
-						'verify_peer'  => false,
-						'verify_peer_name'  => false,
-						'allow_self_signed' => true
-						)
-				);
-			}
-			
-			
+
+            if (!empty($config['ssl_no_verify'])) {
+                $this->SMTPOptions = [
+                    'ssl' => [
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true,
+                        ],
+                ];
+            }
         }
 
         $this->From = $config['from_address'];

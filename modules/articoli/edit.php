@@ -2,9 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-// Necesario per funzione \Util\Ini::getList
-include_once Modules::filepath('MyImpianti', 'modutil.php');
-
 $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
 
 $img = null;

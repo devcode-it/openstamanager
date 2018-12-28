@@ -40,10 +40,10 @@ if ($dir == 'entrata') {
                     if ($rs2[0]['piva'] == '') {
                         array_push($campi_mancanti, 'Partita IVA');
                     }
-					/*if ($rs2[0]['codice_fiscale'] == '') {
+                    /*if ($rs2[0]['codice_fiscale'] == '') {
                         array_push($campi_mancanti, 'Codice fiscale');
                     }
-					*/
+                    */
                     if ($rs2[0]['citta'] == '') {
                         array_push($campi_mancanti, 'Città');
                     }
@@ -53,7 +53,7 @@ if ($dir == 'entrata') {
                     if ($rs2[0]['cap'] == '') {
                         array_push($campi_mancanti, 'C.A.P.');
                     }
-					if ($rs2[0]['nazione'] == '') {
+                    if ($rs2[0]['nazione'] == '') {
                         array_push($campi_mancanti, 'Nazione');
                     }
 

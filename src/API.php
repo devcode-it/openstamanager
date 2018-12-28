@@ -105,9 +105,6 @@ class API extends \Util\Singleton
 
         try {
             if (in_array($resource, array_keys($resources))) {
-                // Inclusione funzioni del modulo
-                include_once App::filepath('modules/'.$resources[$resource].'|custom|', 'modutil.php');
-
                 // Esecuzione delle operazioni personalizzate
                 $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
                 include $filename;
@@ -222,9 +219,6 @@ class API extends \Util\Singleton
         if (!in_array($resource, array_keys($resources))) {
             return self::error('notFound');
         }
-
-        // Inclusione funzioni del modulo
-        include_once App::filepath('modules/'.$resources[$resource].'|custom|', 'modutil.php');
 
         // Database
         $dbo = $database = database();

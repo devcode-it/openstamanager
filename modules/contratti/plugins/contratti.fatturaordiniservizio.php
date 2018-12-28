@@ -2,11 +2,8 @@
 
 include_once __DIR__.'/../../../core.php';
 
-include_once Modules::filepath('Fatture di vendita', 'modutil.php');
+/* GESTIONE ORDINI DI SERVIZI */
 
-/*
-    GESTIONE ORDINI DI SERVIZIO
-*/
 // TODO: aggiornare con la funzione months()
 $mesi = [
     tr('Gennaio'),

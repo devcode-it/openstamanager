@@ -1,7 +1,5 @@
 <?php
 
-include_once Modules::filepath('Articoli', 'modutil.php');
-
 use Modules\Articoli\Articolo;
 
 switch ($resource) {

@@ -118,12 +118,6 @@ if (!empty($structure['script'])) {
     return;
 }
 
-// Caricamento funzioni del modulo
-$modutil = $structure->filepath('modutil.php');
-if (!empty($modutil)) {
-    include_once $modutil;
-}
-
 // Lettura risultato query del modulo
 $init = $structure->filepath('init.php');
 if (!empty($init)) {

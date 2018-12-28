@@ -30,6 +30,21 @@ foreach ($namespaces as $path => $namespace) {
     $loader->addPsr4($namespace.'\\', __DIR__.'/'.$path.'/src');
 }
 
+// Inclusione dei file modutil.php
+$files = glob(__DIR__.'/{modules,plugins}/*/modutil.php', GLOB_BRACE);
+$custom_files = glob(__DIR__.'/{modules,plugins}/*/custom/modutil.php', GLOB_BRACE);
+foreach ($custom_files as $key => $value) {
+    $index = array_search(str_replace('custom/', '', $value), $files);
+    if ($index !== false) {
+        unset($files[$index]);
+    }
+}
+
+$list = array_merge($files, $custom_files);
+foreach ($list as $file) {
+    include_once $file;
+}
+
 // Individuazione dei percorsi di base
 App::definePaths(__DIR__);
 
@@ -49,6 +64,7 @@ if (!empty($config['redirectHTTPS']) && !isHTTPS(true)) {
 // Forza l'abilitazione del debug
 // $debug = App::debug(true);
 
+/* GESTIONE DEGLI ERRORI */
 // Logger per la segnalazione degli errori
 $logger = new Monolog\Logger('Logs');
 $logger->pushProcessor(new Monolog\Processor\UidProcessor());
@@ -123,7 +139,7 @@ Monolog\ErrorHandler::register($logger);
 // Database
 $dbo = $database = database();
 
-// Inizializzazione della sessione
+/* SESSIONE */
 if (!API::isAPIRequest()) {
     // Sicurezza della sessioni
     ini_set('session.use_trans_sid', '0');
@@ -147,6 +163,7 @@ if (!API::isAPIRequest()) {
     }
 }
 
+/* INTERNAZIONALIZZAZIONE */
 // Istanziamento del gestore delle traduzioni del progetto
 $lang = !empty($config['lang']) ? $config['lang'] : 'it';
 $formatter = !empty($config['formatter']) ? $config['formatter'] : [];
@@ -159,6 +176,7 @@ $translator->setLocale($lang, $formatter);
 $version = Update::getVersion();
 $revision = Update::getRevision();
 
+/* ACCESSO E INSTALLAZIONE */
 // Controllo sulla presenza dei permessi di accesso basilari
 $continue = $dbo->isInstalled() && !Update::isUpdateAvailable() && (Auth::check() || API::isAPIRequest());
 
@@ -175,6 +193,7 @@ if (!$continue && getURLPath() != slashes(ROOTDIR.'/index.php') && !Permissions:
     exit();
 }
 
+/* INIZIALIZZAZIONE GENERALE */
 // Operazione aggiuntive (richieste non API)
 if (!API::isAPIRequest()) {
     // Impostazioni di Content-Type e Charset Header

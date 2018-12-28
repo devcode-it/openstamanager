@@ -10,12 +10,6 @@ use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Components\Descrizione;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 
-// Necessaria per la funzione add_movimento_magazzino
-include_once Modules::filepath('Articoli', 'modutil.php');
-include_once Modules::filepath('Interventi', 'modutil.php');
-include_once Modules::filepath('Ddt di vendita', 'modutil.php');
-include_once Modules::filepath('Ordini cliente', 'modutil.php');
-
 $module = Modules::get($id_module);
 
 if ($module['name'] == 'Fatture di vendita') {
@@ -45,8 +39,6 @@ switch (post('op')) {
 
     case 'update':
         if (post('id_record') !== null) {
-            include_once Modules::filepath($module['name'], 'modutil.php');
-
             $idstatodocumento = post('idstatodocumento');
             $idpagamento = post('idpagamento');
 

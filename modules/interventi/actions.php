@@ -6,10 +6,6 @@ use Modules\Interventi\Intervento;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Interventi\Components\Articolo;
 
-include_once Modules::filepath('Interventi', 'modutil.php');
-include_once Modules::filepath('Articoli', 'modutil.php');
-include_once Modules::filepath('MyImpianti', 'modutil.php');
-
 switch (post('op')) {
     case 'update':
         $idpreventivo = post('idpreventivo');

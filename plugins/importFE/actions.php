@@ -5,8 +5,6 @@ include_once __DIR__.'/../../core.php';
 use Plugins\ImportFE\FatturaElettronica;
 use Plugins\ImportFE\Interaction;
 
-include_once Modules::filepath('Fatture di vendita', 'modutil.php');
-
 $directory = Uploads::getDirectory($id_module);
 
 switch (filter('op')) {

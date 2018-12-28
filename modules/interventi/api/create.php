@@ -1,7 +1,5 @@
 <?php
 
-include_once Modules::filepath('Articoli', 'modutil.php');
-
 use Modules\Interventi\Articolo;
 use Modules\Interventi\Intervento;
 use Modules\Articoli\Articolo as ArticoloOriginale;

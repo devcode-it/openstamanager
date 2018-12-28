@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once Modules::filepath('Fatture di vendita', 'modutil.php');
-
 use Modules\Fatture\Descrizione;
 use Modules\Fatture\Articolo;
 use Modules\Fatture\Riga;
@@ -192,11 +190,11 @@ foreach ($righe as $riga) {
     if (!$riga instanceof Descrizione) {
         echo '
             '.Translator::numberToLocale($riga->imponibile_scontato).' &euro;';
-            /*
-            <br><small class="text-'.($riga->guadagno > 0 ? 'success' : 'danger').'">
-                '.tr('Guadagno').': '.Translator::numberToLocale($riga->guadagno).' &euro;
-            </small>';
-            */
+        /*
+        <br><small class="text-'.($riga->guadagno > 0 ? 'success' : 'danger').'">
+            '.tr('Guadagno').': '.Translator::numberToLocale($riga->guadagno).' &euro;
+        </small>';
+        */
     }
     echo '
         </td>';

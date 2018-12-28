@@ -94,8 +94,6 @@ switch ($op) {
 
     // Carica i campi da compilare del componente
     case 'load_componente':
-        include_once Modules::filepath('MyImpianti', 'modutil.php');
-
         $filename = post('filename');
         $idarticolo = post('idarticolo');
 

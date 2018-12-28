@@ -11,8 +11,6 @@ use Modules\Fatture\Fattura;
 use Modules\Fatture\Tipo;
 use Modules\Anagrafiche\Anagrafica;
 
-include_once Modules::filepath('Fatture di vendita', 'modutil.php');
-
 // Segmenti
 $id_fatture = Modules::get('Fatture di vendita')['id'];
 if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {

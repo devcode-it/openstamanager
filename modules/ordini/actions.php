@@ -2,9 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once Modules::filepath('Articoli', 'modutil.php');
-include_once Modules::filepath('Fatture di vendita', 'modutil.php');
-
 $module = Modules::get($id_module);
 
 if ($module['name'] == 'Ordini cliente') {

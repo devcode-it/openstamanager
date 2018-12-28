@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../../core.php';
 
-include_once Modules::filepath('Preventivi', 'modutil.php');
-
 // Interventi
 $rsi = [];
 if (in_array('Cliente', explode(',', $record['tipianagrafica']))) {

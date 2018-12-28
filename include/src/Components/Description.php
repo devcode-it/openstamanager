@@ -53,6 +53,7 @@ abstract class Description extends Model
 
         $this->save();
     }
+
     public function copiaIn(Document $document)
     {
         $class = get_class($document);
@@ -80,5 +81,6 @@ abstract class Description extends Model
     }
 
     abstract public function parent();
+
     abstract public function getParentID();
 }

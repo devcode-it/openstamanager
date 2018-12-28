@@ -63,6 +63,12 @@ class Fattura extends Document
         ]);
         $id_pagamento = $pagamento['id'];
         $id_banca = $pagamento['idbanca'];
+		
+		$split_payment = $database->fetchOne('SELECT split_payment FROM an_anagrafiche WHERE idanagrafica = :id_anagrafica', [
+			':id_anagrafica' => $id_anagrafica,
+		])['split_payment'];
+			
+		
 
         // Se la fattura è di vendita e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
         if ($direzione == 'entrata' && empty($id_pagamento)) {
@@ -97,6 +103,9 @@ class Fattura extends Document
         if (!empty($id_banca)) {
             $model->idbanca = $id_banca;
         }
+		if (!empty($split_payment)) {
+			$model->split_payment = $split_payment;
+		}
         $model->save();
 
         return $model;

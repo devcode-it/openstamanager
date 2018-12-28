@@ -10,6 +10,7 @@ $tipodoc = $rs[0]['descrizione'];
 
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 $_SESSION['superselect']['ddt'] = $dir;
+$_SESSION['superselect']['split_payment'] = $record['split_payment'];
 
 if ($dir == 'entrata') {
     $conto = 'vendite';

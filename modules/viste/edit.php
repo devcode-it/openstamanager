@@ -76,7 +76,7 @@ echo '
 	</div>
 </form>';
 
-if (!empty($options) && $options != 'custom') {
+if (!empty($options) && $options != 'custom' && $options != 'menu') {
     echo '
 
 <form action="" method="post" role="form">

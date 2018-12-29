@@ -265,11 +265,12 @@ if (!empty($google)) {
             $piano_dei_conti_fornitore = tr('_NAME_', [
                     '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
                 ]);
+            echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"');
         } else {
             $piano_dei_conti_fornitore = tr('Nessuno');
         }
 
-        echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"'); ?>
+        ?>
 
             {[ "type": "select", "label": "<?php echo tr('Piano dei conti fornitore'); ?>", "name": "piano_dei_conti_fornitore", "values": "list=\"\": \"<?php echo $piano_dei_conti_fornitore; ?>\"", "readonly": 1, "value": "", "extra": "" ]}
 
@@ -295,7 +296,7 @@ if (!empty($google)) {
 					</div>
 
 					<div class="col-md-6">
-						{[ "type": "select", "label": "<?php echo tr('Banca predefinita'); ?>", "name": "idbanca_vendite", "values": "query=SELECT id, nome AS descrizione FROM co_banche ORDER BY nome ASC", "value": "$idbanca_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>", "icon-after": "add|<?php echo Modules::get('Banche')['id']; ?>|||<?php echo ($cliente) ? '' : 'disabled'; ?>" ]}
+						{[ "type": "select", "label": "<?php echo tr('Banca predefinita'); ?>", "name": "idbanca_vendite", "values": "query=SELECT id, nome AS descrizione FROM co_banche ORDER BY nome ASC", "value": "$idbanca_vendite$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>", "icon-after": "add|<?php echo Modules::get('Banche')['id']; ?>|||<?php echo ($cliente) ? '' : 'disabled'; ?>", "help": "<?php echo tr('Banca predefinita su cui accreditare i pagamenti.'); ?>" ]}
 					</div>
                 </div>
 
@@ -321,11 +322,11 @@ if (!empty($google)) {
 
 				<div class="row">
 					<div class="col-md-6">
-						{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento_default", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "$idtipointervento_default$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
+						{[ "type": "select", "label": "<?php echo tr('Tipo attività predefinita'); ?>", "name": "idtipointervento_default", "values": "query=SELECT idtipointervento AS id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "$idtipointervento_default$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
 					</div>
 
 					<div class="col-md-6">
-					  {[ "type": "select", "label": "Agente principale", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, IF(deleted_at IS NOT NULL, CONCAT(ragione_sociale, ' (Eliminato)'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione='Agente' AND deleted_at IS NULL)<?php echo isset($record['idagente']) ? 'OR (an_anagrafiche.idanagrafica = '.prepare($record['idagente']).' AND deleted_at IS NOT NULL) ' : ''; ?>ORDER BY ragione_sociale", "value": "$idagente$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
+					  {[ "type": "select", "label": "<?php echo tr('Agente principale'); ?>", "name": "idagente", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, IF(deleted_at IS NOT NULL, CONCAT(ragione_sociale, ' (Eliminato)'), ragione_sociale ) AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione='Agente' AND deleted_at IS NULL)<?php echo isset($record['idagente']) ? 'OR (an_anagrafiche.idanagrafica = '.prepare($record['idagente']).' AND deleted_at IS NOT NULL) ' : ''; ?>ORDER BY ragione_sociale", "value": "$idagente$", "extra": "<?php echo ($cliente) ? '' : 'readonly'; ?>" ]}
 					</div>
                 </div>
                 <div class="row">
@@ -343,11 +344,14 @@ if (!empty($google)) {
             $piano_dei_conti_cliente = tr('_NAME_', [
                     '_NAME_' => $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'],
                 ]);
+            echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"');
         } else {
             $piano_dei_conti_cliente = tr('Nessuno');
         }
 
-        echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"'); ?>                      {[ "type": "select", "label": "<?php echo tr('Piano dei conti cliente'); ?>", "name": "piano_dei_conti_cliente", "values": "list=\"\": \"<?php echo $piano_dei_conti_cliente; ?>\"", "readonly": 1, "value": "", "extra": "" ]}
+        ?>
+
+        {[ "type": "select", "label": "<?php echo tr('Piano dei conti cliente'); ?>", "name": "piano_dei_conti_cliente", "values": "list=\"\": \"<?php echo $piano_dei_conti_cliente; ?>\"", "readonly": 1, "value": "", "extra": "" ]}
 
                     </div>
                     <div class="col-md-6">
@@ -410,7 +414,7 @@ if (!empty($google)) {
 				</div>
 
 				<?php
-                //se non è l'anagrafica azienda, ma  cliente o fornitore
+                //se non è l'anagrafica azienda, ma cliente o fornitore
                  if (!in_array($id_azienda, $tipi_anagrafica) || (($cliente or $fornitore))) {
                      ?>
 				<div class="row">

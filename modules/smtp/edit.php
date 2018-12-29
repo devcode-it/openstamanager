@@ -64,7 +64,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "password", "label": "<?php echo tr('Password SMTP'); ?>", "name": "password", "value": "$password$" ]}
+                    {[ "type": "password", "label": "<?php echo tr('Password SMTP'); ?>", "class": "", "name": "password", "value": "$password$", "icon-after": "<i title=\"<?php echo tr('Visualizza password'); ?>\" class=\"fa fa-eye clickable\" ></i>" ]}
                 </div>
             </div>
 
@@ -113,3 +113,25 @@ if (!empty($elementi)) {
     <i class="fa fa-trash"></i> '.tr('Elimina').'
 </a>';
 }
+?>
+
+<script type="text/javascript">
+
+
+
+$(document).ready(function() {
+
+  $(".input-group-addon").on('click', function() {
+    if ($(this).parent().find("i").hasClass('fa-eye')) {
+      $("#password").attr("type", "text");
+      $(this).parent().find("i").removeClass('fa-eye').addClass('fa-eye-slash');
+      $(this).parent().find("i").attr('title', '<?php echo tr ('Nascondi password'); ?>');
+    } else {
+      $("#password").attr("type", "password");
+      $(this).parent().find("i").removeClass('fa-eye-slash').addClass('fa-eye');
+      $(this).parent().find("i").attr('title', '<?php echo tr ('Visualizza password'); ?>');
+    }
+  });
+});
+
+</script>

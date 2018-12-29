@@ -80,7 +80,7 @@ switch (post('op')) {
                 'idvettore' => post('idvettore'),
                 'idsede' => post('idsede'),
                 'idconto' => post('idconto'),
-				'split_payment' => post('split_payment'),
+                'split_payment' => post('split_payment'),
 
                 'n_colli' => post('n_colli'),
                 'tipo_resa' => post('tipo_resa'),
@@ -344,7 +344,7 @@ switch (post('op')) {
                         'idrivalsainps' => setting('Percentuale rivalsa INPS'),
                         'rivalsainps' => $rivalsainps,
                         'abilita_serial' => $riga['abilita_serial'],
-                        'calcolo_ritenutaacconto' => setting("Metodologia calcolo ritenuta d'acconto predefinito"),
+                        'calcolo_ritenuta_acconto' => setting("Metodologia calcolo ritenuta d'acconto predefinito"),
                     ]);
 
                     if (!empty($riga['idarticolo'])) {
@@ -480,7 +480,7 @@ switch (post('op')) {
                         'idrivalsainps' => setting('Percentuale rivalsa INPS'),
                         'rivalsainps' => $rivalsainps,
                         'abilita_serial' => $riga['abilita_serial'],
-                        'calcolo_ritenutaacconto' => setting("Metodologia calcolo ritenuta d'acconto predefinito"),
+                        'calcolo_ritenuta_acconto' => setting("Metodologia calcolo ritenuta d'acconto predefinito"),
                     ]);
 
                     if (!empty($riga['idarticolo'])) {
@@ -489,7 +489,7 @@ switch (post('op')) {
                 }
             } else {
                 // Aggiunta riga contratto sul documento
-                $query = 'INSERT INTO co_righe_documenti(iddocumento, idcontratto, is_contratto, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenutaacconto, `order`) VALUES('.prepare($id_record).', '.prepare($idcontratto).', "1", '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).", '-', 1, ".prepare(setting('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(setting("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(setting("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
+                $query = 'INSERT INTO co_righe_documenti(iddocumento, idcontratto, is_contratto, idconto, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, idrivalsainps, rivalsainps, idritenutaacconto, ritenutaacconto, calcolo_ritenuta_acconto, `order`) VALUES('.prepare($id_record).', '.prepare($idcontratto).', "1", '.prepare($idconto).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).", '-', 1, ".prepare(setting('Percentuale rivalsa INPS')).', '.prepare($rivalsainps).', '.prepare(setting("Percentuale ritenuta d'acconto")).', '.prepare($ritenutaacconto).', '.prepare(setting("Metodologia calcolo ritenuta d'acconto predefinito")).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
                 $dbo->query($query);
 
                 // Scalo le qta degli articoli nel contratto

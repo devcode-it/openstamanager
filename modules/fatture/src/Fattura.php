@@ -22,11 +22,6 @@ class Fattura extends Document
         'bollo' => 'float',
     ];
 
-    public function getModuleAttribute()
-    {
-        return $this->tipo->dir == 'entrata' ? 'Fatture di vendita' : 'Fatture di acquisto';
-    }
-
     /**
      * Crea una nuova fattura.
      *
@@ -57,18 +52,12 @@ class Fattura extends Document
         }
 
         // Tipo di pagamento e banca predefinite dall'anagrafica
-        $pagamento = $database->fetchOne('SELECT id, (SELECT idbanca_'.$conto.' FROM an_anagrafiche WHERE idanagrafica = ?) AS idbanca FROM co_pagamenti WHERE id = (SELECT idpagamento_'.$conto.' AS pagamento FROM an_anagrafiche WHERE idanagrafica = ?)', [
-            $id_anagrafica,
-            $id_anagrafica,
-        ]);
-        $id_pagamento = $pagamento['id'];
-        $id_banca = $pagamento['idbanca'];
-		
-		$split_payment = $database->fetchOne('SELECT split_payment FROM an_anagrafiche WHERE idanagrafica = :id_anagrafica', [
-			':id_anagrafica' => $id_anagrafica,
-		])['split_payment'];
-			
-		
+        $id_pagamento = $database->fetchOne('SELECT id FROM co_pagamenti WHERE id = :id_pagamento', [
+            ':id_pagamento' => $anagrafica['id_pagamento'.$conto],
+        ])['id'];
+        $id_banca = $anagrafica['idbanca_'.$conto];
+
+        $split_payment = $anagrafica->split_payment;
 
         // Se la fattura è di vendita e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
         if ($direzione == 'entrata' && empty($id_pagamento)) {
@@ -82,7 +71,7 @@ class Fattura extends Document
             ])['id'];
         }
 
-        $id_sede = $database->selectOne('an_anagrafiche', 'idsede_fatturazione', ['idanagrafica' => $id_anagrafica])['idsede_fatturazione'];
+        $id_sede = $anagrafica->idsede_fatturazione;
 
         $model->anagrafica()->associate($anagrafica);
         $model->tipo()->associate($tipo_documento);
@@ -103,9 +92,11 @@ class Fattura extends Document
         if (!empty($id_banca)) {
             $model->idbanca = $id_banca;
         }
-		if (!empty($split_payment)) {
-			$model->split_payment = $split_payment;
-		}
+
+        if (!empty($split_payment)) {
+            $model->split_payment = $split_payment;
+        }
+
         $model->save();
 
         return $model;
@@ -134,63 +125,13 @@ class Fattura extends Document
     }
 
     /**
-     * Calcola il nuovo numero di fattura.
-     *
-     * @param string $data
-     * @param string $direzione
-     * @param int    $id_segment
+     * Restituisce il nome del modulo a cui l'oggetto è collegato.
      *
      * @return string
      */
-    public static function getNextNumero($data, $direzione, $id_segment)
+    public function getModuleAttribute()
     {
-        if ($direzione == 'entrata') {
-            return '';
-        }
-
-        $database = database();
-
-        // Recupero maschera per questo segmento
-        $maschera = Generator::getMaschera($id_segment);
-
-        $ultima_fattura = $database->fetchOne('SELECT numero FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.Generator::getMascheraOrder($maschera, 'numero'), [
-            ':year' => date('Y', strtotime($data)),
-            ':id_segment' => $id_segment,
-        ]);
-
-        $numero = Generator::generate($maschera, $ultima_fattura['numero'], 1, Generator::dateToPattern($data));
-
-        return $numero;
-    }
-
-    /**
-     * Calcola il nuovo numero secondario di fattura.
-     *
-     * @param string $data
-     * @param string $direzione
-     * @param int    $id_segment
-     *
-     * @return string
-     */
-    public static function getNextNumeroSecondario($data, $direzione, $id_segment)
-    {
-        if ($direzione == 'uscita') {
-            return '';
-        }
-
-        $database = database();
-
-        // Recupero maschera per questo segmento
-        $maschera = Generator::getMaschera($id_segment);
-
-        $ultima_fattura = $database->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.Generator::getMascheraOrder($maschera, 'numero_esterno'), [
-            ':year' => date('Y', strtotime($data)),
-            ':id_segment' => $id_segment,
-        ]);
-
-        $numero_esterno = Generator::generate($maschera, $ultima_fattura['numero_esterno'], 1, Generator::dateToPattern($data));
-
-        return $numero_esterno;
+        return $this->tipo->dir == 'entrata' ? 'Fatture di vendita' : 'Fatture di acquisto';
     }
 
     /**
@@ -278,5 +219,67 @@ class Fattura extends Document
     public function scontoGlobale()
     {
         return $this->hasOne(Components\Sconto::class, 'iddocumento');
+    }
+
+    // Metodi statici
+
+    /**
+     * Calcola il nuovo numero di fattura.
+     *
+     * @param string $data
+     * @param string $direzione
+     * @param int    $id_segment
+     *
+     * @return string
+     */
+    public static function getNextNumero($data, $direzione, $id_segment)
+    {
+        if ($direzione == 'entrata') {
+            return '';
+        }
+
+        $database = database();
+
+        // Recupero maschera per questo segmento
+        $maschera = Generator::getMaschera($id_segment);
+
+        $ultima_fattura = $database->fetchOne('SELECT numero FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.Generator::getMascheraOrder($maschera, 'numero'), [
+            ':year' => date('Y', strtotime($data)),
+            ':id_segment' => $id_segment,
+        ]);
+
+        $numero = Generator::generate($maschera, $ultima_fattura['numero'], 1, Generator::dateToPattern($data));
+
+        return $numero;
+    }
+
+    /**
+     * Calcola il nuovo numero secondario di fattura.
+     *
+     * @param string $data
+     * @param string $direzione
+     * @param int    $id_segment
+     *
+     * @return string
+     */
+    public static function getNextNumeroSecondario($data, $direzione, $id_segment)
+    {
+        if ($direzione == 'uscita') {
+            return '';
+        }
+
+        $database = database();
+
+        // Recupero maschera per questo segmento
+        $maschera = Generator::getMaschera($id_segment);
+
+        $ultima_fattura = $database->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.Generator::getMascheraOrder($maschera, 'numero_esterno'), [
+            ':year' => date('Y', strtotime($data)),
+            ':id_segment' => $id_segment,
+        ]);
+
+        $numero_esterno = Generator::generate($maschera, $ultima_fattura['numero_esterno'], 1, Generator::dateToPattern($data));
+
+        return $numero_esterno;
     }
 }

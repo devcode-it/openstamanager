@@ -20,4 +20,15 @@ trait RelationTrait
     {
         return $this->parent();
     }
+
+    public function getNettoAttribute()
+    {
+        $result = parent::getNettoAttribute();
+
+        if ($this->parent->split_payment) {
+            $result = $result - $this->iva;
+        }
+
+        return $result;
+    }
 }

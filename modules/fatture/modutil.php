@@ -234,8 +234,8 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
     $totale_ritenutaacconto = $rs[0]['ritenutaacconto'];
     $totale_rivalsainps = $rs[0]['rivalsainps'];
     $data_documento = $rs[0]['data'];
-	$split_payment = $rs[0]['split_payment'];
-	
+    $split_payment = $rs[0]['split_payment'];
+
     $netto_fattura = get_netto_fattura($iddocumento);
     $totale_fattura = get_totale_fattura($iddocumento);
     $imponibile_fattura = get_imponibile_fattura($iddocumento);
@@ -334,12 +334,12 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
         6) eventuale marca da bollo
     */
     // 1) Aggiungo la riga del conto cliente
-	$importo_cliente = $totale_fattura;
-	
-	if( $split_payment ){
-		$importo_cliente = sum ($importo_cliente, -$iva_fattura, 2);
-	}
-	
+    $importo_cliente = $totale_fattura;
+
+    if ($split_payment) {
+        $importo_cliente = sum($importo_cliente, -$iva_fattura, 2);
+    }
+
     $query2 = 'INSERT INTO co_movimenti(idmastrino, data, data_documento, iddocumento, idanagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($data_documento).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime($data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($importo_cliente + $totale_bolli) * $segno_mov1_cliente).', '.prepare($primanota).' )';
     $dbo->query($query2);
 
@@ -500,10 +500,10 @@ function get_netto_fattura($iddocumento)
         $rs[0]['bollo'],
         -$rs[0]['ritenutaacconto'],
     ], null, 2);
-	
-	if ($rs[0]['split_payment']){
-		$netto_a_pagare = sum($netto_a_pagare, - (get_ivadetraibile_fattura($iddocumento) + get_ivaindetraibile_fattura($iddocumento)), 2 );
-	}
+
+    if ($rs[0]['split_payment']) {
+        $netto_a_pagare = sum($netto_a_pagare, - (get_ivadetraibile_fattura($iddocumento) + get_ivaindetraibile_fattura($iddocumento)), 2);
+    }
 
     return $netto_a_pagare;
 }
@@ -612,7 +612,7 @@ function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenu
  * $prezzo			float		prezzo totale dell'articolo (prezzounitario*qtà)
  * $idintervento	integer		id dell'intervento da cui arriva l'articolo (per non creare casini quando si rimuoverà un articolo dalla fattura).
  */
-function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT', $idintervento = 0, $idconto = 0, $idum = 0, $idrivalsainps = '', $idritenutaacconto = '', $calcolo_ritenutaacconto = '')
+function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT', $idintervento = 0, $idconto = 0, $idum = 0, $idrivalsainps = '', $idritenutaacconto = '', $calcolo_ritenuta_acconto = '')
 {
     global $dir;
     global $idddt;
@@ -657,9 +657,9 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
         // Calcolo ritenuta d'acconto
         $query = 'SELECT * FROM co_ritenutaacconto WHERE id='.prepare($idritenutaacconto);
         $rs = $dbo->fetchArray($query);
-        if ($calcolo_ritenutaacconto == 'Imponibile') {
+        if ($calcolo_ritenuta_acconto == 'IMP') {
             $ritenutaacconto = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
-        } elseif ($calcolo_ritenutaacconto == 'Imponibile + rivalsa inps') {
+        } elseif ($calcolo_ritenuta_acconto == 'IMP+RIV') {
             $ritenutaacconto = ($prezzo - $sconto + $rivalsainps) / 100 * $rs[0]['percentuale'];
         }
     }
@@ -673,7 +673,7 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
         }
         $idconto = empty($idconto) ? $default_idconto : $idconto;
 
-        $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idarticolo, idintervento, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, qta, abilita_serial, idconto, um, `order`, idritenutaacconto, ritenutaacconto, idrivalsainps, rivalsainps,	calcolo_ritenutaacconto) VALUES ('.prepare($iddocumento).', '.prepare($idarticolo).', '.(!empty($idintervento) ? prepare($idintervento) : 'NULL').', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($qta).', '.prepare($rsart[0]['abilita_serial']).', '.prepare($idconto).', '.prepare($um).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($iddocumento).'), '.prepare($idritenutaacconto).', '.prepare($ritenutaacconto).', '.prepare($idrivalsainps).', '.prepare($rivalsainps).', '.prepare($calcolo_ritenutaacconto).')');
+        $dbo->query('INSERT INTO co_righe_documenti(iddocumento, idarticolo, idintervento, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, sconto, sconto_unitario, tipo_sconto, qta, abilita_serial, idconto, um, `order`, idritenutaacconto, ritenutaacconto, idrivalsainps, rivalsainps,	calcolo_ritenuta_acconto) VALUES ('.prepare($iddocumento).', '.prepare($idarticolo).', '.(!empty($idintervento) ? prepare($idintervento) : 'NULL').', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($descrizione).', '.prepare($prezzo).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($qta).', '.prepare($rsart[0]['abilita_serial']).', '.prepare($idconto).', '.prepare($um).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($iddocumento).'), '.prepare($idritenutaacconto).', '.prepare($ritenutaacconto).', '.prepare($idrivalsainps).', '.prepare($rivalsainps).', '.prepare($calcolo_ritenuta_acconto).')');
         $idriga = $dbo->lastInsertedID();
 
         /*

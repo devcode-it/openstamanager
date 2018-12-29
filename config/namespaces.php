@@ -6,6 +6,7 @@ return [
     'modules/articoli' => 'Modules\Articoli',
     'modules/ddt' => 'Modules\DDT',
     'modules/fatture' => 'Modules\Fatture',
+    'modules/ordini' => 'Modules\Ordini',
     'modules/interventi' => 'Modules\Interventi',
     'plugins/exportFE' => 'Plugins\ExportFE',
     'plugins/importFE' => 'Plugins\ImportFE',

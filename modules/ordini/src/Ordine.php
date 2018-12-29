@@ -1,20 +1,20 @@
 <?php
 
-namespace Modules\DDT;
+namespace Modules\Ordini;
 
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Traits\RecordTrait;
 use Util\Generator;
 
-class DDT extends Document
+class Ordine extends Document
 {
     use RecordTrait;
 
-    protected $table = 'dt_ddt';
+    protected $table = 'or_ordini';
 
     /**
-     * Crea un nuovo ddt.
+     * Crea un nuovo ordine.
      *
      * @param Anagrafica $anagrafica
      * @param Tipo       $tipo_documento
@@ -44,7 +44,7 @@ class DDT extends Document
             ':id_pagamento' => $anagrafica['id_pagamento'.$conto],
         ])['id'];
 
-        // Se il ddt è un ddt cliente e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
+        // Se il ordine è un ordine cliente e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
         if ($direzione == 'entrata' && empty($id_pagamento)) {
             $id_pagamento = setting('Tipo di pagamento predefinito');
         }
@@ -77,18 +77,18 @@ class DDT extends Document
      */
     public function getModuleAttribute()
     {
-        return $this->tipo->dir == 'entrata' ? 'Ddt di vendita' : 'DDT di acquisto';
+        return $this->tipo->dir == 'entrata' ? 'Ordini cliente' : 'Ordini fornitore';
     }
 
     public function updateSconto()
     {
         // Aggiornamento sconto
         aggiorna_sconto([
-            'parent' => 'dt_ddt',
-            'row' => 'dt_righe_ddt',
+            'parent' => 'or_ordini',
+            'row' => 'or_righe_ordine',
         ], [
             'parent' => 'id',
-            'row' => 'idddt',
+            'row' => 'idordine',
         ], $this->id);
     }
 
@@ -99,38 +99,38 @@ class DDT extends Document
 
     public function tipo()
     {
-        return $this->belongsTo(Tipo::class, 'idtipoddt');
+        return $this->belongsTo(Tipo::class, 'idtipoordine');
     }
 
     public function stato()
     {
-        return $this->belongsTo(Stato::class, 'idstatoddt');
+        return $this->belongsTo(Stato::class, 'idstatoordine');
     }
 
     public function articoli()
     {
-        return $this->hasMany(Components\Articolo::class, 'idddt');
+        return $this->hasMany(Components\Articolo::class, 'idordine');
     }
 
     public function righe()
     {
-        return $this->hasMany(Components\Riga::class, 'idddt');
+        return $this->hasMany(Components\Riga::class, 'idordine');
     }
 
     public function descrizioni()
     {
-        return $this->hasMany(Components\Descrizione::class, 'idddt');
+        return $this->hasMany(Components\Descrizione::class, 'idordine');
     }
 
     public function scontoGlobale()
     {
-        return $this->hasOne(Components\Sconto::class, 'idddt');
+        return $this->hasOne(Components\Sconto::class, 'idordine');
     }
 
     // Metodi statici
 
     /**
-     * Calcola il nuovo numero di ddt.
+     * Calcola il nuovo numero di ordine.
      *
      * @param string $data
      * @param string $direzione
@@ -142,7 +142,7 @@ class DDT extends Document
     {
         $database = database();
 
-        $rs = $database->fetchOne("SELECT IFNULL(MAX(numero), '0') AS max_numero FROM dt_ddt WHERE YEAR(data) = :year AND idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir = :direction) ORDER BY CAST(numero AS UNSIGNED) DESC", [
+        $rs = $database->fetchOne("SELECT IFNULL(MAX(numero), '0') AS max_numero FROM or_ordini WHERE YEAR(data) = :year AND idtipoordine IN(SELECT id FROM or_tipiordine WHERE dir = :direction) ORDER BY CAST(numero AS UNSIGNED) DESC", [
             ':year' => date('Y', strtotime($data)),
             ':direction' => $direzione,
         ]);
@@ -151,7 +151,7 @@ class DDT extends Document
     }
 
     /**
-     * Calcola il nuovo numero secondario di ddt.
+     * Calcola il nuovo numero secondario di ordine.
      *
      * @param string $data
      * @param string $direzione
@@ -166,14 +166,14 @@ class DDT extends Document
 
         $database = database();
 
-        $maschera = setting('Formato numero secondario ddt');
+        $maschera = setting('Formato numero secondario ordine');
 
-        $ultimo_ddt = $database->fetchOne('SELECT numero_esterno FROM dt_ddt WHERE YEAR(data) = :year AND idtipoddt IN (SELECT id FROM dt_tipiddt WHERE dir = :direction) '.Generator::getMascheraOrder($maschera, 'numero_esterno'), [
+        $ultimo_ordine = $database->fetchOne('SELECT numero_esterno FROM or_ordini WHERE YEAR(data) = :year AND idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = :direction) '.Generator::getMascheraOrder($maschera, 'numero_esterno'), [
             ':year' => date('Y', strtotime($data)),
             ':direction' => $direzione,
         ]);
 
-        $numero_esterno = Generator::generate($maschera, $ultimo_ddt['numero_esterno'], 1, Generator::dateToPattern($data));
+        $numero_esterno = Generator::generate($maschera, $ultimo_ordine['numero_esterno'], 1, Generator::dateToPattern($data));
 
         return $numero_esterno;
     }

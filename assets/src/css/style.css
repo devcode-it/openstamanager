@@ -313,6 +313,15 @@ span.form-control {
     opacity: 0.8;
 }
 
+.li-widget button.close:hover, .li-widget button.close:focus{
+    opacity: 0.3;
+}
+
+.li-widget button.close{
+    padding-right:5px;
+    opacity: 0.1;
+}
+
 /* Tooltip dark */
 
 .ui-tooltip {

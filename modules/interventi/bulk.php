@@ -6,10 +6,10 @@ if (file_exists(__DIR__.'/../../../core.php')) {
     include_once __DIR__.'/../../core.php';
 }
 
-use Util\Zip;
+use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Tipo;
-use Modules\Anagrafiche\Anagrafica;
+use Util\Zip;
 
 // Segmenti
 $id_fatture = Modules::get('Fatture di vendita')['id'];

@@ -3,9 +3,9 @@
 namespace Modules\Fatture;
 
 use Common\Document;
-use Util\Generator;
-use Traits\RecordTrait;
 use Modules\Anagrafiche\Anagrafica;
+use Traits\RecordTrait;
+use Util\Generator;
 
 class Fattura extends Document
 {

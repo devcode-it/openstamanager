@@ -3,8 +3,8 @@
 namespace Modules\Interventi\Components;
 
 use Common\Components\Article;
-use Modules\Interventi\Intervento;
 use Modules\Articoli\Articolo as Original;
+use Modules\Interventi\Intervento;
 
 class Articolo extends Article
 {
@@ -96,6 +96,11 @@ class Articolo extends Article
     {
     }
 
+    public function getSubtotaleAttribute()
+    {
+        return $this->prezzo_vendita * $this->qta;
+    }
+
     /**
      * Effettua i conti per il subtotale della riga.
      */
@@ -104,10 +109,5 @@ class Articolo extends Article
         $this->prezzo_vendita = $this->prezzo_unitario_vendita;
 
         $this->fixIva();
-    }
-
-    public function getSubtotaleAttribute()
-    {
-        return $this->prezzo_vendita * $this->qta;
     }
 }

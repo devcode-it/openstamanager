@@ -156,6 +156,105 @@ class Prints
     }
 
     /**
+     * Individua il link per la stampa.
+     *
+     * @param string|int $print
+     * @param int        $id_record
+     * @param string     $get
+     *
+     * @return string
+     */
+    public static function getHref($print, $id_record, $get = '')
+    {
+        $infos = self::get($print);
+
+        if (empty($infos)) {
+            return false;
+        }
+
+        $link = ROOTDIR.'/pdfgen.php?';
+
+        if (self::isOldStandard($infos['id'])) {
+            $link .= 'ptype='.$infos['directory'];
+
+            $link .= !empty($infos['previous']) && !empty($id_record) ? '&'.$infos['previous'].'='.$id_record : '';
+        } else {
+            $link .= 'id_print='.$infos['id'];
+
+            $link .= !empty($id_record) ? '&id_record='.$id_record : '';
+        }
+
+        $link .= !empty($get) ? '&'.$get : '';
+
+        return $link;
+    }
+
+    /**
+     * Restituisce il codice semplificato per il link alla stampa.
+     *
+     * @deprecated 2.4.1
+     *
+     * @param string|int $print
+     * @param int        $id_record
+     * @param string     $btn
+     * @param string     $title
+     * @param string     $icon
+     * @param string     $get
+     *
+     * @return string
+     */
+    public static function getLink($print, $id_record, $btn = null, $title = null, $icon = null, $get = '')
+    {
+        return '{( "name": "button", "type": "print", "id": "'.$print.'", "id_record": "'.$id_record.'", "label": "'.$title.'", "icon": "'.$icon.'", "parameters": "'.$get.'", "class": "'.$btn.'" )}';
+    }
+
+    /**
+     * Restituisce il link per la visualizzazione della stampa.
+     *
+     * @param string|int $print
+     * @param int        $id_record
+     * @param string     $filename
+     *
+     * @return string
+     */
+    public static function getPreviewLink($print, $id_record, $filename)
+    {
+        self::render($print, $id_record, $filename);
+
+        return self::getPDFLink($filename);
+    }
+
+    /**
+     * Restituisce il link per la visualizzazione del PDF.
+     *
+     * @param string|int $print
+     * @param int        $id_record
+     * @param string     $filename
+     *
+     * @return string
+     */
+    public static function getPDFLink($filename)
+    {
+        return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file=../../../../'.ltrim(str_replace(DOCROOT, '', $filename), '/');
+    }
+
+    /**
+     * Individua il percorso per il file.
+     *
+     * @param string|int $template
+     * @param string     $file
+     *
+     * @return string|null
+     */
+    public static function filepath($template, $file)
+    {
+        $template = self::get($template);
+        $directory = 'templates/'.$template['directory'].'|custom|';
+
+        return App::filepath($directory, $file);
+    }
+
+    /**
      * Restituisce un array associativo dalla codifica JSON delle opzioni di stampa.
      *
      * @param string $string
@@ -382,104 +481,5 @@ class Prints
 
         // Creazione effettiva del PDF
         $mpdf->Output($filename, $mode);
-    }
-
-    /**
-     * Individua il link per la stampa.
-     *
-     * @param string|int $print
-     * @param int        $id_record
-     * @param string     $get
-     *
-     * @return string
-     */
-    public static function getHref($print, $id_record, $get = '')
-    {
-        $infos = self::get($print);
-
-        if (empty($infos)) {
-            return false;
-        }
-
-        $link = ROOTDIR.'/pdfgen.php?';
-
-        if (self::isOldStandard($infos['id'])) {
-            $link .= 'ptype='.$infos['directory'];
-
-            $link .= !empty($infos['previous']) && !empty($id_record) ? '&'.$infos['previous'].'='.$id_record : '';
-        } else {
-            $link .= 'id_print='.$infos['id'];
-
-            $link .= !empty($id_record) ? '&id_record='.$id_record : '';
-        }
-
-        $link .= !empty($get) ? '&'.$get : '';
-
-        return $link;
-    }
-
-    /**
-     * Restituisce il codice semplificato per il link alla stampa.
-     *
-     * @deprecated 2.4.1
-     *
-     * @param string|int $print
-     * @param int        $id_record
-     * @param string     $btn
-     * @param string     $title
-     * @param string     $icon
-     * @param string     $get
-     *
-     * @return string
-     */
-    public static function getLink($print, $id_record, $btn = null, $title = null, $icon = null, $get = '')
-    {
-        return '{( "name": "button", "type": "print", "id": "'.$print.'", "id_record": "'.$id_record.'", "label": "'.$title.'", "icon": "'.$icon.'", "parameters": "'.$get.'", "class": "'.$btn.'" )}';
-    }
-
-    /**
-     * Restituisce il link per la visualizzazione della stampa.
-     *
-     * @param string|int $print
-     * @param int        $id_record
-     * @param string     $filename
-     *
-     * @return string
-     */
-    public static function getPreviewLink($print, $id_record, $filename)
-    {
-        self::render($print, $id_record, $filename);
-
-        return self::getPDFLink($filename);
-    }
-
-    /**
-     * Restituisce il link per la visualizzazione del PDF.
-     *
-     * @param string|int $print
-     * @param int        $id_record
-     * @param string     $filename
-     *
-     * @return string
-     */
-    public static function getPDFLink($filename)
-    {
-        return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file=../../../../'.ltrim(str_replace(DOCROOT, '', $filename), '/');
-    }
-
-    /**
-     * Individua il percorso per il file.
-     *
-     * @param string|int $template
-     * @param string     $file
-     *
-     * @return string|null
-     */
-    public static function filepath($template, $file)
-    {
-        $template = self::get($template);
-        $directory = 'templates/'.$template['directory'].'|custom|';
-
-        return App::filepath($directory, $file);
     }
 }

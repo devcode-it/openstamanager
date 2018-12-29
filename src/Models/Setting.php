@@ -2,8 +2,8 @@
 
 namespace Models;
 
-use Traits\StoreTrait;
 use Common\Model;
+use Traits\StoreTrait;
 
 class Setting extends Model
 {

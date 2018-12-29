@@ -16,154 +16,6 @@ class Update
     ];
 
     /**
-     * Controlla la presenza di aggiornamenti e prepara il database per la procedura.
-     */
-    protected static function prepareToUpdate()
-    {
-        $database = database();
-
-        $database_ready = $database->isConnected() && $database->tableExists('updates');
-
-        // Individuazione di tutti gli aggiornamenti presenti
-        // Aggiornamenti del gestionale
-        $core = self::getCoreUpdates();
-
-        // Aggiornamenti supportati
-        $modules = self::getCustomUpdates();
-
-        $results = array_merge($core, $modules);
-        $paths = array_column($results, 'path');
-
-        // Individuazione di tutti gli aggiornamenti inseriti nel database
-        $updates = ($database_ready) ? $database->fetchArray('SELECT * FROM `updates`') : [];
-        $versions = [];
-        foreach ($updates as $update) {
-            $versions[] = self::findUpdatePath($update);
-        }
-
-        $reset = count(array_intersect($paths, $versions)) != count($results);
-
-        // Memorizzazione degli aggiornamenti
-        if ($reset && $database->isConnected()) {
-            // Reimpostazione della tabella degli aggiornamenti
-            $create = DOCROOT.'/update/create_updates.sql';
-            if (file_exists($create)) {
-                $database->query('DROP TABLE IF EXISTS `updates`');
-                $database->multiQuery($create);
-            }
-
-            // Inserimento degli aggiornamenti individuati
-            foreach ($results as $result) {
-                // Individuazione di script e sql
-                $sql = file_exists($result['path'].'.sql') ? 1 : 0;
-                $script = file_exists($result['path'].'.php') ? 1 : 0;
-
-                // Reimpostazione degli stati per gli aggiornamenti precedentemente presenti
-                $pos = array_search($result['path'], $versions);
-                $done = ($pos !== false) ? $updates[$pos]['done'] : null;
-
-                $directory = explode('update/', $result['path'])[0];
-                $database->insert('updates', [
-                    'directory' => rtrim($directory, '/'),
-                    'version' => $result['version'],
-                    'sql' => $sql,
-                    'script' => $script,
-                    'done' => $done,
-                ]);
-            }
-
-            // Normalizzazione di charset e collation
-            self::normalizeDatabase($database->getDatabaseName());
-        }
-    }
-
-    /**
-     * Restituisce l'elenco degli aggiornamento del gestionale presenti nella cartella <b>update<b>.
-     *
-     * @return array
-     */
-    protected static function getCoreUpdates()
-    {
-        return self::getUpdates(DOCROOT.'/update');
-    }
-
-    /**
-     * Restituisce l'elenco degli aggiornamento nel percorso indicato.
-     *
-     * @param string $directory
-     *
-     * @return array
-     */
-    protected static function getUpdates($directory)
-    {
-        $results = [];
-        $previous = [];
-
-        $files = glob($directory.'/*.{php,sql}', GLOB_BRACE);
-        foreach ($files as $file) {
-            $infos = pathinfo($file);
-            $version = str_replace('_', '.', $infos['filename']);
-
-            if (array_search($version, $previous) === false && self::isVersion($version)) {
-                $path = str_replace(DOCROOT, '', $infos['dirname'].'/'.$infos['filename']);
-                $path = ltrim($path, '/');
-
-                $results[] = [
-                    'path' => $path,
-                    'version' => $version,
-                ];
-                $previous[] = $version;
-            }
-        }
-
-        asort($results);
-
-        return $results;
-    }
-
-    /**
-     * Restituisce l'elenco degli aggiornamento delle strutture supportate, presenti nella cartella <b>update<b>.
-     *
-     * @return array
-     */
-    protected static function getCustomUpdates()
-    {
-        $results = [];
-
-        foreach (self::$directories as $dir) {
-            $folders = glob(DOCROOT.'/'.$dir.'/*/update', GLOB_ONLYDIR);
-
-            foreach ($folders as $folder) {
-                $results = array_merge($results, self::getUpdates($folder));
-            }
-        }
-
-        return $results;
-    }
-
-    protected static function findUpdatePath($update)
-    {
-        $version = str_replace('.', '_', $update['version']);
-
-        $old_standard = str_contains($update['version'], '_');
-        if (empty($update['directory']) && !$old_standard) {
-            return 'update/'.$version;
-        }
-
-        if ($old_standard) {
-            $module = implode('_', explode('_', $update['version'], -1));
-            $version = explode('_', $update['version']);
-            $version = end($version);
-
-            $version = str_replace('.', '_', $version);
-
-            return 'modules/'.$module.'/update/'.$version;
-        }
-
-        return  $update['directory'].'/update/'.$version;
-    }
-
-    /**
      * Restituisce l'elenco degli aggiornamento incompleti o non ancora effettuati.
      *
      * @return array
@@ -315,28 +167,6 @@ class Update
     }
 
     /**
-     * Ottiene i contenuti di un file.
-     *
-     * @param string $file
-     *
-     * @return string
-     */
-    protected static function getFile($file)
-    {
-        $file = (str_contains($file, DOCROOT.DIRECTORY_SEPARATOR)) ? $file : DOCROOT.DIRECTORY_SEPARATOR.$file;
-
-        $result = '';
-
-        $filepath = realpath($file);
-        if (!empty($filepath)) {
-            $result = file_get_contents($filepath);
-            $result = str_replace(["\r\n", "\n"], '', $result);
-        }
-
-        return trim($result);
-    }
-
-    /**
      * Effettua una pulizia del database a seguito del completamento dell'aggiornamento.
      *
      * @return bool
@@ -456,6 +286,176 @@ class Update
 
             return false;
         }
+    }
+
+    /**
+     * Controlla la presenza di aggiornamenti e prepara il database per la procedura.
+     */
+    protected static function prepareToUpdate()
+    {
+        $database = database();
+
+        $database_ready = $database->isConnected() && $database->tableExists('updates');
+
+        // Individuazione di tutti gli aggiornamenti presenti
+        // Aggiornamenti del gestionale
+        $core = self::getCoreUpdates();
+
+        // Aggiornamenti supportati
+        $modules = self::getCustomUpdates();
+
+        $results = array_merge($core, $modules);
+        $paths = array_column($results, 'path');
+
+        // Individuazione di tutti gli aggiornamenti inseriti nel database
+        $updates = ($database_ready) ? $database->fetchArray('SELECT * FROM `updates`') : [];
+        $versions = [];
+        foreach ($updates as $update) {
+            $versions[] = self::findUpdatePath($update);
+        }
+
+        $reset = count(array_intersect($paths, $versions)) != count($results);
+
+        // Memorizzazione degli aggiornamenti
+        if ($reset && $database->isConnected()) {
+            // Reimpostazione della tabella degli aggiornamenti
+            $create = DOCROOT.'/update/create_updates.sql';
+            if (file_exists($create)) {
+                $database->query('DROP TABLE IF EXISTS `updates`');
+                $database->multiQuery($create);
+            }
+
+            // Inserimento degli aggiornamenti individuati
+            foreach ($results as $result) {
+                // Individuazione di script e sql
+                $sql = file_exists($result['path'].'.sql') ? 1 : 0;
+                $script = file_exists($result['path'].'.php') ? 1 : 0;
+
+                // Reimpostazione degli stati per gli aggiornamenti precedentemente presenti
+                $pos = array_search($result['path'], $versions);
+                $done = ($pos !== false) ? $updates[$pos]['done'] : null;
+
+                $directory = explode('update/', $result['path'])[0];
+                $database->insert('updates', [
+                    'directory' => rtrim($directory, '/'),
+                    'version' => $result['version'],
+                    'sql' => $sql,
+                    'script' => $script,
+                    'done' => $done,
+                ]);
+            }
+
+            // Normalizzazione di charset e collation
+            self::normalizeDatabase($database->getDatabaseName());
+        }
+    }
+
+    /**
+     * Restituisce l'elenco degli aggiornamento del gestionale presenti nella cartella <b>update<b>.
+     *
+     * @return array
+     */
+    protected static function getCoreUpdates()
+    {
+        return self::getUpdates(DOCROOT.'/update');
+    }
+
+    /**
+     * Restituisce l'elenco degli aggiornamento nel percorso indicato.
+     *
+     * @param string $directory
+     *
+     * @return array
+     */
+    protected static function getUpdates($directory)
+    {
+        $results = [];
+        $previous = [];
+
+        $files = glob($directory.'/*.{php,sql}', GLOB_BRACE);
+        foreach ($files as $file) {
+            $infos = pathinfo($file);
+            $version = str_replace('_', '.', $infos['filename']);
+
+            if (array_search($version, $previous) === false && self::isVersion($version)) {
+                $path = str_replace(DOCROOT, '', $infos['dirname'].'/'.$infos['filename']);
+                $path = ltrim($path, '/');
+
+                $results[] = [
+                    'path' => $path,
+                    'version' => $version,
+                ];
+                $previous[] = $version;
+            }
+        }
+
+        asort($results);
+
+        return $results;
+    }
+
+    /**
+     * Restituisce l'elenco degli aggiornamento delle strutture supportate, presenti nella cartella <b>update<b>.
+     *
+     * @return array
+     */
+    protected static function getCustomUpdates()
+    {
+        $results = [];
+
+        foreach (self::$directories as $dir) {
+            $folders = glob(DOCROOT.'/'.$dir.'/*/update', GLOB_ONLYDIR);
+
+            foreach ($folders as $folder) {
+                $results = array_merge($results, self::getUpdates($folder));
+            }
+        }
+
+        return $results;
+    }
+
+    protected static function findUpdatePath($update)
+    {
+        $version = str_replace('.', '_', $update['version']);
+
+        $old_standard = str_contains($update['version'], '_');
+        if (empty($update['directory']) && !$old_standard) {
+            return 'update/'.$version;
+        }
+
+        if ($old_standard) {
+            $module = implode('_', explode('_', $update['version'], -1));
+            $version = explode('_', $update['version']);
+            $version = end($version);
+
+            $version = str_replace('.', '_', $version);
+
+            return 'modules/'.$module.'/update/'.$version;
+        }
+
+        return  $update['directory'].'/update/'.$version;
+    }
+
+    /**
+     * Ottiene i contenuti di un file.
+     *
+     * @param string $file
+     *
+     * @return string
+     */
+    protected static function getFile($file)
+    {
+        $file = (str_contains($file, DOCROOT.DIRECTORY_SEPARATOR)) ? $file : DOCROOT.DIRECTORY_SEPARATOR.$file;
+
+        $result = '';
+
+        $filepath = realpath($file);
+        if (!empty($filepath)) {
+            $result = file_get_contents($filepath);
+            $result = str_replace(["\r\n", "\n"], '', $result);
+        }
+
+        return trim($result);
     }
 
     /**

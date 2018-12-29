@@ -2,9 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Interventi\Intervento;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Interventi\Components\Articolo;
+use Modules\Interventi\Intervento;
 
 switch (post('op')) {
     case 'update':

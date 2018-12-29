@@ -2,8 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Plugins\ReceiptFE\Ricevuta;
 use Plugins\ReceiptFE\Interaction;
+use Plugins\ReceiptFE\Ricevuta;
 
 switch (filter('op')) {
     case 'save':

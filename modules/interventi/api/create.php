@@ -1,8 +1,8 @@
 <?php
 
+use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Interventi\Articolo;
 use Modules\Interventi\Intervento;
-use Modules\Articoli\Articolo as ArticoloOriginale;
 
 switch ($resource) {
     case 'intervento':

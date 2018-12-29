@@ -164,9 +164,6 @@ if (!function_exists('random_string')) {
     /**
      * Generates a string of random characters.
      *
-     * @throws LengthException If $length is bigger than the available
-     *                         character pool and $no_duplicate_chars is
-     *                         enabled
      *
      * @param int  $length             The length of the string to
      *                                 generate
@@ -181,6 +178,10 @@ if (!function_exists('random_string')) {
      *                                 true
      * @param bool $no_duplicate_chars whether or not to only use
      *                                 characters once in the string
+     *
+     * @throws LengthException If $length is bigger than the available
+     *                         character pool and $no_duplicate_chars is
+     *                         enabled
      *
      * @return string
      */

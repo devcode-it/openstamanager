@@ -27,32 +27,6 @@ abstract class Document extends Model
     abstract public function scontoGlobale();
 
     /**
-     * Restituisce la collezione di righe e articoli con valori rilevanti per i conti.
-     *
-     * @return iterable
-     */
-    protected function getRigheContabili()
-    {
-        $sconto = $this->scontoGlobale ? [$this->scontoGlobale] : [];
-
-        return $this->getRighe()->merge(collect($sconto));
-    }
-
-    /**
-     * Funzione per l'arrotondamento degli importi.
-     *
-     * @param float $value
-     *
-     * @return float
-     */
-    protected function round($value)
-    {
-        $decimals = 2;
-
-        return round($value, $decimals);
-    }
-
-    /**
      * Calcola l'imponibile della fattura.
      *
      * @return float
@@ -150,5 +124,31 @@ abstract class Document extends Model
     public function getGuadagnoAttribute()
     {
         return $this->round($this->getRigheContabili()->sum('guadagno'));
+    }
+
+    /**
+     * Restituisce la collezione di righe e articoli con valori rilevanti per i conti.
+     *
+     * @return iterable
+     */
+    protected function getRigheContabili()
+    {
+        $sconto = $this->scontoGlobale ? [$this->scontoGlobale] : [];
+
+        return $this->getRighe()->merge(collect($sconto));
+    }
+
+    /**
+     * Funzione per l'arrotondamento degli importi.
+     *
+     * @param float $value
+     *
+     * @return float
+     */
+    protected function round($value)
+    {
+        $decimals = 2;
+
+        return round($value, $decimals);
     }
 }

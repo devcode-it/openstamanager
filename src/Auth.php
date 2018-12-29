@@ -148,83 +148,6 @@ class Auth extends \Util\Singleton
     }
 
     /**
-     * Controlla la corrispondenza delle password ed eventualmente effettua un rehashing.
-     *
-     * @param string $password
-     * @param string $hash
-     * @param int    $user_id
-     */
-    protected function password_check($password, $hash, $user_id)
-    {
-        $result = false;
-        $rehash = false;
-
-        // Retrocompatibilità
-        if ($hash == md5($password)) {
-            $rehash = true;
-
-            $result = true;
-        }
-
-        // Nuova versione
-        if (password_verify($password, $hash)) {
-            $rehash = password_needs_rehash($hash, self::$password_options['algorithm'], self::$password_options['options']);
-
-            $result = true;
-        }
-
-        // Controllo in automatico per futuri cambiamenti dell'algoritmo di password
-        if ($rehash) {
-            $database = database();
-            $database->update('zz_users', ['password' => self::hashPassword($password)], ['id' => $user_id]);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Memorizza le informazioni riguardanti l'utente all'interno della sessione.
-     */
-    protected function saveToSession()
-    {
-        if (session_status() == PHP_SESSION_ACTIVE && $this->isAuthenticated()) {
-            // Retrocompatibilità
-            foreach ($this->user as $key => $value) {
-                $_SESSION[$key] = $value;
-            }
-            $_SESSION['id_utente'] = $this->user->id;
-
-            $identifier = md5($_SESSION['id_utente'].$_SERVER['HTTP_USER_AGENT']);
-            if ((empty($_SESSION['last_active']) || time() < $_SESSION['last_active'] + (60 * 60)) && (empty($_SESSION['identifier']) || $_SESSION['identifier'] == $identifier)) {
-                $_SESSION['last_active'] = time();
-                $_SESSION['identifier'] = $identifier;
-            }
-        }
-    }
-
-    /**
-     * Identifica l'utente interessato dall'autenticazione.
-     *
-     * @param int $user_id
-     */
-    protected function identifyUser($user_id)
-    {
-        $database = database();
-
-        try {
-            $results = $database->fetchArray('SELECT id, idanagrafica, username, (SELECT nome FROM zz_groups WHERE zz_groups.id = zz_users.idgruppo) AS gruppo FROM zz_users WHERE id = :user_id AND enabled = 1 LIMIT 1', [
-                ':user_id' => $user_id,
-            ], false, ['session' => false]);
-
-            if (!empty($results)) {
-                $this->user = User::with('group')->find($user_id);
-            }
-        } catch (PDOException $e) {
-            $this->destory();
-        }
-    }
-
-    /**
      * Controlla se l'utente è autenticato.
      *
      * @return bool
@@ -468,5 +391,82 @@ class Auth extends \Util\Singleton
         ]);
 
         return intval($results[0]['diff']);
+    }
+
+    /**
+     * Controlla la corrispondenza delle password ed eventualmente effettua un rehashing.
+     *
+     * @param string $password
+     * @param string $hash
+     * @param int    $user_id
+     */
+    protected function password_check($password, $hash, $user_id)
+    {
+        $result = false;
+        $rehash = false;
+
+        // Retrocompatibilità
+        if ($hash == md5($password)) {
+            $rehash = true;
+
+            $result = true;
+        }
+
+        // Nuova versione
+        if (password_verify($password, $hash)) {
+            $rehash = password_needs_rehash($hash, self::$password_options['algorithm'], self::$password_options['options']);
+
+            $result = true;
+        }
+
+        // Controllo in automatico per futuri cambiamenti dell'algoritmo di password
+        if ($rehash) {
+            $database = database();
+            $database->update('zz_users', ['password' => self::hashPassword($password)], ['id' => $user_id]);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Memorizza le informazioni riguardanti l'utente all'interno della sessione.
+     */
+    protected function saveToSession()
+    {
+        if (session_status() == PHP_SESSION_ACTIVE && $this->isAuthenticated()) {
+            // Retrocompatibilità
+            foreach ($this->user as $key => $value) {
+                $_SESSION[$key] = $value;
+            }
+            $_SESSION['id_utente'] = $this->user->id;
+
+            $identifier = md5($_SESSION['id_utente'].$_SERVER['HTTP_USER_AGENT']);
+            if ((empty($_SESSION['last_active']) || time() < $_SESSION['last_active'] + (60 * 60)) && (empty($_SESSION['identifier']) || $_SESSION['identifier'] == $identifier)) {
+                $_SESSION['last_active'] = time();
+                $_SESSION['identifier'] = $identifier;
+            }
+        }
+    }
+
+    /**
+     * Identifica l'utente interessato dall'autenticazione.
+     *
+     * @param int $user_id
+     */
+    protected function identifyUser($user_id)
+    {
+        $database = database();
+
+        try {
+            $results = $database->fetchArray('SELECT id, idanagrafica, username, (SELECT nome FROM zz_groups WHERE zz_groups.id = zz_users.idgruppo) AS gruppo FROM zz_users WHERE id = :user_id AND enabled = 1 LIMIT 1', [
+                ':user_id' => $user_id,
+            ], false, ['session' => false]);
+
+            if (!empty($results)) {
+                $this->user = User::with('group')->find($user_id);
+            }
+        } catch (PDOException $e) {
+            $this->destory();
+        }
     }
 }

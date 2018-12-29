@@ -2,20 +2,11 @@
 
 namespace Common\Components;
 
-use Illuminate\Database\Eloquent\Builder;
 use Common\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 abstract class Discount extends Model
 {
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::addGlobalScope('is_discount', function (Builder $builder) {
-            $builder->where('sconto_globale', '=', 1);
-        });
-    }
-
     public static function make()
     {
         $model = parent::make();
@@ -71,5 +62,14 @@ abstract class Discount extends Model
     public function getIvaAttribute()
     {
         return $this->attributes['iva'];
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('is_discount', function (Builder $builder) {
+            $builder->where('sconto_globale', '=', 1);
+        });
     }
 }

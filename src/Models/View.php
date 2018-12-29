@@ -2,8 +2,8 @@
 
 namespace Models;
 
-use Common\Model;
 use App;
+use Common\Model;
 
 class View extends Model
 {

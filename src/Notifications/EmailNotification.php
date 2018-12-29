@@ -3,9 +3,9 @@
 namespace Notifications;
 
 use Mail;
+use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use Prints;
 use Uploads;
-use PHPMailer\PHPMailer\Exception as PHPMailerException;
 
 class EmailNotification extends Notification
 {

@@ -2,32 +2,13 @@
 
 namespace Common\Components;
 
-use Illuminate\Database\Eloquent\Builder;
-use Common\Model;
 use Common\Document;
+use Common\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 abstract class Description extends Model
 {
     protected $guarded = [];
-
-    protected static function boot($bypass = false)
-    {
-        parent::boot();
-
-        if (!$bypass) {
-            static::addGlobalScope('descriptions', function (Builder $builder) {
-                $builder->where('is_descrizione', '=', 1);
-            });
-        } else {
-            static::addGlobalScope('not_descriptions', function (Builder $builder) {
-                $builder->where('is_descrizione', '=', 0);
-            });
-        }
-
-        static::addGlobalScope('not_discount', function (Builder $builder) {
-            $builder->where('sconto_globale', '=', 0);
-        });
-    }
 
     public static function make(Document $document, $bypass = false)
     {
@@ -83,4 +64,23 @@ abstract class Description extends Model
     abstract public function parent();
 
     abstract public function getParentID();
+
+    protected static function boot($bypass = false)
+    {
+        parent::boot();
+
+        if (!$bypass) {
+            static::addGlobalScope('descriptions', function (Builder $builder) {
+                $builder->where('is_descrizione', '=', 1);
+            });
+        } else {
+            static::addGlobalScope('not_descriptions', function (Builder $builder) {
+                $builder->where('is_descrizione', '=', 0);
+            });
+        }
+
+        static::addGlobalScope('not_discount', function (Builder $builder) {
+            $builder->where('sconto_globale', '=', 0);
+        });
+    }
 }

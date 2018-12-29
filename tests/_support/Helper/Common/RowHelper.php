@@ -11,47 +11,6 @@ class RowHelper extends \Codeception\Module
     protected $dir;
 
     /**
-     * Completa le informazioni per la creazione di un nuovo elemento.
-     *
-     * @param AcceptanceTester $t
-     * @param [type]           $descrizione
-     * @param [type]           $qta
-     * @param [type]           $prezzo
-     * @param int              $sconto
-     * @param string           $tipo_sconto
-     * @param [type]           $id_iva
-     * @param [type]           $id_rivalsa_inps
-     * @param [type]           $id_ritenuta_acconto
-     */
-    protected function fill(AcceptanceTester $t, $descrizione, $qta, $prezzo, $sconto = 0, $tipo_sconto = 'UNT', $id_iva = null, $id_rivalsa_inps = null, $id_ritenuta_acconto = null)
-    {
-        $t->fillField('#descrizione_riga', $descrizione);
-        $t->fillField('Q.tà', $qta);
-
-        $label = ($this->dir == 'uscita') ? 'Prezzo unitario' : 'Prezzo unitario di vendita';
-        $t->fillField($label, $prezzo);
-
-        if (!empty($sconto)) {
-            $t->fillField('Sconto unitario', $sconto);
-
-            if (in_array($tipo_sconto, ['PRC', 'UNT'])) {
-                $t->select2ajax('#tipo_sconto', $tipo_sconto);
-            }
-        }
-
-        if ($id_iva) {
-            $t->select2('#idiva', $id_iva);
-        }
-
-        if ($id_rivalsa_inps) {
-            $t->select2('#id_rivalsa_inps', $id_rivalsa_inps);
-        }
-        if ($id_ritenuta_acconto) {
-            $t->select2('#id_ritenuta_acconto', $id_ritenuta_acconto);
-        }
-    }
-
-    /**
      * Aggiunge una nuova riga.
      *
      * @param AcceptanceTester $t
@@ -109,26 +68,6 @@ class RowHelper extends \Codeception\Module
     /**
      * Undocumented function.
      *
-     * @param string $pattern
-     */
-    protected function setFinalPattern($pattern)
-    {
-        $this->finalPattern = $pattern;
-    }
-
-    /**
-     * Undocumented function.
-     *
-     * @param string $type
-     */
-    protected function getFinalValue($type)
-    {
-        return str_replace('|name|', strtoupper($type), $this->finalPattern);
-    }
-
-    /**
-     * Undocumented function.
-     *
      * @param AcceptanceTester $t
      */
     public function testImporti(AcceptanceTester $t, $direzione = 'entrata')
@@ -178,5 +117,66 @@ class RowHelper extends \Codeception\Module
         $t->see('434,11', $this->getFinalValue('Imponibile scontato'));
         $t->see('95,50', $this->getFinalValue('IVA'));
         $t->see('529,61', $this->getFinalValue('Totale'));
+    }
+
+    /**
+     * Completa le informazioni per la creazione di un nuovo elemento.
+     *
+     * @param AcceptanceTester $t
+     * @param [type]           $descrizione
+     * @param [type]           $qta
+     * @param [type]           $prezzo
+     * @param int              $sconto
+     * @param string           $tipo_sconto
+     * @param [type]           $id_iva
+     * @param [type]           $id_rivalsa_inps
+     * @param [type]           $id_ritenuta_acconto
+     */
+    protected function fill(AcceptanceTester $t, $descrizione, $qta, $prezzo, $sconto = 0, $tipo_sconto = 'UNT', $id_iva = null, $id_rivalsa_inps = null, $id_ritenuta_acconto = null)
+    {
+        $t->fillField('#descrizione_riga', $descrizione);
+        $t->fillField('Q.tà', $qta);
+
+        $label = ($this->dir == 'uscita') ? 'Prezzo unitario' : 'Prezzo unitario di vendita';
+        $t->fillField($label, $prezzo);
+
+        if (!empty($sconto)) {
+            $t->fillField('Sconto unitario', $sconto);
+
+            if (in_array($tipo_sconto, ['PRC', 'UNT'])) {
+                $t->select2ajax('#tipo_sconto', $tipo_sconto);
+            }
+        }
+
+        if ($id_iva) {
+            $t->select2('#idiva', $id_iva);
+        }
+
+        if ($id_rivalsa_inps) {
+            $t->select2('#id_rivalsa_inps', $id_rivalsa_inps);
+        }
+        if ($id_ritenuta_acconto) {
+            $t->select2('#id_ritenuta_acconto', $id_ritenuta_acconto);
+        }
+    }
+
+    /**
+     * Undocumented function.
+     *
+     * @param string $pattern
+     */
+    protected function setFinalPattern($pattern)
+    {
+        $this->finalPattern = $pattern;
+    }
+
+    /**
+     * Undocumented function.
+     *
+     * @param string $type
+     */
+    protected function getFinalValue($type)
+    {
+        return str_replace('|name|', strtoupper($type), $this->finalPattern);
     }
 }

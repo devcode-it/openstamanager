@@ -18,55 +18,6 @@ class AJAX
     }
 
     /**
-     * Individua i file per cui l'utente possiede i permessi di accesso.
-     *
-     * @param string $file
-     * @param bool   $permissions
-     *
-     * @return array
-     */
-    protected static function find($file, $permissions = true)
-    {
-        $dirname = substr($file, 0, strrpos($file, '/') + 1);
-
-        // Individuazione delle cartelle accessibili
-        if (!empty($permissions)) {
-            $modules = Modules::getAvailableModules();
-        } else {
-            $modules = Modules::getModules();
-        }
-
-        $modules = $modules->toArray();
-
-        $dirs = array_unique(array_column($modules, 'directory'));
-        $pieces = array_chunk($dirs, 5);
-
-        // Individuazione dei file esistenti
-        $list = [];
-        foreach ($pieces as $piece) {
-            // File nativi
-            $files = glob(DOCROOT.'/modules/{'.implode(',', $piece).'}/'.$file, GLOB_BRACE);
-
-            // File personalizzati
-            $custom_files = glob(DOCROOT.'/modules/{'.implode(',', $piece).'}/custom/'.$file, GLOB_BRACE);
-
-            // Pulizia dei file nativi che sono stati personalizzati
-            foreach ($custom_files as $key => $value) {
-                $index = array_search(str_replace('custom/'.$dirname, $dirname, $value), $files);
-                if ($index !== false) {
-                    unset($files[$index]);
-                }
-            }
-
-            $list = array_merge($list, $files, $custom_files);
-        }
-
-        asort($list);
-
-        return $list;
-    }
-
-    /**
      * Individua le opzioni di selezione a partire dalla risorsa richiesta.
      *
      * @param string $resource
@@ -139,6 +90,107 @@ class AJAX
     }
 
     /**
+     * Effettua la ricerca di un termine all'intero delle risorse disponibili.
+     *
+     * @param string $term
+     *
+     * @return array
+     */
+    public static function search($term)
+    {
+        if (strlen($term) < 2) {
+            return;
+        }
+
+        $files = self::find('ajax/search.php');
+
+        // File di gestione predefinita
+        array_unshift($files, DOCROOT.'/ajax_search.php');
+
+        $results = [];
+        foreach ($files as $file) {
+            $module_results = self::getSearchResults($file, $term);
+
+            $results = array_merge($results, $module_results);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Completa il codice HTML per la risorsa richiesta.
+     *
+     * @param string $resource
+     *
+     * @return string
+     */
+    public static function complete($resource)
+    {
+        $files = self::find('ajax/complete.php');
+
+        // File di gestione predefinita
+        array_unshift($files, DOCROOT.'/ajax_complete.php');
+
+        foreach ($files as $file) {
+            $result = self::getCompleteResults($file, $resource);
+            if (!empty($result)) {
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Individua i file per cui l'utente possiede i permessi di accesso.
+     *
+     * @param string $file
+     * @param bool   $permissions
+     *
+     * @return array
+     */
+    protected static function find($file, $permissions = true)
+    {
+        $dirname = substr($file, 0, strrpos($file, '/') + 1);
+
+        // Individuazione delle cartelle accessibili
+        if (!empty($permissions)) {
+            $modules = Modules::getAvailableModules();
+        } else {
+            $modules = Modules::getModules();
+        }
+
+        $modules = $modules->toArray();
+
+        $dirs = array_unique(array_column($modules, 'directory'));
+        $pieces = array_chunk($dirs, 5);
+
+        // Individuazione dei file esistenti
+        $list = [];
+        foreach ($pieces as $piece) {
+            // File nativi
+            $files = glob(DOCROOT.'/modules/{'.implode(',', $piece).'}/'.$file, GLOB_BRACE);
+
+            // File personalizzati
+            $custom_files = glob(DOCROOT.'/modules/{'.implode(',', $piece).'}/custom/'.$file, GLOB_BRACE);
+
+            // Pulizia dei file nativi che sono stati personalizzati
+            foreach ($custom_files as $key => $value) {
+                $index = array_search(str_replace('custom/'.$dirname, $dirname, $value), $files);
+                if ($index !== false) {
+                    unset($files[$index]);
+                }
+            }
+
+            $list = array_merge($list, $files, $custom_files);
+        }
+
+        asort($list);
+
+        return $list;
+    }
+
+    /**
      * Ottiene i risultati del select all'interno di un file specifico (modulo).
      *
      * @param string $file
@@ -182,34 +234,6 @@ class AJAX
     }
 
     /**
-     * Effettua la ricerca di un termine all'intero delle risorse disponibili.
-     *
-     * @param string $term
-     *
-     * @return array
-     */
-    public static function search($term)
-    {
-        if (strlen($term) < 2) {
-            return;
-        }
-
-        $files = self::find('ajax/search.php');
-
-        // File di gestione predefinita
-        array_unshift($files, DOCROOT.'/ajax_search.php');
-
-        $results = [];
-        foreach ($files as $file) {
-            $module_results = self::getSearchResults($file, $term);
-
-            $results = array_merge($results, $module_results);
-        }
-
-        return $results;
-    }
-
-    /**
      * Ottiene i risultati della ricerca all'interno di un file specifico (modulo).
      *
      * @param string $file
@@ -243,30 +267,6 @@ class AJAX
         }
 
         return $results;
-    }
-
-    /**
-     * Completa il codice HTML per la risorsa richiesta.
-     *
-     * @param string $resource
-     *
-     * @return string
-     */
-    public static function complete($resource)
-    {
-        $files = self::find('ajax/complete.php');
-
-        // File di gestione predefinita
-        array_unshift($files, DOCROOT.'/ajax_complete.php');
-
-        foreach ($files as $file) {
-            $result = self::getCompleteResults($file, $resource);
-            if (!empty($result)) {
-                break;
-            }
-        }
-
-        return $result;
     }
 
     /**

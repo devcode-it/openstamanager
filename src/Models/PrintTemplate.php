@@ -2,9 +2,9 @@
 
 namespace Models;
 
+use Common\Model;
 use Traits\PathTrait;
 use Traits\StoreTrait;
-use Common\Model;
 
 class PrintTemplate extends Model
 {
@@ -13,6 +13,13 @@ class PrintTemplate extends Model
     protected $table = 'zz_prints';
     protected $main_folder = 'templates';
 
+    /* Relazioni Eloquent */
+
+    public function module()
+    {
+        return $this->belongsTo(Module::class, 'id_module');
+    }
+
     protected static function boot()
     {
         parent::boot();
@@ -20,12 +27,5 @@ class PrintTemplate extends Model
         static::addGlobalScope('enabled', function (Builder $builder) {
             $builder->where('enabled', true);
         });
-    }
-
-    /* Relazioni Eloquent */
-
-    public function module()
-    {
-        return $this->belongsTo(Module::class, 'id_module');
     }
 }

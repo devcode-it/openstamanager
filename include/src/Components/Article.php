@@ -2,23 +2,14 @@
 
 namespace Common\Components;
 
-use Modules\Articoli\Articolo as Original;
-use Illuminate\Database\Eloquent\Builder;
-use UnexpectedValueException;
 use Common\Document;
+use Illuminate\Database\Eloquent\Builder;
+use Modules\Articoli\Articolo as Original;
+use UnexpectedValueException;
 
 abstract class Article extends Row
 {
     protected $serialRowID = 'documento';
-
-    protected static function boot()
-    {
-        parent::boot(true);
-
-        static::addGlobalScope('articles', function (Builder $builder) {
-            $builder->whereNotNull('idarticolo')->where('idarticolo', '<>', 0);
-        });
-    }
 
     public static function make(Document $document, Original $articolo)
     {
@@ -68,45 +59,6 @@ abstract class Article extends Row
         $results = database()->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_'.$this->serialRowID.' = '.prepare($this->id));
 
         return array_column($results, 'serial');
-    }
-
-    protected function usedSerials()
-    {
-        if ($this->getDirection() == 'uscita') {
-            $results = database()->fetchArray("SELECT serial FROM mg_prodotti WHERE serial IN (SELECT DISTINCT serial FROM mg_prodotti WHERE dir = 'entrata') AND serial IS NOT NULL AND id_riga_".$this->serialRowID.' = '.prepare($this->id));
-
-            return array_column($results, 'serial');
-        }
-
-        return [];
-    }
-
-    protected function cleanupSerials($new_qta)
-    {
-        // Se la nuova quantità è minore della precedente
-        if ($this->qta > $new_qta) {
-            $seriali_usati = $this->usedSerials();
-            $count_seriali_usati = count($seriali_usati);
-
-            // Controllo sulla possibilità di rimuovere i seriali (se non utilizzati da documenti di vendita)
-            if ($this->getDirection() == 'uscita' && $new_qta < $count_seriali_usati) {
-                return false;
-            } else {
-                // Controllo sul numero di seriali effettivi da rimuovere
-                $seriali = $this->serials;
-
-                if ($new_qta < count($seriali)) {
-                    $rimovibili = array_diff($seriali, $seriali_usati);
-
-                    // Rimozione dei seriali aggiuntivi
-                    $serials = array_slice($rimovibili, 0, $new_qta - $count_seriali_usati);
-
-                    $this->serials = array_merge($seriali_usati, $serials);
-                }
-            }
-        }
-
-        return true;
     }
 
     /**
@@ -168,5 +120,53 @@ abstract class Article extends Row
         $model->fill($attributes);
 
         return $model;
+    }
+
+    protected static function boot()
+    {
+        parent::boot(true);
+
+        static::addGlobalScope('articles', function (Builder $builder) {
+            $builder->whereNotNull('idarticolo')->where('idarticolo', '<>', 0);
+        });
+    }
+
+    protected function usedSerials()
+    {
+        if ($this->getDirection() == 'uscita') {
+            $results = database()->fetchArray("SELECT serial FROM mg_prodotti WHERE serial IN (SELECT DISTINCT serial FROM mg_prodotti WHERE dir = 'entrata') AND serial IS NOT NULL AND id_riga_".$this->serialRowID.' = '.prepare($this->id));
+
+            return array_column($results, 'serial');
+        }
+
+        return [];
+    }
+
+    protected function cleanupSerials($new_qta)
+    {
+        // Se la nuova quantità è minore della precedente
+        if ($this->qta > $new_qta) {
+            $seriali_usati = $this->usedSerials();
+            $count_seriali_usati = count($seriali_usati);
+
+            // Controllo sulla possibilità di rimuovere i seriali (se non utilizzati da documenti di vendita)
+            if ($this->getDirection() == 'uscita' && $new_qta < $count_seriali_usati) {
+                return false;
+            } else {
+                // Controllo sul numero di seriali effettivi da rimuovere
+                $seriali = $this->serials;
+
+                if ($new_qta < count($seriali)) {
+                    $rimovibili = array_diff($seriali, $seriali_usati);
+
+                    // Rimozione dei seriali aggiuntivi
+                    $serials = array_slice($rimovibili, 0, $new_qta - $count_seriali_usati);
+
+                    $this->serials = array_merge($seriali_usati, $serials);
+                }
+            }
+        }
+
+        return true;
     }
 }

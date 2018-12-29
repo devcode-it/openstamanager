@@ -27,34 +27,6 @@ namespace Helper;
 class Select2 extends \Codeception\Module
 {
     /**
-     * @param $selector
-     * @param $optionText
-     * @param bool $expectedReturn Default to true
-     *
-     * @return string JavaScript
-     */
-    protected function _optionIsSelectedForSelect2($selector, $optionText, $expectedReturn = true)
-    {
-        $returnFlag = $expectedReturn === true ? '' : '!';
-
-        return $script = <<<EOT
-return (function (\$) {
-  var isSelected = false;
-  var values = \$("$selector").val();
-  values = \$.isArray(values ) ? values : [values];
-  if (values && values.length > 0) {
-    isSelected = values.some(function (data) {
-      if (data && data.text && data.text === "$optionText") {
-        return data;
-      }
-    });
-  }
-  return ${returnFlag}isSelected;
-}(jQuery));
-EOT;
-    }
-
-    /**
      * Wait until the select2 component is loaded.
      *
      * @param $selector
@@ -213,6 +185,34 @@ EOT;
         $selector = $this->getSelect2Selector($selector);
         $this->waitForSelect2($selector);
         $t->executeJS('jQuery("'.$selector.'").select2("close");');
+    }
+
+    /**
+     * @param $selector
+     * @param $optionText
+     * @param bool $expectedReturn Default to true
+     *
+     * @return string JavaScript
+     */
+    protected function _optionIsSelectedForSelect2($selector, $optionText, $expectedReturn = true)
+    {
+        $returnFlag = $expectedReturn === true ? '' : '!';
+
+        return $script = <<<EOT
+return (function (\$) {
+  var isSelected = false;
+  var values = \$("$selector").val();
+  values = \$.isArray(values ) ? values : [values];
+  if (values && values.length > 0) {
+    isSelected = values.some(function (data) {
+      if (data && data.text && data.text === "$optionText") {
+        return data;
+      }
+    });
+  }
+  return ${returnFlag}isSelected;
+}(jQuery));
+EOT;
     }
 
     protected function getSelect2Selector($selector)

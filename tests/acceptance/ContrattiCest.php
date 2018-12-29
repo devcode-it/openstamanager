@@ -9,15 +9,29 @@ class ContrattiCest
      */
     protected $rowHelper;
 
-    protected function _inject(RowHelper $rowHelper)
-    {
-        $this->rowHelper = $rowHelper;
-    }
-
     public function _before(\AcceptanceTester $t)
     {
         // Effettua l'accesso con le credenziali fornite
         $t->login('admin', 'admin');
+    }
+
+    /**
+     * Crea un nuovo contratto.
+     *
+     * @param AcceptanceTester $t
+     */
+    public function testContratto(AcceptanceTester $t)
+    {
+        $this->addContratto($t, 'Contratto di test', 2);
+
+        $this->rowHelper->testImporti($t);
+
+        //$t->click('Stampa');
+    }
+
+    protected function _inject(RowHelper $rowHelper)
+    {
+        $this->rowHelper = $rowHelper;
     }
 
     /**
@@ -62,19 +76,5 @@ class ContrattiCest
 
         // Controlla eliminazione
         $t->see('Contratto eliminato!', '.alert-success');
-    }
-
-    /**
-     * Crea un nuovo contratto.
-     *
-     * @param AcceptanceTester $t
-     */
-    public function testContratto(AcceptanceTester $t)
-    {
-        $this->addContratto($t, 'Contratto di test', 2);
-
-        $this->rowHelper->testImporti($t);
-
-        //$t->click('Stampa');
     }
 }

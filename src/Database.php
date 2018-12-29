@@ -379,22 +379,6 @@ class Database extends Util\Singleton
     }
 
     /**
-     * Prepara il campo per l'inserimento in uno statement SQL.
-     *
-     * @since 2.3
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    protected function quote($string)
-    {
-        $char = '`';
-
-        return $char.str_replace([$char, '#'], '', $string).$char;
-    }
-
-    /**
      * Costruisce la query per l'INSERT definito dagli argomenti.
      *
      * @since 2.3
@@ -652,6 +636,60 @@ class Database extends Util\Singleton
         }
     }
 
+    public function beginTransaction()
+    {
+        Capsule::beginTransaction();
+    }
+
+    public function commitTransaction()
+    {
+        Capsule::commit();
+    }
+
+    /**
+     * Esegue le query interne ad un file .sql.
+     *
+     * @since 2.0
+     *
+     * @param string $filename  Percorso per raggiungere il file delle query
+     * @param string $delimiter Delimitatore delle query
+     */
+    public function multiQuery($filename, $start = 0)
+    {
+        $queries = readSQLFile($filename, ';');
+        $end = count($queries);
+
+        for ($i = $start; $i < $end; ++$i) {
+            try {
+                $this->getPDO()->exec($queries[$i]);
+            } catch (PDOException $e) {
+                $this->signal($e, $queries[$i], [
+                    'throw' => false,
+                ]);
+
+                return $i;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Prepara il campo per l'inserimento in uno statement SQL.
+     *
+     * @since 2.3
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    protected function quote($string)
+    {
+        $char = '`';
+
+        return $char.str_replace([$char, '#'], '', $string).$char;
+    }
+
     /**
      * Predispone una variabile per il relativo inserimento all'interno di uno statement SQL.
      *
@@ -734,44 +772,6 @@ class Database extends Util\Singleton
         $cond = !empty($and) ? 'AND' : 'OR';
 
         return implode(' '.$cond.' ', $result);
-    }
-
-    public function beginTransaction()
-    {
-        Capsule::beginTransaction();
-    }
-
-    public function commitTransaction()
-    {
-        Capsule::commit();
-    }
-
-    /**
-     * Esegue le query interne ad un file .sql.
-     *
-     * @since 2.0
-     *
-     * @param string $filename  Percorso per raggiungere il file delle query
-     * @param string $delimiter Delimitatore delle query
-     */
-    public function multiQuery($filename, $start = 0)
-    {
-        $queries = readSQLFile($filename, ';');
-        $end = count($queries);
-
-        for ($i = $start; $i < $end; ++$i) {
-            try {
-                $this->getPDO()->exec($queries[$i]);
-            } catch (PDOException $e) {
-                $this->signal($e, $queries[$i], [
-                    'throw' => false,
-                ]);
-
-                return $i;
-            }
-        }
-
-        return true;
     }
 
     /**

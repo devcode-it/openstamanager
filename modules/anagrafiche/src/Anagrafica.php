@@ -4,9 +4,9 @@ namespace Modules\Anagrafiche;
 
 use Common\Model;
 use Modules\Fatture\Fattura;
+use Settings;
 use Traits\RecordTrait;
 use Util\Generator;
-use Settings;
 
 class Anagrafica extends Model
 {

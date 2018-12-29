@@ -9,15 +9,45 @@ class OrdiniCest
      */
     protected $rowHelper;
 
-    protected function _inject(RowHelper $rowHelper)
-    {
-        $this->rowHelper = $rowHelper;
-    }
-
     public function _before(\AcceptanceTester $t)
     {
         // Effettua l'accesso con le credenziali fornite
         $t->login('admin', 'admin');
+    }
+
+    /**
+     * Crea un nuovo ordine.
+     *
+     * @param AcceptanceTester $t
+     */
+    public function testOrdineCliente(AcceptanceTester $t)
+    {
+        $this->addOrdine($t, true, 2);
+
+        $this->rowHelper->testImporti($t);
+
+        //$t->click('Stampa');
+    }
+
+    /**
+     * Crea un nuovo ordine.
+     *
+     * @param AcceptanceTester $t
+     */
+    public function testOrdineFornitore(AcceptanceTester $t)
+    {
+        $this->addOrdine($t, false, 4);
+
+        // Fix pagamento vuoto
+        $t->select2('#idpagamento', 109);
+        $t->clickAndWait('Salva');
+
+        $this->rowHelper->testImporti($t, 'uscita');
+    }
+
+    protected function _inject(RowHelper $rowHelper)
+    {
+        $this->rowHelper = $rowHelper;
     }
 
     /**
@@ -61,35 +91,5 @@ class OrdiniCest
 
         // Controlla eliminazione
         $t->see('Ordine eliminato!', '.alert-success');
-    }
-
-    /**
-     * Crea un nuovo ordine.
-     *
-     * @param AcceptanceTester $t
-     */
-    public function testOrdineCliente(AcceptanceTester $t)
-    {
-        $this->addOrdine($t, true, 2);
-
-        $this->rowHelper->testImporti($t);
-
-        //$t->click('Stampa');
-    }
-
-    /**
-     * Crea un nuovo ordine.
-     *
-     * @param AcceptanceTester $t
-     */
-    public function testOrdineFornitore(AcceptanceTester $t)
-    {
-        $this->addOrdine($t, false, 4);
-
-        // Fix pagamento vuoto
-        $t->select2('#idpagamento', 109);
-        $t->clickAndWait('Salva');
-
-        $this->rowHelper->testImporti($t, 'uscita');
     }
 }

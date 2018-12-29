@@ -1,7 +1,7 @@
 <?php
 
-use Util\Zip;
 use Ifsnop\Mysqldump\Mysqldump;
+use Util\Zip;
 
 /**
  * Classe per la gestione dei backup.
@@ -37,22 +37,6 @@ class Backup
     }
 
     /**
-     * Restituisce il percorso su cui salvare temporeneamente il dump del database.
-     *
-     * @return string
-     */
-    protected static function getDatabaseDirectory()
-    {
-        $result = self::getDirectory().'/database';
-
-        if (!directory($result)) {
-            throw new UnexpectedValueException();
-        }
-
-        return slashes($result);
-    }
-
-    /**
      * Restituisce l'elenco dei backup disponibili.
      *
      * @param string $pattern Eventuale pattern alternativo
@@ -81,24 +65,6 @@ class Backup
         }
 
         return $results;
-    }
-
-    /**
-     * Restituisce l'elenco delle variabili da sostituire normalizzato per l'utilizzo.
-     */
-    protected static function getReplaces()
-    {
-        return Util\Generator::getReplaces();
-    }
-
-    /**
-     * Restituisce il nome previsto per il backup successivo.
-     *
-     * @return string
-     */
-    protected static function getNextName()
-    {
-        return Util\Generator::generate(self::PATTERN);
     }
 
     /**
@@ -269,5 +235,39 @@ class Backup
             delete($extraction_dir);
         }
         delete(DOCROOT.'/database.sql');
+    }
+
+    /**
+     * Restituisce il percorso su cui salvare temporeneamente il dump del database.
+     *
+     * @return string
+     */
+    protected static function getDatabaseDirectory()
+    {
+        $result = self::getDirectory().'/database';
+
+        if (!directory($result)) {
+            throw new UnexpectedValueException();
+        }
+
+        return slashes($result);
+    }
+
+    /**
+     * Restituisce l'elenco delle variabili da sostituire normalizzato per l'utilizzo.
+     */
+    protected static function getReplaces()
+    {
+        return Util\Generator::getReplaces();
+    }
+
+    /**
+     * Restituisce il nome previsto per il backup successivo.
+     *
+     * @return string
+     */
+    protected static function getNextName()
+    {
+        return Util\Generator::generate(self::PATTERN);
     }
 }

@@ -9,15 +9,29 @@ class PreventiviCest
      */
     protected $rowHelper;
 
-    protected function _inject(RowHelper $rowHelper)
-    {
-        $this->rowHelper = $rowHelper;
-    }
-
     public function _before(\AcceptanceTester $t)
     {
         // Effettua l'accesso con le credenziali fornite
         $t->login('admin', 'admin');
+    }
+
+    /**
+     * Crea un nuovo preventivo.
+     *
+     * @param AcceptanceTester $t
+     */
+    public function testPreventivo(AcceptanceTester $t)
+    {
+        $this->addPreventivo($t, 'Preventivo di test', 2);
+
+        $this->rowHelper->testImporti($t);
+
+        //$t->click('Stampa');
+    }
+
+    protected function _inject(RowHelper $rowHelper)
+    {
+        $this->rowHelper = $rowHelper;
     }
 
     /**
@@ -63,19 +77,5 @@ class PreventiviCest
 
         // Controlla eliminazione
         $t->see('Preventivo eliminato!', '.alert-success');
-    }
-
-    /**
-     * Crea un nuovo preventivo.
-     *
-     * @param AcceptanceTester $t
-     */
-    public function testPreventivo(AcceptanceTester $t)
-    {
-        $this->addPreventivo($t, 'Preventivo di test', 2);
-
-        $this->rowHelper->testImporti($t);
-
-        //$t->click('Stampa');
     }
 }

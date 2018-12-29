@@ -37,15 +37,6 @@ class Acceptance extends \Codeception\Module
         $select2->selectOptionForSelect2($selector, $option, $timeout);
     }
 
-    protected function getAcceptanceModule()
-    {
-        if (!$this->hasModule('WebDriver')) {
-            throw new \Exception('You must enable the WebDriver module', 1);
-        }
-
-        return $this->getModule('WebDriver');
-    }
-
     public function seePageHasElement($element)
     {
         try {
@@ -65,5 +56,14 @@ class Acceptance extends \Codeception\Module
             $t->click($link, '.sidebar');
             $t->wait(1);
         }
+    }
+
+    protected function getAcceptanceModule()
+    {
+        if (!$this->hasModule('WebDriver')) {
+            throw new \Exception('You must enable the WebDriver module', 1);
+        }
+
+        return $this->getModule('WebDriver');
     }
 }

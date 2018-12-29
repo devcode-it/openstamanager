@@ -4,8 +4,8 @@ namespace Modules\Interventi;
 
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Interventi\Components\Riga;
 use Modules\Interventi\Components\Articolo;
+use Modules\Interventi\Components\Riga;
 
 class Intervento extends Document
 {

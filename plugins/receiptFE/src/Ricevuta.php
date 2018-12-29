@@ -3,8 +3,8 @@
 namespace Plugins\ReceiptFE;
 
 use Modules\Fatture\Fattura;
-use Util\XML;
 use UnexpectedValueException;
+use Util\XML;
 
 /**
  * Classe per la gestione della fatturazione elettronica in XML.

@@ -2,13 +2,13 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Fatture\Tipo;
-use Modules\Fatture\Fattura;
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Fatture\Components\Riga;
+use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Fatture\Components\Articolo;
 use Modules\Fatture\Components\Descrizione;
-use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Fatture\Components\Riga;
+use Modules\Fatture\Fattura;
+use Modules\Fatture\Tipo;
 
 $module = Modules::get($id_module);
 

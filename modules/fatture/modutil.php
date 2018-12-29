@@ -502,7 +502,7 @@ function get_netto_fattura($iddocumento)
     ], null, 2);
 
     if ($rs[0]['split_payment']) {
-        $netto_a_pagare = sum($netto_a_pagare, - (get_ivadetraibile_fattura($iddocumento) + get_ivaindetraibile_fattura($iddocumento)), 2);
+        $netto_a_pagare = sum($netto_a_pagare, -(get_ivadetraibile_fattura($iddocumento) + get_ivaindetraibile_fattura($iddocumento)), 2);
     }
 
     return $netto_a_pagare;

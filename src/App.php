@@ -44,26 +44,6 @@ class App
     ];
 
     /**
-     * Restituisce la configurazione di default del progetto.
-     *
-     * @return array
-     */
-    protected static function getDefaultConfig()
-    {
-        if (file_exists(DOCROOT.'/config.example.php')) {
-            include DOCROOT.'/config.example.php';
-        }
-
-        $db_host = '';
-        $db_username = '';
-        $db_password = '';
-        $db_name = '';
-        $port = '';
-
-        return get_defined_vars();
-    }
-
-    /**
      * Restituisce la configurazione dell'installazione in utilizzo del progetto.
      *
      * @return array
@@ -237,6 +217,143 @@ class App
     }
 
     /**
+     * Sostituisce i valori previsti all'interno delle query di moduli/plugin.
+     *
+     * @param string $query
+     * @param int    $custom
+     *
+     * @return string
+     */
+    public static function replacePlaceholder($query)
+    {
+        $id_parent = filter('id_parent');
+
+        $id_module = Modules::getCurrent()['id'];
+        $segment = $_SESSION['module_'.$id_module]['id_segment'];
+
+        $user = Auth::user();
+
+        // Elenco delle sostituzioni
+        $replace = [
+            // Identificatori
+            '|id_anagrafica|' => prepare($user['idanagrafica']),
+            '|id_utente|' => prepare($user['id']),
+            '|id_parent|' => prepare($id_parent),
+
+            // Date
+            '|period_start|' => $_SESSION['period_start'],
+            '|period_end|' => $_SESSION['period_end'],
+
+            // Segmenti
+            '|segment|' => !empty($segment) ? ' AND id_segment = '.prepare($segment) : '',
+        ];
+
+        // Sostituzione dei formati
+        $patterns = formatter()->getSQLPatterns();
+
+        foreach ($patterns as $key => $value) {
+            $replace['|'.$key.'_format|'] = "'".$value."'";
+        }
+
+        // Sostituzione effettiva
+        $query = replace($query, $replace);
+
+        return $query;
+    }
+
+    /**
+     * Restituisce il codice HTML per il form contenente il file indicato.
+     *
+     * @param string $path
+     * @param array  $result
+     * @param array  $options
+     *
+     * @return string
+     */
+    public static function load($file, $result, $options)
+    {
+        $form = self::internalLoad('form.php', $result, $options);
+
+        $response = self::internalLoad($file, $result, $options);
+
+        $form = str_replace('|response|', $response, $form);
+
+        return $form;
+    }
+
+    /**
+     * Restituisce il codice HTML generato del file indicato.
+     *
+     * @param string $path
+     * @param array  $result
+     * @param array  $options
+     * @param string $directory
+     *
+     * @return string
+     */
+    public static function internalLoad($file, $result, $options, $directory = null)
+    {
+        $module = Modules::getCurrent();
+
+        $id_module = $module['id'];
+        $id_record = filter('id_record');
+
+        $directory = empty($directory) ? 'include|custom|/common/' : $directory;
+
+        ob_start();
+        include self::filepath($directory, $file);
+        $response = ob_get_clean();
+
+        return $response;
+    }
+
+    /**
+     * Individua il percorso per il file da includere considerando gli eventuali custom.
+     *
+     * @param string $path
+     * @param string $file
+     *
+     * @return string|null
+     */
+    public static function filepath($path, $file = null)
+    {
+        $path = str_contains($path, DOCROOT) ? $path : DOCROOT.'/'.ltrim($path, '/');
+        $path = empty($file) ? $path : rtrim($path, '/').'/'.$file;
+
+        $original_file = str_replace('|custom|', '', $path);
+        $custom_file = str_replace('|custom|', '/custom', $path);
+
+        $result = '';
+        if (file_exists($custom_file)) {
+            $result = $custom_file;
+        } elseif (file_exists($original_file)) {
+            $result = $original_file;
+        }
+
+        return slashes($result);
+    }
+
+    /**
+     * Restituisce la configurazione di default del progetto.
+     *
+     * @return array
+     */
+    protected static function getDefaultConfig()
+    {
+        if (file_exists(DOCROOT.'/config.example.php')) {
+            include DOCROOT.'/config.example.php';
+        }
+
+        $db_host = '';
+        $db_username = '';
+        $db_password = '';
+        $db_name = '';
+        $port = '';
+
+        return get_defined_vars();
+    }
+
+    /**
      * Interpreta lo standard modulare per l'individuazione delle query di un modulo/plugin del progetto.
      *
      * @param array $element
@@ -362,122 +479,5 @@ class App
         ORDER BY `order` ASC');
 
         return $views;
-    }
-
-    /**
-     * Sostituisce i valori previsti all'interno delle query di moduli/plugin.
-     *
-     * @param string $query
-     * @param int    $custom
-     *
-     * @return string
-     */
-    public static function replacePlaceholder($query)
-    {
-        $id_parent = filter('id_parent');
-
-        $id_module = Modules::getCurrent()['id'];
-        $segment = $_SESSION['module_'.$id_module]['id_segment'];
-
-        $user = Auth::user();
-
-        // Elenco delle sostituzioni
-        $replace = [
-            // Identificatori
-            '|id_anagrafica|' => prepare($user['idanagrafica']),
-            '|id_utente|' => prepare($user['id']),
-            '|id_parent|' => prepare($id_parent),
-
-            // Date
-            '|period_start|' => $_SESSION['period_start'],
-            '|period_end|' => $_SESSION['period_end'],
-
-            // Segmenti
-            '|segment|' => !empty($segment) ? ' AND id_segment = '.prepare($segment) : '',
-        ];
-
-        // Sostituzione dei formati
-        $patterns = formatter()->getSQLPatterns();
-
-        foreach ($patterns as $key => $value) {
-            $replace['|'.$key.'_format|'] = "'".$value."'";
-        }
-
-        // Sostituzione effettiva
-        $query = replace($query, $replace);
-
-        return $query;
-    }
-
-    /**
-     * Restituisce il codice HTML per il form contenente il file indicato.
-     *
-     * @param string $path
-     * @param array  $result
-     * @param array  $options
-     *
-     * @return string
-     */
-    public static function load($file, $result, $options)
-    {
-        $form = self::internalLoad('form.php', $result, $options);
-
-        $response = self::internalLoad($file, $result, $options);
-
-        $form = str_replace('|response|', $response, $form);
-
-        return $form;
-    }
-
-    /**
-     * Restituisce il codice HTML generato del file indicato.
-     *
-     * @param string $path
-     * @param array  $result
-     * @param array  $options
-     * @param string $directory
-     *
-     * @return string
-     */
-    public static function internalLoad($file, $result, $options, $directory = null)
-    {
-        $module = Modules::getCurrent();
-
-        $id_module = $module['id'];
-        $id_record = filter('id_record');
-
-        $directory = empty($directory) ? 'include|custom|/common/' : $directory;
-
-        ob_start();
-        include self::filepath($directory, $file);
-        $response = ob_get_clean();
-
-        return $response;
-    }
-
-    /**
-     * Individua il percorso per il file da includere considerando gli eventuali custom.
-     *
-     * @param string $path
-     * @param string $file
-     *
-     * @return string|null
-     */
-    public static function filepath($path, $file = null)
-    {
-        $path = str_contains($path, DOCROOT) ? $path : DOCROOT.'/'.ltrim($path, '/');
-        $path = empty($file) ? $path : rtrim($path, '/').'/'.$file;
-
-        $original_file = str_replace('|custom|', '', $path);
-        $custom_file = str_replace('|custom|', '/custom', $path);
-
-        $result = '';
-        if (file_exists($custom_file)) {
-            $result = $custom_file;
-        } elseif (file_exists($original_file)) {
-            $result = $original_file;
-        }
-
-        return slashes($result);
     }
 }

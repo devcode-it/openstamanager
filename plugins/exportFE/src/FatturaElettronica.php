@@ -2,17 +2,17 @@
 
 namespace Plugins\ExportFE;
 
-use FluidXml\FluidXml;
-use Respect\Validation\Validator as v;
-use Stringy\Stringy as S;
-use GuzzleHttp\Client;
 use DateTime;
 use DOMDocument;
-use XSLTProcessor;
-use Uploads;
+use FluidXml\FluidXml;
+use GuzzleHttp\Client;
 use Modules;
 use Plugins;
 use Prints;
+use Respect\Validation\Validator as v;
+use Stringy\Stringy as S;
+use Uploads;
+use XSLTProcessor;
 
 /**
  * Classe per la gestione della fatturazione elettronica in XML.
@@ -42,6 +42,520 @@ class FatturaElettronica
     /** @var array Irregolarità nella fattura XML */
     protected $errors = null;
 
+    /** @var array Elenco di campi dello standard per la formattazione e la validazione */
+    protected static $validators = [
+        'IdPaese' => [
+            'type' => 'string',
+            'size' => 2,
+        ],
+        'IdCodice' => [
+            'type' => 'string',
+            'size' => [1, 28],
+        ],
+        'ProgressivoInvio' => [
+            'type' => 'normalizedString',
+            'size' => [1, 10],
+        ],
+        'FormatoTrasmissione' => [
+            'type' => 'string',
+            'size' => 5,
+        ],
+        'CodiceDestinatario' => [
+            'type' => 'string',
+            'size' => [6, 7],
+        ],
+        'Telefono' => [
+            'type' => 'normalizedString',
+            'size' => [5, 12],
+        ],
+        'Email' => [
+            'type' => 'string',
+            'size' => [7, 256],
+        ],
+        'PECDestinatario' => [
+            'type' => 'normalizedString',
+            'size' => [7, 256],
+        ],
+        'CodiceFiscale' => [
+            'type' => 'string',
+            'size' => [11, 16],
+        ],
+        'Denominazione' => [
+            'type' => 'normalizedString',
+            'size' => [1, 80],
+        ],
+        'Nome' => [
+            'type' => 'normalizedString',
+            'size' => [1, 60],
+        ],
+        'Cognome' => [
+            'type' => 'normalizedString',
+            'size' => [1, 60],
+        ],
+        'Titolo' => [
+            'type' => 'normalizedString',
+            'size' => [2, 10],
+        ],
+        'CodEORI' => [
+            'type' => 'string',
+            'size' => [13, 17],
+        ],
+        'AlboProfessionale' => [
+            'type' => 'normalizedString',
+            'size' => [1, 60],
+        ],
+        'ProvinciaAlbo' => [
+            'type' => 'string',
+            'size' => 2,
+        ],
+        'NumeroIscrizioneAlbo' => [
+            'type' => 'normalizedString',
+            'size' => [1, 60],
+        ],
+        'DataIscrizioneAlbo' => [
+            'type' => 'date',
+            'size' => 10,
+        ],
+        'RegimeFiscale' => [
+            'type' => 'string',
+            'size' => 4,
+        ],
+        'Indirizzo' => [
+            'type' => 'normalizedString',
+            'size' => [1, 60],
+        ],
+        'NumeroCivico' => [
+            'type' => 'normalizedString',
+            'size' => [1, 8],
+        ],
+        'CAP' => [
+            'type' => 'string',
+            'size' => 5,
+        ],
+        'Comune' => [
+            'type' => 'normalizedString',
+            'size' => [1, 60],
+        ],
+        'Provincia' => [
+            'type' => 'string',
+            'size' => 2,
+        ],
+        'Nazione' => [
+            'type' => 'string',
+            'size' => 2,
+        ],
+        'Ufficio' => [
+            'type' => 'string',
+            'size' => 2,
+        ],
+        'NumeroREA' => [
+            'type' => 'normalizedString',
+            'size' => [1, 20],
+        ],
+        'CapitaleSociale' => [
+            'type' => 'decimal',
+            'size' => [4, 15],
+        ],
+        'SocioUnico' => [
+            'type' => 'string',
+            'size' => 2,
+        ],
+        'StatoLiquidazione' => [
+            'type' => 'string',
+            'size' => 2,
+        ],
+        'Fax' => [
+            'type' => 'normalizedString',
+            'size' => [5, 12],
+        ],
+        'RiferimentoAmministrazione' => [
+            'type' => 'normalizedString',
+            'size' => [1, 20],
+        ],
+        'SoggettoEmittente' => [
+            'type' => 'string',
+            'size' => 2,
+        ],
+        'TipoDocumento' => [
+            'type' => 'string',
+            'size' => 4,
+        ],
+        'Divisa' => [
+            'type' => 'string',
+            'size' => 3,
+        ],
+        'Data' => [
+            'type' => 'date',
+            'size' => 10,
+        ],
+        'Numero' => [
+            'type' => 'normalizedString',
+            'size' => [1, 20],
+        ],
+        'TipoRitenuta' => [
+            'type' => 'string',
+            'size' => 4,
+        ],
+        'ImportoRitenuta' => [
+            'type' => 'decimal',
+            'size' => [4, 15],
+        ],
+        'AliquotaRitenuta' => [
+            'type' => 'decimal',
+            'size' => [4, 6],
+        ],
+        'CausalePagamento' => [
+            'type' => 'string',
+            'size' => [1, 2],
+        ],
+        'BolloVirtuale' => [
+            'type' => 'string',
+            'size' => 2,
+        ],
+        'ImportoBollo' => [
+            'type' => 'decimal',
+            'size' => [4, 15],
+        ],
+        'TipoCassa' => [
+            'type' => 'string',
+            'size' => 4,
+        ],
+        'AlCassa' => [
+            'type' => 'decimal',
+            'size' => [4, 6],
+        ],
+        'ImportoContributoCassa' => [
+            'type' => 'decimal',
+            'size' => [4, 15],
+        ],
+        'ImponibileCassa' => [
+            'type' => 'decimal',
+            'size' => [4, 15],
+        ],
+        'AliquotaIVA' => [
+            'type' => 'decimal',
+            'size' => [4, 6],
+        ],
+        'Ritenuta' => [
+            'type' => 'string',
+            'size' => 2,
+        ],
+        'Natura' => [
+            'type' => 'string',
+            'size' => 2,
+        ],
+        'Tipo' => [
+            'type' => 'string',
+            'size' => 2,
+        ],
+        'Percentuale' => [
+            'type' => 'decimal',
+            'size' => [4, 6],
+        ],
+        'Importo' => [
+            'type' => 'decimal',
+            'size' => [4, 15],
+        ],
+        'ImportoTotaleDocumento' => [
+            'type' => 'decimal',
+            'size' => [4, 15],
+        ],
+        'Arrotondamento' => [
+            'type' => 'decimal',
+            'size' => [4, 21],
+        ],
+        'Causale' => [
+            'type' => 'normalizedString',
+            'size' => [1, 200],
+        ],
+        'Art73' => [
+            'type' => 'string',
+            'size' => 2,
+        ],
+        'RiferimentoNumeroLinea' => [
+            'type' => 'integer',
+            'size' => [1, 4],
+        ],
+        'IdDocumento' => [
+            'type' => 'normalizedString',
+            'size' => [1, 20],
+        ],
+        'NumItem' => [
+            'type' => 'normalizedString',
+            'size' => [1, 20],
+        ],
+        'CodiceCommessaConvenzione' => [
+            'type' => 'normalizedString',
+            'size' => [1, 100],
+        ],
+        'CodiceCUP' => [
+            'type' => 'normalizedString',
+            'size' => [1, 15],
+        ],
+        'CodiceCIG' => [
+            'type' => 'normalizedString',
+            'size' => [1, 15],
+        ],
+        'RiferimentoFase' => [
+            'type' => 'integer',
+            'size' => [1, 3],
+        ],
+        'NumeroDDT' => [
+            'type' => 'normalizedString',
+            'size' => [1, 20],
+        ],
+        'DataDDT' => [
+            'type' => 'date',
+            'size' => 10,
+        ],
+        'NumeroLicenzaGuida' => [
+            'type' => 'normalizedString',
+            'size' => [1, 20],
+        ],
+        'MezzoTrasporto' => [
+            'type' => 'normalizedString',
+            'size' => [1, 80],
+        ],
+        'CausaleTrasporto' => [
+            'type' => 'normalizedString',
+            'size' => [1, 100],
+        ],
+        'NumeroColli' => [
+            'type' => 'integer',
+            'size' => [1, 4],
+        ],
+        'Descrizione' => [
+            'type' => 'normalizedString',
+            'size' => [1, 1000],
+        ],
+        'UnitaMisuraPeso' => [
+            'type' => 'normalizedString',
+            'size' => [1, 10],
+        ],
+        'PesoLordo' => [
+            'type' => 'decimal',
+            'size' => [4, 7],
+        ],
+        'PesoNetto' => [
+            'type' => 'decimal',
+            'size' => [4, 7],
+        ],
+        'DataOraRitiro' => [
+            'type' => 'date',
+            'size' => 19,
+        ],
+        'DataInizioTrasporto' => [
+            'type' => 'date',
+            'size' => 10,
+        ],
+        'TipoResa' => [
+            'type' => 'string',
+            'size' => 3,
+        ],
+        'DataOraConsegna' => [
+            'type' => 'date',
+            'size' => 19,
+        ],
+        'NumeroFatturaPrincipale' => [
+            'type' => 'string',
+            'size' => [1, 20],
+        ],
+        'DataFatturaPrincipale' => [
+            'type' => 'date',
+            'size' => 10,
+        ],
+        'NumeroLinea' => [
+            'type' => 'integer',
+            'size' => [1, 4],
+        ],
+        'TipoCessionePrestazione' => [
+            'type' => 'string',
+            'size' => 2,
+        ],
+        'CodiceArticolo' => [
+            'type' => 'normalizedString',
+        ],
+        'CodiceTipo' => [
+            'type' => 'normalizedString',
+            'size' => [1, 35],
+        ],
+        'CodiceValore' => [
+            'type' => 'normalizedString',
+            'size' => [1, 35],
+        ],
+        'Quantita' => [
+            'type' => 'decimal',
+            'size' => [4, 21],
+        ],
+        'UnitaMisura' => [
+            'type' => 'normalizedString',
+            'size' => [1, 10],
+        ],
+        'DataInizioPeriodo' => [
+            'type' => 'date',
+            'size' => 10,
+        ],
+        'DataFinePeriodo' => [
+            'type' => 'date',
+            'size' => 10,
+        ],
+        'PrezzoUnitario' => [
+            'type' => 'decimal',
+            'size' => [4, 21],
+        ],
+        'PrezzoTotale' => [
+            'type' => 'decimal',
+            'size' => [4, 21],
+        ],
+        'TipoDato' => [
+            'type' => 'normalizedString',
+            'size' => [1, 10],
+        ],
+        'RiferimentoTesto' => [
+            'type' => 'normalizedString',
+            'size' => [1, 60],
+        ],
+        'RiferimentoNumero' => [
+            'type' => 'decimal',
+            'size' => [4, 21],
+        ],
+        'RiferimentoData' => [
+            'type' => 'normalizedString',
+            'size' => 10,
+        ],
+        'SpeseAccessorie' => [
+            'type' => 'decimal',
+            'size' => [4, 15],
+        ],
+        'ImponibileImporto' => [
+            'type' => 'decimal',
+            'size' => [4, 15],
+        ],
+        'Imposta' => [
+            'type' => 'decimal',
+            'size' => [4, 15],
+        ],
+        'EsigibilitaIVA' => [
+            'type' => 'string',
+            'size' => 1,
+        ],
+        'RiferimentoNormativo' => [
+            'type' => 'normalizedString',
+            'size' => [1, 100],
+        ],
+        'TotalePercorso' => [
+            'type' => 'normalizedString',
+            'size' => [1, 15],
+        ],
+        'CondizioniPagamento' => [
+            'type' => 'string',
+            'size' => 4,
+        ],
+        'Beneficiario' => [
+            'type' => 'string',
+            'size' => [1, 200],
+        ],
+        'ModalitaPagamento' => [
+            'type' => 'string',
+            'size' => 4,
+        ],
+        'DataRiferimentoTerminiPagamento' => [
+            'type' => 'date',
+            'size' => 10,
+        ],
+        'GiorniTerminiPagamento' => [
+            'type' => 'integer',
+            'size' => [1, 3],
+        ],
+        'DataScadenzaPagamento' => [
+            'type' => 'date',
+            'size' => 10,
+        ],
+        'ImportoPagamento' => [
+            'type' => 'decimal',
+            'size' => [4, 15],
+        ],
+        'CodUfficioPostale' => [
+            'type' => 'normalizedString',
+            'size' => [1, 20],
+        ],
+        'CognomeQuietanzante' => [
+            'type' => 'normalizedString',
+            'size' => [1, 60],
+        ],
+        'NomeQuietanzante' => [
+            'type' => 'normalizedString',
+            'size' => [1, 60],
+        ],
+        'CFQuietanzante' => [
+            'type' => 'string',
+            'size' => 16,
+        ],
+        'TitoloQuietanzante' => [
+            'type' => 'normalizedString',
+            'size' => [2, 10],
+        ],
+        'IstitutoFinanziario' => [
+            'type' => 'normalizedString',
+            'size' => [1, 80],
+        ],
+        'IBAN' => [
+            'type' => 'string',
+            'size' => [15, 34],
+        ],
+        'ABI' => [
+            'type' => 'string',
+            'size' => 5,
+        ],
+        'CAB' => [
+            'type' => 'string',
+            'size' => 5,
+        ],
+        'BIC' => [
+            'type' => 'string',
+            'size' => [8, 11],
+        ],
+        'ScontoPagamentoAnticipato' => [
+            'type' => 'decimal',
+            'size' => [4, 15],
+        ],
+        'DataLimitePagamentoAnticipato' => [
+            'type' => 'date',
+            'size' => 10,
+        ],
+        'PenalitaPagamentiRitardati' => [
+            'type' => 'decimal',
+            'size' => [4, 15],
+        ],
+        'DataDecorrenzaPenale' => [
+            'type' => 'date',
+            'size' => 10,
+        ],
+        'CodicePagamento' => [
+            'type' => 'string',
+            'size' => [1, 60],
+        ],
+        'NomeAttachment' => [
+            'type' => 'normalizedString',
+            'size' => [1, 60],
+        ],
+        'AlgoritmoCompressione' => [
+            'type' => 'string',
+            'size' => [1, 10],
+        ],
+        'FormatoAttachment' => [
+            'type' => 'string',
+            'size' => [1, 10],
+        ],
+        'DescrizioneAttachment' => [
+            'type' => 'normalizedString',
+            'size' => [1, 100],
+        ],
+        'Attachment' => [
+            'type' => 'base64Binary',
+        ],
+    ];
+
     public function __construct($id_documento)
     {
         $database = database();
@@ -57,6 +571,11 @@ class FatturaElettronica
         if ($this->documento['stato'] != 'Emessa') {
             throw new \UnexpectedValueException();
         }
+    }
+
+    public function __toString()
+    {
+        return $this->toHTML();
     }
 
     /**
@@ -223,6 +742,161 @@ class FatturaElettronica
         }
 
         return $this->errors;
+    }
+
+    public static function PA($codice_fiscale)
+    {
+        $id = setting('Authorization ID Indice PA');
+
+        if (empty($id)) {
+            return null;
+        }
+
+        // Localhost:
+        $client = new Client(['curl' => [CURLOPT_SSL_VERIFYPEER => false]]);
+
+        $response = $client->request('POST', 'https://www.indicepa.gov.it/public-ws/WS01_SFE_CF.php', [
+            'form_params' => [
+                'AUTH_ID' => $id,
+                'CF' => $codice_fiscale,
+            ],
+        ]);
+
+        $json = json_decode($response->getBody(), true);
+
+        return isset($json['data'][0]['OU'][0]['cod_uni_ou']) ? $json['data'][0]['OU'][0]['cod_uni_ou'] : null;
+    }
+
+    public static function getDirectory()
+    {
+        return Uploads::getDirectory(Modules::get('Fatture di vendita')['id']);
+    }
+
+    /**
+     * Salva il file XML.
+     *
+     * @param string $directory
+     *
+     * @return string Nome del file
+     */
+    public function save($directory)
+    {
+        $name = 'Fattura Elettronica (XML)';
+        $previous = $this->getFilename();
+        $data = $this->getUploadData();
+
+        Uploads::delete($previous, $data);
+
+        // Generazione nome XML
+        $filename = $this->getFilename(true);
+
+        // Salvataggio del file
+        $file = rtrim($directory, '/').'/'.$filename;
+        $result = directory($directory) && file_put_contents($file, $this->toXML());
+
+        // Registrazione come allegato
+        Uploads::register(array_merge([
+            'name' => $name,
+            'original' => $filename,
+        ], $data));
+
+        // Aggiornamento effettivo
+        database()->update('co_documenti', [
+            'progressivo_invio' => $this->getDocumento()['progressivo_invio'],
+            'codice_stato_fe' => 'GEN',
+        ], ['id' => $this->getDocumento()['id']]);
+
+        return ($result === false) ? null : $filename;
+    }
+
+    /**
+     * Restituisce il nome del file XML per la fattura elettronica.
+     *
+     * @return string
+     */
+    public function getFilename($new = false)
+    {
+        $azienda = static::getAzienda();
+        $prefix = 'IT'.(empty($azienda['piva']) ? $azienda['codice_fiscale'] : $azienda['piva']);
+
+        if (empty($this->documento['progressivo_invio']) || !empty($new)) {
+            $database = database();
+
+            do {
+                $code = date('y').secure_random_string(3);
+            } while ($database->fetchNum('SELECT `id` FROM `co_documenti` WHERE `progressivo_invio` = '.prepare($code)) != 0);
+
+            // Registrazione
+            $this->documento['progressivo_invio'] = $code;
+        }
+
+        return $prefix.'_'.$this->documento['progressivo_invio'].'.xml';
+    }
+
+    /**
+     * Restituisce il codice XML della fattura elettronica.
+     *
+     * @return string
+     */
+    public function toXML()
+    {
+        if (empty($this->xml)) {
+            $this->errors = [];
+
+            $cliente = $this->getCliente();
+
+            // Inizializzazione libreria per la generazione della fattura in XML
+            $fattura = new FluidXml(null, ['stylesheet' => 'http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2.1/fatturaPA_v1.2.1.xsl']);
+
+            // Generazione dell'elemento root
+            $fattura->namespace('p', 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2');
+            $root = $fattura->addChild('p:FatturaElettronica', true);
+            $rootNode = $root[0];
+
+            // Completamento dei tag
+            $attributes = [
+                'versione' => ($cliente['tipo'] == 'Ente pubblico') ? 'FPA12' : 'FPR12',
+                'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#',
+                'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
+                'xsi:schemaLocation' => 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd',
+            ];
+            foreach ($attributes as $key => $value) {
+                $rootNode->setAttribute($key, $value);
+            }
+
+            // Generazione della fattura elettronica
+            $xml = static::prepareForXML([
+                'FatturaElettronicaHeader' => static::getHeader($this),
+                'FatturaElettronicaBody' => static::getBody($this),
+            ]);
+            $fattura->add($xml);
+
+            $this->xml = $fattura->__toString();
+        }
+
+        return $this->xml;
+    }
+
+    /**
+     * Restituisce il codice XML formattato della fattura elettronica.
+     *
+     * @return string
+     */
+    public function toHTML()
+    {
+        // XML
+        $xml = new DOMDocument();
+        $xml->loadXML($this->toXML());
+
+        // XSL
+        $xsl = new DOMDocument();
+        $xsl->load(__DIR__.'/stylesheet-1.2.1.xsl');
+
+        // XSLT
+        $xslt = new XSLTProcessor();
+        $xslt->importStylesheet($xsl);
+
+        return $xslt->transformToXML($xml);
     }
 
     /**
@@ -760,10 +1434,11 @@ class FatturaElettronica
                 'Imposta' => $riepilogo['iva'],
                 'EsigibilitaIVA' => $riepilogo['esigibilita'],
             ];
-			
-			//Con split payment EsigibilitaIVA sempre a S
-			if ($documento['split_payment'])
-				$iva['EsigibilitaIVA'] = 'S';
+
+            //Con split payment EsigibilitaIVA sempre a S
+            if ($documento['split_payment']) {
+                $iva['EsigibilitaIVA'] = 'S';
+            }
 
             // TODO: la dicitura può essere diversa tra diverse IVA con stessa percentuale/natura
             // nei riepiloghi viene fatto un accorpamento percentuale/natura
@@ -787,10 +1462,11 @@ class FatturaElettronica
                 'Imposta' => $riepilogo['iva'],
                 'EsigibilitaIVA' => $riepilogo['esigibilita'],
             ];
-			
-			//Con split payment EsigibilitaIVA sempre a S
-			if ($documento['split_payment'])
-				$iva['EsigibilitaIVA'] = 'S';
+
+            //Con split payment EsigibilitaIVA sempre a S
+            if ($documento['split_payment']) {
+                $iva['EsigibilitaIVA'] = 'S';
+            }
 
             $result[] = [
                 'DatiRiepilogo' => $iva,
@@ -1036,34 +1712,6 @@ class FatturaElettronica
         return $output;
     }
 
-    public static function PA($codice_fiscale)
-    {
-        $id = setting('Authorization ID Indice PA');
-
-        if (empty($id)) {
-            return null;
-        }
-
-        // Localhost:
-        $client = new Client(['curl' => [CURLOPT_SSL_VERIFYPEER => false]]);
-
-        $response = $client->request('POST', 'https://www.indicepa.gov.it/public-ws/WS01_SFE_CF.php', [
-            'form_params' => [
-                'AUTH_ID' => $id,
-                'CF' => $codice_fiscale,
-            ],
-        ]);
-
-        $json = json_decode($response->getBody(), true);
-
-        return isset($json['data'][0]['OU'][0]['cod_uni_ou']) ? $json['data'][0]['OU'][0]['cod_uni_ou'] : null;
-    }
-
-    public static function getDirectory()
-    {
-        return Uploads::getDirectory(Modules::get('Fatture di vendita')['id']);
-    }
-
     protected function getUploadData()
     {
         return [
@@ -1072,650 +1720,4 @@ class FatturaElettronica
             'id_record' => $this->getDocumento()['id'],
         ];
     }
-
-    /**
-     * Salva il file XML.
-     *
-     * @param string $directory
-     *
-     * @return string Nome del file
-     */
-    public function save($directory)
-    {
-        $name = 'Fattura Elettronica (XML)';
-        $previous = $this->getFilename();
-        $data = $this->getUploadData();
-
-        Uploads::delete($previous, $data);
-
-        // Generazione nome XML
-        $filename = $this->getFilename(true);
-
-        // Salvataggio del file
-        $file = rtrim($directory, '/').'/'.$filename;
-        $result = directory($directory) && file_put_contents($file, $this->toXML());
-
-        // Registrazione come allegato
-        Uploads::register(array_merge([
-            'name' => $name,
-            'original' => $filename,
-        ], $data));
-
-        // Aggiornamento effettivo
-        database()->update('co_documenti', [
-            'progressivo_invio' => $this->getDocumento()['progressivo_invio'],
-            'codice_stato_fe' => 'GEN',
-        ], ['id' => $this->getDocumento()['id']]);
-
-        return ($result === false) ? null : $filename;
-    }
-
-    /**
-     * Restituisce il nome del file XML per la fattura elettronica.
-     *
-     * @return string
-     */
-    public function getFilename($new = false)
-    {
-        $azienda = static::getAzienda();
-        $prefix = 'IT'.(empty($azienda['piva']) ? $azienda['codice_fiscale'] : $azienda['piva']);
-
-        if (empty($this->documento['progressivo_invio']) || !empty($new)) {
-            $database = database();
-
-            do {
-                $code = date('y').secure_random_string(3);
-            } while ($database->fetchNum('SELECT `id` FROM `co_documenti` WHERE `progressivo_invio` = '.prepare($code)) != 0);
-
-            // Registrazione
-            $this->documento['progressivo_invio'] = $code;
-        }
-
-        return $prefix.'_'.$this->documento['progressivo_invio'].'.xml';
-    }
-
-    /**
-     * Restituisce il codice XML della fattura elettronica.
-     *
-     * @return string
-     */
-    public function toXML()
-    {
-        if (empty($this->xml)) {
-            $this->errors = [];
-
-            $cliente = $this->getCliente();
-
-            // Inizializzazione libreria per la generazione della fattura in XML
-            $fattura = new FluidXml(null, ['stylesheet' => 'http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2.1/fatturaPA_v1.2.1.xsl']);
-
-            // Generazione dell'elemento root
-            $fattura->namespace('p', 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2');
-            $root = $fattura->addChild('p:FatturaElettronica', true);
-            $rootNode = $root[0];
-
-            // Completamento dei tag
-            $attributes = [
-                'versione' => ($cliente['tipo'] == 'Ente pubblico') ? 'FPA12' : 'FPR12',
-                'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#',
-                'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
-                'xsi:schemaLocation' => 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd',
-            ];
-            foreach ($attributes as $key => $value) {
-                $rootNode->setAttribute($key, $value);
-            }
-
-            // Generazione della fattura elettronica
-            $xml = static::prepareForXML([
-                'FatturaElettronicaHeader' => static::getHeader($this),
-                'FatturaElettronicaBody' => static::getBody($this),
-            ]);
-            $fattura->add($xml);
-
-            $this->xml = $fattura->__toString();
-        }
-
-        return $this->xml;
-    }
-
-    /**
-     * Restituisce il codice XML formattato della fattura elettronica.
-     *
-     * @return string
-     */
-    public function toHTML()
-    {
-        // XML
-        $xml = new DOMDocument();
-        $xml->loadXML($this->toXML());
-
-        // XSL
-        $xsl = new DOMDocument();
-        $xsl->load(__DIR__.'/stylesheet-1.2.1.xsl');
-
-        // XSLT
-        $xslt = new XSLTProcessor();
-        $xslt->importStylesheet($xsl);
-
-        return $xslt->transformToXML($xml);
-    }
-
-    public function __toString()
-    {
-        return $this->toHTML();
-    }
-
-    /** @var array Elenco di campi dello standard per la formattazione e la validazione */
-    protected static $validators = [
-        'IdPaese' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'IdCodice' => [
-            'type' => 'string',
-            'size' => [1, 28],
-        ],
-        'ProgressivoInvio' => [
-            'type' => 'normalizedString',
-            'size' => [1, 10],
-        ],
-        'FormatoTrasmissione' => [
-            'type' => 'string',
-            'size' => 5,
-        ],
-        'CodiceDestinatario' => [
-            'type' => 'string',
-            'size' => [6, 7],
-        ],
-        'Telefono' => [
-            'type' => 'normalizedString',
-            'size' => [5, 12],
-        ],
-        'Email' => [
-            'type' => 'string',
-            'size' => [7, 256],
-        ],
-        'PECDestinatario' => [
-            'type' => 'normalizedString',
-            'size' => [7, 256],
-        ],
-        'CodiceFiscale' => [
-            'type' => 'string',
-            'size' => [11, 16],
-        ],
-        'Denominazione' => [
-            'type' => 'normalizedString',
-            'size' => [1, 80],
-        ],
-        'Nome' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'Cognome' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'Titolo' => [
-            'type' => 'normalizedString',
-            'size' => [2, 10],
-        ],
-        'CodEORI' => [
-            'type' => 'string',
-            'size' => [13, 17],
-        ],
-        'AlboProfessionale' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'ProvinciaAlbo' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'NumeroIscrizioneAlbo' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'DataIscrizioneAlbo' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'RegimeFiscale' => [
-            'type' => 'string',
-            'size' => 4,
-        ],
-        'Indirizzo' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'NumeroCivico' => [
-            'type' => 'normalizedString',
-            'size' => [1, 8],
-        ],
-        'CAP' => [
-            'type' => 'string',
-            'size' => 5,
-        ],
-        'Comune' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'Provincia' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'Nazione' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'Ufficio' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'NumeroREA' => [
-            'type' => 'normalizedString',
-            'size' => [1, 20],
-        ],
-        'CapitaleSociale' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'SocioUnico' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'StatoLiquidazione' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'Fax' => [
-            'type' => 'normalizedString',
-            'size' => [5, 12],
-        ],
-        'RiferimentoAmministrazione' => [
-            'type' => 'normalizedString',
-            'size' => [1, 20],
-        ],
-        'SoggettoEmittente' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'TipoDocumento' => [
-            'type' => 'string',
-            'size' => 4,
-        ],
-        'Divisa' => [
-            'type' => 'string',
-            'size' => 3,
-        ],
-        'Data' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'Numero' => [
-            'type' => 'normalizedString',
-            'size' => [1, 20],
-        ],
-        'TipoRitenuta' => [
-            'type' => 'string',
-            'size' => 4,
-        ],
-        'ImportoRitenuta' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'AliquotaRitenuta' => [
-            'type' => 'decimal',
-            'size' => [4, 6],
-        ],
-        'CausalePagamento' => [
-            'type' => 'string',
-            'size' => [1, 2],
-        ],
-        'BolloVirtuale' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'ImportoBollo' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'TipoCassa' => [
-            'type' => 'string',
-            'size' => 4,
-        ],
-        'AlCassa' => [
-            'type' => 'decimal',
-            'size' => [4, 6],
-        ],
-        'ImportoContributoCassa' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'ImponibileCassa' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'AliquotaIVA' => [
-            'type' => 'decimal',
-            'size' => [4, 6],
-        ],
-        'Ritenuta' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'Natura' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'Tipo' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'Percentuale' => [
-            'type' => 'decimal',
-            'size' => [4, 6],
-        ],
-        'Importo' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'ImportoTotaleDocumento' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'Arrotondamento' => [
-            'type' => 'decimal',
-            'size' => [4, 21],
-        ],
-        'Causale' => [
-            'type' => 'normalizedString',
-            'size' => [1, 200],
-        ],
-        'Art73' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'RiferimentoNumeroLinea' => [
-            'type' => 'integer',
-            'size' => [1, 4],
-        ],
-        'IdDocumento' => [
-            'type' => 'normalizedString',
-            'size' => [1, 20],
-        ],
-        'NumItem' => [
-            'type' => 'normalizedString',
-            'size' => [1, 20],
-        ],
-        'CodiceCommessaConvenzione' => [
-            'type' => 'normalizedString',
-            'size' => [1, 100],
-        ],
-        'CodiceCUP' => [
-            'type' => 'normalizedString',
-            'size' => [1, 15],
-        ],
-        'CodiceCIG' => [
-            'type' => 'normalizedString',
-            'size' => [1, 15],
-        ],
-        'RiferimentoFase' => [
-            'type' => 'integer',
-            'size' => [1, 3],
-        ],
-        'NumeroDDT' => [
-            'type' => 'normalizedString',
-            'size' => [1, 20],
-        ],
-        'DataDDT' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'NumeroLicenzaGuida' => [
-            'type' => 'normalizedString',
-            'size' => [1, 20],
-        ],
-        'MezzoTrasporto' => [
-            'type' => 'normalizedString',
-            'size' => [1, 80],
-        ],
-        'CausaleTrasporto' => [
-            'type' => 'normalizedString',
-            'size' => [1, 100],
-        ],
-        'NumeroColli' => [
-            'type' => 'integer',
-            'size' => [1, 4],
-        ],
-        'Descrizione' => [
-            'type' => 'normalizedString',
-            'size' => [1, 1000],
-        ],
-        'UnitaMisuraPeso' => [
-            'type' => 'normalizedString',
-            'size' => [1, 10],
-        ],
-        'PesoLordo' => [
-            'type' => 'decimal',
-            'size' => [4, 7],
-        ],
-        'PesoNetto' => [
-            'type' => 'decimal',
-            'size' => [4, 7],
-        ],
-        'DataOraRitiro' => [
-            'type' => 'date',
-            'size' => 19,
-        ],
-        'DataInizioTrasporto' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'TipoResa' => [
-            'type' => 'string',
-            'size' => 3,
-        ],
-        'DataOraConsegna' => [
-            'type' => 'date',
-            'size' => 19,
-        ],
-        'NumeroFatturaPrincipale' => [
-            'type' => 'string',
-            'size' => [1, 20],
-        ],
-        'DataFatturaPrincipale' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'NumeroLinea' => [
-            'type' => 'integer',
-            'size' => [1, 4],
-        ],
-        'TipoCessionePrestazione' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'CodiceArticolo' => [
-            'type' => 'normalizedString',
-        ],
-        'CodiceTipo' => [
-            'type' => 'normalizedString',
-            'size' => [1, 35],
-        ],
-        'CodiceValore' => [
-            'type' => 'normalizedString',
-            'size' => [1, 35],
-        ],
-        'Quantita' => [
-            'type' => 'decimal',
-            'size' => [4, 21],
-        ],
-        'UnitaMisura' => [
-            'type' => 'normalizedString',
-            'size' => [1, 10],
-        ],
-        'DataInizioPeriodo' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'DataFinePeriodo' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'PrezzoUnitario' => [
-            'type' => 'decimal',
-            'size' => [4, 21],
-        ],
-        'PrezzoTotale' => [
-            'type' => 'decimal',
-            'size' => [4, 21],
-        ],
-        'TipoDato' => [
-            'type' => 'normalizedString',
-            'size' => [1, 10],
-        ],
-        'RiferimentoTesto' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'RiferimentoNumero' => [
-            'type' => 'decimal',
-            'size' => [4, 21],
-        ],
-        'RiferimentoData' => [
-            'type' => 'normalizedString',
-            'size' => 10,
-        ],
-        'SpeseAccessorie' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'ImponibileImporto' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'Imposta' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'EsigibilitaIVA' => [
-            'type' => 'string',
-            'size' => 1,
-        ],
-        'RiferimentoNormativo' => [
-            'type' => 'normalizedString',
-            'size' => [1, 100],
-        ],
-        'TotalePercorso' => [
-            'type' => 'normalizedString',
-            'size' => [1, 15],
-        ],
-        'CondizioniPagamento' => [
-            'type' => 'string',
-            'size' => 4,
-        ],
-        'Beneficiario' => [
-            'type' => 'string',
-            'size' => [1, 200],
-        ],
-        'ModalitaPagamento' => [
-            'type' => 'string',
-            'size' => 4,
-        ],
-        'DataRiferimentoTerminiPagamento' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'GiorniTerminiPagamento' => [
-            'type' => 'integer',
-            'size' => [1, 3],
-        ],
-        'DataScadenzaPagamento' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'ImportoPagamento' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'CodUfficioPostale' => [
-            'type' => 'normalizedString',
-            'size' => [1, 20],
-        ],
-        'CognomeQuietanzante' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'NomeQuietanzante' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'CFQuietanzante' => [
-            'type' => 'string',
-            'size' => 16,
-        ],
-        'TitoloQuietanzante' => [
-            'type' => 'normalizedString',
-            'size' => [2, 10],
-        ],
-        'IstitutoFinanziario' => [
-            'type' => 'normalizedString',
-            'size' => [1, 80],
-        ],
-        'IBAN' => [
-            'type' => 'string',
-            'size' => [15, 34],
-        ],
-        'ABI' => [
-            'type' => 'string',
-            'size' => 5,
-        ],
-        'CAB' => [
-            'type' => 'string',
-            'size' => 5,
-        ],
-        'BIC' => [
-            'type' => 'string',
-            'size' => [8, 11],
-        ],
-        'ScontoPagamentoAnticipato' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'DataLimitePagamentoAnticipato' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'PenalitaPagamentiRitardati' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'DataDecorrenzaPenale' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'CodicePagamento' => [
-            'type' => 'string',
-            'size' => [1, 60],
-        ],
-        'NomeAttachment' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'AlgoritmoCompressione' => [
-            'type' => 'string',
-            'size' => [1, 10],
-        ],
-        'FormatoAttachment' => [
-            'type' => 'string',
-            'size' => [1, 10],
-        ],
-        'DescrizioneAttachment' => [
-            'type' => 'normalizedString',
-            'size' => [1, 100],
-        ],
-        'Attachment' => [
-            'type' => 'base64Binary',
-        ],
-    ];
 }

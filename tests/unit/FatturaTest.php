@@ -1,8 +1,8 @@
 <?php
 
+use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Tipo;
-use Modules\Anagrafiche\Anagrafica;
 
 class FatturaTest extends \Codeception\Test\Unit
 {

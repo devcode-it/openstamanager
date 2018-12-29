@@ -73,9 +73,9 @@ $logger->pushProcessor(new Monolog\Processor\WebProcessor());
 // Registrazione globale del logger
 Monolog\Registry::addLogger($logger, 'logs');
 
-use Monolog\Handler\StreamHandler;
 use Monolog\Handler\FilterHandler;
 use Monolog\Handler\RotatingFileHandler;
+use Monolog\Handler\StreamHandler;
 
 $handlers = [];
 if (!API::isAPIRequest()) {

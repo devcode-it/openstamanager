@@ -9,17 +9,6 @@ abstract class Row extends Description
 {
     protected $prezzo_unitario_vendita_riga = null;
 
-    protected static function boot($bypass = false)
-    {
-        parent::boot(true);
-
-        if (!$bypass) {
-            static::addGlobalScope('rows', function (Builder $builder) {
-                $builder->whereNull('idarticolo')->orWhere('idarticolo', '=', 0);
-            });
-        }
-    }
-
     public static function make(Document $document, $bypass = false)
     {
         return parent::make($document, true);
@@ -193,6 +182,37 @@ abstract class Row extends Description
     }
 
     /**
+     * Save the model to the database.
+     *
+     * @param array $options
+     *
+     * @return bool
+     */
+    public function save(array $options = [])
+    {
+        // Fix dei campi statici
+        $this->fixSubtotale();
+        $this->fixSconto();
+
+        $this->fixIva();
+        $this->fixRitenutaAcconto();
+        $this->fixRivalsaINPS();
+
+        return parent::save($options);
+    }
+
+    protected static function boot($bypass = false)
+    {
+        parent::boot(true);
+
+        if (!$bypass) {
+            static::addGlobalScope('rows', function (Builder $builder) {
+                $builder->whereNull('idarticolo')->orWhere('idarticolo', '=', 0);
+            });
+        }
+    }
+
+    /**
      * Effettua i conti per il subtotale della riga.
      */
     protected function fixSubtotale()
@@ -265,24 +285,5 @@ abstract class Row extends Description
     protected function fixSconto()
     {
         $this->attributes['sconto'] = $this->sconto;
-    }
-
-    /**
-     * Save the model to the database.
-     *
-     * @param  array  $options
-     * @return bool
-     */
-    public function save(array $options = [])
-    {
-        // Fix dei campi statici
-        $this->fixSubtotale();
-        $this->fixSconto();
-
-        $this->fixIva();
-        $this->fixRitenutaAcconto();
-        $this->fixRivalsaINPS();
-
-        return parent::save($options);
     }
 }

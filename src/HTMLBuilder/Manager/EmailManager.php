@@ -2,8 +2,8 @@
 
 namespace HTMLBuilder\Manager;
 
-use Translator;
 use Prints;
+use Translator;
 
 /**
  * Gestione allegati.

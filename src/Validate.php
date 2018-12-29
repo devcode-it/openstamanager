@@ -1,7 +1,7 @@
 <?php
 
-use Mpociot\VatCalculator\VatCalculator;
 use Mpociot\VatCalculator\Exceptions\VATCheckUnavailableException;
+use Mpociot\VatCalculator\VatCalculator;
 use Respect\Validation\Validator as v;
 
 /**

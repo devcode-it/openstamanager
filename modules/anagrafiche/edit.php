@@ -268,9 +268,7 @@ if (!empty($google)) {
             echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"');
         } else {
             $piano_dei_conti_fornitore = tr('Nessuno');
-        }
-
-        ?>
+        } ?>
 
             {[ "type": "select", "label": "<?php echo tr('Piano dei conti fornitore'); ?>", "name": "piano_dei_conti_fornitore", "values": "list=\"\": \"<?php echo $piano_dei_conti_fornitore; ?>\"", "readonly": 1, "value": "", "extra": "" ]}
 
@@ -347,9 +345,7 @@ if (!empty($google)) {
             echo Modules::link('Piano dei conti', null, null, null, 'class="pull-right"');
         } else {
             $piano_dei_conti_cliente = tr('Nessuno');
-        }
-
-        ?>
+        } ?>
 
         {[ "type": "select", "label": "<?php echo tr('Piano dei conti cliente'); ?>", "name": "piano_dei_conti_cliente", "values": "list=\"\": \"<?php echo $piano_dei_conti_cliente; ?>\"", "readonly": 1, "value": "", "extra": "" ]}
 

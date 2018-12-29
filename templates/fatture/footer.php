@@ -248,20 +248,16 @@ if (!empty($record['ritenutaacconto']) or (!empty($record['spit_payment']))) {
         </th>';
     }
 
-    
-
-	echo '
+    echo '
         <th class="text-center small" colspan="'.$second_colspan.'">';
-		if (empty($record['split_payment'])) {
-			echo   tr('Netto a pagare', [], ['upper' => true]);
-		}else{
-			echo   tr('Totale', [], ['upper' => true]);
-		}
+    if (empty($record['split_payment'])) {
+        echo   tr('Netto a pagare', [], ['upper' => true]);
+    } else {
+        echo   tr('Totale', [], ['upper' => true]);
+    }
     echo '
 		</th>';
-	
 
-	
     echo'
 	</tr>
 
@@ -286,14 +282,12 @@ if (!empty($record['ritenutaacconto']) or (!empty($record['spit_payment']))) {
     </tr>';
 }
 
-
 // Split payment
 if (!empty($record['split_payment'])) {
-	
-	$first_colspan = 1;
-	$second_colspan = 2;
-	
-   echo '
+    $first_colspan = 1;
+    $second_colspan = 2;
+
+    echo '
     <tr>
         <th class="text-center small" colspan="'.$first_colspan.'">
             '.tr('iva a carico del destinatario', [], ['upper' => true]).'
@@ -304,22 +298,17 @@ if (!empty($record['split_payment'])) {
         </th>
     </tr>';
 
-  echo '
+    echo '
 	 <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
         '.Translator::numberToLocale($totale_iva).' &euro;
         </td>
 
         <td class="cell-padded text-center" colspan="'.$second_colspan.'">
-            '.Translator::numberToLocale($totale - $totale_iva -$record['ritenutaacconto']).' &euro;
+            '.Translator::numberToLocale($totale - $totale_iva - $record['ritenutaacconto']).' &euro;
         </td>
     </tr>';
-	
-	
 }
-
-
-
 
 // Solo bollo
 if (empty($record['ritenutaacconto']) && empty($record['rivalsainps']) && empty($record['split_payment']) && abs($record['bollo']) > 0) {

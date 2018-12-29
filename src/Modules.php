@@ -243,6 +243,55 @@ class Modules
     }
 
     /**
+     * Costruisce un link HTML per il modulo e il record indicati.
+     *
+     * @param string|int $modulo
+     * @param int        $id_record
+     * @param string     $testo
+     * @param string     $alternativo
+     * @param string     $extra
+     *
+     * @return string
+     */
+    public static function link($modulo, $id_record = null, $testo = null, $alternativo = true, $extra = null, $blank = true)
+    {
+        $testo = isset($testo) ? nl2br($testo) : tr('Visualizza scheda');
+        $alternativo = is_bool($alternativo) && $alternativo ? $testo : $alternativo;
+
+        // Aggiunta automatica dell'icona di riferimento
+        if (!str_contains($testo, '<i ')) {
+            $testo = $testo.' <i class="fa fa-external-link"></i>';
+        }
+
+        $module = self::get($modulo);
+
+        $extra .= !empty($blank) ? ' target="_blank"' : '';
+
+        if (!empty($module) && in_array($module->permission, ['r', 'rw'])) {
+            $link = !empty($id_record) ? 'editor.php?id_module='.$module['id'].'&id_record='.$id_record : 'controller.php?id_module='.$module['id'];
+
+            return '<a href="'.ROOTDIR.'/'.$link.'" '.$extra.'>'.$testo.'</a>';
+        } else {
+            return $alternativo;
+        }
+    }
+
+    /**
+     * Individua il percorso per il file.
+     *
+     * @param string|int $element
+     * @param string     $file
+     *
+     * @return string|null
+     */
+    public static function filepath($element, $file)
+    {
+        $element = self::get($element);
+
+        return $element ? $element->filepath($file) : null;
+    }
+
+    /**
      * Restituisce l'insieme dei menu derivato da un'array strutturato ad albero.
      *
      * @param array $element
@@ -306,54 +355,5 @@ class Modules
         }
 
         return [$result, $active, $show];
-    }
-
-    /**
-     * Costruisce un link HTML per il modulo e il record indicati.
-     *
-     * @param string|int $modulo
-     * @param int        $id_record
-     * @param string     $testo
-     * @param string     $alternativo
-     * @param string     $extra
-     *
-     * @return string
-     */
-    public static function link($modulo, $id_record = null, $testo = null, $alternativo = true, $extra = null, $blank = true)
-    {
-        $testo = isset($testo) ? nl2br($testo) : tr('Visualizza scheda');
-        $alternativo = is_bool($alternativo) && $alternativo ? $testo : $alternativo;
-
-        // Aggiunta automatica dell'icona di riferimento
-        if (!str_contains($testo, '<i ')) {
-            $testo = $testo.' <i class="fa fa-external-link"></i>';
-        }
-
-        $module = self::get($modulo);
-
-        $extra .= !empty($blank) ? ' target="_blank"' : '';
-
-        if (!empty($module) && in_array($module->permission, ['r', 'rw'])) {
-            $link = !empty($id_record) ? 'editor.php?id_module='.$module['id'].'&id_record='.$id_record : 'controller.php?id_module='.$module['id'];
-
-            return '<a href="'.ROOTDIR.'/'.$link.'" '.$extra.'>'.$testo.'</a>';
-        } else {
-            return $alternativo;
-        }
-    }
-
-    /**
-     * Individua il percorso per il file.
-     *
-     * @param string|int $element
-     * @param string     $file
-     *
-     * @return string|null
-     */
-    public static function filepath($element, $file)
-    {
-        $element = self::get($element);
-
-        return $element ? $element->filepath($file) : null;
     }
 }

@@ -13,6 +13,29 @@ class EloquentCollector extends \DebugBar\DataCollector\PDO\PDOCollector
         $this->addConnection($this->getTraceablePdo(), 'Eloquent PDO');
     }
 
+    // Override
+    public function getName()
+    {
+        return 'eloquent_pdo';
+    }
+
+    // Override
+    public function getWidgets()
+    {
+        return [
+            'eloquent' => [
+                'icon' => 'inbox',
+                'widget' => 'PhpDebugBar.Widgets.SQLQueriesWidget',
+                'map' => 'eloquent_pdo',
+                'default' => '[]',
+            ],
+            'eloquent:badge' => [
+                'map' => 'eloquent_pdo.nb_statements',
+                'default' => 0,
+            ],
+        ];
+    }
+
     /**
      * @return Illuminate\Database\Capsule\Manager;
      */
@@ -35,28 +58,5 @@ class EloquentCollector extends \DebugBar\DataCollector\PDO\PDOCollector
     protected function getTraceablePdo()
     {
         return new \DebugBar\DataCollector\PDO\TraceablePDO($this->getEloquentPdo());
-    }
-
-    // Override
-    public function getName()
-    {
-        return 'eloquent_pdo';
-    }
-
-    // Override
-    public function getWidgets()
-    {
-        return [
-            'eloquent' => [
-                'icon' => 'inbox',
-                'widget' => 'PhpDebugBar.Widgets.SQLQueriesWidget',
-                'map' => 'eloquent_pdo',
-                'default' => '[]',
-            ],
-            'eloquent:badge' => [
-                'map' => 'eloquent_pdo.nb_statements',
-                'default' => 0,
-            ],
-        ];
     }
 }

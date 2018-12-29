@@ -182,16 +182,16 @@ class Generator
      *
      * @return string
      */
-    public static function getMascheraOrder($maschera, $filed)
+    public static function getMascheraOrder($maschera, $field)
     {
         // Estraggo blocchi di caratteri standard
         preg_match('/[#]+/', $maschera, $m1);
 
         $pos1 = strpos($maschera, $m1[0]);
         if ($pos1 == 0) {
-            $query = 'ORDER BY CAST('.$filed.' AS UNSIGNED) DESC';
+            $query = 'ORDER BY CAST('.$field.' AS UNSIGNED) DESC';
         } else {
-            $query = 'ORDER BY '.$filed.' DESC';
+            $query = 'ORDER BY '.$field.' DESC';
         }
 
         return $query;

@@ -123,7 +123,7 @@ abstract class Article extends Row
         $previous = $this->qta;
         $diff = $value - $previous;
 
-        parent::setQtaAttribute($value);
+        $this->attributes['qta'] = $value;
         $this->movimenta($diff);
 
         $database = database();

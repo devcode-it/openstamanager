@@ -2,11 +2,11 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Anagrafiche\Anagrafica;
-use Modules\Fatture\Fattura;
 use Modules\Fatture\Tipo;
-use Modules\Fatture\Components\Articolo;
+use Modules\Fatture\Fattura;
+use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Components\Riga;
+use Modules\Fatture\Components\Articolo;
 use Modules\Fatture\Components\Descrizione;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 
@@ -622,9 +622,10 @@ switch (post('op')) {
             $riga->prezzo_unitario_acquisto = post('prezzo_acquisto');
         }
         $riga->prezzo_unitario_vendita = post('prezzo');
-        $riga->qta = $qta;
         $riga->sconto_unitario = post('sconto');
         $riga->tipo_sconto = post('tipo_sconto');
+
+        $riga->qta = $qta;
 
         // Informazioni aggiuntive FE
         $riga->data_inizio_periodo = post('data_inizio_periodo') ?: null;

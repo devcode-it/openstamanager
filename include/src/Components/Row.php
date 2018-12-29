@@ -2,8 +2,8 @@
 
 namespace Common\Components;
 
-use Illuminate\Database\Eloquent\Builder;
 use Common\Document;
+use Illuminate\Database\Eloquent\Builder;
 
 abstract class Row extends Description
 {
@@ -238,7 +238,10 @@ abstract class Row extends Description
 
         $valore = ($this->imponibile_scontato) * $iva['percentuale'] / 100;
 
-        $this->attributes['desc_iva'] = $descrizione;
+        if (!empty($descrizione)) {
+            $this->attributes['desc_iva'] = $descrizione;
+        }
+
         $this->attributes['iva'] = $valore;
 
         $this->fixIvaIndetraibile();

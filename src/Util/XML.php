@@ -45,6 +45,7 @@ class XML
      * TODO: controllare il funzionamento con gli allegati (https://forum.italia.it/t/in-produzione-xml-ricevuto-non-leggibile/5695/2).
      *
      * @param string $string File content
+     *
      * @return string An arguably-valid XML string with the .p7m header and footer stripped away.
      *
      * @source https://www.ryadel.com/php-estrarre-contenuto-file-xml-p7m-cades-fattura-elettronica-pa/
@@ -64,9 +65,10 @@ class XML
     }
 
     /**
-     * Removes invalid characters from a UTF-8 XML string
+     * Removes invalid characters from a UTF-8 XML string.
      *
      * @param string a XML string potentially containing invalid characters
+     *
      * @return string
      *
      * @source https://www.ryadel.com/php-eliminare-caratteri-non-validi-file-stringa-xml-utf8-utf-8/
@@ -90,11 +92,11 @@ class XML
         )/x';
             $string = preg_replace($regex, '', $string);
 
-            $result = "";
+            $result = '';
             $current;
             $length = strlen($string);
-            for ($i=0; $i < $length; $i++) {
-                $current = ord($string{$i});
+            for ($i = 0; $i < $length; ++$i) {
+                $current = ord($string[$i]);
                 if (($current == 0x9) ||
                 ($current == 0xA) ||
                 ($current == 0xD) ||
@@ -109,6 +111,7 @@ class XML
             }
             $string = $result;
         }
+
         return $string;
     }
 }

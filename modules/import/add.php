@@ -7,6 +7,7 @@ foreach ($imports as $key => $value) {
     $list[] = [
         'id' => $key,
         'text' => $value['title'],
+        'directory' => $value['directory'],
     ];
 }
 
@@ -44,7 +45,7 @@ $('#id_record').change( function(){
 });
 
 $( "#example" ).click(function(event) {
-    var module =  $('#id_record').find(':selected').data('text').toLowerCase();
+    var module =  $('#id_record').find(':selected').data('directory').toLowerCase();
     var dir = "<?php echo ROOTDIR; ?>/modules/"+module+"/import.php";
     var file = "<?php echo ROOTDIR; ?>/files/"+module+"/"+module+".csv";
 

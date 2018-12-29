@@ -2,11 +2,9 @@
 
 include_once __DIR__.'/../../core.php';
 
-
 echo'
 <button type="button" class="btn btn-primary" onclick="if( confirm(\'Duplicare questo preventivo?\') ){ $(\'#form-copy\').submit(); }"> <i class="fa fa-copy"></i> '.tr('Duplica preventivo').'</button>';
-	
-	
+
 if (!in_array($record['stato'], ['Bozza', 'Rifiutato', 'In attesa di conferma'])) {
     echo '
 	<div class="dropdown">
@@ -34,7 +32,6 @@ echo '
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="op" value="copy">
 </form>';
-
 
 //crea revisione
 echo '

@@ -307,7 +307,11 @@ span.form-control {
     padding-right: 5px;
     position: relative;
     z-index: 1;
-    opacity: 0.1;
+    opacity: 0.4;
+}
+
+.close:focus, .close:hover{
+    opacity: 0.8;
 }
 
 /* Tooltip dark */
@@ -798,7 +802,7 @@ input.small-width {
     z-index: 2000;
 }
 
-.after.input-group-addon .select2-selection{
+.after.input-group-addon .select2-selection, .after.input-group-addon{
 	 border-radius:0px 4px 4px 0px;
 	 border-left:none;
 }

@@ -173,7 +173,7 @@ class FatturaElettronica
     }
 
     /**
-     * Restituisce le fatture collegaten al documento.
+     * Restituisce le fatture collegate al documento.
      *
      * @return array
      */
@@ -236,14 +236,17 @@ class FatturaElettronica
         $documento = $fattura->getDocumento();
         $cliente = $fattura->getCliente();
 
+        // Se sto fatturando ad un ente pubblico il codice destinatario di default è 99999 (sei nove), in alternativa uso 0000000 (sette zeri)
         $default_code = ($cliente['tipo'] == 'Ente pubblico') ? '999999' : '0000000';
+        // Se il mio cliente non ha sede in Italia il codice destinatario di default diventa (XXXXXXX) (sette X)
         $default_code = ($cliente['nazione'] != 'IT') ? 'XXXXXXX' : $default_code;
 
         // Generazione dell'header
+        // Se all'Anagrafe Tributaria il trasmittente è censito con il codice fiscale
         $result = [
             'IdTrasmittente' => [
                 'IdPaese' => $azienda['nazione'],
-                'IdCodice' => $azienda['piva'],
+                'IdCodice' => (!empty($azienda['piva'])) ? $azienda['piva'] : $azienda['codice_fiscale'],
             ],
             'ProgressivoInvio' => $documento['progressivo_invio'],
             'FormatoTrasmissione' => ($cliente['tipo'] == 'Ente pubblico') ? 'FPA12' : 'FPR12',
@@ -677,6 +680,10 @@ class FatturaElettronica
         // Righe del documento
         $righe_documento = $fattura->getRighe();
         foreach ($righe_documento as $numero => $riga) {
+            $riga['subtotale'] = abs($riga['subtotale']);
+            $riga['qta'] = abs($riga['qta']);
+            $riga['sconto'] = abs($riga['sconto']);
+
             $prezzo_unitario = $riga['subtotale'] / $riga['qta'];
             $prezzo_totale = $riga['subtotale'] - $riga['sconto'];
 
@@ -745,7 +752,7 @@ class FatturaElettronica
 
         // Riepiloghi per IVA per percentuale
         $riepiloghi_percentuale = $database->fetchArray('SELECT SUM(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) as totale, SUM(`co_righe_documenti`.`iva`) as iva, `co_iva`.`esigibilita`, `co_iva`.`percentuale`, `co_iva`.`dicitura` FROM `co_righe_documenti` INNER JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`idiva` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND
-        `co_iva`.`codice_natura_fe` IS NULL GROUP BY `co_iva`.`percentuale`');
+        `co_iva`.`codice_natura_fe` IS NULL AND sconto_globale=0 GROUP BY `co_iva`.`percentuale`');
         foreach ($riepiloghi_percentuale as $riepilogo) {
             $iva = [
                 'AliquotaIVA' => $riepilogo['percentuale'],
@@ -757,7 +764,7 @@ class FatturaElettronica
             // TODO: la dicitura può essere diversa tra diverse IVA con stessa percentuale/natura
             // nei riepiloghi viene fatto un accorpamento percentuale/natura
             if (!empty($riepilogo['dicitura'])) {
-                //$iva['RiferimentoNormativo'] = $riepilogo['dicitura'];
+                // $iva['RiferimentoNormativo'] = $riepilogo['dicitura'];
             }
 
             $result[] = [

@@ -31,6 +31,7 @@ echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
     <thead>
 		<tr>
+<<<<<<< HEAD
 			<th>' . tr('Descrizione') . '</th>
 			<th width="120">' . tr('Q.tà') . '</th>
 			<th width="80">' . tr('U.m.') . '</th>
@@ -39,6 +40,16 @@ echo '
 			<th width="120">' . tr('Guadagno') . '</th>
 			<th width="120">' . tr('Iva') . '</th>
 			<th width="120">' . tr('Imponibile') . '</th>
+=======
+			<th>'.tr('Descrizione').'</th>
+			<th width="120">'.tr('Q.tà').'</th>
+			<th width="80">'.tr('U.m.').'</th>
+			<th width="150">'.tr('Prezzo acq. unitario').'</th>
+			<th width="160">'.tr('Prezzo vend. unitario').'</th>
+			<th width="120">'.tr('Iva').'</th>
+			<th width="120">'.tr('Imponibile').'</th>
+			<th width="120">'.tr('Guadagno').'</th>
+>>>>>>> 5987bd43fd89765b2b890a82b0f7d3d81bfe7ab7
 			<th width="60"></th>
 		</tr>
 	</thead>
@@ -80,12 +91,16 @@ foreach ($rs as $r) {
             </td>';
 
     // Prezzo di acquisto unitario
+<<<<<<< HEAD
     $subtotale_acquisto = $r['subtotale_acquisto'] / $r['qta'];
+=======
+>>>>>>> 5987bd43fd89765b2b890a82b0f7d3d81bfe7ab7
     echo '
         <td class="text-right">';
 
     if (empty($r['is_descrizione'])) {
         echo '
+<<<<<<< HEAD
             ' . Translator::numberToLocale($subtotale_acquisto) . ' &euro;';
     }
 
@@ -93,6 +108,12 @@ foreach ($rs as $r) {
         </td>';
 
     // costo unitario
+=======
+            '.Translator::numberToLocale($r['prezzo_unitario_acquisto']).' &euro;';
+    }
+
+    // prezzo di vendita unitario
+>>>>>>> 5987bd43fd89765b2b890a82b0f7d3d81bfe7ab7
     echo '
             <td class="text-right">';
     if (empty($r['is_descrizione'])) {
@@ -143,8 +164,27 @@ foreach ($rs as $r) {
         echo '
                 ' . Translator::numberToLocale($r['subtotale'] - $r['sconto']) . ' &euro;';
     }
+<<<<<<< HEAD
     echo '
             </td>';
+=======
+
+    // Guadagno
+    $guadagno = $r['subtotale'] - ($r['prezzo_unitario_acquisto'] * $r["qta"]) - ($r["sconto_unitario"] * $r["qta"]);
+    if ($guadagno < 0) {
+        $guadagno_style = "background-color: #FFC6C6; border: 3px solid red";
+    } else {
+        $guadagno_style = "";
+    }
+    echo '
+        <td class="text-right" style="' . $guadagno_style . '">';
+    if (empty($r['is_descrizione'])) {
+        echo '
+            '.Translator::numberToLocale($guadagno).' &euro;';
+    }
+    echo '
+        </td>';
+>>>>>>> 5987bd43fd89765b2b890a82b0f7d3d81bfe7ab7
 
     // Possibilità di rimuovere una riga solo se il preventivo non è stato pagato
     echo '
@@ -178,6 +218,10 @@ foreach ($rs as $r) {
 }
 
 // Calcoli
+$totale_acquisto = 0;
+foreach ($rs as $r) {
+    $totale_acquisto += ($r["prezzo_unitario_acquisto"] * $r["qta"]);
+}
 $imponibile = sum(array_column($rs, 'subtotale'));
 $sconto = sum(array_column($rs, 'sconto'));
 $iva = sum(array_column($rs, 'iva'));
@@ -189,6 +233,11 @@ $totale = sum([
     $imponibile_scontato,
     $iva,
 ]);
+$totale_guadagno = sum([
+    $imponibile_scontato
+    -$totale_acquisto
+]);
+
 
 $guadagno_totale = sum([
     $guadagno
@@ -203,7 +252,11 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="7" class="text-right">
+<<<<<<< HEAD
             <b>' . tr('Imponibile', [], ['upper' => true]) . ':</b>
+=======
+            <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
+>>>>>>> 5987bd43fd89765b2b890a82b0f7d3d81bfe7ab7
         </td>
         <td align="right">
             ' . Translator::numberToLocale($imponibile) . ' &euro;
@@ -214,7 +267,11 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="7" class="text-right">
+<<<<<<< HEAD
             <b>' . tr('Sconto', [], ['upper' => true]) . ':</b>
+=======
+            <b>'.tr('Sconto', [], ['upper' => true]).':</b>
+>>>>>>> 5987bd43fd89765b2b890a82b0f7d3d81bfe7ab7
         </td>
         <td align="right">
             ' . Translator::numberToLocale($sconto) . ' &euro;
@@ -226,7 +283,11 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="7" class="text-right">
+<<<<<<< HEAD
             <b>' . tr('Imponibile scontato', [], ['upper' => true]) . ':</b>
+=======
+            <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
+>>>>>>> 5987bd43fd89765b2b890a82b0f7d3d81bfe7ab7
         </td>
         <td align="right">
             ' . Translator::numberToLocale($imponibile_scontato) . ' &euro;
@@ -238,7 +299,11 @@ if (abs($sconto) > 0) {
     echo '
     <tr>
         <td colspan="7" class="text-right">
+<<<<<<< HEAD
             <b>' . tr('Imponibile', [], ['upper' => true]) . ':</b>
+=======
+            <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
+>>>>>>> 5987bd43fd89765b2b890a82b0f7d3d81bfe7ab7
         </td>
         <td align="right">
             ' . Translator::numberToLocale($imponibile) . ' &euro;
@@ -251,7 +316,11 @@ if (abs($sconto) > 0) {
 echo '
     <tr>
         <td colspan="7" class="text-right">
+<<<<<<< HEAD
             <b>' . tr('IVA', [], ['upper' => true]) . ':</b>
+=======
+            <b>'.tr('IVA', [], ['upper' => true]).':</b>
+>>>>>>> 5987bd43fd89765b2b890a82b0f7d3d81bfe7ab7
         </td>
         <td align="right">
             ' . Translator::numberToLocale($iva) . ' &euro;
@@ -263,7 +332,11 @@ echo '
 echo '
     <tr>
         <td colspan="7" class="text-right">
+<<<<<<< HEAD
             <b>' . tr('Totale', [], ['upper' => true]) . ':</b>
+=======
+            <b>'.tr('Totale', [], ['upper' => true]).':</b>
+>>>>>>> 5987bd43fd89765b2b890a82b0f7d3d81bfe7ab7
         </td>
         <td align="right">
             ' . Translator::numberToLocale($totale) . ' &euro;
@@ -271,7 +344,27 @@ echo '
         <td></td>
     </tr>';
 
+<<<<<<< HEAD
 // Guadagno totale
+=======
+// GUADAGNO TOTALE
+if ($totale_guadagno < 0) {
+    $guadagno_style = "background-color: #FFC6C6; border: 3px solid red";
+} else {
+    $guadagno_style = "";
+}
+echo '
+    <tr>
+        <td colspan="7" class="text-right">
+            <b>'.tr('Guadagno totale', [], ['upper' => true]).':</b>
+        </td>
+        <td align="right" style="' . $guadagno_style . '">
+            '.Translator::numberToLocale($totale_guadagno).' &euro;
+        </td>
+        <td></td>
+    </tr>';
+
+>>>>>>> 5987bd43fd89765b2b890a82b0f7d3d81bfe7ab7
 echo '
     <tr>
         <td colspan="7" class="text-right" id="guadagno_text">

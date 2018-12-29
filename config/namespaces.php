@@ -8,4 +8,5 @@ return [
     'modules/interventi' => 'Modules\Interventi',
     'plugins/exportFE' => 'Plugins\ExportFE',
     'plugins/importFE' => 'Plugins\ImportFE',
+    'plugins/receiptFE' => 'Plugins\ReceiptFE',
 ];

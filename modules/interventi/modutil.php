@@ -192,7 +192,7 @@ function get_costi_intervento($id_intervento)
         ROUND(prezzo_ore_unitario*ore, '.$decimals.')
     ), 0) AS manodopera_addebito,
     COALESCE(SUM(
-        ROUND(prezzo_ore_unitario*ore, '.$decimals.') - ROUND(sconto_unitario*ore, '.$decimals.')
+        ROUND(prezzo_ore_unitario*ore, '.$decimals.') - ROUND(sconto, '.$decimals.')
     ), 0) AS manodopera_scontato,
 
 
@@ -369,7 +369,7 @@ function aggiungi_intervento_in_fattura($id_intervento, $id_fattura, $descrizion
     $codice = $rs[0]['codice'];
 
     // Fatturo le ore di lavoro raggruppate per costo orario
-    $rst = $dbo->fetchArray('SELECT SUM( ROUND( TIMESTAMPDIFF( MINUTE, orario_inizio, orario_fine ) / 60, '.setting('Cifre decimali per quantità').' ) ) AS tot_ore, SUM(prezzo_ore_consuntivo) AS tot_prezzo_ore_consuntivo, SUM(sconto) AS tot_sconto, prezzo_ore_unitario FROM in_interventi_tecnici WHERE idintervento='.prepare($id_intervento).' GROUP BY prezzo_ore_unitario');
+    $rst = $dbo->fetchArray('SELECT SUM( ROUND( TIMESTAMPDIFF( MINUTE, orario_inizio, orario_fine ) / 60, '.setting('Cifre decimali per quantità').' ) ) AS tot_ore, SUM(prezzo_ore_unitario*ore) AS tot_prezzo_ore_consuntivo, SUM(sconto) AS tot_sconto, prezzo_ore_unitario FROM in_interventi_tecnici WHERE idintervento='.prepare($id_intervento).' GROUP BY prezzo_ore_unitario');
 
     // Aggiunta riga intervento sul documento
     if (sizeof($rst) == 0) {

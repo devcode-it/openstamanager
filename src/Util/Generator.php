@@ -37,10 +37,10 @@ class Generator
     /**
      * Genera un pattern sulla base del precedente.
      *
-     * @param string    $pattern
-     * @param string    $last
-     * @param int $quantity
-     * @param array $values
+     * @param string $pattern
+     * @param string $last
+     * @param int    $quantity
+     * @param array  $values
      *
      * @return string
      */

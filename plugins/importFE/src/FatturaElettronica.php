@@ -75,8 +75,10 @@ class FatturaElettronica
 
     public static function store($filename, $content)
     {
-        $file = static::getImportDirectory().'/'.$filename;
+        $directory = static::getImportDirectory();
+        $file = $directory.'/'.$filename;
 
+        directory($directory);
         file_put_contents($file, $content);
 
         return $filename;
@@ -254,7 +256,13 @@ class FatturaElettronica
 
         foreach ($allegati as $allegato) {
             $content = base64_decode($allegato['Attachment']);
-            $original = $allegato['NomeAttachment'].'.'.strtolower($allegato['FormatoAttachment']);
+
+            $extension = '';
+            if (!empty($allegato['FormatoAttachment'])) {
+                $extension = '.'.strtolower($allegato['FormatoAttachment']);
+            }
+
+            $original = $allegato['NomeAttachment'].$extension;
             $filename = Uploads::getName($original, [
                 'id_module' => $module['id'],
             ]);

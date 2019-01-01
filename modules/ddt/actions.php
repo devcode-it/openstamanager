@@ -207,17 +207,13 @@ switch (post('op')) {
         $idpagamento = post('idpagamento');
         $idconto = post('idconto');
         $idordine = post('idordine');
-        $numero = get_new_numeroddt($data);
 
-        if ($dir == 'entrata') {
-            $numero_esterno = get_new_numerosecondarioddt($data);
-        } else {
-            $numero_esterno = '';
-        }
+        // Creazione DDT
+        $anagrafica = Anagrafica::find($idanagrafica);
+        $tipo = Tipo::where('dir', $dir)->first();
 
-        // Creazione nuovo ddt
-        $dbo->query('INSERT INTO dt_ddt( numero, numero_esterno, data, idanagrafica, idtipoddt, idstatoddt, idpagamento, idconto) VALUES('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($data).', '.prepare($idanagrafica).', (SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir)."), (SELECT id FROM dt_statiddt WHERE descrizione='Bozza'), ".prepare($idpagamento).', '.prepare($idconto).')');
-        $id_record = $dbo->lastInsertedID();
+        $ddt = DDT::make($anagrafica, $tipo, $data);
+        $id_record = $ddt->id;
 
         // Lettura di tutte le righe della tabella in arrivo
         foreach (post('qta_da_evadere') as $idriga => $value) {

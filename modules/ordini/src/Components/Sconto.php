@@ -9,7 +9,7 @@ class Sconto extends Discount
 {
     use RelationTrait;
 
-    protected $table = 'or_righe_ordine';
+    protected $table = 'or_righe_ordini';
 
     /**
      * Crea una nuovo sconto globale collegato alla ordine, oppure restituisce quello esistente.

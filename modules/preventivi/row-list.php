@@ -15,11 +15,9 @@ echo '
 			<th>'.tr('Descrizione').'</th>
 			<th width="120">'.tr('Q.tà').'</th>
 			<th width="80">'.tr('U.m.').'</th>
-			<th width="150">'.tr('Prezzo acq. unitario').'</th>
-			<th width="160">'.tr('Prezzo vend. unitario').'</th>
+			<th width="160">'.tr('Prezzo unitario').'</th>
 			<th width="120">'.tr('Iva').'</th>
 			<th width="120">'.tr('Imponibile').'</th>
-			<th width="120">'.tr('Guadagno').'</th>
 			<th width="60"></th>
 		</tr>
 	</thead>
@@ -60,15 +58,6 @@ foreach ($rs as $r) {
     echo '
             </td>';
 
-    // Prezzo di acquisto unitario
-    echo '
-        <td class="text-right">';
-
-    if (empty($r['is_descrizione'])) {
-        echo '
-            '.Translator::numberToLocale($r['prezzo_unitario_acquisto']).' &euro;';
-    }
-
     // prezzo di vendita unitario
     echo '
             <td class="text-right">';
@@ -106,22 +95,6 @@ foreach ($rs as $r) {
         echo '
                 '.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
     }
-
-    // Guadagno
-    $guadagno = $r['subtotale'] - ($r['prezzo_unitario_acquisto'] * $r['qta']) - ($r['sconto_unitario'] * $r['qta']);
-    if ($guadagno < 0) {
-        $guadagno_style = 'background-color: #FFC6C6; border: 3px solid red';
-    } else {
-        $guadagno_style = '';
-    }
-    echo '
-        <td class="text-right" style="'.$guadagno_style.'">';
-    if (empty($r['is_descrizione'])) {
-        echo '
-            '.Translator::numberToLocale($guadagno).' &euro;';
-    }
-    echo '
-        </td>';
 
     // Possibilità di rimuovere una riga solo se il preventivo non è stato pagato
     echo '
@@ -181,7 +154,7 @@ echo '
 if (abs($sconto) > 0) {
     echo '
     <tr>
-        <td colspan="7" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -192,7 +165,7 @@ if (abs($sconto) > 0) {
 
     echo '
     <tr>
-        <td colspan="7" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -204,7 +177,7 @@ if (abs($sconto) > 0) {
     // Totale imponibile
     echo '
     <tr>
-        <td colspan="7" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -216,7 +189,7 @@ if (abs($sconto) > 0) {
     // Totale imponibile
     echo '
     <tr>
-        <td colspan="7" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -229,7 +202,7 @@ if (abs($sconto) > 0) {
 // Totale iva
 echo '
     <tr>
-        <td colspan="7" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('IVA', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
@@ -241,28 +214,11 @@ echo '
 // Totale preventivo
 echo '
     <tr>
-        <td colspan="7" class="text-right">
+        <td colspan="5" class="text-right">
             <b>'.tr('Totale', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($totale).' &euro;
-        </td>
-        <td></td>
-    </tr>';
-
-// GUADAGNO TOTALE
-if ($totale_guadagno < 0) {
-    $guadagno_style = 'background-color: #FFC6C6; border: 3px solid red';
-} else {
-    $guadagno_style = '';
-}
-echo '
-    <tr>
-        <td colspan="7" class="text-right">
-            <b>'.tr('Guadagno totale', [], ['upper' => true]).':</b>
-        </td>
-        <td align="right" style="'.$guadagno_style.'">
-            '.Translator::numberToLocale($totale_guadagno).' &euro;
         </td>
         <td></td>
     </tr>';
@@ -286,7 +242,7 @@ $(document).ready(function(){
                     order += ","+$(this).data("id");
                 });
                 order = order.replace(/^,/, "");
-                
+
 				$.post("'.$rootdir.'/actions.php", {
 					id: ui.item.data("id"),
 					id_module: '.$id_module.',

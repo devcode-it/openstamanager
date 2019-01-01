@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Preventivi\Preventivo;
+
 /**
  * Questa funzione rimuove un articolo dal ddt data e lo riporta in magazzino
  * 	$idarticolo		integer		codice dell'articolo da scollegare dall'ordine
@@ -99,12 +101,9 @@ function ricalcola_costiagg_preventivo($idpreventivo, $idrivalsainps = '', $idri
 
 function get_imponibile_preventivo($idpreventivo)
 {
-    $dbo = database();
+    $preventivo = Preventivo::find($idpreventivo);
 
-    $query = 'SELECT SUM(co_righe_preventivi.subtotale - co_righe_preventivi.sconto) AS imponibile FROM co_righe_preventivi GROUP BY idpreventivo HAVING idpreventivo='.prepare($idpreventivo);
-    $rs = $dbo->fetchArray($query);
-
-    return isset($rs[0]['imponibile']) ? $rs[0]['imponibile'] : 0;
+    return $preventivo->imponibile;
 }
 
 /**

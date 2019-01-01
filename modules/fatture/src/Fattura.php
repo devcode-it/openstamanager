@@ -53,7 +53,7 @@ class Fattura extends Document
 
         // Tipo di pagamento e banca predefinite dall'anagrafica
         $id_pagamento = $database->fetchOne('SELECT id FROM co_pagamenti WHERE id = :id_pagamento', [
-            ':id_pagamento' => $anagrafica['id_pagamento'.$conto],
+            ':id_pagamento' => $anagrafica['idpagamento_'.$conto],
         ])['id'];
         $id_banca = $anagrafica['idbanca_'.$conto];
 

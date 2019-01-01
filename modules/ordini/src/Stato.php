@@ -8,7 +8,7 @@ class Stato extends Model
 {
     protected $table = 'or_statiordine';
 
-    public function fatture()
+    public function ordini()
     {
         return $this->hasMany(Ordine::class, 'idstatoordine');
     }

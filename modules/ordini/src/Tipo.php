@@ -8,7 +8,7 @@ class Tipo extends Model
 {
     protected $table = 'or_tipiordine';
 
-    public function fatture()
+    public function ordini()
     {
         return $this->hasMany(Ordine::class, 'idtipoordine');
     }

@@ -1,39 +1,39 @@
 <?php
 
-namespace Modules\Ordini\Components;
+namespace Modules\Preventivi\Components;
 
 use Common\Components\Article;
 use Modules\Articoli\Articolo as Original;
-use Modules\Ordini\Ordine;
+use Modules\Preventivi\Preventivo;
 
 class Articolo extends Article
 {
     use RelationTrait;
 
-    protected $table = 'or_righe_ordini';
+    protected $table = 'co_righe_preventivi';
 
     /**
-     * Crea un nuovo articolo collegato ad una ordine.
+     * Crea un nuovo articolo collegato ad una preventivo.
      *
-     * @param Ordine  $ordine
+     * @param Preventivo  $preventivo
      * @param Original $articolo
      *
      * @return self
      */
-    public static function make(Ordine $ordine, Original $articolo)
+    public static function make(Preventivo $preventivo, Original $articolo)
     {
-        $model = parent::make($ordine, $articolo);
+        $model = parent::make($preventivo, $articolo);
 
         return $model;
     }
 
     public function movimenta($qta)
     {
-        $ordine = $this->ordine;
-        $tipo = $ordine->tipo;
+        $preventivo = $this->preventivo;
+        $tipo = $preventivo->tipo;
 
-        $numero = $ordine->numero_esterno ?: $ordine->numero;
-        $data = $ordine->data;
+        $numero = $preventivo->numero_esterno ?: $preventivo->numero;
+        $data = $preventivo->data;
 
         $carico = ($tipo->dir == 'entrata') ? tr('Ripristino articolo da _TYPE_ _NUM_') : tr('Carico magazzino da _TYPE_ numero _NUM_');
         $scarico = ($tipo->dir == 'entrata') ? tr('Scarico magazzino per _TYPE_ numero _NUM_') : tr('Rimozione articolo da _TYPE_ _NUM_');
@@ -47,12 +47,12 @@ class Articolo extends Article
         ]);
 
         $this->articolo->movimenta(-$qta, $movimento, $data, false, [
-            'iddocumento' => $ordine->id,
+            'iddocumento' => $preventivo->id,
         ]);
     }
 
     public function getDirection()
     {
-        return $this->ordine->tipo->dir;
+        return $this->preventivo->tipo->dir;
     }
 }

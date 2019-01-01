@@ -4,6 +4,8 @@ return [
     'include' => 'Common',
     'modules/anagrafiche' => 'Modules\Anagrafiche',
     'modules/articoli' => 'Modules\Articoli',
+    'modules/ritenute' => 'Modules\Ritenute',
+    'modules/iva' => 'Modules\Iva',
     'modules/ddt' => 'Modules\DDT',
     'modules/fatture' => 'Modules\Fatture',
     'modules/ordini' => 'Modules\Ordini',

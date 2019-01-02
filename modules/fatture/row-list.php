@@ -55,7 +55,7 @@ foreach ($righe as $riga) {
         $ref_modulo = Modules::get('Articoli')['id'];
         $ref_id = $riga['idarticolo'];
 
-        $riga['descrizione'] = (!empty($riga['codice']) ? $riga['codice'].' - ' : '').$riga['descrizione'];
+        $riga['descrizione'] = (!empty($riga->articolo) ? $riga->articolo->codice.' - ' : '').$riga['descrizione'];
 
         $delete = 'unlink_articolo';
 

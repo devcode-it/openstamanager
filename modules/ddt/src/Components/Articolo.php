@@ -20,9 +20,9 @@ class Articolo extends Article
      *
      * @return self
      */
-    public static function make(DDT $ddt, Original $articolo)
+    public static function build(DDT $ddt, Original $articolo)
     {
-        $model = parent::make($ddt, $articolo);
+        $model = parent::build($ddt, $articolo);
 
         return $model;
     }

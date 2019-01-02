@@ -36,9 +36,9 @@ class Anagrafica extends Model
      *
      * @return self
      */
-    public static function make($ragione_sociale, array $tipologie = [])
+    public static function build($ragione_sociale, array $tipologie = [])
     {
-        $model = parent::make();
+        $model = parent::build();
 
         $model->ragione_sociale = $ragione_sociale;
 

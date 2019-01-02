@@ -18,9 +18,9 @@ class Riga extends Row
      *
      * @return self
      */
-    public static function make(Ordine $ordine)
+    public static function build(Ordine $ordine)
     {
-        $model = parent::make($ordine);
+        $model = parent::build($ordine);
 
         return $model;
     }

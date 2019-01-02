@@ -14,7 +14,7 @@ class Acceptance extends \Codeception\Module
      * @param $option
      * @param int $timeout seconds. Default to 1
      */
-    public function select2($selector, $option)
+    public function select2($selector, $option, $timeout = null)
     {
         $select2 = $this->getModule('\Helper\Select2');
 
@@ -30,7 +30,7 @@ class Acceptance extends \Codeception\Module
      * @param $option
      * @param int $timeout seconds. Default to 1
      */
-    public function select2ajax($selector, $option)
+    public function select2ajax($selector, $option, $timeout = null)
     {
         $select2 = $this->getModule('\Helper\Select2Ajax');
 

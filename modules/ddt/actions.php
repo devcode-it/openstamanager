@@ -27,7 +27,7 @@ switch (post('op')) {
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = Tipo::find($id_tipo);
 
-        $ddt = DDT::make($anagrafica, $tipo, $data);
+        $ddt = DDT::build($anagrafica, $tipo, $data);
         $id_record = $ddt->id;
 
         flash()->info(tr('Aggiunto ddt in _TYPE_ numero _NUM_!', [
@@ -212,7 +212,7 @@ switch (post('op')) {
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = Tipo::where('dir', $dir)->first();
 
-        $ddt = DDT::make($anagrafica, $tipo, $data);
+        $ddt = DDT::build($anagrafica, $tipo, $data);
         $id_record = $ddt->id;
 
         // Lettura di tutte le righe della tabella in arrivo

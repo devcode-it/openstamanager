@@ -98,7 +98,7 @@ switch (post('op')) {
 
                 if (empty($id_documento)) {
                     $anagrafica = Anagrafica::find($id_anagrafica);
-                    $fattura = Fattura::make($anagrafica, $tipo_documento, $data, $id_segment);
+                    $fattura = Fattura::build($anagrafica, $tipo_documento, $data, $id_segment);
 
                     $id_documento = $fattura->id;
                     $id_documento_cliente[$id_anagrafica] = $id_documento;

@@ -32,7 +32,7 @@ class EmailManager implements ManagerInterface
         }
 
         // Codice HTML
-        $result .= '
+        $result = '
 <div class="box box-info collapsable collapsed-box">
     <div class="box-header with-border">
         <h3 class="box-title"><i class="fa fa-envelope"></i> '.tr('Email inviate: _NUM_', [

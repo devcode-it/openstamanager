@@ -24,9 +24,9 @@ class Preventivo extends Document
      *
      * @return self
      */
-    public static function make(Anagrafica $anagrafica, TipoSessione $tipo_sessione, $nome)
+    public static function build(Anagrafica $anagrafica, TipoSessione $tipo_sessione, $nome)
     {
-        $model = parent::make();
+        $model = parent::build();
 
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
 

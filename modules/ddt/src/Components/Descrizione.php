@@ -18,9 +18,9 @@ class Descrizione extends Description
      *
      * @return self
      */
-    public static function make(DDT $ddt)
+    public static function build(DDT $ddt)
     {
-        $model = parent::make($ddt);
+        $model = parent::build($ddt);
 
         return $model;
     }

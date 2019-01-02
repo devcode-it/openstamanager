@@ -18,12 +18,12 @@ class Sconto extends Discount
      *
      * @return self
      */
-    public static function make(Ordine $ordine)
+    public static function build(Ordine $ordine)
     {
         $model = $ordine->scontoGlobale;
 
         if ($model == null) {
-            $model = parent::make();
+            $model = parent::build();
 
             $model->setOrdine($ordine);
         }

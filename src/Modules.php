@@ -74,7 +74,7 @@ class Modules
      */
     public static function getCurrent()
     {
-        return Module::getCurrent($id);
+        return Module::getCurrent();
     }
 
     /**

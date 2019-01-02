@@ -12,9 +12,9 @@ abstract class Row extends Description
 {
     protected $prezzo_unitario_vendita_riga = null;
 
-    public static function make(Document $document, $bypass = false)
+    public static function build(Document $document, $bypass = false)
     {
-        return parent::make($document, true);
+        return parent::build($document, true);
     }
 
     // Attributi di contabilità

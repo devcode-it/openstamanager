@@ -22,9 +22,9 @@ class Ordine extends Document
      *
      * @return self
      */
-    public static function make(Anagrafica $anagrafica, Tipo $tipo_documento, $data)
+    public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data)
     {
-        $model = parent::make();
+        $model = parent::build();
 
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
 

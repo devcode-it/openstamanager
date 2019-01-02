@@ -18,12 +18,12 @@ class Sconto extends Discount
      *
      * @return self
      */
-    public static function make(DDT $ddt)
+    public static function build(DDT $ddt)
     {
         $model = $ddt->scontoGlobale;
 
         if ($model == null) {
-            $model = parent::make();
+            $model = parent::build();
 
             $model->setDDT($ddt);
         }

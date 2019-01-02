@@ -372,6 +372,7 @@ class Uploads
             self::register($data);
 
             // Operazioni finali
+            $options = [];
             self::processOptions($data, $options);
         }
 

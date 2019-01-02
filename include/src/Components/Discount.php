@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 abstract class Discount extends Model
 {
-    public static function make()
+    public static function build()
     {
-        $model = parent::make();
+        $model = parent::build();
 
         $model->sconto_globale = 1;
 

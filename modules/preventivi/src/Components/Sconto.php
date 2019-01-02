@@ -18,12 +18,12 @@ class Sconto extends Discount
      *
      * @return self
      */
-    public static function make(Preventivo $preventivo)
+    public static function build(Preventivo $preventivo)
     {
         $model = $preventivo->scontoGlobale;
 
         if ($model == null) {
-            $model = parent::make();
+            $model = parent::build();
 
             $model->setPreventivo($preventivo);
         }

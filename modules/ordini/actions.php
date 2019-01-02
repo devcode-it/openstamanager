@@ -29,7 +29,7 @@ switch (post('op')) {
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = Tipo::find($tipo['id']);
 
-        $ordine = Ordine::make($anagrafica, $tipo, $data);
+        $ordine = Ordine::build($anagrafica, $tipo, $data);
         $id_record = $ordine->id;
 
         flash()->info(tr('Aggiunto ordine numero _NUM_!', [

@@ -18,9 +18,9 @@ class Riga extends Row
      *
      * @return self
      */
-    public static function make(Preventivo $preventivo)
+    public static function build(Preventivo $preventivo)
     {
-        $model = parent::make($preventivo);
+        $model = parent::build($preventivo);
 
         return $model;
     }

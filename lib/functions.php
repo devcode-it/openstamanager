@@ -131,7 +131,7 @@ function copyr($source, $destination, $ignores = [])
         }
     }
 
-    return $resul;
+    return $result;
 }
 
 /**

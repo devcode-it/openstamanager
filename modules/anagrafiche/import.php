@@ -67,7 +67,7 @@ switch (post('op')) {
                 }
 
                 if (empty($anagrafica)) {
-                    $anagrafica = Anagrafica::make($dati_anagrafica['ragione_sociale']);
+                    $anagrafica = Anagrafica::build($dati_anagrafica['ragione_sociale']);
                 }
 
                 $anagrafica->fill($dati_anagrafica);

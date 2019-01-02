@@ -72,6 +72,7 @@ class API extends \Util\Singleton
         $select = '*';
         $where = [];
         $order = [];
+        $parameters = [];
 
         // Selezione personalizzata
         $select = !empty($request['display']) ? explode(',', substr($request['display'], 1, -1)) : $select;

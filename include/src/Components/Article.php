@@ -11,9 +11,9 @@ abstract class Article extends Row
 {
     protected $serialRowID = 'documento';
 
-    public static function make(Document $document, Original $articolo)
+    public static function build(Document $document, Original $articolo)
     {
-        $model = parent::make($document, true);
+        $model = parent::build($document, true);
 
         $model->articolo()->associate($articolo);
 
@@ -110,7 +110,7 @@ abstract class Article extends Row
         $attributes = $this->getAttributes();
         unset($attributes['id']);
 
-        $model = $object::make($document, $this->articolo);
+        $model = $object::build($document, $this->articolo);
         $model->save();
 
         $model = $object::find($model->id);

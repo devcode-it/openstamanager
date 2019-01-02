@@ -18,9 +18,9 @@ class Descrizione extends Description
      *
      * @return self
      */
-    public static function make(Ordine $ordine)
+    public static function build(Ordine $ordine)
     {
-        $model = parent::make($ordine);
+        $model = parent::build($ordine);
 
         return $model;
     }

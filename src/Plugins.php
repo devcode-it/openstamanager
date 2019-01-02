@@ -64,7 +64,7 @@ class Plugins
      */
     public static function getCurrent()
     {
-        return Plugin::getCurrent($id);
+        return Plugin::getCurrent();
     }
 
     /**

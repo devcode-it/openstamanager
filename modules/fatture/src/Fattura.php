@@ -32,9 +32,9 @@ class Fattura extends Document
      *
      * @return self
      */
-    public static function make(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment)
+    public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment)
     {
-        $model = parent::make();
+        $model = parent::build();
 
         $stato_documento = Stato::where('descrizione', 'Bozza')->first();
 

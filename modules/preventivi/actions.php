@@ -19,7 +19,7 @@ switch (post('op')) {
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = TipoSessione::find($idtipointervento);
 
-        $preventivo = Preventivo::make($anagrafica, $tipo, $nome);
+        $preventivo = Preventivo::build($anagrafica, $tipo, $nome);
         $id_record = $preventivo->id;
 
         flash()->info(tr('Aggiunto preventivo numero _NUM_!', [

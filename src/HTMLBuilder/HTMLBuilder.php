@@ -417,6 +417,7 @@ class HTMLBuilder
 
         $values['class'] = array_unique($values['class']);
 
+        $attributes = [];
         foreach ($values as $key => $value) {
             // Fix per la presenza di apici doppi
             $value = prepareToField(is_array($value) ? implode(' ', $value) : $value);

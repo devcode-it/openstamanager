@@ -20,9 +20,9 @@ class Articolo extends Article
      *
      * @return self
      */
-    public static function make(Preventivo $preventivo, Original $articolo)
+    public static function build(Preventivo $preventivo, Original $articolo)
     {
-        $model = parent::make($preventivo, $articolo);
+        $model = parent::build($preventivo, $articolo);
 
         return $model;
     }

@@ -10,9 +10,9 @@ abstract class Description extends Model
 {
     protected $guarded = [];
 
-    public static function make(Document $document, $bypass = false)
+    public static function build(Document $document, $bypass = false)
     {
-        $model = parent::make();
+        $model = parent::build();
 
         if (!$bypass) {
             $model->is_descrizione = 1;
@@ -49,7 +49,7 @@ abstract class Description extends Model
         $attributes = $this->getAttributes();
         unset($attributes['id']);
 
-        $model = $object::make($document);
+        $model = $object::build($document);
         $model->save();
 
         $model = $object::find($model->id);

@@ -122,7 +122,7 @@ switch (post('op')) {
         $idtipoanagrafica = post('idtipoanagrafica');
         $ragione_sociale = post('ragione_sociale');
 
-        $anagrafica = Anagrafica::make($ragione_sociale, $idtipoanagrafica);
+        $anagrafica = Anagrafica::build($ragione_sociale, $idtipoanagrafica);
         $id_record = $anagrafica->id;
 
         // Se ad aggiungere un cliente è un agente, lo imposto come agente di quel cliente

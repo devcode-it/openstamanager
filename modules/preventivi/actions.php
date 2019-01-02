@@ -8,7 +8,7 @@ use Modules\Preventivi\Components\Articolo;
 use Modules\Preventivi\Components\Descrizione;
 use Modules\Preventivi\Components\Riga;
 use Modules\Preventivi\Preventivo;
-use Modules\Interventi\TipoSessione as TipoIntervento;
+use Modules\Interventi\TipoSessione;
 
 switch (post('op')) {
     case 'add':
@@ -17,7 +17,7 @@ switch (post('op')) {
         $idtipointervento = post('idtipointervento');
 
         $anagrafica = Anagrafica::find($idanagrafica);
-        $tipo = TipoIntervento::find($idtipointervento);
+        $tipo = TipoSessione::find($idtipointervento);
 
         $preventivo = Preventivo::make($anagrafica, $tipo, $nome);
         $id_record = $preventivo->id;

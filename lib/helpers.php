@@ -87,9 +87,9 @@ function get($param, $raw = false)
  *
  * @return string
  */
-function setting($nome, $again = false)
+function setting($name, $again = false)
 {
-    return \Settings::getValue($nome, $again);
+    return \Settings::getValue($name);
 }
 
 /**

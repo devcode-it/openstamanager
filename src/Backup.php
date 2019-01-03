@@ -211,8 +211,8 @@ class Backup
         $database_file = $extraction_dir.'/database.sql';
         if (file_exists($database_file)) {
             $database->query('SET foreign_key_checks = 0');
-            foreach ($tables as $tables) {
-                $database->query('DROP TABLE IF EXISTS `'.$tables.'`');
+            foreach ($tables as $table) {
+                $database->query('DROP TABLE IF EXISTS `'.$table.'`');
             }
             $database->query('DROP TABLE IF EXISTS `updates`');
 

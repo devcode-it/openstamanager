@@ -350,9 +350,7 @@ if (!empty($google)) {
         {[ "type": "select", "label": "<?php echo tr('Piano dei conti cliente'); ?>", "name": "piano_dei_conti_cliente", "values": "list=\"\": \"<?php echo $piano_dei_conti_cliente; ?>\"", "readonly": 1, "value": "", "extra": "" ]}
 
                     </div>
-                    <div class="col-md-6">
-                        {[ "type": "checkbox", "label": "<?php echo tr('Abilitare lo split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Lo split payment è disponibile per le anagrafiche di tipo \"Ente pubblico\" ed <strong>&egrave; obbligatorio</strong> per:<ul><li>Stato;</li><li>organi statali ancorch&eacute; dotati di personalit&agrave; giuridica;</li><li>enti pubblici territoriali e dei consorzi tra essi costituiti;</li><li>Camere di Commercio;</li><li>Istituti universitari;</li><li>ASL e degli enti ospedalieri;</li><li>enti pubblici di ricovero e cura aventi prevalente carattere scientifico;</li><li>enti pubblici di assistenza e beneficienza;</li><li>enti di previdenza;</li><li>consorzi tra questi costituiti.</li></ul>'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>", "extra" : "<?php echo ($record['tipo'] != 'Ente pubblico') ? 'disabled' : ''; ?>" ]}
-                    </div>
+                    
               </div>
 
 
@@ -411,7 +409,7 @@ if (!empty($google)) {
 
 				<?php
                 //se non è l'anagrafica azienda, ma cliente o fornitore
-                 if (!in_array($id_azienda, $tipi_anagrafica) || (($cliente or $fornitore))) {
+                 if (!in_array($id_azienda, $tipi_anagrafica) and (($cliente or $fornitore))) {
                      ?>
 				<div class="row">
 					<div class="col-md-3">
@@ -430,16 +428,24 @@ if (!empty($google)) {
 						{[ "type": "text", "label": "<?php echo tr('Codice BIC'); ?>", "name": "bic", "value": "$bic$" ]}
 					</div>
 				</div>
-				<?php
-                 }
-                ?>
+				
 
 
 				<div class="row">
-					<div class="col-md-12">
+				
+					<div class="col-md-3">
+                        {[ "type": "checkbox", "label": "<?php echo tr('Abilitare lo split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Lo split payment è disponibile per le anagrafiche di tipologia \"Ente pubblico\" o \"Azienda\" ed <strong>&egrave; obbligatorio</strong> per:<ul><li>Stato;</li><li>organi statali ancorch&eacute; dotati di personalit&agrave; giuridica;</li><li>enti pubblici territoriali e dei consorzi tra essi costituiti;</li><li>Camere di Commercio;</li><li>Istituti universitari;</li><li>ASL e degli enti ospedalieri;</li><li>enti pubblici di ricovero e cura aventi prevalente carattere scientifico;</li><li>enti pubblici di assistenza e beneficienza;</li><li>enti di previdenza;</li><li>consorzi tra questi costituiti.</li></ul>'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>", "extra" : "<?php echo ($record['tipo'] == 'Ente pubblico' or $record['tipo'] == 'Azienda')  ? '' : 'disabled'; ?>" ]}
+                    </div>
+					
+					<div class="col-md-9">
 						{[ "type": "text", "label": "<?php echo tr('Dicitura fissa in fattura'); ?>", "name": "diciturafissafattura", "value": "$diciturafissafattura$" ]}
 					</div>
 				</div>
+				
+				
+				<?php
+                 }
+                ?>
 
 				<div class="row">
 					<div class="col-md-3">

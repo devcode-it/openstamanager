@@ -82,7 +82,7 @@ echo '
             success: function(data){
                 data = JSON.parse(data);
 
-                var html = "'.tr('Le seguenti ricevute sono state considerate:').'";
+                var html = "'.tr('Le seguenti ricevute sono state considerate in quanto non è stata trovata la fattura di vendita corrispondente nel gestionale:').'";
 
                 console.log(data);
                 data.forEach(function(element) {

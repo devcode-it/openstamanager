@@ -71,7 +71,7 @@ if (!empty($righe)) {
     echo '
     <h4>
         '.tr('Righe').'
-        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copy()"><i class="fa fa-copy"></i> '.tr('Copia IVA e conto da prima riga').'</button>
+        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copy()"><i class="fa fa-copy"></i> '.tr('Copia IVA e conto dalla prima riga').'</button>
         <div class="clearfix"></div>
     </h4>
 

@@ -3,16 +3,13 @@
 namespace Plugins\ExportFE;
 
 use DateTime;
-use DOMDocument;
 use FluidXml\FluidXml;
 use GuzzleHttp\Client;
 use Modules;
-use Plugins;
 use Prints;
 use Respect\Validation\Validator as v;
 use Stringy\Stringy as S;
 use Uploads;
-use XSLTProcessor;
 
 /**
  * Classe per la gestione della fatturazione elettronica in XML.
@@ -575,7 +572,7 @@ class FatturaElettronica
 
     public function __toString()
     {
-        return $this->toHTML();
+        return $this->toXML();
     }
 
     /**
@@ -744,6 +741,15 @@ class FatturaElettronica
         return $this->errors;
     }
 
+    /**
+     * Ottiene il codice destinatario a partire dal database ufficiale indicepa www.indicepa.gov.it.
+     *
+     * @param $codice_fiscale
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     *
+     * @return string|null
+     */
     public static function PA($codice_fiscale)
     {
         $id = setting('Authorization ID Indice PA');
@@ -752,7 +758,7 @@ class FatturaElettronica
             return null;
         }
 
-        // Localhost:
+        // Configurazione per localhost: CURLOPT_SSL_VERIFYPEER
         $client = new Client(['curl' => [CURLOPT_SSL_VERIFYPEER => false]]);
 
         $response = $client->request('POST', 'https://www.indicepa.gov.it/public-ws/WS01_SFE_CF.php', [
@@ -875,28 +881,6 @@ class FatturaElettronica
         }
 
         return $this->xml;
-    }
-
-    /**
-     * Restituisce il codice XML formattato della fattura elettronica.
-     *
-     * @return string
-     */
-    public function toHTML()
-    {
-        // XML
-        $xml = new DOMDocument();
-        $xml->loadXML($this->toXML());
-
-        // XSL
-        $xsl = new DOMDocument();
-        $xsl->load(__DIR__.'/stylesheet-1.2.1.xsl');
-
-        // XSLT
-        $xslt = new XSLTProcessor();
-        $xslt->importStylesheet($xsl);
-
-        return $xslt->transformToXML($xml);
     }
 
     /**
@@ -1164,45 +1148,11 @@ class FatturaElettronica
 
             $result['ScontoMaggiorazione'] = $sconto;
         }
-		
-		// Importo Totale Documento (2.1.1.9)
-		//Importo totale del documento al netto dell'eventuale sconto e comprensivo di imposta a debito del cessionario / committente
-		
-		// Calcoli
-		$imponibile = sum(array_column($righe, 'subtotale'));
-		//$sconto = sum(array_column($righe, 'sconto'));
-		$iva = sum(array_column($righe, 'iva'));
 
-		//$imponibile_scontato = sum($imponibile, -$sconto);
-
-		$totale_iva = sum($iva, $record['iva_rivalsainps']);
-
-		/*$totale = sum([
-			$imponibile_scontato,
-			$record['rivalsainps'],
-			$totale_iva,
-		]);
-
-		$netto_a_pagare = sum([
-			$totale,
-			$record['bollo'],
-			-$record['ritenutaacconto'],
-		]);
-
-		$imponibile = abs($imponibile);
-		$sconto = abs($sconto);
-		$iva = abs($iva);
-		$imponibile_scontato = abs($imponibile_scontato);
-		$totale_iva = abs($totale_iva);
-		$totale = abs($totale);
-		$netto_a_pagare = abs($netto_a_pagare);*/
-
-
-		
-		if (!empty($imponibile)) {
-			  
-			$result['ImportoTotaleDocumento'] = $imponibile+$totale_iva;
-		}	  
+        // Importo Totale Documento (2.1.1.9)
+        // Importo totale del documento al netto dell'eventuale sconto e comprensivo di imposta a debito del cessionario / committente
+        $fattura = Modules\Fatture\Fattura::find($documento['id']);
+        $result['ImportoTotaleDocumento'] = $fattura->calcola('imponibile', 'iva');
 
         return $result;
     }
@@ -1406,23 +1356,21 @@ class FatturaElettronica
             $dettaglio = [
                 'NumeroLinea' => $numero + 1,
             ];
-			
-			// 2.2.1.2
+
+            // 2.2.1.2
             if (!empty($riga['tipo_cessione_prestazione'])) {
                 $dettaglio['TipoCessionePrestazione'] = $riga['tipo_cessione_prestazione'];
             }
-			
-			//2.2.1.3
-			if (!empty($riga['idarticolo'])) {
-				
-				$codice_articolo = [
+
+            //2.2.1.3
+            if (!empty($riga['idarticolo'])) {
+                $codice_articolo = [
                     'CodiceTipo' => 'OSM',
-					'CodiceValore' => $database->fetchOne('SELECT `codice` FROM `mg_articoli` WHERE `id` = '.prepare($riga['idarticolo']))['codice']
+                    'CodiceValore' => $database->fetchOne('SELECT `codice` FROM `mg_articoli` WHERE `id` = '.prepare($riga['idarticolo']))['codice'],
                 ];
-				
-				$dettaglio['CodiceArticolo'] = $codice_articolo;
-			}
-			
+
+                $dettaglio['CodiceArticolo'] = $codice_articolo;
+            }
 
             $dettaglio['Descrizione'] = $riga['descrizione'];
             $dettaglio['Quantita'] = $riga['qta'];
@@ -1714,11 +1662,13 @@ class FatturaElettronica
             $size = isset($info['size']) ? $info['size'] : null;
 
             $output = $input;
+
             // Operazioni di normalizzazione
             // Formattazione decimali
             if ($info['type'] == 'decimal') {
                 $output = number_format($output, 2, '.', '');
             }
+
             // Formattazione date
             elseif ($info['type'] == 'date') {
                 $object = DateTime::createFromFormat('Y-m-d H:i:s', $output);
@@ -1726,6 +1676,7 @@ class FatturaElettronica
                     $output = $object->format('Y-m-d');
                 }
             }
+
             // Formattazione testo
             elseif ($info['type'] == 'string') {
             }

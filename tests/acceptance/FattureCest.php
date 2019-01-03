@@ -78,7 +78,7 @@ class FattureCest
      *
      * @param AcceptanceTester $t
      */
-    protected function addAndDeleteFattura(AcceptanceTester $t, $cliente = 2, $tipo)
+    protected function addAndDeleteFattura(AcceptanceTester $t, $cliente, $tipo)
     {
         $this->addAnag($t, $cliente, $tipo);
 

@@ -51,7 +51,6 @@ class Uploads
         'm4a' => 'audio/mpeg',
         'm4b' => 'audio/mpeg',
         'mp' => 'audio/mpeg',
-        'm4b' => 'audio/mpeg',
         'ra' => 'audio/x-realaudio',
         'ram' => 'audio/x-realaudio',
         'wav' => 'audio/wav',
@@ -372,6 +371,7 @@ class Uploads
             self::register($data);
 
             // Operazioni finali
+            $options = [];
             self::processOptions($data, $options);
         }
 

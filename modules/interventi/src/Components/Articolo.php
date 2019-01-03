@@ -23,9 +23,9 @@ class Articolo extends Article
      *
      * @return self
      */
-    public static function make(Intervento $intervento, Original $articolo, $id_automezzo = null)
+    public static function build(Intervento $intervento, Original $articolo, $id_automezzo = null)
     {
-        $model = parent::make($intervento, $articolo);
+        $model = parent::build($intervento, $articolo);
 
         $model->prezzo_acquisto = $articolo->prezzo_acquisto;
         $model->prezzo_vendita = $articolo->prezzo_vendita;

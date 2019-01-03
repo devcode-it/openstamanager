@@ -4,6 +4,8 @@ use Modules\Fatture\Fattura;
 
 /**
  * Funzione per generare un nuovo numero per la fattura.
+ *
+ * @deprecated 2.4.5
  */
 function get_new_numerofattura($data)
 {
@@ -15,6 +17,8 @@ function get_new_numerofattura($data)
 
 /**
  * Funzione per calcolare il numero secondario successivo utilizzando la maschera dalle impostazioni.
+ *
+ * @deprecated 2.4.5
  */
 function get_new_numerosecondariofattura($data)
 {
@@ -22,6 +26,66 @@ function get_new_numerosecondariofattura($data)
     global $id_segment;
 
     return Fattura::getNextNumeroSecondario($data, $dir, $id_segment);
+}
+
+/**
+ * Calcolo imponibile fattura (totale_righe - sconto).
+ *
+ * @deprecated 2.4.5
+ */
+function get_imponibile_fattura($iddocumento)
+{
+    $fattura = Fattura::find($iddocumento);
+
+    return $fattura->imponibile;
+}
+
+/**
+ * Calcolo totale fattura (imponibile + iva).
+ *
+ * @deprecated 2.4.5
+ */
+function get_totale_fattura($iddocumento)
+{
+    $fattura = Fattura::find($iddocumento);
+
+    return $fattura->totale;
+}
+
+/**
+ * Calcolo netto a pagare fattura (totale - ritenute - bolli).
+ *
+ * @deprecated 2.4.5
+ */
+function get_netto_fattura($iddocumento)
+{
+    $fattura = Fattura::find($iddocumento);
+
+    return $fattura->netto;
+}
+
+/**
+ * Calcolo iva detraibile fattura.
+ *
+ * @deprecated 2.4.5
+ */
+function get_ivadetraibile_fattura($iddocumento)
+{
+    $fattura = Fattura::find($iddocumento);
+
+    return $fattura->iva_detraibile;
+}
+
+/**
+ * Calcolo iva indetraibile fattura.
+ *
+ * @deprecated 2.4.5
+ */
+function get_ivaindetraibile_fattura($iddocumento)
+{
+    $fattura = Fattura::find($iddocumento);
+
+    return $fattura->iva_indetraibile;
 }
 
 /**
@@ -433,105 +497,6 @@ function get_new_idmastrino($table = 'co_movimenti')
     $rs = $dbo->fetchArray($query);
 
     return intval($rs[0]['maxidmastrino']) + 1;
-}
-
-/**
- * Calcolo imponibile fattura (totale_righe - sconto).
- */
-function get_imponibile_fattura($iddocumento)
-{
-    $dbo = database();
-
-    $query = 'SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS imponibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
-    $rs = $dbo->fetchArray($query);
-
-    return sum($rs[0]['imponibile'], null, 2);
-}
-
-/**
- * Calcolo totale fattura (imponibile + iva).
- */
-function get_totale_fattura($iddocumento)
-{
-    $dbo = database();
-
-    // Sommo l'iva di ogni riga al totale
-    $query = 'SELECT SUM(iva) AS iva FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
-    $rs = $dbo->fetchArray($query);
-
-    // Aggiungo la rivalsa inps se c'è
-    $query2 = 'SELECT rivalsainps FROM co_documenti WHERE id='.prepare($iddocumento);
-    $rs2 = $dbo->fetchArray($query2);
-
-    $iva_rivalsainps = 0;
-
-    $rsr = $dbo->fetchArray('SELECT idiva, rivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento));
-
-    for ($r = 0; $r < sizeof($rsr); ++$r) {
-        $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare($rsr[$r]['idiva']);
-        $rsi = $dbo->fetchArray($qi);
-        $iva_rivalsainps += $rsr[$r]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
-    }
-
-    $iva = $rs[0]['iva'];
-    $totale_iva = sum($iva, $iva_rivalsainps);
-
-    $totale = sum([
-        get_imponibile_fattura($iddocumento),
-        $rs2[0]['rivalsainps'],
-        $totale_iva,
-    ], null, 2);
-
-    return $totale;
-}
-
-/**
- * Calcolo netto a pagare fattura (totale - ritenute - bolli).
- */
-function get_netto_fattura($iddocumento)
-{
-    $dbo = database();
-
-    $query = 'SELECT ritenutaacconto, bollo, split_payment FROM co_documenti WHERE id='.prepare($iddocumento);
-    $rs = $dbo->fetchArray($query);
-
-    $netto_a_pagare = sum([
-        get_totale_fattura($iddocumento),
-        $rs[0]['bollo'],
-        -$rs[0]['ritenutaacconto'],
-    ], null, 2);
-
-    if ($rs[0]['split_payment']) {
-        $netto_a_pagare = sum($netto_a_pagare, -(get_ivadetraibile_fattura($iddocumento) + get_ivaindetraibile_fattura($iddocumento)), 2);
-    }
-
-    return $netto_a_pagare;
-}
-
-/**
- * Calcolo iva detraibile fattura.
- */
-function get_ivadetraibile_fattura($iddocumento)
-{
-    $dbo = database();
-
-    $query = 'SELECT SUM(iva)-SUM(iva_indetraibile) AS iva_detraibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
-    $rs = $dbo->fetchArray($query);
-
-    return $rs[0]['iva_detraibile'];
-}
-
-/**
- * Calcolo iva indetraibile fattura.
- */
-function get_ivaindetraibile_fattura($iddocumento)
-{
-    $dbo = database();
-
-    $query = 'SELECT SUM(iva_indetraibile) AS iva_indetraibile FROM co_righe_documenti GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
-    $rs = $dbo->fetchArray($query);
-
-    return $rs[0]['iva_indetraibile'];
 }
 
 /**

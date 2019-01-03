@@ -93,7 +93,6 @@ class XML
             $string = preg_replace($regex, '', $string);
 
             $result = '';
-            $current;
             $length = strlen($string);
             for ($i = 0; $i < $length; ++$i) {
                 $current = ord($string[$i]);
@@ -104,9 +103,6 @@ class XML
                 (($current >= 0xE000) && ($current <= 0xFFFD)) ||
                 (($current >= 0x10000) && ($current <= 0x10FFFF))) {
                     $result .= chr($current);
-                } else {
-                    $ret;    // use this to strip invalid character(s)
-                // $ret .= " ";    // use this to replace them with spaces
                 }
             }
             $string = $result;

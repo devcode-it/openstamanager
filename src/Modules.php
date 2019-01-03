@@ -74,7 +74,7 @@ class Modules
      */
     public static function getCurrent()
     {
-        return Module::getCurrent($id);
+        return Module::getCurrent();
     }
 
     /**
@@ -146,9 +146,9 @@ class Modules
     /**
      * Restituisce i filtri aggiuntivi dell'utente in relazione al modulo specificato.
      *
-     * @param int $id
+     * @param int $module
      *
-     * @return string
+     * @return array
      */
     public static function getSegments($module)
     {

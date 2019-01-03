@@ -4,14 +4,17 @@ namespace Common\Components;
 
 use Common\Document;
 use Illuminate\Database\Eloquent\Builder;
+use Modules\Iva\Aliquota;
+use Modules\Ritenute\RitenutaAcconto;
+use Modules\Ritenute\RivalsaINPS;
 
 abstract class Row extends Description
 {
     protected $prezzo_unitario_vendita_riga = null;
 
-    public static function make(Document $document, $bypass = false)
+    public static function build(Document $document, $bypass = false)
     {
-        return parent::make($document, true);
+        return parent::build($document, true);
     }
 
     // Attributi di contabilità
@@ -80,26 +83,28 @@ abstract class Row extends Description
 
     public function getRivalsaINPSAttribute()
     {
-        return $this->attributes['rivalsainps'];
+        return ($this->imponibile_scontato) / 100 * $this->rivalsa->percentuale;
     }
 
     public function getRitenutaAccontoAttribute()
     {
-        return $this->attributes['ritenutaacconto'];
+        $result = $this->imponibile_scontato;
+
+        if ($this->calcolo_ritenuta_acconto == 'IMP+RIV') {
+            $result += $this->rivalsainps;
+        }
+
+        return $result / 100 * $this->ritenuta->percentuale;
     }
 
     public function getIvaIndetraibileAttribute()
     {
-        return $this->attributes['iva_indetraibile'];
+        return $this->iva / 100 * $this->aliquota->indetraibile;
     }
 
     public function getIvaAttribute()
     {
-        $percentuale = database()->fetchOne('SELECT percentuale FROM co_iva WHERE id = :id', [
-            ':id' => $this->idiva,
-        ])['percentuale'];
-
-        return ($this->imponibile_scontato + $this->rivalsa_inps) * $percentuale / 100;
+        return ($this->imponibile_scontato + $this->rivalsa_inps) * $this->aliquota->percentuale / 100;
     }
 
     public function getIvaDetraibileAttribute()
@@ -128,15 +133,14 @@ abstract class Row extends Description
     }
 
     /**
-     * Imposta l'identificatore della Rivalsa INPS, effettuando di conseguenza i conti.
+     * Imposta l'identificatore della Rivalsa INPS.
      *
      * @param int $value
      */
     public function setIdRivalsaINPSAttribute($value)
     {
         $this->attributes['idrivalsainps'] = $value;
-
-        $this->fixRivalsaINPS();
+        $this->load('rivalsa');
     }
 
     /**
@@ -147,16 +151,18 @@ abstract class Row extends Description
     public function setIdRitenutaAccontoAttribute($value)
     {
         $this->attributes['idritenutaacconto'] = $value;
+        $this->load('ritenuta');
     }
 
     /**
-     * Imposta l'identificatore dell'IVA, effettuando di conseguenza i conti.
+     * Imposta l'identificatore dell'IVA.
      *
      * @param int $value
      */
     public function setIdIvaAttribute($value)
     {
         $this->attributes['idiva'] = $value;
+        $this->load('aliquota');
     }
 
     /**
@@ -225,9 +231,7 @@ abstract class Row extends Description
      */
     protected function fixRivalsaINPS()
     {
-        $rivalsa = database()->fetchOne('SELECT * FROM co_rivalsainps WHERE id = '.prepare($this->idrivalsainps));
-
-        $this->attributes['rivalsainps'] = ($this->imponibile_scontato) / 100 * $rivalsa['percentuale'];
+        $this->attributes['rivalsainps'] = $this->rivalsa_inps;
     }
 
     /**
@@ -235,15 +239,7 @@ abstract class Row extends Description
      */
     protected function fixRitenutaAcconto()
     {
-        // Calcolo ritenuta d'acconto
-        $ritenuta = database()->fetchOne('SELECT * FROM co_ritenutaacconto WHERE id = '.prepare($this->idritenutaacconto));
-        $conto = $this->imponibile_scontato;
-
-        if ($this->calcolo_ritenuta_acconto == 'IMP+RIV') {
-            $conto += $this->rivalsainps;
-        }
-
-        $this->attributes['ritenutaacconto'] = $conto / 100 * $ritenuta['percentuale'];
+        $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
     }
 
     /**
@@ -251,18 +247,12 @@ abstract class Row extends Description
      */
     protected function fixIva()
     {
-        $iva = database()->fetchOne('SELECT * FROM co_iva WHERE id = :id_iva', [
-            ':id_iva' => $this->idiva,
-        ]);
-        $descrizione = $iva['descrizione'];
+        $this->attributes['iva'] = $this->iva;
 
-        $valore = ($this->imponibile_scontato) * $iva['percentuale'] / 100;
-
+        $descrizione = $this->aliquota->descrizione;
         if (!empty($descrizione)) {
             $this->attributes['desc_iva'] = $descrizione;
         }
-
-        $this->attributes['iva'] = $valore;
 
         $this->fixIvaIndetraibile();
     }
@@ -272,11 +262,7 @@ abstract class Row extends Description
      */
     protected function fixIvaIndetraibile()
     {
-        $iva = database()->fetchOne('SELECT * FROM co_iva WHERE id = :id_iva', [
-            ':id_iva' => $this->idiva,
-        ]);
-
-        $this->attributes['iva_indetraibile'] = $this->iva / 100 * $iva['indetraibile'];
+        $this->attributes['iva_indetraibile'] = $this->iva_indetraibile;
     }
 
     /**
@@ -285,5 +271,20 @@ abstract class Row extends Description
     protected function fixSconto()
     {
         $this->attributes['sconto'] = $this->sconto;
+    }
+
+    public function aliquota()
+    {
+        return $this->belongsTo(Aliquota::class, 'idiva');
+    }
+
+    public function rivalsa()
+    {
+        return $this->belongsTo(RivalsaINPS::class, 'idrivalsainps');
+    }
+
+    public function ritenuta()
+    {
+        return $this->belongsTo(RitenutaAcconto::class, 'idritenutaacconto');
     }
 }

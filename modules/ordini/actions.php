@@ -2,6 +2,14 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Ordini\Components\Articolo;
+use Modules\Ordini\Components\Descrizione;
+use Modules\Ordini\Components\Riga;
+use Modules\Ordini\Ordine;
+use Modules\Ordini\Tipo;
+
 $module = Modules::get($id_module);
 
 if ($module['name'] == 'Ordini cliente') {
@@ -13,41 +21,21 @@ if ($module['name'] == 'Ordini cliente') {
 switch (post('op')) {
     case 'add':
         $idanagrafica = post('idanagrafica');
-
         $data = post('data');
 
         // Leggo se l'ordine è cliente o fornitore
-        $rs = $dbo->fetchArray('SELECT id FROM or_tipiordine WHERE dir='.prepare($dir));
-        $idtipoordine = $rs[0]['id'];
+        $tipo = $dbo->fetchOne('SELECT id FROM or_tipiordine WHERE dir='.prepare($dir));
 
-        if (post('idanagrafica') !== null) {
-            $numero = get_new_numeroordine($data);
-            if ($dir == 'entrata') {
-                $numero_esterno = get_new_numerosecondarioordine($data);
-            } else {
-                $numero_esterno = '';
-            }
+        $anagrafica = Anagrafica::find($idanagrafica);
+        $tipo = Tipo::find($tipo['id']);
 
-            $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
+        $ordine = Ordine::build($anagrafica, $tipo, $data);
+        $id_record = $ordine->id;
 
-            // Tipo di pagamento predefinito dall'anagrafica
-            $rs = $dbo->fetchArray('SELECT id FROM co_pagamenti WHERE id=(SELECT '.$campo.' AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')');
-            $idpagamento = isset($rs[0]) ? $rs[0]['id'] : null;
+        flash()->info(tr('Aggiunto ordine numero _NUM_!', [
+            '_NUM_' => $numero,
+        ]));
 
-            // Se l'ordine è un ordine cliente e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
-            if ($dir == 'entrata' && empty($idpagamento)) {
-                $idpagamento = setting('Tipo di pagamento predefinito');
-            }
-
-            $query = 'INSERT INTO or_ordini( numero, numero_esterno, idanagrafica, idtipoordine, idpagamento, data, idstatoordine ) VALUES ( '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idtipoordine).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `or_statiordine` WHERE `descrizione`='Bozza') )";
-            $dbo->query($query);
-
-            $id_record = $dbo->lastInsertedID();
-
-            flash()->info(tr('Aggiunto ordine numero _NUM_!', [
-                '_NUM_' => $numero,
-            ]));
-        }
         break;
 
     case 'update':

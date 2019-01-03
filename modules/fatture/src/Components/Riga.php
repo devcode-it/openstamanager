@@ -18,9 +18,9 @@ class Riga extends Row
      *
      * @return self
      */
-    public static function make(Fattura $fattura)
+    public static function build(Fattura $fattura)
     {
-        $model = parent::make($fattura);
+        $model = parent::build($fattura);
 
         return $model;
     }

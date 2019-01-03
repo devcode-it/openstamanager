@@ -415,7 +415,7 @@ switch (post('op')) {
     case 'addarticolo':
         $originale = ArticoloOriginale::find(post('idarticolo'));
         $intervento = Intervento::find($id_record);
-        $articolo = Articolo::make($intervento, $originale, post('idautomezzo'));
+        $articolo = Articolo::build($intervento, $originale, post('idautomezzo'));
 
         $articolo->qta = post('qta');
         $articolo->descrizione = post('descrizione');
@@ -496,7 +496,7 @@ switch (post('op')) {
 
                 $data = explode(',', post('firma_base64'));
 
-                $img = Intervention\Image\ImageManagerStatic::make(base64_decode($data[1]));
+                $img = Intervention\Image\ImageManagerStatic::build(base64_decode($data[1]));
                 $img->resize(680, 202, function ($constraint) {
                     $constraint->aspectRatio();
                 });

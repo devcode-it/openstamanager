@@ -30,3 +30,4 @@ ALTER TABLE `co_documenti` ADD `split_payment` BOOLEAN NOT NULL DEFAULT FALSE AF
 UPDATE `co_righe_documenti` SET `calcolo_ritenutaacconto` = 'IMP' WHERE `calcolo_ritenutaacconto` = 'Imponibile' OR `calcolo_ritenutaacconto` = '';
 UPDATE `co_righe_documenti` SET `calcolo_ritenutaacconto` = 'IMP+RIV' WHERE `calcolo_ritenutaacconto` = 'Imponibile + rivalsa inps';
 ALTER TABLE `co_righe_documenti` CHANGE `calcolo_ritenutaacconto` `calcolo_ritenuta_acconto` ENUM('IMP', 'IMP+RIV') DEFAULT 'IMP';
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT ''IMP'' AS id, ''Imponibile'' AS descrizione UNION SELECT ''IMP+RIV'' AS id, ''Imponibile + rivalsa inps'' AS descrizione', `valore` = REPLACE(REPLACE(`valore`, 'Imponibile + rivalsa inps', 'IMP+RIV'), 'Imponibile', 'IMP') WHERE `nome` = 'Metodologia calcolo ritenuta d''acconto predefinito';

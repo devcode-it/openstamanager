@@ -2,64 +2,25 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Preventivi\Components\Articolo;
+use Modules\Preventivi\Components\Descrizione;
+use Modules\Preventivi\Components\Riga;
+use Modules\Preventivi\Preventivo;
+use Modules\Interventi\TipoSessione;
+
 switch (post('op')) {
     case 'add':
         $idanagrafica = post('idanagrafica');
         $nome = post('nome');
-
         $idtipointervento = post('idtipointervento');
-        $rs = $dbo->fetchArray('SELECT costo_orario, costo_diritto_chiamata FROM in_tipiintervento WHERE idtipointervento='.prepare($idtipointervento));
-        $costo_orario = $rs[0]['costo_orario'];
-        $costo_diritto_chiamata = $rs[0]['costo_diritto_chiamata'];
 
-        // Verifico se c'è già un agente o un metodo di pagamento collegato all'anagrafica cliente, così lo imposto già
-        $q = 'SELECT idagente, idpagamento_vendite AS idpagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica);
-        $rs = $dbo->fetchArray($q);
-        $idagente = $rs[0]['idagente'];
-        $idpagamento = $rs[0]['idpagamento'];
+        $anagrafica = Anagrafica::find($idanagrafica);
+        $tipo = TipoSessione::find($idtipointervento);
 
-        // Codice preventivo: calcolo il successivo in base al formato specificato
-        $numeropreventivo_template = setting('Formato codice preventivi');
-        $numeropreventivo_template = str_replace('#', '%', $numeropreventivo_template);
-
-        // Codice preventivo: calcolo il successivo in base al formato specificato
-        $rs = $dbo->fetchArray('SELECT numero FROM co_preventivi WHERE numero=(SELECT MAX(CAST(numero AS SIGNED)) FROM co_preventivi) AND numero LIKE('.prepare(Util\Generator::complete($numeropreventivo_template)).') ORDER BY numero DESC LIMIT 0,1');
-        $numero = Util\Generator::generate(setting('Formato codice preventivi'), $rs[0]['numero']);
-
-        if (!is_numeric($numero)) {
-            $rs = $dbo->fetchArray('SELECT numero FROM co_preventivi WHERE numero LIKE('.prepare(Util\Generator::complete($numeropreventivo_template)).') ORDER BY numero DESC LIMIT 0,1');
-            $numero = Util\Generator::generate(setting('Formato codice preventivi'), $rs[0]['numero']);
-        }
-
-        $idiva = setting('Iva predefinita');
-        $rs_iva = $dbo->fetchArray('SELECT descrizione, percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva));
-
-        // Se al preventivo non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
-        if ($idpagamento == '') {
-            $idpagamento = setting('Tipo di pagamento predefinito');
-        }
-
-        $dbo->query('INSERT INTO co_preventivi(idanagrafica, nome, numero, idagente, idstato, idtipointervento, data_bozza, data_conclusione, idiva, idpagamento) VALUES ('.prepare($idanagrafica).', '.prepare($nome).', '.prepare($numero).', '.prepare($idagente).", (SELECT `id` FROM `co_statipreventivi` WHERE `descrizione`='Bozza'), ".prepare($idtipointervento).', NOW(), DATE_ADD(NOW(), INTERVAL +1 MONTH), '.prepare($idiva).', '.prepare($idpagamento).')');
-        $id_record = $dbo->lastInsertedID();
-
-        //Aggiungo master_revision e default_revision
-        $dbo->query('UPDATE co_preventivi SET master_revision='.prepare($id_record).', default_revision=1 WHERE id='.$id_record);
-
-        /*
-        // inserisco righe standard preventivo
-        // ore lavoro
-        $costo = $costo_orario;
-        $iva = $costo / 100 * $rs_iva[0]['percentuale'];
-        $iva_indetraibile = $iva / 100 * $rs_iva[0]['indetraibile'];
-        $ore = $dbo->fetchArray("SELECT `id` FROM `mg_unitamisura` WHERE `valore`='ore'");
-        $dbo->query('INSERT INTO co_righe_preventivi(idpreventivo, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, `order`) VALUES ('.prepare($id_record).", '0', ".prepare($idiva).', '.prepare($rs_iva[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).", 'Ore lavoro', ".prepare($costo).', '.prepare('ore').", 1, 0, 0, 'UNT', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_preventivi AS t WHERE idpreventivo=".prepare($id_record).'))');
-
-        // diritto chiamata
-        $costo = $costo_diritto_chiamata;
-        $iva = $costo / 100 * $rs_iva[0]['percentuale'];
-        $iva_indetraibile = $iva / 100 * $rs_iva[0]['indetraibile'];
-        $dbo->query('INSERT INTO co_righe_preventivi(idpreventivo, idarticolo, idiva, desc_iva, iva, iva_indetraibile, descrizione, subtotale, um, qta, sconto, sconto_unitario, tipo_sconto, `order`) VALUES ('.prepare($id_record).", '0', ".prepare($idiva).', '.prepare($rs_iva[0]['descrizione']).', '.prepare($iva).', '.prepare($iva_indetraibile).", 'Diritto chiamata', ".prepare($costo).", '', 1, 0, 0, 'UNT', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_preventivi AS t WHERE idpreventivo=".prepare($id_record).'))');
-        */
+        $preventivo = Preventivo::build($anagrafica, $tipo, $nome);
+        $id_record = $preventivo->id;
 
         flash()->info(tr('Aggiunto preventivo numero _NUM_!', [
             '_NUM_' => $numero,

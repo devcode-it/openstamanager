@@ -425,7 +425,7 @@ if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
                     </div>';
 
             // Lettura contratti accettati, in attesa di conferma o in lavorazione
-            $contr_query = 'SELECT COUNT(*) AS tot FROM co_contratti WHERE idanagrafica='.prepare($record['idanagrafica']).' AND id NOT IN (SELECT idcontratto FROM co_righe_documenti WHERE NOT idcontratto=NULL) AND idstato IN( SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND NOT EXISTS (SELECT id FROM co_righe_documenti WHERE co_righe_documenti.idcontratto = co_contratti.id)';
+            $contr_query = 'SELECT COUNT(*) AS tot FROM co_contratti WHERE idanagrafica='.prepare($record['idanagrafica']).' AND id NOT IN (SELECT idcontratto FROM co_righe_documenti WHERE idcontratto IS NOT NULL) AND idstato IN( SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND NOT EXISTS (SELECT id FROM co_righe_documenti WHERE co_righe_documenti.idcontratto = co_contratti.id)';
             $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
             echo '
                     <div class="tip" data-toggle="tooltip" title="'.tr('Contratti accettati, in attesa di conferma o in lavorazione.').'" style="display:inline;">

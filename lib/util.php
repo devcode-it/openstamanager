@@ -17,7 +17,7 @@ if (!function_exists('array_column')) {
      *
      * @since 2.3
      *
-     * @return plucked array only with key data
+     * @return array plucked array only with key data
      */
     function array_column($array, $key)
     {

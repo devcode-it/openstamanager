@@ -25,14 +25,14 @@ class EmailManager implements ManagerInterface
         $database = database();
 
         // Visualizzo il log delle operazioni di invio email
-        $operations = $database->fetchArray('SELECT created_at, options, (SELECT name FROM zz_emails WHERE id = id_email) AS email, (SELECT username FROM zz_users WHERE id = id_utente) AS user FROM zz_operations WHERE id_record = '.prepare($options['id_record']).' AND id_module = '.prepare($options['id_module']).' AND op = "send-email" AND id_email IS NOT NULL ORDER BY created_at DESC');
+        $operations = $database->fetchArray('SELECT created_at, options, (SELECT name FROM zz_emails WHERE id = id_email) AS email, (SELECT username FROM zz_users WHERE id = id_utente) AS user FROM zz_operations WHERE id_record = '.prepare($options['id_record']).' AND id_module = '.prepare($options['id_module'])." AND op = 'send-email' AND id_email IS NOT NULL ORDER BY created_at DESC");
 
         if (empty($operations)) {
             return ' ';
         }
 
         // Codice HTML
-        $result .= '
+        $result = '
 <div class="box box-info collapsable collapsed-box">
     <div class="box-header with-border">
         <h3 class="box-title"><i class="fa fa-envelope"></i> '.tr('Email inviate: _NUM_', [

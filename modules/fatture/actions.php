@@ -28,7 +28,7 @@ switch (post('op')) {
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = Tipo::find($idtipodocumento);
 
-        $fattura = Fattura::make($anagrafica, $tipo, $data, $id_segment);
+        $fattura = Fattura::build($anagrafica, $tipo, $data, $id_segment);
         $id_record = $fattura->id;
 
         flash()->info(tr('Aggiunta fattura numero _NUM_!', [
@@ -534,7 +534,7 @@ switch (post('op')) {
             $articolo = Articolo::find(post('idriga'));
         } else {
             $originale = ArticoloOriginale::find(post('idarticolo'));
-            $articolo = Articolo::make($fattura, $originale);
+            $articolo = Articolo::build($fattura, $originale);
         }
 
         $qta = post('qta');
@@ -592,7 +592,7 @@ switch (post('op')) {
         if (post('idriga') != null) {
             $riga = Riga::find(post('idriga'));
         } else {
-            $riga = Riga::make($fattura);
+            $riga = Riga::build($fattura);
         }
 
         $qta = post('qta');
@@ -650,7 +650,7 @@ switch (post('op')) {
         if (post('idriga') != null) {
             $riga = Descrizione::find(post('idriga'));
         } else {
-            $riga = Descrizione::make($fattura);
+            $riga = Descrizione::build($fattura);
         }
 
         $riga->descrizione = post('descrizione');
@@ -1272,7 +1272,7 @@ switch (post('op')) {
         $anagrafica = $fattura->anagrafica;
         $tipo = Tipo::where('descrizione', 'Nota di credito')->where('dir', 'entrata')->first();
 
-        $nota = Fattura::make($anagrafica, $tipo, $data, $id_segment);
+        $nota = Fattura::build($anagrafica, $tipo, $data, $id_segment);
         $nota->ref_documento = $fattura->id;
         $nota->idconto = $fattura->idconto;
         $nota->idpagamento = $fattura->idpagamento;
@@ -1370,7 +1370,7 @@ if (get('op') == 'nota_addebito') {
     $tipo = Tipo::where('descrizione', 'Nota di debito')->where('dir', 'entrata')->first();
     $data = $fattura->data;
 
-    $nota = Fattura::make($anagrafica, $tipo, $data, $id_segment);
+    $nota = Fattura::build($anagrafica, $tipo, $data, $id_segment);
     $nota->ref_documento = $fattura->id;
     $nota->idconto = $fattura->idconto;
     $nota->idpagamento = $fattura->idpagamento;

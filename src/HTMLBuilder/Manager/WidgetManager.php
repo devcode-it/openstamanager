@@ -152,7 +152,7 @@ class WidgetManager implements ManagerInterface
 
     protected function custom($widget)
     {
-        $result .= '
+        $result = '
 
         <li class="'.$widget['class'].'" id="'.$widget['id'].'">
             <!-- small box -->

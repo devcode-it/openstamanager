@@ -33,7 +33,7 @@ class BackupCest
      *
      * @param AcceptanceTester $t
      */
-    protected function restoreBackup(AcceptanceTester $t, $name = nullW)
+    protected function restoreBackup(AcceptanceTester $t, $name = null)
     {
         // Seleziona il modulo da aprire
         $t->expandSidebarLink('Strumenti');

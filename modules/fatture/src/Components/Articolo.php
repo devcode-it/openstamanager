@@ -20,9 +20,9 @@ class Articolo extends Article
      *
      * @return self
      */
-    public static function make(Fattura $fattura, Original $articolo)
+    public static function build(Fattura $fattura, Original $articolo)
     {
-        $model = parent::make($fattura, $articolo);
+        $model = parent::build($fattura, $articolo);
 
         return $model;
     }

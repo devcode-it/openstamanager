@@ -18,12 +18,12 @@ class Sconto extends Discount
      *
      * @return self
      */
-    public static function make(Fattura $fattura)
+    public static function build(Fattura $fattura)
     {
         $model = $fattura->scontoGlobale;
 
         if ($model == null) {
-            $model = parent::make();
+            $model = parent::build();
 
             $model->setFattura($fattura);
         }

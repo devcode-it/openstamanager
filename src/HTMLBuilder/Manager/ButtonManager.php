@@ -11,8 +11,6 @@ class ButtonManager implements ManagerInterface
     {
         $options['parameters'] = isset($options['parameters']) ? $options['parameters'] : null;
 
-        $result = '';
-
         if (isset($options['id'])) {
             $result = $this->link($options);
         } else {
@@ -24,8 +22,6 @@ class ButtonManager implements ManagerInterface
 
     protected function getInfo($options)
     {
-        $result = [];
-
         if ($options['type'] == 'print') {
             $print = \Prints::get($options['id']);
 
@@ -81,8 +77,6 @@ class ButtonManager implements ManagerInterface
 
     protected function getList($options)
     {
-        $results = [];
-
         if ($options['type'] == 'print') {
             $results = \Prints::getModulePrints($options['id_module']);
         } else {
@@ -159,8 +153,6 @@ class ButtonManager implements ManagerInterface
 
     protected function defaultText($options)
     {
-        $result = '';
-
         if ($options['type'] == 'print') {
             $result = '<i class="fa fa-print"></i> '.tr('Stampa');
         } else {

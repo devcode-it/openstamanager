@@ -28,7 +28,7 @@ echo '
 		</div>
 
 		<div class="col-md-2">
-			{[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia", "maxlength": 2, "class": "text-center" ]}
+			{[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia", "maxlength": 2, "class": "text-center text-uppercase", "extra": "onkeyup=\"this.value = this.value.toUpperCase();\"" ]}
 		</div>
 
 		<div class="col-md-2">

@@ -996,9 +996,9 @@ class FatturaElettronica
             'Comune' => $anagrafica['citta'],
         ];
 
-        // Provincia se impostata e SOLO SE nazione ITALIA
+        // Provincia impostata e SOLO SE nazione ITALIA
         if (!empty($anagrafica['provincia']) && $anagrafica['nazione'] == 'IT') {
-            $result['Provincia'] = $anagrafica['provincia'];
+            $result['Provincia'] = strtoupper($anagrafica['provincia']);
         }
 
         $result['Nazione'] = $anagrafica['nazione'];

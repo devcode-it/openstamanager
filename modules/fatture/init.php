@@ -18,6 +18,7 @@ if (isset($id_record)) {
         co_documenti.note_aggiuntive,
         co_documenti.idpagamento,
         co_documenti.id AS iddocumento,
+		co_documenti.split_payment AS split_payment,
         co_statidocumento.descrizione AS `stato`,
         co_tipidocumento.descrizione AS `descrizione_tipodoc`,
         (SELECT is_fiscale FROM zz_segments WHERE id = id_segment) AS is_fiscale,

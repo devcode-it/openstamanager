@@ -35,7 +35,7 @@ if ($dir == 'entrata') {
 			<?php
 
                 if ($dir == 'entrata') {
-                    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche WHERE idanagrafica='.prepare($record['idanagrafica']));
+                    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia, id_nazione FROM an_anagrafiche WHERE idanagrafica='.prepare($record['idanagrafica']));
                     $campi_mancanti = [];
 
                     if ($rs2[0]['piva'] == '') {
@@ -54,7 +54,7 @@ if ($dir == 'entrata') {
                     if ($rs2[0]['cap'] == '') {
                         array_push($campi_mancanti, 'C.A.P.');
                     }
-                    if ($rs2[0]['nazione'] == '') {
+                    if (empty($rs2[0]['id_nazione'])) {
                         array_push($campi_mancanti, 'Nazione');
                     }
 
@@ -231,7 +231,7 @@ if ($dir == 'uscita') {
                 </div>
 				
 				<div class="col-md-3">
-					{[ "type": "checkbox", "label": "<?php echo tr('Split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Abilita lo split payment per questo documento.'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>", "extra" : "" ]}
+					{[ "type": "checkbox", "label": "<?php echo tr('Split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Abilita lo split payment per questo documento.'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>" ]}
 				</div>
 				
 				

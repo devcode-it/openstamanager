@@ -781,7 +781,7 @@ class FatturaElettronica
      */
     public function save($directory)
     {
-        $name = 'Fattura Elettronica (XML)';
+        $name = 'Fattura Elettronica';
         $previous = $this->getFilename();
         $data = $this->getUploadData();
 
@@ -1115,7 +1115,7 @@ class FatturaElettronica
             ];
         }
 
-        // Bollo
+        // Bollo (2.1.1.6)
         $documento['bollo'] = floatval($documento['bollo']);
         if (!empty($documento['bollo'])) {
             $result['DatiBollo'] = [
@@ -1149,7 +1149,7 @@ class FatturaElettronica
             $result['DatiCassaPrevidenziale'] = $dati_cassa;
         }*/
 
-        // Sconto globale
+        // Sconto globale (2.1.1.8)
         $documento['sconto_globale'] = floatval($documento['sconto_globale']);
         if (!empty($documento['sconto_globale'])) {
             $sconto = [
@@ -1164,6 +1164,45 @@ class FatturaElettronica
 
             $result['ScontoMaggiorazione'] = $sconto;
         }
+		
+		// Importo Totale Documento (2.1.1.9)
+		//Importo totale del documento al netto dell'eventuale sconto e comprensivo di imposta a debito del cessionario / committente
+		
+		// Calcoli
+		$imponibile = sum(array_column($righe, 'subtotale'));
+		//$sconto = sum(array_column($righe, 'sconto'));
+		$iva = sum(array_column($righe, 'iva'));
+
+		//$imponibile_scontato = sum($imponibile, -$sconto);
+
+		$totale_iva = sum($iva, $record['iva_rivalsainps']);
+
+		/*$totale = sum([
+			$imponibile_scontato,
+			$record['rivalsainps'],
+			$totale_iva,
+		]);
+
+		$netto_a_pagare = sum([
+			$totale,
+			$record['bollo'],
+			-$record['ritenutaacconto'],
+		]);
+
+		$imponibile = abs($imponibile);
+		$sconto = abs($sconto);
+		$iva = abs($iva);
+		$imponibile_scontato = abs($imponibile_scontato);
+		$totale_iva = abs($totale_iva);
+		$totale = abs($totale);
+		$netto_a_pagare = abs($netto_a_pagare);*/
+
+
+		
+		if (!empty($imponibile)) {
+			  
+			$result['ImportoTotaleDocumento'] = $imponibile+$totale_iva;
+		}	  
 
         return $result;
     }
@@ -1367,10 +1406,23 @@ class FatturaElettronica
             $dettaglio = [
                 'NumeroLinea' => $numero + 1,
             ];
-
+			
+			// 2.2.1.2
             if (!empty($riga['tipo_cessione_prestazione'])) {
                 $dettaglio['TipoCessionePrestazione'] = $riga['tipo_cessione_prestazione'];
             }
+			
+			//2.2.1.3
+			if (!empty($riga['idarticolo'])) {
+				
+				$codice_articolo = [
+                    'CodiceTipo' => 'OSM',
+					'CodiceValore' => $database->fetchOne('SELECT `codice` FROM `mg_articoli` WHERE `id` = '.prepare($riga['idarticolo']))['codice']
+                ];
+				
+				$dettaglio['CodiceArticolo'] = $codice_articolo;
+			}
+			
 
             $dettaglio['Descrizione'] = $riga['descrizione'];
             $dettaglio['Quantita'] = $riga['qta'];
@@ -1388,7 +1440,7 @@ class FatturaElettronica
 
             $dettaglio['PrezzoUnitario'] = $prezzo_unitario;
 
-            // Sconto
+            // Sconto (2.2.1.10)
             $riga['sconto_unitario'] = floatval($riga['sconto_unitario']);
             if (!empty($riga['sconto_unitario'])) {
                 $sconto = [

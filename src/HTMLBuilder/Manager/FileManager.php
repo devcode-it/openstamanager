@@ -77,12 +77,13 @@ class FileManager implements ManagerInterface
         </tr>';
 
                 foreach ($rs as $r) {
+					$extension = pathinfo($r['original'])['extension'];
                     $result .= '
         <tr>
             <td align="left">
                 <a href="'.ROOTDIR.'/'.$directory.'/'.$r['filename'].'" target="_blank">
                     <i class="fa fa-external-link"></i> '.$r['name'].'
-                </a>
+                </a> ('.$extension.')'.'
             </td>
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
             <td class="text-center">
@@ -91,7 +92,6 @@ class FileManager implements ManagerInterface
                 </a>';
 
                     // Anteprime supportate dal browser
-                    $extension = pathinfo($r['original'])['extension'];
                     $supported_extensions = ['pdf', 'jpg', 'png', 'gif', 'jpeg', 'bmp'];
                     if (in_array(strtolower($extension), $supported_extensions)) {
                         $result .= "

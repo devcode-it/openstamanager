@@ -38,13 +38,33 @@ if (!$cliente) {
 
 			<div class="panel-body">
 				<div class="row">
-					<div class="col-md-8">
-						{[ "type": "text", "label": "<?php echo tr('Ragione sociale'); ?>", "name": "ragione_sociale", "required": 1, "value": "$ragione_sociale$" ]}
+					<div class="col-md-6">
+						{[ "type": "text", "label": "<?php echo tr('Denominazione'); ?>", "name": "ragione_sociale", "required": 1, "value": "$ragione_sociale$" ]}
 					</div>
-
-					<div class="col-md-4">
+					
+					<div class="col-md-3">
+                        {[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask text-uppercase", "value": "$piva$" ]}
+                    </div>
+					
+					<div class="col-md-3">
 						{[ "type": "select", "label": "<?php echo tr('Tipologia'); ?>", "name": "tipo", "values": "list=\"\": \"<?php echo tr('Non specificato'); ?>\", \"Azienda\": \"<?php echo tr('Azienda'); ?>\", \"Privato\": \"<?php echo tr('Privato'); ?>\", \"Ente pubblico\": \"<?php echo tr('Ente pubblico'); ?>\"", "value": "$tipo$" ]}
 					</div>
+				</div>
+				
+				<div class="row">
+				
+					<div class="col-md-4">
+							{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 0, "value": "$nome$" ]}
+					</div>
+					
+					<div class="col-md-4">
+							{[ "type": "text", "label": "<?php echo tr('Cognome'); ?>", "name": "cognome", "required": 0, "value": "$cognome$" ]}
+					</div>
+					 
+					<div class="col-md-4">
+                        {[ "type": "text", "label": "<?php echo tr('Codice fiscale'); ?>", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask text-uppercase", "value": "$codice_fiscale$" ]}
+                    </div>
+					
 				</div>
 
 				<!-- RIGA PER LE ANAGRAFICHE CON TIPOLOGIA 'PRIVATO' -->
@@ -66,15 +86,7 @@ if (!$cliente) {
 				<?php
 } ?>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        {[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask text-uppercase", "value": "$piva$" ]}
-                    </div>
-
-                    <div class="col-md-6">
-                        {[ "type": "text", "label": "<?php echo tr('Codice fiscale'); ?>", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask text-uppercase", "value": "$codice_fiscale$" ]}
-                    </div>
-                </div>
+              
 
 				<div class="row">
 					<div class="col-md-2">
@@ -638,6 +650,42 @@ if (empty($record['deleted_at'])) {
 			$("#lat").val(result.geometry.location.lat());
 			$("#lng").val(result.geometry.location.lng());
         });
+		
+		/* Campo nome e cognome*/
+		if ($('#ragione_sociale').val()!='' && $('#ragione_sociale').val() != $('#nome').val()+' '+$('#cognome').val()){
+			$('#nome').prop('disabled', true);
+			$('#cognome').prop('disabled', true);
+		};
+		
+		if ($('#nome').val()!='' && $('#cognome').val()!=''){
+			$('#ragione_sociale').prop('disabled', true);
+			$("#ragione_sociale").attr('required', false);
+		};
+		
+		$('#nome, #cognome').keyup(function(){
+			if ($('#nome').val() =='' && $('#cognome').val() =='' ){
+				$('#ragione_sociale').prop('disabled', false);
+				$("#ragione_sociale").attr('required', true);
+			}else{
+				
+				$('#ragione_sociale').prop('disabled', true);
+				$("#ragione_sociale").attr('required', false);
+			}
+		});
+		
+		$('#ragione_sociale').keyup(function(){
+			
+			if ($(this).val()!=''){
+				$('#nome').prop('disabled', true);
+				$('#cognome').prop('disabled', true);
+				$("#ragione_sociale").attr('required', true);
+			}else{
+				$('#nome').prop('disabled', false);
+				$('#cognome').prop('disabled', false);
+				$("#ragione_sociale").attr('required', false);
+			}
+		});
+			
 	});
 </script>
 

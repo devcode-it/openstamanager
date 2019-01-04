@@ -621,6 +621,23 @@ class FatturaElettronica
 
         return $this->cliente;
     }
+	
+	/**
+     * Restituisce le informazioni sull'anagrafica dell'intermediario.
+     *
+     * @return array
+     */
+    public function getIntermediario()
+    {
+		if (empty($this->intermediario)) {
+			$intermediario = static::getAnagrafica(setting('Terzo intermediario'));
+			$this->intermediario = $intermediario;
+		}
+		
+        return $this->intermediario;
+    }
+	
+	
 
     /**
      * Restituisce le informazioni riguardanti un anagrafica sulla base dell'identificativo fornito.
@@ -823,7 +840,7 @@ class FatturaElettronica
     public function getFilename($new = false)
     {
         $azienda = static::getAzienda();
-        $prefix = 'IT'.(empty($azienda['piva']) ? $azienda['codice_fiscale'] : $azienda['piva']);
+        $prefix = 'IT'.(!empty($azienda['codice_fiscale']) ? $azienda['codice_fiscale'] : $azienda['piva']);
 
         if (empty($this->documento['progressivo_invio']) || !empty($new)) {
             $database = database();
@@ -904,7 +921,7 @@ class FatturaElettronica
         $result = [
             'IdTrasmittente' => [
                 'IdPaese' => $azienda['nazione'],
-                'IdCodice' => (!empty($azienda['piva'])) ? $azienda['piva'] : $azienda['codice_fiscale'],
+                'IdCodice' => (!empty($azienda['codice_fiscale'])) ? $azienda['codice_fiscale'] : $azienda['piva'],
             ],
             'ProgressivoInvio' => $documento['progressivo_invio'],
             'FormatoTrasmissione' => ($cliente['tipo'] == 'Ente pubblico') ? 'FPA12' : 'FPR12',
@@ -940,10 +957,12 @@ class FatturaElettronica
 
         // Partita IVA (obbligatoria se presente)
         if (!empty($anagrafica['piva'])) {
-            $result['IdFiscaleIVA'] = [
-                'IdPaese' => $anagrafica['nazione'],
-                'IdCodice' => $anagrafica['piva'],
-            ];
+            
+			if (!empty($anagrafica['nazione']))
+				$result['IdFiscaleIVA']['IdPaese'] = $anagrafica['nazione'];
+			
+			$result['IdFiscaleIVA']['IdCodice'] = $anagrafica['piva'];
+			
         }
 
         // Codice fiscale
@@ -1043,7 +1062,7 @@ class FatturaElettronica
     }
 
     /**
-     * Restituisce l'array responsabile per la generazione del tag CessionarioCommittente.
+     * Restituisce l'array responsabile per la generazione del tag CessionarioCommittente (1.4).
      *
      * @return array
      */
@@ -1058,6 +1077,24 @@ class FatturaElettronica
 
         return $result;
     }
+	
+	
+	 /**
+     * Restituisce l'array responsabile per la generazione del tag TerzoIntermediarioOSoggettoEmittente (1.5).
+     *
+     * @return array
+     */
+	protected static function getTerzoIntermediarioOSoggettoEmittente($fattura)
+	{	
+		$intermediario = $fattura->getIntermediario();
+		
+		$result = [
+            'DatiAnagrafici' => static::getDatiAnagrafici($intermediario),
+        ];
+		
+		return $result;
+	}
+	
 
     /**
      * Restituisce l'array responsabile per la generazione del tag DatiGeneraliDocumento.
@@ -1412,7 +1449,10 @@ class FatturaElettronica
             }
 
             if (empty($percentuale)) {
-                $dettaglio['Natura'] = $iva['codice_natura_fe'];
+				//Controllo aggiuntivo codice_natura_fe per evitare che venga riportato il tag vuoto
+				if (!empty($iva['codice_natura_fe'])){
+					$dettaglio['Natura'] = $iva['codice_natura_fe'];
+				}
             }
 
             if (!empty($riga['riferimento_amministrazione'])) {
@@ -1611,6 +1651,12 @@ class FatturaElettronica
             'CedentePrestatore' => static::getCedentePrestatore($fattura),
             'CessionarioCommittente' => static::getCessionarioCommittente($fattura),
         ];
+		
+		//Terzo Intermediario o Soggetto Emittente
+		if (!empty(setting('Terzo intermediario'))){
+			$result['TerzoIntermediarioOSoggettoEmittente'] = static::getTerzoIntermediarioOSoggettoEmittente($fattura);
+			$result['SoggettoEmittente'] = 'TZ';
+		}
 
         return $result;
     }

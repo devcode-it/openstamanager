@@ -22,7 +22,7 @@ if (!empty($fattura_pa)) {
 // Campi obbligatori per il pagamento
 $pagamento = $database->fetchOne('SELECT * FROM `co_pagamenti` WHERE `id` = '.prepare($record['idpagamento']));
 $fields = [
-    'codice_modalita_pagamento_fe' => 'Codice di pagamento FE',
+    'codice_modalita_pagamento_fe' => 'Codice modalità pagamento FE',
 ];
 
 $missing = [];
@@ -35,7 +35,7 @@ foreach ($fields as $key => $name) {
 if (!empty($missing) && !$generated) {
     echo '
 <div class="alert alert-warning">
-    <p><i class="fa fa-warning"></i> '.tr('Prima di procedere alla generazione della fattura elettronica completa i seguenti campi del tipo di pagamento: _FIELDS_', [
+    <p><i class="fa fa-warning"></i> '.tr('Prima di procedere alla generazione della fattura elettronica completa i seguenti campi per il Pagamento: _FIELDS_', [
         '_FIELDS_' => '<b>'.implode(', ', $missing).'</b>',
     ]).'</p>
 </div>';

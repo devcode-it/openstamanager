@@ -114,24 +114,3 @@ if (!empty($elementi)) {
 </a>';
 }
 ?>
-
-<script type="text/javascript">
-
-
-
-$(document).ready(function() {
-
-  $(".input-group-addon").on('click', function() {
-    if ($(this).parent().find("i").hasClass('fa-eye')) {
-      $("#password").attr("type", "text");
-      $(this).parent().find("i").removeClass('fa-eye').addClass('fa-eye-slash');
-      $(this).parent().find("i").attr('title', '<?php echo tr('Nascondi password'); ?>');
-    } else {
-      $("#password").attr("type", "password");
-      $(this).parent().find("i").removeClass('fa-eye-slash').addClass('fa-eye');
-      $(this).parent().find("i").attr('title', '<?php echo tr('Visualizza password'); ?>');
-    }
-  });
-});
-
-</script>

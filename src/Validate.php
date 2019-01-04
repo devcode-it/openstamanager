@@ -154,7 +154,7 @@ class Validate
 
             $data = json_decode($output, false);
 
-            /*se la riposta è null verficando il formato, il record mx o il server smtp imposto la relativa proprietà dell'oggetto a 0*/
+            /*se la riposta è null verificando il formato, il record mx o il server smtp imposto la relativa proprietà dell'oggetto a 0*/
             if ($data->format_valid == null) {
                 $data->format_valid = 0;
             }

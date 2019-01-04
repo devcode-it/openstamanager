@@ -53,7 +53,7 @@ if ($options['dir'] == 'entrata') {
             var parent = $("#prezzo_acquisto").closest("div").parent();
             var div = parent.find("div[id*=\"errors\"]");
 
-            div.html("'.tr('Guadagno').': " + guadagno.toLocale());
+            div.html("<small>'.tr('Guadagno').': " + guadagno.toLocale() + " &euro;</small>");
             if (guadagno < 0) {
                 parent.addClass("has-error");
                 div.addClass("text-danger").removeClass("text-success");

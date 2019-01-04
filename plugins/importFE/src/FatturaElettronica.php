@@ -137,8 +137,11 @@ class FatturaElettronica
         // Informazioni sull'anagrafica
         $REA = $xml['IscrizioneREA'];
         if (!empty($REA)) {
-            $anagrafica->codicerea = $REA['Ufficio'].'-'.$REA['NumeroREA'];
-
+			
+			if (!empty($REA['Ufficio']) and !empty($REA['NumeroREA'])) {
+				$anagrafica->codicerea = $REA['Ufficio'].'-'.$REA['NumeroREA'];
+			}
+			
             if (!empty($REA['CapitaleSociale'])) {
                 $anagrafica->capitale_sociale = $REA['CapitaleSociale'];
             }

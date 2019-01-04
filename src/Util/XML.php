@@ -10,7 +10,7 @@ namespace Util;
 class XML
 {
     /**
-     * Interpreta i contentuti di una stringa in formato XML.
+     * Interpreta i contenuti di una stringa in formato XML.
      *
      * @param string $string
      *

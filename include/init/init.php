@@ -121,7 +121,7 @@ if (!$has_user) {
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "password", "label": "'.tr('Password').'", "name": "admin_password", "value": "'.$osm_password.'", "placeholder": "'.tr("Digita la password dell'amministratore").'", "required": 1 ]}
+                            {[ "type": "password", "label": "'.tr('Password').'", "id": "password", "name": "admin_password", "value": "'.$osm_password.'", "placeholder": "'.tr("Digita la password dell'amministratore").'", "required": 1, "icon-after": "<i  onclick=\" if ($(this).parent().find(\'i\').hasClass(\'fa-eye\')) {  $(\'#password\').attr(\'type\', \'text\'); $(this).parent().find(\'i\').removeClass(\'fa-eye\').addClass(\'fa-eye-slash\');  $(this).parent().find(\'i\').attr(\'title\', \'Nascondi password\'); }  else { $(\'#password\').attr(\'type\', \'password\'); $(this).parent().find(\'i\').removeClass(\'fa-eye-slash\').addClass(\'fa-eye\');  $(this).parent().find(\'i\').attr(\'title\', \'Visualizza password\'); } \" title=\"'.tr('Visualizza password').'\" class=\"fa fa-eye clickable\" ></i>" ]}
                         </div>
 
                         <div class="col-md-6">
@@ -166,6 +166,9 @@ if (!$has_azienda) {
                             <div class="col-md-12">
                                 {[ "type": "file", "placeholder": "'.tr('File').'", "name": "blob" ]}
                             </div>
+							
+							  
+							<p>&nbsp;</p><div class="col-md-12 alert alert-info text-center">'.tr('Per impostare il logo delle stampe, caricare un file ".jpg". Risoluzione consigliata 302x111 pixel').'.</div>
 
                         </div>
                     </div>';

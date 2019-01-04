@@ -27,13 +27,30 @@ abstract class Document extends Model
     abstract public function scontoGlobale();
 
     /**
+     *  Calcola la somma degli attributi indicati come parametri.
+     *
+     * @param mixed ...$args
+     *
+     * @return float
+     */
+    public function calcola(...$args)
+    {
+        $result = 0;
+        foreach ($args as $arg) {
+            $result += $this->getRigheContabili()->sum($arg);
+        }
+
+        return $this->round($result);
+    }
+
+    /**
      * Calcola l'imponibile della fattura.
      *
      * @return float
      */
     public function getImponibileAttribute()
     {
-        return $this->round($this->getRigheContabili()->sum('imponibile'));
+        return $this->calcola('imponibile');
     }
 
     /**
@@ -43,7 +60,7 @@ abstract class Document extends Model
      */
     public function getScontoAttribute()
     {
-        return $this->round($this->getRigheContabili()->sum('sconto'));
+        return $this->calcola('sconto');
     }
 
     /**
@@ -53,7 +70,7 @@ abstract class Document extends Model
      */
     public function getImponibileScontatoAttribute()
     {
-        return $this->round($this->getRigheContabili()->sum('imponibile_scontato'));
+        return $this->calcola('imponibile_scontato');
     }
 
     /**
@@ -63,7 +80,7 @@ abstract class Document extends Model
      */
     public function getIvaAttribute()
     {
-        return $this->round($this->getRigheContabili()->sum('iva'));
+        return $this->calcola('iva');
     }
 
     /**
@@ -73,7 +90,7 @@ abstract class Document extends Model
      */
     public function getRivalsaINPSAttribute()
     {
-        return $this->round($this->getRigheContabili()->sum('rivalsa_inps'));
+        return $this->calcola('rivalsa_inps');
     }
 
     /**
@@ -83,7 +100,7 @@ abstract class Document extends Model
      */
     public function getRitenutaAccontoAttribute()
     {
-        return $this->round($this->getRigheContabili()->sum('ritenuta_acconto'));
+        return $this->calcola('ritenuta_acconto');
     }
 
     /**
@@ -93,7 +110,7 @@ abstract class Document extends Model
      */
     public function getTotaleAttribute()
     {
-        return $this->round($this->getRigheContabili()->sum('totale'));
+        return $this->calcola('totale');
     }
 
     /**
@@ -103,7 +120,7 @@ abstract class Document extends Model
      */
     public function getNettoAttribute()
     {
-        return $this->round($this->getRigheContabili()->sum('netto'));
+        return $this->calcola('netto');
     }
 
     /**
@@ -113,7 +130,7 @@ abstract class Document extends Model
      */
     public function getSpesaAttribute()
     {
-        return $this->round($this->getRigheContabili()->sum('spesa'));
+        return $this->calcola('spesa');
     }
 
     /**
@@ -123,7 +140,7 @@ abstract class Document extends Model
      */
     public function getGuadagnoAttribute()
     {
-        return $this->round($this->getRigheContabili()->sum('guadagno'));
+        return $this->calcola('guadagno');
     }
 
     /**

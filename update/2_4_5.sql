@@ -33,5 +33,9 @@ ALTER TABLE `co_righe_documenti` CHANGE `calcolo_ritenutaacconto` `calcolo_riten
 UPDATE `zz_settings` SET `tipo` = 'query=SELECT ''IMP'' AS id, ''Imponibile'' AS descrizione UNION SELECT ''IMP+RIV'' AS id, ''Imponibile + rivalsa inps'' AS descrizione', `valore` = REPLACE(REPLACE(`valore`, 'Imponibile + rivalsa inps', 'IMP+RIV'), 'Imponibile', 'IMP') WHERE `nome` = 'Metodologia calcolo ritenuta d''acconto predefinito';
 
 -- Fix per province caricate a gestionale in minuscolo 
-UPDATE an_anagrafiche SET provincia=UPPER(provincia)
-UPDATE an_sedi SET provincia=UPPER(provincia)
+UPDATE `an_anagrafiche` SET `provincia` = UPPER(provincia);
+UPDATE `an_sedi` SET `provincia` = UPPER(provincia);
+
+
+-- Colonna Codice Modalità (Pagamenti)
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default` ) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Pagamenti'), 'Codice Modalità', 'codice_modalita_pagamento_fe', 2, 1, 0, 0, NULL, NULL, 1, 0, 0);

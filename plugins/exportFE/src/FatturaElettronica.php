@@ -1152,7 +1152,7 @@ class FatturaElettronica
         // Importo Totale Documento (2.1.1.9)
         // Importo totale del documento al netto dell'eventuale sconto e comprensivo di imposta a debito del cessionario / committente
         $fattura = Modules\Fatture\Fattura::find($documento['id']);
-        $result['ImportoTotaleDocumento'] = $fattura->calcola('imponibile', 'iva');
+        $result['ImportoTotaleDocumento'] = $fattura->calcola('netto');
 
         return $result;
     }

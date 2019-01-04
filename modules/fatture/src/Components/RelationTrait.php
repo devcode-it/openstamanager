@@ -23,7 +23,7 @@ trait RelationTrait
 
     public function getNettoAttribute()
     {
-        $result = parent::getNettoAttribute();
+        $result = $this->totale - $this->ritenuta_acconto;
 
         if ($this->parent->split_payment) {
             $result = $result - $this->iva;

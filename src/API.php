@@ -278,7 +278,7 @@ class API extends \Util\Singleton
     }
 
     /**
-     * Formatta i contentuti della risposta secondo il formato JSON.
+     * Formatta i contenuti della risposta secondo il formato JSON.
      *
      * @param array $array
      *
@@ -287,7 +287,7 @@ class API extends \Util\Singleton
     public static function response($array)
     {
         if (empty($array['custom'])) {
-            // Agiunta dello status di default
+            // Aggiunta dello status di default
             if (empty($array['status'])) {
                 $array['status'] = self::$status['ok']['code'];
             }

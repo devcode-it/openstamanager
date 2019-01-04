@@ -13,7 +13,7 @@ class Backup
     /** @var string Pattern per i nomi dei backup */
     const PATTERN = 'OSM backup YYYY-m-d H_i_s';
 
-    /** @var array Elenco delle varabili che identificano i backup giornalieri */
+    /** @var array Elenco delle variabili che identificano i backup giornalieri */
     protected static $daily_replaces = [
         'YYYY', 'm', 'd',
     ];
@@ -238,7 +238,7 @@ class Backup
     }
 
     /**
-     * Restituisce il percorso su cui salvare temporeneamente il dump del database.
+     * Restituisce il percorso su cui salvare temporaneamente il dump del database.
      *
      * @return string
      */

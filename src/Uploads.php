@@ -121,7 +121,7 @@ class Uploads
     ];
 
     /**
-     * Restisuice l'elenco degli allegati registrati per un determinato modulo/plugin e record.
+     * Restituisce l'elenco degli allegati registrati per un determinato modulo/plugin e record.
      *
      * @param array $data
      *

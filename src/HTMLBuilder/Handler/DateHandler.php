@@ -18,32 +18,32 @@ class DateHandler implements HandlerInterface
             'min-date',
         ];
         foreach ($detect as $attr) {
-            if ($values[$attr] == '-now-') {
-                $values[$attr] = date(\Translator::getFormatter()->getStandardFormats()['timestamp']);
+            if (isset($values[$attr]) && $values[$attr] == '-now-') {
+                $values[$attr] = date(\Intl\Formatter::getStandardFormats()['timestamp']);
             }
         }
 
         // Restrizione dei valori permessi
         // Timestamp
-        if ($values['type'] == 'timestamp' && \Translator::getFormatter()->isStandardTimestamp($values['value'])) {
+        if ($values['type'] == 'timestamp' && formatter()->isStandardTimestamp($values['value'])) {
             $values['value'] = \Translator::timestampToLocale($values['value']);
         }
 
         // Data
-        elseif ($values['type'] == 'date' && \Translator::getFormatter()->isStandardDate($values['value'])) {
+        elseif ($values['type'] == 'date' && formatter()->isStandardDate($values['value'])) {
             $values['value'] = \Translator::dateToLocale($values['value']);
         }
 
         // Orario
-        elseif ($values['type'] == 'time' && \Translator::getFormatter()->isStandardTime($values['value'])) {
+        elseif ($values['type'] == 'time' && formatter()->isStandardTime($values['value'])) {
             $values['value'] = \Translator::timeToLocale($values['value']);
         }
 
         // Controllo sulla correttezza sintattica del valore impostato
         if (!(
-            ($values['type'] == 'timestamp' && \Translator::getFormatter()->isFormattedTimestamp($values['value'])) ||
-            ($values['type'] == 'date' && \Translator::getFormatter()->isFormattedDate($values['value'])) ||
-            ($values['type'] == 'time' && \Translator::getFormatter()->isFormattedTime($values['value']))
+            ($values['type'] == 'timestamp' && formatter()->isFormattedTimestamp($values['value'])) ||
+            ($values['type'] == 'date' && formatter()->isFormattedDate($values['value'])) ||
+            ($values['type'] == 'time' && formatter()->isFormattedTime($values['value']))
         )) {
             $values['value'] = '';
         }
@@ -58,22 +58,22 @@ class DateHandler implements HandlerInterface
             if (empty($values['label'])) {
                 $result = '
 <div class="form-group">';
-            }
 
-            if (empty($values['icon-before']) || empty($values['icon-after'])) {
-                $result .= '
+                if (empty($values['icon-before']) || empty($values['icon-after'])) {
+                    $result .= '
     <div class="input-group">';
+                }
             }
 
             $result .= '
     <input |attr|>';
 
-            if (empty($values['icon-before']) || empty($values['icon-after'])) {
-                $result .= '
-    </div>';
-            }
-
             if (empty($values['label'])) {
+                if (empty($values['icon-before']) || empty($values['icon-after'])) {
+                    $result .= '
+    </div>';
+                }
+
                 $result .= '
 </div>';
             }

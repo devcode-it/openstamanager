@@ -22,7 +22,7 @@ class WidgetManager implements ManagerInterface
 
     protected function widget($options)
     {
-        $database = \Database::getConnection();
+        $database = database();
 
         // Widget richiesto
         $widget = $database->fetchArray('SELECT * FROM zz_widgets WHERE id = '.prepare($options['id']))[0];
@@ -77,14 +77,17 @@ class WidgetManager implements ManagerInterface
         $query = \App::replacePlaceholder($query);
 
         // Individuazione del risultato della query
-        $database = \Database::getConnection();
+        $database = database();
         $value = null;
         if (!empty($query)) {
             $value = $database->fetchArray($query)[0]['dato'];
+            if (!preg_match('/\\d/', $value)) {
+                $value = '-';
+            }
         }
 
         // Generazione del codice HTML
-        $result .= '
+        $result = '
 <button type="button" class="close" onclick="if(confirm(\'Disabilitare questo widget?\')) { $.post( \''.ROOTDIR.'/modules/aggiornamenti/actions.php?id_module='.$widget['id_module'].'\', { op: \'disable_widget\', id: \''.$widget['id'].'\' }, function(response){ location.reload(); }); };" >
     <span aria-hidden="true">&times;</span><span class="sr-only">'.tr('Chiudi').'</span>
 </button>';
@@ -100,7 +103,7 @@ class WidgetManager implements ManagerInterface
 
             // Modal
             elseif ($widget['more_link_type'] == 'popup') {
-                $result .= 'data-href="'.$widget['more_link'].'" data-toggle="modal" data-title="'.$widget['text'].'" data-target="#bs-popup"';
+                $result .= 'data-href="'.$widget['more_link'].'" data-toggle="modal" data-title="'.$widget['text'].'"';
             }
 
             // Codice JavaScript
@@ -149,7 +152,7 @@ class WidgetManager implements ManagerInterface
 
     protected function custom($widget)
     {
-        $result .= '
+        $result = '
 
         <li class="'.$widget['class'].'" id="'.$widget['id'].'">
             <!-- small box -->
@@ -202,8 +205,8 @@ class WidgetManager implements ManagerInterface
 
         $query = str_replace('|position|', $position, $query);
 
-        // Indivduazione dei widget interessati
-        $database = \Database::getConnection();
+        // Individuazione dei widget interessati
+        $database = database();
         $widgets = $database->fetchArray($query);
 
         $result = ' ';

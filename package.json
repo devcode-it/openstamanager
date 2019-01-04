@@ -1,38 +1,11 @@
 {
-    "name": "openstamanager",
-    "description": "Gestionale open-source per assistenza tecnica e fatturazione",
-    "license": "GPL-3.0",
-    "keywords": [
-        "open-source",
-        "gestionale",
-        "assistenza tecnica",
-        "fatturazione"
-    ],
-    "homepage": "https://www.openstamanager.com/",
-    "author": {
-        "name": "Fabio Lovato",
-        "email": "info@openstamanager.com"
-    },
-    "contributors": [
-        {
-            "name": "Fabio Piovan",
-            "email": "info@openstamanager.com"
-        },
-        {
-            "name": "Luca Salvà",
-            "email": "info@openstamanager.com"
-        }
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/devcode-it/openstamanager.git"
-    },
+    "private": true,
     "main": "gulpfile.js",
     "dependencies": {
-        "admin-lte": "~2.3.11",
+        "admin-lte": "^2.4.0",
         "autosize": "^3.0.21",
         "bootstrap": "^3.3.7",
-        "bootstrap-colorpicker": "^2.5.1",
+        "bootstrap-colorpicker": "2.5.1",
         "bootstrap-daterangepicker": "^2.1.25",
         "chart.js": "^2.7.0",
         "ckeditor": "git://github.com/ckeditor/ckeditor-releases.git#full/latest",
@@ -55,7 +28,6 @@
         "parsleyjs": "^2.7.2",
         "pdf": "git://github.com/mozilla/pdf.js#gh-pages",
         "pdf.js": "git://github.com/mozilla/pdf.js#gh-pages",
-        "pdfjs": "git://github.com/mozilla/pdf.js#gh-pages",
         "select2": "4.0.3",
         "select2-bootstrap-theme": "^0.1.0-beta.10",
         "signature_pad": "^2.1.1",
@@ -65,6 +37,7 @@
     },
     "devDependencies": {
         "archiver": "^2.0.0",
+        "concurrently": "^3.6.1",
         "cwd": "^0.10.0",
         "del": "^2.2.0",
         "gulp": "^3.9.1",
@@ -93,7 +66,8 @@
         "assets-OSM": "yarn upgrade && yarn run build-OSM",
         "build-OSM": "gulp",
         "dump-OSM": "php composer.phar dump-autoload",
-        "doc-OSM": "php couscous.phar deploy",
+        "tests-server": "concurrently \"java -jar selenium-server-standalone.jar\" \"chromedriver --url-base=/wd/hub\"",
+        "tests-OSM": "php codecept.phar run",
         "windows-fix": "yarn global add windows-build-tools"
     },
     "overrides": {
@@ -109,7 +83,7 @@
         "admin-lte": {
             "main": [
                 "dist/css/AdminLTE.css",
-                "dist/js/app.js"
+                "dist/js/adminlte.js"
             ],
             "dependencies": {
                 "jquery": ">=1.9.1"

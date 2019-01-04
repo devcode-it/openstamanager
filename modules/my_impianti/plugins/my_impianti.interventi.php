@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$matricole = (array) $post['matricole'];
+$matricole = (array) post('matricole');
 
 // Salvo gli impianti selezionati
 if (filter('op') == 'link_myimpianti') {
@@ -29,11 +29,11 @@ if (filter('op') == 'link_myimpianti') {
         }
     }
 
-    $_SESSION['infos'][] = tr('Informazioni impianti salvate!');
+    flash()->info(tr('Informazioni impianti salvate!'));
 } elseif (filter('op') == 'link_componenti') {
-    $components = (array) $post['componenti'];
+    $components = (array) post('componenti');
 
-    $list = (!empty($post['list'])) ? explode(',', $post['list']) : [];
+    $list = (!empty(post('list'))) ? explode(',', post('list')) : [];
     foreach ($list as $delete) {
         if (!in_array($delete, $components)) {
             $dbo->query('DELETE FROM my_componenti_interventi WHERE id_componente = '.prepare($delete).' AND id_intervento = '.prepare($id_record));
@@ -46,7 +46,7 @@ if (filter('op') == 'link_myimpianti') {
         }
     }
 
-    $_SESSION['infos'][] = tr('Informazioni componenti salvate!');
+    flash()->info(tr('Informazioni componenti salvate!'));
 }
 
 //Blocco della modifica impianti se l'intervento è completato
@@ -168,7 +168,7 @@ $impianti = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_interventi WHER
 $impianti = !empty($impianti) ? array_column($impianti, 'idimpianto') : [];
 
 // Elenco sedi
-$sedi = $dbo->fetchArray('SELECT id, nomesede, citta FROM an_sedi WHERE idanagrafica='.prepare($records[0]['idanagrafica'])." UNION SELECT 0, 'Sede legale', '' ORDER BY id");
+$sedi = $dbo->fetchArray('SELECT id, nomesede, citta FROM an_sedi WHERE idanagrafica='.prepare($record['idanagrafica'])." UNION SELECT 0, 'Sede legale', '' ORDER BY id");
 
 echo '
         <p><strong>'.tr('Impianti disponibili').'</strong></p>
@@ -176,7 +176,7 @@ echo '
             <input type="hidden" name="backto" value="record-edit">
             <div class="row">
                 <div class="col-xs-12 col-md-6">
-                    {[ "type": "select", "name": "matricole[]", "multiple": 1, "value": "'.implode(',', $impianti).'", "values": "query=SELECT my_impianti.id, CONCAT(matricola, \' - \', nome) AS descrizione, CONCAT(nomesede, IF(citta IS NULL OR citta = \'\', \'\', CONCAT(\' (\', citta, \')\'))) AS optgroup FROM my_impianti JOIN (SELECT id, nomesede, citta FROM an_sedi UNION SELECT 0 AS id, \'Sede legale\' AS nomesede, \'\' AS citta) AS t ON t.id = my_impianti.idsede WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' ORDER BY idsede ASC, matricola ASC", "extra": "'.$readonly.'" ]}
+                    {[ "type": "select", "name": "matricole[]", "multiple": 1, "value": "'.implode(',', $impianti).'", "values": "query=SELECT my_impianti.id, CONCAT(matricola, \' - \', nome) AS descrizione, CONCAT(nomesede, IF(citta IS NULL OR citta = \'\', \'\', CONCAT(\' (\', citta, \')\'))) AS optgroup FROM my_impianti JOIN (SELECT id, nomesede, citta FROM an_sedi UNION SELECT 0 AS id, \'Sede legale\' AS nomesede, \'\' AS citta) AS t ON t.id = my_impianti.idsede WHERE idanagrafica='.prepare($record['idanagrafica']).' ORDER BY idsede ASC, matricola ASC", "extra": "'.$readonly.'" ]}
                 </div>
             </div>
             <br><br>

@@ -1,6 +1,6 @@
 <?php
 
-return [
+$settings = [
     'orientation' => 'P',
     'format' => 'A4',
     'font-size' => 10,
@@ -12,4 +12,7 @@ return [
     ],
     'header-height' => 35,
     'footer-height' => 5,
+    'header-font-size' => 12,
 ];
+
+return $settings;

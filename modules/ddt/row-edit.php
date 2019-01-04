@@ -22,7 +22,7 @@ $options = [
 ];
 
 // Dati della riga
-$rsr = $dbo->fetchArray('SELECT * FROM dt_righe_ddt WHERE idddt='.prepare($id_record).' AND id='.prepare($get['idriga']));
+$rsr = $dbo->fetchArray('SELECT * FROM dt_righe_ddt WHERE idddt='.prepare($id_record).' AND id='.prepare(get('idriga')));
 
 $result = $rsr[0];
 $result['prezzo'] = $rsr[0]['subtotale'] / $rsr[0]['qta'];

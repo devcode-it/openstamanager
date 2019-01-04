@@ -1,12 +1,17 @@
 <?php
 
+$result['id'] = isset($result['id']) ? $result['id'] : null;
+
 /*
     Form di inserimento riga documento
 */
 echo '
 <form action="'.ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post">
-    <input type="hidden" name="op" value="'.$options['op'].'">
+    <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
+    <input type="hidden" name="hash" value="tab_'.$id_plugin.'">
     <input type="hidden" name="backto" value="record-edit">
+
+    <input type="hidden" name="op" value="'.$options['op'].'">
     <input type="hidden" name="idriga" value="'.$result['id'].'">
     <input type="hidden" name="dir" value="'.$options['dir'].'">';
 

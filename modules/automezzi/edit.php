@@ -55,14 +55,14 @@ include_once __DIR__.'/../../core.php';
 							<input type="hidden" name="op" value="">
 
 							<?php
-		                    include $docroot.'/modules/automezzi/row-list-tecnici.php';
-		                    ?>
+                            include $docroot.'/modules/automezzi/row-list-tecnici.php';
+                            ?>
 						</form>
 
 						<a href="javascript:;" class="btn btn-sm btn-success pull-right" title="Aggiorna date" onclick="$('#updatetech-form input[name=op]').val('savetech'); $('#updatetech-form').submit();"><i class="fa fa-edit"></i> <?php echo tr('Salva date'); ?></a>
 
 						<div class="pull-left">
-							<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir; ?>/modules/automezzi/add_tecnico.php?idautomezzo=<?php echo $id_record; ?>" data-toggle="modal" data-title="Aggiungi tecnico" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi tecnico'); ?></a><br>
+							<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir; ?>/modules/automezzi/add_tecnico.php?idautomezzo=<?php echo $id_record; ?>" data-toggle="modal" data-title="Aggiungi tecnico"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi tecnico'); ?></a><br>
 						</div>
 						<div class="clearfix"></div>
 					</div>
@@ -87,18 +87,18 @@ include_once __DIR__.'/../../core.php';
 				<div class="row">
 					<div class="col-md-12">
 						<?php
-		                include $docroot.'/modules/automezzi/row-list-articoli.php';
-		                ?>
+                        include $docroot.'/modules/automezzi/row-list-articoli.php';
+                        ?>
 
 						<div class="pull-left">
-							<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir; ?>/modules/automezzi/add_articolo.php?idautomezzo=<?php echo $id_record; ?>" data-toggle="modal" data-title="Aggiungi articoli" data-target="#bs-popup"><i class="fa fa-plus"></i> <?php echo tr('Articolo magazzino'); ?></a><br>
+							<a class="btn btn-sm btn-primary" data-href="<?php echo $rootdir; ?>/modules/automezzi/add_articolo.php?idautomezzo=<?php echo $id_record; ?>" data-toggle="modal" data-title="Aggiungi articoli"><i class="fa fa-plus"></i> <?php echo tr('Articolo magazzino'); ?></a><br>
 						</div>
 						<div class="clearfix"></div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>	
+	</div>
 </div>
 
 <a class="btn btn-danger ask" data-backto="record-list">

@@ -2,7 +2,63 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (get_var('Attiva aggiornamenti')) {
+// Personalizzazioni di codice
+if (function_exists(custom)) {
+    $custom = custom();
+    $tables = customTables();
+    if (!empty($custom) || !empty($tables)) {
+        echo '
+	<div class="box box-warning">
+		<div class="box-header with-border">
+			<h3 class="box-title"><span class="tip" title="'.tr('Elenco delle personalizzazioni rilevabili dal gestionale').'.">
+				<i class="fa fa-edit"></i> '.tr('Personalizzazioni').'
+			</span></h3>
+		</div>
+		<div class="box-body">';
+
+        if (!empty($custom)) {
+            echo '
+			<table class="table table-hover table-striped">
+				<tr>
+					<th width="10%">'.tr('Percorso').'</th>
+					<th width="15%">'.tr('Cartella personalizzata').'</th>
+					<th width="15%">'.tr('Database personalizzato').'</th>
+				</tr>';
+
+            foreach ($custom as $element) {
+                echo '
+				<tr>
+					<td>'.$element['path'].'</td>
+					<td>'.($element['directory'] ? 'Si' : 'No').'</td>
+					<td>'.($element['database'] ? 'Si' : 'No').'</td>
+				</tr>';
+            }
+
+            echo '
+			</table>
+
+			<p><strong>'.tr("Si sconsiglia l'aggiornamento senza il supporto dell'assistenza ufficiale").'.</strong></p>';
+        } else {
+            echo '
+			<p>'.tr('Non ci sono strutture personalizzate').'.</p>';
+        }
+
+        if (!empty($tables)) {
+            echo '
+			<div class="alert alert-warning">
+				<i class="fa fa-warning"></i>
+				<b>Attenzione!</b> Ci sono delle tabelle non previste nella versione standard del gestionale: '.implode(', ', $tables).'.
+			</div>';
+        }
+
+        echo '
+		</div>
+	</div>';
+    }
+}
+
+// Aggiornamenti
+if (setting('Attiva aggiornamenti')) {
     $alerts = [];
 
     if (!extension_loaded('zip')) {
@@ -39,51 +95,95 @@ if (get_var('Attiva aggiornamenti')) {
     }
 
     echo '
-        <div class="row">';
-    // Aggiornamento
+<script>
+function update() {
+    if ($("#blob").val()) {
+        swal({
+            title: "'.tr('Avviare la procedura?').'",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "'.tr('Sì').'"
+        }).then(function (result) {
+            $("#update").submit();
+        })
+    } else {
+        swal({
+            title: "'.tr('Selezionare un file!').'",
+            type: "error",
+        })
+    }
+}
+
+function search(button) {
+    buttonLoading(button);
+
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "post",
+        data: {
+            id_module: globals.id_module,
+            op: "check",
+        },
+        success: function(data){
+            if (data == "none") {
+                $("#update-search").html("'.tr('Nessun aggiornamento disponibile').'.");
+            } else {
+                $("#update-search").html("'.tr("E' stato individuato un nuovo aggiornamento").': " + data + ".<br>'.tr('Scaricalo ora: _LINK_', [
+                    '_LINK_' => "<a target='_blank' href='https://github.com/devcode-it/openstamanager/releases'>https://github.com/devcode-it/openstamanager/releases</a>",
+                ]).'");
+            }
+        }
+    });
+}
+</script>';
+
     echo '
-            <div class="col-md-6">
-                <div class="box box-success">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">'.tr('Carica un aggiornamento').'</h3>
-                    </div>
-                    <div class="box-body">
-                        <form action="'.$rootdir.'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" class="form-inline" id="update">
-                            <input type="hidden" name="op" value="upload">
-                            <input type="hidden" name="type" value="update">
+<div class="row">
+    <div class="col-md-8">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <h3 class="box-title">
+                    '.tr('Carica un aggiornamento').' <span class="tip" title="'.tr('Form di caricamento aggiornamenti del gestionale e innesti di moduli e plugin').'."><i class="fa fa-question-circle-o"></i></span>
+                </h3>
+            </div>
+            <div class="box-body">
+                <form action="'.ROOTDIR.'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" class="form-inline" id="update">
+                    <input type="hidden" name="op" value="upload">
 
-                            <label><input type="file" name="blob"></label>
+                    <label><input type="file" name="blob" id="blob"></label>
 
-                            <button type="button" class="btn btn-primary" onclick="if( confirm(\''.tr('Avviare la procedura?').'\') ){ $(\'#update\').submit(); }">
-                                <i class="fa fa-upload"></i> '.tr('Carica').'...
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>';
+                    <button type="button" class="btn btn-primary pull-right" onclick="update()">
+                        <i class="fa fa-upload"></i> '.tr('Carica').'
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>';
 
-    // Nuovo modulo
     echo '
-            <div class="col-md-6">
-                <div class="box box-info">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">'.tr('Carica un nuovo modulo').'</h3>
-                    </div>
-                    <div class="box-body">
-                        <form action="'.$rootdir.'/controller.php?id_module='.$id_module.'" method="post" enctype="multipart/form-data" class="form-inline" id="module">
-                            <input type="hidden" name="op" value="upload">
-                            <input type="hidden" name="type" value="new">
 
-                            <label><input type="file" name="blob"></label>
-                            <button type="button" class="btn btn-primary" onclick="if( confirm(\''.tr('Avviare la procedura?').'\') ){ $(\'#module\').submit(); }">
-                                <i class="fa fa-upload"></i> '.tr('Carica').'...
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>';
-    echo '
-        </div>';
+    <div class="col-md-4">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">
+                    '.tr('Ricerca aggiornamenti').' <span class="tip" title="'.tr('Controllo automatico della presenza di aggiornamenti per il gestionale').'."><i class="fa fa-question-circle-o"></i></span>
+                </h3>
+            </div>
+            <div class="box-body" id="update-search">';
+    if (extension_loaded('curl')) {
+        echo'		<button type="button" class="btn btn-info btn-block" onclick="search(this)">
+                    <i class="fa fa-search"></i> '.tr('Ricerca').'
+                </button>';
+    } else {
+        echo'		<button type="button" class="btn btn-warning btn-block disabled" >
+                    <i class="fa fa-warning"></i> '.tr('Estensione curl non supportata').'.
+                </button>';
+    }
+
+    echo'   </div>
+        </div>
+    </div>
+</div>';
 }
 
 // Elenco moduli installati
@@ -100,138 +200,11 @@ echo '
                 <th width="20">'.tr('Opzioni').'</th>
             </tr>';
 
-$modules = $dbo->fetchArray('SELECT * FROM zz_modules WHERE parent IS NULL ORDER BY `order` ASC');
+$modules = Modules::getHierarchy();
 
 $osm_version = Update::getVersion();
 
-foreach ($modules as $module) {
-    // STATO
-    if (!empty($module['enabled'])) {
-        $text = tr('Abilitato');
-        $text .= ($module['id'] != $id_module) ? '. '.tr('Clicca per disabilitarlo').'...' : '';
-        $stato = '<i class="fa fa-cog fa-spin text-success" data-toggle="tooltip" title="'.$text.'"></i>';
-    } else {
-        $stato = '<i class="fa fa-cog text-warning" data-toggle="tooltip" title="'.tr('Non abilitato').'"></i>';
-        $class = 'warning';
-    }
-
-    // Possibilità di disabilitare o abilitare i moduli tranne quello degli aggiornamenti
-    if ($module['id'] != $id_module) {
-        if ($module['enabled']) {
-            $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Disabilitare questo modulo?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'disable', id: '".$module['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\">".$stato."</a>\n";
-        } else {
-            $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Abilitare questo modulo?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'enable', id: '".$module['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\"\">".$stato."</a>\n";
-        }
-    }
-
-    // COMPATIBILITA'
-    $compatibilities = explode(',', $module['compatibility']);
-    // Controllo per ogni versione se la regexp combacia per dire che è compatibile o meno
-    $comp = false;
-    foreach ($compatibilities as $compatibility) {
-        $comp = (preg_match('/'.$compatibility.'/', $osm_version)) ? true : $comp;
-    }
-
-    if ($comp) {
-        $compatible = '<i class="fa fa-check-circle text-success" data-toggle="tooltip" title="'.tr('Compatibile').'"></i>';
-		($module['enabled']) ? $class = 'success': $class = 'warning';
-    } else {
-        $compatible = '<i class="fa fa-warning text-danger" data-toggle="tooltip" title="'.tr('Non compatibile!').tr('Questo modulo è compatibile solo con le versioni').': '.$module['compatibility'].'"></i>';
-        $class = 'danger';
-    }
-
-    echo '
-            <tr class="'.$class.'">
-                <td>'.$module['name'].'</td>
-                <td align="right">'.$module['version'].'</td>
-                <td align="center">'.$stato.'</td>
-                <td align="center">'.$compatible.'</td>';
-
-    echo '
-                <td>';
-
-    // Possibilità di disinstallare solo se il modulo non è tra quelli predefiniti
-    if (empty($module['default'])) {
-        echo "
-                    <a href=\"javascript:;\" data-toggle='tooltip' title=\"".tr('Disinstalla')."...\" onclick=\"if( confirm('".tr('Vuoi disinstallare questo modulo?').' '.tr('Tutti i dati salvati andranno persi!')."') ){ if( confirm('".tr('Sei veramente sicuro?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'uninstall', id: '".$module['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); } }\"><i class='fa fa-trash'></i></a>";
-    } else {
-        echo "
-                    <a class='disabled text-muted'>
-                        <i class='fa fa-trash'></i>
-                    </a>";
-    }
-
-    echo '
-                </td>
-            </tr>';
-
-    // Prima di cambiare modulo verifico se ci sono sottomoduli
-    $submodules = $dbo->fetchArray('SELECT * FROM zz_modules WHERE parent='.prepare($module['id']).' ORDER BY `order` ASC');
-    foreach ($submodules as $sub) {
-        // STATO
-        if (!empty($sub['enabled'])) {
-            $text = tr('Abilitato');
-            $text .= ($sub['id'] != $id_module) ? '. '.tr('Clicca per disabilitarlo').'...' : '';
-            $stato = '<i class="fa fa-cog fa-spin text-success" data-toggle="tooltip" title="'.$text.'"></i>';
-        } else {
-            $stato = '<i class="fa fa-cog text-warning" data-toggle="tooltip" title="'.tr('Non abilitato').'"></i>';
-            $class = 'warning';
-        }
-
-        // Possibilità di disabilitare o abilitare i moduli tranne quello degli aggiornamenti
-        if ($sub['id'] != $id_module) {
-            if ($sub['enabled']) {
-                $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Disabilitare questo modulo?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'disable', id: '".$sub['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\">".$stato."</a>\n";
-            } else {
-                $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Abilitare questo modulo?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'enable', id: '".$sub['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\"\">".$stato."</a>\n";
-            }
-        }
-
-        // COMPATIBILITA'
-        $compatibilities = explode(',', $sub['compatibility']);
-        // Controllo per ogni versione se la regexp combacia per dire che è compatibile o meno
-        $comp = false;
-
-        foreach ($compatibilities as $compatibility) {
-            $comp = (preg_match('/'.$compatibility.'/', $osm_version)) ? true : $comp;
-        }
-
-        if ($comp) {
-            $compatible = '<i class="fa fa-check-circle text-success" data-toggle="tooltip" title="'.tr('Compatibile').'"></i>';
-            ($sub['enabled']) ? $class = 'success': $class = 'warning';
-        } else {
-            $compatible = '<i class="fa fa-warning text-danger" data-toggle="tooltip" title="'.tr('Non compatibile!').tr('Questo modulo è compatibile solo con le versioni').': '.$sub['compatibility'].'"></i>';
-            $class = 'danger';
-        }
-
-        echo '
-            <tr class="'.$class.'">
-                <td><small>&nbsp;&nbsp;- '.$sub['name'].'</small></td>
-                <td align="right">'.$sub['version'].'</td>
-                <td align="center">'.$stato.'</td>
-                <td align="center">'.$compatible.'</td>';
-
-        echo '
-                <td>';
-
-        // Possibilità di disinstallare solo se il modulo non è tra quelli predefiniti
-        if (empty($sub['default'])) {
-            echo "
-                    <a href=\"javascript:;\" data-toggle='tooltip' title=\"".tr('Disinstalla')."...\" onclick=\"if( confirm('".tr('Vuoi disinstallare questo modulo?').' '.tr('Tutti i dati salvati andranno persi!')."') ){ if( confirm('".tr('Sei veramente sicuro?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'uninstall', id: '".$sub['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); } }\">
-                        <i class='fa fa-trash'></i>
-                    </a>";
-        } else {
-            echo "
-                    <a class='disabled text-muted'>
-                        <i class='fa fa-trash'></i>
-                    </a>";
-        }
-
-        echo '
-                </td>
-            </tr>';
-    }
-}
+echo submodules($modules);
 
 echo '
         </table>
@@ -273,9 +246,9 @@ foreach ($widgets as $widget) {
 
     // Possibilità di disabilitare o abilitare i moduli tranne quello degli aggiornamenti
     if ($widget['enabled']) {
-        $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Disabilitare questo widget?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'disable_widget', id: '".$widget['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\">".$stato."</a>\n";
+        $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Disabilitare questo widget?')."') ){ $.post( '".ROOTDIR.'/actions.php?id_module='.$id_module."', { op: 'disable_widget', id: '".$widget['id']."' }, function(response){ location.href='".ROOTDIR.'/controller.php?id_module='.$id_module."'; }); }\">".$stato."</a>\n";
     } else {
-        $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Abilitare questo widget?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'enable_widget', id: '".$widget['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\"\">".$stato."</a>\n";
+        $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Abilitare questo widget?')."') ){ $.post( '".ROOTDIR.'/actions.php?id_module='.$id_module."', { op: 'enable_widget', id: '".$widget['id']."' }, function(response){ location.href='".ROOTDIR.'/controller.php?id_module='.$id_module."'; }); }\"\">".$stato."</a>\n";
     }
 
     // POSIZIONE
@@ -287,10 +260,10 @@ foreach ($widgets as $widget) {
 
     if ($widget['location'] == 'controller_right') {
         $posizione = "<i class='fa fa-arrow-up text-warning' data-toggle='tooltip' title=\"".tr('Clicca per cambiare la posizione...')."\"></i>&nbsp;<i class='fa fa-arrow-right text-success' data-toggle='tooltip' title=\"\"></i>";
-        $posizione = "<a href='javascript:;' onclick=\"if( confirm('".tr('Cambiare la posizione di questo widget?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'change_position_widget_top', id: '".$widget['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\"\">".$posizione."</a>\n";
+        $posizione = "<a href='javascript:;' onclick=\"if( confirm('".tr('Cambiare la posizione di questo widget?')."') ){ $.post( '".ROOTDIR.'/actions.php?id_module='.$id_module."', { op: 'change_position_widget_top', id: '".$widget['id']."' }, function(response){ location.href='".ROOTDIR.'/controller.php?id_module='.$id_module."'; }); }\"\">".$posizione."</a>\n";
     } elseif ($widget['location'] == 'controller_top') {
         $posizione = "<i class='fa fa-arrow-up text-success' data-toggle='tooltip' title=\"\"></i>&nbsp;<i class='fa fa-arrow-right text-warning' data-toggle='tooltip' title=\"".tr('Clicca per cambiare la posizione...').'"></i></i>';
-        $posizione = "<a href='javascript:;' onclick=\"if( confirm('".tr('Cambiare la posizione di questo widget?')."') ){ $.post( '".$rootdir.'/actions.php?id_module='.$id_module."', { op: 'change_position_widget_right', id: '".$widget['id']."' }, function(response){ location.href='".$rootdir.'/controller.php?id_module='.$id_module."'; }); }\"\">".$posizione."</a>\n";
+        $posizione = "<a href='javascript:;' onclick=\"if( confirm('".tr('Cambiare la posizione di questo widget?')."') ){ $.post( '".ROOTDIR.'/actions.php?id_module='.$id_module."', { op: 'change_position_widget_right', id: '".$widget['id']."' }, function(response){ location.href='".ROOTDIR.'/controller.php?id_module='.$id_module."'; }); }\"\">".$posizione."</a>\n";
     }
 
     echo '
@@ -307,4 +280,16 @@ foreach ($widgets as $widget) {
 echo '
         </table>
     </div>
+</div>';
+
+// Requisiti
+echo '
+<hr>
+<div>
+    <h3>'.tr('Requisiti').'</h3>';
+
+include DOCROOT.'/include/init/requirements.php';
+
+echo '
+
 </div>';

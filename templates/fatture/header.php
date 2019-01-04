@@ -1,10 +1,22 @@
 <?php
 
-echo '
-<!-- Intestazione fornitore -->
-$default_header$
-<br>
+if ($options['hide_header']) {
+    echo '
+	<!-- Intestazione vuota fornitore -->
+	<div class="row" style="height:111px;">
+		<div class="col-xs-6">
+		</div>
+		<div class="col-xs-6 text-right">
+		</div>
+	</div>';
+} else {
+    echo '
+	<!-- Intestazione fornitore -->
+	$default_header$';
+}
 
+echo '
+<br>
 <div class="row">
     <!-- Dati Fattura -->
     <div class="col-xs-6">
@@ -12,7 +24,7 @@ $default_header$
             <b>$tipo_doc$</b>
         </div>
 
-        <table class="table">
+        <table class="table" style="overflow: visible">
             <tr>
                 <td valign="top" class="border-full text-center">
                     <p class="small-bold">'.tr('Nr. documento', [], ['upper' => true]).'</p>

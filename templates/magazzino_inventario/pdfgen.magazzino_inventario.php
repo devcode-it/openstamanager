@@ -3,17 +3,19 @@
 include_once __DIR__.'/../../core.php';
 
 // carica report html
-$report = file_get_contents($docroot.'/templates/magazzino_inventario/magazzino_inventario.html');
-$body = file_get_contents($docroot.'/templates/magazzino_inventario/magazzino_inventario_body.html');
+$report = file_get_contents(__DIR__.'/magazzino_inventario.html');
+$body = file_get_contents(__DIR__.'/magazzino_inventario_body.html');
 
 $search_codice = $_GET['search_codice'];
 $search_descrizione = $_GET['search_descrizione'];
 
-if ($_GET['search_subcategoria']=='undefined')
-	$_GET['search_subcategoria'] = '';
+if ($_GET['search_subcategoria'] == 'undefined') {
+    $_GET['search_subcategoria'] = '';
+}
 
-if (!empty( $_GET['search_categoria'] ) or !empty( $_GET['search_subcategoria'] ) )
-	$search_categoria = $_GET['search_categoria'].' '.$_GET['search_subcategoria'];
+if (!empty($_GET['search_categoria']) or !empty($_GET['search_subcategoria'])) {
+    $search_categoria = $_GET['search_categoria'].' '.$_GET['search_subcategoria'];
+}
 
 $search_tipo = $_GET['search_tipo'];
 
@@ -29,18 +31,18 @@ if ($search_tipo == 'solo prodotti attivi') {
     $add_where = '';
 }
 
+if ($search_codice != '') {
+    $add_where .= " AND ( replace(codice,'.','') LIKE \"%$search_codice%\" OR codice LIKE \"%$search_codice%\" )";
+}
 
-if ($search_codice!='')
-	$add_where .= " AND ( replace(codice,'.','') LIKE \"%$search_codice%\" OR codice LIKE \"%$search_codice%\" )";
-
-if ($search_descrizione!='')
-		$add_where .= "  AND replace(descrizione,'.','') LIKE \"%$search_descrizione%\"";
+if ($search_descrizione != '') {
+    $add_where .= "  AND replace(descrizione,'.','') LIKE \"%$search_descrizione%\"";
+}
 
 $add_having = '';
-if (!empty($search_categoria))
-		$add_having .= "  AND CONCAT_WS( ' ', categoria, subcategoria ) LIKE '%".$search_categoria."%' ";
-	
-	
+if (!empty($search_categoria)) {
+    $add_having .= "  AND CONCAT_WS( ' ', categoria, subcategoria ) LIKE '%".$search_categoria."%' ";
+}
 
 include_once $docroot.'/templates/pdfgen_variables.php';
 
@@ -48,13 +50,13 @@ include_once $docroot.'/templates/pdfgen_variables.php';
 // LEFT OUTER JOIN mg_unitamisura ON mg_unitamisura.id=mg_articoli.idum
 // mg_unitamisura.valore AS um
 // LEFT OUTER JOIN mg_categorie ON (mg_categorie.id=mg_articoli.id_categoria AND mg_categorie.parent = 0) OR (mg_categorie.id=mg_articoli.id_sottocategoria AND  mg_categorie.parent = 1)
-$query = "SELECT *, mg_articoli.id AS id_articolo, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 0 AND mg_categorie.id = mg_articoli.id_categoria) AS categoria, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 1 AND mg_categorie.id = mg_articoli.id_sottocategoria) AS subcategoria  FROM mg_articoli WHERE 1=1   ".$add_where." AND qta > 0 HAVING  2=2 ".$add_having." ORDER BY codice ASC";
+$period_end = $_SESSION['period_end'];
+
+$query = 'SELECT *, mg_articoli.id AS id_articolo, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 0 AND mg_categorie.id = mg_articoli.id_categoria) AS categoria, (SELECT nome FROM mg_categorie WHERE  mg_categorie.parent = 1 AND mg_categorie.id = mg_articoli.id_sottocategoria) AS subcategoria, (SELECT SUM(qta) FROM mg_movimenti WHERE mg_movimenti.idarticolo=mg_articoli.id AND (mg_movimenti.idintervento IS NULL OR mg_movimenti.idautomezzo = 0) AND data <= '.prepare($period_end).' ) AS qta FROM mg_articoli WHERE 1=1 '.$add_where.' HAVING  2=2 AND qta > 0 '.$add_having.' ORDER BY codice ASC';
 $rs = $dbo->fetchArray($query);
 $totrows = sizeof($rs);
 
-
-
-$body .= '<h3>INVENTARIO AL '.date('d/m/Y')."</h3>\n";
+$body .= '<h3>INVENTARIO AL '.Translator::dateToLocale($period_end)."</h3>\n";
 
 $body .= "<table cellspacing='0' style='table-layout:fixed;'>\n";
 $body .= "<col width='100'><col width='230'><col width='70'><col width='70'><col width='70'><col width='90'>\n";

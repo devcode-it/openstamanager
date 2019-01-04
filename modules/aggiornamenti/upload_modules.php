@@ -2,117 +2,95 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (!get_var('Attiva aggiornamenti')) {
+use Util\Zip;
+
+if (!setting('Attiva aggiornamenti')) {
     die(tr('Accesso negato'));
 }
 
-$tmp = $_FILES['blob']['tmp_name'];
-$filename = $_FILES['blob']['name'];
-$filetype = $_FILES['blob']['type'];
-$size = $_FILES['blob']['size'];
-$type = $_POST['type'];
-
 if (!extension_loaded('zip')) {
-    $_SESSION['errors'][] = tr('Estensione zip non supportata!').'<br>'.tr('Verifica e attivala sul tuo file _FILE_', [
+    flash()->error(tr('Estensione zip non supportata!').'<br>'.tr('Verifica e attivala sul tuo file _FILE_', [
         '_FILE_' => '<b>php.ini</b>',
-    ]);
-} elseif (!ends_with($filename, '.zip')) {
-    $_SESSION['errors'][] = tr('Il file non è un archivio zip!');
-} elseif (!empty($tmp) && is_file($tmp)) {
-    $zip = new ZipArchive();
+    ]));
 
-    if ($zip->open($tmp)) {
-        $tmp_dir = $docroot.'/tmp';
-
-        // Controllo sulla cartella
-        directory($tmp_dir);
-
-        $zip->extractTo($tmp_dir);
-
-        // AGGIORNAMENTO
-        if ('update' == $type) {
-            // Salvo i file di configurazione e versione attuale
-            $old_config = file_get_contents($docroot.'/config.inc.php');
-
-            // Aggiornamento del CORE
-            if (file_exists($tmp_dir.'/VERSION')) {
-                //rename($docroot.'/VERSION', $docroot.'/VERSION.old');
-
-                // Copia i file dalla cartella temporanea alla root
-                copyr($tmp_dir, $docroot);
-
-                // Scollego l'utente per eventuali aggiornamenti del db
-                Auth::logout();
-            }
-
-            // Aggiornamento di un MODULO
-            elseif (file_exists($tmp_dir.'/MODULE')) {
-                $module_info = parse_ini_file($tmp_dir.'/MODULE', true);
-                $module_name = $module_info['module_name'];
-                $module_dir = $module_info['module_directory'];
-
-                // Copio i file nella cartella "modules/<nomemodulo>/"
-                copyr($tmp_dir, $docroot.'/modules/'.$module_dir.'/');
-
-                // Rinomino il file di versione per forzare l'aggiornamento
-                //rename($docroot.'/VERSION_'.$module, $docroot.'/VERSION_'.$module.'.old');
-
-                // Scollego l'utente per eventuali aggiornamenti del db
-                Auth::logout();
-            } else {
-                $_SESSION['errors'][] = tr('File di aggiornamento non riconosciuto!');
-            }
-
-            // Ripristino il file di configurazione dell'utente
-            file_put_contents($docroot.'/config.inc.php', $old_config);
-        }
-
-        // NUOVO MODULO
-        elseif ('new' == $type) {
-            // Se non c'è il file MODULE non é un modulo
-            if (is_file($tmp_dir.'/MODULE')) {
-                // Leggo le info dal file di configurazione del modulo
-                $module_info = parse_ini_file($tmp_dir.'/MODULE', true);
-                $module_name = $module_info['module_name'];
-                $module_version = $module_info['module_version'];
-                $module_dir = $module_info['module_directory'];
-
-                // Copio i file nella cartella "modules/<nomemodulo>/"
-                copyr($tmp_dir, $docroot.'/modules/'.$module_dir.'/');
-
-                // Scollego l'utente per eventuali aggiornamenti del db
-                Auth::logout();
-
-                // Sposto i file della cartella "files/" nella root
-                $files_dir = $docroot.'/modules/'.$module_dir.'/files/';
-                if (is_dir($files_dir)) {
-                    copyr($files_dir, $docroot.'/files');
-                    delete($files_dir);
-                }
-
-                // Inserimento delle voci del modulo nel db per ogni sezione [sezione]
-                // Verifico che il modulo non esista già
-                $n = $dbo->fetchNum('SELECT name FROM zz_modules WHERE name='.prepare($module_name));
-
-                if (0 == $n) {
-                    $module_info['module_parent'] = $dbo->fetchNum('SELECT name FROM zz_modules WHERE id='.prepare($module_info['module_parent'])) ? prepare($module_info['module_parent']) : 'NULL';
-
-                    $query = 'INSERT INTO zz_modules(`name`, `title`, `directory`, `options`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES('.prepare($module_name).', '.prepare($module_name).', '.prepare($module_dir).', '.prepare($module_info['module_options']).', '.prepare($module_info['module_icon']).', '.prepare($module_version).', '.prepare($module_info['module_compatibility']).', "100", '.$module_info['module_parent'].', 0, 1)';
-                    $dbo->query($query);
-                }
-            }
-
-            // File zip non contiene il file MODULE
-            else {
-                $_SESSION['errors'][] = tr('File di installazione non valido!');
-            }
-        }
-
-        delete($tmp_dir);
-        redirect($rootdir);
-    } else {
-        $_SESSION['errors'][] = checkZip($tmp);
-    }
-
-    $zip->close();
+    return;
 }
+
+$extraction_dir = Zip::extract($_FILES['blob']['tmp_name']);
+
+// Aggiornamento del progetto
+if (file_exists($extraction_dir.'/VERSION')) {
+    // Salva il file di configurazione
+    $config = file_get_contents($docroot.'/config.inc.php');
+
+    // Copia i file dalla cartella temporanea alla root
+    copyr($extraction_dir, $docroot);
+
+    // Ripristina il file di configurazione dell'installazione
+    file_put_contents($docroot.'/config.inc.php', $config);
+} else {
+    $finder = Symfony\Component\Finder\Finder::create()
+        ->files()
+        ->ignoreDotFiles(true)
+        ->ignoreVCS(true)
+        ->in($extraction_dir);
+
+    $files = $finder->name('MODULE')->name('PLUGIN');
+
+    foreach ($files as $file) {
+        // Informazioni dal file di configurazione
+        $info = Util\Ini::readFile($file->getRealPath());
+
+        // Informazioni aggiuntive per il database
+        $insert = [];
+
+        // Modulo
+        if (basename($file->getRealPath()) == 'MODULE') {
+            $directory = 'modules';
+            $table = 'zz_modules';
+
+            $installed = Modules::get($info['name']);
+            $insert['parent'] = Modules::get($info['parent']);
+            $insert['icon'] = $info['icon'];
+        }
+
+        // Plugin
+        elseif (basename($file->getRealPath()) == 'PLUGIN') {
+            $directory = 'plugins';
+            $table = 'zz_plugins';
+
+            $installed = Plugins::get($info['name']);
+            $insert['idmodule_from'] = Modules::get($info['module_from'])['id'];
+            $insert['idmodule_to'] = Modules::get($info['module_to'])['id'];
+            $insert['position'] = $info['position'];
+        }
+
+        // Copia dei file nella cartella relativa
+        copyr(dirname($file->getRealPath()), $docroot.'/'.$directory.'/'.$info['directory']);
+
+        // Eventuale registrazione nel database
+        if (empty($installed)) {
+            $dbo->insert($table, array_merge($insert, [
+                'name' => $info['name'],
+                'title' => !empty($info['title']) ? $info['title'] : $info['name'],
+                'directory' => $info['directory'],
+                'options' => $info['options'],
+                'version' => $info['version'],
+                'compatibility' => $info['compatibility'],
+                'order' => 100,
+                'default' => 0,
+                'enabled' => 1,
+            ]));
+
+            flash()->error(tr('Installazione completata!'));
+        } else {
+            flash()->error(tr('Aggiornamento completato!'));
+        }
+    }
+}
+
+// Rimozione delle risorse inutilizzate
+delete($extraction_dir);
+
+// Redirect
+redirect(ROOTDIR.'/editor.php?id_module='.$id_module);

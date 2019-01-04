@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\Capsule\Manager as Capsule;
+
 /**
  * Classe per gestire la connessione al database.
  *
@@ -7,27 +9,17 @@
  */
 class Database extends Util\Singleton
 {
-    /** @var string Host del database */
-    protected $host;
-    /** @var int Porta di accesso del database */
-    protected $port;
-    /** @var string Username di accesso */
-    protected $username;
-    /** @var string Password di accesso */
-    protected $password;
+    /** @var \Illuminate\Database\Capsule\Manager Gestore di connessione Laravel */
+    protected $capsule;
+
     /** @var string Nome del database */
     protected $database_name;
 
-    /** @var string Charset della comunicazione */
-    protected $charset;
-    /** @var array Opzioni riguardanti la comunicazione (PDO) */
-    protected $option = [];
-
-    /** @var DebugBar\DataCollector\PDO\TraceablePDO Classe PDO tracciabile */
-    protected $pdo;
-
+    /** @var bool Stato di connessione del database */
+    protected $is_connected;
     /** @var bool Stato di installazione del database */
     protected $is_installed;
+
     /** @var string Versione corrente di MySQL */
     protected $mysql_version;
 
@@ -40,13 +32,12 @@ class Database extends Util\Singleton
      * @param string       $password
      * @param string       $database_name
      * @param string       $charset
-     * @param array        $option
      *
      * @since 2.3
      *
      * @return Database
      */
-    protected function __construct($server, $username, $password, $database_name, $charset = null, $option = [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION])
+    protected function __construct($server, $username, $password, $database_name, $charset = null)
     {
         if (is_array($server)) {
             $host = $server['host'];
@@ -56,52 +47,43 @@ class Database extends Util\Singleton
             $host = $temp[0];
             $port = !empty($temp[1]) ? $temp[1] : null;
         }
-		
-		//possibilità di specificare una porta per il servizio mysql diversa dalla standard 3306
-		$port = (!empty(App::getConfig()['port'])) ? App::getConfig()['port'] : $port;
-		
-        $this->host = $host;
-        if (!empty($port) && is_int($port * 1)) {
-            $this->port = $port;
-        }
 
-        $this->username = $username;
-        $this->password = $password;
+        // Possibilità di specificare una porta per il servizio MySQL diversa dalla standard 3306
+        $port = !empty(App::getConfig()['port']) ? App::getConfig()['port'] : $port;
+
         $this->database_name = $database_name;
 
-        $this->charset = $charset;
-        $this->option = $option;
-
-        if (!empty($this->host) && !empty($this->database_name)) {
+        if (!empty($host) && !empty($database_name)) {
             try {
-                $pdo = new PDO(
-                    'mysql:host='.$this->host.(!empty($this->port) ? ';port='.$this->port : '').';dbname='.$this->database_name,
-                    $this->username,
-                    $this->password,
-                    $this->option
-                );
+                // Istanziamento di Eloquent
+                $this->capsule = new Capsule();
+                $this->capsule->addConnection([
+                    'driver' => 'mysql',
+                    'host' => $host,
+                    'database' => $database_name,
+                    'username' => $username,
+                    'password' => $password,
+                    'charset' => 'utf8',
+                    'prefix' => '',
+                    'port' => $port,
+                ]);
 
-                if (App::getConfig()['debug']) {
-                    $pdo = new \DebugBar\DataCollector\PDO\TraceablePDO($pdo);
-                }
+                $this->is_connected = !empty($this->getPDO());
 
-                $this->pdo = $pdo;
-
-                if (empty($this->charset) && version_compare($this->getMySQLVersion(), '5.5.3') >= 0) {
-                    $this->charset = 'utf8mb4';
+                // Impostazione del charset della comunicazione
+                if (empty($charset) && version_compare($this->getMySQLVersion(), '5.5.3') >= 0) {
+                    $this->getPDO()->exec("SET NAMES 'utf8mb4'");
                 }
 
                 // Fix per problemi di compatibilità delle password MySQL 4.1+ (da versione precedente)
-                $this->pdo->query('SET SESSION old_passwords = 0');
-                //$this->pdo->query('SET PASSWORD = PASSWORD('.$this->prepare($this->password).')');
-
-                // Impostazione del charset della comunicazione
-                if (!empty($this->charset)) {
-                    $this->pdo->query("SET NAMES '".$this->charset."'");
-                }
+                $this->getPDO()->exec('SET SESSION old_passwords = 0');
+                //$this->getPDO()->exec('SET PASSWORD = PASSWORD('.$this->prepare($this->password).')');
 
                 // Reset della modalità di esecuzione MySQL per la sessione corrente
-                $this->pdo->query("SET sql_mode = ''");
+                $this->getPDO()->exec("SET sql_mode = ''");
+
+                $this->capsule->setAsGlobal();
+                $this->capsule->bootEloquent();
             } catch (PDOException $e) {
                 if ($e->getCode() == 1049 || $e->getCode() == 1044) {
                     $e = new PDOException(($e->getCode() == 1049) ? tr('Database non esistente!') : tr('Credenziali di accesso invalide!'));
@@ -145,11 +127,16 @@ class Database extends Util\Singleton
      *
      * @since 2.3
      *
-     * @return \DebugBar\DataCollector\PDO\TraceablePDO
+     * @return \DebugBar\DataCollector\PDO\TraceablePDO|PDO
      */
     public function getPDO()
     {
-        return $this->pdo;
+        return $this->capsule->getConnection()->getPDO();
+    }
+
+    public function getCapsule()
+    {
+        return $this->capsule;
     }
 
     /**
@@ -161,7 +148,7 @@ class Database extends Util\Singleton
      */
     public function isConnected()
     {
-        return !empty($this->pdo);
+        return $this->is_connected;
     }
 
     /**
@@ -174,7 +161,7 @@ class Database extends Util\Singleton
     public function isInstalled()
     {
         if (empty($this->is_installed)) {
-            $this->is_installed = $this->isConnected() && $this->fetchNum("SHOW TABLES LIKE 'zz_modules'");
+            $this->is_installed = $this->tableExists('zz_modules');
         }
 
         return $this->is_installed;
@@ -185,7 +172,7 @@ class Database extends Util\Singleton
      *
      * @since 2.3
      *
-     * @return int
+     * @return string
      */
     public function getMySQLVersion()
     {
@@ -220,10 +207,11 @@ class Database extends Util\Singleton
      *
      * @return int
      */
-    public function query($query, $signal = null, $options = [])
+    public function query($query, $parameters = [], $signal = null, $options = [])
     {
         try {
-            $this->pdo->query($query);
+            $statement = $this->getPDO()->prepare($query);
+            $statement->execute($parameters);
 
             $id = $this->lastInsertedID();
             if ($id == 0) {
@@ -246,12 +234,15 @@ class Database extends Util\Singleton
      *
      * @return array
      */
-    public function fetchArray($query, $numeric = false, $options = [])
+    public function fetchArray($query, $parameters = [], $numeric = false, $options = [])
     {
         try {
             $mode = empty($numeric) ? PDO::FETCH_ASSOC : PDO::FETCH_NUM;
 
-            $result = $this->pdo->query($query)->fetchAll($mode);
+            $statement = $this->getPDO()->prepare($query);
+            $statement->execute($parameters);
+
+            $result = $statement->fetchAll($mode);
 
             return $result;
         } catch (PDOException $e) {
@@ -271,7 +262,7 @@ class Database extends Util\Singleton
      */
     public function fetchRows($query)
     {
-        return $this->fetchArray($query, true);
+        return $this->fetchArray($query, [], true);
     }
 
     /**
@@ -286,8 +277,28 @@ class Database extends Util\Singleton
      */
     public function fetchRow($query)
     {
-        $result = $this->fetchArray($query);
-        if (is_array($result)) {
+        return $this->fetchOne($query);
+    }
+
+    /**
+     * Restituisce il primo elemento della selezione, strutturato in base ai nomi degli attributi.
+     * Attenzione: aggiunge il LIMIT relativo a fine della query.
+     *
+     * @since 2.4
+     *
+     * @param string $query Query da eseguire
+     *
+     * @return array
+     */
+    public function fetchOne($query, $parameters = [])
+    {
+        if (!str_contains($query, 'LIMIT')) {
+            $query .= ' LIMIT 1';
+        }
+
+        $result = $this->fetchArray($query, $parameters);
+
+        if (isset($result[0])) {
             return $result[0];
         }
 
@@ -301,16 +312,26 @@ class Database extends Util\Singleton
      *
      * @param string $query Query da eseguire
      *
-     * @return array
+     * @return int
      */
-    public function fetchNum($query)
+    public function fetchNum($query, $parameters = [])
     {
-        $result = $this->fetchArray($query);
-        if (is_array($result)) {
-            return count($result);
+        $result = $this->fetchArray('SELECT COUNT(*) as `tot` FROM ('.$query.') AS `count`', $parameters);
+
+        if (!empty($result)) {
+            return $result[0]['tot'];
         }
 
-        return $result;
+        return 0;
+    }
+
+    public function tableExists($table)
+    {
+        if ($this->isConnected()) {
+            return $this->capsule->schema()->hasTable($table);
+        }
+
+        return null;
     }
 
     /**
@@ -336,7 +357,7 @@ class Database extends Util\Singleton
     public function lastInsertedID()
     {
         try {
-            return $this->pdo->lastInsertId();
+            return $this->getPDO()->lastInsertId();
         } catch (PDOException $e) {
             $this->signal($e, tr("Impossibile ottenere l'ultimo identificativo creato"));
         }
@@ -350,27 +371,11 @@ class Database extends Util\Singleton
      *
      * @since 2.3
      *
-     * @return string
+     * @return mixed
      */
     public function prepare($parameter)
     {
-        return $this->pdo->quote($parameter);
-    }
-
-    /**
-     * Prepara il campo per l'inserimento in uno statement SQL.
-     *
-     * @since 2.3
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    protected function quote($string)
-    {
-        $char = '`';
-
-        return $char.str_replace([$char, '#'], '', $string).$char;
+        return $this->getPDO()->quote($parameter);
     }
 
     /**
@@ -380,45 +385,20 @@ class Database extends Util\Singleton
      *
      * @param string $table
      * @param array  $array
-     * @param bool   $return
      *
      * @return string|array
      */
-    public function insert($table, $array, $return = false)
+    public function insert($table, $array)
     {
         if (!is_string($table) || !is_array($array)) {
             throw new UnexpectedValueException();
         }
 
-        if (!is_array($array[0])) {
+        if (!isset($array[0]) || !is_array($array[0])) {
             $array = [$array];
         }
 
-        // Chiavi dei valori
-        $keys = [];
-        $temp = array_keys($array[0]);
-        foreach ($temp as $value) {
-            $keys[] = $this->quote($value);
-        }
-
-        // Valori da inserire
-        $inserts = [];
-        foreach ($array as $values) {
-            foreach ($values as $key => $value) {
-                $values[$key] = $this->prepareValue($key, $value);
-            }
-
-            $inserts[] = '('.implode(array_values($values), ', ').')';
-        }
-
-        // Costruzione della query
-        $query = 'INSERT INTO '.$this->quote($table).' ('.implode(',', $keys).') VALUES '.implode($inserts, ', ');
-
-        if (!empty($return)) {
-            return $query;
-        } else {
-            return $this->query($query);
-        }
+        return Capsule::table($table)->insert($array);
     }
 
     /**
@@ -429,36 +409,16 @@ class Database extends Util\Singleton
      * @param string $table
      * @param array  $array
      * @param array  $conditions
-     * @param bool   $return
      *
      * @return string|array
      */
-    public function update($table, $array, $conditions, $return = false)
+    public function update($table, $array, $conditions)
     {
         if (!is_string($table) || !is_array($array) || !is_array($conditions)) {
             throw new UnexpectedValueException();
         }
 
-        // Valori da aggiornare
-        $update = [];
-        foreach ($array as $key => $value) {
-            $update[] = $this->quote($key).' = '.$this->prepareValue($key, $value);
-        }
-
-        // Condizioni di aggiornamento
-        $where = [];
-        foreach ($conditions as $key => $value) {
-            $where[] = $this->quote($key).' = '.$this->prepareValue($key, $value);
-        }
-
-        // Costruzione della query
-        $query = 'UPDATE '.$this->quote($table).' SET '.implode($update, ', ').' WHERE '.implode($where, ' AND ');
-
-        if (!empty($return)) {
-            return $query;
-        } else {
-            return $this->query($query);
-        }
+        return Capsule::table($table)->where($conditions)->update($array);
     }
 
     /**
@@ -480,7 +440,7 @@ class Database extends Util\Singleton
         if (
             !is_string($table) ||
             (!empty($order) && !is_string($order) && !is_array($order)) ||
-            (!empty($limit) && !is_string($limit) && !is_array($limit))
+            (!empty($limit) && !is_string($limit) && !is_integer($limit) && !is_array($limit))
         ) {
             throw new UnexpectedValueException();
         }
@@ -488,7 +448,7 @@ class Database extends Util\Singleton
         // Valori da ottenere
         $select = [];
         foreach ((array) $array as $key => $value) {
-            $select[] = $value.(is_numeric($key) ? '' : 'AS '.$this->quote($key));
+            $select[] = $value.(is_numeric($key) ? '' : ' AS '.$this->quote($key));
         }
         $select = !empty($select) ? $select : ['*'];
 
@@ -527,6 +487,59 @@ class Database extends Util\Singleton
             return $query;
         } else {
             return $this->fetchArray($query);
+        }
+    }
+
+    /**
+     * Costruisce la query per il SELECT definito dagli argomenti (LIMIT 1).
+     *
+     * @since 2.4.1
+     *
+     * @param string $table
+     * @param array  $array
+     * @param array  $conditions
+     * @param array  $order
+     * @param bool   $return
+     *
+     * @return string|array
+     */
+    public function selectOne($table, $array = [], $conditions = [], $order = [], $return = false)
+    {
+        $limit = 1;
+
+        $result = $this->select($table, $array, $conditions, $order, $limit, $return);
+
+        if (!is_string($result) && isset($result[0])) {
+            return $result[0];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Costruisce la query per l'DELETE definito dagli argomenti.
+     *
+     * @since 2.4.1
+     *
+     * @param string $table
+     * @param array  $conditions
+     * @param bool   $return
+     *
+     * @return string|array
+     */
+    public function delete($table, $conditions, $return = false)
+    {
+        if (!is_string($table) || !is_array($conditions)) {
+            throw new UnexpectedValueException();
+        }
+
+        // Costruzione della query
+        $query = 'DELETE FROM '.$this->quote($table).' WHERE '.$this->whereStatement($conditions);
+
+        if (!empty($return)) {
+            return $query;
+        } else {
+            return $this->query($query);
         }
     }
 
@@ -619,8 +632,62 @@ class Database extends Util\Singleton
         if (!empty($field) && !empty($sync)) {
             $conditions[$field] = $sync;
 
-            $this->query('DELETE FROM '.$this->quote($table).' WHERE '.$this->whereStatement($conditions));
+            $this->delete($table, $conditions);
         }
+    }
+
+    public function beginTransaction()
+    {
+        Capsule::beginTransaction();
+    }
+
+    public function commitTransaction()
+    {
+        Capsule::commit();
+    }
+
+    /**
+     * Esegue le query interne ad un file .sql.
+     *
+     * @since 2.0
+     *
+     * @param string $filename  Percorso per raggiungere il file delle query
+     * @param string $delimiter Delimitatore delle query
+     */
+    public function multiQuery($filename, $start = 0)
+    {
+        $queries = readSQLFile($filename, ';');
+        $end = count($queries);
+
+        for ($i = $start; $i < $end; ++$i) {
+            try {
+                $this->getPDO()->exec($queries[$i]);
+            } catch (PDOException $e) {
+                $this->signal($e, $queries[$i], [
+                    'throw' => false,
+                ]);
+
+                return $i;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Prepara il campo per l'inserimento in uno statement SQL.
+     *
+     * @since 2.3
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    protected function quote($string)
+    {
+        $char = '`';
+
+        return $char.str_replace([$char, '#'], '', $string).$char;
     }
 
     /**
@@ -691,7 +758,13 @@ class Database extends Util\Singleton
                 }
                 // Condizione di uguaglianza
                 else {
-                    $result[] = $this->quote($key).' = '.$this->prepareValue($key, $value);
+                    $prepared = $this->prepareValue($key, $value);
+
+                    if ($prepared == 'NULL') {
+                        $result[] = $this->quote($key).' IS '.$prepared;
+                    } else {
+                        $result[] = $this->quote($key).' = '.$prepared;
+                    }
                 }
             }
         }
@@ -702,49 +775,19 @@ class Database extends Util\Singleton
     }
 
     /**
-     * Esegue le query interne ad un file .sql.
-     *
-     * @since 2.0
-     *
-     * @param string $filename  Percorso per raggiungere il file delle query
-     * @param string $delimiter Delimitatore delle query
-     */
-    public function multiQuery($filename, $start = 0)
-    {
-        $queries = readSQLFile($filename, ';');
-        $end = count($queries);
-
-        for ($i = $start; $i < $end; ++$i) {
-            try {
-                $this->pdo->query($queries[$i]);
-            } catch (PDOException $e) {
-                $this->signal($e, $queries[$i], [
-                    'throw' => false,
-                ]);
-
-                return $i;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Aggiunge informazioni alla struttura di base dell'erroe o dell'eccezione intercettata.
      *
      * @since 2.3
      */
     protected function signal($e, $message, $options = [])
     {
-        global $logger;
-
         $options = array_merge([
             'session' => true,
             'level' => \Monolog\Logger::ERROR,
             'throw' => true,
         ], $options);
 
-        if (!empty($options['session'])) {
+        if (!empty($options['session']) && !API::isAPIRequest()) {
             $msg = tr("Si è verificato un'errore").'.';
 
             if (Auth::check()) {
@@ -753,7 +796,7 @@ class Database extends Util\Singleton
 
             $msg .= '<br><small>'.$e->getMessage().'</small>';
 
-            $_SESSION['errors'][] = $msg;
+            flash()->error($msg);
         }
 
         $error = $e->getMessage().' - '.$message;
@@ -761,6 +804,8 @@ class Database extends Util\Singleton
         if (!empty($options['throw'])) {
             throw new PDOException($error);
         } else {
+            $logger = logger();
+
             $logger->addRecord($options['level'], $error);
         }
     }

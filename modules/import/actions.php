@@ -16,9 +16,12 @@ switch (post('op')) {
 
         $fields = Import::getFields($id_record);
 
-        $csv = Import::getFile($id_record, $records[0]['id'], [
+        $csv = Import::getFile($id_record, $record['id'], [
             'headers' => $first_row,
         ]);
+
+        // Gestione automatica dei valori convertiti
+        $csv = Filter::parse($csv);
 
         // Interpretazione dei dati
         $data = [];
@@ -50,7 +53,9 @@ switch (post('op')) {
         // Richiamo delle operazioni specifiche
         include $imports[$id_record]['import'];
 
-        $_SESSION['infos'][] = tr('Importazione completata. '.count($csv).' righe processate.');
+        flash()->info(tr('Importazione completata: _COUNT_  righe processate', [
+            '_COUNT_' => count($csv),
+        ]));
 
         break;
 }

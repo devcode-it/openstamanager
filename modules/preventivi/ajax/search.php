@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$id_module = Modules::get('Preventivi')['id'];
+$link_id = Modules::get('Preventivi')['id'];
 
 $fields = [
     'Codice preventivo' => 'numero',
@@ -29,7 +29,7 @@ $rs = $dbo->fetchArray($query);
 foreach ($rs as $r) {
     $result = [];
 
-    $result['link'] = ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$r['id'];
+    $result['link'] = ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$r['id'];
     $result['title'] = 'Preventivo '.$r['numero'];
 
     if ($rs[$r]['data_accettazione'] == '0000-00-00') {

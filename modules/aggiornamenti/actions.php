@@ -5,6 +5,20 @@ include_once __DIR__.'/../../core.php';
 $id = post('id');
 
 switch (post('op')) {
+    case 'check':
+        $api = json_decode(get_remote_data('https://api.github.com/repos/devcode-it/openstamanager/releases'), true);
+
+        $version = ltrim($api[0]['tag_name'], 'v');
+        $current = Update::getVersion();
+
+        if (version_compare($current, $version) < 0) {
+            echo $version;
+        } else {
+            echo 'none';
+        }
+
+        break;
+
     case 'upload':
         include $docroot.'/modules/aggiornamenti/upload_modules.php';
 
@@ -14,7 +28,7 @@ switch (post('op')) {
         if (!empty($id)) {
             // Leggo l'id del modulo
             $rs = $dbo->fetchArray('SELECT id, name, directory FROM zz_modules WHERE id='.prepare($id).' AND `default`=0');
-            $modulo = $rs[0]['name'];
+            $modulo = $rs[0]['title'];
             $module_dir = $rs[0]['directory'];
 
             if (count($rs) == 1) {
@@ -29,47 +43,41 @@ switch (post('op')) {
 
                 delete($docroot.'/modules/'.$module_dir.'/');
 
-                $_SESSION['infos'][] = tr('Modulo _MODULE_ disinstallato!', [
+                flash()->info(tr('Modulo _MODULE_ disinstallato!', [
                     '_MODULE_' => '"'.$modulo.'"',
-                ]);
+                ]));
             }
         }
 
         break;
 
     case 'disable':
-        $dbo->query('UPDATE zz_modules SET enabled=0 WHERE id='.prepare($id));
+        $dbo->query('UPDATE `zz_modules` SET `enabled` = 0 WHERE (`id` = '.prepare($id).' OR `parent` = '.prepare($id).') AND `id` != '.prepare(Modules::get('Aggiornamenti')['id']));
 
-        $rs = $dbo->fetchArray('SELECT id, name FROM zz_modules WHERE id='.prepare($id));
-        $modulo = $rs[0]['name'];
-
-        $_SESSION['infos'][] = tr('Modulo _MODULE_ disabilitato!', [
-            '_MODULE_' => '"'.$modulo.'"',
-        ]);
+        flash()->info(tr('Modulo _MODULE_ disabilitato!', [
+            '_MODULE_' => '"'.Modules::get($id)['title'].'"',
+        ]));
 
         break;
 
     case 'enable':
-        $dbo->query('UPDATE zz_modules SET enabled=1 WHERE id='.prepare($id));
+        $dbo->query('UPDATE `zz_modules` SET `enabled` = 1 WHERE `id` = '.prepare($id).' OR `parent` = '.prepare($id));
 
-        $rs = $dbo->fetchArray('SELECT id, name FROM zz_modules WHERE id='.prepare($id));
-        $modulo = $rs[0]['name'];
-
-        $_SESSION['infos'][] = tr('Modulo _MODULE_ abilitato!', [
-            '_MODULE_' => '"'.$modulo.'"',
-        ]);
+        flash()->info(tr('Modulo _MODULE_ abilitato!', [
+            '_MODULE_' => '"'.Modules::get($id)['title'].'"',
+        ]));
 
         break;
 
     case 'disable_widget':
-        $dbo->query('UPDATE zz_widgets SET enabled=0 WHERE id='.prepare($id));
+        $dbo->query('UPDATE zz_widgets SET enabled = 0 WHERE id = '.prepare($id));
 
         $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
         $widget = $rs[0]['name'];
 
-        $_SESSION['infos'][] = tr('Widget _WIDGET_ disabilitato!', [
+        flash()->info(tr('Widget _WIDGET_ disabilitato!', [
             '_WIDGET_' => '"'.$widget.'"',
-        ]);
+        ]));
 
         break;
 
@@ -79,9 +87,9 @@ switch (post('op')) {
         $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
         $widget = $rs[0]['name'];
 
-        $_SESSION['infos'][] = tr('Widget _WIDGET_ abilitato!', [
+        flash()->info(tr('Widget _WIDGET_ abilitato!', [
             '_WIDGET_' => '"'.$widget.'"',
-        ]);
+        ]));
 
         break;
 
@@ -91,9 +99,9 @@ switch (post('op')) {
         $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
         $widget = $rs[0]['name'];
 
-        $_SESSION['infos'][] = tr('Posizione del widget _WIDGET_ aggiornata!', [
+        flash()->info(tr('Posizione del widget _WIDGET_ aggiornata!', [
             '_WIDGET_' => '"'.$widget.'"',
-        ]);
+        ]));
 
         break;
 
@@ -103,9 +111,9 @@ switch (post('op')) {
         $rs = $dbo->fetchArray('SELECT id, name FROM zz_widgets WHERE id='.prepare($id));
         $widget = $rs[0]['name'];
 
-        $_SESSION['infos'][] = tr('Posizione del widget _WIDGET_ aggiornata!', [
+        flash()->info(tr('Posizione del widget _WIDGET_ aggiornata!', [
             '_WIDGET_' => '"'.$widget.'"',
-        ]);
+        ]));
 
         break;
 
@@ -120,14 +128,12 @@ switch (post('op')) {
                 $dbo->query('UPDATE zz_modules SET `order`='.prepare($i).' WHERE id='.prepare($ids[$i]));
             }
 
-            $_SESSION['infos'][] = tr('Posizione voci di  menù aggiornate!');
+            flash()->info(tr('Posizione voci di  menù aggiornate!'));
         }
 
         break;
 
     case 'sortwidget':
-        $id_module = post('id_module');
-        $id_record = post('id_record');
         $location = post('location');
 
         $location = empty($id_record) ? 'controller_'.$location : 'editor_'.$location;
@@ -142,13 +148,11 @@ switch (post('op')) {
                 $dbo->query('UPDATE zz_widgets SET `order`='.prepare($i).' WHERE id='.prepare($id[1]));
             }
 
-            $_SESSION['infos'][] = tr('Posizioni widgets aggiornate!');
+            flash()->info(tr('Posizioni widgets aggiornate!'));
         }
         break;
 
     case 'updatewidget':
-        $id_module = post('id_module');
-        $id_record = post('id_record');
         $location = post('location');
         $class = post('class');
         $id = explode('_', post('id'));

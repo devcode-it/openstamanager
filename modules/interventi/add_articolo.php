@@ -1,24 +1,26 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
-// Prezzo modificabile solo se l'utente loggato è un tecnico (+ può vedere i prezzi) o se è amministratore
-$rs = $dbo->fetchArray('SELECT nome FROM zz_groups WHERE id IN(SELECT idgruppo FROM zz_users WHERE id='.prepare($_SESSION['id_utente']).')');
-for ($i = 0; $i < count($rs); ++$i) {
-    $gruppi[$i] = $rs[$i]['nome'];
+if (file_exists(__DIR__.'/../../../core.php')) {
+    include_once __DIR__.'/../../../core.php';
+} else {
+    include_once __DIR__.'/../../core.php';
 }
 
-$can_edit_prezzi = (in_array('Amministratori', $gruppi)) || (get_var('Mostra i prezzi al tecnico') == 1 && (in_array('Tecnici', $gruppi)));
+// Prezzo modificabile solo se l'utente loggato è un tecnico (+ può vedere i prezzi) o se è amministratore
+$gruppi = Auth::user()['gruppo'];
+$can_edit_prezzi = (in_array('Amministratori', $gruppi)) || (setting('Mostra i prezzi al tecnico') == 1 && (in_array('Tecnici', $gruppi)));
 
 $idriga = get('idriga');
 $idautomezzo = (get('idautomezzo') == 'undefined') ? '' : get('idautomezzo');
 
-$_SESSION['superselect']['idintervento'] = get('id_record');
-
 // Lettura idanagrafica cliente e percentuale di sconto/rincaro in base al listino
 $rs = $dbo->fetchArray('SELECT idanagrafica FROM in_interventi WHERE id='.prepare($id_record));
-
 $idanagrafica = $rs[0]['idanagrafica'];
+
+$_SESSION['superselect']['idintervento'] = get('id_record');
+$_SESSION['superselect']['dir'] = 'entrata';
+$_SESSION['superselect']['idanagrafica'] = $idanagrafica;
+
 if (empty($idriga)) {
     $op = 'addarticolo';
     $button = '<i class="fa fa-plus"></i> '.tr('Aggiungi');
@@ -29,16 +31,11 @@ if (empty($idriga)) {
     $qta = 1;
     $um = '';
 
+    $prezzo_acquisto = '0';
     $prezzo_vendita = '0';
     $sconto_unitario = 0;
 
     $idimpianto = 0;
-
-    $listino = $dbo->fetchArray('SELECT prc_guadagno FROM mg_listini WHERE id = (SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica = '.prepare($idanagrafica).')');
-    if (!empty($listino[0]['prc_guadagno'])) {
-        $sconto_unitario = $listino[0]['prc_guadagno'];
-        $tipo_sconto = 'PRC';
-    }
 } else {
     $op = 'editarticolo';
     $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
@@ -53,8 +50,9 @@ if (empty($idriga)) {
     $qta = $rsr[0]['qta'];
     $um = $rsr[0]['um'];
     $idiva = $rsr[0]['idiva'];
-    
+
     $prezzo_vendita = $rsr[0]['prezzo_vendita'];
+    $prezzo_acquisto = $rsr[0]['prezzo_acquisto'];
 
     $sconto_unitario = $rsr[0]['sconto_unitario'];
     $tipo_sconto = $rsr[0]['tipo_sconto'];
@@ -92,8 +90,15 @@ echo '
         <div class="col-md-12">
             {[ "type": "textarea", "label": "'.tr('Descrizione').'", "name": "descrizione", "id": "descrizione_articolo", "required": 1, "value": '.json_encode($descrizione).' ]}
         </div>
+    </div>';
+
+// Impianto
+echo '
+<div class="row">
+    <div class="col-md-12">
+        {[ "type": "select", "label": "'.tr('Impianto su cui installare').'", "name": "idimpianto", "value": "'.$idimpianto.'", "ajax-source": "impianti-intervento" ]}
     </div>
-    <br>';
+</div>';
 
 // Quantità
 echo '
@@ -108,24 +113,24 @@ echo '
             {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
         </div>';
 
-// Impianto
+// Iva
 echo '
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Impianto su cui installare').'", "name": "idimpianto", "value": "'.$idimpianto.'", "ajax-source": "impianti" ]}
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "ajax-source": "iva" ]}
         </div>
     </div>';
-    
-// Iva
+
+// Prezzo di acquisto
 echo '
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
+            {[ "type": "number", "label": "'.tr('Prezzo di acquisto (un.)').'", "name": "prezzo_acquisto", "required": 1, "value": "'.$prezzo_acquisto.'", "icon-after": "&euro;" ]}
         </div>';
 
 // Prezzo di vendita
 echo '
         <div class="col-md-4">
-            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo_vendita", "required": 1, "value": "'.$prezzo_vendita.'", "icon-after": "&euro;" ]}
+            {[ "type": "number", "label": "'.tr('Prezzo di vendita (un.)').'", "name": "prezzo_vendita", "required": 1, "value": "'.$prezzo_vendita.'", "icon-after": "&euro;" ]}
         </div>';
 
 // Sconto
@@ -173,8 +178,9 @@ echo '
                 $data = $(this).selectData();
 
                 $("#prezzo_vendita").val($data.prezzo_vendita);
+                $("#prezzo_acquisto").val($data.prezzo_acquisto);
                 $("#descrizione_articolo").val($data.descrizione);
-                $("#idiva").selectSet($data.idiva_vendita, $data.iva_vendita);
+                $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita);
                 $("#um").selectSetNew($data.um, $data.um);
             }else{
                 $("#prezzi_articolo button").addClass("disabled");
@@ -192,7 +198,7 @@ echo '
     <!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> '.tr('Aggiungi').'</button>
+			<button type="submit" class="btn btn-primary pull-right">'.$button.'</button>
 		</div>
     </div>
 </form>';

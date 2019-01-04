@@ -1,188 +1,148 @@
 <?php
 
 include_once __DIR__.'/../../core.php';
-include_once DOCROOT.'/modules/fatture/modutil.php';
+
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Fatture\Fattura;
+use Modules\Fatture\Tipo;
+
+if ($module['name'] == 'Ddt di vendita') {
+    $dir = 'entrata';
+    $module_name = 'Fatture di vendita';
+} else {
+    $dir = 'uscita';
+    $module_name = 'Fatture di acquisto';
+}
+
+// Segmenti
+$id_fatture = Modules::get($module_name)['id'];
+if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
+    $segments = Modules::getSegments($id_fatture);
+    $_SESSION['module_'.$id_fatture]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
+}
+$id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
 
 switch (post('op')) {
-    case 'creafatturavendita':
-        $iddocumento_cliente = [];
+    case 'crea_fattura':
+        $id_documento_cliente = [];
         $totale_n_ddt = 0;
-        $dir = 'entrata';
+
+        // Informazioni della fattura
+        if ($dir == 'entrata') {
+            $tipo_documento = 'Fattura immediata di vendita';
+        } else {
+            $tipo_documento = 'Fattura immediata di acquisto';
+        }
+
+        $tipo_documento = Tipo::where('descrizione', $tipo_documento)->first();
+
+        $idiva = setting('Iva predefinita');
+        $data = date('Y-m-d');
+        $id_segment = post('id_segment');
 
         // Lettura righe selezionate
-        for ($r = 0; $r < sizeof($id_records); ++$r) {
-            $idiva = get_var('Iva predefinita');
-            $idddt = $id_records[$r];
+        foreach ($id_records as $id) {
+            $id_anagrafica = $dbo->selectOne('dt_ddt', 'idanagrafica', ['id' => $id])['idanagrafica'];
 
-            $rs_idanagrafica = $dbo->fetchArray("SELECT idanagrafica FROM in_interventi WHERE id='".$id_records[$r]."'");
-            $idanagrafica = $rs_idanagrafica[0]['idanagrafica'];
-
-            $q = 'SELECT
-					*, dt_righe_ddt.id AS idriga
-                FROM
-					dt_righe_ddt INNER JOIN dt_ddt ON dt_righe_ddt.idddt=dt_ddt.id
-				WHERE
-					idddt='.prepare($idddt).'
-					AND idddt NOT IN (SELECT idddt FROM co_righe_documenti WHERE idddt IS NOT NULL)
-				ORDER BY
-					dt_ddt.data ASC';
-
-            $rsi = $dbo->fetchArray($q);
-            $n_ddt = sizeof($rsi);
-            $totale_n_ddt += $n_ddt;
+            $righe = $dbo->fetchArray('SELECT * FROM dt_righe_ddt WHERE idddt='.prepare($id).' AND idddt NOT IN (SELECT idddt FROM co_righe_documenti WHERE idddt IS NOT NULL)');
 
             // Proseguo solo se i ddt scelti sono fatturabili
-            if ($n_ddt > 0) {
-                //Se non c'è già una fattura appena creata per questo cliente, creo una fattura nuova
-                if (empty($iddocumento_cliente[$idanagrafica])) {
-                    $data = date('Y-m-d');
-                    $dir = 'entrata';
-                    $idtipodocumento = '2';
+            if (!empty($righe)) {
+                $id_documento = $id_documento_cliente[$id_anagrafica];
+                ++$totale_n_ddt;
 
-                    if (empty($_SESSION['m'.Modules::get('Fatture di vendita')['id']]['id_segment'])) {
-                        $rs = $dbo->fetchArray('SELECT id  FROM zz_segments WHERE predefined = 1 AND id_module = '.prepare(Modules::get('Fatture di vendita')['id']).'LIMIT 0,1');
-                        $_SESSION['m'.Modules::get('Fatture di vendita')['id']]['id_segment'] = $rs[0]['id'];
-                    }
+                // Se non c'è già una fattura appena creata per questo cliente, creo una fattura nuova
+                if (empty($id_documento)) {
+                    $anagrafica = Anagrafica::find($id_anagrafica);
+                    $fattura = Fattura::build($anagrafica, $tipo_documento, $data, $id_segment);
 
-                    $id_segment = $_SESSION['m'.Modules::get('Fatture di vendita')['id']]['id_segment'];
-
-                    $numero = get_new_numerofattura($data);
-
-                    $numero_esterno = get_new_numerosecondariofattura($data);
-                    $idconto = get_var('Conto predefinito fatture di vendita');
-
-                    $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
-
-                    // Tipo di pagamento predefinito dall'anagrafica
-                    $query = 'SELECT id FROM co_pagamenti WHERE id=(SELECT '.$campo.' AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')';
-                    $rs = $dbo->fetchArray($query);
-                    $idpagamento = $rs[0]['id'];
-
-                    // Se alla non è stato associato un pagamento predefinito al cliente, leggo il pagamento dalle impostazioni
-                    if ($idpagamento == '') {
-                        $idpagamento = get_var('Tipo di pagamento predefinito');
-                    }
-
-                    // Creazione nuova fattura
-                    $dbo->query('INSERT INTO co_documenti (numero, numero_esterno, idanagrafica, idconto, idtipodocumento, idpagamento, data, idstatodocumento, idsede) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($idconto).', '.prepare($idtipodocumento).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `co_statidocumento` WHERE `descrizione`='Bozza'), (SELECT idsede_fatturazione FROM an_anagrafiche WHERE idanagrafica=".prepare($idanagrafica).') )');
-                    $iddocumento = $dbo->lastInsertedID();
-                    $iddocumento_cliente[$idanagrafica] = $iddocumento;
+                    $id_documento = $fattura->id;
+                    $id_documento_cliente[$id_anagrafica] = $id_documento;
                 }
 
                 // Inserimento righe
-                for ($i = 0; $i < sizeof($rsi); ++$i) {
-                    $qta = $rsi[$i]['qta'] - $rsi[$i]['qta_evasa'];
+                foreach ($righe as $riga) {
+                    $qta = $riga['qta'] - $riga['qta_evasa'];
 
                     if ($qta > 0) {
-                        $dbo->query('
-							INSERT INTO co_righe_documenti(
-									iddocumento,
-									idarticolo,
-									idddt,
-									idiva,
-									desc_iva,
-									iva,
-									iva_indetraibile,
-									is_descrizione,
-									descrizione,
-									subtotale,
-									sconto,
-									sconto_unitario,
-									sconto_prc,
-									tipo_sconto,
-									idgruppo,
-									abilita_serial,
-									um,
-									qta,
-									`order`)
-								VALUES(
-									'.$iddocumento_cliente[$idanagrafica].',
-									'.prepare($rsi[$i]['idarticolo']).',
-									'.prepare($rsi[$i]['idddt']).',
-									'.prepare($rsi[$i]['idiva']).',
-									'.prepare($rsi[$i]['desc_iva']).',
-									'.prepare($rsi[$i]['iva']).',
-									'.prepare($rsi[$i]['iva_indetraibile']).',
-									'.prepare($rsi[$i]['is_descrizione']).',
-									'.prepare($rsi[$i]['descrizione']).',
-									'.prepare($rsi[$i]['subtotale']).',
-									'.prepare($rsi[$i]['sconto']).',
-									'.prepare($rsi[$i]['sconto_unitario']).',
-									'.prepare($rsi[$i]['sconto_prc']).',
-									'.prepare($rsi[$i]['tipo_sconto']).',
-									'.prepare($rsi[$i]['idgruppo']).',
-									'.prepare($rsi[$i]['abilita_serial']).',
-									'.prepare($rsi[$i]['um']).',
-									'.prepare($qta).',
-									(SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($iddocumento).')
-								)');
+                        $dbo->insert('co_righe_documenti', [
+                            'iddocumento' => $id_documento,
+                            'idarticolo' => $riga['idarticolo'],
+                            'idddt' => $id,
+                            'idiva' => $riga['idiva'],
+                            'desc_iva' => $riga['desc_iva'],
+                            'iva' => $riga['iva'],
+                            'iva_indetraibile' => $riga['iva_indetraibile'],
+                            'descrizione' => $riga['descrizione'],
+                            'is_descrizione' => $riga['is_descrizione'],
+                            'subtotale' => $riga['subtotale'],
+                            'sconto' => $riga['sconto'],
+                            'sconto_unitario' => $riga['sconto_unitario'],
+                            'tipo_sconto' => $riga['tipo_sconto'],
+                            'um' => $riga['um'],
+                            'qta' => $qta,
+                            'abilita_serial' => $riga['abilita_serial'],
+                            'order' => orderValue('co_righe_documenti', 'iddocumento', $id_documento),
+                        ]);
+                        $id_riga_documento = $dbo->lastInsertedID();
+
+                        // Copia dei serial tra le righe
+                        if (!empty($riga['idarticolo'])) {
+                            $dbo->query('INSERT INTO mg_prodotti (id_riga_documento, id_articolo, dir, serial, lotto, altro) SELECT '.prepare($id_riga_documento).', '.prepare($riga['idarticolo']).', '.prepare($dir).', serial, lotto, altro FROM mg_prodotti AS t WHERE id_riga_ddt='.prepare($riga['id']));
+                        }
 
                         // Aggiorno la quantità evasa
-                        $dbo->query('UPDATE dt_righe_ddt SET qta_evasa = qta WHERE id='.prepare($rsi[$i]['idriga']));
+                        $dbo->query('UPDATE dt_righe_ddt SET qta_evasa = qta WHERE id='.prepare($riga['id']));
 
                         // Aggiorno lo stato ddt
-                        $dbo->query('UPDATE dt_ddt SET idstatoddt = (SELECT id FROM dt_statiddt WHERE descrizione="Fatturato") WHERE id='.prepare($rsi[$i]['idddt']));
+                        $dbo->query('UPDATE dt_ddt SET idstatoddt = (SELECT id FROM dt_statiddt WHERE descrizione="Fatturato") WHERE id='.prepare($id));
                     }
 
                     // Ricalcolo inps, ritenuta e bollo
-                    if ($dir == 'entrata') {
-                        ricalcola_costiagg_fattura($iddocumento_cliente[$idanagrafica]);
-                    } else {
-                        ricalcola_costiagg_fattura($iddocumento_cliente[$idanagrafica], 0, 0, 0);
-                    }
+                    ricalcola_costiagg_fattura($id_documento);
                 }
             }
         }
 
         if ($totale_n_ddt > 0) {
-            $_SESSION['infos'][] = tr('_NUM_ ddt fatturati!', [
+            flash()->info(tr('_NUM_ ddt fatturati!', [
                 '_NUM_' => $totale_n_ddt,
-            ]);
+            ]));
         } else {
-            $_SESSION['warnings'][] = tr('Nessun ddt fatturato!');
+            flash()->warning(tr('Nessun ddt fatturato!'));
         }
 
     break;
 
     case 'delete-bulk':
-	
-		if ($debug){
-			
-			foreach ($id_records as $id) {
-				$dbo->query('DELETE  FROM dt_ddt  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
-				$dbo->query('DELETE FROM dt_righe_ddt WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
-				$dbo->query('DELETE FROM mg_movimenti WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
-			}
 
-			$_SESSION['infos'][] = tr('Ddt eliminati!');
-			
-		}else{
-				$_SESSION['warnings'][] = tr('Procedura in fase di sviluppo. Nessuna modifica apportata.');
-		}
+        if (App::debug()) {
+            foreach ($id_records as $id) {
+                $dbo->query('DELETE  FROM dt_ddt  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
+                $dbo->query('DELETE FROM dt_righe_ddt WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
+                $dbo->query('DELETE FROM mg_movimenti WHERE idddt='.prepare($id).Modules::getAdditionalsQuery($id_module));
+            }
+
+            flash()->info(tr('Ddt eliminati!'));
+        } else {
+            flash()->warning(tr('Procedura in fase di sviluppo. Nessuna modifica apportata.'));
+        }
 
     break;
 }
 
-return [
+$operations = [
     'delete-bulk' => tr('Elimina selezionati'),
-
-    'export-bulk' => [
-        'text' => tr('Esporta stampe'),
-        'data' => [
-            'msg' => tr('Vuoi davvero esportare tutte le stampe in un archivio?'),
-            'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
-            'blank' => true,
-        ],
-    ],
-
-    'creafatturavendita' => [
+    'crea_fattura' => [
         'text' => tr('Crea fattura'),
         'data' => [
-            'msg' => tr('Vuoi davvero creare una fattura per questi interventi?'),
+            'title' => tr('Vuoi davvero creare una fattura per questi interventi?'),
+            'msg' => '<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module=\''.$id_fatture.'\' AND is_fiscale = 1 ORDER BY name", "value": "'.$id_segment.'" ]}',
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,
         ],
     ],
 ];
+
+return $operations;

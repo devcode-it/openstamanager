@@ -7,21 +7,29 @@
  */
 class App
 {
-    /** @var int Identificativo del modulo corrente */
+    /** @var array Identificativo del modulo corrente */
     protected static $current_module;
     /** @var int Identificativo dell'elemento corrente */
     protected static $current_element;
 
+    /** @var \Util\Messages Gestione dei messaggi flash */
+    protected static $flash = null;
+
+    /** @var bool Stato di debug */
+    protected static $config = [];
+
+    /** @var array Elenco degli assets del progetto */
     protected static $assets = [
         // CSS
         'css' => [
             'app.min.css',
             'style.min.css',
             'themes.min.css',
-            [
-                'href' => 'print.min.css',
-                'media' => 'print',
-            ],
+        ],
+
+        // Print CSS
+        'print' => [
+            'print.min.css',
         ],
 
         // JS
@@ -36,100 +44,100 @@ class App
     ];
 
     /**
-     * Restituisce l'identificativo del modulo attualmente in utilizzo.
-     *
-     * @return int
-     */
-    public static function getCurrentModule()
-    {
-        if (empty(self::$current_module)) {
-            self::$current_module = Modules::get(filter('id_module'));
-        }
-
-        return self::$current_module;
-    }
-
-    /**
-     * Restituisce l'identificativo dell'elemento attualmente in utilizzo.
-     *
-     * @return int
-     */
-    public static function getCurrentElement()
-    {
-        if (empty(self::$current_element)) {
-            self::$current_element = filter('id_record');
-        }
-
-        return self::$current_element;
-    }
-
-    /**
-     * Restituisce la configurazione di default del gestionale.
-     *
-     * @return array
-     */
-    protected static function getDefaultConfig()
-    {
-        if (file_exists(DOCROOT.'/config.example.php')) {
-            include DOCROOT.'/config.example.php';
-        }
-
-        return get_defined_vars();
-    }
-
-    /**
-     * Restituisce la configurazione dell'installazione.
+     * Restituisce la configurazione dell'installazione in utilizzo del progetto.
      *
      * @return array
      */
     public static function getConfig()
     {
-        if (file_exists(DOCROOT.'/config.inc.php')) {
-            include DOCROOT.'/config.inc.php';
+        if (empty(self::$config['db_host'])) {
+            if (file_exists(DOCROOT.'/config.inc.php')) {
+                include DOCROOT.'/config.inc.php';
 
-            $config = get_defined_vars();
-        } else {
-            $config = [];
+                $config = get_defined_vars();
+            } else {
+                $config = [];
+            }
+
+            $defaultConfig = self::getDefaultConfig();
+
+            $result = array_merge($defaultConfig, $config);
+
+            // Operazioni di normalizzazione sulla configurazione
+            $result['debug'] = isset(self::$config['debug']) ? self::$config['debug'] : !empty($result['debug']);
+
+            self::$config = $result;
         }
 
-        $defaultConfig = self::getDefaultConfig();
-
-        $result = array_merge($defaultConfig, $config);
-
-        // Operazioni di normalizzazione sulla configurazione
-        $result['debug'] = !empty($result['debug']);
-
-        return $result;
+        return self::$config;
     }
 
     /**
-     * Individuazione dei percorsi di base.
+     * Imposta e restituisce lo stato di debug del progetto.
+     *
+     * @param bool $value
+     *
+     * @return bool
+     */
+    public static function debug($value = null)
+    {
+        if (is_bool($value)) {
+            self::$config['debug'] = $value;
+        }
+
+        if (!isset(self::$config['debug'])) {
+            App::getConfig();
+        }
+
+        return self::$config['debug'];
+    }
+
+    /**
+     * Restituisce l'oggetto dedicato alla gestione dei messaggi per l'utente.
+     *
+     * @return \Util\Messages
+     */
+    public static function flash()
+    {
+        if (empty(self::$flash)) {
+            $storage = null;
+            self::$flash = new \Util\Messages($storage, 'messages');
+        }
+
+        return self::$flash;
+    }
+
+    /**
+     * Individua i percorsi di base necessari per il funzionamento del gestionale.
+     * <b>Attenzione<b>: questo metodo deve essere eseguito all'interno di un file nella cartella principale del progetto per permettere il corretto funzionamento degli URL.
      *
      * @return array
      */
     public static function definePaths($docroot)
     {
-        // Individuazione di $rootdir
-        $rootdir = substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/')).'/';
-        if (strrpos($rootdir, '/'.basename($docroot).'/') !== false) {
-            $rootdir = substr($rootdir, 0, strrpos($rootdir, '/'.basename($docroot).'/')).'/'.basename($docroot);
-        } else {
-            $rootdir = '/';
+        if (!defined('DOCROOT')) {
+            // Individuazione di $rootdir
+            $rootdir = substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/')).'/';
+            if (strrpos($rootdir, '/'.basename($docroot).'/') !== false) {
+                $rootdir = substr($rootdir, 0, strrpos($rootdir, '/'.basename($docroot).'/')).'/'.basename($docroot);
+            } else {
+                $rootdir = '/';
+            }
+            $rootdir = rtrim($rootdir, '/');
+            $rootdir = str_replace('%2F', '/', rawurlencode($rootdir));
+
+            // Individuazione di $baseurl
+            $baseurl = (isHTTPS(true) ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].$rootdir;
+
+            // Impostazione delle variabili globali
+            define('DOCROOT', $docroot);
+            define('ROOTDIR', $rootdir);
+            define('BASEURL', $baseurl);
         }
-        $rootdir = rtrim($rootdir, '/');
-        $rootdir = str_replace('%2F', '/', rawurlencode($rootdir));
-
-        // Individuazione di $baseurl
-        $baseurl = (isHTTPS(true) ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].$rootdir;
-
-        // Impostazione delle variabili globali
-        define('DOCROOT', $docroot);
-        define('ROOTDIR', $rootdir);
-        define('BASEURL', $baseurl);
     }
 
     /**
-     * Restituisce la configurazione dell'installazione.
+     * Individua i percorsi principali del progetto.
      *
      * @return array
      */
@@ -146,7 +154,7 @@ class App
     }
 
     /**
-     * Restituisce la configurazione dell'installazione.
+     * Restituisce l'elenco degli assets del progetto.
      *
      * @return array
      */
@@ -155,55 +163,45 @@ class App
         // Assets aggiuntivi
         $config = self::getConfig();
 
-        $css = array_unique(array_merge(self::$assets['css'], $config['assets']['css']));
-        $js = array_unique(array_merge(self::$assets['js'], $config['assets']['js']));
-
         // Impostazione dei percorsi
         $paths = self::getPaths();
-        $lang = Translator::getInstance()->getCurrentLocale();
+        $lang = trans()->getCurrentLocale();
 
-        foreach ($css as $key => $value) {
-            if (is_array($value)) {
-                $path = $value['href'];
-            } else {
-                $path = $value;
+        // Sezioni: nome - percorso
+        $sections = [
+            'css' => 'css',
+            'print' => 'css',
+            'js' => 'js',
+        ];
+
+        $assets = [];
+
+        foreach ($sections as $section => $dir) {
+            $result = array_unique(array_merge(self::$assets[$section], $config['assets'][$section]));
+
+            foreach ($result as $key => $element) {
+                $element = $paths[$dir].'/'.$element;
+                $element = str_replace('|lang|', $lang, $element);
+
+                $result[$key] = $element;
             }
 
-            $path = $paths['css'].'/'.$path;
-            $path = str_replace('|lang|', $lang, $path);
-
-            if (is_array($value)) {
-                $value['href'] = $path;
-            } else {
-                $value = $path;
-            }
-
-            $css[$key] = $value;
-        }
-
-        foreach ($js as $key => $value) {
-            $value = $paths['js'].'/'.$value;
-            $value = str_replace('|lang|', $lang, $value);
-
-            $js[$key] = $value;
+            $assets[$section] = $result;
         }
 
         // JS aggiuntivi per gli utenti connessi
         if (Auth::check()) {
-            $js[] = ROOTDIR.'/lib/functions.js';
-            $js[] = ROOTDIR.'/lib/init.js';
+            $assets['js'][] = ROOTDIR.'/lib/functions.js';
+            $assets['js'][] = ROOTDIR.'/lib/init.js';
         }
 
-        return [
-            'css' => $css,
-            'js' => $js,
-        ];
+        return $assets;
     }
 
     /**
      * Restituisce un'insieme di array comprendenti le informazioni per la costruzione della query del modulo indicato.
      *
-     * @param int $id
+     * @param array $element
      *
      * @return array
      */
@@ -218,12 +216,157 @@ class App
         return $result;
     }
 
+    /**
+     * Sostituisce i valori previsti all'interno delle query di moduli/plugin.
+     *
+     * @param string $query
+     * @param int    $custom
+     *
+     * @return string
+     */
+    public static function replacePlaceholder($query)
+    {
+        $id_parent = filter('id_parent');
+
+        $id_module = Modules::getCurrent()['id'];
+        $segment = $_SESSION['module_'.$id_module]['id_segment'];
+
+        $user = Auth::user();
+
+        // Elenco delle sostituzioni
+        $replace = [
+            // Identificatori
+            '|id_anagrafica|' => prepare($user['idanagrafica']),
+            '|id_utente|' => prepare($user['id']),
+            '|id_parent|' => prepare($id_parent),
+
+            // Date
+            '|period_start|' => $_SESSION['period_start'],
+            '|period_end|' => $_SESSION['period_end'],
+
+            // Segmenti
+            '|segment|' => !empty($segment) ? ' AND id_segment = '.prepare($segment) : '',
+        ];
+
+        // Sostituzione dei formati
+        $patterns = formatter()->getSQLPatterns();
+
+        foreach ($patterns as $key => $value) {
+            $replace['|'.$key.'_format|'] = "'".$value."'";
+        }
+
+        // Sostituzione effettiva
+        $query = replace($query, $replace);
+
+        return $query;
+    }
+
+    /**
+     * Restituisce il codice HTML per il form contenente il file indicato.
+     *
+     * @param string $path
+     * @param array  $result
+     * @param array  $options
+     *
+     * @return string
+     */
+    public static function load($file, $result, $options)
+    {
+        $form = self::internalLoad('form.php', $result, $options);
+
+        $response = self::internalLoad($file, $result, $options);
+
+        $form = str_replace('|response|', $response, $form);
+
+        return $form;
+    }
+
+    /**
+     * Restituisce il codice HTML generato del file indicato.
+     *
+     * @param string $path
+     * @param array  $result
+     * @param array  $options
+     * @param string $directory
+     *
+     * @return string
+     */
+    public static function internalLoad($file, $result, $options, $directory = null)
+    {
+        $module = Modules::getCurrent();
+
+        $id_module = $module['id'];
+        $id_record = filter('id_record');
+
+        $directory = empty($directory) ? 'include|custom|/common/' : $directory;
+
+        ob_start();
+        include self::filepath($directory, $file);
+        $response = ob_get_clean();
+
+        return $response;
+    }
+
+    /**
+     * Individua il percorso per il file da includere considerando gli eventuali custom.
+     *
+     * @param string $path
+     * @param string $file
+     *
+     * @return string|null
+     */
+    public static function filepath($path, $file = null)
+    {
+        $path = str_contains($path, DOCROOT) ? $path : DOCROOT.'/'.ltrim($path, '/');
+        $path = empty($file) ? $path : rtrim($path, '/').'/'.$file;
+
+        $original_file = str_replace('|custom|', '', $path);
+        $custom_file = str_replace('|custom|', '/custom', $path);
+
+        $result = '';
+        if (file_exists($custom_file)) {
+            $result = $custom_file;
+        } elseif (file_exists($original_file)) {
+            $result = $original_file;
+        }
+
+        return slashes($result);
+    }
+
+    /**
+     * Restituisce la configurazione di default del progetto.
+     *
+     * @return array
+     */
+    protected static function getDefaultConfig()
+    {
+        if (file_exists(DOCROOT.'/config.example.php')) {
+            include DOCROOT.'/config.example.php';
+        }
+
+        $db_host = '';
+        $db_username = '';
+        $db_password = '';
+        $db_name = '';
+        $port = '';
+
+        return get_defined_vars();
+    }
+
+    /**
+     * Interpreta lo standard modulare per l'individuazione delle query di un modulo/plugin del progetto.
+     *
+     * @param array $element
+     *
+     * @return array
+     */
     protected static function readNewQuery($element)
     {
         $fields = [];
         $summable = [];
         $search_inside = [];
         $search = [];
+        $format = [];
         $slow = [];
         $order_by = [];
 
@@ -235,14 +378,14 @@ class App
         foreach ($views as $view) {
             $select[] = $view['query'].(!empty($view['name']) ? " AS '".$view['name']."'" : '');
 
-            if ($view['enabled']) {
+            if (!empty($view['visible'])) {
                 $view['name'] = trim($view['name']);
                 $view['search_inside'] = trim($view['search_inside']);
                 $view['order_by'] = trim($view['order_by']);
 
                 $fields[] = trim($view['name']);
 
-                $search_inside[] = !empty($view['search_inside']) ? $view['search_inside'] : $view['name'];
+                $search_inside[] = !empty($view['search_inside']) ? $view['search_inside'] : '`'.$view['name'].'`';
                 $order_by[] = !empty($view['order_by']) ? $view['order_by'] : '`'.$view['name'].'`';
                 $search[] = $view['search'];
                 $slow[] = $view['slow'];
@@ -270,6 +413,13 @@ class App
         ];
     }
 
+    /**
+     * Interpreta lo standard JSON per l'individuazione delle query di un modulo/plugin del progetto.
+     *
+     * @param array $element
+     *
+     * @return array
+     */
     protected static function readOldQuery($element)
     {
         $options = str_replace(["\r", "\n", "\t"], ' ', $element['option']);
@@ -294,7 +444,7 @@ class App
             $format[] = 0;
         }
 
-        $search_inside = $fields;
+        $search_inside = $order_by;
 
         return [
             'query' => self::replacePlaceholder($query),
@@ -308,9 +458,16 @@ class App
         ];
     }
 
+    /**
+     * Restituisce le singole componenti delle query per un determinato modulo/plugin.
+     *
+     * @param array $element
+     *
+     * @return array
+     */
     protected static function getViews($element)
     {
-        $database = Database::getConnection();
+        $database = database();
 
         $user = Auth::user();
 
@@ -322,76 +479,5 @@ class App
         ORDER BY `order` ASC');
 
         return $views;
-    }
-
-    public static function replacePlaceholder($query, $custom = null)
-    {
-        $id_module = filter('id_module');
-        $user = Auth::user();
-
-        // Sostituzione degli identificatori
-        $id = empty($custom) ? $user['idanagrafica'] : $custom;
-        $query = str_replace(['|idagente|', '|idtecnico|', '|idanagrafica|'], prepare($id), $query);
-
-        // Sostituzione delle date
-        $query = str_replace(['|period_start|', '|period_end|'], [$_SESSION['period_start'], $_SESSION['period_end']], $query);
-
-        // Sostituzione dei segmenti
-        $query = str_replace('|segment|', !empty($_SESSION['m'.$id_module]['id_segment']) ? ' AND id_segment = '.prepare($_SESSION['m'.$id_module]['id_segment']) : '', $query);
-
-        return $query;
-    }
-
-    public static function load($file, $result, $options, $directory = null)
-    {
-        $module = self::getCurrentModule();
-
-        $id_module = filter('id_module');
-        $id_record = filter('id_record');
-
-        $directory = empty($directory) ? 'include|custom|/common/' : $directory;
-        $directory = str_contains($directory, DOCROOT) ? $directory : DOCROOT.'/'.$directory;
-
-        ob_start();
-
-        $original_file = str_replace('|custom|', '', $directory).'form.php';
-        $custom_file = str_replace('|custom|', '/custom', $directory).'form.php';
-        if (file_exists($custom_file)) {
-            require $custom_file;
-        } elseif (file_exists($original_file)) {
-            require $original_file;
-        }
-
-        $form = ob_get_clean();
-
-        $response = self::internalLoad($file, $result, $options, $directory);
-        $form = str_replace('|response|', $response, $form);
-
-        return $form;
-    }
-
-    protected static function internalLoad($file, $result, $options, $directory = null)
-    {
-        $module = self::getCurrentModule();
-
-        $id_module = filter('id_module');
-        $id_record = filter('id_record');
-
-        $directory = empty($directory) ? 'include|custom|/common/' : $directory;
-        $directory = str_contains($directory, DOCROOT) ? $directory : DOCROOT.'/'.$directory;
-
-        ob_start();
-
-        $original_file = str_replace('|custom|', '', $directory).$file;
-        $custom_file = str_replace('|custom|', '/custom', $directory).$file;
-        if (file_exists($custom_file)) {
-            require $custom_file;
-        } elseif (file_exists($original_file)) {
-            require $original_file;
-        }
-
-        $response = ob_get_clean();
-
-        return $response;
     }
 }

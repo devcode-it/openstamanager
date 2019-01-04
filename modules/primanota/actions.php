@@ -2,13 +2,11 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once $docroot.'/modules/fatture/modutil.php';
-
 switch (post('op')) {
     case 'add':
         $all_ok = true;
         $iddocumento = post('iddocumento');
-        $data = $post['data'];
+        $data = post('data');
         $idmastrino = get_new_idmastrino();
         $descrizione = post('descrizione');
 
@@ -20,10 +18,10 @@ switch (post('op')) {
         $totale = 0;
         $totale_pagato = 0;
 
-        for ($i = 0; $i < sizeof($post['idconto']); ++$i) {
+        for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
             $idconto = post('idconto')[$i];
-            $dare = $post['dare'][$i];
-            $avere = $post['avere'][$i];
+            $dare = post('dare')[$i];
+            $avere = post('avere')[$i];
 
             if (!empty($dare) || !empty($avere)) {
                 if (!empty($avere)) {
@@ -51,10 +49,10 @@ switch (post('op')) {
 
         // Se non va a buon fine qualcosa elimino il mastrino per non lasciare incongruenze nel db
         if (!$all_ok) {
-            $_SESSION['errors'][] = tr("Errore durante l'aggiunta del movimento!");
+            flash()->error(tr("Errore durante l'aggiunta del movimento!"));
             $dbo->query('DELETE FROM co_movimenti WHERE idmastrino='.prepare($idmastrino));
         } else {
-            $_SESSION['infos'][] = tr('Movimento aggiunto in prima nota!');
+            flash()->info(tr('Movimento aggiunto in prima nota!'));
 
             // Verifico se la fattura è stata pagata tutta, così imposto lo stato a "Pagato"
             $query = 'SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
@@ -87,28 +85,35 @@ switch (post('op')) {
             $rs2 = $dbo->fetchArray($query2);
 
             for ($j = 0; $j < sizeof($rs2); ++$j) {
-                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id IN (SELECT idintervento FROM co_preventivi_interventi WHERE idpreventivo=".prepare($rs2[$j]['idpreventivo']).')');
+                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id_preventivo=".prepare($rs2[$j]['idpreventivo']));
             }
         }
-        
-        //Creo il modello di prima nota
-        
-        if(post('crea_modello')=='1'){
-            $idmastrino = get_new_idmastrino('co_movimenti_modelli');
 
-            for ($i = 0; $i < sizeof($post['idconto']); ++$i) {
-                $idconto = post('idconto')[$i];
-                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($descrizione).', '.prepare($idconto).')';
-                $dbo->query($query);
-            }
+        //Creo il modello di prima nota
+
+        if (!empty(post('crea_modello'))) {
+			
+			if (empty(post('idmastrino'))){
+				$idmastrino = get_new_idmastrino('co_movimenti_modelli');
+			}else{
+				$dbo->query('DELETE FROM co_movimenti_modelli WHERE idmastrino='.prepare(post('idmastrino')));
+				$idmastrino = post('idmastrino');
+			}
+			
+			for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
+				$idconto = post('idconto')[$i];
+				$query = 'INSERT INTO co_movimenti_modelli(idmastrino, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($descrizione).', '.prepare($idconto).')';
+				$dbo->query($query);
+			}
+			
         }
-        
+
         break;
 
     case 'editriga':
         $all_ok = true;
         $iddocumento = post('iddocumento');
-        $data = $post['data'];
+        $data = post('data');
         $idmastrino = post('idmastrino');
         $descrizione = post('descrizione');
 
@@ -130,10 +135,10 @@ switch (post('op')) {
         $ragione_sociale = $rs[0]['ragione_sociale'];
         $dir = $rs[0]['dir'];
 
-        for ($i = 0; $i < sizeof($post['idconto']); ++$i) {
+        for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
             $idconto = post('idconto')[$i];
-            $dare = $post['dare'][$i];
-            $avere = $post['avere'][$i];
+            $dare = post('dare')[$i];
+            $avere = post('avere')[$i];
 
             if ($dare != '' && $dare != 0) {
                 $totale = $dare;
@@ -178,7 +183,7 @@ switch (post('op')) {
                                 $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='In attesa di pagamento') WHERE id=".prepare($rs3[$j]['idpreventivo']));
 
                                 // Aggiorno anche lo stato degli interventi collegati ai preventivi
-                                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Completato') WHERE id IN(SELECT idintervento FROM co_preventivi_interventi WHERE idpreventivo=".prepare($rs3[$j]['idpreventivo']).')');
+                                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Completato') WHERE id_preventivo=".prepare($rs3[$j]['idpreventivo']));
                             }
 
                             // Aggiorno lo stato degli interventi collegati alla fattura se ce ne sono
@@ -196,10 +201,10 @@ switch (post('op')) {
 
         // Se non va a buon fine qualcosa elimino il mastrino per non lasciare incongruenze nel db
         if (!$all_ok) {
-            $_SESSION['errors'][] = tr("Errore durante l'aggiunta del movimento!");
+            flash()->error(tr("Errore durante l'aggiunta del movimento!"));
             $dbo->query('DELETE FROM co_movimenti WHERE idmastrino='.prepare($idmastrino));
         } else {
-            $_SESSION['infos'][] = tr('Movimento modificato in prima nota!');
+            flash()->info(tr('Movimento modificato in prima nota!'));
 
             // Verifico se la fattura è stata pagata, così imposto lo stato a "Pagato"
             $query = 'SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.prepare($iddocumento);
@@ -222,7 +227,7 @@ switch (post('op')) {
                 $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='Pagato') WHERE id=".prepare($rs2[$j]['idpreventivo']));
 
                 // Aggiorno anche lo stato degli interventi collegati ai preventivi
-                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id IN (SELECT idintervento FROM co_preventivi_interventi WHERE idpreventivo=".prepare($rs2[$j]['idpreventivo']).')');
+                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id_preventivo=".prepare($rs2[$j]['idpreventivo']));
             }
 
             // Aggiorno lo stato degli interventi collegati alla fattura se ce ne sono
@@ -230,7 +235,7 @@ switch (post('op')) {
             $rs2 = $dbo->fetchArray($query2);
 
             for ($j = 0; $j < sizeof($rs2); ++$j) {
-                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id IN (SELECT idintervento FROM co_preventivi_interventi WHERE idpreventivo=".prepare($rs2[$j]['idpreventivo']).')');
+                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id_preventivo=".prepare($rs2[$j]['idpreventivo']));
             }
         }
         break;
@@ -306,7 +311,7 @@ switch (post('op')) {
                 $dbo->query("UPDATE co_preventivi SET idstato=(SELECT id FROM co_statipreventivi WHERE descrizione='In attesa di pagamento') WHERE id=".prepare($rs[$i]['idpreventivo']));
 
                 // Aggiorno anche lo stato degli interventi collegati ai preventivi
-                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Completato') WHERE idpreventivo=".prepare($rs[$i]['idpreventivo']));
+                $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Completato') WHERE id_preventivo=".prepare($rs[$i]['idpreventivo']));
             }
 
             // Aggiorno lo stato degli interventi collegati alla fattura se ce ne sono
@@ -317,7 +322,7 @@ switch (post('op')) {
                 $dbo->query("UPDATE in_interventi SET idstatointervento=(SELECT idstatointervento FROM in_statiintervento WHERE descrizione='Fatturato') WHERE id=".prepare($rs[$i]['idintervento']));
             }
 
-            $_SESSION['infos'][] = tr('Movimento eliminato!');
+            flash()->info(tr('Movimento eliminato!'));
         }
         break;
 }

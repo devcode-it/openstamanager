@@ -1,5 +1,7 @@
 <?php
 
+use Models\MailAccount;
+
 /**
  * Classe per gestire le email in base alle impostazioni, basata sul framework open-source PHPMailer.
  *
@@ -12,86 +14,127 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
 
     /** @var array Elenco dei template email disponibili */
     protected static $templates = [];
+    protected static $references = [];
     /** @var array Elenco dei template email per modulo */
     protected static $modules = [];
 
     protected $infos = [];
 
+    public function __construct($account = null, $exceptions = null)
+    {
+        parent::__construct($exceptions);
+
+        $this->CharSet = 'UTF-8';
+
+        // Configurazione di base
+        $config = self::get($account);
+
+        // Preparazione email
+        $this->IsHTML(true);
+
+        if (!empty($config['server'])) {
+            $this->IsSMTP(true);
+
+            // Impostazioni di debug
+            $this->SMTPDebug = App::debug() ? 2 : 0;
+            $this->Debugoutput = function ($str, $level) {
+                $this->infos[] = $str;
+            };
+
+            // Impostazioni dell'host
+            $this->Host = $config['server'];
+            $this->Port = $config['port'];
+
+            // Impostazioni di autenticazione
+            if (!empty($config['username'])) {
+                $this->SMTPAuth = true;
+                $this->Username = $config['username'];
+                $this->Password = $config['password'];
+            }
+
+            // Impostazioni di sicurezza
+            if (in_array(strtolower($config['encryption']), ['ssl', 'tls'])) {
+                $this->SMTPSecure = strtolower($config['encryption']);
+            }
+
+            if (!empty($config['ssl_no_verify'])) {
+                $this->SMTPOptions = [
+                    'ssl' => [
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true,
+                        ],
+                ];
+            }
+        }
+
+        $this->From = $config['from_address'];
+        $this->FromName = $config['from_name'];
+
+        $this->WordWrap = 78;
+    }
+
     /**
-     * Restituisce tutte le informazioni di tutti i plugin installati.
+     * Restituisce tutte le informazioni di tutti gli account email presenti.
      *
      * @return array
      */
     public static function getAccounts()
     {
-        if (empty(self::$accounts)) {
-            $database = Database::getConnection();
-
-            $results = $database->fetchArray('SELECT * FROM zz_smtp WHERE deleted = 0');
-
-            $accounts = [];
-
-            foreach ($results as $result) {
-                $accounts[$result['id']] = $result;
-                $accounts[$result['name']] = $result['id'];
-
-                if (!empty($result['main'])) {
-                    $accounts['default'] = $result['id'];
-                }
-            }
-
-            self::$accounts = $accounts;
-        }
-
-        return self::$accounts;
+        return MailAccount::getAll();
     }
 
     /**
-     * Restituisce le informazioni relative a un singolo modulo specificato.
+     * Restituisce le informazioni relative a un singolo account email specificato.
      *
-     * @param string|int $template
+     * @param string|int $account
      *
      * @return array
      */
     public static function get($account = null)
     {
-        if (!is_numeric($account) && !empty(self::getAccounts()[$account])) {
-            $account = self::getAccounts()[$account];
+        $accounts = self::getAccounts();
+
+        $result = MailAccount::get($account);
+
+        if (empty($result)) {
+            $result = $accounts->first(function ($item) {
+                return !empty($item->predefined);
+            });
         }
 
-        if (empty($account)) {
-            $account = self::getAccounts()['default'];
-        }
-
-        return self::getAccounts()[$account];
+        return $result;
     }
 
     /**
-     * Restituisce tutte le informazioni di tutti i plugin installati.
+     * Restituisce tutte le informazioni di tutti i template presenti.
      *
      * @return array
      */
     public static function getTemplates()
     {
         if (empty(self::$templates)) {
-            $database = Database::getConnection();
+            $database = database();
 
-            $results = $database->fetchArray('SELECT * FROM zz_emails WHERE deleted = 0');
+            $results = $database->fetchArray('SELECT * FROM zz_emails WHERE deleted_at IS NULL');
 
             $templates = [];
+            $references = [];
+
+            // Inizializzazione dei riferimenti
+            foreach (Modules::getModules() as $module) {
+                self::$modules[$module['id']] = [];
+            }
 
             foreach ($results as $result) {
                 $templates[$result['id']] = $result;
-                $templates[$result['name']] = $result['id'];
-
-                if (!isset(self::$modules[$result['id_module']])) {
-                    self::$modules[$result['id_module']] = [];
-                }
+                $references[$result['name']] = $result['id'];
 
                 self::$modules[$result['id_module']][] = $result['id'];
             }
 
             self::$templates = $templates;
+            self::$references = $references;
         }
 
         return self::$templates;
@@ -106,15 +149,17 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
      */
     public static function getTemplate($template)
     {
-        if (!is_numeric($template) && !empty(self::getTemplates()[$template])) {
-            $template = self::getTemplates()[$template];
+        $templates = self::getTemplates();
+
+        if (!is_numeric($template) && !empty(self::$references[$template])) {
+            $template = self::$references[$template];
         }
 
-        return self::getTemplates()[$template];
+        return $templates[$template];
     }
 
     /**
-     * Restituisce le informazioni relative a un singolo template specificato.
+     * Restituisce le variabili relative a un singolo template specificato.
      *
      * @param string|int $template
      *
@@ -123,22 +168,11 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     public static function getTemplateVariables($template, $id_record)
     {
         $template = self::getTemplate($template);
-        $module = Modules::get($template['id_module']);
 
-        $file = DOCROOT.'/modules/'.$module['directory'].'|custom|/variables.php';
-
-        $original_file = str_replace('|custom|', '', $file);
-        $custom_file = str_replace('|custom|', '/custom', $file);
-
-        $database = Database::getConnection();
-        $dbo = $database;
+        $dbo = $database = database();
 
         // Lettura delle variabili nei singoli moduli
-        if (file_exists($custom_file)) {
-            $variables = require $custom_file;
-        } elseif (file_exists($original_file)) {
-            $variables = require $original_file;
-        }
+        $variables = include Modules::filepath($template['id_module'], 'variables.php');
 
         return (array) $variables;
     }
@@ -165,65 +199,105 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
         return $result;
     }
 
-    public function __construct($account = null, $exceptions = null)
+    /**
+     * Testa la connessione al server SMTP.
+     *
+     * @return bool
+     */
+    public function testSMTP()
     {
-        parent::__construct($exceptions);
+        if ($this->smtpConnect()) {
+            $this->smtpClose();
 
-        // Configurazione di base
-        $config = self::get($account);
-
-        // Preparazione email
-        $this->IsHTML(true);
-
-        if (!empty($config['server'])) {
-            $this->IsSMTP(true);
-
-            // Impostazioni di debug
-            $this->SMTPDebug = 3;
-            $this->Debugoutput = function ($str, $level) {
-                $this->infos[] = $str;
-            };
-
-            // Impostazioni dell'host
-            $this->Host = $config['server'];
-            $this->Port = $config['port'];
-
-            // Impostazioni di autenticazione
-            if (!empty($config['username'])) {
-                $this->SMTPAuth = true;
-                $this->Username = $config['username'];
-                $this->Password = $config['password'];
-            }
-
-            // Impostazioni di sicurezza
-            if (in_array(strtolower($config['encryption']), ['ssl', 'tls'])) {
-                $this->SMTPSecure = strtolower($config['encryption']);
-            }
+            return true;
         }
 
-        $this->From = $config['from_address'];
-        $this->FromName = $_SESSION['from_name'];
-
-        $this->WordWrap = 78;
+        return false;
     }
 
+    /**
+     * Invia l'email impostata.
+     *
+     * @return bool
+     *
+     * @throws Exception
+     */
     public function send()
     {
-        global $logger;
-
         if (empty($this->AltBody)) {
             $this->AltBody = strip_tags($this->Body);
         }
 
-        $result = parent::send();
+        $exception = null;
+        try {
+            $result = parent::send();
+        } catch (PHPMailer\PHPMailer\Exception $e) {
+            $result = false;
+            $exception = $e;
+        }
 
         $this->SmtpClose();
 
         // Segnalazione degli errori
-        foreach ($this->infos as $info) {
-            $logger->addRecord(\Monolog\Logger::ERROR, $info);
+        if (!$result) {
+            $logger = logger();
+            foreach ($this->infos as $info) {
+                $logger->addRecord(\Monolog\Logger::ERROR, $info);
+            }
+        }
+
+        if (!empty($exception)) {
+            throw $exception;
         }
 
         return $result;
+    }
+
+    public function setTemplate(array $template)
+    {
+        // Reply To
+        if (!empty($template['reply_to'])) {
+            $this->AddReplyTo($template['reply_to']);
+        }
+
+        // CC
+        if (!empty($template['cc'])) {
+            $this->AddCC($template['cc']);
+        }
+
+        // BCC
+        if (!empty($template['bcc'])) {
+            $this->AddBCC($template['bcc']);
+        }
+    }
+
+    /**
+     * Aggiunge un destinatario.
+     *
+     * @param array $receiver
+     * @param array $type
+     */
+    public function addReceiver($receiver, $type = null)
+    {
+        $pieces = explode('<', $receiver);
+        $count = count($pieces);
+
+        $name = null;
+        if ($count > 1) {
+            $email = substr(end($pieces), 0, -1);
+            $name = substr($receiver, 0, strpos($receiver, '<'.$email));
+        } else {
+            $email = $receiver;
+        }
+
+        if (!empty($email)) {
+            if ($type == 'cc') {
+                $this->AddCC($email, $name);
+            } elseif ($type == 'bcc') {
+                $this->AddBCC($email, $name);
+            } else {
+                $this->AddAddress($email, $name);
+            }
+        }
     }
 }

@@ -44,7 +44,7 @@ $rs_gen = $dbo->fetchArray("SELECT *,
     (SELECT `percentuale` FROM `co_iva` WHERE `id` = `dt_righe_ddt`.`idiva`) AS perc_iva,
     IFNULL((SELECT peso_lordo FROM mg_articoli WHERE id=idarticolo),0) * qta AS peso_lordo,
     IFNULL((SELECT volume FROM mg_articoli WHERE id=idarticolo),0) * qta AS volume
-FROM `dt_righe_ddt` WHERE idddt=".prepare($id_record));
+FROM `dt_righe_ddt` WHERE idddt=".prepare($id_record).' ORDER BY `order`');
 foreach ($rs_gen as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
@@ -77,17 +77,12 @@ foreach ($rs_gen as $r) {
         }
     }
 
-    // Aggiunta riferimento a ordine
-    if (!empty($r['idordine'])) {
-        $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data FROM or_ordini WHERE id='.prepare($r['idordine']));
-        $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
+    // Aggiunta dei riferimenti ai documenti
+    $ref = doc_references($r, $records[0]['dir'], ['idddt']);
 
+    if (!empty($ref)) {
         echo '
-            <br/><small>'.tr('Rif. ordine num. _NUM_ del _DATE_', [
-                '_NUM_' => $numero,
-                '_DATE_' => Translator::dateToLocale($rso[0]['data']),
-            ]).'</small>';
-
+                <br><small>'.$ref['description'].'</small>';
         if ($count <= 1) {
             $count += 0.4;
         }
@@ -100,7 +95,7 @@ foreach ($rs_gen as $r) {
         <td class="text-center">';
     if (empty($r['is_descrizione'])) {
         echo '
-            '.Translator::numberToLocale($r['qta']).' '.$r['um'];
+            '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'];
     }
     echo '
         </td>';
@@ -164,7 +159,7 @@ echo '
 
 // Info per il footer
 $imponibile = sum($imponibile) - sum($sconto);
-$iva = sum($iva, null, 4);
+$iva = sum($iva);
 
 $totale = $imponibile + $iva;
 

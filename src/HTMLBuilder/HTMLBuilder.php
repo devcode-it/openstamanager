@@ -51,39 +51,44 @@ class HTMLBuilder
     /** @var array Elenco dei gestori dei campi HTML */
     protected static $handlers = [
         'list' => [
-            'default' => 'HTMLBuilder\Handler\DefaultHandler',
-            'image' => 'HTMLBuilder\Handler\MediaHandler',
-            'select' => 'HTMLBuilder\Handler\SelectHandler',
-            'checkbox' => 'HTMLBuilder\Handler\ChoicesHandler',
-            'radio' => 'HTMLBuilder\Handler\ChoicesHandler',
-            'bootswitch' => 'HTMLBuilder\Handler\ChoicesHandler',
-            'timestamp' => 'HTMLBuilder\Handler\DateHandler',
-            'date' => 'HTMLBuilder\Handler\DateHandler',
-            'time' => 'HTMLBuilder\Handler\DateHandler',
+            'default' => Handler\DefaultHandler::class,
+            'image' => Handler\MediaHandler::class,
+            'select' => Handler\SelectHandler::class,
+            'checkbox' => Handler\ChoicesHandler::class,
+            'radio' => Handler\ChoicesHandler::class,
+            'bootswitch' => Handler\ChoicesHandler::class,
+            'timestamp' => Handler\DateHandler::class,
+            'date' => Handler\DateHandler::class,
+            'time' => Handler\DateHandler::class,
+            'ckeditor' => Handler\CKEditorHandler::class,
         ],
         'instances' => [],
     ];
 
     /** @var array Generatore del contenitore per i campi HTML */
     protected static $wrapper = [
-        'class' => 'HTMLBuilder\Wrapper\HTMLWrapper',
+        'class' => Wrapper\HTMLWrapper::class,
         'istance' => null,
     ];
 
     /** @var array Elenco dei gestori delle strutture HTML */
     protected static $managers = [
         'list' => [
-            'filelist_and_upload' => 'HTMLBuilder\Manager\FileManager',
-            'button' => 'HTMLBuilder\Manager\ButtonManager',
-            'csrf' => 'HTMLBuilder\Manager\CSRFManager',
-            'custom_fields' => 'HTMLBuilder\Manager\FieldManager',
-            'widgets' => 'HTMLBuilder\Manager\WidgetManager',
+            'filelist_and_upload' => Manager\FileManager::class,
+            'button' => Manager\ButtonManager::class,
+            'csrf' => Manager\CSRFManager::class,
+            'custom_fields' => Manager\FieldManager::class,
+            'widgets' => Manager\WidgetManager::class,
+            'log_email' => Manager\EmailManager::class,
         ],
         'instances' => [],
     ];
 
     /** @var int Limite di ricorsione interna */
     protected static $max_recursion = 10;
+
+    /** @var array Elenco degli elementi abilitati per la sostituzione automatica nei valori ($nome$) */
+    protected static $record = [];
 
     /**
      * Esegue la sostituzione dei tag personalizzati con il relativo codice HTML.
@@ -127,175 +132,6 @@ class HTMLBuilder
         }
 
         return $html;
-    }
-
-    /**
-     * Genera il codice HTML per i singoli tag di input.
-     *
-     * @param string $json
-     *
-     * @return string
-     */
-    protected static function generate($json)
-    {
-        // Elaborazione del formato
-        $elaboration = self::elaborate($json);
-        $values = $elaboration[0];
-        $extras = $elaboration[1];
-
-        $result = null;
-        if (!empty($values)) {
-            // Generazione dell'elemento
-            $html = self::getHandler($values['type'])->handle($values, $extras);
-
-            // Generazione del parte iniziale del contenitore
-            $before = self::getWrapper()->before($values, $extras);
-
-            // Generazione del parte finale del contenitore
-            $after = self::getWrapper()->after($values, $extras);
-
-            $result = $before.$html.$after;
-
-            // Elaborazione del codice HTML
-            $result = self::process($result, $values, $extras);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Decodifica i tag personalizzati e li converte in un array basato sul formato JSON.
-     *
-     * @param string $string
-     * @param string $type
-     *
-     * @return array
-     */
-    protected static function decode($string, $type)
-    {
-        $string = '{'.substr($string, strlen(self::$open[$type]), -strlen(self::$close[$type])).'}';
-
-        // Fix per contenuti con newline integrati
-        $string = str_replace(["\n", "\r"], ['\\n', '\\r'], $string);
-
-        $json = (array) json_decode($string, true);
-
-        return $json;
-    }
-
-    /**
-     * Elabora l'array contenente le impostazioni del tag per renderlo fruibile alla conversione in HTML (per i tag di input).
-     *
-     * @param array $json
-     *
-     * @return array
-     */
-    protected static function elaborate($json)
-    {
-        global $records;
-
-        $values = [];
-        $extras = [];
-
-        if (!empty($json)) {
-            // Conversione delle variabili con i campi di database ($records)
-            foreach ($json as $key => $value) {
-                if (empty($value) && !is_numeric($value)) {
-                    unset($json[$key]);
-                }
-                // Sostituzione delle variabili $nome$ col relativo valore da database
-                elseif (preg_match_all('/\$([a-z0-9\_]+)\$/i', $json[$key], $m)) {
-                    for ($i = 0; $i < count($m[0]); ++$i) {
-                        $record = isset($records[0][$m[1][$i]]) ? $records[0][$m[1][$i]] : '';
-                        $json[$key] = str_replace($m[0][$i], prepareToField($record), $json[$key]);
-                    }
-                }
-            }
-
-            // Valori speciali che richiedono solo la propria presenza
-            foreach (self::$specifics as $specific) {
-                if (isset($json[$specific])) {
-                    if (!empty($json[$specific])) {
-                        $extras[] = trim($specific);
-                    }
-                    unset($json[$specific]);
-                }
-            }
-
-            // Campo personalizzato "extra"
-            if (isset($json['extra'])) {
-                if (!empty($json['extra'])) {
-                    $extras[] = trim($json['extra']);
-                }
-                unset($json['extra']);
-            }
-
-            // Attributi normali
-            foreach ($json as $key => $value) {
-                $values[trim($key)] = is_string($value) ? trim($value) : $value;
-            }
-
-            // Valori particolari
-            $values['name'] = str_replace(' ', '_', $values['name']);
-            $values['id'] = empty($values['id']) ? $values['name'] : $values['id'];
-            $values['id'] = str_replace(['[', ']', ' '], ['', '', '_'], $values['id']);
-            $values['value'] = isset($values['value']) ? $values['value'] : '';
-
-            // Gestione delle classi CSS
-            $values['class'] = [];
-            $values['class'][] = 'form-control';
-            if (!empty($json['class'])) {
-                $classes = explode(' ', $json['class']);
-                foreach ($classes as $class) {
-                    if (!empty($class)) {
-                        $values['class'][] = trim($class);
-                    }
-                }
-            }
-
-            // Gestione grafica dell'attributo required
-            if (in_array('required', $extras)) {
-                if (!empty($values['label'])) {
-                    $values['label'] .= '*';
-                } elseif (!empty($values['placeholder'])) {
-                    $values['placeholder'] .= '*';
-                }
-            }
-        }
-
-        return [$values, $extras];
-    }
-
-    /**
-     * Sostituisce i placeholder delle impostazioni con i relativi valori (per i tag di input).
-     *
-     * @param string $result
-     * @param array  $values
-     * @param array  $extras
-     *
-     * @return string
-     */
-    protected static function process($result, $values, $extras)
-    {
-        unset($values['label']);
-
-        $values['class'] = array_unique($values['class']);
-
-        foreach ($values as $key => $value) {
-            // Fix per la presenza di apici doppi
-            $value = prepareToField(is_array($value) ? implode(' ', $value) : $value);
-            if (str_contains($result, '|'.$key.'|')) {
-                $result = str_replace('|'.$key.'|', $value, $result);
-            } elseif (!empty($value) || is_numeric($value)) {
-                $attributes[] = $key.'="'.$value.'"';
-            }
-        }
-
-        $attributes = array_unique(array_merge($attributes, $extras));
-
-        $result = str_replace('|attr|', implode(' ', $attributes), $result);
-
-        return $result;
     }
 
     /**
@@ -418,5 +254,184 @@ class HTMLBuilder
             self::$managers['list'][$input] = $original;
             self::$managers['instances'][$original] = $class;
         }
+    }
+
+    /**
+     * Imposta l'oggetto responsabile per la costruzione del codice HTML per il tag personalizzato.
+     *
+     * @param string       $input
+     * @param string|mixed $class
+     */
+    public static function setRecord($record)
+    {
+        self::$record = $record;
+    }
+
+    /**
+     * Genera il codice HTML per i singoli tag di input.
+     *
+     * @param string $json
+     *
+     * @return string
+     */
+    protected static function generate($json)
+    {
+        // Elaborazione del formato
+        $elaboration = self::elaborate($json);
+        $values = $elaboration[0];
+        $extras = $elaboration[1];
+
+        $result = null;
+        if (!empty($values)) {
+            // Generazione dell'elemento
+            $html = self::getHandler($values['type'])->handle($values, $extras);
+
+            // Generazione del parte iniziale del contenitore
+            $before = self::getWrapper()->before($values, $extras);
+
+            // Generazione del parte finale del contenitore
+            $after = self::getWrapper()->after($values, $extras);
+
+            $result = $before.$html.$after;
+
+            // Elaborazione del codice HTML
+            $result = self::process($result, $values, $extras);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Decodifica i tag personalizzati e li converte in un array basato sul formato JSON.
+     *
+     * @param string $string
+     * @param string $type
+     *
+     * @return array
+     */
+    protected static function decode($string, $type)
+    {
+        $string = '{'.substr($string, strlen(self::$open[$type]), -strlen(self::$close[$type])).'}';
+
+        // Fix per contenuti con newline integrati
+        $string = str_replace(["\n", "\r"], ['\\n', '\\r'], $string);
+
+        $json = (array) json_decode($string, true);
+
+        return $json;
+    }
+
+    /**
+     * Elabora l'array contenente le impostazioni del tag per renderlo fruibile alla conversione in HTML (per i tag di input).
+     *
+     * @param array $json
+     *
+     * @return array
+     */
+    protected static function elaborate($json)
+    {
+        $values = [];
+        $extras = [];
+
+        if (!empty($json)) {
+            // Conversione delle variabili con i campi di database ($record)
+            foreach ($json as $key => $value) {
+                if (empty($value) && !is_numeric($value)) {
+                    unset($json[$key]);
+                }
+                // Sostituzione delle variabili $nome$ col relativo valore da database
+                elseif (is_string($json[$key]) && preg_match_all('/\$([a-z0-9\_]+)\$/i', $json[$key], $m)) {
+                    for ($i = 0; $i < count($m[0]); ++$i) {
+                        $record = isset(self::$record[$m[1][$i]]) ? self::$record[$m[1][$i]] : '';
+                        $json[$key] = str_replace($m[0][$i], prepareToField($record), $json[$key]);
+                    }
+                }
+            }
+
+            // Valori speciali che richiedono solo la propria presenza
+            foreach (self::$specifics as $specific) {
+                if (isset($json[$specific])) {
+                    if (!empty($json[$specific])) {
+                        $extras[] = trim($specific);
+                    }
+                    unset($json[$specific]);
+                }
+            }
+
+            // Campo personalizzato "extra"
+            if (isset($json['extra'])) {
+                if (!empty($json['extra'])) {
+                    $extras[] = trim($json['extra']);
+                }
+                unset($json['extra']);
+            }
+
+            // Attributi normali
+            foreach ($json as $key => $value) {
+                $values[trim($key)] = is_string($value) ? trim($value) : $value;
+            }
+
+            // Valori particolari
+            $values['name'] = str_replace(' ', '_', $values['name']);
+            $values['id'] = empty($values['id']) ? $values['name'] : $values['id'];
+            $values['id'] = str_replace(['[', ']', ' '], ['', '', '_'], $values['id']);
+            $values['value'] = isset($values['value']) ? $values['value'] : '';
+
+            // Gestione delle classi CSS
+            $values['class'] = [];
+            $values['class'][] = 'form-control';
+            if (!empty($json['class'])) {
+                $classes = explode(' ', $json['class']);
+                foreach ($classes as $class) {
+                    if (!empty($class)) {
+                        $values['class'][] = trim($class);
+                    }
+                }
+            }
+
+            // Gestione grafica dell'attributo required
+            if (in_array('required', $extras)) {
+                if (!empty($values['label'])) {
+                    $values['label'] .= '*';
+                } elseif (!empty($values['placeholder'])) {
+                    $values['placeholder'] .= '*';
+                }
+            }
+        }
+
+        return [$values, $extras];
+    }
+
+    /**
+     * Sostituisce i placeholder delle impostazioni con i relativi valori (per i tag di input).
+     *
+     * @param string $result
+     * @param array  $values
+     * @param array  $extras
+     *
+     * @return string
+     */
+    protected static function process($result, $values, $extras)
+    {
+        unset($values['label']);
+
+        $values['class'] = array_unique($values['class']);
+
+        $attributes = [];
+        foreach ($values as $key => $value) {
+            // Fix per la presenza di apici doppi
+            $value = prepareToField(is_array($value) ? implode(' ', $value) : $value);
+            if (str_contains($result, '|'.$key.'|')) {
+                $result = str_replace('|'.$key.'|', $value, $result);
+            } elseif (!empty($value) || is_numeric($value)) {
+                $attributes[] = $key.'="'.$value.'"';
+            }
+        }
+
+        $attributes = array_unique(array_merge($attributes, $extras));
+
+        $result = str_replace('|attr|', implode(' ', $attributes), $result);
+
+        return $result;
     }
 }

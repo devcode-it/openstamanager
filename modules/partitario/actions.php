@@ -9,7 +9,7 @@ switch (post('op')) {
         $numero = post('numero');
         $descrizione = post('descrizione');
 
-        if (isset($post['idpianodeiconti2'])) {
+        if (post('idpianodeiconti2') !== null) {
             // Controllo che non sia stato usato un numero non valido del conto
             $query = 'SELECT idpianodeiconti2, numero FROM co_pianodeiconti3 WHERE numero='.prepare($numero).' AND idpianodeiconti2='.prepare($idpianodeiconti2);
             $rs = $dbo->fetchArray($query);
@@ -18,10 +18,10 @@ switch (post('op')) {
                 $query = 'INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, dir, can_edit, can_delete) VALUES('.prepare($numero).', '.prepare($descrizione).', '.prepare($idpianodeiconti2).', (SELECT dir FROM co_pianodeiconti2 WHERE id='.prepare($idpianodeiconti2).'), 1, 1)';
 
                 if ($dbo->query($query)) {
-                    $_SESSION['infos'][] = tr('Nuovo conto aggiunto!');
+                    flash()->info(tr('Nuovo conto aggiunto!'));
                 }
             } else {
-                $_SESSION['errors'][] = tr('Il numero scelto è già esistente!');
+                flash()->error(tr('Il numero scelto è già esistente!'));
             }
         }
         break;
@@ -41,10 +41,10 @@ switch (post('op')) {
                 $query = 'UPDATE co_pianodeiconti3 SET numero='.prepare($numero).', descrizione='.prepare($descrizione).' WHERE id='.prepare($idconto);
 
                 if ($dbo->query($query)) {
-                    $_SESSION['infos'][] = tr('Descrizione conto modificata!');
+                    flash()->info(tr('Descrizione conto modificata!'));
                 }
             } else {
-                $_SESSION['errors'][] = tr('Il numero scelto è già esistente!');
+                flash()->error(tr('Il numero scelto è già esistente!'));
             }
         }
 
@@ -58,7 +58,7 @@ switch (post('op')) {
             $query = 'DELETE FROM co_pianodeiconti3 WHERE id='.prepare($idconto);
 
             if ($dbo->query($query)) {
-                $_SESSION['infos'][] = tr('Conto eliminato!');
+                flash()->info(tr('Conto eliminato!'));
             }
         }
         break;

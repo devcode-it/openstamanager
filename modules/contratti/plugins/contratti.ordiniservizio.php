@@ -5,6 +5,7 @@ include_once __DIR__.'/../../../core.php';
 /*
     GESTIONE ORDINI DI SERVIZIO
 */
+// TODO: aggiornare con la funzione months()
 $mesi = [
     tr('Gennaio'),
     tr('Febbraio'),
@@ -21,20 +22,20 @@ $mesi = [
 ];
 
 // Generazione ordini di servizio
-if ($get['op'] == 'add_ordineservizio') {
+if (get('op') == 'add_ordineservizio') {
     $prev_data = '';
 
     // Ciclo fra le voci in arrivo dal form
-    foreach ($post['voce'] as $data_scadenza => $ordiniservizio) {
+    foreach (post('voce') as $data_scadenza => $ordiniservizio) {
         $data_scadenza = date_create_from_format('Ym', $data_scadenza)->format(Intl\Formatter::getStandardFormats()['date']);
 
         // Ogni data può avere più voci di servizio da salvare
         foreach ($ordiniservizio as $n => $idvoce) {
             // Aggiunta ordine di servizio solo se la voce è spuntata
-            if (in_array($idvoce, $post['idvoce'])) {
+            if (in_array($idvoce, post('idvoce'))) {
                 // Creazione ordine di servizio per data di scadenza
                 if ($prev_data != $data_scadenza) {
-                    $dbo->query('INSERT INTO co_ordiniservizio(idcontratto, data_scadenza, idimpianto, stato) VALUES('.prepare($id_record).', '.prepare($data_scadenza).', '.prepare($post['matricola']).", 'aperto')");
+                    $dbo->query('INSERT INTO co_ordiniservizio(idcontratto, data_scadenza, idimpianto, stato) VALUES('.prepare($id_record).', '.prepare($data_scadenza).', '.prepare(post('matricola')).", 'aperto')");
                     $idordineservizio = $dbo->lastInsertedID();
                 }
 
@@ -45,12 +46,12 @@ if ($get['op'] == 'add_ordineservizio') {
         }
     }
 
-    $_SESSION['infos'][] = tr('Ordini di servizio generati correttamente!');
+    flash()->info(tr('Ordini di servizio generati correttamente!'));
 }
 
 // Eliminazione pianificazione specifica
-elseif ($get['op'] == 'del_ordineservizio') {
-    $idordineservizio = $get['idordineservizio'];
+elseif (get('op') == 'del_ordineservizio') {
+    $idordineservizio = get('idordineservizio');
 
     $n = $dbo->fetchNum('SELECT id FROM co_ordiniservizio WHERE id='.prepare($idordineservizio)." AND stato='aperto'");
 
@@ -60,13 +61,13 @@ elseif ($get['op'] == 'del_ordineservizio') {
             // Eliminazione voci di servizio collegate
             $dbo->query('DELETE FROM co_ordiniservizio_vociservizio WHERE idordineservizio='.prepare($idordineservizio));
 
-            $_SESSION['infos'][] = tr('Ordine di servizio eliminato correttamente!');
+            flash()->info(tr('Ordine di servizio eliminato correttamente!'));
         }
     }
 
     // Non si può eliminare l'ordine di servizio perché è chiuso
     else {
-        $_SESSION['infos'][] = tr('Ordine di servizio già chiuso, impossibile eliminarlo!');
+        flash()->info(tr('Ordine di servizio già chiuso, impossibile eliminarlo!'));
     }
 }
 
@@ -279,7 +280,7 @@ else {
         echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Impianto').'", "name": "matricola", "values": "query=SELECT my_impianti.id, CONCAT(my_impianti.matricola, \" - \", my_impianti.nome) AS descrizione, an_sedi.optgroup FROM my_impianti INNER JOIN (SELECT id, CONCAT(an_sedi.nomesede, \"(\", an_sedi.citta, \")\") AS optgroup FROM an_sedi WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' UNION SELECT 0, \'Sede legale\') AS an_sedi ON my_impianti.idsede = an_sedi.id WHERE my_impianti.idanagrafica='.prepare($records[0]['idanagrafica']).' AND my_impianti.id NOT IN(SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).') ORDER BY idsede ASC, matricola ASC" ]}
+            {[ "type": "select", "label": "'.tr('Impianto').'", "name": "matricola", "values": "query=SELECT my_impianti.id, CONCAT(my_impianti.matricola, \" - \", my_impianti.nome) AS descrizione, an_sedi.optgroup FROM my_impianti INNER JOIN (SELECT id, CONCAT(an_sedi.nomesede, \"(\", an_sedi.citta, \")\") AS optgroup FROM an_sedi WHERE idanagrafica='.prepare($record['idanagrafica']).' UNION SELECT 0, \'Sede legale\') AS an_sedi ON my_impianti.idsede = an_sedi.id WHERE my_impianti.idanagrafica='.prepare($record['idanagrafica']).' AND my_impianti.id NOT IN(SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).') ORDER BY idsede ASC, matricola ASC" ]}
         </div>';
 
         // Indice voci di servizio
@@ -324,7 +325,7 @@ else {
             Copia pianificazione da una già fatta per un impianto ad un'altra
         */
         // Opzione di copia pianificazione solo se ci sono ancora impianti non pianificati
-        $query2 = 'SELECT * FROM my_impianti WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' AND id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).')';
+        $query2 = 'SELECT * FROM my_impianti WHERE idanagrafica='.prepare($record['idanagrafica']).' AND id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).')';
         $cont = $dbo->fetchNum($query2);
 
         if ($cont > 0) {
@@ -334,7 +335,7 @@ else {
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Copiare la pianificazione da un altro impianto').'", "name": "matricola_src", "values": "query=SELECT my_impianti.id, CONCAT(my_impianti.matricola, \" - \", my_impianti.nome) AS descrizione, an_sedi.optgroup FROM my_impianti INNER JOIN (SELECT id, CONCAT(an_sedi.nomesede, \"(\", an_sedi.citta, \")\") AS optgroup FROM an_sedi WHERE idanagrafica='.prepare($records[0]['idanagrafica']).' UNION SELECT 0, \'Sede legale\') AS an_sedi ON my_impianti.idsede = an_sedi.id WHERE my_impianti.idanagrafica='.prepare($records[0]['idanagrafica']).' AND my_impianti.id IN(SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).') ORDER BY idsede ASC, matricola ASC" ]}
+            {[ "type": "select", "label": "'.tr('Copiare la pianificazione da un altro impianto').'", "name": "matricola_src", "values": "query=SELECT my_impianti.id, CONCAT(my_impianti.matricola, \" - \", my_impianti.nome) AS descrizione, an_sedi.optgroup FROM my_impianti INNER JOIN (SELECT id, CONCAT(an_sedi.nomesede, \"(\", an_sedi.citta, \")\") AS optgroup FROM an_sedi WHERE idanagrafica='.prepare($record['idanagrafica']).' UNION SELECT 0, \'Sede legale\') AS an_sedi ON my_impianti.idsede = an_sedi.id WHERE my_impianti.idanagrafica='.prepare($record['idanagrafica']).' AND my_impianti.id IN(SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).') ORDER BY idsede ASC, matricola ASC" ]}
         </div>
     </div>';
 

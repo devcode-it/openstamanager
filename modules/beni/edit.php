@@ -15,7 +15,7 @@ include_once __DIR__.'/../../core.php';
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1,  "value": "$descrizione$" ]}
+					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
 				</div>
 			</div>
 		</div>
@@ -24,11 +24,13 @@ include_once __DIR__.'/../../core.php';
 </form>
 
 <?php
+// Collegamenti diretti (numerici)
 $documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE idaspettobeni='.prepare($id_record).'
-			 UNION SELECT id FROM co_documenti WHERE idaspettobeni='.prepare($id_record));
 
-if (!empty($documenti)){
-echo '
+UNION SELECT id FROM co_documenti WHERE idaspettobeni='.prepare($id_record));
+
+if (!empty($documenti)) {
+    echo '
 <div class="alert alert-danger">
     '.tr('Ci sono _NUM_ documenti collegati', [
         '_NUM_' => count($documenti),

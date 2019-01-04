@@ -1,19 +1,23 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-include_once __DIR__.'/modutil.php';
+if (file_exists(__DIR__.'/../../../core.php')) {
+    include_once __DIR__.'/../../../core.php';
+} else {
+    include_once __DIR__.'/../../core.php';
+}
 
-$idiva = get_var('Iva predefinita');
+$show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
+
+$idiva = setting('Iva predefinita');
 $rs_iva = $dbo->fetchArray('SELECT descrizione, percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva));
 ($rs_iva[0]['percentuale'] > 0) ? $hide = '' : $hide = 'hide';
 
-if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
+if ($show_prezzi) {
     $costi = get_costi_intervento($id_record);
 
-    $rss = $dbo->fetchArray('SELECT in_statiintervento.completato FROM in_statiintervento INNER JOIN in_interventi ON in_statiintervento.idstatointervento=in_interventi.idstatointervento WHERE in_interventi.id='.prepare($id_record));
-    $flg_completato = $rss[0]['completato'];
+    $rss = $dbo->fetchArray('SELECT in_statiintervento.completato AS flag_completato FROM in_statiintervento INNER JOIN in_interventi ON in_statiintervento.idstatointervento=in_interventi.idstatointervento WHERE in_interventi.id='.prepare($id_record));
 
-    if ($flg_completato) {
+    if ($rss[0]['flag_completato']) {
         $readonly = 'readonly';
     } else {
         $readonly = '';

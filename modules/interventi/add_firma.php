@@ -1,6 +1,10 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
+if (file_exists(__DIR__.'/../../../core.php')) {
+    include_once __DIR__.'/../../../core.php';
+} else {
+    include_once __DIR__.'/../../core.php';
+}
 $module_name = 'Interventi';
 
 if (get('anteprima') !== null) {
@@ -16,7 +20,7 @@ if (get('anteprima') !== null) {
     // Gestione della stampa
     $rapportino_nome = sanitizeFilename('Rapportino'.$rs[0]['codice'].'.pdf');
     $filename = $docroot.'/files/interventi/'.$rapportino_nome;
-    $id_print = Prints::getModuleMainPrint($id_module)['id'];
+    $id_print = setting('Stampa per anteprima e firma');
 
     // HTML per la visualizzazione
     echo '
@@ -28,7 +32,7 @@ if (get('anteprima') !== null) {
 
     <div class="clearfix"></div>
 
-    <iframe src="'.Prints::getPreviewLink($id_print, $id_record, $filename).'" allowfullscreen="" webkitallowfullscreen="" width="100%" height="550"></iframe>
+    <iframe src="'.Prints::getPreviewLink($id_print, $id_record, $filename).'" frameborder="0" width="100%" height="550"></iframe>
 </div>';
 }
 
@@ -42,20 +46,26 @@ if (get('anteprima') !== null) {
             {[ "type": "text", "label": "<?php echo tr('Nome e cognome'); ?>", "name": "firma_nome", "required": 1 ]}
         </div>
     </div>
-
-    <div id="signature-pad" class="signature-pad">
-        <canvas id="canvas" onselectstart="return false"></canvas>
-        <input type="hidden" name="firma_base64" id="firma_base64" value="">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="signature-pad" class="signature-pad">
+                <canvas id="canvas" onselectstart="return false"></canvas>
+                <input type="hidden" name="firma_base64" id="firma_base64" value="">
+            </div>
+        </div>
     </div>
-
-
-    <div class="btn-group pull-right">
-        <button type="button" class="btn btn-danger" data-action="clear">
-            <i class="fa fa-eraser"></i> <?php echo tr('Cancella firma'); ?>
-        </button>
-        <button type="submit" class="btn btn-success" data-action="save">
-            <i class="fa fa-check"></i> <?php echo tr('Salva firma'); ?>
-        </button>
+    <br>
+    <div class="row">
+        <div class="col-md-6">
+            <button type="button" class="btn btn-danger" data-action="clear">
+                <i class="fa fa-eraser"></i> <?php echo tr('Cancella firma'); ?>
+            </button>
+        </div>
+        <div class="col-md-6">
+            <button type="submit" class="btn btn-success pull-right" data-action="save">
+                <i class="fa fa-check"></i> <?php echo tr('Salva firma'); ?>
+            </button>
+        </div>
     </div>
 
 </form>

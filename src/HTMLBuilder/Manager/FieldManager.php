@@ -16,7 +16,7 @@ class FieldManager implements ManagerInterface
 
     public function getInfo($options)
     {
-        $database = \Database::getConnection();
+        $database = database();
 
         $query = 'SELECT `zz_fields`.*'.(isset($options['id_record']) ? ', `zz_field_record`.`value`' : '').' FROM `zz_fields`';
 
@@ -66,13 +66,13 @@ class FieldManager implements ManagerInterface
                 $field['value'] = isset($field['value']) ? $field['value'] : '';
 
                 $replace = [
-                'value' => $field['value'],
-                'label' => $field['name'],
-                'name' => $field['html_name'],
-            ];
+                    'value' => $field['value'],
+                    'label' => $field['name'],
+                    'name' => $field['html_name'],
+                ];
 
-                foreach ($replace as $key => $value) {
-                    $field['content'] = str_replace('|'.$key.'|', $value, $field['content']);
+                foreach ($replace as $name => $value) {
+                    $field['content'] = str_replace('|'.$name.'|', $value, $field['content']);
                 }
 
                 $result .= '

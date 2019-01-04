@@ -2,10 +2,12 @@
 
 include_once __DIR__.'/../../core.php';
 
-/*
-    Righe fattura
-*/
-$rs = $dbo->fetchArray("SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice, (SELECT descrizione FROM co_pianodeiconti3 WHERE co_pianodeiconti3.id=IF(co_righe_documenti.idconto = 0, (SELECT idconto FROM co_documenti WHERE iddocumento=".prepare($id_record).' LIMIT 1), co_righe_documenti.idconto)) AS descrizione_conto FROM `co_righe_documenti` WHERE iddocumento='.prepare($id_record).' ORDER BY `order`');
+use Modules\Fatture\Components\Articolo;
+use Modules\Fatture\Components\Descrizione;
+use Modules\Fatture\Components\Riga;
+
+// Righe fattura
+$righe = $fattura->getRighe();
 
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
@@ -14,291 +16,254 @@ echo '
             <th>'.tr('Descrizione').'</th>
             <th width="120">'.tr('Q.tà').'</th>
             <th width="80">'.tr('U.m.').'</th>
-            <th width="120">'.tr('Costo unitario').'</th>
+            <th width="120">'.tr('Prezzo unitario').'</th>
             <th width="120">'.tr('Iva').'</th>
-            <th width="120">'.tr('Imponibile').'</th>
+            <th width="120">'.tr('Importo').'</th>
             <th width="60"></th>
         </tr>
     </thead>
     <tbody class="sortable">';
 
-if (!empty($rs)) {
-    foreach ($rs as $r) {
+foreach ($righe as $riga) {
+    // Valori assoluti
+    $riga['qta'] = abs($riga['qta']);
+    $riga['prezzo_unitario_acquisto'] = abs($riga['prezzo_unitario_acquisto']);
+    $riga['subtotale'] = abs($riga['subtotale']);
+    $riga['sconto_unitario'] = abs($riga['sconto_unitario']);
+    $riga['sconto'] = abs($riga['sconto']);
+    $riga['iva'] = abs($riga['iva']);
+
+    $extra = '';
+
+    $ref_modulo = null;
+    $ref_id = null;
+
+    // Preventivi
+    if (!empty($riga['idpreventivo'])) {
+        $delete = 'unlink_preventivo';
+    }
+    // Contratti
+    elseif (!empty($riga['idcontratto'])) {
+        $delete = 'unlink_contratto';
+    }
+    // Intervento
+    elseif (!empty($riga['idintervento'])) {
+        $delete = 'unlink_intervento';
+    }
+    // Articoli
+    elseif ($riga instanceof Articolo) {
+        $ref_modulo = Modules::get('Articoli')['id'];
+        $ref_id = $riga['idarticolo'];
+
+        $riga['descrizione'] = (!empty($riga->articolo) ? $riga->articolo->codice.' - ' : '').$riga['descrizione'];
+
+        $delete = 'unlink_articolo';
+
         $extra = '';
+        $mancanti = 0;
+    }
+    // Righe generiche
+    else {
+        $delete = 'unlink_riga';
+    }
 
-        $ref_modulo = null;
-        $ref_id = null;
+    // Individuazione dei seriali
+    if (!empty($riga['abilita_serial'])) {
+        $serials = $riga->serials;
+        $mancanti = $riga['qta'] - count($serials);
 
-        // Articoli
-        if (!empty($r['idarticolo'])) {
-            $ref_modulo = Modules::get('Articoli')['id'];
-            $ref_id = $r['idarticolo'];
-
-            $r['descrizione'] = (!empty($r['codice']) ? $r['codice'].' - ' : '').$r['descrizione'];
-
-            $delete = 'unlink_articolo';
-
-            $extra = '';
+        if ($mancanti > 0) {
+            $extra = 'class="warning"';
+        } else {
             $mancanti = 0;
+        }
+    }
 
-            // Individuazione dei seriali
-            if (!empty($r['abilita_serial'])) {
-                $serials = array_column($dbo->fetchArray('SELECT serial FROM mg_prodotti WHERE serial IS NOT NULL AND id_riga_documento='.prepare($r['id'])), 'serial');
-                $mancanti = $r['qta'] - count($serials);
-
-                if ($mancanti > 0) {
-                    $extra = 'class="warning"';
-                } else {
-                    $mancanti = 0;
-                }
-            }
-        }
-        // Preventivi
-        elseif (!empty($r['idpreventivo'])) {
-            $delete = 'unlink_preventivo';
-        }
-        // Contratti
-        elseif (!empty($r['idcontratto'])) {
-            $delete = 'unlink_contratto';
-        }
-        // Intervento
-        elseif (!empty($r['idintervento'])) {
-            $delete = 'unlink_intervento';
-        }
-        // Righe generiche
-        else {
-            $delete = 'unlink_riga';
-        }
-
-        echo '
-    <tr data-id="'.$r['id'].'" '.$extra.'>';
-
-        echo '
+    echo '
+    <tr data-id="'.$riga['id'].'" '.$extra.'>
         <td>
-            '.Modules::link($ref_modulo, $ref_id, $r['descrizione']).'
-            <small class="pull-right text-muted">'.$r['descrizione_conto'].'</small>';
+            '.Modules::link($ref_modulo, $ref_id, $riga['descrizione']).'
+            <small class="pull-right text-muted">'.$riga['descrizione_conto'].'</small>';
 
-        if (!empty($r['abilita_serial'])) {
-            if (!empty($mancanti)) {
-                echo '
+    if (!empty($riga['abilita_serial'])) {
+        if (!empty($mancanti)) {
+            echo '
             <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [
                 '_NUM_' => $mancanti,
             ]).'</small></b>';
-            }
-            if (!empty($serials)) {
-                echo '
+        }
+        if (!empty($serials)) {
+            echo '
             <br>'.tr('SN').': '.implode(', ', $serials);
-            }
         }
+    }
 
-        $ref_modulo = null;
-        $ref_id = null;
+    // Aggiunta dei riferimenti ai documenti
+    if ($fattura->isNotaDiAccredito()) {
+        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM co_documenti WHERE id = ".prepare($record['ref_documento']));
 
-        // Aggiunta dei riferimenti ai documenti
-        // Ordine
-        if (!empty($r['idordine'])) {
-            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM or_ordini WHERE id=".prepare($r['idordine']));
-
-            $ref_modulo = ($dir == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
-            $ref_id = $r['idordine'];
-
-            $documento = tr('Ordine');
-        }
-        // DDT
-        elseif (!empty($r['idddt'])) {
-            $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM dt_ddt WHERE id=".prepare($r['idddt']));
-
-            $ref_modulo = ($dir == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
-            $ref_id = $r['idddt'];
-
-            $documento = tr('Ddt');
-        }
-        // Preventivo
-        elseif (!empty($r['idpreventivo'])) {
-            $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_preventivi WHERE id='.prepare($r['idpreventivo']));
-
-            $ref_modulo = 'Preventivi';
-            $ref_id = $r['idpreventivo'];
-
-            $documento = tr('Preventivo');
-        }
-        // Contratto
-        elseif (!empty($r['idcontratto'])) {
-            $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_contratti WHERE id='.prepare($r['idcontratto']));
-
-            $ref_modulo = 'Contratti';
-            $ref_id = $r['idcontratto'];
-
-            $documento = tr('Contratto');
-        }
-        // Intervento
-        elseif (!empty($r['idintervento'])) {
-            $data = $dbo->fetchArray('SELECT codice AS numero, IFNULL( (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta) AS data FROM in_interventi WHERE id='.prepare($r['idintervento']));
-
-            $ref_modulo = 'Interventi';
-            $ref_id = $r['idintervento'];
-
-            $documento = tr('Intervento');
-        }
-
-        if (!empty($ref_modulo) && !empty($ref_id)) {
-            $documento = Stringy\Stringy::create($documento)->toLowerCase();
-
-            if (!empty($data)) {
-                $descrizione = tr('Rif. _DOC_ num. _NUM_ del _DATE_', [
-                    '_DOC_' => $documento,
-                    '_NUM_' => $data[0]['numero'],
-                    '_DATE_' => Translator::dateToLocale($data[0]['data']),
-                ]);
-            } else {
-                $descrizione = tr('_DOC_ di riferimento _ID_ eliminato', [
-                    '_DOC_' => $documento->upperCaseFirst(),
-                    '_ID_' => $ref_id,
-                ]);
-            }
-
-            echo '
-            <br>'.Modules::link($ref_modulo, $ref_id, $descrizione, $descrizione);
-        }
+        $text = tr('Rif. fattura _NUM_ del _DATE_', [
+                '_NUM_' => $data[0]['numero'],
+                '_DATE_' => Translator::dateToLocale($data[0]['data']),
+            ]);
 
         echo '
+            <br>'.Modules::link('Fatture di vendita', $record['ref_documento'], $text, $text);
+    }
+
+    $ref = doc_references($r, $dir, ['iddocumento']);
+    if (!empty($ref)) {
+        echo '
+            <br>'.Modules::link($ref['module'], $ref['id'], $ref['description'], $ref['description']);
+    }
+
+    echo '
         </td>';
 
-        echo '
-        <td class="text-right">';
-
-        if (empty($r['is_descrizione'])) {
-            echo '
-            '.Translator::numberToLocale($r['qta']);
-        }
-
-        echo '
-        </td>';
-
-        // Unità di misura
-        echo '
+    echo '
         <td class="text-center">';
 
-        if (empty($r['is_descrizione'])) {
-            echo '
-            '.$r['um'];
-        }
-
+    if (!$riga instanceof Descrizione) {
         echo '
+            '.Translator::numberToLocale($riga->qta, 'qta');
+    }
+
+    echo '
         </td>';
 
-        // Costo unitario
+    // Unità di misura
+    echo '
+        <td class="text-center">';
+
+    if (!$riga instanceof Descrizione) {
         echo '
+            '.$riga['um'];
+    }
+
+    echo '
+        </td>';
+
+    // Prezzi unitari
+    echo '
         <td class="text-right">';
 
-        if (empty($r['is_descrizione'])) {
-            echo '
-            '.Translator::numberToLocale($r['subtotale'] / $r['qta']).' &euro;';
+    if (!$riga instanceof Descrizione) {
+        echo '
+            '.Translator::numberToLocale($riga->prezzo_unitario_vendita).' &euro;';
 
-            if ($r['sconto_unitario'] > 0) {
-                echo '
-            <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
-                '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
-                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+        if ($dir == 'entrata') {
+            echo '
+            <br><small>
+                '.tr('Acquisto').': '.Translator::numberToLocale($riga->prezzo_unitario_acquisto).' &euro;
+            </small>';
+        }
+
+        if ($riga->sconto_unitario > 0) {
+            echo '
+            <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
+                '_TOT_' => Translator::numberToLocale($riga->sconto_unitario),
+                '_TYPE_' => ($riga->tipo_sconto == 'PRC' ? '%' : '&euro;'),
             ]).'</small>';
-            }
         }
+    }
 
-        echo '
+    echo '
         </td>';
 
-        // Iva
-        echo '
+    // Iva
+    echo '
         <td class="text-right">';
 
-        if (empty($r['is_descrizione'])) {
-            echo '
-            '.Translator::numberToLocale($r['iva']).' &euro;
-            <br><small class="help-block">'.$r['desc_iva'].'</small>';
-        }
-
+    if (!$riga instanceof Descrizione) {
         echo '
+            '.Translator::numberToLocale($riga->iva).' &euro;
+            <br><small class="help-block">'.$riga->desc_iva.'</small>';
+    }
+
+    echo '
         </td>';
 
-        // Imponibile
-        echo '
+    // Importo
+    echo '
         <td class="text-right">';
-        if (empty($r['is_descrizione'])) {
-            echo '
-            '.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
-        }
+    if (!$riga instanceof Descrizione) {
         echo '
+            '.Translator::numberToLocale($riga->imponibile_scontato).' &euro;';
+        /*
+        <br><small class="text-'.($riga->guadagno > 0 ? 'success' : 'danger').'">
+            '.tr('Guadagno').': '.Translator::numberToLocale($riga->guadagno).' &euro;
+        </small>';
+        */
+    }
+    echo '
         </td>';
 
-        // Possibilità di rimuovere una riga solo se la fattura non è pagata
-        echo '
+    // Possibilità di rimuovere una riga solo se la fattura non è pagata
+    echo '
         <td class="text-center">';
 
-        if ($records[0]['stato'] != 'Pagato' && $records[0]['stato'] != 'Emessa' && empty($r['sconto_globale'])) {
-            echo "
-            <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
+    if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
+        echo "
+            <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$riga['id']."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>
-                <input type='hidden' name='idriga' value='".$r['id']."'>
+                <input type='hidden' name='idriga' value='".$riga['id']."'>
                 <input type='hidden' name='op' value='".$delete."'>";
 
-            if (!empty($r['idarticolo'])) {
-                echo "
-                <input type='hidden' name='idarticolo' value='".$r['idarticolo']."'>";
-            }
-
+        if ($riga instanceof Articolo) {
             echo "
-                <div class='input-group-btn'>";
-
-            if (!empty($r['idarticolo']) && $r['abilita_serial'] && (empty($r['idddt']) || empty($r['idintervento']))) {
-                echo "
-                    <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'&idarticolo='.$r['idarticolo']."', 1 );\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
-            }
-
-            echo "
-                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal( 'Modifica riga', '".$rootdir.'/modules/fatture/row-edit.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id']."', 1 );\"><i class='fa fa-edit'></i></a>
-
-                    <a class='btn btn-xs btn-danger' title='Rimuovi questa riga...' onclick=\"if( confirm('Rimuovere questa riga dalla fattura?') ){ $('#delete-form-".$r['id']."').submit(); }\"><i class='fa fa-trash'></i></a>
-                </div>
-            </form>";
+                <input type='hidden' name='idarticolo' value='".$riga['idarticolo']."'>";
         }
 
-        if (empty($r['sconto_globale'])) {
-            echo '
+        echo "
+                <div class='input-group-btn'>";
+
+        if (!$fattura->isNotaDiAccredito() && $riga instanceof Articolo && $riga['abilita_serial'] && (empty($riga['idddt']) || empty($riga['idintervento']))) {
+            echo "
+                    <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id'].'&idarticolo='.$riga['idarticolo']."', 1 );\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
+        }
+
+        echo "
+                    <a class='btn btn-xs btn-warning' title='Modifica questa riga...' onclick=\"launch_modal( 'Modifica riga', '".$rootdir.'/modules/fatture/row-edit.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id']."', 1 );\"><i class='fa fa-edit'></i></a>
+
+                    <a class='btn btn-xs btn-danger' title='Rimuovi questa riga...' onclick=\"if( confirm('Rimuovere questa riga dalla fattura?') ){ $('#delete-form-".$riga['id']."').submit(); }\"><i class='fa fa-trash'></i></a>
+                </div>
+            </form>";
+    }
+
+    echo '
             <div class="handle clickable" style="padding:10px">
                 <i class="fa fa-sort"></i>
             </div>';
-        }
 
-        echo '
+    echo '
         </td>
 
     </tr>';
-    }
+}
+
+$sconto_globale = $fattura->scontoGlobale;
+if (!empty($sconto_globale)) {
+    echo '
+    <tr>
+        <td>'.$sconto_globale->descrizione.'</td>
+        <td class="text-center">'.Translator::numberToLocale(1, 'qta').'</td>
+        <td></td>
+        <td class="text-right">'.Translator::numberToLocale($sconto_globale->totale).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale($sconto_globale->iva).' &euro;</td>
+        <td class="text-right">'.Translator::numberToLocale($sconto_globale->totale).' &euro;</td>
+    </tr>';
 }
 
 echo '
     </tbody>';
 
-// Calcoli
-$imponibile = sum(array_column($rs, 'subtotale'));
-$sconto = sum(array_column($rs, 'sconto'));
-$iva = sum(array_column($rs, 'iva'), null, 2);
-
-$imponibile_scontato = sum($imponibile, -$sconto);
-
-$totale_iva = sum($iva, $records[0]['iva_rivalsainps']);
-
-$totale = sum([
-    $imponibile_scontato,
-    $records[0]['rivalsainps'],
-    $totale_iva,
-]);
-
-$netto_a_pagare = sum([
-    $totale,
-    $records[0]['bollo'],
-    -$records[0]['ritenutaacconto'],
-]);
+$imponibile = abs($fattura->imponibile);
+$sconto = abs($fattura->sconto);
+$imponibile_scontato = abs($fattura->imponibile_scontato);
+$iva = abs($fattura->iva);
+$totale = abs($fattura->totale);
+$netto_a_pagare = abs($fattura->netto);
+$guadagno = $fattura->guadagno;
 
 // IMPONIBILE
 echo '
@@ -313,7 +278,7 @@ echo '
     </tr>';
 
 // SCONTO
-if (abs($sconto) > 0) {
+if (!empty($sconto)) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
@@ -339,28 +304,34 @@ if (abs($sconto) > 0) {
 }
 
 // RIVALSA INPS
-if (abs($records[0]['rivalsainps']) > 0) {
+if (!empty($fattura->rivalsa_inps)) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
             <b>'.tr('Rivalsa INPS', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($records[0]['rivalsainps']).' &euro;
+            '.Translator::numberToLocale($fattura->rivalsa_inps).' &euro;
         </td>
         <td></td>
     </tr>';
 }
 
 // IVA
-if (abs($totale_iva) > 0) {
+if (!empty($iva)) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
-            <b>'.tr('Iva', [], ['upper' => true]).':</b>
+        <td colspan="5" class="text-right">';
+
+    if ($records[0]['split_payment']) {
+        echo '<b>'.tr('Iva a carico del destinatario', [], ['upper' => true]).':</b>';
+    } else {
+        echo '<b>'.tr('Iva', [], ['upper' => true]).':</b>';
+    }
+    echo '
         </td>
         <td align="right">
-            '.Translator::numberToLocale($totale_iva).' &euro;
+            '.Translator::numberToLocale($iva).' &euro;
         </td>
         <td></td>
     </tr>';
@@ -379,33 +350,31 @@ echo '
     </tr>';
 
 // Mostra marca da bollo se c'è
-if (abs($records[0]['bollo']) > 0) {
+if (!empty($fattura->bollo)) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
             <b>'.tr('Marca da bollo', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($records[0]['bollo']).' &euro;
+            '.Translator::numberToLocale($fattura->bollo).' &euro;
         </td>
         <td></td>
     </tr>';
 }
 
 // RITENUTA D'ACCONTO
-if (abs($records[0]['ritenutaacconto']) > 0) {
+if (!empty($fattura->ritenuta_acconto)) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
             <b>'.tr("Ritenuta d'acconto", [], ['upper' => true]).':</b>
         </td>
         <td align="right">
-            '.Translator::numberToLocale($records[0]['ritenutaacconto']).' &euro;
+            '.Translator::numberToLocale($fattura->ritenuta_acconto).' &euro;
         </td>
         <td></td>
     </tr>';
-
-    //$netto_a_pagare -= $records[0]['ritenutaacconto'];
 }
 
 // NETTO A PAGARE
@@ -422,6 +391,24 @@ if ($totale != $netto_a_pagare) {
     </tr>';
 }
 
+// GUADAGNO TOTALE
+if ($dir == 'entrata') {
+    $guadagno_style = $guadagno < 0 ? 'background-color: #FFC6C6; border: 3px solid red' : '';
+
+    /*
+    echo '
+    <tr>
+        <td colspan="5" class="text-right">
+            <b>'.tr('Guadagno', [], ['upper' => true]).':</b>
+        </td>
+        <td align="right" style="'.$guadagno_style.'">
+            '.Translator::numberToLocale($guadagno).' &euro;
+        </td>
+        <td></td>
+    </tr>';
+    */
+}
+
 echo '
 </table>';
 
@@ -435,17 +422,19 @@ $(document).ready(function(){
 			cursor: "move",
 			dropOnEmpty: true,
 			scroll: true,
-			start: function(event, ui) {
-				ui.item.data("start", ui.item.index());
-			},
 			update: function(event, ui) {
+                var order = "";
+                $(".table tr[data-id]").each( function(){
+                    order += ","+$(this).data("id");
+                });
+                order = order.replace(/^,/, "");
+
 				$.post("'.$rootdir.'/actions.php", {
 					id: ui.item.data("id"),
 					id_module: '.$id_module.',
 					id_record: '.$id_record.',
 					op: "update_position",
-					start: ui.item.data("start"),
-					end: ui.item.index()
+                    order: order,
 				});
 			}
 		});

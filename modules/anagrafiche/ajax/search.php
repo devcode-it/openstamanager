@@ -6,7 +6,7 @@ include_once __DIR__.'/../../../core.php';
     Anagrafiche
 */
 
-$id_module = Modules::get('Anagrafiche')['id'];
+$link_id = Modules::get('Anagrafiche')['id'];
 
 $fields = [
     'Codice' => 'codice',
@@ -50,8 +50,9 @@ $rs = $dbo->fetchArray($query);
 foreach ($rs as $r) {
     $result = [];
 
-    $result['link'] = ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$r['id'];
+    $result['link'] = ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$r['id'];
     $result['title'] = $r['ragione_sociale'];
+    $result['title'] .= !empty($r['deleted_at']) ? ' <small class="text-danger"><em>('.tr('Eliminato').')</em></small>' : '';
     $result['category'] = 'Anagrafiche';
 
     // Campi da evidenziare
@@ -96,7 +97,7 @@ $plugin = $dbo->fetchArray("SELECT id FROM zz_plugins WHERE name='Referenti'");
 foreach ($rs as $r) {
     $result = [];
 
-    $result['link'] = ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$r['id'].'#tab_'.$plugin[0]['id'];
+    $result['link'] = ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$r['id'].'#tab_'.$plugin[0]['id'];
     $result['title'] = $r['nome'];
     $result['category'] = 'Referenti';
 

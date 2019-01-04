@@ -15,7 +15,7 @@ switch (post('op')) {
         $query = 'UPDATE mg_listini SET nome='.prepare($nome).', prc_guadagno='.prepare($prc_guadagno).', note='.prepare($note).' WHERE id='.prepare($id_record);
         $dbo->query($query);
 
-        $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
+        flash()->info(tr('Informazioni salvate correttamente!'));
         break;
 
     case 'add':
@@ -30,12 +30,12 @@ switch (post('op')) {
             $dbo->query('INSERT INTO mg_listini( nome, prc_guadagno ) VALUES ('.prepare($nome).', '.prepare($prc_guadagno).')');
             $id_record = $dbo->lastInsertedID();
 
-            $_SESSION['infos'][] = tr('Nuovo listino aggiunto!');
+            flash()->info(tr('Nuovo listino aggiunto!'));
         }
         break;
 
     case 'delete':
         $dbo->query('DELETE FROM mg_listini WHERE id='.prepare($id_record));
-        $_SESSION['infos'][] = tr('Listino eliminato!');
+        flash()->info(tr('Listino eliminato!'));
         break;
 }

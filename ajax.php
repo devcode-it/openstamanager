@@ -46,4 +46,36 @@ switch (get('op')) {
         }
 
         break;
+
+    case 'list_attachments':
+        echo '{( "name": "filelist_and_upload", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "id_plugin": "'.$id_plugin.'" )}';
+
+        break;
+
+    case 'active_users':
+        $posizione = get('id_module');
+        if (isset($id_record)) {
+            $posizione .= ', '.get('id_record');
+        }
+
+        $user = Auth::user();
+        $interval = setting('Timeout notifica di presenza (minuti)') * 60 * 2;
+
+        $dbo->query('UPDATE zz_semaphores SET updated = NOW() WHERE id_utente = :user_id AND posizione = :position', [
+            ':user_id' => $user['id'],
+            ':position' => $posizione,
+        ]);
+
+        // Rimozione record scaduti
+        $dbo->query('DELETE FROM zz_semaphores WHERE DATE_ADD(updated, INTERVAL :interval SECOND) <= NOW()', [
+            ':interval' => $interval,
+        ]);
+
+        $datas = $dbo->fetchArray('SELECT DISTINCT username FROM zz_semaphores INNER JOIN zz_users ON zz_semaphores.id_utente=zz_users.id WHERE zz_semaphores.id_utente != :user_id AND posizione = :position', [
+            ':user_id' => $user['id'],
+            ':position' => $posizione,
+        ]);
+
+        echo json_encode($datas);
+    break;
 }

@@ -2,8 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$enable_readonly = !get_var('Modifica Viste di default');
-$record = $records[0];
+$enable_readonly = !setting('Modifica Viste di default');
 
 echo '
 <form action="" method="post" role="form">
@@ -59,7 +58,13 @@ if ($options != '' && $options != 'menu' && $options != 'custom') {
 
                     <div class="row">
                         <div class="col-md-12 text-right">
-                            <button type="button" class="btn btn-warning pull-righ" onclick="testQuery()"><i class="fa fa-file-text-o "></i> '.tr('Testa la query').'</button>
+                            <button type="button" class="btn btn-warning" onclick="testQuery()">
+                                <i class="fa fa-file-text-o"></i> '.tr('Testa la query').'
+                            </button>
+
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa fa-check"></i> '.tr('Salva').'
+                            </button>
                         </div>
                     </div>
 				</div>
@@ -71,7 +76,7 @@ echo '
 	</div>
 </form>';
 
-if (!empty($options) && $options != 'custom') {
+if (!empty($options) && $options != 'custom' && $options != 'menu') {
     echo '
 
 <form action="" method="post" role="form">
@@ -86,13 +91,6 @@ if (!empty($options) && $options != 'custom') {
 				</div>
 
 				<div class="panel-body">
-                    <!--div class="row">
-                        <div class="text-right">
-                            <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
-                        </div>
-                    </div>
-                    <hr-->
-
 					<div class="data">';
 
     $key = 0;
@@ -101,8 +99,8 @@ if (!empty($options) && $options != 'custom') {
         $editable = !($field['default'] && $enable_readonly);
 
         echo '
-					<div class="box ';
-        if ($field['enabled']) {
+					    <div class="box ';
+        if ($field['visible']) {
             echo 'box-success';
         } else {
             echo 'box-danger';
@@ -146,7 +144,7 @@ if (!empty($options) && $options != 'custom') {
 
 								<div class="row">
 									<div class="col-md-6">
-										{[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi['.$key.'][]", "multiple": "1",  "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "';
+										{[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi['.$key.'][]", "multiple": "1", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "';
         $results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT id_gruppo SEPARATOR \',\') AS gruppi FROM zz_group_view WHERE id_vista='.prepare($field['id']));
 
         echo $results[0]['gruppi'].'"';
@@ -155,41 +153,25 @@ if (!empty($options) && $options != 'custom') {
 									</div>
 
 									<div class="col-xs-12 col-md-6">
-										{[ "type": "select", "label": "'.tr('Visibilità').'", "name": "enabled['.$key.']", "values": "list=\"0\":\"'.tr('Nascosto (variabili di stato)').'\",\"1\": \"'.tr('Visibile nella sezione').'\"", "value": "'.$field['enabled'].'", "help": "'.tr('Stato del campo: visibile nella tabella oppure nascosto').'" ]}
+										{[ "type": "select", "label": "'.tr('Visibilità').'", "name": "visible['.$key.']", "values": "list=\"0\":\"'.tr('Nascosto (variabili di stato)').'\",\"1\": \"'.tr('Visibile nella sezione').'\"", "value": "'.$field['visible'].'", "help": "'.tr('Stato del campo: visibile nella tabella oppure nascosto').'" ]}
 									</div>
 								</div>
 
 								<div class="row">
 									<div class="col-md-3">
-										{[ "type": "checkbox", "label": "'.tr('Ricercabile').'", "name": "search['.$key.']", "value": "'.$field['search'].'"';
-        if (!$editable) {
-            echo ', "readonly": "1"';
-        }
-        echo ', "help": "'.tr('Indica se il campo è ricercabile').'" ]}
+										{[ "type": "checkbox", "label": "'.tr('Ricercabile').'", "name": "search['.$key.']", "value": "'.$field['search'].'", "help": "'.tr('Indica se il campo è ricercabile').'" ]}
 									</div>
 
 									<div class="col-md-3">
-										{[ "type": "checkbox", "label": "'.tr('Ricerca lenta').'", "name": "slow['.$key.']", "value": "'.$field['slow'].'"';
-        if (!$editable) {
-            echo ', "readonly": "1"';
-        }
-        echo ', "help": "'.tr("Indica se la ricerca per questo campo è lenta (da utilizzare nel caso di evidenti rallentamenti, mostra solo un avviso all'utente").'" ]}
+										{[ "type": "checkbox", "label": "'.tr('Ricerca lenta').'", "name": "slow['.$key.']", "value": "'.$field['slow'].'", "help": "'.tr("Indica se la ricerca per questo campo è lenta (da utilizzare nel caso di evidenti rallentamenti, mostra solo un avviso all'utente").'" ]}
 									</div>
 
 									<div class="col-md-3">
-										{[ "type": "checkbox", "label": "'.tr('Sommabile').'", "name": "sum['.$key.']", "value": "'.$field['summable'].'"';
-        if (!$editable) {
-            echo ', "readonly": "1"';
-        }
-        echo ', "help": "'.tr('Indica se il campo è da sommare').'" ]}
+										{[ "type": "checkbox", "label": "'.tr('Sommabile').'", "name": "sum['.$key.']", "value": "'.$field['summable'].'", "help": "'.tr('Indica se il campo è da sommare').'" ]}
 									</div>
 
                                     <div class="col-md-3">
-										{[ "type": "checkbox", "label": "'.tr('Formattabile').'", "name": "format['.$key.']", "value": "'.$field['format'].'"';
-        if (!$editable) {
-            echo ', "readonly": "1"';
-        }
-        echo ', "help": "'.tr('Indica se il campo è formattabile in modo automatico').'" ]}
+										{[ "type": "checkbox", "label": "'.tr('Formattabile').'", "name": "format['.$key.']", "value": "'.$field['format'].'", "help": "'.tr('Indica se il campo è formattabile in modo automatico').'" ]}
 									</div>
 								</div>
 
@@ -218,8 +200,13 @@ if (!empty($options) && $options != 'custom') {
 
                 <div class="row">
                     <div class="col-md-12 text-right">
-                        <button type="button" class="btn btn-info" id="add"><i class="fa fa-plus"></i> '.tr('Aggiungi nuovo campo').'</button>
-                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
+                        <button type="button" class="btn btn-info" id="add">
+                            <i class="fa fa-plus"></i> '.tr('Aggiungi nuovo campo').'
+                        </button>
+
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa fa-check"></i> '.tr('Salva').'
+                        </button>
                     </div>
                 </div>
 
@@ -230,17 +217,17 @@ if (!empty($options) && $options != 'custom') {
 		<div class="col-md-3">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					<h3 class="panel-title">'.tr('Ordine di visualizzazione').'</h3>
+					<h3 class="panel-title">'.tr('Ordine di visualizzazione').' <span class="tip pull-right" title="'.tr('Trascina per ordinare le colonne').'."><i class="fa fa-question-circle-o"></i></span></h3>
 				</div>
 
 				<div class="panel-body sortable">';
 
     foreach ($fields as $field) {
         echo '
-            <p data-id="'.$field['id'].'">
-                <i class="fa fa-sort"></i>
+            <p class="clickable" data-id="'.$field['id'].'">
+                <i class="fa fa-sort" ></i>
                 ';
-        if ($field['enabled']) {
+        if ($field['visible']) {
             echo '<strong class="text-success">'.$field['name'].'</strong>';
         } else {
             echo '<span class="text-danger">'.$field['name'].'</span>';
@@ -267,7 +254,8 @@ if (!empty($options) && $options != 'custom') {
 				<div class="col-md-12">
 					{[ "type": "text", "label": "'.tr('Nome').'", "name": "name[-id-]" ]}
 				</div>
-			</div>
+            </div>
+
 			<div class="row">
 				<div class="col-md-12">
 					{[ "type": "textarea", "label": "'.tr('Query prevista').'", "name": "query[-id-]" ]}
@@ -276,11 +264,11 @@ if (!empty($options) && $options != 'custom') {
 
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[-id-][]", "multiple": "1",  "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC" ]}
+					{[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[-id-][]", "multiple": "1", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC" ]}
 				</div>
 
 				<div class="col-md-6">
-					{[ "type": "select", "label": "'.tr('Visibilità').'", "name": "enabled[-id-]", "values": "list=\"0\":\"'.tr('Nascosto (variabili di stato)').'\",\"1\": \"'.tr('Visibile nella sezione').'\"" ]}
+					{[ "type": "select", "label": "'.tr('Visibilità').'", "name": "visible[-id-]", "values": "list=\"0\":\"'.tr('Nascosto (variabili di stato)').'\",\"1\": \"'.tr('Visibile nella sezione').'\"" ]}
 				</div>
 			</div>
 
@@ -310,7 +298,8 @@ if (!empty($options) && $options != 'custom') {
 				<div class="col-md-6">
 					{[ "type": "text", "label": "'.tr('Ordina tramite').'", "name": "order_by[-id-]" ]}
 				</div>
-			</div>
+            </div>
+
 		</div>
 	</div>
 </form>';
@@ -327,13 +316,6 @@ if (!empty($options) && $options != 'custom') {
             </div>
 
             <div class="panel-body">
-                <!--div class="row">
-                    <div class="text-right">
-                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
-                    </div>
-                </div>
-                <hr-->
-
                 <div class="data">';
 
     $num = 0;
@@ -349,73 +331,79 @@ if (!empty($options) && $options != 'custom') {
             echo 'box-danger';
         }
         echo '">
-                            <div class="box-header with-border">
-                                <h3 class="box-title">
-                                    <a data-toggle="collapse" href="#additional-'.$additional['id'].'">'.tr('Filtro: _NAME_', [
-                                        '_NAME_' => $additional['name'],
-                                    ]).'</a>
-                                </h3>';
+                        <div class="box-header with-border">
+                            <h3 class="box-title">
+                                <a data-toggle="collapse" href="#additional-'.$additional['id'].'">'.tr('Filtro: _NAME_', [
+                                    '_NAME_' => $additional['name'],
+                                ]).'</a>
+                            </h3>';
         if ($editable) {
             echo '
-                                <a class="btn btn-danger ask pull-right" data-backto="record-edit" data-op="delete_filter" data-id="'.$additional['id'].'">
-                                    <i class="fa fa-trash"></i> '.tr('Elimina').'
-                                </a>';
+                            <a class="btn btn-danger ask pull-right" data-backto="record-edit" data-op="delete_filter" data-id="'.$additional['id'].'">
+                                <i class="fa fa-trash"></i> '.tr('Elimina').'
+                            </a>';
         }
         echo '
-                                <a class="btn btn-warning ask pull-right" data-backto="record-edit" data-msg="'.($additional['enabled'] ? tr('Disabilitare questo elemento?') : tr('Abilitare questo elemento?')).'" data-op="change" data-id="'.$additional['id'].'" data-class="btn btn-lg btn-warning" data-button="'.($additional['enabled'] ? tr('Disabilita') : tr('Abilita')).'">
-                                    <i class="fa fa-eye-slash"></i> '.($additional['enabled'] ? tr('Disabilita') : tr('Abilita')).'
-                                </a>';
+                            <a class="btn btn-warning ask pull-right" data-backto="record-edit" data-msg="'.($additional['enabled'] ? tr('Disabilitare questo elemento?') : tr('Abilitare questo elemento?')).'" data-op="change" data-id="'.$additional['id'].'" data-class="btn btn-lg btn-warning" data-button="'.($additional['enabled'] ? tr('Disabilita') : tr('Abilita')).'">
+                                <i class="fa fa-eye-slash"></i> '.($additional['enabled'] ? tr('Disabilita') : tr('Abilita')).'
+                            </a>';
         echo '
-                            </div>
-                            <div id="additional-'.$additional['id'].'" class="box-body collapse">
-                                
-									<div class="row">
-										<div class="col-md-12">
-											{[ "type": "textarea", "label": "'.tr('Query').'", "name": "query['.$num.']", "value": "'.prepareToField($additional['clause']).'"';
-											if (!$editable) {
-											echo ', "readonly": "1"';
-											}
-											echo ' ]}
-										</div>
-									</div>
-								
-								<div class="row">
-                                    <input type="hidden" value="'.$additional['id'].'" name="id['.$num.']">
-									
-									
-									<div class="col-md-6">
-										{[ "type": "text", "label": "'.tr('Name').'", "name": "name['.$num.']", "value": "'.$additional['name'].'"  ]}
-									</div>
+                        </div>
+                        <div id="additional-'.$additional['id'].'" class="box-body collapse">
 
-
-                                    <div class="col-md-3">
-                                        {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo['.$num.']",  "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "'.$additional['idgruppo'].'"';
+                            <div class="row">
+                                <div class="col-md-12">
+                                    {[ "type": "textarea", "label": "'.tr('Query').'", "name": "query['.$num.']", "value": "'.prepareToField($additional['clause']).'"';
         if (!$editable) {
             echo ', "readonly": "1"';
         }
         echo ' ]}
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        {[ "type": "select", "label": "'.tr('Posizione').'", "name": "position['.$num.']", "values": "list=\"0\":\"'.tr('WHERE').'\",\"1\": \"'.tr('HAVING').'\"", "value": "'.$additional['position'].'"';
-        if (!$editable) {
-            echo ', "readonly": "1"';
-        }
-        echo ' ]}
-                                    </div>
                                 </div>
                             </div>
-                        </div>';
+
+                            <div class="row">
+                                <input type="hidden" value="'.$additional['id'].'" name="id['.$num.']">
+
+                                <div class="col-md-6">
+                                    {[ "type": "text", "label": "'.tr('Name').'", "name": "name['.$num.']", "value": "'.$additional['name'].'"  ]}
+                                </div>
+
+                                <div class="col-md-3">
+                                    {[ "type": "select", "label": "'.tr('Gruppo').'", "name": "gruppo['.$num.']", "values": "query=SELECT id, nome AS descrizione FROM zz_groups ORDER BY id ASC", "value": "'.$additional['idgruppo'].'"';
+        if (!$editable) {
+            echo ', "readonly": "1"';
+        }
+        echo ' ]}
+                                </div>
+
+                                <div class="col-md-3">
+                                    {[ "type": "select", "label": "'.tr('Posizione').'", "name": "position['.$num.']", "values": "list=\"0\":\"'.tr('WHERE').'\",\"1\": \"'.tr('HAVING').'\"", "value": "'.$additional['position'].'"';
+        if (!$editable) {
+            echo ', "readonly": "1"';
+        }
+        echo ' ]}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>';
     }
+
     echo '
                 </div>
 
                 <div class="row">
                     <div class="col-md-12 text-right">
-                        <button type="button" class="btn btn-info" id="add_filter"><i class="fa fa-plus"></i> '.tr('Aggiungi nuovo filtro').'</button>
-                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> '.tr('Salva').'</button>
+                        <button type="button" class="btn btn-info" id="add_filter">
+                            <i class="fa fa-plus"></i> '.tr('Aggiungi nuovo filtro').'
+                        </button>
+
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa fa-check"></i> '.tr('Salva').'
+                        </button>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -428,13 +416,13 @@ if (!empty($options) && $options != 'custom') {
 			<h3 class="box-title">'.tr('Nuovo filtro').'</h3>
 		</div>
 		<div class="box-body">
-		
+
 			<div class="row">
 				<div class="col-md-12">
 					{[ "type": "textarea", "label": "'.tr('Query').'", "name": "query[-id-]" ]}
 				</div>
 			</div>
-			
+
 			<div class="row">
 				<input type="hidden" value="" name="id[-id-]">
 
@@ -447,10 +435,11 @@ if (!empty($options) && $options != 'custom') {
 				</div>
 
                 <div class="col-md-3">
-					{[ "type": "select", "label": "'.tr('Posizione').'", "name": "position[-id-]", "values": "list=\"0\":\"'.tr('WHERE').'\",\"1\": \"'.tr('HAVING').'\"", "value": "" ]}
+					{[ "type": "select", "label": "'.tr('Posizione').'", "name": "position[-id-]", "values": "list=\"0\":\"'.tr('WHERE').'\",\"1\": \"'.tr('HAVING').'\"" ]}
 				</div>
-		</div>
-	</div>
+            </div>
+        </div>
+    </div>
 </form>';
 
     echo '
@@ -474,7 +463,6 @@ function testQuery(){
             $("#main_loading").fadeOut();
 
             swal("'.tr('Errore').'", "'.tr('Errore durante il test della query!').'", "error");
-			session_set ("errors,0", 0, 1);
         }
     })
 }
@@ -484,6 +472,8 @@ function replaceAll(str, find, replace) {
 }
 
 $(document).ready(function(){
+    $("#save").addClass("hide");
+
 	var n = '.$key.';
 	$(document).on("click", "#add", function(){
 		$("#template .superselect, #template .superselectajax").select2().select2("destroy");
@@ -509,21 +499,27 @@ $(document).ready(function(){
 			cursor: "move",
 			dropOnEmpty: true,
 			scroll: true,
-			start: function(event, ui) {
-				ui.item.data("start", ui.item.index());
-			},
 			update: function(event, ui) {
-				$.get("'.$rootdir.'/actions.php", {
+				
+				var order = "";
+                $("div.panel-body.sortable  p[data-id]").each( function(){
+                    order += ","+$(this).data("id");
+                });
+				
+                order = order.replace(/^,/, "");
+				
+				$.post("'.$rootdir.'/actions.php", {
 					id: ui.item.data("id"),
 					id_module: '.$id_module.',
 					id_record: '.$id_record.',
 					op: "update_position",
-					start: ui.item.data("start"),
-					end: ui.item.index()
+					order: order,
 				});
 			}
 		});
 	});
 });
 </script>';
+    // Fix apertura non corrisposta di un tag div
+    echo '</div>';
 }

@@ -8,15 +8,24 @@ switch (filter('op')) {
 
         if (isset($descrizione)) {
             if ($dbo->fetchNum('SELECT * FROM `dt_causalet` WHERE `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
-                $dbo->query('UPDATE `dt_causalet` SET `descrizione`='.prepare($descrizione).' WHERE `id`='.prepare($id_record));
-                $_SESSION['infos'][] = tr('Salvataggio completato!');
+                $predefined = post('predefined');
+                if (!empty($predefined)) {
+                    $dbo->query('UPDATE dt_causalet SET predefined = 0');
+                }
+
+                $dbo->update('dt_causalet', [
+                    'descrizione' => $descrizione,
+                    'predefined' => $predefined,
+                ], ['id' => $id_record]);
+
+                flash()->info(tr('Salvataggio completato!'));
             } else {
-                $_SESSION['errors'][] = tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione.", [
+                flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione", [
                     '_TYPE_' => 'causale',
-                ]);
+                ]));
             }
         } else {
-            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio.');
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio.'));
         }
 
         break;
@@ -26,20 +35,25 @@ switch (filter('op')) {
 
         if (isset($descrizione)) {
             if ($dbo->fetchNum('SELECT * FROM `dt_causalet` WHERE `descrizione`='.prepare($descrizione)) == 0) {
-                $dbo->query('INSERT INTO `dt_causalet` (`descrizione`) VALUES ('.prepare($descrizione).')');
-
+                $dbo->insert('dt_causalet', [
+                    'descrizione' => $descrizione,
+                ]);
                 $id_record = $dbo->lastInsertedID();
 
-                $_SESSION['infos'][] = tr('Aggiunta nuova tipologia di _TYPE_', [
+                if (isAjaxRequest()) {
+                    echo json_encode(['id' => $id_record, 'text' => $descrizione]);
+                }
+
+                flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
                     '_TYPE_' => 'causale',
-                ]);
+                ]));
             } else {
-                $_SESSION['errors'][] = tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione.", [
+                flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione", [
                     '_TYPE_' => 'causale',
-                ]);
+                ]));
             }
         } else {
-            $_SESSION['errors'][] = tr('Ci sono stati alcuni errori durante il salvataggio.');
+            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio'));
         }
 
         break;
@@ -50,15 +64,12 @@ switch (filter('op')) {
                      UNION SELECT id FROM co_documenti WHERE idcausalet='.prepare($id_record));
 
         if (isset($id_record) && empty($documenti)) {
-
             $dbo->query('DELETE FROM `dt_causalet` WHERE `id`='.prepare($id_record));
-            $_SESSION['infos'][] = tr('Tipologia di _TYPE_ eliminata con successo.', [
+            flash()->info(tr('Tipologia di _TYPE_ eliminata con successo.', [
                 '_TYPE_' => 'causale',
-            ]);
-
-        }else{
-
-            $_SESSION['errors'][] = tr('Sono presenti dei documenti collegati a questa causale.');
+            ]));
+        } else {
+            flash()->error(tr('Sono presenti dei documenti collegati a questa causale'));
         }
 
         break;

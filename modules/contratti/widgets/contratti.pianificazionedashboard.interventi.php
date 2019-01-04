@@ -2,6 +2,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
+// TODO: aggiornare con la funzione months()
 $mesi = [
     tr('Gennaio'),
     tr('Febbraio'),
@@ -18,7 +19,7 @@ $mesi = [
 ];
 
 // Righe inserite
-$qp = "SELECT *, DATE_FORMAT( data_richiesta, '%m-%Y') AS mese, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_righe_contratti.idtipointervento) AS tipointervento, (SELECT idanagrafica FROM co_contratti WHERE id=idcontratto) AS idcliente, (SELECT ragione_sociale FROM co_contratti INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_contratti.id=idcontratto) AS ragione_sociale FROM co_righe_contratti WHERE idcontratto IN( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL ORDER BY DATE_FORMAT( data_richiesta, '%m-%Y') ASC, ragione_sociale ASC";
+$qp = "SELECT *, DATE_FORMAT( data_richiesta, '%m-%Y') AS mese, (SELECT descrizione FROM in_tipiintervento WHERE idtipointervento=co_promemoria.idtipointervento) AS tipointervento, (SELECT idanagrafica FROM co_contratti WHERE id=idcontratto) AS idcliente, (SELECT ragione_sociale FROM co_contratti INNER JOIN an_anagrafiche ON co_contratti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_contratti.id=idcontratto) AS ragione_sociale, (SELECT CONCAT('Contratto ', numero, ' del ', DATE_FORMAT(data_bozza, '%d/%m/%Y'), ' - ', nome, ' [', (SELECT `descrizione` FROM `co_staticontratti` WHERE `co_staticontratti`.`id` = `idstato`) , ']') FROM co_contratti WHERE id = co_promemoria.idcontratto) contratto, (SELECT id FROM co_contratti WHERE id = co_promemoria.idcontratto) idcontratto FROM co_promemoria WHERE idcontratto IN ( SELECT id FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND idintervento IS NULL ORDER BY DATE_FORMAT( data_richiesta, '%Y-%m') ASC, ragione_sociale ASC";
 $rsp = $dbo->fetchArray($qp);
 
 if (!empty($rsp)) {
@@ -43,14 +44,14 @@ if (!empty($rsp)) {
 
             echo '
 <div id="t1_'.$i.'" '.$attr.'>
-    <table class="table table-hover table-striped">
+    <table class="table table-hover table-striped datatables">
         <thead>
             <tr>
                 <th width="120">'.tr('Cliente').'</th>
+				 <th width="200">'.tr('Contratto').'</th>
                 <th width="70">'.tr('Entro il').'</th>
                 <th width="200">'.tr('Tipo intervento').'</th>
                 <th>'.tr('Descrizione').'</th>
-                <th width="200">'.tr('Intervento collegato').'</th>
                 <th width="100">'.tr('Sede').'</th>
                 <th width="18"></th>
             </tr>
@@ -61,24 +62,11 @@ if (!empty($rsp)) {
 
         echo '
             <tr id="int_'.$r['id'].'">
-                <td>'.$r['ragione_sociale'].'</td>
+				<td><a target="_blank" >'.Modules::link(Modules::get('Anagrafiche')['id'], $r['idcliente'], $r['ragione_sociale']).'</a></td>
+				<td><a target="_blank" >'.Modules::link(Modules::get('Contratti')['id'], $r['idcontratto'], $r['contratto']).'</a></td>
                 <td>'.Translator::dateToLocale($r['data_richiesta']).'</td>
                 <td>'.$r['tipointervento'].'</td>
-                <td>'.nl2br($r['richiesta']).'</td>
-                <td>';
-
-        // Intervento svolto
-        if (!empty($r['idintervento'])) {
-            $rsp2 = $dbo->fetchArray('SELECT id, codice, data FROM in_interventi WHERE id='.prepare($r['idintervento']));
-
-            echo Modules::link('Interventi', $rsp2[0]['id'], tr('Intervento num. _NUM_ del _DATE_', [
-                '_NUM_' => $rsp2[0]['codice'],
-                '_DATE_' => Translator::dateToLocale($rsp2[0]['data']),
-            ]));
-        } else {
-            echo '- '.('Nessuno').' -';
-        }
-        echo '</td>';
+                <td>'.nl2br($r['richiesta']).'</td>';
 
         echo '
                 <td>';
@@ -119,3 +107,15 @@ if (!empty($rsp)) {
     echo '
 <p>'.tr('Non ci sono interventi da pianificare').'.</p>';
 }
+
+?>
+
+<script>
+$(document).ready(function() {
+	 $('.datatables').DataTable({
+		 	"oLanguage": { "sUrl": "<?php echo $rootdir; ?>/assets/dist/js/i18n/datatables/<?php echo $lang; ?>.min.json" },
+		 	 "paging": false,
+			 "info":     false
+	 });
+} );
+</script>

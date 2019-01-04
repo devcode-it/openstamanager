@@ -8,11 +8,11 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-2">
-			{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "idstatointervento", "maxlength": 10, "class": "alphanumeric-mask",  "required": 1, "value": "" ]}
+			{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "idstatointervento", "maxlength": 10, "class": "alphanumeric-mask", "required": 1 ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "" ]}
+			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1 ]}
 		</div>
 
 		<div class="col-md-2">
@@ -31,9 +31,9 @@ include_once __DIR__.'/../../core.php';
 <script>
 	$(document).ready( function(){
 		$('.colorpicker').colorpicker().on('changeColor', function(){
-			$('#colore_').parent().find('.square').css( 'background', $('#colore_').val() );
+			$('#bs-popup #colore_').parent().find('.square').css( 'background', $('#bs-popup #colore_').val() );
 		});
 
-		$('#colore_').parent().find('.square').css( 'background', $('#colore_').val() );
+		$('#bs-popup #colore_').parent().find('.square').css( 'background', $('#bs-popup #colore_').val() );
 	});
 </script>

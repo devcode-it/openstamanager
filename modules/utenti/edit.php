@@ -2,29 +2,26 @@
 
 include_once __DIR__.'/../../core.php';
 
-$record = $records[0];
-
-$moduli = $dbo->fetchArray('SELECT * FROM zz_modules WHERE parent IS NULL ORDER BY `order` ASC');
-
-$utenti = $dbo->fetchArray('SELECT *, (SELECT ragione_sociale FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE an_anagrafiche.idanagrafica=zz_users.idanagrafica AND an_tipianagrafiche_anagrafiche.idtipoanagrafica=zz_users.idtipoanagrafica) AS ragione_sociale, (SELECT descrizione FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica=an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica=zz_users.idanagrafica AND an_tipianagrafiche.idtipoanagrafica=zz_users.idtipoanagrafica) AS tipo FROM zz_users WHERE idgruppo='.prepare($record['id']));
+$utenti = $dbo->fetchArray('SELECT *, (SELECT ragione_sociale FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica=zz_users.idanagrafica ) AS ragione_sociale, (SELECT GROUP_CONCAT(descrizione SEPARATOR ", ") FROM an_tipianagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche.idtipoanagrafica=an_tipianagrafiche_anagrafiche.idtipoanagrafica WHERE idanagrafica=zz_users.idanagrafica GROUP BY idanagrafica) AS tipo FROM zz_users WHERE idgruppo='.prepare($record['id']));
 
 echo '
 	<div class="panel panel-primary">
 		<div class="panel-heading">
 			<h3 class="panel-title">'.tr('Utenti _GROUP_', [
-                '_GROUP_' => $records[0]['nome'],
+                '_GROUP_' => $record['nome'],
             ]).'</h3>
 		</div>
 
 		<div class="panel-body">';
 if (!empty($utenti)) {
     echo '
+        <div class="table-responsive">
 		<table class="table table-hover table-condensed table-striped">
 		<tr>
 			<th>'.tr('Nome utente').'</th>
 			<th>'.tr('Ragione sociale').'</th>
 			<th>'.tr('Tipo di anagrafica').'</th>
-			<th>'.tr('Opzioni').'</th>
+			<th width="120">'.tr('Opzioni').'</th>
 		</tr>';
 
     foreach ($utenti as $utente) {
@@ -53,10 +50,10 @@ if (!empty($utenti)) {
         if ($utente['id'] != '1') {
             if ($utente['enabled'] == 1) {
                 echo '
-				<a href="javascript:;" onclick="if( confirm(\''.tr('Disabilitare questo utente?').'\') ){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=disable&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }" title="Disabilita utente" class="text-danger tip"><i class="fa fa-2x fa-eye-slash"></i></a>';
+				<a href="javascript:;" onclick="swal({ title: \''.tr('Disabilitare questo utente?').'\', type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=disable&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Disabilita utente" class="text-danger tip"><i class="fa fa-2x fa-eye-slash"></i></a>';
             } else {
                 echo '
-				<a href="javascript:;" onclick="if( confirm(\'Abilitare questo utente?\') ){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=enable&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }" title="Abilita utente" class="text-success tip"><i class="fa fa-2x fa-eye"></i></a>';
+				<a href="javascript:;" onclick="swal({ title: \''.tr('Abilitare questo utente?').'\', type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=enable&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Abilita utente" class="text-success tip"><i class="fa fa-2x fa-eye"></i></a>';
             }
         } else {
             echo '
@@ -65,15 +62,30 @@ if (!empty($utenti)) {
 
         // Cambio password e nome utente
         echo '
-				<a href="" data-href="'.$rootdir.'/modules/'.Modules::get($id_module)['directory'].'/user.php?id_utente='.$utente['id'].'&idgruppo='.$record['id'].'" class="text-warning tip" data-toggle="modal" data-target="#bs-popup" title="Aggiorna dati utente"  data-title="Aggiorna dati utente"><i class="fa fa-2x fa-unlock-alt"></i></a>';
+                <a href="" data-href="'.$rootdir.'/modules/'.Modules::get($id_module)['directory'].'/user.php?id_utente='.$utente['id'].'&idgruppo='.$record['id'].'" class="text-warning tip" data-toggle="modal" title="Aggiorna dati utente"  data-title="Aggiorna dati utente"><i class="fa fa-2x fa-unlock-alt"></i></a>';
+
+        // Disabilitazione token API, se diverso da id_utente #1 (admin)
+        if ($utente['id'] != '1') {
+            $token = $dbo->fetchOne('SELECT `enabled` FROM `zz_tokens` WHERE `id_utente` = '.prepare($utente['id']));
+            if (!empty($token['enabled'])) {
+                echo '
+                    <a href="javascript:;" onclick="swal({ title: \''.tr("Disabilitare l\'accesso API per questo utente?").'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=token_disable&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Disabilita API" class="text-danger tip"><i class="fa fa-2x fa-key"></i></a>';
+            } else {
+                echo '
+                    <a href="javascript:;" onclick="swal({ title: \''.tr("Abilitare l\'accesso API per questo utente?").'\',  type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=token_enable&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Abilitare API" class="text-success tip"><i class="fa fa-2x fa-key"></i></a>';
+            }
+        } else {
+            echo '
+                    <span onclick="alert(\"'.tr("Non è possibile gestire l'accesso API per l'utente admin").'\")" class="text-muted tip"><i class="fa fa-2x fa-key "></i></span>';
+        }
 
         // Eliminazione utente, se diverso da id_utente #1 (admin)
         if ($utente['id'] != '1') {
             echo '
-			<a href="javascript:;" onclick="if( confirm(\'Sei sicuro di voler eliminare questo utente?\') ){ location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }" title="Elimina utente" class="text-danger tip"><i class="fa fa-2x fa-trash"></i></a>';
+			        <a href="javascript:;" onclick="swal({ title: \''.tr('Eliminare questo utente?').'\', type: \'info\', showCancelButton: true, confirmButtonText: \''.tr('Sì').'\' 	}).then(function (result) { location.href=\''.$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=delete&id_utente='.$utente['id'].'&idgruppo='.$record['id'].'\'; }) " title="Elimina utente" class="text-danger tip"><i class="fa fa-2x fa-trash"></i></a>';
         } else {
             echo '
-			<span onclick="alert(\"'.tr("Non è possibile eliminare l'utente admin").'\")" class="text-muted tip"><i class="fa fa-2x fa-trash"></i></span>';
+			        <span onclick="alert(\"'.tr("Non è possibile eliminare l'utente admin").'\")" class="text-muted tip"><i class="fa fa-2x fa-trash"></i></span>';
         }
 
         echo '
@@ -82,13 +94,14 @@ if (!empty($utenti)) {
     }
 
     echo '
-			</table>';
+			</table>
+            </div>';
 } else {
     echo '
-			<p>'.tr('Non ci sono utenti in questo gruppo').'...</p>';
+			<div class=\'alert alert-info\' ><i class=\'fa fa-info-circle\'></i> '.tr('Non ci sono utenti in questo gruppo').'.</div>';
 }
 echo '
-			<a data-toggle="modal" data-target="#bs-popup" data-href="'.$rootdir.'/modules/utenti/user.php?idgruppo='.$record['id'].'" data-title="'.tr('Aggiungi utente').'" class="pull-right btn btn-primary"><i class="fa fa-plus"></i> '.tr('Aggiungi utente').'</a>
+			<a data-toggle="modal" data-href="'.$rootdir.'/modules/utenti/user.php?idgruppo='.$record['id'].'" data-title="'.tr('Aggiungi utente').'" class="pull-right btn btn-primary"><i class="fa fa-plus"></i> '.tr('Aggiungi utente').'</a>
 		</div>
 	</div>';
 
@@ -99,29 +112,40 @@ echo '
 echo '
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Permessi').'</h3>
+            <h3 class="panel-title">'.tr('Permessi _GROUP_', [
+                '_GROUP_' => $record['nome'],
+            ]).((empty($record['editable'])) ? '<a class=\'clickable btn-xs pull-right ask\'  data-msg="'.tr('Verranno reimpostati i permessi di default per il gruppo \''.$record['nome'].'\' ').'." data-class="btn btn-lg btn-warning" data-button="'.tr('Reimposta permessi').'" data-op="restore_permission"  >'.tr('Reimposta permessi').'</a>' : '').'</h3>
+
 		</div>
 
 		<div class="panel-body">';
 if ($record['nome'] != 'Amministratori') {
     echo '
-			<table class="table table-hover table-condensed table-striped">
+			<div class="table-responsive">
+            <table class="table table-hover table-condensed table-striped">
 				<tr>
 					<th>'.tr('Modulo').'</th>
 					<th>'.tr('Permessi').'</th>
-				</tr>';
-    for ($m = 0; $m < count($moduli); ++$m) {
-        $perms_values = ['-', 'r', 'rw'];
-        $perms_names = [tr('Nessun permesso'), tr('Sola lettura'), tr('Lettura e scrittura')];
+                </tr>';
 
-        echo menuSelection($moduli[$m], $id_record, -1, $perms_values, $perms_names);
+    $moduli = Modules::getHierarchy();
+
+    $permissions = [
+        '-' => tr('Nessun permesso'),
+        'r' => tr('Sola lettura'),
+        'rw' => tr('Lettura e scrittura'),
+    ];
+
+    for ($m = 0; $m < count($moduli); ++$m) {
+        echo menuSelection($moduli[$m], $id_record, -1, array_keys($permissions), array_values($permissions));
     }
 
     echo '
-			</table>';
+			</table>
+            </div>';
 } else {
     echo '
-			<p>'.tr('Gli amministratori hanno accesso a qualsiasi modulo').'.</p>';
+			<div class=\'alert alert-info\' ><i class=\'fa fa-info-circle\'></i> '.tr('Gli amministratori hanno accesso a qualsiasi modulo').'.</div>';
 }
 echo '
 		</div>
@@ -142,6 +166,10 @@ if ($record['editable'] == 1) {
 
 echo '
 <script>
+    $(document).ready(function(){
+        $("#save").addClass("hide");
+    });
+	$("li.active.header button.btn-primary").attr("data-href", $("a.pull-right").attr("data-href") );
     function update_permissions(id, value){
         $.get(
             globals.rootdir + "/actions.php?id_module='.$id_module.'&id_record='.$id_record.'&op=update_permission&idmodulo=" + id + "&permesso=" + value,

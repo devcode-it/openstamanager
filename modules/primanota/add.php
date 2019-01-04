@@ -2,11 +2,12 @@
 
 include_once __DIR__.'/../../core.php';
 
-?><form action="<?php echo ROOTDIR ?>/editor.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>" method="post" id="add-form">
+?><form action="<?php echo ROOTDIR; ?>/editor.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="iddocumento" value="<?php echo get('iddocumento'); ?>">
 	<input type="hidden" name="crea_modello" id="crea_modello" value="0">
+	<input type="hidden" name="idmastrino" id="idmastrino" value="0">
 
 	<?php
     $idconto = get('idconto');
@@ -15,11 +16,17 @@ include_once __DIR__.'/../../core.php';
 
     if (!empty($iddocumento)) {
         // Lettura numero e tipo di documento
-        $query = 'SELECT dir, numero, numero_esterno, data, co_tipidocumento.descrizione AS tdescrizione, idanagrafica AS parent_idanagrafica, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=parent_idanagrafica AND deleted=0) AS ragione_sociale FROM co_documenti LEFT OUTER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
+        $query = 'SELECT dir, numero, numero_esterno, data, co_tipidocumento.descrizione AS tdescrizione, idanagrafica AS parent_idanagrafica, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=parent_idanagrafica AND deleted_at IS NULL) AS ragione_sociale FROM co_documenti LEFT OUTER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
         $rs = $dbo->fetchArray($query);
         $dir = $rs[0]['dir'];
         $numero_doc = !empty($rs[0]['numero_esterno']) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
         $tipo_doc = $rs[0]['tdescrizione'];
+
+        $nota_credito = false;
+
+        if ($tipo_doc == 'Nota di credito') {
+            $nota_credito = true;
+        }
 
         $descrizione = tr('_DOC_ numero _NUM_ del _DATE_ (_NAME_)', [
             '_DOC_' => $tipo_doc,
@@ -35,7 +42,7 @@ include_once __DIR__.'/../../core.php';
         $idconto_aziendale = $dbo->fetchArray('SELECT '.$field.' FROM co_pagamenti WHERE id = (SELECT idpagamento FROM co_documenti WHERE id='.prepare($iddocumento).') GROUP BY descrizione')[0][$field];
 
         // Lettura conto di default
-        $idconto_aziendale = !empty($idconto_aziendale) ? $idconto_aziendale : get_var('Conto aziendale predefinito');
+        $idconto_aziendale = !empty($idconto_aziendale) ? $idconto_aziendale : setting('Conto aziendale predefinito');
 
         // Generazione causale (incasso fattura)
         $descrizione_conto_aziendale = $descrizione;
@@ -44,7 +51,7 @@ include_once __DIR__.'/../../core.php';
             Calcolo totale per chiudere la fattura
         */
         // Lettura importo da scadenzario (seleziono l'importo di questo mese)
-        $query = 'SELECT *, scadenza, ABS(da_pagare-pagato) AS rata FROM co_scadenziario WHERE iddocumento='.prepare($iddocumento)." AND ABS(da_pagare) > ABS(pagato) ORDER BY DATE_FORMAT(scadenza,'%m/%Y') ASC";
+        $query = 'SELECT *, scadenza, ABS(da_pagare-pagato) AS rata FROM co_scadenziario WHERE iddocumento='.prepare($iddocumento)." AND ABS(da_pagare) > ABS(pagato) ORDER BY DATE_FORMAT(scadenza,'%m/%Y') DESC";
         $rs = $dbo->fetchArray($query);
         $importo_conto_aziendale = $rs[0]['rata'];
 
@@ -109,10 +116,10 @@ include_once __DIR__.'/../../core.php';
         }
     }
     ?>
-	
+
 	<div class="row">
 		<div class="col-md-12">
-			{[ "type": "select", "label": "<?php echo tr('Modello primanota'); ?>", "id": "modello_primanota", "required": 0, "values": "query=SELECT idmastrino AS id, descrizione FROM co_movimenti_modelli GROUP BY idmastrino", "value": "" ]}
+			{[ "type": "select", "label": "<?php echo tr('Modello primanota'); ?>", "id": "modello_primanota", "values": "query=SELECT idmastrino AS id, descrizione FROM co_movimenti_modelli GROUP BY idmastrino" ]}
 		</div>
 	</div>
 
@@ -122,7 +129,7 @@ include_once __DIR__.'/../../core.php';
 		</div>
 
 		<div class="col-md-8">
-			{[ "type": "text", "label": "<?php echo tr('Causale'); ?>", "name": "descrizione", "id": "desc", "required": 1, "value": "<?php echo $descrizione; ?>" ]}
+			{[ "type": "text", "label": "<?php echo tr('Causale'); ?>", "name": "descrizione", "id": "desc", "required": 1, "value": <?php echo json_encode($descrizione); ?> ]}
 		</div>
 	</div>
 
@@ -130,7 +137,7 @@ include_once __DIR__.'/../../core.php';
 	<?php
     $totale_dare = 0.00;
     $totale_avere = 0.00;
-    $idmastrino = $records[0]['idmastrino'];
+    $idmastrino = $record['idmastrino'];
 
     // Salvo l'elenco conti in un array (per non fare il ciclo ad ogni riga)
 
@@ -146,9 +153,8 @@ include_once __DIR__.'/../../core.php';
         </tr>';
 
     for ($i = 0; $i < 10; ++$i) {
-        
-		($i<=1) ? $required = 1 : $required = 0;
-		// Conto
+        ($i <= 1) ? $required = 1 : $required = 0;
+        // Conto
         echo '
 			<tr>
 				<td>
@@ -181,6 +187,13 @@ include_once __DIR__.'/../../core.php';
         } else {
             $value_dare = '';
             $value_avere = '';
+        }
+
+        // Se è una nota di credito, inverto i valori
+        if ($nota_credito) {
+            $tmp = $value_dare;
+            $value_dare = $value_avere;
+            $value_avere = $tmp;
         }
 
         // Dare
@@ -236,7 +249,7 @@ include_once __DIR__.'/../../core.php';
 
 	<script type="text/javascript">
 		$(document).ready( function(){
-			$('input[id*=dare], input[id*=avere]').each(function(){
+			$('#bs-popup input[id*=dare], #bs-popup input[id*=avere]').each(function(){
 				if($(this).val() != "<?php echo Translator::numberToLocale(0); ?>") $(this).prop("disabled", false);
 			});
 
@@ -252,26 +265,26 @@ include_once __DIR__.'/../../core.php';
                 }
 			});
 
-			$('input[id*=dare]').on('keyup change', function(){
+			$('#bs-popup input[id*=dare]').on('keyup change', function(){
                 if(!$(this).prop('disabled')){
                     if($(this).val()) {
-                        $(this).parent().parent().find('input[id*=avere]').prop("disabled", true);
+                        $(this).parent().parent().find('#bs-popup input[id*=avere]').prop("disabled", true);
                     }
                     else {
-                        $(this).parent().parent().find('input[id*=avere]').prop("disabled", false);
+                        $(this).parent().parent().find('#bs-popup input[id*=avere]').prop("disabled", false);
                     }
 
                     calcolaBilancio();
                 }
 			});
 
-			$('input[id*=avere]').on('keyup change', function(){
+			$('#bs-popup input[id*=avere]').on('keyup change', function(){
                 if(!$(this).prop('disabled')){
                     if($(this).val()) {
-                        $(this).parent().parent().find('input[id*=dare]').prop("disabled", true);
+                        $(this).parent().parent().find('#bs-popup input[id*=dare]').prop("disabled", true);
                     }
                     else {
-                        $(this).parent().parent().find('input[id*=dare]').prop("disabled", false);
+                        $(this).parent().parent().find('#bs-popup input[id*=dare]').prop("disabled", false);
                     }
 
                     calcolaBilancio();
@@ -285,69 +298,80 @@ include_once __DIR__.'/../../core.php';
 				totale_avere = 0.00;
 
 				// Calcolo il totale dare e totale avere
-				$('input[id*=dare]').each( function(){
+				$('#bs-popup input[id*=dare]').each( function(){
 					if( $(this).val() == '' ) valore = 0;
 					else valore = $(this).val().toEnglish();
 					totale_dare += Math.round(valore*100)/100;
 				});
 
-				$('input[id*=avere]').each( function(){
+				$('#bs-popup input[id*=avere]').each( function(){
 					if( $(this).val() == '' ) valore = 0;
                     else valore = $(this).val().toEnglish();
 					totale_avere += Math.round(valore*100)/100;
 				});
 
-				$('#totale_dare').text(totale_dare.toLocale());
-				$('#totale_avere').text(totale_avere.toLocale());
+				$('#bs-popup #totale_dare').text(totale_dare.toLocale());
+				$('#bs-popup #totale_avere').text(totale_avere.toLocale());
 
 				bilancio = Math.round(totale_dare*100)/100 - Math.round(totale_avere*100)/100;
 
 				if(bilancio == 0){
-					$("#testo_aggiuntivo").removeClass('text-danger').html("");
-					$("#btn_submit").removeClass('hide');
+					$('#bs-popup #testo_aggiuntivo').removeClass('text-danger').html("");
+					$('#bs-popup #btn_submit').removeClass('hide');
+					$('#bs-popup #btn_crea_modello').removeClass('hide');
 				}
 				else{
-					$("#testo_aggiuntivo").addClass('text-danger').html("sbilancio di " + bilancio.toLocale() + " &euro;" );
-					$("#btn_submit").addClass('hide');
+					$('#bs-popup #testo_aggiuntivo').addClass('text-danger').html("sbilancio di " + bilancio.toLocale() + " &euro;" );
+					$('#bs-popup #btn_submit').addClass('hide');
+					$('#bs-popup #btn_crea_modello').addClass('hide');
 				}
 			}
 
 			// Trigger dell'evento keyup() per la prima volta, per eseguire i dovuti controlli nel caso siano predisposte delle righe in prima nota
-			$("input[id*=dare][value!=''], input[id*=avere][value!='']").keyup();
+			$("#bs-popup input[id*=dare][value!=''], #bs-popup input[id*=avere][value!='']").keyup();
 
-			$("select[id*=idconto]").click( function(){
-				$("input[id*=dare][value!=''], input[id*=avere][value!='']").keyup();
+			$("#bs-popup select[id*=idconto]").click( function(){
+				$("#bs-popup input[id*=dare][value!=''], #bs-popup input[id*=avere][value!='']").keyup();
 			});
-			
-			
-			$('#modello_primanota').change(function(){
-				var idmastrino = $(this).val();
-				
-				if(idmastrino!=''){
-					$('#btn_crea_modello').hide();
-					var causale = $(this).find('option:selected').text();
 
-					$('#desc').val(causale);
+
+			$('#bs-popup #modello_primanota').change(function(){
+				
+				if ($(this).val()!=''){
+					$('#btn_crea_modello').text('<?php echo tr('Aggiungi e modifica modello'); ?>');
+					$('#bs-popup #idmastrino').val($(this).val());
+				}else{
+					$('#btn_crea_modello').text('<?php echo tr('Aggiungi e crea modello'); ?>');
+					$('#bs-popup #idmastrino').val(0);
+				}
+				
+				var idmastrino = $(this).val();
+
+				if(idmastrino!=''){
+					var causale = $(this).find('option:selected').text();
 					
-					$.get('<?=$rootdir?>/ajax_complete.php?op=get_conti&idmastrino='+idmastrino, function(data){
+					//aggiornava erroneamente anche la causale ed eventuale numero di fattura e data
+					<?php if (empty($iddocumento)) {?>
+						$('#bs-popup #desc').val(causale);
+					<?php } ?>
+					
+					$.get('<?php echo $rootdir; ?>/ajax_complete.php?op=get_conti&idmastrino='+idmastrino, function(data){
 						var conti = data.split(',');
 						for(i=0;i<conti.length;i++){
 							var conto = conti[i].split(';');
 							var option = $("<option selected></option>").val(conto[0]).text(conto[1]);
-							$('#conto'+i).selectReset();
-							$('#conto'+i).append(option).trigger('change');
+							$('#bs-popup #conto'+i).selectReset();
+							$('#bs-popup #conto'+i).append(option).trigger('change');
 						}
 					});
-				}else{
-					$('#btn_crea_modello').show();
 				}
 			});
-			
-			$('#btn_crea_modello').click(function(){
-				$("#crea_modello").val("1");
-				$("#add-form").submit();
+
+			$('#bs-popup #btn_crea_modello').click(function(){
+				$('#bs-popup #crea_modello').val("1");
+				$('#bs-popup #add-form').submit();
 			});
-			
+
 		});
 	</script>
 </form>

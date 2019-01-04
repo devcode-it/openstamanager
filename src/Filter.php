@@ -11,9 +11,9 @@ class Filter
     protected static $purifier;
 
     /** @var array Elenco dei contenuti inviati via POST */
-    protected static $post;
+    protected static $post = [];
     /** @var array Elenco dei contenuti inviati via GET */
-    protected static $get;
+    protected static $get = [];
 
     /**
      * Restituisce il valore presente nei dati ottenuti dall'input dell'utente.
@@ -23,16 +23,16 @@ class Filter
      *
      * @return string
      */
-    public static function getValue($property, $method = null)
+    public static function getValue($property, $method = null, $raw = false)
     {
         $value = null;
 
         if (empty($method)) {
-            $value = (self::post($property) !== null) ? self::post($property) : self::get($property);
+            $value = (self::post($property, $raw) !== null) ? self::post($property, $raw) : self::get($property, $raw);
         } elseif (strtolower($method) == 'post') {
-            $value = self::post($property);
+            $value = self::post($property, $raw);
         } elseif (strtolower($method) == 'get') {
-            $value = self::get($property);
+            $value = self::get($property, $raw);
         }
 
         return $value;
@@ -46,10 +46,11 @@ class Filter
     public static function getPOST()
     {
         if (empty(self::$post)) {
-            self::$post = self::sanitize($_POST);
+            self::$post['raw'] = self::sanitize($_POST);
+            self::$post['data'] = self::parse(self::$post['raw']);
         }
 
-        return self::$post;
+        return self::$post['data'];
     }
 
     /**
@@ -59,11 +60,14 @@ class Filter
      *
      * @return string
      */
-    public static function post($property)
+    public static function post($property, $raw = false)
     {
-        $post = self::getPOST();
-        if (!empty($post) && isset($post[$property])) {
-            return $post[$property];
+        self::getPOST();
+
+        $category = empty($raw) ? 'data' : 'raw';
+
+        if (isset(self::$post[$category][$property])) {
+            return self::$post[$category][$property];
         }
     }
 
@@ -75,10 +79,11 @@ class Filter
     public static function getGET()
     {
         if (empty(self::$get)) {
-            self::$get = self::sanitize($_GET);
+            self::$get['raw'] = self::sanitize($_GET);
+            self::$get['data'] = self::parse(self::$get['raw']);
         }
 
-        return self::$get;
+        return self::$get['data'];
     }
 
     /**
@@ -88,18 +93,21 @@ class Filter
      *
      * @return string
      */
-    public static function get($property)
+    public static function get($property, $raw = false)
     {
-        $get = self::getGET();
-        if (!empty($get) && isset($get[$property])) {
-            return $get[$property];
+        self::getGET();
+
+        $category = empty($raw) ? 'data' : 'raw';
+
+        if (isset(self::$get[$category][$property])) {
+            return self::$get[$category][$property];
         }
     }
 
     /**
-     * Sanitarizza il testo inserito.
+     * Sanitarizza i contenuti dell'input.
      *
-     * @param mixed $input Testo da sanitarizzare
+     * @param mixed $input Contenuti
      *
      * @return mixed
      */
@@ -112,18 +120,27 @@ class Filter
             }
         } else {
             $output = trim(self::getPurifier()->purify($input));
+        }
 
-            if (!empty($output)) {
-                if (Translator::getFormatter()->isFormattedDate($output)) {
-                    $output = Translator::dateToEnglish($output);
-                } elseif (Translator::getFormatter()->isFormattedTime($output)) {
-                    $output = Translator::timeToEnglish($output);
-                } elseif (Translator::getFormatter()->isFormattedTimestamp($output)) {
-                    $output = Translator::timestampToEnglish($output);
-                } elseif (Translator::getFormatter()->isFormattedNumber($output)) {
-                    $output = Translator::numberToEnglish($output);
-                }
+        return $output;
+    }
+
+    /**
+     * Interpreta e formatta correttamente i contenuti dell'input.
+     *
+     * @param mixed $input Contenuti
+     *
+     * @return mixed
+     */
+    public static function parse($input)
+    {
+        $output = null;
+        if (is_array($input)) {
+            foreach ($input as $key => $value) {
+                $output[$key] = self::parse($value);
             }
+        } elseif (!is_null($input)) {
+            $output = formatter()->parse($input);
         }
 
         return $output;
@@ -138,7 +155,9 @@ class Filter
     {
         if (empty(self::$purifier)) {
             $config = \HTMLPurifier_Config::createDefault();
-            $config->set('HTML.Allowed', 'a[href|target|title],img[class|src|border|alt|title|hspace|vspace|width|height|align|name],hr[class|width|size|noshade],font[face|size|color|style],span[class|style],br,p[class]');
+
+            $config->set('HTML.Allowed', 'br,p[style],b[style],strong[style],i[style],em[style],u[style],strike,a[style|href|title|target],ol[style],ul[style],li[style],hr[style],blockquote[style],img[style|alt|title|width|height|src|align],table[style|width|bgcolor|align|cellspacing|cellpadding|border],tr[style],td[style],th[style],tbody,thead,caption,col,colgroup,span[style],sup');
+
             //$config->set('Cache.SerializerPath', realpath(__DIR__.'/cache/HTMLPurifier'));
             $config->set('Cache.DefinitionImpl', null);
 
@@ -146,5 +165,21 @@ class Filter
         }
 
         return self::$purifier;
+    }
+
+    /**
+     * Imposta una proprietà specifica a un valore personalizzato.
+     *
+     * @param string $method
+     * @param string $property
+     * @param mixed  $value
+     */
+    public static function set($method, $property, $value)
+    {
+        if (strtolower($method) == 'post') {
+            self::$post['data'][$property] = $value;
+        } elseif (strtolower($method) == 'get') {
+            self::$get['data'][$property] = $value;
+        }
     }
 }

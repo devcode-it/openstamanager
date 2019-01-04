@@ -9,13 +9,27 @@ namespace Util;
  */
 abstract class Singleton
 {
-    /** @var Util\Singleton Oggetti istanziati */
+    /** @var Singleton Oggetti istanziati */
     protected static $instance = [];
 
     /**
      * Protected constructor to prevent creating a new instance of the <b>Singleton</b> via the `new` operator from outside of this class.
      */
     protected function __construct()
+    {
+    }
+
+    /**
+     * Private clone method to prevent cloning of the instance of the <b>Singleton</b> instance.
+     */
+    private function __clone()
+    {
+    }
+
+    /**
+     * Private unserialize method to prevent unserializing of the <b>Singleton</b> instance.
+     */
+    private function __wakeup()
     {
     }
 
@@ -33,19 +47,5 @@ abstract class Singleton
         }
 
         return self::$instance[$class];
-    }
-
-    /**
-     * Private clone method to prevent cloning of the instance of the <b>Singleton</b> instance.
-     */
-    private function __clone()
-    {
-    }
-
-    /**
-     * Private unserialize method to prevent unserializing of the <b>Singleton</b> instance.
-     */
-    private function __wakeup()
-    {
     }
 }

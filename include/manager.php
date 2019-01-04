@@ -2,92 +2,75 @@
 
 include_once __DIR__.'/../core.php';
 
-// Lettura parametri iniziali del modulo
+// Compatibilità per controller ed editor
 if (!empty($id_plugin)) {
-    $element = Plugins::get($id_plugin);
+    $structure = Plugins::get($id_plugin);
+} else {
+    $structure = Modules::get($id_module);
+}
 
-    if (!empty($element['script'])) {
-        // Inclusione di eventuale plugin personalizzato
-        if (file_exists($docroot.'/modules/'.$element['module_dir'].'/plugins/custom/'.$element['script'])) {
-            include $docroot.'/modules/'.$element['module_dir'].'/plugins/custom/'.$element['script'];
-        } elseif (file_exists($docroot.'/modules/'.$element['module_dir'].'/plugins/'.$element['script'])) {
-            include $docroot.'/modules/'.$element['module_dir'].'/plugins/'.$element['script'];
-        }
+if (!empty($id_plugin)) {
+    // Inclusione di eventuale plugin personalizzato
+    if (!empty($structure['script'])) {
+        include $structure->getEditFile();
 
         return;
     }
 
     echo '
         <h4>
-			<span  class="'.(!empty($element['help']) ? ' tip' : '').'"'.(!empty($element['help']) ? ' title="'.prepareToField($element['help']).'" data-position="bottom"' : '').' >
-            '.$element['title'].(!empty($element['help']) ? ' <i class="fa fa-question-circle-o"></i>' : '').'</span>';
+			<span  class="'.(!empty($structure['help']) ? ' tip' : '').'"'.(!empty($structure['help']) ? ' title="'.prepareToField($structure['help']).'" data-position="bottom"' : '').' >
+            '.$structure['title'].(!empty($structure['help']) ? ' <i class="fa fa-question-circle-o"></i>' : '').'</span>';
 
-    if (file_exists($docroot.'/plugins/'.$element['directory'].'/add.php')) {
+    if ($structure->hasAddFile()) {
         echo '
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_parent='.$id_record.'"><i class="fa fa-plus"></i></button>';
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_parent='.$id_record.'"><i class="fa fa-plus"></i></button>';
     }
 
     echo '
     </h4>';
-
-    $directory = '/plugins/'.$element['directory'];
-} else {
-    $element = Modules::get($id_module);
-
-    $directory = '/modules/'.$element['directory'];
 }
-$total = App::readQuery($element);
 
-$module_options = (!empty($element['options2'])) ? $element['options2'] : $element['options'];
+$type = $structure['option'];
+
+// Lettura risultato query del modulo
+// include $structure->filepath('init.php');
 
 // Caricamento file aggiuntivo su elenco record
-if (file_exists($docroot.$directory.'/custom/controller_before.php')) {
-    include $docroot.$directory.'/custom/controller_before.php';
-} elseif (file_exists($docroot.$directory.'/controller_before.php')) {
-    include $docroot.$directory.'/controller_before.php';
-}
-
-// Segmenti
-/*deve sempre essere impostato almeno un sezionale*/
-if (empty($_SESSION['m'.$id_module]['id_segment'])) {
-    $rs = $dbo->fetchArray('SELECT id  FROM zz_segments WHERE predefined = 1 AND id_module = '.prepare($id_module).'LIMIT 0,1');
-    $_SESSION['m'.$id_module]['id_segment'] = $rs[0]['id'];
-}
-
-if (count($dbo->fetchArray("SELECT id FROM zz_segments WHERE id_module = \"$id_module\"")) > 1) {
-?>
-
-    <div class="row">
-    	<div class="col-md-4 pull-right">
-    		{[ "type": "select", "label": "", "name": "id_segment_", "required": 0, "class": "", "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module = '<?php echo $id_module; ?>'", "value": "<?php echo $_SESSION['m'.$id_module]['id_segment']; ?>", "extra": "" ]}
-    	</div>
-    </div>
-    <br>
-
-
-    <script>
-    $(document).ready(function () {
-
-    	$("#id_segment_").on("change", function(){
-    		
-    		if ($(this).val()<1){
-    			session_set('<?php echo 'm'.$id_module; ?>,id_segment', '', 1, 1);
-    		}else{
-    			session_set('<?php echo 'm'.$id_module; ?>,id_segment', $(this).val(), 0, 1);
-    		}
-
-      });
-
-    });
-    </script>
-
-<?php
+$controller_before = $structure->filepath('controller_before.php');
+if (!empty($controller_before)) {
+    include $controller_before;
 }
 
 /*
  * Datatables con record
  */
-if (!empty($module_options) && $module_options != 'menu' && $module_options != 'custom') {
+if (!empty($type) && $type != 'menu' && $type != 'custom') {
+    $total = App::readQuery($structure);
+
+    if (empty($id_plugin) && count(Modules::getSegments($id_module)) > 1) {
+        echo '
+    <div class="row">
+    	<div class="col-md-4 pull-right">
+    		{[ "type": "select", "name": "id_segment_", "required": 0, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module = '.prepare($id_module).'", "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
+    	</div>
+    </div>
+    <br>';
+
+        echo '
+    <script>
+    $(document).ready(function () {
+    	$("#id_segment_").on("change", function(){
+    		if ($(this).val() < 1){
+    			session_set("module_'.$id_module.',id_segment", "", 1, 1);
+    		} else {
+    			session_set("module_'.$id_module.',id_segment", $(this).val(), 0, 1);
+    		}
+      });
+    });
+    </script>';
+    }
+
     $table_id = 'main_'.rand(0, 99);
     echo '
     <table data-idmodule="'.$id_module.'" data-idplugin="'.$id_plugin.'" data-idparent="'.$id_record.'" id="'.$table_id.'" width="100%" class="main-records table table-condensed table-bordered">
@@ -121,7 +104,7 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
         }
 
         echo '
-                <th'.$attr_td.' id="th_'.str_replace([' ', '.'], ['-', ''], $name).'"';
+                <th'.$attr_td.' id="th_'.searchFieldName($name).'"';
         if ($total['search'][$key] == 1) {
             echo ' class="search"';
         } else {
@@ -175,11 +158,11 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
             $data = is_array($value) ? $value['data'] : [];
             $extra = [];
             foreach ($data as $k => $v) {
-                $extra[] = 'data-'.$k.'="'.$v.'"';
+                $extra[] = 'data-'.$k.'="'.prepareToField(\HTMLBuilder\HTMLBuilder::replace($v)).'"';
             }
 
             echo '
-                <li role="presentation"><a class="bulk-action clickable" data-op="'.$key.'" data-backto="record-list" '.implode(' ', $extra).'>'.$text.'</a></li>';
+                <li role="presentation"><a class="bulk-action clickable" data-op="'.prepareToField($key).'" data-backto="record-list" '.implode(' ', $extra).'>'.$text.'</a></li>';
         }
 
         echo '
@@ -190,10 +173,34 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
         </div>
 
         <div class="col-md-5 text-right">
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-primary btn-csv disabled" disabled>'.tr('Esporta').'</button>
-                <button type="button" class="btn btn-default btn-copy disabled" disabled>'.tr('Copia').'</button>
-                <button type="button" class="btn btn-default btn-print disabled" disabled>'.tr('Stampa').'</button>
+            <div class="btn-group" role="group">';
+
+    if (setting('Abilita esportazione Excel e PDF')) {
+        echo '
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary table-btn btn-csv disabled" disabled>'.tr('Esporta').'</button>
+
+                    <button type="button" class="btn btn-primary  table-btn disabled dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+
+                    <ul class="dropdown-menu">
+                        <li><a class="table-btn btn-pdf disabled" disabled>'.tr('PDF').'</a></li>
+
+                        <li><a class="table-btn btn-excel disabled" disabled>'.tr('Excel').'</a></li>
+                    </ul>
+                </div>';
+    } else {
+        echo '
+            <button type="button" class="btn btn-primary table-btn btn-csv disabled" disabled>'.tr('Esporta').'</button>';
+    }
+
+    echo '
+
+                <button type="button" class="btn btn-default table-btn btn-copy disabled" disabled>'.tr('Copia').'</button>
+
+                <button type="button" class="btn btn-default table-btn btn-print disabled" disabled>'.tr('Stampa').'</button>
             </div>
         </div>
     </div>';
@@ -202,22 +209,12 @@ if (!empty($module_options) && $module_options != 'menu' && $module_options != '
 /*
  * Inclusione modulo personalizzato
  */
-elseif ($module_options == 'custom') {
-    // Lettura template modulo (verifico se ci sono template personalizzati, altrimenti uso quello base)
-    if (file_exists($docroot.$directory.'/custom/edit.php')) {
-        include $docroot.$directory.'/custom/edit.php';
-    } elseif (file_exists($docroot.$directory.'/custom/edit.html')) {
-        include $docroot.$directory.'/custom/edit.html';
-    } elseif (file_exists($docroot.$directory.'/edit.php')) {
-        include $docroot.$directory.'/edit.php';
-    } elseif (file_exists($docroot.$directory.'/edit.html')) {
-        include $docroot.$directory.'/edit.html';
-    }
+elseif ($type == 'custom') {
+    include $structure->getEditFile();
 }
 
 // Caricamento file aggiuntivo su elenco record
-if (file_exists($docroot.$directory.'/custom/controller_after.php')) {
-    include $docroot.$directory.'/custom/controller_after.php';
-} elseif (file_exists($docroot.$directory.'/controller_after.php')) {
-    include $docroot.$directory.'/controller_after.php';
+$controller_after = $structure->filepath('controller_after.php');
+if (!empty($controller_after)) {
+    include $controller_after;
 }

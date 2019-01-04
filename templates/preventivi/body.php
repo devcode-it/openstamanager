@@ -29,7 +29,8 @@ echo '
                 <td colspan=2 class="border-full" style="height:16mm;">
                     <p class="small-bold">'.tr('Spett.le', [], ['upper' => true]).'</p>
                     <p>$c_ragionesociale$</p>
-                    <p>$c_indirizzo$ $c_citta_full$</p>
+                    <p>$c_indirizzo$</p>
+                    <p>$c_citta_full$</p>
                 </td>
             </tr>
 
@@ -110,7 +111,7 @@ foreach ($righe as $r) {
             <td class='text-center'>";
     if (empty($r['is_descrizione'])) {
         echo '
-                '.(empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'])).' '.$r['um'];
+                '.(empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'], 'qta')).' '.$r['um'];
     }
     echo '
             </td>';
@@ -185,7 +186,7 @@ foreach ($righe as $r) {
 
 $sconto = sum($sconto);
 $imponibile = sum($imponibile);
-$iva = sum($iva, null, 4);
+$iva = sum($iva);
 
 $totale = $imponibile - $sconto;
 
@@ -269,8 +270,9 @@ $rs = $dbo->fetchArray('SELECT * FROM co_pagamenti WHERE id = '.$records[0]['idp
 $pagamento = $rs[0]['descrizione'];
 
 // Lettura resa
-$rs = $dbo->fetchArray('SELECT * FROM dt_porto WHERE id = '.$records[0]['idporto']);
-$resa_materiale = $rs[0]['descrizione'];
+
+//$rs = $dbo->fetchArray('SELECT * FROM dt_porto WHERE id = '.$records[0]['idporto']);
+//$resa_materiale = $rs[0]['descrizione'];
 
 echo '
 <table class="table table-bordered">
@@ -290,7 +292,7 @@ echo '
         </td>
     </tr>
 
-    <tr>
+    <!--tr>
         <th>
             '.tr('Resa materiale', [], ['upper' => true]).'
         </th>
@@ -298,7 +300,7 @@ echo '
         <td>
             '.$resa_materiale.'
         </td>
-    </tr>
+    </tr-->
 
     <tr>
         <th>

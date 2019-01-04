@@ -2,6 +2,17 @@
 
 include_once __DIR__.'/../../core.php';
 
+$_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
+
+$img = null;
+if (!empty($record['immagine'])) {
+    $fileinfo = Uploads::fileInfo($record['immagine']);
+
+    $default_img = '/'.Uploads::getDirectory($id_module).'/'.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
+
+    $img = file_exists(DOCROOT.$default_img) ? ROOTDIR.$default_img : ROOTDIR.'/'.Uploads::getDirectory($id_module).'/'.$record['immagine'];
+}
+
 ?><form action="" method="post" id="edit-form" enctype="multipart/form-data">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -16,10 +27,7 @@ include_once __DIR__.'/../../core.php';
 		<div class="panel-body">
 			<div class="row">
 				<div class="col-md-3">
-					<?php
-                    $immagine = ($records[0]['immagine'] == '') ? '' : $rootdir.'/files/my_impianti/'.$records[0]['immagine'];
-                    ?>
-					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine", "class": "img-thumbnail", "value": "<?php echo $immagine; ?>" ]}
+					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine", "class": "img-thumbnail", "value": "<?php echo $img; ?>" ]}
 				</div>
 
 				<div class="col-md-9">
@@ -33,16 +41,22 @@ include_once __DIR__.'/../../core.php';
 						</div>
 						<div class="clearfix"></div>
 
-						<div class="col-md-12">
-							{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Cliente' AND deleted=0 ORDER BY ragione_sociale", "value": "$idanagrafica$", "extra": "onchange=\"load_preventivi( this.value ); load_contratti( this.value ); $('#idsede').load( '<?php echo $rootdir; ?>/ajax_complete.php?module=Anagrafiche&op=get_sedi_select&idanagrafica='+$('#idanagrafica option:selected').val() ); load_impianti( $('#idanagrafica option:selected').val(), $('#idsede option:selected').val() );\"", "ajax-source": "clienti" ]}
+						<div class="col-md-8">
+							<?php
+                                echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"');
+                            ?>
+							{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "extra": "", "ajax-source": "clienti" ]}
 						</div>
+                        <div class="col-md-4">
+                            {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "class": "", "value": "$id_categoria$", "values": "query=SELECT id, nome AS descrizione FROM my_impianti_categorie" ]}
+                        </div>
 					</div>
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Tecnico assegnato'); ?>", "name": "idtecnico", "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE descrizione='Tecnico' AND deleted=0 ORDER BY ragione_sociale ASC", "value": "$idtecnico$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tecnico assegnato'); ?>", "name": "idtecnico", "ajax-source": "tecnici", "value": "$idtecnico$" ]}
 				</div>
 
 				<div class="col-md-4">
@@ -50,7 +64,7 @@ include_once __DIR__.'/../../core.php';
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "values": "query=SELECT 0 AS id, 'Sede legale' AS descrizione UNION SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica='$idanagrafica$'", "value": "$idsede$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "$idsede$", "required": "1", "ajax-source": "sedi", "placeholder": "Sede legale" ]}
 				</div>
 			</div>
 
@@ -99,8 +113,30 @@ include_once __DIR__.'/../../core.php';
 	</div>
 </form>
 
-{( "name": "filelist_and_upload", "id_module": "<?php echo $id_module; ?>", "id_record": "<?php echo $id_record; ?>" )}
+{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+	$('#idanagrafica').change( function(){
+
+		session_set('superselect,idanagrafica', $(this).val(), 0);
+
+        var value = !$(this).val() ? true : false;
+
+		$("#idsede").prop("disabled", value);
+		$("#idsede").selectReset();
+
+	});
+
+	$('#idsede').change( function(){
+		//session_set('superselect,idsede', $(this).val(), 0);
+	});
+
+});
+</script>

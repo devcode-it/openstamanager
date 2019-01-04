@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$google = Settings::get('Google Maps API key');
+$google = setting('Google Maps API key');
 
 /*
 if (!empty($google)) {
@@ -12,7 +12,10 @@ if (!empty($google)) {
 */
 
 echo '
-<form action="plugin_editor.php?id_plugin=$id_plugin$&id_module=$id_module$&id_record=$id_record$&id_parent=$id_parent$" method="post" role="form" id="form_sedi">
+<form action="" method="post" role="form" id="form_sedi">
+    <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
+    <input type="hidden" name="id_parent" value="'.$id_parent.'">
+    <input type="hidden" name="id_record" value="'.$id_record.'">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="updatesede">
 
@@ -24,38 +27,28 @@ echo '
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "indirizzo", "id": "indirizzo_",  "required": 1, "value": "$indirizzo$" ]}
+			{[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "indirizzo", "id": "indirizzo_", "required": 1, "value": "$indirizzo$" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Secondo indirizzo').'", "name": "indirizzo2", "value": "$indirizzo2$" ]}
-		</div>
+            {[ "type": "text", "label": "'.($record['tipo_anagrafica'] == 'Ente pubblico' ? tr('Codice unico ufficio') : tr('Codice destinatario')).'", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": '.($record['tipo_anagrafica'] == 'Ente pubblico' ? '6' : '7').',  "extra": "'.(empty($record['tipo_anagrafica']) || $record['tipo_anagrafica'] == 'Privato' ? 'disabled' : '').'", "help": "'.tr('<b>Attenzione</b>: per impostare il codice specificare prima \'Tipologia\' e \'Nazione\' dell\'anagrafica:<br><ul><li>Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri</li><li>Azienda (B2B) - Codice Destinatario, 7 caratteri</li><li>Privato (B2C) - viene utilizzato il Codice Fiscale</li></ul>').'", "readonly": "'.intval($record['iso2'] != 'IT').'" ]}
+        </div>
 	</div>
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('P.Iva').'", "name": "piva", "value": "$piva$" ]}
-		</div>
-
-		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Codice Fiscale').'", "name": "codice_fiscale", "value": "$codice_fiscale$" ]}
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-md-3">
 			{[ "type": "text", "label": "'.tr('Città').'", "name": "citta", "id": "citta_", "value": "$citta$" ]}
 		</div>
 
-		<div class="col-md-3">
+		<div class="col-md-2">
 			{[ "type": "text", "label": "'.tr('C.A.P.').'", "name": "cap", "value": "$cap$" ]}
 		</div>
 
-		<div class="col-md-3">
-			{[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia", "value": "$provincia$" ]}
+		<div class="col-md-2">
+			{[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia", "value": "$provincia$", "maxlength": 2, "class": "text-center text-uppercase", "extra": "onkeyup=\"this.value = this.value.toUpperCase();\"" ]}
 		</div>
 
-		<div class="col-md-3">
+		<div class="col-md-2">
 			{[ "type": "number", "label": "'.tr('Km').'", "name": "km", "value": "$km$" ]}
 		</div>
 	</div>
@@ -102,11 +95,11 @@ if (!empty($google)) {
 		</div>
 
 		<div class="col-md-2">
-			{[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "id": "lng_",  "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right" ]}
+			{[ "type": "text", "label": "'.tr('Longitudine').'", "name": "lng", "id": "lng_", "value": "$lng$", "extra": "data-geo=\'lng\'", "class": "text-right" ]}
 		</div>';
 
     // Vedi su google maps
-    if (!empty($records[0]['indirizzo']) || (empty($records[0]['citta']))) {
+    if (!empty($record['indirizzo']) || (empty($record['citta']))) {
         echo '
 			<div  class="btn-group col-md-2"  >
 				<label>&nbsp;</label><br>
@@ -121,14 +114,14 @@ if (!empty($google)) {
     echo '
     </div>';
 
-    if (!empty($records[0]['gaddress']) || (!empty($records[0]['lat']) && !empty($records[0]['lng']))) {
+    if (!empty($record['gaddress']) || (!empty($record['lat']) && !empty($record['lng']))) {
         echo '
     <div id="map" style="height:400px; width:100%"></div><br>';
     }
 } else {
     echo '
     <div class="alert alert-info">
-        '.Modules::link('Impostazioni', $dbo->fetchArray("SELECT `idimpostazione` FROM `zz_settings` WHERE sezione='Generali'")[0]['idimpostazione'], tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni')).'.
+        '.Modules::link('Impostazioni', $dbo->fetchOne("SELECT `id` FROM `zz_settings` WHERE sezione='Generali'")['id'], tr('Per abilitare la visualizzazione delle anagrafiche nella mappa, inserire la Google Maps API Key nella scheda Impostazioni')).'.
     </div>';
 }
 
@@ -136,7 +129,7 @@ echo '
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12">
-            <a class="btn btn-danger ask" data-backto="record-edit" data-href="'.$rootdir.'/plugin_editor.php" data-op="deletesede" data-id_record="'.$records[0]['id'].'" data-id_plugin="'.$id_plugin.'" data-id_module="'.$id_module.'" data-id_parent="'.$id_parent.'">
+            <a class="btn btn-danger ask" data-backto="record-edit" data-op="deletesede" data-id_record="'.$record['id'].'" data-id_plugin="'.$id_plugin.'" data-id_module="'.$id_module.'" data-id_parent="'.$id_parent.'">
                 <i class="fa fa-trash"></i> '.tr('Elimina').'
             </a>
 
@@ -144,9 +137,6 @@ echo '
 		</div>
 	</div>
 </form>';
-
-echo '
-<script src="'.$rootdir.'/lib/init.js"></script>';
 
 echo '
 <script>

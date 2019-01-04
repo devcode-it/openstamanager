@@ -2,47 +2,90 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\DDT\DDT;
+
 /**
  * Funzione per generare un nuovo numero per il ddt.
+ *
+ * @deprecated 2.4.5
  */
 function get_new_numeroddt($data)
 {
-    global $dbo;
     global $dir;
 
-    $query = "SELECT IFNULL(MAX(numero),'0') AS max_numeroddt FROM dt_ddt WHERE DATE_FORMAT( data, '%Y' ) = '".date('Y', strtotime($data))."' AND idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir='".$dir."') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1";
-    $rs = $dbo->fetchArray($query);
-
-    return intval($rs[0]['max_numeroddt']) + 1;
+    return DDT::getNextNumero($data, $dir);
 }
 
 /**
  * Funzione per calcolare il numero secondario successivo utilizzando la maschera dalle impostazioni.
+ *
+ * @deprecated 2.4.5
  */
 function get_new_numerosecondarioddt($data)
 {
-    global $dbo;
     global $dir;
 
-    // Calcolo il numero secondario se stabilito dalle impostazioni e se documento di vendita
-    $formato_numero_secondario = get_var('Formato numero secondario ddt');
+    return DDT::getNextNumeroSecondario($data, $dir);
+}
 
-    $query = "SELECT numero_esterno FROM dt_ddt WHERE DATE_FORMAT( data, '%Y' ) = '".date('Y', strtotime($data))."' AND idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir='".$dir."') ORDER BY numero_esterno DESC LIMIT 0,1";
+/**
+ * Calcolo imponibile ddt (totale_righe - sconto).
+ *
+ * @deprecated 2.4.5
+ */
+function get_imponibile_ddt($id_ddt)
+{
+    $ddt = DDT::find($id_ddt);
 
-    $rs = $dbo->fetchArray($query);
-    $numero_secondario = $rs[0]['numero_esterno'];
+    return $ddt->imponibile;
+}
 
-    if ($numero_secondario == '') {
-        $numero_secondario = $formato_numero_secondario;
-    }
+/**
+ * Calcolo totale ddt (imponibile + iva).
+ *
+ * @deprecated 2.4.5
+ */
+function get_totale_ddt($id_ddt)
+{
+    $ddt = DDT::find($id_ddt);
 
-    if ($formato_numero_secondario != '' && $dir == 'entrata') {
-        $numero_esterno = Util\Generator::generate($formato_numero_secondario, $numero_secondario);
-    } else {
-        $numero_esterno = '';
-    }
+    return $ddt->totale;
+}
 
-    return $numero_esterno;
+/**
+ * Calcolo netto a pagare ddt (totale - ritenute - bolli).
+ *
+ * @deprecated 2.4.5
+ */
+function get_netto_ddt($id_ddt)
+{
+    $ddt = DDT::find($id_ddt);
+
+    return $ddt->netto;
+}
+
+/**
+ * Calcolo iva detraibile ddt.
+ *
+ * @deprecated 2.4.5
+ */
+function get_ivadetraibile_ddt($id_ddt)
+{
+    $ddt = DDT::find($id_ddt);
+
+    return $ddt->iva_detraibile;
+}
+
+/**
+ * Calcolo iva indetraibile ddt.
+ *
+ * @deprecated 2.4.5
+ */
+function get_ivaindetraibile_ddt($id_ddt)
+{
+    $ddt = DDT::find($id_ddt);
+
+    return $ddt->iva_indetraibile;
 }
 
 /**
@@ -52,8 +95,9 @@ function get_new_numerosecondarioddt($data)
  */
 function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
 {
-    global $dbo;
     global $dir;
+
+    $dbo = database();
 
     // Leggo la quantità di questo articolo in ddt
     $query = 'SELECT qta, subtotale FROM dt_righe_ddt WHERE id='.prepare($idrigaddt);
@@ -96,80 +140,15 @@ function rimuovi_articolo_daddt($idarticolo, $idddt, $idrigaddt)
     // Elimino la riga dal ddt
     $dbo->query('DELETE FROM `dt_righe_ddt` WHERE id='.prepare($idrigaddt).' AND idddt='.prepare($idddt));
 
+    //Aggiorno lo stato dell'ordine
+    if (setting('Cambia automaticamente stato ordini fatturati') && !empty($idordine)) {
+        $dbo->query('UPDATE or_ordini SET idstatoordine=(SELECT id FROM or_statiordine WHERE descrizione="'.get_stato_ordine($idordine).'") WHERE id = '.prepare($idordine));
+    }
+
     // Elimino i seriali utilizzati dalla riga
     $dbo->query('DELETE FROM `mg_prodotti` WHERE id_articolo = '.prepare($idarticolo).' AND id_riga_ddt = '.prepare($idrigaddt));
 
     return true;
-}
-
-/**
- * Calcolo imponibile ddt (totale_righe - sconto).
- */
-function get_imponibile_ddt($idddt)
-{
-    global $dbo;
-
-    $query = 'SELECT SUM(subtotale-sconto) AS imponibile FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt);
-    $rs = $dbo->fetchArray($query);
-
-    return $rs[0]['imponibile'];
-}
-
-/**
- * Calcolo totale ddt (imponibile + iva).
- */
-function get_totale_ddt($idddt)
-{
-    global $dbo;
-
-    // Sommo l'iva di ogni riga al totale
-    $query = "SELECT SUM(iva) AS iva FROM dt_righe_ddt GROUP BY idddt HAVING idddt='".$idddt."'";
-    $rs = $dbo->fetchArray($query);
-
-    // Aggiungo la rivalsa inps se c'è
-    $query2 = "SELECT rivalsainps FROM dt_ddt WHERE id='".$idddt."'";
-    $rs2 = $dbo->fetchArray($query2);
-
-    return get_imponibile_ddt($idddt) + $rs[0]['iva'] + $rs2[0]['rivalsainps'];
-}
-
-/**
- * Calcolo netto a pagare ddt (totale - ritenute - bolli).
- */
-function get_netto_ddt($idddt)
-{
-    global $dbo;
-
-    $query = "SELECT ritenutaacconto,bollo FROM dt_ddt WHERE id='".$idddt."'";
-    $rs = $dbo->fetchArray($query);
-
-    return get_totale_ddt($idddt) - $rs[0]['ritenutaacconto'] + $rs[0]['bollo'];
-}
-
-/**
- * Calcolo iva detraibile ddt.
- */
-function get_ivadetraibile_ddt($idddt)
-{
-    global $dbo;
-
-    $query = "SELECT SUM(iva)-SUM(iva_indetraibile) AS iva_detraibile FROM dt_righe_ddt GROUP BY idddt HAVING idddt='".$idddt."'";
-    $rs = $dbo->fetchArray($query);
-
-    return $rs[0]['iva_detraibile'];
-}
-
-/**
- * Calcolo iva indetraibile ddt.
- */
-function get_ivaindetraibile_ddt($idddt)
-{
-    global $dbo;
-
-    $query = "SELECT SUM(iva_indetraibile) AS iva_indetraibile FROM dt_righe_ddt GROUP BY idddt HAVING idddt='".$idddt."'";
-    $rs = $dbo->fetchArray($query);
-
-    return $rs[0]['iva_indetraibile'];
 }
 
 /**
@@ -182,8 +161,9 @@ function get_ivaindetraibile_ddt($idddt)
  */
 function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto = '', $bolli = '')
 {
-    global $dbo;
     global $dir;
+
+    $dbo = database();
 
     // Se ci sono righe nel ddt faccio i conteggi, altrimenti azzero gli sconti e le spese aggiuntive (inps, ritenuta, marche da bollo)
     $query = "SELECT COUNT(id) AS righe FROM dt_righe_ddt WHERE idddt='$idddt'";
@@ -204,7 +184,7 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
         // Leggo la rivalsa inps se c'è (per i ddt di vendita lo leggo dalle impostazioni)
         if ($dir == 'entrata') {
             if (!empty($idrivalsainps)) {
-                $idrivalsainps = get_var('Percentuale rivalsa INPS');
+                $idrivalsainps = setting('Percentuale rivalsa INPS');
             }
         }
 
@@ -213,7 +193,7 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
         $rivalsainps = $totale_imponibile / 100 * $rs[0]['percentuale'];
 
         // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
-        $qi = "SELECT percentuale FROM co_iva WHERE id='".get_var('Iva predefinita')."'";
+        $qi = "SELECT percentuale FROM co_iva WHERE id='".setting('Iva predefinita')."'";
         $rsi = $dbo->fetchArray($qi);
         $iva_rivalsainps = $rivalsainps / 100 * $rsi[0]['percentuale'];
 
@@ -225,7 +205,7 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
         // Leggo la ritenuta d'acconto se c'è (per i ddt di vendita lo leggo dalle impostazioni)
         if (!empty($idritenutaacconto)) {
             if ($dir == 'entrata') {
-                $idritenutaacconto = get_var("Percentuale ritenuta d'acconto");
+                $idritenutaacconto = setting("Percentuale ritenuta d'acconto");
             }
         }
 
@@ -240,21 +220,21 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
         if ($dir == 'uscita') {
             if ($bolli != 0.00) {
                 $bolli = str_replace(',', '.', $bolli);
-                if (abs($bolli) > 0 && abs($netto_a_pagare > get_var("Soglia minima per l'applicazione della marca da bollo"))) {
+                if (abs($bolli) > 0 && abs($netto_a_pagare > setting("Soglia minima per l'applicazione della marca da bollo"))) {
                     $marca_da_bollo = str_replace(',', '.', $bolli);
                 } else {
                     $marca_da_bollo = 0.00;
                 }
             }
         } else {
-            $bolli = str_replace(',', '.', get_var('Importo marca da bollo'));
-            if (abs($bolli) > 0 && abs($netto_a_pagare) > abs(get_var("Soglia minima per l'applicazione della marca da bollo"))) {
+            $bolli = str_replace(',', '.', setting('Importo marca da bollo'));
+            if (abs($bolli) > 0 && abs($netto_a_pagare) > abs(setting("Soglia minima per l'applicazione della marca da bollo"))) {
                 $marca_da_bollo = str_replace(',', '.', $bolli);
             } else {
                 $marca_da_bollo = 0.00;
             }
 
-            // Se l'importo è negativo può essere una nota di accredito, quindi cambio segno alla marca da bollo
+            // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo
             if ($netto_a_pagare < 0) {
                 $marca_da_bollo *= -1;
             }
@@ -274,20 +254,16 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
  * $qta			float		quantità dell'articolo nell'ordine
  * $prezzo			float		prezzo totale degli articoli (prezzounitario*qtà).
  */
-function add_articolo_inddt($idddt, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT')
+function add_articolo_inddt($idddt, $idarticolo, $descrizione, $idiva, $qta, $idum, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT')
 {
-    global $dbo;
     global $dir;
+    global $idordine;
 
-    // Lettura unità di misura dell'articolo
-    // $query = "SELECT valore FROM mg_unitamisura WHERE id=(SELECT idum FROM mg_articoli WHERE id='".$idarticolo."')";
-    // $rs = $dbo->fetchArray($query);
-    // $um = $rs[0]['valore'];
+    $dbo = database();
 
     // Lettura unità di misura dell'articolo
     if (empty($idum)) {
-        $query = 'SELECT um FROM mg_articoli WHERE id='.prepare($idarticolo);
-        $rs = $dbo->fetchArray($query);
+        $rs = $dbo->fetchArray('SELECT um FROM mg_articoli WHERE id='.prepare($idarticolo));
         $um = $rs[0]['valore'];
     } else {
         $um = $idum;
@@ -319,6 +295,9 @@ function add_articolo_inddt($idddt, $idarticolo, $descrizione, $idiva, $qta, $pr
             // Decremento la quantità dal magazzino centrale
             add_movimento_magazzino($idarticolo, $qta, ['idddt' => $idddt]);
         }
+
+        // Inserisco il riferimento dell'ordine alla riga
+        $dbo->query('UPDATE dt_righe_ddt SET idordine='.prepare($idordine).' WHERE id='.prepare($idriga));
     }
 
     return $idriga;
@@ -329,7 +308,7 @@ function add_articolo_inddt($idddt, $idarticolo, $descrizione, $idiva, $qta, $pr
  */
 function get_stato_ddt($idddt)
 {
-    global $dbo;
+    $dbo = database();
 
     $rs = $dbo->fetchArray('SELECT SUM(qta) AS qta, SUM(qta_evasa) AS qta_evasa FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt));
 

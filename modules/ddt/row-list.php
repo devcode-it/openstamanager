@@ -19,7 +19,7 @@ echo '
 /*
     Articoli e righe generiche
 */
-$q_art = 'SELECT *, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice FROM `dt_righe_ddt` WHERE idddt='.prepare($id_record).' ORDER BY `order`';
+$q_art = 'SELECT *, round(sconto_unitario,'.setting('Cifre decimali per importi').') AS sconto_unitario, round(sconto,'.setting('Cifre decimali per importi').') AS sconto, round(subtotale,'.setting('Cifre decimali per importi').') AS subtotale, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice FROM `dt_righe_ddt` WHERE idddt='.prepare($id_record).' ORDER BY `order`';
 $rs = $dbo->fetchArray($q_art);
 
 if (!empty($rs)) {
@@ -64,23 +64,12 @@ if (!empty($rs)) {
             echo nl2br($r['descrizione']);
         }
 
-        // Aggiunta riferimento a ordine
-        if (!empty($r['idordine'])) {
-            $rso = $dbo->fetchArray('SELECT numero, numero_esterno, data, dir FROM or_ordini JOIN or_tipiordine ON or_tipiordine.id = or_ordini.idtipoordine WHERE or_ordini.id='.prepare($r['idordine']));
-            $numero = !empty($rso[0]['numero_esterno']) ? $rso[0]['numero_esterno'] : $rso[0]['numero'];
+        // Aggiunta dei riferimenti ai documenti
+        $ref = doc_references($r, $dir, ['idddt']);
 
-            $ref = $rso[0]['dir'] == 'entrata' ? 'Ordini cliente' : 'Ordini fornitore';
-            $ref_id = $r['idordine'];
-
-            $descrizione = tr('Rif. ordine num. _NUM_ del _DATE_', [
-                '_NUM_' => $numero,
-                '_DATE_' => Translator::dateToLocale($rso[0]['data']),
-            ]);
-        }
-
-        if (!empty($descrizione)) {
+        if (!empty($ref)) {
             echo '
-            <br>'.Modules::link($ref, $ref_id, $descrizione.' <i class="fa fa-external-link"></i>', $descrizione);
+            <br>'.Modules::link($ref['module'], $ref['id'], $ref['description'], $ref['description']);
         }
 
         echo '
@@ -91,8 +80,8 @@ if (!empty($rs)) {
         if (empty($r['is_descrizione'])) {
             if (empty($r['sconto_globale'])) {
                 echo '
-                <big>'.Translator::numberToLocale($r['qta'] - $r['qta_evasa']).'</big>
-                <br><small>('.tr('Q.tà iniziale').': '.Translator::numberToLocale($r['qta']).')</small>';
+                <big>'.Translator::numberToLocale($r['qta'] - $r['qta_evasa'], 'qta').'</big>
+                <br><small>('.tr('Q.tà iniziale').': '.Translator::numberToLocale($r['qta'], 'qta').')</small>';
             } else {
                 echo '1';
             }
@@ -119,7 +108,7 @@ if (!empty($rs)) {
 
             if ($r['sconto_unitario'] > 0) {
                 echo '
-            <br><small class="label label-danger">- '.tr('sconto _TOT_ _TYPE_', [
+            <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
                 '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
                 '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
             ]).'</small>';
@@ -152,9 +141,9 @@ if (!empty($rs)) {
         // Possibilità di rimuovere una riga solo se il ddt non è evaso
         echo '
         <td class="text-center">';
-        if ($records[0]['stato'] != 'Evaso' && empty($r['sconto_globale'])) {
+        if ($record['flag_completato'] == 0 && empty($r['sconto_globale'])) {
             echo "
-            <form action='".$rootdir.'/editor.php?id_module='.Modules::get($name)['id'].'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
+            <form action='".$rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record."' method='post' id='delete-form-".$r['id']."' role='form'>
                 <input type='hidden' name='backto' value='record-edit'>
                 <input type='hidden' name='id_record' value='".$id_record."'>
                 <input type='hidden' name='idriga' value='".$r['id']."'>
@@ -210,22 +199,22 @@ echo '
 // Calcoli
 $imponibile = sum(array_column($rs, 'subtotale'));
 $sconto = sum(array_column($rs, 'sconto'));
-$iva = sum(array_column($rs, 'iva'), null, 4);
+$iva = sum(array_column($rs, 'iva'));
 
 $imponibile_scontato = sum($imponibile, -$sconto);
 
-$totale_iva = sum($iva, $records[0]['iva_rivalsainps']);
+$totale_iva = sum($iva, $record['iva_rivalsainps']);
 
 $totale = sum([
     $imponibile_scontato,
-    $records[0]['rivalsainps'],
+    $record['rivalsainps'],
     $totale_iva,
 ]);
 
 $netto_a_pagare = sum([
     $totale,
-    $marca_da_bollo,
-    -$records[0]['ritenutaacconto'],
+    //$marca_da_bollo, // Variabile non inizializzata!
+    -$record['ritenutaacconto'],
 ]);
 
 // IMPONIBILE
@@ -273,7 +262,7 @@ if (abs($sconto) > 0) {
 }
 
 // RIVALSA INPS
-if (abs($records[0]['rivalsainps']) > 0) {
+if (abs($record['rivalsainps']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
@@ -281,7 +270,7 @@ if (abs($records[0]['rivalsainps']) > 0) {
         </td>
 
         <td align="right">
-            '.Translator::numberToLocale($records[0]['rivalsainps']).' &euro;
+            '.Translator::numberToLocale($record['rivalsainps']).' &euro;
         </td>
 
         <td></td>
@@ -318,7 +307,7 @@ echo '
     </tr>';
 
 // Mostra marca da bollo se c'è
-if (abs($records[0]['bollo']) > 0) {
+if (abs($record['bollo']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
@@ -326,7 +315,7 @@ if (abs($records[0]['bollo']) > 0) {
         </td>
 
         <td align="right">
-            '.Translator::numberToLocale($records[0]['bollo']).' &euro;
+            '.Translator::numberToLocale($record['bollo']).' &euro;
         </td>
 
         <td></td>
@@ -334,7 +323,7 @@ if (abs($records[0]['bollo']) > 0) {
 }
 
 // RITENUTA D'ACCONTO
-if (abs($records[0]['ritenutaacconto']) > 0) {
+if (abs($record['ritenutaacconto']) > 0) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
@@ -342,7 +331,7 @@ if (abs($records[0]['ritenutaacconto']) > 0) {
         </td>
 
         <td align="right">
-            '.Translator::numberToLocale($records[0]['ritenutaacconto']).' &euro;
+            '.Translator::numberToLocale($record['ritenutaacconto']).' &euro;
         </td>
 
         <td></td>
@@ -378,17 +367,19 @@ $(document).ready(function(){
 			cursor: "move",
 			dropOnEmpty: true,
 			scroll: true,
-			start: function(event, ui) {
-				ui.item.data("start", ui.item.index());
-			},
 			update: function(event, ui) {
+                var order = "";
+                $(".table tr[data-id]").each( function(){
+                    order += ","+$(this).data("id");
+                });
+                order = order.replace(/^,/, "");
+
 				$.post("'.$rootdir.'/actions.php", {
 					id: ui.item.data("id"),
 					id_module: '.$id_module.',
 					id_record: '.$id_record.',
 					op: "update_position",
-					start: ui.item.data("start"),
-					end: ui.item.index()
+                    order: order,
 				});
 			}
 		});

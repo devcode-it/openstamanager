@@ -13,9 +13,13 @@ include_once __DIR__.'/../../core.php';
 
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-md-12">
-					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1,  "value": "$descrizione$" ]}
+				<div class="col-md-9">
+					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
 				</div>
+
+                <div class="col-md-3">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Causale predefinita'); ?>", "name": "predefined", "value": "$predefined$", "help":"<?php echo tr('Impostare questa causale di trasporto come predefinita per i ddt'); ?>." ]}
+                </div>
 			</div>
 		</div>
 	</div>
@@ -23,11 +27,12 @@ include_once __DIR__.'/../../core.php';
 </form>
 
 <?php
+// Collegamenti diretti (numerici)
 $documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE idcausalet='.prepare($id_record).'
-			 UNION SELECT id FROM co_documenti WHERE idcausalet='.prepare($id_record));
+UNION SELECT id FROM co_documenti WHERE idcausalet='.prepare($id_record));
 
-if (!empty($documenti)){
-echo '
+if (!empty($documenti)) {
+    echo '
 <div class="alert alert-danger">
     '.tr('Ci sono _NUM_ documenti collegati', [
         '_NUM_' => count($documenti),

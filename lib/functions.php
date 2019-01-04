@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Funzioni fondamentali per il corretto funzionamento del nucleo del progetto.
+ *
+ * @since 2.3
+ */
 
 /**
  * Esegue il redirect.
@@ -36,6 +41,13 @@ function sanitizeFilename($filename)
     return $filename;
 }
 
+/**
+ * Elimina i file indicati.
+ *
+ * @param array $files
+ *
+ * @return bool
+ */
 function delete($files)
 {
     // Filesystem Symfony
@@ -51,6 +63,13 @@ function delete($files)
     return true;
 }
 
+/**
+ * Controlla l'esistenza e i permessi di scrittura sul percorso indicato.
+ *
+ * @param string $path
+ *
+ * @return bool
+ */
 function directory($path)
 {
     if (is_dir($path) && is_writable($path)) {
@@ -74,230 +93,45 @@ function directory($path)
 /**
  * Copy a file, or recursively copy a folder and its contents.
  *
- * @author Aidan Lister <aidan@php.net>
- *
- * @version 1.0.1
- *
- * @see http://aidanlister.com/repos/v/function.copyr.php
- *
- * @param string       $source
- *                              Source path
- * @param string       $dest
- *                              Destination path
- * @param array|string $ignores
- *                              Paths to ingore
+ * @param string       $source  Source path
+ * @param string       $dest    Destination path
+ * @param array|string $ignores Paths to ingore
  *
  * @return bool Returns TRUE on success, FALSE on failure
  */
 function copyr($source, $destination, $ignores = [])
 {
-    $finder = Symfony\Component\Finder\Finder::create()
+    if (!directory($destination)) {
+        return false;
+    }
+
+    $files = Symfony\Component\Finder\Finder::create()
         ->files()
         ->exclude((array) $ignores['dirs'])
-        ->ignoreDotFiles(true)
+        ->ignoreDotFiles(false)
         ->ignoreVCS(true)
         ->in($source);
 
     foreach ((array) $ignores['files'] as $value) {
-        $finder->notName($value);
+        $files->notName($value);
     }
 
-    foreach ($finder as $file) {
-        $filename = rtrim($destination, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$file->getRelativePathname();
+    $result = true;
 
-        // Filesystem Symfony
-        $fs = new Symfony\Component\Filesystem\Filesystem();
+    // Filesystem Symfony
+    $fs = new Symfony\Component\Filesystem\Filesystem();
+    foreach ($files as $file) {
+        $filename = rtrim($destination, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$file->getRelativePathname();
 
         // Copia
         try {
             $fs->copy($file, $filename);
         } catch (Symfony\Component\Filesystem\Exception\IOException $e) {
+            $result = false;
         }
     }
 
-    return true;
-}
-
-/**
- * Crea un file zip comprimendo ricorsivamente tutte le sottocartelle a partire da una cartella specificata.
- * *.
- *
- * @param string $source
- * @param string $destination
- * @param array  $ignores
- */
-function create_zip($source, $destination, $ignores = [])
-{
-    if (!extension_loaded('zip')) {
-        $_SESSION['errors'][] = tr('Estensione zip non supportata!');
-
-        return false;
-    }
-
-    $zip = new ZipArchive();
-    $result = $zip->open($destination, ZIPARCHIVE::CREATE);
-    if ($result === true && is_writable(dirname($destination))) {
-        $finder = Symfony\Component\Finder\Finder::create()
-            ->files()
-            ->exclude((array) $ignores['dirs'])
-            ->ignoreDotFiles(true)
-            ->ignoreVCS(true)
-            ->in($source);
-
-        foreach ((array) $ignores['files'] as $value) {
-            $finder->notName($value);
-        }
-
-        foreach ($finder as $file) {
-            $zip->addFile($file, $file->getRelativePathname());
-        }
-        $zip->close();
-    } else {
-        $_SESSION['errors'][] = tr("Errore durante la creazione dell'archivio!");
-    }
-
-    return $result === true;
-}
-
-/**
- * Controllo dei file zip e gestione errori.
- *
- * @param string $zip_file
- *
- * @return string|bool
- */
-function checkZip($zip_file)
-{
-    $errno = zip_open($zip_file);
-    zip_close($errno);
-
-    if (!is_resource($errno)) {
-        // using constant name as a string to make this function PHP4 compatible
-        $errors = [
-            ZIPARCHIVE::ER_MULTIDISK => tr('archivi multi-disco non supportati'),
-            ZIPARCHIVE::ER_RENAME => tr('ridenominazione del file temporaneo fallita'),
-            ZIPARCHIVE::ER_CLOSE => tr('impossibile chiudere il file zip'),
-            ZIPARCHIVE::ER_SEEK => tr('errore durante la ricerca dei file'),
-            ZIPARCHIVE::ER_READ => tr('errore di lettura'),
-            ZIPARCHIVE::ER_WRITE => tr('errore di scrittura'),
-            ZIPARCHIVE::ER_CRC => tr('errore CRC'),
-            ZIPARCHIVE::ER_ZIPCLOSED => tr("l'archivio zip è stato chiuso"),
-            ZIPARCHIVE::ER_NOENT => tr('file non trovato'),
-            ZIPARCHIVE::ER_EXISTS => tr('il file esiste già'),
-            ZIPARCHIVE::ER_OPEN => tr('impossibile aprire il file'),
-            ZIPARCHIVE::ER_TMPOPEN => tr('impossibile creare il file temporaneo'),
-            ZIPARCHIVE::ER_ZLIB => tr('errore nella libreria Zlib'),
-            ZIPARCHIVE::ER_MEMORY => tr("fallimento nell'allocare memoria"),
-            ZIPARCHIVE::ER_CHANGED => tr('voce modificata'),
-            ZIPARCHIVE::ER_COMPNOTSUPP => tr('metodo di compressione non supportato'),
-            ZIPARCHIVE::ER_EOF => tr('fine del file non prevista'),
-            ZIPARCHIVE::ER_INVAL => tr('argomento non valido'),
-            ZIPARCHIVE::ER_NOZIP => tr('file zip non valido'),
-            ZIPARCHIVE::ER_INTERNAL => tr('errore interno'),
-            ZIPARCHIVE::ER_INCONS => tr('archivio zip inconsistente'),
-            ZIPARCHIVE::ER_REMOVE => tr('impossibile rimuovere la voce'),
-            ZIPARCHIVE::ER_DELETED => tr('voce eliminata'),
-        ];
-
-        if (isset($errors[$errno])) {
-            return tr('Errore').': '.$errors[$errno];
-        }
-
-        return false;
-    } else {
-        return true;
-    }
-}
-
-/**
- * Individua la differenza tra le date indicate.
- * $interval può essere:
- * yyyy - Number of full years
- * q - Number of full quarters
- * m - Number of full months
- * y - Difference between day numbers
- * (eg 1st Jan 2004 is "1", the first day. 2nd Feb 2003 is "33". The datediff is "-32".)
- * d - Number of full days
- * w - Number of full weekdays
- * ww - Number of full weeks
- * h - Number of full hours
- * n - Number of full minutes
- * s - Number of full seconds (default).
- *
- * @param unknown $interval
- * @param unknown $datefrom
- * @param unknown $dateto
- * @param string  $using_timestamps
- */
-function datediff($interval, $datefrom, $dateto, $using_timestamps = false)
-{
-    if (!$using_timestamps) {
-        $datefrom = strtotime($datefrom, 0);
-        $dateto = strtotime($dateto, 0);
-    }
-    $difference = $dateto - $datefrom; // Difference in seconds
-    switch ($interval) {
-        case 'yyyy': // Number of full years
-            $years_difference = floor($difference / 31536000);
-            if (mktime(date('H', $datefrom), date('i', $datefrom), date('s', $datefrom), date('n', $datefrom), date('j', $datefrom), date('Y', $datefrom) + $years_difference) > $dateto) {
-                --$years_difference;
-            }
-            if (mktime(date('H', $dateto), date('i', $dateto), date('s', $dateto), date('n', $dateto), date('j', $dateto), date('Y', $dateto) - ($years_difference + 1)) > $datefrom) {
-                ++$years_difference;
-            }
-            $datediff = $years_difference;
-            break;
-        case 'q': // Number of full quarters
-            $quarters_difference = floor($difference / 8035200);
-            while (mktime(date('H', $datefrom), date('i', $datefrom), date('s', $datefrom), date('n', $datefrom) + ($quarters_difference * 3), date('j', $dateto), date('Y', $datefrom)) < $dateto) {
-                ++$months_difference;
-            }
-            --$quarters_difference;
-            $datediff = $quarters_difference;
-            break;
-        case 'm': // Number of full months
-            $months_difference = floor($difference / 2678400);
-            while (mktime(date('H', $datefrom), date('i', $datefrom), date('s', $datefrom), date('n', $datefrom) + ($months_difference), date('j', $dateto), date('Y', $datefrom)) < $dateto) {
-                ++$months_difference;
-            }
-            --$months_difference;
-            $datediff = $months_difference;
-            break;
-        case 'y': // Difference between day numbers
-            $datediff = date('z', $dateto) - date('z', $datefrom);
-            break;
-        case 'd': // Number of full days
-            $datediff = floor($difference / 86400);
-            break;
-        case 'w': // Number of full weekdays
-            $days_difference = floor($difference / 86400);
-            $weeks_difference = floor($days_difference / 7); // Complete weeks
-            $first_day = date('w', $datefrom);
-            $days_remainder = floor($days_difference % 7);
-            $odd_days = $first_day + $days_remainder; // Do we have a Saturday or Sunday in the remainder?
-            if ($odd_days > 7) { // Sunday
-                --$days_remainder;
-            }
-            if ($odd_days > 6) { // Saturday
-                --$days_remainder;
-            }
-            $datediff = ($weeks_difference * 5) + $days_remainder;
-            break;
-        case 'ww': // Number of full weeks
-            $datediff = floor($difference / 604800);
-            break;
-        case 'h': // Number of full hours
-            $datediff = floor($difference / 3600);
-            break;
-        case 'n': // Number of full minutes
-            $datediff = floor($difference / 60);
-            break;
-        default: // Number of full seconds (default)
-            $datediff = $difference;
-            break;
-    }
-
-    return $datediff;
+    return $result;
 }
 
 /**
@@ -338,68 +172,6 @@ function getOS()
 }
 
 /**
- * Verifica che il nome del file non sia già usato nella cartella inserita, nel qual caso aggiungo un suffisso.
- *
- * @param string $filename
- * @param string $dir
- *
- * @return string
- */
-function unique_filename($filename, $dir)
-{
-    $f = pathinfo($filename);
-    $suffix = 1;
-    while (file_exists($dir.'/'.$filename)) {
-        $filename = $f['filename'].'_'.$suffix.'.'.$f['extension'];
-        ++$suffix;
-    }
-
-    return $filename;
-}
-
-/**
- * Crea le thumbnails di $filename da dentro $dir e le salva in $dir.
- *
- * @param string $tmp
- * @param string $filename
- * @param string $dir
- *
- * @return bool
- */
-function create_thumbnails($tmp, $filename, $dir)
-{
-    $infos = pathinfo($filename);
-    $name = $infos['filename'];
-    $extension = strtolower($infos['extension']);
-
-    if (!directory($dir)) {
-        return false;
-    }
-
-    $driver = extension_loaded('gd') ? 'gd' : 'imagick';
-    Intervention\Image\ImageManagerStatic::configure(['driver' => $driver]);
-
-    $img = Intervention\Image\ImageManagerStatic::make($tmp);
-
-    $img->resize(600, null, function ($constraint) {
-        $constraint->aspectRatio();
-    });
-    $img->save(slashes($dir.'/'.$name.'.'.$extension));
-
-    $img->resize(250, null, function ($constraint) {
-        $constraint->aspectRatio();
-    });
-    $img->save(slashes($dir.'/'.$name.'_thumb250.'.$extension));
-
-    $img->resize(100, null, function ($constraint) {
-        $constraint->aspectRatio();
-    });
-    $img->save(slashes($dir.'/'.$name.'_thumb100.'.$extension));
-
-    return true;
-}
-
-/**
  * Ottiene l'indirizzo IP del client.
  *
  * @return string
@@ -407,7 +179,7 @@ function create_thumbnails($tmp, $filename, $dir)
 function get_client_ip()
 {
     $ipaddress = '';
-	if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
         $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
     } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
         $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -417,10 +189,10 @@ function get_client_ip()
         $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
     } elseif (!empty($_SERVER['HTTP_FORWARDED'])) {
         $ipaddress = $_SERVER['HTTP_FORWARDED'];
-    } elseif (!empty($_SERVER['REMOTE_ADDR']) AND $_SERVER['REMOTE_ADDR']!='127.0.0.1' ) {
+    } elseif (!empty($_SERVER['REMOTE_ADDR']) and $_SERVER['REMOTE_ADDR'] != '127.0.0.1') {
         $ipaddress = $_SERVER['REMOTE_ADDR'];
-    }  elseif (!empty(getHostByName(getHostName()))){
-        $ipaddress = getHostByName(getHostName());
+    } elseif (!empty(gethostbyname(gethostname()))) {
+        $ipaddress = gethostbyname(gethostname());
     } else {
         $ipaddress = 'UNKNOWN';
     }
@@ -435,61 +207,49 @@ function get_client_ip()
  */
 function translateTemplate()
 {
-    global $id_module;
-    global $id_record;
-    global $id_plugin;
-    global $id_parent;
-    global $operations_log;
+    $id_record = filter('id_record');
+    $id_parent = filter('id_parent');
+    $id_email = filter('id_email');
+
+    $id_module = Modules::getCurrent()['id'];
+    $id_plugin = Plugins::getCurrent()['id'];
 
     $template = ob_get_clean();
-
-    $template = \HTMLBuilder\HTMLBuilder::replace($template);
 
     $template = str_replace('$id_module$', $id_module, $template);
     $template = str_replace('$id_plugin$', $id_plugin, $template);
     $template = str_replace('$id_record$', $id_record, $template);
-    $template = str_replace('$id_parent$', $id_parent, $template);
 
-    // Completamento delle informazioni estese sulle azioni dell'utente
-    if (Auth::check() && !empty($operations_log) && !empty($_SESSION['infos'])) {
-        $user = Auth::user();
-        $logger = Monolog\Registry::getInstance('logs');
+    $template = \HTMLBuilder\HTMLBuilder::replace($template);
 
-        foreach ($_SESSION['infos'] as $value) {
-            $logger->info($value.PHP_EOL.json_encode([
-                'user' => $user['username'],
-            ]));
+    // Informazioni estese sulle azioni dell'utente
+    if (!empty(post('op')) && post('op') != 'send-email') {
+        operationLog(post('op'));
+    }
+
+    // Retrocompatibilità
+    if (!empty($_SESSION['infos'])) {
+        foreach ($_SESSION['infos'] as $message) {
+            flash()->info($message);
+        }
+    }
+    if (!empty($_SESSION['warnings'])) {
+        foreach ($_SESSION['warnings'] as $message) {
+            flash()->warning($message);
+        }
+    }
+    if (!empty($_SESSION['errors'])) {
+        foreach ($_SESSION['errors'] as $message) {
+            flash()->error($message);
         }
     }
 
     // Annullo le notifiche (AJAX)
     if (isAjaxRequest()) {
-        unset($_SESSION['infos']);
+        flash()->clearMessage('info');
     }
 
     echo $template;
-}
-
-/**
- * Sostituisce la prima occorenza di una determinata stringa.
- *
- * @param string $str_pattern
- * @param string $str_replacement
- * @param string $string
- *
- * @since 2.3
- *
- * @return string
- */
-function str_replace_once($str_pattern, $str_replacement, $string)
-{
-    if (strpos($string, $str_pattern) !== false) {
-        $occurrence = strpos($string, $str_pattern);
-
-        return substr_replace($string, $str_replacement, strpos($string, $str_pattern), strlen($str_pattern));
-    }
-
-    return $string;
 }
 
 /**
@@ -507,122 +267,6 @@ function slashes($string)
 }
 
 /**
- * Prepara il parametro inserito per l'inserimento in una query SQL.
- * Attenzione: protezione di base contro SQL Injection.
- *
- * @param string $parameter
- *
- * @since 2.3
- *
- * @return string
- */
-function prepare($parameter)
-{
-    return p($parameter);
-}
-
-/**
- * Prepara il parametro inserito per l'inserimento in una query SQL.
- * Attenzione: protezione di base contro SQL Injection.
- *
- * @param string $parameter
- *
- * @since 2.3
- *
- * @return string
- */
-function p($parameter)
-{
-    return Database::getConnection()->prepare($parameter);
-}
-
-/**
- * Restituisce la traduzione del messaggio inserito.
- *
- * @param string $string
- * @param array  $parameters
- * @param string $domain
- * @param string $locale
- *
- * @since 2.3
- *
- * @return string
- */
-function tr($string, $parameters = [], $operations = [])
-{
-    return Translator::translate($string, $parameters, $operations);
-}
-
-// Retrocompatibilità (con la funzione gettext)
-if (!function_exists('_')) {
-    function _($string, $parameters = [], $operations = [])
-    {
-        return tr($string, $parameters, $operations);
-    }
-}
-
-/**
- * Legge il valore di un'impostazione dalla tabella zz_settings.
- * Se descrizione = 1 e il tipo è 'query=' mi restituisce il valore del campo descrizione della query.
- *
- * @param string $name
- * @param string $sezione
- * @param string $descrizione
- *
- * @return mixed
- */
-function get_var($nome, $sezione = null, $descrizione = false, $again = false)
-{
-    return Settings::get($nome, $sezione, $descrizione, $again);
-}
-
-/**
- * Restituisce il contenuto sanitarizzato dell'input dell'utente.
- *
- * @param string $param  Nome del parametro
- * @param string $rule   Regola di filtraggio
- * @param string $method Posizione del parametro (post o get)
- *
- * @since 2.3
- *
- * @return string
- */
-function filter($param, $method = null)
-{
-    return Filter::getValue($param, $method = null);
-}
-
-/**
- * Restituisce il contenuto sanitarizzato dell'input dell'utente.
- *
- * @param string $param Nome del parametro
- * @param string $rule  Regola di filtraggio
- *
- * @since 2.3
- *
- * @return string
- */
-function post($param, $rule = 'text')
-{
-    return Filter::getValue($param, 'post');
-}
-
-/**
- * Restituisce il contenuto sanitarizzato dell'input dell'utente.
- *
- * @param string $param Nome del parametro
- * @param string $rule  Regola di filtraggio
- *
- * @since 2.3
- *
- * @return string
- */
-function get($param, $rule = 'text')
-{
-    return Filter::getValue($param, 'get');
-}
-
-/**
  * Controlla se è in corso una richiesta AJAX generata dal progetto.
  *
  * @since 2.3
@@ -632,45 +276,6 @@ function get($param, $rule = 'text')
 function isAjaxRequest()
 {
     return \Whoops\Util\Misc::isAjaxRequest() && filter('ajax') !== null;
-}
-
-/**
- * Esegue una somma precisa tra due interi/array.
- *
- * @param array|float $first
- * @param array|float $second
- * @param int         $decimals
- *
- * @since 2.3
- *
- * @return float
- */
-function sum($first, $second = null, $decimals = null)
-{
-    $first = (array) $first;
-    $second = (array) $second;
-
-    $array = array_merge($first, $second);
-
-    $result = 0;
-
-    if (!is_numeric($decimals)) {
-        $decimals = is_numeric($decimals) ? $decimals : Translator::getFormatter()->getPrecision();
-    }
-
-    $bcadd = function_exists('bcadd');
-
-    foreach ($array as $value) {
-        $value = round($value, $decimals);
-
-        if ($bcadd) {
-            $result = bcadd($result, $value, $decimals);
-        } else {
-            $result += $value;
-        }
-    }
-
-    return floatval($result);
 }
 
 /**
@@ -705,6 +310,8 @@ function redirectOperation($id_module, $id_record)
  *
  * @param string $string
  *
+ * @since 2.3
+ *
  * @return string
  */
 function prepareToField($string)
@@ -715,6 +322,8 @@ function prepareToField($string)
 /**
  * Restituisce se l'user-agent (browser web) è una versione mobile.
  *
+ * @since 2.3
+ *
  * @return bool
  */
 function isMobile()
@@ -724,6 +333,8 @@ function isMobile()
 
 /**
  * Restituisce il percorso derivante dal file in esecuzione.
+ *
+ * @since 2.4.1
  *
  * @return string
  */
@@ -739,4 +350,52 @@ function getURLPath()
     }
 
     return slashes($path);
+}
+
+/**
+ * Sostituisce i caratteri speciali per la ricerca attraverso le tabelle Datatables.
+ *
+ * @since 2.4.2
+ *
+ * @param string $field
+ *
+ * @return string
+ */
+function searchFieldName($field)
+{
+    return str_replace([' ', '.'], ['-', ''], $field);
+}
+
+/**
+ * Registra un'azione specifica nei log.
+ *
+ * @since 2.4.3
+ *
+ * @param string $operation
+ * @param int    $id_record
+ * @param int    $id_module
+ * @param int    $id_plugin
+ * @param int    $id_parent
+ * @param int    $id_email
+ * @param array  $options
+ */
+function operationLog($operation, array $ids = [], array $options = [])
+{
+    if (!Auth::check()) {
+        return false;
+    }
+
+    $ids['id_module'] = $ids['id_module'] ?: Modules::getCurrent()['id'];
+    $ids['id_plugin'] = $ids['id_plugin'] ?: Plugins::getCurrent()['id'];
+    $ids['id_record'] = $ids['id_record'] ?: filter('id_record');
+    //$ids['id_parent'] = $ids['id_parent'] ?: filter('id_parent');
+
+    database()->insert('zz_operations', array_merge($ids, [
+        'op' => $operation,
+        'id_utente' => Auth::user()['id'],
+
+        'options' => !empty($options) ? json_encode($options) : null,
+    ]));
+
+    return true;
 }

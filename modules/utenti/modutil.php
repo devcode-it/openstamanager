@@ -4,14 +4,14 @@ include_once __DIR__.'/../../core.php';
 
 function menuSelection($element, $group_id, $depth, $perms_values, $perms_names)
 {
-    $dbo = Database::getConnection();
+    $dbo = database();
 
     ++$depth;
     $name = $element['title'];
 
-    $submenus = $dbo->fetchArray("SELECT * FROM zz_modules WHERE enabled='1' AND parent=".prepare($element['id']).' ORDER BY `order` ASC');
+    $submenus = $element['all_children'];
 
-    if ($submenus != null && count($submenus) != 0) {
+    if (!empty($submenus)) {
         $temp = '';
         foreach ($submenus as $submenu) {
             $temp .= menuSelection($submenu, $group_id, $depth, $perms_values, $perms_names);

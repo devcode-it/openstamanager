@@ -1,13 +1,16 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
+if (file_exists(__DIR__.'/../../../core.php')) {
+    include_once __DIR__.'/../../../core.php';
+} else {
+    include_once __DIR__.'/../../core.php';
+}
 
 $idriga = filter('idriga');
 
 //Lettura idanagrafica cliente e percentuale di sconto/rincaro in base al listino
-$rs = $dbo->fetchArray('SELECT idanagrafica, (SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica=.in_interventi.idanagrafica)) AS prc_sconto FROM in_interventi WHERE id='.prepare($id_record));
+$rs = $dbo->fetchArray('SELECT idanagrafica FROM in_interventi WHERE id='.prepare($id_record));
 $idanagrafica = $rs[0]['idanagrafica'];
-$prc_sconto = $rs[0]['prc_sconto'];
 
 if (empty($idriga)) {
     $op = 'addriga';
@@ -19,11 +22,6 @@ if (empty($idriga)) {
     $um = '';
     $prezzo_vendita = '0';
     $prezzo_acquisto = '0';
-
-    if (!empty($rs[0]['prc_guadagno'])) {
-        $sconto_unitario = $rs[0]['prc_guadagno'];
-        $tipo_sconto = 'PRC';
-    }
 } else {
     $op = 'editriga';
     $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
@@ -38,7 +36,7 @@ if (empty($idriga)) {
     $idiva = $rsr[0]['idiva'];
     $prezzo_vendita = $rsr[0]['prezzo_vendita'];
     $prezzo_acquisto = $rsr[0]['prezzo_acquisto'];
-    
+
     $sconto_unitario = $rsr[0]['sconto_unitario'];
     $tipo_sconto = $rsr[0]['tipo_sconto'];
 }
@@ -72,11 +70,11 @@ echo '
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Unità di misura').'", "icon-after": "add|'.Modules::get('Unità di misura')['id'].'", "name": "um", "value": "'.$um.'", "ajax-source": "misure" ]}
         </div>';
-    
+
 // Iva
 echo '
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$idiva.'", "ajax-source": "iva" ]}
         </div>
     </div>';
 

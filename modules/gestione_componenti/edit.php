@@ -54,7 +54,7 @@ if (empty($id_record)) {
         </div>
     </form>
 
-    <a class="btn btn-danger ask" data-backto="record-list" data-nomefile="<?php echo $records[0]['nomefile']; ?>">
+    <a class="btn btn-danger ask" data-backto="record-list" data-nomefile="<?php echo $record['nomefile']; ?>">
         <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
     </a>
 

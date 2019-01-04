@@ -1,5 +1,5 @@
 {
-    "name": "devcode/openstamanager",
+    "name": "devcode-it/openstamanager",
     "description": "Gestionale open-source per assistenza tecnica e fatturazione",
     "license": "GPL-3.0",
     "keywords": [
@@ -22,27 +22,45 @@
     "require": {
         "php": ">=5.6",
         "ext-mbstring": "*",
-        "ext-pdo_mysql": "*",
+        "ext-json": "*",
+        "ext-pdo": "*",
+        "ext-zip": "*",
+        "ext-intl": "*",
+        "ext-simplexml": "*",
+        "ext-libxml": "*",
+        "ext-dom": "*",
+        "ext-curl": "*",
+        "ext-openssl": "*",
+        "ext-xsl": "*",
         "aluguest/ical-easy-reader": "^1.5",
         "danielstjules/stringy": "^3.1",
+        "davidepastore/codice-fiscale": "^0.4.0",
         "ezyang/htmlpurifier": "^4.8",
         "filp/whoops": "^2.1",
+        "guzzlehttp/guzzle": "^6.3",
         "ifsnop/mysqldump-php": "^2.3",
+        "illuminate/database": "~5.4.0",
         "intervention/image": "^2.3",
-        "ircmaxell/password-compat": "^1.0",
         "league/csv": "^8.2",
         "maximebf/debugbar": "^1.15",
         "monolog/monolog": "^1.22",
-        "mpdf/mpdf": "^7.0",
-        "paragonie/random_compat": "^2.0",
+        "mpdf/mpdf": "^7.1",
+        "mpociot/vat-calculator": "^2.3",
+        "owasp/csrf-protector-php": "^1.0",
         "phpmailer/phpmailer": "^6.0",
+        "respect/validation": "^1.1",
+        "servo/fluidxml": "^1.21",
+        "slim/flash": "^0.4.0",
         "spipu/html2pdf": "^5.0",
         "symfony/filesystem": "^3.3",
         "symfony/finder": "^3.3",
+        "symfony/polyfill-ctype": "^1.8",
+        "symfony/polyfill-php70": "^1.8",
         "symfony/translation": "^3.3",
         "symfony/var-dumper": "^3.3"
     },
     "require-dev": {
+        "codeception/codeception": "2.4.*",
         "friendsofphp/php-cs-fixer": "^2.10"
     },
     "autoload": {
@@ -51,6 +69,8 @@
         },
         "files": [
             "lib/functions.php",
+            "lib/common.php",
+            "lib/helpers.php",
             "lib/util.php",
             "lib/deprecated.php"
         ]
@@ -59,6 +79,9 @@
         "sort-packages": true,
         "optimize-autoloader": true,
         "apcu-autoloader": true,
-        "prefer-stable": true
+        "prefer-stable": true,
+        "platform": {
+            "php": "5.6.4"
+        }
     }
 }

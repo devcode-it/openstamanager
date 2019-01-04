@@ -11,21 +11,31 @@ switch ($op) {
         $username = post('username');
         $password = post('password');
 
-        if ($dbo->isConnected() && $dbo->isInstalled() && Auth::getInstance()->attempt($username, $password)) {
+        if ($dbo->isConnected() && $dbo->isInstalled() && auth()->attempt($username, $password)) {
             $_SESSION['keep_alive'] = (filter('keep_alive') != null);
 
+            // Rimozione log vecchi
+            $dbo->query('DELETE FROM `zz_operations` WHERE DATE_ADD(`created_at`, INTERVAL 30*24*60*60 SECOND) <= NOW()');
+
             // Auto backup del database giornaliero
-            if (get_var('Backup automatico')) {
+            if (setting('Backup automatico')) {
                 $result = Backup::daily();
 
                 if (!isset($result)) {
-                    $_SESSION['infos'][] = tr('Backup saltato perché già esistente!');
+                    flash()->info(tr('Backup saltato perché già esistente!'));
                 } elseif (!empty($result)) {
-                    $_SESSION['infos'][] = tr('Backup automatico eseguito correttamente!');
+                    flash()->info(tr('Backup automatico eseguito correttamente!'));
                 } else {
-                    $_SESSION['errors'][] = tr('Errore durante la generazione del backup automatico!');
+                    flash()->error(tr('Errore durante la generazione del backup automatico!'));
                 }
             }
+        } else {
+            $status = auth()->getCurrentStatus();
+
+            flash()->error(Auth::getStatus()[$status]['message']);
+
+            redirect(ROOTDIR.'/index.php');
+            exit();
         }
 
         break;
@@ -34,7 +44,6 @@ switch ($op) {
         Auth::logout();
 
         redirect(ROOTDIR.'/index.php');
-
         exit();
 
         break;
@@ -44,7 +53,7 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
     $module = Auth::firstModule();
 
     if (!empty($module)) {
-        redirect(ROOTDIR.'/controller.php?id_module='.$module, 'js');
+        redirect(ROOTDIR.'/controller.php?id_module='.$module);
     } else {
         redirect(ROOTDIR.'/index.php?op=logout');
     }
@@ -52,21 +61,20 @@ if (Auth::check() && isset($dbo) && $dbo->isConnected() && $dbo->isInstalled()) 
 }
 
 // Procedura di installazione
-include_once $docroot.'/include/configuration.php';
+include_once $docroot.'/include/init/configuration.php';
 
 // Procedura di aggiornamento
-include_once $docroot.'/include/update.php';
+include_once $docroot.'/include/init/update.php';
+
+// Procedura di inizializzazione
+include_once $docroot.'/include/init/init.php';
 
 $pageTitle = tr('Login');
 
-if (file_exists($docroot.'/include/custom/top.php')) {
-    include_once $docroot.'/include/custom/top.php';
-} else {
-    include_once $docroot.'/include/top.php';
-}
+include_once App::filepath('include|custom|', 'top.php');
 
 // Controllo se è una beta e in caso mostro un warning
-if (str_contains($version, 'beta')) {
+if (Update::isBeta()) {
     echo '
 			<div class="clearfix">&nbsp;</div>
 			<div class="alert alert-warning alert-dismissable col-md-6 col-md-push-3 text-center fade in">
@@ -109,7 +117,7 @@ if (Auth::isBrute()) {
             </script>';
 }
 
-if (!empty($_SESSION['errors'])) {
+if (!empty(flash()->getMessage('error'))) {
     echo '
             <script>
 			$(document).ready(function(){
@@ -127,7 +135,7 @@ echo '
 
 				<div class="login-box-body box-body">
 					<div class="form-group input-group">
-						<span class="input-group-addon"><i class="fa fa-user"></i> </span>
+						<span class="input-group-addon before"><i class="fa fa-user"></i> </span>
 						<input type="text" name="username" autocomplete="off" class="form-control" placeholder="'.tr('Nome utente').'"';
 if (isset($username)) {
     echo ' value="'.$username.'"';
@@ -135,7 +143,7 @@ if (isset($username)) {
 echo'>
 					</div>
 					<div class="form-group input-group">
-						<span class="input-group-addon"><i class="fa fa-lock"></i> </span>
+						<span class="input-group-addon before"><i class="fa fa-lock"></i> </span>
 						<input type="password" name="password" autocomplete="off" class="form-control" placeholder="'.tr('Password').'">
 					</div>
 					<div class="form-group">
@@ -158,7 +166,7 @@ echo '/> '.tr('Mantieni attiva la sessione').'
             $(document).ready( function(){
                 $("#login").click(function(){
                     $("#login").text("';
-    if ($dbo->isInstalled() && get_var('Backup automatico')) {
+    if ($dbo->isInstalled() && !Update::isUpdateAvailable() && setting('Backup automatico')) {
         echo tr('Backup automatico in corso');
     } else {
         echo tr('Autenticazione');
@@ -175,8 +183,4 @@ echo '/> '.tr('Mantieni attiva la sessione').'
             });
             </script>';
 
-if (file_exists($docroot.'/include/custom/bottom.php')) {
-    include_once $docroot.'/include/custom/bottom.php';
-} else {
-    include_once $docroot.'/include/bottom.php';
-}
+include_once App::filepath('include|custom|', 'bottom.php');

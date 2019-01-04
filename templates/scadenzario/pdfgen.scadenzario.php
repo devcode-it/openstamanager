@@ -4,6 +4,9 @@ include_once __DIR__.'/../../core.php';
 
 $module_name = 'Scadenzario';
 
+$date_start = $_SESSION['period_start'];
+$date_end = $_SESSION['period_end'];
+
 // carica report html
 $report = file_get_contents($docroot.'/templates/scadenzario/scadenzario.html');
 $body = file_get_contents($docroot.'/templates/scadenzario/scadenzario_body.html');
@@ -24,7 +27,7 @@ if ($_GET['type'] == 'clienti') {
     $add_where = '';
 }
 
-$body .= '<h3>'.$titolo.' dal '.Translator::dateToLocale($_SESSION['period_start']).' al '.Translator::dateToLocale($_SESSION['period_end'])."</h3>\n";
+$body .= '<h3>'.$titolo.' dal '.Translator::dateToLocale($date_start).' al '.Translator::dateToLocale($date_end)."</h3>\n";
 $body .= "<table class=\"table_values\" cellspacing=\"0\" border=\"0\" cellpadding=\"0\" style=\"table-layout:fixed; border-color:#aaa;\">\n";
 $body .= "<col width=\"300\"><col width=\"200\"><col width=\"150\"><col width=\"50\"><col width=\"70\"><col width=\"70\">\n";
 
@@ -46,7 +49,7 @@ $rs = $dbo->fetchArray("SELECT co_scadenziario.id AS id, ragione_sociale AS `Ana
     INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica
     INNER JOIN co_pagamenti ON co_documenti.idpagamento=co_pagamenti.id
     INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id
-WHERE ABS(pagato) < ABS(da_pagare) ".$add_where." AND scadenza >= '".$_SESSION['period_start']."' AND scadenza <= '".$_SESSION['period_end']."' ORDER BY scadenza ASC");
+WHERE ABS(pagato) < ABS(da_pagare) ".$add_where." AND scadenza >= '".$date_start."' AND scadenza <= '".$date_end."' ORDER BY scadenza ASC");
 
 for ($i = 0; $i < sizeof($rs); ++$i) {
     $body .= '	<tr>';

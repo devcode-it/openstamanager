@@ -5,23 +5,9 @@ include_once __DIR__.'/../core.php';
 $paths = App::getPaths();
 $user = Auth::user();
 
-// Istanziamento della barra di debug
-if (!empty($debug)) {
-    $debugbar = new DebugBar\DebugBar();
+$pageTitle = $pageTitle ?: $structure->title;
 
-    $debugbar->addCollector(new DebugBar\DataCollector\MemoryCollector());
-    $debugbar->addCollector(new DebugBar\DataCollector\PhpInfoCollector());
-
-    $debugbar->addCollector(new DebugBar\DataCollector\RequestDataCollector());
-    $debugbar->addCollector(new DebugBar\DataCollector\TimeDataCollector());
-
-    $debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
-    $debugbar->addCollector(new DebugBar\DataCollector\PDO\PDOCollector($dbo->getPDO()));
-
-    $debugbarRenderer = $debugbar->getJavascriptRenderer();
-    $debugbarRenderer->setIncludeVendors(false);
-    $debugbarRenderer->setBaseUrl($paths['assets'].'/php-debugbar');
-}
+$messages = flash()->getMessages();
 
 echo '<!DOCTYPE html>
 <html>
@@ -31,13 +17,20 @@ echo '<!DOCTYPE html>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
+        <meta name="robots" content="noindex,nofollow">
+
 		<link href="'.$paths['img'].'/favicon.png" rel="icon" type="image/x-icon" />';
 
-foreach ($css_modules as $style) {
-    $style = (is_array($style)) ? $style : ['href' => $style, 'media' => 'all'];
-
+// CSS
+foreach (App::getAssets()['css'] as $style) {
     echo '
-<link rel="stylesheet" type="text/css" media="'.$style['media'].'" href="'.$style['href'].'"/>';
+        <link rel="stylesheet" type="text/css" media="all" href="'.$style.'"/>';
+}
+
+// Print CSS
+foreach (App::getAssets()['print'] as $style) {
+    echo '
+        <link rel="stylesheet" type="text/css" media="print" href="'.$style.'"/>';
 }
 
 if (Auth::check()) {
@@ -45,16 +38,15 @@ if (Auth::check()) {
 		<script>
             search = []';
 
-    $array = [];
-    foreach ($_SESSION as $idx1 => $arr2) {
-        if ($idx1 == 'module_'.$id_module) {
-            foreach ($arr2 as $field => $value) {
-                if ($value != '') {
-                    $field_name = str_replace('search_', '', $field);
-                    echo '
+    $array = $_SESSION['module_'.$id_module];
+    if (!empty($array)) {
+        foreach ($array as $field => $value) {
+            if (!empty($value) && starts_with($field, 'search_')) {
+                $field_name = str_replace('search_', '', $field);
+
+                echo '
             search.push("search_'.$field_name.'");
             search["search_'.$field_name.'"] = "'.$value.'";';
-                }
             }
         }
     }
@@ -84,6 +76,8 @@ if (Auth::check()) {
         'delete' => tr('Elimina'),
         'deleteTitle' => tr('Sei sicuro?'),
         'deleteMessage' => tr('Eliminare questo elemento?'),
+        'errorTitle' => tr('Errore'),
+        'errorMessage' => tr("Si è verificato un errore nell'esecuzione dell'operazione richiesta"),
         'close' => tr('Chiudi'),
         'filter' => tr('Filtra'),
         'long' => tr('La ricerca potrebbe richiedere del tempo'),
@@ -108,10 +102,10 @@ if (Auth::check()) {
 
                 aggiornamenti_id: \''.($dbo->isInstalled() ? Modules::get('Aggiornamenti')['id'] : '').'\',
 
-                cifre_decimali: '.get_var('Cifre decimali per importi').',
+                cifre_decimali: '.setting('Cifre decimali per importi').',
 
-                decimals: "'.Translator::getFormatter()->getNumberSeparators()['decimals'].'",
-                thousands: "'.Translator::getFormatter()->getNumberSeparators()['thousands'].'",
+                decimals: "'.formatter()->getNumberSeparators()['decimals'].'",
+                thousands: "'.formatter()->getNumberSeparators()['thousands'].'",
 
                 search: search,
                 translations: translations,
@@ -122,13 +116,24 @@ if (Auth::check()) {
                 end_date: \''.Translator::dateToLocale($_SESSION['period_end']).'\',
 
                 ckeditorToolbar: [
-					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
+					["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","Scayt", "-","Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule","-","JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock","-","NumberedList","BulletedList","Outdent","Indent","Blockquote","-","Styles","Format","Image","Table", "TextColor", "BGColor" ],
 				],
+
+                tempo_attesa_ricerche: '.setting('Tempo di attesa ricerche in secondi').',
             };
 		</script>';
+} else {
+    echo '
+        <script>
+            globals = {
+                locale: \''.$lang.'\',
+                full_locale: \''.$lang.'_'.strtoupper($lang).'\',
+            };
+        </script>';
 }
 
-foreach ($jscript_modules as $js) {
+// JS
+foreach (App::getAssets()['js'] as $js) {
     echo '
         <script type="text/javascript" charset="utf-8" src="'.$js.'"></script>';
 }
@@ -144,17 +149,31 @@ echo '
             });
         </script>';
 
-if (!empty($debugbarRenderer) && Auth::check()) {
-    echo $debugbarRenderer->renderHead();
+if (Auth::check()) {
+    // Barra di debug
+    if (App::debug()) {
+        $debugbarRenderer = $debugbar->getJavascriptRenderer();
+        $debugbarRenderer->setIncludeVendors(false);
+        $debugbarRenderer->setBaseUrl($paths['assets'].'/php-debugbar');
+
+        echo $debugbarRenderer->renderHead();
+    }
+
+    if (setting('Abilita esportazione Excel e PDF')) {
+        echo '
+        <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>';
+    }
 }
 
-$hide_sidebar = get_var('Nascondere la barra sinistra di default');
+$hide_sidebar = Auth::check() && setting('Nascondere la barra sinistra di default');
 echo '
 
     </head>
 
 	<body class="skin-'.$theme.(!empty($hide_sidebar) ? ' sidebar-collapse' : '').(!Auth::check() ? ' hold-transition login-page' : '').'">
-		<div class="wrapper">';
+		<div class="'.(!Auth::check() ? '' : 'wrapper').'">';
 
 if (Auth::check()) {
     $calendar = ($_SESSION['period_start'] != date('Y').'-01-01' || $_SESSION['period_end'] != date('Y').'-12-31') ? 'red' : 'white';
@@ -185,7 +204,7 @@ if (Auth::check()) {
 				<!-- Header Navbar: style can be found in header.less -->
 				<nav class="navbar navbar-static-top" role="navigation">
 					<!-- Sidebar toggle button-->
-					<a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+					<a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
 						<span class="sr-only">'.tr('Mostra/nascondi menu').'</span>
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
@@ -193,8 +212,8 @@ if (Auth::check()) {
 					</a>
 
 					<div class="input-group btn-calendar pull-left">
-                        <button id="daterange" class="btn"><i class="fa fa-calendar" style="color:'.$calendar.'"></i> <i class="fa fa-caret-down"></i></button>
-                        <span class="hidden-xs" style="vertical-align:middle">
+                        <button id="daterange" class="btn"><i class="fa fa-calendar" style="color:'.$calendar.'"></i> <i class="fa fa-caret-down" style="color:'.$calendar.';" ></i></button>
+                        <span class="hidden-xs" style="vertical-align:middle; color:'.$calendar.';">
                             '.Translator::dateToLocale($_SESSION['period_start']).' - '.Translator::dateToLocale($_SESSION['period_end']).'
                         </span>
                     </div>
@@ -273,42 +292,57 @@ if (Auth::check()) {
     }
 
     echo '
-						<div class="col-md-12">';
-} elseif (!empty($_SESSION['infos']) || !empty($_SESSION['warnings']) || !empty($_SESSION['errors'])) {
-    echo '
+                        <div class="col-md-12">';
+
+    // Eventuale messaggio personalizzato per l'installazione corrente
+    include_once App::filepath('include/custom/extra', 'extra.php');
+} else {
+    // Eventuale messaggio personalizzato per l'installazione corrente
+    include_once App::filepath('include/custom/extra', 'login.php');
+
+    if (!empty($messages['info']) || !empty($messages['warning']) || !empty($messages['error'])) {
+        echo '
             <div class="box box-warning box-center">
                 <div class="box-header with-border text-center">
                     <h3 class="box-title">'.tr('Informazioni').'</h3>
                 </div>
 
                 <div class="box-body">';
+    }
 }
+
 // Infomazioni
-foreach ($_SESSION['infos'] as $value) {
-    echo '
+if (!empty($messages['info'])) {
+    foreach ($messages['info'] as $value) {
+        echo '
 							<div class="alert alert-success push">
                                 <i class="fa fa-check"></i> '.$value.'
                             </div>';
+    }
 }
 
 // Errori
-foreach ($_SESSION['errors'] as $value) {
-    echo '
+if (!empty($messages['error'])) {
+    foreach ($messages['error'] as $value) {
+        echo '
 							<div class="alert alert-danger push">
                                 <i class="fa fa-times"></i> '.$value.'
                             </div>';
+    }
 }
 
 // Avvisi
-foreach ($_SESSION['warnings'] as $value) {
-    echo '
+if (!empty($messages['warning'])) {
+    foreach ($messages['warning'] as $value) {
+        echo '
 							<div class="alert alert-warning push">
                                 <i class="fa fa-warning"></i>
                                 '.$value.'
                             </div>';
+    }
 }
 
-if (!Auth::check() && (!empty($_SESSION['infos']) || !empty($_SESSION['warnings']) || !empty($_SESSION['errors']))) {
+if (!Auth::check() && (!empty($messages['info']) || !empty($messages['warning']) || !empty($messages['error']))) {
     echo '
                 </div>
             </div>';

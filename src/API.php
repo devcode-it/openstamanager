@@ -66,10 +66,13 @@ class API extends \Util\Singleton
             ]);
         }
 
+        $response = [];
+
         $table = '';
         $select = '*';
         $where = [];
         $order = [];
+        $parameters = [];
 
         // Selezione personalizzata
         $select = !empty($request['display']) ? explode(',', substr($request['display'], 1, -1)) : $select;
@@ -93,41 +96,39 @@ class API extends \Util\Singleton
 
         // Paginazione automatica dell'API
         $page = isset($request['page']) ? (int) $request['page'] : 0;
-        $length = Settings::get('Lunghezza pagine per API');
+        $length = setting('Lunghezza pagine per API');
 
-        $database = Database::getConnection();
+        $dbo = $database = database();
 
         $kind = 'retrieve';
         $resources = self::getResources()[$kind];
         $resource = $request['resource'];
 
-        if (in_array($resource, array_keys($resources))) {
-            $dbo = $database;
+        try {
+            if (in_array($resource, array_keys($resources))) {
+                // Esecuzione delle operazioni personalizzate
+                $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
+                include $filename;
+            } elseif (
+                !in_array($resource, explode(',', setting('Tabelle escluse per la sincronizzazione API automatica')))
+                && $database->tableExists($resource)
+            ) {
+                $table = $resource;
 
-            // Esecuzione delle operazioni personalizzate
-            $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
-            include $filename;
-        } elseif (
-            !in_array($resource, explode(',', Settings::get('Tabelle escluse per la sincronizzazione API automatica')))
-            && $database->fetchNum('SHOW TABLES WHERE `Tables_in_'.$database->getDatabaseName().'` = '.prepare($resource))
-        ) {
-            $table = $resource;
+                // Individuazione della colonna AUTO_INCREMENT per l'ordinamento automatico
+                if (empty($order)) {
+                    $column = $database->fetchArray('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '.prepare($table)." AND EXTRA LIKE '%AUTO_INCREMENT%' AND TABLE_SCHEMA = ".prepare($database->getDatabaseName()));
 
-            // Individuazione della colonna AUTO_INCREMENT per l'ordinamento automatico
-            if (empty($order)) {
-                $column = $database->fetchArray('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '.prepare($table)." AND EXTRA LIKE '%AUTO_INCREMENT%' AND TABLE_SCHEMA = ".prepare($database->getDatabaseName()));
-
-                if (!empty($column)) {
-                    $order[] = $column[0]['COLUMN_NAME'];
+                    if (!empty($column)) {
+                        $order[] = $column[0]['COLUMN_NAME'];
+                    }
                 }
+            } else {
+                return self::error('notFound');
             }
-        } else {
-            return self::error('notFound');
-        }
 
-        // Generazione automatica delle query
-        if (empty($results) && !empty($table)) {
-            try {
+            // Generazione automatica delle query
+            if (!empty($table)) {
                 // Date di interesse
                 if (!empty($request['upd'])) {
                     $where['#updated_at'] = 'updated_at >= '.prepare($request['upd']);
@@ -137,21 +138,25 @@ class API extends \Util\Singleton
                 }
 
                 // Query per ottenere le informazioni
-                $results = $database->select($table, $select, $where, $order, [$page * $length, $length]);
-
-                // Informazioni aggiuntive
                 $query = $database->select($table, $select, $where, $order, [], true);
-                $cont = $database->fetchArray('SELECT COUNT(*) as `records`, CEIL(COUNT(*) / '.$length.') as `pages` FROM ('.$query.') AS `count`');
-                if (!empty($cont)) {
-                    $results['records'] = $cont[0]['records'];
-                    $results['pages'] = $cont[0]['pages'];
-                }
-            } catch (PDOException $e) {
-                return self::error('internalError');
             }
+
+            if (!empty($query)) {
+                $response['records'] = $database->fetchArray($query.' LIMIT '.($page * $length).', '.$length, $parameters);
+                $count = $database->fetchNum($query, $parameters);
+
+                $response['total-count'] = $count;
+                $response['pages'] = ceil($count / $length);
+            }
+        } catch (PDOException $e) {
+            // Log dell'errore
+            $logger = logger();
+            $logger->addRecord(\Monolog\Logger::ERROR, $e);
+
+            return self::error('internalError');
         }
 
-        return self::response($results);
+        return self::response($response);
     }
 
     /**
@@ -188,46 +193,6 @@ class API extends \Util\Singleton
     public function delete($request)
     {
         return $this->fileRequest($request, 'delete');
-    }
-
-    /**
-     * Gestisce le richieste in modo generalizzato, con il relativo richiamo ai file specifici responsabili dell'operazione.
-     *
-     * @param array $request
-     *
-     * @return string
-     */
-    protected function fileRequest($request, $kind)
-    {
-        $user = Auth::user();
-
-        // Controllo sulla compatibilità dell'API
-        if (!self::isCompatible()) {
-            return self::response([
-                'status' => self::$status['incompatible']['code'],
-            ]);
-        }
-
-        $resources = self::getResources()[$kind];
-        $resource = $request['resource'];
-
-        if (!in_array($resource, array_keys($resources))) {
-            return self::error('notFound');
-        }
-
-        // Database
-        $database = Database::getConnection();
-        $dbo = $database;
-
-        $database->query('START TRANSACTION');
-
-        // Esecuzione delle operazioni
-        $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
-        include $filename;
-
-        $database->query('COMMIT');
-
-        return self::response($results);
     }
 
     /**
@@ -283,7 +248,8 @@ class API extends \Util\Singleton
 
             foreach ($operations as $operation) {
                 // Individua la tipologia e il modulo delle operazioni
-                $module = basename(dirname(dirname($operation)));
+                $path = explode('/api/', $operation)[0];
+                $module = explode('modules/', $path)[1];
                 $kind = basename($operation, '.php');
 
                 $resources[$kind] = isset($resources[$kind]) ? (array) $resources[$kind] : [];
@@ -312,7 +278,7 @@ class API extends \Util\Singleton
     }
 
     /**
-     * Formatta i contentuti della risposta secondo il formato JSON.
+     * Formatta i contenuti della risposta secondo il formato JSON.
      *
      * @param array $array
      *
@@ -321,7 +287,7 @@ class API extends \Util\Singleton
     public static function response($array)
     {
         if (empty($array['custom'])) {
-            // Agiunta dello status di default
+            // Aggiunta dello status di default
             if (empty($array['status'])) {
                 $array['status'] = self::$status['ok']['code'];
             }
@@ -370,6 +336,10 @@ class API extends \Util\Singleton
 
     /**
      * Restituisce i parametri specificati dalla richiesta.
+     *
+     * @param bool $raw
+     *
+     * @return array
      */
     public static function getRequest($raw = false)
     {
@@ -380,9 +350,10 @@ class API extends \Util\Singleton
 
             if (empty($raw)) {
                 $request = (array) json_decode($request, true);
+                $request = Filter::sanitize($request);
 
-                // Fallback nel caso la richiesta sia effettuata da browser
-                if ($_SERVER['REQUEST_METHOD'] == 'GET' && empty($request)) {
+                // Fallback per input standard vuoto (richiesta da browser o upload file)
+                if (empty($request)) { // $_SERVER['REQUEST_METHOD'] == 'GET'
                     $request = Filter::getGET();
                 }
 
@@ -402,8 +373,48 @@ class API extends \Util\Singleton
      */
     public static function isCompatible()
     {
-        $database = Database::getConnection();
+        $database = database();
 
         return version_compare($database->getMySQLVersion(), '5.6.5') >= 0;
+    }
+
+    /**
+     * Gestisce le richieste in modo generalizzato, con il relativo richiamo ai file specifici responsabili dell'operazione.
+     *
+     * @param array $request
+     *
+     * @return string
+     */
+    protected function fileRequest($request, $kind)
+    {
+        $user = Auth::user();
+        $response = [];
+
+        // Controllo sulla compatibilità dell'API
+        if (!self::isCompatible()) {
+            return self::response([
+                'status' => self::$status['incompatible']['code'],
+            ]);
+        }
+
+        $resources = self::getResources()[$kind];
+        $resource = $request['resource'];
+
+        if (!in_array($resource, array_keys($resources))) {
+            return self::error('notFound');
+        }
+
+        // Database
+        $dbo = $database = database();
+
+        $database->beginTransaction();
+
+        // Esecuzione delle operazioni
+        $filename = DOCROOT.'/modules/'.$resources[$resource].'/api/'.$kind.'.php';
+        include $filename;
+
+        $database->commitTransaction();
+
+        return self::response($response);
     }
 }

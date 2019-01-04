@@ -8,26 +8,26 @@ include_once __DIR__.'/../../../core.php';
 if (filter('op') == 'save_ordineservizio') {
     $n_errors = 0;
 
-    if (isset($post['eseguito'])) {
-        foreach ($post['eseguito'] as $idvoceservizio => $eseguito) {
-            $presenza = $post['presenza'][$idvoceservizio];
-            $esito = $post['esito'][$idvoceservizio];
-            $priorita = $post['priorita'][$idvoceservizio];
+    if (post('eseguito') !== null) {
+        foreach (post('eseguito') as $idvoceservizio => $eseguito) {
+            $presenza = post('presenza')[$idvoceservizio];
+            $esito = post('esito')[$idvoceservizio];
+            $priorita = post('priorita')[$idvoceservizio];
 
-            if (!$dbo->query('UPDATE co_ordiniservizio_vociservizio SET eseguito='.prepare($eseguito).', presenza='.prepare($presenza).', esito='.prepare($esito).', priorita='.prepare($priorita).', note='.prepare($post['note_ods'][$idvoceservizio]).' WHERE id='.prepare($idvoceservizio))) {
+            if (!$dbo->query('UPDATE co_ordiniservizio_vociservizio SET eseguito='.prepare($eseguito).', presenza='.prepare($presenza).', esito='.prepare($esito).', priorita='.prepare($priorita).', note='.prepare(post('note_ods')[$idvoceservizio]).' WHERE id='.prepare($idvoceservizio))) {
                 ++$n_errors;
             }
         }
     }
 
     if ($n_errors == 0) {
-        $_SESSION['infos'][] = tr('Voci di servizio salvate correttamente!');
+        flash()->info(tr('Voci di servizio salvate correttamente!'));
     } else {
-        $_SESSION['errors'][] = tr('Errore durante il salvataggio delle voci di servizio!');
+        flash()->error(tr('Errore durante il salvataggio delle voci di servizio!'));
     }
 
     // Aggiornamento 4 spunte
-    $dbo->query('UPDATE co_ordiniservizio SET copia_centrale='.prepare($post['copia_centrale']).', copia_cliente='.prepare($post['copia_cliente']).', copia_amministratore='.prepare($post['copia_amministratore']).'", funzionamento_in_sicurezza='.prepare($post['funzionamento_in_sicurezza']).' WHERE idintervento='.prepare($id_record));
+    $dbo->query('UPDATE co_ordiniservizio SET copia_centrale='.prepare(post('copia_centrale')).', copia_cliente='.prepare(post('copia_cliente')).', copia_amministratore='.prepare(post('copia_amministratore')).'", funzionamento_in_sicurezza='.prepare(post('funzionamento_in_sicurezza')).' WHERE idintervento='.prepare($id_record));
 }
 
 /*

@@ -45,13 +45,13 @@ $month = intval($d1->format('m')) - 1;
 for ($i = 0; $i < $count; ++$i) {
     $month = $month % 12;
 
-    if (intval($fatturato[$i]['month']) != $month + 1) {
+    if (!isset($fatturato[$i]) || intval($fatturato[$i]['month']) != $month + 1) {
         array_splice($fatturato, $i, 0, [[
             'totale' => 0,
         ]]);
     }
 
-    if (intval($acquisti[$i]['month']) != $month + 1) {
+    if (!isset($acquisti[$i]) || intval($acquisti[$i]['month']) != $month + 1) {
         array_splice($acquisti, $i, 0, [[
             'totale' => 0,
         ]]);
@@ -111,7 +111,7 @@ $(document).ready(function() {
 </script>';
 
 // Clienti top
-$clienti = $dbo->fetchArray("SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS totale, (SELECT COUNT(*) FROM co_documenti WHERE co_documenti.idanagrafica =an_anagrafiche.idanagrafica) AS qta, an_anagrafiche.idanagrafica, an_anagrafiche.ragione_sociale FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=co_documenti.idanagrafica WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY an_anagrafiche.idanagrafica ORDER BY SUM(subtotale - sconto) DESC LIMIT 15');
+$clienti = $dbo->fetchArray('SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS totale, (SELECT COUNT(*) FROM co_documenti WHERE co_documenti.idanagrafica =an_anagrafiche.idanagrafica AND co_documenti.data BETWEEN '.prepare($start).' AND '.prepare($end).") AS qta, an_anagrafiche.idanagrafica, an_anagrafiche.ragione_sociale FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=co_documenti.idanagrafica WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end).' GROUP BY an_anagrafiche.idanagrafica ORDER BY SUM(subtotale - sconto) DESC LIMIT 15');
 
 $totale = $dbo->fetchArray("SELECT SUM(co_righe_documenti.subtotale - co_righe_documenti.sconto) AS totale FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id INNER JOIN co_righe_documenti ON co_righe_documenti.iddocumento=co_documenti.id WHERE co_tipidocumento.dir='entrata' AND co_documenti.data BETWEEN ".prepare($start).' AND '.prepare($end));
 
@@ -215,7 +215,7 @@ foreach ($tipi as $tipo) {
     for ($i = 0; $i < $count; ++$i) {
         $month = $month % 12;
 
-        if (intval($interventi[$i]['month']) != $month + 1) {
+        if (!isset($interventi[$i]) || intval($interventi[$i]['month']) != $month + 1) {
             array_splice($interventi, $i, 0, [[
                 'totale' => 0,
             ]]);

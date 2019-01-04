@@ -20,7 +20,7 @@ class Import
         if (empty(self::$imports)) {
             $modules = Modules::getModules();
 
-            $database = Database::getConnection();
+            $database = database();
 
             $results = [];
             foreach ($modules as $module) {
@@ -30,11 +30,14 @@ class Import
                 $custom_file = str_replace('|custom|', '/custom', $file);
 
                 if (file_exists($custom_file) || file_exists($original_file)) {
-                    $files = $database->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare(Modules::get('Import')['id']).' AND id_record='.prepare($module['id']).' ORDER BY id DESC');
+                    $files = Uploads::get([
+                        'id_module' => Modules::get('Import')['id'],
+                        'id_record' => $module['id'],
+                    ]);
 
-                    $results[$module['id']] = array_merge($module, [
+                    $results[$module['id']] = array_merge($module->toArray(), [
                         'import' => file_exists($custom_file) ? $custom_file : $original_file,
-                        'files' => $files,
+                        'files' => array_reverse($files),
                     ]);
                 }
             }
@@ -54,9 +57,7 @@ class Import
      */
     public static function get($module)
     {
-        if (!is_numeric($module) && !empty(self::getModules()[$module])) {
-            $module = self::getModules()[$module];
-        }
+        $module = Modules::get($module)['id'];
 
         return self::getImports()[$module];
     }
@@ -79,11 +80,20 @@ class Import
         // Impostazione automatica dei nomi "ufficiali" dei campi
         foreach ($fields as $key => $value) {
             if (!isset($value['names'])) {
-                $fields[$key]['names'] = [
+                $names = [
                     $value['field'],
                     $value['label'],
                 ];
+            } else {
+                $names = $value['names'];
             }
+
+            // Impostazione dei nomi in minuscolo
+            foreach ($names as $k => $v) {
+                $names[$k] = str_to_lower($v);
+            }
+
+            $fields[$key]['names'] = $names;
         }
 
         return $fields;

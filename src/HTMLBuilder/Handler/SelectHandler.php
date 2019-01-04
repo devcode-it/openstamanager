@@ -25,7 +25,7 @@ class SelectHandler implements HandlerInterface
 
         // Se il valore presente non è valido, carica l'eventuale valore predefinito
         if (empty($values['value']) && !is_numeric($values['value']) && !empty($values['valore_predefinito'])) {
-            $values['value'] = get_var($values['valore_predefinito']);
+            $values['value'] = setting($values['valore_predefinito']);
         }
 
         $values['value'] = (array) $values['value'];
@@ -40,30 +40,26 @@ class SelectHandler implements HandlerInterface
             if (!empty($values['value']) || is_numeric($values['value'])) {
                 $result .= $this->select2($values['ajax-source'], $values['value']);
             }
-        }
+        } else {
+            if (!in_array('multiple', $extras)) {
+                $result .= '
+            <option></option>';
+            }
 
-        // Gestione del select da query specifica (se il campo "values" è impostato a "query=SQL")
-        elseif (preg_match_all('/^query=(.+?)$/', $values['values'], $matches)) {
-            $result .= '
-        <option></option>';
+            // Gestione del select dal formato JSON completo, convertito in array
+            if (is_array($values['values'])) {
+                $result .= $this->selectArray($values['values'], $values['value']);
+            }
 
-            $result .= $this->selectQuery($matches[1][0], $values['value']);
-        }
+            // Gestione del select da query specifica (se il campo "values" è impostato a "query=SQL")
+            elseif (preg_match_all('/^query=(.+?)$/', $values['values'], $matches)) {
+                $result .= $this->selectQuery($matches[1][0], $values['value']);
+            }
 
-        // Gestione del select dal formato JSON parziale (valori singoli)
-        elseif (preg_match_all('/^list=(.+?)$/', $values['values'], $matches)) {
-            $result .= '
-        <option></option>';
-
-            $result .= $this->selectList(json_decode('{'.$matches[1][0].'}', true), $values);
-        }
-
-        // Gestione del select dal formato JSON completo, convertito in array
-        elseif (is_array($values['values'])) {
-            $result .= '
-        <option></option>';
-
-            $result .= $this->selectArray($values['values'], $values['value']);
+            // Gestione del select dal formato JSON parziale (valori singoli)
+            elseif (preg_match_all('/^list=(.+?)$/', $values['values'], $matches)) {
+                $result .= $this->selectList(json_decode('{'.$matches[1][0].'}', true), $values);
+            }
         }
 
         // Impostazione del placeholder
@@ -111,7 +107,7 @@ class SelectHandler implements HandlerInterface
     {
         // Richiamo del file dedicato alle richieste AJAX per ottenere il valore iniziale del select
         ob_start();
-        $dbo = \Database::getConnection();
+        $dbo = database();
         include DOCROOT.'/ajax_select.php';
         $text = ob_get_clean();
 
@@ -159,6 +155,8 @@ class SelectHandler implements HandlerInterface
      */
     protected function selectArray($array, $values)
     {
+        $result = '';
+
         $prev = '';
         foreach ($array as $element) {
             if (!empty($element['optgroup'])) {
@@ -210,7 +208,7 @@ class SelectHandler implements HandlerInterface
     {
         $result = '';
 
-        $database = \Database::getConnection();
+        $database = database();
 
         $array = $database->fetchArray($query);
 

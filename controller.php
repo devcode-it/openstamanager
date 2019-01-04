@@ -8,22 +8,10 @@ if (!empty($id_record) && !empty($id_module)) {
     redirect(ROOTDIR.'/index.php');
 }
 
-if (file_exists($docroot.'/include/custom/top.php')) {
-    include $docroot.'/include/custom/top.php';
-} else {
-    include $docroot.'/include/top.php';
-}
+include_once App::filepath('include|custom|', 'top.php');
 
-// Lettura parametri iniziali del modulo
-$module = Modules::get($id_module);
-
-if (empty($module) || empty($module['enabled'])) {
-    die(tr('Accesso negato'));
-}
-
-$module_dir = $module['directory'];
-
-include $docroot.'/actions.php';
+// Inclusione gli elementi fondamentali
+include_once $docroot.'/actions.php';
 
 // Widget in alto
 echo '{( "name": "widgets", "id_module": "'.$id_module.'", "position": "top", "place": "controller" )}';
@@ -32,24 +20,23 @@ echo '{( "name": "widgets", "id_module": "'.$id_module.'", "position": "top", "p
 echo '
 		<div class="nav-tabs-custom">
 			<ul class="nav nav-tabs pull-right" id="tabs" role="tablist">
-				<li class="pull-left active header">';
-
-// Verifico se ho impostato un nome modulo personalizzato
-$name = $module['title'];
-
-echo '
+				<li class="pull-left active header">
 					<a data-toggle="tab" href="#tab_0">
-						<i class="'.$module['icon'].'"></i> '.$name;
+                        <i class="'.$structure['icon'].'"></i> '.$structure['title'];
+
 // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
-if (file_exists($docroot.'/modules/'.$module_dir.'/add.php') && $module['permessi'] == 'rw') {
+if ($structure->hasAddFile() && $structure->permission == 'rw') {
     echo '
-						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-target="#bs-popup" data-href="add.php?id_module='.$id_module.'"><i class="fa fa-plus"></i></button>';
+						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
 }
+
 echo '
 					</a>
 				</li>';
 
 $plugins = $dbo->fetchArray('SELECT id, title FROM zz_plugins WHERE idmodule_to='.prepare($id_module)." AND position='tab_main' AND enabled = 1");
+
+// Tab dei plugin
 foreach ($plugins as $plugin) {
     echo '
 				<li>
@@ -67,8 +54,11 @@ include $docroot.'/include/manager.php';
 echo '
 				</div>';
 
-// Inclusione contenuti varie tab dei plugin
+// Plugin
+$module_record = $record;
 foreach ($plugins as $plugin) {
+    $record = $module_record;
+
     echo '
 				<div id="tab_'.$plugin['id'].'" class="tab-pane">';
 
@@ -80,17 +70,15 @@ foreach ($plugins as $plugin) {
 				</div>';
 }
 
+$record = $module_record;
+
 echo '
 			</div>
 		</div>';
 
-redirectOperation($id_module, $id_record);
+redirectOperation($id_module, isset($id_parent) ? $id_parent : $id_record);
 
 // Widget in basso
 echo '{( "name": "widgets", "id_module": "'.$id_module.'", "position": "right", "place": "controller" )}';
 
-if (file_exists($docroot.'/include/custom/bottom.php')) {
-    include $docroot.'/include/custom/bottom.php';
-} else {
-    include $docroot.'/include/bottom.php';
-}
+include_once App::filepath('include|custom|', 'bottom.php');

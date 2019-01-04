@@ -1,22 +1,18 @@
 <?php
 
 $skip_permissions = true;
-include __DIR__.'/../../core.php';
+include_once __DIR__.'/../../core.php';
 
 $pageTitle = tr('Utente');
 
-if (file_exists($docroot.'/include/custom/top.php')) {
-    include $docroot.'/include/custom/top.php';
-} else {
-    include $docroot.'/include/top.php';
-}
+include_once App::filepath('include|custom|', 'top.php');
 
 if (post('op') == 'change_pwd') {
-    include __DIR__.'/actions.php';
+    include_once __DIR__.'/actions.php';
 }
 
 $user = Auth::user();
-$token = Auth::getInstance()->getToken();
+$token = auth()->getToken();
 
 $rs = $dbo->fetchArray('SELECT * FROM an_anagrafiche WHERE idanagrafica = '.prepare($user['idanagrafica']));
 $anagrafica = [];
@@ -47,7 +43,7 @@ if (!empty($anagrafica)) {
 
 echo '
 
-            <a class="btn btn-info col-md-4" data-href="'.$rootdir.'/modules/'.Modules::get('Utenti e permessi')['directory'].'/user.php" class="text-warning tip" data-toggle="modal" data-target="#bs-popup" data-title="Cambia password">
+            <a class="btn btn-info col-md-4 tip '.((!empty(Modules::get('Utenti e permessi'))) ? '' : 'disabled').'" data-href="'.$rootdir.'/modules/'.Modules::get('Utenti e permessi')['directory'].'/user.php" data-toggle="modal" data-title="Cambia password">
                 <i class="fa fa-unlock-alt"></i> '.tr('Cambia password').'
             </a>
         </div>';
@@ -112,8 +108,4 @@ echo '
 
 </div>';
 
-if (file_exists($docroot.'/include/custom/bottom.php')) {
-    include $docroot.'/include/custom/bottom.php';
-} else {
-    include $docroot.'/include/bottom.php';
-}
+include_once App::filepath('include|custom|', 'bottom.php');

@@ -71,7 +71,7 @@ vendor/
 ######################
 *.new
 *.old
-.couscous/
+*.txt
 assets/dist/
 backup/*
 !backup/.htaccess
@@ -81,6 +81,14 @@ files/*
 !files/my_impianti/
 files/my_impianti/*
 !files/my_impianti/componente.ini
+tmp/
 config.inc.php
+database.sql
+VERSION
 REVISION
 .php_cs.cache
+
+/tests/_log/*
+/tests/_temp/*
+codeception.yml
+!.gitkeep

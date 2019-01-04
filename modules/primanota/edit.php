@@ -6,18 +6,18 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="op" value="editriga">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
-	<input type="hidden" name="idmastrino" value="<?php echo $records[0]['idmastrino']; ?>">
-	<input type="hidden" name="iddocumento" value="<?php echo $records[0]['iddocumento']; ?>">
+	<input type="hidden" name="idmastrino" value="<?php echo $record['idmastrino']; ?>">
+	<input type="hidden" name="iddocumento" value="<?php echo $record['iddocumento']; ?>">
 
 
     <div class="row">
 	<?php
-    if (!empty($records[0]['iddocumento'])) {
-        $rs = $dbo->fetchArray('SELECT dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($records[0]['iddocumento']));
+    if (!empty($record['iddocumento'])) {
+        $rs = $dbo->fetchArray('SELECT dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.idtipodocumento WHERE co_documenti.id='.prepare($record['iddocumento']));
         $modulo = ($rs[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto'; ?>
 		<div class=" col-md-2">
             <br>
-			<a href="<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get($modulo)['id']; ?>&id_record=<?php echo $records[0]['iddocumento']; ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Torna alla fattura'); ?></a>
+			<a href="<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get($modulo)['id']; ?>&id_record=<?php echo $record['iddocumento']; ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Torna alla fattura'); ?></a>
 		</div>
 	<?php
     }
@@ -37,7 +37,7 @@ include_once __DIR__.'/../../core.php';
     $conti3 = [];    // contenitore conti di terzo livello
     $totale_dare = 0.00;
     $totale_avere = 0.00;
-    $idmastrino = $records[0]['idmastrino'];
+    $idmastrino = $record['idmastrino'];
 
     // Salvo l'elenco conti in un array (per non fare il ciclo ad ogni riga)
     $query2 = 'SELECT * FROM co_pianodeiconti2';
@@ -56,7 +56,7 @@ include_once __DIR__.'/../../core.php';
         Form di modifica riga movimento
     */
     // Lettura movimenti del mastrino selezionato
-    $query = 'SELECT * FROM co_movimenti WHERE idmastrino='.prepare($records[0]['idmastrino']).' AND iddocumento='.prepare($records[0]['iddocumento']).' AND primanota='.prepare($records[0]['primanota']);
+    $query = 'SELECT * FROM co_movimenti WHERE idmastrino='.prepare($record['idmastrino']).' AND iddocumento='.prepare($record['iddocumento']).' AND primanota='.prepare($record['primanota']);
     $rs = $dbo->fetchArray($query);
     $n = sizeof($rs);
     $iddocumento = $rs[0]['iddocumento'];
@@ -70,9 +70,8 @@ include_once __DIR__.'/../../core.php';
         </tr>';
 
     for ($i = 0; $i < 10; ++$i) {
-		
-		($i<=1) ? $required = 1 : $required = 0;
-			
+        ($i <= 1) ? $required = 1 : $required = 0;
+
         // Conto
         echo '
 			<tr>
@@ -198,25 +197,25 @@ include_once __DIR__.'/../../core.php';
 				$('input[id*=dare]').each( function(){
 					if( $(this).val() == '' ) valore = 0;
 					else valore = $(this).val().toEnglish();
-					totale_dare += valore;
+					totale_dare += Math.round(valore*100)/100;
 				});
 
 				$('input[id*=avere]').each( function(){
 					if( $(this).val() == '' ) valore = 0;
 					else valore = $(this).val().toEnglish();
-					totale_avere += valore;
+					totale_avere += Math.round(valore*100)/100;
 				});
 
 				$('#totale_dare').text(totale_dare.toLocale());
 				$('#totale_avere').text(totale_avere.toLocale());
 
-				bilancio = totale_dare-totale_avere;
+				bilancio = Math.round(totale_dare*100)/100 - Math.round(totale_avere*100)/100;
 
 				if( bilancio == 0 ){
 					$("#testo_aggiuntivo").removeClass('text-danger').html("");
 					//$("button[type=submit]").removeClass('hide');
                     $("#save").removeClass('hide');
-                    
+
 				}
 				else{
 					$("#testo_aggiuntivo").addClass('text-danger').html("sbilancio di " + bilancio.toLocale() + " &euro;" );
@@ -236,6 +235,6 @@ include_once __DIR__.'/../../core.php';
 	</script>
 </form>
 
-<a class="btn btn-danger ask" data-backto="record-list" data-idmastrino="<?php echo $records[0]['idmastrino']; ?>">
+<a class="btn btn-danger ask" data-backto="record-list" data-idmastrino="<?php echo $record['idmastrino']; ?>">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>

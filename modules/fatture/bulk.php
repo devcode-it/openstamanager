@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Util\Zip;
+
 switch (post('op')) {
     case 'export-bulk':
         $dir = DOCROOT.'/files/export_fatture/';
@@ -14,10 +16,10 @@ switch (post('op')) {
         }
 
         // Selezione delle fatture da stampare
-        $records = $dbo->fetchArray('SELECT co_documenti.id, numero_esterno, data, ragione_sociale, co_tipidocumento.descrizione FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).')');
+        $fatture = $dbo->fetchArray('SELECT co_documenti.id, numero_esterno, data, ragione_sociale, co_tipidocumento.descrizione FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).')');
 
-        if (!empty($records)) {
-            foreach ($records as $r) {
+        if (!empty($fatture)) {
+            foreach ($fatture as $r) {
                 $numero = !empty($r['numero_esterno']) ? $r['numero_esterno'] : $r['numero'];
                 $numero = str_replace(['/', '\\'], '-', $numero);
 
@@ -25,11 +27,9 @@ switch (post('op')) {
                 $rapportino_nome = sanitizeFilename($numero.' '.$r['data'].' '.$r['ragione_sociale'].'.pdf');
                 $filename = slashes($dir.'tmp/'.$rapportino_nome);
 
-                $_GET['iddocumento'] = $r['id']; // Fix temporaneo per la stampa
-                $iddocumento = $r['id']; // Fix temporaneo per la stampa
-                $ptype = 'fatture';
+                $print = Prints::getModulePredefinedPrint($id_module);
 
-                require DOCROOT.'/pdfgen.php';
+                Prints::render($print['id'], $r['id'], $filename);
             }
 
             $dir = slashes($dir);
@@ -37,7 +37,7 @@ switch (post('op')) {
 
             // Creazione zip
             if (extension_loaded('zip')) {
-                create_zip($dir.'tmp/', $file);
+                Zip::create($dir.'tmp/', $file);
 
                 // Invio al browser dello zip
                 download($file);
@@ -50,26 +50,25 @@ switch (post('op')) {
         break;
 
         case 'delete-bulk':
-			
-			if ($debug){
-				foreach ($id_records as $id) {
-					$dbo->query('DELETE  FROM co_documenti  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
-					$dbo->query('DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-					$dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-					$dbo->query('DELETE FROM mg_movimenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
-				}
 
-				$_SESSION['infos'][] = tr('Fatture eliminate!');
-			}else{
-				$_SESSION['warnings'][] = tr('Procedura in fase di sviluppo. Nessuna modifica apportata.');
-			}
-			
+            if (App::debug()) {
+                foreach ($id_records as $id) {
+                    $dbo->query('DELETE  FROM co_documenti  WHERE id = '.prepare($id).Modules::getAdditionalsQuery($id_module));
+                    $dbo->query('DELETE FROM co_righe_documenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
+                    $dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
+                    $dbo->query('DELETE FROM mg_movimenti WHERE iddocumento='.prepare($id).Modules::getAdditionalsQuery($id_module));
+                }
+
+                flash()->info(tr('Fatture eliminate!'));
+            } else {
+                flash()->warning(tr('Procedura in fase di sviluppo. Nessuna modifica apportata.'));
+            }
+
         break;
 }
 
 return [
-	
-	'delete-bulk' => tr('Elimina selezionati'),
+    'delete-bulk' => tr('Elimina selezionati'),
 
     'export-bulk' => [
         'text' => tr('Esporta stampe'),

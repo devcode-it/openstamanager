@@ -1,6 +1,12 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
+if (file_exists(__DIR__.'/../../../core.php')) {
+    include_once __DIR__.'/../../../core.php';
+} else {
+    include_once __DIR__.'/../../core.php';
+}
+
+$show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
 $query = 'SELECT * FROM in_righe_interventi WHERE idintervento='.prepare($id_record).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC';
 $rs2 = $dbo->fetchArray($query);
@@ -13,16 +19,16 @@ if (count($rs2) > 0) {
         <th width="8%">'.tr('Q.tà').'</th>
         <th width="15%">'.tr('Prezzo di acquisto').'</th>';
 
-    if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
+    if ($show_prezzi) {
         echo '
         <th width="15%">'.tr('Prezzo di vendita').'</th>
         <th width="10%">'.tr('Iva').'</th>
         <th width="15%">'.tr('Subtotale').'</th>';
     }
 
-    if (!$records[0]['flg_completato']) {
+    if (!$record['flag_completato']) {
         echo '
-        <th width="80"></th>';
+        <th width="120" class="text-center">'.tr('#').'</th>';
     }
     echo '
     </tr>';
@@ -38,7 +44,7 @@ if (count($rs2) > 0) {
         // Quantità
         echo '
         <td class="text-right">
-            '.Translator::numberToLocale($r['qta']).' '.$r['um'].'
+            '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
         </td>';
 
         //Costo unitario
@@ -47,7 +53,7 @@ if (count($rs2) > 0) {
             '.Translator::numberToLocale($r['prezzo_acquisto']).' &euro;
         </td>';
 
-        if (Auth::admin() || $_SESSION['gruppo'] != 'Tecnici') {
+        if ($show_prezzi) {
             // Prezzo unitario
             $netto = $r['prezzo_vendita'] - $r['sconto_unitario'];
 
@@ -67,7 +73,7 @@ if (count($rs2) > 0) {
 
             echo '
         </td>';
-        
+
             echo '
         <td class="text-right">
             <span>'.Translator::numberToLocale($r['iva']).'</span> &euro;';
@@ -83,9 +89,9 @@ if (count($rs2) > 0) {
 
         // Pulsante per riportare nel magazzino centrale.
         // Visibile solo se l'intervento non è stato nè fatturato nè completato.
-        if (!$records[0]['flg_completato']) {
+        if (!$record['flag_completato']) {
             echo '
-        <td>
+        <td class="text-center">
             <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" onclick="launch_modal(\''.tr('Modifica spesa').'\', \''.$rootdir.'/modules/interventi/add_righe.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$r['id'].'\', 1);"><i class="fa fa-edit"></i></button>
             <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" onclick="if(confirm(\''.tr('Eliminare questa spesa?').'\')){ elimina_riga( \''.$r['id'].'\' ); }"><i class="fa fa-trash"></i></button>
         </td>';
@@ -96,6 +102,9 @@ if (count($rs2) > 0) {
 
     echo '
 </table>';
+} else {
+    echo '
+<p>'.tr('Nessuna spesa presente').'.</p>';
 }
 
 ?>

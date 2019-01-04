@@ -3,115 +3,14 @@
 // Descrizione
 echo App::internalLoad('descrizione.php', $result, $options);
 
-$show_idrivalsainps = 0;
-$show_idritenutaacconto = 0;
-$show_calcolo_ritenutaacconto = 0;
-$idrivalsainps = 0;
-$idritenutaacconto = 0;
-$calcolo_ritenutaacconto = 0;
-
-// Informazioni aggiuntive per Fatture
-if ($module['name'] == 'Fatture di acquisto' || $module['name'] == 'Fatture di vendita') {
-    
-    // Percentuale rivalsa INPS e Percentuale ritenuta d'acconto
-    if ($options['action'] == 'edit'){
-        
-        if($options['dir'] == 'uscita'){
-            $show_idrivalsainps = 1;
-            $show_idritenutaacconto = 1;
-            $show_calcolo_ritenutaacconto = 1;
-        }
-        else if (($options['dir'] == 'entrata' && ( get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d'acconto") != ''))) {
-            if( get_var('Percentuale rivalsa INPS') != '' ){ $show_idrivalsainps = 1; }else{ $show_idrivalsainps = 0; }
-            if( get_var("Percentuale ritenuta d'acconto") != '' ){ $show_idritenutaacconto = 1; }else{ $show_idritenutaacconto = 0; }
-            if( get_var("Percentuale ritenuta d'acconto") != '' ){ $show_calcolo_ritenutaacconto = 1; }else{ $show_calcolo_ritenutaacconto = 0; }
-        }
-        
-        $idrivalsainps = $result['idrivalsainps'];
-        $idritenutaacconto = $result['idritenutaacconto'];
-        $calcolo_ritenutaacconto = $result['calcolo_ritenutaacconto'];
-        
-    }
-    
-    else if ($options['action'] == 'add'){
-        
-        if($options['dir'] == 'uscita'){
-            $show_idrivalsainps = 1;
-            $show_idritenutaacconto = 1;
-            $show_calcolo_ritenutaacconto = 1;
-            
-            $idrivalsainps = "";
-            $idritenutaacconto = "";
-            $calcolo_ritenutaacconto = get_var("Metodologia calcolo ritenuta d'acconto predefinito");
-        }
-        else if ($options['dir'] == 'entrata' && $options['op']=='addriga' && ( get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d'acconto") != '')) {
-            if( get_var('Percentuale rivalsa INPS') != '' ){ $show_idrivalsainps = 1; }else{ $show_idrivalsainps = 0; }
-            if( get_var("Percentuale ritenuta d'acconto") != '' ){ $show_idritenutaacconto = 1; }else{ $show_idritenutaacconto = 0; }
-            if( get_var("Percentuale ritenuta d'acconto") != '' ){ $show_calcolo_ritenutaacconto = 1; }else{ $show_calcolo_ritenutaacconto = 0; }
-            
-            $idrivalsainps = get_var('Percentuale rivalsa INPS');
-            $idritenutaacconto = get_var("Percentuale ritenuta d'acconto");
-            $calcolo_ritenutaacconto = get_var("Metodologia calcolo ritenuta d'acconto predefinito");
-        }
-        //Caso particolare per aggiunta articolo in fatture di vendita
-        else if($options['dir'] == 'entrata' && $options['op']=='addarticolo' && ( get_var('Percentuale rivalsa INPS') != '' || get_var("Percentuale ritenuta d'acconto") != '')){
-            if( get_var('Percentuale rivalsa INPS') != '' ){ $show_idrivalsainps = 1; }else{ $show_idrivalsainps = 0; }
-            if( get_var("Percentuale ritenuta d'acconto") != '' ){ $show_idritenutaacconto = 1; }else{ $show_idritenutaacconto = 0; }
-            if( get_var("Percentuale ritenuta d'acconto") != '' ){ $show_calcolo_ritenutaacconto = 1; }else{ $show_calcolo_ritenutaacconto = 0; }
-            
-            $idrivalsainps = "";
-            $idritenutaacconto = get_var("Percentuale ritenuta d'acconto");
-            $calcolo_ritenutaacconto = get_var("Metodologia calcolo ritenuta d'acconto predefinito");
-        }
-        
-    }
-    
-    if($show_idrivalsainps==1 || $show_idritenutaacconto==1){
-        echo '
-<div class="row">';
-
-        // Rivalsa INPS
-        if ( $show_idrivalsainps == 1 ) {
-            echo '
-    <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr('Rivalsa INPS').'", "name": "idrivalsainps", "value": "'.$idrivalsainps.'", "values": "query=SELECT * FROM co_rivalsainps" ]}
-    </div>';
-        }
-
-        // Ritenuta d'acconto
-        if ( $show_idritenutaacconto == 1 ) {
-            echo '
-    <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "idritenutaacconto", "value": "'.$idritenutaacconto.'", "values": "query=SELECT * FROM co_ritenutaacconto" ]}
-    </div>';
-        }
-        
-        //Calcola ritenuta d'acconto su
-        if ( $show_calcolo_ritenutaacconto == 1 ) {
-            echo '
-    <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr("Calcola ritenuta d'acconto su").'", "name": "calcolo_ritenutaacconto", "value": "'.$calcolo_ritenutaacconto.'", "values": "list=\"Imponibile\":\"Imponibile\", \"Imponibile + rivalsa inps\":\"Imponibile + rivalsa inps\"", "required": "1" ]}
-    </div>';
-        }
-        
-        echo '
-</div>';
-    }
-
-    // Conto
-    echo '
-    <div class="row">
-        <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Conto').'", "name": "idconto", "required": 1, "value": "'.$result['idconto'].'", "ajax-source": "'.$options['conti'].'" ]}
-        </div>
-    </div>';
-}
+// Conti, rivalsa INPS e ritenuta d'acconto
+echo App::internalLoad('conti.php', $result, $options);
 
 // Iva
 echo '
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$result['idiva'].'", "values": "query=SELECT * FROM co_iva ORDER BY descrizione ASC" ]}
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$result['idiva'].'", "ajax-source": "iva" ]}
         </div>';
 
 // Quantità
@@ -127,16 +26,128 @@ echo '
         </div>
     </div>';
 
-    // Costo unitario
 echo '
-    <div class="row">
-        <div class="col-md-6">
-            {[ "type": "number", "label": "'.tr('Costo unitario').'", "name": "prezzo", "value": "'.$result['prezzo'].'", "required": 1, "icon-after": "&euro;" ]}
+    <div class="row">';
+
+$width = $options['dir'] == 'entrata' ? 4 : 6;
+$label = $options['dir'] == 'entrata' ? tr('Prezzo unitario di vendita') : tr('Prezzo unitario');
+if ($options['dir'] == 'entrata') {
+    // Prezzo di acquisto unitario
+    echo '
+        <div class="col-md-'.$width.'">
+            {[ "type": "number", "label": "'.tr('Prezzo unitario di acquisto').'", "name": "prezzo_acquisto", "value": "'.$result['prezzo_unitario_acquisto'].'", "icon-after": "&euro;" ]}
+        </div>';
+
+    // Funzione per l'aggiornamento in tempo reale del guadagno
+    echo '
+    <script>
+        function aggiorna_guadagno() {
+            var prezzo_acquisto = $("#prezzo_acquisto").val().toEnglish();
+            var prezzo = $("#prezzo").val().toEnglish();
+            var sconto = $("#sconto").val().toEnglish();
+            if ($("#tipo_sconto").val() === "PRC") {
+                sconto = sconto / 100 * prezzo;
+            }
+
+            var guadagno = prezzo - sconto - prezzo_acquisto;
+            var parent = $("#prezzo_acquisto").closest("div").parent();
+            var div = parent.find("div[id*=\"errors\"]");
+
+            div.html("<small>'.tr('Guadagno').': " + guadagno.toLocale() + " &euro;</small>");
+            if (guadagno < 0) {
+                parent.addClass("has-error");
+                div.addClass("text-danger").removeClass("text-success");
+            } else {
+                parent.removeClass("has-error");
+                div.removeClass("text-danger").addClass("text-success");
+            }
+        }
+
+        aggiorna_guadagno();
+
+        $("#prezzo").keyup(aggiorna_guadagno);
+        $("#prezzo_acquisto").keyup(aggiorna_guadagno);
+        $("#sconto").keyup(aggiorna_guadagno);
+        $("#tipo_sconto").change(aggiorna_guadagno);
+    </script>';
+}
+
+// Prezzo di vendita unitario
+echo '
+        <div class="col-md-'.$width.'">
+            {[ "type": "number", "label": "'.$label.'", "name": "prezzo", "value": "'.$result['prezzo'].'", "required": 1, "icon-after": "&euro;" ]}
         </div>';
 
 // Sconto unitario
 echo '
-        <div class="col-md-6">
+        <div class="col-md-'.$width.'">
             {[ "type": "number", "label": "'.tr('Sconto unitario').'", "name": "sconto", "value": "'.$result['sconto_unitario'].'", "icon-after": "choice|untprc|'.$result['tipo_sconto'].'" ]}
         </div>
     </div>';
+
+if ($module['name'] == 'Fatture di vendita') {
+    $collapsed = empty($result['data_inizio_periodo']) && empty($result['data_fine_periodo']) && empty($result['riferimento_amministrazione']);
+
+    echo '
+    <div class="box box-info '.($collapsed ? 'collapsed-box' : '').'">
+	    <div class="box-header with-border">
+	        <h3 class="box-title">'.tr('Dati Fatturazione Elettronica').'</h3>
+	        <div class="box-tools pull-right">
+	            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+	                <i class="fa fa-plus"></i>
+	            </button>
+	        </div>
+	    </div>
+        <div class="box-body">';
+
+    $tipi_cessione_prestazione = [
+        [
+            'id' => 'SC',
+            'text' => 'SC - '.tr('Sconto'),
+        ],
+        [
+            'id' => 'PR',
+            'text' => 'PR - '.tr('Premio'),
+        ],
+        [
+            'id' => 'AB',
+            'text' => 'AB - '.tr('Abbuono'),
+        ],
+        [
+            'id' => 'AC',
+            'text' => 'AC - '.tr('Spesa accessoria'),
+        ],
+    ];
+
+    // Data inizio periodo
+    echo '
+            <div class="row">
+                <div class="col-md-6">
+                    {[ "type": "select", "label": "'.tr('Tipo Cessione Prestazione').'", "name": "tipo_cessione_prestazione", "value": "'.$result['tipo_cessione_prestazione'].'", "values": '.json_encode($tipi_cessione_prestazione).' ]}
+                </div>';
+
+    // Riferimento amministrazione
+    echo '
+                <div class="col-md-6">
+                    {[ "type": "text", "label": "'.tr('Riferimento Amministrazione').'", "name": "riferimento_amministrazione", "value": "'.$result['riferimento_amministrazione'].'", "maxlength": 20 ]}
+                </div>
+            </div>';
+
+    // Data inizio periodo
+    echo '
+            <div class="row">
+                <div class="col-md-6">
+                    {[ "type": "date", "label": "'.tr('Data Inizio Periodo').'", "name": "data_inizio_periodo", "value": "'.$result['data_inizio_periodo'].'" ]}
+                </div>';
+
+    // Data fine periodo
+    echo '
+                <div class="col-md-6">
+                    {[ "type": "date", "label": "'.tr('Data Fine Periodo').'", "name": "data_fine_periodo", "value": "'.$result['data_fine_periodo'].'" ]}
+                </div>
+            </div>';
+
+    echo '
+        </div>
+    </div>';
+}

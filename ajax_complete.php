@@ -3,8 +3,8 @@
 include_once __DIR__.'/core.php';
 
 if (!isset($resource)) {
-    $module = $get['module'];
-    $op = $get['op'];
+    $module = get('module');
+    $op = get('op');
 
     $result = AJAX::complete($op);
 

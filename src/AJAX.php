@@ -17,6 +17,138 @@ class AJAX
         return \Whoops\Util\Misc::isAjaxRequest() && filter('ajax') !== null;
     }
 
+    /**
+     * Individua le opzioni di selezione a partire dalla risorsa richiesta.
+     *
+     * @param string $resource
+     * @param array  $elements
+     * @param mixed  $search
+     *
+     * @return array
+     */
+    public static function select($resource, $elements = [], $search = null)
+    {
+        if (!isset($elements)) {
+            $elements = [];
+        }
+        $elements = (!is_array($elements)) ? explode(',', $elements) : $elements;
+
+        $files = self::find('ajax/select.php', false);
+
+        // File di gestione predefinita
+        array_unshift($files, DOCROOT.'/ajax_select.php');
+
+        foreach ($files as $file) {
+            $results = self::getSelectResults($file, $resource, $elements, $search);
+            if (isset($results)) {
+                break;
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Completa la query SQL a partire da parametri definiti e ne restituisce i risultati.
+     *
+     * @param string $query
+     * @param array  $where
+     * @param array  $filter
+     * @param array  $search
+     * @param array  $custom
+     *
+     * @return array
+     */
+    public static function completeResults($query, $where, $filter = [], $search = [], $custom = [])
+    {
+        if (str_contains($query, '|filter|')) {
+            $query = str_replace('|filter|', !empty($filter) ? 'WHERE '.implode(' OR ', $filter) : '', $query);
+        } elseif (!empty($filter)) {
+            $where[] = '('.implode(' OR ', $filter).')';
+        }
+
+        if (!empty($search)) {
+            $where[] = '('.implode(' OR ', $search).')';
+        }
+
+        $query = str_replace('|where|', !empty($where) ? 'WHERE '.implode(' AND ', $where) : '', $query);
+
+        $database = database();
+        $rs = $database->fetchArray($query);
+
+        $results = [];
+        foreach ($rs as $r) {
+            $result = [];
+            foreach ($custom as $key => $value) {
+                $result[$key] = $r[$value];
+            }
+
+            $results[] = $result;
+        }
+
+        return $results;
+    }
+
+    /**
+     * Effettua la ricerca di un termine all'intero delle risorse disponibili.
+     *
+     * @param string $term
+     *
+     * @return array
+     */
+    public static function search($term)
+    {
+        if (strlen($term) < 2) {
+            return;
+        }
+
+        $files = self::find('ajax/search.php');
+
+        // File di gestione predefinita
+        array_unshift($files, DOCROOT.'/ajax_search.php');
+
+        $results = [];
+        foreach ($files as $file) {
+            $module_results = self::getSearchResults($file, $term);
+
+            $results = array_merge($results, $module_results);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Completa il codice HTML per la risorsa richiesta.
+     *
+     * @param string $resource
+     *
+     * @return string
+     */
+    public static function complete($resource)
+    {
+        $files = self::find('ajax/complete.php');
+
+        // File di gestione predefinita
+        array_unshift($files, DOCROOT.'/ajax_complete.php');
+
+        foreach ($files as $file) {
+            $result = self::getCompleteResults($file, $resource);
+            if (!empty($result)) {
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Individua i file per cui l'utente possiede i permessi di accesso.
+     *
+     * @param string $file
+     * @param bool   $permissions
+     *
+     * @return array
+     */
     protected static function find($file, $permissions = true)
     {
         $dirname = substr($file, 0, strrpos($file, '/') + 1);
@@ -27,6 +159,8 @@ class AJAX
         } else {
             $modules = Modules::getModules();
         }
+
+        $modules = $modules->toArray();
 
         $dirs = array_unique(array_column($modules, 'directory'));
         $pieces = array_chunk($dirs, 5);
@@ -56,58 +190,16 @@ class AJAX
         return $list;
     }
 
-    public static function select($resource, $elements = [], $search = null)
-    {
-        if (!isset($elements)) {
-            $elements = [];
-        }
-        $elements = (!is_array($elements)) ? explode(',', $elements) : $elements;
-
-        $files = self::find('ajax/select.php', false);
-
-        // File di gestione predefinita
-        array_unshift($files, DOCROOT.'/ajax_select.php');
-
-        foreach ($files as $file) {
-            $results = self::getSelectResults($file, $resource, $elements, $search);
-            if (isset($results)) {
-                break;
-            }
-        }
-
-        return $results;
-    }
-
-    public static function completeResults($query, $where, $filter = [], $search = [], $custom = [])
-    {
-        if (str_contains($query, '|filter|')) {
-            $query = str_replace('|filter|', !empty($filter) ? 'WHERE '.implode(' OR ', $filter) : '', $query);
-        } elseif (!empty($filter)) {
-            $where[] = '('.implode(' OR ', $filter).')';
-        }
-
-        if (!empty($search)) {
-            $where[] = '('.implode(' OR ', $search).')';
-        }
-
-        $query = str_replace('|where|', !empty($where) ? 'WHERE '.implode(' AND ', $where) : '', $query);
-
-        $database = Database::getConnection();
-        $rs = $database->fetchArray($query);
-
-        $results = [];
-        foreach ($rs as $r) {
-            $result = [];
-            foreach ($custom as $key => $value) {
-                $result[$key] = $r[$value];
-            }
-
-            $results[] = $result;
-        }
-
-        return $results;
-    }
-
+    /**
+     * Ottiene i risultati del select all'interno di un file specifico (modulo).
+     *
+     * @param string $file
+     * @param string $resource
+     * @param array  $elements
+     * @param mixed  $search
+     *
+     * @return array|null
+     */
     protected static function getSelectResults($file, $resource, $elements = [], $search = null)
     {
         $superselect = self::getSelectInfo();
@@ -122,8 +214,7 @@ class AJAX
         ];
 
         // Database
-        $database = Database::getConnection();
-        $dbo = $database;
+        $dbo = $database = database();
 
         require $file;
 
@@ -131,40 +222,29 @@ class AJAX
             $results = self::completeResults($query, $where, $filter, $search_fields, $custom);
         }
 
-        return $results;
+        return isset($results) ? $results : null;
     }
 
+    /**
+     * Restituisce le informazioni aggiuntive per i select.
+     */
     protected static function getSelectInfo()
     {
         return !empty($_SESSION['superselect']) ? $_SESSION['superselect'] : [];
     }
 
-    public static function search($term)
-    {
-        if (strlen($term) < 2) {
-            return;
-        }
-
-        $files = self::find('ajax/search.php');
-
-        // File di gestione predefinita
-        array_unshift($files, DOCROOT.'/ajax_search.php');
-
-        $results = [];
-        foreach ($files as $file) {
-            $module_results = self::getSearchResults($file, $term);
-
-            $results = array_merge($results, $module_results);
-        }
-
-        return $results;
-    }
-
+    /**
+     * Ottiene i risultati della ricerca all'interno di un file specifico (modulo).
+     *
+     * @param string $file
+     * @param string $term
+     *
+     * @return array
+     */
     protected static function getSearchResults($file, $term)
     {
         // Database
-        $database = Database::getConnection();
-        $dbo = $database;
+        $dbo = $database = database();
 
         // Ricerca anagrafiche per ragione sociale per potere mostrare gli interventi, fatture,
         // ordini, ecc della persona ricercata
@@ -189,28 +269,18 @@ class AJAX
         return $results;
     }
 
-    public static function complete($resource)
-    {
-        $files = self::find('ajax/complete.php');
-
-        // File di gestione predefinita
-        array_unshift($files, DOCROOT.'/ajax_complete.php');
-
-        foreach ($files as $file) {
-            $result = self::getCompleteResults($file, $resource);
-            if (!empty($result)) {
-                break;
-            }
-        }
-
-        return $result;
-    }
-
+    /**
+     * Ottiene i risultati della richiesta di completamento all'interno di un file specifico (modulo).
+     *
+     * @param string $file
+     * @param string $resource
+     *
+     * @return string
+     */
     protected static function getCompleteResults($file, $resource)
     {
         // Database
-        $database = Database::getConnection();
-        $dbo = $database;
+        $dbo = $database = database();
 
         ob_start();
         require $file;

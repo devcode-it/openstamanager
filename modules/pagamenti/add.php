@@ -7,8 +7,12 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="backto" value="record-edit">
 
 	<div class="row">
-		<div class="col-md-12">
-			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione",  "value": "" ]}
+		<div class="col-md-6">
+			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1 ]}
+		</div>
+		
+		<div class="col-md-6">
+			{[ "type": "select", "label": "<?php echo tr('Codice Modalità (Fatturazione Elettronica)'); ?>", "name": "codice_modalita_pagamento_fe", "value": "", "values": "query=SELECT codice as id, CONCAT(codice, ' - ', descrizione) AS descrizione FROM fe_modalita_pagamento", "required": 1 ]}
 		</div>
 	</div>
 

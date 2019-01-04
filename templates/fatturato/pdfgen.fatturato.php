@@ -6,9 +6,12 @@ include_once __DIR__.'/../../core.php';
 $report = file_get_contents($docroot.'/templates/fatturato/fatturato.html');
 $body = file_get_contents($docroot.'/templates/fatturato/fatturato_body.html');
 
-$mesi = ['', 'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+$mesi = months();
 
-$dir = save($_GET['dir']);
+$dir = get('dir');
+
+$date_start = $_SESSION['period_start'];
+$date_end = $_SESSION['period_end'];
 
 include_once $docroot.'/templates/pdfgen_variables.php';
 
@@ -23,15 +26,15 @@ if ($dir == 'entrata') {
 }
 
 // Ciclo tra le fatture selezionate
-$query = "SELECT DATE_FORMAT( data, '%m-%Y' ) AS periodo, data FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id GROUP BY periodo, dir HAVING (data BETWEEN '".$_SESSION['period_start']."' AND '".$_SESSION['period_end']."') AND dir='".$dir."' ".$add_where.' ORDER BY data ASC';
+$query = "SELECT DATE_FORMAT( data, '%m-%Y' ) AS periodo, data FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id GROUP BY periodo, dir HAVING (data BETWEEN '".$date_start."' AND '".$date_end."') AND dir='".$dir."' ".$add_where.' ORDER BY data ASC';
 
 $rs = $dbo->fetchArray($query);
 $totrows = sizeof($rs);
 
 if ($dir == 'entrata') {
-    $body .= '<h3>FATTURATO MENSILE DAL '.Translator::dateToLocale($_SESSION['period_start']).' AL '.Translator::dateToLocale($_SESSION['period_end'])."</h3>\n";
+    $body .= '<h3>FATTURATO MENSILE DAL '.Translator::dateToLocale($date_start).' AL '.Translator::dateToLocale($date_end)."</h3>\n";
 } else {
-    $body .= '<h3>ACQUISTI MENSILI DAL '.Translator::dateToLocale($_SESSION['period_start']).' AL '.Translator::dateToLocale($_SESSION['period_end'])."</h3>\n";
+    $body .= '<h3>ACQUISTI MENSILI DAL '.Translator::dateToLocale($date_start).' AL '.Translator::dateToLocale($date_end)."</h3>\n";
 }
 
 $body .= "<table cellspacing='0' style='table-layout:fixed;'>\n";
@@ -66,4 +69,4 @@ $body .= "</tr>\n";
 
 $body .= "</table>\n";
 
-$report_name = 'inventario.pdf';
+$report_name = 'fatturato.pdf';

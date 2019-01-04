@@ -13,12 +13,12 @@ $backup_dir = __DIR__.'/backup/';
 // Tema selezionato per il front-end
 $theme = 'default';
 
-// Redirect automatico delle richieste da HTTP a HTTPS
-$redirectHTTPS = false;
+// Impostazioni di sicurezza
+$redirectHTTPS = false; // Redirect automatico delle richieste da HTTP a HTTPS
+$disableCSRF = true; // Protezione contro CSRF
 
 // Impostazioni di debug
 $debug = false;
-$operations_log = false;
 
 // Personalizzazione dei gestori dei tag personalizzati
 $HTMLWrapper = null;
@@ -41,5 +41,6 @@ $formatter = [
 // Ulteriori file CSS e JS da includere
 $assets = [
     'css' => [],
+    'print' => [],
     'js' => [],
 ];

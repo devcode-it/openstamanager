@@ -55,7 +55,8 @@
 .skin-default .main-header .navbar .nav .open a:hover,
 .skin-default .main-header .navbar .nav .open a:focus,
 .skin-default .main-header .navbar .nav .active a,
-.skin-default .main-header .navbar .nav .actual a {
+.skin-default .main-header .navbar .nav .actual a,
+.skin-default .main-header .navbar .nav .menu-open a {
     background: rgba(0, 0, 0, 0.2);
     color: #f6f6f6;
 }
@@ -132,7 +133,8 @@
 
 .skin-default .sidebar-menu li:hover a,
 .skin-default .sidebar-menu li.active a,
-.skin-default .sidebar-menu li.actual a {
+.skin-default .sidebar-menu li.actual a,
+.skin-default .sidebar-menu li.menu-open a {
     background: #222;
     border-left-color: #222;
 }
@@ -195,20 +197,4 @@
 
 .skin-default .panel-primary .panel-heading {
     border-bottom: 2px solid #57a;
-}
-
-.skin-default .ui-autocomplete {
-    background: #f6f6f6;
-    border-color: #ccc;
-    border-color: rgba(0, 0, 0, 0.2);
-    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    -webkit-background-clip: padding-box;
-    -moz-background-clip: padding;
-    background-clip: padding-box;
-}
-
-.skin-default .parsley-errors-list{
-    color: red;
 }

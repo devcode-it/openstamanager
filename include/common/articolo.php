@@ -1,15 +1,21 @@
 <?php
 
+$result['idarticolo'] = isset($result['idarticolo']) ? $result['idarticolo'] : null;
+
+$_SESSION['superselect']['dir'] = $options['dir'];
+$_SESSION['superselect']['idanagrafica'] = $options['idanagrafica'];
+$_SESSION['superselect']['idarticolo'] = $options['idarticolo'];
+
 // Articolo
 if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
     echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli" ]}
+            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli" '.(($options['dir'] == 'uscita') ? ',"icon-after": "add|'.Modules::get('Articoli')['id'].'"' : "").' ]}
         </div>
     </div>';
 } else {
-    $database = Database::getConnection();
+    $database = database();
     $articolo = $database->fetchArray('SELECT codice, descrizione FROM mg_articoli WHERE id = '.prepare($result['idarticolo']))[0];
 
     echo '
@@ -55,12 +61,21 @@ if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
         $("#idarticolo").on("change", function(){
             // Autoimpostazione dei valori relativi
             if ($(this).val()) {
+
                 session_set("superselect,idarticolo", $(this).val(), 0);
-                $data = $(this).selectData();
+				session_set("superselect,idanagrafica", "'.$options['idanagrafica'].'", 0);
+				session_set("superselect,dir", "'.$options['dir'].'", 0);
+
+				$data = $(this).selectData();
+
+                var id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';
 
                 $("#prezzo").val($data.prezzo_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').');
                 $("#descrizione_riga").val($data.descrizione);
-                $("#idiva").selectSet($data.idiva_vendita, $data.iva_vendita);
+                $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita);
+                if(id_conto) {
+                    $("#idconto").selectSetNew(id_conto, $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').'_title);
+                }
                 $("#um").selectSetNew($data.um, $data.um);
             }';
 

@@ -1,5 +1,7 @@
 <?php
 
+use Models\Module;
+
 /**
  * Classe per la gestione delle informazioni relative ai moduli installati.
  *
@@ -7,24 +9,13 @@
  */
 class Modules
 {
-    /** @var int Identificativo del modulo corrente */
-    protected static $current_module;
-    /** @var int Identificativo dell'elemento corrente */
-    protected static $current_element;
-
-    /** @var array Elenco dei moduli disponibili */
-    protected static $modules = [];
     /** @var array Elenco delle condizioni aggiuntive disponibili */
     protected static $additionals = [];
-    /** @var array Elenco delle query generiche dei moduli */
-    protected static $queries = [];
+    /** @var array Elenco dei segmenti disponibili */
+    protected static $segments = [];
 
     /** @var array Elenco gerarchico dei moduli */
-    protected static $hierarchy = [];
-    /** @var array Profondità dell'elenco gerarchico */
-    protected static $depth;
-    /** @var array Struttura HTML dedicata al menu principale */
-    protected static $menu;
+    protected static $hierarchy;
 
     /**
      * Restituisce tutte le informazioni di tutti i moduli installati.
@@ -33,62 +24,14 @@ class Modules
      */
     public static function getModules()
     {
-        if (empty(self::$modules)) {
-            $database = Database::getConnection();
+        $results = Module::getAll();
 
-            $user = Auth::user();
-
-            $results = $database->fetchArray('SELECT * FROM `zz_modules` LEFT JOIN (SELECT `idmodule`, `permessi` FROM `zz_permissions` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).')) AS `zz_permissions` ON `zz_modules`.`id`=`zz_permissions`.`idmodule` LEFT JOIN (SELECT NULL AS `id_segment`, `idmodule`, `clause`, `position` FROM `zz_group_module` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id_utente']).') AND `enabled` = 1 UNION SELECT `id` AS `id_segment`, `id_module` AS `idmodule`, `clause`, `position` FROM `zz_segments`) AS `zz_group_module` ON `zz_modules`.`id`=`zz_group_module`.`idmodule`');
-
-            $modules = [];
-            $additionals = [];
-
-            foreach ($results as $result) {
-                if (empty($additionals[$result['id']])) {
-                    $additionals[$result['id']]['WHR'] = [];
-                    $additionals[$result['id']]['HVN'] = [];
-                }
-
-                $result['options'] = App::replacePlaceholder($result['options']);
-                $result['options2'] = App::replacePlaceholder($result['options2']);
-
-                $result['option'] = empty($result['options2']) ? $result['options'] : $result['options2'];
-
-                if (!empty($result['clause'])) {
-                    if (!empty($result['id_segment'])) {
-                        if ($result['id_segment'] == $_SESSION['m'.$result['id']]['id_segment']) {
-                            $result['clause'] = App::replacePlaceholder($result['clause']);
-                            $additionals[$result['id']][$result['position']][] = $result['clause'];
-                        }
-                    } else {
-                        $result['clause'] = App::replacePlaceholder($result['clause']);
-                        $additionals[$result['id']][$result['position']][] = $result['clause'];
-                    }
-                }
-
-                if (empty($modules[$result['id']])) {
-                    if (empty($result['permessi'])) {
-                        if (Auth::admin()) {
-                            $result['permessi'] = 'rw';
-                        } else {
-                            $result['permessi'] = '-';
-                        }
-                    }
-
-                    unset($result['clause']);
-                    unset($result['position']);
-                    unset($result['idmodule']);
-
-                    $modules[$result['id']] = $result;
-                    $modules[$result['name']] = $result['id'];
-                }
-            }
-
-            self::$modules = $modules;
-            self::$additionals = $additionals;
+        // Caricamento dei plugin
+        if (!$results->first()->relationLoaded('plugins')) {
+            $results->load('plugins');
         }
 
-        return self::$modules;
+        return $results;
     }
 
     /**
@@ -100,8 +43,9 @@ class Modules
     {
         // Individuazione dei moduli con permesso di accesso
         $modules = self::getModules();
+
         foreach ($modules as $key => $module) {
-            if ($module['permessi'] == '-') {
+            if ($module->permission == '-') {
                 unset($modules[$key]);
             }
         }
@@ -114,15 +58,33 @@ class Modules
      *
      * @param string|int $module
      *
-     * @return array
+     * @return Module
      */
     public static function get($module)
     {
-        if (!is_numeric($module) && !empty(self::getModules()[$module])) {
-            $module = self::getModules()[$module];
-        }
+        self::getModules();
 
-        return self::getModules()[$module];
+        return Module::get($module);
+    }
+
+    /**
+     * Restituisce il modulo attualmente in utilizzo.
+     *
+     * @return Module
+     */
+    public static function getCurrent()
+    {
+        return Module::getCurrent();
+    }
+
+    /**
+     * Imposta il modulo attualmente in utilizzo.
+     *
+     * @param int $id
+     */
+    public static function setCurrent($id)
+    {
+        Module::setCurrent($id);
     }
 
     /**
@@ -134,7 +96,7 @@ class Modules
      */
     public static function getPermission($module)
     {
-        return self::get($module)['permessi'];
+        return self::get($module)->permission;
     }
 
     /**
@@ -146,7 +108,63 @@ class Modules
      */
     public static function getAdditionals($module)
     {
-        return (array) self::$additionals[self::get($module)['id']];
+        $module = self::get($module);
+        $user = Auth::user();
+
+        if (!isset(self::$additionals[$module['id']])) {
+            $database = database();
+
+            $additionals['WHR'] = [];
+            $additionals['HVN'] = [];
+
+            $results = $database->fetchArray('SELECT * FROM `zz_group_module` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id']).') AND `enabled` = 1 AND `idmodule` = '.prepare($module['id']));
+            foreach ($results as $result) {
+                if (!empty($result['clause'])) {
+                    $result['clause'] = App::replacePlaceholder($result['clause']);
+
+                    $additionals[$result['position']][] = $result['clause'];
+                }
+            }
+
+            // Aggiunta dei segmenti
+            $segments = self::getSegments($module['id']);
+            $id_segment = $_SESSION['module_'.$module['id']]['id_segment'];
+            foreach ($segments as $result) {
+                if (!empty($result['clause']) && $result['id'] == $id_segment) {
+                    $result['clause'] = App::replacePlaceholder($result['clause']);
+
+                    $additionals[$result['position']][] = $result['clause'];
+                }
+            }
+
+            self::$additionals[$module['id']] = $additionals;
+        }
+
+        return (array) self::$additionals[$module['id']];
+    }
+
+    /**
+     * Restituisce i filtri aggiuntivi dell'utente in relazione al modulo specificato.
+     *
+     * @param int $module
+     *
+     * @return array
+     */
+    public static function getSegments($module)
+    {
+        if (Update::isUpdateAvailable()) {
+            return [];
+        }
+
+        $module = self::get($module)['id'];
+
+        if (!isset(self::$segments[$module])) {
+            $database = database();
+
+            self::$segments[$module] = $database->fetchArray('SELECT * FROM `zz_segments` WHERE `id_module` = '.prepare($module).' ORDER BY `predefined` DESC, `id` ASC');
+        }
+
+        return (array) self::$segments[$module];
     }
 
     /**
@@ -193,75 +211,13 @@ class Modules
      *
      * @return array
      */
-    public static function getHierarchy($depth = 3)
+    public static function getHierarchy()
     {
-        if (empty(self::$hierarchy) || self::$depth != $depth) {
-            $database = Database::getConnection();
-
-            $depth = ($depth < 2) ? 2 : $depth;
-
-            $fields = [];
-            for ($i = 0; $i < $depth; ++$i) {
-                $fields[] = '`t'.$i."`.`id` AS 't".$i.".id'";
-            }
-
-            $query = 'SELECT '.implode(', ', $fields).' FROM `zz_modules` AS `t0`';
-
-            for ($i = 1; $i < $depth; ++$i) {
-                $query .= ' LEFT JOIN `zz_modules` AS `t'.$i.'` ON `t'.$i.'`.`parent` = `t'.($i - 1).'`.`id`';
-            }
-
-            $query .= ' WHERE `t0`.`parent` IS NULL ORDER BY ';
-
-            for ($i = 0; $i < $depth; ++$i) {
-                $query .= '`t'.$i.'`.`order` ASC';
-
-                if ($i != $depth - 1) {
-                    $query .= ', ';
-                }
-            }
-
-            $modules = $database->fetchArray($query);
-
-            $hierarchy = [];
-            foreach ($modules as $module) {
-                $hierarchy = self::buildArray($module, $hierarchy);
-            }
-
-            self::$depth = $depth;
-            self::$hierarchy = $hierarchy;
+        if (!isset(self::$hierarchy)) {
+            self::$hierarchy = Module::getHierarchy()->toArray();
         }
 
         return self::$hierarchy;
-    }
-
-    /**
-     * Restituisce l'elaborazione dell'array secondo una struttura ad albero (molteplici root).
-     *
-     * @param int   $id
-     * @param array $data
-     * @param int   $actual
-     *
-     * @return array
-     */
-    protected static function buildArray($module, $data = [], $actual = 0)
-    {
-        if (!empty($module['t'.$actual.'.id'])) {
-            $pos = array_search($module['t'.$actual.'.id'], array_column($data, 'id'));
-            if ($pos === false && !empty($module['t'.$actual.'.id'])) {
-                $array = self::get($module['t'.$actual.'.id']);
-                $array['childrens'] = [];
-
-                $data[] = $array;
-                $pos = count($data) - 1;
-            }
-
-            if (!empty($module['t'.($actual + 1).'.id'])) {
-                $data[$pos]['childrens'] = self::buildArray($module, $data[$pos]['childrens'], $actual + 1);
-            }
-        }
-
-        return $data;
     }
 
     /**
@@ -273,20 +229,66 @@ class Modules
      */
     public static function getMainMenu($depth = 3)
     {
-        if (empty(self::$menu) || self::$depth != $depth) {
-            $menus = self::getHierarchy($depth);
+        $menus = self::getHierarchy();
 
-            $module_name = App::getCurrentModule()['name'];
+        $module = Modules::getCurrent();
+        $module_name = isset($module) ? $module->name : '';
 
-            $result = '';
-            foreach ($menus as $menu) {
-                $result .= self::sidebarMenu($menu, isset($module_name) ? $module_name : '')[0];
-            }
-
-            self::$menu = $result;
+        $result = '';
+        foreach ($menus as $menu) {
+            $result .= self::sidebarMenu($menu, $module_name, $depth)[0];
         }
 
-        return self::$menu;
+        return $result;
+    }
+
+    /**
+     * Costruisce un link HTML per il modulo e il record indicati.
+     *
+     * @param string|int $modulo
+     * @param int        $id_record
+     * @param string     $testo
+     * @param string     $alternativo
+     * @param string     $extra
+     *
+     * @return string
+     */
+    public static function link($modulo, $id_record = null, $testo = null, $alternativo = true, $extra = null, $blank = true)
+    {
+        $testo = isset($testo) ? nl2br($testo) : tr('Visualizza scheda');
+        $alternativo = is_bool($alternativo) && $alternativo ? $testo : $alternativo;
+
+        // Aggiunta automatica dell'icona di riferimento
+        if (!str_contains($testo, '<i ')) {
+            $testo = $testo.' <i class="fa fa-external-link"></i>';
+        }
+
+        $module = self::get($modulo);
+
+        $extra .= !empty($blank) ? ' target="_blank"' : '';
+
+        if (!empty($module) && in_array($module->permission, ['r', 'rw'])) {
+            $link = !empty($id_record) ? 'editor.php?id_module='.$module['id'].'&id_record='.$id_record : 'controller.php?id_module='.$module['id'];
+
+            return '<a href="'.ROOTDIR.'/'.$link.'" '.$extra.'>'.$testo.'</a>';
+        } else {
+            return $alternativo;
+        }
+    }
+
+    /**
+     * Individua il percorso per il file.
+     *
+     * @param string|int $element
+     * @param string     $file
+     *
+     * @return string|null
+     */
+    public static function filepath($element, $file)
+    {
+        $element = self::get($element);
+
+        return $element ? $element->filepath($file) : null;
     }
 
     /**
@@ -294,23 +296,28 @@ class Modules
      *
      * @param array $element
      * @param int   $actual
+     * @param int   $max_depth
+     * @param int   $actual_depth
      *
      * @return string
      */
-    protected static function sidebarMenu($element, $actual = null)
+    protected static function sidebarMenu($element, $actual = null, $max_depth = 3, $actual_depth = 0)
     {
-        $options = ($element['options2'] != '') ? $element['options2'] : $element['options'];
-        $link = ($options != '' && $options != 'menu') ? ROOTDIR.'/controller.php?id_module='.$element['id'] : 'javascript:;';
+        if ($actual_depth >= $max_depth) {
+            return '';
+        }
+
+        $link = (!empty($element['option']) && $element['option'] != 'menu') ? ROOTDIR.'/controller.php?id_module='.$element['id'] : 'javascript:;';
         $title = $element['title'];
-        $target = ($element['new'] == 1) ? '_blank' : '_self';
+        $target = '_self'; // $target = ($element['new'] == 1) ? '_blank' : '_self';
         $active = ($actual == $element['name']);
         $show = (self::getPermission($element['id']) != '-' && !empty($element['enabled'])) ? true : false;
 
-        $submenus = $element['childrens'];
+        $submenus = $element['all_children'];
         if (!empty($submenus)) {
             $temp = '';
             foreach ($submenus as $submenu) {
-                $r = self::sidebarMenu($submenu, $actual);
+                $r = self::sidebarMenu($submenu, $actual, $actual_depth + 1);
                 $active = $active || $r[1];
                 if (!$show && $r[2]) {
                     $link = 'javascript:;';
@@ -348,39 +355,5 @@ class Modules
         }
 
         return [$result, $active, $show];
-    }
-
-    /**
-     * Undocumented function.
-     *
-     * @param string|int $modulo
-     * @param int        $id_record
-     * @param string     $testo
-     * @param string     $alternativo
-     * @param string     $extra
-     *
-     * @return string
-     */
-    public static function link($modulo, $id_record = null, $testo = null, $alternativo = true, $extra = null, $blank = true)
-    {
-        $testo = isset($testo) ? nl2br($testo) : tr('Visualizza scheda');
-        $alternativo = is_bool($alternativo) && $alternativo ? $testo : $alternativo;
-
-        // Aggiunta automatica dell'icona di riferimento
-        if (!str_contains($testo, '<i ')) {
-            $testo = $testo.' <i class="fa fa-external-link"></i>';
-        }
-
-        $module = self::get($modulo);
-
-        $extra .= !empty($blank) ? ' target="_blank"' : '';
-
-        if (!empty($module) && in_array($module['permessi'], ['r', 'rw'])) {
-            $link = !empty($id_record) ? 'editor.php?id_module='.$module['id'].'&id_record='.$id_record : 'controller.php?id_module='.$module['id'];
-
-            return '<a href="'.ROOTDIR.'/'.$link.'" '.$extra.'>'.$testo.'</a>';
-        } else {
-            return $alternativo;
-        }
     }
 }

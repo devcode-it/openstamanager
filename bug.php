@@ -18,18 +18,18 @@ if (filter('op') == 'send') {
     $mail->Subject = 'Segnalazione bug OSM '.$version;
 
     // Aggiunta dei file di log (facoltativo)
-    if (!empty($post['log']) && file_exists($docroot.'/logs/error.log')) {
+    if (!empty(post('log')) && file_exists($docroot.'/logs/error.log')) {
         $mail->AddAttachment($docroot.'/logs/error.log');
     }
 
     // Aggiunta della copia del database (facoltativo)
-    if (!empty($post['sql'])) {
+    if (!empty(post('sql'))) {
         $backup_file = $docroot.'/Backup OSM '.date('Y-m-d').' '.date('H_i_s').'.sql';
         Backup::database($backup_file);
 
         $mail->AddAttachment($backup_file);
 
-        $_SESSION['infos'][] = tr('Backup del database eseguito ed allegato correttamente!');
+        flash()->info(tr('Backup del database eseguito ed allegato correttamente!'));
     }
 
     // Aggiunta delle informazioni di base sull'installazione
@@ -41,12 +41,12 @@ if (filter('op') == 'send') {
     ];
 
     // Aggiunta delle informazioni sul sistema (facoltativo)
-    if (!empty($post['info'])) {
+    if (!empty(post('info'))) {
         $infos['Sistema'] = $_SERVER['HTTP_USER_AGENT'].' - '.getOS();
     }
 
     // Completamento del body
-    $body = $post['body'].'<hr>';
+    $body = post('body').'<hr>';
     foreach ($infos as $key => $value) {
         $body .= '<p>'.$key.': '.$value.'</p>';
     }
@@ -57,13 +57,13 @@ if (filter('op') == 'send') {
 
     // Invio mail
     if (!$mail->send()) {
-        $_SESSION['errors'][] = tr("Errore durante l'invio della segnalazione").': '.$mail->ErrorInfo;
+        flash()->error(tr("Errore durante l'invio della segnalazione").': '.$mail->ErrorInfo);
     } else {
-        $_SESSION['infos'][] = tr('Email inviata correttamente!');
+        flash()->info(tr('Email inviata correttamente!'));
     }
 
     // Rimozione del dump del database
-    if (!empty($post['sql'])) {
+    if (!empty(post('sql'))) {
         delete($backup_file);
     }
 
@@ -72,13 +72,8 @@ if (filter('op') == 'send') {
 }
 
 $pageTitle = tr('Bug');
-$jscript_modules[] = App::getPaths()['js'].'/ckeditor/ckeditor.js';
 
-if (file_exists($docroot.'/include/custom/top.php')) {
-    include $docroot.'/include/custom/top.php';
-} else {
-    include $docroot.'/include/top.php';
-}
+include_once App::filepath('include|custom|', 'top.php');
 
 if (empty($mail['from_address']) || empty($mail['server'])) {
     echo '
@@ -137,7 +132,7 @@ echo '
             <div class="clearfix"></div>
             <br>
 
-            {[ "type": "textarea", "label": "'.tr('Descrizione del bug').'", "name": "body" ]}
+            {[ "type": "ckeditor", "label": "'.tr('Descrizione del bug').'", "name": "body" ]}
 
             <!-- PULSANTI -->
             <div class="row">
@@ -156,20 +151,13 @@ echo '
         var html = "<p>'.tr('Se hai riscontrato un bug ricordati di specificare').':</p>" +
         "<ul>" +
             "<li>'.tr('Modulo esatto (o pagina relativa) in cui questi si è verificato').';</li>" +
-            "<li>'.tr('Dopo quali specifiche operazioni hai notato il malfunzionameto').'.</li>" +
+            "<li>'.tr('Dopo quali specifiche operazioni hai notato il malfunzionamento').'.</li>" +
         "</ul>" +
         "<p>'.tr('Assicurati inoltre di controllare che il checkbox relativo ai file di log sia contrassegnato, oppure riporta qui l\'errore visualizzato').'.</p>" +
         "<p>'.tr('Ti ringraziamo per il tuo contributo').',<br>" +
         "'.tr('Lo staff di OSM').'</p>";
 
         var firstFocus = 1;
-
-        CKEDITOR.replace("body", {
-            toolbar: globals.ckeditorToolbar,
-            language: globals.locale,
-            scayt_autoStartup: true,
-            scayt_sLang: globals.full_locale
-        });
 
         CKEDITOR.instances.body.on("key", function() {
             setTimeout(function(){
@@ -191,10 +179,8 @@ echo '
             }
         });
     });
-</script>';
+</script>
 
-if (file_exists($docroot.'/include/custom/bottom.php')) {
-    include $docroot.'/include/custom/bottom.php';
-} else {
-    include $docroot.'/include/bottom.php';
-}
+<script type="text/javascript" charset="utf-8" src="'.App::getPaths()['js'].'/ckeditor/ckeditor.js'.'"></script>';
+
+include_once App::filepath('include|custom|', 'bottom.php');

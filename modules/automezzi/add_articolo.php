@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$idautomezzo = $get['idautomezzo'];
+$idautomezzo = get('idautomezzo');
 
 /*
     Form di inserimento riga documento

@@ -28,9 +28,8 @@ CREATE TABLE IF NOT EXISTS `zz_prints` (
   `main` tinyint(1) NOT NULL,
   `default` tinyint(1) NOT NULL,
   `enabled` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE
-);
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 
 -- Inserimento delle stampe di base
 INSERT INTO `zz_prints` (`id_module`, `name`, `directory`, `options`, `previous`, `enabled`, `default`) VALUES
@@ -99,7 +98,7 @@ CREATE TABLE IF NOT EXISTS `zz_smtp` (
   `main` tinyint(1) NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-);
+) ENGINE=InnoDB;
 
 --
 -- Struttura della tabella `zz_emails`
@@ -119,10 +118,8 @@ CREATE TABLE IF NOT EXISTS `zz_emails` (
   `read_notify` tinyint(1) NOT NULL,
   `main` tinyint(1) NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_smtp`) REFERENCES `zz_smtp`(`id`) ON DELETE CASCADE
-);
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 
 --
 -- Struttura della tabella `zz_emails`
@@ -132,10 +129,8 @@ CREATE TABLE IF NOT EXISTS `zz_email_print` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_email` int(11) NOT NULL,
   `id_print` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_email`) REFERENCES `zz_emails`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_print`) REFERENCES `zz_prints`(`id`) ON DELETE CASCADE
-);
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 
 -- Aggiunta dei moduli dedicati alla gestione delle email
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Account email', 'Account email', 'smtp', 'SELECT |select| FROM zz_smtp WHERE 1=1 AND deleted = 0 HAVING 2=2 ORDER BY `name`', 'fa fa-user-o', '2.3', '2.3', '10', NULL, 1, 1);
@@ -185,10 +180,10 @@ CREATE TABLE IF NOT EXISTS `zz_segments` (
   `note` text NOT NULL,
   `predefined` BOOLEAN NOT NULL,
   PRIMARY KEY (`id`)
-);
+) ENGINE=InnoDB;
 
 -- Popolo con i segmenti di default
-INSERT INTO `zz_segments` (`id`, `id_module`, `name`,  `clause`, `position`, `pattern`,`note`, `predefined`) VALUES
+INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`,`note`, `predefined`) VALUES
 (1, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Standard vendite', '1=1', 'WHR', IF((SELECT COUNT(id) FROM co_documenti) > 0, (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Formato numero secondario fattura'), '####/YYYY'), '', 1),
 (2, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto'), 'Standard acquisti', '1=1', 'WHR', '#', '', 1);
 
@@ -200,8 +195,8 @@ UPDATE `co_documenti` SET `id_segment`='1' WHERE `idtipodocumento` IN (SELECT `i
 UPDATE `co_documenti` SET `id_segment`='2' WHERE `idtipodocumento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`dir`='uscita');
 
 -- Innesto modulo segmenti sotto "Strumenti"
-INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES
-(NULL, 'Segmenti', 'Segmenti', 'segmenti', '{	"main_query": [	{	"type": "table", "fields": "id, Nome, Modulo, Maschera, Note, Predefinito", "query": "SELECT `id`,  (IF(predefined=1, ''S&igrave;'', ''No'')) AS `Predefinito`, `name` AS `Nome`, (SELECT name FROM zz_modules WHERE id = zz_segments.id_module) AS Modulo,  `pattern` AS `Maschera`, `note` AS `Note`  FROM `zz_segments` HAVING 2=2 ORDER BY name, id_module"}	]}', '', 'fa fa-database', '2.4', '2.4', 1, (SELECT `id` FROM `zz_modules`  `m` WHERE `name` = 'Strumenti'), 1, 1);
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Segmenti', 'Segmenti', 'segmenti', '{	"main_query": [	{	"type": "table", "fields": "id, Nome, Modulo, Maschera, Note, Predefinito", "query": "SELECT `id`, (IF(predefined=1, ''Sì'', ''No'')) AS `Predefinito`, `name` AS `Nome`, (SELECT name FROM zz_modules WHERE id = zz_segments.id_module) AS Modulo, `pattern` AS `Maschera`, `note` AS `Note`  FROM `zz_segments` HAVING 2=2 ORDER BY name, id_module"}	]}', '', 'fa fa-database', '2.4', '2.4', 1, NULL, 1, 1);
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Segmenti' AND `t2`.`name` = 'Strumenti') SET `t1`.`parent` = `t2`.`id`;
 
 -- Aggiorno widget Fatturato con i sezionali
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM co_documenti WHERE idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir="entrata") |segment| AND data >= "|period_start|" AND data <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Fatturato';
@@ -210,7 +205,10 @@ UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare))), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE dir=''uscita'' |segment| AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|"' WHERE `zz_widgets`.`name` = 'Acquisti';
 
 -- Aggiorno widget Crediti da clienti con i sezionali
-UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), ",", "#"), ".", ","), "#", "."), "€") AS dato FROM co_documenti WHERE idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir="entrata") AND idstatodocumento = (SELECT id FROM co_statidocumento WHERE descrizione="Emessa") |segment| AND data >= "|period_start|" AND data <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Crediti da clienti' ;
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(" ", REPLACE(REPLACE(REPLACE(FORMAT(SUM((SELECT SUM(subtotale+iva-sconto) FROM co_righe_documenti WHERE iddocumento=co_documenti.id)+iva_rivalsainps+rivalsainps+bollo-ritenutaacconto), 2), ",", "#"), ".", ","), "#", "."), "&euro;") AS dato FROM co_documenti WHERE idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir="entrata") AND idstatodocumento = (SELECT id FROM co_statidocumento WHERE descrizione="Emessa") |segment| AND data >= "|period_start|" AND data <= "|period_end|" AND 1=1' WHERE `zz_widgets`.`name` = 'Crediti da clienti' ;
+
+-- Aggiorno widget Debiti verso fornitori con i sezionali
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS('' '', REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare-pagato))), 2), '','', ''#''), ''.'', '',''),''#'', ''.''), ''&euro;'') AS dato FROM (co_scadenziario INNER JOIN co_documenti ON co_scadenziario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=''uscita'' |segment| AND data_emissione >= "|period_start|" AND data_emissione <= "|period_end|"' WHERE `zz_widgets`.`name` = 'Debiti verso fornitori';
 
 -- Aggiorno i moduli Fattura con i sezionali
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id` WHERE 1=1 AND `dir` = ''uscita'' |segment| AND `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 2=2 ORDER BY `data` DESC, CAST(IF(numero_esterno='''', numero, numero_esterno) AS UNSIGNED) DESC' WHERE `name` = 'Fatture di acquisto';
@@ -234,10 +232,8 @@ CREATE TABLE IF NOT EXISTS `zz_fields` (
   `order` int(11) NOT NULL,
   `on_add` boolean NOT NULL,
   `top` boolean NOT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE
-);
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 
 --
 -- Struttura della tabella `zz_fields`
@@ -248,9 +244,8 @@ CREATE TABLE IF NOT EXISTS `zz_field_record` (
   `id_field` int(11) NOT NULL,
   `id_record` int(11) NOT NULL,
   `value` text NOT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_field`) REFERENCES `zz_fields`(`id`) ON DELETE CASCADE
-);
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 
 -- Aggiunta modulo di importazione
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES
@@ -319,22 +314,17 @@ CREATE TABLE IF NOT EXISTS `co_banche` (
   `note` text NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB;
 
 -- Innesto modulo per gestione banche
-INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Banche', 'Banche', 'banche', 'SELECT |select| FROM `co_banche` WHERE 1=1 AND deleted = 0 GROUP BY `nome` HAVING 2=2', '', 'fa fa-university', '2.4', '2.4', '1', (SELECT `id` FROM `zz_modules` m WHERE `name` = 'Tabelle'), '1', '1');
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Banche', 'Banche', 'banche', 'SELECT |select| FROM `co_banche` WHERE 1=1 AND deleted = 0 GROUP BY `nome` HAVING 2=2', '', 'fa fa-university', '2.4', '2.4', '1', NULL, '1', '1');
+UPDATE `zz_modules` `t1` INNER JOIN `zz_modules` `t2` ON (`t1`.`name` = 'Banche' AND `t2`.`name` = 'Tabelle') SET `t1`.`parent` = `t2`.`id`;
 
-INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `enabled`, `summable`, `default`) VALUES
-(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'id', 'co_banche.id', 0, 0, 0, 0, '', '', 1, 0, 0),
-(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'Nome', 'co_banche.nome', 0, 0, 0, 0, '', '', 1, 0, 0),
-(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'Filiale', 'co_banche.filiale', 0, 0, 0, 0, '', '', 1, 0, 0),
-(NULL,  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'IBAN', 'co_banche.iban', 0, 0, 0, 0, '', '', 1, 0, 0);
-
-INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
-((SELECT `id` FROM `zz_groups` WHERE `nome` = 'Amministratori'), (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'id')),
-((SELECT `id` FROM `zz_groups` WHERE `nome` = 'Amministratori'), (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'Nome')),
-((SELECT `id` FROM `zz_groups` WHERE `nome` = 'Amministratori'), (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'Filiale')),
-((SELECT `id` FROM `zz_groups` WHERE `nome` = 'Amministratori'), (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche') AND `name` = 'IBAN'));
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `enabled`, `summable`, `default`) VALUES
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'id', 'co_banche.id', 0, 0, 0, 0, 1, 0, 0),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'Nome', 'co_banche.nome', 0, 0, 0, 0, 1, 0, 0),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'Filiale', 'co_banche.filiale', 0, 0, 0, 0, 1, 0, 0),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'IBAN', 'co_banche.iban', 0, 0, 0, 0, 1, 0, 0);
 
 -- Aggiungo campi in an_anagrafiche con riferimento banche
 ALTER TABLE `an_anagrafiche` ADD `idbanca_vendite` INT(11) NOT NULL AFTER `idconto_cliente`, ADD `idbanca_acquisti` INT(11) NOT NULL AFTER `idbanca_vendite`;

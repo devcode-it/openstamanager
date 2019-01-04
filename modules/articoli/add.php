@@ -10,19 +10,19 @@ unset($_SESSION['superselect']['id_categoria']);
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Inserisci il codice:'); ?>", "name": "codice", "class":"alphanumeric-mask", "required": 1, "value": "" ]}
+			{[ "type": "text", "label": "<?php echo tr('Inserisci il codice:'); ?>", "name": "codice", "class":"alphanumeric-mask", "required": 1 ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Inserisci la descrizione:'); ?>", "name": "descrizione", "required": 1, "value": "" ]}
+			{[ "type": "text", "label": "<?php echo tr('Inserisci la descrizione:'); ?>", "name": "descrizione", "required": 1 ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Inserisci la categoria:'); ?>", "name": "categoria", "required": 1, "value": "", "ajax-source": "categorie", "icon-after": "add|<?php echo Modules::get('Categorie')['id']; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Inserisci la categoria:'); ?>", "name": "categoria", "required": 1, "ajax-source": "categorie", "icon-after": "add|<?php echo Modules::get('Categorie articoli')['id']; ?>" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Inserisci la subcategoria:'); ?>", "name": "subcategoria", "id": "subcategoria_add", "value": "", "ajax-source": "sottocategorie", "icon-after": "add|<?php echo Modules::get('Categorie')['id']; ?>||hide" ]}
+			{[ "type": "select", "label": "<?php echo tr('Inserisci la sottocategoria:'); ?>", "name": "subcategoria", "id": "subcategoria_add", "ajax-source": "sottocategorie", "icon-after": "add|<?php echo Modules::get('Categorie articoli')['id']; ?>||hide" ]}
 		</div>
 	</div>
 

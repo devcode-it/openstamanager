@@ -2,34 +2,20 @@
 
 include_once __DIR__.'/core.php';
 
-if (!empty($id_plugin)) {
-    $info = Plugins::get($id_plugin);
+// Inclusione elementi fondamentali del modulo
+include $docroot.'/actions.php';
 
-    $directory = '/plugins/'.$info['directory'];
-} else {
+// Controllo dei permessi
+if (empty($id_plugin)) {
     Permissions::check('rw');
-
-    $module = Modules::get($id_module);
-
-    $directory = '/modules/'.$module['directory'];
 }
 
-$module_dir = $module['directory'];
-
+// Caricamento template
 echo '
 <div id="form_'.$id_module.'-'.$id_plugin.'">
 ';
 
-// Caricamento template popup
-if (file_exists($docroot.$directory.'/custom/add.php')) {
-    include $docroot.$directory.'/custom/add.php';
-} elseif (file_exists($docroot.$directory.'/custom/add.html')) {
-    include $docroot.$directory.'/custom/add.html';
-} elseif (file_exists($docroot.$directory.'/add.php')) {
-    include $docroot.$directory.'/add.php';
-} elseif (file_exists($docroot.$directory.'/add.html')) {
-    include $docroot.$directory.'/add.html';
-}
+include !empty(get('edit')) ? $structure->getEditFile() : $structure->getAddFile();
 
 echo '
 </div>';
@@ -38,6 +24,9 @@ echo '
 echo '
 
 <div class="hide" id="custom_fields_top-add">
+    <input type="hidden" name="id_module" value="'.$id_module.'">
+    <input type="hidden" name="id_plugin" value="'.$id_plugin.'">
+
     {( "name": "custom_fields", "id_module": "'.$id_module.'", "id_plugin": "'.$id_plugin.'", "position": "top", "place": "add" )}
 </div>
 
@@ -54,6 +43,11 @@ $(document).ready(function(){
 
     // Campi a fine form
     var last = form.find(".panel").last();
+
+    if (!last.length) {
+        last = form.find(".box").last();
+    }
+
     if (!last.length) {
         last = form.find(".row").eq(-2);
     }
@@ -68,21 +62,15 @@ if (isAjaxRequest()) {
 $(document).ready(function(){
     data = {};';
 
-    foreach ($get as $key => $value) {
+    foreach (Filter::getGET() as $key => $value) {
         echo '
     data.'.$key.' = "'.$value.'";';
-    }
-    
-    if (file_exists($docroot.$directory.'/custom/actions.php')) {
-        $url = $rootdir.$directory.'/custom/actions.php';
-    } elseif (file_exists($docroot.$directory.'/actions.php')) {
-        $url = $rootdir.$directory.'/actions.php';
     }
 
     echo '
 
     $("#form_'.$id_module.'-'.$id_plugin.'").find("form").ajaxForm({
-        url: "'.$url.'",
+        url: globals.rootdir + "/actions.php",
         beforeSubmit: function(arr, $form, options) {
             return $form.parsley().validate();
         },
@@ -91,9 +79,9 @@ $(document).ready(function(){
         success: function(data){
             data = data.trim();
 
-            if(data && !$("#'.$get['select'].'").val()) {
+            if(data && $("#'.get('select').'").val() !== undefined ) {
                 result = JSON.parse(data);
-                $("#'.$get['select'].'").selectSetNew(result.id, result.text);
+                $("#'.get('select').'").selectSetNew(result.id, result.text);
             }
 
             $("#bs-popup2").modal("hide");

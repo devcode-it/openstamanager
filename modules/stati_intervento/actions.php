@@ -4,17 +4,16 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'update':
-        $descrizione = post('descrizione');
-        $colore = post('colore');
+        $dbo->update('in_statiintervento', [
+            'descrizione' => post('descrizione'),
+            'colore' => post('colore'),
+            'completato' => post('completato'),
+            'notifica' => post('notifica'),
+            'id_email' => post('email') ?: null,
+            'destinatari' => post('destinatari'),
+        ], ['idstatointervento' => $id_record]);
 
-        $query = 'UPDATE in_statiintervento SET colore='.prepare($colore).' WHERE idstatointervento='.prepare($id_record);
-        $dbo->query($query);
-
-        // Aggiorna descrizione
-        $query = 'UPDATE in_statiintervento SET descrizione='.prepare($descrizione).' WHERE idstatointervento='.prepare($id_record);
-        $dbo->query($query);
-
-        $_SESSION['infos'][] = tr('Informazioni salvate correttamente.');
+        flash()->info(tr('Informazioni salvate correttamente.'));
 
         break;
 
@@ -25,12 +24,12 @@ switch (post('op')) {
 
         //controllo idstatointervento che non sia duplicato
         if (count($dbo->fetchArray('SELECT idstatointervento FROM in_statiintervento WHERE idstatointervento='.prepare($idstatointervento))) > 0) {
-            $_SESSION['errors'][] = tr('Stato di intervento già esistente.');
+            flash()->error(tr('Stato di intervento già esistente.'));
         } else {
             $query = 'INSERT INTO in_statiintervento(idstatointervento, descrizione, colore) VALUES ('.prepare($idstatointervento).', '.prepare($descrizione).', '.prepare($colore).')';
             $dbo->query($query);
             $id_record = $idstatointervento;
-            $_SESSION['infos'][] = tr('Nuovo stato di intervento aggiunto.');
+            flash()->info(tr('Nuovo stato di intervento aggiunto.'));
         }
 
         break;
@@ -39,14 +38,14 @@ switch (post('op')) {
 
         //scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato negli interventi
         if (count($dbo->fetchArray('SELECT id FROM in_interventi WHERE idstatointervento='.prepare($id_record))) > 0) {
-            $query = 'UPDATE in_statiintervento SET deleted = 1 WHERE idstatointervento='.prepare($id_record).' AND `can_delete`=1';
+            $query = 'UPDATE in_statiintervento SET deleted_at = NOW() WHERE idstatointervento='.prepare($id_record).' AND `can_delete`=1';
         } else {
             $query = 'DELETE FROM in_statiintervento  WHERE idstatointervento='.prepare($id_record).' AND `can_delete`=1';
         }
 
         $dbo->query($query);
 
-        $_SESSION['infos'][] = tr('Stato di intervento eliminato.');
+        flash()->info(tr('Stato di intervento eliminato.'));
 
         break;
 }

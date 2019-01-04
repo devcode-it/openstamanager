@@ -20,7 +20,23 @@ echo '
                 '_NUM_' => $records[0]['numero'],
                 '_DATE_' => Translator::dateToLocale($records[0]['data_bozza']),
             ], ['upper' => true]).'</b>
-        </div>
+        </div>';
+
+// Elenco impianti
+if (!empty($records[0]['idimpianti'])) {
+    $impianti = $dbo->fetchArray('SELECT nome, matricola FROM my_impianti WHERE id IN ('.$records[0]['idimpianti'].')');
+
+    $list = [];
+    foreach ($impianti as $impianto) {
+        $list[] = $impianto['nome']." <span style='color:#777;'>(".$impianto['matricola'].')</span>';
+    }
+
+    echo '
+        <br>
+        <p class="small-bold">'.tr('Impianti', [], ['upper' => true]).'</p>
+        <p><small>'.implode(', ', $list).'</small></p>';
+}
+echo '
     </div>
 
     <div class="col-xs-5 col-xs-offset-1">
@@ -80,7 +96,7 @@ echo "
     <tbody>';
 
 // RIGHE PREVENTIVO CON ORDINAMENTO UNICO
-$righe = $dbo->fetchArray('SELECT * FROM co_righe2_contratti WHERE idcontratto='.prepare($id_record).' ORDER BY `order`');
+$righe = $dbo->fetchArray('SELECT * FROM co_righe_contratti WHERE idcontratto='.prepare($id_record).' ORDER BY `order`');
 foreach ($righe as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
@@ -109,7 +125,7 @@ foreach ($righe as $r) {
             <td class='text-center'>";
     if (empty($r['is_descrizione'])) {
         echo '
-                '.(empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'])).' '.$r['um'];
+                '.(empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'], 'qta')).' '.$r['um'];
     }
     echo '
             </td>';
@@ -289,12 +305,15 @@ echo '
 </table>';
 
 // Conclusione
-echo '
+if (empty($records[0]['fatturabile'])) {
+    echo '
 <p class="text-center"><b>'.tr('Il tutto S.E. & O.').'</b></p>
 <p class="text-center">'.tr("In attesa di un Vostro Cortese riscontro, colgo l'occasione per porgere Cordiali Saluti").'</p>';
+}
 
-//Firma
-echo '<div style=\'position:absolute; bottom:'.($settings['margins']['bottom'] + $settings['footer-height']).'px\' > <table >
+// Firma
+echo '<div style="position:absolute; bottom:'.($settings['margins']['bottom'] + $settings['footer-height']).'px">
+<table>
     <tr>
         <td style="vertical-align:bottom;" width="50%">
             lì, ___________________________

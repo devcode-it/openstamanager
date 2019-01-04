@@ -2,117 +2,90 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Ordini\Ordine;
+
 /**
  * Funzione per generare un nuovo numero per la fattura.
+ *
+ * @deprecated 2.4.5
  */
 function get_new_numeroordine($data)
 {
-    global $dbo;
     global $dir;
 
-    $query = "SELECT numero AS max_numeroordine FROM or_ordini WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data))).' AND idtipoordine IN(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') ORDER BY CAST(numero AS UNSIGNED) DESC LIMIT 0,1';
-    $rs = $dbo->fetchArray($query);
-    $numero = $rs[0]['max_numeroordine'] + 1;
-
-    return $numero;
+    return Ordine::getNextNumero($data, $dir);
 }
 
 /**
  * Funzione per calcolare il numero secondario successivo utilizzando la maschera dalle impostazioni.
+ *
+ * @deprecated 2.4.5
  */
 function get_new_numerosecondarioordine($data)
 {
-    global $dbo;
     global $dir;
 
-    $query = "SELECT numero_esterno FROM or_ordini WHERE DATE_FORMAT( data, '%Y' ) = ".prepare(date('Y', strtotime($data))).' AND idtipoordine IN(SELECT id FROM or_tipiordine WHERE dir='.prepare($dir).') ORDER BY CAST(numero_esterno AS UNSIGNED) DESC LIMIT 0,1';
-    $rs = $dbo->fetchArray($query);
-    $numero_secondario = $rs[0]['numero_esterno'];
-
-    // Calcolo il numero secondario se stabilito dalle impostazioni e se documento di vendita
-    $formato_numero_secondario = get_var('Formato numero secondario ordine');
-
-    if ($numero_secondario == '') {
-        $numero_secondario = $formato_numero_secondario;
-    }
-
-    if ($formato_numero_secondario != '' && $dir == 'entrata') {
-        $numero_esterno = Util\Generator::generate($formato_numero_secondario, $numero_secondario);
-    } else {
-        $numero_esterno = '';
-    }
-
-    return $numero_esterno;
+    return Ordine::getNextNumeroSecondario($data, $dir);
 }
 
 /**
  * Calcolo imponibile ordine (totale_righe - sconto).
+ *
+ * @deprecated 2.4.5
  */
 function get_imponibile_ordine($idordine)
 {
-    global $dbo;
+    $ordine = Ordine::find($idordine);
 
-    $query = 'SELECT SUM(subtotale-sconto) AS imponibile FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine);
-    $rs = $dbo->fetchArray($query);
-
-    return $rs[0]['imponibile'];
+    return $ordine->imponibile;
 }
 
 /**
  * Calcolo totale ordine (imponibile + iva).
+ *
+ * @deprecated 2.4.5
  */
 function get_totale_ordine($idordine)
 {
-    global $dbo;
+    $ordine = Ordine::find($idordine);
 
-    // Sommo l'iva di ogni riga al totale
-    $query = 'SELECT SUM(iva) AS iva FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine);
-    $rs = $dbo->fetchArray($query);
-
-    // Aggiungo la rivalsa inps se c'è
-    $query2 = 'SELECT rivalsainps FROM or_ordini WHERE id='.prepare($idordine);
-    $rs2 = $dbo->fetchArray($query2);
-
-    return get_imponibile_ordine($idordine) + $rs[0]['iva'] + $rs2[0]['rivalsainps'];
+    return $ordine->totale;
 }
 
 /**
- * Calcolo netto a pagare ordine (totale - iva).
+ * Calcolo netto a pagare ordine (totale - ritenute - bolli).
+ *
+ * @deprecated 2.4.5
  */
 function get_netto_ordine($idordine)
 {
-    global $dbo;
+    $ordine = Ordine::find($idordine);
 
-    $query = 'SELECT ritenutaacconto,bollo FROM or_ordini WHERE id='.prepare($idordine);
-    $rs = $dbo->fetchArray($query);
-
-    return get_totale_ordine($idordine) - $rs[0]['ritenutaacconto'] + $rs[0]['bollo'];
+    return $ordine->netto;
 }
 
 /**
  * Calcolo iva detraibile ordine.
+ *
+ * @deprecated 2.4.5
  */
 function get_ivadetraibile_ordine($idordine)
 {
-    global $dbo;
+    $ordine = Ordine::find($idordine);
 
-    $query = 'SELECT SUM(iva)-SUM(iva_indetraibile) AS iva_detraibile FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine);
-    $rs = $dbo->fetchArray($query);
-
-    return $rs[0]['iva_detraibile'];
+    return $ordine->iva_detraibile;
 }
 
 /**
  * Calcolo iva indetraibile ordine.
+ *
+ * @deprecated 2.4.5
  */
 function get_ivaindetraibile_ordine($idordine)
 {
-    global $dbo;
+    $ordine = Ordine::find($idordine);
 
-    $query = 'SELECT SUM(iva_indetraibile) AS iva_indetraibile FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine);
-    $rs = $dbo->fetchArray($query);
-
-    return $rs[0]['iva_indetraibile'];
+    return $ordine->iva_indetraibile;
 }
 
 /**
@@ -124,19 +97,19 @@ function get_ivaindetraibile_ordine($idordine)
  * $qta			float		quantità dell'articolo nell'ordine
  * $prezzo			float		prezzo totale degli articoli (prezzounitario*qtà).
  */
-function add_articolo_inordine($idordine, $idarticolo, $descrizione, $idiva, $qta, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT')
+function add_articolo_inordine($idordine, $idarticolo, $descrizione, $idiva, $qta, $idum, $prezzo, $sconto = 0, $sconto_unitario = 0, $tipo_sconto = 'UNT')
 {
-    global $dbo;
     global $dir;
 
-    // Lettura unità di misura dell'articolo
-    // $query = "SELECT valore FROM mg_unitamisura WHERE id=(SELECT idum FROM mg_articoli WHERE id='".$idarticolo."')";
-    // $rs = $dbo->fetchArray($query);
-    // $um = $rs[0]['valore'];
+    $dbo = database();
 
-    $query = 'SELECT um FROM mg_articoli WHERE id='.prepare($idarticolo);
-    $rs = $dbo->fetchArray($query);
-    $um = $rs[0]['um'];
+    // Lettura unità di misura dell'articolo
+    if (empty($idum)) {
+        $rs = $dbo->fetchArray('SELECT um FROM mg_articoli WHERE id='.prepare($idarticolo));
+        $um = $rs[0]['valore'];
+    } else {
+        $um = $idum;
+    }
 
     // Lettura iva dell'articolo
     $rs2 = $dbo->fetchArray('SELECT descrizione, percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva));
@@ -157,8 +130,9 @@ function add_articolo_inordine($idordine, $idarticolo, $descrizione, $idiva, $qt
  */
 function rimuovi_articolo_daordine($idarticolo, $idordine, $idrigaordine)
 {
-    global $dbo;
     global $dir;
+
+    $dbo = database();
 
     $non_rimovibili = seriali_non_rimuovibili('id_riga_ordine', $idrigaordine, $dir);
     if (!empty($non_rimovibili)) {
@@ -184,8 +158,9 @@ function rimuovi_articolo_daordine($idarticolo, $idordine, $idrigaordine)
  */
 function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaacconto = '', $bolli = '')
 {
-    global $dbo;
     global $dir;
+
+    $dbo = database();
 
     // Se ci sono righe nel ordine faccio i conteggi, altrimenti azzero gli sconti e le spese aggiuntive (inps, ritenuta, marche da bollo)
     $query = 'SELECT COUNT(id) AS righe FROM or_righe_ordini WHERE idordine='.prepare($idordine);
@@ -206,7 +181,7 @@ function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaac
         // Leggo la rivalsa inps se c'è (per i ordine di vendita lo leggo dalle impostazioni)
         if ($dir == 'entrata') {
             if (!empty($idrivalsainps)) {
-                $idrivalsainps = get_var('Percentuale rivalsa INPS');
+                $idrivalsainps = setting('Percentuale rivalsa INPS');
             }
         }
 
@@ -223,7 +198,7 @@ function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaac
         // Leggo la rivalsa inps se c'è (per i ordine di vendita lo leggo dalle impostazioni)
         if (!empty($idritenutaacconto)) {
             if ($dir == 'entrata') {
-                $idritenutaacconto = get_var("Percentuale ritenuta d'acconto");
+                $idritenutaacconto = setting("Percentuale ritenuta d'acconto");
             }
         }
 
@@ -238,28 +213,28 @@ function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaac
         if ($dir == 'uscita') {
             if ($bolli != 0.00) {
                 $bolli = str_replace(',', '.', $bolli);
-                if (abs($bolli) > 0 && abs($netto_a_pagare > get_var("Soglia minima per l'applicazione della marca da bollo"))) {
+                if (abs($bolli) > 0 && abs($netto_a_pagare > setting("Soglia minima per l'applicazione della marca da bollo"))) {
                     $marca_da_bollo = str_replace(',', '.', $bolli);
                 } else {
                     $marca_da_bollo = 0.00;
                 }
             }
         } else {
-            $bolli = str_replace(',', '.', get_var('Importo marca da bollo'));
-            if (abs($bolli) > 0 && abs($netto_a_pagare) > abs(get_var("Soglia minima per l'applicazione della marca da bollo"))) {
+            $bolli = str_replace(',', '.', setting('Importo marca da bollo'));
+            if (abs($bolli) > 0 && abs($netto_a_pagare) > abs(setting("Soglia minima per l'applicazione della marca da bollo"))) {
                 $marca_da_bollo = str_replace(',', '.', $bolli);
             } else {
                 $marca_da_bollo = 0.00;
             }
 
-            // Se l'importo è negativo può essere una nota di accredito, quindi cambio segno alla marca da bollo
+            // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo
             if ($netto_a_pagare < 0) {
                 $marca_da_bollo *= -1;
             }
         }
 
         // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
-        $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare(get_var('Iva predefinita'));
+        $qi = 'SELECT percentuale FROM co_iva WHERE id='.prepare(setting('Iva predefinita'));
         $rsi = $dbo->fetchArray($qi);
         $iva_rivalsainps = $rivalsainps / 100 * $rsi[0]['percentuale'];
 
@@ -274,17 +249,47 @@ function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaac
  */
 function get_stato_ordine($idordine)
 {
-    global $dbo;
+    $dbo = database();
 
-    $rs = $dbo->fetchArray('SELECT SUM(qta) AS qta, SUM(qta_evasa) AS qta_evasa FROM or_righe_ordini GROUP BY idordine HAVING idordine='.prepare($idordine));
+    $rs_ordine = $dbo->fetchArray("SELECT IFNULL(SUM(qta), 0) AS qta FROM or_righe_ordini WHERE idordine='".$idordine."'");
+    $qta_ordine = $rs_ordine[0]['qta'];
 
-    if ($rs[0]['qta_evasa'] > 0) {
-        if ($rs[0]['qta'] > $rs[0]['qta_evasa']) {
-            return 'Parzialmente evaso';
-        } elseif ($rs[0]['qta'] == $rs[0]['qta_evasa']) {
-            return 'Evaso';
-        }
-    } else {
-        return 'Non evaso';
+    //Righe dell'ordine in ddt
+    $rs_ddt = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM dt_righe_ddt WHERE idordine='.prepare($idordine));
+    $qta_ddt = $rs_ddt[0]['qta'];
+
+    //Righe dell'ordine in fattura
+    $rs_fattura = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM co_righe_documenti WHERE idordine='.prepare($idordine));
+    $qta_fattura = $rs_fattura[0]['qta'];
+
+    //Righe dell'ordine in fattura passando da ddt
+    $rs_ddt_fattura = $dbo->fetchArray("SELECT IFNULL(SUM(qta), 0) AS qta FROM co_righe_documenti WHERE idddt IN(SELECT DISTINCT idddt FROM dt_righe_ddt WHERE idordine='".$idordine."')");
+    $qta_ddt_fattura = $rs_ddt_fattura[0]['qta'];
+
+    if ($qta_ddt == 0) {
+        $stato = 'Bozza';
     }
+    if ($qta_fattura == 0) {
+        $stato = 'Bozza';
+    }
+    if ($qta_ddt > 0 && $qta_ddt < $qta_ordine && $qta_ordine > 0) {
+        $stato = 'Parzialmente evaso';
+    }
+    if ($qta_ddt == $qta_ordine && $qta_ordine > 0) {
+        $stato = 'Evaso';
+    }
+    if ($qta_fattura > 0 && $qta_fattura < $qta_ordine && $qta_ordine > 0) {
+        $stato = 'Parzialmente fatturato';
+    }
+    if ($qta_fattura == $qta_ordine && $qta_ordine > 0) {
+        $stato = 'Fatturato';
+    }
+    if ($qta_ddt_fattura > 0 && $qta_ddt_fattura < $qta_ordine && $qta_ordine > 0) {
+        $stato = 'Parzialmente fatturato';
+    }
+    if ($qta_ddt_fattura == $qta_ordine && $qta_ordine > 0) {
+        $stato = 'Fatturato';
+    }
+
+    return $stato;
 }

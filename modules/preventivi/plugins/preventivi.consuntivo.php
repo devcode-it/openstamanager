@@ -1,11 +1,8 @@
 <?php
 
 include_once __DIR__.'/../../../core.php';
-include_once $docroot.'/modules/interventi/modutil.php';
 
-/*
-CONSUNTIVO
-*/
+/* CONSUNTIVO */
 
 // Salvo i colori e gli stati degli stati intervento su un array
 $colori = [];
@@ -26,7 +23,7 @@ $totale = 0;
 $totale_stato = [];
 
 // Tabella con riepilogo interventi
-$rsi = $dbo->fetchArray('SELECT *, in_interventi.id, in_interventi.codice, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM co_preventivi_interventi INNER JOIN in_interventi ON co_preventivi_interventi.idintervento=in_interventi.id WHERE co_preventivi_interventi.idpreventivo='.prepare($id_record).' ORDER BY co_preventivi_interventi.idintervento DESC');
+$rsi = $dbo->fetchArray('SELECT *, in_interventi.id, in_interventi.codice, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM in_interventi WHERE in_interventi.id_preventivo='.prepare($id_record).' ORDER BY in_interventi.id DESC');
 if (!empty($rsi)) {
     echo '
 <table class="table table-bordered table-condensed">
@@ -42,7 +39,7 @@ if (!empty($rsi)) {
     // Tabella con i dati
     foreach ($rsi as $int) {
         $int = array_merge($int, get_costi_intervento($int['id']));
-        $totale_stato[$int['idstatointervento']] = sum($totale_stato[$int['idstatointervento']], $int['totale']);
+        $totale_stato[$int['idstatointervento']] = sum($totale_stato[$int['idstatointervento']], $int['totale_scontato']);
 
         // Riga intervento singolo
         echo '
@@ -72,7 +69,7 @@ if (!empty($rsi)) {
         </td>
 
         <td class="text-right">
-            '.Translator::numberToLocale($int['totale']).'
+            '.Translator::numberToLocale($int['totale_scontato']).'
         </td>
     </tr>';
 
@@ -153,7 +150,7 @@ if (!empty($rsi)) {
                     <td>
                         '.Modules::link('Articoli', $r['idarticolo'], $r['descrizione']).(!empty($extra) ? '<small class="help-block">'.implode(', ', $extra).'</small>' : '').'
                     </td>
-                    <td class="text-right">'.Translator::numberToLocale($r['qta']).'</td>
+                    <td class="text-right">'.Translator::numberToLocale($r['qta'], 'qta').'</td>
                     <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_acquisto'] * $r['qta']).'</td>
                     <td class="text-right success">'.Translator::numberToLocale($r['prezzo_vendita'] * $r['qta']).$sconto.'</td>
                 </tr>';
@@ -186,7 +183,7 @@ if (!empty($rsi)) {
                     <td>
                         '.$r['descrizione'].'
                     </td>
-                    <td class="text-right">'.Translator::numberToLocale($r['qta']).'</td>
+                    <td class="text-right">'.Translator::numberToLocale($r['qta'], 'qta').'</td>
                     <td class="text-right danger">'.Translator::numberToLocale($r['prezzo_acquisto'] * $r['qta']).'</td>
                     <td class="text-right success">'.Translator::numberToLocale($r['prezzo_vendita'] * $r['qta']).$sconto.'</td>
                 </tr>';
@@ -204,7 +201,7 @@ if (!empty($rsi)) {
         $totale_km += $int['km'];
         $totale_costo += $int['totale_costo'];
         $totale_addebito += $int['totale_addebito'];
-        $totale += $int['totale'];
+        $totale += $int['totale_scontato'];
     }
 
     // Totali
@@ -276,7 +273,7 @@ echo '
 <div class="well text-center">
     <br><span><big>
         <b>'.tr('Rapporto budget/spesa').':<br>';
-if ($budget > $totale) {
+if ($diff > 0) {
     echo '
         <span class="text-success"><big>+'.Translator::numberToLocale($diff).' &euro;</big></span>';
 } elseif ($diff < 0) {
@@ -299,10 +296,8 @@ echo '
     '.Prints::getLink('Consuntivo preventivo', $id_record, 'btn-primary', tr('Stampa consuntivo')).'
 </div>';
 
-/*
-    Aggiunta interventi se il preventivo é aperto o in attesa o pagato (non si possono inserire interventi collegati ad altri preventivi)
-*/
-if ($stato == 'Accettato' || $stato == 'In lavorazione' || $stato = 'Pagato') {
+// Aggiunta interventi se il preventivo é aperto o in attesa o pagato (non si possono inserire interventi collegati ad altri preventivi)
+if (in_array($record['stato'], ['Accettato', 'In lavorazione', 'Pagato'])) {
     echo '
 <form action="" method="post">
     <input type="hidden" name="op" value="addintervento">
@@ -310,7 +305,7 @@ if ($stato == 'Accettato' || $stato == 'In lavorazione' || $stato = 'Pagato') {
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Aggiungi un altro intervento a questo preventivo').'", "name": "idintervento", "values": "query=SELECT id, CONCAT(\'Intervento \', codice, \' del \',  DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione FROM in_interventi WHERE id NOT IN( SELECT idintervento FROM co_preventivi_interventi WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_righe_contratti WHERE idintervento IS NOT NULL) AND idanagrafica='.prepare($records[0]['idanagrafica']).'" ]}
+            {[ "type": "select", "label": "'.tr('Aggiungi un altro intervento a questo preventivo').'", "name": "idintervento", "values": "query=SELECT id, CONCAT(\'Intervento \', codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione FROM in_interventi WHERE id_preventivo IS NULL AND id NOT IN( SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) AND idanagrafica='.prepare($record['idanagrafica']).'" ]}
         </div>
     </div>
 

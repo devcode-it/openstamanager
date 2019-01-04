@@ -8,55 +8,56 @@ switch ($operazione) {
     case 'addsede':
         $dbo->insert('an_sedi', [
             'idanagrafica' => $id_parent,
-            'nomesede' => $post['nomesede'],
-            'indirizzo' => $post['indirizzo'],
-            'indirizzo2' => $post['indirizzo2'],
-            'citta' => $post['citta'],
-            'cap' => $post['cap'],
-            'km' => $post['km'],
-            'cellulare' => $post['cellulare'],
-            'telefono' => $post['telefono'],
-            'email' => $post['email'],
-            'idzona' => $post['idzona'],
+            'nomesede' => post('nomesede'),
+            'indirizzo' => post('indirizzo'),
+            'citta' => post('citta'),
+            'cap' => post('cap'),
+            'provincia' => strtoupper(post('provincia')),
+            'km' => post('km'),
+            'cellulare' => post('cellulare'),
+            'telefono' => post('telefono'),
+            'email' => post('email'),
+            'id_nazione' => !empty(post('id_nazione')) ? post('id_nazione') : null,
+            'idzona' => post('idzona'),
         ]);
         $id_record = $dbo->lastInsertedID();
 
-        $_SESSION['infos'][] = tr('Aggiunta una nuova sede!');
+        flash()->info(tr('Aggiunta una nuova sede!'));
 
         break;
 
     case 'updatesede':
         $array = [
-            'nomesede' => $post['nomesede'],
-            'indirizzo' => $post['indirizzo'],
-            'indirizzo2' => $post['indirizzo2'],
-            'piva' => $post['piva'],
-            'codice_fiscale' => $post['codice_fiscale'],
-            'citta' => $post['citta'],
-            'cap' => $post['cap'],
-            'provincia' => $post['provincia'],
-            'km' => $post['km'],
-            'cellulare' => $post['cellulare'],
-            'telefono' => $post['telefono'],
-            'email' => $post['email'],
-            'fax' => $post['fax'],
-            'id_nazione' => !empty($post['id_nazione']) ? $post['id_nazione'] : null,
-            'idzona' => $post['idzona'],
-            'gaddress' => $post['gaddress'],
-            'lat' => $post['lat'],
-            'lng' => $post['lng'],
+            'nomesede' => post('nomesede'),
+            'indirizzo' => post('indirizzo'),
+            'codice_destinatario' => post('codice_destinatario'),
+            'piva' => post('piva'),
+            'codice_fiscale' => post('codice_fiscale'),
+            'citta' => post('citta'),
+            'cap' => post('cap'),
+            'provincia' => strtoupper(post('provincia')),
+            'km' => post('km'),
+            'cellulare' => post('cellulare'),
+            'telefono' => post('telefono'),
+            'email' => post('email'),
+            'fax' => post('fax'),
+            'id_nazione' => !empty(post('id_nazione')) ? post('id_nazione') : null,
+            'idzona' => post('idzona'),
+            'gaddress' => post('gaddress'),
+            'lat' => post('lat'),
+            'lng' => post('lng'),
         ];
 
         $dbo->update('an_sedi', $array, ['id' => $id_record]);
 
-        $_SESSION['infos'][] = tr('Salvataggio completato!');
+        flash()->info(tr('Salvataggio completato!'));
 
         break;
 
     case 'deletesede':
         $dbo->query('DELETE FROM `an_sedi` WHERE `id`='.prepare($id_record));
 
-        $_SESSION['infos'][] = tr('Sede eliminata!');
+        flash()->info(tr('Sede eliminata!'));
 
         break;
 }

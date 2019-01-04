@@ -76,7 +76,7 @@ foreach ($righe as $r) {
             <td class='text-center'>";
     if (empty($r['is_descrizione'])) {
         echo '
-                '.(empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'])).' '.$r['um'];
+                '.(empty($r['qta']) ? '' : Translator::numberToLocale($r['qta'], 'qta')).' '.$r['um'];
     }
     echo '
             </td>';
@@ -151,7 +151,7 @@ foreach ($righe as $r) {
 
 $sconto = sum($sconto);
 $imponibile = sum($imponibile);
-$iva = sum($iva, null, 4);
+$iva = sum($iva);
 
 $totale = $imponibile - $sconto;
 

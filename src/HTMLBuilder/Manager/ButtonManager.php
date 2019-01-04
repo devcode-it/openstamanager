@@ -9,7 +9,7 @@ class ButtonManager implements ManagerInterface
 {
     public function manage($options)
     {
-        $result = '';
+        $options['parameters'] = isset($options['parameters']) ? $options['parameters'] : null;
 
         if (isset($options['id'])) {
             $result = $this->link($options);
@@ -22,14 +22,12 @@ class ButtonManager implements ManagerInterface
 
     protected function getInfo($options)
     {
-        $result = [];
-
         if ($options['type'] == 'print') {
             $print = \Prints::get($options['id']);
 
             $result = [
                 'link' => \Prints::getHref($options['id'], $options['id_record'], $options['parameters']),
-                'title' => $print['title'],
+                'title' => tr('Stampa').' '.((strtoupper($print['title']) == $print['title']) ? $print['title'] : lcfirst($print['title'])),
                 'icon' => $print['icon'],
             ];
         } else {
@@ -37,7 +35,7 @@ class ButtonManager implements ManagerInterface
 
             $result = [
                 'link' => ROOTDIR.'/mail.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'],
-                'title' => $template['name'],
+                'title' => tr('Invia').' '.((strtoupper($template['name']) == $template['name']) ? $template['name'] : lcfirst($template['name'])),
                 'icon' => $template['icon'],
                 'type' => 'modal',
             ];
@@ -61,7 +59,7 @@ class ButtonManager implements ManagerInterface
         // Modal
         if (isset($info['type']) && $info['type'] == 'modal') {
             $result = '
-<a '.$class.' data-href="'.$info['link'].'" data-toggle="modal" data-title="'.$title.'" data-target="#bs-popup">';
+<a '.$class.' data-href="'.$info['link'].'" data-toggle="modal" data-title="'.$title.'">';
         }
 
         // Link normale
@@ -79,8 +77,6 @@ class ButtonManager implements ManagerInterface
 
     protected function getList($options)
     {
-        $results = [];
-
         if ($options['type'] == 'print') {
             $results = \Prints::getModulePrints($options['id_module']);
         } else {
@@ -101,9 +97,9 @@ class ButtonManager implements ManagerInterface
             $result = '
 <div class="btn-group">';
 
-            $main = array_search(1, array_column($list, 'main'));
-            if ($main !== false) {
-                $element = $list[$main];
+            $predefined = array_search(1, array_column($list, 'predefined'));
+            if ($predefined !== false) {
+                $element = $list[$predefined];
 
                 $result .= $this->link([
                     'type' => $options['type'],
@@ -111,17 +107,18 @@ class ButtonManager implements ManagerInterface
                     'id_module' => $options['id_module'],
                     'id_record' => $options['id_record'],
                     'class' => $options['class'],
+                    'parameters' => $options['parameters'],
                 ]);
 
-                unset($list[$main]);
+                unset($list[$predefined]);
             }
 
             $result .= '
     <button type="button" class="btn '.$options['class'].' dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        '.($main === false ? $this->defaultText($options).' ' : '').'<span class="caret"></span>
+        '.($predefined === false ? $this->defaultText($options).' ' : '').'<span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
     </button>
-    <ul class="dropdown-menu">';
+    <ul class="dropdown-menu dropdown-menu-right">';
 
             foreach ($list as $element) {
                 $result .= '
@@ -131,6 +128,7 @@ class ButtonManager implements ManagerInterface
             'id_module' => $options['id_module'],
             'id_record' => $options['id_record'],
             'class' => false,
+            'parameters' => $options['parameters'],
         ]).'</li>';
             }
 
@@ -144,6 +142,7 @@ class ButtonManager implements ManagerInterface
                 'id_module' => $options['id_module'],
                 'id_record' => $options['id_record'],
                 'class' => $options['class'],
+                'parameters' => $options['parameters'],
             ]);
         } else {
             $result = ' ';
@@ -154,12 +153,10 @@ class ButtonManager implements ManagerInterface
 
     protected function defaultText($options)
     {
-        $result = '';
-
         if ($options['type'] == 'print') {
-            $result = '<i class="fa fa-print"></i> '.tr('Stampe');
+            $result = '<i class="fa fa-print"></i> '.tr('Stampa');
         } else {
-            $result = '<i class="fa fa-envelope"></i> '.tr('Email');
+            $result = '<i class="fa fa-envelope"></i> '.tr('Invia');
         }
 
         return $result;

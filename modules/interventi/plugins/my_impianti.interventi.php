@@ -1,7 +1,6 @@
 <?php
 
 include_once __DIR__.'/../../../core.php';
-include_once $docroot.'/modules/interventi/modutil.php';
 
 // INTERVENTI ESEGUITI SU QUESTO IMPIANTO
 echo '
@@ -38,7 +37,7 @@ if (!empty($results)) {
                 <td class="text-right">'.Translator::numberToLocale($costi_intervento['totale']).' &euro;</td>
             </tr>';
     }
-    
+
     echo '  <tr>';
     echo '      <td colspan="2" class="text-right">';
     echo '          <b>Totale:</b>';
@@ -47,13 +46,12 @@ if (!empty($results)) {
     echo            '<b>'.Translator::numberToLocale($totale_interventi).' &euro;</b>';
     echo '      </td>';
     echo '  </tr>';
-    
 
     echo '
         </table>';
 } else {
     echo '
-<p>'.tr('Nessun intervento su questo impianto').'...</p>';
+<div class=\'alert alert-info\' ><i class=\'fa fa-info-circle\'></i> '.tr('Nessun intervento su questo impianto').'.</div>';
 }
 
 echo '

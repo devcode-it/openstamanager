@@ -47,7 +47,7 @@ for ($x = 0; $x < $n1; ++$x) {
         echo "	</div>\n";
 
         // Livello 3
-        $query3 = "SELECT * FROM `co_pianodeiconti3` WHERE idpianodeiconti2='".$rs2[$y]['id']."' ORDER BY numero ASC";
+        $query3 = 'SELECT `co_pianodeiconti3`.*, `clienti`.`idanagrafica` AS id_cliente, `fornitori`.`idanagrafica` AS id_fornitore FROM `co_pianodeiconti3` LEFT OUTER JOIN `an_anagrafiche` `clienti` ON `clienti`.`idconto_cliente` = `co_pianodeiconti3`.`id` LEFT OUTER JOIN `an_anagrafiche` `fornitori` ON `fornitori`.`idconto_fornitore` = `co_pianodeiconti3`.`id` WHERE `idpianodeiconti2` = '.prepare($rs2[$y]['id']).' ORDER BY numero ASC';
         $rs3 = $dbo->fetchArray($query3);
         $n3 = sizeof($rs3);
 
@@ -96,8 +96,10 @@ for ($x = 0; $x < $n1; ++$x) {
                     <a href="javascript:;" class="btn btn-primary btn-xs plus-btn"><i class="fa fa-plus"></i></a>';
             }
 
+            $id_anagrafica = $rs3[$z]['id_cliente'] ?: $rs3[$z]['id_fornitore'];
+
             echo '
-                    '.$tools.'&nbsp;'.$rs2[$y]['numero'].'.'.$rs3[$z]['numero'].' '.$rs3[$z]['descrizione'].'
+                    '.$tools.'&nbsp;'.$rs2[$y]['numero'].'.'.$rs3[$z]['numero'].' '.$rs3[$z]['descrizione'].' '.(isset($id_anagrafica) ? Modules::link('Anagrafiche', $id_anagrafica, 'Anagrafica', null) : '').'
                 </span>';
 
             echo '			<div id="conto_'.$rs3[$z]['id']."\" style=\"display:none;\">\n";
@@ -115,7 +117,7 @@ for ($x = 0; $x < $n1; ++$x) {
                 for ($i = 0; $i < sizeof($rs); ++$i) {
                     echo "				<tr><td>\n";
 
-                    if ($rs[$i]['iddocumento'] != '') {
+                    if (!empty($rs[$i]['iddocumento'])) {
                         $module = ($rs[$i]['dir'] == 'entrata') ? Modules::get('Fatture di vendita')['id'] : Modules::get('Fatture di acquisto')['id'];
                         echo "<a data-toggle='modal' data-title='Dettagli movimento...' data-target='#bs-popup' class='clickable' data-href='".$rootdir.'/modules/partitario/dettagli_movimento.php?id_movimento='.$rs[$i]['id'].'&id_conto='.$rs[$i]['idconto'].'&id_module='.$module."' >".$rs[$i]['descrizione']."</a>\n";
                     // echo "					<a href='".$rootdir.'/editor.php?id_module='.$module.'&id_record='.$rs[$i]['iddocumento']."'>".$rs[$i]['descrizione']."</a>\n";
@@ -186,7 +188,7 @@ for ($x = 0; $x < $n1; ++$x) {
         echo "	</table>\n";
 
         // Possibilità di inserire un nuovo conto
-        echo "	<button type='button' class='btn btn-xs btn-primary' data-toggle='tooltip' title='Aggiungi un nuovo conto...' onclick=\"launch_modal( 'Nuovo conto', '".$rootdir.'/modules/partitario/add_conto.php?id='.$rs2[$y]['id']."', 1 );\"><i class='fa fa-plus-circle'></i></button><br><br>\n";
+        echo "	<button type='button' class='btn btn-xs btn-primary' data-toggle='tooltip'  title='".tr('Aggiungi un nuovo conto...')."' onclick=\"launch_modal( '".tr('Nuovo conto')."', '".$rootdir.'/modules/partitario/add_conto.php?id='.$rs2[$y]['id']."', 1 );\"><i class='fa fa-plus-circle'></i></button><br><br>\n";
         echo "</div>\n";
     } // Fine livello 2
 
@@ -265,6 +267,6 @@ for ($x = 0; $x < $n1; ++$x) {
     } else {
         echo "<p align='right'><big><b>RICAVI:</b> ".Translator::numberToLocale(sum($totale_ricavi))." &euro;</big></p>\n";
         echo "<p align='right'><big><b>COSTI:</b> ".Translator::numberToLocale(abs(sum($totale_costi)))." &euro;</big></p>\n";
-        echo "<p align='right'><big><b>UTILE/PERDITA:</b> ".Translator::numberToLocale(sum($totale_ricavi) - sum(abs($totale_costi)))." &euro;</big></p>\n";
+        echo "<p align='right'><big><b>UTILE/PERDITA:</b> ".Translator::numberToLocale(sum($totale_ricavi) - abs(sum($totale_costi)))." &euro;</big></p>\n";
     }
 }

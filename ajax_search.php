@@ -9,7 +9,7 @@ if (!isset($term)) {
     Il risultato è in json
     */
 
-    $term = $get['term'];
+    $term = get('term');
     $term = str_replace('/', '\\/', $term);
 
     $results = AJAX::search($term);

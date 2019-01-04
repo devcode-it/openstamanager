@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once $docroot.'/modules/interventi/modutil.php';
-
 $report_name = 'intervento_'.$records[0]['codice'].'.pdf';
 
 /*
@@ -16,10 +14,10 @@ echo '
     </tr>
 
     <tr>
-        <td class="text-center" style="width:40%">'.tr('Intervento numero').': <b>'.$records[0]['codice'].'</b></td>
+        <td class="text-center" style="width:30%">'.tr('Intervento num.').': <b>'.$records[0]['codice'].'</b></td>
         <td class="text-center" style="width:20%">'.tr('Data').': <b>'.Translator::dateToLocale($records[0]['data_richiesta']).'</b></td>
-        <td class="text-center" style="width:20%">'.tr('Preventivo num.').': <b>'.$records[0]['numero_preventivo'].'</b></td>
-        <td class="text-center" style="width:20%">'.tr('Contratto num.').': <b>'.$records[0]['numero_contratto'].'</b></td>
+        <td class="text-center" style="width:25%">'.tr('Preventivo num.').': <b>'.$records[0]['numero_preventivo'].'</b></td>
+        <td class="text-center" style="width:25%">'.tr('Contratto num.').': <b>'.$records[0]['numero_contratto'].'</b></td>
     </tr>';
 
     // Dati cliente
@@ -33,35 +31,38 @@ echo '
 
     if (!empty($c_piva)) {
         echo '
-    			<td colspan=2>
-    				'.tr('P.Iva').': <b>'.strtoupper($c_piva).'</b>
-    			</td>
-    		</tr>';
+				<td colspan=2>
+					'.tr('P.Iva').': <b>'.strtoupper($c_piva).'</b>
+				</td>';
     } else {
         echo '
     			<td colspan=2>
     				'.tr('C.F.').': <b>'.strtoupper($c_codicefiscale).'</b>
-    			</td>
-    		</tr>';
+    			</td>';
     }
 
-// riga 2
-echo '
-    <tr>
-        <td colspan="4">
-            '.tr('Via').': <b>'.$c_indirizzo.'</b> -
-            '.tr('CAP').': <b>'.$c_cap.'</b> -
-            '.tr('Comune').': <b>'.$c_citta.' ('.strtoupper($c_provincia).')</b>
-        </td>
-    </tr>';
+    echo '</tr>';
+
+    //Indirizzo
+    if (!empty($c_indirizzo) or !empty($c_cap) or !empty($c_citta) or !empty($c_provincia)) {
+        echo '
+			<tr>
+				<td colspan="4">
+					'.((!empty($c_indirizzo)) ? tr('Via').': <b>'.$c_indirizzo.'</b>' : '').'
+					'.((!empty($c_cap)) ? tr('CAP').': <b>'.$c_cap.'</b>' : '').'
+					'.((!empty($c_citta)) ? tr('Città').': <b>'.$c_citta.'</b>' : '').'
+					'.((!empty($c_provincia)) ? tr('Provincia').': <b>'.strtoupper($c_provincia).'</b>' : '').'
+				</td>
+			</tr>';
+    }
 
 echo '
     <tr>
         <td colspan="4">
             '.tr('Telefono').': <b>'.$c_telefono.'</b>';
-if (!empty($c_cellulare)) {
-    echo' - '.tr('Cellulare').': <b>'.$c_cellulare.'</b>';
-}
+    if (!empty($c_cellulare)) {
+        echo' - '.tr('Cellulare').': <b>'.$c_cellulare.'</b>';
+    }
 echo '
         </td>
     </tr>';
@@ -112,7 +113,10 @@ echo '
 $totale = [];
 
 // MATERIALE UTILIZZATO
-$rs2 = $dbo->fetchArray('SELECT *, (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice_art FROM `mg_articoli_interventi` WHERE idintervento='.prepare($id_record)." AND NOT idarticolo='0' ORDER BY idarticolo ASC");
+$rs2 = $dbo->fetchArray("SELECT *,
+    (SELECT codice FROM mg_articoli WHERE id=idarticolo) AS codice_art,
+    (SELECT GROUP_CONCAT(`serial` SEPARATOR ', ') FROM `mg_prodotti` WHERE `id_riga_intervento` = `mg_articoli_interventi`.`idintervento`) AS seriali
+FROM `mg_articoli_interventi` WHERE idintervento=".prepare($id_record)." AND NOT idarticolo='0' ORDER BY idarticolo ASC");
 if (!empty($rs2)) {
     echo '
 <table class="table table-bordered">
@@ -157,13 +161,21 @@ if (!empty($rs2)) {
         // Descrizione
         echo '
             <td>
-                '.$r['descrizione'].'
+                '.$r['descrizione'];
+
+        // Seriali
+        if (!empty($r['seriali'])) {
+            echo '
+                <br><small>'.tr('SN').': '.$r['seriali'].'</small>';
+        }
+
+        echo '
             </td>';
 
         // Quantità
         echo '
             <td class="text-center">
-                '.Translator::numberToLocale($r['qta']).' '.$r['um'].'
+                '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
             </td>';
 
         // Netto
@@ -242,13 +254,23 @@ if (!empty($rs2)) {
         // Quantità
         echo '
         <td class="text-center">
-            '.Translator::numberToLocale($r['qta']).'
+            '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
         </td>';
 
         // Prezzo unitario
         echo '
         <td class="text-center">
-            '.($options['pricing'] ? Translator::numberToLocale($r['prezzo_vendita']).' &euro;' : '-').'
+            '.($options['pricing'] ? Translator::numberToLocale($r['prezzo_vendita']).' &euro;' : '-');
+
+        if ($options['pricing'] && $r['sconto'] > 0) {
+            echo "
+            <br><small class='text-muted'>".tr('sconto _TOT_ _TYPE_', [
+                '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
+                '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
+            ]).'</small>';
+        }
+
+        echo '
         </td>';
 
         // Prezzo totale
@@ -309,7 +331,7 @@ echo '
             </th>
 
             <td class="text-center" style="font-size:6pt;width:35%">
-                '.tr('I dati del ricevente verrano trattati in base al D.lgs n. 196/2003').'
+                '.tr('I dati del ricevente verranno trattati in base al D.lgs n. 196/2003').'
             </td>
         </tr>
     </thead>
@@ -383,7 +405,7 @@ if ($options['pricing']) {
 }
 
 // Timbro e firma
-$firma = !empty($records[0]['firma_file']) ? '<img src="'.$docroot.'/files/interventi/'.$records[0]['firma_file'].'" style="width:70mm;">' : '';
+$firma = !empty($records[0]['firma_file']) ? '<img src="'.DOCROOT.'/files/interventi/'.$records[0]['firma_file'].'" style="width:70mm;">' : '';
 echo '
         <td rowspan="2" class="text-center" style="font-size:8pt;height:30mm;vertical-align:bottom">
             '.$firma.'<br>
@@ -435,9 +457,7 @@ if ($options['pricing']) {
         </th>
     </tr>';
 
-    $sconto_addebito = $costi_intervento['totale_addebito'] - $costi_intervento['totale_scontato'];
-
-    $totale_sconto = $costi_intervento['sconto_globale'] + $sconto_addebito;
+    $totale_sconto = $costi_intervento['totale_addebito'] - $costi_intervento['totale_scontato'];
 
     // Eventuale sconto totale
     if (!empty($totale_sconto)) {
@@ -460,33 +480,23 @@ if ($options['pricing']) {
             </td>
 
             <th class="text-center">
-                <b>'.Translator::numberToLocale($costi_intervento['totale']).' &euro;</b>
+                <b>'.Translator::numberToLocale($costi_intervento['totale_scontato']).' &euro;</b>
             </th>
         </tr>';
     }
-
-    // Leggo iva da applicare
-    $rs1 = $dbo->fetchArray('SELECT percentuale FROM co_iva WHERE id='.prepare(get_var('Iva predefinita')));
-    $percentuale_iva = $rs1[0]['percentuale'];
-
-    $iva = ($costi_intervento['totale'] / 100 * $percentuale_iva);
 
     // IVA
     // Totale intervento
     echo '
     <tr>
         <td colspan="4" class="text-right">
-            <b>'.tr('Iva (_PRC_%)', [
-                '_PRC_' => Translator::numberToLocale($percentuale_iva, 0),
-            ], ['upper' => true]).':</b>
+            <b>'.tr('Iva', [], ['upper' => true]).':</b>
         </td>
 
         <th class="text-center">
-            <b>'.Translator::numberToLocale($iva).' &euro;</b>
+            <b>'.Translator::numberToLocale($costi_intervento['iva_totale']).' &euro;</b>
         </th>
     </tr>';
-
-    $totale = sum($costi_intervento['totale'], $iva);
 
     // TOTALE INTERVENTO
     echo '
@@ -495,7 +505,7 @@ if ($options['pricing']) {
             <b>'.tr('Totale intervento', [], ['upper' => true]).':</b>
     	</td>
     	<th class="text-center">
-    		<b>'.Translator::numberToLocale($totale).' &euro;</b>
+    		<b>'.Translator::numberToLocale($costi_intervento['totale']).' &euro;</b>
     	</th>
     </tr>';
 }

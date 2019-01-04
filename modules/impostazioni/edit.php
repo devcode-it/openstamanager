@@ -10,54 +10,18 @@ echo '
 	<!-- DATI -->
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">'.tr('Valori della sezione').'</h3>
+            <h3 class="panel-title">'.tr('Impostazioni _SEZIONE_', [
+                '_SEZIONE_' => $record['sezione'],
+            ]).'</h3>
 		</div>
 
 		<div class="panel-body">';
 
 foreach ($records as $record) {
-    // Scelta fra più valori
     echo '
-			<div class="col-md-6">';
-    if (preg_match("/list\[(.+?)\]/", $record['tipo'], $m)) {
-        $m = explode(',', $m[1]);
-        $list = '';
-        for ($j = 0; $j < count($m); ++$j) {
-            if ($j != 0) {
-                $list .= ',';
-            }
-            $list .= '\\"'.$m[$j].'\\": \\"'.$m[$j].'\\"';
-        }
-        echo '
-				{[ "type": "select", "label": "'.$record['nome'].'", "name": "'.$record['idimpostazione'].'", "values": "list='.$list.'", "value": "'.$record['valore'].'" ]}';
-    }
-
-    // query
-    elseif (preg_match('/^query=(.+?)$/', $record['tipo'], $m)) {
-        echo '
-				{[ "type": "select", "label": "'.$record['nome'].'", "name": "'.$record['idimpostazione'].'", "values": "'.$record['tipo'].'", "value": "'.$record['valore'].'" ]}';
-    }
-
-    // Boolean (checkbox)
-    elseif ($record['tipo'] == 'boolean') {
-        echo '
-				{[ "type": "checkbox", "label": "'.$record['nome'].'", "name": "'.$record['idimpostazione'].'", "placeholder": "'.tr('Attivo').'", "value": "'.$record['valore'].'" ]}';
-    } elseif ($record['tipo'] == 'textarea') {
-        echo '
-				{[ "type": "textarea", "label": "'.$record['nome'].'", "name": "'.$record['idimpostazione'].'", "value": '.json_encode($record['valore']).' ]}';
-    }
-    // Campo di testo normale
-    else {
-        $numerico = in_array($record['tipo'], ['integer', 'decimal']);
-
-        $tipo = (preg_match('/password/i', $record['nome'], $m)) ? 'password' : $tipo;
-        $tipo = $numerico ? 'number' : 'text';
-
-        echo '
-				{[ "type": "'.$tipo.'", "label": "'.$record['nome'].'", "name": "'.$record['idimpostazione'].'", "value": "'.$record['valore'].'"'.($numerico && $record['tipo'] == 'integer' ? ', "decimals": 0' : '').' ]}';
-    }
-    echo '
-			</div>';
+            <div class="col-md-6">
+                '.Settings::input($record['id']).'
+            </div>';
 }
 
 echo '

@@ -9,7 +9,7 @@
     <br>
     <a href="http://openstamanager.com">Sito web</a>
     &middot;
-    <a href="https://devcode-it.github.io/openstamanager">Documentazione tecnica</a>
+    <a href="https://devcode-it.github.io/openstamanager">Documentazione</a>
     &middot;
     <a href="http://openstamanager.com/forum">Forum</a>
   </p>
@@ -44,7 +44,7 @@ La documentazione ufficiale è disponibile all'indirizzo <https://devcode-it.git
 - [Installazione](#installazione)
     - [Versioni](#versioni)
     - [GitHub](#github)
-- [Perché software open-source](#perch%C3%A9-software-open-source)
+- [Perché software open-source](#perché-software-open-source)
 - [Community](#community)
 - [Contribuire](#contribuire)
 - [Sviluppatori](#sviluppatori)
@@ -57,9 +57,9 @@ La documentazione ufficiale è disponibile all'indirizzo <https://devcode-it.git
 L'installazione del gestionale richiede la presenza di un server web con abilitato il [DBMS MySQL](https://www.mysql.com)  e il linguaggio di programmazione [PHP](http://php.net).
 
 - PHP >= 5.6
-- MySQL >= 5.0
+- MySQL >= 5.6.5
 
-Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Installazione](https://devcode-it.github.io/openstamanager/installazione.html) della documentazione.
+Per ulteriori informazioni sui pacchetti che forniscono questi elementi di default, visitare la sezione [Installazione](https://devcode-it.github.io/openstamanager/2.4.2/docs/installazione/) della documentazione.
 
 ## Installazione
 
@@ -105,7 +105,7 @@ In alternativa alla sequenza di comandi precedente, è possibile utilizzare il s
 yarn run develop-OSM
 ```
 
-Per ulteriori informazioni, visitare le sezioni [Assets](https://devcode-it.github.io/openstamanager/assets.html) e [Framework](https://devcode-it.github.io/openstamanager/framework.html) della documentazione.
+Per ulteriori informazioni, visitare le sezioni [Assets](https://devcode-it.github.io/openstamanager/2.4.2/docs/base/assets/) e [Framework](https://devcode-it.github.io/openstamanager/2.4.2/docs/base/framework/) della documentazione.
 
 ## Perché software open-source
 
@@ -117,7 +117,7 @@ In questo modo è possibile ottenere un'ulteriore garanzia sul funzionamento del
 
 La community è una componente importante in un progetto open-source, perché mette in contatto utenti e programmatori tra di loro e permette pertanto l'individuazione di soluzioni innovative e migliori.
 
-Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), e il nostro forum ufficiale è disponibile all'indirizzo <http://www.openstamanager.com/forum/>, dove potete segnalare i vostri problemi e soddisfare le vostre curiosità nelle sezioni più adeguate:
+Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), e il nostro forum ufficiale è disponibile all'indirizzo <http://www.openstamanager.com/forum>, dove potete segnalare i vostri problemi e soddisfare le vostre curiosità nelle sezioni più adeguate:
 
 - [Idee, suggerimenti e consigli](http://www.openstamanager.com/forum/viewforum.php?f=1)
 - [Problemi con la prima installazione](http://www.openstamanager.com/forum/viewforum.php?f=2)
@@ -129,10 +129,7 @@ Siamo presenti su [Facebook](https://www.facebook.com/openstamanager), e il nost
 
 ## Contribuire
 
-Per poter contribuire, si consiglia di seguire le indicazioni descritte all'interno della [documentazione ufficiale](https://devcode-it.github.io/openstamanager/contribuire.html).
-
-Le impostazione di base per il codice sono disponibili attraverso [editor config](https://github.com/devcode-it/openstamanager/blob/master/.editorconfig) per l'utilizzo semplificato negli editor più comuni.
-Maggiori informazioni sulla configurazione e sul plugin sono disponibili nel sito <http://editorconfig.org>.
+Per poter contribuire ed eseguire i test automatici, si consiglia di seguire le indicazioni descritte all'interno della [documentazione ufficiale](https://github.com/devcode-it/openstamanager/blob/master/.github/CONTRIBUTING.md).
 
 ## Sviluppatori
 

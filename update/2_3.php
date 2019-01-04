@@ -1,27 +1,6 @@
 <?php
 
 /*
-* Inserimento valori di default
-*/
-
-// Permessi di default delle viste
-$gruppi = $database->fetchArray('SELECT `id` FROM `zz_groups`');
-$results = $database->fetchArray('SELECT `id` FROM `zz_views` WHERE `id` NOT IN (SELECT `id_vista` FROM `zz_group_view`)');
-
-$array = [];
-foreach ($results as $result) {
-    foreach ($gruppi as $gruppo) {
-        $array[] = [
-            'id_gruppo' => $gruppo['id'],
-            'id_vista' => $result['id'],
-        ];
-    }
-}
-if (!empty($array)) {
-    $database->insert('zz_group_view', $array);
-}
-
-/*
 * Fix
 */
 
@@ -54,6 +33,9 @@ $database->query('ALTER TABLE `zz_logs` DROP `timestamp`');
 
 $database->query('UPDATE `zz_files` SET `created_at` = `data`');
 $database->query('ALTER TABLE `zz_files` DROP `data`');
+
+// Fix per gli idtipointervento che non si sono copiati in in_interventi_tecnici
+$database->query("UPDATE `in_interventi_tecnici` SET `idtipointervento` = (SELECT `idtipointervento` FROM `in_interventi` WHERE `in_interventi`.`id` = `in_interventi_tecnici`.`idintervento`) WHERE `idtipointervento` = '' ");
 
 /*
 * Rimozione file e cartelle deprecati [in 2.3.1 per risolvere un problema sui percorsi]

@@ -9,7 +9,7 @@ $fields = [
     'Note' => 'note',
     'Note aggiuntive' => 'note_aggiuntive',
     'Buono d\'ordine' => 'buono_ordine',
-    'Righe' => '(SELECT GROUP_CONCAT(descrizione SEPARATOR \' -- \') FROM co_righe_documenti WHERE co_righe_documenti.iddocumento = co_documenti.id)',
+    'Righe' => 'righe.descrizione',
 ];
 
 $query = 'SELECT *, co_documenti.id, co_tipidocumento.descrizione AS tipologia';
@@ -18,7 +18,7 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE idanagrafica IN('.implode(',', $idanagrafiche).') ';
+$query .= ' FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id LEFT JOIN (SELECT GROUP_CONCAT(descrizione SEPARATOR " -- ") AS "descrizione", iddocumento FROM co_righe_documenti GROUP BY iddocumento) righe ON righe.iddocumento=co_documenti.id WHERE idanagrafica IN('.implode(',', $idanagrafiche).') ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE "%'.$term.'%"';
@@ -32,11 +32,11 @@ foreach ($rs as $r) {
     $result = [];
 
     $module = ($r['dir'] == 'uscita') ? 'Fatture di acquisto' : 'Fatture di vendita';
-    $id_module = Modules::get($module)['id'];
+    $link_id = Modules::get($module)['id'];
 
     $numero = empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'];
 
-    $result['link'] = ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$r['id'];
+    $result['link'] = ROOTDIR.'/editor.php?id_module='.$link_id.'&id_record='.$r['id'];
     $result['title'] = $r['tipologia'].' num. '.$numero.' del '.Translator::dateToLocale($r['data']);
     $result['category'] = $r['tipologia'];
 

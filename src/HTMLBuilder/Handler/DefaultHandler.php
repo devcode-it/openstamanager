@@ -3,7 +3,7 @@
 namespace HTMLBuilder\Handler;
 
 /**
- *  Gestione dell'input di tipo "text", "file", "password", "email", "number", "textarea" e "hidden".
+ * Gestione dell'input di tipo "text", "file", "password", "email", "number", "textarea" e "hidden".
  *
  * @since 2.3
  */
@@ -103,6 +103,7 @@ class DefaultHandler implements HandlerInterface
         $values['type'] = $original['type'];
         $values['value'] = $original['value'];
         $values['name'] = $original['name'];
+        $values['id'] = $original['id'];
         $values['class'] = [];
 
         // Delega al metodo "text", per la generazione del codice HTML
@@ -152,13 +153,13 @@ class DefaultHandler implements HandlerInterface
                 // Se non è previsto un valore minimo, lo imposta a 1
                 $values['min-value'] = isset($values['min-value']) ? $values['min-value'] : 0;
 
-                $decimals = \Settings::get('Cifre decimali per quantità');
+                $decimals = setting('Cifre decimali per quantità');
                 $values['decimals'] = $decimals;
             }
         }
 
         // Controllo sulla correttezza sintattica del valore impostato
-        $values['value'] = (\Translator::getFormatter()->isStandardNumber($values['value'])) ? \Translator::numberToLocale($values['value'], $decimals) : $values['value'];
+        $values['value'] = (formatter()->isStandardNumber($values['value'])) ? \Translator::numberToLocale($values['value'], $decimals) : $values['value'];
 
         $values['type'] = 'text';
 

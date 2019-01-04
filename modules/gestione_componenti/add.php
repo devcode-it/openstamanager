@@ -8,13 +8,13 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 		<div class="col-md-12">
-			{[ "type": "text", "label": "<?php echo tr('Nome file'); ?>", "name": "nomefile", "required": 1, "value": "" ]}
+			{[ "type": "text", "label": "<?php echo tr('Nome file'); ?>", "name": "nomefile", "required": 1 ]}
 		</div>
 
 
 		<div class="col-md-12">
 			<a href="#" class="pull-right" id="default">[Default]</a>
-			{[ "type": "textarea", "label": "<?php echo tr('Contenuto'); ?>", "name": "contenuto", "id": "contenuto_add", "required": 1, "class": "autosize", "value": "", "extra": "rows='10'" ]}
+			{[ "type": "textarea", "label": "<?php echo tr('Contenuto'); ?>", "name": "contenuto", "id": "contenuto_add", "required": 1, "class": "autosize", "extra": "rows='10'" ]}
 		</div>
 	</div>
 
@@ -28,12 +28,12 @@ include_once __DIR__.'/../../core.php';
 
 <script type="text/javascript">
 	$(document).ready( function(){
-		$('#default').click( function(){
+		$('#bs-popup #default').click( function(){
 			if (confirm ('Generare un componente di default?')){
 
 				var ini = '[Nome]\ntipo = span\nvalore = "Componente di esempio"\n\n[Marca]\ntipo = input\nvalore =\n\n[Tipo]\ntipo = select\nvalore =\nopzioni = "Tipo 1", "Tipo 2"\n\n[Data di installazione]\ntipo = date\nvalore =\n\n[Note]\ntipo = textarea\nvalore =\n';
 
-				$("#contenuto_add").val(ini);
+				$("#bs-popup #contenuto_add").val(ini);
 			}
 		});
 	});

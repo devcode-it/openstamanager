@@ -4,11 +4,7 @@ include_once __DIR__.'/core.php';
 
 $pageTitle = tr('Log');
 
-if (file_exists($docroot.'/include/custom/top.php')) {
-    include $docroot.'/include/custom/top.php';
-} else {
-    include $docroot.'/include/top.php';
-}
+include_once App::filepath('include|custom|', 'top.php');
 
 echo '
     <div class="box">
@@ -35,7 +31,7 @@ echo '
 if (Auth::admin()) {
     $q = 'SELECT * FROM `zz_logs` ORDER BY `created_at` DESC LIMIT 0, 100';
 } else {
-    $q = 'SELECT * FROM `zz_logs` WHERE `id_utente`='.prepare($_SESSION['id_utente']).' ORDER BY `created_at` DESC LIMIT 0, 100';
+    $q = 'SELECT * FROM `zz_logs` WHERE `id_utente`='.prepare(Auth::user()['id']).' ORDER BY `created_at` DESC LIMIT 0, 100';
 }
 $rs = $dbo->fetchArray($q);
 $n = sizeof($rs);
@@ -81,8 +77,4 @@ echo '
     </div>
     <!-- /.box -->';
 
-if (file_exists($docroot.'/include/custom/bottom.php')) {
-    include $docroot.'/include/custom/bottom.php';
-} else {
-    include $docroot.'/include/bottom.php';
-}
+include_once App::filepath('include|custom|', 'bottom.php');

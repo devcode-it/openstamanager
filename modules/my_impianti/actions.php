@@ -12,63 +12,61 @@ switch ($op) {
         $matricola = post('matricola');
 
         if (!empty($matricola)) {
-            $idanagrafica = post('idanagrafica');
-            $data = Translator::dateToEnglish($_POST['data']);
-            $idtecnico = post('idtecnico');
-            $idsede = post('idsede');
-            $nome = post('nome');
-            $descrizione = post('descrizione');
+            $dbo->update('my_impianti', [
+                'idanagrafica' => post('idanagrafica'),
+                'nome' => post('nome'),
+                'matricola' => $matricola,
+                'id_categoria' => post('id_categoria') ?: null,
+                'descrizione' => post('descrizione'),
+                'idsede' => post('idsede'),
+                'data' => post('data'),
+                'proprietario' => post('proprietario'),
+                'palazzo' => post('palazzo'),
+                'ubicazione' => post('ubicazione'),
+                'idtecnico' => post('idtecnico'),
+                'scala' => post('scala'),
+                'piano' => post('piano'),
+                'interno' => post('interno'),
+                'occupante' => post('occupante'),
+            ], ['id' => $id_record]);
 
-            $proprietario = post('proprietario');
-            $palazzo = post('palazzo');
-            $ubicazione = post('ubicazione');
-            $scala = post('scala');
-            $piano = post('piano');
-            $interno = post('interno');
-            $occupante = post('occupante');
-
-            $query = 'UPDATE my_impianti SET '.
-                ' idanagrafica='.prepare($idanagrafica).','.
-                ' nome='.prepare($nome).','.
-                ' matricola='.prepare($matricola).','.
-                ' descrizione='.prepare($descrizione).','.
-                ' idsede='.prepare($idsede).','.
-                ' data='.prepare($data).','.
-                ' proprietario='.prepare($proprietario).','.
-                ' palazzo='.prepare($palazzo).','.
-                ' ubicazione='.prepare($ubicazione).','.
-                ' idtecnico='.prepare($idtecnico).','.
-                ' scala='.prepare($scala).','.
-                ' piano='.prepare($piano).','.
-                ' interno='.prepare($interno).','.
-                ' occupante='.prepare($occupante).
-                ' WHERE id='.prepare($id_record);
-            $dbo->query($query);
-
-            $_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
+            flash()->info(tr('Informazioni salvate correttamente!'));
 
             // Upload file
             if (!empty($_FILES) && !empty($_FILES['immagine']['name'])) {
-                $filename = $_FILES['immagine']['name'];
-                $tmp = $_FILES['immagine']['tmp_name'];
+                $filename = Uploads::upload($_FILES['immagine'], [
+                    'name' => 'Immagine',
+                    'id_module' => $id_module,
+                    'id_record' => $id_record,
+                ], [
+                    'thumbnails' => true,
+                ]);
 
-                $filename = unique_filename($filename, $upload_dir);
-
-                if (move_uploaded_file($tmp, $upload_dir.'/'.$filename)) {
-                    $dbo->query('UPDATE my_impianti SET immagine='.prepare($filename).' WHERE id='.prepare($id_record));
-                } else {
-                    $_SESSION['warnings'][] = tr('Errore durante il caricamento del file in _DIR_!', [
-                        '_DIR_' => $upload_dir,
+                if (!empty($filename)) {
+                    $dbo->update('my_impianti', [
+                        'immagine' => $filename,
+                    ], [
+                        'id' => $id_record,
                     ]);
+                } else {
+                    flash()->warning(tr('Errore durante il caricamento del file in _DIR_!', [
+                        '_DIR_' => $upload_dir,
+                    ]));
                 }
             }
 
             // Eliminazione file
             if (post('delete_immagine') !== null) {
-                $filename = basename(post('immagine'));
-                delete($upload_dir.'/'.$filename);
+                Uploads::delete($record['immagine'], [
+                    'id_module' => $id_module,
+                    'id_record' => $id_record,
+                ]);
 
-                $dbo->query("UPDATE my_impianti SET immagine='' WHERE id=".prepare($id_record));
+                $dbo->update('my_impianti', [
+                    'immagine' => null,
+                ], [
+                    'id' => $id_record,
+                ]);
             }
         }
         break;
@@ -85,15 +83,17 @@ switch ($op) {
 
             $id_record = $dbo->lastInsertedID();
 
-            $_SESSION['infos'][] = tr('Aggiunto nuovo impianto!');
+            if (isAjaxRequest() && post('source') != '') {
+                echo json_encode(['id' => $id_record, 'text' => $matricola.' - '.$nome]);
+            }
+
+            flash()->info(tr('Aggiunto nuovo impianto!'));
         }
 
         break;
 
     // Carica i campi da compilare del componente
     case 'load_componente':
-        include_once $docroot.'/modules/my_impianti/modutil.php';
-
         $filename = post('filename');
         $idarticolo = post('idarticolo');
 
@@ -118,6 +118,21 @@ switch ($op) {
     case 'delete':
         $dbo->query('DELETE FROM my_impianti WHERE id='.prepare($id_record));
 
-        $_SESSION['infos'][] = tr('Impianto e relativi componenti eliminati!');
+        flash()->info(tr('Impianto e relativi componenti eliminati!'));
         break;
+}
+
+// Operazioni aggiuntive per l'immagine
+if (filter('op') == 'unlink_file' && filter('filename') == $record['immagine']) {
+    $dbo->update('my_impianti', [
+        'immagine' => null,
+    ], [
+        'id' => $id_record,
+    ]);
+} elseif (filter('op') == 'link_file' && filter('nome_allegato') == 'Immagine') {
+    $dbo->update('my_impianti', [
+        'immagine' => $upload,
+    ], [
+        'id' => $id_record,
+    ]);
 }

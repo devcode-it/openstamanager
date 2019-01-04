@@ -4,14 +4,14 @@ switch ($resource) {
     case 'updates':
         $custom_where = !empty($updated) ? ' WHERE updated_at >= '.prepare($updated) : '';
 
-        $excluded = explode(',', Settings::get('Tabelle escluse per la sincronizzazione API automatica'));
+        $excluded = explode(',', setting('Tabelle escluse per la sincronizzazione API automatica'));
 
         // Attenzione: query specifica per MySQL
         $datas = $dbo->fetchArray("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA=".prepare($db_name));
         if (!empty($datas)) {
             foreach ($datas as $data) {
                 if (!in_array($data['TABLE_NAME'], $excluded)) {
-                    $results[$data['TABLE_NAME']] = $dbo->fetchArray('SELECT * FROM '.$data['TABLE_NAME'].$custom_where);
+                    $response[$data['TABLE_NAME']] = $dbo->fetchArray('SELECT * FROM '.$data['TABLE_NAME'].$custom_where);
                 }
             }
         }
@@ -19,7 +19,7 @@ switch ($resource) {
 
     // Attualmente vengono considerate solo le tabelle che eseguono l'eliminazione fisica della riga
     case 'deleted':
-        $excluded = explode(',', Settings::get('Tabelle escluse per la sincronizzazione API automatica'));
+        $excluded = explode(',', setting('Tabelle escluse per la sincronizzazione API automatica'));
 
         // Attenzione: query specifica per MySQL
         $datas = $dbo->fetchArray("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA=".prepare($db_name));
@@ -48,7 +48,7 @@ switch ($resource) {
                         }
                     }
 
-                    $results[$table_name] = $total;
+                    $response[$table_name] = $total;
                 }
             }
         }

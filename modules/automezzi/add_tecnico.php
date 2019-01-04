@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$id_record = $get['idautomezzo'];
+$id_record = get('idautomezzo');
 
 // Form di inserimento responsabili automezzo
 echo '
@@ -16,19 +16,19 @@ echo '
 // Tecnico
 echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "idtecnico", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione=\'Tecnico\') AND deleted=0 ORDER BY ragione_sociale", "value": "'.$idtecnico.'" ]}
+            {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "idtecnico", "required": 1, "values": "query=SELECT an_anagrafiche.idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.idtipoanagrafica) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE (descrizione=\'Tecnico\') AND deleted_at IS NULL ORDER BY ragione_sociale", "value": "'.$idtecnico.'" ]}
         </div>';
 
 // Data di partenza
 echo '
         <div class="col-md-3">
-            {[ "type": "date", "label": "'.tr('Data dal').'", "name": "data_inizio", "required": 1, "maxlength": 10, "value": "-now-" ]}
+            {[ "type": "date", "label": "'.tr('Data dal').'", "name": "data_inizio", "required": 1, "value": "-now-" ]}
         </div>';
 
 // Data di fine
 echo '
         <div class="col-md-3">
-            {[ "type": "date", "label": "'.tr('Data al').'", "name": "data_fine", "value": "", "maxlength": 10, "min-date": "-now-" ]}
+            {[ "type": "date", "label": "'.tr('Data al').'", "name": "data_fine", "min-date": "-now-" ]}
         </div>';
 
 echo '

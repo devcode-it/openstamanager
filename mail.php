@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/core.php';
 
-$template = Mail::getTemplate($get['id']);
+$template = Mail::getTemplate(get('id'));
 $module = Modules::get($id_module);
 $smtp = Mail::get($template['id_smtp']);
 
@@ -35,8 +35,13 @@ if (empty($smtp['port'])) {
 }
 
 if (sizeof($campi_mancanti) > 0) {
-    echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere all'invio completa: <b>".implode(', ', $campi_mancanti).'</b><br/>
-	'.Modules::link('Account email', $smtp['id'], tr('Vai alla scheda account email'), null).'</div>';
+    echo '
+<div class="alert alert-warning">
+    <i class="fa fa-warning"></i> '.tr("Prima di procedere all'invio completa: _VALUES_", [
+            '_VALUES_' => '<b>'.implode(', ', $campi_mancanti).'</b>',
+    ]).'<br/>
+    '.Modules::link('Account email', $smtp['id'], tr('Vai alla scheda account email'), null).'
+</div>';
 }
 
 // Form
@@ -49,14 +54,14 @@ echo '
 
     <p><b>'.tr('Mittente').'</b>: '.$smtp['from_name'].' &lt;'.$smtp['from_address'].'&gt;</p>';
 
-if (!empty($smtp['cc'])) {
+if (!empty($template['cc'])) {
     echo '
-    <p><b>'.tr('CC').'</b>: '.$smtp['cc'].'</p>';
+    <p><b>'.tr('CC').'</b>: '.$template['cc'].'</p>';
 }
 
-if (!empty($smtp['cc'])) {
+if (!empty($template['bcc'])) {
     echo '
-    <p><b>'.tr('CCN').'</b>: '.$smtp['bcc'].'</p>';
+    <p><b>'.tr('CCN').'</b>: '.$template['bcc'].'</p>';
 }
 
 echo '
@@ -76,7 +81,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "checkbox", "label": "'.tr('Notifica di lettura').'", "name": "read_notify", "value": "'.$template['read_notify'].'" ]}
+            {[ "type": "checkbox", "label": "'.tr('Richiedi notifica di lettura').'", "name": "read_notify", "value": "'.$template['read_notify'].'" ]}
         </div>
     </div>';
 
@@ -88,14 +93,20 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($id_module).'" ]}
+            {[ "type": "select", "multiple": "1", "label": "'.tr('Stampe').'", "name": "prints[]", "value": "'.implode(',', $selected).'", "values": "query=SELECT id, title AS text FROM zz_prints WHERE id_module = '.prepare($id_module).' AND enabled=1" ]}
         </div>';
+
+$attachments = [];
+if ($template['name'] == 'Fattura Elettronica') {
+    $attachments = $dbo->fetchArray('SELECT id FROM zz_files WHERE id_module = '.prepare($module['id']).' AND id_record = '.prepare($id_record).' AND category = \'Fattura elettronica\'');
+    $attachments = array_column($attachments, 'id');
+}
 
 // Allegati
 echo '
 
         <div class="col-md-6">
-            {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "attachments[]", "values": "query=SELECT id, nome AS text FROM zz_files WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record)." UNION SELECT id, CONCAT(nome, ' (Azienda)') AS text FROM zz_files WHERE id_module = ".prepare(Modules::get('Anagrafiche')['id'])." AND id_record = (SELECT valore FROM zz_settings WHERE nome = 'Azienda predefinita')\" ]}
+            {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "attachments[]", "value": "'.implode(',', $attachments).'", "values": "query=SELECT id, name AS text FROM zz_files WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record)." UNION SELECT id, CONCAT(name, ' (Azienda)') AS text FROM zz_files WHERE id_module = ".prepare(Modules::get('Anagrafiche')['id'])." AND id_record = (SELECT valore FROM zz_settings WHERE nome = 'Azienda predefinita')\" ]}
         </div>
     </div>";
 
@@ -103,7 +114,7 @@ echo '
 
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "textarea", "label": "'.tr('Contenuto').'", "name": "body", "value": '.json_encode($body).' ]}
+            {[ "type": "ckeditor", "label": "'.tr('Contenuto').'", "name": "body", "value": '.json_encode($body).' ]}
         </div>
     </div>';
 
@@ -125,15 +136,15 @@ echo '
 </div>';
 
 echo '
-<script src="'.$rootdir.'/assets/dist/js/ckeditor/ckeditor.js"></script>';
-
-echo '
 <script>
     var emails = [];
 
-    $(document).ready(function(){
+    $(document).ready(function(){';
+
         // Autocompletamento destinatario
-		$(document).load(globals.rootdir + "/ajax_complete.php?module=Anagrafiche&op=get_email&id_anagrafica='.$variables['id_anagrafica'].'", function(response) {
+        if (!empty($variables['id_anagrafica'])) {
+            echo '
+		$(document).load(globals.rootdir + "/ajax_complete.php?module=Anagrafiche&op=get_email&id_anagrafica='.$variables['id_anagrafica'].(($smtp['pec']) ? '&type=pec' : '').'", function(response) {
             emails = JSON.parse(response);
 
             $(".destinatari").each(function(){
@@ -142,16 +153,15 @@ echo '
                     minLength: 0
                 }).focus(function() {
                     $(this).autocomplete("search", $(this).val())
-                });;
+                });
             });
-        });
 
-        CKEDITOR.replace("body", {
-            toolbar: globals.ckeditorToolbar,
-            language: globals.locale,
-            scayt_autoStartup: true,
-            scayt_sLang: globals.full_locale
-        });
+            aggiungi_destinatario();
+        });';
+        }
+
+        echo '
+
     });
 
     function send(){

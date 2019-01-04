@@ -2,147 +2,124 @@
 
 include_once __DIR__.'/../../core.php';
 
-$id_azienda = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Azienda'")[0]['idtipoanagrafica'];
-$id_cliente = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Cliente'")[0]['idtipoanagrafica'];
-$id_fornitore = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Fornitore'")[0]['idtipoanagrafica'];
-$id_tecnico = $dbo->fetchArray("SELECT idtipoanagrafica FROM an_tipianagrafiche WHERE descrizione='Tecnico'")[0]['idtipoanagrafica'];
+use Modules\Anagrafiche\Anagrafica;
 
 switch (post('op')) {
     case 'update':
-        $post['piva'] = trim(strtoupper($post['piva']));
-        $post['codice_fiscale'] = trim(strtoupper($post['codice_fiscale']));
+        // Informazioni sulla sede
+        $sede = $anagrafica->sedeLegale;
+        $sede->indirizzo = post('indirizzo');
+        $sede->indirizzo2 = post('indirizzo2');
+        $sede->citta = post('citta');
+        $sede->cap = post('cap');
+        $sede->provincia = post('provincia');
+        $sede->km = post('km');
+        $sede->id_nazione = post('id_nazione') ?: null;
+        $sede->gaddress = post('gaddress');
+        $sede->lat = post('lat');
+        $sede->lng = post('lng');
+        $sede->telefono = post('telefono');
+        $sede->cellulare = post('cellulare');
+        $sede->fax = post('fax');
+        $sede->idzona = post('idzona');
+        $sede->email = post('email');
 
-        // Leggo tutti i valori passati dal POST e li salvo in un array
-        $dbo->update('an_anagrafiche', [
-            'ragione_sociale' => $post['ragione_sociale'],
-            'tipo' => $post['tipo'],
-            'piva' => $post['piva'],
-            'codice_fiscale' => $post['codice_fiscale'],
-            'data_nascita' => $post['data_nascita'],
-            'luogo_nascita' => $post['luogo_nascita'],
-            'sesso' => $post['sesso'],
-            'capitale_sociale' => $post['capitale_sociale'],
-            'indirizzo' => $post['indirizzo'],
-            'indirizzo2' => $post['indirizzo2'],
-            'citta' => $post['citta'],
-            'cap' => $post['cap'],
-            'provincia' => $post['provincia'],
-            'km' => $post['km'],
-            'id_nazione' => !empty($post['id_nazione']) ? $post['id_nazione'] : null,
-            'telefono' => $post['telefono'],
-            'cellulare' => $post['cellulare'],
-            'fax' => $post['fax'],
-            'email' => $post['email'],
-            'pec' => $post['pec'],
-            'idsede_fatturazione' => $post['idsede_fatturazione'],
-            'note' => $post['note'],
-            'codiceri' => $post['codiceri'],
-            'codicerea' => $post['codicerea'],
-            'appoggiobancario' => $post['appoggiobancario'],
-            'filiale' => $post['filiale'],
-            'codiceiban' => $post['codiceiban'],
-            'bic' => $post['bic'],
-            'diciturafissafattura' => $post['diciturafissafattura'],
-            'idpagamento_acquisti' => $post['idpagamento_acquisti'],
-            'idpagamento_vendite' => $post['idpagamento_vendite'],
-            'idlistino_acquisti' => $post['idlistino_acquisti'],
-            'idlistino_vendite' => $post['idlistino_vendite'],
-            'idiva_acquisti' => $post['idiva_acquisti'],
-            'idiva_vendite' => $post['idiva_vendite'],
-		   'idbanca_acquisti' => $post['idbanca_acquisti'],
-            'idbanca_vendite' => $post['idbanca_vendite'],
-            'settore' => $post['settore'],
-            'marche' => $post['marche'],
-            'dipendenti' => $post['dipendenti'],
-            'macchine' => $post['macchine'],
-            'idagente' => $post['idagente'],
-            'idrelazione' => $post['idrelazione'],
-            'sitoweb' => $post['sitoweb'],
-            'idzona' => $post['idzona'],
-            'nome_cognome' => $post['nome_cognome'],
-            'iscrizione_tribunale' => $post['iscrizione_tribunale'],
-            'cciaa' => $post['cciaa'],
-            'cciaa_citta' => $post['cciaa_citta'],
-            'n_alboartigiani' => $post['n_alboartigiani'],
-            'foro_competenza' => $post['foro_competenza'],
-            'colore' => $post['colore'],
-            'idtipointervento_default' => $post['idtipointervento_default'],
-            'gaddress' => $post['gaddress'],
-            'lat' => $post['lat'],
-            'lng' => $post['lng'],
-        ], ['idanagrafica' => $id_record]);
+        $sede->save();
+		
+		if (!empty(post('nome')) and !empty(post('cognome')) ){
+			$ragione_sociale = post('nome').' '.post('cognome');
+		}else{
+			$ragione_sociale = post('ragione_sociale');
+		}
+        // Informazioni sull'anagrafica
+        $anagrafica->codice = post('codice');
+        $anagrafica->tipo = post('tipo');
+        $anagrafica->codice_destinatario = post('codice_destinatario');
+        $anagrafica->ragione_sociale = $ragione_sociale;
+        $anagrafica->partita_iva = post('piva');
+        $anagrafica->codice_fiscale = post('codice_fiscale');
+        $anagrafica->tipo = post('tipo');
+        $anagrafica->data_nascita = post('data_nascita');
+        $anagrafica->luogo_nascita = post('luogo_nascita');
+        $anagrafica->sesso = post('sesso');
+        $anagrafica->capitale_sociale = post('capitale_sociale');
+        $anagrafica->pec = post('pec');
+        $anagrafica->idsede_fatturazione = post('idsede_fatturazione');
+        $anagrafica->note = post('note');
+        $anagrafica->codiceri = post('codiceri');
+        $anagrafica->codicerea = post('codicerea');
+        $anagrafica->appoggiobancario = post('appoggiobancario');
+        $anagrafica->filiale = post('filiale');
+        $anagrafica->codiceiban = post('codiceiban');
+        $anagrafica->bic = post('bic');
+        $anagrafica->diciturafissafattura = post('diciturafissafattura');
+        $anagrafica->idpagamento_acquisti = post('idpagamento_acquisti');
+        $anagrafica->idpagamento_vendite = post('idpagamento_vendite');
+        $anagrafica->idlistino_acquisti = post('idlistino_acquisti');
+        $anagrafica->idlistino_vendite = post('idlistino_vendite');
+        $anagrafica->idiva_acquisti = post('idiva_acquisti');
+        $anagrafica->idiva_vendite = post('idiva_vendite');
+        $anagrafica->idbanca_acquisti = post('idbanca_acquisti');
+        $anagrafica->idbanca_vendite = post('idbanca_vendite');
+        $anagrafica->settore = post('settore');
+        $anagrafica->marche = post('marche');
+        $anagrafica->dipendenti = post('dipendenti');
+        $anagrafica->macchine = post('macchine');
+        $anagrafica->idagente = post('idagente');
+        $anagrafica->idrelazione = post('idrelazione');
+        $anagrafica->sitoweb = post('sitoweb');
+		$anagrafica->nome = post('nome');
+        $anagrafica->cognome = post('cognome');
+        $anagrafica->iscrizione_tribunale = post('iscrizione_tribunale');
+        $anagrafica->cciaa = post('cciaa');
+        $anagrafica->cciaa_citta = post('cciaa_citta');
+        $anagrafica->n_alboartigiani = post('n_alboartigiani');
+        $anagrafica->foro_competenza = post('foro_competenza');
+        $anagrafica->colore = post('colore');
+        $anagrafica->idtipointervento_default = post('idtipointervento_default');
+        $anagrafica->id_ritenuta_acconto_acquisti = post('id_ritenuta_acconto_acquisti');
+        $anagrafica->id_ritenuta_acconto_vendite = post('id_ritenuta_acconto_vendite');
+        $anagrafica->split_payment = post('split_payment');
 
-        $_SESSION['infos'][] = str_replace('_NAME_', '"'.$post['ragione_sociale'].'"', "Informazioni per l'anagrafica _NAME_ salvate correttamente!");
+        $anagrafica->tipologie = (array) post('idtipoanagrafica');
+
+        $anagrafica->save();
+
+        flash()->info(str_replace('_NAME_', '"'.post('ragione_sociale').'"', "Informazioni per l'anagrafica _NAME_ salvate correttamente!"));
 
         // Validazione della Partita IVA
-        $check_vat_number = Validate::isValidVatNumber(strtoupper($post['piva']));
-        // Se $check_vat_number non è null e la riposta è negativa --> mostro il messaggio di avviso.
-        if ((!is_null($check_vat_number)) && (!$check_vat_number->valid)) {
-            if (!empty($check_vat_number->error->info)) {
-                $_SESSION['errors'][] = $check_vat_number->error->info;
-            } else {
-                $_SESSION['errors'][] = tr('Attenzione: la partita IVA _IVA_ sembra non essere valida', [
-                    '_IVA_' => $post['piva'],
-                ]);
+        $partita_iva = $anagrafica->partita_iva;
+        $partita_iva = strlen($partita_iva) == 11 ? $anagrafica->nazione->iso2.$partita_iva : $partita_iva;
+
+        $check_vat_number = Validate::isValidVatNumber($partita_iva);
+        if (empty($check_vat_number)) {
+            flash()->warning(tr('Attenzione: la partita IVA _IVA_ sembra non essere valida', [
+                '_IVA_' => $partita_iva,
+            ]));
+        }
+
+        // Validazione del Codice Fiscale, solo per anagrafiche Private e Aziende, ignoro controllo se codice fiscale e settato uguale alla p.iva
+        $codice_fiscale = $anagrafica->codice_fiscale;
+        if ($anagrafica->tipo != 'Ente pubblico' and $codice_fiscale != $partita_iva) {
+            $check_codice_fiscale = Validate::isValidTaxCode($codice_fiscale);
+            if (empty($check_codice_fiscale)) {
+                flash()->warning(tr('Attenzione: il codice fiscale _COD_ sembra non essere valido', [
+                    '_COD_' => $codice_fiscale,
+                ]));
             }
         }
 
         // Aggiorno il codice anagrafica se non è già presente, altrimenti lo ignoro
-        $esiste = $dbo->fetchNum('SELECT idanagrafica FROM an_anagrafiche WHERE codice='.prepare($post['codice']).' AND NOT idanagrafica='.prepare($id_record));
-
-        // Verifica dell'esistenza codice anagrafica
-        if ($esiste) {
-            $_SESSION['errors'][] = tr("Il codice anagrafica inserito esiste già! Inserirne un'altro...");
-        } else {
-            $dbo->query('UPDATE an_anagrafiche SET codice='.prepare($post['codice']).' WHERE idanagrafica='.prepare($id_record));
+        if ($anagrafica->codice != post('codice')) {
+            flash()->error(tr("Il codice anagrafica inserito esiste già! Inserirne un'altro..."));
         }
 
         // Aggiorno gli agenti collegati
-        $dbo->sync('an_anagrafiche_agenti', ['idanagrafica' => $id_record], ['idagente' => (array) $post['idagenti']]);
+        $dbo->sync('an_anagrafiche_agenti', ['idanagrafica' => $id_record], ['idagente' => (array) post('idagenti')]);
 
         // Se l'agente di default è stato elencato anche tra gli agenti secondari lo rimuovo
-        if (!empty($post['idagente'])) {
-            $dbo->query('DELETE FROM an_anagrafiche_agenti WHERE idanagrafica='.prepare($id_record).' AND idagente='.prepare($post['idagente']));
-        }
-
-        // Aggiorno le tipologie di anagrafica
-        $post['idtipoanagrafica'] = (array) $post['idtipoanagrafica'];
-        if (str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
-            $post['idtipoanagrafica'][] = $id_azienda;
-        }
-
-        $dbo->sync('an_tipianagrafiche_anagrafiche', ['idanagrafica' => $id_record], ['idtipoanagrafica' => $post['idtipoanagrafica']]);
-
-        // Verifico se esiste già l'associazione dell'anagrafica a conti del partitario
-        $rs = $dbo->fetchArray('SELECT idconto_cliente, idconto_fornitore FROM an_anagrafiche WHERE idanagrafica='.prepare($id_record));
-        $idconto_cliente = $rs[0]['idconto_cliente'];
-        $idconto_fornitore = $rs[0]['idconto_fornitore'];
-
-        // Creo il relativo conto nel partitario se non esiste
-        if (empty($idconto_cliente) && in_array($id_cliente, $post['idtipoanagrafica'])) {
-            // Calcolo prossimo numero cliente
-            $rs = $dbo->fetchArray("SELECT MAX(CAST(co_pianodeiconti3.numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti2.descrizione='Crediti clienti e crediti diversi'");
-            $new_numero = $rs[0]['max_numero'] + 1;
-            $new_numero = str_pad($new_numero, 6, '0', STR_PAD_LEFT);
-
-            $dbo->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, can_delete, can_edit) VALUES('.prepare($new_numero).', '.prepare($post['ragione_sociale']).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Crediti clienti e crediti diversi'), 1, 1)");
-            $idconto = $dbo->lastInsertedID();
-
-            // Collegamento conto
-            $dbo->query('UPDATE an_anagrafiche SET idconto_cliente='.prepare($idconto).' WHERE idanagrafica='.prepare($id_record));
-        }
-
-        if (empty($idconto_fornitore) && in_array($id_fornitore, $post['idtipoanagrafica'])) {
-            // Calcolo prossimo numero cliente
-            $rs = $dbo->fetchArray("SELECT MAX(CAST(co_pianodeiconti3.numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti2.descrizione='Debiti fornitori e debiti diversi'");
-            $new_numero = $rs[0]['max_numero'] + 1;
-            $new_numero = str_pad($new_numero, 6, '0', STR_PAD_LEFT);
-
-            $dbo->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, can_delete, can_edit) VALUES('.prepare($new_numero).', '.prepare($post['ragione_sociale']).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Debiti fornitori e debiti diversi'), 1, 1)");
-            $idconto = $dbo->lastInsertedID();
-
-            // Collegamento conto
-            $dbo->query('UPDATE an_anagrafiche SET idconto_fornitore='.prepare($idconto).' WHERE idanagrafica='.prepare($id_record));
+        if (!empty(post('idagente'))) {
+            $dbo->query('DELETE FROM an_anagrafiche_agenti WHERE idanagrafica='.prepare($id_record).' AND idagente='.prepare(post('idagente')));
         }
 
         break;
@@ -150,11 +127,9 @@ switch (post('op')) {
     case 'add':
         $idtipoanagrafica = post('idtipoanagrafica');
         $ragione_sociale = post('ragione_sociale');
-
-        // Inserimento anagrafica base
-        // Leggo l'ultimo codice anagrafica per calcolare il successivo
-        $rs = $dbo->fetchArray('SELECT codice FROM an_anagrafiche ORDER BY CAST(codice AS SIGNED) DESC LIMIT 0, 1');
-        $codice = Util\Generator::generate(get_var('Formato codice anagrafica'), $rs[0]['codice']);
+		
+        $anagrafica = Anagrafica::build($ragione_sociale, $idtipoanagrafica);
+        $id_record = $anagrafica->id;
 
         // Se ad aggiungere un cliente è un agente, lo imposto come agente di quel cliente
         // Lettura tipologia dell'utente loggato
@@ -169,104 +144,59 @@ switch (post('op')) {
             }
         }
 
-        $idagente = ($agente_is_logged && in_array($id_cliente, $post['idtipoanagrafica'])) ? $user['idanagrafica'] : 0;
+        $idagente = ($agente_is_logged && in_array($id_cliente, $idtipoanagrafica)) ? $user['idanagrafica'] : 0;
+		
+		$anagrafica->nome = post('nome');
+		$anagrafica->cognome = post('cognome');
+        $anagrafica->partita_iva = post('piva');
+        $anagrafica->codice_fiscale = post('codice_fiscale');
+        $anagrafica->indirizzo = post('indirizzo');
+        $anagrafica->citta = post('citta');
+        $anagrafica->cap = post('cap');
+        $anagrafica->provincia = post('provincia');
+        $anagrafica->telefono = post('telefono');
+        $anagrafica->cellulare = post('cellulare');
+        $anagrafica->email = post('email');
+        $anagrafica->idrelazione = post('idrelazione');
+        $anagrafica->idagente = $idagente;
 
-        // Inserisco l'anagrafica
-        $dbo->insert('an_anagrafiche', [
-            'ragione_sociale' => $ragione_sociale,
-            'codice' => $codice,
-            'piva' => post('piva'),
-            'codice_fiscale' => post('codice_fiscale'),
-            'indirizzo' => post('indirizzo'),
-            'citta' => post('citta'),
-            'cap' => post('cap'),
-            'provincia' => post('provincia'),
-            'telefono' => post('telefono'),
-            'cellulare' => post('cellulare'),
-            'email' => post('email'),
-            'idrelazione' => post('idrelazione'),
-            'idagente' => $idagente,
-        ]);
+        $anagrafica->save();
 
-        $new_id = $dbo->lastInsertedID();
-
-        // Inserisco il rapporto dell'anagrafica (cliente, tecnico, ecc)
-        $dbo->sync('an_tipianagrafiche_anagrafiche', ['idanagrafica' => $new_id], ['idtipoanagrafica' => (array) $idtipoanagrafica]);
-
-        if (in_array($id_azienda, $post['idtipoanagrafica'])) {
-            $dbo->query('UPDATE zz_settings SET valore='.prepare($new_id)." WHERE nome='Azienda predefinita'");
-            $_SESSION['infos'][] = tr('Anagrafica Azienda impostata come predefinita. Per ulteriori informazionioni, visitare "Strumenti -> Impostazioni -> Generali".');
+        if ($anagrafica->isAzienda()) {
+            flash()->info(tr('Anagrafica Azienda impostata come predefinita').'. '.tr('Per ulteriori informazionioni, visitare "Strumenti -> Impostazioni -> Generali"'));
         }
-
-        //se sto inserendo un tecnico, mi copio già le tariffe per le varie attività
-        if (in_array($id_tecnico, $post['idtipoanagrafica'])) {
-            //per ogni tipo di attività
-            $rs_tipiintervento = $dbo->fetchArray('SELECT * FROM in_tipiintervento');
-
-            for ($i = 0; $i < count($rs_tipiintervento); ++$i) {
-                if ($dbo->query('INSERT INTO in_tariffe( idtecnico, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico ) VALUES( '.prepare($new_id).', '.prepare($rs_tipiintervento[$i]['idtipointervento']).', (SELECT costo_orario FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_km FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_diritto_chiamata FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'),   (SELECT costo_orario_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_km_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).'), (SELECT costo_diritto_chiamata_tecnico FROM in_tipiintervento WHERE idtipointervento='.prepare($rs_tipiintervento[$i]['idtipointervento']).') )')) {
-                    //$_SESSION['infos'][] = tr('Informazioni salvate correttamente!');
-                } else {
-                    $_SESSION['errors'][] = tr("Errore durante l'importazione tariffe!");
-                }
-            }
-        }
-
-        // Creo il relativo conto nel partitario (cliente)
-        if (in_array($id_cliente, $post['idtipoanagrafica'])) {
-            // Calcolo prossimo numero cliente
-            $rs = $dbo->fetchArray("SELECT MAX(CAST(co_pianodeiconti3.numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti2.descrizione='Crediti clienti e crediti diversi'");
-            $new_numero = $rs[0]['max_numero'] + 1;
-            $new_numero = str_pad($new_numero, 6, '0', STR_PAD_LEFT);
-
-            // Creazione conto
-            $dbo->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, can_delete, can_edit) VALUES('.prepare($new_numero).', '.prepare($ragione_sociale).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Crediti clienti e crediti diversi'), 1, 1)");
-            $idconto = $dbo->lastInsertedID();
-
-            // Collegamento conto
-            $dbo->query('UPDATE an_anagrafiche SET idconto_cliente='.prepare($idconto).' WHERE idanagrafica='.prepare($new_id));
-        }
-
-        // Creo il relativo conto nel partitario (fornitore)
-        if (in_array($id_fornitore, $post['idtipoanagrafica'])) {
-            // Calcolo prossimo numero cliente
-            $rs = $dbo->fetchArray("SELECT MAX(CAST(co_pianodeiconti3.numero AS UNSIGNED)) AS max_numero FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti2.descrizione='Debiti fornitori e debiti diversi'");
-            $new_numero = $rs[0]['max_numero'] + 1;
-            $new_numero = str_pad($new_numero, 6, '0', STR_PAD_LEFT);
-
-            // Creazione conto
-            $dbo->query('INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, can_delete, can_edit) VALUES('.prepare($new_numero).', '.prepare($ragione_sociale).", (SELECT id FROM co_pianodeiconti2 WHERE descrizione='Debiti fornitori e debiti diversi'), 1, 1)");
-            $idconto = $dbo->lastInsertedID();
-
-            // Collegamento conto
-            $dbo->query('UPDATE an_anagrafiche SET idconto_fornitore='.prepare($idconto).' WHERE idanagrafica='.prepare($new_id));
-        }
-
-        $id_record = $new_id;
 
         // Lettura tipologia della nuova anagrafica
-        if (!empty($idtipoanagrafica)) {
-            $rs = $dbo->fetchArray('SELECT descrizione FROM an_tipianagrafiche WHERE idtipoanagrafica IN ('.implode(',', $idtipoanagrafica).')');
-            $tipoanagrafica_dst = implode(', ', array_column($rs, 'descrizione'));
-        }
-
-        if (isAjaxRequest() && str_contains($tipoanagrafica_dst, post('tipoanagrafica'))) {
+        $descrizioni_tipi = $anagrafica->tipi()->get()->pluck('descrizione')->toArray();
+        if (isAjaxRequest() && in_array(post('tipoanagrafica'), $descrizioni_tipi)) {
             echo json_encode(['id' => $id_record, 'text' => $ragione_sociale]);
         }
 
-        $_SESSION['infos'][] = tr('Aggiunta nuova anagrafica di tipo _TYPE_', [
-            '_TYPE_' => '"'.$tipoanagrafica_dst.'"',
-        ]);
+        flash()->info(tr('Aggiunta nuova anagrafica di tipo _TYPE_', [
+            '_TYPE_' => '"'.implode(', ', $descrizioni_tipi).'"',
+        ]));
 
         break;
 
     case 'delete':
         // Se l'anagrafica non è l'azienda principale, la disattivo
-        if (!str_contains($records[0]['idtipianagrafica'], $id_azienda)) {
-            $dbo->query('UPDATE an_anagrafiche SET deleted = 1 WHERE idanagrafica = '.prepare($id_record).Modules::getAdditionalsQuery($id_module));
+        if (!in_array($id_azienda, $tipi_anagrafica)) {
+            $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE idanagrafica = '.prepare($id_record).Modules::getAdditionalsQuery($id_module));
 
-            $_SESSION['infos'][] = tr('Anagrafica eliminata!');
+            // Se l'anagrafica è collegata ad un utente lo disabilito
+            $dbo->query('UPDATE zz_users SET enabled = 0 WHERE idanagrafica = '.prepare($id_record).Modules::getAdditionalsQuery($id_module));
+
+            flash()->info(tr('Anagrafica eliminata!'));
         }
 
         break;
+}
+
+// Operazioni aggiuntive per il logo
+if (filter('op') == 'link_file') {
+    $nome = 'Logo stampe';
+
+    if (setting('Azienda predefinita') == $id_record && filter('nome_allegato') == $nome) {
+        Settings::setValue($nome, $upload);
+    }
 }

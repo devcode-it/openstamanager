@@ -10,11 +10,11 @@
  */
 
 return '
-<div class="row">
+<div class="row" style="'.((!empty($settings['header-font-size'])) ? 'font-size:'.($settings['header-font-size']).'px;' : '').'"  >
     <div class="col-xs-6">
         <img src="$logo$" alt="Logo" border="0"/>
     </div>
-    <div class="col-xs-6 text-right">
+    <div class="col-xs-6 text-right" >
         <p><b>'.$f_ragionesociale.'</b></p>
         <p>'.$f_indirizzo.'</p>
         <p>'.$f_citta_full.'</p>
@@ -22,5 +22,8 @@ return '
         <p>'.(!empty($f_codicefiscale) ? tr('C.F.').': '.$f_codicefiscale : '').'</p>
         <p>'.(!empty($f_capsoc) ? tr('Cap.Soc.').': '.$f_capsoc : '').'</p>
         <p>'.(!empty($f_telefono) ? tr('Tel').': '.$f_telefono : '').'</p>
+		<p>'.(!empty($f_email) ? tr('Email').': '.$f_email : '').'</p>
+		<p>'.(!empty($f_pec) ? tr('PEC').': '.$f_pec : '').'</p>
+		<p>'.(!empty($f_sitoweb) ? tr('Web').': '.$f_sitoweb : '').'</p>
     </div>
 </div>';

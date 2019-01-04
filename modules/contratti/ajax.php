@@ -11,8 +11,8 @@ if (get('op') == 'get_costo_orario') {
 
 // Copia ordine di servizio da un impianto ad un altro
 elseif (get('op') == 'get_pianificazione_os') {
-    $idcontratto = $get['idcontratto'];
-    $matricola_src = $get['matricola_src'];
+    $idcontratto = get('idcontratto');
+    $matricola_src = get('matricola_src');
 
     $ordiniservizio = [];
 

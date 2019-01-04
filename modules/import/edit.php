@@ -42,9 +42,10 @@ if (empty($id_record)) {
         </div>
     </div>';
 
-    $rows = Import::getFile($id_record, $records[0]['id'], [
+    $rows = Import::getFile($id_record, $record['id'], [
         'limit' => 10,
     ]);
+
     $count = count($rows[0]);
 
     echo '
@@ -65,7 +66,7 @@ if (empty($id_record)) {
         // Individuazione delle corrispondenze
         $selected = null;
         foreach ($fields as $key => $value) {
-            if (in_array($rows[0][$column], $value['names'])) {
+            if (in_array(str_to_lower($rows[0][$column]), $value['names'])) {
                 $first_row = 1;
                 $selected = $key;
                 break;

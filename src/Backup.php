@@ -1,5 +1,8 @@
 <?php
 
+use Ifsnop\Mysqldump\Mysqldump;
+use Util\Zip;
+
 /**
  * Classe per la gestione dei backup.
  *
@@ -10,7 +13,7 @@ class Backup
     /** @var string Pattern per i nomi dei backup */
     const PATTERN = 'OSM backup YYYY-m-d H_i_s';
 
-    /** @var array Elenco delle varabili che identificano i backup giornalieri */
+    /** @var array Elenco delle variabili che identificano i backup giornalieri */
     protected static $daily_replaces = [
         'YYYY', 'm', 'd',
     ];
@@ -30,23 +33,7 @@ class Backup
             throw new UnexpectedValueException();
         }
 
-        return realpath($result);
-    }
-
-    /**
-     * Restituisce il percorso su cui salvare temporeneamente il dump del database.
-     *
-     * @return string
-     */
-    protected static function getDatabaseDirectory()
-    {
-        $result = self::getDirectory().'/database';
-
-        if (!directory($result)) {
-            throw new UnexpectedValueException();
-        }
-
-        return realpath($result);
+        return slashes($result);
     }
 
     /**
@@ -78,24 +65,6 @@ class Backup
         }
 
         return $results;
-    }
-
-    /**
-     * Restituisce l'elenco delle variabili da sostituire normalizzato per l'utilizzo.
-     */
-    protected static function getReplaces()
-    {
-        return Util\Generator::getReplaces();
-    }
-
-    /**
-     * Restituisce il nome previsto per il backup successivo.
-     *
-     * @return string
-     */
-    protected static function getNextName()
-    {
-        return Util\Generator::generate(self::PATTERN);
     }
 
     /**
@@ -159,102 +128,36 @@ class Backup
                 'config.inc.php',
             ],
             'dirs' => [
-                basename($backup_dir),
-                '.couscous',
                 'node_modules',
                 'tests',
+                'tmp',
             ],
         ];
 
-        // Lista dei file da inserire nel backup
-        $files = Symfony\Component\Finder\Finder::create()
-            ->files()
-            ->exclude((array) $ignores['dirs'])
-            ->ignoreDotFiles(true)
-            ->ignoreVCS(true)
-            ->in(DOCROOT)
-            ->in(self::getDatabaseDirectory());
-
-        foreach ((array) $ignores['files'] as $value) {
-            $files->notName($value);
+        if (starts_with($backup_dir, slashes(DOCROOT))) {
+            $ignores['dirs'][] = basename($backup_dir);
         }
 
         // Creazione backup in formato ZIP
         if (extension_loaded('zip')) {
-            $result = self::zipBackup($files, $backup_dir.'/'.$backup_name.'.zip');
+            $result = Zip::create([
+                DOCROOT,
+                self::getDatabaseDirectory(),
+            ], $backup_dir.'/'.$backup_name.'.zip', $ignores);
         }
 
         // Creazione backup attraverso la copia dei file
         else {
-            $result = self::folderBackup($files, $backup_dir.'/'.$backup_name);
+            $result = copyr([
+                DOCROOT,
+                self::getDatabaseDirectory(),
+            ], $backup_dir.'/'.$backup_name.'.zip', $ignores);
         }
 
         // Rimozione cartella temporanea
         delete($database_file);
 
         self::cleanup();
-
-        return $result;
-    }
-
-    /**
-     * Effettua il backup in formato ZIP.
-     *
-     * @param array  $files       Elenco dei file da includere
-     * @param string $destination Nome del file ZIP
-     *
-     * @return bool
-     */
-    protected static function zipBackup($files, $destination)
-    {
-        if (!directory(dirname($destination))) {
-            return false;
-        }
-
-        $zip = new ZipArchive();
-
-        $result = $zip->open($destination, ZIPARCHIVE::CREATE);
-        if ($result === true) {
-            foreach ($files as $file) {
-                $zip->addFile($file, $file->getRelativePathname());
-            }
-
-            $zip->close();
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Effettua il backup attraverso la copia dei file.
-     *
-     * @param array  $files       Elenco dei file da includere
-     * @param string $destination Nome della cartella
-     *
-     * @return bool
-     */
-    protected static function folderBackup($files, $destination)
-    {
-        if (!directory($destination)) {
-            return false;
-        }
-
-        $result = true;
-
-        // Filesystem Symfony
-        $fs = new Symfony\Component\Filesystem\Filesystem();
-        foreach ($files as $file) {
-            $filename = $destination.DIRECTORY_SEPARATOR.$file->getRelativePathname();
-
-            // Copia
-            try {
-                $fs->copy($file, $filename);
-            } catch (Symfony\Component\Filesystem\Exception\IOException $e) {
-                $result = false;
-            }
-        }
 
         return $result;
     }
@@ -268,7 +171,7 @@ class Backup
     {
         $config = App::getConfig();
 
-        $dump = new Ifsnop\Mysqldump\Mysqldump('mysql:host='.$config['db_host'].';dbname='.$config['db_name'], $config['db_username'], $config['db_password'], [
+        $dump = new Mysqldump('mysql:host='.$config['db_host'].';dbname='.$config['db_name'], $config['db_username'], $config['db_password'], [
             'add-drop-table' => true,
         ]);
 
@@ -280,7 +183,7 @@ class Backup
      */
     public static function cleanup()
     {
-        $max_backups = intval(Settings::get('Numero di backup da mantenere'));
+        $max_backups = intval(setting('Numero di backup da mantenere'));
 
         $backups = self::getList();
         $count = count($backups);
@@ -289,5 +192,82 @@ class Backup
         for ($i = 0; $i < $count - $max_backups; ++$i) {
             delete($backups[$i]);
         }
+    }
+
+    /**
+     * Ripristina un backup esistente.
+     *
+     * @param string $path
+     */
+    public static function restore($path, $cleanup = true)
+    {
+        $database = database();
+        $extraction_dir = is_dir($path) ? $path : Zip::extract($path);
+
+        // Rimozione del database
+        $tables = include DOCROOT.'/update/tables.php';
+
+        // Ripristino del database
+        $database_file = $extraction_dir.'/database.sql';
+        if (file_exists($database_file)) {
+            $database->query('SET foreign_key_checks = 0');
+            foreach ($tables as $table) {
+                $database->query('DROP TABLE IF EXISTS `'.$table.'`');
+            }
+            $database->query('DROP TABLE IF EXISTS `updates`');
+
+            // Ripristino del database
+            $database->multiQuery($database_file);
+            $database->query('SET foreign_key_checks = 1');
+        }
+
+        // Salva il file di configurazione
+        $config = file_get_contents(DOCROOT.'/config.inc.php');
+
+        // Copia i file dalla cartella temporanea alla root
+        copyr($extraction_dir, DOCROOT);
+
+        // Ripristina il file di configurazione dell'installazione
+        file_put_contents(DOCROOT.'/config.inc.php', $config);
+
+        // Pulizia
+        if (!empty($cleanup)) {
+            delete($extraction_dir);
+        }
+        delete(DOCROOT.'/database.sql');
+    }
+
+    /**
+     * Restituisce il percorso su cui salvare temporaneamente il dump del database.
+     *
+     * @return string
+     */
+    protected static function getDatabaseDirectory()
+    {
+        $result = self::getDirectory().'/database';
+
+        if (!directory($result)) {
+            throw new UnexpectedValueException();
+        }
+
+        return slashes($result);
+    }
+
+    /**
+     * Restituisce l'elenco delle variabili da sostituire normalizzato per l'utilizzo.
+     */
+    protected static function getReplaces()
+    {
+        return Util\Generator::getReplaces();
+    }
+
+    /**
+     * Restituisce il nome previsto per il backup successivo.
+     *
+     * @return string
+     */
+    protected static function getNextName()
+    {
+        return Util\Generator::generate(self::PATTERN);
     }
 }

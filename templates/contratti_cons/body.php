@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once $docroot.'/modules/interventi/modutil.php';
-
 $report_name = 'contratto_'.$records[0]['numero'].'_cons.pdf';
 
 echo '
@@ -61,7 +59,7 @@ $totale_ore_impiegate = 0;
 $sconto = [];
 $imponibile = [];
 
-$interventi = $dbo->fetchArray('SELECT *, in_interventi.id, in_interventi.codice, (SELECT GROUP_CONCAT(DISTINCT ragione_sociale) FROM in_interventi_tecnici JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = in_interventi_tecnici.idtecnico WHERE idintervento=in_interventi.id) AS tecnici, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT SUM(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM co_righe_contratti JOIN in_interventi ON co_righe_contratti.idintervento=in_interventi.id WHERE co_righe_contratti.idcontratto='.prepare($id_record).' ORDER BY inizio DESC');
+$interventi = $dbo->fetchArray('SELECT *, in_interventi.id, in_interventi.codice, (SELECT GROUP_CONCAT(DISTINCT ragione_sociale) FROM in_interventi_tecnici JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = in_interventi_tecnici.idtecnico WHERE idintervento=in_interventi.id) AS tecnici, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT SUM(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM co_promemoria JOIN in_interventi ON co_promemoria.idintervento=in_interventi.id WHERE co_promemoria.idcontratto='.prepare($id_record).' ORDER BY inizio DESC');
 
 if (!empty($interventi)) {
     // Interventi
@@ -112,7 +110,10 @@ if (!empty($interventi)) {
 
             <td class="text-center">
                 '.Translator::numberToLocale($int['km']).'
-            </td>
+            </td>';
+
+        if ($options['pricing']) {
+            echo '
 
             <td class="text-center">
                 '.Translator::numberToLocale($int['sconto']).' &euro;
@@ -120,13 +121,20 @@ if (!empty($interventi)) {
 
             <td class="text-center">
                 '.Translator::numberToLocale($int['subtotale']).' &euro;
-            </td>
+            </td>';
+        } else {
+            echo '
+            <td class="text-center">-</td>
+            <td class="text-center">-</td>';
+        }
+
+        echo '
         </tr>';
 
         // Calcolo il totale delle ore lavorate
         $tecnici = $dbo->fetchArray('SELECT orario_inizio, orario_fine FROM in_interventi_tecnici WHERE idintervento='.prepare($int['id']));
         foreach ($tecnici as $tecnico) {
-            $totale_ore_impiegate += datediff('n', $tecnico['orario_inizio'], $tecnico['orario_fine']) / 60;
+            $totale_ore_impiegate += calcola_ore_intervento($tecnico['orario_inizio'], $tecnico['orario_fine']);
         }
 
         $ore[] = $int['ore'];
@@ -162,7 +170,10 @@ if (!empty($interventi)) {
 
         <td class="text-center">
             <b>'.Translator::numberToLocale($km).'</b>
-        </td>
+        </td>';
+
+    if ($options['pricing']) {
+        echo '
 
         <td class="text-center">
             <b>'.Translator::numberToLocale($sconto_int).' &euro;</b>
@@ -170,7 +181,14 @@ if (!empty($interventi)) {
 
         <th class="text-center">
             <b>'.Translator::numberToLocale($totale_int).' &euro;</b>
-        </th>
+        </th>';
+    } else {
+        echo '
+        <td class="text-center">-</td>
+        <td class="text-center">-</td>';
+    }
+
+    echo '
     </tr>';
 
     echo '
@@ -244,49 +262,58 @@ if (!empty($interventi)) {
                 // Quantità
                 echo '
             <td class="text-center">
-                '.Translator::numberToLocale($r['qta']).' '.$r['um'].'
+                '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
             </td>';
 
-                // Prezzo unitario
-                echo "
+                if ($options['pricing']) {
+                    // Prezzo unitario
+                    echo "
             <td class='text-center'>
                 ".Translator::numberToLocale($r['prezzo_vendita']).' &euro;';
 
-                if ($r['sconto'] > 0) {
-                    echo "
-                    <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
+                    if ($r['sconto'] > 0) {
+                        echo "
+                <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
                         '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
                         '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
                     ]).'</small>';
 
-                    if ($count <= 1) {
-                        $count += 0.4;
+                        if ($count <= 1) {
+                            $count += 0.4;
+                        }
                     }
-                }
 
-                echo '
+                    echo '
             </td>';
 
-                // Netto
-                $netto = $r['prezzo_vendita'] * $r['qta'];
-                echo '
+                    // Netto
+                    $netto = $r['prezzo_vendita'] * $r['qta'];
+                    echo '
             <td class="text-center">
-                '.Translator::numberToLocale($netto).' &euro;';
+        '.Translator::numberToLocale($netto).' &euro;';
 
-                if ($r['sconto'] > 0) {
-                    echo "
-                    <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
-                        '_TOT_' => Translator::numberToLocale($r['sconto']),
-                        '_TYPE_' => '&euro;',
-                    ]).'</small>';
+                    if ($r['sconto'] > 0) {
+                        echo "
+                <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
+                            '_TOT_' => Translator::numberToLocale($r['sconto']),
+                            '_TYPE_' => '&euro;',
+                        ]).'</small>';
 
-                    if ($count <= 1) {
-                        $count += 0.4;
+                        if ($count <= 1) {
+                            $count += 0.4;
+                        }
                     }
+
+                    echo '
+            </td>';
+                } else {
+                    echo '
+            <td class="text-center">-</td>
+            <td class="text-center">-</td>';
                 }
 
                 echo '
-            </td>
+
         </tr>';
 
                 $sconto_art[] = $r['sconto'];
@@ -305,7 +332,8 @@ if (!empty($interventi)) {
         $imponibile[] = $imponibile_art;
 
         // Totale spesa articoli
-        echo '
+        if ($options['pricing']) {
+            echo '
     <tr>
         <td colspan="2" class="text-right">
             <b>'.tr('Totale materiale utilizzato', [], ['upper' => true]).':</b>
@@ -315,6 +343,7 @@ if (!empty($interventi)) {
             <b>'.Translator::numberToLocale($totale_art).' &euro;</b>
         </th>
     </tr>';
+        }
 
         echo '
 </table>';
@@ -381,49 +410,57 @@ if (!empty($interventi)) {
                 // Quantità
                 echo '
             <td class="text-center">
-                '.Translator::numberToLocale($r['qta']).' '.$r['um'].'
+                '.Translator::numberToLocale($r['qta'], 'qta').' '.$r['um'].'
             </td>';
 
-                // Prezzo unitario
-                echo "
+                if ($options['pricing']) {
+                    // Prezzo unitario
+                    echo "
             <td class='text-center'>
                 ".Translator::numberToLocale($r['prezzo_vendita']).' &euro;';
 
-                if ($r['sconto'] > 0) {
-                    echo "
+                    if ($r['sconto'] > 0) {
+                        echo "
                     <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
                         '_TOT_' => Translator::numberToLocale($r['sconto_unitario']),
                         '_TYPE_' => ($r['tipo_sconto'] == 'PRC' ? '%' : '&euro;'),
                     ]).'</small>';
 
-                    if ($count <= 1) {
-                        $count += 0.4;
+                        if ($count <= 1) {
+                            $count += 0.4;
+                        }
                     }
-                }
 
-                echo '
+                    echo '
             </td>';
 
-                // Netto
-                $netto = $r['prezzo_vendita'] * $r['qta'];
-                echo '
+                    // Netto
+                    $netto = $r['prezzo_vendita'] * $r['qta'];
+                    echo '
             <td class="text-center">
                 '.Translator::numberToLocale($netto).' &euro;';
 
-                if ($r['sconto'] > 0) {
-                    echo "
+                    if ($r['sconto'] > 0) {
+                        echo "
                     <br><small class='text-muted'>- ".tr('sconto _TOT_ _TYPE_', [
                         '_TOT_' => Translator::numberToLocale($r['sconto']),
                         '_TYPE_' => '&euro;',
                     ]).'</small>';
 
-                    if ($count <= 1) {
-                        $count += 0.4;
+                        if ($count <= 1) {
+                            $count += 0.4;
+                        }
                     }
+
+                    echo '
+            </td>';
+                } else {
+                    echo '
+        <td class="text-center">-</td>
+        <td class="text-center">-</td>';
                 }
 
                 echo '
-            </td>
         </tr>';
 
                 $sconto_spese[] = $r['sconto'];
@@ -464,19 +501,26 @@ $imponibile = sum($imponibile);
 
 $totale = $imponibile - $sconto;
 
-$rs = $dbo->fetchArray('SELECT SUM(subtotale) as budget FROM `co_righe2_contratti` WHERE idcontratto = '.prepare($id_record));
+$rs = $dbo->fetchArray('SELECT SUM(subtotale-sconto) as budget FROM `co_righe_contratti` WHERE idcontratto = '.prepare($id_record));
 $budget = $rs[0]['budget'];
 
-$rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe2_contratti` WHERE um='ore' AND idcontratto = ".prepare($id_record));
+$rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe_contratti` WHERE um='ore' AND idcontratto = ".prepare($id_record));
 $totale_ore = $rs[0]['totale_ore'];
 
 $rapporto = $budget - $totale;
 
 // Totale imponibile
 echo '
-<table class="table table-bordered">
+<table class="table table-bordered" style="display:none;">';
+
+if ($options['pricing']) {
+    // Pulisco da informazioni irrilevanti (imponibile,iva)
+    $show = false;
+
+    if ($show) {
+        echo '
     <tr>
-        <td colspan="3" class="text-right border-top">
+        <td colspan="3" class="text-right border-top"  >
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -485,9 +529,9 @@ echo '
         </th>
     </tr>';
 
-// Eventuale sconto incondizionato
-if (!empty($sconto)) {
-    echo '
+        // Eventuale sconto incondizionato
+        if (!empty($sconto)) {
+            echo '
     <tr>
         <td colspan="3" class="text-right border-top">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
@@ -498,8 +542,8 @@ if (!empty($sconto)) {
         </th>
     </tr>';
 
-    // Imponibile scontato
-    echo '
+            // Imponibile scontato
+            echo '
     <tr>
         <td colspan="3" class="text-right border-top">
             <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
@@ -509,14 +553,14 @@ if (!empty($sconto)) {
             <b>'.Translator::numberToLocale($totale).' &euro;</b>
         </th>
     </tr>';
-}
+        }
 
-// IVA
-$rs = $dbo->fetchArray('SELECT * FROM co_iva WHERE co_iva.id = '.prepare(get_var('Iva predefinita')));
-$percentuale_iva = $rs[0]['percentuale'];
-$iva = $totale / 100 * $percentuale_iva;
+        // IVA
+        $rs = $dbo->fetchArray('SELECT * FROM co_iva WHERE co_iva.id = '.prepare(setting('Iva predefinita')));
+        $percentuale_iva = $rs[0]['percentuale'];
+        $iva = $totale / 100 * $percentuale_iva;
 
-echo '
+        echo '
     <tr>
         <td colspan="3" class="text-right border-top">
             <b>'.tr('Iva (_PRC_%)', [
@@ -529,21 +573,22 @@ echo '
         </th>
     </tr>';
 
-$totale = sum($totale, $iva);
+        //$totale = sum($totale, $iva);
+    }
 
-// TOTALE
-echo '
+    // TOTALE
+    echo '
     <tr>
     	<td colspan="3" class="text-right border-top">
-            <b>'.tr('Totale consuntivo', [], ['upper' => true]).':</b>
+            <b>'.tr('Totale consuntivo (no IVA)', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-center">
     		<b>'.Translator::numberToLocale($totale).' &euro;</b>
     	</th>
     </tr>';
 
-// BUDGET
-echo '
+    // BUDGET
+    echo '
     <tr>
         <td colspan="3" class="text-right border-top">
             <b>'.tr('Budget (no IVA)', [], ['upper' => true]).':</b>
@@ -553,8 +598,8 @@ echo '
         </th>
     </tr>';
 
-// RAPPORTO
-echo '
+    // RAPPORTO
+    echo '
     <tr>
         <td colspan="3" class="text-right border-top">
             <b>'.tr('Rapporto budget/spesa (no IVA)', [], ['upper' => true]).':</b>
@@ -563,6 +608,7 @@ echo '
             <b>'.Translator::numberToLocale($rapporto).' &euro;</b>
         </th>
     </tr>';
+}
 
 // ORE RESIDUE
 if (!empty($totale_ore)) {

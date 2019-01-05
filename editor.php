@@ -40,7 +40,18 @@ if (!empty($advanced_sessions)) {
 
 if (empty($record)) {
     echo '
-		<p>'.tr('Record non trovato').'.</p>';
+        <div class="text-center">
+    		<h3 class="text-muted">'.
+                '<i class="fa fa-question-circle"></i> '.tr('Record non trovato').'
+                <br><br>
+                <small class="help-block">'.tr('Stai cercando di accedere ad un record eliminato o non presente').'</small>
+            </h3>
+            <br>
+
+            <a class="btn btn-default" href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
+                <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
+            </a>
+        </div>';
 } else {
     echo '
 		<div class="nav-tabs-custom">
@@ -310,11 +321,13 @@ redirectOperation($id_module, isset($id_parent) ? $id_parent : $id_record);
 // Widget in basso
 echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "right", "place": "editor" )}';
 
-echo '
-		<hr>
-        <a href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
-            <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
-        </a>';
+if (!empty($record)) {
+    echo '
+    		<hr>
+            <a class="btn btn-default" href="'.ROOTDIR.'/controller.php?id_module='.$id_module.'">
+                <i class="fa fa-chevron-left"></i> '.tr('Indietro').'
+            </a>';
+}
 
 echo '
         <script>';

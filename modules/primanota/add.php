@@ -242,7 +242,7 @@ include_once __DIR__.'/../../core.php';
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type='button' class="btn btn-primary" id='btn_crea_modello'><i class="fa fa-plus"></i> <?php echo tr('Aggiungi e crea modello'); ?></button>
+			<button type='button' class="btn btn-default" id='btn_crea_modello'><i class="fa fa-plus"></i> <?php echo tr('Aggiungi e crea modello'); ?></button>
 			<button type="submit" class="btn btn-primary" id='btn_submit'><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 		</div>
 	</div>

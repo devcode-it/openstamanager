@@ -622,17 +622,17 @@ class FatturaElettronica
         return $this->cliente;
     }
 
-	/**
+    /**
      * Restituisce le informazioni sull'anagrafica dell'intermediario.
      *
      * @return array
      */
     public function getIntermediario()
     {
-		if (empty($this->intermediario)) {
-			$intermediario = static::getAnagrafica(setting('Terzo intermediario'));
-			$this->intermediario = $intermediario;
-		}
+        if (empty($this->intermediario)) {
+            $intermediario = static::getAnagrafica(setting('Terzo intermediario'));
+            $this->intermediario = $intermediario;
+        }
 
         return $this->intermediario;
     }
@@ -957,12 +957,11 @@ class FatturaElettronica
 
         // Partita IVA (obbligatoria se presente)
         if (!empty($anagrafica['piva'])) {
+            if (!empty($anagrafica['nazione'])) {
+                $result['IdFiscaleIVA']['IdPaese'] = $anagrafica['nazione'];
+            }
 
-			if (!empty($anagrafica['nazione']))
-				$result['IdFiscaleIVA']['IdPaese'] = $anagrafica['nazione'];
-
-			$result['IdFiscaleIVA']['IdCodice'] = $anagrafica['piva'];
-
+            $result['IdFiscaleIVA']['IdCodice'] = $anagrafica['piva'];
         }
 
         // Codice fiscale
@@ -1079,21 +1078,21 @@ class FatturaElettronica
     }
 
 
-	 /**
-     * Restituisce l'array responsabile per la generazione del tag TerzoIntermediarioOSoggettoEmittente (1.5).
-     *
-     * @return array
-     */
-	protected static function getTerzoIntermediarioOSoggettoEmittente($fattura)
-	{
-		$intermediario = $fattura->getIntermediario();
+    /**
+    * Restituisce l'array responsabile per la generazione del tag TerzoIntermediarioOSoggettoEmittente (1.5).
+    *
+    * @return array
+    */
+    protected static function getTerzoIntermediarioOSoggettoEmittente($fattura)
+    {
+        $intermediario = $fattura->getIntermediario();
 
-		$result = [
+        $result = [
             'DatiAnagrafici' => static::getDatiAnagrafici($intermediario),
         ];
 
-		return $result;
-	}
+        return $result;
+    }
 
 
     /**
@@ -1164,7 +1163,7 @@ class FatturaElettronica
                 'TipoCassa' => setting('Tipo Cassa'),
                 'AlCassa' => $percentuale,
                 'ImportoContributoCassa' => $totale_rivalsainps,
-                'ImponibileCassa' => $fattura->calcola('imponibile'),
+                'ImponibileCassa' => $fattura->imponibile,
                 'AliquotaIVA' => $iva['percentuale'],
             ];
 
@@ -1198,7 +1197,7 @@ class FatturaElettronica
         // Importo Totale Documento (2.1.1.9)
         // Importo totale del documento al netto dell'eventuale sconto e comprensivo di imposta a debito del cessionario / committente
         $fattura = Modules\Fatture\Fattura::find($documento['id']);
-        $result['ImportoTotaleDocumento'] = $fattura->calcola('netto');
+        $result['ImportoTotaleDocumento'] = $fattura->netto;
 
         return $result;
     }
@@ -1458,10 +1457,10 @@ class FatturaElettronica
             }
 
             if (empty($percentuale)) {
-				//Controllo aggiuntivo codice_natura_fe per evitare che venga riportato il tag vuoto
-				if (!empty($iva['codice_natura_fe'])){
-					$dettaglio['Natura'] = $iva['codice_natura_fe'];
-				}
+                //Controllo aggiuntivo codice_natura_fe per evitare che venga riportato il tag vuoto
+                if (!empty($iva['codice_natura_fe'])) {
+                    $dettaglio['Natura'] = $iva['codice_natura_fe'];
+                }
             }
 
             if (!empty($riga['riferimento_amministrazione'])) {
@@ -1657,11 +1656,11 @@ class FatturaElettronica
             'CessionarioCommittente' => static::getCessionarioCommittente($fattura),
         ];
 
-		//Terzo Intermediario o Soggetto Emittente
-		if (!empty(setting('Terzo intermediario'))){
-			$result['TerzoIntermediarioOSoggettoEmittente'] = static::getTerzoIntermediarioOSoggettoEmittente($fattura);
-			$result['SoggettoEmittente'] = 'TZ';
-		}
+        //Terzo Intermediario o Soggetto Emittente
+        if (!empty(setting('Terzo intermediario'))) {
+            $result['TerzoIntermediarioOSoggettoEmittente'] = static::getTerzoIntermediarioOSoggettoEmittente($fattura);
+            $result['SoggettoEmittente'] = 'TZ';
+        }
 
         return $result;
     }

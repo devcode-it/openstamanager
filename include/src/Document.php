@@ -27,22 +27,18 @@ abstract class Document extends Model
     abstract public function scontoGlobale();
 
     /**
-     *  Calcola la somma degli attributi indicati come parametri.
+     * Calcola la somma degli attributi indicati come parametri.
+     * Il metodo **non** deve essere adattato per ulteriori funzionalità: deve esclusivamente calcolare la somma richiesta in modo esplicito dagli argomenti.
      *
      * @param mixed ...$args
      *
      * @return float
      */
-    public function calcola(...$args)
+    protected function calcola(...$args)
     {
         $result = 0;
         foreach ($args as $arg) {
             $result += $this->getRigheContabili()->sum($arg);
-        }
-
-        // Aggiunta eventuale iva rivalsa inps
-        if (in_array ('iva', $args) ) {
-            $result = sum($result, $this->iva_rivalsainps);
         }
 
         return $this->round($result);
@@ -85,7 +81,7 @@ abstract class Document extends Model
      */
     public function getIvaAttribute()
     {
-        return $this->calcola('iva');
+        return $this->calcola('iva', 'iva_rivalsa_inps');
     }
 
     /**
@@ -105,7 +101,7 @@ abstract class Document extends Model
      */
     public function getIvaRivalsaINPSAttribute()
     {
-        return $this->calcola('iva_rivalsainps');
+        return $this->calcola('iva_rivalsa_inps');
     }
 
     /**

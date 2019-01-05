@@ -83,12 +83,12 @@ abstract class Row extends Description
 
     public function getRivalsaINPSAttribute()
     {
-        return ($this->imponibile_scontato) / 100 * $this->rivalsa->percentuale;
+        return $this->imponibile_scontato / 100 * $this->rivalsa->percentuale;
     }
 
     public function getIvaRivalsaINPSAttribute()
     {
-        return $this->getRivalsaINPSAttribute() / 100 * $this->aliquota->percentuale;
+        return $this->rivalsa_inps / 100 * $this->aliquota->percentuale;
     }
 
     public function getRitenutaAccontoAttribute()

@@ -23,7 +23,7 @@ if (!in_array($record['stato'], ['Bozza', 'Rifiutato', 'In attesa di conferma'])
 	</div>';
 } else {
     echo '
-	<button type="button" class="btn btn-warning" onclick="if(confirm(\'Vuoi creare un nuova revisione?\')){$(\'#form_crearevisione\').submit();}"><i class="fa fa-copy"></i>'.tr('Crea nuova revisione...').'</button>';
+	<button type="button" class="btn btn-warning" onclick="if(confirm(\'Vuoi creare un nuova revisione?\')){$(\'#form_crearevisione\').submit();}"><i class="fa fa-edit"></i> '.tr('Crea nuova revisione...').'</button>';
 }
 
 //duplica preventivo

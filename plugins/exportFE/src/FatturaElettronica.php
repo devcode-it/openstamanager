@@ -621,7 +621,7 @@ class FatturaElettronica
 
         return $this->cliente;
     }
-	
+
 	/**
      * Restituisce le informazioni sull'anagrafica dell'intermediario.
      *
@@ -633,11 +633,11 @@ class FatturaElettronica
 			$intermediario = static::getAnagrafica(setting('Terzo intermediario'));
 			$this->intermediario = $intermediario;
 		}
-		
+
         return $this->intermediario;
     }
-	
-	
+
+
 
     /**
      * Restituisce le informazioni riguardanti un anagrafica sulla base dell'identificativo fornito.
@@ -957,12 +957,12 @@ class FatturaElettronica
 
         // Partita IVA (obbligatoria se presente)
         if (!empty($anagrafica['piva'])) {
-            
+
 			if (!empty($anagrafica['nazione']))
 				$result['IdFiscaleIVA']['IdPaese'] = $anagrafica['nazione'];
-			
+
 			$result['IdFiscaleIVA']['IdCodice'] = $anagrafica['piva'];
-			
+
         }
 
         // Codice fiscale
@@ -1077,24 +1077,24 @@ class FatturaElettronica
 
         return $result;
     }
-	
-	
+
+
 	 /**
      * Restituisce l'array responsabile per la generazione del tag TerzoIntermediarioOSoggettoEmittente (1.5).
      *
      * @return array
      */
 	protected static function getTerzoIntermediarioOSoggettoEmittente($fattura)
-	{	
+	{
 		$intermediario = $fattura->getIntermediario();
-		
+
 		$result = [
             'DatiAnagrafici' => static::getDatiAnagrafici($intermediario),
         ];
-		
+
 		return $result;
 	}
-	
+
 
     /**
      * Restituisce l'array responsabile per la generazione del tag DatiGeneraliDocumento.
@@ -1117,11 +1117,19 @@ class FatturaElettronica
         // Ritenuta d'Acconto
         $righe = $fattura->getRighe();
         $id_ritenuta = null;
-        $totale = 0;
+        $id_rivalsainps = null;
+        $totale_rivalsainps = 0;
+        $totale_ritenutaacconto = 0;
         foreach ($righe as $riga) {
             if (!empty($riga['idritenutaacconto'])) {
                 $id_ritenuta = $riga['idritenutaacconto'];
-                $totale += $riga['ritenutaacconto'];
+                $totale_ritenutaacconto += $riga['ritenutaacconto'];
+            }
+
+            if (!empty($riga['idrivalsainps'])) {
+                $id_rivalsainps = $riga['idrivalsainps'];
+                $totale_rivalsainps += $riga['rivalsainps'];
+                $aliquota_iva_rivalsainps = $riga['idiva'];
             }
         }
 
@@ -1130,7 +1138,7 @@ class FatturaElettronica
 
             $result['DatiRitenuta'] = [
                 'TipoRitenuta' => ($azienda['tipo'] == 'Privato') ? 'RT01' : 'RT02',
-                'ImportoRitenuta' => $totale,
+                'ImportoRitenuta' => $totale_ritenutaacconto,
                 'AliquotaRitenuta' => $percentuale,
                 'CausalePagamento' => setting("Causale ritenuta d'acconto"),
             ];
@@ -1146,16 +1154,17 @@ class FatturaElettronica
         }
 
         // Cassa Previdenziale
-        /*
-        if (!empty($documento['bollo'])) {
-            $id_iva = setting('Iva predefinita');
-            $iva = $database->fetchOne('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($id_iva));
+        if (!empty($id_rivalsainps)) {
+            $iva = database()->fetchOne('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($aliquota_iva_rivalsainps));
+            $percentuale = database()->fetchOne('SELECT percentuale FROM co_rivalsainps WHERE id = '.prepare($id_rivalsainps))['percentuale'];
+
+            $fattura = Modules\Fatture\Fattura::find($documento['id']);
 
             $dati_cassa = [
                 'TipoCassa' => setting('Tipo Cassa'),
-                'AlCassa' => '',
-                'ImportoContributoCassa' => '',
-                'ImponibileCassa' => '',
+                'AlCassa' => $percentuale,
+                'ImportoContributoCassa' => $totale_rivalsainps,
+                'ImponibileCassa' => $fattura->calcola('imponibile'),
                 'AliquotaIVA' => $iva['percentuale'],
             ];
 
@@ -1168,7 +1177,7 @@ class FatturaElettronica
             $dati_cassa['RiferimentoAmministrazione'] = '';
 
             $result['DatiCassaPrevidenziale'] = $dati_cassa;
-        }*/
+        }
 
         // Sconto globale (2.1.1.8)
         $documento['sconto_globale'] = floatval($documento['sconto_globale']);
@@ -1647,7 +1656,7 @@ class FatturaElettronica
             'CedentePrestatore' => static::getCedentePrestatore($fattura),
             'CessionarioCommittente' => static::getCessionarioCommittente($fattura),
         ];
-		
+
 		//Terzo Intermediario o Soggetto Emittente
 		if (!empty(setting('Terzo intermediario'))){
 			$result['TerzoIntermediarioOSoggettoEmittente'] = static::getTerzoIntermediarioOSoggettoEmittente($fattura);

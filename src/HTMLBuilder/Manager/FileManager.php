@@ -112,6 +112,11 @@ class FileManager implements ManagerInterface
                 <button class="btn btn-xs btn-info" data-target="#bs-popup2" type="button" data-title="'.prepareToField($r['name']).' <small><em>('.$r['filename'].')</em></small>" data-href="#view-'.$r['id'].'">
                     <i class="fa fa-eye"></i>
                 </button>';
+                    } elseif (strtolower($extension) == 'xml' ) {
+                        $result .= '
+                        <a class="btn btn-xs btn-info" href="'.ROOTDIR.'/plugins/exportFE/view.php?id_record='.$r['id'].'" target="_blank">
+                            <i class="fa fa-eye"></i>
+                        </a>';
                     } else {
                         $result .= '
                 <button class="btn btn-xs btn-default disabled" title="'.tr('Anteprima file non disponibile').'" disabled>

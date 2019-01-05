@@ -1642,10 +1642,6 @@ class FatturaElettronica
      */
     protected static function getHeader($fattura)
     {
-        $azienda = static::getAzienda();
-        $documento = $fattura->getDocumento();
-        $cliente = $fattura->getCliente();
-
         $result = [
             'DatiTrasmissione' => static::getDatiTrasmissione($fattura),
             'CedentePrestatore' => static::getCedentePrestatore($fattura),

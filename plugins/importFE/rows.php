@@ -16,20 +16,25 @@ echo '
 
 // Fornitore
 $fornitore = $fattura_pa->getHeader()['CedentePrestatore']['DatiAnagrafici'];
-
 $ragione_sociale = $fornitore['Anagrafica']['Denominazione'] ?: $fornitore['Anagrafica']['Nome'].' '.$fornitore['Anagrafica']['Cognome'];
 $codice_fiscale = $fornitore['CodiceFiscale'];
 $partita_iva = $fornitore['IdFiscaleIVA']['IdCodice'];
 
-echo '
-    <h4>'.tr('Fornitore').'</h4>
+$sede = $fattura_pa->getHeader()['CedentePrestatore']['Sede'];
 
-    <p>'.tr('Le informazioni principali del fornitore sono le seguenti').':</p>
-    <ul>
-        <li>'.tr('Ragione Sociale').': '.$ragione_sociale.'</li>
-        <li>'.tr('Codice Fiscale').': '.$codice_fiscale.'</li>
-        <li>'.tr('Partita IVA').': '.$partita_iva.'</li>
-    </ul>';
+$cap = $sede['CAP'];
+$citta = $sede['Comune'];
+$provincia = $sede['Provincia'];
+
+echo '
+    <h4>'.
+        $ragione_sociale.'<br>
+        <small>
+            '.( !empty($codice_fiscale) ? (tr('Codice Fiscale').': '.$codice_fiscale.'<br>') : '' ).'
+            '.( !empty($partita_iva) ? (tr('Partita IVA').': '.$partita_iva.'<br>') : '' ).'
+            '.$cap.' '.$citta.' ('.$provincia.')<br>
+        </small>
+    </h4><br>';
 
 // Pagamenti
 $pagamenti = $fattura_pa->getBody()['DatiPagamento'];

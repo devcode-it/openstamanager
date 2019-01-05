@@ -47,8 +47,21 @@ if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom
                 elseif (preg_match('/^color_(.+?)$/', $total['fields'][$i], $m)) {
                     $total['search_inside'][$i] = '`color_title_'.$m[1].'`';
                 }
-
-                $search_filters[] = $total['search_inside'][$i].' LIKE '.prepare('%'.trim($columns[$i]['search']['value'].'%'));
+                if (strpos($columns[$i]['search']['value'],"&lt;")!==false) {
+                    if (strpos($columns[$i]['search']['value'],"=")!==false) {
+                        $search_filters[] = $total['search_inside'][$i].' <= '.prepare(Filter::parse(str_replace('=', '', str_replace('&lt;', '', $columns[$i]['search']['value']))));
+                    } else {
+                        $search_filters[] = $total['search_inside'][$i].' < '.prepare(Filter::parse(str_replace('&lt;', '', $columns[$i]['search']['value'])));
+                    }
+                } elseif (strpos($columns[$i]['search']['value'],"&gt;")!==false) {
+                    if (strpos($columns[$i]['search']['value'],"=")!==false) {
+                        $search_filters[] = $total['search_inside'][$i].' >= '.prepare(Filter::parse(str_replace('=', '', str_replace('&gt;', '', $columns[$i]['search']['value']))));
+                    } else {
+                        $search_filters[] = $total['search_inside'][$i].' > '.prepare(Filter::parse(str_replace('&gt', '', $columns[$i]['search']['value'])));
+                    }
+                } else {
+                    $search_filters[] = $total['search_inside'][$i].' LIKE '.prepare('%'.trim($columns[$i]['search']['value'].'%'));
+                }
             }
         }
     }

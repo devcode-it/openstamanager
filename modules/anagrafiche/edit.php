@@ -41,30 +41,30 @@ if (!$cliente) {
 					<div class="col-md-6">
 						{[ "type": "text", "label": "<?php echo tr('Denominazione'); ?>", "name": "ragione_sociale", "required": 1, "value": "$ragione_sociale$" ]}
 					</div>
-					
+
 					<div class="col-md-3">
                         {[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask text-uppercase", "value": "$piva$" ]}
                     </div>
-					
+
 					<div class="col-md-3">
 						{[ "type": "select", "label": "<?php echo tr('Tipologia'); ?>", "name": "tipo", "values": "list=\"\": \"<?php echo tr('Non specificato'); ?>\", \"Azienda\": \"<?php echo tr('Azienda'); ?>\", \"Privato\": \"<?php echo tr('Privato'); ?>\", \"Ente pubblico\": \"<?php echo tr('Ente pubblico'); ?>\"", "value": "$tipo$" ]}
 					</div>
 				</div>
-				
+
 				<div class="row">
-				
+
 					<div class="col-md-4">
 							{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 0, "value": "$nome$" ]}
 					</div>
-					
+
 					<div class="col-md-4">
 							{[ "type": "text", "label": "<?php echo tr('Cognome'); ?>", "name": "cognome", "required": 0, "value": "$cognome$" ]}
 					</div>
-					 
+
 					<div class="col-md-4">
                         {[ "type": "text", "label": "<?php echo tr('Codice fiscale'); ?>", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask text-uppercase", "value": "$codice_fiscale$" ]}
                     </div>
-					
+
 				</div>
 
 				<!-- RIGA PER LE ANAGRAFICHE CON TIPOLOGIA 'PRIVATO' -->
@@ -86,7 +86,7 @@ if (!$cliente) {
 				<?php
 } ?>
 
-              
+
 
 				<div class="row">
 					<div class="col-md-2">
@@ -264,7 +264,7 @@ if (!empty($google)) {
 						{[ "type": "select", "label": "<?php echo tr('Listino articoli'); ?>", "name": "idlistino_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_acquisti$", "extra": "<?php echo ($fornitore) ? '' : 'readonly'; ?>" ]}
 					</div>
                     <div class="col-md-6">
-				
+
 
 <?php
 
@@ -365,7 +365,7 @@ if (!empty($google)) {
         {[ "type": "select", "label": "<?php echo tr('Piano dei conti cliente'); ?>", "name": "piano_dei_conti_cliente", "values": "list=\"\": \"<?php echo $piano_dei_conti_cliente; ?>\"", "readonly": 1, "value": "", "extra": "" ]}
 
                     </div>
-                    
+
               </div>
 
 
@@ -443,21 +443,21 @@ if (!empty($google)) {
 						{[ "type": "text", "label": "<?php echo tr('Codice BIC'); ?>", "name": "bic", "value": "$bic$" ]}
 					</div>
 				</div>
-				
+
 
 
 				<div class="row">
-				
+
 					<div class="col-md-3">
                         {[ "type": "checkbox", "label": "<?php echo tr('Abilitare lo split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Lo split payment è disponibile per le anagrafiche di tipologia \"Ente pubblico\" o \"Azienda\" ed <strong>&egrave; obbligatorio</strong> per:<ul><li>Stato;</li><li>organi statali ancorch&eacute; dotati di personalit&agrave; giuridica;</li><li>enti pubblici territoriali e dei consorzi tra essi costituiti;</li><li>Camere di Commercio;</li><li>Istituti universitari;</li><li>ASL e degli enti ospedalieri;</li><li>enti pubblici di ricovero e cura aventi prevalente carattere scientifico;</li><li>enti pubblici di assistenza e beneficienza;</li><li>enti di previdenza;</li><li>consorzi tra questi costituiti.</li></ul>'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>", "extra" : "<?php echo ($record['tipo'] == 'Ente pubblico' or $record['tipo'] == 'Azienda')  ? '' : 'disabled'; ?>" ]}
                     </div>
-					
+
 					<div class="col-md-9">
 						{[ "type": "text", "label": "<?php echo tr('Dicitura fissa in fattura'); ?>", "name": "diciturafissafattura", "value": "$diciturafissafattura$" ]}
 					</div>
 				</div>
-				
-				
+
+
 				<?php
                  }
                 ?>
@@ -650,42 +650,29 @@ if (empty($record['deleted_at'])) {
 			$("#lat").val(result.geometry.location.lat());
 			$("#lng").val(result.geometry.location.lng());
         });
-		
-		/* Campo nome e cognome*/
-		if ($('#ragione_sociale').val()!='' && $('#ragione_sociale').val() != $('#nome').val()+' '+$('#cognome').val()){
-			$('#nome').prop('disabled', true);
-			$('#cognome').prop('disabled', true);
-		};
-		
-		if ($('#nome').val()!='' && $('#cognome').val()!=''){
-			$('#ragione_sociale').prop('disabled', true);
-			$("#ragione_sociale").attr('required', false);
-		};
-		
+
+		// Abilito solo ragione sociale oppure solo nome-cognome in base a cosa compilo
 		$('#nome, #cognome').keyup(function(){
-			if ($('#nome').val() =='' && $('#cognome').val() =='' ){
-				$('#ragione_sociale').prop('disabled', false);
-				$("#ragione_sociale").attr('required', true);
+			if ($('#nome').val() == '' && $('#cognome').val() == '' ){
+                $('#nome, #cognome').prop('disabled', true).prop('required', false);
+				$('#ragione_sociale').prop('disabled', false).prop('required', true);
 			}else{
-				
-				$('#ragione_sociale').prop('disabled', true);
-				$("#ragione_sociale").attr('required', false);
+                $('#nome, #cognome').prop('disabled', false).prop('required', true);
+				$('#ragione_sociale').prop('disabled', true).prop('required', false);
 			}
 		});
-		
-		$('#ragione_sociale').keyup(function(){
-			
-			if ($(this).val()!=''){
-				$('#nome').prop('disabled', true);
-				$('#cognome').prop('disabled', true);
-				$("#ragione_sociale").attr('required', true);
+
+        $('#ragione_sociale').keyup(function(){
+			if ($('#ragione_sociale').val() == '' ){
+                $('#nome, #cognome').prop('disabled', false).prop('required', true);
+                $('#ragione_sociale').prop('disabled', true).prop('required', false);
 			}else{
-				$('#nome').prop('disabled', false);
-				$('#cognome').prop('disabled', false);
-				$("#ragione_sociale").attr('required', false);
+                $('#nome, #cognome').prop('disabled', true).prop('required', false);
+				$('#ragione_sociale').prop('disabled', false).prop('required', true);
 			}
 		});
-			
+
+        $('#ragione_sociale, #nome').trigger('keyup');
 	});
 </script>
 

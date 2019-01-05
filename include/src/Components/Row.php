@@ -40,13 +40,13 @@ abstract class Row extends Description
     }
 
     /**
-     * Restituisce il totale (imponibile + iva + rivalsa_inps) dell'elemento.
+     * Restituisce il totale (imponibile + iva + rivalsa_inps + iva_rivalsainps) dell'elemento.
      *
      * @return float
      */
     public function getTotaleAttribute()
     {
-        return $this->imponibile_scontato + $this->iva + $this->rivalsa_inps;
+        return $this->imponibile_scontato + $this->iva + $this->rivalsa_inps + $this->iva_rivalsa_inps;
     }
 
     /**
@@ -86,6 +86,11 @@ abstract class Row extends Description
         return ($this->imponibile_scontato) / 100 * $this->rivalsa->percentuale;
     }
 
+    public function getIvaRivalsaINPSAttribute()
+    {
+        return $this->getRivalsaINPSAttribute() / 100 * $this->aliquota->percentuale;
+    }
+
     public function getRitenutaAccontoAttribute()
     {
         $result = $this->imponibile_scontato;
@@ -104,7 +109,7 @@ abstract class Row extends Description
 
     public function getIvaAttribute()
     {
-        return ($this->imponibile_scontato + $this->rivalsa_inps) * $this->aliquota->percentuale / 100;
+        return ($this->imponibile_scontato) * $this->aliquota->percentuale / 100;
     }
 
     public function getIvaDetraibileAttribute()

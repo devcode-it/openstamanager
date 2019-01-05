@@ -40,6 +40,11 @@ abstract class Document extends Model
             $result += $this->getRigheContabili()->sum($arg);
         }
 
+        // Aggiunta eventuale iva rivalsa inps
+        if (in_array ('iva', $args) ) {
+            $result = sum($result, $this->iva_rivalsainps);
+        }
+
         return $this->round($result);
     }
 
@@ -91,6 +96,16 @@ abstract class Document extends Model
     public function getRivalsaINPSAttribute()
     {
         return $this->calcola('rivalsa_inps');
+    }
+
+    /**
+     * Calcola l'iva della rivalsa INPS totale della fattura.
+     *
+     * @return float
+     */
+    public function getIvaRivalsaINPSAttribute()
+    {
+        return $this->calcola('iva_rivalsainps');
     }
 
     /**

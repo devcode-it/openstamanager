@@ -27,24 +27,6 @@ abstract class Document extends Model
     abstract public function scontoGlobale();
 
     /**
-     * Calcola la somma degli attributi indicati come parametri.
-     * Il metodo **non** deve essere adattato per ulteriori funzionalità: deve esclusivamente calcolare la somma richiesta in modo esplicito dagli argomenti.
-     *
-     * @param mixed ...$args
-     *
-     * @return float
-     */
-    protected function calcola(...$args)
-    {
-        $result = 0;
-        foreach ($args as $arg) {
-            $result += $this->getRigheContabili()->sum($arg);
-        }
-
-        return $this->round($result);
-    }
-
-    /**
      * Calcola l'imponibile della fattura.
      *
      * @return float
@@ -152,6 +134,24 @@ abstract class Document extends Model
     public function getGuadagnoAttribute()
     {
         return $this->calcola('guadagno');
+    }
+
+    /**
+     * Calcola la somma degli attributi indicati come parametri.
+     * Il metodo **non** deve essere adattato per ulteriori funzionalità: deve esclusivamente calcolare la somma richiesta in modo esplicito dagli argomenti.
+     *
+     * @param mixed ...$args
+     *
+     * @return float
+     */
+    protected function calcola(...$args)
+    {
+        $result = 0;
+        foreach ($args as $arg) {
+            $result += $this->getRigheContabili()->sum($arg);
+        }
+
+        return $this->round($result);
     }
 
     /**

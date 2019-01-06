@@ -32,7 +32,6 @@ echo '
 		</div>
 	</div>';
 
-
 echo '
     <div class="box box-info collapsed-box">
 	    <div class="box-header with-border">

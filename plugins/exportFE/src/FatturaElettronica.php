@@ -637,8 +637,6 @@ class FatturaElettronica
         return $this->intermediario;
     }
 
-
-
     /**
      * Restituisce le informazioni riguardanti un anagrafica sulla base dell'identificativo fornito.
      *
@@ -1077,12 +1075,11 @@ class FatturaElettronica
         return $result;
     }
 
-
     /**
-    * Restituisce l'array responsabile per la generazione del tag TerzoIntermediarioOSoggettoEmittente (1.5).
-    *
-    * @return array
-    */
+     * Restituisce l'array responsabile per la generazione del tag TerzoIntermediarioOSoggettoEmittente (1.5).
+     *
+     * @return array
+     */
     protected static function getTerzoIntermediarioOSoggettoEmittente($fattura)
     {
         $intermediario = $fattura->getIntermediario();
@@ -1093,7 +1090,6 @@ class FatturaElettronica
 
         return $result;
     }
-
 
     /**
      * Restituisce l'array responsabile per la generazione del tag DatiGeneraliDocumento.

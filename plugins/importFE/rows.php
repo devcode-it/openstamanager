@@ -30,8 +30,8 @@ echo '
     <h4>'.
         $ragione_sociale.'<br>
         <small>
-            '.( !empty($codice_fiscale) ? (tr('Codice Fiscale').': '.$codice_fiscale.'<br>') : '' ).'
-            '.( !empty($partita_iva) ? (tr('Partita IVA').': '.$partita_iva.'<br>') : '' ).'
+            '.(!empty($codice_fiscale) ? (tr('Codice Fiscale').': '.$codice_fiscale.'<br>') : '').'
+            '.(!empty($partita_iva) ? (tr('Partita IVA').': '.$partita_iva.'<br>') : '').'
             '.$cap.' '.$citta.' ('.$provincia.')<br>
         </small>
     </h4><br>';
@@ -41,9 +41,14 @@ $pagamenti = $fattura_pa->getBody()['DatiPagamento'];
 
 $metodi = $pagamenti['DettaglioPagamento'];
 $metodi = isset($metodi[0]) ? $metodi : [$metodi];
+$codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
 
 // prc '.($pagamenti['CondizioniPagamento'] == 'TP01' ? '!' : '').'= 100 AND
-$query = 'SELECT id, descrizione FROM co_pagamenti WHERE codice_modalita_pagamento_fe = '.prepare($metodi[0]['ModalitaPagamento']).' GROUP BY descrizione ORDER BY descrizione ASC';
+$query = 'SELECT id, descrizione FROM co_pagamenti';
+if (!empty($codice_modalita_pagamento)) {
+    $query .= ' WHERE codice_modalita_pagamento_fe = '.prepare($codice_modalita_pagamento);
+}
+$query .= ' GROUP BY descrizione ORDER BY descrizione ASC';
 
 echo '
     <h4>'.tr('Pagamento').'</h4>

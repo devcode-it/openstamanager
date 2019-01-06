@@ -92,20 +92,18 @@ switch (post('op')) {
         //Creo il modello di prima nota
 
         if (!empty(post('crea_modello'))) {
-			
-			if (empty(post('idmastrino'))){
-				$idmastrino = get_new_idmastrino('co_movimenti_modelli');
-			}else{
-				$dbo->query('DELETE FROM co_movimenti_modelli WHERE idmastrino='.prepare(post('idmastrino')));
-				$idmastrino = post('idmastrino');
-			}
-			
-			for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
-				$idconto = post('idconto')[$i];
-				$query = 'INSERT INTO co_movimenti_modelli(idmastrino, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($descrizione).', '.prepare($idconto).')';
-				$dbo->query($query);
-			}
-			
+            if (empty(post('idmastrino'))) {
+                $idmastrino = get_new_idmastrino('co_movimenti_modelli');
+            } else {
+                $dbo->query('DELETE FROM co_movimenti_modelli WHERE idmastrino='.prepare(post('idmastrino')));
+                $idmastrino = post('idmastrino');
+            }
+
+            for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
+                $idconto = post('idconto')[$i];
+                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, descrizione, idconto) VALUES('.prepare($idmastrino).', '.prepare($descrizione).', '.prepare($idconto).')';
+                $dbo->query($query);
+            }
         }
 
         break;

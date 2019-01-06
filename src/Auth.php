@@ -460,7 +460,7 @@ class Auth extends \Util\Singleton
         try {
             $results = $database->fetchArray('SELECT id, idanagrafica, username, (SELECT nome FROM zz_groups WHERE zz_groups.id = zz_users.idgruppo) AS gruppo FROM zz_users WHERE id = :user_id AND enabled = 1 LIMIT 1', [
                 ':user_id' => $user_id,
-            ], false, ['session' => false]);
+            ]);
 
             if (!empty($results)) {
                 $this->user = User::with('group')->find($user_id);

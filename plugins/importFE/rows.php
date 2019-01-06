@@ -30,8 +30,8 @@ echo '
     <h4>'.
         $ragione_sociale.'<br>
         <small>
-            '.( !empty($codice_fiscale) ? (tr('Codice Fiscale').': '.$codice_fiscale.'<br>') : '' ).'
-            '.( !empty($partita_iva) ? (tr('Partita IVA').': '.$partita_iva.'<br>') : '' ).'
+            '.(!empty($codice_fiscale) ? (tr('Codice Fiscale').': '.$codice_fiscale.'<br>') : '').'
+            '.(!empty($partita_iva) ? (tr('Partita IVA').': '.$partita_iva.'<br>') : '').'
             '.$cap.' '.$citta.' ('.$provincia.')<br>
         </small>
     </h4><br>';

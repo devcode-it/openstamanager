@@ -637,8 +637,6 @@ class FatturaElettronica
         return $this->intermediario;
     }
 
-
-
     /**
      * Restituisce le informazioni riguardanti un anagrafica sulla base dell'identificativo fornito.
      *
@@ -1077,12 +1075,11 @@ class FatturaElettronica
         return $result;
     }
 
-
     /**
-    * Restituisce l'array responsabile per la generazione del tag TerzoIntermediarioOSoggettoEmittente (1.5).
-    *
-    * @return array
-    */
+     * Restituisce l'array responsabile per la generazione del tag TerzoIntermediarioOSoggettoEmittente (1.5).
+     *
+     * @return array
+     */
     protected static function getTerzoIntermediarioOSoggettoEmittente($fattura)
     {
         $intermediario = $fattura->getIntermediario();
@@ -1094,7 +1091,6 @@ class FatturaElettronica
         return $result;
     }
 
-
     /**
      * Restituisce l'array responsabile per la generazione del tag DatiGeneraliDocumento.
      *
@@ -1104,6 +1100,8 @@ class FatturaElettronica
     {
         $documento = $fattura->getDocumento();
         $azienda = static::getAzienda();
+
+        $fattura = Modules\Fatture\Fattura::find($documento['id']);
 
         $result = [
             'TipoDocumento' => $documento['tipo_documento'],
@@ -1157,8 +1155,6 @@ class FatturaElettronica
             $iva = database()->fetchOne('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($aliquota_iva_rivalsainps));
             $percentuale = database()->fetchOne('SELECT percentuale FROM co_rivalsainps WHERE id = '.prepare($id_rivalsainps))['percentuale'];
 
-            $fattura = Modules\Fatture\Fattura::find($documento['id']);
-
             $dati_cassa = [
                 'TipoCassa' => setting('Tipo Cassa'),
                 'AlCassa' => $percentuale,
@@ -1196,7 +1192,6 @@ class FatturaElettronica
 
         // Importo Totale Documento (2.1.1.9)
         // Importo totale del documento al netto dell'eventuale sconto e comprensivo di imposta a debito del cessionario / committente
-        $fattura = Modules\Fatture\Fattura::find($documento['id']);
         $result['ImportoTotaleDocumento'] = $fattura->netto;
 
         return $result;

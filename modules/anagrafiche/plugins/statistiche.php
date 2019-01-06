@@ -134,10 +134,10 @@ echo '
 				<div class="box-body">';
 // Fatture di vendita
 $totale_fatture_vendita = 0;
-$fatture = database()->fetchArray("SELECT id FROM co_documenti WHERE idanagrafica=".prepare($id_record));
+$fatture = database()->fetchArray('SELECT id FROM co_documenti WHERE idanagrafica='.prepare($id_record));
 
 foreach ($fatture as $fattura) {
-    $totale_fatture_vendita = sum( $totale_fatture_vendita, Modules\Fatture\Fattura::find( $fattura['id'] )->netto );
+    $totale_fatture_vendita = sum($totale_fatture_vendita, Modules\Fatture\Fattura::find($fattura['id'])->netto);
 }
 
 $data_start = strtotime('now');

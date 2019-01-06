@@ -212,6 +212,21 @@ abstract class Row extends Description
         return parent::save($options);
     }
 
+    public function aliquota()
+    {
+        return $this->belongsTo(Aliquota::class, 'idiva');
+    }
+
+    public function rivalsa()
+    {
+        return $this->belongsTo(RivalsaINPS::class, 'idrivalsainps');
+    }
+
+    public function ritenuta()
+    {
+        return $this->belongsTo(RitenutaAcconto::class, 'idritenutaacconto');
+    }
+
     protected static function boot($bypass = false)
     {
         parent::boot(true);
@@ -276,20 +291,5 @@ abstract class Row extends Description
     protected function fixSconto()
     {
         $this->attributes['sconto'] = $this->sconto;
-    }
-
-    public function aliquota()
-    {
-        return $this->belongsTo(Aliquota::class, 'idiva');
-    }
-
-    public function rivalsa()
-    {
-        return $this->belongsTo(RivalsaINPS::class, 'idrivalsainps');
-    }
-
-    public function ritenuta()
-    {
-        return $this->belongsTo(RitenutaAcconto::class, 'idritenutaacconto');
     }
 }

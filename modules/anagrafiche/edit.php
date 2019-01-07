@@ -444,7 +444,14 @@ if (!empty($google)) {
 					</div>
 				</div>
 
-
+				<?php
+                 }
+                ?>
+				
+				<?php
+                //se non è l'anagrafica azienda, ma cliente o fornitore
+                 if ($cliente or $fornitore) {
+                     ?>
 
 				<div class="row">
 

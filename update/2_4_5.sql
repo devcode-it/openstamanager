@@ -52,3 +52,5 @@ ALTER TABLE `an_anagrafiche` ADD `cognome` VARCHAR(255) NOT NULL AFTER `nome`;
 -- Colonna Rif. fattura (Prima nota)
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default` ) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota'), 'Rif. fattura', '(SELECT numero_esterno FROM co_documenti WHERE id = iddocumento)', 2, 1, 0, 0, NULL, NULL, 1, 0, 0);
 
+-- Aumento decimali percentuali delle rate pagamenti a 2
+ALTER TABLE `co_pagamenti` CHANGE `prc` `prc` DECIMAL(5,2) NOT NULL; 

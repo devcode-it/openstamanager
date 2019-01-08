@@ -39,7 +39,7 @@ if (!$cliente) {
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-md-6">
-						{[ "type": "text", "label": "<?php echo tr('Denominazione'); ?>", "name": "ragione_sociale", "required": 1, "value": "$ragione_sociale$" ]}
+						{[ "type": "text", "label": "<?php echo tr('Denominazione'); ?>", "name": "ragione_sociale", "required": 1, "value": "$ragione_sociale$", "extra": "autocomplete=\"off\"" ]}
 					</div>
 
 					<div class="col-md-3">
@@ -54,11 +54,11 @@ if (!$cliente) {
 				<div class="row">
 
 					<div class="col-md-4">
-							{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 0, "value": "$nome$" ]}
+							{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 0, "value": "$nome$", "extra": "autocomplete=\"off\"" ]}
 					</div>
 
 					<div class="col-md-4">
-							{[ "type": "text", "label": "<?php echo tr('Cognome'); ?>", "name": "cognome", "required": 0, "value": "$cognome$" ]}
+							{[ "type": "text", "label": "<?php echo tr('Cognome'); ?>", "name": "cognome", "required": 0, "value": "$cognome$", "extra": "autocomplete=\"off\"" ]}
 					</div>
 
 					<div class="col-md-4">
@@ -598,7 +598,7 @@ if (!empty($elementi)) {
             $modulo = 'Contratti';
         } elseif (in_array($elemento['tipo_documento'], ['Ordine cliente', 'Ordine fornitore'])) {
             $modulo = ($elemento['dir'] == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
-        } elseif (in_array($elemento['tipo_documento'], ['Ddt di vendita', 'Ddt di acquisto'])) {
+        } elseif (in_array($elemento['tipo_documento'], ['Ddt in uscita', 'Ddt in entrata'])) {
             $modulo = ($elemento['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
         } else {
             $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
@@ -659,23 +659,26 @@ if (empty($record['deleted_at'])) {
         });
 
 		// Abilito solo ragione sociale oppure solo nome-cognome in base a cosa compilo
-		$('#nome, #cognome').keyup(function(){
+		$('#nome, #cognome').bind("keyup change", function(e) {
 			if ($('#nome').val() == '' && $('#cognome').val() == '' ){
                 $('#nome, #cognome').prop('disabled', true).prop('required', false);
 				$('#ragione_sociale').prop('disabled', false).prop('required', true);
+				$('#ragione_sociale').focus();
 			}else{
                 $('#nome, #cognome').prop('disabled', false).prop('required', true);
 				$('#ragione_sociale').prop('disabled', true).prop('required', false);
 			}
 		});
 
-        $('#ragione_sociale').keyup(function(){
+        $('#ragione_sociale').bind("keyup change", function(e) {
 			if ($('#ragione_sociale').val() == '' ){
                 $('#nome, #cognome').prop('disabled', false).prop('required', true);
                 $('#ragione_sociale').prop('disabled', true).prop('required', false);
+				$('#nome').focus();
 			}else{
                 $('#nome, #cognome').prop('disabled', true).prop('required', false);
 				$('#ragione_sociale').prop('disabled', false).prop('required', true);
+				$('#ragione_sociale').focus();
 			}
 		});
 

@@ -54,3 +54,6 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 
 -- Aumento decimali percentuali delle rate pagamenti a 2
 ALTER TABLE `co_pagamenti` CHANGE `prc` `prc` DECIMAL(5,2) NOT NULL; 
+
+-- Ordino gestione documentale per data, nome
+UPDATE `zz_modules` SET `options` = '{ "main_query": [ { "type": "table", "fields": "Categoria, Nome, Data", "query": "SELECT id,(SELECT descrizione FROM zz_documenti_categorie WHERE zz_documenti_categorie.id = idcategoria) AS Categoria, zz_documenti.nome AS Nome, DATE_FORMAT( zz_documenti.`data`, ''%d/%m/%Y'' ) AS `Data` FROM zz_documenti WHERE `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 1=1 ORDER BY data, nome"} ]}' WHERE `zz_modules`.`name` = 'Gestione documentale';

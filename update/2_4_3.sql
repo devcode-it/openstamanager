@@ -35,7 +35,7 @@ ALTER TABLE `co_righe_documenti` ADD `data_inizio_periodo` date, ADD `data_fine_
 ALTER TABLE `co_documenti` ADD `tipo_resa` VARCHAR(3);
 
 -- Colonna nome impianto
-INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default` ) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti'), 'Nome', 'nome', 2, 1, 0, 0, NULL, NULL, 0, 0, 0);
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default` ) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti'), 'Nome', 'nome', 2, 1, 0, 0, NULL, NULL, 1, 0, 1);
 
 -- Colonna causale predefinita
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default` ) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Causali'), 'Predefinita', 'IF(predefined, ''Sì'', ''No'')', 2, 1, 0, 0, NULL, NULL, 0, 0, 0);

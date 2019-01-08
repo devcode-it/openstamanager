@@ -32,22 +32,38 @@ foreach ($righe as $riga) {
     $riga['sconto_unitario'] = abs($riga['sconto_unitario']);
     $riga['sconto'] = abs($riga['sconto']);
     $riga['iva'] = abs($riga['iva']);
+	
+	$riga['descrizione_conto'] = $dbo->fetchOne("SELECT descrizione FROM co_pianodeiconti3 WHERE id = ".prepare($riga['idconto']))['descrizione'];
 
     $extra = '';
 
     $ref_modulo = null;
     $ref_id = null;
-
+	
     // Preventivi
     if (!empty($riga['idpreventivo'])) {
+		$ref_modulo = Modules::get('Preventivi')['id'];
+		$ref_id = $riga['idpreventivo'];
         $delete = 'unlink_preventivo';
     }
     // Contratti
     elseif (!empty($riga['idcontratto'])) {
-        $delete = 'unlink_contratto';
+		
+		$ref_modulo = Modules::get('Contratti')['id'];
+		$ref_id = $riga['idcontratto'];
+		
+		$contratto = $dbo->fetchOne("SELECT codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = ".prepare($riga['idcontratto']));
+		$riga['codice_cig'] = $contratto['codice_cig'];
+		$riga['codice_cup'] = $contratto['codice_cup'];
+		$riga['id_documento_fe'] = $contratto['id_documento_fe'];
+		
+		$delete = 'unlink_contratto';
+		
     }
     // Intervento
     elseif (!empty($riga['idintervento'])) {
+		$ref_modulo = Modules::get('Interventi')['id'];
+		$ref_id = $riga['idintervento'];
         $delete = 'unlink_intervento';
     }
     // Articoli
@@ -61,6 +77,7 @@ foreach ($righe as $riga) {
 
         $extra = '';
         $mancanti = 0;
+		
     }
     // Righe generiche
     else {
@@ -78,12 +95,20 @@ foreach ($righe as $riga) {
             $mancanti = 0;
         }
     }
-
+	
+	$extra_riga = '';
+	$extra_riga = tr('_DESCRIZIONE_CONTO_ _CODICE_CIG_ _CODICE_CUP_ _ID_DOCUMENTO_', [
+		'_DESCRIZIONE_CONTO_' => $riga['descrizione_conto'] ?: null,
+		'_CODICE_CIG_' =>  $riga['codice_cig'] ? '<br>CIG: '.$riga['codice_cig'] : null,
+		'_CODICE_CUP_' =>  $riga['codice_cup'] ? '<br>CUP: '.$riga['codice_cup'] : null,
+		'_ID_DOCUMENTO_' =>  $riga['id_documento_fe'] ? '<br>DOC: '.$riga['id_documento_fe'] : null,
+	]);
+	
     echo '
     <tr data-id="'.$riga['id'].'" '.$extra.'>
         <td>
             '.Modules::link($ref_modulo, $ref_id, $riga['descrizione']).'
-            <small class="pull-right text-muted">'.$riga['descrizione_conto'].'</small>';
+            <small class="pull-right text-muted">'.$extra_riga.'</small>';
 
     if (!empty($riga['abilita_serial'])) {
         if (!empty($mancanti)) {

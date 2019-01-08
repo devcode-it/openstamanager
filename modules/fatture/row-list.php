@@ -101,7 +101,7 @@ foreach ($righe as $riga) {
 		'_DESCRIZIONE_CONTO_' => $riga['descrizione_conto'] ?: null,
 		'_CODICE_CIG_' =>  $riga['codice_cig'] ? '<br>CIG: '.$riga['codice_cig'] : null,
 		'_CODICE_CUP_' =>  $riga['codice_cup'] ? '<br>CUP: '.$riga['codice_cup'] : null,
-		'_ID_DOCUMENTO_' =>  $riga['id_documento_fe'] ? '<br>CUP: '.$riga['id_documento_fe'] : null,
+		'_ID_DOCUMENTO_' =>  $riga['id_documento_fe'] ? '<br>DOC: '.$riga['id_documento_fe'] : null,
 	]);
 	
     echo '

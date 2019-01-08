@@ -1557,11 +1557,10 @@ class FatturaElettronica
                     $pagamento['BIC'] = $co_banche['bic'];
                 }
             }
+            
+            $result[]['DettaglioPagamento'] = $pagamento;
         }
 
-        $result[] = [
-            'DettaglioPagamento' => $pagamento,
-        ];
 
         return $result;
     }

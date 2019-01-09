@@ -1401,7 +1401,11 @@ class FatturaElettronica
             $riga['subtotale'] = abs($riga['subtotale']);
             $riga['qta'] = abs($riga['qta']);
             $riga['sconto'] = abs($riga['sconto']);
-
+			
+			if (!empty($riga['is_descrizione'])){
+				$riga['idiva'] = $database->fetchOne('SELECT `idiva` FROM `co_righe_documenti` WHERE `is_descrizione` = 0 AND `iddocumento` = '.prepare($documento['id']))['idiva'];
+			}
+			
             $riga['qta'] = (!empty($riga['qta'])) ? $riga['qta'] : 1;
 
             $prezzo_unitario = $riga['subtotale'] / $riga['qta'];

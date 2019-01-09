@@ -300,11 +300,13 @@ class FatturaElettronica
 
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
         $data = $dati_generali['Data'];
+		$tipo = $dati_generali['TipoDocumento'];
+		
         $numero_esterno = $dati_generali['Numero'];
         $progressivo_invio = $this->getHeader()['DatiTrasmissione']['ProgressivoInvio'];
 
-        $descrizione_tipo = empty($this->getBody()['DatiGenerali']['DatiTrasporto']) ? 'Fattura immediata di acquisto' : 'Fattura accompagnatoria di acquisto';
-        $tipo = TipoFattura::where('descrizione', $descrizione_tipo)->first();
+        //$descrizione_tipo = empty($this->getBody()['DatiGenerali']['DatiTrasporto']) ? 'Fattura immediata di acquisto' : 'Fattura accompagnatoria di acquisto';
+        //$tipo = TipoFattura::where('descrizione', $descrizione_tipo)->first();
 
         $fattura = Fattura::build($anagrafica, $tipo, $data, $id_sezionale);
         $this->fattura = $fattura;

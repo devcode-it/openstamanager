@@ -296,18 +296,26 @@ class FatturaElettronica
      */
     public function saveFattura($id_pagamento, $id_sezionale)
     {
-        $anagrafica = static::createAnagrafica($this->getHeader()['CedentePrestatore']);
+       
+		
+		$anagrafica = static::createAnagrafica($this->getHeader()['CedentePrestatore']);
 
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
         $data = $dati_generali['Data'];
-		$tipo = $dati_generali['TipoDocumento'];
+		
+		//Fix temporaneo per gestire TD02,TD03,TD06 non ancora previsti in OSM
+		if ($dati_generali['TipoDocumento']=='TD02' OR $dati_generali['TipoDocumento']=='TD03' OR $dati_generali['TipoDocumento']=='TD06'){
+			$id_tipo = 'TD01'
+		}
+		
+		$id_tipo = database()->fetchOne('SELECT id FROM co_tipidocumento WHERE codice_tipo_documento_fe = '.prepare($dati_generali['TipoDocumento']))['id'];
 		
         $numero_esterno = $dati_generali['Numero'];
         $progressivo_invio = $this->getHeader()['DatiTrasmissione']['ProgressivoInvio'];
 
         //$descrizione_tipo = empty($this->getBody()['DatiGenerali']['DatiTrasporto']) ? 'Fattura immediata di acquisto' : 'Fattura accompagnatoria di acquisto';
-        //$tipo = TipoFattura::where('descrizione', $descrizione_tipo)->first();
-
+        $tipo = TipoFattura::where('id', $id_tipo)->first();
+		
         $fattura = Fattura::build($anagrafica, $tipo, $data, $id_sezionale);
         $this->fattura = $fattura;
 

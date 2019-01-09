@@ -32,15 +32,16 @@ foreach ($righe as $riga) {
     $riga['sconto_unitario'] = abs($riga['sconto_unitario']);
     $riga['sconto'] = abs($riga['sconto']);
     $riga['iva'] = abs($riga['iva']);
-	
-	if (empty($riga['is_descrizione']))
-		$riga['descrizione_conto'] = $dbo->fetchOne("SELECT descrizione FROM co_pianodeiconti3 WHERE id = ".prepare($riga['idconto']))['descrizione'];
+
+    if (empty($riga['is_descrizione'])) {
+        $riga['descrizione_conto'] = $dbo->fetchOne('SELECT descrizione FROM co_pianodeiconti3 WHERE id = '.prepare($riga['idconto']))['descrizione'];
+    }
 
     $extra = '';
 
     $ref_modulo = null;
     $ref_id = null;
-	
+
     // Articoli
     if ($riga instanceof Articolo) {
         $ref_modulo = Modules::get('Articoli')['id'];
@@ -52,33 +53,30 @@ foreach ($righe as $riga) {
 
         $extra = '';
         $mancanti = 0;
-		
     }
-	// Intervento
+    // Intervento
     elseif (!empty($riga['idintervento'])) {
-		//$ref_modulo = Modules::get('Interventi')['id'];
-		//$ref_id = $riga['idintervento'];
+        //$ref_modulo = Modules::get('Interventi')['id'];
+        //$ref_id = $riga['idintervento'];
         $delete = 'unlink_intervento';
     }
     // Preventivi
     elseif (!empty($riga['idpreventivo'])) {
-		//$ref_modulo = Modules::get('Preventivi')['id'];
-		//$ref_id = $riga['idpreventivo'];
+        //$ref_modulo = Modules::get('Preventivi')['id'];
+        //$ref_id = $riga['idpreventivo'];
         $delete = 'unlink_preventivo';
     }
     // Contratti
     elseif (!empty($riga['idcontratto'])) {
-		
-		//$ref_modulo = Modules::get('Contratti')['id'];
-		//$ref_id = $riga['idcontratto'];
-		
-		$contratto = $dbo->fetchOne("SELECT codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = ".prepare($riga['idcontratto']));
-		$riga['codice_cig'] = $contratto['codice_cig'];
-		$riga['codice_cup'] = $contratto['codice_cup'];
-		$riga['id_documento_fe'] = $contratto['id_documento_fe'];
-		
-		$delete = 'unlink_contratto';
-		
+        //$ref_modulo = Modules::get('Contratti')['id'];
+        //$ref_id = $riga['idcontratto'];
+
+        $contratto = $dbo->fetchOne('SELECT codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($riga['idcontratto']));
+        $riga['codice_cig'] = $contratto['codice_cig'];
+        $riga['codice_cup'] = $contratto['codice_cup'];
+        $riga['id_documento_fe'] = $contratto['id_documento_fe'];
+
+        $delete = 'unlink_contratto';
     }
     // Righe generiche
     else {
@@ -96,15 +94,15 @@ foreach ($righe as $riga) {
             $mancanti = 0;
         }
     }
-	
-	$extra_riga = '';
-	$extra_riga = tr('_DESCRIZIONE_CONTO_ _CODICE_CIG_ _CODICE_CUP_ _ID_DOCUMENTO_', [
-		'_DESCRIZIONE_CONTO_' => $riga['descrizione_conto'] ?: null,
-		'_CODICE_CIG_' =>  $riga['codice_cig'] ? '<br>CIG: '.$riga['codice_cig'] : null,
-		'_CODICE_CUP_' =>  $riga['codice_cup'] ? '<br>CUP: '.$riga['codice_cup'] : null,
-		'_ID_DOCUMENTO_' =>  $riga['id_documento_fe'] ? '<br>DOC: '.$riga['id_documento_fe'] : null,
-	]);
-	
+
+    $extra_riga = '';
+    $extra_riga = tr('_DESCRIZIONE_CONTO_ _CODICE_CIG_ _CODICE_CUP_ _ID_DOCUMENTO_', [
+        '_DESCRIZIONE_CONTO_' => $riga['descrizione_conto'] ?: null,
+        '_CODICE_CIG_' => $riga['codice_cig'] ? '<br>CIG: '.$riga['codice_cig'] : null,
+        '_CODICE_CUP_' => $riga['codice_cup'] ? '<br>CUP: '.$riga['codice_cup'] : null,
+        '_ID_DOCUMENTO_' => $riga['id_documento_fe'] ? '<br>DOC: '.$riga['id_documento_fe'] : null,
+    ]);
+
     echo '
     <tr data-id="'.$riga['id'].'" '.$extra.'>
         <td>

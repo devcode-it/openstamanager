@@ -657,7 +657,7 @@ class FatturaElettronica
     public function getRighe()
     {
         if (empty($this->righe)) {
-			//AND is_descrizione = 0
+            //AND is_descrizione = 0
             $this->righe = database()->fetchArray('SELECT * FROM `co_righe_documenti` WHERE `sconto_globale` = 0  AND `iddocumento` = '.prepare($this->getDocumento()['id']));
         }
 
@@ -1401,9 +1401,9 @@ class FatturaElettronica
             $riga['subtotale'] = abs($riga['subtotale']);
             $riga['qta'] = abs($riga['qta']);
             $riga['sconto'] = abs($riga['sconto']);
-			
-			$riga['qta'] = (!empty($riga['qta'])) ? $riga['qta'] : 1; 
-			
+
+            $riga['qta'] = (!empty($riga['qta'])) ? $riga['qta'] : 1;
+
             $prezzo_unitario = $riga['subtotale'] / $riga['qta'];
             $prezzo_totale = $riga['subtotale'] - $riga['sconto'];
 
@@ -1573,10 +1573,9 @@ class FatturaElettronica
                     $pagamento['BIC'] = $co_banche['bic'];
                 }
             }
-            
+
             $result[]['DettaglioPagamento'] = $pagamento;
         }
-
 
         return $result;
     }

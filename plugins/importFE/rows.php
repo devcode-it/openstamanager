@@ -36,37 +36,54 @@ echo '
         </small>
     </h4><br>';
 
-// Pagamenti
-$pagamenti = $fattura_pa->getBody()['DatiPagamento'];
+// Se il blocco DatiPagamento è valorizzato (opzionale)
+if (!empty($fattura_pa->getBody()['DatiPagamento'])){
+	
+	$pagamenti = $fattura_pa->getBody()['DatiPagamento'];
 
-$metodi = $pagamenti['DettaglioPagamento'];
-$metodi = isset($metodi[0]) ? $metodi : [$metodi];
-$codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
+	$metodi = $pagamenti['DettaglioPagamento'];
+	$metodi = isset($metodi[0]) ? $metodi : [$metodi];
+	$codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
+
+	echo '
+		<h4>'.tr('Pagamento').'</h4>
+
+		<p>'.tr('La fattura importata presenta _NUM_ rate di pagamento con le seguenti scadenze', [
+			'_NUM_' => count($metodi),
+		]).':</p>
+		<ul>';
+
+	// Scadenze di pagamento
+	foreach ($metodi as $metodo) {
+		
+		echo '
+				<li>';
+				
+		//nodo opzionale per il blocco DatiPagamento
+		if (!empty($metodo['DataScadenzaPagamento'])){
+			echo Translator::dateToLocale($metodo['DataScadenzaPagamento']).' ';
+		}
+		
+		echo '('.((!empty($metodo['ModalitaPagamento'])) ? database()->fetchOne('SELECT descrizione FROM fe_modalita_pagamento WHERE codice = '.prepare($metodo['ModalitaPagamento']))['descrizione'] : '' ).')';
+		
+		
+		echo '
+				</li>';
+	}
+
+	echo '
+		</ul>';
+		
+}
+
 
 // prc '.($pagamenti['CondizioniPagamento'] == 'TP01' ? '!' : '').'= 100 AND
-$query = 'SELECT id, descrizione FROM co_pagamenti';
+$query = 'SELECT id, CONCAT (descrizione, IF((codice_modalita_pagamento_fe IS NULL), \"\", CONCAT( \" (\", codice_modalita_pagamento_fe, \")\" ) )) as descrizione FROM co_pagamenti';
 if (!empty($codice_modalita_pagamento)) {
-    $query .= ' WHERE codice_modalita_pagamento_fe = '.prepare($codice_modalita_pagamento);
+	$query .= ' WHERE codice_modalita_pagamento_fe = '.prepare($codice_modalita_pagamento);
 }
 $query .= ' GROUP BY descrizione ORDER BY descrizione ASC';
-
-echo '
-    <h4>'.tr('Pagamento').'</h4>
-
-    <p>'.tr('La fattura importata presenta _NUM_ rate di pagamento con le seguenti scadenze', [
-        '_NUM_' => count($metodi),
-    ]).':</p>
-    <ul>';
-
-// Scadenze di pagamento
-foreach ($metodi as $metodo) {
-    echo '
-        <li>'.Translator::dateToLocale($metodo['DataScadenzaPagamento']).'</li>';
-}
-
-echo '
-    </ul>';
-
+	
 echo '
     {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "values": "query='.$query.'" ]}';
 

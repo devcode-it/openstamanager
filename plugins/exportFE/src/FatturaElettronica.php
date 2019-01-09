@@ -967,15 +967,28 @@ class FatturaElettronica
         if (!empty($anagrafica['codice_fiscale'])) {
             $result['CodiceFiscale'] = $anagrafica['codice_fiscale'];
         }
-
-        $result['Anagrafica'] = [
-            'Denominazione' => $anagrafica['ragione_sociale'],
-            // TODO: 'Nome' => $azienda['ragione_sociale'],
-            // TODO: 'Cognome' => $azienda['ragione_sociale'],
-            // TODO: 'Titolo' => $azienda['ragione_sociale'],
-            // TODO: CodEORI
-        ];
-
+		
+		if (!empty($anagrafica['nome']) or !empty($anagrafica['cognome'])){
+			
+			$result['Anagrafica'] = [
+				//'Denominazione' => $anagrafica['ragione_sociale'],
+				'Nome' => $anagrafica['nome'],
+				'Cognome' => $anagrafica['cognome'],
+				// TODO: 'Titolo' => $anagrafica['ragione_sociale'],
+				// TODO: CodEORI
+			];
+			
+			
+		}else{
+			$result['Anagrafica'] = [
+				'Denominazione' => $anagrafica['ragione_sociale'],
+				//'Nome' => $anagrafica['nome'],
+				//'Cognome' => $anagrafica['cognome'],
+				// TODO: 'Titolo' => $anagrafica['ragione_sociale'],
+				// TODO: CodEORI
+			];
+		}
+		
         // Informazioni specifiche azienda
         if ($azienda) {
             $result['RegimeFiscale'] = setting('Regime Fiscale');
@@ -1194,7 +1207,7 @@ class FatturaElettronica
         // Importo Totale Documento (2.1.1.9)
         // Importo totale del documento al netto dell'eventuale sconto e comprensivo di imposta a debito del cessionario / committente
         $fattura = Modules\Fatture\Fattura::find($documento['id']);
-        $result['ImportoTotaleDocumento'] = $fattura->netto;
+        $result['ImportoTotaleDocumento'] = abs($fattura->netto);
 
         return $result;
     }
@@ -1477,8 +1490,8 @@ class FatturaElettronica
         foreach ($riepiloghi_percentuale as $riepilogo) {
             $iva = [
                 'AliquotaIVA' => $riepilogo['percentuale'],
-                'ImponibileImporto' => $riepilogo['totale'],
-                'Imposta' => $riepilogo['iva'],
+                'ImponibileImporto' => abs($riepilogo['totale']),
+                'Imposta' => abs($riepilogo['iva']),
                 'EsigibilitaIVA' => $riepilogo['esigibilita'],
             ];
 

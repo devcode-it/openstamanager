@@ -117,7 +117,7 @@ $replaces = array_merge($replaces, [
     'rootdir' => ROOTDIR,
     'directory' => Prints::get($id_print)['full_directory'],
     'footer' => !empty($footer) ? $footer : '',
-    'dicitura_fissa_fattura' => setting('Dicitura fissa fattura'),
+    'dicitura_fissa_fattura' => setting('Dicitura fissa fattura').((!empty(setting('OSMCloud Services API Token'))) ? tr(' Documento privo di valenza fiscale dell\'art 21 dpr 633/72.'): ''),
 ]);
 
 unset($replace);

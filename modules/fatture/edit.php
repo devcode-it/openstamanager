@@ -35,16 +35,16 @@ if ($dir == 'entrata') {
 			<?php
 
                 if ($dir == 'entrata') {
-                    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia, id_nazione FROM an_anagrafiche WHERE idanagrafica='.prepare($record['idanagrafica']));
+                    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia, id_nazione, tipo FROM an_anagrafiche WHERE idanagrafica='.prepare($record['idanagrafica']));
                     $campi_mancanti = [];
-
-                    if ($rs2[0]['piva'] == '') {
-                        array_push($campi_mancanti, 'Partita IVA');
-                    }
-                    /*if ($rs2[0]['codice_fiscale'] == '') {
+					
+					if ($rs2[0]['codice_fiscale'] == '' and ($rs2[0]['tipo'] == 'Privato' or $rs2[0]['tipo'] == 'Ente pubblico')) {
                         array_push($campi_mancanti, 'Codice fiscale');
                     }
-                    */
+                    else if ($rs2[0]['piva'] == '') {
+                        array_push($campi_mancanti, 'Partita IVA');
+                    }
+                    
                     if ($rs2[0]['citta'] == '') {
                         array_push($campi_mancanti, 'Città');
                     }

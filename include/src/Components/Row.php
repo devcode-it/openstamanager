@@ -40,13 +40,13 @@ abstract class Row extends Description
     }
 
     /**
-     * Restituisce il totale (imponibile + iva + rivalsa_inps) dell'elemento.
+     * Restituisce il totale (imponibile + iva + rivalsa_inps + iva_rivalsainps) dell'elemento.
      *
      * @return float
      */
     public function getTotaleAttribute()
     {
-        return $this->imponibile_scontato + $this->iva + $this->rivalsa_inps;
+        return $this->imponibile_scontato + $this->iva + $this->rivalsa_inps + $this->iva_rivalsa_inps;
     }
 
     /**
@@ -83,7 +83,12 @@ abstract class Row extends Description
 
     public function getRivalsaINPSAttribute()
     {
-        return ($this->imponibile_scontato) / 100 * $this->rivalsa->percentuale;
+        return $this->imponibile_scontato / 100 * $this->rivalsa->percentuale;
+    }
+
+    public function getIvaRivalsaINPSAttribute()
+    {
+        return $this->rivalsa_inps / 100 * $this->aliquota->percentuale;
     }
 
     public function getRitenutaAccontoAttribute()
@@ -104,7 +109,7 @@ abstract class Row extends Description
 
     public function getIvaAttribute()
     {
-        return ($this->imponibile_scontato + $this->rivalsa_inps) * $this->aliquota->percentuale / 100;
+        return ($this->imponibile_scontato) * $this->aliquota->percentuale / 100;
     }
 
     public function getIvaDetraibileAttribute()
@@ -207,6 +212,21 @@ abstract class Row extends Description
         return parent::save($options);
     }
 
+    public function aliquota()
+    {
+        return $this->belongsTo(Aliquota::class, 'idiva');
+    }
+
+    public function rivalsa()
+    {
+        return $this->belongsTo(RivalsaINPS::class, 'idrivalsainps');
+    }
+
+    public function ritenuta()
+    {
+        return $this->belongsTo(RitenutaAcconto::class, 'idritenutaacconto');
+    }
+
     protected static function boot($bypass = false)
     {
         parent::boot(true);
@@ -271,20 +291,5 @@ abstract class Row extends Description
     protected function fixSconto()
     {
         $this->attributes['sconto'] = $this->sconto;
-    }
-
-    public function aliquota()
-    {
-        return $this->belongsTo(Aliquota::class, 'idiva');
-    }
-
-    public function rivalsa()
-    {
-        return $this->belongsTo(RivalsaINPS::class, 'idrivalsainps');
-    }
-
-    public function ritenuta()
-    {
-        return $this->belongsTo(RitenutaAcconto::class, 'idritenutaacconto');
     }
 }

@@ -34,6 +34,7 @@ echo "
 // RIGHE PREVENTIVO CON ORDINAMENTO UNICO
 $righe = $dbo->fetchArray("SELECT *,
     IFNULL((SELECT `codice` FROM `mg_articoli` WHERE `id` = `or_righe_ordini`.`idarticolo`), '') AS codice_articolo,
+	IFNULL((SELECT `immagine` FROM `mg_articoli` WHERE `id` = `or_righe_ordini`.`idarticolo`), '') AS immagine_articolo,
     (SELECT GROUP_CONCAT(`serial` SEPARATOR ', ') FROM `mg_prodotti` WHERE `id_riga_ordine` = `or_righe_ordini`.`id`) AS seriali,
     (SELECT `percentuale` FROM `co_iva` WHERE `id` = `or_righe_ordini`.`idiva`) AS perc_iva
 FROM `or_righe_ordini` WHERE idordine=".prepare($id_record).' ORDER BY `order`');
@@ -44,7 +45,13 @@ foreach ($righe as $r) {
 
     echo '
         <tr>
-            <td>
+            <td>';
+			
+	if (!empty($r['immagine_articolo'])) {
+		//echo '<img src="files/articoli/'.$r['immagine_articolo'].'" height="120"></img><div class="clearfix" ></div>';
+	}
+	
+	echo '
                 '.nl2br($r['descrizione']);
 
     // Codice articolo

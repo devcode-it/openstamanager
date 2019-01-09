@@ -103,13 +103,13 @@ switch (post('op')) {
             $formato = setting('Formato codice intervento');
             $template = str_replace('#', '%', $formato);
 
-            $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
+            $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare(Util\Generator::complete($template)).' ORDER BY codice DESC LIMIT 0,1');
             if (!empty($rs[0]['codice'])) {
                 $codice = Util\Generator::generate($formato, $rs[0]['codice']);
             }
 
             if (empty($codice)) {
-                $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
+                $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice LIKE '.prepare(Util\Generator::complete($template)).' ORDER BY codice DESC LIMIT 0,1');
                 $codice = Util\Generator::generate($formato, $rs[0]['codice']);
             }
 

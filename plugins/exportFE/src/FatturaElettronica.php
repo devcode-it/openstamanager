@@ -623,6 +623,21 @@ class FatturaElettronica
     }
 
     /**
+     * Restituisce le informazioni sull'anagrafica dell'intermediario.
+     *
+     * @return array
+     */
+    public function getIntermediario()
+    {
+        if (empty($this->intermediario)) {
+            $intermediario = static::getAnagrafica(setting('Terzo intermediario'));
+            $this->intermediario = $intermediario;
+        }
+
+        return $this->intermediario;
+    }
+
+    /**
      * Restituisce le informazioni riguardanti un anagrafica sulla base dell'identificativo fornito.
      *
      * @param int $id
@@ -642,7 +657,8 @@ class FatturaElettronica
     public function getRighe()
     {
         if (empty($this->righe)) {
-            $this->righe = database()->fetchArray('SELECT * FROM `co_righe_documenti` WHERE `sconto_globale` = 0 AND is_descrizione = 0 AND `iddocumento` = '.prepare($this->getDocumento()['id']));
+            //AND is_descrizione = 0
+            $this->righe = database()->fetchArray('SELECT * FROM `co_righe_documenti` WHERE `sconto_globale` = 0  AND `iddocumento` = '.prepare($this->getDocumento()['id']));
         }
 
         return $this->righe;
@@ -823,7 +839,7 @@ class FatturaElettronica
     public function getFilename($new = false)
     {
         $azienda = static::getAzienda();
-        $prefix = 'IT'.(empty($azienda['piva']) ? $azienda['codice_fiscale'] : $azienda['piva']);
+        $prefix = 'IT'.(!empty($azienda['codice_fiscale']) ? $azienda['codice_fiscale'] : $azienda['piva']);
 
         if (empty($this->documento['progressivo_invio']) || !empty($new)) {
             $database = database();
@@ -904,7 +920,7 @@ class FatturaElettronica
         $result = [
             'IdTrasmittente' => [
                 'IdPaese' => $azienda['nazione'],
-                'IdCodice' => (!empty($azienda['piva'])) ? $azienda['piva'] : $azienda['codice_fiscale'],
+                'IdCodice' => (!empty($azienda['codice_fiscale'])) ? $azienda['codice_fiscale'] : $azienda['piva'],
             ],
             'ProgressivoInvio' => $documento['progressivo_invio'],
             'FormatoTrasmissione' => ($cliente['tipo'] == 'Ente pubblico') ? 'FPA12' : 'FPR12',
@@ -940,25 +956,39 @@ class FatturaElettronica
 
         // Partita IVA (obbligatoria se presente)
         if (!empty($anagrafica['piva'])) {
-            $result['IdFiscaleIVA'] = [
-                'IdPaese' => $anagrafica['nazione'],
-                'IdCodice' => $anagrafica['piva'],
-            ];
+            if (!empty($anagrafica['nazione'])) {
+                $result['IdFiscaleIVA']['IdPaese'] = $anagrafica['nazione'];
+            }
+
+            $result['IdFiscaleIVA']['IdCodice'] = $anagrafica['piva'];
         }
 
         // Codice fiscale
         if (!empty($anagrafica['codice_fiscale'])) {
             $result['CodiceFiscale'] = $anagrafica['codice_fiscale'];
         }
-
-        $result['Anagrafica'] = [
-            'Denominazione' => $anagrafica['ragione_sociale'],
-            // TODO: 'Nome' => $azienda['ragione_sociale'],
-            // TODO: 'Cognome' => $azienda['ragione_sociale'],
-            // TODO: 'Titolo' => $azienda['ragione_sociale'],
-            // TODO: CodEORI
-        ];
-
+		
+		if (!empty($anagrafica['nome']) or !empty($anagrafica['cognome'])){
+			
+			$result['Anagrafica'] = [
+				//'Denominazione' => $anagrafica['ragione_sociale'],
+				'Nome' => $anagrafica['nome'],
+				'Cognome' => $anagrafica['cognome'],
+				// TODO: 'Titolo' => $anagrafica['ragione_sociale'],
+				// TODO: CodEORI
+			];
+			
+			
+		}else{
+			$result['Anagrafica'] = [
+				'Denominazione' => $anagrafica['ragione_sociale'],
+				//'Nome' => $anagrafica['nome'],
+				//'Cognome' => $anagrafica['cognome'],
+				// TODO: 'Titolo' => $anagrafica['ragione_sociale'],
+				// TODO: CodEORI
+			];
+		}
+		
         // Informazioni specifiche azienda
         if ($azienda) {
             $result['RegimeFiscale'] = setting('Regime Fiscale');
@@ -1043,7 +1073,7 @@ class FatturaElettronica
     }
 
     /**
-     * Restituisce l'array responsabile per la generazione del tag CessionarioCommittente.
+     * Restituisce l'array responsabile per la generazione del tag CessionarioCommittente (1.4).
      *
      * @return array
      */
@@ -1054,6 +1084,22 @@ class FatturaElettronica
         $result = [
             'DatiAnagrafici' => static::getDatiAnagrafici($cliente),
             'Sede' => static::getSede($cliente),
+        ];
+
+        return $result;
+    }
+
+    /**
+     * Restituisce l'array responsabile per la generazione del tag TerzoIntermediarioOSoggettoEmittente (1.5).
+     *
+     * @return array
+     */
+    protected static function getTerzoIntermediarioOSoggettoEmittente($fattura)
+    {
+        $intermediario = $fattura->getIntermediario();
+
+        $result = [
+            'DatiAnagrafici' => static::getDatiAnagrafici($intermediario),
         ];
 
         return $result;
@@ -1080,11 +1126,19 @@ class FatturaElettronica
         // Ritenuta d'Acconto
         $righe = $fattura->getRighe();
         $id_ritenuta = null;
-        $totale = 0;
+        $id_rivalsainps = null;
+        $totale_rivalsainps = 0;
+        $totale_ritenutaacconto = 0;
         foreach ($righe as $riga) {
             if (!empty($riga['idritenutaacconto'])) {
                 $id_ritenuta = $riga['idritenutaacconto'];
-                $totale += $riga['ritenutaacconto'];
+                $totale_ritenutaacconto += $riga['ritenutaacconto'];
+            }
+
+            if (!empty($riga['idrivalsainps'])) {
+                $id_rivalsainps = $riga['idrivalsainps'];
+                $totale_rivalsainps += $riga['rivalsainps'];
+                $aliquota_iva_rivalsainps = $riga['idiva'];
             }
         }
 
@@ -1093,7 +1147,7 @@ class FatturaElettronica
 
             $result['DatiRitenuta'] = [
                 'TipoRitenuta' => ($azienda['tipo'] == 'Privato') ? 'RT01' : 'RT02',
-                'ImportoRitenuta' => $totale,
+                'ImportoRitenuta' => $totale_ritenutaacconto,
                 'AliquotaRitenuta' => $percentuale,
                 'CausalePagamento' => setting("Causale ritenuta d'acconto"),
             ];
@@ -1109,16 +1163,17 @@ class FatturaElettronica
         }
 
         // Cassa Previdenziale
-        /*
-        if (!empty($documento['bollo'])) {
-            $id_iva = setting('Iva predefinita');
-            $iva = $database->fetchOne('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($id_iva));
+        if (!empty($id_rivalsainps)) {
+            $iva = database()->fetchOne('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($aliquota_iva_rivalsainps));
+            $percentuale = database()->fetchOne('SELECT percentuale FROM co_rivalsainps WHERE id = '.prepare($id_rivalsainps))['percentuale'];
+
+            $fattura = Modules\Fatture\Fattura::find($documento['id']);
 
             $dati_cassa = [
                 'TipoCassa' => setting('Tipo Cassa'),
-                'AlCassa' => '',
-                'ImportoContributoCassa' => '',
-                'ImponibileCassa' => '',
+                'AlCassa' => $percentuale,
+                'ImportoContributoCassa' => $totale_rivalsainps,
+                'ImponibileCassa' => $fattura->imponibile,
                 'AliquotaIVA' => $iva['percentuale'],
             ];
 
@@ -1131,7 +1186,7 @@ class FatturaElettronica
             $dati_cassa['RiferimentoAmministrazione'] = '';
 
             $result['DatiCassaPrevidenziale'] = $dati_cassa;
-        }*/
+        }
 
         // Sconto globale (2.1.1.8)
         $documento['sconto_globale'] = floatval($documento['sconto_globale']);
@@ -1152,7 +1207,7 @@ class FatturaElettronica
         // Importo Totale Documento (2.1.1.9)
         // Importo totale del documento al netto dell'eventuale sconto e comprensivo di imposta a debito del cessionario / committente
         $fattura = Modules\Fatture\Fattura::find($documento['id']);
-        $result['ImportoTotaleDocumento'] = $fattura->calcola('netto');
+        $result['ImportoTotaleDocumento'] = abs($fattura->netto);
 
         return $result;
     }
@@ -1347,6 +1402,8 @@ class FatturaElettronica
             $riga['qta'] = abs($riga['qta']);
             $riga['sconto'] = abs($riga['sconto']);
 
+            $riga['qta'] = (!empty($riga['qta'])) ? $riga['qta'] : 1;
+
             $prezzo_unitario = $riga['subtotale'] / $riga['qta'];
             $prezzo_totale = $riga['subtotale'] - $riga['sconto'];
 
@@ -1412,7 +1469,10 @@ class FatturaElettronica
             }
 
             if (empty($percentuale)) {
-                $dettaglio['Natura'] = $iva['codice_natura_fe'];
+                //Controllo aggiuntivo codice_natura_fe per evitare che venga riportato il tag vuoto
+                if (!empty($iva['codice_natura_fe'])) {
+                    $dettaglio['Natura'] = $iva['codice_natura_fe'];
+                }
             }
 
             if (!empty($riga['riferimento_amministrazione'])) {
@@ -1430,8 +1490,8 @@ class FatturaElettronica
         foreach ($riepiloghi_percentuale as $riepilogo) {
             $iva = [
                 'AliquotaIVA' => $riepilogo['percentuale'],
-                'ImponibileImporto' => $riepilogo['totale'],
-                'Imposta' => $riepilogo['iva'],
+                'ImponibileImporto' => abs($riepilogo['totale']),
+                'Imposta' => abs($riepilogo['iva']),
                 'EsigibilitaIVA' => $riepilogo['esigibilita'],
             ];
 
@@ -1458,8 +1518,8 @@ class FatturaElettronica
             $iva = [
                 'AliquotaIVA' => 0,
                 'Natura' => $riepilogo['codice_natura_fe'],
-                'ImponibileImporto' => $riepilogo['totale'],
-                'Imposta' => $riepilogo['iva'],
+                'ImponibileImporto' => abs($riepilogo['totale']),
+                'Imposta' => abs($riepilogo['iva']),
                 'EsigibilitaIVA' => $riepilogo['esigibilita'],
             ];
 
@@ -1498,7 +1558,7 @@ class FatturaElettronica
             $pagamento = [
                 'ModalitaPagamento' => $co_pagamenti['codice_modalita_pagamento_fe'],
                 'DataScadenzaPagamento' => $scadenza['scadenza'],
-                'ImportoPagamento' => $scadenza['da_pagare'],
+                'ImportoPagamento' => abs($scadenza['da_pagare']),
             ];
 
             if (!empty($documento['idbanca'])) {
@@ -1513,11 +1573,9 @@ class FatturaElettronica
                     $pagamento['BIC'] = $co_banche['bic'];
                 }
             }
-        }
 
-        $result[] = [
-            'DettaglioPagamento' => $pagamento,
-        ];
+            $result[]['DettaglioPagamento'] = $pagamento;
+        }
 
         return $result;
     }
@@ -1602,15 +1660,17 @@ class FatturaElettronica
      */
     protected static function getHeader($fattura)
     {
-        $azienda = static::getAzienda();
-        $documento = $fattura->getDocumento();
-        $cliente = $fattura->getCliente();
-
         $result = [
             'DatiTrasmissione' => static::getDatiTrasmissione($fattura),
             'CedentePrestatore' => static::getCedentePrestatore($fattura),
             'CessionarioCommittente' => static::getCessionarioCommittente($fattura),
         ];
+
+        //Terzo Intermediario o Soggetto Emittente
+        if (!empty(setting('Terzo intermediario'))) {
+            $result['TerzoIntermediarioOSoggettoEmittente'] = static::getTerzoIntermediarioOSoggettoEmittente($fattura);
+            $result['SoggettoEmittente'] = 'TZ';
+        }
 
         return $result;
     }

@@ -91,8 +91,13 @@ switch (post('op')) {
 
         //Creo il modello di prima nota
 
-        if (post('crea_modello') == '1') {
-            $idmastrino = get_new_idmastrino('co_movimenti_modelli');
+        if (!empty(post('crea_modello'))) {
+            if (empty(post('idmastrino'))) {
+                $idmastrino = get_new_idmastrino('co_movimenti_modelli');
+            } else {
+                $dbo->query('DELETE FROM co_movimenti_modelli WHERE idmastrino='.prepare(post('idmastrino')));
+                $idmastrino = post('idmastrino');
+            }
 
             for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
                 $idconto = post('idconto')[$i];

@@ -26,11 +26,16 @@ switch (post('op')) {
 
         $sede->save();
 
+        if (!empty(post('nome')) and !empty(post('cognome'))) {
+            $ragione_sociale = post('nome').' '.post('cognome');
+        } else {
+            $ragione_sociale = post('ragione_sociale');
+        }
         // Informazioni sull'anagrafica
         $anagrafica->codice = post('codice');
         $anagrafica->tipo = post('tipo');
         $anagrafica->codice_destinatario = post('codice_destinatario');
-        $anagrafica->ragione_sociale = post('ragione_sociale');
+        $anagrafica->ragione_sociale = $ragione_sociale;
         $anagrafica->partita_iva = post('piva');
         $anagrafica->codice_fiscale = post('codice_fiscale');
         $anagrafica->tipo = post('tipo');
@@ -63,7 +68,8 @@ switch (post('op')) {
         $anagrafica->idagente = post('idagente');
         $anagrafica->idrelazione = post('idrelazione');
         $anagrafica->sitoweb = post('sitoweb');
-        $anagrafica->nome_cognome = post('nome_cognome');
+        $anagrafica->nome = post('nome');
+        $anagrafica->cognome = post('cognome');
         $anagrafica->iscrizione_tribunale = post('iscrizione_tribunale');
         $anagrafica->cciaa = post('cciaa');
         $anagrafica->cciaa_citta = post('cciaa_citta');
@@ -140,6 +146,8 @@ switch (post('op')) {
 
         $idagente = ($agente_is_logged && in_array($id_cliente, $idtipoanagrafica)) ? $user['idanagrafica'] : 0;
 
+        $anagrafica->nome = post('nome');
+        $anagrafica->cognome = post('cognome');
         $anagrafica->partita_iva = post('piva');
         $anagrafica->codice_fiscale = post('codice_fiscale');
         $anagrafica->indirizzo = post('indirizzo');

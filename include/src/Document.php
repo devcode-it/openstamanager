@@ -27,23 +27,6 @@ abstract class Document extends Model
     abstract public function scontoGlobale();
 
     /**
-     *  Calcola la somma degli attributi indicati come parametri.
-     *
-     * @param mixed ...$args
-     *
-     * @return float
-     */
-    public function calcola(...$args)
-    {
-        $result = 0;
-        foreach ($args as $arg) {
-            $result += $this->getRigheContabili()->sum($arg);
-        }
-
-        return $this->round($result);
-    }
-
-    /**
      * Calcola l'imponibile della fattura.
      *
      * @return float
@@ -80,7 +63,7 @@ abstract class Document extends Model
      */
     public function getIvaAttribute()
     {
-        return $this->calcola('iva');
+        return $this->calcola('iva', 'iva_rivalsa_inps');
     }
 
     /**
@@ -91,6 +74,16 @@ abstract class Document extends Model
     public function getRivalsaINPSAttribute()
     {
         return $this->calcola('rivalsa_inps');
+    }
+
+    /**
+     * Calcola l'iva della rivalsa INPS totale della fattura.
+     *
+     * @return float
+     */
+    public function getIvaRivalsaINPSAttribute()
+    {
+        return $this->calcola('iva_rivalsa_inps');
     }
 
     /**
@@ -141,6 +134,24 @@ abstract class Document extends Model
     public function getGuadagnoAttribute()
     {
         return $this->calcola('guadagno');
+    }
+
+    /**
+     * Calcola la somma degli attributi indicati come parametri.
+     * Il metodo **non** deve essere adattato per ulteriori funzionalità: deve esclusivamente calcolare la somma richiesta in modo esplicito dagli argomenti.
+     *
+     * @param mixed ...$args
+     *
+     * @return float
+     */
+    protected function calcola(...$args)
+    {
+        $result = 0;
+        foreach ($args as $arg) {
+            $result += $this->getRigheContabili()->sum($arg);
+        }
+
+        return $this->round($result);
     }
 
     /**

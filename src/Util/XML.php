@@ -2,6 +2,8 @@
 
 namespace Util;
 
+use UnexpectedValueException;
+
 /**
  * Classe dedicata all'interpretazione dei file XML.
  *
@@ -19,9 +21,16 @@ class XML
     public static function read($string)
     {
         $content = static::stripP7MData($string);
-        $content = static::sanitizeXML($content);
+
+        libxml_use_internal_errors(true);
 
         $xml = simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NOCDATA);
+        if ($xml === false) {
+            $message = libxml_get_last_error()->message;
+
+            throw new UnexpectedValueException($message);
+        }
+
         $result = json_decode(json_encode($xml), true);
 
         return $result;

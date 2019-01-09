@@ -15,7 +15,7 @@ class Articolo extends Article
     /**
      * Crea un nuovo articolo collegato ad una ddt.
      *
-     * @param DDT  $ddt
+     * @param DDT      $ddt
      * @param Original $articolo
      *
      * @return self

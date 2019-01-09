@@ -7,6 +7,7 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="iddocumento" value="<?php echo get('iddocumento'); ?>">
 	<input type="hidden" name="crea_modello" id="crea_modello" value="0">
+	<input type="hidden" name="idmastrino" id="idmastrino" value="0">
 
 	<?php
     $idconto = get('idconto');
@@ -335,13 +336,27 @@ include_once __DIR__.'/../../core.php';
 
 
 			$('#bs-popup #modello_primanota').change(function(){
+				
+				if ($(this).val()!=''){
+					$('#btn_crea_modello').html('<i class="fa fa-edit"></i> '+'<?php echo tr('Aggiungi e modifica modello'); ?>');
+					$('#bs-popup #idmastrino').val($(this).val());
+				}else{
+					$('#btn_crea_modello').html('<i class="fa fa-plus"></i> '+'<?php echo tr('Aggiungi e crea modello'); ?>');
+					$('#bs-popup #idmastrino').val(0);
+				}
+				
 				var idmastrino = $(this).val();
 
 				if(idmastrino!=''){
 					var causale = $(this).find('option:selected').text();
-
-					$('#bs-popup #desc').val(causale);
-
+					
+					//aggiornava erroneamente anche la causale ed eventuale numero di fattura e data
+					<?php if (empty($iddocumento)) {
+        ?>
+						$('#bs-popup #desc').val(causale);
+					<?php
+    } ?>
+					
 					$.get('<?php echo $rootdir; ?>/ajax_complete.php?op=get_conti&idmastrino='+idmastrino, function(data){
 						var conti = data.split(',');
 						for(i=0;i<conti.length;i++){

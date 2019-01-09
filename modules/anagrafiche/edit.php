@@ -38,13 +38,33 @@ if (!$cliente) {
 
 			<div class="panel-body">
 				<div class="row">
-					<div class="col-md-8">
-						{[ "type": "text", "label": "<?php echo tr('Ragione sociale'); ?>", "name": "ragione_sociale", "required": 1, "value": "$ragione_sociale$" ]}
+					<div class="col-md-6">
+						{[ "type": "text", "label": "<?php echo tr('Denominazione'); ?>", "name": "ragione_sociale", "required": 1, "value": "$ragione_sociale$", "extra": "autocomplete=\"off\"" ]}
+					</div>
+
+					<div class="col-md-3">
+                        {[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask text-uppercase", "value": "$piva$" ]}
+                    </div>
+
+					<div class="col-md-3">
+						{[ "type": "select", "label": "<?php echo tr('Tipologia'); ?>", "name": "tipo", "values": "list=\"\": \"<?php echo tr('Non specificato'); ?>\", \"Azienda\": \"<?php echo tr('Azienda'); ?>\", \"Privato\": \"<?php echo tr('Privato'); ?>\", \"Ente pubblico\": \"<?php echo tr('Ente pubblico'); ?>\"", "value": "$tipo$" ]}
+					</div>
+				</div>
+
+				<div class="row">
+
+					<div class="col-md-4">
+							{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 0, "value": "$nome$", "extra": "autocomplete=\"off\"" ]}
 					</div>
 
 					<div class="col-md-4">
-						{[ "type": "select", "label": "<?php echo tr('Tipologia'); ?>", "name": "tipo", "values": "list=\"\": \"<?php echo tr('Non specificato'); ?>\", \"Azienda\": \"<?php echo tr('Azienda'); ?>\", \"Privato\": \"<?php echo tr('Privato'); ?>\", \"Ente pubblico\": \"<?php echo tr('Ente pubblico'); ?>\"", "value": "$tipo$" ]}
+							{[ "type": "text", "label": "<?php echo tr('Cognome'); ?>", "name": "cognome", "required": 0, "value": "$cognome$", "extra": "autocomplete=\"off\"" ]}
 					</div>
+
+					<div class="col-md-4">
+                        {[ "type": "text", "label": "<?php echo tr('Codice fiscale'); ?>", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask text-uppercase", "value": "$codice_fiscale$" ]}
+                    </div>
+
 				</div>
 
 				<!-- RIGA PER LE ANAGRAFICHE CON TIPOLOGIA 'PRIVATO' -->
@@ -66,15 +86,7 @@ if (!$cliente) {
 				<?php
 } ?>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        {[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask text-uppercase", "value": "$piva$" ]}
-                    </div>
 
-                    <div class="col-md-6">
-                        {[ "type": "text", "label": "<?php echo tr('Codice fiscale'); ?>", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask text-uppercase", "value": "$codice_fiscale$" ]}
-                    </div>
-                </div>
 
 				<div class="row">
 					<div class="col-md-2">
@@ -83,8 +95,8 @@ if (!$cliente) {
 
 					<div class="col-md-2">
 						<?php
-							$help_text = '<b>Attenzione</b>: per impostare il codice specificare prima \'Tipologia\' e \'Nazione\' dell\'anagrafica:<br><ul><li>Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri</li><li>Azienda (B2B) - Codice Destinatario, 7 caratteri</li><li>Privato (B2C) - viene utilizzato il Codice Fiscale</li></ul>'.((in_array($id_azienda, $tipi_anagrafica)) ? '<p>N.B. <b>non è necessario</b> comunicare il proprio codice destinatario ai fornitori in quanto è sufficiente che questo sia registrato nel portale del Sistema Di Interscambio dell\'Agenzia Entrate (SDI)</p>' : '').'';
-						?>
+                            $help_text = '<b>Attenzione</b>: per impostare il codice specificare prima \'Tipologia\' e \'Nazione\' dell\'anagrafica:<br><ul><li>Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri</li><li>Azienda (B2B) - Codice Destinatario, 7 caratteri</li><li>Privato (B2C) - viene utilizzato il Codice Fiscale</li></ul>'.((in_array($id_azienda, $tipi_anagrafica)) ? '<p>N.B. <b>non è necessario</b> comunicare il proprio codice destinatario ai fornitori in quanto è sufficiente che questo sia registrato nel portale del Sistema Di Interscambio dell\'Agenzia Entrate (SDI)</p>' : '').'';
+                        ?>
 						{[ "type": "text", "label": "<?php echo ($record['tipo'] == 'Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo ($record['tipo'] == 'Ente pubblico') ? '6' : '7'; ?>,  "extra": "<?php echo (empty($record['tipo']) or ($record['tipo'] == 'Privato')) ? 'disabled' : ''; ?>", "help": "<?php echo tr($help_text); ?>", "readonly": "<?php echo intval($anagrafica->sedeLegale->nazione->iso2 != 'IT'); ?>" ]}
 					</div>
 
@@ -252,7 +264,7 @@ if (!empty($google)) {
 						{[ "type": "select", "label": "<?php echo tr('Listino articoli'); ?>", "name": "idlistino_acquisti", "values": "query=SELECT id, nome AS descrizione FROM mg_listini ORDER BY nome ASC", "value": "$idlistino_acquisti$", "extra": "<?php echo ($fornitore) ? '' : 'readonly'; ?>" ]}
 					</div>
                     <div class="col-md-6">
-				
+
 
 <?php
 
@@ -353,7 +365,7 @@ if (!empty($google)) {
         {[ "type": "select", "label": "<?php echo tr('Piano dei conti cliente'); ?>", "name": "piano_dei_conti_cliente", "values": "list=\"\": \"<?php echo $piano_dei_conti_cliente; ?>\"", "readonly": 1, "value": "", "extra": "" ]}
 
                     </div>
-                    
+
               </div>
 
 
@@ -431,21 +443,28 @@ if (!empty($google)) {
 						{[ "type": "text", "label": "<?php echo tr('Codice BIC'); ?>", "name": "bic", "value": "$bic$" ]}
 					</div>
 				</div>
-				
 
+				<?php
+                 }
+                ?>
+				
+				<?php
+                //se non è l'anagrafica azienda, ma cliente o fornitore
+                 if ($cliente or $fornitore) {
+                     ?>
 
 				<div class="row">
-				
+
 					<div class="col-md-3">
-                        {[ "type": "checkbox", "label": "<?php echo tr('Abilitare lo split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Lo split payment è disponibile per le anagrafiche di tipologia \"Ente pubblico\" o \"Azienda\" ed <strong>&egrave; obbligatorio</strong> per:<ul><li>Stato;</li><li>organi statali ancorch&eacute; dotati di personalit&agrave; giuridica;</li><li>enti pubblici territoriali e dei consorzi tra essi costituiti;</li><li>Camere di Commercio;</li><li>Istituti universitari;</li><li>ASL e degli enti ospedalieri;</li><li>enti pubblici di ricovero e cura aventi prevalente carattere scientifico;</li><li>enti pubblici di assistenza e beneficienza;</li><li>enti di previdenza;</li><li>consorzi tra questi costituiti.</li></ul>'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>", "extra" : "<?php echo ($record['tipo'] == 'Ente pubblico' or $record['tipo'] == 'Azienda')  ? '' : 'disabled'; ?>" ]}
+                        {[ "type": "checkbox", "label": "<?php echo tr('Abilitare lo split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Lo split payment è disponibile per le anagrafiche di tipologia \"Ente pubblico\" o \"Azienda\" ed <strong>&egrave; obbligatorio</strong> per:<ul><li>Stato;</li><li>organi statali ancorch&eacute; dotati di personalit&agrave; giuridica;</li><li>enti pubblici territoriali e dei consorzi tra essi costituiti;</li><li>Camere di Commercio;</li><li>Istituti universitari;</li><li>ASL e degli enti ospedalieri;</li><li>enti pubblici di ricovero e cura aventi prevalente carattere scientifico;</li><li>enti pubblici di assistenza e beneficienza;</li><li>enti di previdenza;</li><li>consorzi tra questi costituiti.</li></ul>'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>", "extra" : "<?php echo ($record['tipo'] == 'Ente pubblico' or $record['tipo'] == 'Azienda') ? '' : 'disabled'; ?>" ]}
                     </div>
-					
+
 					<div class="col-md-9">
 						{[ "type": "text", "label": "<?php echo tr('Dicitura fissa in fattura'); ?>", "name": "diciturafissafattura", "value": "$diciturafissafattura$" ]}
 					</div>
 				</div>
-				
-				
+
+
 				<?php
                  }
                 ?>
@@ -579,7 +598,7 @@ if (!empty($elementi)) {
             $modulo = 'Contratti';
         } elseif (in_array($elemento['tipo_documento'], ['Ordine cliente', 'Ordine fornitore'])) {
             $modulo = ($elemento['dir'] == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
-        } elseif (in_array($elemento['tipo_documento'], ['Ddt di vendita', 'Ddt di acquisto'])) {
+        } elseif (in_array($elemento['tipo_documento'], ['Ddt in uscita', 'Ddt in entrata'])) {
             $modulo = ($elemento['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
         } else {
             $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
@@ -638,6 +657,32 @@ if (empty($record['deleted_at'])) {
 			$("#lat").val(result.geometry.location.lat());
 			$("#lng").val(result.geometry.location.lng());
         });
+
+		// Abilito solo ragione sociale oppure solo nome-cognome in base a cosa compilo
+		$('#nome, #cognome').bind("keyup change", function(e) {
+			if ($('#nome').val() == '' && $('#cognome').val() == '' ){
+                $('#nome, #cognome').prop('disabled', true).prop('required', false);
+				$('#ragione_sociale').prop('disabled', false).prop('required', true);
+				$('#ragione_sociale').focus();
+			}else{
+                $('#nome, #cognome').prop('disabled', false).prop('required', true);
+				$('#ragione_sociale').prop('disabled', true).prop('required', false);
+			}
+		});
+
+        $('#ragione_sociale').bind("keyup change", function(e) {
+			if ($('#ragione_sociale').val() == '' ){
+                $('#nome, #cognome').prop('disabled', false).prop('required', true);
+                $('#ragione_sociale').prop('disabled', true).prop('required', false);
+				$('#nome').focus();
+			}else{
+                $('#nome, #cognome').prop('disabled', true).prop('required', false);
+				$('#ragione_sociale').prop('disabled', false).prop('required', true);
+				$('#ragione_sociale').focus();
+			}
+		});
+
+        $('#ragione_sociale, #nome').trigger('keyup');
 	});
 </script>
 

@@ -57,3 +57,8 @@ ALTER TABLE `co_pagamenti` CHANGE `prc` `prc` DECIMAL(5,2) NOT NULL;
 
 -- Ordino gestione documentale per data, nome
 UPDATE `zz_modules` SET `options` = '{ "main_query": [ { "type": "table", "fields": "Categoria, Nome, Data", "query": "SELECT id,(SELECT descrizione FROM zz_documenti_categorie WHERE zz_documenti_categorie.id = idcategoria) AS Categoria, zz_documenti.nome AS Nome, DATE_FORMAT( zz_documenti.`data`, ''%d/%m/%Y'' ) AS `Data` FROM zz_documenti WHERE `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 1=1 ORDER BY data, nome"} ]}' WHERE `zz_modules`.`name` = 'Gestione documentale';
+
+-- Ordino Ddt anche per created_at (nel caso di stessa data e che il cast del numero esterno non sia efficace)
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id` WHERE 1=1 AND `dir` = ''entrata'' AND `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 2=2 ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC,`dt_ddt`.created_at DESC' WHERE `zz_modules`.`name` = 'Ddt di vendita';
+
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id` WHERE 1=1 AND `dir` = ''uscita'' AND `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 2=2 ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC, `dt_ddt`.created_at DESC' WHERE `zz_modules`.`id` = 'Ddt di acquisto';

@@ -657,7 +657,8 @@ class FatturaElettronica
     public function getRighe()
     {
         if (empty($this->righe)) {
-            $this->righe = database()->fetchArray('SELECT * FROM `co_righe_documenti` WHERE `sconto_globale` = 0 AND is_descrizione = 0 AND `iddocumento` = '.prepare($this->getDocumento()['id']));
+			//AND is_descrizione = 0
+            $this->righe = database()->fetchArray('SELECT * FROM `co_righe_documenti` WHERE `sconto_globale` = 0  AND `iddocumento` = '.prepare($this->getDocumento()['id']));
         }
 
         return $this->righe;
@@ -1387,7 +1388,9 @@ class FatturaElettronica
             $riga['subtotale'] = abs($riga['subtotale']);
             $riga['qta'] = abs($riga['qta']);
             $riga['sconto'] = abs($riga['sconto']);
-
+			
+			$riga['qta'] = (!empty($riga['qta'])) ? $riga['qta'] : 1; 
+			
             $prezzo_unitario = $riga['subtotale'] / $riga['qta'];
             $prezzo_totale = $riga['subtotale'] - $riga['sconto'];
 
@@ -1502,8 +1505,8 @@ class FatturaElettronica
             $iva = [
                 'AliquotaIVA' => 0,
                 'Natura' => $riepilogo['codice_natura_fe'],
-                'ImponibileImporto' => $riepilogo['totale'],
-                'Imposta' => $riepilogo['iva'],
+                'ImponibileImporto' => abs($riepilogo['totale']),
+                'Imposta' => abs($riepilogo['iva']),
                 'EsigibilitaIVA' => $riepilogo['esigibilita'],
             ];
 
@@ -1542,7 +1545,7 @@ class FatturaElettronica
             $pagamento = [
                 'ModalitaPagamento' => $co_pagamenti['codice_modalita_pagamento_fe'],
                 'DataScadenzaPagamento' => $scadenza['scadenza'],
-                'ImportoPagamento' => $scadenza['da_pagare'],
+                'ImportoPagamento' => abs($scadenza['da_pagare']),
             ];
 
             if (!empty($documento['idbanca'])) {

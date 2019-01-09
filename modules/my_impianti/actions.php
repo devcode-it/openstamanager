@@ -77,7 +77,7 @@ switch ($op) {
         $idanagrafica = post('idanagrafica');
         $nome = post('nome');
         $idtecnico = post('idtecnico');
-		$idsede = post('idsede');
+        $idsede = post('idsede');
 
         if (!empty($matricola)) {
             $dbo->query('INSERT INTO my_impianti(matricola, idanagrafica, nome, data, idtecnico, idsede) VALUES ('.prepare($matricola).', '.prepare($idanagrafica).', '.prepare($nome).', NOW(), '.prepare($idtecnico).', '.prepare($idsede).')');

@@ -141,37 +141,39 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 	</div>
 
 <?php
-	// Visualizzo solo se l'anagrafica cliente è un ente pubblico
-	if (!empty($record['idcontratto'])){
-		$contratto = $dbo->fetchOne("SELECT codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = ".prepare($record['idcontratto']));
-		$record['id_documento_fe'] = $contratto['id_documento_fe'];
-		$record['codice_cup'] = $contratto['codice_cup'];
-		$record['codice_cig'] = $contratto['codice_cig'];
-	}
-	
+    // Visualizzo solo se l'anagrafica cliente è un ente pubblico
+    if (!empty($record['idcontratto'])) {
+        $contratto = $dbo->fetchOne('SELECT codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($record['idcontratto']));
+        $record['id_documento_fe'] = $contratto['id_documento_fe'];
+        $record['codice_cup'] = $contratto['codice_cup'];
+        $record['codice_cig'] = $contratto['codice_cig'];
+    }
+
     ?>
     <!-- Fatturazione Elettronica PA-->
     <div class="panel panel-primary <?php echo (($record['tipo_anagrafica']) == 'Ente pubblico') ? 'show' : 'hide'; ?>" >
         <div class="panel-heading">
             <h3 class="panel-title"><?php echo tr('Dati appalto'); ?>
-			<?php if (!empty($record['idcontratto'])){ ?>
+			<?php if (!empty($record['idcontratto'])) {
+        ?>
 			<span class="tip" title="<?php echo tr('E\' possibile specificare i dati dell\'appalto solo se il cliente è di tipo \'Ente pubblico\' e l\'attività non risulta già collegata ad un contratto.'); ?>" > <i class="fa fa-question-circle-o"></i></span>
 			</h3>
-			<?php } ?>
+			<?php
+    } ?>
         </div>
 
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-4">
-					{[ "type": "<?php echo (!empty($record['idcontratto']) ? 'span': 'text' ) ?>", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "value": "<?php echo $record['id_documento_fe']; ?>", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
+					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "value": "<?php echo $record['id_documento_fe']; ?>", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
 				</div>
 
                 <div class="col-md-4">
-					{[ "type": "<?php echo (!empty($record['idcontratto']) ? 'span': 'text' ) ?>", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "<?php echo $record['codice_cig']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
+					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "<?php echo $record['codice_cig']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "<?php echo (!empty($record['idcontratto']) ? 'span': 'text' ) ?>", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "<?php echo $record['codice_cup']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
+					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "<?php echo $record['codice_cup']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
 				</div>
             </div>
         </div>

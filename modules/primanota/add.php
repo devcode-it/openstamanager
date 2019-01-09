@@ -351,9 +351,11 @@ include_once __DIR__.'/../../core.php';
 					var causale = $(this).find('option:selected').text();
 					
 					//aggiornava erroneamente anche la causale ed eventuale numero di fattura e data
-					<?php if (empty($iddocumento)) { ?>
+					<?php if (empty($iddocumento)) {
+        ?>
 						$('#bs-popup #desc').val(causale);
-					<?php } ?>
+					<?php
+    } ?>
 					
 					$.get('<?php echo $rootdir; ?>/ajax_complete.php?op=get_conti&idmastrino='+idmastrino, function(data){
 						var conti = data.split(',');

@@ -39,7 +39,7 @@ if (!$cliente) {
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-md-6">
-						{[ "type": "text", "label": "<?php echo tr('Denominazione'); ?>", "name": "ragione_sociale", "required": 1, "value": "$ragione_sociale$" ]}
+						{[ "type": "text", "label": "<?php echo tr('Denominazione'); ?>", "name": "ragione_sociale", "required": 1, "value": "$ragione_sociale$", "extra": "autocomplete=\"off\"" ]}
 					</div>
 
 					<div class="col-md-3">
@@ -54,11 +54,11 @@ if (!$cliente) {
 				<div class="row">
 
 					<div class="col-md-4">
-							{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 0, "value": "$nome$" ]}
+							{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 0, "value": "$nome$", "extra": "autocomplete=\"off\"" ]}
 					</div>
 
 					<div class="col-md-4">
-							{[ "type": "text", "label": "<?php echo tr('Cognome'); ?>", "name": "cognome", "required": 0, "value": "$cognome$" ]}
+							{[ "type": "text", "label": "<?php echo tr('Cognome'); ?>", "name": "cognome", "required": 0, "value": "$cognome$", "extra": "autocomplete=\"off\"" ]}
 					</div>
 
 					<div class="col-md-4">
@@ -95,6 +95,7 @@ if (!$cliente) {
 
 					<div class="col-md-2">
 						<?php
+<<<<<<< HEAD
                             $help_codice_destinatario = tr("Per impostare il codice specificare prima 'Tipologia' e 'Nazione' dell'anagrafica").':<br><ul>
                                 <li>'.tr('Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri').'</li>
                                 <li>'.tr('Azienda (B2B) - Codice Destinatario, 7 caratteri').'</li>
@@ -106,6 +107,11 @@ if (!$cliente) {
                             }
                         ?>
 						{[ "type": "text", "label": "<?php echo ($record['tipo'] == 'Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo ($record['tipo'] == 'Ente pubblico') ? '6' : '7'; ?>, "extra": "<?php echo (empty($record['tipo']) or ($record['tipo'] == 'Privato')) ? 'disabled' : ''; ?>", "help": "<?php echo tr($help_codice_destinatario); ?>", "readonly": "<?php echo intval($anagrafica->sedeLegale->nazione->iso2 != 'IT'); ?>" ]}
+=======
+                            $help_text = '<b>Attenzione</b>: per impostare il codice specificare prima \'Tipologia\' e \'Nazione\' dell\'anagrafica:<br><ul><li>Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri</li><li>Azienda (B2B) - Codice Destinatario, 7 caratteri</li><li>Privato (B2C) - viene utilizzato il Codice Fiscale</li></ul>'.((in_array($id_azienda, $tipi_anagrafica)) ? '<p>N.B. <b>non è necessario</b> comunicare il proprio codice destinatario ai fornitori in quanto è sufficiente che questo sia registrato nel portale del Sistema Di Interscambio dell\'Agenzia Entrate (SDI)</p>' : '').'';
+                        ?>
+						{[ "type": "text", "label": "<?php echo ($record['tipo'] == 'Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo ($record['tipo'] == 'Ente pubblico') ? '6' : '7'; ?>,  "extra": "<?php echo (empty($record['tipo']) or ($record['tipo'] == 'Privato')) ? 'disabled' : ''; ?>", "help": "<?php echo tr($help_text); ?>", "readonly": "<?php echo intval($anagrafica->sedeLegale->nazione->iso2 != 'IT'); ?>" ]}
+>>>>>>> master
 					</div>
 
                     <div class="col-md-4">
@@ -452,7 +458,14 @@ if (!empty($google)) {
 					</div>
 				</div>
 
-
+				<?php
+                 }
+                ?>
+				
+				<?php
+                //se non è l'anagrafica azienda, ma cliente o fornitore
+                 if ($cliente or $fornitore) {
+                     ?>
 
 				<div class="row">
 
@@ -599,7 +612,7 @@ if (!empty($elementi)) {
             $modulo = 'Contratti';
         } elseif (in_array($elemento['tipo_documento'], ['Ordine cliente', 'Ordine fornitore'])) {
             $modulo = ($elemento['dir'] == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
-        } elseif (in_array($elemento['tipo_documento'], ['Ddt di vendita', 'Ddt di acquisto'])) {
+        } elseif (in_array($elemento['tipo_documento'], ['Ddt in uscita', 'Ddt in entrata'])) {
             $modulo = ($elemento['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
         } else {
             $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
@@ -660,23 +673,26 @@ if (empty($record['deleted_at'])) {
         });
 
 		// Abilito solo ragione sociale oppure solo nome-cognome in base a cosa compilo
-		$('#nome, #cognome').keyup(function(){
+		$('#nome, #cognome').bind("keyup change", function(e) {
 			if ($('#nome').val() == '' && $('#cognome').val() == '' ){
                 $('#nome, #cognome').prop('disabled', true).prop('required', false);
 				$('#ragione_sociale').prop('disabled', false).prop('required', true);
+				$('#ragione_sociale').focus();
 			}else{
                 $('#nome, #cognome').prop('disabled', false).prop('required', true);
 				$('#ragione_sociale').prop('disabled', true).prop('required', false);
 			}
 		});
 
-        $('#ragione_sociale').keyup(function(){
+        $('#ragione_sociale').bind("keyup change", function(e) {
 			if ($('#ragione_sociale').val() == '' ){
                 $('#nome, #cognome').prop('disabled', false).prop('required', true);
                 $('#ragione_sociale').prop('disabled', true).prop('required', false);
+				$('#nome').focus();
 			}else{
                 $('#nome, #cognome').prop('disabled', true).prop('required', false);
 				$('#ragione_sociale').prop('disabled', false).prop('required', true);
+				$('#ragione_sociale').focus();
 			}
 		});
 

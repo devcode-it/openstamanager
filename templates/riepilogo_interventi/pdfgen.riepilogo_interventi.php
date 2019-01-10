@@ -18,7 +18,7 @@ if (is_array($_SESSION['module_'.$id_module])) {
             $field_name = str_replace('search_', '', $field);
             $field_name = str_replace('__', ' ', $field_name);
             $field_name = str_replace('-', ' ', $field_name);
-            array_push($search_filters, '`'.$field_name.'` LIKE "%'.$field_value.'%"');
+            array_push($search_filters, '`'.$field_name.'` LIKE "%'.$value.'%"');
         }
     }
 }

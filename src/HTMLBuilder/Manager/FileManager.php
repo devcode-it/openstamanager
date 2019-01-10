@@ -114,7 +114,7 @@ class FileManager implements ManagerInterface
                 </button>';
                     } elseif (strtolower($extension) == 'xml') {
                         $result .= '
-                        <a class="btn btn-xs btn-info" href="'.ROOTDIR.'/plugins/exportFE/view.php?id_record='.$r['id'].'" target="_blank">
+                        <a class="btn btn-xs btn-info" href="'.ROOTDIR.'/plugins/exportFE/view.php?id_record='.$r['id_record'].'" target="_blank">
                             <i class="fa fa-eye"></i>
                         </a>';
                     } else {

@@ -27,6 +27,7 @@ $citta = $sede['Comune'];
 $provincia = $sede['Provincia'];
 
 echo '
+<<<<<<< HEAD
     <h4>'.
         $ragione_sociale.'<br>
         <small>
@@ -35,33 +36,89 @@ echo '
             '.$cap.' '.$citta.' ('.$provincia.')<br>
         </small>
     </h4><br>';
+=======
+    <div class="row" >
+		<div class="col-md-6" >
+			<h4>'.
+				$ragione_sociale.'<br>
+				<small>
+					'.(!empty($codice_fiscale) ? (tr('Codice Fiscale').': '.$codice_fiscale.'<br>') : '').'
+					'.(!empty($partita_iva) ? (tr('Partita IVA').': '.$partita_iva.'<br>') : '').'
+					'.$cap.' '.$citta.' ('.$provincia.')<br>
+				</small>
+			</h4>
+		</div>';	
+echo '
+		<div class="col-md-6">
+			<h4>'.$fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']['Numero'].'<br>
+				<small>
+					'.database()->fetchOne('SELECT CONCAT("('.$fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']['TipoDocumento'].') ", descrizione) AS descrizione FROM fe_tipi_documento WHERE codice = '.prepare($fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']['TipoDocumento']))['descrizione'].'
+					<br>'.Translator::dateToLocale($fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']['Data']).'
+					<br>'.$fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']['Divisa'].'
+				</small>
+			</h4>
+		</div>
+	</div>';
 
-// Pagamenti
-$pagamenti = $fattura_pa->getBody()['DatiPagamento'];
+// Se il blocco DatiPagamento è valorizzato (opzionale)
+if (!empty($fattura_pa->getBody()['DatiPagamento'])){
+	
+	$pagamenti = $fattura_pa->getBody()['DatiPagamento'];
 
-$metodi = $pagamenti['DettaglioPagamento'];
-$metodi = isset($metodi[0]) ? $metodi : [$metodi];
+	$metodi = $pagamenti['DettaglioPagamento'];
+	$metodi = isset($metodi[0]) ? $metodi : [$metodi];
+	$codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
+
+	echo '
+		<h4>'.tr('Pagamento').'</h4>
+
+		<p>'.tr('La fattura importata presenta _NUM_ rat_E_ di pagamento con le seguenti scadenze', [
+			'_NUM_' => count($metodi),
+			'_E_' => ((count($metodi)>1) ? 'e': 'a'),
+		]).':</p>
+		<ol>';
+
+	// Scadenze di pagamento
+	foreach ($metodi as $metodo) {
+		
+		echo '
+				<li>';
+				
+		//DataScadenzaPagamento è un nodo opzionale per il blocco DatiPagamento
+		if (!empty($metodo['DataScadenzaPagamento'])){
+			echo Translator::dateToLocale($metodo['DataScadenzaPagamento']).' ';
+		}
+		
+		echo Translator::numberToLocale($metodo['ImportoPagamento']).' &euro; ';
+		echo '('.((!empty($metodo['ModalitaPagamento'])) ? database()->fetchOne('SELECT descrizione FROM fe_modalita_pagamento WHERE codice = '.prepare($metodo['ModalitaPagamento']))['descrizione'] : '' ).')';
+		
+		
+		echo '
+				</li>';
+	}
+
+	echo '
+		</ol>';
+		
+}
+>>>>>>> master
+
+
+// Tipo del documento
+$codice_tipo_documento_fe = (intval(database()->fetchNum('SELECT id FROM co_tipidocumento WHERE codice_tipo_documento_fe = '.prepare($fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']['TipoDocumento']).''))) ? $fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']['TipoDocumento'] : '%';
+$query = 'SELECT id, CONCAT (descrizione, IF((codice_tipo_documento_fe IS NULL), \'\', CONCAT( \' (\', codice_tipo_documento_fe, \')\' ) )) as descrizione FROM co_tipidocumento WHERE dir = \'uscita\' AND codice_tipo_documento_fe LIKE '.prepare($codice_tipo_documento_fe);
+
+echo '
+    {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'" ]}';
+
 
 // prc '.($pagamenti['CondizioniPagamento'] == 'TP01' ? '!' : '').'= 100 AND
-$query = 'SELECT id, descrizione FROM co_pagamenti WHERE codice_modalita_pagamento_fe = '.prepare($metodi[0]['ModalitaPagamento']).' GROUP BY descrizione ORDER BY descrizione ASC';
-
-echo '
-    <h4>'.tr('Pagamento').'</h4>
-
-    <p>'.tr('La fattura importata presenta _NUM_ rate di pagamento con le seguenti scadenze', [
-        '_NUM_' => count($metodi),
-    ]).':</p>
-    <ul>';
-
-// Scadenze di pagamento
-foreach ($metodi as $metodo) {
-    echo '
-        <li>'.Translator::dateToLocale($metodo['DataScadenzaPagamento']).'</li>';
+$query = 'SELECT id, CONCAT (descrizione, IF((codice_modalita_pagamento_fe IS NULL), \"\", CONCAT( \" (\", codice_modalita_pagamento_fe, \")\" ) )) as descrizione FROM co_pagamenti';
+if (!empty($codice_modalita_pagamento)) {
+	$query .= ' WHERE codice_modalita_pagamento_fe = '.prepare($codice_modalita_pagamento);
 }
-
-echo '
-    </ul>';
-
+$query .= ' GROUP BY descrizione ORDER BY descrizione ASC';
+	
 echo '
     {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "values": "query='.$query.'" ]}';
 

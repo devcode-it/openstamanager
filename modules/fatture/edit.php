@@ -234,6 +234,18 @@ if ($dir == 'uscita') {
 					{[ "type": "checkbox", "label": "<?php echo tr('Split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Abilita lo split payment per questo documento.'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>" ]}
 				</div>
 				
+				<?php
+				//TODO: Fattura per conto del fornitore (es. cooperative agricole che emettono la fattura per conto dei propri soci produttori agricoli conferenti)
+				if ($dir == 'entrata') {
+				?>
+					<div class="col-md-3">
+						{[ "type": "checkbox", "label": "<?php echo tr('Fattura per conto terzi'); ?>", "name": "is_fattura_conto_terzi", "value": "$is_fattura_conto_terzi$", "help": "<?php echo tr('Nell\'xml della FE imposta il cliente come cessionario e il fornitore come cedente/prestatore.'); ?>", "placeholder": "<?php echo tr('Fattura per conto terzi'); ?>" ]}
+					</div>
+					
+				<?php
+				}
+				?>
+				
 				
             </div>
 

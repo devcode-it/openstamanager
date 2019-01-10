@@ -23,7 +23,7 @@ switch (post('op')) {
         $id_record = $preventivo->id;
 
         flash()->info(tr('Aggiunto preventivo numero _NUM_!', [
-            '_NUM_' => $numero,
+            '_NUM_' => $preventivo['numero'],
         ]));
 
         break;
@@ -110,6 +110,7 @@ switch (post('op')) {
         $numeropreventivo_template = str_replace('#', '%', $numeropreventivo_template);
         $rs = $dbo->fetchArray('SELECT numero FROM co_preventivi WHERE numero LIKE('.prepare(Util\Generator::complete($numeropreventivo_template)).') ORDER BY numero DESC LIMIT 0,1');
         $numero = Util\Generator::generate(setting('Formato codice preventivi'), $rs[0]['numero']);
+		
 
         $dbo->query('UPDATE co_preventivi SET idstato=1, numero = '.$numero.', master_revision = id WHERE id='.prepare($id_record));
 
@@ -121,6 +122,7 @@ switch (post('op')) {
         $dbo->query('DROP TEMPORARY TABLE tmp');
 
         flash()->info(tr('Preventivo duplicato correttamente!'));
+	
 
     break;
 

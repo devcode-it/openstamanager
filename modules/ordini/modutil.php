@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Ordini\Ordine;
 
 /**
- * Funzione per generare un nuovo numero per la fattura.
+ * Funzione per generare un nuovo numero per l'ordine.
  *
  * @deprecated 2.4.5
  */

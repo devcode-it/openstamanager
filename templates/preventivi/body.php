@@ -82,7 +82,7 @@ echo "
     <tbody>';
 
 // RIGHE PREVENTIVO CON ORDINAMENTO UNICO
-$righe = $dbo->fetchArray("SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva FROM `co_righe_preventivi` WHERE idpreventivo=".prepare($id_record).' ORDER BY `order`');
+$righe = $dbo->fetchArray("SELECT *, IFNULL((SELECT codice FROM mg_articoli WHERE id=idarticolo),'') AS codice_articolo, (SELECT percentuale FROM co_iva WHERE id=idiva) AS perc_iva FROM `co_righe_preventivi` WHERE idpreventivo=".prepare($id_record).' ORDER BY `order`');
 foreach ($righe as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);

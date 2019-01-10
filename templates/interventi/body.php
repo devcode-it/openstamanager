@@ -331,7 +331,7 @@ echo '
             </th>
 
             <td class="text-center" style="font-size:6pt;width:35%">
-                '.tr('I dati del ricevente verranno trattati in base al D.lgs n. 196/2003').'
+                '.tr('I dati del ricevente verrano trattati in base alla normativa europea UE 2016/679 del 27 aprile 2016 (GDPR)').'
             </td>
         </tr>
     </thead>

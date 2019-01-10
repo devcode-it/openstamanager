@@ -50,6 +50,15 @@ echo '
 		</div>
 	</div>';
 
+
+
+// Tipo del documento
+$codice_tipo_documento_fe = (intval(database()->fetchNum('SELECT id FROM co_tipidocumento WHERE codice_tipo_documento_fe = '.prepare($fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']['TipoDocumento']).''))) ? $fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']['TipoDocumento'] : '%';
+$query = 'SELECT id, CONCAT (descrizione, IF((codice_tipo_documento_fe IS NULL), \'\', CONCAT( \' (\', codice_tipo_documento_fe, \')\' ) )) as descrizione FROM co_tipidocumento WHERE dir = \'uscita\' AND codice_tipo_documento_fe LIKE '.prepare($codice_tipo_documento_fe);
+
+echo '
+    {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'" ]}';
+
 // Se il blocco DatiPagamento è valorizzato (opzionale)
 if (!empty($fattura_pa->getBody()['DatiPagamento'])){
 	

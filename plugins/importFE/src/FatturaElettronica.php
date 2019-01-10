@@ -294,7 +294,7 @@ class FatturaElettronica
      *
      * @return int
      */
-    public function saveFattura($id_pagamento, $id_sezionale)
+    public function saveFattura($id_pagamento, $id_sezionale, $id_tipo)
     {
        
 		
@@ -304,11 +304,11 @@ class FatturaElettronica
         $data = $dati_generali['Data'];
 		
 		//Fix temporaneo per gestire TD02,TD03,TD06 non ancora previsti in OSM
-		if ($dati_generali['TipoDocumento']=='TD02' OR $dati_generali['TipoDocumento']=='TD03' OR $dati_generali['TipoDocumento']=='TD06'){
-			$id_tipo = 'TD01'
+		/*if ($dati_generali['TipoDocumento']=='TD02' OR $dati_generali['TipoDocumento']=='TD03' OR $dati_generali['TipoDocumento']=='TD06'){
+			$id_tipo = 'TD01';
 		}
 		
-		$id_tipo = database()->fetchOne('SELECT id FROM co_tipidocumento WHERE codice_tipo_documento_fe = '.prepare($dati_generali['TipoDocumento']))['id'];
+		$id_tipo = database()->fetchOne('SELECT id FROM co_tipidocumento WHERE codice_tipo_documento_fe = '.prepare($dati_generali['TipoDocumento']))['id'];*/
 		
         $numero_esterno = $dati_generali['Numero'];
         $progressivo_invio = $this->getHeader()['DatiTrasmissione']['ProgressivoInvio'];
@@ -345,6 +345,11 @@ class FatturaElettronica
             $importo = $ritenuta['ImportoRitenuta'];
 
             // TODO: salvare in fattura
+        }
+
+        $causale = $dati_generali['Causale'];
+        if (!empty($causale)) {
+            $fattura->note = $causale;
         }
 
         // Bollo

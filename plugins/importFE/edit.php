@@ -74,7 +74,7 @@ echo '
 
             <div class="col-md-3">
                 <button type="button" class="btn btn-primary pull-right" onclick="upload(this)">
-                    <i class="fa fa-upload"></i> '.tr('Carica fattura di acquisto').'
+                    <i class="fa fa-upload"></i> '.tr('Carica documento fornitore').'
                 </button>
             </div>
         </div>

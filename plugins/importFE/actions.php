@@ -43,7 +43,7 @@ switch (filter('op')) {
     case 'generate':
         $fattura_pa = new FatturaElettronica(post('filename'));
 
-        $id_record = $fattura_pa->saveFattura(post('pagamento'), post('id_segment'));
+        $id_record = $fattura_pa->saveFattura(post('pagamento'), post('id_segment'), post('id_tipo') );
         $fattura_pa->saveRighe(post('articoli'), post('iva'), post('conto'));
         $fattura_pa->getFattura()->updateSconto();
 

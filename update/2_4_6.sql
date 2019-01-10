@@ -1,0 +1,1 @@
+ALTER TABLE `co_righe_documenti` ADD `ritenutaenasarco` DECIMAL(12,4) NOT NULL AFTER `ritenutaacconto`;

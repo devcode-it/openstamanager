@@ -2,6 +2,7 @@
 
 include_once __DIR__.'/init.php';
 
+use Modules\Anagrafiche\Anagrafica;
 use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
 
@@ -72,7 +73,7 @@ if (!empty($missing)) {
 }
 
 // Campi obbligatori per l'anagrafica Cliente
-$cliente = FatturaElettronica::getAnagrafica($record['idanagrafica']);
+$cliente = Anagrafica::find($record['idanagrafica']);
 $fields = [
     // 'piva' => 'Partita IVA',
     // 'codice_fiscale' => 'Codice Fiscale',

@@ -2,13 +2,13 @@
 
 namespace Plugins\ExportFE;
 
-use DateTime;
 use FluidXml\FluidXml;
 use GuzzleHttp\Client;
 use Modules;
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Fatture\Fattura;
 use Prints;
-use Respect\Validation\Validator as v;
-use Stringy\Stringy as S;
+use UnexpectedValueException;
 use Uploads;
 
 /**
@@ -18,13 +18,17 @@ use Uploads;
  */
 class FatturaElettronica
 {
-    /** @var array Informazioni sull'anagrafica Azienda */
+    /** @var Anagrafica Informazioni sull'anagrafica Azienda */
     protected static $azienda = [];
 
-    /** @var array Informazioni sull'anagrafica Cliente del documento */
+    /** @var Anagrafica Informazioni sull'anagrafica Cliente del documento */
     protected $cliente = [];
-    /** @var array Informazioni sul documento */
-    protected $documento = [];
+
+    /** @var Modules\Fatture\Fattura Informazioni sul documento */
+    protected $documento = null;
+
+    /** @var Validator Oggetto dedicato alla validazione dell'XML */
+    protected $validator = null;
 
     /** @var array Contratti collegati al documento */
     protected $contratti = [];
@@ -36,537 +40,15 @@ class FatturaElettronica
     /** @var array XML della fattura */
     protected $xml = null;
 
-    /** @var array Irregolarità nella fattura XML */
-    protected $errors = null;
-
-    /** @var array Elenco di campi dello standard per la formattazione e la validazione */
-    protected static $validators = [
-        'IdPaese' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'IdCodice' => [
-            'type' => 'string',
-            'size' => [1, 28],
-        ],
-        'ProgressivoInvio' => [
-            'type' => 'normalizedString',
-            'size' => [1, 10],
-        ],
-        'FormatoTrasmissione' => [
-            'type' => 'string',
-            'size' => 5,
-        ],
-        'CodiceDestinatario' => [
-            'type' => 'string',
-            'size' => [6, 7],
-        ],
-        'Telefono' => [
-            'type' => 'normalizedString',
-            'size' => [5, 12],
-        ],
-        'Email' => [
-            'type' => 'string',
-            'size' => [7, 256],
-        ],
-        'PECDestinatario' => [
-            'type' => 'normalizedString',
-            'size' => [7, 256],
-        ],
-        'CodiceFiscale' => [
-            'type' => 'string',
-            'size' => [11, 16],
-        ],
-        'Denominazione' => [
-            'type' => 'normalizedString',
-            'size' => [1, 80],
-        ],
-        'Nome' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'Cognome' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'Titolo' => [
-            'type' => 'normalizedString',
-            'size' => [2, 10],
-        ],
-        'CodEORI' => [
-            'type' => 'string',
-            'size' => [13, 17],
-        ],
-        'AlboProfessionale' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'ProvinciaAlbo' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'NumeroIscrizioneAlbo' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'DataIscrizioneAlbo' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'RegimeFiscale' => [
-            'type' => 'string',
-            'size' => 4,
-        ],
-        'Indirizzo' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'NumeroCivico' => [
-            'type' => 'normalizedString',
-            'size' => [1, 8],
-        ],
-        'CAP' => [
-            'type' => 'string',
-            'size' => 5,
-        ],
-        'Comune' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'Provincia' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'Nazione' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'Ufficio' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'NumeroREA' => [
-            'type' => 'normalizedString',
-            'size' => [1, 20],
-        ],
-        'CapitaleSociale' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'SocioUnico' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'StatoLiquidazione' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'Fax' => [
-            'type' => 'normalizedString',
-            'size' => [5, 12],
-        ],
-        'RiferimentoAmministrazione' => [
-            'type' => 'normalizedString',
-            'size' => [1, 20],
-        ],
-        'SoggettoEmittente' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'TipoDocumento' => [
-            'type' => 'string',
-            'size' => 4,
-        ],
-        'Divisa' => [
-            'type' => 'string',
-            'size' => 3,
-        ],
-        'Data' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'Numero' => [
-            'type' => 'normalizedString',
-            'size' => [1, 20],
-        ],
-        'TipoRitenuta' => [
-            'type' => 'string',
-            'size' => 4,
-        ],
-        'ImportoRitenuta' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'AliquotaRitenuta' => [
-            'type' => 'decimal',
-            'size' => [4, 6],
-        ],
-        'CausalePagamento' => [
-            'type' => 'string',
-            'size' => [1, 2],
-        ],
-        'BolloVirtuale' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'ImportoBollo' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'TipoCassa' => [
-            'type' => 'string',
-            'size' => 4,
-        ],
-        'AlCassa' => [
-            'type' => 'decimal',
-            'size' => [4, 6],
-        ],
-        'ImportoContributoCassa' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'ImponibileCassa' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'AliquotaIVA' => [
-            'type' => 'decimal',
-            'size' => [4, 6],
-        ],
-        'Ritenuta' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'Natura' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'Tipo' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'Percentuale' => [
-            'type' => 'decimal',
-            'size' => [4, 6],
-        ],
-        'Importo' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'ImportoTotaleDocumento' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'Arrotondamento' => [
-            'type' => 'decimal',
-            'size' => [4, 21],
-        ],
-        'Causale' => [
-            'type' => 'normalizedString',
-            'size' => [1, 200],
-        ],
-        'Art73' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'RiferimentoNumeroLinea' => [
-            'type' => 'integer',
-            'size' => [1, 4],
-        ],
-        'IdDocumento' => [
-            'type' => 'normalizedString',
-            'size' => [1, 20],
-        ],
-        'NumItem' => [
-            'type' => 'normalizedString',
-            'size' => [1, 20],
-        ],
-        'CodiceCommessaConvenzione' => [
-            'type' => 'normalizedString',
-            'size' => [1, 100],
-        ],
-        'CodiceCUP' => [
-            'type' => 'normalizedString',
-            'size' => [1, 15],
-        ],
-        'CodiceCIG' => [
-            'type' => 'normalizedString',
-            'size' => [1, 15],
-        ],
-        'RiferimentoFase' => [
-            'type' => 'integer',
-            'size' => [1, 3],
-        ],
-        'NumeroDDT' => [
-            'type' => 'normalizedString',
-            'size' => [1, 20],
-        ],
-        'DataDDT' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'NumeroLicenzaGuida' => [
-            'type' => 'normalizedString',
-            'size' => [1, 20],
-        ],
-        'MezzoTrasporto' => [
-            'type' => 'normalizedString',
-            'size' => [1, 80],
-        ],
-        'CausaleTrasporto' => [
-            'type' => 'normalizedString',
-            'size' => [1, 100],
-        ],
-        'NumeroColli' => [
-            'type' => 'integer',
-            'size' => [1, 4],
-        ],
-        'Descrizione' => [
-            'type' => 'normalizedString',
-            'size' => [1, 1000],
-        ],
-        'UnitaMisuraPeso' => [
-            'type' => 'normalizedString',
-            'size' => [1, 10],
-        ],
-        'PesoLordo' => [
-            'type' => 'decimal',
-            'size' => [4, 7],
-        ],
-        'PesoNetto' => [
-            'type' => 'decimal',
-            'size' => [4, 7],
-        ],
-        'DataOraRitiro' => [
-            'type' => 'date',
-            'size' => 19,
-        ],
-        'DataInizioTrasporto' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'TipoResa' => [
-            'type' => 'string',
-            'size' => 3,
-        ],
-        'DataOraConsegna' => [
-            'type' => 'date',
-            'size' => 19,
-        ],
-        'NumeroFatturaPrincipale' => [
-            'type' => 'string',
-            'size' => [1, 20],
-        ],
-        'DataFatturaPrincipale' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'NumeroLinea' => [
-            'type' => 'integer',
-            'size' => [1, 4],
-        ],
-        'TipoCessionePrestazione' => [
-            'type' => 'string',
-            'size' => 2,
-        ],
-        'CodiceArticolo' => [
-            'type' => 'normalizedString',
-        ],
-        'CodiceTipo' => [
-            'type' => 'normalizedString',
-            'size' => [1, 35],
-        ],
-        'CodiceValore' => [
-            'type' => 'normalizedString',
-            'size' => [1, 35],
-        ],
-        'Quantita' => [
-            'type' => 'decimal',
-            'size' => [4, 21],
-        ],
-        'UnitaMisura' => [
-            'type' => 'normalizedString',
-            'size' => [1, 10],
-        ],
-        'DataInizioPeriodo' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'DataFinePeriodo' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'PrezzoUnitario' => [
-            'type' => 'decimal',
-            'size' => [4, 21],
-        ],
-        'PrezzoTotale' => [
-            'type' => 'decimal',
-            'size' => [4, 21],
-        ],
-        'TipoDato' => [
-            'type' => 'normalizedString',
-            'size' => [1, 10],
-        ],
-        'RiferimentoTesto' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'RiferimentoNumero' => [
-            'type' => 'decimal',
-            'size' => [4, 21],
-        ],
-        'RiferimentoData' => [
-            'type' => 'normalizedString',
-            'size' => 10,
-        ],
-        'SpeseAccessorie' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'ImponibileImporto' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'Imposta' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'EsigibilitaIVA' => [
-            'type' => 'string',
-            'size' => 1,
-        ],
-        'RiferimentoNormativo' => [
-            'type' => 'normalizedString',
-            'size' => [1, 100],
-        ],
-        'TotalePercorso' => [
-            'type' => 'normalizedString',
-            'size' => [1, 15],
-        ],
-        'CondizioniPagamento' => [
-            'type' => 'string',
-            'size' => 4,
-        ],
-        'Beneficiario' => [
-            'type' => 'string',
-            'size' => [1, 200],
-        ],
-        'ModalitaPagamento' => [
-            'type' => 'string',
-            'size' => 4,
-        ],
-        'DataRiferimentoTerminiPagamento' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'GiorniTerminiPagamento' => [
-            'type' => 'integer',
-            'size' => [1, 3],
-        ],
-        'DataScadenzaPagamento' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'ImportoPagamento' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'CodUfficioPostale' => [
-            'type' => 'normalizedString',
-            'size' => [1, 20],
-        ],
-        'CognomeQuietanzante' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'NomeQuietanzante' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'CFQuietanzante' => [
-            'type' => 'string',
-            'size' => 16,
-        ],
-        'TitoloQuietanzante' => [
-            'type' => 'normalizedString',
-            'size' => [2, 10],
-        ],
-        'IstitutoFinanziario' => [
-            'type' => 'normalizedString',
-            'size' => [1, 80],
-        ],
-        'IBAN' => [
-            'type' => 'string',
-            'size' => [15, 34],
-        ],
-        'ABI' => [
-            'type' => 'string',
-            'size' => 5,
-        ],
-        'CAB' => [
-            'type' => 'string',
-            'size' => 5,
-        ],
-        'BIC' => [
-            'type' => 'string',
-            'size' => [8, 11],
-        ],
-        'ScontoPagamentoAnticipato' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'DataLimitePagamentoAnticipato' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'PenalitaPagamentiRitardati' => [
-            'type' => 'decimal',
-            'size' => [4, 15],
-        ],
-        'DataDecorrenzaPenale' => [
-            'type' => 'date',
-            'size' => 10,
-        ],
-        'CodicePagamento' => [
-            'type' => 'string',
-            'size' => [1, 60],
-        ],
-        'NomeAttachment' => [
-            'type' => 'normalizedString',
-            'size' => [1, 60],
-        ],
-        'AlgoritmoCompressione' => [
-            'type' => 'string',
-            'size' => [1, 10],
-        ],
-        'FormatoAttachment' => [
-            'type' => 'string',
-            'size' => [1, 10],
-        ],
-        'DescrizioneAttachment' => [
-            'type' => 'normalizedString',
-            'size' => [1, 100],
-        ],
-        'Attachment' => [
-            'type' => 'base64Binary',
-        ],
-    ];
-
     public function __construct($id_documento)
     {
-        $database = database();
-
         // Documento
-        $this->documento = $database->fetchOne('SELECT `co_documenti`.*, `co_tipidocumento`.`descrizione` AS `tipo`, `co_tipidocumento`.`codice_tipo_documento_fe` AS `tipo_documento`, `co_statidocumento`.`descrizione` AS `stato` FROM `co_documenti`
-        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
-        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
-        WHERE `co_documenti`.`id` = '.prepare($id_documento));
+        $this->documento = Fattura::find($id_documento);
 
         // Controllo sulla possibilità di creare la fattura elettronica
         // Posso fatturare ai privati utilizzando il codice fiscale
-        if ($this->documento['stato'] != 'Emessa') {
-            throw new \UnexpectedValueException();
+        if ($this->documento->stato->descrizione != 'Emessa') {
+            throw new UnexpectedValueException();
         }
     }
 
@@ -578,7 +60,7 @@ class FatturaElettronica
     /**
      * Restituisce le informazioni sull'anagrafica azienda.
      *
-     * @return array
+     * @return bool
      */
     public function isGenerated()
     {
@@ -590,12 +72,12 @@ class FatturaElettronica
     /**
      * Restituisce le informazioni sull'anagrafica azienda.
      *
-     * @return array
+     * @return Anagrafica
      */
     public static function getAzienda()
     {
         if (empty(static::$azienda)) {
-            static::$azienda = static::getAnagrafica(setting('Azienda predefinita'));
+            static::$azienda = Anagrafica::find(setting('Azienda predefinita'));
         }
 
         return static::$azienda;
@@ -604,49 +86,25 @@ class FatturaElettronica
     /**
      * Restituisce le informazioni sull'anagrafica cliente legata al documento.
      *
-     * @return array
+     * @return Anagrafica
      */
     public function getCliente()
     {
-        if (empty($this->cliente)) {
-            $cliente = static::getAnagrafica($this->getDocumento()['idanagrafica']);
-
-            $sede = database()->fetchOne('SELECT `codice_destinatario` FROM `an_sedi` WHERE `id` = '.prepare($this->getDocumento()['idsede']));
-            if (!empty($sede)) {
-                $cliente['codice_destinatario'] = $sede['codice_destinatario'];
-            }
-
-            $this->cliente = $cliente;
-        }
-
-        return $this->cliente;
+        return $this->getDocumento()->anagrafica;
     }
 
     /**
      * Restituisce le informazioni sull'anagrafica dell'intermediario.
      *
-     * @return array
+     * @return Anagrafica
      */
-    public function getIntermediario()
+    public static function getIntermediario()
     {
-        if (empty($this->intermediario)) {
-            $intermediario = static::getAnagrafica(setting('Terzo intermediario'));
-            $this->intermediario = $intermediario;
+        if (empty(static::$intermediario)) {
+            static::$intermediario = Anagrafica::find(setting('Terzo intermediario'));
         }
 
-        return $this->intermediario;
-    }
-
-    /**
-     * Restituisce le informazioni riguardanti un anagrafica sulla base dell'identificativo fornito.
-     *
-     * @param int $id
-     *
-     * @return array
-     */
-    public static function getAnagrafica($id)
-    {
-        return database()->fetchOne('SELECT *, (SELECT `iso2` FROM `an_nazioni` WHERE `an_nazioni`.`id` = `an_anagrafiche`.`id_nazione`) AS nazione FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare($id));
+        return static::$intermediario;
     }
 
     /**
@@ -750,11 +208,11 @@ class FatturaElettronica
      */
     public function getErrors()
     {
-        if (!isset($this->errors)) {
+        if (!isset($this->validator)) {
             $this->toXML();
         }
 
-        return $this->errors;
+        return $this->validator->getErrors();
     }
 
     /**
@@ -887,10 +345,11 @@ class FatturaElettronica
             }
 
             // Generazione della fattura elettronica
-            $xml = static::prepareForXML([
+            $this->validator = new Validator([
                 'FatturaElettronicaHeader' => static::getHeader($this),
                 'FatturaElettronicaBody' => static::getBody($this),
             ]);
+            $xml = $this->validator->validate();
             $fattura->add($xml);
 
             $this->xml = $fattura->__toString();
@@ -910,16 +369,23 @@ class FatturaElettronica
         $documento = $fattura->getDocumento();
         $cliente = $fattura->getCliente();
 
+        $sede = database()->fetchOne('SELECT `codice_destinatario` FROM `an_sedi` WHERE `id` = '.prepare($documento['idsede']));
+        if (!empty($sede)) {
+            $codice_destinatario = $sede['codice_destinatario'];
+        } else {
+            $codice_destinatario = $cliente->codice_destinatario;
+        }
+
         // Se sto fatturando ad un ente pubblico il codice destinatario di default è 99999 (sei nove), in alternativa uso 0000000 (sette zeri)
         $default_code = ($cliente['tipo'] == 'Ente pubblico') ? '999999' : '0000000';
         // Se il mio cliente non ha sede in Italia il codice destinatario di default diventa (XXXXXXX) (sette X)
-        $default_code = ($cliente['nazione'] != 'IT') ? 'XXXXXXX' : $default_code;
+        $default_code = ($cliente->nazione->iso2 != 'IT') ? 'XXXXXXX' : $default_code;
 
         // Generazione dell'header
         // Se all'Anagrafe Tributaria il trasmittente è censito con il codice fiscale
         $result = [
             'IdTrasmittente' => [
-                'IdPaese' => $azienda['nazione'],
+                'IdPaese' => $azienda->nazione->iso2,
                 'IdCodice' => (!empty($azienda['codice_fiscale'])) ? $azienda['codice_fiscale'] : $azienda['piva'],
             ],
             'ProgressivoInvio' => $documento['progressivo_invio'],
@@ -956,8 +422,8 @@ class FatturaElettronica
 
         // Partita IVA (obbligatoria se presente)
         if (!empty($anagrafica['piva'])) {
-            if (!empty($anagrafica['nazione'])) {
-                $result['IdFiscaleIVA']['IdPaese'] = $anagrafica['nazione'];
+            if (!empty($anagrafica->nazione->iso2)) {
+                $result['IdFiscaleIVA']['IdPaese'] = $anagrafica->nazione->iso2;
             }
 
             $result['IdFiscaleIVA']['IdCodice'] = $anagrafica['piva'];
@@ -997,6 +463,8 @@ class FatturaElettronica
     /**
      * Restituisce l'array responsabile per la generazione dei tag Sede per Azienda e Cliente.
      *
+     * @param array $anagrafica
+     *
      * @return array
      */
     protected static function getSede($anagrafica)
@@ -1008,11 +476,11 @@ class FatturaElettronica
         ];
 
         // Provincia impostata e SOLO SE nazione ITALIA
-        if (!empty($anagrafica['provincia']) && $anagrafica['nazione'] == 'IT') {
+        if (!empty($anagrafica['provincia']) && $anagrafica->nazione->iso2 == 'IT') {
             $result['Provincia'] = strtoupper($anagrafica['provincia']);
         }
 
-        $result['Nazione'] = $anagrafica['nazione'];
+        $result->nazione->iso2 = $anagrafica->nazione->iso2;
 
         return $result;
     }
@@ -1093,7 +561,7 @@ class FatturaElettronica
      */
     protected static function getTerzoIntermediarioOSoggettoEmittente($fattura)
     {
-        $intermediario = $fattura->getIntermediario();
+        $intermediario = static::getIntermediario();
 
         $result = [
             'DatiAnagrafici' => static::getDatiAnagrafici($intermediario),
@@ -1112,10 +580,8 @@ class FatturaElettronica
         $documento = $fattura->getDocumento();
         $azienda = static::getAzienda();
 
-        $fattura = Modules\Fatture\Fattura::find($documento['id']);
-
         $result = [
-            'TipoDocumento' => $documento['tipo_documento'],
+            'TipoDocumento' => $documento->tipo->codice_tipo_documento_fe,
             'Divisa' => 'EUR',
             'Data' => $documento['data'],
             'Numero' => $documento['numero_esterno'],
@@ -1170,7 +636,7 @@ class FatturaElettronica
                 'TipoCassa' => setting('Tipo Cassa'),
                 'AlCassa' => $percentuale,
                 'ImportoContributoCassa' => $totale_rivalsainps,
-                'ImponibileCassa' => $fattura->imponibile,
+                'ImponibileCassa' => $documento->imponibile,
                 'AliquotaIVA' => $iva['percentuale'],
             ];
 
@@ -1203,7 +669,7 @@ class FatturaElettronica
 
         // Importo Totale Documento (2.1.1.9)
         // Importo totale del documento al netto dell'eventuale sconto e comprensivo di imposta a debito del cessionario / committente
-        $result['ImportoTotaleDocumento'] = abs($fattura->netto);
+        $result['ImportoTotaleDocumento'] = abs($documento->netto);
 
         return $result;
     }
@@ -1224,7 +690,7 @@ class FatturaElettronica
         $result = [];
 
         if ($documento['idvettore']) {
-            $vettore = static::getAnagrafica($documento['idvettore']);
+            $vettore = Anagrafica::find($documento['idvettore']);
             $result['DatiAnagraficiVettore'] = static::getDatiAnagrafici($vettore);
         }
 
@@ -1371,7 +837,7 @@ class FatturaElettronica
             }
         }
 
-        if ($documento['tipo'] == 'Fattura accompagnatoria di vendita') {
+        if ($documento->tipo->descrizione == 'Fattura accompagnatoria di vendita') {
             $result['DatiTrasporto'] = static::getDatiTrasporto($fattura);
         }
 
@@ -1713,80 +1179,6 @@ class FatturaElettronica
         }
 
         return $result;
-    }
-
-    /**
-     * Prepara i contenuti per la generazione dell'XML della fattura.
-     * Effettua inoltre dei controlli interni di validità sui campi previsti dallo standard.
-     *
-     * @param mixed  $input
-     * @param string $key
-     *
-     * @return mixed
-     */
-    protected function prepareForXML($input, $key = null)
-    {
-        $output = null;
-        if (is_array($input)) {
-            foreach ($input as $key => $value) {
-                $output[$key] = $this->prepareForXML($value, $key);
-            }
-        } elseif (!is_null($input)) {
-            $info = static::$validators[$key];
-            $size = isset($info['size']) ? $info['size'] : null;
-
-            $output = $input;
-
-            // Operazioni di normalizzazione
-            // Formattazione decimali
-            if ($info['type'] == 'decimal') {
-                $output = number_format($output, 2, '.', '');
-            }
-
-            // Formattazione date
-            elseif ($info['type'] == 'date') {
-                $object = DateTime::createFromFormat('Y-m-d H:i:s', $output);
-                if (is_object($object)) {
-                    $output = $object->format('Y-m-d');
-                }
-            }
-
-            // Formattazione testo
-            elseif ($info['type'] == 'string') {
-            }
-
-            // Riduzione delle dimensioni
-            if ($info['type'] != 'integer' && isset($size[1])) {
-                $output = trim($output);
-                $output = S::create($output)->substr(0, $size[1])->__toString();
-            }
-
-            // Validazione
-            if ($info['type'] == 'string' || $info['type'] == 'normalizedString') {
-                $validator = v::stringType();
-
-                if (isset($size[1])) {
-                    $validator = $validator->length($size[0], $size[1]);
-                }
-            } elseif ($info['type'] == 'decimal') {
-                $validator = v::floatVal();
-            } elseif ($info['type'] == 'integer') {
-                $validator = v::intVal();
-            } elseif ($info['type'] == 'date') {
-                $validator = v::date();
-            }
-
-            if (!empty($validator)) {
-                $validation = $validator->validate($output);
-
-                // Segnalazione dell'irregolarità
-                if (!intval($validation)) {
-                    $this->errors[] = $key;
-                }
-            }
-        }
-
-        return $output;
     }
 
     protected function getUploadData()

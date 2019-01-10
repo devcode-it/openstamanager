@@ -2,14 +2,41 @@
 
 include_once __DIR__.'/../../core.php';
 
+function findKey($array, $keySearch)
+{
+    foreach ($array as $key => $item) {
+        if ($key == $keySearch) {
+            return true;
+        } elseif (is_array($item) && findKey($item, $keySearch)) {
+			echo $key;
+            return true;
+        }
+    }
+    return false;
+}
+
 $report_name = 'ordine_'.$numero_ord.'.pdf';
+$has_image = false;
+// RIGHE ORDINE
+$righe = $dbo->fetchArray("SELECT *,
+    IFNULL((SELECT `codice` FROM `mg_articoli` WHERE `id` = `or_righe_ordini`.`idarticolo`), '') AS codice_articolo,
+	IFNULL((SELECT `immagine` FROM `mg_articoli` WHERE `id` = `or_righe_ordini`.`idarticolo`), '') AS immagine_articolo,
+    (SELECT GROUP_CONCAT(`serial` SEPARATOR ', ') FROM `mg_prodotti` WHERE `id_riga_ordine` = `or_righe_ordini`.`id`) AS seriali,
+    (SELECT `percentuale` FROM `co_iva` WHERE `id` = `or_righe_ordini`.`idiva`) AS perc_iva
+FROM `or_righe_ordini` WHERE idordine=".prepare($id_record).' ORDER BY `order`');
+
+//controllo se gli articoli nell'ordine hanno un'immagine
+if (findKey($righe,"immagine_articolo")){
+	if (!empty($righe[(findKey($righe,"immagine_articolo")-1)]["immagine_articolo"]))
+		$has_image = true;	
+}
 
 $autofill = [
     'count' => 0, // Conteggio delle righe
     'words' => 70, // Numero di parolo dopo cui contare una riga nuova
     'rows' => 20, // Numero di righe massimo presente nella pagina
     'additional' => 15, // Numero di righe massimo da aggiungere
-    'columns' => 5, // Numero di colonne della tabella
+    'columns' => (($has_image) ? 6:5), // Numero di colonne della tabella
 ];
 
 $sconto = [];
@@ -20,8 +47,13 @@ $iva = [];
 echo "
 <table class='table table-striped table-bordered' id='contents'>
     <thead>
-        <tr>
-            <th class='text-center' style='width:50%'>".tr('Descrizione', [], ['upper' => true])."</th>
+        <tr>";
+			
+			if ($has_image){
+echo "		<th class='text-center' style='width:20%'>".tr('Immagine', [], ['upper' => true])."</th>";
+            }
+echo "
+			<th class='text-center' style='width:50%'>".tr('Descrizione', [], ['upper' => true])."</th>
             <th class='text-center' style='width:10%'>".tr('Q.tà', [], ['upper' => true])."</th>
             <th class='text-center' style='width:15%'>".tr('Prezzo unitario', [], ['upper' => true])."</th>
             <th class='text-center' style='width:15%'>".tr('Importo', [], ['upper' => true])."</th>
@@ -31,26 +63,29 @@ echo "
 
     <tbody>';
 
-// RIGHE PREVENTIVO CON ORDINAMENTO UNICO
-$righe = $dbo->fetchArray("SELECT *,
-    IFNULL((SELECT `codice` FROM `mg_articoli` WHERE `id` = `or_righe_ordini`.`idarticolo`), '') AS codice_articolo,
-	IFNULL((SELECT `immagine` FROM `mg_articoli` WHERE `id` = `or_righe_ordini`.`idarticolo`), '') AS immagine_articolo,
-    (SELECT GROUP_CONCAT(`serial` SEPARATOR ', ') FROM `mg_prodotti` WHERE `id_riga_ordine` = `or_righe_ordini`.`id`) AS seriali,
-    (SELECT `percentuale` FROM `co_iva` WHERE `id` = `or_righe_ordini`.`idiva`) AS perc_iva
-FROM `or_righe_ordini` WHERE idordine=".prepare($id_record).' ORDER BY `order`');
+
 foreach ($righe as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
     $count += substr_count($r['descrizione'], PHP_EOL);
-
-    echo '
-        <tr>
+	
+	 echo '
+        <tr>';
+	
+	if ($has_image){
+		echo '
+				<td>';
+			if (!empty($r['immagine_articolo'])){
+				echo '<img src="files/articoli/'.$r['immagine_articolo'].'" height="80"></img>';
+			}
+		echo '
+				</td>';
+	
+	}	
+	
+	echo '
             <td>';
 			
-	if (!empty($r['immagine_articolo'])) {
-		//echo '<img src="files/articoli/'.$r['immagine_articolo'].'" height="120"></img><div class="clearfix" ></div>';
-	}
-	
 	echo '
                 '.nl2br($r['descrizione']);
 
@@ -171,7 +206,7 @@ if ($options['pricing']) {
     // Totale imponibile
     echo '
     <tr>
-        <td colspan="3" class="text-right border-top">
+        <td colspan="'.(($has_image) ? 4:3).'" class="text-right border-top">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -184,7 +219,7 @@ if ($options['pricing']) {
     if (!empty($sconto)) {
         echo '
     <tr>
-        <td colspan="3" class="text-right border-top">
+        <td colspan="'.(($has_image) ? 4:3).'" class="text-right border-top">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
 
@@ -196,7 +231,7 @@ if ($options['pricing']) {
         // Imponibile scontato
         echo '
     <tr>
-        <td colspan="3" class="text-right border-top">
+        <td colspan="'.(($has_image) ? 4:3).'" class="text-right border-top">
             <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
         </td>
 
@@ -209,7 +244,7 @@ if ($options['pricing']) {
     // IVA
     echo '
     <tr>
-        <td colspan="3" class="text-right border-top">
+        <td colspan="'.(($has_image) ? 4:3).'" class="text-right border-top">
             <b>'.tr('Totale IVA', [], ['upper' => true]).':</b>
         </td>
 
@@ -223,7 +258,7 @@ if ($options['pricing']) {
     // TOTALE
     echo '
     <tr>
-    	<td colspan="3" class="text-right border-top">
+    	<td colspan="'.(($has_image) ? 4:3).'" class="text-right border-top">
             <b>'.tr('Quotazione totale', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-center">

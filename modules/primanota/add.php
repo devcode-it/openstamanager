@@ -242,7 +242,7 @@ include_once __DIR__.'/../../core.php';
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type='button' class="btn btn-primary" id='btn_crea_modello'><i class="fa fa-plus"></i> <?php echo tr('Aggiungi e crea modello'); ?></button>
+			<button type='button' class="btn btn-default" id='btn_crea_modello'><i class="fa fa-plus"></i> <?php echo tr('Aggiungi e crea modello'); ?></button>
 			<button type="submit" class="btn btn-primary" id='btn_submit'><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 		</div>
 	</div>
@@ -338,10 +338,10 @@ include_once __DIR__.'/../../core.php';
 			$('#bs-popup #modello_primanota').change(function(){
 				
 				if ($(this).val()!=''){
-					$('#btn_crea_modello').html('<i class="fa fa-edit"></i> '+'<?php echo tr('Aggiungi e modifica modello'); ?>');
+					$('#btn_crea_modello').text('<?php echo tr('Aggiungi e modifica modello'); ?>');
 					$('#bs-popup #idmastrino').val($(this).val());
 				}else{
-					$('#btn_crea_modello').html('<i class="fa fa-plus"></i> '+'<?php echo tr('Aggiungi e crea modello'); ?>');
+					$('#btn_crea_modello').text('<?php echo tr('Aggiungi e crea modello'); ?>');
 					$('#bs-popup #idmastrino').val(0);
 				}
 				

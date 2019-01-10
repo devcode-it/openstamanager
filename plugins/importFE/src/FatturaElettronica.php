@@ -347,9 +347,12 @@ class FatturaElettronica
             // TODO: salvare in fattura
         }
 
-        $causale = $dati_generali['Causale'];
-        if (!empty($causale)) {
-            $fattura->note = $causale;
+        $causali = $dati_generali['Causale'];
+        if (count($causali)>0) {
+            foreach($causali AS $causale){
+                 $note .= $causale;
+            }
+            $fattura->note = $note;
         }
 
         // Bollo

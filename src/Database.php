@@ -89,7 +89,7 @@ class Database extends Util\Singleton
                     $e = new PDOException(($e->getCode() == 1049) ? tr('Database non esistente!') : tr('Credenziali di accesso invalide!'));
                 }
 
-                $this->signal($e, tr('Errore durante la connessione al database'), ['throw' => false, 'session' => false]);
+                throw $e;
             }
         }
     }
@@ -203,51 +203,45 @@ class Database extends Util\Singleton
      *
      * @since 2.0
      *
-     * @param string $query Query da eseguire
+     * @param string $query      Query da eseguire
+     * @param array  $parameters
      *
      * @return int
      */
-    public function query($query, $parameters = [], $signal = null, $options = [])
+    public function query($query, $parameters = [])
     {
-        try {
-            $statement = $this->getPDO()->prepare($query);
-            $statement->execute($parameters);
+        $statement = $this->getPDO()->prepare($query);
+        $statement->execute($parameters);
 
-            $id = $this->lastInsertedID();
-            if ($id == 0) {
-                return 1;
-            } else {
-                return $id;
-            }
-        } catch (PDOException $e) {
-            $signal = empty($signal) ? $query : $signal;
-            $this->signal($e, $signal, $options);
+        $id = $this->lastInsertedID();
+        if ($id == 0) {
+            return 1;
+        } else {
+            return $id;
         }
     }
 
     /**
      * Restituisce un'array strutturato in base ai nomi degli attributi della selezione.
      *
-     * @since 2.0
+     * @param string $query      Query da eseguire
+     * @param array  $parameters
+     * @param bool   $numeric
      *
-     * @param string $query Query da eseguire
+     * @throws Exception
      *
      * @return array
      */
-    public function fetchArray($query, $parameters = [], $numeric = false, $options = [])
+    public function fetchArray($query, $parameters = [], $numeric = false)
     {
-        try {
-            $mode = empty($numeric) ? PDO::FETCH_ASSOC : PDO::FETCH_NUM;
+        $mode = empty($numeric) ? PDO::FETCH_ASSOC : PDO::FETCH_NUM;
 
-            $statement = $this->getPDO()->prepare($query);
-            $statement->execute($parameters);
+        $statement = $this->getPDO()->prepare($query);
+        $statement->execute($parameters);
 
-            $result = $statement->fetchAll($mode);
+        $result = $statement->fetchAll($mode);
 
-            return $result;
-        } catch (PDOException $e) {
-            $this->signal($e, $query, $options);
-        }
+        return $result;
     }
 
     /**
@@ -359,7 +353,7 @@ class Database extends Util\Singleton
         try {
             return $this->getPDO()->lastInsertId();
         } catch (PDOException $e) {
-            $this->signal($e, tr("Impossibile ottenere l'ultimo identificativo creato"));
+            throw new PDOException(tr("Impossibile ottenere l'ultimo identificativo creato"));
         }
     }
 
@@ -452,41 +446,40 @@ class Database extends Util\Singleton
         }
         $select = !empty($select) ? $select : ['*'];
 
-        // Costruzione della query
-        $query = 'SELECT '.implode(', ', $select).' FROM '.$this->quote($table);
-
-        // Condizioni di selezione
-        $where = $this->whereStatement($conditions);
-        if (!empty($where)) {
-            $query .= ' WHERE '.$where;
-        }
+        $statement = Capsule::table($table)->where($conditions)->select($select);
 
         // Impostazioni di ordinamento
         if (!empty($order)) {
-            $list = [];
-            $allow = ['ASC', 'DESC'];
             foreach ((array) $order as $key => $value) {
-                if (is_numeric($key)) {
-                    $key = $value;
-                    $value = $allow[0];
+                $order = is_numeric($key) ? 'ASC' : strtoupper($value);
+                $field = is_numeric($key) ? $value : key;
+
+                if ($order == 'ASC') {
+                    $statement = $statement->orderBy($field);
+                } else {
+                    $statement = $statement->orderByDesc($field);
                 }
-
-                $value = in_array($value, $allow) ? $value : $allow[0];
-                $list[] = $this->quote($key).' '.$value;
             }
-
-            $query .= ' ORDER BY '.implode(', ', $list);
         }
 
         // Eventuali limiti
         if (!empty($limit)) {
-            $query .= ' LIMIT '.(is_array($limit) ? $limit[0].', '.$limit[1] : $limit);
+            $offset = is_array($limit) ? $limit[0] : null;
+            $count = is_array($limit) ? $limit[1] : $limit;
+
+            if ($offset) {
+                $statement = $statement->offset($offset);
+            }
+
+            $statement = $statement->limit($count);
         }
 
         if (!empty($return)) {
-            return $query;
+            return $statement->toSql();
         } else {
-            return $this->fetchArray($query);
+            $result = $statement->get()->toArray();
+
+            return json_decode(json_encode($result), true);
         }
     }
 
@@ -523,24 +516,17 @@ class Database extends Util\Singleton
      *
      * @param string $table
      * @param array  $conditions
-     * @param bool   $return
      *
      * @return string|array
      */
-    public function delete($table, $conditions, $return = false)
+    public function delete($table, $conditions)
     {
         if (!is_string($table) || !is_array($conditions)) {
             throw new UnexpectedValueException();
         }
 
         // Costruzione della query
-        $query = 'DELETE FROM '.$this->quote($table).' WHERE '.$this->whereStatement($conditions);
-
-        if (!empty($return)) {
-            return $query;
-        } else {
-            return $this->query($query);
-        }
+        return Capsule::table($table)->where($conditions)->delete();
     }
 
     /**
@@ -647,7 +633,7 @@ class Database extends Util\Singleton
     }
 
     /**
-     * Esegue le query interne ad un file .sql.
+     * Esegue le query interne ad un file ".sql".
      *
      * @since 2.0
      *
@@ -660,15 +646,7 @@ class Database extends Util\Singleton
         $end = count($queries);
 
         for ($i = $start; $i < $end; ++$i) {
-            try {
-                $this->getPDO()->exec($queries[$i]);
-            } catch (PDOException $e) {
-                $this->signal($e, $queries[$i], [
-                    'throw' => false,
-                ]);
-
-                return $i;
-            }
+            $this->query($queries[$i]);
         }
 
         return true;
@@ -688,125 +666,5 @@ class Database extends Util\Singleton
         $char = '`';
 
         return $char.str_replace([$char, '#'], '', $string).$char;
-    }
-
-    /**
-     * Predispone una variabile per il relativo inserimento all'interno di uno statement SQL.
-     *
-     * @since 2.3
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    protected function prepareValue($field, $value)
-    {
-        $value = (is_null($value)) ? 'NULL' : $value;
-        $value = is_bool($value) ? intval($value) : $value;
-
-        if (!starts_with($field, '#')) {
-            if ($value != 'NULL') {
-                $value = $this->prepare($value);
-            }
-        }
-
-        return $value;
-    }
-
-    /**
-     * Predispone il contenuto di un array come clausola WHERE.
-     *
-     * @since 2.3
-     *
-     * @param string|array $where
-     * @param bool         $and
-     *
-     * @return string
-     */
-    protected function whereStatement($where, $and = true)
-    {
-        $result = [];
-
-        foreach ($where as $key => $value) {
-            // Query personalizzata
-            if (starts_with($key, '#')) {
-                $result[] = $this->prepareValue($key, $value);
-            } else {
-                // Ulteriori livelli di complessità
-                if (is_array($value) && in_array(strtoupper($key), ['AND', 'OR'])) {
-                    $result[] = '('.$this->whereStatement($value, $key == 'AND').')';
-                }
-                // Condizione IN
-                elseif (is_array($value)) {
-                    if (!empty($value)) {
-                        $in = [];
-                        foreach ($value as $v) {
-                            $in[] = $this->prepareValue($key, $v);
-                        }
-
-                        $result[] = $this->quote($key).' IN ('.implode(',', $in).')';
-                    }
-                }
-                // Condizione LIKE
-                elseif (str_contains($value, '%') || str_contains($value, '_')) {
-                    $result[] = $this->quote($key).' LIKE '.$this->prepareValue($key, $value);
-                }
-                // Condizione BETWEEN
-                elseif (str_contains($value, '|')) {
-                    $pieces = explode('|', $value);
-                    $result[] = $this->quote($key).' BETWEEN '.$this->prepareValue($key, $pieces[0]).' AND '.$this->prepareValue($key, $pieces[1]);
-                }
-                // Condizione di uguaglianza
-                else {
-                    $prepared = $this->prepareValue($key, $value);
-
-                    if ($prepared == 'NULL') {
-                        $result[] = $this->quote($key).' IS '.$prepared;
-                    } else {
-                        $result[] = $this->quote($key).' = '.$prepared;
-                    }
-                }
-            }
-        }
-
-        $cond = !empty($and) ? 'AND' : 'OR';
-
-        return implode(' '.$cond.' ', $result);
-    }
-
-    /**
-     * Aggiunge informazioni alla struttura di base dell'erroe o dell'eccezione intercettata.
-     *
-     * @since 2.3
-     */
-    protected function signal($e, $message, $options = [])
-    {
-        $options = array_merge([
-            'session' => true,
-            'level' => \Monolog\Logger::ERROR,
-            'throw' => true,
-        ], $options);
-
-        if (!empty($options['session']) && !API::isAPIRequest()) {
-            $msg = tr("Si è verificato un'errore").'.';
-
-            if (Auth::check()) {
-                $msg .= ' '.tr('Se il problema persiste siete pregati di chiedere assistenza tramite la sezione Bug').'. <a href="'.ROOTDIR.'/bug.php"><i class="fa fa-external-link"></i></a>';
-            }
-
-            $msg .= '<br><small>'.$e->getMessage().'</small>';
-
-            flash()->error($msg);
-        }
-
-        $error = $e->getMessage().' - '.$message;
-
-        if (!empty($options['throw'])) {
-            throw new PDOException($error);
-        } else {
-            $logger = logger();
-
-            $logger->addRecord($options['level'], $error);
-        }
     }
 }

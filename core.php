@@ -82,6 +82,7 @@ if (!API::isAPIRequest()) {
     // File di log di base (logs/error.log)
     $handlers[] = new StreamHandler($docroot.'/logs/error.log', Monolog\Logger::ERROR);
     $handlers[] = new StreamHandler($docroot.'/logs/setup.log', Monolog\Logger::EMERGENCY);
+    $handlers[] = new Extensions\MessageHandler(Monolog\Logger::ERROR);
 
     // Impostazioni di debug
     if (App::debug()) {
@@ -128,13 +129,14 @@ if (App::debug()) {
     $monologFormatter->includeStacktraces(true);
 }
 
+// Filtra gli errori per livello preciso del gestore dedicato
 foreach ($handlers as $handler) {
     $handler->setFormatter($monologFormatter);
     $logger->pushHandler(new FilterHandler($handler, [$handler->getLevel()]));
 }
 
 // Imposta Monolog come gestore degli errori
-Monolog\ErrorHandler::register($logger);
+Monolog\ErrorHandler::register($logger, [], Monolog\Logger::ERROR, Monolog\Logger::ERROR);
 
 // Database
 $dbo = $database = database();

@@ -1115,6 +1115,8 @@ class FatturaElettronica
         $documento = $fattura->getDocumento();
         $azienda = static::getAzienda();
 
+        $fattura = Modules\Fatture\Fattura::find($documento['id']);
+
         $result = [
             'TipoDocumento' => $documento['tipo_documento'],
             'Divisa' => 'EUR',
@@ -1166,8 +1168,6 @@ class FatturaElettronica
         if (!empty($id_rivalsainps)) {
             $iva = database()->fetchOne('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($aliquota_iva_rivalsainps));
             $percentuale = database()->fetchOne('SELECT percentuale FROM co_rivalsainps WHERE id = '.prepare($id_rivalsainps))['percentuale'];
-
-            $fattura = Modules\Fatture\Fattura::find($documento['id']);
 
             $dati_cassa = [
                 'TipoCassa' => setting('Tipo Cassa'),
@@ -1402,10 +1402,12 @@ class FatturaElettronica
             $riga['qta'] = abs($riga['qta']);
             $riga['sconto'] = abs($riga['sconto']);
 			
+			//Fix per righe di tipo descrizione, copio idiva dalla prima riga del documento che non è di tipo descrizione, riportando di conseguenza eventuali % e/o nature
 			if (!empty($riga['is_descrizione'])){
 				$riga['idiva'] = $database->fetchOne('SELECT `idiva` FROM `co_righe_documenti` WHERE `is_descrizione` = 0 AND `iddocumento` = '.prepare($documento['id']))['idiva'];
 			}
 			
+			//Fix per qta, deve sempre essere impostata almeno a 1
             $riga['qta'] = (!empty($riga['qta'])) ? $riga['qta'] : 1;
 
             $prezzo_unitario = $riga['subtotale'] / $riga['qta'];
@@ -1482,7 +1484,22 @@ class FatturaElettronica
             if (!empty($riga['riferimento_amministrazione'])) {
                 $dettaglio['RiferimentoAmministrazione'] = $riga['riferimento_amministrazione'];
             }
+			
+			
+			 // AltriDatiGestionali (2.2.1.16) - Ritenuta ENASARCO
+            $riga['ritenutaenasarco'] = floatval($riga['ritenutaenasarco']);
+            if (!empty($riga['ritenutaenasarco'])) {
+				
+                $ritenutaenasarco = [
+                    'TipoDato' => 'CASSA-PREV',
+					'RiferimentoTesto' => 'ENASARCO - TC07',
+					'RiferimentoNumero' => $riga['ritenutaenasarco'],
+                ];
 
+                $dettaglio['AltriDatiGestionali'] = $ritenutaenasarco;
+            }
+			
+			
             $result[] = [
                 'DettaglioLinee' => $dettaglio,
             ];

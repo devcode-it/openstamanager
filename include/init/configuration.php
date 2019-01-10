@@ -23,12 +23,15 @@ if (post('db_host') !== null) {
     $valid_config = isset($db_host) && isset($db_name) && isset($db_username) && isset($db_password);
 
     // Generazione di una nuova connessione al database
-    $dbo = Database::getConnection(true, [
-        'db_host' => $db_host,
-        'db_name' => $db_name,
-        'db_username' => $db_username,
-        'db_password' => $db_password,
-    ]);
+    try {
+        $dbo = Database::getConnection(true, [
+            'db_host' => $db_host,
+            'db_name' => $db_name,
+            'db_username' => $db_username,
+            'db_password' => $db_password,
+        ]);
+    } catch (Exception $e) {
+    }
 
     // Test della configurazione
     if (post('test') !== null) {

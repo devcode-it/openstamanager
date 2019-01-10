@@ -36,10 +36,8 @@ UPDATE `zz_settings` SET `tipo` = 'query=SELECT ''IMP'' AS id, ''Imponibile'' AS
 UPDATE `an_anagrafiche` SET `provincia` = UPPER(provincia);
 UPDATE `an_sedi` SET `provincia` = UPPER(provincia);
 
-
 -- Colonna Codice Modalità (Pagamenti)
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default` ) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Pagamenti'), 'Codice Modalità', 'codice_modalita_pagamento_fe', 2, 1, 0, 0, NULL, NULL, 1, 0, 0);
-
 
 -- Impostazione "Anagrafica del terzo intermediario"
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'Terzo intermediario', '', 'query=SELECT `an_anagrafiche`.`idanagrafica` AS ''id'', `ragione_sociale` AS ''descrizione'' FROM `an_anagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_tipianagrafiche_anagrafiche`.`idanagrafica` WHERE `idtipoanagrafica` = (SELECT `idtipoanagrafica` FROM `an_tipianagrafiche` WHERE `descrizione` = ''Fornitore'') AND `deleted_at` IS NULL', '1', 'Fatturazione Elettronica');
@@ -47,7 +45,6 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 --  Aggiungo campi nome e cognome
 ALTER TABLE `an_anagrafiche` CHANGE `nome_cognome` `nome` VARCHAR(255) NOT NULL;
 ALTER TABLE `an_anagrafiche` ADD `cognome` VARCHAR(255) NOT NULL AFTER `nome`;
-
 
 -- Colonna Rif. fattura (Prima nota)
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default` ) VALUES (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota'), 'Rif. fattura', '(SELECT numero_esterno FROM co_documenti WHERE id = iddocumento)', 2, 1, 0, 0, NULL, NULL, 1, 0, 0);

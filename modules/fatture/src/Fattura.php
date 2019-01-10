@@ -238,17 +238,14 @@ class Fattura extends Document
             return '';
         }
 
-        $database = database();
-
         // Recupero maschera per questo segmento
         $maschera = Generator::getMaschera($id_segment);
 
-        $ultima_fattura = $database->fetchOne('SELECT numero FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.Generator::getMascheraOrder($maschera, 'numero'), [
-            ':year' => date('Y', strtotime($data)),
-            ':id_segment' => $id_segment,
+        $ultimo = Generator::getPreviousFrom($maschera, 'co_documenti', 'numero', [
+            'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+            'id_segment = '.prepare($id_segment),
         ]);
-
-        $numero = Generator::generate($maschera, $ultima_fattura['numero'], 1, Generator::dateToPattern($data));
+        $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
         return $numero;
     }
@@ -268,17 +265,14 @@ class Fattura extends Document
             return '';
         }
 
-        $database = database();
-
         // Recupero maschera per questo segmento
         $maschera = Generator::getMaschera($id_segment);
 
-        $ultima_fattura = $database->fetchOne('SELECT numero_esterno FROM co_documenti WHERE YEAR(data) = :year AND id_segment = :id_segment '.Generator::getMascheraOrder($maschera, 'numero_esterno'), [
-            ':year' => date('Y', strtotime($data)),
-            ':id_segment' => $id_segment,
+        $ultimo = Generator::getPreviousFrom($maschera, 'co_documenti', 'numero_esterno', [
+            'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+            'id_segment = '.prepare($id_segment),
         ]);
-
-        $numero_esterno = Generator::generate($maschera, $ultima_fattura['numero_esterno'], 1, Generator::dateToPattern($data));
+        $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
         return $numero_esterno;
     }

@@ -141,19 +141,10 @@ class Preventivo extends Document
      */
     public static function getNextNumero()
     {
-        $database = database();
-
         $maschera = setting('Formato codice preventivi');
 
-        $ultimo_preventivo = $database->fetchOne('SELECT numero FROM co_preventivi WHERE numero=(SELECT MAX(CAST(numero AS SIGNED)) FROM co_preventivi) AND numero LIKE('.prepare(Generator::complete($maschera)).') ORDER BY numero DESC');
-
-        $numero = Generator::generate($maschera, $ultimo_preventivo['numero']);
-
-        if (!is_numeric($numero)) {
-            $ultimo_preventivo = $database->fetchOne('SELECT numero FROM co_preventivi WHERE numero LIKE('.prepare(Generator::complete($maschera)).') ORDER BY numero DESC');
-
-            $numero = Generator::generate($maschera, $ultimo_preventivo['numero']);
-        }
+        $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero');
+        $numero = Generator::generate($maschera, $ultimo);
 
         return $numero;
     }

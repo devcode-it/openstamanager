@@ -140,14 +140,15 @@ class Ordine extends Document
      */
     public static function getNextNumero($data, $direzione)
     {
-        $database = database();
+        $maschera = '#';
 
-        $rs = $database->fetchOne("SELECT IFNULL(MAX(numero), '0') AS max_numero FROM or_ordini WHERE YEAR(data) = :year AND idtipoordine IN(SELECT id FROM or_tipiordine WHERE dir = :direction) ORDER BY CAST(numero AS UNSIGNED) DESC", [
-            ':year' => date('Y', strtotime($data)),
-            ':direction' => $direzione,
+        $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero', [
+            'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+            'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
         ]);
+        $numero = Generator::generate($maschera, $ultimo);
 
-        return intval($rs['max_numero']) + 1;
+        return $numero;
     }
 
     /**
@@ -164,17 +165,14 @@ class Ordine extends Document
             return '';
         }
 
-        $database = database();
-
         $maschera = setting('Formato numero secondario ordine');
 
-        $ultimo_ordine = $database->fetchOne('SELECT numero_esterno FROM or_ordini WHERE YEAR(data) = :year AND idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = :direction) '.Generator::getMascheraOrder($maschera, 'numero_esterno'), [
-            ':year' => date('Y', strtotime($data)),
-            ':direction' => $direzione,
+        $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero_esterno', [
+            'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+            'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
         ]);
+        $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
-        $numero_esterno = Generator::generate($maschera, $ultimo_ordine['numero_esterno'], 1, Generator::dateToPattern($data));
-
-        return $numero_esterno;
+        return $numero;
     }
 }

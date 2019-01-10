@@ -3,7 +3,6 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Ordini\Components\Articolo;
 use Modules\Ordini\Components\Descrizione;
 use Modules\Ordini\Components\Riga;

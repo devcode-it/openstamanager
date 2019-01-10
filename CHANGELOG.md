@@ -4,6 +4,10 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.5 (2019-01-10)](#245-2019-01-10)
+  - [Aggiunto (Added)](#aggiunto-added)
+  - [Modificato (Changed)](#modificato-changed)
+  - [Fixed](#fixed)
 - [2.4.4 (2018-12-12)](#244-2018-12-12)
   - [Aggiunto (Added)](#aggiunto-added)
   - [Fixed](#fixed)
@@ -44,12 +48,33 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
   - [Fixed](#fixed-7)
 
 
+## 2.4.5 (2019-01-10)
+
+### Aggiunto (Added)
+
+ - Introduzione dello split payment
+ - Introduzione dei campi Nome e Cognome per le anagrafiche
+ - Introduzione della possibilità di non verificare il certificato SSL per gli account email
+ - Introduzione calcolo del guadagno in fase di aggiunta righe nei documenti
+
+### Modificato (Changed)
+
+ - Miglioramento della generazione xml per le Fatture Elettroniche
+ - Miglioramento procedura importazione xml per le Fatture Elettroniche
+ - Gestite righe di tipo descrizione nelle Fatture Elettroniche
+ 
+### Fixed
+
+ - Fix calcolo codice intervento
+ - Fix dei filtri per la stampa del riepilogo interventi
+ - Risolti altri bug minori
+
 ## 2.4.4 (2018-12-12)
 
 ### Aggiunto (Added)
 
  - Controllo sulla presenza di personalizzazioni nel modulo **Aggiornamenti**
- - Stati multipli per la Fatture Elettroniche (per ampliamenti futuri)
+ - Stati multipli per le Fatture Elettroniche (per ampliamenti futuri)
 
 ### Fixed
 

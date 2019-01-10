@@ -2,12 +2,12 @@
 
 namespace Modules\Preventivi;
 
+use Carbon\Carbon;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\TipoSessione;
 use Traits\RecordTrait;
 use Util\Generator;
-use Carbon\Carbon;
 
 class Preventivo extends Document
 {
@@ -18,9 +18,9 @@ class Preventivo extends Document
     /**
      * Crea un nuovo preventivo.
      *
-     * @param Anagrafica $anagrafica
+     * @param Anagrafica     $anagrafica
      * @param TipoIntervento $tipo_sessione
-     * @param string     $nome
+     * @param string         $nome
      *
      * @return self
      */

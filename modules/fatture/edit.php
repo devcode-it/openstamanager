@@ -35,16 +35,15 @@ if ($dir == 'entrata') {
 			<?php
 
                 if ($dir == 'entrata') {
-                    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia, id_nazione FROM an_anagrafiche WHERE idanagrafica='.prepare($record['idanagrafica']));
+                    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia, id_nazione, tipo FROM an_anagrafiche WHERE idanagrafica='.prepare($record['idanagrafica']));
                     $campi_mancanti = [];
 
-                    if ($rs2[0]['piva'] == '') {
+                    if ($rs2[0]['codice_fiscale'] == '' and ($rs2[0]['tipo'] == 'Privato' or $rs2[0]['tipo'] == 'Ente pubblico')) {
+                        array_push($campi_mancanti, 'Codice fiscale');
+                    } elseif ($rs2[0]['piva'] == '') {
                         array_push($campi_mancanti, 'Partita IVA');
                     }
-                    /*if ($rs2[0]['codice_fiscale'] == '') {
-                        array_push($campi_mancanti, 'Codice fiscale');
-                    }
-                    */
+
                     if ($rs2[0]['citta'] == '') {
                         array_push($campi_mancanti, 'Città');
                     }
@@ -235,16 +234,16 @@ if ($dir == 'uscita') {
 				</div>
 				
 				<?php
-				//TODO: Fattura per conto del fornitore (es. cooperative agricole che emettono la fattura per conto dei propri soci produttori agricoli conferenti)
-				if ($dir == 'entrata') {
-				?>
+                //TODO: Fattura per conto del fornitore (es. cooperative agricole che emettono la fattura per conto dei propri soci produttori agricoli conferenti)
+                if ($dir == 'entrata') {
+                    ?>
 					<div class="col-md-3">
 						{[ "type": "checkbox", "label": "<?php echo tr('Fattura per conto terzi'); ?>", "name": "is_fattura_conto_terzi", "value": "$is_fattura_conto_terzi$", "help": "<?php echo tr('Nell\'xml della FE imposta il cliente come cessionario e il fornitore come cedente/prestatore.'); ?>", "placeholder": "<?php echo tr('Fattura per conto terzi'); ?>" ]}
 					</div>
 					
 				<?php
-				}
-				?>
+                }
+                ?>
 				
 				
             </div>

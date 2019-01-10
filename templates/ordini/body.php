@@ -9,9 +9,11 @@ function findKey($array, $keySearch)
             return true;
         } elseif (is_array($item) && findKey($item, $keySearch)) {
             echo $key;
+
             return true;
         }
     }
+
     return false;
 }
 
@@ -27,8 +29,8 @@ $righe = $dbo->fetchArray("SELECT *,
 FROM `or_righe_ordini` WHERE idordine=".prepare($id_record).' ORDER BY `order`');
 
 //controllo se gli articoli nell'ordine hanno un'immagine
-if (findKey($righe, "immagine_articolo")) {
-    if (!empty($righe[(findKey($righe, "immagine_articolo")-1)]["immagine_articolo"])) {
+if (findKey($righe, 'immagine_articolo')) {
+    if (!empty($righe[(findKey($righe, 'immagine_articolo') - 1)]['immagine_articolo'])) {
         $has_image = true;
     }
 }
@@ -38,7 +40,7 @@ $autofill = [
     'words' => 70, // Numero di parolo dopo cui contare una riga nuova
     'rows' => 20, // Numero di righe massimo presente nella pagina
     'additional' => 15, // Numero di righe massimo da aggiungere
-    'columns' => (($has_image) ? 6:5), // Numero di colonne della tabella
+    'columns' => (($has_image) ? 6 : 5), // Numero di colonne della tabella
 ];
 
 $sconto = [];
@@ -52,7 +54,7 @@ echo "
         <tr>";
 
             if ($has_image) {
-                echo "		<th class='text-center' style='width:20%'>".tr('Immagine', [], ['upper' => true])."</th>";
+                echo "		<th class='text-center' style='width:20%'>".tr('Immagine', [], ['upper' => true]).'</th>';
             }
 echo "
 			<th class='text-center' style='width:50%'>".tr('Descrizione', [], ['upper' => true])."</th>
@@ -206,7 +208,7 @@ if ($options['pricing']) {
     // Totale imponibile
     echo '
     <tr>
-        <td colspan="'.(($has_image) ? 4:3).'" class="text-right border-top">
+        <td colspan="'.(($has_image) ? 4 : 3).'" class="text-right border-top">
             <b>'.tr('Imponibile', [], ['upper' => true]).':</b>
         </td>
 
@@ -219,7 +221,7 @@ if ($options['pricing']) {
     if (!empty($sconto)) {
         echo '
     <tr>
-        <td colspan="'.(($has_image) ? 4:3).'" class="text-right border-top">
+        <td colspan="'.(($has_image) ? 4 : 3).'" class="text-right border-top">
             <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
 
@@ -231,7 +233,7 @@ if ($options['pricing']) {
         // Imponibile scontato
         echo '
     <tr>
-        <td colspan="'.(($has_image) ? 4:3).'" class="text-right border-top">
+        <td colspan="'.(($has_image) ? 4 : 3).'" class="text-right border-top">
             <b>'.tr('Imponibile scontato', [], ['upper' => true]).':</b>
         </td>
 
@@ -244,7 +246,7 @@ if ($options['pricing']) {
     // IVA
     echo '
     <tr>
-        <td colspan="'.(($has_image) ? 4:3).'" class="text-right border-top">
+        <td colspan="'.(($has_image) ? 4 : 3).'" class="text-right border-top">
             <b>'.tr('Totale IVA', [], ['upper' => true]).':</b>
         </td>
 
@@ -258,7 +260,7 @@ if ($options['pricing']) {
     // TOTALE
     echo '
     <tr>
-    	<td colspan="'.(($has_image) ? 4:3).'" class="text-right border-top">
+    	<td colspan="'.(($has_image) ? 4 : 3).'" class="text-right border-top">
             <b>'.tr('Quotazione totale', [], ['upper' => true]).':</b>
     	</td>
     	<th colspan="2" class="text-center">

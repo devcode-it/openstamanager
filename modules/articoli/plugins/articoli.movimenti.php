@@ -66,8 +66,8 @@ if (!empty($rs2)) {
                 <td>'.$r['movimento'].'
 				'.((!empty($r['idintervento'])) ? Modules::link('Interventi', $r['idintervento']) : '').'
 				'.((!empty($r['idautomezzo'])) ? Modules::link('Automezzi', $r['idautomezzo']) : '').'
-				'.((!empty($r['idddt'])) ? (Modules::link('DDt di '.$dir, $r['idddt'], null, null, (intval($database->fetchOne('SELECT * FROM `dt_ddt` WHERE `id` ='.prepare($r['idddt'])))) ? '': 'class="disabled"')) : '').'
-				'.((!empty($r['iddocumento'])) ? (Modules::link('Fatture di '.$dir, $r['iddocumento'], null, null, (intval($database->fetchOne('SELECT * FROM `co_documenti` WHERE `id` ='.prepare($r['iddocumento'])))) ? '': 'class="disabled"')) : '' ).'
+				'.((!empty($r['idddt'])) ? (Modules::link('DDt di '.$dir, $r['idddt'], null, null, (intval($database->fetchOne('SELECT * FROM `dt_ddt` WHERE `id` ='.prepare($r['idddt'])))) ? '' : 'class="disabled"')) : '').'
+				'.((!empty($r['iddocumento'])) ? (Modules::link('Fatture di '.$dir, $r['iddocumento'], null, null, (intval($database->fetchOne('SELECT * FROM `co_documenti` WHERE `id` ='.prepare($r['iddocumento'])))) ? '' : 'class="disabled"')) : '').'
 				</td>';
 
         // Data

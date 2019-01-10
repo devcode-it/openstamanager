@@ -27,16 +27,6 @@ $citta = $sede['Comune'];
 $provincia = $sede['Provincia'];
 
 echo '
-<<<<<<< HEAD
-    <h4>'.
-        $ragione_sociale.'<br>
-        <small>
-            '.(!empty($codice_fiscale) ? (tr('Codice Fiscale').': '.$codice_fiscale.'<br>') : '').'
-            '.(!empty($partita_iva) ? (tr('Partita IVA').': '.$partita_iva.'<br>') : '').'
-            '.$cap.' '.$citta.' ('.$provincia.')<br>
-        </small>
-    </h4><br>';
-=======
     <div class="row" >
 		<div class="col-md-6" >
 			<h4>'.
@@ -101,8 +91,6 @@ if (!empty($fattura_pa->getBody()['DatiPagamento'])){
 		</ol>';
 		
 }
->>>>>>> master
-
 
 // Tipo del documento
 $codice_tipo_documento_fe = (intval(database()->fetchNum('SELECT id FROM co_tipidocumento WHERE codice_tipo_documento_fe = '.prepare($fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']['TipoDocumento']).''))) ? $fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']['TipoDocumento'] : '%';

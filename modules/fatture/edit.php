@@ -518,6 +518,13 @@ include $docroot.'/modules/fatture/row-list.php';
 
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
+<?php
+ if ($dir == 'entrata') {
+	 echo '
+	<div class="alert alert-info text-center">'.tr('Per allegare un documento alla fattura elettronica caricare il file specificando come categoria "Fattura Elettronica"').'.</div>';
+ }
+?>
+
 <script type="text/javascript">
 	$('#idanagrafica').change( function(){
         session_set('superselect,idanagrafica', $(this).val(), 0);

@@ -13,6 +13,10 @@ class MessageHandler extends AbstractProcessingHandler
 {
     protected function write(array $record)
     {
+        if (isAjaxRequest()) {
+            return;
+        }
+
         $message = tr("Si è verificato un'errore").' <i>[uid: '.$record['extra']['uid'].']</i>.';
 
         if (auth()->check()) {

@@ -13,15 +13,19 @@ class MessageHandler extends AbstractProcessingHandler
 {
     protected function write(array $record)
     {
-        $message = tr("Si è verificato un'errore").'.';
+        $message = tr("Si è verificato un'errore").' <i>[uid: '.$record['extra']['uid'].']</i>.';
 
         if (auth()->check()) {
             $message .= '
-            '.tr('Se il problema persiste siete pregati di chiedere assistenza tramite la sezione Bug').'. <a href="'.ROOTDIR.'/bug.php"><i class="fa fa-external-link"></i></a>
+            '.tr('Se il problema persiste siete pregati di chiedere assistenza tramite la sezione Bug').'. <a href="'.ROOTDIR.'/bug.php"><i class="fa fa-external-link"></i></a>';
+
+            if (auth()->isAdmin()) {
+                $message .= '
             <br><small>'.$record['message'].'</small>';
+            }
         }
 
-        //flash()->error($message);
+        flash()->error($message);
 
         echo '
     <div class="alert alert-danger push">

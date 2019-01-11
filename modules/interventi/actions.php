@@ -2,9 +2,12 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Interventi\Components\Articolo;
 use Modules\Interventi\Intervento;
+use Modules\Interventi\Stato;
+use Modules\Interventi\TipoSessione;
 
 switch (post('op')) {
     case 'update':
@@ -100,18 +103,19 @@ switch (post('op')) {
 
     case 'add':
         if (post('id_intervento') == null) {
-            $formato = setting('Formato codice intervento');
-            $template = str_replace('#', '%', $formato);
+            $idanagrafica = post('idanagrafica');
+            $idtipointervento = post('idtipointervento');
+            $idstatointervento = post('idstatointervento');
+            $data_richiesta = post('data_richiesta');
 
-            $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare(Util\Generator::complete($template)).' ORDER BY codice DESC LIMIT 0,1');
-            if (!empty($rs[0]['codice'])) {
-                $codice = Util\Generator::generate($formato, $rs[0]['codice']);
-            }
+            $anagrafica = Anagrafica::find($idanagrafica);
+            $tipo = TipoSessione::find($idtipointervento);
+            $stato = Stato::find($idstatointervento);
 
-            if (empty($codice)) {
-                $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice LIKE '.prepare(Util\Generator::complete($template)).' ORDER BY codice DESC LIMIT 0,1');
-                $codice = Util\Generator::generate($formato, $rs[0]['codice']);
-            }
+            $intervento = Intervento::build($anagrafica, $tipo, $stato, $data_richiesta);
+            $id_record = $intervento->id;
+
+            flash()->info(tr('Aggiunto nuovo intervento!'));
 
             // Informazioni di base
             $idpreventivo = post('idpreventivo');
@@ -119,30 +123,19 @@ switch (post('op')) {
             $idcontratto_riga = post('idcontratto_riga');
             $idtipointervento = post('idtipointervento');
             $idsede = post('idsede');
-            $data_richiesta = post('data_richiesta');
             $richiesta = post('richiesta');
             $idautomezzo = null;
 
-            if (!empty($codice) && !empty(post('idanagrafica')) && !empty(post('idtipointervento'))) {
-                // Salvataggio modifiche intervento
-                $dbo->insert('in_interventi', [
-                    'idanagrafica' => post('idanagrafica'),
-                    'idclientefinale' => post('idclientefinale') ?: 0,
-                    'idstatointervento' => post('idstatointervento'),
-                    'idtipointervento' => $idtipointervento,
-                    'idsede' => $idsede ?: 0,
-                    'idautomezzo' => $idautomezzo ?: 0,
-                    'id_preventivo' => $idpreventivo,
-
-                    'codice' => $codice,
-                    'data_richiesta' => $data_richiesta,
-                    'richiesta' => $richiesta,
-                ]);
-
-                $id_record = $dbo->lastInsertedID();
-
-                flash()->info(tr('Aggiunto nuovo intervento!'));
+            if (post('idclientefinale')) {
+                $intervento->idclientefinale = post('idclientefinale');
             }
+
+            if (post('idsede')) {
+                $intervento->idsede = post('idsede');
+            }
+
+            $intervento->id_preventivo = post('$idpreventivo');
+            $intervento->richiesta = post('richiesta');
 
             // Collego l'intervento al contratto
             if (!empty($idcontratto)) {

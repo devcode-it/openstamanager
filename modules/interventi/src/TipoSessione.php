@@ -24,4 +24,9 @@ class TipoSessione extends Model
     {
         return $this->hasMany(Preventivo::class, 'idtipointervento');
     }
+
+    public function interventi()
+    {
+        return $this->hasMany(Intervento::class, 'idtipointervento');
+    }
 }

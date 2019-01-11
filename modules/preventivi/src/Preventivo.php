@@ -18,9 +18,9 @@ class Preventivo extends Document
     /**
      * Crea un nuovo preventivo.
      *
-     * @param Anagrafica     $anagrafica
-     * @param TipoIntervento $tipo_sessione
-     * @param string         $nome
+     * @param Anagrafica   $anagrafica
+     * @param TipoSessione $tipo_sessione
+     * @param string       $nome
      *
      * @return self
      */

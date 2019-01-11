@@ -94,20 +94,6 @@ class FatturaElettronica
     }
 
     /**
-     * Restituisce le informazioni sull'anagrafica dell'intermediario.
-     *
-     * @return Anagrafica
-     */
-    public static function getIntermediario()
-    {
-        if (empty(static::$intermediario)) {
-            static::$intermediario = Anagrafica::find(setting('Terzo intermediario'));
-        }
-
-        return static::$intermediario;
-    }
-
-    /**
      * Restituisce le righe del documento.
      *
      * @return array
@@ -561,7 +547,7 @@ class FatturaElettronica
      */
     protected static function getTerzoIntermediarioOSoggettoEmittente($fattura)
     {
-        $intermediario = static::getIntermediario();
+        $intermediario = Anagrafica::find(setting('Terzo intermediario'));
 
         $result = [
             'DatiAnagrafici' => static::getDatiAnagrafici($intermediario),
@@ -1184,7 +1170,7 @@ class FatturaElettronica
     protected function getUploadData()
     {
         return [
-            'category' => tr('Fattura elettronica'),
+            'category' => tr('Fattura Elettronica'),
             'id_module' => Modules::get('Fatture di vendita')['id'],
             'id_record' => $this->getDocumento()['id'],
         ];

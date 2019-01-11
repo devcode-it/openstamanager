@@ -29,6 +29,14 @@ $result = [
 $iva = $dbo->fetchArray('SELECT idiva_vendite AS idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
 $result['idiva'] = $iva[0]['idiva'] ?: setting('Iva predefinita');
 
+// Aggiunta sconto di default da listino per le vendite
+$listino = $dbo->fetchArray('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_listini ON an_anagrafiche.idlistino_vendite=mg_listini.id WHERE idanagrafica='.prepare($idanagrafica));
+
+if( $listino[0]['prc_guadagno'] > 0 ){
+    $result['sconto_unitario'] = $listino[0]['prc_guadagno'];
+    $result['tipo_sconto'] = 'PRC';
+}
+
 // Importazione della gestione dedicata
 $file = 'riga';
 if (get('is_descrizione') !== null) {

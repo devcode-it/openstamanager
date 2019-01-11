@@ -93,7 +93,11 @@ abstract class Row extends Description
 
     public function getRitenutaAccontoAttribute()
     {
-        $result = $this->imponibile_scontato;
+        if ($this->ritenuta->indetraibile > 0) {
+            $result = $this->imponibile_scontato - ($this->imponibile_scontato / 100 * $this->ritenuta->indetraibile);
+        } else {
+            $result = $this->imponibile_scontato;
+        }
 
         if ($this->calcolo_ritenuta_acconto == 'IMP+RIV') {
             $result += $this->rivalsainps;

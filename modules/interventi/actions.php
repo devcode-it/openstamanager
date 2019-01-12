@@ -489,7 +489,7 @@ switch (post('op')) {
 
                 $data = explode(',', post('firma_base64'));
 
-                $img = Intervention\Image\ImageManagerStatic::build(base64_decode($data[1]));
+                $img = Intervention\Image\ImageManagerStatic::make(base64_decode($data[1]));
                 $img->resize(680, 202, function ($constraint) {
                     $constraint->aspectRatio();
                 });

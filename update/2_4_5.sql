@@ -78,3 +78,8 @@ INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, 
 INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'SEPA Direct Debit CORE', '0', '1', '100', NULL, NULL, 'MP20');
 INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'SEPA Direct Debit B2B', '0', '1', '100', NULL, NULL, 'MP21');
 INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'Trattenuta su somme già riscosse', '0', '1', '100', NULL, NULL, 'MP22');
+
+
+-- Fix per tipi di spedizione fuorvianti (esiste già il campo "Porto" per stabilire di chi è a carico la spedizione)
+UPDATE `dt_spedizione` SET `descrizione` = 'Ritiro in magazzino' WHERE `dt_spedizione`.`descrizione` = 'A carico del cliente';
+UPDATE `dt_spedizione` SET `descrizione` = 'Espressa' WHERE `dt_spedizione`.`descrizione` = 'A nostro carico';

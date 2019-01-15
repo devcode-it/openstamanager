@@ -23,13 +23,13 @@ if (!empty($tecnici)) {
         <tr>
             <th>'.$tecnico['ragione_sociale'].'</th>
             <th>'.tr('Attività').'</th>
-            <th>'.tr('Addebito orario').'</th>
-            <th>'.tr('Addebito km').'</th>
-            <th>'.tr('Addebito diritto ch.').'</th>
+            <th>'.tr('Addebito orario').' <span class="tip" title="'.tr("Addebito al cliente").'"><i class="fa fa-question-circle-o"></i></span></th>
+            <th>'.tr('Addebito km').' <span class="tip" title="'.tr("Addebito al cliente").'"><i class="fa fa-question-circle-o"></i></span></th>
+            <th>'.tr('Addebito diritto ch.').' <span class="tip" title="'.tr("Addebito al cliente").'"><i class="fa fa-question-circle-o"></i></span></th>
 
-            <th>'.tr('Costo orario').'</th>
-            <th>'.tr('Costo km').'</th>
-            <th>'.tr('Costo diritto ch.').'</th>
+            <th>'.tr('Costo orario').' <span class="tip" title="'.tr("Costo interno").'"><i class="fa fa-question-circle-o"></i></span></th>
+            <th>'.tr('Costo km').' <span class="tip" title="'.tr("Costo interno").'"><i class="fa fa-question-circle-o"></i></span></th>
+            <th>'.tr('Costo diritto ch.').' <span class="tip" title="'.tr("Costo interno").'"><i class="fa fa-question-circle-o"></i></span></th>
             <th width="40"></th>
         </tr>';
 

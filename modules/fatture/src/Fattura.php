@@ -274,6 +274,6 @@ class Fattura extends Document
         ]);
         $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
-        return $numero_esterno;
+        return $numero;
     }
 }

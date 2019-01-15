@@ -77,12 +77,12 @@ if (!API::isAPIRequest()) {
     // Inizializzazione Whoops
     $whoops = new Whoops\Run();
 
-    if (App::debug() || isAjaxRequest()) {
+    if (App::debug()) {
         $whoops->pushHandler(new Whoops\Handler\PrettyPageHandler());
     }
 
     // Abilita la gestione degli errori nel caso la richiesta sia di tipo AJAX
-    if (isAjaxRequest()) {
+    if (Whoops\Util\Misc::isAjaxRequest()) {
         $whoops->pushHandler(new Whoops\Handler\JsonResponseHandler());
     }
 

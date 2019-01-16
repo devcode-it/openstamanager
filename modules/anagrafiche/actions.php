@@ -27,7 +27,7 @@ switch (post('op')) {
         $sede->save();
 
         if (empty(post('ragione_sociale'))) {
-            $ragione_sociale = post('nome').' '.post('cognome');
+            $ragione_sociale = post('cognome').' '.post('nome');
         } else {
             $ragione_sociale = post('ragione_sociale');
         }
@@ -130,7 +130,7 @@ switch (post('op')) {
         $idtipoanagrafica = post('idtipoanagrafica');
 
         if (empty(post('ragione_sociale'))) {
-            $ragione_sociale = post('nome').' '.post('cognome');
+            $ragione_sociale = post('cognome').' '.post('nome');
         } else {
             $ragione_sociale = post('ragione_sociale');
         }

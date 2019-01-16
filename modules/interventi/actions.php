@@ -135,7 +135,9 @@ switch (post('op')) {
             }
 
             $intervento->id_preventivo = post('$idpreventivo');
-            $intervento->richiesta = post('richiesta');
+            $intervento->richiesta = $richiesta;
+
+            $intervento->save();
 
             // Collego l'intervento al contratto
             if (!empty($idcontratto)) {

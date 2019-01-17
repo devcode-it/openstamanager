@@ -8,6 +8,7 @@ try {
     $update = new Aggiornamento();
 
     include $module->filepath('view.php');
+
     return;
 } catch (InvalidArgumentException $e) {
 }
@@ -220,7 +221,7 @@ function download(button) {
             </div>
 
             <div id="update-none" class="hide">
-                <p>'.tr("Nessun aggiornamento presente").'.</p>
+                <p>'.tr('Nessun aggiornamento presente').'.</p>
             </div>';
     } else {
         echo'

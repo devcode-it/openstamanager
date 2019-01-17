@@ -10,6 +10,6 @@ class Stato extends Model
 
     public function ddt()
     {
-        return $this->hasMany(DDT::class, 'idstatoddt');
+        return $this->hasMany(DDT::class, 'id_stato');
     }
 }

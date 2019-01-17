@@ -104,7 +104,7 @@ class Ordine extends Document
 
     public function stato()
     {
-        return $this->belongsTo(Stato::class, 'idstatoordine');
+        return $this->belongsTo(Stato::class, 'id_stato');
     }
 
     public function articoli()

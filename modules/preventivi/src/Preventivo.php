@@ -104,7 +104,7 @@ class Preventivo extends Document
 
     public function stato()
     {
-        return $this->belongsTo(Stato::class, 'idstato');
+        return $this->belongsTo(Stato::class, 'id_stato');
     }
 
     public function tipoSessione()

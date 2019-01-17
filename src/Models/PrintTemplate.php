@@ -3,9 +3,9 @@
 namespace Models;
 
 use Common\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Traits\PathTrait;
 use Traits\StoreTrait;
-use Illuminate\Database\Eloquent\Builder;
 
 class PrintTemplate extends Model
 {
@@ -13,6 +13,18 @@ class PrintTemplate extends Model
 
     protected $table = 'zz_prints';
     protected $main_folder = 'templates';
+
+    /* Relazioni Eloquent */
+
+    public function module()
+    {
+        return $this->belongsTo(Module::class, 'id_module');
+    }
+
+    public function groups()
+    {
+        return $this->morphToMany(Group::class, 'permission', 'zz_permissions', 'external_id', 'group_id')->where('permission_level', '!=', '-')->withPivot('permission_level');
+    }
 
     protected static function boot()
     {
@@ -25,17 +37,5 @@ class PrintTemplate extends Model
         static::addGlobalScope('permission', function (Builder $builder) {
             $builder->with('groups');
         });
-    }
-
-    /* Relazioni Eloquent */
-
-    public function module()
-    {
-        return $this->belongsTo(Module::class, 'id_module');
-    }
-
-    public function groups()
-    {
-        return $this->morphToMany(Group::class, 'permission', 'zz_permissions', 'external_id', 'group_id')->where('permission_level', '!=', '-')->withPivot('permission_level');
     }
 }

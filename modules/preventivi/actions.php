@@ -109,7 +109,7 @@ switch (post('op')) {
         $rs = $dbo->fetchArray('SELECT numero FROM co_preventivi WHERE numero LIKE('.prepare(Util\Generator::complete($numeropreventivo_template)).') ORDER BY numero DESC LIMIT 0,1');
         $numero = Util\Generator::generate(setting('Formato codice preventivi'), $rs[0]['numero']);
 
-        $dbo->query('UPDATE co_preventivi SET idstato=1, numero = '.prepare($numero).', master_revision = id WHERE id='.prepare($id_record));
+        $dbo->query('UPDATE co_preventivi SET id_stato=1, numero = '.prepare($numero).', master_revision = id WHERE id='.prepare($id_record));
 
         //copio anche le righe del preventivo
         $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM co_righe_preventivi WHERE idpreventivo = '.filter('id_record'));
@@ -307,7 +307,7 @@ switch (post('op')) {
             'data_pagamento' => $rs_preventivo[0]['data_pagamento'],
             'budget' => $rs_preventivo[0]['budget'],
             'descrizione' => $rs_preventivo[0]['descrizione'],
-            'idstato' => $rs_preventivo[0]['idstato'],
+            'id_stato' => $rs_preventivo[0]['id_stato'],
             'validita' => $rs_preventivo[0]['validita'],
             'tempi_consegna' => $rs_preventivo[0]['tempi_consegna'],
             'idanagrafica' => $rs_preventivo[0]['idanagrafica'],

@@ -6,9 +6,9 @@ use App;
 use Common\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Traits\ManagerTrait;
+use Traits\PermissionTrait;
 use Traits\StoreTrait;
 use Traits\UploadTrait;
-use Traits\PermissionTrait;
 
 class Plugin extends Model
 {

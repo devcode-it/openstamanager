@@ -518,7 +518,7 @@ switch (post('op')) {
                 $dbo->query('UPDATE co_contratti SET budget='.prepare($prezzo).' WHERE id='.prepare($idcontratto));
             }
 
-            $dbo->query("UPDATE co_contratti SET idstato=(SELECT id FROM co_staticontratti WHERE descrizione='In attesa di pagamento') WHERE id=".prepare($idcontratto));
+            $dbo->query("UPDATE co_contratti SET id_stato=(SELECT id FROM co_staticontratti WHERE descrizione='In attesa di pagamento') WHERE id=".prepare($idcontratto));
 
             // Ricalcolo inps, ritenuta e bollo
             if ($dir == 'entrata') {

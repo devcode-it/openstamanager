@@ -78,7 +78,7 @@ switch (post('op')) {
             $codice_cig = post('codice_cig');
             $codice_cup = post('codice_cup');
 
-            $query = 'UPDATE co_contratti SET idanagrafica='.prepare($idanagrafica).', idsede='.prepare($idsede).', id_stato='.prepare($idstato).', nome='.prepare($nome).', idagente='.prepare($idagente).', idpagamento='.prepare($idpagamento).', numero='.prepare($numero).', budget='.prepare($budget).', idreferente='.prepare($idreferente).', validita='.prepare($validita).', data_bozza='.prepare($data_bozza).', data_accettazione='.prepare($data_accettazione).', data_rifiuto='.prepare($data_rifiuto).', data_conclusione='.prepare($data_conclusione).', rinnovabile='.prepare($rinnovabile).', giorni_preavviso_rinnovo='.prepare($giorni_preavviso_rinnovo).', esclusioni='.prepare($esclusioni).', descrizione='.prepare($descrizione).', id_documento_fe='.prepare(post('id_documento_fe')).', codice_cig='.prepare($codice_cig).', codice_cup='.prepare($codice_cup).' WHERE id='.prepare($id_record);
+            $query = 'UPDATE co_contratti SET idanagrafica='.prepare($idanagrafica).', idsede='.prepare($idsede).', id_stato='.prepare($id_stato).', nome='.prepare($nome).', idagente='.prepare($idagente).', idpagamento='.prepare($idpagamento).', numero='.prepare($numero).', budget='.prepare($budget).', idreferente='.prepare($idreferente).', validita='.prepare($validita).', data_bozza='.prepare($data_bozza).', data_accettazione='.prepare($data_accettazione).', data_rifiuto='.prepare($data_rifiuto).', data_conclusione='.prepare($data_conclusione).', rinnovabile='.prepare($rinnovabile).', giorni_preavviso_rinnovo='.prepare($giorni_preavviso_rinnovo).', esclusioni='.prepare($esclusioni).', descrizione='.prepare($descrizione).', id_documento_fe='.prepare(post('id_documento_fe')).', codice_cig='.prepare($codice_cig).', codice_cup='.prepare($codice_cup).' WHERE id='.prepare($id_record);
             // costo_diritto_chiamata='.prepare($costo_diritto_chiamata).', ore_lavoro='.prepare($ore_lavoro).', costo_orario='.prepare($costo_orario).', costo_km='.prepare($costo_km).'
 
             $dbo->query($query);
@@ -345,7 +345,7 @@ switch (post('op')) {
                 }
 
                 // Cambio stato precedente contratto in concluso (non più pianificabile)
-                $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT id FROM co_staticontratti WHERE pianificabile = 0 AND fatturabile = 1 AND descrizione = \'Concluso\')  WHERE `id` = '.prepare($id_record));
+                $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `id_stato`= (SELECT id FROM co_staticontratti WHERE pianificabile = 0 AND fatturabile = 1 AND descrizione = \'Concluso\')  WHERE `id` = '.prepare($id_record));
 
                 flash()->info(tr('Contratto rinnovato!'));
 

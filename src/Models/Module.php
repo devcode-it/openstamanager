@@ -3,10 +3,10 @@
 namespace Models;
 
 use Auth;
-use Traits\PermissionTrait;
 use Common\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Traits\ManagerTrait;
+use Traits\PermissionTrait;
 use Traits\StoreTrait;
 use Traits\UploadTrait;
 

@@ -8,6 +8,10 @@ switch ($resource) {
 
         $where[] = 'an_anagrafiche.deleted_at IS NULL';
 
+        foreach ($elements as $element) {
+            $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
+        }
+
         if (!empty($search)) {
             $search_fields[] = 'an_anagrafiche.ragione_sociale LIKE '.prepare('%'.$search.'%');
         }

@@ -85,7 +85,7 @@ if (str_contains($current_module['option'], '|segment|')) {
 				</div>
 
                 <div class="col-md-6">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Sezionale fiscale'); ?>", "name": "is_fiscale", "value": "$is_fiscale$"  ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Sezionale fiscale'); ?>", "name": "is_fiscale", "value": "$is_fiscale$", "extra": "<?php echo ($tot > 0) ? 'readonly' : ''; ?>"  ]}
 				</div>
             </div>
 
@@ -138,13 +138,6 @@ $list = [
 </form>
 
 <?php
-
-$array = preg_match('/(?<=FROM)\s([^\s]+)\s/', $record['options'], $table);
-if (strpos($table[0], 'co_documenti') !== false) {
-    $righe = $dbo->fetchArray('SELECT COUNT(*) AS tot FROM '.$table[0].' WHERE id_segment = '.prepare($id_record));
-    $tot = $righe[0]['tot'];
-}
-
 if ($tot > 0) {
     echo "<div class='alert alert-danger' style='margin:0px;'>";
 

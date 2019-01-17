@@ -2,13 +2,12 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Interventi\Articolo;
-use Modules\Interventi\Intervento;
+use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
-
-include_once Modules::filepath('Interventi', 'modutil.php');
-include_once Modules::filepath('Articoli', 'modutil.php');
-include_once Modules::filepath('MyImpianti', 'modutil.php');
+use Modules\Interventi\Components\Articolo;
+use Modules\Interventi\Intervento;
+use Modules\Interventi\Stato;
+use Modules\Interventi\TipoSessione;
 
 switch (post('op')) {
     case 'update':
@@ -91,7 +90,11 @@ switch (post('op')) {
             $n->setTemplate($stato['id_email'], $id_record);
             $n->setReceivers($stato['destinatari']);
 
-            $n->send();
+            if ($n->send()) {
+                flash()->info(tr('Notifica inviata'));
+            } else {
+                flash()->warning(tr("Errore nell'invio della notifica"));
+            }
         }
 
         flash()->info(tr('Informazioni salvate correttamente!'));
@@ -100,18 +103,19 @@ switch (post('op')) {
 
     case 'add':
         if (post('id_intervento') == null) {
-            $formato = setting('Formato codice intervento');
-            $template = str_replace('#', '%', $formato);
+            $idanagrafica = post('idanagrafica');
+            $idtipointervento = post('idtipointervento');
+            $idstatointervento = post('idstatointervento');
+            $data_richiesta = post('data_richiesta');
 
-            $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
-            if (!empty($rs[0]['codice'])) {
-                $codice = Util\Generator::generate($formato, $rs[0]['codice']);
-            }
+            $anagrafica = Anagrafica::find($idanagrafica);
+            $tipo = TipoSessione::find($idtipointervento);
+            $stato = Stato::find($idstatointervento);
 
-            if (empty($codice)) {
-                $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
-                $codice = Util\Generator::generate($formato, $rs[0]['codice']);
-            }
+            $intervento = Intervento::build($anagrafica, $tipo, $stato, $data_richiesta);
+            $id_record = $intervento->id;
+
+            flash()->info(tr('Aggiunto nuovo intervento!'));
 
             // Informazioni di base
             $idpreventivo = post('idpreventivo');
@@ -119,30 +123,21 @@ switch (post('op')) {
             $idcontratto_riga = post('idcontratto_riga');
             $id_tipo_intervento = post('id_tipo_intervento');
             $idsede = post('idsede');
-            $data_richiesta = post('data_richiesta', true);
             $richiesta = post('richiesta');
             $idautomezzo = null;
 
-            if (!empty($codice) && !empty(post('idanagrafica')) && !empty($id_tipo_intervento)) {
-                // Salvataggio modifiche intervento
-                $dbo->insert('in_interventi', [
-                    'idanagrafica' => post('idanagrafica'),
-                    'idclientefinale' => post('idclientefinale') ?: 0,
-                    'id_stato' => post('id_stato'),
-                    'id_tipo_intervento' => $id_tipo_intervento,
-                    'idsede' => $idsede ?: 0,
-                    'idautomezzo' => $idautomezzo ?: 0,
-                    'id_preventivo' => $idpreventivo,
-
-                    'codice' => $codice,
-                    'data_richiesta' => $data_richiesta,
-                    'richiesta' => $richiesta,
-                ]);
-
-                $id_record = $dbo->lastInsertedID();
-
-                flash()->info(tr('Aggiunto nuovo intervento!'));
+            if (post('idclientefinale')) {
+                $intervento->idclientefinale = post('idclientefinale');
             }
+
+            if (post('idsede')) {
+                $intervento->idsede = post('idsede');
+            }
+
+            $intervento->id_preventivo = post('$idpreventivo');
+            $intervento->richiesta = $richiesta;
+
+            $intervento->save();
 
             // Collego l'intervento al contratto
             if (!empty($idcontratto)) {
@@ -415,17 +410,16 @@ switch (post('op')) {
     case 'addarticolo':
         $originale = ArticoloOriginale::find(post('idarticolo'));
         $intervento = Intervento::find($id_record);
-        $articolo = Articolo::make($intervento, $originale, post('idautomezzo'));
+        $articolo = Articolo::build($intervento, $originale, post('idautomezzo'));
 
         $articolo->qta = post('qta', true);
         $articolo->descrizione = post('descrizione');
-        $articolo->prezzo_vendita = post('prezzo_vendita', true);
+        $articolo->prezzo_unitario_vendita = post('prezzo_vendita', true);
         $articolo->prezzo_acquisto = post('prezzo_acquisto', true);
         $articolo->um = post('um');
 
         $articolo->sconto_unitario = post('sconto', true);
         $articolo->tipo_sconto = post('tipo_sconto');
-
         $articolo->id_iva = post('idiva');
 
         $articolo->save();
@@ -516,7 +510,11 @@ switch (post('op')) {
                         $n->setTemplate($stato['id_email'], $id_record);
                         $n->setReceivers($stato['destinatari']);
 
-                        $n->send();
+                        if ($n->send()) {
+                            flash()->info(tr('Notifica inviata'));
+                        } else {
+                            flash()->warning(tr("Errore nell'invio della notifica"));
+                        }
                     }
                 } else {
                     flash()->error(tr('Errore durante il salvataggio della firma nel database!'));
@@ -563,7 +561,11 @@ switch (post('op')) {
             $n->setTemplate('Notifica rimozione intervento', $id_record);
             $n->setReceivers($tecnico['email']);
 
-            $n->send();
+            if ($n->send()) {
+                flash()->info(tr('Notifica inviata'));
+            } else {
+                flash()->warning(tr("Errore nell'invio della notifica"));
+            }
         }
 
         break;

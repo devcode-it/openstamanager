@@ -135,6 +135,139 @@ class HTMLBuilder
     }
 
     /**
+     * Restituisce il nome della classe resposabile per la gestione di una determinata tipologia di tag di input.
+     *
+     * @param string $input
+     *
+     * @return string
+     */
+    public static function getHandlerName($input)
+    {
+        $result = empty(self::$handlers['list'][$input]) ? self::$handlers['list']['default'] : self::$handlers['list'][$input];
+
+        return $result;
+    }
+
+    /**
+     * Restituisce l'istanza della classe resposabile per la gestione di una determinata tipologia di tag di input.
+     *
+     * @param string $input
+     *
+     * @return mixed
+     */
+    public static function getHandler($input)
+    {
+        $class = self::getHandlerName($input);
+        if (empty(self::$handlers['instances'][$class])) {
+            self::$handlers['instances'][$class] = new $class();
+        }
+
+        return self::$handlers['instances'][$class];
+    }
+
+    /**
+     * Imposta una determinata classe come resposabile per la gestione di una determinata tipologia di tag di input.
+     *
+     * @param string       $input
+     * @param string|mixed $class
+     */
+    public static function setHandler($input, $class)
+    {
+        $original = $class;
+
+        $class = is_object($class) ? $class : new $class();
+
+        if ($class instanceof Handler\HandlerInterface) {
+            self::$handlers['list'][$input] = $original;
+            self::$handlers['instances'][$original] = $class;
+        }
+    }
+
+    /**
+     * Restituisce l'oggetto responsabile per la costruzione del codice HTML contenente gli input effettivi.
+     *
+     * @return mixed
+     */
+    public static function getWrapper()
+    {
+        if (empty(self::$wrapper['instance'])) {
+            $class = self::$wrapper['class'];
+            self::$wrapper['instance'] = new $class();
+        }
+
+        return self::$wrapper['instance'];
+    }
+
+    /**
+     * Imposta l'oggetto responsabile per la costruzione del codice HTML contenente gli input effettivi.
+     *
+     * @param string|mixed $class
+     */
+    public static function setWrapper($class)
+    {
+        $original = $class;
+
+        $class = is_object($class) ? $class : new $class();
+
+        if ($class instanceof Wrapper\WrapperInterface) {
+            self::$wrapper['class'] = $original;
+            self::$wrapper['instance'] = $class;
+        }
+    }
+
+    /**
+     * Restituisce l'oggetto responsabile per la costruzione del codice HTML per il tag personalizzato.
+     *
+     * @param string $input
+     *
+     * @return mixed
+     */
+    public static function getManager($input)
+    {
+        $result = null;
+
+        $class = self::$managers['list'][$input];
+        if (!empty($class)) {
+            if (empty(self::$managers['instances'][$class])) {
+                self::$managers['instances'][$class] = new $class();
+            }
+
+            $result = self::$managers['instances'][$class];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Imposta l'oggetto responsabile per la costruzione del codice HTML per il tag personalizzato.
+     *
+     * @param string       $input
+     * @param string|mixed $class
+     */
+    public static function setManager($input, $class)
+    {
+        $original = $class;
+
+        $class = is_object($class) ? $class : new $class();
+
+        if ($class instanceof Handler\ManagerInterface) {
+            self::$managers['list'][$input] = $original;
+            self::$managers['instances'][$original] = $class;
+        }
+    }
+
+    /**
+     * Imposta l'oggetto responsabile per la costruzione del codice HTML per il tag personalizzato.
+     *
+     * @param string       $input
+     * @param string|mixed $class
+     */
+    public static function setRecord($record)
+    {
+        self::$record = $record;
+    }
+
+    /**
      * Genera il codice HTML per i singoli tag di input.
      *
      * @param string $json
@@ -284,6 +417,7 @@ class HTMLBuilder
 
         $values['class'] = array_unique($values['class']);
 
+        $attributes = [];
         foreach ($values as $key => $value) {
             // Fix per la presenza di apici doppi
             $value = prepareToField(is_array($value) ? implode(' ', $value) : $value);
@@ -299,138 +433,5 @@ class HTMLBuilder
         $result = str_replace('|attr|', implode(' ', $attributes), $result);
 
         return $result;
-    }
-
-    /**
-     * Restituisce il nome della classe resposabile per la gestione di una determinata tipologia di tag di input.
-     *
-     * @param string $input
-     *
-     * @return string
-     */
-    public static function getHandlerName($input)
-    {
-        $result = empty(self::$handlers['list'][$input]) ? self::$handlers['list']['default'] : self::$handlers['list'][$input];
-
-        return $result;
-    }
-
-    /**
-     * Restituisce l'istanza della classe resposabile per la gestione di una determinata tipologia di tag di input.
-     *
-     * @param string $input
-     *
-     * @return mixed
-     */
-    public static function getHandler($input)
-    {
-        $class = self::getHandlerName($input);
-        if (empty(self::$handlers['instances'][$class])) {
-            self::$handlers['instances'][$class] = new $class();
-        }
-
-        return self::$handlers['instances'][$class];
-    }
-
-    /**
-     * Imposta una determinata classe come resposabile per la gestione di una determinata tipologia di tag di input.
-     *
-     * @param string       $input
-     * @param string|mixed $class
-     */
-    public static function setHandler($input, $class)
-    {
-        $original = $class;
-
-        $class = is_object($class) ? $class : new $class();
-
-        if ($class instanceof Handler\HandlerInterface) {
-            self::$handlers['list'][$input] = $original;
-            self::$handlers['instances'][$original] = $class;
-        }
-    }
-
-    /**
-     * Restituisce l'oggetto responsabile per la costruzione del codice HTML contenente gli input effettivi.
-     *
-     * @return mixed
-     */
-    public static function getWrapper()
-    {
-        if (empty(self::$wrapper['instance'])) {
-            $class = self::$wrapper['class'];
-            self::$wrapper['instance'] = new $class();
-        }
-
-        return self::$wrapper['instance'];
-    }
-
-    /**
-     * Imposta l'oggetto responsabile per la costruzione del codice HTML contenente gli input effettivi.
-     *
-     * @param string|mixed $class
-     */
-    public static function setWrapper($class)
-    {
-        $original = $class;
-
-        $class = is_object($class) ? $class : new $class();
-
-        if ($class instanceof Wrapper\WrapperInterface) {
-            self::$wrapper['class'] = $original;
-            self::$wrapper['instance'] = $class;
-        }
-    }
-
-    /**
-     * Restituisce l'oggetto responsabile per la costruzione del codice HTML per il tag personalizzato.
-     *
-     * @param string $input
-     *
-     * @return mixed
-     */
-    public static function getManager($input)
-    {
-        $result = null;
-
-        $class = self::$managers['list'][$input];
-        if (!empty($class)) {
-            if (empty(self::$managers['instances'][$class])) {
-                self::$managers['instances'][$class] = new $class();
-            }
-
-            $result = self::$managers['instances'][$class];
-        }
-
-        return $result;
-    }
-
-    /**
-     * Imposta l'oggetto responsabile per la costruzione del codice HTML per il tag personalizzato.
-     *
-     * @param string       $input
-     * @param string|mixed $class
-     */
-    public static function setManager($input, $class)
-    {
-        $original = $class;
-
-        $class = is_object($class) ? $class : new $class();
-
-        if ($class instanceof Handler\ManagerInterface) {
-            self::$managers['list'][$input] = $original;
-            self::$managers['instances'][$original] = $class;
-        }
-    }
-
-    /**
-     * Imposta l'oggetto responsabile per la costruzione del codice HTML per il tag personalizzato.
-     *
-     * @param string       $input
-     * @param string|mixed $class
-     */
-    public static function setRecord($record)
-    {
-        self::$record = $record;
     }
 }

@@ -12,8 +12,6 @@ if ($module['name'] == 'Ddt di vendita') {
     $dir = 'uscita';
 }
 
-$_SESSION['superselect']['dir'] = $dir;
-
 // Impostazioni per la gestione
 $options = [
     'op' => 'addriga',
@@ -37,10 +35,11 @@ $result = [
 $iva = $dbo->fetchArray('SELECT idiva_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
 $result['idiva'] = $iva[0]['idiva'] ?: setting('Iva predefinita');
 
-// Sconto unitario
-$rss = $dbo->fetchArray('SELECT prc_guadagno FROM mg_listini WHERE id=(SELECT idlistino_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')');
-if (!empty($rss)) {
-    $result['sconto_unitario'] = $rss[0]['prc_guadagno'];
+// Aggiunta sconto di default da listino per le vendite
+$listino = $dbo->fetchArray('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_listini ON an_anagrafiche.idlistino_'.($dir == 'uscita' ? 'acquisti' : 'vendite').'=mg_listini.id WHERE idanagrafica='.prepare($idanagrafica));
+
+if ($listino[0]['prc_guadagno'] > 0) {
+    $result['sconto_unitario'] = $listino[0]['prc_guadagno'];
     $result['tipo_sconto'] = 'PRC';
 }
 

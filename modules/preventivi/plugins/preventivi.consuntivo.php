@@ -2,11 +2,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-include_once Modules::filepath('Interventi', 'modutil.php');
-
-/*
-CONSUNTIVO
-*/
+/* CONSUNTIVO */
 
 // Salvo i colori e gli stati degli stati intervento su un array
 $colori = [];
@@ -271,13 +267,13 @@ if (!empty($rsi)) {
 /*
     Bilancio del preventivo
 */
-$diff = sum($budget, -$totale_addebito);
+$diff = sum($budget, -$totale);
 
 echo '
 <div class="well text-center">
     <br><span><big>
         <b>'.tr('Rapporto budget/spesa').':<br>';
-if ($budget > $totale) {
+if ($diff > 0) {
     echo '
         <span class="text-success"><big>+'.Translator::numberToLocale($diff).' &euro;</big></span>';
 } elseif ($diff < 0) {

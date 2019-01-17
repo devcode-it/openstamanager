@@ -11,7 +11,7 @@ switch (filter('op')) {
         $percentuale = empty($esente) ? post('percentuale') : 0;
 
         if ($dbo->fetchNum('SELECT * FROM `co_iva` WHERE (`descrizione` = '.prepare($descrizione).' AND `codice` = '.prepare($codice).') AND `id` != '.prepare($id_record)) == 0) {
-            $codice_natura = post('codice_natura_fe') ? : null;
+            $codice_natura = post('codice_natura_fe') ?: null;
             $esigibilita = post('esigibilita');
 
             $dbo->update('co_iva', [
@@ -43,7 +43,7 @@ switch (filter('op')) {
         $codice = post('codice');
         $esente = post('esente');
         $percentuale = empty($esente) ? post('percentuale') : 0;
-        $codice_natura = post('codice_natura_fe') ? : null;
+        $codice_natura = post('codice_natura_fe') ?: null;
         if ($dbo->fetchNum('SELECT * FROM `co_iva` WHERE `descrizione` = '.prepare($descrizione).' AND `codice` = '.prepare($codice)) == 0) {
             $dbo->insert('co_iva', [
                 'descrizione' => $descrizione,

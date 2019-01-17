@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (!in_array($record['stato'], ['Evaso', 'Fatturato'])) {
+if (!in_array($record['stato'], ['Fatturato'])) {
     echo '
 	<div class="dropdown">
 	<button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -19,7 +19,7 @@ if (!in_array($record['stato'], ['Evaso', 'Fatturato'])) {
 			</li>';
     }
 
-    if (in_array($record['stato'], ['Bozza', 'Parzialmente fatturato'])) {
+    if (in_array($record['stato'], ['Bozza', 'Evaso', 'Parzialmente evaso', 'Parzialmente fatturato'])) {
         echo '
 			<li>
 				<a data-href="'.$rootdir.'/modules/fatture/crea_documento.php?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-toggle="modal" data-title="'.tr('Crea fattura').'"><i class="fa fa-file"></i>&nbsp;'.tr('fattura').'

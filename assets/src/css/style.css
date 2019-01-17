@@ -37,7 +37,6 @@ a.disabled {
 }
 
 #progress {
-    width: 400px;
     margin: auto;
     position: relative;
     display: none;
@@ -307,6 +306,19 @@ span.form-control {
     padding-right: 5px;
     position: relative;
     z-index: 1;
+    opacity: 0.4;
+}
+
+.close:focus, .close:hover{
+    opacity: 0.8;
+}
+
+.li-widget button.close:hover, .li-widget button.close:focus{
+    opacity: 0.3;
+}
+
+.li-widget button.close{
+    padding-right:5px;
     opacity: 0.1;
 }
 
@@ -426,7 +438,6 @@ span.form-control {
 
 .sidebar-form {
     border-radius: 3px;
-    border-color: 1px;
     margin: 10px 10px;
 }
 
@@ -798,7 +809,7 @@ input.small-width {
     z-index: 2000;
 }
 
-.after.input-group-addon .select2-selection{
+.after.input-group-addon .select2-selection, .after.input-group-addon{
 	 border-radius:0px 4px 4px 0px;
 	 border-left:none;
 }

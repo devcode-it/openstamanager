@@ -39,8 +39,8 @@ switch (filter('op')) {
                     'descrizione' => $descrizione,
                 ]);
                 $id_record = $dbo->lastInsertedID();
-				
-				if (isAjaxRequest()) {
+
+                if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);
                 }
 

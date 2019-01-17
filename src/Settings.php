@@ -1,7 +1,7 @@
 <?php
 
-use Respect\Validation\Validator as v;
 use Models\Setting;
+use Respect\Validation\Validator as v;
 
 /**
  * Classe per la gestione dell impostazioni del progetto.

@@ -73,7 +73,10 @@ if (filter('action') == 'do_update') {
         Update::updateCleanup();
 
         echo '
-        <p><strong>'.tr('Aggiornamento completato').'</strong> <i class="fa fa-smile-o"></i></p>';
+        <p><strong>'.tr('Aggiornamento completato').'</strong> <i class="fa fa-smile-o"></i></p>
+        <script>
+            setPercent(100);
+        </script>';
 
         // Istruzioni per la prima installazione
         if ($_GET['firstuse'] == 'true') {
@@ -214,6 +217,10 @@ if (filter('action') == 'do_update') {
                         percent = Math.round(percent);
                         percent = percent > 100 ? 100 : percent;
 
+                        setPercent(percent);
+                    }
+                    
+                    function setPercent(percent){
                         $("#progress .progress-bar").width(percent + "%");
                         $("#progress .progress-bar span").text(percent + "%");
                     }

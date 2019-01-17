@@ -167,7 +167,7 @@ echo '
             <div class="row">
 			
 				<div class="col-md-4">
-                    {[ "type": "checkbox", "label": "'.tr("Promemoria ciclico").'", "name": "pianifica_promemoria", "value": "0", "placeholder": "'.tr("Pianificare promemoria ciclici").'", "help": "'.tr("Pianificare ciclicamente altri promemoria identici a questo").'" ]}
+                    {[ "type": "checkbox", "label": "'.tr('Promemoria ciclico').'", "name": "pianifica_promemoria", "value": "0", "placeholder": "'.tr('Pianificare promemoria ciclici').'", "help": "'.tr('Pianificare ciclicamente altri promemoria identici a questo').'" ]}
                 </div>
 				
                 <div class="col-md-2">

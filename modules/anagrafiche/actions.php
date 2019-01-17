@@ -13,8 +13,6 @@ switch (post('op')) {
     case 'update':
         // Informazioni sulla sede
         $sede = $anagrafica->sedeLegale;
-        $sede->partita_iva = post('piva');
-        $sede->codice_fiscale = post('codice_fiscale');
         $sede->indirizzo = post('indirizzo');
         $sede->indirizzo2 = post('indirizzo2');
         $sede->citta = post('citta');
@@ -33,11 +31,22 @@ switch (post('op')) {
 
         $sede->save();
 
+        if (empty(post('ragione_sociale'))) {
+            $ragione_sociale = post('cognome').' '.post('nome');
+        } else {
+            $ragione_sociale = post('ragione_sociale');
+        }
+
         // Informazioni sull'anagrafica
         $anagrafica->codice = post('codice');
         $anagrafica->tipo = post('tipo');
         $anagrafica->codice_destinatario = post('codice_destinatario');
-        $anagrafica->ragione_sociale = post('ragione_sociale');
+        $anagrafica->ragione_sociale = $ragione_sociale;
+        $anagrafica->nome = post('nome');
+        $anagrafica->cognome = post('cognome');
+
+        $anagrafica->partita_iva = post('piva');
+        $anagrafica->codice_fiscale = post('codice_fiscale');
         $anagrafica->tipo = post('tipo');
         $anagrafica->data_nascita = post('data_nascita', true);
         $anagrafica->luogo_nascita = post('luogo_nascita');
@@ -68,7 +77,6 @@ switch (post('op')) {
         $anagrafica->idagente = post('idagente');
         $anagrafica->idrelazione = post('idrelazione');
         $anagrafica->sitoweb = post('sitoweb');
-        $anagrafica->nome_cognome = post('nome_cognome');
         $anagrafica->iscrizione_tribunale = post('iscrizione_tribunale');
         $anagrafica->cciaa = post('cciaa');
         $anagrafica->cciaa_citta = post('cciaa_citta');
@@ -78,6 +86,7 @@ switch (post('op')) {
         $anagrafica->id_tipo_intervento_default = post('id_tipo_intervento_default') ?: null;
         $anagrafica->id_ritenuta_acconto_acquisti = post('id_ritenuta_acconto_acquisti');
         $anagrafica->id_ritenuta_acconto_vendite = post('id_ritenuta_acconto_vendite');
+        $anagrafica->split_payment = post('split_payment');
 
         $anagrafica->tipologie = (array) post('id_tipo_anagrafica');
 
@@ -87,20 +96,24 @@ switch (post('op')) {
 
         // Validazione della Partita IVA
         $partita_iva = $anagrafica->partita_iva;
+        $partita_iva = strlen($partita_iva) == 11 ? $anagrafica->nazione->iso2.$partita_iva : $partita_iva;
+
         $check_vat_number = Validate::isValidVatNumber($partita_iva);
         if (empty($check_vat_number)) {
-            flash()->error(tr('Attenzione: la partita IVA _IVA_ sembra non essere valida', [
+            flash()->warning(tr('Attenzione: la partita IVA _IVA_ sembra non essere valida', [
                 '_IVA_' => $partita_iva,
             ]));
         }
 
-        // Validazione del Codice Fiscale
+        // Validazione del Codice Fiscale, solo per anagrafiche Private e Aziende, ignoro controllo se codice fiscale e settato uguale alla p.iva
         $codice_fiscale = $anagrafica->codice_fiscale;
-        $check_codice_fiscale = Validate::isValidTaxCode($codice_fiscale);
-        if (empty($check_codice_fiscale)) {
-            flash()->error(tr('Attenzione: il codice fiscale _COD_ sembra non essere valido', [
-                '_COD_' => $codice_fiscale,
-            ]));
+        if ($anagrafica->tipo != 'Ente pubblico' and $codice_fiscale != $partita_iva) {
+            $check_codice_fiscale = Validate::isValidTaxCode($codice_fiscale);
+            if (empty($check_codice_fiscale)) {
+                flash()->warning(tr('Attenzione: il codice fiscale _COD_ sembra non essere valido', [
+                    '_COD_' => $codice_fiscale,
+                ]));
+            }
         }
 
         // Aggiorno il codice anagrafica se non è già presente, altrimenti lo ignoro
@@ -119,10 +132,15 @@ switch (post('op')) {
         break;
 
     case 'add':
-        $id_tipo_anagrafica = post('id_tipo_anagrafica');
-        $ragione_sociale = post('ragione_sociale');
+        $idtipoanagrafica = post('id_tipo_anagrafica');
 
-        $anagrafica = Anagrafica::make($ragione_sociale, $id_tipo_anagrafica);
+        if (empty(post('ragione_sociale'))) {
+            $ragione_sociale = post('cognome').' '.post('nome');
+        } else {
+            $ragione_sociale = post('ragione_sociale');
+        }
+
+        $anagrafica = Anagrafica::build($ragione_sociale, $idtipoanagrafica);
         $id_record = $anagrafica->id;
 
         // Se ad aggiungere un cliente è un agente, lo imposto come agente di quel cliente
@@ -138,9 +156,10 @@ switch (post('op')) {
             }
         }
 
-        $idagente = ($agente_is_logged && in_array($id_cliente, $id_tipo_anagrafica)) ? $user['idanagrafica'] : 0;
+        $idagente = ($agente_is_logged && in_array($id_cliente, $idtipoanagrafica)) ? $user['idanagrafica'] : 0;
 
-
+        $anagrafica->nome = post('nome');
+        $anagrafica->cognome = post('cognome');
         $anagrafica->idrelazione = post('idrelazione');
         $anagrafica->idagente = $idagente;
 

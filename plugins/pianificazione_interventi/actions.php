@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once Modules::filepath('Articoli', 'modutil.php');
-
 // Pianificazione intervento
 switch (filter('op')) {
     case 'add-promemoria':
@@ -92,8 +90,6 @@ switch (filter('op')) {
             //}
             $data_richiesta = $min_date;
 
-
-
             // inizio controllo data_conclusione, data valida e maggiore della $min_date
             if ((date('Y', strtotime($data_conclusione)) > 1970) && (date('Y-m-d', strtotime($min_date)) <= date('Y-m-d', strtotime($data_conclusione)))) {
                 $i = 0;
@@ -148,19 +144,7 @@ switch (filter('op')) {
                             // intervento sempre nello stato "In programmazione"
                             $id_stato = 'WIP';
 
-                            // calcolo codice intervento
-                            $formato = setting('Formato codice intervento');
-                            $template = str_replace('#', '%', $formato);
-
-                            $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
-                            if (!empty($rs[0]['codice'])) {
-                                $codice = Util\Generator::generate($formato, $rs[0]['codice']);
-                            }
-
-                            if (empty($codice)) {
-                                $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice LIKE '.prepare($template).' ORDER BY codice DESC LIMIT 0,1');
-                                $codice = Util\Generator::generate($formato, $rs[0]['codice']);
-                            }
+                            $codice = \Modules\Interventi\Intervento::getNextCodice();
 
                             // Creo intervento
                             $dbo->insert('in_interventi', [

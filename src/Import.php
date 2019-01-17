@@ -37,7 +37,7 @@ class Import
 
                     $results[$module['id']] = array_merge($module->toArray(), [
                         'import' => file_exists($custom_file) ? $custom_file : $original_file,
-                        'files' => $files,
+                        'files' => array_reverse($files),
                     ]);
                 }
             }

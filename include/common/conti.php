@@ -21,7 +21,7 @@ $show_calcolo_ritenuta_acconto = $show_ritenuta_acconto;
 if ($options['action'] == 'edit') {
     $id_rivalsa_inps = $result['idrivalsainps'];
     $id_ritenuta_acconto = $result['idritenutaacconto'];
-    $calcolo_ritenuta_acconto = $result['calcolo_ritenutaacconto'];
+    $calcolo_ritenuta_acconto = $result['calcolo_ritenuta_acconto'];
 } elseif ($options['action'] == 'add') {
     // Fattura di acquisto
     if ($options['dir'] == 'uscita') {
@@ -64,7 +64,7 @@ if ($show_rivalsa_inps == 1 || $show_ritenuta_acconto == 1) {
     if ($show_calcolo_ritenuta_acconto == 1) {
         echo '
     <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr("Calcola ritenuta d'acconto su").'", "name": "calcolo_ritenuta_acconto", "value": "'.$calcolo_ritenuta_acconto.'", "values": "list=\"Imponibile\":\"Imponibile\", \"Imponibile + rivalsa inps\":\"Imponibile + rivalsa inps\"", "required": "1" ]}
+        {[ "type": "select", "label": "'.tr("Calcola ritenuta d'acconto su").'", "name": "calcolo_ritenuta_acconto", "value": "'.$calcolo_ritenuta_acconto.'", "values": "list=\"IMP\":\"Imponibile\", \"IMP+RIV\":\"Imponibile + rivalsa inps\"", "required": "1" ]}
     </div>';
     }
 

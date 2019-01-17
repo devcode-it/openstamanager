@@ -81,7 +81,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "checkbox", "label": "'.tr('Notifica di lettura').'", "name": "read_notify", "value": "'.$template['read_notify'].'" ]}
+            {[ "type": "checkbox", "label": "'.tr('Richiedi notifica di lettura').'", "name": "read_notify", "value": "'.$template['read_notify'].'" ]}
         </div>
     </div>';
 

@@ -13,12 +13,14 @@ $can_edit_prezzi = (in_array('Amministratori', $gruppi)) || (setting('Mostra i p
 $idriga = get('idriga');
 $idautomezzo = (get('idautomezzo') == 'undefined') ? '' : get('idautomezzo');
 
-$_SESSION['superselect']['idintervento'] = get('id_record');
-
 // Lettura idanagrafica cliente e percentuale di sconto/rincaro in base al listino
 $rs = $dbo->fetchArray('SELECT idanagrafica FROM in_interventi WHERE id='.prepare($id_record));
-
 $idanagrafica = $rs[0]['idanagrafica'];
+
+$_SESSION['superselect']['idintervento'] = get('id_record');
+$_SESSION['superselect']['dir'] = 'entrata';
+$_SESSION['superselect']['idanagrafica'] = $idanagrafica;
+
 if (empty($idriga)) {
     $op = 'addarticolo';
     $button = '<i class="fa fa-plus"></i> '.tr('Aggiungi');
@@ -34,12 +36,6 @@ if (empty($idriga)) {
     $sconto_unitario = 0;
 
     $idimpianto = 0;
-
-    $listino = $dbo->fetchArray('SELECT prc_guadagno FROM mg_listini WHERE id = (SELECT idlistino_vendite FROM an_anagrafiche WHERE idanagrafica = '.prepare($idanagrafica).')');
-    if (!empty($listino[0]['prc_guadagno'])) {
-        $sconto_unitario = $listino[0]['prc_guadagno'];
-        $tipo_sconto = 'PRC';
-    }
 } else {
     $op = 'editarticolo';
     $button = '<i class="fa fa-edit"></i> '.tr('Modifica');

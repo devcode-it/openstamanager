@@ -152,7 +152,7 @@ class WidgetManager implements ManagerInterface
 
     protected function custom($widget)
     {
-        $result .= '
+        $result = '
 
         <li class="'.$widget['class'].'" id="'.$widget['id'].'">
             <!-- small box -->
@@ -205,7 +205,7 @@ class WidgetManager implements ManagerInterface
 
         $query = str_replace('|position|', $position, $query);
 
-        // Indivduazione dei widget interessati
+        // Individuazione dei widget interessati
         $database = database();
         $widgets = $database->fetchArray($query);
 

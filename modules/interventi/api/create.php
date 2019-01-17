@@ -1,10 +1,8 @@
 <?php
 
-include_once Modules::filepath('Articoli', 'modutil.php');
-
+use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Interventi\Articolo;
 use Modules\Interventi\Intervento;
-use Modules\Articoli\Articolo as ArticoloOriginale;
 
 switch ($resource) {
     case 'intervento':
@@ -63,7 +61,7 @@ switch ($resource) {
 
         $originale = ArticoloOriginale::find($data['id_articolo']);
         $intervento = Intervento::find($data['id_intervento']);
-        $articolo = Articolo::make($intervento, $originale, $data['id_automezzo']);
+        $articolo = Articolo::build($intervento, $originale, $data['id_automezzo']);
 
         $articolo->qta = $data['qta'];
         $articolo->um = $data['um'];

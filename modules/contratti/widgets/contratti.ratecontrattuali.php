@@ -18,13 +18,15 @@ $mesi = [
     tr('Dicembre'),
 ];
 
-echo '
-<h3>'.tr('Fatture da emettere').'</h3>
-<hr>';
-
 // Righe inserite
-//idcontratto IN( SELECT id FROM co_contratti WHERE id_stato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1) ) AND
-$qp = "SELECT *, (SELECT SUM(subtotale) FROM co_righe_contratti WHERE idcontratto=co_ordiniservizio_pianificazionefatture.idcontratto) AS budget_contratto, DATE_FORMAT( data_scadenza, '%m-%Y') AS mese, (SELECT idanagrafica FROM co_contratti WHERE id=idcontratto) AS idcliente, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id=idcontratto)) AS ragione_sociale, (SELECT descrizione FROM an_zone WHERE id=co_ordiniservizio_pianificazionefatture.idzona) AS zona FROM co_ordiniservizio_pianificazionefatture WHERE  co_ordiniservizio_pianificazionefatture.iddocumento=0 ORDER BY DATE_FORMAT( data_scadenza, '%m-%Y') ASC, idcliente ASC";
+$qp = "SELECT *,
+    (SELECT SUM(subtotale) FROM co_righe_contratti WHERE idcontratto=co_ordiniservizio_pianificazionefatture.idcontratto) AS budget_contratto,
+    DATE_FORMAT(data_scadenza, '%m-%Y') AS mese,
+    (SELECT idanagrafica FROM co_contratti WHERE id=idcontratto) AS idcliente,
+	(SELECT nome FROM co_contratti WHERE id=idcontratto) AS nome,
+    (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id=idcontratto)) AS ragione_sociale,
+    (SELECT descrizione FROM an_zone WHERE id=co_ordiniservizio_pianificazionefatture.idzona) AS zona
+FROM co_ordiniservizio_pianificazionefatture WHERE  co_ordiniservizio_pianificazionefatture.iddocumento=0 ORDER BY data_scadenza ASC, idcliente ASC";
 $rsp = $dbo->fetchArray($qp);
 
 if (!empty($rsp)) {
@@ -70,9 +72,9 @@ if (!empty($rsp)) {
     <table class="table table-hover table-striped">
         <thead>
             <tr>
-                <th width="10%">'.tr('Entro il').'</th>
-                <th width="40%">'.tr('Ragione sociale').'</th>
-                <th width="20%">'.tr('Zona').'</th>
+                <th width="25%">'.tr('Entro il').'</th>
+                <th width="35%">'.tr('Ragione sociale').'</th>
+                <th width="10%">'.tr('Zona').'</th>
                 <th width="20%">'.tr('Impianto').'</th>
                 <th width="10%"></th>
             </tr>
@@ -81,10 +83,15 @@ if (!empty($rsp)) {
         <tbody>';
         }
 
-        $n_sedi_pianificate = $dbo->fetchNum('SELECT DISTINCT(idsede) FROM my_impianti WHERE id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($r['idcontratto']).') AND idsede IN(SELECT id FROM an_sedi WHERE idzona='.prepare($r['idzona']).')');
+        // Lettura numero di sedi in cui si sono pianificati ordini di servizio per la zona corrente
+        if (!empty($r['idzona'])) {
+            $n_sedi_pianificate = $dbo->fetchNum('SELECT DISTINCT(idsede) FROM my_impianti WHERE id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).') AND idsede IN(SELECT id FROM an_sedi WHERE idzona='.prepare($r['idzona']).')');
 
-        // Verifico se ci sono impianti in questa zona legati alla sede legale
-        $n_sedi_pianificate += $dbo->fetchNum('SELECT DISTINCT(idsede) FROM my_impianti WHERE id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($r['idcontratto']).') AND idsede=(SELECT idsede FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id='.prepare($r['idcontratto']).') AND idzona='.prepare($r['idzona']).') AND idsede=0');
+            // Verifico se ci sono impianti in questa zona legati alla sede legale
+            $n_sedi_pianificate += $dbo->fetchNum('SELECT DISTINCT(idsede) FROM my_impianti WHERE id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).') AND idsede=(SELECT idsede FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id='.prepare($id_record).') AND idzona='.prepare($r['idzona']).') AND idsede=0');
+        }
+        // Fix nel caso non siano previste sedi pianificate (l'eventuale 0 portava a problemi nel calcolo dell'importo)
+        $n_sedi_pianificate = ($n_sedi_pianificate < 1) ? 1 : $n_sedi_pianificate;
 
         /*
             Importo
@@ -111,7 +118,7 @@ if (!empty($rsp)) {
         if ($r['iddocumento'] == 0) {
             echo "
             <tr id='fat_".$r['id']."'>
-                <td>".Translator::dateToLocale($r['data_scadenza'])."</td>
+                <td>".Translator::dateToLocale($r['data_scadenza'])."<br><a href='".$rootdir.'/editor.php?id_module='.Modules::get('Contratti')['id'].'&id_record='.$r['idcontratto']."'><small>rif. ".$r['nome']." </small></a></td>
                 <td>
                     <a href='".$rootdir.'/editor.php?id_module='.Modules::get('Anagrafiche')['id'].'&id_record='.$r['idcliente']."'>".nl2br($r['ragione_sociale']).'</a>
                 </td>

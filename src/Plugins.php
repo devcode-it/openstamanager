@@ -64,7 +64,7 @@ class Plugins
      */
     public static function getCurrent()
     {
-        return Plugin::getCurrent($id);
+        return Plugin::getCurrent();
     }
 
     /**
@@ -94,6 +94,7 @@ class Plugins
     public static function filepath($element, $file)
     {
         $element = self::get($element);
+
         return $element ? $element->filepath($file) : null;
     }
 }

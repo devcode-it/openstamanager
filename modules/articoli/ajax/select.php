@@ -6,20 +6,20 @@ switch ($resource) {
     case 'articoli':
         $query = 'SELECT mg_articoli.*, (SELECT CONCAT(co_pianodeiconti2.numero, ".", co_pianodeiconti3.numero, " ", co_pianodeiconti3.descrizione) FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = idconto_vendita) AS idconto_vendita_title, (SELECT CONCAT(co_pianodeiconti2.numero, ".", co_pianodeiconti3.numero, " ", co_pianodeiconti3.descrizione) FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = idconto_acquisto) AS idconto_acquisto_title, co_iva.descrizione AS iva_vendita FROM mg_articoli LEFT OUTER JOIN co_iva ON mg_articoli.idiva_vendita=co_iva.id |where| ORDER BY mg_articoli.id_categoria ASC, mg_articoli.id_sottocategoria ASC';
 
-        //per le vendite leggo iva predefinita da anagrafica, se settata
-         if (!empty($superselect['dir']) && $superselect['dir'] == 'entrata') {
-             if (!empty($superselect['idanagrafica'])) {
-                 $idiva_predefinita = $dbo->fetchArray("SELECT idiva_vendite FROM an_anagrafiche WHERE idanagrafica = '".$superselect['idanagrafica']."' ")[0]['idiva_vendite'];
-                 $iva_predefinita = $dbo->fetchArray("SELECT descrizione FROM co_iva WHERE id = '".$superselect['idiva_vendita']."' ")[0]['descrizione'];
-             }
-         }
+        // Individuazione di eventuali listini
+        if (!empty($superselect['dir']) && !empty($superselect['idanagrafica'])) {
+            $listino = $dbo->fetchOne('SELECT prc_guadagno as percentuale FROM mg_listini WHERE id=(SELECT idlistino_'.($superselect['dir'] == 'uscita' ? 'acquisti' : 'vendite').' FROM an_anagrafiche WHERE idanagrafica='.prepare($superselect['idanagrafica']).')');
+        }
 
-         //in alternativa, per tutti gli altri casi, prendo quella da impostazioni
-          if (empty($idiva_predefinita)) {
-              $idiva_predefinita = get_var('Iva predefinita');
-              $rs = $dbo->fetchArray("SELECT descrizione FROM co_iva WHERE id='".$idiva_predefinita."'");
-              $iva_predefinita = $rs[0]['descrizione'];
-          }
+        //per le vendite leggo iva predefinita da anagrafica, se settata
+        if (!empty($superselect['dir']) && $superselect['dir'] == 'entrata' && !empty($superselect['idanagrafica'])) {
+            $idiva_predefinita_anagrafica = $dbo->fetchOne('SELECT idiva_vendite FROM an_anagrafiche WHERE idanagrafica = '.prepare($superselect['idanagrafica']))['idiva_vendite'];
+            $iva_predefinita_anagrafica = $dbo->fetchOne('SELECT descrizione FROM co_iva WHERE id = '.prepare($idiva_predefinita_anagrafica))['descrizione'];
+        }
+
+        // IVA da impostazioni
+        $idiva_predefinita = get_var('Iva predefinita');
+        $iva_predefinita = $dbo->fetchOne('SELECT descrizione FROM co_iva WHERE id='.prepare($idiva_predefinita))['descrizione'];
 
         foreach ($elements as $element) {
             $filter[] = 'mg_articoli.id='.prepare($element);
@@ -62,12 +62,26 @@ switch ($resource) {
                 $results[] = ['text' => $categoria.' ('.(!empty($r['id_sottocategoria']) ? $sottocategoria : '-').')', 'children' => []];
             }
 
-            if (empty($r['idiva_vendita'])) {
+            // Iva dell'articolo
+            if (!empty($idiva_predefinita_anagrafica)) {
+                $idiva = $idiva_predefinita_anagrafica;
+                $iva = $iva_predefinita_anagrafica;
+            } elseif (empty($r['idiva_vendita'])) {
                 $idiva = $idiva_predefinita;
                 $iva = $iva_predefinita;
             } else {
                 $idiva = $r['idiva_vendita'];
                 $iva = $r['iva_vendita'];
+            }
+
+            $prezzo_vendita = $r['prezzo_vendita'];
+            if (!empty($listino)) {
+                $prezzo_vendita = sum($prezzo_vendita, -calcola_sconto([
+                    'sconto' => $listino['percentuale'],
+                    'prezzo' => $prezzo_vendita,
+                    'tipo' => 'PRC',
+                    'qta' => 1,
+                ]));
             }
 
             $results[count($results) - 1]['children'][] = [
@@ -82,8 +96,8 @@ switch ($resource) {
                 'idconto_vendita_title' => $r['idconto_vendita_title'],
                 'idconto_acquisto' => $r['idconto_acquisto'],
                 'idconto_acquisto_title' => $r['idconto_acquisto_title'],
-                'prezzo_acquisto' => Translator::numberToLocale($r['prezzo_acquisto']),
-                'prezzo_vendita' => Translator::numberToLocale($r['prezzo_vendita']),
+                'prezzo_acquisto' => $r['prezzo_acquisto'],
+                'prezzo_vendita' => $prezzo_vendita,
             ];
         }
 

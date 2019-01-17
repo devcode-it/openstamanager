@@ -3,19 +3,20 @@
 namespace Models;
 
 use Auth;
-use Traits\RecordTrait;
-use Traits\UploadTrait;
-use Traits\StoreTrait;
 use Traits\PermissionTrait;
 use Common\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Traits\ManagerTrait;
+use Traits\StoreTrait;
+use Traits\UploadTrait;
 
 class Module extends Model
 {
-    use RecordTrait, UploadTrait, StoreTrait, PermissionTrait;
+    use ManagerTrait, UploadTrait, StoreTrait, PermissionTrait;
 
     protected $table = 'zz_modules';
     protected $main_folder = 'modules';
+    protected $upload_identifier = 'id_module';
 
     protected $appends = [
         'permission',
@@ -26,19 +27,6 @@ class Module extends Model
         'options',
         'options2',
     ];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::addGlobalScope('enabled', function (Builder $builder) {
-            $builder->where('enabled', true);
-        });
-
-        static::addGlobalScope('permission', function (Builder $builder) {
-            $builder->with('groups');
-        });
-    }
 
     /**
      * Restituisce i permessi relativi all'account in utilizzo.
@@ -129,5 +117,18 @@ class Module extends Model
             ->whereNull('parent')
             ->orderBy('order')
             ->get();
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('enabled', function (Builder $builder) {
+            $builder->where('enabled', true);
+        });
+
+        static::addGlobalScope('permission', function (Builder $builder) {
+            $builder->with('groups');
+        });
     }
 }

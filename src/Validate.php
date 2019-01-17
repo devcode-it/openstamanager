@@ -1,7 +1,7 @@
 <?php
 
-use Mpociot\VatCalculator\VatCalculator;
 use Mpociot\VatCalculator\Exceptions\VATCheckUnavailableException;
+use Mpociot\VatCalculator\VatCalculator;
 use Respect\Validation\Validator as v;
 
 /**
@@ -11,6 +11,39 @@ use Respect\Validation\Validator as v;
  */
 class Validate
 {
+    public static function vatCheck($partita_iva)
+    {
+        if ($partita_iva === '') {
+            return true;
+        }
+        if (strlen($partita_iva) == 13) {
+            $partita_iva = substr($partita_iva, 2);
+        }
+
+        if (strlen($partita_iva) != 11 || preg_match('/^[0-9]+$/D', $partita_iva) != 1) {
+            return false;
+        }
+
+        $s = 0;
+        for ($i = 0; $i <= 9; $i += 2) {
+            $s += ord($partita_iva[$i]) - ord('0');
+        }
+
+        for ($i = 1; $i <= 9; $i += 2) {
+            $c = 2 * (ord($partita_iva[$i]) - ord('0'));
+            if ($c > 9) {
+                $c = $c - 9;
+            }
+            $s += $c;
+        }
+
+        if ((10 - $s % 10) % 10 != ord($partita_iva[10]) - ord('0')) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Controlla se la partita iva inserita è valida.
      *
@@ -24,8 +57,12 @@ class Validate
             return true;
         }
 
-        $vat_number = starts_with($vat_number, 'IT') ? $vat_number : 'IT'.$vat_number;
+        // Controllo sulla sintassi
+        if (!static::vatCheck($vat_number)) {
+            return false;
+        }
 
+        /**
         // Controllo con API europea ufficiale
         if (extension_loaded('soap')) {
             try {
@@ -36,7 +73,7 @@ class Validate
                 }
             } catch (VATCheckUnavailableException $e) {
             }
-        }
+        } */
 
         // Controllo attraverso apilayer
         $access_key = setting('apilayer API key for VAT number');
@@ -117,7 +154,7 @@ class Validate
 
             $data = json_decode($output, false);
 
-            /*se la riposta è null verficando il formato, il record mx o il server smtp imposto la relativa proprietà dell'oggetto a 0*/
+            /*se la riposta è null verificando il formato, il record mx o il server smtp imposto la relativa proprietà dell'oggetto a 0*/
             if ($data->format_valid == null) {
                 $data->format_valid = 0;
             }
@@ -143,6 +180,9 @@ class Validate
 
     public static function isValidTaxCode($codice_fiscale)
     {
+        if (empty($codice_fiscale)) {
+            return true;
+        }
 
         $validator = new CodiceFiscale\Validator($codice_fiscale);
 

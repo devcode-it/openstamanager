@@ -44,6 +44,5 @@ switch (post('op')) {
 
         flash()->info(tr('Campo personalizzato eliminato'));
 
-
         break;
 }

@@ -2,18 +2,18 @@
 
 namespace Modules\Aggiornamenti;
 
-use Symfony\Component\Finder\Finder;
 use GuzzleHttp\Client;
-use Parsedown;
 use InvalidArgumentException;
-use Util\Zip;
-use Util\Ini;
+use Models\Group;
 use Models\Module;
 use Models\Plugin;
-use Models\Group;
 use Modules;
+use Parsedown;
 use Plugins;
+use Symfony\Component\Finder\Finder;
 use Update;
+use Util\Ini;
+use Util\Zip;
 
 class Aggiornamento
 {
@@ -142,7 +142,6 @@ class Aggiornamento
 
     /**
      * Completa l'aggiornamento globale secondo la procedura apposita.
-     *
      */
     public function executeCore()
     {
@@ -154,41 +153,6 @@ class Aggiornamento
 
         // Ripristina il file di configurazione dell'installazione
         file_put_contents(DOCROOT.'/config.inc.php', $config);
-    }
-
-    /**
-     * Completa l'aggiornamento del singolo componente come previsto dai parametri indicati.
-     *
-     * @param string $directory Percorso di copia dei contenuti
-     * @param string $table Tabella interessata dall'aggiornamento
-     * @param array $insert Informazioni per la registrazione
-     * @param array $info Contenuti della configurazione
-     * @param boolean $is_installed
-     * @return int|null
-     */
-    protected function executeComponent($path, $directory, $table, $insert, $info, $is_installed = false)
-    {
-        // Copia dei file nella cartella relativa
-        copyr($path, DOCROOT.'/'.$directory.'/'.$info['directory']);
-
-        // Eventuale registrazione nel database
-        if (empty($is_installed)) {
-            $dbo = database();
-
-            $dbo->insert($table, array_merge($insert, [
-                'name' => $info['name'],
-                'title' => !empty($info['title']) ? $info['title'] : $info['name'],
-                'directory' => $info['directory'],
-                'options' => $info['options'],
-                'version' => $info['version'],
-                'compatibility' => $info['compatibility'],
-                'order' => 100,
-                'default' => 0,
-                'enabled' => 1,
-            ]));
-
-            return $dbo->lastInsertedID();
-        }
     }
 
     /**
@@ -245,37 +209,15 @@ class Aggiornamento
     }
 
     /**
-     * Resituisce i permessi di default da impostare all'installazione del componente.
-     *
-     * @return array
-     */
-    protected function groups()
-    {
-        if (!isset($this->groups)) {
-            $groups = Group::where('nome', 'Amministratori')->get();
-
-            $result = [];
-            foreach ($groups as $group) {
-                $result[$group->id] = [
-                    'permission_level' => 'rw'
-                ];
-            }
-
-            $this->groups = $result;
-        }
-
-        return $this->groups;
-    }
-
-    /**
      * Instanzia un aggiornamento sulla base di uno zip indicato.
      * Controlla inoltre che l'aggiornamento sia fattibile.
      *
      * @param string $file
-     * @return static
      *
      * @throws DowngradeException
      * @throws InvalidArgumentException
+     *
+     * @return static
      */
     public static function make($file)
     {
@@ -313,40 +255,10 @@ class Aggiornamento
     }
 
     /**
-     * Restituisce l'oggetto per la connessione all'API del progetto.
+     * Controlla se è disponibile un aggiornamento nella repository GitHub.
      *
-     * @return Client
+     * @return string|bool
      */
-    protected static function getClient()
-    {
-        if (!isset(self::$client)) {
-            self::$client = new Client([
-                'base_uri' => 'https://api.github.com/repos/devcode-it/openstamanager/',
-                'verify' => false
-            ]);
-        }
-
-        return self::$client;
-    }
-
-    /**
-     * Restituisce i contenuti JSON dell'API del progetto
-     *
-     * @return array
-     */
-    protected static function getAPI()
-    {
-        $response = self::getClient()->request('GET', 'releases');
-        $body = $response->getBody();
-
-        return json_decode($body, true)[0];
-    }
-
-    /**
-    * Controlla se è disponibile un aggiornamento nella repository GitHub.
-    *
-    * @return string|bool
-    */
     public static function isAvailable()
     {
         $api = self::getAPI();
@@ -362,10 +274,10 @@ class Aggiornamento
     }
 
     /**
-    * Scarica la release più recente (se presente).
-    *
-    * @return static
-    */
+     * Scarica la release più recente (se presente).
+     *
+     * @return static
+     */
     public static function download()
     {
         if (self::isAvailable() === false) {
@@ -390,6 +302,7 @@ class Aggiornamento
      *
      * @param string $path
      * @param string $version
+     *
      * @return string
      */
     public static function getChangelog($path, $version = null)
@@ -410,5 +323,94 @@ class Aggiornamento
         $result = str_replace(['h4>', 'h3>', 'h2>'], ['p>', 'b>', 'h4>'], $result);
 
         return $result;
+    }
+
+    /**
+     * Completa l'aggiornamento del singolo componente come previsto dai parametri indicati.
+     *
+     * @param string $directory    Percorso di copia dei contenuti
+     * @param string $table        Tabella interessata dall'aggiornamento
+     * @param array  $insert       Informazioni per la registrazione
+     * @param array  $info         Contenuti della configurazione
+     * @param bool   $is_installed
+     *
+     * @return int|null
+     */
+    protected function executeComponent($path, $directory, $table, $insert, $info, $is_installed = false)
+    {
+        // Copia dei file nella cartella relativa
+        copyr($path, DOCROOT.'/'.$directory.'/'.$info['directory']);
+
+        // Eventuale registrazione nel database
+        if (empty($is_installed)) {
+            $dbo = database();
+
+            $dbo->insert($table, array_merge($insert, [
+                'name' => $info['name'],
+                'title' => !empty($info['title']) ? $info['title'] : $info['name'],
+                'directory' => $info['directory'],
+                'options' => $info['options'],
+                'version' => $info['version'],
+                'compatibility' => $info['compatibility'],
+                'order' => 100,
+                'default' => 0,
+                'enabled' => 1,
+            ]));
+
+            return $dbo->lastInsertedID();
+        }
+    }
+
+    /**
+     * Resituisce i permessi di default da impostare all'installazione del componente.
+     *
+     * @return array
+     */
+    protected function groups()
+    {
+        if (!isset($this->groups)) {
+            $groups = Group::where('nome', 'Amministratori')->get();
+
+            $result = [];
+            foreach ($groups as $group) {
+                $result[$group->id] = [
+                    'permission_level' => 'rw',
+                ];
+            }
+
+            $this->groups = $result;
+        }
+
+        return $this->groups;
+    }
+
+    /**
+     * Restituisce l'oggetto per la connessione all'API del progetto.
+     *
+     * @return Client
+     */
+    protected static function getClient()
+    {
+        if (!isset(self::$client)) {
+            self::$client = new Client([
+                'base_uri' => 'https://api.github.com/repos/devcode-it/openstamanager/',
+                'verify' => false,
+            ]);
+        }
+
+        return self::$client;
+    }
+
+    /**
+     * Restituisce i contenuti JSON dell'API del progetto.
+     *
+     * @return array
+     */
+    protected static function getAPI()
+    {
+        $response = self::getClient()->request('GET', 'releases');
+        $body = $response->getBody();
+
+        return json_decode($body, true)[0];
     }
 }

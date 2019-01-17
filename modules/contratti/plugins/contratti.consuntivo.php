@@ -2,11 +2,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-include_once Modules::filepath('Interventi', 'modutil.php');
-
-/*
-CONSUNTIVO
-*/
+/* CONSUNTIVO */
 
 // Salvo i colori e gli stati degli stati intervento su un array
 $colori = [];
@@ -275,7 +271,7 @@ $budget = $rs[0]['budget'];
 $rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe_contratti` WHERE um='ore' AND idcontratto=".prepare($id_record));
 $contratto_tot_ore = $rs[0]['totale_ore'];
 
-$diff = sum($budget, -$totale_addebito);
+$diff = sum($budget, -$totale);
 
 if ($diff > 0) {
     $bilancio = '<span class="text-success"><big>'.Translator::numberToLocale($diff).' &euro;</big></span>';

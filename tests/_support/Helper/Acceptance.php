@@ -14,7 +14,7 @@ class Acceptance extends \Codeception\Module
      * @param $option
      * @param int $timeout seconds. Default to 1
      */
-    public function select2($selector, $option)
+    public function select2($selector, $option, $timeout = null)
     {
         $select2 = $this->getModule('\Helper\Select2');
 
@@ -30,11 +30,32 @@ class Acceptance extends \Codeception\Module
      * @param $option
      * @param int $timeout seconds. Default to 1
      */
-    public function select2ajax($selector, $option)
+    public function select2ajax($selector, $option, $timeout = null)
     {
         $select2 = $this->getModule('\Helper\Select2Ajax');
 
         $select2->selectOptionForSelect2($selector, $option, $timeout);
+    }
+
+    public function seePageHasElement($element)
+    {
+        try {
+            $this->getAcceptanceModule()->seeElement($element);
+        } catch (\PHPUnit_Framework_AssertionFailedError $f) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function expandSidebarLink($link)
+    {
+        $t = $this->getAcceptanceModule();
+
+        if (!$this->seePageHasElement("descendant-or-self::*[@class and contains(concat(' ', normalize-space(@class), ' '), ' sidebar ')]/descendant-or-self::*/li[contains(., '".$link."') and @class and contains(concat(' ', normalize-space(@class), ' '), ' menu-open ')]")) {
+            $t->click($link, '.sidebar');
+            $t->wait(1);
+        }
     }
 
     protected function getAcceptanceModule()

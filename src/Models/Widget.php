@@ -2,13 +2,9 @@
 
 namespace Models;
 
-use App;
-use Traits\RecordTrait;
-use Traits\UploadTrait;
-use Traits\StoreTrait;
-use Traits\PermissionTrait;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Traits\PermissionTrait;
 
 class Widget extends Model
 {
@@ -19,6 +15,18 @@ class Widget extends Model
     protected $appends = [
         'permission',
     ];
+
+    /* Relazioni Eloquent */
+
+    public function module()
+    {
+        return $this->belongsTo(Module::class, 'id_module');
+    }
+
+    public function groups()
+    {
+        return $this->morphToMany(Group::class, 'permission', 'zz_permissions', 'external_id', 'group_id')->where('permission_level', '!=', '-')->withPivot('permission_level');
+    }
 
     protected static function boot()
     {
@@ -31,17 +39,5 @@ class Widget extends Model
         static::addGlobalScope('permission', function (Builder $builder) {
             $builder->with('groups');
         });
-    }
-
-    /* Relazioni Eloquent */
-
-    public function module()
-    {
-        return $this->belongsTo(Module::class, 'id_module');
-    }
-
-    public function groups()
-    {
-        return $this->morphToMany(Group::class, 'permission', 'zz_permissions', 'external_id', 'group_id')->where('permission_level', '!=', '-')->withPivot('permission_level');
     }
 }

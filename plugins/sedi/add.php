@@ -9,16 +9,12 @@ echo '
 	<input type="hidden" name="op" value="addsede">
 
 	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Nome sede').'", "name": "nomesede", "required": 1 ]}
 		</div>
 
-		<div class="col-md-4">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Indirizzo').'", "name": "indirizzo", "required": 0 ]}
-		</div>
-
-		<div class="col-md-4">
-			{[ "type": "text", "label": "'.tr('Indirizzo2').'", "name": "indirizzo2" ]}
 		</div>
 	</div>
 
@@ -32,11 +28,20 @@ echo '
 		</div>
 
 		<div class="col-md-2">
-			{[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia", "maxlength": 2, "class": "text-center" ]}
+			{[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia", "maxlength": 2, "class": "text-center text-uppercase", "extra": "onkeyup=\"this.value = this.value.toUpperCase();\"" ]}
 		</div>
 
 		<div class="col-md-2">
 			{[ "type": "text", "label": "'.tr('Km').'", "name": "km" ]}
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-6">
+			{[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "values": "query=SELECT `id`, `nome` AS `descrizione` FROM `an_nazioni` ORDER BY `descrizione` ASC", "value": "" ]}
+		</div>
+        <div class="col-md-6">
+			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT `id`, CONCAT(`nome`, \' - \', `descrizione`) AS `descrizione` FROM `an_zone` ORDER BY `descrizione` ASC" ]}
 		</div>
 	</div>
 
@@ -51,12 +56,6 @@ echo '
 
 		<div class="col-md-4">
 			{[ "type": "text", "label": "'.tr('Indirizzo email').'", "name": "email" ]}
-		</div>
-	</div>
-
-	<div class="row">
-        <div class="col-md-12">
-			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT `id`, CONCAT(`nome`, \' - \', `descrizione`) AS `descrizione` FROM `an_zone` ORDER BY `descrizione` ASC" ]}
 		</div>
 	</div>
 

@@ -12,6 +12,62 @@ try {
 } catch (InvalidArgumentException $e) {
 }
 
+// Personalizzazioni di codice
+if (function_exists(custom)) {
+    $custom = custom();
+    $tables = customTables();
+    if (!empty($custom) || !empty($tables)) {
+        echo '
+	<div class="box box-warning">
+		<div class="box-header with-border">
+			<h3 class="box-title"><span class="tip" title="'.tr('Elenco delle personalizzazioni rilevabili dal gestionale').'.">
+				<i class="fa fa-edit"></i> '.tr('Personalizzazioni').'
+			</span></h3>
+		</div>
+		<div class="box-body">';
+
+        if (!empty($custom)) {
+            echo '
+			<table class="table table-hover table-striped">
+				<tr>
+					<th width="10%">'.tr('Percorso').'</th>
+					<th width="15%">'.tr('Cartella personalizzata').'</th>
+					<th width="15%">'.tr('Database personalizzato').'</th>
+				</tr>';
+
+            foreach ($custom as $element) {
+                echo '
+				<tr>
+					<td>'.$element['path'].'</td>
+					<td>'.($element['directory'] ? 'Si' : 'No').'</td>
+					<td>'.($element['database'] ? 'Si' : 'No').'</td>
+				</tr>';
+            }
+
+            echo '
+			</table>
+
+			<p><strong>'.tr("Si sconsiglia l'aggiornamento senza il supporto dell'assistenza ufficiale").'.</strong></p>';
+        } else {
+            echo '
+			<p>'.tr('Non ci sono strutture personalizzate').'.</p>';
+        }
+
+        if (!empty($tables)) {
+            echo '
+			<div class="alert alert-warning">
+				<i class="fa fa-warning"></i>
+				<b>Attenzione!</b> Ci sono delle tabelle non previste nella versione standard del gestionale: '.implode(', ', $tables).'.
+			</div>';
+        }
+
+        echo '
+		</div>
+	</div>';
+    }
+}
+
+// Aggiornamenti
 if (setting('Attiva aggiornamenti')) {
     $alerts = [];
 
@@ -126,13 +182,12 @@ function download(button) {
                     <label><input type="file" name="blob" id="blob"></label>
 
                     <button type="button" class="btn btn-primary pull-right" onclick="update()">
-                        <i class="fa fa-upload"></i> '.tr('Carica').'...
+                        <i class="fa fa-upload"></i> '.tr('Carica').'
                     </button>
                 </form>
             </div>
         </div>
     </div>';
-
 
     echo '
 
@@ -199,70 +254,7 @@ $modules = Modules::getHierarchy();
 
 $osm_version = Update::getVersion();
 
-foreach ($modules as $module) {
-    // STATO
-    if (!empty($module['enabled'])) {
-        $text = tr('Abilitato');
-        $text .= ($module['id'] != $id_module) ? '. '.tr('Clicca per disabilitarlo').'...' : '';
-        $stato = '<i class="fa fa-cog fa-spin text-success" data-toggle="tooltip" title="'.$text.'"></i>';
-    } else {
-        $stato = '<i class="fa fa-cog text-warning" data-toggle="tooltip" title="'.tr('Non abilitato').'"></i>';
-        $class = 'warning';
-    }
-
-    // Possibilità di disabilitare o abilitare i moduli tranne quello degli aggiornamenti
-    if ($module['id'] != $id_module) {
-        if ($module['enabled']) {
-            $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Disabilitare questo modulo?')."') ){ $.post( '".ROOTDIR.'/actions.php?id_module='.$id_module."', { op: 'disable', id: '".$module['id']."' }, function(response){ location.href='".ROOTDIR.'/controller.php?id_module='.$id_module."'; }); }\">".$stato."</a>\n";
-        } else {
-            $stato = "<a href='javascript:;' onclick=\"if( confirm('".tr('Abilitare questo modulo?')."') ){ $.post( '".ROOTDIR.'/actions.php?id_module='.$id_module."', { op: 'enable', id: '".$module['id']."' }, function(response){ location.href='".ROOTDIR.'/controller.php?id_module='.$id_module."'; }); }\"\">".$stato."</a>\n";
-        }
-    }
-
-    // COMPATIBILITA'
-    $compatibilities = explode(',', $module['compatibility']);
-    // Controllo per ogni versione se la regexp combacia per dire che è compatibile o meno
-    $comp = false;
-    foreach ($compatibilities as $compatibility) {
-        $comp = (preg_match('/'.$compatibility.'/', $osm_version)) ? true : $comp;
-    }
-
-    if ($comp) {
-        $compatible = '<i class="fa fa-check-circle text-success" data-toggle="tooltip" title="'.tr('Compatibile').'"></i>';
-        ($module['enabled']) ? $class = 'success' : $class = 'warning';
-    } else {
-        $compatible = '<i class="fa fa-warning text-danger" data-toggle="tooltip" title="'.tr('Non compatibile!').tr('Questo modulo è compatibile solo con le versioni').': '.$module['compatibility'].'"></i>';
-        $class = 'danger';
-    }
-
-    echo '
-            <tr class="'.$class.'">
-                <td>'.$module['title'].'</td>
-                <td align="right">'.$module['version'].'</td>
-                <td align="center">'.$stato.'</td>
-                <td align="center">'.$compatible.'</td>';
-
-    echo '
-                <td>';
-
-    // Possibilità di disinstallare solo se il modulo non è tra quelli predefiniti
-    if (empty($module['default'])) {
-        echo "
-                    <a href=\"javascript:;\" data-toggle='tooltip' title=\"".tr('Disinstalla')."...\" onclick=\"if( confirm('".tr('Vuoi disinstallare questo modulo?').' '.tr('Tutti i dati salvati andranno persi!')."') ){ if( confirm('".tr('Sei veramente sicuro?')."') ){ $.post( '".ROOTDIR.'/actions.php?id_module='.$id_module."', { op: 'uninstall', id: '".$module['id']."' }, function(response){ location.href='".ROOTDIR.'/controller.php?id_module='.$id_module."'; }); } }\"><i class='fa fa-trash'></i></a>";
-    } else {
-        echo "
-                    <a class='disabled text-muted'>
-                        <i class='fa fa-trash'></i>
-                    </a>";
-    }
-
-    echo '
-                </td>
-            </tr>';
-
-    // Prima di cambiare modulo verifico se ci sono sottomoduli
-    echo submodules($module['all_children']);
-}
+echo submodules($modules);
 
 echo '
         </table>
@@ -343,7 +335,7 @@ echo '
 // Requisiti
 echo '
 <hr>
-</div>
+<div>
     <h3>'.tr('Requisiti').'</h3>';
 
 include DOCROOT.'/include/init/requirements.php';

@@ -17,7 +17,7 @@ if (!function_exists('array_column')) {
      *
      * @since 2.3
      *
-     * @return plucked array only with key data
+     * @return array plucked array only with key data
      */
     function array_column($array, $key)
     {
@@ -39,9 +39,9 @@ if (!function_exists('array_clean')) {
      */
     function array_clean($array)
     {
-        return array_values(array_filter($array, function ($value) {
+        return array_unique(array_values(array_filter($array, function ($value) {
             return !empty($value);
-        }));
+        })));
     }
 }
 
@@ -164,9 +164,6 @@ if (!function_exists('random_string')) {
     /**
      * Generates a string of random characters.
      *
-     * @throws LengthException If $length is bigger than the available
-     *                         character pool and $no_duplicate_chars is
-     *                         enabled
      *
      * @param int  $length             The length of the string to
      *                                 generate
@@ -181,6 +178,10 @@ if (!function_exists('random_string')) {
      *                                 true
      * @param bool $no_duplicate_chars whether or not to only use
      *                                 characters once in the string
+     *
+     * @throws LengthException If $length is bigger than the available
+     *                         character pool and $no_duplicate_chars is
+     *                         enabled
      *
      * @return string
      */

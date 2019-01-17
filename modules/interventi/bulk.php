@@ -6,12 +6,10 @@ if (file_exists(__DIR__.'/../../../core.php')) {
     include_once __DIR__.'/../../core.php';
 }
 
-use Util\Zip;
+use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Tipo;
-use Modules\Anagrafiche\Anagrafica;
-
-include_once Modules::filepath('Fatture di vendita', 'modutil.php');
+use Util\Zip;
 
 // Segmenti
 $id_fatture = Modules::get('Fatture di vendita')['id'];
@@ -100,7 +98,7 @@ switch (post('op')) {
 
                 if (empty($id_documento)) {
                     $anagrafica = Anagrafica::find($id_anagrafica);
-                    $fattura = Fattura::make($anagrafica, $tipo_documento, $data, $id_segment);
+                    $fattura = Fattura::build($anagrafica, $tipo_documento, $data, $id_segment);
 
                     $id_documento = $fattura->id;
                     $id_documento_cliente[$id_anagrafica] = $id_documento;

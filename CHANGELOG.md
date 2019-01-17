@@ -5,40 +5,50 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
 - [2.5](#25)
-    - [Aggiunto (Added)](#aggiunto-added)
-    - [Modificato (Changed)](#modificato-changed)
-- [2.4.2](#242)
-    - [Aggiunto (Added)](#aggiunto-added-1)
-    - [Modificato (Changed)](#modificato-changed-1)
-    - [Deprecato (Deprecated)](#deprecato-deprecated)
-    - [Rimosso (Removed)](#rimosso-removed)
-    - [Sicurezza (Security)](#sicurezza-security)
+  - [Aggiunto (Added)](#aggiunto-added)
+  - [Modificato (Changed)](#modificato-changed)
+- [2.4.5 (2019-01-10)](#245-2019-01-10)
+  - [Aggiunto (Added)](#aggiunto-added-1)
+  - [Modificato (Changed)](#modificato-changed-1)
+  - [Fixed](#fixed)
+- [2.4.4 (2018-12-12)](#244-2018-12-12)
+  - [Aggiunto (Added)](#aggiunto-added-2)
+  - [Fixed](#fixed-1)
+- [2.4.3 (2018-12-07)](#243-2018-12-07)
+  - [Aggiunto (Added)](#aggiunto-added-3)
+  - [Fixed](#fixed-2)
+- [2.4.2 (2018-11-14)](#242-2018-11-14)
+  - [Aggiunto (Added)](#aggiunto-added-4)
+  - [Modificato (Changed)](#modificato-changed-2)
+  - [Deprecato (Deprecated)](#deprecato-deprecated)
+  - [Rimosso (Removed)](#rimosso-removed)
+  - [Sicurezza (Security)](#sicurezza-security)
 - [2.4.1 (2018-08-01)](#241-2018-08-01)
-    - [Aggiunto (Added)](#aggiunto-added-2)
-    - [Modificato (Changed)](#modificato-changed-2)
-    - [Fixed](#fixed)
+  - [Aggiunto (Added)](#aggiunto-added-5)
+  - [Modificato (Changed)](#modificato-changed-3)
+  - [Fixed](#fixed-3)
 - [2.4 (2018-03-30)](#24-2018-03-30)
-    - [Aggiunto (Added)](#aggiunto-added-3)
-    - [Modificato (Changed)](#modificato-changed-3)
-    - [Fixed](#fixed-1)
+  - [Aggiunto (Added)](#aggiunto-added-6)
+  - [Modificato (Changed)](#modificato-changed-4)
+  - [Fixed](#fixed-4)
 - [2.3.1 (2018-02-19)](#231-2018-02-19)
-    - [Aggiunto (Added)](#aggiunto-added-4)
-    - [Modificato (Changed)](#modificato-changed-4)
-    - [Fixed](#fixed-2)
+  - [Aggiunto (Added)](#aggiunto-added-7)
+  - [Modificato (Changed)](#modificato-changed-5)
+  - [Fixed](#fixed-5)
 - [2.3 (2018-02-16)](#23-2018-02-16)
-    - [Aggiunto (Added)](#aggiunto-added-5)
-    - [Modificato (Changed)](#modificato-changed-5)
-    - [Deprecato (Deprecated)](#deprecato-deprecated-1)
-    - [Rimosso (Removed)](#rimosso-removed-1)
-    - [Fixed](#fixed-3)
-    - [Sicurezza (Security)](#sicurezza-security-1)
+  - [Aggiunto (Added)](#aggiunto-added-8)
+  - [Modificato (Changed)](#modificato-changed-6)
+  - [Deprecato (Deprecated)](#deprecato-deprecated-1)
+  - [Rimosso (Removed)](#rimosso-removed-1)
+  - [Fixed](#fixed-6)
+  - [Sicurezza (Security)](#sicurezza-security-1)
 - [2.2 (2016-11-10)](#22-2016-11-10)
-    - [Aggiunto (Added)](#aggiunto-added-6)
-    - [Fixed](#fixed-4)
+  - [Aggiunto (Added)](#aggiunto-added-9)
+  - [Fixed](#fixed-7)
 - [2.1 (2015-04-02)](#21-2015-04-02)
-    - [Aggiunto (Added)](#aggiunto-added-7)
-    - [Modificato (Changed)](#modificato-changed-6)
-    - [Fixed](#fixed-5)
+  - [Aggiunto (Added)](#aggiunto-added-10)
+  - [Modificato (Changed)](#modificato-changed-7)
+  - [Fixed](#fixed-8)
 
 ## 2.5
 
@@ -53,7 +63,54 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Miglioramento della procedura semplificata di aggiornamento
  - Inversione del comportamento della classe **Filter** e degli helper *post*, *get* e *filter* (il secondo parametro restituisce il valore formattato)
 
-## 2.4.2
+## 2.4.5 (2019-01-10)
+
+### Aggiunto (Added)
+
+ - Introduzione dello split payment
+ - Introduzione dei campi Nome e Cognome per le anagrafiche
+ - Introduzione della possibilità di non verificare il certificato SSL per gli account email
+ - Introduzione calcolo del guadagno in fase di aggiunta righe nei documenti
+
+### Modificato (Changed)
+
+ - Miglioramento della generazione xml per le Fatture Elettroniche
+ - Miglioramento procedura importazione xml per le Fatture Elettroniche
+ - Gestite righe di tipo descrizione nelle Fatture Elettroniche
+
+### Fixed
+
+ - Fix calcolo codice intervento
+ - Fix dei filtri per la stampa del riepilogo interventi
+ - Risolti altri bug minori
+
+## 2.4.4 (2018-12-12)
+
+### Aggiunto (Added)
+
+ - Controllo sulla presenza di personalizzazioni nel modulo **Aggiornamenti**
+ - Stati multipli per le Fatture Elettroniche (per ampliamenti futuri)
+
+### Fixed
+
+ - Risolti malfunzionamenti negli import degli allegati della Fattura Elettronica
+ - Risolti diversi bug
+
+## 2.4.3 (2018-12-07)
+
+### Aggiunto (Added)
+
+ - Nodi secondari per la Fatturazione Elettronica
+ - Importazione di Fatture Elettroniche in formato P7M
+ - Messaggi informativi in vari campi
+
+### Fixed
+
+ - Risolti alcuni problemi di compatibilità
+ - Risolti malfunzionamenti delle righe dei documenti
+ - Fix dei calcoli
+
+## 2.4.2 (2018-11-14)
 
 ### Aggiunto (Added)
 

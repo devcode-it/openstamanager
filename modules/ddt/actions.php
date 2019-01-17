@@ -2,10 +2,12 @@
 
 include_once __DIR__.'/../../core.php';
 
-// Necessaria per la funzione add_movimento_magazzino
-include_once Modules::filepath('Articoli', 'modutil.php');
-include_once Modules::filepath('Fatture di vendita', 'modutil.php');
-include_once Modules::filepath('Ordini cliente', 'modutil.php');
+use Modules\Anagrafiche\Anagrafica;
+use Modules\DDT\Components\Articolo;
+use Modules\DDT\Components\Descrizione;
+use Modules\DDT\Components\Riga;
+use Modules\DDT\DDT;
+use Modules\DDT\Tipo;
 
 $module = Modules::get($id_module);
 
@@ -22,32 +24,17 @@ switch (post('op')) {
         $dir = post('dir');
         $id_tipo_ddt = post('id_tipo_ddt');
 
-        if (post('idanagrafica') !== null) {
-            $numero = get_new_numeroddt($data);
-            $numero_esterno = ($dir == 'entrata') ? get_new_numerosecondarioddt($data) : '';
+        $anagrafica = Anagrafica::find($idanagrafica);
+        $tipo = Tipo::find($id_tipo);
 
-            $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
+        $ddt = DDT::build($anagrafica, $tipo, $data);
+        $id_record = $ddt->id;
 
-            // Tipo di pagamento predefinito dall'anagrafica
-            $query = 'SELECT id FROM co_pagamenti WHERE id=(SELECT '.$campo.' AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')';
-            $rs = $dbo->fetchArray($query);
-            $idpagamento = isset($rs[0]) ? $rs[0]['id'] : null;
+        flash()->info(tr('Aggiunto ddt in _TYPE_ numero _NUM_!', [
+            '_TYPE_' => $dir,
+            '_NUM_' => $numero,
+        ]));
 
-            // Se il ddt è un ddt cliente e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
-            if ($dir == 'entrata' && empty($idpagamento)) {
-                $idpagamento = setting('Tipo di pagamento predefinito');
-            }
-
-            $query = 'INSERT INTO dt_ddt(numero, numero_esterno, idanagrafica, id_tipo_ddt, idpagamento, data, id_stato) VALUES ('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($id_tipo_ddt).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `dt_statiddt` WHERE `descrizione`='Bozza'))";
-            $dbo->query($query);
-
-            $id_record = $dbo->lastInsertedID();
-
-            flash()->info(tr('Aggiunto ddt in _TYPE_ numero _NUM_!', [
-                '_TYPE_' => $dir,
-                '_NUM_' => $numero,
-            ]));
-        }
         break;
 
     case 'update':
@@ -220,17 +207,13 @@ switch (post('op')) {
         $idpagamento = post('idpagamento');
         $idconto = post('idconto');
         $idordine = post('idordine');
-        $numero = get_new_numeroddt($data);
 
-        if ($dir == 'entrata') {
-            $numero_esterno = get_new_numerosecondarioddt($data);
-        } else {
-            $numero_esterno = '';
-        }
+        // Creazione DDT
+        $anagrafica = Anagrafica::find($idanagrafica);
+        $tipo = Tipo::where('dir', $dir)->first();
 
-        // Creazione nuovo ddt
-        $dbo->query('INSERT INTO dt_ddt( numero, numero_esterno, data, idanagrafica, id_tipo_ddt, id_stato, idpagamento, idconto) VALUES('.prepare($numero).', '.prepare($numero_esterno).', '.prepare($data).', '.prepare($idanagrafica).', (SELECT id FROM dt_tipiddt WHERE dir='.prepare($dir)."), (SELECT id FROM dt_statiddt WHERE descrizione='Bozza'), ".prepare($idpagamento).', '.prepare($idconto).')');
-        $id_record = $dbo->lastInsertedID();
+        $ddt = DDT::build($anagrafica, $tipo, $data);
+        $id_record = $ddt->id;
 
         // Lettura di tutte le righe della tabella in arrivo
         foreach (post('qta_da_evadere') as $idriga => $value) {
@@ -452,7 +435,7 @@ switch (post('op')) {
         }
 
         for ($i = 0; $i < sizeof($rs); ++$i) {
-            if($rs[$i]['idarticolo']){
+            if ($rs[$i]['idarticolo']) {
                 rimuovi_articolo_daddt($rs[$i]['idarticolo'], $id_record, $rs[$i]['id']);
             }
         }
@@ -497,12 +480,12 @@ switch (post('op')) {
         break;
 
         case 'update_position':
-            $orders = explode( ",", $_POST['order'] );
+            $orders = explode(',', $_POST['order']);
             $order = 0;
 
-            foreach( $orders as $idriga ){
+            foreach ($orders as $idriga) {
                 $dbo->query('UPDATE `dt_righe_ddt` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
-                $order++;
+                ++$order;
             }
 
             break;

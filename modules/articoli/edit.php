@@ -2,9 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-// Necesario per funzione \Util\Ini::getList
-include_once Modules::filepath('MyImpianti', 'modutil.php');
-
 $_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
 
 $img = null;
@@ -13,7 +10,7 @@ if (!empty($record['immagine'])) {
 
     $default_img = '/'.Uploads::getDirectory($id_module).'/'.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
 
-    $img = file_exists(DOCROOT.$default_img) ? ROOTDIR.$default_img : ROOTDIR.'/'.Uploads::getDirectory($id_module).'/'.$record['immagine01'];
+    $img = file_exists(DOCROOT.$default_img) ? ROOTDIR.$default_img : ROOTDIR.'/'.Uploads::getDirectory($id_module).'/'.$record['immagine'];
 }
 
 ?><form action="" method="post" id="edit-form" enctype="multipart/form-data">

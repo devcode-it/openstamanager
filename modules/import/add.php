@@ -7,6 +7,7 @@ foreach ($imports as $key => $value) {
     $list[] = [
         'id' => $key,
         'text' => $value['title'],
+        'directory' => $value['directory'],
     ];
 }
 

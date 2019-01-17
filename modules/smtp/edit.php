@@ -33,9 +33,15 @@ include_once __DIR__.'/../../core.php';
                     {[ "type": "text", "label": "<?php echo tr('Nome visualizzato'); ?>", "name": "from_name", "value": "$from_name$" ]}
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-3">
                     {[ "type": "email", "label": "<?php echo tr('Email mittente'); ?>", "name": "from_address", "value": "$from_address$", "required": 1 ]}
                 </div>
+			
+				<div class="col-md-3">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Non verificare il certificato SSL'); ?>", "name": "ssl_no_verify", "value": "$ssl_no_verify$" ]}
+                </div>
+				
+				
             </div>
 
             <div class="row">
@@ -58,7 +64,7 @@ include_once __DIR__.'/../../core.php';
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "password", "label": "<?php echo tr('Password SMTP'); ?>", "name": "password", "value": "$password$" ]}
+                    {[ "type": "password", "label": "<?php echo tr('Password SMTP'); ?>", "class": "", "name": "password", "value": "$password$", "icon-after": "<i title=\"<?php echo tr('Visualizza password'); ?>\" class=\"fa fa-eye clickable\" ></i>" ]}
                 </div>
             </div>
 
@@ -107,3 +113,4 @@ if (!empty($elementi)) {
     <i class="fa fa-trash"></i> '.tr('Elimina').'
 </a>';
 }
+?>

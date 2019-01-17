@@ -2,59 +2,34 @@
 
 namespace Traits;
 
+use Models\Module;
+use Models\Plugin;
+
 trait RecordTrait
 {
-    use PathTrait;
-
-    /**
-     * Restituisce il percorso per il file di crezione dei record.
-     *
-     * @return string
-     */
-    public function getAddFile()
+    public function getModule()
     {
-        if (method_exists($this, 'getCustomAddFile')) {
-            $result = $this->getCustomAddFile();
-
-            if (!empty($result)) {
-                return $result;
-            }
-        }
-
-        $php = $this->filepath('add.php');
-        $html = $this->filepath('add.html');
-
-        return !empty($php) ? $php : $html;
+        return !empty($this->module) ? Module::get($this->module) : null;
     }
 
-    /**
-     * Controlla l'esistenza del file di crezione dei record.
-     *
-     * @return bool
-     */
-    public function hasAddFile()
+    public function getPlugin()
     {
-        return !empty($this->getAddFile());
+        return !empty($this->plugin) ? Plugin::get($this->plugin) : null;
     }
 
-    /**
-     * Restituisce il percorso per il file di modifica dei record.
-     *
-     * @return string
-     */
-    public function getEditFile()
+    public function uploads()
     {
-        if (method_exists($this, 'getCustomEditFile')) {
-            $result = $this->getCustomEditFile();
+        $module = $this->getModule();
+        $plugin = $this->getPlugin();
 
-            if (!empty($result)) {
-                return $result;
-            }
+        if (!empty($module)) {
+            return $module->uploads($this->id);
         }
 
-        $php = $this->filepath('edit.php');
-        $html = $this->filepath('edit.html');
+        if (!empty($plugin)) {
+            return $plugin->uploads($this->id);
+        }
 
-        return !empty($php) ? $php : $html;
+        return collect();
     }
 }

@@ -76,7 +76,7 @@ echo '
 	</div>
 </form>';
 
-if (!empty($options) && $options != 'custom') {
+if (!empty($options) && $options != 'custom' && $options != 'menu') {
     echo '
 
 <form action="" method="post" role="form">
@@ -217,7 +217,7 @@ if (!empty($options) && $options != 'custom') {
 		<div class="col-md-3">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					<h3 class="panel-title">'.tr('Ordine di visualizzazione').' <span class="tip pull-right" title="'.tr("Trascina per ordinare le colonne").'."><i class="fa fa-question-circle-o"></i></span></h3>
+					<h3 class="panel-title">'.tr('Ordine di visualizzazione').' <span class="tip pull-right" title="'.tr('Trascina per ordinare le colonne').'."><i class="fa fa-question-circle-o"></i></span></h3>
 				</div>
 
 				<div class="panel-body sortable">';
@@ -520,6 +520,6 @@ $(document).ready(function(){
 	});
 });
 </script>';
-// Fix apertura non corrisposta di un tag div
-echo '</div>';
+    // Fix apertura non corrisposta di un tag div
+    echo '</div>';
 }

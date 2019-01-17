@@ -37,7 +37,7 @@ echo '
             <hr>';
 
         echo '
-            <h3 class="text-center">'.tr("OpenSTAManager versione _VERSION_", [
+            <h3 class="text-center">'.tr('OpenSTAManager versione _VERSION_', [
                 '_VERSION_' => Update::getFile($update->getDirectory().'/VERSION'),
             ]).'</h3>';
 

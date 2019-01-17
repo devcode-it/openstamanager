@@ -6,7 +6,7 @@ $groups = Models\Group::all();
 $array = [];
 foreach ($groups as $group) {
     $array[$group->id] = [
-        'permission_level' => 'rw'
+        'permission_level' => 'rw',
     ];
 }
 
@@ -35,7 +35,7 @@ $modules = Models\Module::all();
 foreach ($modules as $element) {
     $element->groups()->syncWithoutDetaching([
         $admin->id => [
-            'permission_level' => 'rw'
-        ]
+            'permission_level' => 'rw',
+        ],
     ]);
 }

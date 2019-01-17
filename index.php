@@ -138,7 +138,7 @@ echo '
 
 				<div class="login-box-body box-body">
 					<div class="form-group input-group">
-						<span class="input-group-addon"><i class="fa fa-user"></i> </span>
+						<span class="input-group-addon before"><i class="fa fa-user"></i> </span>
 						<input type="text" name="username" autocomplete="off" class="form-control" placeholder="'.tr('Nome utente').'"';
 if (isset($username)) {
     echo ' value="'.$username.'"';
@@ -146,7 +146,7 @@ if (isset($username)) {
 echo'>
 					</div>
 					<div class="form-group input-group">
-						<span class="input-group-addon"><i class="fa fa-lock"></i> </span>
+						<span class="input-group-addon before"><i class="fa fa-lock"></i> </span>
 						<input type="password" name="password" autocomplete="off" class="form-control" placeholder="'.tr('Password').'">
 					</div>
 					<div class="form-group">

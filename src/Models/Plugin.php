@@ -3,19 +3,23 @@
 namespace Models;
 
 use App;
-use Traits\RecordTrait;
-use Traits\UploadTrait;
-use Traits\StoreTrait;
-use Traits\PermissionTrait;
 use Common\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Traits\ManagerTrait;
+use Traits\StoreTrait;
+use Traits\UploadTrait;
+use Traits\PermissionTrait;
 
 class Plugin extends Model
 {
-    use RecordTrait, UploadTrait, StoreTrait, PermissionTrait;
+    use ManagerTrait, StoreTrait, PermissionTrait;
+    use UploadTrait {
+        getUploadDirectoryAttribute as protected defaultUploadDirectory;
+    }
 
     protected $table = 'zz_plugins';
     protected $main_folder = 'plugins';
+    protected $upload_identifier = 'id_plugin';
 
     protected $appends = [
         'permission',
@@ -27,17 +31,14 @@ class Plugin extends Model
         'options2',
     ];
 
-    protected static function boot()
+    /**
+     * Restituisce i permessi relativi all'account in utilizzo.
+     *
+     * @return string
+     */
+    public function getPermissionAttribute()
     {
-        parent::boot();
-
-        static::addGlobalScope('enabled', function (Builder $builder) {
-            $builder->where('enabled', true);
-        });
-
-        static::addGlobalScope('permission', function (Builder $builder) {
-            $builder->with('groups');
-        });
+        return $this->originalModule->permission;
     }
 
     public function getOptionAttribute()
@@ -77,6 +78,20 @@ class Plugin extends Model
         return $this->getAddFile();
     }
 
+    /**
+     * Restituisce il percorso per il salvataggio degli upload.
+     *
+     * @return string
+     */
+    public function getUploadDirectoryAttribute()
+    {
+        if (!empty($this->script)) {
+            return $this->uploads_directory.'/'.basename($this->script, '.php');
+        }
+
+        return $this->defaultUploadDirectory();
+    }
+
     /* Relazioni Eloquent */
 
     public function originalModule()
@@ -92,5 +107,18 @@ class Plugin extends Model
     public function groups()
     {
         return $this->morphToMany(Group::class, 'permission', 'zz_permissions', 'external_id', 'group_id')->where('permission_level', '!=', '-')->withPivot('permission_level');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('enabled', function (Builder $builder) {
+            $builder->where('enabled', true);
+        });
+
+        static::addGlobalScope('permission', function (Builder $builder) {
+            $builder->with('groups');
+        });
     }
 }

@@ -66,8 +66,8 @@ switch ($resource) {
 
         // Email del cliente
         $query = "SELECT DISTINCT(email) AS email, ragione_sociale, idanagrafica FROM an_anagrafiche WHERE email != '' ".$where;
-		// Se type pec, propongo anche la pec
-        if (get('type')=='pec') {
+        // Se type pec, propongo anche la pec
+        if (get('type') == 'pec') {
             $query .= " UNION SELECT DISTINCT(pec), ragione_sociale, idanagrafica FROM an_anagrafiche WHERE email != '' ".$where;
         }
         $query .= ' ORDER BY idanagrafica';

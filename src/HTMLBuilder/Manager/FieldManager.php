@@ -66,13 +66,13 @@ class FieldManager implements ManagerInterface
                 $field['value'] = isset($field['value']) ? $field['value'] : '';
 
                 $replace = [
-                'value' => $field['value'],
-                'label' => $field['name'],
-                'name' => $field['html_name'],
-            ];
+                    'value' => $field['value'],
+                    'label' => $field['name'],
+                    'name' => $field['html_name'],
+                ];
 
-                foreach ($replace as $key => $value) {
-                    $field['content'] = str_replace('|'.$key.'|', $value, $field['content']);
+                foreach ($replace as $name => $value) {
+                    $field['content'] = str_replace('|'.$name.'|', $value, $field['content']);
                 }
 
                 $result .= '

@@ -20,6 +20,20 @@ abstract class Singleton
     }
 
     /**
+     * Private clone method to prevent cloning of the instance of the <b>Singleton</b> instance.
+     */
+    private function __clone()
+    {
+    }
+
+    /**
+     * Private unserialize method to prevent unserializing of the <b>Singleton</b> instance.
+     */
+    private function __wakeup()
+    {
+    }
+
+    /**
      * Restituisce l'istanza della classe in oggetto.
      *
      * @return Singleton
@@ -33,19 +47,5 @@ abstract class Singleton
         }
 
         return self::$instance[$class];
-    }
-
-    /**
-     * Private clone method to prevent cloning of the instance of the <b>Singleton</b> instance.
-     */
-    private function __clone()
-    {
-    }
-
-    /**
-     * Private unserialize method to prevent unserializing of the <b>Singleton</b> instance.
-     */
-    private function __wakeup()
-    {
     }
 }

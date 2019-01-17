@@ -12,7 +12,7 @@ $settings = [
     ],
     'header-height' => 35,
     'footer-height' => 5,
-	'header-font-size' => 8,
+    'header-font-size' => 11,
 ];
 
 return $settings;

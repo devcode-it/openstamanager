@@ -36,7 +36,7 @@ function prepare($parameter)
  *
  * @param string $param  Nome del parametro
  * @param string $method Posizione del parametro (post o get)
- * @param bool   $parse    Restituire il valore formattato
+ * @param bool   $parse  Restituire il valore formattato
  *
  * @since 2.3
  *
@@ -51,7 +51,7 @@ function filter($param, $method = null, $parse = false)
  * Restituisce il contenuto sanitarizzato dell'input dell'utente.
  *
  * @param string $param Nome del parametro
- * @param bool   $parse   Restituire il valore formattato
+ * @param bool   $parse Restituire il valore formattato
  *
  * @since 2.3
  *
@@ -66,7 +66,7 @@ function post($param, $parse = false)
  * Restituisce il contenuto sanitarizzato dell'input dell'utente.
  *
  * @param string $param Nome del parametro
- * @param bool   $parse   Restituire il valore formattato
+ * @param bool   $parse Restituire il valore formattato
  *
  * @since 2.3
  *
@@ -87,9 +87,9 @@ function get($param, $parse = false)
  *
  * @return string
  */
-function setting($nome, $again = false)
+function setting($name, $again = false)
 {
-    return \Settings::getValue($nome, $again);
+    return \Settings::getValue($name);
 }
 
 /**

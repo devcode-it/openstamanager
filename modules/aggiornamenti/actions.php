@@ -2,7 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Util\Zip;
 use Modules\Aggiornamenti\Aggiornamento;
 use Modules\Aggiornamenti\DowngradeException;
 
@@ -41,9 +40,9 @@ switch (post('op')) {
         try {
             $update = Aggiornamento::make($_FILES['blob']['tmp_name']);
         } catch (DowngradeException $e) {
-            flash()->error(tr("Il pacchetto contiene una versione precedente del gestionale"));
+            flash()->error(tr('Il pacchetto contiene una versione precedente del gestionale'));
         } catch (InvalidArgumentException $e) {
-            flash()->error(tr("Il pacchetto contiene solo componenti già installate e aggiornate"));
+            flash()->error(tr('Il pacchetto contiene solo componenti già installate e aggiornate'));
         }
 
         break;

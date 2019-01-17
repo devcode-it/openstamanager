@@ -4,18 +4,18 @@ namespace Modules\Anagrafiche;
 
 use Common\Model;
 use Modules\Fatture\Fattura;
-use Util\Generator;
 use Settings;
+use Traits\RecordTrait;
+use Util\Generator;
 
 class Anagrafica extends Model
 {
+    use RecordTrait;
+
     protected $table = 'an_anagrafiche';
     protected $primaryKey = 'idanagrafica';
-    /**
-     * The attributes that aren't mass assignable.
-     *
-     * @var array
-     */
+    protected $module = 'Anagrafiche';
+
     protected $guarded = [];
 
     protected $appends = [
@@ -34,9 +34,9 @@ class Anagrafica extends Model
      *
      * @return self
      */
-    public static function make($ragione_sociale, array $tipologie = [])
+    public static function build($ragione_sociale, array $tipologie = [])
     {
-        $model = parent::make();
+        $model = parent::build();
 
         $model->ragione_sociale = $ragione_sociale;
 

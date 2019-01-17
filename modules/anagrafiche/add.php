@@ -13,11 +13,21 @@ echo '
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Ragione sociale').'", "name": "ragione_sociale", "required": 1 ]}
+			{[ "type": "text", "label": "'.tr('Denominazione').'", "name": "ragione_sociale", "required": 1 ]}
 		</div>
 
 		<div class="col-md-6">
 			{[ "type": "select", "label": "'.tr('Tipo di anagrafica').'", "name": "id_tipo_anagrafica[]", "multiple": "1", "required": 1, "values": "query=SELECT id, descrizione FROM an_tipianagrafiche WHERE id NOT IN (SELECT DISTINCT(x.id_tipo_anagrafica) FROM an_tipianagrafiche_anagrafiche x INNER JOIN an_tipianagrafiche t ON x.id_tipo_anagrafica = t.id INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = x.idanagrafica WHERE t.descrizione = \'Azienda\' AND deleted_at IS NULL) ORDER BY descrizione", "value": "'.(isset($id_tipo_anagrafica) ? $id_tipo_anagrafica : null).'", "readonly": '.(!empty($readonly_tipo) ? 1 : 0).' ]}
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-6">
+			{[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "required": 0 ]}
+		</div>
+
+		<div class="col-md-6">
+			{[ "type": "text", "label": "'.tr('Cognome').'", "name": "cognome", "required": 0 ]}
 		</div>
 	</div>';
 
@@ -31,7 +41,7 @@ echo '
 	            </button>
 	        </div>
 	    </div>
-	    <div class="box-body collapse">
+	    <div class="box-body">
 			<div class="row">
 				<div class="col-md-4">
 					{[ "type": "text", "label": "'.tr('Partita IVA').'", "maxlength": 13, "name": "piva", "class": "text-center alphanumeric-mask" ]}
@@ -60,7 +70,7 @@ echo '
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia", "maxlength": 2, "class": "text-center" ]}
+					{[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia", "maxlength": 2, "class": "text-center", "extra": "onkeyup=\"this.value = this.value.toUpperCase();\"" ]}
 				</div>
 			</div>
 
@@ -88,3 +98,27 @@ echo
 		</div>
 	</div>
 </form>';
+?>
+
+<script>
+    // Abilito solo ragione sociale oppure solo nome-cognome in base a cosa compilo
+    $('#nome, #cognome', '#bs-popup, #bs-popup2').keyup(function(){
+        if ($('#nome', '#bs-popup, #bs-popup2').val() == '' && $('#cognome', '#bs-popup, #bs-popup2').val() == '' ){
+            $('#nome, #cognome', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
+            $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
+        }else{
+            $('#nome, #cognome', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
+            $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
+        }
+    });
+
+    $('#ragione_sociale', '#bs-popup, #bs-popup2').keyup(function(){
+        if ($('#ragione_sociale', '#bs-popup, #bs-popup2').val() == '' ){
+            $('#nome, #cognome', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
+            $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
+        }else{
+            $('#nome, #cognome', '#bs-popup, #bs-popup2').prop('disabled', true).prop('required', false);
+            $('#ragione_sociale', '#bs-popup, #bs-popup2').prop('disabled', false).prop('required', true);
+        }
+    });
+</script>

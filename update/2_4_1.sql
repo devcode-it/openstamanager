@@ -33,7 +33,7 @@ ALTER TABLE `zz_plugins` ADD `help` VARCHAR(255) NOT NULL AFTER `directory`;
 -- Help text per plugin Ddt del cliente
 UPDATE `zz_plugins` SET `help` = 'Righe ddt del cliente. I ddt senza righe non saranno visualizzati.' WHERE `zz_plugins`.`name` = 'Ddt del cliente';
 
--- Creazione tablla per modelli primanota
+-- Creazione tabella per modelli primanota
 CREATE TABLE IF NOT EXISTS `co_movimenti_modelli` (
   `id` int(11) NOT NULL,
   `idmastrino` int(11) NOT NULL,
@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS `co_righe_contratti_articoli` (
   KEY `idimpianto` (`idimpianto`)
 );
 
--- Modifica query wiget per mostrare solo quelli che non sono stati rinnovati
+-- Modifica query widget per mostrare solo quelli che non sono stati rinnovati
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato, co_contratti.id, DATEDIFF( data_conclusione, NOW() ) AS giorni_rimanenti FROM co_contratti WHERE idstato IN(SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND rinnovabile=1 AND NOW() > DATE_ADD( data_conclusione, INTERVAL - ABS(giorni_preavviso_rinnovo) DAY) AND YEAR(data_conclusione) > 1970 HAVING ISNULL((SELECT id FROM co_contratti contratti WHERE contratti.idcontratto_prev=co_contratti.id )) ORDER BY giorni_rimanenti ASC' WHERE `zz_widgets`.`name` = 'Contratti in scadenza';
 
 -- Aggiunto campo data su movimenti articoli
@@ -144,12 +144,6 @@ ALTER TABLE `in_tipiintervento` ADD `tempo_standard` DECIMAL(10,2)  NULL AFTER `
 
 -- Rinomino Interventi da pianificare in Promemoria contratti da pianificare
 UPDATE `zz_widgets` SET `text` = 'Promemoria contratti da pianificare' WHERE `zz_widgets`.`name` = 'Interventi da pianificare';
-
--- Fix arrotondamenti per fatture di vendita
---UPDATE `zz_views` SET `query` = '(SELECT SUM(round(subtotale,2) - round(sconto,2) + round(iva,2) + round(rivalsainps,2) - round(ritenutaacconto,2)) FROM co_righe_documenti WHERE co_righe_documenti.iddocumento=co_documenti.id GROUP BY iddocumento) + round(bollo,2) + round(iva_rivalsainps,2)'  WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') AND name = 'Totale';
-
--- Fix arrotondamenti per fatture di acquisto
---UPDATE `zz_views` SET `query` = '(SELECT SUM(round(subtotale,2) - round(sconto,2) + round(iva,2) + round(rivalsainps,2) - round(ritenutaacconto,2)) FROM co_righe_documenti WHERE co_righe_documenti.iddocumento=co_documenti.id GROUP BY iddocumento ) + round(bollo,2) + round(iva_rivalsainps,2)' WHERE `zz_views`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') AND name = 'Totale';
 
 -- Aggiunta impostazioni per cambio stato automatici
 INSERT INTO `zz_settings` (`idimpostazione`, `nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES (NULL, 'Cambia automaticamente stato ddt fatturati', '1', 'boolean', '1', 'Ddt');
@@ -289,7 +283,7 @@ UPDATE `or_righe_ordini` SET `idiva` = 75 WHERE `idiva` = 31;
 -- Rimozione idtipointervento da co_contratti
 ALTER TABLE `co_contratti` DROP `idtipointervento`;
 
--- Rinominazione tabelle
+-- Ridenominazione tabelle
 ALTER TABLE `co_righe_contratti` RENAME `co_contratti_promemoria`;
 ALTER TABLE `co_righe2_contratti` RENAME `co_righe_contratti`;
 UPDATE `zz_widgets` SET `query` = REPLACE(`query`, 'co_righe_contratti', 'co_contratti_promemoria');

@@ -553,8 +553,11 @@ ALTER TABLE `co_preventivi`  ADD `master_revision` INT NOT NULL  AFTER `tipo_sco
 -- Plugin revisioni
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Revisioni', 'Revisioni', 13, 13, 'tab', '', 1, 0, 0, '', '', NULL, 'custom', 'revisioni', '');
 
--- Modifica modilo preventivi per revisioni
+-- Modifica modulo preventivi per revisioni
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_preventivi` WHERE 1=1 AND default_revision=1 HAVING 2=2 AND ((\'|period_start|\' >= `data_bozza` AND \'|period_start|\' <= `data_conclusione`) OR (\'|period_end|\' >= `data_bozza` AND \'|period_end|\' <= `data_conclusione`) OR (`data_bozza` >= \'|period_start|\' AND `data_bozza` <= \'|period_end|\') OR (`data_conclusione` >= \'|period_start|\' AND `data_conclusione` <= \'|period_end|\') OR (`data_bozza` >= \'|period_start|\' AND `data_conclusione` = \'0000-00-00\')) ORDER BY `id` DESC' WHERE `zz_modules`.`name` = 'Preventivi';
+
+-- Mi assicuro che non ci siano righe del preventivo collegate a preventivi non più esistenti
+DELETE FROM co_righe_preventivi  WHERE  idpreventivo NOT IN (SELECT id FROM co_preventivi);
 
 -- Chiave secondaria per le righe del preventivo
 ALTER TABLE `co_righe_preventivi` ADD FOREIGN KEY (`idpreventivo`) REFERENCES `co_preventivi`(`id`) ON DELETE CASCADE;
@@ -600,11 +603,11 @@ UPDATE `zz_plugins` SET `options` = ' { "main_query": [ { "type": "table", "fiel
 -- Fix plugin "Ddt del cliente"
 UPDATE `zz_plugins` SET `options` = ' { "main_query": [ { "type": "table", "fields": "Numero, Data, Descrizione, Qtà", "query": "SELECT dt_ddt.id, (SELECT `id` FROM `zz_modules` WHERE `name` = \'Ddt di vendita\') AS _link_module_, dt_ddt.id AS _link_record_, IF(dt_ddt.numero_esterno = \'\', dt_ddt.numero, dt_ddt.numero_esterno) AS Numero, DATE_FORMAT(dt_ddt.data, \'%d/%m/%Y\') AS Data, dt_righe_ddt.descrizione AS `Descrizione`, REPLACE(REPLACE(REPLACE(FORMAT(dt_righe_ddt.qta, 2), \',\', \'#\'), \'.\', \',\'), \'#\', \'.\') AS `Qtà` FROM dt_ddt LEFT JOIN dt_righe_ddt ON dt_ddt.id=dt_righe_ddt.idddt WHERE dt_ddt.idanagrafica=|id_parent| GROUP BY dt_ddt.id HAVING 2=2 ORDER BY dt_ddt.id DESC"} ]}' WHERE `zz_plugins`.`name` = 'Ddt del cliente';
 
--- Aggiunto codice cig e codice cup per contratti
+-- Aggiunto codice cig e codice cup per contratti e interventi
 ALTER TABLE `co_contratti` ADD `codice_cig` VARCHAR(15) AFTER `tipo_sconto_globale`, ADD `codice_cup` VARCHAR(15) AFTER `codice_cig`, ADD `id_documento_fe` VARCHAR(20) AFTER `codice_cup`;
 ALTER TABLE `in_interventi` ADD `codice_cig` VARCHAR(15) AFTER `tipo_sconto_globale`, ADD `codice_cup` VARCHAR(15) AFTER `codice_cig`, ADD `id_documento_fe` VARCHAR(20) AFTER `codice_cup`;
 
--- Agiunta data e ora generazione fattura elettronica
+-- Aggiunta data e ora generazione fattura elettronica
 ALTER TABLE `co_documenti` ADD `xml_generated_at` TIMESTAMP NULL AFTER `codice_xml`;
 
 -- Colonna nella vista fatture per indicare se è stato generato o meno il file xml
@@ -635,8 +638,6 @@ UPDATE `zz_group_module` SET `name` = 'Mostra ai clienti solo le proprie fatture
 UPDATE `zz_group_module` SET `name` = 'Mostra agli agenti solo la prima nota delle anagrafiche di cui sono agenti' WHERE `zz_group_module`.`idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Agenti') AND  `zz_group_module`.`idmodule` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota');
 
 UPDATE `zz_group_module` SET `name` = 'Mostra ai clienti solo i propri impianti' WHERE `zz_group_module`.`idgruppo` = (SELECT `id` FROM `zz_groups` WHERE `nome` = 'Clienti') AND  `zz_group_module`.`idmodule` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'MyImpianti');
-
-
 
 
 -- Importazione dell'account email PEC

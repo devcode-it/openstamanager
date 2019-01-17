@@ -2,13 +2,11 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once Modules::filepath('Fatture di vendita', 'modutil.php');
-
 $report_name = 'fattura_'.$numero.'.pdf';
 
 $autofill = [
     'count' => 0, // Conteggio delle righe
-    'words' => 70, // Numero di parolo dopo cui contare una riga nuova
+    'words' => 70, // Numero di parole dopo cui contare una riga nuova
     'rows' => $fattura_accompagnatoria ? 15 : 20, // Numero di righe massimo presente nella pagina
     'additional' => $fattura_accompagnatoria ? 10 : 15, // Numero di righe massimo da aggiungere
     'columns' => 5, // Numero di colonne della tabella
@@ -56,6 +54,11 @@ foreach ($righe as $r) {
     $count = 0;
     $count += ceil(strlen($r['descrizione']) / $autofill['words']);
     $count += substr_count($r['descrizione'], PHP_EOL);
+
+    $v_iva[$r['desc_iva']] = sum($v_iva[$r['desc_iva']], $r['iva']);
+    $v_totale[$r['desc_iva']] = sum($v_totale[$r['desc_iva']], [
+        $r['subtotale'], -$r['sconto'],
+    ]);
 
     // Valori assoluti
     $r['qta'] = abs($r['qta']);
@@ -144,7 +147,7 @@ foreach ($righe as $r) {
             <td class='text-right'>";
     if (empty($r['is_descrizione'])) {
         echo '
-				'.(empty($r['qta']) || empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
+				'.(empty($r['qta']) ? '' : Translator::numberToLocale($r['subtotale'] / $r['qta'])).' &euro;';
 
         if ($r['sconto'] > 0) {
             echo "
@@ -167,7 +170,7 @@ foreach ($righe as $r) {
             <td class='text-right'>";
     if (empty($r['is_descrizione'])) {
         echo '
-				'.(empty($r['subtotale']) ? '' : Translator::numberToLocale($r['subtotale'] - $r['sconto'])).' &euro;';
+				'.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
 
         if ($r['sconto'] > 0) {
             /*echo "
@@ -196,10 +199,6 @@ foreach ($righe as $r) {
         </tr>';
 
     $autofill['count'] += $count;
-    $v_iva[$r['desc_iva']] = sum($v_iva[$r['desc_iva']], $r['iva']);
-    $v_totale[$r['desc_iva']] = sum($v_totale[$r['desc_iva']], [
-        $r['subtotale'], -$r['sconto'],
-    ]);
 }
 
 echo '

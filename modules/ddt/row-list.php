@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once Modules::filepath('Fatture di vendita', 'modutil.php');
-
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">
     <tr>
@@ -375,7 +373,7 @@ $(document).ready(function(){
                     order += ","+$(this).data("id");
                 });
                 order = order.replace(/^,/, "");
-                
+
 				$.post("'.$rootdir.'/actions.php", {
 					id: ui.item.data("id"),
 					id_module: '.$id_module.',

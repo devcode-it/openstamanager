@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once Modules::filepath('Fatture di vendita', 'modutil.php');
-
 switch (post('op')) {
     case 'add':
         $idanagrafica = post('idanagrafica');
@@ -258,12 +256,12 @@ switch (post('op')) {
         break;
 
         case 'update_position':
-            $orders = explode(",", $_POST['order']);
+            $orders = explode(',', $_POST['order']);
             $order = 0;
 
             foreach ($orders as $idriga) {
                 $dbo->query('UPDATE `co_righe_contratti` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
-                $order++;
+                ++$order;
             }
 
             break;
@@ -344,12 +342,11 @@ switch (post('op')) {
                         'id_plugin' => Plugins::get('Pianificazione interventi')['id'],
                         'id_record' => $id_promemoria,
                     ]);
-					
                 }
-				
-				// Cambio stato precedente contratto in concluso (non più pianificabile)
-				$dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT id FROM co_staticontratti WHERE pianificabile = 0 AND fatturabile = 1 AND descrizione = \'Concluso\')  WHERE `id` = '.prepare($id_record));
-					
+
+                // Cambio stato precedente contratto in concluso (non più pianificabile)
+                $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT id FROM co_staticontratti WHERE pianificabile = 0 AND fatturabile = 1 AND descrizione = \'Concluso\')  WHERE `id` = '.prepare($id_record));
+
                 flash()->info(tr('Contratto rinnovato!'));
 
                 $id_record = $new_idcontratto;

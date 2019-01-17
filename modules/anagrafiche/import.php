@@ -2,7 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 use Modules\Anagrafiche\Anagrafica;
-
 use Modules\Anagrafiche\Anagrafica;
 
 switch (post('op')) {
@@ -48,11 +47,14 @@ switch (post('op')) {
 
                 // Ricerca di eventuale anagrafica corrispondente
                 if (!empty($primary_key)) {
-                    $anagrafica = Anagrafica::find($dati_anagrafica[$primary_key]);
+                    //impedisco di aggiornare la mia anagrafica azienda
+                    if ($dati_anagrafica[$primary_key] != setting('Azienda predefinita')) {
+                        $anagrafica = Anagrafica::where($primary_key, '=', $dati_anagrafica[$primary_key])->first();
+                    }
                 }
 
                 if (empty($anagrafica)) {
-                    $anagrafica = Anagrafica::make($dati_anagrafica['ragione_sociale']);
+                    $anagrafica = Anagrafica::build($dati_anagrafica['ragione_sociale']);
                 }
 
                 $anagrafica->fill($dati_anagrafica);
@@ -97,6 +99,10 @@ return [
         'label' => 'Indirizzo',
     ],
     [
+        'field' => 'indirizzo2',
+        'label' => 'Civico',
+    ],
+    [
         'field' => 'cap',
         'label' => 'CAP',
     ],
@@ -115,6 +121,18 @@ return [
     [
         'field' => 'codice_fiscale',
         'label' => 'Codice Fiscale',
+    ],
+    [
+        'field' => 'data_nascita',
+        'label' => 'Data di nascita',
+    ],
+    [
+        'field' => 'luogo_nascita',
+        'label' => 'Luogo di nascita',
+    ],
+    [
+        'field' => 'sesso',
+        'label' => 'Sesso',
     ],
     [
         'field' => 'piva',

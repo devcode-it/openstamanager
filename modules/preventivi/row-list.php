@@ -15,7 +15,7 @@ echo '
 			<th>'.tr('Descrizione').'</th>
 			<th width="120">'.tr('Q.tà').'</th>
 			<th width="80">'.tr('U.m.').'</th>
-			<th width="120">'.tr('Costo unitario').'</th>
+			<th width="160">'.tr('Prezzo unitario').'</th>
 			<th width="120">'.tr('Iva').'</th>
 			<th width="120">'.tr('Imponibile').'</th>
 			<th width="60"></th>
@@ -58,7 +58,7 @@ foreach ($rs as $r) {
     echo '
             </td>';
 
-    // costo unitario
+    // prezzo di vendita unitario
     echo '
             <td class="text-right">';
     if (empty($r['is_descrizione'])) {
@@ -95,8 +95,6 @@ foreach ($rs as $r) {
         echo '
                 '.Translator::numberToLocale($r['subtotale'] - $r['sconto']).' &euro;';
     }
-    echo'
-            </td>';
 
     // Possibilità di rimuovere una riga solo se il preventivo non è stato pagato
     echo '
@@ -130,6 +128,10 @@ foreach ($rs as $r) {
 }
 
 // Calcoli
+$totale_acquisto = 0;
+foreach ($rs as $r) {
+    $totale_acquisto += ($r['prezzo_unitario_acquisto'] * $r['qta']);
+}
 $imponibile = sum(array_column($rs, 'subtotale'));
 $sconto = sum(array_column($rs, 'sconto'));
 $iva = sum(array_column($rs, 'iva'));
@@ -139,6 +141,10 @@ $imponibile_scontato = sum($imponibile, -$sconto);
 $totale = sum([
     $imponibile_scontato,
     $iva,
+]);
+$totale_guadagno = sum([
+    $imponibile_scontato
+    - $totale_acquisto,
 ]);
 
 echo '
@@ -236,7 +242,7 @@ $(document).ready(function(){
                     order += ","+$(this).data("id");
                 });
                 order = order.replace(/^,/, "");
-                
+
 				$.post("'.$rootdir.'/actions.php", {
 					id: ui.item.data("id"),
 					id_module: '.$id_module.',

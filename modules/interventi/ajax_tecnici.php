@@ -6,8 +6,6 @@ if (file_exists(__DIR__.'/../../../core.php')) {
     include_once __DIR__.'/../../core.php';
 }
 
-include_once Modules::filepath('Interventi', 'modutil.php');
-
 $show_costi = true;
 // Limitazione delle azioni dei tecnici
 if ($user['gruppo'] == 'Tecnici') {
@@ -19,10 +17,10 @@ $rss = $dbo->fetchArray('SELECT completato AS flag_completato FROM in_statiinter
 $is_completato = $rss[0]['flag_completato'];
 
 // Sessioni dell'intervento
-$query = 'SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at AS anagrafica_deleted_at, in_tipiintervento.descrizione AS descrizione_tipo FROM in_interventi_tecnici
+$query = 'SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at AS anagrafica_deleted_at, in_tipiintervento.descrizione AS descrizione_tipo, in_interventi_tecnici.tipo_scontokm AS tipo_sconto_km FROM in_interventi_tecnici
 INNER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica
 INNER JOIN in_tipiintervento ON in_interventi_tecnici.id_tipo_intervento = in_tipiintervento.id
-WHERE in_interventi_tecnici.idintervento='.prepare($id_record)." ORDER BY ragione_sociale ASC, in_interventi_tecnici.orario_inizio ASC, in_interventi_tecnici.id ASC";
+WHERE in_interventi_tecnici.idintervento='.prepare($id_record).' ORDER BY ragione_sociale ASC, in_interventi_tecnici.orario_inizio ASC, in_interventi_tecnici.id ASC';
 $sessioni = $dbo->fetchArray($query);
 
 $prev_tecnico = '';
@@ -175,7 +173,7 @@ if (!empty($sessioni)) {
             <td style="border-right:1px solid #aaa;">
                 '.tr('_TOT_ _TYPE_', [
                     '_TOT_' => Translator::numberToLocale($sessione['scontokm_unitario']),
-                    '_TYPE_' => ($sessione['tipo_scontokm'] == 'PRC' ? '%' : '&euro;'),
+                    '_TYPE_' => ($sessione['tipo_sconto_km'] == 'PRC' ? '%' : '&euro;'),
                 ]).'
             </td>';
         }
@@ -209,14 +207,14 @@ if (!$is_completato) {
     echo '
 <!-- AGGIUNTA TECNICO -->
 <div class="row">
-    <div class="col-md-offset-6 col-md-3">
-        {[ "type": "select", "label": "'.tr('Aggiungi tecnico').'", "name": "nuovotecnico", "ajax-source": "tecnici" ]}
+    <div class="col-md-offset-6 col-md-4">
+        {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "nuovotecnico", "placeholder": "'.tr('- Seleziona un tecnico -').'", "ajax-source": "tecnici", "icon-after": "add|'.Modules::get('Anagrafiche')['id'].'|tipoanagrafica=Tecnico" ]}
     </div>
 
-    <div class="col-md-3">
-        <br>
-        <button type="button" class="btn btn-primary btn-block" onclick="if($(\'#nuovotecnico\').val()){ add_tecnici($(\'#nuovotecnico\').val()); }else{ alert(\'Seleziona un tecnico!\'); }">
-            <i class="fa fa-plus"></i> '.tr('Aggiungi tecnico').'
+    <div class="col-md-2">
+        <label>&nbsp;</label>
+        <button type="button" class="btn btn-primary btn-block" onclick="if($(\'#nuovotecnico\').val()){ add_tecnici($(\'#nuovotecnico\').val()); }else{ swal(\''.tr('Attenzione').'\', \''.tr('Seleziona il tecnico da aggiungere').'.\', \'warning\'); $(\'#nuovotecnico\').focus(); }">
+            <i class="fa fa-plus"></i> '.tr('Aggiungi').'
         </button>
     </div>
 </div>';

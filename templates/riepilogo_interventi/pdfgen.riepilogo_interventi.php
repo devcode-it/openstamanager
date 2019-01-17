@@ -15,10 +15,10 @@ $search_filters = [];
 if (is_array($_SESSION['module_'.$id_module])) {
     foreach ($_SESSION['module_'.$id_module] as $field => $value) {
         if (!empty($value) && starts_with($field, 'search_')) {
-            $field_name = str_replace('search_', '', $field_name);
+            $field_name = str_replace('search_', '', $field);
             $field_name = str_replace('__', ' ', $field_name);
             $field_name = str_replace('-', ' ', $field_name);
-            array_push($search_filters, '`'.$field_name.'` LIKE "%'.$field_value.'%"');
+            array_push($search_filters, '`'.$field_name.'` LIKE "%'.$value.'%"');
         }
     }
 }
@@ -73,6 +73,7 @@ $costo_km_cons = [];
 $diritto_chiamata_cons = [];
 
 $idinterventi = ['0'];
+$costi_interventi = [];
 
 foreach ($interventi as $intervento) {
     // Lettura dati dei tecnici dell'intervento corrente
@@ -113,6 +114,8 @@ foreach ($interventi as $intervento) {
 
     $totale_dirittochiamata += floatval($rs[$i]['prezzo_dirittochiamata']);
     array_push($idinterventi, "'".$intervento['id']."'");
+
+    array_push($costi_interventi, get_costi_intervento($intervento['id']));
 }
 
 $body .= '<big><big><b>RIEPILOGO INTERVENTI DAL '.Translator::dateToLocale($_SESSION['period_start']).' al '.Translator::dateToLocale($_SESSION['period_end'])."</b></big></big><br/><br/>\n";
@@ -141,7 +144,7 @@ if (sizeof($info_intervento) > 0) {
     $body .= "</th>\n";
 
     $body .= "<th align=\"center\" style=\"width:15mm;\">\n";
-    $body .= "<span>Costo unitario all&rsquo;ora</span>\n";
+    $body .= "<span>Costo medio unitario all&rsquo;ora</span>\n";
     $body .= "</th>\n";
 
     $body .= "<th align=\"center\" style=\"width:15mm;\">\n";
@@ -157,11 +160,17 @@ if (sizeof($info_intervento) > 0) {
 
     // Tabella con i dati
     for ($i = 0; $i < sizeof($info_intervento); ++$i) {
-        $subtotale_consuntivo = floatval($costo_ore_cons[$i] + $costo_km_cons[$i] + $diritto_chiamata_cons[$i]);
-        $totale_consuntivo += $subtotale_consuntivo;
+        $subtotale_consuntivo = $costi_interventi[$i]['totale_addebito'];
+        $totale_consuntivo += $costi_interventi[$i]['totale_addebito'];
+        //$subtotale_consuntivo = floatval($costo_ore_cons[$i] + $costo_km_cons[$i] + $diritto_chiamata_cons[$i]);
+        //$totale_consuntivo += $subtotale_consuntivo;
 
-        $subtotale_calcolato = $costi_orari[$i] * $ore[$i] + $costi_km[$i] * $km[$i] + $diritto_chiamata[$i];
-        $totale_calcolato += $subtotale_calcolato;
+        //$subtotale_calcolato = $costi_orari[$i] * $ore[$i] + $costi_km[$i] * $km[$i] + $diritto_chiamata[$i];
+        //$totale_calcolato += $subtotale_calcolato;
+        $subtotale_calcolato = $costi_interventi[$i]['totale_scontato'];
+        $totale_calcolato += $costi_interventi[$i]['totale_scontato'];
+
+        $costi_orari[$i] = ($costi_interventi[$i]['manodopera_addebito'] / $ore[$i]);
 
         $body .= "<tr><td>\n";
         $body .= '<div style="width:75mm;"><span>'.$info_intervento[$i].'<br/><span style="font-size:10px; color:#777;"><b>Tecnici:</b></span></span><br/><small>'.$tecnici[$i]."</small></div>\n";

@@ -5,10 +5,10 @@ namespace Traits;
 trait PermissionTrait
 {
     /**
-    * Restituisce i permessi relativi all'account in utilizzo.
-    *
-    * @return string
-    */
+     * Restituisce i permessi relativi all'account in utilizzo.
+     *
+     * @return string
+     */
     public function getPermissionAttribute()
     {
         if (auth()->user()->is_admin) {

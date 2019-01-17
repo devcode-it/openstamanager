@@ -8,18 +8,7 @@ unset($_SESSION['superselect']['idsede']);
 unset($_SESSION['superselect']['non_fatturato']);
 
 // Calcolo del nuovo codice
-$idintervento_template = setting('Formato codice intervento');
-$idintervento_template = str_replace('#', '%', $idintervento_template);
-
-$rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice=(SELECT MAX(CAST(codice AS SIGNED)) FROM in_interventi) AND codice LIKE '.prepare($idintervento_template).' ORDER BY codice DESC LIMIT 0,1');
-if (!empty($rs[0]['codice'])) {
-    $new_codice = Util\Generator::generate(setting('Formato codice intervento'), $rs[0]['codice']);
-}
-
-if (empty($new_codice)) {
-    $rs = $dbo->fetchArray('SELECT codice FROM in_interventi WHERE codice LIKE '.prepare($idintervento_template).' ORDER BY codice DESC LIMIT 0,1');
-    $new_codice = Util\Generator::generate(setting('Formato codice intervento'), $rs[0]['codice']);
-}
+$new_codice = \Modules\Interventi\Intervento::getNextCodice();
 
 // Se ho passato l'idanagrafica, carico il tipo di intervento di default
 $idanagrafica = filter('idanagrafica');
@@ -362,7 +351,7 @@ if (!empty($id_intervento)) {
 		session_set('superselect,idanagrafica', $(this).val(), 0);
 
         var value = !$(this).val() ? true : false;
-        var placeholder = !$(this).val() ? '<?php echo tr("Seleziona prima un cliente...");?>' : '<?php echo tr("-Seleziona un\'opzione-");?>';
+        var placeholder = !$(this).val() ? '<?php echo tr('Seleziona prima un cliente...'); ?>' : '<?php echo tr("-Seleziona un\'opzione-"); ?>';
 
 		$("#bs-popup #idsede").prop("disabled", value);
 		$("#bs-popup #idsede").selectReset(placeholder);
@@ -409,7 +398,7 @@ if (!empty($id_intervento)) {
 
         if($(this).val()){
             //TODO: disattivato perché genera problemi con il change successivo di iditpointervento per il tempo standard*
-			// $('#bs-popup #id_tipo_intervento').selectSetNew($(this).selectData().id_tipo_intervento, $(this).selectData().id_tipo_intervento_descrizione);
+			$('#bs-popup #idtipointervento').selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
         }
 	});
 
@@ -427,10 +416,11 @@ if (!empty($id_intervento)) {
         $("#bs-popup #componenti").selectReset();
 	});
 
-	// tempo standard*
-	$('#bs-popup #id_tipo_intervento').change( function(){
+	// tempo standard
+    // TODO: tempo_standard da preventivo e contratto attraverso selectData() relativi
+	$('#bs-popup #idtipointervento').change( function(){
 
-		if ( (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
+		if ($(this).selectData() && (($(this).selectData().tempo_standard)>0) && ('<?php echo filter('orario_fine'); ?>' == '')){
 			tempo_standard = $(this).selectData().tempo_standard;
 
 			data = moment($('#bs-popup #orario_inizio').val(), globals.timestampFormat);

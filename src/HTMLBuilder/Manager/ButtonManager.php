@@ -11,8 +11,6 @@ class ButtonManager implements ManagerInterface
     {
         $options['parameters'] = isset($options['parameters']) ? $options['parameters'] : null;
 
-        $result = '';
-
         if (isset($options['id'])) {
             $result = $this->link($options);
         } else {
@@ -24,14 +22,12 @@ class ButtonManager implements ManagerInterface
 
     protected function getInfo($options)
     {
-        $result = [];
-
         if ($options['type'] == 'print') {
             $print = \Prints::get($options['id']);
 
             $result = [
                 'link' => \Prints::getHref($options['id'], $options['id_record'], $options['parameters']),
-                'title' => tr('Stampa').' '.strtolower($print['title']),
+                'title' => tr('Stampa').' '.((strtoupper($print['title']) == $print['title']) ? $print['title'] : lcfirst($print['title'])),
                 'icon' => $print['icon'],
             ];
         } else {
@@ -39,7 +35,7 @@ class ButtonManager implements ManagerInterface
 
             $result = [
                 'link' => ROOTDIR.'/mail.php?id_module='.$options['id_module'].'&id_record='.$options['id_record'].'&id='.$options['id'],
-                'title' => tr('Invia').' '.strtolower($template['name']),
+                'title' => tr('Invia').' '.((strtoupper($template['name']) == $template['name']) ? $template['name'] : lcfirst($template['name'])),
                 'icon' => $template['icon'],
                 'type' => 'modal',
             ];
@@ -81,8 +77,6 @@ class ButtonManager implements ManagerInterface
 
     protected function getList($options)
     {
-        $results = [];
-
         if ($options['type'] == 'print') {
             $results = \Prints::getModulePrints($options['id_module']);
         } else {
@@ -159,8 +153,6 @@ class ButtonManager implements ManagerInterface
 
     protected function defaultText($options)
     {
-        $result = '';
-
         if ($options['type'] == 'print') {
             $result = '<i class="fa fa-print"></i> '.tr('Stampa');
         } else {

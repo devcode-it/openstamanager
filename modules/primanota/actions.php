@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once Modules::filepath('Fatture di vendita', 'modutil.php');
-
 switch (post('op')) {
     case 'add':
         $all_ok = true;
@@ -93,8 +91,13 @@ switch (post('op')) {
 
         //Creo il modello di prima nota
 
-        if (post('crea_modello') == '1') {
-            $idmastrino = get_new_idmastrino('co_movimenti_modelli');
+        if (!empty(post('crea_modello'))) {
+            if (empty(post('idmastrino'))) {
+                $idmastrino = get_new_idmastrino('co_movimenti_modelli');
+            } else {
+                $dbo->query('DELETE FROM co_movimenti_modelli WHERE idmastrino='.prepare(post('idmastrino')));
+                $idmastrino = post('idmastrino');
+            }
 
             for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
                 $idconto = post('idconto')[$i];
@@ -157,7 +160,7 @@ switch (post('op')) {
                     // Tengo conto dei valori negativi per gli acquisti e dei valori positivi per le vendite
                     if (($dir == 'uscita' && $totale < 0) || ($dir == 'entrata' && $totale > 0)) {
                         // Azzero lo scadenziario e lo ricalcolo
-                        $dbo->query("UPDATE co_scadenziario SET pagato=0, data_pagamento = NULL WHERE iddocumento=".prepare($iddocumento));
+                        $dbo->query('UPDATE co_scadenziario SET pagato=0, data_pagamento = NULL WHERE iddocumento='.prepare($iddocumento));
 
                         // Ricalcolo lo scadenziario per il solo nuovo importo
                         aggiorna_scadenziario($iddocumento, $totale, $data);
@@ -276,7 +279,7 @@ switch (post('op')) {
 
                         // ...se l'importo è a zero, azzero anche la data di pagamento
                         else {
-                            $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($new_value).", data_pagamento = NULL WHERE id=".prepare($rs[$i]['id']));
+                            $dbo->query('UPDATE co_scadenziario SET pagato='.prepare($new_value).', data_pagamento = NULL WHERE id='.prepare($rs[$i]['id']));
                         }
 
                         $rimanente = 0;

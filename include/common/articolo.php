@@ -2,16 +2,16 @@
 
 $result['idarticolo'] = isset($result['idarticolo']) ? $result['idarticolo'] : null;
 
-unset($_SESSION['superselect']['dir']);
-unset($_SESSION['superselect']['idanagrafica']);
-unset($_SESSION['superselect']['idarticolo']);
+$_SESSION['superselect']['dir'] = $options['dir'];
+$_SESSION['superselect']['idanagrafica'] = $options['idanagrafica'];
+$_SESSION['superselect']['idarticolo'] = $options['idarticolo'];
 
 // Articolo
 if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
     echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli" ]}
+            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli" '.(($options['dir'] == 'uscita') ? ',"icon-after": "add|'.Modules::get('Articoli')['id'].'"' : '').' ]}
         </div>
     </div>';
 } else {

@@ -1,7 +1,7 @@
 <?php
 
 $paths = App::getPaths();
-$pageTitle = $pageTitle ?: $structure->title;
+$pageTitle = !empty($pageTitle) ? $pageTitle : $structure->title;
 
 echo '<!DOCTYPE html>
 <html>

@@ -2,8 +2,12 @@
 
 include_once __DIR__.'/../../core.php';
 
-include_once Modules::filepath('Articoli', 'modutil.php');
-include_once Modules::filepath('Fatture di vendita', 'modutil.php');
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Ordini\Components\Articolo;
+use Modules\Ordini\Components\Descrizione;
+use Modules\Ordini\Components\Riga;
+use Modules\Ordini\Ordine;
+use Modules\Ordini\Tipo;
 
 $module = Modules::get($id_module);
 
@@ -16,56 +20,28 @@ if ($module['name'] == 'Ordini cliente') {
 switch (post('op')) {
     case 'add':
         $idanagrafica = post('idanagrafica');
-
         $data = post('data', true);
 
         // Leggo se l'ordine è cliente o fornitore
-        $rs = $dbo->fetchArray('SELECT id FROM or_tipiordine WHERE dir='.prepare($dir));
-        $id_tipo_ordine = $rs[0]['id'];
+        $tipo = $dbo->fetchOne('SELECT id FROM or_tipiordine WHERE dir='.prepare($dir));
 
-        if (post('idanagrafica') !== null) {
-            $numero = get_new_numeroordine($data);
-            if ($dir == 'entrata') {
-                $numero_esterno = get_new_numerosecondarioordine($data);
-            } else {
-                $numero_esterno = '';
-            }
+        $anagrafica = Anagrafica::find($idanagrafica);
+        $tipo = Tipo::find($tipo['id']);
 
-            $campo = ($dir == 'entrata') ? 'idpagamento_vendite' : 'idpagamento_acquisti';
+        $ordine = Ordine::build($anagrafica, $tipo, $data);
+        $id_record = $ordine->id;
 
-            // Tipo di pagamento predefinito dall'anagrafica
-            $rs = $dbo->fetchArray('SELECT id FROM co_pagamenti WHERE id=(SELECT '.$campo.' AS pagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica).')');
-            $idpagamento = isset($rs[0]) ? $rs[0]['id'] : null;
+        flash()->info(tr('Aggiunto ordine numero _NUM_!', [
+            '_NUM_' => $numero,
+        ]));
 
-            // Se l'ordine è un ordine cliente e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
-            if ($dir == 'entrata' && empty($idpagamento)) {
-                $idpagamento = setting('Tipo di pagamento predefinito');
-            }
-
-            $query = 'INSERT INTO or_ordini( numero, numero_esterno, idanagrafica, id_tipo_ordine, idpagamento, data, id_stato ) VALUES ( '.prepare($numero).', '.prepare($numero_esterno).', '.prepare($idanagrafica).', '.prepare($id_tipo_ordine).', '.prepare($idpagamento).', '.prepare($data).", (SELECT `id` FROM `or_statiordine` WHERE `descrizione`='Bozza') )";
-            $dbo->query($query);
-
-            $id_record = $dbo->lastInsertedID();
-
-            flash()->info(tr('Aggiunto ordine numero _NUM_!', [
-                '_NUM_' => $numero,
-            ]));
-        }
         break;
 
     case 'update':
-
-        $numero_esterno = post('numero_esterno');
-        $numero = post('numero');
-        $data = post('data', true);
-        $idanagrafica = post('idanagrafica');
-        $note = post('note');
-        $note_aggiuntive = post('note_aggiuntive');
-        $id_stato = post('id_stato');
+        $idstatoordine = post('idstatoordine');
         $idpagamento = post('idpagamento');
         $idsede = post('idsede');
-        $idconto = post('idconto');
-        $idagente = post('idagente');
+
         $totale_imponibile = get_imponibile_ordine($id_record);
         $totale_ordine = get_totale_ordine($id_record);
 
@@ -88,22 +64,33 @@ switch (post('op')) {
         $pagamento = $rs[0]['descrizione'];
 
         // Query di aggiornamento
-        $query = 'UPDATE or_ordini SET idanagrafica='.prepare($idanagrafica).','.
-            ' numero='.prepare($numero).','.
-            ' data='.prepare($data).','.
-            ' idagente='.prepare($idagente).','.
-            ' id_stato='.prepare($id_stato).','.
-            ' idpagamento='.prepare($idpagamento).','.
-            ' idsede='.prepare($idsede).','.
-            ' numero_esterno='.prepare($numero_esterno).','.
-            ' note='.prepare($note).','.
-            ' note_aggiuntive='.prepare($note_aggiuntive).','.
-            ' idconto='.prepare($idconto).','.
-            ' idrivalsainps='.prepare($idrivalsainps).','.
-            ' idritenutaacconto='.prepare($idritenutaacconto).','.
-            ' tipo_sconto_globale='.prepare($tipo_sconto).','.
-            ' sconto_globale='.prepare($sconto).','.
-            ' bollo=0, rivalsainps=0, ritenutaacconto=0 WHERE id='.prepare($id_record);
+        $dbo->update('or_ordini', [
+            'idanagrafica' => post('idanagrafica'),
+            'data' => post('data'),
+            'numero' => post('numero'),
+            'numero_esterno' => post('numero_esterno'),
+            'note' => post('note'),
+            'note_aggiuntive' => post('note_aggiuntive'),
+
+            'idagente' => post('idagente'),
+            'id_stato' => $idstatoordine,
+            'idpagamento' => $idpagamento,
+            'idsede' => $idsede,
+            'idconto' => post('idconto'),
+            'idrivalsainps' => $idrivalsainps,
+            'idritenutaacconto' => $idritenutaacconto,
+
+            'sconto_globale' => $sconto,
+            'tipo_sconto_globale' => $tipo_sconto,
+
+            'bollo' => 0,
+            'rivalsainps' => 0,
+            'ritenutaacconto' => 0,
+
+            'id_documento_fe' => post('id_documento_fe'),
+            'codice_cup' => post('codice_cup'),
+            'codice_cig' => post('codice_cig'),
+        ], ['id' => $id_record]);
 
         if ($dbo->query($query)) {
             aggiorna_sconto([
@@ -350,12 +337,12 @@ switch (post('op')) {
         break;
 
         case 'update_position':
-            $orders = explode( ",", $_POST['order'] );
+            $orders = explode(',', $_POST['order']);
             $order = 0;
 
-            foreach( $orders as $idriga ){
+            foreach ($orders as $idriga) {
                 $dbo->query('UPDATE `or_righe_ordini` SET `order`='.prepare($order).' WHERE id='.prepare($idriga));
-                $order++;
+                ++$order;
             }
 
             break;

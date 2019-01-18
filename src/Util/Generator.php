@@ -100,7 +100,7 @@ class Generator
         $values = array_column($replaces, 'regex');
 
         $pattern = preg_replace('/#{1,}/', '#', $pattern);
-        $pattern = preg_quote($pattern, '/');
+        $pattern = str_replace('\\#','#',preg_quote($pattern, '/'));
         $pattern = str_replace(array_keys($replaces), array_values($values), $pattern);
 
         // Individuazione dei valori

@@ -47,18 +47,22 @@ if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom
                 elseif (preg_match('/^color_(.+?)$/', $total['fields'][$i], $m)) {
                     $total['search_inside'][$i] = '`color_title_'.$m[1].'`';
                 }
-                if (strpos($columns[$i]['search']['value'],"&lt;")!==false) {
-                    if (strpos($columns[$i]['search']['value'],"=")!==false) {
-                        $search_filters[] = $total['search_inside'][$i].' <= '.prepare(Filter::parse(str_replace('=', '', str_replace('&lt;', '', $columns[$i]['search']['value']))));
+
+                // Gestione confronti
+                $real_value = trim(str_replace(['&lt;', '&gt;'], ['<', '>'], $columns[$i]['search']['value']));
+                $more = starts_with($real_value, '>=') || starts_with($real_value, '> =') || starts_with($real_value, '>');
+                $minus = starts_with($real_value, '<=') || starts_with($real_value, '< =') || starts_with($real_value, '<');
+
+                if ($minus || $more) {
+                    $sign = str_contains($real_value, '=') ? '=' : '';
+                    if ($more) {
+                        $sign = '>'.$sign;
                     } else {
-                        $search_filters[] = $total['search_inside'][$i].' < '.prepare(Filter::parse(str_replace('&lt;', '', $columns[$i]['search']['value'])));
+                        $sign = '<'.$sign;
                     }
-                } elseif (strpos($columns[$i]['search']['value'],"&gt;")!==false) {
-                    if (strpos($columns[$i]['search']['value'],"=")!==false) {
-                        $search_filters[] = $total['search_inside'][$i].' >= '.prepare(Filter::parse(str_replace('=', '', str_replace('&gt;', '', $columns[$i]['search']['value']))));
-                    } else {
-                        $search_filters[] = $total['search_inside'][$i].' > '.prepare(Filter::parse(str_replace('&gt', '', $columns[$i]['search']['value'])));
-                    }
+
+                    $value = trim(str_replace(['&lt;', '=', '&gt;'], '', $columns[$i]['search']['value']));
+                    $search_filters[] = 'CAST('.$total['search_inside'][$i].' AS UNSIGNED) '.$sign.' '.prepare($value);
                 } else {
                     $search_filters[] = $total['search_inside'][$i].' LIKE '.prepare('%'.trim($columns[$i]['search']['value'].'%'));
                 }

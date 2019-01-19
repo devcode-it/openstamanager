@@ -31,7 +31,7 @@ switch (post('op')) {
 
         flash()->info(tr('Aggiunto ddt in _TYPE_ numero _NUM_!', [
             '_TYPE_' => $dir,
-            '_NUM_' => $numero,
+            '_NUM_' => $ddt->numero,
         ]));
 
         break;

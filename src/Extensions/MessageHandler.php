@@ -13,7 +13,7 @@ class MessageHandler extends AbstractProcessingHandler
 {
     protected function write(array $record)
     {
-        if (isAjaxRequest()) {
+        if (\Whoops\Util\Misc::isAjaxRequest()) {
             return;
         }
 

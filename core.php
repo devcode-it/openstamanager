@@ -117,7 +117,7 @@ if (!API::isAPIRequest()) {
             'message' => $exception->getMessage(),
             'file' => $exception->getFile(),
             'line' => $exception->getLine(),
-            'trace' => null,
+            'trace' => $exception->getTraceAsString(),
         ]);
     });
 }

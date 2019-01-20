@@ -32,7 +32,7 @@ switch (post('op')) {
         $id_record = $ordine->id;
 
         flash()->info(tr('Aggiunto ordine numero _NUM_!', [
-            '_NUM_' => $numero,
+            '_NUM_' => $ordine->numero,
         ]));
 
         break;

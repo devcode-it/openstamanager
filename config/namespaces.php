@@ -11,6 +11,7 @@ return [
     'modules/fatture' => 'Modules\Fatture',
     'modules/ordini' => 'Modules\Ordini',
     'modules/preventivi' => 'Modules\Preventivi',
+    'modules/contratti' => 'Modules\Contratti',
     'modules/interventi' => 'Modules\Interventi',
     'plugins/exportFE' => 'Plugins\ExportFE',
     'plugins/importFE' => 'Plugins\ImportFE',

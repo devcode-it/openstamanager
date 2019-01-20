@@ -7,7 +7,6 @@ use Common\Model;
 class Stato extends Model
 {
     public $incrementing = false;
-    protected $primaryKey = 'id';
     protected $table = 'in_statiintervento';
 
     public function interventi()

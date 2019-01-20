@@ -50,7 +50,7 @@ class Anagrafica extends Model
         $model->tipologie = $tipologie;
 
         // Creazione della sede legale
-        $sede = Sede::make($model, true);
+        $sede = Sede::build($model, true);
         $model->id_sede_legale = $sede->id;
 
         $model->save();
@@ -106,7 +106,7 @@ class Anagrafica extends Model
     public static function fixTecnico(Anagrafica $anagrafica)
     {
         // Copio già le tariffe per le varie attività
-        $result = database()->query('INSERT INTO in_tariffe(idtecnico, id_tipo_intervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) SELECT '.prepare($model->id).', id_tipo_intervento, costo_orario, costo_km, costo_diritto_chiamata, costo_orario_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico FROM in_tipiintervento');
+        $result = database()->query('INSERT INTO in_tariffe(idtecnico, id_tipo_intervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) SELECT '.prepare($model->id).', id, costo_orario, costo_km, costo_diritto_chiamata, costo_orario_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico FROM in_tipiintervento');
 
         if (!$result) {
             flash()->error(tr("Errore durante l'importazione tariffe!"));
@@ -184,22 +184,17 @@ class Anagrafica extends Model
 
     public function getPartitaIvaAttribute()
     {
-        return $this->sedeLegale->partita_iva;
+        return $this->piva;
     }
 
     public function setPartitaIvaAttribute($value)
     {
-        $this->sedeLegale->partita_iva = $value;
-    }
-
-    public function getCodiceFiscaleAttribute($value)
-    {
-        return $this->sedeLegale->codice_fiscale;
+        $this->attributes['piva'] = trim(strtoupper($value));
     }
 
     public function setCodiceFiscaleAttribute($value)
     {
-        $this->sedeLegale->codice_fiscale = $value;
+        $this->attributes['codice_fiscale'] = trim(strtoupper($value));
     }
 
     public function setCodiceDestinatarioAttribute($value)

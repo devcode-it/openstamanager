@@ -274,8 +274,8 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                                 swal("'.tr('Configurazione corretta').'", "'.tr('Ti sei connesso con successo al database').'. '.tr("Clicca su 'Installa' per proseguire").'.", "success");
                             }
                         },
-                        error: function(data) {
-                            alert("'.tr('Errore').': " + data);
+                        error: function(xhr, error, thrown) {
+                            ajaxError(xhr, error, thrown);
                         }
                     });
                 }

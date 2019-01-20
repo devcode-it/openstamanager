@@ -4,7 +4,11 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'clienti':
-            $query = 'SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale) AS descrizione, id_tipo_intervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale';
+            $query = 'SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale) AS descrizione, id_tipo_intervento_default
+            FROM an_anagrafiche
+            INNER JOIN `an_sedi` ON `an_sedi`.`id`=`an_anagrafiche`.`id_sede_legale`
+            INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica
+            INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id |where| ORDER BY ragione_sociale';
 
             foreach ($elements as $element) {
                 $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
@@ -26,7 +30,8 @@ switch ($resource) {
         break;
 
     case 'fornitori':
-            $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))) AS descrizione, id_tipo_intervento_default FROM an_anagrafiche
+            $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))) AS descrizione, id_tipo_intervento_default
+            FROM an_anagrafiche
             INNER JOIN `an_sedi` ON `an_sedi`.`id`=`an_anagrafiche`.`id_sede_legale`
             INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica
             INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id |where| ORDER BY ragione_sociale";
@@ -51,7 +56,11 @@ switch ($resource) {
         break;
 
     case 'vettori':
-            $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))) AS descrizione, idtipointervento_default FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica |where| ORDER BY ragione_sociale";
+            $query = "SELECT an_anagrafiche.idanagrafica AS id, CONCAT(ragione_sociale, IF(citta IS NULL OR citta = '', '', CONCAT(' (', citta, ')'))) AS descrizione, id_tipo_intervento_default
+                FROM an_anagrafiche
+                INNER JOIN `an_sedi` ON `an_sedi`.`id`=`an_anagrafiche`.`id_sede_legale`
+                INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica
+                INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id |where| ORDER BY ragione_sociale";
 
             foreach ($elements as $element) {
                 $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);
@@ -68,7 +77,7 @@ switch ($resource) {
                 $search_fields[] = 'provincia LIKE '.prepare('%'.$search.'%');
             }
 
-            $custom['idtipointervento'] = 'idtipointervento_default';
+            $custom['idtipointervento'] = 'id_tipo_intervento_default';
 
         break;
 
@@ -142,7 +151,11 @@ switch ($resource) {
 
     // Nota Bene: nel campo id viene specificato id_tipo_anagrafica-idanagrafica -> modulo Utenti e permessi, creazione nuovo utente
      case 'clienti_fornitori':
-        $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT_WS('', ragione_sociale, IF(citta !='' OR provincia != '', CONCAT(' (', citta, IF(provincia!='', CONCAT(' ', provincia), ''), ')'), '')) AS descrizione, `an_tipianagrafiche`.`descrizione` AS optgroup, idtipointervento_default, an_tipianagrafiche.id FROM `an_tipianagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC, ragione_sociale ASC";
+        $query = "SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT_WS('', ragione_sociale, IF(citta !='' OR provincia != '', CONCAT(' (', citta, IF(provincia!='', CONCAT(' ', provincia), ''), ')'), '')) AS descrizione, `an_tipianagrafiche`.`descrizione` AS optgroup, id_tipo_intervento_default, an_tipianagrafiche.id
+            FROM an_anagrafiche
+            INNER JOIN `an_sedi` ON `an_sedi`.`id`=`an_anagrafiche`.`id_sede_legale`
+            INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica
+            INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id |where| ORDER BY `optgroup` ASC, ragione_sociale ASC";
 
         foreach ($elements as $element) {
             $filter[] = 'an_anagrafiche.idanagrafica='.prepare($element);

@@ -22,7 +22,7 @@ class Sede extends Model
      *
      * @return self
      */
-    public static function make(Anagrafica $anagrafica, $is_sede_legale = false)
+    public static function build(Anagrafica $anagrafica, $is_sede_legale = false)
     {
         $model = parent::make();
 
@@ -33,21 +33,6 @@ class Sede extends Model
         $model->save();
 
         return $model;
-    }
-
-    public function getPartitaIvaAttribute()
-    {
-        return $this->piva;
-    }
-
-    public function setPartitaIvaAttribute($value)
-    {
-        $this->attributes['piva'] = trim(strtoupper($value));
-    }
-
-    public function setCodiceFiscaleAttribute($value)
-    {
-        $this->attributes['codice_fiscale'] = trim(strtoupper($value));
     }
 
     public function anagrafica()

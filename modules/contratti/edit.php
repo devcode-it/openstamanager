@@ -2,9 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-unset($_SESSION['superselect']['idanagrafica']);
-$_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
-
 ?><script src="<?php echo $rootdir; ?>/modules/contratti/js/contratti_helper.js"></script>
 
 <form action="" method="post" id="edit-form">
@@ -33,7 +30,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "placeholder": "Sede legale" ]}
+					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "placeholder": "Sede legale", "ajax-info": "idanagrafica=$idanagrafica$" ]}
 				</div>
 
 
@@ -48,7 +45,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti" ]}
+					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "ajax-info": "idanagrafica=$idanagrafica$" ]}
 				</div>
 
 
@@ -228,7 +225,7 @@ echo '
 					<div class="hide">';
 
 //Loop fra i tipi di attività e i relativi costi del tipo intervento (quelli a 0)
-$rs = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE id_tipo_intervento NOT IN('.implode(',', $idtipiintervento).') ORDER BY descrizione');
+$rs = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE id NOT IN('.implode(',', $idtipiintervento).') ORDER BY descrizione');
 
 if (sizeof($rs) > 0) {
     echo '
@@ -411,9 +408,11 @@ if (!empty($record['idcontratto_prev'])) {
 	}
 
 	$('#idanagrafica_c').change( function(){
-        session_set('superselect,idanagrafica', $(this).val(), 0);
+        $("#idsede").selectInfo('idanagrafica', $(this).val())
+        $("#idreferente").selectInfo('idanagrafica', $(this).val())
 
-		$("#idsede").selectReset();
+        $("#idsede").selectReset();
+        $("#idreferente").selectReset();
 	});
 </script>
 

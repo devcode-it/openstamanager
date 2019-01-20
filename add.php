@@ -86,8 +86,8 @@ $(document).ready(function(){
 
             $("#bs-popup2").modal("hide");
         },
-        error: function(response) {
-            alert("'.tr('Errore').': " + response);
+        error: function(xhr, error, thrown) {
+            ajaxError(xhr, error, thrown);
         }
     });
 });

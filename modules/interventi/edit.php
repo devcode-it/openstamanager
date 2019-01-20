@@ -2,9 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-unset($_SESSION['superselect']['idanagrafica']);
-$_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
-
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">
@@ -27,7 +24,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede","value": "$idsede$", "ajax-source": "sedi", "placeholder": "Sede legale", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede","value": "$idsede$", "ajax-source": "sedi", "placeholder": "Sede legale", "readonly": "<?php echo $record['flag_completato']; ?>", "ajax-info": "idanagrafica=$idanagrafica$" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -38,11 +35,9 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Referente'); ?>", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "readonly": "<?php echo $record['flag_completato']; ?>", "ajax-info": "idanagrafica=$idanagrafica$" ]}
 				</div>
 			</div>
-
-
 
 			<!-- RIGA 2 -->
 			<div class="row">
@@ -54,7 +49,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
                     }
                     ?>
 
-					{[ "type": "select", "label": "<?php echo tr('Preventivo'); ?>", "name": "idpreventivo", "value": "$idpreventivo$", "ajax-source": "preventivi", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Preventivo'); ?>", "name": "idpreventivo", "value": "$idpreventivo$", "ajax-source": "preventivi", "readonly": "<?php echo $record['flag_completato']; ?>", "ajax-info": "idanagrafica=$idanagrafica$" ]}
 				</div>
 
 				<div class="col-md-6">
@@ -74,7 +69,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
                         }
                     ?>
 
-					{[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $record['idcontratto']; ?>", "ajax-source": "contratti", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $record['idcontratto']; ?>", "ajax-source": "contratti", "readonly": "<?php echo $record['flag_completato']; ?>", "ajax-info": "idanagrafica=$idanagrafica$" ]}
 					<input type='hidden' name='idcontratto_riga' value='<?php echo $idcontratto_riga; ?>'>
 				</div>
 			</div>
@@ -313,9 +308,13 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 <script>
 	$('#idanagrafica').change( function(){
-		session_set('superselect,idanagrafica', $(this).val(), 0);
+        $("#idsede").selectInfo('idanagrafica', $(this).val())
+        $("#idreferente").selectInfo('idanagrafica', $(this).val())
+        $("#idcontratto").selectInfo('idanagrafica', $(this).val())
+        $("#idpreventivo").selectInfo('idanagrafica', $(this).val())
 
-		$("#idsede").selectReset();
+        $("#idsede").selectReset();
+        $("#idreferente").selectReset();
 		$("#idpreventivo").selectReset();
 		$("#idcontratto").selectReset();
 

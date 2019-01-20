@@ -104,8 +104,8 @@ switch (post('op')) {
     case 'add':
         if (post('id_intervento') == null) {
             $idanagrafica = post('idanagrafica');
-            $idtipointervento = post('idtipointervento');
-            $idstatointervento = post('idstatointervento');
+            $idtipointervento = post('id_tipo_intervento');
+            $idstatointervento = post('id_stato_intervento');
             $data_richiesta = post('data_richiesta');
 
             $anagrafica = Anagrafica::find($idanagrafica);
@@ -543,6 +543,7 @@ switch (post('op')) {
         $inizio = date('Y-m-d H:\0\0');
         $fine = date_modify(date_create(date('Y-m-d H:\0\0')), '+'.$ore.' hours')->format('Y-m-d H:\0\0');
 
+        dd($id_record); exit();
         add_tecnico($id_record, $id_tecnico, $inizio, $fine, $idcontratto);
         break;
 

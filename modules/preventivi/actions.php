@@ -12,7 +12,7 @@ switch (post('op')) {
     case 'add':
         $idanagrafica = post('idanagrafica');
         $nome = post('nome');
-        $idtipointervento = post('idtipointervento');
+        $idtipointervento = post('id_tipo_intervento');
 
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = TipoSessione::find($idtipointervento);

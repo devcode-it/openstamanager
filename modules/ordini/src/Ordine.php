@@ -99,7 +99,7 @@ class Ordine extends Document
 
     public function tipo()
     {
-        return $this->belongsTo(Tipo::class, 'idtipoordine');
+        return $this->belongsTo(Tipo::class, 'id_tipo_ordine');
     }
 
     public function stato()
@@ -144,7 +144,7 @@ class Ordine extends Document
 
         $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero', [
             'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-            'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
+            'id_tipo_ordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
         ]);
         $numero = Generator::generate($maschera, $ultimo);
 
@@ -169,7 +169,7 @@ class Ordine extends Document
 
         $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero_esterno', [
             'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-            'idtipoordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
+            'id_tipo_ordine IN (SELECT id FROM or_tipiordine WHERE dir = '.prepare($direzione).')',
         ]);
         $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 

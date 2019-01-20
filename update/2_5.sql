@@ -2,11 +2,11 @@
 
 -- Separazione sedi dalle anagrafiche
 ALTER TABLE `an_anagrafiche` ADD `id_sede_legale` int(11), ADD FOREIGN KEY (`id_sede_legale`) REFERENCES `an_sedi`(`id`) ON DELETE SET NULL;
-INSERT INTO `an_sedi` (`nomesede`, `piva`, `codice_fiscale`, `indirizzo`, `indirizzo2`, `citta`, `cap`, `provincia`, `km`, `id_nazione`, `telefono`, `fax`, `cellulare`, `email`, `idanagrafica`, `idzona`, `gaddress`, `lat`, `lng`) SELECT 'Sede legale', `piva`, `codice_fiscale`, `indirizzo`, `indirizzo2`, `citta`, `cap`, `provincia`, `km`, `id_nazione`, `telefono`, `fax`, `cellulare`, `email`, `idanagrafica`, `idzona`, `gaddress`, `lat`, `lng` FROM `an_anagrafiche`;
+INSERT INTO `an_sedi` (`nomesede`, `indirizzo`, `indirizzo2`, `citta`, `cap`, `provincia`, `km`, `id_nazione`, `telefono`, `fax`, `cellulare`, `email`, `idanagrafica`, `idzona`, `gaddress`, `lat`, `lng`) SELECT 'Sede legale', `indirizzo`, `indirizzo2`, `citta`, `cap`, `provincia`, `km`, `id_nazione`, `telefono`, `fax`, `cellulare`, `email`, `idanagrafica`, `idzona`, `gaddress`, `lat`, `lng` FROM `an_anagrafiche`;
 
 UPDATE `an_anagrafiche` SET `id_sede_legale` = (SELECT `id` FROM `an_sedi` WHERE `an_sedi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` AND `an_sedi`.`nomesede` = 'Sede legale' LIMIT 1);
 
-ALTER TABLE `an_anagrafiche` DROP FOREIGN KEY `an_anagrafiche_ibfk_1`, DROP `piva`, DROP `codice_fiscale`, DROP `indirizzo`, DROP `indirizzo2`, DROP `citta`, DROP `cap`, DROP `provincia`, DROP `km`, DROP `id_nazione`, DROP `telefono`, DROP `fax`, DROP `cellulare`, DROP `email`, DROP `idzona`, DROP `gaddress`, DROP `lat`, DROP `lng`;
+ALTER TABLE `an_anagrafiche` DROP FOREIGN KEY `an_anagrafiche_ibfk_1`, DROP `indirizzo`, DROP `indirizzo2`, DROP `citta`, DROP `cap`, DROP `provincia`, DROP `km`, DROP `id_nazione`, DROP `telefono`, DROP `fax`, DROP `cellulare`, DROP `email`, DROP `idzona`, DROP `gaddress`, DROP `lat`, DROP `lng`;
 
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `an_anagrafiche` LEFT JOIN `an_relazioni` ON `an_anagrafiche`.`idrelazione` = `an_relazioni`.`id` LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` INNER JOIN `an_sedi` ON `an_sedi`.`id`=`an_anagrafiche`.`id_sede_legale` LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica` WHERE 1=1 AND `deleted_at` IS NULL GROUP BY `an_anagrafiche`.`idanagrafica` HAVING 2=2 ORDER BY TRIM(`ragione_sociale`)' WHERE `name` = 'Anagrafiche';
 
@@ -23,7 +23,8 @@ ALTER TABLE `an_tipianagrafiche_anagrafiche` CHANGE `idtipoanagrafica` `id_tipo_
 DELETE FROM `an_tipianagrafiche_anagrafiche` WHERE `id_tipo_anagrafica` NOT IN (SELECT `id` FROM `an_tipianagrafiche`);
 ALTER TABLE `an_tipianagrafiche_anagrafiche` ADD FOREIGN KEY (`id_tipo_anagrafica`) REFERENCES `an_tipianagrafiche`(`id`) ON DELETE CASCADE;
 
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `an_anagrafiche` LEFT JOIN `an_relazioni` ON `an_anagrafiche`.`idrelazione` = `an_relazioni`.`id` LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica` WHERE 1=1 AND `deleted_at` IS NULL GROUP BY `an_anagrafiche`.`idanagrafica` HAVING 2=2 ORDER BY TRIM(`ragione_sociale`)' WHERE `name` = 'Anagrafiche';
+UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `an_anagrafiche` LEFT JOIN `an_relazioni` ON `an_anagrafiche`.`idrelazione` = `an_relazioni`.`id` LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica` LEFT JOIN `an_sedi` ON `an_sedi`.`id`=`an_anagrafiche`.`id_sede_legale` WHERE 1=1 AND `deleted_at` IS NULL GROUP BY `an_anagrafiche`.`idanagrafica` HAVING 2=2 ORDER BY TRIM(`ragione_sociale`)' WHERE `name` = 'Anagrafiche';
+UPDATE `zz_views` SET `query` = 'an_anagrafiche.codice_destinatario' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche') AND `query` = 'codice_destinatario';
 
 UPDATE `zz_widgets` SET `query` = REPLACE(`query`, 'an_tipianagrafiche_anagrafiche.idtipoanagrafica', 'an_tipianagrafiche_anagrafiche.id_tipo_anagrafica');
 
@@ -75,6 +76,8 @@ DELETE FROM `or_ordini` WHERE `id_tipo_ordine` NOT IN (SELECT `id` FROM `or_tipi
 ALTER TABLE `or_ordini` ADD FOREIGN KEY (`id_tipo_ordine`) REFERENCES `or_tipiordine`(`id`) ON DELETE CASCADE;
 
 UPDATE `zz_views` SET `query` = REPLACE(`query`, 'idtipoordine', 'id_tipo_ordine');
+UPDATE `zz_modules` SET `options` = REPLACE(`options`, 'idtipoordine', 'id_tipo_ordine'), `options2` = REPLACE(`options2`, 'idtipoordine', 'id_tipo_ordine');
+
 
 -- Foreign keys dt_tipiddt
 ALTER TABLE `dt_tipiddt` CHANGE `id` `id` int(11) NOT NULL AUTO_INCREMENT;
@@ -139,6 +142,8 @@ ALTER TABLE `or_ordini` CHANGE `idstatoordine` `id_stato` int(11);
 UPDATE `or_ordini` SET `id_stato` = NULL WHERE `id_stato` NOT IN (SELECT `id` FROM `or_statiordine`);
 ALTER TABLE `or_ordini` ADD FOREIGN KEY (`id_stato`) REFERENCES `or_statiordine`(`id`) ON DELETE CASCADE;
 
+UPDATE `zz_modules` SET `options` = REPLACE(`options`, 'idtipoddt', 'id_tipo_ddt'), `options2` = REPLACE(`options2`, 'idtipoddt', 'id_tipo_ddt');
+
 -- Fix vari per gli stati
 UPDATE `zz_widgets` SET `query` = REPLACE(`query`, 'idstatodocumento', 'id_stato');
 UPDATE `zz_views` SET `query` = REPLACE(`query`, 'idstatointervento', 'id_stato');
@@ -150,8 +155,7 @@ UPDATE `zz_views` SET `query` = REPLACE(`query`, 'idstato', 'id_stato');
 UPDATE `zz_views` SET `query` = '(SELECT descrizione FROM in_statiintervento WHERE id=in_interventi.id_stato)' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi') AND `name` = 'Stato';
 UPDATE `zz_views` SET `query` = '(SELECT colore FROM in_statiintervento WHERE id=in_interventi.id_stato)' WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi') AND `name` = '_bg_';
 
--- TODO: aggiornare da versione 2.4.*
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato, co_contratti.id, DATEDIFF( data_conclusione, NOW() ) AS giorni_rimanenti FROM co_contratti WHERE id_stato IN(SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND rinnovabile=1 AND NOW() > DATE_ADD( data_conclusione, INTERVAL - ABS(giorni_preavviso_rinnovo) DAY) AND YEAR(data_conclusione) > 1970 HAVING ISNULL((SELECT id FROM co_contratti contratti WHERE contratti.idcontratto_prev=co_contratti.id )) ORDER BY giorni_rimanenti ASC' WHERE `zz_widgets`.`name` = 'Contratti in scadenza';
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato, co_contratti.id, DATEDIFF( data_conclusione, NOW() ) AS giorni_rimanenti FROM co_contratti WHERE id_stato IN(SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND rinnovabile=1 AND NOW() > DATE_ADD( data_conclusione, INTERVAL - ABS(giorni_preavviso_rinnovo) DAY) AND YEAR(data_conclusione) > 1970 AND ISNULL((SELECT id FROM co_contratti contratti WHERE contratti.idcontratto_prev=co_contratti.id )) ORDER BY giorni_rimanenti ASC' WHERE `zz_widgets`.`name` = 'Contratti in scadenza';
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_promemoria WHERE idcontratto IN( SELECT id FROM co_contratti WHERE id_stato IN (SELECT id FROM co_staticontratti WHERE pianificabile = 1)) AND idintervento IS NULL' WHERE `zz_widgets`.`name` = 'Interventi da pianificare';
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_ordiniservizio WHERE idcontratto IN( SELECT id FROM co_contratti WHERE id_stato IN(SELECT id FROM co_staticontratti WHERE pianificabile = 1)) AND idintervento IS NULL' WHERE `zz_widgets`.`name` = 'Ordini di servizio da impostare';
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_ordiniservizio_pianificazionefatture WHERE idcontratto IN( SELECT id FROM co_contratti WHERE id_stato IN(SELECT id FROM co_staticontratti WHERE descrizione IN("Bozza", "Accettato", "In lavorazione", "In attesa di pagamento")) ) AND co_ordiniservizio_pianificazionefatture.iddocumento=0' WHERE `zz_widgets`.`name` = 'Rate contrattuali';

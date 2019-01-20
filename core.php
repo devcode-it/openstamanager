@@ -111,7 +111,7 @@ Monolog\ErrorHandler::register($logger, [], Monolog\Logger::ERROR, Monolog\Logge
 
 // Aggiunta di Monolog a Whoops
 if (!API::isAPIRequest()) {
-    $whoops->pushHandler(function (\Whoops\Exception\ErrorException $exception, $inspector, $run) use ($logger) {
+    $whoops->pushHandler(function ($exception, $inspector, $run) use ($logger) {
         $logger->addError($exception->getMessage(), [
             'code' => $exception->getCode(),
             'message' => $exception->getMessage(),

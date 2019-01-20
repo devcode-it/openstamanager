@@ -162,12 +162,12 @@ switch (post('op')) {
         $anagrafica->cognome = post('cognome');
         $anagrafica->idrelazione = post('idrelazione');
         $anagrafica->idagente = $idagente;
+        $anagrafica->partita_iva = post('piva');
+        $anagrafica->codice_fiscale = post('codice_fiscale');
 
         $anagrafica->save();
 
         $sede = $anagrafica->sedeLegale;
-        $sede->partita_iva = post('piva');
-        $sede->codice_fiscale = post('codice_fiscale');
         $sede->indirizzo = post('indirizzo');
         $sede->citta = post('citta');
         $sede->cap = post('cap');

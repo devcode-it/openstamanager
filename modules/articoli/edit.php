@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-$_SESSION['superselect']['id_categoria'] = $record['id_categoria'];
-
 $img = null;
 if (!empty($record['immagine'])) {
     $fileinfo = Uploads::fileInfo($record['immagine']);
@@ -38,7 +36,7 @@ if (!empty($record['immagine'])) {
 				<div class="col-md-5">
                     {[ "type": "checkbox", "label": "<?php echo tr("Seleziona per rendere attivo l'articolo"); ?>", "name": "attivo", "value": "$attivo$", "placeholder": "<?php echo tr('Articolo attivo'); ?>" ]}
 				    <br>
-                    {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie", "ajax-info": "id_categoria=$id_categoria$" ]}
                 </div>
 			</div>
 			<div class="row">
@@ -341,8 +339,9 @@ echo '
 
 <script>
 $("#categoria").change( function(){
-	session_set("superselect,id_categoria", $(this).val(), 0);
-	$("#subcategoria").val(null).trigger("change");
+    $("#subcategoria").selectInfo('id_categoria', $(this).val())
+
+    $("#subcategoria").val(null).trigger("change");
 });
 </script>
 

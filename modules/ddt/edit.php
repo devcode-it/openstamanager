@@ -29,7 +29,7 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 			<?php
                 if ($dir == 'entrata') {
-                    $anagrafica = $dbo->fetchOne('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche
+                    $anagrafica = $dbo->fetchOne('SELECT an_anagrafiche.piva, an_anagrafiche.codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche
                         INNER JOIN `an_sedi` ON `an_sedi`.`id`=`an_anagrafiche`.`id_sede_legale`
                         WHERE `an_anagrafiche`.idanagrafica='.prepare($record['idanagrafica']));
                     $campi_mancanti = [];

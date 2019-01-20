@@ -303,7 +303,7 @@ echo '
 /*
     Schema per pianificare la fatturazione per zona
 */
-$rs = $dbo->fetchArray('SELECT id, descrizione FROM an_zone WHERE ( id IN (SELECT idzona FROM an_sedi WHERE id IN (SELECT idsede FROM my_impianti WHERE id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto='.prepare($id_record).'))) ) OR ( id=(SELECT idzona FROM an_anagrafiche WHERE idanagrafica=(SELECT idanagrafica FROM co_contratti WHERE id='.prepare($id_record).") AND idzona=an_zone.id) ) UNION SELECT 0, 'Altro'");
+$rs = $dbo->fetchArray('SELECT id, descrizione FROM an_zone WHERE id IN (SELECT idsede FROM my_impianti WHERE id IN (SELECT idimpianto FROM co_ordiniservizio WHERE idcontratto = '.prepare($id_record).')) OR id IN (SELECT idzona FROM an_anagrafiche INNER JOIN `an_sedi` ON `an_sedi`.`id`=`an_anagrafiche`.`id_sede_legale` WHERE an_anagrafiche.idanagrafica = (SELECT idanagrafica FROM co_contratti WHERE id='.prepare($id_record).")) UNION SELECT 0, 'Altro'");
 
 if (sizeof($rs) == 0) {
     echo '

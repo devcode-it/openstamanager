@@ -109,7 +109,7 @@ class Preventivo extends Document
 
     public function tipoSessione()
     {
-        return $this->belongsTo(TipoSessione::class, 'idtipointervento');
+        return $this->belongsTo(TipoSessione::class, 'id_tipo_intervento');
     }
 
     public function articoli()

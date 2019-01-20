@@ -99,7 +99,7 @@ class DDT extends Document
 
     public function tipo()
     {
-        return $this->belongsTo(Tipo::class, 'idtipoddt');
+        return $this->belongsTo(Tipo::class, 'id_tipo_ddt');
     }
 
     public function stato()
@@ -134,7 +134,6 @@ class DDT extends Document
      *
      * @param string $data
      * @param string $direzione
-     * @param int    $id_segment
      *
      * @return string
      */
@@ -144,7 +143,7 @@ class DDT extends Document
 
         $ultimo = Generator::getPreviousFrom($maschera, 'dt_ddt', 'numero', [
             'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-            'idtipoddt IN (SELECT id FROM dt_tipiddt WHERE dir = '.prepare($direzione).')',
+            'id_tipo_ddt IN (SELECT id FROM dt_tipiddt WHERE dir = '.prepare($direzione).')',
         ]);
         $numero = Generator::generate($maschera, $ultimo);
 
@@ -169,7 +168,7 @@ class DDT extends Document
 
         $ultimo = Generator::getPreviousFrom($maschera, 'dt_ddt', 'numero_esterno', [
             'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-            'idtipoddt IN (SELECT id FROM dt_tipiddt WHERE dir = '.prepare($direzione).')',
+            'id_tipo_ddt IN (SELECT id FROM dt_tipiddt WHERE dir = '.prepare($direzione).')',
         ]);
         $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 

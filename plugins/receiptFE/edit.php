@@ -60,8 +60,8 @@ echo '
                     importAll(btn);
                 });
             },
-            error: function(data) {
-                alert("'.tr('Errore').': " + data);
+            error: function(xhr, error, thrown) {
+                ajaxError(xhr, error, thrown);
 
                 buttonRestore(btn, restore);
             }
@@ -108,8 +108,8 @@ echo '
 
                 buttonRestore(btn, restore);
             },
-            error: function(data) {
-                alert("'.tr('Errore').': " + data);
+            error: function(xhr, error, thrown) {
+                ajaxError(xhr, error, thrown);
 
                 buttonRestore(btn, restore);
             }

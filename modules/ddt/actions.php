@@ -22,7 +22,7 @@ switch (post('op')) {
         $idanagrafica = post('idanagrafica');
         $data = post('data', true);
         $dir = post('dir');
-        $id_tipo_ddt = post('id_tipo_ddt');
+        $id_tipo = post('id_tipo_ddt');
 
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = Tipo::find($id_tipo);

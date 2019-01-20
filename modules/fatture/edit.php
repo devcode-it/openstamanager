@@ -34,7 +34,7 @@ if ($dir == 'entrata') {
 
 			<?php
                 if ($dir == 'entrata') {
-                    $anagrafica = $dbo->fetchOne('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia, id_nazione, tipo FROM an_anagrafiche WHERE idanagrafica='.prepare($record['idanagrafica']));
+                    $anagrafica = $dbo->fetchOne('SELECT an_anagrafiche.piva, an_anagrafiche.codice_fiscale, citta, indirizzo, cap, provincia, id_nazione, tipo FROM an_anagrafiche INNER JOIN `an_sedi` ON `an_sedi`.`id`=`an_anagrafiche`.`id_sede_legale` WHERE an_anagrafiche.idanagrafica='.prepare($record['idanagrafica']));
                     $campi_mancanti = [];
 
                     if ($anagrafica['codice_fiscale'] == '' and ($anagrafica['tipo'] == 'Privato' or $anagrafica['tipo'] == 'Ente pubblico')) {

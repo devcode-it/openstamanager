@@ -19,7 +19,7 @@ $is_completato = $rss[0]['flag_completato'];
 // Sessioni dell'intervento
 $query = 'SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at AS anagrafica_deleted_at, in_tipiintervento.descrizione AS descrizione_tipo, in_interventi_tecnici.tipo_scontokm AS tipo_sconto_km FROM in_interventi_tecnici
 INNER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica
-INNER JOIN in_tipiintervento ON in_interventi_tecnici.id_tipo_intervento = in_tipiintervento.id
+LEFT JOIN in_tipiintervento ON in_interventi_tecnici.id_tipo_intervento = in_tipiintervento.id
 WHERE in_interventi_tecnici.idintervento='.prepare($id_record).' ORDER BY ragione_sociale ASC, in_interventi_tecnici.orario_inizio ASC, in_interventi_tecnici.id ASC';
 $sessioni = $dbo->fetchArray($query);
 

@@ -215,8 +215,8 @@ $(document).ready(function(){
             success: function(data){
                 reload_'.$attachment_id.'();
             },
-            error: function(data) {
-                alert("'.tr('Errore').': " + data);
+            error: function(xhr, error, thrown) {
+                ajaxError(xhr, error, thrown);
             }
         });
     });

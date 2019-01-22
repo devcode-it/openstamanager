@@ -12,5 +12,18 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 UPDATE `dt_spedizione` SET `descrizione` = 'Ritiro in magazzino' WHERE `dt_spedizione`.`descrizione` = 'A carico del cliente';
 UPDATE `dt_spedizione` SET `descrizione` = 'Espressa' WHERE `dt_spedizione`.`descrizione` = 'A nostro carico';
 
--- Fix Percentuale rivalsa INPS in Percentuale rivalsa
-UPDATE `osm_totino`.`zz_settings` SET `nome` = 'Percentuale rivalsa' WHERE `zz_settings`.`nome` = 'Percentuale rivalsa INPS';
+-- Rinomino tabella gestione rivalse
+RENAME TABLE co_rivalsainps TO co_rivalse;
+
+-- Fix Percentuale rivalsa INPS in Percentuale rivalsa in impostazioni
+UPDATE `zz_settings` SET `nome` = 'Percentuale rivalsa', `tipo` = 'query=SELECT id, descrizione FROM `co_rivalse` ORDER BY descrizione ASC'  WHERE `zz_settings`.`nome` = 'Percentuale rivalsa INPS';
+
+-- Aggiunto modulo per gestire le rivalse
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Rivalse', 'Rivalse', 'rivalse', 'SELECT |select| FROM `co_rivalse` WHERE 1=1 HAVING 2=2', '', 'fa fa-percent', '2.4.6', '2.4.6', '1', (SELECT id FROM zz_modules t WHERE t.name = 'Tabelle' ), '1', '1');
+
+-- Colonne per modulo 'Rivalse'
+INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default` ) VALUES 
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Rivalse'), 'id', 'id', 1, 1, 0, 0, NULL, NULL, 0, 0, 1),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Rivalse'), 'Descrizione', 'descrizione', 2, 1, 0, 0, NULL, NULL, 1, 0, 1),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Rivalse'), 'Percentuale', 'percentuale', 3, 1, 0, 0, NULL, NULL, 1, 0, 1),
+(NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Rivalse'), 'Indetraibile', 'indetraibile', 4, 1, 0, 0, NULL, NULL, 1, 0, 1);

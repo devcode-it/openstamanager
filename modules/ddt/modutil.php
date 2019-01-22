@@ -188,7 +188,7 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
             }
         }
 
-        $query = "SELECT percentuale FROM co_rivalsainps WHERE id='".$idrivalsainps."'";
+        $query = "SELECT percentuale FROM co_rivalse WHERE id='".$idrivalsainps."'";
         $rs = $dbo->fetchArray($query);
         $rivalsainps = $totale_imponibile / 100 * $rs[0]['percentuale'];
 

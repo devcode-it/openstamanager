@@ -6,5 +6,5 @@ use Common\Model;
 
 class RivalsaINPS extends Model
 {
-    protected $table = 'co_rivalsainps';
+    protected $table = 'co_rivalse';
 }

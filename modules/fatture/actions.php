@@ -292,7 +292,7 @@ switch (post('op')) {
             $desc_iva = $rs[0]['descrizione'];
 
             // Calcolo rivalsa inps
-            $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(setting('Percentuale rivalsa'));
+            $query = 'SELECT * FROM co_rivalse WHERE id='.prepare(setting('Percentuale rivalsa'));
             $rs = $dbo->fetchArray($query);
             $rivalsainps = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
 
@@ -429,7 +429,7 @@ switch (post('op')) {
             $desc_iva = $rs[0]['descrizione'];
 
             // Calcolo rivalsa inps
-            $query = 'SELECT * FROM co_rivalsainps WHERE id='.prepare(setting('Percentuale rivalsa'));
+            $query = 'SELECT * FROM co_rivalse WHERE id='.prepare(setting('Percentuale rivalsa'));
             $rs = $dbo->fetchArray($query);
             $rivalsainps = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
 

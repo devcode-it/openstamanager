@@ -185,7 +185,7 @@ function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaac
             }
         }
 
-        $query = 'SELECT percentuale FROM co_rivalsainps WHERE id='.prepare($idrivalsainps);
+        $query = 'SELECT percentuale FROM co_rivalse WHERE id='.prepare($idrivalsainps);
         $rs = $dbo->fetchArray($query);
         $rivalsainps = $totale_imponibile / 100 * $rs[0]['percentuale'];
 

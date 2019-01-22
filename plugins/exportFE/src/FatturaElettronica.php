@@ -976,7 +976,8 @@ class FatturaElettronica
             if (!empty($riepilogo['dicitura'])) {
                 // $iva['RiferimentoNormativo'] = $riepilogo['dicitura'];
             }
-
+			
+			//2.2.2
             $result[] = [
                 'DatiRiepilogo' => $iva,
             ];
@@ -998,7 +999,8 @@ class FatturaElettronica
             if ($documento['split_payment']) {
                 $iva['EsigibilitaIVA'] = 'S';
             }
-
+			
+			//2.2.2
             $result[] = [
                 'DatiRiepilogo' => $iva,
             ];

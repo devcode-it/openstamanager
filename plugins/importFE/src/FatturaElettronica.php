@@ -220,17 +220,27 @@ class FatturaElettronica
                 $obj->um = $riga['UnitaMisura'];
             }
 
-            $sconto = $riga['ScontoMaggiorazione'];
-            if (!empty($sconto)) {
-                $tipo = !empty($sconto['Percentuale']) ? 'PRC' : 'EUR';
-                $unitario = $sconto['Percentuale'] ?: $sconto['Importo'];
-
-                $unitario = ($sconto['Tipo'] == 'SC') ? $unitario : -$unitario;
-
-                $obj->sconto_unitario = $unitario;
-                $obj->tipo_sconto = $tipo;
-            }
-
+            $sconti = $riga['ScontoMaggiorazione'];
+            if (!empty($sconti)) {
+				
+				foreach ($sconti as $key => $sconto) {
+					$tipo = !empty($sconto['Percentuale']) ? 'PRC' : 'EUR';
+					$unitario = $sconto['Percentuale'] ?: $sconto['Importo'];
+					
+					//SConto o MaGgiorazione 
+					$unitario = ($sconto['Tipo'] == 'SC') ? $unitario : -$unitario;
+					
+					if (!empty($unitario)){
+						$obj->sconto_unitario = unitario;
+						$obj->tipo_sconto = $tipo;
+					}	
+					
+					
+				}
+				
+			}
+			
+			 
             $obj->save();
         }
     }

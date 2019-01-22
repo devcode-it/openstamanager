@@ -27,9 +27,7 @@ class Interaction extends Connection
 
             $body = static::responseBody($response);
 
-            if (!empty($body['sent'])) {
-                return true;
-            }
+            return $body;
         } catch (UnexpectedValueException $e) {
         }
 

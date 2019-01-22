@@ -18,14 +18,18 @@ class Interaction extends Connection
         $response = static::request('POST', 'get_fatture_da_importare');
         $body = static::responseBody($response);
 
-        $list = $body['results'];
+        $code = $body['code'];
 
-        $files = glob($directory.'/*.xml');
-        foreach ($files as $file) {
-            $list[] = basename($file);
+        if($code=='200'){
+            $list = $body['results'];
+
+            $files = glob($directory.'/*.xml');
+            foreach ($files as $file) {
+                $list[] = basename($file);
+            }
+
+            return array_clean($list);
         }
-
-        return array_clean($list);
     }
 
     public static function getImportXML($name)
@@ -43,5 +47,22 @@ class Interaction extends Connection
         }
 
         return $name;
+    }
+
+    public static function processXML($filename)
+    {
+            $response = static::request('POST', 'process_xml', [
+                'filename' => $filename,
+            ]);
+
+            $body = static::responseBody($response);
+
+            if($body['processed']=='0'){
+                $message = $body['code']." - ".$body['message'];
+            }else{
+                $message = "";
+            }
+
+        return $message;
     }
 }

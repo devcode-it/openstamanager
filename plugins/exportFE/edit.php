@@ -176,12 +176,12 @@ echo '
                     data = JSON.parse(data);
                     buttonRestore(btn, restore);
 
-                    if (data.sent) {
-                        swal("'.tr('Fattura inviata!').'", "'.tr('Fattura inoltrata con successo').'", "success");
+                    if (data.code == "200") {
+                        swal("'.tr('Fattura inviata!').'", data.message, "success");
 
                         $(btn).attr("disabled", true).addClass("disabled");
                     } else {
-                        swal("'.tr('Invio fallito').'", "'.tr("L'invio della fattura è fallito").'", "error");
+                        swal("'.tr('Invio fallito').'", data.code + " - " + data.message, "error");
                     }
                 },
                 error: function(data) {

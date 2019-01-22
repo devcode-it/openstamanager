@@ -157,7 +157,7 @@ echo '
 
     <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
-    <button onclick="send(this)" class="btn btn-success btn-lg '.($send ? '' : 'disabled').'" target="_blank" '.($send ? '' : 'disabled').'>
+    <button onclick="if( confirm(\''.tr('Inviare la fattura al SDI?').'\') ){ send(this); }" class="btn btn-success btn-lg '.($send ? '' : 'disabled').'" target="_blank" '.($send ? '' : 'disabled').'>
         <i class="fa fa-paper-plane"></i> '.tr('Invia').'
     </button>
 

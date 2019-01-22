@@ -21,11 +21,22 @@ class Interaction extends Connection
         $code = $body['code'];
 
         if($code=='200'){
-            $list = $body['results'];
+            $files = $body['results'];
 
-            $files = glob($directory.'/*.xml');
             foreach ($files as $file) {
+                /**
+                  * Verifico che l'XML non sia già stato importato nel db
+                  */
+                
+                if( preg_match( "/^([A-Z]{2})(.+?)_([^\.]+)\.xml/i", $file, $m ) ){
+                    $partita_iva = $m[2];
+                    $progressivo_invio = $m[3];
+                    $fattura = database()->fetchOne('SELECT co_documenti.id FROM (co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_tipidocumento.dir="uscita" AND an_anagrafiche.piva='.prepare($partita_iva).' AND co_documenti.progressivo_invio='.prepare($progressivo_invio));
+                    
+                    if (!$fattura) {
                 $list[] = basename($file);
+                    }
+                }
             }
 
             return array_clean($list);

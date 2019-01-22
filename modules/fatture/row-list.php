@@ -332,7 +332,7 @@ if (!empty($fattura->rivalsa_inps)) {
     echo '
     <tr>
         <td colspan="5" class="text-right">
-            <b>'.tr('Rivalsa INPS', [], ['upper' => true]).':</b>
+            <b>'.tr('Rivalsa', [], ['upper' => true]).':</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($fattura->rivalsa_inps).' &euro;

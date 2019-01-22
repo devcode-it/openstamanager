@@ -177,7 +177,7 @@ if (!empty($record['rivalsainps'])) {
     echo '
     <tr>
         <th class="text-center small" colspan="'.$first_colspan.'">
-            '.tr('Rivalsa INPS _PRC_%', [
+            '.tr('Rivalsa _PRC_%', [
                 '_PRC_' => Translator::numberToLocale($rs2[0]['percentuale'], 0),
             ], ['upper' => true]).'
         </th>';

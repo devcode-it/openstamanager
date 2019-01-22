@@ -11,3 +11,6 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 -- Fix per tipi di spedizione fuorvianti (esiste già il campo "Porto" per stabilire di chi è a carico la spedizione)
 UPDATE `dt_spedizione` SET `descrizione` = 'Ritiro in magazzino' WHERE `dt_spedizione`.`descrizione` = 'A carico del cliente';
 UPDATE `dt_spedizione` SET `descrizione` = 'Espressa' WHERE `dt_spedizione`.`descrizione` = 'A nostro carico';
+
+-- Fix Percentuale rivalsa INPS in Percentuale rivalsa
+UPDATE `osm_totino`.`zz_settings` SET `nome` = 'Percentuale rivalsa' WHERE `zz_settings`.`nome` = 'Percentuale rivalsa INPS';

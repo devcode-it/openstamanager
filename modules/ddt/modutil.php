@@ -184,7 +184,7 @@ function ricalcola_costiagg_ddt($idddt, $idrivalsainps = '', $idritenutaacconto 
         // Leggo la rivalsa inps se c'è (per i ddt di vendita lo leggo dalle impostazioni)
         if ($dir == 'entrata') {
             if (!empty($idrivalsainps)) {
-                $idrivalsainps = setting('Percentuale rivalsa INPS');
+                $idrivalsainps = setting('Percentuale rivalsa');
             }
         }
 

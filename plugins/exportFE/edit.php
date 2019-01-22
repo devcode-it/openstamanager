@@ -141,17 +141,19 @@ echo '
         <i class="fa fa-download"></i> '.tr('Scarica').'
     </a>';
 
+    $file = $generated ? Models\Upload::where('filename', $fattura_pa->getFilename())->where('id_record', $id_record)->first() : null;
+
 echo '
 
     <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
-    <a href="'.ROOTDIR.'/plugins/exportFE/view.php?id_record='.$id_record.'" class="btn btn-info btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
+    <a href="'.ROOTDIR.'/view.php?file_id='.($file ? $file->id : null).'" class="btn btn-info btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
         <i class="fa fa-eye"></i> '.tr('Visualizza').'
     </a>';
 
-    $send = Interaction::isEnabled() && $generated && $record['codice_stato_fe'] == 'GEN';
+$send = Interaction::isEnabled() && $generated && $record['codice_stato_fe'] == 'GEN';
 
-    echo '
+echo '
 
     <i class="fa fa-arrow-right fa-fw text-muted"></i>
 

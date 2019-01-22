@@ -465,9 +465,10 @@ class FatturaElettronica
         if (!empty($anagrafica['provincia']) && $anagrafica->nazione->iso2 == 'IT') {
             $result['Provincia'] = strtoupper($anagrafica['provincia']);
         }
-		
-		if (!empty($anagrafica->nazione->iso2))
-			$result['Nazione'] = $anagrafica->nazione->iso2;
+
+        if (!empty($anagrafica->nazione->iso2)) {
+            $result['Nazione'] = $anagrafica->nazione->iso2;
+        }
 
         return $result;
     }

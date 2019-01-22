@@ -109,7 +109,7 @@ class FatturaElettronica
     }
 
     /**
-     * Restituisce i contratti collegati al documento (contratti e interventi).
+     * Restituisce i contratti collegati al documento (contratti e interventi e ordini).
      *
      * @return array
      */
@@ -122,8 +122,10 @@ class FatturaElettronica
             $contratti = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `co_contratti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idcontratto` = `co_contratti`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
             $interventi = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `in_interventi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idintervento` = `in_interventi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+			
+			$ordini = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `or_ordini` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idordine` = `or_ordini`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
-            $this->contratti = array_merge($contratti, $interventi);
+            $this->contratti = array_merge($contratti, $interventi, $ordini);
         }
 
         return $this->contratti;
@@ -615,7 +617,7 @@ class FatturaElettronica
             ];
         }
 
-        // Cassa Previdenziale
+        // Cassa Previdenziale (2.1.1.7)
         if (!empty($id_rivalsainps)) {
             $iva = database()->fetchOne('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($aliquota_iva_rivalsainps));
             $percentuale = database()->fetchOne('SELECT percentuale FROM co_rivalse WHERE id = '.prepare($id_rivalsainps))['percentuale'];
@@ -629,12 +631,13 @@ class FatturaElettronica
             ];
 
             $ritenuta_predefinita = setting("Percentuale ritenuta d'acconto");
-            if (!empty($ritenuta_predefinita)) {
+            if (!empty($ritenuta_predefinita))
                 $dati_cassa['Ritenuta'] = 'SI';
-            }
-
-            $dati_cassa['Natura'] = $iva['codice_natura_fe'];
-            $dati_cassa['RiferimentoAmministrazione'] = '';
+			
+			if (!empty($iva['codice_natura_fe']))
+				$dati_cassa['Natura'] = $iva['codice_natura_fe'];
+			
+            //$dati_cassa['RiferimentoAmministrazione'] = '';
 
             $result['DatiCassaPrevidenziale'] = $dati_cassa;
         }

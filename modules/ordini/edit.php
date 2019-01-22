@@ -100,7 +100,7 @@ if ($module['name'] == 'Ordini cliente') {
 	</div>
 
     <!-- Fatturazione Elettronica PA-->
-    <div class="panel panel-primary <?php echo ($dir == 'entrata' && $record['tipo_anagrafica'] == 'Ente pubblico') ? 'show' : 'hide'; ?>" >
+    <div class="panel panel-primary <?php echo ($dir == 'entrata' && $record['tipo_anagrafica'] == 'Ente pubblico' or ($record['tipo_anagrafica']) == 'Azienda') ? 'show' : 'hide'; ?>" >
         <div class="panel-heading">
             <h3 class="panel-title"><?php echo tr('Dati appalto'); ?></h3>
         </div>

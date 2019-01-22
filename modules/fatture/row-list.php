@@ -58,6 +58,14 @@ foreach ($righe as $riga) {
     elseif (!empty($riga['idintervento'])) {
         //$ref_modulo = Modules::get('Interventi')['id'];
         //$ref_id = $riga['idintervento'];
+		
+		
+        $intervento = $dbo->fetchOne('SELECT codice_cig,codice_cup,id_documento_fe FROM in_interventi WHERE id = '.prepare($riga['idintervento']));
+        $riga['codice_cig'] = $intervento['codice_cig'];
+        $riga['codice_cup'] = $intervento['codice_cup'];
+        $riga['id_documento_fe'] = $intervento['id_documento_fe'];
+		
+		
         $delete = 'unlink_intervento';
     }
     // Preventivi

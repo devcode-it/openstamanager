@@ -390,7 +390,7 @@ class FatturaElettronica
         }
 
         // Inizializzazione PEC solo se anagrafica azienda e codice destinatario non compilato, per privato e PA la PEC non serve
-        if (empty($cliente['codice_destinatario']) && $cliente['tipo'] == 'Azienda') {
+        if (empty($cliente['codice_destinatario']) && $cliente['tipo'] == 'Azienda' && !empty($cliente['pec'])) {
             $result['PECDestinatario'] = $cliente['pec'];
         }
 

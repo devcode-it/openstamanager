@@ -27,3 +27,8 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Rivalse'), 'Descrizione', 'descrizione', 2, 1, 0, 0, NULL, NULL, 1, 0, 1),
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Rivalse'), 'Percentuale', 'percentuale', 3, 1, 0, 0, NULL, NULL, 1, 0, 1),
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Rivalse'), 'Indetraibile', 'indetraibile', 4, 1, 0, 0, NULL, NULL, 1, 0, 1);
+
+-- Aggiunto campo help per impostazioni
+ALTER TABLE `zz_settings` ADD `help` VARCHAR(255) NOT NULL AFTER `order`;
+
+UPDATE `zz_settings` SET `help` = 'Definisce il tipo della rivalsa' WHERE `zz_settings`.`nome` = 'Tipo Cassa';

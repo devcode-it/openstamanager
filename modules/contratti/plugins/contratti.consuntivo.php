@@ -45,7 +45,7 @@ if (!empty($rsi)) {
         <td>
             <a href="javascript:;" class="btn btn-primary btn-xs" onclick="$(\'#dettagli_'.$int['id'].'\').toggleClass(\'hide\'); $(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');"><i class="fa fa-plus"></i></a>
             '.Modules::link('Interventi', $int['id'], tr('Intervento _NUM_ del _DATE_', [
-                '_NUM_' => $int['id'],
+                '_NUM_' => $int['codice'],
                 '_DATE_' => Translator::dateToLocale($int['inizio']),
             ])).'
         </td>

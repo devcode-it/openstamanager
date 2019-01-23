@@ -231,11 +231,9 @@ class FatturaElettronica
 					$unitario = ($sconto['Tipo'] == 'SC') ? $unitario : -$unitario;
 					
 					if (!empty($unitario)){
-						$obj->sconto_unitario = unitario;
+						$obj->sconto_unitario = $unitario;
 						$obj->tipo_sconto = $tipo;
 					}	
-					
-					
 				}
 				
 			}

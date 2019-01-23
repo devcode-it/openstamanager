@@ -209,7 +209,7 @@ foreach ($righe as $riga) {
     if (!$riga instanceof Descrizione) {
         echo '
             '.Translator::numberToLocale($riga->iva).' &euro;
-            <br><small class="help-block">'.$riga->desc_iva.'</small>';
+            <br><small class="'.(($dbo->fetchNum('SELECT deleted_at FROM co_iva WHERE deleted_at IS NOT NULL AND id = '.prepare($riga['idiva']))) ? 'text-red' : '').' help-block">'.$riga->desc_iva.'</small>';
     }
 
     echo '

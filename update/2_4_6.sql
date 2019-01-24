@@ -36,3 +36,12 @@ ALTER TABLE `zz_settings` ADD `help` VARCHAR(255) NOT NULL AFTER `order`;
 
 -- Aggiunto help per impostazione tipo cassa
 UPDATE `zz_settings` SET `help` = 'Definisce il tipo della rivalsa' WHERE `zz_settings`.`nome` = 'Tipo Cassa';
+
+-- Aggiorno indirizzo a cui inviare le FE
+UPDATE `zz_emails` SET `cc` = 'sdi24@pec.fatturapa.it' WHERE `zz_emails`.`name` = 'PEC' AND `zz_emails`.`cc` = 'sdi01@pec.fatturapa.it';
+
+-- Aggiunto id documento codice cig e codice cup per preventivi
+ALTER TABLE `co_preventivi` ADD `codice_cig` VARCHAR(15) AFTER `master_revision`, ADD `codice_cup` VARCHAR(15) AFTER `codice_cig`, ADD `id_documento_fe` VARCHAR(20) AFTER `codice_cup`;
+
+-- Migliorata visualizzazione impostazione
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT codice AS id, CONCAT_WS(\' - \', codice, descrizione) AS descrizione FROM fe_causali_pagamento_ritenuta' WHERE `zz_settings`.`nome` = 'Causale ritenuta d\'acconto';

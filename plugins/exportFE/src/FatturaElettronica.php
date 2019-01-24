@@ -120,12 +120,14 @@ class FatturaElettronica
             $database = database();
 
             $contratti = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `co_contratti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idcontratto` = `co_contratti`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+			
+			$preventivi = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `co_preventivi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idpreventivo` = `co_preventivi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
             $interventi = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `in_interventi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idintervento` = `in_interventi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 			
 			$ordini = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `or_ordini` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idordine` = `or_ordini`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
-            $this->contratti = array_merge($contratti, $interventi, $ordini);
+            $this->contratti = array_merge($contratti, $preventivi, $interventi, $ordini);
         }
 
         return $this->contratti;
@@ -880,15 +882,23 @@ class FatturaElettronica
 
             //2.2.1.3
             if (!empty($riga['idarticolo'])) {
+				
+				$tipo_codice = $database->fetchOne('SELECT `mg_categorie`.`nome` FROM `mg_categorie` INNER JOIN `mg_articoli` ON `mg_categorie`.`id` = `mg_articoli`.`id_categoria` WHERE `mg_articoli`.`id` = '.prepare($riga['idarticolo']))['nome'];
+				
                 $codice_articolo = [
-                    'CodiceTipo' => 'OSM',
+                    'CodiceTipo' => ($tipo_codice) ? : 'OSM',
                     'CodiceValore' => $database->fetchOne('SELECT `codice` FROM `mg_articoli` WHERE `id` = '.prepare($riga['idarticolo']))['codice'],
                 ];
 
                 $dettaglio['CodiceArticolo'] = $codice_articolo;
             }
-
-            $dettaglio['Descrizione'] = $riga['descrizione'];
+			
+			//Non ammesso ’
+			//$descrizione = html_entity_decode($riga['descrizione'], ENT_HTML5, 'UTF-8');
+            $descrizione = str_replace("&gt;", " ", $riga['descrizione']);
+			$descrizione = str_replace("…", "...", $descrizione);
+			
+			$dettaglio['Descrizione'] = str_replace("’", " ", $descrizione);
             $dettaglio['Quantita'] = $riga['qta'];
 
             if (!empty($riga['um'])) {

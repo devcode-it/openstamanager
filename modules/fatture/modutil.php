@@ -555,15 +555,13 @@ function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenu
 
         $marca_da_bollo = 0;
         if (abs($bolli) > 0 && abs($netto_a_pagare > setting("Soglia minima per l'applicazione della marca da bollo"))) {
-            
             //Controllo che tra le iva ce ne sia almeno una con natura N1, N2, N3 o N4
-            $check_natura = $dbo->fetchArray("SELECT codice_natura_fe FROM co_righe_documenti INNER JOIN co_iva ON co_righe_documenti.idiva=co_iva.id WHERE iddocumento=".prepare($iddocumento)." AND codice_natura_fe IN('N1','N2','N3','N4') GROUP BY codice_natura_fe");
-            if(($dir == 'entrata' && sizeof($check_natura)>0) || $dir == 'uscita'){
+            $check_natura = $dbo->fetchArray('SELECT codice_natura_fe FROM co_righe_documenti INNER JOIN co_iva ON co_righe_documenti.idiva=co_iva.id WHERE iddocumento='.prepare($iddocumento)." AND codice_natura_fe IN('N1','N2','N3','N4') GROUP BY codice_natura_fe");
+            if (($dir == 'entrata' && sizeof($check_natura) > 0) || $dir == 'uscita') {
                 $marca_da_bollo = $bolli;
-            }else{
+            } else {
                 $marca_da_bollo = 0.00;
             }
-            
         }
 
         // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo

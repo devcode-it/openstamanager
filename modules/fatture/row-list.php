@@ -58,24 +58,24 @@ foreach ($righe as $riga) {
     elseif (!empty($riga['idintervento'])) {
         //$ref_modulo = Modules::get('Interventi')['id'];
         //$ref_id = $riga['idintervento'];
-		
+
         $intervento = $dbo->fetchOne('SELECT codice_cig,codice_cup,id_documento_fe FROM in_interventi WHERE id = '.prepare($riga['idintervento']));
         $riga['codice_cig'] = $intervento['codice_cig'];
         $riga['codice_cup'] = $intervento['codice_cup'];
         $riga['id_documento_fe'] = $intervento['id_documento_fe'];
-		
+
         $delete = 'unlink_intervento';
     }
     // Preventivi
     elseif (!empty($riga['idpreventivo'])) {
         //$ref_modulo = Modules::get('Preventivi')['id'];
         //$ref_id = $riga['idpreventivo'];
-		
-		$preventivo = $dbo->fetchOne('SELECT codice_cig,codice_cup,id_documento_fe FROM co_preventivi WHERE id = '.prepare($riga['idpreventivo']));
+
+        $preventivo = $dbo->fetchOne('SELECT codice_cig,codice_cup,id_documento_fe FROM co_preventivi WHERE id = '.prepare($riga['idpreventivo']));
         $riga['codice_cig'] = $preventivo['codice_cig'];
         $riga['codice_cup'] = $preventivo['codice_cup'];
         $riga['id_documento_fe'] = $preventivo['id_documento_fe'];
-		
+
         $delete = 'unlink_preventivo';
     }
     // Contratti
@@ -108,14 +108,14 @@ foreach ($righe as $riga) {
     }
 
     $extra_riga = '';
-	if (!$riga['is_descrizione']){
-		$extra_riga = tr('_DESCRIZIONE_CONTO_ _ID_DOCUMENTO_ _CODICE_CIG_ _CODICE_CUP_ ', [
-			'_DESCRIZIONE_CONTO_' => $riga['descrizione_conto'] ?: null,
-			'_CODICE_CIG_' => $riga['codice_cig'] ? ',CIG: '.$riga['codice_cig'] : null,
-			'_CODICE_CUP_' => $riga['codice_cup'] ? ',CUP: '.$riga['codice_cup'] : null,
-			'_ID_DOCUMENTO_' => $riga['id_documento_fe'] ? ' - DOC: '.$riga['id_documento_fe'] : null,
-		]);
-	}
+    if (!$riga['is_descrizione']) {
+        $extra_riga = tr('_DESCRIZIONE_CONTO_ _ID_DOCUMENTO_ _CODICE_CIG_ _CODICE_CUP_ ', [
+            '_DESCRIZIONE_CONTO_' => $riga['descrizione_conto'] ?: null,
+            '_CODICE_CIG_' => $riga['codice_cig'] ? ',CIG: '.$riga['codice_cig'] : null,
+            '_CODICE_CUP_' => $riga['codice_cup'] ? ',CUP: '.$riga['codice_cup'] : null,
+            '_ID_DOCUMENTO_' => $riga['id_documento_fe'] ? ' - DOC: '.$riga['id_documento_fe'] : null,
+        ]);
+    }
 
     echo '
     <tr data-id="'.$riga['id'].'" '.$extra.'>

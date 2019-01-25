@@ -45,7 +45,7 @@ switch (filter('op')) {
 
         //Processo il file ricevuto
         $process_result = Interaction::processXML($filename);
-        if($process_result!=''){
+        if ($process_result != '') {
             flash()->error($process_result);
             redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
             exit;

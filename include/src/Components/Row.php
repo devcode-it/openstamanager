@@ -6,7 +6,7 @@ use Common\Document;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Iva\Aliquota;
 use Modules\Ritenute\RitenutaAcconto;
-use Modules\Ritenute\RivalsaINPS;
+use Modules\Rivalse\RivalsaINPS;
 
 abstract class Row extends Description
 {

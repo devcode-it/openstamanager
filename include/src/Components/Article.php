@@ -96,32 +96,6 @@ abstract class Article extends Row
         return $this->belongsTo(Original::class, 'idarticolo');
     }
 
-    public function copiaIn(Document $document)
-    {
-        $class = get_class($document);
-        $namespace = implode('\\', explode('\\', $class, -1));
-
-        $current = get_class($this);
-        $pieces = explode('\\', $current);
-        $type = end($pieces);
-
-        $object = $namespace.'\\Components\\'.$type;
-
-        $attributes = $this->getAttributes();
-        unset($attributes['id']);
-
-        $model = $object::build($document, $this->articolo);
-        $model->save();
-
-        $model = $object::find($model->id);
-        $accepted = $model->getAttributes();
-
-        $attributes = array_intersect_key($attributes, $accepted);
-        $model->fill($attributes);
-
-        return $model;
-    }
-
     protected static function boot()
     {
         parent::boot(true);
@@ -168,5 +142,10 @@ abstract class Article extends Row
         }
 
         return true;
+    }
+
+    protected function customCopiaIn($original)
+    {
+        $this->articolo()->associate($original->articolo);
     }
 }

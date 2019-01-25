@@ -58,11 +58,10 @@ switch (post('op')) {
             $costo_orario = post('costo_orario');
             $costo_km = post('costo_km');
             $costo_diritto_chiamata = post('costo_diritto_chiamata');
-			
-			$id_documento_fe = post('id_documento_fe');
+
+            $id_documento_fe = post('id_documento_fe');
             $codice_cig = post('codice_cig');
             $codice_cup = post('codice_cup');
-			
 
             $query = 'UPDATE co_contratti SET idanagrafica='.prepare($idanagrafica).', 
 				idsede='.prepare($idsede).',
@@ -84,7 +83,7 @@ switch (post('op')) {
 				id_documento_fe='.prepare($id_documento_fe).',
 				codice_cig='.prepare($codice_cig).',
 				codice_cup='.prepare($codice_cup).' WHERE id='.prepare($id_record);
-				
+
             // costo_diritto_chiamata='.prepare($costo_diritto_chiamata).', ore_lavoro='.prepare($ore_lavoro).', costo_orario='.prepare($costo_orario).', costo_km='.prepare($costo_km).'
 
             $dbo->query($query);

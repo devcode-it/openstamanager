@@ -6,13 +6,12 @@ echo'
 <button type="button" class="btn btn-primary" onclick="if( confirm(\'Duplicare questo preventivo?\') ){ $(\'#form-copy\').submit(); }"> <i class="fa fa-copy"></i> '.tr('Duplica preventivo').'</button>';
 
 if (!in_array($record['stato'], ['Bozza', 'Rifiutato', 'In attesa di conferma'])) {
-	$disabled = '';
+    $disabled = '';
 } else {
     echo '
 	<button type="button" class="btn btn-warning" onclick="if(confirm(\'Vuoi creare un nuova revisione?\')){$(\'#form_crearevisione\').submit();}"><i class="fa fa-edit"></i> '.tr('Crea nuova revisione...').'</button>';
-	$disabled = 'disabled';
+    $disabled = 'disabled';
 }
-
 
 // crea ordine
 echo '
@@ -30,7 +29,6 @@ echo '
 
 	</ul>
 </div>';
-	
 
 //duplica preventivo
 echo '

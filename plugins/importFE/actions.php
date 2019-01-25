@@ -41,7 +41,17 @@ switch (filter('op')) {
         break;
 
     case 'generate':
-        $fattura_pa = new FatturaElettronica(post('filename'));
+        $filename = post('filename');
+
+        //Processo il file ricevuto
+        $process_result = Interaction::processXML($filename);
+        if($process_result!=''){
+            flash()->error($process_result);
+            redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
+            exit;
+        }
+
+        $fattura_pa = new FatturaElettronica($filename);
 
         $id_record = $fattura_pa->saveFattura(post('pagamento'), post('id_segment'), post('id_tipo'));
         $fattura_pa->saveRighe(post('articoli'), post('iva'), post('conto'));

@@ -45,3 +45,8 @@ ALTER TABLE `co_preventivi` ADD `codice_cig` VARCHAR(15) AFTER `master_revision`
 
 -- Migliorata visualizzazione impostazione
 UPDATE `zz_settings` SET `tipo` = 'query=SELECT codice AS id, CONCAT_WS(\' - \', codice, descrizione) AS descrizione FROM fe_causali_pagamento_ritenuta' WHERE `zz_settings`.`nome` = 'Causale ritenuta d\'acconto';
+
+UPDATE `fe_stati_documento` SET `descrizione`='In elaborazione' WHERE `codice`='WAIT';
+
+INSERT INTO `fe_stati_documento`( `codice`, `descrizione`, `icon` ) VALUES
+( 'ERVAL', 'Errore di validazione', 'fa fa-edit text-danger' );

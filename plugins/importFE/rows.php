@@ -125,7 +125,7 @@ if (!empty($righe)) {
     echo '
     <h4>
         '.tr('Righe').'
-        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copy()"><i class="fa fa-copy"></i> '.tr('Copia IVA e conto dalla prima riga').'</button>
+        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copy()"><i class="fa fa-copy"></i> '.tr('Copia dati contabili dalla prima riga').'</button>
         <div class="clearfix"></div>
     </h4>
 
@@ -135,8 +135,7 @@ if (!empty($righe)) {
                 <th>'.tr('Descrizione').'</th>
                 <th width="10%">'.tr('Q.tà').'</th>
                 <th width="10%">'.tr('Prezzo unitario').'</th>
-                <th width="15%">'.tr('Iva associata').'*</th>
-                <th width="15%">'.tr('Conto').'*</th>
+                <th width="15%">'.tr('Dati contabili').'*</th>
                 <th width="25%">'.tr('Articolo').'</th>
             </tr>';
 
@@ -155,10 +154,9 @@ if (!empty($righe)) {
             <td>'.Translator::numberToLocale($riga['Quantita']).' '.$riga['UnitaMisura'].'</td>
             <td>'.Translator::numberToLocale($riga['PrezzoUnitario']).'&nbsp;&euro;<small class="help-block">Aliquota iva: '.$riga['AliquotaIVA'].'%</small></td>
             <td>
-                {[ "type": "select", "name": "iva['.$key.']", "values": "query='.str_replace('"', '\"', $query).'", "required": 1 ]}
-            </td>
-            <td>
-                {[ "type": "select", "name": "conto['.$key.']", "ajax-source": "conti-acquisti", "required": 1 ]}
+                {[ "type": "select", "name": "iva['.$key.']", "values": "query='.str_replace('"', '\"', $query).'", "required": 1, "placeholder": "Aliquota iva" ]}
+                <br>
+                {[ "type": "select", "name": "conto['.$key.']", "ajax-source": "conti-acquisti", "required": 1, "placeholder": "Conto acquisti" ]}
             </td>
             <td>
                 {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "class": "", "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}

@@ -19,14 +19,15 @@ class Ricevuta
     /** @var array XML della fattura */
     protected $fattura = null;
 
-    public function __construct($content)
+    public function __construct($name, $content)
     {
         $this->xml = XML::read($content);
 
         $nome = $this->xml['NomeFile'];
-        $pieces = explode('_', $nome);
+        $filename = explode('.', $nome)[0];
+        $pieces = explode('_', $filename);
 
-        $progressivo_invio = explode('.', $pieces[1])[0];
+        $progressivo_invio = $pieces[1];
 
         $this->fattura = Fattura::where([
             'progressivo_invio' => $progressivo_invio,
@@ -34,6 +35,20 @@ class Ricevuta
 
         if (empty($this->fattura)) {
             throw new UnexpectedValueException();
+        } else {
+            // Processo la ricevuta e salvo il codice e messaggio di errore
+            $filename = explode('.', $name)[0];
+            $pieces = explode('_', $filename);
+            $codice = $pieces[2];
+            $descrizione = $this->xml['Destinatario']['Descrizione'];
+            $data = $this->xml['DataOraRicezione'];
+
+            $this->fattura->codice_stato_fe = $codice;
+            $this->fattura->descrizione_stato_fe = $descrizione;
+            $this->fattura->data_stato_fe = date('Y-m-d H:i:s', strtotime($data));
+            $this->fattura->save();
+            
+            return true;
         }
     }
 

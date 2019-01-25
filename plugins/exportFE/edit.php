@@ -151,7 +151,8 @@ echo '
         <i class="fa fa-eye"></i> '.tr('Visualizza').'
     </a>';
 
-$send = Interaction::isEnabled() && $generated && $record['codice_stato_fe'] == 'GEN';
+// Scelgo quando posso inviarla
+$send = Interaction::isEnabled() && $generated && in_array( $record['codice_stato_fe'], array('GEN', 'ERVAL') );
 
 echo '
 
@@ -159,8 +160,34 @@ echo '
 
     <button onclick="if( confirm(\''.tr('Inviare la fattura al SDI?').'\') ){ send(this); }" class="btn btn-success btn-lg '.($send ? '' : 'disabled').'" target="_blank" '.($send ? '' : 'disabled').'>
         <i class="fa fa-paper-plane"></i> '.tr('Invia').'
-    </button>
+    </button><br><br>';
 
+// Messaggio esito invio
+if ($record['codice_stato_fe'] == '') {
+    
+} elseif ($record['codice_stato_fe'] == 'GEN') {
+    echo '
+    <div class="alert alert-warning">'.tr('La fattura è stata generata ed è pronta per l\'invio.').'</div>
+    ';
+} else {
+    $stato_fe = database()->fetchOne('SELECT codice, descrizione, icon FROM fe_stati_documento WHERE codice='.prepare($record['codice_stato_fe']));
+    
+    if (in_array($stato_fe['codice'], array('EC01', 'RC'))) {
+        $class = 'success';
+    } elseif (in_array($stato_fe['codice'], array('ERVAL', 'GEN', 'MC', 'WAIT'))) {
+        $class = 'warning';
+    } else {
+        $class = 'danger';
+    }
+    
+    echo '
+    <div class="alert text-left alert-'.$class.'"><big><i class="'.$stato_fe['icon'].'" style="color:#fff;"></i> <b>'.$record['codice_stato_fe'].'</b> - '.$record['descrizione_stato_fe'].'</big> <div class="pull-right"><i class="fa fa-clock-o"></i> '.date('d/m/Y H:i', strtotime($record['data_stato_fe'])).'</small></div>
+    ';
+}
+
+
+
+echo '
     <script>
         function send(btn) {
             var restore = buttonLoading(btn);

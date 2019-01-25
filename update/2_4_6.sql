@@ -48,5 +48,7 @@ UPDATE `zz_settings` SET `tipo` = 'query=SELECT codice AS id, CONCAT_WS(\' - \',
 
 UPDATE `fe_stati_documento` SET `descrizione`='In elaborazione' WHERE `codice`='WAIT';
 
-INSERT INTO `fe_stati_documento`( `codice`, `descrizione`, `icon` ) VALUES
-( 'ERVAL', 'Errore di validazione', 'fa fa-edit text-danger' );
+INSERT INTO `fe_stati_documento`( `codice`, `descrizione`, `icon` ) VALUES( 'ERVAL', 'Errore di validazione', 'fa fa-edit text-danger' );
+
+ALTER TABLE `co_documenti` ADD `descrizione_stato_fe` TEXT NOT NULL AFTER `codice_stato_fe`;
+ALTER TABLE `co_documenti` ADD `data_stato_fe` TIMESTAMP NOT NULL AFTER `descrizione_stato_fe`;

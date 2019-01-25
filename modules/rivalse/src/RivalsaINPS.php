@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Ritenute;
+namespace Modules\Rivalse;
 
 use Common\Model;
 

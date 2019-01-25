@@ -23,6 +23,11 @@ abstract class Description extends Model
         return $model;
     }
 
+    /**
+     * Imposta il proprietario dell'oggetto e l'ordine relativo all'interno delle righe.
+     *
+     * @param Document $document
+     */
     public function setParent(Document $document)
     {
         $this->parent()->associate($document);
@@ -35,8 +40,17 @@ abstract class Description extends Model
         $this->save();
     }
 
-    public function copiaIn(Document $document)
+    /**
+     * Copia l'oggetto (articolo, riga, descrizione) nel corrispettivo per il documento indicato.
+     *
+     * @param Document   $document
+     * @param float|null $qta
+     *
+     * @return self
+     */
+    public function copiaIn(Document $document, $qta = null)
     {
+        // Individuazione classe di destinazione
         $class = get_class($document);
         $namespace = implode('\\', explode('\\', $class, -1));
 
@@ -46,17 +60,33 @@ abstract class Description extends Model
 
         $object = $namespace.'\\Components\\'.$type;
 
+        // Attributi dell'oggetto da copiare
         $attributes = $this->getAttributes();
         unset($attributes['id']);
 
-        $model = $object::build($document);
+        if ($qta !== null) {
+            $attributes['qta'] = $qta;
+        }
+
+        // Creazione del nuovo oggetto
+        $model = new $object();
+        $model->setParent($document);
+
+        $model->customCopiaIn($this);
+
         $model->save();
 
+        // Impostazione degli attributi
         $model = $object::find($model->id);
         $accepted = $model->getAttributes();
 
         $attributes = array_intersect_key($attributes, $accepted);
         $model->fill($attributes);
+
+        $model->save();
+
+        // Rimozione quantità evasa
+        $this->qta_evasa = $this->qta_evasa + $attributes['qta'];
 
         return $model;
     }
@@ -64,6 +94,15 @@ abstract class Description extends Model
     abstract public function parent();
 
     abstract public function getParentID();
+
+    /**
+     * Azione personalizzata per la copia dell'oggetto.
+     *
+     * @param $original
+     */
+    protected function customCopiaIn($original)
+    {
+    }
 
     protected static function boot($bypass = false)
     {

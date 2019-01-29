@@ -81,7 +81,7 @@ switch (post('op')) {
                 'idsede' => post('idsede'),
                 'idconto' => post('idconto'),
                 'split_payment' => post('split_payment') ?: 0,
-
+				'is_fattura_conto_terzi' => post('is_fattura_conto_terzi') ?: 0,
                 'n_colli' => post('n_colli'),
                 'tipo_resa' => post('tipo_resa'),
                 'bollo' => 0,

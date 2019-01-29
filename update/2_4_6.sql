@@ -55,3 +55,6 @@ ALTER TABLE `co_documenti` ADD `data_stato_fe` TIMESTAMP NOT NULL AFTER `descriz
 
 -- Rimozione iva eliminata
 UPDATE `zz_settings` SET `tipo`='query=SELECT id, descrizione FROM `co_iva` WHERE deleted_at IS NULL ORDER BY descrizione ASC' WHERE `nome`='Iva predefinita';
+
+-- Flag fattura per conto terzi
+ALTER TABLE `co_documenti` ADD `is_fattura_conto_terzi` BOOLEAN NOT NULL DEFAULT FALSE AFTER `split_payment`;

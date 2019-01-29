@@ -152,7 +152,7 @@ if (!$cliente) {
                 </div>
 
 				 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Nazione'); ?>", "name": "id_nazione", "values": "query=SELECT id AS id, nome AS descrizione FROM an_nazioni ORDER BY nome ASC", "value": "$id_nazione$" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Nazione'); ?>", "name": "id_nazione", "values": "query=SELECT id AS id, CONCAT_WS(' - ', iso2, nome) AS descrizione FROM an_nazioni ORDER BY nome ASC", "value": "$id_nazione$" ]}
                 </div>
 
                 <div class="col-md-3">

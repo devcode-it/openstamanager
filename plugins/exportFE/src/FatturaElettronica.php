@@ -483,9 +483,17 @@ class FatturaElettronica
      * @return array
      */
     protected static function getCedentePrestatore($fattura)
-    {
-        $azienda = static::getAzienda();
-
+    {	
+		
+		$documento = $fattura->getDocumento();
+		
+		//Fattura per conto terzi 
+		if ($documento['is_fattura_conto_terzi']){
+			$azienda = $fattura->getCliente();
+		}else{
+			$azienda = static::getAzienda();
+		}
+		
         $result = [
             'DatiAnagrafici' => static::getDatiAnagrafici($azienda, true),
             'Sede' => static::getSede($azienda),

@@ -36,6 +36,7 @@ $button = !empty(get('op')) ? tr('Aggiungi') : $button;
 $rs = $dbo->fetchArray('SELECT * FROM '.$table.' WHERE id='.prepare($id_record));
 $numero = !empty($rs[0]['numero_esterno']) ? $rs[0]['numero_esterno'] : $rs[0]['numero'];
 $idanagrafica = $rs[0]['idanagrafica'];
+$idsede = $rs[0]['idsede'];
 $idpagamento = $rs[0]['idpagamento'];
 $idconto = $rs[0]['idconto'];
 
@@ -55,6 +56,7 @@ if (!empty($rs)) {
 <form action="'.$rootdir.'/editor.php?id_module='.Modules::get($module_name)['id'].(!empty(get('iddocumento')) ? '&id_record='.get('iddocumento') : '').'" method="post">
     <input type="hidden" name="'.$id.'" value="'.$id_record.'">
     <input type="hidden" name="idanagrafica" value="'.$idanagrafica.'">
+    <input type="hidden" name="idsede" value="'.$idsede.'">
     <input type="hidden" name="idconto" value="'.$idconto.'">
     <input type="hidden" name="idpagamento" value="'.$idpagamento.'">
     <input type="hidden" name="iddocumento" value="'.$id_record.'">

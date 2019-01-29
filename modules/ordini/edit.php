@@ -73,6 +73,10 @@ if ($module['name'] == 'Ordini cliente') {
                     }
                     ?>
 				</div>
+                
+                <div class="col-md-3">
+					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "required": 1, "ajax-source": "sedi", "value": "<?php echo $record['idsede']; ?>", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+				</div>
 
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
@@ -228,4 +232,10 @@ if ($record['flag_completato']) {
 <?php
 }
 ?>
+
+$('#idanagrafica').change( function(){
+	session_set('superselect,idanagrafica', $(this).val(), 0);
+
+	$("#idsede").selectReset();
+});
 </script>

@@ -203,6 +203,7 @@ switch (post('op')) {
         $totale_ordine = 0.00;
         $data = post('data');
         $idanagrafica = post('idanagrafica');
+        $idsede = post('idsede');
         $idpagamento = post('idpagamento');
         $idconto = post('idconto');
         $idordine = post('idordine');

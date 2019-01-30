@@ -215,7 +215,7 @@ foreach ($righe as $riga) {
     if (!$riga instanceof Descrizione) {
         echo '
             '.Translator::numberToLocale($riga->iva).' &euro;
-            <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' help-block">'.$riga->desc_iva.'</small>';
+            <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' help-block">'.$riga->desc_iva.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')': null).'</small>';
     }
 
     echo '
@@ -345,8 +345,15 @@ if (!empty($sconto)) {
 if (!empty($fattura->rivalsa_inps)) {
     echo '
     <tr>
-        <td colspan="5" class="text-right">
-            <b>'.tr('Rivalsa', [], ['upper' => true]).':</b>
+        <td colspan="5" class="text-right">';
+	
+	if ($dir == 'entrata') {
+		echo '
+				<span class="tip" title="'.$database->fetchOne('SELECT CONCAT_WS(\' - \', codice, descrizione) AS descrizione FROM fe_tipo_cassa WHERE codice = '.prepare(setting('Tipo Cassa')))['descrizione'].'"  > <i class="fa fa-question-circle-o"></i></span> ';
+	}
+			
+	echo '
+			<b>'.tr('Rivalsa', [], ['upper' => true]).' :</b>
         </td>
         <td align="right">
             '.Translator::numberToLocale($fattura->rivalsa_inps).' &euro;

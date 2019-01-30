@@ -19,7 +19,7 @@ if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
     $articolo = $database->fetchArray('SELECT codice, descrizione FROM mg_articoli WHERE id = '.prepare($result['idarticolo']))[0];
 
     echo '
-    <p>'.tr('Articolo').': '.$articolo['codice'].' - '.$articolo['descrizione'].'.</p>';
+    <p><strong>'.tr('Articolo').'</strong><br> '.$articolo['codice'].' - '.$articolo['descrizione'].'.</p>';
 }
 
 echo App::internalLoad('riga.php', $result, $options);

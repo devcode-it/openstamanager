@@ -1069,7 +1069,7 @@ class FatturaElettronica
     }
 
     /**
-     * Restituisce l'array responsabile per la generazione del tag DatiPagamento.
+     * Restituisce l'array responsabile per la generazione del tag DatiPagamento (2.4).
      *
      * @return array
      */

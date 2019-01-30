@@ -478,7 +478,7 @@ class FatturaElettronica
     }
 
     /**
-     * Restituisce l'array responsabile per la generazione del tag CedentePrestatore.
+     * Restituisce l'array responsabile per la generazione del tag CedentePrestatore (mia Azienda ovvero il fornitore) (1.2).
      *
      * @return array
      */
@@ -487,7 +487,7 @@ class FatturaElettronica
 
 		$documento = $fattura->getDocumento();
 
-		//Fattura per conto terzi
+		//Fattura per conto terzi, il cliente diventa il cedente al posto della mia Azienda (fornitore)
 		if ($documento['is_fattura_conto_terzi']){
 			$azienda = $fattura->getCliente();
 		}else{
@@ -538,14 +538,22 @@ class FatturaElettronica
     }
 
     /**
-     * Restituisce l'array responsabile per la generazione del tag CessionarioCommittente (1.4).
+     * Restituisce l'array responsabile per la generazione del tag CessionarioCommittente (Cliente) (1.4).
      *
      * @return array
      */
     protected static function getCessionarioCommittente($fattura)
-    {
-        $cliente = $fattura->getCliente();
-
+    {	
+		
+		$documento = $fattura->getDocumento();
+		
+		//Fattura per conto terzi, la mia Azienda (fornitore) diventa il cessionario al posto del cliente
+		if ($documento['is_fattura_conto_terzi']){
+			$cliente = static::getAzienda();
+		}else{
+			$cliente = $fattura->getCliente();
+		}
+		
         $result = [
             'DatiAnagrafici' => static::getDatiAnagrafici($cliente),
             'Sede' => static::getSede($cliente),

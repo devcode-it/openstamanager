@@ -483,17 +483,17 @@ class FatturaElettronica
      * @return array
      */
     protected static function getCedentePrestatore($fattura)
-    {	
-		
+    {
+
 		$documento = $fattura->getDocumento();
-		
-		//Fattura per conto terzi 
+
+		//Fattura per conto terzi
 		if ($documento['is_fattura_conto_terzi']){
 			$azienda = $fattura->getCliente();
 		}else{
 			$azienda = static::getAzienda();
 		}
-		
+
         $result = [
             'DatiAnagrafici' => static::getDatiAnagrafici($azienda, true),
             'Sede' => static::getSede($azienda),
@@ -908,6 +908,38 @@ class FatturaElettronica
             $descrizione = str_replace('…', '...', $descrizione);
 
             $dettaglio['Descrizione'] = str_replace('’', ' ', $descrizione);
+
+            //Aggiungo il riferimento della riga alla descrizione
+            $rif = '';
+            if (!empty($riga['idordine'])) {
+                $data = $database->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM or_ordini WHERE id=".prepare($riga['idordine']));
+                $rif = 'ordine';
+            }
+            // DDT
+            elseif (!empty($riga['idddt'])) {
+                $data = $database->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM dt_ddt WHERE id=".prepare($riga['idddt']));
+                $rif = 'ddt';
+            }
+            // Preventivo
+            elseif (!empty($riga['idpreventivo'])) {
+                $data = $database->fetchArray('SELECT numero, data_bozza AS data FROM co_preventivi WHERE id='.prepare($riga['idpreventivo']));
+                $rif = 'preventivo';
+            }
+            // Contratto
+            elseif (!empty($riga['idcontratto'])) {
+                $data = $database->fetchArray('SELECT numero, data_bozza AS data FROM co_contratti WHERE id='.prepare($riga['idcontratto']));
+                $rif = 'contratto';
+            }
+            // Intervento
+            elseif (!empty($riga['idintervento'])) {
+                $data = $database->fetchArray('SELECT codice AS numero, IFNULL( (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta) AS data FROM in_interventi WHERE id='.prepare($riga['idintervento']));
+                $rif = 'intervento';
+            }
+
+            if(!empty($rif)){
+                $dettaglio['Descrizione'] .= "\nRif. ".$rif." n.".$data[0]['numero']." del ".date('d/m/Y', strtotime($data[0]['data']));
+            }
+
             $dettaglio['Quantita'] = $riga['qta'];
 
             if (!empty($riga['um'])) {

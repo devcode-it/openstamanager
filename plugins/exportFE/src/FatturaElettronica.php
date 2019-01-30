@@ -596,19 +596,24 @@ class FatturaElettronica
             // TODO: 'Causale' => $documento['causale'],
         ];
 
-        // Ritenuta d'Acconto
+        
         $righe = $fattura->getRighe();
+		
+		// Ritenuta d'Acconto
         $id_ritenuta = null;
-        $id_rivalsainps = null;
+		$totale_ritenutaacconto = 0;
+		
+		// Rivalsa
+		$id_rivalsainps = null;
         $totale_rivalsainps = 0;
-        $totale_ritenutaacconto = 0;
+        
         foreach ($righe as $riga) {
-            if (!empty($riga['idritenutaacconto'])) {
+            if (!empty($riga['idritenutaacconto']) and empty($riga['is_descrizione']) ) {
                 $id_ritenuta = $riga['idritenutaacconto'];
                 $totale_ritenutaacconto += $riga['ritenutaacconto'];
             }
 
-            if (!empty($riga['idrivalsainps'])) {
+            if (!empty($riga['idrivalsainps']) and empty($riga['is_descrizione'])) {
                 $id_rivalsainps = $riga['idrivalsainps'];
                 $totale_rivalsainps += $riga['rivalsainps'];
                 $aliquota_iva_rivalsainps = $riga['idiva'];
@@ -635,7 +640,7 @@ class FatturaElettronica
             ];
         }
 
-        // Cassa Previdenziale (2.1.1.7)
+        // Cassa Previdenziale (Rivalsa) (2.1.1.7)
         if (!empty($id_rivalsainps)) {
             $iva = database()->fetchOne('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($aliquota_iva_rivalsainps));
             $percentuale = database()->fetchOne('SELECT percentuale FROM co_rivalse WHERE id = '.prepare($id_rivalsainps))['percentuale'];
@@ -982,7 +987,7 @@ class FatturaElettronica
             $dettaglio['PrezzoTotale'] = $prezzo_totale;
             $dettaglio['AliquotaIVA'] = $percentuale;
 
-            if (!empty($riga['idritenutaacconto'])) {
+            if (!empty($riga['idritenutaacconto']) and empty($riga['is_descrizione'])) {
                 $dettaglio['Ritenuta'] = 'SI';
             }
 

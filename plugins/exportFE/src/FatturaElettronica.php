@@ -1003,12 +1003,15 @@ class FatturaElettronica
             }
 
             // AltriDatiGestionali (2.2.1.16) - Ritenuta ENASARCO
-            $riga['ritenutaenasarco'] = floatval($riga['ritenutaenasarco']);
-            if (!empty($riga['ritenutaenasarco'])) {
+			//https://forum.italia.it/uploads/default/original/2X/d/d35d721c3a3a601d2300378724a270154e23af52.jpeg
+            if (!empty($documento['id_ritenuta_contributi'])) {
+				
+				$percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenuta_contributi WHERE id = '.prepare($documento['id_ritenuta_contributi']))['percentuale'];
+				
                 $ritenutaenasarco = [
                     'TipoDato' => 'CASSA-PREV',
-                    'RiferimentoTesto' => 'ENASARCO - TC07',
-                    'RiferimentoNumero' => $riga['ritenutaenasarco'],
+                    'RiferimentoTesto' => 'ENASARCO - TC07 ('.Translator::numberToLocale($percentuale).'%)',
+                    'RiferimentoNumero' => $documento['ritenuta_contributi'];,
                 ];
 
                 $dettaglio['AltriDatiGestionali'] = $ritenutaenasarco;

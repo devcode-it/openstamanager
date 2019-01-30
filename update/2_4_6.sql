@@ -46,8 +46,10 @@ ALTER TABLE `co_preventivi` ADD `codice_cig` VARCHAR(15) AFTER `master_revision`
 -- Migliorata visualizzazione impostazione
 UPDATE `zz_settings` SET `tipo` = 'query=SELECT codice AS id, CONCAT_WS(\' - \', codice, descrizione) AS descrizione FROM fe_causali_pagamento_ritenuta' WHERE `zz_settings`.`nome` = 'Causale ritenuta d\'acconto';
 
+-- Aggiunto stato WAIT, fattura elettronica in elaborazione
 UPDATE `fe_stati_documento` SET `descrizione`='In elaborazione' WHERE `codice`='WAIT';
 
+-- Inserito stato errore interno OSM 
 INSERT INTO `fe_stati_documento`( `codice`, `descrizione`, `icon` ) VALUES( 'ERVAL', 'Errore di validazione', 'fa fa-edit text-danger' );
 
 ALTER TABLE `co_documenti` ADD `descrizione_stato_fe` TEXT NOT NULL AFTER `codice_stato_fe`;
@@ -58,3 +60,17 @@ UPDATE `zz_settings` SET `tipo`='query=SELECT id, descrizione FROM `co_iva` WHER
 
 -- Flag fattura per conto terzi
 ALTER TABLE `co_documenti` ADD `is_fattura_conto_terzi` BOOLEAN NOT NULL DEFAULT FALSE AFTER `split_payment`;
+
+-- Migliorata visualizzazione impostazione
+UPDATE `zz_settings` SET `tipo` = 'query=SELECT codice AS id, CONCAT_WS(\' - \', codice, descrizione) AS descrizione FROM fe_tipo_cassa' WHERE `zz_settings`.`nome` = 'Tipo Cassa';
+
+
+-- Tabella co_ritenuta_contributi (ENASARCO, ECC..)
+
+CREATE TABLE IF NOT EXISTS `co_ritenuta_contributi` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `descrizione` varchar(100) NOT NULL,
+  `percentuale` decimal(5,2) NOT NULL,
+  `percentuale_imponibile` decimal(5,2) NOT NULL,
+  PRIMARY KEY (`id`)
+);

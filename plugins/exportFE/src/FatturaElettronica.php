@@ -1011,7 +1011,7 @@ class FatturaElettronica
                 $ritenutaenasarco = [
                     'TipoDato' => 'CASSA-PREV',
                     'RiferimentoTesto' => 'ENASARCO - TC07 ('.Translator::numberToLocale($percentuale).'%)',
-                    'RiferimentoNumero' => $documento['ritenuta_contributi'];,
+                    'RiferimentoNumero' => $documento['ritenuta_contributi'],
                 ];
 
                 $dettaglio['AltriDatiGestionali'] = $ritenutaenasarco;

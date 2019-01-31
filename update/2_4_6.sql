@@ -74,3 +74,15 @@ CREATE TABLE IF NOT EXISTS `co_ritenuta_contributi` (
   `percentuale_imponibile` decimal(5,2) NOT NULL,
   PRIMARY KEY (`id`)
 );
+
+
+--  Aggiungo id PRIMARY KEY per zz_operations
+
+--ALTER TABLE `zz_operations` ADD `id` INT(11) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id`);
+
+-- Fix icon_Inviata Fatture di vendita per errore subquery
+
+UPDATE `zz_views` SET `query` = '(SELECT GROUP_CONCAT(DISTINCT `name` SEPARATOR \'\r\n \') FROM zz_operations INNER JOIN zz_emails ON zz_operations.id_email = zz_emails.id WHERE zz_operations.id_module = (SELECT id FROM zz_modules WHERE `name` = \'Fatture di vendita\') AND op = \'send-email\' AND id_record = co_documenti.id GROUP BY zz_operations.id ORDER BY zz_operations.created_at DESC LIMIT 1) ' WHERE `zz_views`.`name` = 'icon_title_Inviata' AND id_module = (SELECT id FROM zz_modules WHERE name = 'Fatture di vendita');
+
+
+UPDATE `zz_views` SET `query` = 'IF((SELECT GROUP_CONCAT(DISTINCT `name` SEPARATOR \'\r\n \') FROM zz_operations INNER JOIN zz_emails ON zz_operations.id_email = zz_emails.id WHERE zz_operations.id_module = (SELECT id FROM zz_modules WHERE `name` = \'Fatture di vendita\') AND op = \'send-email\' AND id_record = co_documenti.id GROUP BY zz_operations.id ORDER BY zz_operations.created_at DESC LIMIT 1) IS NOT NULL, \'fa fa-envelope text-success\', \'\') ' WHERE `zz_views`.`name` = 'icon_Inviata' AND id_module = (SELECT id FROM zz_modules WHERE name = 'Fatture di vendita');

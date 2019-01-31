@@ -399,3 +399,17 @@ function operationLog($operation, array $ids = [], array $options = [])
 
     return true;
 }
+
+/**
+ * Rimuove spazi e caratteri speciali da una stringa.
+ *
+ * @param string $string
+ * @param string $permitted
+ *
+ * @since 2.4.6
+ *
+ * @return string
+ */
+function clean($string, $permitted) {
+   return preg_replace('/[^A-Za-z0-9'.$permitted.']/', '', $string); // Removes special chars.
+}

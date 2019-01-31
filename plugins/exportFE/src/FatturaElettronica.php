@@ -501,7 +501,7 @@ class FatturaElettronica
 
         // IscrizioneREA
         if (!empty($azienda['codicerea'])) {
-            $codice = explode('-', $azienda['codicerea']);
+            $codice = explode('-', clean($azienda['codicerea'], '\-'));
 
             if (!empty($codice[0]) && !empty($codice[1])) {
                 $result['IscrizioneREA'] = [
@@ -1107,7 +1107,7 @@ class FatturaElettronica
                     $pagamento['IstitutoFinanziario'] = $co_banche['nome'];
                 }
                 if (!empty($co_banche['iban'])) {
-                    $pagamento['IBAN'] = $co_banche['iban'];
+                    $pagamento['IBAN'] = clean($co_banche['iban']);
                 }
                 if (!empty($co_banche['bic'])) {
                     $pagamento['BIC'] = $co_banche['bic'];

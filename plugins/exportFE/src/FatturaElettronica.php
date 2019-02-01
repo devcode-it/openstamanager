@@ -274,6 +274,7 @@ class FatturaElettronica
         database()->update('co_documenti', [
             'progressivo_invio' => $this->getDocumento()['progressivo_invio'],
             'codice_stato_fe' => 'GEN',
+            'data_stato_fe' => date('Y-m-d H:i:s'),
         ], ['id' => $this->getDocumento()['id']]);
 
         return ($result === false) ? null : $filename;
@@ -286,12 +287,12 @@ class FatturaElettronica
      */
     public function getFilename($new = false)
     {
-        
-		if (!empty(setting('Terzo intermediario')))
-			$anagrafica = Anagrafica::find(setting('Terzo intermediario'));
-		else
-			$anagrafica = static::getAzienda();
-		
+        if (!empty(setting('Terzo intermediario'))) {
+            $anagrafica = Anagrafica::find(setting('Terzo intermediario'));
+        } else {
+            $anagrafica = static::getAzienda();
+        }
+
         $prefix = 'IT'.(!empty($anagrafica['codice_fiscale']) ? $anagrafica['codice_fiscale'] : $anagrafica['piva']);
 
         if (empty($this->documento['progressivo_invio']) || !empty($new)) {
@@ -359,14 +360,15 @@ class FatturaElettronica
      * @return array
      */
     protected static function getDatiTrasmissione($fattura)
-    {	
-		// Se in impostazioni ho definito un terzo intermediario (es. Aruba, Teamsystem)
-		if (!empty(setting('Terzo intermediario')))
-			$anagrafica = Anagrafica::find(setting('Terzo intermediario'));
-		else
-			$anagrafica = static::getAzienda();
-        
-		$documento = $fattura->getDocumento();
+    {
+        // Se in impostazioni ho definito un terzo intermediario (es. Aruba, Teamsystem)
+        if (!empty(setting('Terzo intermediario'))) {
+            $anagrafica = Anagrafica::find(setting('Terzo intermediario'));
+        } else {
+            $anagrafica = static::getAzienda();
+        }
+
+        $documento = $fattura->getDocumento();
         $cliente = $fattura->getCliente();
 
         $sede = database()->fetchOne('SELECT `codice_destinatario` FROM `an_sedi` WHERE `id` = '.prepare($documento['idsede']));
@@ -382,15 +384,15 @@ class FatturaElettronica
         $default_code = ($cliente->nazione->iso2 != 'IT') ? 'XXXXXXX' : $default_code;
 
         // Generazione dell'header
-		// Se all'Anagrafe Tributaria il trasmittente è censito con il codice fiscale, es. ditte individuali
-		$result = [
-			'IdTrasmittente' => [
-				'IdPaese' => $anagrafica->nazione->iso2,
-				'IdCodice' => (!empty($anagrafica['codice_fiscale'])) ? $anagrafica['codice_fiscale'] : $anagrafica['piva'],
-			]
-		];
-		
-		$result[] = [
+        // Se all'Anagrafe Tributaria il trasmittente è censito con il codice fiscale, es. ditte individuali
+        $result = [
+            'IdTrasmittente' => [
+                'IdPaese' => $anagrafica->nazione->iso2,
+                'IdCodice' => (!empty($anagrafica['codice_fiscale'])) ? $anagrafica['codice_fiscale'] : $anagrafica['piva'],
+            ],
+        ];
+
+        $result[] = [
             'ProgressivoInvio' => $documento['progressivo_invio'],
             'FormatoTrasmissione' => ($cliente['tipo'] == 'Ente pubblico') ? 'FPA12' : 'FPR12',
             'CodiceDestinatario' => !empty($cliente['codice_destinatario']) ? $cliente['codice_destinatario'] : $default_code,
@@ -497,15 +499,14 @@ class FatturaElettronica
      */
     protected static function getCedentePrestatore($fattura)
     {
+        $documento = $fattura->getDocumento();
 
-		$documento = $fattura->getDocumento();
-
-		//Fattura per conto terzi, il cliente diventa il cedente al posto della mia Azienda (fornitore)
-		if ($documento['is_fattura_conto_terzi']){
-			$azienda = $fattura->getCliente();
-		}else{
-			$azienda = static::getAzienda();
-		}
+        //Fattura per conto terzi, il cliente diventa il cedente al posto della mia Azienda (fornitore)
+        if ($documento['is_fattura_conto_terzi']) {
+            $azienda = $fattura->getCliente();
+        } else {
+            $azienda = static::getAzienda();
+        }
 
         $result = [
             'DatiAnagrafici' => static::getDatiAnagrafici($azienda, true),
@@ -556,17 +557,16 @@ class FatturaElettronica
      * @return array
      */
     protected static function getCessionarioCommittente($fattura)
-    {	
-		
-		$documento = $fattura->getDocumento();
-		
-		//Fattura per conto terzi, la mia Azienda (fornitore) diventa il cessionario al posto del cliente
-		if ($documento['is_fattura_conto_terzi']){
-			$cliente = static::getAzienda();
-		}else{
-			$cliente = $fattura->getCliente();
-		}
-		
+    {
+        $documento = $fattura->getDocumento();
+
+        //Fattura per conto terzi, la mia Azienda (fornitore) diventa il cessionario al posto del cliente
+        if ($documento['is_fattura_conto_terzi']) {
+            $cliente = static::getAzienda();
+        } else {
+            $cliente = $fattura->getCliente();
+        }
+
         $result = [
             'DatiAnagrafici' => static::getDatiAnagrafici($cliente),
             'Sede' => static::getSede($cliente),
@@ -609,19 +609,18 @@ class FatturaElettronica
             // TODO: 'Causale' => $documento['causale'],
         ];
 
-        
         $righe = $fattura->getRighe();
-		
-		// Ritenuta d'Acconto
+
+        // Ritenuta d'Acconto
         $id_ritenuta = null;
-		$totale_ritenutaacconto = 0;
-		
-		// Rivalsa
-		$id_rivalsainps = null;
+        $totale_ritenutaacconto = 0;
+
+        // Rivalsa
+        $id_rivalsainps = null;
         $totale_rivalsainps = 0;
-        
+
         foreach ($righe as $riga) {
-            if (!empty($riga['idritenutaacconto']) and empty($riga['is_descrizione']) ) {
+            if (!empty($riga['idritenutaacconto']) and empty($riga['is_descrizione'])) {
                 $id_ritenuta = $riga['idritenutaacconto'];
                 $totale_ritenutaacconto += $riga['ritenutaacconto'];
             }
@@ -893,13 +892,13 @@ class FatturaElettronica
             $riga['qta'] = abs($riga['qta']);
             $riga['sconto'] = abs($riga['sconto']);
 
-            //Fix per righe di tipo descrizione, copio idiva dalla prima riga del documento che non è di tipo descrizione, riportando di conseguenza eventuali % e/o nature
+            // Fix per righe di tipo descrizione, copio idiva dalla prima riga del documento che non è di tipo descrizione, riportando di conseguenza eventuali % e/o nature
             if (!empty($riga['is_descrizione'])) {
                 $riga['idiva'] = $database->fetchOne('SELECT `idiva` FROM `co_righe_documenti` WHERE `is_descrizione` = 0 AND `iddocumento` = '.prepare($documento['id']))['idiva'];
             }
 
-            //Fix per qta, deve sempre essere impostata almeno a 1
-            $riga['qta'] = (!empty($riga['qta'])) ? $riga['qta'] : 1;
+            // Fix per qta, deve sempre essere impostata almeno a 1
+            $riga['qta'] = !empty($riga['qta']) ? $riga['qta'] : 1;
 
             $prezzo_unitario = $riga['subtotale'] / $riga['qta'];
             $prezzo_totale = $riga['subtotale'] - $riga['sconto'];
@@ -928,42 +927,16 @@ class FatturaElettronica
                 $dettaglio['CodiceArticolo'] = $codice_articolo;
             }
 
-            //Non ammesso ’
-            //$descrizione = html_entity_decode($riga['descrizione'], ENT_HTML5, 'UTF-8');
+            // Non ammesso ’
+            // $descrizione = html_entity_decode($riga['descrizione'], ENT_HTML5, 'UTF-8');
             $descrizione = str_replace('&gt;', ' ', $riga['descrizione']);
             $descrizione = str_replace('…', '...', $descrizione);
 
             $dettaglio['Descrizione'] = str_replace('’', ' ', $descrizione);
 
-            //Aggiungo il riferimento della riga alla descrizione
-            $rif = '';
-            if (!empty($riga['idordine'])) {
-                $data = $database->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM or_ordini WHERE id=".prepare($riga['idordine']));
-                $rif = 'ordine';
-            }
-            // DDT
-            elseif (!empty($riga['idddt'])) {
-                $data = $database->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM dt_ddt WHERE id=".prepare($riga['idddt']));
-                $rif = 'ddt';
-            }
-            // Preventivo
-            elseif (!empty($riga['idpreventivo'])) {
-                $data = $database->fetchArray('SELECT numero, data_bozza AS data FROM co_preventivi WHERE id='.prepare($riga['idpreventivo']));
-                $rif = 'preventivo';
-            }
-            // Contratto
-            elseif (!empty($riga['idcontratto'])) {
-                $data = $database->fetchArray('SELECT numero, data_bozza AS data FROM co_contratti WHERE id='.prepare($riga['idcontratto']));
-                $rif = 'contratto';
-            }
-            // Intervento
-            elseif (!empty($riga['idintervento'])) {
-                $data = $database->fetchArray('SELECT codice AS numero, IFNULL( (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta) AS data FROM in_interventi WHERE id='.prepare($riga['idintervento']));
-                $rif = 'intervento';
-            }
-
-            if(!empty($rif)){
-                $dettaglio['Descrizione'] .= "\nRif. ".$rif." n.".$data[0]['numero']." del ".date('d/m/Y', strtotime($data[0]['data']));
+            $ref = doc_references($riga, 'entrata', ['iddocumento']);
+            if (!empty($ref)) {
+                $dettaglio['Descrizione'] .= "\n".$ref['description'];
             }
 
             $dettaglio['Quantita'] = $riga['qta'];
@@ -1016,11 +989,10 @@ class FatturaElettronica
             }
 
             // AltriDatiGestionali (2.2.1.16) - Ritenuta ENASARCO
-			//https://forum.italia.it/uploads/default/original/2X/d/d35d721c3a3a601d2300378724a270154e23af52.jpeg
+            // https://forum.italia.it/uploads/default/original/2X/d/d35d721c3a3a601d2300378724a270154e23af52.jpeg
             if (!empty($documento['id_ritenuta_contributi'])) {
-				
-				$percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenuta_contributi WHERE id = '.prepare($documento['id_ritenuta_contributi']))['percentuale'];
-				
+                $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenuta_contributi WHERE id = '.prepare($documento['id_ritenuta_contributi']))['percentuale'];
+
                 $ritenutaenasarco = [
                     'TipoDato' => 'CASSA-PREV',
                     'RiferimentoTesto' => 'ENASARCO - TC07 ('.Translator::numberToLocale($percentuale).'%)',

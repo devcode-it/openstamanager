@@ -201,6 +201,11 @@ class Fattura extends Document
         return $this->belongsTo(Stato::class, 'idstatodocumento');
     }
 
+    public function statoFE()
+    {
+        return $this->belongsTo(StatoFE::class, 'codice_stato_fe');
+    }
+
     public function articoli()
     {
         return $this->hasMany(Components\Articolo::class, 'iddocumento');

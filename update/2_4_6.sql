@@ -80,3 +80,10 @@ UPDATE `zz_views` SET `query` = 'IF((SELECT GROUP_CONCAT(DISTINCT `name` SEPARAT
 
 -- Limitato il controllo numeri fattura duplicati all'anno in corso
 UPDATE `zz_views` SET `query` = 'IF((SELECT COUNT(t.numero_esterno) FROM co_documenti AS t WHERE t.numero_esterno = co_documenti.numero_esterno AND t.numero_esterno != '''' AND t.id_segment = co_documenti.id_segment AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = ''entrata'') AND t.data >= ''|period_start|'' AND t.data <= ''|period_end|'' AND YEAR(t.data) = YEAR(co_documenti.data)  ) > 1, ''red'', '''') ' WHERE `zz_views`.`name` = '_bg_' AND id_module = (SELECT id FROM zz_modules WHERE name = 'Fatture di vendita');
+
+-- Fornitore terzo intermediario abilitato all'invio della fattura elettronica
+UPDATE `zz_settings` SET `help` = 'Fornitore, mio intermediario abilitato all\'invio della fattura elettronica (es. Aruba, Teamsystem ecc...)' WHERE `zz_settings`.`nome` = 'Terzo intermediario';
+
+-- Aggiunta percentuale_imponibile su cui applicare il calcolo della ritenuta
+ALTER TABLE `co_ritenutaacconto` ADD `percentuale_imponibile` DECIMAL(5,2) NOT NULL AFTER `esente`;
+

@@ -386,7 +386,7 @@ class FatturaElettronica
 		$result = [
 			'IdTrasmittente' => [
 				'IdPaese' => $anagrafica->nazione->iso2,
-				'IdCodice' => (!empty($anagrafica['codice_fiscale'])) ? $anagrafica['codice_fiscale'] : $anagrafica['piva'],
+				'IdCodice' => (!empty($anagrafica['codice_fiscale'])) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']),
 			]
 		];
 		
@@ -425,11 +425,12 @@ class FatturaElettronica
 
         // Partita IVA (obbligatoria se presente)
         if (!empty($anagrafica['piva'])) {
-            if (!empty($anagrafica->nazione->iso2)) {
+            
+			if (!empty($anagrafica->nazione->iso2)) {
                 $result['IdFiscaleIVA']['IdPaese'] = $anagrafica->nazione->iso2;
             }
-
-            $result['IdFiscaleIVA']['IdCodice'] = $anagrafica['piva'];
+			
+            $result['IdFiscaleIVA']['IdCodice'] = str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']);
         }
 
         // Codice fiscale

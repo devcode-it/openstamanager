@@ -49,7 +49,7 @@ $_SESSION['module_'.$id_module]['id_segment'] = $id_record;
 $_SESSION['module_'.$record['id_module']]['id_segment'] = $id_record;
 
 $current_module = Modules::get($record['id_module']);
-$total = App::readQuery($current_module);
+$total = Util\Query::readQuery($current_module);
 $module_query = Modules::replaceAdditionals($record['id_module'], $total['query']);
 
 echo '

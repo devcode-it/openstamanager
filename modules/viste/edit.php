@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Module;
+
 $enable_readonly = !setting('Modifica Viste di default');
 
 echo '
@@ -47,8 +49,7 @@ echo '
             </div>';
 
 if ($options != '' && $options != 'menu' && $options != 'custom') {
-    $total = App::readQuery(Modules::get($id_record));
-    $module_query = $total['query'];
+    $module_query = Util\Query::getQuery(Module::find($id_record));
 
     echo '
 			<div class="row">

@@ -39,8 +39,8 @@ echo '
                         }
 						buttonRestore(btn, restore);
                     },
-                    error: function(data) {
-                        alert("'.tr('Errore').': " + data);
+                    error: function(xhr) {
+                        alert("'.tr('Errore').': " + xhr.responseJSON.error.message);
 
                         buttonRestore(btn, restore);
                     }

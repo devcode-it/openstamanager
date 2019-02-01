@@ -62,11 +62,10 @@ function download(button, file) {
                     title: "'.tr('Fattura già importata.').'",
                     type: "info",
                 });
+                
 				buttonRestore(button, restore);
 				$(button).prop("disabled", true);
             }
-
-           
         }
     });
 }

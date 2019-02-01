@@ -264,7 +264,7 @@ switch (post('op')) {
         $dbo->query($query);
 
         // Eliminazione dell'intervento
-        $query = 'DELETE FROM in_interventi WHERE id='.prepare($id_record).' '.Modules::getAdditionalsQuery($id_module);
+        $query = 'DELETE FROM in_interventi WHERE id='.prepare($id_record);
         $dbo->query($query);
 
         // Elimino i collegamenti degli articoli a questo intervento
@@ -370,7 +370,7 @@ switch (post('op')) {
 
     case 'delriga':
         $idriga = post('idriga');
-        $dbo->query('DELETE FROM in_righe_interventi WHERE id='.prepare($idriga).' '.Modules::getAdditionalsQuery($id_module));
+        $dbo->query('DELETE FROM in_righe_interventi WHERE id='.prepare($idriga));
 
         break;
 
@@ -425,7 +425,7 @@ switch (post('op')) {
         $articolo->save();
 
         // Aggiorno l'automezzo dell'intervento
-        $dbo->query('UPDATE in_interventi SET idautomezzo='.prepare(post('idautomezzo')).' WHERE id='.prepare($id_record).' '.Modules::getAdditionalsQuery($id_module));
+        $dbo->query('UPDATE in_interventi SET idautomezzo='.prepare(post('idautomezzo')).' WHERE id='.prepare($id_record));
 
         if (!empty($serials)) {
             if ($old_qta > $qta) {

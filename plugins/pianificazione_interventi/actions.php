@@ -272,7 +272,7 @@ switch (filter('op')) {
     case 'unlink_articolo':
         $idriga = post('idriga');
 
-        $dbo->query('DELETE FROM co_promemoria_articoli WHERE id='.prepare($idriga).' '.Modules::getAdditionalsQuery($id_module));
+        $dbo->query('DELETE FROM co_promemoria_articoli WHERE id='.prepare($idriga));
 
         break;
 
@@ -350,7 +350,7 @@ switch (filter('op')) {
     case 'delriga':
         $idriga = post('idriga');
 
-        $dbo->query('DELETE FROM co_promemoria_righe WHERE id='.prepare($idriga).' '.Modules::getAdditionalsQuery($id_module));
+        $dbo->query('DELETE FROM co_promemoria_righe WHERE id='.prepare($idriga));
 
         break;
 }

@@ -2,7 +2,7 @@
 
 namespace Util;
 
-use UnexpectedValueException;
+use Exception;
 
 /**
  * Classe dedicata all'interpretazione dei file XML.
@@ -28,7 +28,7 @@ class XML
         if ($xml === false) {
             $message = libxml_get_last_error()->message;
 
-            throw new UnexpectedValueException($message);
+            throw new Exception($message);
         }
 
         $result = json_decode(json_encode($xml), true);

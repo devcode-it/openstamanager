@@ -15,7 +15,7 @@ include_once App::filepath('include|custom|', 'top.php');
 $query = Util\Query::getQuery($structure, [
     'id' => $id_record,
 ]);
-$has_access = $dbo->fetchNum($query);
+$has_access = !empty($query) ? $dbo->fetchNum($query) : true;
 
 if ($has_access) {
     // Inclusione gli elementi fondamentali

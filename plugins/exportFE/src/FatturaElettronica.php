@@ -286,8 +286,13 @@ class FatturaElettronica
      */
     public function getFilename($new = false)
     {
-        $azienda = static::getAzienda();
-        $prefix = 'IT'.(!empty($azienda['codice_fiscale']) ? $azienda['codice_fiscale'] : $azienda['piva']);
+        
+		if (!empty(setting('Terzo intermediario')))
+			$anagrafica = Anagrafica::find(setting('Terzo intermediario'));
+		else
+			$anagrafica = static::getAzienda();
+		
+        $prefix = 'IT'.(!empty($anagrafica['codice_fiscale']) ? $anagrafica['codice_fiscale'] : $anagrafica['piva']);
 
         if (empty($this->documento['progressivo_invio']) || !empty($new)) {
             $database = database();
@@ -354,9 +359,14 @@ class FatturaElettronica
      * @return array
      */
     protected static function getDatiTrasmissione($fattura)
-    {
-        $azienda = static::getAzienda();
-        $documento = $fattura->getDocumento();
+    {	
+		// Se in impostazioni ho definito un terzo intermediario (es. Aruba, Teamsystem)
+		if (!empty(setting('Terzo intermediario')))
+			$anagrafica = Anagrafica::find(setting('Terzo intermediario'));
+		else
+			$anagrafica = static::getAzienda();
+        
+		$documento = $fattura->getDocumento();
         $cliente = $fattura->getCliente();
 
         $sede = database()->fetchOne('SELECT `codice_destinatario` FROM `an_sedi` WHERE `id` = '.prepare($documento['idsede']));
@@ -372,25 +382,28 @@ class FatturaElettronica
         $default_code = ($cliente->nazione->iso2 != 'IT') ? 'XXXXXXX' : $default_code;
 
         // Generazione dell'header
-        // Se all'Anagrafe Tributaria il trasmittente è censito con il codice fiscale
-        $result = [
-            'IdTrasmittente' => [
-                'IdPaese' => $azienda->nazione->iso2,
-                'IdCodice' => (!empty($azienda['codice_fiscale'])) ? $azienda['codice_fiscale'] : $azienda['piva'],
-            ],
+		// Se all'Anagrafe Tributaria il trasmittente è censito con il codice fiscale, es. ditte individuali
+		$result = [
+			'IdTrasmittente' => [
+				'IdPaese' => $anagrafica->nazione->iso2,
+				'IdCodice' => (!empty($anagrafica['codice_fiscale'])) ? $anagrafica['codice_fiscale'] : $anagrafica['piva'],
+			]
+		];
+		
+		$result[] = [
             'ProgressivoInvio' => $documento['progressivo_invio'],
             'FormatoTrasmissione' => ($cliente['tipo'] == 'Ente pubblico') ? 'FPA12' : 'FPR12',
             'CodiceDestinatario' => !empty($cliente['codice_destinatario']) ? $cliente['codice_destinatario'] : $default_code,
         ];
 
         // Telefono di contatto
-        if (!empty($azienda['telefono'])) {
-            $result['ContattiTrasmittente']['Telefono'] = $azienda['telefono'];
+        if (!empty($anagrafica['telefono'])) {
+            $result['ContattiTrasmittente']['Telefono'] = $anagrafica['telefono'];
         }
 
         // Email di contatto
-        if (!empty($azienda['email'])) {
-            $result['ContattiTrasmittente']['Email'] = $azienda['email'];
+        if (!empty($anagrafica['email'])) {
+            $result['ContattiTrasmittente']['Email'] = $anagrafica['email'];
         }
 
         // Inizializzazione PEC solo se anagrafica azienda e codice destinatario non compilato, per privato e PA la PEC non serve

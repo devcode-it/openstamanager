@@ -410,6 +410,6 @@ function operationLog($operation, array $ids = [], array $options = [])
  *
  * @return string
  */
-function clean($string, $permitted) {
+function clean($string, $permitted = '') {
    return preg_replace('/[^A-Za-z0-9'.$permitted.']/', '', $string); // Removes special chars.
 }

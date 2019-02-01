@@ -191,8 +191,11 @@ function calcola_sconto($data)
 /**
  * Restistuisce le informazioni sull'eventuale riferimento ai documenti.
  *
- * @param array  $data
- * @param string $dir
+ * @param $info
+ * @param $dir
+ * @param array $ignore
+ *
+ * @throws Exception
  *
  * @return array
  */

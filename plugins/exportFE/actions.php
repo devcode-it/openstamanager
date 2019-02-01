@@ -31,7 +31,6 @@ switch (filter('op')) {
         if ($result) {
             database()->update('co_documenti', [
                 'codice_stato_fe' => 'WAIT',
-                'descrizione_stato_fe' => 'Fattura in elaborazione...',
                 'data_stato_fe' => date('Y-m-d H:i:s'),
             ], ['id' => $id_record]);
         }

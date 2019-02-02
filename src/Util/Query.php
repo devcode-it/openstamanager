@@ -13,10 +13,22 @@ use Translator;
  */
 class Query
 {
+    protected static $segments = true;
+
+    /**
+     * Imposta l'utilizzo o meno dei segmenti per le query.
+     *
+     * @param bool $segments
+     */
+    public static function setSegments($segments)
+    {
+        self::$segments = $segments;
+    }
+
     /**
      * Restituisce un'insieme di array comprendenti le informazioni per la costruzione della query del modulo indicato.
      *
-     * @param $element
+     * @param array $element
      *
      * @throws \Exception
      *
@@ -45,7 +57,7 @@ class Query
         $id_parent = filter('id_parent');
 
         $id_module = Modules::getCurrent()['id'];
-        $segment = $_SESSION['module_'.$id_module]['id_segment'];
+        $segment = !empty(self::$segments) ? $_SESSION['module_'.$id_module]['id_segment'] : null;
 
         $user = Auth::user();
 

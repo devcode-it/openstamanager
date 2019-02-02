@@ -163,6 +163,7 @@ echo '
     </button><br><br>';
 
 // Messaggio esito invio
+if ($send) {
     if ($record['codice_stato_fe'] == 'GEN') {
         echo '
 		<div class="alert alert-warning">'.tr("La fattura è stata generata ed è pronta per l'invio").'.</div>
@@ -179,9 +180,16 @@ echo '
         }
 
         echo '
-		<div class="alert text-left alert-'.$class.'"><big><i class="'.$stato_fe['icon'].'" style="color:#fff;"></i> <b>'.$stato_fe['codice'].'</b> - '.$stato_fe['descrizione'].'</big> <div class="pull-right"><i class="fa fa-clock-o"></i> '.Translator::timestampToLocale($record['data_stato_fe']).'</small></div>
+		<div class="alert text-left alert-'.$class.'">
+		    <big><i class="'.$stato_fe['icon'].'" style="color:#fff;"></i> 
+		    <b>'.$stato_fe['codice'].'</b> - '.$stato_fe['descrizione'].'</big> <small>'.$record['descrizione_ricevuta_fe'].'</small>
+		    <div class="pull-right">
+		        <i class="fa fa-clock-o"></i> '.Translator::timestampToLocale($record['data_stato_fe']).'
+            </div>
+        </small>
 		';
     }
+}
 
 echo '
     <script>

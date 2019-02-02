@@ -85,3 +85,15 @@ UPDATE `zz_settings` SET `help` = 'Fornitore, mio intermediario abilitato all\'i
 -- Aggiunta percentuale_imponibile su cui applicare il calcolo della ritenuta
 ALTER TABLE `co_ritenutaacconto` ADD `percentuale_imponibile` DECIMAL(5,2) NOT NULL AFTER `esente`;
 
+-- Aggiunto modulo per gestire la seconda ritenuta (ENASARCO, ECC..)
+INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Ritenute contributi', 'Ritenute contributi','ritenute_contributi', 'SELECT |select| FROM `co_ritenuta_contributi` WHERE 1=1 HAVING 2=2', '', 'fa fa-percent', '2.4.6', '2.4.6', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Tabelle'), '1', '1');
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ritenute contributi'), 'Percentuale imponibile', 'percentuale_imponibile', 4, 1, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ritenute contributi'), 'Percentuale', 'percentuale', 3, 1, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ritenute contributi'), 'Descrizione', 'descrizione', 2, 1, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ritenute contributi'), 'id', 'id', 1, 1, 0, 0);
+
+
+
+UPDATE `zz_views` SET `query` = 'percentuale_imponibile', `name` = 'Percentuale imponibile' WHERE `zz_views`.`name` = 'Indetraibile' AND id_module = (SELECT id FROM zz_modules WHERE name = 'Ritenute acconto');

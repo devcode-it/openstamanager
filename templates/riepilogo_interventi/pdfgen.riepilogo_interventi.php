@@ -370,7 +370,7 @@ if (sizeof($rs2) > 0) {
 
         // Prezzo unitario
         $body .= "<td class='table_cell' align='center'>\n";
-        $netto = $rs2[$i]['prezzo'];
+        $netto = $rs2[$i]['prezzo_vendita'];
         $body .= '<span>'.Translator::numberToLocale($netto)." &euro;</span>\n";
         $body .= "</td>\n";
 

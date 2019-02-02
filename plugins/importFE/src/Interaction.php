@@ -25,7 +25,8 @@ class Interaction extends Connection
 
             foreach ($files as $file) {
                 /*
-                  * Verifico che l'XML non sia già stato importato nel db
+                  * Verifico che l'XML (fattura di acquisto) non sia già stato importato nel db, controllo p.iva del fornitore e progressivo invio
+				  * TODO: caricare contenuto xml e verificare anche la data (e magari numero) della fattura. Potrebbe essere che il fornitore l'anno successivo mi genera FE con stesso progressivo invio.
                   */
 
                 if (preg_match("/^([A-Z]{2})(.+?)_([^\.]+)\.xml/i", $file, $m)) {

@@ -10,11 +10,11 @@ $directory = Uploads::getDirectory($id_module);
 switch (filter('op')) {
     case 'save':
         $content = file_get_contents($_FILES['blob']['tmp_name']);
-        $file = FatturaElettronica::store($_FILES['blob']['name'], $content);
+        $filename = FatturaElettronica::store($_FILES['blob']['name'], $content);
 
         if (FatturaElettronica::isValid($file)) {
             echo json_encode([
-                'filename' => $file,
+                'filename' => $filename,
             ]);
         } else {
             echo json_encode([

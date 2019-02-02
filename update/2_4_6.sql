@@ -94,6 +94,4 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ritenute contributi'), 'Descrizione', 'descrizione', 2, 1, 0, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Ritenute contributi'), 'id', 'id', 1, 1, 0, 0);
 
-
-
 UPDATE `zz_views` SET `query` = 'percentuale_imponibile', `name` = 'Percentuale imponibile' WHERE `zz_views`.`name` = 'Indetraibile' AND id_module = (SELECT id FROM zz_modules WHERE name = 'Ritenute acconto');

@@ -44,7 +44,11 @@ echo '
 		</div>
 		
 		<div class="col-md-6">
-			<h4>'.$dati_generali['Numero'].'<br>
+			<h4>'.$dati_generali['Numero'];
+		echo '
+				<a href="'.ROOTDIR.'/view.php?file_id='.get('id').'" class="btn btn-info btn-xs" target="_blank" >
+					<i class="fa fa-eye"></i> '.tr('Visualizza').'
+				</a><br>
 				<small>
 					'.database()->fetchOne('SELECT CONCAT("(", codice, ") ", descrizione) AS descrizione FROM fe_tipi_documento WHERE codice = '.prepare($dati_generali['TipoDocumento']))['descrizione'].'
 					<br>'.Translator::dateToLocale($dati_generali['Data']).'

@@ -95,11 +95,10 @@ if (!$cliente) {
 
 					<div class="col-md-2">
 						<?php
-                            $help_codice_destinatario = tr("Per impostare il codice specificare prima 'Tipologia' e 'Nazione' dell'anagrafica").':<br><ul>
+                            $help_codice_destinatario = tr("Per impostare il codice specificare prima '<b>Tipologia</b>' e '<b>Nazione</b>' dell'anagrafica").':<br><br><ul>
                                 <li>'.tr('Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri').'</li>
                                 <li>'.tr('Azienda (B2B) - Codice Destinatario, 7 caratteri').'</li>
-                                <li>'.tr('Privato (B2C) - viene utilizzato il Codice Fiscale').'</li>
-                            </ul>';
+                                <li>'.tr('Privato (B2C) - viene utilizzato il Codice Fiscale').'</li></ul>Se non si conosce il codice destinatario lasciare vuoto il campo. Verrà applicato in automatico quello previsto di default dal sistema (\'0000000\', \'999999\', \'XXXXXXX\').';
 
                             if (in_array($id_azienda, $tipi_anagrafica)) {
                                 $help_codice_destinatario .= '<b>'.tr("Non è necessario comunicare il proprio codice destinatario ai fornitori in quanto è sufficiente che questo sia registrato nel portale del Sistema Di Interscambio dell'Agenzia Entrate (SDI)").'.</b>';

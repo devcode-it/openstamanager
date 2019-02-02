@@ -104,28 +104,38 @@ class Query
         $search_filters = [];
         foreach ($search as $field => $value) {
             $pos = array_search($field, $total['fields']);
+            $value = trim($value);
 
             if (isset($value) && $pos !== false) {
                 $search_query = $total['search_inside'][$pos];
 
+                // Campo con ricerca personalizzata
                 if (str_contains($search_query, '|search|')) {
                     $pieces = explode(',', $value);
                     foreach ($pieces as $piece) {
                         $piece = trim($piece);
                         $search_filters[] = str_replace('|search|', prepare('%'.$piece.'%'), $search_query);
                     }
-                } else {
-                    // Per le icone cerco nel campo icon_title
+                }
+
+                // Campo id: ricerca tramite comparazione
+                elseif ($field == 'id') {
+                    $search_filters[] = $search_query.' = '.prepare($value);
+                }
+
+                // Campi tradizionali: ricerca tramite like
+                else {
+                    // Ricerca nei titoli icon_title_* per le icone icon_*
                     if (preg_match('/^icon_(.+?)$/', $field, $m)) {
                         $search_query = '`icon_title_'.$m[1].'`';
                     }
 
-                    // Per i colori cerco nel campo color_title
+                    // Ricerca nei titoli color_title_* per i colori color_*
                     elseif (preg_match('/^color_(.+?)$/', $field, $m)) {
                         $search_query = '`color_title_'.$m[1].'`';
                     }
 
-                    $search_filters[] = $search_query.' LIKE '.prepare('%'.trim($value.'%'));
+                    $search_filters[] = $search_query.' LIKE '.prepare('%'.$value.'%');
                 }
             }
 

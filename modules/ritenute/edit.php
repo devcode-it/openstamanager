@@ -2,7 +2,17 @@
 
 include_once __DIR__.'/../../core.php';
 
-?><form action="" method="post" id="edit-form">
+// Presenza di documenti associati
+if ($record['doc_associati'] > 0) {
+    echo '
+<div class="alert alert-warning">'.tr('Non puoi eliminare questa ritenuta.').' '.tr('Ci sono _NUM_ documenti associati.', [
+    '_NUM_' => $record['doc_associati'],
+]).'</div>';
+}
+
+?>
+
+<form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
 
@@ -25,7 +35,7 @@ include_once __DIR__.'/../../core.php';
 				</div>
 
 				<div class="col-md-6">
-					{[ "type": "number", "label": "<?php echo tr('Indetraibile'); ?>", "name": "indetraibile", "value": "$indetraibile$", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+					{[ "type": "number", "label": "<?php echo tr('Percentuale imponibile'); ?>", "name": "percentuale_imponibile", "value": "$percentuale_imponibile$", "help": "<?php echo tr('Percentuale imponibile sui cui applicare il calcolo della ritenuta'); ?>", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
 				</div>
 			</div>
 		</div>
@@ -33,6 +43,12 @@ include_once __DIR__.'/../../core.php';
 
 </form>
 
+<?php
+
+// Presenza di documenti associati
+if ($record['doc_associati'] == 0) {
+    echo '
 <a class="btn btn-danger ask" data-backto="record-list">
-    <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-</a>
+    <i class="fa fa-trash"></i> '.tr('Elimina').'
+</a>';
+}

@@ -51,9 +51,7 @@ UPDATE `fe_stati_documento` SET `descrizione`='In elaborazione' WHERE `codice`='
 
 -- Inserito stato errore interno OSM
 INSERT INTO `fe_stati_documento`( `codice`, `descrizione`, `icon` ) VALUES( 'ERVAL', 'Errore di validazione', 'fa fa-edit text-danger' );
-
-ALTER TABLE `co_documenti` ADD `descrizione_stato_fe` TEXT NOT NULL AFTER `codice_stato_fe`;
-ALTER TABLE `co_documenti` ADD `data_stato_fe` TIMESTAMP NOT NULL AFTER `descrizione_stato_fe`;
+ALTER TABLE `co_documenti` ADD `data_stato_fe` TIMESTAMP, ADD `descrizione_ricevuta_fe` TEXT;
 
 -- Rimozione iva eliminata
 UPDATE `zz_settings` SET `tipo`='query=SELECT id, descrizione FROM `co_iva` WHERE deleted_at IS NULL ORDER BY descrizione ASC' WHERE `nome`='Iva predefinita';
@@ -77,3 +75,13 @@ CREATE TABLE IF NOT EXISTS `co_ritenuta_contributi` (
 UPDATE `zz_views` SET `query` = '(SELECT GROUP_CONCAT(DISTINCT `name` SEPARATOR \'\r\n \') FROM zz_operations INNER JOIN zz_emails ON zz_operations.id_email = zz_emails.id WHERE zz_operations.id_module = (SELECT id FROM zz_modules WHERE `name` = \'Fatture di vendita\') AND op = \'send-email\' AND id_record = co_documenti.id ORDER BY zz_operations.created_at DESC LIMIT 1)' WHERE `zz_views`.`name` = 'icon_title_Inviata' AND id_module = (SELECT id FROM zz_modules WHERE name = 'Fatture di vendita');
 
 UPDATE `zz_views` SET `query` = 'IF((SELECT GROUP_CONCAT(DISTINCT `name` SEPARATOR \'\r\n \') FROM zz_operations INNER JOIN zz_emails ON zz_operations.id_email = zz_emails.id WHERE zz_operations.id_module = (SELECT id FROM zz_modules WHERE `name` = \'Fatture di vendita\') AND op = \'send-email\' AND id_record = co_documenti.id ORDER BY zz_operations.created_at DESC LIMIT 1) IS NOT NULL, \'fa fa-envelope text-success\', \'\') ' WHERE `zz_views`.`name` = 'icon_Inviata' AND id_module = (SELECT id FROM zz_modules WHERE name = 'Fatture di vendita');
+
+-- Limitato il controllo numeri fattura duplicati all'anno in corso
+UPDATE `zz_views` SET `query` = 'IF((SELECT COUNT(t.numero_esterno) FROM co_documenti AS t WHERE t.numero_esterno = co_documenti.numero_esterno AND t.numero_esterno != '''' AND t.id_segment = co_documenti.id_segment AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = ''entrata'') AND t.data >= ''|period_start|'' AND t.data <= ''|period_end|'' AND YEAR(t.data) = YEAR(co_documenti.data)  ) > 1, ''red'', '''') ' WHERE `zz_views`.`name` = '_bg_' AND id_module = (SELECT id FROM zz_modules WHERE name = 'Fatture di vendita');
+
+-- Fornitore terzo intermediario abilitato all'invio della fattura elettronica
+UPDATE `zz_settings` SET `help` = 'Fornitore, mio intermediario abilitato all\'invio della fattura elettronica (es. Aruba, Teamsystem ecc...)' WHERE `zz_settings`.`nome` = 'Terzo intermediario';
+
+-- Aggiunta percentuale_imponibile su cui applicare il calcolo della ritenuta
+ALTER TABLE `co_ritenutaacconto` ADD `percentuale_imponibile` DECIMAL(5,2) NOT NULL AFTER `esente`;
+

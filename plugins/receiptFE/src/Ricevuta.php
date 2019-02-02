@@ -44,10 +44,10 @@ class Ricevuta
             $data = $this->xml['DataOraRicezione'];
 
             $this->fattura->codice_stato_fe = $codice;
-            $this->fattura->descrizione_stato_fe = $descrizione;
+            $this->fattura->descrizione_ricevuta_fe = $descrizione;
             $this->fattura->data_stato_fe = date('Y-m-d H:i:s', strtotime($data));
             $this->fattura->save();
-            
+
             return true;
         }
     }

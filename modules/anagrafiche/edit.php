@@ -52,13 +52,13 @@ if (!$cliente) {
 				</div>
 
 				<div class="row">
-
+				
 					<div class="col-md-4">
-							{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 0, "value": "$nome$", "extra": "autocomplete=\"off\"" ]}
+							{[ "type": "text", "label": "<?php echo tr('Cognome'); ?>", "name": "cognome", "required": 0, "value": "$cognome$", "extra": "autocomplete=\"off\"" ]}
 					</div>
 
 					<div class="col-md-4">
-							{[ "type": "text", "label": "<?php echo tr('Cognome'); ?>", "name": "cognome", "required": 0, "value": "$cognome$", "extra": "autocomplete=\"off\"" ]}
+							{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 0, "value": "$nome$", "extra": "autocomplete=\"off\"" ]}
 					</div>
 
 					<div class="col-md-4">
@@ -665,7 +665,7 @@ if (empty($record['deleted_at'])) {
 			$("#lng").val(result.geometry.location.lng());
         });
 
-		// Abilito solo ragione sociale oppure solo nome-cognome in base a cosa compilo
+		// Abilito solo ragione sociale oppure solo cognome-nome in base a cosa compilo
 		$('#nome, #cognome').bind("keyup change", function(e) {
 			if ($('#nome').val() == '' && $('#cognome').val() == '' ){
                 $('#nome, #cognome').prop('disabled', true).prop('required', false);
@@ -681,7 +681,7 @@ if (empty($record['deleted_at'])) {
 			if ($('#ragione_sociale').val() == '' ){
                 $('#nome, #cognome').prop('disabled', false).prop('required', true);
                 $('#ragione_sociale').prop('disabled', true).prop('required', false);
-				$('#nome').focus();
+				$('#cognome').focus();
 			}else{
                 $('#nome, #cognome').prop('disabled', true).prop('required', false);
 				$('#ragione_sociale').prop('disabled', false).prop('required', true);
@@ -689,7 +689,7 @@ if (empty($record['deleted_at'])) {
 			}
 		});
 
-        $('#ragione_sociale, #nome').trigger('keyup');
+        $('#ragione_sociale, #cognome').trigger('keyup');
 	});
 </script>
 

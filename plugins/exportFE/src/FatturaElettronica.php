@@ -718,18 +718,23 @@ class FatturaElettronica
 
         $result = [];
 
+        //Se imposto il vettore deve essere indicata anche la p.iva nella sua anagrafica
         if ($documento['idvettore']) {
             $vettore = Anagrafica::find($documento['idvettore']);
             $result['DatiAnagraficiVettore'] = static::getDatiAnagrafici($vettore);
         }
+		
+		if (!empty($causale))
+			$result['CausaleTrasporto'] = $causale;
+		
+		if (!empty($documento['n_colli']))
+			$result['NumeroColli'] = $documento['n_colli'];
+		
+        if (!empty($aspetto))
+			$result['Descrizione'] = $aspetto;
 
-        $result['CausaleTrasporto'] = $causale;
-        $result['NumeroColli'] = $documento['n_colli'];
-        $result['Descrizione'] = $aspetto;
-
-        if ($documento['tipo_resa']) {
+        if ($documento['tipo_resa'])
             $result['TipoResa'] = $documento['tipo_resa'];
-        }
 
         return $result;
     }

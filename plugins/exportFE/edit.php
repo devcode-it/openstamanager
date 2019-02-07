@@ -20,6 +20,33 @@ if (!empty($fattura_pa)) {
     $generated = false;
 }
 
+
+// Natura obbligatoria per iva con esenzione
+$iva = $database->fetchOne('SELECT * FROM `co_iva` WHERE `id` IN (SELECT idiva FROM co_righe_documenti WHERE iddocumento = '.prepare($record['id_record']).') AND esente = 1' );
+$fields = [
+    'codice_natura_fe' => 'Natura IVA',
+];
+
+$missing = [];
+foreach ($fields as $key => $name) {
+    if (empty($iva[$key])) {
+        $missing[] = $name;
+    }
+}
+
+if (!empty($missing) && !$generated) {
+    echo '
+<div class="alert alert-warning">
+    <p><i class="fa fa-warning"></i> '.tr('Prima di procedere alla generazione della fattura elettronica completa i seguenti campi per IVA: _FIELDS_', [
+        '_FIELDS_' => '<b>'.implode(', ', $missing).'</b>',
+    ]).'</p>
+</div>';
+
+    //$disabled = true;
+}
+
+
+
 // Campi obbligatori per il pagamento
 $pagamento = $database->fetchOne('SELECT * FROM `co_pagamenti` WHERE `id` = '.prepare($record['idpagamento']));
 $fields = [

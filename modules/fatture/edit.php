@@ -37,13 +37,18 @@ if ($dir == 'entrata') {
                 if ($dir == 'entrata') {
                     $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia, id_nazione, tipo FROM an_anagrafiche WHERE idanagrafica='.prepare($record['idanagrafica']));
                     $campi_mancanti = [];
-
-                    if ($rs2[0]['codice_fiscale'] == '' and ($rs2[0]['tipo'] == 'Privato' or $rs2[0]['tipo'] == 'Ente pubblico')) {
-                        array_push($campi_mancanti, 'Codice fiscale');
-                    } elseif ($rs2[0]['piva'] == '') {
+					
+					
+					//di default è un azienda e chiedo la partita iva
+					if (empty($rs2[0]['piva']) and (empty($rs2[0]['tipo']) or $rs2[0]['tipo'] == 'Azienda')) {
                         array_push($campi_mancanti, 'Partita IVA');
                     }
-
+					
+					//se è un privato o un ente pubblico controllo il codice fiscale
+                    if (($rs2[0]['tipo'] == 'Privato' or $rs2[0]['tipo'] == 'Ente pubblico') and empty($rs2[0]['codice_fiscale'])) {
+                        array_push($campi_mancanti, 'Codice fiscale');
+                    }
+					
                     if ($rs2[0]['citta'] == '') {
                         array_push($campi_mancanti, 'Città');
                     }

@@ -535,6 +535,7 @@ switch (post('op')) {
         $id_tecnico = post('id_tecnico');
 
         // Verifico se l'intervento è collegato ad un contratto
+		// TODO: utilizzare campo id_contratto in in_interventi come avviene già per i preventivi (id_preventivo) dalla 2.4.2
         $rs = $dbo->fetchArray('SELECT idcontratto FROM co_promemoria WHERE idintervento='.prepare($id_record));
         $idcontratto = $rs[0]['idcontratto'];
 
@@ -554,7 +555,7 @@ switch (post('op')) {
 
         $dbo->query('DELETE FROM in_interventi_tecnici WHERE id='.prepare($id_sessione));
 
-        // Notifica nuovo intervento al tecnico
+        // Notifica rimozione dell' intervento al tecnico
         if (!empty($tecnico['email'])) {
             $n = new Notifications\EmailNotification();
 

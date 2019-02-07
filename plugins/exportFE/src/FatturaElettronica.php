@@ -437,7 +437,7 @@ class FatturaElettronica
 
         // Codice fiscale
         if (!empty($anagrafica['codice_fiscale'])) {
-            $result['CodiceFiscale'] = $anagrafica['codice_fiscale'];
+            $result['CodiceFiscale'] = preg_replace('/\s+/', '', $anagrafica['codice_fiscale']);
         }
 
         if (!empty($anagrafica['nome']) or !empty($anagrafica['cognome'])) {

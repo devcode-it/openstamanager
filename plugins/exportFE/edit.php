@@ -22,7 +22,7 @@ if (!empty($fattura_pa)) {
 
 
 // Natura obbligatoria per iva con esenzione
-$iva = $database->fetchOne('SELECT * FROM `co_iva` WHERE `id` IN (SELECT idiva FROM co_righe_documenti WHERE iddocumento = '.prepare($record['id_record']).') AND esente = 1' );
+$iva = $database->fetchOne('SELECT * FROM `co_iva` WHERE `id` IN (SELECT idiva FROM co_righe_documenti WHERE iddocumento = '.prepare($id_record).') AND esente = 1' );
 $fields = [
     'codice_natura_fe' => 'Natura IVA',
 ];

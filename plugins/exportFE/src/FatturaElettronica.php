@@ -698,7 +698,7 @@ class FatturaElettronica
 
         // Importo Totale Documento (2.1.1.9)
         // Importo totale del documento al netto dell'eventuale sconto e comprensivo di imposta a debito del cessionario / committente
-        $result['ImportoTotaleDocumento'] = abs($documento->netto);
+        $result['ImportoTotaleDocumento'] = abs($documento->totale);
 
         return $result;
     }

@@ -3,6 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 $backup_dir = Backup::getDirectory();
+$backups = Backup::getList();
 
 echo '<p>'.tr('Il backup è <b>molto importante</b> perché permette di creare una copia della propria installazione e relativi dati per poterla poi ripristinare in seguito a errori, cancellazioni accidentali o guasti hardware').'.</p>';
 
@@ -35,26 +36,10 @@ if (!empty($backup_dir)) {
     $message = tr('Sembra che tu non abbia ancora specificato un percorso per il backup').'.';
 }
 
-echo '
-<div class="row">
-    <div class="col-md-8">
-        <div class="callout callout-success">
-            <p>'.$message.'</p>
-			<p><small>'.tr('Dimensione totale: _SPAZIO_', [
-                '_SPAZIO_' => format_size(foldersize($backup_dir)),
-            ]).'</small><br
-			<p><small>'.tr('Numero di backup: _NUM_', [
-                '_NUM_' => count(Backup::getList()),
-            ]).'</small><br/>
-            <small>'.tr('Puoi modificare il percorso di backup dal tuo file _FILE_', [
-                '_FILE_' => '<b>config.inc.php</b>',
-            ]).'</small></p>
-        </div>
-    </div>';
-
-// Ripristino backup
+// Operazioni JavaScript
 echo '
 <script>
+// Ripristino backup
 function restore() {
     if ($("#blob").val()) {
         swal({
@@ -72,7 +57,61 @@ function restore() {
         })
     }
 }
+
+// Creazione backup
+function backup(){
+    swal({
+        title: "'.tr('Nuovo backup').'",
+        text: "'.tr('Sei sicuro di voler creare un nuovo backup?').'",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn btn-lg btn-success",
+        confirmButtonText: "'.tr('Crea').'",
+    }).then(
+    function(){
+        location.href = globals.rootdir + "/editor.php?id_module='.$id_module.'&op=backup";
+    }, function(){});
+}
+
+// Caricamento
+function loadSize(name, id){
+    $("#" + id).html("'.tr('Calcolo in corso').'...");
+
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "get",
+        data: {
+            id_module: globals.id_module,
+            op: "size",
+            file: name,
+        },
+        success: function(data) {
+            $("#" + id).html(data);
+        }
+    });
+}
 </script>';
+
+echo '
+<div class="row">
+    <div class="col-md-8">
+        <div class="callout callout-success">
+            <p>'.$message.'</p>
+			<p><small>'.tr('Dimensione totale: _SPAZIO_', [
+                '_SPAZIO_' => '<i id="total_size"></i>',
+            ]).'</small></p>
+			<p><small>'.tr('Numero di backup: _NUM_', [
+                '_NUM_' => count($backups),
+            ]).'</small></p>
+            <p><small>'.tr('Puoi modificare il percorso di backup dal tuo file _FILE_', [
+                '_FILE_' => '<b>config.inc.php</b>',
+            ]).'</small></p>
+        </div>
+    </div>
+    
+    <script>
+        loadSize("", "total_size");
+    </script>';
 
 $upload_max_filesize = ini_get('upload_max_filesize');
 $max_execution_time = ini_get('max_execution_time');
@@ -104,7 +143,6 @@ if (file_exists($backup_dir)) {
     $backups_zip = [];
     $backups_file = [];
 
-    $backups = Backup::getList();
     foreach ($backups as $backup) {
         if (ends_with($backup, '.zip')) {
             $backups_zip[] = $backup;
@@ -126,7 +164,7 @@ if (file_exists($backup_dir)) {
         <h3>'.tr('Backup compressi').'</h3>';
 
         if (!empty($backups_zip)) {
-            foreach ($backups_zip as $backup) {
+            foreach ($backups_zip as $id => $backup) {
                 $name = basename($backup);
                 $info = Backup::readName($backup);
 
@@ -141,9 +179,13 @@ if (file_exists($backup_dir)) {
             ]).'</h4>
             <p><small>
                 '.tr('Nome del file').': '.$name.'<br>
-                '.tr('Dimensione').': '.format_size(filesize($backup)).'
+                '.tr('Dimensione').': <i id="c-'.$id.'"></i>
             </small></p>
-
+            
+            <script>
+                loadSize("'.$name.'", "c-'.$id.'");
+            </script>
+            
             <a class="btn btn-primary" href="'.$rootdir.'/modules/backups/actions.php?op=getfile&file='.$name.'" target="_blank"><i class="fa fa-download"></i> '.tr('Scarica').'</a>
 
             <div class="pull-right">
@@ -187,8 +229,12 @@ if (file_exists($backup_dir)) {
             ]).'</h4>
             <p><small>
                 '.tr('Nome del file').': '.$name.'<br>
-                '.tr('Dimensione').': '.format_size(filesize($backup)).'
+                '.tr('Dimensione').': <i id="n-'.$id.'"></i>
             </small></p>
+            
+            <script>
+                loadSize("'.$name.'", "n-'.$id.'");
+            </script>
 
             <a class="btn btn-sm btn-warning disabled" href="javascript:;"><i class="fa fa-times"></i> '.tr('Non scaricabile').'</a>
 
@@ -219,26 +265,10 @@ if (file_exists($backup_dir)) {
 <div class="alert alert-danger">'.tr('La cartella di backup non esiste!').' '.tr('Non è possibile eseguire i backup!').'</div>';
 }
 
+// Creazione backup
 if (!empty($backup_dir)) {
-    // Creazione backup
     echo '
-<button type="button" class="btn btn-primary pull-right" onclick="continue_backup()"><i class="fa fa-database"></i> '.tr('Crea backup').'...</button>
+<button type="button" class="btn btn-primary pull-right" onclick="backup()"><i class="fa fa-database"></i> '.tr('Crea backup').'...</button>
 
-<div class="clearfix"></div>
-
-<script>
-    function continue_backup(){
-        swal({
-            title: "'.tr('Nuovo backup').'",
-            text: "'.tr('Sei sicuro di voler creare un nuovo backup?').'",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonClass: "btn btn-lg btn-success",
-            confirmButtonText: "'.tr('Crea').'",
-        }).then(
-        function(){
-            location.href = globals.rootdir + "/editor.php?id_module='.$id_module.'&op=backup";
-        }, function(){});
-    }
-</script>';
+<div class="clearfix"></div>';
 }

@@ -32,6 +32,7 @@ return [
     'co_righe_documenti',
     'co_righe_preventivi',
     'co_ritenutaacconto',
+	'co_ritenuta_contributi',
     'co_rivalse',
     'co_scadenziario',
     'co_staticontratti',

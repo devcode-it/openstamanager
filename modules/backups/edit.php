@@ -40,7 +40,13 @@ echo '
     <div class="col-md-8">
         <div class="callout callout-success">
             <p>'.$message.'</p>
-            <p><small>'.tr('Puoi modificare il percorso di backup dal tuo file _FILE_', [
+			<p><small>'.tr('Dimensione totale: _SPAZIO_', [
+                '_SPAZIO_' => format_size(foldersize($backup_dir)),
+            ]).'</small><br
+			<p><small>'.tr('Numero di backup: _NUM_', [
+                '_NUM_' => count(Backup::getList()),
+            ]).'</small><br/>
+            <small>'.tr('Puoi modificare il percorso di backup dal tuo file _FILE_', [
                 '_FILE_' => '<b>config.inc.php</b>',
             ]).'</small></p>
         </div>
@@ -135,7 +141,7 @@ if (file_exists($backup_dir)) {
             ]).'</h4>
             <p><small>
                 '.tr('Nome del file').': '.$name.'<br>
-                '.tr('Dimensione').': '.Translator::numberToLocale(filesize($backup) / 1024 / 1024).'MB
+                '.tr('Dimensione').': '.format_size(filesize($backup)).'
             </small></p>
 
             <a class="btn btn-primary" href="'.$rootdir.'/modules/backups/actions.php?op=getfile&file='.$name.'" target="_blank"><i class="fa fa-download"></i> '.tr('Scarica').'</a>
@@ -181,7 +187,7 @@ if (file_exists($backup_dir)) {
             ]).'</h4>
             <p><small>
                 '.tr('Nome del file').': '.$name.'<br>
-                '.tr('Dimensione').': '.Translator::numberToLocale(filesize($backup) / 1024 / 1024).'MB
+                '.tr('Dimensione').': '.format_size(filesize($backup)).'
             </small></p>
 
             <a class="btn btn-sm btn-warning disabled" href="javascript:;"><i class="fa fa-times"></i> '.tr('Non scaricabile').'</a>

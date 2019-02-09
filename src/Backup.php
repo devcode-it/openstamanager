@@ -28,8 +28,10 @@ class Backup
         $result = App::getConfig()['backup_dir'];
 
         $result = rtrim($result, '/');
-
-        if (!is_writable($result) || !directory($result)) {
+		if (!directory($result)){
+			$fileSystem->mkdir($result, 0700);
+		}
+        else if (!is_writable($result)) {
             throw new UnexpectedValueException();
         }
 

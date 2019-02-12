@@ -18,7 +18,7 @@ class FileSystem
      *
      * @return bool
      */
-    public function directory($path)
+    public static function directory($path)
     {
         if (is_dir($path) && is_writable($path)) {
             return true;

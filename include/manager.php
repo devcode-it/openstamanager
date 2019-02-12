@@ -46,7 +46,7 @@ if (!empty($controller_before)) {
  * Datatables con record
  */
 if (!empty($type) && $type != 'menu' && $type != 'custom') {
-    $total = App::readQuery($structure);
+    $total = Util\Query::readQuery($structure);
 
     if (empty($id_plugin) && count(Modules::getSegments($id_module)) > 1) {
         echo '

@@ -9,73 +9,73 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
   - [Modificato (Changed)](#modificato-changed)
   - [Fixed](#fixed)
 - [2.4.5 (2019-01-10)](#245-2019-01-10)
-  - [Aggiunto (Added)](#aggiunto-added)
-  - [Modificato (Changed)](#modificato-changed)
-  - [Fixed](#fixed)
-- [2.4.4 (2018-12-12)](#244-2018-12-12)
-  - [Aggiunto (Added)](#aggiunto-added)
-  - [Fixed](#fixed)
-- [2.4.3 (2018-12-07)](#243-2018-12-07)
   - [Aggiunto (Added)](#aggiunto-added-1)
+  - [Modificato (Changed)](#modificato-changed-1)
   - [Fixed](#fixed-1)
-- [2.4.2 (2018-11-14)](#242-2018-11-14)
+- [2.4.4 (2018-12-12)](#244-2018-12-12)
   - [Aggiunto (Added)](#aggiunto-added-2)
-  - [Modificato (Changed)](#modificato-changed)
+  - [Fixed](#fixed-2)
+- [2.4.3 (2018-12-07)](#243-2018-12-07)
+  - [Aggiunto (Added)](#aggiunto-added-3)
+  - [Fixed](#fixed-3)
+- [2.4.2 (2018-11-14)](#242-2018-11-14)
+  - [Aggiunto (Added)](#aggiunto-added-4)
+  - [Modificato (Changed)](#modificato-changed-2)
   - [Deprecato (Deprecated)](#deprecato-deprecated)
   - [Rimosso (Removed)](#rimosso-removed)
   - [Sicurezza (Security)](#sicurezza-security)
 - [2.4.1 (2018-08-01)](#241-2018-08-01)
-  - [Aggiunto (Added)](#aggiunto-added-3)
-  - [Modificato (Changed)](#modificato-changed-1)
-  - [Fixed](#fixed-2)
-- [2.4 (2018-03-30)](#24-2018-03-30)
-  - [Aggiunto (Added)](#aggiunto-added-4)
-  - [Modificato (Changed)](#modificato-changed-2)
-  - [Fixed](#fixed-3)
-- [2.3.1 (2018-02-19)](#231-2018-02-19)
   - [Aggiunto (Added)](#aggiunto-added-5)
   - [Modificato (Changed)](#modificato-changed-3)
   - [Fixed](#fixed-4)
-- [2.3 (2018-02-16)](#23-2018-02-16)
+- [2.4 (2018-03-30)](#24-2018-03-30)
   - [Aggiunto (Added)](#aggiunto-added-6)
   - [Modificato (Changed)](#modificato-changed-4)
+  - [Fixed](#fixed-5)
+- [2.3.1 (2018-02-19)](#231-2018-02-19)
+  - [Aggiunto (Added)](#aggiunto-added-7)
+  - [Modificato (Changed)](#modificato-changed-5)
+  - [Fixed](#fixed-6)
+- [2.3 (2018-02-16)](#23-2018-02-16)
+  - [Aggiunto (Added)](#aggiunto-added-8)
+  - [Modificato (Changed)](#modificato-changed-6)
   - [Deprecato (Deprecated)](#deprecato-deprecated-1)
   - [Rimosso (Removed)](#rimosso-removed-1)
-  - [Fixed](#fixed-5)
+  - [Fixed](#fixed-7)
   - [Sicurezza (Security)](#sicurezza-security-1)
 - [2.2 (2016-11-10)](#22-2016-11-10)
-  - [Aggiunto (Added)](#aggiunto-added-7)
-  - [Fixed](#fixed-6)
+  - [Aggiunto (Added)](#aggiunto-added-9)
+  - [Fixed](#fixed-8)
 - [2.1 (2015-04-02)](#21-2015-04-02)
-  - [Aggiunto (Added)](#aggiunto-added-8)
-  - [Modificato (Changed)](#modificato-changed-5)
-  - [Fixed](#fixed-7)
+  - [Aggiunto (Added)](#aggiunto-added-10)
+  - [Modificato (Changed)](#modificato-changed-7)
+  - [Fixed](#fixed-9)
 
-  
+
 ## 2.4.6 (2019-02-12)
 
 ### Aggiunto (Added)
 
- - Introduzione delle seconda ritenuta
+ - Introduzione della seconda ritenuta (ad esempio, *Contributo Enasarco*)
  - Introduzione della fatturazione per conto terzi
- - Aggiunto stato elaborazione fattura elettronica per fatture di vendita
- - Aggiunto codice cig, cup e identificativo documento anche per preventivi
+ - Aggiunto stato elaborazione fattura elettronica per **Fatture di vendita**
+ - Aggiunto codice cig, cup e identificativo documento per **Preventivi**
 
 ### Modificato (Changed)
 
  - Miglioramento della generazione xml per le Fatture Elettroniche
  - Miglioramento procedura importazione xml per le Fatture Elettroniche
  - Gestito split payment nella fattura elettronica
- 
+
 ### Fixed
 
- - Fix calcolo codice preventivo, ordine, ddt e fattura
+ - Fix del calcolo dei codice preventivo, ordine, ddt e fattura
  - Fix valori non riportati in fase di inserimento di una nuova attività
  - Fix aggiunta del contratto in fattura
  - Fix aggiunta articolo in attività
- - Fix calcolo sconto per nota di credito fa fattura di vendita 
+ - Fix calcolo sconto per nota di credito fa fattura di vendita
  - Risolti altri bug minori
- 
+
 ## 2.4.5 (2019-01-10)
 
 ### Aggiunto (Added)
@@ -90,7 +90,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
  - Miglioramento della generazione xml per le Fatture Elettroniche
  - Miglioramento procedura importazione xml per le Fatture Elettroniche
  - Gestite righe di tipo descrizione nelle Fatture Elettroniche
- 
+
 ### Fixed
 
  - Fix calcolo codice intervento

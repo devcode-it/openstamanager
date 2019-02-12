@@ -41,7 +41,7 @@ switch (filter('op')) {
     case 'delete':
         $directory = Plugins\ImportFE\FatturaElettronica::getImportDirectory();
 
-        delete($directory.'/'.get('filename'));
+        delete($directory.'/'.get('name'));
 
         break;
 

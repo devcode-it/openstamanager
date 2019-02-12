@@ -10,6 +10,7 @@ use UnexpectedValueException;
 abstract class Article extends Row
 {
     protected $serialRowID = 'documento';
+    protected $abilita_movimentazione = true;
 
     public static function build(Document $document, Original $articolo)
     {
@@ -76,7 +77,10 @@ abstract class Article extends Row
         $diff = $value - $previous;
 
         $this->attributes['qta'] = $value;
-        $this->movimenta($diff);
+
+        if ($this->abilita_movimentazione) {
+            $this->movimenta($diff);
+        }
 
         $database = database();
 
@@ -94,6 +98,11 @@ abstract class Article extends Row
     public function articolo()
     {
         return $this->belongsTo(Original::class, 'idarticolo');
+    }
+
+    public function movimentazione($value = true)
+    {
+        $this->abilita_movimentazione = $value;
     }
 
     protected static function boot()
@@ -144,8 +153,14 @@ abstract class Article extends Row
         return true;
     }
 
-    protected function customCopiaIn($original)
+    protected function customBeforeCopiaIn($original)
     {
+        $this->movimentazione(false);
         $this->articolo()->associate($original->articolo);
+    }
+
+    protected function customAfterCopiaIn($original)
+    {
+        $this->movimentazione(true);
     }
 }

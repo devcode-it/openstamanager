@@ -72,7 +72,7 @@ abstract class Description extends Model
         $model = new $object();
         $model->setParent($document);
 
-        $model->customCopiaIn($this);
+        $model->customBeforeCopiaIn($this);
 
         $model->save();
 
@@ -82,6 +82,8 @@ abstract class Description extends Model
 
         $attributes = array_intersect_key($attributes, $accepted);
         $model->fill($attributes);
+
+        $model->customAfterCopiaIn($this);
 
         $model->save();
 
@@ -96,11 +98,20 @@ abstract class Description extends Model
     abstract public function getParentID();
 
     /**
-     * Azione personalizzata per la copia dell'oggetto.
+     * Azione personalizzata per la copia dell'oggetto (prima della copia).
      *
      * @param $original
      */
-    protected function customCopiaIn($original)
+    protected function customBeforeCopiaIn($original)
+    {
+    }
+
+    /**
+     * Azione personalizzata per la copia dell'oggetto (dopo la copia).
+     *
+     * @param $original
+     */
+    protected function customAfterCopiaIn($original)
     {
     }
 

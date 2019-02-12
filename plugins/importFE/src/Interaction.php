@@ -17,7 +17,7 @@ class Interaction extends Connection
 
         $list = [];
 
-        $files = glob($directory.'/*.xml');
+        $files = glob($directory.'/*.xml*');
         foreach ($files as $file) {
             $list[] = basename($file);
         }

@@ -81,7 +81,7 @@ switch (post('op')) {
                 'idsede' => post('idsede'),
                 'idconto' => post('idconto'),
                 'split_payment' => post('split_payment') ?: 0,
-				'is_fattura_conto_terzi' => post('is_fattura_conto_terzi') ?: 0,
+                'is_fattura_conto_terzi' => post('is_fattura_conto_terzi') ?: 0,
                 'n_colli' => post('n_colli'),
                 'tipo_resa' => post('tipo_resa'),
                 'bollo' => 0,
@@ -543,27 +543,15 @@ switch (post('op')) {
         }
 
         $articolo->descrizione = post('descrizione');
-        $um = post('um');
-        if (!empty($um)) {
-            $articolo->um = $um;
-        }
+        $articolo->um = post('um') ?: null;
 
         $articolo->id_iva = post('idiva');
         $articolo->idconto = post('idconto');
 
-        if (post('calcolo_ritenuta_acconto')) {
-            $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto');
-            $articolo->id_ritenuta_acconto = post('id_ritenuta_acconto');
-        }else{
-			$articolo->calcolo_ritenuta_acconto = null;
-			$articolo->id_ritenuta_acconto = null;
-		}
+        $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
+        $articolo->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
 
-        if (post('id_rivalsa_inps')) {
-            $articolo->id_rivalsa_inps = post('id_rivalsa_inps');
-        }else{
-			$articolo->id_rivalsa_inps = null;
-		}
+        $articolo->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
         if (post('prezzo_acquisto')) {
             $riga->prezzo_unitario_acquisto = post('prezzo_acquisto');
@@ -606,24 +594,15 @@ switch (post('op')) {
         }
 
         $riga->descrizione = post('descrizione');
-        $riga->um = (post('um')) ? :null;
-        
+        $riga->um = post('um') ?: null;
+
         $riga->id_iva = post('idiva');
         $riga->idconto = post('idconto');
 
-        if (post('calcolo_ritenuta_acconto')) {
-            $riga->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto');
-            $riga->id_ritenuta_acconto = post('id_ritenuta_acconto');
-        }else{
-			$riga->calcolo_ritenuta_acconto = null;
-            $riga->id_ritenuta_acconto = null;
-		}
+        $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
+        $articolo->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
 
-        if (post('id_rivalsa_inps')) {
-            $riga->id_rivalsa_inps = post('id_rivalsa_inps');
-        }else{
-			$riga->id_rivalsa_inps = null;
-		}
+        $articolo->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
         if (post('prezzo_acquisto')) {
             $riga->prezzo_unitario_acquisto = post('prezzo_acquisto');

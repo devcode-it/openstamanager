@@ -117,6 +117,29 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 		</div>
 	</div>
+	
+	  <!-- Fatturazione Elettronica -->
+    <div class="panel panel-primary <?php echo (($record['tipo_anagrafica']) == 'Ente pubblico' or ($record['tipo_anagrafica']) == 'Azienda') ? 'show' : 'hide'; ?>" >
+        <div class="panel-heading">
+            <h3 class="panel-title"><?php echo tr('Dati appalto'); ?></h3>
+        </div>
+
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>","name": "id_documento_fe", "required": 0, "value": "$id_documento_fe$", "maxlength": 20 ]}
+				</div>
+
+                <div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15 ]}
+				</div>
+
+				<div class="col-md-4">
+					{[ "type": "text", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "$codice_cup$", "maxlength": 15 ]}
+				</div>
+            </div>
+        </div>
+    </div>
 </form>
 
 

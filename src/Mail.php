@@ -218,9 +218,9 @@ class Mail extends PHPMailer\PHPMailer\PHPMailer
     /**
      * Invia l'email impostata.
      *
-     * @return bool
-     *
      * @throws Exception
+     *
+     * @return bool
      */
     public function send()
     {

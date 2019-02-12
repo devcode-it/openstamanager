@@ -2,40 +2,24 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Contratti\Components\Articolo;
+use Modules\Contratti\Components\Riga;
+use Modules\Contratti\Contratto;
+
 switch (post('op')) {
     case 'add':
         $idanagrafica = post('idanagrafica');
         $nome = post('nome');
 
-        // Verifico se c'è già un agente collegato all'anagrafica cliente, così lo imposto già
-        $q = 'SELECT idagente FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica);
-        $rs = $dbo->fetchArray($q);
-        $idagente = $rs[0]['idagente'];
+        $anagrafica = Anagrafica::find($idanagrafica);
 
-        // Codice contratto: calcolo il successivo in base al formato specificato
-        $rs = $dbo->fetchArray('SELECT numero FROM co_contratti ORDER BY id DESC LIMIT 0,1');
-        $numero = Util\Generator::generate(setting('Formato codice contratti'), $rs[0]['numero']);
+        $contratto = Contratto::build($anagrafica, $nome);
+        $id_record = $contratto->id;
 
-        // Uso il tipo di pagamento specificato in anagrafica se c'è, altrimenti quello di default
-        $rsa = $dbo->fetchArray('SELECT idpagamento_vendite AS idpagamento FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
-
-         $idpagamento = (!empty($rsa[0]['idpagamento'])) ? $rsa[0]['idpagamento'] : setting('Tipo di pagamento predefinito');
-
-        if (post('idanagrafica') !== null) {
-            $dbo->query('INSERT INTO co_contratti(idanagrafica, nome, numero, idagente, idpagamento, idstato, data_bozza) VALUES ('.prepare($idanagrafica).', '.prepare($nome).', '.prepare($numero).', '.prepare($idagente).', '.prepare($idpagamento).", (SELECT `id` FROM `co_staticontratti` WHERE `descrizione`='Bozza'), NOW())");
-            $id_record = $dbo->lastInsertedID();
-
-            // Aggiunta associazioni costi unitari al contratto
-            $rsi = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE (costo_orario!=0 OR costo_km!=0 OR costo_diritto_chiamata!=0)');
-
-            for ($i = 0; $i < sizeof($rsi); ++$i) {
-                $dbo->query('INSERT INTO co_contratti_tipiintervento(idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) VALUES('.prepare($id_record).', '.prepare($rsi[$i]['idtipointervento']).', '.prepare($rsi[$i]['costo_orario']).', '.prepare($rsi[$i]['costo_km']).', '.prepare($rsi[$i]['costo_diritto_chiamata']).', '.prepare($rsi[$i]['costo_orario_tecnico']).', '.prepare($rsi[$i]['costo_km_tecnico']).', '.prepare($rsi[$i]['costo_diritto_chiamata_tecnico']).')');
-            }
-
-            flash()->info(tr('Aggiunto contratto numero _NUM_!', [
-                '_NUM_' => $numero,
-            ]));
-        }
+        flash()->info(tr('Aggiunto contratto numero _NUM_!', [
+            '_NUM_' => $contratto['numero'],
+        ]));
 
         break;
 
@@ -75,10 +59,31 @@ switch (post('op')) {
             $costo_km = post('costo_km');
             $costo_diritto_chiamata = post('costo_diritto_chiamata');
 
+            $id_documento_fe = post('id_documento_fe');
             $codice_cig = post('codice_cig');
             $codice_cup = post('codice_cup');
 
-            $query = 'UPDATE co_contratti SET idanagrafica='.prepare($idanagrafica).', idsede='.prepare($idsede).', idstato='.prepare($idstato).', nome='.prepare($nome).', idagente='.prepare($idagente).', idpagamento='.prepare($idpagamento).', numero='.prepare($numero).', budget='.prepare($budget).', idreferente='.prepare($idreferente).', validita='.prepare($validita).', data_bozza='.prepare($data_bozza).', data_accettazione='.prepare($data_accettazione).', data_rifiuto='.prepare($data_rifiuto).', data_conclusione='.prepare($data_conclusione).', rinnovabile='.prepare($rinnovabile).', giorni_preavviso_rinnovo='.prepare($giorni_preavviso_rinnovo).', esclusioni='.prepare($esclusioni).', descrizione='.prepare($descrizione).', id_documento_fe='.prepare(post('id_documento_fe')).', codice_cig='.prepare($codice_cig).', codice_cup='.prepare($codice_cup).' WHERE id='.prepare($id_record);
+            $query = 'UPDATE co_contratti SET idanagrafica='.prepare($idanagrafica).', 
+				idsede='.prepare($idsede).',
+				idstato='.prepare($idstato).',
+				nome='.prepare($nome).',
+				idagente='.prepare($idagente).',
+				idpagamento='.prepare($idpagamento).',
+				numero='.prepare($numero).',
+				budget='.prepare($budget).',
+				idreferente='.prepare($idreferente).',
+				validita='.prepare($validita).',
+				data_bozza='.prepare($data_bozza).',
+				data_accettazione='.prepare($data_accettazione).',
+				data_rifiuto='.prepare($data_rifiuto).',
+				data_conclusione='.prepare($data_conclusione).',
+				rinnovabile='.prepare($rinnovabile).',
+				giorni_preavviso_rinnovo='.prepare($giorni_preavviso_rinnovo).',
+				esclusioni='.prepare($esclusioni).', descrizione='.prepare($descrizione).',
+				id_documento_fe='.prepare($id_documento_fe).',
+				codice_cig='.prepare($codice_cig).',
+				codice_cup='.prepare($codice_cup).' WHERE id='.prepare($id_record);
+
             // costo_diritto_chiamata='.prepare($costo_diritto_chiamata).', ore_lavoro='.prepare($ore_lavoro).', costo_orario='.prepare($costo_orario).', costo_km='.prepare($costo_km).'
 
             $dbo->query($query);

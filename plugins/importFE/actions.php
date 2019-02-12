@@ -5,8 +5,6 @@ include_once __DIR__.'/../../core.php';
 use Plugins\ImportFE\FatturaElettronica;
 use Plugins\ImportFE\Interaction;
 
-$directory = Uploads::getDirectory($id_module);
-
 switch (filter('op')) {
     case 'save':
         $content = file_get_contents($_FILES['blob']['tmp_name']);
@@ -40,10 +38,27 @@ switch (filter('op')) {
 
         break;
 
-    case 'generate':
-        $fattura_pa = new FatturaElettronica(post('filename'));
+    case 'delete':
+        $directory = Plugins\ImportFE\FatturaElettronica::getImportDirectory();
 
-        $id_record = $fattura_pa->saveFattura(post('pagamento'), post('id_segment'), post('id_tipo') );
+        delete($directory.'/'.get('name'));
+
+        break;
+
+    case 'generate':
+        $filename = post('filename');
+
+        //Processo il file ricevuto
+        $process_result = Interaction::processXML($filename);
+        if ($process_result != '') {
+            flash()->error($process_result);
+            redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
+            exit;
+        }
+
+        $fattura_pa = new FatturaElettronica($filename);
+
+        $id_record = $fattura_pa->saveFattura(post('pagamento'), post('id_segment'), post('id_tipo'));
         $fattura_pa->saveRighe(post('articoli'), post('iva'), post('conto'));
         $fattura_pa->getFattura()->updateSconto();
 

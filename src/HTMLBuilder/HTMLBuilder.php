@@ -106,7 +106,18 @@ class HTMLBuilder
             $json = self::decode($value, 'manager');
             $class = self::getManager($json['name']);
 
-            $result = !empty($class) ? $class->manage($json) : '';
+            $result = '';
+            try {
+                $result = !empty($class) ? $class->manage($json) : '';
+            } catch (\Exception $exception) {
+                logger()->error($exception->getMessage(), [
+                    'code' => $exception->getCode(),
+                    'message' => $exception->getMessage(),
+                    'file' => $exception->getFile(),
+                    'line' => $exception->getLine(),
+                    'trace' => $exception->getTraceAsString(),
+                ]);
+            }
 
             // Ricorsione
             if ($depth < self::$max_recursion) {
@@ -121,7 +132,19 @@ class HTMLBuilder
 
         foreach ($handlers[0] as $value) {
             $json = self::decode($value, 'handler');
-            $result = self::generate($json);
+
+            $result = null;
+            try {
+                $result = self::generate($json);
+            } catch (\Exception $exception) {
+                logger()->error($exception->getMessage(), [
+                    'code' => $exception->getCode(),
+                    'message' => $exception->getMessage(),
+                    'file' => $exception->getFile(),
+                    'line' => $exception->getLine(),
+                    'trace' => $exception->getTraceAsString(),
+                ]);
+            }
 
             // Ricorsione
             if ($depth < self::$max_recursion) {

@@ -10,6 +10,9 @@ use UnexpectedValueException;
 abstract class Article extends Row
 {
     protected $serialRowID = 'documento';
+    protected $abilita_movimentazione = true;
+
+    protected $qta_movimentazione = 0;
 
     public static function build(Document $document, Original $articolo)
     {
@@ -29,13 +32,29 @@ abstract class Article extends Row
     abstract public function getDirection();
 
     /**
-     * Imposta i seriali collegati all'articolo del documento.
+     * Imposta i seriali collegati all'articolo.
      *
      * @param array $serials
      */
     public function setSerialsAttribute($serials)
     {
         database()->sync('mg_prodotti', [
+            'id_riga_'.$this->serialRowID => $this->id,
+            'dir' => $this->getDirection(),
+            'id_articolo' => $this->idarticolo,
+        ], [
+            'serial' => array_clean($serials),
+        ]);
+    }
+
+    /**
+     * Rimuove i seriali collegati all'articolo.
+     *
+     * @param array $serials
+     */
+    public function removeSerials($serials)
+    {
+        database()->detach('mg_prodotti', [
             'id_riga_'.$this->serialRowID => $this->id,
             'dir' => $this->getDirection(),
             'id_articolo' => $this->idarticolo,
@@ -76,7 +95,10 @@ abstract class Article extends Row
         $diff = $value - $previous;
 
         $this->attributes['qta'] = $value;
-        $this->movimenta($diff);
+
+        if ($this->abilita_movimentazione) {
+            $this->qta_movimentazione += $diff;
+        }
 
         $database = database();
 
@@ -96,30 +118,25 @@ abstract class Article extends Row
         return $this->belongsTo(Original::class, 'idarticolo');
     }
 
-    public function copiaIn(Document $document)
+    public function movimentazione($value = true)
     {
-        $class = get_class($document);
-        $namespace = implode('\\', explode('\\', $class, -1));
+        $this->abilita_movimentazione = $value;
+    }
 
-        $current = get_class($this);
-        $pieces = explode('\\', $current);
-        $type = end($pieces);
+    /**
+     * Salva l'articolo, eventualmente movimentandone il magazzino.
+     *
+     * @param array $options
+     *
+     * @return bool
+     */
+    public function save(array $options = [])
+    {
+        if (!empty($this->qta_movimentazione)) {
+            $this->movimenta($this->qta_movimentazione);
+        }
 
-        $object = $namespace.'\\Components\\'.$type;
-
-        $attributes = $this->getAttributes();
-        unset($attributes['id']);
-
-        $model = $object::build($document, $this->articolo);
-        $model->save();
-
-        $model = $object::find($model->id);
-        $accepted = $model->getAttributes();
-
-        $attributes = array_intersect_key($attributes, $accepted);
-        $model->fill($attributes);
-
-        return $model;
+        return parent::save($options);
     }
 
     protected static function boot()
@@ -168,5 +185,24 @@ abstract class Article extends Row
         }
 
         return true;
+    }
+
+    protected function customInitCopiaIn($original)
+    {
+        $this->articolo()->associate($original->articolo);
+    }
+
+    protected function customBeforeDataCopiaIn($original)
+    {
+        $this->movimentazione(false);
+
+        parent::customBeforeDataCopiaIn($original);
+    }
+
+    protected function customAfterDataCopiaIn($original)
+    {
+        $this->movimentazione(true);
+
+        parent::customAfterDataCopiaIn($original);
     }
 }

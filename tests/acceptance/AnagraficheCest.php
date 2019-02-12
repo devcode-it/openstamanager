@@ -72,7 +72,7 @@ class AnagraficheCest
         $t->clickAndWaitModal('.btn-primary', '#tabs');
 
         // Completa i campi per il nuovo elemento
-        $t->fillField('Ragione sociale', $name);
+        $t->fillField('Denominazione', $name);
         $t->select2('#idtipoanagrafica', $tipo);
         $t->click('.btn-box-tool');
         $t->waitForElementVisible('#piva', 3);
@@ -82,7 +82,7 @@ class AnagraficheCest
         $t->clickAndWait('Aggiungi', '#add-form');
 
         // Controlla il salvataggio finale
-        $t->seeInField('Ragione sociale', $name);
+        $t->seeInField('Denominazione', $name);
     }
 
     /**

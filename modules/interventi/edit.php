@@ -151,12 +151,12 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
     ?>
     <!-- Fatturazione Elettronica PA-->
-    <div class="panel panel-primary <?php echo (($record['tipo_anagrafica']) == 'Ente pubblico') ? 'show' : 'hide'; ?>" >
+    <div class="panel panel-primary <?php echo (($record['tipo_anagrafica']) == 'Ente pubblico' or ($record['tipo_anagrafica']) == 'Azienda') ? 'show' : 'hide'; ?>" >
         <div class="panel-heading">
             <h3 class="panel-title"><?php echo tr('Dati appalto'); ?>
 			<?php if (!empty($record['idcontratto'])) {
         ?>
-			<span class="tip" title="<?php echo tr('E\' possibile specificare i dati dell\'appalto solo se il cliente è di tipo \'Ente pubblico\' e l\'attività non risulta già collegata ad un contratto.'); ?>" > <i class="fa fa-question-circle-o"></i></span>
+			<span class="tip" title="<?php echo tr('E\' possibile specificare i dati dell\'appalto solo se il cliente è di tipo \'Ente pubblico\' o \'Azienda\' e l\'attività non risulta già collegata ad un contratto.'); ?>" > <i class="fa fa-question-circle-o"></i></span>
 			</h3>
 			<?php
     } ?>

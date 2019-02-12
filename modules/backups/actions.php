@@ -37,6 +37,13 @@ switch (filter('op')) {
         }
 
         break;
+
+    case 'size':
+        $file = filter('file');
+
+        echo Util\FileSystem::size($backup_dir.'/'.$file);
+
+        break;
 }
 
 if (filter('op') == 'restore') {

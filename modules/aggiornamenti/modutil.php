@@ -125,7 +125,7 @@ function customTables()
 
     $database = database();
 
-    $results = $database->fetchArray('SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '.prepare($database->getDatabaseName()).' AND  TABLE_NAME NOT IN ('.implode(',', $names).") AND TABLE_NAME != 'updates'");
+    $results = $database->fetchArray('SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '.prepare($database->getDatabaseName()).' AND TABLE_NAME NOT IN ('.implode(',', $names).") AND TABLE_NAME != 'updates'");
 
     return array_column($results, 'TABLE_NAME');
 }

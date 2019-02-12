@@ -52,13 +52,13 @@ if (!$cliente) {
 				</div>
 
 				<div class="row">
-
+				
 					<div class="col-md-4">
-							{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 0, "value": "$nome$", "extra": "autocomplete=\"off\"" ]}
+							{[ "type": "text", "label": "<?php echo tr('Cognome'); ?>", "name": "cognome", "required": 0, "value": "$cognome$", "extra": "autocomplete=\"off\"" ]}
 					</div>
 
 					<div class="col-md-4">
-							{[ "type": "text", "label": "<?php echo tr('Cognome'); ?>", "name": "cognome", "required": 0, "value": "$cognome$", "extra": "autocomplete=\"off\"" ]}
+							{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 0, "value": "$nome$", "extra": "autocomplete=\"off\"" ]}
 					</div>
 
 					<div class="col-md-4">
@@ -95,18 +95,16 @@ if (!$cliente) {
 
 					<div class="col-md-2">
 						<?php
-                            $help_codice_destinatario = tr("Per impostare il codice specificare prima 'Tipologia' e 'Nazione' dell'anagrafica").':<br><ul>
+                            $help_codice_destinatario = tr("Per impostare il codice specificare prima '<b>Tipologia</b>' e '<b>Nazione</b>' dell'anagrafica").':<br><br><ul>
                                 <li>'.tr('Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri').'</li>
                                 <li>'.tr('Azienda (B2B) - Codice Destinatario, 7 caratteri').'</li>
-                                <li>'.tr('Privato (B2C) - viene utilizzato il Codice Fiscale').'</li>
-                            </ul>';
+                                <li>'.tr('Privato (B2C) - viene utilizzato il Codice Fiscale').'</li></ul>Se non si conosce il codice destinatario lasciare vuoto il campo. Verrà applicato in automatico quello previsto di default dal sistema (\'0000000\', \'999999\', \'XXXXXXX\').';
 
                             if (in_array($id_azienda, $tipi_anagrafica)) {
                                 $help_codice_destinatario .= '<b>'.tr("Non è necessario comunicare il proprio codice destinatario ai fornitori in quanto è sufficiente che questo sia registrato nel portale del Sistema Di Interscambio dell'Agenzia Entrate (SDI)").'.</b>';
                             }
                         ?>
 						{[ "type": "text", "label": "<?php echo ($record['tipo'] == 'Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo ($record['tipo'] == 'Ente pubblico') ? '6' : '7'; ?>, "extra": "<?php echo (empty($record['tipo']) or ($record['tipo'] == 'Privato')) ? 'disabled' : ''; ?>", "help": "<?php echo tr($help_codice_destinatario); ?>", "readonly": "<?php echo intval($anagrafica->sedeLegale->nazione->iso2 != 'IT'); ?>" ]}
-
 					</div>
 
                     <div class="col-md-4">
@@ -153,7 +151,7 @@ if (!$cliente) {
                 </div>
 
 				 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Nazione'); ?>", "name": "id_nazione", "values": "query=SELECT id AS id, nome AS descrizione FROM an_nazioni ORDER BY nome ASC", "value": "$id_nazione$" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Nazione'); ?>", "name": "id_nazione", "values": "query=SELECT id AS id, CONCAT_WS(' - ', iso2, nome) AS descrizione FROM an_nazioni ORDER BY nome ASC", "value": "$id_nazione$" ]}
                 </div>
 
                 <div class="col-md-3">
@@ -456,7 +454,7 @@ if (!empty($google)) {
 				<?php
                  }
                 ?>
-				
+
 				<?php
                 //se non è l'anagrafica azienda, ma cliente o fornitore
                  if ($cliente or $fornitore) {
@@ -465,7 +463,7 @@ if (!empty($google)) {
 				<div class="row">
 
 					<div class="col-md-3">
-                        {[ "type": "checkbox", "label": "<?php echo tr('Abilitare lo split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Lo split payment è disponibile per le anagrafiche di tipologia \"Ente pubblico\" o \"Azienda\" ed <strong>&egrave; obbligatorio</strong> per:<ul><li>Stato;</li><li>organi statali ancorch&eacute; dotati di personalit&agrave; giuridica;</li><li>enti pubblici territoriali e dei consorzi tra essi costituiti;</li><li>Camere di Commercio;</li><li>Istituti universitari;</li><li>ASL e degli enti ospedalieri;</li><li>enti pubblici di ricovero e cura aventi prevalente carattere scientifico;</li><li>enti pubblici di assistenza e beneficienza;</li><li>enti di previdenza;</li><li>consorzi tra questi costituiti.</li></ul>'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>", "extra" : "<?php echo ($record['tipo'] == 'Ente pubblico' or $record['tipo'] == 'Azienda') ? '' : 'disabled'; ?>" ]}
+                        {[ "type": "checkbox", "label": "<?php echo tr('Abilitare lo split payment'); ?>", "name": "split_payment", "value": "$split_payment$", "help": "<?php echo tr('Lo split payment è disponibile per le anagrafiche di tipologia \"Ente pubblico\" o \"Azienda\" (iscritta al Dipartimento Finanze - Scissione dei pagamenti) ed <strong>&egrave; obbligatorio</strong> per:<ul><li>Stato;</li><li>organi statali ancorch&eacute; dotati di personalit&agrave; giuridica;</li><li>enti pubblici territoriali e dei consorzi tra essi costituiti;</li><li>Camere di Commercio;</li><li>Istituti universitari;</li><li>ASL e degli enti ospedalieri;</li><li>enti pubblici di ricovero e cura aventi prevalente carattere scientifico;</li><li>enti pubblici di assistenza e beneficienza;</li><li>enti di previdenza;</li><li>consorzi tra questi costituiti.</li></ul>'); ?>", "placeholder": "<?php echo tr('Split payment'); ?>", "extra" : "<?php echo ($record['tipo'] == 'Ente pubblico' or $record['tipo'] == 'Azienda') ? '' : 'disabled'; ?>" ]}
                     </div>
 
 					<div class="col-md-9">
@@ -667,7 +665,7 @@ if (empty($record['deleted_at'])) {
 			$("#lng").val(result.geometry.location.lng());
         });
 
-		// Abilito solo ragione sociale oppure solo nome-cognome in base a cosa compilo
+		// Abilito solo ragione sociale oppure solo cognome-nome in base a cosa compilo
 		$('#nome, #cognome').bind("keyup change", function(e) {
 			if ($('#nome').val() == '' && $('#cognome').val() == '' ){
                 $('#nome, #cognome').prop('disabled', true).prop('required', false);
@@ -683,7 +681,7 @@ if (empty($record['deleted_at'])) {
 			if ($('#ragione_sociale').val() == '' ){
                 $('#nome, #cognome').prop('disabled', false).prop('required', true);
                 $('#ragione_sociale').prop('disabled', true).prop('required', false);
-				$('#nome').focus();
+				$('#cognome').focus();
 			}else{
                 $('#nome, #cognome').prop('disabled', true).prop('required', false);
 				$('#ragione_sociale').prop('disabled', false).prop('required', true);
@@ -691,7 +689,7 @@ if (empty($record['deleted_at'])) {
 			}
 		});
 
-        $('#ragione_sociale, #nome').trigger('keyup');
+        $('#ragione_sociale, #cognome').trigger('keyup');
 	});
 </script>
 

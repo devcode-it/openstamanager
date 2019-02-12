@@ -3,7 +3,6 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\DDT\Components\Articolo;
 use Modules\DDT\Components\Descrizione;
 use Modules\DDT\Components\Riga;
@@ -32,7 +31,7 @@ switch (post('op')) {
 
         flash()->info(tr('Aggiunto ddt in _TYPE_ numero _NUM_!', [
             '_TYPE_' => $dir,
-            '_NUM_' => $numero,
+            '_NUM_' => $ddt->numero,
         ]));
 
         break;
@@ -204,6 +203,7 @@ switch (post('op')) {
         $totale_ordine = 0.00;
         $data = post('data');
         $idanagrafica = post('idanagrafica');
+        $idsede = post('idsede');
         $idpagamento = post('idpagamento');
         $idconto = post('idconto');
         $idordine = post('idordine');

@@ -6,7 +6,7 @@ use Common\Document;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Iva\Aliquota;
 use Modules\Ritenute\RitenutaAcconto;
-use Modules\Ritenute\RivalsaINPS;
+use Modules\Rivalse\RivalsaINPS;
 
 abstract class Row extends Description
 {
@@ -36,7 +36,11 @@ abstract class Row extends Description
      */
     public function getImponibileScontatoAttribute()
     {
-        return $this->imponibile - $this->sconto;
+        $result = $this->prezzo_unitario_vendita > 0 ? $this->imponibile : -$this->imponibile;
+
+        $result -= $this->sconto;
+
+        return $this->prezzo_unitario_vendita > 0 ? $result : -$result;
     }
 
     /**
@@ -193,7 +197,7 @@ abstract class Row extends Description
     }
 
     /**
-     * Save the model to the database.
+     * Salva la riga, impostando i campi dipendenti dai parametri singoli.
      *
      * @param array $options
      *
@@ -291,5 +295,17 @@ abstract class Row extends Description
     protected function fixSconto()
     {
         $this->attributes['sconto'] = $this->sconto;
+    }
+
+    /**
+     * Azione personalizzata per la copia dell'oggetto (dopo la copia).
+     *
+     * @param $original
+     */
+    protected function customAfterDataCopiaIn($original)
+    {
+        $this->prezzo_unitario_vendita = $original->prezzo_unitario_vendita;
+
+        parent::customAfterDataCopiaIn($original);
     }
 }

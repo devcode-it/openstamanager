@@ -29,8 +29,8 @@ foreach ($prefixes as $prefix) {
     $replaces[$prefix.'cellulare'] = !empty($replaces[$prefix.'cellulare']) ? 'Cell: '.$replaces[$prefix.'cellulare'] : '';
     $replaces[$prefix.'email'] = !empty($replaces[$prefix.'email']) ? 'Email: '.$replaces[$prefix.'email'] : '';
     $replaces[$prefix.'codiceiban'] = !empty($replaces[$prefix.'codiceiban']) ? 'IBAN: '.$replaces[$prefix.'codiceiban'] : '';
-	$replaces[$prefix.'pec'] = !empty($replaces[$prefix.'pec']) ? 'PEC: '.$replaces[$prefix.'pec'] : '';
-	
+    $replaces[$prefix.'pec'] = !empty($replaces[$prefix.'pec']) ? 'PEC: '.$replaces[$prefix.'pec'] : '';
+
     foreach ($replaces as $key => $value) {
         if (starts_with($key, $prefix)) {
             $replaces[$key] = empty($value) ? $value : $value.'<br/>';

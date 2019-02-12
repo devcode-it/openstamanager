@@ -109,11 +109,12 @@ function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = 0)
 {
     $dbo = database();
 
-    $totale_da_pagare = 0.00;
-    $totale_fattura = get_totale_fattura($iddocumento);
-    $netto_fattura = get_netto_fattura($iddocumento);
-    $imponibile_fattura = get_imponibile_fattura($iddocumento);
-    $totale_iva = sum(abs($totale_fattura), -abs($imponibile_fattura));
+    $fattura = Fattura::find($iddocumento);
+
+    $ricalcola = true;
+    if ($fattura->isFE()) {
+        $ricalcola = $fattura->registraScadenzeFE($pagato);
+    }
 
     // Lettura data di emissione fattura
     $query3 = 'SELECT ritenutaacconto, data FROM co_documenti WHERE id='.prepare($iddocumento);
@@ -121,77 +122,86 @@ function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = 0)
     $data = $rs[0]['data'];
     $ritenutaacconto = $rs[0]['ritenutaacconto'];
 
-    // Verifico se la fattura è di acquisto o di vendita per scegliere che segno mettere nel totale
-    $query2 = 'SELECT dir FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
-    $rs2 = $dbo->fetchArray($query2);
-    $dir = $rs2[0]['dir'];
+    if ($ricalcola) {
+        $totale_da_pagare = 0.00;
 
-    /*
-        Inserisco la nuova scadenza (anche più di una riga per pagamenti multipli
-    */
-    // Se il pagamento non è specificato lo leggo dal documento
-    if ($pagamento == '') {
-        $query = 'SELECT descrizione FROM co_pagamenti WHERE id=(SELECT idpagamento FROM co_documenti WHERE id='.prepare($iddocumento).')';
-        $rs = $dbo->fetchArray($query);
-        $pagamento = $rs[0]['descrizione'];
-    }
+        $totale_fattura = get_totale_fattura($iddocumento);
+        $netto_fattura = get_netto_fattura($iddocumento);
+        $imponibile_fattura = get_imponibile_fattura($iddocumento);
+        $totale_iva = sum(abs($totale_fattura), -abs($imponibile_fattura));
 
-    $query4 = 'SELECT * FROM co_pagamenti WHERE descrizione='.prepare($pagamento);
-    $rs = $dbo->fetchArray($query4);
-    for ($i = 0; $i < sizeof($rs); ++$i) {
-        // X giorni esatti
-        if ($rs[$i]['giorno'] == 0) {
-            $scadenza = date('Y-m-d', strtotime($data.' +'.$rs[$i]['num_giorni'].' day'));
+        // Verifico se la fattura è di acquisto o di vendita per scegliere che segno mettere nel totale
+        $query2 = 'SELECT dir FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id='.prepare($iddocumento);
+        $rs2 = $dbo->fetchArray($query2);
+        $dir = $rs2[0]['dir'];
+
+        /*
+            Inserisco la nuova scadenza (anche più di una riga per pagamenti multipli
+        */
+        // Se il pagamento non è specificato lo leggo dal documento
+        if ($pagamento == '') {
+            $query = 'SELECT descrizione FROM co_pagamenti WHERE id=(SELECT idpagamento FROM co_documenti WHERE id='.prepare($iddocumento).')';
+            $rs = $dbo->fetchArray($query);
+            $pagamento = $rs[0]['descrizione'];
         }
 
-        // Ultimo del mese
-        elseif ($rs[$i]['giorno'] < 0) {
-            $date = new DateTime($data);
-
-            $add = floor($rs[$i]['num_giorni'] / 30);
-            for ($c = 0; $c < $add; ++$c) {
-                $date->modify('last day of next month');
+        $query4 = 'SELECT * FROM co_pagamenti WHERE descrizione='.prepare($pagamento);
+        $rs = $dbo->fetchArray($query4);
+        for ($i = 0; $i < sizeof($rs); ++$i) {
+            // X giorni esatti
+            if ($rs[$i]['giorno'] == 0) {
+                $scadenza = date('Y-m-d', strtotime($data.' +'.$rs[$i]['num_giorni'].' day'));
             }
 
-            // Ultimo del mese più X giorni
-            $giorni = -$rs[$i]['giorno'] - 1;
-            if ($giorni > 0) {
-                $date->modify('+'.($giorni).' day');
-            } else {
-                $date->modify('last day of this month');
+            // Ultimo del mese
+            elseif ($rs[$i]['giorno'] < 0) {
+                $date = new DateTime($data);
+
+                $add = floor($rs[$i]['num_giorni'] / 30);
+                for ($c = 0; $c < $add; ++$c) {
+                    $date->modify('last day of next month');
+                }
+
+                // Ultimo del mese più X giorni
+                $giorni = -$rs[$i]['giorno'] - 1;
+                if ($giorni > 0) {
+                    $date->modify('+'.($giorni).' day');
+                } else {
+                    $date->modify('last day of this month');
+                }
+
+                $scadenza = $date->format('Y-m-d');
             }
 
-            $scadenza = $date->format('Y-m-d');
-        }
+            // Giorno preciso del mese
+            else {
+                $scadenza = date('Y-m-'.$rs[$i]['giorno'], strtotime($data.' +'.$rs[$i]['num_giorni'].' day'));
+            }
 
-        // Giorno preciso del mese
-        else {
-            $scadenza = date('Y-m-'.$rs[$i]['giorno'], strtotime($data.' +'.$rs[$i]['num_giorni'].' day'));
-        }
+            // All'ultimo ciclo imposto come cifra da pagare il totale della fattura meno gli importi già inseriti in scadenziario per evitare di inserire cifre arrotondate "male"
+            if ($i == (sizeof($rs) - 1)) {
+                $da_pagare = sum($netto_fattura, -$totale_da_pagare, 2);
+            }
 
-        // All'ultimo ciclo imposto come cifra da pagare il totale della fattura meno gli importi già inseriti in scadenziario per evitare di inserire cifre arrotondate "male"
-        if ($i == (sizeof($rs) - 1)) {
-            $da_pagare = sum($netto_fattura, -$totale_da_pagare, 2);
-        }
+            // Totale da pagare (totale x percentuale di pagamento nei casi pagamenti multipli)
+            else {
+                $da_pagare = sum($netto_fattura / 100 * $rs[$i]['prc'], 0, 2);
+            }
+            $totale_da_pagare = sum($da_pagare, $totale_da_pagare, 2);
 
-        // Totale da pagare (totale x percentuale di pagamento nei casi pagamenti multipli)
-        else {
-            $da_pagare = sum($netto_fattura / 100 * $rs[$i]['prc'], 0, 2);
-        }
-        $totale_da_pagare = sum($da_pagare, $totale_da_pagare, 2);
+            if ($dir == 'uscita') {
+                $da_pagare = -$da_pagare;
+            }
 
-        if ($dir == 'uscita') {
-            $da_pagare = -$da_pagare;
-        }
+            $dbo->query('INSERT INTO co_scadenziario(iddocumento, data_emissione, scadenza, da_pagare, pagato, tipo) VALUES('.prepare($iddocumento).', '.prepare($data).', '.prepare($scadenza).', '.prepare($da_pagare).", 0, 'fattura')");
 
-        $dbo->query('INSERT INTO co_scadenziario(iddocumento, data_emissione, scadenza, da_pagare, pagato, tipo) VALUES('.prepare($iddocumento).', '.prepare($data).', '.prepare($scadenza).', '.prepare($da_pagare).", 0, 'fattura')");
-
-        if ($pagato) {
-            $id_scadenza = $dbo->lastInsertedID();
-            $dbo->update('co_scadenziario', [
+            if ($pagato) {
+                $id_scadenza = $dbo->lastInsertedID();
+                $dbo->update('co_scadenziario', [
                 'pagato' => $da_pagare,
                 'data_pagamento' => $data,
             ], ['id' => $id_scadenza]);
+            }
         }
     }
 
@@ -555,7 +565,13 @@ function ricalcola_costiagg_fattura($iddocumento, $idrivalsainps = '', $idritenu
 
         $marca_da_bollo = 0;
         if (abs($bolli) > 0 && abs($netto_a_pagare > setting("Soglia minima per l'applicazione della marca da bollo"))) {
-            $marca_da_bollo = $bolli;
+            //Controllo che tra le iva ce ne sia almeno una con natura N1, N2, N3 o N4
+            $check_natura = $dbo->fetchArray('SELECT codice_natura_fe FROM co_righe_documenti INNER JOIN co_iva ON co_righe_documenti.idiva=co_iva.id WHERE iddocumento='.prepare($iddocumento)." AND codice_natura_fe IN('N1','N2','N3','N4') GROUP BY codice_natura_fe");
+            if (($dir == 'entrata' && sizeof($check_natura) > 0) || $dir == 'uscita') {
+                $marca_da_bollo = $bolli;
+            } else {
+                $marca_da_bollo = 0.00;
+            }
         }
 
         // Se l'importo è negativo può essere una nota di credito, quindi cambio segno alla marca da bollo
@@ -614,7 +630,7 @@ function add_articolo_infattura($iddocumento, $idarticolo, $descrizione, $idiva,
 
     if (!empty($idrivalsainps)) {
         // Calcolo rivalsa inps
-        $rs = $dbo->fetchArray('SELECT * FROM co_rivalsainps WHERE id='.prepare($idrivalsainps));
+        $rs = $dbo->fetchArray('SELECT * FROM co_rivalse WHERE id='.prepare($idrivalsainps));
         $rivalsainps = ($prezzo - $sconto) / 100 * $rs[0]['percentuale'];
     }
 

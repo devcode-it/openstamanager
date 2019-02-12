@@ -15,14 +15,39 @@ class Interaction extends Connection
     {
         $directory = FatturaElettronica::getImportDirectory();
 
-        $response = static::request('POST', 'get_fatture_da_importare');
-        $body = static::responseBody($response);
+        $list = [];
 
-        $list = $body['results'];
-
-        $files = glob($directory.'/*.xml');
+        $files = glob($directory.'/*.xml*');
         foreach ($files as $file) {
             $list[] = basename($file);
+        }
+
+        // Ricerca da remoto
+        if (self::isEnabled()) {
+            $response = static::request('POST', 'get_fatture_da_importare');
+            $body = static::responseBody($response);
+
+            $code = $body['code'];
+
+            if ($code == '200') {
+                $files = $body['results'];
+
+                foreach ($files as $file) {
+                    /*
+                      * Verifico che l'XML (fattura di acquisto) non sia già stato importato nel db, controllo p.iva del fornitore e progressivo invio
+                      * TODO: caricare contenuto xml e verificare anche la data (e magari numero) della fattura. Potrebbe essere che il fornitore l'anno successivo mi genera FE con stesso progressivo invio.
+                      */
+                    if (preg_match("/^([A-Z]{2})(.+?)_([^\.]+)\.xml/i", $file, $m)) {
+                        $partita_iva = $m[2];
+                        $progressivo_invio = $m[3];
+                        $fattura = database()->fetchOne('SELECT co_documenti.id FROM (co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id) INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica WHERE co_tipidocumento.dir="uscita" AND an_anagrafiche.piva='.prepare($partita_iva).' AND co_documenti.progressivo_invio='.prepare($progressivo_invio));
+
+                        if (!$fattura) {
+                            $list[] = basename($file);
+                        }
+                    }
+                }
+            }
         }
 
         return array_clean($list);
@@ -43,5 +68,22 @@ class Interaction extends Connection
         }
 
         return $name;
+    }
+
+    public static function processXML($filename)
+    {
+        $response = static::request('POST', 'process_xml', [
+                'filename' => $filename,
+            ]);
+
+        $body = static::responseBody($response);
+
+        if ($body['processed'] == '0') {
+            $message = $body['code'].' - '.$body['message'];
+        } else {
+            $message = '';
+        }
+
+        return $message;
     }
 }

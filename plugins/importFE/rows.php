@@ -26,93 +26,101 @@ $cap = $sede['CAP'];
 $citta = $sede['Comune'];
 $provincia = $sede['Provincia'];
 
+// Dati generali
+$dati_generali = $fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
+$descrizione_documento = database()->fetchOne('SELECT CONCAT("(", codice, ") ", descrizione) AS descrizione FROM fe_tipi_documento WHERE codice = '.prepare($dati_generali['TipoDocumento']));
+
 echo '
     <div class="row" >
-		<div class="col-md-6" >
+		<div class="col-md-6">
 			<h4>'.
-				$ragione_sociale.'<br>
+    $ragione_sociale.'<br>
 				<small>
 					'.(!empty($codice_fiscale) ? (tr('Codice Fiscale').': '.$codice_fiscale.'<br>') : '').'
 					'.(!empty($partita_iva) ? (tr('Partita IVA').': '.$partita_iva.'<br>') : '').'
 					'.$cap.' '.$citta.' ('.$provincia.')<br>
 				</small>
 			</h4>
-		</div>';	
-echo '
+		</div>
+		
 		<div class="col-md-6">
-			<h4>'.$fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']['Numero'].'<br>
+			<h4>'.$dati_generali['Numero'];
+        echo '
+				<a href="'.$structure->fileurl('view.php').'?filename='.get('filename').'" class="btn btn-info btn-xs" target="_blank" >
+					<i class="fa fa-eye"></i> '.tr('Visualizza').'
+				</a><br>
 				<small>
-					'.database()->fetchOne('SELECT CONCAT("('.$fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']['TipoDocumento'].') ", descrizione) AS descrizione FROM fe_tipi_documento WHERE codice = '.prepare($fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']['TipoDocumento']))['descrizione'].'
-					<br>'.Translator::dateToLocale($fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']['Data']).'
-					<br>'.$fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']['Divisa'].'
+					'.database()->fetchOne('SELECT CONCAT("(", codice, ") ", descrizione) AS descrizione FROM fe_tipi_documento WHERE codice = '.prepare($dati_generali['TipoDocumento']))['descrizione'].'
+					<br>'.Translator::dateToLocale($dati_generali['Data']).'
+					<br>'.$dati_generali['Divisa'].'
 				</small>
 			</h4>
 		</div>
 	</div>';
 
-// Se il blocco DatiPagamento è valorizzato (opzionale)
-if (!empty($fattura_pa->getBody()['DatiPagamento'])){
-	
-	$pagamenti = $fattura_pa->getBody()['DatiPagamento'];
+// Tipo del documento
+$query = 'SELECT id, CONCAT (descrizione, IF((codice_tipo_documento_fe IS NULL), \'\', CONCAT( \' (\', codice_tipo_documento_fe, \')\' ) )) as descrizione FROM co_tipidocumento WHERE dir = \'uscita\'';
+if (database()->fetchNum('SELECT id FROM co_tipidocumento WHERE codice_tipo_documento_fe = '.prepare($dati_generali['TipoDocumento']))) {
+    $query .= ' AND codice_tipo_documento_fe = '.prepare($dati_generali['TipoDocumento']);
+}
+echo '
+    <div class="row" >
+		<div class="col-md-6">
+            {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'" ]}
+        </div>';
 
-	$metodi = $pagamenti['DettaglioPagamento'];
-	$metodi = isset($metodi[0]) ? $metodi : [$metodi];
-	$codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
+// Sezionale
+echo '
+        <div class="col-md-6">
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.$id_module.' ORDER BY name", "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}
+        </div>
+    </div>';
 
-	echo '
+// Blocco DatiPagamento è valorizzato (opzionale)
+$pagamenti = $fattura_pa->getBody()['DatiPagamento'];
+if (!empty($pagamenti)) {
+    $metodi = $pagamenti['DettaglioPagamento'];
+    $metodi = isset($metodi[0]) ? $metodi : [$metodi];
+
+    echo '
 		<h4>'.tr('Pagamento').'</h4>
 
-		<p>'.tr('La fattura importata presenta _NUM_ rat_E_ di pagamento con le seguenti scadenze', [
-			'_NUM_' => count($metodi),
-			'_E_' => ((count($metodi)>1) ? 'e': 'a'),
-		]).':</p>
+        <p>'.tr('La fattura importata presenta _NUM_ rat_E_ di pagamento con le seguenti scadenze', [
+            '_NUM_' => count($metodi),
+            '_E_' => ((count($metodi) > 1) ? 'e' : 'a'),
+        ]).':</p>
 		<ol>';
 
-	// Scadenze di pagamento
-	foreach ($metodi as $metodo) {
-		
-		echo '
+    // Scadenze di pagamento
+    foreach ($metodi as $metodo) {
+        echo '
 				<li>';
-				
-		//DataScadenzaPagamento è un nodo opzionale per il blocco DatiPagamento
-		if (!empty($metodo['DataScadenzaPagamento'])){
-			echo Translator::dateToLocale($metodo['DataScadenzaPagamento']).' ';
-		}
-		
-		echo Translator::numberToLocale($metodo['ImportoPagamento']).' &euro; ';
-		echo '('.((!empty($metodo['ModalitaPagamento'])) ? database()->fetchOne('SELECT descrizione FROM fe_modalita_pagamento WHERE codice = '.prepare($metodo['ModalitaPagamento']))['descrizione'] : '' ).')';
-		
-		
-		echo '
-				</li>';
-	}
 
-	echo '
+        //DataScadenzaPagamento è un nodo opzionale per il blocco DatiPagamento
+        if (!empty($metodo['DataScadenzaPagamento'])) {
+            echo Translator::dateToLocale($metodo['DataScadenzaPagamento']).' ';
+        }
+
+        $descrizione = !empty($metodo['ModalitaPagamento']) ? database()->fetchOne('SELECT descrizione FROM fe_modalita_pagamento WHERE codice = '.prepare($metodo['ModalitaPagamento']))['descrizione'] : '';
+
+        echo Translator::numberToLocale($metodo['ImportoPagamento']).' &euro; 
+            ('.$descrizione.')
+            </li>';
+    }
+
+    echo '
 		</ol>';
-		
 }
-
-// Tipo del documento
-$codice_tipo_documento_fe = (intval(database()->fetchNum('SELECT id FROM co_tipidocumento WHERE codice_tipo_documento_fe = '.prepare($fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']['TipoDocumento']).''))) ? $fattura_pa->getBody()['DatiGenerali']['DatiGeneraliDocumento']['TipoDocumento'] : '%';
-$query = 'SELECT id, CONCAT (descrizione, IF((codice_tipo_documento_fe IS NULL), \'\', CONCAT( \' (\', codice_tipo_documento_fe, \')\' ) )) as descrizione FROM co_tipidocumento WHERE dir = \'uscita\' AND codice_tipo_documento_fe LIKE '.prepare($codice_tipo_documento_fe);
-
-echo '
-    {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'" ]}';
-
 
 // prc '.($pagamenti['CondizioniPagamento'] == 'TP01' ? '!' : '').'= 100 AND
 $query = 'SELECT id, CONCAT (descrizione, IF((codice_modalita_pagamento_fe IS NULL), \"\", CONCAT( \" (\", codice_modalita_pagamento_fe, \")\" ) )) as descrizione FROM co_pagamenti';
 if (!empty($codice_modalita_pagamento)) {
-	$query .= ' WHERE codice_modalita_pagamento_fe = '.prepare($codice_modalita_pagamento);
+    $query .= ' WHERE codice_modalita_pagamento_fe = '.prepare($codice_modalita_pagamento);
 }
 $query .= ' GROUP BY descrizione ORDER BY descrizione ASC';
-	
+
 echo '
     {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "values": "query='.$query.'" ]}';
-
-// Sezionale
-echo '
-    {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT id, name AS descrizione FROM zz_segments WHERE id_module='.$id_module.' ORDER BY name", "value": "'.$_SESSION['module_'.$id_module]['id_segment'].'" ]}';
 
 // Righe
 $righe = $fattura_pa->getRighe();
@@ -121,7 +129,7 @@ if (!empty($righe)) {
     echo '
     <h4>
         '.tr('Righe').'
-        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copy()"><i class="fa fa-copy"></i> '.tr('Copia IVA e conto dalla prima riga').'</button>
+        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copy()"><i class="fa fa-copy"></i> '.tr('Copia dati contabili dalla prima riga').'</button>
         <div class="clearfix"></div>
     </h4>
 
@@ -131,8 +139,7 @@ if (!empty($righe)) {
                 <th>'.tr('Descrizione').'</th>
                 <th width="10%">'.tr('Q.tà').'</th>
                 <th width="10%">'.tr('Prezzo unitario').'</th>
-                <th width="15%">'.tr('Iva associata').'*</th>
-                <th width="15%">'.tr('Conto').'*</th>
+                <th width="15%">'.tr('Dati contabili').'*</th>
                 <th width="25%">'.tr('Articolo').'</th>
             </tr>';
 
@@ -149,12 +156,11 @@ if (!empty($righe)) {
         <tr>
             <td>'.$riga['Descrizione'].'</td>
             <td>'.Translator::numberToLocale($riga['Quantita']).' '.$riga['UnitaMisura'].'</td>
-            <td>'.Translator::numberToLocale($riga['PrezzoUnitario']).'&nbsp;&euro;</td>
+            <td>'.Translator::numberToLocale($riga['PrezzoUnitario']).'&nbsp;&euro;<small class="help-block">Aliquota iva: '.$riga['AliquotaIVA'].'%</small></td>
             <td>
-                {[ "type": "select", "name": "iva['.$key.']", "values": "query='.str_replace('"', '\"', $query).'", "required": 1 ]}
-            </td>
-            <td>
-                {[ "type": "select", "name": "conto['.$key.']", "ajax-source": "conti-acquisti", "required": 1 ]}
+                {[ "type": "select", "name": "iva['.$key.']", "values": "query='.str_replace('"', '\"', $query).'", "required": 1, "placeholder": "Aliquota iva" ]}
+                <br>
+                {[ "type": "select", "name": "conto['.$key.']", "ajax-source": "conti-acquisti", "required": 1, "placeholder": "Conto acquisti" ]}
             </td>
             <td>
                 {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "class": "", "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}

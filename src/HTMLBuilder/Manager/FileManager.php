@@ -2,6 +2,8 @@
 
 namespace HTMLBuilder\Manager;
 
+use Models\Upload;
+
 /**
  * Gestione allegati.
  *
@@ -77,13 +79,14 @@ class FileManager implements ManagerInterface
         </tr>';
 
                 foreach ($rs as $r) {
-                    $extension = pathinfo($r['original'])['extension'];
+                    $file = Upload::find($r['id']);
+
                     $result .= '
         <tr>
             <td align="left">
                 <a href="'.ROOTDIR.'/'.$directory.'/'.$r['filename'].'" target="_blank">
                     <i class="fa fa-external-link"></i> '.$r['name'].'
-                </a> ('.$extension.')'.'
+                </a> ('.$file->extension.')'.'
             </td>
             <td>'.\Translator::timestampToLocale($r['created_at']).'</td>
             <td class="text-center">
@@ -92,31 +95,11 @@ class FileManager implements ManagerInterface
                 </a>';
 
                     // Anteprime supportate dal browser
-                    $supported_extensions = ['pdf', 'jpg', 'png', 'gif', 'jpeg', 'bmp'];
-                    if (in_array(strtolower($extension), $supported_extensions)) {
-                        $result .= "
-                <div class='hide-it-off-screen' id='view-".$r['id']."'>";
-
-                        if ($extension == 'pdf') {
-                            $result .= '
-                    <iframe src="'.\Prints::getPDFLink($directory.'/'.$r['filename']).'" frameborder="0" width="100%" height="550"></iframe>';
-                        } else {
-                            $result .= '
-                    <img src="'.ROOTDIR.'/'.$directory.'/'.$r['filename'].'" width="100%"></img>';
-                        }
-
+                    if ($file->hasPreview()) {
                         $result .= '
-                </div>';
-
-                        $result .= '
-                <button class="btn btn-xs btn-info" data-target="#bs-popup2" type="button" data-title="'.prepareToField($r['name']).' <small><em>('.$r['filename'].')</em></small>" data-href="#view-'.$r['id'].'">
+                <button class="btn btn-xs btn-info" data-target="#bs-popup2" type="button" data-title="'.prepareToField($r['name']).' <small style=\'color:white\'><i>('.$r['filename'].')</i></small>" data-href="'.ROOTDIR.'/view.php?file_id='.$r['id'].'">
                     <i class="fa fa-eye"></i>
                 </button>';
-                    } elseif (strtolower($extension) == 'xml') {
-                        $result .= '
-                        <a class="btn btn-xs btn-info" href="'.ROOTDIR.'/plugins/exportFE/view.php?id_record='.$r['id_record'].'" target="_blank">
-                            <i class="fa fa-eye"></i>
-                        </a>';
                     } else {
                         $result .= '
                 <button class="btn btn-xs btn-default disabled" title="'.tr('Anteprima file non disponibile').'" disabled>

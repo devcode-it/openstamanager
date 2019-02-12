@@ -162,7 +162,7 @@ $totale = sum($totale, $record['bollo']);
 
 // Rivalsa INPS (+ bollo)
 if (!empty($record['rivalsainps'])) {
-    $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_rivalsainps WHERE id=(SELECT idrivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idrivalsainps!=0 LIMIT 0,1)');
+    $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_rivalse WHERE id=(SELECT idrivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idrivalsainps!=0 LIMIT 0,1)');
 
     $first_colspan = 3;
     $second_colspan = 2;
@@ -177,7 +177,7 @@ if (!empty($record['rivalsainps'])) {
     echo '
     <tr>
         <th class="text-center small" colspan="'.$first_colspan.'">
-            '.tr('Rivalsa INPS _PRC_%', [
+            '.tr('Rivalsa _PRC_%', [
                 '_PRC_' => Translator::numberToLocale($rs2[0]['percentuale'], 0),
             ], ['upper' => true]).'
         </th>';

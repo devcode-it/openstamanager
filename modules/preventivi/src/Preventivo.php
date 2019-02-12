@@ -2,12 +2,12 @@
 
 namespace Modules\Preventivi;
 
+use Carbon\Carbon;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Interventi\TipoSessione;
 use Traits\RecordTrait;
 use Util\Generator;
-use Carbon\Carbon;
 
 class Preventivo extends Document
 {
@@ -18,9 +18,9 @@ class Preventivo extends Document
     /**
      * Crea un nuovo preventivo.
      *
-     * @param Anagrafica $anagrafica
-     * @param TipoIntervento $tipo_sessione
-     * @param string     $nome
+     * @param Anagrafica   $anagrafica
+     * @param TipoSessione $tipo_sessione
+     * @param string       $nome
      *
      * @return self
      */
@@ -141,19 +141,10 @@ class Preventivo extends Document
      */
     public static function getNextNumero()
     {
-        $database = database();
-
         $maschera = setting('Formato codice preventivi');
 
-        $ultimo_preventivo = $database->fetchOne('SELECT numero FROM co_preventivi WHERE numero=(SELECT MAX(CAST(numero AS SIGNED)) FROM co_preventivi) AND numero LIKE('.prepare(Generator::complete($maschera)).') ORDER BY numero DESC');
-
-        $numero = Generator::generate($maschera, $ultimo_preventivo['numero']);
-
-        if (!is_numeric($numero)) {
-            $ultimo_preventivo = $database->fetchOne('SELECT numero FROM co_preventivi WHERE numero LIKE('.prepare(Generator::complete($maschera)).') ORDER BY numero DESC');
-
-            $numero = Generator::generate($maschera, $ultimo_preventivo['numero']);
-        }
+        $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero');
+        $numero = Generator::generate($maschera, $ultimo);
 
         return $numero;
     }

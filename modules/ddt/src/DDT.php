@@ -140,14 +140,15 @@ class DDT extends Document
      */
     public static function getNextNumero($data, $direzione)
     {
-        $database = database();
+        $maschera = '#';
 
-        $rs = $database->fetchOne("SELECT IFNULL(MAX(numero), '0') AS max_numero FROM dt_ddt WHERE YEAR(data) = :year AND idtipoddt IN(SELECT id FROM dt_tipiddt WHERE dir = :direction) ORDER BY CAST(numero AS UNSIGNED) DESC", [
-            ':year' => date('Y', strtotime($data)),
-            ':direction' => $direzione,
+        $ultimo = Generator::getPreviousFrom($maschera, 'dt_ddt', 'numero', [
+            'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+            'idtipoddt IN (SELECT id FROM dt_tipiddt WHERE dir = '.prepare($direzione).')',
         ]);
+        $numero = Generator::generate($maschera, $ultimo);
 
-        return intval($rs['max_numero']) + 1;
+        return $numero;
     }
 
     /**
@@ -164,17 +165,14 @@ class DDT extends Document
             return '';
         }
 
-        $database = database();
-
         $maschera = setting('Formato numero secondario ddt');
 
-        $ultimo_ddt = $database->fetchOne('SELECT numero_esterno FROM dt_ddt WHERE YEAR(data) = :year AND idtipoddt IN (SELECT id FROM dt_tipiddt WHERE dir = :direction) '.Generator::getMascheraOrder($maschera, 'numero_esterno'), [
-            ':year' => date('Y', strtotime($data)),
-            ':direction' => $direzione,
+        $ultimo = Generator::getPreviousFrom($maschera, 'dt_ddt', 'numero_esterno', [
+            'YEAR(data) = '.prepare(date('Y', strtotime($data))),
+            'idtipoddt IN (SELECT id FROM dt_tipiddt WHERE dir = '.prepare($direzione).')',
         ]);
+        $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
 
-        $numero_esterno = Generator::generate($maschera, $ultimo_ddt['numero_esterno'], 1, Generator::dateToPattern($data));
-
-        return $numero_esterno;
+        return $numero;
     }
 }

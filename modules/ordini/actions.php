@@ -3,7 +3,6 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Ordini\Components\Articolo;
 use Modules\Ordini\Components\Descrizione;
 use Modules\Ordini\Components\Riga;
@@ -33,7 +32,7 @@ switch (post('op')) {
         $id_record = $ordine->id;
 
         flash()->info(tr('Aggiunto ordine numero _NUM_!', [
-            '_NUM_' => $numero,
+            '_NUM_' => $ordine->numero,
         ]));
 
         break;

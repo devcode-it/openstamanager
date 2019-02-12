@@ -369,7 +369,7 @@ switch (post('op')) {
         flash()->info(tr('Aggiunta nuova revisione!'));
         break;
 
-    // Creazione fattura da contratto
+    // Creazione fattura da preventivo
     case 'fattura_da_preventivo':
        $preventivo = Preventivo::find($id_record);
 

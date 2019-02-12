@@ -1289,7 +1289,7 @@ switch (post('op')) {
         // Aggiornamento sconto
         if (post('evadere')[$fattura->scontoGlobale->id] == 'on') {
             $nota->tipo_sconto_globale = $fattura->tipo_sconto_globale;
-            $nota->sconto_globale = $fattura->sconto_globale;
+            $nota->sconto_globale = $fattura->tipo_sconto_globale == 'PRC' ? $fattura->sconto_globale : -$fattura->sconto_globale;
             $nota->save();
 
             $nota->updateSconto();

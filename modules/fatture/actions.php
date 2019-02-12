@@ -606,11 +606,8 @@ switch (post('op')) {
         }
 
         $riga->descrizione = post('descrizione');
-        $um = post('um');
-        if (!empty($um)) {
-            $riga->um = $um;
-        }
-
+        $riga->um = (post('um')) ? :null;
+        
         $riga->id_iva = post('idiva');
         $riga->idconto = post('idconto');
 

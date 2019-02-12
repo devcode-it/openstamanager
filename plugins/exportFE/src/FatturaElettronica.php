@@ -697,7 +697,7 @@ class FatturaElettronica
         }
 
         // Importo Totale Documento (2.1.1.9)
-        // Importo totale del documento al netto dell'eventuale sconto e comprensivo di imposta a debito del cessionario / committente
+        // Valorizzare l’importo complessivo lordo della fattura (onnicomprensivo di Iva, bollo, contributi previdenziali, ecc…)
         $result['ImportoTotaleDocumento'] = abs($documento->totale);
 
         return $result;

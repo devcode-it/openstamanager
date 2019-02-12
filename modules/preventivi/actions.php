@@ -385,9 +385,11 @@ switch (post('op')) {
         $righe = $preventivo->getRighe();
         foreach ($righe as $riga) {
             $copia = $riga->copiaIn($fattura);
-            $copia->movimenta($copia->qta);
-
             $copia->idconto = $id_conto;
+
+            if ($riga->isArticolo()) {
+                $copia->movimenta($copia->qta);
+            }
         }
 
         flash()->info(tr('Creata una nuova fattura!'));

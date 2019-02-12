@@ -2,8 +2,6 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Fatture\Components\Articolo;
-use Modules\Fatture\Components\Descrizione;
 use Modules\Fatture\Components\Riga;
 
 // Righe fattura
@@ -24,11 +22,13 @@ echo '
     </thead>
     <tbody class="sortable">';
 
-foreach ($righe as $riga) {
+foreach ($righe as $row) {
+    $riga = $row->toArray();
+
     // Valori assoluti
     $riga['qta'] = abs($riga['qta']);
     $riga['prezzo_unitario_acquisto'] = abs($riga['prezzo_unitario_acquisto']);
-    $riga['subtotale'] = abs($riga['subtotale']);
+    $riga['imponibile_scontato'] = abs($row->imponibile_scontato);
     $riga['sconto_unitario'] = abs($riga['sconto_unitario']);
     $riga['sconto'] = abs($riga['sconto']);
     $riga['iva'] = abs($riga['iva']);
@@ -43,11 +43,11 @@ foreach ($righe as $riga) {
     $ref_id = null;
 
     // Articoli
-    if ($riga instanceof Articolo) {
+    if ($row->isArticolo()) {
         $ref_modulo = Modules::get('Articoli')['id'];
         $ref_id = $riga['idarticolo'];
 
-        $riga['descrizione'] = (!empty($riga->articolo) ? $riga->articolo->codice.' - ' : '').$riga['descrizione'];
+        $riga['descrizione'] = (!empty($rowarticolo) ? $rowarticolo->codice.' - ' : '').$riga['descrizione'];
 
         $delete = 'unlink_articolo';
 
@@ -97,7 +97,7 @@ foreach ($righe as $riga) {
 
     // Individuazione dei seriali
     if (!empty($riga['abilita_serial'])) {
-        $serials = $riga->serials;
+        $serials = $rowserials;
         $mancanti = $riga['qta'] - count($serials);
 
         if ($mancanti > 0) {
@@ -161,9 +161,9 @@ foreach ($righe as $riga) {
     echo '
         <td class="text-center">';
 
-    if (!$riga instanceof Descrizione) {
+    if (!$row->isDescrizione()) {
         echo '
-            '.Translator::numberToLocale($riga->qta, 'qta');
+            '.Translator::numberToLocale($riga['qta'], 'qta');
     }
 
     echo '
@@ -173,7 +173,7 @@ foreach ($righe as $riga) {
     echo '
         <td class="text-center">';
 
-    if (!$riga instanceof Descrizione) {
+    if (!$row->isDescrizione()) {
         echo '
             '.$riga['um'];
     }
@@ -185,22 +185,22 @@ foreach ($righe as $riga) {
     echo '
         <td class="text-right">';
 
-    if (!$riga instanceof Descrizione) {
+    if (!$row->isDescrizione()) {
         echo '
-            '.Translator::numberToLocale($riga->prezzo_unitario_vendita).' &euro;';
+            '.Translator::numberToLocale($row->prezzo_unitario_vendita).' &euro;';
 
         if ($dir == 'entrata') {
             echo '
             <br><small>
-                '.tr('Acquisto').': '.Translator::numberToLocale($riga->prezzo_unitario_acquisto).' &euro;
+                '.tr('Acquisto').': '.Translator::numberToLocale($row->prezzo_unitario_acquisto).' &euro;
             </small>';
         }
 
-        if ($riga->sconto_unitario > 0) {
+        if ($rowsconto_unitario > 0) {
             echo '
             <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
-                '_TOT_' => Translator::numberToLocale($riga->sconto_unitario),
-                '_TYPE_' => ($riga->tipo_sconto == 'PRC' ? '%' : '&euro;'),
+                '_TOT_' => Translator::numberToLocale($row->sconto_unitario),
+                '_TYPE_' => ($row->tipo_sconto == 'PRC' ? '%' : '&euro;'),
             ]).'</small>';
         }
     }
@@ -212,10 +212,10 @@ foreach ($righe as $riga) {
     echo '
         <td class="text-right">';
 
-    if (!$riga instanceof Descrizione) {
+    if (!$row->isDescrizione()) {
         echo '
-            '.Translator::numberToLocale($riga->iva).' &euro;
-            <br><small class="'.(($riga->aliquota->deleted_at) ? 'text-red' : '').' help-block">'.$riga->desc_iva.(($riga->aliquota->esente) ? ' ('.$riga->aliquota->codice_natura_fe.')': null).'</small>';
+            '.Translator::numberToLocale($riga['iva']).' &euro;
+            <br><small class="'.(($row->aliquota->deleted_at) ? 'text-red' : '').' help-block">'.$row->desc_iva.(($row->aliquota->esente) ? ' ('.$row->aliquota->codice_natura_fe.')' : null).'</small>';
     }
 
     echo '
@@ -224,12 +224,12 @@ foreach ($righe as $riga) {
     // Importo
     echo '
         <td class="text-right">';
-    if (!$riga instanceof Descrizione) {
+    if (!$row->isDescrizione()) {
         echo '
-            '.Translator::numberToLocale($riga->imponibile_scontato).' &euro;';
+            '.Translator::numberToLocale($riga['imponibile_scontato']).' &euro;';
         /*
-        <br><small class="text-'.($riga->guadagno > 0 ? 'success' : 'danger').'">
-            '.tr('Guadagno').': '.Translator::numberToLocale($riga->guadagno).' &euro;
+        <br><small class="text-'.($rowguadagno > 0 ? 'success' : 'danger').'">
+            '.tr('Guadagno').': '.Translator::numberToLocale($row->guadagno).' &euro;
         </small>';
         */
     }
@@ -247,7 +247,7 @@ foreach ($righe as $riga) {
                 <input type='hidden' name='idriga' value='".$riga['id']."'>
                 <input type='hidden' name='op' value='".$delete."'>";
 
-        if ($riga instanceof Articolo) {
+        if ($row->isArticolo()) {
             echo "
                 <input type='hidden' name='idarticolo' value='".$riga['idarticolo']."'>";
         }
@@ -255,7 +255,7 @@ foreach ($righe as $riga) {
         echo "
                 <div class='input-group-btn'>";
 
-        if (!$fattura->isNotaDiAccredito() && $riga instanceof Articolo && $riga['abilita_serial'] && (empty($riga['idddt']) || empty($riga['idintervento']))) {
+        if (!$fattura->isNotaDiAccredito() && $row->isArticolo() && $riga['abilita_serial'] && (empty($riga['idddt']) || empty($riga['idintervento']))) {
             echo "
                     <a class='btn btn-primary btn-xs'data-toggle='tooltip' title='Aggiorna SN...' onclick=\"launch_modal( 'Aggiorna SN', '".$rootdir.'/modules/fatture/add_serial.php?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga['id'].'&idarticolo='.$riga['idarticolo']."', 1 );\"><i class='fa fa-barcode' aria-hidden='true'></i></a>";
         }
@@ -346,13 +346,13 @@ if (!empty($fattura->rivalsa_inps)) {
     echo '
     <tr>
         <td colspan="5" class="text-right">';
-	
-	if ($dir == 'entrata') {
-		echo '
+
+    if ($dir == 'entrata') {
+        echo '
 				<span class="tip" title="'.$database->fetchOne('SELECT CONCAT_WS(\' - \', codice, descrizione) AS descrizione FROM fe_tipo_cassa WHERE codice = '.prepare(setting('Tipo Cassa')))['descrizione'].'"  > <i class="fa fa-question-circle-o"></i></span> ';
-	}
-			
-	echo '
+    }
+
+    echo '
 			<b>'.tr('Rivalsa', [], ['upper' => true]).' :</b>
         </td>
         <td align="right">

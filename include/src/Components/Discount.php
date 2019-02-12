@@ -45,7 +45,9 @@ abstract class Discount extends Model
      */
     public function getImponibileAttribute()
     {
-        return $this->subtotale;
+        $result = $this->subtotale;
+
+        return $this->parent->tipo->reversed ? -$result : $result;
     }
 
     /**
@@ -61,7 +63,9 @@ abstract class Discount extends Model
      */
     public function getIvaAttribute()
     {
-        return $this->attributes['iva'];
+        $result = $this->attributes['iva'];
+
+        return $this->parent->tipo->reversed ? -$result : $result;
     }
 
     protected static function boot()

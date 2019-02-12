@@ -70,9 +70,9 @@ abstract class Description extends Model
 
         // Creazione del nuovo oggetto
         $model = new $object();
-        $model->setParent($document);
 
-        $model->customBeforeCopiaIn($this);
+        // Azioni specifiche di inizalizzazione
+        $model->customInitCopiaIn($this);
 
         $model->save();
 
@@ -80,15 +80,23 @@ abstract class Description extends Model
         $model = $object::find($model->id);
         $accepted = $model->getAttributes();
 
+        // Azioni specifiche precedenti
+        $model->customBeforeDataCopiaIn($this);
+
         $attributes = array_intersect_key($attributes, $accepted);
         $model->fill($attributes);
 
-        $model->customAfterCopiaIn($this);
+        // Impostazione del genitore
+        $model->setParent($document);
+
+        // Azioni specifiche successive
+        $model->customAfterDataCopiaIn($this);
 
         $model->save();
 
         // Rimozione quantità evasa
-        $this->qta_evasa = $this->qta_evasa + $attributes['qta'];
+        $this->qta_evasa = $this->qta_evasa + abs($attributes['qta']);
+        $this->save();
 
         return $model;
     }
@@ -97,12 +105,27 @@ abstract class Description extends Model
 
     abstract public function getParentID();
 
+    public function isDescrizione()
+    {
+        return $this->is_descrizione == 1;
+    }
+
+    public function isRiga()
+    {
+        return !$this->isDescrizione() && !$this->isArticolo();
+    }
+
+    public function isArticolo()
+    {
+        return !empty($this->idarticolo);
+    }
+
     /**
-     * Azione personalizzata per la copia dell'oggetto (prima della copia).
+     * Azione personalizzata per la copia dell'oggetto (inizializzazione della copia).
      *
      * @param $original
      */
-    protected function customBeforeCopiaIn($original)
+    protected function customInitCopiaIn($original)
     {
     }
 
@@ -111,7 +134,16 @@ abstract class Description extends Model
      *
      * @param $original
      */
-    protected function customAfterCopiaIn($original)
+    protected function customBeforeDataCopiaIn($original)
+    {
+    }
+
+    /**
+     * Azione personalizzata per la copia dell'oggetto (dopo la copia).
+     *
+     * @param $original
+     */
+    protected function customAfterDataCopiaIn($original)
     {
     }
 

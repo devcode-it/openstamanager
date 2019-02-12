@@ -12,6 +12,8 @@ abstract class Article extends Row
     protected $serialRowID = 'documento';
     protected $abilita_movimentazione = true;
 
+    protected $qta_movimentazione = 0;
+
     public static function build(Document $document, Original $articolo)
     {
         $model = parent::build($document, true);
@@ -30,13 +32,29 @@ abstract class Article extends Row
     abstract public function getDirection();
 
     /**
-     * Imposta i seriali collegati all'articolo del documento.
+     * Imposta i seriali collegati all'articolo.
      *
      * @param array $serials
      */
     public function setSerialsAttribute($serials)
     {
         database()->sync('mg_prodotti', [
+            'id_riga_'.$this->serialRowID => $this->id,
+            'dir' => $this->getDirection(),
+            'id_articolo' => $this->idarticolo,
+        ], [
+            'serial' => array_clean($serials),
+        ]);
+    }
+
+    /**
+     * Rimuove i seriali collegati all'articolo.
+     *
+     * @param array $serials
+     */
+    public function removeSerials($serials)
+    {
+        database()->detach('mg_prodotti', [
             'id_riga_'.$this->serialRowID => $this->id,
             'dir' => $this->getDirection(),
             'id_articolo' => $this->idarticolo,
@@ -79,7 +97,7 @@ abstract class Article extends Row
         $this->attributes['qta'] = $value;
 
         if ($this->abilita_movimentazione) {
-            $this->movimenta($diff);
+            $this->qta_movimentazione += $diff;
         }
 
         $database = database();
@@ -103,6 +121,22 @@ abstract class Article extends Row
     public function movimentazione($value = true)
     {
         $this->abilita_movimentazione = $value;
+    }
+
+    /**
+     * Salva l'articolo, eventualmente movimentandone il magazzino.
+     *
+     * @param array $options
+     *
+     * @return bool
+     */
+    public function save(array $options = [])
+    {
+        if (!empty($this->qta_movimentazione)) {
+            $this->movimenta($this->qta_movimentazione);
+        }
+
+        return parent::save($options);
     }
 
     protected static function boot()
@@ -153,14 +187,22 @@ abstract class Article extends Row
         return true;
     }
 
-    protected function customBeforeCopiaIn($original)
+    protected function customInitCopiaIn($original)
     {
-        $this->movimentazione(false);
         $this->articolo()->associate($original->articolo);
     }
 
-    protected function customAfterCopiaIn($original)
+    protected function customBeforeDataCopiaIn($original)
+    {
+        $this->movimentazione(false);
+
+        parent::customBeforeDataCopiaIn($original);
+    }
+
+    protected function customAfterDataCopiaIn($original)
     {
         $this->movimentazione(true);
+
+        parent::customAfterDataCopiaIn($original);
     }
 }

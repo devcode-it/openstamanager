@@ -81,16 +81,22 @@ echo '
     </div>
 </div>';
 
-if (Interaction::isEnabled()) {
-    echo '
+echo '
 <div class="box box-info">
     <div class="box-header with-border">
         <h3 class="box-title">
-            '.tr('Importazione automatica').'</span>
-        </h3>
+            '.tr('Fatture da importare').'</span>
+        </h3>';
+
+// Ricerca automatica
+if (Interaction::isEnabled()) {
+    echo '
         <button type="button" class="btn btn-primary pull-right" onclick="search(this)">
             <i class="fa fa-refresh"></i> '.tr('Ricerca fatture di acquisto').'
-        </button>
+        </button>';
+}
+
+echo '
     </div>
     <div class="box-body" id="list">';
 
@@ -110,4 +116,3 @@ function search(button) {
     });
 }
 </script>';
-}

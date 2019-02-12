@@ -5,8 +5,6 @@ include_once __DIR__.'/../../core.php';
 use Plugins\ImportFE\FatturaElettronica;
 use Plugins\ImportFE\Interaction;
 
-$directory = Uploads::getDirectory($id_module);
-
 switch (filter('op')) {
     case 'save':
         $content = file_get_contents($_FILES['blob']['tmp_name']);
@@ -37,6 +35,13 @@ switch (filter('op')) {
                 'already' => 1,
             ]);
         }
+
+        break;
+
+    case 'delete':
+        $directory = Plugins\ImportFE\FatturaElettronica::getImportDirectory();
+
+        delete($directory.'/'.get('filename'));
 
         break;
 

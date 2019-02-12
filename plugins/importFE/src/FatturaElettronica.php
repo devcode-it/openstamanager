@@ -221,7 +221,7 @@ class FatturaElettronica
             }
 
             $sconti = $riga['ScontoMaggiorazione'];
-            
+
             if (!empty($sconti)) {
                 if ($sconti['Percentuale'] || $sconti['Importo']) {
                     $tipo = !empty($sconti['Percentuale']) ? 'PRC' : 'EUR';
@@ -235,7 +235,7 @@ class FatturaElettronica
                         $obj->tipo_sconto = $tipo;
                     }
                 }
-                
+
                 // Sconti multipli
                 else {
                     $sconto = $sconti[0]['Percentuale'] ? $sconti[0]['Percentuale'] : $sconti['Percentuale'];
@@ -244,28 +244,26 @@ class FatturaElettronica
                     $sconto_totale = 0;
                     if ($tipo == 'PRC') {
                         /**
-                          * Trasformo un eventuale sconto percentuale combinato in più
-                          * sconti:
-                          * Esempio:
-                          * 40% + 30% è uno sconto del 42%
-                          */
+                         * Trasformo un eventuale sconto percentuale combinato in più
+                         * sconti:
+                         * Esempio:
+                         * 40% + 30% è uno sconto del 42%.
+                         */
                         $prezzo_intero = $riga['PrezzoUnitario'] * $riga['Quantita'];
                         $prezzo_scontato = $prezzo_intero;
 
                         foreach ($sconti as $scontor) {
                             $prezzo_scontato -= $prezzo_scontato / 100 * $scontor['Percentuale'];
                         }
-                        
+
                         // Ricavo la percentuale finale di sconto con una proporzione
-                        $percentuale_totale = ( 1 - ($prezzo_scontato / $prezzo_intero) ) * 100;
-                        
+                        $percentuale_totale = (1 - ($prezzo_scontato / $prezzo_intero)) * 100;
+
                         if (!empty($percentuale_totale)) {
                             $obj->sconto_unitario = $percentuale_totale;
                             $obj->tipo_sconto = $tipo;
                         }
-                    }
-                    
-                    else {
+                    } else {
                         // Combino gli sconti tra loro
                         foreach ($sconti as $sconto) {
                             $unitario = $sconto['Percentuale'] ?: $sconto['Importo'];
@@ -275,7 +273,7 @@ class FatturaElettronica
 
                             $sconto_totale += $unitario;
                         }
-                        
+
                         if (!empty($unitario)) {
                             $obj->sconto_unitario = $sconto_totale;
                             $obj->tipo_sconto = $tipo;

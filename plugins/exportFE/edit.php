@@ -20,9 +20,8 @@ if (!empty($fattura_pa)) {
     $generated = false;
 }
 
-
 // Natura obbligatoria per iva con esenzione
-$iva = $database->fetchOne('SELECT * FROM `co_iva` WHERE `id` IN (SELECT idiva FROM co_righe_documenti WHERE iddocumento = '.prepare($id_record).') AND esente = 1' );
+$iva = $database->fetchOne('SELECT * FROM `co_iva` WHERE `id` IN (SELECT idiva FROM co_righe_documenti WHERE iddocumento = '.prepare($id_record).') AND esente = 1');
 $fields = [
     'codice_natura_fe' => 'Natura IVA',
 ];
@@ -44,8 +43,6 @@ if (!empty($missing) && !$generated) {
 
     //$disabled = true;
 }
-
-
 
 // Campi obbligatori per il pagamento
 $pagamento = $database->fetchOne('SELECT * FROM `co_pagamenti` WHERE `id` = '.prepare($record['idpagamento']));
@@ -164,7 +161,7 @@ echo '
 echo '
     <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
-    <a href="'.ROOTDIR.'/plugins/exportFE/download.php?id_record='.$id_record.'" class="btn btn-success btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
+    <a href="'.$structure->fileurl('download.php').'?id_record='.$id_record.'" class="btn btn-success btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
         <i class="fa fa-download"></i> '.tr('Scarica').'
     </a>';
 
@@ -209,7 +206,7 @@ if (!empty($record['codice_stato_fe'])) {
         echo '
 		<div class="alert text-left alert-'.$class.'">
 		    <big><i class="'.$stato_fe['icon'].'" style="color:#fff;"></i> 
-		    <b>'.$stato_fe['codice'].'</b> - '.$stato_fe['descrizione'].'</big> '.( !empty($record['descrizione_ricevuta_fe']) ? '<br><b>NOTE:</b><br>'.$record['descrizione_ricevuta_fe'] : '' ).'
+		    <b>'.$stato_fe['codice'].'</b> - '.$stato_fe['descrizione'].'</big> '.(!empty($record['descrizione_ricevuta_fe']) ? '<br><b>NOTE:</b><br>'.$record['descrizione_ricevuta_fe'] : '').'
 		    <div class="pull-right">
 		        <i class="fa fa-clock-o"></i> '.Translator::timestampToLocale($record['data_stato_fe']).'
             </div>

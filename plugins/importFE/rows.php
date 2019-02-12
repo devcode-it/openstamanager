@@ -45,8 +45,8 @@ echo '
 		
 		<div class="col-md-6">
 			<h4>'.$dati_generali['Numero'];
-		echo '
-				<a href="'.ROOTDIR.'/view.php?file_id='.get('id').'" class="btn btn-info btn-xs" target="_blank" >
+        echo '
+				<a href="'.$structure->fileurl('view.php').'?filename='.get('filename').'" class="btn btn-info btn-xs" target="_blank" >
 					<i class="fa fa-eye"></i> '.tr('Visualizza').'
 				</a><br>
 				<small>

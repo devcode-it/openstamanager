@@ -76,7 +76,7 @@ UPDATE `zz_views` SET `query` = '(SELECT GROUP_CONCAT(DISTINCT `name` SEPARATOR 
 
 UPDATE `zz_views` SET `query` = 'IF((SELECT GROUP_CONCAT(DISTINCT `name` SEPARATOR \'\r\n \') FROM zz_operations INNER JOIN zz_emails ON zz_operations.id_email = zz_emails.id WHERE zz_operations.id_module = (SELECT id FROM zz_modules WHERE `name` = \'Fatture di vendita\') AND op = \'send-email\' AND id_record = co_documenti.id ORDER BY zz_operations.created_at DESC LIMIT 1) IS NOT NULL, \'fa fa-envelope text-success\', \'\') ' WHERE `zz_views`.`name` = 'icon_Inviata' AND id_module = (SELECT id FROM zz_modules WHERE name = 'Fatture di vendita');
 
--- Limitato il controllo numeri fattura duplicati all'anno in corso
+-- Limitato all'anno in corso il controllo per i numeri duplicati nelle fatture
 UPDATE `zz_views` SET `query` = 'IF((SELECT COUNT(t.numero_esterno) FROM co_documenti AS t WHERE t.numero_esterno = co_documenti.numero_esterno AND t.numero_esterno != '''' AND t.id_segment = co_documenti.id_segment AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = ''entrata'') AND t.data >= ''|period_start|'' AND t.data <= ''|period_end|'' AND YEAR(t.data) = YEAR(co_documenti.data)  ) > 1, ''red'', '''') ' WHERE `zz_views`.`name` = '_bg_' AND id_module = (SELECT id FROM zz_modules WHERE name = 'Fatture di vendita');
 
 -- Fornitore terzo intermediario abilitato all'invio della fattura elettronica

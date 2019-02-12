@@ -4,6 +4,10 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.4.6 (2019-02-12)](#246-2019-02-12)
+  - [Aggiunto (Added)](#aggiunto-added)
+  - [Modificato (Changed)](#modificato-changed)
+  - [Fixed](#fixed)
 - [2.4.5 (2019-01-10)](#245-2019-01-10)
   - [Aggiunto (Added)](#aggiunto-added)
   - [Modificato (Changed)](#modificato-changed)
@@ -47,7 +51,31 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
   - [Modificato (Changed)](#modificato-changed-5)
   - [Fixed](#fixed-7)
 
+  
+## 2.4.6 (2019-02-12)
 
+### Aggiunto (Added)
+
+ - Introduzione delle seconda ritenuta
+ - Introduzione della fatturazione per conto terzi
+ - Aggiunto stato elaborazione fattura elettronica per fatture di vendita
+ - Aggiunto codice cig, cup e identificativo documento anche per preventivi
+
+### Modificato (Changed)
+
+ - Miglioramento della generazione xml per le Fatture Elettroniche
+ - Miglioramento procedura importazione xml per le Fatture Elettroniche
+ - Gestito split payment nella fattura elettronica
+ 
+### Fixed
+
+ - Fix calcolo codice preventivo, ordine, ddt e fattura
+ - Fix valori non riportati in fase di inserimento di una nuova attività
+ - Fix aggiunta del contratto in fattura
+ - Fix aggiunta articolo in attività
+ - Fix calcolo sconto per nota di credito fa fattura di vendita 
+ - Risolti altri bug minori
+ 
 ## 2.4.5 (2019-01-10)
 
 ### Aggiunto (Added)

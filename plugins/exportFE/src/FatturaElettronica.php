@@ -384,15 +384,15 @@ class FatturaElettronica
         $default_code = ($cliente->nazione->iso2 != 'IT') ? 'XXXXXXX' : $default_code;
 
         // Generazione dell'header
-		// Se all'Anagrafe Tributaria il trasmittente è censito con il codice fiscale, es. ditte individuali
-		$result = [
-			'IdTrasmittente' => [
-				'IdPaese' => $anagrafica->nazione->iso2,
-				'IdCodice' => (!empty($anagrafica['codice_fiscale'])) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']),
-			]
-		];
+        // Se all'Anagrafe Tributaria il trasmittente è censito con il codice fiscale, es. ditte individuali
+        $result = [
+            'IdTrasmittente' => [
+                'IdPaese' => $anagrafica->nazione->iso2,
+                'IdCodice' => (!empty($anagrafica['codice_fiscale'])) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']),
+            ],
+        ];
 
-		$result[] = [
+        $result[] = [
             'ProgressivoInvio' => $documento['progressivo_invio'],
             'FormatoTrasmissione' => ($cliente['tipo'] == 'Ente pubblico') ? 'FPA12' : 'FPR12',
             'CodiceDestinatario' => !empty($cliente['codice_destinatario']) ? $cliente['codice_destinatario'] : $default_code,
@@ -427,8 +427,7 @@ class FatturaElettronica
 
         // Partita IVA (obbligatoria se presente)
         if (!empty($anagrafica['piva'])) {
-
-			if (!empty($anagrafica->nazione->iso2)) {
+            if (!empty($anagrafica->nazione->iso2)) {
                 $result['IdFiscaleIVA']['IdPaese'] = $anagrafica->nazione->iso2;
             }
 
@@ -723,18 +722,22 @@ class FatturaElettronica
             $vettore = Anagrafica::find($documento['idvettore']);
             $result['DatiAnagraficiVettore'] = static::getDatiAnagrafici($vettore);
         }
-		
-		if (!empty($causale))
-			$result['CausaleTrasporto'] = $causale;
-		
-		if (!empty($documento['n_colli']))
-			$result['NumeroColli'] = $documento['n_colli'];
-		
-        if (!empty($aspetto))
-			$result['Descrizione'] = $aspetto;
 
-        if ($documento['tipo_resa'])
+        if (!empty($causale)) {
+            $result['CausaleTrasporto'] = $causale;
+        }
+
+        if (!empty($documento['n_colli'])) {
+            $result['NumeroColli'] = $documento['n_colli'];
+        }
+
+        if (!empty($aspetto)) {
+            $result['Descrizione'] = $aspetto;
+        }
+
+        if ($documento['tipo_resa']) {
             $result['TipoResa'] = $documento['tipo_resa'];
+        }
 
         return $result;
     }
@@ -1134,7 +1137,7 @@ class FatturaElettronica
 
         // Inclusione
         foreach ($allegati as $allegato) {
-            if ($allegato['category'] == 'Fattura Elettronica') {
+            if ($allegato['category'] == 'Fattura Elettronica' && $allegato['name'] != 'Stampa allegata') {
                 $file = DOCROOT.'/'.$directory.'/'.$allegato['filename'];
 
                 $attachments[] = [

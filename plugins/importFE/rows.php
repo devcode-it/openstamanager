@@ -45,11 +45,16 @@ echo '
 		
 		<div class="col-md-6">
 			<h4>'.$dati_generali['Numero'];
-        echo '
+
+if (!ends_with(get('filename'), '.p7m')) {
+    echo '
 				<a href="'.$structure->fileurl('view.php').'?filename='.get('filename').'" class="btn btn-info btn-xs" target="_blank" >
 					<i class="fa fa-eye"></i> '.tr('Visualizza').'
-				</a><br>
-				<small>
+				</a>';
+}
+
+        echo '
+				<br><small>
 					'.database()->fetchOne('SELECT CONCAT("(", codice, ") ", descrizione) AS descrizione FROM fe_tipi_documento WHERE codice = '.prepare($dati_generali['TipoDocumento']))['descrizione'].'
 					<br>'.Translator::dateToLocale($dati_generali['Data']).'
 					<br>'.$dati_generali['Divisa'].'
@@ -81,6 +86,8 @@ $pagamenti = $fattura_pa->getBody()['DatiPagamento'];
 if (!empty($pagamenti)) {
     $metodi = $pagamenti['DettaglioPagamento'];
     $metodi = isset($metodi[0]) ? $metodi : [$metodi];
+
+    $codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
 
     echo '
 		<h4>'.tr('Pagamento').'</h4>

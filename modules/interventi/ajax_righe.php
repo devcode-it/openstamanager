@@ -8,7 +8,7 @@ if (file_exists(__DIR__.'/../../../core.php')) {
 
 $show_prezzi = Auth::user()['gruppo'] != 'Tecnici' || (Auth::user()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
-$query = 'SELECT * FROM in_righe_interventi WHERE idintervento='.prepare($id_record).' '.Modules::getAdditionalsQuery('Magazzino').' ORDER BY id ASC';
+$query = 'SELECT * FROM in_righe_interventi WHERE idintervento='.prepare($id_record).' ORDER BY id ASC';
 $rs2 = $dbo->fetchArray($query);
 
 if (count($rs2) > 0) {

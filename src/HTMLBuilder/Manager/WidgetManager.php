@@ -74,7 +74,7 @@ class WidgetManager implements ManagerInterface
             $query = str_replace('1=1', '1=1 '.$additionals, $query);
         }
 
-        $query = \App::replacePlaceholder($query);
+        $query = \Util\Query::replacePlaceholder($query);
 
         // Individuazione del risultato della query
         $database = database();
@@ -110,7 +110,7 @@ class WidgetManager implements ManagerInterface
             elseif ($widget['more_link_type'] == 'javascript') {
                 $link = $widget['more_link'];
 
-                $link = \App::replacePlaceholder($link);
+                $link = \Util\Query::replacePlaceholder($link);
 
                 $result .= 'onclick="'.$link.'"';
             }

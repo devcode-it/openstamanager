@@ -251,25 +251,27 @@ class Fattura extends Document
 
         $xml = \Util\XML::read($this->getXML());
 
-        $scadenze = $xml['FatturaElettronicaBody']['DatiPagamento']['DettaglioPagamento'];
-        $scadenze = isset($scadenze[0]) ? $scadenze : [$scadenze];
+        $pagamenti = $xml['FatturaElettronicaBody']['DatiPagamento']['DettaglioPagamento'];
+        if (!empty($pagamenti)) {
+            $scadenze = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
 
-        foreach ($scadenze as $scadenza) {
-            $data = $scadenza['DataScadenzaPagamento'];
-            $importo = $scadenza['ImportoPagamento'];
+            foreach ($scadenze as $scadenza) {
+                $data = $scadenza['DataScadenzaPagamento'];
+                $importo = $scadenza['ImportoPagamento'];
 
-            $dbo->insert('co_scadenziario', [
-                'iddocumento' => $this->id,
-                'data_emissione' => $this->data,
-                'scadenza' => $data,
-                'da_pagare' => $importo,
-                'tipo' => 'fattura',
-                'pagato' => $is_pagato ? $importo : 0,
-                'data_pagamento' => $is_pagato ? $data : '',
-            ], ['id' => $id_scadenza]);
+                $dbo->insert('co_scadenziario', [
+                    'iddocumento' => $this->id,
+                    'data_emissione' => $this->data,
+                    'scadenza' => $data,
+                    'da_pagare' => -$importo,
+                    'tipo' => 'fattura',
+                    'pagato' => $is_pagato ? $importo : 0,
+                    'data_pagamento' => $is_pagato ? $data : '',
+                ], ['id' => $id_scadenza]);
+            }
         }
 
-        return !empty($scadenze);
+        return !empty($pagamenti);
     }
 
     // Metodi statici

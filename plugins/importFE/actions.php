@@ -71,7 +71,7 @@ switch (filter('op')) {
         ricalcola_costiagg_fattura($id_record, $idrivalsainps, $idritenutaacconto, $bollo);
         elimina_scadenza($id_record);
         elimina_movimento($id_record, 0);
-        aggiungi_scadenza($id_record, post('pagamento'));
+        aggiungi_scadenza($id_record);
         aggiungi_movimento($id_record, 'uscita');
 
         $fattura_pa->delete();

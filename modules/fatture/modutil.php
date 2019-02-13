@@ -111,9 +111,8 @@ function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = 0)
 
     $fattura = Fattura::find($iddocumento);
 
-    $ricalcola = true;
     if ($fattura->isFE()) {
-        $ricalcola = $fattura->registraScadenzeFE($pagato);
+        $scadenze_fe = $fattura->registraScadenzeFE($pagato);
     }
 
     // Lettura data di emissione fattura
@@ -122,7 +121,7 @@ function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = 0)
     $data = $rs[0]['data'];
     $ritenutaacconto = $rs[0]['ritenutaacconto'];
 
-    if ($ricalcola) {
+    if (empty($scadenze_fe)) {
         $totale_da_pagare = 0.00;
 
         $totale_fattura = get_totale_fattura($iddocumento);
@@ -198,9 +197,9 @@ function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = 0)
             if ($pagato) {
                 $id_scadenza = $dbo->lastInsertedID();
                 $dbo->update('co_scadenziario', [
-                'pagato' => $da_pagare,
-                'data_pagamento' => $data,
-            ], ['id' => $id_scadenza]);
+                    'pagato' => $da_pagare,
+                    'data_pagamento' => $data,
+                ], ['id' => $id_scadenza]);
             }
         }
     }

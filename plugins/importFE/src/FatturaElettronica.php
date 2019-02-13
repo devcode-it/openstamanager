@@ -41,7 +41,7 @@ class FatturaElettronica
         if (ends_with($file, '.p7m')) {
             $file = XML::decodeP7M($this->file);
 
-            if ($file !== false) {
+            if (!empty($file)) {
                 delete($this->file);
 
                 $this->file = $file;

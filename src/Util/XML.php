@@ -70,12 +70,12 @@ class XML
         $final_file = $directory.'/'.basename($file, '.p7m');
 
         exec('openssl smime -verify -noverify -in "'.$file.'" -inform DER -out "'.$final_file.'"', $output, $cmd);
-        if ($cmd != 0) {
+        if (!file_exists($final_file)) {
             self::der2smime($file);
 
             $result = openssl_pkcs7_verify($file, PKCS7_NOVERIFY, '', [], '', $final_file);
 
-            if ($result == -1) {
+            if ($result == -1 || $result === false) {
                 return false;
             }
         }

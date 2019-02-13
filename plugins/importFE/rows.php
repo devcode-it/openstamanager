@@ -87,6 +87,8 @@ if (!empty($pagamenti)) {
     $metodi = $pagamenti['DettaglioPagamento'];
     $metodi = isset($metodi[0]) ? $metodi : [$metodi];
 
+    $codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
+
     echo '
 		<h4>'.tr('Pagamento').'</h4>
 

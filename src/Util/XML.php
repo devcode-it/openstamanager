@@ -39,13 +39,87 @@ class XML
     /**
      * Interpreta i contenuti di un file XML.
      *
-     * @param string $path
+     * @param string $file
      *
      * @return array
      */
-    public static function readFile($path)
+    public static function readFile($file)
     {
-        return static::read(file_get_contents($path));
+        return static::read(file_get_contents($file));
+    }
+
+    /**
+     * Interpreta i contenuti di un file XML.
+     *
+     * @param string $file
+     *
+     * @return string|bool
+     */
+    public static function decodeP7M($file)
+    {
+        $content = file_get_contents($file);
+
+        $base64 = base64_decode($content, true);
+        if ($base64 !== false) {
+            $content = $base64;
+        }
+
+        file_put_contents($file, self::removeBOM($content));
+
+        $directory = pathinfo($file, PATHINFO_DIRNAME);
+        $final_file = $directory.'/'.basename($file, '.p7m');
+
+        exec('openssl smime -verify -noverify -in "'.$file.'" -inform DER -out "'.$final_file.'"', $output, $cmd);
+        if ($cmd != 0) {
+            self::der2smime($file);
+
+            $result = openssl_pkcs7_verify($file, PKCS7_NOVERIFY, '', [], '', $final_file);
+
+            if ($result == -1) {
+                return false;
+            }
+        }
+
+        return $final_file;
+    }
+
+    /**
+     * Remove UTF8 BOM.
+     *
+     * @param $text
+     *
+     * @return string
+     *
+     * @source https://stackoverflow.com/questions/10290849/how-to-remove-multiple-utf-8-bom-sequences
+     */
+    protected static function removeBOM($text)
+    {
+        $bom = pack('H*', 'EFBBBF');
+        $text = preg_replace("/^$bom/", '', $text);
+
+        return $text;
+    }
+
+    /**
+     * @param $file
+     *
+     * @return bool|int
+     *
+     * @source http://php.net/manual/en/function.openssl-pkcs7-verify.php#123118
+     */
+    protected static function der2smime($file)
+    {
+        $to = <<<TXT
+MIME-Version: 1.0
+Content-Disposition: attachment; filename="smime.p7m"
+Content-Type: application/x-pkcs7-mime; smime-type=signed-data; name="smime.p7m"
+Content-Transfer-Encoding: base64
+\n
+TXT;
+        $from = file_get_contents($file);
+        $to .= chunk_split(base64_encode($from));
+
+        return file_put_contents($file, $to);
     }
 
     /**

@@ -47,7 +47,7 @@ foreach ($righe as $row) {
         $ref_modulo = Modules::get('Articoli')['id'];
         $ref_id = $riga['idarticolo'];
 
-        $riga['descrizione'] = (!empty($rowarticolo) ? $rowarticolo->codice.' - ' : '').$riga['descrizione'];
+        $riga['descrizione'] = (!empty($row->articolo) ? $row->articolo->codice.' - ' : '').$riga['descrizione'];
 
         $delete = 'unlink_articolo';
 
@@ -97,7 +97,7 @@ foreach ($righe as $row) {
 
     // Individuazione dei seriali
     if (!empty($riga['abilita_serial'])) {
-        $serials = $rowserials;
+        $serials = $row->serials;
         $mancanti = $riga['qta'] - count($serials);
 
         if ($mancanti > 0) {
@@ -196,7 +196,7 @@ foreach ($righe as $row) {
             </small>';
         }
 
-        if ($rowsconto_unitario > 0) {
+        if ($row->sconto_unitario > 0) {
             echo '
             <br><small class="label label-danger">'.tr('sconto _TOT_ _TYPE_', [
                 '_TOT_' => Translator::numberToLocale($row->sconto_unitario),
@@ -228,7 +228,7 @@ foreach ($righe as $row) {
         echo '
             '.Translator::numberToLocale($riga['imponibile_scontato']).' &euro;';
         /*
-        <br><small class="text-'.($rowguadagno > 0 ? 'success' : 'danger').'">
+        <br><small class="text-'.($row->guadagno > 0 ? 'success' : 'danger').'">
             '.tr('Guadagno').': '.Translator::numberToLocale($row->guadagno).' &euro;
         </small>';
         */

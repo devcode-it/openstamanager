@@ -9,7 +9,7 @@ use UnexpectedValueException;
 
 abstract class Article extends Row
 {
-    protected $serialRowID = 'documento';
+    protected $serialRowID = null;
     protected $abilita_movimentazione = true;
 
     protected $qta_movimentazione = 0;

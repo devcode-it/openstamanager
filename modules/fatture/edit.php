@@ -432,7 +432,7 @@ if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
                     </div>';
 
             // Lettura preventivi accettati, in attesa di conferma o in lavorazione
-            $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($record['idanagrafica'])." AND id NOT IN (SELECT idpreventivo FROM co_righe_documenti WHERE idpreventivo IS NOT NULL) AND id NOT IN (SELECT idpreventivo FROM or_righe_ordini WHERE NOT idpreventivo IS NOT NULL)  AND idstato IN(SELECT id FROM co_statipreventivi WHERE descrizione='Accettato' OR descrizione='In lavorazione' OR descrizione='In attesa di conferma') AND default_revision=1";
+            $prev_query = 'SELECT COUNT(*) AS tot FROM co_preventivi WHERE idanagrafica='.prepare($record['idanagrafica'])." AND idstato IN(SELECT id FROM co_statipreventivi WHERE descrizione='Accettato' OR descrizione='In lavorazione' OR descrizione='In attesa di conferma') AND default_revision=1 AND co_preventivi.id IN (SELECT idpreventivo FROM co_righe_preventivi WHERE co_righe_preventivi.idpreventivo = co_preventivi.id AND (qta - qta_evasa) > 0)";
             $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
             echo '
                     <div class="tip" data-toggle="tooltip" title="'.tr('Preventivi accettati, in attesa di conferma o in lavorazione.').'" style="display:inline;">
@@ -442,7 +442,7 @@ if ($record['stato'] != 'Pagato' && $record['stato'] != 'Emessa') {
                     </div>';
 
             // Lettura contratti accettati, in attesa di conferma o in lavorazione
-            $contr_query = 'SELECT COUNT(*) AS tot FROM co_contratti WHERE idanagrafica='.prepare($record['idanagrafica']).' AND id NOT IN (SELECT idcontratto FROM co_righe_documenti WHERE idcontratto IS NOT NULL) AND idstato IN( SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND NOT EXISTS (SELECT id FROM co_righe_documenti WHERE co_righe_documenti.idcontratto = co_contratti.id)';
+            $contr_query = 'SELECT COUNT(*) AS tot FROM co_contratti WHERE idanagrafica='.prepare($record['idanagrafica']).' AND idstato IN( SELECT id FROM co_staticontratti WHERE fatturabile = 1) AND co_contratti.id IN (SELECT idcontratto FROM co_righe_contratti WHERE co_righe_contratti.idcontratto = co_contratti.id AND (qta - qta_evasa) > 0)';
             $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
             echo '
                     <div class="tip" data-toggle="tooltip" title="'.tr('Contratti accettati, in attesa di conferma o in lavorazione.').'" style="display:inline;">

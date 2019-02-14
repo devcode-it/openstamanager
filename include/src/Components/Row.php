@@ -12,6 +12,11 @@ abstract class Row extends Description
 {
     protected $prezzo_unitario_vendita_riga = null;
 
+    protected $casts = [
+        'qta' => 'float',
+        //'qta_evasa' => 'float',
+    ];
+
     public static function build(Document $document, $bypass = false)
     {
         return parent::build($document, true);

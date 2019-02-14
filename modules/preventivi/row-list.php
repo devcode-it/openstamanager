@@ -40,10 +40,11 @@ foreach ($rs as $r) {
 
     // q.tà
     echo '
-            <td class="text-right">';
+            <td class="text-center">';
     if (empty($r['is_descrizione'])) {
         echo '
-                '.Translator::numberToLocale($r['qta'], 'qta');
+                <big>'.Translator::numberToLocale($r['qta'] - $r['qta_evasa'], 'qta').'</big>
+                <br><small>('.tr('Q.tà iniziale').': '.Translator::numberToLocale($r['qta'], 'qta').')</small>';
     }
     echo '
             </td>';

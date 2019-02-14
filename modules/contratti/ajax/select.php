@@ -10,13 +10,11 @@ switch ($resource) {
             $filter[] = 'id='.prepare($element);
         }
 
-        $where[] = 'an_anagrafiche.idanagrafica='.prepare($superselect['idanagrafica']);
+        if (empty($elements)) {
+            $where[] = 'an_anagrafiche.idanagrafica='.prepare($superselect['idanagrafica']);
 
-        $stato = !empty($superselect['stato']) ? $superselect['stato'] : 'pianificabile';
-        $where[] = 'idstato IN (SELECT `id` FROM co_staticontratti WHERE '.$stato.' = 1)';
-
-        if (!empty($superselect['non_fatturato'])) {
-            $where[] = 'id NOT IN (SELECT idcontratto FROM co_righe_documenti WHERE idcontratto IS NOT NULL)';
+            $stato = !empty($superselect['stato']) ? $superselect['stato'] : 'pianificabile';
+            $where[] = 'idstato IN (SELECT `id` FROM co_staticontratti WHERE '.$stato.' = 1)';
         }
 
         if (!empty($search)) {

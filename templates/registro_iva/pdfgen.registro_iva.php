@@ -48,12 +48,12 @@ $query = 'SELECT *, SUM(subtotale-co_righe_documenti.sconto) AS subtotale, SUM(i
 $rs = $dbo->fetchArray($query);
 
 if ('entrata' == $dir) {
-    $body .= "<span style='font-size:15pt; margin-left:6px;'><b>".tr('Registro iva vendita dal _START_ al _END_', [
+    $body .= "<span style='font-size:15pt;'><b>".tr('Registro iva vendita dal _START_ al _END_', [
         '_START_' => Translator::dateToLocale($date_start),
         '_END_' => Translator::dateToLocale($date_end),
     ], ['upper' => true]).'</b></span><br><br>';
 } elseif ('uscita' == $dir) {
-    $body .= "<span style='font-size:15pt; margin-left:6px;'><b>".tr('Registro iva acquisto dal _START_ al _END_', [
+    $body .= "<span style='font-size:15pt;'><b>".tr('Registro iva acquisto dal _START_ al _END_', [
         '_START_' => Translator::dateToLocale($date_start),
         '_END_' => Translator::dateToLocale($date_end),
     ], ['upper' => true]).'</b></span><br><br>';
@@ -80,9 +80,9 @@ for ($i = 0; $i < sizeof($rs); ++$i) {
     $body .= '<tr>';
 
     if ($rs[$i]['numero'] == $rs[$i - 1]['numero']) {
-        $body .= "	<td class='first_cell cell-padded text-center'></td>";
-        $body .= "	<td class='table_cell cell-padded text-center'></td>";
-        $body .= "	<td class='table_cell cell-padded text-center'></td>";
+        $body .= "	<td class='first_cell cell-padded text-center'> - </td>";
+        $body .= "	<td class='table_cell cell-padded text-center'> - </td>";
+        $body .= "	<td class='table_cell cell-padded text-center'> - </td>";
     } else {
         $body .= "	<td class='first_cell cell-padded text-center'>".$rs[$i]['numero'].'</td>';
         $body .= "	<td class='table_cell cell-padded text-center'>".$rs[$i]['numero_esterno'].'</td>';
@@ -108,7 +108,7 @@ $body .= '
         </table>
             ';
 
-$body .= "<br><br><span style='font-size:12pt; margin-left:6px;'><b>RIEPILOGO IVA</b></span><br><br>";
+$body .= "<br><br><span style='font-size:12pt;'><b>RIEPILOGO IVA</b></span><br><br>";
 
 $body .= "
         <table cellspacing='0' style='table-layout:fixed;'>

@@ -291,7 +291,7 @@ class FatturaElettronica
             $anagrafica = static::getAzienda();
         }
 
-        $prefix = 'IT'.(!empty($anagrafica['codice_fiscale']) ? $anagrafica['codice_fiscale'] : $anagrafica['piva']);
+        $prefix = 'IT'.(!empty($anagrafica['codice_fiscale']) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']));
 
         if (empty($this->documento['progressivo_invio']) || !empty($new)) {
             $database = database();

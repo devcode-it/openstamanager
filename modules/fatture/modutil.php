@@ -393,7 +393,17 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
         $numero = $rs[0]['numero'];
     }
 
-    $descrizione = $rs[0]['descrizione_tipodoc']." numero $numero";
+    // Abbreviazioni contabili dei movimenti
+    $tipodoc = '';
+    if ($rs[0]['descrizione_tipodoc'] == 'Nota di credito') {
+        $tipodoc = 'Nota di credito';
+    } elseif ($rs[0]['descrizione_tipodoc'] == 'Nota di debito') {
+        $tipodoc = 'Nota di debito';
+    } else {
+        $tipodoc = 'Fattura';
+    }
+
+    $descrizione = $tipodoc.' num. '.$numero;
 
     /*
         Il mastrino si apre con almeno 3 righe di solito (esempio fattura di vendita):

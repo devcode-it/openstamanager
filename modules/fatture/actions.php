@@ -326,10 +326,10 @@ switch (post('op')) {
         $riga->id_iva = post('idiva');
         $riga->idconto = post('idconto');
 
-        $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
-        $articolo->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
+        $riga->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
+        $riga->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
 
-        $articolo->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
+        $riga->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
         if (post('prezzo_acquisto')) {
             $riga->prezzo_unitario_acquisto = post('prezzo_acquisto');

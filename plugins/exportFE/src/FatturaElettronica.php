@@ -1015,17 +1015,27 @@ class FatturaElettronica
         }
 
         // Riepiloghi per IVA per percentuale
-        $riepiloghi_percentuale = $database->fetchArray('SELECT SUM(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) as totale, SUM(`co_righe_documenti`.`iva`) as iva, `co_iva`.`esigibilita`, `co_iva`.`percentuale`, `co_iva`.`dicitura` FROM `co_righe_documenti` INNER JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`idiva` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND
-        `co_iva`.`codice_natura_fe` IS NULL AND sconto_globale=0 GROUP BY `co_iva`.`percentuale`');
+        $righe = $documento->getRighe();
+
+        $riepiloghi_percentuale = $righe->filter(function ($item, $key) {
+            return $item->aliquota->codice_natura_fe == null;
+        })->groupBy(function ($item, $key) {
+            return $item->aliquota->percentuale;
+        });
         foreach ($riepiloghi_percentuale as $riepilogo) {
+            $totale = round($riepilogo->sum('imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
+            $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
+
+            $dati = $riepilogo->first()->aliquota;
+
             $iva = [
-                'AliquotaIVA' => $riepilogo['percentuale'],
-                'ImponibileImporto' => abs($riepilogo['totale']),
-                'Imposta' => abs($riepilogo['iva']),
-                'EsigibilitaIVA' => $riepilogo['esigibilita'],
+                'AliquotaIVA' => $dati['percentuale'],
+                'ImponibileImporto' => abs($totale),
+                'Imposta' => abs($imposta),
+                'EsigibilitaIVA' => $dati['esigibilita'],
             ];
 
-            //Con split payment EsigibilitaIVA sempre a S
+            // Con split payment EsigibilitaIVA sempre a S
             if ($documento['split_payment']) {
                 $iva['EsigibilitaIVA'] = 'S';
             }
@@ -1036,30 +1046,38 @@ class FatturaElettronica
                 // $iva['RiferimentoNormativo'] = $riepilogo['dicitura'];
             }
 
-            //2.2.2
+            // 2.2.2
             $result[] = [
                 'DatiRiepilogo' => $iva,
             ];
         }
 
         // Riepiloghi per IVA per natura
-        $riepiloghi_natura = $database->fetchArray('SELECT SUM(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) as totale, SUM(`co_righe_documenti`.`iva`) as iva, `co_iva`.`esigibilita`, `co_iva`.`codice_natura_fe` FROM `co_righe_documenti` INNER JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`idiva` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND
-        `co_iva`.`codice_natura_fe` IS NOT NULL GROUP BY `co_iva`.`codice_natura_fe`');
+        $riepiloghi_natura = $righe->filter(function ($item, $key) {
+            return $item->aliquota->codice_natura_fe != null;
+        })->groupBy(function ($item, $key) {
+            return $item->aliquota->codice_natura_fe;
+        });
         foreach ($riepiloghi_natura as $riepilogo) {
+            $totale = round($riepilogo->sum('imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
+            $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
+
+            $dati = $riepilogo->first()->aliquota;
+
             $iva = [
                 'AliquotaIVA' => 0,
-                'Natura' => $riepilogo['codice_natura_fe'],
-                'ImponibileImporto' => abs($riepilogo['totale']),
-                'Imposta' => abs($riepilogo['iva']),
-                'EsigibilitaIVA' => $riepilogo['esigibilita'],
+                'Natura' => $dati['codice_natura_fe'],
+                'ImponibileImporto' => abs($totale),
+                'Imposta' => abs($imposta),
+                'EsigibilitaIVA' => $dati['esigibilita'],
             ];
 
-            //Con split payment EsigibilitaIVA sempre a S
+            // Con split payment EsigibilitaIVA sempre a S
             if ($documento['split_payment']) {
                 $iva['EsigibilitaIVA'] = 'S';
             }
 
-            //2.2.2
+            // 2.2.2
             $result[] = [
                 'DatiRiepilogo' => $iva,
             ];

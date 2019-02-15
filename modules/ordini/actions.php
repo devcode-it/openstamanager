@@ -352,7 +352,7 @@ switch (post('op')) {
         if (post('create_document') == 'on') {
             $tipo = Tipo::where('dir', $dir)->first();
 
-            $ordine = Ordine::build($preventivo->anagrafica, $tipo, date('Y-m-d'), post('id_segment'));
+            $ordine = Ordine::build($preventivo->anagrafica, $tipo, post('data'));
             $ordine->idpagamento = $preventivo->idpagamento;
             $ordine->save();
 
@@ -371,6 +371,8 @@ switch (post('op')) {
                 $copia = $riga->copiaIn($ordine, $qta);
                 $copia->id_iva = $id_iva;
                 $copia->id_conto = $id_conto;
+
+                $copia->save();
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {

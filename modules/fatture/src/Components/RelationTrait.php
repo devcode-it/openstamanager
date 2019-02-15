@@ -31,4 +31,14 @@ trait RelationTrait
 
         return $result;
     }
+
+    public function getIdContoAttribute()
+    {
+        return $this->idconto;
+    }
+
+    public function setIdContoAttribute($value)
+    {
+        $this->idconto = $value;
+    }
 }

@@ -630,7 +630,7 @@ switch (post('op')) {
             $descrizione = ($dir == 'entrata') ? 'Fattura immediata di vendita' : 'Fattura immediata di acquisto';
             $tipo = Tipo::where('descrizione', $descrizione)->first();
 
-            $fattura = Fattura::build($ordine->anagrafica, $tipo, date('Y-m-d'), post('id_segment'));
+            $fattura = Fattura::build($ordine->anagrafica, $tipo, post('data'), post('id_segment'));
             $fattura->idpagamento = $ordine->idpagamento;
             $fattura->save();
 
@@ -654,6 +654,8 @@ switch (post('op')) {
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
                 $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
                 $copia->id_rivalsa_inps = $id_rivalsa_inps;
+
+                $copia->save();
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
@@ -693,7 +695,7 @@ switch (post('op')) {
             $descrizione = ($dir == 'entrata') ? 'Fattura differita di vendita' : 'Fattura differita di acquisto';
             $tipo = Tipo::where('descrizione', $descrizione)->first();
 
-            $fattura = Fattura::build($ddt->anagrafica, $tipo, date('Y-m-d'), post('id_segment'));
+            $fattura = Fattura::build($ddt->anagrafica, $tipo, post('data'), post('id_segment'));
             $fattura->idpagamento = $ddt->idpagamento;
             $fattura->save();
 
@@ -717,6 +719,8 @@ switch (post('op')) {
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
                 $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
                 $copia->id_rivalsa_inps = $id_rivalsa_inps;
+
+                $copia->save();
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
@@ -753,7 +757,7 @@ switch (post('op')) {
         if (post('create_document') == 'on') {
             $tipo = Tipo::where('descrizione', 'Fattura immediata di vendita')->first();
 
-            $fattura = Fattura::build($preventivo->anagrafica, $tipo, date('Y-m-d'), post('id_segment'));
+            $fattura = Fattura::build($preventivo->anagrafica, $tipo, post('data'), post('id_segment'));
             $fattura->idpagamento = $preventivo->idpagamento;
             $fattura->save();
 
@@ -779,6 +783,8 @@ switch (post('op')) {
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
                 $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
                 $copia->id_rivalsa_inps = $id_rivalsa_inps;
+
+                $copia->save();
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
@@ -821,7 +827,7 @@ switch (post('op')) {
         if (post('create_document') == 'on') {
             $tipo = Tipo::where('descrizione', 'Fattura immediata di vendita')->first();
 
-            $fattura = Fattura::build($contratto->anagrafica, $tipo, date('Y-m-d'), post('id_segment'));
+            $fattura = Fattura::build($contratto->anagrafica, $tipo, post('data'), post('id_segment'));
             $fattura->idpagamento = $contratto->idpagamento;
             $fattura->save();
 
@@ -847,6 +853,8 @@ switch (post('op')) {
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
                 $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
                 $copia->id_rivalsa_inps = $id_rivalsa_inps;
+
+                $copia->save();
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
@@ -904,6 +912,8 @@ switch (post('op')) {
 
                 $copia = $riga->copiaIn($nota, -$qta);
                 $copia->ref_riga_documento = $riga->id;
+
+                $copia->save();
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {

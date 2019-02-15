@@ -206,7 +206,7 @@ switch (post('op')) {
         if (post('create_document') == 'on') {
             $tipo = Tipo::where('dir', $dir)->first();
 
-            $ddt = DDT::build($ordine->anagrafica, $tipo, date('Y-m-d'));
+            $ddt = DDT::build($ordine->anagrafica, $tipo, post('data'));
             $ddt->idpagamento = $ordine->idpagamento;
             $ddt->save();
 
@@ -225,6 +225,8 @@ switch (post('op')) {
 
                 $copia = $riga->copiaIn($ddt, $qta);
                 $copia->id_conto = $id_conto;
+
+                $copia->save();
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {

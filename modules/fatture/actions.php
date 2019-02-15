@@ -637,18 +637,23 @@ switch (post('op')) {
             $id_record = $fattura->id;
         }
 
-        $parziale = false;
-
-        $id_iva = get('id_iva');
+        $id_rivalsa_inps = setting('Percentuale rivalsa');
+        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : setting("Percentuale ritenuta d'acconto");
+        $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = get('id_conto');
-        $righe = $ordine->getRighe();
 
+        $parziale = false;
+        $righe = $ordine->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($fattura, $qta);
                 $copia->id_conto = $id_conto;
+
+                $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
+                $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
+                $copia->id_rivalsa_inps = $id_rivalsa_inps;
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
@@ -695,10 +700,12 @@ switch (post('op')) {
             $id_record = $fattura->id;
         }
 
-        $parziale = false;
-
-        $id_iva = get('id_iva');
+        $id_rivalsa_inps = setting('Percentuale rivalsa');
+        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : setting("Percentuale ritenuta d'acconto");
+        $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = get('id_conto');
+
+        $parziale = false;
         $righe = $ddt->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
@@ -706,6 +713,10 @@ switch (post('op')) {
 
                 $copia = $riga->copiaIn($fattura, $qta);
                 $copia->id_conto = $id_conto;
+
+                $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
+                $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
+                $copia->id_rivalsa_inps = $id_rivalsa_inps;
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
@@ -749,10 +760,13 @@ switch (post('op')) {
             $id_record = $fattura->id;
         }
 
-        $parziale = false;
-
-        $id_iva = get('id_iva');
+        $id_rivalsa_inps = setting('Percentuale rivalsa');
+        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : setting("Percentuale ritenuta d'acconto");
+        $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = get('id_conto');
+        $id_iva = get('id_iva');
+
+        $parziale = false;
         $righe = $preventivo->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
@@ -761,6 +775,10 @@ switch (post('op')) {
                 $copia = $riga->copiaIn($fattura, $qta);
                 $copia->id_iva = $id_iva;
                 $copia->id_conto = $id_conto;
+
+                $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
+                $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
+                $copia->id_rivalsa_inps = $id_rivalsa_inps;
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
@@ -810,10 +828,13 @@ switch (post('op')) {
             $id_record = $fattura->id;
         }
 
-        $parziale = false;
-
-        $id_iva = get('id_iva');
+        $id_rivalsa_inps = setting('Percentuale rivalsa');
+        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : setting("Percentuale ritenuta d'acconto");
+        $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = get('id_conto');
+        $id_iva = get('id_iva');
+
+        $parziale = false;
         $righe = $contratto->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
@@ -822,6 +843,10 @@ switch (post('op')) {
                 $copia = $riga->copiaIn($fattura, $qta);
                 $copia->id_iva = $id_iva;
                 $copia->id_conto = $id_conto;
+
+                $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
+                $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
+                $copia->id_rivalsa_inps = $id_rivalsa_inps;
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {

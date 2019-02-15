@@ -17,3 +17,6 @@ INSERT INTO `co_staticontratti` (`id`, `descrizione`, `pianificabile`, `fatturab
 (NULL, 'Parzialmente fatturato', 0, 1, 'fa fa-file-text-o text-warning');
 
 UPDATE `zz_widgets` SET `query` = REPLACE(`query`, 'In attesa di pagamento', 'Fatturato');
+
+-- Rimozione id_ritenuta_acconto_vendite non supportata
+ALTER TABLE `an_anagrafiche` DROP `id_ritenuta_acconto_vendite`;

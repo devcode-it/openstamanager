@@ -42,8 +42,6 @@ class Aggiornamento
 
     /**
      * Pulisce la cartella di estrazione.
-     *
-     * @return void
      */
     public function delete()
     {
@@ -63,7 +61,7 @@ class Aggiornamento
     /**
      * Controlla se l'aggiornamento è di tipo globale.
      *
-     * @return boolean
+     * @return bool
      */
     public function isCoreUpdate()
     {
@@ -323,6 +321,33 @@ class Aggiornamento
         $result = str_replace(['h4>', 'h3>', 'h2>'], ['p>', 'b>', 'h4>'], $result);
 
         return $result;
+    }
+
+    /**
+     * Restituisce i contenuti JSON dell'API del progetto.
+     *
+     * @return array
+     */
+    public static function checkFiles()
+    {
+        $date = date('Y-m-d', filemtime(DOCROOT.'/core.php'));
+
+        // Individuazione dei file tramite data di modifica
+        $files = Finder::create()
+            ->date('<= '.$date)
+            ->sortByName()
+            ->in(DOCROOT)
+            ->exclude([
+                'node_modules',
+                'tests',
+                'tmp',
+                'vendor',
+            ])
+            ->name('*.php')
+            ->notPath('*custom*')
+            ->files();
+
+        return iterator_to_array($files);
     }
 
     /**

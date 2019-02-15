@@ -89,6 +89,7 @@ switch (post('op')) {
                 'ritenutaacconto' => 0,
                 'iva_rivalsainps' => 0,
                 'codice_stato_fe' => post('codice_stato_fe') ?: null,
+                'id_ritenuta_contributi' => post('id_ritenuta_contributi') ?: null,
             ], $data), ['id' => $id_record]);
 
             $query = 'SELECT descrizione FROM co_statidocumento WHERE id='.prepare($idstatodocumento);
@@ -277,12 +278,10 @@ switch (post('op')) {
 
         $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
         $articolo->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
-
+        $articolo->ritenuta_contributi = post('ritenuta_contributi');
         $articolo->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
-        if (post('prezzo_acquisto')) {
-            $riga->prezzo_unitario_acquisto = post('prezzo_acquisto');
-        }
+        $articolo->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
         $articolo->prezzo_unitario_vendita = post('prezzo');
         $articolo->sconto_unitario = post('sconto');
         $articolo->tipo_sconto = post('tipo_sconto');
@@ -328,12 +327,10 @@ switch (post('op')) {
 
         $riga->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
         $riga->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
-
+        $riga->ritenuta_contributi = post('ritenuta_contributi');
         $riga->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
-        if (post('prezzo_acquisto')) {
-            $riga->prezzo_unitario_acquisto = post('prezzo_acquisto');
-        }
+        $riga->prezzo_unitario_acquisto = post('prezzo_acquisto') ?: 0;
         $riga->prezzo_unitario_vendita = post('prezzo');
         $riga->sconto_unitario = post('sconto');
         $riga->tipo_sconto = post('tipo_sconto');

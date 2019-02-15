@@ -25,14 +25,6 @@ trait RelationTrait
     {
     }
 
-    public function fixRivalsaINPS()
-    {
-    }
-
-    public function fixRitenutaAcconto()
-    {
-    }
-
     public function getSubtotaleAttribute()
     {
         return $this->prezzo_vendita * $this->qta;

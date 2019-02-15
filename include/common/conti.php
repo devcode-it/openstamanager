@@ -47,7 +47,7 @@ if ($show_rivalsa == 1 || $show_ritenuta_acconto == 1) {
     if ($show_rivalsa == 1) {
         echo '
     <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr('Rivalsa').'", "name": "id_rivalsa_inps", "value": "'.$id_rivalsa_inps.'", "values": "query=SELECT * FROM co_rivalse", "help": "'.(($options['dir'] == 'entrata') ? setting("Tipo Cassa") : null).'" ]}
+        {[ "type": "select", "label": "'.tr('Rivalsa').'", "name": "id_rivalsa_inps", "value": "'.$id_rivalsa_inps.'", "values": "query=SELECT * FROM co_rivalse", "help": "'.(($options['dir'] == 'entrata') ? setting('Tipo Cassa') : null).'" ]}
     </div>';
     }
 
@@ -71,12 +71,28 @@ if ($show_rivalsa == 1 || $show_ritenuta_acconto == 1) {
 </div>';
 }
 
-// Conto
-if (empty($options['hide_conto'])) {
+if (!empty($options['show-ritenuta-contributi']) || empty($options['hide_conto'])) {
+    $width = !empty($options['show-ritenuta-contributi']) && empty($options['hide_conto']) ? 6 : 12;
+
     echo '
-    <div class="row">
-        <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Conto').'", "name": "idconto", "required": 1, "value": "'.$result['idconto'].'", "ajax-source": "'.$options['conti'].'" ]}
-        </div>
+<div class="row">';
+
+    // Ritenuta contributi
+    if (!empty($options['show-ritenuta-contributi'])) {
+        echo '
+    <div class="col-md-'.$width.'">
+        {[ "type": "checkbox", "label": "'.tr('Ritenuta contributi').'", "name": "ritenuta_contributi", "value": "'.$result['ritenuta_contributi'].'" ]}
     </div>';
+    }
+
+    // Conto
+    if (empty($options['hide_conto'])) {
+        echo '
+    <div class="col-md-'.$width.'">
+        {[ "type": "select", "label": "'.tr('Conto').'", "name": "idconto", "required": 1, "value": "'.$result['idconto'].'", "ajax-source": "'.$options['conti'].'" ]}
+    </div>';
+    }
+
+    echo '
+</div>';
 }

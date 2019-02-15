@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../core.php';
 
 // Info documento
-$rs = $dbo->fetchArray('SELECT idanagrafica FROM co_documenti WHERE id='.prepare($id_record));
+$rs = $dbo->fetchArray('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
 $idanagrafica = $rs[0]['idanagrafica'];
 
 if ($module['name'] == 'Fatture di vendita') {
@@ -26,6 +26,7 @@ $options = [
     'dir' => $dir,
     'conti' => $conti,
     'idanagrafica' => $idanagrafica,
+    'show-ritenuta-contributi' => !empty($rs[0]['id_ritenuta_contributi']),
 ];
 
 // Dati di default
@@ -38,6 +39,7 @@ $result = [
     'tipo_sconto' => '',
     'idiva' => '',
     'idconto' => $idconto,
+    'ritenuta_contributi' => true,
 ];
 
 // Leggo l'iva predefinita per l'anagrafica e se non c'è leggo quella predefinita generica

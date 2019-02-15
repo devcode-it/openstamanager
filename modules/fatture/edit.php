@@ -250,7 +250,10 @@ if ($dir == 'uscita') {
 				<?php
                 }
                 ?>
-				
+
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Ritenuta contributi'); ?>", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT * FROM co_ritenuta_contributi" ]}
+                </div>
 				
             </div>
 

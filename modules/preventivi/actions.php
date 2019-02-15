@@ -60,7 +60,11 @@ switch (post('op')) {
 
             $idiva = post('idiva');
 
-            $query = 'UPDATE co_preventivi SET id_stato='.prepare($id_stato).','.
+            $id_documento_fe = post('id_documento_fe');
+            $codice_cig = post('codice_cig');
+            $codice_cup = post('codice_cup');
+
+            $query = 'UPDATE co_preventivi SET id_stato='.prepare($idstato).','.
                 ' nome='.prepare($nome).','.
                 ' idanagrafica='.prepare($idanagrafica).','.
                 ' idagente='.prepare($idagente).','.
@@ -77,6 +81,9 @@ switch (post('op')) {
                 ' descrizione='.prepare($descrizione).','.
                 ' tipo_sconto_globale='.prepare($tipo_sconto).','.
                 ' sconto_globale='.prepare($sconto).','.
+                ' id_documento_fe='.prepare($id_documento_fe).','.
+                ' codice_cig='.prepare($codice_cig).','.
+                ' codice_cup='.prepare($codice_cup).','.
                 ' validita='.prepare($validita).','.
                 ' id_tipo_intervento='.prepare($id_tipo_intervento).','.
                 ' idiva='.prepare($idiva).' WHERE id='.prepare($id_record);

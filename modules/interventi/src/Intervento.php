@@ -4,6 +4,7 @@ namespace Modules\Interventi;
 
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Contratti\Contratto;
 use Modules\Interventi\Components\Articolo;
 use Modules\Interventi\Components\Riga;
 use Modules\Preventivi\Preventivo;
@@ -46,7 +47,12 @@ class Intervento extends Document
 
     public function preventivo()
     {
-        return $this->hasOne(Preventivo::class, 'id_preventivo');
+        return $this->belongsTo(Preventivo::class, 'id_preventivo');
+    }
+
+    public function contratto()
+    {
+        return $this->belongsTo(Contratto::class, 'id_contratto');
     }
 
     public function stato()

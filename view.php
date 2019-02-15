@@ -21,7 +21,7 @@ if ($file->isFatturaElettronica()) {
 
     // XSL
     $xsl = new DOMDocument();
-    $xsl->load(__DIR__.'/assets/src/xml/fe-stylesheet-1.2.1.xsl');
+    $xsl->load(DOCROOT.'/assets/src/xml/fe-stylesheet-1.2.1.xsl');
 
     // XSLT
     $xslt = new XSLTProcessor();

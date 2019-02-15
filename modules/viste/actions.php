@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Module;
+
 function check_query($query)
 {
     $query = mb_strtoupper($query);
@@ -136,8 +138,7 @@ switch (filter('op')) {
         break;
 
     case 'test':
-        $total = App::readQuery(Modules::get($id_record));
-        $module_query = $total['query'];
+        $module_query = Util\Query::getQuery(Module::find($id_record));
 
         $dbo->fetchArray($module_query.' LIMIT 1');
 

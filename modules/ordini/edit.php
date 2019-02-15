@@ -73,6 +73,10 @@ if ($module['name'] == 'Ordini cliente') {
                     }
                     ?>
 				</div>
+                
+                <div class="col-md-3">
+					{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "required": 1, "ajax-source": "sedi", "value": "<?php echo $record['idsede']; ?>", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+				</div>
 
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "values": "query=SELECT id, descrizione FROM co_pagamenti GROUP BY descrizione ORDER BY descrizione ASC", "value": "$idpagamento$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
@@ -100,7 +104,7 @@ if ($module['name'] == 'Ordini cliente') {
 	</div>
 
     <!-- Fatturazione Elettronica PA-->
-    <div class="panel panel-primary <?php echo ($dir == 'entrata' && $record['tipo_anagrafica'] == 'Ente pubblico') ? 'show' : 'hide'; ?>" >
+    <div class="panel panel-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>" >
         <div class="panel-heading">
             <h3 class="panel-title"><?php echo tr('Dati appalto'); ?></h3>
         </div>
@@ -189,7 +193,7 @@ if (!empty($elementi)) {
             '_DATE_' => Translator::dateToLocale($elemento['data']),
         ]);
 
-        if (!in_array($elemento['tipo_documento'], ['Ddt in uscita', 'Ddt in ingresso'])) {
+        if (!in_array($elemento['tipo_documento'], ['Ddt in uscita', 'Ddt in entrata'])) {
             $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
         } else {
             $modulo = ($elemento['dir'] == 'entrata') ? 'Ddt di vendita' : 'Ddt di acquisto';
@@ -228,4 +232,10 @@ if ($record['flag_completato']) {
 <?php
 }
 ?>
+
+$('#idanagrafica').change( function(){
+	session_set('superselect,idanagrafica', $(this).val(), 0);
+
+	$("#idsede").selectReset();
+});
 </script>

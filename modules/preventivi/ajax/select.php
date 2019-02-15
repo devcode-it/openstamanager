@@ -11,24 +11,12 @@ switch ($resource) {
                 $filter[] = 'id='.prepare($element);
             }
 
-            $where[] = 'an_anagrafiche.idanagrafica='.prepare($superselect['idanagrafica']);
-            $where[] = 'co_preventivi.default_revision=1';
+            if (empty($elements)) {
+                $where[] = 'an_anagrafiche.idanagrafica='.prepare($superselect['idanagrafica']);
+                $where[] = 'co_preventivi.default_revision=1';
 
-            $stati = !empty($superselect['stati']) ? $superselect['stati'] : [
-                'In attesa di conferma',
-                'Accettato',
-                'In lavorazione',
-                'Concluso',
-                'In attesa di pagamento',
-            ];
-            $desc = [];
-            foreach ($stati as $value) {
-                $desc[] = prepare($value);
-            }
-            $where[] = 'id_stato IN (SELECT `id` FROM co_statipreventivi WHERE descrizione IN ('.implode(',', $desc).'))';
-
-            if (!empty($superselect['non_fatturato'])) {
-                $where[] = 'id NOT IN (SELECT idpreventivo FROM co_righe_documenti WHERE idpreventivo IS NOT NULL)';
+                $stato = !empty($superselect['stato']) ? $superselect['stato'] : 'fatturabile';
+                $where[] = 'idstato IN (SELECT `id` FROM co_staticontratti WHERE '.$stato.' = 1)';
             }
 
             if (!empty($search)) {

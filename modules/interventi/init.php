@@ -2,7 +2,11 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Interventi\Intervento;
+
 if (isset($id_record)) {
+    $intervento = Intervento::find($id_record);
+
     $record = $dbo->fetchOne('SELECT *,
     (SELECT tipo FROM an_anagrafiche WHERE idanagrafica = in_interventi.idanagrafica) AS tipo_anagrafica,
     (SELECT completato FROM in_statiintervento WHERE in_statiintervento.id=in_interventi.id_stato) AS flag_completato,
@@ -12,6 +16,7 @@ if (isset($id_record)) {
     ) AS idzona,
     (SELECT colore FROM in_statiintervento WHERE in_statiintervento.id=in_interventi.id_stato) AS colore,
     (SELECT idcontratto FROM co_promemoria WHERE idintervento=in_interventi.id LIMIT 0,1) AS idcontratto,
-    in_interventi.id_preventivo as idpreventivo
-    FROM in_interventi WHERE id='.prepare($id_record).Modules::getAdditionalsQuery($id_module));
+    in_interventi.id_preventivo as idpreventivo,
+    in_interventi.id_contratto as idcontratto
+    FROM in_interventi WHERE id='.prepare($id_record));
 }

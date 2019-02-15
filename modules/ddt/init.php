@@ -2,8 +2,10 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\DDT\DDT;
+
 if (isset($id_record)) {
-    $ddt = Modules\DDT\DDT::with('tipo', 'stato')->find($id_record);
+    $ddt = DDT::with('tipo', 'stato')->find($id_record);
 
     $record = $dbo->fetchOne('SELECT *, dt_ddt.note, dt_ddt.idpagamento, dt_ddt.id AS idddt, dt_statiddt.descrizione AS `stato`, dt_tipiddt.descrizione AS `descrizione_tipodoc`,
         (SELECT completato FROM dt_statiddt WHERE dt_statiddt.id=dt_ddt.id_stato) AS flag_completato

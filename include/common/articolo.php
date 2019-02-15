@@ -11,7 +11,7 @@ if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
     echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli" '.(($options['dir'] == 'uscita') ? ',"icon-after": "add|'.Modules::get('Articoli')['id'].'"' : '').' ]}
+            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$result['idarticolo'].'", "ajax-source": "articoli", "icon-after": "add|'.Modules::get('Articoli')['id'].'||'.(($options['dir'] == 'uscita') ? '' : 'disabled').'" ]}
         </div>
     </div>';
 } else {
@@ -19,7 +19,7 @@ if (!isset($options['edit_articolo']) || !empty($options['edit_articolo'])) {
     $articolo = $database->fetchArray('SELECT codice, descrizione FROM mg_articoli WHERE id = '.prepare($result['idarticolo']))[0];
 
     echo '
-    <p>'.tr('Articolo').': '.$articolo['codice'].' - '.$articolo['descrizione'].'.</p>';
+    <p><strong>'.tr('Articolo').'</strong><br> '.$articolo['codice'].' - '.$articolo['descrizione'].'.</p>';
 }
 
 echo App::internalLoad('riga.php', $result, $options);

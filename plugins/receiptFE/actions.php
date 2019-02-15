@@ -32,7 +32,7 @@ switch (filter('op')) {
             $result = [];
             if (!empty($file)) {
                 try {
-                    $receipt = new Ricevuta($file['content']);
+                    $receipt = new Ricevuta($name, $file['content']);
 
                     $result = [
                         'fattura' => $receipt->getFattura()->numero_esterno,

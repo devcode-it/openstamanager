@@ -28,8 +28,7 @@ class Backup
         $result = App::getConfig()['backup_dir'];
 
         $result = rtrim($result, '/');
-
-        if (!is_writable($result) || !directory($result)) {
+        if (!directory($result) || !is_writable($result)) {
             throw new UnexpectedValueException();
         }
 
@@ -57,7 +56,8 @@ class Backup
         $backups = Symfony\Component\Finder\Finder::create()
             ->name('/^'.$pattern.'/')
             ->sortByName()
-            ->in(self::getDirectory());
+            ->in(self::getDirectory())
+            ->depth('== 0');
 
         $results = [];
         foreach ($backups as $backup) {

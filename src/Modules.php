@@ -120,7 +120,7 @@ class Modules
             $results = $database->fetchArray('SELECT * FROM `zz_group_module` WHERE `idgruppo` = (SELECT `idgruppo` FROM `zz_users` WHERE `id` = '.prepare($user['id']).') AND `enabled` = 1 AND `idmodule` = '.prepare($module['id']));
             foreach ($results as $result) {
                 if (!empty($result['clause'])) {
-                    $result['clause'] = App::replacePlaceholder($result['clause']);
+                    $result['clause'] = Util\Query::replacePlaceholder($result['clause']);
 
                     $additionals[$result['position']][] = $result['clause'];
                 }
@@ -131,7 +131,7 @@ class Modules
             $id_segment = $_SESSION['module_'.$module['id']]['id_segment'];
             foreach ($segments as $result) {
                 if (!empty($result['clause']) && $result['id'] == $id_segment) {
-                    $result['clause'] = App::replacePlaceholder($result['clause']);
+                    $result['clause'] = Util\Query::replacePlaceholder($result['clause']);
 
                     $additionals[$result['position']][] = $result['clause'];
                 }

@@ -85,7 +85,6 @@ switch (post('op')) {
         $anagrafica->colore = post('colore');
         $anagrafica->id_tipo_intervento_default = post('id_tipo_intervento_default') ?: null;
         $anagrafica->id_ritenuta_acconto_acquisti = post('id_ritenuta_acconto_acquisti');
-        $anagrafica->id_ritenuta_acconto_vendite = post('id_ritenuta_acconto_vendite');
         $anagrafica->split_payment = post('split_payment');
 
         $anagrafica->tipologie = (array) post('id_tipo_anagrafica');
@@ -96,7 +95,7 @@ switch (post('op')) {
 
         // Validazione della Partita IVA
         $partita_iva = $anagrafica->partita_iva;
-        $partita_iva = strlen($partita_iva) == 11 ? $anagrafica->nazione->iso2.$partita_iva : $partita_iva;
+        $partita_iva = is_numeric($partita_iva) ? $anagrafica->nazione->iso2.$partita_iva : $partita_iva;
 
         $check_vat_number = Validate::isValidVatNumber($partita_iva);
         if (empty($check_vat_number)) {
@@ -197,10 +196,10 @@ switch (post('op')) {
     case 'delete':
         // Se l'anagrafica non è l'azienda principale, la disattivo
         if (!in_array($id_azienda, $tipi_anagrafica)) {
-            $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE idanagrafica = '.prepare($id_record).Modules::getAdditionalsQuery($id_module));
+            $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE idanagrafica = '.prepare($id_record));
 
             // Se l'anagrafica è collegata ad un utente lo disabilito
-            $dbo->query('UPDATE zz_users SET enabled = 0 WHERE idanagrafica = '.prepare($id_record).Modules::getAdditionalsQuery($id_module));
+            $dbo->query('UPDATE zz_users SET enabled = 0 WHERE idanagrafica = '.prepare($id_record));
 
             flash()->info(tr('Anagrafica eliminata!'));
         }

@@ -5,6 +5,7 @@ namespace Modules\Preventivi;
 use Carbon\Carbon;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Interventi\Intervento;
 use Modules\Interventi\TipoSessione;
 use Traits\RecordTrait;
 use Util\Generator;
@@ -130,6 +131,11 @@ class Preventivo extends Document
     public function scontoGlobale()
     {
         return $this->hasOne(Components\Sconto::class, 'idpreventivo');
+    }
+
+    public function interventi()
+    {
+        return $this->hasMany(Intervento::class, 'id_preventivo');
     }
 
     // Metodi statici

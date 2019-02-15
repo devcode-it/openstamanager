@@ -7,7 +7,6 @@ UPDATE `fe_stati_documento` SET `icon` = 'fa fa-check text-success' WHERE `codic
 ALTER TABLE `an_anagrafiche` ADD `split_payment` BOOLEAN NOT NULL DEFAULT FALSE AFTER `codice_destinatario`;
 
 -- Prezzo di acquisto in Fatture di vendita e Preventivi
-
 ALTER TABLE `co_righe_documenti` ADD `prezzo_unitario_acquisto` DECIMAL(12,4) NOT NULL AFTER `descrizione`;
 ALTER TABLE `co_righe_preventivi` ADD `prezzo_unitario_acquisto` DECIMAL(12,4) NOT NULL AFTER `descrizione`;
 
@@ -60,21 +59,22 @@ UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_ddt` INNER JOIN `d
 
 UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id` WHERE 1=1 AND `dir` = ''uscita'' AND `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' HAVING 2=2 ORDER BY `data` DESC, CAST(`numero_esterno` AS UNSIGNED) DESC, `dt_ddt`.created_at DESC' WHERE `zz_modules`.`id` = 'Ddt di acquisto';
 
--- Aggiunti pagamenti mancanti Assegno circolare,Contanti presso Tesoreria, Vaglia cambiario, Bollettino bancario,  RID, RID utenze, RID veloce, MAV, Quietanza erario, Giroconto su conti di contabilità speciale, Domiciliazione bancaria,  Domiciliazione postale, Bollettino di c/c postale, SEPA Direct Debit, SEPA Direct Debit CORE, SEPA Direct Debit B2B, Trattenuta su somme già riscosse
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'Assegno circolare', '0', '1', '100', NULL, NULL, 'MP03');
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'Contanti presso Tesoreria', '0', '1', '100', NULL, NULL, 'MP04');
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'Vaglia cambiario', '0', '1', '100', NULL, NULL, 'MP06');
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'Bollettino bancario', '0', '1', '100', NULL, NULL, 'MP07');
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'RID', '0', '1', '100', NULL, NULL, 'MP09');
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'RID utenze', '0', '1', '100', NULL, NULL, 'MP10');
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'RID veloce', '0', '1', '100', NULL, NULL, 'MP11');
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'MAV', '0', '1', '100', NULL, NULL, 'MP13');
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'Quietanza erario', '0', '1', '100', NULL, NULL, 'MP14');
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'Giroconto su conti di contabilità speciale', '0', '1', '100', NULL, NULL, 'MP15');
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'Domiciliazione bancaria', '0', '1', '100', NULL, NULL, 'MP16');
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'Domiciliazione postale', '0', '1', '100', NULL, NULL, 'MP17');
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'Bollettino di c/c postale', '0', '1', '100', NULL, NULL, 'MP18');
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'SEPA Direct Debit', '0', '1', '100', NULL, NULL, 'MP19');
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'SEPA Direct Debit CORE', '0', '1', '100', NULL, NULL, 'MP20');
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'SEPA Direct Debit B2B', '0', '1', '100', NULL, NULL, 'MP21');
-INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `idconto_vendite`, `idconto_acquisti`, `codice_modalita_pagamento_fe`) VALUES (NULL, 'Trattenuta su somme già riscosse', '0', '1', '100', NULL, NULL, 'MP22');
+-- Aggiunti pagamenti mancanti Assegno circolare,Contanti presso Tesoreria, Vaglia cambiario, Bollettino bancario,  RID, RID utenze, RID veloce, MAV, Quietanza erario, Giroconto su conti di contabilità speciale, Domiciliazione bancaria, Domiciliazione postale, Bollettino di c/c postale, SEPA Direct Debit, SEPA Direct Debit CORE, SEPA Direct Debit B2B, Trattenuta su somme già riscosse
+INSERT INTO `co_pagamenti` (`id`, `descrizione`, `giorno`, `num_giorni`, `prc`, `codice_modalita_pagamento_fe`) VALUES
+(NULL, 'Assegno circolare', '0', '1', '100', 'MP03'),
+(NULL, 'Contanti presso Tesoreria', '0', '1', '100', 'MP04'),
+(NULL, 'Vaglia cambiario', '0', '1', '100', 'MP06'),
+(NULL, 'Bollettino bancario', '0', '1', '100', 'MP07'),
+(NULL, 'RID', '0', '1', '100', 'MP09'),
+(NULL, 'RID utenze', '0', '1', '100', 'MP10'),
+(NULL, 'RID veloce', '0', '1', '100', 'MP11'),
+(NULL, 'MAV', '0', '1', '100', 'MP13'),
+(NULL, 'Quietanza erario', '0', '1', '100', 'MP14'),
+(NULL, 'Giroconto su conti di contabilità speciale', '0', '1', '100', 'MP15'),
+(NULL, 'Domiciliazione bancaria', '0', '1', '100', 'MP16'),
+(NULL, 'Domiciliazione postale', '0', '1', '100', 'MP17'),
+(NULL, 'Bollettino di c/c postale', '0', '1', '100', 'MP18'),
+(NULL, 'SEPA Direct Debit', '0', '1', '100', 'MP19'),
+(NULL, 'SEPA Direct Debit CORE', '0', '1', '100', 'MP20'),
+(NULL, 'SEPA Direct Debit B2B', '0', '1', '100', 'MP21'),
+(NULL, 'Trattenuta su somme già riscosse', '0', '1', '100', 'MP22');

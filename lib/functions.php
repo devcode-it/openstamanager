@@ -72,22 +72,7 @@ function delete($files)
  */
 function directory($path)
 {
-    if (is_dir($path) && is_writable($path)) {
-        return true;
-    } elseif (!is_dir($path)) {
-        // Filesystem Symfony
-        $fs = new Symfony\Component\Filesystem\Filesystem();
-
-        // Tentativo di creazione
-        try {
-            $fs->mkdir($path);
-
-            return true;
-        } catch (Symfony\Component\Filesystem\Exception\IOException $e) {
-        }
-    }
-
-    return false;
+    return Util\FileSystem::directory($path);
 }
 
 /**
@@ -381,4 +366,19 @@ function operationLog($operation, array $ids = [], array $options = [])
     ]));
 
     return true;
+}
+
+/**
+ * Rimuove spazi e caratteri speciali da una stringa.
+ *
+ * @param string $string
+ * @param string $permitted
+ *
+ * @since 2.4.6
+ *
+ * @return string
+ */
+function clean($string, $permitted = '')
+{
+    return preg_replace('/[^A-Za-z0-9'.$permitted.']/', '', $string); // Removes special chars.
 }

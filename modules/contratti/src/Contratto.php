@@ -5,6 +5,7 @@ namespace Modules\Contratti;
 use Carbon\Carbon;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Interventi\Intervento;
 use Modules\Interventi\TipoSessione;
 use Traits\RecordTrait;
 use Util\Generator;
@@ -136,6 +137,11 @@ class Contratto extends Document
     public function scontoGlobale()
     {
         return $this->hasOne(Components\Sconto::class, 'idcontratto');
+    }
+
+    public function interventi()
+    {
+        return $this->hasMany(Intervento::class, 'id_contratto');
     }
 
     // Metodi statici

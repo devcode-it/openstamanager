@@ -4,6 +4,7 @@ namespace Modules\Fatture;
 
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
+use Plugins\ExportFE\FatturaElettronica;
 use Traits\RecordTrait;
 use Util\Generator;
 
@@ -201,6 +202,11 @@ class Fattura extends Document
         return $this->belongsTo(Stato::class, 'id_stato');
     }
 
+    public function statoFE()
+    {
+        return $this->belongsTo(StatoFE::class, 'codice_stato_fe');
+    }
+
     public function articoli()
     {
         return $this->hasMany(Components\Articolo::class, 'iddocumento');
@@ -219,6 +225,53 @@ class Fattura extends Document
     public function scontoGlobale()
     {
         return $this->hasOne(Components\Sconto::class, 'iddocumento');
+    }
+
+    public function getXML()
+    {
+        if (empty($this->progressivo_invio)) {
+            $fe = new FatturaElettronica($this->id);
+
+            return $fe->toXML();
+        }
+
+        $file = $this->uploads()->where('name', 'Fattura Elettronica')->first();
+
+        return file_get_contents($file->filepath);
+    }
+
+    public function isFE()
+    {
+        return !empty($this->progressivo_invio) && $this->module == 'Fatture di acquisto';
+    }
+
+    public function registraScadenzeFE($is_pagato = false)
+    {
+        $database = $dbo = database();
+
+        $xml = \Util\XML::read($this->getXML());
+
+        $pagamenti = $xml['FatturaElettronicaBody']['DatiPagamento']['DettaglioPagamento'];
+        if (!empty($pagamenti)) {
+            $scadenze = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
+
+            foreach ($scadenze as $scadenza) {
+                $data = $scadenza['DataScadenzaPagamento'];
+                $importo = $scadenza['ImportoPagamento'];
+
+                $dbo->insert('co_scadenziario', [
+                    'iddocumento' => $this->id,
+                    'data_emissione' => $this->data,
+                    'scadenza' => $data,
+                    'da_pagare' => -$importo,
+                    'tipo' => 'fattura',
+                    'pagato' => $is_pagato ? $importo : 0,
+                    'data_pagamento' => $is_pagato ? $data : '',
+                ], ['id' => $id_scadenza]);
+            }
+        }
+
+        return !empty($pagamenti);
     }
 
     // Metodi statici

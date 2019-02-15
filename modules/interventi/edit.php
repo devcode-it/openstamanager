@@ -43,7 +43,7 @@ include_once __DIR__.'/../../core.php';
 			<div class="row">
 				<div class="col-md-6">
 					<?php
-                    if (($record['idpreventivo'] != '')) {
+                    if (!empty($record['idpreventivo'])) {
                         echo '
                         '.Modules::link('Preventivi', $record['idpreventivo'], null, null, 'class="pull-right"');
                     }
@@ -54,22 +54,15 @@ include_once __DIR__.'/../../core.php';
 
 				<div class="col-md-6">
 					<?php
-                        /*$rs = $dbo->fetchArray('SELECT id, idcontratto FROM co_promemoria WHERE idintervento='.prepare($id_record));
-                        if (count($rs) == 1) {
-                            $idcontratto = $rs[0]['idcontratto'];
-                            $idcontratto_riga = $rs[0]['id'];
-                        } else {
-                            $idcontratto = '';
-                            $idcontratto_riga = '';
-                        }*/
+                        $idcontratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
 
-                        if (($record['idcontratto'] != '')) {
+                        if (!empty($record['idcontratto'])) {
                             echo '
                             '.Modules::link('Contratti', $record['idcontratto'], null, null, 'class="pull-right"');
                         }
                     ?>
 
-					{[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $record['idcontratto']; ?>", "ajax-source": "contratti", "readonly": "<?php echo $record['flag_completato']; ?>", "ajax-info": "idanagrafica=$idanagrafica$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $record['id_contratto']; ?>", "ajax-source": "contratti", "readonly": "<?php echo $record['flag_completato']; ?>", "ajax-info": "idanagrafica=$idanagrafica$" ]}
 					<input type='hidden' name='idcontratto_riga' value='<?php echo $idcontratto_riga; ?>'>
 				</div>
 			</div>
@@ -146,12 +139,12 @@ include_once __DIR__.'/../../core.php';
 
     ?>
     <!-- Fatturazione Elettronica PA-->
-    <div class="panel panel-primary <?php echo (($record['tipo_anagrafica']) == 'Ente pubblico') ? 'show' : 'hide'; ?>" >
+    <div class="panel panel-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>" >
         <div class="panel-heading">
             <h3 class="panel-title"><?php echo tr('Dati appalto'); ?>
 			<?php if (!empty($record['idcontratto'])) {
         ?>
-			<span class="tip" title="<?php echo tr('E\' possibile specificare i dati dell\'appalto solo se il cliente è di tipo \'Ente pubblico\' e l\'attività non risulta già collegata ad un contratto.'); ?>" > <i class="fa fa-question-circle-o"></i></span>
+			<span class="tip" title="<?php echo tr('E\' possibile specificare i dati dell\'appalto solo se il cliente è di tipo \'Ente pubblico\' o \'Azienda\' e l\'attività non risulta già collegata ad un contratto.'); ?>" > <i class="fa fa-question-circle-o"></i></span>
 			</h3>
 			<?php
     } ?>

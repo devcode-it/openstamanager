@@ -6,18 +6,17 @@ if ($module['name'] != 'Fatture di acquisto' && $module['name'] != 'Fatture di v
 }
 
 if ($options['dir'] == 'entrata') {
-    $show_rivalsa_inps = (setting('Percentuale rivalsa INPS') != '');
-    $show_ritenuta_acconto = (setting("Percentuale ritenuta d'acconto") != '');
-
+    $show_rivalsa = ((setting('Percentuale rivalsa') != '') or (!empty($result['idrivalsainps'])));
+    $show_ritenuta_acconto = ((setting("Percentuale ritenuta d'acconto") != '') or (!empty($result['idritenutaacconto'])));
     $show_ritenuta_acconto |= !empty($options['id_ritenuta_acconto_predefined']);
 } else {
-    $show_rivalsa_inps = 1;
+    $show_rivalsa = 1;
     $show_ritenuta_acconto = 1;
 }
 
 $show_calcolo_ritenuta_acconto = $show_ritenuta_acconto;
 
-// Percentuale rivalsa INPS e Percentuale ritenuta d'acconto
+// Percentuale rivalsa e Percentuale ritenuta d'acconto
 if ($options['action'] == 'edit') {
     $id_rivalsa_inps = $result['idrivalsainps'];
     $id_ritenuta_acconto = $result['idritenutaacconto'];
@@ -32,7 +31,7 @@ if ($options['action'] == 'edit') {
     // Fattura di vendita
     elseif ($options['dir'] == 'entrata') {
         // Caso particolare per aggiunta articolo
-        $id_rivalsa_inps = ($options['op'] == 'addarticolo') ? '' : setting('Percentuale rivalsa INPS');
+        $id_rivalsa_inps = ($options['op'] == 'addarticolo') ? '' : setting('Percentuale rivalsa');
 
         $id_ritenuta_acconto = $options['id_ritenuta_acconto_predefined'] ?: setting("Percentuale ritenuta d'acconto");
     }
@@ -40,15 +39,15 @@ if ($options['action'] == 'edit') {
 
 $calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto ?: setting("Metodologia calcolo ritenuta d'acconto predefinito");
 
-if ($show_rivalsa_inps == 1 || $show_ritenuta_acconto == 1) {
+if ($show_rivalsa == 1 || $show_ritenuta_acconto == 1) {
     echo '
 <div class="row">';
 
     // Rivalsa INPS
-    if ($show_rivalsa_inps == 1) {
+    if ($show_rivalsa == 1) {
         echo '
     <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr('Rivalsa INPS').'", "name": "id_rivalsa_inps", "value": "'.$id_rivalsa_inps.'", "values": "query=SELECT * FROM co_rivalsainps" ]}
+        {[ "type": "select", "label": "'.tr('Rivalsa').'", "name": "id_rivalsa_inps", "value": "'.$id_rivalsa_inps.'", "values": "query=SELECT * FROM co_rivalse", "help": "'.(($options['dir'] == 'entrata') ? setting("Tipo Cassa") : null).'" ]}
     </div>';
     }
 
@@ -64,7 +63,7 @@ if ($show_rivalsa_inps == 1 || $show_ritenuta_acconto == 1) {
     if ($show_calcolo_ritenuta_acconto == 1) {
         echo '
     <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr("Calcola ritenuta d'acconto su").'", "name": "calcolo_ritenuta_acconto", "value": "'.$calcolo_ritenuta_acconto.'", "values": "list=\"IMP\":\"Imponibile\", \"IMP+RIV\":\"Imponibile + rivalsa inps\"", "required": "1" ]}
+        {[ "type": "select", "label": "'.tr("Calcola ritenuta d'acconto su").'", "name": "calcolo_ritenuta_acconto", "value": "'.$calcolo_ritenuta_acconto.'", "values": "list=\"IMP\":\"Imponibile\", \"IMP+RIV\":\"Imponibile + rivalsa\"", "required": "1" ]}
     </div>';
     }
 

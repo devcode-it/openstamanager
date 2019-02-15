@@ -26,10 +26,6 @@ class Interaction extends Connection
         ]);
         $body = static::responseBody($response);
 
-        if ($body['code'] != '200') {
-            return false;
-        }
-
         return $body;
     }
 }

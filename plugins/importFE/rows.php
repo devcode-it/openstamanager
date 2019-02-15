@@ -44,8 +44,17 @@ echo '
 		</div>
 		
 		<div class="col-md-6">
-			<h4>'.$dati_generali['Numero'].'<br>
-				<small>
+			<h4>'.$dati_generali['Numero'];
+
+if (!ends_with(get('filename'), '.p7m')) {
+    echo '
+				<a href="'.$structure->fileurl('view.php').'?filename='.get('filename').'" class="btn btn-info btn-xs" target="_blank" >
+					<i class="fa fa-eye"></i> '.tr('Visualizza').'
+				</a>';
+}
+
+        echo '
+				<br><small>
 					'.database()->fetchOne('SELECT CONCAT("(", codice, ") ", descrizione) AS descrizione FROM fe_tipi_documento WHERE codice = '.prepare($dati_generali['TipoDocumento']))['descrizione'].'
 					<br>'.Translator::dateToLocale($dati_generali['Data']).'
 					<br>'.$dati_generali['Divisa'].'
@@ -77,6 +86,8 @@ $pagamenti = $fattura_pa->getBody()['DatiPagamento'];
 if (!empty($pagamenti)) {
     $metodi = $pagamenti['DettaglioPagamento'];
     $metodi = isset($metodi[0]) ? $metodi : [$metodi];
+
+    $codice_modalita_pagamento = $metodi[0]['ModalitaPagamento'];
 
     echo '
 		<h4>'.tr('Pagamento').'</h4>
@@ -125,7 +136,7 @@ if (!empty($righe)) {
     echo '
     <h4>
         '.tr('Righe').'
-        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copy()"><i class="fa fa-copy"></i> '.tr('Copia IVA e conto dalla prima riga').'</button>
+        <button type="button" class="btn btn-info btn-sm pull-right" onclick="copy()"><i class="fa fa-copy"></i> '.tr('Copia dati contabili dalla prima riga').'</button>
         <div class="clearfix"></div>
     </h4>
 
@@ -135,8 +146,7 @@ if (!empty($righe)) {
                 <th>'.tr('Descrizione').'</th>
                 <th width="10%">'.tr('Q.tà').'</th>
                 <th width="10%">'.tr('Prezzo unitario').'</th>
-                <th width="15%">'.tr('Iva associata').'*</th>
-                <th width="15%">'.tr('Conto').'*</th>
+                <th width="15%">'.tr('Dati contabili').'*</th>
                 <th width="25%">'.tr('Articolo').'</th>
             </tr>';
 
@@ -153,12 +163,11 @@ if (!empty($righe)) {
         <tr>
             <td>'.$riga['Descrizione'].'</td>
             <td>'.Translator::numberToLocale($riga['Quantita']).' '.$riga['UnitaMisura'].'</td>
-            <td>'.Translator::numberToLocale($riga['PrezzoUnitario']).'&nbsp;&euro;</td>
+            <td>'.Translator::numberToLocale($riga['PrezzoUnitario']).'&nbsp;&euro;<small class="help-block">Aliquota iva: '.$riga['AliquotaIVA'].'%</small></td>
             <td>
-                {[ "type": "select", "name": "iva['.$key.']", "values": "query='.str_replace('"', '\"', $query).'", "required": 1 ]}
-            </td>
-            <td>
-                {[ "type": "select", "name": "conto['.$key.']", "ajax-source": "conti-acquisti", "required": 1 ]}
+                {[ "type": "select", "name": "iva['.$key.']", "values": "query='.str_replace('"', '\"', $query).'", "required": 1, "placeholder": "Aliquota iva" ]}
+                <br>
+                {[ "type": "select", "name": "conto['.$key.']", "ajax-source": "conti-acquisti", "required": 1, "placeholder": "Conto acquisti" ]}
             </td>
             <td>
                 {[ "type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "class": "", "icon-after": "add|'.Modules::get('Articoli')['id'].'" ]}

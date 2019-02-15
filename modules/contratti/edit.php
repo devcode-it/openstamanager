@@ -130,8 +130,8 @@ if ($record['stato'] == 'Emessa') {
 		</div>
 	</div>
 
-    <!-- Fatturazione Elettronica PA -->
-    <div class="panel panel-primary <?php echo (($record['tipo_anagrafica']) == 'Ente pubblico') ? 'show' : 'hide'; ?>" >
+    <!-- Fatturazione Elettronica -->
+    <div class="panel panel-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>" >
         <div class="panel-heading">
             <h3 class="panel-title"><?php echo tr('Dati appalto'); ?></h3>
         </div>
@@ -375,12 +375,6 @@ if (!empty($record['idcontratto_prev'])) {
 
 {( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
-<form action='<?php echo $rootdir; ?>/editor.php?id_module=<?php echo Modules::get('Fatture di vendita')['id']; ?>' method='post' id='form_creafattura'>
-	<input type="hidden" name="backto" value="record-edit">
-	<input type='hidden' name='op' value='fattura_da_contratto'>
-	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
-</form>
-
 <script type="text/javascript">
     $(document).ready(function(){
         $('#data_accettazione').on("dp.change", function(){
@@ -402,10 +396,6 @@ if (!empty($record['idcontratto_prev'])) {
         $("#data_accettazione").trigger("dp.change");
         $("#data_rifiuto").trigger("dp.change");
     });
-
-	function fattura_da_contratto(){
-		$('#form_creafattura').submit();
-	}
 
 	$('#idanagrafica_c').change( function(){
         $("#idsede").selectInfo('idanagrafica', $(this).val())

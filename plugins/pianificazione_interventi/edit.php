@@ -67,11 +67,11 @@ if (!empty($records)) {
 
         // Intervento svolto
         if (!empty($record['idintervento'])) {
-            $sede = $dbo->fetchOne('SELECT id, codice, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS data FROM in_interventi WHERE id='.prepare($record['idintervento']));
+            $intervento = $dbo->fetchOne('SELECT id, codice, IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento = in_interventi.id), data_richiesta) AS data FROM in_interventi WHERE id = '.prepare($record['idintervento']));
 
-            $info_intervento = Modules::link('Interventi', $sede[0]['id'], tr('Intervento num. _NUM_ del _DATE_', [
-                '_NUM_' => $sede[0]['codice'],
-                '_DATE_' => Translator::dateToLocale($sede[0]['data']),
+            $info_intervento = Modules::link('Interventi', $intervento['id'], tr('Intervento num. _NUM_ del _DATE_', [
+                '_NUM_' => $intervento['codice'],
+                '_DATE_' => Translator::dateToLocale($intervento['data']),
             ]));
 
             $disabled = 'disabled';

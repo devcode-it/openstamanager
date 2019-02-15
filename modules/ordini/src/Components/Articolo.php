@@ -11,6 +11,7 @@ class Articolo extends Article
     use RelationTrait;
 
     protected $table = 'or_righe_ordini';
+    protected $serialRowID = 'ordine';
 
     /**
      * Crea un nuovo articolo collegato ad una ordine.

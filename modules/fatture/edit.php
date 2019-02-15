@@ -232,7 +232,7 @@ if ($dir == 'uscita') {
             <div class="row">
 			
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato'); ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr('Sconto complessivo della fattura.'); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php echo ($record['stato'] == 'Emessa') ? ', "disabled" : 1' : ''; ?> ]}
+                    {[ "type": "number", "label": "<?php echo tr('Sconto incondizionato'); ?>", "name": "sconto_generico", "value": "$sconto_globale$", "help": "<?php echo tr('Sconto complessivo della fattura. Il valore positivo indica uno sconto. Per applicare un rincaro inserire un valore negativo.'); ?>", "icon-after": "choice|untprc|$tipo_sconto_globale$"<?php echo ($record['stato'] == 'Emessa') ? ', "disabled" : 1' : ''; ?> ]}
                 </div>
 				
 				<div class="col-md-3">

@@ -13,12 +13,12 @@ if (empty($id_record) && !empty($id_module)) {
 include_once App::filepath('include|custom|', 'top.php');
 
 Util\Query::setSegments(false);
-$query = Util\Query::getQuery($structure, [
+$query = Util\Query::getQuery($module, [
     'id' => $id_record,
 ]);
 Util\Query::setSegments(true);
 
-$has_access = !empty($query) ? $dbo->fetchNum($query) : true;
+$has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
 
 if ($has_access) {
     // Inclusione gli elementi fondamentali

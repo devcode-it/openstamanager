@@ -55,6 +55,7 @@ if ($listino[0]['prc_guadagno'] > 0) {
 }
 
 // Leggo la ritenuta d'acconto predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
+// id_ritenuta_acconto_vendite oppure id_ritenuta_acconto_acquisti
 $ritenuta_acconto = $dbo->fetchOne('SELECT id_ritenuta_acconto_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS id_ritenuta_acconto FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
 $options['id_ritenuta_acconto_predefined'] = $ritenuta_acconto['id_ritenuta_acconto'];
 

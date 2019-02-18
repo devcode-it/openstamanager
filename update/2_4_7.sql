@@ -18,9 +18,6 @@ INSERT INTO `co_staticontratti` (`id`, `descrizione`, `pianificabile`, `fatturab
 
 UPDATE `zz_widgets` SET `query` = REPLACE(`query`, 'In attesa di pagamento', 'Fatturato');
 
--- Rimozione id_ritenuta_acconto_vendite non supportata
-ALTER TABLE `an_anagrafiche` DROP `id_ritenuta_acconto_vendite`;
-
 -- Fix ritenuta contributi
 ALTER TABLE `co_documenti` CHANGE `id_ritenuta_contributi` `id_ritenuta_contributi` INT(11);
 UPDATE `co_documenti` SET `id_ritenuta_contributi` = NULL WHERE `id_ritenuta_contributi` = 0;

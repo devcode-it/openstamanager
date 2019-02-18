@@ -46,6 +46,7 @@ class Anagrafica extends Model
         $codice = Generator::generate(setting('Formato codice anagrafica'), $ultimo['codice']);
 
         $model->codice = $codice;
+        $model->id_ritenuta_acconto_vendite = setting("Percentuale ritenuta d'acconto");
         $model->save();
 
         $model->tipologie = $tipologie;

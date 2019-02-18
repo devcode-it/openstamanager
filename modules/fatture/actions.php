@@ -635,7 +635,7 @@ switch (post('op')) {
         }
 
         $id_rivalsa_inps = setting('Percentuale rivalsa');
-        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : setting("Percentuale ritenuta d'acconto");
+        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : $fattura->anagrafica->id_ritenuta_acconto_vendite;
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = get('id_conto');
 
@@ -700,7 +700,7 @@ switch (post('op')) {
         }
 
         $id_rivalsa_inps = setting('Percentuale rivalsa');
-        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : setting("Percentuale ritenuta d'acconto");
+        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : $fattura->anagrafica->id_ritenuta_acconto_vendite;
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = get('id_conto');
 
@@ -762,7 +762,7 @@ switch (post('op')) {
         }
 
         $id_rivalsa_inps = setting('Percentuale rivalsa');
-        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : setting("Percentuale ritenuta d'acconto");
+        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : $fattura->anagrafica->id_ritenuta_acconto_vendite;
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = get('id_conto');
         $id_iva = get('id_iva');
@@ -832,7 +832,7 @@ switch (post('op')) {
         }
 
         $id_rivalsa_inps = setting('Percentuale rivalsa');
-        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : setting("Percentuale ritenuta d'acconto");
+        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : $fattura->anagrafica->id_ritenuta_acconto_vendite;
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = get('id_conto');
         $id_iva = get('id_iva');

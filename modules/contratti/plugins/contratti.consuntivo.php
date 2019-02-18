@@ -21,7 +21,22 @@ $totale = 0;
 $totale_stato = [];
 
 // Tabella con riepilogo interventi
-$rsi = $dbo->fetchArray('SELECT *, in_interventi.id, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio, (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore, (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km FROM co_promemoria INNER JOIN in_interventi ON co_promemoria.idintervento=in_interventi.id WHERE co_promemoria.idcontratto='.prepare($id_record).' ORDER BY co_promemoria.idintervento DESC');
+$rsi = $dbo->fetchArray('SELECT in_interventi.id, in_interventi.codice, 
+       (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio,
+       (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore,
+       (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km
+    FROM co_promemoria
+    INNER JOIN in_interventi ON co_promemoria.idintervento=in_interventi.id
+    WHERE co_promemoria.idcontratto='.prepare($id_record).'
+UNION
+    SELECT in_interventi.id, in_interventi.codice,  
+        (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS inizio,
+        (SELECT SUM(ore) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS ore,
+        (SELECT MIN(km) FROM in_interventi_tecnici WHERE idintervento=in_interventi.id) AS km
+    FROM in_interventi
+    WHERE id_contratto = '.prepare($id_record).'
+ORDER BY id DESC');
+
 if (!empty($rsi)) {
     echo '
 <table class="table table-bordered table-condensed">

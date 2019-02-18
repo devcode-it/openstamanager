@@ -4,6 +4,7 @@ namespace Modules\Fatture;
 
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\RitenuteContributi\RitenutaContributi;
 use Plugins\ExportFE\FatturaElettronica;
 use Traits\RecordTrait;
 use Util\Generator;
@@ -87,6 +88,8 @@ class Fattura extends Document
         $model->idconto = $id_conto;
         $model->idsede = $id_sede;
 
+        $model->id_ritenuta_contributi = ($tipo_documento->dir == 'entrata') ? setting('Ritenuta contributi') : null;
+
         if (!empty($id_pagamento)) {
             $model->idpagamento = $id_pagamento;
         }
@@ -135,6 +138,8 @@ class Fattura extends Document
         return $this->tipo->dir == 'entrata' ? 'Fatture di vendita' : 'Fatture di acquisto';
     }
 
+    // Calcoli
+
     /**
      * Calcola il netto a pagare della fattura.
      *
@@ -142,50 +147,55 @@ class Fattura extends Document
      */
     public function getNettoAttribute()
     {
-        return parent::getNettoAttribute() + $this->bollo;
+        return $this->calcola('netto') + $this->bollo;
     }
 
     /**
-     * Restituisce l'elenco delle note di credito collegate.
+     * Calcola la rivalsa INPS totale della fattura.
      *
-     * @return iterable
+     * @return float
      */
-    public function getNoteDiAccredito()
+    public function getRivalsaINPSAttribute()
     {
-        return self::where('ref_documento', $this->id)->get();
+        return $this->calcola('rivalsa_inps');
     }
 
     /**
-     * Restituisce l'elenco delle note di credito collegate.
+     * Calcola l'IVA totale della fattura.
      *
-     * @return self
+     * @return float
      */
-    public function getFatturaOriginale()
+    public function getIvaAttribute()
     {
-        return self::find($this->ref_documento);
+        return $this->calcola('iva', 'iva_rivalsa_inps');
     }
 
     /**
-     * Controlla se la fattura è una nota di credito.
+     * Calcola l'iva della rivalsa INPS totale della fattura.
      *
-     * @return bool
+     * @return float
      */
-    public function isNotaDiAccredito()
+    public function getIvaRivalsaINPSAttribute()
     {
-        return $this->tipo->reversed == 1;
+        return $this->calcola('iva_rivalsa_inps');
     }
 
-    public function updateSconto()
+    /**
+     * Calcola la ritenuta d'acconto totale della fattura.
+     *
+     * @return float
+     */
+    public function getRitenutaAccontoAttribute()
     {
-        // Aggiornamento sconto
-        aggiorna_sconto([
-            'parent' => 'co_documenti',
-            'row' => 'co_righe_documenti',
-        ], [
-            'parent' => 'id',
-            'row' => 'iddocumento',
-        ], $this->id);
+        return $this->calcola('ritenuta_acconto');
     }
+
+    public function getTotaleRitenutaContributiAttribute()
+    {
+        return $this->calcola('ritenuta_contributi');
+    }
+
+    // Relazioni Eloquent
 
     public function anagrafica()
     {
@@ -226,6 +236,13 @@ class Fattura extends Document
     {
         return $this->hasOne(Components\Sconto::class, 'iddocumento');
     }
+
+    public function ritenutaContributi()
+    {
+        return $this->belongsTo(RitenutaContributi::class, 'id_ritenuta_contributi');
+    }
+
+    // Metodi generali
 
     public function getXML()
     {
@@ -272,6 +289,48 @@ class Fattura extends Document
         }
 
         return !empty($pagamenti);
+    }
+
+    /**
+     * Restituisce l'elenco delle note di credito collegate.
+     *
+     * @return iterable
+     */
+    public function getNoteDiAccredito()
+    {
+        return self::where('ref_documento', $this->id)->get();
+    }
+
+    /**
+     * Restituisce l'elenco delle note di credito collegate.
+     *
+     * @return self
+     */
+    public function getFatturaOriginale()
+    {
+        return self::find($this->ref_documento);
+    }
+
+    /**
+     * Controlla se la fattura è una nota di credito.
+     *
+     * @return bool
+     */
+    public function isNotaDiAccredito()
+    {
+        return $this->tipo->reversed == 1;
+    }
+
+    public function updateSconto()
+    {
+        // Aggiornamento sconto
+        aggiorna_sconto([
+            'parent' => 'co_documenti',
+            'row' => 'co_righe_documenti',
+        ], [
+            'parent' => 'id',
+            'row' => 'iddocumento',
+        ], $this->id);
     }
 
     // Metodi statici

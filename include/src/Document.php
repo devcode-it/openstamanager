@@ -27,7 +27,7 @@ abstract class Document extends Model
     abstract public function scontoGlobale();
 
     /**
-     * Calcola l'imponibile della fattura.
+     * Calcola l'imponibile del documento.
      *
      * @return float
      */
@@ -37,7 +37,7 @@ abstract class Document extends Model
     }
 
     /**
-     * Calcola lo sconto totale della fattura.
+     * Calcola lo sconto totale del documento.
      *
      * @return float
      */
@@ -47,7 +47,7 @@ abstract class Document extends Model
     }
 
     /**
-     * Calcola l'imponibile scontato della fattura.
+     * Calcola l'imponibile scontato del documento.
      *
      * @return float
      */
@@ -57,63 +57,23 @@ abstract class Document extends Model
     }
 
     /**
-     * Calcola l'IVA totale della fattura.
+     * Calcola l'IVA totale del documento.
      *
      * @return float
      */
     public function getIvaAttribute()
     {
-        return $this->calcola('iva', 'iva_rivalsa_inps');
+        return $this->calcola('iva');
     }
 
     /**
-     * Calcola la rivalsa INPS totale della fattura.
-     *
-     * @return float
-     */
-    public function getRivalsaINPSAttribute()
-    {
-        return $this->calcola('rivalsa_inps');
-    }
-
-    /**
-     * Calcola l'iva della rivalsa INPS totale della fattura.
-     *
-     * @return float
-     */
-    public function getIvaRivalsaINPSAttribute()
-    {
-        return $this->calcola('iva_rivalsa_inps');
-    }
-
-    /**
-     * Calcola la ritenuta d'acconto totale della fattura.
-     *
-     * @return float
-     */
-    public function getRitenutaAccontoAttribute()
-    {
-        return $this->calcola('ritenuta_acconto');
-    }
-
-    /**
-     * Calcola il totale della fattura.
+     * Calcola il totale del documento.
      *
      * @return float
      */
     public function getTotaleAttribute()
     {
         return $this->calcola('totale');
-    }
-
-    /**
-     * Calcola il netto a pagare della fattura.
-     *
-     * @return float
-     */
-    public function getNettoAttribute()
-    {
-        return $this->calcola('netto');
     }
 
     /**
@@ -127,7 +87,7 @@ abstract class Document extends Model
     }
 
     /**
-     * Calcola il guadagno della fattura.
+     * Calcola il guadagno del documento.
      *
      * @return float
      */

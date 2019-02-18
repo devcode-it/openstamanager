@@ -5,7 +5,6 @@ include_once __DIR__.'/../../core.php';
 // Rimuovo session usate sui select combinati (sedi, preventivi, contratti, impianti)
 unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idsede']);
-unset($_SESSION['superselect']['non_fatturato']);
 
 // Calcolo del nuovo codice
 $new_codice = \Modules\Interventi\Intervento::getNextCodice();

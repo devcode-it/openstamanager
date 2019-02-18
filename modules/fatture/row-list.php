@@ -422,6 +422,20 @@ if (!empty($fattura->ritenuta_acconto)) {
     </tr>';
 }
 
+// RITENUTA CONTRIBUTI
+if (!empty($fattura->totale_ritenuta_contributi)) {
+    echo '
+    <tr>
+        <td colspan="5" class="text-right">
+            <b>'.tr('Ritenuta contributi', [], ['upper' => true]).':</b>
+        </td>
+        <td align="right">
+            '.Translator::numberToLocale($fattura->totale_ritenuta_contributi).' &euro;
+        </td>
+        <td></td>
+    </tr>';
+}
+
 // NETTO A PAGARE
 if ($totale != $netto_a_pagare) {
     echo '

@@ -26,9 +26,14 @@ include_once __DIR__.'/../../core.php';
 
         if ($tipo_doc == 'Nota di credito') {
             $nota_credito = true;
-        }
+			$tipo_doc = 'nota di credito';
+        } elseif ($tipo_doc == 'Nota di debito') {
+			$tipo_doc = 'nota di debito';
+		} else {
+			$tipo_doc = 'fattura';
+		}
 
-        $descrizione = tr('_DOC_ numero _NUM_ del _DATE_ (_NAME_)', [
+        $descrizione = tr('Pag. _DOC_ num. _NUM_ del _DATE_ (_NAME_)', [
             '_DOC_' => $tipo_doc,
             '_NUM_' => $numero_doc,
             '_DATE_' => Translator::dateToLocale($rs[0]['data']),
@@ -336,7 +341,7 @@ include_once __DIR__.'/../../core.php';
 
 
 			$('#bs-popup #modello_primanota').change(function(){
-				
+
 				if ($(this).val()!=''){
 					$('#btn_crea_modello').html('<i class="fa fa-edit"></i> '+'<?php echo tr('Aggiungi e modifica modello'); ?>');
 					$('#bs-popup #idmastrino').val($(this).val());
@@ -344,19 +349,19 @@ include_once __DIR__.'/../../core.php';
 					$('#btn_crea_modello').html('<i class="fa fa-plus"></i> '+'<?php echo tr('Aggiungi e crea modello'); ?>');
 					$('#bs-popup #idmastrino').val(0);
 				}
-				
+
 				var idmastrino = $(this).val();
 
 				if(idmastrino!=''){
 					var causale = $(this).find('option:selected').text();
-					
+
 					//aggiornava erroneamente anche la causale ed eventuale numero di fattura e data
 					<?php if (empty($iddocumento)) {
         ?>
 						$('#bs-popup #desc').val(causale);
 					<?php
     } ?>
-					
+
 					$.get('<?php echo $rootdir; ?>/ajax_complete.php?op=get_conti&idmastrino='+idmastrino, function(data){
 						var conti = data.split(',');
 						for(i=0;i<conti.length;i++){
@@ -377,4 +382,3 @@ include_once __DIR__.'/../../core.php';
 		});
 	</script>
 </form>
-

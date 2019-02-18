@@ -42,13 +42,11 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 				</div>
 			</div>
 
-
-
 			<!-- RIGA 2 -->
 			<div class="row">
 				<div class="col-md-6">
 					<?php
-                    if (($record['idpreventivo'] != '')) {
+                    if (!empty($record['idpreventivo'])) {
                         echo '
                         '.Modules::link('Preventivi', $record['idpreventivo'], null, null, 'class="pull-right"');
                     }
@@ -59,22 +57,16 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 				<div class="col-md-6">
 					<?php
-                        /*$rs = $dbo->fetchArray('SELECT id, idcontratto FROM co_promemoria WHERE idintervento='.prepare($id_record));
-                        if (count($rs) == 1) {
-                            $idcontratto = $rs[0]['idcontratto'];
-                            $idcontratto_riga = $rs[0]['id'];
-                        } else {
-                            $idcontratto = '';
-                            $idcontratto_riga = '';
-                        }*/
+                        $idcontratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
 
-                        if (($record['idcontratto'] != '')) {
+                        if (!empty($record['idcontratto'])) {
                             echo '
                             '.Modules::link('Contratti', $record['idcontratto'], null, null, 'class="pull-right"');
                         }
                     ?>
 
-					{[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $record['idcontratto']; ?>", "ajax-source": "contratti", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Contratto'); ?>", "name": "idcontratto", "value": "<?php echo $record['id_contratto']; ?>", "ajax-source": "contratti", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+
 					<input type='hidden' name='idcontratto_riga' value='<?php echo $idcontratto_riga; ?>'>
 				</div>
 			</div>

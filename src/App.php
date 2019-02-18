@@ -201,15 +201,16 @@ class App
     /**
      * Restituisce il codice HTML per il form contenente il file indicato.
      *
-     * @param string $path
+     * @param string $file
      * @param array  $result
      * @param array  $options
+     * @param bool   $disableForm
      *
      * @return string
      */
-    public static function load($file, $result, $options)
+    public static function load($file, $result, $options, $disableForm = false)
     {
-        $form = self::internalLoad('form.php', $result, $options);
+        $form = $disableForm ? '|response|' : self::internalLoad('form.php', $result, $options);
 
         $response = self::internalLoad($file, $result, $options);
 
@@ -221,7 +222,7 @@ class App
     /**
      * Restituisce il codice HTML generato del file indicato.
      *
-     * @param string $path
+     * @param string $file
      * @param array  $result
      * @param array  $options
      * @param string $directory
@@ -231,6 +232,8 @@ class App
     public static function internalLoad($file, $result, $options, $directory = null)
     {
         $module = Modules::getCurrent();
+
+        $database = $dbo = database();
 
         $id_module = $module['id'];
         $id_record = filter('id_record');

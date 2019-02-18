@@ -11,6 +11,7 @@ class Articolo extends Article
     use RelationTrait;
 
     protected $table = 'co_righe_documenti';
+    protected $serialRowID = 'documento';
 
     /**
      * Crea un nuovo articolo collegato ad una fattura.

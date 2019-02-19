@@ -273,7 +273,7 @@ class Fattura extends Document
             $scadenze = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
 
             foreach ($scadenze as $scadenza) {
-                $data = $scadenza['DataScadenzaPagamento'];
+                $data = $scadenza['DataScadenzaPagamento'] ?: $this->data;
                 $importo = $scadenza['ImportoPagamento'];
 
                 $dbo->insert('co_scadenziario', [

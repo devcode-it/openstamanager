@@ -14,9 +14,9 @@ class Interaction extends Connection
     public static function getReceiptList()
     {
         $response = static::request('POST', 'notifiche_da_importare');
-        $body = static::responseBody($response)['results'];
+        $body = static::responseBody($response);
 
-        return $body;
+        return $body['results'];
     }
 
     public static function getReceipt($name)

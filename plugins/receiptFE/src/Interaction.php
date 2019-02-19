@@ -13,7 +13,7 @@ class Interaction extends Connection
 {
     public static function getReceiptList()
     {
-        $response = static::request('POST', 'get_receipt_list');
+        $response = static::request('POST', 'notifiche_da_importare');
         $body = static::responseBody($response)['results'];
 
         return $body;
@@ -21,7 +21,7 @@ class Interaction extends Connection
 
     public static function getReceipt($name)
     {
-        $response = static::request('POST', 'get_receipt', [
+        $response = static::request('POST', 'notifica_da_importare', [
             'name' => $name,
         ]);
         $body = static::responseBody($response);

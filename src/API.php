@@ -28,6 +28,10 @@ class API extends \Util\Singleton
             'code' => 404,
             'message' => 'Non trovato',
         ],
+        'externalError' => [
+            'code' => 409,
+            'message' => 'Errore in un servizio esterno',
+        ],
         'serverError' => [
             'code' => 500,
             'message' => 'Errore del server',

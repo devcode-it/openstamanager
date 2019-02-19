@@ -27,18 +27,8 @@ class Connection
             'resource' => $resource,
         ]);
 
-        if (!empty($options['multipart'])) {
-            foreach ($json as $key => $value) {
-                $options['multipart'][] = [
-                    'name' => $key,
-                    'contents' => $value,
-                ];
-            }
-        } else {
-            $options['form_params'] = $json;
-        }
-
         $options = array_merge($options, [
+            'json' => $json,
             'http_errors' => false,
         ]);
 

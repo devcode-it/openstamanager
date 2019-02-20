@@ -26,6 +26,21 @@ class Interaction extends Connection
         ]);
         $body = static::responseBody($response);
 
-        return $body;
+        return $body['content'];
+    }
+
+    public static function processReceipt($filename)
+    {
+        $response = static::request('POST', 'notifica_xml_salvata', [
+            'filename' => $filename,
+        ]);
+        $body = static::responseBody($response);
+
+        $result = true;
+        if ($body['status'] != '200') {
+            $result = $body['status'].' - '.$body['message'];
+        }
+
+        return $result;
     }
 }

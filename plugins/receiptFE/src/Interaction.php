@@ -21,12 +21,19 @@ class Interaction extends Connection
 
     public static function getReceipt($name)
     {
-        $response = static::request('POST', 'notifica_da_importare', [
-            'name' => $name,
-        ]);
-        $body = static::responseBody($response);
+        $directory = Ricevuta::getImportDirectory();
+        $file = $directory.'/'.$name;
 
-        return $body['content'];
+        if (!file_exists($file)) {
+            $response = static::request('POST', 'notifica_da_importare', [
+                'name' => $name,
+            ]);
+            $body = static::responseBody($response);
+
+            Ricevuta::store($name, $body['content']);
+        }
+
+        return $name;
     }
 
     public static function processReceipt($filename)

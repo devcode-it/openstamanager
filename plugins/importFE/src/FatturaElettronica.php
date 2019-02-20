@@ -34,9 +34,9 @@ class FatturaElettronica
     /** @var Fattura Fattura collegata */
     protected $fattura = null;
 
-    public function __construct($file)
+    public function __construct($name)
     {
-        $this->file = static::getImportDirectory().'/'.$file;
+        $this->file = static::getImportDirectory().'/'.$name;
         $this->xml = XML::readFile($this->file);
 
         // Individuazione fattura pre-esistente
@@ -84,10 +84,10 @@ class FatturaElettronica
         return $filename;
     }
 
-    public static function isValid($file)
+    public static function isValid($name)
     {
         try {
-            new static($file);
+            new static($name);
 
             return true;
         } catch (UnexpectedValueException $e) {

@@ -27,16 +27,19 @@ switch (filter('op')) {
 
         $results = [];
         foreach ($list as $name) {
-            $content = Interaction::getReceipt($name);
+            Interaction::getReceipt($name);
 
             $fattura = null;
             try {
                 $receipt = new Ricevuta($name, $content);
+                $receipt->save();
 
                 $fattura = $receipt->getFattura()->numero_esterno;
 
+                $receipt->delete();
+
                 Interaction::processReceipt($name);
-            } catch (Exception $e) {
+            } catch (UnexpectedValueException $e) {
             }
 
             $results[] = [

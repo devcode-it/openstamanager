@@ -64,10 +64,9 @@ class Interaction extends Connection
 
         $body = static::responseBody($response);
 
+        $message = '';
         if ($body['status'] != '200') {
             $message = $body['status'].' - '.$body['message'];
-        } else {
-            $message = '';
         }
 
         return $message;

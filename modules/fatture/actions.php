@@ -635,7 +635,11 @@ switch (post('op')) {
         }
 
         $id_rivalsa_inps = setting('Percentuale rivalsa');
-        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : $fattura->anagrafica->id_ritenuta_acconto_vendite;
+        if ($dir == 'uscita') {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_acquisti;
+        } else {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
+        }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = get('id_conto');
 
@@ -700,7 +704,11 @@ switch (post('op')) {
         }
 
         $id_rivalsa_inps = setting('Percentuale rivalsa');
-        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : $fattura->anagrafica->id_ritenuta_acconto_vendite;
+        if ($dir == 'uscita') {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_acquisti;
+        } else {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
+        }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = get('id_conto');
 
@@ -762,7 +770,11 @@ switch (post('op')) {
         }
 
         $id_rivalsa_inps = setting('Percentuale rivalsa');
-        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : $fattura->anagrafica->id_ritenuta_acconto_vendite;
+        if ($dir == 'uscita') {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_acquisti;
+        } else {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
+        }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = get('id_conto');
         $id_iva = get('id_iva');
@@ -832,7 +844,11 @@ switch (post('op')) {
         }
 
         $id_rivalsa_inps = setting('Percentuale rivalsa');
-        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : $fattura->anagrafica->id_ritenuta_acconto_vendite;
+        if ($dir == 'uscita') {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_acquisti;
+        } else {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
+        }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = get('id_conto');
         $id_iva = get('id_iva');

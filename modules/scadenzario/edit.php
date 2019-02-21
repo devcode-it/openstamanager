@@ -137,6 +137,7 @@ echo '
 	<div class="clearfix"></div>
 </form>
 
+{( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <script>
 	$(document).ready( function(){

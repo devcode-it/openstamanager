@@ -1,0 +1,28 @@
+<?php
+
+$r = $dbo->fetchOne('SELECT co_scadenziario.*, co_documenti.*,
+	an_anagrafiche.email,
+	an_anagrafiche.pec,
+	an_anagrafiche.ragione_sociale,
+	(SELECT pec FROM zz_smtps WHERE zz_smtps.id='.prepare($template['id_smtp']).') AS is_pec,
+	(SELECT descrizione FROM co_pagamenti WHERE co_pagamenti.id = co_documenti.idpagamento) AS pagamento
+FROM co_scadenziario
+    INNER JOIN co_documenti ON co_documenti.id = co_scadenziario.iddocumento
+    INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica
+WHERE co_scadenziario.id='.prepare($id_record));
+
+$logo_azienda = str_replace(DOCROOT, ROOTDIR, App::filepath('templates/base|custom|/logo_azienda.jpg'));
+
+// Variabili da sostituire
+return [
+    'email' => $r['is_pec'] ? $r['pec'] : $r['email'],
+    'id_anagrafica' => $r['idanagrafica'],
+    'ragione_sociale' => $r['ragione_sociale'],
+    'numero' => empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'],
+    'note' => $r['note'],
+    'pagamento' => $r['pagamento'],
+    'totale' => Translator::numberToLocale(abs($r['da_pagare'])),
+    'data_scadenza' => Translator::dateToLocale($r['scadenza']),
+    'data' => Translator::dateToLocale($r['scadenza']),
+    'logo_azienda' => !empty($logo_azienda) ? '<img src="'.$logo_azienda.'" />' : '',
+];

@@ -51,7 +51,7 @@ class Connection
     {
         if (!isset(self::$client)) {
             self::$client = new Client([
-                'base_uri' => 'https://services.osmcloud.it/v1/',
+                'base_uri' => 'https://services.osmcloud.it/api/',
                 'verify' => false,
             ]);
         }

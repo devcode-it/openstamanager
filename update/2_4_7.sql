@@ -25,3 +25,7 @@ ALTER TABLE `co_documenti` ADD FOREIGN KEY (`id_ritenuta_contributi`) REFERENCES
 ALTER TABLE `co_righe_documenti` ADD `ritenuta_contributi` BOOLEAN NOT NULL DEFAULT FALSE;
 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Ritenuta contributi', '', 'query=SELECT * FROM co_ritenuta_contributi', 1, 'Fatturazione', 12);
+
+-- Fix ricerca documentali
+UPDATE `zz_modules` SET `options` = '{	"main_query": [	{	"type": "table", "fields": "Descrizione", "query": "SELECT zz_documenti_categorie.`descrizione`as Descrizione, zz_documenti_categorie.`id`as id FROM zz_documenti_categorie WHERE deleted_at IS NULL AND 1=1 HAVING 2=2"}	]}' WHERE `name` = 'Categorie documenti';
+UPDATE `zz_modules` SET `options` = '{	"main_query": [	{	"type": "table", "fields": "Categoria, Nome, Data", "query": "SELECT id,(SELECT descrizione FROM zz_documenti_categorie WHERE zz_documenti_categorie.id = idcategoria) AS Categoria, zz_documenti.nome AS Nome, DATE_FORMAT( zz_documenti.`data`, ''%d/%m/%Y'' ) AS `Data` FROM zz_documenti  WHERE  `data` >= ''|period_start|'' AND `data` <= ''|period_end|'' AND 1=1 HAVING 2=2"}	]}' WHERE `name` = 'Gestione documentale';

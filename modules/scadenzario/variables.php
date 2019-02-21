@@ -9,7 +9,7 @@ $r = $dbo->fetchOne('SELECT co_scadenziario.*, co_documenti.*,
 FROM co_scadenziario
     INNER JOIN co_documenti ON co_documenti.id = co_scadenziario.iddocumento
     INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica
-WHERE co_scadenziario.id='.prepare($id_record));
+WHERE co_scadenziario.pagato != co_scadenziario.da_pagare AND co_scadenziario.iddocumento = (SELECT iddocumento FROM co_scadenziario s WHERE id='.prepare($id_record).')');
 
 $logo_azienda = str_replace(DOCROOT, ROOTDIR, App::filepath('templates/base|custom|/logo_azienda.jpg'));
 

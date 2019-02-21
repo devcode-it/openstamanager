@@ -197,7 +197,7 @@ class FatturaElettronica
         return $result;
     }
 
-    public function saveRighe($articoli, $iva, $conto)
+    public function saveRighe($articoli, $iva, $conto, $movimentazione = true)
     {
         $righe = $this->getRighe();
         $fattura = $this->getFattura();
@@ -207,6 +207,8 @@ class FatturaElettronica
 
             if (!empty($articolo)) {
                 $obj = Articolo::build($fattura, $articolo);
+
+                $obj->movimentazione($movimentazione);
             } else {
                 $obj = Riga::build($fattura);
             }

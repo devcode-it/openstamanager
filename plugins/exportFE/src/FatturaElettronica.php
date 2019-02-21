@@ -899,7 +899,9 @@ class FatturaElettronica
         $result = [];
 
         // Righe del documento
-        $iva_descrizioni = $righe->first()->aliquota;
+        $iva_descrizioni = $righe->first(function ($item, $key) {
+            return $item->aliquota != null;
+        })->aliquota;
         foreach ($righe as $numero => $riga) {
             $dettaglio = [
                 'NumeroLinea' => $numero + 1,
@@ -1004,7 +1006,7 @@ class FatturaElettronica
 
         // Riepiloghi per IVA per percentuale
         $riepiloghi_percentuale = $righe->filter(function ($item, $key) {
-            return $item->aliquota->codice_natura_fe == null;
+            return $item->aliquota != null && $item->aliquota->codice_natura_fe == null;
         })->groupBy(function ($item, $key) {
             return $item->aliquota->percentuale;
         });
@@ -1040,7 +1042,7 @@ class FatturaElettronica
 
         // Riepiloghi per IVA per natura
         $riepiloghi_natura = $righe->filter(function ($item, $key) {
-            return $item->aliquota->codice_natura_fe != null;
+            return $item->aliquota != null && $item->aliquota->codice_natura_fe != null;
         })->groupBy(function ($item, $key) {
             return $item->aliquota->codice_natura_fe;
         });

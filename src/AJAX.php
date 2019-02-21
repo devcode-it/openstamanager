@@ -149,7 +149,7 @@ class AJAX
      *
      * @return array
      */
-    protected static function find($file, $permissions = true)
+    public static function find($file, $permissions = true)
     {
         $dirname = substr($file, 0, strrpos($file, '/') + 1);
 

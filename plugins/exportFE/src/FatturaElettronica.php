@@ -589,6 +589,17 @@ class FatturaElettronica
         return $result;
     }
 
+    protected function chunkSplit($str, $chunklen)
+    {
+        $res = [];
+        $k = ceil(strlen($str) / $chunklen);
+        for ($i = 0; $i < $k; ++$i) {
+            $res[] = substr($str, $i * $chunklen, $chunklen);
+        }
+
+        return $res;
+    }
+
     /**
      * Restituisce l'array responsabile per la generazione del tag DatiGeneraliDocumento.
      *
@@ -604,8 +615,12 @@ class FatturaElettronica
             'Divisa' => 'EUR',
             'Data' => $documento['data'],
             'Numero' => $documento['numero_esterno'],
-            // TODO: 'Causale' => $documento['causale'],
         ];
+
+        $causali = self::chunkSplit($documento['note'], 200);
+        foreach ($causali as $causale) {
+            $result[] = ['Causale' => $causale];
+        }
 
         $righe = $fattura->getRighe();
 

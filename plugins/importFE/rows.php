@@ -126,8 +126,19 @@ if (!empty($codice_modalita_pagamento)) {
 }
 $query .= ' GROUP BY descrizione ORDER BY descrizione ASC';
 
+// Pagamento
 echo '
-    {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "values": "query='.$query.'" ]}';
+    <div class="row" >
+		<div class="col-md-6">
+            {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "pagamento", "required": 1, "values": "query='.$query.'" ]}
+        </div>';
+
+// Movimentazioni
+echo '
+        <div class="col-md-6">
+            {[ "type": "checkbox", "label": "'.tr('Movimenta gli articoli').'", "name": "movimentazione", "value": 1 ]}
+        </div>
+    </div>';
 
 // Righe
 $righe = $fattura_pa->getRighe();

@@ -13,7 +13,7 @@ $xml->loadXML($content);
 
 // XSL
 $xsl = new DOMDocument();
-$xsl->load(DOCROOT.'/assets/src/xml/fe-stylesheet-1.2.1.xsl');
+$xsl->load(DOCROOT.'/plugins/xml/asso-invoice.xsl');
 
 // XSLT
 $xslt = new XSLTProcessor();

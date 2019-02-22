@@ -15,17 +15,35 @@ $link = ROOTDIR.'/'.$file->filepath;
 if ($file->isFatturaElettronica()) {
     $content = file_get_contents(DOCROOT.'/'.$file->filepath);
 
-    // XML
-    $xml = new DOMDocument();
-    $xml->loadXML($content);
+    // Individuazione stylsheet
+    $stylesheet = 'asso-invoice';
 
-    // XSL
-    $xsl = new DOMDocument();
-    $xsl->load(DOCROOT.'/assets/src/xml/fe-stylesheet-1.2.1.xsl');
+    $name = basename($file->original);
+    $filename = explode('.', $name)[0];
+    $pieces = explode('_', $filename);
+    $codice = $pieces[2];
+    if (!empty($codice)) {
+        $stylesheet = $codice.'_v1.0';
+    }
+
+    $stylesheet = DOCROOT.'/plugins/xml/'.$stylesheet.'.xsl';
+
+    // Fix per ricevute con namespace errato
+    $content = str_replace('http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fattura/messaggi/v1.0', 'http://www.fatturapa.gov.it/sdi/messaggi/v1.0', $content);
+
+    // XML
+    $xml = DOMDocument::loadXML($content);
 
     // XSLT
     $xslt = new XSLTProcessor();
-    $xslt->importStylesheet($xsl);
+    $xslt->importStylesheet(DOMDocument::load($stylesheet));
+
+    echo '
+<style>
+    #notifica {
+        min-width: 860px !important;
+    }
+</style>';
 
     echo $xslt->transformToXML($xml);
 } else {

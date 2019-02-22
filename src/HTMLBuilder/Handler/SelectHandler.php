@@ -98,8 +98,8 @@ class SelectHandler implements HandlerInterface
      * Gestione dell'input di tipo "select" con richieste AJAX (nome della richiesta indicato tramite attributo "ajax-source").
      * Esempio: {[ "type": "select", "label": "Select di test", "name": "test", "ajax-source": "test" ]}.
      *
-     * @param array $values
-     * @param array $extras
+     * @param string $op
+     * @param array  $elements
      *
      * @return string
      */
@@ -111,10 +111,11 @@ class SelectHandler implements HandlerInterface
         include DOCROOT.'/ajax_select.php';
         $text = ob_get_clean();
 
-        $result = '';
+        $html = '';
 
-        $array = (array) json_decode($text, true);
-        foreach ($array as $element) {
+        $response = (array) json_decode($text, true);
+        $results = $response['results'];
+        foreach ($results as $element) {
             $element = (array) $element;
             if (isset($element['children'][0])) {
                 $element = (array) $element['children'][0];
@@ -137,11 +138,11 @@ class SelectHandler implements HandlerInterface
                 }
             }
 
-            $result .= '
+            $html .= '
         <option value="'.prepareToField($element['id']).'" '.implode(' ', $attributes).'>'.$element['text'].'</option>';
         }
 
-        return $result;
+        return $html;
     }
 
     /**

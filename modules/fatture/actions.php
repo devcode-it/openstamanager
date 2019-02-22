@@ -248,8 +248,18 @@ switch (post('op')) {
         break;
 
     case 'addintervento':
-        if (!empty($id_record) && post('idintervento') !== null) {
-            aggiungi_intervento_in_fattura(post('idintervento'), $id_record, post('descrizione'), post('idiva'), post('idconto'), post('id_rivalsa_inps'), post('id_ritenuta_acconto'), post('calcolo_ritenuta_acconto'));
+        $id_intervento = post('idintervento');
+        if (!empty($id_record) && $id_intervento !== null) {
+            $copia_descrizione = post('copia_descrizione');
+            $intervento = $dbo->fetchOne('SELECT descrizione FROM in_interventi WHERE id = '.prepare($id_intervento));
+            if (!empty($copia_descrizione) && !empty($intervento['descrizione'])) {
+                $riga = Descrizione::build($fattura);
+                $riga->descrizione = $intervento['descrizione'];
+                $riga->idintervento = $id_intervento;
+                $riga->save();
+            }
+
+            aggiungi_intervento_in_fattura($id_intervento, $id_record, post('descrizione'), post('idiva'), post('idconto'), post('id_rivalsa_inps'), post('id_ritenuta_acconto'), post('calcolo_ritenuta_acconto'));
 
             flash()->info(tr('Intervento _NUM_ aggiunto!', [
                 '_NUM_' => $idintervento,
@@ -635,7 +645,11 @@ switch (post('op')) {
         }
 
         $id_rivalsa_inps = setting('Percentuale rivalsa');
-        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : $fattura->anagrafica->id_ritenuta_acconto_vendite;
+        if ($dir == 'uscita') {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_acquisti;
+        } else {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
+        }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = get('id_conto');
 
@@ -700,7 +714,11 @@ switch (post('op')) {
         }
 
         $id_rivalsa_inps = setting('Percentuale rivalsa');
-        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : $fattura->anagrafica->id_ritenuta_acconto_vendite;
+        if ($dir == 'uscita') {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_acquisti;
+        } else {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
+        }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = get('id_conto');
 
@@ -762,7 +780,11 @@ switch (post('op')) {
         }
 
         $id_rivalsa_inps = setting('Percentuale rivalsa');
-        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : $fattura->anagrafica->id_ritenuta_acconto_vendite;
+        if ($dir == 'uscita') {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_acquisti;
+        } else {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
+        }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = get('id_conto');
         $id_iva = get('id_iva');
@@ -832,7 +854,11 @@ switch (post('op')) {
         }
 
         $id_rivalsa_inps = setting('Percentuale rivalsa');
-        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : $fattura->anagrafica->id_ritenuta_acconto_vendite;
+        if ($dir == 'uscita') {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_acquisti;
+        } else {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
+        }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
         $id_conto = get('id_conto');
         $id_iva = get('id_iva');

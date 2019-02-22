@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Inherited Methods.
  *
@@ -111,10 +110,6 @@ class AcceptanceTester extends \Codeception\Actor
     {
         $t = $this;
 
-        if ($t->loadSessionSnapshot('login')) {
-            return;
-        }
-
         // Operazioni di login
         $t->amOnPage('/');
 
@@ -125,8 +120,6 @@ class AcceptanceTester extends \Codeception\Actor
 
         // Controlla il completamento del login
         $t->see($username, '.user-panel');
-
-        $t->saveSessionSnapshot('login');
 
         // Rimozione barra di debug
         $t->executeJS('$(".phpdebugbar-close-btn").click()');

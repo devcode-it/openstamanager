@@ -88,7 +88,8 @@ class Fattura extends Document
         $model->idconto = $id_conto;
         $model->idsede = $id_sede;
 
-        $model->id_ritenuta_contributi = ($tipo_documento->dir == 'entrata') ? setting('Ritenuta contributi') : null;
+        $id_ritenuta_contributi = ($tipo_documento->dir == 'entrata') ? setting('Ritenuta contributi') : null;
+        $model->id_ritenuta_contributi = $id_ritenuta_contributi ?: null;
 
         if (!empty($id_pagamento)) {
             $model->idpagamento = $id_pagamento;
@@ -273,7 +274,7 @@ class Fattura extends Document
             $scadenze = isset($pagamenti[0]) ? $pagamenti : [$pagamenti];
 
             foreach ($scadenze as $scadenza) {
-                $data = $scadenza['DataScadenzaPagamento'];
+                $data = $scadenza['DataScadenzaPagamento'] ?: $this->data;
                 $importo = $scadenza['ImportoPagamento'];
 
                 $dbo->insert('co_scadenziario', [

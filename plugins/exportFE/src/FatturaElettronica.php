@@ -125,7 +125,7 @@ class FatturaElettronica
 
             $interventi = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `in_interventi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idintervento` = `in_interventi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
-            $this->contratti = array_merge($contratti, $preventivi, $interventi, $ordini);
+            $this->contratti = array_merge($contratti, $preventivi, $interventi);
         }
 
         return $this->contratti;
@@ -589,6 +589,17 @@ class FatturaElettronica
         return $result;
     }
 
+    protected function chunkSplit($str, $chunklen)
+    {
+        $res = [];
+        $k = ceil(strlen($str) / $chunklen);
+        for ($i = 0; $i < $k; ++$i) {
+            $res[] = substr($str, $i * $chunklen, $chunklen);
+        }
+
+        return $res;
+    }
+
     /**
      * Restituisce l'array responsabile per la generazione del tag DatiGeneraliDocumento.
      *
@@ -604,8 +615,12 @@ class FatturaElettronica
             'Divisa' => 'EUR',
             'Data' => $documento['data'],
             'Numero' => $documento['numero_esterno'],
-            // TODO: 'Causale' => $documento['causale'],
         ];
+
+        $causali = self::chunkSplit($documento['note'], 200);
+        foreach ($causali as $causale) {
+            $result[] = ['Causale' => $causale];
+        }
 
         $righe = $fattura->getRighe();
 
@@ -899,7 +914,9 @@ class FatturaElettronica
         $result = [];
 
         // Righe del documento
-        $iva_descrizioni = $righe->first()->aliquota;
+        $iva_descrizioni = $righe->first(function ($item, $key) {
+            return $item->aliquota != null;
+        })->aliquota;
         foreach ($righe as $numero => $riga) {
             $dettaglio = [
                 'NumeroLinea' => $numero + 1,
@@ -1004,7 +1021,7 @@ class FatturaElettronica
 
         // Riepiloghi per IVA per percentuale
         $riepiloghi_percentuale = $righe->filter(function ($item, $key) {
-            return $item->aliquota->codice_natura_fe == null;
+            return $item->aliquota != null && $item->aliquota->codice_natura_fe == null;
         })->groupBy(function ($item, $key) {
             return $item->aliquota->percentuale;
         });
@@ -1040,7 +1057,7 @@ class FatturaElettronica
 
         // Riepiloghi per IVA per natura
         $riepiloghi_natura = $righe->filter(function ($item, $key) {
-            return $item->aliquota->codice_natura_fe != null;
+            return $item->aliquota != null && $item->aliquota->codice_natura_fe != null;
         })->groupBy(function ($item, $key) {
             return $item->aliquota->codice_natura_fe;
         });

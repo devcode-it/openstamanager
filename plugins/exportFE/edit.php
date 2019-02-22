@@ -25,11 +25,12 @@ $iva = $database->fetchOne('SELECT * FROM `co_iva` WHERE `id` IN (SELECT idiva F
 $fields = [
     'codice_natura_fe' => 'Natura IVA',
 ];
-
-$missing = [];
-foreach ($fields as $key => $name) {
-    if (empty($iva[$key])) {
-        $missing[] = $name;
+if (!empty($iva)) {
+    $missing = [];
+    foreach ($fields as $key => $name) {
+        if (empty($iva[$key])) {
+            $missing[] = $name;
+        }
     }
 }
 

@@ -26,12 +26,12 @@ include_once __DIR__.'/../../core.php';
 
         if ($tipo_doc == 'Nota di credito') {
             $nota_credito = true;
-			$tipo_doc = 'nota di credito';
+            $tipo_doc = 'nota di credito';
         } elseif ($tipo_doc == 'Nota di debito') {
-			$tipo_doc = 'nota di debito';
-		} else {
-			$tipo_doc = 'fattura';
-		}
+            $tipo_doc = 'nota di debito';
+        } else {
+            $tipo_doc = 'fattura';
+        }
 
         $descrizione = tr('Pag. _DOC_ num. _NUM_ del _DATE_ (_NAME_)', [
             '_DOC_' => $tipo_doc,

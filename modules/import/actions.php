@@ -4,8 +4,11 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'import':
-        $first_row = !post('first_row');
-        $selected = post('fields');
+        $include_first_row = post('include_first_row');
+        $selected_fields = post('fields');
+        $page = post('page');
+
+        $limit = 500;
 
         // Pulizia dei campi inutilizzati
         foreach ($selected as $key => $value) {
@@ -16,46 +19,71 @@ switch (post('op')) {
 
         $fields = Import::getFields($id_record);
 
-        $csv = Import::getFile($id_record, $record['id'], [
-            'headers' => $first_row,
-        ]);
+        $csv = Import::getCSV($id_record, $record['id']);
 
-        // Gestione automatica dei valori convertiti
-        $csv = Filter::parse($csv);
+        $offset = isset($page) ? $page * $limit : 0;
 
-        // Interpretazione dei dati
-        $data = [];
-        foreach ($csv as $row) {
-            $data_row = [];
+        // Ignora la prima riga se composta da header
+        if ($offset == 0 && empty($include_first_row)) {
+            ++$offset;
+        }
 
+        $csv = $csv->setOffset($offset)
+                    ->setLimit($limit);
+
+        // Chiavi per la lettura CSV
+        $keys = [];
+        foreach ($selected_fields as $id => $field_id) {
+            if (is_numeric($field_id)) {
+                $value = $fields[$field_id]['field'];
+            } else {
+                $value = -($id + 1);
+            }
+
+            $keys[] = $value;
+        }
+
+        // Query dei campi selezionati
+        $queries = [];
+        foreach ($fields as $key => $field) {
+            if (!empty($field['query'])) {
+                $queries[$field['field']] = $field['query'];
+            }
+        }
+
+        // Lettura dei record
+        $rows = $csv->fetchAssoc($keys, function ($row) use ($queries, $dbo) {
             foreach ($row as $key => $value) {
-                $field = $fields[$selected[$key]];
+                if (is_int($key)) {
+                    unset($row[$key]);
+                } elseif (isset($queries[$key])) {
+                    $query = str_replace('|value|', prepare($value), $queries[$key]);
 
-                if (isset($selected[$key])) {
-                    $name = $field['field'];
+                    $value = $dbo->fetchOne($query)['result'];
 
-                    $query = $field['query'];
-                    if (!empty($query)) {
-                        $query = str_replace('|value|', prepare($value), $query);
-
-                        $value = $dbo->fetchArray($query)[0]['result'];
-                    }
-
-                    $data_row[$name] = $value;
+                    $row[$key] = $value;
                 }
             }
 
-            $data[] = $data_row;
-        }
+            return $row;
+        });
+
+        // Gestione automatica dei valori convertiti
+        $rows = iterator_to_array($rows);
+        $data = Filter::parse($rows);
 
         $primary_key = post('primary_key');
 
         // Richiamo delle operazioni specifiche
         include $imports[$id_record]['import'];
 
-        flash()->info(tr('Importazione completata: _COUNT_  righe processate', [
-            '_COUNT_' => count($csv),
-        ]));
+        $count = count($rows);
+        $more = $count == $limit;
+
+        echo json_encode([
+            'more' => $more,
+            'count' => $count,
+        ]);
 
         break;
 }

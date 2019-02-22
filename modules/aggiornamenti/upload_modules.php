@@ -50,7 +50,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
             $table = 'zz_modules';
 
             $installed = Modules::get($info['name']);
-            $insert['parent'] = Modules::get($info['parent']);
+            $insert['parent'] = Modules::get($info['parent'])['id'];
             $insert['icon'] = $info['icon'];
         }
 

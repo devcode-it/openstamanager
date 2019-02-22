@@ -23,10 +23,12 @@ class AJAX
      * @param string $resource
      * @param array  $elements
      * @param mixed  $search
+     * @param int    $page
+     * @param int    $length
      *
      * @return array
      */
-    public static function select($resource, $elements = [], $search = null)
+    public static function select($resource, $elements = [], $search = null, $page = 0, $length = 100)
     {
         if (!isset($elements)) {
             $elements = [];
@@ -39,13 +41,23 @@ class AJAX
         array_unshift($files, DOCROOT.'/ajax_select.php');
 
         foreach ($files as $file) {
-            $results = self::getSelectResults($file, $resource, $elements, $search);
+            $results = self::getSelectResults($file, $resource, $elements, [
+                'offset' => $page * $length,
+                'length' => $length,
+            ], $search);
+
             if (isset($results)) {
                 break;
             }
         }
 
-        return $results;
+        $total = $results['recordsFiltered'] ?: count($results);
+        $list = $results['results'] ? $results['results'] : $results;
+
+        return [
+            'results' => $list,
+            'recordsFiltered' => $total,
+        ];
     }
 
     /**
@@ -55,11 +67,12 @@ class AJAX
      * @param array  $where
      * @param array  $filter
      * @param array  $search
+     * @param array  $limit
      * @param array  $custom
      *
      * @return array
      */
-    public static function completeResults($query, $where, $filter = [], $search = [], $custom = [])
+    public static function selectResults($query, $where, $filter = [], $search = [], $limit = [], $custom = [])
     {
         if (str_contains($query, '|filter|')) {
             $query = str_replace('|filter|', !empty($filter) ? 'WHERE '.implode(' OR ', $filter) : '', $query);
@@ -72,21 +85,25 @@ class AJAX
         }
 
         $query = str_replace('|where|', !empty($where) ? 'WHERE '.implode(' AND ', $where) : '', $query);
+        $query .= ' LIMIT '.$limit['offset'].', '.$limit['length'];
 
-        $database = database();
-        $rs = $database->fetchArray($query);
+        $data = \Util\Query::executeAndCount($query);
+        $rows = $data['results'];
 
         $results = [];
-        foreach ($rs as $r) {
+        foreach ($rows as $row) {
             $result = [];
             foreach ($custom as $key => $value) {
-                $result[$key] = $r[$value];
+                $result[$key] = $row[$value];
             }
 
             $results[] = $result;
         }
 
-        return $results;
+        return [
+            'results' => $results,
+            'recordsFiltered' => $data['count'],
+        ];
     }
 
     /**
@@ -196,11 +213,12 @@ class AJAX
      * @param string $file
      * @param string $resource
      * @param array  $elements
+     * @param array  $limit
      * @param mixed  $search
      *
      * @return array|null
      */
-    protected static function getSelectResults($file, $resource, $elements = [], $search = null)
+    protected static function getSelectResults($file, $resource, $elements = [], $limit = [], $search = null)
     {
         $superselect = self::getSelectInfo();
 
@@ -219,7 +237,7 @@ class AJAX
         require $file;
 
         if (!isset($results) && !empty($query)) {
-            $results = self::completeResults($query, $where, $filter, $search_fields, $custom);
+            $results = self::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
         }
 
         return isset($results) ? $results : null;

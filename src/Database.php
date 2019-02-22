@@ -442,7 +442,7 @@ class Database extends Util\Singleton
         // Valori da ottenere
         $select = [];
         foreach ((array) $array as $key => $value) {
-            $select[] = $value.(is_numeric($key) ? '' : ' AS '.$this->quote($key));
+            $select[] = $value.(is_numeric($key) ? '' : ' AS '.$key);
         }
         $select = !empty($select) ? $select : ['*'];
 
@@ -650,21 +650,5 @@ class Database extends Util\Singleton
         }
 
         return true;
-    }
-
-    /**
-     * Prepara il campo per l'inserimento in uno statement SQL.
-     *
-     * @since 2.3
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    protected function quote($string)
-    {
-        $char = '`';
-
-        return $char.str_replace([$char, '#'], '', $string).$char;
     }
 }

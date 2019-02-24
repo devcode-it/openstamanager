@@ -589,7 +589,7 @@ class FatturaElettronica
         return $result;
     }
 
-    protected function chunkSplit($str, $chunklen)
+    protected static function chunkSplit($str, $chunklen)
     {
         $res = [];
         $k = ceil(strlen($str) / $chunklen);

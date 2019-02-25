@@ -37,7 +37,7 @@ if ($file->isFatturaElettronica()) {
 
 	// XSL
 	$xsl = new DOMDocument();
-	$xsl->load(DOCROOT.'/plugins/xml/asso-invoice.xsl');
+	$xsl->load($stylesheet);
 	
 	// XSLT
 	$xslt = new XSLTProcessor();

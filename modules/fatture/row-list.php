@@ -39,14 +39,8 @@ foreach ($righe as $row) {
 
     $extra = '';
 
-    $ref_modulo = null;
-    $ref_id = null;
-
     // Articoli
     if ($row->isArticolo()) {
-        $ref_modulo = Modules::get('Articoli')['id'];
-        $ref_id = $riga['idarticolo'];
-
         $riga['descrizione'] = (!empty($row->articolo) ? $row->articolo->codice.' - ' : '').$riga['descrizione'];
 
         $delete = 'unlink_articolo';
@@ -56,9 +50,6 @@ foreach ($righe as $row) {
     }
     // Intervento
     elseif (!empty($riga['idintervento'])) {
-        //$ref_modulo = Modules::get('Interventi')['id'];
-        //$ref_id = $riga['idintervento'];
-
         $intervento = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM in_interventi WHERE id = '.prepare($riga['idintervento']));
         $riga['num_item'] = $intervento['num_item'];
         $riga['codice_cig'] = $intervento['codice_cig'];
@@ -69,9 +60,6 @@ foreach ($righe as $row) {
     }
     // Preventivi
     elseif (!empty($riga['idpreventivo'])) {
-        //$ref_modulo = Modules::get('Preventivi')['id'];
-        //$ref_id = $riga['idpreventivo'];
-
         $preventivo = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_preventivi WHERE id = '.prepare($riga['idpreventivo']));
         $riga['num_item'] = $preventivo['num_item'];
         $riga['codice_cig'] = $preventivo['codice_cig'];
@@ -82,9 +70,6 @@ foreach ($righe as $row) {
     }
     // Contratti
     elseif (!empty($riga['idcontratto'])) {
-        //$ref_modulo = Modules::get('Contratti')['id'];
-        //$ref_id = $riga['idcontratto'];
-
         $contratto = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($riga['idcontratto']));
         $riga['num_item'] = $contratto['num_item'];
         $riga['codice_cig'] = $contratto['codice_cig'];
@@ -124,7 +109,7 @@ foreach ($righe as $row) {
     echo '
     <tr data-id="'.$riga['id'].'" '.$extra.'>
         <td>
-            '.Modules::link($ref_modulo, $ref_id, $riga['descrizione']).'
+            '.Modules::link($row->isArticolo() ? Modules::get('Articoli')['id'] : null, $row->isArticolo() ? $riga['idarticolo'] : null, $riga['descrizione']).'
             <small class="pull-right text-muted">'.$extra_riga.'</small>';
 
     if (!empty($riga['abilita_serial'])) {

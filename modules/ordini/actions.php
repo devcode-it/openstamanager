@@ -360,29 +360,33 @@ switch (post('op')) {
         }
 
         $parziale = false;
-
-        $id_iva = post('id_iva');
-        $id_conto = post('id_conto');
         $righe = $preventivo->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($ordine, $qta);
-                $copia->idiva = $id_iva;
-                $copia->id_conto = $id_conto;
-
-                $copia->save();
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
                     $copia->movimenta($copia->qta);
                 }
+
+                $copia->save();
             }
 
             if ($riga->qta != $riga->qta_evasa) {
                 $parziale = true;
             }
+        }
+
+        // Aggiornamento sconto
+        if (post('evadere')[$preventivo->scontoGlobale->id] == 'on') {
+            $ordine->tipo_sconto_globale = $preventivo->tipo_sconto_globale;
+            $ordine->sconto_globale = $preventivo->tipo_sconto_globale == 'PRC' ? $preventivo->sconto_globale : $preventivo->sconto_globale;
+            $ordine->save();
+
+            $ordine->updateSconto();
         }
 
         ricalcola_costiagg_ordine($id_record);

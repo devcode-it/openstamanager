@@ -937,7 +937,7 @@ class FatturaElettronica
                 $tipo_codice = $database->fetchOne('SELECT `mg_categorie`.`nome` FROM `mg_categorie` INNER JOIN `mg_articoli` ON `mg_categorie`.`id` = `mg_articoli`.`id_categoria` WHERE `mg_articoli`.`id` = '.prepare($riga['idarticolo']))['nome'];
 
                 $codice_articolo = [
-                    'CodiceTipo' => ($tipo_codice) ?: 'OSM',
+                    'CodiceTipo' => ($tipo_codice) ?: 'COD',
                     'CodiceValore' => $riga->articolo->codice,
                 ];
 

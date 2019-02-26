@@ -2,131 +2,82 @@
 
 include_once __DIR__.'/core.php';
 
+use Util\Query;
+
 // Informazioni fondamentali
-$start = filter('start');
-$length = filter('length');
 $columns = filter('columns');
 $order = filter('order')[0];
 
 $order['column'] = $order['column'] - 1;
 array_shift($columns);
 
-$total = App::readQuery($structure);
+$total = Util\Query::readQuery($structure);
 
-// Lettura parametri modulo
-$result_query = $total['query'];
-
-// Predisposizione dela risposta
-$results = [];
-$results['data'] = [];
-$results['recordsTotal'] = 0;
-$results['recordsFiltered'] = 0;
-$results['summable'] = [];
-
-if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom') {
-    // Conteggio totale
-    $results['recordsTotal'] = $dbo->fetchNum($result_query);
-
-    // Filtri di ricerica
-    $search_filters = [];
-    for ($i = 0; $i < count($columns); ++$i) {
-        if (!empty($columns[$i]['search']['value'])) {
-            if (str_contains($total['search_inside'][$i], '|search|')) {
-                $pieces = explode(',', $columns[$i]['search']['value']);
-                foreach ($pieces as $piece) {
-                    $piece = trim($piece);
-                    $search_filters[] = str_replace('|search|', prepare('%'.$piece.'%'), $total['search_inside'][$i]);
-                }
-            } else {
-                // Per le icone cerco nel campo icon_title
-                if (preg_match('/^icon_(.+?)$/', $total['fields'][$i], $m)) {
-                    $total['search_inside'][$i] = '`icon_title_'.$m[1].'`';
-                }
-
-                // Per i colori cerco nel campo color_title
-                elseif (preg_match('/^color_(.+?)$/', $total['fields'][$i], $m)) {
-                    $total['search_inside'][$i] = '`color_title_'.$m[1].'`';
-                }
-
-                $search_filters[] = $total['search_inside'][$i].' LIKE '.prepare('%'.trim($columns[$i]['search']['value'].'%'));
-            }
-        }
+// Ricerca
+$search = [];
+for ($i = 0; $i < count($columns); ++$i) {
+    if (!empty($columns[$i]['search']['value'])) {
+        $search[$total['fields'][$i]] = $columns[$i]['search']['value'];
     }
+}
 
-    // Ricerca
-    if (!empty($search_filters)) {
-        $result_query = str_replace('2=2', '2=2 AND ('.implode(' AND ', $search_filters).') ', $result_query);
-    }
+$limit = [
+    'start' => filter('start'),
+    'length' => filter('length'),
+];
+
+// Predisposizione della risposta
+$results = [
+    'data' => [],
+    'recordsTotal' => 0,
+    'recordsFiltered' => 0,
+    'summable' => [],
+];
+
+$query = Query::getQuery($structure);
+if (!empty($query)) {
+    // CONTEGGIO TOTALE
+    $results['recordsTotal'] = $dbo->fetchNum($query);
+
+    // RISULTATI VISIBILI
+    $query = Query::getQuery($structure, $search, $order, $limit);
 
     // Filtri derivanti dai permessi (eventuali)
     if (empty($id_plugin)) {
-        $result_query = Modules::replaceAdditionals($id_module, $result_query);
+        $query = Modules::replaceAdditionals($id_module, $query);
     }
-
-    // Ordinamento dei risultati
-    if (isset($order['dir']) && isset($order['column'])) {
-        $pieces = explode('ORDER', $result_query);
-
-        $count = count($pieces);
-        if ($count > 1) {
-            unset($pieces[$count - 1]);
-        }
-
-        $result_query = implode('ORDER', $pieces).' ORDER BY '.$total['order_by'][$order['column']].' '.$order['dir'];
-    }
-
-    // Calcolo di eventuali somme
-    if (!empty($total['summable'])) {
-        $sum_query = str_replace_once('SELECT', 'SELECT '.implode(', ', $total['summable']).' FROM(SELECT ', $result_query).') AS `z`';
-        $sums = $dbo->fetchArray($sum_query)[0];
-        if (!empty($sums)) {
-            $r = [];
-            foreach ($sums as $key => $sum) {
-                if (str_contains($key, 'sum_')) {
-                    $r[str_replace('sum_', '', $key)] = Translator::numberToLocale($sum);
-                }
-            }
-            $results['summable'] = $r;
-        }
-    }
-
-    // Paginazione
-    if ($length > 0) {
-        $result_query .= ' LIMIT '.$start.', '.$length;
-    }
-
-    // Query effettiva
-    $query = str_replace_once('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $result_query);
-
-    $rs = $dbo->fetchArray($query);
 
     // Conteggio dei record filtrati
-    $count = $dbo->fetchArray('SELECT FOUND_ROWS()');
-    if (!empty($count)) {
-        $results['recordsFiltered'] = $count[0]['FOUND_ROWS()'];
+    $data = Query::executeAndCount($query);
+    $rows = $data['results'];
+    $results['recordsFiltered'] = $data['count'];
+
+    // SOMME
+    $results['summable'] = Util\Query::getSums($structure, $search);
+
+    // Allineamento delle righe
+    $align = [];
+    $row = $rows[0] ?: [];
+    foreach ($row as $field => $value) {
+        $value = trim($value);
+
+        // Allineamento a destra se il valore della prima riga risulta numerica
+        if (formatter()->isStandardNumber($value)) {
+            $align[$field] = 'text-right';
+        }
+
+        // Allineamento al centro se il valore della prima riga risulta relativo a date o icone
+        elseif (formatter()->isStandardDate($value) || preg_match('/^icon_(.+?)$/', $field)) {
+            $align[$field] = 'text-center';
+        }
     }
 
     // Creazione della tabella
-    $align = [];
-    foreach ($rs as $i => $r) {
-        if ($i == 0) {
-            foreach ($total['fields'] as $field) {
-                $value = trim($r[$field]);
+    foreach ($rows as $i => $r) {
+        $result = [
+            '<span class="hide" data-id="'.$r['id'].'"></span>', // Colonna ID
+        ];
 
-                // Allineamento a destra se il valore della prima riga risulta numerica
-                if (formatter()->isStandardNumber($value)) {
-                    $align[$field] = 'text-right';
-                }
-
-                // Allineamento al centro se il valore della prima riga risulta relativo a date o icone
-                elseif (formatter()->isStandardDate($value) || preg_match('/^icon_(.+?)$/', $field)) {
-                    $align[$field] = 'text-center';
-                }
-            }
-        }
-
-        $result = [];
-        $result[] = '<span class="hide" data-id="'.$r['id'].'"></span>';
         foreach ($total['fields'] as $pos => $field) {
             $column = [];
 
@@ -219,5 +170,5 @@ if (!empty($result_query) && $result_query != 'menu' && $result_query != 'custom
     }
 }
 
-$rows = json_encode($results);
-echo $rows;
+$json = json_encode($results);
+echo $json;

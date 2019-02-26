@@ -17,5 +17,5 @@ return [
     'numero' => empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'],
     'note' => $r['note'],
     'data' => Translator::dateToLocale($r['data']),
-	'logo_azienda' => !empty($logo_azienda) ? '<img src="'.$logo_azienda.'" />': '',
+    'logo_azienda' => !empty($logo_azienda) ? '<img src="'.$logo_azienda.'" />' : '',
 ];

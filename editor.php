@@ -12,33 +12,20 @@ if (empty($id_record) && !empty($id_module)) {
 
 include_once App::filepath('include|custom|', 'top.php');
 
-// Inclusione gli elementi fondamentali
-include_once $docroot.'/actions.php';
+Util\Query::setSegments(false);
+$query = Util\Query::getQuery($module, [
+    'id' => $id_record,
+]);
+Util\Query::setSegments(true);
 
-// Widget in alto
-echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top", "place": "editor" )}';
+$has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
 
-$advanced_sessions = setting('Attiva notifica di presenza utenti sul record');
-if (!empty($advanced_sessions)) {
-    $dbo->query('DELETE FROM zz_semaphores WHERE id_utente='.prepare(Auth::user()['id']).' AND posizione='.prepare($id_module.', '.$id_record));
-
-    $dbo->query('INSERT INTO zz_semaphores (id_utente, posizione, updated) VALUES ('.prepare(Auth::user()['id']).', '.prepare($id_module.', '.$id_record).', NOW())');
-
-    echo '
-		<div class="box box-warning box-solid text-center info-active hide">
-			<div class="box-header with-border">
-				<h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Attenzione!').'</h3>
-			</div>
-			<div class="box-body">
-				<p>'.tr('I seguenti utenti stanno visualizzando questa pagina').':</p>
-				<ul class="list">
-				</ul>
-				<p>'.tr('Prestare attenzione prima di effettuare modifiche, poichè queste potrebbero essere perse a causa di multipli salvataggi contemporanei').'.</p>
-			</div>
-		</div>';
+if ($has_access) {
+    // Inclusione gli elementi fondamentali
+    include_once $docroot.'/actions.php';
 }
 
-if (empty($record)) {
+if (empty($record) || !$has_access) {
     echo '
         <div class="text-center">
     		<h3 class="text-muted">'.
@@ -53,6 +40,29 @@ if (empty($record)) {
             </a>
         </div>';
 } else {
+    // Widget in alto
+    echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top", "place": "editor" )}';
+
+    $advanced_sessions = setting('Attiva notifica di presenza utenti sul record');
+    if (!empty($advanced_sessions)) {
+        $dbo->query('DELETE FROM zz_semaphores WHERE id_utente='.prepare(Auth::user()['id']).' AND posizione='.prepare($id_module.', '.$id_record));
+
+        $dbo->query('INSERT INTO zz_semaphores (id_utente, posizione, updated) VALUES ('.prepare(Auth::user()['id']).', '.prepare($id_module.', '.$id_record).', NOW())');
+
+        echo '
+		<div class="box box-warning box-solid text-center info-active hide">
+			<div class="box-header with-border">
+				<h3 class="box-title"><i class="fa fa-warning"></i> '.tr('Attenzione!').'</h3>
+			</div>
+			<div class="box-body">
+				<p>'.tr('I seguenti utenti stanno visualizzando questa pagina').':</p>
+				<ul class="list">
+				</ul>
+				<p>'.tr('Prestare attenzione prima di effettuare modifiche, poichè queste potrebbero essere perse a causa di multipli salvataggi contemporanei').'.</p>
+			</div>
+		</div>';
+    }
+
     echo '
 		<div class="nav-tabs-custom">
 			<ul class="nav nav-tabs pull-right" id="tabs" role="tablist">
@@ -382,7 +392,6 @@ if ($read_only || !empty($block_edit)) {
             };
 
 			 window.addEventListener("unload", function(e) {
-				 //console.log(e);
 				$("#main_loading").show();
 			});
 

@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 $module = Modules::get('Interventi');
 $id_module = $module['id'];
 
-$total = App::readQuery($module);
+$total = Util\Query::readQuery($module);
 
 // Lettura parametri modulo
 $module_query = $total['query'];

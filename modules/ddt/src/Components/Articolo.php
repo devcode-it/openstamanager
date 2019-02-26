@@ -11,6 +11,7 @@ class Articolo extends Article
     use RelationTrait;
 
     protected $table = 'dt_righe_ddt';
+    protected $serialRowID = 'ddt';
 
     /**
      * Crea un nuovo articolo collegato ad una ddt.

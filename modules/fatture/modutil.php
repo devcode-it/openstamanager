@@ -111,9 +111,8 @@ function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = 0)
 
     $fattura = Fattura::find($iddocumento);
 
-    $ricalcola = true;
     if ($fattura->isFE()) {
-        $ricalcola = $fattura->registraScadenzeFE($pagato);
+        $scadenze_fe = $fattura->registraScadenzeFE($pagato);
     }
 
     // Lettura data di emissione fattura
@@ -122,7 +121,7 @@ function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = 0)
     $data = $rs[0]['data'];
     $ritenutaacconto = $rs[0]['ritenutaacconto'];
 
-    if ($ricalcola) {
+    if (empty($scadenze_fe)) {
         $totale_da_pagare = 0.00;
 
         $totale_fattura = get_totale_fattura($iddocumento);
@@ -198,9 +197,9 @@ function aggiungi_scadenza($iddocumento, $pagamento = '', $pagato = 0)
             if ($pagato) {
                 $id_scadenza = $dbo->lastInsertedID();
                 $dbo->update('co_scadenziario', [
-                'pagato' => $da_pagare,
-                'data_pagamento' => $data,
-            ], ['id' => $id_scadenza]);
+                    'pagato' => $da_pagare,
+                    'data_pagamento' => $data,
+                ], ['id' => $id_scadenza]);
             }
         }
     }
@@ -394,7 +393,17 @@ function aggiungi_movimento($iddocumento, $dir, $primanota = 0)
         $numero = $rs[0]['numero'];
     }
 
-    $descrizione = $rs[0]['descrizione_tipodoc']." numero $numero";
+    // Abbreviazioni contabili dei movimenti
+    $tipodoc = '';
+    if ($rs[0]['descrizione_tipodoc'] == 'Nota di credito') {
+        $tipodoc = 'Nota di credito';
+    } elseif ($rs[0]['descrizione_tipodoc'] == 'Nota di debito') {
+        $tipodoc = 'Nota di debito';
+    } else {
+        $tipodoc = 'Fattura';
+    }
+
+    $descrizione = $tipodoc.' num. '.$numero;
 
     /*
         Il mastrino si apre con almeno 3 righe di solito (esempio fattura di vendita):

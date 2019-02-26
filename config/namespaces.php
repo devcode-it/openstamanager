@@ -5,6 +5,7 @@ return [
     'modules/anagrafiche' => 'Modules\Anagrafiche',
     'modules/articoli' => 'Modules\Articoli',
     'modules/ritenute' => 'Modules\Ritenute',
+    'modules/ritenute_contributi' => 'Modules\RitenuteContributi',
     'modules/rivalse' => 'Modules\Rivalse',
     'modules/iva' => 'Modules\Iva',
     'modules/ddt' => 'Modules\DDT',

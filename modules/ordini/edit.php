@@ -9,6 +9,8 @@ if ($module['name'] == 'Ordini cliente') {
     $dir = 'uscita';
 }
 
+$_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
+
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -104,7 +106,7 @@ if ($module['name'] == 'Ordini cliente') {
 	</div>
 
     <!-- Fatturazione Elettronica PA-->
-    <div class="panel panel-primary <?php echo ($dir == 'entrata' && $record['tipo_anagrafica'] == 'Ente pubblico' or ($record['tipo_anagrafica']) == 'Azienda') ? 'show' : 'hide'; ?>" >
+    <div class="panel panel-primary <?php echo ($record['tipo_anagrafica'] == 'Ente pubblico' || $record['tipo_anagrafica'] == 'Azienda') ? 'show' : 'hide'; ?>" >
         <div class="panel-heading">
             <h3 class="panel-title"><?php echo tr('Dati appalto'); ?></h3>
         </div>

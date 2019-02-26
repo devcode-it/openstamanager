@@ -4,53 +4,75 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.4.6 (2019-02-12)](#246-2019-02-12)
+- [2.4.7 (2019-02-21)](#247-2019-02-21)
   - [Aggiunto (Added)](#aggiunto-added)
   - [Modificato (Changed)](#modificato-changed)
   - [Fixed](#fixed)
-- [2.4.5 (2019-01-10)](#245-2019-01-10)
+- [2.4.6 (2019-02-12)](#246-2019-02-12)
   - [Aggiunto (Added)](#aggiunto-added-1)
   - [Modificato (Changed)](#modificato-changed-1)
   - [Fixed](#fixed-1)
-- [2.4.4 (2018-12-12)](#244-2018-12-12)
+- [2.4.5 (2019-01-10)](#245-2019-01-10)
   - [Aggiunto (Added)](#aggiunto-added-2)
+  - [Modificato (Changed)](#modificato-changed-2)
   - [Fixed](#fixed-2)
-- [2.4.3 (2018-12-07)](#243-2018-12-07)
+- [2.4.4 (2018-12-12)](#244-2018-12-12)
   - [Aggiunto (Added)](#aggiunto-added-3)
   - [Fixed](#fixed-3)
-- [2.4.2 (2018-11-14)](#242-2018-11-14)
+- [2.4.3 (2018-12-07)](#243-2018-12-07)
   - [Aggiunto (Added)](#aggiunto-added-4)
-  - [Modificato (Changed)](#modificato-changed-2)
+  - [Fixed](#fixed-4)
+- [2.4.2 (2018-11-14)](#242-2018-11-14)
+  - [Aggiunto (Added)](#aggiunto-added-5)
+  - [Modificato (Changed)](#modificato-changed-3)
   - [Deprecato (Deprecated)](#deprecato-deprecated)
   - [Rimosso (Removed)](#rimosso-removed)
   - [Sicurezza (Security)](#sicurezza-security)
 - [2.4.1 (2018-08-01)](#241-2018-08-01)
-  - [Aggiunto (Added)](#aggiunto-added-5)
-  - [Modificato (Changed)](#modificato-changed-3)
-  - [Fixed](#fixed-4)
-- [2.4 (2018-03-30)](#24-2018-03-30)
   - [Aggiunto (Added)](#aggiunto-added-6)
   - [Modificato (Changed)](#modificato-changed-4)
   - [Fixed](#fixed-5)
-- [2.3.1 (2018-02-19)](#231-2018-02-19)
+- [2.4 (2018-03-30)](#24-2018-03-30)
   - [Aggiunto (Added)](#aggiunto-added-7)
   - [Modificato (Changed)](#modificato-changed-5)
   - [Fixed](#fixed-6)
-- [2.3 (2018-02-16)](#23-2018-02-16)
+- [2.3.1 (2018-02-19)](#231-2018-02-19)
   - [Aggiunto (Added)](#aggiunto-added-8)
   - [Modificato (Changed)](#modificato-changed-6)
+  - [Fixed](#fixed-7)
+- [2.3 (2018-02-16)](#23-2018-02-16)
+  - [Aggiunto (Added)](#aggiunto-added-9)
+  - [Modificato (Changed)](#modificato-changed-7)
   - [Deprecato (Deprecated)](#deprecato-deprecated-1)
   - [Rimosso (Removed)](#rimosso-removed-1)
-  - [Fixed](#fixed-7)
+  - [Fixed](#fixed-8)
   - [Sicurezza (Security)](#sicurezza-security-1)
 - [2.2 (2016-11-10)](#22-2016-11-10)
-  - [Aggiunto (Added)](#aggiunto-added-9)
-  - [Fixed](#fixed-8)
-- [2.1 (2015-04-02)](#21-2015-04-02)
   - [Aggiunto (Added)](#aggiunto-added-10)
-  - [Modificato (Changed)](#modificato-changed-7)
   - [Fixed](#fixed-9)
+- [2.1 (2015-04-02)](#21-2015-04-02)
+  - [Aggiunto (Added)](#aggiunto-added-11)
+  - [Modificato (Changed)](#modificato-changed-8)
+  - [Fixed](#fixed-10)
 
+
+## 2.4.7 (2019-02-21)
+
+### Aggiunto (Added)
+
+ - Aggiunto possibilità per evitare i movimenti causati da Fatture Elettroniche importate
+ - Supporto delle fatture alle ritenute contributi
+ - Solleciti di pagamento nel modulo **Scadenzario**
+
+### Modificato (Changed)
+
+ - Miglioramento del sistema di importazione dei diversi documenti in fattura
+
+### Fixed
+
+ - Fix di diversi bug nella procedura di importazione XML
+ - Fix degli sconti nelle note di credito
+ - Risolti alcuni bug distribuiti
 
 ## 2.4.6 (2019-02-12)
 

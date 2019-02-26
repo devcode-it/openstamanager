@@ -48,18 +48,10 @@ switch (filter('op')) {
     case 'generate':
         $filename = post('filename');
 
-        //Processo il file ricevuto
-        $process_result = Interaction::processXML($filename);
-        if ($process_result != '') {
-            flash()->error($process_result);
-            redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
-            exit;
-        }
-
         $fattura_pa = new FatturaElettronica($filename);
 
         $id_record = $fattura_pa->saveFattura(post('pagamento'), post('id_segment'), post('id_tipo'));
-        $fattura_pa->saveRighe(post('articoli'), post('iva'), post('conto'));
+        $fattura_pa->saveRighe(post('articoli'), post('iva'), post('conto'), post('movimentazione'));
         $fattura_pa->getFattura()->updateSconto();
 
         $fattura_pa->saveAllegati();
@@ -71,10 +63,20 @@ switch (filter('op')) {
         ricalcola_costiagg_fattura($id_record, $idrivalsainps, $idritenutaacconto, $bollo);
         elimina_scadenza($id_record);
         elimina_movimento($id_record, 0);
-        aggiungi_scadenza($id_record, post('pagamento'));
+        aggiungi_scadenza($id_record);
         aggiungi_movimento($id_record, 'uscita');
 
         $fattura_pa->delete();
+
+        // Processo il file ricevuto
+        if (Interaction::isEnabled()) {
+            $process_result = Interaction::processXML($filename);
+            if ($process_result != '') {
+                flash()->error($process_result);
+                redirect(ROOTDIR.'/controller.php?id_module='.$id_module);
+                exit;
+            }
+        }
 
         redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
         break;

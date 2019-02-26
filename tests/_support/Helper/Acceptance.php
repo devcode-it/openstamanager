@@ -33,8 +33,12 @@ class Acceptance extends \Codeception\Module
     public function select2ajax($selector, $option, $timeout = null)
     {
         $select2 = $this->getModule('\Helper\Select2Ajax');
+        $t = $this->getAcceptanceModule();
 
-        $select2->selectOptionForSelect2($selector, $option, $timeout);
+        $select2->openSelect2($selector);
+        $t->wait(1);
+        $select2->selectByPosition($selector, $option, $timeout);
+        $select2->closeSelect2($selector);
     }
 
     public function seePageHasElement($element)

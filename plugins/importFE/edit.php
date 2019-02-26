@@ -31,7 +31,7 @@ echo '
                             launch_modal("'.tr('Righe fattura').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&op=list&filename=" + data.filename);
                         } else {
                             swal({
-                                title: "'.tr('Fattura già importata.').'",
+                                title: "'.tr('Fattura già importata').'.",
                                 type: "info",
                             });
 							
@@ -39,8 +39,8 @@ echo '
                         }
 						buttonRestore(btn, restore);
                     },
-                    error: function(data) {
-                        alert("'.tr('Errore').': " + data);
+                    error: function(xhr) {
+                        alert("'.tr('Errore').': " + xhr.responseJSON.error.message);
 
                         buttonRestore(btn, restore);
                     }

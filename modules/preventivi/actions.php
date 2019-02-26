@@ -63,6 +63,7 @@ switch (post('op')) {
             $idiva = post('idiva');
 
             $id_documento_fe = post('id_documento_fe');
+            $num_item = post('num_item');
             $codice_cig = post('codice_cig');
             $codice_cup = post('codice_cup');
 
@@ -84,6 +85,7 @@ switch (post('op')) {
                 ' tipo_sconto_globale='.prepare($tipo_sconto).','.
                 ' sconto_globale='.prepare($sconto).','.
                 ' id_documento_fe='.prepare($id_documento_fe).','.
+                ' num_item='.prepare($num_item).','.
                 ' codice_cig='.prepare($codice_cig).','.
                 ' codice_cup='.prepare($codice_cup).','.
                 ' validita='.prepare($validita).','.

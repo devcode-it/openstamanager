@@ -90,6 +90,7 @@ switch (post('op')) {
             'id_documento_fe' => post('id_documento_fe'),
             'codice_cup' => post('codice_cup'),
             'codice_cig' => post('codice_cig'),
+            'num_item' => post('num_item'),
         ], ['id' => $id_record]);
 
         if ($dbo->query($query)) {

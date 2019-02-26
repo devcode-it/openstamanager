@@ -116,6 +116,10 @@ if ($module['name'] == 'Ordini cliente') {
                 </div>
 
                 <div class="col-md-4">
+                    {[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                </div>
+
+                <div class="col-md-4">
                     {[ "type": "text", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "$codice_cig$", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
 

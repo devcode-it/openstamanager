@@ -143,10 +143,11 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 <?php
     // Visualizzo solo se l'anagrafica cliente è un ente pubblico
     if (!empty($record['idcontratto'])) {
-        $contratto = $dbo->fetchOne('SELECT codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($record['idcontratto']));
+        $contratto = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($record['idcontratto']));
         $record['id_documento_fe'] = $contratto['id_documento_fe'];
         $record['codice_cup'] = $contratto['codice_cup'];
         $record['codice_cig'] = $contratto['codice_cig'];
+        $record['num_item'] = $contratto['num_item'];
     }
 
     ?>
@@ -166,6 +167,10 @@ $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
             <div class="row">
                 <div class="col-md-4">
 					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "value": "<?php echo $record['id_documento_fe']; ?>", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
+				</div>
+
+                <div class="col-md-4">
+					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "<?php echo $record['num_item']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
 				</div>
 
                 <div class="col-md-4">

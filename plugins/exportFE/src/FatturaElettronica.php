@@ -707,11 +707,15 @@ class FatturaElettronica
         // Valorizzare l’importo complessivo lordo della fattura (onnicomprensivo di Iva, bollo, contributi previdenziali, ecc…)
         $result['ImportoTotaleDocumento'] = abs($documento->totale);
 		
-		// Causale (2.1.1.11)
+		// Arrotondamento - Eventuale arrotondamento sul totale documento (ammette anche il segno negativo) (2.1.1.10)
+		
+		// Causale - Descrizione della causale del documento (2.1.1.11)
 		$causali = self::chunkSplit($documento['note'], 200);
         foreach ($causali as $causale) {
             $result[] = ['Causale' => $causale];
         }
+		
+		// Art73 - Ciò consente al cedente/prestatore l'emissione nello stesso anno di più documenti aventi stesso numero (2.1.1.12)
 
         return $result;
     }
@@ -1027,7 +1031,8 @@ class FatturaElettronica
             return $item->aliquota->percentuale;
         });
         foreach ($riepiloghi_percentuale as $riepilogo) {
-            $totale = round($riepilogo->sum('imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
+			//(imponibile-sconto) + rivalsa inps
+            $totale = round(($riepilogo->sum('imponibile')-$riepilogo->sum('sconto')) + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
 
             $dati = $riepilogo->first()->aliquota;
@@ -1063,7 +1068,8 @@ class FatturaElettronica
             return $item->aliquota->codice_natura_fe;
         });
         foreach ($riepiloghi_natura as $riepilogo) {
-            $totale = round($riepilogo->sum('imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
+			//(imponibile-sconto) + rivalsa inps
+            $totale = round(($riepilogo->sum('imponibile')-$riepilogo->sum('sconto')) + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
 
             $dati = $riepilogo->first()->aliquota;

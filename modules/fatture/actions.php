@@ -720,7 +720,7 @@ switch (post('op')) {
             $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
         }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
-        $id_conto = post('id_conto');
+        $id_conto = get('id_conto');
 
         $parziale = false;
         $righe = $ddt->getRighe();
@@ -729,11 +729,11 @@ switch (post('op')) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($fattura, $qta);
-                $copia->idconto = $id_conto;
+                $copia->id_conto = $id_conto;
 
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
-                $copia->idritenutaacconto = $id_ritenuta_acconto;
-                $copia->idrivalsainps = $id_rivalsa_inps;
+                $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
+                $copia->id_rivalsa_inps = $id_rivalsa_inps;
 
                 $copia->save();
 
@@ -799,9 +799,9 @@ switch (post('op')) {
                 $copia->idiva = $id_iva;
                 $copia->idconto = $id_conto;
 
-                $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_accontocalcolo_ritenuta_acconto;
-                $copia->idritenuta = $id_ritenuta_acconto;
-                $copia->idrivalsainps = $id_rivalsa_inps;
+                $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
+                $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
+                $copia->id_rivalsa_inps = $id_rivalsa_inps;
 
                 $copia->save();
 
@@ -860,8 +860,8 @@ switch (post('op')) {
             $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
         }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
-        $id_conto = post('id_conto');
-        $id_iva = post('id_iva');
+        $id_conto = get('id_conto');
+        $id_iva = get('id_iva');
 
         $parziale = false;
         $righe = $contratto->getRighe();
@@ -870,12 +870,12 @@ switch (post('op')) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($fattura, $qta);
-                $copia->idiva = $id_iva;
-                $copia->idconto = $id_conto;
+                $copia->id_iva = $id_iva;
+                $copia->id_conto = $id_conto;
 
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
-                $copia->idritenutaacconto = $id_ritenuta_acconto;
-                $copia->idrivalsainps = $id_rivalsa_inps;
+                $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
+                $copia->id_rivalsa_inps = $id_rivalsa_inps;
 
                 $copia->save();
 

@@ -361,15 +361,15 @@ switch (post('op')) {
 
         $parziale = false;
 
-        $id_iva = get('id_iva');
-        $id_conto = get('id_conto');
+        $id_iva = post('id_iva');
+        $id_conto = post('id_conto');
         $righe = $preventivo->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($ordine, $qta);
-                $copia->id_iva = $id_iva;
+                $copia->idiva = $id_iva;
                 $copia->id_conto = $id_conto;
 
                 $copia->save();

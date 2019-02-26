@@ -786,8 +786,8 @@ switch (post('op')) {
             $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
         }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
-        $id_conto = get('id_conto');
-        $id_iva = get('id_iva');
+        $id_conto = post('id_conto');
+        $id_iva = post('id_iva');
 
         $parziale = false;
         $righe = $preventivo->getRighe();
@@ -796,8 +796,8 @@ switch (post('op')) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($fattura, $qta);
-                $copia->id_iva = $id_iva;
-                $copia->id_conto = $id_conto;
+                $copia->idiva = $id_iva;
+                $copia->idconto = $id_conto;
 
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
                 $copia->id_ritenuta_acconto = $id_ritenuta_acconto;

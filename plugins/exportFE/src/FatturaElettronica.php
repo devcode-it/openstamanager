@@ -617,11 +617,6 @@ class FatturaElettronica
             'Numero' => $documento['numero_esterno'],
         ];
 
-        $causali = self::chunkSplit($documento['note'], 200);
-        foreach ($causali as $causale) {
-            $result[] = ['Causale' => $causale];
-        }
-
         $righe = $fattura->getRighe();
 
         // Ritenuta d'Acconto
@@ -711,6 +706,12 @@ class FatturaElettronica
         // Importo Totale Documento (2.1.1.9)
         // Valorizzare l’importo complessivo lordo della fattura (onnicomprensivo di Iva, bollo, contributi previdenziali, ecc…)
         $result['ImportoTotaleDocumento'] = abs($documento->totale);
+		
+		// Causale (2.1.1.11)
+		$causali = self::chunkSplit($documento['note'], 200);
+        foreach ($causali as $causale) {
+            $result[] = ['Causale' => $causale];
+        }
 
         return $result;
     }

@@ -198,8 +198,10 @@ switch (post('op')) {
 
         break;
 
+		
     // Aggiunta di un ordine in ddt
     case 'add_ordine':
+	
         $ordine = \Modules\Ordini\Ordine::find(post('id_ordine'));
 
         // Creazione della fattura al volo
@@ -215,8 +217,8 @@ switch (post('op')) {
 
         $parziale = false;
 
-        $id_iva = get('id_iva');
-        $id_conto = get('id_conto');
+        //$id_iva = post('id_iva');
+        //$id_conto = post('id_conto');
         $righe = $ordine->getRighe();
 
         foreach ($righe as $riga) {
@@ -224,8 +226,7 @@ switch (post('op')) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($ddt, $qta);
-                $copia->id_conto = $id_conto;
-
+        		
                 $copia->save();
 
                 // Aggiornamento seriali dalla riga dell'ordine
@@ -256,7 +257,8 @@ switch (post('op')) {
         ]));
 
         break;
-
+	
+	
     // Scollegamento articolo da ddt
     case 'unlink_articolo':
         $idriga = post('idriga');
@@ -472,7 +474,7 @@ switch (post('op')) {
             break;
 
     // aggiungi righe da ordine
-    case 'add_ordine':
+    /*case 'add_ordine':
         $idordine = post('iddocumento');
 
         // Lettura di tutte le righe della tabella in arrivo
@@ -535,6 +537,7 @@ switch (post('op')) {
         flash()->info(tr('Aggiunti nuovi articoli in ddt!'));
 
         break;
+		*/
 }
 
 // Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase

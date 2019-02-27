@@ -8,7 +8,7 @@ if (isset($id_record)) {
     include __DIR__.'/init.php';
 }
 
-?><form action="editor.php?id_module=$id_module$<?php
+?><form action="controller.php?id_module=$id_module$<?php
 if (isset($id_record)) {
     echo '&id_record='.$id_record;
 }

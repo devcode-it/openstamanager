@@ -8,9 +8,13 @@ if (isset($id_record)) {
     include __DIR__.'/init.php';
 }
 
-?><form action="<?php echo ROOTDIR; ?>/controller.php?id_module=$id_module$<?php
-if (isset($id_record)) {
-    echo '&id_record='.$id_record;
+?><form action="<?php
+if (isset($id_original)) {
+    echo ROOTDIR.'/editor.php?id_module='.$id_module;
+
+    if (isset($id_record)) {
+        echo '&id_record='.$id_record;
+    }
 }
 ?>" method="post" id="add-form">
 	<input type="hidden" name="backto" value="record-edit">

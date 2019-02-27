@@ -10,19 +10,7 @@ if (isset($id_record)) {
 
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="backto" value="record-edit">
-
-<?php
-if (!isset($id_original)) {
-    ?>
 	<input type="hidden" name="op" value="add">
-<?php
-} else {
-        ?>
-	<input type="hidden" name="op" value="row">
-	<input type="hidden" name="id_original" value="<?php echo $id_original; ?>">
-<?php
-    }
-?>
 
 	<div class="row">
         <div class="col-md-8">
@@ -43,17 +31,7 @@ if (!isset($id_original)) {
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-	<?php
-if (isset($id_record)) {
-    ?>
-			<button type="submit" class="btn btn-success"><i class="fa fa-save"></i> <?php echo tr('Salva'); ?></button>
-<?php
-} else {
-        ?>
 			<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
-<?php
-    }
-?>
 		</div>
 	</div>
 </form>

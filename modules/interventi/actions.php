@@ -74,6 +74,7 @@ switch (post('op')) {
             $idtipointervento = post('idtipointervento');
             $idstatointervento = post('idstatointervento');
             $data_richiesta = post('data_richiesta');
+            $data_scadenza = post('data_scadenza');
 
             $anagrafica = Anagrafica::find($idanagrafica);
             $tipo = TipoSessione::find($idtipointervento);
@@ -104,6 +105,7 @@ switch (post('op')) {
             $intervento->id_preventivo = post('idpreventivo');
             $intervento->id_contratto = post('idcontratto');
             $intervento->richiesta = $richiesta;
+            $intervento->data_scadenza = $data_scadenza;
 
             $intervento->save();
 

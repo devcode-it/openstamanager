@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../core.php';
-
 if (Auth::check()) {
     echo '
                     </div><!-- /.row -->
@@ -52,4 +50,4 @@ if (Auth::check()) {
     }
 }
 
-include App::filepath('include/layout|custom|', 'footer.php');
+include App::filepath('resources\views|custom|\layout', 'footer.php');

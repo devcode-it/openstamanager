@@ -11,7 +11,7 @@ if (file_exists('config.inc.php') && $valid_config && $dbo->isConnected()) {
 
 $pageTitle = tr('Configurazione');
 
-include_once App::filepath('include/layout|custom|', 'header.php');
+include_once App::filepath('resources\views|custom|\layout', 'header.php');
 
 // Controllo sull'esistenza di nuovi parametri di configurazione
 if (post('db_host') !== null) {
@@ -427,6 +427,6 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
         </div>';
 }
 
-include_once App::filepath('include/layout|custom|', 'footer.php');
+include_once App::filepath('resources\views|custom|\layout', 'footer.php');
 
 exit();

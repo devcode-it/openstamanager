@@ -10,7 +10,7 @@ if (empty($id_record) && !empty($id_module)) {
     redirect(ROOTDIR.'/index.php');
 }
 
-include_once App::filepath('include|custom|', 'top.php');
+include_once App::filepath('resources\views|custom|\layout', 'top.php');
 
 Util\Query::setSegments(false);
 $query = Util\Query::getQuery($module, [
@@ -426,4 +426,4 @@ if (!empty($advanced_sessions)) {
 	    </script>
 <?php
 
-include_once App::filepath('include|custom|', 'bottom.php');
+include_once App::filepath('resources\views|custom|\layout', 'bottom.php');

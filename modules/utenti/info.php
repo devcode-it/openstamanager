@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 
 $pageTitle = tr('Utente');
 
-include_once App::filepath('include|custom|', 'top.php');
+include_once App::filepath('resources\views|custom|\layout', 'top.php');
 
 if (post('op') == 'change_pwd') {
     include_once __DIR__.'/actions.php';
@@ -108,4 +108,4 @@ echo '
 
 </div>';
 
-include_once App::filepath('include|custom|', 'bottom.php');
+include_once App::filepath('resources\views|custom|\layout', 'bottom.php');

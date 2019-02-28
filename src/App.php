@@ -238,7 +238,7 @@ class App
         $id_module = $module['id'];
         $id_record = filter('id_record');
 
-        $directory = empty($directory) ? 'include|custom|/common/' : $directory;
+        $directory = empty($directory) ? 'resources\views|custom|\layout/common/' : $directory;
 
         ob_start();
         include self::filepath($directory, $file);

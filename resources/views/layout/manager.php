@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../core.php';
-
 // Compatibilità per controller ed editor
 if (!empty($id_plugin)) {
     $structure = Plugins::get($id_plugin);

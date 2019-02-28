@@ -8,7 +8,7 @@ if (!empty($id_record) && !empty($id_module)) {
     redirect(ROOTDIR.'/index.php');
 }
 
-include_once App::filepath('include|custom|', 'top.php');
+include_once App::filepath('resources\views|custom|\layout', 'top.php');
 
 // Inclusione gli elementi fondamentali
 include_once $docroot.'/actions.php';
@@ -81,4 +81,4 @@ redirectOperation($id_module, isset($id_parent) ? $id_parent : $id_record);
 // Widget in basso
 echo '{( "name": "widgets", "id_module": "'.$id_module.'", "position": "right", "place": "controller" )}';
 
-include_once App::filepath('include|custom|', 'bottom.php');
+include_once App::filepath('resources\views|custom|\layout', 'bottom.php');

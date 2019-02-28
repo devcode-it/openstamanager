@@ -10,8 +10,8 @@ use Modules\Aggiornamenti\Aggiornamento;
 $pageTitle = '';
 
 $body_class = 'hold-transition login-page';
-include App::filepath('include/layout|custom|', 'header.php');
-include App::filepath('include/layout|custom|', 'messages.php');
+include App::filepath('resources\views|custom|\layout', 'header.php');
+include App::filepath('resources\views|custom|\layout', 'messages.php');
 
 echo '
 <div class="box box-center-large box-warning nav nav-tabs">
@@ -182,6 +182,6 @@ echo '
         }, function(){});
     }
 </script>';
-include App::filepath('include/layout|custom|', 'footer.php');
+include App::filepath('resources\views|custom|\layout', 'footer.php');
 
 exit();

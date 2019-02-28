@@ -4,7 +4,7 @@ include_once __DIR__.'/core.php';
 
 $pageTitle = tr('Log');
 
-include_once App::filepath('include|custom|', 'top.php');
+include_once App::filepath('resources\views|custom|\layout', 'top.php');
 
 echo '
     <div class="box">
@@ -77,4 +77,4 @@ echo '
     </div>
     <!-- /.box -->';
 
-include_once App::filepath('include|custom|', 'bottom.php');
+include_once App::filepath('resources\views|custom|\layout', 'bottom.php');

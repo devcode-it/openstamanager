@@ -73,7 +73,7 @@ if (filter('op') == 'send') {
 
 $pageTitle = tr('Bug');
 
-include_once App::filepath('include|custom|', 'top.php');
+include_once App::filepath('resources\views|custom|\layout', 'top.php');
 
 if (empty($mail['from_address']) || empty($mail['server'])) {
     echo '
@@ -183,4 +183,4 @@ echo '
 
 <script type="text/javascript" charset="utf-8" src="'.App::getPaths()['js'].'/ckeditor/ckeditor.js'.'"></script>';
 
-include_once App::filepath('include|custom|', 'bottom.php');
+include_once App::filepath('resources\views|custom|\layout', 'bottom.php');

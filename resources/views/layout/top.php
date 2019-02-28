@@ -1,8 +1,6 @@
 <?php
 
-include_once __DIR__.'/../core.php';
-
-include App::filepath('include/layout|custom|', 'header.php');
+include App::filepath('resources\views|custom|\layout', 'header.php');
 
 $paths = App::getPaths();
 $user = Auth::user();
@@ -229,4 +227,4 @@ if (Auth::check()) {
     include_once App::filepath('include/custom/extra', 'login.php');
 }
 
-include_once App::filepath('include/layout|custom|', 'messages.php');
+include_once App::filepath('resources\views|custom|\layout', 'messages.php');

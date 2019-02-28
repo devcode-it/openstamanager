@@ -6,9 +6,8 @@ switch (filter('op')) {
     case 'update':
         $descrizione = filter('descrizione');
         $percentuale = filter('percentuale');
-		$percentuale_imponibile = filter('percentuale_imponibile');
+        $percentuale_imponibile = filter('percentuale_imponibile');
 
-		
         if (isset($descrizione) && isset($percentuale) && isset($percentuale_imponibile)) {
             if ($dbo->fetchNum('SELECT * FROM `co_ritenuta_contributi` WHERE `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
                 $dbo->query('UPDATE `co_ritenuta_contributi` SET `descrizione`='.prepare($descrizione).', `percentuale`='.prepare($percentuale).', `percentuale_imponibile`='.prepare($percentuale_imponibile).' WHERE `id`='.prepare($id_record));

@@ -89,6 +89,7 @@ switch (post('op')) {
                 'ritenutaacconto' => 0,
                 'iva_rivalsainps' => 0,
                 'codice_stato_fe' => post('codice_stato_fe') ?: null,
+                'id_ritenuta_contributi' => post('id_ritenuta_contributi') ?: null,
             ], $data), ['id' => $id_record]);
 
             $query = 'SELECT descrizione FROM co_statidocumento WHERE id='.prepare($id_stato);
@@ -247,8 +248,18 @@ switch (post('op')) {
         break;
 
     case 'addintervento':
-        if (!empty($id_record) && post('idintervento') !== null) {
-            aggiungi_intervento_in_fattura(post('idintervento'), $id_record, post('descrizione'), post('idiva'), post('idconto'), post('id_rivalsa_inps'), post('id_ritenuta_acconto'), post('calcolo_ritenuta_acconto'));
+        $id_intervento = post('idintervento');
+        if (!empty($id_record) && $id_intervento !== null) {
+            $copia_descrizione = post('copia_descrizione');
+            $intervento = $dbo->fetchOne('SELECT descrizione FROM in_interventi WHERE id = '.prepare($id_intervento));
+            if (!empty($copia_descrizione) && !empty($intervento['descrizione'])) {
+                $riga = Descrizione::build($fattura);
+                $riga->descrizione = $intervento['descrizione'];
+                $riga->idintervento = $id_intervento;
+                $riga->save();
+            }
+
+            aggiungi_intervento_in_fattura($id_intervento, $id_record, post('descrizione'), post('idiva'), post('idconto'), post('id_rivalsa_inps'), post('id_ritenuta_acconto'), post('calcolo_ritenuta_acconto'));
 
             flash()->info(tr('Intervento _NUM_ aggiunto!', [
                 '_NUM_' => $idintervento,
@@ -277,12 +288,10 @@ switch (post('op')) {
 
         $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
         $articolo->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
-
+        $articolo->ritenuta_contributi = post('ritenuta_contributi');
         $articolo->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
-        if (post('prezzo_acquisto')) {
-            $riga->prezzo_unitario_acquisto = post('prezzo_acquisto', true);
-        }
+        $articolo->prezzo_unitario_acquisto = post('prezzo_acquisto', true) ?: 0;
         $articolo->prezzo_unitario_vendita = post('prezzo', true);
         $articolo->sconto_unitario = post('sconto', true);
         $articolo->tipo_sconto = post('tipo_sconto');
@@ -328,12 +337,10 @@ switch (post('op')) {
 
         $riga->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
         $riga->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
-
+        $riga->ritenuta_contributi = post('ritenuta_contributi');
         $riga->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
-        if (post('prezzo_acquisto')) {
-            $riga->prezzo_unitario_acquisto = post('prezzo_acquisto', true);
-        }
+        $riga->prezzo_unitario_acquisto = post('prezzo_acquisto', true) ?: 0;
         $riga->prezzo_unitario_vendita = post('prezzo', true);
         $riga->sconto_unitario = post('sconto', true);
         $riga->tipo_sconto = post('tipo_sconto');
@@ -630,7 +637,7 @@ switch (post('op')) {
             $descrizione = ($dir == 'entrata') ? 'Fattura immediata di vendita' : 'Fattura immediata di acquisto';
             $tipo = Tipo::where('descrizione', $descrizione)->first();
 
-            $fattura = Fattura::build($ordine->anagrafica, $tipo, date('Y-m-d'), post('id_segment'));
+            $fattura = Fattura::build($ordine->anagrafica, $tipo, post('data'), post('id_segment'));
             $fattura->idpagamento = $ordine->idpagamento;
             $fattura->save();
 
@@ -638,9 +645,13 @@ switch (post('op')) {
         }
 
         $id_rivalsa_inps = setting('Percentuale rivalsa');
-        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : setting("Percentuale ritenuta d'acconto");
+        if ($dir == 'uscita') {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_acquisti;
+        } else {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
+        }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
-        $id_conto = get('id_conto');
+        $id_conto = post('id_conto');
 
         $parziale = false;
         $righe = $ordine->getRighe();
@@ -663,11 +674,22 @@ switch (post('op')) {
 
                     $copia->serials = $serials;
                 }
+
+                $copia->save();
             }
 
             if ($riga->qta != $riga->qta_evasa) {
                 $parziale = true;
             }
+        }
+
+        // Aggiornamento sconto
+        if (post('evadere')[$ordine->scontoGlobale->id] == 'on') {
+            $fattura->tipo_sconto_globale = $ordine->tipo_sconto_globale;
+            $fattura->sconto_globale = $ordine->tipo_sconto_globale == 'PRC' ? $ordine->sconto_globale : $ordine->sconto_globale;
+            $fattura->save();
+
+            $fattura->updateSconto();
         }
 
         // Impostazione del nuovo stato
@@ -693,7 +715,7 @@ switch (post('op')) {
             $descrizione = ($dir == 'entrata') ? 'Fattura differita di vendita' : 'Fattura differita di acquisto';
             $tipo = Tipo::where('descrizione', $descrizione)->first();
 
-            $fattura = Fattura::build($ddt->anagrafica, $tipo, date('Y-m-d'), post('id_segment'));
+            $fattura = Fattura::build($ddt->anagrafica, $tipo, post('data'), post('id_segment'));
             $fattura->idpagamento = $ddt->idpagamento;
             $fattura->save();
 
@@ -701,9 +723,13 @@ switch (post('op')) {
         }
 
         $id_rivalsa_inps = setting('Percentuale rivalsa');
-        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : setting("Percentuale ritenuta d'acconto");
+        if ($dir == 'uscita') {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_acquisti;
+        } else {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
+        }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
-        $id_conto = get('id_conto');
+        $id_conto = post('id_conto');
 
         $parziale = false;
         $righe = $ddt->getRighe();
@@ -724,11 +750,22 @@ switch (post('op')) {
 
                     $copia->serials = $serials;
                 }
+
+                $copia->save();
             }
 
             if ($riga->qta != $riga->qta_evasa) {
                 $parziale = true;
             }
+        }
+
+        // Aggiornamento sconto
+        if (post('evadere')[$ddt->scontoGlobale->id] == 'on') {
+            $fattura->tipo_sconto_globale = $ddt->tipo_sconto_globale;
+            $fattura->sconto_globale = $ddt->tipo_sconto_globale == 'PRC' ? $ddt->sconto_globale : $ddt->sconto_globale;
+            $fattura->save();
+
+            $fattura->updateSconto();
         }
 
         // Impostazione del nuovo stato
@@ -753,7 +790,7 @@ switch (post('op')) {
         if (post('create_document') == 'on') {
             $tipo = Tipo::where('descrizione', 'Fattura immediata di vendita')->first();
 
-            $fattura = Fattura::build($preventivo->anagrafica, $tipo, date('Y-m-d'), post('id_segment'));
+            $fattura = Fattura::build($preventivo->anagrafica, $tipo, post('data'), post('id_segment'));
             $fattura->idpagamento = $preventivo->idpagamento;
             $fattura->save();
 
@@ -761,10 +798,13 @@ switch (post('op')) {
         }
 
         $id_rivalsa_inps = setting('Percentuale rivalsa');
-        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : setting("Percentuale ritenuta d'acconto");
+        if ($dir == 'uscita') {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_acquisti;
+        } else {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
+        }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
-        $id_conto = get('id_conto');
-        $id_iva = get('id_iva');
+        $id_conto = post('id_conto');
 
         $parziale = false;
         $righe = $preventivo->getRighe();
@@ -773,7 +813,6 @@ switch (post('op')) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($fattura, $qta);
-                $copia->id_iva = $id_iva;
                 $copia->id_conto = $id_conto;
 
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
@@ -784,11 +823,22 @@ switch (post('op')) {
                 if ($copia->isArticolo()) {
                     $copia->movimenta($copia->qta);
                 }
+
+                $copia->save();
             }
 
             if ($riga->qta != $riga->qta_evasa) {
                 $parziale = true;
             }
+        }
+
+        // Aggiornamento sconto
+        if (post('evadere')[$preventivo->scontoGlobale->id] == 'on') {
+            $fattura->tipo_sconto_globale = $preventivo->tipo_sconto_globale;
+            $fattura->sconto_globale = $preventivo->tipo_sconto_globale == 'PRC' ? $preventivo->sconto_globale : $preventivo->sconto_globale;
+            $fattura->save();
+
+            $fattura->updateSconto();
         }
 
         // Impostazione del nuovo stato
@@ -821,7 +871,7 @@ switch (post('op')) {
         if (post('create_document') == 'on') {
             $tipo = Tipo::where('descrizione', 'Fattura immediata di vendita')->first();
 
-            $fattura = Fattura::build($contratto->anagrafica, $tipo, date('Y-m-d'), post('id_segment'));
+            $fattura = Fattura::build($contratto->anagrafica, $tipo, post('data'), post('id_segment'));
             $fattura->idpagamento = $contratto->idpagamento;
             $fattura->save();
 
@@ -829,10 +879,13 @@ switch (post('op')) {
         }
 
         $id_rivalsa_inps = setting('Percentuale rivalsa');
-        $id_ritenuta_acconto = ($dir == 'uscita') ? $fattura->anagrafica->id_ritenuta_acconto_acquisti : setting("Percentuale ritenuta d'acconto");
+        if ($dir == 'uscita') {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_acquisti;
+        } else {
+            $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
+        }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
-        $id_conto = get('id_conto');
-        $id_iva = get('id_iva');
+        $id_conto = post('id_conto');
 
         $parziale = false;
         $righe = $contratto->getRighe();
@@ -841,7 +894,6 @@ switch (post('op')) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($fattura, $qta);
-                $copia->id_iva = $id_iva;
                 $copia->id_conto = $id_conto;
 
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
@@ -852,11 +904,22 @@ switch (post('op')) {
                 if ($copia->isArticolo()) {
                     $copia->movimenta($copia->qta);
                 }
+
+                $copia->save();
             }
 
             if ($riga->qta != $riga->qta_evasa) {
                 $parziale = true;
             }
+        }
+
+        // Aggiornamento sconto
+        if (post('evadere')[$contratto->scontoGlobale->id] == 'on') {
+            $fattura->tipo_sconto_globale = $contratto->tipo_sconto_globale;
+            $fattura->sconto_globale = $contratto->tipo_sconto_globale == 'PRC' ? $contratto->sconto_globale : $contratto->sconto_globale;
+            $fattura->save();
+
+            $fattura->updateSconto();
         }
 
         // Impostazione del nuovo stato
@@ -914,6 +977,8 @@ switch (post('op')) {
                     $copia->serials = $serials;
                     $riga->removeSerials($serials);
                 }
+
+                $copia->save();
             }
         }
 

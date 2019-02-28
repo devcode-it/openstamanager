@@ -2,6 +2,8 @@
 
 include_once __DIR__.'/core.php';
 
+use Util\Query;
+
 // Informazioni fondamentali
 $columns = filter('columns');
 $order = filter('order')[0];
@@ -32,27 +34,23 @@ $results = [
     'summable' => [],
 ];
 
-$query = Util\Query::getQuery($structure);
+$query = Query::getQuery($structure);
 if (!empty($query)) {
     // CONTEGGIO TOTALE
     $results['recordsTotal'] = $dbo->fetchNum($query);
 
     // RISULTATI VISIBILI
-    $query = Util\Query::getQuery($structure, $search, $order, $limit);
+    $query = Query::getQuery($structure, $search, $order, $limit);
 
     // Filtri derivanti dai permessi (eventuali)
     if (empty($id_plugin)) {
         $query = Modules::replaceAdditionals($id_module, $query);
     }
 
-    $query = str_replace_once('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $query);
-    $rows = $dbo->fetchArray($query);
-
     // Conteggio dei record filtrati
-    $count = $dbo->fetchArray('SELECT FOUND_ROWS()');
-    if (!empty($count)) {
-        $results['recordsFiltered'] = $count[0]['FOUND_ROWS()'];
-    }
+    $data = Query::executeAndCount($query);
+    $rows = $data['results'];
+    $results['recordsFiltered'] = $data['count'];
 
     // SOMME
     $results['summable'] = Util\Query::getSums($structure, $search);

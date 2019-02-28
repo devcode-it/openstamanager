@@ -102,7 +102,7 @@ switch ($resource) {
                 $search_fields[] = 'provincia LIKE '.prepare('%'.$search.'%');
             }
 
-            $results = AJAX::completeResults($query, $where, $filter, $search, $custom);
+            $results = AJAX::selectResults($query, $where, $filter, $search, $limit, $custom);
 
             // Evidenzia l'agente di default
             if ($superselect['idanagrafica']) {

@@ -5,8 +5,6 @@ namespace Common\Components;
 use Common\Document;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Iva\Aliquota;
-use Modules\Ritenute\RitenutaAcconto;
-use Modules\Rivalse\RivalsaINPS;
 
 abstract class Row extends Description
 {
@@ -49,23 +47,13 @@ abstract class Row extends Description
     }
 
     /**
-     * Restituisce il totale (imponibile + iva + rivalsa_inps + iva_rivalsainps) dell'elemento.
+     * Restituisce il totale (imponibile + iva) dell'elemento.
      *
      * @return float
      */
     public function getTotaleAttribute()
     {
-        return $this->imponibile_scontato + $this->iva + $this->rivalsa_inps + $this->iva_rivalsa_inps;
-    }
-
-    /**
-     * Restituisce il netto a pagare (totale - ritenuta_acconto) dell'elemento.
-     *
-     * @return float
-     */
-    public function getNettoAttribute()
-    {
-        return $this->totale - $this->ritenuta_acconto;
+        return $this->imponibile_scontato + $this->iva;
     }
 
     /**
@@ -89,27 +77,6 @@ abstract class Row extends Description
     }
 
     // Attributi della componente
-
-    public function getRivalsaINPSAttribute()
-    {
-        return $this->imponibile_scontato / 100 * $this->rivalsa->percentuale;
-    }
-
-    public function getIvaRivalsaINPSAttribute()
-    {
-        return $this->rivalsa_inps / 100 * $this->aliquota->percentuale;
-    }
-
-    public function getRitenutaAccontoAttribute()
-    {
-        $result = $this->imponibile_scontato;
-
-        if ($this->calcolo_ritenuta_acconto == 'IMP+RIV') {
-            $result += $this->rivalsainps;
-        }
-
-        return $result / 100 * $this->ritenuta->percentuale;
-    }
 
     public function getIvaIndetraibileAttribute()
     {
@@ -144,28 +111,6 @@ abstract class Row extends Description
             'tipo' => $this->tipo_sconto,
             'qta' => $this->qta,
         ]);
-    }
-
-    /**
-     * Imposta l'identificatore della Rivalsa INPS.
-     *
-     * @param int $value
-     */
-    public function setIdRivalsaINPSAttribute($value)
-    {
-        $this->attributes['idrivalsainps'] = $value;
-        $this->load('rivalsa');
-    }
-
-    /**
-     * Imposta l'identificatore della Ritenuta d'Acconto.
-     *
-     * @param int $value
-     */
-    public function setIdRitenutaAccontoAttribute($value)
-    {
-        $this->attributes['idritenutaacconto'] = $value;
-        $this->load('ritenuta');
     }
 
     /**
@@ -215,8 +160,6 @@ abstract class Row extends Description
         $this->fixSconto();
 
         $this->fixIva();
-        $this->fixRitenutaAcconto();
-        $this->fixRivalsaINPS();
 
         return parent::save($options);
     }
@@ -224,16 +167,6 @@ abstract class Row extends Description
     public function aliquota()
     {
         return $this->belongsTo(Aliquota::class, 'idiva');
-    }
-
-    public function rivalsa()
-    {
-        return $this->belongsTo(RivalsaINPS::class, 'idrivalsainps');
-    }
-
-    public function ritenuta()
-    {
-        return $this->belongsTo(RitenutaAcconto::class, 'idritenutaacconto');
     }
 
     protected static function boot($bypass = false)
@@ -253,22 +186,6 @@ abstract class Row extends Description
     protected function fixSubtotale()
     {
         $this->attributes['subtotale'] = $this->imponibile;
-    }
-
-    /**
-     * Effettua i conti per la Rivalsa INPS.
-     */
-    protected function fixRivalsaINPS()
-    {
-        $this->attributes['rivalsainps'] = $this->rivalsa_inps;
-    }
-
-    /**
-     * Effettua i conti per la Ritenuta d'Acconto, basandosi sul valore del campo calcolo_ritenuta_acconto.
-     */
-    protected function fixRitenutaAcconto()
-    {
-        $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
     }
 
     /**

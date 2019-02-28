@@ -79,18 +79,18 @@ Cerchiamo di essere disponibili quanto possibile, ma non sempre riusciamo a risp
 
 Il progetto presenta, a partire dalla versione 2.4.2, un insieme di test per facilitare il controllo sul corretto funzionamento del gestionale.
 
-Per eseguire i test è necessario seguire le seguenti istruzioni (https://codeception.com/docs/modules/WebDriver):
-- Scaricare (Selenium Server)[https://docs.seleniumhq.org/download/] e salvarlo come `selenium-server-standalone.jar` nella cartella principale
-- Scaricare (ChromeDriver)[https://sites.google.com/a/chromium.org/chromedriver/getting-started], rendendolo eseguibile da riga di comando (su Windows, aggiungerlo al PATH)
-- Configurare localmente Codeception nel file `codeception.yml` con l'URL del web server locale
+E' innanzitutto necessario configurare correttamente l'ambiente locale per l'esecuzione dei test:
+- Impostare l'URL del web server locale nel file `codeception.yml` per Codeception
 ```yml
 modules:
     config:
         WebDriver:
             url: http://localhost/openstamanager
 ```
-- Eseguire su shell differenti i seguenti comandi:
+- Scaricare (ChromeDriver)[https://sites.google.com/a/chromium.org/chromedriver/getting-started], rendendolo eseguibile da riga di comando (su Windows, aggiungerlo al PATH)
+
+E' quindi possibile eseguire i tests avviando dapprima il server ChromeDriver e poi Codeception in shell differenti:
 ```bash
-npm run tests-server    # Avvia i server per i test di funzionamento grafico
-npm run tests-OSM       # Avvia i test
+chromedriver --url-base=/wd/hub
+php codecept.phar run --steps
 ```

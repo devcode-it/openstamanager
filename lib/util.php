@@ -77,30 +77,6 @@ if (!function_exists('ends_with')) {
     }
 }
 
-if (!function_exists('str_replace_once')) {
-    /**
-     * Sostituisce la prima occorenza di una determinata stringa.
-     *
-     * @param string $str_pattern
-     * @param string $str_replacement
-     * @param string $string
-     *
-     * @since 2.3
-     *
-     * @return string
-     */
-    function str_replace_once($str_pattern, $str_replacement, $string)
-    {
-        if (strpos($string, $str_pattern) !== false) {
-            $occurrence = strpos($string, $str_pattern);
-
-            return substr_replace($string, $str_replacement, strpos($string, $str_pattern), strlen($str_pattern));
-        }
-
-        return $string;
-    }
-}
-
 if (!function_exists('str_contains')) {
     /**
      * Check if a string contains the given string.

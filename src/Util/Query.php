@@ -181,6 +181,23 @@ class Query
         return $query;
     }
 
+    public static function executeAndCount($query)
+    {
+        $database = database();
+
+        // Esecuzione della query
+        $query = self::str_replace_once('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $query);
+        $results = $database->fetchArray($query);
+
+        // Conteggio dei record filtrati
+        $count = $database->fetchOne('SELECT FOUND_ROWS() AS count');
+
+        return [
+            'results' => $results,
+            'count' => $count['count'],
+        ];
+    }
+
     /**
      * Restituisce le somme richieste dalla query prevista dalla struttura.
      *
@@ -202,7 +219,7 @@ class Query
 
         $result_query = self::getQuery($structure, $search);
 
-        $query = str_replace_once('SELECT', 'SELECT '.implode(', ', $total['summable']).' FROM(SELECT ', $result_query).') AS `z`';
+        $query = self::str_replace_once('SELECT', 'SELECT '.implode(', ', $total['summable']).' FROM(SELECT ', $result_query).') AS `z`';
         $sums = database()->fetchOne($query);
 
         $results = [];
@@ -215,6 +232,28 @@ class Query
         }
 
         return $results;
+    }
+
+    /**
+     * Sostituisce la prima occorenza di una determinata stringa.
+     *
+     * @param string $str_pattern
+     * @param string $str_replacement
+     * @param string $string
+     *
+     * @since 2.3
+     *
+     * @return string
+     */
+    protected static function str_replace_once($str_pattern, $str_replacement, $string)
+    {
+        if (strpos($string, $str_pattern) !== false) {
+            $occurrence = strpos($string, $str_pattern);
+
+            return substr_replace($string, $str_replacement, strpos($string, $str_pattern), strlen($str_pattern));
+        }
+
+        return $string;
     }
 
     /**

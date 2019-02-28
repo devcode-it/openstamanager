@@ -29,8 +29,13 @@ class MessageHandler extends AbstractProcessingHandler
             }
         }
 
-        flash()->error($message);
+        // Messaggio nella sessione
+        try {
+            flash()->error($message);
+        } catch (\Exception $e) {
+        }
 
+        // Messaggio visivo immediato
         echo '
     <div class="alert alert-danger push">
         <i class="fa fa-times"></i> '.$message.'

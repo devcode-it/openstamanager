@@ -45,8 +45,8 @@ echo '
 
                 count = data.length;
                 buttonRestore(btn, restore);
-                
-                if( count == 0 ){
+
+                if(count == 0){
                     swal({
                         title: "'.tr('Non ci sono ricevute da importare').'",
                         showCancelButton: false,
@@ -91,7 +91,6 @@ echo '
 
                 var html = "'.tr('Sono state elaborate le seguenti ricevute:').'";
 
-                console.log(data);
                 data.forEach(function(element) {
                     var text = "";
                     if(element.fattura) {

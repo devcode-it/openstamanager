@@ -11,7 +11,7 @@ trait PathTrait
      *
      * @return string
      */
-    public function getPath()
+    public function getPathAttribute()
     {
         return $this->main_folder.'/'.$this->directory;
     }
@@ -19,21 +19,25 @@ trait PathTrait
     /**
      * Restituisce il percorso completo per il file indicato della struttura.
      *
-     * @return string
+     * @param $file
+     *
+     * @return string|null
      */
     public function filepath($file)
     {
-        return App::filepath($this->getPath().'|custom|', $file);
+        return App::filepath($this->path.'|custom|', $file);
     }
 
     /**
      * Restituisce l'URL completa per il file indicato della struttura.
      *
-     * @return string
+     * @param $file
+     *
+     * @return string|null
      */
     public function fileurl($file)
     {
-        $filepath = App::filepath($this->getPath().'|custom|', $file);
+        $filepath = App::filepath($this->path.'|custom|', $file);
 
         $result = str_replace(DOCROOT, ROOTDIR, $filepath);
         $result = str_replace('\\', '/', $result);

@@ -108,6 +108,15 @@ for ($i = 0; $i < count($rs); ++$i) {
 $totale_da_pagare = sum(array_column($rs, 'da_pagare'));
 $totale_pagato = sum(array_column($rs, 'pagato'));
 
+if ($totale_da_pagare == $totale_pagato) {
+    echo '
+<script>
+$(document).ready(function(){
+    $("#pulsanti").children().find("a:nth-child(2)").attr("disabled", true).addClass("disabled");
+})
+</script>';
+}
+
 echo '
                         <tr>
                             <td align="right"><b>'.tr('Totale').'</b></td>
@@ -137,6 +146,7 @@ echo '
 	<div class="clearfix"></div>
 </form>
 
+{( "name": "log_email", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <script>
 	$(document).ready( function(){

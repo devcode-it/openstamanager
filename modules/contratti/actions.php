@@ -60,6 +60,7 @@ switch (post('op')) {
             $costo_diritto_chiamata = post('costo_diritto_chiamata');
 
             $id_documento_fe = post('id_documento_fe');
+            $num_item = post('num_item');
             $codice_cig = post('codice_cig');
             $codice_cup = post('codice_cup');
 
@@ -81,6 +82,7 @@ switch (post('op')) {
 				giorni_preavviso_rinnovo='.prepare($giorni_preavviso_rinnovo).',
 				esclusioni='.prepare($esclusioni).', descrizione='.prepare($descrizione).',
 				id_documento_fe='.prepare($id_documento_fe).',
+				num_item='.prepare($num_item).',
 				codice_cig='.prepare($codice_cig).',
 				codice_cup='.prepare($codice_cup).' WHERE id='.prepare($id_record);
 

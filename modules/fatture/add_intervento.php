@@ -46,7 +46,7 @@ $rs = $dbo->fetchArray('SELECT
         AND in_interventi.id_preventivo IS NULL
         AND NOT in_interventi.id IN (SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL)');
 foreach ($rs as $key => $value) {
-    $rs[$key]['prezzo'] = get_costi_intervento($value['id'])['totale'];
+    $rs[$key]['prezzo'] = Translator::numberToLocale(get_costi_intervento($value['id'])['totale']);
 }
 
 // Intervento

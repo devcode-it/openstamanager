@@ -20,18 +20,4 @@ trait RelationTrait
     {
         return $this->parent();
     }
-
-    /**
-     * Effettua i conti per la Rivalsa INPS.
-     */
-    protected function fixRivalsaINPS()
-    {
-    }
-
-    /**
-     * Effettua i conti per la Ritenuta d'Acconto, basandosi sul valore del campo calcolo_ritenuta_acconto.
-     */
-    protected function fixRitenutaAcconto()
-    {
-    }
 }

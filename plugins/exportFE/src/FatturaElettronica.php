@@ -8,6 +8,7 @@ use Modules;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Fatture\Fattura;
 use Prints;
+use Translator;
 use UnexpectedValueException;
 use Uploads;
 
@@ -101,8 +102,7 @@ class FatturaElettronica
     public function getRighe()
     {
         if (empty($this->righe)) {
-            //AND is_descrizione = 0
-            $this->righe = database()->fetchArray('SELECT * FROM `co_righe_documenti` WHERE `sconto_globale` = 0  AND `iddocumento` = '.prepare($this->getDocumento()['id']));
+            $this->righe = $this->getDocumento()->getRighe();
         }
 
         return $this->righe;
@@ -119,13 +119,13 @@ class FatturaElettronica
             $documento = $this->getDocumento();
             $database = database();
 
-            $contratti = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `co_contratti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idcontratto` = `co_contratti`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+            $contratti = $database->fetchArray('SELECT `id_documento_fe`, `num_item`, `codice_cig`, `codice_cup` FROM `co_contratti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idcontratto` = `co_contratti`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
-            $preventivi = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `co_preventivi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idpreventivo` = `co_preventivi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+            $preventivi = $database->fetchArray('SELECT `id_documento_fe`, `num_item`, `codice_cig`, `codice_cup` FROM `co_preventivi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idpreventivo` = `co_preventivi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
-            $interventi = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `in_interventi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idintervento` = `in_interventi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+            $interventi = $database->fetchArray('SELECT `id_documento_fe`, `num_item`, `codice_cig`, `codice_cup` FROM `in_interventi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idintervento` = `in_interventi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
-            $this->contratti = array_merge($contratti, $preventivi, $interventi, $ordini);
+            $this->contratti = array_merge($contratti, $preventivi, $interventi);
         }
 
         return $this->contratti;
@@ -142,7 +142,7 @@ class FatturaElettronica
             $documento = $this->getDocumento();
             $database = database();
 
-            $ordini = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `or_ordini` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idordine` = `or_ordini`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+            $ordini = $database->fetchArray('SELECT `id_documento_fe`, `num_item`, `codice_cig`, `codice_cup` FROM `or_ordini` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idordine` = `or_ordini`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
             $this->ordini = $ordini;
         }
@@ -172,7 +172,7 @@ class FatturaElettronica
     /**
      * Restituisce le informazioni relative al documento.
      *
-     * @return array
+     * @return Fattura
      */
     public function getDocumento()
     {
@@ -474,7 +474,7 @@ class FatturaElettronica
     {
         $result = [
             'Indirizzo' => $anagrafica['indirizzo'],
-            'CAP' => $anagrafica['cap'],
+            'CAP' => ($anagrafica->nazione->iso2 == 'IT') ? $anagrafica['cap'] : '00000',
             'Comune' => $anagrafica['citta'],
         ];
 
@@ -589,6 +589,17 @@ class FatturaElettronica
         return $result;
     }
 
+    protected static function chunkSplit($str, $chunklen)
+    {
+        $res = [];
+        $k = ceil(strlen($str) / $chunklen);
+        for ($i = 0; $i < $k; ++$i) {
+            $res[] = substr($str, $i * $chunklen, $chunklen);
+        }
+
+        return $res;
+    }
+
     /**
      * Restituisce l'array responsabile per la generazione del tag DatiGeneraliDocumento.
      *
@@ -604,7 +615,6 @@ class FatturaElettronica
             'Divisa' => 'EUR',
             'Data' => $documento['data'],
             'Numero' => $documento['numero_esterno'],
-            // TODO: 'Causale' => $documento['causale'],
         ];
 
         $righe = $fattura->getRighe();
@@ -697,6 +707,16 @@ class FatturaElettronica
         // Valorizzare l’importo complessivo lordo della fattura (onnicomprensivo di Iva, bollo, contributi previdenziali, ecc…)
         $result['ImportoTotaleDocumento'] = abs($documento->totale);
 
+        // Arrotondamento - Eventuale arrotondamento sul totale documento (ammette anche il segno negativo) (2.1.1.10)
+
+        // Causale - Descrizione della causale del documento (2.1.1.11)
+        $causali = self::chunkSplit($documento['note'], 200);
+        foreach ($causali as $causale) {
+            $result[] = ['Causale' => $causale];
+        }
+
+        // Art73 - Ciò consente al cedente/prestatore l'emissione nello stesso anno di più documenti aventi stesso numero (2.1.1.12)
+
         return $result;
     }
 
@@ -757,6 +777,10 @@ class FatturaElettronica
                 ];
             }
 
+            if (!empty($element['num_item'])) {
+                $dati['NumItem'] = $element['num_item'];
+            }
+
             if (!empty($element['codice_cig'])) {
                 $dati['CodiceCIG'] = $element['codice_cig'];
             }
@@ -786,6 +810,10 @@ class FatturaElettronica
                 $dati = [
                     'IdDocumento' => $element['id_documento_fe'],
                 ];
+            }
+
+            if (!empty($element['num_item'])) {
+                $dati['NumItem'] = $element['num_item'];
             }
 
             if (!empty($element['codice_cig'])) {
@@ -882,37 +910,27 @@ class FatturaElettronica
     /**
      * Restituisce l'array responsabile per la generazione del tag DatiBeniServizi.
      *
+     * @param $fattura
+     *
+     * @throws \Exception
+     *
      * @return array
      */
     protected static function getDatiBeniServizi($fattura)
     {
         $documento = $fattura->getDocumento();
+        $ritenuta_contributi = $documento->ritenutaContributi;
+        $righe = $documento->getRighe();
 
         $database = database();
 
         $result = [];
 
         // Righe del documento
-        $righe_documento = $fattura->getRighe();
-        foreach ($righe_documento as $numero => $riga) {
-            $riga['subtotale'] = abs($riga['subtotale']);
-            $riga['qta'] = abs($riga['qta']);
-            $riga['sconto'] = abs($riga['sconto']);
-
-            // Fix per righe di tipo descrizione, copio idiva dalla prima riga del documento che non è di tipo descrizione, riportando di conseguenza eventuali % e/o nature
-            if (!empty($riga['is_descrizione'])) {
-                $riga['idiva'] = $database->fetchOne('SELECT `idiva` FROM `co_righe_documenti` WHERE `is_descrizione` = 0 AND `iddocumento` = '.prepare($documento['id']))['idiva'];
-            }
-
-            // Fix per qta, deve sempre essere impostata almeno a 1
-            $riga['qta'] = !empty($riga['qta']) ? $riga['qta'] : 1;
-
-            $prezzo_unitario = $riga['subtotale'] / $riga['qta'];
-            $prezzo_totale = $riga['subtotale'] - $riga['sconto'];
-
-            $iva = $database->fetchOne('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($riga['idiva']));
-            $percentuale = floatval($iva['percentuale']);
-
+        $iva_descrizioni = $righe->first(function ($item, $key) {
+            return $item->aliquota != null;
+        })->aliquota;
+        foreach ($righe as $numero => $riga) {
             $dettaglio = [
                 'NumeroLinea' => $numero + 1,
             ];
@@ -922,13 +940,13 @@ class FatturaElettronica
                 $dettaglio['TipoCessionePrestazione'] = $riga['tipo_cessione_prestazione'];
             }
 
-            //2.2.1.3
-            if (!empty($riga['idarticolo'])) {
+            // 2.2.1.3
+            if ($riga->isArticolo()) {
                 $tipo_codice = $database->fetchOne('SELECT `mg_categorie`.`nome` FROM `mg_categorie` INNER JOIN `mg_articoli` ON `mg_categorie`.`id` = `mg_articoli`.`id_categoria` WHERE `mg_articoli`.`id` = '.prepare($riga['idarticolo']))['nome'];
 
                 $codice_articolo = [
-                    'CodiceTipo' => ($tipo_codice) ?: 'OSM',
-                    'CodiceValore' => $database->fetchOne('SELECT `codice` FROM `mg_articoli` WHERE `id` = '.prepare($riga['idarticolo']))['codice'],
+                    'CodiceTipo' => ($tipo_codice) ?: 'COD',
+                    'CodiceValore' => $riga->articolo->codice,
                 ];
 
                 $dettaglio['CodiceArticolo'] = $codice_articolo;
@@ -938,15 +956,17 @@ class FatturaElettronica
             // $descrizione = html_entity_decode($riga['descrizione'], ENT_HTML5, 'UTF-8');
             $descrizione = str_replace('&gt;', ' ', $riga['descrizione']);
             $descrizione = str_replace('…', '...', $descrizione);
+            $descrizione = str_replace('’', ' ', $descrizione);
 
-            $dettaglio['Descrizione'] = str_replace('’', ' ', $descrizione);
-
-            $ref = doc_references($riga, 'entrata', ['iddocumento']);
+            $ref = doc_references($riga->toArray(), 'entrata', ['iddocumento']);
             if (!empty($ref)) {
-                $dettaglio['Descrizione'] .= "\n".$ref['description'];
+                $descrizione .= "\n".$ref['description'];
             }
 
-            $dettaglio['Quantita'] = $riga['qta'];
+            $dettaglio['Descrizione'] = $descrizione;
+
+            $qta = abs($riga->qta) ?: 1;
+            $dettaglio['Quantita'] = $qta;
 
             if (!empty($riga['um'])) {
                 $dettaglio['UnitaMisura'] = $riga['um'];
@@ -959,36 +979,38 @@ class FatturaElettronica
                 $dettaglio['DataFinePeriodo'] = $riga['data_fine_periodo'];
             }
 
-            $dettaglio['PrezzoUnitario'] = $prezzo_unitario;
+            $dettaglio['PrezzoUnitario'] = abs($riga->prezzo_unitario_vendita);
 
             // Sconto (2.2.1.10)
-            $riga['sconto_unitario'] = floatval($riga['sconto_unitario']);
-            if (!empty($riga['sconto_unitario'])) {
+            $sconto = abs($riga->sconto);
+            $sconto_unitario = abs($riga->sconto_unitario);
+            if (!empty($sconto_unitario)) {
                 $sconto = [
-                    'Tipo' => $riga['sconto_unitario'] > 0 ? 'SC' : 'MG',
+                    'Tipo' => $riga->sconto_unitario > 0 ? 'SC' : 'MG',
                 ];
 
                 if ($riga['tipo_sconto'] == 'PRC') {
-                    $sconto['Percentuale'] = $riga['sconto_unitario'];
+                    $sconto['Percentuale'] = $sconto_unitario;
                 } else {
-                    $sconto['Importo'] = $riga['sconto_unitario'];
+                    $sconto['Importo'] = $sconto_unitario;
                 }
 
                 $dettaglio['ScontoMaggiorazione'] = $sconto;
             }
 
-            $dettaglio['PrezzoTotale'] = $prezzo_totale;
+            $aliquota = $riga->aliquota ?: $iva_descrizioni;
+            $percentuale = floatval($aliquota->percentuale);
+
+            $dettaglio['PrezzoTotale'] = abs($riga->imponibile_scontato);
             $dettaglio['AliquotaIVA'] = $percentuale;
 
-            if (!empty($riga['idritenutaacconto']) and empty($riga['is_descrizione'])) {
+            if (!empty($riga['idritenutaacconto']) && empty($riga['is_descrizione'])) {
                 $dettaglio['Ritenuta'] = 'SI';
             }
 
-            if (empty($percentuale)) {
-                //Controllo aggiuntivo codice_natura_fe per evitare che venga riportato il tag vuoto
-                if (!empty($iva['codice_natura_fe'])) {
-                    $dettaglio['Natura'] = $iva['codice_natura_fe'];
-                }
+            // Controllo aggiuntivo codice_natura_fe per evitare che venga riportato il tag vuoto
+            if (empty($percentuale) && !empty($aliquota['codice_natura_fe'])) {
+                $dettaglio['Natura'] = $aliquota['codice_natura_fe'];
             }
 
             if (!empty($riga['riferimento_amministrazione'])) {
@@ -997,16 +1019,12 @@ class FatturaElettronica
 
             // AltriDatiGestionali (2.2.1.16) - Ritenuta ENASARCO
             // https://forum.italia.it/uploads/default/original/2X/d/d35d721c3a3a601d2300378724a270154e23af52.jpeg
-            if (!empty($documento['id_ritenuta_contributi'])) {
-                $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenuta_contributi WHERE id = '.prepare($documento['id_ritenuta_contributi']))['percentuale'];
-
-                $ritenutaenasarco = [
+            if (!empty($riga['ritenuta_contributi'])) {
+                $dettaglio['AltriDatiGestionali'] = [
                     'TipoDato' => 'CASSA-PREV',
-                    'RiferimentoTesto' => 'ENASARCO - TC07 ('.Translator::numberToLocale($percentuale).'%)',
-                    'RiferimentoNumero' => $documento['ritenuta_contributi'],
+                    'RiferimentoTesto' => setting('Tipo Cassa').' - '.$ritenuta_contributi->descrizione.' ('.Translator::numberToLocale($ritenuta_contributi->percentuale).'%)',
+                    'RiferimentoNumero' => $riga->ritenuta_contributi,
                 ];
-
-                $dettaglio['AltriDatiGestionali'] = $ritenutaenasarco;
             }
 
             $result[] = [
@@ -1015,15 +1033,14 @@ class FatturaElettronica
         }
 
         // Riepiloghi per IVA per percentuale
-        $righe = $documento->getRighe();
-
         $riepiloghi_percentuale = $righe->filter(function ($item, $key) {
-            return $item->aliquota->codice_natura_fe == null;
+            return $item->aliquota != null && $item->aliquota->codice_natura_fe == null;
         })->groupBy(function ($item, $key) {
             return $item->aliquota->percentuale;
         });
         foreach ($riepiloghi_percentuale as $riepilogo) {
-            $totale = round($riepilogo->sum('imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
+            //(imponibile-sconto) + rivalsa inps
+            $totale = round(($riepilogo->sum('imponibile')-$riepilogo->sum('sconto')) + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
 
             $dati = $riepilogo->first()->aliquota;
@@ -1054,22 +1071,24 @@ class FatturaElettronica
 
         // Riepiloghi per IVA per natura
         $riepiloghi_natura = $righe->filter(function ($item, $key) {
-            return $item->aliquota->codice_natura_fe != null;
+            return $item->aliquota != null && $item->aliquota->codice_natura_fe != null;
         })->groupBy(function ($item, $key) {
             return $item->aliquota->codice_natura_fe;
         });
         foreach ($riepiloghi_natura as $riepilogo) {
-            $totale = round($riepilogo->sum('imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
+            //(imponibile-sconto) + rivalsa inps
+            $totale = round(($riepilogo->sum('imponibile')-$riepilogo->sum('sconto')) + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
 
             $dati = $riepilogo->first()->aliquota;
 
             $iva = [
                 'AliquotaIVA' => 0,
-                'Natura' => $dati['codice_natura_fe'],
+                'Natura' => $dati->codice_natura_fe,
                 'ImponibileImporto' => abs($totale),
                 'Imposta' => abs($imposta),
-                'EsigibilitaIVA' => $dati['esigibilita'],
+                'EsigibilitaIVA' => $dati->esigibilita,
+                'RiferimentoNormativo' => $dati->descrizione,
             ];
 
             // Con split payment EsigibilitaIVA sempre a S

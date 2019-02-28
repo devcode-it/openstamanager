@@ -11,6 +11,8 @@ $files = [
     'include/src/Article.php',
     'include/src/Row.php',
     'include/src/Description.php',
+    'plugins/importPA',
+    'plugins/exportPA',
 ];
 
 foreach ($files as $key => $value) {

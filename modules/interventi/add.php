@@ -223,15 +223,19 @@ if (!empty($id_intervento)) {
 		<div class="panel-body">
 			<!-- RIGA 3 -->
 			<div class="row">
-                <div class="col-md-4">
-                    {[ "type": "timestamp", "label": "<?php echo tr('Data e ora richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "<?php echo $data_richiesta ?: '-now-'; ?>" ]}
+                <div class="col-md-3">
+                    {[ "type": "timestamp", "label": "<?php echo tr('Data/ora richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "<?php echo $data_richiesta ?: '-now-'; ?>" ]}
                 </div>
 
-				<div class="col-md-4">
+                <div class="col-md-3">
+                    {[ "type": "timestamp", "label": "<?php echo tr('Data/ora scadenza'); ?>", "name": "data_scadenza", "required": 0, "value": "" ]}
+                </div>
+
+				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "id_tipo_intervento", "required": 1, "values": "query=SELECT id, descrizione FROM in_tipiintervento ORDER BY descrizione ASC", "value": "<?php echo $id_tipo_intervento; ?>", "ajax-source": "tipiintervento" ]}
 				</div>
 
-				<div class="col-md-4">
+				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "id_stato_intervento", "required": 1, "values": "query=SELECT id, descrizione, colore AS _bgcolor_ FROM in_statiintervento WHERE deleted_at IS NULL", "value": "<?php echo $id_stato_intervento_intervento; ?>" ]}
 				</div>
 			</div>

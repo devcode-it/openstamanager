@@ -233,7 +233,7 @@ if (filter('action') == 'do_update') {
                             $("#progress .info").html($("#progress .info").html() + "<p><strong>'.tr('Aggiornamento _DONE_ di _TODO_ (_VERSION_)', [
                                 '_DONE_' => '" + current + "',
                                 '_TODO_' => '" + count + "',
-                                '_VERSION_' => '" + version + "',
+                                '_VERSION_' => '" + version.trim() + "',
                             ]).'</strong></p>");
                         }
                     }

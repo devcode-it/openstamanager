@@ -9,6 +9,8 @@ if ($module['name'] == 'Ordini cliente') {
     $dir = 'uscita';
 }
 
+$_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
+
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
@@ -113,6 +115,10 @@ if ($module['name'] == 'Ordini cliente') {
             <div class="row">
                 <div class="col-md-4">
                     {[ "type": "text", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "value": "$id_documento_fe$", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+                </div>
+
+                <div class="col-md-4">
+                    {[ "type": "text", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "$num_item$", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
 
                 <div class="col-md-4">

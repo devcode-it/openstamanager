@@ -83,7 +83,11 @@ include_once __DIR__.'/../../core.php';
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "timestamp", "label": "<?php echo tr('Data e ora richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "$data_richiesta$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+					{[ "type": "timestamp", "label": "<?php echo tr('Data/ora richiesta'); ?>", "name": "data_richiesta", "required": 1, "value": "$data_richiesta$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
+				</div>
+				
+				<div class="col-md-3">
+					{[ "type": "timestamp", "label": "<?php echo tr('Data/ora scadenza'); ?>", "name": "data_scadenza", "required": 0, "value": "$data_scadenza$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -131,10 +135,11 @@ include_once __DIR__.'/../../core.php';
 <?php
     // Visualizzo solo se l'anagrafica cliente è un ente pubblico
     if (!empty($record['idcontratto'])) {
-        $contratto = $dbo->fetchOne('SELECT codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($record['idcontratto']));
+        $contratto = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($record['idcontratto']));
         $record['id_documento_fe'] = $contratto['id_documento_fe'];
         $record['codice_cup'] = $contratto['codice_cup'];
         $record['codice_cig'] = $contratto['codice_cig'];
+        $record['num_item'] = $contratto['num_item'];
     }
 
     ?>
@@ -154,6 +159,10 @@ include_once __DIR__.'/../../core.php';
             <div class="row">
                 <div class="col-md-4">
 					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "value": "<?php echo $record['id_documento_fe']; ?>", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
+				</div>
+
+                <div class="col-md-4">
+					{[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "<?php echo $record['num_item']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
 				</div>
 
                 <div class="col-md-4">

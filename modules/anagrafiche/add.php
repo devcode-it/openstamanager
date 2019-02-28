@@ -22,13 +22,16 @@ echo '
 	</div>
 
 	<div class="row">
+	
+		<div class="col-md-6">
+			{[ "type": "text", "label": "'.tr('Cognome').'", "name": "cognome", "required": 0 ]}
+		</div>
+		
 		<div class="col-md-6">
 			{[ "type": "text", "label": "'.tr('Nome').'", "name": "nome", "required": 0 ]}
 		</div>
 
-		<div class="col-md-6">
-			{[ "type": "text", "label": "'.tr('Cognome').'", "name": "cognome", "required": 0 ]}
-		</div>
+		
 	</div>';
 
 echo '

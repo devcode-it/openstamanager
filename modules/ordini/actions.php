@@ -87,6 +87,7 @@ switch (post('op')) {
             'id_documento_fe' => post('id_documento_fe'),
             'codice_cup' => post('codice_cup'),
             'codice_cig' => post('codice_cig'),
+            'num_item' => post('num_item'),
         ], ['id' => $id_record]);
 
         if ($dbo->query($query)) {
@@ -352,7 +353,7 @@ switch (post('op')) {
         if (post('create_document') == 'on') {
             $tipo = Tipo::where('dir', $dir)->first();
 
-            $ordine = Ordine::build($preventivo->anagrafica, $tipo, date('Y-m-d'), post('id_segment'));
+            $ordine = Ordine::build($preventivo->anagrafica, $tipo, post('data'));
             $ordine->idpagamento = $preventivo->idpagamento;
             $ordine->save();
 
@@ -360,27 +361,33 @@ switch (post('op')) {
         }
 
         $parziale = false;
-
-        $id_iva = get('id_iva');
-        $id_conto = get('id_conto');
         $righe = $preventivo->getRighe();
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($ordine, $qta);
-                $copia->id_iva = $id_iva;
-                $copia->id_conto = $id_conto;
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
                     $copia->movimenta($copia->qta);
                 }
+
+                $copia->save();
             }
 
             if ($riga->qta != $riga->qta_evasa) {
                 $parziale = true;
             }
+        }
+
+        // Aggiornamento sconto
+        if (post('evadere')[$preventivo->scontoGlobale->id] == 'on') {
+            $ordine->tipo_sconto_globale = $preventivo->tipo_sconto_globale;
+            $ordine->sconto_globale = $preventivo->tipo_sconto_globale == 'PRC' ? $preventivo->sconto_globale : $preventivo->sconto_globale;
+            $ordine->save();
+
+            $ordine->updateSconto();
         }
 
         ricalcola_costiagg_ordine($id_record);

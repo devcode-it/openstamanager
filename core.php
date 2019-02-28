@@ -87,6 +87,17 @@ if (!API::isAPIRequest()) {
     }
 
     $whoops->register();
+
+    // Aggiunta di Monolog a Whoops
+    $whoops->pushHandler(function ($exception, $inspector, $run) use ($logger) {
+        $logger->addError($exception->getMessage(), [
+            'code' => $exception->getCode(),
+            'message' => $exception->getMessage(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+            'trace' => $exception->getTraceAsString(),
+        ]);
+    });
 } else {
     $handlers[] = new StreamHandler($docroot.'/logs/api.log', Monolog\Logger::ERROR);
 }
@@ -108,19 +119,6 @@ foreach ($handlers as $handler) {
 
 // Imposta Monolog come gestore degli errori
 Monolog\ErrorHandler::register($logger, [], Monolog\Logger::ERROR, Monolog\Logger::ERROR);
-
-// Aggiunta di Monolog a Whoops
-if (App::debug()) {
-    $whoops->pushHandler(function ($exception, $inspector, $run) use ($logger) {
-        $logger->addError($exception->getMessage(), [
-            'code' => $exception->getCode(),
-            'message' => $exception->getMessage(),
-            'file' => $exception->getFile(),
-            'line' => $exception->getLine(),
-            'trace' => $exception->getTraceAsString(),
-        ]);
-    });
-}
 
 // Database
 $dbo = $database = database();

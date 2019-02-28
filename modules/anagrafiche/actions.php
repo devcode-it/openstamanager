@@ -85,6 +85,7 @@ switch (post('op')) {
         $anagrafica->colore = post('colore');
         $anagrafica->id_tipo_intervento_default = post('id_tipo_intervento_default') ?: null;
         $anagrafica->id_ritenuta_acconto_acquisti = post('id_ritenuta_acconto_acquisti');
+        $anagrafica->id_ritenuta_acconto_vendite = post('id_ritenuta_acconto_vendite');
         $anagrafica->split_payment = post('split_payment');
 
         $anagrafica->tipologie = (array) post('id_tipo_anagrafica');

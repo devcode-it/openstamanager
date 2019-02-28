@@ -67,6 +67,7 @@ if (post('action') == 'init') {
             'nome' => 'Amministratori',
         ]);
 
+        // Creazione utente Amministratore
         $dbo->insert('zz_users', [
             'username' => post('admin_username'),
             'password' => Auth::hashPassword(post('admin_password')),
@@ -74,6 +75,12 @@ if (post('action') == 'init') {
             'idgruppo' => $admin['id'],
             'idanagrafica' => isset($id_record) ? $id_record : 0,
             'enabled' => 1,
+        ]);
+
+        // Creazione token API per l'amministratore
+        $dbo->insert('zz_tokens', [
+            'id_utente' => $dbo->lastInsertedID(),
+            'token' => secure_random_string(),
         ]);
     }
 

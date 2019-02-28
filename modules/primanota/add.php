@@ -2,7 +2,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-?><form action="<?php echo ROOTDIR; ?>/editor.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>" method="post" id="add-form">
+?><form action="<?php echo ROOTDIR; ?>/controller.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="iddocumento" value="<?php echo get('iddocumento'); ?>">
@@ -26,12 +26,12 @@ include_once __DIR__.'/../../core.php';
 
         if ($tipo_doc == 'Nota di credito') {
             $nota_credito = true;
-			$tipo_doc = 'nota di credito';
+            $tipo_doc = 'nota di credito';
         } elseif ($tipo_doc == 'Nota di debito') {
-			$tipo_doc = 'nota di debito';
-		} else {
-			$tipo_doc = 'fattura';
-		}
+            $tipo_doc = 'nota di debito';
+        } else {
+            $tipo_doc = 'fattura';
+        }
 
         $descrizione = tr('Pag. _DOC_ num. _NUM_ del _DATE_ (_NAME_)', [
             '_DOC_' => $tipo_doc,
@@ -247,7 +247,7 @@ include_once __DIR__.'/../../core.php';
 	<!-- PULSANTI -->
 	<div class="row">
 		<div class="col-md-12 text-right">
-			<button type='button' class="btn btn-primary" id='btn_crea_modello'><i class="fa fa-plus"></i> <?php echo tr('Aggiungi e crea modello'); ?></button>
+			<button type='button' class="btn btn-default" id='btn_crea_modello'><i class="fa fa-plus"></i> <?php echo tr('Aggiungi e crea modello'); ?></button>
 			<button type="submit" class="btn btn-primary" id='btn_submit'><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
 		</div>
 	</div>

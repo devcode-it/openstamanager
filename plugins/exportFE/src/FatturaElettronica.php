@@ -474,7 +474,7 @@ class FatturaElettronica
     {
         $result = [
             'Indirizzo' => $anagrafica['indirizzo'],
-            'CAP' => $anagrafica['cap'],
+            'CAP' => ($anagrafica->nazione->iso2 == 'IT') ? $anagrafica['cap'] : '00000',
             'Comune' => $anagrafica['citta'],
         ];
 

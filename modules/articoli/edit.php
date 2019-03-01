@@ -158,11 +158,12 @@ if (!empty($record['immagine'])) {
 
                 <div class="panel-body">
 
-                    <button type="button" class="btn btn-info btn-sm pull-right" onclick="scorpora_iva()"><?php echo tr('Scorpora iva da prezzo'); ?></button>
+                    
                     <div class="clearfix"></div>
 
                     <div class="row">
                         <div class="col-md-6">
+						<button type="button" class="btn btn-info btn-xs pull-right tip pull-right" title="<?php echo tr('Scorpora iva dal prezzo di vendita.'); ?>" id="scorpora_iva"><i class="fa fa-calculator" aria-hidden="true"></i></button>
                           {[ "type": "number", "label": "<?php echo tr('Prezzo di vendita'); ?>", "name": "prezzo_vendita", "value": "$prezzo_vendita$", "icon-after": "&euro;" ]}
                         </div>
 
@@ -351,17 +352,27 @@ $("#categoria").change( function(){
 	$("#subcategoria").val(null).trigger("change");
 });
 
+
 function scorpora_iva() {
-    var percentuale = parseFloat($("#idiva_vendita").selectData().percentuale);
-    if(!percentuale) return;
+	if ($("#idiva_vendita").val()!=''){
+		var percentuale = parseFloat($("#idiva_vendita").selectData().percentuale);
+		if(!percentuale) return;
 
-    var input = $("#prezzo_vendita");
-    var prezzo = input.val().toEnglish();
+		var input = $("#prezzo_vendita");
+		var prezzo = input.val().toEnglish();
 
-    var scorporato = prezzo * 100 / (100 + percentuale);
+		var scorporato = prezzo * 100 / (100 + percentuale);
 
-    input.val(scorporato);
+		input.val(scorporato);
+	}else{
+		swal("<?php echo tr('Attenzione'); ?>", "<?php echo tr('Seleziona Iva di vendita.'); ?>", "warning");
+	}
 }
+
+$("#scorpora_iva").click( function(){
+	scorpora_iva();
+});	
+
 </script>
 
 

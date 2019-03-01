@@ -18,7 +18,7 @@ foreach ($imports as $key => $value) {
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "file", "label": "<?php echo tr('File'); ?>", "name": "blob", "required": 1 ]}
+			{[ "type": "file", "label": "<?php echo tr('File'); ?>", "name": "blob", "required": 1, "extra": "accept=\".csv\"" ]}
 		</div>
 
 		<div class="col-md-6">

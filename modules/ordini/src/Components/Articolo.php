@@ -48,7 +48,7 @@ class Articolo extends Article
         ]);
 
         $this->articolo->movimenta(-$qta, $movimento, $data, false, [
-            'iddocumento' => $ordine->id,
+            'idordine' => $ordine->id,
         ]);
     }
 

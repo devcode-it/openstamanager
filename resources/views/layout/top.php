@@ -97,12 +97,8 @@ if (Auth::check()) {
 		</script>';
 
     // Barra di debug
-    if (App::debug()) {
-        $debugbarRenderer = $debugbar->getJavascriptRenderer();
-        $debugbarRenderer->setIncludeVendors(false);
-        $debugbarRenderer->setBaseUrl($paths['assets'].'/php-debugbar');
-
-        echo $debugbarRenderer->renderHead();
+    if (!empty($debugbar)) {
+        echo $debugbar->renderHead();
     }
 
     if (setting('Abilita esportazione Excel e PDF')) {
@@ -114,7 +110,7 @@ if (Auth::check()) {
 }
 
 echo '
-		<div class="'.(!Auth::check() ? 'hold-transition login-page' : 'wrapper'.(!empty(setting('Nascondere la barra sinistra di default')) ? ' sidebar-collapse' : '')).'">';
+		<div class="wrapper'.(!empty(setting('Nascondere la barra sinistra di default')) ? ' sidebar-collapse' : '').'">';
 
 if (Auth::check()) {
     $calendar = ($_SESSION['period_start'] != date('Y').'-01-01' || $_SESSION['period_end'] != date('Y').'-12-31') ? 'red' : 'white';
@@ -158,7 +154,7 @@ if (Auth::check()) {
 						<a href="'.$rootdir.'/info.php" class="btn btn-sm btn-github tip" title="'.tr('Informazioni').'">
                             <i class="fa fa-info"></i>
                         </a>
-						<a href="'.$rootdir.'/index.php?op=logout" class="btn btn-sm btn-danger tip" title="'.tr('Esci').'">
+						<a href="'.$router->pathFor('logout').'" class="btn btn-sm btn-danger tip" title="'.tr('Esci').'">
                             <i class="fa fa-power-off"></i>
                         </a>
 					</div>

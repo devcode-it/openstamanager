@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $valid_config = isset($db_host) && isset($db_name) && isset($db_username) && isset($db_password);
 
 // Gestione del file di configurazione

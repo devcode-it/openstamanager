@@ -7,7 +7,7 @@ use Carbon\Carbon;
  *
  * @since 2.3
  */
-class Translator extends Util\Singleton
+class Translator
 {
     /** @var Intl\Formatter Oggetto per la conversione di date e numeri nella lingua selezionata */
     protected static $formatter;
@@ -110,15 +110,14 @@ class Translator extends Util\Singleton
      * Restituisce la traduzione richiesta.
      *
      * @param string $string
-     * @param string $parameters
-     * @param string $domain
-     * @param string $locale
+     * @param array  $parameters
+     * @param array  $operations
      *
      * @return string
      */
     public static function translate($string, $parameters = [], $operations = [])
     {
-        $result = self::getInstance()->getTranslator()->trans($string, $parameters);
+        $result = trans()->getTranslator()->trans($string, $parameters);
 
         // Operazioni aggiuntive sul risultato
         if (!empty($operations)) {

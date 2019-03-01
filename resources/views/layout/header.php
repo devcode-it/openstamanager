@@ -66,7 +66,7 @@ echo '
 
     </head>
 
-    <body class="skin-'.$theme.' '.$body_class.'">
+    <body class="skin-'.$config['theme'].' '.$body_class.'">
         <!-- Loader principale -->
         <div id="main_loading">
             <div>

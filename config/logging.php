@@ -52,6 +52,13 @@ if (!API::isAPIRequest()) {
             'trace' => $exception->getTraceAsString(),
         ]);
     });
+
+    if (App::debug()) {
+        // Override the default Slim error handler
+        $container['errorHandler'] = function () use ($whoops) {
+            return new \App\Extensions\WhoopsErrorHandler($whoops);
+        };
+    }
 } else {
     $handlers[] = new StreamHandler($docroot.'/logs/api.log', Monolog\Logger::ERROR);
 }

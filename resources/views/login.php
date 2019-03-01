@@ -1,11 +1,7 @@
 <?php
 
-$skip_permissions = true;
-
-// Procedura di inizializzazione
-include_once $docroot.'/include/init/init.php';
-
 $pageTitle = tr('Login');
+$body_class = 'hold-transition login-page';
 
 include_once App::filepath('resources\views|custom|\layout', 'header.php');
 include_once App::filepath('resources\views|custom|\layout', 'messages.php');
@@ -64,7 +60,7 @@ if (!empty(flash()->getMessage('error'))) {
 }
 
 echo '
-			<form action="?op=login" method="post" class="login-box box">
+			<form action="" method="post" class="login-box box">
 				<div class="box-header with-border text-center">
 					<img src="'.App::getPaths()['img'].'/logo.png" alt="'.tr('OSM Logo').'">
 					<h3 class="box-title">'.tr('OpenSTAManager').'</h3>

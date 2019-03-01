@@ -50,17 +50,35 @@ $container = new \Slim\Container([
         'displayErrorDetails' => App::debug(),
     ],
 ]);
+App::setContainer($container);
 
+// Configurazione
 $container['config'] = $config;
+
+// Database
+$database = new Database($config['db_host'], $config['db_username'], $config['db_password'], $config['db_name']);
+$container['database'] = $database;
 
 // Istanziamento del logging
 require __DIR__.'/config/logging.php';
 
-// Database
-$dbo = $database = database();
-
 // Istanziamento delle dipendenze
 require __DIR__.'/config/dependencies.php';
+
+// Debugbar
+if (App::debug()) {
+    $debugbar = new \DebugBar\StandardDebugBar();
+
+    $debugbar->addCollector(new \Extensions\EloquentCollector($container['database']->getCapsule()));
+    $debugbar->addCollector(new \DebugBar\Bridge\MonologCollector($container['logger']));
+
+    $paths = App::getPaths();
+    $debugbarRenderer = $debugbar->getJavascriptRenderer();
+    $debugbarRenderer->setIncludeVendors(false);
+    $debugbarRenderer->setBaseUrl($paths['assets'].'/php-debugbar');
+
+    $container['debugbar'] = $debugbarRenderer;
+}
 
 // Istanziamento dell'applicazione Slim
 $app = new \Slim\App($container);

@@ -12,8 +12,8 @@ class App
     /** @var int Identificativo dell'elemento corrente */
     protected static $current_element;
 
-    /** @var \Util\Messages Gestione dei messaggi flash */
-    protected static $flash = null;
+    /** @var \Slim\Container */
+    protected static $container = null;
 
     /** @var bool Stato di debug */
     protected static $config = [];
@@ -92,19 +92,14 @@ class App
         return self::$config['debug'];
     }
 
-    /**
-     * Restituisce l'oggetto dedicato alla gestione dei messaggi per l'utente.
-     *
-     * @return \Util\Messages
-     */
-    public static function flash()
+    public static function setContainer($container)
     {
-        if (empty(self::$flash)) {
-            $storage = null;
-            self::$flash = new \Util\Messages($storage, 'messages');
-        }
+        self::$container = $container;
+    }
 
-        return self::$flash;
+    public static function getContainer()
+    {
+        return self::$container;
     }
 
     /**
@@ -198,6 +193,20 @@ class App
         return $assets;
     }
 
+    public static function isConfigured()
+    {
+        $config = self::$container['config'];
+
+        $valid_config = isset($config['db_host']) && isset($config['db_name']) && isset($config['db_username']) && isset($config['db_password']);
+
+        // Gestione del file di configurazione
+        if (file_exists(DOCROOT.'/config.inc.php') && $valid_config && database()->isConnected()) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Restituisce il codice HTML per il form contenente il file indicato.
      *
@@ -238,7 +247,7 @@ class App
         $id_module = $module['id'];
         $id_record = filter('id_record');
 
-        $directory = empty($directory) ? 'resources\views|custom|\layout/common/' : $directory;
+        $directory = empty($directory) ? 'resources\views|custom|/common/' : $directory;
 
         ob_start();
         include self::filepath($directory, $file);

@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $updateRate = 20;
 $scriptValue = $updateRate * 5;
 

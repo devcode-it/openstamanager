@@ -2,7 +2,7 @@
 
 // Auth manager
 $container['auth'] = function ($container) {
-    return auth();
+    return new Auth();
 };
 
 // Language manager
@@ -12,8 +12,8 @@ $container['translator'] = function ($container) {
     $lang = !empty($config['lang']) ? $config['lang'] : 'it';
     $formatter = !empty($config['formatter']) ? $config['formatter'] : [];
 
-    $translator = Translator::getInstance();
-    $translator->addLocalePath(DOCROOT.'/locale');
+    $translator = new Translator();
+    $translator->addLocalePath(DOCROOT.'/resources/locale');
     $translator->addLocalePath(DOCROOT.'/modules/*/locale');
 
     $translator->setLocale($lang, $formatter);
@@ -27,13 +27,8 @@ $container['formatter'] = function ($container) {
 };
 
 // Flash messages
-$container['flash'] = function () {
-    return new \Slim\Flash\Messages();
-};
-
-// Database
-$container['database'] = function () {
-    return database();
+$container['flash'] = function ($container) {
+    return new \Util\Messages();
 };
 
 use Slim\Views\PhpRenderer;
@@ -41,6 +36,21 @@ use Slim\Views\PhpRenderer;
 // Templating PHP
 $container['view'] = function ($container) {
     $renderer = new PhpRenderer('./');
+
+    $renderer->setAttributes([
+        'database' => $container['database'],
+        'dbo' => $container['database'],
+        'config' => $container['config'],
+        'router' => $container['router'],
+
+        'rootdir' => ROOTDIR,
+        'docroot' => DOCROOT,
+        'baseurl' => BASEURL,
+    ]);
+
+    if (!empty($container['debugbar'])) {
+        $renderer->addAttribute('debugbar', $container['debugbar']);
+    }
 
     // Inclusione dei file modutil.php
     // TODO: sostituire * con lista module dir {aggiornamenti,anagrafiche,articoli}
@@ -77,6 +87,10 @@ $container['twig-view'] = function ($container) {
     $view->offsetSet('flash', $container['flash']);
     $view->offsetSet('translator', $container['translator']);
     $view->offsetSet('router', $container['router']);
+
+    if (!empty($container['debugbar'])) {
+        $view->offsetSet('debugbar', $container['debugbar']);
+    }
 
     return $view;
 };

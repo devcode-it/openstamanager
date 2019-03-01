@@ -7,7 +7,7 @@ use Models\User;
  *
  * @since 2.3
  */
-class Auth extends \Util\Singleton
+class Auth
 {
     /** @var array Stati previsti dal sistema di autenticazione */
     protected static $status = [
@@ -50,7 +50,7 @@ class Auth extends \Util\Singleton
     /** @var string|null Nome del primo modulo su cui l'utente ha permessi di navigazione */
     protected $first_module;
 
-    protected function __construct()
+    public function __construct()
     {
         $database = database();
 
@@ -296,7 +296,7 @@ class Auth extends \Util\Singleton
      */
     public static function check()
     {
-        return self::getInstance()->isAuthenticated();
+        return auth()->isAuthenticated();
     }
 
     /**
@@ -306,7 +306,7 @@ class Auth extends \Util\Singleton
      */
     public static function admin()
     {
-        return self::getInstance()->isAdmin();
+        return auth()->isAdmin();
     }
 
     /**
@@ -316,7 +316,7 @@ class Auth extends \Util\Singleton
      */
     public static function user()
     {
-        return self::getInstance()->getUser();
+        return auth()->getUser();
     }
 
     /**
@@ -324,7 +324,7 @@ class Auth extends \Util\Singleton
      */
     public static function logout()
     {
-        return self::getInstance()->destory();
+        return auth()->destory();
     }
 
     /**
@@ -334,7 +334,7 @@ class Auth extends \Util\Singleton
      */
     public static function firstModule()
     {
-        return self::getInstance()->getFirstModule();
+        return auth()->getFirstModule();
     }
 
     /**

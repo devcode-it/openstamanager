@@ -9,52 +9,89 @@
 |
 */
 
-$app->get('/', function ($request, $response, $args) {
-    return $response->write('Hello World!');
-});
+// Pagina principale
+$app->get('/', 'Controllers\BaseController:index')->setName('login');
+$app->post('/', 'Controllers\BaseController:loginAction')
+    ->add('Middlewares\Authorization\GuestMiddleware');
+$app->get('/logout', 'Controllers\BaseController:logout')->setName('logout')
+    ->add('Middlewares\Authorization\UserMiddleware');
 
-$app->get('/info', 'Controllers\BaseController:info')->setName('info');
+// Configurazione iniziale
+$app->group('', function () use ($app) {
+    $app->get('/update-install', 'Controllers\ConfigController:update')->setName('update');
+
+    $app->get('/configuration', 'Controllers\ConfigController:configuration')->setName('configuration');
+
+    $app->get('/requirements', 'Controllers\ConfigController:requirements')->setName('requirements');
+})->add('Middlewares\Authorization\GuestMiddleware');
+
+// Informazioni su OpenSTAManager
+$app->get('/info', 'Controllers\ConfigController:info')->setName('info')
+    ->add('Middlewares\Authorization\UserMiddleware');
+
+// Operazioni Ajax
+$app->group('/ajax', function () use ($app) {
+    $app->get('/select', 'Controllers\AjaxController:select')->setName('ajax-select');
+    $app->get('/complete', 'Controllers\AjaxController:complete')->setName('ajax-complete');
+    $app->get('/search', 'Controllers\AjaxController:search')->setName('ajax-search');
+
+    $app->get('/dataload', 'Controllers\AjaxController:search')->setName('ajax-dataload');
+
+    $app->get('/session', 'Controllers\AjaxController:search')->setName('ajax-session');
+    $app->get('/session-array', 'Controllers\AjaxController:search')->setName('ajax-session-array');
+})->add('Middlewares\Authorization\UserMiddleware');
+
+// Moduli
+$app->group('/module/{module_id}', function () use ($app) {
+    $app->get('', 'Controllers\ModuleController:index')->setName('module');
+
+    $app->get('/edit/{record_id}', 'Controllers\ModuleController:record')->setName('module-record');
+    $app->post('/edit/{record_id}', 'Controllers\ModuleController:saveRecord');
+
+    $app->get('/add', 'Controllers\ModuleController:add')->setName('module-add');
+    $app->post('/add', 'Controllers\ModuleController:addRecord');
+})->add('Middlewares\Authorization\UserMiddleware');
 
 /*
-Route::get('/', 'BaseController@index');
+Route::get('/', 'BaseController:index');
 
 // Authentication routes
 //Auth::routes();
-Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
-Route::post('login', 'Auth\LoginController@login');
-Route::post('logout', 'Auth\LoginController@logout')->name('logout');
+Route::get('login', 'Auth\LoginController:showLoginForm')->setName('login');
+$app->post('login', 'Auth\LoginController:login');
+$app->post('logout', 'Auth\LoginController:logout')->setName('logout');
 
 // Base routes
-Route::get('/info', 'InfoController@index')->name('info');
-Route::get('/bug', 'InfoController@bug')->name('bug');
-Route::get('/user', 'InfoController@user')->name('user');
-Route::get('/user-logs', 'InfoController@logs')->name('logs');
+Route::get('/info', 'InfoController:index')->setName('info');
+Route::get('/bug', 'InfoController:bug')->setName('bug');
+Route::get('/user', 'InfoController:user')->setName('user');
+Route::get('/user-logs', 'InfoController:logs')->setName('logs');
 
 // Modules
 Route::prefix('module/{module}')->group(function () {
-    Route::get('', 'ModuleController@index')->name('module');
+   $app->get('', 'ModuleController:index')->setName('module');
 
-    Route::get('/{record_id}', 'ModuleController@record')->name('module-record');
-    Route::post('/{record_id}', 'ModuleController@saveRecord');
+   $app->get('/{record_id}', 'ModuleController:record')->setName('module-record');
+    $app->post('/{record_id}', 'ModuleController:saveRecord');
 
-    Route::get('/add', 'ModuleController@add')->name('module-add');
-    Route::post('/add', 'ModuleController@addRecord');
+   $app->get('/add', 'ModuleController:add')->setName('module-add');
+    $app->post('/add', 'ModuleController:addRecord');
 });
 
 // Plugins
 Route::prefix('plugin')->group(function () {
-    Route::get('/{plugin}', 'PluginController@index')->name('plugin');
+   $app->get('/{plugin}', 'PluginController:index')->setName('plugin');
 
-    Route::get('/{plugin}/{record_id}', 'PluginController@record')->name('plugin-record');
-    Route::post('/{plugin}/{record_id}', 'PluginController@saveRecord');
+   $app->get('/{plugin}/{record_id}', 'PluginController:record')->setName('plugin-record');
+    $app->post('/{plugin}/{record_id}', 'PluginController:saveRecord');
 
-    Route::get('/add/{parent_id}/{plugin}', 'PluginController@record')->name('plugin-add');
-    Route::post('/add/{parent_id}/{plugin}', 'PluginController@addRecord');
+   $app->get('/add/{parent_id}/{plugin}', 'PluginController:record')->setName('plugin-add');
+    $app->post('/add/{parent_id}/{plugin}', 'PluginController:addRecord');
 });
 
 // Prints
-Route::get('/print/{print_id}', 'PrintController@index')->name('print');
+Route::get('/print/{print_id}', 'PrintController:index')->setName('print');
 
 // Mails
-Route::get('/mail/{mail_id}', 'MailController@index')->name('mail');
+Route::get('/mail/{mail_id}', 'MailController:index')->setName('mail');
 */

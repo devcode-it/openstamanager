@@ -13,7 +13,7 @@
  */
 function database()
 {
-    return \Database::getConnection();
+    return \App::getContainer()['database'];
 }
 
 /**
@@ -101,7 +101,7 @@ function setting($name, $again = false)
  */
 function flash()
 {
-    return App::flash();
+    return \App::getContainer()['flash'];
 }
 
 /**
@@ -113,7 +113,7 @@ function flash()
  */
 function auth()
 {
-    return \Auth::getInstance();
+    return \App::getContainer()['auth'];
 }
 
 /**
@@ -125,7 +125,7 @@ function auth()
  */
 function trans()
 {
-    return \Translator::getInstance();
+    return \App::getContainer()['translator'];
 }
 
 /**
@@ -137,7 +137,7 @@ function trans()
  */
 function formatter()
 {
-    return \Translator::getFormatter();
+    return \App::getContainer()['formatter'];
 }
 
 /**
@@ -145,7 +145,7 @@ function formatter()
  *
  * @param string $string
  * @param array  $parameters
- * @param string $operations
+ * @param array  $operations
  *
  * @since 2.3
  *
@@ -173,7 +173,7 @@ if (!function_exists('_')) {
  */
 function logger()
 {
-    return Monolog\Registry::getInstance('logs');
+    return \App::getContainer()['logger'];
 }
 
 /**

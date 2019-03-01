@@ -1040,7 +1040,7 @@ class FatturaElettronica
         });
         foreach ($riepiloghi_percentuale as $riepilogo) {
             //(imponibile-sconto) + rivalsa inps
-            $totale = round(($riepilogo->sum('imponibile')-$riepilogo->sum('sconto')) + $riepilogo->sum('rivalsa_inps'), 2);
+            $totale = round(($riepilogo->sum('imponibile') - $riepilogo->sum('sconto')) + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
 
             $dati = $riepilogo->first()->aliquota;
@@ -1077,7 +1077,7 @@ class FatturaElettronica
         });
         foreach ($riepiloghi_natura as $riepilogo) {
             //(imponibile-sconto) + rivalsa inps
-            $totale = round(($riepilogo->sum('imponibile')-$riepilogo->sum('sconto')) + $riepilogo->sum('rivalsa_inps'), 2);
+            $totale = round(($riepilogo->sum('imponibile') - $riepilogo->sum('sconto')) + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
 
             $dati = $riepilogo->first()->aliquota;

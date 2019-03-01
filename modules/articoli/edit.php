@@ -151,10 +151,16 @@ if (!empty($record['immagine'])) {
         <div class="col-md-6">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><?php echo tr('Vendita'); ?></h3>
+                    <h3 class="panel-title">
+                        <?php echo tr('Vendita'); ?>
+                    </h3>
                 </div>
 
                 <div class="panel-body">
+
+                    <button type="button" class="btn btn-info btn-sm pull-right" onclick="scorpora_iva()"><?php echo tr('Scorpora iva da prezzo'); ?></button>
+                    <div class="clearfix"></div>
+
                     <div class="row">
                         <div class="col-md-6">
                           {[ "type": "number", "label": "<?php echo tr('Prezzo di vendita'); ?>", "name": "prezzo_vendita", "value": "$prezzo_vendita$", "icon-after": "&euro;" ]}
@@ -344,6 +350,18 @@ $("#categoria").change( function(){
 	session_set("superselect,id_categoria", $(this).val(), 0);
 	$("#subcategoria").val(null).trigger("change");
 });
+
+function scorpora_iva() {
+    var percentuale = parseFloat($("#idiva_vendita").selectData().percentuale);
+    if(!percentuale) return;
+
+    var input = $("#prezzo_vendita");
+    var prezzo = input.val().toEnglish();
+
+    var scorporato = prezzo * 100 / (100 + percentuale);
+
+    input.val(scorporato);
+}
 </script>
 
 

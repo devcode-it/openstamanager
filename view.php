@@ -32,17 +32,16 @@ if ($file->isFatturaElettronica()) {
     $content = str_replace('http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fattura/messaggi/v1.0', 'http://www.fatturapa.gov.it/sdi/messaggi/v1.0', $content);
 
     // XML
-	$xml = new DOMDocument();
+    $xml = new DOMDocument();
     $xml->loadXML($content);
 
-	// XSL
-	$xsl = new DOMDocument();
-	$xsl->load($stylesheet);
-	
-	// XSLT
-	$xslt = new XSLTProcessor();
-	$xslt->importStylesheet($xsl);
+    // XSL
+    $xsl = new DOMDocument();
+    $xsl->load($stylesheet);
 
+    // XSLT
+    $xslt = new XSLTProcessor();
+    $xslt->importStylesheet($xsl);
 
     echo '
 <style>

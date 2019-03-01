@@ -155,9 +155,7 @@ if (!empty($righe)) {
         <table class="table table-hover table-striped table-condensed">
             <tr>
                 <th>'.tr('Descrizione').'</th>
-                <th width="10%">'.tr('Q.tà').'</th>
-                <th width="10%">'.tr('Prezzo unitario').'</th>
-                <th width="15%">'.tr('Dati contabili').'*</th>
+                <th width="25%">'.tr('Dati contabili').'*</th>
                 <th width="25%">'.tr('Articolo').'</th>
             </tr>';
 
@@ -172,9 +170,19 @@ if (!empty($righe)) {
 
         echo '
         <tr>
-            <td>'.$riga['Descrizione'].'</td>
-            <td>'.Translator::numberToLocale($riga['Quantita']).' '.$riga['UnitaMisura'].'</td>
-            <td>'.Translator::numberToLocale($riga['PrezzoUnitario']).'&nbsp;&euro;<small class="help-block">Aliquota iva: '.$riga['AliquotaIVA'].'%</small></td>
+            <td>
+                '.$riga['Descrizione'].'<br>
+                
+                <small>'.tr('Q.tà: _QTA_ _UM_', [
+                    '_QTA_' => Translator::numberToLocale($riga['Quantita']),
+                    '_UM_' => $riga['UnitaMisura'],
+                ]).'</small><br>
+                
+                <small>'.tr('Aliquota iva _PRC_% _DESC_', [
+                    '_PRC_' => Translator::numberToLocale($riga['AliquotaIVA']),
+                    '_DESC_' => $riga['RiferimentoNormativo'] ? ' - '.$riga['RiferimentoNormativo'] : '',
+                ]).'</small>
+            </td>
             <td>
                 {[ "type": "select", "name": "iva['.$key.']", "values": "query='.str_replace('"', '\"', $query).'", "required": 1, "placeholder": "Aliquota iva" ]}
                 <br>

@@ -138,7 +138,7 @@ class App
      */
     public static function getPaths()
     {
-        $assets = ROOTDIR.'/assets/dist';
+        $assets = ROOTDIR.'/assets';
 
         return [
             'assets' => $assets,
@@ -186,8 +186,8 @@ class App
 
         // JS aggiuntivi per gli utenti connessi
         if (Auth::check()) {
-            $assets['js'][] = ROOTDIR.'/lib/functions.js';
-            $assets['js'][] = ROOTDIR.'/lib/init.js';
+            $assets['js'][] = ROOTDIR.'/assets/js/functions.js';
+            $assets['js'][] = ROOTDIR.'/assets/js/init.js';
         }
 
         return $assets;

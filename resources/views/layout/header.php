@@ -33,6 +33,8 @@ foreach (App::getAssets()['js'] as $js) {
         <script type="text/javascript" charset="utf-8" src="'.$js.'"></script>';
 }
 
+$lang = trans()->getCurrentLocale();
+
 // Impostazioni di default per gli alert
 echo '
         <script>

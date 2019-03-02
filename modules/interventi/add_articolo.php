@@ -3,7 +3,7 @@
 if (file_exists(__DIR__.'/../../../core.php')) {
     include_once __DIR__.'/../../../core.php';
 } else {
-    }
+}
 
 // Prezzo modificabile solo se l'utente loggato è un tecnico (+ può vedere i prezzi) o se è amministratore
 $gruppi = Auth::user()['gruppo'];
@@ -203,7 +203,7 @@ echo '
 </form>';
 
 echo '
-	<script src="'.$rootdir.'/lib/init.js"></script>';
+	<script src="'.$rootdir.'/assets/js/init.js"></script>';
 
 ?>
 

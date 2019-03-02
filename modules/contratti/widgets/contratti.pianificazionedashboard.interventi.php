@@ -113,7 +113,7 @@ if (!empty($rsp)) {
 <script>
 $(document).ready(function() {
 	 $('.datatables').DataTable({
-		 	"oLanguage": { "sUrl": "<?php echo $rootdir; ?>/assets/dist/js/i18n/datatables/<?php echo $lang; ?>.min.json" },
+		 	"oLanguage": { "sUrl": "<?php echo $rootdir; ?>/assets/js/i18n/datatables/<?php echo $lang; ?>.min.json" },
 		 	 "paging": false,
 			 "info":     false
 	 });

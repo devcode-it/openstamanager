@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use App;
 use Modules;
 use Util\Query;
 
@@ -134,7 +135,7 @@ class AjaxController extends Controller
         $args['plugin_id'] = filter('id_plugin');
 
         $args = ModuleController::argsPrepare($args);
-        $structure = $args['structure'];
+        extract($args);
 
         // Informazioni fondamentali
         $columns = filter('columns');
@@ -204,6 +205,7 @@ class AjaxController extends Controller
                 }
             }
 
+            $router = App::getContainer()->router;
             // Creazione della tabella
             foreach ($rows as $i => $r) {
                 $result = [
@@ -277,7 +279,10 @@ class AjaxController extends Controller
 
                         // Link per i moduli
                         if (empty($id_plugin)) {
-                            $column['data-link'] = $rootdir.'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash;
+                            $column['data-link'] = $router->pathFor('module-record', [
+                                'module_id' => $id_module,
+                                'record_id' => $id_record,
+                            ]).$hash;
                         }
                         // Link per i plugin
                         else {

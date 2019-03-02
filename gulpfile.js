@@ -29,8 +29,8 @@ var inquirer = require('inquirer');
 
 // Configurazione
 var config = {
-    production: 'assets/dist', // Cartella di destinazione
-    development: 'assets/src', // Cartella dei file di personalizzazione
+    production: 'public/assets', // Cartella di destinazione
+    development: 'resources/assets', // Cartella dei file di personalizzazione
     debug: false,
     main: {
         bowerDirectory: './node_modules',
@@ -63,6 +63,12 @@ gulp.task('srcJS', function () {
             config.development + '/' + config.paths.js + '/*.js',
         ])
         .pipe(concat('custom.min.js'))
+        .pipe(minifyJS())
+        .pipe(gulp.dest(config.production + '/' + config.paths.js));
+
+    gulp.src([
+            config.development + '/' + config.paths.js + '/independent/*.js',
+        ])
         .pipe(minifyJS())
         .pipe(gulp.dest(config.production + '/' + config.paths.js));
 });

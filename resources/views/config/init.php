@@ -231,7 +231,7 @@ echo '
     });
 </script>
 <script src="'.$rootdir.'/lib/functions.js"></script>
-<script src="'.$rootdir.'/lib/init.js"></script>';
+<script src="'.$rootdir.'/assets/js/init.js"></script>';
 
 include_once App::filepath('resources\views|custom|\layout', 'footer.php');
 

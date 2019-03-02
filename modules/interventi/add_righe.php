@@ -3,7 +3,7 @@
 if (file_exists(__DIR__.'/../../../core.php')) {
     include_once __DIR__.'/../../../core.php';
 } else {
-    }
+}
 
 $idriga = filter('idriga');
 
@@ -107,7 +107,7 @@ echo '
 </form>';
 
 echo '
-<script src="'.$rootdir.'/lib/init.js"></script>';
+<script src="'.$rootdir.'/assets/js/init.js"></script>';
 
 ?>
 

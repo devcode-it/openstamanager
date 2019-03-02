@@ -30,4 +30,4 @@ echo '
 </form>';
 
 echo '
-	<script src="'.ROOTDIR.'/lib/init.js"></script>';
+	<script src="'.ROOTDIR.'/assets/js/init.js"></script>';

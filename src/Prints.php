@@ -149,9 +149,9 @@ class Prints
         }
 
         if (self::isOldStandard($print)) {
-            self::oldLoader($infos['id'], $id_record, $filename);
+            return self::oldLoader($infos['id'], $id_record, $filename);
         } else {
-            self::loader($infos['id'], $id_record, $filename);
+            return self::loader($infos['id'], $id_record, $filename);
         }
     }
 
@@ -227,15 +227,13 @@ class Prints
     /**
      * Restituisce il link per la visualizzazione del PDF.
      *
-     * @param string|int $print
-     * @param int        $id_record
-     * @param string     $filename
+     * @param string $filename
      *
      * @return string
      */
     public static function getPDFLink($filename)
     {
-        return ROOTDIR.'/assets/dist/pdfjs/web/viewer.html?file=../../../../'.ltrim(str_replace(DOCROOT, '', $filename), '/');
+        return ROOTDIR.'/assets/pdfjs/web/viewer.html?file=../../../../'.ltrim(str_replace(DOCROOT, '', $filename), '/');
     }
 
     /**
@@ -357,7 +355,7 @@ class Prints
         $html2pdf->writeHTML($report);
         $html2pdf->pdf->setTitle($title);
 
-        $html2pdf->output($filename, $mode);
+        return $html2pdf->output($filename, $mode);
     }
 
     /**
@@ -480,6 +478,6 @@ class Prints
         $mpdf->WriteHTML($report);
 
         // Creazione effettiva del PDF
-        $mpdf->Output($filename, $mode);
+        return $mpdf->Output($filename, $mode);
     }
 }

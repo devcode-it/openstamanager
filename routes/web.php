@@ -52,6 +52,23 @@ $app->group('/module/{module_id}', function () use ($app) {
     $app->post('/add', 'Controllers\ModuleController:addRecord');
 })->add('Middlewares\Authorization\UserMiddleware');
 
+// Stampe
+$app->get('/print/{print_id}', 'PrintController:index')->setName('print')
+    ->add('Middlewares\Authorization\UserMiddleware');
+
+// Moduli
+$app->group('/upload', function () use ($app) {
+    $app->get('/{upload_id}', 'Controllers\UploadController:view')->setName('upload-view');
+
+    $app->get('/add/{module_id}/{plugin_id}/{record_id}', 'Controllers\UploadController:index')->setName('upload');
+
+    $app->get('/remove/{upload_id}', 'Controllers\UploadController:remove')->setName('upload-remove');
+})->add('Middlewares\Authorization\UserMiddleware');
+
+// E-mail
+$app->get('/mail/{mail_id}', 'MailController:index')->setName('mail')
+    ->add('Middlewares\Authorization\UserMiddleware');
+
 /*
 Route::get('/', 'BaseController:index');
 

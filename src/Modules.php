@@ -248,7 +248,7 @@ class Modules
      * @param string|int $modulo
      * @param int        $id_record
      * @param string     $testo
-     * @param string     $alternativo
+     * @param bool       $alternativo
      * @param string     $extra
      *
      * @return string
@@ -268,7 +268,13 @@ class Modules
         $extra .= !empty($blank) ? ' target="_blank"' : '';
 
         if (!empty($module) && in_array($module->permission, ['r', 'rw'])) {
-            $link = !empty($id_record) ? 'editor.php?id_module='.$module['id'].'&id_record='.$id_record : 'controller.php?id_module='.$module['id'];
+            $router = App::getContainer()->router;
+            $link = !empty($id_record) ? $router->pathFor('module-record', [
+                'module_id' => $module['id'],
+                'record_id' => $id_record,
+            ]) : $router->pathFor('module', [
+                'module_id' => $module['id'],
+            ]);
 
             return '<a href="'.ROOTDIR.'/'.$link.'" '.$extra.'>'.$testo.'</a>';
         } else {
@@ -307,7 +313,10 @@ class Modules
             return '';
         }
 
-        $link = (!empty($element['option']) && $element['option'] != 'menu') ? ROOTDIR.'/controller.php?id_module='.$element['id'] : 'javascript:;';
+        $router = App::getContainer()->router;
+        $link = (!empty($element['option']) && $element['option'] != 'menu') ? $router->pathFor('module', [
+            'module_id' => $element['id'],
+        ]) : 'javascript:;';
         $title = $element['title'];
         $target = '_self'; // $target = ($element['new'] == 1) ? '_blank' : '_self';
         $active = ($actual == $element['name']);

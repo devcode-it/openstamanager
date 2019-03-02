@@ -14,7 +14,7 @@ class CKEditorHandler implements HandlerInterface
         // Generazione del codice HTML
         return '
     <textarea |attr|>|value|</textarea>
-    <script src="'.ROOTDIR.'/assets/dist/js/ckeditor/ckeditor.js"></script>
+    <script src="'.ROOTDIR.'/assets/js/ckeditor/ckeditor.js"></script>
     <script>
         CKEDITOR.replace("'.prepareToField($values['id']).'", {
             toolbar: globals.ckeditorToolbar,

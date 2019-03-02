@@ -9,7 +9,7 @@ return [
         'GET' => 0,
         'POST' => 0,
     ],
-    'jsUrl' => ROOTDIR.'/assets/dist/js/csrf/csrfprotector.js',
+    'jsUrl' => ROOTDIR.'/assets/js/csrf/csrfprotector.js',
     'tokenLength' => 10,
     'cookieConfig' => [
         'path' => ROOTDIR,

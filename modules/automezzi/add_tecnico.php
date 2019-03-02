@@ -41,7 +41,7 @@ echo '
 </form>';
 
 echo '
-<script src="'.$rootdir.'/lib/init.js"></script>';
+<script src="'.$rootdir.'/assets/js/init.js"></script>';
 
 echo '
 <script type="text/javascript">

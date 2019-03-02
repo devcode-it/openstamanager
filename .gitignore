@@ -72,7 +72,7 @@ vendor/
 *.new
 *.old
 *.txt
-assets/dist/
+public/assets/
 backup/*
 !backup/.htaccess
 custom/

@@ -1,26 +1,3 @@
-# Remove autoindex
-<IfModule mod_autoindex.c>
-    IndexIgnore */*
-</IfModule>
-
-# Deny access to files starting with dot
-<FilesMatch "^\.">
-     Order allow,deny
-     Deny from all
-</FilesMatch>
-
-# Deny access to log, sql, htaccess ecc..
-<FilesMatch "\.(ini|psd|log|sh|sql|md|lock|phar)$">
-     Order allow,deny
-     Deny from all
-</FilesMatch>
-
-# Deny access to VERSION, REVISION and config file
-<Files ~ "(VERSION$|REVISION$|LICENSE|(config.inc|config.example).php|(composer|package).json|gulpfile.js)">
-     Order allow,deny
-     Deny from all
-</Files>
-
 # Disable indexing of php, html, htm, pdf files
 ServerSignature Off
 <IfModule mod_headers.c>
@@ -28,28 +5,12 @@ ServerSignature Off
 </IfModule>
 
 <IfModule mod_rewrite.c>
-	RewriteEngine On
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^ index.php [QSA,L]
-
+    RewriteEngine on
+    RewriteCond %{REQUEST_FILENAME} !index.php
+    RewriteRule ^(.*)$ public/$1 [L]
 
 	# Tell PHP that the mod_rewrite module is ENABLED.
     SetEnv HTTP_MOD_REWRITE On
-
-	# Deny access to protected folders
-    RewriteRule ^backup/ - [F,L]
-    RewriteRule ^docs/ - [F,L]
-    RewriteRule ^include/ - [F,L]
-    RewriteRule ^locale/ - [F,L]
-    RewriteRule ^logs/ - [F,L]
-    RewriteRule ^update/ - [F,L]
-
-	# Deny access to svn, git, node_modules and vendor folders
-    RewriteRule ^.git/ - [F,L]
-    RewriteRule ^.svn/ - [F,L]
-    RewriteRule ^node_modules/ - [F,L]
-    RewriteRule ^vendor/ - [F,L]
 
     # Disable HTTP TRACE
     RewriteCond %{REQUEST_METHOD} ^TRACE

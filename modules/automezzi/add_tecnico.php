@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $id_record = get('idautomezzo');
 
 // Form di inserimento responsabili automezzo

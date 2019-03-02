@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 switch (post('op')) {
     // Aggiunta articolo
     case 'add':
@@ -151,7 +149,7 @@ switch (post('op')) {
         preg_match("/(.*?)([\d]*$)/", $serial__end, $m);
         $serial_end = intval($m[2]);
         $n_serial = abs($serial_end - $serial_start) + 1;
-        $serial_prefix = rtrim($serial__end,$serial_end);
+        $serial_prefix = rtrim($serial__end, $serial_end);
         $serial_pad_length = strlen($serial__end) - strlen($serial_prefix);
 
         // Altro

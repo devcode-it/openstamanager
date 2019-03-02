@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $fornitore = in_array($id_fornitore, $tipi_anagrafica);
 $cliente = in_array($id_cliente, $tipi_anagrafica);
 

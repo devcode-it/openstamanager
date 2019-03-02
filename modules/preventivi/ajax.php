@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 if (get('op') == 'get_costo_orario') {
     $id_tipo_intervento = get('id_tipo_intervento');
 

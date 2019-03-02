@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 use Modules\Interventi\Intervento;
 
 if (isset($id_record)) {

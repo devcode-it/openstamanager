@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 echo '
 <script src="'.$rootdir.'/assets/dist/js/chartjs/Chart.min.js"></script>';
 

@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $subcategorie = $dbo->fetchArray('SELECT * FROM `mg_categorie` WHERE `parent`='.prepare($id_record));
 
 foreach ($subcategorie as $sub) {

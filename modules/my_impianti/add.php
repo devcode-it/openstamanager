@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $source = get('source');
 $idanagrafica = null;
 

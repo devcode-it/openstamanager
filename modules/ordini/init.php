@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 if (isset($id_record)) {
     $ordine = Modules\Ordini\Ordine::with('tipo', 'stato')->find($id_record);
 

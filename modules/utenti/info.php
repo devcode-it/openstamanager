@@ -1,8 +1,6 @@
 <?php
 
 $skip_permissions = true;
-include_once __DIR__.'/../../core.php';
-
 $pageTitle = tr('Utente');
 
 include_once App::filepath('resources\views|custom|\layout', 'top.php');

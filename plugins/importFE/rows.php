@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $fattura_pa = new Plugins\ImportFE\FatturaElettronica(get('filename'));
 
 echo '

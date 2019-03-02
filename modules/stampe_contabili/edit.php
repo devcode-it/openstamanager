@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 echo '
 
 <div class="alert alert-warning">

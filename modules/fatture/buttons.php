@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 echo '
 
 <form action="" class="text-right" method="post" id="form-copy">

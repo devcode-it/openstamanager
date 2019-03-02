@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $plugin = Plugins::get($id_plugin);
 
 $idriga = filter('idriga');

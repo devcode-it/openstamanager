@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 ?><script src="<?php echo $rootdir; ?>/modules/contratti/js/contratti_helper.js"></script>
 
 <form action="" method="post" id="edit-form">

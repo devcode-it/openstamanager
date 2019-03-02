@@ -1,6 +1,4 @@
 <?php
-include_once __DIR__.'/../../core.php';
-
 $idconto = get('id');
 
 //Info conto

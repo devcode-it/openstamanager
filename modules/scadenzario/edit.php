@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 echo '
 <form action="" method="post" id="edit-form">
 	<input type="hidden" name="op" value="update">

@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 // Mostro le righe dell'ordine
 echo '
 <table class="table table-striped table-hover table-condensed table-bordered">

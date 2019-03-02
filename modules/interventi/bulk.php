@@ -3,7 +3,6 @@
 if (file_exists(__DIR__.'/../../../core.php')) {
     include_once __DIR__.'/../../../core.php';
 } else {
-    include_once __DIR__.'/../../core.php';
 }
 
 use Modules\Anagrafiche\Anagrafica;

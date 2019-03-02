@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 // Se lo stato intervento è uno di quelli di default, non lo lascio modificare
 if ($record['default']) {
     $attr = "readonly='true'";

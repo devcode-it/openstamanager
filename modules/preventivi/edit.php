@@ -1,6 +1,4 @@
 <?php
-include_once __DIR__.'/../../core.php';
-
 unset($_SESSION['superselect']['idanagrafica']);
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 

@@ -1,6 +1,4 @@
 <?php
-include_once __DIR__.'/../../core.php';
-
 if ($record['can_delete']) {
     $attr = '';
 } else {

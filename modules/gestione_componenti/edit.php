@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 if (empty($id_record)) {
     echo '
     <table width="100%" class="datatables table table-striped table-hover table-condensed table-bordered">

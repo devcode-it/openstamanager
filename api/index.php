@@ -13,8 +13,6 @@ function serverError()
 set_error_handler('serverError');
 register_shutdown_function('serverError');
 
-include_once __DIR__.'/../core.php';
-
 // Disabilta la sessione per l'API
 session_write_close();
 

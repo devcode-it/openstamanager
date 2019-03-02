@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 if (empty($dbo->fetchArray('SELECT * FROM co_scadenziario'))) {
     $class = 'muted';
     $disabled = 'disabled';

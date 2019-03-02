@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 function menuSelection($element, $group_id, $depth, $perms_values, $perms_names)
 {
     $dbo = database();

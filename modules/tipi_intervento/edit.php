@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 ?><form action="" method="post">
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">

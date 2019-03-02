@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $_SESSION['superselect']['idanagrafica'] = $record['idanagrafica'];
 
 $img = null;

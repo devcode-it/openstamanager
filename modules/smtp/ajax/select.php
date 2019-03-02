@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 switch ($resource) {
     case 'smtp':
         $query = 'SELECT id AS id, name AS descrizione FROM zz_smtps |where| ORDER BY name';

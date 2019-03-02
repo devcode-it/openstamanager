@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $img = null;
 if (!empty($record['immagine'])) {
     $fileinfo = Uploads::fileInfo($record['immagine']);

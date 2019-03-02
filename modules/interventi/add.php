@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 // Rimuovo session usate sui select combinati (sedi, preventivi, contratti, impianti)
 unset($_SESSION['superselect']['idanagrafica']);
 unset($_SESSION['superselect']['idsede']);

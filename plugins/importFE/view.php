@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $directory = Plugins\ImportFE\FatturaElettronica::getImportDirectory();
 $filename = get('filename');
 

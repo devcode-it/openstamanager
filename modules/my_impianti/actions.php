@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $op = post('op');
 
 $upload_dir = $docroot.'/files/'.Modules::get('MyImpianti')['directory'];

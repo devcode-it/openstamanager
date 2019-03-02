@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 if (empty($record['firma_file'])) {
     $frase = tr('Anteprima e firma');
     $info_firma = '';

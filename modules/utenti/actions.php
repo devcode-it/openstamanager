@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $id_utente = filter('id_utente');
 
 switch (filter('op')) {

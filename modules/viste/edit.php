@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 use Models\Module;
 
 $enable_readonly = !setting('Modifica Viste di default');

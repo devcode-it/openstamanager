@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $report_name = 'fattura_'.$numero.'.pdf';
 
 $autofill = [

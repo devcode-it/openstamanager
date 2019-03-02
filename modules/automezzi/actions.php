@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 switch (post('op')) {
     case 'update':
         $targa = post('targa');

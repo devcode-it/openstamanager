@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 // Impostazione filtri di default a tutte le selezioni la prima volta
 if (!isset($_SESSION['dashboard']['idtecnici'])) {
     $rs = $dbo->fetchArray("SELECT an_anagrafiche.idanagrafica AS id FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id) ON an_anagrafiche.idanagrafica=an_tipianagrafiche_anagrafiche.idanagrafica WHERE deleted_at IS NULL AND descrizione='Tecnico'");

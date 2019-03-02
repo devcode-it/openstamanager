@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $id_movimento = get('id_movimento');
 $id_conto = get('id_conto');
 

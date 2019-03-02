@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 // Info contratto
 $rs = $dbo->fetchArray('SELECT * FROM co_contratti WHERE id='.prepare($id_record));
 $idanagrafica = $rs[0]['idanagrafica'];

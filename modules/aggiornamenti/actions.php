@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 use Modules\Aggiornamenti\Aggiornamento;
 use Modules\Aggiornamenti\DowngradeException;
 

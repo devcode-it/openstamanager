@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 /**
  * Funzione per inserire i movimenti di magazzino.
  */

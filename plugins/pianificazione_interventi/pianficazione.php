@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $plugin = Plugins::get($id_plugin);
 
 $id_module = Modules::get('Contratti')['id'];

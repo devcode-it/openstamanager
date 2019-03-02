@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 // Lettura info fattura
 $record = $dbo->fetchOne('SELECT *,
     (SELECT descrizione FROM co_statidocumento WHERE id=id_stato) AS stato_doc,

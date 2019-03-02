@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $report_name = 'contratto_'.$records[0]['numero'].'.pdf';
 
 $autofill = [

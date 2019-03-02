@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 echo '
 <form action="" method="post" role="form">
     <input type="hidden" name="id_plugin" value="'.$id_plugin.'">

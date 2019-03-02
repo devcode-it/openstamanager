@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Ordini\Components\Articolo;
 use Modules\Ordini\Components\Descrizione;

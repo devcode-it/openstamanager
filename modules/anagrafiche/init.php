@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 use Modules\Anagrafiche\Anagrafica;
 
 $id_azienda = $dbo->fetchArray("SELECT id FROM an_tipianagrafiche WHERE descrizione='Azienda'")[0]['id'];

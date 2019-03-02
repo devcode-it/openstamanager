@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 if (empty($id_record)) {
     require $docroot.'/add.php';
 } else {

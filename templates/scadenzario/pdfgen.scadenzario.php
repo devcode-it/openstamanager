@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $module_name = 'Scadenzario';
 
 $date_start = $_SESSION['period_start'];

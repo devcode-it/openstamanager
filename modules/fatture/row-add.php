@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 // Info documento
 $rs = $dbo->fetchArray('SELECT * FROM co_documenti WHERE id='.prepare($id_record));
 $idanagrafica = $rs[0]['idanagrafica'];

@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $backup_dir = Backup::getDirectory();
 
 switch (filter('op')) {

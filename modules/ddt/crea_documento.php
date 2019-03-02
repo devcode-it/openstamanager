@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $module = Modules::get($id_module);
 
 $final_module = $module['name'] == 'Ddt di vendita' ? 'Fatture di vendita' : 'Fatture di acquisto';

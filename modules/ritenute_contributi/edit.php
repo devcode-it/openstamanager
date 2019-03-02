@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 // Presenza di documenti associati
 if ($record['doc_associati'] > 0) {
     echo '

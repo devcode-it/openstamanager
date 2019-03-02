@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 if (get('tipoanagrafica') != '') {
     $id_tipo_anagrafica = $dbo->fetchOne('SELECT id FROM an_tipianagrafiche WHERE descrizione='.prepare(get('tipoanagrafica')))['id'];
 }

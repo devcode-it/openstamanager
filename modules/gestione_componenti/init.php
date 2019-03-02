@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $cmp = \Util\Ini::getList($docroot.'/files/my_impianti/');
 
 if (!empty($id_record) && isset($cmp[$id_record - 1])) {

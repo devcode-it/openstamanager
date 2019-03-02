@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $block_edit = !empty($note_accredito) || $record['stato'] == 'Emessa';
 
 $rs = $dbo->fetchArray('SELECT co_tipidocumento.descrizione, dir FROM co_tipidocumento INNER JOIN co_documenti ON co_tipidocumento.id=co_documenti.id_tipo_documento WHERE co_documenti.id='.prepare($id_record));

@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/core.php';
-
 // Inclusione elementi fondamentali del modulo
 include $docroot.'/actions.php';
 

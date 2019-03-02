@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $path = $docroot.'/files/my_impianti/';
 
 switch (post('op')) {

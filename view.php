@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/core.php';
-
 $file_id = filter('file_id');
 
 $file = Models\Upload::find($file_id);

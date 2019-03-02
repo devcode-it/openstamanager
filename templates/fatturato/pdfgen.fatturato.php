@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 // carica report html
 $report = file_get_contents($docroot.'/templates/fatturato/fatturato.html');
 $body = file_get_contents($docroot.'/templates/fatturato/fatturato_body.html');

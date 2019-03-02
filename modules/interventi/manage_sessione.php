@@ -1,6 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
 include_once __DIR__.'/../../../crore.php';
 
 $show_costi = true;

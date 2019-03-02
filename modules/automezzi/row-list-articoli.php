@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 // Elenco articoli caricati sull'automezzo
 $query = 'SELECT mg_articoli_automezzi.id, mg_articoli.codice AS codice, idarticolo, mg_articoli_automezzi.qta AS qta_automezzo, mg_articoli.qta AS qta_magazzino, mg_articoli.descrizione, mg_articoli.prezzo_vendita, (SELECT percentuale FROM co_iva WHERE id=mg_articoli.idiva_vendita) AS prciva_vendita FROM mg_articoli_automezzi INNER JOIN mg_articoli ON mg_articoli_automezzi.idarticolo=mg_articoli.id WHERE mg_articoli_automezzi.idautomezzo='.prepare($id_record).' AND mg_articoli_automezzi.qta > 0';
 $rs2 = $dbo->fetchArray($query);

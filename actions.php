@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/core.php';
-
 if (empty($structure) || empty($structure['enabled'])) {
     die(tr('Accesso negato'));
 }

@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 unset($_SESSION['superselect']['id_categoria']);
 
 ?><form action="" method="post" id="add-form">

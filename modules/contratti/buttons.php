@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $rs_documento = $dbo->fetchArray('SELECT * FROM co_righe_contratti WHERE idcontratto='.prepare($id_record));
 
 /* permetto di fatturare il contratto solo se contiene righe e si trova in uno stato fatturabile */

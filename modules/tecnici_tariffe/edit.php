@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $tipi_interventi = $dbo->fetchArray('SELECT * FROM in_tipiintervento ORDER BY descrizione');
 
 $tecnici = $dbo->fetchArray("SELECT idanagrafica, ragione_sociale FROM an_anagrafiche WHERE idanagrafica IN (

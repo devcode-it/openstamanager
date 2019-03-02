@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 // Lettura info ddt
 $q = 'SELECT *,
     (SELECT dir FROM dt_tipiddt WHERE id=id_tipo_ddt) AS dir,

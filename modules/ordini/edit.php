@@ -1,6 +1,4 @@
 <?php
-include_once __DIR__.'/../../core.php';
-
 $module = Modules::get($id_module);
 
 if ($module['name'] == 'Ordini cliente') {

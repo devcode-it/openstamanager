@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $id_original = filter('id_original');
 
 if (isset($id_record)) {

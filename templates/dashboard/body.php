@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $height = '80';
 
 if (isset($_SESSION['period']['month'])) {

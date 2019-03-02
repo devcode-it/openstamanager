@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 // Lunghezza minima della password
 $min_length_password = 8;
 // Lunghezza minima del nome utente (username)

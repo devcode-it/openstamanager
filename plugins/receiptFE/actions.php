@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 use Plugins\ReceiptFE\Interaction;
 use Plugins\ReceiptFE\Ricevuta;
 

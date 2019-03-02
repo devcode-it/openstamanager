@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 // carica report html
 $report = file_get_contents(__DIR__.'/magazzino_inventario.html');
 $body = file_get_contents(__DIR__.'/magazzino_inventario_body.html');

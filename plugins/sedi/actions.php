@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 $operazione = filter('op');
 
 switch ($operazione) {

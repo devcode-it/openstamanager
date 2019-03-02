@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 function findKey($array, $keySearch)
 {
     foreach ($array as $key => $item) {

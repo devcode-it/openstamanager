@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 if (isset($id_record)) {
     $preventivo = Modules\Preventivi\Preventivo::with('stato')->find($id_record);
 

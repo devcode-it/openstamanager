@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/../../core.php';
-
 if (isset($id_record)) {
     $record = $dbo->fetchOne('SELECT *,
         (SELECT tipo FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica = an_sedi.idanagrafica) AS tipo_anagrafica,

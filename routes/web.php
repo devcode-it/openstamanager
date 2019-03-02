@@ -35,9 +35,9 @@ $app->group('/ajax', function () use ($app) {
     $app->get('/complete', 'Controllers\AjaxController:complete')->setName('ajax-complete');
     $app->get('/search', 'Controllers\AjaxController:search')->setName('ajax-search');
 
-    $app->get('/dataload', 'Controllers\AjaxController:search')->setName('ajax-dataload');
+    $app->get('/dataload', 'Controllers\AjaxController:dataLoad')->setName('ajax-dataload');
 
-    $app->get('/session', 'Controllers\AjaxController:search')->setName('ajax-session');
+    $app->get('/session', 'Controllers\AjaxController:session')->setName('ajax-session');
     $app->get('/session-array', 'Controllers\AjaxController:search')->setName('ajax-session-array');
 })->add('Middlewares\Authorization\UserMiddleware');
 

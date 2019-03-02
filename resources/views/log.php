@@ -1,7 +1,5 @@
 <?php
 
-include_once __DIR__.'/core.php';
-
 $pageTitle = tr('Log');
 
 include_once App::filepath('resources\views|custom|\layout', 'top.php');

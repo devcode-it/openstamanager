@@ -1,13 +1,5 @@
 <?php
 
-include_once __DIR__.'/core.php';
-
-if (!empty($id_record) && !empty($id_module)) {
-    redirect(ROOTDIR.'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
-} elseif (empty($id_module)) {
-    redirect(ROOTDIR.'/index.php');
-}
-
 include_once App::filepath('resources\views|custom|\layout', 'top.php');
 
 // Inclusione gli elementi fondamentali
@@ -27,7 +19,9 @@ echo '
 // Pulsante "Aggiungi" solo se il modulo è di tipo "table" e se esiste il template per la popup
 if ($structure->hasAddFile() && $structure->permission == 'rw') {
     echo '
-						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
+						<button type="button" class="btn btn-primary" data-toggle="modal" data-title="'.tr('Aggiungi').'..." data-href="'.$router->pathFor('module-add', [
+            'module_id' => $id_module,
+        ]).'"><i class="fa fa-plus"></i></button>';
 }
 
 echo '
@@ -49,7 +43,7 @@ echo '
 			<div class="tab-content">
 				<div id="tab_0" class="tab-pane active">';
 
-include $docroot.'/include/manager.php';
+include App::filepath('resources\views|custom|\layout', 'manager.php');
 
 echo '
 				</div>';
@@ -64,7 +58,7 @@ foreach ($plugins as $plugin) {
 
     $id_plugin = $plugin['id'];
 
-    include $docroot.'/include/manager.php';
+    include App::filepath('resources\views|custom|\layout', 'manager.php');
 
     echo '
 				</div>';

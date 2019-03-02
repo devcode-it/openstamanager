@@ -90,4 +90,42 @@ require __DIR__.'/routes/web.php';
 require __DIR__.'/config/middlewares.php';
 
 // Run application
-$app->run();
+$response = $app->run(true);
+$html = $response->getBody()->__toString();
+
+// Configurazione templating personalizzato
+if (!empty($config['HTMLWrapper'])) {
+    HTMLBuilder\HTMLBuilder::setWrapper($config['HTMLWrapper']);
+}
+foreach ((array) $config['HTMLHandlers'] as $key => $value) {
+    HTMLBuilder\HTMLBuilder::setHandler($key, $value);
+}
+
+foreach ((array) $config['HTMLManagers'] as $key => $value) {
+    HTMLBuilder\HTMLBuilder::setManager($key, $value);
+}
+
+$id_module = Modules::getCurrent()['id'];
+$id_plugin = Plugins::getCurrent()['id'];
+
+$html = str_replace('$id_module$', $id_module, $html);
+$html = str_replace('$id_plugin$', $id_plugin, $html);
+$html = str_replace('$id_record$', $id_record, $html);
+
+$html = \HTMLBuilder\HTMLBuilder::replace($html);
+
+$body = new Slim\Http\Body(fopen('php://temp', 'r+'));
+$body->write($html);
+
+$response = $response->withBody($body);
+$app->respond($response);
+
+// Informazioni estese sulle azioni dell'utente
+if (!empty(post('op')) && post('op') != 'send-email') {
+    operationLog(post('op'));
+}
+
+// Annullo le notifiche (AJAX)
+if (isAjaxRequest()) {
+    flash()->clearMessage('info');
+}

@@ -20,7 +20,7 @@
     }],
     "type": "project",
     "require": {
-        "php": ">=5.6",
+        "php": ">=7.1",
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-intl": "*",
@@ -40,7 +40,7 @@
         "filp/whoops": "^2.1",
         "guzzlehttp/guzzle": "^6.3",
         "ifsnop/mysqldump-php": "^2.3",
-        "illuminate/database": "~5.4.0",
+        "illuminate/database": "^5.4.0",
         "intervention/image": "^2.3",
         "league/csv": "^8.2",
         "maximebf/debugbar": "^1.15",
@@ -57,12 +57,12 @@
         "slim/slim": "^3.12",
         "slim/twig-view": "^2.4",
         "spipu/html2pdf": "^5.0",
-        "symfony/filesystem": "^3.3",
-        "symfony/finder": "^3.3",
+        "symfony/filesystem": "^4.0",
+        "symfony/finder": "^4.0",
         "symfony/polyfill-ctype": "^1.8",
         "symfony/polyfill-php70": "^1.8",
-        "symfony/translation": "^3.3",
-        "symfony/var-dumper": "^3.3"
+        "symfony/translation": "^4.0",
+        "symfony/twig-bridge": "^4.0"
     },
     "require-dev": {
         "codeception/codeception": "^2.4",
@@ -85,9 +85,6 @@
         "sort-packages": true,
         "optimize-autoloader": true,
         "apcu-autoloader": true,
-        "prefer-stable": true,
-        "platform": {
-            "php": "5.6.4"
-        }
+        "prefer-stable": true
     }
 }

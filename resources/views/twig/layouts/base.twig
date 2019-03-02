@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}{% endblock %} - {{ 'OpenSTAManager'|trans }}</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+        <meta name="robots" content="noindex,nofollow">
+
+        <link href="{{ base_url() }}/assets/img/favicon.png" rel="icon" type="image/x-icon" />
+        {% set lang = translator.getCurrentLocale() %}
+
+        <link rel="stylesheet" type="text/css" media="all" href="{{ base_url() }}/assets/css/app.min.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="{{ base_url() }}/assets/css/style.min.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="{{ base_url() }}/assets/css/themes.min.css"/>
+
+        <link rel="stylesheet" type="text/css" media="print" href="{{ base_url() }}/assets/css/print.min.css"/>
+
+        <script type="text/javascript" charset="utf-8" src="{{ base_url() }}/assets/js/app.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="{{ base_url() }}/assets/js/custom.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="{{ base_url() }}/assets/js/i18n/parsleyjs/{{ lang }}.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="{{ base_url() }}/assets/js/i18n/select2/{{ lang }}.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="{{ base_url() }}/assets/js/i18n/moment/{{ lang }}.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="{{ base_url() }}/assets/js/i18n/fullcalendar/{{ lang }}.min.js"></script>
+
+        {% if auth.isAuthenticated() %}
+        <script type="text/javascript" charset="utf-8" src="{{ base_url() }}/assets/js/functions.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="{{ base_url() }}/assets/js/init.min.js"></script>
+        {% endif %}
+
+        {% block css %}{% endblock %}
+        {% block js %}{% endblock %}
+
+        <!-- Impostazioni di default per gli alert -->
+        <script>
+            swal.setDefaults({
+                buttonsStyling: false,
+                confirmButtonClass: "btn btn-lg btn-primary",
+                cancelButtonClass: "btn btn-lg",
+                cancelButtonText: "{{ "Annulla"|trans }}",
+            });
+
+            globals = {
+                rootdir: '{{ base_url() }}',
+                locale: '{{ lang }}',
+                full_locale: '{{ lang }}_{{ lang|upper }}',
+                translations: {}
+            };
+
+            // Aggiunta dell'ingranaggio all\'unload della pagina
+            $(window).on("beforeunload", function () {
+                $("#main_loading").show();
+            });
+
+            // Rimozione dell'ingranaggio al caricamento completo della pagina
+            $(window).on("load", function () {
+                $("#main_loading").fadeOut();
+            });
+        </script>
+
+    </head>
+
+    <body class="skin-{{ config.theme }} {% block body_class %}{% endblock %}">
+        <!-- Loader principale -->
+        <div id="main_loading">
+            <div>
+                <i class="fa fa-cog fa-spin text-danger"></i>
+            </div>
+        </div>
+
+        <!-- Loader secondario -->
+        <div id="mini-loader" style="display:none;">
+            <div></div>
+        </div>
+
+        <!-- Loader senza overlay -->
+        <div id="tiny-loader" style="display:none;"></div>
+
+        {% block body %}{% endblock %}
+
+    </body>
+</html>

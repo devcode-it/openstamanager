@@ -1,0 +1,15 @@
+{% extends "layouts/base.twig" %}
+
+{% block body_class %}hold-transition login-page{% endblock %}
+
+{% block body %}
+<div class="box box-center-large {% block box_class %}{% endblock %}">
+    <div class="box-header with-border text-center">
+        {% block box_header %}{% endblock %}
+    </div>
+
+    <div class="box-body">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

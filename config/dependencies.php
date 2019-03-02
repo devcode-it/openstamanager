@@ -73,24 +73,30 @@ $container['view'] = function ($container) {
 };
 
 // Templating Twig
-$container['twig-view'] = function ($container) {
-    $settings = $container->settings['views'];
+$container['twig'] = function ($container) {
+    $settings = $container->settings;
 
-    $view = new \Slim\Views\Twig($settings['templates'], $settings['config']);
+    $twig = new \Slim\Views\Twig('resources/views/twig', [
+        'cache' => false, //DOCROOT.'/cache/twig',
+    ]);
 
     // Instantiate and add Slim specific extension
-    $basePath = rtrim(str_ireplace('index.php', '', $container['request']->getUri()->getBasePath()), '/');
-    $view->addExtension(new \Slim\Views\TwigExtension($container['router'], $basePath));
-    $view->addExtension(new \Symfony\Bridge\Twig\Extension\TranslationExtension($container['translator']->getTranslator()));
+    $router = $container->get('router');
+    $uri = \Slim\Http\Uri::createFromEnvironment(new \Slim\Http\Environment($_SERVER));
+    $twig->addExtension(new \Slim\Views\TwigExtension($router, $uri));
 
-    $view->offsetSet('auth', $container['auth']);
-    $view->offsetSet('flash', $container['flash']);
-    $view->offsetSet('translator', $container['translator']);
-    $view->offsetSet('router', $container['router']);
+    $twig->addExtension(new \Symfony\Bridge\Twig\Extension\TranslationExtension($container['translator']->getTranslator()));
+
+    $twig->offsetSet('config', $container['config']);
+    $twig->offsetSet('auth', $container['auth']);
+    $twig->offsetSet('flash', $container['flash']);
+    $twig->offsetSet('translator', $container['translator']);
+    $twig->offsetSet('lang', $container['translator']->getCurrentLocale());
+    $twig->offsetSet('router', $container['router']);
 
     if (!empty($container['debugbar'])) {
-        $view->offsetSet('debugbar', $container['debugbar']);
+        $twig->offsetSet('debugbar', $container['debugbar']);
     }
 
-    return $view;
+    return $twig;
 };

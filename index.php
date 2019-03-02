@@ -1,7 +1,7 @@
 <?php
 
 // Controllo sulla versione PHP
-$minimum = '5.6.0';
+$minimum = '7.1.0';
 if (version_compare(phpversion(), $minimum) < 0) {
     echo '
 <p>Stai utilizzando la versione PHP '.phpversion().', non compatibile con OpenSTAManager.</p>

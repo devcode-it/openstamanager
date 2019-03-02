@@ -11,12 +11,13 @@ class BaseController extends Controller
     public function index($request, $response, $args)
     {
         // Requisiti di OpenSTAManager
-        if (!App::isConfigured()) {
-            $response = $response->withRedirect($this->router->pathFor('requirements'));
+        if (!ConfigController::requirementsSatisfied()) {
+            $controller = new ConfigController($this->container);
+            $response = $controller->requirements($request, $response, $args);
         }
 
         // Inizializzazione
-        if (!App::isConfigured()) {
+        elseif (!App::isConfigured()) {
             $response = $response->withRedirect($this->router->pathFor('configuration'));
         }
 

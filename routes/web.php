@@ -13,60 +13,60 @@
 $app->get('/', 'Controllers\BaseController:index')->setName('login');
 $app->post('/', 'Controllers\BaseController:loginAction')
     ->add('Middlewares\Authorization\GuestMiddleware');
-$app->get('/logout', 'Controllers\BaseController:logout')->setName('logout')
+$app->get('/logout[/]', 'Controllers\BaseController:logout')->setName('logout')
     ->add('Middlewares\Authorization\UserMiddleware');
 
 // Configurazione iniziale
 $app->group('', function () use ($app) {
-    $app->get('/update-install', 'Controllers\ConfigController:update')->setName('update');
+    $app->get('/update[/]', 'Controllers\ConfigController:update')->setName('update');
 
-    $app->get('/configuration', 'Controllers\ConfigController:configuration')->setName('configuration');
+    $app->get('/configuration[/]', 'Controllers\ConfigController:configuration')->setName('configuration');
 
-    $app->get('/requirements', 'Controllers\ConfigController:requirements')->setName('requirements');
+    $app->get('/requirements[/]', 'Controllers\ConfigController:requirements')->setName('requirements');
 })->add('Middlewares\Authorization\GuestMiddleware');
 
 // Informazioni su OpenSTAManager
-$app->get('/info', 'Controllers\ConfigController:info')->setName('info')
+$app->get('/info[/]', 'Controllers\ConfigController:info')->setName('info')
     ->add('Middlewares\Authorization\UserMiddleware');
 
 // Operazioni Ajax
 $app->group('/ajax', function () use ($app) {
-    $app->get('/select', 'Controllers\AjaxController:select')->setName('ajax-select');
-    $app->get('/complete', 'Controllers\AjaxController:complete')->setName('ajax-complete');
-    $app->get('/search', 'Controllers\AjaxController:search')->setName('ajax-search');
+    $app->get('/select[/]', 'Controllers\AjaxController:select')->setName('ajax-select');
+    $app->get('/complete[/]', 'Controllers\AjaxController:complete')->setName('ajax-complete');
+    $app->get('/search[/]', 'Controllers\AjaxController:search')->setName('ajax-search');
 
-    $app->get('/dataload', 'Controllers\AjaxController:dataLoad')->setName('ajax-dataload');
+    $app->get('/dataload[/]', 'Controllers\AjaxController:dataLoad')->setName('ajax-dataload');
 
-    $app->get('/session', 'Controllers\AjaxController:session')->setName('ajax-session');
-    $app->get('/session-array', 'Controllers\AjaxController:search')->setName('ajax-session-array');
+    $app->get('/session[/]', 'Controllers\AjaxController:session')->setName('ajax-session');
+    $app->get('/session-array[/]', 'Controllers\AjaxController:search')->setName('ajax-session-array');
 })->add('Middlewares\Authorization\UserMiddleware');
 
 // Moduli
 $app->group('/module/{module_id}', function () use ($app) {
-    $app->get('', 'Controllers\ModuleController:index')->setName('module');
+    $app->get('[/]', 'Controllers\ModuleController:index')->setName('module');
 
-    $app->get('/edit/{record_id}', 'Controllers\ModuleController:record')->setName('module-record');
+    $app->get('/edit/{record_id}[/]', 'Controllers\ModuleController:record')->setName('module-record');
     $app->post('/edit/{record_id}', 'Controllers\ModuleController:saveRecord');
 
-    $app->get('/add', 'Controllers\ModuleController:add')->setName('module-add');
-    $app->post('/add', 'Controllers\ModuleController:addRecord');
+    $app->get('/add[/]', 'Controllers\ModuleController:add')->setName('module-add');
+    $app->post('/add[/]', 'Controllers\ModuleController:addRecord');
 })->add('Middlewares\Authorization\UserMiddleware');
 
 // Stampe
-$app->get('/print/{print_id}', 'PrintController:index')->setName('print')
+$app->get('/print/{print_id}[/]', 'PrintController:index')->setName('print')
     ->add('Middlewares\Authorization\UserMiddleware');
 
 // Moduli
 $app->group('/upload', function () use ($app) {
-    $app->get('/{upload_id}', 'Controllers\UploadController:view')->setName('upload-view');
+    $app->get('/{upload_id}[/]', 'Controllers\UploadController:view')->setName('upload-view');
 
-    $app->get('/add/{module_id}/{plugin_id}/{record_id}', 'Controllers\UploadController:index')->setName('upload');
+    $app->get('/add/{module_id}/{plugin_id}/{record_id}[/]', 'Controllers\UploadController:index')->setName('upload');
 
-    $app->get('/remove/{upload_id}', 'Controllers\UploadController:remove')->setName('upload-remove');
+    $app->get('/remove/{upload_id}[/]', 'Controllers\UploadController:remove')->setName('upload-remove');
 })->add('Middlewares\Authorization\UserMiddleware');
 
 // E-mail
-$app->get('/mail/{mail_id}', 'MailController:index')->setName('mail')
+$app->get('/mail/{mail_id}[/]', 'MailController:index')->setName('mail')
     ->add('Middlewares\Authorization\UserMiddleware');
 
 /*

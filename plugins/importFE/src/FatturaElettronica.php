@@ -205,6 +205,9 @@ class FatturaElettronica
         foreach ($righe as $key => $riga) {
             $articolo = ArticoloOriginale::find($articoli[$key]);
 
+            $riga['PrezzoUnitario'] = floatval($riga['PrezzoUnitario']);
+            $riga['Quantita'] = floatval($riga['Quantita']);
+
             if (!empty($articolo)) {
                 $obj = Articolo::build($fattura, $articolo);
 

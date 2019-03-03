@@ -143,7 +143,7 @@ echo '
     '_BTN_' => '<b>Genera</b>',
 ]).'. '.tr('Successivamente sarà possibile procedere alla visualizzazione e al download della fattura generata attraverso i pulsanti dedicati').'.</p>
 
-<p>'.tr("Tutti gli allegati inseriti all'interno della categoria \"Fattura Elettronica\" saranno inclusi come allegati dell'XML").'.</p>
+<p>'.tr("Tutti gli allegati PDF inseriti all'interno della categoria \"Fattura Elettronica\" saranno inclusi come allegati dell'XML").'.</p>
 <br>';
 
 echo '
@@ -158,15 +158,8 @@ echo '
             <i class="fa fa-file"></i> '.tr('Genera').'
         </button>
     </form>';
-
-echo '
-    <i class="fa fa-arrow-right fa-fw text-muted"></i>
-
-    <a href="'.$structure->fileurl('download.php').'?id_record='.$id_record.'" class="btn btn-success btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
-        <i class="fa fa-download"></i> '.tr('Scarica').'
-    </a>';
-
-    $file = $generated ? Models\Upload::where('filename', $fattura_pa->getFilename())->where('id_record', $id_record)->first() : null;
+	
+	$file = $generated ? Models\Upload::where('filename', $fattura_pa->getFilename())->where('id_record', $id_record)->first() : null;
 
 echo '
 
@@ -175,10 +168,18 @@ echo '
     <a href="'.ROOTDIR.'/view.php?file_id='.($file ? $file->id : null).'" class="btn btn-info btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
         <i class="fa fa-eye"></i> '.tr('Visualizza').'
     </a>';
+	
+	// Scelgo quando posso inviarla
+	$send = Interaction::isEnabled() && $generated && in_array($record['codice_stato_fe'], ['GEN', 'ERVAL']);
 
-// Scelgo quando posso inviarla
-$send = Interaction::isEnabled() && $generated && in_array($record['codice_stato_fe'], ['GEN', 'ERVAL']);
+	
+echo '
+    <i class="fa fa-arrow-right fa-fw text-muted"></i>
 
+    <a href="'.$structure->fileurl('download.php').'?id_record='.$id_record.'" class="btn btn-primary btn-lg '.($generated ? '' : 'disabled').'" target="_blank" '.($generated ? '' : 'disabled').'>
+        <i class="fa fa-download"></i> '.tr('Scarica').'
+    </a>';
+	
 echo '
 
     <i class="fa fa-arrow-right fa-fw text-muted"></i>
@@ -191,7 +192,7 @@ echo '
 if (!empty($record['codice_stato_fe'])) {
     if ($record['codice_stato_fe'] == 'GEN') {
         echo '
-		<div class="alert alert-warning">'.tr("La fattura è stata generata ed è pronta per l'invio").'.</div>
+		<div class="alert alert-info text-left"><i class="fa fa-info-circle"></i> '.tr("La fattura è stata generata ed è pronta per l'invio").'.</div>
 		';
     } else {
         $stato_fe = database()->fetchOne('SELECT codice, descrizione, icon FROM fe_stati_documento WHERE codice='.prepare($record['codice_stato_fe']));

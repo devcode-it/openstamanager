@@ -11,4 +11,4 @@ actor_suffix: Tester
 extensions:
     enabled:
         - Codeception\Extension\RunFailed
-        - Codeception\Extension\Recorder
+        #- Codeception\Extension\Recorder

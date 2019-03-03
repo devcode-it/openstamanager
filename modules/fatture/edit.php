@@ -128,7 +128,7 @@ if (empty($record['is_fiscale'])) {
 
                     if ($dir == 'entrata') {
                         ?>
-						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "clienti", "help": "<?php echo tr("In caso di autofattura indicare l'azienda: ").$database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']; ?>", "value": "$idanagrafica$" ]}
+						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "clienti", "help": "<?php echo tr("In caso di autofattura indicare l'azienda: ").stripslashes($database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']); ?>", "value": "$idanagrafica$" ]}
 					<?php
                     } else {
                         ?>
@@ -182,35 +182,6 @@ if (empty($record['is_fiscale'])) {
 				<div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Banca'); ?>", "name": "idbanca", "values": "query=SELECT id, CONCAT (nome, ' - ' , iban) AS descrizione FROM co_banche WHERE deleted_at IS NULL ORDER BY nome ASC", "value": "$idbanca$", "icon-after": "add|<?php echo Modules::get('Banche')['id']; ?>||", "extra": " <?php echo ($record['stato'] == 'Bozza') ? '' : 'disabled'; ?> " ]}
 				</div>
-
-
-				<div class="col-md-3">
-					<label>&nbsp;</label><br>
-<?php
-
-if (!empty($record['is_fiscale'])) {
-    // Aggiunta prima nota solo se non c'è già, se non si è in bozza o se il pagamento non è completo
-    $n2 = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE iddocumento='.prepare($id_record).' AND primanota=1');
-
-    $rs3 = $dbo->fetchArray('SELECT SUM(da_pagare-pagato) AS differenza, SUM(da_pagare) FROM co_scadenziario GROUP BY iddocumento HAVING iddocumento='.prepare($id_record));
-    $differenza = isset($rs3[0]) ? $rs3[0]['differenza'] : null;
-    $da_pagare = isset($rs3[0]) ? $rs3[0]['da_pagare'] : null;
-
-    if (($n2 <= 0 && $record['stato'] == 'Emessa') || $differenza != 0) {
-        ?>
-					<a class="btn btn-primary btn-block  <?php echo (!empty(Modules::get('Prima nota'))) ? '' : 'disabled'; ?>" href="javascript:;" onclick="launch_modal( 'Aggiungi prima nota', '<?php echo $rootdir; ?>/add.php?id_module=<?php echo Modules::get('Prima nota')['id']; ?>&iddocumento=<?php echo $id_record; ?>&dir=<?php echo $dir; ?>', 1 );"><i class="fa fa-euro"></i> <?php echo tr('Registrazione contabile pagamento'); ?>...</a><br><br>
-<?php
-    }
-
-    if ($record['stato'] == 'Pagato') {
-        ?>
-					<a class="btn btn-primary btn-block" href="javascript:;" onclick="if( confirm('Se riapri questa fattura verrà azzerato lo scadenzario e la prima nota. Continuare?') ){ $.post( '<?php echo $rootdir; ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>', { id_module: '<?php echo $id_module; ?>', id_record: '<?php echo $id_record; ?>', op: 'reopen' }, function(){ location.href='<?php echo $rootdir; ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>'; } ); }" title="Registrazione contabile pagamento"><i class="fa fa-folder-open"></i> <?php echo tr('Riapri fattura'); ?>...</a>
-<?php
-    }
-}
-?>
-
-				</div>
 			</div>
 
 <?php
@@ -244,7 +215,7 @@ if ($dir == 'uscita') {
                 if ($dir == 'entrata') {
                     ?>
 					<div class="col-md-3">
-						{[ "type": "checkbox", "label": "<?php echo tr('Fattura per conto terzi'); ?>", "name": "is_fattura_conto_terzi", "value": "$is_fattura_conto_terzi$", "help": "<?php echo tr('Nell\'xml della FE imposta il fornitore ('.$database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale'].') come cessionario e il cliente come cedente/prestatore.'); ?>", "placeholder": "<?php echo tr('Fattura per conto terzi'); ?>" ]}
+						{[ "type": "checkbox", "label": "<?php echo tr('Fattura per conto terzi'); ?>", "name": "is_fattura_conto_terzi", "value": "$is_fattura_conto_terzi$", "help": "<?php echo tr('Nell\'xml della FE imposta il fornitore ('.stripslashes($database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']).') come cessionario e il cliente come cedente/prestatore.'); ?>", "placeholder": "<?php echo tr('Fattura per conto terzi'); ?>" ]}
 					</div>
 					
 				<?php
@@ -259,7 +230,7 @@ if ($dir == 'uscita') {
 
 			<div class="row">
 				<div class="col-md-12">
-					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "help": "<?php echo tr('Note visibili anche in stampa.'); ?>", "value": "$note$" ]}
+					{[ "type": "textarea", "label": "<?php echo tr('Note'); ?>", "name": "note", "help": "<?php echo tr('Note visibili anche in fattura.'); ?>", "value": "$note$" ]}
 				</div>
 			</div>
 
@@ -530,7 +501,7 @@ include $docroot.'/modules/fatture/row-list.php';
 <?php
  if ($dir == 'entrata') {
      echo '
-	<div class="alert alert-info text-center">'.tr('Per allegare un documento alla fattura elettronica caricare il file specificando come categoria "Fattura Elettronica"').'.</div>';
+	<div class="alert alert-info text-center">'.tr('Per allegare un documento alla fattura elettronica caricare il file PDF specificando come categoria "Fattura Elettronica"').'.</div>';
  }
 ?>
 

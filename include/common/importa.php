@@ -75,28 +75,15 @@ if (!empty($righe)) {
     </div>';
     }
 
-    echo '
-    
-    <div class="row">';
-
-    // Iva
-    if ($original_module['name'] == 'Preventivi' || $original_module['name'] == 'Contratti') {
-        echo '
-        <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Iva').'", "name": "id_iva", "required": 1, "value": "'.$id_iva.'", "ajax-source": "iva" ]}
-        </div>';
-    }
-
     // Conto
-    if (($final_module['name'] == 'Fatture di vendita' || $final_module['name'] == 'Fatture di acquisto') && $op != 'nota_credito') {
+    if (($final_module['name'] == 'Fatture di vendita' || $final_module['name'] == 'Fatture di acquisto') && !($original_module['name'] == 'Fatture di vendita' || $original_module['name'] == 'Fatture di acquisto')) {
         echo '
-        <div class="col-md-6">
+    <div class="row">
+        <div class="col-md-12">
             {[ "type": "select", "label": "'.tr('Conto').'", "name": "id_conto", "required": 1, "value": "'.$id_conto.'", "ajax-source": "'.($dir == 'entrata' ? 'conti-vendite' : 'conti-acquisti').'" ]}
-        </div>';
-    }
-
-    echo '
+        </div>
     </div>';
+    }
 
     echo '
     <div class="clearfix"></div>

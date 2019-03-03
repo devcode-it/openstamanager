@@ -214,19 +214,12 @@ switch (post('op')) {
         }
 
         $parziale = false;
-
-        $id_iva = get('id_iva');
-        $id_conto = get('id_conto');
         $righe = $ordine->getRighe();
-
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($ddt, $qta);
-                $copia->id_conto = $id_conto;
-
-                $copia->save();
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
@@ -236,11 +229,22 @@ switch (post('op')) {
 
                     $copia->serials = $serials;
                 }
+
+                $copia->save();
             }
 
             if ($riga->qta != $riga->qta_evasa) {
                 $parziale = true;
             }
+        }
+
+        // Aggiornamento sconto
+        if (post('evadere')[$ordine->scontoGlobale->id] == 'on') {
+            $ddt->tipo_sconto_globale = $ordine->tipo_sconto_globale;
+            $ddt->sconto_globale = $ordine->tipo_sconto_globale == 'PRC' ? $ordine->sconto_globale : $ordine->sconto_globale;
+            $ddt->save();
+
+            $ddt->updateSconto();
         }
 
         // Impostazione del nuovo stato
@@ -470,71 +474,6 @@ switch (post('op')) {
             }
 
             break;
-
-    // aggiungi righe da ordine
-    case 'add_ordine':
-        $idordine = post('iddocumento');
-
-        // Lettura di tutte le righe della tabella in arrivo
-        foreach (post('qta_da_evadere') as $i => $value) {
-            // Processo solo le righe da evadere
-            if (post('evadere')[$i] == 'on') {
-                $idrigaordine = $i;
-                $idarticolo = post('idarticolo')[$i];
-                $descrizione = post('descrizione')[$i];
-
-                $qta = post('qta_da_evadere')[$i];
-                $um = post('um')[$i];
-
-                $subtot = post('subtot')[$i] * $qta;
-                $sconto = post('sconto')[$i];
-                $sconto = $sconto * $qta;
-
-                $qprc = 'SELECT tipo_sconto, sconto_unitario FROM or_righe_ordini WHERE id='.prepare($idrigaordine);
-                $rsprc = $dbo->fetchArray($qprc);
-
-                $sconto_unitario = $rsprc[0]['sconto_unitario'];
-                $tipo_sconto = $rsprc[0]['tipo_sconto'];
-
-                $idiva = post('idiva')[$i];
-
-                // Calcolo l'iva indetraibile
-                $q = 'SELECT percentuale, indetraibile FROM co_iva WHERE id='.prepare($idiva);
-                $rs = $dbo->fetchArray($q);
-                $iva = ($subtot - $sconto) / 100 * $rs[0]['percentuale'];
-                $iva_indetraibile = $iva / 100 * $rs[0]['indetraibile'];
-
-                // Leggo la descrizione iva
-                $query = 'SELECT * FROM co_iva WHERE id='.prepare($idiva);
-                $rs = $dbo->fetchArray($query);
-                $desc_iva = $rs[0]['descrizione'];
-
-                // Se sto aggiungendo un articolo uso la funzione per inserirlo e incrementare la giacenza
-                if (!empty($idarticolo)) {
-                    $idiva_acquisto = $idiva;
-                    $prezzo_acquisto = $subtot;
-                    $riga = add_articolo_inddt($id_record, $idarticolo, $descrizione, $idiva, $qta, $um, $prezzo_acquisto, $sconto, $sconto_unitario, $tipo_sconto);
-
-                    // Lettura lotto, serial, altro dalla riga dell'ordine
-                    $dbo->query('INSERT INTO mg_prodotti (id_riga_documento, id_articolo, dir, serial, lotto, altro) SELECT '.prepare($riga).', '.prepare($idarticolo).', '.prepare($dir).', serial, lotto, altro FROM mg_prodotti AS t WHERE id_riga_ordine='.prepare($idrigaordine));
-                }
-
-                // Inserimento riga normale
-                elseif ($qta != 0) {
-                    $query = 'INSERT INTO dt_righe_ddt(idddt, idarticolo, descrizione, idordine, idiva, desc_iva, iva, iva_indetraibile, subtotale, sconto, sconto_unitario, tipo_sconto, um, qta, `order`) VALUES('.prepare($id_record).', '.prepare($idarticolo).', '.prepare($descrizione).', '.prepare($idordine).', '.prepare($idiva).', '.prepare($desc_iva).', '.prepare($iva).', '.prepare($iva_indetraibile).', '.prepare($subtot).', '.prepare($sconto).', '.prepare($sconto_unitario).', '.prepare($tipo_sconto).', '.prepare($um).', '.prepare($qta).', (SELECT IFNULL(MAX(`order`) + 1, 0) FROM co_righe_documenti AS t WHERE iddocumento='.prepare($id_record).'))';
-                    $dbo->query($query);
-                }
-
-                // Scalo la quantità dall ordine
-                $dbo->query('UPDATE or_righe_ordini SET qta_evasa = qta_evasa+'.$qta.' WHERE id='.prepare($idrigaordine));
-            }
-        }
-
-        ricalcola_costiagg_ddt($id_record);
-
-        flash()->info(tr('Aggiunti nuovi articoli in ddt!'));
-
-        break;
 }
 
 // Aggiornamento stato degli ordini presenti in questa fattura in base alle quantità totali evase

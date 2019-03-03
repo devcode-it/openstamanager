@@ -119,11 +119,11 @@ class FatturaElettronica
             $documento = $this->getDocumento();
             $database = database();
 
-            $contratti = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `co_contratti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idcontratto` = `co_contratti`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+            $contratti = $database->fetchArray('SELECT `id_documento_fe`, `num_item`, `codice_cig`, `codice_cup` FROM `co_contratti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idcontratto` = `co_contratti`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
-            $preventivi = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `co_preventivi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idpreventivo` = `co_preventivi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+            $preventivi = $database->fetchArray('SELECT `id_documento_fe`, `num_item`, `codice_cig`, `codice_cup` FROM `co_preventivi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idpreventivo` = `co_preventivi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
-            $interventi = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `in_interventi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idintervento` = `in_interventi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+            $interventi = $database->fetchArray('SELECT `id_documento_fe`, `num_item`, `codice_cig`, `codice_cup` FROM `in_interventi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idintervento` = `in_interventi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
             $this->contratti = array_merge($contratti, $preventivi, $interventi);
         }
@@ -142,7 +142,7 @@ class FatturaElettronica
             $documento = $this->getDocumento();
             $database = database();
 
-            $ordini = $database->fetchArray('SELECT `id_documento_fe`, `codice_cig`, `codice_cup` FROM `or_ordini` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idordine` = `or_ordini`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
+            $ordini = $database->fetchArray('SELECT `id_documento_fe`, `num_item`, `codice_cig`, `codice_cup` FROM `or_ordini` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idordine` = `or_ordini`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL');
 
             $this->ordini = $ordini;
         }
@@ -474,7 +474,7 @@ class FatturaElettronica
     {
         $result = [
             'Indirizzo' => $anagrafica['indirizzo'],
-            'CAP' => $anagrafica['cap'],
+            'CAP' => ($anagrafica->nazione->iso2 == 'IT') ? $anagrafica['cap'] : '00000',
             'Comune' => $anagrafica['citta'],
         ];
 
@@ -589,7 +589,7 @@ class FatturaElettronica
         return $result;
     }
 
-    protected function chunkSplit($str, $chunklen)
+    protected static function chunkSplit($str, $chunklen)
     {
         $res = [];
         $k = ceil(strlen($str) / $chunklen);
@@ -616,11 +616,6 @@ class FatturaElettronica
             'Data' => $documento['data'],
             'Numero' => $documento['numero_esterno'],
         ];
-
-        $causali = self::chunkSplit($documento['note'], 200);
-        foreach ($causali as $causale) {
-            $result[] = ['Causale' => $causale];
-        }
 
         $righe = $fattura->getRighe();
 
@@ -712,6 +707,16 @@ class FatturaElettronica
         // Valorizzare l’importo complessivo lordo della fattura (onnicomprensivo di Iva, bollo, contributi previdenziali, ecc…)
         $result['ImportoTotaleDocumento'] = abs($documento->totale);
 
+        // Arrotondamento - Eventuale arrotondamento sul totale documento (ammette anche il segno negativo) (2.1.1.10)
+
+        // Causale - Descrizione della causale del documento (2.1.1.11)
+        $causali = self::chunkSplit($documento['note'], 200);
+        foreach ($causali as $causale) {
+            $result[] = ['Causale' => $causale];
+        }
+
+        // Art73 - Ciò consente al cedente/prestatore l'emissione nello stesso anno di più documenti aventi stesso numero (2.1.1.12)
+
         return $result;
     }
 
@@ -772,6 +777,10 @@ class FatturaElettronica
                 ];
             }
 
+            if (!empty($element['num_item'])) {
+                $dati['NumItem'] = $element['num_item'];
+            }
+
             if (!empty($element['codice_cig'])) {
                 $dati['CodiceCIG'] = $element['codice_cig'];
             }
@@ -801,6 +810,10 @@ class FatturaElettronica
                 $dati = [
                     'IdDocumento' => $element['id_documento_fe'],
                 ];
+            }
+
+            if (!empty($element['num_item'])) {
+                $dati['NumItem'] = $element['num_item'];
             }
 
             if (!empty($element['codice_cig'])) {
@@ -932,7 +945,7 @@ class FatturaElettronica
                 $tipo_codice = $database->fetchOne('SELECT `mg_categorie`.`nome` FROM `mg_categorie` INNER JOIN `mg_articoli` ON `mg_categorie`.`id` = `mg_articoli`.`id_categoria` WHERE `mg_articoli`.`id` = '.prepare($riga['idarticolo']))['nome'];
 
                 $codice_articolo = [
-                    'CodiceTipo' => ($tipo_codice) ?: 'OSM',
+                    'CodiceTipo' => ($tipo_codice) ?: 'COD',
                     'CodiceValore' => $riga->articolo->codice,
                 ];
 
@@ -1026,7 +1039,8 @@ class FatturaElettronica
             return $item->aliquota->percentuale;
         });
         foreach ($riepiloghi_percentuale as $riepilogo) {
-            $totale = round($riepilogo->sum('imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
+            //(imponibile-sconto) + rivalsa inps
+            $totale = round(($riepilogo->sum('imponibile') - $riepilogo->sum('sconto')) + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
 
             $dati = $riepilogo->first()->aliquota;
@@ -1062,7 +1076,8 @@ class FatturaElettronica
             return $item->aliquota->codice_natura_fe;
         });
         foreach ($riepiloghi_natura as $riepilogo) {
-            $totale = round($riepilogo->sum('imponibile') + $riepilogo->sum('rivalsa_inps'), 2);
+            //(imponibile-sconto) + rivalsa inps
+            $totale = round(($riepilogo->sum('imponibile') - $riepilogo->sum('sconto')) + $riepilogo->sum('rivalsa_inps'), 2);
             $imposta = round($riepilogo->sum('iva') + $riepilogo->sum('iva_rivalsa_inps'), 2);
 
             $dati = $riepilogo->first()->aliquota;

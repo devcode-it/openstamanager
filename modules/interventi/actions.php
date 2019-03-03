@@ -24,6 +24,7 @@ switch (post('op')) {
 
         // Salvataggio modifiche intervento
         $intervento->data_richiesta = post('data_richiesta');
+        $intervento->data_scadenza = post('data_scadenza');
         $intervento->richiesta = post('richiesta');
         $intervento->descrizione = post('descrizione');
         $intervento->informazioniaggiuntive = post('informazioniaggiuntive');
@@ -43,6 +44,7 @@ switch (post('op')) {
         $intervento->tipo_sconto_globale = $tipo_sconto;
 
         $intervento->id_documento_fe = post('id_documento_fe');
+        $intervento->num_item = post('num_item');
         $intervento->codice_cup = post('codice_cup');
         $intervento->codice_cig = post('codice_cig');
         $intervento->save();
@@ -72,6 +74,7 @@ switch (post('op')) {
             $idtipointervento = post('idtipointervento');
             $idstatointervento = post('idstatointervento');
             $data_richiesta = post('data_richiesta');
+            $data_scadenza = post('data_scadenza');
 
             $anagrafica = Anagrafica::find($idanagrafica);
             $tipo = TipoSessione::find($idtipointervento);
@@ -102,6 +105,7 @@ switch (post('op')) {
             $intervento->id_preventivo = post('idpreventivo');
             $intervento->id_contratto = post('idcontratto');
             $intervento->richiesta = $richiesta;
+            $intervento->data_scadenza = $data_scadenza;
 
             $intervento->save();
 

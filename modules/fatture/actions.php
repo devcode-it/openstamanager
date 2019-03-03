@@ -651,7 +651,7 @@ switch (post('op')) {
             $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
         }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
-        $id_conto = get('id_conto');
+        $id_conto = post('id_conto');
 
         $parziale = false;
         $righe = $ordine->getRighe();
@@ -666,8 +666,6 @@ switch (post('op')) {
                 $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
                 $copia->id_rivalsa_inps = $id_rivalsa_inps;
 
-                $copia->save();
-
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
                     $copia->movimenta($copia->qta);
@@ -676,11 +674,22 @@ switch (post('op')) {
 
                     $copia->serials = $serials;
                 }
+
+                $copia->save();
             }
 
             if ($riga->qta != $riga->qta_evasa) {
                 $parziale = true;
             }
+        }
+
+        // Aggiornamento sconto
+        if (post('evadere')[$ordine->scontoGlobale->id] == 'on') {
+            $fattura->tipo_sconto_globale = $ordine->tipo_sconto_globale;
+            $fattura->sconto_globale = $ordine->tipo_sconto_globale == 'PRC' ? $ordine->sconto_globale : $ordine->sconto_globale;
+            $fattura->save();
+
+            $fattura->updateSconto();
         }
 
         // Impostazione del nuovo stato
@@ -720,7 +729,7 @@ switch (post('op')) {
             $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
         }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
-        $id_conto = get('id_conto');
+        $id_conto = post('id_conto');
 
         $parziale = false;
         $righe = $ddt->getRighe();
@@ -735,19 +744,28 @@ switch (post('op')) {
                 $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
                 $copia->id_rivalsa_inps = $id_rivalsa_inps;
 
-                $copia->save();
-
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
                     $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
 
                     $copia->serials = $serials;
                 }
+
+                $copia->save();
             }
 
             if ($riga->qta != $riga->qta_evasa) {
                 $parziale = true;
             }
+        }
+
+        // Aggiornamento sconto
+        if (post('evadere')[$ddt->scontoGlobale->id] == 'on') {
+            $fattura->tipo_sconto_globale = $ddt->tipo_sconto_globale;
+            $fattura->sconto_globale = $ddt->tipo_sconto_globale == 'PRC' ? $ddt->sconto_globale : $ddt->sconto_globale;
+            $fattura->save();
+
+            $fattura->updateSconto();
         }
 
         // Impostazione del nuovo stato
@@ -786,8 +804,7 @@ switch (post('op')) {
             $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
         }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
-        $id_conto = get('id_conto');
-        $id_iva = get('id_iva');
+        $id_conto = post('id_conto');
 
         $parziale = false;
         $righe = $preventivo->getRighe();
@@ -796,24 +813,32 @@ switch (post('op')) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($fattura, $qta);
-                $copia->id_iva = $id_iva;
                 $copia->id_conto = $id_conto;
 
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
                 $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
                 $copia->id_rivalsa_inps = $id_rivalsa_inps;
 
-                $copia->save();
-
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
                     $copia->movimenta($copia->qta);
                 }
+
+                $copia->save();
             }
 
             if ($riga->qta != $riga->qta_evasa) {
                 $parziale = true;
             }
+        }
+
+        // Aggiornamento sconto
+        if (post('evadere')[$preventivo->scontoGlobale->id] == 'on') {
+            $fattura->tipo_sconto_globale = $preventivo->tipo_sconto_globale;
+            $fattura->sconto_globale = $preventivo->tipo_sconto_globale == 'PRC' ? $preventivo->sconto_globale : $preventivo->sconto_globale;
+            $fattura->save();
+
+            $fattura->updateSconto();
         }
 
         // Impostazione del nuovo stato
@@ -860,8 +885,7 @@ switch (post('op')) {
             $id_ritenuta_acconto = $fattura->anagrafica->id_ritenuta_acconto_vendite ?: setting("Percentuale ritenuta d'acconto");
         }
         $calcolo_ritenuta_acconto = setting("Metodologia calcolo ritenuta d'acconto predefinito");
-        $id_conto = get('id_conto');
-        $id_iva = get('id_iva');
+        $id_conto = post('id_conto');
 
         $parziale = false;
         $righe = $contratto->getRighe();
@@ -870,24 +894,32 @@ switch (post('op')) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($fattura, $qta);
-                $copia->id_iva = $id_iva;
                 $copia->id_conto = $id_conto;
 
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
                 $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
                 $copia->id_rivalsa_inps = $id_rivalsa_inps;
 
-                $copia->save();
-
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
                     $copia->movimenta($copia->qta);
                 }
+
+                $copia->save();
             }
 
             if ($riga->qta != $riga->qta_evasa) {
                 $parziale = true;
             }
+        }
+
+        // Aggiornamento sconto
+        if (post('evadere')[$contratto->scontoGlobale->id] == 'on') {
+            $fattura->tipo_sconto_globale = $contratto->tipo_sconto_globale;
+            $fattura->sconto_globale = $contratto->tipo_sconto_globale == 'PRC' ? $contratto->sconto_globale : $contratto->sconto_globale;
+            $fattura->save();
+
+            $fattura->updateSconto();
         }
 
         // Impostazione del nuovo stato
@@ -936,8 +968,6 @@ switch (post('op')) {
                 $copia = $riga->copiaIn($nota, -$qta);
                 $copia->ref_riga_documento = $riga->id;
 
-                $copia->save();
-
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
                     $copia->movimenta($copia->qta);
@@ -947,6 +977,8 @@ switch (post('op')) {
                     $copia->serials = $serials;
                     $riga->removeSerials($serials);
                 }
+
+                $copia->save();
             }
         }
 

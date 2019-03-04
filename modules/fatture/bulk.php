@@ -2,13 +2,16 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Util\Zip;
 use Modules\Fatture\Fattura;
+use Util\Zip;
 
 switch (post('op')) {
     case 'export-bulk':
         $dir = DOCROOT.'/files/export_fatture/';
         directory($dir.'tmp/');
+
+        $dir = slashes($dir);
+        $zip = slashes($dir.'fatture_'.time().'.zip');
 
         // Rimozione dei contenuti precedenti
         $files = glob($dir.'/*.zip');
@@ -33,15 +36,12 @@ switch (post('op')) {
                 Prints::render($print['id'], $r['id'], $filename);
             }
 
-            $dir = slashes($dir);
-            $file = slashes($dir.'fatture_'.time().'.zip');
-
             // Creazione zip
             if (extension_loaded('zip')) {
-                Zip::create($dir.'tmp/', $file);
+                Zip::create($dir.'tmp/', $zip);
 
                 // Invio al browser dello zip
-                download($file);
+                download($zip);
 
                 // Rimozione dei contenuti
                 delete($dir.'tmp/');
@@ -67,8 +67,10 @@ switch (post('op')) {
 
     case 'export-xml-bulk':
         $dir = DOCROOT.'/files/export_fatture/';
-        directory($dir);
         directory($dir.'tmp/');
+
+        $dir = slashes($dir);
+        $zip = slashes($dir.'fatture_'.time().'.zip');
 
         // Rimozione dei contenuti precedenti
         $files = glob($dir.'/*.zip');
@@ -78,60 +80,64 @@ switch (post('op')) {
 
         // Selezione delle fatture da stampare
         $fatture = $dbo->fetchArray('SELECT co_documenti.id, numero_esterno, data, ragione_sociale, co_tipidocumento.descrizione FROM co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id IN('.implode(',', $id_records).')');
-        $dir = slashes($dir);
 
+        $failed = [];
         if (!empty($fatture)) {
             foreach ($fatture as $r) {
                 $fattura = Fattura::find($r['id']);
-                $id_module = Modules::getCurrent()["id"];
-                $upload_dir = DOCROOT . '/' . Uploads::getDirectory($id_module);
-                if ($id_module == 14) {
-                    try {
-                        $fe = new \Plugins\ExportFE\FatturaElettronica($fattura->id);
-                    } catch (UnexpectedValueException $e) {
-                        flash()->warning("La fattura elettronica " . $fattura->numero_esterno . " creata in data " . $fattura->data . " indirizzata al cliente " . $fattura->anagrafica->ragione_sociale . " non è ancora stata generata, pertanto non è stata inclusa nell'archivio");
-                        continue;
-                    }
+                $include = true;
 
-                    $file = slashes($upload_dir . '/' . $fe->getFilename());
-                    $dest = slashes($dir . '/tmp/' . $fe->getFilename());
-                } else {
-                    $data = $dbo->fetchOne("SELECT filename, original FROM zz_files WHERE name='Fattura Elettronica' AND id_module=15 AND id_record=" . prepare($fattura->id));
-                    $file = slashes($upload_dir . '/' . $data['filename']);
-                    $dest = slashes($dir . '/tmp/' . $data["original"]);
+                try {
+                    $fe = new \Plugins\ExportFE\FatturaElettronica($fattura->id);
+
+                    $include = $fe->isGenerated();
+                } catch (UnexpectedValueException $e) {
+                    $include = false;
                 }
-                switch (copy($file, $dest)) {
-                    case FALSE:
-                        flash()->error("Impossibile salvare il file XML della fattura " . $fattura->numero_esterno);
-                        break;
-                    case TRUE:
-                        operationLog("export-xml-bulk", ["id_record" => $r["id"]]);
-                        break;
+
+                if (!$include) {
+                    $failed[] = $fattura->numero_esterno;
+                } else {
+                    $filename = $fe->getFilename();
+
+                    $file = slashes($module->upload_directory.'/'.$filename);
+                    $dest = slashes($dir.'/tmp/'.$filename);
+
+                    $result = copy($file, $dest);
+                    if ($result) {
+                        operationLog('export-xml-bulk', ['id_record' => $r['id']]);
+                    } else {
+                        $failed[] = $fattura->numero_esterno;
+                    }
                 }
             }
 
-            if (!empty(glob($dir . '/tmp/*.{xml,p7m}', GLOB_BRACE))) {
-                $file = slashes($dir . 'fatture_' . time() . '.zip');
+            // Creazione zip
+            if (extension_loaded('zip')) {
+                Zip::create($dir.'tmp/', $zip);
 
-                // Creazione zip
-                if (extension_loaded('zip')) {
-                    Zip::create($dir . 'tmp/', $file);
+                // Invio al browser il file zip
+                download($zip);
 
-                    // Invio al browser il file zip
-                    download($file);
+                // Rimozione dei contenuti
+                delete($dir.'tmp/');
+            }
 
-                    // Rimozione dei contenuti
-                    delete($dir . 'tmp/');
-                }
+            if (!empty($failed)) {
+                flash()->warning(tr('Le fatture elettroniche _LIST_ non sono state incluse poichè non ancora generate', [
+                    '_LIST_' => implode(', ', $failed),
+                ]));
             }
         }
         break;
 }
 
-return [
+$bulk = [
     'delete-bulk' => tr('Elimina selezionati'),
+];
 
-    'export-bulk' => [
+if ($module->name == 'Fatture di vendita') {
+    $bulk['export-bulk'] = [
         'text' => tr('Esporta stampe'),
         'data' => [
             'msg' => tr('Vuoi davvero esportare tutte le stampe in un archivio?'),
@@ -139,9 +145,9 @@ return [
             'class' => 'btn btn-lg btn-warning',
             'blank' => true,
         ],
-    ],
+    ];
 
-    'export-xml-bulk' => [
+    $bulk['export-xml-bulk'] = [
         'text' => tr('Esporta XML'),
         'data' => [
             'msg' => tr('Vuoi davvero esportare tutte le fatture elettroniche in un archivio?'),
@@ -149,5 +155,7 @@ return [
             'class' => 'btn btn-lg btn-warning',
             'blank' => true,
         ],
-    ],
-];
+    ];
+}
+
+return $bulk;

@@ -80,7 +80,7 @@ class Backup
     /**
      * Effettua il backup giornaliero.
      *
-     * @return null|bool
+     * @return bool|null
      */
     public static function daily()
     {
@@ -173,6 +173,7 @@ class Backup
 
         $dump = new Mysqldump('mysql:host='.$config['db_host'].';dbname='.$config['db_name'], $config['db_username'], $config['db_password'], [
             'add-drop-table' => true,
+            'add-locks' => false,
         ]);
 
         $dump->start($file);

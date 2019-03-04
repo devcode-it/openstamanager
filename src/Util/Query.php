@@ -174,7 +174,7 @@ class Query
         }
 
         // Paginazione
-        if (!empty($limit)) {
+        if (!empty($limit) && intval($limit['length']) > 0) {
             $query .= ' LIMIT '.$limit['start'].', '.$limit['length'];
         }
 
